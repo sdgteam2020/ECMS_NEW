@@ -232,3 +232,8 @@ AppPackages/
 /DataAccessLayer/bin/
 /DataTransferObject/bin/
 /WebApi/bin/
+/Web/obj/
+/BusinessLogicsLayer/obj/
+/DataAccessLayer/obj/
+/DataTransferObject/obj/
+/WebApi/obj/
