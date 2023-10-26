@@ -9,6 +9,7 @@ namespace DataTransferObject.Response
 {
     public class DTOCorpsResponse
     {
+        [Required]
         public int CorpsId { get; set; }
       
         public string CorpsName { get; set; }
