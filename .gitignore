@@ -56,9 +56,17 @@ x64/
 .builds
 *.pidb
 *.scc
+<<<<<<< HEAD
 
 
 
+=======
+*.dll
+*.pdb
+*.cache
+*/bin/*
+**/bin/**
+>>>>>>> 9055b36437f5f36b122212ca891e7e9438a45af9
 # Visual C++ cache files
 ipch/
 *.aps
@@ -236,4 +244,8 @@ AppPackages/
 /DataAccessLayer/obj/
 /DataTransferObject/obj/
 /WebApi/obj/
+<<<<<<< HEAD
 /BusinessLogicsLayer/bin/Debug/net7.0/*.dll
+=======
+/BusinessLogicsLayer/.cache
+>>>>>>> 9055b36437f5f36b122212ca891e7e9438a45af9
