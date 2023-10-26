@@ -11,7 +11,6 @@ namespace DataTransferObject.Response
     {
         
         public int BdeId { get; set; }
-       
         public string BdeName { get; set; }
 
         public int ComdId { get; set; }
