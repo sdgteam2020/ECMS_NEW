@@ -1,0 +1,7 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/Web/bin/Debug/net7.0/Web.pdb
+/Web/obj/Debug/net7.0/Web.dll
+/Web/obj/Debug/net7.0/Web.pdb
