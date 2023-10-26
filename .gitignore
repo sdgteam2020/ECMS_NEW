@@ -249,3 +249,7 @@ AppPackages/
 =======
 /BusinessLogicsLayer/.cache
 >>>>>>> 9055b36437f5f36b122212ca891e7e9438a45af9
+/TestConsoleReso/obj/project.assets.json
+/TestConsoleReso/obj/project.nuget.cache
+/TestConsoleReso/obj/TestConsoleReso.csproj.nuget.dgspec.json
+/TestConsoleReso/obj/TestConsoleReso.csproj.nuget.g.props
