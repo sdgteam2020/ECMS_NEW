@@ -17,9 +17,7 @@
 [Rr]elease/
 x64/
 [Bb]in/
-Web/[Bb]in/
 [Oo]bj/
-Web/[Oo]bj/
 # build folder is nowadays used for build scripts and should not be ignored
 #build/
 
@@ -58,6 +56,7 @@ Web/[Oo]bj/
 .builds
 *.pidb
 *.scc
+*.dll
 
 # Visual C++ cache files
 ipch/
