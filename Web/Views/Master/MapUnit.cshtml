@@ -1,0 +1,81 @@
+﻿@{
+    ViewData["Title"] = "Unit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-4">
+    <div class="card mb-3 ">
+        <div class="card-header">
+
+            <span id="SpnTxnId" class="d-none">0</span>
+            @*<span id="PtoId" class="d-none">0</span>*@
+            <div class="row">
+                <div class="col-xl-12 text-left">
+                    <h3>
+                        Unit Details
+                        <small class="text-muted"></small>
+
+
+                    </h3>
+                </div>
+
+
+            </div>
+        </div>
+
+
+        <div class="card-body" style="min-height:150px;">
+            
+            <div class="col-xl-12">
+                <div class="mb-2 d-md-flex justify-content-md-between align-items-md-center">
+                    <h6 class="mb-3 mb-md-0">
+                        Total Units <span id="lblTotal" class="ml-3 border border-light b px-2 py-1">0</span>
+                    </h6>
+                    <div>
+                        <button type="button" id="btnMapUnitAdd" class="btn btn-outline-success font-weight-600 btn-sm">Add Unit</button>
+                        <button type="button" id="btnMapUnitMultiDelete" class="btn btn-outline-danger font-weight-600 btn-sm">Delete</button>
+
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="table border border-purple table-striped no-footer dataTable table-hover" role="grid" id="tblMapUnitdata">
+                        <thead>
+                            <tr>
+                                <th class="noExport d-none"></th>
+                                <th class="noExport wd-30-f">
+                                    <div class="custom-control custom-checkbox small">
+                                        <input type="checkbox" class="custom-control-input" id="chkAll">
+                                        <label class="custom-control-label font-weight-bold" for="chkAll"></label>
+                                    </div>
+                                </th>
+                                <th class=" wd-30-f">SNo.</th>
+
+
+                                <th class="nowrap">Command</th>
+
+                                <th class="nowrap">Corps</th>
+                                <th class="nowrap">Div</th>
+                                <th class="nowrap">Bde</th>
+                                <th class="nowrap">Unit</th>
+                                <th class="nowrap">Action</th>
+
+
+                            </tr>
+                        </thead>
+                        <tbody id="DetailBodyMapUnit">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+
+        </div>
+
+
+
+    </div>
+</div>
+
+
+<script src="~/developerjs/mtables.js"></script>
+<script src="~/developerjs/MapUnit.js"></script>

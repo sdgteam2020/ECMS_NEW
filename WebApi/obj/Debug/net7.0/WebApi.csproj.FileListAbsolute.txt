@@ -1,0 +1,751 @@
+C:\Users\master\Downloads\AFSAC_PRo\WebApi\bin\Debug\net7.0\appsettings.Development.json
+C:\Users\master\Downloads\AFSAC_PRo\WebApi\bin\Debug\net7.0\appsettings.json
+C:\Users\master\Downloads\AFSAC_PRo\WebApi\bin\Debug\net7.0\WebApi.staticwebassets.runtime.json
+C:\Users\master\Downloads\AFSAC_PRo\WebApi\bin\Debug\net7.0\WebApi.exe
+C:\Users\master\Downloads\AFSAC_PRo\WebApi\bin\Debug\net7.0\WebApi.deps.json
+C:\Users\master\Downloads\AFSAC_PRo\WebApi\bin\Debug\net7.0\WebApi.runtimeconfig.json
+C:\Users\master\Downloads\AFSAC_PRo\WebApi\bin\Debug\net7.0\WebApi.dll
+C:\Users\master\Downloads\AFSAC_PRo\WebApi\bin\Debug\net7.0\WebApi.pdb
+C:\Users\master\Downloads\AFSAC_PRo\WebApi\bin\Debug\net7.0\Azure.Core.dll
+C:\Users\master\Downloads\AFSAC_PRo\WebApi\bin\Debug\net7.0\Azure.Identity.dll
+C:\Users\master\Downloads\AFSAC_PRo\WebApi\bin\Debug\net7.0\Dapper.dll
+C:\Users\master\Downloads\AFSAC_PRo\WebApi\bin\Debug\net7.0\Microsoft.Bcl.AsyncInterfaces.dll
+C:\Users\master\Downloads\AFSAC_PRo\WebApi\bin\Debug\net7.0\Microsoft.Data.SqlClient.dll
+C:\Users\master\Downloads\AFSAC_PRo\WebApi\bin\Debug\net7.0\Microsoft.EntityFrameworkCore.dll
+C:\Users\master\Downloads\AFSAC_PRo\WebApi\bin\Debug\net7.0\Microsoft.EntityFrameworkCore.Abstractions.dll
+C:\Users\master\Downloads\AFSAC_PRo\WebApi\bin\Debug\net7.0\Microsoft.EntityFrameworkCore.Relational.dll
+C:\Users\master\Downloads\AFSAC_PRo\WebApi\bin\Debug\net7.0\Microsoft.EntityFrameworkCore.SqlServer.dll
+C:\Users\master\Downloads\AFSAC_PRo\WebApi\bin\Debug\net7.0\Microsoft.Identity.Client.dll
+C:\Users\master\Downloads\AFSAC_PRo\WebApi\bin\Debug\net7.0\Microsoft.Identity.Client.Extensions.Msal.dll
+C:\Users\master\Downloads\AFSAC_PRo\WebApi\bin\Debug\net7.0\Microsoft.IdentityModel.Abstractions.dll
+C:\Users\master\Downloads\AFSAC_PRo\WebApi\bin\Debug\net7.0\Microsoft.IdentityModel.JsonWebTokens.dll
+C:\Users\master\Downloads\AFSAC_PRo\WebApi\bin\Debug\net7.0\Microsoft.IdentityModel.Logging.dll
+C:\Users\master\Downloads\AFSAC_PRo\WebApi\bin\Debug\net7.0\Microsoft.IdentityModel.Protocols.dll
+C:\Users\master\Downloads\AFSAC_PRo\WebApi\bin\Debug\net7.0\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
+C:\Users\master\Downloads\AFSAC_PRo\WebApi\bin\Debug\net7.0\Microsoft.IdentityModel.Tokens.dll
+C:\Users\master\Downloads\AFSAC_PRo\WebApi\bin\Debug\net7.0\Microsoft.OpenApi.dll
+C:\Users\master\Downloads\AFSAC_PRo\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.Server.dll
+C:\Users\master\Downloads\AFSAC_PRo\WebApi\bin\Debug\net7.0\Microsoft.Win32.SystemEvents.dll
+C:\Users\master\Downloads\AFSAC_PRo\WebApi\bin\Debug\net7.0\Newtonsoft.Json.dll
+C:\Users\master\Downloads\AFSAC_PRo\WebApi\bin\Debug\net7.0\Swashbuckle.AspNetCore.Swagger.dll
+C:\Users\master\Downloads\AFSAC_PRo\WebApi\bin\Debug\net7.0\Swashbuckle.AspNetCore.SwaggerGen.dll
+C:\Users\master\Downloads\AFSAC_PRo\WebApi\bin\Debug\net7.0\Swashbuckle.AspNetCore.SwaggerUI.dll
+C:\Users\master\Downloads\AFSAC_PRo\WebApi\bin\Debug\net7.0\System.Configuration.ConfigurationManager.dll
+C:\Users\master\Downloads\AFSAC_PRo\WebApi\bin\Debug\net7.0\System.Data.SqlClient.dll
+C:\Users\master\Downloads\AFSAC_PRo\WebApi\bin\Debug\net7.0\System.Drawing.Common.dll
+C:\Users\master\Downloads\AFSAC_PRo\WebApi\bin\Debug\net7.0\System.IdentityModel.Tokens.Jwt.dll
+C:\Users\master\Downloads\AFSAC_PRo\WebApi\bin\Debug\net7.0\System.Memory.Data.dll
+C:\Users\master\Downloads\AFSAC_PRo\WebApi\bin\Debug\net7.0\System.Runtime.Caching.dll
+C:\Users\master\Downloads\AFSAC_PRo\WebApi\bin\Debug\net7.0\System.Security.Cryptography.ProtectedData.dll
+C:\Users\master\Downloads\AFSAC_PRo\WebApi\bin\Debug\net7.0\System.Security.Permissions.dll
+C:\Users\master\Downloads\AFSAC_PRo\WebApi\bin\Debug\net7.0\System.Windows.Extensions.dll
+C:\Users\master\Downloads\AFSAC_PRo\WebApi\bin\Debug\net7.0\runtimes\unix\lib\net6.0\Microsoft.Data.SqlClient.dll
+C:\Users\master\Downloads\AFSAC_PRo\WebApi\bin\Debug\net7.0\runtimes\win\lib\net6.0\Microsoft.Data.SqlClient.dll
+C:\Users\master\Downloads\AFSAC_PRo\WebApi\bin\Debug\net7.0\runtimes\win-arm\native\Microsoft.Data.SqlClient.SNI.dll
+C:\Users\master\Downloads\AFSAC_PRo\WebApi\bin\Debug\net7.0\runtimes\win-arm64\native\Microsoft.Data.SqlClient.SNI.dll
+C:\Users\master\Downloads\AFSAC_PRo\WebApi\bin\Debug\net7.0\runtimes\win-x64\native\Microsoft.Data.SqlClient.SNI.dll
+C:\Users\master\Downloads\AFSAC_PRo\WebApi\bin\Debug\net7.0\runtimes\win-x86\native\Microsoft.Data.SqlClient.SNI.dll
+C:\Users\master\Downloads\AFSAC_PRo\WebApi\bin\Debug\net7.0\runtimes\win\lib\net7.0\Microsoft.Win32.SystemEvents.dll
+C:\Users\master\Downloads\AFSAC_PRo\WebApi\bin\Debug\net7.0\runtimes\win-arm64\native\sni.dll
+C:\Users\master\Downloads\AFSAC_PRo\WebApi\bin\Debug\net7.0\runtimes\win-x64\native\sni.dll
+C:\Users\master\Downloads\AFSAC_PRo\WebApi\bin\Debug\net7.0\runtimes\win-x86\native\sni.dll
+C:\Users\master\Downloads\AFSAC_PRo\WebApi\bin\Debug\net7.0\runtimes\unix\lib\netcoreapp2.1\System.Data.SqlClient.dll
+C:\Users\master\Downloads\AFSAC_PRo\WebApi\bin\Debug\net7.0\runtimes\win\lib\netcoreapp2.1\System.Data.SqlClient.dll
+C:\Users\master\Downloads\AFSAC_PRo\WebApi\bin\Debug\net7.0\runtimes\win\lib\net7.0\System.Drawing.Common.dll
+C:\Users\master\Downloads\AFSAC_PRo\WebApi\bin\Debug\net7.0\runtimes\win\lib\net6.0\System.Runtime.Caching.dll
+C:\Users\master\Downloads\AFSAC_PRo\WebApi\bin\Debug\net7.0\runtimes\win\lib\net7.0\System.Security.Cryptography.ProtectedData.dll
+C:\Users\master\Downloads\AFSAC_PRo\WebApi\bin\Debug\net7.0\runtimes\win\lib\net7.0\System.Windows.Extensions.dll
+C:\Users\master\Downloads\AFSAC_PRo\WebApi\bin\Debug\net7.0\BusinessLogicsLayer.dll
+C:\Users\master\Downloads\AFSAC_PRo\WebApi\bin\Debug\net7.0\DataAccessLayer.dll
+C:\Users\master\Downloads\AFSAC_PRo\WebApi\bin\Debug\net7.0\DataTransferObject.dll
+C:\Users\master\Downloads\AFSAC_PRo\WebApi\bin\Debug\net7.0\BusinessLogicsLayer.pdb
+C:\Users\master\Downloads\AFSAC_PRo\WebApi\bin\Debug\net7.0\DataTransferObject.pdb
+C:\Users\master\Downloads\AFSAC_PRo\WebApi\bin\Debug\net7.0\DataAccessLayer.pdb
+C:\Users\master\Downloads\AFSAC_PRo\WebApi\obj\Debug\net7.0\WebApi.csproj.AssemblyReference.cache
+C:\Users\master\Downloads\AFSAC_PRo\WebApi\obj\Debug\net7.0\WebApi.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\master\Downloads\AFSAC_PRo\WebApi\obj\Debug\net7.0\WebApi.AssemblyInfoInputs.cache
+C:\Users\master\Downloads\AFSAC_PRo\WebApi\obj\Debug\net7.0\WebApi.AssemblyInfo.cs
+C:\Users\master\Downloads\AFSAC_PRo\WebApi\obj\Debug\net7.0\WebApi.csproj.CoreCompileInputs.cache
+C:\Users\master\Downloads\AFSAC_PRo\WebApi\obj\Debug\net7.0\WebApi.MvcApplicationPartsAssemblyInfo.cs
+C:\Users\master\Downloads\AFSAC_PRo\WebApi\obj\Debug\net7.0\WebApi.MvcApplicationPartsAssemblyInfo.cache
+C:\Users\master\Downloads\AFSAC_PRo\WebApi\obj\Debug\net7.0\staticwebassets\msbuild.WebApi.Microsoft.AspNetCore.StaticWebAssets.props
+C:\Users\master\Downloads\AFSAC_PRo\WebApi\obj\Debug\net7.0\staticwebassets\msbuild.build.WebApi.props
+C:\Users\master\Downloads\AFSAC_PRo\WebApi\obj\Debug\net7.0\staticwebassets\msbuild.buildMultiTargeting.WebApi.props
+C:\Users\master\Downloads\AFSAC_PRo\WebApi\obj\Debug\net7.0\staticwebassets\msbuild.buildTransitive.WebApi.props
+C:\Users\master\Downloads\AFSAC_PRo\WebApi\obj\Debug\net7.0\staticwebassets.pack.json
+C:\Users\master\Downloads\AFSAC_PRo\WebApi\obj\Debug\net7.0\staticwebassets.build.json
+C:\Users\master\Downloads\AFSAC_PRo\WebApi\obj\Debug\net7.0\staticwebassets.development.json
+C:\Users\master\Downloads\AFSAC_PRo\WebApi\obj\Debug\net7.0\scopedcss\bundle\WebApi.styles.css
+C:\Users\master\Downloads\AFSAC_PRo\WebApi\obj\Debug\net7.0\WebApi.csproj.CopyComplete
+C:\Users\master\Downloads\AFSAC_PRo\WebApi\obj\Debug\net7.0\WebApi.dll
+C:\Users\master\Downloads\AFSAC_PRo\WebApi\obj\Debug\net7.0\refint\WebApi.dll
+C:\Users\master\Downloads\AFSAC_PRo\WebApi\obj\Debug\net7.0\WebApi.pdb
+C:\Users\master\Downloads\AFSAC_PRo\WebApi\obj\Debug\net7.0\WebApi.genruntimeconfig.cache
+C:\Users\master\Downloads\AFSAC_PRo\WebApi\obj\Debug\net7.0\ref\WebApi.dll
+D:\AFSAC\WebApi\obj\Debug\net7.0\WebApi.dll
+D:\AFSAC\WebApi\obj\Debug\net7.0\refint\WebApi.dll
+D:\AFSAC\WebApi\obj\Debug\net7.0\WebApi.pdb
+D:\AFSAC\WebApi\obj\Debug\net7.0\WebApi.csproj.AssemblyReference.cache
+D:\AFSAC\WebApi\obj\Debug\net7.0\WebApi.GeneratedMSBuildEditorConfig.editorconfig
+D:\AFSAC\WebApi\obj\Debug\net7.0\WebApi.AssemblyInfoInputs.cache
+D:\AFSAC\WebApi\obj\Debug\net7.0\WebApi.AssemblyInfo.cs
+D:\AFSAC\WebApi\obj\Debug\net7.0\WebApi.csproj.CoreCompileInputs.cache
+D:\AFSAC\WebApi\obj\Debug\net7.0\WebApi.MvcApplicationPartsAssemblyInfo.cs
+D:\AFSAC\WebApi\obj\Debug\net7.0\WebApi.MvcApplicationPartsAssemblyInfo.cache
+D:\AFSAC\WebApi\bin\Debug\net7.0\appsettings.Development.json
+D:\AFSAC\WebApi\bin\Debug\net7.0\appsettings.json
+D:\AFSAC\WebApi\bin\Debug\net7.0\WebApi.staticwebassets.runtime.json
+D:\AFSAC\WebApi\bin\Debug\net7.0\WebApi.exe
+D:\AFSAC\WebApi\bin\Debug\net7.0\WebApi.deps.json
+D:\AFSAC\WebApi\bin\Debug\net7.0\WebApi.runtimeconfig.json
+D:\AFSAC\WebApi\bin\Debug\net7.0\WebApi.dll
+D:\AFSAC\WebApi\bin\Debug\net7.0\WebApi.pdb
+D:\AFSAC\WebApi\bin\Debug\net7.0\Azure.Core.dll
+D:\AFSAC\WebApi\bin\Debug\net7.0\Azure.Identity.dll
+D:\AFSAC\WebApi\bin\Debug\net7.0\Dapper.dll
+D:\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.Bcl.AsyncInterfaces.dll
+D:\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.Data.SqlClient.dll
+D:\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.EntityFrameworkCore.dll
+D:\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.EntityFrameworkCore.Abstractions.dll
+D:\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.EntityFrameworkCore.Relational.dll
+D:\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.EntityFrameworkCore.SqlServer.dll
+D:\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.Identity.Client.dll
+D:\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.Identity.Client.Extensions.Msal.dll
+D:\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.IdentityModel.Abstractions.dll
+D:\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.IdentityModel.JsonWebTokens.dll
+D:\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.IdentityModel.Logging.dll
+D:\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.IdentityModel.Protocols.dll
+D:\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
+D:\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.IdentityModel.Tokens.dll
+D:\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.OpenApi.dll
+D:\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.Server.dll
+D:\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.Win32.SystemEvents.dll
+D:\AFSAC\WebApi\bin\Debug\net7.0\Newtonsoft.Json.dll
+D:\AFSAC\WebApi\bin\Debug\net7.0\Swashbuckle.AspNetCore.Swagger.dll
+D:\AFSAC\WebApi\bin\Debug\net7.0\Swashbuckle.AspNetCore.SwaggerGen.dll
+D:\AFSAC\WebApi\bin\Debug\net7.0\Swashbuckle.AspNetCore.SwaggerUI.dll
+D:\AFSAC\WebApi\bin\Debug\net7.0\System.Configuration.ConfigurationManager.dll
+D:\AFSAC\WebApi\bin\Debug\net7.0\System.Data.SqlClient.dll
+D:\AFSAC\WebApi\bin\Debug\net7.0\System.Drawing.Common.dll
+D:\AFSAC\WebApi\bin\Debug\net7.0\System.IdentityModel.Tokens.Jwt.dll
+D:\AFSAC\WebApi\bin\Debug\net7.0\System.Memory.Data.dll
+D:\AFSAC\WebApi\bin\Debug\net7.0\System.Runtime.Caching.dll
+D:\AFSAC\WebApi\bin\Debug\net7.0\System.Security.Cryptography.ProtectedData.dll
+D:\AFSAC\WebApi\bin\Debug\net7.0\System.Security.Permissions.dll
+D:\AFSAC\WebApi\bin\Debug\net7.0\System.Windows.Extensions.dll
+D:\AFSAC\WebApi\bin\Debug\net7.0\runtimes\unix\lib\net6.0\Microsoft.Data.SqlClient.dll
+D:\AFSAC\WebApi\bin\Debug\net7.0\runtimes\win\lib\net6.0\Microsoft.Data.SqlClient.dll
+D:\AFSAC\WebApi\bin\Debug\net7.0\runtimes\win-arm\native\Microsoft.Data.SqlClient.SNI.dll
+D:\AFSAC\WebApi\bin\Debug\net7.0\runtimes\win-arm64\native\Microsoft.Data.SqlClient.SNI.dll
+D:\AFSAC\WebApi\bin\Debug\net7.0\runtimes\win-x64\native\Microsoft.Data.SqlClient.SNI.dll
+D:\AFSAC\WebApi\bin\Debug\net7.0\runtimes\win-x86\native\Microsoft.Data.SqlClient.SNI.dll
+D:\AFSAC\WebApi\bin\Debug\net7.0\runtimes\win\lib\net7.0\Microsoft.Win32.SystemEvents.dll
+D:\AFSAC\WebApi\bin\Debug\net7.0\runtimes\win-arm64\native\sni.dll
+D:\AFSAC\WebApi\bin\Debug\net7.0\runtimes\win-x64\native\sni.dll
+D:\AFSAC\WebApi\bin\Debug\net7.0\runtimes\win-x86\native\sni.dll
+D:\AFSAC\WebApi\bin\Debug\net7.0\runtimes\unix\lib\netcoreapp2.1\System.Data.SqlClient.dll
+D:\AFSAC\WebApi\bin\Debug\net7.0\runtimes\win\lib\netcoreapp2.1\System.Data.SqlClient.dll
+D:\AFSAC\WebApi\bin\Debug\net7.0\runtimes\win\lib\net7.0\System.Drawing.Common.dll
+D:\AFSAC\WebApi\bin\Debug\net7.0\runtimes\win\lib\net6.0\System.Runtime.Caching.dll
+D:\AFSAC\WebApi\bin\Debug\net7.0\runtimes\win\lib\net7.0\System.Security.Cryptography.ProtectedData.dll
+D:\AFSAC\WebApi\bin\Debug\net7.0\runtimes\win\lib\net7.0\System.Windows.Extensions.dll
+D:\AFSAC\WebApi\bin\Debug\net7.0\BusinessLogicsLayer.dll
+D:\AFSAC\WebApi\bin\Debug\net7.0\DataAccessLayer.dll
+D:\AFSAC\WebApi\bin\Debug\net7.0\DataTransferObject.dll
+D:\AFSAC\WebApi\bin\Debug\net7.0\BusinessLogicsLayer.pdb
+D:\AFSAC\WebApi\bin\Debug\net7.0\DataTransferObject.pdb
+D:\AFSAC\WebApi\bin\Debug\net7.0\DataAccessLayer.pdb
+D:\AFSAC\WebApi\obj\Debug\net7.0\staticwebassets\msbuild.WebApi.Microsoft.AspNetCore.StaticWebAssets.props
+D:\AFSAC\WebApi\obj\Debug\net7.0\staticwebassets\msbuild.build.WebApi.props
+D:\AFSAC\WebApi\obj\Debug\net7.0\staticwebassets\msbuild.buildMultiTargeting.WebApi.props
+D:\AFSAC\WebApi\obj\Debug\net7.0\staticwebassets\msbuild.buildTransitive.WebApi.props
+D:\AFSAC\WebApi\obj\Debug\net7.0\staticwebassets.pack.json
+D:\AFSAC\WebApi\obj\Debug\net7.0\staticwebassets.build.json
+D:\AFSAC\WebApi\obj\Debug\net7.0\staticwebassets.development.json
+D:\AFSAC\WebApi\obj\Debug\net7.0\scopedcss\bundle\WebApi.styles.css
+D:\AFSAC\WebApi\obj\Debug\net7.0\WebApi.csproj.CopyComplete
+D:\AFSAC\WebApi\obj\Debug\net7.0\WebApi.genruntimeconfig.cache
+D:\AFSAC\WebApi\obj\Debug\net7.0\ref\WebApi.dll
+D:\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.AspNetCore.Cryptography.Internal.dll
+D:\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.AspNetCore.Cryptography.KeyDerivation.dll
+D:\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.AspNetCore.Identity.EntityFrameworkCore.dll
+D:\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.Extensions.Identity.Core.dll
+D:\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.Extensions.Identity.Stores.dll
+D:\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.Extensions.Options.dll
+D:\AFSAC\WebApi\bin\Debug\net7.0\Humanizer.dll
+D:\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.EntityFrameworkCore.Design.dll
+D:\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.Extensions.DependencyModel.dll
+D:\AFSAC\WebApi\bin\Debug\net7.0\Mono.TextTemplating.dll
+D:\AFSAC\WebApi\bin\Debug\net7.0\System.CodeDom.dll
+D:\AFSAC\WebApi\bin\Debug\net7.0\EntityFramework.SqlServer.dll
+D:\AFSAC\WebApi\bin\Debug\net7.0\EntityFramework.dll
+D:\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.Assessment.dll
+D:\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.Assessment.Types.dll
+D:\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.Data.Tools.Sql.BatchParser.dll
+D:\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.ConnectionInfo.dll
+D:\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.Dmf.Common.dll
+D:\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.Dmf.dll
+D:\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.Management.Assessment.dll
+D:\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.Management.Collector.dll
+D:\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.Management.CollectorEnum.dll
+D:\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.Management.HadrData.dll
+D:\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.Management.HadrModel.dll
+D:\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.Management.RegisteredServers.dll
+D:\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.Management.Sdk.Sfc.dll
+D:\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.Management.SqlScriptPublish.dll
+D:\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.Management.XEvent.dll
+D:\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.Management.XEventDbScoped.dll
+D:\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.Management.XEventDbScopedEnum.dll
+D:\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.Management.XEventEnum.dll
+D:\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.PolicyEnum.dll
+D:\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.ServiceBrokerEnum.dll
+D:\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.Smo.Notebook.dll
+D:\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.Smo.dll
+D:\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.SmoExtended.dll
+D:\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.SqlEnum.dll
+D:\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.SqlWmiManagement.dll
+D:\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.WmiEnum.dll
+D:\AFSAC\WebApi\bin\Debug\net7.0\System.Data.OleDb.dll
+D:\AFSAC\WebApi\bin\Debug\net7.0\System.Diagnostics.PerformanceCounter.dll
+D:\AFSAC\WebApi\bin\Debug\net7.0\System.Management.dll
+D:\AFSAC\WebApi\bin\Debug\net7.0\runtimes\win\lib\net6.0\System.Data.OleDb.dll
+D:\AFSAC\WebApi\bin\Debug\net7.0\runtimes\win\lib\net6.0\System.Diagnostics.PerformanceCounter.dll
+D:\AFSAC\WebApi\bin\Debug\net7.0\runtimes\win\lib\net6.0\System.Management.dll
+D:\AFSAC\AFSAC\WebApi\bin\Debug\net7.0\appsettings.Development.json
+D:\AFSAC\AFSAC\WebApi\bin\Debug\net7.0\appsettings.json
+D:\AFSAC\AFSAC\WebApi\bin\Debug\net7.0\WebApi.staticwebassets.runtime.json
+D:\AFSAC\AFSAC\WebApi\bin\Debug\net7.0\WebApi.exe
+D:\AFSAC\AFSAC\WebApi\bin\Debug\net7.0\WebApi.deps.json
+D:\AFSAC\AFSAC\WebApi\bin\Debug\net7.0\WebApi.runtimeconfig.json
+D:\AFSAC\AFSAC\WebApi\bin\Debug\net7.0\WebApi.dll
+D:\AFSAC\AFSAC\WebApi\bin\Debug\net7.0\WebApi.pdb
+D:\AFSAC\AFSAC\WebApi\bin\Debug\net7.0\Azure.Core.dll
+D:\AFSAC\AFSAC\WebApi\bin\Debug\net7.0\Azure.Identity.dll
+D:\AFSAC\AFSAC\WebApi\bin\Debug\net7.0\Dapper.dll
+D:\AFSAC\AFSAC\WebApi\bin\Debug\net7.0\EntityFramework.SqlServer.dll
+D:\AFSAC\AFSAC\WebApi\bin\Debug\net7.0\EntityFramework.dll
+D:\AFSAC\AFSAC\WebApi\bin\Debug\net7.0\Humanizer.dll
+D:\AFSAC\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.AspNetCore.Cryptography.Internal.dll
+D:\AFSAC\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.AspNetCore.Cryptography.KeyDerivation.dll
+D:\AFSAC\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.AspNetCore.Identity.EntityFrameworkCore.dll
+D:\AFSAC\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.AspNetCore.JsonPatch.dll
+D:\AFSAC\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.Bcl.AsyncInterfaces.dll
+D:\AFSAC\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.Data.SqlClient.dll
+D:\AFSAC\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.EntityFrameworkCore.dll
+D:\AFSAC\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.EntityFrameworkCore.Abstractions.dll
+D:\AFSAC\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.EntityFrameworkCore.Design.dll
+D:\AFSAC\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.EntityFrameworkCore.Relational.dll
+D:\AFSAC\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.EntityFrameworkCore.SqlServer.dll
+D:\AFSAC\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.Extensions.DependencyModel.dll
+D:\AFSAC\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.Extensions.Identity.Core.dll
+D:\AFSAC\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.Extensions.Identity.Stores.dll
+D:\AFSAC\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.Extensions.Options.dll
+D:\AFSAC\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.Identity.Client.dll
+D:\AFSAC\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.Identity.Client.Extensions.Msal.dll
+D:\AFSAC\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.IdentityModel.Abstractions.dll
+D:\AFSAC\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.IdentityModel.JsonWebTokens.dll
+D:\AFSAC\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.IdentityModel.Logging.dll
+D:\AFSAC\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.IdentityModel.Protocols.dll
+D:\AFSAC\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
+D:\AFSAC\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.IdentityModel.Tokens.dll
+D:\AFSAC\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.OpenApi.dll
+D:\AFSAC\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.Assessment.dll
+D:\AFSAC\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.Assessment.Types.dll
+D:\AFSAC\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.Server.dll
+D:\AFSAC\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.Data.Tools.Sql.BatchParser.dll
+D:\AFSAC\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.ConnectionInfo.dll
+D:\AFSAC\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.Dmf.Common.dll
+D:\AFSAC\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.Dmf.dll
+D:\AFSAC\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.Management.Assessment.dll
+D:\AFSAC\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.Management.Collector.dll
+D:\AFSAC\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.Management.CollectorEnum.dll
+D:\AFSAC\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.Management.HadrData.dll
+D:\AFSAC\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.Management.HadrModel.dll
+D:\AFSAC\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.Management.RegisteredServers.dll
+D:\AFSAC\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.Management.Sdk.Sfc.dll
+D:\AFSAC\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.Management.SqlScriptPublish.dll
+D:\AFSAC\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.Management.XEvent.dll
+D:\AFSAC\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.Management.XEventDbScoped.dll
+D:\AFSAC\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.Management.XEventDbScopedEnum.dll
+D:\AFSAC\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.Management.XEventEnum.dll
+D:\AFSAC\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.PolicyEnum.dll
+D:\AFSAC\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.ServiceBrokerEnum.dll
+D:\AFSAC\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.Smo.Notebook.dll
+D:\AFSAC\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.Smo.dll
+D:\AFSAC\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.SmoExtended.dll
+D:\AFSAC\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.SqlEnum.dll
+D:\AFSAC\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.SqlWmiManagement.dll
+D:\AFSAC\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.WmiEnum.dll
+D:\AFSAC\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.Win32.SystemEvents.dll
+D:\AFSAC\AFSAC\WebApi\bin\Debug\net7.0\Mono.TextTemplating.dll
+D:\AFSAC\AFSAC\WebApi\bin\Debug\net7.0\Newtonsoft.Json.dll
+D:\AFSAC\AFSAC\WebApi\bin\Debug\net7.0\Newtonsoft.Json.Bson.dll
+D:\AFSAC\AFSAC\WebApi\bin\Debug\net7.0\Swashbuckle.AspNetCore.Swagger.dll
+D:\AFSAC\AFSAC\WebApi\bin\Debug\net7.0\Swashbuckle.AspNetCore.SwaggerGen.dll
+D:\AFSAC\AFSAC\WebApi\bin\Debug\net7.0\Swashbuckle.AspNetCore.SwaggerUI.dll
+D:\AFSAC\AFSAC\WebApi\bin\Debug\net7.0\System.CodeDom.dll
+D:\AFSAC\AFSAC\WebApi\bin\Debug\net7.0\System.Configuration.ConfigurationManager.dll
+D:\AFSAC\AFSAC\WebApi\bin\Debug\net7.0\System.Data.OleDb.dll
+D:\AFSAC\AFSAC\WebApi\bin\Debug\net7.0\System.Data.SqlClient.dll
+D:\AFSAC\AFSAC\WebApi\bin\Debug\net7.0\System.Diagnostics.PerformanceCounter.dll
+D:\AFSAC\AFSAC\WebApi\bin\Debug\net7.0\System.Drawing.Common.dll
+D:\AFSAC\AFSAC\WebApi\bin\Debug\net7.0\System.IdentityModel.Tokens.Jwt.dll
+D:\AFSAC\AFSAC\WebApi\bin\Debug\net7.0\System.Management.dll
+D:\AFSAC\AFSAC\WebApi\bin\Debug\net7.0\System.Memory.Data.dll
+D:\AFSAC\AFSAC\WebApi\bin\Debug\net7.0\System.Runtime.Caching.dll
+D:\AFSAC\AFSAC\WebApi\bin\Debug\net7.0\System.Security.Cryptography.ProtectedData.dll
+D:\AFSAC\AFSAC\WebApi\bin\Debug\net7.0\System.Security.Permissions.dll
+D:\AFSAC\AFSAC\WebApi\bin\Debug\net7.0\System.Windows.Extensions.dll
+D:\AFSAC\AFSAC\WebApi\bin\Debug\net7.0\runtimes\unix\lib\net6.0\Microsoft.Data.SqlClient.dll
+D:\AFSAC\AFSAC\WebApi\bin\Debug\net7.0\runtimes\win\lib\net6.0\Microsoft.Data.SqlClient.dll
+D:\AFSAC\AFSAC\WebApi\bin\Debug\net7.0\runtimes\win-arm\native\Microsoft.Data.SqlClient.SNI.dll
+D:\AFSAC\AFSAC\WebApi\bin\Debug\net7.0\runtimes\win-arm64\native\Microsoft.Data.SqlClient.SNI.dll
+D:\AFSAC\AFSAC\WebApi\bin\Debug\net7.0\runtimes\win-x64\native\Microsoft.Data.SqlClient.SNI.dll
+D:\AFSAC\AFSAC\WebApi\bin\Debug\net7.0\runtimes\win-x86\native\Microsoft.Data.SqlClient.SNI.dll
+D:\AFSAC\AFSAC\WebApi\bin\Debug\net7.0\runtimes\win\lib\net7.0\Microsoft.Win32.SystemEvents.dll
+D:\AFSAC\AFSAC\WebApi\bin\Debug\net7.0\runtimes\win-arm64\native\sni.dll
+D:\AFSAC\AFSAC\WebApi\bin\Debug\net7.0\runtimes\win-x64\native\sni.dll
+D:\AFSAC\AFSAC\WebApi\bin\Debug\net7.0\runtimes\win-x86\native\sni.dll
+D:\AFSAC\AFSAC\WebApi\bin\Debug\net7.0\runtimes\win\lib\net6.0\System.Data.OleDb.dll
+D:\AFSAC\AFSAC\WebApi\bin\Debug\net7.0\runtimes\unix\lib\netcoreapp2.1\System.Data.SqlClient.dll
+D:\AFSAC\AFSAC\WebApi\bin\Debug\net7.0\runtimes\win\lib\netcoreapp2.1\System.Data.SqlClient.dll
+D:\AFSAC\AFSAC\WebApi\bin\Debug\net7.0\runtimes\win\lib\net6.0\System.Diagnostics.PerformanceCounter.dll
+D:\AFSAC\AFSAC\WebApi\bin\Debug\net7.0\runtimes\win\lib\net7.0\System.Drawing.Common.dll
+D:\AFSAC\AFSAC\WebApi\bin\Debug\net7.0\runtimes\win\lib\net6.0\System.Management.dll
+D:\AFSAC\AFSAC\WebApi\bin\Debug\net7.0\runtimes\win\lib\net6.0\System.Runtime.Caching.dll
+D:\AFSAC\AFSAC\WebApi\bin\Debug\net7.0\runtimes\win\lib\net7.0\System.Security.Cryptography.ProtectedData.dll
+D:\AFSAC\AFSAC\WebApi\bin\Debug\net7.0\runtimes\win\lib\net7.0\System.Windows.Extensions.dll
+D:\AFSAC\AFSAC\WebApi\bin\Debug\net7.0\BusinessLogicsLayer.dll
+D:\AFSAC\AFSAC\WebApi\bin\Debug\net7.0\DataAccessLayer.dll
+D:\AFSAC\AFSAC\WebApi\bin\Debug\net7.0\DataTransferObject.dll
+D:\AFSAC\AFSAC\WebApi\bin\Debug\net7.0\BusinessLogicsLayer.pdb
+D:\AFSAC\AFSAC\WebApi\bin\Debug\net7.0\DataTransferObject.pdb
+D:\AFSAC\AFSAC\WebApi\bin\Debug\net7.0\DataAccessLayer.pdb
+D:\AFSAC\AFSAC\WebApi\obj\Debug\net7.0\WebApi.csproj.AssemblyReference.cache
+D:\AFSAC\AFSAC\WebApi\obj\Debug\net7.0\WebApi.GeneratedMSBuildEditorConfig.editorconfig
+D:\AFSAC\AFSAC\WebApi\obj\Debug\net7.0\WebApi.AssemblyInfoInputs.cache
+D:\AFSAC\AFSAC\WebApi\obj\Debug\net7.0\WebApi.AssemblyInfo.cs
+D:\AFSAC\AFSAC\WebApi\obj\Debug\net7.0\WebApi.csproj.CoreCompileInputs.cache
+D:\AFSAC\AFSAC\WebApi\obj\Debug\net7.0\WebApi.MvcApplicationPartsAssemblyInfo.cs
+D:\AFSAC\AFSAC\WebApi\obj\Debug\net7.0\WebApi.MvcApplicationPartsAssemblyInfo.cache
+D:\AFSAC\AFSAC\WebApi\obj\Debug\net7.0\staticwebassets\msbuild.WebApi.Microsoft.AspNetCore.StaticWebAssets.props
+D:\AFSAC\AFSAC\WebApi\obj\Debug\net7.0\staticwebassets\msbuild.build.WebApi.props
+D:\AFSAC\AFSAC\WebApi\obj\Debug\net7.0\staticwebassets\msbuild.buildMultiTargeting.WebApi.props
+D:\AFSAC\AFSAC\WebApi\obj\Debug\net7.0\staticwebassets\msbuild.buildTransitive.WebApi.props
+D:\AFSAC\AFSAC\WebApi\obj\Debug\net7.0\staticwebassets.pack.json
+D:\AFSAC\AFSAC\WebApi\obj\Debug\net7.0\staticwebassets.build.json
+D:\AFSAC\AFSAC\WebApi\obj\Debug\net7.0\staticwebassets.development.json
+D:\AFSAC\AFSAC\WebApi\obj\Debug\net7.0\scopedcss\bundle\WebApi.styles.css
+D:\AFSAC\AFSAC\WebApi\obj\Debug\net7.0\WebApi.csproj.CopyComplete
+D:\AFSAC\AFSAC\WebApi\obj\Debug\net7.0\WebApi.dll
+D:\AFSAC\AFSAC\WebApi\obj\Debug\net7.0\refint\WebApi.dll
+D:\AFSAC\AFSAC\WebApi\obj\Debug\net7.0\WebApi.pdb
+D:\AFSAC\AFSAC\WebApi\obj\Debug\net7.0\WebApi.genruntimeconfig.cache
+D:\AFSAC\AFSAC\WebApi\obj\Debug\net7.0\ref\WebApi.dll
+D:\Code For Murge\AFSAC\WebApi\bin\Debug\net7.0\appsettings.Development.json
+D:\Code For Murge\AFSAC\WebApi\bin\Debug\net7.0\appsettings.json
+D:\Code For Murge\AFSAC\WebApi\bin\Debug\net7.0\WebApi.staticwebassets.runtime.json
+D:\Code For Murge\AFSAC\WebApi\bin\Debug\net7.0\WebApi.exe
+D:\Code For Murge\AFSAC\WebApi\bin\Debug\net7.0\WebApi.deps.json
+D:\Code For Murge\AFSAC\WebApi\bin\Debug\net7.0\WebApi.runtimeconfig.json
+D:\Code For Murge\AFSAC\WebApi\bin\Debug\net7.0\WebApi.dll
+D:\Code For Murge\AFSAC\WebApi\bin\Debug\net7.0\WebApi.pdb
+D:\Code For Murge\AFSAC\WebApi\bin\Debug\net7.0\Azure.Core.dll
+D:\Code For Murge\AFSAC\WebApi\bin\Debug\net7.0\Azure.Identity.dll
+D:\Code For Murge\AFSAC\WebApi\bin\Debug\net7.0\Dapper.dll
+D:\Code For Murge\AFSAC\WebApi\bin\Debug\net7.0\EntityFramework.SqlServer.dll
+D:\Code For Murge\AFSAC\WebApi\bin\Debug\net7.0\EntityFramework.dll
+D:\Code For Murge\AFSAC\WebApi\bin\Debug\net7.0\Humanizer.dll
+D:\Code For Murge\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.AspNetCore.Cryptography.Internal.dll
+D:\Code For Murge\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.AspNetCore.Cryptography.KeyDerivation.dll
+D:\Code For Murge\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.AspNetCore.Identity.EntityFrameworkCore.dll
+D:\Code For Murge\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.AspNetCore.JsonPatch.dll
+D:\Code For Murge\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.Bcl.AsyncInterfaces.dll
+D:\Code For Murge\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.Data.SqlClient.dll
+D:\Code For Murge\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.EntityFrameworkCore.dll
+D:\Code For Murge\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.EntityFrameworkCore.Abstractions.dll
+D:\Code For Murge\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.EntityFrameworkCore.Design.dll
+D:\Code For Murge\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.EntityFrameworkCore.Relational.dll
+D:\Code For Murge\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.EntityFrameworkCore.SqlServer.dll
+D:\Code For Murge\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.Extensions.DependencyModel.dll
+D:\Code For Murge\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.Extensions.Identity.Core.dll
+D:\Code For Murge\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.Extensions.Identity.Stores.dll
+D:\Code For Murge\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.Extensions.Options.dll
+D:\Code For Murge\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.Identity.Client.dll
+D:\Code For Murge\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.Identity.Client.Extensions.Msal.dll
+D:\Code For Murge\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.IdentityModel.Abstractions.dll
+D:\Code For Murge\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.IdentityModel.JsonWebTokens.dll
+D:\Code For Murge\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.IdentityModel.Logging.dll
+D:\Code For Murge\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.IdentityModel.Protocols.dll
+D:\Code For Murge\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
+D:\Code For Murge\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.IdentityModel.Tokens.dll
+D:\Code For Murge\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.OpenApi.dll
+D:\Code For Murge\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.Assessment.dll
+D:\Code For Murge\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.Assessment.Types.dll
+D:\Code For Murge\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.Server.dll
+D:\Code For Murge\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.Data.Tools.Sql.BatchParser.dll
+D:\Code For Murge\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.ConnectionInfo.dll
+D:\Code For Murge\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.Dmf.Common.dll
+D:\Code For Murge\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.Dmf.dll
+D:\Code For Murge\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.Management.Assessment.dll
+D:\Code For Murge\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.Management.Collector.dll
+D:\Code For Murge\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.Management.CollectorEnum.dll
+D:\Code For Murge\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.Management.HadrData.dll
+D:\Code For Murge\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.Management.HadrModel.dll
+D:\Code For Murge\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.Management.RegisteredServers.dll
+D:\Code For Murge\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.Management.Sdk.Sfc.dll
+D:\Code For Murge\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.Management.SqlScriptPublish.dll
+D:\Code For Murge\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.Management.XEvent.dll
+D:\Code For Murge\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.Management.XEventDbScoped.dll
+D:\Code For Murge\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.Management.XEventDbScopedEnum.dll
+D:\Code For Murge\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.Management.XEventEnum.dll
+D:\Code For Murge\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.PolicyEnum.dll
+D:\Code For Murge\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.ServiceBrokerEnum.dll
+D:\Code For Murge\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.Smo.Notebook.dll
+D:\Code For Murge\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.Smo.dll
+D:\Code For Murge\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.SmoExtended.dll
+D:\Code For Murge\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.SqlEnum.dll
+D:\Code For Murge\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.SqlWmiManagement.dll
+D:\Code For Murge\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.WmiEnum.dll
+D:\Code For Murge\AFSAC\WebApi\bin\Debug\net7.0\Microsoft.Win32.SystemEvents.dll
+D:\Code For Murge\AFSAC\WebApi\bin\Debug\net7.0\Mono.TextTemplating.dll
+D:\Code For Murge\AFSAC\WebApi\bin\Debug\net7.0\Newtonsoft.Json.dll
+D:\Code For Murge\AFSAC\WebApi\bin\Debug\net7.0\Newtonsoft.Json.Bson.dll
+D:\Code For Murge\AFSAC\WebApi\bin\Debug\net7.0\Swashbuckle.AspNetCore.Swagger.dll
+D:\Code For Murge\AFSAC\WebApi\bin\Debug\net7.0\Swashbuckle.AspNetCore.SwaggerGen.dll
+D:\Code For Murge\AFSAC\WebApi\bin\Debug\net7.0\Swashbuckle.AspNetCore.SwaggerUI.dll
+D:\Code For Murge\AFSAC\WebApi\bin\Debug\net7.0\System.CodeDom.dll
+D:\Code For Murge\AFSAC\WebApi\bin\Debug\net7.0\System.Configuration.ConfigurationManager.dll
+D:\Code For Murge\AFSAC\WebApi\bin\Debug\net7.0\System.Data.OleDb.dll
+D:\Code For Murge\AFSAC\WebApi\bin\Debug\net7.0\System.Data.SqlClient.dll
+D:\Code For Murge\AFSAC\WebApi\bin\Debug\net7.0\System.Diagnostics.PerformanceCounter.dll
+D:\Code For Murge\AFSAC\WebApi\bin\Debug\net7.0\System.Drawing.Common.dll
+D:\Code For Murge\AFSAC\WebApi\bin\Debug\net7.0\System.IdentityModel.Tokens.Jwt.dll
+D:\Code For Murge\AFSAC\WebApi\bin\Debug\net7.0\System.Management.dll
+D:\Code For Murge\AFSAC\WebApi\bin\Debug\net7.0\System.Memory.Data.dll
+D:\Code For Murge\AFSAC\WebApi\bin\Debug\net7.0\System.Runtime.Caching.dll
+D:\Code For Murge\AFSAC\WebApi\bin\Debug\net7.0\System.Security.Cryptography.ProtectedData.dll
+D:\Code For Murge\AFSAC\WebApi\bin\Debug\net7.0\System.Security.Permissions.dll
+D:\Code For Murge\AFSAC\WebApi\bin\Debug\net7.0\System.Windows.Extensions.dll
+D:\Code For Murge\AFSAC\WebApi\bin\Debug\net7.0\runtimes\unix\lib\net6.0\Microsoft.Data.SqlClient.dll
+D:\Code For Murge\AFSAC\WebApi\bin\Debug\net7.0\runtimes\win\lib\net6.0\Microsoft.Data.SqlClient.dll
+D:\Code For Murge\AFSAC\WebApi\bin\Debug\net7.0\runtimes\win-arm\native\Microsoft.Data.SqlClient.SNI.dll
+D:\Code For Murge\AFSAC\WebApi\bin\Debug\net7.0\runtimes\win-arm64\native\Microsoft.Data.SqlClient.SNI.dll
+D:\Code For Murge\AFSAC\WebApi\bin\Debug\net7.0\runtimes\win-x64\native\Microsoft.Data.SqlClient.SNI.dll
+D:\Code For Murge\AFSAC\WebApi\bin\Debug\net7.0\runtimes\win-x86\native\Microsoft.Data.SqlClient.SNI.dll
+D:\Code For Murge\AFSAC\WebApi\bin\Debug\net7.0\runtimes\win\lib\net7.0\Microsoft.Win32.SystemEvents.dll
+D:\Code For Murge\AFSAC\WebApi\bin\Debug\net7.0\runtimes\win-arm64\native\sni.dll
+D:\Code For Murge\AFSAC\WebApi\bin\Debug\net7.0\runtimes\win-x64\native\sni.dll
+D:\Code For Murge\AFSAC\WebApi\bin\Debug\net7.0\runtimes\win-x86\native\sni.dll
+D:\Code For Murge\AFSAC\WebApi\bin\Debug\net7.0\runtimes\win\lib\net6.0\System.Data.OleDb.dll
+D:\Code For Murge\AFSAC\WebApi\bin\Debug\net7.0\runtimes\unix\lib\netcoreapp2.1\System.Data.SqlClient.dll
+D:\Code For Murge\AFSAC\WebApi\bin\Debug\net7.0\runtimes\win\lib\netcoreapp2.1\System.Data.SqlClient.dll
+D:\Code For Murge\AFSAC\WebApi\bin\Debug\net7.0\runtimes\win\lib\net6.0\System.Diagnostics.PerformanceCounter.dll
+D:\Code For Murge\AFSAC\WebApi\bin\Debug\net7.0\runtimes\win\lib\net7.0\System.Drawing.Common.dll
+D:\Code For Murge\AFSAC\WebApi\bin\Debug\net7.0\runtimes\win\lib\net6.0\System.Management.dll
+D:\Code For Murge\AFSAC\WebApi\bin\Debug\net7.0\runtimes\win\lib\net6.0\System.Runtime.Caching.dll
+D:\Code For Murge\AFSAC\WebApi\bin\Debug\net7.0\runtimes\win\lib\net7.0\System.Security.Cryptography.ProtectedData.dll
+D:\Code For Murge\AFSAC\WebApi\bin\Debug\net7.0\runtimes\win\lib\net7.0\System.Windows.Extensions.dll
+D:\Code For Murge\AFSAC\WebApi\bin\Debug\net7.0\BusinessLogicsLayer.dll
+D:\Code For Murge\AFSAC\WebApi\bin\Debug\net7.0\DataAccessLayer.dll
+D:\Code For Murge\AFSAC\WebApi\bin\Debug\net7.0\DataTransferObject.dll
+D:\Code For Murge\AFSAC\WebApi\bin\Debug\net7.0\BusinessLogicsLayer.pdb
+D:\Code For Murge\AFSAC\WebApi\bin\Debug\net7.0\DataTransferObject.pdb
+D:\Code For Murge\AFSAC\WebApi\bin\Debug\net7.0\DataAccessLayer.pdb
+D:\Code For Murge\AFSAC\WebApi\obj\Debug\net7.0\WebApi.csproj.AssemblyReference.cache
+D:\Code For Murge\AFSAC\WebApi\obj\Debug\net7.0\WebApi.GeneratedMSBuildEditorConfig.editorconfig
+D:\Code For Murge\AFSAC\WebApi\obj\Debug\net7.0\WebApi.AssemblyInfoInputs.cache
+D:\Code For Murge\AFSAC\WebApi\obj\Debug\net7.0\WebApi.AssemblyInfo.cs
+D:\Code For Murge\AFSAC\WebApi\obj\Debug\net7.0\WebApi.csproj.CoreCompileInputs.cache
+D:\Code For Murge\AFSAC\WebApi\obj\Debug\net7.0\WebApi.MvcApplicationPartsAssemblyInfo.cs
+D:\Code For Murge\AFSAC\WebApi\obj\Debug\net7.0\WebApi.MvcApplicationPartsAssemblyInfo.cache
+D:\Code For Murge\AFSAC\WebApi\obj\Debug\net7.0\staticwebassets\msbuild.WebApi.Microsoft.AspNetCore.StaticWebAssets.props
+D:\Code For Murge\AFSAC\WebApi\obj\Debug\net7.0\staticwebassets\msbuild.build.WebApi.props
+D:\Code For Murge\AFSAC\WebApi\obj\Debug\net7.0\staticwebassets\msbuild.buildMultiTargeting.WebApi.props
+D:\Code For Murge\AFSAC\WebApi\obj\Debug\net7.0\staticwebassets\msbuild.buildTransitive.WebApi.props
+D:\Code For Murge\AFSAC\WebApi\obj\Debug\net7.0\staticwebassets.pack.json
+D:\Code For Murge\AFSAC\WebApi\obj\Debug\net7.0\staticwebassets.build.json
+D:\Code For Murge\AFSAC\WebApi\obj\Debug\net7.0\staticwebassets.development.json
+D:\Code For Murge\AFSAC\WebApi\obj\Debug\net7.0\scopedcss\bundle\WebApi.styles.css
+D:\Code For Murge\AFSAC\WebApi\obj\Debug\net7.0\WebApi.csproj.CopyComplete
+D:\Code For Murge\AFSAC\WebApi\obj\Debug\net7.0\WebApi.dll
+D:\Code For Murge\AFSAC\WebApi\obj\Debug\net7.0\refint\WebApi.dll
+D:\Code For Murge\AFSAC\WebApi\obj\Debug\net7.0\WebApi.pdb
+D:\Code For Murge\AFSAC\WebApi\obj\Debug\net7.0\WebApi.genruntimeconfig.cache
+D:\Code For Murge\AFSAC\WebApi\obj\Debug\net7.0\ref\WebApi.dll
+D:\ECMS\WebApi\obj\Debug\net7.0\WebApi.csproj.AssemblyReference.cache
+D:\ECMS\WebApi\obj\Debug\net7.0\WebApi.GeneratedMSBuildEditorConfig.editorconfig
+D:\ECMS\WebApi\obj\Debug\net7.0\WebApi.AssemblyInfoInputs.cache
+D:\ECMS\WebApi\obj\Debug\net7.0\WebApi.AssemblyInfo.cs
+D:\ECMS\WebApi\obj\Debug\net7.0\WebApi.csproj.CoreCompileInputs.cache
+D:\ECMS\WebApi\obj\Debug\net7.0\WebApi.MvcApplicationPartsAssemblyInfo.cache
+D:\ECMS\WebApi\bin\Debug\net7.0\appsettings.Development.json
+D:\ECMS\WebApi\bin\Debug\net7.0\appsettings.json
+D:\ECMS\WebApi\bin\Debug\net7.0\WebApi.staticwebassets.runtime.json
+D:\ECMS\WebApi\bin\Debug\net7.0\WebApi.exe
+D:\ECMS\WebApi\bin\Debug\net7.0\WebApi.deps.json
+D:\ECMS\WebApi\bin\Debug\net7.0\WebApi.runtimeconfig.json
+D:\ECMS\WebApi\bin\Debug\net7.0\WebApi.dll
+D:\ECMS\WebApi\bin\Debug\net7.0\WebApi.pdb
+D:\ECMS\WebApi\bin\Debug\net7.0\AutoMapper.dll
+D:\ECMS\WebApi\bin\Debug\net7.0\Azure.Core.dll
+D:\ECMS\WebApi\bin\Debug\net7.0\Azure.Identity.dll
+D:\ECMS\WebApi\bin\Debug\net7.0\Dapper.dll
+D:\ECMS\WebApi\bin\Debug\net7.0\EntityFramework.SqlServer.dll
+D:\ECMS\WebApi\bin\Debug\net7.0\EntityFramework.dll
+D:\ECMS\WebApi\bin\Debug\net7.0\Humanizer.dll
+D:\ECMS\WebApi\bin\Debug\net7.0\Microsoft.AspNetCore.Cryptography.Internal.dll
+D:\ECMS\WebApi\bin\Debug\net7.0\Microsoft.AspNetCore.Cryptography.KeyDerivation.dll
+D:\ECMS\WebApi\bin\Debug\net7.0\Microsoft.AspNetCore.Identity.EntityFrameworkCore.dll
+D:\ECMS\WebApi\bin\Debug\net7.0\Microsoft.AspNetCore.JsonPatch.dll
+D:\ECMS\WebApi\bin\Debug\net7.0\Microsoft.AspNetCore.Mvc.Razor.Extensions.dll
+D:\ECMS\WebApi\bin\Debug\net7.0\Microsoft.AspNetCore.Razor.Language.dll
+D:\ECMS\WebApi\bin\Debug\net7.0\Microsoft.Bcl.AsyncInterfaces.dll
+D:\ECMS\WebApi\bin\Debug\net7.0\Microsoft.CodeAnalysis.dll
+D:\ECMS\WebApi\bin\Debug\net7.0\Microsoft.CodeAnalysis.CSharp.dll
+D:\ECMS\WebApi\bin\Debug\net7.0\Microsoft.CodeAnalysis.Razor.dll
+D:\ECMS\WebApi\bin\Debug\net7.0\Microsoft.Data.SqlClient.dll
+D:\ECMS\WebApi\bin\Debug\net7.0\Microsoft.EntityFrameworkCore.dll
+D:\ECMS\WebApi\bin\Debug\net7.0\Microsoft.EntityFrameworkCore.Abstractions.dll
+D:\ECMS\WebApi\bin\Debug\net7.0\Microsoft.EntityFrameworkCore.Design.dll
+D:\ECMS\WebApi\bin\Debug\net7.0\Microsoft.EntityFrameworkCore.Relational.dll
+D:\ECMS\WebApi\bin\Debug\net7.0\Microsoft.EntityFrameworkCore.SqlServer.dll
+D:\ECMS\WebApi\bin\Debug\net7.0\Microsoft.Extensions.DependencyModel.dll
+D:\ECMS\WebApi\bin\Debug\net7.0\Microsoft.Extensions.Identity.Core.dll
+D:\ECMS\WebApi\bin\Debug\net7.0\Microsoft.Extensions.Identity.Stores.dll
+D:\ECMS\WebApi\bin\Debug\net7.0\Microsoft.Extensions.Options.dll
+D:\ECMS\WebApi\bin\Debug\net7.0\Microsoft.Identity.Client.dll
+D:\ECMS\WebApi\bin\Debug\net7.0\Microsoft.Identity.Client.Extensions.Msal.dll
+D:\ECMS\WebApi\bin\Debug\net7.0\Microsoft.IdentityModel.Abstractions.dll
+D:\ECMS\WebApi\bin\Debug\net7.0\Microsoft.IdentityModel.JsonWebTokens.dll
+D:\ECMS\WebApi\bin\Debug\net7.0\Microsoft.IdentityModel.Logging.dll
+D:\ECMS\WebApi\bin\Debug\net7.0\Microsoft.IdentityModel.Protocols.dll
+D:\ECMS\WebApi\bin\Debug\net7.0\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
+D:\ECMS\WebApi\bin\Debug\net7.0\Microsoft.IdentityModel.Tokens.dll
+D:\ECMS\WebApi\bin\Debug\net7.0\Microsoft.OpenApi.dll
+D:\ECMS\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.Assessment.dll
+D:\ECMS\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.Assessment.Types.dll
+D:\ECMS\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.Server.dll
+D:\ECMS\WebApi\bin\Debug\net7.0\Microsoft.Data.Tools.Sql.BatchParser.dll
+D:\ECMS\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.ConnectionInfo.dll
+D:\ECMS\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.Dmf.Common.dll
+D:\ECMS\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.Dmf.dll
+D:\ECMS\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.Management.Assessment.dll
+D:\ECMS\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.Management.Collector.dll
+D:\ECMS\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.Management.CollectorEnum.dll
+D:\ECMS\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.Management.HadrData.dll
+D:\ECMS\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.Management.HadrModel.dll
+D:\ECMS\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.Management.RegisteredServers.dll
+D:\ECMS\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.Management.Sdk.Sfc.dll
+D:\ECMS\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.Management.SqlScriptPublish.dll
+D:\ECMS\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.Management.XEvent.dll
+D:\ECMS\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.Management.XEventDbScoped.dll
+D:\ECMS\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.Management.XEventDbScopedEnum.dll
+D:\ECMS\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.Management.XEventEnum.dll
+D:\ECMS\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.PolicyEnum.dll
+D:\ECMS\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.ServiceBrokerEnum.dll
+D:\ECMS\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.Smo.Notebook.dll
+D:\ECMS\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.Smo.dll
+D:\ECMS\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.SmoExtended.dll
+D:\ECMS\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.SqlEnum.dll
+D:\ECMS\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.SqlWmiManagement.dll
+D:\ECMS\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.WmiEnum.dll
+D:\ECMS\WebApi\bin\Debug\net7.0\Microsoft.Win32.SystemEvents.dll
+D:\ECMS\WebApi\bin\Debug\net7.0\Mono.TextTemplating.dll
+D:\ECMS\WebApi\bin\Debug\net7.0\Newtonsoft.Json.dll
+D:\ECMS\WebApi\bin\Debug\net7.0\Newtonsoft.Json.Bson.dll
+D:\ECMS\WebApi\bin\Debug\net7.0\Swashbuckle.AspNetCore.Swagger.dll
+D:\ECMS\WebApi\bin\Debug\net7.0\Swashbuckle.AspNetCore.SwaggerGen.dll
+D:\ECMS\WebApi\bin\Debug\net7.0\Swashbuckle.AspNetCore.SwaggerUI.dll
+D:\ECMS\WebApi\bin\Debug\net7.0\System.CodeDom.dll
+D:\ECMS\WebApi\bin\Debug\net7.0\System.Configuration.ConfigurationManager.dll
+D:\ECMS\WebApi\bin\Debug\net7.0\System.Data.OleDb.dll
+D:\ECMS\WebApi\bin\Debug\net7.0\System.Data.SqlClient.dll
+D:\ECMS\WebApi\bin\Debug\net7.0\System.Diagnostics.PerformanceCounter.dll
+D:\ECMS\WebApi\bin\Debug\net7.0\System.Drawing.Common.dll
+D:\ECMS\WebApi\bin\Debug\net7.0\System.IdentityModel.Tokens.Jwt.dll
+D:\ECMS\WebApi\bin\Debug\net7.0\System.Management.dll
+D:\ECMS\WebApi\bin\Debug\net7.0\System.Memory.Data.dll
+D:\ECMS\WebApi\bin\Debug\net7.0\System.Runtime.Caching.dll
+D:\ECMS\WebApi\bin\Debug\net7.0\System.Security.Cryptography.ProtectedData.dll
+D:\ECMS\WebApi\bin\Debug\net7.0\System.Security.Permissions.dll
+D:\ECMS\WebApi\bin\Debug\net7.0\System.Windows.Extensions.dll
+D:\ECMS\WebApi\bin\Debug\net7.0\runtimes\unix\lib\net6.0\Microsoft.Data.SqlClient.dll
+D:\ECMS\WebApi\bin\Debug\net7.0\runtimes\win\lib\net6.0\Microsoft.Data.SqlClient.dll
+D:\ECMS\WebApi\bin\Debug\net7.0\runtimes\win-arm\native\Microsoft.Data.SqlClient.SNI.dll
+D:\ECMS\WebApi\bin\Debug\net7.0\runtimes\win-arm64\native\Microsoft.Data.SqlClient.SNI.dll
+D:\ECMS\WebApi\bin\Debug\net7.0\runtimes\win-x64\native\Microsoft.Data.SqlClient.SNI.dll
+D:\ECMS\WebApi\bin\Debug\net7.0\runtimes\win-x86\native\Microsoft.Data.SqlClient.SNI.dll
+D:\ECMS\WebApi\bin\Debug\net7.0\runtimes\win\lib\net7.0\Microsoft.Win32.SystemEvents.dll
+D:\ECMS\WebApi\bin\Debug\net7.0\runtimes\win-arm64\native\sni.dll
+D:\ECMS\WebApi\bin\Debug\net7.0\runtimes\win-x64\native\sni.dll
+D:\ECMS\WebApi\bin\Debug\net7.0\runtimes\win-x86\native\sni.dll
+D:\ECMS\WebApi\bin\Debug\net7.0\runtimes\win\lib\net6.0\System.Data.OleDb.dll
+D:\ECMS\WebApi\bin\Debug\net7.0\runtimes\unix\lib\netcoreapp2.1\System.Data.SqlClient.dll
+D:\ECMS\WebApi\bin\Debug\net7.0\runtimes\win\lib\netcoreapp2.1\System.Data.SqlClient.dll
+D:\ECMS\WebApi\bin\Debug\net7.0\runtimes\win\lib\net6.0\System.Diagnostics.PerformanceCounter.dll
+D:\ECMS\WebApi\bin\Debug\net7.0\runtimes\win\lib\net7.0\System.Drawing.Common.dll
+D:\ECMS\WebApi\bin\Debug\net7.0\runtimes\win\lib\net6.0\System.Management.dll
+D:\ECMS\WebApi\bin\Debug\net7.0\runtimes\win\lib\net6.0\System.Runtime.Caching.dll
+D:\ECMS\WebApi\bin\Debug\net7.0\runtimes\win\lib\net7.0\System.Security.Cryptography.ProtectedData.dll
+D:\ECMS\WebApi\bin\Debug\net7.0\runtimes\win\lib\net7.0\System.Windows.Extensions.dll
+D:\ECMS\WebApi\bin\Debug\net7.0\BusinessLogicsLayer.dll
+D:\ECMS\WebApi\bin\Debug\net7.0\DataAccessLayer.dll
+D:\ECMS\WebApi\bin\Debug\net7.0\DataTransferObject.dll
+D:\ECMS\WebApi\bin\Debug\net7.0\BusinessLogicsLayer.pdb
+D:\ECMS\WebApi\bin\Debug\net7.0\DataTransferObject.pdb
+D:\ECMS\WebApi\bin\Debug\net7.0\DataAccessLayer.pdb
+D:\ECMS\WebApi\obj\Debug\net7.0\WebApi.MvcApplicationPartsAssemblyInfo.cs
+D:\ECMS\WebApi\obj\Debug\net7.0\staticwebassets\msbuild.WebApi.Microsoft.AspNetCore.StaticWebAssets.props
+D:\ECMS\WebApi\obj\Debug\net7.0\staticwebassets\msbuild.build.WebApi.props
+D:\ECMS\WebApi\obj\Debug\net7.0\staticwebassets\msbuild.buildMultiTargeting.WebApi.props
+D:\ECMS\WebApi\obj\Debug\net7.0\staticwebassets\msbuild.buildTransitive.WebApi.props
+D:\ECMS\WebApi\obj\Debug\net7.0\staticwebassets.pack.json
+D:\ECMS\WebApi\obj\Debug\net7.0\staticwebassets.build.json
+D:\ECMS\WebApi\obj\Debug\net7.0\staticwebassets.development.json
+D:\ECMS\WebApi\obj\Debug\net7.0\scopedcss\bundle\WebApi.styles.css
+D:\ECMS\WebApi\obj\Debug\net7.0\WebApi.csproj.CopyComplete
+D:\ECMS\WebApi\obj\Debug\net7.0\WebApi.dll
+D:\ECMS\WebApi\obj\Debug\net7.0\refint\WebApi.dll
+D:\ECMS\WebApi\obj\Debug\net7.0\WebApi.pdb
+D:\ECMS\WebApi\obj\Debug\net7.0\WebApi.genruntimeconfig.cache
+D:\ECMS\WebApi\obj\Debug\net7.0\ref\WebApi.dll
+D:\ECMS\WebApi\bin\Debug\net7.0\Microsoft.AspNetCore.Mvc.NewtonsoftJson.dll
+D:\ECMS_26102023_0923\ECMS\WebApi\bin\Debug\net7.0\appsettings.Development.json
+D:\ECMS_26102023_0923\ECMS\WebApi\bin\Debug\net7.0\appsettings.json
+D:\ECMS_26102023_0923\ECMS\WebApi\bin\Debug\net7.0\WebApi.staticwebassets.runtime.json
+D:\ECMS_26102023_0923\ECMS\WebApi\bin\Debug\net7.0\WebApi.exe
+D:\ECMS_26102023_0923\ECMS\WebApi\bin\Debug\net7.0\WebApi.deps.json
+D:\ECMS_26102023_0923\ECMS\WebApi\bin\Debug\net7.0\WebApi.runtimeconfig.json
+D:\ECMS_26102023_0923\ECMS\WebApi\bin\Debug\net7.0\WebApi.dll
+D:\ECMS_26102023_0923\ECMS\WebApi\bin\Debug\net7.0\WebApi.pdb
+D:\ECMS_26102023_0923\ECMS\WebApi\bin\Debug\net7.0\AutoMapper.dll
+D:\ECMS_26102023_0923\ECMS\WebApi\bin\Debug\net7.0\Azure.Core.dll
+D:\ECMS_26102023_0923\ECMS\WebApi\bin\Debug\net7.0\Azure.Identity.dll
+D:\ECMS_26102023_0923\ECMS\WebApi\bin\Debug\net7.0\Dapper.dll
+D:\ECMS_26102023_0923\ECMS\WebApi\bin\Debug\net7.0\EntityFramework.SqlServer.dll
+D:\ECMS_26102023_0923\ECMS\WebApi\bin\Debug\net7.0\EntityFramework.dll
+D:\ECMS_26102023_0923\ECMS\WebApi\bin\Debug\net7.0\Humanizer.dll
+D:\ECMS_26102023_0923\ECMS\WebApi\bin\Debug\net7.0\Microsoft.AspNetCore.Cryptography.Internal.dll
+D:\ECMS_26102023_0923\ECMS\WebApi\bin\Debug\net7.0\Microsoft.AspNetCore.Cryptography.KeyDerivation.dll
+D:\ECMS_26102023_0923\ECMS\WebApi\bin\Debug\net7.0\Microsoft.AspNetCore.Identity.EntityFrameworkCore.dll
+D:\ECMS_26102023_0923\ECMS\WebApi\bin\Debug\net7.0\Microsoft.AspNetCore.JsonPatch.dll
+D:\ECMS_26102023_0923\ECMS\WebApi\bin\Debug\net7.0\Microsoft.AspNetCore.Mvc.NewtonsoftJson.dll
+D:\ECMS_26102023_0923\ECMS\WebApi\bin\Debug\net7.0\Microsoft.AspNetCore.Mvc.Razor.Extensions.dll
+D:\ECMS_26102023_0923\ECMS\WebApi\bin\Debug\net7.0\Microsoft.AspNetCore.Razor.Language.dll
+D:\ECMS_26102023_0923\ECMS\WebApi\bin\Debug\net7.0\Microsoft.Bcl.AsyncInterfaces.dll
+D:\ECMS_26102023_0923\ECMS\WebApi\bin\Debug\net7.0\Microsoft.CodeAnalysis.dll
+D:\ECMS_26102023_0923\ECMS\WebApi\bin\Debug\net7.0\Microsoft.CodeAnalysis.CSharp.dll
+D:\ECMS_26102023_0923\ECMS\WebApi\bin\Debug\net7.0\Microsoft.CodeAnalysis.Razor.dll
+D:\ECMS_26102023_0923\ECMS\WebApi\bin\Debug\net7.0\Microsoft.Data.SqlClient.dll
+D:\ECMS_26102023_0923\ECMS\WebApi\bin\Debug\net7.0\Microsoft.EntityFrameworkCore.dll
+D:\ECMS_26102023_0923\ECMS\WebApi\bin\Debug\net7.0\Microsoft.EntityFrameworkCore.Abstractions.dll
+D:\ECMS_26102023_0923\ECMS\WebApi\bin\Debug\net7.0\Microsoft.EntityFrameworkCore.Design.dll
+D:\ECMS_26102023_0923\ECMS\WebApi\bin\Debug\net7.0\Microsoft.EntityFrameworkCore.Relational.dll
+D:\ECMS_26102023_0923\ECMS\WebApi\bin\Debug\net7.0\Microsoft.EntityFrameworkCore.SqlServer.dll
+D:\ECMS_26102023_0923\ECMS\WebApi\bin\Debug\net7.0\Microsoft.Extensions.DependencyModel.dll
+D:\ECMS_26102023_0923\ECMS\WebApi\bin\Debug\net7.0\Microsoft.Extensions.Identity.Core.dll
+D:\ECMS_26102023_0923\ECMS\WebApi\bin\Debug\net7.0\Microsoft.Extensions.Identity.Stores.dll
+D:\ECMS_26102023_0923\ECMS\WebApi\bin\Debug\net7.0\Microsoft.Extensions.Options.dll
+D:\ECMS_26102023_0923\ECMS\WebApi\bin\Debug\net7.0\Microsoft.Identity.Client.dll
+D:\ECMS_26102023_0923\ECMS\WebApi\bin\Debug\net7.0\Microsoft.Identity.Client.Extensions.Msal.dll
+D:\ECMS_26102023_0923\ECMS\WebApi\bin\Debug\net7.0\Microsoft.IdentityModel.Abstractions.dll
+D:\ECMS_26102023_0923\ECMS\WebApi\bin\Debug\net7.0\Microsoft.IdentityModel.JsonWebTokens.dll
+D:\ECMS_26102023_0923\ECMS\WebApi\bin\Debug\net7.0\Microsoft.IdentityModel.Logging.dll
+D:\ECMS_26102023_0923\ECMS\WebApi\bin\Debug\net7.0\Microsoft.IdentityModel.Protocols.dll
+D:\ECMS_26102023_0923\ECMS\WebApi\bin\Debug\net7.0\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
+D:\ECMS_26102023_0923\ECMS\WebApi\bin\Debug\net7.0\Microsoft.IdentityModel.Tokens.dll
+D:\ECMS_26102023_0923\ECMS\WebApi\bin\Debug\net7.0\Microsoft.OpenApi.dll
+D:\ECMS_26102023_0923\ECMS\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.Assessment.dll
+D:\ECMS_26102023_0923\ECMS\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.Assessment.Types.dll
+D:\ECMS_26102023_0923\ECMS\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.Server.dll
+D:\ECMS_26102023_0923\ECMS\WebApi\bin\Debug\net7.0\Microsoft.Data.Tools.Sql.BatchParser.dll
+D:\ECMS_26102023_0923\ECMS\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.ConnectionInfo.dll
+D:\ECMS_26102023_0923\ECMS\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.Dmf.Common.dll
+D:\ECMS_26102023_0923\ECMS\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.Dmf.dll
+D:\ECMS_26102023_0923\ECMS\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.Management.Assessment.dll
+D:\ECMS_26102023_0923\ECMS\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.Management.Collector.dll
+D:\ECMS_26102023_0923\ECMS\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.Management.CollectorEnum.dll
+D:\ECMS_26102023_0923\ECMS\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.Management.HadrData.dll
+D:\ECMS_26102023_0923\ECMS\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.Management.HadrModel.dll
+D:\ECMS_26102023_0923\ECMS\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.Management.RegisteredServers.dll
+D:\ECMS_26102023_0923\ECMS\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.Management.Sdk.Sfc.dll
+D:\ECMS_26102023_0923\ECMS\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.Management.SqlScriptPublish.dll
+D:\ECMS_26102023_0923\ECMS\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.Management.XEvent.dll
+D:\ECMS_26102023_0923\ECMS\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.Management.XEventDbScoped.dll
+D:\ECMS_26102023_0923\ECMS\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.Management.XEventDbScopedEnum.dll
+D:\ECMS_26102023_0923\ECMS\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.Management.XEventEnum.dll
+D:\ECMS_26102023_0923\ECMS\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.PolicyEnum.dll
+D:\ECMS_26102023_0923\ECMS\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.ServiceBrokerEnum.dll
+D:\ECMS_26102023_0923\ECMS\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.Smo.Notebook.dll
+D:\ECMS_26102023_0923\ECMS\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.Smo.dll
+D:\ECMS_26102023_0923\ECMS\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.SmoExtended.dll
+D:\ECMS_26102023_0923\ECMS\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.SqlEnum.dll
+D:\ECMS_26102023_0923\ECMS\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.SqlWmiManagement.dll
+D:\ECMS_26102023_0923\ECMS\WebApi\bin\Debug\net7.0\Microsoft.SqlServer.WmiEnum.dll
+D:\ECMS_26102023_0923\ECMS\WebApi\bin\Debug\net7.0\Microsoft.Win32.SystemEvents.dll
+D:\ECMS_26102023_0923\ECMS\WebApi\bin\Debug\net7.0\Mono.TextTemplating.dll
+D:\ECMS_26102023_0923\ECMS\WebApi\bin\Debug\net7.0\Newtonsoft.Json.dll
+D:\ECMS_26102023_0923\ECMS\WebApi\bin\Debug\net7.0\Newtonsoft.Json.Bson.dll
+D:\ECMS_26102023_0923\ECMS\WebApi\bin\Debug\net7.0\Swashbuckle.AspNetCore.Swagger.dll
+D:\ECMS_26102023_0923\ECMS\WebApi\bin\Debug\net7.0\Swashbuckle.AspNetCore.SwaggerGen.dll
+D:\ECMS_26102023_0923\ECMS\WebApi\bin\Debug\net7.0\Swashbuckle.AspNetCore.SwaggerUI.dll
+D:\ECMS_26102023_0923\ECMS\WebApi\bin\Debug\net7.0\System.CodeDom.dll
+D:\ECMS_26102023_0923\ECMS\WebApi\bin\Debug\net7.0\System.Configuration.ConfigurationManager.dll
+D:\ECMS_26102023_0923\ECMS\WebApi\bin\Debug\net7.0\System.Data.OleDb.dll
+D:\ECMS_26102023_0923\ECMS\WebApi\bin\Debug\net7.0\System.Data.SqlClient.dll
+D:\ECMS_26102023_0923\ECMS\WebApi\bin\Debug\net7.0\System.Diagnostics.PerformanceCounter.dll
+D:\ECMS_26102023_0923\ECMS\WebApi\bin\Debug\net7.0\System.Drawing.Common.dll
+D:\ECMS_26102023_0923\ECMS\WebApi\bin\Debug\net7.0\System.IdentityModel.Tokens.Jwt.dll
+D:\ECMS_26102023_0923\ECMS\WebApi\bin\Debug\net7.0\System.Management.dll
+D:\ECMS_26102023_0923\ECMS\WebApi\bin\Debug\net7.0\System.Memory.Data.dll
+D:\ECMS_26102023_0923\ECMS\WebApi\bin\Debug\net7.0\System.Runtime.Caching.dll
+D:\ECMS_26102023_0923\ECMS\WebApi\bin\Debug\net7.0\System.Security.Cryptography.ProtectedData.dll
+D:\ECMS_26102023_0923\ECMS\WebApi\bin\Debug\net7.0\System.Security.Permissions.dll
+D:\ECMS_26102023_0923\ECMS\WebApi\bin\Debug\net7.0\System.Windows.Extensions.dll
+D:\ECMS_26102023_0923\ECMS\WebApi\bin\Debug\net7.0\runtimes\unix\lib\net6.0\Microsoft.Data.SqlClient.dll
+D:\ECMS_26102023_0923\ECMS\WebApi\bin\Debug\net7.0\runtimes\win\lib\net6.0\Microsoft.Data.SqlClient.dll
+D:\ECMS_26102023_0923\ECMS\WebApi\bin\Debug\net7.0\runtimes\win-arm\native\Microsoft.Data.SqlClient.SNI.dll
+D:\ECMS_26102023_0923\ECMS\WebApi\bin\Debug\net7.0\runtimes\win-arm64\native\Microsoft.Data.SqlClient.SNI.dll
+D:\ECMS_26102023_0923\ECMS\WebApi\bin\Debug\net7.0\runtimes\win-x64\native\Microsoft.Data.SqlClient.SNI.dll
+D:\ECMS_26102023_0923\ECMS\WebApi\bin\Debug\net7.0\runtimes\win-x86\native\Microsoft.Data.SqlClient.SNI.dll
+D:\ECMS_26102023_0923\ECMS\WebApi\bin\Debug\net7.0\runtimes\win\lib\net7.0\Microsoft.Win32.SystemEvents.dll
+D:\ECMS_26102023_0923\ECMS\WebApi\bin\Debug\net7.0\runtimes\win-arm64\native\sni.dll
+D:\ECMS_26102023_0923\ECMS\WebApi\bin\Debug\net7.0\runtimes\win-x64\native\sni.dll
+D:\ECMS_26102023_0923\ECMS\WebApi\bin\Debug\net7.0\runtimes\win-x86\native\sni.dll
+D:\ECMS_26102023_0923\ECMS\WebApi\bin\Debug\net7.0\runtimes\win\lib\net6.0\System.Data.OleDb.dll
+D:\ECMS_26102023_0923\ECMS\WebApi\bin\Debug\net7.0\runtimes\unix\lib\netcoreapp2.1\System.Data.SqlClient.dll
+D:\ECMS_26102023_0923\ECMS\WebApi\bin\Debug\net7.0\runtimes\win\lib\netcoreapp2.1\System.Data.SqlClient.dll
+D:\ECMS_26102023_0923\ECMS\WebApi\bin\Debug\net7.0\runtimes\win\lib\net6.0\System.Diagnostics.PerformanceCounter.dll
+D:\ECMS_26102023_0923\ECMS\WebApi\bin\Debug\net7.0\runtimes\win\lib\net7.0\System.Drawing.Common.dll
+D:\ECMS_26102023_0923\ECMS\WebApi\bin\Debug\net7.0\runtimes\win\lib\net6.0\System.Management.dll
+D:\ECMS_26102023_0923\ECMS\WebApi\bin\Debug\net7.0\runtimes\win\lib\net6.0\System.Runtime.Caching.dll
+D:\ECMS_26102023_0923\ECMS\WebApi\bin\Debug\net7.0\runtimes\win\lib\net7.0\System.Security.Cryptography.ProtectedData.dll
+D:\ECMS_26102023_0923\ECMS\WebApi\bin\Debug\net7.0\runtimes\win\lib\net7.0\System.Windows.Extensions.dll
+D:\ECMS_26102023_0923\ECMS\WebApi\bin\Debug\net7.0\BusinessLogicsLayer.dll
+D:\ECMS_26102023_0923\ECMS\WebApi\bin\Debug\net7.0\DataAccessLayer.dll
+D:\ECMS_26102023_0923\ECMS\WebApi\bin\Debug\net7.0\DataTransferObject.dll
+D:\ECMS_26102023_0923\ECMS\WebApi\bin\Debug\net7.0\BusinessLogicsLayer.pdb
+D:\ECMS_26102023_0923\ECMS\WebApi\bin\Debug\net7.0\DataTransferObject.pdb
+D:\ECMS_26102023_0923\ECMS\WebApi\bin\Debug\net7.0\DataAccessLayer.pdb
+D:\ECMS_26102023_0923\ECMS\WebApi\obj\Debug\net7.0\WebApi.csproj.AssemblyReference.cache
+D:\ECMS_26102023_0923\ECMS\WebApi\obj\Debug\net7.0\WebApi.GeneratedMSBuildEditorConfig.editorconfig
+D:\ECMS_26102023_0923\ECMS\WebApi\obj\Debug\net7.0\WebApi.AssemblyInfoInputs.cache
+D:\ECMS_26102023_0923\ECMS\WebApi\obj\Debug\net7.0\WebApi.AssemblyInfo.cs
+D:\ECMS_26102023_0923\ECMS\WebApi\obj\Debug\net7.0\WebApi.csproj.CoreCompileInputs.cache
+D:\ECMS_26102023_0923\ECMS\WebApi\obj\Debug\net7.0\WebApi.MvcApplicationPartsAssemblyInfo.cs
+D:\ECMS_26102023_0923\ECMS\WebApi\obj\Debug\net7.0\WebApi.MvcApplicationPartsAssemblyInfo.cache
+D:\ECMS_26102023_0923\ECMS\WebApi\obj\Debug\net7.0\staticwebassets\msbuild.WebApi.Microsoft.AspNetCore.StaticWebAssets.props
+D:\ECMS_26102023_0923\ECMS\WebApi\obj\Debug\net7.0\staticwebassets\msbuild.build.WebApi.props
+D:\ECMS_26102023_0923\ECMS\WebApi\obj\Debug\net7.0\staticwebassets\msbuild.buildMultiTargeting.WebApi.props
+D:\ECMS_26102023_0923\ECMS\WebApi\obj\Debug\net7.0\staticwebassets\msbuild.buildTransitive.WebApi.props
+D:\ECMS_26102023_0923\ECMS\WebApi\obj\Debug\net7.0\staticwebassets.pack.json
+D:\ECMS_26102023_0923\ECMS\WebApi\obj\Debug\net7.0\staticwebassets.build.json
+D:\ECMS_26102023_0923\ECMS\WebApi\obj\Debug\net7.0\staticwebassets.development.json
+D:\ECMS_26102023_0923\ECMS\WebApi\obj\Debug\net7.0\scopedcss\bundle\WebApi.styles.css
+D:\ECMS_26102023_0923\ECMS\WebApi\obj\Debug\net7.0\WebApi.csproj.CopyComplete
+D:\ECMS_26102023_0923\ECMS\WebApi\obj\Debug\net7.0\WebApi.dll
+D:\ECMS_26102023_0923\ECMS\WebApi\obj\Debug\net7.0\refint\WebApi.dll
+D:\ECMS_26102023_0923\ECMS\WebApi\obj\Debug\net7.0\WebApi.pdb
+D:\ECMS_26102023_0923\ECMS\WebApi\obj\Debug\net7.0\WebApi.genruntimeconfig.cache
+D:\ECMS_26102023_0923\ECMS\WebApi\obj\Debug\net7.0\ref\WebApi.dll

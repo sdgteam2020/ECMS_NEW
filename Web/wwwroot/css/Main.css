@@ -1,0 +1,59 @@
+﻿.swal2-confirm, .swal2-styled {
+    background: #D97904 !important;
+}
+
+.swal2-cancel {
+    background: red !important;
+}
+
+.text-hrms {
+    color: #D97904;
+}
+.text-hrms-bold{
+    font-size:40px;
+    font-weight:900;
+}
+.Dosth-btn {
+    font-family: 'Roboto', sans-serif;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 15px;
+    font-weight: 400;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+    outline: none;
+    border: 0;
+    color: #fff;
+    border-radius: 8px;
+    /* background-color: #F29F05;*/
+    background: linear-gradient(90deg, rgba(217,121,4,1) 0%, rgba(242,159,5,1) 100%);
+    /*background-color: #2f35df;*/
+    padding: 10px 36px;
+    margin-bottom: 10px;
+    margin-top: 10px;
+    width: 100%;
+    -webkit-transition: all 0.3s ease-in-out;
+    -o-transition: all 0.3s ease-in-out;
+    transition: all 0.3s ease-in-out;
+}
+
+    .Dosth-btn:hover {
+        background-color: #141ac6;
+        border-color: #141ac6;
+        color: #fff;
+    }
+
+    .Dosth-btn:focus {
+        outline: none;
+    }
+.imgrotet90 {
+    
+    rotate: 90deg;
+}
+@media (min-width: 1200px) 
+.modal-xl {
+    width: 1707px;
+}
+.toast {
+    margin-top: 48px !important;
+}

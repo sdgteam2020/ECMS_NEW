@@ -1,0 +1,12 @@
+C:\Users\master\Downloads\AFSAC_PRo\DapperRepo.Core\bin\Debug\net7.0\EFRepo.Core.deps.json
+C:\Users\master\Downloads\AFSAC_PRo\DapperRepo.Core\bin\Debug\net7.0\EFRepo.Core.dll
+C:\Users\master\Downloads\AFSAC_PRo\DapperRepo.Core\bin\Debug\net7.0\EFRepo.Core.pdb
+C:\Users\master\Downloads\AFSAC_PRo\DapperRepo.Core\obj\Debug\net7.0\EFRepo.Core.csproj.AssemblyReference.cache
+C:\Users\master\Downloads\AFSAC_PRo\DapperRepo.Core\obj\Debug\net7.0\EFRepo.Core.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\master\Downloads\AFSAC_PRo\DapperRepo.Core\obj\Debug\net7.0\EFRepo.Core.AssemblyInfoInputs.cache
+C:\Users\master\Downloads\AFSAC_PRo\DapperRepo.Core\obj\Debug\net7.0\EFRepo.Core.AssemblyInfo.cs
+C:\Users\master\Downloads\AFSAC_PRo\DapperRepo.Core\obj\Debug\net7.0\EFRepo.Core.csproj.CoreCompileInputs.cache
+C:\Users\master\Downloads\AFSAC_PRo\DapperRepo.Core\obj\Debug\net7.0\EFRepo.Core.dll
+C:\Users\master\Downloads\AFSAC_PRo\DapperRepo.Core\obj\Debug\net7.0\refint\EFRepo.Core.dll
+C:\Users\master\Downloads\AFSAC_PRo\DapperRepo.Core\obj\Debug\net7.0\EFRepo.Core.pdb
+C:\Users\master\Downloads\AFSAC_PRo\DapperRepo.Core\obj\Debug\net7.0\ref\EFRepo.Core.dll

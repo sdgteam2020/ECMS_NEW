@@ -1,0 +1,119 @@
+﻿@{
+    ViewData["Title"] = "Appoinment";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-4">
+    <div class="card mb-3 ">
+        <div class="card-header">
+
+            <span id="SpnTxnId" class="d-none">0</span>
+            @*<span id="PtoId" class="d-none">0</span>*@
+            <div class="row">
+                <div class="col-xl-12 text-left">
+                    <h3>
+                        Appoinment Details
+                        <small class="text-muted"></small>
+
+
+                    </h3>
+                </div>
+
+
+            </div>
+        </div>
+
+
+        <div class="card-body" style="min-height:150px;">
+            <form action="" id="SaveForm" method="post" name="SaveForm">
+                <div class="row">
+
+                    <div class="col-xl-5">
+                        <div class="form-group row mb-2">
+                            <span class=" d-none" id="spnapptId">0</span>
+                            <label class="col-form-label col-sm-4">Select Formation</label>
+                            <div class="col-sm-8">
+                                <i class="fas fa-asterisk mand"></i>
+                                <select class=" js-example-basic-single select2 form-control " style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddlFormation" required id="ddlFormation">
+                                    <option value="0">Select Formation</option>
+
+
+                                </select>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="col-xl-5">
+                        <div class="form-group row mb-2">
+
+                            <label class="col-form-label col-sm-4">Enter Appointment</label>
+                            <div class="col-sm-8">
+                                <i class="fas fa-asterisk mand"></i>
+                                <input class="form-control Alphanumeric" placeholder="Enter Appointment" id="txtAppoinment" required pattern="^[a-zA-Z0-9 ]*$" title="Only Alphabets and Numbers allowed" />
+
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="col-xl-2">
+
+                        <div class="col-sm-12 text-right">
+                            <input type="button" class="btn btn-primary " value="save" id="btnsave" />
+                            <button type="button" id="btnReset" class="btn btn-outline-danger">Reset</button>
+                        </div>
+                        <div class="col-sm-12" id="msg">
+                        </div>
+                    </div>
+
+                </div>
+            </form>
+            <div class="col-xl-12">
+                <div class="mb-2 d-md-flex justify-content-md-between align-items-md-center">
+                    <h6 class="mb-3 mb-md-0">
+                        Total Appointment <span id="lblTotal" class="ml-3 border border-light b px-2 py-1">0</span>
+                    </h6>
+                    <div>
+                        @* <button type="button" id="btnAdd" class="btn btn-outline-success font-weight-600 btn-sm">Add Corps</button> *@
+                        <button type="button" id="btnMultiDelete" class="btn btn-outline-danger font-weight-600 btn-sm">Delete</button>
+
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="table border border-purple table-striped no-footer dataTable table-hover" role="grid" id="tbldata">
+                        <thead>
+                            <tr>
+                                <th class="noExport d-none"></th>
+                                <th class="noExport wd-30-f">
+                                    <div class="custom-control custom-checkbox small">
+                                        <input type="checkbox" class="custom-control-input" id="chkAll">
+                                        <label class="custom-control-label font-weight-bold" for="chkAll"></label>
+                                    </div>
+                                </th>
+                                <th class=" wd-30-f">SNo.</th>
+
+                                <th class="nowrap">Appointment</th>
+                                <th class="nowrap">Formation</th>
+                                <th class="nowrap">Action</th>
+
+
+                            </tr>
+                        </thead>
+                        <tbody id="DetailBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+
+        </div>
+
+
+
+    </div>
+</div>
+
+
+
+
+<script src="~/developerjs/mtables.js"></script>
+<script src="~/developerjs/Appoinment.js"></script>

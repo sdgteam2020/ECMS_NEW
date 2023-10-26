@@ -1,0 +1,189 @@
+﻿@model DTOLoginRequest
+@{
+    ViewBag.Title = "Login Section";
+    ViewBag.Description = "Login Section";
+    ViewBag.Keywords = "";
+    Layout = null;
+}
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" type="image/x-icon" href="/images/DOST.png">
+    <title> AFSAC </title>
+    <link href="/Fonts/css/all.min.css" rel="stylesheet" type="text/css">
+
+    <link href="~/css/style.css" rel="stylesheet" />
+    <link href="~/css/nunito.css" rel="stylesheet" />
+    <link href="~/css/roboto.css" rel="stylesheet" />
+    <link href="~/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+
+    <link href="~/css/login.css" rel="stylesheet" />
+
+    <link href="~/sweetalert2/sweetalert2.min.css" rel="stylesheet" />
+    <link href="~/css/feed.css" rel="stylesheet" />
+
+    <link href="~/css/normalize.min.css" rel="stylesheet" />
+    <link href="~/css/swiper.min.css" rel="stylesheet" />
+    <link href="~/css/feed.css" rel="stylesheet" />
+    <link href="~/css/main.css" rel="stylesheet" />
+    <link href="~/css/sliders/style.css" rel="stylesheet" />
+    <style>
+        .swal2-confirm, .swal2-styled {
+            background: #D97924 !important;
+        }
+    </style>
+</head>
+
+<body>
+    @* <div id="loading" class="loader">
+    <div class="loader-container">
+    <img src="/Images/load.gif" width="100">
+    <div>
+    <h4 style="margin-top: -20px;">Loading...</h4>
+    <span>Please wait. This may take few seconds.</span>
+    </div>
+    </div>
+    </div>*@
+    <div class="page">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="align-items-center col-lg-6 col-md-6 col-xl-8 d-flex login-img-block">
+
+
+                    <div class="mb-4 logo-sec">
+                        <div class=""><img src="/Images/AFSAC_Logo.png" class="" alt="logo"></div>
+                        @*  <h2 class="ml-sm-3"> AFSAC</h2> *@
+                        <h2 class="ml-sm-3"> <span></span></h2>
+                        <h2 class="ml-sm-3"> <span>AFSAC</span> (Armed Forced Secure Access Card ) </h2>
+                    </div>
+
+                </div>
+                <div class="col-md-6 col-lg-6 col-xl-4 bg-white login-wrap align-items-center">
+                    <div class="login py-2 py-sm-4">
+                        <div class="row">
+                            <div class="col-md-10 col-lg-10 col-xl-9 mx-auto">
+                                <div class="card-sigin">
+                                    <div class="main-signup-header login-form">
+                                        @* <h1 class="font-weight-bold text-center mb-0 mt-3 logo"><color style="color: #D97904">Login</color></h1>*@
+                                        <p class="font-weight-normal text-center mb-4 mt-1 ">Kindly login with your login id and password here.</p>
+                                        <div class="pb-3 mt-3">
+                                             <form asp-antiforgery="true" method="post" asp-action="login" autocomplete="off" role="form">
+                                                <input hidden asp-for="hdns" />
+                                            <div class="form-group">
+                                                <label>Login Id</label>
+                                             @*    <input class="form-control" id="txtUserId" placeholder="Enter Login Id" type="text" value="">
+                                                <span class="field-icon"><i data-feather="lock"></i></span> *@
+
+                                                    <input asp-for="UserName" class="form-control" placeholder="Enter Username..." value="admin" />
+                                                    <span asp-validation-for="UserName" class="text-danger"></span>
+                                            </div>
+
+                                            <div class="form-group">
+                                               @*  <label>Password</label>
+                                                <input class="form-control" id="txtPassword" placeholder="Enter password" type="password" value="">
+                                                <span class="field-icon"><i data-feather="key"></i></span> *@
+                                                    <label asp-for="Password" class="form-label fs-6"></label>
+                                                    <input asp-for="Password" class="form-control" placeholder="Password" value="Admin123#" />
+                                                    <span asp-validation-for="Password" class="text-danger"></span>
+                                            </div>
+
+                                          @*   <div class="text-center"><button type="button" id="btnLogin" class="btn login-btn">Login</button></div> *@
+                                                <button type="submit" class="btn btn-primary text-uppercase py-2 fs-5 w-100 mt-2" onclick="SubmitsEncry();">Login</button>
+
+
+                                            @*<div class="text-center"><button type="button" id="btnForgotPassword" class="btn p-0 btn-link">Forgot Password</button></div>*@
+
+                                            <div class="alert alert-danger alert-dismissible fade show spnmsg d-none">
+                                                @*<button type="button" class="btn-close" data-bs-dismiss="alert"></button>*@
+                                                <span class="text-danger" id="error-msg"></span>
+
+
+                                            </div>
+                                            </form>
+                                        </div>
+                                        <div id="tokenmsg">
+                                        </div>
+                                        <div id="tokenmsgafterverify">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div><!-- End -->
+            </div>
+        </div>
+        <script src="~/lib/jquery/dist/jquery.min.js"></script>
+
+        <script src="~/bootstrap/js/bootstrap.bundle.min.js"></script>
+        <script src="~/fonts/feather/feather.min.js"></script>
+        <script src="~/sweetalert2/sweetalert2.min.js"></script>
+
+        <script src="~/js/swiper.min.js"></script>
+
+        <script src="~/js/script.js"></script>
+        <script src="~/developerjs/login.js"></script>
+        <script src="~/js/aes.js"></script>
+        <script src="~/js/aesimpscript.js"></script>
+        <script>
+            $(document).ready(function () {
+
+
+                $('.registration-form .form-group .form-control').focus(function () {
+                    $(this).closest('.form-group').addClass("focused");
+                });
+
+                $('.registration-form .form-group .form-control').focusout(function () {
+                    var text_value = $(this).val();
+                    if (text_value == "" || text_value == null) {
+                        $(this).closest('.form-group').removeClass("focused");
+                    } else {
+                        // alert(multiSelectText);
+                        $(this).closest('.form-group').addClass("focused");
+                    }
+                });
+            });
+        </script>
+        <script>
+            $(document).ready(function () {
+
+
+                //$("#loading").hide();
+                //$(document).ajaxStart(function () {
+                //    $("#loading").show();
+                //}).ajaxStop(function () {
+                //    $("#loading").hide();
+                //});
+
+
+
+
+            });
+        </script>
+        <script>
+            feather.replace();
+        </script>
+        </body>
+        </html>
+
+@section Scripts{
+    
+    <script>
+        $(document).ready(function () {
+            const togglePassword = document.querySelector("#togglePassword");
+            const password = document.querySelector("#Password");
+            togglePassword.addEventListener("click", function () {
+                // toggle the type attribute
+                const type = password.getAttribute("type") == "password" ? "text" : "password";
+                password.setAttribute("type", type);
+                // toggle the eye icon
+                this.classList.toggle('fa-eye');
+                this.classList.toggle('fa-eye-slash');
+            });
+        });
+    </script>
+}

@@ -1,0 +1,15 @@
+{
+  "version": 2,
+  "dgSpecHash": "tqTEO+hc6RiR8DZv2hbx7pMT8l0u03bRIf1zwJmfEkZG8iTtVNGDWXeCK7VqQ95SOaEn7d9bBrfh/bylNcDEUQ==",
+  "success": true,
+  "projectFilePath": "D:\\Projects\\ECMS_NEW\\TestConsoleReso\\TestConsoleReso.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\master\\.nuget\\packages\\microsoft.extensions.apidescription.server\\3.0.0\\microsoft.extensions.apidescription.server.3.0.0.nupkg.sha512",
+    "C:\\Users\\master\\.nuget\\packages\\microsoft.openapi\\1.2.3\\microsoft.openapi.1.2.3.nupkg.sha512",
+    "C:\\Users\\master\\.nuget\\packages\\swashbuckle.aspnetcore\\6.2.3\\swashbuckle.aspnetcore.6.2.3.nupkg.sha512",
+    "C:\\Users\\master\\.nuget\\packages\\swashbuckle.aspnetcore.swagger\\6.2.3\\swashbuckle.aspnetcore.swagger.6.2.3.nupkg.sha512",
+    "C:\\Users\\master\\.nuget\\packages\\swashbuckle.aspnetcore.swaggergen\\6.2.3\\swashbuckle.aspnetcore.swaggergen.6.2.3.nupkg.sha512",
+    "C:\\Users\\master\\.nuget\\packages\\swashbuckle.aspnetcore.swaggerui\\6.2.3\\swashbuckle.aspnetcore.swaggerui.6.2.3.nupkg.sha512"
+  ],
+  "logs": []
+}

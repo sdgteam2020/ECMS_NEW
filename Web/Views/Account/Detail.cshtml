@@ -1,0 +1,49 @@
+﻿@model DTORegisterListRequest
+@inject IHttpContextAccessor HttpContextAccessor
+@inject ApplicationDbContext context
+@{
+    ViewBag.Title = "User Details";
+}
+<style>
+    table > *:first-child:not(thead) td:first-child {
+        font-weight: bold;
+        font-size: 1rem;
+    }
+    td{
+        width:50%
+    }
+    table, th, td {
+        border: 1px solid black;
+    }
+</style>
+<div class="row align-items-center">
+    @if (!string.IsNullOrEmpty(@HttpContextAccessor.HttpContext.Session.GetString("_AuthRemark")))
+    {
+        @Html.Raw(@HttpContextAccessor.HttpContext.Session.GetString("_AuthRemark"))
+        HttpContextAccessor.HttpContext.Session.Remove("_AuthRemark");
+    }
+</div>
+    <div class="card card-default mt-2">
+        <div class="card-body" id="divPrint">
+            <div class="table-responsive mt-1">
+                <table cellpadding="10" cellspacing="10" width="100%"id="DivIdToPrint">
+                    <tbody>
+                        <tr>
+                            <td>Domain Id</td>
+                            <td>Active</td>
+                        </tr>
+                        <tr>
+                            <td>@Model.DomainId</td>
+                            <td>@Model.Active</td>
+                        </tr>
+                        <tr>
+                        <td colspan="2" class="text-center"><a asp-controller="Account" asp-action="SetPassword" asp-route-Id="@(Model.EncryptedId)" class="btn btn-primary">Change Password</a></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+@section Scripts{
+    <script src="~/js/CustomScript.js"></script>
+}

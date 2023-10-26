@@ -1,0 +1,179 @@
+﻿@model DTOBasicDetailUpdRequest
+@{
+    ViewBag.Title = "Edit I-card detail";
+}
+<div class="row g-3 row-deck mb-3">
+    <div class="card mb-4">
+        <div class="card-header py-3 d-flex  bg-transparent">
+            <h6 class="mb-0 fw-bold"></h6>
+        </div>
+        <form enctype="multipart/form-data" asp-controller="BasicDetail" asp-action="Edit" method="post" class="mt-3">
+            <div class="card-body">
+                <input hidden asp-for="BasicDetailId" />
+                <input hidden asp-for="ExistingPhotoImagePath" />
+                <input hidden asp-for="ExistingSignatureImagePath" />
+                <input hidden asp-for="EncryptedId" />
+                <div class="row">
+                    <div class="col-xl-9">
+                        <div class="row mb-3 required">
+                            <label class="col-sm-1 col-form-label text-center font-weight-bold">1.</label>
+                            <label asp-for="Name" class="col-sm-3 col-form-label form-label"></label>
+                            <div class="col-sm-4">
+                                <input asp-for="Name" class="form-control" placeholder="Max 36 Characters incl spaces" />
+                                <span asp-validation-for="Name" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="row mb-3 required">
+                            <label class="col-sm-1 col-form-label text-center font-weight-bold">2.</label>
+                            <label asp-for="Rank" class="col-sm-3 col-form-label form-label"></label>
+                            <div class="col-sm-4">
+                                <select asp-for="Rank" class="form-control" asp-items="ViewBag.OptionsRank">
+                                </select>
+                                <span asp-validation-for="Rank" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="row mb-3 required">
+                            <label class="col-sm-1 col-form-label text-center font-weight-bold">3.</label>
+                            <label asp-for="ArmService" class="col-sm-3 col-form-label form-label"></label>
+                            <div class="col-sm-4">
+                                <input asp-for="ArmService" class="form-control" placeholder="INF/ARTY/INT/EME" />
+                                <span asp-validation-for="ArmService" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="row mb-3 required">
+                            <label class="col-sm-1 col-form-label text-center font-weight-bold">4.</label>
+                            <label asp-for="ServiceNo" class="col-sm-3 col-form-label form-label"></label>
+                            <div class="col-sm-4">
+                                <input asp-for="ServiceNo" class="form-control" placeholder="IC-12345X/JC-12345X" />
+                                <span asp-validation-for="ServiceNo" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="row mb-3 required">
+                            <label class="col-sm-1 col-form-label text-center font-weight-bold">5.</label>
+                            <label asp-for="IdentityMark" class="col-sm-3 col-form-label form-label"></label>
+                            <div class="col-sm-4">
+                                <input asp-for="IdentityMark" class="form-control" placeholder="Only one iden Mk (Max 20 characters incl spaces)" />
+                                <span asp-validation-for="IdentityMark" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <label class="col-sm-1 col-form-label text-center font-weight-bold">6.</label>
+                            <label asp-for="DOB" class="col-sm-3 col-form-label form-label"></label>
+                            <div class="col-sm-4">
+                                <input asp-for="DOB" type="date" class="form-control" max="2999-12-31" />
+                                <span asp-validation-for="DOB" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="row mb-3 required">
+                            <label class="col-sm-1 col-form-label text-center font-weight-bold">7.</label>
+                            <label asp-for="Height" class="col-sm-3 col-form-label form-label"></label>
+                            <div class="col-sm-4">
+                                <input asp-for="Height" class="form-control" />
+                                <span asp-validation-for="Height" class="text-danger" placeholder="Height in CM"></span>
+                            </div>
+                        </div>
+                        <div class="row mb-3 required">
+                            <label class="col-sm-1 col-form-label text-center font-weight-bold">8.</label>
+                            <label asp-for="AadhaarNo" class="col-sm-3 col-form-label form-label"></label>
+                            <div class="col-sm-4">
+                                <input asp-for="AadhaarNo" class="form-control" placeholder="0000 0000 0000" onkeyup="Aadhaarformate(event,this);" maxlength="14" />
+                                <span asp-validation-for="AadhaarNo" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="row mb-3 required">
+                            <label class="col-sm-1 col-form-label text-center font-weight-bold">9.</label>
+                            <label asp-for="BloodGroup" class="col-sm-3 col-form-label form-label"></label>
+                            <div class="col-sm-4">
+                                <select asp-for="BloodGroup" class="form-control" asp-items="ViewBag.OptionsBloodGroup">
+                                </select>
+                                <span asp-validation-for="BloodGroup" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="row mb-3 required">
+                            <label class="col-sm-1 col-form-label text-center font-weight-bold">10.</label>
+                            <label asp-for="PlaceOfIssue" class="col-sm-3 col-form-label form-label"></label>
+                            <div class="col-sm-3">
+                                <select asp-for="StateId" class="form-control" asp-items="ViewBag.OptionsState" onchange="GetDistrictListByStateId(this.value)">
+                                </select>
+                                <span asp-validation-for="StateId" class="text-danger"></span>
+                            </div>
+                            <div class="col-sm-3">
+                                <select asp-for="DistrictId" asp-items="ViewBag.OptionsDistrict" class="form-control">
+                                </select>
+                                <span asp-validation-for="DistrictId" class="text-danger"></span>
+                            </div>
+                            <div class="col-sm-2">
+                                <textarea asp-for="PlaceOfIssue" rows="1" class="form-control" placeholder="Place Of Issue"></textarea>
+                                <span asp-validation-for="PlaceOfIssue" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <label class="col-sm-1 col-form-label text-center font-weight-bold">11.</label>
+                            <label asp-for="DateOfIssue" class="col-sm-3 col-form-label form-label"></label>
+                            <div class="col-sm-4">
+                                <input asp-for="DateOfIssue" type="date" class="form-control" max="2999-12-31" />
+                                <span asp-validation-for="DateOfIssue" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="row mb-3 required">
+                            <label class="col-sm-1 col-form-label text-center font-weight-bold">12.</label>
+                            <label asp-for="IssuingAuth" class="col-sm-3 col-form-label form-label"></label>
+                            <div class="col-sm-4">
+                                <input asp-for="IssuingAuth" class="form-control" />
+                                <span asp-validation-for="IssuingAuth" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="row mb-3 required">
+                            <label class="col-sm-1 col-form-label text-center font-weight-bold">13.</label>
+                            <label asp-for="Signature_" class="col-sm-3 col-form-label"></label>
+                            <div class="col-sm-8">
+                                <img id="SignaturePath" src="@Model.ExistingSignatureImagePath" height="80px" width="100px" />
+                                <label class="text-info">(Upload Signature)</label>
+                                <input asp-for="Signature_" class="form-control" onchange="signatureChange(this)" accept="image/jpeg,image/jpg,image/png,image/gif" />
+                                <span asp-validation-for="Signature_" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-3">
+                        <label class="col-sm-2 col-form-label font-weight-bold">16.</label>
+                        <img id="PhotoPath" src="@Model.ExistingPhotoImagePath" height="200px" width="200px" />
+
+                        <div class="row mb-3 required">
+                            <div class="col-sm-10">
+                                <label class="text-info text-center">(BROWSE & UPLOAD Photograph)</label>
+                                <input asp-for="Photo_" class="form-control" onchange="photoChange(this)" accept="image/jpeg,image/jpg,image/png,image/gif" />
+                                <span asp-validation-for="Photo_" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="row mb-3">
+                        <label class="col-sm-1 col-form-label text-center font-weight-bold">14.</label>
+                        <label asp-for="DateOfCommissioning" class="col-sm-3 col-form-label form-label"></label>
+                        <div class="col-sm-4">
+                            <input asp-for="DateOfCommissioning" type="date" class="form-control" max="2999-12-31" />
+                            <span asp-validation-for="DateOfCommissioning" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="row mb-3 required">
+                        <label class="col-sm-1 col-form-label text-center font-weight-bold">15.</label>
+                        <label asp-for="PermanentAddress" class="col-sm-3 col-form-label form-label"></label>
+                        <div class="col-sm-8">
+                            <input asp-for="PermanentAddress" class="form-control" placeholder="" />
+                            <span asp-validation-for="PermanentAddress" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            </div>
+            <div class="card-footer text-center">
+                <button type="submit" class="btn btn-primary">Save</button>
+                <a asp-action="Index" asp-controller="BasicDetail" class="btn btn-primary">Back</a>
+            </div>
+        </form>
+    </div>
+</div>
+@section Scripts{
+    <script asp-src-include="~/js/CustomScript.js"></script>
+    }

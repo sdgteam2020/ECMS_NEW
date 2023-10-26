@@ -1,0 +1,120 @@
+C:\Users\master\Downloads\AFSAC_PRo\TestConsoleReso\bin\Debug\net7.0\TestConsoleReso.exe
+C:\Users\master\Downloads\AFSAC_PRo\TestConsoleReso\bin\Debug\net7.0\TestConsoleReso.deps.json
+C:\Users\master\Downloads\AFSAC_PRo\TestConsoleReso\bin\Debug\net7.0\TestConsoleReso.runtimeconfig.json
+C:\Users\master\Downloads\AFSAC_PRo\TestConsoleReso\bin\Debug\net7.0\TestConsoleReso.dll
+C:\Users\master\Downloads\AFSAC_PRo\TestConsoleReso\bin\Debug\net7.0\TestConsoleReso.pdb
+C:\Users\master\Downloads\AFSAC_PRo\TestConsoleReso\bin\Debug\net7.0\Microsoft.OpenApi.dll
+C:\Users\master\Downloads\AFSAC_PRo\TestConsoleReso\bin\Debug\net7.0\Swashbuckle.AspNetCore.Swagger.dll
+C:\Users\master\Downloads\AFSAC_PRo\TestConsoleReso\bin\Debug\net7.0\Swashbuckle.AspNetCore.SwaggerGen.dll
+C:\Users\master\Downloads\AFSAC_PRo\TestConsoleReso\bin\Debug\net7.0\Swashbuckle.AspNetCore.SwaggerUI.dll
+C:\Users\master\Downloads\AFSAC_PRo\TestConsoleReso\obj\Debug\net7.0\TestConsoleReso.csproj.AssemblyReference.cache
+C:\Users\master\Downloads\AFSAC_PRo\TestConsoleReso\obj\Debug\net7.0\TestConsoleReso.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\master\Downloads\AFSAC_PRo\TestConsoleReso\obj\Debug\net7.0\TestConsoleReso.AssemblyInfoInputs.cache
+C:\Users\master\Downloads\AFSAC_PRo\TestConsoleReso\obj\Debug\net7.0\TestConsoleReso.AssemblyInfo.cs
+C:\Users\master\Downloads\AFSAC_PRo\TestConsoleReso\obj\Debug\net7.0\TestConsoleReso.csproj.CoreCompileInputs.cache
+C:\Users\master\Downloads\AFSAC_PRo\TestConsoleReso\obj\Debug\net7.0\TestConsoleReso.csproj.CopyComplete
+C:\Users\master\Downloads\AFSAC_PRo\TestConsoleReso\obj\Debug\net7.0\TestConsoleReso.dll
+C:\Users\master\Downloads\AFSAC_PRo\TestConsoleReso\obj\Debug\net7.0\refint\TestConsoleReso.dll
+C:\Users\master\Downloads\AFSAC_PRo\TestConsoleReso\obj\Debug\net7.0\TestConsoleReso.pdb
+C:\Users\master\Downloads\AFSAC_PRo\TestConsoleReso\obj\Debug\net7.0\TestConsoleReso.genruntimeconfig.cache
+C:\Users\master\Downloads\AFSAC_PRo\TestConsoleReso\obj\Debug\net7.0\ref\TestConsoleReso.dll
+D:\AFSAC\TestConsoleReso\bin\Debug\net7.0\TestConsoleReso.exe
+D:\AFSAC\TestConsoleReso\bin\Debug\net7.0\TestConsoleReso.deps.json
+D:\AFSAC\TestConsoleReso\bin\Debug\net7.0\TestConsoleReso.runtimeconfig.json
+D:\AFSAC\TestConsoleReso\bin\Debug\net7.0\TestConsoleReso.dll
+D:\AFSAC\TestConsoleReso\bin\Debug\net7.0\TestConsoleReso.pdb
+D:\AFSAC\TestConsoleReso\bin\Debug\net7.0\Microsoft.OpenApi.dll
+D:\AFSAC\TestConsoleReso\bin\Debug\net7.0\Swashbuckle.AspNetCore.Swagger.dll
+D:\AFSAC\TestConsoleReso\bin\Debug\net7.0\Swashbuckle.AspNetCore.SwaggerGen.dll
+D:\AFSAC\TestConsoleReso\bin\Debug\net7.0\Swashbuckle.AspNetCore.SwaggerUI.dll
+D:\AFSAC\TestConsoleReso\obj\Debug\net7.0\TestConsoleReso.csproj.AssemblyReference.cache
+D:\AFSAC\TestConsoleReso\obj\Debug\net7.0\TestConsoleReso.GeneratedMSBuildEditorConfig.editorconfig
+D:\AFSAC\TestConsoleReso\obj\Debug\net7.0\TestConsoleReso.AssemblyInfoInputs.cache
+D:\AFSAC\TestConsoleReso\obj\Debug\net7.0\TestConsoleReso.AssemblyInfo.cs
+D:\AFSAC\TestConsoleReso\obj\Debug\net7.0\TestConsoleReso.csproj.CoreCompileInputs.cache
+D:\AFSAC\TestConsoleReso\obj\Debug\net7.0\TestConsoleReso.csproj.CopyComplete
+D:\AFSAC\TestConsoleReso\obj\Debug\net7.0\TestConsoleReso.dll
+D:\AFSAC\TestConsoleReso\obj\Debug\net7.0\refint\TestConsoleReso.dll
+D:\AFSAC\TestConsoleReso\obj\Debug\net7.0\TestConsoleReso.pdb
+D:\AFSAC\TestConsoleReso\obj\Debug\net7.0\TestConsoleReso.genruntimeconfig.cache
+D:\AFSAC\TestConsoleReso\obj\Debug\net7.0\ref\TestConsoleReso.dll
+D:\AFSAC\AFSAC\TestConsoleReso\bin\Debug\net7.0\TestConsoleReso.exe
+D:\AFSAC\AFSAC\TestConsoleReso\bin\Debug\net7.0\TestConsoleReso.deps.json
+D:\AFSAC\AFSAC\TestConsoleReso\bin\Debug\net7.0\TestConsoleReso.runtimeconfig.json
+D:\AFSAC\AFSAC\TestConsoleReso\bin\Debug\net7.0\TestConsoleReso.dll
+D:\AFSAC\AFSAC\TestConsoleReso\bin\Debug\net7.0\TestConsoleReso.pdb
+D:\AFSAC\AFSAC\TestConsoleReso\bin\Debug\net7.0\Microsoft.OpenApi.dll
+D:\AFSAC\AFSAC\TestConsoleReso\bin\Debug\net7.0\Swashbuckle.AspNetCore.Swagger.dll
+D:\AFSAC\AFSAC\TestConsoleReso\bin\Debug\net7.0\Swashbuckle.AspNetCore.SwaggerGen.dll
+D:\AFSAC\AFSAC\TestConsoleReso\bin\Debug\net7.0\Swashbuckle.AspNetCore.SwaggerUI.dll
+D:\AFSAC\AFSAC\TestConsoleReso\obj\Debug\net7.0\TestConsoleReso.csproj.AssemblyReference.cache
+D:\AFSAC\AFSAC\TestConsoleReso\obj\Debug\net7.0\TestConsoleReso.GeneratedMSBuildEditorConfig.editorconfig
+D:\AFSAC\AFSAC\TestConsoleReso\obj\Debug\net7.0\TestConsoleReso.AssemblyInfoInputs.cache
+D:\AFSAC\AFSAC\TestConsoleReso\obj\Debug\net7.0\TestConsoleReso.AssemblyInfo.cs
+D:\AFSAC\AFSAC\TestConsoleReso\obj\Debug\net7.0\TestConsoleReso.csproj.CoreCompileInputs.cache
+D:\AFSAC\AFSAC\TestConsoleReso\obj\Debug\net7.0\TestConsoleReso.csproj.CopyComplete
+D:\AFSAC\AFSAC\TestConsoleReso\obj\Debug\net7.0\TestConsoleReso.dll
+D:\AFSAC\AFSAC\TestConsoleReso\obj\Debug\net7.0\refint\TestConsoleReso.dll
+D:\AFSAC\AFSAC\TestConsoleReso\obj\Debug\net7.0\TestConsoleReso.pdb
+D:\AFSAC\AFSAC\TestConsoleReso\obj\Debug\net7.0\TestConsoleReso.genruntimeconfig.cache
+D:\AFSAC\AFSAC\TestConsoleReso\obj\Debug\net7.0\ref\TestConsoleReso.dll
+D:\Code For Murge\AFSAC\TestConsoleReso\bin\Debug\net7.0\TestConsoleReso.exe
+D:\Code For Murge\AFSAC\TestConsoleReso\bin\Debug\net7.0\TestConsoleReso.deps.json
+D:\Code For Murge\AFSAC\TestConsoleReso\bin\Debug\net7.0\TestConsoleReso.runtimeconfig.json
+D:\Code For Murge\AFSAC\TestConsoleReso\bin\Debug\net7.0\TestConsoleReso.dll
+D:\Code For Murge\AFSAC\TestConsoleReso\bin\Debug\net7.0\TestConsoleReso.pdb
+D:\Code For Murge\AFSAC\TestConsoleReso\bin\Debug\net7.0\Microsoft.OpenApi.dll
+D:\Code For Murge\AFSAC\TestConsoleReso\bin\Debug\net7.0\Swashbuckle.AspNetCore.Swagger.dll
+D:\Code For Murge\AFSAC\TestConsoleReso\bin\Debug\net7.0\Swashbuckle.AspNetCore.SwaggerGen.dll
+D:\Code For Murge\AFSAC\TestConsoleReso\bin\Debug\net7.0\Swashbuckle.AspNetCore.SwaggerUI.dll
+D:\Code For Murge\AFSAC\TestConsoleReso\obj\Debug\net7.0\TestConsoleReso.csproj.AssemblyReference.cache
+D:\Code For Murge\AFSAC\TestConsoleReso\obj\Debug\net7.0\TestConsoleReso.GeneratedMSBuildEditorConfig.editorconfig
+D:\Code For Murge\AFSAC\TestConsoleReso\obj\Debug\net7.0\TestConsoleReso.AssemblyInfoInputs.cache
+D:\Code For Murge\AFSAC\TestConsoleReso\obj\Debug\net7.0\TestConsoleReso.AssemblyInfo.cs
+D:\Code For Murge\AFSAC\TestConsoleReso\obj\Debug\net7.0\TestConsoleReso.csproj.CoreCompileInputs.cache
+D:\Code For Murge\AFSAC\TestConsoleReso\obj\Debug\net7.0\TestConsoleReso.csproj.CopyComplete
+D:\Code For Murge\AFSAC\TestConsoleReso\obj\Debug\net7.0\TestConsoleReso.dll
+D:\Code For Murge\AFSAC\TestConsoleReso\obj\Debug\net7.0\refint\TestConsoleReso.dll
+D:\Code For Murge\AFSAC\TestConsoleReso\obj\Debug\net7.0\TestConsoleReso.pdb
+D:\Code For Murge\AFSAC\TestConsoleReso\obj\Debug\net7.0\TestConsoleReso.genruntimeconfig.cache
+D:\Code For Murge\AFSAC\TestConsoleReso\obj\Debug\net7.0\ref\TestConsoleReso.dll
+D:\ECMS\TestConsoleReso\bin\Debug\net7.0\TestConsoleReso.exe
+D:\ECMS\TestConsoleReso\bin\Debug\net7.0\TestConsoleReso.deps.json
+D:\ECMS\TestConsoleReso\bin\Debug\net7.0\TestConsoleReso.runtimeconfig.json
+D:\ECMS\TestConsoleReso\bin\Debug\net7.0\TestConsoleReso.dll
+D:\ECMS\TestConsoleReso\bin\Debug\net7.0\TestConsoleReso.pdb
+D:\ECMS\TestConsoleReso\bin\Debug\net7.0\Microsoft.OpenApi.dll
+D:\ECMS\TestConsoleReso\bin\Debug\net7.0\Swashbuckle.AspNetCore.Swagger.dll
+D:\ECMS\TestConsoleReso\bin\Debug\net7.0\Swashbuckle.AspNetCore.SwaggerGen.dll
+D:\ECMS\TestConsoleReso\bin\Debug\net7.0\Swashbuckle.AspNetCore.SwaggerUI.dll
+D:\ECMS\TestConsoleReso\obj\Debug\net7.0\TestConsoleReso.csproj.AssemblyReference.cache
+D:\ECMS\TestConsoleReso\obj\Debug\net7.0\TestConsoleReso.GeneratedMSBuildEditorConfig.editorconfig
+D:\ECMS\TestConsoleReso\obj\Debug\net7.0\TestConsoleReso.AssemblyInfoInputs.cache
+D:\ECMS\TestConsoleReso\obj\Debug\net7.0\TestConsoleReso.AssemblyInfo.cs
+D:\ECMS\TestConsoleReso\obj\Debug\net7.0\TestConsoleReso.csproj.CoreCompileInputs.cache
+D:\ECMS\TestConsoleReso\obj\Debug\net7.0\TestConsoleReso.csproj.CopyComplete
+D:\ECMS\TestConsoleReso\obj\Debug\net7.0\TestConsoleReso.dll
+D:\ECMS\TestConsoleReso\obj\Debug\net7.0\refint\TestConsoleReso.dll
+D:\ECMS\TestConsoleReso\obj\Debug\net7.0\TestConsoleReso.pdb
+D:\ECMS\TestConsoleReso\obj\Debug\net7.0\TestConsoleReso.genruntimeconfig.cache
+D:\ECMS\TestConsoleReso\obj\Debug\net7.0\ref\TestConsoleReso.dll
+D:\ECMS_26102023_0923\ECMS\TestConsoleReso\bin\Debug\net7.0\TestConsoleReso.exe
+D:\ECMS_26102023_0923\ECMS\TestConsoleReso\bin\Debug\net7.0\TestConsoleReso.deps.json
+D:\ECMS_26102023_0923\ECMS\TestConsoleReso\bin\Debug\net7.0\TestConsoleReso.runtimeconfig.json
+D:\ECMS_26102023_0923\ECMS\TestConsoleReso\bin\Debug\net7.0\TestConsoleReso.dll
+D:\ECMS_26102023_0923\ECMS\TestConsoleReso\bin\Debug\net7.0\TestConsoleReso.pdb
+D:\ECMS_26102023_0923\ECMS\TestConsoleReso\bin\Debug\net7.0\Microsoft.OpenApi.dll
+D:\ECMS_26102023_0923\ECMS\TestConsoleReso\bin\Debug\net7.0\Swashbuckle.AspNetCore.Swagger.dll
+D:\ECMS_26102023_0923\ECMS\TestConsoleReso\bin\Debug\net7.0\Swashbuckle.AspNetCore.SwaggerGen.dll
+D:\ECMS_26102023_0923\ECMS\TestConsoleReso\bin\Debug\net7.0\Swashbuckle.AspNetCore.SwaggerUI.dll
+D:\ECMS_26102023_0923\ECMS\TestConsoleReso\obj\Debug\net7.0\TestConsoleReso.csproj.AssemblyReference.cache
+D:\ECMS_26102023_0923\ECMS\TestConsoleReso\obj\Debug\net7.0\TestConsoleReso.GeneratedMSBuildEditorConfig.editorconfig
+D:\ECMS_26102023_0923\ECMS\TestConsoleReso\obj\Debug\net7.0\TestConsoleReso.AssemblyInfoInputs.cache
+D:\ECMS_26102023_0923\ECMS\TestConsoleReso\obj\Debug\net7.0\TestConsoleReso.AssemblyInfo.cs
+D:\ECMS_26102023_0923\ECMS\TestConsoleReso\obj\Debug\net7.0\TestConsoleReso.csproj.CoreCompileInputs.cache
+D:\ECMS_26102023_0923\ECMS\TestConsoleReso\obj\Debug\net7.0\TestConsoleReso.csproj.CopyComplete
+D:\ECMS_26102023_0923\ECMS\TestConsoleReso\obj\Debug\net7.0\TestConsoleReso.dll
+D:\ECMS_26102023_0923\ECMS\TestConsoleReso\obj\Debug\net7.0\refint\TestConsoleReso.dll
+D:\ECMS_26102023_0923\ECMS\TestConsoleReso\obj\Debug\net7.0\TestConsoleReso.pdb
+D:\ECMS_26102023_0923\ECMS\TestConsoleReso\obj\Debug\net7.0\TestConsoleReso.genruntimeconfig.cache
+D:\ECMS_26102023_0923\ECMS\TestConsoleReso\obj\Debug\net7.0\ref\TestConsoleReso.dll

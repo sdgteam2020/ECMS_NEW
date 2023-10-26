@@ -1,0 +1,13 @@
+{
+  "version": 2,
+  "dgSpecHash": "V8WJo+EIoNpd4Oh2K+slk8PCgNj5ZZ7PSw/PEgHlCC0E9rr3GorNwzboe2Woz8SL3bz+3iFT0Tub7TC0Hm6aUw==",
+  "success": true,
+  "projectFilePath": "D:\\AFSAC\\DapperRepo.Core\\EFRepo.Core.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\master\\.nuget\\packages\\microsoft.extensions.fileproviders.abstractions\\7.0.0\\microsoft.extensions.fileproviders.abstractions.7.0.0.nupkg.sha512",
+    "C:\\Users\\master\\.nuget\\packages\\microsoft.extensions.fileproviders.physical\\7.0.0\\microsoft.extensions.fileproviders.physical.7.0.0.nupkg.sha512",
+    "C:\\Users\\master\\.nuget\\packages\\microsoft.extensions.filesystemglobbing\\7.0.0\\microsoft.extensions.filesystemglobbing.7.0.0.nupkg.sha512",
+    "C:\\Users\\master\\.nuget\\packages\\microsoft.extensions.primitives\\7.0.0\\microsoft.extensions.primitives.7.0.0.nupkg.sha512"
+  ],
+  "logs": []
+}

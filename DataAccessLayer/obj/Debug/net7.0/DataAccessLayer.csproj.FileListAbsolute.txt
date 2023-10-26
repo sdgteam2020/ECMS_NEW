@@ -1,0 +1,136 @@
+C:\Users\master\Downloads\RepositoryDappaerCore-master\DataAccessLayer\bin\Debug\net7.0\DataAccessLayer.deps.json
+C:\Users\master\Downloads\RepositoryDappaerCore-master\DataAccessLayer\bin\Debug\net7.0\DataAccessLayer.dll
+C:\Users\master\Downloads\RepositoryDappaerCore-master\DataAccessLayer\bin\Debug\net7.0\DataAccessLayer.pdb
+C:\Users\master\Downloads\RepositoryDappaerCore-master\DataAccessLayer\bin\Debug\net7.0\DapperRepo.Core.dll
+C:\Users\master\Downloads\RepositoryDappaerCore-master\DataAccessLayer\bin\Debug\net7.0\DataTransferObject.dll
+C:\Users\master\Downloads\RepositoryDappaerCore-master\DataAccessLayer\bin\Debug\net7.0\DapperRepo.Core.pdb
+C:\Users\master\Downloads\RepositoryDappaerCore-master\DataAccessLayer\bin\Debug\net7.0\DataTransferObject.pdb
+C:\Users\master\Downloads\RepositoryDappaerCore-master\DataAccessLayer\obj\Debug\net7.0\DataAccessLayer.csproj.AssemblyReference.cache
+C:\Users\master\Downloads\RepositoryDappaerCore-master\DataAccessLayer\obj\Debug\net7.0\DataAccessLayer.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\master\Downloads\RepositoryDappaerCore-master\DataAccessLayer\obj\Debug\net7.0\DataAccessLayer.AssemblyInfoInputs.cache
+C:\Users\master\Downloads\RepositoryDappaerCore-master\DataAccessLayer\obj\Debug\net7.0\DataAccessLayer.AssemblyInfo.cs
+C:\Users\master\Downloads\RepositoryDappaerCore-master\DataAccessLayer\obj\Debug\net7.0\DataAccessLayer.csproj.CoreCompileInputs.cache
+C:\Users\master\Downloads\RepositoryDappaerCore-master\DataAccessLayer\obj\Debug\net7.0\DataAccessLayer.csproj.CopyComplete
+C:\Users\master\Downloads\RepositoryDappaerCore-master\DataAccessLayer\obj\Debug\net7.0\DataAccessLayer.dll
+C:\Users\master\Downloads\RepositoryDappaerCore-master\DataAccessLayer\obj\Debug\net7.0\refint\DataAccessLayer.dll
+C:\Users\master\Downloads\RepositoryDappaerCore-master\DataAccessLayer\obj\Debug\net7.0\DataAccessLayer.pdb
+C:\Users\master\Downloads\RepositoryDappaerCore-master\DataAccessLayer\obj\Debug\net7.0\ref\DataAccessLayer.dll
+C:\Users\master\Downloads\AFSAC_PRo\DataAccessLayer\bin\Debug\net7.0\DataAccessLayer.deps.json
+C:\Users\master\Downloads\AFSAC_PRo\DataAccessLayer\bin\Debug\net7.0\DataAccessLayer.runtimeconfig.json
+C:\Users\master\Downloads\AFSAC_PRo\DataAccessLayer\bin\Debug\net7.0\DataAccessLayer.dll
+C:\Users\master\Downloads\AFSAC_PRo\DataAccessLayer\bin\Debug\net7.0\DataAccessLayer.pdb
+C:\Users\master\Downloads\AFSAC_PRo\DataAccessLayer\bin\Debug\net7.0\DataTransferObject.dll
+C:\Users\master\Downloads\AFSAC_PRo\DataAccessLayer\bin\Debug\net7.0\DataTransferObject.pdb
+C:\Users\master\Downloads\AFSAC_PRo\DataAccessLayer\obj\Debug\net7.0\DataAccessLayer.csproj.AssemblyReference.cache
+C:\Users\master\Downloads\AFSAC_PRo\DataAccessLayer\obj\Debug\net7.0\DataAccessLayer.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\master\Downloads\AFSAC_PRo\DataAccessLayer\obj\Debug\net7.0\DataAccessLayer.AssemblyInfoInputs.cache
+C:\Users\master\Downloads\AFSAC_PRo\DataAccessLayer\obj\Debug\net7.0\DataAccessLayer.AssemblyInfo.cs
+C:\Users\master\Downloads\AFSAC_PRo\DataAccessLayer\obj\Debug\net7.0\DataAccessLayer.csproj.CoreCompileInputs.cache
+C:\Users\master\Downloads\AFSAC_PRo\DataAccessLayer\obj\Debug\net7.0\DataAccessLayer.csproj.CopyComplete
+C:\Users\master\Downloads\AFSAC_PRo\DataAccessLayer\obj\Debug\net7.0\DataAccessLayer.dll
+C:\Users\master\Downloads\AFSAC_PRo\DataAccessLayer\obj\Debug\net7.0\refint\DataAccessLayer.dll
+C:\Users\master\Downloads\AFSAC_PRo\DataAccessLayer\obj\Debug\net7.0\DataAccessLayer.pdb
+C:\Users\master\Downloads\AFSAC_PRo\DataAccessLayer\obj\Debug\net7.0\DataAccessLayer.genruntimeconfig.cache
+C:\Users\master\Downloads\AFSAC_PRo\DataAccessLayer\obj\Debug\net7.0\ref\DataAccessLayer.dll
+D:\AFSAC_PRo\DataAccessLayer\bin\Debug\net7.0\DataAccessLayer.deps.json
+D:\AFSAC_PRo\DataAccessLayer\bin\Debug\net7.0\DataAccessLayer.runtimeconfig.json
+D:\AFSAC_PRo\DataAccessLayer\bin\Debug\net7.0\DataAccessLayer.dll
+D:\AFSAC_PRo\DataAccessLayer\bin\Debug\net7.0\DataAccessLayer.pdb
+D:\AFSAC_PRo\DataAccessLayer\bin\Debug\net7.0\DataTransferObject.dll
+D:\AFSAC_PRo\DataAccessLayer\bin\Debug\net7.0\DataTransferObject.pdb
+D:\AFSAC_PRo\DataAccessLayer\obj\Debug\net7.0\DataAccessLayer.csproj.AssemblyReference.cache
+D:\AFSAC_PRo\DataAccessLayer\obj\Debug\net7.0\DataAccessLayer.GeneratedMSBuildEditorConfig.editorconfig
+D:\AFSAC_PRo\DataAccessLayer\obj\Debug\net7.0\DataAccessLayer.AssemblyInfoInputs.cache
+D:\AFSAC_PRo\DataAccessLayer\obj\Debug\net7.0\DataAccessLayer.AssemblyInfo.cs
+D:\AFSAC_PRo\DataAccessLayer\obj\Debug\net7.0\DataAccessLayer.csproj.CoreCompileInputs.cache
+D:\AFSAC_PRo\DataAccessLayer\obj\Debug\net7.0\DataAccessLayer.csproj.CopyComplete
+D:\AFSAC_PRo\DataAccessLayer\obj\Debug\net7.0\DataAccessLayer.dll
+D:\AFSAC_PRo\DataAccessLayer\obj\Debug\net7.0\refint\DataAccessLayer.dll
+D:\AFSAC_PRo\DataAccessLayer\obj\Debug\net7.0\DataAccessLayer.pdb
+D:\AFSAC_PRo\DataAccessLayer\obj\Debug\net7.0\DataAccessLayer.genruntimeconfig.cache
+D:\AFSAC_PRo\DataAccessLayer\obj\Debug\net7.0\ref\DataAccessLayer.dll
+D:\AFSAC\DataAccessLayer\bin\Debug\net7.0\DataAccessLayer.deps.json
+D:\AFSAC\DataAccessLayer\bin\Debug\net7.0\DataAccessLayer.runtimeconfig.json
+D:\AFSAC\DataAccessLayer\bin\Debug\net7.0\DataAccessLayer.dll
+D:\AFSAC\DataAccessLayer\bin\Debug\net7.0\DataAccessLayer.pdb
+D:\AFSAC\DataAccessLayer\bin\Debug\net7.0\DataTransferObject.dll
+D:\AFSAC\DataAccessLayer\bin\Debug\net7.0\DataTransferObject.pdb
+D:\AFSAC\DataAccessLayer\obj\Debug\net7.0\DataAccessLayer.csproj.AssemblyReference.cache
+D:\AFSAC\DataAccessLayer\obj\Debug\net7.0\DataAccessLayer.GeneratedMSBuildEditorConfig.editorconfig
+D:\AFSAC\DataAccessLayer\obj\Debug\net7.0\DataAccessLayer.AssemblyInfoInputs.cache
+D:\AFSAC\DataAccessLayer\obj\Debug\net7.0\DataAccessLayer.AssemblyInfo.cs
+D:\AFSAC\DataAccessLayer\obj\Debug\net7.0\DataAccessLayer.csproj.CoreCompileInputs.cache
+D:\AFSAC\DataAccessLayer\obj\Debug\net7.0\DataAccessLayer.csproj.CopyComplete
+D:\AFSAC\DataAccessLayer\obj\Debug\net7.0\DataAccessLayer.dll
+D:\AFSAC\DataAccessLayer\obj\Debug\net7.0\refint\DataAccessLayer.dll
+D:\AFSAC\DataAccessLayer\obj\Debug\net7.0\DataAccessLayer.pdb
+D:\AFSAC\DataAccessLayer\obj\Debug\net7.0\DataAccessLayer.genruntimeconfig.cache
+D:\AFSAC\DataAccessLayer\obj\Debug\net7.0\ref\DataAccessLayer.dll
+D:\AFSAC\AFSAC\DataAccessLayer\bin\Debug\net7.0\DataAccessLayer.deps.json
+D:\AFSAC\AFSAC\DataAccessLayer\bin\Debug\net7.0\DataAccessLayer.runtimeconfig.json
+D:\AFSAC\AFSAC\DataAccessLayer\bin\Debug\net7.0\DataAccessLayer.dll
+D:\AFSAC\AFSAC\DataAccessLayer\bin\Debug\net7.0\DataAccessLayer.pdb
+D:\AFSAC\AFSAC\DataAccessLayer\bin\Debug\net7.0\DataTransferObject.dll
+D:\AFSAC\AFSAC\DataAccessLayer\bin\Debug\net7.0\DataTransferObject.pdb
+D:\AFSAC\AFSAC\DataAccessLayer\obj\Debug\net7.0\DataAccessLayer.csproj.AssemblyReference.cache
+D:\AFSAC\AFSAC\DataAccessLayer\obj\Debug\net7.0\DataAccessLayer.GeneratedMSBuildEditorConfig.editorconfig
+D:\AFSAC\AFSAC\DataAccessLayer\obj\Debug\net7.0\DataAccessLayer.AssemblyInfoInputs.cache
+D:\AFSAC\AFSAC\DataAccessLayer\obj\Debug\net7.0\DataAccessLayer.AssemblyInfo.cs
+D:\AFSAC\AFSAC\DataAccessLayer\obj\Debug\net7.0\DataAccessLayer.csproj.CoreCompileInputs.cache
+D:\AFSAC\AFSAC\DataAccessLayer\obj\Debug\net7.0\DataAccessLayer.csproj.CopyComplete
+D:\AFSAC\AFSAC\DataAccessLayer\obj\Debug\net7.0\DataAccessLayer.dll
+D:\AFSAC\AFSAC\DataAccessLayer\obj\Debug\net7.0\refint\DataAccessLayer.dll
+D:\AFSAC\AFSAC\DataAccessLayer\obj\Debug\net7.0\DataAccessLayer.pdb
+D:\AFSAC\AFSAC\DataAccessLayer\obj\Debug\net7.0\DataAccessLayer.genruntimeconfig.cache
+D:\AFSAC\AFSAC\DataAccessLayer\obj\Debug\net7.0\ref\DataAccessLayer.dll
+D:\Code For Murge\AFSAC\DataAccessLayer\bin\Debug\net7.0\DataAccessLayer.deps.json
+D:\Code For Murge\AFSAC\DataAccessLayer\bin\Debug\net7.0\DataAccessLayer.runtimeconfig.json
+D:\Code For Murge\AFSAC\DataAccessLayer\bin\Debug\net7.0\DataAccessLayer.dll
+D:\Code For Murge\AFSAC\DataAccessLayer\bin\Debug\net7.0\DataAccessLayer.pdb
+D:\Code For Murge\AFSAC\DataAccessLayer\bin\Debug\net7.0\DataTransferObject.dll
+D:\Code For Murge\AFSAC\DataAccessLayer\bin\Debug\net7.0\DataTransferObject.pdb
+D:\Code For Murge\AFSAC\DataAccessLayer\obj\Debug\net7.0\DataAccessLayer.csproj.AssemblyReference.cache
+D:\Code For Murge\AFSAC\DataAccessLayer\obj\Debug\net7.0\DataAccessLayer.GeneratedMSBuildEditorConfig.editorconfig
+D:\Code For Murge\AFSAC\DataAccessLayer\obj\Debug\net7.0\DataAccessLayer.AssemblyInfoInputs.cache
+D:\Code For Murge\AFSAC\DataAccessLayer\obj\Debug\net7.0\DataAccessLayer.AssemblyInfo.cs
+D:\Code For Murge\AFSAC\DataAccessLayer\obj\Debug\net7.0\DataAccessLayer.csproj.CoreCompileInputs.cache
+D:\Code For Murge\AFSAC\DataAccessLayer\obj\Debug\net7.0\DataAccessLayer.csproj.CopyComplete
+D:\Code For Murge\AFSAC\DataAccessLayer\obj\Debug\net7.0\DataAccessLayer.dll
+D:\Code For Murge\AFSAC\DataAccessLayer\obj\Debug\net7.0\refint\DataAccessLayer.dll
+D:\Code For Murge\AFSAC\DataAccessLayer\obj\Debug\net7.0\DataAccessLayer.pdb
+D:\Code For Murge\AFSAC\DataAccessLayer\obj\Debug\net7.0\DataAccessLayer.genruntimeconfig.cache
+D:\Code For Murge\AFSAC\DataAccessLayer\obj\Debug\net7.0\ref\DataAccessLayer.dll
+D:\ECMS\DataAccessLayer\bin\Debug\net7.0\DataAccessLayer.deps.json
+D:\ECMS\DataAccessLayer\bin\Debug\net7.0\DataAccessLayer.runtimeconfig.json
+D:\ECMS\DataAccessLayer\bin\Debug\net7.0\DataAccessLayer.dll
+D:\ECMS\DataAccessLayer\bin\Debug\net7.0\DataAccessLayer.pdb
+D:\ECMS\DataAccessLayer\bin\Debug\net7.0\DataTransferObject.dll
+D:\ECMS\DataAccessLayer\bin\Debug\net7.0\DataTransferObject.pdb
+D:\ECMS\DataAccessLayer\obj\Debug\net7.0\DataAccessLayer.csproj.AssemblyReference.cache
+D:\ECMS\DataAccessLayer\obj\Debug\net7.0\DataAccessLayer.GeneratedMSBuildEditorConfig.editorconfig
+D:\ECMS\DataAccessLayer\obj\Debug\net7.0\DataAccessLayer.AssemblyInfoInputs.cache
+D:\ECMS\DataAccessLayer\obj\Debug\net7.0\DataAccessLayer.AssemblyInfo.cs
+D:\ECMS\DataAccessLayer\obj\Debug\net7.0\DataAccessLayer.csproj.CoreCompileInputs.cache
+D:\ECMS\DataAccessLayer\obj\Debug\net7.0\DataAccessLayer.csproj.CopyComplete
+D:\ECMS\DataAccessLayer\obj\Debug\net7.0\DataAccessLayer.dll
+D:\ECMS\DataAccessLayer\obj\Debug\net7.0\refint\DataAccessLayer.dll
+D:\ECMS\DataAccessLayer\obj\Debug\net7.0\DataAccessLayer.pdb
+D:\ECMS\DataAccessLayer\obj\Debug\net7.0\DataAccessLayer.genruntimeconfig.cache
+D:\ECMS\DataAccessLayer\obj\Debug\net7.0\ref\DataAccessLayer.dll
+D:\ECMS_26102023_0923\ECMS\DataAccessLayer\obj\Debug\net7.0\DataAccessLayer.csproj.AssemblyReference.cache
+D:\ECMS_26102023_0923\ECMS\DataAccessLayer\obj\Debug\net7.0\DataAccessLayer.GeneratedMSBuildEditorConfig.editorconfig
+D:\ECMS_26102023_0923\ECMS\DataAccessLayer\obj\Debug\net7.0\DataAccessLayer.AssemblyInfoInputs.cache
+D:\ECMS_26102023_0923\ECMS\DataAccessLayer\obj\Debug\net7.0\DataAccessLayer.AssemblyInfo.cs
+D:\ECMS_26102023_0923\ECMS\DataAccessLayer\obj\Debug\net7.0\DataAccessLayer.csproj.CoreCompileInputs.cache
+D:\ECMS_26102023_0923\ECMS\DataAccessLayer\obj\Debug\net7.0\DataAccessLayer.dll
+D:\ECMS_26102023_0923\ECMS\DataAccessLayer\obj\Debug\net7.0\refint\DataAccessLayer.dll
+D:\ECMS_26102023_0923\ECMS\DataAccessLayer\obj\Debug\net7.0\DataAccessLayer.pdb
+D:\ECMS_26102023_0923\ECMS\DataAccessLayer\bin\Debug\net7.0\DataAccessLayer.deps.json
+D:\ECMS_26102023_0923\ECMS\DataAccessLayer\bin\Debug\net7.0\DataAccessLayer.runtimeconfig.json
+D:\ECMS_26102023_0923\ECMS\DataAccessLayer\bin\Debug\net7.0\DataAccessLayer.dll
+D:\ECMS_26102023_0923\ECMS\DataAccessLayer\bin\Debug\net7.0\DataAccessLayer.pdb
+D:\ECMS_26102023_0923\ECMS\DataAccessLayer\bin\Debug\net7.0\DataTransferObject.dll
+D:\ECMS_26102023_0923\ECMS\DataAccessLayer\bin\Debug\net7.0\DataTransferObject.pdb
+D:\ECMS_26102023_0923\ECMS\DataAccessLayer\obj\Debug\net7.0\DataAccessLayer.csproj.CopyComplete
+D:\ECMS_26102023_0923\ECMS\DataAccessLayer\obj\Debug\net7.0\DataAccessLayer.genruntimeconfig.cache
+D:\ECMS_26102023_0923\ECMS\DataAccessLayer\obj\Debug\net7.0\ref\DataAccessLayer.dll

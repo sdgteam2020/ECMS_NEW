@@ -1,0 +1,19 @@
+﻿using DataTransferObject.Domain.Master;
+using DataTransferObject.Requests;
+using DataTransferObject.Response;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace BusinessLogicsLayer.Unit
+{
+    public interface IMapUnitBL : IGenericRepository<MapUnit>
+    {
+
+        public Task<bool> GetByName(MapUnit Data);
+        public Task<List<DTOMapUnitResponse>> GetALLUnit(DTOMHierarchyRequest unit);
+    }
+}
+

@@ -1,0 +1,816 @@
+﻿@using System.Security.Claims;
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <link rel="icon" type="image/x-icon" href="/images/AFSAC.png">
+    <meta content='width=device-width, initial-scale=1.0, shrink-to-fit=no' name='viewport' />
+    <title>AFSAC</title>
+    <link href="~/fonts/css/all.min.css" rel="stylesheet" />
+    <link href="~/css/sidemenu/feather/feather.css" rel="stylesheet" />
+    <link href="~/css/sidemenu/style.css" rel="stylesheet" />
+    <link href="~/css/sidemenu/ti-icons/css/themify-icons.css" rel="stylesheet" />
+    <link href="~/css/DashBoard.css" rel="stylesheet" />
+    <link href="~/css/nunito.css" rel="stylesheet" />
+    <link href="~/css/roboto.css" rel="stylesheet" />
+
+    <link href="~/sweetalert2/sweetalert2.min.css" rel="stylesheet" />
+    <link href="~/css/bootstrap-datetimepicker.min.css" rel="stylesheet" />
+    <link href="~/datatables/dataTables.bootstrap4.min.css" rel="stylesheet" />
+    <link href="~/datatables/responsive.bootstrap4.min.css" rel="stylesheet" />
+    <link href="~/datatables/responsive.dataTables.min.css" rel="stylesheet" />
+    <link href="~/datatables/buttons.bootstrap4.min.css" rel="stylesheet" />
+    <link href="~/datatables/fixedHeader.dataTables.min.css" rel="stylesheet" />
+    <link href="~/datatables/jquery.dataTables.min.css" rel="stylesheet" />
+    <link href="~/css/style.css" rel="stylesheet" />
+    <link href="~/css/extra.css" rel="stylesheet" />
+    <link href="~/css/background.css" rel="stylesheet" />
+    <link href="~/css/typography.css" rel="stylesheet" />
+    <link href="~/css/cssStyle.css" rel="stylesheet" />
+    @*<link href="~/css/main.min.css" rel="stylesheet" />*@
+
+    <link href="~/css/horizontaltimeline.css" rel="stylesheet" />
+
+    <script src="~/fonts/feather/feather.min.js"></script>
+    <script src="~/fonts/allfont/webfont.min.js"></script>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script asp-src-include="~/lib/jquery-validate/jquery.validate.js"></script>
+    <script asp-src-include="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
+
+    <link href="~/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+
+
+    <link href="~/toastr/toastr.min.css" rel="stylesheet" />
+    <link href="~/css/main.css" rel="stylesheet" />
+</head>
+<body class="nav-fixed">
+    @*   <div id="loading" class="loader">
+    <div class="loader-container">
+    <img src="/Images/load.gif" width="100">
+    <div>
+    <h4 style="margin-top: -20px;">Loading...</h4>
+    <span>Please wait. This may take few seconds.</span>
+    </div>
+    </div>
+    </div>
+    <div id="loadingToken" class="loader">
+    <div class="loader-container">
+    <img src="/Images/load.gif" width="100">
+    <div>
+    <h4 style="margin-top: -20px;" id="tokenmess"></h4>
+    <span>Please wait. Read Token....... This may take few seconds.</span>
+    </div>
+    </div>
+    </div> *@
+    <div class="d-none" id="postingouthtml"></div>
+    <div class="d-none" id="content-container"></div>
+    <div class="d-none" id="spnPostedOffrsfornoti"></div>
+    @* <span id="spnroleId" class="d-none">@User.Claims.First(c => c.Type.Contains("roleId")).Value</span>
+    <span id="spnarmyno" class="d-none">@User.Claims.First(c => c.Type.Contains("armyNo")).Value</span>
+    <span id="spnsunno" class="d-none1">@User.Claims.First(c => c.Type.Contains("SUSNo")).Value</span> *@
+    <div class="container-scroller">
+        <!-- partial:partials/_navbar.html -->
+        <nav class="navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row d-print-none">
+            <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center">
+                <a class="navbar-brand brand-logo mr-5" href="index.html"><img src="~/Images/AFSAC_Logo.png" class="mr-2" alt="logo" /></a>
+                <a class="navbar-brand brand-logo-mini" href="index.html"><img src="~/Images/AFSAC.png" alt="logo" /></a>
+            </div>
+            <div class="navbar-menu-wrapper d-flex align-items-center justify-content-end">
+                <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
+                    <span class="icon-menu"></span>
+                </button>
+                <ul class="navbar-nav mr-lg-2">
+                    <li class="nav-item nav-search d-none d-lg-block">
+                        <div class="input-group">
+                            @* <div class="input-group-prepend hover-cursor" id="navbar-search-icon">
+                            <span class="input-group-text" id="search">
+                            <i class="icon-search"></i>
+                            </span>
+                            </div>*@
+                            <div id="tokenmsg" class="p-2"></div>
+                            @*<input type="text" class="form-control" id="navbar-search-input" placeholder="Search now" aria-label="search" aria-describedby="search">*@
+                        </div>
+                    </li>
+                </ul>
+                <ul class="navbar-nav navbar-nav-right">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link count-indicator dropdown-toggle" id="notificationDropdown" href="#" data-toggle="dropdown">
+                            <i class="icon-bell mx-0"></i>
+                            <span class="isnotification"></span>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list" aria-labelledby="notificationDropdown">
+                            @* <p class="mb-0 font-weight-normal float-left dropdown-header">Notifications</p>
+                            <a class="dropdown-item preview-item">
+                            <div class="preview-thumbnail">
+                            <div class="preview-icon bg-success">
+                            <i class="ti-info-alt mx-0"></i>
+                            </div>
+                            </div>
+                            <div class="preview-item-content">
+                            <h6 class="preview-subject font-weight-normal">Application Error</h6>
+                            <p class="font-weight-light small-text mb-0 text-muted">
+                            Just now
+                            </p>
+                            </div>
+                            </a>
+                            <a class="dropdown-item preview-item">
+                            <div class="preview-thumbnail">
+                            <div class="preview-icon bg-warning">
+                            <i class="ti-settings mx-0"></i>
+                            </div>
+                            </div>
+                            <div class="preview-item-content">
+                            <h6 class="preview-subject font-weight-normal">Settings</h6>
+                            <p class="font-weight-light small-text mb-0 text-muted">
+                            Private message
+                            </p>
+                            </div>
+                            </a>
+                            <a class="dropdown-item preview-item">
+                            <div class="preview-thumbnail">
+                            <div class="preview-icon bg-info">
+                            <i class="ti-user mx-0"></i>
+                            </div>
+                            </div>
+                            <div class="preview-item-content">
+                            <h6 class="preview-subject font-weight-normal">New user registration</h6>
+                            <p class="font-weight-light small-text mb-0 text-muted">
+                            2 days ago
+                            </p>
+                            </div>
+                            </a>*@
+                        </div>
+                    </li>
+                    <li class="nav-item nav-profile dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" id="profileDropdown">
+                            <img src="~/Images/user4.png" alt="profile" />
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="profileDropdown">
+                            <a class="dropdown-item">
+                                <i class="ti-settings text-primary"></i>
+                                Settings
+                            </a>
+                            <a class="dropdown-item" href="/Account/Logout">
+                                <i class="ti-power-off text-primary"></i>
+                                Logout
+                            </a>
+                        </div>
+                    </li>
+
+                </ul>
+                <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" data-toggle="offcanvas">
+                    <span class="icon-menu"></span>
+                </button>
+            </div>
+        </nav>
+        <!-- partial -->
+        <div class="page-body-wrapper">
+            <!-- partial:partials/_settings-panel.html -->
+            @* <div class="theme-setting-wrapper">
+            <div id="settings-trigger"><i class="ti-settings"></i></div>
+            <div id="theme-settings" class="settings-panel">
+            <i class="settings-close ti-close"></i>
+            <p class="settings-heading">SIDEBAR SKINS</p>
+            <div class="sidebar-bg-options selected" id="sidebar-light-theme"><div class="img-ss rounded-circle bg-light border mr-3"></div>Light</div>
+            <div class="sidebar-bg-options" id="sidebar-dark-theme"><div class="img-ss rounded-circle bg-dark border mr-3"></div>Dark</div>
+            <p class="settings-heading mt-2">HEADER SKINS</p>
+            <div class="color-tiles mx-0 px-4">
+            <div class="tiles success"></div>
+            <div class="tiles warning"></div>
+            <div class="tiles danger"></div>
+            <div class="tiles info"></div>
+            <div class="tiles dark"></div>
+            <div class="tiles default"></div>
+            </div>
+            </div>
+            </div>
+            <div id="right-sidebar" class="settings-panel">
+            <i class="settings-close ti-close"></i>
+            <ul class="nav nav-tabs border-top" id="setting-panel" role="tablist">
+            <li class="nav-item">
+            <a class="nav-link active" id="todo-tab" data-toggle="tab" href="#todo-section" role="tab" aria-controls="todo-section" aria-expanded="true">TO DO LIST</a>
+            </li>
+            <li class="nav-item">
+            <a class="nav-link" id="chats-tab" data-toggle="tab" href="#chats-section" role="tab" aria-controls="chats-section">CHATS</a>
+            </li>
+            </ul>
+            <div class="tab-content" id="setting-content">
+            <div class="tab-pane fade show active scroll-wrapper" id="todo-section" role="tabpanel" aria-labelledby="todo-section">
+            <div class="add-items d-flex px-3 mb-0">
+            <form class="form w-100">
+            <div class="form-group d-flex">
+            <input type="text" class="form-control todo-list-input" placeholder="Add To-do">
+            <button type="submit" class="add btn btn-primary todo-list-add-btn" id="add-task">Add</button>
+            </div>
+            </form>
+            </div>
+            <div class="list-wrapper px-3">
+            <ul class="d-flex flex-column-reverse todo-list">
+            <li>
+            <div class="form-check">
+            <label class="form-check-label">
+            <input class="checkbox" type="checkbox">
+            Team review meeting at 3.00 PM
+            </label>
+            </div>
+            <i class="remove ti-close"></i>
+            </li>
+            <li>
+            <div class="form-check">
+            <label class="form-check-label">
+            <input class="checkbox" type="checkbox">
+            Prepare for presentation
+            </label>
+            </div>
+            <i class="remove ti-close"></i>
+            </li>
+            <li>
+            <div class="form-check">
+            <label class="form-check-label">
+            <input class="checkbox" type="checkbox">
+            Resolve all the low priority tickets due today
+            </label>
+            </div>
+            <i class="remove ti-close"></i>
+            </li>
+            <li class="completed">
+            <div class="form-check">
+            <label class="form-check-label">
+            <input class="checkbox" type="checkbox" checked>
+            Schedule meeting for next week
+            </label>
+            </div>
+            <i class="remove ti-close"></i>
+            </li>
+            <li class="completed">
+            <div class="form-check">
+            <label class="form-check-label">
+            <input class="checkbox" type="checkbox" checked>
+            Project review
+            </label>
+            </div>
+            <i class="remove ti-close"></i>
+            </li>
+            </ul>
+            </div>
+            <h4 class="px-3 text-muted mt-5 font-weight-light mb-0">Events</h4>
+            <div class="events pt-4 px-3">
+            <div class="wrapper d-flex mb-2">
+            <i class="ti-control-record text-primary mr-2"></i>
+            <span>Feb 11 2018</span>
+            </div>
+            <p class="mb-0 font-weight-thin text-gray">Creating component page build a js</p>
+            <p class="text-gray mb-0">The total number of sessions</p>
+            </div>
+            <div class="events pt-4 px-3">
+            <div class="wrapper d-flex mb-2">
+            <i class="ti-control-record text-primary mr-2"></i>
+            <span>Feb 7 2018</span>
+            </div>
+            <p class="mb-0 font-weight-thin text-gray">Meeting with Alisa</p>
+            <p class="text-gray mb-0 ">Call Sarah Graves</p>
+            </div>
+            </div>
+
+            </div>
+            </div>*@
+            <!-- partial -->
+            <!-- partial:partials/_sidebar.html -->
+            <nav class="sidebar sidebar-offcanvas" id="sidebar">
+                <ul class="nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="../Home/Dashboard">
+                            <i class="icon-grid menu-icon"></i>
+                            <span class="menu-title">Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link collapsed" data-toggle="collapse" href="#ui-basic" aria-expanded="true" aria-controls="ui-basic">
+                            <i class="icon-layout menu-icon"></i>
+                            <span class="menu-title">User Profile</span>
+                            <i class="menu-arrow"></i>
+                        </a>
+                        <div class="collapse show" id="ui-basic">
+                            <ul class="nav flex-column sub-menu">
+                                <li class="nav-item"> <a class="nav-link" href="/Account/Index">User</a></li>
+                                <li class="nav-item"> <a class="nav-link" href="/BasicDetail/Index">ICard List</a></li>
+                            </ul>
+                        </div>
+                       
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link collapsed" data-toggle="collapse" href="#ui-basic_Unit" aria-expanded="false" aria-controls="ui-basic_Unit">
+                            <i class="icon-layout menu-icon"></i>
+                            <span class="menu-title">Fmn/Unit </span>
+                            <i class="menu-arrow"></i>
+                        </a>
+                        <div class="collapse show" id="ui-basic_Unit">
+                            <ul class="nav flex-column sub-menu">
+                                <li class="nav-item"> <a class="nav-link" href="/Master/Command">Comd / PSO</a></li>
+                                <li class="nav-item"> <a class="nav-link" href="/Master/Corps">Corps / Dte / Area</a></li>
+                                <li class="nav-item"> <a class="nav-link" href="/Master/Div">Div / Branch / SubArea</a></li>
+                                <li class="nav-item"> <a class="nav-link" href="/Master/Bde">Bde </a></li>
+                                <li class="nav-item"> <a class="nav-link" href="/Master/MapUnit"> Map Unit</a></li>
+                            </ul>
+                        </div>
+
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-toggle="collapse" href="#ui-basic" aria-expanded="false" aria-controls="ui-basic">
+                            <i class="icon-layout menu-icon"></i>
+                            <span class="menu-title">Master</span>
+                            <i class="menu-arrow"></i>
+                        </a>
+                        <div class="collapse show" id="ui-basic">
+                            <ul class="nav flex-column sub-menu">
+                                <li class="nav-item"> <a class="nav-link" href="/Master/Unit/&$&&&">Unit</a></li>
+                                <li class="nav-item"> <a class="nav-link" href="/Master/Formation">Formation</a></li>
+                                <li class="nav-item"> <a class="nav-link" href="/Master/Appointment">Appointment</a></li>
+                                <li class="nav-item"> <a class="nav-link" href="/Master/ArmedType">Armed Type</a></li>
+                            </ul>
+                        </div>
+                    </li>
+
+
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            <i class="icon-paper menu-icon"></i>
+                            <span class="menu-title">Documentation</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+
+            <!-- partial -->
+            <div class="main-panel">
+                <ul class="nav nav-tabs" style="background-color:#37568c">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="../Home/Dashboard">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Link</a>
+                    </li>
+                    @* <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Dropdown</a>
+                    <div class="dropdown-menu">
+                    <a class="dropdown-item" href="#">Action</a>
+                    <a class="dropdown-item" href="#">Another action</a>
+                    <a class="dropdown-item" href="#">Something else here</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="#">Separated link</a>
+                    </div>
+                    </li> *@
+                    @*
+                    <li class="nav-item">
+                    <a class="nav-link disabled" href="#">Disabled</a>
+                    </li> *@
+                </ul>
+                <div class="content-wrapper">
+                    <partial name="_Notification" />
+                    @RenderBody()
+
+                    <!-- partial -->
+                    <!-- main-panel ends -->
+                </div>
+                <!-- page-body-wrapper ends -->
+            </div>
+
+            <!-- partial -->
+            <!-- main-panel ends -->
+        </div>
+        <!-- page-body-wrapper ends -->
+    </div>
+
+
+
+
+
+
+    @*  <script src="~/select2/dist/js/select2.min.js"></script>*@
+    @RenderSection("Scripts", false)
+    @RenderSection("body_scripts", false)
+    <script>
+        $(document).ready(function () {
+
+            $('[data-toggle="tooltip"]').tooltip();
+
+            $("#loading").hide();
+            $(document).ajaxStart(function () {
+                $("#loading").show();
+            }).ajaxStop(function () {
+                $("#loading").hide();
+            });
+            $('.datepicker').datetimepicker({
+                format: "L"
+            });
+            $('.timepicker').datetimepicker({
+                format: "LT"
+            });
+            $('.datetimepicker').datetimepicker({
+                sideBySide: true
+            });
+
+            $('.PersInfo').on("click", function () {
+                sessionStorage.persid = null
+            })
+        });
+    </script>
+
+
+    <script src="~/bootstrap/js/bootstrap.bundle.min.js"></script>
+    @*<script src="~/js/bootstrap.min.js"></script>*@
+
+    @*    <script src="~/js/scripts.js"></script>*@
+    <script src="~/js/jssidemenu/vendor.bundle.base.js"></script>
+    <script src="~/js/jssidemenu/hoverable-collapse.js"></script>
+    <script src="~/js/jssidemenu/off-canvas.js"></script>
+    <script src="~/js/jssidemenu/template.js"></script>
+    <script src="~/js/datatables/jquery.datatables.min.js"></script>
+    <script src="~/js/datatables/dataTables.responsive.min.js"></script>
+    <script src="~/js/datatables/responsive.dataTables.min.js"></script>
+    <script src="~/js/datatables/dataTables.bootstrap4.min.js"></script>
+    <script src="~/js/datatables/responsive.bootstrap4.min.js"></script>
+    <script src="~/js/datatables/dataTables.buttons.min.js"></script>
+    <script src="~/js/datatables/buttons.bootstrap4.min.js"></script>
+    <script src="~/js/datatables/jszip.min.js"></script>
+    <script src="~/js/datatables/pdfmake.min.js"></script>
+    <script src="~/js/datatables/vfs_fonts.js"></script>
+    <script src="~/js/datatables/buttons.html5.min.js"></script>
+    <script src="~/js/datatables/buttons.print.min.js"></script>
+    <script src="~/js/datatables/datatables-call.js"></script>
+    @*<script src="~/fonts/feather/feather.min.js"></script>*@
+    <script src="~/sweetalert2/sweetalert2.min.js"></script>
+    <script src="~/toastr/toastr.min.js"></script>
+    <script src="~/js/moment.min.js"></script>
+    <script src="~/js/bootstrap-datetimepicker.min.js"></script>
+    <script src="~/developerjs/layout.js"></script>
+    <script src="~/developerjs/keyconstants.js"></script>
+    <script src="~/developerjs/commanvalidation.js"></script>
+    @*  <script src="~/developerjs/layout.js"></script>
+    <script src="~/developerjs/MedCate.js"></script> *@
+    @*<script src="/DeveloperJs/Master.js"></script>*@
+    @*     <script src="~/developerjs/master.js"></script>
+    *@
+    @*
+    <section class="page_copyright ls section_padding_25">
+    <div class="container">
+    <div class="row">
+    <div class="col-sm-12 text-center darklinks">
+    <h5 class="font-weight-600">
+    &copy; 2023 HRMS
+    (DGIS).
+    </h5>
+    </div>
+    </div>
+    </div>
+    </section>*@
+
+</body>
+</html>
+
+<div class="modal fade" id="AddNewUnitmap" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Enter Unit Details With Mapping</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+
+            </div>
+
+            <div class="modal-body">
+
+                <div class="row">
+
+
+
+                    <form action="" id="SaveFormMapUnit" method="post" name="SaveForm">
+                        <div class="row">
+                            <span class="spnUnitMapUnitId d-none">0</span>
+
+                            <div class="form-group row mb-2">
+
+                                <label class="col-form-label col-sm-2">Comd</label>
+                                <div class="col-sm-10">
+                                    <i class="fas fa-asterisk mand"></i>
+                                    <select class=" js-example-basic-single select2 form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddlCommand" required id="ddlCommand">
+                                        <option value="0">Select Comd </option>
+
+                                    </select>
+                                </div>
+
+                            </div>
+
+
+                            <div class="form-group row mb-2">
+
+                                <label class="col-form-label col-sm-2">Corps</label>
+                                <div class="col-sm-10">
+                                    <i class="fas fa-asterisk mand"></i>
+                                    <select class=" js-example-basic-single select2 form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddlCorps" required id="ddlCorps">
+                                        <option value="0">Select Corps </option>
+
+                                    </select>
+                                </div>
+
+                            </div>
+
+                            <div class="form-group row mb-2">
+
+                                <label class="col-form-label col-sm-2">Div</label>
+                                <div class="col-sm-10">
+                                    <i class="fas fa-asterisk mand"></i>
+                                    <select class=" js-example-basic-single select2 form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddlDiv" required id="ddlDiv">
+                                        <option value="0">Select Div </option>
+
+                                    </select>
+                                </div>
+
+                            </div>
+
+                            <div class="form-group row mb-2">
+                                <label class="col-form-label col-sm-2">Bde</label>
+                                <div class="col-sm-10">
+                                    <i class="fas fa-asterisk mand"></i>
+                                    <select class=" js-example-basic-single select2 form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddlBde" required id="ddlBde">
+                                        <option value="0">Select Bde </option>
+
+                                    </select>
+                                </div>
+
+                            </div>
+
+                            <div class="form-group row mb-2">
+
+                                <label class="col-form-label col-sm-2">SUS No </label>
+                                <div class="col-sm-10">
+                                    <i class="fas fa-asterisk mand"></i>
+                                    <input class="form-control Alphanumeric" placeholder="Enter SUS No" id="txtSusno" required pattern="^[a-zA-Z0-9 ]*$" title="Only Alphabets and Numbers allowed" />
+
+                                </div>
+
+                            </div>
+
+                            <div class="form-group row mb-2">
+
+                                <label class="col-form-label col-sm-2">Unit </label>
+                                <div class="col-sm-10">
+                                    <i class="fas fa-asterisk mand"></i>
+                                    <span id="SpnUnitMapId">0</span>
+                                    <input class="form-control Alphanumeric" placeholder="Enter Unit" id="txtUnit" required pattern="^[a-zA-Z0-9 ]*$" title="Only Alphabets and Numbers allowed" />
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="col-sm-12 text-right">
+                                <input type="button" class="btn btn-primary " value="save" id="btnUnitMapsave" />
+                                <button type="button" id="btnUnitMapReset" class="btn btn-outline-danger">Reset</button>
+                            </div>
+                            <div class="col-sm-12" id="msg">
+                            </div>
+
+
+                        </div>
+                    </form>
+
+                    <div class="col-sm-12" id="msg">
+                    </div>
+                </div>
+            </div>
+
+        </div><!-- modal-content -->
+    </div><!-- modal-dialog -->
+</div>
+
+<div class="modal fade" id="SelectOff" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Select Offrs</h5>
+                <span id="spntokenmsgoff" class="d-none"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="form-group row mb-2">
+                        <label class="col-form-label col-sm-4">Select Offrs</label>
+                        <div class="col-sm-8">
+
+
+                            <i class="fas fa-asterisk mand"></i>
+                            <select class=" js-example-basic-single select2 form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddlOffrs" required id="ddlOffrs">
+                                <option value="0">Select Offrs</option>
+
+
+                            </select>
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary d-none" data-bs-dismiss="modal">Close</button>
+                <h6 class="fw-bold mt-3 mb-1 p-3" id="tokenmsgoff"></h6>
+                <button type="button" class="btn btn-primary" id="selectedoArmyNo">Ok</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal right fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="InstrustionLabel">Instructions</h4>
+            </div>
+
+            <div class="modal-body">
+                <h5 class="text-center badge badge-success">Step Wise Publish Part-II Order</h5>
+                <div class="timeline timeline-xs">
+                    <!-- Timeline Item 1-->
+                    <div class="timeline-item">
+                        <div class="timeline-item-marker">
+                            @*<div class="timeline-item-marker-text">27 min</div>*@
+                            <div class="timeline-item-marker-indicator bg-primary"></div>
+                        </div>
+                        <div class="timeline-item-content">
+                            Add Pers Info Details
+                            <a class="fw-bold text-dark" href="/PersInfo/PersInfo">Click Here</a>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-item-marker">
+                            @*<div class="timeline-item-marker-text">27 min</div>*@
+                            <div class="timeline-item-marker-indicator bg-danger"></div>
+                        </div>
+                        <div class="timeline-item-content">
+                            Create Draft
+                            <a class="fw-bold text-dark" href="/OffrsPartIIOrder/PartIIDraftOff">Click Here</a>
+                            TEXT
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-item-marker">
+                            @*<div class="timeline-item-marker-text">27 min</div>*@
+                            <div class="timeline-item-marker-indicator bg-warning"></div>
+                        </div>
+                        <div class="timeline-item-content">
+                            Seft Verification Part II Order
+                            <a class="fw-bold text-dark" href="/OffrsPartIIOrder/PartIIDraftOff">Click Here</a>
+                            TEXT
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-item-marker">
+                            @*<div class="timeline-item-marker-text">27 min</div>*@
+                            <div class="timeline-item-marker-indicator bg-success"></div>
+                        </div>
+                        <div class="timeline-item-content">
+                            Publish Part II Order
+                            <a class="fw-bold text-dark" href="/OffrsPartIIOrder/PublishPartIIOrderOffrs">Click Here</a>
+                            TEXT
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div><!-- modal-content -->
+    </div><!-- modal-dialog -->
+</div>
+<div class="modal fade" id="MedCateModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">SHAPE FACTOR</h5>
+                <span id="spnfillcontrol" class="d-none"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+
+                <div class="row mt-2">
+                    <div class="col-2">
+                    </div>
+                    <div class="col-2">
+                        <div class="text-center">S</div>
+                    </div>
+                    <div class="col-2 text-center">
+                        <div class="text-center">H</div>
+                    </div>
+                    <div class="col-2 text-center">
+                        <div class="text-center">A</div>
+                    </div>
+                    <div class="col-2 text-center">
+                        <div class="text-center">P</div>
+                    </div>
+                    <div class="col-2 text-center">
+                        <div class="text-center">E</div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-2">
+                        Value
+                    </div>
+                    <div class="col-2">
+                        <input type="number" class="form-control medvalue" value="1" id="S" maxlength="1" />
+                    </div>
+                    <div class="col-2">
+                        <input type="number" class="form-control medvalue" value="1" id="H" maxlength="1" width="50" />
+                    </div>
+                    <div class="col-2">
+                        <input type="number" class="form-control medvalue" value="1" id="A" maxlength="1" width="50" />
+                    </div>
+                    <div class="col-2">
+                        <input type="number" class="form-control medvalue" value="1" id="P" maxlength="1" width="50" />
+                    </div>
+                    <div class="col-2">
+                        <input type="number" class="form-control medvalue" value="1" id="E" placeholder="E" maxlength="1" />
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col-2">
+                        Temp/Perm
+                    </div>
+                    <div class="col-2">
+                        <select class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddlS" required id="ddlS">
+                            <option value=""></option>
+                            <option value="P">P</option>
+                            <option value="T">T</option>
+
+
+                        </select>
+
+                    </div>
+                    <div class="col-2">
+                        <select class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddlH" required id="ddlH">
+                            <option value=""></option>
+                            <option value="P">P</option>
+                            <option value="T">T</option>
+
+
+                        </select>
+                    </div>
+                    <div class="col-2">
+                        <select class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddlA" required id="ddlA">
+                            <option value=""></option>
+                            <option value="P">P</option>
+                            <option value="T">T</option>
+
+
+                        </select>
+                    </div>
+                    <div class="col-2">
+                        <select class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddlP" required id="ddlP">
+                            <option value=""></option>
+                            <option value="P">P</option>
+                            <option value="T">T</option>
+
+
+                        </select>
+                    </div>
+                    <div class="col-2">
+                        <select class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddlE" required id="ddlE">
+                            <option value=""></option>
+                            <option value="P">P</option>
+                            <option value="T">T</option>
+
+
+                        </select>
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col-2">
+                        Period
+                    </div>
+                    <div class="col-2">
+                        <input type="number" class="form-control" id="PS" maxlength="1" />
+                    </div>
+                    <div class="col-2">
+                        <input type="number" class="form-control" id="PH" maxlength="1" width="50" />
+                    </div>
+                    <div class="col-2">
+                        <input type="number" class="form-control" id="PA" maxlength="1" width="50" />
+                    </div>
+                    <div class="col-2">
+                        <input type="number" class="form-control" id="PP" maxlength="1" width="50" />
+                    </div>
+                    <div class="col-2">
+                        <input type="number" class="form-control" id="PE" maxlength="1" />
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <h6 class="fw-bold mt-3 mb-1 p-3" id="medcatemsg"></h6>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+
+                <button type="button" class="btn btn-primary" id="btnmedcategen">Ok</button>
+            </div>
+        </div>
+    </div>
+</div>

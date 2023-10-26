@@ -1,0 +1,108 @@
+﻿@model DTOBasicDetailRequest
+<link rel="stylesheet" href="~/lib/bootstrap/dist/assets/plugin/datatables/responsive.dataTables.min.css">
+<link rel="stylesheet" href="~/lib/bootstrap/dist/assets/plugin/datatables/dataTables.bootstrap5.min.css">
+<div class="row align-items-center">
+    <div class="border-0 mb-4">
+        <div class="card-header py-3 no-bg bg-transparent d-flex align-items-center px-0 justify-content-between border-bottom flex-wrap">
+            <h3 class="h4 mb-0">@ViewBag.Title</h3>
+        </div>
+    </div>
+</div> <!-- Row end  -->
+<div class="row clearfix g-3">
+    <div class="col-sm-6">
+        <div class="card mb-3">
+            <div class="card-body">
+                <table id="myProjectTable" class="table table-hover align-middle mb-0" style="width:100%">
+                    <tbody>
+                        <tr>
+                            <th>1.</th>
+                            <th>@Html.DisplayNameFor(model => model.Name)</th>
+                            <td>@Model.Name</td>
+                        </tr>
+                        <tr>
+                            <th>2.</th>
+                            <th>@Html.DisplayNameFor(model => model.Rank)</th>
+                            <td>@Model.Rank</td>
+                        </tr>
+                        <tr>
+                            <th>3.</th>
+                            <th>@Html.DisplayNameFor(model => model.ArmService)</th>
+                            <td>@Model.ArmService</td>
+                        </tr>
+                        <tr>
+                            <th>4.</th>
+                            <th>@Html.DisplayNameFor(model => model.ServiceNo)</th>
+                            <td>@Model.ServiceNo</td>
+                        </tr>
+                        <tr>
+                            <th>5.</th>
+                            <th>@Html.DisplayNameFor(model => model.IdentityMark)</th>
+                            <td>@Model.IdentityMark</td>
+                        </tr>
+                        <tr>
+                            <th>6.</th>
+                            <th>@Html.DisplayNameFor(model => model.DOB)</th>
+                            <td>@(Model.DOB!=null?@Model.DOB.Value.ToString("dd/MM/yyyy"):"No Date")</td>
+                        </tr>
+                        <tr>
+                            <th>7.</th>
+                            <th>@Html.DisplayNameFor(model => model.Height)</th>
+                            <td>@Model.Height</td>
+                        </tr>
+                        <tr>
+                            <th>8.</th>
+                            <th>@Html.DisplayNameFor(model => model.AadhaarNo)</th>
+                            <td>@Model.AadhaarNo</td>
+                        </tr>
+                        <tr>
+                            <th>9.</th>
+                            <th>@Html.DisplayNameFor(model => model.BloodGroup)</th>
+                            <td>@Model.BloodGroup</td>
+                        </tr>
+                        <tr>
+                            <th>10.</th>
+                            <th>@Html.DisplayNameFor(model => model.PlaceOfIssue)</th>
+                            <td>@Model.PlaceOfIssue</td>
+                        </tr>
+                        <tr>
+                            <th>11.</th>
+                            <th>@Html.DisplayNameFor(model => model.DateOfIssue)</th>
+                            <td>@(Model.DateOfIssue!=null?@Model.DateOfIssue.Value.ToString("dd/MM/yyyy"):"No Date")</td>
+                        </tr>
+                        <tr>
+                            <th>12.</th>
+                            <th>@Html.DisplayNameFor(model => model.IssuingAuth)</th>
+                            <td>@Model.IssuingAuth</td>
+                        </tr>
+                        <tr>
+                            <th>13.</th>
+                            <th>@Html.DisplayNameFor(model => model.SignatureImagePath)</th>
+                            <td><img id="SignaturePath" src="@Model.SignatureImagePath" height="80px" width="100px" /></td>
+                        </tr>
+                        <tr>
+                            <th>14.</th>
+                            <th>@Html.DisplayNameFor(model => model.DateOfCommissioning)</th>
+                            <td>@(Model.DateOfCommissioning!=null?@Model.DateOfCommissioning.Value.ToString("dd/MM/yyyy"):"No Date")</td>
+                        </tr>
+                        <tr>
+                            <th>15.</th>
+                            <th>@Html.DisplayNameFor(model => model.PermanentAddress)</th>
+                            <td>@Model.PermanentAddress</td>
+                        </tr>
+                        <tr>
+                            <th>16.</th>
+                            <th>@Html.DisplayNameFor(model => model.PhotoImagePath)</th>
+                            <td><img id="PhotoPath" src="@Model.PhotoImagePath" height="200px" width="200px" /></td>
+                        </tr>
+                        <tr>
+                            <td colspan="3" style="text-align:center;"><a asp-controller="BasicDetail" asp-action="Index" class="btn-info btn-sm">Back</a></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div><!-- Row End -->
+
+@section Scripts{
+}

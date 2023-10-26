@@ -1,0 +1,186 @@
+﻿body 
+{
+    max-width:100%;
+   
+    font-family:Arial;
+    font-size:15px;
+    font-weight:500;
+    counter-reset:section;
+}
+.table thead th {
+    vertical-align: bottom;
+    border: 1px solid black;
+}
+
+
+.printbtn
+{
+    margin-left:40%;
+    padding:10px;
+    
+}
+.forheaderlbl
+{
+    width: 200px;
+    border:1px solid;
+    padding:1px;
+    min-height:30px;
+    Font-Size:16px;
+    font-weight:700;
+    margin-right: 10px;
+}
+.forheaderlbl1 {
+    width: 400px;
+    border: 1px solid;
+    padding: 1px;
+    min-height: 30px;
+    Font-Size: 16px;
+    font-weight: 700;
+    margin-right: 10px;
+}
+.forheaderlbl2 {
+    width: 100px;
+    border: 1px solid;
+    padding: 1px;
+    min-height: 30px;
+    Font-Size: 16px;
+    font-weight: 700;
+    margin-right: 10px;
+}
+.lbltext
+{
+     Font-Size:16px;
+   
+}
+.tableborder
+{
+    border:1px solid black;
+}
+    
+  #footer
+      {
+          bottom:20px;
+          margin-top:100px;
+      }
+    
+  .notshow
+       {
+            display: none1;
+       }
+       tr .noBorder td
+        {
+            border:0;
+        }
+
+    @media print
+    {
+        @page {
+            margin-left: 10mm;
+            margin-right: 10mm;
+            margin-top: 5mm;
+            margin-bottom: 0mm;
+            /*Size: A4 landscape;*/
+            size: A3 landscape;
+        }
+       
+        @page first {
+            display: none;
+        }
+
+
+        .page-break {
+            page-break-before: always;
+        }
+
+        body::after {
+           
+            margin-left: 10mm;
+            margin-right: 10mm;
+            margin-top: 5mm;
+            margin-bottom: 0mm;
+           
+            z-index: -1; /* Hide the time and URL in the header */
+        }
+        hr
+       {
+           border:none;
+           height:1px;
+           color:#333;
+           background-color:#333;
+       }
+       .page-break
+       {
+            page-break-before:always;
+       } 
+         tr.pagebefore
+        {
+           page-break-before:always;
+      
+      
+        }
+      
+     
+        button
+        {
+            display: none!important;
+           
+        }
+       .notshow
+       {
+            display:table-row;
+       }
+      
+     #footer
+      {
+         position:fixed;
+         display:block;
+         bottom:0; 
+         font-size:20px;
+         height:100px;
+         
+      }
+     
+    
+  
+         
+     /* .lblshhetno:before
+       {
+           counter-increment:page;
+           content:"Page " couter(page);
+           text-align:center;
+           
+       }*/
+     }
+   
+       
+       .remove
+       {
+         
+          
+         
+          margin-top: 15px;
+          z-index:1;
+          overflow:hidden;
+          position:absolute;
+          right:38%;
+         
+       }
+       .sign
+       {
+         z-index:0;
+       }
+
+#tblTxns{
+    border: 1px solid #000;
+}
+#tblTxns td{
+    text-align: center;
+    border: 1px solid #333;
+    text-align: left;
+}
+
+ul{
+    list-style-type: none;
+   
+}
+
