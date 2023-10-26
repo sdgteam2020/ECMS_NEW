@@ -138,9 +138,9 @@ function GetUnitDetails(val) {
 
                 else {
 
-                    $("#txtUnit").val(response.unit_desc);
+                    $("#txtUnit").val(response.Unit_desc);
                     $('#txtUnit').attr('readonly', true);
-                    $("#SpnUnitMapId").html(response.unitId);
+                    $("#SpnUnitMapId").html(response.UnitId);
                     
 
 

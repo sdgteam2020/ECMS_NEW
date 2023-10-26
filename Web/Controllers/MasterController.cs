@@ -420,7 +420,7 @@ namespace Web.Controllers
                 {
                     if (!await unitOfWork.MappUnit.GetByName(dTO))
                     {
-                        if (dTO.UnitId > 0)
+                        if (dTO.UnitMapId > 0)
                         {
                             unitOfWork.MappUnit.Update(dTO);
                             return Json(KeyConstants.Update);
@@ -481,7 +481,7 @@ namespace Web.Controllers
                 MapUnit dto = new MapUnit();
                 foreach (int i in ints)
                 {
-                    dto.UnitId = i;
+                    dto.UnitMapId = i;
                     await unitOfWork.MappUnit.Delete(dto);
                 }
 

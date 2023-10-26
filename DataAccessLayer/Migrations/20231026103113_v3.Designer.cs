@@ -4,6 +4,7 @@ using DataAccessLayer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccessLayer.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231026103113_v3")]
+    partial class v3
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -462,8 +465,11 @@ namespace DataAccessLayer.Migrations
 
             modelBuilder.Entity("DataTransferObject.Domain.Master.MapUnit", b =>
                 {
-                    b.Property<int>("UnitId")
+                    b.Property<int>("UnitMapId")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UnitMapId"));
 
                     b.Property<int>("BdeId")
                         .HasColumnType("int");
@@ -480,7 +486,7 @@ namespace DataAccessLayer.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
-                    b.Property<int>("UnitMapId")
+                    b.Property<int>("UnitId")
                         .HasColumnType("int");
 
                     b.Property<string>("UnitName")
@@ -494,7 +500,7 @@ namespace DataAccessLayer.Migrations
                     b.Property<int>("Updatedby")
                         .HasColumnType("int");
 
-                    b.HasKey("UnitId");
+                    b.HasKey("UnitMapId");
 
                     b.HasIndex("BdeId");
 
@@ -503,6 +509,8 @@ namespace DataAccessLayer.Migrations
                     b.HasIndex("CorpsId");
 
                     b.HasIndex("DivId");
+
+                    b.HasIndex("UnitId");
 
                     b.ToTable("MapUnit");
                 });
