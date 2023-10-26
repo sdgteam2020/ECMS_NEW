@@ -33,7 +33,7 @@ x64/
 # MSTest test Results
 [Tt]est[Rr]esult*/
 [Bb]uild[Ll]og.*
-
+*.dll
 *_i.c
 *_p.c
 *.ilk
@@ -56,8 +56,7 @@ x64/
 .builds
 *.pidb
 *.scc
-*.dll
-*.pdb
+
 
 
 # Visual C++ cache files
@@ -228,12 +227,12 @@ AppPackages/
 # End of core ignore list, below put you custom 'per project' settings (patterns or path)
 #####
 /Web/bin/
-/BusinessLogicsLayer/bin/
+/BusinessLogicsLayer/bin/*.dll
 /DataAccessLayer/bin/
 /DataTransferObject/bin/
 /WebApi/bin/
 /Web/obj/
-/BusinessLogicsLayer/obj/
+/BusinessLogicsLayer/obj/*.dll
 /DataAccessLayer/obj/
 /DataTransferObject/obj/
 /WebApi/obj/
