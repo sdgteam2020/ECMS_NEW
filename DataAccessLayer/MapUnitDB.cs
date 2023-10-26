@@ -53,7 +53,7 @@ namespace DataAccessLayer
                        select new DTOMapUnitResponse
                        {
                            UnitName = uni.UnitName,
-                           UnitId = uni.UnitId,
+                          // UnitId = uni.UnitId,
                            BdeId = bde.BdeId,  
                            BdeName = bde.BdeName,   
                            DivId = div.DivId,

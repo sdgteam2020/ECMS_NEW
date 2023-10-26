@@ -4,6 +4,7 @@ using DataAccessLayer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccessLayer.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231026103420_v5")]
+    partial class v5
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -463,7 +466,10 @@ namespace DataAccessLayer.Migrations
             modelBuilder.Entity("DataTransferObject.Domain.Master.MapUnit", b =>
                 {
                     b.Property<int>("UnitId")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UnitId"));
 
                     b.Property<int>("BdeId")
                         .HasColumnType("int");
@@ -479,9 +485,6 @@ namespace DataAccessLayer.Migrations
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
-
-                    b.Property<int>("UnitMapId")
-                        .HasColumnType("int");
 
                     b.Property<string>("UnitName")
                         .IsRequired()
@@ -985,12 +988,6 @@ namespace DataAccessLayer.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("DataTransferObject.Domain.Master.MUnit", "MUnit")
-                        .WithMany()
-                        .HasForeignKey("UnitId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.Navigation("Bde");
 
                     b.Navigation("Comd");
@@ -998,8 +995,6 @@ namespace DataAccessLayer.Migrations
                     b.Navigation("Corps");
 
                     b.Navigation("Div");
-
-                    b.Navigation("MUnit");
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Model.BasicDetail", b =>
