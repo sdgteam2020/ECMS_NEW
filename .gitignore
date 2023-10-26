@@ -227,3 +227,4 @@ AppPackages/
 #####
 # End of core ignore list, below put you custom 'per project' settings (patterns or path)
 #####
+/Web/bin/Debug/net7.0/Web.dll
