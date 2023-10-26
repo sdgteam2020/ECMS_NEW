@@ -227,4 +227,8 @@ AppPackages/
 #####
 # End of core ignore list, below put you custom 'per project' settings (patterns or path)
 #####
-/Web/bin/Debug/net7.0/Web.dll
+/Web/bin/
+/BusinessLogicsLayer/bin/
+/DataAccessLayer/bin/
+/DataTransferObject/bin/
+/WebApi/bin/
