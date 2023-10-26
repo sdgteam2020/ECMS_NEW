@@ -59,7 +59,8 @@ x64/
 *.dll
 *.pdb
 *.cache
-
+*/bin/*
+**/bin/**
 # Visual C++ cache files
 ipch/
 *.aps
