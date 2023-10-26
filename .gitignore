@@ -58,7 +58,7 @@ x64/
 *.scc
 *.dll
 *.pdb
-
+*.cache
 
 # Visual C++ cache files
 ipch/
@@ -237,3 +237,4 @@ AppPackages/
 /DataAccessLayer/obj/
 /DataTransferObject/obj/
 /WebApi/obj/
+/TestConsoleReso/obj/Debug/net7.0/TestConsoleReso.assets.cache
