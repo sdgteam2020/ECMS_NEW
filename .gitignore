@@ -236,3 +236,4 @@ AppPackages/
 /DataAccessLayer/obj/
 /DataTransferObject/obj/
 /WebApi/obj/
+/BusinessLogicsLayer/bin/Debug/net7.0/BusinessLogicsLayer.dll
