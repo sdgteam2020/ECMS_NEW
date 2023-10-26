@@ -237,4 +237,4 @@ AppPackages/
 /DataAccessLayer/obj/
 /DataTransferObject/obj/
 /WebApi/obj/
-/TestConsoleReso/obj/Debug/net7.0/TestConsoleReso.assets.cache
+/BusinessLogicsLayer/.cache

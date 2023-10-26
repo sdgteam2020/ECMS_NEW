@@ -10734,23 +10734,23 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\master\\.nuget\\packages\\": {},
+    "C:\\Users\\lanmanager\\.nuget\\packages\\": {},
     "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\Projects\\ECMS_NEW\\WebApi\\WebApi.csproj",
+      "projectUniqueName": "D:\\ECMS\\ECMS_NEW\\WebApi\\WebApi.csproj",
       "projectName": "WebApi",
-      "projectPath": "D:\\Projects\\ECMS_NEW\\WebApi\\WebApi.csproj",
-      "packagesPath": "C:\\Users\\master\\.nuget\\packages\\",
-      "outputPath": "D:\\Projects\\ECMS_NEW\\WebApi\\obj\\",
+      "projectPath": "D:\\ECMS\\ECMS_NEW\\WebApi\\WebApi.csproj",
+      "packagesPath": "C:\\Users\\lanmanager\\.nuget\\packages\\",
+      "outputPath": "D:\\ECMS\\ECMS_NEW\\WebApi\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
       ],
       "configFilePaths": [
-        "C:\\Users\\master\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\lanmanager\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
@@ -10759,18 +10759,17 @@
       ],
       "sources": {
         "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-        "C:\\Program Files\\dotnet\\library-packs": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
         "net7.0": {
           "targetAlias": "net7.0",
           "projectReferences": {
-            "D:\\Projects\\ECMS_NEW\\BusinessLogicsLayer\\BusinessLogicsLayer.csproj": {
-              "projectPath": "D:\\Projects\\ECMS_NEW\\BusinessLogicsLayer\\BusinessLogicsLayer.csproj"
+            "D:\\ECMS\\ECMS_NEW\\BusinessLogicsLayer\\BusinessLogicsLayer.csproj": {
+              "projectPath": "D:\\ECMS\\ECMS_NEW\\BusinessLogicsLayer\\BusinessLogicsLayer.csproj"
             },
-            "D:\\Projects\\ECMS_NEW\\DataTransferObject\\DataTransferObject.csproj": {
-              "projectPath": "D:\\Projects\\ECMS_NEW\\DataTransferObject\\DataTransferObject.csproj"
+            "D:\\ECMS\\ECMS_NEW\\DataTransferObject\\DataTransferObject.csproj": {
+              "projectPath": "D:\\ECMS\\ECMS_NEW\\DataTransferObject\\DataTransferObject.csproj"
             }
           }
         }
@@ -10819,7 +10818,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.400\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.402\\RuntimeIdentifierGraph.json"
       }
     }
   }
