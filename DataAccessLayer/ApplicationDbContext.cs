@@ -35,6 +35,8 @@ namespace DataAccessLayer
         public DbSet<State> MStates { get; set; } = null!;
         public DbSet<District> MDistricts { get; set; } = null!;
         public DbSet<BasicDetail> BasicDetails { get; set; } = null!;
+        public DbSet<ProfileData> ProfileDatas { get; set; } = null!;
+        public DbSet<BasicDetailTemp> BasicDetailTemps { get; set; } = null!;
         public DbSet<ProfileData> ProfileData { get; set; } = null!;
         public DbSet<MUserProfile> UserProfile { get; set; } = null!;
         public DbSet<ProfileData> ProfileDatas { get; set; } = null!;

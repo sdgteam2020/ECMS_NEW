@@ -58,6 +58,9 @@ namespace BusinessLogicsLayer
             services.AddTransient<IBasicDetailBL, BasicDetailBL>();
             services.AddTransient<IBasicDetailDB, BasicDetailDB>();
 
+            services.AddTransient<IBasicDetailTempBL,BasicDetailTempBL>();
+            services.AddTransient<IBasicDetailTempDB, BasicDetailTempDB>();
+
             services.AddTransient<IUserProfileBL, UserProfileBL>();
             services.AddTransient<IUserProfileDB, UserProfileDB>();
 

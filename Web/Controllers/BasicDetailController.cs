@@ -107,6 +107,170 @@ namespace Web.Controllers
         [Authorize(Roles = "Admin,User")]
         public Task<ViewResult> Registration()
         {
+            ViewBag.OptionsRegistrationType = service.GetRegistrationType();
+            ViewBag.OptionsSubmitType = service.GetSubmitType();
+            return Task.FromResult(View());
+        }
+        [HttpPost]
+        [Authorize(Roles = "Admin,User")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Registration(DTORegistrationRequest model)
+        {
+            try
+            {
+                ViewBag.OptionsRegistrationType = service.GetRegistrationType();
+                ViewBag.OptionsSubmitType = service.GetSubmitType();
+                var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+                model.Updatedby = Convert.ToInt32(userId);
+                if (ModelState.IsValid)
+                {
+                    if (model.SubmitType == 1)
+                    {
+                        BasicDetail basicDetail = new BasicDetail();
+                        basicDetail.Name = model.Name;
+                        basicDetail.ServiceNo = model.ServiceNo;
+                        basicDetail.DOB = model.DOB;
+                        basicDetail.DateOfCommissioning = model.DateOfCommissioning;
+                        basicDetail.PermanentAddress = model.PermanentAddress;
+                        basicDetail.Step = 1;
+                        BasicDetail insertedBasicdetail = await unitOfWork.BasicDetail.AddWithReturn(basicDetail);
+                        // Encrypt the ID value and store in EncryptedId property
+                        insertedBasicdetail.EncryptedId = protector.Protect(insertedBasicdetail.BasicDetailId.ToString());
+                        TempData["success"] = "Successfully created.";
+                        return RedirectToActionPermanent("Part2", "BasicDetail", new { Id = insertedBasicdetail.EncryptedId });
+                    }
+                    else
+                    {
+                        BasicDetailTemp basicDetailTemp = new BasicDetailTemp();
+                        basicDetailTemp.Name = model.Name;
+                        basicDetailTemp.ServiceNo = model.ServiceNo;
+                        basicDetailTemp.DOB = model.DOB;
+                        basicDetailTemp.DateOfCommissioning = model.DateOfCommissioning;
+                        basicDetailTemp.PermanentAddress = model.PermanentAddress;
+                        await unitOfWork.BasicDetailTemp.Add(basicDetailTemp);
+                        TempData["success"] = "Request Submited Successfully.";
+                        return RedirectToAction("InaccurateData");
+                    }
+                }
+                else
+                {
+                    TempData["error"] = "Operation failed.";
+                }
+            }
+            catch (ReferenceConstraintException ex)
+            {
+                _logger.LogError(1001, ex, "ReferenceConstraintException");
+                ModelState.AddModelError("", ex.Message);
+                goto xyz;
+            }
+            catch (UniqueConstraintException ex)
+            {
+                _logger.LogError(1002, ex, "UniqueConstraintException");
+                ModelState.AddModelError("", ex.Message);
+                goto xyz;
+            }
+            catch (MaxLengthExceededException ex)
+            {
+                _logger.LogError(1003, ex, "MaxLengthExceededException");
+                ModelState.AddModelError("", ex.Message);
+                goto xyz;
+            }
+            catch (CannotInsertNullException ex)
+            {
+                _logger.LogError(1004, ex, "CannotInsertNullException");
+                ModelState.AddModelError("", ex.Message);
+                goto xyz;
+            }
+            catch (NumericOverflowException ex)
+            {
+                _logger.LogError(1005, ex, "NumericOverflowException");
+                ModelState.AddModelError("", ex.Message);
+                goto xyz;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1006, ex, "Exception");
+                ModelState.AddModelError("", ex.Message);
+                goto xyz;
+            }
+
+        xyz:
+            return View(model);
+        }
+        [Authorize(Roles = "Admin,User")]
+        [HttpGet]
+        public async Task<ActionResult> Part1(string Id)
+        {
+            string decryptedId = string.Empty;
+            int decryptedIntId = 0;
+            try
+            {
+                // Decrypt the  id using Unprotect method
+                decryptedId = protector.Unprotect(Id);
+                decryptedIntId = Convert.ToInt32(decryptedId);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "This error occure because Id value change by user.");
+                return RedirectToAction("Error", "Error");
+            }
+
+            BasicDetail? basicDetail = await unitOfWork.BasicDetail.Get(decryptedIntId);
+            if (basicDetail != null)
+            {
+                HttpContext.Session.SetInt32(SessionKeyStep, basicDetail.Step);
+                HttpContext.Session.SetInt32(SessionKeyCurStep, 1);
+
+                if (basicDetail.Step == 0 || basicDetail.IsSubmit == true)
+                    return RedirectToAction("Index");
+                ViewBag.Step = basicDetail.Step;
+
+                BasicDetailUpdVMPart1 newBasicDetail = _mapper.Map<BasicDetail, BasicDetailUpdVMPart1>(basicDetail);
+
+                newBasicDetail.EncryptedId = Id;
+                newBasicDetail.BasicDetailId = decryptedIntId;
+
+                return View(newBasicDetail);
+            }
+            else
+            {
+                Response.StatusCode = 404;
+                return View("BasicDetailNotFound", decryptedId.ToString());
+            }
+        }
+        [Authorize(Roles = "Admin,User")]
+        [HttpPost]
+        public async Task<IActionResult> Part1(BasicDetailUpdVMPart1 model)
+        {
+            BasicDetail? basicDetail = await unitOfWork.BasicDetail.Get(model.BasicDetailId);
+            if (basicDetail != null)
+            {
+                if (basicDetail.Step > 0)
+                    return RedirectToAction("Part2", new { Id = model.EncryptedId });
+                else
+                    return RedirectToAction("Part1", new { Id = model.EncryptedId });
+            }
+            else
+            {
+                Response.StatusCode = 404;
+                return View("BasicDetailNotFound", model.BasicDetailId);
+            }
+        }
+        [HttpGet]
+        [Authorize(Roles = "Admin,User")]
+        public async Task<ActionResult> InaccurateData()
+        {
+            var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var allrecord = await Task.Run(() => unitOfWork.BasicDetailTemp.GetALLBasicDetailTemp(Convert.ToInt32(userId)));
+            _logger.LogInformation(1001, "Index Page Of Basic Detail Temp View");
+            ViewBag.Title = "List of Inaccurate Data";
+            return View(allrecord);
+        }
+        [HttpGet]
+        [Authorize(Roles = "Admin,User")]
+        public Task<ViewResult> Registration()
+        {
             HttpContext.Session.SetInt32(SessionKeyStep, 0);
             HttpContext.Session.SetInt32(SessionKeyCurStep, 1);
             ViewBag.OptionsRegistrationType = service.GetRegistrationType();

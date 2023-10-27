@@ -43,24 +43,28 @@
                         <div class="row mb-3 required">
                             <label asp-for="ServiceNo" class="col-sm-3 col-form-label form-label"></label>
                             <div class="col-sm-4">
+                                <input asp-for="ServiceNo" class="form-control" placeholder="IC-12345X/JC-12345X" readonly />
                                 <span asp-validation-for="ServiceNo" class="text-danger"></span>
                             </div>
                         </div>
                         <div class="row mb-3">
                             <label asp-for="DOB" class="col-sm-3 col-form-label form-label"></label>
                             <div class="col-sm-4">
+                                <input asp-for="DOB" type="date" class="form-control" max="2999-12-31" readonly />
                                 <span asp-validation-for="DOB" class="text-danger"></span>
                             </div>
                         </div>
                         <div class="row mb-3">
                             <label asp-for="DateOfCommissioning" class="col-sm-3 col-form-label form-label"></label>
                             <div class="col-sm-4">
+                                <input asp-for="DateOfCommissioning" type="date" class="form-control" max="2999-12-31" />
                                 <span asp-validation-for="DateOfCommissioning" class="text-danger"></span>
                             </div>
                         </div>
                         <div class="row mb-3 required">
                             <label asp-for="PermanentAddress" class="col-sm-3 col-form-label form-label"></label>
                             <div class="col-sm-8">
+                                <input asp-for="PermanentAddress" class="form-control" placeholder="" />
                                 <span asp-validation-for="PermanentAddress" class="text-danger"></span>
                             </div>
                         </div>
