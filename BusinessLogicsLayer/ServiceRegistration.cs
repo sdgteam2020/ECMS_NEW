@@ -1,5 +1,6 @@
 ﻿using BusinessLogicsLayer.Appt;
 using BusinessLogicsLayer.BasicDet;
+using BusinessLogicsLayer.BasicDetTemp;
 using BusinessLogicsLayer.Bde;
 using BusinessLogicsLayer.BdeCat;
 using BusinessLogicsLayer.BdeCate;
@@ -56,6 +57,9 @@ namespace BusinessLogicsLayer
 
             services.AddTransient<IBasicDetailBL, BasicDetailBL>();
             services.AddTransient<IBasicDetailDB, BasicDetailDB>();
+
+            services.AddTransient<IBasicDetailTempBL,BasicDetailTempBL>();
+            services.AddTransient<IBasicDetailTempDB, BasicDetailTempDB>();
 
 
             //services.AddDbContext<ApplicationDbContext>(opt => opt.UseSqlServer("Server=SDG20\\SQLEXPRESS; Database=AFSAC;Integrated Security=True;MultipleActiveResultSets=True;TrustServerCertificate=True"));
