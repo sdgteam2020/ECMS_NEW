@@ -312,7 +312,7 @@ namespace DataTransferObject.Requests
         [Display(Name = "PermanentAddress", ResourceType = typeof(Resource))]
         public string PermanentAddress { get; set; } = string.Empty;
 
-        public int step { get; set; }
+        public int Step { get; set; }
 
         [NotMapped]
         public string EncryptedId { get; set; }
@@ -395,7 +395,7 @@ namespace DataTransferObject.Requests
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
         public int DistrictId { get; set; }
         public District? District { get; set; }
-        public int step { get; set; }
+        public int Step { get; set; }
         public DateTime UpdatedOn { get; set; } = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
 
         [ScaffoldColumn(false)]

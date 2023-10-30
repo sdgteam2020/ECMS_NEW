@@ -462,8 +462,11 @@ namespace DataAccessLayer.Migrations
 
             modelBuilder.Entity("DataTransferObject.Domain.Master.MapUnit", b =>
                 {
-                    b.Property<int>("UnitId")
+                    b.Property<int>("UnitMapId")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UnitMapId"));
 
                     b.Property<int>("BdeId")
                         .HasColumnType("int");
@@ -480,7 +483,7 @@ namespace DataAccessLayer.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
-                    b.Property<int>("UnitMapId")
+                    b.Property<int>("UnitId")
                         .HasColumnType("int");
 
                     b.Property<string>("UnitName")
@@ -494,7 +497,7 @@ namespace DataAccessLayer.Migrations
                     b.Property<int>("Updatedby")
                         .HasColumnType("int");
 
-                    b.HasKey("UnitId");
+                    b.HasKey("UnitMapId");
 
                     b.HasIndex("BdeId");
 
@@ -503,6 +506,8 @@ namespace DataAccessLayer.Migrations
                     b.HasIndex("CorpsId");
 
                     b.HasIndex("DivId");
+
+                    b.HasIndex("UnitId");
 
                     b.ToTable("MapUnit");
                 });
@@ -605,6 +610,9 @@ namespace DataAccessLayer.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
+                    b.Property<int>("Step")
+                        .HasColumnType("int");
+
                     b.Property<DateTime?>("UpdatedOn")
                         .IsRequired()
                         .HasColumnType("datetime2");
@@ -617,6 +625,50 @@ namespace DataAccessLayer.Migrations
                     b.HasIndex("DistrictId");
 
                     b.ToTable("BasicDetails");
+                });
+
+            modelBuilder.Entity("DataTransferObject.Domain.Model.BasicDetailTemp", b =>
+                {
+                    b.Property<int>("BasicDetailTempId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("BasicDetailTempId"));
+
+                    b.Property<DateTime>("DOB")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("DateOfCommissioning")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(36)
+                        .HasColumnType("nvarchar(36)");
+
+                    b.Property<string>("PermanentAddress")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("ServiceNo")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTime?>("UpdatedOn")
+                        .IsRequired()
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Updatedby")
+                        .HasColumnType("int");
+
+                    b.HasKey("BasicDetailTempId");
+
+                    b.ToTable("BasicDetailTemps");
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Model.DocUpload", b =>
