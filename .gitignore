@@ -278,3 +278,5 @@ AppPackages/
 /.vs/AFSAC/v17/.suo
 /.vs/AFSAC/v17/.suo
 /.vs/AFSAC/DesignTimeBuild/.dtbcache.v2
+/DataAccessLayer/Migrations/20231030041207_vv1.cs
+/DataAccessLayer/Migrations/20231030041207_vv1.Designer.cs
