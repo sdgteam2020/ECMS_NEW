@@ -11,6 +11,7 @@
             <div class="card-body">
                 <input hidden asp-for="BasicDetailId" />
                 <input hidden asp-for="EncryptedId" />
+                <input hidden asp-for="DOB"/>
                 <div class="row">
                     <div class="col-xl-12">
                         <div class="row mb-3 required">
@@ -30,7 +31,7 @@
                         <div class="row mb-3">
                             <label asp-for="DOB" class="col-sm-3 col-form-label form-label"></label>
                             <div class="col-sm-4">
-                                <input asp-for="DOB" type="date" class="form-control" max="2999-12-31" readonly />
+                                <input type="text" id="DOB_" name="DOB_" class="form-control" value="@Model.DOB.ToString("dd/MMM/yyyy")" readonly />
                                 <span asp-validation-for="DOB" class="text-danger"></span>
                             </div>
                         </div>

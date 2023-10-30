@@ -285,11 +285,14 @@ function getData() {
             "ICNumber": $("#ServiceNumber").val()
         },
         success: function (response, status) {
+            alert(JSON.stringify(response));
             $("#Name").val(response.Name);
             $("#ServiceNo").val(response.ServiceNo);
             $("#DOB").val(response.DOB.split('T')[0]);
+            $("#DOB_").val(moment(response.DOB).format("DD-MMM-YYYY"));
             $("#DateOfCommissioning").val(response.DateOfCommissioning.split('T')[0]);
             $("#PermanentAddress").val(response.PermanentAddress);
+            $("#DOB").html("2019-07-22");
         }
     });
 }

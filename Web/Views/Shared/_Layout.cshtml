@@ -410,6 +410,7 @@
         $(document).ready(function () {
 
             $('[data-toggle="tooltip"]').tooltip();
+            
 
             $("#loading").hide();
             $(document).ajaxStart(function () {
@@ -431,6 +432,7 @@
                 sessionStorage.persid = null
             })
         });
+      
     </script>
 
 
@@ -438,6 +440,7 @@
     @*<script src="~/js/bootstrap.min.js"></script>*@
 
     @*    <script src="~/js/scripts.js"></script>*@
+    <script src="~/js/moment.js"></script>
     <script src="~/js/jssidemenu/vendor.bundle.base.js"></script>
     <script src="~/js/jssidemenu/hoverable-collapse.js"></script>
     <script src="~/js/jssidemenu/off-canvas.js"></script>
