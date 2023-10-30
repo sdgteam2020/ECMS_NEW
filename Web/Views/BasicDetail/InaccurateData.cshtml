@@ -1,4 +1,4 @@
-﻿@model List<DTOBasicDetailRequest>
+﻿@model List<DTOBasicDetailTempRequest>
 <link rel="stylesheet" href="~/lib/bootstrap/dist/assets/plugin/datatables/responsive.dataTables.min.css">
 <link rel="stylesheet" href="~/lib/bootstrap/dist/assets/plugin/datatables/dataTables.bootstrap5.min.css">
 <div class="row align-items-center">
@@ -6,7 +6,6 @@
         <div class="card-header py-3 no-bg bg-transparent d-flex align-items-center px-0 justify-content-between border-bottom flex-wrap">
             <h3 class="h4 mb-0">@ViewBag.Title</h3>
             <div class="col-auto d-flex w-sm-100 mt-2 mt-sm-0">
-                <a asp-controller="BasicDetail" asp-action="Registration" class="btn btn-dark btn-set-task w-sm-100"><i class="icofont-plus-circle me-2 fs-6"></i>Add I-card</a>
             </div>
         </div>
     </div>
@@ -19,14 +18,12 @@
                     <thead>
                         <tr>
                             <th>@Html.DisplayNameFor(model => model[0].Sno)</th>
-                            <th>@Html.DisplayNameFor(model => model[0].DateOfIssue)</th>
                             <th>@Html.DisplayNameFor(model => model[0].Name)</th>
-                            <th>@Html.DisplayNameFor(model => model[0].Rank)</th>
-                            <th>@Html.DisplayNameFor(model => model[0].ArmService)</th>
                             <th>@Html.DisplayNameFor(model => model[0].ServiceNo)</th>
                             <th>@Html.DisplayNameFor(model => model[0].DOB)</th>
-                            <th>@Html.DisplayNameFor(model => model[0].AadhaarNo)</th>
-                            <th>Action</th>
+                            <th>@Html.DisplayNameFor(model => model[0].DateOfCommissioning)</th>
+                            <th>@Html.DisplayNameFor(model => model[0].PermanentAddress)</th>
+@*                             <th>Action</th> *@
                         </tr>
                     </thead>
                     <tbody>
@@ -34,30 +31,17 @@
                         {
                             <tr>
                                 <td>@item.Sno</td>
-                                <td>@(item.DateOfIssue != null ? @item.DateOfIssue.Value.ToString("dd/MM/yyyy") : "No Date")</td>
                                 <td>@item.Name</td>
-                                <td>@item.Rank</td>
-                                <td>@item.ArmService</td>
                                 <td>@item.ServiceNo</td>
-                                <td>@(item.DOB != null ? @item.DOB.Value.ToString("dd/MM/yyyy") : "No Date")</td>
-                                <td>@item.AadhaarNo</td>
-                                <td>
+                                <td>@(item.DOB.ToString("dd/MM/yyyy"))</td>
+                                <td>@item.DateOfCommissioning</td>
+                                <td>@item.PermanentAddress</td>
+@*                                 <td>
                                     <div class="d-flex p-2">
-                                        <a asp-controller="BasicDetail" asp-action="View" asp-route-Id="@item.EncryptedId" class="text-primary mr-2"><i class="fa fa-eye fa-lg"></i></a>
-                                        <a asp-controller="BasicDetail" asp-action="Part1" asp-route-Id="@item.EncryptedId" class="text-primary mr-2"><i class="fas fa-edit fa-lg"></i></a>
-                                        <form method="post" asp-controller="BasicDetail" asp-action="delete" asp-route-Id="@item.EncryptedId">
-                                            <span id="confirmDeleteSpan_@item.BasicDetailId" style="display:none">
-                                                <span>Are you sure you want to delete ?</span>
-                                                <button type="submit" class="btn btn-danger">Yes</button>
-                                                <a href="#" class="btn btn-primary" onclick="confirmDelete('@item.BasicDetailId',false)">No</a>
-                                            </span>
-                                            <span id="deleteSpan_@item.BasicDetailId">
-                                                <a href="#" class="text-danger mr-2" onclick="confirmDelete('@item.BasicDetailId',true)"><i class="fas fa-trash-alt fa-lg"></i></a>
-                                            </span>
-                                        </form>
+                                        <a asp-controller="BasicDetail" asp-action="RegistrationEdit" asp-route-Id="@item.EncryptedId" class="text-primary mr-2"><i class="fas fa-edit fa-lg"></i></a>
                                     </div>
 
-                                </td>
+                                </td> *@
                             </tr>
                         }
                     </tbody>
@@ -66,11 +50,10 @@
         </div>
     </div>
 </div><!-- Row End -->
-
 @section Scripts{
     <script asp-src-include="~/js/CustomScript.js"></script>
     <!-- Jquery Core Js -->
-@*    <script src="~/lib/bootstrap/dist/assets/bundles/libscripts.bundle.js"></script>*@
+    @*    <script src="~/lib/bootstrap/dist/assets/bundles/libscripts.bundle.js"></script>*@
 
     <!-- Plugin Js-->
     <script asp-src-include="~/lib/bootstrap/dist/assets/bundles/dataTables.bundle.js"></script>

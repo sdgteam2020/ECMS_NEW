@@ -1,5 +1,6 @@
 ﻿using BusinessLogicsLayer.Appt;
 using BusinessLogicsLayer.BasicDet;
+using BusinessLogicsLayer.BasicDetTemp;
 using BusinessLogicsLayer.Bde;
 using BusinessLogicsLayer.BdeCat;
 using BusinessLogicsLayer.BdeCate;

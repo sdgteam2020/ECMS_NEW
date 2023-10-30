@@ -1,5 +1,6 @@
 ﻿using BusinessLogicsLayer.Appt;
 using BusinessLogicsLayer.BasicDet;
+using BusinessLogicsLayer.BasicDetTemp;
 using BusinessLogicsLayer.Bde;
 using BusinessLogicsLayer.BdeCat;
 using BusinessLogicsLayer.Corps;
@@ -24,7 +25,7 @@ namespace BusinessLogicsLayer
     {
 
       
-        public UnitOfWork(IUserBL _user, IComd _comds, ICorpsBL _corpsBL, IBdeBL _bdeCat, IDivBL divBL, IUnitBL unit, IMapUnitBL MapUnitBL, IFormationBL FormationBL, IApptBL apptBL, IArmedBL armedBL, IBasicDetailBL _basicDetail)
+        public UnitOfWork(IUserBL _user, IComd _comds, ICorpsBL _corpsBL, IBdeBL _bdeCat, IDivBL divBL, IUnitBL unit, IMapUnitBL MapUnitBL, IFormationBL FormationBL, IApptBL apptBL, IArmedBL armedBL, IBasicDetailBL _basicDetailBL,IBasicDetailTempBL _basicDetailTempBL)
         {
             Users = _user;
             Comds = _comds;
@@ -36,7 +37,8 @@ namespace BusinessLogicsLayer
             Appt = apptBL;
             Armed = armedBL;
             Unit = unit;
-            BasicDetail = _basicDetail;
+            BasicDetail = _basicDetailBL;
+            BasicDetailTemp = _basicDetailTempBL;
         }
         public IUserBL Users { get; }
 
@@ -51,6 +53,7 @@ namespace BusinessLogicsLayer
         public IApptBL Appt { get; }
         public IArmedBL Armed { get; }
         public IBasicDetailBL BasicDetail { get; }
+        public IBasicDetailTempBL BasicDetailTemp { get; }
         public async Task<List<DTOMasterResponse>> GetAllMMaster(DTOMasterRequest Data)
         {
             List<DTOMasterResponse> lst = new List<DTOMasterResponse>();
