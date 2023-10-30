@@ -24,10 +24,10 @@ namespace DataTransferObject.Domain.Model
         public string? UnitSusNoPart2 { get; set; }
         public string? UnitName { get; set; }
         public string? TypeOfUnit { get; set; }
-        public string? Comd { get; set; }
-        public string? Corps { get; set; }
-        public string? Div { get; set; }
-        public string? Bde { get; set; }
+        public int ComdId { get; set; }
+        public int Corps { get; set; }
+        public int Div { get; set; }
+        public int Bde { get; set; }
         public string? InitiatingOfficerArmyNumber { get; set; }
         public string? IOArmyNumberPart1 { get; set; }
         public int? IOArmyNumberPart2 { get; set; }

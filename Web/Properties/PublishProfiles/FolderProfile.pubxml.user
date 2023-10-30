@@ -5,7 +5,7 @@ https://go.microsoft.com/fwlink/?LinkID=208121.
 <Project>
   <PropertyGroup>
     <_PublishTargetUrl>D:\AFSAC_pub</_PublishTargetUrl>
-    <History>True|2023-10-18T10:02:32.2158501Z;</History>
+    <History>True|2023-10-27T09:53:20.3381476Z;False|2023-10-27T15:22:08.1496604+05:30;True|2023-10-27T12:52:37.3438899+05:30;True|2023-10-26T17:13:09.1141368+05:30;False|2023-10-26T17:12:38.0646577+05:30;True|2023-10-26T17:08:18.6693161+05:30;True|2023-10-18T15:32:32.2158501+05:30;</History>
     <LastFailureDetails />
   </PropertyGroup>
 </Project>
