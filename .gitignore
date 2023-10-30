@@ -280,6 +280,7 @@ AppPackages/
 /.vs/AFSAC/DesignTimeBuild/.dtbcache.v2
 /DataAccessLayer/Migrations/20231030041207_vv1.cs
 /DataAccessLayer/Migrations/20231030041207_vv1.Designer.cs
+/.vs/ProjectEvaluation/afsac.metadata.v7.bin
 /DataAccessLayer/Migrations/20231030041207_vv1.cs
 /DataAccessLayer/Migrations/20231030041207_vv1.Designer.cs
 /.vs/ProjectEvaluation/afsac.metadata.v7.bin
