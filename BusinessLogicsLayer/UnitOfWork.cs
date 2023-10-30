@@ -121,7 +121,21 @@ namespace BusinessLogicsLayer
 
                 }
             }
+            else if (Data.id == Convert.ToInt16(Constants.MasterTbl.Appt))
+            {
+                var Ret = await Appt.GetAll();
+                foreach (var Forma in Ret)
+                {
 
+                    DTOMasterResponse db = new DTOMasterResponse();
+
+                    db.Id = Forma.ApptId;
+                    db.Name = Forma.AppointmentName;
+                    lst.Add(db);
+
+
+                }
+            }
             //Constants.MasterTbl.Command;
             return lst;
         }

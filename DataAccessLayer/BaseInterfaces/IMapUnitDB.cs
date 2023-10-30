@@ -13,5 +13,7 @@ namespace DataAccessLayer.BaseInterfaces
     {
         public Task<bool> GetByName(MapUnit Data);
         public Task<List<DTOMapUnitResponse>> GetALLUnit(DTOMHierarchyRequest unit);
+        public Task<List<DTOMapUnitResponse>> GetALLByUnitName(string Unitname);
+        public Task<DTOMapUnitResponse> GetALLByUnitMapId(int UnitMapId);
     }
 }
