@@ -26,13 +26,14 @@ $(document).ready(function () {
     $('#ddlBde').on('change', function () {
         BindDataMapUnit();
     });
-    $("#btnMapUnitReset").click(function () {
+    $("#btnUnitMapReset").click(function () {
         ResetMapUnit();
     });
 
 
 
     $("#btnUnitMapsave").click(function () {
+        
         if ($("#SaveFormMapUnit")[0].checkValidity()) {
 
             Swal.fire({
@@ -45,11 +46,12 @@ $(document).ready(function () {
                 confirmButtonText: 'Yes, Save it!'
             }).then((result) => {
                 if (result.isConfirmed) {
-
-                    if ($("#SpnUnitMapUnitId").html() == 0) {
-                        UnitSave();
+                  
+                    if ($("#SpnUnitMapId").html() == 0) {
+                         UnitSave();
+                       
                     } else {
-                      Save();
+                        SaveUnitMap();
                     }
                 }
             })
@@ -108,11 +110,11 @@ $(document).ready(function () {
         $("#SpnUnitMapId").html(0);
         $('#txtUnit').attr('readonly', false);
         if ($(this).val().length > 7) {
-            GetUnitDetails($(this).val());
+            GetUnitDetails($(this).val(),1);
     }
     });
 });
-function GetUnitDetails(val) {
+function GetUnitDetails(val,flag) {
     var userdata =
     {
         "Sus_no": val,
@@ -142,7 +144,9 @@ function GetUnitDetails(val) {
                     $('#txtUnit').attr('readonly', true);
                     $("#SpnUnitMapId").html(response.UnitId);
                     
-
+                    if (flag == 2) {
+                        SaveUnitMap();
+                    }
 
                 }
             }
@@ -197,21 +201,21 @@ function BindDataMapUnit() {
                     for (var i = 0; i < response.length; i++) {
 
                         listItem += "<tr>";
-                        listItem += "<td class='d-none'><span id='spnMUnitId'>" + response[i].unitId + "</span><span id='spnMbdeId'>" + response[i].bdeId + "</span><span id='spnMDivId'>" + response[i].divId + "</span><span id='spnMcorpsId'>" + response[i].corpsId + "</span><span id='spncomdId'>" + response[i].comdId + "</span></td>";
+                        listItem += "<td class='d-none'><span id='spnMapUnitId'>" + response[i].UnitMapId + "</span><span id='spnMUnitId'>" + response[i].UnitId + "</span><span id='spnMbdeId'>" + response[i].BdeId + "</span><span id='spnMDivId'>" + response[i].DivId + "</span><span id='spnMcorpsId'>" + response[i].CorpsId + "</span><span id='spncomdId'>" + response[i].ComdId + "</span></td>";
                         listItem += "<td>";
                         listItem += "<div class='custom-control custom-checkbox small'>";
-                        listItem += "<input type='checkbox' class='custom-control-input' id='" + response[i].unitId + "'>";
-                        listItem += "<label class='custom-control-label' for='" + response[i].unitId + "'></label>";
+                        listItem += "<input type='checkbox' class='custom-control-input' id='" + response[i].UnitMapId + "'>";
+                        listItem += "<label class='custom-control-label' for='" + response[i].UnitMapId + "'></label>";
                         listItem += "</div>";
                         listItem += "</td>";
                         listItem += "<td class='align-middle'>" + (i + 1) + "</td>";
                        
-                        listItem += "<td class='align-middle'><span id='comdName'>" + response[i].comdName + "</span></td>";
-                        listItem += "<td class='align-middle'><span id='corpsName'>" + response[i].corpsName + "</span></td>";
-                        listItem += "<td class='align-middle'><span id='divName'>" + response[i].divName + "</span></td>";
-                        listItem += "<td class='align-middle'><span id='bdeName'>" + response[i].bdeName + "</span></td>";
-                        listItem += "<td class='align-middle'><span id='unitName'>" + response[i].unitName + "</span></td>";
-                       
+                        listItem += "<td class='align-middle'><span id='comdName'>" + response[i].ComdName + "</span></td>";
+                        listItem += "<td class='align-middle'><span id='corpsName'>" + response[i].CorpsName + "</span></td>";
+                        listItem += "<td class='align-middle'><span id='divName'>" + response[i].DivName + "</span></td>";
+                        listItem += "<td class='align-middle'><span id='bdeName'>" + response[i].BdeName + "</span></td>";
+                        listItem += "<td class='align-middle'><span id='unitName'>" + response[i].UnitName + "</span></td>";
+                        listItem += "<td class='align-middle'><span id='Sus_no'>" + response[i].Sus_no + response[i].Suffix + "</span></td>";
                         listItem += "<td class='align-middle'><span id='btnedit'><button type='button' class='cls-btnedit btn btn-icon btn-round btn-primary mr-1'><i class='fas fa-edit'></i></button></span><button type='button' class='cls-btnDelete btn-icon btn-round btn-danger mr-1'><i class='fas fa-trash-alt'></i></button></td>";
 
                        
@@ -277,9 +281,13 @@ function BindDataMapUnit() {
                         mMsaterByParent($(this).closest("tr").find("#spnMbdeId").html(), "ddlBde", 4, $('#ddlCommand').val(), $(this).closest("tr").find("#spnMcorpsId").html(), $(this).closest("tr").find("#spnMDivId").html(), 0);///ComdId,CorpsId,DivId,BdeId
 
 
-                        $(".spnUnitMapUnitId").html($(this).closest("tr").find("#spnMUnitId").html());
+                        $("#spnUnitMapUnitId").html($(this).closest("tr").find("#spnMapUnitId").html());
+
+                        $("#SpnUnitMapId").html($(this).closest("tr").find("#spnMUnitId").html());
 
                         $("#txtUnit").val($(this).closest("tr").find("#unitName").html());
+                        $("#txtSusno").val($(this).closest("tr").find("#Sus_no").html());
+                        $("#AddNewUnitmap").modal('show');
                         $("#btnMapUnitsave").val("Update");
                     });
 
@@ -321,14 +329,66 @@ function BindDataMapUnit() {
     });
 
 }
-function Save() {
+
+function UnitSave() {
+
+    /*  alert($('#bdaymonth').val());*/
+
+    $.ajax({
+        url: '/Master/SaveUnit',
+        type: 'POST',
+        data: { "Sus_no": $("#txtSusno").val().substring(0, 7), "UnitId": 0, "Suffix": $("#txtSusno").val().substring(8, 7), "Unit_desc": $("#txtUnit").val(), "IsVerify": false }, //get the search string
+        success: function (result) {
+
+
+            if (result == DataSave) {
+                toastr.success('Unit has been saved');
+                GetUnitDetails($("#txtSusno").val(),2);
+                /*  $("#AddNewM").modal('hide');*/
+               
+            }
+            else if (result == DataUpdate) {
+                toastr.success('Unit has been Updated');
+
+                /*  $("#AddNewM").modal('hide');*/
+              
+              
+            }
+            else if (result == DataExists) {
+
+                toastr.error('Unit Name Exits!');
+
+            }
+            else if (result == InternalServerError) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Something went wrong or Invalid Entry!',
+
+                })
+
+            } else {
+                if (result.length > 0) {
+                    for (var i = 0; i < result.length; i++) {
+                        toastr.error(result[i][0].errorMessage)
+                    }
+
+
+                }
+
+
+            }
+        }
+    });
+}
+function SaveUnitMap() {
 
     /*  alert($('#bdaymonth').val());*/
    
     $.ajax({
         url: '/Master/SaveMapUnit',
         type: 'POST',
-        data: { "UnitName": $("#txtUnit").val(), "ComdId": $("#ddlCommand").val(), "CorpsId": $("#ddlCorps").val(), "DivId": $("#ddlDiv").val(), "BdeId": $("#ddlBde").val(), "UnitId": $(".spnUnitMapUnitId").html() }, //get the search string
+        data: { "UnitName": $("#txtUnit").val(), "ComdId": $("#ddlCommand").val(), "CorpsId": $("#ddlCorps").val(), "DivId": $("#ddlDiv").val(), "BdeId": $("#ddlBde").val(), "UnitMapId": $("#spnUnitMapUnitId").html(), "UnitId": $("#SpnUnitMapId").html() }, //get the search string
         success: function (result) {
 
 
@@ -338,7 +398,7 @@ function Save() {
                 toastr.success('Unit has been saved');
                 ResetMapUnit();
                 BindDataMapUnit();
-
+                $("#AddNewUnitmap").modal('hide');
             }
             else if (result == DataUpdate) {
 
@@ -346,6 +406,7 @@ function Save() {
                 toastr.success('Unit has been Updated');
                 ResetMapUnit();
                 BindDataMapUnit();
+                $("#AddNewUnitmap").modal('hide');
 
             }
             else if (result == DataExists) {
@@ -379,7 +440,11 @@ function ResetMapUnit() {
     $("#ddlCorps").val("");
     $("#ddlDiv").val("");
     $("#ddlBde").val("");
-    $(".spnBdeId").html("0");
+    $("#txtSusno").val("");
+    $("#txtUnit").val("");
+
+    $("#spnUnitMapUnitId").html("0");
+    $("#SpnUnitMapId").html("0");
     $("#btnsave").val("Save");
     $("#txtUnit").val("");
 }

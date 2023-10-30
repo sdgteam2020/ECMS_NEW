@@ -8,7 +8,8 @@ using System.Threading.Tasks;
 namespace DataTransferObject.Response
 {
     public class DTOMapUnitResponse
-    {
+    { 
+        public int UnitMapId { get; set; }
         public int UnitId { get; set; }
         public string UnitName { get; set; }
         public int BdeId { get; set; }
@@ -19,8 +20,8 @@ namespace DataTransferObject.Response
         public string CorpsName { get; set; }
         public int DivId { get; set; }
         public string DivName { get; set; }
+        public string Sus_no { get; set; }
 
-       
-
+        public string Suffix { get; set; }
     }
 }

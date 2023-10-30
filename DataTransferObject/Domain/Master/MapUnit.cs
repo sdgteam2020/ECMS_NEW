@@ -10,7 +10,7 @@ namespace DataTransferObject.Domain.Master
 {
     public class MapUnit : Common
     {
-        [Key]
+        [Key] 
         public int UnitMapId { get; set; }
         [Required(ErrorMessage = "required!")]
         [RegularExpression("^[a-zA-Z0-9 ]*$", ErrorMessage = "Only Alphabets and Numbers allowed.")]

@@ -25,7 +25,7 @@ namespace DataAccessLayer
 
         public async Task<bool> GetByName(MapUnit Data)
         {
-            var ret = _context.MapUnit.Any(p => p.UnitName.ToUpper() == Data.UnitName.ToUpper());
+            var ret = _context.MapUnit.Any(p => p.UnitId == Data.UnitId);
             return ret;
         }
 
@@ -39,10 +39,11 @@ namespace DataAccessLayer
 
             //on new { Div.UnitId, a.Years_Months } equals new { c.UnitId, c.Years_Months }
             var Div = (from uni in _context.MapUnit
-            where (unit.ComdId == 0 ? uni.ComdId == uni.ComdId : uni.ComdId == unit.ComdId)
-            && (unit.CorpsId == 0 ? uni.CorpsId == uni.CorpsId : uni.CorpsId == unit.CorpsId)
-            && (unit.DivId == 0 ? uni.DivId == uni.DivId : uni.DivId == unit.DivId)
-            && (unit.BdeId == 0 ? uni.BdeId == uni.BdeId : uni.BdeId == unit.BdeId)
+            //where (unit.ComdId == 0 ? uni.ComdId == uni.ComdId : uni.ComdId == unit.ComdId)
+            //&& (unit.CorpsId == 0 ? uni.CorpsId == uni.CorpsId : uni.CorpsId == unit.CorpsId)
+            //&& (unit.DivId == 0 ? uni.DivId == uni.DivId : uni.DivId == unit.DivId)
+            //&& (unit.BdeId == 0 ? uni.BdeId == uni.BdeId : uni.BdeId == unit.BdeId)
+            join MUni in _context.MUnit on uni.UnitId equals MUni.UnitId
                        join Com in _context.MComd
                        on uni.ComdId equals Com.ComdId
                     //   on new { uni.ComdId } equals new { Com.ComdId }
@@ -52,8 +53,9 @@ namespace DataAccessLayer
                       
                        select new DTOMapUnitResponse
                        {
+                           UnitMapId= uni.UnitMapId,
                            UnitName = uni.UnitName,
-                          // UnitId = uni.UnitId,
+                           UnitId = uni.UnitId,
                            BdeId = bde.BdeId,  
                            BdeName = bde.BdeName,   
                            DivId = div.DivId,
@@ -62,6 +64,8 @@ namespace DataAccessLayer
                            CorpsName = cor.CorpsName,
                            ComdName = Com.ComdName,
                            ComdId = Com.ComdId,
+                           Suffix=MUni.Suffix,
+                           Sus_no=MUni.Sus_no
                        }
                      ).Distinct().ToList(); ;
 

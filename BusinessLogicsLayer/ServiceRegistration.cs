@@ -57,6 +57,8 @@ namespace BusinessLogicsLayer
             services.AddTransient<IBasicDetailBL, BasicDetailBL>();
             services.AddTransient<IBasicDetailDB, BasicDetailDB>();
 
+            services.AddTransient<IUserProfileBL, UserProfileBL>();
+            services.AddTransient<IUserProfileDB, UserProfileDB>();
 
             //services.AddDbContext<ApplicationDbContext>(opt => opt.UseSqlServer("Server=SDG20\\SQLEXPRESS; Database=AFSAC;Integrated Security=True;MultipleActiveResultSets=True;TrustServerCertificate=True"));
             //services.AddDbContext<ApplicationDbContext>(opt => opt.UseSqlServer("Server=.\\sqlexpress; Database=AFSAC;User Id=sa; Password=Admin@2018;MultipleActiveResultSets=True;TrustServerCertificate=True"));
@@ -79,6 +81,6 @@ namespace BusinessLogicsLayer
 
             // return services;
         }
-        
+
     }
 }

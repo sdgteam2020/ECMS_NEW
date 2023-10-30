@@ -50,7 +50,7 @@ namespace Web.Controllers
             var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
             var usera = await userManager.FindByIdAsync(userId);
             int sno = 1;
-            var ProfileDataList = context.ProfileDatas.Where(x => x.Updatedby == Convert.ToInt32(userId)).ToList();
+            var ProfileDataList = context.ProfileData.Where(x => x.Updatedby == Convert.ToInt32(userId)).ToList();
 
             var allrecord = from e in ProfileDataList
                             orderby e.UpdatedOn descending
@@ -346,10 +346,10 @@ namespace Web.Controllers
                         {
                             goto xyz;
                         }
-                        profileData.Comd = model.Comd;
-                        profileData.Corps = model.Corps;
-                        profileData.Div = model.Div;
-                        profileData.Bde = model.Bde;
+                        //profileData.Comd = model.Comd;
+                        //profileData.Corps = model.Corps;
+                        //profileData.Div = model.Div;
+                        //profileData.Bde = model.Bde;
                         profileData.GISArmyNumberPart1 = model.IOArmyNumberPart1;
                         profileData.GISArmyNumberPart2 = model.IOArmyNumberPart2;
                         profileData.GISArmyNumberPart3 = model.IOArmyNumberPart3;
@@ -361,10 +361,10 @@ namespace Web.Controllers
                     }
                     else
                     {
-                        profileData.Comd = null;
-                        profileData.Corps = null;
-                        profileData.Div = null;
-                        profileData.Bde = null;
+                        //profileData.Comd = null;
+                        //profileData.Corps = null;
+                        //profileData.Div = null;
+                        //profileData.Bde = null;
                         profileData.GISArmyNumberPart1 = null;
                         profileData.GISArmyNumberPart2 = null;
                         profileData.GISArmyNumberPart3 = null;
