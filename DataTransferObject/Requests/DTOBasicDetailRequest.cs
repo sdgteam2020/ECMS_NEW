@@ -249,4 +249,35 @@ namespace DataTransferObject.Requests
         [NotMapped]
         public string? EncryptedId { get; set; }
     }
+    public class DTORegistrationRequest
+    {
+        public string RegistrationType { get; set; } = string.Empty;
+        public string ServiceNumber { get; set; } = string.Empty;
+
+        [Display(Name = "Name", ResourceType = typeof(Resource))]
+        [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
+        [MaxLength(36, ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "MaxLengthError")]
+        [RegularExpression(@"^[\w \.\,\?\;\:\""\''\[\]\!\@\#\$\%\&\*\(\)\-\=\+\\\/]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
+        public string Name { get; set; } = string.Empty;
+
+        [Display(Name = "ServiceNo", ResourceType = typeof(Resource))]
+        [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
+        [RegularExpression(@"^[\w \.\,\?\;\:\""\''\[\]\!\@\#\$\%\&\*\(\)\-\=\+\\\/]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
+        public string ServiceNo { get; set; } = string.Empty;
+
+        [Display(Name = "DOB", ResourceType = typeof(Resource))]
+        [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
+        public DateTime DOB { get; set; }
+
+        [Display(Name = "DateOfCommissioning", ResourceType = typeof(Resource))]
+        [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
+        public DateTime DateOfCommissioning { get; set; }
+
+        [Display(Name = "PermanentAddress", ResourceType = typeof(Resource))]
+        [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
+        [RegularExpression(@"^[\w \.\,\?\;\:\""\''\[\]\!\@\#\$\%\&\*\(\)\-\=\+\\\/]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
+        public string PermanentAddress { get; set; } = string.Empty;
+
+    }
+
 }
