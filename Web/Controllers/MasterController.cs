@@ -462,6 +462,30 @@ namespace Web.Controllers
             }
 
         }
+        public async Task<IActionResult> GetALLByUnitName(string UnitName)
+        {
+            try
+            {
+                return Json(await unitOfWork.MappUnit.GetALLByUnitName(UnitName));
+            }
+            catch (Exception ex)
+            {
+                return Json(KeyConstants.InternalServerError);
+            }
+
+        } 
+        public async Task<IActionResult> GetALLByUnitMapId(int UnitMapId)
+        {
+            try
+            {
+                return Json(await unitOfWork.MappUnit.GetALLByUnitMapId(UnitMapId));
+            }
+            catch (Exception ex)
+            {
+                return Json(KeyConstants.InternalServerError);
+            }
+
+        }
         public async Task<IActionResult> DeleteMapUnit(MapUnit dTO)
         {
             try

@@ -11,3 +11,4 @@ const Corps = 2;
 const Div = 3;
 const Bde = 4;
 const Formation = 5;
+const Appt = 6;
