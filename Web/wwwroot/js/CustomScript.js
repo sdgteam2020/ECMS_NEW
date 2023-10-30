@@ -277,6 +277,22 @@ function getUserData() {
         }
     });
 }
+function getData() {
+    $.ajax({
+        url: "/BasicDetail/GetData",
+        type: "POST",
+        data: {
+            "ICNumber": $("#ServiceNumber").val()
+        },
+        success: function (response, status) {
+            $("#Name").val(response.Name);
+            $("#ServiceNo").val(response.ServiceNo);
+            $("#DOB").val(response.DOB.split('T')[0]);
+            $("#DateOfCommissioning").val(response.DateOfCommissioning.split('T')[0]);
+            $("#PermanentAddress").val(response.PermanentAddress);
+        }
+    });
+}
 function confirmDelete(uniqueId, isDeleteClicked) {
     var deleteSpan = '#deleteSpan_' + uniqueId;
     var confirmDeleteSpan = '#confirmDeleteSpan_' + uniqueId;
