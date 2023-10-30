@@ -264,6 +264,7 @@ namespace DataTransferObject.Requests
 
         [Display(Name = "DOB", ResourceType = typeof(Resource))]
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
+        [DataType(DataType.Date)]
         public DateTime DOB { get; set; }
 
         [Display(Name = "DateOfCommissioning", ResourceType = typeof(Resource))]
