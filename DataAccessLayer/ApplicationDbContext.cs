@@ -37,6 +37,8 @@ namespace DataAccessLayer
         public DbSet<BasicDetail> BasicDetails { get; set; } = null!;
         public DbSet<ProfileData> ProfileData { get; set; } = null!;
         public DbSet<MUserProfile> UserProfile { get; set; } = null!;
+        public DbSet<ProfileData> ProfileDatas { get; set; } = null!;
+        public DbSet<BasicDetailTemp> BasicDetailTemps { get; set; } = null!;
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);

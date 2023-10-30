@@ -11,6 +11,8 @@ namespace BusinessLogicsLayer.Service
 {
     public interface IService
     {
+        public IEnumerable<SelectListItem> GetSubmitType();
+        public IEnumerable<SelectListItem> GetRegistrationType();
         public IEnumerable<SelectListItem> GetRole();
         public IEnumerable<SelectListItem> GetBloodGroup();
         public IEnumerable<SelectListItem> GetArmyNumberPart1();

@@ -67,6 +67,8 @@ namespace DataTransferObject.Domain.Model
         [Column(TypeName = "nvarchar(100)")]
         public string? PermanentAddress { get; set; }
         public bool IsDeleted { get; set; }
+
+        public int Step { get; set; }
         public bool IsSubmit { get; set; }
         public int? DistrictId { get; set; }
         public District? District { get; set; }

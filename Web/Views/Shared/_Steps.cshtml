@@ -1,0 +1,104 @@
+﻿@inject SignInManager<ApplicationUser> signInManager;
+@inject IHttpContextAccessor HttpContextAccessor
+@{
+
+    //int LasteStep = ViewBag.Step;
+    //int CurrentStep = ViewBag.CurStep;
+    int LasteStep = (int)HttpContextAccessor.HttpContext.Session.GetInt32("_Step");
+    int CurrentStep = (int)HttpContextAccessor.HttpContext.Session.GetInt32("_CurStep");
+
+    LasteStep = LasteStep + 1;
+    string Action = ViewBag.Action;
+    int totalstep = 3;
+
+}
+<style>
+    .step {
+        display: flex;
+        flex-wrap: nowrap;
+        width: auto;
+    }
+</style>
+
+<div class="mb-3">
+    <ul class="steps">
+        @for (int i = 1; i < totalstep; i++)
+        {
+
+            if (i <= LasteStep)
+            {
+                if (CurrentStep == i)
+                {
+                    if (Action == "Registration")
+                    {
+                        <li class="step step-active">
+                            <div class="step-content">
+                                <span class="step-circle">@CurrentStep</span>
+                                <a asp-controller="BasicDetail" asp-action="@(Action)">
+                                    <span class="step-text">Step @CurrentStep</span>
+                                </a>
+                            </div>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="step step-active">
+                            <div class="step-content">
+                                <span class="step-circle">@CurrentStep</span>
+                                <a asp-controller="BasicDetail" asp-action="@(Action)" asp-route-Id="@Model.EncryptedId">
+                                    <span class="step-text">Step @CurrentStep</span>
+                                </a>
+                            </div>
+                        </li>
+                    }
+                }
+                else
+                {
+                    <li class="step step-success">
+                        <div class="step-content">
+                            <span class="step-circle">@i</span>
+                            <a asp-controller="ResearchProposal" asp-action=@(Action) asp-route-Id="@Model.EncryptedId">
+                                <span class="step-text">Step @i</span>
+                            </a>
+                        </div>
+                    </li>
+                }
+            }
+            else
+            {
+                <li class="step">
+                    <div class="step-content">
+                        <span class="step-circle">@i </span>
+                        <span class="step-text">Step @i</span>
+                    </div>
+                </li>
+
+            }
+        }
+        @*<li class="step">
+        <div class="step-content">
+        <span class="step-circle">3</span>
+        <span class="step-text">Step 3</span>
+        </div>
+        </li>
+        <li class="step">
+        <div class="step-content">
+        <span class="step-circle">4</span>
+        <span class="step-text">Step 4</span>
+        </div>
+        </li>
+        <li class="step">
+        <div class="step-content">
+        <span class="step-circle">5</span>
+        <span class="step-text">Step 5</span>
+        </div>
+        </li>
+        <li class="step">
+        <div class="step-content">
+        <span class="step-circle">6</span>
+        <span class="step-text">Step 6</span>
+        </div>
+        </li>*@
+    </ul>
+</div>
+

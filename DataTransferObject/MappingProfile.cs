@@ -21,6 +21,8 @@ namespace DataTransferObject
             CreateMap<DTOBasicDetailCrtRequest, BasicDetail>();
             CreateMap<BasicDetail, DTOBasicDetailUpdRequest>();
             CreateMap<BasicDetail, DTOBasicDetailRequest>();
+            CreateMap<BasicDetail, BasicDetailUpdVMPart1>();
+            CreateMap<BasicDetail, BasicDetailUpdVMPart2>();
 
             CreateMap<DTODocUploadCrtRequest, DocUpload>();
             CreateMap<DocUpload, DTODocUploadUpdRequest>();

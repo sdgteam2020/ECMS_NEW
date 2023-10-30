@@ -4,6 +4,7 @@ using DataAccessLayer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccessLayer.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231030041207_vv1")]
+    partial class vv1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -160,82 +163,6 @@ namespace DataAccessLayer.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
-                });
-
-            modelBuilder.Entity("DataTransferObject.Domain.MUserProfile", b =>
-                {
-                    b.Property<int>("UserId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UserId"));
-
-                    b.Property<int>("ApptId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ArmyNo")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ArmyNo_Old")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("BdeId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ComdId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("CorpsId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("DivId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("GISOfficerArmyNo")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("IOArmyNo")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("InitOffrsArmyNo")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsSubmit")
-                        .HasColumnType("bit");
-
-                    b.Property<int?>("MUnitUnitId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("RankId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TypeOfUnit")
-                        .HasColumnType("int");
-
-                    b.Property<int>("UnitId")
-                        .HasColumnType("int");
-
-                    b.HasKey("UserId");
-
-                    b.HasIndex("ApptId");
-
-                    b.HasIndex("BdeId");
-
-                    b.HasIndex("ComdId");
-
-                    b.HasIndex("CorpsId");
-
-                    b.HasIndex("DivId");
-
-                    b.HasIndex("MUnitUnitId");
-
-                    b.ToTable("UserProfile");
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Master.Comd", b =>
@@ -493,27 +420,6 @@ namespace DataAccessLayer.Migrations
                     b.HasKey("FormationId");
 
                     b.ToTable("MFormation");
-                });
-
-            modelBuilder.Entity("DataTransferObject.Domain.Master.MRank", b =>
-                {
-                    b.Property<int>("RankId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RankId"));
-
-                    b.Property<string>("RankAbbreviation")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("RankName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("RankId");
-
-                    b.ToTable("MRank");
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Master.MUnit", b =>
@@ -825,17 +731,17 @@ namespace DataAccessLayer.Migrations
                     b.Property<string>("ArmyNumberPart3")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Bde")
-                        .HasColumnType("int");
+                    b.Property<string>("Bde")
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("ComdId")
-                        .HasColumnType("int");
+                    b.Property<string>("Comd")
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Corps")
-                        .HasColumnType("int");
+                    b.Property<string>("Corps")
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Div")
-                        .HasColumnType("int");
+                    b.Property<string>("Div")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("DomainId")
                         .HasColumnType("nvarchar(max)");
@@ -924,7 +830,7 @@ namespace DataAccessLayer.Migrations
 
                     b.HasKey("ProfileDataId");
 
-                    b.ToTable("ProfileData");
+                    b.ToTable("ProfileDatas");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
@@ -1028,56 +934,6 @@ namespace DataAccessLayer.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens", (string)null);
-                });
-
-            modelBuilder.Entity("DataTransferObject.Domain.MUserProfile", b =>
-                {
-                    b.HasOne("DataTransferObject.Domain.Master.MAppointment", "MAppointment")
-                        .WithMany()
-                        .HasForeignKey("ApptId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("DataTransferObject.Domain.Master.MBde", "Bde")
-                        .WithMany()
-                        .HasForeignKey("BdeId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("DataTransferObject.Domain.Master.Comd", "Comd")
-                        .WithMany()
-                        .HasForeignKey("ComdId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("DataTransferObject.Domain.Master.MCorps", "Corps")
-                        .WithMany()
-                        .HasForeignKey("CorpsId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("DataTransferObject.Domain.Master.MDiv", "Div")
-                        .WithMany()
-                        .HasForeignKey("DivId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("DataTransferObject.Domain.Master.MUnit", "MUnit")
-                        .WithMany()
-                        .HasForeignKey("MUnitUnitId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("Bde");
-
-                    b.Navigation("Comd");
-
-                    b.Navigation("Corps");
-
-                    b.Navigation("Div");
-
-                    b.Navigation("MAppointment");
-
-                    b.Navigation("MUnit");
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Master.District", b =>
