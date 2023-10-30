@@ -287,3 +287,4 @@ AppPackages/
 /.vs/ProjectEvaluation/afsac.projects.v7.bin
 /.gitignore
 /.gitignore
+/Web/Properties/PublishProfiles/FolderProfile.pubxml.user
