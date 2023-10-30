@@ -15,6 +15,7 @@ namespace BusinessLogicsLayer.Helpers
             internal const string Div = "3";
             internal const string Bde = "4";
             internal const string Formation = "5";
+            internal const string Appt = "6";
         }
         }
 }
