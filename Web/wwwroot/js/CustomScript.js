@@ -52,7 +52,7 @@ function beforeUploadPhotoSizeCheck(id) {
     }
 }
 function beforeSubmitValidateBasicDetail(id) {
-    debugger;
+    de
     let formId = '#' + id;
 
     //$('#ArmService').prop('required', true);
@@ -277,7 +277,20 @@ function getUserData() {
         }
     });
 }
-function getData() {
+function getData(id) {  
+    debugger
+    //let formId = '#' + id;
+    //$("#RegistrationType").prop('required', true);
+    //$("#ServiceNumber").prop('required', true);
+    ///*$.validator.unobtrusive.parse($(formId));*/
+    //$.validator.unobtrusive.parse("Reg");
+    //if ($(formId).valid()) {
+    //    var formData = $(formId).serialize();
+    //    console.log(formData);
+    //}
+    //else {
+    //    return false;
+    //}
     $.ajax({
         url: "/BasicDetail/GetData",
         type: "POST",

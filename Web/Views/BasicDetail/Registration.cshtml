@@ -4,30 +4,33 @@
     ViewBag.Title = "New Registration";
     ViewBag.Action = "Registration";
 }
-<div class="card-body">
-    <div class="row">
-        <div class="col-xl-12">
-            <div class="row mb-3 required">
-                <label asp-for="RegistrationType" class="col-sm-3 col-form-label form-label"></label>
-                <div class="col-sm-4">
-                    <select asp-for="RegistrationType" class="form-control" asp-items="ViewBag.OptionsRegistrationType">
-                    </select>
-                    <span asp-validation-for="RegistrationType" class="text-danger"></span>
+<form id="Reg" name="Reg">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="row mb-3 required">
+                    <label asp-for="RegistrationType" class="col-sm-3 col-form-label form-label"></label>
+                    <div class="col-sm-4">
+                        <select asp-for="RegistrationType" class="form-control" asp-items="ViewBag.OptionsRegistrationType">
+                        </select>
+                        <span asp-validation-for="RegistrationType" class="text-danger"></span>
+                    </div>
                 </div>
-            </div>
-            <div class="row mb-3 required">
-                <label asp-for="ServiceNumber" class="col-sm-3 col-form-label form-label"></label>
-                <div class="col-sm-4">
-                    <input asp-for="ServiceNumber" class="form-control" placeholder="IC-12345X/JC-12345X" />
-                    <span asp-validation-for="ServiceNumber" class="text-danger"></span>
+                <div class="row mb-3 required">
+                    <label asp-for="ServiceNumber" class="col-sm-3 col-form-label form-label"></label>
+                    <div class="col-sm-4">
+                        <input asp-for="ServiceNumber" class="form-control" placeholder="IC-12345X/JC-12345X" />
+                        <span asp-validation-for="ServiceNumber" class="text-danger"></span>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
-<div class="card-footer text-center">
-    <button type="button" id="btngetdata" name="btngetdata" class="btn btn-primary" onclick="getData();">Fetch Data</button>
-</div>
+    <div class="card-footer text-center">
+        <button type="button" id="btngetdata" name="btngetdata" class="btn btn-primary" onclick="getData(this.form.id);">Fetch Data</button>
+    </div>
+</form>
+
 <div class="row g-3 row-deck mb-3">
     <div class="card mb-4">
         <div class="card-header bg-light">@Html.Partial("_Steps")</div>
@@ -90,8 +93,5 @@
     </div>
 </div>
 @section Scripts{
-@*     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script> *@
-    <script asp-src-include="~/lib/jquery-validate/jquery.validate.js"></script>
-    <script asp-src-include="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
     <script asp-src-include="~/js/CustomScript.js"></script>
     }

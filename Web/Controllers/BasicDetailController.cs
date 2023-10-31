@@ -124,17 +124,20 @@ namespace Web.Controllers
                 ViewBag.OptionsSubmitType = service.GetSubmitType();
                 var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
 
+
                 model.Updatedby = Convert.ToInt32(userId);
                 if (ModelState.IsValid)
                 {
+                    DTOApiDataResponse dTOApiDataResponse = new DTOApiDataResponse();
+                    dTOApiDataResponse =await GetApiData(model.ServiceNo);
                     if (model.SubmitType == 1)
                     {
                         BasicDetail basicDetail = new BasicDetail();
-                        basicDetail.Name = model.Name;
-                        basicDetail.ServiceNo = model.ServiceNo;
-                        basicDetail.DOB = model.DOB;
-                        basicDetail.DateOfCommissioning = model.DateOfCommissioning;
-                        basicDetail.PermanentAddress = model.PermanentAddress;
+                        basicDetail.Name = dTOApiDataResponse.Name;
+                        basicDetail.ServiceNo = dTOApiDataResponse.ServiceNo;
+                        basicDetail.DOB = dTOApiDataResponse.DOB;
+                        basicDetail.DateOfCommissioning = dTOApiDataResponse.DateOfCommissioning;
+                        basicDetail.PermanentAddress = dTOApiDataResponse.PermanentAddress;
                         basicDetail.Updatedby = model.Updatedby;
                         basicDetail.UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
                         basicDetail.Step = 1;
@@ -147,11 +150,11 @@ namespace Web.Controllers
                     else
                     {
                         BasicDetailTemp basicDetailTemp = new BasicDetailTemp();
-                        basicDetailTemp.Name = model.Name;
-                        basicDetailTemp.ServiceNo = model.ServiceNo;
-                        basicDetailTemp.DOB = model.DOB;
-                        basicDetailTemp.DateOfCommissioning = model.DateOfCommissioning;
-                        basicDetailTemp.PermanentAddress = model.PermanentAddress;
+                        basicDetailTemp.Name = dTOApiDataResponse.Name;
+                        basicDetailTemp.ServiceNo = dTOApiDataResponse.ServiceNo;
+                        basicDetailTemp.DOB = dTOApiDataResponse.DOB;
+                        basicDetailTemp.DateOfCommissioning = dTOApiDataResponse.DateOfCommissioning;
+                        basicDetailTemp.PermanentAddress = dTOApiDataResponse.PermanentAddress;
                         basicDetailTemp.Updatedby = model.Updatedby;
                         basicDetailTemp.UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
                         await unitOfWork.BasicDetailTemp.Add(basicDetailTemp);
@@ -297,14 +300,14 @@ namespace Web.Controllers
                 BasicDetailUpdVMPart2 newBasicDetail = _mapper.Map<BasicDetail, BasicDetailUpdVMPart2>(basicDetail);
                 if (newBasicDetail.Step == 2)
                 {
-                    if (newBasicDetail.AadhaarNo != null && newBasicDetail.AadhaarNo.Length == 12)
-                    {
-                        string p1, p2, p3;
-                        p1 = newBasicDetail.AadhaarNo.Substring(0, 4);
-                        p2 = newBasicDetail.AadhaarNo.Substring(4, 4);
-                        p3 = newBasicDetail.AadhaarNo.Substring(8, 4);
-                        newBasicDetail.AadhaarNo = p1 + " " + p2 + " " + p3;
-                    }
+                    //if (newBasicDetail.AadhaarNo != null && newBasicDetail.AadhaarNo.Length == 12)
+                    //{
+                    //    string p1, p2, p3;
+                    //    p1 = newBasicDetail.AadhaarNo.Substring(0, 4);
+                    //    p2 = newBasicDetail.AadhaarNo.Substring(4, 4);
+                    //    p3 = newBasicDetail.AadhaarNo.Substring(8, 4);
+                    //    newBasicDetail.AadhaarNo = p1 + " " + p2 + " " + p3;
+                    //}
                     newBasicDetail.ExistingPhotoImagePath = newBasicDetail.PhotoImagePath;
                     newBasicDetail.ExistingSignatureImagePath = newBasicDetail.SignatureImagePath;
 
@@ -362,10 +365,11 @@ namespace Web.Controllers
                     basicDetail.DateOfIssue = model.DateOfIssue;
                     basicDetail.IssuingAuth = model.IssuingAuth;
                     basicDetail.DistrictId = model.DistrictId;
-                    if (model.AadhaarNo != null)
-                    {
-                        basicDetail.AadhaarNo = model.AadhaarNo.Replace(" ", "");
-                    }
+                    basicDetail.AadhaarNo = model.AadhaarNo;
+                    //if (model.AadhaarNo != null)
+                    //{
+                    //    basicDetail.AadhaarNo = model.AadhaarNo.Replace(" ", "");
+                    //}
 
                     string sourceFolderPhotoDB = "/WriteReadData/" + "Photo";
                     string sourceFolderSignatureDB = "/WriteReadData/" + "Signature";
@@ -946,6 +950,22 @@ namespace Web.Controllers
                     response.EnsureSuccessStatusCode();
                     var responseData = JsonConvert.DeserializeObject(responseContent);
                     return Ok(responseData);
+                }
+            }
+        }
+        public async Task<DTOApiDataResponse> GetApiData(string ICNumber)
+        {
+            using (var client = new HttpClient())
+            {
+                //client.BaseAddress = new Uri("https://api.postalpincode.in/");
+                client.BaseAddress = new Uri("https://localhost:7002/api/Fetch/GetData/");
+                //using (HttpResponseMessage response = await client.GetAsync("ICNumber/" + ICNumber))
+                using (HttpResponseMessage response = await client.GetAsync(ICNumber))
+                {
+                    var responseContent = response.Content.ReadAsStringAsync().Result;
+                    response.EnsureSuccessStatusCode();
+                    DTOApiDataResponse? responseData = JsonConvert.DeserializeObject<DTOApiDataResponse>(responseContent);
+                    return responseData;
                 }
             }
         }

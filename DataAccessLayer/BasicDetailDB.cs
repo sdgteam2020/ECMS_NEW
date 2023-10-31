@@ -36,12 +36,10 @@ namespace DataAccessLayer
                                 EncryptedId = protector.Protect(e.BasicDetailId.ToString()),
                                 Sno = sno++,
                                 Name = e.Name,
-                                Rank = e.Rank,
-                                ArmService = e.ArmService,
                                 ServiceNo = e.ServiceNo,
                                 DOB = e.DOB,
-                                AadhaarNo = e.AadhaarNo,
-                                DateOfIssue = e.DateOfIssue
+                                DateOfCommissioning = e.DateOfCommissioning,
+                                PermanentAddress = e.PermanentAddress,
                             }).ToList();
             return Task.FromResult(allrecord);
         }
