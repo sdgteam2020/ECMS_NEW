@@ -45,7 +45,7 @@
                         <div class="row mb-3 required">
                             <label asp-for="AadhaarNo" class="col-sm-3 col-form-label form-label"></label>
                             <div class="col-sm-4">
-                                <input asp-for="AadhaarNo" class="form-control" placeholder="0000 0000 0000" onkeyup="Aadhaarformate(event,this);" maxlength="14" />
+                                <input asp-for="AadhaarNo" class="form-control" placeholder="Last Four Digit" maxlength="4" /> @* onkeyup="Aadhaarformate(event,this);" *@
                                 <span asp-validation-for="AadhaarNo" class="text-danger"></span>
                             </div>
                         </div>
@@ -144,7 +144,5 @@
     </div>
 </div>
 @section Scripts{
-    <script asp-src-include="~/lib/jquery-validate/jquery.validate.js"></script>
-    <script asp-src-include="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
     <script asp-src-include="~/js/CustomScript.js"></script>
     }

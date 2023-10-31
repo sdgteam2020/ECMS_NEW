@@ -182,14 +182,12 @@
                 <button type="button" id="btngetdata" name="btngetdata" class="btn btn-primary" onclick="getUserData();">Featch Data</button>
                 <button type="button" id="btngetDummyData" name="btngetDummyData" class="btn btn-primary" onclick="getDummyData();">Dummy Data</button>
                 <button type="button" class="btn btn-primary" onclick="resetForm(this.form.id);">Clear</button>
-                <button type="submit" class="btn btn-primary" @* onclick="beforeSubmitValidateBasicDetail(this.form.id);" *@ >Submit</button>
+                <button type="submit" class="btn btn-primary" onclick="beforeSubmitValidateBasicDetail(this.form.id);">Submit</button>
                 <a asp-action="Index" asp-controller="BasicDetail" class="btn btn-primary">Back</a>
             </div>
         </form>
     </div>
 </div>
 @section Scripts{
-    <script asp-src-include="~/lib/jquery-validate/jquery.validate.js"></script>
-    <script asp-src-include="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
     <script asp-src-include="~/js/CustomScript.js"></script>
     }

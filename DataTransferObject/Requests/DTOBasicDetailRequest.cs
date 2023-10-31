@@ -285,7 +285,14 @@ namespace DataTransferObject.Requests
     }
     public class DTORegistrationRequest : DTOBasicDetailTempRequest
     {
+        [Display(Name = "RegistrationType", ResourceType = typeof(Resource))]
+        //[Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
+        [RegularExpression(@"^[\w \.\,\?\;\:\""\''\[\]\!\@\#\$\%\&\*\(\)\-\=\+\\\/]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
         public string RegistrationType { get; set; } = string.Empty;
+        
+        [Display(Name = "ServiceNo", ResourceType = typeof(Resource))]
+        //[Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
+        [RegularExpression(@"^[\w \.\,\?\;\:\""\''\[\]\!\@\#\$\%\&\*\(\)\-\=\+\\\/]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
         public string ServiceNumber { get; set; } = string.Empty;
 
         [Display(Name = "SubmitType", ResourceType = typeof(Resource))]
@@ -316,7 +323,7 @@ namespace DataTransferObject.Requests
         public int Step { get; set; }
 
         [NotMapped]
-        public string EncryptedId { get; set; }
+        public string EncryptedId { get; set; } = string.Empty;
 
     }
     public class BasicDetailUpdVMPart2
@@ -346,8 +353,9 @@ namespace DataTransferObject.Requests
 
         [Display(Name = "AadhaarNo", ResourceType = typeof(Resource))]
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
-        [RegularExpression(@"^[\d ]{14}$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "AadhaarNoDigit")]
+        //[RegularExpression(@"^[\d ]{14}$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "AadhaarNoDigit")]
         //[RegularExpression(@"^\d{12}$", ErrorMessage = "AADHAAR Number is twelve digits.")]
+        [RegularExpression(@"^[\d ]{4}$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "AadhaarNoDigit")]
         public string AadhaarNo { get; set; } = string.Empty;
 
         [Display(Name = "BloodGroup", ResourceType = typeof(Resource))]
@@ -403,7 +411,7 @@ namespace DataTransferObject.Requests
         public int Updatedby { get; set; }
 
         [NotMapped]
-        public string EncryptedId { get; set; }
+        public string EncryptedId { get; set; } = string.Empty;
     }
 
 }
