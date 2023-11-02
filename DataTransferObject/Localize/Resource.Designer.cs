@@ -394,6 +394,15 @@ namespace DataTransferObject.Localize {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Photo.
+        /// </summary>
+        public static string Photo_ {
+            get {
+                return ResourceManager.GetString("Photo_", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to BROWSE &amp; UPLOAD PHOTOGRAPH.
         /// </summary>
         public static string PhotoImagePath {
@@ -430,6 +439,15 @@ namespace DataTransferObject.Localize {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Registration Type.
+        /// </summary>
+        public static string RegistrationType {
+            get {
+                return ResourceManager.GetString("RegistrationType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Role Name.
         /// </summary>
         public static string RoleName {
@@ -453,6 +471,15 @@ namespace DataTransferObject.Localize {
         public static string ServiceNo {
             get {
                 return ResourceManager.GetString("ServiceNo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Signature.
+        /// </summary>
+        public static string Signature_ {
+            get {
+                return ResourceManager.GetString("Signature_", resourceCulture);
             }
         }
         
