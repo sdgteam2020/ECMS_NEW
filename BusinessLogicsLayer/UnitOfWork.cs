@@ -131,7 +131,7 @@ namespace BusinessLogicsLayer
 
                     DTOMasterResponse db = new DTOMasterResponse();
 
-                    DTOMasterResponse db = new DTOMasterResponse();
+                  
 
                     db.Id = Forma.ApptId;
                     db.Name = Forma.AppointmentName;
