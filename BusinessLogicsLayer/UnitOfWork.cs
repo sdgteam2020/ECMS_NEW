@@ -130,36 +130,12 @@ namespace BusinessLogicsLayer
                 {
 
                     DTOMasterResponse db = new DTOMasterResponse();
-            else if (Data.id == Convert.ToInt16(Constants.MasterTbl.Appt))
-            {
-                var Ret = await Appt.GetAll();
-                foreach (var Forma in Ret)
-                {
-
-                    DTOMasterResponse db = new DTOMasterResponse();
 
                     db.Id = Forma.ApptId;
                     db.Name = Forma.AppointmentName;
                     lst.Add(db);
 
 
-                }
-            } 
-            else if (Data.id == Convert.ToInt16(Constants.MasterTbl.Rank))
-            {
-                var Ret = await Rank.GetAll();
-                foreach (var Forma in Ret)
-                {
-
-                    DTOMasterResponse db = new DTOMasterResponse();
-
-                    db.Id = Forma.RankId;
-                    db.Name = Forma.RankName;
-                    lst.Add(db);
-
-
-                }
-            }
             //Constants.MasterTbl.Command;
             return lst;
         }
