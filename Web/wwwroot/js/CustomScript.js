@@ -278,7 +278,6 @@ function getUserData() {
     });
 }
 function getData(id) {  
-    debugger
     //let formId = '#' + id;
     //$("#RegistrationType").prop('required', true);
     //$("#ServiceNumber").prop('required', true);
@@ -298,7 +297,7 @@ function getData(id) {
             "ICNumber": $("#ServiceNumber").val()
         },
         success: function (response, status) {
-            alert(JSON.stringify(response));
+            //alert(JSON.stringify(response));
             $("#Name").val(response.Name);
             $("#ServiceNo").val(response.ServiceNo);
             $("#DOB").val(response.DOB.split('T')[0]);

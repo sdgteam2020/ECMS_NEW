@@ -380,6 +380,7 @@ namespace DataTransferObject.Requests
         [AllowedExtensions(new string[] { ".jpg", ".jpeg", ".png", ".gif" })]
         [AllowedContentType(new string[] { "image/jpeg", "image/jpg", "image/gif", "image/png" })]
         [MaxFileSize(50, "Signature")]
+        [Display(Name = "Signature_", ResourceType = typeof(Resource))]
         public IFormFile? Signature_ { get; set; }
 
         public string SignatureImagePath { get; set; } = string.Empty;
@@ -389,6 +390,7 @@ namespace DataTransferObject.Requests
         [AllowedExtensions(new string[] { ".jpg", ".jpeg", ".png", ".gif" })]
         [AllowedContentType(new string[] { "image/jpeg", "image/jpg", "image/gif", "image/png" })]
         [MaxFileSize(200, "Photo")]
+        [Display(Name = "Photo_", ResourceType = typeof(Resource))]
         public IFormFile? Photo_ { get; set; }
 
         public string PhotoImagePath { get; set; } = string.Empty;
