@@ -134,6 +134,7 @@ namespace Web.Controllers
             try
             {
                 return Json(await _userProfileBL.GetByMArmyNo(ArmyNo));
+
             }
             catch (Exception ex)
             {

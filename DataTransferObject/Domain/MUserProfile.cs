@@ -22,8 +22,10 @@ namespace DataTransferObject.Domain
         public string Name { get; set; }
 
         //[ForeignKey("MAppointment")]
+        [Required]
         public int ApptId { get; set; }
-        //public MAppointment? MAppointment { get; set; }       
+        //public MAppointment? MAppointment { get; set; }
+         [Required]
         public int UnitId { get; set; }
         //public MUnit? MUnit { get; set; }
        

@@ -87,19 +87,13 @@ namespace WebApi.Controllers
         [HttpGet("{ICNumber}")]
         public async Task<ActionResult> GetData(string ICNumber)
         {
-
+            MApiData data = new MApiData();
+            data = await _aPIDataBL.GetByIC(ICNumber);
             if (ICNumber != null)
             {
-                 MApiData? apiData = (MApiData?)await _aPIDataBL.GetByIC(ICNumber);
-
-                if (apiData != null)
-                {
-                    return Ok(apiData);
-                }
-                // else
-                {
-                    return NotFound();
-                }
+               
+                    return Ok(data);
+                
             }
             else
             {

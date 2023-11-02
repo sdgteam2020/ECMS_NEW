@@ -139,21 +139,21 @@ if (!app.Environment.IsDevelopment())
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
-app.Use(async (ctx, next) =>
-{
-    ctx.Response.Headers.Add("Content-Security-Policy", "default-src *; style-src 'self' http://* 'unsafe-inline'; script-src 'self' http://* 'unsafe-inline' 'unsafe-eval'; img-src 'self' http://* data:;");
-    ctx.Response.Headers.Add("Feature-Policy", "fullscreen 'none'");
-    ctx.Response.Headers.Add("Referrer-Policy", "same-origin");
-    ctx.Response.Headers.Add("X-Frame-Options", "DENY");
-    ctx.Response.Headers.Add("X-XSS-Protection", "1; mode=block");
-    ctx.Response.Headers.Add("X-Content-Type-Options", "nosniff");
-    //ctx.Response.Headers.Add("Strict-Transport-Security", "max-age=31536000; includeSubDomains; preload");
-    ctx.Response.Headers.Remove("X-Powered-By");
-    ctx.Response.Headers.Remove("x-aspnet-version");
-    // Some headers won't remove
-    ctx.Response.Headers.Remove("Server");
-    await next();
-});
+//app.Use(async (ctx, next) =>
+//{
+//    ctx.Response.Headers.Add("Content-Security-Policy", "default-src *; style-src 'self' http://* 'unsafe-inline'; script-src 'self' http://* 'unsafe-inline' 'unsafe-eval'; img-src 'self' http://* data:;");
+//    ctx.Response.Headers.Add("Feature-Policy", "fullscreen 'none'");
+//    ctx.Response.Headers.Add("Referrer-Policy", "same-origin");
+//    ctx.Response.Headers.Add("X-Frame-Options", "DENY");
+//    ctx.Response.Headers.Add("X-XSS-Protection", "1; mode=block");
+//    ctx.Response.Headers.Add("X-Content-Type-Options", "nosniff");
+//    //ctx.Response.Headers.Add("Strict-Transport-Security", "max-age=31536000; includeSubDomains; preload");
+//    ctx.Response.Headers.Remove("X-Powered-By");
+//    ctx.Response.Headers.Remove("x-aspnet-version");
+//    // Some headers won't remove
+//    ctx.Response.Headers.Remove("Server");
+//    await next();
+//});
 
 app.UseForwardedHeaders();
 app.UseHttpsRedirection();
