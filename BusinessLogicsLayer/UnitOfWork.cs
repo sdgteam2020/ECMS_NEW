@@ -25,7 +25,7 @@ namespace BusinessLogicsLayer
     {
 
       
-        public UnitOfWork(IUserBL _user, IComd _comds, ICorpsBL _corpsBL, IBdeBL _bdeCat, IDivBL divBL, IUnitBL unit, IMapUnitBL MapUnitBL, IFormationBL FormationBL, IApptBL apptBL, IArmedBL armedBL, IBasicDetailBL _basicDetailBL,IBasicDetailTempBL _basicDetailTempBL)
+        public UnitOfWork(IUserBL _user, IComd _comds, ICorpsBL _corpsBL, IBdeBL _bdeCat, IDivBL divBL, IUnitBL unit, IMapUnitBL MapUnitBL, IFormationBL FormationBL, IApptBL apptBL, IArmedBL armedBL, IBasicDetailBL _basicDetailBL,IBasicDetailTempBL _basicDetailTempBL, IRankBL rankBL)
         {
             Users = _user;
             Comds = _comds;
@@ -39,6 +39,7 @@ namespace BusinessLogicsLayer
             Unit = unit;
             BasicDetail = _basicDetailBL;
             BasicDetailTemp = _basicDetailTempBL;
+            Rank = rankBL;
         }
         public IUserBL Users { get; }
 
@@ -52,6 +53,7 @@ namespace BusinessLogicsLayer
         public IFormationBL Formation { get; }
         public IApptBL Appt { get; }
         public IArmedBL Armed { get; }
+        public IRankBL Rank { get; }
         public IBasicDetailBL BasicDetail { get; }
         public IBasicDetailTempBL BasicDetailTemp { get; }
         public async Task<List<DTOMasterResponse>> GetAllMMaster(DTOMasterRequest Data)
@@ -131,6 +133,21 @@ namespace BusinessLogicsLayer
 
                     db.Id = Forma.ApptId;
                     db.Name = Forma.AppointmentName;
+                    lst.Add(db);
+
+
+                }
+            } 
+            else if (Data.id == Convert.ToInt16(Constants.MasterTbl.Rank))
+            {
+                var Ret = await Rank.GetAll();
+                foreach (var Forma in Ret)
+                {
+
+                    DTOMasterResponse db = new DTOMasterResponse();
+
+                    db.Id = Forma.RankId;
+                    db.Name = Forma.RankName;
                     lst.Add(db);
 
 

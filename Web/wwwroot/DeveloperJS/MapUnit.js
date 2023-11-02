@@ -370,7 +370,7 @@ function UnitSave() {
             } else {
                 if (result.length > 0) {
                     for (var i = 0; i < result.length; i++) {
-                        toastr.error(result[i][0].errorMessage)
+                        toastr.error(result[i][0].ErrorMessage)
                     }
 
 
@@ -424,7 +424,7 @@ function SaveUnitMap() {
             } else {
                 if (result.length > 0) {
                     for (var i = 0; i < result.length; i++) {
-                        toastr.error(result[i][0].errorMessage)
+                        toastr.error(result[i][0].ErrorMessage)
                     }
 
 
