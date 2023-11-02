@@ -294,6 +294,7 @@ namespace Web.Controllers
                 if (basicDetail.Step < 1 || basicDetail.IsSubmit == true)
                     return RedirectToAction("Index");
                 ViewBag.OptionsRank = service.GetRank();
+                ViewBag.OptionsArmedType = service.GetArmedType();
                 ViewBag.OptionsBloodGroup = service.GetBloodGroup();
 
 
@@ -342,6 +343,7 @@ namespace Web.Controllers
         {
             ViewBag.OptionsRank = service.GetRank();
             ViewBag.OptionsBloodGroup = service.GetBloodGroup();
+            ViewBag.OptionsArmedType = service.GetArmedType();
             var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
 
             BasicDetail basicDetail = await unitOfWork.BasicDetail.Get(model.BasicDetailId);

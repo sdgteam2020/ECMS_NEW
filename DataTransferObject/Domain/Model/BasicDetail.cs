@@ -72,6 +72,10 @@ namespace DataTransferObject.Domain.Model
         public bool IsSubmit { get; set; }
         public int? DistrictId { get; set; }
         public District? District { get; set; }
+        public int? ArmedId { get; set; }
+        public MArmedType? MArmedType { get; set; }
+        public int? RankId { get; set; }
+        public MRank? MRank { get; set; }
 
         [NotMapped]
         public bool success { get; set; }
