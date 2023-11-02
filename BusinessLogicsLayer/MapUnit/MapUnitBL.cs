@@ -21,6 +21,11 @@ namespace BusinessLogicsLayer.Unit
             _UnitDB = UnitDB;
         }
 
+        public Task<DTOMapUnitResponse> GetALLByUnitById(int UnitId)
+        {
+            return _UnitDB.GetALLByUnitById(UnitId);
+        }
+
         public Task<DTOMapUnitResponse> GetALLByUnitMapId(int UnitMapId)
         {
             return _UnitDB.GetALLByUnitMapId(UnitMapId);
