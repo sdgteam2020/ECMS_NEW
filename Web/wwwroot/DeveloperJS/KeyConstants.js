@@ -12,3 +12,4 @@ const Div = 3;
 const Bde = 4;
 const Formation = 5;
 const Appt = 6;
+const Rank = 7;
