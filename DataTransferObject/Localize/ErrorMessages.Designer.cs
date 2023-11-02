@@ -61,7 +61,7 @@ namespace DataTransferObject.Localize {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to AADHAAR Number is twelve digits..
+        ///   Looks up a localized string similar to AADHAAR Number is last four digits..
         /// </summary>
         public static string AadhaarNoDigit {
             get {

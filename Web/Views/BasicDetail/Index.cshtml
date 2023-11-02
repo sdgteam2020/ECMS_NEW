@@ -19,13 +19,11 @@
                     <thead>
                         <tr>
                             <th>@Html.DisplayNameFor(model => model[0].Sno)</th>
-                            <th>@Html.DisplayNameFor(model => model[0].DateOfIssue)</th>
                             <th>@Html.DisplayNameFor(model => model[0].Name)</th>
-                            <th>@Html.DisplayNameFor(model => model[0].Rank)</th>
-                            <th>@Html.DisplayNameFor(model => model[0].ArmService)</th>
                             <th>@Html.DisplayNameFor(model => model[0].ServiceNo)</th>
                             <th>@Html.DisplayNameFor(model => model[0].DOB)</th>
-                            <th>@Html.DisplayNameFor(model => model[0].AadhaarNo)</th>
+                            <th>@Html.DisplayNameFor(model => model[0].DateOfCommissioning)</th>
+                            <th>@Html.DisplayNameFor(model => model[0].PermanentAddress)</th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -34,13 +32,11 @@
                         {
                             <tr>
                                 <td>@item.Sno</td>
-                                <td>@(item.DateOfIssue != null ? @item.DateOfIssue.Value.ToString("dd/MM/yyyy") : "No Date")</td>
                                 <td>@item.Name</td>
-                                <td>@item.Rank</td>
-                                <td>@item.ArmService</td>
                                 <td>@item.ServiceNo</td>
-                                <td>@(item.DOB != null ? @item.DOB.Value.ToString("dd/MM/yyyy") : "No Date")</td>
-                                <td>@item.AadhaarNo</td>
+                                <td>@(item.DOB != null ? @item.DOB.Value.ToString("dd/MMM/yyyy") : "No Date")</td>
+                                <td>@(item.DateOfCommissioning!=null?item.DateOfCommissioning.Value.ToString("dd/MMM/yyyy"):"No Date")</td>
+                                <td>@item.PermanentAddress</td>
                                 <td>
                                     <div class="d-flex p-2">
                                         <a asp-controller="BasicDetail" asp-action="View" asp-route-Id="@item.EncryptedId" class="text-primary mr-2"><i class="fa fa-eye fa-lg"></i></a>
