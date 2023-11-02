@@ -231,6 +231,9 @@
   <data name="PhotoImagePath" xml:space="preserve">
     <value>BROWSE &amp; UPLOAD PHOTOGRAPH</value>
   </data>
+  <data name="Photo_" xml:space="preserve">
+    <value>Photo</value>
+  </data>
   <data name="PlaceOfIssue" xml:space="preserve">
     <value>Place of Issue</value>
   </data>
@@ -239,6 +242,9 @@
   </data>
   <data name="Rank" xml:space="preserve">
     <value>Rk</value>
+  </data>
+  <data name="RegistrationType" xml:space="preserve">
+    <value>Registration Type</value>
   </data>
   <data name="RoleName" xml:space="preserve">
     <value>Role Name</value>
@@ -251,6 +257,9 @@
   </data>
   <data name="SignatureImagePath" xml:space="preserve">
     <value>Signature of Indl</value>
+  </data>
+  <data name="Signature_" xml:space="preserve">
+    <value>Signature</value>
   </data>
   <data name="Sno" xml:space="preserve">
     <value>S No.</value>

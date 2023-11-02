@@ -52,7 +52,7 @@ function beforeUploadPhotoSizeCheck(id) {
     }
 }
 function beforeSubmitValidateBasicDetail(id) {
-    debugger;
+    de
     let formId = '#' + id;
 
     //$('#ArmService').prop('required', true);
@@ -277,7 +277,19 @@ function getUserData() {
         }
     });
 }
-function getData() {
+function getData(id) {  
+    //let formId = '#' + id;
+    //$("#RegistrationType").prop('required', true);
+    //$("#ServiceNumber").prop('required', true);
+    ///*$.validator.unobtrusive.parse($(formId));*/
+    //$.validator.unobtrusive.parse("Reg");
+    //if ($(formId).valid()) {
+    //    var formData = $(formId).serialize();
+    //    console.log(formData);
+    //}
+    //else {
+    //    return false;
+    //}
     $.ajax({
         url: "/BasicDetail/GetData",
         type: "POST",
@@ -285,11 +297,14 @@ function getData() {
             "ICNumber": $("#ServiceNumber").val()
         },
         success: function (response, status) {
+            //alert(JSON.stringify(response));
             $("#Name").val(response.Name);
             $("#ServiceNo").val(response.ServiceNo);
             $("#DOB").val(response.DOB.split('T')[0]);
+            $("#DOB_").val(moment(response.DOB).format("DD-MMM-YYYY"));
             $("#DateOfCommissioning").val(response.DateOfCommissioning.split('T')[0]);
             $("#PermanentAddress").val(response.PermanentAddress);
+            $("#DOB").html("2019-07-22");
         }
     });
 }
