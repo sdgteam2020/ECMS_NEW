@@ -474,11 +474,24 @@ namespace Web.Controllers
             }
 
         } 
+      
         public async Task<IActionResult> GetALLByUnitMapId(int UnitMapId)
         {
             try
             {
                 return Json(await unitOfWork.MappUnit.GetALLByUnitMapId(UnitMapId));
+            }
+            catch (Exception ex)
+            {
+                return Json(KeyConstants.InternalServerError);
+            }
+
+        } 
+        public async Task<IActionResult> GetALLByUnitById(int UnitId)
+        {
+            try
+            {
+                return Json(await unitOfWork.MappUnit.GetALLByUnitById(UnitId));
             }
             catch (Exception ex)
             {
