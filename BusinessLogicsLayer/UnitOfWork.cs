@@ -143,6 +143,23 @@ namespace BusinessLogicsLayer
                     lst.Add(db);
 
 
+                }
+            } 
+            else if (Data.id == Convert.ToInt16(Constants.MasterTbl.Rank))
+            {
+                var Ret = await Rank.GetAll();
+                foreach (var Forma in Ret)
+                {
+
+                    DTOMasterResponse db = new DTOMasterResponse();
+
+                    db.Id = Forma.RankId;
+                    db.Name = Forma.RankName;
+                    lst.Add(db);
+
+
+                }
+            }
             //Constants.MasterTbl.Command;
             return lst;
         }
