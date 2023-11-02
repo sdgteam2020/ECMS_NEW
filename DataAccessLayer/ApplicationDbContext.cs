@@ -41,8 +41,7 @@ namespace DataAccessLayer
         public DbSet<ProfileData> ProfileData { get; set; } = null!;
         public DbSet<MUserProfile> UserProfile { get; set; } = null!;
         public DbSet<MMappingProfile> MMappingProfile { get; set; } = null!;
-        public DbSet<ProfileData> ProfileDatas { get; set; } = null!;
-        public DbSet<BasicDetailTemp> BasicDetailTemps { get; set; } = null!;
+       
         public DbSet<MApiData> MApiData { get; set; }
         protected override void OnModelCreating(ModelBuilder builder)
         {
