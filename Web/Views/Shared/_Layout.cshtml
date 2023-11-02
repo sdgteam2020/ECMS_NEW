@@ -9,7 +9,7 @@
     <meta content='width=device-width, initial-scale=1.0, shrink-to-fit=no' name='viewport' />
     <title>AFSAC</title>
     <link href="~/fonts/css/all.min.css" rel="stylesheet" />
-    <link href="~/css/steps.min.css" rel="stylesheet" />
+   @*  <link href="~/css/steps.min.css" rel="stylesheet" /> *@
     <link href="~/css/sidemenu/feather/feather.css" rel="stylesheet" />
     <link href="~/css/sidemenu/style.css" rel="stylesheet" />
     <link href="~/css/sidemenu/ti-icons/css/themify-icons.css" rel="stylesheet" />
@@ -31,7 +31,7 @@
     <link href="~/css/typography.css" rel="stylesheet" />
     <link href="~/css/cssStyle.css" rel="stylesheet" />
     @*<link href="~/css/main.min.css" rel="stylesheet" />*@
-
+   
     <link href="~/css/horizontaltimeline.css" rel="stylesheet" />
 
     <script src="~/fonts/feather/feather.min.js"></script>
@@ -41,7 +41,7 @@
     <script asp-src-include="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
 
     <link href="~/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
-
+    <link href="~/lib/jqueryui/themes/base/jquery-ui.min.css" rel="stylesheet" />
 
     <link href="~/toastr/toastr.min.css" rel="stylesheet" />
     <link href="~/css/main.css" rel="stylesheet" />
@@ -82,19 +82,24 @@
                 <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
                     <span class="icon-menu"></span>
                 </button>
-                <ul class="navbar-nav mr-lg-2">
+                @* <ul class="navbar-nav mr-lg-2">
                     <li class="nav-item nav-search d-none d-lg-block">
                         <div class="input-group">
-                            @* <div class="input-group-prepend hover-cursor" id="navbar-search-icon">
+                            <div class="input-group-prepend hover-cursor" id="navbar-search-icon">
                             <span class="input-group-text" id="search">
                             <i class="icon-search"></i>
                             </span>
-                            </div>*@
+                            </div>
                             <div id="tokenmsg" class="p-2"></div>
-                            @*<input type="text" class="form-control" id="navbar-search-input" placeholder="Search now" aria-label="search" aria-describedby="search">*@
+                            <input type="text" class="form-control" id="navbar-search-input" placeholder="Search now" aria-label="search" aria-describedby="search">
                         </div>
                     </li>
-                </ul>
+                </ul> *@
+                <ul class="navbar-nav" >
+                    <li>
+                        <img src="~/images/afsac9.jpg" width="180%" height="60px" />
+                    </li>
+                    </ul>
                 <ul class="navbar-nav navbar-nav-right">
                     <li class="nav-item dropdown">
                         <a class="nav-link count-indicator dropdown-toggle" id="notificationDropdown" href="#" data-toggle="dropdown">
@@ -463,10 +468,11 @@
     <script src="~/toastr/toastr.min.js"></script>
     <script src="~/js/moment.min.js"></script>
     <script src="~/js/bootstrap-datetimepicker.min.js"></script>
-    <script src="~/js/jquery.autocomplete.js"></script>
+    <script src="~/lib/jqueryui/jquery-ui.min.js"></script>
     <script src="~/developerjs/layout.js"></script>
     <script src="~/developerjs/keyconstants.js"></script>
     <script src="~/developerjs/commanvalidation.js"></script>
+
     @*  <script src="~/developerjs/layout.js"></script>
     <script src="~/developerjs/MedCate.js"></script> *@
     @*<script src="/DeveloperJs/Master.js"></script>*@
