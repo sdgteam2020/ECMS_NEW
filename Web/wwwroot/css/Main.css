@@ -64,3 +64,6 @@
     left: 0;
     cursor: default;
 }
+.ui-autocomplete {
+    z-index: 2147483647;
+}

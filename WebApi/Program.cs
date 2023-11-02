@@ -1,11 +1,18 @@
 using BusinessLogicsLayer;
+using BusinessLogicsLayer.Bde;
+using BusinessLogicsLayer.BdeCate;
+using DataAccessLayer;
+using DataAccessLayer.BaseInterfaces;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json.Serialization;
 using Swashbuckle.AspNetCore.SwaggerUI;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
+var configration = builder.Configuration;
 
 // Add services to the container.
+builder.Services.AddDbContextPool<ApplicationDbContext>(options => options.UseSqlServer(configration.GetConnectionString("AFSACDBConnection")));
 
 //builder.Services.AddInfrastructure();
 builder.Services.AddCors();
@@ -15,7 +22,8 @@ builder.Services.AddControllers().AddNewtonsoftJson(options =>
     options.SerializerSettings.ContractResolver = new DefaultContractResolver();
 });
 builder.Services.AddSwaggerGen();
-
+builder.Services.AddTransient<IAPIDataBL, APIDataBL>();
+builder.Services.AddTransient<IAPIDataDB, APIDataDB>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
