@@ -24,8 +24,8 @@ namespace BusinessLogicsLayer
     public class UnitOfWork : IUnitOfWork
     {
 
-      
-        public UnitOfWork(IUserBL _user, IComd _comds, ICorpsBL _corpsBL, IBdeBL _bdeCat, IDivBL divBL, IUnitBL unit, IMapUnitBL MapUnitBL, IFormationBL FormationBL, IApptBL apptBL, IArmedBL armedBL, IBasicDetailBL _basicDetailBL,IBasicDetailTempBL _basicDetailTempBL)
+
+        public UnitOfWork(IUserBL _user, IComd _comds, ICorpsBL _corpsBL, IBdeBL _bdeCat, IDivBL divBL, IUnitBL unit, IMapUnitBL MapUnitBL, IFormationBL FormationBL, IApptBL apptBL, IArmedBL armedBL, IBasicDetailBL _basicDetailBL, IBasicDetailTempBL _basicDetailTempBL, IRankBL rankBL)
         {
             Users = _user;
             Comds = _comds;
@@ -39,6 +39,7 @@ namespace BusinessLogicsLayer
             Unit = unit;
             BasicDetail = _basicDetailBL;
             BasicDetailTemp = _basicDetailTempBL;
+            Rank = rankBL;
         }
         public IUserBL Users { get; }
 
@@ -52,6 +53,7 @@ namespace BusinessLogicsLayer
         public IFormationBL Formation { get; }
         public IApptBL Appt { get; }
         public IArmedBL Armed { get; }
+        public IRankBL Rank { get; }
         public IBasicDetailBL BasicDetail { get; }
         public IBasicDetailTempBL BasicDetailTemp { get; }
         public async Task<List<DTOMasterResponse>> GetAllMMaster(DTOMasterRequest Data)
@@ -121,81 +123,112 @@ namespace BusinessLogicsLayer
 
                 }
             }
+            else if (Data.id == Convert.ToInt16(Constants.MasterTbl.Appt))
+            {
+                var Ret = await Appt.GetAll();
+                foreach (var Forma in Ret)
+                {
 
+                    DTOMasterResponse db = new DTOMasterResponse();
+
+                  
+
+                    db.Id = Forma.ApptId;
+                    db.Name = Forma.AppointmentName;
+                    lst.Add(db);
+
+
+                }
+            } 
+            else if (Data.id == Convert.ToInt16(Constants.MasterTbl.Rank))
+            {
+                var Ret = await Rank.GetAll();
+                foreach (var Forma in Ret)
+                {
+
+                    DTOMasterResponse db = new DTOMasterResponse();
+
+                    db.Id = Forma.RankId;
+                    db.Name = Forma.RankName;
+                    lst.Add(db);
+
+
+                }
+            }
             //Constants.MasterTbl.Command;
             return lst;
         }
-
-        public async Task<List<DTOMasterResponse>> GetAllMMasterByParent(DTOMHierarchyRequest Data)
-        {
-            List<DTOMasterResponse> lst = new List<DTOMasterResponse>();
-            int count = 0;
-            if (Data.TableId == Convert.ToInt16(Constants.MasterTbl.Div))
+            public async Task<List<DTOMasterResponse>> GetAllMMasterByParent(DTOMHierarchyRequest Data)
             {
-                var Ret = await Div.GetByHId(Data);
-                foreach (var comd in Ret)
+                List<DTOMasterResponse> lst = new List<DTOMasterResponse>();
+                int count = 0;
+                if (Data.TableId == Convert.ToInt16(Constants.MasterTbl.Div))
                 {
+                    var Ret = await Div.GetByHId(Data);
+                    foreach (var comd in Ret)
+                    {
+                        if (count == 0)
+                        {
+                            DTOMasterResponse db1 = new DTOMasterResponse();
+                            db1.Id = 1;
+                            db1.Name = "No Div";
+                            lst.Add(db1);
+                            count = 1;
+                        }
+
+                        DTOMasterResponse db = new DTOMasterResponse();
+                        db.Id = comd.DivId;
+                        db.Name = comd.DivName;
+                        lst.Add(db);
+
+
+
+                    }
                     if (count == 0)
                     {
                         DTOMasterResponse db1 = new DTOMasterResponse();
                         db1.Id = 1;
                         db1.Name = "No Div";
                         lst.Add(db1);
-                        count = 1;
+
                     }
-
-                    DTOMasterResponse db = new DTOMasterResponse();
-                    db.Id = comd.DivId;
-                    db.Name = comd.DivName;
-                    lst.Add(db);
-
-
-
                 }
-                if (count == 0)
+                else if (Data.TableId == Convert.ToInt16(Constants.MasterTbl.Bde))
                 {
-                    DTOMasterResponse db1 = new DTOMasterResponse();
-                    db1.Id = 1;
-                    db1.Name = "No Div";
-                    lst.Add(db1);
+                    var Ret = await Bde.GetByHId(Data);
+                    foreach (var comd in Ret)
+                    {
+                        if (count == 0)
+                        {
+                            DTOMasterResponse db1 = new DTOMasterResponse();
+                            db1.Id = 1;
+                            db1.Name = "No Bde";
+                            lst.Add(db1);
+                            count = 1;
+                        }
 
-                }
-            }
-            else if (Data.TableId == Convert.ToInt16(Constants.MasterTbl.Bde))
-            {
-                var Ret = await Bde.GetByHId(Data);
-                foreach (var comd in Ret)
-                {
+                        DTOMasterResponse db = new DTOMasterResponse();
+                        db.Id = comd.BdeId;
+                        db.Name = comd.BdeName;
+                        lst.Add(db);
+
+
+
+                    }
                     if (count == 0)
                     {
                         DTOMasterResponse db1 = new DTOMasterResponse();
                         db1.Id = 1;
                         db1.Name = "No Bde";
                         lst.Add(db1);
-                        count = 1;
+
                     }
-
-                    DTOMasterResponse db = new DTOMasterResponse();
-                    db.Id = comd.BdeId;
-                    db.Name = comd.BdeName;
-                    lst.Add(db);
-
-
-
                 }
-                if (count == 0)
-                {
-                    DTOMasterResponse db1 = new DTOMasterResponse();
-                    db1.Id = 1;
-                    db1.Name = "No Bde";
-                    lst.Add(db1);
-
-                }
+                //Constants.MasterTbl.Command;
+                return lst;
             }
-            //Constants.MasterTbl.Command;
-            return lst;
+
+
         }
-
-
     }
-}
+

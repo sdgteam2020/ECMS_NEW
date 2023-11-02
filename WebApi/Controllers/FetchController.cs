@@ -1,4 +1,8 @@
-﻿using Microsoft.AspNetCore.Cors;
+﻿using BusinessLogicsLayer;
+using BusinessLogicsLayer.Bde;
+using DataAccessLayer.Migrations;
+using DataTransferObject.Domain.Model;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebApi.Controllers
@@ -7,6 +11,8 @@ namespace WebApi.Controllers
     [Route("api/[controller]/[action]")]
     public class FetchController : ControllerBase
     {
+        private readonly IAPIDataBL _aPIDataBL;
+       
         String[] first = new String[] {"Brown", "Black", "White", "Orange", "Wild", "Tiger", "Snow Leopard", "Koo",
                                               "Kooapps", "Gray", "Zombie", "Gumdrop", "Candy", "Choco", "Darth", "Dark",
                                               "Goldfish on a", "Evil", "German", "Beach", "City", "Haunted", "Spooky"};
@@ -26,12 +32,12 @@ namespace WebApi.Controllers
         public List<ApiData> _apiDataList;
 
         Random rnd1 = new Random();
-        public FetchController()
+        public FetchController(IAPIDataBL aPIDataBL)
         {
             x = rnd.Next(0, first.Length);
             y = rnd.Next(0, last.Length);
             a = rnd.Next(0, PermanentAddress.Length);
-
+            _aPIDataBL = aPIDataBL;
             _userDataList = new List<UserData>()
             {
                 new UserData()
@@ -84,12 +90,13 @@ namespace WebApi.Controllers
 
             if (ICNumber != null)
             {
-                ApiData? apiData = _apiDataList.FirstOrDefault();
+                 MApiData? apiData = (MApiData?)await _aPIDataBL.GetByIC(ICNumber);
+
                 if (apiData != null)
                 {
                     return Ok(apiData);
                 }
-                else
+                // else
                 {
                     return NotFound();
                 }

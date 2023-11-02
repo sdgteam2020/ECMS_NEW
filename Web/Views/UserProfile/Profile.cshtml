@@ -2,19 +2,17 @@
     ViewData["Title"] = "Add Profile";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
-<div class="container mt-4">
-    <div class="card mb-3 ">
-    <div class="card mb-3 ">
+<div class="row">
+    <div class="col-12 mb-4">
+        <div class="card h-100">
         <div class="card-header">
-            <input class="form-control d-none" type="text" id="armyNo" value=@ViewBag.armyNo>
-            <span id="SpnTxnId" class="d-none">0</span>
-            @*<span id="PtoId" class="d-none">0</span>*@
+          
+         
             <div class="row">
                 <div class="col-xl-12 text-left">
                     <h3>
                         Add Profile
-                        <small class="text-muted"> Page</small>
+                        <small class="text-muted"> </small>
 
 
                     </h3>
@@ -26,10 +24,72 @@
 
 
 
-    </div>
+  
     <div class="card-body" style="min-height:150px;">
 
-            <div class="row">
+          
+
+            <div class="col-xl-12">
+                <div class="mb-2 d-md-flex justify-content-md-between align-items-md-center">
+                    <h6 class="mb-3 mb-md-0">
+                            Total Profile <span id="lblTotalProfile" class="ml-3 border border-light b px-2 py-1">0</span>
+                    </h6>
+                    <div>
+                        <button type="button" id="btnAddProfile" class="btn btn-outline-success font-weight-600 btn-sm">Add New </button>
+                        <button type="button" id="btnMultiDelete" class="btn btn-outline-danger font-weight-600 btn-sm">Delete</button>
+
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="table border border-purple table-striped no-footer dataTable table-hover" role="grid" id="tbldataProfile">
+                        <thead>
+                            <tr>
+                                <th class="noExport d-none"></th>
+                                <th class="noExport wd-30-f">
+                                    <div class="custom-control custom-checkbox small">
+                                        <input type="checkbox" class="custom-control-input" id="chkAll">
+                                        <label class="custom-control-label font-weight-bold" for="chkAll"></label>
+                                    </div>
+                                </th>
+                                <th class=" wd-30-f">S No</th>
+                                <th class="nowrap">Army No</th>
+                                <th class="nowrap">Name</th>
+                                <th class="nowrap">Rank</th>
+                                <th class="nowrap">Appt.</th>
+                                <th class="nowrap">Unit Name(SUSNo)</th>
+                                <th class="nowrap">IO Army No</th>
+                                <th class="nowrap">IO Name</th>
+                                <th class="nowrap">IO Unit Name(SUSNo)</th>
+                                <th class="nowrap">GSO Army No</th>
+                                <th class="nowrap">GSO Name</th>
+                                <th class="nowrap">GSO Unit Name(SUSNo)</th>
+                                <th class="nowrap">Action</th>
+
+
+                            </tr>
+                        </thead>
+                            <tbody id="DetailBodyProfile">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+
+    </div>
+
+</div>
+</div>
+</div>
+<div class="modal fade" id="AddNewProfile" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h5 class="modal-title" id="exampleModalToggleLabel">Add New Profile  </h5>
+            </div>
+
+            <div class="modal-body">
+                <div class="row">
 
 
 
@@ -156,178 +216,213 @@
                             </div>
                         </div>
 
-                        <div class="card mt-2">
-                            <div class="card-body">
-                                <h5 class="card-title">IO Details</h5>
-                                <div class="row">
-                                    <div class="col-sm-4">
-                                        <div class="form-group row mb-2">
-                                            <label class="col-form-label col-sm-4">IO Army No</label>
-                                            <div class="col-sm-6">
-                                                <i class="fas fa-asterisk mand"></i>
-                                                <input class="form-control Alphanumeric" placeholder="Enter IO Army No" id="txtProIOArmyNo" required pattern="^[a-zA-Z0-9 ]*$" title="Only Alphabets and Numbers allowed" />
+                            <div class="card mt-2">
+                                <div class="card-body">
+                                    <h5 class="card-title">IO Details</h5>
+                                    <form action="" id="SaveIOForm" method="post" name="SaveIOForm">
+                                        <div class="row">
+                                            <div class="col-sm-4">
+                                                <div class="form-group row mb-2">
+                                                    <label class="col-form-label col-sm-4">IO Army No</label>
+                                                    <span id="spnUserIdIO" class="d-none">0</span>
+                                                    <div class="col-sm-8">
+                                                        <i class="fas fa-asterisk mand"></i>
+                                                        <input class="form-control " placeholder="Enter IO Army No" id="txtProIOArmyNo" required data-toggle="tooltip" data-placement="top" title="Enter Army No" />
+                                                    </div>
+                                                    @* <div class="col-sm-2">
+                                                        <button type="button" class="btn btn-icon btn-round btn-warning" id="btnIOProAdd" data-toggle="tooltip" data-placement="top" title="Click To New IO Details"><i class="fas fa-plus"></i></button>
+                                                        <button type="button" class="btn btn-icon btn-round btn-danger d-none" id="btnIOProremove" data-toggle="tooltip" data-placement="top" title="Click To New IO Details"><i class="fas fa-minus"></i></button>
+                                                    </div> *@
+                                                    @*  <div class="col-sm-8 IOlbl">
+                                                    <i class="fas fa-asterisk mand"></i>
+                                                    <label id="lblIOProAdd" class="form-control"></label>
+                                                    </div> *@
+                                                </div>
                                             </div>
-                                            <div class="col-sm-2">
-                                                <button type="button" class="btn btn-icon btn-round btn-warning" id="btnIOProAdd"><i class="fas fa-plus"></i></button>
+                                            <div class="col-sm-4">
+                                                <div class="form-group row mb-2">
+                                                    <label class="col-form-label col-sm-4">IO Rank</label>
+                                                    <div class="col-sm-8 ">
+                                                        <i class="fas fa-asterisk mand"></i>
+                                                        <select class=" js-example-basic-single select2 form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddlProIORank" id="ddlProIORank">
+                                                            <option value="0">Select IO Rank </option>
+                                                        </select>
+                                                       @*  <label id="lblProIORank" class="col-form-label IOlbl"></label> *@
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-4">
+                                                <div class="form-group row mb-2">
+                                                    <label class="col-form-label col-sm-4">IO Name</label>
+                                                    <div class="col-sm-8 ">
+                                                        <i class="fas fa-asterisk mand"></i>
+                                                        <input class="form-control" placeholder="Enter IO Name" readonly id="txtProIOName" pattern="^[a-zA-Z0-9 ]*$" maxlength="200" title="Only Alphabets and Numbers allowed" />
+                                                      
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-4">
+                                                <div class="form-group row mb-2">
+                                                    <label class="col-form-label col-sm-4">IO Formation</label>
+                                                    <div class="col-sm-8 ">
+                                                        <i class="fas fa-asterisk mand"></i>
+                                                        <select class=" js-example-basic-single select2 form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddlProIOFormation" id="ddlProIOFormation">
+                                                            <option value="0">Select Io Formation </option>
+                                                        </select>
+                                                        
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-4">
+                                                <div class="form-group row mb-2">
+                                                    <label class="col-form-label col-sm-4">IO Appt.</label>
+                                                    <div class="col-sm-8 ">
+                                                        <i class="fas fa-asterisk mand"></i>
+                                                        <select class=" js-example-basic-single select2 form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddlProIOAppointment" id="ddlProIOAppointment">
+                                                            <option value="0">Select IO Appointment </option>
+                                                        </select>
+                                                       
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-4">
+                                                <div class="form-group row mb-2">
+                                                    <label class="col-form-label col-sm-4">IO  Unit</label>
+                                                    <div class="col-sm-6">
+                                                        <span id="spnUnitIdIO" class="d-none">0</span>
+                                                        <i class="fas fa-asterisk mand"></i>
+                                                        <input class="form-control " placeholder="Enter IO Army No" id="txtProIOformunit" title="Only Alphabets and Numbers allowed" />
+                                                    </div>
+                                                    <div class="col-sm-2">
+                                                        <button type="button" class="btn btn-icon btn-round btn-warning" id="btnIOUnitAdd"><i class="fas fa-plus"></i></button>
+                                                    </div>
+                                                    @* <div class="col-sm-8">
+                                                        <i class="fas fa-asterisk mand IOlbl"></i>
+                                                        <label id="lblIOProIOUnit" class="col-form-label IOlbl"></label>
+                                                    </div> *@
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-12 text-center">
+                                                <button type="button" class="btn btn-round btn-primary d-none" id="btnSaveIO">Save IO Details</i></button>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <div class="form-group row mb-2">
-                                            <label class="col-form-label col-sm-4">IO Rank</label>
-                                            <div class="col-sm-8">
-                                                <i class="fas fa-asterisk mand"></i>
-                                                <select class=" js-example-basic-single select2 form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddlProIORank" required id="ddlProIORank">
-                                                    <option value="0">Select IO Rank </option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <div class="form-group row mb-2">
-                                            <label class="col-form-label col-sm-4">IO Name</label>
-                                            <div class="col-sm-8">
-                                                <i class="fas fa-asterisk mand"></i>
-                                                <input class="form-control Alphanumeric" placeholder="Enter IO Name" id="txtIOName" required pattern="^[a-zA-Z0-9 ]*$" maxlength="200" title="Only Alphabets and Numbers allowed" />
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <div class="form-group row mb-2">
-                                            <label class="col-form-label col-sm-4">IO Formation</label>
-                                            <div class="col-sm-8">
-                                                <i class="fas fa-asterisk mand"></i>
-                                                <select class=" js-example-basic-single select2 form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddlProIOFormation" required id="ddlProIOFormation">
-                                                    <option value="0">Select Io Formation </option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <div class="form-group row mb-2">
-                                            <label class="col-form-label col-sm-4">IO Appt.</label>
-                                            <div class="col-sm-8">
-                                                <i class="fas fa-asterisk mand"></i>
-                                                <select class=" js-example-basic-single select2 form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddlProIOAppointment" required id="ddlProIOAppointment">
-                                                    <option value="0">Select IO Appointment </option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <div class="form-group row mb-2">
-                                            <label class="col-form-label col-sm-4">IO  Unit</label>
-                                            <div class="col-sm-6">
-                                                <i class="fas fa-asterisk mand"></i>
-                                                <input class="form-control Alphanumeric" placeholder="Enter IO Army No" id="txtProIOformunit" required pattern="^[a-zA-Z0-9 ]*$" title="Only Alphabets and Numbers allowed" />
-                                            </div>
-                                            <div class="col-sm-2">
-                                                <button type="button" class="btn btn-icon btn-round btn-warning" id="btnIOUnitAdd"><i class="fas fa-plus"></i></button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                   
-                                    
+                                    </form>
                                 </div>
                             </div>
-                        </div>
 
-                        <div class="card mt-2">
-                            <div class="card-body">
-                                <h5 class="card-title">GSO Details</h5>
-                                <div class="row">
-                                    <div class="col-sm-4">
-                                        <div class="form-group row mb-2">
-                                            <label class="col-form-label col-sm-4">GSO Army No</label>
-                                            <div class="col-sm-6">
-                                                <i class="fas fa-asterisk mand"></i>
-                                                <input class="form-control Alphanumeric" placeholder="Enter GSO Army No" id="txtProGSOArmyNo" required pattern="^[a-zA-Z0-9 ]*$" title="Only Alphabets and Numbers allowed" />
-                                            </div>
-                                            <div class="col-sm-2">
-                                                <button type="button" class="btn btn-icon btn-round btn-warning" id="btnGSOProAdd"><i class="fas fa-plus"></i></button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <div class="form-group row mb-2">
-                                            <label class="col-form-label col-sm-4">GSO Rank</label>
-                                            <div class="col-sm-8">
-                                                <i class="fas fa-asterisk mand"></i>
-                                                <select class=" js-example-basic-single select2 form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddlProGSORank" required id="ddlProIORank">
-                                                    <option value="0">Select GSO Rank </option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <div class="form-group row mb-2">
-                                            <label class="col-form-label col-sm-4">GSO Name</label>
-                                            <div class="col-sm-8">
-                                                <i class="fas fa-asterisk mand"></i>
-                                                <input class="form-control Alphanumeric" placeholder="Enter GSO Name" id="txtGSOName" required pattern="^[a-zA-Z0-9 ]*$" maxlength="200" title="Only Alphabets and Numbers allowed" />
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <div class="form-group row mb-2">
-                                            <label class="col-form-label col-sm-4">GSO Formation</label>
-                                            <div class="col-sm-8">
-                                                <i class="fas fa-asterisk mand"></i>
-                                                <select class=" js-example-basic-single select2 form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddlProGSOFormation" required id="ddlProGSOFormation">
-                                                    <option value="0">Select GSO Formation </option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <div class="form-group row mb-2">
-                                            <label class="col-form-label col-sm-4">GSO Appt.</label>
-                                            <div class="col-sm-8">
-                                                <i class="fas fa-asterisk mand"></i>
-                                                <select class=" js-example-basic-single select2 form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddlProGSOAppointment" required id="ddlProGSOAppointment">
-                                                    <option value="0">Select GSO Appointment </option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <div class="form-group row mb-2">
-                                            <label class="col-form-label col-sm-4">GSO  Unit</label>
-                                            <div class="col-sm-6">
-                                                <i class="fas fa-asterisk mand"></i>
-                                                <input class="form-control Alphanumeric" placeholder="Enter GSO Army No" id="txtProGSOformunit" required pattern="^[a-zA-Z0-9 ]*$" title="Only Alphabets and Numbers allowed" />
-                                            </div>
-                                            <div class="col-sm-2">
-                                                <button type="button" class="btn btn-icon btn-round btn-warning" id="btnGSOUnitAdd"><i class="fas fa-plus"></i></button>
-                                            </div>
-                                        </div>
-                                    </div>
+                            <div class="card mt-2">
+                                <div class="card-body">
+                                    <h5 class="card-title">GSO Details</h5>
 
+                                    <div class="row">
+                                        <div class="col-sm-4">
+                                            <div class="form-group row mb-2">
+                                                <label class="col-form-label col-sm-4">GSO Army No</label>
+                                                <span id="spnUserIdGSO" class="d-none">0</span>
+                                                <div class="col-sm-6">
+                                                    <i class="fas fa-asterisk mand"></i>
+                                                    <input class="form-control " placeholder="Enter GSO Army No" id="txtProGSOArmyNo" required data-toggle="tooltip" data-placement="top" title="Enter Army No" />
+                                                </div>
+                                                <div class="col-sm-2">
+                                                    <button type="button" class="btn btn-icon btn-round btn-warning" id="btnGSOProAdd" data-toggle="tooltip" data-placement="top" title="Click To New GSO Details"><i class="fas fa-plus"></i></button>
+                                                    <button type="button" class="btn btn-icon btn-round btn-danger d-none" id="btnGSOProremove" data-toggle="tooltip" data-placement="top" title="Click To New GSO Details"><i class="fas fa-minus"></i></button>
+                                                </div>
+                                                @*  <div class="col-sm-8 GSOlbl">
+                                                <i class="fas fa-asterisk mand"></i>
+                                                <label id="lblIOProAdd" class="form-control"></label>
+                                                </div> *@
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <div class="form-group row mb-2">
+                                                <label class="col-form-label col-sm-4">GSO Rank</label>
+                                                <div class="col-sm-8 ">
+                                                    <i class="fas fa-asterisk mand"></i>
+                                                    <select class=" js-example-basic-single select2 form-control GSO" style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddlProGSORank" id="ddlProGSORank">
+                                                        <option value="0">Select GSO Rank </option>
+                                                    </select>
+                                                    <label id="lblProGSORank" class="col-form-label GSOlbl"></label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <div class="form-group row mb-2">
+                                                <label class="col-form-label col-sm-4">GSO Name</label>
+                                                <div class="col-sm-8 ">
+                                                    <i class="fas fa-asterisk mand"></i>
+                                                    <input class="form-control  GSO" placeholder="Enter GSO Name" id="txtProGSOName" pattern="^[a-zA-Z0-9 ]*$" maxlength="200" title="Only Alphabets and Numbers allowed" />
+                                                    <label id="lblProGSOName" class="col-form-label GSOlbl"></label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <div class="form-group row mb-2">
+                                                <label class="col-form-label col-sm-4">GSO Formation</label>
+                                                <div class="col-sm-8 ">
+                                                    <i class="fas fa-asterisk mand"></i>
+                                                    <select class=" js-example-basic-single select2 form-control GSO" style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddlProGSOFormation" id="ddlProGSOFormation">
+                                                        <option value="0">Select Io Formation </option>
+                                                    </select>
+                                                    <label id="lblProGSOFormation" class="col-form-label GSOlbl"></label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <div class="form-group row mb-2">
+                                                <label class="col-form-label col-sm-4">GSO Appt.</label>
+                                                <div class="col-sm-8 ">
+                                                    <i class="fas fa-asterisk mand"></i>
+                                                    <select class=" js-example-basic-single select2 form-control GSO" style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddlProGSOAppointment" id="ddlProGSOAppointment">
+                                                        <option value="0">Select GSO Appointment </option>
+                                                    </select>
+                                                    <label id="lblProGSOAppointment" class="col-form-label GSOlbl"></label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <div class="form-group row mb-2">
+                                                <label class="col-form-label col-sm-4">GSO  Unit</label>
+                                                <div class="col-sm-6 GSO">
+                                                    <span id="spnUnitIdGSO" class="d-none">0</span>
+                                                    <i class="fas fa-asterisk mand"></i>
+                                                    <input class="form-control " placeholder="Enter GSO Army No" id="txtProGSOformunit" title="Only Alphabets and Numbers allowed" />
+                                                </div>
+                                                <div class="col-sm-2 GSO">
+                                                    <button type="button" class="btn btn-icon btn-round btn-warning" id="btnGSOUnitAdd"><i class="fas fa-plus"></i></button>
+                                                </div>
+                                                <div class="col-sm-8">
+                                                    <i class="fas fa-asterisk mand GSOlbl"></i>
+                                                    <label id="lblGSOProGSOUnit" class="col-form-label GSOlbl"></label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-12 text-center">
+                                            <button type="button" class="btn btn-round btn-primary d-none" id="btnSaveGSO">Save GSO Details</button>
+                                        </div>
+                                    </div>
 
                                 </div>
                             </div>
-                        </div>
 
 
-                        <div class="col-sm-12 text-right mt-2">
-                            <input type="button" class="btn btn-primary " value="Save" id="btnProfilesave" />
-                            <button type="button" id="btnProfileReset" class="btn btn-outline-danger">Reset</button>
+                            <div class="col-sm-12 text-right mt-2">
+                                <input type="button" class="btn btn-primary " value="Save" id="btnProfilesave" />
+                                <button type="button" id="btnProfileReset" class="btn btn-outline-danger">Reset</button>
+                            </div>
+                            <div class="col-sm-12" id="msg">
+                            </div>
                         </div>
-                        <div class="col-sm-12" id="msg">
-                        </div>
+                    </form>
+
+                    <div class="col-sm-12" id="msg">
                     </div>
-                </form>
-
-                <div class="col-sm-12" id="msg">
                 </div>
+                
             </div>
 
-
-    </div>
-
+        </div><!-- modal-content -->
+    </div><!-- modal-dialog -->
 </div>
-</div>
-
 
 <script src="~/developerjs/mtables.js"></script>
 <script src="~/developerjs/mapunit.js"></script>
