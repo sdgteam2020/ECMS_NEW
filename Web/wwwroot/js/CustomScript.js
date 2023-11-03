@@ -304,7 +304,6 @@ function getData(id) {
             $("#DateOfCommissioning").val(response.DateOfCommissioning);
             $("#DOC").val(moment(response.DateOfCommissioning).format("DD-MMM-YYYY"));
             $("#PermanentAddress").val(response.PermanentAddress);
-            $("#DOB").html("2019-07-22");
         }
     });
 }
