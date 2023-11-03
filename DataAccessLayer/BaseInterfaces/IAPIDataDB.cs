@@ -1,5 +1,4 @@
-﻿using DataAccessLayer.Migrations;
-using DataTransferObject.Domain.Master;
+﻿using DataTransferObject.Domain.Master;
 using DataTransferObject.Domain.Model;
 using System;
 using System.Collections.Generic;

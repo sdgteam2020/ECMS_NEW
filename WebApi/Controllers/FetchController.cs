@@ -1,6 +1,5 @@
 ﻿using BusinessLogicsLayer;
 using BusinessLogicsLayer.Bde;
-using DataAccessLayer.Migrations;
 using DataTransferObject.Domain.Model;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;

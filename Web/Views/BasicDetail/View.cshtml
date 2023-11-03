@@ -21,13 +21,13 @@
                         </tr>
                         <tr>
                             <th>2.</th>
-                            <th>@Html.DisplayNameFor(model => model.Rank)</th>
-                            <td>@Model.Rank</td>
+                            <th>@Html.DisplayNameFor(model => model.RankId)</th>
+                            <td>@Model.RankId</td>
                         </tr>
                         <tr>
                             <th>3.</th>
-                            <th>@Html.DisplayNameFor(model => model.ArmService)</th>
-                            <td>@Model.ArmService</td>
+                            <th>@Html.DisplayNameFor(model => model.ArmedId)</th>
+                            <td>@Model.ArmedId</td>
                         </tr>
                         <tr>
                             <th>4.</th>
@@ -42,7 +42,7 @@
                         <tr>
                             <th>6.</th>
                             <th>@Html.DisplayNameFor(model => model.DOB)</th>
-                            <td>@(Model.DOB!=null?@Model.DOB.Value.ToString("dd/MM/yyyy"):"No Date")</td>
+                            <td>@Model.DOB.ToString("dd/MM/yyyy"))</td>
                         </tr>
                         <tr>
                             <th>7.</th>
@@ -67,7 +67,7 @@
                         <tr>
                             <th>11.</th>
                             <th>@Html.DisplayNameFor(model => model.DateOfIssue)</th>
-                            <td>@(Model.DateOfIssue!=null?@Model.DateOfIssue.Value.ToString("dd/MM/yyyy"):"No Date")</td>
+                            <td>@Model.DateOfIssue.ToString("dd/MM/yyyy")</td>
                         </tr>
                         <tr>
                             <th>12.</th>
@@ -82,7 +82,7 @@
                         <tr>
                             <th>14.</th>
                             <th>@Html.DisplayNameFor(model => model.DateOfCommissioning)</th>
-                            <td>@(Model.DateOfCommissioning!=null?@Model.DateOfCommissioning.Value.ToString("dd/MM/yyyy"):"No Date")</td>
+                            <td>@Model.DateOfCommissioning.ToString("dd/MM/yyyy"):"No Date")</td>
                         </tr>
                         <tr>
                             <th>15.</th>

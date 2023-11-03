@@ -30,12 +30,5 @@ namespace BusinessLogicsLayer.Service
         public bool IsImage(IFormFile postedFile);
         public string GetContentType(string path);
         public Dictionary<string, string> GetMimeTypes();
-        public Task<List<State>> GetAllState();
-        public Task<List<District>> GetDistrictListByStateId(int StateId);
-        public IEnumerable<SelectListItem> GetStateDDL();
-        public IEnumerable<SelectListItem> GetStateDDLIdSelected(int StateId);
-        public IEnumerable<SelectListItem> GetStateDDLId(int stateId);
-        public IEnumerable<SelectListItem> GetDistrictDDL();
-        public IEnumerable<SelectListItem> GetDistrictDDL(int stateId);
     }
 }

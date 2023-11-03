@@ -14,18 +14,19 @@
                 <div class="row">
                     <div class="col-xl-12">
                         <div class="row mb-3 required">
-                            <label asp-for="Rank" class="col-sm-3 col-form-label form-label"></label>
+                            <label asp-for="RankId" class="col-sm-3 col-form-label form-label"></label>
                             <div class="col-sm-4">
-                                <select asp-for="Rank" class="form-control" asp-items="ViewBag.OptionsRank">
+                                <select asp-for="RankId" class="form-control" asp-items="ViewBag.OptionsRank">
                                 </select>
-                                <span asp-validation-for="Rank" class="text-danger"></span>
+                                <span asp-validation-for="RankId" class="text-danger"></span>
                             </div>
                         </div>
                         <div class="row mb-3 required">
-                            <label asp-for="ArmService" class="col-sm-3 col-form-label form-label"></label>
+                            <label asp-for="ArmedId" class="col-sm-3 col-form-label form-label"></label>
                             <div class="col-sm-4">
-                                <input asp-for="ArmService" class="form-control" placeholder="INF/ARTY/INT/EME" />
-                                <span asp-validation-for="ArmService" class="text-danger"></span>
+                                <select asp-for="ArmedId" class="form-control" asp-items="ViewBag.OptionsArmedType">
+                                </select>
+                                <span asp-validation-for="ArmedId" class="text-danger"></span>
                             </div>
                         </div>
                         <div class="row mb-3 required">
@@ -59,27 +60,7 @@
                         </div>
                         <div class="row mb-3 required">
                             <label asp-for="PlaceOfIssue" class="col-sm-3 col-form-label form-label"></label>
-                            <div class="col-sm-3">
-                                <select asp-for="StateId" class="form-control" asp-items="ViewBag.OptionsState" onchange="GetDistrictListByStateId(this.value)">
-                                </select>
-                                <span asp-validation-for="StateId" class="text-danger"></span>
-                            </div>
-                            <div class="col-sm-3">
-                                @if (Model.Step == 2)
-                                {
-                                    <select asp-for="DistrictId" asp-items="ViewBag.OptionsDistrict" class="form-control">
-                                    </select>
-                                }
-                                else
-                                {
-                                    <select asp-for="DistrictId" class="form-control">
-                                        <option value="">-- Select District --</option>
-                                    </select>
-                                }
-
-                                <span asp-validation-for="DistrictId" class="text-danger"></span>
-                            </div>
-                            <div class="col-sm-2">
+                            <div class="col-sm-4">
                                 <textarea asp-for="PlaceOfIssue" rows="1" class="form-control" placeholder="Place Of Issue"></textarea>
                                 <span asp-validation-for="PlaceOfIssue" class="text-danger"></span>
                             </div>

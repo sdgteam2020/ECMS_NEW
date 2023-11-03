@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccessLayer.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20231027111220_v3")]
-    partial class v3
+    [Migration("20231103063857_vv1")]
+    partial class vv1
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -180,36 +180,8 @@ namespace DataAccessLayer.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("ArmyNo_Old")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("BdeId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ComdId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("CorpsId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("DivId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("GISOfficerArmyNo")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("IOArmyNo")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("InitOffrsArmyNo")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsSubmit")
+                    b.Property<bool>("IsActive")
                         .HasColumnType("bit");
-
-                    b.Property<int?>("MUnitUnitId")
-                        .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -218,25 +190,17 @@ namespace DataAccessLayer.Migrations
                     b.Property<int>("RankId")
                         .HasColumnType("int");
 
-                    b.Property<int>("TypeOfUnit")
-                        .HasColumnType("int");
-
                     b.Property<int>("UnitId")
                         .HasColumnType("int");
 
+                    b.Property<DateTime?>("UpdatedOn")
+                        .IsRequired()
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Updatedby")
+                        .HasColumnType("int");
+
                     b.HasKey("UserId");
-
-                    b.HasIndex("ApptId");
-
-                    b.HasIndex("BdeId");
-
-                    b.HasIndex("ComdId");
-
-                    b.HasIndex("CorpsId");
-
-                    b.HasIndex("DivId");
-
-                    b.HasIndex("MUnitUnitId");
 
                     b.ToTable("UserProfile");
                 });
@@ -270,28 +234,6 @@ namespace DataAccessLayer.Migrations
                     b.HasKey("ComdId");
 
                     b.ToTable("MComd");
-                });
-
-            modelBuilder.Entity("DataTransferObject.Domain.Master.District", b =>
-                {
-                    b.Property<int>("DistrictId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("DistrictId"));
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("StateId")
-                        .HasColumnType("int");
-
-                    b.HasKey("DistrictId");
-
-                    b.HasIndex("StateId");
-
-                    b.ToTable("MDistricts");
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Master.MAppointment", b =>
@@ -498,6 +440,41 @@ namespace DataAccessLayer.Migrations
                     b.ToTable("MFormation");
                 });
 
+            modelBuilder.Entity("DataTransferObject.Domain.Master.MMappingProfile", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("GSOId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("IOId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("UnitId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedOn")
+                        .IsRequired()
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Updatedby")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("MMappingProfile");
+                });
+
             modelBuilder.Entity("DataTransferObject.Domain.Master.MRank", b =>
                 {
                     b.Property<int>("RankId")
@@ -612,24 +589,6 @@ namespace DataAccessLayer.Migrations
                     b.ToTable("MapUnit");
                 });
 
-            modelBuilder.Entity("DataTransferObject.Domain.Master.State", b =>
-                {
-                    b.Property<int>("StateId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("StateCode")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("StateName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("StateId");
-
-                    b.ToTable("MStates");
-                });
-
             modelBuilder.Entity("DataTransferObject.Domain.Model.BasicDetail", b =>
                 {
                     b.Property<int>("BasicDetailId")
@@ -639,76 +598,80 @@ namespace DataAccessLayer.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("BasicDetailId"));
 
                     b.Property<string>("AadhaarNo")
-                        .HasMaxLength(12)
-                        .HasColumnType("nvarchar(12)");
+                        .IsRequired()
+                        .HasMaxLength(4)
+                        .HasColumnType("nvarchar(4)");
 
-                    b.Property<string>("ArmService")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                    b.Property<int>("ArmedId")
+                        .HasColumnType("int");
 
                     b.Property<string>("BloodGroup")
+                        .IsRequired()
                         .HasMaxLength(3)
                         .HasColumnType("nvarchar(3)");
 
-                    b.Property<DateTime?>("DOB")
+                    b.Property<DateTime>("DOB")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime?>("DateOfCommissioning")
+                    b.Property<DateTime>("DateOfCommissioning")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime?>("DateOfIssue")
+                    b.Property<DateTime>("DateOfIssue")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("DistrictId")
+                    b.Property<int>("Height")
                         .HasColumnType("int");
 
-                    b.Property<decimal?>("Height")
-                        .HasColumnType("decimal(18,2)");
-
                     b.Property<string>("IdentityMark")
+                        .IsRequired()
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
                     b.Property<bool>("IsSubmit")
                         .HasColumnType("bit");
 
                     b.Property<string>("IssuingAuth")
+                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasMaxLength(36)
                         .HasColumnType("nvarchar(36)");
 
                     b.Property<string>("PermanentAddress")
+                        .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("PhotoImagePath")
+                        .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
                     b.Property<string>("PlaceOfIssue")
+                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<string>("Rank")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                    b.Property<int>("RankId")
+                        .HasColumnType("int");
 
                     b.Property<string>("ServiceNo")
+                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("SignatureImagePath")
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
+
+                    b.Property<int>("Step")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("UpdatedOn")
                         .IsRequired()
@@ -719,9 +682,55 @@ namespace DataAccessLayer.Migrations
 
                     b.HasKey("BasicDetailId");
 
-                    b.HasIndex("DistrictId");
+                    b.HasIndex("ArmedId");
+
+                    b.HasIndex("RankId");
 
                     b.ToTable("BasicDetails");
+                });
+
+            modelBuilder.Entity("DataTransferObject.Domain.Model.BasicDetailTemp", b =>
+                {
+                    b.Property<int>("BasicDetailTempId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("BasicDetailTempId"));
+
+                    b.Property<DateTime>("DOB")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("DateOfCommissioning")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(36)
+                        .HasColumnType("nvarchar(36)");
+
+                    b.Property<string>("PermanentAddress")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("ServiceNo")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTime?>("UpdatedOn")
+                        .IsRequired()
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Updatedby")
+                        .HasColumnType("int");
+
+                    b.HasKey("BasicDetailTempId");
+
+                    b.ToTable("BasicDetailTemps");
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Model.DocUpload", b =>
@@ -756,6 +765,37 @@ namespace DataAccessLayer.Migrations
                     b.HasKey("DocUploadId");
 
                     b.ToTable("DocUploads");
+                });
+
+            modelBuilder.Entity("DataTransferObject.Domain.Model.MApiData", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("DOB")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("DateOfCommissioning")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PermanentAddress")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ServiceNo")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("MApiData");
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Model.ProfileData", b =>
@@ -986,67 +1026,6 @@ namespace DataAccessLayer.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("DataTransferObject.Domain.MUserProfile", b =>
-                {
-                    b.HasOne("DataTransferObject.Domain.Master.MAppointment", "MAppointment")
-                        .WithMany()
-                        .HasForeignKey("ApptId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("DataTransferObject.Domain.Master.MBde", "Bde")
-                        .WithMany()
-                        .HasForeignKey("BdeId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("DataTransferObject.Domain.Master.Comd", "Comd")
-                        .WithMany()
-                        .HasForeignKey("ComdId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("DataTransferObject.Domain.Master.MCorps", "Corps")
-                        .WithMany()
-                        .HasForeignKey("CorpsId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("DataTransferObject.Domain.Master.MDiv", "Div")
-                        .WithMany()
-                        .HasForeignKey("DivId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("DataTransferObject.Domain.Master.MUnit", "MUnit")
-                        .WithMany()
-                        .HasForeignKey("MUnitUnitId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("Bde");
-
-                    b.Navigation("Comd");
-
-                    b.Navigation("Corps");
-
-                    b.Navigation("Div");
-
-                    b.Navigation("MAppointment");
-
-                    b.Navigation("MUnit");
-                });
-
-            modelBuilder.Entity("DataTransferObject.Domain.Master.District", b =>
-                {
-                    b.HasOne("DataTransferObject.Domain.Master.State", "State")
-                        .WithMany()
-                        .HasForeignKey("StateId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("State");
-                });
-
             modelBuilder.Entity("DataTransferObject.Domain.Master.MAppointment", b =>
                 {
                     b.HasOne("DataTransferObject.Domain.Master.MFormation", "mFormation")
@@ -1159,12 +1138,21 @@ namespace DataAccessLayer.Migrations
 
             modelBuilder.Entity("DataTransferObject.Domain.Model.BasicDetail", b =>
                 {
-                    b.HasOne("DataTransferObject.Domain.Master.District", "District")
+                    b.HasOne("DataTransferObject.Domain.Master.MArmedType", "Armed")
                         .WithMany()
-                        .HasForeignKey("DistrictId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .HasForeignKey("ArmedId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
-                    b.Navigation("District");
+                    b.HasOne("DataTransferObject.Domain.Master.MRank", "Rank")
+                        .WithMany()
+                        .HasForeignKey("RankId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Armed");
+
+                    b.Navigation("Rank");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>

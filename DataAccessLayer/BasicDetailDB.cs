@@ -31,7 +31,7 @@ namespace DataAccessLayer
         public async Task<List<DTOBasicDetailRequest>> GetALLBasicDetail(int UserId)
         {
             //var BasicDetailList = _context.BasicDetails.Where(x => x.IsDeleted == false && x.Updatedby == UserId).ToList();
-            var query = "SELECT * FROM BasicDetails WHERE IsDeleted=0 and Updatedby=@UserId ORDER BY UpdatedOn DESC";
+            var query = "SELECT * FROM BasicDetails WHERE Updatedby=@UserId ORDER BY UpdatedOn DESC";
             using (var connection = _contextDP.CreateConnection())
             {
                 var BasicDetailList = await connection.QueryAsync<BasicDetail>(query, new { UserId });

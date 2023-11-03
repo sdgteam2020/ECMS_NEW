@@ -52,7 +52,6 @@ function beforeUploadPhotoSizeCheck(id) {
     }
 }
 function beforeSubmitValidateBasicDetail(id) {
-    de
     let formId = '#' + id;
 
     //$('#ArmService').prop('required', true);
@@ -300,9 +299,10 @@ function getData(id) {
             //alert(JSON.stringify(response));
             $("#Name").val(response.Name);
             $("#ServiceNo").val(response.ServiceNo);
-            $("#DOB").val(response.DOB.split('T')[0]);
+            $("#DOB").val(response.DOB);
             $("#DOB_").val(moment(response.DOB).format("DD-MMM-YYYY"));
-            $("#DateOfCommissioning").val(response.DateOfCommissioning.split('T')[0]);
+            $("#DateOfCommissioning").val(response.DateOfCommissioning);
+            $("#DOC").val(moment(response.DateOfCommissioning).format("DD-MMM-YYYY"));
             $("#PermanentAddress").val(response.PermanentAddress);
             $("#DOB").html("2019-07-22");
         }
