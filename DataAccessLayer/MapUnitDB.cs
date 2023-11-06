@@ -29,9 +29,9 @@ namespace DataAccessLayer
             return ret;
         }
 
-        public Task<List<DTOMapUnitResponse>> GetALLUnit(DTOMHierarchyRequest unit)
+        public Task<List<DTOMapUnitResponse>> GetALLUnit(DTOMHierarchyRequest unit, string Unit1)
         {
-
+            Unit1 = string.IsNullOrEmpty(Unit1) ? "" : Unit1.ToLower();
             if (unit.ComdId == null)unit.ComdId = 0;
             if (unit.CorpsId == null)unit.CorpsId = 0;
             if (unit.DivId == null)unit.DivId = 0;
@@ -50,11 +50,11 @@ namespace DataAccessLayer
                        join cor in _context.MCorps on uni.CorpsId equals cor.CorpsId
                        join div in _context.MDiv on uni.DivId equals div.DivId
                        join bde in _context.MBde on uni.BdeId equals bde.BdeId
-                      
+                      where MUni.UnitName == "" || MUni.UnitName.ToLower().Contains(Unit1)
                        select new DTOMapUnitResponse
                        {
                            UnitMapId= uni.UnitMapId,
-                           UnitName = uni.UnitName,
+                           UnitName = MUni.UnitName,
                            UnitId = uni.UnitId,
                            BdeId = bde.BdeId,  
                            BdeName = bde.BdeName,   
@@ -67,7 +67,7 @@ namespace DataAccessLayer
                            Suffix=MUni.Suffix,
                            Sus_no=MUni.Sus_no
                        }
-                     ).Distinct().ToList(); ;
+                     ).Distinct().Take(200).ToList(); ;
 
 
 
@@ -92,11 +92,11 @@ namespace DataAccessLayer
                        join cor in _context.MCorps on uni.CorpsId equals cor.CorpsId
                        join div in _context.MDiv on uni.DivId equals div.DivId
                        join bde in _context.MBde on uni.BdeId equals bde.BdeId
-                       where MUni.Unit_desc.Contains(UnitName)
+                       where MUni.UnitName.Contains(UnitName)
                        select new DTOMapUnitResponse
                        {
                            UnitMapId = uni.UnitMapId,
-                           UnitName = uni.UnitName,
+                           UnitName = MUni.UnitName,
                            //UnitId = uni.UnitId,
                            //BdeId = bde.BdeId,
                            //BdeName = bde.BdeName,
@@ -138,7 +138,7 @@ namespace DataAccessLayer
                        select new DTOMapUnitResponse
                        {
                            UnitMapId = uni.UnitMapId,
-                           UnitName = uni.UnitName,
+                           UnitName = MUni.UnitName,
                            UnitId = uni.UnitId,
                            BdeId = bde.BdeId,
                            BdeName = bde.BdeName,
@@ -179,7 +179,7 @@ namespace DataAccessLayer
                        select new DTOMapUnitResponse
                        {
                            UnitMapId = uni.UnitMapId,
-                           UnitName = uni.UnitName,
+                           UnitName = MUni.UnitName,
                            UnitId = uni.UnitId,
                            BdeId = bde.BdeId,
                            BdeName = bde.BdeName,

@@ -8,38 +8,39 @@ $(document).ready(function () {
     });
     DataBindAll();
 
-    $(".GSO").addClass("d-none");
-    $(".IO").addClass("d-none");
+    //$(".GSO").addClass("d-none");
+    //$(".IO").addClass("d-none");
   
-    $("#btnGSOProAdd").click(function () {
-        $(".GSO").removeClass("d-none");
-        $(".GSOlbl").addClass("d-none");
-        $("#btnGSOProAdd").addClass("d-none");
-        $("#btnGSOProremove").removeClass("d-none");
-        $("#btnSaveGSO").removeClass("d-none");
+    //$("#btnGSOProAdd").click(function () {
+    //    $(".GSO").removeClass("d-none");
+       
+    //    $("#btnGSOProAdd").addClass("d-none");
+    //    $("#btnGSOProremove").removeClass("d-none");
+    //    $("#btnSaveGSO").removeClass("d-none");
 
-       $("#txtProGSOArmyNo").val('');
-       $("#ddlProGSORank").val(0);
-       $("#txtProGSOName").val('');
-       $("#ddlProGSOAppointment").val(0);
-       $("#spnUnitIdGSO").html(0);
-    });
-    $("#btnGSOProremove").click(function () {
-        $(".GSO").addClass("d-none");
-        $(".GSOlbl").removeClass("d-none");
-        $("#btnGSOProAdd").removeClass("d-none");
-        $("#btnGSOProremove").addClass("d-none");
-        $("#btnSaveGSO").addClass("d-none");
+    //   $("#txtProGSOArmyNo").val('');
+    //   $("#ddlProGSORank").val(0);
+    //   $("#txtProGSOName").val('');
+    //   $("#ddlProGSOAppointment").val(0);
+    //   $("#spnUnitIdGSO").html(0);
+    //});
+    //$("#btnGSOProremove").click(function () {
+    //    $(".GSO").addClass("d-none");
 
 
-        $("#spnUserIdGSO").html(0);
-        $("#txtProGSOArmyNo").html('');
-        $("#lblProGSORank").html('');
-        $("#lblProGSOName").html('');
-        $("#lblProGSOFormation").html('');
-        $("#lblProGSOAppointment").html('');
-        $("#lblGSOProGSOUnit").html('');
-    });
+    //    $("#btnGSOProAdd").removeClass("d-none");
+    //    $("#btnGSOProremove").addClass("d-none");
+    //    $("#btnSaveGSO").addClass("d-none");
+
+
+    //    $("#spnUserIdGSO").html(0);
+    //    $("#txtProGSOArmyNo").html('');
+    //    $("#lblProGSORank").html('');
+    //    $("#lblProGSOName").html('');
+    //    $("#lblProGSOFormation").html('');
+    //    $("#lblProGSOAppointment").html('');
+    //    $("#lblGSOProGSOUnit").html('');
+    //});
 
 
     //$("#btnIOProAdd").click(function () {
@@ -92,7 +93,7 @@ $(document).ready(function () {
                     var Unit = $("#spnUnitIdIO").html();
                     var UserId = $("#spnUserIdIO").html();
 
-                    SaveUserProfile(ArmyNo, Rank, Name, Appt, Unit, 1, 0, 0, UserId)
+                    SaveUserProfile(ArmyNo, Rank, Name, Appt, Unit, false, 1, 0, 0, UserId)
                 }                          
             })                             
                                            
@@ -124,7 +125,7 @@ $(document).ready(function () {
                 var Appt = $("#ddlProGSOAppointment").val();
                 var Unit = $("#spnUnitIdGSO").html();
                 var UserId = $("#spnUserIdGSO").html();
-                SaveUserProfile(ArmyNo, Rank, Name, Appt, Unit, 2,0,0,UserId)
+                SaveUserProfile(ArmyNo, Rank, Name, Appt, Unit,false, 2,0,0,UserId)
             }
         })
 
@@ -141,6 +142,7 @@ $(document).ready(function () {
 
     $("#btnProfilesave").click(function () {
 
+       /* alert($("#intoffsyes").prop("checked") )*/
         if ($("#SaveFormProfile")[0].checkValidity()) {
             Swal.fire({
                 title: 'Are you sure?',
@@ -176,7 +178,7 @@ $(document).ready(function () {
                         toastr.error('Please Enter GSO Details');
                     }
                     else {
-                        SaveUserProfile(ArmyNo, Rank, Name, Appt, Unit, 3, $("#spnUserIdIO").html(), $("#spnUserIdGSO").html(), userid)
+                        SaveUserProfile(ArmyNo, Rank, Name, Appt, Unit, $("#intoffsyes").prop("checked"), 3, $("#spnUserIdIO").html(), $("#spnUserIdGSO").html(), userid)
                     }
                     
                 }
@@ -228,74 +230,84 @@ $(document).ready(function () {
 
     });
   
+    $("#btnProfileSerch").click(function () {
 
-   $("#txtProArmy").autocomplete({
+        
+            $.ajax({
+                url: "/BasicDetail/GetData",
+                type: "POST",
+                data: {
+                    "ICNumber": $('#txtProArmy').val()
+                },
+                success: function (response, status) {
+                    if (status == "success") {
+                        $('#txtProArmy').val(response.ServiceNo);
+                        $('#txtName').val(response.Name);
+                        toastr.success('Found from API!');
+                    }
+                    else {
+                        toastr.error('Army No Not Found in API!');
+                    }
+                }
+            });
+        
+    });
+
+   //$("#txtProArmy").autocomplete({
 
 
-            source: function (request, response) {
+   //         source: function (request, response) {
 
-           //var param = { "ICNumber": request.term };
-           if (isNaN(request.term) && request.term.length == 8) {
+   //        //var param = { "ICNumber": request.term };
+   //        if (isNaN(request.term) && request.term.length == 8) {
 
-               //$.ajax({
-               //    url: 'https://localhost:7002/api/Fetch/GetData/' + request.term,
-               //    contentType: 'application/x-www-form-urlencoded',
+   //            //$.ajax({
+   //            //    url: 'https://localhost:7002/api/Fetch/GetData/' + request.term,
+   //            //    contentType: 'application/x-www-form-urlencoded',
 
-               //    type: 'GET',
-               //    success: function (data) {
-               //        console.log(data);
-               //        response($.map(data, function (item) {
+   //            //    type: 'GET',
+   //            //    success: function (data) {
+   //            //        console.log(data);
+   //            //        response($.map(data, function (item) {
 
-               //            $("#loading").addClass("d-none");
-               //            return { label: item.ServiceNo, value: item.ServiceNo };
+   //            //            $("#loading").addClass("d-none");
+   //            //            return { label: item.ServiceNo, value: item.ServiceNo };
 
-               //        }))
-               //    },
-               //    error: function (response) {
-               //        alert(response.responseText);
-               //    },
-               //    failure: function (response) {
-               //        alert(response.responseText);
-               //    }
-               //});
+   //            //        }))
+   //            //    },
+   //            //    error: function (response) {
+   //            //        alert(response.responseText);
+   //            //    },
+   //            //    failure: function (response) {
+   //            //        alert(response.responseText);
+   //            //    }
+   //            //});
             
-                   $.ajax({
-                       url: "/BasicDetail/GetData",
-                       type: "POST",
-                       data: {
-                           "ICNumber": request.term
-                       },
-                       success: function (response, status) {
-                           if (response.Name != "") {
-                               $('#txtProArmy').val(response.ServiceNo);
-                               $('#txtName').val(response.Name);
-                           }
-                       }
-                   });
+                  
               
-           }
-            },
-            select: function (e, i) {
-                e.preventDefault();
-                $("#txtProArmy").val(i.item.label);
-                alert(i.item.value)
-                //var param1 = { "UnitMapId": i.item.value };
-                //$.ajax({
-                //    url: 'https://192.168.10.203:7002/api/Fetch/GetData/' + i.item.value,
-                //    contentType: 'application/x-www-form-urlencoded',
+   //        }
+   //         },
+   //         select: function (e, i) {
+   //             e.preventDefault();
+   //             $("#txtProArmy").val(i.item.label);
+   //             alert(i.item.value)
+   //             //var param1 = { "UnitMapId": i.item.value };
+   //             //$.ajax({
+   //             //    url: 'https://192.168.10.203:7002/api/Fetch/GetData/' + i.item.value,
+   //             //    contentType: 'application/x-www-form-urlencoded',
 
-                //    type: 'GET',
-                //    success: function (data) {
+   //             //    type: 'GET',
+   //             //    success: function (data) {
 
 
-                //        alert(data.Name)
+   //             //        alert(data.Name)
 
-                //    }
-                //});
+   //             //    }
+   //             //});
 
-            },
-            appendTo: '#suggesstion-box'
-        });
+   //         },
+   //         appendTo: '#suggesstion-box'
+   //     });
     $("#txtProUnit").autocomplete({
 
 
@@ -453,39 +465,42 @@ $(document).ready(function () {
         appendTo: '#suggesstion-box'
     });
 
-    $("#txtProIOArmyNo").blur(function () {
-        if ($("#spnUserIdIO").html() == 0) {
-            $.ajax({
-                url: "/BasicDetail/GetData",
-                type: "POST",
-                data: {
-                    "ICNumber": $("#txtProIOArmyNo").val()
-                },
-                success: function (response, status) {
-                   
-                    if (status == "success") {
-                        $("#spnUserIdIO").html(0)
-                        $('#txtProIOArmyNo').val(response.ServiceNo);
-                        $('#txtProIOName').val(response.Name);
+    $("#btnIOProfileSerch").click(function () {
+       
+        if ($("#txtProIOArmyNo").val().length > 7) {
+            if ($("#spnUserIdIO").html() == 0) {
+                $.ajax({
+                    url: "/BasicDetail/GetData",
+                    type: "POST",
+                    data: {
+                        "ICNumber": $('#txtProIOArmyNo').val()
+                    },
+                    success: function (response, status) {
+
+                        if (status == "success") {
+                            $("#spnUserIdIO").html(0)
+                            $('#txtProIOArmyNo').val(response.ServiceNo);
+                            $('#txtProIOName').val(response.Name);
 
 
-                        $("#spnUserIdIO").html(0);
-                        $("#ddlProIORank").val('');
-                        $("#ddlProIOFormation").val('');
-                        $("#ddlProIOAppointment").val('');
-                       
-                        $("#txtProIOformunit").val('');
-                        $("#txtProIOformunit").attr('readonly', false);
-                        $("#spnUnitIdIO").html(''); 
-                        $("#btnSaveIO").removeClass("d-none");
+                            $("#spnUserIdIO").html(0);
+                            $("#ddlProIORank").val('');
+                            $("#ddlProIOFormation").val('');
+                            $("#ddlProIOAppointment").val('');
+
+                            $("#txtProIOformunit").val('');
+                            $("#txtProIOformunit").attr('readonly', false);
+                            $("#spnUnitIdIO").html('');
+                            $("#btnSaveIO").removeClass("d-none");
+                            toastr.success(response.ServiceNo +' Found Data From API!');
+                        }
+                        else {
+                            toastr.error($("#txtProIOArmyNo").val()  +' No Not Found in API!');
+                            resetIo();
+                        }
                     }
-                    else {
-                toastr.error('IO Army No Not Found in API!');
-
-                    }
-                }
-            });
-
+                });
+            }
         }
     });
 
@@ -495,7 +510,7 @@ $(document).ready(function () {
         source: function (request, response) {
 
             var param = { "ArmyNo": request.term };
-            $("#spnUserIdIO").html(0);
+            resetIo();
             $.ajax({
                 url: '/UserProfile/GetByMasterArmyNo',
                 contentType: 'application/x-www-form-urlencoded',
@@ -524,33 +539,49 @@ $(document).ready(function () {
             $("#txtProIOArmyNo").val(i.item.label);
             //alert(i.item.value)
             // var param1 = { "UnitMapId": i.item.value };
-           
+            
             GetByArmyNo(i.item.label, 1) 
         },
         appendTo: '#suggesstion-box'
     });
-    $("#txtProGSOArmyNo").blur(function () {
-        if ($("#spnUserIdGSO").html() == 0) {
-            $.ajax({
-                url: "/BasicDetail/GetData",
-                type: "POST",
-                data: {
-                    "ICNumber": $("#txtProGSOArmyNo").val()
-                },
-                success: function (response, status) {
 
-                    if (status == "success") {
-                        $("#spnUserIdGSO").html(0)
-                        $('#txtProGSOArmyNo').val(response.ServiceNo);
-                        $('#txtProGSOName').val(response.Name);
+    $("#btnGSOProfileSerch").click(function () {
+        resetGSo();
+        if ($("#txtProGSOArmyNo").val().length > 7) {
+          
+            if ($("#spnUserIdGSO").html() == 0) {
+                $.ajax({
+                    url: "/BasicDetail/GetData",
+                    type: "POST",
+                    data: {
+                        "ICNumber": $('#txtProGSOArmyNo').val()
+                    },
+                    success: function (response, status) {
+
+                        if (status == "success") {
+                            alert(response.Name)
+                            $('#txtProGSOArmyNo').val(response.ServiceNo);
+                            $('#txtProGSOName').val(response.Name);
+
+
+                            $("#spnUserIdGSO").html(0);
+                            $("#ddlProGSORank").val('');
+                           
+                            $("#ddlProGSOFormation").val('');
+
+                            $("#ddlProGSOAppointment").val('');
+                            $("#txtProGSOformunit").attr('readonly', false);
+                            $("#spnUnitIdGSO").html('');
+                            $("#btnSaveGSO").removeClass("d-none");
+                            toastr.success(response.ServiceNo + ' Found Data From API!');
+                        }
+                        else {
+                            toastr.error($("#txtProIOArmyNo").val() + ' No Not Found in API!');
+                            resetIo();
+                        }
                     }
-                    else {
-                        toastr.error('GSO Army No Not Found in API!');
-
-                    }
-                }
-            });
-
+                });
+            }
         }
     });
     $("#txtProGSOArmyNo").autocomplete({
@@ -560,6 +591,7 @@ $(document).ready(function () {
 
             var param = { "ArmyNo": request.term };
             $("#spnUserIdGSO").html(0);
+            resetGSo()
             $.ajax({
                 url: '/UserProfile/GetByMasterArmyNo',
                 contentType: 'application/x-www-form-urlencoded',
@@ -683,12 +715,12 @@ function DataBindAll() {
                             listItem += "<td class='align-middle'><span id='AppointmentName'>" + response[i].AppointmentName + "</span></td>";
                              listItem += "<td class='align-middle'><span id='Unit_desc'>" + response[i].Unit_desc + "(" + response[i].SusNo +")</span></td>";
                             listItem += "<td class='align-middle'><span id='IOArmyNo'>" + response[i].IOArmyNo + "</span></td>";
-                            listItem += "<td class='align-middle'><span id='IOName'>" + response[i].IOName + "</span></td>";
-                             listItem += "<td class='align-middle'><span id='UnitIo'>" + response[i].UnitIo + "(" + response[i].IOSusNo +")</span></td>";
+                            //listItem += "<td class='align-middle'><span id='IOName'>" + response[i].IOName + "</span></td>";
+                            // listItem += "<td class='align-middle'><span id='UnitIo'>" + response[i].UnitIo + "(" + response[i].IOSusNo +")</span></td>";
 
                             listItem += "<td class='align-middle'><span id='GSOArmyNo'>" + response[i].GSOArmyNo + "</span></td>";
-                            listItem += "<td class='align-middle'><span id='GSOName'>" + response[i].GSOName + "</span></td>";
-                              listItem += "<td class='align-middle'><span id='UnitGSO'>" + response[i].UnitGSO + "(" + response[i].GSOSusNo +")</span></td>";
+                            //listItem += "<td class='align-middle'><span id='GSOName'>" + response[i].GSOName + "</span></td>";
+                            //  listItem += "<td class='align-middle'><span id='UnitGSO'>" + response[i].UnitGSO + "(" + response[i].GSOSusNo +")</span></td>";
 
                             listItem += "<td class='align-middle'><span id='btneditpro'><button type='button' class='cls-btneditpro btn btn-icon btn-round btn-primary mr-1'><i class='fas fa-edit'></i></button></span><button type='button' class='cls-btnDelete btn-icon btn-round btn-danger mr-1'><i class='fas fa-trash-alt'></i></button></td>";
 
@@ -752,13 +784,14 @@ function DataBindAll() {
 
                       //  $(this).closest("tr").find("#spnproUserUnitId").html()
 
-                        $("#spnProfileMapId").html($(this).closest("tr").find("#spnMMapId").html());
+                        $("#spnUserId").html($(this).closest("tr").find("#spnMMapId").html());
                         GetByArmyNo($(this).closest("tr").find("#ArmyNo").html(), 0) 
                         GetByArmyNo($(this).closest("tr").find("#IOArmyNo").html(), 1) 
                         GetByArmyNo($(this).closest("tr").find("#GSOArmyNo").html(), 2) 
+
                         //$(".spnCorpsId").html($(this).closest("tr").find("#spnMcorpsId").html());
                         //$("#txtCoprsName").val($(this).closest("tr").find("#corpsName").html());
-
+                        $("#txtProArmy").attr('readonly', true);;
 
                         var param1 = { "UnitId": $(this).closest("tr").find("#spnproUserUnitId").html() };
                         $.ajax({
@@ -821,32 +854,37 @@ function DataBindAll() {
     });
 
 }
-function SaveUserProfile(ArmyNo, Rank, Name, Appt, Unit, Type, IO, GSO, UserId) {
+function SaveUserProfile(ArmyNo, Rank, Name, Appt, Unit, IntOffr, Type, IO, GSO, UserId) {
 
     /*  alert($('#bdaymonth').val());*/
-
+    
     $.ajax({
         url: '/UserProfile/SaveUserProfile',
         type: 'POST',
-        data: { "ArmyNo": ArmyNo, "RankId": Rank, "Name": Name, "ApptId": Appt, "UnitId": Unit, "UserId": UserId }, //get the search string
+        data: { "ArmyNo": ArmyNo, "RankId": Rank, "Name": Name, "ApptId": Appt, "UnitId": Unit, "UserId": UserId, "IntOffr": IntOffr }, //get the search string
         success: function (result) {
 
 
             if (result == DataSave) {
                 toastr.success('User has been saved');
                 GetByArmyNo(ArmyNo, Type, Unit,IO, GSO);
-                /*  $("#AddNewM").modal('hide');*/
                 
+                DataBindAll();
             }
             else if (result == DataUpdate) {
                 toastr.success('User has been Updated');
 
-                /*  $("#AddNewM").modal('hide');*/
-               
+                $("#AddNewProfile").modal('hide');
+                DataBindAll();
             }
             else if (result == DataExists) {
 
                 toastr.error('Army No Exits!');
+
+            }
+            else if (result == IncorrectData) {
+
+                toastr.error('Incorrect Data!');
 
             }
             else if (result == InternalServerError) {
@@ -902,7 +940,7 @@ function GetByArmyNo(ArmyNo, Type, Unit, IO, GSO) {
 
                         $("#spnUserId").html(response.UserId);
                         $("#txtProArmy").val(response.ArmyNo);
-                        
+                       
 
                         mMsater(response.FormationId, "ddlProFormation", Formation, "");
 
@@ -910,11 +948,21 @@ function GetByArmyNo(ArmyNo, Type, Unit, IO, GSO) {
                         
                         mMsater(response.ApptId, "ddlProAppointment", Appt, response.FormationId);
 
-                       
-                       
+
+                        //  alert(response.IntOffr)
+                        if (response.IntOffr == false) {
+                           
+                            $("#intoffsno").prop("checked", true); 
+                        }
+                        else {
+                            
+                            $("#intoffsyes").prop("checked", true); 
+                           
+                        }
+                        
                         $("#txtName").val(response.Name);
                       
-                       
+                        $("#AddNewProfile").modal('hide');
 
                     }
                    else if (Type == 1) {
@@ -928,6 +976,7 @@ function GetByArmyNo(ArmyNo, Type, Unit, IO, GSO) {
                         //$("#lblIOProIOUnit").html(response.Unit_desc);
                        // $("#lblProIORank").html(response.Rank);
                         $("#txtProIOName").val(response.Name);
+                        $("#txtProIOName").attr('readonly', true);;
                        // $("#lblProIOFormation").html(response.FormationName);
                        // $("#lblProIOAppointment").html(response.AppointmentName);
                        // $("#lblIOProIOUnit").html(response.Unit_desc);
@@ -947,22 +996,42 @@ function GetByArmyNo(ArmyNo, Type, Unit, IO, GSO) {
                         //$("#btnIOProAdd").removeClass("d-none");
                         //$("#btnIOProremove").addClass("d-none");
                         $("#btnSaveIO").addClass("d-none");
+
+
+
                     } else if (Type == 2) {
-
                         $("#spnUserIdGSO").html(response.UserId);
-                        $("#txtProGSOArmyNo").val(response.ArmyNo);
-                        $("#lblProGSORank").html(response.Rank);
-                        $("#lblProGSOName").html(response.Name);
-                        $("#lblProGSOFormation").html(response.FormationName);
-                        $("#lblProGSOAppointment").html(response.AppointmentName);
-                        $("#lblGSOProGSOUnit").html(response.Unit_desc);
+                        $('#txtProGSOArmyNo').val(response.ArmyNo);
+                        $('#txtProGSOName').val(response.Name);
+                        $("#txtProGSOName").attr('readonly', true);
+                        mMsater(response.RankId, "ddlProGSORank", Rank, "");
 
 
-                        $(".GSO").addClass("d-none");
-                        $(".GSOlbl").removeClass("d-none");
-                        $("#btnGSOProAdd").removeClass("d-none");
-                        $("#btnGSOProremove").addClass("d-none");
+                        mMsater(response.FormationId, "ddlProGSOFormation", Formation, "");
+                        mMsater(response.ApptId, "ddlProGSOAppointment", Appt, response.FormationId);
+
+                       
+                        $("#txtProGSOformunit").val(response.Unit_desc);
+                        $("#txtProGSOformunit").attr('readonly', true);
+                        $("#spnUnitIdGSO").html(response.UnitId); 
+                       
                         $("#btnSaveGSO").addClass("d-none");
+
+
+                        //$("#spnUserIdGSO").html(response.UserId);
+                        //$("#txtProGSOArmyNo").val(response.ArmyNo);
+                        //$("#lblProGSORank").html(response.Rank);
+                        //$("#lblProGSOName").html(response.Name);
+                        //$("#lblProGSOFormation").html(response.FormationName);
+                        //$("#lblProGSOAppointment").html(response.AppointmentName);
+                        //$("#lblGSOProGSOUnit").html(response.Unit_desc);
+
+
+                        //$(".GSO").addClass("d-none");
+                       
+                        //$("#btnGSOProAdd").removeClass("d-none");
+                        //$("#btnGSOProremove").addClass("d-none");
+                        //$("#btnSaveGSO").addClass("d-none");
                     }
                     else if(Type == 3)
                     {
@@ -989,7 +1058,7 @@ function MappingIOGSOUNIT(UserId, Unit, IO, GSO) {
 
     var userdata =
     {
-        "Id": $("#spnProfileMapId").html(),
+        "Id": $("#spnUserId").html(),
         "UserId": UserId,
         "UnitId": Unit,
         "IOId": IO,
@@ -1051,55 +1120,112 @@ function MappingIOGSOUNIT(UserId, Unit, IO, GSO) {
        
     });
 }
-
-function reset() {
-
-    $("#spnProfileMapId").html(0);
-    $(".GSO").addClass("d-none");
-    $(".GSOlbl").removeClass("d-none");
-    $("#btnGSOProAdd").removeClass("d-none");
-    $("#btnGSOProremove").addClass("d-none");
-    $("#btnSaveGSO").addClass("d-none");
-
-
-    $("#spnUserIdGSO").html(0);
-    $("#txtProGSOArmyNo").html('');
-    $("#lblProGSORank").html('');
-    $("#lblProGSOName").html('');
-    $("#lblProGSOFormation").html('');
-    $("#lblProGSOAppointment").html('');
-    $("#lblGSOProGSOUnit").html('');
-
-
-    $(".IO").addClass("d-none");
-    $(".IOlbl").removeClass("d-none");
-    $("#btnIOProAdd").removeClass("d-none");
-    $("#btnIOProremove").addClass("d-none");
+function resetIo() {
+  
     $("#btnSaveIO").addClass("d-none");
-
-
+    /////////IO////////////////////
+   // $('#txtProIOArmyNo').val('');
     $("#spnUserIdIO").html(0);
-    $("#txtProIOArmyNo").html('');
-    $("#lblProIORank").html('');
-    $("#lblProIOName").html('');
-    $("#lblProIOFormation").html('');
-    $("#lblProIOAppointment").html('');
-    $("#lblIOProIOUnit").html('');
+    $("#txtProIOName").val('');
+    $("#ddlProIORank").val('');
+    $("#ddlProIOFormation").val('');
+    $("#ddlProIOAppointment").val('');
 
-    $("#txtProArmy").val('');
+    $("#txtProIOformunit").val('');
+    $("#spnUnitIdIO").html('');
+     /////////End IO////////////////////
+}
+function resetProfile() {
+
+    ///////// Army Profile////////////////////
+    $("#spnUserId").html(0);
+   // $("#txtProArmy").val('');
     $("#ddlProRank").val(0);
     $("#txtName").val('');
+    $("#ddlProFormation").val(0);
     $("#ddlProAppointment").val(0);
+     ///////// End Army Profile////////////////////
+
+
+}
+function resetGSo() {
+    $("#btnSaveGSO").addClass("d-none");
+    /////////GSO////////////////////
+   
+    $("#spnUserIdGSO").html(0);
+    //$('#txtProGSOArmyNo').val('');
+    $("#txtProGSOName").val('');
+    $("#ddlProGSORank").val('');
+    $("#ddlProGSOFormation").val('');
+    $("#ddlProGSOAppointment").val('');
+
+    $("#txtProGSOformunit").val('');
+    $("#spnUnitIdGSO").html('');
+     /////////End GSO////////////////////
+}
+function resetUnit() {
+    /////////Unit////////////////////
     $("#spnUnitIdUserPro").html(0);
-    $("#spnUserIdIO").html(0)
-    $("#spnUserIdGSO").html(0)
-
-
-
-    $("#txtProUnit").html('');
-    $("#lblProSusno").html('');
     $("#lblProComd").html('');
     $("#lblProCorps").html('');
     $("#lblProDiv").html('');
     $("#lblPrBde").html('');
+    $("#lblProSusno").html('');
+}
+function reset() {
+
+    $("#spnUserId").html(0);
+
+   
+    /////////GSO////////////////////
+     $("#btnSaveGSO").addClass("d-none");
+    $("#spnUserIdGSO").html(0);
+    $('#txtProGSOArmyNo').val('');
+    $("#txtProGSOName").val('');
+    $("#ddlProGSORank").val('');
+    $("#ddlProGSOFormation").val('');
+    $("#ddlProGSOAppointment").val('');
+
+    $("#txtProGSOformunit").val('');
+    $("#spnUnitIdGSO").html('');
+
+    $("#intoffsyes").prop("checked", false); 
+    $("#intoffsno").prop("checked", true); 
+     /////////End GSO////////////////////
+
+
+    
+
+    /////////IO////////////////////
+    $('#txtProIOArmyNo').val('');
+    $("#spnUserIdIO").html(0);
+    $("#txtProIOName").val('');
+    $("#ddlProIORank").val('');
+    $("#ddlProIOFormation").val('');
+    $("#ddlProIOAppointment").val('');
+
+    $("#txtProIOformunit").val('');
+    $("#spnUnitIdIO").html('');
+    $("#btnSaveIO").addClass("d-none");
+     /////////End IO////////////////////
+
+
+      ///////// Army Profile////////////////////
+    $("#spnUserId").html(0); 
+    $("#txtProArmy").val('');
+    $("#ddlProRank").val(0);
+    $("#txtName").val('');
+    $("#ddlProFormation").val(0);
+    $("#ddlProAppointment").val(0);
+     ///////// End Army Profile////////////////////
+ 
+
+
+      /////////Unit////////////////////
+    $("#spnUnitIdUserPro").html(0);
+    $("#lblProComd").html('');
+    $("#lblProCorps").html('');
+    $("#lblProDiv").html('');
+    $("#lblPrBde").html('');
+    $("#lblProSusno").html('');
 }

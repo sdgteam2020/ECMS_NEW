@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace DataTransferObject.Domain.Master
 {
     public class MUnit:Common
-    { 
+    {
         [Key]
         public int UnitId { get; set; }
         [Required(ErrorMessage = "required!")]
@@ -24,7 +24,7 @@ namespace DataTransferObject.Domain.Master
         [Required(ErrorMessage = "required!")]
         [RegularExpression("^[a-zA-Z0-9 ]*$", ErrorMessage = "Only Alphabets and Numbers allowed.")]
         [MaxLength(200)]
-        public string Unit_desc { get; set; }
+        public string UnitName { get; set; }
         [Required(ErrorMessage = "required!")]
         public bool IsVerify { get; set; }
     }

@@ -22,13 +22,13 @@ var configration = builder.Configuration;
 
 builder.Services.AddDbContextPool<ApplicationDbContext>(options => options.UseSqlServer(configration.GetConnectionString("AFSACDBConnection")));
 
-builder.Services.Configure<ForwardedHeadersOptions>(options =>
-{
-    options.ForwardedHeaders =
-       //This one did not work ForwardedHeaders.XForwardedFor | 
-       ForwardedHeaders.XForwardedHost |
-       ForwardedHeaders.XForwardedProto;
-});
+//builder.Services.Configure<ForwardedHeadersOptions>(options =>
+//{
+//    options.ForwardedHeaders =
+//       //This one did not work ForwardedHeaders.XForwardedFor | 
+//       ForwardedHeaders.XForwardedHost |
+//       ForwardedHeaders.XForwardedProto;
+//});
 
 builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(option =>
 {
@@ -141,7 +141,7 @@ if (!app.Environment.IsDevelopment())
 }
 //app.Use(async (ctx, next) =>
 //{
-//    ctx.Response.Headers.Add("Content-Security-Policy", "default-src *; style-src 'self' http://* 'unsafe-inline'; script-src 'self' http://* 'unsafe-inline' 'unsafe-eval'; img-src 'self' http://* data:;");
+//    //ctx.Response.Headers.Add("Content-Security-Policy", "default-src *; style-src 'self' ");
 //    ctx.Response.Headers.Add("Feature-Policy", "fullscreen 'none'");
 //    ctx.Response.Headers.Add("Referrer-Policy", "same-origin");
 //    ctx.Response.Headers.Add("X-Frame-Options", "DENY");

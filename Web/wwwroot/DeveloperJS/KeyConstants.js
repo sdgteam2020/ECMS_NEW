@@ -4,6 +4,7 @@ const InternalServerError = 500;
 const DataSave = 1;
 const DataUpdate = 2;
 const DataExists = 3;
+const IncorrectData = 4;
 
 
 const Command = 1;

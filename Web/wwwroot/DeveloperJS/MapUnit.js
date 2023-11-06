@@ -6,6 +6,11 @@ $(document).ready(function () {
         $("#AddNewUnitmap").modal('show');
 
     });
+    $("#txtSerachunit").keyup(function () {
+        BindDataMapUnit()
+
+    });
+
     $('#ddlCommand').on('change', function () {
        
         mMsater(0, "ddlCorps", 2, $('#ddlCommand').val());
@@ -171,7 +176,7 @@ function BindDataMapUnit() {
         "CorpsId": $('#ddlCorps').val(),
         "DivId": $('#ddlDiv').val(),
         "BdeId": $('#ddlBde').val(),
-
+        "Unit": $('#txtSerachunit').val(),
     };
     $.ajax({
         url: '/Master/GetAllMapUnit',
@@ -188,10 +193,16 @@ function BindDataMapUnit() {
                     });
                 }
                 else if (response == 0) {
-                    listItem += "<tr><td class='text-center' colspan=9>No Record Found</td></tr>";
-                    //$("#tbldata").DataTable().destroy();
+                    $("#tblMapUnitdata").DataTable().destroy();
+
                     $("#DetailBodyMapUnit").html(listItem);
-                    $("#lblMapUnitTotal").html(0);
+                    memberTable = $('#tblMapUnitdata').DataTable({
+                        "language": {
+                            "emptyTable": "No data available"
+                        }
+                    });
+
+
                 }
                 
                 else {
@@ -229,6 +240,7 @@ function BindDataMapUnit() {
                     memberTable = $('#tblMapUnitdata').DataTable({
                         retrieve: true,
                         lengthChange: false,
+                        searching: false,
                         "order": [[2, "asc"]],
                         buttons: [{
                             extend: 'copy',
@@ -315,10 +327,15 @@ function BindDataMapUnit() {
                 }
             }
             else {
-                listItem += "<tr><td class='text-center' colspan=9>No Record Found</td></tr>";
-               // $("#tbldata").DataTable().destroy();
+                $("#tblMapUnitdata").DataTable().destroy();
+
                 $("#DetailBodyMapUnit").html(listItem);
-                $("#lblMapUnitTotal").html(0);
+                memberTable = $('#tblMapUnitdata').DataTable({
+                    "language": {
+                        "emptyTable": "No data available"
+                    }
+                });
+
             }
         },
         error: function (result) {

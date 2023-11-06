@@ -71,19 +71,22 @@
                         </div>
                     </div>
                 </form>
+               
                 <div class="col-xl-12">
                     <div class="mb-2 d-md-flex justify-content-md-between align-items-md-center">
                         <h6 class="mb-3 mb-md-0">
-                            Total Command <span id="lblTotal" class="ml-3 border border-light b px-2 py-1">0</span>
+                            @* Total Command <span id="lblTotal" class="ml-3 border border-light b px-2 py-1">0</span> *@
                         </h6>
-                        <div>
+                        <div class="d-flex">
+                           
                             @* <button type="button" id="btnAdd" class="btn btn-outline-success font-weight-600 btn-sm">Add Command</button> *@
                             <button type="button" id="btnMultiDelete" class="btn btn-outline-danger font-weight-600 btn-sm">Delete</button>
+                            <input class="btn-outline-light form-control ml-2" placeholder="Search Unit Name" id="txtSerachunit" maxlength="10" pattern="^[a-zA-Z]*$" />
 
                         </div>
                     </div>
                     <div class="table-responsive">
-                        <table class="table border border-purple table-striped no-footer dataTable table-hover" role="grid" id="tbldata">
+                        <table class="table border border-purple table-striped no-footer table-hover" role="grid" id="tbldata">
                             <thead>
                                 <tr>
                                     <th class="noExport d-none"></th>

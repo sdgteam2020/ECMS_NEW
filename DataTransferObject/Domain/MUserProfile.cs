@@ -27,6 +27,7 @@ namespace DataTransferObject.Domain
         //public MAppointment? MAppointment { get; set; }
          [Required]
         public int UnitId { get; set; }
+        public Boolean IntOffr { get; set; }
         //public MUnit? MUnit { get; set; }
        
     }

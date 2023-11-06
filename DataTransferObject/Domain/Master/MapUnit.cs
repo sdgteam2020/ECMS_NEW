@@ -12,10 +12,7 @@ namespace DataTransferObject.Domain.Master
     {
         [Key] 
         public int UnitMapId { get; set; }
-        [Required(ErrorMessage = "required!")]
-        [RegularExpression("^[a-zA-Z0-9 ]*$", ErrorMessage = "Only Alphabets and Numbers allowed.")]
-
-        public string UnitName { get; set; }
+      
 
         [ForeignKey("MUnit") ,DatabaseGenerated(DatabaseGeneratedOption.None)]
         [Required(ErrorMessage = "required!")]

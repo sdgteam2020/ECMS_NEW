@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using DataTransferObject.Response;
 using DataTransferObject.Requests;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace BusinessLogicsLayer.Unit
 {
@@ -21,7 +22,11 @@ namespace BusinessLogicsLayer.Unit
             _UnitDB = UnitDB;
         }
 
-      
+        public Task<List<MUnit>> GetAllUnit(string Sus_no)
+        {
+            return _UnitDB.GetAllUnit(Sus_no);
+        }
+
         public Task<bool> GetByName(MUnit Data)
         {
             return _UnitDB.GetByName(Data); 

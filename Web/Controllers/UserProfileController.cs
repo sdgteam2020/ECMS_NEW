@@ -26,40 +26,46 @@ namespace Web.Controllers
         {
             try
             {
-                dTO.IsActive = true;
-                dTO.Updatedby = 1;
-                dTO.UpdatedOn = DateTime.Now;
-
-                if (ModelState.IsValid)
+                if (dTO.UnitId != 0 && dTO.RankId != 0 && dTO.ApptId != 0)
                 {
-                    if (!await _userProfileBL.GetByArmyNo(dTO))
+                    dTO.IsActive = true;
+                    dTO.Updatedby = 1;
+                    dTO.UpdatedOn = DateTime.Now;
+
+                    if (ModelState.IsValid)
                     {
-                        if (dTO.UserId > 0)
+                        if (!await _userProfileBL.GetByArmyNo(dTO))
                         {
-                            _userProfileBL.Update(dTO);
-                            return Json(KeyConstants.Update);
+                            if (dTO.UserId > 0)
+                            {
+                                _userProfileBL.Update(dTO);
+                                return Json(KeyConstants.Update);
+                            }
+                            else
+                            {
+
+                                await _userProfileBL.Add(dTO);
+                                return Json(KeyConstants.Save);
+
+
+                            }
                         }
                         else
                         {
-
-                            await _userProfileBL.Add(dTO);
-                            return Json(KeyConstants.Save);
-
-
+                            return Json(KeyConstants.Exists);
                         }
+
                     }
                     else
                     {
-                        return Json(KeyConstants.Exists);
-                    }
 
+                        return Json(ModelState.Select(x => x.Value.Errors).Where(y => y.Count > 0).ToList());
+                    }
                 }
                 else
                 {
-
-                    return Json(ModelState.Select(x => x.Value.Errors).Where(y => y.Count > 0).ToList());
+                    return Json(KeyConstants.IncorrectData);
                 }
-
             }
             catch (Exception ex) { return Json(KeyConstants.InternalServerError); }
         }

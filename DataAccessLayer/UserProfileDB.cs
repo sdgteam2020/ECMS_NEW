@@ -55,9 +55,9 @@ namespace DataAccessLayer
                            RankId = rank.RankId,
                            Name=user.Name,
                            UnitId=user.UnitId,
-                           Unit_desc=Uni.Unit_desc,
-                           
-                           
+                           UnitName=Uni.UnitName,
+                           IntOffr = user.IntOffr,
+
                        }
                      ).Distinct().SingleOrDefault();
 
@@ -95,22 +95,23 @@ namespace DataAccessLayer
                            Rank = rank.RankName,
                            Name = user.Name,
                            UnitId = user.UnitId,
-                           Unit_desc = Uni.Unit_desc,
+                           UnitName = Uni.UnitName,
                            SusNo = Uni.Sus_no+Uni.Suffix,
+                           IntOffr=user.IntOffr,
 
-                           
+
                            IOArmyNo = userio.ArmyNo,
                            IOName= rankIO.RankName+" "+userio.Name,
                            IOUserId = userio.UserId,
                            UnitIdIo = UniO.UnitId,
-                           UnitIo=UniO.Unit_desc,
+                           UnitIo=UniO.UnitName,
                            IOSusNo = UniO.Sus_no + UniO.Suffix,
 
                            GSOArmyNo = usergso.ArmyNo,
                            GSOName = rankGSO.RankName+" "+ usergso.Name,
                            GSOUserId = usergso.UserId,
                            UnitIdGSO = UnGSO.UnitId,
-                           UnitGSO = UnGSO.Unit_desc,
+                           UnitGSO = UnGSO.UnitName,
                            GSOSusNo= UnGSO.Sus_no+ UnGSO.Suffix
                        }
                      ).Distinct().ToList();

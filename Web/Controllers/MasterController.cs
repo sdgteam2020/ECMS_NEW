@@ -450,11 +450,11 @@ namespace Web.Controllers
             catch (Exception ex) { return Json(KeyConstants.InternalServerError); }
 
         }
-        public async Task<IActionResult> GetAllMapUnit(DTOMHierarchyRequest Data)
+        public async Task<IActionResult> GetAllMapUnit(DTOMHierarchyRequest Data,string Unit)
         {
             try
             {
-                return Json(await unitOfWork.MappUnit.GetALLUnit(Data));
+                return Json(await unitOfWork.MappUnit.GetALLUnit(Data, Unit));
             }
             catch (Exception ex)
             {
@@ -580,11 +580,11 @@ namespace Web.Controllers
             catch (Exception ex) { return Json(KeyConstants.InternalServerError); }
 
         }
-        public async Task<IActionResult> GetAllUnit()
+        public async Task<IActionResult> GetAllUnit(string Unit)
         {
             try
             {
-                return Json(await unitOfWork.Unit.GetAll());
+                return Json(await unitOfWork.Unit.GetAllUnit(Unit));
             }
             catch (Exception ex)
             {

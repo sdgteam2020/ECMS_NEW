@@ -7,6 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <link rel="icon" type="image/x-icon" href="/images/AFSAC.png">
     <meta content='width=device-width, initial-scale=1.0, shrink-to-fit=no' name='viewport' />
+    @* <meta http-equiv="content-security-policy"content="default-src 'none'; script-src 'self'; connect-src 'self'; img-src 'self'; style-src 'self' 'sha256-CwE3Bg0VYQOIdNAkbB/Btdkhul49qZuwgNCMPgNY5zw=';" /> *@
     <title>AFSAC</title>
     <link href="~/fonts/css/all.min.css" rel="stylesheet" />
    @*  <link href="~/css/steps.min.css" rel="stylesheet" /> *@
@@ -513,7 +514,28 @@
                     <form action="" id="SaveFormMapUnit" method="post" name="SaveForm">
                         <div class="row">
                             <span class=" d-none" id="spnUnitMapUnitId">0</span>
+                            <div class="form-group row mb-2">
 
+                                <label class="col-form-label col-sm-2">SUS No </label>
+                                <div class="col-sm-10">
+                                    <i class="fas fa-asterisk mand"></i>
+                                    <input class="form-control Alphanumeric" placeholder="Enter SUS No" id="txtSusno" required pattern="^[a-zA-Z0-9 ]*$" maxlength="8" title="Only Alphabets and Numbers allowed" />
+
+                                </div>
+
+                            </div>
+
+                            <div class="form-group row mb-2">
+
+                                <label class="col-form-label col-sm-2">Unit </label>
+                                <div class="col-sm-10">
+                                    <i class="fas fa-asterisk mand"></i>
+                                    <span id="SpnUnitMapId" class="d-none">0</span>
+                                    <input class="form-control Alphanumeric" placeholder="Enter Unit" id="txtUnit" required pattern="^[a-zA-Z0-9 ]*$" title="Only Alphabets and Numbers allowed" />
+
+                                </div>
+
+                            </div>
                             <div class="form-group row mb-2">
 
                                 <label class="col-form-label col-sm-2">Comd</label>
@@ -566,28 +588,7 @@
 
                             </div>
 
-                            <div class="form-group row mb-2">
-
-                                <label class="col-form-label col-sm-2">SUS No </label>
-                                <div class="col-sm-10">
-                                    <i class="fas fa-asterisk mand"></i>
-                                    <input class="form-control Alphanumeric" placeholder="Enter SUS No" id="txtSusno" required pattern="^[a-zA-Z0-9 ]*$" maxlength="8" title="Only Alphabets and Numbers allowed" />
-
-                                </div>
-
-                            </div>
-
-                            <div class="form-group row mb-2">
-
-                                <label class="col-form-label col-sm-2">Unit </label>
-                                <div class="col-sm-10">
-                                    <i class="fas fa-asterisk mand"></i>
-                                    <span id="SpnUnitMapId" class="d-none">0</span>
-                                    <input class="form-control Alphanumeric" placeholder="Enter Unit" id="txtUnit" required pattern="^[a-zA-Z0-9 ]*$" title="Only Alphabets and Numbers allowed" />
-
-                                </div>
-
-                            </div>
+                          
 
 
                             <div class="col-sm-12 text-right">

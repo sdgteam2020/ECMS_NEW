@@ -26,13 +26,21 @@ namespace DataAccessLayer
 
         public async Task<bool> GetByName(MUnit Data)
         {
-            var ret = _context.MUnit.Any(p => p.Unit_desc.ToUpper() == Data.Unit_desc.ToUpper());
+            var ret = _context.MUnit.Any(p => p.UnitName.ToUpper() == Data.UnitName.ToUpper());
             return ret;
         }
 
         public async Task<MUnit> GetBySusNo(string Sus_no)
         {
             return _context.MUnit.Where(P => P.Sus_no + P.Suffix == Sus_no).SingleOrDefault();
+        }
+
+        public async Task<List<MUnit>> GetAllUnit(string UnitName)
+        {
+            UnitName = string.IsNullOrEmpty(UnitName) ?"": UnitName.ToLower();
+            var ret=  _context.MUnit.Where(P => UnitName == "" || P.UnitName.ToLower().Contains(UnitName)).Take(200).ToList();
+            return ret;
+
         }
     }
  }

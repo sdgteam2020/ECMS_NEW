@@ -5,11 +5,10 @@ $(document).ready(function () {
     
     Reset();
     BindData()
-    //$("#btnAdd").click(function () {
-    //    Reset();
-    //    $("#AddNewM").modal('show');
+    $("#txtSerachunit").keyup(function () {
+        BindData()
 
-    //});
+    });
    
     $("#btnsave").click(function () {
         if ($("#SaveForm")[0].checkValidity()) {
@@ -80,7 +79,7 @@ function BindData() {
     var listItem = "";
     var userdata =
     {
-        "Id": 0,
+        "Unit": $("#txtSerachunit").val(),
 
     };
     $.ajax({
@@ -91,22 +90,30 @@ function BindData() {
 
         success: function (response) {
             if (response != "null" && response != null) {
+               
                 if (response == InternalServerError) {
                     Swal.fire({
                         text: errormsg
                     });
 
                 }
-                else if (response == 0) {
-                    listItem += "<tr><td class='text-center' colspan=6>No Record Found</td></tr>";
-                    $("#tblcommnd").DataTable().destroy();
+                else if (response.length == 0) {
+                    $("#tbldata").DataTable().destroy();
+                   
                     $("#DetailBody").html(listItem);
-                    $("#lblTotal").html(0);
+                    memberTable = $('#tbldata').DataTable({
+                        "language": {
+                            "emptyTable": "No data available"
+                        }
+                    });
+
+                  
                 }
                
                 else {
 
-                    /*$("#tblcommnd").DataTable().destroy();*/
+                    $("#tbldata").DataTable().destroy();
+                  
                    
                     for (var i = 0; i < response.length; i++) {
                      
@@ -121,7 +128,7 @@ function BindData() {
                             listItem += "<td class='align-middle'>" + (i+1) + "</td>";
                             listItem += "<td class='align-middle'><span id='sus_no'>" + response[i].Sus_no + "</span></td>";
                             listItem += "<td class='align-middle'><span id='suffix'>" + response[i].Suffix + "</span></td>";
-                        listItem += "<td class='align-middle'><span id='unit_desc'>" + response[i].Unit_desc + "</span></td>";
+                        listItem += "<td class='align-middle'><span id='unit_desc'>" + response[i].UnitName + "</span></td>";
 
                         if (response[i].IsVerify == true)
                             listItem += "<td class='align-middle'><span id='unit_desc'><span class='badge badge-pill badge-success'>Verifed</span></span></td>";
@@ -143,6 +150,7 @@ function BindData() {
                     memberTable = $('#tbldata').DataTable({
                         retrieve: true,
                         lengthChange: false,
+                        searching: false,
                         "order": [[2, "asc"]],
                         buttons: [{
                             extend: 'copy',
@@ -221,10 +229,16 @@ function BindData() {
                 }
             }
             else {
-                listItem += "<tr><td class='text-center' colspan=6>No Record Found</td></tr>";
-                $("#tblcommnd").DataTable().destroy();
+                $("#tbldata").DataTable().destroy();
+
                 $("#DetailBody").html(listItem);
-                $("#lblTotal").html(0);
+                memberTable = $('#tbldata').DataTable({
+                    "language": {
+                        "emptyTable": "No data available"
+                    }
+                });
+
+
             }
         },
         error: function (result) {
@@ -242,7 +256,7 @@ function Save() {
     $.ajax({
         url: '/Master/SaveUnit',
         type: 'POST',
-        data: { "Sus_no": $("#txtSusno").val(), "UnitId": $("#spnUnitId").html(), "Suffix": $("#txtSuffix").val(), "Unit_desc": $("#txtUnitDesc").val(), "IsVerify": true }, //get the search string
+        data: { "Sus_no": $("#txtSusno").val(), "UnitId": $("#spnUnitId").html(), "Suffix": $("#txtSuffix").val(), "UnitName": $("#txtUnitDesc").val(), "IsVerify": true }, //get the search string
         success: function (result) {
 
 

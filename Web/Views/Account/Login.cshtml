@@ -12,7 +12,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <meta name="author" content="">
-    <link rel="icon" type="image/x-icon" href="/images/DOST.png">
+   @*  <meta http-equiv="content-security-policy"
+          content="default-src 'none'; script-src 'self';
+  connect-src 'self'; img-src 'self';
+  style-src 'self' 'sha256-CwE3Bg0VYQOIdNAkbB/Btdkhul49qZuwgNCMPgNY5zw=';" /> *@
+    <link rel="icon" type="image/x-icon" href="/images/AFSAC.png">
     <title> AFSAC </title>
     <link href="/Fonts/css/all.min.css" rel="stylesheet" type="text/css">
 
@@ -69,6 +73,9 @@
                                 <div class="card-sigin">
                                     <div class="main-signup-header login-form">
                                         @* <h1 class="font-weight-bold text-center mb-0 mt-3 logo"><color style="color: #D97904">Login</color></h1>*@
+                                        <div class="mb-1 logo-sec text-center">
+                                            <img src="/Images/AFSAC_Logo.png" />
+                                            </div>
                                         <p class="font-weight-normal text-center mb-4 mt-1 ">Kindly login with your login id and password here.</p>
                                         <div class="pb-3 mt-3">
                                              <form asp-antiforgery="true" method="post" asp-action="login" autocomplete="off" role="form">

@@ -22,9 +22,10 @@ namespace DataTransferObject.Response
         public int FormationId { get; set; }
         public string FormationName { get; set; }
         public int UnitId { get; set; }
+        public Boolean IntOffr { get; set; }
         public string SusNo { get; set; }
 
-        public string Unit_desc { get; set; }
+        public string UnitName { get; set; }
         public string Rank { get; set;}
         public int RankId { get; set; }
         public int IOUserId { get; set; }

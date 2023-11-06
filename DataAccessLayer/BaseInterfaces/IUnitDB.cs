@@ -14,6 +14,7 @@ namespace DataAccessLayer.BaseInterfaces
         public Task<bool> GetByName(MUnit Data);
         public Task<MUnit> GetBySusNo(string Sus_no);
 
+        public Task<List<MUnit>> GetAllUnit(string Sus_no);
 
     }
 }

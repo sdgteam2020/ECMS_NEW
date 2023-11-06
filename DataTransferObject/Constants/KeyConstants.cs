@@ -43,6 +43,7 @@ namespace DapperRepo.Core.Constants
         public const int Save = 1;
         public const int Update = 2;
         public const int Exists = 3;
+        public const int IncorrectData = 4;
 
 
         #endregion

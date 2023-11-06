@@ -25,17 +25,19 @@
 
 
         <div class="card-body" style="min-height:150px;">
-            
+            <div class="row">
             <div class="col-xl-12">
                 <div class="mb-2 d-md-flex justify-content-md-between align-items-md-center">
                     <h6 class="mb-3 mb-md-0">
-                        Total Units <span id="lblTotal" class="ml-3 border border-light b px-2 py-1">0</span>
+                      @*   Total Units <span id="lblTotal" class="ml-3 border border-light b px-2 py-1">0</span> *@
                     </h6>
-                    <div>
+                        <div class="d-flex">
+                         <input class="" placeholder="Search Unit Name" id="txtSerachunit" maxlength="10" pattern="^[a-zA-Z]*$" />
                         <button type="button" id="btnMapUnitAdd" class="btn btn-outline-success font-weight-600 btn-sm">Add Unit</button>
                         <button type="button" id="btnMapUnitMultiDelete" class="btn btn-outline-danger font-weight-600 btn-sm">Delete</button>
-
+                       
                     </div>
+                       
                 </div>
                 <div class="table-responsive">
                     <table class="table border border-purple table-striped no-footer dataTable table-hover" role="grid" id="tblMapUnitdata">
@@ -71,7 +73,7 @@
 
 
         </div>
-
+        </div>
 
 
     </div>
