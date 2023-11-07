@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -111,5 +112,79 @@ namespace DataTransferObject.Requests
         //public string Token { get; set; }
         public string? hdns { get; set; }
 
+    }
+    public class EditRoleViewModel
+    {
+        public EditRoleViewModel()
+        {
+            Users = new List<string>();
+        }
+
+        public string Id { get; set; }
+
+        [Required(ErrorMessage = "Role Name is required")]
+        public string RoleName { get; set; }
+
+        public List<string> Users { get; set; }
+    }
+    public class UserClaimsViewModel
+    {
+        public UserClaimsViewModel()
+        {
+            Cliams = new List<UserClaim>();
+        }
+
+        public string UserId { get; set; }
+        public List<UserClaim> Cliams { get; set; }
+    }
+    public class UserClaim
+    {
+        public string ClaimType { get; set; } = string.Empty;
+        public bool IsSelected { get; set; }
+    }
+    public static class ClaimsStore
+    {
+        public static List<Claim> AllClaims = new List<Claim>()
+        {
+            new Claim("Create Role", "Create Role"),
+            new Claim("Edit Role","Edit Role"),
+            new Claim("Delete Role","Delete Role")
+        };
+    }
+    public class UserRolesViewModel
+    {
+        public string RoleId { get; set; }=string.Empty;
+        public string RoleName { get; set; } = string.Empty;
+        public bool IsSelected { get; set; }
+    }
+    public class EditUserViewModel
+    {
+        public EditUserViewModel()
+        {
+            Claims = new List<string>();
+            Roles = new List<string>();
+        }
+
+        public int Id { get; set; }
+        public string EncryptedId { get; set; } = string.Empty;
+        public string DomainId { get; set; } = string.Empty;
+        public bool Active { get; set; } = false;
+        public bool AdminFlag { get; set; } = false;
+
+        public List<string> Claims { get; set; }
+
+        public IList<string> Roles { get; set; }
+    }
+    public class CreateRoleViewModel
+    {
+        [Required]
+        public string RoleName { get; set; } = string.Empty;
+    }
+    public class UserRoleViewModel
+    {
+        public int UserId { get; set; } 
+        public string EncryptedId { get; set; } = string.Empty;
+        public string DomainId { get; set; } = string.Empty;
+        public bool IsSelected { get; set; }
     }
 }

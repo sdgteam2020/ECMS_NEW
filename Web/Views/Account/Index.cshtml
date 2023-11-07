@@ -40,6 +40,20 @@
                                 <td>@item.RoleName</td>
                                 <td>
                                     <a asp-controller="Account" asp-action="ResetPassword" asp-route-Id="@(item.EncryptedId)" class="btn btn-primary">Reset Password</a>
+                                    <a asp-action="EditUser" asp-controller="Account" asp-route-Id="@item.EncryptedId" class="btn btn-primary">Edit</a>
+                                    <form asp-action="DeleteUser" asp-route-Id="@item.EncryptedId" method="post">
+                                        <span id="confirmDeleteSpan_@item.EncryptedId" style="display:none">
+                                            <span>Are you sure you want to delete?</span>
+                                            <button type="submit" class="btn btn-danger">Yes</button>
+                                            <a href="#" class="btn btn-primary"
+                                               onclick="confirmDelete('@item.EncryptedId', false)">No</a>
+                                        </span>
+
+                                        <span id="deleteSpan_@item.Id">
+                                            <a href="#" class="btn btn-danger"
+                                               onclick="confirmDelete('@item.EncryptedId', true)">Delete</a>
+                                        </span>
+                                    </form>
                                 </td>
                             </tr>
                         }
