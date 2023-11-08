@@ -26,6 +26,7 @@
                             <label class="col-sm-1 col-form-label text-center font-weight-bold">2.</label>
                             <label asp-for="RankId" class="col-sm-3 col-form-label form-label"></label>
                             <div class="col-sm-6">
+                                <i class="fas fa-asterisk mand"></i>
                                 <select asp-for="RankId" class="form-control" asp-items="ViewBag.OptionsRank">
                                 </select>
                                 <span asp-validation-for="RankId" class="text-danger"></span>
@@ -35,6 +36,7 @@
                             <label class="col-sm-1 col-form-label text-center font-weight-bold">3.</label>
                             <label asp-for="ArmedId" class="col-sm-3 col-form-label form-label"></label>
                             <div class="col-sm-6">
+                                <i class="fas fa-asterisk mand"></i>
                                 <select asp-for="ArmedId" class="form-control" asp-items="ViewBag.OptionsArmedType">
                                 </select>
                                 <span asp-validation-for="ArmedId" class="text-danger"></span>
@@ -52,13 +54,14 @@
                             <label class="col-sm-1 col-form-label text-center font-weight-bold">5.</label>
                             <label asp-for="IdentityMark" class="col-sm-3 col-form-label form-label"></label>
                             <div class="col-sm-6">
+                                <i class="fas fa-asterisk mand"></i>
                                 <input asp-for="IdentityMark" class="form-control" placeholder="Only one iden Mk (Max 20 characters incl spaces)" />
                                 <span asp-validation-for="IdentityMark" class="text-danger"></span>
                             </div>
                         </div>
                         <div class="row mb-1">
                             <label class="col-sm-1 col-form-label text-center font-weight-bold">6.</label>
-                            <label class="col-sm-3 col-form-label form-label">Dt of Birth</label>
+                            <label class="col-sm-3 col-form-label form-label">Date of Birth</label>
                             <div class="col-sm-6">
                                 <input type="text" id="DOB_" name="DOB_" class="form-control" value="@Model.DOB.ToString("dd/MMM/yyyy")" readonly />
                             </div>
@@ -67,6 +70,7 @@
                             <label class="col-sm-1 col-form-label text-center font-weight-bold">7.</label>
                             <label asp-for="Height" class="col-sm-3 col-form-label form-label"></label>
                             <div class="col-sm-6">
+                                <i class="fas fa-asterisk mand"></i>
                                 <input asp-for="Height" class="form-control" placeholder="Height in CM" />
                                 <span asp-validation-for="Height" class="text-danger" ></span>
                             </div>
@@ -75,6 +79,7 @@
                             <label class="col-sm-1 col-form-label text-center font-weight-bold">8.</label>
                             <label asp-for="AadhaarNo" class="col-sm-3 col-form-label form-label"></label>
                             <div class="col-sm-6">
+                                <i class="fas fa-asterisk mand"></i>
                                 <input asp-for="AadhaarNo" class="form-control" placeholder="Last Four Digit" maxlength="4" /> @* onkeyup="Aadhaarformate(event,this);" *@
                                 <span asp-validation-for="AadhaarNo" class="text-danger"></span>
                             </div>
@@ -83,6 +88,7 @@
                             <label class="col-sm-1 col-form-label text-center font-weight-bold">9.</label>
                             <label asp-for="BloodGroup" class="col-sm-3 col-form-label form-label"></label>
                             <div class="col-sm-6">
+                                <i class="fas fa-asterisk mand"></i>
                                 <select asp-for="BloodGroup" class="form-control" asp-items="ViewBag.OptionsBloodGroup">
                                 </select>
                                 <span asp-validation-for="BloodGroup" class="text-danger"></span>
@@ -92,6 +98,7 @@
                             <label class="col-sm-1 col-form-label text-center font-weight-bold">10.</label>
                             <label asp-for="PlaceOfIssue" class="col-sm-3 col-form-label form-label"></label>
                             <div class="col-sm-6">
+                                <i class="fas fa-asterisk mand"></i>
                                 <textarea asp-for="PlaceOfIssue" rows="1" class="form-control" placeholder="Place Of Issue"></textarea>
                                 <span asp-validation-for="PlaceOfIssue" class="text-danger"></span>
                             </div>
@@ -100,6 +107,7 @@
                             <label class="col-sm-1 col-form-label text-center font-weight-bold">11.</label>
                             <label asp-for="DateOfIssue" class="col-sm-3 col-form-label form-label"></label>
                             <div class="col-sm-6">
+                                <i class="fas fa-asterisk mand"></i>
                                 <input asp-for="DateOfIssue" type="date" class="form-control" max="2999-12-31" />
                                 <span asp-validation-for="DateOfIssue" class="text-danger"></span>
                             </div>
@@ -108,6 +116,7 @@
                             <label class="col-sm-1 col-form-label text-center font-weight-bold">12.</label>
                             <label asp-for="IssuingAuth" class="col-sm-3 col-form-label form-label"></label>
                             <div class="col-sm-6">
+                                <i class="fas fa-asterisk mand"></i>
                                 <input asp-for="IssuingAuth" class="form-control" />
                                 <span asp-validation-for="IssuingAuth" class="text-danger"></span>
                             </div>
@@ -120,6 +129,7 @@
                             <div class="col-sm-8">
                                 <img id="SignaturePath" src="~/writereaddata/images/noimage.png" height="80px" width="100px" />
                                 <label class="text-info">(Upload Signature)</label>
+                                <i class="fas fa-asterisk mand"></i>
                                 <input asp-for="Signature_" class="form-control" onchange="beforeUploadSignatureSizeCheck(this)" accept="image/jpeg,image/jpg,image/png,image/gif" />
                                 <span id="lblSignature" style="color: red;"></span>
                                 <span asp-validation-for="Signature_" class="text-danger"></span>
@@ -127,7 +137,7 @@
                         </div>
                         <div class="row mb-1">
                             <label class="col-sm-1 col-form-label text-center font-weight-bold">14.</label>
-                            <label class="col-sm-3 col-form-label form-label">Dt of Commissioning/ Enrolment</label>
+                            <label class="col-sm-3 col-form-label form-label">Date of Commissioning/ Enrollment</label>
                             <div class="col-sm-4">
                                 <input type="text" id="DOC" name="DOC" class="form-control" value="@Model.DateOfCommissioning.ToString("dd/MMM/yyyy")" readonly />
                             </div>
@@ -146,6 +156,7 @@
                             <div class="col-sm-8">
                                 <img id="PhotoPath" src="~/writereaddata/images/noimage.png" height="200px" width="200px" />
                                 <label class="text-info text-center">(BROWSE & UPLOAD Photograph)</label>
+                                <i class="fas fa-asterisk mand"></i>
                                 <input asp-for="Photo_" class="form-control" onchange="beforeUploadPhotoSizeCheck(this);" accept="image/jpeg,image/jpg,image/png,image/gif" />
                                 <span id="lblPhoto" style="color: red;"></span>
                                 <span asp-validation-for="Photo_" class="text-danger"></span>

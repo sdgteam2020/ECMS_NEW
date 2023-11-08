@@ -1,4 +1,5 @@
 ﻿@using System.Security.Claims;
+@inject SignInManager<ApplicationUser> signInManager;
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -292,6 +293,23 @@
                             <span class="menu-title">Dashboard</span>
                         </a>
                     </li>
+                    @if (signInManager.IsSignedIn(User) && User.IsInRole("Super Admin"))
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link collapsed" data-toggle="collapse" href="#ui-basic" aria-expanded="true" aria-controls="ui-basic">
+                                <i class="icon-layout menu-icon"></i>
+                                <span class="menu-title">Super Admin</span>
+                                <i class="menu-arrow"></i>
+                            </a>
+                            <div class="collapse show" id="ui-basic">
+                                <ul class="nav flex-column sub-menu">
+                                    <li class="nav-item"> <a class="nav-link" href="/Account/Index">Users</a></li>
+                                    <li class="nav-item"> <a class="nav-link" href="/Account/ListRoles">Roles</a></li>
+                                </ul>
+                            </div>
+                        </li>
+                    }
+
                     <li class="nav-item">
                         <a class="nav-link collapsed" data-toggle="collapse" href="#ui-basic" aria-expanded="true" aria-controls="ui-basic">
                             <i class="icon-layout menu-icon"></i>
@@ -300,7 +318,7 @@
                         </a>
                         <div class="collapse show" id="ui-basic">
                             <ul class="nav flex-column sub-menu">
-                                <li class="nav-item"> <a class="nav-link" href="/Account/Index">User</a></li>
+                                <li class="nav-item"> <a class="nav-link" href="/BasicDetail/Registration">Add I-Card</a></li>
                                 <li class="nav-item"> <a class="nav-link" href="/BasicDetail/Index">ICard List</a></li>
                                 <li class="nav-item"> <a class="nav-link" href="/BasicDetail/InaccurateData">Inaccurate List</a></li>
                             </ul>

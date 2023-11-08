@@ -359,6 +359,37 @@ function printDiv() {
 
 }
 /* Load Data In Table */
+function LoadJDTK(selector) {
+    $(document).ready(function () {
+        memberTable = $(selector).DataTable({
+            retrieve: true,
+            lengthChange: false,
+            "order": [[2, "asc"]],
+            buttons: [{
+                extend: 'copy',
+                exportOptions: {
+                    columns: "thead th:not(.noExport)"
+                }
+            }, {
+                extend: 'excel',
+                exportOptions: {
+                    columns: "thead th:not(.noExport)"
+                }
+            }, {
+                extend: 'pdfHtml5',
+                orientation: 'landscape',
+                pageSize: 'LEGAL',
+                exportOptions: {
+                    columns: "thead th:not(.noExport)"
+                }
+            }]
+        });
+
+        memberTable.buttons().container().appendTo('#myProjectTable_wrapper .col-md-6:eq(0)');
+
+    });
+}
+
 function LoadJDT(selector) {
     $(document).ready(function () {
         oTable = $(selector).DataTable({

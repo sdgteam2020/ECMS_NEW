@@ -124,7 +124,7 @@ namespace DataTransferObject.Localize {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Blood gp.
+        ///   Looks up a localized string similar to Blood Group.
         /// </summary>
         public static string BloodGroup {
             get {
@@ -169,7 +169,7 @@ namespace DataTransferObject.Localize {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Dt of Commissioning/ Enrolment.
+        ///   Looks up a localized string similar to Date of Commissioning/ Enrollment.
         /// </summary>
         public static string DateOfCommissioning {
             get {
@@ -178,7 +178,7 @@ namespace DataTransferObject.Localize {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Dt of Issue.
+        ///   Looks up a localized string similar to Date of Issue.
         /// </summary>
         public static string DateOfIssue {
             get {
@@ -205,7 +205,7 @@ namespace DataTransferObject.Localize {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Dt of Birth.
+        ///   Looks up a localized string similar to Date of Birth.
         /// </summary>
         public static string DOB {
             get {
@@ -304,7 +304,7 @@ namespace DataTransferObject.Localize {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Ht in CM.
+        ///   Looks up a localized string similar to Height (Cm).
         /// </summary>
         public static string Height {
             get {
@@ -313,7 +313,7 @@ namespace DataTransferObject.Localize {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Iden Mks.
+        ///   Looks up a localized string similar to Identification Mark.
         /// </summary>
         public static string IdentityMark {
             get {
@@ -367,7 +367,7 @@ namespace DataTransferObject.Localize {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Issuing Auth.
+        ///   Looks up a localized string similar to Issuing Authority.
         /// </summary>
         public static string IssuingAuth {
             get {
@@ -430,7 +430,7 @@ namespace DataTransferObject.Localize {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Rk.
+        ///   Looks up a localized string similar to Rank.
         /// </summary>
         public static string Rank {
             get {
@@ -439,7 +439,7 @@ namespace DataTransferObject.Localize {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Registration Type.
+        ///   Looks up a localized string similar to Category.
         /// </summary>
         public static string RegistrationType {
             get {
@@ -466,7 +466,7 @@ namespace DataTransferObject.Localize {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Service No.
+        ///   Looks up a localized string similar to Army No.
         /// </summary>
         public static string ServiceNo {
             get {

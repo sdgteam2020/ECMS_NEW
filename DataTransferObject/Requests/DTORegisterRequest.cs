@@ -120,7 +120,8 @@ namespace DataTransferObject.Requests
             Users = new List<string>();
         }
 
-        public string Id { get; set; }
+        public int RoleId { get; set; }
+        public string EncryptedId { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Role Name is required")]
         public string RoleName { get; set; }
@@ -165,7 +166,7 @@ namespace DataTransferObject.Requests
             Roles = new List<string>();
         }
 
-        public int Id { get; set; }
+        public int UserId { get; set; } 
         public string EncryptedId { get; set; } = string.Empty;
         public string DomainId { get; set; } = string.Empty;
         public bool Active { get; set; } = false;
