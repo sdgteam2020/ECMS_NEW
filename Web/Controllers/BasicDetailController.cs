@@ -943,7 +943,13 @@ namespace Web.Controllers
                 {
                     var responseContent = response.Content.ReadAsStringAsync().Result;
                     response.EnsureSuccessStatusCode();
-                    var responseData = JsonConvert.DeserializeObject(responseContent);
+                    DTOApiDataResponse? responseData = JsonConvert.DeserializeObject<DTOApiDataResponse>(responseContent);
+                    DateTime DOB, DOC;
+                    TimeSpan timeSpan = new TimeSpan(0, 0, 0, 0, 0, 0);
+                    DOB = responseData.DOB.Date + timeSpan;
+                    DOC = responseData.DateOfCommissioning.Date + timeSpan;
+                    responseData.DOB = DOB;
+                    responseData.DateOfCommissioning = DOC;
                     return Ok(responseData);
                 }
             }

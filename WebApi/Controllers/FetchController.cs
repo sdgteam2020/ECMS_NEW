@@ -95,13 +95,13 @@ namespace WebApi.Controllers
                 {
                     return Ok(apiData);
                 }
-                // else
-                {
+                else
+                {   
                     return NotFound();
                 }
             }
             else
-            {
+            {   
                 return NotFound();
             }
 
