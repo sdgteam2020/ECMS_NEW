@@ -1,5 +1,4 @@
 ﻿using DataAccessLayer.BaseInterfaces;
-using DataAccessLayer.Migrations;
 using DataTransferObject.Domain.Master;
 using DataTransferObject.Domain.Model;
 using Microsoft.EntityFrameworkCore;

@@ -183,18 +183,37 @@ namespace BusinessLogicsLayer.Service
         }
         public IEnumerable<SelectListItem> GetRank()
         {
-            var rakes = new List<SelectListItem>
+            var RankOptions = context.MRank.OrderBy(o => o.RankName)
+                 .Select(a =>
+                   new SelectListItem
+                   {
+                       Value = a.RankId.ToString(),
+                       Text = a.RankName,
+                   }).ToList();
+            var ddfirst = new SelectListItem()
             {
-                new SelectListItem{ Text="-- Select --", Value = null },
-                new SelectListItem{ Text="Lt", Value = "Lt" },
-                new SelectListItem{ Text="Capt", Value = "Capt" },
-                new SelectListItem{ Text="Maj", Value = "Maj" },
-                new SelectListItem{ Text="Lt Col", Value = "Lt Col" },
-                new SelectListItem{ Text="Col", Value = "Col" },
-                new SelectListItem{ Text="Brig", Value = "Brig" },
-                new SelectListItem{ Text="Maj Gen", Value = "Maj Gen" },
+                Value = null,
+                Text = "-- Select State--"
             };
-            return new SelectList(rakes, "Value", "Text");
+            RankOptions.Insert(0, ddfirst);
+            return new SelectList(RankOptions, "Value", "Text");
+        }
+        public IEnumerable<SelectListItem> GetArmedType()
+        {
+            var ArmedOptions = context.MArmedType.OrderBy(o => o.ArmedName)
+                 .Select(a =>
+                   new SelectListItem
+                   {
+                       Value = a.ArmedId.ToString(),
+                       Text = a.ArmedName,
+                   }).ToList();
+            var ddfirst = new SelectListItem()
+            {
+                Value = null,
+                Text = "-- Select State--"
+            };
+            ArmedOptions.Insert(0, ddfirst);
+            return new SelectList(ArmedOptions, "Value", "Text");
         }
         public IEnumerable<SelectListItem> GetRole()
         {
@@ -430,102 +449,6 @@ namespace BusinessLogicsLayer.Service
                 {".gif", "image/gif"},
                 {".csv", "text/csv"}
             };
-        }
-        public async Task<List<State>> GetAllState()
-        {
-            return await context.Set<State>().ToListAsync();
-
-        }
-        public async Task<List<District>> GetDistrictListByStateId(int StateId)
-        {
-            return await context.Set<District>().Where(o => o.StateId == StateId).ToListAsync();
-        }
-        public IEnumerable<SelectListItem> GetStateDDL()
-        {
-            var StateOptions = context.MStates.OrderBy(o => o.StateName)
-                 .Select(a =>
-                   new SelectListItem
-                   {
-                       Value = a.StateId.ToString(),
-                       Text = a.StateName
-                   }).ToList();
-            var ddfirst = new SelectListItem()
-            {
-                Value = null,
-                Text = "-- Select State--"
-            };
-            StateOptions.Insert(0, ddfirst);
-            return new SelectList(StateOptions, "Value", "Text");
-        }
-        public IEnumerable<SelectListItem> GetStateDDLIdSelected(int StateId)
-        {
-            var StateOptions = context.MStates.OrderBy(o => o.StateName)
-                 .Select(a =>
-                   new SelectListItem
-                   {
-                       Value = a.StateId.ToString(),
-                       Text = a.StateName,
-                   }).ToList();
-            var ddfirst = new SelectListItem()
-            {
-                Value = null,
-                Text = "-- Select State--"
-            };
-            StateOptions.Insert(0, ddfirst);
-            return new SelectList(StateOptions, "Value", "Text", StateId);
-        }
-        public IEnumerable<SelectListItem> GetStateDDLId(int stateId)
-        {
-            var StateOptions = context.MStates.Where(x => x.StateId == stateId)
-                 .Select(a =>
-                   new SelectListItem
-                   {
-                       Value = a.StateId.ToString(),
-                       Text = a.StateName,
-                   }).ToList();
-            var ddfirst = new SelectListItem()
-            {
-                Value = null,
-                Text = "-- Select District --"
-            };
-            StateOptions.Insert(0, ddfirst);
-            return new SelectList(StateOptions, "Value", "Text");
-        }
-        public IEnumerable<SelectListItem> GetDistrictDDL()
-        {
-            var DistrictOptions = context.MDistricts.OrderBy(o => o.Name)
-                .Select(a =>
-                  new SelectListItem
-                  {
-                      Value = a.DistrictId.ToString(),
-                      Text = a.Name
-                  }).ToList();
-
-            var ddfirst = new SelectListItem()
-            {
-                Value = null,
-                Text = "-- Select District --"
-            };
-            DistrictOptions.Insert(0, ddfirst);
-            return new SelectList(DistrictOptions, "Value", "Text");
-        }
-        public IEnumerable<SelectListItem> GetDistrictDDL(int stateId)
-        {
-            var DistrictOptions = context.MDistricts.Where(s => s.StateId == stateId).OrderBy(o => o.Name)
-                .Select(a =>
-                  new SelectListItem
-                  {
-                      Value = a.DistrictId.ToString(),
-                      Text = a.Name
-                  }).ToList();
-
-            var ddfirst = new SelectListItem()
-            {
-                Value = null,
-                Text = "-- Select District --"
-            };
-            DistrictOptions.Insert(0, ddfirst);
-            return new SelectList(DistrictOptions, "Value", "Text");
         }
     }
 }

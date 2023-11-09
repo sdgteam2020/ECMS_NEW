@@ -15,6 +15,9 @@ using System;
 using Web.Data;
 using ApplicationUser = DataTransferObject.Domain.Identitytable.ApplicationUser;
 using BusinessLogicsLayer.Service;
+using Microsoft.SqlServer.Management.Smo.Wmi;
+using DataAccessLayer.Security;
+using Microsoft.AspNetCore.Authorization;
 
 var builder = WebApplication.CreateBuilder(args);
 var configration = builder.Configuration;
@@ -121,6 +124,19 @@ builder.Services.ConfigureApplicationCookie(options =>
     //options.ReturnUrlParameter=""
 });
 
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("DeleteRolePolicy",
+        policy => policy.RequireClaim("Delete Role"));
+
+    options.AddPolicy("EditRolePolicy",
+        policy => policy.AddRequirements(new ManageAdminRolesAndClaimsRequirement()));
+
+    options.AddPolicy("AdminRolePolicy",
+        policy => policy.RequireRole("Admin"));
+});
+builder.Services.AddSingleton<IAuthorizationHandler, CanEditOnlyOtherAdminRolesAndClaimsHandler>();
+builder.Services.AddSingleton<IAuthorizationHandler, SuperAdminHandler>();
 builder.Services.AddSingleton<DataProtectionPurposeStrings>();
 
 builder.Services.AddHsts(options =>
@@ -133,9 +149,16 @@ builder.Services.AddHsts(options =>
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (!app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment())
+{
+    app.UseDeveloperExceptionPage();
+    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+    //app.UseHsts();
+}
+else
 {
     app.UseExceptionHandler("/Error");
+    app.UseStatusCodePagesWithReExecute("/Error/{0}");
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }

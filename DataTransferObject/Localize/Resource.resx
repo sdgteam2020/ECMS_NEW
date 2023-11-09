@@ -139,7 +139,7 @@
     <value>Bde.</value>
   </data>
   <data name="BloodGroup" xml:space="preserve">
-    <value>Blood gp</value>
+    <value>Blood Group</value>
   </data>
   <data name="choice" xml:space="preserve">
     <value>Select Choice</value>
@@ -154,10 +154,10 @@
     <value>Date</value>
   </data>
   <data name="DateOfCommissioning" xml:space="preserve">
-    <value>Dt of Commissioning/ Enrolment</value>
+    <value>Date of Commissioning/ Enrollment</value>
   </data>
   <data name="DateOfIssue" xml:space="preserve">
-    <value>Dt of Issue</value>
+    <value>Date of Issue</value>
   </data>
   <data name="DistrictId" xml:space="preserve">
     <value>District</value>
@@ -166,7 +166,7 @@
     <value>Div.</value>
   </data>
   <data name="DOB" xml:space="preserve">
-    <value>Dt of Birth</value>
+    <value>Date of Birth</value>
   </data>
   <data name="DocName" xml:space="preserve">
     <value>Document Name</value>
@@ -199,10 +199,10 @@
     <value>GIS Officer Formation / Unit </value>
   </data>
   <data name="Height" xml:space="preserve">
-    <value>Ht in CM</value>
+    <value>Height (Cm)</value>
   </data>
   <data name="IdentityMark" xml:space="preserve">
-    <value>Iden Mks</value>
+    <value>Identification Mark</value>
   </data>
   <data name="InitiatingOfficerArmyNumber" xml:space="preserve">
     <value>IO Army No.</value>
@@ -220,7 +220,7 @@
     <value>IO Formation / Unit </value>
   </data>
   <data name="IssuingAuth" xml:space="preserve">
-    <value>Issuing Auth</value>
+    <value>Issuing Authority</value>
   </data>
   <data name="Name" xml:space="preserve">
     <value>Name</value>
@@ -241,10 +241,10 @@
     <value>Id</value>
   </data>
   <data name="Rank" xml:space="preserve">
-    <value>Rk</value>
+    <value>Rank</value>
   </data>
   <data name="RegistrationType" xml:space="preserve">
-    <value>Registration Type</value>
+    <value>Category</value>
   </data>
   <data name="RoleName" xml:space="preserve">
     <value>Role Name</value>
@@ -253,7 +253,7 @@
     <value>Seniority</value>
   </data>
   <data name="ServiceNo" xml:space="preserve">
-    <value>Service No</value>
+    <value>Army No</value>
   </data>
   <data name="SignatureImagePath" xml:space="preserve">
     <value>Signature of Indl</value>

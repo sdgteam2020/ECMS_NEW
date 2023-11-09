@@ -18,6 +18,7 @@ namespace BusinessLogicsLayer.Service
         public IEnumerable<SelectListItem> GetArmyNumberPart1();
         public IEnumerable<SelectListItem> GetArmyNumberPart3();
         public IEnumerable<SelectListItem> GetRank();
+        public IEnumerable<SelectListItem> GetArmedType();
         public IEnumerable<SelectListItem> GetTypeOfUnit();
         public IEnumerable<SelectListItem> GetTemp();
         public IEnumerable<SelectListItem> GetComd();
@@ -29,12 +30,5 @@ namespace BusinessLogicsLayer.Service
         public bool IsImage(IFormFile postedFile);
         public string GetContentType(string path);
         public Dictionary<string, string> GetMimeTypes();
-        public Task<List<State>> GetAllState();
-        public Task<List<District>> GetDistrictListByStateId(int StateId);
-        public IEnumerable<SelectListItem> GetStateDDL();
-        public IEnumerable<SelectListItem> GetStateDDLIdSelected(int StateId);
-        public IEnumerable<SelectListItem> GetStateDDLId(int stateId);
-        public IEnumerable<SelectListItem> GetDistrictDDL();
-        public IEnumerable<SelectListItem> GetDistrictDDL(int stateId);
     }
 }

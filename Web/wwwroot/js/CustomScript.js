@@ -52,7 +52,6 @@ function beforeUploadPhotoSizeCheck(id) {
     }
 }
 function beforeSubmitValidateBasicDetail(id) {
-    de
     let formId = '#' + id;
 
     //$('#ArmService').prop('required', true);
@@ -300,11 +299,11 @@ function getData(id) {
             //alert(JSON.stringify(response));
             $("#Name").val(response.Name);
             $("#ServiceNo").val(response.ServiceNo);
-            $("#DOB").val(response.DOB.split('T')[0]);
+            $("#DOB").val(response.DOB);
             $("#DOB_").val(moment(response.DOB).format("DD-MMM-YYYY"));
-            $("#DateOfCommissioning").val(response.DateOfCommissioning.split('T')[0]);
+            $("#DateOfCommissioning").val(response.DateOfCommissioning);
+            $("#DOC").val(moment(response.DateOfCommissioning).format("DD-MMM-YYYY"));
             $("#PermanentAddress").val(response.PermanentAddress);
-            $("#DOB").html("2019-07-22");
         }
     });
 }
@@ -360,6 +359,37 @@ function printDiv() {
 
 }
 /* Load Data In Table */
+function LoadJDTK(selector) {
+    $(document).ready(function () {
+        memberTable = $(selector).DataTable({
+            retrieve: true,
+            lengthChange: false,
+            "order": [[2, "asc"]],
+            buttons: [{
+                extend: 'copy',
+                exportOptions: {
+                    columns: "thead th:not(.noExport)"
+                }
+            }, {
+                extend: 'excel',
+                exportOptions: {
+                    columns: "thead th:not(.noExport)"
+                }
+            }, {
+                extend: 'pdfHtml5',
+                orientation: 'landscape',
+                pageSize: 'LEGAL',
+                exportOptions: {
+                    columns: "thead th:not(.noExport)"
+                }
+            }]
+        });
+
+        memberTable.buttons().container().appendTo('#myProjectTable_wrapper .col-md-6:eq(0)');
+
+    });
+}
+
 function LoadJDT(selector) {
     $(document).ready(function () {
         oTable = $(selector).DataTable({

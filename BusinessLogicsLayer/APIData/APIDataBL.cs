@@ -1,7 +1,6 @@
 ﻿using BusinessLogicsLayer.Bde;
 using DataAccessLayer;
 using DataAccessLayer.BaseInterfaces;
-using DataAccessLayer.Migrations;
 using DataTransferObject.Domain.Master;
 using DataTransferObject.Domain.Model;
 using DataTransferObject.Requests;

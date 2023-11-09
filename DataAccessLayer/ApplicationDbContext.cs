@@ -1,5 +1,4 @@
-﻿using DataAccessLayer.Migrations;
-using DataTransferObject.Domain;
+﻿using DataTransferObject.Domain;
 using DataTransferObject.Domain.Error;
 using DataTransferObject.Domain.Identitytable;
 using DataTransferObject.Domain.Master;
@@ -33,8 +32,6 @@ namespace DataAccessLayer
         public DbSet<MAppointment> MAppointment { get; set; }
         public DbSet<MArmedType> MArmedType { get; set; }
         public DbSet<MRank> MRank { get; set; }
-        public DbSet<State> MStates { get; set; } = null!;
-        public DbSet<District> MDistricts { get; set; } = null!;
         public DbSet<BasicDetail> BasicDetails { get; set; } = null!;
         public DbSet<ProfileData> ProfileDatas { get; set; } = null!;
         public DbSet<BasicDetailTemp> BasicDetailTemps { get; set; } = null!;

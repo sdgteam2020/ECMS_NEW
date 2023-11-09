@@ -1,6 +1,5 @@
 ﻿using BusinessLogicsLayer;
 using BusinessLogicsLayer.Bde;
-using DataAccessLayer.Migrations;
 using DataTransferObject.Domain.Model;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
@@ -91,12 +90,19 @@ namespace WebApi.Controllers
             data = await _aPIDataBL.GetByIC(ICNumber);
             if (ICNumber != null)
             {
-               
-                    return Ok(data);
-                
+                 MApiData? apiData = (MApiData?)await _aPIDataBL.GetByIC(ICNumber);
+
+                if (apiData != null)
+                {
+                    return Ok(apiData);
+                }
+                else
+                {   
+                    return NotFound();
+                }
             }
             else
-            {
+            {   
                 return NotFound();
             }
 
