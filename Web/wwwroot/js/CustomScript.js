@@ -1,4 +1,16 @@
-﻿function Aadhaarformate(e,elemt) {
+﻿function registrationEnableDisabledField(val) {
+    debugger
+    if (val==1) {
+        $("#btn1").prop('disabled', false);
+        $("#btn2").prop('disabled', true);
+    }
+    else {
+        $("#btn1").prop('disabled', true);
+        $("#btn2").prop('disabled', false);
+    }
+
+}
+function Aadhaarformate(e, elemt) {
     if (e.which !== 8) {
         if (elemt.value.length === 4 || elemt.value.length === 9) {
             elemt.value = elemt.value += ' ';

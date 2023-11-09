@@ -107,8 +107,8 @@ namespace Web.Controllers
         [Authorize(Roles = "Admin,User")]
         public Task<ViewResult> Registration()
         {
-            HttpContext.Session.SetInt32(SessionKeyStep, 0);
-            HttpContext.Session.SetInt32(SessionKeyCurStep, 1);
+            //HttpContext.Session.SetInt32(SessionKeyStep, 0);
+            //HttpContext.Session.SetInt32(SessionKeyCurStep, 1);
             ViewBag.OptionsRegistrationType = service.GetRegistrationType();
             ViewBag.OptionsSubmitType = service.GetSubmitType();
             return Task.FromResult(View());
@@ -161,7 +161,7 @@ namespace Web.Controllers
                         basicDetailTemp.UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
                         await unitOfWork.BasicDetailTemp.Add(basicDetailTemp);
                         TempData["success"] = "Request Submited Successfully.";
-                        return RedirectToAction("InaccurateData");
+                        return RedirectToAction("Registration");
                     }
                 }
                 else

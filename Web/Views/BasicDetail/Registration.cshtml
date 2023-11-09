@@ -28,7 +28,7 @@
                     <div class="row mb-3 required">
                         <label asp-for="RegistrationType" class="col-sm-3 col-form-label form-label"></label>
                         <div class="col-sm-4">
-                            <select asp-for="RegistrationType" class="form-control" asp-items="ViewBag.OptionsRegistrationType">
+                            <select asp-for="RegistrationType" class="form-select" asp-items="ViewBag.OptionsRegistrationType">
                             </select>
                             <span asp-validation-for="RegistrationType" class="text-danger"></span>
                         </div>
@@ -92,11 +92,10 @@
                             <div class="row mb-3 required">
                                 <label asp-for="SubmitType" class="col-sm-3 col-form-label form-label"></label>
                                 <div class="col-sm-4">
-                                    <input asp-for="SubmitType" type="radio" value="1" />
-                                    <label>I am agree.</label>
-                                    <br />
-                                    <input asp-for="SubmitType" type="radio" value="2" />
-                                    <label>I am not agree.</label>
+                                    <input asp-for="SubmitType" type="radio" value="1" onclick="registrationEnableDisabledField(this.value)" />
+                                    <label>Yes</label>
+                                    <input asp-for="SubmitType" type="radio" value="2" onclick="registrationEnableDisabledField(this.value)" />
+                                    <label>No</label>
                                     <span asp-validation-for="SubmitType" class="text-danger"></span>
                                 </div>
                             </div>
@@ -104,8 +103,8 @@
                     </div>
                 </div>
                 <div class="card-footer text-center">
-                    <a asp-action="Index" asp-controller="BasicDetail" class="btn btn-primary">Back To Index</a>
-                    <button type="submit" class="btn btn-primary">Proceed</button>
+                    <button type="submit" id="btn1" name="btn1" class="btn btn-primary" disabled>Proceed</button>
+                    <button type="submit" id="btn2" name="btn2" class="btn btn-primary" disabled>Clear</button>
                 </div>
             </form>
         </div>

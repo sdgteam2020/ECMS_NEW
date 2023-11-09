@@ -32,7 +32,7 @@
                             <label class="col-sm-1 col-form-label text-center font-weight-bold">2.</label>
                             <label asp-for="RankId" class="col-sm-3 col-form-label form-label"></label>
                             <div class="col-sm-6">
-                                <select asp-for="RankId" class="form-control" asp-items="ViewBag.OptionsRank">
+                                <select asp-for="RankId" class="form-select" asp-items="ViewBag.OptionsRank">
                                 </select>
                                 <span asp-validation-for="RankId" class="text-danger"></span>
                             </div>
@@ -41,12 +41,12 @@
                             <label class="col-sm-1 col-form-label text-center font-weight-bold">3.</label>
                             <label asp-for="ArmedId" class="col-sm-3 col-form-label form-label"></label>
                             <div class="col-sm-6">
-                                <select asp-for="ArmedId" class="form-control" asp-items="ViewBag.OptionsArmedType">
+                                <select asp-for="ArmedId" class="form-select" asp-items="ViewBag.OptionsArmedType">
                                 </select>
                                 <span asp-validation-for="ArmedId" class="text-danger"></span>
                             </div>
                         </div>
-                        <div class="row mb-1 required">
+                        <div class="row mb-1">
                             <label class="col-sm-1 col-form-label text-center font-weight-bold">4.</label>
                             <label asp-for="ServiceNo" class="col-sm-3 col-form-label form-label"></label>
                             <div class="col-sm-6">
@@ -64,7 +64,7 @@
                         </div>
                         <div class="row mb-1">
                             <label class="col-sm-1 col-form-label text-center font-weight-bold">6.</label>
-                            <label class="col-sm-3 col-form-label form-label">Date of Birth</label>
+                            <label asp-for="DOB" class="col-sm-3 col-form-label form-label"></label>
                             <div class="col-sm-6">
                                 <input type="text" id="DOB_" name="DOB_" class="form-control" value="@Model.DOB.ToString("dd/MMM/yyyy")" readonly />
                             </div>
@@ -89,7 +89,7 @@
                             <label class="col-sm-1 col-form-label text-center font-weight-bold">9.</label>
                             <label asp-for="BloodGroup" class="col-sm-3 col-form-label form-label"></label>
                             <div class="col-sm-6">
-                                <select asp-for="BloodGroup" class="form-control" asp-items="ViewBag.OptionsBloodGroup">
+                                <select asp-for="BloodGroup" class="form-select" asp-items="ViewBag.OptionsBloodGroup">
                                 </select>
                                 <span asp-validation-for="BloodGroup" class="text-danger"></span>
                             </div>
@@ -132,7 +132,7 @@
                         </div>
                         <div class="row mb-1">
                             <label class="col-sm-1 col-form-label text-center font-weight-bold">14.</label>
-                            <label class="col-sm-3 col-form-label form-label">Date of Commissioning/ Enrollment</label>
+                            <label asp-for="DateOfCommissioning" class="col-sm-3 col-form-label form-label"></label>
                             <div class="col-sm-4">
                                 <input type="text" id="DOC" name="DOC" class="form-control" value="@Model.DateOfCommissioning.ToString("dd/MMM/yyyy")" readonly />
                             </div>
@@ -141,7 +141,7 @@
                             <label class="col-sm-1 col-form-label text-center font-weight-bold">15.</label>
                             <label asp-for="PermanentAddress" class="col-sm-3 col-form-label form-label"></label>
                             <div class="col-sm-8">
-                                <input asp-for="PermanentAddress" class="form-control" placeholder="" readonly />
+                                <textarea asp-for="PermanentAddress" rows="2" class="form-control" placeholder="" readonly></textarea>
                                 <span asp-validation-for="PermanentAddress" class="text-danger"></span>
                             </div>
                         </div>
