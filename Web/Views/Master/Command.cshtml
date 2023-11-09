@@ -30,10 +30,11 @@
                     <div class="row">
                 <div class="col-sm-5">
                     <div class="form-group row mb-2">
-                                <span class="spncomdId d-none" id="spncomdId">sd</span>
-                        <label class="col-form-label col-sm-4">Comd</label>
+                                <span class="spncomdId d-none" id="spncomdId">0</span>
+                                <span class="spnSOrderby d-none" id="spnSOrderby">0</span>
+                                <label class="col-form-label col-sm-4">Comd / PSO<i class="fas fa-asterisk mand1"></i></label>
                         <div class="col-sm-8">
-                            <i class="fas fa-asterisk mand"></i>
+                            
                                     <input class="form-control Alphanumeric" placeholder="Enter Comd" id="txtComandName" required pattern="^[a-zA-Z0-9 ]*$" title="Only Alphabets and Numbers allowed" />
                         </div>
 
@@ -41,10 +42,10 @@
                     </div>
                     <div class="col-sm-5">
                     <div class="form-group row mb-2">
-                      
-                        <label class="col-form-label col-sm-4">Abbreviation</label>
+
+                                <label class="col-form-label col-sm-4">Abbreviation <i class="fas fa-asterisk mand1"></i></label>
                         <div class="col-sm-8">
-                            <i class="fas fa-asterisk mand"></i>
+                           
                                     <input class="form-control Alphanumeric" placeholder="Enter Abbreviation" id="txtAbbreviation" required pattern="^[a-zA-Z0-9 ]*$" title="Only Alphabets and Numbers allowed" />
                         </div>
 
@@ -53,6 +54,7 @@
                 <div class="col-sm-2">
                     <div class="col-sm-12 text-left">
                         <input type="button" class="btn btn-primary " value="Save" id="btnsave" />
+                                <button type="button" id="btnReset" class="btn btn-outline-danger">Reset</button>
                     </div>
                     <div class="col-sm-12" id="msg">
                     </div>
@@ -82,10 +84,10 @@
                                         </div>
                                     </th>
                                     <th class=" wd-30-f">S No</th>
-                                    <th class="nowrap">Comd</th>
+                                    <th class="nowrap">Comd / PSO</th>
                                     <th class="nowrap">Abbreviation</th>
+                                    <th class="nowrap">Order</th>
                                     <th class="nowrap">Action</th>
-
 
                                 </tr>
                             </thead>

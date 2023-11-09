@@ -8,9 +8,22 @@ namespace DataTransferObject.Response
 {
     public class DTOTokenResponse
     {
-        public bool IsToken { get; set; }
-        public string Message { get; set; }
-        public int MessageCode { get; set; }
-        public string ArmyNo { get; set; }
+      //  public string? API { get; set; }
+        public Boolean CRL_OCSPCheck { get; set; }
+        public string? CRL_OCSPMsg { get; set; }
+        public string? Remarks { get; set; }
+        public string? Thumbprint { get; set; }
+        public string Status { get; set; }
+        public Boolean TokenValid { get; set; }
+        public DateTime? ValidFrom { get; set; }
+        public DateTime? ValidTo { get; set; }
+        public string? issuer { get; set; }
+        public string? subject { get; set; }
+        public string? ArmyNo { get; set; }
+        public string? Name { get; set; }
+        public string? Rank { get; set; }
+       
+
+      
     }
 }

@@ -1,0 +1,212 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title> HRMS </title>
+    <link href="/Fonts/css/all.min.css" rel="stylesheet" type="text/css">
+
+
+    <link href="~/css/nunito.css" rel="stylesheet" />
+    <link href="~/css/roboto.css" rel="stylesheet" />
+    <link href="~/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+
+    <link href="~/css/login.css" rel="stylesheet" />
+
+    <link href="~/sweetalert2/sweetalert2.min.css" rel="stylesheet" />
+    <link href="~/css/feed.css" rel="stylesheet" />
+
+    <link href="~/css/normalize.min.css" rel="stylesheet" />
+    <link href="~/css/swiper.min.css" rel="stylesheet" />
+    <link href="~/css/feed.css" rel="stylesheet" />
+    <link href="~/css/main.css" rel="stylesheet" />
+    <link href="~/css/style.css" rel="stylesheet" />
+    <link href="~/css/stepwise.css" rel="stylesheet" />
+    <link href="~/select2/css/select2.min.css" rel="stylesheet" />
+    <style>
+        .swal2-confirm, .swal2-styled {
+            background: #D97904 !important;
+        }
+
+        .swal2-cancel {
+            background: red !important;
+        }
+
+        .login-wrap {
+            margin-top: 200px;
+            margin-bottom: 100px;
+            margin-left: 30%;
+            margin-right: 30%;
+            /*  border: 7px double #242c6d;*/
+            border-radius: 10px;
+            box-shadow: 0px 0px 40px rgb(217 121 4 / 23%);
+            z-index: 1;
+        }
+
+    </style>
+
+    <style>
+        .error-container {
+        }
+    </style>
+</head>
+
+
+<body>
+
+    @* <div id="loading" class="loader">
+    <div class="loader-container">
+    <img src="/Images/load.gif" width="100">
+    <div>
+    <h4 style="margin-top: -20px;">Loading...</h4>
+    <span>Please wait. This may take few seconds.</span>
+    </div>
+    </div>
+    </div>*@
+    <span id="IsRegd" class="d-none1"></span>@*@ViewBag.IsRegd*@
+    
+    <div class="container-fluid" id="grad1">
+        <div class="row justify-content-center mt-0">
+            <div class="col-11 col-sm-9 col-md-7 col-lg-6 text-center p-0 mt-3 mb-2">
+                <div class="card px-0 pt-4 pb-0 mt-3 mb-3">
+                    <h2><strong>User Details</strong></h2>
+
+                    <div class="row">
+                        <div class="col-md-12 mx-0">
+                            <form id="msform">
+
+                               
+                              
+                                    <div class="form-card">
+                                        <div class="card-sigin">
+                                            <div class="main-signup-header login-form">
+                                           @*  <h1 class="font-weight-bold text-center mb-0 mt-3 Backuphead">User Details </h1> *@
+                                                <p class="font-weight-normal text-center mb-4 mt-1 text-danger"> </p>
+                                                <div class="alert alert-danger alert-dismissible fade show error-msg d-none">
+
+                                                    <span class="text-danger" id="error-msg"></span>
+                                                </div>
+                                                <div class="pb-3 mt-3 d-grid gap-2 col-8 mx-auto">
+
+
+
+                                                <div class="col-xl-12">
+                                                    <div class="form-group row mb-2">
+                                                        <label class="col-form-label col-sm-4">User ID/ Domain ID</label>
+                                                        <div class="col-sm-8">
+                                                            <i class="fas fa-asterisk mand"></i><label class="form-control" id="txtDomainId"></label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-xl-12">
+                                                    <div class="form-group row mb-2">
+                                                        <label class="col-form-label col-sm-4">Role</label>
+                                                        <div class="col-sm-8">
+                                                            <i class="fas fa-asterisk mand"></i>
+                                                            <select class="form-select" style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddlRoles" required id="ddlRoles">
+                                                              
+                                                                <option value="User">User</option>
+                                                               
+
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-xl-12 d-none1">
+                                                    <div class="form-group row mb-2">
+                                                        <label class="col-form-label col-sm-4">Email Id</label>
+                                                        <div class="col-sm-8">
+                                                            <i class="fas fa-asterisk mand"></i><label class="form-control" id="txtEmailId"></label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-xl-12">
+                                                    <div class="form-group row mb-2">
+                                                        <label class="col-form-label col-sm-4">Offrs Army No </label>
+                                                        <div class="col-sm-8">
+                                                            <i class="fas fa-asterisk mand"></i><label class="form-control" id="txtArmyNo"></label>
+                                                            IC No fetched from token (NE)
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                </div>
+
+
+
+
+                                            <div class="col-md-12 text-center mb-4">
+
+
+                                                <button type="button" id="btnfetchtoken" class="btn btn-danger font-weight-600 btn-sm">
+                                                        Refresh to fetch Token Details
+                                                    </button>
+                                                <button type="button" id="btnsave" class="btn btn-success font-weight-600 btn-sm">Sign Up/ Save Record (Enabled once Army No filled)</button>
+
+                                                
+                                            </div>
+                                       
+
+                                                <div class="alert alert-danger alert-dismissible fade show spnmsg d-none d-grid gap-2 col-6 mx-auto">
+                                                    @*<button type="button" class="btn-close" data-bs-dismiss="alert"></button>*@
+                                                    <span class="text-danger" id="error-msg"></span>
+                                                </div>
+                                            </div>
+                                            <div id="tokenmsg" class="d-grid gap-2 col-6 mx-auto">
+                                            </div>
+                                            
+
+                                        </div>
+                                    </div>
+                                    
+                              
+                             
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+
+    <script src="~/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="~/fonts/feather/feather.min.js"></script>
+    <script src="~/sweetalert2/sweetalert2.min.js"></script>
+   
+    <script src="~/js/swiper.min.js"></script>
+    <script src="~/select2/js/select2.min.js"></script>
+    <script src="~/js/script.js"></script>
+    <script src="~/developerjs/token.js"></script>
+    <script>
+        feather.replace();
+    </script>
+
+
+</body>
+</html>
+<script>
+    $(document).ready(function () {
+
+
+
+
+        $('.radio-group .radio').click(function () {
+            $(this).parent().find('.radio').removeClass('selected');
+            $(this).addClass('selected');
+        });
+
+        $(".submit").click(function () {
+            return false;
+        })
+
+    });
+</script>

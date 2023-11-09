@@ -140,10 +140,25 @@ namespace BusinessLogicsLayer
 
                 }
             } 
-            else if (Data.id == Convert.ToInt16(Constants.MasterTbl.Rank))
+            else if (Data.id == Convert.ToInt16(Constants.MasterTbl.RankOffrs))
             {
                 var Ret = await Rank.GetAll();
-                foreach (var Forma in Ret)
+                foreach (var Forma in Ret.Where(P=>P.Type==1))
+                {
+
+                    DTOMasterResponse db = new DTOMasterResponse();
+
+                    db.Id = Forma.RankId;
+                    db.Name = Forma.RankName;
+                    lst.Add(db);
+
+
+                }
+            }
+            else if (Data.id == Convert.ToInt16(Constants.MasterTbl.RankOrJco))
+            {
+                var Ret = await Rank.GetAll();
+                foreach (var Forma in Ret.Where(P => P.Type == 2))
                 {
 
                     DTOMasterResponse db = new DTOMasterResponse();
@@ -158,7 +173,7 @@ namespace BusinessLogicsLayer
             //Constants.MasterTbl.Command;
             return lst;
         }
-            public async Task<List<DTOMasterResponse>> GetAllMMasterByParent(DTOMHierarchyRequest Data)
+        public async Task<List<DTOMasterResponse>> GetAllMMasterByParent(DTOMHierarchyRequest Data)
             {
                 List<DTOMasterResponse> lst = new List<DTOMasterResponse>();
                 int count = 0;

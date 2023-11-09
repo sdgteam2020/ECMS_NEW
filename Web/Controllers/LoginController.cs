@@ -13,7 +13,7 @@ namespace Web.Controllers
         public async Task<IActionResult> GetIsToken(DTOTokenRequest Token)
         {
             DTOTokenResponse dTOTokenResponse = new DTOTokenResponse();
-            dTOTokenResponse.IsToken = false;
+           // dTOTokenResponse.IsToken = false;
             return Json(dTOTokenResponse);
         }
 
@@ -22,7 +22,7 @@ namespace Web.Controllers
         {
 
             DTOTokenResponse dTOTokenResponse = new DTOTokenResponse();
-            dTOTokenResponse.IsToken = false;
+          //  dTOTokenResponse.IsToken = false;
             return Json(dTOTokenResponse);
         }
     }

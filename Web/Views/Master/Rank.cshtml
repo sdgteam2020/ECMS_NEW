@@ -8,11 +8,11 @@
         <div class="card-header">
 
             <span id="SpnTxnId" class="d-none">0</span>
-            @*<span id="PtoId" class="d-none">0</span>*@
+           
             <div class="row">
                 <div class="col-xl-12 text-left">
                     <h3>
-                        Armed Details
+                        Rank Details
                         <small class="text-muted"></small>
 
 
@@ -28,18 +28,19 @@
             <div class="row">
                 <form action="" id="SaveForm" method="post" name="SaveForm">
                     <div class="row">
-                        <div class="col-sm-5">
+                        <div class="col-sm-3">
                             <div class="form-group row mb-2">
-                                <span class="d-none" id="spnArmedId">0</span>
-                                <label class="col-form-label col-sm-4">Armed<i class="fas fa-asterisk mand1"></i></label>
+                                <span class="spnrankId d-none" id="spnrankId">0</span>
+                                <span class="spnSOrderby d-none" id="spnSOrderby">0</span>
+                                <label class="col-form-label col-sm-4">Rank<i class="fas fa-asterisk mand1"></i></label>
                                 <div class="col-sm-8">
                                     
-                                    <input class="form-control Alphanumeric" placeholder="Enter Armed" id="txtArmedName" required pattern="^[a-zA-Z0-9 ]*$" title="Only Alphabets and Numbers allowed" />
+                                    <input class="form-control Alphanumeric" placeholder="Enter Rank" id="txtRank" required pattern="^[a-zA-Z0-9 ]*$" title="Only Alphabets and Numbers allowed" />
                                 </div>
 
                             </div>
                         </div>
-                        <div class="col-sm-5">
+                        <div class="col-sm-4">
                             <div class="form-group row mb-2">
 
                                 <label class="col-form-label col-sm-4">Abbreviation<i class="fas fa-asterisk mand1"></i></label>
@@ -50,9 +51,25 @@
 
                             </div>
                         </div>
+                        <div class="col-sm-3">
+                            <div class="form-group row mb-2">
+
+                                <label class="col-form-label col-sm-4">Rank Type<i class="fas fa-asterisk mand1"></i></label>
+                                <div class="col-sm-8">
+                                    
+                                    <select class="form-select" style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddlRankType" required id="ddlRankType">
+                                        <option value="">Select Rank Type </option>
+                                        <option value="1">Offrs</option>
+                                        <option value="2">JCO/OR</option>
+                                    </select>
+                                </div>
+
+                            </div>
+                        </div>
                         <div class="col-sm-2">
                             <div class="col-sm-12 text-left">
                                 <input type="button" class="btn btn-primary " value="Save" id="btnsave" />
+                                <input type="button" class="btn btn-danger " value="Reset" id="btnReset" />
                             </div>
                             <div class="col-sm-12" id="msg">
                             </div>
@@ -62,11 +79,11 @@
                 <div class="col-xl-12">
                     <div class="mb-2 d-md-flex justify-content-md-between align-items-md-center">
                         <h6 class="mb-3 mb-md-0">
-                            Total Armed <span id="lblTotal" class="ml-3 border border-light b px-2 py-1">0</span>
+                            Total Rank <span id="lblTotal" class="ml-3 border border-light b px-2 py-1">0</span>
                         </h6>
                         <div>
                             @* <button type="button" id="btnAdd" class="btn btn-outline-success font-weight-600 btn-sm">Add Command</button> *@
-                            @* <button type="button" id="btnMultiDelete" class="btn btn-outline-danger font-weight-600 btn-sm">Delete</button> *@
+                            <button type="button" id="btnMultiDelete" class="btn btn-outline-danger font-weight-600 btn-sm">Delete</button>
 
                         </div>
                     </div>
@@ -82,10 +99,10 @@
                                         </div>
                                     </th>
                                     <th class=" wd-30-f">S No</th>
-                                    <th class="nowrap">Armed</th>
+                                    <th class="nowrap">Rank</th>
                                     <th class="nowrap">Abbreviation</th>
+                                    <th class="nowrap">Order</th>
                                     <th class="nowrap">Action</th>
-
 
                                 </tr>
                             </thead>
@@ -106,5 +123,5 @@
 
 
 
-<script src="~/developerjs/command.js"></script>
-<script src="~/developerjs/armedtype.js"></script>
+<script src="~/developerjs/rank.js"></script>
+<script src="~/developerjs/commandvalidation.js"></script>

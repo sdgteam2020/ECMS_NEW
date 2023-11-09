@@ -30,6 +30,7 @@ namespace BusinessLogicsLayer
         IFormationBL Formation { get; }
         IApptBL Appt { get; }
         IArmedBL Armed { get; }
+        IRankBL Rank { get; }   
         IUnitBL Unit { get; }
         IBasicDetailBL BasicDetail { get; }
         IBasicDetailTempBL BasicDetailTemp { get; }

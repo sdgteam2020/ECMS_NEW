@@ -8,6 +8,7 @@ using BusinessLogicsLayer.Corps;
 using BusinessLogicsLayer.Div;
 using BusinessLogicsLayer.Formation;
 using BusinessLogicsLayer.Master;
+using BusinessLogicsLayer.Token;
 using BusinessLogicsLayer.Unit;
 using BusinessLogicsLayer.User;
 using DataAccessLayer;
@@ -56,6 +57,8 @@ namespace BusinessLogicsLayer
             services.AddTransient<IArmedDB, ArmedDB>();
             
             services.AddTransient<IRankBL, RankBL>();
+            services.AddTransient<IRankDB, RankDB>();
+
             services.AddTransient<IUserProfileMappingBL, UserProfileMappingBL>();
            
 
@@ -74,6 +77,8 @@ namespace BusinessLogicsLayer
 
             services.AddTransient<IBasicDetailTempBL, BasicDetailTempBL>();
             services.AddTransient<IBasicDetailTempDB, BasicDetailTempDB>();
+
+            services.AddTransient<iGetTokenBL, GetTokenBL>();
 
             services.AddTransient<IAPIDataBL, APIDataBL>();
             services.AddTransient<IAPIDataDB, APIDataDB>();

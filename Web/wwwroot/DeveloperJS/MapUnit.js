@@ -53,7 +53,18 @@ $(document).ready(function () {
                 if (result.isConfirmed) {
                   
                     if ($("#SpnUnitMapId").html() == 0) {
-                         UnitSave();
+
+                        //$("#txtSusno").val().substring(0, 7), "UnitId": 0, "Suffix": $("#txtSusno").val().substring(8, 7),
+                        //alert($("#txtSusno").val().substring(8, 7))
+                        //alert(isNumeric($("#txtSusno").val().substring(8, 7)))
+
+                        if (isNumeric($("#txtSusno").val().substring(0, 7)) == true && isNumeric($("#txtSusno").val().substring(8, 7)) == false) {
+                            UnitSave();
+                        }
+                        else {
+                            toastr.error('SUSNO Should be first 7 digit Numeric and last digit alphaBat!');
+                        }
+                        // 
                        
                     } else {
                         SaveUnitMap();
@@ -145,7 +156,7 @@ function GetUnitDetails(val,flag) {
 
                 else {
 
-                    $("#txtUnit").val(response.Unit_desc);
+                    $("#txtUnit").val(response.UnitName);
                     $('#txtUnit').attr('readonly', true);
                     $("#SpnUnitMapId").html(response.UnitId);
                     
@@ -354,7 +365,7 @@ function UnitSave() {
     $.ajax({
         url: '/Master/SaveUnit',
         type: 'POST',
-        data: { "Sus_no": $("#txtSusno").val().substring(0, 7), "UnitId": 0, "Suffix": $("#txtSusno").val().substring(8, 7), "Unit_desc": $("#txtUnit").val(), "IsVerify": false }, //get the search string
+        data: { "Sus_no": $("#txtSusno").val().substring(0, 7), "UnitId": 0, "Suffix": $("#txtSusno").val().substring(8, 7), "UnitName": $("#txtUnit").val(), "IsVerify": false }, //get the search string
         success: function (result) {
 
 

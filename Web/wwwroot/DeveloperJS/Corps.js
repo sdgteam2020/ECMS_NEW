@@ -247,7 +247,7 @@ function Save() {
             if (result == DataSave) {
 
 
-                toastr.success('Corps has been saved');
+                toastr.success('Data has been saved');
                 Reset();
                 BindData();
 
@@ -255,14 +255,14 @@ function Save() {
             else if (result == DataUpdate) {
 
 
-                toastr.success('Corps has been Updated');
+                toastr.success('Data has been Updated');
                 Reset();
                 BindData();
 
             }
             else if (result == DataExists) {
 
-                toastr.error('Corps Name Exits!');
+                toastr.error('Corps / Dte / Area Name Exits!');
             }
             else if (result == InternalServerError) {
                 Swal.fire({

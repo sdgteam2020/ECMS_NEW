@@ -17,7 +17,7 @@ namespace Web.Controllers
         {
             _userProfileBL=userProfileBL;
             _userProfileMappingBL = userProfileMappingBL;
-    }
+        }
         public IActionResult Profile()
         {
             return View();
@@ -83,7 +83,7 @@ namespace Web.Controllers
                     //{
                         if (dTO.Id > 0)
                         {
-                            _userProfileMappingBL.Update(dTO);
+                        await _userProfileMappingBL.Update(dTO);
                             return Json(KeyConstants.Update);
                         }
                         else

@@ -237,14 +237,14 @@ function Save() {
 
 
             if (result == DataSave) {
-                toastr.success('Command has been saved');
+                toastr.success('Data has been saved');
 
                 /*  $("#AddNewM").modal('hide');*/
                 BindData();
                 Reset();
             }
             else if (result == DataUpdate) {
-                toastr.success('Command has been Updated');
+                toastr.success('Data has been Updated');
 
                 /*  $("#AddNewM").modal('hide');*/
                 BindData();
@@ -252,7 +252,7 @@ function Save() {
             }
             else if (result == DataExists) {
 
-                toastr.error('Command Name Exits!');
+                toastr.error('Formation Name Exits!');
 
             }
             else if (result == InternalServerError) {

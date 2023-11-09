@@ -9,8 +9,8 @@ using System.Xml.Schema;
 
 namespace DataTransferObject.Domain.Master
 {
-    public class MRank
-    {
+    public class MRank:Common
+    { 
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int RankId { get; set; }
@@ -22,6 +22,8 @@ namespace DataTransferObject.Domain.Master
         [RegularExpression("^[a-zA-Z0-9 ]*$", ErrorMessage = "Only Alphabets and Numbers allowed.")]
         public string RankAbbreviation { get; set; }
 
-       
+        public int Orderby { get; set; }
+        [Required(ErrorMessage = "required!")]
+        public int Type { get; set; }
     }
 }

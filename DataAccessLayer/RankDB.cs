@@ -13,10 +13,10 @@ using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace DataAccessLayer
 {
-    public class ComdDB : GenericRepositoryDL<Comd>, IComdDB
+    public class RankDB : GenericRepositoryDL<MRank>, IRankDB
     {
         protected readonly ApplicationDbContext _context;
-        public ComdDB(ApplicationDbContext context) : base(context)
+        public RankDB(ApplicationDbContext context) : base(context)
         {
             _context = context;
         }
@@ -31,29 +31,29 @@ namespace DataAccessLayer
 
        
 
-         public async Task<bool> GetByName(Comd DTo)
+         public async Task<bool> GetByName(MRank DTo)
          {
             // && p.ComdId != DTo.ComdId && p.IsDeleted==true
-            var ret = _context.MComd.Select(p => p.ComdName.ToUpper() == DTo.ComdName.ToUpper()).FirstOrDefault();
+            var ret = _context.MRank.Select(p => p.RankAbbreviation.ToUpper() == DTo.RankAbbreviation.ToUpper()).FirstOrDefault();
             return ret;
         }
 
         public async Task<int> GetByMaxOrder()
         {
-            int ret = _context.MComd.Max(P => P.Orderby);
+            int ret = _context.MRank.Max(P => P.Orderby);
             return ret+1;
         }
 
-        public async Task<int> GetComdIdbyOrderby(int OrderBy)
+        public async Task<int> GetRankIdbyOrderby(int OrderBy)
         {
-            var ret= _context.MComd.Where(P => P.Orderby == OrderBy).Select(c=>c.ComdId).SingleOrDefault(); 
+            var ret= _context.MRank.Where(P => P.Orderby == OrderBy).Select(c=>c.RankId).SingleOrDefault(); 
            
             return ret;
         }
 
-        public async Task<IEnumerable<Comd>> GetAllByorder()
+        public async Task<IEnumerable<MRank>> GetAllByorder()
         {
-            var ret=  _context.MComd.OrderBy(x => x.Orderby).ToList();   
+            var ret=  _context.MRank.OrderBy(x => x.Orderby).ToList();   
             return ret;
         }
     }

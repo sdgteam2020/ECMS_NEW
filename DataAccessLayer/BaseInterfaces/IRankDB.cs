@@ -1,5 +1,4 @@
 ﻿using DataTransferObject.Domain.Master;
-using DataTransferObject.Requests;
 using DataTransferObject.Response;
 using DataTransferObject.Response.User;
 using System;
@@ -8,14 +7,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BusinessLogicsLayer.Bde
+namespace DataAccessLayer.BaseInterfaces
 {
-    public interface IRankBL : IGenericRepository<MRank>
+    public interface IRankDB : IGenericRepositoryDL<MRank>
     {
-
-        public Task<bool> GetByName(MRank DTo);
+        public Task<bool> GetByName(MRank Dto);
         public Task<int> GetByMaxOrder();
-        public Task<int> OrderByChange(MRank DTo);
+        public Task<int> GetRankIdbyOrderby(int OrderBy);
         public Task<IEnumerable<MRank>> GetAllByorder();
+
     }
 }

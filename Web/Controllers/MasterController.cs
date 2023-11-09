@@ -42,7 +42,7 @@ namespace Web.Controllers
                         }
                         else
                         {
-
+                            dTO.Orderby=await unitOfWork.Comds.GetByMaxOrder();
                             await unitOfWork.Comds.Add(dTO);
                             return Json(KeyConstants.Save);
 
@@ -69,7 +69,7 @@ namespace Web.Controllers
         {
             try
             {
-                return Json(await unitOfWork.Comds.GetAll());
+                return Json(await unitOfWork.Comds.GetAllByorder());
             }
             catch (Exception ex)
             {
@@ -90,9 +90,20 @@ namespace Web.Controllers
             }
 
 
+        }
+        public async Task<IActionResult> OrderByChange(Comd dTO)
+        {
+            try
+            {
+                await unitOfWork.Comds.OrderByChange(dTO);
+                return Json(KeyConstants.Success);
+            }
+            catch (Exception ex)
+            {
+                return Json(KeyConstants.InternalServerError);
+            }
 
 
-            return Json(2);
         }
         public async Task<IActionResult> DeleteCommandMultiple(int[] ints)
         {
@@ -825,6 +836,116 @@ namespace Web.Controllers
             }
         }
         #endregion End Appointment
+
+        #region Rank Page
+        public async Task<IActionResult> Rank()
+        {
+
+            return View();
+        }
+        public async Task<IActionResult> SaveRank(MRank dTO)
+        {
+            try
+            {
+                dTO.IsActive = true;
+                dTO.Updatedby = 1;
+                dTO.UpdatedOn = DateTime.Now;
+
+                if (ModelState.IsValid)
+                {
+                    if (!await unitOfWork.Rank.GetByName(dTO))
+                    {
+                        if (dTO.RankId > 0)
+                        {
+                            unitOfWork.Rank.Update(dTO);
+                            return Json(KeyConstants.Update);
+                        }
+                        else
+                        {
+                            dTO.Orderby = await unitOfWork.Comds.GetByMaxOrder();
+                            await unitOfWork.Rank.Add(dTO);
+                            return Json(KeyConstants.Save);
+
+
+                        }
+                    }
+                    else
+                    {
+                        return Json(KeyConstants.Exists);
+                    }
+
+                }
+                else
+                {
+
+                    return Json(ModelState.Select(x => x.Value.Errors).Where(y => y.Count > 0).ToList());
+                }
+
+            }
+            catch (Exception ex) { return Json(KeyConstants.InternalServerError); }
+
+        }
+        public async Task<IActionResult> GetAllRank(int[] Id)
+        {
+            try
+            {
+                return Json(await unitOfWork.Rank.GetAllByorder());
+            }
+            catch (Exception ex)
+            {
+                return Json(KeyConstants.InternalServerError);
+            }
+
+        }
+        public async Task<IActionResult> DeleteRank(MRank dTO)
+        {
+            try
+            {
+                await unitOfWork.Rank.Delete(dTO);
+                return Json(KeyConstants.Success);
+            }
+            catch (Exception ex)
+            {
+                return Json(KeyConstants.InternalServerError);
+            }
+
+
+        }
+        public async Task<IActionResult> RankOrderByChange(MRank dTO)
+        {
+            try
+            {
+                await unitOfWork.Rank.OrderByChange(dTO);
+                return Json(KeyConstants.Success);
+            }
+            catch (Exception ex)
+            {
+                return Json(KeyConstants.InternalServerError);
+            }
+
+
+        }
+        public async Task<IActionResult> DeleteRankMultiple(int[] ints)
+        {
+            try
+            {
+                MRank dto = new MRank();
+                foreach (int i in ints)
+                {
+                    dto.RankId = i;
+                    await unitOfWork.Rank.Delete(dto);
+                }
+
+                return Json(KeyConstants.Success);
+            }
+            catch (Exception ex)
+            {
+
+                return Json(KeyConstants.InternalServerError);
+            }
+        }
+
+        #endregion Command
 
         #region Command Page
         public async Task<IActionResult> ArmedType()

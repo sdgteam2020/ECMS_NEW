@@ -6,6 +6,11 @@ $(document).ready(function () {
         $("#AddNewProfile").modal('show');
 
     });
+    $("#btnProfileReset").click(function () {
+        reset();
+      
+
+    });
     DataBindAll();
 
     //$(".GSO").addClass("d-none");
@@ -229,7 +234,50 @@ $(document).ready(function () {
         $("#AddNewUnitmap").modal('show');
 
     });
-  
+    $("#txtProArmy").autocomplete({
+
+
+        source: function (request, response) {
+
+            var param = { "ArmyNo": request.term };
+            
+            $("#btnProfileSerch").removeClass('d-none');
+            $("#spnUserIdIO").html(0);
+            resetProfile();
+            resetUnit();
+            $.ajax({
+                url: '/UserProfile/GetByMasterArmyNo',
+                contentType: 'application/x-www-form-urlencoded',
+                data: param,
+                type: 'POST',
+                success: function (data) {
+                    console.log(data);
+
+                    response($.map(data, function (item) {
+
+                        $("#loading").addClass("d-none");
+                        return { label: item.ArmyNo, value: item.UserId };
+
+                    }))
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                }
+            });
+        },
+        select: function (e, i) {
+            e.preventDefault();
+            $("#txtProArmy").val(i.item.label);
+            //alert(i.item.value)
+            // var param1 = { "UnitMapId": i.item.value };
+            $("#btnProfileSerch").addClass('d-none');
+            GetByArmyNo(i.item.label, 0)
+        },
+        appendTo: '#suggesstion-box'
+    });
     $("#btnProfileSerch").click(function () {
 
         
@@ -506,11 +554,13 @@ $(document).ready(function () {
 
     $("#txtProIOArmyNo").autocomplete({
 
-
+       
         source: function (request, response) {
 
             var param = { "ArmyNo": request.term };
             resetIo();
+            $("#btnIOProfileSerch").removeClass('d-none');
+            $("#spnUserIdIO").html(0);
             $.ajax({
                 url: '/UserProfile/GetByMasterArmyNo',
                 contentType: 'application/x-www-form-urlencoded',
@@ -539,7 +589,7 @@ $(document).ready(function () {
             $("#txtProIOArmyNo").val(i.item.label);
             //alert(i.item.value)
             // var param1 = { "UnitMapId": i.item.value };
-            
+            $("#btnIOProfileSerch").addClass('d-none');
             GetByArmyNo(i.item.label, 1) 
         },
         appendTo: '#suggesstion-box'
@@ -592,6 +642,7 @@ $(document).ready(function () {
             var param = { "ArmyNo": request.term };
             $("#spnUserIdGSO").html(0);
             resetGSo()
+            $("#btnGSOProfileSerch").removeClass('d-none');
             $.ajax({
                 url: '/UserProfile/GetByMasterArmyNo',
                 contentType: 'application/x-www-form-urlencoded',
@@ -619,7 +670,7 @@ $(document).ready(function () {
             $("#txtProGSOArmyNo").val(i.item.label);
             //alert(i.item.value)
             // var param1 = { "UnitMapId": i.item.value };
-
+            $("#btnGSOProfileSerch").addClass('d-none');
             GetByArmyNo(i.item.label, 2,0,0,0)
         },
         appendTo: '#suggesstion-box'
@@ -712,8 +763,8 @@ function DataBindAll() {
                             listItem += "<td class='align-middle'><span id='ArmyNo'>" + response[i].ArmyNo + "</span></td>";
                             listItem += "<td class='align-middle'><span id='Name'>" + response[i].Name + "</span></td>";
                             listItem += "<td class='align-middle'><span id='Rank'>" + response[i].Rank + "</span></td>";
-                            listItem += "<td class='align-middle'><span id='AppointmentName'>" + response[i].AppointmentName + "</span></td>";
-                             listItem += "<td class='align-middle'><span id='Unit_desc'>" + response[i].Unit_desc + "(" + response[i].SusNo +")</span></td>";
+                        listItem += "<td class='align-middle'><span id='AppointmentName'>" + response[i].AppointmentName + "</span></td>";
+                        listItem += "<td class='align-middle'><span id='Unit_desc'>" + response[i].UnitName + "(" + response[i].SusNo + ")</span></td>";
                             listItem += "<td class='align-middle'><span id='IOArmyNo'>" + response[i].IOArmyNo + "</span></td>";
                             //listItem += "<td class='align-middle'><span id='IOName'>" + response[i].IOName + "</span></td>";
                             // listItem += "<td class='align-middle'><span id='UnitIo'>" + response[i].UnitIo + "(" + response[i].IOSusNo +")</span></td>";
@@ -784,7 +835,8 @@ function DataBindAll() {
 
                       //  $(this).closest("tr").find("#spnproUserUnitId").html()
 
-                        $("#spnUserId").html($(this).closest("tr").find("#spnMMapId").html());
+                        $("#spnMapingUserId").html($(this).closest("tr").find("#spnMMapId").html());
+                        $("#spnUserId").html($(this).closest("tr").find("#spnproUserId").html());
                         GetByArmyNo($(this).closest("tr").find("#ArmyNo").html(), 0) 
                         GetByArmyNo($(this).closest("tr").find("#IOArmyNo").html(), 1) 
                         GetByArmyNo($(this).closest("tr").find("#GSOArmyNo").html(), 2) 
@@ -793,25 +845,8 @@ function DataBindAll() {
                         //$("#txtCoprsName").val($(this).closest("tr").find("#corpsName").html());
                         $("#txtProArmy").attr('readonly', true);;
 
-                        var param1 = { "UnitId": $(this).closest("tr").find("#spnproUserUnitId").html() };
-                        $.ajax({
-                            url: '/Master/GetALLByUnitById',
-                            contentType: 'application/x-www-form-urlencoded',
-                            data: param1,
-                            type: 'POST',
-                            success: function (data) {
-
-
-                                $("#spnUnitIdUserPro").html(data.UnitId);
-                                $("#txtProUnit").val(data.UnitName);
-                                $("#lblProComd").html(data.ComdName);
-                                $("#lblProCorps").html(data.CorpsName);
-                                $("#lblProDiv").html(data.DivName);
-                                $("#lblPrBde").html(data.BdeName);
-                                $("#lblProSusno").html(data.Sus_no + '' + data.Suffix);
-
-                            }
-                        });
+                  
+                        GetALLByUnitById($(this).closest("tr").find("#spnproUserUnitId").html());
 
                         $("#btnsave").val("Update");
                     });
@@ -854,6 +889,26 @@ function DataBindAll() {
     });
 
 }
+function GetALLByUnitById(param1) {
+    $.ajax({
+        url: '/Master/GetALLByUnitById',
+        contentType: 'application/x-www-form-urlencoded',
+        data: { "UnitId": param1 },
+        type: 'POST',
+        success: function (data) {
+
+
+            $("#spnUnitIdUserPro").html(data.UnitId);
+            $("#txtProUnit").val(data.UnitName);
+            $("#lblProComd").html(data.ComdName);
+            $("#lblProCorps").html(data.CorpsName);
+            $("#lblProDiv").html(data.DivName);
+            $("#lblPrBde").html(data.BdeName);
+            $("#lblProSusno").html(data.Sus_no + '' + data.Suffix);
+
+        }
+    });
+}
 function SaveUserProfile(ArmyNo, Rank, Name, Appt, Unit, IntOffr, Type, IO, GSO, UserId) {
 
     /*  alert($('#bdaymonth').val());*/
@@ -868,12 +923,12 @@ function SaveUserProfile(ArmyNo, Rank, Name, Appt, Unit, IntOffr, Type, IO, GSO,
             if (result == DataSave) {
                 toastr.success('User has been saved');
                 GetByArmyNo(ArmyNo, Type, Unit,IO, GSO);
-                
+                $("#AddNewProfile").modal('hide');
                 DataBindAll();
             }
             else if (result == DataUpdate) {
                 toastr.success('User has been Updated');
-
+                GetByArmyNo(ArmyNo, Type, Unit, IO, GSO);
                 $("#AddNewProfile").modal('hide');
                 DataBindAll();
             }
@@ -961,8 +1016,9 @@ function GetByArmyNo(ArmyNo, Type, Unit, IO, GSO) {
                         }
                         
                         $("#txtName").val(response.Name);
-                      
-                        $("#AddNewProfile").modal('hide');
+                        
+                        GetALLByUnitById(response.UnitId);
+                        //$("#AddNewProfile").modal('hide');
 
                     }
                    else if (Type == 1) {
@@ -987,7 +1043,7 @@ function GetByArmyNo(ArmyNo, Type, Unit, IO, GSO) {
 
                         mMsater(response.FormationId, "ddlProIOFormation", Formation, "");
                         mMsater(response.ApptId, "ddlProIOAppointment", Appt, response.FormationId);
-                        $("#txtProIOformunit").val(response.Unit_desc);
+                        $("#txtProIOformunit").val(response.UnitName);
                         $("#txtProIOformunit").attr('readonly', true);
                         $("#spnUnitIdIO").html(response.UnitId); 
 
@@ -1011,7 +1067,7 @@ function GetByArmyNo(ArmyNo, Type, Unit, IO, GSO) {
                         mMsater(response.ApptId, "ddlProGSOAppointment", Appt, response.FormationId);
 
                        
-                        $("#txtProGSOformunit").val(response.Unit_desc);
+                        $("#txtProGSOformunit").val(response.UnitName);
                         $("#txtProGSOformunit").attr('readonly', true);
                         $("#spnUnitIdGSO").html(response.UnitId); 
                        
@@ -1058,7 +1114,7 @@ function MappingIOGSOUNIT(UserId, Unit, IO, GSO) {
 
     var userdata =
     {
-        "Id": $("#spnUserId").html(),
+        "Id": $("#spnMapingUserId").html(),
         "UserId": UserId,
         "UnitId": Unit,
         "IOId": IO,
@@ -1078,7 +1134,7 @@ function MappingIOGSOUNIT(UserId, Unit, IO, GSO) {
 
 
                 toastr.success('Data has been saved');
-                $("#AddNewProfile").modal('show');
+               
                 reset();
                 DataBindAll();
                 $("#AddNewProfile").modal('hide');
@@ -1088,7 +1144,7 @@ function MappingIOGSOUNIT(UserId, Unit, IO, GSO) {
 
 
                 toastr.success('Data has been Updated');
-                $("#AddNewProfile").modal('show');
+                
                 reset();
                 DataBindAll();
                 $("#AddNewProfile").modal('hide');
@@ -1135,9 +1191,11 @@ function resetIo() {
     $("#spnUnitIdIO").html('');
      /////////End IO////////////////////
 }
+
 function resetProfile() {
 
     ///////// Army Profile////////////////////
+    $("#spnMapingUserId").html(0)
     $("#spnUserId").html(0);
    // $("#txtProArmy").val('');
     $("#ddlProRank").val(0);
@@ -1175,7 +1233,7 @@ function resetUnit() {
 function reset() {
 
     $("#spnUserId").html(0);
-
+    $("#spnMapingUserId").html(0)
    
     /////////GSO////////////////////
      $("#btnSaveGSO").addClass("d-none");
@@ -1213,15 +1271,16 @@ function reset() {
       ///////// Army Profile////////////////////
     $("#spnUserId").html(0); 
     $("#txtProArmy").val('');
-    $("#ddlProRank").val(0);
+    $("#ddlProRank").val('');
     $("#txtName").val('');
-    $("#ddlProFormation").val(0);
-    $("#ddlProAppointment").val(0);
+    $("#ddlProFormation").val('');
+    $("#ddlProAppointment").val('');
      ///////// End Army Profile////////////////////
  
 
 
       /////////Unit////////////////////
+    $("#txtProUnit").val('');
     $("#spnUnitIdUserPro").html(0);
     $("#lblProComd").html('');
     $("#lblProCorps").html('');

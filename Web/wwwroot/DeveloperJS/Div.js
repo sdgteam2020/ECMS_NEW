@@ -244,7 +244,7 @@ function Save() {
             if (result == DataSave) {
 
 
-                toastr.success('Div has been saved');
+                toastr.success('Data has been saved');
                 Reset();
                 BindData();
 
@@ -252,14 +252,14 @@ function Save() {
             else if (result == DataUpdate) {
 
 
-                toastr.success('Div has been Updated');
+                toastr.success('Data has been Updated');
                 Reset();
                 BindData();
 
             }
             else if (result == DataExists) {
 
-                toastr.error('Div Name Exits!');
+                toastr.error('Div  /Branch / SubArea Name Exits!');
             }
             else if (result == InternalServerError) {
                 Swal.fire({

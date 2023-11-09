@@ -3,13 +3,13 @@ $(document).ready(function () {
     
 
     
-    Reset();
+   
     BindData()
-    //$("#btnAdd").click(function () {
-    //    Reset();
-    //    $("#AddNewM").modal('show');
+    $("#btnReset").click(function () {
+        Reset()();
+       
 
-    //});
+    });
    
     $("#btnsave").click(function () {
         if ($("#SaveForm")[0].checkValidity()) {
@@ -106,12 +106,12 @@ function BindData() {
                
                 else {
 
-                    /*$("#tblcommnd").DataTable().destroy();*/
+                    $("#tblcommnd").DataTable().destroy();
                    
                     for (var i = 0; i < response.length; i++) {
                         if (response[i].ComdId != 1) {
                             listItem += "<tr>";
-                            listItem += "<td class='d-none'><span id='ScomdId'>" + response[i].ComdId + "</span></td>";
+                            listItem += "<td class='d-none'><span id='ScomdId'>" + response[i].ComdId + "</span><span id='SOrderby'>" + response[i].Orderby + "</span></td>";
                             listItem += "<td>";
                             listItem += "<div class='custom-control custom-checkbox small'>";
                             listItem += "<input type='checkbox' class='custom-control-input' id='" + response[i].ComdId + "'>";
@@ -121,7 +121,13 @@ function BindData() {
                             listItem += "<td class='align-middle'>" + i + "</td>";
                             listItem += "<td class='align-middle'><span id='comdName'>" + response[i].ComdName + "</span></td>";
                             listItem += "<td class='align-middle'><span id='comdAbbreviation'>" + response[i].ComdAbbreviation + "</span></td>";
+                            
 
+                            if (response[i].Orderby != response.length-1)
+                                listItem += "<td class='align-middle'><span id=''><button type='button' class='cls-btnorder btn btn-icon btn-round btn-info mr-1'><i class='fas fa-arrow-down'></i></button></span></td>";
+                            else
+                                listItem += "<td></td>";
+                              
 
                             listItem += "<td class='align-middle'><span id='btnedit'><button type='button' class='cls-btnedit btn btn-icon btn-round btn-warning mr-1'><i class='fas fa-edit'></i></button></span><button type='button' class='cls-btnDelete btn-icon btn-round btn-danger mr-1'><i class='fas fa-trash-alt'></i></button></td>";
 
@@ -180,12 +186,19 @@ function BindData() {
                         }
                     });
 
+                    $("body").off("click").on("click", ".cls-btnorder", function () {
+
+                     
+                        OrderByChange($(this).closest("tr").find("#ScomdId").html() ,$(this).closest("tr").find("#SOrderby").html());
+                        
+                    });
                     $("body").on("click", ".cls-btnedit", function () {
                       /*  $("#AddNewM").modal('show');*/
                         $("#txtComandName").val($(this).closest("tr").find("#comdName").html());
                         $("#txtAbbreviation").val($(this).closest("tr").find("#comdAbbreviation").html());
                        
                         $("#spncomdId").html($(this).closest("tr").find("#ScomdId").html());
+                        $("#spnSOrderby").html($(this).closest("tr").find("#SOrderby").html());
                         
                     });
 
@@ -234,19 +247,19 @@ function Save() {
     $.ajax({
         url: '/Master/SaveCommand',
         type: 'POST',
-        data: { "ComdName": $("#txtComandName").val(), "ComdId": $("#spncomdId").html(), "ComdAbbreviation": $("#txtAbbreviation").val() }, //get the search string
+        data: { "ComdName": $("#txtComandName").val(), "ComdId": $("#spncomdId").html(), "ComdAbbreviation": $("#txtAbbreviation").val(), "Orderby": $("#spnSOrderby").html() }, //get the search string
         success: function (result) {
 
 
             if (result == DataSave) {
-                toastr.success('Command has been saved');
+                toastr.success('Data has been saved');
 
                 /*  $("#AddNewM").modal('hide');*/
                 BindData();
                 Reset();
             }
             else if (result == DataUpdate) {
-                toastr.success('Command has been Updated');
+                toastr.success('Data has been Updated');
 
                 /*  $("#AddNewM").modal('hide');*/
                 BindData();
@@ -254,7 +267,7 @@ function Save() {
             }
             else if (result == DataExists) {
 
-                toastr.error('Command Name Exits!');
+                toastr.error('Comd / PSO Name Exits!');
 
             }
             else if (result == InternalServerError) {
@@ -358,6 +371,45 @@ function DeleteMultiple(ComdId) {
                 //}
             }
            
+        },
+        error: function (result) {
+            Swal.fire({
+                text: errormsg002
+            });
+        }
+    });
+}
+
+function OrderByChange(ComdId, OrderBy) {
+   
+    var userdata =
+    {
+        "ComdId": ComdId,
+        "Orderby": OrderBy,
+
+    };
+    $.ajax({
+        url: '/Master/OrderByChange',
+        contentType: 'application/x-www-form-urlencoded',
+        data: userdata,
+        type: 'POST',
+        success: function (response) {
+            if (response != "null") {
+                if (response == InternalServerError) {
+                    Swal.fire({
+                        text: errormsg
+                    });
+                }
+                else if (response == Success) {
+                    //lol++;
+                    //if (lol == Tot) {
+                    toastr.success('Order Changed Success');
+                    BindData();
+                }
+
+                //}
+            }
+
         },
         error: function (result) {
             Swal.fire({

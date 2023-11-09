@@ -465,6 +465,7 @@ namespace Web.Controllers
             }
 
         }
+
         [HttpPost]
         [Authorize]
         [ValidateAntiForgeryToken]
@@ -567,5 +568,7 @@ namespace Web.Controllers
         //            $"override the register page in /Areas/Identity/Pages/Account/Register.cshtml");
         //    }
         //}
+
+
     }
 }
