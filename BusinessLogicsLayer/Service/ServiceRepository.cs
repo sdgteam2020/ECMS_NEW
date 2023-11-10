@@ -43,8 +43,8 @@ namespace BusinessLogicsLayer.Service
             var RegType = new List<SelectListItem>
             {
                 new SelectListItem{ Text="-- Select --", Value = null },
-                new SelectListItem{ Text="Officer", Value = "Officer" },
-                new SelectListItem{ Text="JCOs/OR", Value = "JCO" },
+                new SelectListItem{ Text="Officer", Value = "1" },
+                new SelectListItem{ Text="JCOs/OR", Value = "2" },
             };
             return new SelectList(RegType, "Value", "Text");
         }
