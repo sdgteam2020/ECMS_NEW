@@ -55,7 +55,7 @@ namespace BusinessLogicsLayer.Token
                         var subdata = data.subject.Split(",");
                    
                         db.Name = subdata[0].Replace("CN=", "");
-                        db.ArmyNo = subdata[1].Replace("SERIALNUMBER=", ""); ;
+                        db.ArmyNo = subdata[1].Replace("SERIALNUMBER=", "");
                     }
                     db.Status = data.Status;
                     db.Remarks = data.Remarks;
