@@ -104,12 +104,13 @@
                                     <div class="col-sm-4">
                                         <div class="form-group row mb-2">
                                                 <label class="col-form-label col-sm-4">Army No<i class="fas fa-asterisk mand1"></i></label>
-                                            <div class="col-sm-6">
+                                            <div class="col-sm-4">
                                                 
                                                 <input class="form-control" placeholder="Enter Army No" id="txtProArmy" required maxlength="8" />
                                             </div>
-                                                <div class="col-sm-2">
+                                                <div class="col-sm-4">
                                                     <button type="button" class="btn btn-icon btn-round btn-warning" id="btnProfileSerch"><i class="fas fa-search"></i></button>
+                                                    <button type="button" class="btn btn-icon btn-round btn-primary" id="btngetToken"><i class="fa fa-id-badge" aria-hidden="true"></i></button>
                                                 </div>
                                         </div>
                                     </div>
@@ -174,6 +175,7 @@
                                                 </div>
                                         </div>
                                     </div>
+                                       
                                 </div>
                             </div>
                         </div>
@@ -437,6 +439,10 @@
                             <div class="col-sm-12 text-right mt-2">
                                 <input type="button" class="btn btn-primary " value="Submit" id="btnProfilesave" />
                                 <button type="button" id="btnProfileReset" class="btn btn-outline-danger">Reset</button>
+                                <div class="col-sm-12 text-center">
+                                    <div id="tokenmsg" class="d-grid gap-2 col-4 mx-auto">
+                                    </div>
+                                </div>
                             </div>
                             <div class="col-sm-12" id="msg">
                             </div>
@@ -456,3 +462,4 @@
 <script src="~/developerjs/mtables.js"></script>
 <script src="~/developerjs/mapunit.js"></script>
 <script src="~/developerjs/profile.js"></script>
+<script src="~/developerjs/token.js"></script>

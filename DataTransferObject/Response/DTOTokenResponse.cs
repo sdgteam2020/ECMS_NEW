@@ -15,15 +15,15 @@ namespace DataTransferObject.Response
         public string? Thumbprint { get; set; }
         public string Status { get; set; }
         public Boolean TokenValid { get; set; }
-        public DateTime? ValidFrom { get; set; }
-        public DateTime? ValidTo { get; set; }
+        public string? ValidFrom { get; set; }
+        public string? ValidTo { get; set; }
         public string? issuer { get; set; }
         public string? subject { get; set; }
         public string? ArmyNo { get; set; }
         public string? Name { get; set; }
         public string? Rank { get; set; }
-       
 
+    
       
     }
 }

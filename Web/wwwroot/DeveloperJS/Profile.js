@@ -4,6 +4,7 @@ $(document).ready(function () {
     $("#btnAddProfile").click(function () {
         reset();
         $("#AddNewProfile").modal('show');
+     
 
     });
     $("#btnProfileReset").click(function () {
@@ -278,8 +279,16 @@ $(document).ready(function () {
         },
         appendTo: '#suggesstion-box'
     });
-    $("#btnProfileSerch").click(function () {
+    $("#btngetToken").click(function () {
+       
+            GetTokenDetails("FetchUniqueTokenDetails", "txtProArmy");
+       
+        
 
+
+    });
+    $("#btnProfileSerch").click(function () {
+       
         
             $.ajax({
                 url: "/BasicDetail/GetData",
