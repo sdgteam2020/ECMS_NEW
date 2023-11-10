@@ -289,18 +289,22 @@ function getUserData() {
     });
 }
 function getData(id) {  
-    //let formId = '#' + id;
-    //$("#RegistrationType").prop('required', true);
-    //$("#ServiceNumber").prop('required', true);
-    ///*$.validator.unobtrusive.parse($(formId));*/
-    //$.validator.unobtrusive.parse("Reg");
-    //if ($(formId).valid()) {
-    //    var formData = $(formId).serialize();
-    //    console.log(formData);
-    //}
-    //else {
-    //    return false;
-    //}
+    let formId = '#' + id;
+    // Check if the form exists
+    if ($(formId).length === 0) {
+        console.error("Form not found.");
+        return;
+    }
+    $("#RegistrationType").prop('required', true);
+    $("#ServiceNumber").prop('required', true);
+    $.validator.unobtrusive.parse($(formId));
+    if ($(formId).valid()) {
+        var formData = $(formId).serialize();
+        console.log(formData);
+    }
+    else {
+        return false;
+    }
     $.ajax({
         url: "/BasicDetail/GetData",
         type: "POST",

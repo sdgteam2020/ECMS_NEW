@@ -35,7 +35,7 @@
                 <div class="card p-4">
                     <div class="mt-2">
                         
-                    <form id="Reg" name="Reg">
+                    <form id="Reg" name="Reg"method="post">
                    
                         <div class="row">
                         <div class="col-xl-4">
@@ -58,9 +58,8 @@
                             </div>
                         </div>
                             <div class="col-xl-4">
-                                    <button type="button" class="btn btn-round btn-primary" id="btngetToken">Get ICNO From Token</i></button>
-
-                            <button type="button" id="btngetdata" name="btngetdata" class="btn btn-primary" onclick="getData(this.form.id);">Fetch Data</button>
+                                <button type="button" class="btn btn-round btn-primary" id="btngetToken">Get ICNO From Token</i></button>
+                                <button type="button" id="btngetdata" name="btngetdata" class="btn btn-primary" onclick="getData(this.form.id);">Fetch Data</button>
                         </div>
                     </div>
                    
@@ -162,8 +161,6 @@
     </div>
 
 </div>
-
-   
 
 @section Scripts{
     <script asp-src-include="~/js/CustomScript.js"></script>
