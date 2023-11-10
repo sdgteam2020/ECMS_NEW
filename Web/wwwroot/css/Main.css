@@ -100,7 +100,7 @@
         background: transparent;
         width: 100px;
         height: 100px;
-        border: 15px solid #f27f21;
+       /* border: 15px solid #f27f21;*/
         border-top: none;
         border-right: none;
         border-radius: 0 0 0 20px;
