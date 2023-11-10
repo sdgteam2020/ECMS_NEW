@@ -14,8 +14,32 @@ $(document).ready(function () {
 
         }
     });
-
+    memberTable=$('#tbldatatabledata').DataTable({
+        retrieve: true,
+        lengthChange: false,
+        "order": [[2, "asc"]],
+        buttons: [{
+            extend: 'copy',
+            exportOptions: {
+                columns: "thead th:not(.noExport)"
+            }
+        }, {
+            extend: 'excel',
+            exportOptions: {
+                columns: "thead th:not(.noExport)"
+            }
+        }, {
+            extend: 'pdfHtml5',
+            orientation: 'landscape',
+            pageSize: 'LEGAL',
+            exportOptions: {
+                columns: "thead th:not(.noExport)"
+            }
+        }]
+    });
+    memberTable.buttons().container().appendTo('#tbldatatabledata_wrapper .col-md-6:eq(0)');
 });
+
 function isNumeric(str) {
     if (typeof str != "string") return false // we only process strings!  
     return !isNaN(str) && // use type coercion to parse the _entirety_ of the string (`parseFloat` alone does not do this)...
