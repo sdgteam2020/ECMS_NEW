@@ -313,15 +313,20 @@ function getData(id) {
             "ICNumber": $("#ServiceNumber").val()
         },
         success: function (response, status) {
-            //alert(JSON.stringify(response));
-            $("#Name").val(response.Name);
-            $("#ServiceNo").val(response.ServiceNo);
-            $("#DOB").val(response.DOB);
-            $("#DOB_").val(moment(response.DOB).format("DD-MMM-YYYY"));
-            $("#DateOfCommissioning").val(response.DateOfCommissioning);
-            $("#DOC").val(moment(response.DateOfCommissioning).format("DD-MMM-YYYY"));
-            $("#PermanentAddress").val(response.PermanentAddress);
-            $("#RegType").val(regType);
+            if (response.Status==false) {
+                alert("Data Not Found.")
+            }
+            else {
+                //alert(JSON.stringify(response));
+                $("#Name").val(response.Name);
+                $("#ServiceNo").val(response.ServiceNo);
+                $("#DOB").val(response.DOB);
+                $("#DOB_").val(moment(response.DOB).format("DD-MMM-YYYY"));
+                $("#DateOfCommissioning").val(response.DateOfCommissioning);
+                $("#DOC").val(moment(response.DateOfCommissioning).format("DD-MMM-YYYY"));
+                $("#PermanentAddress").val(response.PermanentAddress);
+                $("#RegType").val(regType);
+            }
         }
     });
 }
@@ -1021,22 +1026,22 @@ function LoadJDTSortedDate(selector) {
 }
 
 // Date range filter
-minDateFilter = "";
-maxDateFilter = "";
-$(document).ready(function () {
-    $("#show_hide_password a").on('click', function (event) {
-        event.preventDefault();
-        if ($('#show_hide_password input').attr("type") == "text") {
-            $('#show_hide_password input').attr('type', 'password');
-            $('#show_hide_password i').addClass("fa-eye-slash");
-            $('#show_hide_password i').removeClass("fa-eye");
-        } else if ($('#show_hide_password input').attr("type") == "password") {
-            $('#show_hide_password input').attr('type', 'text');
-            $('#show_hide_password i').removeClass("fa-eye-slash");
-            $('#show_hide_password i').addClass("fa-eye");
-        }
-    });
-});
+//minDateFilter = "";
+//maxDateFilter = "";
+//$(document).ready(function () {
+//    $("#show_hide_password a").on('click', function (event) {
+//        event.preventDefault();
+//        if ($('#show_hide_password input').attr("type") == "text") {
+//            $('#show_hide_password input').attr('type', 'password');
+//            $('#show_hide_password i').addClass("fa-eye-slash");
+//            $('#show_hide_password i').removeClass("fa-eye");
+//        } else if ($('#show_hide_password input').attr("type") == "password") {
+//            $('#show_hide_password input').attr('type', 'text');
+//            $('#show_hide_password i').removeClass("fa-eye-slash");
+//            $('#show_hide_password i').addClass("fa-eye");
+//        }
+//    });
+//});
 /* Load Menu Tree View */
 /* Param  selector== DivId*/
 /* Param  Jsonurl== UrlActionMethod*/

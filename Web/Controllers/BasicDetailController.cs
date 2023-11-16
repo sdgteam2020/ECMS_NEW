@@ -952,16 +952,26 @@ namespace Web.Controllers
                 //using (HttpResponseMessage response = await client.GetAsync("ICNumber/" + ICNumber))
                 using (HttpResponseMessage response = await client.GetAsync(ICNumber))
                 {
-                    var responseContent = response.Content.ReadAsStringAsync().Result;
-                    response.EnsureSuccessStatusCode();
-                    DTOApiDataResponse? responseData = JsonConvert.DeserializeObject<DTOApiDataResponse>(responseContent);
-                    DateTime DOB, DOC;
-                    TimeSpan timeSpan = new TimeSpan(0, 0, 0, 0, 0, 0);
-                    DOB = responseData.DOB.Date + timeSpan;
-                    DOC = responseData.DateOfCommissioning.Date + timeSpan;
-                    responseData.DOB = DOB;
-                    responseData.DateOfCommissioning = DOC;
-                    return Ok(responseData);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var responseContent = response.Content.ReadAsStringAsync().Result;
+                        response.EnsureSuccessStatusCode();
+                        DTOApiDataResponse? responseData = JsonConvert.DeserializeObject<DTOApiDataResponse>(responseContent);
+                        DateTime DOB, DOC;
+                        TimeSpan timeSpan = new TimeSpan(0, 0, 0, 0, 0, 0);
+                        DOB = responseData.DOB.Date + timeSpan;
+                        DOC = responseData.DateOfCommissioning.Date + timeSpan;
+                        responseData.DOB = DOB;
+                        responseData.DateOfCommissioning = DOC;
+                        responseData.Status = true;
+                        return Ok(responseData);
+                    }
+                    else
+                    {
+                        DTOApiDataResponse dTOApiDataResponse= new DTOApiDataResponse();
+                        dTOApiDataResponse.Status = false;
+                        return Ok(dTOApiDataResponse);
+                    }
                 }
             }
         }
