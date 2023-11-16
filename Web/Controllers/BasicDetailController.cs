@@ -83,8 +83,17 @@ namespace Web.Controllers
 
             if (basicDetail != null)
             {
-
                 DTOBasicDetailRequest basicDetailVM = _mapper.Map<BasicDetail, DTOBasicDetailRequest>(basicDetail);
+                MRank? mRank = await context.MRank.FindAsync(basicDetail.RankId);
+                if(mRank!=null)
+                {
+                    basicDetailVM.MRank = mRank;
+                }
+                MArmedType? mArmedType = await context.MArmedType.FindAsync(basicDetail.ArmedId);
+                if(mArmedType!=null)
+                {
+                    basicDetailVM.MArmedType = mArmedType;
+                }
                 return View(basicDetailVM);
             }
             else
@@ -227,7 +236,7 @@ namespace Web.Controllers
                 model = JsonConvert.DeserializeObject<DTORegistrationRequest>(TempData["Registration"].ToString());
                 if (model.SubmitType == 1)
                 {
-                    ViewBag.OptionsRank = service.GetRank();
+                    ViewBag.OptionsRank = service.GetRank(Convert.ToInt32(model.RegType));
                     ViewBag.OptionsArmedType = service.GetArmedType();
                     ViewBag.OptionsBloodGroup = service.GetBloodGroup();
                     DTOBasicDetailCrtRequest dTOBasicDetailCrtRequest = new DTOBasicDetailCrtRequest();
@@ -236,6 +245,7 @@ namespace Web.Controllers
                     dTOBasicDetailCrtRequest.DOB = model.DOB;
                     dTOBasicDetailCrtRequest.DateOfCommissioning = model.DateOfCommissioning;
                     dTOBasicDetailCrtRequest.PermanentAddress = model.PermanentAddress;
+                    dTOBasicDetailCrtRequest.RegistrationType = model.RegType;
                     return await Task.FromResult(View(dTOBasicDetailCrtRequest));
                 }
                 else
@@ -255,7 +265,7 @@ namespace Web.Controllers
         {
             try
             {
-                ViewBag.OptionsRank = service.GetRank();
+                ViewBag.OptionsRank = service.GetRank(Convert.ToInt32(model.RegistrationType));
                 ViewBag.OptionsBloodGroup = service.GetBloodGroup();
                 ViewBag.OptionsArmedType = service.GetArmedType();
                 var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -385,7 +395,6 @@ namespace Web.Controllers
         [Authorize(Roles = "Admin,User")]
         public async Task<ActionResult> Edit(string Id)
         {
-            ViewBag.OptionsRank = service.GetRank();
             ViewBag.OptionsBloodGroup = service.GetBloodGroup();
             ViewBag.OptionsArmedType = service.GetArmedType();
 
@@ -407,7 +416,8 @@ namespace Web.Controllers
 
             if (basicDetail != null)
             {
-
+                MRank? mRank = await context.MRank.FindAsync(basicDetail.RankId);
+                ViewBag.OptionsRank = service.GetRank(mRank.Type);
                 DTOBasicDetailUpdRequest basicDetailUpdVM = _mapper.Map<BasicDetail, DTOBasicDetailUpdRequest>(basicDetail);
                 //if (basicDetailUpdVM.AadhaarNo != null && basicDetailUpdVM.AadhaarNo.Length == 12)
                 //{
@@ -433,7 +443,6 @@ namespace Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(DTOBasicDetailUpdRequest model)
         {
-            ViewBag.OptionsRank = service.GetRank();
             ViewBag.OptionsBloodGroup = service.GetBloodGroup();
             var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
 
@@ -441,6 +450,8 @@ namespace Web.Controllers
 
             if (basicDetail != null)
             {
+                MRank? mRank = await context.MRank.FindAsync(basicDetail.RankId);
+                ViewBag.OptionsRank = service.GetRank(mRank.Type);
                 if (ModelState.IsValid)
                 {
                     basicDetail.RankId = model.RankId;
@@ -677,7 +688,7 @@ namespace Web.Controllers
 
                 if (basicDetail.Step < 1 || basicDetail.IsSubmit == true)
                     return RedirectToAction("Index");
-                ViewBag.OptionsRank = service.GetRank();
+                ViewBag.OptionsRank = service.GetRank(1);
                 ViewBag.OptionsArmedType = service.GetArmedType();
                 ViewBag.OptionsBloodGroup = service.GetBloodGroup();
 
@@ -711,7 +722,7 @@ namespace Web.Controllers
         [HttpPost]
         public async Task<IActionResult> Part2(BasicDetailUpdVMPart2 model)
         {
-            ViewBag.OptionsRank = service.GetRank();
+            ViewBag.OptionsRank = service.GetRank(1);
             ViewBag.OptionsBloodGroup = service.GetBloodGroup();
             ViewBag.OptionsArmedType = service.GetArmedType();
             var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);

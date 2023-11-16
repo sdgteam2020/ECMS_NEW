@@ -181,9 +181,9 @@ namespace BusinessLogicsLayer.Service
             };
             return new SelectList(rakes, "Value", "Text");
         }
-        public IEnumerable<SelectListItem> GetRank()
+        public IEnumerable<SelectListItem> GetRank(int Type)
         {
-            var RankOptions = context.MRank.OrderBy(o => o.RankName)
+            var RankOptions = context.MRank.Where(x=>x.Type== Type).OrderBy(o => o.RankName)
                  .Select(a =>
                    new SelectListItem
                    {

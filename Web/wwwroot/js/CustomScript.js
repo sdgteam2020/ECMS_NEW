@@ -302,9 +302,10 @@ function getData(id) {
         var formData = $(formId).serialize();
         console.log(formData);
     }
-    else {
+     else {
         return false;
     }
+    let regType = $("#RegistrationType").find(":selected").val();
     $.ajax({
         url: "/BasicDetail/GetData",
         type: "POST",
@@ -320,6 +321,7 @@ function getData(id) {
             $("#DateOfCommissioning").val(response.DateOfCommissioning);
             $("#DOC").val(moment(response.DateOfCommissioning).format("DD-MMM-YYYY"));
             $("#PermanentAddress").val(response.PermanentAddress);
+            $("#RegType").val(regType);
         }
     });
 }
