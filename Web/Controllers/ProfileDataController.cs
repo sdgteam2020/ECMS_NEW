@@ -75,7 +75,7 @@ namespace Web.Controllers
         [Authorize(Roles = "Admin,User")]
         public Task<ViewResult> Create()
         {
-            ViewBag.OptionsRank = service.GetRank();
+            ViewBag.OptionsRank = service.GetRank(1);
             ViewBag.OptionsArmyNumberPart1 = service.GetArmyNumberPart1();
             ViewBag.OptionsArmyNumberPart3 = service.GetArmyNumberPart3();
             ViewBag.OptionsTypeOfUnit = service.GetTypeOfUnit();
@@ -91,7 +91,7 @@ namespace Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(DTOProfileDataCrtRequest model)
         {
-            ViewBag.OptionsRank = service.GetRank();
+            ViewBag.OptionsRank = service.GetRank(1);
             ViewBag.OptionsArmyNumberPart1 = service.GetArmyNumberPart1();
             ViewBag.OptionsArmyNumberPart3 = service.GetArmyNumberPart3();
             ViewBag.OptionsTypeOfUnit = service.GetTypeOfUnit();
@@ -202,7 +202,7 @@ namespace Web.Controllers
         [Authorize(Roles = "Admin,User")]
         public async Task<ActionResult> Edit(string Id)
         {
-            ViewBag.OptionsRank = service.GetRank();
+            ViewBag.OptionsRank = service.GetRank(1);
             ViewBag.OptionsArmyNumberPart1 = service.GetArmyNumberPart1();
             ViewBag.OptionsArmyNumberPart3 = service.GetArmyNumberPart3();
             ViewBag.OptionsTypeOfUnit = service.GetTypeOfUnit();
@@ -246,7 +246,7 @@ namespace Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(DTOProfileDataUpdRequest model)
         {
-            ViewBag.OptionsRank = service.GetRank();
+            ViewBag.OptionsRank = service.GetRank(1);
             ViewBag.OptionsArmyNumberPart1 = service.GetArmyNumberPart1();
             ViewBag.OptionsArmyNumberPart3 = service.GetArmyNumberPart3();
             ViewBag.OptionsTypeOfUnit = service.GetTypeOfUnit();

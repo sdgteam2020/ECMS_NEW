@@ -127,6 +127,8 @@ namespace DataTransferObject.Requests
     }
     public class DTOBasicDetailCrtRequest : DTOBasicDetailRequest
     {
+        [NotMapped]
+        public string RegistrationType { get; set; } = string.Empty;
 
         [Display(Name = "TermsConditions", ResourceType = typeof(Resource))]
         //[Range(typeof(bool), "true", "true", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "TermsConditionsError")]
@@ -258,6 +260,10 @@ namespace DataTransferObject.Requests
         [RegularExpression(@"^[\w \.\,\?\;\:\""\''\[\]\!\@\#\$\%\&\*\(\)\-\=\+\\\/]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
         public string PermanentAddress { get; set; } = string.Empty;
 
+        [Display(Name = "Observations", ResourceType = typeof(Resource))]   
+        [RegularExpression(@"^[\w \.\,\?\;\:\""\''\[\]\!\@\#\$\%\&\*\(\)\-\=\+\\\/]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
+        public string? Observations { get; set; }
+
         [NotMapped]
         public string? EncryptedId { get; set; }
 
@@ -267,6 +273,9 @@ namespace DataTransferObject.Requests
     }
     public class DTORegistrationRequest : DTOBasicDetailTempRequest
     {
+        [RegularExpression(@"^[\w \.\,\?\;\:\""\''\[\]\!\@\#\$\%\&\*\(\)\-\=\+\\\/]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
+        public string RegType { get; set; } = string.Empty;
+        
         [Display(Name = "RegistrationType", ResourceType = typeof(Resource))]
         //[Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
         [RegularExpression(@"^[\w \.\,\?\;\:\""\''\[\]\!\@\#\$\%\&\*\(\)\-\=\+\\\/]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
