@@ -1,12 +1,46 @@
-﻿function registrationEnableDisabledField(val) {
+﻿function Proceed(id) {
     debugger
-    if (val==1) {
-        $("#btn1").prop('disabled', false);
-        $("#btn2").prop('disabled', true);
+    let formId = '#' + id;
+    // Check if the form exists
+    if ($(formId).length === 0) {
+        console.error("Form not found.");
+        return;
+    }
+    let stype = parseInt($("input[name='SubmitType']:checked").val());
+    if (stype !=1) {
+        $("#Observations").prop('required', true);
+        $("#lblObservations").text('Observations is required.')
+    }
+    if ($("#DOB_").val() == '') {
+        $("#lblDOB").text('Date of Birth is required.')
     }
     else {
-        $("#btn1").prop('disabled', true);
-        $("#btn2").prop('disabled', false);
+        $("#lblDOB").text('')
+    }
+    if ($("#DOC").val() == '') {
+        $("#lblDateOfCommissioning").text('Date of Commissioning/ Enrollment is required.')
+    }
+    else {
+        $("#lblDateOfCommissioning").text('')
+    }
+    $.validator.unobtrusive.parse($(formId));
+    if ($(formId).valid()) {
+        var formData = $(formId).serialize();
+        console.log(formData);
+    }
+    else {
+        return false;
+    }
+}
+function registrationEnableDisabledField(val) {
+    if (val==1) {
+        $("#btnsubmit").prop('disabled', false);
+        $("#Observations").val('');
+        $("#Observations").prop('readonly', true);
+    }
+    else {
+        $("#btnsubmit").prop('disabled', false);
+        $("#Observations").prop('readonly', false);
     }
 
 }
@@ -33,6 +67,24 @@ function beforeUploadSignatureSizeCheck(id) {
             });
             $("#Signature_").val(null);
             return false;
+        }   
+        else {
+            signatureChange(id);
+        }
+
+    }
+}
+function beforeUploadSignatureSizeCheckInEdit(id) {
+    $("#lblSignature").html("");
+    const file = id.files[0];
+    if (file) {
+        var size = parseFloat(file.size);
+        var maxSizeKB = 50; //Size in KB.
+        var maxSize = maxSizeKB * 1024; //File size is returned in Bytes.
+        if (size > maxSize) {
+            $("#lblSignature").html("Signature not change because maximum file size " + maxSizeKB + "KB allowed.");
+            $("#Signature_").val(null);
+            return false;
         }
         else {
             signatureChange(id);
@@ -54,6 +106,24 @@ function beforeUploadPhotoSizeCheck(id) {
                 'width': '200px',
                 'height': '200px'
             });
+            $("#Photo_").val(null);
+            return false;
+        }
+        else {
+            photoChange(id);
+        }
+
+    }
+}
+function beforeUploadPhotoSizeCheckInEdit(id) {
+    $("#lblPhoto").html("");
+    const file = id.files[0];
+    if (file) {
+        var size = parseFloat(file.size);
+        var maxSizeKB = 200; //Size in KB.
+        var maxSize = maxSizeKB * 1024; //File size is returned in Bytes.
+        if (size > maxSize) {
+            $("#lblPhoto").html("Photo not change because maximum file size " + maxSizeKB + "KB allowed.");
             $("#Photo_").val(null);
             return false;
         }

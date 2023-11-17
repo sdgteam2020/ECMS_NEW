@@ -260,6 +260,10 @@ namespace DataTransferObject.Requests
         [RegularExpression(@"^[\w \.\,\?\;\:\""\''\[\]\!\@\#\$\%\&\*\(\)\-\=\+\\\/]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
         public string PermanentAddress { get; set; } = string.Empty;
 
+        [Display(Name = "Observations", ResourceType = typeof(Resource))]   
+        [RegularExpression(@"^[\w \.\,\?\;\:\""\''\[\]\!\@\#\$\%\&\*\(\)\-\=\+\\\/]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
+        public string? Observations { get; set; }
+
         [NotMapped]
         public string? EncryptedId { get; set; }
 

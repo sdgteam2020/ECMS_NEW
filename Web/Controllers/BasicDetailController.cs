@@ -166,6 +166,7 @@ namespace Web.Controllers
                         basicDetailTemp.DOB = model.DOB;
                         basicDetailTemp.DateOfCommissioning = model.DateOfCommissioning;
                         basicDetailTemp.PermanentAddress = model.PermanentAddress;
+                        basicDetailTemp.Observations = model.Observations;
                         basicDetailTemp.Updatedby = model.Updatedby;
                         basicDetailTemp.UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
                         await unitOfWork.BasicDetailTemp.Add(basicDetailTemp);
@@ -265,9 +266,9 @@ namespace Web.Controllers
         {
             try
             {
-                ViewBag.OptionsRank = service.GetRank(Convert.ToInt32(model.RegistrationType));
-                ViewBag.OptionsBloodGroup = service.GetBloodGroup();
-                ViewBag.OptionsArmedType = service.GetArmedType();
+                //ViewBag.OptionsRank = service.GetRank(Convert.ToInt32(model.RegistrationType));
+                //ViewBag.OptionsBloodGroup = service.GetBloodGroup();
+                //ViewBag.OptionsArmedType = service.GetArmedType();
                 var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
 
                 model.Updatedby = Convert.ToInt32(userId);
