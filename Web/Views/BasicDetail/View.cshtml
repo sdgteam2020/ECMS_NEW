@@ -13,7 +13,7 @@
         </div>
         <div class="card-body" style="min-height:150px;">
             <div class="row">
-                <div class="col-xl-6">
+                <div class="col-xl-8">
                     <div class="table-responsive">
                         <table id="tbldatatabledata" class="table border border-purple table-striped no-footer dataTable table-hover" style="width:100%">
                             <tbody>
@@ -102,6 +102,22 @@
                                 </tr>
                             </tbody>
                         </table>
+                    </div>
+                </div>
+                <div class="col-xl-4">
+                    <div class="card mb-3">
+                        भारतीय सशस्त्र सेनाएँ पहचान कार्ड (IAFZ-2015)<br />
+                        INDIAN ARMED FORCES INDENTITY CARD
+                        <div class="col-xl-6">
+                            <img id="PhotoPath" src="@Model.PhotoImagePath" height="200px" width="200px" />
+                        </div>
+                        <div class="col-xl-6">
+                            @Model.Name<br />
+                            @(Model.MRank != null ? Model.MRank.RankName : "No Rank")<br />
+                        </div>
+                    </div>
+                    <div class="card mb-3">
+                        जन्म की तारीख
                     </div>
                 </div>
             </div>

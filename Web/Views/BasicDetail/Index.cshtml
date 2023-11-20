@@ -1,5 +1,4 @@
 ﻿@model List<DTOBasicDetailRequest>
-
 <div class="container mt-4">
     <div class="card mb-3 ">
         <div class="card-header">
@@ -25,7 +24,7 @@
                                     <th>@Html.DisplayNameFor(model => model[0].DOB)</th>
                                     <th>@Html.DisplayNameFor(model => model[0].DateOfCommissioning)</th>
                                     <th>@Html.DisplayNameFor(model => model[0].PermanentAddress)</th>
-                                    <th>Action</th>
+                                    <th class="noExport">Action</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -38,7 +37,7 @@
                                         <td>@item.DOB.ToString("dd/MMM/yyyy")</td>
                                         <td>@item.DateOfCommissioning.ToString("dd/MMM/yyyy")</td>
                                         <td>@item.PermanentAddress</td>
-                                        <td>
+                                        <td class="noExport">
                                             <div class="d-flex p-2">
                                               
                                                 <a asp-controller="BasicDetail" asp-action="View" asp-route-Id="@item.EncryptedId" class="btn btn-icon btn-round btn-primary mr-1"><i class="fa fa-eye mt-2"></i></a>

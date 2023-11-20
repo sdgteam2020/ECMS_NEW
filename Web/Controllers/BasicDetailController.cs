@@ -160,18 +160,26 @@ namespace Web.Controllers
                     }
                     else
                     {
-                        BasicDetailTemp basicDetailTemp = new BasicDetailTemp();
-                        basicDetailTemp.Name = model.Name;
-                        basicDetailTemp.ServiceNo = model.ServiceNo;
-                        basicDetailTemp.DOB = model.DOB;
-                        basicDetailTemp.DateOfCommissioning = model.DateOfCommissioning;
-                        basicDetailTemp.PermanentAddress = model.PermanentAddress;
-                        basicDetailTemp.Observations = model.Observations;
-                        basicDetailTemp.Updatedby = model.Updatedby;
-                        basicDetailTemp.UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
-                        await unitOfWork.BasicDetailTemp.Add(basicDetailTemp);
-                        TempData["success"] = "Request Submited Successfully.";
-                        return RedirectToAction("Registration");
+                        if (model.Observations == null)
+                        {
+                            ModelState.AddModelError("Observations", "Observations is required.");
+                            goto end;
+                        }
+                        else
+                        {
+                            BasicDetailTemp basicDetailTemp = new BasicDetailTemp();
+                            basicDetailTemp.Name = model.Name;
+                            basicDetailTemp.ServiceNo = model.ServiceNo;
+                            basicDetailTemp.DOB = model.DOB;
+                            basicDetailTemp.DateOfCommissioning = model.DateOfCommissioning;
+                            basicDetailTemp.PermanentAddress = model.PermanentAddress;
+                            basicDetailTemp.Observations = model.Observations;
+                            basicDetailTemp.Updatedby = model.Updatedby;
+                            basicDetailTemp.UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
+                            await unitOfWork.BasicDetailTemp.Add(basicDetailTemp);
+                            TempData["success"] = "Request Submited Successfully.";
+                            return RedirectToAction("Registration");
+                        }
                     }
                 }
                 else
@@ -183,40 +191,40 @@ namespace Web.Controllers
             {
                 _logger.LogError(1001, ex, "ReferenceConstraintException");
                 ModelState.AddModelError("", ex.Message);
-                goto xyz;
+                goto end;
             }
             catch (UniqueConstraintException ex)
             {
                 _logger.LogError(1002, ex, "UniqueConstraintException");
                 ModelState.AddModelError("", ex.Message);
-                goto xyz;
+                goto end;
             }
             catch (MaxLengthExceededException ex)
             {
                 _logger.LogError(1003, ex, "MaxLengthExceededException");
                 ModelState.AddModelError("", ex.Message);
-                goto xyz;
+                goto end;
             }
             catch (CannotInsertNullException ex)
             {
                 _logger.LogError(1004, ex, "CannotInsertNullException");
                 ModelState.AddModelError("", ex.Message);
-                goto xyz;
+                goto end;
             }
             catch (NumericOverflowException ex)
             {
                 _logger.LogError(1005, ex, "NumericOverflowException");
                 ModelState.AddModelError("", ex.Message);
-                goto xyz;
+                goto end;
             }
             catch (Exception ex)
             {
                 _logger.LogError(1006, ex, "Exception");
                 ModelState.AddModelError("", ex.Message);
-                goto xyz;
+                goto end;
             }
 
-        xyz:
+        end:
             return View(model);
         }
         [Authorize(Roles = "Admin,User")]
@@ -247,6 +255,7 @@ namespace Web.Controllers
                     dTOBasicDetailCrtRequest.DateOfCommissioning = model.DateOfCommissioning;
                     dTOBasicDetailCrtRequest.PermanentAddress = model.PermanentAddress;
                     dTOBasicDetailCrtRequest.RegistrationType = model.RegType;
+                    dTOBasicDetailCrtRequest.DateOfIssue= TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
                     return await Task.FromResult(View(dTOBasicDetailCrtRequest));
                 }
                 else
@@ -297,7 +306,7 @@ namespace Web.Controllers
                             {
                                 System.IO.File.Delete(path);
                             }
-                            goto xyz;
+                            goto end;
                         }
 
                         newBasicDetail.PhotoImagePath = sourceFolderPhotoDB + "/" + FileName;
@@ -330,7 +339,7 @@ namespace Web.Controllers
                             {
                                 System.IO.File.Delete(path);
                             }
-                            goto xyz;
+                            goto end;
                         }
 
                         newBasicDetail.SignatureImagePath = sourceFolderSignatureDB + "/" + FileName;
@@ -356,40 +365,40 @@ namespace Web.Controllers
             {
                 _logger.LogError(1001, ex, "ReferenceConstraintException");
                 ModelState.AddModelError("", ex.Message);
-                goto xyz;
+                goto end;
             }
             catch (UniqueConstraintException ex)
             {
                 _logger.LogError(1002, ex, "UniqueConstraintException");
                 ModelState.AddModelError("", ex.Message);
-                goto xyz;
+                goto end;
             }
             catch (MaxLengthExceededException ex)
             {
                 _logger.LogError(1003, ex, "MaxLengthExceededException");
                 ModelState.AddModelError("", ex.Message);
-                goto xyz;
+                goto end;
             }
             catch (CannotInsertNullException ex)
             {
                 _logger.LogError(1004, ex, "CannotInsertNullException");
                 ModelState.AddModelError("", ex.Message);
-                goto xyz;
+                goto end;
             }
             catch (NumericOverflowException ex)
             {
                 _logger.LogError(1005, ex, "NumericOverflowException");
                 ModelState.AddModelError("", ex.Message);
-                goto xyz;
+                goto end;
             }
             catch (Exception ex)
             {
                 _logger.LogError(1006, ex, "Exception");
                 ModelState.AddModelError("", ex.Message);
-                goto xyz;
+                goto end;
             }
 
-        xyz:
+        end:
             return View(model);
         }
         [HttpGet]
@@ -482,7 +491,7 @@ namespace Web.Controllers
                             {
                                 System.IO.File.Delete(filePath);
                             }
-                            goto xyz;
+                            goto end;
                         }
 
                         if (model.ExistingPhotoImagePath != null)
@@ -515,7 +524,7 @@ namespace Web.Controllers
                             {
                                 System.IO.File.Delete(filePath);
                             }
-                            goto xyz;
+                            goto end;
                         }
 
                         if (model.ExistingSignatureImagePath != null)
@@ -546,7 +555,7 @@ namespace Web.Controllers
             }
 
 
-        xyz:
+        end:
             return View(model);
 
         }
