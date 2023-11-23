@@ -275,9 +275,9 @@ namespace Web.Controllers
         {
             try
             {
-                //ViewBag.OptionsRank = service.GetRank(Convert.ToInt32(model.RegistrationType));
-                //ViewBag.OptionsBloodGroup = service.GetBloodGroup();
-                //ViewBag.OptionsArmedType = service.GetArmedType();
+                ViewBag.OptionsRank = service.GetRank(Convert.ToInt32(model.RegistrationType));
+                ViewBag.OptionsBloodGroup = service.GetBloodGroup();
+                ViewBag.OptionsArmedType = service.GetArmedType();
                 var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
 
                 model.Updatedby = Convert.ToInt32(userId);

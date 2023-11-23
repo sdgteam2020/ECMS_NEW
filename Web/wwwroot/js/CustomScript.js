@@ -1,4 +1,11 @@
-﻿function Proceed(id) {
+﻿function printTable(divId) {
+    var divToPrint = document.getElementById(divId);
+    newWin = window.open("");
+    newWin.document.write(divToPrint.outerHTML);
+    newWin.print();
+    newWin.close();
+}
+function Proceed(id) {
     debugger
     let formId = '#' + id;
     // Check if the form exists
