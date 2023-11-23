@@ -83,8 +83,17 @@ namespace Web.Controllers
 
             if (basicDetail != null)
             {
-
                 DTOBasicDetailRequest basicDetailVM = _mapper.Map<BasicDetail, DTOBasicDetailRequest>(basicDetail);
+                MRank? mRank = await context.MRank.FindAsync(basicDetail.RankId);
+                if(mRank!=null)
+                {
+                    basicDetailVM.MRank = mRank;
+                }
+                MArmedType? mArmedType = await context.MArmedType.FindAsync(basicDetail.ArmedId);
+                if(mArmedType!=null)
+                {
+                    basicDetailVM.MArmedType = mArmedType;
+                }
                 return View(basicDetailVM);
             }
             else
@@ -151,17 +160,26 @@ namespace Web.Controllers
                     }
                     else
                     {
-                        BasicDetailTemp basicDetailTemp = new BasicDetailTemp();
-                        basicDetailTemp.Name = model.Name;
-                        basicDetailTemp.ServiceNo = model.ServiceNo;
-                        basicDetailTemp.DOB = model.DOB;
-                        basicDetailTemp.DateOfCommissioning = model.DateOfCommissioning;
-                        basicDetailTemp.PermanentAddress = model.PermanentAddress;
-                        basicDetailTemp.Updatedby = model.Updatedby;
-                        basicDetailTemp.UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
-                        await unitOfWork.BasicDetailTemp.Add(basicDetailTemp);
-                        TempData["success"] = "Request Submited Successfully.";
-                        return RedirectToAction("Registration");
+                        if (model.Observations == null)
+                        {
+                            ModelState.AddModelError("Observations", "Observations is required.");
+                            goto end;
+                        }
+                        else
+                        {
+                            BasicDetailTemp basicDetailTemp = new BasicDetailTemp();
+                            basicDetailTemp.Name = model.Name;
+                            basicDetailTemp.ServiceNo = model.ServiceNo;
+                            basicDetailTemp.DOB = model.DOB;
+                            basicDetailTemp.DateOfCommissioning = model.DateOfCommissioning;
+                            basicDetailTemp.PermanentAddress = model.PermanentAddress;
+                            basicDetailTemp.Observations = model.Observations;
+                            basicDetailTemp.Updatedby = model.Updatedby;
+                            basicDetailTemp.UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
+                            await unitOfWork.BasicDetailTemp.Add(basicDetailTemp);
+                            TempData["success"] = "Request Submited Successfully.";
+                            return RedirectToAction("Registration");
+                        }
                     }
                 }
                 else
@@ -173,40 +191,40 @@ namespace Web.Controllers
             {
                 _logger.LogError(1001, ex, "ReferenceConstraintException");
                 ModelState.AddModelError("", ex.Message);
-                goto xyz;
+                goto end;
             }
             catch (UniqueConstraintException ex)
             {
                 _logger.LogError(1002, ex, "UniqueConstraintException");
                 ModelState.AddModelError("", ex.Message);
-                goto xyz;
+                goto end;
             }
             catch (MaxLengthExceededException ex)
             {
                 _logger.LogError(1003, ex, "MaxLengthExceededException");
                 ModelState.AddModelError("", ex.Message);
-                goto xyz;
+                goto end;
             }
             catch (CannotInsertNullException ex)
             {
                 _logger.LogError(1004, ex, "CannotInsertNullException");
                 ModelState.AddModelError("", ex.Message);
-                goto xyz;
+                goto end;
             }
             catch (NumericOverflowException ex)
             {
                 _logger.LogError(1005, ex, "NumericOverflowException");
                 ModelState.AddModelError("", ex.Message);
-                goto xyz;
+                goto end;
             }
             catch (Exception ex)
             {
                 _logger.LogError(1006, ex, "Exception");
                 ModelState.AddModelError("", ex.Message);
-                goto xyz;
+                goto end;
             }
 
-        xyz:
+        end:
             return View(model);
         }
         [Authorize(Roles = "Admin,User")]
@@ -227,7 +245,7 @@ namespace Web.Controllers
                 model = JsonConvert.DeserializeObject<DTORegistrationRequest>(TempData["Registration"].ToString());
                 if (model.SubmitType == 1)
                 {
-                    ViewBag.OptionsRank = service.GetRank();
+                    ViewBag.OptionsRank = service.GetRank(Convert.ToInt32(model.RegType));
                     ViewBag.OptionsArmedType = service.GetArmedType();
                     ViewBag.OptionsBloodGroup = service.GetBloodGroup();
                     DTOBasicDetailCrtRequest dTOBasicDetailCrtRequest = new DTOBasicDetailCrtRequest();
@@ -236,6 +254,8 @@ namespace Web.Controllers
                     dTOBasicDetailCrtRequest.DOB = model.DOB;
                     dTOBasicDetailCrtRequest.DateOfCommissioning = model.DateOfCommissioning;
                     dTOBasicDetailCrtRequest.PermanentAddress = model.PermanentAddress;
+                    dTOBasicDetailCrtRequest.RegistrationType = model.RegType;
+                    dTOBasicDetailCrtRequest.DateOfIssue= TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
                     return await Task.FromResult(View(dTOBasicDetailCrtRequest));
                 }
                 else
@@ -255,7 +275,7 @@ namespace Web.Controllers
         {
             try
             {
-                ViewBag.OptionsRank = service.GetRank();
+                ViewBag.OptionsRank = service.GetRank(Convert.ToInt32(model.RegistrationType));
                 ViewBag.OptionsBloodGroup = service.GetBloodGroup();
                 ViewBag.OptionsArmedType = service.GetArmedType();
                 var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -286,7 +306,7 @@ namespace Web.Controllers
                             {
                                 System.IO.File.Delete(path);
                             }
-                            goto xyz;
+                            goto end;
                         }
 
                         newBasicDetail.PhotoImagePath = sourceFolderPhotoDB + "/" + FileName;
@@ -319,7 +339,7 @@ namespace Web.Controllers
                             {
                                 System.IO.File.Delete(path);
                             }
-                            goto xyz;
+                            goto end;
                         }
 
                         newBasicDetail.SignatureImagePath = sourceFolderSignatureDB + "/" + FileName;
@@ -345,47 +365,46 @@ namespace Web.Controllers
             {
                 _logger.LogError(1001, ex, "ReferenceConstraintException");
                 ModelState.AddModelError("", ex.Message);
-                goto xyz;
+                goto end;
             }
             catch (UniqueConstraintException ex)
             {
                 _logger.LogError(1002, ex, "UniqueConstraintException");
                 ModelState.AddModelError("", ex.Message);
-                goto xyz;
+                goto end;
             }
             catch (MaxLengthExceededException ex)
             {
                 _logger.LogError(1003, ex, "MaxLengthExceededException");
                 ModelState.AddModelError("", ex.Message);
-                goto xyz;
+                goto end;
             }
             catch (CannotInsertNullException ex)
             {
                 _logger.LogError(1004, ex, "CannotInsertNullException");
                 ModelState.AddModelError("", ex.Message);
-                goto xyz;
+                goto end;
             }
             catch (NumericOverflowException ex)
             {
                 _logger.LogError(1005, ex, "NumericOverflowException");
                 ModelState.AddModelError("", ex.Message);
-                goto xyz;
+                goto end;
             }
             catch (Exception ex)
             {
                 _logger.LogError(1006, ex, "Exception");
                 ModelState.AddModelError("", ex.Message);
-                goto xyz;
+                goto end;
             }
 
-        xyz:
+        end:
             return View(model);
         }
         [HttpGet]
         [Authorize(Roles = "Admin,User")]
         public async Task<ActionResult> Edit(string Id)
         {
-            ViewBag.OptionsRank = service.GetRank();
             ViewBag.OptionsBloodGroup = service.GetBloodGroup();
             ViewBag.OptionsArmedType = service.GetArmedType();
 
@@ -407,7 +426,8 @@ namespace Web.Controllers
 
             if (basicDetail != null)
             {
-
+                MRank? mRank = await context.MRank.FindAsync(basicDetail.RankId);
+                ViewBag.OptionsRank = service.GetRank(mRank.Type);
                 DTOBasicDetailUpdRequest basicDetailUpdVM = _mapper.Map<BasicDetail, DTOBasicDetailUpdRequest>(basicDetail);
                 //if (basicDetailUpdVM.AadhaarNo != null && basicDetailUpdVM.AadhaarNo.Length == 12)
                 //{
@@ -433,7 +453,6 @@ namespace Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(DTOBasicDetailUpdRequest model)
         {
-            ViewBag.OptionsRank = service.GetRank();
             ViewBag.OptionsBloodGroup = service.GetBloodGroup();
             var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
 
@@ -441,6 +460,8 @@ namespace Web.Controllers
 
             if (basicDetail != null)
             {
+                MRank? mRank = await context.MRank.FindAsync(basicDetail.RankId);
+                ViewBag.OptionsRank = service.GetRank(mRank.Type);
                 if (ModelState.IsValid)
                 {
                     basicDetail.RankId = model.RankId;
@@ -470,7 +491,7 @@ namespace Web.Controllers
                             {
                                 System.IO.File.Delete(filePath);
                             }
-                            goto xyz;
+                            goto end;
                         }
 
                         if (model.ExistingPhotoImagePath != null)
@@ -503,7 +524,7 @@ namespace Web.Controllers
                             {
                                 System.IO.File.Delete(filePath);
                             }
-                            goto xyz;
+                            goto end;
                         }
 
                         if (model.ExistingSignatureImagePath != null)
@@ -534,7 +555,7 @@ namespace Web.Controllers
             }
 
 
-        xyz:
+        end:
             return View(model);
 
         }
@@ -677,7 +698,7 @@ namespace Web.Controllers
 
                 if (basicDetail.Step < 1 || basicDetail.IsSubmit == true)
                     return RedirectToAction("Index");
-                ViewBag.OptionsRank = service.GetRank();
+                ViewBag.OptionsRank = service.GetRank(1);
                 ViewBag.OptionsArmedType = service.GetArmedType();
                 ViewBag.OptionsBloodGroup = service.GetBloodGroup();
 
@@ -711,7 +732,7 @@ namespace Web.Controllers
         [HttpPost]
         public async Task<IActionResult> Part2(BasicDetailUpdVMPart2 model)
         {
-            ViewBag.OptionsRank = service.GetRank();
+            ViewBag.OptionsRank = service.GetRank(1);
             ViewBag.OptionsBloodGroup = service.GetBloodGroup();
             ViewBag.OptionsArmedType = service.GetArmedType();
             var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -941,16 +962,26 @@ namespace Web.Controllers
                 //using (HttpResponseMessage response = await client.GetAsync("ICNumber/" + ICNumber))
                 using (HttpResponseMessage response = await client.GetAsync(ICNumber))
                 {
-                    var responseContent = response.Content.ReadAsStringAsync().Result;
-                    response.EnsureSuccessStatusCode();
-                    DTOApiDataResponse? responseData = JsonConvert.DeserializeObject<DTOApiDataResponse>(responseContent);
-                    DateTime DOB, DOC;
-                    TimeSpan timeSpan = new TimeSpan(0, 0, 0, 0, 0, 0);
-                    DOB = responseData.DOB.Date + timeSpan;
-                    DOC = responseData.DateOfCommissioning.Date + timeSpan;
-                    responseData.DOB = DOB;
-                    responseData.DateOfCommissioning = DOC;
-                    return Ok(responseData);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var responseContent = response.Content.ReadAsStringAsync().Result;
+                        response.EnsureSuccessStatusCode();
+                        DTOApiDataResponse? responseData = JsonConvert.DeserializeObject<DTOApiDataResponse>(responseContent);
+                        DateTime DOB, DOC;
+                        TimeSpan timeSpan = new TimeSpan(0, 0, 0, 0, 0, 0);
+                        DOB = responseData.DOB.Date + timeSpan;
+                        DOC = responseData.DateOfCommissioning.Date + timeSpan;
+                        responseData.DOB = DOB;
+                        responseData.DateOfCommissioning = DOC;
+                        responseData.Status = true;
+                        return Ok(responseData);
+                    }
+                    else
+                    {
+                        DTOApiDataResponse dTOApiDataResponse= new DTOApiDataResponse();
+                        dTOApiDataResponse.Status = false;
+                        return Ok(dTOApiDataResponse);
+                    }
                 }
             }
         }

@@ -716,7 +716,7 @@ namespace Web.Controllers
             ViewBag.T = "Register User";
             var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
             ViewBag.RoleOptions = unitOfWork.Users.GetRole();
-            ViewBag.OptionsRank = service.GetRank();
+            ViewBag.OptionsRank = service.GetRank(1);
             DTORegisterRequest model = new DTORegisterRequest();
             string dd = AESEncrytDecry.GetSalt();  // "8080808080808080"; //protector.Protect("1");
             HttpContext.Session.SetString(SessionKeySalt, dd);
@@ -735,7 +735,7 @@ namespace Web.Controllers
             string rolename = "";
             var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
             ViewBag.RoleOptions = unitOfWork.Users.GetRole();
-            ViewBag.OptionsRank = service.GetRank();
+            ViewBag.OptionsRank = service.GetRank(1);
             if (userId == null)
             {
                 userId = "0";

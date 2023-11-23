@@ -1,8 +1,5 @@
 $(document).ready(function () {
-
-    
-
-    
+  
    
     BindData()
     $("#btnReset").click(function () {

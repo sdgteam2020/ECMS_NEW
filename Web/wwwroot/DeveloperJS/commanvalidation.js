@@ -17,7 +17,6 @@ $(document).ready(function () {
     memberTable=$('#tbldatatabledata').DataTable({
         retrieve: true,
         lengthChange: false,
-        "order": [[2, "asc"]],
         buttons: [{
             extend: 'copy',
             exportOptions: {

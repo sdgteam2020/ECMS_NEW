@@ -3,7 +3,7 @@
     ViewBag.Title = "Edit I-card detail";
 }
 <style>
-    .row .mb-1.required .form-label:after {
+    .row.mb-1.required .form-label::after {
         content: "*";
         color: red;
     }
@@ -128,7 +128,8 @@
                             <label class="col-sm-3 col-form-label form-label">Signature</label>
                             <div class="col-sm-8">
                                 <img id="SignaturePath" src="@Model.ExistingSignatureImagePath" height="80px" width="100px" />
-                                <input asp-for="Signature_" class="form-control" onchange="signatureChange(this)" accept="image/jpeg,image/jpg,image/png,image/gif" />
+                                <input asp-for="Signature_" class="form-control" onchange="beforeUploadSignatureSizeCheckInEdit(this)" accept="image/jpeg,image/jpg,image/png,image/gif" />
+                                <span id="lblSignature" style="color: red;"></span>
                                 <span asp-validation-for="Signature_" class="text-danger"></span>
                             </div>
                         </div>
@@ -152,7 +153,8 @@
                             <label class="col-sm-3 col-form-label form-label">Photograph</label>
                             <div class="col-sm-8">
                                 <img id="PhotoPath" src="@Model.ExistingPhotoImagePath" height="200px" width="200px" />
-                                <input asp-for="Photo_" class="form-control" onchange="photoChange(this)" accept="image/jpeg,image/jpg,image/png,image/gif" />
+                                <input asp-for="Photo_" class="form-control" onchange="beforeUploadPhotoSizeCheckInEdit(this)" accept="image/jpeg,image/jpg,image/png,image/gif" />
+                                <span id="lblPhoto" style="color: red;"></span>
                                 <span asp-validation-for="Photo_" class="text-danger"></span>
                             </div>
                         </div>

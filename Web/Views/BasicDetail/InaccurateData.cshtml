@@ -1,60 +1,60 @@
 ﻿@model List<DTOBasicDetailTempRequest>
 <div class="container mt-4">
     <div class="card mb-3 ">
+        <div class="card-header">
+            <div class="row">
+                <div class="col-xl-12 text-left">
+                    <h3>
+                        @ViewBag.Title
+                        <small class="text-muted"></small>
+                    </h3>
+                </div>
+            </div>
+            <div class="card-body" style="min-height:150px;">
+                <div class="row">
+                    <div class="col-xl-12">
+                        <div class="table-responsive">
+                            <table id="tbldatatabledata" class="table border border-purple table-striped no-footer dataTable table-hover" style="width:100%">
+                                <thead>
+                                    <tr>
+                                        <th>@Html.DisplayNameFor(model => model[0].Sno)</th>
+                                        <th>@Html.DisplayNameFor(model => model[0].Name)</th>
+                                        <th>@Html.DisplayNameFor(model => model[0].ServiceNo)</th>
+                                        <th>@Html.DisplayNameFor(model => model[0].DOB)</th>
+                                        <th>@Html.DisplayNameFor(model => model[0].DateOfCommissioning)</th>
+                                        <th>@Html.DisplayNameFor(model => model[0].PermanentAddress)</th>
+                                        <th>@Html.DisplayNameFor(model => model[0].Observations)</th>
+                                        @*<th>Action</th> *@
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model)
+                                    {
+                                        <tr>
+                                            <td>@item.Sno</td>
+                                            <td>@item.Name</td>
+                                            <td>@item.ServiceNo</td>
+                                            <td>@(item.DOB.ToString("dd/MMM/yyyy"))</td>
+                                            <td>@item.DateOfCommissioning.ToString("dd/MMM/yyyy")</td>
+                                            <td>@item.PermanentAddress</td>
+                                            <td>@item.Observations</td>
+                                            @*                                 <td>
+                                        <div class="d-flex p-2">
+                                        <a asp-controller="BasicDetail" asp-action="RegistrationEdit" asp-route-Id="@item.EncryptedId" class="text-primary mr-2"><i class="fas fa-edit fa-lg"></i></a>
+                                        </div>
 
+                                        </td> *@
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
-<link rel="stylesheet" href="~/lib/bootstrap/dist/assets/plugin/datatables/responsive.dataTables.min.css">
-<link rel="stylesheet" href="~/lib/bootstrap/dist/assets/plugin/datatables/dataTables.bootstrap5.min.css">
-<div class="row align-items-center">
-    <div class="border-0 mb-4">
-        <div class="card-header py-3 no-bg bg-transparent d-flex align-items-center px-0 justify-content-between border-bottom flex-wrap">
-            <h3 class="h4 mb-0">@ViewBag.Title</h3>
-            <div class="col-auto d-flex w-sm-100 mt-2 mt-sm-0">
-            </div>
-        </div>
-    </div>
-</div> <!-- Row end  -->
-<div class="row clearfix g-3">
-    <div class="col-sm-12">
-        <div class="card mb-3">
-            <div class="card-body">
-                <table id="myProjectTable" class="table table-hover align-middle mb-0" style="width:100%">
-                    <thead>
-                        <tr>
-                            <th>@Html.DisplayNameFor(model => model[0].Sno)</th>
-                            <th>@Html.DisplayNameFor(model => model[0].Name)</th>
-                            <th>@Html.DisplayNameFor(model => model[0].ServiceNo)</th>
-                            <th>@Html.DisplayNameFor(model => model[0].DOB)</th>
-                            <th>@Html.DisplayNameFor(model => model[0].DateOfCommissioning)</th>
-                            <th>@Html.DisplayNameFor(model => model[0].PermanentAddress)</th>
-@*                             <th>Action</th> *@
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var item in Model)
-                        {
-                            <tr>
-                                <td>@item.Sno</td>
-                                <td>@item.Name</td>
-                                <td>@item.ServiceNo</td>
-                                <td>@(item.DOB.ToString("dd/MMM/yyyy"))</td>
-                                <td>@item.DateOfCommissioning.ToString("dd/MMM/yyyy")</td>
-                                <td>@item.PermanentAddress</td>
-@*                                 <td>
-                                    <div class="d-flex p-2">
-                                        <a asp-controller="BasicDetail" asp-action="RegistrationEdit" asp-route-Id="@item.EncryptedId" class="text-primary mr-2"><i class="fas fa-edit fa-lg"></i></a>
-                                    </div>
-
-                                </td> *@
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-</div><!-- Row End -->
 @section Scripts{
     <script asp-src-include="~/js/CustomScript.js"></script>
 }

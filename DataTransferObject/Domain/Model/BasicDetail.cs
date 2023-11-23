@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DataTransferObject.Domain.Master;
+using DataTransferObject.Constants;
 
 namespace DataTransferObject.Domain.Model
 {
@@ -13,6 +14,7 @@ namespace DataTransferObject.Domain.Model
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int BasicDetailId { get; set; }
+        public RegistrationType RegistrationType { get; set; }
 
         [StringLength(36)]
         [Column(TypeName = "nvarchar(36)")]

@@ -1,5 +1,6 @@
 ﻿@using System.Security.Claims;
 @inject SignInManager<ApplicationUser> signInManager;
+@inject UserManager<ApplicationUser> userManager;
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -38,15 +39,20 @@
 
     <script src="~/fonts/feather/feather.min.js"></script>
     <script src="~/fonts/allfont/webfont.min.js"></script>
-    <script asp-src-include="~/lib/jquery/dist/jquery.js"></script>
-    <script asp-src-include="~/lib/jquery-validate/jquery.validate.js"></script>
-    <script asp-src-include="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
+    <script asp-src-include="~/lib/jquery/jquery.js"></script>
+    <script asp-src-include="~/lib/jquery-validate/jquery.validate.js" defer></script>
+    <script asp-src-include="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js" defer></script>
 
     <link href="~/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
     <link href="~/lib/jqueryui/themes/base/jquery-ui.min.css" rel="stylesheet" />
 
     <link href="~/toastr/toastr.min.css" rel="stylesheet" />
     <link href="~/css/main.css" rel="stylesheet" />
+    <script type="text/javascript">
+        function preventBack() { window.history.forward(); }
+        setTimeout("preventBack()", 0);
+        window.onunload = function () { null };
+    </script>
 </head>
 <body class="nav-fixed">
       <div id="loading" class="loader">
@@ -103,6 +109,11 @@
                         <img src="~/images/afsac9.jpg" width="180%" height="60px" />
                     </li>
                     </ul>
+                @{
+                    var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+                    var user = await userManager.FindByIdAsync(userId);
+
+                }
                 <ul class="navbar-nav navbar-nav-right">
                     <li class="nav-item dropdown">
                         <a class="nav-link count-indicator dropdown-toggle" id="notificationDropdown" href="#" data-toggle="dropdown">
@@ -159,8 +170,7 @@
                         <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="profileDropdown">
                             <a class="dropdown-item">
                                 <i class="ti-settings text-primary"></i>
-                                @User.Identity.Name
-                                @signInManager
+                                @user.UserName
                             </a>
                             <a class="dropdown-item" href="/Account/Logout">
                                 <i class="ti-power-off text-primary"></i>
@@ -312,78 +322,80 @@
                             </div>
                         </li>
                     }
+                    else if (signInManager.IsSignedIn(User) && (User.IsInRole("Admin") || User.IsInRole("User")))
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link collapsed" data-toggle="collapse" href="#ui-basic" aria-expanded="true" aria-controls="ui-basic">
+                                <i class="icon-layout menu-icon"></i>
+                                <span class="menu-title">User Profile</span>
+                                <i class="menu-arrow"></i>
+                            </a>
+                            <div class="collapse show" id="ui-Profile">
+                                <ul class="nav flex-column sub-menu">
+                                    <li class="nav-item"> <a class="nav-link" href="/BasicDetail/Registration">Add I-Card</a></li>
+                                    <li class="nav-item"> <a class="nav-link" href="/BasicDetail/Index">ICard List</a></li>
+                                    <li class="nav-item"> <a class="nav-link" href="/BasicDetail/InaccurateData">Inaccurate List</a></li>
+                                </ul>
+                            </div>
 
-                    <li class="nav-item">
-                        <a class="nav-link collapsed" data-toggle="collapse" href="#ui-basic" aria-expanded="true" aria-controls="ui-basic">
-                            <i class="icon-layout menu-icon"></i>
-                            <span class="menu-title">User Profile</span>
-                            <i class="menu-arrow"></i>
-                        </a>
-                        <div class="collapse show" id="ui-Profile">
-                            <ul class="nav flex-column sub-menu">
-                                <li class="nav-item"> <a class="nav-link" href="/BasicDetail/Registration">Add I-Card</a></li>
-                                <li class="nav-item"> <a class="nav-link" href="/BasicDetail/Index">ICard List</a></li>
-                                <li class="nav-item"> <a class="nav-link" href="/BasicDetail/InaccurateData">Inaccurate List</a></li>
-                            </ul>
-                        </div>
-                       
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link collapsed" data-toggle="collapse" href="#ui-basic_Unit" aria-expanded="false" aria-controls="ui-basic_Unit">
-                            <i class="icon-layout menu-icon"></i>
-                            <span class="menu-title">Fmn/Unit </span>
-                            <i class="menu-arrow"></i>
-                        </a>
-                        <div class="collapse show" id="ui-basic_Unit">
-                            <ul class="nav flex-column sub-menu">
-                                <li class="nav-item"> <a class="nav-link" href="/Master/Command">Comd / PSO</a></li>
-                                <li class="nav-item"> <a class="nav-link" href="/Master/Corps">Corps / Dte / Area</a></li>
-                                <li class="nav-item"> <a class="nav-link" href="/Master/Div">Div / Branch / SubArea</a></li>
-                                <li class="nav-item"> <a class="nav-link" href="/Master/Bde">Bde </a></li>
-                                <li class="nav-item"> <a class="nav-link" href="/Master/MapUnit"> Map Unit</a></li>
-                            </ul>
-                        </div>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link collapsed" data-toggle="collapse" href="#ui-basic_Unit" aria-expanded="false" aria-controls="ui-basic_Unit">
+                                <i class="icon-layout menu-icon"></i>
+                                <span class="menu-title">Fmn/Unit </span>
+                                <i class="menu-arrow"></i>
+                            </a>
+                            <div class="collapse show" id="ui-basic_Unit">
+                                <ul class="nav flex-column sub-menu">
+                                    <li class="nav-item"> <a class="nav-link" href="/Master/Command">Comd / PSO</a></li>
+                                    <li class="nav-item"> <a class="nav-link" href="/Master/Corps">Corps / Dte / Area</a></li>
+                                    <li class="nav-item"> <a class="nav-link" href="/Master/Div">Div / Branch / SubArea</a></li>
+                                    <li class="nav-item"> <a class="nav-link" href="/Master/Bde">Bde </a></li>
+                                    <li class="nav-item"> <a class="nav-link" href="/Master/MapUnit"> Map Unit</a></li>
+                                </ul>
+                            </div>
 
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" data-toggle="collapse" href="#ui-Master" aria-expanded="false" aria-controls="ui-Master">
-                            <i class="icon-layout menu-icon"></i>
-                            <span class="menu-title">Master</span>
-                            <i class="menu-arrow"></i>
-                        </a>
-                        <div class="collapse show" id="ui-Master">
-                            <ul class="nav flex-column sub-menu">
-                                <li class="nav-item"> <a class="nav-link" href="/Master/Unit/&$&&&">Unit</a></li>
-                                <li class="nav-item"> <a class="nav-link" href="/Master/Rank">Rank</a></li>
-                                <li class="nav-item"> <a class="nav-link" href="/Master/Formation">Formation</a></li>
-                                <li class="nav-item"> <a class="nav-link" href="/Master/Appointment">Appointment</a></li>
-                                <li class="nav-item"> <a class="nav-link" href="/Master/ArmedType">Armed Type</a></li>
-                            </ul>
-                        </div>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" data-toggle="collapse" href="#ui-ICard" aria-expanded="false" aria-controls="ui-ICard">
-                            <i class="icon-layout menu-icon"></i>
-                            <span class="menu-title">ICard Request</span>
-                            <i class="menu-arrow"></i>
-                        </a>
-                        <div class="collapse show" id="ui-ICard">
-                            <ul class="nav flex-column sub-menu">
-                                <li class="nav-item"> <a class="nav-link" href="/UserProfile/Profile">Add Profile</a></li>
-                                <li class="nav-item"> <a class="nav-link" href="/ConfigUser/index">Config User</a></li>
-                               
-                            </ul>
-                        </div>
-                    </li>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="collapse" href="#ui-Master" aria-expanded="false" aria-controls="ui-Master">
+                                <i class="icon-layout menu-icon"></i>
+                                <span class="menu-title">Master</span>
+                                <i class="menu-arrow"></i>
+                            </a>
+                            <div class="collapse show" id="ui-Master">
+                                <ul class="nav flex-column sub-menu">
+                                    <li class="nav-item"> <a class="nav-link" href="/Master/Unit/&$&&&">Unit</a></li>
+                                    <li class="nav-item"> <a class="nav-link" href="/Master/Rank">Rank</a></li>
+                                    <li class="nav-item"> <a class="nav-link" href="/Master/Formation">Formation</a></li>
+                                    <li class="nav-item"> <a class="nav-link" href="/Master/Appointment">Appointment</a></li>
+                                    <li class="nav-item"> <a class="nav-link" href="/Master/ArmedType">Armed Type</a></li>
+                                </ul>
+                            </div>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="collapse" href="#ui-ICard" aria-expanded="false" aria-controls="ui-ICard">
+                                <i class="icon-layout menu-icon"></i>
+                                <span class="menu-title">ICard Request</span>
+                                <i class="menu-arrow"></i>
+                            </a>
+                            <div class="collapse show" id="ui-ICard">
+                                <ul class="nav flex-column sub-menu">
+                                    <li class="nav-item"> <a class="nav-link" href="/UserProfile/Profile">Add Profile</a></li>
+                                    <li class="nav-item"> <a class="nav-link" href="/ConfigUser/index">Config User</a></li>
+
+                                </ul>
+                            </div>
+                        </li>
 
 
 
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">
-                            <i class="icon-paper menu-icon"></i>
-                            <span class="menu-title">Documentation</span>
-                        </a>
-                    </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">
+                                <i class="icon-paper menu-icon"></i>
+                                <span class="menu-title">Documentation</span>
+                            </a>
+                        </li>
+                    }
                 </ul>
             </nav>
 

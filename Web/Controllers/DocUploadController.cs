@@ -64,7 +64,7 @@ namespace Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UploadDocument(DTODocUploadCrtRequest model)
         {
-            ViewBag.OptionsRank = service.GetRank();
+            ViewBag.OptionsRank = service.GetRank(1);
             var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
             var user = await userManager.FindByIdAsync(userId);
             string user_name = string.Empty;
@@ -145,7 +145,7 @@ namespace Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditUploadDocument(DTODocUploadUpdRequest model)
         {
-            ViewBag.OptionsRank = service.GetRank();
+            ViewBag.OptionsRank = service.GetRank(1);
             var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
             var user = await userManager.FindByIdAsync(userId);
             string user_name = string.Empty;

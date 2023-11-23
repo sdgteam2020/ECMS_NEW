@@ -1,4 +1,5 @@
-﻿using DataTransferObject.Domain;
+﻿using DataTransferObject.Constants;
+using DataTransferObject.Domain;
 using DataTransferObject.Domain.Master;
 using DataTransferObject.Domain.Model;
 using DataTransferObject.Localize;
@@ -19,6 +20,7 @@ namespace DataTransferObject.Requests
     {
         [Display(Name = "BasicDetailId", ResourceType = typeof(Resource))]
         public int BasicDetailId { get; set; }
+        public RegistrationType RegistrationType { get; set; }
 
         [Display(Name = "Name", ResourceType = typeof(Resource))]
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
@@ -127,7 +129,6 @@ namespace DataTransferObject.Requests
     }
     public class DTOBasicDetailCrtRequest : DTOBasicDetailRequest
     {
-
         [Display(Name = "TermsConditions", ResourceType = typeof(Resource))]
         //[Range(typeof(bool), "true", "true", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "TermsConditionsError")]
         //[CheckBoxRequired(ErrorMessage = "Please accept the terms and condition.")]
@@ -258,6 +259,10 @@ namespace DataTransferObject.Requests
         [RegularExpression(@"^[\w \.\,\?\;\:\""\''\[\]\!\@\#\$\%\&\*\(\)\-\=\+\\\/]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
         public string PermanentAddress { get; set; } = string.Empty;
 
+        [Display(Name = "Observations", ResourceType = typeof(Resource))]   
+        [RegularExpression(@"^[\w \.\,\?\;\:\""\''\[\]\!\@\#\$\%\&\*\(\)\-\=\+\\\/]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
+        public string? Observations { get; set; }
+
         [NotMapped]
         public string? EncryptedId { get; set; }
 
@@ -267,10 +272,13 @@ namespace DataTransferObject.Requests
     }
     public class DTORegistrationRequest : DTOBasicDetailTempRequest
     {
+        [RegularExpression(@"^[\w \.\,\?\;\:\""\''\[\]\!\@\#\$\%\&\*\(\)\-\=\+\\\/]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
+        public RegistrationType RegType { get; set; }
+        
         [Display(Name = "RegistrationType", ResourceType = typeof(Resource))]
         //[Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
         [RegularExpression(@"^[\w \.\,\?\;\:\""\''\[\]\!\@\#\$\%\&\*\(\)\-\=\+\\\/]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
-        public string RegistrationType { get; set; } = string.Empty;
+        public RegistrationType RegistrationType { get; set; }
         
         [Display(Name = "ServiceNo", ResourceType = typeof(Resource))]
         //[Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
