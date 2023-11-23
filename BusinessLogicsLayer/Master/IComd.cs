@@ -9,12 +9,12 @@ using System.Threading.Tasks;
 
 namespace BusinessLogicsLayer.Master
 { 
-    public interface IComd : IGenericRepository<DataTransferObject.Domain.Master.Comd>
+    public interface IComd : IGenericRepository<DataTransferObject.Domain.Master.MComd>
     {
 
-        public Task<bool> GetByName(DataTransferObject.Domain.Master.Comd DTo);
+        public Task<bool> GetByName(DataTransferObject.Domain.Master.MComd DTo);
         public Task<int> GetByMaxOrder(); 
-        public Task<int> OrderByChange(DataTransferObject.Domain.Master.Comd DTo);
-        public Task<IEnumerable<DataTransferObject.Domain.Master.Comd>> GetAllByorder();
+        public Task<int> OrderByChange(DataTransferObject.Domain.Master.MComd DTo);
+        public Task<IEnumerable<DataTransferObject.Domain.Master.MComd>> GetAllByorder();
     }
 }

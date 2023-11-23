@@ -9,12 +9,12 @@ using System.Threading.Tasks;
 
 namespace DataAccessLayer.BaseInterfaces
 {
-    public interface IComdDB : IGenericRepositoryDL<Comd>
+    public interface IComdDB : IGenericRepositoryDL<MComd>
     {
-        public Task<bool> GetByName(Comd Dto);
+        public Task<bool> GetByName(MComd Dto);
         public Task<int> GetByMaxOrder();
         public Task<int> GetComdIdbyOrderby(int OrderBy);
-        public Task<IEnumerable<DataTransferObject.Domain.Master.Comd>> GetAllByorder();
+        public Task<IEnumerable<DataTransferObject.Domain.Master.MComd>> GetAllByorder();
 
     }
 }

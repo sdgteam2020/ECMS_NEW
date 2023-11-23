@@ -325,12 +325,12 @@
                     else if (signInManager.IsSignedIn(User) && (User.IsInRole("Admin") || User.IsInRole("User")))
                     {
                         <li class="nav-item">
-                            <a class="nav-link collapsed" data-toggle="collapse" href="#ui-basic" aria-expanded="true" aria-controls="ui-basic">
+                            <a class="nav-link collapsed" data-toggle="collapse" href="#ui-basic1" aria-expanded="true" aria-controls="ui-basic1">
                                 <i class="icon-layout menu-icon"></i>
                                 <span class="menu-title">User Profile</span>
                                 <i class="menu-arrow"></i>
                             </a>
-                            <div class="collapse show" id="ui-Profile">
+                            <div class="collapse show" id="ui-basic1">
                                 <ul class="nav flex-column sub-menu">
                                     <li class="nav-item"> <a class="nav-link" href="/BasicDetail/Registration">Add I-Card</a></li>
                                     <li class="nav-item"> <a class="nav-link" href="/BasicDetail/Index">ICard List</a></li>
@@ -369,6 +369,7 @@
                                     <li class="nav-item"> <a class="nav-link" href="/Master/Formation">Formation</a></li>
                                     <li class="nav-item"> <a class="nav-link" href="/Master/Appointment">Appointment</a></li>
                                     <li class="nav-item"> <a class="nav-link" href="/Master/ArmedType">Armed Type</a></li>
+                                    <li class="nav-item"> <a class="nav-link" href="/Master/Regimental">Regimental</a></li>
                                 </ul>
                             </div>
                         </li>
@@ -575,7 +576,12 @@
 
                                 <label class="col-form-label col-sm-4">Fmn HQ/Branch <i class="fas fa-asterisk mand1"></i></label>
                                 <div class="col-sm-8">
-                                  
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="" id="ChkFmnBrach">
+                                        <label class="form-check-label" for="ChkFmnBrach">
+                                            Fmn HQ/Branch
+                                        </label>
+                                    </div>
                                    
                                 </div>
 

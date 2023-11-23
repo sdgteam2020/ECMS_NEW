@@ -8,19 +8,22 @@ using System.Threading.Tasks;
 
 namespace DataTransferObject.Domain.Master
 {
-    public class Comd: Common
-    { 
+    public class MRegimental : Common
+    {
         [Key]
-        public int ComdId { get; set; }
+        public int RegId { get; set; }
+        [Required(ErrorMessage = "required!")]
+        [RegularExpression("^[a-zA-Z0-9 ]*$", ErrorMessage = "Only Alphabets and Numbers allowed.")]
+        public string Name { get; set; }
+        [Required(ErrorMessage = "required!")]
+        [RegularExpression("^[a-zA-Z0-9 ]*$", ErrorMessage = "Only Alphabets and Numbers allowed.")]
+        public string Abbreviation { get; set; }
 
-        [Required(ErrorMessage = "required!")]
-        [RegularExpression("^[a-zA-Z0-9 ]*$", ErrorMessage = "Only Alphabets and Numbers allowed.")]
-        public string ComdName { get; set; }
-        [Required(ErrorMessage = "required!")]
-        [RegularExpression("^[a-zA-Z0-9 ]*$", ErrorMessage = "Only Alphabets and Numbers allowed.")]
-        public string ComdAbbreviation { get; set; }
-        [Required(ErrorMessage = "required!")]
+        [ForeignKey("MArmedType"), DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public int ArmedId { get; set; }
+
+
+        public MArmedType? MArmedType { get; set; }
         
-        public int Orderby { get; set; }
     }
 }

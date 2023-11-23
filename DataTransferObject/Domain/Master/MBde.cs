@@ -20,7 +20,7 @@ namespace DataTransferObject.Domain.Master
         [ForeignKey("Comd")]
         public int ComdId { get; set; }
 
-        public Comd? Comd { get; set; }
+        public MComd? Comd { get; set; }
 
         [ForeignKey("MCorps")]
         public int CorpsId { get; set; }

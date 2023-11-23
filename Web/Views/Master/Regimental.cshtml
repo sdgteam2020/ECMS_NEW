@@ -1,0 +1,126 @@
+﻿@{
+    ViewData["Title"] = "Create Draft";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-4">
+    <div class="card mb-3 ">
+        <div class="card-header">
+
+            <span id="SpnTxnId" class="d-none">0</span>
+            @*<span id="PtoId" class="d-none">0</span>*@
+            <div class="row">
+                <div class="col-xl-12 text-left">
+                    <h3>
+                        Regimental Centre  Details
+                        <small class="text-muted"></small>
+
+
+                    </h3>
+                </div>
+
+
+            </div>
+        </div>
+
+
+        <div class="card-body" style="min-height:150px;">
+            <div class="row">
+                <form action="" id="SaveForm" method="post" name="SaveForm">
+                    <div class="row">
+                        <div class="col-xl-3">
+                            <div class="form-group row mb-2">
+                                <span class="spnCorpsId d-none">0</span>
+                                <label class="col-form-label col-sm-6">Select ArmType <i class="fas fa-asterisk mand1"></i></label>
+                                <div class="col-sm-6">
+
+                                    <select class=" js-example-basic-single select2 form-control " style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddlArmType" required id="ddlArmType">
+                                        <option value="0">Select ArmType</option>
+
+
+                                    </select>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group row mb-2">
+                                <span class="d-none" id="spnRegId">0</span>
+                                <label class="col-form-label col-sm-6">Regimental<i class="fas fa-asterisk mand1"></i></label>
+                                <div class="col-sm-6">
+
+                                    <input class="form-control Alphanumeric" placeholder="Enter Regimental" id="txtName" required pattern="^[a-zA-Z0-9 ]*$" title="Only Alphabets and Numbers allowed" />
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group row mb-2">
+
+                                <label class="col-form-label col-sm-6">Abbreviation<i class="fas fa-asterisk mand1"></i></label>
+                                <div class="col-sm-6">
+
+                                    <input class="form-control Alphanumeric" placeholder="Enter Abbreviation" id="txtAbbreviation" required pattern="^[a-zA-Z0-9 ]*$" title="Only Alphabets and Numbers allowed" />
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="col-sm-12 text-left">
+                                <input type="button" class="btn btn-primary " value="Save" id="btnsave" />
+                            </div>
+                            <div class="col-sm-12" id="msg">
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                <div class="col-xl-12">
+                    <div class="mb-2 d-md-flex justify-content-md-between align-items-md-center">
+                        <h6 class="mb-3 mb-md-0">
+                            Total Regimental Centre  <span id="lblTotal" class="ml-3 border border-light b px-2 py-1">0</span>
+                        </h6>
+                        <div>
+                            @* <button type="button" id="btnAdd" class="btn btn-outline-success font-weight-600 btn-sm">Add Command</button> *@
+                            @* <button type="button" id="btnMultiDelete" class="btn btn-outline-danger font-weight-600 btn-sm">Delete</button> *@
+
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table border border-purple table-striped no-footer dataTable table-hover" role="grid" id="tblData">
+                            <thead>
+                                <tr>
+                                    <th class="noExport d-none"></th>
+                                    <th class="noExport wd-30-f">
+                                        <div class="custom-control custom-checkbox small">
+                                            <input type="checkbox" class="custom-control-input" id="chkAll">
+                                            <label class="custom-control-label font-weight-bold" for="chkAll"></label>
+                                        </div>
+                                    </th>
+                                    <th class=" wd-30-f">S No</th>
+                                    <th class="nowrap">Armed Type </th>
+                                    <th class="nowrap">Regimental Centre </th>
+                                    <th class="nowrap">Abbreviation</th>
+                                    <th class="nowrap">Action</th>
+
+
+                                </tr>
+                            </thead>
+                            <tbody id="DetailBody">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+
+            </div>
+
+
+
+        </div>
+    </div>
+</div>
+
+
+<script src="~/developerjs/mtables.js"></script>
+
+<script src="~/developerjs/regimental.js"></script>

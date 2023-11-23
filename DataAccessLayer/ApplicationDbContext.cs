@@ -22,7 +22,7 @@ namespace DataAccessLayer
 
         public DbSet<DocUpload> DocUploads { get; set; } = null!;
         public DbSet<Error> Errors { get; set; } = null!;
-        public DbSet<Comd> MComd { get; set; }
+        public DbSet<MComd> MComd { get; set; }
         public DbSet<MCorps> MCorps { get; set; }
         public DbSet<MBde> MBde { get; set; }
         public DbSet<MDiv> MDiv { get; set; }
@@ -38,6 +38,7 @@ namespace DataAccessLayer
         public DbSet<ProfileData> ProfileData { get; set; } = null!;
         public DbSet<MUserProfile> UserProfile { get; set; } = null!;
         public DbSet<MMappingProfile> MMappingProfile { get; set; } = null!;
+        public DbSet<MRegimental> MRegimental { get; set; } = null!;
        
         public DbSet<MApiData> MApiData { get; set; }
         protected override void OnModelCreating(ModelBuilder builder)

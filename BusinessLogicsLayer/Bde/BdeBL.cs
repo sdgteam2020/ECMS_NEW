@@ -37,5 +37,7 @@ namespace BusinessLogicsLayer.BdeCate
         {
            return _iBdeCatDB.GetByName(Data);
         }
+
+       
     }
 }

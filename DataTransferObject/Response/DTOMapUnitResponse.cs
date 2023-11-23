@@ -21,7 +21,7 @@ namespace DataTransferObject.Response
         public int DivId { get; set; }
         public string DivName { get; set; }
         public string Sus_no { get; set; }
-
+        public Boolean FmnBrach { get; set; }
         public string Suffix { get; set; }
     }
 }

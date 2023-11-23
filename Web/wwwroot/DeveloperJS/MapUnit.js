@@ -38,7 +38,7 @@ $(document).ready(function () {
 
 
     $("#btnUnitMapsave").click(function () {
-        
+      
         if ($("#SaveFormMapUnit")[0].checkValidity()) {
 
             Swal.fire({
@@ -223,7 +223,7 @@ function BindDataMapUnit() {
                     for (var i = 0; i < response.length; i++) {
 
                         listItem += "<tr>";
-                        listItem += "<td class='d-none'><span id='spnMapUnitId'>" + response[i].UnitMapId + "</span><span id='spnMUnitId'>" + response[i].UnitId + "</span><span id='spnMbdeId'>" + response[i].BdeId + "</span><span id='spnMDivId'>" + response[i].DivId + "</span><span id='spnMcorpsId'>" + response[i].CorpsId + "</span><span id='spncomdId'>" + response[i].ComdId + "</span></td>";
+                        listItem += "<td class='d-none'><span id='spnMapUnitId'>" + response[i].UnitMapId + "</span><span id='spnMUnitId'>" + response[i].UnitId + "</span><span id='spnMbdeId'>" + response[i].BdeId + "</span><span id='spnMDivId'>" + response[i].DivId + "</span><span id='spnMcorpsId'>" + response[i].CorpsId + "</span><span id='spncomdId'>" + response[i].ComdId + "</span><span id='spnfmnBrach'>" + response[i].FmnBrach + "</span></td>";
                         listItem += "<td>";
                         listItem += "<div class='custom-control custom-checkbox small'>";
                         listItem += "<input type='checkbox' class='custom-control-input' id='" + response[i].UnitMapId + "'>";
@@ -236,6 +236,14 @@ function BindDataMapUnit() {
                         listItem += "<td class='align-middle'><span id='corpsName'>" + response[i].CorpsName + "</span></td>";
                         listItem += "<td class='align-middle'><span id='divName'>" + response[i].DivName + "</span></td>";
                         listItem += "<td class='align-middle'><span id='bdeName'>" + response[i].BdeName + "</span></td>";
+                        if (response[i].FmnBrach == true) {
+                            listItem += "<td class='align-middle'><span class='badge bg-danger'>Yes</span></td>";
+                        }
+                        else {
+                            listItem += "<td class='align-middle'><span class='badge bg-primary'>No</span></td>";
+
+                        }
+                        
                         listItem += "<td class='align-middle'><span id='unitName'>" + response[i].UnitName + "</span></td>";
                         listItem += "<td class='align-middle'><span id='Sus_no'>" + response[i].Sus_no + response[i].Suffix + "</span></td>";
                         listItem += "<td class='align-middle'><span id='btnedit'><button type='button' class='cls-btnedit btn btn-icon btn-round btn-primary mr-1'><i class='fas fa-edit'></i></button></span><button type='button' class='cls-btnDelete btn-icon btn-round btn-danger mr-1'><i class='fas fa-trash-alt'></i></button></td>";
@@ -310,6 +318,14 @@ function BindDataMapUnit() {
 
                         $("#txtUnit").val($(this).closest("tr").find("#unitName").html());
                         $("#txtSusno").val($(this).closest("tr").find("#Sus_no").html());
+                        
+                        if ($(this).closest("tr").find("#spnfmnBrach").html() == 'true' || $(this).closest("tr").find("#spnfmnBrach").html() == true) {
+                            $("#ChkFmnBrach").prop("checked", true);
+                           
+                        }
+                        else {
+                            $("#ChkFmnBrach").prop("checked", false);
+                        }
                         $("#AddNewUnitmap").modal('show');
                         $("#btnMapUnitsave").val("Update");
                     });
@@ -416,7 +432,7 @@ function SaveUnitMap() {
     $.ajax({
         url: '/Master/SaveMapUnit',
         type: 'POST',
-        data: { "UnitName": $("#txtUnit").val(), "ComdId": $("#ddlCommand").val(), "CorpsId": $("#ddlCorps").val(), "DivId": $("#ddlDiv").val(), "BdeId": $("#ddlBde").val(), "UnitMapId": $("#spnUnitMapUnitId").html(), "UnitId": $("#SpnUnitMapId").html() }, //get the search string
+        data: { "UnitName": $("#txtUnit").val(), "ComdId": $("#ddlCommand").val(), "CorpsId": $("#ddlCorps").val(), "DivId": $("#ddlDiv").val(), "BdeId": $("#ddlBde").val(), "UnitMapId": $("#spnUnitMapUnitId").html(), "UnitId": $("#SpnUnitMapId").html(), "FmnBrach": $("#ChkFmnBrach").prop("checked") }, //get the search string
         success: function (result) {
 
 
