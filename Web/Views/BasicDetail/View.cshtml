@@ -19,96 +19,102 @@
             </div>
         </div>
         <div class="card-body" style="min-height:150px;">
+
             <div class="row">
                 <div class="col-xl-8">
-                    <div class="table-responsive">
-                        <table id="tbldatatabledata" class="table border border-purple table-striped no-footer dataTable table-hover" style="width:100%">
-                            <tbody>
-                                <tr>
-                                    <th>1.</th>
-                                    <th>@Html.DisplayNameFor(model => model.Name)</th>
-                                    <td>@Model.Name</td>
-                                </tr>
-                                <tr>
-                                    <th>2.</th>
-                                    <th>@Html.DisplayNameFor(model => model.RankId)</th>
-                                    <td>@(Model.MRank != null ? Model.MRank.RankName : "No Rank")</td>
-                                </tr>
-                                <tr>
-                                    <th>3.</th>
-                                    <th>@Html.DisplayNameFor(model => model.ArmedId)</th>
-                                    <td>@(Model.MArmedType != null ? Model.MArmedType.ArmedName : "No Armed")</td>
-                                </tr>
-                                <tr>
-                                    <th>4.</th>
-                                    <th>@Html.DisplayNameFor(model => model.ServiceNo)</th>
-                                    <td>@Model.ServiceNo</td>
-                                </tr>
-                                <tr>
-                                    <th>5.</th>
-                                    <th>@Html.DisplayNameFor(model => model.IdentityMark)</th>
-                                    <td>@Model.IdentityMark</td>
-                                </tr>
-                                <tr>
-                                    <th>6.</th>
-                                    <th>@Html.DisplayNameFor(model => model.DOB)</th>
-                                    <td>@Model.DOB.ToString("dd/MMM/yyyy")</td>
-                                </tr>
-                                <tr>
-                                    <th>7.</th>
-                                    <th>@Html.DisplayNameFor(model => model.Height)</th>
-                                    <td>@Model.Height</td>
-                                </tr>
-                                <tr>
-                                    <th>8.</th>
-                                    <th>@Html.DisplayNameFor(model => model.AadhaarNo)</th>
-                                    <td>@Model.AadhaarNo</td>
-                                </tr>
-                                <tr>
-                                    <th>9.</th>
-                                    <th>@Html.DisplayNameFor(model => model.BloodGroup)</th>
-                                    <td>@Model.BloodGroup</td>
-                                </tr>
-                                <tr>
-                                    <th>10.</th>
-                                    <th>@Html.DisplayNameFor(model => model.PlaceOfIssue)</th>
-                                    <td>@Model.PlaceOfIssue</td>
-                                </tr>
-                                <tr>
-                                    <th>11.</th>
-                                    <th>@Html.DisplayNameFor(model => model.DateOfIssue)</th>
-                                    <td>@Model.DateOfIssue.ToString("dd/MMM/yyyy")</td>
-                                </tr>
-                                <tr>
-                                    <th>12.</th>
-                                    <th>@Html.DisplayNameFor(model => model.IssuingAuth)</th>
-                                    <td>@Model.IssuingAuth</td>
-                                </tr>
-                                <tr>
-                                    <th>13.</th>
-                                    <th>@Html.DisplayNameFor(model => model.SignatureImagePath)</th>
-                                    <td><img id="SignaturePath" src="@Model.SignatureImagePath" height="80px" width="100px" /></td>
-                                </tr>
-                                <tr>
-                                    <th>14.</th>
-                                    <th>@Html.DisplayNameFor(model => model.DateOfCommissioning)</th>
-                                    <td>@Model.DateOfCommissioning.ToString("dd/MMM/yyyy")</td>
-                                </tr>
-                                <tr>
-                                    <th>15.</th>
-                                    <th>@Html.DisplayNameFor(model => model.PermanentAddress)</th>
-                                    <td>@Model.PermanentAddress</td>
-                                </tr>
-                                <tr>
-                                    <th>16.</th>
-                                    <th>@Html.DisplayNameFor(model => model.PhotoImagePath)</th>
-                                    <td><img src="@Model.PhotoImagePath" height="200px" width="200px" /></td>
-                                </tr>
-                                <tr>
-                                    <td colspan="3" style="text-align:center;"><a asp-controller="BasicDetail" asp-action="Index" class="btn-info btn-sm">Back</a></td>
-                                </tr>
-                            </tbody>
-                        </table>
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table id="printableArea" class="table border border-purple table-striped no-footer dataTable table-hover" style="width:100%">
+                                    <tbody>
+                                        <tr>
+                                            <th>1.</th>
+                                            <th>@Html.DisplayNameFor(model => model.Name)</th>
+                                            <td>@Model.Name</td>
+                                        </tr>
+                                        <tr>
+                                            <th>2.</th>
+                                            <th>@Html.DisplayNameFor(model => model.RankId)</th>
+                                            <td>@(Model.MRank != null ? Model.MRank.RankName : "No Rank")</td>
+                                        </tr>
+                                        <tr>
+                                            <th>3.</th>
+                                            <th>@Html.DisplayNameFor(model => model.ArmedId)</th>
+                                            <td>@(Model.MArmedType != null ? Model.MArmedType.ArmedName : "No Armed")</td>
+                                        </tr>
+                                        <tr>
+                                            <th>4.</th>
+                                            <th>@Html.DisplayNameFor(model => model.ServiceNo)</th>
+                                            <td>@Model.ServiceNo</td>
+                                        </tr>
+                                        <tr>
+                                            <th>5.</th>
+                                            <th>@Html.DisplayNameFor(model => model.IdentityMark)</th>
+                                            <td>@Model.IdentityMark</td>
+                                        </tr>
+                                        <tr>
+                                            <th>6.</th>
+                                            <th>@Html.DisplayNameFor(model => model.DOB)</th>
+                                            <td>@Model.DOB.ToString("dd/MMM/yyyy")</td>
+                                        </tr>
+                                        <tr>
+                                            <th>7.</th>
+                                            <th>@Html.DisplayNameFor(model => model.Height)</th>
+                                            <td>@Model.Height</td>
+                                        </tr>
+                                        <tr>
+                                            <th>8.</th>
+                                            <th>@Html.DisplayNameFor(model => model.AadhaarNo)</th>
+                                            <td>@Model.AadhaarNo</td>
+                                        </tr>
+                                        <tr>
+                                            <th>9.</th>
+                                            <th>@Html.DisplayNameFor(model => model.BloodGroup)</th>
+                                            <td>@Model.BloodGroup</td>
+                                        </tr>
+                                        <tr>
+                                            <th>10.</th>
+                                            <th>@Html.DisplayNameFor(model => model.PlaceOfIssue)</th>
+                                            <td>@Model.PlaceOfIssue</td>
+                                        </tr>
+                                        <tr>
+                                            <th>11.</th>
+                                            <th>@Html.DisplayNameFor(model => model.DateOfIssue)</th>
+                                            <td>@Model.DateOfIssue.ToString("dd/MMM/yyyy")</td>
+                                        </tr>
+                                        <tr>
+                                            <th>12.</th>
+                                            <th>@Html.DisplayNameFor(model => model.IssuingAuth)</th>
+                                            <td>@Model.IssuingAuth</td>
+                                        </tr>
+                                        <tr>
+                                            <th>13.</th>
+                                            <th>Signature</th>
+                                            <td><img id="SignaturePath" src="@Model.SignatureImagePath" height="80px" width="100px" /></td>
+                                        </tr>
+                                        <tr>
+                                            <th>14.</th>
+                                            <th>@Html.DisplayNameFor(model => model.DateOfCommissioning)</th>
+                                            <td>@Model.DateOfCommissioning.ToString("dd/MMM/yyyy")</td>
+                                        </tr>
+                                        <tr>
+                                            <th>15.</th>
+                                            <th>@Html.DisplayNameFor(model => model.PermanentAddress)</th>
+                                            <td>@Model.PermanentAddress</td>
+                                        </tr>
+                                        <tr>
+                                            <th>16.</th>
+                                            <th>Photograph</th>
+                                            <td><img src="@Model.PhotoImagePath" height="200px" width="200px" /></td>
+                                        </tr>   
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="card-footer text-center">
+                            <a asp-controller="BasicDetail" asp-action="Index" class="btn-info btn-sm">Back</a>
+                            <a href="#" class="btn-info btn-sm" onclick="printTable('printableArea')">Print</a>
+                        </div>
                     </div>
                 </div>
                 <div class="col-xl-4">

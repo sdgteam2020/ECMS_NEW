@@ -18,18 +18,6 @@ using EntityFramework.Exceptions.Common;
 using DataTransferObject.Response;
 using BusinessLogicsLayer.Service;
 using BusinessLogicsLayer;
-using iText.Kernel.Pdf;
-using iText.Layout.Element;
-using iText.Layout.Properties;
-using iText.Layout;
-using iText.Kernel.Geom;
-using Path = System.IO.Path;
-using Table = iText.Layout.Element.Table;
-using Image = iText.Layout.Element.Image;
-using iText.IO.Image;
-using System.Data;
-using iText.Layout.Borders;
-using iText.Kernel.Colors;
 
 namespace Web.Controllers
 {
@@ -287,9 +275,9 @@ namespace Web.Controllers
         {
             try
             {
-                //ViewBag.OptionsRank = service.GetRank(Convert.ToInt32(model.RegistrationType));
-                //ViewBag.OptionsBloodGroup = service.GetBloodGroup();
-                //ViewBag.OptionsArmedType = service.GetArmedType();
+                ViewBag.OptionsRank = service.GetRank(Convert.ToInt32(model.RegistrationType));
+                ViewBag.OptionsBloodGroup = service.GetBloodGroup();
+                ViewBag.OptionsArmedType = service.GetArmedType();
                 var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
 
                 model.Updatedby = Convert.ToInt32(userId);
@@ -1063,50 +1051,6 @@ namespace Web.Controllers
             basicDetail.DateOfCommissioning = DateTime.Now;
             basicDetail.PermanentAddress = "House No.-" + Random.Shared.Next(50, 999) + ", " + PermanentAddress[a];
             return Ok(basicDetail);
-        }
-        public async Task<string?> PdfICard(int BasicDetailId)
-        {
-            BasicDetail? basicDetail = await context.BasicDetails.FindAsync(BasicDetailId);
-            string uniqueFileName = Guid.NewGuid() + ".pdf";
-            string dest = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "Temp", uniqueFileName);
-
-
-            PdfDocument pdfDoc = new PdfDocument(new PdfWriter(dest));
-            pdfDoc.SetDefaultPageSize(PageSize.A4);
-            Document doc = new Document(pdfDoc);
-            doc.SetMargins(36, 36, 36, 36);
-            doc.SetFontSize(14f);
-            if(basicDetail!=null)
-            {
-                Image imagePhoto = new Image(ImageDataFactory.Create(basicDetail.PhotoImagePath));
-                imagePhoto.SetMargins(0, 0, 0, 0);
-                imagePhoto.ScaleAbsolute(162, 88);
-                imagePhoto.SetHorizontalAlignment(HorizontalAlignment.CENTER);
-
-                Image imageIndiaLogo = new Image(ImageDataFactory.Create("~/writereaddata/images/gov-india-logo_2.png"));
-                imageIndiaLogo.SetMargins(0, 0, 0, 0);
-                imageIndiaLogo.ScaleAbsolute(162, 88);
-                imageIndiaLogo.SetHorizontalAlignment(HorizontalAlignment.CENTER);
-
-                Image imageArmyLogo = new Image(ImageDataFactory.Create("~/writereaddata/images/indian-army-logo.jpg"));
-                imageArmyLogo.SetMargins(0, 0, 0, 0);
-                imageArmyLogo.ScaleAbsolute(162, 88);
-                imageArmyLogo.SetHorizontalAlignment(HorizontalAlignment.CENTER);
-
-                Table table = new Table(2);
-                table.SetPadding(5);
-                table.SetSpacingRatio(2);
-                table.SetBorder(Border.NO_BORDER);
-                var paragraph_1 = new Paragraph("भारतीय सशस्त्र सेनाएँ पहचान कार्ड (IAFZ-2015)<br />INDIAN ARMED FORCES INDENTITY CARD")
-                                            .SetBold();
-                Cell cell_1 = new Cell(1,2).Add(paragraph_1);
-                cell_1.SetWidth(523);
-                return dest;
-            }
-            else
-            {
-                return null;
-            }
         }
     }
 }
