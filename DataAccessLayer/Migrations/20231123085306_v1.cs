@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace DataAccessLayer.Migrations
 {
     /// <inheritdoc />
-    public partial class vv1 : Migration
+    public partial class v1 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -70,6 +70,7 @@ namespace DataAccessLayer.Migrations
                     DOB = table.Column<DateTime>(type: "datetime2", nullable: false),
                     DateOfCommissioning = table.Column<DateTime>(type: "datetime2", nullable: false),
                     PermanentAddress = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Observations = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     IsActive = table.Column<bool>(type: "bit", nullable: false),
                     Updatedby = table.Column<int>(type: "int", nullable: false),
                     UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: false)
@@ -153,6 +154,7 @@ namespace DataAccessLayer.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     ComdName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ComdAbbreviation = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Orderby = table.Column<int>(type: "int", nullable: false),
                     IsActive = table.Column<bool>(type: "bit", nullable: false),
                     Updatedby = table.Column<int>(type: "int", nullable: false),
                     UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: false)
@@ -204,7 +206,12 @@ namespace DataAccessLayer.Migrations
                     RankId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     RankName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    RankAbbreviation = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    RankAbbreviation = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Orderby = table.Column<int>(type: "int", nullable: false),
+                    Type = table.Column<int>(type: "int", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    Updatedby = table.Column<int>(type: "int", nullable: false),
+                    UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -219,7 +226,7 @@ namespace DataAccessLayer.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Sus_no = table.Column<string>(type: "nvarchar(7)", maxLength: 7, nullable: false),
                     Suffix = table.Column<string>(type: "nvarchar(1)", maxLength: 1, nullable: false),
-                    Unit_desc = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
+                    UnitName = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
                     IsVerify = table.Column<bool>(type: "bit", nullable: false),
                     IsActive = table.Column<bool>(type: "bit", nullable: false),
                     Updatedby = table.Column<int>(type: "int", nullable: false),
@@ -228,55 +235,6 @@ namespace DataAccessLayer.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_MUnit", x => x.UnitId);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "ProfileData",
-                columns: table => new
-                {
-                    ProfileDataId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    ArmyNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ArmyNumberPart1 = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ArmyNumberPart2 = table.Column<int>(type: "int", nullable: true),
-                    ArmyNumberPart3 = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Rank = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Appointment = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    DomainId = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    UnitSusNo = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    UnitSusNoPart1 = table.Column<int>(type: "int", nullable: true),
-                    UnitSusNoPart2 = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    UnitName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    TypeOfUnit = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ComdId = table.Column<int>(type: "int", nullable: false),
-                    Corps = table.Column<int>(type: "int", nullable: false),
-                    Div = table.Column<int>(type: "int", nullable: false),
-                    Bde = table.Column<int>(type: "int", nullable: false),
-                    InitiatingOfficerArmyNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    IOArmyNumberPart1 = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    IOArmyNumberPart2 = table.Column<int>(type: "int", nullable: true),
-                    IOArmyNumberPart3 = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    IORank = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    IOName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    IOAppointment = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    IOUnitFormation = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    GISOfficerArmyNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    GISArmyNumberPart1 = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    GISArmyNumberPart2 = table.Column<int>(type: "int", nullable: true),
-                    GISArmyNumberPart3 = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    GISRank = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    GISName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    GISAppointment = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    GISUnitFormation = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    IsSubmit = table.Column<bool>(type: "bit", nullable: false),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false),
-                    Updatedby = table.Column<int>(type: "int", nullable: false),
-                    UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ProfileData", x => x.ProfileDataId);
                 });
 
             migrationBuilder.CreateTable(
@@ -290,6 +248,7 @@ namespace DataAccessLayer.Migrations
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ApptId = table.Column<int>(type: "int", nullable: false),
                     UnitId = table.Column<int>(type: "int", nullable: false),
+                    IntOffr = table.Column<bool>(type: "bit", nullable: false),
                     IsActive = table.Column<bool>(type: "bit", nullable: false),
                     Updatedby = table.Column<int>(type: "int", nullable: false),
                     UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: false)
@@ -458,6 +417,7 @@ namespace DataAccessLayer.Migrations
                 {
                     BasicDetailId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    RegistrationType = table.Column<int>(type: "int", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(36)", maxLength: 36, nullable: false),
                     ArmedId = table.Column<int>(type: "int", nullable: false),
                     RankId = table.Column<int>(type: "int", nullable: false),
@@ -470,10 +430,12 @@ namespace DataAccessLayer.Migrations
                     PlaceOfIssue = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     DateOfIssue = table.Column<DateTime>(type: "datetime2", nullable: false),
                     IssuingAuth = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    SignatureImagePath = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
+                    SignatureImagePath = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
                     PhotoImagePath = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
                     DateOfCommissioning = table.Column<DateTime>(type: "datetime2", nullable: false),
                     PermanentAddress = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    StatusLevel = table.Column<byte>(type: "tinyint", nullable: false),
+                    RegimentalId = table.Column<int>(type: "int", nullable: true),
                     Step = table.Column<int>(type: "int", nullable: false),
                     IsSubmit = table.Column<bool>(type: "bit", nullable: false),
                     IsActive = table.Column<bool>(type: "bit", nullable: false),
@@ -570,7 +532,6 @@ namespace DataAccessLayer.Migrations
                 {
                     UnitMapId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    UnitName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     UnitId = table.Column<int>(type: "int", nullable: false),
                     ComdId = table.Column<int>(type: "int", nullable: false),
                     CorpsId = table.Column<int>(type: "int", nullable: false),
@@ -766,9 +727,6 @@ namespace DataAccessLayer.Migrations
 
             migrationBuilder.DropTable(
                 name: "MMappingProfile");
-
-            migrationBuilder.DropTable(
-                name: "ProfileData");
 
             migrationBuilder.DropTable(
                 name: "UserProfile");

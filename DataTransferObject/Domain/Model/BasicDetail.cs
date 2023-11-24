@@ -58,7 +58,7 @@ namespace DataTransferObject.Domain.Model
 
         [StringLength(200)]
         [Column(TypeName = "nvarchar(200)")]
-        public string? SignatureImagePath { get; set; }
+        public string SignatureImagePath { get; set; } = string.Empty;  
 
         [StringLength(200)]
         [Column(TypeName = "nvarchar(200)")]
@@ -68,6 +68,8 @@ namespace DataTransferObject.Domain.Model
         [StringLength(100)]
         [Column(TypeName = "nvarchar(100)")]
         public string PermanentAddress { get; set; } = string.Empty;
+        public byte StatusLevel { get; set; }
+        public int? RegimentalId { get; set; }
         public int Step { get; set; }
         public bool IsSubmit { get; set; }
 

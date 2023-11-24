@@ -13,11 +13,6 @@ namespace DataTransferObject
     {
         public MappingProfile()
         {
-            CreateMap<DTOProfileDataCrtRequest, ProfileData>();
-            CreateMap<ProfileData, DTOProfileDataUpdRequest>();
-            CreateMap<DTOProfileDataUpdRequest, ProfileData>();
-            CreateMap<ProfileData, DTOProfileDataRequest>();
-
             CreateMap<DTOBasicDetailCrtRequest, BasicDetail>();
             CreateMap<BasicDetail, DTOBasicDetailUpdRequest>();
             CreateMap<BasicDetail, DTOBasicDetailRequest>();

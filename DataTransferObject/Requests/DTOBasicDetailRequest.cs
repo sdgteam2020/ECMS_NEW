@@ -112,6 +112,11 @@ namespace DataTransferObject.Requests
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
         [RegularExpression(@"^[\w \.\,\?\;\:\""\''\[\]\!\@\#\$\%\&\*\(\)\-\=\+\\\/]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
         public string PermanentAddress { get; set; } = string.Empty;
+        public byte StatusLevel { get; set; }
+        
+        [Display(Name = "RegimentalId", ResourceType = typeof(Resource))]
+        [RegularExpression(@"^[\w \.\,\?\;\:\""\''\[\]\!\@\#\$\%\&\*\(\)\-\=\+\\\/]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
+        public int? RegimentalId { get; set; }
         public bool IsSubmit { get; set; }
 
         [NotMapped]
@@ -228,6 +233,10 @@ namespace DataTransferObject.Requests
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
         [RegularExpression(@"^[\w \.\,\?\;\:\""\''\[\]\!\@\#\$\%\&\*\(\)\-\=\+\\\/]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
         public string PermanentAddress { get; set; } = string.Empty;
+
+        [Display(Name = "RegimentalId", ResourceType = typeof(Resource))]
+        [RegularExpression(@"^[\w \.\,\?\;\:\""\''\[\]\!\@\#\$\%\&\*\(\)\-\=\+\\\/]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
+        public int? RegimentalId { get; set; }
         public bool IsSubmit { get; set; }
 
         [NotMapped]

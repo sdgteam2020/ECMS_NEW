@@ -246,6 +246,9 @@
   <data name="Rank" xml:space="preserve">
     <value>Rank</value>
   </data>
+  <data name="RegimentalId" xml:space="preserve">
+    <value>Regimental</value>
+  </data>
   <data name="RegistrationType" xml:space="preserve">
     <value>Category</value>
   </data>
