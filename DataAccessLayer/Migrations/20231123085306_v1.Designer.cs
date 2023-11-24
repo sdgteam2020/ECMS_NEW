@@ -4,6 +4,7 @@ using DataAccessLayer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccessLayer.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231123085306_v1")]
+    partial class v1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -828,58 +831,6 @@ namespace DataAccessLayer.Migrations
                     b.ToTable("MApiData");
                 });
 
-            modelBuilder.Entity("DataTransferObject.Domain.Model.TrnFwd", b =>
-                {
-                    b.Property<int>("TrnFwdId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TrnFwdId"));
-
-                    b.Property<string>("ActionRemark")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("BasicDetailId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("CancelDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("FlagAccepted")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("FlagSUS")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("FromProfileId")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<byte>("StatusLevel")
-                        .HasColumnType("tinyint");
-
-                    b.Property<int>("SusNo")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("ToProfileId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("UpdatedOn")
-                        .IsRequired()
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("Updatedby")
-                        .HasColumnType("int");
-
-                    b.HasKey("TrnFwdId");
-
-                    b.HasIndex("BasicDetailId");
-
-                    b.ToTable("TrnFwds");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
                 {
                     b.Property<int>("Id")
@@ -1110,17 +1061,6 @@ namespace DataAccessLayer.Migrations
                     b.Navigation("Armed");
 
                     b.Navigation("Rank");
-                });
-
-            modelBuilder.Entity("DataTransferObject.Domain.Model.TrnFwd", b =>
-                {
-                    b.HasOne("DataTransferObject.Domain.Model.BasicDetail", "BasicDetail")
-                        .WithMany()
-                        .HasForeignKey("BasicDetailId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("BasicDetail");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>

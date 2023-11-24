@@ -42,7 +42,7 @@ namespace BusinessLogicsLayer.Service
         {
             var RegType = new List<SelectListItem>
             {
-                new SelectListItem{ Text="-- Select --", Value = null },
+                new SelectListItem{ Text="Please Select", Value = null },
                 new SelectListItem{ Text="Officer", Value = "1" },
                 new SelectListItem{ Text="JCOs/OR", Value = "2" },
             };
@@ -181,6 +181,10 @@ namespace BusinessLogicsLayer.Service
             };
             return new SelectList(rakes, "Value", "Text");
         }
+        public async Task<List<MArmedType>> GetRegimentalListByArmedId(int RegimentalId)
+        {
+            return await context.Set<MArmedType>().Where(o => o.ArmedId == RegimentalId).ToListAsync();
+        }
         public IEnumerable<SelectListItem> GetRank(int Type)
         {
             var RankOptions = context.MRank.Where(x=>x.Type== Type).OrderBy(o => o.RankName)
@@ -193,24 +197,24 @@ namespace BusinessLogicsLayer.Service
             var ddfirst = new SelectListItem()
             {
                 Value = null,
-                Text = "-- Select State--"
+                Text = "Please Select"
             };
             RankOptions.Insert(0, ddfirst);
             return new SelectList(RankOptions, "Value", "Text");
         }
         public IEnumerable<SelectListItem> GetArmedType()
         {
-            var ArmedOptions = context.MArmedType.OrderBy(o => o.ArmedName)
+            var ArmedOptions = context.MArmedType.OrderBy(o => o.Abbreviation)
                  .Select(a =>
                    new SelectListItem
                    {
                        Value = a.ArmedId.ToString(),
-                       Text = a.ArmedName,
+                       Text = a.Abbreviation,
                    }).ToList();
             var ddfirst = new SelectListItem()
             {
                 Value = null,
-                Text = "-- Select State--"
+                Text = "Please Select"
             };
             ArmedOptions.Insert(0, ddfirst);
             return new SelectList(ArmedOptions, "Value", "Text");
@@ -219,7 +223,7 @@ namespace BusinessLogicsLayer.Service
         {
             var roles = new List<SelectListItem>
             {
-                new SelectListItem{ Text="-- Select --", Value = null },
+                new SelectListItem{ Text="Please Select", Value = null },
                 new SelectListItem{ Text="User", Value = "user" },
             };
             return new SelectList(roles, "Value", "Text");
@@ -228,7 +232,7 @@ namespace BusinessLogicsLayer.Service
         {
             var roles = new List<SelectListItem>
             {
-                new SelectListItem{ Text="-- Select --", Value = null },
+                new SelectListItem{ Text="Please Select", Value = null },
                 new SelectListItem{ Text="A+", Value = "A+" },
                 new SelectListItem{ Text="A-", Value = "A-" },
                 new SelectListItem{ Text="B+", Value = "B+" },

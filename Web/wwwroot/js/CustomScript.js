@@ -1,4 +1,20 @@
-﻿function printTable(divId) {
+﻿function GetRegimentalListByArmedId(regimentalId) {
+    debugger
+    $.ajax({
+        url: "/BasicDetail/GetRegimentalListByArmedId",
+        type: "POST",
+        data: {
+            "RegimentalId": regimentalId
+        },
+        success: function (response, status) {
+            $('#RegimentalId').find('option').not(':first').remove();
+            for (var i = 0; i < response.length; i++) {
+                $('#RegimentalId').append('<option value="' + response[i].RegimentalId + '">' + response[i].Abbreviation + '</option>');
+            }
+        }
+    });
+}
+function printTable(divId) {
     var divToPrint = document.getElementById(divId);
     newWin = window.open("");
     newWin.document.write(divToPrint.outerHTML);

@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccessLayer.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20231103063857_vv1")]
-    partial class vv1
+    [Migration("20231123085921_v2")]
+    partial class v2
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -180,6 +180,9 @@ namespace DataAccessLayer.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool>("IntOffr")
+                        .HasColumnType("bit");
+
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
@@ -223,6 +226,9 @@ namespace DataAccessLayer.Migrations
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
+
+                    b.Property<int>("Orderby")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("UpdatedOn")
                         .IsRequired()
@@ -483,6 +489,12 @@ namespace DataAccessLayer.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RankId"));
 
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("Orderby")
+                        .HasColumnType("int");
+
                     b.Property<string>("RankAbbreviation")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -490,6 +502,16 @@ namespace DataAccessLayer.Migrations
                     b.Property<string>("RankName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedOn")
+                        .IsRequired()
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Updatedby")
+                        .HasColumnType("int");
 
                     b.HasKey("RankId");
 
@@ -520,7 +542,7 @@ namespace DataAccessLayer.Migrations
                         .HasMaxLength(7)
                         .HasColumnType("nvarchar(7)");
 
-                    b.Property<string>("Unit_desc")
+                    b.Property<string>("UnitName")
                         .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
@@ -562,10 +584,6 @@ namespace DataAccessLayer.Migrations
 
                     b.Property<int>("UnitId")
                         .HasColumnType("int");
-
-                    b.Property<string>("UnitName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("UpdatedOn")
                         .IsRequired()
@@ -661,14 +679,24 @@ namespace DataAccessLayer.Migrations
                     b.Property<int>("RankId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("RegimentalId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("RegistrationType")
+                        .HasColumnType("int");
+
                     b.Property<string>("ServiceNo")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("SignatureImagePath")
+                        .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
+
+                    b.Property<byte>("StatusLevel")
+                        .HasColumnType("tinyint");
 
                     b.Property<int>("Step")
                         .HasColumnType("int");
@@ -710,6 +738,11 @@ namespace DataAccessLayer.Migrations
                         .IsRequired()
                         .HasMaxLength(36)
                         .HasColumnType("nvarchar(36)");
+
+                    b.Property<string>("Observations")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("PermanentAddress")
                         .IsRequired()
@@ -798,118 +831,43 @@ namespace DataAccessLayer.Migrations
                     b.ToTable("MApiData");
                 });
 
-            modelBuilder.Entity("DataTransferObject.Domain.Model.ProfileData", b =>
+            modelBuilder.Entity("DataTransferObject.Domain.Model.TrnFwd", b =>
                 {
-                    b.Property<int>("ProfileDataId")
+                    b.Property<int>("TrnFwdId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProfileDataId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TrnFwdId"));
 
-                    b.Property<string>("Appointment")
+                    b.Property<string>("ActionRemark")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("ArmyNumber")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ArmyNumberPart1")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("ArmyNumberPart2")
+                    b.Property<int>("BasicDetailId")
                         .HasColumnType("int");
 
-                    b.Property<string>("ArmyNumberPart3")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<DateTime?>("CancelDate")
+                        .HasColumnType("datetime2");
 
-                    b.Property<int>("Bde")
+                    b.Property<bool>("FlagAccepted")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("FlagSUS")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("FromProfileId")
                         .HasColumnType("int");
-
-                    b.Property<int>("ComdId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Corps")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Div")
-                        .HasColumnType("int");
-
-                    b.Property<string>("DomainId")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("GISAppointment")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("GISArmyNumberPart1")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("GISArmyNumberPart2")
-                        .HasColumnType("int");
-
-                    b.Property<string>("GISArmyNumberPart3")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("GISName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("GISOfficerArmyNumber")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("GISRank")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("GISUnitFormation")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("IOAppointment")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("IOArmyNumberPart1")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("IOArmyNumberPart2")
-                        .HasColumnType("int");
-
-                    b.Property<string>("IOArmyNumberPart3")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("IOName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("IORank")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("IOUnitFormation")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("InitiatingOfficerArmyNumber")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
-                    b.Property<bool>("IsSubmit")
-                        .HasColumnType("bit");
+                    b.Property<byte>("StatusLevel")
+                        .HasColumnType("tinyint");
 
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Rank")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("TypeOfUnit")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("UnitName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("UnitSusNo")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("UnitSusNoPart1")
+                    b.Property<int>("SusNo")
                         .HasColumnType("int");
 
-                    b.Property<string>("UnitSusNoPart2")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("ToProfileId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("UpdatedOn")
                         .IsRequired()
@@ -918,9 +876,11 @@ namespace DataAccessLayer.Migrations
                     b.Property<int>("Updatedby")
                         .HasColumnType("int");
 
-                    b.HasKey("ProfileDataId");
+                    b.HasKey("TrnFwdId");
 
-                    b.ToTable("ProfileData");
+                    b.HasIndex("BasicDetailId");
+
+                    b.ToTable("TrnFwds");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
@@ -1153,6 +1113,17 @@ namespace DataAccessLayer.Migrations
                     b.Navigation("Armed");
 
                     b.Navigation("Rank");
+                });
+
+            modelBuilder.Entity("DataTransferObject.Domain.Model.TrnFwd", b =>
+                {
+                    b.HasOne("DataTransferObject.Domain.Model.BasicDetail", "BasicDetail")
+                        .WithMany()
+                        .HasForeignKey("BasicDetailId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("BasicDetail");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>

@@ -11,6 +11,7 @@ namespace BusinessLogicsLayer.Service
 {
     public interface IService
     {
+        public Task<List<MArmedType>> GetRegimentalListByArmedId(int RegimentalId);
         public IEnumerable<SelectListItem> GetSubmitType();
         public IEnumerable<SelectListItem> GetRegistrationType();
         public IEnumerable<SelectListItem> GetRole();

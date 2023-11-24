@@ -19,7 +19,7 @@ namespace DataAccessLayer
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         { }
-
+        public DbSet<TrnFwd> TrnFwds { get; set; } = null!;
         public DbSet<DocUpload> DocUploads { get; set; } = null!;
         public DbSet<Error> Errors { get; set; } = null!;
         public DbSet<Comd> MComd { get; set; }
@@ -33,9 +33,7 @@ namespace DataAccessLayer
         public DbSet<MArmedType> MArmedType { get; set; }
         public DbSet<MRank> MRank { get; set; }
         public DbSet<BasicDetail> BasicDetails { get; set; } = null!;
-        public DbSet<ProfileData> ProfileDatas { get; set; } = null!;
         public DbSet<BasicDetailTemp> BasicDetailTemps { get; set; } = null!;
-        public DbSet<ProfileData> ProfileData { get; set; } = null!;
         public DbSet<MUserProfile> UserProfile { get; set; } = null!;
         public DbSet<MMappingProfile> MMappingProfile { get; set; } = null!;
        
