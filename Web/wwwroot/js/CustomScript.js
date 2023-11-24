@@ -1,5 +1,4 @@
 ﻿function GetRegimentalListByArmedId(regimentalId) {
-    debugger
     $.ajax({
         url: "/BasicDetail/GetRegimentalListByArmedId",
         type: "POST",
@@ -9,7 +8,7 @@
         success: function (response, status) {
             $('#RegimentalId').find('option').not(':first').remove();
             for (var i = 0; i < response.length; i++) {
-                $('#RegimentalId').append('<option value="' + response[i].RegimentalId + '">' + response[i].Abbreviation + '</option>');
+                $('#RegimentalId').append('<option value="' + response[i].RegId + '">' + response[i].Name + '</option>');
             }
         }
     });
@@ -22,7 +21,6 @@ function printTable(divId) {
     newWin.close();
 }
 function Proceed(id) {
-    debugger
     let formId = '#' + id;
     // Check if the form exists
     if ($(formId).length === 0) {
@@ -157,22 +155,22 @@ function beforeUploadPhotoSizeCheckInEdit(id) {
     }
 }
 function beforeSubmitValidateBasicDetail(id) {
+    debugger
     let formId = '#' + id;
-
-    //$('#ArmService').prop('required', true);
-
-    $("input").prop('required', true);
-    $('#Rank').prop('required', true);
-    $('#StateId').prop('required', true);
-    $('#DistrictId').prop('required', true);
-    $('#BloodGroup').prop('required', true);
-    $('#PlaceOfIssue').prop('required', true);
-
+    let rType = $("#RegistrationType").val();
+    if (rType == 'JCO') {
+        $("#lblRegimentalId").text('');
+        let regId = $("#RegimentalId").val();
+        if (regId == '') {
+            $('#RegimentalId').prop('required', true);
+            $("#lblRegimentalId").text('Regimental is required.')
+        }
+    }
     $.validator.unobtrusive.parse($(formId));
     if ($(formId).valid()) {
-        var formData = $(formId).serialize();
-        console.log(formData);
-
+    }
+    else {
+        return false;
     }
 }
 function ProfileEnableDisabledField() {
