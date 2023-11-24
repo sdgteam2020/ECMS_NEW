@@ -16,5 +16,6 @@ namespace BusinessLogicsLayer.Master
         public Task<DTOUserProfileResponse> GetByArmyNo(string ArmyNo);
         public Task<List<MUserProfile>> GetByMArmyNo(string ArmyNo);
         public Task<List<DTOUserProfileResponse>> GetAll(string DomainId);
+        public Task<DTOUserProfileResponse> GetAllByArmyNo(string ArmyNo);
     }
 }

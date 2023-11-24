@@ -846,7 +846,8 @@ function DataBindAll() {
 
                         $("#spnMapingUserId").html($(this).closest("tr").find("#spnMMapId").html());
                         $("#spnUserId").html($(this).closest("tr").find("#spnproUserId").html());
-                        GetByArmyNo($(this).closest("tr").find("#ArmyNo").html(), 0) 
+                        GetByArmyNo($(this).closest("tr").find("#ArmyNo").html(), 0)
+                        
                         GetByArmyNo($(this).closest("tr").find("#IOArmyNo").html(), 1) 
                         GetByArmyNo($(this).closest("tr").find("#GSOArmyNo").html(), 2) 
 

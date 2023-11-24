@@ -28,6 +28,11 @@ namespace BusinessLogicsLayer.Master
             return _iUserProfileDB.GetAll(DomainId);
         }
 
+        public Task<DTOUserProfileResponse> GetAllByArmyNo(string ArmyNo)
+        {
+            return _iUserProfileDB.GetAllByArmyNo(ArmyNo);
+        }
+
         public Task<bool> GetByArmyNo(MUserProfile Data)
         {
           return  _iUserProfileDB.GetByArmyNo(Data);

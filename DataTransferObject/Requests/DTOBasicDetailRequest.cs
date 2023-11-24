@@ -131,6 +131,17 @@ namespace DataTransferObject.Requests
         [NotMapped]
         [Display(Name = "Sno", ResourceType = typeof(Resource))]
         public int Sno { get; set; }
+
+
+        [NotMapped]
+        public int StepCounter { get; set; } 
+        [NotMapped]
+        public int StepId { get; set; }       
+        [NotMapped]
+        [Display(Name = "Request For")]
+        public string ICardType { get; set; }
+        [NotMapped]
+        public int RequestId { get; set; }
     }
     public class DTOBasicDetailCrtRequest : DTOBasicDetailRequest
     {

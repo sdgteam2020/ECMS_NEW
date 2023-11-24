@@ -134,7 +134,19 @@ namespace Web.Controllers
                 return Json(KeyConstants.InternalServerError);
             }
 
-        }  
+        }
+        public async Task<IActionResult> GetAllByArmyNo(string ArmyNo)
+        {
+            try
+            {
+                return Json(await _userProfileBL.GetAllByArmyNo(ArmyNo));
+            }
+            catch (Exception ex)
+            {
+                return Json(KeyConstants.InternalServerError);
+            }
+
+        }
         public async Task<IActionResult> GetByMasterArmyNo(string ArmyNo)
         {
             try

@@ -1,5 +1,5 @@
 ﻿@model List<DTOBasicDetailRequest>
-<div class="container mt-4">
+<div class="container1 mt-4">
     <div class="card mb-3 ">
         <div class="card-header">
             <div class="row">
@@ -24,6 +24,7 @@
                                     <th>@Html.DisplayNameFor(model => model[0].DOB)</th>
                                     <th>@Html.DisplayNameFor(model => model[0].DateOfCommissioning)</th>
                                     <th>@Html.DisplayNameFor(model => model[0].PermanentAddress)</th>
+                                    <th>@Html.DisplayNameFor(model => model[0].ICardType)</th>
                                     <th class="noExport">Action</th>
                                 </tr>
                             </thead>
@@ -32,15 +33,16 @@
                                 {
                                     <tr>
                                         <td>@item.Sno</td>
-                                        <td>@item.Name</td>
-                                        <td>@item.ServiceNo</td>
+                                        <td class="PersName">@item.Name</td>
+                                        <td class="ServiceNo">@item.ServiceNo</td>
                                         <td>@item.DOB.ToString("dd/MMM/yyyy")</td>
                                         <td>@item.DateOfCommissioning.ToString("dd/MMM/yyyy")</td>
                                         <td>@item.PermanentAddress</td>
+                                        <td>@item.ICardType</td>
                                         <td class="noExport">
                                             <div class="d-flex p-2">
-                                              
-                                                <a asp-controller="BasicDetail" asp-action="View" asp-route-Id="@item.EncryptedId" class="btn btn-icon btn-round btn-primary mr-1"><i class="fa fa-eye mt-2"></i></a>
+
+                                                <a asp-controller="BasicDetail" asp-action="View" asp-route-Id="@item.EncryptedId" class="btn btn-icon btn-round btn-primary mr-1"><i class="fa fa-print mt-2"></i></a>
                                                 <a asp-controller="BasicDetail" asp-action="Edit" asp-route-Id="@item.EncryptedId" class="btn btn-icon btn-round btn-warning mr-1"><i class="fas fa-edit mt-2"></i></a>
                                                 <form method="post" asp-controller="BasicDetail" asp-action="delete" asp-route-Id="@item.EncryptedId">
                                                     <span id="confirmDeleteSpan_@item.BasicDetailId" style="display:none">
@@ -52,6 +54,10 @@
                                                         <a href="#" class="btn btn-icon btn-round btn-danger mr-1" onclick="confirmDelete('@item.BasicDetailId',true)"><i class="fas fa-trash-alt m-2"></i></a>
                                                     </span>
                                                 </form>
+                                                <spna class="spnRequestId d-none">@item.RequestId</spna>
+                                                <spna class="spnStepCounterId d-none">@item.StepCounter</spna>
+                                                <spna class="spnStepId d-none">@item.StepId</spna>
+                                                <button class="btn btn-icon btn-round btn-primary mr-1 fwdrecord"><i class="fa fa-step-forward"></i></button>
                                                 </div>
                                            
 
@@ -66,6 +72,9 @@
         </div><!-- Row End -->
     </div>
 </div>
+
 @section Scripts{
     <script asp-src-include="~/js/CustomScript.js"></script>
+    <script asp-src-include="~/developerjs/fwdrecord.js"></script>
+    <script asp-src-include="~/developerjs/token.js"></script>
 }

@@ -47,7 +47,7 @@ namespace DataTransferObject.Domain.Model
         [Column(TypeName = "nvarchar(3)")]
         public string BloodGroup { get; set; } = string.Empty;
 
-        [StringLength(50)]
+        [StringLength(50)] 
         [Column(TypeName = "nvarchar(50)")]
         public string PlaceOfIssue { get; set; } = string.Empty;
         public DateTime DateOfIssue { get; set; }
