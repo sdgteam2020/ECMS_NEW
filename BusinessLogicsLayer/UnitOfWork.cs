@@ -10,6 +10,8 @@ using BusinessLogicsLayer.Helpers;
 using BusinessLogicsLayer.Master;
 using BusinessLogicsLayer.Unit;
 using BusinessLogicsLayer.User;
+using DataAccessLayer;
+using DataAccessLayer.BaseInterfaces;
 using DataTransferObject.Domain.Master;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
@@ -25,7 +27,7 @@ namespace BusinessLogicsLayer
     {
 
 
-        public UnitOfWork(IUserBL _user, IComd _comds, ICorpsBL _corpsBL, IBdeBL _bdeCat, IDivBL divBL, IUnitBL unit, IMapUnitBL MapUnitBL, IFormationBL FormationBL, IApptBL apptBL, IArmedBL armedBL, IBasicDetailBL _basicDetailBL, IBasicDetailTempBL _basicDetailTempBL, IRankBL rankBL)
+        public UnitOfWork(IUserBL _user, IComd _comds, ICorpsBL _corpsBL, IBdeBL _bdeCat, IDivBL divBL, IUnitBL unit, IMapUnitBL MapUnitBL, IFormationBL FormationBL, IApptBL apptBL, IArmedBL armedBL, IBasicDetailBL _basicDetailBL, IBasicDetailTempBL _basicDetailTempBL, IRankBL rankBL, IRegimentalBL regimentalBL)
         {
             Users = _user;
             Comds = _comds;
@@ -40,6 +42,7 @@ namespace BusinessLogicsLayer
             BasicDetail = _basicDetailBL;
             BasicDetailTemp = _basicDetailTempBL;
             Rank = rankBL;
+            Regimental= regimentalBL;
         }
         public IUserBL Users { get; }
 
@@ -56,6 +59,9 @@ namespace BusinessLogicsLayer
         public IRankBL Rank { get; }
         public IBasicDetailBL BasicDetail { get; }
         public IBasicDetailTempBL BasicDetailTemp { get; }
+
+        public IRegimentalBL Regimental { get; }
+
         public async Task<List<DTOMasterResponse>> GetAllMMaster(DTOMasterRequest Data)
         {
             List<DTOMasterResponse> lst = new List<DTOMasterResponse>();
@@ -165,6 +171,21 @@ namespace BusinessLogicsLayer
 
                     db.Id = Forma.RankId;
                     db.Name = Forma.RankName;
+                    lst.Add(db);
+
+
+                }
+            }
+            else if (Data.id == Convert.ToInt16(Constants.MasterTbl.ArmyType))
+            {
+                var Ret = await Armed.GetAll();
+                foreach (var Forma in Ret)
+                {
+
+                    DTOMasterResponse db = new DTOMasterResponse();
+
+                    db.Id = Forma.ArmedId;
+                    db.Name = Forma.ArmedName;
                     lst.Add(db);
 
 

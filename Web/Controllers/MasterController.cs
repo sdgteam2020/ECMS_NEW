@@ -1,4 +1,5 @@
 ﻿using BusinessLogicsLayer;
+using BusinessLogicsLayer.Master;
 using DapperRepo.Core.Constants;
 using DataTransferObject.Domain.Master;
 using DataTransferObject.Requests;
@@ -12,9 +13,11 @@ namespace Web.Controllers
     public class MasterController : Controller
     {
         private readonly IUnitOfWork unitOfWork;
-        public MasterController(IUnitOfWork unitOfWork)
+        private readonly IChangeHierarchyMasterBL changeHierarchyMaster;
+        public MasterController(IUnitOfWork unitOfWork, IChangeHierarchyMasterBL changeHierarchyMaster)
         {
             this.unitOfWork = unitOfWork;
+            this.changeHierarchyMaster = changeHierarchyMaster;
         }
 
         #region Command Page
@@ -23,7 +26,7 @@ namespace Web.Controllers
 
             return View();
         }
-        public async Task<IActionResult> SaveCommand(Comd dTO)
+        public async Task<IActionResult> SaveCommand(MComd dTO)
         {
             try
             {
@@ -77,7 +80,7 @@ namespace Web.Controllers
             }
 
         }
-        public async Task<IActionResult> DeleteCommand(Comd dTO)
+        public async Task<IActionResult> DeleteCommand(MComd dTO)
         {
             try
             {
@@ -91,7 +94,7 @@ namespace Web.Controllers
 
 
         }
-        public async Task<IActionResult> OrderByChange(Comd dTO)
+        public async Task<IActionResult> OrderByChange(MComd dTO)
         {
             try
             {
@@ -109,7 +112,7 @@ namespace Web.Controllers
         {
             try
             {
-                Comd dto = new Comd();
+                MComd dto = new MComd();
                 foreach (int i in ints)
                 {
                     dto.ComdId = i;
@@ -152,6 +155,14 @@ namespace Web.Controllers
                         if (dTO.CorpsId > 0)
                         {
                             unitOfWork.Corps.Update(dTO);
+
+                            /////update Commd By CorpsId
+                            MapUnit dat = new MapUnit();
+                            dat.CorpsId = dTO.CorpsId;
+                            dat.ComdId = dTO.ComdId;
+                            changeHierarchyMaster.UpdateChageComdByCorps(dat);
+                            ////////End Code //////////////
+
                             return Json(KeyConstants.Update);
                         }
                         else
@@ -248,6 +259,14 @@ namespace Web.Controllers
                         if (dTO.DivId > 0)
                         {
                             unitOfWork.Div.Update(dTO);
+
+                            /////update Commd By CorpsId
+                            MapUnit dat = new MapUnit();
+                            dat.CorpsId = dTO.CorpsId;
+                            dat.ComdId = dTO.ComdId;
+                            dat.DivId=dTO.DivId;
+                            changeHierarchyMaster.UpdateComdCorpsByDivs(dat);
+                            ////////End Code //////////////
                             return Json(KeyConstants.Update);
                         }
                         else
@@ -341,6 +360,16 @@ namespace Web.Controllers
                         if (dTO.BdeId > 0)
                         {
                             unitOfWork.Bde.Update(dTO);
+
+                            /////update Commd By CorpsId
+                            MapUnit dat = new MapUnit();
+                            dat.CorpsId = dTO.CorpsId;
+                            dat.ComdId = dTO.ComdId;
+                            dat.DivId = dTO.DivId;
+                            dat.BdeId=dTO.BdeId;
+                            changeHierarchyMaster.UpdateComdCorpsByDivs(dat);
+                            ////////End Code //////////////
+                            ///
                             return Json(KeyConstants.Update);
                         }
                         else
@@ -947,7 +976,7 @@ namespace Web.Controllers
 
         #endregion Command
 
-        #region Command Page
+        #region ArmedType Page
         public async Task<IActionResult> ArmedType()
         {
 
@@ -1044,7 +1073,107 @@ namespace Web.Controllers
             }
         }
 
-        #endregion Command
+        #endregion ArmedType
+
+
+        #region ArmedType Page
+        public async Task<IActionResult> Regimental()
+        {
+
+            return View();
+        }
+        public async Task<IActionResult> SaveRegimental(MRegimental dTO)
+        {
+            try
+            {
+                dTO.IsActive = true;
+                dTO.Updatedby = 1;
+                dTO.UpdatedOn = DateTime.Now;
+
+                if (ModelState.IsValid)
+                {
+                    if (!await unitOfWork.Regimental.GetByName(dTO))
+                    {
+                        if (dTO.RegId > 0)
+                        {
+                            unitOfWork.Regimental.Update(dTO);
+                            return Json(KeyConstants.Update);
+                        }
+                        else
+                        {
+
+                            await unitOfWork.Regimental.Add(dTO);
+                            return Json(KeyConstants.Save);
+
+
+                        }
+                    }
+                    else
+                    {
+                        return Json(KeyConstants.Exists);
+                    }
+
+                }
+                else
+                {
+
+                    return Json(ModelState.Select(x => x.Value.Errors).Where(y => y.Count > 0).ToList());
+                }
+
+            }
+            catch (Exception ex) { return Json(KeyConstants.InternalServerError); }
+
+        }
+        public async Task<IActionResult> GetAllRegimental(int[] Id)
+        {
+            try
+            {
+                return Json(await unitOfWork.Regimental.GetAllData());
+            }
+            catch (Exception ex)
+            {
+                return Json(KeyConstants.InternalServerError);
+            }
+
+        }
+        public async Task<IActionResult> DeleteRegimental(MRegimental dTO)
+        {
+            try
+            {
+                await unitOfWork.Regimental.Delete(dTO);
+                return Json(KeyConstants.Success);
+            }
+            catch (Exception ex)
+            {
+                return Json(KeyConstants.InternalServerError);
+            }
+
+
+
+
+
+        }
+        public async Task<IActionResult> DeleteRegimentalMultiple(int[] ints)
+        {
+            try
+            {
+                MRegimental dto = new MRegimental();
+                foreach (int i in ints)
+                {
+                    dto.RegId = i;
+                    await unitOfWork.Regimental.Delete(dto);
+                }
+
+                return Json(KeyConstants.Success);
+            }
+            catch (Exception ex)
+            {
+
+                return Json(KeyConstants.InternalServerError);
+            }
+        }
+
+        #endregion ArmedType
 
         #region Master Table 
         public async Task<IActionResult> GetAllMMaster(DTOMasterRequest Data)

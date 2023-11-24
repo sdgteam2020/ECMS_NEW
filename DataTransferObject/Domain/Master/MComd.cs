@@ -8,21 +8,19 @@ using System.Threading.Tasks;
 
 namespace DataTransferObject.Domain.Master
 {
-    public class MCorps:Common
-    {
+    public class MComd: Common
+    { 
         [Key]
-        public int CorpsId { get; set; }
+        public int ComdId { get; set; }
 
         [Required(ErrorMessage = "required!")]
         [RegularExpression("^[a-zA-Z0-9 ]*$", ErrorMessage = "Only Alphabets and Numbers allowed.")]
-        public string CorpsName { get; set; }
+        public string ComdName { get; set; }
         [Required(ErrorMessage = "required!")]
-
-        [ForeignKey("Comd"), DatabaseGenerated(DatabaseGeneratedOption.None)]
-        public int ComdId { get; set; }
-
+        [RegularExpression("^[a-zA-Z0-9 ]*$", ErrorMessage = "Only Alphabets and Numbers allowed.")]
+        public string ComdAbbreviation { get; set; }
+        [Required(ErrorMessage = "required!")]
         
-        public MComd? Comd { get; set; }  
-      
+        public int Orderby { get; set; }
     }
 }

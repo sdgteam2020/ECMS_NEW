@@ -18,7 +18,7 @@ namespace DataTransferObject.Domain.Master
         public string DivName { get; set; }
 
         public int ComdId { get; set; }
-        public Comd? Comd { get; set; }
+        public MComd? Comd { get; set; }
         public int CorpsId { get; set; }
         public MCorps? Corps { get; set; }   
 

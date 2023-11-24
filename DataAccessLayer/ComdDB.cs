@@ -13,7 +13,7 @@ using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace DataAccessLayer
 {
-    public class ComdDB : GenericRepositoryDL<Comd>, IComdDB
+    public class ComdDB : GenericRepositoryDL<MComd>, IComdDB
     {
         protected readonly ApplicationDbContext _context;
         public ComdDB(ApplicationDbContext context) : base(context)
@@ -31,7 +31,7 @@ namespace DataAccessLayer
 
        
 
-         public async Task<bool> GetByName(Comd DTo)
+         public async Task<bool> GetByName(MComd DTo)
          {
             // && p.ComdId != DTo.ComdId && p.IsDeleted==true
             var ret = _context.MComd.Select(p => p.ComdName.ToUpper() == DTo.ComdName.ToUpper()).FirstOrDefault();
@@ -51,7 +51,7 @@ namespace DataAccessLayer
             return ret;
         }
 
-        public async Task<IEnumerable<Comd>> GetAllByorder()
+        public async Task<IEnumerable<MComd>> GetAllByorder()
         {
             var ret=  _context.MComd.OrderBy(x => x.Orderby).ToList();   
             return ret;

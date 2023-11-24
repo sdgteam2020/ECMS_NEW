@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace BusinessLogicsLayer.Master
 { 
-    public class Comd : GenericRepositoryDL<DataTransferObject.Domain.Master.Comd>, IComd
+    public class Comd : GenericRepositoryDL<DataTransferObject.Domain.Master.MComd>, IComd
     {
         private readonly IComdDB _iComdDB;
 
@@ -21,7 +21,7 @@ namespace BusinessLogicsLayer.Master
             _iComdDB= comdDB;   
         }
 
-        public Task<IEnumerable<DataTransferObject.Domain.Master.Comd>> GetAllByorder()
+        public Task<IEnumerable<DataTransferObject.Domain.Master.MComd>> GetAllByorder()
         {
             return _iComdDB.GetAllByorder();
         }
@@ -31,13 +31,13 @@ namespace BusinessLogicsLayer.Master
             return _iComdDB.GetByMaxOrder();    
         }
 
-        public Task<bool> GetByName(DataTransferObject.Domain.Master.Comd Dto)
+        public Task<bool> GetByName(DataTransferObject.Domain.Master.MComd Dto)
         {
             Dto.ComdName = Dto.ComdName.Trim().TrimEnd().TrimStart();    
            return _iComdDB.GetByName(Dto);   
         }
 
-        public async Task<int> OrderByChange(DataTransferObject.Domain.Master.Comd Dto)
+        public async Task<int> OrderByChange(DataTransferObject.Domain.Master.MComd Dto)
         {
             ////Current Order
             int ComdIdnext =await _iComdDB.GetComdIdbyOrderby(Dto.Orderby+1);
@@ -51,7 +51,7 @@ namespace BusinessLogicsLayer.Master
                 await Update(datanext);
 
                 ////////Change Order No For Click
-                DataTransferObject.Domain.Master.Comd data = new DataTransferObject.Domain.Master.Comd();
+                DataTransferObject.Domain.Master.MComd data = new DataTransferObject.Domain.Master.MComd();
                 data = await Get(Dto.ComdId);
                 data.Orderby = Dto.Orderby + 1;
                 await Update(data);

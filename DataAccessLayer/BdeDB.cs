@@ -6,18 +6,23 @@ using DataTransferObject.Response.User;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static Dapper.SqlMapper;
+using DataAccessLayer.Logger;
 
 namespace DataAccessLayer
 {
     public class BdeDB : GenericRepositoryDL<MBde>, IBdeDB
     {
         protected readonly ApplicationDbContext _context;
-        public BdeDB(ApplicationDbContext context) : base(context)
+       
+        public BdeDB(ApplicationDbContext context ) : base(context)
         {
             _context = context;
+          
         }
         private readonly IConfiguration configuration;
 
@@ -26,6 +31,7 @@ namespace DataAccessLayer
             var ret = _context.MBde.Any(p => p.BdeName.ToUpper() == Data.BdeName.ToUpper());
             return ret;
         }
+      
 
         public Task<List<DTOBdeResponse>> GetALLBdeCat()
         {

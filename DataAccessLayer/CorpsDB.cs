@@ -23,7 +23,7 @@ namespace DataAccessLayer
 
         public async Task<bool> GetByName(MCorps Data)
         {
-            var ret = _context.MCorps.Where(p=> p.ComdId == Data.ComdId).Select(p => p.CorpsName.ToUpper() == Data.CorpsName.ToUpper()).FirstOrDefault();
+            var ret = _context.MCorps.Where(p=> p.ComdId != Data.ComdId).Select(p => p.CorpsName.ToUpper() == Data.CorpsName.ToUpper()).FirstOrDefault();
 
           
             return ret;

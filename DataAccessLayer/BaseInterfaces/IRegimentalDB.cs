@@ -1,5 +1,4 @@
 ﻿using DataTransferObject.Domain.Master;
-using DataTransferObject.Requests;
 using DataTransferObject.Response;
 using DataTransferObject.Response.User;
 using System;
@@ -10,11 +9,9 @@ using System.Threading.Tasks;
 
 namespace DataAccessLayer.BaseInterfaces
 {
-    public interface IBdeDB : IGenericRepositoryDL<MBde>
+    public interface IRegimentalDB : IGenericRepositoryDL<MRegimental>
     {
-        public Task<bool> GetByName(MBde Data);
-        public Task<List<DTOBdeResponse>> GetALLBdeCat();
-        public Task<List<DTOBdeResponse>> GetByHId(DTOMHierarchyRequest Data);
-        
+        public Task<bool> GetByName(MRegimental Dto);
+        public Task<List<DTORegimentalResponse>> GetAllData();
     }
 }

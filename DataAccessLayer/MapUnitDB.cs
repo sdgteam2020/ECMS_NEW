@@ -25,7 +25,7 @@ namespace DataAccessLayer
 
         public async Task<bool> GetByName(MapUnit Data)
         {
-            var ret = _context.MapUnit.Any(p => p.UnitId == Data.UnitId);
+            var ret = _context.MapUnit.Any(p => p.UnitId == Data.UnitId && p.UnitMapId==0);
             return ret;
         }
 
@@ -65,7 +65,9 @@ namespace DataAccessLayer
                            ComdName = Com.ComdName,
                            ComdId = Com.ComdId,
                            Suffix=MUni.Suffix,
-                           Sus_no=MUni.Sus_no
+                           Sus_no=MUni.Sus_no,
+                           FmnBrach= uni.FmnBrach
+                           
                        }
                      ).Distinct().Take(200).ToList(); ;
 

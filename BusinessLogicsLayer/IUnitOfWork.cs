@@ -34,6 +34,9 @@ namespace BusinessLogicsLayer
         IUnitBL Unit { get; }
         IBasicDetailBL BasicDetail { get; }
         IBasicDetailTempBL BasicDetailTemp { get; }
+        IRegimentalBL Regimental { get; }
+
+
         public Task<List<DTOMasterResponse>> GetAllMMaster(DTOMasterRequest Data);
         public Task<List<DTOMasterResponse>> GetAllMMasterByParent(DTOMHierarchyRequest Data);
     }
