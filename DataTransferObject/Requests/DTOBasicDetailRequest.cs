@@ -89,7 +89,7 @@ namespace DataTransferObject.Requests
         [AllowedExtensions(new string[] { ".jpg", ".jpeg", ".png", ".gif" })]
         [AllowedContentType(new string[] { "image/jpeg", "image/jpg", "image/gif", "image/png" })]
         [MaxFileSize(50, "Signature")]
-        [Display(Name = "SignatureImagePath", ResourceType = typeof(Resource))]
+        [Display(Name = "Signature_", ResourceType = typeof(Resource))]
         public IFormFile Signature_ { get; set; }
 
         [Display(Name = "SignatureImagePath", ResourceType = typeof(Resource))]
@@ -98,7 +98,7 @@ namespace DataTransferObject.Requests
         [AllowedExtensions(new string[] { ".jpg", ".jpeg", ".png", ".gif" })]
         [AllowedContentType(new string[] { "image/jpeg", "image/jpg", "image/gif", "image/png" })]
         [MaxFileSize(200, "Photo")]
-        [Display(Name = "PhotoImagePath", ResourceType = typeof(Resource))]
+        [Display(Name = "Photo_", ResourceType = typeof(Resource))]
         public IFormFile Photo_ { get; set; }
 
         [Display(Name = "PhotoImagePath", ResourceType = typeof(Resource))]
@@ -143,6 +143,8 @@ namespace DataTransferObject.Requests
     {
         [Display(Name = "BasicDetailId", ResourceType = typeof(Resource))]
         public int BasicDetailId { get; set; }
+
+        public RegistrationType RegistrationType { get; set; }
 
         [Display(Name = "Name", ResourceType = typeof(Resource))]
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]

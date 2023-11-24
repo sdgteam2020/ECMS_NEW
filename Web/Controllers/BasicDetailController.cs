@@ -18,6 +18,7 @@ using EntityFramework.Exceptions.Common;
 using DataTransferObject.Response;
 using BusinessLogicsLayer.Service;
 using BusinessLogicsLayer;
+using DataTransferObject.Constants;
 
 namespace Web.Controllers
 {
@@ -276,6 +277,14 @@ namespace Web.Controllers
 
                 model.Updatedby = Convert.ToInt32(userId);
                 model.StatusLevel = 0;
+                if(model.RegistrationType== RegistrationType.JCO)
+                {
+                    if(model.RegimentalId == null)
+                    {
+                        ModelState.AddModelError("RegimentalId", "Regimental is required.");
+                        goto end;
+                    }
+                }
                 if (ModelState.IsValid)
                 {
                     BasicDetail newBasicDetail = _mapper.Map<DTOBasicDetailCrtRequest, BasicDetail>(model);
@@ -432,9 +441,13 @@ namespace Web.Controllers
                 //    p3 = basicDetailUpdVM.AadhaarNo.Substring(8, 4);
                 //    basicDetailUpdVM.AadhaarNo = p1 + " " + p2 + " " + p3;
                 //}
+                //basicDetailUpdVM.RegistrationType = basicDetailUpdVM.RegistrationType;
+                //basicDetailUpdVM.RegimentalId = basicDetailUpdVM.RegimentalId;
                 basicDetailUpdVM.ExistingPhotoImagePath = basicDetailUpdVM.PhotoImagePath;
                 basicDetailUpdVM.ExistingSignatureImagePath = basicDetailUpdVM.SignatureImagePath;
                 basicDetailUpdVM.EncryptedId = Id;
+                ViewBag.OptionsRegimental = service.GetRegimentalDDLIdSelected(basicDetailUpdVM.ArmedId);
+
                 return View(basicDetailUpdVM);
             }
             else

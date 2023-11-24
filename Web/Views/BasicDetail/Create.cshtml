@@ -57,7 +57,7 @@
                                     <select asp-for="RegimentalId" class="form-select">
                                         <option value="">Please Select</option>
                                     </select>
-                                    <span asp-validation-for="RegimentalId" class="text-danger"></span>
+                                    <span id="lblRegimentalId" class="text-danger"></span>
                                 </div>
                             </div>
                         }
@@ -189,7 +189,7 @@
 @*                 <button type="button" id="btngetdata" name="btngetdata" class="btn btn-primary" onclick="getUserData();">Featch Data</button>
                 <button type="button" id="btngetDummyData" name="btngetDummyData" class="btn btn-primary" onclick="getDummyData();">Dummy Data</button>
                 <button type="button" class="btn btn-primary" onclick="resetForm(this.form.id);">Clear</button> *@
-                <button type="submit" class="btn btn-primary">Submit</button> @* onclick="beforeSubmitValidateBasicDetail(this.form.id);" *@
+                <button type="submit" class="btn btn-primary" onclick="beforeSubmitValidateBasicDetail(this.form.id);">Submit</button>
                 <a asp-action="Index" asp-controller="BasicDetail" class="btn btn-primary">Back</a>
             </div>
         </form>
