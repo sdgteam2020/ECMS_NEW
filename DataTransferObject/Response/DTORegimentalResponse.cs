@@ -16,5 +16,6 @@ namespace DataTransferObject.Response
         public string Abbreviation { get; set; } 
         public int ArmedId { get; set; }
         public string ArmedName { get; set; }
+        public string Location { get; set; } = string.Empty;
     }
 }

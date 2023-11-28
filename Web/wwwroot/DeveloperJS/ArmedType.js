@@ -101,11 +101,9 @@ function BindData() {
                 }
                
                 else {
-
+                    alert(JSON.stringify(response));
                     /*$("#tblcommnd").DataTable().destroy();*/
-                   
                     for (var i = 0; i < response.length; i++) {
-                        
                             listItem += "<tr>";
                             listItem += "<td class='d-none'><span id='spnMarmedId'>" + response[i].ArmedId + "</span></td>";
                             listItem += "<td>";
@@ -113,7 +111,8 @@ function BindData() {
                             listItem += "<input type='checkbox' class='custom-control-input' id='" + response[i].ArmedId + "'>";
                             listItem += "<label class='custom-control-label' for='" + response[i].ArmedId + "'></label>";
                             listItem += "</div>";
-                            listItem += "<td class='align-middle'>" + (i+1) + "</td>";
+                            listItem += "<td class='align-middle'>" + (i + 1) + "</td>";
+                            listItem += "<td class='align-middle'><span id='armedType'>" + response[i].ArmedType + "</span></td>";
                             listItem += "<td class='align-middle'><span id='armedName'>" + response[i].ArmedName + "</span></td>";
                             listItem += "<td class='align-middle'><span id='abbreviation'>" + response[i].Abbreviation + "</span></td>";
 
@@ -177,7 +176,14 @@ function BindData() {
 
 
                     $("body").on("click", ".cls-btnedit", function () {
-                      /*  $("#AddNewM").modal('show');*/
+                        /*  $('#ddlArmedType :selected').text($(this).closest("tr").find("#armedType").html());*/
+                      
+                        var arm = $(this).closest("tr").find("#armedType").html();
+                        $('#ddlArmedType option').removeAttr("selected");
+                        $("#ddlArmedType option").filter(function () {
+                            return this.text == arm;
+                            }).attr('selected', true);
+
                         $("#txtArmedName").val($(this).closest("tr").find("#armedName").html());
                         $("#txtAbbreviation").val($(this).closest("tr").find("#abbreviation").html());
                        
@@ -225,7 +231,7 @@ function BindData() {
 }
 function Save() {
 
-      alert( $("#ddlArmedType").find(":selected").val());
+     /* alert( $("#ddlArmedType").find(":selected").val());*/
 
     $.ajax({
         url: '/Master/SaveArmed',

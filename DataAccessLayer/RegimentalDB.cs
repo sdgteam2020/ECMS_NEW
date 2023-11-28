@@ -42,7 +42,8 @@ namespace DataAccessLayer
                              Name=c.Name,
                              Abbreviation=c.Abbreviation,
                              ArmedId=c.ArmedId,
-                             ArmedName=d.ArmedName
+                             ArmedName=d.ArmedName,
+                             Location=c.Location,
 
                          }).ToList();
 

@@ -14,9 +14,7 @@ namespace DataTransferObject.Constants
     {
         [Display(Name = "Arms")]
         Arms = 1,
-        [Display(Name = "Service")]
+        [Display(Name = "Service / Corps")]
         Service = 2,
-        [Display(Name = "Corps")]
-        Corps =3
     }
 }

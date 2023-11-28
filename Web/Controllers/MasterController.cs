@@ -1076,7 +1076,7 @@ namespace Web.Controllers
         #endregion ArmedType
 
 
-        #region ArmedType Page
+        #region Regimental Page
         public async Task<IActionResult> Regimental()
         {
 

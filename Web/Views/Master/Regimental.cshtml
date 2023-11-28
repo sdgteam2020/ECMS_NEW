@@ -12,7 +12,7 @@
             <div class="row">
                 <div class="col-xl-12 text-left">
                     <h3>
-                        Regimental Centre  Details
+                        Regt Centre  Details
                         <small class="text-muted"></small>
 
 
@@ -28,44 +28,48 @@
             <div class="row">
                 <form action="" id="SaveForm" method="post" name="SaveForm">
                     <div class="row">
-                        <div class="col-xl-3">
+                        <div class="col-xl-4">
                             <div class="form-group row mb-2">
                                 <span class="spnCorpsId d-none">0</span>
-                                <label class="col-form-label col-sm-6">Select ArmType <i class="fas fa-asterisk mand1"></i></label>
+                                <label class="col-form-label col-sm-6">Name of Arms, Service & Corps <i class="fas fa-asterisk mand1"></i></label>
                                 <div class="col-sm-6">
-
-                                    <select class=" js-example-basic-single select2 form-control " style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddlArmType" required id="ddlArmType">
-                                        <option value="0">Select ArmType</option>
-
-
+                                    <select class="form-select" style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddlArmType" required id="ddlArmType">
+                                        <option value="0">Please Select</option>
                                     </select>
                                 </div>
-
                             </div>
                         </div>
-                        <div class="col-sm-3">
+                        <div class="col-sm-4">
                             <div class="form-group row mb-2">
                                 <span class="d-none" id="spnRegId">0</span>
-                                <label class="col-form-label col-sm-6">Regimental<i class="fas fa-asterisk mand1"></i></label>
-                                <div class="col-sm-6">
+                                <label class="col-form-label col-sm-5">Name of Regt Center<i class="fas fa-asterisk mand1"></i></label>
+                                <div class="col-sm-7">
 
                                     <input class="form-control Alphanumeric" placeholder="Enter Regimental" id="txtName" required pattern="^[a-zA-Z0-9 ]*$" title="Only Alphabets and Numbers allowed" />
                                 </div>
 
                             </div>
                         </div>
-                        <div class="col-sm-3">
+                        <div class="col-sm-4">
                             <div class="form-group row mb-2">
-
-                                <label class="col-form-label col-sm-6">Abbreviation<i class="fas fa-asterisk mand1"></i></label>
-                                <div class="col-sm-6">
-
+                                <label class="col-form-label col-sm-5">Abbreviation<i class="fas fa-asterisk mand1"></i></label>
+                                <div class="col-sm-7">
                                     <input class="form-control Alphanumeric" placeholder="Enter Abbreviation" id="txtAbbreviation" required pattern="^[a-zA-Z0-9 ]*$" title="Only Alphabets and Numbers allowed" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group row mb-2">
+                                <label class="col-form-label col-sm-6">Location<i class="fas fa-asterisk mand1"></i></label>
+                                <div class="col-sm-6">
+                                    <textarea class="form-control" id="txtLocation" rows="2" placeholder="Enter Location" required pattern="^[a-zA-Z0-9 ]*$" title="Only Alphabets and Numbers allowed"></textarea>
                                 </div>
 
                             </div>
                         </div>
-                        <div class="col-sm-3">
+                        <div class="col-sm-4">
                             <div class="col-sm-12 text-left">
                                 <input type="button" class="btn btn-primary " value="Save" id="btnsave" />
                             </div>
@@ -100,6 +104,7 @@
                                     <th class="nowrap">Armed Type </th>
                                     <th class="nowrap">Regimental Centre </th>
                                     <th class="nowrap">Abbreviation</th>
+                                    <th class="nowrap">Location</th>
                                     <th class="nowrap">Action</th>
 
 

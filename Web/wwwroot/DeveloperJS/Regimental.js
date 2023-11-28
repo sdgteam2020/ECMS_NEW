@@ -107,7 +107,7 @@ function BindData() {
                     for (var i = 0; i < response.length; i++) {
                         
                             listItem += "<tr>";
-                        listItem += "<td class='d-none'><span id='spnMRegId'>" + response[i].RegId + "</span><span id='spnArmedId'>" + response[i].ArmedId + "</span></td>";
+                            listItem += "<td class='d-none'><span id='spnMRegId'>" + response[i].RegId + "</span><span id='spnArmedId'>" + response[i].ArmedId + "</span></td>";
                             listItem += "<td>";
                             listItem += "<div class='custom-control custom-checkbox small'>";
                             listItem += "<input type='checkbox' class='custom-control-input' id='" + response[i].RegId + "'>";
@@ -117,6 +117,7 @@ function BindData() {
                             listItem += "<td class='align-middle'><span id='ArmedName'>" + response[i].ArmedName + "</span></td>";
                             listItem += "<td class='align-middle'><span id='Name'>" + response[i].Name + "</span></td>";
                             listItem += "<td class='align-middle'><span id='abbreviation'>" + response[i].Abbreviation + "</span></td>";
+                            listItem += "<td class='align-middle'><span id='Location'>" + response[i].Location + "</span></td>";
 
 
                             listItem += "<td class='align-middle'><span id='btnedit'><button type='button' class='cls-btnedit btn btn-icon btn-round btn-warning mr-1'><i class='fas fa-edit'></i></button></span><button type='button' class='cls-btnDelete btn-icon btn-round btn-danger mr-1'><i class='fas fa-trash-alt'></i></button></td>";
@@ -181,6 +182,7 @@ function BindData() {
                       /*  $("#AddNewM").modal('show');*/
                         $("#txtName").val($(this).closest("tr").find("#Name").html());
                         $("#txtAbbreviation").val($(this).closest("tr").find("#abbreviation").html());
+                        $("#txtLocation").val($(this).closest("tr").find("#Location").html());
                        
                         $("#spnRegId").html($(this).closest("tr").find("#spnMRegId").html());
 
@@ -228,12 +230,10 @@ function BindData() {
 }
 function Save() {
 
-    /*  alert($('#bdaymonth').val());*/
-
     $.ajax({
         url: '/Master/SaveRegimental',
         type: 'POST',
-        data: { "Name": $("#txtName").val(), "RegId": $("#spnRegId").html(), "Abbreviation": $("#txtAbbreviation").val(), "ArmedId": $("#ddlArmType").val() }, //get the search string
+        data: { "Name": $("#txtName").val(), "RegId": $("#spnRegId").html(), "Abbreviation": $("#txtAbbreviation").val(), "ArmedId": $("#ddlArmType").val(), "Location": $("#txtLocation").val(), }, //get the search string
         success: function (result) {
 
 
@@ -282,6 +282,7 @@ function Save() {
 function Reset() {
     $("#txtName").val("");
     $("#txtAbbreviation").val("");
+    $("#txtLocation").val("");
     $("#spnRegId").html("0");
     $("#ddlArmType").val("0");
 }
