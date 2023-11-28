@@ -225,12 +225,12 @@ function BindData() {
 }
 function Save() {
 
-    /*  alert($('#bdaymonth').val());*/
+      alert( $("#ddlArmedType").find(":selected").val());
 
     $.ajax({
         url: '/Master/SaveArmed',
         type: 'POST',
-        data: { "ArmedName": $("#txtArmedName").val(), "ArmedId": $("#spnArmedId").html(), "Abbreviation": $("#txtAbbreviation").val() }, //get the search string
+        data: { "ArmedName": $("#txtArmedName").val(), "ArmedType": $("#ddlArmedType").find(":selected").val(), "ArmedId": $("#spnArmedId").html(), "Abbreviation": $("#txtAbbreviation").val() }, //get the search string
         success: function (result) {
 
 

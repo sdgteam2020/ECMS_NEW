@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DataTransferObject.Constants;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -11,6 +12,10 @@ namespace DataTransferObject.Domain.Master
     {
         [Key]
         public int ArmedId { get; set; }
+        
+        [Required(ErrorMessage = "required!")]
+        [RegularExpression("^[a-zA-Z0-9 ]*$", ErrorMessage = "Only Alphabets and Numbers allowed.")]
+        public ArmedType ArmedType { get; set; }
 
         [Required(ErrorMessage = "required!")]
         [RegularExpression("^[a-zA-Z0-9 ]*$", ErrorMessage = "Only Alphabets and Numbers allowed.")]

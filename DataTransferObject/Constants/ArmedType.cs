@@ -1,5 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System;
 using System.Collections.Generic;
@@ -11,11 +10,13 @@ using System.Threading.Tasks;
 namespace DataTransferObject.Constants
 {
     [JsonConverter(typeof(StringEnumConverter))]
-    public enum RegistrationType
+    public enum ArmedType
     {
-        [Display(Name = "Officer")]
-        Officer = 1,
-        [Display(Name = "JCOs/OR")]
-        JCO = 2,
+        [Display(Name = "Arms")]
+        Arms = 1,
+        [Display(Name = "Service")]
+        Service = 2,
+        [Display(Name = "Corps")]
+        Corps =3
     }
 }
