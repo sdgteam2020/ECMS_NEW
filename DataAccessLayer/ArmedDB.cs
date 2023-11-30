@@ -48,6 +48,7 @@ namespace DataAccessLayer
                               ArmedName = A.ArmedName,
                               Abbreviation = A.Abbreviation,
                               FlagInf=A.FlagInf,
+                              Inf= A.FlagInf==true?"Yes":"No",
                               ArmedCatId = F.ArmedCatId,
                               Name = F.Name,
                           }).ToList();

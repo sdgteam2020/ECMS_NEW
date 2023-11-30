@@ -28,18 +28,7 @@
             <div class="row">
                 <form action="" id="SaveForm" method="post" name="SaveForm">
                     <div class="row">
-                        <div class="col-xl-4">
-                            <div class="form-group row mb-2">
-                                <span class="spnCorpsId d-none">0</span>
-                                <label class="col-form-label col-sm-6">Name of Arms, Service & Corps <i class="fas fa-asterisk mand1"></i></label>
-                                <div class="col-sm-6">
-                                    <select class="form-select" style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddlArmType" required id="ddlArmType">
-                                        <option value="0">Please Select</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-sm-4">
+                        <div class="col-sm-5">
                             <div class="form-group row mb-2">
                                 <span class="d-none" id="spnRegId">0</span>
                                 <label class="col-form-label col-sm-5">Name of Regt Center<i class="fas fa-asterisk mand1"></i></label>
@@ -58,15 +47,26 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-sm-4">
+                        <div class="col-sm-3">
                             <div class="form-group row mb-2">
-                                <label class="col-form-label col-sm-6">Location<i class="fas fa-asterisk mand1"></i></label>
-                                <div class="col-sm-6">
+                                <label class="col-form-label col-sm-4">Location<i class="fas fa-asterisk mand1"></i></label>
+                                <div class="col-sm-8">
                                     <textarea class="form-control" id="txtLocation" rows="2" placeholder="Enter Location" required pattern="^[a-zA-Z0-9 ]*$" title="Only Alphabets and Numbers allowed"></textarea>
                                 </div>
 
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-5">
+                            <div class="form-group row mb-2">
+                                <span class="spnCorpsId d-none">0</span>
+                                <label class="col-form-label col-sm-5">Name of Arms, Service & Corps <i class="fas fa-asterisk mand1"></i></label>
+                                <div class="col-sm-7">
+                                    <select class="form-select" style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddlArmType" required id="ddlArmType">
+                                        <option value="0">Please Select</option>
+                                    </select>
+                                </div>
                             </div>
                         </div>
                         <div class="col-sm-4">
@@ -101,10 +101,10 @@
                                         </div>
                                     </th>
                                     <th class=" wd-30-f">S No</th>
-                                    <th class="nowrap">Armed Type </th>
                                     <th class="nowrap">Regimental Centre </th>
                                     <th class="nowrap">Abbreviation</th>
                                     <th class="nowrap">Location</th>
+                                    <th class="nowrap">Armed Type </th>
                                     <th class="nowrap">Action</th>
 
 
@@ -124,8 +124,5 @@
         </div>
     </div>
 </div>
-
-
-<script src="~/developerjs/mtables.js"></script>
-
-<script src="~/developerjs/regimental.js"></script>
+<script asp-src-include="~/developerjs/mtables.js"></script>
+<script asp-src-include="~/developerjs/regimental.js"></script>

@@ -26,8 +26,6 @@ namespace DataTransferObject.Domain.Master
 
         [ForeignKey("MArmedType"), DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int ArmedId { get; set; }
-
-
         public MArmedType? MArmedType { get; set; }
         
     }

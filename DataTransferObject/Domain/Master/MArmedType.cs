@@ -16,10 +16,11 @@ namespace DataTransferObject.Domain.Master
         
         [Required(ErrorMessage = "required!")]
         [RegularExpression("^[a-zA-Z0-9 ]*$", ErrorMessage = "Only Alphabets and Numbers allowed.")]
-        public string ArmedName { get; set; }
+        public string ArmedName { get; set; } = string.Empty;
+
         [Required(ErrorMessage = "required!")]
         [RegularExpression("^[a-zA-Z0-9 ]*$", ErrorMessage = "Only Alphabets and Numbers allowed.")]
-        public string Abbreviation { get; set; }
+        public string Abbreviation { get; set; } = string.Empty;
         public bool FlagInf { get; set; } = false;
 
         [ForeignKey("MArmedCat")]

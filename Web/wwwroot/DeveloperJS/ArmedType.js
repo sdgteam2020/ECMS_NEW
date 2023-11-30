@@ -111,7 +111,7 @@ function BindData() {
                             listItem += "<td class='align-middle'>" + (i + 1) + "</td>";
                             listItem += "<td class='align-middle'><span id='armedName'>" + response[i].ArmedName + "</span></td>";
                             listItem += "<td class='align-middle'><span id='abbreviation'>" + response[i].Abbreviation + "</span></td>";
-                            listItem += "<td class='align-middle'><span id='flagInf'>" + response[i].FlagInf + "</span></td>";
+                            listItem += "<td class='align-middle'><span id='flagInf'>" + response[i].Inf + "</span></td>";
                             listItem += "<td class='align-middle'><span id='armedCat'>" + response[i].Name + "</span></td>";
 
 
@@ -180,7 +180,7 @@ function BindData() {
                         $("#txtAbbreviation").val($(this).closest("tr").find("#abbreviation").html());
 
 
-                        if ($(this).closest("tr").find("#flagInf").html() == "true") {
+                        if ($(this).closest("tr").find("#flagInf").html() == "Yes") {
 
                             $("#radioInfyes").prop("checked", true);
                         }
@@ -234,11 +234,11 @@ function BindData() {
 function Save() {
 
      /* alert( $("#ddlArmedType").find(":selected").val());*/
-
+    alert($("#radioInfyes").prop("checked"));
     $.ajax({
         url: '/Master/SaveArmed',
         type: 'POST',
-        data: { "ArmedName": $("#txtArmedName").val(), "ArmedCatId": $("#ddlArmedCat").val(), "ArmedId": $("#spnArmedId").html(), "Abbreviation": $("#txtAbbreviation").val(), "FlagInf": $("#radioInf").prop("checked") }, //get the search string 
+        data: { "ArmedName": $("#txtArmedName").val(), "ArmedCatId": $("#ddlArmedCat").val(), "ArmedId": $("#spnArmedId").html(), "Abbreviation": $("#txtAbbreviation").val(), "FlagInf": $("#radioInfyes").prop("checked") }, //get the search string 
         success: function (result) {
 
 
