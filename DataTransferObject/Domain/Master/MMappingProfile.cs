@@ -17,5 +17,6 @@ namespace DataTransferObject.Domain.Master
         public int UnitId { get; set; }
         public int IOId { get; set; }
         public int GSOId { get; set; }
+       
     }
 }

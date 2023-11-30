@@ -45,13 +45,13 @@
                                     <div class="form-group row mb-2 required">
                                         <label asp-for="ServiceNumber" class="col-form-label col-sm-6 form-label"></label>
                                         <div class="col-sm-6">
-                                            <input asp-for="ServiceNumber" class="form-control" />
+                                            <input asp-for="ServiceNumber" class="form-control" readonly />
                                             <span asp-validation-for="ServiceNumber" class="text-danger"></span>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-xl-4">
-                                    <button type="button" class="btn btn-round btn-primary" id="btngetToken">Get ICNO From Token</i></button>
+                                    @* <button type="button" class="btn btn-round btn-primary" id="btngetToken">Get ICNO From Token</i></button> *@
                                     <button type="button" id="btngetdata" name="btngetdata" class="btn btn-primary" onclick="getData(this.form.id);">Fetch Data</button>
                                 </div>
                             </div>
@@ -153,6 +153,7 @@
     }
 <script>
     $(document).ready(function () {
+        
         $("#RegistrationType").change(function () {
             $("#tokenmsg").html("");
             $("#ServiceNumber").val("");

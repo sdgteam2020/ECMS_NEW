@@ -27,6 +27,9 @@ namespace Web.Controllers
         private readonly ApplicationDbContext context, contextTransaction;
         private readonly UserManager<ApplicationUser> userManager;
         private readonly IUnitOfWork unitOfWork;
+        private readonly IStepCounterBL iStepCounterBL;
+        private readonly ITrnICardRequestBL iTrnICardRequestBL;
+        private readonly ITrnFwnBL iTrnFwnBL;
         private readonly IService service;
         private readonly IMapper _mapper;
         private readonly IWebHostEnvironment hostingEnvironment;
@@ -38,7 +41,7 @@ namespace Web.Controllers
         public DateTime dateTimenow;
         public BasicDetailController(IUnitOfWork unitOfWork, IService service, IMapper mapper, ApplicationDbContext context,
             UserManager<ApplicationUser> userManager, IWebHostEnvironment hostingEnvironment, IDataProtectionProvider dataProtectionProvider,
-                              DataProtectionPurposeStrings dataProtectionPurposeStrings, ILogger<BasicDetailController> logger)
+                              DataProtectionPurposeStrings dataProtectionPurposeStrings, ILogger<BasicDetailController> logger, IStepCounterBL iStepCounterBL, ITrnFwnBL iTrnFwnBL, ITrnICardRequestBL iTrnICardRequestBL)
         {
             this.unitOfWork = unitOfWork;
             this.service = service;
@@ -51,17 +54,56 @@ namespace Web.Controllers
             this.protector = dataProtectionProvider.CreateProtector(
                 dataProtectionPurposeStrings.AFSACIdRouteValue);
             _logger = logger;
+            this.iStepCounterBL = iStepCounterBL;
+            this.iTrnFwnBL = iTrnFwnBL;
+            this.iTrnICardRequestBL = iTrnICardRequestBL;
         }
-        [HttpGet]
+        
         [Authorize(Roles = "Admin,User")]
-        public async Task<ActionResult> Index()
+        public async Task<ActionResult> Index(int Id)
         {
-            var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var allrecord = await Task.Run(()=> unitOfWork.BasicDetail.GetALLBasicDetail(Convert.ToInt32(userId))) ;
+            var userId = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").UserId;
+            int type = 0;
+            ViewBag.Id = Id;    
+            var allrecord = await Task.Run(()=> unitOfWork.BasicDetail.GetALLBasicDetail(Convert.ToInt32(userId), Id, type)) ;
             _logger.LogInformation(1001, "Index Page Of Basic Detail View");
             ViewBag.Title = "List of Register I-Card";
             return View(allrecord);
         }
+        [Authorize(Roles = "Admin,User")]
+        public async Task<ActionResult> ApprovalForIO(int Id)
+        {
+            int type = 0;
+            var userId = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").UserId;
+            if (Id == 22)
+            {
+                Id = 2;
+                type = 1;
+            }
+            else if (Id == 33)
+            {
+                Id = 3;
+                type = 2;
+            }
+            else if (Id == 44)
+            {
+                Id = 4;
+                type = 3;
+                userId = 101;
+            }
+            else if (Id == 55)
+            {
+                Id = 5;
+                type = 4;
+                userId = 29;
+            }
+
+            var allrecord = await Task.Run(() => unitOfWork.BasicDetail.GetALLBasicDetail(Convert.ToInt32(userId), Id, type));
+            _logger.LogInformation(1001, "Index Page Of Basic Detail View");
+            ViewBag.Title = "List of Register I-Card";
+            return View(allrecord);
+        }
+
         [HttpGet]
         [Authorize(Roles = "Admin,User")]
         public async Task<ActionResult> View(string Id)
@@ -277,14 +319,6 @@ namespace Web.Controllers
 
                 model.Updatedby = Convert.ToInt32(userId);
                 model.StatusLevel = 0;
-                if(model.RegistrationType== RegistrationType.JCO)
-                {
-                    if(model.RegimentalId == null)
-                    {
-                        ModelState.AddModelError("RegimentalId", "Regimental is required.");
-                        goto end;
-                    }
-                }
                 if (ModelState.IsValid)
                 {
                     BasicDetail newBasicDetail = _mapper.Map<DTOBasicDetailCrtRequest, BasicDetail>(model);
@@ -356,9 +390,31 @@ namespace Web.Controllers
                     //{
                     //    newBasicDetail.AadhaarNo = model.AadhaarNo.Replace(" ", "");
                     //}
-                    await unitOfWork.BasicDetail.Add(newBasicDetail);
+                    BasicDetail ret=new BasicDetail();
+                    ret= await unitOfWork.BasicDetail.AddWithReturn(newBasicDetail);
+                    if (ret != null)
+                    {
+                        
+                        MTrnICardRequest mTrnICardRequest = new MTrnICardRequest();
+                        mTrnICardRequest.BasicDetailId = ret.BasicDetailId;
+                        mTrnICardRequest.Status = false;
+                        mTrnICardRequest.TypeId = 1;
+                        mTrnICardRequest.UpdatedOn = DateTime.Now;
+                        mTrnICardRequest.Updatedby = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").UserId; //SessionHeplers.GetObject<string>(HttpContext.Session, "ArmyNo");
+                        mTrnICardRequest = await iTrnICardRequestBL.AddWithReturn(mTrnICardRequest);
+                        if(mTrnICardRequest.RequestId > 0)
+                        {
+                            MStepCounter mStepCounter = new MStepCounter();
+                            mStepCounter.Step = 1;
+                            mStepCounter.RequestId = mTrnICardRequest.RequestId;
+                            mStepCounter.UpdatedOn = DateTime.Now;
+                            mStepCounter.Updatedby = 1;
+                            await iStepCounterBL.Add(mStepCounter);
+                        }
+                       
+                    }
                     TempData["success"] = "Successfully created.";
-                    return RedirectToAction("Index");
+                    return RedirectToAction("Index", new { Id = 1 });
                 }
                 else
                 {
@@ -663,6 +719,33 @@ namespace Web.Controllers
                     return Ok(responseData);
                 }
             }
+        }    
+        
+
+        public async Task<IActionResult> UpdateStepCounter(MStepCounter mStepCounter)
+        {
+           
+           
+            mStepCounter.UpdatedOn = DateTime.Now;
+            mStepCounter.Updatedby = 1;
+            await iStepCounterBL.Update(mStepCounter);
+
+            return Ok(mStepCounter);    
+        } 
+        public async Task<IActionResult> IcardFwd(MTrnFwd data)
+        {
+            try
+            {
+                data.UpdatedOn = DateTime.Now;
+                data.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                data.IsActive = true;
+                await iTrnFwnBL.Add(data);
+            }
+            catch (Exception ex) { }
+
+          
+
+            return Ok(data);    
         }
         [Authorize(Roles = "Admin,User")]
         [HttpPost]

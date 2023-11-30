@@ -959,10 +959,11 @@ namespace Web.Controllers
                             if (roles[0] == "Admin")
                             {
                                 return RedirectToActionPermanent("Dashboard", "Home");
+                                
                             }
                             else if (roles[0] == "User")
                             {
-                                return RedirectToActionPermanent("Dashboard", "Home");
+                                return RedirectToActionPermanent("index", "ConfigUser");
                             }
                             else if (roles[0] == "Super Admin")
                             {

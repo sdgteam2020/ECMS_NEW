@@ -33,12 +33,13 @@ namespace DataAccessLayer
         public DbSet<MAppointment> MAppointment { get; set; }
         public DbSet<MArmedType> MArmedType { get; set; }
         public DbSet<MRank> MRank { get; set; }
+        public DbSet<MStepCounter> TrnStepCounter { get; set; }
+        public DbSet<MTrnICardRequest> TrnICardRequest { get; set; }
         public DbSet<BasicDetail> BasicDetails { get; set; } = null!;
         public DbSet<BasicDetailTemp> BasicDetailTemps { get; set; } = null!;
         public DbSet<MUserProfile> UserProfile { get; set; } = null!;
         public DbSet<MMappingProfile> MMappingProfile { get; set; } = null!;
         public DbSet<MRegimental> MRegimental { get; set; } = null!;
-       
         public DbSet<MApiData> MApiData { get; set; }
         protected override void OnModelCreating(ModelBuilder builder)
         {

@@ -17,9 +17,9 @@ namespace BusinessLogicsLayer.BasicDet
         {
                 _iBasicDetailDB = BasicDetail;
         }
-        public Task<List<DTOBasicDetailRequest>> GetALLBasicDetail(int UserId)
+        public Task<List<DTOBasicDetailRequest>> GetALLBasicDetail(int UserId, int step, int type)
         {
-            return _iBasicDetailDB.GetALLBasicDetail(UserId);
+            return _iBasicDetailDB.GetALLBasicDetail(UserId ,step, type);
         }
     }
 }

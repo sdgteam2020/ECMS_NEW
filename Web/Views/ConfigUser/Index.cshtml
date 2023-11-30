@@ -134,7 +134,7 @@
                                                     <div class="form-group row mb-2">
                                                         <label class="col-form-label col-sm-4">Offrs Army No </label>
                                                         <div class="col-sm-8">
-                                                            <i class="fas fa-asterisk mand"></i><input type="text" readonly class="form-control" id="txtArmyNo" />
+                                                            <i class="fas fa-asterisk mand"></i><input type="text"  class="form-control" id="txtArmyNo" value="IC-00001" />
                                                             IC No fetched from token (NE)
                                                         </div>
                                                     </div>
@@ -150,8 +150,8 @@
                                                 <button type="button" id="btnfetchtoken" class="btn btn-danger font-weight-600 btn-sm">
                                                         Refresh to fetch Token Details
                                                     </button>
-                                                <button type="button" id="btnsave" class="btn btn-success font-weight-600 btn-sm">Sign Up/ Save Record (Enabled once Army No filled)</button>
-
+                                                <button type="button" id="btnConfigsave" class="btn btn-success font-weight-600 btn-sm">Go To DashBoard (Enabled once Army No filled)</button>
+                                                @* //Sign Up/ Save Record *@
                                                 
                                             </div>
                                        
@@ -178,7 +178,7 @@
         </div>
     </div>
 
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script asp-src-include="~/lib/jquery/jquery.js"></script>
 
     <script src="~/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="~/fonts/feather/feather.min.js"></script>
@@ -188,6 +188,7 @@
     <script src="~/select2/js/select2.min.js"></script>
     <script src="~/js/script.js"></script>
     <script src="~/developerjs/token.js"></script>
+    <script src="~/developerjs/userconfig.js"></script>
     <script>
         feather.replace();
     </script>
@@ -209,6 +210,8 @@
         $(".submit").click(function () {
             return false;
         })
-
+       
     });
+
+
 </script>

@@ -24,7 +24,7 @@ namespace DataTransferObject.Response
         public int UnitId { get; set; }
         public Boolean IntOffr { get; set; }
         public string SusNo { get; set; }
-
+        public int RequestId { get; set; }
         public string UnitName { get; set; }
         public string Rank { get; set;}
         public int RankId { get; set; }

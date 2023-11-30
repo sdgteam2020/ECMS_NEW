@@ -1,4 +1,18 @@
-﻿function GetRegimentalListByArmedId(regimentalId) {
+﻿$(document).ready(function () {
+    $('#RegistrationType').on('change', function () {
+        if ($('#RegistrationType').val() == 1) {
+            $("#ServiceNumber").attr("readonly", true); 
+            $("#ServiceNumber").val($("#aspntokenarmyno").html());
+        }
+        else {
+            $("#ServiceNumber").val("");
+            $("#ServiceNumber").attr("readonly", false); 
+        }
+        
+
+    });
+});
+function GetRegimentalListByArmedId(regimentalId) {
     $.ajax({
         url: "/BasicDetail/GetRegimentalListByArmedId",
         type: "POST",
@@ -397,29 +411,88 @@ function getData(id) {
         return false;
     }
     let regType = $("#RegistrationType").find(":selected").val();
+
+    var param = { "ArmyNo": $("#ServiceNumber").val() };
+
     $.ajax({
-        url: "/BasicDetail/GetData",
-        type: "POST",
-        data: {
-            "ICNumber": $("#ServiceNumber").val()
-        },
-        success: function (response, status) {
-            if (response.Status==false) {
-                alert("Data Not Found.")
+        url: '/UserProfile/GetByMasterArmyNo',
+        contentType: 'application/x-www-form-urlencoded',
+        data: param,
+        type: 'POST',
+        success: function (data) {
+
+
+
+            //return { label: item.ArmyNo, value: item.UserId };
+            if (data.length > 0) {
+
+               
+              
+                $.ajax({
+                    url: "/BasicDetail/GetData",
+                    type: "POST",
+                    data: {
+                        "ICNumber": data[0].ArmyNo
+                    },
+                    success: function (response, status) {
+                        if (response.Status == false) {
+                            alert("Data Not Found.")
+                        }
+                        else {
+                            //alert(JSON.stringify(response));
+                            $("#Name").val(response.Name);
+                            $("#ServiceNo").val(response.ServiceNo);
+                            $("#DOB").val(response.DOB);
+                            $("#DOB_").val(moment(response.DOB).format("DD-MMM-YYYY"));
+                            $("#DateOfCommissioning").val(response.DateOfCommissioning);
+                            $("#DOC").val(moment(response.DateOfCommissioning).format("DD-MMM-YYYY"));
+                            $("#PermanentAddress").val(response.PermanentAddress);
+                            $("#RegType").val(regType);
+                        }
+                    }
+                });
             }
             else {
-                //alert(JSON.stringify(response));
-                $("#Name").val(response.Name);
-                $("#ServiceNo").val(response.ServiceNo);
-                $("#DOB").val(response.DOB);
-                $("#DOB_").val(moment(response.DOB).format("DD-MMM-YYYY"));
-                $("#DateOfCommissioning").val(response.DateOfCommissioning);
-                $("#DOC").val(moment(response.DateOfCommissioning).format("DD-MMM-YYYY"));
-                $("#PermanentAddress").val(response.PermanentAddress);
-                $("#RegType").val(regType);
+                if ($('#RegistrationType').val() == 1) {
+                    alert("Profile Not Found.")
+                } else {
+                    $.ajax({
+                        url: "/BasicDetail/GetData",
+                        type: "POST",
+                        data: {
+                            "ICNumber": $("#ServiceNumber").val()
+                        },
+                        success: function (response, status) {
+                            if (response.Status == false) {
+                                alert("Data Not Found.")
+                            }
+                            else {
+                                //alert(JSON.stringify(response));
+                                $("#Name").val(response.Name);
+                                $("#ServiceNo").val(response.ServiceNo);
+                                $("#DOB").val(response.DOB);
+                                $("#DOB_").val(moment(response.DOB).format("DD-MMM-YYYY"));
+                                $("#DateOfCommissioning").val(response.DateOfCommissioning);
+                                $("#DOC").val(moment(response.DateOfCommissioning).format("DD-MMM-YYYY"));
+                                $("#PermanentAddress").val(response.PermanentAddress);
+                                $("#RegType").val(regType);
+                            }
+                        }
+                    });
+                }
             }
+
+
+        },
+        error: function (response) {
+            alert(response.responseText);
+        },
+        failure: function (response) {
+            alert(response.responseText);
         }
     });
+
+   
 }
 function confirmDelete(uniqueId, isDeleteClicked) {
     var deleteSpan = '#deleteSpan_' + uniqueId;

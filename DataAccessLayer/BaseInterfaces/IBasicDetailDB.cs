@@ -10,6 +10,6 @@ namespace DataAccessLayer.BaseInterfaces
 {
     public interface IBasicDetailDB:IGenericRepositoryDL<BasicDetail>
     {
-        public Task<List<DTOBasicDetailRequest>> GetALLBasicDetail(int UserId);
+        public Task<List<DTOBasicDetailRequest>> GetALLBasicDetail(int UserId,int step, int type);
     }
 }

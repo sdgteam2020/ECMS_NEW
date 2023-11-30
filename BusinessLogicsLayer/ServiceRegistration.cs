@@ -83,6 +83,9 @@ namespace BusinessLogicsLayer
             services.AddTransient<IBasicDetailTempDB, BasicDetailTempDB>();
 
             services.AddTransient<iGetTokenBL, GetTokenBL>();
+            services.AddTransient<IStepCounterBL, StepCounterBL>();
+            services.AddTransient<ITrnFwnBL, TrnFwnBL>();
+            services.AddTransient<ITrnICardRequestBL, TrnICardRequestBL>();
 
             services.AddTransient<IAPIDataBL, APIDataBL>();
             services.AddTransient<IAPIDataDB, APIDataDB>(); 
