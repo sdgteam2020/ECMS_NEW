@@ -12,5 +12,6 @@ namespace DataAccessLayer.BaseInterfaces
     public interface IArmedDB : IGenericRepositoryDL<MArmedType>
     {
         public Task<bool> GetByName(MArmedType Dto);
+        public Task<List<DTOArmedResponse>> GetALLArmed();
     }
 }

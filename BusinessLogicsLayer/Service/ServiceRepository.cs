@@ -181,6 +181,24 @@ namespace BusinessLogicsLayer.Service
             };
             return new SelectList(rakes, "Value", "Text");
         }
+        public IEnumerable<SelectListItem> GetArmedCat()
+        {
+            var ArmedCatOptions = context.MArmedCats.OrderBy(o => o.Order)
+                .Select(a =>
+                  new SelectListItem
+                  {
+                      Value = a.ArmedCatId.ToString(),
+                      Text = a.Name
+                  }).ToList();
+
+            var ddfirst = new SelectListItem()
+            {
+                Value = null,
+                Text = "Please Select"
+            };
+            ArmedCatOptions.Insert(0, ddfirst);
+            return new SelectList(ArmedCatOptions, "Value", "Text");
+        }
         public IEnumerable<SelectListItem> GetRegimentalDDLIdSelected(int ArmedId)
         {
             var RegimentalOptions = context.MRegimental.Where(s => s.ArmedId == ArmedId).OrderBy(o => o.Name)

@@ -1,4 +1,5 @@
 ﻿using BusinessLogicsLayer.Appt;
+using BusinessLogicsLayer.ArmedCat;
 using BusinessLogicsLayer.BasicDet;
 using BusinessLogicsLayer.BasicDetTemp;
 using BusinessLogicsLayer.Bde;
@@ -35,6 +36,7 @@ namespace BusinessLogicsLayer
         IBasicDetailBL BasicDetail { get; }
         IBasicDetailTempBL BasicDetailTemp { get; }
         IRegimentalBL Regimental { get; }
+        IArmedCatBL ArmedCat { get; }
 
 
         public Task<List<DTOMasterResponse>> GetAllMMaster(DTOMasterRequest Data);

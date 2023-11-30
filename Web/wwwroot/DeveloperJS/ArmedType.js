@@ -1,9 +1,7 @@
 $(document).ready(function () {
-
-    
-
-    
-    Reset();
+  
+   /* Reset();*/
+    mMsater(0, "ddlArmedCat", ArmyCat, "");
     BindData()
   
    
@@ -101,20 +99,20 @@ function BindData() {
                 }
                
                 else {
-                    alert(JSON.stringify(response));
                     /*$("#tblcommnd").DataTable().destroy();*/
                     for (var i = 0; i < response.length; i++) {
                             listItem += "<tr>";
-                            listItem += "<td class='d-none'><span id='spnMarmedId'>" + response[i].ArmedId + "</span></td>";
+                        listItem += "<td class='d-none'><span id='spnMarmedId'>" + response[i].ArmedId + "</span><span id='spnArmedCatId'>" + response[i].ArmedCatId + "</span></td>";
                             listItem += "<td>";
                             listItem += "<div class='custom-control custom-checkbox small'>";
                             listItem += "<input type='checkbox' class='custom-control-input' id='" + response[i].ArmedId + "'>";
                             listItem += "<label class='custom-control-label' for='" + response[i].ArmedId + "'></label>";
                             listItem += "</div>";
                             listItem += "<td class='align-middle'>" + (i + 1) + "</td>";
-                            listItem += "<td class='align-middle'><span id='armedType'>" + response[i].ArmedType + "</span></td>";
                             listItem += "<td class='align-middle'><span id='armedName'>" + response[i].ArmedName + "</span></td>";
                             listItem += "<td class='align-middle'><span id='abbreviation'>" + response[i].Abbreviation + "</span></td>";
+                            listItem += "<td class='align-middle'><span id='flagInf'>" + response[i].FlagInf + "</span></td>";
+                            listItem += "<td class='align-middle'><span id='armedCat'>" + response[i].Name + "</span></td>";
 
 
                             listItem += "<td class='align-middle'><span id='btnedit'><button type='button' class='cls-btnedit btn btn-icon btn-round btn-warning mr-1'><i class='fas fa-edit'></i></button></span><button type='button' class='cls-btnDelete btn-icon btn-round btn-danger mr-1'><i class='fas fa-trash-alt'></i></button></td>";
@@ -176,17 +174,21 @@ function BindData() {
 
 
                     $("body").on("click", ".cls-btnedit", function () {
-                        /*  $('#ddlArmedType :selected').text($(this).closest("tr").find("#armedType").html());*/
-                      
-                        var arm = $(this).closest("tr").find("#armedType").html();
-                        $('#ddlArmedType option').removeAttr("selected");
-                        $("#ddlArmedType option").filter(function () {
-                            return this.text == arm;
-                            }).attr('selected', true);
-
+                        
+                        $("#ddlArmedCat").val($(this).closest("tr").find("#spnArmedCatId").html());
                         $("#txtArmedName").val($(this).closest("tr").find("#armedName").html());
                         $("#txtAbbreviation").val($(this).closest("tr").find("#abbreviation").html());
-                       
+
+
+                        if ($(this).closest("tr").find("#flagInf").html() == "true") {
+
+                            $("#radioInfyes").prop("checked", true);
+                        }
+                        else {
+
+                            $("#radioInfno").prop("checked", true);
+
+                        }
                         $("#spnArmedId").html($(this).closest("tr").find("#spnMarmedId").html());
                         
                     });
@@ -236,7 +238,7 @@ function Save() {
     $.ajax({
         url: '/Master/SaveArmed',
         type: 'POST',
-        data: { "ArmedName": $("#txtArmedName").val(), "ArmedType": $("#ddlArmedType").find(":selected").val(), "ArmedId": $("#spnArmedId").html(), "Abbreviation": $("#txtAbbreviation").val() }, //get the search string
+        data: { "ArmedName": $("#txtArmedName").val(), "ArmedCatId": $("#ddlArmedCat").val(), "ArmedId": $("#spnArmedId").html(), "Abbreviation": $("#txtAbbreviation").val(), "FlagInf": $("#radioInf").prop("checked") }, //get the search string 
         success: function (result) {
 
 
@@ -283,6 +285,7 @@ function Save() {
 }
 
 function Reset() {
+    $("#ddlArmedCat").val("");
     $("#txtArmedName").val("");
     $("#txtAbbreviation").val("");
     $("#spnArmedId").html("0");

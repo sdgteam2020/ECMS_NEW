@@ -2,6 +2,7 @@
 using DataAccessLayer;
 using DataAccessLayer.BaseInterfaces;
 using DataTransferObject.Domain.Master;
+using DataTransferObject.Response;
 using DataTransferObject.Response.User;
 using System;
 using System.Collections.Generic;
@@ -24,6 +25,10 @@ namespace BusinessLogicsLayer.Master
         {
             Dto.ArmedName = Dto.ArmedName.Trim().TrimEnd().TrimStart();    
            return _iArmedDB.GetByName(Dto);   
+        }
+        public Task<List<DTOArmedResponse>> GetALLArmed()
+        {
+            return _iArmedDB.GetALLArmed();
         }
     }
 }

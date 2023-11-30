@@ -1,4 +1,5 @@
 ﻿using DataTransferObject.Domain.Master;
+using DataTransferObject.Response;
 using DataTransferObject.Response.User;
 using System;
 using System.Collections.Generic;
@@ -12,5 +13,6 @@ namespace BusinessLogicsLayer.Master
     {
 
         public Task<bool> GetByName(MArmedType DTo);
+        public Task<List<DTOArmedResponse>> GetALLArmed();
     }
 }

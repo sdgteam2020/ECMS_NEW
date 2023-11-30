@@ -19,6 +19,7 @@ namespace DataAccessLayer
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         { }
+        public DbSet <MArmedCat> MArmedCats { get; set; } = null!;
         public DbSet<TrnFwd> TrnFwds { get; set; } = null!;
         public DbSet<DocUpload> DocUploads { get; set; } = null!;
         public DbSet<Error> Errors { get; set; } = null!;

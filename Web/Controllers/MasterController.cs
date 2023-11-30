@@ -1024,11 +1024,11 @@ namespace Web.Controllers
             catch (Exception ex) { return Json(KeyConstants.InternalServerError); }
 
         }
-        public async Task<IActionResult> GetAllArmed(int[] Id)
+        public async Task<IActionResult> GetAllArmed()
         {
             try
             {
-                return Json(await unitOfWork.Armed.GetAll());
+                return Json(await unitOfWork.Armed.GetALLArmed());
             }
             catch (Exception ex)
             {

@@ -1,5 +1,5 @@
 ﻿function mMsater(sectid = '', ddl, TableId, ParentId) {
-
+    
 
     var userdata =
     {

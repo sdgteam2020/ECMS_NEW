@@ -1,5 +1,6 @@
 ﻿using DataAccessLayer.BaseInterfaces;
 using DataTransferObject.Domain.Master;
+using DataTransferObject.Response;
 using DataTransferObject.Response.User;
 using Microsoft.Extensions.Configuration;
 using System;
@@ -34,6 +35,25 @@ namespace DataAccessLayer
             // && p.ComdId != DTo.ComdId && p.IsDeleted==true
             var ret = _context.MArmedType.Where(P=>P.ArmedId!=DTo.ArmedId).Select(p => p.ArmedName.ToUpper() == DTo.ArmedName.ToUpper()).FirstOrDefault();
             return ret;
+        }
+        public Task<List<DTOArmedResponse>> GetALLArmed()
+        {
+            var GetALL = (from A in _context.MArmedType
+                          join F in _context.MArmedCats
+                          on A.ArmedCatId equals F.ArmedCatId
+
+                          select new DTOArmedResponse
+                          {
+                              ArmedId = A.ArmedId,
+                              ArmedName = A.ArmedName,
+                              Abbreviation = A.Abbreviation,
+                              FlagInf=A.FlagInf,
+                              ArmedCatId = F.ArmedCatId,
+                              Name = F.Name,
+                          }).ToList();
+
+
+            return Task.FromResult(GetALL);
         }
     }
 }

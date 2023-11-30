@@ -1,4 +1,5 @@
 ﻿using BusinessLogicsLayer.Appt;
+using BusinessLogicsLayer.ArmedCat;
 using BusinessLogicsLayer.BasicDet;
 using BusinessLogicsLayer.BasicDetTemp;
 using BusinessLogicsLayer.Bde;
@@ -27,7 +28,7 @@ namespace BusinessLogicsLayer
     {
 
 
-        public UnitOfWork(IUserBL _user, IComd _comds, ICorpsBL _corpsBL, IBdeBL _bdeCat, IDivBL divBL, IUnitBL unit, IMapUnitBL MapUnitBL, IFormationBL FormationBL, IApptBL apptBL, IArmedBL armedBL, IBasicDetailBL _basicDetailBL, IBasicDetailTempBL _basicDetailTempBL, IRankBL rankBL, IRegimentalBL regimentalBL)
+        public UnitOfWork(IUserBL _user, IComd _comds, ICorpsBL _corpsBL, IBdeBL _bdeCat, IDivBL divBL, IUnitBL unit, IMapUnitBL MapUnitBL, IFormationBL FormationBL, IApptBL apptBL, IArmedBL armedBL, IBasicDetailBL _basicDetailBL, IBasicDetailTempBL _basicDetailTempBL, IRankBL rankBL, IRegimentalBL regimentalBL,IArmedCatBL armedCatBL)
         {
             Users = _user;
             Comds = _comds;
@@ -43,6 +44,7 @@ namespace BusinessLogicsLayer
             BasicDetailTemp = _basicDetailTempBL;
             Rank = rankBL;
             Regimental= regimentalBL;
+            ArmedCat = armedCatBL;
         }
         public IUserBL Users { get; }
 
@@ -61,6 +63,8 @@ namespace BusinessLogicsLayer
         public IBasicDetailTempBL BasicDetailTemp { get; }
 
         public IRegimentalBL Regimental { get; }
+
+        public IArmedCatBL ArmedCat { get; }
 
         public async Task<List<DTOMasterResponse>> GetAllMMaster(DTOMasterRequest Data)
         {
@@ -189,6 +193,19 @@ namespace BusinessLogicsLayer
                     lst.Add(db);
 
 
+                }
+            }
+            else if (Data.id == Convert.ToInt16(Constants.MasterTbl.ArmyCat))
+            {
+                var Ret = await ArmedCat.GetAll();
+                foreach (var Forma in Ret)
+                {
+
+                    DTOMasterResponse db = new DTOMasterResponse();
+
+                    db.Id = Forma.ArmedCatId;
+                    db.Name = Forma.Name;
+                    lst.Add(db);
                 }
             }
             //Constants.MasterTbl.Command;
