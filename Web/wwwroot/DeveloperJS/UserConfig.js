@@ -4,7 +4,7 @@
        
         if ($("#txtArmyNo").val() != "")
         {
-            //   Gotodashboard($("#txtArmyNo").val());
+               Gotodashboard($("#txtArmyNo").val());
         }
         else
             $("#tokenmsg").html('<div class="alert alert-danger alert-dismissible fade show "><i class="fa fa-times" aria-hidden="true"></i><span class="m-lg-2">Offrs Army No Not Blank</span>.</div>');

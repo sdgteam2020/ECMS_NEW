@@ -21,6 +21,7 @@ using BusinessLogicsLayer;
 using DataTransferObject.Constants;
 using BusinessLogicsLayer.Bde;
 using Web.WebHelpers;
+using DataTransferObject.ViewModels;
 
 namespace Web.Controllers
 {
@@ -655,7 +656,7 @@ namespace Web.Controllers
                 {
                     MRank? mRank = await context.MRank.FindAsync(basicDetail.RankId);
                     ViewBag.OptionsRank = service.GetRank(mRank.Type);
-                    DTOBasicDetailUpdRequest basicDetailUpdVM = _mapper.Map<BasicDetail, DTOBasicDetailUpdRequest>(basicDetail);
+                    BasicDetailCrtAndUpdVM basicDetailUpdVM = _mapper.Map<BasicDetail, BasicDetailCrtAndUpdVM>(basicDetail);
                     //if (basicDetailUpdVM.AadhaarNo != null && basicDetailUpdVM.AadhaarNo.Length == 12)
                     //{
                     //    string p1, p2, p3;
@@ -681,12 +682,148 @@ namespace Web.Controllers
             }
             else
             {
-                return View();
+                TempData.Keep("Registration");
+                DTORegistrationRequest? model = new DTORegistrationRequest();
+                if (TempData["Registration"] != null)
+                {
+                    model = JsonConvert.DeserializeObject<DTORegistrationRequest>(TempData["Registration"].ToString());
+                    if (model.SubmitType == 1)
+                    {
+                        ViewBag.OptionsRank = service.GetRank(Convert.ToInt32(model.RegType));
+                        ViewBag.OptionsArmedType = service.GetArmedType();
+                        ViewBag.OptionsBloodGroup = service.GetBloodGroup();
+                        BasicDetailCrtAndUpdVM dTOBasicDetailCrtRequest = new BasicDetailCrtAndUpdVM();
+                        dTOBasicDetailCrtRequest.Name = model.Name;
+                        dTOBasicDetailCrtRequest.ServiceNo = model.ServiceNo;
+                        dTOBasicDetailCrtRequest.DOB = model.DOB;
+                        dTOBasicDetailCrtRequest.DateOfCommissioning = model.DateOfCommissioning;
+                        dTOBasicDetailCrtRequest.PermanentAddress = model.PermanentAddress;
+                        dTOBasicDetailCrtRequest.RegistrationType = model.RegType;
+                        dTOBasicDetailCrtRequest.DateOfIssue = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
+                        return await Task.FromResult(View(dTOBasicDetailCrtRequest));
+                    }
+                    else
+                    {
+                        return RedirectToAction("Registration");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("Registration");
+                }
+            }
+        }
+        [HttpPost]
+        [Authorize(Roles = "Admin,User")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> BasicDetail(BasicDetailCrtAndUpdVM model)
+        {
+            ViewBag.OptionsBloodGroup = service.GetBloodGroup();
+            var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            BasicDetail basicDetail = await unitOfWork.BasicDetail.Get(model.BasicDetailId);
+
+            if (basicDetail != null)
+            {
+                MRank? mRank = await context.MRank.FindAsync(basicDetail.RankId);
+                ViewBag.OptionsRank = service.GetRank(mRank.Type);
+                if (ModelState.IsValid)
+                {
+                    basicDetail.RankId = model.RankId;
+                    basicDetail.ArmedId = model.ArmedId;
+                    basicDetail.IdentityMark = model.IdentityMark;
+                    basicDetail.Height = model.Height;
+                    basicDetail.BloodGroup = model.BloodGroup;
+                    basicDetail.PlaceOfIssue = model.PlaceOfIssue;
+                    basicDetail.DateOfIssue = model.DateOfIssue;
+                    basicDetail.IssuingAuth = model.IssuingAuth;
+                    if (model.Photo_ != null)
+                    {
+                        string sourceFolderPhotoDB = "/WriteReadData/" + "Photo";
+                        string sourceFolderPhotoPhy = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "Photo");
+
+                        string FileName = service.ProcessUploadedFile(model.Photo_, sourceFolderPhotoPhy);
+                        string filePath = Path.Combine(sourceFolderPhotoPhy, FileName);
+
+                        bool imgcontentresult = service.IsImage(model.Photo_);
+
+                        bool result = service.IsValidHeader(filePath);
+
+                        if (!result || !imgcontentresult)
+                        {
+                            ModelState.AddModelError("", "File format not correct");
+                            if (System.IO.File.Exists(filePath))
+                            {
+                                System.IO.File.Delete(filePath);
+                            }
+                            goto end;
+                        }
+
+                        if (model.ExistingPhotoImagePath != null)
+                        {
+                            string f = Path.Join(hostingEnvironment.WebRootPath, basicDetail.PhotoImagePath.Replace('/', '\\').ToString());
+                            if (System.IO.File.Exists(f))
+                            {
+                                System.IO.File.Delete(f);
+                            }
+                        }
+                        basicDetail.PhotoImagePath = sourceFolderPhotoDB + "/" + FileName;
+                    }
+
+                    if (model.Signature_ != null)
+                    {
+                        string sourceFolderSignatureDB = "/WriteReadData/" + "Signature";
+                        string sourceFolderSignaturePhy = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "Signature");
+
+                        string FileName = service.ProcessUploadedFile(model.Signature_, sourceFolderSignaturePhy);
+                        string filePath = Path.Combine(sourceFolderSignaturePhy, FileName);
+
+                        bool imgcontentresult = service.IsImage(model.Signature_);
+
+                        bool result = service.IsValidHeader(filePath);
+
+                        if (!result || !imgcontentresult)
+                        {
+                            ModelState.AddModelError("", "File format not correct");
+                            if (System.IO.File.Exists(filePath))
+                            {
+                                System.IO.File.Delete(filePath);
+                            }
+                            goto end;
+                        }
+
+                        if (model.ExistingSignatureImagePath != null)
+                        {
+                            string f = Path.Join(hostingEnvironment.WebRootPath, basicDetail.SignatureImagePath.Replace("/", "\\"));
+                            if (System.IO.File.Exists(f))
+                            {
+                                System.IO.File.Delete(f);
+                            }
+                        }
+                        basicDetail.SignatureImagePath = sourceFolderSignatureDB + "/" + FileName;
+                    }
+                    //if (model.AadhaarNo != null)
+                    //{
+                    //    basicDetail.AadhaarNo = model.AadhaarNo.Replace(" ", "");
+                    //}
+                    basicDetail.AadhaarNo = model.AadhaarNo;
+                    basicDetail.Updatedby = Convert.ToInt32(userId);
+                    basicDetail.UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
+                    await unitOfWork.BasicDetail.Update(basicDetail);
+                    TempData["success"] = "Updated Successfully.";
+                    return RedirectToAction("Index");
+                }
+            }
+            else
+            {
+
             }
 
 
-        }
+        end:
+            return View(model);
 
+        }
 
         [HttpPost]
         [Authorize(Roles = "Admin,User")]

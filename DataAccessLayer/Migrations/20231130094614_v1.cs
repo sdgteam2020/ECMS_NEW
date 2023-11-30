@@ -130,20 +130,20 @@ namespace DataAccessLayer.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "MArmedType",
+                name: "MArmedCats",
                 columns: table => new
                 {
-                    ArmedId = table.Column<int>(type: "int", nullable: false)
+                    ArmedCatId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    ArmedName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Abbreviation = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Order = table.Column<int>(type: "int", nullable: false),
                     IsActive = table.Column<bool>(type: "bit", nullable: false),
                     Updatedby = table.Column<int>(type: "int", nullable: false),
                     UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_MArmedType", x => x.ArmedId);
+                    table.PrimaryKey("PK_MArmedCats", x => x.ArmedCatId);
                 });
 
             migrationBuilder.CreateTable(
@@ -219,22 +219,75 @@ namespace DataAccessLayer.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "MUnit",
+                name: "TrnDomainMapping",
                 columns: table => new
                 {
-                    UnitId = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Sus_no = table.Column<string>(type: "nvarchar(7)", maxLength: 7, nullable: false),
-                    Suffix = table.Column<string>(type: "nvarchar(1)", maxLength: 1, nullable: false),
-                    UnitName = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
-                    IsVerify = table.Column<bool>(type: "bit", nullable: false),
+                    DomianId = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<int>(type: "int", nullable: true),
+                    UnitId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TrnDomainMapping", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TrnFwds",
+                columns: table => new
+                {
+                    TrnFwdId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    RequestId = table.Column<int>(type: "int", nullable: false),
+                    FromUserId = table.Column<int>(type: "int", nullable: false),
+                    ToUserId = table.Column<int>(type: "int", nullable: true),
+                    SusNo = table.Column<int>(type: "int", nullable: false),
+                    Remark = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Status = table.Column<bool>(type: "bit", nullable: false),
+                    HType = table.Column<int>(type: "int", nullable: false),
                     IsActive = table.Column<bool>(type: "bit", nullable: false),
                     Updatedby = table.Column<int>(type: "int", nullable: false),
                     UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_MUnit", x => x.UnitId);
+                    table.PrimaryKey("PK_TrnFwds", x => x.TrnFwdId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TrnICardRequest",
+                columns: table => new
+                {
+                    RequestId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    BasicDetailId = table.Column<int>(type: "int", nullable: false),
+                    Status = table.Column<bool>(type: "bit", nullable: false),
+                    TypeId = table.Column<int>(type: "int", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    Updatedby = table.Column<int>(type: "int", nullable: false),
+                    UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TrnICardRequest", x => x.RequestId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TrnStepCounter",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    RequestId = table.Column<int>(type: "int", nullable: false),
+                    Step = table.Column<int>(type: "int", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    Updatedby = table.Column<int>(type: "int", nullable: false),
+                    UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TrnStepCounter", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -365,6 +418,31 @@ namespace DataAccessLayer.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "MArmedType",
+                columns: table => new
+                {
+                    ArmedId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ArmedName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Abbreviation = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    FlagInf = table.Column<bool>(type: "bit", nullable: false),
+                    ArmedCatId = table.Column<int>(type: "int", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    Updatedby = table.Column<int>(type: "int", nullable: false),
+                    UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MArmedType", x => x.ArmedId);
+                    table.ForeignKey(
+                        name: "FK_MArmedType_MArmedCats_ArmedCatId",
+                        column: x => x.ArmedCatId,
+                        principalTable: "MArmedCats",
+                        principalColumn: "ArmedCatId",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "MCorps",
                 columns: table => new
                 {
@@ -460,6 +538,58 @@ namespace DataAccessLayer.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "MRegimental",
+                columns: table => new
+                {
+                    RegId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Abbreviation = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Location = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ArmedId = table.Column<int>(type: "int", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    Updatedby = table.Column<int>(type: "int", nullable: false),
+                    UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MRegimental", x => x.RegId);
+                    table.ForeignKey(
+                        name: "FK_MRegimental_MArmedType_ArmedId",
+                        column: x => x.ArmedId,
+                        principalTable: "MArmedType",
+                        principalColumn: "ArmedId",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "MUnit",
+                columns: table => new
+                {
+                    UnitId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Sus_no = table.Column<string>(type: "nvarchar(7)", maxLength: 7, nullable: false),
+                    Suffix = table.Column<string>(type: "nvarchar(1)", maxLength: 1, nullable: false),
+                    UnitName = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
+                    Abbreviation = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IsVerify = table.Column<bool>(type: "bit", nullable: false),
+                    ArmedId = table.Column<int>(type: "int", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    Updatedby = table.Column<int>(type: "int", nullable: false),
+                    UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MUnit", x => x.UnitId);
+                    table.ForeignKey(
+                        name: "FK_MUnit_MArmedType_ArmedId",
+                        column: x => x.ArmedId,
+                        principalTable: "MArmedType",
+                        principalColumn: "ArmedId",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "MDiv",
                 columns: table => new
                 {
@@ -533,6 +663,7 @@ namespace DataAccessLayer.Migrations
                     UnitMapId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     UnitId = table.Column<int>(type: "int", nullable: false),
+                    FmnBrach = table.Column<bool>(type: "bit", nullable: false),
                     ComdId = table.Column<int>(type: "int", nullable: false),
                     CorpsId = table.Column<int>(type: "int", nullable: false),
                     DivId = table.Column<int>(type: "int", nullable: false),
@@ -656,6 +787,11 @@ namespace DataAccessLayer.Migrations
                 column: "UnitId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_MArmedType_ArmedCatId",
+                table: "MArmedType",
+                column: "ArmedCatId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_MBde_ComdId",
                 table: "MBde",
                 column: "ComdId");
@@ -684,6 +820,16 @@ namespace DataAccessLayer.Migrations
                 name: "IX_MDiv_CorpsId",
                 table: "MDiv",
                 column: "CorpsId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MRegimental_ArmedId",
+                table: "MRegimental",
+                column: "ArmedId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MUnit_ArmedId",
+                table: "MUnit",
+                column: "ArmedId");
         }
 
         /// <inheritdoc />
@@ -729,6 +875,21 @@ namespace DataAccessLayer.Migrations
                 name: "MMappingProfile");
 
             migrationBuilder.DropTable(
+                name: "MRegimental");
+
+            migrationBuilder.DropTable(
+                name: "TrnDomainMapping");
+
+            migrationBuilder.DropTable(
+                name: "TrnFwds");
+
+            migrationBuilder.DropTable(
+                name: "TrnICardRequest");
+
+            migrationBuilder.DropTable(
+                name: "TrnStepCounter");
+
+            migrationBuilder.DropTable(
                 name: "UserProfile");
 
             migrationBuilder.DropTable(
@@ -736,9 +897,6 @@ namespace DataAccessLayer.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
-
-            migrationBuilder.DropTable(
-                name: "MArmedType");
 
             migrationBuilder.DropTable(
                 name: "MRank");
@@ -756,7 +914,13 @@ namespace DataAccessLayer.Migrations
                 name: "MDiv");
 
             migrationBuilder.DropTable(
+                name: "MArmedType");
+
+            migrationBuilder.DropTable(
                 name: "MCorps");
+
+            migrationBuilder.DropTable(
+                name: "MArmedCats");
 
             migrationBuilder.DropTable(
                 name: "MComd");

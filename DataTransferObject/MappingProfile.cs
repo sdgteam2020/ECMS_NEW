@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using DataTransferObject.Domain.Model;
 using DataTransferObject.Requests;
+using DataTransferObject.ViewModels;
 
 namespace DataTransferObject
 {
@@ -18,6 +19,8 @@ namespace DataTransferObject
             CreateMap<BasicDetail, DTOBasicDetailRequest>();
             CreateMap<BasicDetail, BasicDetailUpdVMPart1>();
             CreateMap<BasicDetail, BasicDetailUpdVMPart2>();
+
+            CreateMap<BasicDetailCrtAndUpdVM, BasicDetail>();
 
             CreateMap<DTODocUploadCrtRequest, DocUpload>();
             CreateMap<DocUpload, DTODocUploadUpdRequest>();
