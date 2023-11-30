@@ -625,6 +625,68 @@ namespace Web.Controllers
             return View(model);
 
         }
+        [HttpGet]
+        [Authorize(Roles = "Admin,User")]
+        public async Task<ActionResult> BasicDetail(string? Id)
+        {
+            ViewBag.OptionsBloodGroup = service.GetBloodGroup();
+            ViewBag.OptionsArmedType = service.GetArmedType();
+
+            var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            string decryptedId = string.Empty;
+            int decryptedIntId = 0;
+
+            if (Id!=null)
+            {
+                try
+                {
+                    // Decrypt the  id using Unprotect method
+                    decryptedId = protector.Unprotect(Id);
+                    decryptedIntId = Convert.ToInt32(decryptedId);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(1001, ex, "This error occure because Id value change by user.");
+                    return RedirectToAction("Error", "Error");
+                }
+                BasicDetail? basicDetail = await unitOfWork.BasicDetail.Get(decryptedIntId);
+
+                if (basicDetail != null)
+                {
+                    MRank? mRank = await context.MRank.FindAsync(basicDetail.RankId);
+                    ViewBag.OptionsRank = service.GetRank(mRank.Type);
+                    DTOBasicDetailUpdRequest basicDetailUpdVM = _mapper.Map<BasicDetail, DTOBasicDetailUpdRequest>(basicDetail);
+                    //if (basicDetailUpdVM.AadhaarNo != null && basicDetailUpdVM.AadhaarNo.Length == 12)
+                    //{
+                    //    string p1, p2, p3;
+                    //    p1 = basicDetailUpdVM.AadhaarNo.Substring(0, 4);
+                    //    p2 = basicDetailUpdVM.AadhaarNo.Substring(4, 4);
+                    //    p3 = basicDetailUpdVM.AadhaarNo.Substring(8, 4);
+                    //    basicDetailUpdVM.AadhaarNo = p1 + " " + p2 + " " + p3;
+                    //}
+                    //basicDetailUpdVM.RegistrationType = basicDetailUpdVM.RegistrationType;
+                    //basicDetailUpdVM.RegimentalId = basicDetailUpdVM.RegimentalId;
+                    basicDetailUpdVM.ExistingPhotoImagePath = basicDetailUpdVM.PhotoImagePath;
+                    basicDetailUpdVM.ExistingSignatureImagePath = basicDetailUpdVM.SignatureImagePath;
+                    basicDetailUpdVM.EncryptedId = Id;
+                    ViewBag.OptionsRegimental = service.GetRegimentalDDLIdSelected(basicDetailUpdVM.ArmedId);
+
+                    return View(basicDetailUpdVM);
+                }
+                else
+                {
+                    Response.StatusCode = 404;
+                    return View("BasicDetailNotFound", decryptedId.ToString());
+                }
+            }
+            else
+            {
+                return View();
+            }
+
+
+        }
+
 
         [HttpPost]
         [Authorize(Roles = "Admin,User")]

@@ -39,7 +39,7 @@ namespace DataAccessLayer.Migrations
 
                     b.HasKey("ErrorId");
 
-                    b.ToTable("Errors");
+                    b.ToTable("Errors", (string)null);
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Identitytable.ApplicationRole", b =>
@@ -202,7 +202,7 @@ namespace DataAccessLayer.Migrations
 
                     b.HasKey("UserId");
 
-                    b.ToTable("UserProfile");
+                    b.ToTable("UserProfile", (string)null);
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Master.MAppointment", b =>
@@ -237,7 +237,7 @@ namespace DataAccessLayer.Migrations
 
                     b.HasIndex("mFormationFormationId");
 
-                    b.ToTable("MAppointment");
+                    b.ToTable("MAppointment", (string)null);
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Master.MArmedCat", b =>
@@ -267,7 +267,7 @@ namespace DataAccessLayer.Migrations
 
                     b.HasKey("ArmedCatId");
 
-                    b.ToTable("MArmedCats");
+                    b.ToTable("MArmedCats", (string)null);
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Master.MArmedType", b =>
@@ -306,7 +306,7 @@ namespace DataAccessLayer.Migrations
 
                     b.HasIndex("ArmedCatId");
 
-                    b.ToTable("MArmedType");
+                    b.ToTable("MArmedType", (string)null);
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Master.MBde", b =>
@@ -348,7 +348,7 @@ namespace DataAccessLayer.Migrations
 
                     b.HasIndex("DivId");
 
-                    b.ToTable("MBde");
+                    b.ToTable("MBde", (string)null);
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Master.MComd", b =>
@@ -382,7 +382,7 @@ namespace DataAccessLayer.Migrations
 
                     b.HasKey("ComdId");
 
-                    b.ToTable("MComd");
+                    b.ToTable("MComd", (string)null);
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Master.MCorps", b =>
@@ -414,7 +414,7 @@ namespace DataAccessLayer.Migrations
 
                     b.HasIndex("ComdId");
 
-                    b.ToTable("MCorps");
+                    b.ToTable("MCorps", (string)null);
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Master.MDiv", b =>
@@ -451,7 +451,7 @@ namespace DataAccessLayer.Migrations
 
                     b.HasIndex("CorpsId");
 
-                    b.ToTable("MDiv");
+                    b.ToTable("MDiv", (string)null);
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Master.MFormation", b =>
@@ -478,7 +478,7 @@ namespace DataAccessLayer.Migrations
 
                     b.HasKey("FormationId");
 
-                    b.ToTable("MFormation");
+                    b.ToTable("MFormation", (string)null);
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Master.MMappingProfile", b =>
@@ -513,7 +513,7 @@ namespace DataAccessLayer.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("MMappingProfile");
+                    b.ToTable("MMappingProfile", (string)null);
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Master.MRank", b =>
@@ -550,7 +550,7 @@ namespace DataAccessLayer.Migrations
 
                     b.HasKey("RankId");
 
-                    b.ToTable("MRank");
+                    b.ToTable("MRank", (string)null);
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Master.MRegimental", b =>
@@ -590,7 +590,7 @@ namespace DataAccessLayer.Migrations
 
                     b.HasIndex("ArmedId");
 
-                    b.ToTable("MRegimental");
+                    b.ToTable("MRegimental", (string)null);
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Master.MUnit", b =>
@@ -640,7 +640,7 @@ namespace DataAccessLayer.Migrations
 
                     b.HasIndex("ArmedId");
 
-                    b.ToTable("MUnit");
+                    b.ToTable("MUnit", (string)null);
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Master.MapUnit", b =>
@@ -691,7 +691,7 @@ namespace DataAccessLayer.Migrations
 
                     b.HasIndex("UnitId");
 
-                    b.ToTable("MapUnit");
+                    b.ToTable("MapUnit", (string)null);
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Model.BasicDetail", b =>
@@ -801,7 +801,7 @@ namespace DataAccessLayer.Migrations
 
                     b.HasIndex("RankId");
 
-                    b.ToTable("BasicDetails");
+                    b.ToTable("BasicDetails", (string)null);
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Model.BasicDetailTemp", b =>
@@ -850,7 +850,7 @@ namespace DataAccessLayer.Migrations
 
                     b.HasKey("BasicDetailTempId");
 
-                    b.ToTable("BasicDetailTemps");
+                    b.ToTable("BasicDetailTemps", (string)null);
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Model.DocUpload", b =>
@@ -884,7 +884,7 @@ namespace DataAccessLayer.Migrations
 
                     b.HasKey("DocUploadId");
 
-                    b.ToTable("DocUploads");
+                    b.ToTable("DocUploads", (string)null);
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Model.MApiData", b =>
@@ -915,7 +915,7 @@ namespace DataAccessLayer.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("MApiData");
+                    b.ToTable("MApiData", (string)null);
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Model.TrnFwd", b =>
@@ -967,7 +967,7 @@ namespace DataAccessLayer.Migrations
 
                     b.HasIndex("BasicDetailId");
 
-                    b.ToTable("TrnFwds");
+                    b.ToTable("TrnFwds", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
