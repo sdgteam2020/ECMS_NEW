@@ -41,6 +41,7 @@ namespace DataAccessLayer
         public DbSet<MMappingProfile> MMappingProfile { get; set; } = null!;
         public DbSet<MRegimental> MRegimental { get; set; } = null!;
         public DbSet<MApiData> MApiData { get; set; }
+        public DbSet<TrnDomainMapping> TrnDomainMapping { get; set; }
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
