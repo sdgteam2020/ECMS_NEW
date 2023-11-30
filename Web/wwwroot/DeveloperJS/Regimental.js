@@ -114,11 +114,10 @@ function BindData() {
                             listItem += "<label class='custom-control-label' for='" + response[i].RegId + "'></label>";
                             listItem += "</div>";
                             listItem += "<td class='align-middle'>" + (i+1) + "</td>";
-                            listItem += "<td class='align-middle'><span id='ArmedName'>" + response[i].ArmedName + "</span></td>";
                             listItem += "<td class='align-middle'><span id='Name'>" + response[i].Name + "</span></td>";
                             listItem += "<td class='align-middle'><span id='abbreviation'>" + response[i].Abbreviation + "</span></td>";
                             listItem += "<td class='align-middle'><span id='Location'>" + response[i].Location + "</span></td>";
-
+                            listItem += "<td class='align-middle'><span id='ArmedName'>" + response[i].ArmedName + "</span></td>";
 
                             listItem += "<td class='align-middle'><span id='btnedit'><button type='button' class='cls-btnedit btn btn-icon btn-round btn-warning mr-1'><i class='fas fa-edit'></i></button></span><button type='button' class='cls-btnDelete btn-icon btn-round btn-danger mr-1'><i class='fas fa-trash-alt'></i></button></td>";
 
