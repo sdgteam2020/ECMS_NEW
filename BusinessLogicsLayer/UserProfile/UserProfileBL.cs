@@ -23,29 +23,29 @@ namespace BusinessLogicsLayer.Master
             _iUserProfileDB = userProfileDB;   
         }
 
-        public Task<List<DTOUserProfileResponse>> GetAll(string DomainId)
+        public Task<List<DTOUserProfileResponse>> GetAll(string DomainId, int UserId)
         {
-            return _iUserProfileDB.GetAll(DomainId);
+            return _iUserProfileDB.GetAll(DomainId, UserId);
         }
 
-        public Task<DTOUserProfileResponse> GetAllByArmyNo(string ArmyNo)
+        public Task<DTOUserProfileResponse> GetAllByArmyNo(string ArmyNo, int UserId)
         {
-            return _iUserProfileDB.GetAllByArmyNo(ArmyNo);
+            return _iUserProfileDB.GetAllByArmyNo(ArmyNo, UserId);
         }
 
-        public Task<bool> GetByArmyNo(MUserProfile Data)
+        public Task<bool> GetByArmyNo(MUserProfile Data, int UserId)
         {
-          return  _iUserProfileDB.GetByArmyNo(Data);
+          return  _iUserProfileDB.GetByArmyNo(Data, UserId);
         }
 
-        public Task<DTOUserProfileResponse> GetByArmyNo(string ArmyNo)
+        public Task<DTOUserProfileResponse> GetByArmyNo(string ArmyNo, int UserId)
         {
-            return _iUserProfileDB.GetByArmyNo(ArmyNo);
+            return _iUserProfileDB.GetByArmyNo(ArmyNo, UserId);
         }
 
-        public Task<List<MUserProfile>> GetByMArmyNo(string ArmyNo)
+        public Task<List<MUserProfile>> GetByMArmyNo(string ArmyNo, int UserId)
         {
-            return _iUserProfileDB.GetByMArmyNo(ArmyNo);
+            return _iUserProfileDB.GetByMArmyNo(ArmyNo, UserId);
         }
     }
 }

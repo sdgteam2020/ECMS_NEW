@@ -4,8 +4,8 @@ $(document).ready(function () {
     $("#btnAddProfile").click(function () {
         reset();
         $("#AddNewProfile").modal('show');
-     
-
+       
+        GetArmynoMasterdata($("#aspntokenarmyno").html());
     });
     $("#btnProfileReset").click(function () {
         reset();
@@ -290,23 +290,7 @@ $(document).ready(function () {
     $("#btnProfileSerch").click(function () {
        
         
-            $.ajax({
-                url: "/BasicDetail/GetData",
-                type: "POST",
-                data: {
-                    "ICNumber": $('#txtProArmy').val()
-                },
-                success: function (response, status) {
-                    if (status == "success") {
-                        $('#txtProArmy').val(response.ServiceNo);
-                        $('#txtName').val(response.Name);
-                        toastr.success('Found from API!');
-                    }
-                    else {
-                        toastr.error('Army No Not Found in API!');
-                    }
-                }
-            });
+        GetDataFromAPIbYArmyNo();
         
     });
 
@@ -685,6 +669,63 @@ $(document).ready(function () {
         appendTo: '#suggesstion-box'
     });
 });
+function GetDataFromAPIbYArmyNo(ArmyNo) {
+    $.ajax({
+        url: "/BasicDetail/GetData",
+        type: "POST",
+        data: {
+            "ICNumber": ArmyNo
+        },
+        success: function (response, status) {
+            if (status == "success") {
+                $('#txtProArmy').val(response.ServiceNo);
+                $('#txtName').val(response.Name);
+                toastr.success('Found from API!');
+            }
+            else {
+                toastr.error('Army No Not Found in API!');
+            }
+        }
+    });
+}
+function GetArmynoMasterdata(ArmyNo) {
+   
+    $("#btnProfileSerch").removeClass('d-none');
+    $("#spnUserIdIO").html(0);
+    resetProfile();
+    resetUnit();
+
+    var param = { "ArmyNo": ArmyNo };
+
+    $.ajax({
+        url: '/UserProfile/GetByMasterArmyNo',
+        contentType: 'application/x-www-form-urlencoded',
+        data: param,
+        type: 'POST',
+        success: function (data) {
+            
+
+               
+            //return { label: item.ArmyNo, value: item.UserId };
+            if (data.length > 0) {
+
+                $("#btnProfileSerch").addClass('d-none');
+                GetByArmyNo(data[0].ArmyNo, 0)
+            }
+            else {
+                GetDataFromAPIbYArmyNo(ArmyNo);
+            }
+
+            
+        },
+        error: function (response) {
+            alert(response.responseText);
+        },
+        failure: function (response) {
+            alert(response.responseText);
+        }
+    });
+}
 function DataBindAll() {
     var listItem = "";
     var userdata =
@@ -772,8 +813,8 @@ function DataBindAll() {
                             listItem += "<td class='align-middle'><span id='ArmyNo'>" + response[i].ArmyNo + "</span></td>";
                             listItem += "<td class='align-middle'><span id='Name'>" + response[i].Name + "</span></td>";
                             listItem += "<td class='align-middle'><span id='Rank'>" + response[i].Rank + "</span></td>";
-                        listItem += "<td class='align-middle'><span id='AppointmentName'>" + response[i].AppointmentName + "</span></td>";
-                        listItem += "<td class='align-middle'><span id='Unit_desc'>" + response[i].UnitName + "(" + response[i].SusNo + ")</span></td>";
+                            listItem += "<td class='align-middle'><span id='AppointmentName'>" + response[i].AppointmentName + "</span></td>";
+                            listItem += "<td class='align-middle'><span id='Unit_desc'>" + response[i].UnitName + "(" + response[i].SusNo + ")</span></td>";
                             listItem += "<td class='align-middle'><span id='IOArmyNo'>" + response[i].IOArmyNo + "</span></td>";
                             //listItem += "<td class='align-middle'><span id='IOName'>" + response[i].IOName + "</span></td>";
                             // listItem += "<td class='align-middle'><span id='UnitIo'>" + response[i].UnitIo + "(" + response[i].IOSusNo +")</span></td>";
@@ -781,9 +822,10 @@ function DataBindAll() {
                             listItem += "<td class='align-middle'><span id='GSOArmyNo'>" + response[i].GSOArmyNo + "</span></td>";
                             //listItem += "<td class='align-middle'><span id='GSOName'>" + response[i].GSOName + "</span></td>";
                             //  listItem += "<td class='align-middle'><span id='UnitGSO'>" + response[i].UnitGSO + "(" + response[i].GSOSusNo +")</span></td>";
-
+                        if ($("#aspntokenarmyno").html() == response[i].ArmyNo)
                             listItem += "<td class='align-middle'><span id='btneditpro'><button type='button' class='cls-btneditpro btn btn-icon btn-round btn-primary mr-1'><i class='fas fa-edit'></i></button></span><button type='button' class='cls-btnDelete btn-icon btn-round btn-danger mr-1'><i class='fas fa-trash-alt'></i></button></td>";
-
+                        else
+                            listItem += "<td class='align-middle'></td>";
 
                             /*    listItem += "<td class='nowrap'><button type='button' class='cls-btnSend btn btn-outline-success mr-1'>Send To Verification</button></td>";*/
                             listItem += "</tr>";
@@ -933,13 +975,13 @@ function SaveUserProfile(ArmyNo, Rank, Name, Appt, Unit, IntOffr, Type, IO, GSO,
             if (result == DataSave) {
                 toastr.success('User has been saved');
                 GetByArmyNo(ArmyNo, Type, Unit,IO, GSO);
-                $("#AddNewProfile").modal('hide');
+               
                 DataBindAll();
             }
             else if (result == DataUpdate) {
                 toastr.success('User has been Updated');
                 GetByArmyNo(ArmyNo, Type, Unit, IO, GSO);
-                $("#AddNewProfile").modal('hide');
+               
                 DataBindAll();
             }
             else if (result == DataExists) {

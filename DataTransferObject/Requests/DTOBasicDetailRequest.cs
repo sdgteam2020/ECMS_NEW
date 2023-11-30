@@ -139,7 +139,7 @@ namespace DataTransferObject.Requests
         public int StepId { get; set; }       
         [NotMapped]
         [Display(Name = "Request For")]
-        public string ICardType { get; set; }
+        public string? ICardType { get; set; }
         [NotMapped]
         public int RequestId { get; set; }
     }

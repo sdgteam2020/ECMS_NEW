@@ -4,6 +4,7 @@ using DapperRepo.Core.Constants;
 using DataTransferObject.Domain;
 using DataTransferObject.Domain.Master;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace Web.Controllers
 {
@@ -29,12 +30,12 @@ namespace Web.Controllers
                 if (dTO.UnitId != 0 && dTO.RankId != 0 && dTO.ApptId != 0)
                 {
                     dTO.IsActive = true;
-                    dTO.Updatedby = 1;
+                    dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                     dTO.UpdatedOn = DateTime.Now;
-
+                    int userid = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                     if (ModelState.IsValid)
                     {
-                        if (!await _userProfileBL.GetByArmyNo(dTO))
+                        if (!await _userProfileBL.GetByArmyNo(dTO, userid))
                         {
                             if (dTO.UserId > 0)
                             {
@@ -74,9 +75,9 @@ namespace Web.Controllers
             try
             {
                 dTO.IsActive = true;
-                dTO.Updatedby = 1;
+                dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                 dTO.UpdatedOn = DateTime.Now;
-
+                
                 if (ModelState.IsValid)
                 {
                     //if (!await _userProfileBL.GetByArmyNo(dTO))
@@ -115,7 +116,8 @@ namespace Web.Controllers
         {
             try
             {
-                return Json(await _userProfileBL.GetAll(Id));
+                int userid = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                return Json(await _userProfileBL.GetAll(Id, userid));
             }
             catch (Exception ex)
             {
@@ -127,7 +129,8 @@ namespace Web.Controllers
         {
             try
             {
-                return Json(await _userProfileBL.GetByArmyNo(ArmyNo));
+                int userid = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                return Json(await _userProfileBL.GetByArmyNo(ArmyNo, userid));
             }
             catch (Exception ex)
             {
@@ -139,7 +142,8 @@ namespace Web.Controllers
         {
             try
             {
-                return Json(await _userProfileBL.GetAllByArmyNo(ArmyNo));
+                int userid = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                return Json(await _userProfileBL.GetAllByArmyNo(ArmyNo, userid));
             }
             catch (Exception ex)
             {
@@ -151,7 +155,8 @@ namespace Web.Controllers
         {
             try
             {
-                return Json(await _userProfileBL.GetByMArmyNo(ArmyNo));
+                int userid = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                return Json(await _userProfileBL.GetByMArmyNo(ArmyNo, userid));
 
             }
             catch (Exception ex)

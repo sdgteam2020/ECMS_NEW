@@ -1,6 +1,8 @@
-﻿using DataAccessLayer.BaseInterfaces;
+﻿using Azure.Core;
+using DataAccessLayer.BaseInterfaces;
 using DataTransferObject.Domain;
 using DataTransferObject.Domain.Master;
+using DataTransferObject.Domain.Model;
 using DataTransferObject.Response;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -20,17 +22,17 @@ namespace DataAccessLayer
             _context = context;
         }
         private readonly IConfiguration configuration;
-        public async Task<bool> GetByArmyNo(MUserProfile Data)
+        public async Task<bool> GetByArmyNo(MUserProfile Data, int UserId)
         { 
             var ret = _context.UserProfile.Any(p => p.ArmyNo.ToUpper() == Data.ArmyNo.ToUpper() && p.UserId!=Data.UserId);
             return ret;
         }
-        public async Task<List<MUserProfile>> GetByMArmyNo(string ArmyNo)
+        public async Task<List<MUserProfile>> GetByMArmyNo(string ArmyNo, int UserId)
         {
             var ret = _context.UserProfile.Where(P=>P.ArmyNo.ToUpper().Contains(ArmyNo.ToUpper())).ToList();
             return ret;
         }
-        public async Task<DTOUserProfileResponse> GetByArmyNo(string ArmyNo)
+        public async Task<DTOUserProfileResponse> GetByArmyNo(string ArmyNo, int UserId)
         {
             // return _context.UserProfile.Where(P => P.ArmyNo == ArmyNo).SingleOrDefault();
             try
@@ -42,7 +44,7 @@ namespace DataAccessLayer
                                  join forma in _context.MFormation on app.FormationId equals forma.FormationId
                                  join rank in _context.MRank on user.RankId equals rank.RankId
 
-                                 where user.ArmyNo == ArmyNo
+                                 where user.ArmyNo == ArmyNo //&&  user.Updatedby == UserId
                                  select new DTOUserProfileResponse
                                  {
 
@@ -68,7 +70,7 @@ namespace DataAccessLayer
 
             return null;
         }
-        public Task<List<DTOUserProfileResponse>> GetAll(string DomainId)
+        public Task<List<DTOUserProfileResponse>> GetAll(string DomainId, int UserId)
         {
             // return _context.UserProfile.Where(P => P.ArmyNo == ArmyNo).SingleOrDefault();
             var ret = (from user in _context.UserProfile
@@ -84,7 +86,7 @@ namespace DataAccessLayer
                        join usergso in _context.UserProfile on map.GSOId equals usergso.UserId
                        join UnGSO in _context.MUnit on userio.UnitId equals UnGSO.UnitId
                        join rankGSO in _context.MRank on usergso.RankId equals rankGSO.RankId
-                       //  where user.ArmyNo == ArmyNo
+                         where user.Updatedby == UserId
                        select new DTOUserProfileResponse
                        {
                            MapId=map.Id,
@@ -123,11 +125,12 @@ namespace DataAccessLayer
 
             return Task.FromResult(ret);
         }
-        public Task<DTOUserProfileResponse> GetAllByArmyNo(string ArmyNo)
+        public Task<DTOUserProfileResponse> GetAllByArmyNo(string ArmyNo, int UserId)
         {
             // return _context.UserProfile.Where(P => P.ArmyNo == ArmyNo).SingleOrDefault();
             var ret = (from user in _context.UserProfile
-
+                       join basicd in _context.BasicDetails on user.ArmyNo equals basicd.ServiceNo
+                       join icardreq in _context.TrnICardRequest on basicd.BasicDetailId equals icardreq.BasicDetailId
                        join Uni in _context.MUnit on user.UnitId equals Uni.UnitId
                        join app in _context.MAppointment on user.ApptId equals app.ApptId
                        join forma in _context.MFormation on app.FormationId equals forma.FormationId
@@ -139,11 +142,11 @@ namespace DataAccessLayer
                        join usergso in _context.UserProfile on map.GSOId equals usergso.UserId
                        join UnGSO in _context.MUnit on userio.UnitId equals UnGSO.UnitId
                        join rankGSO in _context.MRank on usergso.RankId equals rankGSO.RankId
-                         where user.ArmyNo == ArmyNo
+                         where user.ArmyNo == ArmyNo //&&  user.Updatedby == UserId
                        select new DTOUserProfileResponse
                        {
                            MapId = map.Id,
-                           ArmyNo = user.ArmyNo,
+                           ArmyNo = user.ArmyNo, 
                            UserId = user.UserId,
                            FormationId = forma.FormationId,
                            FormationName = forma.FormationName,
@@ -155,7 +158,7 @@ namespace DataAccessLayer
                            UnitName = Uni.UnitName,
                            SusNo = Uni.Sus_no + Uni.Suffix,
                            IntOffr = user.IntOffr,
-
+                           RequestId= icardreq.RequestId,
 
                            IOArmyNo = userio.ArmyNo,
                            IOName = rankIO.RankAbbreviation + " " + userio.Name,
@@ -170,6 +173,8 @@ namespace DataAccessLayer
                            UnitIdGSO = UnGSO.UnitId,
                            UnitGSO = UnGSO.UnitName,
                            GSOSusNo = UnGSO.Sus_no + UnGSO.Suffix
+                           
+
                        }
                      ).Distinct().SingleOrDefault();
 

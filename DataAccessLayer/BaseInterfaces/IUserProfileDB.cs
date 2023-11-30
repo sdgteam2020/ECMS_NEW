@@ -12,10 +12,10 @@ namespace DataAccessLayer.BaseInterfaces
 {
     public interface IUserProfileDB : IGenericRepositoryDL<MUserProfile>
     {
-        public Task<bool> GetByArmyNo(MUserProfile Data);
-        public Task<List<MUserProfile>> GetByMArmyNo(string ArmyNo);
-        public Task<DTOUserProfileResponse> GetByArmyNo(string ArmyNo);
-        public Task<List<DTOUserProfileResponse>> GetAll(string DomainId);
-        public Task<DTOUserProfileResponse> GetAllByArmyNo(string ArmyNo);
+        public Task<bool> GetByArmyNo(MUserProfile Data, int UserId);
+        public Task<List<MUserProfile>> GetByMArmyNo(string ArmyNo,int UserId);
+        public Task<DTOUserProfileResponse> GetByArmyNo(string ArmyNo,int UserId);
+        public Task<List<DTOUserProfileResponse>> GetAll(string DomainId, int UserId);
+        public Task<DTOUserProfileResponse> GetAllByArmyNo(string ArmyNo, int UserId);
     }
 }

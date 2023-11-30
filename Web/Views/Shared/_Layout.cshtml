@@ -1,4 +1,6 @@
 ﻿@using System.Security.Claims;
+@using Web.WebHelpers;
+@using Microsoft.AspNetCore.Mvc;
 @inject SignInManager<ApplicationUser> signInManager;
 @inject UserManager<ApplicationUser> userManager;
 <!DOCTYPE html>
@@ -170,7 +172,9 @@
                         <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="profileDropdown">
                             <a class="dropdown-item">
                                 <i class="ti-settings text-primary"></i>
-                                @user.UserName
+                                @user.UserName 
+                               (<span id="aspntokenarmyno"></span>)
+                               
                             </a>
                             <a class="dropdown-item" href="/Account/Logout">
                                 <i class="ti-power-off text-primary"></i>
@@ -322,7 +326,7 @@
                             </div>
                         </li>
                     }
-                    else if (signInManager.IsSignedIn(User) && (User.IsInRole("Admin") || User.IsInRole("User")))
+                    else if (signInManager.IsSignedIn(User) && User.IsInRole("User"))
                     {
                         <li class="nav-item">
                             <a class="nav-link collapsed" data-toggle="collapse" href="#ui-basic1" aria-expanded="true" aria-controls="ui-basic1">
@@ -334,13 +338,43 @@
                                 <ul class="nav flex-column sub-menu">
                                     <li class="nav-item"> <a class="nav-link" href="/UserProfile/Profile">Add Profile</a></li>
                                     <li class="nav-item"> <a class="nav-link" href="/BasicDetail/Registration">Add I-Card</a></li>
-                                    <li class="nav-item"> <a class="nav-link" href="/BasicDetail/Index">ICard List</a></li>
+                                    <li class="nav-item"> <a class="nav-link" href="/BasicDetail/Index/1">ICard List</a></li>
+                                    <li class="nav-item"> <a class="nav-link" href="/BasicDetail/Index/2">ICard Pending From IO</a></li>
+                                    <li class="nav-item"> <a class="nav-link" href="/BasicDetail/Index/3">ICard Pending From GSO</a></li>
                                     <li class="nav-item"> <a class="nav-link" href="/BasicDetail/InaccurateData">Inaccurate List</a></li>
+                                    <li class="nav-item"> <a class="nav-link" href="/BasicDetail/Index/4">ICard Pending Form MI 11</a></li>
                                 </ul>
                             </div>
 
                         </li>
                         <li class="nav-item">
+                            <a class="nav-link collapsed" data-toggle="collapse" href="#ui-basic1" aria-expanded="true" aria-controls="ui-basic1">
+                                <i class="icon-layout menu-icon"></i>
+                                <span class="menu-title">ICard Request For Approval</span>
+                                <i class="menu-arrow"></i>
+                            </a>
+                            <div class="collapse show" id="ui-basic1">
+                                <ul class="nav flex-column sub-menu">
+
+                                    <li class="nav-item"> <a class="nav-link" href="/BasicDetail/ApprovalForIO/22">ICard Approval For IO</a></li>
+                                    <li class="nav-item"> <a class="nav-link" href="/BasicDetail/ApprovalForIO/33">ICard Approval For GSO</a></li>
+                                    @if (user.UserName=="mi_11")
+                                    {
+                                        <li class="nav-item"> <a class="nav-link" href="/BasicDetail/ApprovalForIO/44">ICard Approval For MI 11</a></li>
+                                    } 
+                                    else if (user.UserName == "hq_54")
+                                    {
+                                        <li class="nav-item"> <a class="nav-link" href="/BasicDetail/ApprovalForIO/55">ICard Approvaled by MI 11</a></li>
+                                    }
+
+                                </ul>
+                            </div>
+
+                        </li>
+                    }
+                    else if (signInManager.IsSignedIn(User) && (User.IsInRole("Admin")))
+                    {
+                    <li class="nav-item">
                             <a class="nav-link collapsed" data-toggle="collapse" href="#ui-basic_Unit" aria-expanded="false" aria-controls="ui-basic_Unit">
                                 <i class="icon-layout menu-icon"></i>
                                 <span class="menu-title">Fmn/Unit </span>
@@ -700,6 +734,7 @@
                 <div class="card mt-2">
                     <div class="mt-2 ml-4">
                         <h5 class="card-title">Forward To <label class="gsoio"></label> Details</h5>
+                        <span id="spnFwssusno" class="d-none">0</span>
                         <span id="spnFrom" class="d-none">0</span>
                         <span id="spnForwardTo" class="d-none">0</span>
                         <span id="spnCurrentspnRequestId" class="d-none">0</span>

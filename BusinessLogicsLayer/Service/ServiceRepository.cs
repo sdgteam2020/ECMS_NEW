@@ -181,9 +181,9 @@ namespace BusinessLogicsLayer.Service
             };
             return new SelectList(rakes, "Value", "Text");
         }
-        public async Task<List<MArmedType>> GetRegimentalListByArmedId(int RegimentalId)
+        public async Task<List<MRegimental>> GetRegimentalListByArmedId(int RegimentalId)
         {
-            return await context.Set<MArmedType>().Where(o => o.ArmedId == RegimentalId).ToListAsync();
+            return await context.Set<MRegimental>().Where(o => o.ArmedId == RegimentalId).ToListAsync();
         }
         public IEnumerable<SelectListItem> GetRank(int Type)
         {

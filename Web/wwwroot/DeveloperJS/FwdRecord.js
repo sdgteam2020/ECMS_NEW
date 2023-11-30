@@ -25,10 +25,10 @@
                 var spnRequestId = $("#spnCurrentspnRequestId").html();
                 var Counter = parseInt($("#spnStepCounter").html()) + 1;
 
-
+               
                 UpdateStepCounter(spnStepId, spnRequestId, Counter);
 
-                ForwardTo(spnRequestId);
+               
             }
         })  
     });
@@ -40,12 +40,18 @@ function GetForwardHHierarchy(ArmyNo, StepCounter, spnRequestId) {
         $("#btnForward").html("Forward To IO");
 
     }
-    else {
+    else if (StepCounter == 2) {
         $(".gsoio").html("GSO");
         $("#btnForward").html("Forward To GSO");
     }
-        
-
+    else if (StepCounter == 3) {
+        $(".gsoio").html("MI 11");
+        $("#btnForward").html("Forward To MI 11");
+    }
+    else if (StepCounter == 4) {
+        $(".gsoio").html("HQ 54");
+        $("#btnForward").html("Forward To HQ 54");
+    }
     var userdata =
     {
         "ArmyNo": ArmyNo,
@@ -73,7 +79,7 @@ function GetForwardHHierarchy(ArmyNo, StepCounter, spnRequestId) {
                     $(".HProfileDetails").removeClass("d-none");
                     $("#ForwardDetails").html("");
                     $("#btnForward").removeClass("d-none");
-                    $("#spnCurrentspnRequestId").html(spnRequestId);
+                    $("#spnCurrentspnRequestId").html(response.RequestId);
                     if (StepCounter == 1) {
                         $(".spnFtoarmyno").html(response.IOArmyNo);
                         $(".spnFtoname").html(response.IOName);
@@ -81,18 +87,30 @@ function GetForwardHHierarchy(ArmyNo, StepCounter, spnRequestId) {
 
                         $("#spnFrom").html(response.UserId);
                         $("#spnForwardTo").html(response.IOUserId);
-
+                        $("#spnFwssusno").html(0);
                     } else if (StepCounter == 2) {
                         $(".spnFtoarmyno").html(response.GSOArmyNo);
                         $(".spnFtoname").html(response.GSOName);
 
                         $("#spnFrom").html(response.IOUserId);
                         $("#spnForwardTo").html(response.GSOUserId);
+                        $("#spnFwssusno").html(0);
                     }
                     else if (StepCounter == 3) {
 
-                    }
+                        $(".HProfileDetails").addClass("d-none");
+                        $("#spnFrom").html(response.GSOUserId);
+                        $("#spnFwssusno").html(101);
 
+                    }
+                    else if (StepCounter == 4) {
+
+                        $(".HProfileDetails").addClass("d-none");
+                        $("#spnFrom").html(101);
+                        $("#spnForwardTo").html(29);
+                        $("#spnFwssusno").html(0);
+
+                    }
                 }
             }
             else {
@@ -115,16 +133,18 @@ function GetForwardHHierarchy(ArmyNo, StepCounter, spnRequestId) {
         }
     });
 }
-function ForwardTo(RequestId) {
+function ForwardTo(RequestId, HType) {
+
     var userdata =
     {
         "TrnFwdId": 0,
         "RequestId": RequestId,
         "FromUserId": $("#spnFrom").html(),
         "ToUserId": $("#spnForwardTo").html(),
-        "SusNo": 0,
+        "SusNo": $("#spnFwssusno").html(),
         "Remark": "",
         "Status": true,
+        "HType": HType,
 
     };
     $.ajax({
@@ -134,7 +154,7 @@ function ForwardTo(RequestId) {
         type: 'POST',
         success: function (response) {
             if (response != "null" && response != null) {
-
+                location.reload();
             }
         }
 
@@ -156,6 +176,14 @@ function UpdateStepCounter(stepId, spnRequestId, Counter) {
         success: function (response) {
             if (response != "null" && response != null) {
                 $("#FwdRecord").modal('hide');
+                var HType = 0;
+                if (Counter == 3) {
+                    HType = 1;
+                } else if (Counter == 4) {
+                    HType = 2;
+                } 
+
+                ForwardTo(spnRequestId, HType);
             }
         }
 

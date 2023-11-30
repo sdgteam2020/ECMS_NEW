@@ -34,7 +34,8 @@ function GetTokenDetails(ApiId,txt) {
                     else {
                         $("#tokenmsg").html('<div class="alert alert-success alert-dismissible fade show "><i class="fa fa-check " aria-hidden="true"></i><span class="m-lg-2">Token Detected </span></div>');
                         if (response[0].ArmyNo = "7f33df8ac6540b5cf7ccfd041d8c837641226444d9f1a4aa30a01924c0610996")
-                            $("#" + txt).val("IC-00001");
+                            $("#" + txt).val("IC-00100");
+                          //$("#" + txt).val("IC-00002");
                     }
 
                    
