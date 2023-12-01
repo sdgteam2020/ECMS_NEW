@@ -51,7 +51,7 @@
                                     </div>
                                 </div>
                                 <div class="col-xl-4">
-                                    @* <button type="button" class="btn btn-round btn-primary" id="btngetToken">Get ICNO From Token</i></button> *@
+                                    <button type="button" class="btn btn-round btn-primary" id="btngetToken">Get ICNO From Token</i></button>
                                     <button type="button" id="btngetdata" name="btngetdata" class="btn btn-primary" onclick="getData(this.form.id);">Fetch Data</button>
                                 </div>
                             </div>
@@ -154,25 +154,25 @@
 <script>
     $(document).ready(function () {
         
-        $("#RegistrationType").change(function () {
-            $("#tokenmsg").html("");
-            $("#ServiceNumber").val("");
+        // $("#RegistrationType").change(function () {
+        //     $("#tokenmsg").html("");
+        //     $("#ServiceNumber").val("");
 
-            if ($("#RegistrationType").val() == 1) {
-                $("#btngetToken").removeClass("d-none")
-            }
-            else {
-                $("#btngetToken").addClass("d-none")
-                $("#ServiceNumber").val("");
+        //     if ($("#RegistrationType").val() == 1) {
+        //         $("#btngetToken").removeClass("d-none")
+        //     }
+        //     else {
+        //         $("#btngetToken").addClass("d-none")
+        //         $("#ServiceNumber").val("");
 
-            }
+        //     }
 
-        });
+        // });
 
         $("#btngetToken").click(function () {
 
             if ($("#RegistrationType").val() == 1) {
-
+                
                 GetTokenDetails("FetchUniqueTokenDetails", "ServiceNumber");
 
             }

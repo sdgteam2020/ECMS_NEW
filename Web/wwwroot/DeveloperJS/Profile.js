@@ -4,7 +4,7 @@ $(document).ready(function () {
     $("#btnAddProfile").click(function () {
         reset();
         $("#AddNewProfile").modal('show');
-       
+        $("#txtProArmy").val($("#aspntokenarmyno").html());
         GetArmynoMasterdata($("#aspntokenarmyno").html());
     });
     $("#btnProfileReset").click(function () {
@@ -178,11 +178,7 @@ $(document).ready(function () {
                     if (parseInt(Unit) == 0) {
                         toastr.error('Please Enter Unit');
                     }
-                    else if (parseInt($("#spnUserIdIO").html()) == 0) {
-                        toastr.error('Please Enter IO Details');
-                    } else if (parseInt($("#spnUserIdGSO").html()) == 0) {
-                        toastr.error('Please Enter GSO Details');
-                    }
+                    
                     else {
                         SaveUserProfile(ArmyNo, Rank, Name, Appt, Unit, $("#intoffsyes").prop("checked"), 3, $("#spnUserIdIO").html(), $("#spnUserIdGSO").html(), userid)
                     }
@@ -822,10 +818,10 @@ function DataBindAll() {
                             listItem += "<td class='align-middle'><span id='GSOArmyNo'>" + response[i].GSOArmyNo + "</span></td>";
                             //listItem += "<td class='align-middle'><span id='GSOName'>" + response[i].GSOName + "</span></td>";
                             //  listItem += "<td class='align-middle'><span id='UnitGSO'>" + response[i].UnitGSO + "(" + response[i].GSOSusNo +")</span></td>";
-                        if ($("#aspntokenarmyno").html() == response[i].ArmyNo)
+                        /*if ($("#aspntokenarmyno").html() == response[i].ArmyNo)*/
                             listItem += "<td class='align-middle'><span id='btneditpro'><button type='button' class='cls-btneditpro btn btn-icon btn-round btn-primary mr-1'><i class='fas fa-edit'></i></button></span><button type='button' class='cls-btnDelete btn-icon btn-round btn-danger mr-1'><i class='fas fa-trash-alt'></i></button></td>";
-                        else
-                            listItem += "<td class='align-middle'></td>";
+                        //else
+                        //    listItem += "<td class='align-middle'></td>";
 
                             /*    listItem += "<td class='nowrap'><button type='button' class='cls-btnSend btn btn-outline-success mr-1'>Send To Verification</button></td>";*/
                             listItem += "</tr>";
@@ -897,8 +893,10 @@ function DataBindAll() {
                         //$("#txtCoprsName").val($(this).closest("tr").find("#corpsName").html());
                         $("#txtProArmy").attr('readonly', true);;
 
-                  
-                        GetALLByUnitById($(this).closest("tr").find("#spnproUserUnitId").html());
+                       
+                        //GetALLByUnitById($(this).closest("tr").find("#spnproUserUnitId").html());
+                       
+                        GetALLByUnitById($("#aspndomainUnitID").html());
 
                         $("#btnsave").val("Update");
                     });
@@ -1143,7 +1141,14 @@ function GetByArmyNo(ArmyNo, Type, Unit, IO, GSO) {
                     }
                     else if(Type == 3)
                     {
-                        MappingIOGSOUNIT(response.UserId,Unit, IO, GSO);
+                        if (parseInt($("#spnUserIdIO").html()) != 0 && parseInt($("#spnUserIdGSO").html()) != 0) {
+
+                            MappingIOGSOUNIT(response.UserId, Unit, IO, GSO);
+
+                        } else {
+                            toastr.error("IO/GSo details Not Save");
+                        }
+                        
                     }
 
                 }

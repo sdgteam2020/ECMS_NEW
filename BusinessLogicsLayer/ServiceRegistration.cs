@@ -88,8 +88,12 @@ namespace BusinessLogicsLayer
             services.AddTransient<ITrnICardRequestBL, TrnICardRequestBL>();
 
             services.AddTransient<IAPIDataBL, APIDataBL>();
-            services.AddTransient<IAPIDataDB, APIDataDB>(); 
-            
+            services.AddTransient<IAPIDataDB, APIDataDB>();
+
+            services.AddTransient<IDomainMapBL, DomainMapBL>();
+            services.AddTransient<IDomainMapDB, DomainMapDB>();
+
+
             services.AddTransient<IChangeHierarchyMasterBL, ChangeHierarchyMasterBL>();
             services.AddTransient<IChangeHierarchyMasterDB, ChangeHierarchyMasterDB>();
 
