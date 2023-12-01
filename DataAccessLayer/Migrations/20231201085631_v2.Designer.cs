@@ -4,6 +4,7 @@ using DataAccessLayer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccessLayer.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231201085631_v2")]
+    partial class v2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -621,53 +624,6 @@ namespace DataAccessLayer.Migrations
                     b.HasKey("RegistrationId");
 
                     b.ToTable("MRegistration");
-
-                    b.HasData(
-                        new
-                        {
-                            RegistrationId = 1,
-                            IsActive = false,
-                            Name = "Apply for Self (Officer)",
-                            Order = 1,
-                            UpdatedOn = new DateTime(2023, 12, 1, 15, 34, 57, 368, DateTimeKind.Unspecified).AddTicks(6944),
-                            Updatedby = 1
-                        },
-                        new
-                        {
-                            RegistrationId = 2,
-                            IsActive = false,
-                            Name = "Apply for Unit Officer",
-                            Order = 2,
-                            UpdatedOn = new DateTime(2023, 12, 1, 15, 34, 57, 368, DateTimeKind.Unspecified).AddTicks(6950),
-                            Updatedby = 1
-                        },
-                        new
-                        {
-                            RegistrationId = 3,
-                            IsActive = false,
-                            Name = "Apply for Other Unit Officer",
-                            Order = 3,
-                            UpdatedOn = new DateTime(2023, 12, 1, 15, 34, 57, 368, DateTimeKind.Unspecified).AddTicks(6954),
-                            Updatedby = 1
-                        },
-                        new
-                        {
-                            RegistrationId = 4,
-                            IsActive = false,
-                            Name = "Apply for Unit JCOs/OR",
-                            Order = 4,
-                            UpdatedOn = new DateTime(2023, 12, 1, 15, 34, 57, 368, DateTimeKind.Unspecified).AddTicks(6958),
-                            Updatedby = 1
-                        },
-                        new
-                        {
-                            RegistrationId = 5,
-                            IsActive = false,
-                            Name = "Apply for Other Unit JCOs/OR",
-                            Order = 5,
-                            UpdatedOn = new DateTime(2023, 12, 1, 15, 34, 57, 368, DateTimeKind.Unspecified).AddTicks(6962),
-                            Updatedby = 1
-                        });
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Master.MUnit", b =>

@@ -20,7 +20,6 @@ namespace DataTransferObject.ViewModels
     {
         [Display(Name = "BasicDetailId", ResourceType = typeof(Resource))]
         public int BasicDetailId { get; set; }
-        public RegistrationType RegistrationType { get; set; }
 
         [Display(Name = "Name", ResourceType = typeof(Resource))]
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
@@ -105,6 +104,13 @@ namespace DataTransferObject.ViewModels
         [Display(Name = "RegimentalId", ResourceType = typeof(Resource))]
         [RegularExpression(@"^[\w \.\,\?\;\:\""\''\[\]\!\@\#\$\%\&\*\(\)\-\=\+\\\/]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
         public int? RegimentalId { get; set; }
+
+        public int RegistrationId { get; set; }
+        public MRegistration? Registration { get; set; }
+
+        public int UnitId { get; set; }
+        public MUnit? Unit { get; set; }
+
         public bool IsSubmit { get; set; }
 
         [NotMapped]

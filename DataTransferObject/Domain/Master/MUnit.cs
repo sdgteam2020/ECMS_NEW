@@ -33,9 +33,5 @@ namespace DataTransferObject.Domain.Master
 
         [Required(ErrorMessage = "required!")]
         public bool IsVerify { get; set; }
-        
-        [ForeignKey("MArmedType"), DatabaseGenerated(DatabaseGeneratedOption.None)]
-        public int ArmedId { get; set; }
-        public MArmedType? MArmedType { get; set; }
     }
 }

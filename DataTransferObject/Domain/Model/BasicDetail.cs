@@ -69,7 +69,18 @@ namespace DataTransferObject.Domain.Model
         [Column(TypeName = "nvarchar(100)")]
         public string PermanentAddress { get; set; } = string.Empty;
         public byte StatusLevel { get; set; }
+        
+        [ForeignKey("MRegimental")]
         public int? RegimentalId { get; set; }
+        public MRegimental? Regimental { get; set; }
+        
+        [ForeignKey("MRegistration")]
+        public int RegistrationId { get; set; }
+        public MRegistration? Registration { get; set; }
+        
+        [ForeignKey("MUnit")]
+        public int UnitId { get; set; }
+        public MUnit? Unit { get; set; }
         public int Step { get; set; }
         public bool IsSubmit { get; set; }
 

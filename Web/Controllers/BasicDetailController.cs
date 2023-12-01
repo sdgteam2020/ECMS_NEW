@@ -66,6 +66,7 @@ namespace Web.Controllers
         public async Task<ActionResult> Index(int Id)
         {
             var userId = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").UserId;
+            userId = 4;
             int type = 0;
             ViewBag.Id = Id;    
             var allrecord = await Task.Run(()=> unitOfWork.BasicDetail.GetALLBasicDetail(Convert.ToInt32(userId), Id, type)) ;
@@ -162,10 +163,7 @@ namespace Web.Controllers
         [Authorize(Roles = "Admin,User")]
         public Task<ViewResult> Registration()
         {
-            //HttpContext.Session.SetInt32(SessionKeyStep, 0);
-            //HttpContext.Session.SetInt32(SessionKeyCurStep, 1);
-            ViewBag.OptionsRegistrationType = service.GetRegistrationType();
-            ViewBag.OptionsSubmitType = service.GetSubmitType();
+            ViewBag.OptionsRegistration = service.GetRegistration();
             return Task.FromResult(View());
         }
         [HttpPost]
@@ -175,8 +173,7 @@ namespace Web.Controllers
         {
             try
             {
-                ViewBag.OptionsRegistrationType = service.GetRegistrationType();
-                ViewBag.OptionsSubmitType = service.GetSubmitType();
+                ViewBag.OptionsRegistration = service.GetRegistration();
                 var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
 
 
@@ -202,7 +199,7 @@ namespace Web.Controllers
                         //TempData["success"] = "Successfully created.";
                         //return RedirectToActionPermanent("Create", "BasicDetail", new { Id = insertedBasicdetail.EncryptedId });
                         TempData["Registration"] = JsonConvert.SerializeObject(model);
-                        return RedirectToActionPermanent("Create", "BasicDetail");
+                        return RedirectToActionPermanent("BasicDetail", "BasicDetail");
                     }
                     else
                     {
@@ -273,359 +270,6 @@ namespace Web.Controllers
         end:
             return View(model);
         }
-
-        [HttpGet]
-        [Authorize(Roles = "Admin,User")]
-        public async Task<IActionResult> Create()
-        {
-            TempData.Keep("Registration");
-            DTORegistrationRequest? model = new DTORegistrationRequest();
-            if (TempData["Registration"]!=null)
-            {
-                model = JsonConvert.DeserializeObject<DTORegistrationRequest>(TempData["Registration"].ToString());
-                if (model.SubmitType == 1)
-                {
-                    ViewBag.OptionsRank = service.GetRank(Convert.ToInt32(model.RegType));
-                    ViewBag.OptionsArmedType = service.GetArmedType();
-                    ViewBag.OptionsBloodGroup = service.GetBloodGroup();
-                    DTOBasicDetailCrtRequest dTOBasicDetailCrtRequest = new DTOBasicDetailCrtRequest();
-                    dTOBasicDetailCrtRequest.Name = model.Name;
-                    dTOBasicDetailCrtRequest.ServiceNo = model.ServiceNo;
-                    dTOBasicDetailCrtRequest.DOB = model.DOB;
-                    dTOBasicDetailCrtRequest.DateOfCommissioning = model.DateOfCommissioning;
-                    dTOBasicDetailCrtRequest.PermanentAddress = model.PermanentAddress;
-                    dTOBasicDetailCrtRequest.RegistrationType = model.RegType;
-                    dTOBasicDetailCrtRequest.DateOfIssue= TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
-                    return await Task.FromResult(View(dTOBasicDetailCrtRequest));
-                }
-                else
-                {
-                    return RedirectToAction("Registration");
-                }
-            }
-            else
-            {
-                return RedirectToAction("Registration");
-            }
-        }
-        [HttpPost]
-        [Authorize(Roles = "Admin,User")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(DTOBasicDetailCrtRequest model)
-        {
-            try
-            {
-                ViewBag.OptionsRank = service.GetRank(Convert.ToInt32(model.RegistrationType));
-                ViewBag.OptionsBloodGroup = service.GetBloodGroup();
-                ViewBag.OptionsArmedType = service.GetArmedType();
-                var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-                model.Updatedby = Convert.ToInt32(userId);
-                model.StatusLevel = 0;
-                if (ModelState.IsValid)
-                {
-                    BasicDetail newBasicDetail = _mapper.Map<DTOBasicDetailCrtRequest, BasicDetail>(model);
-                    string sourceFolderPhotoDB = "/WriteReadData/" + "Photo";
-                    string sourceFolderPhotoPhy = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "Photo");
-
-                    if (!Directory.Exists(sourceFolderPhotoPhy))
-                        Directory.CreateDirectory(sourceFolderPhotoPhy);
-
-                    if (model.Photo_ != null)
-                    {
-                        string FileName = service.ProcessUploadedFile(model.Photo_, sourceFolderPhotoPhy);
-
-                        string path = Path.Combine(sourceFolderPhotoPhy, FileName);
-
-                        bool result = service.IsValidHeader (path);
-                        bool imgcontentresult = service.IsImage(model.Photo_);
-
-                        if (!result || !imgcontentresult)
-                        {
-                            ModelState.AddModelError("", "File format not correct");
-                            if (System.IO.File.Exists(path))
-                            {
-                                System.IO.File.Delete(path);
-                            }
-                            goto end;
-                        }
-
-                        newBasicDetail.PhotoImagePath = sourceFolderPhotoDB + "/" + FileName;
-                        ViewBag.PhotoImagePath = newBasicDetail.PhotoImagePath;
-                    }
-                    else
-                    {
-                        ModelState.AddModelError("Photo_", "Photo is required.");
-                    }
-
-                    string sourceFolderSignatureDB = "/WriteReadData/" + "Signature";
-                    string sourceFolderSignaturePhy = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "Signature");
-
-                    if (!Directory.Exists(sourceFolderSignaturePhy))
-                        Directory.CreateDirectory(sourceFolderSignaturePhy);
-
-                    if (model.Signature_ != null)
-                    {
-                        string FileName = service.ProcessUploadedFile(model.Signature_, sourceFolderSignaturePhy);
-
-                        string path = Path.Combine(sourceFolderSignaturePhy, FileName);
-
-                        bool result = service.IsValidHeader(path);
-                        bool imgcontentresult = service.IsImage(model.Signature_);
-
-                        if (!result || !imgcontentresult)
-                        {
-                            ModelState.AddModelError("", "File format not correct");
-                            if (System.IO.File.Exists(path))
-                            {
-                                System.IO.File.Delete(path);
-                            }
-                            goto end;
-                        }
-
-                        newBasicDetail.SignatureImagePath = sourceFolderSignatureDB + "/" + FileName;
-                    }
-                    else
-                    {
-                        ModelState.AddModelError("Signature_", "Signature is required.");
-                    }
-                    //if (model.AadhaarNo != null)
-                    //{
-                    //    newBasicDetail.AadhaarNo = model.AadhaarNo.Replace(" ", "");
-                    //}
-                    BasicDetail ret=new BasicDetail();
-                    ret= await unitOfWork.BasicDetail.AddWithReturn(newBasicDetail);
-                    if (ret != null)
-                    {
-                        
-                        MTrnICardRequest mTrnICardRequest = new MTrnICardRequest();
-                        mTrnICardRequest.BasicDetailId = ret.BasicDetailId;
-                        mTrnICardRequest.Status = false;
-                        mTrnICardRequest.TypeId = 1;
-                        mTrnICardRequest.UpdatedOn = DateTime.Now;
-                        mTrnICardRequest.Updatedby = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").UserId; //SessionHeplers.GetObject<string>(HttpContext.Session, "ArmyNo");
-                        mTrnICardRequest = await iTrnICardRequestBL.AddWithReturn(mTrnICardRequest);
-                        if(mTrnICardRequest.RequestId > 0)
-                        {
-                            MStepCounter mStepCounter = new MStepCounter();
-                            mStepCounter.Step = 1;
-                            mStepCounter.RequestId = mTrnICardRequest.RequestId;
-                            mStepCounter.UpdatedOn = DateTime.Now;
-                            mStepCounter.Updatedby = 1;
-                            await iStepCounterBL.Add(mStepCounter);
-                        }
-                       
-                    }
-                    TempData["success"] = "Successfully created.";
-                    return RedirectToAction("Index", new { Id = 1 });
-                }
-                else
-                {
-                    TempData["error"] = "Operation failed.";
-                }
-            }
-            catch (ReferenceConstraintException ex)
-            {
-                _logger.LogError(1001, ex, "ReferenceConstraintException");
-                ModelState.AddModelError("", ex.Message);
-                goto end;
-            }
-            catch (UniqueConstraintException ex)
-            {
-                _logger.LogError(1002, ex, "UniqueConstraintException");
-                ModelState.AddModelError("", ex.Message);
-                goto end;
-            }
-            catch (MaxLengthExceededException ex)
-            {
-                _logger.LogError(1003, ex, "MaxLengthExceededException");
-                ModelState.AddModelError("", ex.Message);
-                goto end;
-            }
-            catch (CannotInsertNullException ex)
-            {
-                _logger.LogError(1004, ex, "CannotInsertNullException");
-                ModelState.AddModelError("", ex.Message);
-                goto end;
-            }
-            catch (NumericOverflowException ex)
-            {
-                _logger.LogError(1005, ex, "NumericOverflowException");
-                ModelState.AddModelError("", ex.Message);
-                goto end;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(1006, ex, "Exception");
-                ModelState.AddModelError("", ex.Message);
-                goto end;
-            }
-
-        end:
-            return View(model);
-        }
-        [HttpGet]
-        [Authorize(Roles = "Admin,User")]
-        public async Task<ActionResult> Edit(string Id)
-        {
-            ViewBag.OptionsBloodGroup = service.GetBloodGroup();
-            ViewBag.OptionsArmedType = service.GetArmedType();
-
-            var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-            string decryptedId = string.Empty;
-            int decryptedIntId = 0;
-            try
-            {
-                // Decrypt the  id using Unprotect method
-                decryptedId = protector.Unprotect(Id);
-                decryptedIntId = Convert.ToInt32(decryptedId);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(1001, ex, "This error occure because Id value change by user.");
-                return RedirectToAction("Error", "Error");
-            }
-            BasicDetail? basicDetail = await unitOfWork.BasicDetail.Get(decryptedIntId);
-
-            if (basicDetail != null)
-            {
-                MRank? mRank = await context.MRank.FindAsync(basicDetail.RankId);
-                ViewBag.OptionsRank = service.GetRank(mRank.Type);
-                DTOBasicDetailUpdRequest basicDetailUpdVM = _mapper.Map<BasicDetail, DTOBasicDetailUpdRequest>(basicDetail);
-                //if (basicDetailUpdVM.AadhaarNo != null && basicDetailUpdVM.AadhaarNo.Length == 12)
-                //{
-                //    string p1, p2, p3;
-                //    p1 = basicDetailUpdVM.AadhaarNo.Substring(0, 4);
-                //    p2 = basicDetailUpdVM.AadhaarNo.Substring(4, 4);
-                //    p3 = basicDetailUpdVM.AadhaarNo.Substring(8, 4);
-                //    basicDetailUpdVM.AadhaarNo = p1 + " " + p2 + " " + p3;
-                //}
-                //basicDetailUpdVM.RegistrationType = basicDetailUpdVM.RegistrationType;
-                //basicDetailUpdVM.RegimentalId = basicDetailUpdVM.RegimentalId;
-                basicDetailUpdVM.ExistingPhotoImagePath = basicDetailUpdVM.PhotoImagePath;
-                basicDetailUpdVM.ExistingSignatureImagePath = basicDetailUpdVM.SignatureImagePath;
-                basicDetailUpdVM.EncryptedId = Id;
-                ViewBag.OptionsRegimental = service.GetRegimentalDDLIdSelected(basicDetailUpdVM.ArmedId);
-
-                return View(basicDetailUpdVM);
-            }
-            else
-            {
-                Response.StatusCode = 404;
-                return View("BasicDetailNotFound", decryptedId.ToString());
-            }
-        }
-        [HttpPost]
-        [Authorize(Roles = "Admin,User")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(DTOBasicDetailUpdRequest model)
-        {
-            ViewBag.OptionsBloodGroup = service.GetBloodGroup();
-            var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-            BasicDetail basicDetail = await unitOfWork.BasicDetail.Get(model.BasicDetailId);
-
-            if (basicDetail != null)
-            {
-                MRank? mRank = await context.MRank.FindAsync(basicDetail.RankId);
-                ViewBag.OptionsRank = service.GetRank(mRank.Type);
-                if (ModelState.IsValid)
-                {
-                    basicDetail.RankId = model.RankId;
-                    basicDetail.ArmedId = model.ArmedId;
-                    basicDetail.IdentityMark = model.IdentityMark;
-                    basicDetail.Height = model.Height;
-                    basicDetail.BloodGroup = model.BloodGroup;
-                    basicDetail.PlaceOfIssue = model.PlaceOfIssue;
-                    basicDetail.DateOfIssue = model.DateOfIssue;
-                    basicDetail.IssuingAuth = model.IssuingAuth;
-                    if (model.Photo_ != null)
-                    {
-                        string sourceFolderPhotoDB = "/WriteReadData/" + "Photo";
-                        string sourceFolderPhotoPhy = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "Photo");
-
-                        string FileName = service.ProcessUploadedFile(model.Photo_, sourceFolderPhotoPhy);
-                        string filePath = Path.Combine(sourceFolderPhotoPhy, FileName);
-
-                        bool imgcontentresult = service.IsImage(model.Photo_);
-
-                        bool result = service.IsValidHeader(filePath);
-
-                        if (!result || !imgcontentresult)
-                        {
-                            ModelState.AddModelError("", "File format not correct");
-                            if (System.IO.File.Exists(filePath))
-                            {
-                                System.IO.File.Delete(filePath);
-                            }
-                            goto end;
-                        }
-
-                        if (model.ExistingPhotoImagePath != null)
-                        {
-                            string f = Path.Join(hostingEnvironment.WebRootPath, basicDetail.PhotoImagePath.Replace('/', '\\').ToString());
-                            if (System.IO.File.Exists(f))
-                            {
-                                System.IO.File.Delete(f);
-                            }
-                        }
-                        basicDetail.PhotoImagePath = sourceFolderPhotoDB + "/" + FileName;
-                    }
-
-                    if (model.Signature_ != null)
-                    {
-                        string sourceFolderSignatureDB = "/WriteReadData/" + "Signature";
-                        string sourceFolderSignaturePhy = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "Signature");
-
-                        string FileName = service.ProcessUploadedFile(model.Signature_, sourceFolderSignaturePhy);
-                        string filePath = Path.Combine(sourceFolderSignaturePhy, FileName);
-
-                        bool imgcontentresult = service.IsImage(model.Signature_);
-
-                        bool result = service.IsValidHeader(filePath);
-
-                        if (!result || !imgcontentresult)
-                        {
-                            ModelState.AddModelError("", "File format not correct");
-                            if (System.IO.File.Exists(filePath))
-                            {
-                                System.IO.File.Delete(filePath);
-                            }
-                            goto end;
-                        }
-
-                        if (model.ExistingSignatureImagePath != null)
-                        {
-                            string f = Path.Join(hostingEnvironment.WebRootPath, basicDetail.SignatureImagePath.Replace("/", "\\"));
-                            if (System.IO.File.Exists(f))
-                            {
-                                System.IO.File.Delete(f);
-                            }
-                        }
-                        basicDetail.SignatureImagePath = sourceFolderSignatureDB + "/" + FileName;
-                    }
-                    //if (model.AadhaarNo != null)
-                    //{
-                    //    basicDetail.AadhaarNo = model.AadhaarNo.Replace(" ", "");
-                    //}
-                    basicDetail.AadhaarNo = model.AadhaarNo;
-                    basicDetail.Updatedby = Convert.ToInt32(userId);
-                    basicDetail.UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
-                    await unitOfWork.BasicDetail.Update(basicDetail);
-                    TempData["success"] = "Updated Successfully.";
-                    return RedirectToAction("Index");
-                }
-            }
-            else
-            {
-
-            }
-
-
-        end:
-            return View(model);
-
-        }
         [HttpGet]
         [Authorize(Roles = "Admin,User")]
         public async Task<ActionResult> BasicDetail(string? Id)
@@ -637,7 +281,48 @@ namespace Web.Controllers
             string decryptedId = string.Empty;
             int decryptedIntId = 0;
 
-            if (Id!=null)
+            if (Id == null)
+            {
+                List<int> RegistrationIds = new List<int>(new int[] { 1, 2, 3 });
+                TempData.Keep("Registration");
+                DTORegistrationRequest? model = new DTORegistrationRequest();
+                if (TempData["Registration"] != null)
+                {
+                    model = JsonConvert.DeserializeObject<DTORegistrationRequest>(TempData["Registration"].ToString());
+                    if (model.SubmitType == 1)
+                    {
+                        if(RegistrationIds.Contains(model.RegId))
+                        {
+                            ViewBag.OptionsRank = service.GetRank(1);
+                        }
+                        else
+                        {
+                            ViewBag.OptionsRank = service.GetRank(2);
+                        }
+
+                        ViewBag.OptionsArmedType = service.GetArmedType();
+                        ViewBag.OptionsBloodGroup = service.GetBloodGroup();
+                        BasicDetailCrtAndUpdVM dTOBasicDetailCrtRequest = new BasicDetailCrtAndUpdVM();
+                        dTOBasicDetailCrtRequest.Name = model.Name;
+                        dTOBasicDetailCrtRequest.ServiceNo = model.ServiceNo;
+                        dTOBasicDetailCrtRequest.DOB = model.DOB;
+                        dTOBasicDetailCrtRequest.DateOfCommissioning = model.DateOfCommissioning;
+                        dTOBasicDetailCrtRequest.PermanentAddress = model.PermanentAddress;
+                        dTOBasicDetailCrtRequest.RegistrationId = model.RegId;
+                        dTOBasicDetailCrtRequest.DateOfIssue = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
+                        return await Task.FromResult(View(dTOBasicDetailCrtRequest));
+                    }
+                    else
+                    {
+                        return RedirectToAction("Registration");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("Registration");
+                }
+            }
+            else
             {
                 try
                 {
@@ -680,145 +365,262 @@ namespace Web.Controllers
                     return View("BasicDetailNotFound", decryptedId.ToString());
                 }
             }
-            else
-            {
-                TempData.Keep("Registration");
-                DTORegistrationRequest? model = new DTORegistrationRequest();
-                if (TempData["Registration"] != null)
-                {
-                    model = JsonConvert.DeserializeObject<DTORegistrationRequest>(TempData["Registration"].ToString());
-                    if (model.SubmitType == 1)
-                    {
-                        ViewBag.OptionsRank = service.GetRank(Convert.ToInt32(model.RegType));
-                        ViewBag.OptionsArmedType = service.GetArmedType();
-                        ViewBag.OptionsBloodGroup = service.GetBloodGroup();
-                        BasicDetailCrtAndUpdVM dTOBasicDetailCrtRequest = new BasicDetailCrtAndUpdVM();
-                        dTOBasicDetailCrtRequest.Name = model.Name;
-                        dTOBasicDetailCrtRequest.ServiceNo = model.ServiceNo;
-                        dTOBasicDetailCrtRequest.DOB = model.DOB;
-                        dTOBasicDetailCrtRequest.DateOfCommissioning = model.DateOfCommissioning;
-                        dTOBasicDetailCrtRequest.PermanentAddress = model.PermanentAddress;
-                        dTOBasicDetailCrtRequest.RegistrationType = model.RegType;
-                        dTOBasicDetailCrtRequest.DateOfIssue = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
-                        return await Task.FromResult(View(dTOBasicDetailCrtRequest));
-                    }
-                    else
-                    {
-                        return RedirectToAction("Registration");
-                    }
-                }
-                else
-                {
-                    return RedirectToAction("Registration");
-                }
-            }
         }
         [HttpPost]
         [Authorize(Roles = "Admin,User")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> BasicDetail(BasicDetailCrtAndUpdVM model)
         {
-            ViewBag.OptionsBloodGroup = service.GetBloodGroup();
-            var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-            BasicDetail basicDetail = await unitOfWork.BasicDetail.Get(model.BasicDetailId);
-
-            if (basicDetail != null)
+            try
             {
-                MRank? mRank = await context.MRank.FindAsync(basicDetail.RankId);
-                ViewBag.OptionsRank = service.GetRank(mRank.Type);
-                if (ModelState.IsValid)
+                ViewBag.OptionsBloodGroup = service.GetBloodGroup();
+                var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+                if (model.BasicDetailId > 0)
                 {
-                    basicDetail.RankId = model.RankId;
-                    basicDetail.ArmedId = model.ArmedId;
-                    basicDetail.IdentityMark = model.IdentityMark;
-                    basicDetail.Height = model.Height;
-                    basicDetail.BloodGroup = model.BloodGroup;
-                    basicDetail.PlaceOfIssue = model.PlaceOfIssue;
-                    basicDetail.DateOfIssue = model.DateOfIssue;
-                    basicDetail.IssuingAuth = model.IssuingAuth;
-                    if (model.Photo_ != null)
+                    BasicDetail basicDetail = await unitOfWork.BasicDetail.Get(model.BasicDetailId);
+
+                    if (basicDetail != null)
                     {
+                        MRank? mRank = await context.MRank.FindAsync(basicDetail.RankId);
+                        ViewBag.OptionsRank = service.GetRank(mRank.Type);
+                        if (ModelState.IsValid)
+                        {
+                            basicDetail.RankId = model.RankId;
+                            basicDetail.ArmedId = model.ArmedId;
+                            basicDetail.IdentityMark = model.IdentityMark;
+                            basicDetail.Height = model.Height;
+                            basicDetail.BloodGroup = model.BloodGroup;
+                            basicDetail.PlaceOfIssue = model.PlaceOfIssue;
+                            basicDetail.DateOfIssue = model.DateOfIssue;
+                            basicDetail.IssuingAuth = model.IssuingAuth;
+                            if (model.Photo_ != null)
+                            {
+                                string sourceFolderPhotoDB = "/WriteReadData/" + "Photo";
+                                string sourceFolderPhotoPhy = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "Photo");
+
+                                string FileName = service.ProcessUploadedFile(model.Photo_, sourceFolderPhotoPhy);
+                                string filePath = Path.Combine(sourceFolderPhotoPhy, FileName);
+
+                                bool imgcontentresult = service.IsImage(model.Photo_);
+
+                                bool result = service.IsValidHeader(filePath);
+
+                                if (!result || !imgcontentresult)
+                                {
+                                    ModelState.AddModelError("", "File format not correct");
+                                    if (System.IO.File.Exists(filePath))
+                                    {
+                                        System.IO.File.Delete(filePath);
+                                    }
+                                    goto end;
+                                }
+
+                                if (model.ExistingPhotoImagePath != null)
+                                {
+                                    string f = Path.Join(hostingEnvironment.WebRootPath, basicDetail.PhotoImagePath.Replace('/', '\\').ToString());
+                                    if (System.IO.File.Exists(f))
+                                    {
+                                        System.IO.File.Delete(f);
+                                    }
+                                }
+                                basicDetail.PhotoImagePath = sourceFolderPhotoDB + "/" + FileName;
+                            }
+
+                            if (model.Signature_ != null)
+                            {
+                                string sourceFolderSignatureDB = "/WriteReadData/" + "Signature";
+                                string sourceFolderSignaturePhy = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "Signature");
+
+                                string FileName = service.ProcessUploadedFile(model.Signature_, sourceFolderSignaturePhy);
+                                string filePath = Path.Combine(sourceFolderSignaturePhy, FileName);
+
+                                bool imgcontentresult = service.IsImage(model.Signature_);
+
+                                bool result = service.IsValidHeader(filePath);
+
+                                if (!result || !imgcontentresult)
+                                {
+                                    ModelState.AddModelError("", "File format not correct");
+                                    if (System.IO.File.Exists(filePath))
+                                    {
+                                        System.IO.File.Delete(filePath);
+                                    }
+                                    goto end;
+                                }
+
+                                if (model.ExistingSignatureImagePath != null)
+                                {
+                                    string f = Path.Join(hostingEnvironment.WebRootPath, basicDetail.SignatureImagePath.Replace("/", "\\"));
+                                    if (System.IO.File.Exists(f))
+                                    {
+                                        System.IO.File.Delete(f);
+                                    }
+                                }
+                                basicDetail.SignatureImagePath = sourceFolderSignatureDB + "/" + FileName;
+                            }
+                            //if (model.AadhaarNo != null)
+                            //{
+                            //    basicDetail.AadhaarNo = model.AadhaarNo.Replace(" ", "");
+                            //}
+                            basicDetail.AadhaarNo = model.AadhaarNo;
+                            basicDetail.Updatedby = Convert.ToInt32(userId);
+                            basicDetail.UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
+                            await unitOfWork.BasicDetail.Update(basicDetail);
+                            TempData["success"] = "Updated Successfully.";
+                            return RedirectToAction("Index");
+                        }
+                    }
+                    else
+                    {
+
+                    }
+                }
+                else
+                {
+                    ViewBag.OptionsRank = service.GetRank(Convert.ToInt32(model.RegistrationType));
+                    ViewBag.OptionsArmedType = service.GetArmedType();
+
+                    model.Updatedby = Convert.ToInt32(userId);
+                    model.StatusLevel = 0;
+                    if (ModelState.IsValid)
+                    {
+                        BasicDetail newBasicDetail = _mapper.Map<BasicDetailCrtAndUpdVM, BasicDetail>(model);
                         string sourceFolderPhotoDB = "/WriteReadData/" + "Photo";
                         string sourceFolderPhotoPhy = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "Photo");
 
-                        string FileName = service.ProcessUploadedFile(model.Photo_, sourceFolderPhotoPhy);
-                        string filePath = Path.Combine(sourceFolderPhotoPhy, FileName);
+                        if (!Directory.Exists(sourceFolderPhotoPhy))
+                            Directory.CreateDirectory(sourceFolderPhotoPhy);
 
-                        bool imgcontentresult = service.IsImage(model.Photo_);
-
-                        bool result = service.IsValidHeader(filePath);
-
-                        if (!result || !imgcontentresult)
+                        if (model.Photo_ != null)
                         {
-                            ModelState.AddModelError("", "File format not correct");
-                            if (System.IO.File.Exists(filePath))
+                            string FileName = service.ProcessUploadedFile(model.Photo_, sourceFolderPhotoPhy);
+
+                            string path = Path.Combine(sourceFolderPhotoPhy, FileName);
+
+                            bool result = service.IsValidHeader(path);
+                            bool imgcontentresult = service.IsImage(model.Photo_);
+
+                            if (!result || !imgcontentresult)
                             {
-                                System.IO.File.Delete(filePath);
+                                ModelState.AddModelError("", "File format not correct");
+                                if (System.IO.File.Exists(path))
+                                {
+                                    System.IO.File.Delete(path);
+                                }
+                                goto end;
                             }
-                            goto end;
+
+                            newBasicDetail.PhotoImagePath = sourceFolderPhotoDB + "/" + FileName;
+                            ViewBag.PhotoImagePath = newBasicDetail.PhotoImagePath;
+                        }
+                        else
+                        {
+                            ModelState.AddModelError("Photo_", "Photo is required.");
                         }
 
-                        if (model.ExistingPhotoImagePath != null)
-                        {
-                            string f = Path.Join(hostingEnvironment.WebRootPath, basicDetail.PhotoImagePath.Replace('/', '\\').ToString());
-                            if (System.IO.File.Exists(f))
-                            {
-                                System.IO.File.Delete(f);
-                            }
-                        }
-                        basicDetail.PhotoImagePath = sourceFolderPhotoDB + "/" + FileName;
-                    }
-
-                    if (model.Signature_ != null)
-                    {
                         string sourceFolderSignatureDB = "/WriteReadData/" + "Signature";
                         string sourceFolderSignaturePhy = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "Signature");
 
-                        string FileName = service.ProcessUploadedFile(model.Signature_, sourceFolderSignaturePhy);
-                        string filePath = Path.Combine(sourceFolderSignaturePhy, FileName);
+                        if (!Directory.Exists(sourceFolderSignaturePhy))
+                            Directory.CreateDirectory(sourceFolderSignaturePhy);
 
-                        bool imgcontentresult = service.IsImage(model.Signature_);
-
-                        bool result = service.IsValidHeader(filePath);
-
-                        if (!result || !imgcontentresult)
+                        if (model.Signature_ != null)
                         {
-                            ModelState.AddModelError("", "File format not correct");
-                            if (System.IO.File.Exists(filePath))
-                            {
-                                System.IO.File.Delete(filePath);
-                            }
-                            goto end;
-                        }
+                            string FileName = service.ProcessUploadedFile(model.Signature_, sourceFolderSignaturePhy);
 
-                        if (model.ExistingSignatureImagePath != null)
-                        {
-                            string f = Path.Join(hostingEnvironment.WebRootPath, basicDetail.SignatureImagePath.Replace("/", "\\"));
-                            if (System.IO.File.Exists(f))
+                            string path = Path.Combine(sourceFolderSignaturePhy, FileName);
+
+                            bool result = service.IsValidHeader(path);
+                            bool imgcontentresult = service.IsImage(model.Signature_);
+
+                            if (!result || !imgcontentresult)
                             {
-                                System.IO.File.Delete(f);
+                                ModelState.AddModelError("", "File format not correct");
+                                if (System.IO.File.Exists(path))
+                                {
+                                    System.IO.File.Delete(path);
+                                }
+                                goto end;
                             }
+
+                            newBasicDetail.SignatureImagePath = sourceFolderSignatureDB + "/" + FileName;
                         }
-                        basicDetail.SignatureImagePath = sourceFolderSignatureDB + "/" + FileName;
+                        else
+                        {
+                            ModelState.AddModelError("Signature_", "Signature is required.");
+                        }
+                        //if (model.AadhaarNo != null)
+                        //{
+                        //    newBasicDetail.AadhaarNo = model.AadhaarNo.Replace(" ", "");
+                        //}
+                        BasicDetail ret = new BasicDetail();
+                        ret = await unitOfWork.BasicDetail.AddWithReturn(newBasicDetail);
+                        if (ret != null)
+                        {
+
+                            MTrnICardRequest mTrnICardRequest = new MTrnICardRequest();
+                            mTrnICardRequest.BasicDetailId = ret.BasicDetailId;
+                            mTrnICardRequest.Status = false;
+                            mTrnICardRequest.TypeId = 1;
+                            mTrnICardRequest.UpdatedOn = DateTime.Now;
+                            mTrnICardRequest.Updatedby = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").UserId; //SessionHeplers.GetObject<string>(HttpContext.Session, "ArmyNo");
+                            mTrnICardRequest = await iTrnICardRequestBL.AddWithReturn(mTrnICardRequest);
+                            if (mTrnICardRequest.RequestId > 0)
+                            {
+                                MStepCounter mStepCounter = new MStepCounter();
+                                mStepCounter.Step = 1;
+                                mStepCounter.RequestId = mTrnICardRequest.RequestId;
+                                mStepCounter.UpdatedOn = DateTime.Now;
+                                mStepCounter.Updatedby = 1;
+                                await iStepCounterBL.Add(mStepCounter);
+                            }
+
+                        }
+                        TempData["success"] = "Successfully created.";
+                        return RedirectToAction("Index", new { Id = 1 });
                     }
-                    //if (model.AadhaarNo != null)
-                    //{
-                    //    basicDetail.AadhaarNo = model.AadhaarNo.Replace(" ", "");
-                    //}
-                    basicDetail.AadhaarNo = model.AadhaarNo;
-                    basicDetail.Updatedby = Convert.ToInt32(userId);
-                    basicDetail.UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
-                    await unitOfWork.BasicDetail.Update(basicDetail);
-                    TempData["success"] = "Updated Successfully.";
-                    return RedirectToAction("Index");
+                    else
+                    {
+                        TempData["error"] = "Operation failed.";
+                    }
                 }
             }
-            else
+            catch (ReferenceConstraintException ex)
             {
-
+                _logger.LogError(1001, ex, "ReferenceConstraintException");
+                ModelState.AddModelError("", ex.Message);
+                goto end;
             }
-
+            catch (UniqueConstraintException ex)
+            {
+                _logger.LogError(1002, ex, "UniqueConstraintException");
+                ModelState.AddModelError("", ex.Message);
+                goto end;
+            }
+            catch (MaxLengthExceededException ex)
+            {
+                _logger.LogError(1003, ex, "MaxLengthExceededException");
+                ModelState.AddModelError("", ex.Message);
+                goto end;
+            }
+            catch (CannotInsertNullException ex)
+            {
+                _logger.LogError(1004, ex, "CannotInsertNullException");
+                ModelState.AddModelError("", ex.Message);
+                goto end;
+            }
+            catch (NumericOverflowException ex)
+            {
+                _logger.LogError(1005, ex, "NumericOverflowException");
+                ModelState.AddModelError("", ex.Message);
+                goto end;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1006, ex, "Exception");
+                ModelState.AddModelError("", ex.Message);
+                goto end;
+            }
 
         end:
             return View(model);
@@ -921,8 +723,6 @@ namespace Web.Controllers
                 }
             }
         }    
-        
-
         public async Task<IActionResult> UpdateStepCounter(MStepCounter mStepCounter)
         {
            
@@ -1049,316 +849,5 @@ namespace Web.Controllers
             basicDetail.PermanentAddress = "House No.-" + Random.Shared.Next(50, 999) + ", " + PermanentAddress[a];
             return Ok(basicDetail);
         }
-        #region Part wise code.
-        //[Authorize(Roles = "Admin,User")]
-        //[HttpGet]
-        //public async Task<ActionResult> Part1(string Id)
-        //{
-        //    string decryptedId = string.Empty;
-        //    int decryptedIntId = 0;
-        //    try
-        //    {
-        //        // Decrypt the  id using Unprotect method
-        //        decryptedId = protector.Unprotect(Id);
-        //        decryptedIntId = Convert.ToInt32(decryptedId);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _logger.LogError(1001, ex, "This error occure because Id value change by user.");
-        //        return RedirectToAction("Error", "Error");
-        //    }
-
-        //    BasicDetail? basicDetail = await unitOfWork.BasicDetail.Get(decryptedIntId);
-        //    if (basicDetail != null)
-        //    {
-        //        HttpContext.Session.SetInt32(SessionKeyStep, basicDetail.Step);
-        //        HttpContext.Session.SetInt32(SessionKeyCurStep, 1);
-
-        //        if (basicDetail.Step == 0 || basicDetail.IsSubmit == true)
-        //            return RedirectToAction("Index");
-        //        ViewBag.Step = basicDetail.Step;
-
-        //        BasicDetailUpdVMPart1 newBasicDetail = _mapper.Map<BasicDetail, BasicDetailUpdVMPart1>(basicDetail);
-
-        //        newBasicDetail.EncryptedId = Id;
-        //        newBasicDetail.BasicDetailId = decryptedIntId;
-
-        //        return View(newBasicDetail);
-        //    }
-        //    else
-        //    {
-        //        Response.StatusCode = 404;
-        //        return View("BasicDetailNotFound", decryptedId.ToString());
-        //    }
-        //}
-        //[Authorize(Roles = "Admin,User")]
-        //[HttpPost]
-        //public async Task<IActionResult> Part1(BasicDetailUpdVMPart1 model)
-        //{
-        //    BasicDetail? basicDetail = await unitOfWork.BasicDetail.Get(model.BasicDetailId);
-        //    if (basicDetail != null)
-        //    {
-        //        if (basicDetail.Step > 0)
-        //            return RedirectToAction("Part2", new { Id = model.EncryptedId });
-        //        else
-        //            return RedirectToAction("Part1", new { Id = model.EncryptedId });
-        //    }
-        //    else
-        //    {
-        //        Response.StatusCode = 404;
-        //        return View("BasicDetailNotFound", model.BasicDetailId);
-        //    }
-        //}
-        //[Authorize(Roles = "Admin,User")]
-        //[HttpGet]
-        //public async Task<ActionResult> Part2(string Id)
-        //{
-
-        //    string decryptedId = string.Empty;
-        //    int decryptedIntId = 0;
-        //    try
-        //    {
-        //        // Decrypt the  id using Unprotect method
-        //        decryptedId = protector.Unprotect(Id);
-        //        decryptedIntId = Convert.ToInt32(decryptedId);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _logger.LogError(1001, ex, "This error occure because Id value change by user.");
-        //        return RedirectToAction("Error", "Error");
-        //    }
-
-        //    BasicDetail? basicDetail = await unitOfWork.BasicDetail.Get(decryptedIntId);
-        //    if (basicDetail != null)
-        //    {
-        //        HttpContext.Session.SetInt32(SessionKeyStep, basicDetail.Step);
-        //        HttpContext.Session.SetInt32(SessionKeyCurStep, 2);
-
-        //        if (basicDetail.Step < 1 || basicDetail.IsSubmit == true)
-        //            return RedirectToAction("Index");
-        //        ViewBag.OptionsRank = service.GetRank(1);
-        //        ViewBag.OptionsArmedType = service.GetArmedType();
-        //        ViewBag.OptionsBloodGroup = service.GetBloodGroup();
-
-
-        //        BasicDetailUpdVMPart2 newBasicDetail = _mapper.Map<BasicDetail, BasicDetailUpdVMPart2>(basicDetail);
-        //        if (newBasicDetail.Step == 2)
-        //        {
-        //            //if (newBasicDetail.AadhaarNo != null && newBasicDetail.AadhaarNo.Length == 12)
-        //            //{
-        //            //    string p1, p2, p3;
-        //            //    p1 = newBasicDetail.AadhaarNo.Substring(0, 4);
-        //            //    p2 = newBasicDetail.AadhaarNo.Substring(4, 4);
-        //            //    p3 = newBasicDetail.AadhaarNo.Substring(8, 4);
-        //            //    newBasicDetail.AadhaarNo = p1 + " " + p2 + " " + p3;
-        //            //}
-        //            newBasicDetail.ExistingPhotoImagePath = newBasicDetail.PhotoImagePath;
-        //            newBasicDetail.ExistingSignatureImagePath = newBasicDetail.SignatureImagePath;
-        //        }
-        //        newBasicDetail.EncryptedId = Id;
-        //        newBasicDetail.BasicDetailId = decryptedIntId;
-
-        //        return View(newBasicDetail);
-        //    }
-        //    else
-        //    {
-        //        Response.StatusCode = 404;
-        //        return View("BasicDetailNotFound", decryptedId.ToString());
-        //    }
-        //}
-        //[Authorize(Roles = "Admin,User")]
-        //[HttpPost]
-        //public async Task<IActionResult> Part2(BasicDetailUpdVMPart2 model)
-        //{
-        //    ViewBag.OptionsRank = service.GetRank(1);
-        //    ViewBag.OptionsBloodGroup = service.GetBloodGroup();
-        //    ViewBag.OptionsArmedType = service.GetArmedType();
-        //    var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-        //    BasicDetail basicDetail = await unitOfWork.BasicDetail.Get(model.BasicDetailId);
-
-        //    if (basicDetail != null)
-        //    {
-        //        if (ModelState.IsValid)
-        //        {
-        //            basicDetail.RankId = model.RankId;
-        //            basicDetail.ArmedId = model.ArmedId;
-        //            basicDetail.IdentityMark = model.IdentityMark;
-        //            basicDetail.Height = model.Height;
-        //            basicDetail.BloodGroup = model.BloodGroup;
-        //            basicDetail.PlaceOfIssue = model.PlaceOfIssue;
-        //            basicDetail.DateOfIssue = model.DateOfIssue;
-        //            basicDetail.IssuingAuth = model.IssuingAuth;
-        //            basicDetail.AadhaarNo = model.AadhaarNo;
-        //            //if (model.AadhaarNo != null)
-        //            //{
-        //            //    basicDetail.AadhaarNo = model.AadhaarNo.Replace(" ", "");
-        //            //}
-
-        //            string sourceFolderPhotoDB = "/WriteReadData/" + "Photo";
-        //            string sourceFolderSignatureDB = "/WriteReadData/" + "Signature";
-        //            string sourceFolderPhotoPhy = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "Photo");
-        //            string sourceFolderSignaturePhy = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "Signature");
-
-        //            if (!Directory.Exists(sourceFolderPhotoPhy))
-        //                Directory.CreateDirectory(sourceFolderPhotoPhy);
-
-        //            if (!Directory.Exists(sourceFolderSignaturePhy))
-        //                Directory.CreateDirectory(sourceFolderSignaturePhy);
-
-        //            if (basicDetail.Step == 2)
-        //            {
-        //                if (model.Photo_ != null)
-        //                {
-        //                    string FileName = service.ProcessUploadedFile(model.Photo_, sourceFolderPhotoPhy);
-        //                    string filePath = Path.Combine(sourceFolderPhotoPhy, FileName);
-
-        //                    bool imgcontentresult = service.IsImage(model.Photo_);
-
-        //                    bool result = service.IsValidHeader(filePath);
-
-        //                    if (!result || !imgcontentresult)
-        //                    {
-        //                        ModelState.AddModelError("", "File format not correct");
-        //                        if (System.IO.File.Exists(filePath))
-        //                        {
-        //                            System.IO.File.Delete(filePath);
-        //                        }
-        //                        goto xyz;
-        //                    }
-
-        //                    if (model.ExistingPhotoImagePath != null)
-        //                    {
-        //                        string f = Path.Join(hostingEnvironment.WebRootPath, basicDetail.PhotoImagePath.Replace('/', '\\').ToString());
-        //                        if (System.IO.File.Exists(f))
-        //                        {
-        //                            System.IO.File.Delete(f);
-        //                        }
-        //                    }
-        //                    basicDetail.PhotoImagePath = sourceFolderPhotoDB + "/" + FileName;
-        //                }
-
-        //                if (model.Signature_ != null)
-        //                {
-        //                    string FileName = service.ProcessUploadedFile(model.Signature_, sourceFolderSignaturePhy);
-        //                    string filePath = Path.Combine(sourceFolderSignaturePhy, FileName);
-
-        //                    bool imgcontentresult = service.IsImage(model.Signature_);
-
-        //                    bool result = service.IsValidHeader(filePath);
-
-        //                    if (!result || !imgcontentresult)
-        //                    {
-        //                        ModelState.AddModelError("", "File format not correct");
-        //                        if (System.IO.File.Exists(filePath))
-        //                        {
-        //                            System.IO.File.Delete(filePath);
-        //                        }
-        //                        goto xyz;
-        //                    }
-
-        //                    if (model.ExistingSignatureImagePath != null)
-        //                    {
-        //                        string f = Path.Join(hostingEnvironment.WebRootPath, basicDetail.SignatureImagePath.Replace("/", "\\"));
-        //                        if (System.IO.File.Exists(f))
-        //                        {
-        //                            System.IO.File.Delete(f);
-        //                        }
-        //                    }
-        //                    basicDetail.SignatureImagePath = sourceFolderSignatureDB + "/" + FileName;
-        //                }
-        //            }
-        //            else
-        //            {
-        //                if (model.Photo_ == null)
-        //                {
-        //                    ModelState.AddModelError("Photo_", "Photo is required.");
-        //                    goto xyz;
-        //                }
-        //                else
-        //                {
-        //                    string FileName = service.ProcessUploadedFile(model.Photo_, sourceFolderPhotoPhy);
-
-        //                    string path = Path.Combine(sourceFolderPhotoPhy, FileName);
-
-        //                    bool result = service.IsValidHeader(path);
-        //                    bool imgcontentresult = service.IsImage(model.Photo_);
-
-        //                    if (!result || !imgcontentresult)
-        //                    {
-        //                        ModelState.AddModelError("", "File format not correct");
-        //                        if (System.IO.File.Exists(path))
-        //                        {
-        //                            System.IO.File.Delete(path);
-        //                        }
-        //                        goto xyz;
-        //                    }
-
-        //                    basicDetail.PhotoImagePath = sourceFolderPhotoDB + "/" + FileName;
-        //                    ViewBag.PhotoImagePath = basicDetail.PhotoImagePath;
-        //                }
-        //                if (model.Signature_ == null)
-        //                {
-        //                    ModelState.AddModelError("Signature_", "Signature is required.");
-        //                    goto xyz;
-        //                }
-        //                else
-        //                {
-        //                    string FileName = service.ProcessUploadedFile(model.Signature_, sourceFolderSignaturePhy);
-
-        //                    string path = Path.Combine(sourceFolderSignaturePhy, FileName);
-
-        //                    bool result = service.IsValidHeader(path);
-        //                    bool imgcontentresult = service.IsImage(model.Signature_);
-
-        //                    if (!result || !imgcontentresult)
-        //                    {
-        //                        ModelState.AddModelError("", "File format not correct");
-        //                        if (System.IO.File.Exists(path))
-        //                        {
-        //                            System.IO.File.Delete(path);
-        //                        }
-        //                        goto xyz;
-        //                    }
-
-        //                    basicDetail.SignatureImagePath = sourceFolderSignatureDB + "/" + FileName;
-        //                }
-        //            }
-        //            if (basicDetail.Step < 2)
-        //                basicDetail.Step = 2;
-
-        //            basicDetail.Updatedby = Convert.ToInt32(userId);
-        //            basicDetail.UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
-        //            BasicDetail updatedbasicDetail = await unitOfWork.BasicDetail.UpdateWithReturn(basicDetail);
-        //            TempData["success"] = "Updated Successfully.";
-        //            if (updatedbasicDetail.Step > 1)
-        //                return RedirectToAction("Part3", new { Id = model.EncryptedId });
-        //            else
-        //                return RedirectToAction("Part2", new { Id = model.EncryptedId });
-        //        }
-        //        else
-        //        {
-        //            Response.StatusCode = 404;
-        //            return View("BasicDetailNotFound", model.BasicDetailId);
-        //        }
-
-        //    }
-        //    else
-        //    {
-        //        Response.StatusCode = 404;
-        //        return View("BasicDetailNotFound", model.BasicDetailId);
-        //    }
-        //xyz:
-        //    return View(model);
-
-        //}
-        //[Authorize(Roles = "Admin,User")]
-        //[HttpGet]
-        //public async Task<ActionResult> Part3(string Id)
-        //{
-        //    return View();
-        //}
-        #endregion
-
     }
 }

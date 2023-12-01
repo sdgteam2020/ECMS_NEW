@@ -14,11 +14,7 @@ namespace DataTransferObject
     {
         public MappingProfile()
         {
-            CreateMap<DTOBasicDetailCrtRequest, BasicDetail>();
-            CreateMap<BasicDetail, DTOBasicDetailUpdRequest>();
             CreateMap<BasicDetail, DTOBasicDetailRequest>();
-            CreateMap<BasicDetail, BasicDetailUpdVMPart1>();
-            CreateMap<BasicDetail, BasicDetailUpdVMPart2>();
 
             CreateMap<BasicDetailCrtAndUpdVM, BasicDetail>();
 

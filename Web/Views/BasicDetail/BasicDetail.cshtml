@@ -14,7 +14,7 @@
         <div class="card-header py-3 d-flex  bg-transparent">
             <h6 class="mb-0 fw-bold"></h6>
         </div>
-        <form enctype="multipart/form-data" asp-controller="BasicDetail" asp-action="Edit" method="post" class="mt-3">
+        <form enctype="multipart/form-data" asp-controller="BasicDetail" asp-action="BasicDetail" method="post" class="mt-3">
             <div class="card-body">
                 <input hidden asp-for="BasicDetailId" />
                 <input hidden asp-for="ExistingPhotoImagePath" />
@@ -141,8 +141,16 @@
                             <label class="col-sm-1 col-form-label text-center font-weight-bold">@(sno++).</label>
                             <label class="col-sm-3 col-form-label form-label">Signature</label>
                             <div class="col-sm-8">
-                                <img id="SignaturePath" src="@Model.ExistingSignatureImagePath" height="80px" width="100px" />
-                                <input asp-for="Signature_" class="form-control" onchange="beforeUploadSignatureSizeCheckInEdit(this)" accept="image/jpeg,image/jpg,image/png,image/gif" />
+                                @if(Model.ArmedId>0)
+                                {
+                                    <img id="SignaturePath" src="@Model.ExistingSignatureImagePath" height="80px" width="100px" />
+                                    <input asp-for="Signature_" class="form-control" onchange="beforeUploadSignatureSizeCheckInEdit(this)" accept="image/jpeg,image/jpg,image/png,image/gif" />
+                                }
+                                else
+                                {
+                                    <img id="SignaturePath" src="~/writereaddata/images/noimage.png" height="80px" width="100px" />
+                                    <input asp-for="Signature_" class="form-control" onchange="beforeUploadSignatureSizeCheck(this)" accept="image/jpeg,image/jpg,image/png,image/gif" />
+                                }
                                 <span id="lblSignature" style="color: red;"></span>
                                 <span asp-validation-for="Signature_" class="text-danger"></span>
                             </div>
@@ -166,14 +174,36 @@
                             <label class="col-sm-1 col-form-label font-weight-bold">@(sno++).</label>
                             <label class="col-sm-3 col-form-label form-label">Photograph</label>
                             <div class="col-sm-8">
-                                <img id="PhotoPath" src="@Model.ExistingPhotoImagePath" height="200px" width="200px" />
-                                <input asp-for="Photo_" class="form-control" onchange="beforeUploadPhotoSizeCheckInEdit(this)" accept="image/jpeg,image/jpg,image/png,image/gif" />
+                                @if(Model.ArmedId>0)
+                                {
+                                    <img id="PhotoPath" src="@Model.ExistingPhotoImagePath" height="200px" width="200px" />
+                                    <input asp-for="Photo_" class="form-control" onchange="beforeUploadPhotoSizeCheckInEdit(this)" accept="image/jpeg,image/jpg,image/png,image/gif" />
+                                }
+                                else
+                                {
+                                    <img id="PhotoPath" src="~/writereaddata/images/noimage.png" height="200px" width="200px" />
+                                    <input asp-for="Photo_" class="form-control" onchange="beforeUploadPhotoSizeCheck(this);" accept="image/jpeg,image/jpg,image/png,image/gif" />
+                                }
                                 <span id="lblPhoto" style="color: red;"></span>
                                 <span asp-validation-for="Photo_" class="text-danger"></span>
                             </div>
                         </div>
                     </div>
                 </div>
+                @if (Model.ArmedId == 0)
+                {
+                    <div class="row">
+                        <div class="row mb-3 required">
+                            <div class="col-sm-12">
+                                <div class="form-check">
+                                    <input asp-for="TermsConditions" type="checkbox" class="form-check-input" />
+                                    <label asp-for="TermsConditions" class="font-weight-bold"></label>
+                                    <span asp-validation-for="TermsConditions" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             </div>
             <div class="card-footer text-center">

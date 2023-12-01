@@ -169,7 +169,6 @@ function beforeUploadPhotoSizeCheckInEdit(id) {
     }
 }
 function beforeSubmitValidateBasicDetail(id) {
-    debugger
     let formId = '#' + id;
     let rType = $("#RegistrationType").val();
     if (rType == 'JCO') {
@@ -400,7 +399,7 @@ function getData(id) {
         console.error("Form not found.");
         return;
     }
-    $("#RegistrationType").prop('required', true);
+    $("#RegistrationId").prop('required', true);
     $("#ServiceNumber").prop('required', true);
     $.validator.unobtrusive.parse($(formId));
     if ($(formId).valid()) {
@@ -410,7 +409,7 @@ function getData(id) {
      else {
         return false;
     }
-    let regType = $("#RegistrationType").find(":selected").val();
+    let regId = $("#RegistrationId").find(":selected").val();
 
     var param = { "ArmyNo": $("#ServiceNumber").val() };
 
@@ -447,13 +446,13 @@ function getData(id) {
                             $("#DateOfCommissioning").val(response.DateOfCommissioning);
                             $("#DOC").val(moment(response.DateOfCommissioning).format("DD-MMM-YYYY"));
                             $("#PermanentAddress").val(response.PermanentAddress);
-                            $("#RegType").val(regType);
+                            $("#RegId").val(regId);
                         }
                     }
                 });
             }
             else {
-                if ($('#RegistrationType').val() == 1) {
+                if ($('#RegistrationId').val() == 1) {
                     alert("Profile Not Found.")
                 } else {
                     $.ajax({

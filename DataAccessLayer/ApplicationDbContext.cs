@@ -1,4 +1,5 @@
-﻿using DataTransferObject.Domain;
+﻿using DataAccessLayer.ExtensionsClass;
+using DataTransferObject.Domain;
 using DataTransferObject.Domain.Error;
 using DataTransferObject.Domain.Identitytable;
 using DataTransferObject.Domain.Master;
@@ -19,6 +20,7 @@ namespace DataAccessLayer
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         { }
+        public DbSet<MRegistration> MRegistration { get; set; } = null!;
         public DbSet <MArmedCat> MArmedCats { get; set; } = null!;
         public DbSet<MTrnFwd> TrnFwds { get; set; } = null!;
         public DbSet<DocUpload> DocUploads { get; set; } = null!;
@@ -45,7 +47,7 @@ namespace DataAccessLayer
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
-
+            builder.Seed();
             builder.Entity<IdentityUserRole<int>>(entity =>
             {
             });

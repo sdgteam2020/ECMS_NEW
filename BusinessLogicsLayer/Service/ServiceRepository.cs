@@ -28,16 +28,6 @@ namespace BusinessLogicsLayer.Service
             this.userManager = userManager;
             EndDate = new DateTime(2299, 01, 01);
         }
-        public IEnumerable<SelectListItem> GetSubmitType()
-        {
-            var SubmitType = new List<SelectListItem>
-            {
-                new SelectListItem{ Text="-- Select --", Value = null },
-                new SelectListItem{ Text="I am agree.", Value = "1" },
-                new SelectListItem{ Text="I am not agree.", Value = "2" },
-            };
-            return new SelectList(SubmitType, "Value", "Text");
-        }
         public IEnumerable<SelectListItem> GetRegistrationType()
         {
             var RegType = new List<SelectListItem>
@@ -180,6 +170,24 @@ namespace BusinessLogicsLayer.Service
                 new SelectListItem{ Text="Z", Value = "Z" },
             };
             return new SelectList(rakes, "Value", "Text");
+        }
+        public IEnumerable<SelectListItem> GetRegistration()
+        {
+            var RegistrationOptions = context.MRegistration.OrderBy(o => o.Order)
+                .Select(a =>
+                  new SelectListItem
+                  {
+                      Value = a.RegistrationId.ToString(),
+                      Text = a.Name
+                  }).ToList();
+
+            var ddfirst = new SelectListItem()
+            {
+                Value = null,
+                Text = "Please Select"
+            };
+            RegistrationOptions.Insert(0, ddfirst);
+            return new SelectList(RegistrationOptions, "Value", "Text");
         }
         public IEnumerable<SelectListItem> GetArmedCat()
         {
