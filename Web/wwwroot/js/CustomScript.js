@@ -1,12 +1,13 @@
 ﻿$(document).ready(function () {
     $('#RegistrationType').on('change', function () {
         if ($('#RegistrationType').val() == 1) {
-            $("#ServiceNumber").attr("readonly", true); 
-            $("#ServiceNumber").val($("#aspntokenarmyno").html());
+            $("#ServiceNumber").attr("readonly", true);
+            $("#btngetToken").removeClass("d-none");
         }
         else {
             $("#ServiceNumber").val("");
             $("#ServiceNumber").attr("readonly", false); 
+            $("#btngetToken").addClass("d-none");
         }
         
 

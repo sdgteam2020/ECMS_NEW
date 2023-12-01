@@ -1,27 +1,89 @@
-﻿using BusinessLogicsLayer.Master;
+﻿using BusinessLogicsLayer;
+using BusinessLogicsLayer.Bde;
+using BusinessLogicsLayer.Master;
 using BusinessLogicsLayer.Token;
+using DapperRepo.Core.Constants;
 using DataTransferObject.Domain;
+using DataTransferObject.Domain.Identitytable;
+using DataTransferObject.Domain.Model;
 using DataTransferObject.Requests;
+using Humanizer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis.CSharp;
 using System.Drawing;
 using System.Net;
 using System.Security.Claims;
 using Web.WebHelpers;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Web.Controllers
 {
     public class ConfigUserController : Controller
     {
-        public readonly iGetTokenBL _iGetTokenBL; private readonly IUserProfileBL _userProfileBL;
-        public ConfigUserController(iGetTokenBL iGetTokenBL, IUserProfileBL userProfileBL)
+        public readonly iGetTokenBL _iGetTokenBL; 
+        private readonly IUserProfileBL _userProfileBL;
+        private readonly UserManager<ApplicationUser> userManager;
+        public readonly IDomainMapBL _iDomainMapBL;
+        public ConfigUserController(iGetTokenBL iGetTokenBL, IUserProfileBL userProfileBL, UserManager<ApplicationUser> userManager, IDomainMapBL domainMapBL)
         {
             _iGetTokenBL=iGetTokenBL;
             _userProfileBL=userProfileBL;
+            this.userManager=userManager;
+            _iDomainMapBL=domainMapBL;  
         }
-        public IActionResult Index()
+        public async Task<IActionResult> IndexAsync()
         {
-          
-            return View();
+            //this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+
+            ViewBag.DomainId = this.User.FindFirstValue(ClaimTypes.Name);
+            ViewBag.Role = this.User.FindFirstValue(ClaimTypes.Role);
+            TrnDomainMapping dTO = new TrnDomainMapping();
+            dTO.DomianId= Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+            dTO = await _iDomainMapBL.GetByDomainIdbyUnit(dTO);
+            if (dTO==null || dTO.UserId ==null)
+            {
+                return View();
+
+            }
+            else 
+            {
+                
+                var army = await _userProfileBL.Get(Convert.ToInt32(dTO.UserId));
+                DtoSession dtoSession = new DtoSession();
+                if (army!=null)
+                {
+                    dtoSession.ICNO = army.ArmyNo;
+                    dtoSession.UserId = army.UserId;
+                    dtoSession.UnitId=dTO.UnitId;
+                }
+                SessionHeplers.SetObject(HttpContext.Session, "Token", dtoSession);
+                SessionHeplers.SetObject(HttpContext.Session, "ArmyNo", dtoSession.ICNO);
+                // var data=  await _iDomainMapBL.GetByDomainIdbyUnit(dTO);
+                return RedirectToActionPermanent("Dashboard", "Home");
+            }
+
+
+
+
+
+        }
+        [HttpPost]
+        public async Task<IActionResult> CheckProfileExist(int Id)
+        {
+            try
+            {
+                TrnDomainMapping dTO = new TrnDomainMapping();
+                dTO.DomianId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                var data = await _iDomainMapBL.GetByDomainIdbyUnit(dTO);
+                return Json(data);
+            }
+            catch (Exception ex)
+            {
+                return Json(null);
+            }
+           
         }
         [HttpPost]
         public async Task<IActionResult> GetTokenDetails(string ApiName)
@@ -29,6 +91,56 @@ namespace Web.Controllers
 
             var data = await _iGetTokenBL.GetTokenDetails(ApiName);
             return Json(data);
+        }
+        [HttpPost]
+        public async Task<IActionResult> SaveMapping(TrnDomainMapping dTO)
+        {
+
+            dTO.DomianId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+            try
+            {
+               // dTO.IsActive = true;
+               // dTO.Updatedby = 1;
+                //dTO.UpdatedOn = DateTime.Now;
+
+                if (ModelState.IsValid)
+                {
+                    if (!await _iDomainMapBL.GetByDomainId(dTO))
+                    {
+                        if (dTO.Id > 0)
+                        {
+                            _iDomainMapBL.Update(dTO);
+                            return Json(KeyConstants.Update);
+                        }
+                        else
+                        {
+
+                            await _iDomainMapBL.Add(dTO);
+                            return Json(KeyConstants.Save);
+
+
+                        }
+                    }
+                    else
+                    {
+                        TrnDomainMapping trnDomainMapping = new TrnDomainMapping();
+                        trnDomainMapping =await _iDomainMapBL.GetByDomainIdbyUnit(dTO);
+                        trnDomainMapping.UnitId = dTO.UnitId;
+                       await _iDomainMapBL.Update(trnDomainMapping);
+                        return Json(KeyConstants.Update);
+                    }
+
+                }
+                else
+                {
+
+                    return Json(ModelState.Select(x => x.Value.Errors).Where(y => y.Count > 0).ToList());
+                }
+
+            }
+            catch (Exception ex) { return Json(KeyConstants.InternalServerError); }
+
+            return Json(1);
         }
         [HttpPost]
         public async Task<IActionResult> GotoDashboard(string ICNO)
@@ -43,19 +155,10 @@ namespace Web.Controllers
         {
             try
             {
-                string armyno = SessionHeplers.GetObject<string>(HttpContext.Session, "ArmyNo");
-                int userid = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-                var army = await _userProfileBL.GetByMArmyNo(armyno, userid);
+
                 DtoSession dtoSession = new DtoSession();
-                if(army.Count>0l)
-                {
-                    dtoSession.ICNO = armyno;
-                    dtoSession.UserId = army[0].UserId ;
-                }
-                SessionHeplers.SetObject(HttpContext.Session, "Token", dtoSession);
-
-
-                return Json(SessionHeplers.GetObject<string>(HttpContext.Session, "ArmyNo"));
+                dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+                return Json(dtoSession);
 
             }
             catch (Exception ex) {

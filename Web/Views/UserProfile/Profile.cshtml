@@ -187,13 +187,13 @@
                                         <div class="form-group row mb-2">
                                                 <span id="spnUnitIdUserPro" class="d-none"></span>
                                                 <label class="col-form-label col-sm-4">Unit<i class="fas fa-asterisk mand1"></i></label>
-                                            <div class="col-sm-6">
+                                            <div class="col-sm-8">
                                               
-                                                <input class="form-control Alphanumeric" placeholder="Enter Unit" id="txtProUnit" required pattern="^[a-zA-Z0-9 ]*$" title="Only Alphabets and Numbers allowed" />
+                                                <input class="form-control Alphanumeric" readonly placeholder="Enter Unit" id="txtProUnit" required pattern="^[a-zA-Z0-9 ]*$" title="Only Alphabets and Numbers allowed" />
                                             </div>
-                                            <div class="col-sm-2">
+                                           @*  <div class="col-sm-2">
                                                 <button type="button" class="btn btn-icon btn-round btn-warning" id="btnProUnitAdd"><i class="fas fa-plus"></i></button>
-                                            </div>
+                                            </div> *@
                                         </div>
                                     </div>
                                     <div class="col-sm-4">
@@ -249,19 +249,21 @@
                                         <div class="row">
                                             <div class="col-sm-4">
                                                 <div class="form-group row mb-2">
-                                                    <label class="col-form-label col-sm-4">IO Army No<i class="fas fa-asterisk mand1"></i></label>
+                                                    <label class="col-form-label col-sm-4">IO Army No
+                                                       @*  <i class="fas fa-asterisk mand1"></i> *@
+                                                        </label>
                                                     <span id="spnUserIdIO" class="d-none">0</span>
-                                                    <div class="col-sm-6">
+                                                    <div class="col-sm-8">
                                                         
-                                                        <input class="form-control " placeholder="Enter IO Army No" id="txtProIOArmyNo" required data-toggle="tooltip" data-placement="top" title="Enter Army No" />
+                                                        <input class="form-control " placeholder="Enter IO Army No" id="txtProIOArmyNo" data-toggle="tooltip" data-placement="top" title="Enter Army No" />
                                                     </div>
-                                                    <div class="col-sm-2">
+                                                   @*  <div class="col-sm-2"> *@
                                                        
-                                                            <button type="button" class="btn btn-icon btn-round btn-warning" id="btnIOProfileSerch" data-toggle="tooltip" data-placement="top" title="Click To Search From Api"><i class="fas fa-search"></i></button>
+                                                            @* <button type="button" class="btn btn-icon btn-round btn-warning" id="btnIOProfileSerch" data-toggle="tooltip" data-placement="top" title="Click To Search From Api"><i class="fas fa-search"></i></button> *@
                                                        
                                                       @*   <button type="button" class="btn btn-icon btn-round btn-warning" id="btnIOProAdd" data-toggle="tooltip" data-placement="top" title="Click To New IO Details"><i class="fas fa-plus"></i></button>
                                                         <button type="button" class="btn btn-icon btn-round btn-danger d-none" id="btnIOProremove" data-toggle="tooltip" data-placement="top" title="Click To New IO Details"><i class="fas fa-minus"></i></button> *@
-                                                    </div>
+                                                   @*  </div> *@
                                                     @*  <div class="col-sm-8 IOlbl">
                                                     <i class="fas fa-asterisk mand"></i>
                                                     <label id="lblIOProAdd" class="form-control"></label>
@@ -270,7 +272,9 @@
                                             </div>
                                             <div class="col-sm-4">
                                                 <div class="form-group row mb-2">
-                                                    <label class="col-form-label col-sm-4">IO Rank<i class="fas fa-asterisk mand1"></i></label>
+                                                    <label class="col-form-label col-sm-4">IO Rank
+                                                       @*  <i class="fas fa-asterisk mand1"></i> *@
+                                                        </label>
                                                     <div class="col-sm-8 ">
                                                        
                                                         <select class=" js-example-basic-single select2 form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddlProIORank" id="ddlProIORank">
@@ -282,7 +286,9 @@
                                             </div>
                                             <div class="col-sm-4">
                                                 <div class="form-group row mb-2">
-                                                    <label class="col-form-label col-sm-4">IO Name<i class="fas fa-asterisk mand1"></i></label>
+                                                    <label class="col-form-label col-sm-4">IO Name
+                                                        @* <i class="fas fa-asterisk mand1"></i> *@
+                                                        </label>
                                                     <div class="col-sm-8 ">
                                                         
                                                         <input class="form-control" placeholder="Enter IO Name" readonly id="txtProIOName" pattern="^[a-zA-Z0-9 ]*$" maxlength="200" title="Only Alphabets and Numbers allowed" />
@@ -292,7 +298,9 @@
                                             </div>
                                             <div class="col-sm-4">
                                                 <div class="form-group row mb-2">
-                                                    <label class="col-form-label col-sm-4">IO Formation<i class="fas fa-asterisk mand1"></i></label>
+                                                    <label class="col-form-label col-sm-4">IO Formation
+                                                        @* <i class="fas fa-asterisk mand1"></i> *@
+                                                        </label>
                                                     <div class="col-sm-8 ">
                                                         
                                                         <select class=" js-example-basic-single select2 form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddlProIOFormation" id="ddlProIOFormation">
@@ -304,7 +312,9 @@
                                             </div>
                                             <div class="col-sm-4">
                                                 <div class="form-group row mb-2">
-                                                    <label class="col-form-label col-sm-4">IO Appt.<i class="fas fa-asterisk mand1"></i></label>
+                                                    <label class="col-form-label col-sm-4">IO Appt.
+                                                      @*   <i class="fas fa-asterisk mand1"></i> *@
+                                                        </label>
                                                     <div class="col-sm-8 ">
                                                         
                                                         <select class=" js-example-basic-single select2 form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddlProIOAppointment" id="ddlProIOAppointment">
@@ -316,15 +326,17 @@
                                             </div>
                                             <div class="col-sm-4">
                                                 <div class="form-group row mb-2">
-                                                    <label class="col-form-label col-sm-4">IO  Unit<i class="fas fa-asterisk mand1"></i></label>
-                                                    <div class="col-sm-6">
+                                                    <label class="col-form-label col-sm-4">IO  Unit
+                                                        @* <i class="fas fa-asterisk mand1"></i> *@
+                                                        </label>
+                                                    <div class="col-sm-8">
                                                         <span id="spnUnitIdIO" class="d-none">0</span>
                                                         
                                                         <input class="form-control " placeholder="Enter IO Army No" id="txtProIOformunit" title="Only Alphabets and Numbers allowed" />
                                                     </div>
-                                                    <div class="col-sm-2">
+                                                   @*  <div class="col-sm-2">
                                                         <button type="button" class="btn btn-icon btn-round btn-warning" id="btnIOUnitAdd"><i class="fas fa-plus"></i></button>
-                                                    </div>
+                                                    </div> *@
                                                     @* <div class="col-sm-8">
                                                         <i class="fas fa-asterisk mand IOlbl"></i>
                                                         <label id="lblIOProIOUnit" class="col-form-label IOlbl"></label>
@@ -346,17 +358,19 @@
                                     <div class="row">
                                         <div class="col-sm-4">
                                             <div class="form-group row mb-2">
-                                                <label class="col-form-label col-sm-4">GSO Army No<i class="fas fa-asterisk mand1"></i></label>
+                                                <label class="col-form-label col-sm-4">GSO Army No
+                                                    @* <i class="fas fa-asterisk mand1"></i> *@
+                                                    </label>
                                                 <span id="spnUserIdGSO" class="d-none">0</span>
-                                                <div class="col-sm-6">
+                                                <div class="col-sm-8">
                                                     
-                                                    <input class="form-control " placeholder="Enter GSO Army No" id="txtProGSOArmyNo" required data-toggle="tooltip" data-placement="top" title="Enter Army No" />
+                                                    <input class="form-control " placeholder="Enter GSO Army No" id="txtProGSOArmyNo"  data-toggle="tooltip" data-placement="top" title="Enter Army No" />
                                                 </div>
-                                                <div class="col-sm-2">
+                                                @* <div class="col-sm-2">
 
                                                     <button type="button" class="btn btn-icon btn-round btn-warning" id="btnGSOProfileSerch" data-toggle="tooltip" data-placement="top" title="Click To Search From Api"><i class="fas fa-search"></i></button>
 
-                                                  </div>
+                                                  </div> *@
                                                @*  <div class="col-sm-2">
                                                     <button type="button" class="btn btn-icon btn-round btn-warning" id="btnGSOProAdd" data-toggle="tooltip" data-placement="top" title="Click To New GSO Details"><i class="fas fa-plus"></i></button>
                                                     <button type="button" class="btn btn-icon btn-round btn-danger d-none" id="btnGSOProremove" data-toggle="tooltip" data-placement="top" title="Click To New GSO Details"><i class="fas fa-minus"></i></button>
@@ -369,7 +383,9 @@
                                         </div>
                                         <div class="col-sm-4">
                                             <div class="form-group row mb-2">
-                                                <label class="col-form-label col-sm-4">GSO Rank<i class="fas fa-asterisk mand1"></i></label>
+                                                <label class="col-form-label col-sm-4">GSO Rank
+                                                    @* <i class="fas fa-asterisk mand1"></i> *@
+                                                    </label>
                                                 <div class="col-sm-8 ">
                                                     
                                                     <select class=" js-example-basic-single select2 form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddlProGSORank" id="ddlProGSORank">
@@ -381,7 +397,9 @@
                                         </div>
                                         <div class="col-sm-4">
                                             <div class="form-group row mb-2">
-                                                <label class="col-form-label col-sm-4">GSO Name<i class="fas fa-asterisk mand1"></i></label>
+                                                <label class="col-form-label col-sm-4">GSO Name
+                                                   @*  <i class="fas fa-asterisk mand1"></i> *@
+                                                    </label>
                                                 <div class="col-sm-8 ">
                                                     
                                                     <input class="form-control " placeholder="Enter GSO Name" id="txtProGSOName" readonly pattern="^[a-zA-Z0-9 ]*$" maxlength="200" title="Only Alphabets and Numbers allowed" />
@@ -391,7 +409,9 @@
                                         </div>
                                         <div class="col-sm-4">
                                             <div class="form-group row mb-2">
-                                                <label class="col-form-label col-sm-4">GSO Formation<i class="fas fa-asterisk mand1"></i></label>
+                                                <label class="col-form-label col-sm-4">GSO Formation
+                                                    @* <i class="fas fa-asterisk mand1"></i> *@
+                                                    </label>
                                                 <div class="col-sm-8 ">
                                                     
                                                     <select class=" js-example-basic-single select2 form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddlProGSOFormation" id="ddlProGSOFormation">
@@ -403,7 +423,9 @@
                                         </div>
                                         <div class="col-sm-4">
                                             <div class="form-group row mb-2">
-                                                <label class="col-form-label col-sm-4">GSO Appt.<i class="fas fa-asterisk mand1"></i></label>
+                                                <label class="col-form-label col-sm-4">GSO Appt.
+                                                    @* <i class="fas fa-asterisk mand1"></i> *@
+                                                    </label>
                                                 <div class="col-sm-8 ">
                                                     
                                                     <select class=" js-example-basic-single select2 form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddlProGSOAppointment" id="ddlProGSOAppointment">
@@ -415,15 +437,17 @@
                                         </div>
                                         <div class="col-sm-4">
                                             <div class="form-group row mb-2">
-                                                <label class="col-form-label col-sm-4">GSO  Unit<i class="fas fa-asterisk mand1"></i></label>
-                                                <div class="col-sm-6">
+                                                <label class="col-form-label col-sm-4">GSO  Unit
+                                                    @* <i class="fas fa-asterisk mand1"></i> *@
+                                                    </label>
+                                                <div class="col-sm-8">
                                                     <span id="spnUnitIdGSO" class="d-none">0</span>
                                                     
                                                     <input class="form-control" placeholder="Enter GSO Army No" id="txtProGSOformunit" title="Only Alphabets and Numbers allowed" />
                                                 </div>
-                                                <div class="col-sm-2">
+                                               @*  <div class="col-sm-2">
                                                     <button type="button" class="btn btn-icon btn-round btn-warning" id="btnGSOUnitAdd"><i class="fas fa-plus"></i></button>
-                                                </div>
+                                                </div> *@
                                                
                                             </div>
                                         </div>

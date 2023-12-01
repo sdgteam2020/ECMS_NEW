@@ -45,6 +45,7 @@ function GetTokenDetails(ApiId,txt) {
                         //$("#error-msg").html(response.message);
                         $("#tokenmsg").html('<div class="alert alert-danger alert-dismissible fade show "><i class="fa fa-times" aria-hidden="true"></i><span class="m-lg-2">' + response[0].Remarks + '</span>.</div>');
                         $("#" + txt).val("");
+                        $("#" + txt).val("IC-00005");
                     }
                     
                     

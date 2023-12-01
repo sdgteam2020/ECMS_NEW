@@ -18,7 +18,33 @@ toastr.options = {
 }
 $(document).ready(function () {
     Getaspntokenarmyno()
+    if (window.location.pathname !="/UserProfile/Profile")
+    CheckProfileExist();
 });
+function CheckProfileExist() {
+    var listItem = "";
+    var userdata =
+    {
+        "Id": 0,
+
+    };
+    $.ajax({
+        url: '/ConfigUser/CheckProfileExist',
+        contentType: 'application/x-www-form-urlencoded',
+        data: userdata,
+        type: 'POST',
+
+        success: function (response) {
+            if (response != "null" && response != null) {
+                if (response.UserId == 0 || response.UserId == null) {
+                    alert('Please Add Profile First !'); 
+                    window.location = "/UserProfile/Profile";
+                }
+                
+            }
+        }
+    });
+}
 function Getaspntokenarmyno() {
     var listItem = "";
     var userdata =
@@ -35,10 +61,11 @@ function Getaspntokenarmyno() {
         success: function (response) {
             if (response != "null" && response != null) {
                 if (response == 0) {
-                    alert("Plase Add Profile")
+                  //  alert("Plase Add Profile")
                 }
                 else {
-                    $("#aspntokenarmyno").html(response)
+                    $("#aspntokenarmyno").html(response.ICNO)
+                    $("#aspndomainUnitID").html(response.UnitId)
                 }
             }
         }

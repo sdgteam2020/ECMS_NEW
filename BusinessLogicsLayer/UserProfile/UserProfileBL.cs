@@ -23,7 +23,7 @@ namespace BusinessLogicsLayer.Master
             _iUserProfileDB = userProfileDB;   
         }
 
-        public Task<List<DTOUserProfileResponse>> GetAll(string DomainId, int UserId)
+        public Task<List<DTOUserProfileResponse>> GetAll(int DomainId, int UserId)
         {
             return _iUserProfileDB.GetAll(DomainId, UserId);
         }
