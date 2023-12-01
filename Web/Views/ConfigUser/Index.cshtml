@@ -11,7 +11,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title> HRMS </title>
+    <title> AFSAC </title>
     <link href="/Fonts/css/all.min.css" rel="stylesheet" type="text/css">
 
 
@@ -23,7 +23,7 @@
 
     <link href="~/sweetalert2/sweetalert2.min.css" rel="stylesheet" />
     <link href="~/css/feed.css" rel="stylesheet" />
-
+   
     <link href="~/css/normalize.min.css" rel="stylesheet" />
     <link href="~/css/swiper.min.css" rel="stylesheet" />
     <link href="~/css/feed.css" rel="stylesheet" />
@@ -31,6 +31,9 @@
     <link href="~/css/style.css" rel="stylesheet" />
     <link href="~/css/stepwise.css" rel="stylesheet" />
     <link href="~/select2/css/select2.min.css" rel="stylesheet" />
+    <link href="~/lib/jqueryui/themes/base/jquery-ui.min.css" rel="stylesheet" />
+    <link href="~/css/main.css" rel="stylesheet" />
+    <link href="~/toastr/toastr.min.css" rel="stylesheet" />
     <style>
         .swal2-confirm, .swal2-styled {
             background: #D97904 !important;
@@ -104,7 +107,7 @@
                                                         <div class="col-sm-8">
                                                            
 
-                                                            <i class="fas fa-asterisk mand"></i><label class="form-control" id="txtDomainId">Admin</label>
+                                                            <i class="fas fa-asterisk mand"></i><label class="form-control" id="txtDomainId">@ViewBag.DomainId</label>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -112,21 +115,68 @@
                                                     <div class="form-group row mb-2">
                                                         <label class="col-form-label col-sm-4">Role</label>
                                                         <div class="col-sm-8">
-                                                            <i class="fas fa-asterisk mand"></i>
-                                                            <select class="form-select" style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddlRoles" required id="ddlRoles">
+                                                            <i class="fas fa-asterisk mand"></i><label class="form-control" id="txtDomainId">@ViewBag.Role</label>
+                                                           @*  <select class="form-select" style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddlRoles" required id="ddlRoles">
                                                               
                                                                 <option value="User">User</option>
                                                                
 
-                                                            </select>
+                                                            </select> *@
                                                         </div>
                                                     </div>
                                                 </div>
                                                 <div class="col-xl-12 d-none1 text-left">
                                                     <div class="form-group row mb-2">
-                                                        <label class="col-form-label col-sm-4">Email Id</label>
+                                                        <span id="spnUnitIdMap" class="d-none">0</span>
+                                                        <label class="col-form-label col-sm-4">Unit Name</label>
+                                                        <div class="col-sm-6">
+                                                            <i class="fas fa-asterisk mand"></i>
+                                                            <input class="form-control Alphanumeric" placeholder="Enter Unit" id="txtProUnit" required pattern="^[a-zA-Z0-9 ]*$" title="Only Alphabets and Numbers allowed" />
+                                                        </div>
+                                                        <div class="col-sm-2">
+                                                            <button type="button" class="btn btn-icon btn-round btn-warning" id="btnMapUnitAdd"><i class="fas fa-plus"></i></button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-xl-12 UNITM text-left">
+                                                    <div class="form-group row mb-2">
+                                                        <label class="col-form-label col-sm-4">Sus No</label>
+                                                        <div class="col-sm-6">
+
+                                                            <label id="lblProSusno" class="col-form-label"></label>
+                                                            @* <input class="form-control Alphanumeric" placeholder="Enter SUS No" id="txtProSusno" required pattern="^[a-zA-Z0-9 ]*$" maxlength="8" title="Only Alphabets and Numbers allowed" /> *@
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-xl-12 UNITM text-left">
+                                                    <div class="form-group row mb-2">
+                                                        <label class="col-form-label col-sm-4">Comd</label>
                                                         <div class="col-sm-8">
-                                                            <i class="fas fa-asterisk mand"></i><label class="form-control" id="txtEmailId">Admin@army.mil</label>
+                                                            <label class="col-form-label" id="lblProComd"></label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-xl-12 UNITM text-left">
+                                                    <div class="form-group row mb-2">
+                                                        <label class="col-form-label col-sm-4">Corps</label>
+                                                        <div class="col-sm-8">
+                                                            <label class="col-form-label" id="lblProCorps"></label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-xl-12 UNITM text-left">
+                                                    <div class="form-group row mb-2">
+                                                        <label class="col-form-label col-sm-4">Div</label>
+                                                        <div class="col-sm-8">
+                                                            <label class="col-form-label" id="lblProDiv"></label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-xl-12 UNITM text-left">
+                                                    <div class="form-group row mb-2">
+                                                        <label class="col-form-label col-sm-4">Bde</label>
+                                                        <div class="col-sm-8">
+                                                            <label class="col-form-label" id="lblPrBde"></label>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -150,7 +200,7 @@
                                                 <button type="button" id="btnfetchtoken" class="btn btn-danger font-weight-600 btn-sm">
                                                         Refresh to fetch Token Details
                                                     </button>
-                                                <button type="button" id="btnConfigsave" class="btn btn-success font-weight-600 btn-sm">Go To DashBoard (Enabled once Army No filled)</button>
+                                                <button type="button" id="btnConfigsave" class="btn btn-success font-weight-600 btn-sm">Sign Up/ Save Record (Enabled once Army No filled)</button>
                                                 @* //Sign Up/ Save Record *@
                                                 
                                             </div>
@@ -183,12 +233,27 @@
     <script src="~/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="~/fonts/feather/feather.min.js"></script>
     <script src="~/sweetalert2/sweetalert2.min.js"></script>
-   
+    <script src="~/lib/jqueryui/jquery-ui.min.js"></script>
     <script src="~/js/swiper.min.js"></script>
+    <script src="~/js/datatables/jquery.datatables.min.js"></script>
+    <script src="~/js/datatables/dataTables.responsive.min.js"></script>
+    <script src="~/js/datatables/responsive.dataTables.min.js"></script>
+    <script src="~/js/datatables/dataTables.bootstrap4.min.js"></script>
+    <script src="~/js/datatables/responsive.bootstrap4.min.js"></script>
+    <script src="~/js/datatables/dataTables.buttons.min.js"></script>
+    <script src="~/js/datatables/buttons.bootstrap4.min.js"></script>
+    <script src="~/js/datatables/jszip.min.js"></script>
+    <script src="~/js/datatables/pdfmake.min.js"></script>
+    <script src="~/js/datatables/vfs_fonts.js"></script>
+    <script src="~/js/datatables/buttons.html5.min.js"></script>
+    <script src="~/js/datatables/buttons.print.min.js"></script>
+    <script src="~/js/datatables/datatables-call.js"></script>
     <script src="~/select2/js/select2.min.js"></script>
     <script src="~/js/script.js"></script>
     <script src="~/developerjs/token.js"></script>
+    <script src="~/toastr/toastr.min.js"></script>
     <script src="~/developerjs/userconfig.js"></script>
+    <script src="~/developerjs/keyconstants.js"></script>
     <script>
         feather.replace();
     </script>
@@ -196,6 +261,136 @@
 
 </body>
 </html>
+<div class="modal fade" id="AddNewUnitmap" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Enter Unit Details With Mapping</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+
+            </div>
+
+            <div class="modal-body">
+
+                <div class="row">
+
+
+
+                    <form action="" id="SaveFormMapUnit" method="post" name="SaveForm">
+                        <div class="row">
+                            <span class=" d-none" id="spnUnitMapUnitId">0</span>
+                            <div class="form-group row mb-2">
+
+                                <label class="col-form-label col-sm-4">SUS No <i class="fas fa-asterisk mand1"></i></label>
+                                <div class="col-sm-8">
+
+
+                                    <input class="form-control Alphanumeric" placeholder="Enter SUS No" id="txtSusno" minlength="8" maxlength="8" required pattern="^[a-zA-Z0-9 ]*$" title="Only Alphabets and Numbers allowed" />
+                                </div>
+
+                            </div>
+
+                            <div class="form-group row mb-2">
+
+                                <label class="col-form-label col-sm-4">Unit <i class="fas fa-asterisk mand1"></i></label>
+                                <div class="col-sm-8">
+
+                                    <span id="SpnUnitMapId" class="d-none">0</span>
+                                    <input class="form-control Alphanumeric" placeholder="Enter Unit" id="txtUnit" required pattern="^[a-zA-Z0-9 ]*$" title="Only Alphabets and Numbers allowed" />
+
+                                </div>
+
+                            </div>
+                            <div class="form-group row mb-2">
+
+                                <label class="col-form-label col-sm-4">Fmn HQ/Branch <i class="fas fa-asterisk mand1"></i></label>
+                                <div class="col-sm-8">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="" id="ChkFmnBrach">
+                                        <label class="form-check-label" for="ChkFmnBrach">
+                                            Fmn HQ/Branch
+                                        </label>
+                                    </div>
+
+                                </div>
+
+                            </div>
+                            <div class="form-group row mb-2">
+
+                                <label class="col-form-label col-sm-4">Comd / PSO<i class="fas fa-asterisk mand1"></i></label>
+                                <div class="col-sm-8">
+
+                                    <select class=" js-example-basic-single select2 form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddlCommand" required id="ddlCommand">
+                                        <option value="0">Select Comd / PSO </option>
+
+                                    </select>
+                                </div>
+
+                            </div>
+
+
+                            <div class="form-group row mb-4">
+
+                                <label class="col-form-label col-sm-4">Corps / Dte / Area<i class="fas fa-asterisk mand1"></i></label>
+                                <div class="col-sm-8">
+
+                                    <select class=" js-example-basic-single select2 form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddlCorps" required id="ddlCorps">
+                                        <option value="0">Select Corps / Dte / Area </option>
+
+                                    </select>
+                                </div>
+
+                            </div>
+
+                            <div class="form-group row mb-2">
+
+                                <label class="col-form-label col-sm-4">Div  /Branch / SubArea<i class="fas fa-asterisk mand1"></i></label>
+                                <div class="col-sm-8">
+
+                                    <select class=" js-example-basic-single select2 form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddlDiv" required id="ddlDiv">
+                                        <option value="0">Select Div  /Branch / SubArea </option>
+
+                                    </select>
+                                </div>
+
+                            </div>
+
+                            <div class="form-group row mb-2">
+                                <label class="col-form-label col-sm-4">Bde<i class="fas fa-asterisk mand1"></i></label>
+                                <div class="col-sm-8">
+
+                                    <select class=" js-example-basic-single select2 form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddlBde" required id="ddlBde">
+                                        <option value="0">Select Bde </option>
+
+                                    </select>
+                                </div>
+
+                            </div>
+
+
+
+
+                            <div class="col-sm-12 text-right">
+                                <input type="button" class="btn btn-primary " value="Save" id="btnUnitMapsave" />
+                                <button type="button" id="btnUnitMapReset" class="btn btn-outline-danger">Reset</button>
+                            </div>
+                            <div class="col-sm-12" id="msg">
+                            </div>
+
+
+                        </div>
+                    </form>
+
+                    <div class="col-sm-12" id="msg">
+                    </div>
+                </div>
+            </div>
+
+        </div><!-- modal-content -->
+    </div><!-- modal-dialog -->
+</div>
+<script src="~/developerjs/mapunit.js"></script>
+<script src="~/developerjs/mtables.js"></script>
 <script>
     $(document).ready(function () {
 

@@ -2,6 +2,7 @@
 using DataTransferObject.Domain.Master;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Newtonsoft.Json.Linq;
@@ -25,7 +26,7 @@ namespace DataAccessLayer
 
         public async Task<bool> GetByName(MapUnit Data)
         {
-            var ret = _context.MapUnit.Any(p => p.UnitId == Data.UnitId && p.UnitMapId==0);
+            var ret = _context.MapUnit.Any(p => p.UnitId == Data.UnitId);
             return ret;
         }
 
@@ -160,12 +161,12 @@ namespace DataAccessLayer
 
             return Task.FromResult(Div);
         }
-        public Task<DTOMapUnitResponse> GetALLByUnitById(int UnitId)
+        public async Task<DTOMapUnitResponse> GetALLByUnitById(int UnitId)
         {
 
 
             //on new { Div.UnitId, a.Years_Months } equals new { c.UnitId, c.Years_Months }
-            var Div = (from uni in _context.MapUnit
+            var Div =await (from uni in _context.MapUnit
                            //where (unit.ComdId == 0 ? uni.ComdId == uni.ComdId : uni.ComdId == unit.ComdId)
                            //&& (unit.CorpsId == 0 ? uni.CorpsId == uni.CorpsId : uni.CorpsId == unit.CorpsId)
                            //&& (unit.DivId == 0 ? uni.DivId == uni.DivId : uni.DivId == unit.DivId)
@@ -194,12 +195,13 @@ namespace DataAccessLayer
                            Suffix = MUni.Suffix,
                            Sus_no = MUni.Sus_no
                        }
-                     ).Distinct().SingleOrDefault();
+                     ).Distinct().SingleOrDefaultAsync();
 
 
 
 
-            return Task.FromResult(Div);
+
+            return (Div);
         }
     }
  }

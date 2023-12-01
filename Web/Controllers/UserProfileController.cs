@@ -1,8 +1,10 @@
 ﻿using BusinessLogicsLayer;
+using BusinessLogicsLayer.Bde;
 using BusinessLogicsLayer.Master;
 using DapperRepo.Core.Constants;
 using DataTransferObject.Domain;
 using DataTransferObject.Domain.Master;
+using DataTransferObject.Domain.Model;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
@@ -12,12 +14,13 @@ namespace Web.Controllers
     {
         private readonly IUserProfileBL _userProfileBL;
         private readonly IUserProfileMappingBL _userProfileMappingBL;
-       
-       
-        public UserProfileController(IUserProfileBL userProfileBL, IUserProfileMappingBL userProfileMappingBL)
+        public readonly IDomainMapBL _iDomainMapBL;
+
+        public UserProfileController(IUserProfileBL userProfileBL, IUserProfileMappingBL userProfileMappingBL, IDomainMapBL domainMapBL)
         {
             _userProfileBL=userProfileBL;
             _userProfileMappingBL = userProfileMappingBL;
+            _iDomainMapBL = domainMapBL;
         }
         public IActionResult Profile()
         {
@@ -27,7 +30,7 @@ namespace Web.Controllers
         {
             try
             {
-                if (dTO.UnitId != 0 && dTO.RankId != 0 && dTO.ApptId != 0)
+                if (dTO.RankId != 0 && dTO.ApptId != 0)
                 {
                     dTO.IsActive = true;
                     dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
@@ -45,8 +48,17 @@ namespace Web.Controllers
                             else
                             {
 
-                                await _userProfileBL.Add(dTO);
-                                return Json(KeyConstants.Save);
+                                dTO= await _userProfileBL.AddWithReturn(dTO);
+                                TrnDomainMapping trnDomainMapping = new TrnDomainMapping();
+                                trnDomainMapping.DomianId= Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                                trnDomainMapping= await _iDomainMapBL.GetByDomainIdbyUnit(trnDomainMapping);
+                                if(trnDomainMapping!=null && dTO.UserId !=0)
+                                {
+                                    trnDomainMapping.UserId = dTO.UserId;
+                                    _iDomainMapBL.Update(trnDomainMapping);
+                                }
+
+                                    return Json(KeyConstants.Save);
 
 
                             }
@@ -116,8 +128,8 @@ namespace Web.Controllers
         {
             try
             {
-                int userid = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-                return Json(await _userProfileBL.GetAll(Id, userid));
+                int DomainId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                return Json(await _userProfileBL.GetAll(DomainId, 0));
             }
             catch (Exception ex)
             {
