@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DataTransferObject.Domain.Master;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -12,7 +13,9 @@ namespace DataTransferObject.Domain.Model
         [Key]
         public int RequestId { get; set; }
         public int BasicDetailId { get; set; }
+        public BasicDetail? BasicDetail { get; set; }
         public Boolean Status { get; set; }
-        public int TypeId { get; set; }
+        public short TypeId { get; set; }
+        public MICardType? MICardType { get; set; }
     }
 }

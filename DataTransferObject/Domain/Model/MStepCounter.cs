@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DataTransferObject.Domain.Master;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -12,6 +13,8 @@ namespace DataTransferObject.Domain.Model
         [Key]
         public int Id { get; set; }
         public int RequestId { get; set; }
-        public int Step { get; set; }
+        public MTrnICardRequest? MTrnICardRequest { get; set; }
+        public short StepId { get; set; }
+        public MStepCounterStep? MStepCounterStep { get; set; }
     }
 }

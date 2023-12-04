@@ -11,7 +11,7 @@ namespace DataTransferObject.Domain.Master
     public class MFormation : Common
     {
         [Key]
-        public int FormationId { get; set; }
+        public short FormationId { get; set; }
 
         [Required(ErrorMessage = "required!")]
         [RegularExpression("^[a-zA-Z0-9 ]*$", ErrorMessage = "Only Alphabets and Numbers allowed.")]

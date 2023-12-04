@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DataTransferObject.Domain.Identitytable;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -12,6 +13,7 @@ namespace DataTransferObject.Domain.Model
         [Key]
         public int Id { get; set; }
         public int DomianId { get; set; }
+     
         public int? UserId { get; set; }
         public int UnitId { get; set; }
     }

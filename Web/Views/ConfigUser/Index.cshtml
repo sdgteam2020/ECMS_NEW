@@ -13,8 +13,6 @@
 
     <title> AFSAC </title>
     <link href="/Fonts/css/all.min.css" rel="stylesheet" type="text/css">
-
-
     <link href="~/css/nunito.css" rel="stylesheet" />
     <link href="~/css/roboto.css" rel="stylesheet" />
     <link href="~/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
@@ -29,7 +27,7 @@
     <link href="~/css/feed.css" rel="stylesheet" />
     <link href="~/css/main.css" rel="stylesheet" />
     <link href="~/css/style.css" rel="stylesheet" />
-    <link href="~/css/stepwise.css" rel="stylesheet" />
+   @*  <link href="~/css/stepwise.css" rel="stylesheet" /> *@
     <link href="~/select2/css/select2.min.css" rel="stylesheet" />
     <link href="~/lib/jqueryui/themes/base/jquery-ui.min.css" rel="stylesheet" />
     <link href="~/css/main.css" rel="stylesheet" />
@@ -242,23 +240,25 @@
     <script src="~/js/datatables/responsive.bootstrap4.min.js"></script>
     <script src="~/js/datatables/dataTables.buttons.min.js"></script>
     <script src="~/js/datatables/buttons.bootstrap4.min.js"></script>
-    <script src="~/js/datatables/jszip.min.js"></script>
+ @*    <script src="~/js/datatables/jszip.min.js"></script>
     <script src="~/js/datatables/pdfmake.min.js"></script>
     <script src="~/js/datatables/vfs_fonts.js"></script>
     <script src="~/js/datatables/buttons.html5.min.js"></script>
     <script src="~/js/datatables/buttons.print.min.js"></script>
-    <script src="~/js/datatables/datatables-call.js"></script>
+    <script src="~/js/datatables/datatables-call.js"></script> *@
     <script src="~/select2/js/select2.min.js"></script>
-    <script src="~/js/script.js"></script>
+   @*  <script src="~/js/script.js"></script> *@
     <script src="~/developerjs/token.js"></script>
     <script src="~/toastr/toastr.min.js"></script>
     <script src="~/developerjs/userconfig.js"></script>
+    @* <script src="~/developerjs/commanvalidation.js"></script> *@
     <script src="~/developerjs/keyconstants.js"></script>
-    <script>
+  @*   <script>
         feather.replace();
     </script>
-
-
+ *@
+    <script src="~/developerjs/mapunit.js"></script>
+    <script src="~/developerjs/mtables.js"></script>
 </body>
 </html>
 <div class="modal fade" id="AddNewUnitmap" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -389,8 +389,7 @@
         </div><!-- modal-content -->
     </div><!-- modal-dialog -->
 </div>
-<script src="~/developerjs/mapunit.js"></script>
-<script src="~/developerjs/mtables.js"></script>
+
 <script>
     $(document).ready(function () {
 

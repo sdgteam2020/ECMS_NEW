@@ -12,7 +12,7 @@ namespace DataTransferObject.Domain.Master
     public class MArmedType:Common
     {
         [Key]
-        public int ArmedId { get; set; }
+        public short ArmedId { get; set; }
         
         [Required(ErrorMessage = "required!")]
         [RegularExpression("^[a-zA-Z0-9 ]*$", ErrorMessage = "Only Alphabets and Numbers allowed.")]
@@ -24,7 +24,7 @@ namespace DataTransferObject.Domain.Master
         public bool FlagInf { get; set; } = false;
 
         [ForeignKey("MArmedCat")]
-        public int ArmedCatId { get; set; }
+        public short ArmedCatId { get; set; }
         public MArmedCat? ArmedCat { get; set; }
     }
 }

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace DataTransferObject.Domain.Master
 {
-    public class MICardType
+    public class MTrnFwdType
     {
         [Key]
         public short TypeId { get; set; }

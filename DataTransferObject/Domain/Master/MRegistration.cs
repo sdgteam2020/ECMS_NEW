@@ -10,8 +10,8 @@ namespace DataTransferObject.Domain.Master
     public class MRegistration : Common
     {
         [Key]
-        public int RegistrationId { get; set; }
+        public short RegistrationId { get; set; }
         public string Name { get; set; } = string.Empty;
-        public int Order { get; set; }
+        public short Order { get; set; }
     }
 }

@@ -576,7 +576,7 @@ namespace Web.Controllers
                             if (mTrnICardRequest.RequestId > 0)
                             {
                                 MStepCounter mStepCounter = new MStepCounter();
-                                mStepCounter.Step = 1;
+                                mStepCounter.StepId = Convert.ToInt16(1);
                                 mStepCounter.RequestId = mTrnICardRequest.RequestId;
                                 mStepCounter.UpdatedOn = DateTime.Now;
                                 mStepCounter.Updatedby = 1;

@@ -24,7 +24,7 @@ namespace DataTransferObject.Domain
         //[ForeignKey("MAppointment")]
         [Required]
         public int ApptId { get; set; }
-        //public MAppointment? MAppointment { get; set; }
+        public MAppointment? MAppointment { get; set; }
         // [Required]
         //public int UnitId { get; set; }
         public Boolean IntOffr { get; set; }

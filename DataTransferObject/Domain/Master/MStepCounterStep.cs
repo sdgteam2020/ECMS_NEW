@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 
 namespace DataTransferObject.Domain.Master
 {
-    public class MICardType
+    public class MStepCounterStep
     {
         [Key]
-        public short TypeId { get; set; }
+        public short StepId { get; set; }
         public string Name { get; set; }
     }
 }
