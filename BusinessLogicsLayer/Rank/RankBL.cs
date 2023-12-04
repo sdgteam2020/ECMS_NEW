@@ -58,7 +58,7 @@ namespace BusinessLogicsLayer.BdeCate
                 ////////Change Order No For Click
                 MRank data = new MRank();
                 data = await Get(Dto.RankId);
-                data.Orderby = Convert.ToInt16(Dto.Orderby + 1);
+                data.Orderby = Convert.ToByte(Dto.Orderby + 1);
                 await Update(data);
                 /////////////////////////
             }

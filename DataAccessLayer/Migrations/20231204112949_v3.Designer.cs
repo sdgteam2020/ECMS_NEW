@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccessLayer.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20231204063105_v2")]
-    partial class v2
+    [Migration("20231204112949_v3")]
+    partial class v3
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -186,8 +186,8 @@ namespace DataAccessLayer.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
-                    b.Property<short?>("MAppointmentApptId")
-                        .HasColumnType("smallint");
+                    b.Property<byte?>("MAppointmentApptId")
+                        .HasColumnType("tinyint");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -212,18 +212,15 @@ namespace DataAccessLayer.Migrations
 
             modelBuilder.Entity("DataTransferObject.Domain.Master.MAppointment", b =>
                 {
-                    b.Property<short>("ApptId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("smallint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<short>("ApptId"));
+                    b.Property<byte>("ApptId")
+                        .HasColumnType("tinyint");
 
                     b.Property<string>("AppointmentName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<short>("FormationId")
-                        .HasColumnType("smallint");
+                    b.Property<byte>("FormationId")
+                        .HasColumnType("tinyint");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -235,8 +232,8 @@ namespace DataAccessLayer.Migrations
                     b.Property<int>("Updatedby")
                         .HasColumnType("int");
 
-                    b.Property<short?>("mFormationFormationId")
-                        .HasColumnType("smallint");
+                    b.Property<byte?>("mFormationFormationId")
+                        .HasColumnType("tinyint");
 
                     b.HasKey("ApptId");
 
@@ -247,11 +244,8 @@ namespace DataAccessLayer.Migrations
 
             modelBuilder.Entity("DataTransferObject.Domain.Master.MArmedCat", b =>
                 {
-                    b.Property<short>("ArmedCatId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("smallint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<short>("ArmedCatId"));
+                    b.Property<byte>("ArmedCatId")
+                        .HasColumnType("tinyint");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -260,8 +254,8 @@ namespace DataAccessLayer.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<short>("Order")
-                        .HasColumnType("smallint");
+                    b.Property<byte>("Order")
+                        .HasColumnType("tinyint");
 
                     b.Property<DateTime?>("UpdatedOn")
                         .IsRequired()
@@ -277,18 +271,15 @@ namespace DataAccessLayer.Migrations
 
             modelBuilder.Entity("DataTransferObject.Domain.Master.MArmedType", b =>
                 {
-                    b.Property<short>("ArmedId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("smallint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<short>("ArmedId"));
+                    b.Property<byte>("ArmedId")
+                        .HasColumnType("tinyint");
 
                     b.Property<string>("Abbreviation")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<short>("ArmedCatId")
-                        .HasColumnType("smallint");
+                    b.Property<byte>("ArmedCatId")
+                        .HasColumnType("tinyint");
 
                     b.Property<string>("ArmedName")
                         .IsRequired()
@@ -316,24 +307,21 @@ namespace DataAccessLayer.Migrations
 
             modelBuilder.Entity("DataTransferObject.Domain.Master.MBde", b =>
                 {
-                    b.Property<short>("BdeId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("smallint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<short>("BdeId"));
+                    b.Property<byte>("BdeId")
+                        .HasColumnType("tinyint");
 
                     b.Property<string>("BdeName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<short>("ComdId")
-                        .HasColumnType("smallint");
+                    b.Property<byte>("ComdId")
+                        .HasColumnType("tinyint");
 
-                    b.Property<short>("CorpsId")
-                        .HasColumnType("smallint");
+                    b.Property<byte>("CorpsId")
+                        .HasColumnType("tinyint");
 
-                    b.Property<short>("DivId")
-                        .HasColumnType("smallint");
+                    b.Property<byte>("DivId")
+                        .HasColumnType("tinyint");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -358,11 +346,8 @@ namespace DataAccessLayer.Migrations
 
             modelBuilder.Entity("DataTransferObject.Domain.Master.MComd", b =>
                 {
-                    b.Property<short>("ComdId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("smallint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<short>("ComdId"));
+                    b.Property<byte>("ComdId")
+                        .HasColumnType("tinyint");
 
                     b.Property<string>("ComdAbbreviation")
                         .IsRequired()
@@ -392,14 +377,11 @@ namespace DataAccessLayer.Migrations
 
             modelBuilder.Entity("DataTransferObject.Domain.Master.MCorps", b =>
                 {
-                    b.Property<short>("CorpsId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("smallint");
+                    b.Property<byte>("CorpsId")
+                        .HasColumnType("tinyint");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<short>("CorpsId"));
-
-                    b.Property<short>("ComdId")
-                        .HasColumnType("smallint");
+                    b.Property<byte>("ComdId")
+                        .HasColumnType("tinyint");
 
                     b.Property<string>("CorpsName")
                         .IsRequired()
@@ -424,17 +406,14 @@ namespace DataAccessLayer.Migrations
 
             modelBuilder.Entity("DataTransferObject.Domain.Master.MDiv", b =>
                 {
-                    b.Property<short>("DivId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("smallint");
+                    b.Property<byte>("DivId")
+                        .HasColumnType("tinyint");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<short>("DivId"));
+                    b.Property<byte>("ComdId")
+                        .HasColumnType("tinyint");
 
-                    b.Property<short>("ComdId")
-                        .HasColumnType("smallint");
-
-                    b.Property<short>("CorpsId")
-                        .HasColumnType("smallint");
+                    b.Property<byte>("CorpsId")
+                        .HasColumnType("tinyint");
 
                     b.Property<string>("DivName")
                         .IsRequired()
@@ -461,11 +440,8 @@ namespace DataAccessLayer.Migrations
 
             modelBuilder.Entity("DataTransferObject.Domain.Master.MFormation", b =>
                 {
-                    b.Property<short>("FormationId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("smallint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<short>("FormationId"));
+                    b.Property<byte>("FormationId")
+                        .HasColumnType("tinyint");
 
                     b.Property<string>("FormationName")
                         .IsRequired()
@@ -488,11 +464,8 @@ namespace DataAccessLayer.Migrations
 
             modelBuilder.Entity("DataTransferObject.Domain.Master.MICardType", b =>
                 {
-                    b.Property<short>("TypeId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("smallint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<short>("TypeId"));
+                    b.Property<byte>("TypeId")
+                        .HasColumnType("tinyint");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -540,17 +513,17 @@ namespace DataAccessLayer.Migrations
 
             modelBuilder.Entity("DataTransferObject.Domain.Master.MRank", b =>
                 {
-                    b.Property<short>("RankId")
+                    b.Property<byte>("RankId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("smallint");
+                        .HasColumnType("tinyint");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<short>("RankId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<byte>("RankId"));
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
-                    b.Property<short>("Orderby")
-                        .HasColumnType("smallint");
+                    b.Property<byte>("Orderby")
+                        .HasColumnType("tinyint");
 
                     b.Property<string>("RankAbbreviation")
                         .IsRequired()
@@ -560,8 +533,8 @@ namespace DataAccessLayer.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<short>("Type")
-                        .HasColumnType("smallint");
+                    b.Property<byte>("Type")
+                        .HasColumnType("tinyint");
 
                     b.Property<DateTime?>("UpdatedOn")
                         .IsRequired()
@@ -577,18 +550,15 @@ namespace DataAccessLayer.Migrations
 
             modelBuilder.Entity("DataTransferObject.Domain.Master.MRegimental", b =>
                 {
-                    b.Property<short>("RegId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("smallint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<short>("RegId"));
+                    b.Property<byte>("RegId")
+                        .HasColumnType("tinyint");
 
                     b.Property<string>("Abbreviation")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<short>("ArmedId")
-                        .HasColumnType("smallint");
+                    b.Property<byte>("ArmedId")
+                        .HasColumnType("tinyint");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -655,7 +625,7 @@ namespace DataAccessLayer.Migrations
                             Name = "Apply for Self (Officer)",
                             Order = 1,
                             Type = 1,
-                            UpdatedOn = new DateTime(2023, 12, 4, 12, 1, 4, 966, DateTimeKind.Unspecified).AddTicks(651),
+                            UpdatedOn = new DateTime(2023, 12, 4, 16, 59, 49, 4, DateTimeKind.Unspecified).AddTicks(1375),
                             Updatedby = 1
                         },
                         new
@@ -665,7 +635,7 @@ namespace DataAccessLayer.Migrations
                             Name = "Apply for Unit Officer",
                             Order = 2,
                             Type = 1,
-                            UpdatedOn = new DateTime(2023, 12, 4, 12, 1, 4, 966, DateTimeKind.Unspecified).AddTicks(657),
+                            UpdatedOn = new DateTime(2023, 12, 4, 16, 59, 49, 4, DateTimeKind.Unspecified).AddTicks(1380),
                             Updatedby = 1
                         },
                         new
@@ -675,7 +645,7 @@ namespace DataAccessLayer.Migrations
                             Name = "Apply for Other Unit Officer",
                             Order = 3,
                             Type = 1,
-                            UpdatedOn = new DateTime(2023, 12, 4, 12, 1, 4, 966, DateTimeKind.Unspecified).AddTicks(660),
+                            UpdatedOn = new DateTime(2023, 12, 4, 16, 59, 49, 4, DateTimeKind.Unspecified).AddTicks(1384),
                             Updatedby = 1
                         },
                         new
@@ -685,7 +655,7 @@ namespace DataAccessLayer.Migrations
                             Name = "Apply for Unit JCOs/OR",
                             Order = 4,
                             Type = 2,
-                            UpdatedOn = new DateTime(2023, 12, 4, 12, 1, 4, 966, DateTimeKind.Unspecified).AddTicks(663),
+                            UpdatedOn = new DateTime(2023, 12, 4, 16, 59, 49, 4, DateTimeKind.Unspecified).AddTicks(1412),
                             Updatedby = 1
                         },
                         new
@@ -695,18 +665,15 @@ namespace DataAccessLayer.Migrations
                             Name = "Apply for Other Unit JCOs/OR",
                             Order = 5,
                             Type = 2,
-                            UpdatedOn = new DateTime(2023, 12, 4, 12, 1, 4, 966, DateTimeKind.Unspecified).AddTicks(666),
+                            UpdatedOn = new DateTime(2023, 12, 4, 16, 59, 49, 4, DateTimeKind.Unspecified).AddTicks(1416),
                             Updatedby = 1
                         });
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Master.MStepCounterStep", b =>
                 {
-                    b.Property<short>("StepId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("smallint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<short>("StepId"));
+                    b.Property<byte>("StepId")
+                        .HasColumnType("tinyint");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -719,11 +686,8 @@ namespace DataAccessLayer.Migrations
 
             modelBuilder.Entity("DataTransferObject.Domain.Master.MTrnFwdType", b =>
                 {
-                    b.Property<short>("TypeId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("smallint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<short>("TypeId"));
+                    b.Property<byte>("TypeId")
+                        .HasColumnType("tinyint");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -787,17 +751,17 @@ namespace DataAccessLayer.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UnitMapId"));
 
-                    b.Property<short>("BdeId")
-                        .HasColumnType("smallint");
+                    b.Property<byte>("BdeId")
+                        .HasColumnType("tinyint");
 
-                    b.Property<short>("ComdId")
-                        .HasColumnType("smallint");
+                    b.Property<byte>("ComdId")
+                        .HasColumnType("tinyint");
 
-                    b.Property<short>("CorpsId")
-                        .HasColumnType("smallint");
+                    b.Property<byte>("CorpsId")
+                        .HasColumnType("tinyint");
 
-                    b.Property<short>("DivId")
-                        .HasColumnType("smallint");
+                    b.Property<byte>("DivId")
+                        .HasColumnType("tinyint");
 
                     b.Property<bool>("FmnBrach")
                         .HasColumnType("bit");
@@ -845,6 +809,9 @@ namespace DataAccessLayer.Migrations
 
                     b.Property<short>("ArmedId")
                         .HasColumnType("smallint");
+
+                    b.Property<byte?>("ArmedId1")
+                        .HasColumnType("tinyint");
 
                     b.Property<string>("BloodGroup")
                         .IsRequired()
@@ -902,8 +869,14 @@ namespace DataAccessLayer.Migrations
                     b.Property<short>("RankId")
                         .HasColumnType("smallint");
 
+                    b.Property<byte?>("RankId1")
+                        .HasColumnType("tinyint");
+
                     b.Property<short?>("RegimentalId")
                         .HasColumnType("smallint");
+
+                    b.Property<byte?>("RegimentalRegId")
+                        .HasColumnType("tinyint");
 
                     b.Property<short>("RegistrationId")
                         .HasColumnType("smallint");
@@ -939,11 +912,11 @@ namespace DataAccessLayer.Migrations
 
                     b.HasKey("BasicDetailId");
 
-                    b.HasIndex("ArmedId");
+                    b.HasIndex("ArmedId1");
 
-                    b.HasIndex("RankId");
+                    b.HasIndex("RankId1");
 
-                    b.HasIndex("RegimentalId");
+                    b.HasIndex("RegimentalRegId");
 
                     b.HasIndex("RegistrationId");
 
@@ -1077,17 +1050,11 @@ namespace DataAccessLayer.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
-                    b.Property<short?>("MStepCounterStepStepId")
-                        .HasColumnType("smallint");
-
-                    b.Property<int?>("MTrnICardRequestRequestId")
-                        .HasColumnType("int");
-
                     b.Property<int>("RequestId")
                         .HasColumnType("int");
 
-                    b.Property<short>("StepId")
-                        .HasColumnType("smallint");
+                    b.Property<byte>("StepId")
+                        .HasColumnType("tinyint");
 
                     b.Property<DateTime?>("UpdatedOn")
                         .IsRequired()
@@ -1098,9 +1065,9 @@ namespace DataAccessLayer.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("MStepCounterStepStepId");
+                    b.HasIndex("RequestId");
 
-                    b.HasIndex("MTrnICardRequestRequestId");
+                    b.HasIndex("StepId");
 
                     b.ToTable("TrnStepCounter");
                 });
@@ -1113,17 +1080,14 @@ namespace DataAccessLayer.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TrnFwdId"));
 
+                    b.Property<int?>("FromAspNetUsersId")
+                        .HasColumnType("int");
+
                     b.Property<int>("FromUserId")
                         .HasColumnType("int");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
-
-                    b.Property<short?>("MTrnFwdTypeTypeId")
-                        .HasColumnType("smallint");
-
-                    b.Property<int?>("MTrnICardRequestRequestId")
-                        .HasColumnType("int");
 
                     b.Property<string>("Remark")
                         .HasColumnType("nvarchar(max)");
@@ -1134,14 +1098,17 @@ namespace DataAccessLayer.Migrations
                     b.Property<bool>("Status")
                         .HasColumnType("bit");
 
-                    b.Property<int>("SusNo")
+                    b.Property<int?>("ToAspNetUsersId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("ToUserId")
+                    b.Property<int>("ToUserId")
                         .HasColumnType("int");
 
-                    b.Property<short>("TypeId")
-                        .HasColumnType("smallint");
+                    b.Property<byte>("TypeId")
+                        .HasColumnType("tinyint");
+
+                    b.Property<int>("UnitId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("UpdatedOn")
                         .IsRequired()
@@ -1152,13 +1119,19 @@ namespace DataAccessLayer.Migrations
 
                     b.HasKey("TrnFwdId");
 
+                    b.HasIndex("FromAspNetUsersId");
+
                     b.HasIndex("FromUserId");
 
-                    b.HasIndex("MTrnFwdTypeTypeId");
+                    b.HasIndex("RequestId");
 
-                    b.HasIndex("MTrnICardRequestRequestId");
+                    b.HasIndex("ToAspNetUsersId");
 
                     b.HasIndex("ToUserId");
+
+                    b.HasIndex("TypeId");
+
+                    b.HasIndex("UnitId");
 
                     b.ToTable("TrnFwds");
                 });
@@ -1177,14 +1150,11 @@ namespace DataAccessLayer.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
-                    b.Property<short?>("MICardTypeTypeId")
-                        .HasColumnType("smallint");
-
                     b.Property<bool>("Status")
                         .HasColumnType("bit");
 
-                    b.Property<short>("TypeId")
-                        .HasColumnType("smallint");
+                    b.Property<byte>("TypeId")
+                        .HasColumnType("tinyint");
 
                     b.Property<DateTime?>("UpdatedOn")
                         .IsRequired()
@@ -1197,7 +1167,7 @@ namespace DataAccessLayer.Migrations
 
                     b.HasIndex("BasicDetailId");
 
-                    b.HasIndex("MICardTypeTypeId");
+                    b.HasIndex("TypeId");
 
                     b.ToTable("TrnICardRequest");
                 });
@@ -1210,7 +1180,7 @@ namespace DataAccessLayer.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("DomianId")
+                    b.Property<int>("AspNetUsersId")
                         .HasColumnType("int");
 
                     b.Property<int>("UnitId")
@@ -1220,6 +1190,12 @@ namespace DataAccessLayer.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("AspNetUsersId");
+
+                    b.HasIndex("UnitId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("TrnDomainMapping");
                 });
@@ -1473,19 +1449,17 @@ namespace DataAccessLayer.Migrations
                 {
                     b.HasOne("DataTransferObject.Domain.Master.MArmedType", "Armed")
                         .WithMany()
-                        .HasForeignKey("ArmedId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .HasForeignKey("ArmedId1")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("DataTransferObject.Domain.Master.MRank", "Rank")
                         .WithMany()
-                        .HasForeignKey("RankId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .HasForeignKey("RankId1")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("DataTransferObject.Domain.Master.MRegimental", "Regimental")
                         .WithMany()
-                        .HasForeignKey("RegimentalId")
+                        .HasForeignKey("RegimentalRegId")
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("DataTransferObject.Domain.Master.MRegistration", "Registration")
@@ -1513,15 +1487,17 @@ namespace DataAccessLayer.Migrations
 
             modelBuilder.Entity("DataTransferObject.Domain.Model.MStepCounter", b =>
                 {
-                    b.HasOne("DataTransferObject.Domain.Master.MStepCounterStep", "MStepCounterStep")
-                        .WithMany()
-                        .HasForeignKey("MStepCounterStepStepId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.HasOne("DataTransferObject.Domain.Model.MTrnICardRequest", "MTrnICardRequest")
                         .WithMany()
-                        .HasForeignKey("MTrnICardRequestRequestId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .HasForeignKey("RequestId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("DataTransferObject.Domain.Master.MStepCounterStep", "MStepCounterStep")
+                        .WithMany()
+                        .HasForeignKey("StepId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("MStepCounterStep");
 
@@ -1530,26 +1506,49 @@ namespace DataAccessLayer.Migrations
 
             modelBuilder.Entity("DataTransferObject.Domain.Model.MTrnFwd", b =>
                 {
-                    b.HasOne("DataTransferObject.Domain.MUserProfile", "MUserProfile")
+                    b.HasOne("DataTransferObject.Domain.Identitytable.ApplicationUser", "ApplicationUser")
+                        .WithMany()
+                        .HasForeignKey("FromAspNetUsersId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("DataTransferObject.Domain.MUserProfile", "MUserProfileFrom")
                         .WithMany()
                         .HasForeignKey("FromUserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("DataTransferObject.Domain.Master.MTrnFwdType", "MTrnFwdType")
-                        .WithMany()
-                        .HasForeignKey("MTrnFwdTypeTypeId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.HasOne("DataTransferObject.Domain.Model.MTrnICardRequest", "MTrnICardRequest")
                         .WithMany()
-                        .HasForeignKey("MTrnICardRequestRequestId")
+                        .HasForeignKey("RequestId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("DataTransferObject.Domain.Identitytable.ApplicationUser", "ApplicationUser1")
+                        .WithMany()
+                        .HasForeignKey("ToAspNetUsersId")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("DataTransferObject.Domain.MUserProfile", "MUserProfile1")
+                    b.HasOne("DataTransferObject.Domain.MUserProfile", "MUserProfile")
                         .WithMany()
                         .HasForeignKey("ToUserId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("DataTransferObject.Domain.Master.MTrnFwdType", "MTrnFwdType")
+                        .WithMany()
+                        .HasForeignKey("TypeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("DataTransferObject.Domain.Master.MapUnit", "MapUnit")
+                        .WithMany()
+                        .HasForeignKey("UnitId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("ApplicationUser");
+
+                    b.Navigation("ApplicationUser1");
 
                     b.Navigation("MTrnFwdType");
 
@@ -1557,7 +1556,9 @@ namespace DataAccessLayer.Migrations
 
                     b.Navigation("MUserProfile");
 
-                    b.Navigation("MUserProfile1");
+                    b.Navigation("MUserProfileFrom");
+
+                    b.Navigation("MapUnit");
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Model.MTrnICardRequest", b =>
@@ -1570,12 +1571,39 @@ namespace DataAccessLayer.Migrations
 
                     b.HasOne("DataTransferObject.Domain.Master.MICardType", "MICardType")
                         .WithMany()
-                        .HasForeignKey("MICardTypeTypeId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .HasForeignKey("TypeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("BasicDetail");
 
                     b.Navigation("MICardType");
+                });
+
+            modelBuilder.Entity("DataTransferObject.Domain.Model.TrnDomainMapping", b =>
+                {
+                    b.HasOne("DataTransferObject.Domain.Identitytable.ApplicationUser", "ApplicationUser")
+                        .WithMany()
+                        .HasForeignKey("AspNetUsersId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("DataTransferObject.Domain.Master.MapUnit", "MapUnit")
+                        .WithMany()
+                        .HasForeignKey("UnitId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("DataTransferObject.Domain.MUserProfile", "MUserProfile")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("ApplicationUser");
+
+                    b.Navigation("MUserProfile");
+
+                    b.Navigation("MapUnit");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>

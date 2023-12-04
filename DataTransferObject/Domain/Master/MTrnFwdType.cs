@@ -10,7 +10,7 @@ namespace DataTransferObject.Domain.Master
     public class MTrnFwdType
     {
         [Key]
-        public short TypeId { get; set; }
+        public byte TypeId { get; set; }
         public string Name { get; set; }
     }
 }

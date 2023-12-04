@@ -11,7 +11,7 @@ namespace DataTransferObject.Domain.Master
     public class MAppointment:Common
     {
         [Key]
-        public short ApptId { get; set; }
+        public byte ApptId { get; set; }
 
         [Required(ErrorMessage = "required!")]
         [RegularExpression("^[a-zA-Z0-9 ]*$", ErrorMessage = "Only Alphabets and Numbers allowed.")]
@@ -19,7 +19,7 @@ namespace DataTransferObject.Domain.Master
         [Required(ErrorMessage = "required!")]
        
         [ForeignKey("Comd"), DatabaseGenerated(DatabaseGeneratedOption.None)]
-        public short FormationId { get; set; }
+        public byte FormationId { get; set; }
         public MFormation? mFormation { get; set; }
     }
 }

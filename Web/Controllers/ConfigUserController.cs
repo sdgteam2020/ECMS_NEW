@@ -40,7 +40,7 @@ namespace Web.Controllers
             ViewBag.DomainId = this.User.FindFirstValue(ClaimTypes.Name);
             ViewBag.Role = this.User.FindFirstValue(ClaimTypes.Role);
             TrnDomainMapping dTO = new TrnDomainMapping();
-            dTO.DomianId= Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+            dTO.AspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
             dTO = await _iDomainMapBL.GetByDomainIdbyUnit(dTO);
             if (dTO==null || dTO.UserId ==null)
             {
@@ -75,7 +75,7 @@ namespace Web.Controllers
             try
             {
                 TrnDomainMapping dTO = new TrnDomainMapping();
-                dTO.DomianId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                dTO.AspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                 var data = await _iDomainMapBL.GetByDomainIdbyUnit(dTO);
                 return Json(data);
             }
@@ -96,7 +96,7 @@ namespace Web.Controllers
         public async Task<IActionResult> SaveMapping(TrnDomainMapping dTO,string ICNO)
         {
 
-            dTO.DomianId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+            dTO.AspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
             try
             {
                 // dTO.IsActive = true;

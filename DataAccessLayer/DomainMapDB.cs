@@ -20,13 +20,13 @@ namespace DataAccessLayer
 
         public async Task<bool> GetByDomainId(TrnDomainMapping Data)
         {
-            var ret = _context.TrnDomainMapping.Any(p => p.DomianId == Data.DomianId);
+            var ret = _context.TrnDomainMapping.Any(p => p.AspNetUsersId == Data.AspNetUsersId);
             return ret;
         }
 
         public async Task<TrnDomainMapping> GetByDomainIdbyUnit(TrnDomainMapping Data)
         {
-            return await _context.TrnDomainMapping.Where(p => p.DomianId==Data.DomianId).SingleOrDefaultAsync();
+            return await _context.TrnDomainMapping.Where(p => p.AspNetUsersId == Data.AspNetUsersId).SingleOrDefaultAsync();
         }
 
         
