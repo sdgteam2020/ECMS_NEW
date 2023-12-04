@@ -283,7 +283,6 @@ namespace Web.Controllers
 
             if (Id == null)
             {
-                List<int> RegistrationIds = new List<int>(new int[] { 1, 2, 3 });
                 TempData.Keep("Registration");
                 DTORegistrationRequest? model = new DTORegistrationRequest();
                 if (TempData["Registration"] != null)
@@ -291,7 +290,8 @@ namespace Web.Controllers
                     model = JsonConvert.DeserializeObject<DTORegistrationRequest>(TempData["Registration"].ToString());
                     if (model.SubmitType == 1)
                     {
-                        if(RegistrationIds.Contains(model.RegId))
+                        MRegistration? mRegistration = await context.MRegistration.FirstOrDefaultAsync(x => x.RegistrationId == model.RegId);
+                        if(mRegistration.Type== (int)RegistrationType.Officer)
                         {
                             ViewBag.OptionsRank = service.GetRank(1);
                         }
@@ -309,6 +309,7 @@ namespace Web.Controllers
                         dTOBasicDetailCrtRequest.DateOfCommissioning = model.DateOfCommissioning;
                         dTOBasicDetailCrtRequest.PermanentAddress = model.PermanentAddress;
                         dTOBasicDetailCrtRequest.RegistrationId = model.RegId;
+                        dTOBasicDetailCrtRequest.Type = mRegistration.Type;
                         dTOBasicDetailCrtRequest.DateOfIssue = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
                         return await Task.FromResult(View(dTOBasicDetailCrtRequest));
                     }
@@ -381,8 +382,15 @@ namespace Web.Controllers
 
                     if (basicDetail != null)
                     {
-                        MRank? mRank = await context.MRank.FindAsync(basicDetail.RankId);
-                        ViewBag.OptionsRank = service.GetRank(mRank.Type);
+                        MRegistration? mRegistration = await context.MRegistration.FirstOrDefaultAsync(x => x.RegistrationId == model.RegistrationId);
+                        if (mRegistration.Type == 1)
+                        {
+                            ViewBag.OptionsRank = service.GetRank(1);
+                        }
+                        else
+                        {
+                            ViewBag.OptionsRank = service.GetRank(2);
+                        }
                         if (ModelState.IsValid)
                         {
                             basicDetail.RankId = model.RankId;

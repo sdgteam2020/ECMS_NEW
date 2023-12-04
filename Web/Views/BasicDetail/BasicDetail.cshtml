@@ -23,6 +23,7 @@
                 <input hidden asp-for="DateOfCommissioning" />
                 <input hidden asp-for="EncryptedId" />
                 <input hidden asp-for="RegistrationId" />
+                <input hidden asp-for="Type"/>
                 <div class="row">
                     <div class="col-xl-6">
                         <div class="row mb-1">
@@ -51,10 +52,7 @@
                                 <span asp-validation-for="ArmedId" class="text-danger"></span>
                             </div>
                         </div>
-                        @{
-                            List<int> RegistrationIds = new List<int>(new int[] { 1, 2, 3 });
-                        }
-                        @if (!RegistrationIds.Contains(@Model.RegistrationId))
+                        @if (Model.Type == (int)RegistrationType.JCO)
                         {
                             <div class="row mb-1 required">
                                 <label class="col-sm-1 col-form-label text-center font-weight-bold">@(sno++).</label>
