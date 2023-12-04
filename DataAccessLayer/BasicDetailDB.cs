@@ -42,15 +42,16 @@ namespace DataAccessLayer
             {
                 if(stepcount==1)
                 {
-                    query = "SELECT B.RegistrationType,B.BasicDetailId,B.Name,B.ServiceNo,B.DOB,B.DateOfCommissioning,B.PermanentAddress,C.Step StepCounter,C.Id StepId,ty.ICardType,trnicrd.RequestId  FROM BasicDetails B " +
+                    query = "SELECT B.RegistrationType,B.BasicDetailId,B.Name,B.ServiceNo,B.DOB,B.DateOfCommissioning,B.PermanentAddress,C.StepId StepCounter,C.Id StepId,ty.TypeId ICardType,trnicrd.RequestId  FROM BasicDetails B " +
                          "inner join TrnICardRequest trnicrd on trnicrd.BasicDetailId = B.BasicDetailId " +
                          "inner join TrnStepCounter C on trnicrd.RequestId = C.RequestId " +
                          "inner join MICardType ty on ty.TypeId = trnicrd.TypeId " +
-                         "WHERE trnicrd.Updatedby = @UserId ORDER BY B.UpdatedOn DESC";
+                         "inner join UserProfile pr on pr.UserId = trnicrd.Updatedby " +
+                         "WHERE pr.Updatedby = @UserId ORDER BY B.UpdatedOn DESC";
                 }
                 else
                 {
-                    query = "SELECT B.RegistrationType,B.BasicDetailId,B.Name,B.ServiceNo,B.DOB,B.DateOfCommissioning,B.PermanentAddress,C.Step StepCounter,C.Id StepId,ty.ICardType,trnicrd.RequestId  FROM BasicDetails B " +
+                    query = "SELECT B.RegistrationType,B.BasicDetailId,B.Name,B.ServiceNo,B.DOB,B.DateOfCommissioning,B.PermanentAddress,C.Step StepCounter,C.Id StepId,ty.TypeId ICardType,trnicrd.RequestId  FROM BasicDetails B " +
                           "inner join TrnICardRequest trnicrd on trnicrd.BasicDetailId = B.BasicDetailId " +
                           "inner join TrnStepCounter C on trnicrd.RequestId = C.RequestId " +
                           "inner join MICardType ty on ty.TypeId = trnicrd.TypeId " +
@@ -60,7 +61,7 @@ namespace DataAccessLayer
             }
             else if (type == 1)//IO
             {
-                query = "SELECT B.RegistrationType,B.BasicDetailId,B.Name,B.ServiceNo,B.DOB,B.DateOfCommissioning,B.PermanentAddress,C.Step StepCounter,C.Id StepId,ty.ICardType,trnicrd.RequestId  FROM BasicDetails B " +
+                query = "SELECT B.RegistrationType,B.BasicDetailId,B.Name,B.ServiceNo,B.DOB,B.DateOfCommissioning,B.PermanentAddress,C.Step StepCounter,C.Id StepId,ty.TypeId,trnicrd.RequestId  FROM BasicDetails B " +
                            "inner join TrnICardRequest trnicrd on trnicrd.BasicDetailId = B.BasicDetailId " +
                            "inner join TrnStepCounter C on trnicrd.RequestId = C.RequestId " +
                            "inner join MICardType ty on ty.TypeId = trnicrd.TypeId " +
@@ -70,7 +71,7 @@ namespace DataAccessLayer
             }
             else if (type == 2)////GSO
             {
-                query = "SELECT B.RegistrationType,B.BasicDetailId,B.Name,B.ServiceNo,B.DOB,B.DateOfCommissioning,B.PermanentAddress,C.Step StepCounter,C.Id StepId,ty.ICardType,trnicrd.RequestId  FROM BasicDetails B " +
+                query = "SELECT B.RegistrationType,B.BasicDetailId,B.Name,B.ServiceNo,B.DOB,B.DateOfCommissioning,B.PermanentAddress,C.Step StepCounter,C.Id StepId,ty.TypeId ICardType,trnicrd.RequestId  FROM BasicDetails B " +
                            "inner join TrnICardRequest trnicrd on trnicrd.BasicDetailId = B.BasicDetailId " +
                            "inner join TrnStepCounter C on trnicrd.RequestId = C.RequestId " +
                            "inner join MICardType ty on ty.TypeId = trnicrd.TypeId " +
@@ -80,7 +81,7 @@ namespace DataAccessLayer
             }
             else if (type == 3)///MI-11
             {
-                query = "SELECT B.RegistrationType,B.BasicDetailId,B.Name,B.ServiceNo,B.DOB,B.DateOfCommissioning,B.PermanentAddress,C.Step StepCounter,C.Id StepId,ty.ICardType,trnicrd.RequestId "+ 
+                query = "SELECT B.RegistrationType,B.BasicDetailId,B.Name,B.ServiceNo,B.DOB,B.DateOfCommissioning,B.PermanentAddress,C.Step StepCounter,C.Id StepId,ty.TypeId ICardType,trnicrd.RequestId " + 
                             "FROM BasicDetails B "+
                             "inner join TrnICardRequest trnicrd on trnicrd.BasicDetailId = B.BasicDetailId "+
                             "inner join TrnStepCounter C on trnicrd.RequestId = C.RequestId "+
@@ -92,7 +93,7 @@ namespace DataAccessLayer
             }
             else if (type == 4)///Hq-54
             {
-                query = "SELECT B.RegistrationType,B.BasicDetailId,B.Name,B.ServiceNo,B.DOB,B.DateOfCommissioning,B.PermanentAddress,C.Step StepCounter,C.Id StepId,ty.ICardType,trnicrd.RequestId  FROM BasicDetails B " +
+                query = "SELECT B.RegistrationType,B.BasicDetailId,B.Name,B.ServiceNo,B.DOB,B.DateOfCommissioning,B.PermanentAddress,C.Step StepCounter,C.Id StepId,ty.TypeId ICardType,trnicrd.RequestId  FROM BasicDetails B " +
                            "inner join TrnICardRequest trnicrd on trnicrd.BasicDetailId = B.BasicDetailId " +
                            "inner join TrnStepCounter C on trnicrd.RequestId = C.RequestId " +
                            "inner join MICardType ty on ty.TypeId = trnicrd.TypeId " +

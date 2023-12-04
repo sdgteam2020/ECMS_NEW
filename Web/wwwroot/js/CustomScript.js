@@ -1,6 +1,6 @@
 ﻿$(document).ready(function () {
-    $('#RegistrationType').on('change', function () {
-        if ($('#RegistrationType').val() == 1) {
+    $('#RegistrationId').on('change', function () {
+        if ($('#RegistrationId').val() == 1) {
             $("#ServiceNumber").attr("readonly", true);
             $("#btngetToken").removeClass("d-none");
         }
@@ -475,7 +475,7 @@ function getData(id) {
                                 $("#DateOfCommissioning").val(response.DateOfCommissioning);
                                 $("#DOC").val(moment(response.DateOfCommissioning).format("DD-MMM-YYYY"));
                                 $("#PermanentAddress").val(response.PermanentAddress);
-                                $("#RegType").val(regType);
+                                $("#RegId").val(regId);
                             }
                         }
                     });

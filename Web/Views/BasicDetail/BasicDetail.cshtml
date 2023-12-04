@@ -24,6 +24,7 @@
                 <input hidden asp-for="EncryptedId" />
                 <input hidden asp-for="RegistrationId" />
                 <input hidden asp-for="Type"/>
+                <input hidden asp-for="UnitId"/>
                 <div class="row">
                     <div class="col-xl-6">
                         <div class="row mb-1">
@@ -41,6 +42,14 @@
                                 <select asp-for="RankId" class="form-select" asp-items="ViewBag.OptionsRank">
                                 </select>
                                 <span asp-validation-for="RankId" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="row mb-1">
+                            <label class="col-sm-1 col-form-label text-center font-weight-bold">@(sno++).</label>
+                            <label asp-for="UnitId" class="col-sm-3 col-form-label form-label">Unit Name</label>
+                            <div class="col-sm-6">
+                                <input type="text" id="txtUnit" name="txtUnit" class="form-control" placeholder="Unit Name" />
+                                <span asp-validation-for="UnitId" class="text-danger"></span>
                             </div>
                         </div>
                         <div class="row mb-1 required">
@@ -215,5 +224,6 @@
     </div>
 </div>
 @section Scripts{
+    <script asp-src-include="~/developerjs/basicdetails.js"></script>
     <script asp-src-include="~/js/CustomScript.js"></script>
     }
