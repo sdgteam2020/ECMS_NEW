@@ -945,7 +945,8 @@ function GetALLByUnitById(param1) {
         contentType: 'application/x-www-form-urlencoded',
         data: { "UnitId": param1 },
         type: 'POST',
-        success: function (data) {
+        success: function (data)
+        {
 
 
             $("#spnUnitIdUserPro").html(data.UnitId);
@@ -1066,8 +1067,8 @@ function GetByArmyNo(ArmyNo, Type, Unit, IO, GSO) {
                         }
                         
                         $("#txtName").val(response.Name);
-                        
-                        GetALLByUnitById(response.UnitId);
+                        GetALLByUnitById($("#aspndomainUnitID").html());
+                       // GetALLByUnitById(response.UnitId);
                         //$("#AddNewProfile").modal('hide');
 
                     }
