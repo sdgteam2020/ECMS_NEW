@@ -48,7 +48,7 @@
                                                 <a asp-controller="BasicDetail" asp-action="View" asp-route-Id="@item.EncryptedId" class="btn btn-icon btn-round btn-primary mr-1"><i class="fa fa-print mt-2"></i></a>
                                                 @if (ViewBag.Id == 1)
                                                 {
-                                                    <a asp-controller="BasicDetail" asp-action="Edit" asp-route-Id="@item.EncryptedId" class="btn btn-icon btn-round btn-warning mr-1"><i class="fas fa-edit mt-2"></i></a>
+                                                    <a asp-controller="BasicDetail" asp-action="BasicDetail" asp-route-Id="@item.EncryptedId" class="btn btn-icon btn-round btn-warning mr-1"><i class="fas fa-edit mt-2"></i></a>
 
                                                     <form method="post" asp-controller="BasicDetail" asp-action="delete" asp-route-Id="@item.EncryptedId">
                                                         <span id="confirmDeleteSpan_@item.BasicDetailId" style="display:none">
