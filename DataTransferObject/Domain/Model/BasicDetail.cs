@@ -21,11 +21,11 @@ namespace DataTransferObject.Domain.Model
         public string Name { get; set; } = string.Empty;
         
         [ForeignKey("MArmedType")]
-        public int ArmedId { get; set; }
+        public short ArmedId { get; set; }
         public MArmedType? Armed { get; set; }
 
         [ForeignKey("MRank")]
-        public int RankId { get; set; }
+        public short RankId { get; set; }
         public MRank? Rank { get; set; }
 
         [Index("IX_BasicDetails_ServiceNo", IsClustered = false, IsUnique = true, Order = 1)]
@@ -71,11 +71,11 @@ namespace DataTransferObject.Domain.Model
         public byte StatusLevel { get; set; }
         
         [ForeignKey("MRegimental")]
-        public int? RegimentalId { get; set; }
+        public short? RegimentalId { get; set; }
         public MRegimental? Regimental { get; set; }
         
         [ForeignKey("MRegistration")]
-        public int RegistrationId { get; set; }
+        public short RegistrationId { get; set; }
         public MRegistration? Registration { get; set; }
         
         [ForeignKey("MUnit")]

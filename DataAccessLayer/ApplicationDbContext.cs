@@ -44,6 +44,10 @@ namespace DataAccessLayer
         public DbSet<MRegimental> MRegimental { get; set; } = null!;
         public DbSet<MApiData> MApiData { get; set; }
         public DbSet<TrnDomainMapping> TrnDomainMapping { get; set; }
+
+        public DbSet<MStepCounterStep> MStepCounterStep { get; set; }
+        public DbSet<MTrnFwdType> MFwdType { get; set; }
+        public DbSet<MICardType> MICardType { get; set; }
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);

@@ -10,7 +10,7 @@ namespace DataTransferObject.Domain.Master
     public class MRegistration : Common
     {
         [Key]
-        public int RegistrationId { get; set; }
+        public short RegistrationId { get; set; }
 
         [Required(ErrorMessage = "required!")]
         [RegularExpression("^[a-zA-Z0-9 ]*$", ErrorMessage = "Only Alphabets and Numbers allowed.")]

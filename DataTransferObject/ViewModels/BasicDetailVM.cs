@@ -30,13 +30,13 @@ namespace DataTransferObject.ViewModels
         [Display(Name = "Rank", ResourceType = typeof(Resource))]
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
         [RegularExpression(@"^[\w \.\,\?\;\:\""\''\[\]\!\@\#\$\%\&\*\(\)\-\=\+\\\/]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
-        public int RankId { get; set; }
+        public short RankId { get; set; }
         public MRank? MRank { get; set; }
 
         [Display(Name = "ArmService", ResourceType = typeof(Resource))]
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
         [RegularExpression(@"^[\w \.\,\?\;\:\""\''\[\]\!\@\#\$\%\&\*\(\)\-\=\+\\\/]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
-        public int ArmedId { get; set; }
+        public short ArmedId { get; set; }
         public MArmedType? MArmedType { get; set; }
 
         [Remote(action: "IsServiceNoInUse", controller: "BasicDetail", AdditionalFields = "initialServiceNo")]
