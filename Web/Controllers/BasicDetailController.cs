@@ -477,7 +477,15 @@ namespace Web.Controllers
                 }
                 else
                 {
-                    ViewBag.OptionsRank = service.GetRank(Convert.ToInt32(model.RegistrationType));
+                    List<int> RegistrationIds = new List<int>(new int[] { 1, 2, 3 });
+                    if (RegistrationIds.Contains(model.RegistrationId))
+                    {
+                        ViewBag.OptionsRank = service.GetRank(1);
+                    }
+                    else
+                    {
+                        ViewBag.OptionsRank = service.GetRank(2);
+                    }
                     ViewBag.OptionsArmedType = service.GetArmedType();
 
                     model.Updatedby = Convert.ToInt32(userId);
