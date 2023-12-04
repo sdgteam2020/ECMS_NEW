@@ -11,7 +11,7 @@ namespace DataTransferObject.Domain.Master
     public class MCorps:Common
     {
         [Key]
-        public int CorpsId { get; set; }
+        public short CorpsId { get; set; }
 
         [Required(ErrorMessage = "required!")]
         [RegularExpression("^[a-zA-Z0-9 ]*$", ErrorMessage = "Only Alphabets and Numbers allowed.")]
@@ -19,7 +19,7 @@ namespace DataTransferObject.Domain.Master
         [Required(ErrorMessage = "required!")]
 
         [ForeignKey("Comd"), DatabaseGenerated(DatabaseGeneratedOption.None)]
-        public int ComdId { get; set; }
+        public short ComdId { get; set; }
 
         
         public MComd? Comd { get; set; }  

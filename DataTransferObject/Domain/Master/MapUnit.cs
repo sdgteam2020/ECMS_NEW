@@ -21,25 +21,25 @@ namespace DataTransferObject.Domain.Master
         
         public Boolean FmnBrach { get; set; }   
         [ForeignKey("Comd")]
-        public int ComdId { get; set; }
+        public short ComdId { get; set; }
 
         public MComd? Comd { get; set; }
 
         [ForeignKey("MCorps")]
-        public int CorpsId { get; set; }
+        public short CorpsId { get; set; }
         public MCorps? Corps { get; set; }
 
         [ForeignKey("MDiv")]
 
         [Required(ErrorMessage = "required!")]
 
-        public int DivId { get; set; }
+        public short DivId { get; set; }
         public MDiv? Div { get; set; }
 
         [ForeignKey("MBde")]
 
         [Required(ErrorMessage = "required!")]
-        public int BdeId { get; set; }
+        public short BdeId { get; set; }
         public MBde? Bde { get; set;}
   
 

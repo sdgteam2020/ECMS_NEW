@@ -11,15 +11,15 @@ namespace DataTransferObject.Domain.Master
     public class MDiv : Common
     {
         [Key]
-        public int DivId { get; set; }
+        public short DivId { get; set; }
 
         [Required(ErrorMessage = "required!")]
         [RegularExpression("^[a-zA-Z0-9 ]*$", ErrorMessage = "Only Alphabets and Numbers allowed.")]
         public string DivName { get; set; }
 
-        public int ComdId { get; set; }
+        public short ComdId { get; set; }
         public MComd? Comd { get; set; }
-        public int CorpsId { get; set; }
+        public short CorpsId { get; set; }
         public MCorps? Corps { get; set; }   
 
 

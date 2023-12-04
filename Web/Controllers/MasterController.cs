@@ -113,7 +113,7 @@ namespace Web.Controllers
             try
             {
                 MComd dto = new MComd();
-                foreach (int i in ints)
+                foreach (short i in ints)
                 {
                     dto.ComdId = i;
                     await unitOfWork.Comds.Delete(dto);
@@ -221,7 +221,7 @@ namespace Web.Controllers
             try
             {
                 MCorps dto = new MCorps();
-                foreach (int i in ints)
+                foreach (short i in ints)
                 {
                     dto.CorpsId = i;
                     await unitOfWork.Corps.Delete(dto);
@@ -323,7 +323,7 @@ namespace Web.Controllers
             try
             {
                 MDiv dto = new MDiv();
-                foreach (int i in ints)
+                foreach (short i in ints)
                 {
                     dto.DivId = i;
                     await unitOfWork.Div.Delete(dto);
@@ -426,7 +426,7 @@ namespace Web.Controllers
             try
             {
                 MBde dto = new MBde();
-                foreach (int i in ints)
+                foreach (short i in ints)
                 {
                     dto.BdeId = i;
                     await unitOfWork.Bde.Delete(dto);
@@ -846,12 +846,12 @@ namespace Web.Controllers
                 return Json(KeyConstants.InternalServerError);
             }
         }
-        public async Task<IActionResult> DeleteAppointmentMultiple(int[] ints)
+        public async Task<IActionResult> DeleteAppointmentMultiple(short[] ints)
         {
             try
             {
                 MAppointment dto = new MAppointment();
-                foreach (int i in ints)
+                foreach (short i in ints)
                 {
                     dto.ApptId = i;
                     await unitOfWork.Appt.Delete(dto);
