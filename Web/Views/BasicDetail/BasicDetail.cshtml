@@ -22,7 +22,7 @@
                 <input hidden asp-for="DOB" />
                 <input hidden asp-for="DateOfCommissioning" />
                 <input hidden asp-for="EncryptedId" />
-                <input hidden asp-for="RegistrationType" />
+                <input hidden asp-for="RegistrationId" />
                 <div class="row">
                     <div class="col-xl-6">
                         <div class="row mb-1">
@@ -51,7 +51,10 @@
                                 <span asp-validation-for="ArmedId" class="text-danger"></span>
                             </div>
                         </div>
-                        @if (@Model.RegistrationType == DataTransferObject.Constants.RegistrationType.JCO)
+                        @{
+                            List<int> RegistrationIds = new List<int>(new int[] { 1, 2, 3 });
+                        }
+                        @if (!RegistrationIds.Contains(@Model.RegistrationId))
                         {
                             <div class="row mb-1 required">
                                 <label class="col-sm-1 col-form-label text-center font-weight-bold">@(sno++).</label>
