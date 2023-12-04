@@ -11,7 +11,13 @@ namespace DataTransferObject.Domain.Master
     {
         [Key]
         public int RegistrationId { get; set; }
+
+        [Required(ErrorMessage = "required!")]
+        [RegularExpression("^[a-zA-Z0-9 ]*$", ErrorMessage = "Only Alphabets and Numbers allowed.")]
         public string Name { get; set; } = string.Empty;
         public int Order { get; set; }
+
+        [Required(ErrorMessage = "required!")]
+        public int Type { get; set; }
     }
 }
