@@ -112,6 +112,9 @@ namespace DataTransferObject.ViewModels
         public MUnit? Unit { get; set; }
 
         public bool IsSubmit { get; set; }
+        
+        [NotMapped]
+        public int Type { get; set; }
 
         [NotMapped]
         public bool success { get; set; }
