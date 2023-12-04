@@ -48,7 +48,16 @@
                             <label class="col-sm-1 col-form-label text-center font-weight-bold">@(sno++).</label>
                             <label asp-for="UnitId" class="col-sm-3 col-form-label form-label">Unit Name</label>
                             <div class="col-sm-6">
-                                <input type="text" id="txtUnit" name="txtUnit" class="form-control" placeholder="Unit Name" />
+                                @if (ViewBag.UnitName!=null)
+                                {
+                                    MUnit mUnit = ViewBag.UnitName;
+                                    <input type="text" id="txtUnit" name="txtUnit" class="form-control" placeholder="Unit Name" value="@mUnit.UnitName" />
+                                }
+                                else
+                                {
+                                    <input type="text" id="txtUnit" name="txtUnit" class="form-control" placeholder="Unit Name" />
+                                }
+
                                 <span asp-validation-for="UnitId" class="text-danger"></span>
                             </div>
                         </div>

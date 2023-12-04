@@ -22,6 +22,7 @@ using DataTransferObject.Constants;
 using BusinessLogicsLayer.Bde;
 using Web.WebHelpers;
 using DataTransferObject.ViewModels;
+using System.Data.Entity;
 
 namespace Web.Controllers
 {
@@ -290,7 +291,7 @@ namespace Web.Controllers
                     model = JsonConvert.DeserializeObject<DTORegistrationRequest>(TempData["Registration"].ToString());
                     if (model.SubmitType == 1)
                     {
-                        MRegistration? mRegistration = await context.MRegistration.FirstOrDefaultAsync(x => x.RegistrationId == model.RegId);
+                        MRegistration? mRegistration = await context.MRegistration.FindAsync(model.RegId);
                         if(mRegistration.Type== (int)RegistrationType.Officer)
                         {
                             ViewBag.OptionsRank = service.GetRank(1);
@@ -357,6 +358,7 @@ namespace Web.Controllers
                     basicDetailUpdVM.ExistingSignatureImagePath = basicDetailUpdVM.SignatureImagePath;
                     basicDetailUpdVM.EncryptedId = Id;
                     ViewBag.OptionsRegimental = service.GetRegimentalDDLIdSelected(basicDetailUpdVM.ArmedId);
+                    ViewBag.UnitName = await context.MUnit.FindAsync(basicDetailUpdVM.UnitId);
 
                     return View(basicDetailUpdVM);
                 }
@@ -382,7 +384,7 @@ namespace Web.Controllers
 
                     if (basicDetail != null)
                     {
-                        MRegistration? mRegistration = await context.MRegistration.FirstOrDefaultAsync(x => x.RegistrationId == model.RegistrationId);
+                        MRegistration? mRegistration = await context.MRegistration.FindAsync(model.RegistrationId);
                         if (mRegistration.Type == 1)
                         {
                             ViewBag.OptionsRank = service.GetRank(1);
@@ -395,6 +397,7 @@ namespace Web.Controllers
                         {
                             basicDetail.RankId = model.RankId;
                             basicDetail.ArmedId = model.ArmedId;
+                            basicDetail.UnitId= model.UnitId;
                             basicDetail.IdentityMark = model.IdentityMark;
                             basicDetail.Height = model.Height;
                             basicDetail.BloodGroup = model.BloodGroup;

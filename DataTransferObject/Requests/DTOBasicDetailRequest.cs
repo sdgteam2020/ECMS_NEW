@@ -182,11 +182,11 @@ namespace DataTransferObject.Requests
     }
     public class DTORegistrationRequest : DTOBasicDetailTempRequest
     {
-        public int RegistrationId { get; set; }
+        public short RegistrationId { get; set; }
         public MRegistration? Registration { get; set; }
 
         [RegularExpression(@"^[\w \.\,\?\;\:\""\''\[\]\!\@\#\$\%\&\*\(\)\-\=\+\\\/]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
-        public int RegId { get; set; }
+        public short RegId { get; set; }
        
         [Display(Name = "ServiceNo", ResourceType = typeof(Resource))]
         //[Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]

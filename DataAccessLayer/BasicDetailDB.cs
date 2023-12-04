@@ -15,6 +15,7 @@ using Azure.Core;
 using DataTransferObject.Constants;
 using DataTransferObject.Domain.Master;
 using DataTransferObject.Domain;
+using DataTransferObject.ViewModels;
 
 namespace DataAccessLayer
 {
@@ -32,7 +33,7 @@ namespace DataAccessLayer
                 dataProtectionPurposeStrings.AFSACIdRouteValue);
             this.protector = protector;
         }
-        public async Task<List<DTOBasicDetailRequest>> GetALLBasicDetail(int UserId,int stepcount, int type)
+        public async Task<List<BasicDetailVM>> GetALLBasicDetail(int UserId,int stepcount, int type)
         {
             //var BasicDetailList = _context.BasicDetails.Where(x => x.IsDeleted == false && x.Updatedby == UserId).ToList();
 
@@ -42,7 +43,7 @@ namespace DataAccessLayer
             {
                 if(stepcount==1)
                 {
-                    query = "SELECT B.RegistrationType,B.BasicDetailId,B.Name,B.ServiceNo,B.DOB,B.DateOfCommissioning,B.PermanentAddress,C.StepId StepCounter,C.Id StepId,ty.TypeId ICardType,trnicrd.RequestId  FROM BasicDetails B " +
+                    query = "SELECT B.RegistrationId,B.BasicDetailId,B.Name,B.ServiceNo,B.DOB,B.DateOfCommissioning,B.PermanentAddress,C.StepId StepCounter,C.Id StepId,ty.TypeId ICardType,trnicrd.RequestId  FROM BasicDetails B " +
                          "inner join TrnICardRequest trnicrd on trnicrd.BasicDetailId = B.BasicDetailId " +
                          "inner join TrnStepCounter C on trnicrd.RequestId = C.RequestId " +
                          "inner join MICardType ty on ty.TypeId = trnicrd.TypeId " +
@@ -51,7 +52,7 @@ namespace DataAccessLayer
                 }
                 else
                 {
-                    query = "SELECT B.RegistrationType,B.BasicDetailId,B.Name,B.ServiceNo,B.DOB,B.DateOfCommissioning,B.PermanentAddress,C.Step StepCounter,C.Id StepId,ty.TypeId ICardType,trnicrd.RequestId  FROM BasicDetails B " +
+                    query = "SELECT B.RegistrationId,B.BasicDetailId,B.Name,B.ServiceNo,B.DOB,B.DateOfCommissioning,B.PermanentAddress,C.Step StepCounter,C.Id StepId,ty.TypeId ICardType,trnicrd.RequestId  FROM BasicDetails B " +
                           "inner join TrnICardRequest trnicrd on trnicrd.BasicDetailId = B.BasicDetailId " +
                           "inner join TrnStepCounter C on trnicrd.RequestId = C.RequestId " +
                           "inner join MICardType ty on ty.TypeId = trnicrd.TypeId " +
@@ -61,7 +62,7 @@ namespace DataAccessLayer
             }
             else if (type == 1)//IO
             {
-                query = "SELECT B.RegistrationType,B.BasicDetailId,B.Name,B.ServiceNo,B.DOB,B.DateOfCommissioning,B.PermanentAddress,C.Step StepCounter,C.Id StepId,ty.TypeId,trnicrd.RequestId  FROM BasicDetails B " +
+                query = "SELECT B.RegistrationId,B.BasicDetailId,B.Name,B.ServiceNo,B.DOB,B.DateOfCommissioning,B.PermanentAddress,C.Step StepCounter,C.Id StepId,ty.TypeId,trnicrd.RequestId  FROM BasicDetails B " +
                            "inner join TrnICardRequest trnicrd on trnicrd.BasicDetailId = B.BasicDetailId " +
                            "inner join TrnStepCounter C on trnicrd.RequestId = C.RequestId " +
                            "inner join MICardType ty on ty.TypeId = trnicrd.TypeId " +
@@ -71,7 +72,7 @@ namespace DataAccessLayer
             }
             else if (type == 2)////GSO
             {
-                query = "SELECT B.RegistrationType,B.BasicDetailId,B.Name,B.ServiceNo,B.DOB,B.DateOfCommissioning,B.PermanentAddress,C.Step StepCounter,C.Id StepId,ty.TypeId ICardType,trnicrd.RequestId  FROM BasicDetails B " +
+                query = "SELECT B.RegistrationId,B.BasicDetailId,B.Name,B.ServiceNo,B.DOB,B.DateOfCommissioning,B.PermanentAddress,C.Step StepCounter,C.Id StepId,ty.TypeId ICardType,trnicrd.RequestId  FROM BasicDetails B " +
                            "inner join TrnICardRequest trnicrd on trnicrd.BasicDetailId = B.BasicDetailId " +
                            "inner join TrnStepCounter C on trnicrd.RequestId = C.RequestId " +
                            "inner join MICardType ty on ty.TypeId = trnicrd.TypeId " +
@@ -81,7 +82,7 @@ namespace DataAccessLayer
             }
             else if (type == 3)///MI-11
             {
-                query = "SELECT B.RegistrationType,B.BasicDetailId,B.Name,B.ServiceNo,B.DOB,B.DateOfCommissioning,B.PermanentAddress,C.Step StepCounter,C.Id StepId,ty.TypeId ICardType,trnicrd.RequestId " + 
+                query = "SELECT B.RegistrationId,B.BasicDetailId,B.Name,B.ServiceNo,B.DOB,B.DateOfCommissioning,B.PermanentAddress,C.Step StepCounter,C.Id StepId,ty.TypeId ICardType,trnicrd.RequestId " + 
                             "FROM BasicDetails B "+
                             "inner join TrnICardRequest trnicrd on trnicrd.BasicDetailId = B.BasicDetailId "+
                             "inner join TrnStepCounter C on trnicrd.RequestId = C.RequestId "+
@@ -93,7 +94,7 @@ namespace DataAccessLayer
             }
             else if (type == 4)///Hq-54
             {
-                query = "SELECT B.RegistrationType,B.BasicDetailId,B.Name,B.ServiceNo,B.DOB,B.DateOfCommissioning,B.PermanentAddress,C.Step StepCounter,C.Id StepId,ty.TypeId ICardType,trnicrd.RequestId  FROM BasicDetails B " +
+                query = "SELECT B.RegistrationId,B.BasicDetailId,B.Name,B.ServiceNo,B.DOB,B.DateOfCommissioning,B.PermanentAddress,C.Step StepCounter,C.Id StepId,ty.TypeId ICardType,trnicrd.RequestId  FROM BasicDetails B " +
                            "inner join TrnICardRequest trnicrd on trnicrd.BasicDetailId = B.BasicDetailId " +
                            "inner join TrnStepCounter C on trnicrd.RequestId = C.RequestId " +
                            "inner join MICardType ty on ty.TypeId = trnicrd.TypeId " +
@@ -106,10 +107,11 @@ namespace DataAccessLayer
 
             using (var connection = _contextDP.CreateConnection())
             {
-                var BasicDetailList = await connection.QueryAsync<DTOBasicDetailRequest>(query, new { UserId, stepcount });
+                var BasicDetailList = await connection.QueryAsync<BasicDetailVM>(query, new { UserId, stepcount });
+                List<MRegistration> RegistrationList = await _context.MRegistration.ToListAsync();
                 int sno = 1;
                 var allrecord = (from e in BasicDetailList
-                                 select new DTOBasicDetailRequest()
+                                 select new BasicDetailVM()
                                  {
                                      BasicDetailId = e.BasicDetailId,
                                      EncryptedId = protector.Protect(e.BasicDetailId.ToString()),
@@ -122,7 +124,10 @@ namespace DataAccessLayer
                                      StepCounter = e.StepCounter,
                                      StepId = e.StepId,
                                      ICardType=e.ICardType,
-                                     RegistrationType = e.RegistrationType,
+                                     Registration= (from r in RegistrationList
+                                                    where r.RegistrationId == e.RegistrationId 
+                                                    select r).First(),
+                                     RegistrationId = e.RegistrationId,
                                  }).ToList();
                 return await Task.FromResult(allrecord);
 

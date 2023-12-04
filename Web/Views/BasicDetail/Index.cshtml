@@ -1,4 +1,4 @@
-﻿@model List<DTOBasicDetailRequest>
+﻿@model List<BasicDetailVM>
 <div class="container1 mt-4">
     <div class="card mb-3 ">
         <div class="card-header">
@@ -24,7 +24,7 @@
                                     <th>@Html.DisplayNameFor(model => model[0].DOB)</th>
                                     <th>@Html.DisplayNameFor(model => model[0].DateOfCommissioning)</th>
                                     <th>@Html.DisplayNameFor(model => model[0].PermanentAddress)</th>
-                                    <th>@Html.DisplayNameFor(model => model[0].RegistrationType)</th>
+                                    <th>Type</th>
 
                                     <th>@Html.DisplayNameFor(model => model[0].ICardType)</th>
                                     <th class="noExport">Action</th>
@@ -40,7 +40,7 @@
                                         <td>@item.DOB.ToString("dd/MMM/yyyy")</td>
                                         <td>@item.DateOfCommissioning.ToString("dd/MMM/yyyy")</td>
                                         <td>@item.PermanentAddress</td>
-                                        <td>@item.RegistrationType</td>
+                                        <td>@item.Registration.Name</td>
                                         <td>@item.ICardType</td>
                                         <td class="noExport">
                                             <div class="d-flex p-2">

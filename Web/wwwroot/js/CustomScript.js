@@ -170,9 +170,10 @@ function beforeUploadPhotoSizeCheckInEdit(id) {
     }
 }
 function beforeSubmitValidateBasicDetail(id) {
+    debugger;
     let formId = '#' + id;
-    let rType = $("#RegistrationType").val();
-    if (rType == 'JCO') {
+    let rType = $("#Type").val();
+    if (rType == '2') {
         $("#lblRegimentalId").text('');
         let regId = $("#RegimentalId").val();
         if (regId == '') {
