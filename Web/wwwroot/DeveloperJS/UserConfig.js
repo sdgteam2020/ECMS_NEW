@@ -13,30 +13,31 @@
 
 
         source: function (request, response) {
+            if (request.term.length > 2) {
+                var param = { "UnitName": request.term };
+                $("#spnUnitIdMap").html(0);
+                $.ajax({
+                    url: '/Master/GetALLByUnitName',
+                    contentType: 'application/x-www-form-urlencoded',
+                    data: param,
+                    type: 'POST',
+                    success: function (data) {
+                        console.log(data);
+                        response($.map(data, function (item) {
 
-            var param = { "UnitName": request.term };
-            $("#spnUnitIdMap").html(0);
-            $.ajax({
-                url: '/Master/GetALLByUnitName',
-                contentType: 'application/x-www-form-urlencoded',
-                data: param,
-                type: 'POST',
-                success: function (data) {
-                    console.log(data);
-                    response($.map(data, function (item) {
+                            $("#loading").addClass("d-none");
+                            return { label: item.UnitName, value: item.UnitMapId };
 
-                        $("#loading").addClass("d-none");
-                        return { label: item.UnitName, value: item.UnitMapId };
-
-                    }))
-                },
-                error: function (response) {
-                    alert(response.responseText);
-                },
-                failure: function (response) {
-                    alert(response.responseText);
-                }
-            });
+                        }))
+                    },
+                    error: function (response) {
+                        alert(response.responseText);
+                    },
+                    failure: function (response) {
+                        alert(response.responseText);
+                    }
+                });
+            }
         },
         select: function (e, i) {
             e.preventDefault();
@@ -70,7 +71,7 @@ function SaveMapping() {
     {
        
         "UnitId": $("#spnUnitIdMap").html(),
-       
+        "ICNO": $("#txtArmyNo").val()
 
     };
     $.ajax({

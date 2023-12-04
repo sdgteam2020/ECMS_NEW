@@ -43,8 +43,8 @@ namespace DataAccessLayer
             try
             {
                 var ret = await (from user in _context.UserProfile
-                                 join map in _context.TrnDomainMapping on user.UserId equals map.UserId    
-                                 join Uni in _context.MUnit on map.UnitId equals Uni.UnitId
+                                 //join map in _context.TrnDomainMapping on user.UserId equals map.UserId    
+                                 //join Uni in _context.MUnit on map.UnitId equals Uni.UnitId
                                  join app in _context.MAppointment on user.ApptId equals app.ApptId
                                  join forma in _context.MFormation on app.FormationId equals forma.FormationId
                                  join rank in _context.MRank on user.RankId equals rank.RankId
@@ -62,8 +62,8 @@ namespace DataAccessLayer
                                      Rank = rank.RankName,
                                      RankId = rank.RankId,
                                      Name = user.Name,
-                                     UnitId = map.UnitId,
-                                     UnitName = Uni.UnitName,
+                                     //UnitId = map.UnitId,
+                                     //UnitName = Uni.UnitName,
                                      IntOffr = user.IntOffr,
 
                                  }

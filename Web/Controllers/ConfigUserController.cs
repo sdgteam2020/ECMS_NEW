@@ -59,7 +59,7 @@ namespace Web.Controllers
                     dtoSession.UnitId=dTO.UnitId;
                 }
                 SessionHeplers.SetObject(HttpContext.Session, "Token", dtoSession);
-                SessionHeplers.SetObject(HttpContext.Session, "ArmyNo", dtoSession.ICNO);
+                //SessionHeplers.SetObject(HttpContext.Session, "ArmyNo", dtoSession.ICNO);
                 // var data=  await _iDomainMapBL.GetByDomainIdbyUnit(dTO);
                 return RedirectToActionPermanent("Dashboard", "Home");
             }
@@ -93,16 +93,21 @@ namespace Web.Controllers
             return Json(data);
         }
         [HttpPost]
-        public async Task<IActionResult> SaveMapping(TrnDomainMapping dTO)
+        public async Task<IActionResult> SaveMapping(TrnDomainMapping dTO,string ICNO)
         {
 
             dTO.DomianId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
             try
             {
-               // dTO.IsActive = true;
-               // dTO.Updatedby = 1;
+                // dTO.IsActive = true;
+                // dTO.Updatedby = 1;
                 //dTO.UpdatedOn = DateTime.Now;
-
+              
+                DtoSession dtoSession = new DtoSession();
+               
+                dtoSession.ICNO = ICNO;
+                dtoSession.UnitId = dTO.UnitId;
+                SessionHeplers.SetObject(HttpContext.Session, "Token", dtoSession);
                 if (ModelState.IsValid)
                 {
                     if (!await _iDomainMapBL.GetByDomainId(dTO))
