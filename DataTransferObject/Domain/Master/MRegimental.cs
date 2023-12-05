@@ -11,7 +11,7 @@ namespace DataTransferObject.Domain.Master
     public class MRegimental : Common
     {
         [Key]
-        public short RegId { get; set; }
+        public byte RegId { get; set; }
         [Required(ErrorMessage = "required!")]
         [RegularExpression("^[a-zA-Z0-9 ]*$", ErrorMessage = "Only Alphabets and Numbers allowed.")]
         public string Name { get; set; } = string.Empty;
@@ -25,7 +25,7 @@ namespace DataTransferObject.Domain.Master
         public string Location { get; set; } = string.Empty;
 
         [ForeignKey("MArmedType"), DatabaseGenerated(DatabaseGeneratedOption.None)]
-        public short ArmedId { get; set; }
+        public byte ArmedId { get; set; }
         public MArmedType? MArmedType { get; set; }
         
     }

@@ -11,7 +11,7 @@ namespace DataTransferObject.Domain.Master
     public class MComd: Common
     { 
         [Key]
-        public short ComdId { get; set; }
+        public byte ComdId { get; set; }
 
         [Required(ErrorMessage = "required!")]
         [RegularExpression("^[a-zA-Z0-9 ]*$", ErrorMessage = "Only Alphabets and Numbers allowed.")]

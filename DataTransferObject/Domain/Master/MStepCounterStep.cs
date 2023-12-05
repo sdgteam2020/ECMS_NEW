@@ -10,7 +10,7 @@ namespace DataTransferObject.Domain.Master
     public class MStepCounterStep
     {
         [Key]
-        public short StepId { get; set; }
+        public byte StepId { get; set; }
         public string Name { get; set; }
     }
 }

@@ -113,7 +113,7 @@ namespace Web.Controllers
             try
             {
                 MComd dto = new MComd();
-                foreach (short i in ints)
+                foreach (byte i in ints)
                 {
                     dto.ComdId = i;
                     await unitOfWork.Comds.Delete(dto);
@@ -221,7 +221,7 @@ namespace Web.Controllers
             try
             {
                 MCorps dto = new MCorps();
-                foreach (short i in ints)
+                foreach (byte i in ints)
                 {
                     dto.CorpsId = i;
                     await unitOfWork.Corps.Delete(dto);
@@ -323,7 +323,7 @@ namespace Web.Controllers
             try
             {
                 MDiv dto = new MDiv();
-                foreach (short i in ints)
+                foreach (byte i in ints)
                 {
                     dto.DivId = i;
                     await unitOfWork.Div.Delete(dto);
@@ -426,7 +426,7 @@ namespace Web.Controllers
             try
             {
                 MBde dto = new MBde();
-                foreach (short i in ints)
+                foreach (byte i in ints)
                 {
                     dto.BdeId = i;
                     await unitOfWork.Bde.Delete(dto);
@@ -756,7 +756,7 @@ namespace Web.Controllers
             try
             {
                 MFormation dto = new MFormation();
-                foreach (short i in ints)
+                foreach (byte i in ints)
                 {
                     dto.FormationId = i;
                     await unitOfWork.Formation.Delete(dto);
@@ -851,7 +851,7 @@ namespace Web.Controllers
             try
             {
                 MAppointment dto = new MAppointment();
-                foreach (short i in ints)
+                foreach (byte i in ints)
                 {
                     dto.ApptId = i;
                     await unitOfWork.Appt.Delete(dto);
@@ -891,7 +891,7 @@ namespace Web.Controllers
                         }
                         else
                         {
-                            dTO.Orderby = Convert.ToInt16(await unitOfWork.Comds.GetByMaxOrder());
+                            dTO.Orderby = Convert.ToByte(await unitOfWork.Comds.GetByMaxOrder());
                             await unitOfWork.Rank.Add(dTO);
                             return Json(KeyConstants.Save);
 
@@ -959,7 +959,7 @@ namespace Web.Controllers
             try
             {
                 MRank dto = new MRank();
-                foreach (short i in ints)
+                foreach (byte i in ints)
                 {
                     dto.RankId = i;
                     await unitOfWork.Rank.Delete(dto);
@@ -1058,7 +1058,7 @@ namespace Web.Controllers
             try
             {
                 MArmedType dto = new MArmedType();
-                foreach (short i in ints)
+                foreach (byte i in ints)
                 {
                     dto.ArmedId = i;
                     await unitOfWork.Armed.Delete(dto);
@@ -1158,7 +1158,7 @@ namespace Web.Controllers
             try
             {
                 MRegimental dto = new MRegimental();
-                foreach (short i in ints)
+                foreach (byte i in ints)
                 {
                     dto.RegId = i;
                     await unitOfWork.Regimental.Delete(dto);

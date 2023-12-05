@@ -11,8 +11,8 @@ namespace DataTransferObject.Domain.Master
     public class MArmedCat : Common
     {
         [Key]
-        public short ArmedCatId { get; set; }
+        public byte ArmedCatId { get; set; }
         public string Name { get; set; } = string.Empty;
-        public short Order { get; set; }
+        public byte Order { get; set; }
     }
 }

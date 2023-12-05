@@ -4,6 +4,7 @@ using DataAccessLayer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccessLayer.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231204112249_v1")]
+    partial class v1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -622,7 +625,7 @@ namespace DataAccessLayer.Migrations
                             Name = "Apply for Self (Officer)",
                             Order = 1,
                             Type = 1,
-                            UpdatedOn = new DateTime(2023, 12, 4, 16, 59, 49, 4, DateTimeKind.Unspecified).AddTicks(1375),
+                            UpdatedOn = new DateTime(2023, 12, 4, 16, 52, 49, 131, DateTimeKind.Unspecified).AddTicks(309),
                             Updatedby = 1
                         },
                         new
@@ -632,7 +635,7 @@ namespace DataAccessLayer.Migrations
                             Name = "Apply for Unit Officer",
                             Order = 2,
                             Type = 1,
-                            UpdatedOn = new DateTime(2023, 12, 4, 16, 59, 49, 4, DateTimeKind.Unspecified).AddTicks(1380),
+                            UpdatedOn = new DateTime(2023, 12, 4, 16, 52, 49, 131, DateTimeKind.Unspecified).AddTicks(314),
                             Updatedby = 1
                         },
                         new
@@ -642,7 +645,7 @@ namespace DataAccessLayer.Migrations
                             Name = "Apply for Other Unit Officer",
                             Order = 3,
                             Type = 1,
-                            UpdatedOn = new DateTime(2023, 12, 4, 16, 59, 49, 4, DateTimeKind.Unspecified).AddTicks(1384),
+                            UpdatedOn = new DateTime(2023, 12, 4, 16, 52, 49, 131, DateTimeKind.Unspecified).AddTicks(317),
                             Updatedby = 1
                         },
                         new
@@ -652,7 +655,7 @@ namespace DataAccessLayer.Migrations
                             Name = "Apply for Unit JCOs/OR",
                             Order = 4,
                             Type = 2,
-                            UpdatedOn = new DateTime(2023, 12, 4, 16, 59, 49, 4, DateTimeKind.Unspecified).AddTicks(1412),
+                            UpdatedOn = new DateTime(2023, 12, 4, 16, 52, 49, 131, DateTimeKind.Unspecified).AddTicks(321),
                             Updatedby = 1
                         },
                         new
@@ -662,7 +665,7 @@ namespace DataAccessLayer.Migrations
                             Name = "Apply for Other Unit JCOs/OR",
                             Order = 5,
                             Type = 2,
-                            UpdatedOn = new DateTime(2023, 12, 4, 16, 59, 49, 4, DateTimeKind.Unspecified).AddTicks(1416),
+                            UpdatedOn = new DateTime(2023, 12, 4, 16, 52, 49, 131, DateTimeKind.Unspecified).AddTicks(324),
                             Updatedby = 1
                         });
                 });
@@ -1080,9 +1083,6 @@ namespace DataAccessLayer.Migrations
                     b.Property<int?>("FromAspNetUsersId")
                         .HasColumnType("int");
 
-                    b.Property<int>("FromUserId")
-                        .HasColumnType("int");
-
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
@@ -1095,17 +1095,14 @@ namespace DataAccessLayer.Migrations
                     b.Property<bool>("Status")
                         .HasColumnType("bit");
 
-                    b.Property<int?>("ToAspNetUsersId")
+                    b.Property<int>("SusNo")
                         .HasColumnType("int");
 
-                    b.Property<int>("ToUserId")
+                    b.Property<int?>("ToAspNetUsersId")
                         .HasColumnType("int");
 
                     b.Property<byte>("TypeId")
                         .HasColumnType("tinyint");
-
-                    b.Property<int>("UnitId")
-                        .HasColumnType("int");
 
                     b.Property<DateTime?>("UpdatedOn")
                         .IsRequired()
@@ -1114,21 +1111,20 @@ namespace DataAccessLayer.Migrations
                     b.Property<int>("Updatedby")
                         .HasColumnType("int");
 
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
                     b.HasKey("TrnFwdId");
 
                     b.HasIndex("FromAspNetUsersId");
-
-                    b.HasIndex("FromUserId");
 
                     b.HasIndex("RequestId");
 
                     b.HasIndex("ToAspNetUsersId");
 
-                    b.HasIndex("ToUserId");
-
                     b.HasIndex("TypeId");
 
-                    b.HasIndex("UnitId");
+                    b.HasIndex("UserId");
 
                     b.ToTable("TrnFwds");
                 });
@@ -1508,12 +1504,6 @@ namespace DataAccessLayer.Migrations
                         .HasForeignKey("FromAspNetUsersId")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("DataTransferObject.Domain.MUserProfile", "MUserProfileFrom")
-                        .WithMany()
-                        .HasForeignKey("FromUserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("DataTransferObject.Domain.Model.MTrnICardRequest", "MTrnICardRequest")
                         .WithMany()
                         .HasForeignKey("RequestId")
@@ -1525,21 +1515,15 @@ namespace DataAccessLayer.Migrations
                         .HasForeignKey("ToAspNetUsersId")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("DataTransferObject.Domain.MUserProfile", "MUserProfile")
-                        .WithMany()
-                        .HasForeignKey("ToUserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("DataTransferObject.Domain.Master.MTrnFwdType", "MTrnFwdType")
                         .WithMany()
                         .HasForeignKey("TypeId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("DataTransferObject.Domain.Master.MapUnit", "MapUnit")
+                    b.HasOne("DataTransferObject.Domain.MUserProfile", "MUserProfile")
                         .WithMany()
-                        .HasForeignKey("UnitId")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -1552,10 +1536,6 @@ namespace DataAccessLayer.Migrations
                     b.Navigation("MTrnICardRequest");
 
                     b.Navigation("MUserProfile");
-
-                    b.Navigation("MUserProfileFrom");
-
-                    b.Navigation("MapUnit");
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Model.MTrnICardRequest", b =>

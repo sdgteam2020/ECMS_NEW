@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,9 +13,11 @@ namespace DataTransferObject.Domain.Model
     {
         [Key]
         public int Id { get; set; }
+        [ForeignKey("MTrnICardRequest"), DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int RequestId { get; set; }
         public MTrnICardRequest? MTrnICardRequest { get; set; }
-        public short StepId { get; set; }
+        [ForeignKey("MStepCounterStep"), DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public byte StepId { get; set; }
         public MStepCounterStep? MStepCounterStep { get; set; }
     }
 }
