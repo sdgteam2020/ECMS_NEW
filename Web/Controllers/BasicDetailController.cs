@@ -359,6 +359,9 @@ namespace Web.Controllers
                     basicDetailUpdVM.EncryptedId = Id;
                     ViewBag.OptionsRegimental = service.GetRegimentalDDLIdSelected(basicDetailUpdVM.ArmedId);
                     ViewBag.UnitName = await context.MUnit.FindAsync(basicDetailUpdVM.UnitId);
+                    
+                    MRegistration? mRegistration = await context.MRegistration.FindAsync(basicDetailUpdVM.RegistrationId);
+                    basicDetailUpdVM.Type = mRegistration != null ? mRegistration.Type : 1;
 
                     return View(basicDetailUpdVM);
                 }
@@ -393,6 +396,18 @@ namespace Web.Controllers
                         {
                             ViewBag.OptionsRank = service.GetRank(2);
                         }
+                        if(model.Type==2)
+                        {
+                            if(model.RegimentalId == null)
+                            {
+                                ModelState.AddModelError("RegimentalId", "Regimental is required.");
+                                goto end;
+                            }
+                            else
+                            {
+                                basicDetail.RegimentalId= model.RegimentalId;
+                            }
+                        }
                         if (ModelState.IsValid)
                         {
                             basicDetail.RankId = model.RankId;
@@ -404,6 +419,7 @@ namespace Web.Controllers
                             basicDetail.PlaceOfIssue = model.PlaceOfIssue;
                             basicDetail.DateOfIssue = model.DateOfIssue;
                             basicDetail.IssuingAuth = model.IssuingAuth;
+
                             if (model.Photo_ != null)
                             {
                                 string sourceFolderPhotoDB = "/WriteReadData/" + "Photo";

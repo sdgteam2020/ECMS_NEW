@@ -18,7 +18,7 @@ namespace DataAccessLayer.ExtensionsClass
                         RegistrationId = 1,
                         Name = "Apply for Self (Officer)",
                         Order = 1,
-                        Type=1,
+                        Type = 1,
                         Updatedby = 1,
                         UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"))
                     },
@@ -57,6 +57,46 @@ namespace DataAccessLayer.ExtensionsClass
                         Type = 2,
                         Updatedby = 1,
                         UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"))
+                    },
+                    new MICardType
+                    {
+                        TypeId = 1,
+                        Name = "New I-Card Request"
+                    },
+                    new MICardType
+                    {
+                        TypeId = 2,
+                        Name = "Loss of Card"
+                    },
+                    new MICardType
+                    {
+                        TypeId = 3,
+                        Name = "Change of Appearance"
+                    },
+                    new MICardType
+                    {
+                        TypeId = 4,
+                        Name = "Pramotion / Demotion"
+                    },
+                    new MICardType
+                    {
+                        TypeId = 5,
+                        Name = "Fair Wear and Tear"
+                    },
+                    new MICardType
+                    {
+                        TypeId = 6,
+                        Name = "Premature Damage"
+                    },
+                    new MICardType
+                    {
+                        TypeId = 7,
+                        Name = "Loss of Token"
+                    },
+                    new MICardType
+                    {
+                        TypeId = 8,
+                        Name = "Other"
                     }
                 );
         }

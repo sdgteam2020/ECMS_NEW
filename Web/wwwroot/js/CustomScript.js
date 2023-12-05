@@ -170,7 +170,6 @@ function beforeUploadPhotoSizeCheckInEdit(id) {
     }
 }
 function beforeSubmitValidateBasicDetail(id) {
-    debugger
     let formId = '#' + id;
     let rType = $("#Type").val();
     if (rType == '2') {
