@@ -488,8 +488,8 @@ namespace Web.Controllers
                 }
                 else
                 {
-                    List<int> RegistrationIds = new List<int>(new int[] { 1, 2, 3 });
-                    if (RegistrationIds.Contains(model.RegistrationId))
+                    MRegistration? mRegistration = await context.MRegistration.FindAsync(model.RegistrationId);
+                    if (mRegistration.Type == (int)RegistrationType.Officer)
                     {
                         ViewBag.OptionsRank = service.GetRank(1);
                     }
