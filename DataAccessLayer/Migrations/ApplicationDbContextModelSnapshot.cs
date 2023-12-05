@@ -622,7 +622,7 @@ namespace DataAccessLayer.Migrations
                             Name = "Apply for Self (Officer)",
                             Order = 1,
                             Type = 1,
-                            UpdatedOn = new DateTime(2023, 12, 4, 16, 59, 49, 4, DateTimeKind.Unspecified).AddTicks(1375),
+                            UpdatedOn = new DateTime(2023, 12, 5, 10, 12, 28, 392, DateTimeKind.Unspecified).AddTicks(6839),
                             Updatedby = 1
                         },
                         new
@@ -632,7 +632,7 @@ namespace DataAccessLayer.Migrations
                             Name = "Apply for Unit Officer",
                             Order = 2,
                             Type = 1,
-                            UpdatedOn = new DateTime(2023, 12, 4, 16, 59, 49, 4, DateTimeKind.Unspecified).AddTicks(1380),
+                            UpdatedOn = new DateTime(2023, 12, 5, 10, 12, 28, 392, DateTimeKind.Unspecified).AddTicks(6845),
                             Updatedby = 1
                         },
                         new
@@ -642,7 +642,7 @@ namespace DataAccessLayer.Migrations
                             Name = "Apply for Other Unit Officer",
                             Order = 3,
                             Type = 1,
-                            UpdatedOn = new DateTime(2023, 12, 4, 16, 59, 49, 4, DateTimeKind.Unspecified).AddTicks(1384),
+                            UpdatedOn = new DateTime(2023, 12, 5, 10, 12, 28, 392, DateTimeKind.Unspecified).AddTicks(6849),
                             Updatedby = 1
                         },
                         new
@@ -652,7 +652,7 @@ namespace DataAccessLayer.Migrations
                             Name = "Apply for Unit JCOs/OR",
                             Order = 4,
                             Type = 2,
-                            UpdatedOn = new DateTime(2023, 12, 4, 16, 59, 49, 4, DateTimeKind.Unspecified).AddTicks(1412),
+                            UpdatedOn = new DateTime(2023, 12, 5, 10, 12, 28, 392, DateTimeKind.Unspecified).AddTicks(6852),
                             Updatedby = 1
                         },
                         new
@@ -662,7 +662,7 @@ namespace DataAccessLayer.Migrations
                             Name = "Apply for Other Unit JCOs/OR",
                             Order = 5,
                             Type = 2,
-                            UpdatedOn = new DateTime(2023, 12, 4, 16, 59, 49, 4, DateTimeKind.Unspecified).AddTicks(1416),
+                            UpdatedOn = new DateTime(2023, 12, 5, 10, 12, 28, 392, DateTimeKind.Unspecified).AddTicks(6856),
                             Updatedby = 1
                         });
                 });

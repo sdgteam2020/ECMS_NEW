@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace DataAccessLayer.Migrations
 {
     /// <inheritdoc />
-    public partial class v1 : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -735,59 +735,6 @@ namespace DataAccessLayer.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "TrnFwds",
-                columns: table => new
-                {
-                    TrnFwdId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    RequestId = table.Column<int>(type: "int", nullable: false),
-                    UserId = table.Column<int>(type: "int", nullable: false),
-                    FromAspNetUsersId = table.Column<int>(type: "int", nullable: true),
-                    ToAspNetUsersId = table.Column<int>(type: "int", nullable: true),
-                    SusNo = table.Column<int>(type: "int", nullable: false),
-                    Remark = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Status = table.Column<bool>(type: "bit", nullable: false),
-                    TypeId = table.Column<byte>(type: "tinyint", nullable: false),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false),
-                    Updatedby = table.Column<int>(type: "int", nullable: false),
-                    UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_TrnFwds", x => x.TrnFwdId);
-                    table.ForeignKey(
-                        name: "FK_TrnFwds_AspNetUsers_FromAspNetUsersId",
-                        column: x => x.FromAspNetUsersId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_TrnFwds_AspNetUsers_ToAspNetUsersId",
-                        column: x => x.ToAspNetUsersId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_TrnFwds_MFwdType_TypeId",
-                        column: x => x.TypeId,
-                        principalTable: "MFwdType",
-                        principalColumn: "TypeId",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_TrnFwds_TrnICardRequest_RequestId",
-                        column: x => x.RequestId,
-                        principalTable: "TrnICardRequest",
-                        principalColumn: "RequestId",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_TrnFwds_UserProfile_UserId",
-                        column: x => x.UserId,
-                        principalTable: "UserProfile",
-                        principalColumn: "UserId",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "TrnStepCounter",
                 columns: table => new
                 {
@@ -849,16 +796,82 @@ namespace DataAccessLayer.Migrations
                         onDelete: ReferentialAction.Restrict);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "TrnFwds",
+                columns: table => new
+                {
+                    TrnFwdId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    RequestId = table.Column<int>(type: "int", nullable: false),
+                    ToUserId = table.Column<int>(type: "int", nullable: false),
+                    FromUserId = table.Column<int>(type: "int", nullable: false),
+                    FromAspNetUsersId = table.Column<int>(type: "int", nullable: true),
+                    ToAspNetUsersId = table.Column<int>(type: "int", nullable: true),
+                    UnitId = table.Column<int>(type: "int", nullable: false),
+                    Remark = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Status = table.Column<bool>(type: "bit", nullable: false),
+                    TypeId = table.Column<byte>(type: "tinyint", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    Updatedby = table.Column<int>(type: "int", nullable: false),
+                    UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TrnFwds", x => x.TrnFwdId);
+                    table.ForeignKey(
+                        name: "FK_TrnFwds_AspNetUsers_FromAspNetUsersId",
+                        column: x => x.FromAspNetUsersId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_TrnFwds_AspNetUsers_ToAspNetUsersId",
+                        column: x => x.ToAspNetUsersId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_TrnFwds_MFwdType_TypeId",
+                        column: x => x.TypeId,
+                        principalTable: "MFwdType",
+                        principalColumn: "TypeId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_TrnFwds_MapUnit_UnitId",
+                        column: x => x.UnitId,
+                        principalTable: "MapUnit",
+                        principalColumn: "UnitMapId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_TrnFwds_TrnICardRequest_RequestId",
+                        column: x => x.RequestId,
+                        principalTable: "TrnICardRequest",
+                        principalColumn: "RequestId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_TrnFwds_UserProfile_FromUserId",
+                        column: x => x.FromUserId,
+                        principalTable: "UserProfile",
+                        principalColumn: "UserId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_TrnFwds_UserProfile_ToUserId",
+                        column: x => x.ToUserId,
+                        principalTable: "UserProfile",
+                        principalColumn: "UserId",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
             migrationBuilder.InsertData(
                 table: "MRegistration",
                 columns: new[] { "RegistrationId", "IsActive", "Name", "Order", "Type", "UpdatedOn", "Updatedby" },
                 values: new object[,]
                 {
-                    { (short)1, false, "Apply for Self (Officer)", 1, 1, new DateTime(2023, 12, 4, 16, 52, 49, 131, DateTimeKind.Unspecified).AddTicks(309), 1 },
-                    { (short)2, false, "Apply for Unit Officer", 2, 1, new DateTime(2023, 12, 4, 16, 52, 49, 131, DateTimeKind.Unspecified).AddTicks(314), 1 },
-                    { (short)3, false, "Apply for Other Unit Officer", 3, 1, new DateTime(2023, 12, 4, 16, 52, 49, 131, DateTimeKind.Unspecified).AddTicks(317), 1 },
-                    { (short)4, false, "Apply for Unit JCOs/OR", 4, 2, new DateTime(2023, 12, 4, 16, 52, 49, 131, DateTimeKind.Unspecified).AddTicks(321), 1 },
-                    { (short)5, false, "Apply for Other Unit JCOs/OR", 5, 2, new DateTime(2023, 12, 4, 16, 52, 49, 131, DateTimeKind.Unspecified).AddTicks(324), 1 }
+                    { (short)1, false, "Apply for Self (Officer)", 1, 1, new DateTime(2023, 12, 5, 10, 12, 28, 392, DateTimeKind.Unspecified).AddTicks(6839), 1 },
+                    { (short)2, false, "Apply for Unit Officer", 2, 1, new DateTime(2023, 12, 5, 10, 12, 28, 392, DateTimeKind.Unspecified).AddTicks(6845), 1 },
+                    { (short)3, false, "Apply for Other Unit Officer", 3, 1, new DateTime(2023, 12, 5, 10, 12, 28, 392, DateTimeKind.Unspecified).AddTicks(6849), 1 },
+                    { (short)4, false, "Apply for Unit JCOs/OR", 4, 2, new DateTime(2023, 12, 5, 10, 12, 28, 392, DateTimeKind.Unspecified).AddTicks(6852), 1 },
+                    { (short)5, false, "Apply for Other Unit JCOs/OR", 5, 2, new DateTime(2023, 12, 5, 10, 12, 28, 392, DateTimeKind.Unspecified).AddTicks(6856), 1 }
                 });
 
             migrationBuilder.CreateIndex(
@@ -1016,6 +1029,11 @@ namespace DataAccessLayer.Migrations
                 column: "FromAspNetUsersId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_TrnFwds_FromUserId",
+                table: "TrnFwds",
+                column: "FromUserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_TrnFwds_RequestId",
                 table: "TrnFwds",
                 column: "RequestId");
@@ -1026,14 +1044,19 @@ namespace DataAccessLayer.Migrations
                 column: "ToAspNetUsersId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_TrnFwds_ToUserId",
+                table: "TrnFwds",
+                column: "ToUserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_TrnFwds_TypeId",
                 table: "TrnFwds",
                 column: "TypeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_TrnFwds_UserId",
+                name: "IX_TrnFwds_UnitId",
                 table: "TrnFwds",
-                column: "UserId");
+                column: "UnitId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_TrnICardRequest_BasicDetailId",
@@ -1107,13 +1130,13 @@ namespace DataAccessLayer.Migrations
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "MapUnit");
-
-            migrationBuilder.DropTable(
                 name: "AspNetUsers");
 
             migrationBuilder.DropTable(
                 name: "MFwdType");
+
+            migrationBuilder.DropTable(
+                name: "MapUnit");
 
             migrationBuilder.DropTable(
                 name: "UserProfile");
