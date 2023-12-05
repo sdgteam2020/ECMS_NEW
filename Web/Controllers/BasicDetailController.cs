@@ -33,6 +33,7 @@ namespace Web.Controllers
         private readonly IUnitOfWork unitOfWork;
         private readonly IStepCounterBL iStepCounterBL;
         private readonly ITrnICardRequestBL iTrnICardRequestBL;
+        private readonly IDomainMapBL iDomainMapBL;
         private readonly ITrnFwnBL iTrnFwnBL;
         private readonly IService service;
         private readonly IMapper _mapper;
@@ -45,7 +46,7 @@ namespace Web.Controllers
         public DateTime dateTimenow;
         public BasicDetailController(IUnitOfWork unitOfWork, IService service, IMapper mapper, ApplicationDbContext context,
             UserManager<ApplicationUser> userManager, IWebHostEnvironment hostingEnvironment, IDataProtectionProvider dataProtectionProvider,
-                              DataProtectionPurposeStrings dataProtectionPurposeStrings, ILogger<BasicDetailController> logger, IStepCounterBL iStepCounterBL, ITrnFwnBL iTrnFwnBL, ITrnICardRequestBL iTrnICardRequestBL)
+                              DataProtectionPurposeStrings dataProtectionPurposeStrings, ILogger<BasicDetailController> logger, IStepCounterBL iStepCounterBL, ITrnFwnBL iTrnFwnBL, ITrnICardRequestBL iTrnICardRequestBL, IDomainMapBL iDomainMapBL )
         {
             this.unitOfWork = unitOfWork;
             this.service = service;
@@ -61,6 +62,7 @@ namespace Web.Controllers
             this.iStepCounterBL = iStepCounterBL;
             this.iTrnFwnBL = iTrnFwnBL;
             this.iTrnICardRequestBL = iTrnICardRequestBL;
+            this.iDomainMapBL = iDomainMapBL;
         }
         
         [Authorize(Roles = "Admin,User")]
@@ -581,6 +583,10 @@ namespace Web.Controllers
                             mTrnICardRequest.BasicDetailId = ret.BasicDetailId;
                             mTrnICardRequest.Status = false;
                             mTrnICardRequest.TypeId = 1;
+                            TrnDomainMapping trnDomainMapping = new TrnDomainMapping();
+                            trnDomainMapping.AspNetUsersId= Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                            trnDomainMapping=await iDomainMapBL.GetByAspnetUserIdBy(trnDomainMapping);
+                            mTrnICardRequest.TrnDomainMappingId = trnDomainMapping.Id;
                             mTrnICardRequest.UpdatedOn = DateTime.Now;
                             mTrnICardRequest.Updatedby = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").UserId; //SessionHeplers.GetObject<string>(HttpContext.Session, "ArmyNo");
                             mTrnICardRequest = await iTrnICardRequestBL.AddWithReturn(mTrnICardRequest);

@@ -51,7 +51,7 @@ namespace Web.Controllers
                                 dTO= await _userProfileBL.AddWithReturn(dTO);
                                 TrnDomainMapping trnDomainMapping = new TrnDomainMapping();
                                 trnDomainMapping.AspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-                                trnDomainMapping= await _iDomainMapBL.GetByDomainIdbyUnit(trnDomainMapping);
+                                trnDomainMapping= await _iDomainMapBL.GetByAspnetUserIdBy(trnDomainMapping);
                                 if(trnDomainMapping!=null && dTO.UserId !=0)
                                 {
                                     trnDomainMapping.UserId = dTO.UserId;

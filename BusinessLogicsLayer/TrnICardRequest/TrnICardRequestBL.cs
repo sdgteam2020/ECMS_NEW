@@ -18,13 +18,17 @@ namespace BusinessLogicsLayer.BdeCate
 {
     public class TrnICardRequestBL : GenericRepositoryDL<MTrnICardRequest>, ITrnICardRequestBL
     {
+        private readonly ITrnICardRequestDB _iTrnICardRequestDB;
 
 
-        public TrnICardRequestBL(ApplicationDbContext context) : base(context)
+        public TrnICardRequestBL(ApplicationDbContext context, ITrnICardRequestDB iTrnICardRequestDB) : base(context)
         {
-            
+            _iTrnICardRequestDB = iTrnICardRequestDB;
         }
 
-    
+        public async Task<MTrnICardRequest> GetByAspNetUserBy(int AspnetuserId)
+        {
+           return await _iTrnICardRequestDB.GetByAspNetUserBy(AspnetuserId);
+        }
     }
 }

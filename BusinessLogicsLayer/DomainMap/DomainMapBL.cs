@@ -25,6 +25,11 @@ namespace BusinessLogicsLayer.BdeCate
             _IDomainMapDB = domainMapDB;
         }
 
+        public Task<TrnDomainMapping> GetByAspnetUserIdBy(TrnDomainMapping Data)
+        {
+            return _IDomainMapDB.GetByAspnetUserIdBy(Data);
+        }
+
         public Task<bool> GetByDomainId(TrnDomainMapping Data)
         {
             return _IDomainMapDB.GetByDomainId(Data);   
