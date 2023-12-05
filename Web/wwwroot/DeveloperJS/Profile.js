@@ -710,6 +710,7 @@ function GetArmynoMasterdata(ArmyNo) {
             }
             else {
                 GetDataFromAPIbYArmyNo(ArmyNo);
+                GetALLByUnitById($("#aspndomainUnitID").html());
             }
 
             
