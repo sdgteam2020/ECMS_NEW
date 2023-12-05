@@ -51,7 +51,7 @@ namespace DataAccessLayer
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
-            builder.Seed();
+            //builder.Seed();
             builder.Entity<IdentityUserRole<int>>(entity =>
             {
             });
