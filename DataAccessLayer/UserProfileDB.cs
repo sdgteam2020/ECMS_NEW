@@ -48,7 +48,13 @@ namespace DataAccessLayer
                                  join app in _context.MAppointment on user.ApptId equals app.ApptId
                                  join forma in _context.MFormation on app.FormationId equals forma.FormationId
                                  join rank in _context.MRank on user.RankId equals rank.RankId
+                                 join map in _context.TrnDomainMapping on user.UserId equals map.UserId into mapp
+                                 from xmapp in mapp.DefaultIfEmpty()
+                                 join Uni in _context.MUnit on xmapp.UnitId equals Uni.UnitId into muni
+                                 from xmuni in muni.DefaultIfEmpty()
 
+                                     //join UniO in _context.MUnit on xio.UnitId equals UniO.UnitId into Uio
+                                     //from xUio in Uio.DefaultIfEmpty()
                                  where user.ArmyNo == ArmyNo //&&  user.Updatedby == UserId
                                  select new DTOUserProfileResponse
                                  {
@@ -62,8 +68,8 @@ namespace DataAccessLayer
                                      Rank = rank.RankName,
                                      RankId = rank.RankId,
                                      Name = user.Name,
-                                     //UnitId = map.UnitId,
-                                     //UnitName = Uni.UnitName,
+                                     UnitId = xmapp.UnitId,
+                                     UnitName = xmuni.UnitName,
                                      IntOffr = user.IntOffr,
 
                                  }

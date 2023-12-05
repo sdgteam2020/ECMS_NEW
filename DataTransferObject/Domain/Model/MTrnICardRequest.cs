@@ -22,5 +22,9 @@ namespace DataTransferObject.Domain.Model
         [ForeignKey("MICardType"), DatabaseGenerated(DatabaseGeneratedOption.None)]
         public byte TypeId { get; set; }
         public MICardType? MICardType { get; set; }
+
+        [ForeignKey("TrnDomainMapping"), DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public int TrnDomainMappingId { get; set; }
+        public TrnDomainMapping? TrnDomainMapping { get; set; }
     }
 }
