@@ -11,6 +11,7 @@ namespace DataTransferObject.Domain.Master
     public class MDiv : Common
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public byte DivId { get; set; }
 
         [Required(ErrorMessage = "required!")]

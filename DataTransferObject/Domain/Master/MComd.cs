@@ -11,6 +11,7 @@ namespace DataTransferObject.Domain.Master
     public class MComd: Common
     { 
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public byte ComdId { get; set; }
 
         [Required(ErrorMessage = "required!")]

@@ -12,6 +12,7 @@ namespace DataTransferObject.Domain.Model
     public class MTrnICardRequest:Common
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int RequestId { get; set; }
 
         [ForeignKey("BasicDetail"), DatabaseGenerated(DatabaseGeneratedOption.None)]

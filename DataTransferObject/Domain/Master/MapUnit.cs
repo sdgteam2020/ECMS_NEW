@@ -10,7 +10,8 @@ namespace DataTransferObject.Domain.Master
 {
     public class MapUnit : Common
     {
-        [Key] 
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int UnitMapId { get; set; }
       
 

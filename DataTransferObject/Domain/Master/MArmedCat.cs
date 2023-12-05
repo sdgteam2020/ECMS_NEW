@@ -11,6 +11,7 @@ namespace DataTransferObject.Domain.Master
     public class MArmedCat : Common
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public byte ArmedCatId { get; set; }
         public string Name { get; set; } = string.Empty;
         public byte Order { get; set; }

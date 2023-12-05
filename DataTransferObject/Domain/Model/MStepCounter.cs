@@ -12,6 +12,7 @@ namespace DataTransferObject.Domain.Model
     public class MStepCounter:Common
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         [ForeignKey("MTrnICardRequest"), DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int RequestId { get; set; }

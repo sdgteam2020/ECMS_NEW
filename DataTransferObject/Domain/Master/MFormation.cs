@@ -11,6 +11,7 @@ namespace DataTransferObject.Domain.Master
     public class MFormation : Common
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public byte FormationId { get; set; }
 
         [Required(ErrorMessage = "required!")]

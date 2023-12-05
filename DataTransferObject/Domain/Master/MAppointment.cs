@@ -11,6 +11,7 @@ namespace DataTransferObject.Domain.Master
     public class MAppointment:Common
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public byte ApptId { get; set; }
 
         [Required(ErrorMessage = "required!")]

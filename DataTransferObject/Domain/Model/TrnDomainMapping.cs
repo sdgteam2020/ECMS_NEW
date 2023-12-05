@@ -13,11 +13,12 @@ namespace DataTransferObject.Domain.Model
     public class TrnDomainMapping
     { 
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         [ForeignKey("ApplicationUser"), DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int AspNetUsersId { get; set; }
 
-        public ApplicationUser ApplicationUser { get; set; }
+        public ApplicationUser? ApplicationUser { get; set; }
 
         [ForeignKey("MUserProfile"), DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int? UserId { get; set; }

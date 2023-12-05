@@ -12,6 +12,7 @@ namespace DataTransferObject.Domain.Master
     public class MArmedType:Common
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public byte ArmedId { get; set; }
         
         [Required(ErrorMessage = "required!")]
