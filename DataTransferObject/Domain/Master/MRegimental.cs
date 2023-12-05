@@ -11,6 +11,7 @@ namespace DataTransferObject.Domain.Master
     public class MRegimental : Common
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public byte RegId { get; set; }
         [Required(ErrorMessage = "required!")]
         [RegularExpression("^[a-zA-Z0-9 ]*$", ErrorMessage = "Only Alphabets and Numbers allowed.")]

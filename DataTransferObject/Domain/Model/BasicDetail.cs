@@ -14,18 +14,17 @@ namespace DataTransferObject.Domain.Model
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int BasicDetailId { get; set; }
-        public RegistrationType RegistrationType { get; set; }
 
         [StringLength(36)]
         [Column(TypeName = "nvarchar(36)")]
         public string Name { get; set; } = string.Empty;
         
         [ForeignKey("MArmedType")]
-        public short ArmedId { get; set; }
+        public byte ArmedId { get; set; }
         public MArmedType? Armed { get; set; }
 
         [ForeignKey("MRank")]
-        public short RankId { get; set; }
+        public byte RankId { get; set; }
         public MRank? Rank { get; set; }
 
         [Index("IX_BasicDetails_ServiceNo", IsClustered = false, IsUnique = true, Order = 1)]
@@ -71,11 +70,11 @@ namespace DataTransferObject.Domain.Model
         public byte StatusLevel { get; set; }
         
         [ForeignKey("MRegimental")]
-        public short? RegimentalId { get; set; }
+        public byte? RegimentalId { get; set; }
         public MRegimental? Regimental { get; set; }
         
         [ForeignKey("MRegistration")]
-        public short RegistrationId { get; set; }
+        public byte RegistrationId { get; set; }
         public MRegistration? Registration { get; set; }
         
         [ForeignKey("MUnit")]

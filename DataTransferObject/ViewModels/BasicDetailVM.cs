@@ -30,13 +30,13 @@ namespace DataTransferObject.ViewModels
         [Display(Name = "Rank", ResourceType = typeof(Resource))]
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
         [RegularExpression(@"^[\w \.\,\?\;\:\""\''\[\]\!\@\#\$\%\&\*\(\)\-\=\+\\\/]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
-        public short RankId { get; set; }
+        public byte RankId { get; set; }
         public MRank? MRank { get; set; }
 
         [Display(Name = "ArmService", ResourceType = typeof(Resource))]
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
         [RegularExpression(@"^[\w \.\,\?\;\:\""\''\[\]\!\@\#\$\%\&\*\(\)\-\=\+\\\/]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
-        public short ArmedId { get; set; }
+        public byte ArmedId { get; set; }
         public MArmedType? MArmedType { get; set; }
 
         [Remote(action: "IsServiceNoInUse", controller: "BasicDetail", AdditionalFields = "initialServiceNo")]
@@ -103,9 +103,10 @@ namespace DataTransferObject.ViewModels
 
         [Display(Name = "RegimentalId", ResourceType = typeof(Resource))]
         [RegularExpression(@"^[\w \.\,\?\;\:\""\''\[\]\!\@\#\$\%\&\*\(\)\-\=\+\\\/]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
-        public int? RegimentalId { get; set; }
+        public byte? RegimentalId { get; set; }
+        public MRegimental? Regimental { get; set; }
 
-        public int RegistrationId { get; set; }
+        public byte RegistrationId { get; set; }
         public MRegistration? Registration { get; set; }
 
         public int UnitId { get; set; }
