@@ -867,11 +867,11 @@ namespace DataAccessLayer.Migrations
                 columns: new[] { "RegistrationId", "IsActive", "Name", "Order", "Type", "UpdatedOn", "Updatedby" },
                 values: new object[,]
                 {
-                    { (short)1, false, "Apply for Self (Officer)", 1, 1, new DateTime(2023, 12, 5, 10, 12, 28, 392, DateTimeKind.Unspecified).AddTicks(6839), 1 },
-                    { (short)2, false, "Apply for Unit Officer", 2, 1, new DateTime(2023, 12, 5, 10, 12, 28, 392, DateTimeKind.Unspecified).AddTicks(6845), 1 },
-                    { (short)3, false, "Apply for Other Unit Officer", 3, 1, new DateTime(2023, 12, 5, 10, 12, 28, 392, DateTimeKind.Unspecified).AddTicks(6849), 1 },
-                    { (short)4, false, "Apply for Unit JCOs/OR", 4, 2, new DateTime(2023, 12, 5, 10, 12, 28, 392, DateTimeKind.Unspecified).AddTicks(6852), 1 },
-                    { (short)5, false, "Apply for Other Unit JCOs/OR", 5, 2, new DateTime(2023, 12, 5, 10, 12, 28, 392, DateTimeKind.Unspecified).AddTicks(6856), 1 }
+                    { (short)1, false, "Apply for Self (Officer)", 1, 1, new DateTime(2023, 12, 5, 10, 18, 19, 435, DateTimeKind.Unspecified).AddTicks(5387), 1 },
+                    { (short)2, false, "Apply for Unit Officer", 2, 1, new DateTime(2023, 12, 5, 10, 18, 19, 435, DateTimeKind.Unspecified).AddTicks(5392), 1 },
+                    { (short)3, false, "Apply for Other Unit Officer", 3, 1, new DateTime(2023, 12, 5, 10, 18, 19, 435, DateTimeKind.Unspecified).AddTicks(5396), 1 },
+                    { (short)4, false, "Apply for Unit JCOs/OR", 4, 2, new DateTime(2023, 12, 5, 10, 18, 19, 435, DateTimeKind.Unspecified).AddTicks(5399), 1 },
+                    { (short)5, false, "Apply for Other Unit JCOs/OR", 5, 2, new DateTime(2023, 12, 5, 10, 18, 19, 435, DateTimeKind.Unspecified).AddTicks(5403), 1 }
                 });
 
             migrationBuilder.CreateIndex(
