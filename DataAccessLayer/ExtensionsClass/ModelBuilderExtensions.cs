@@ -12,6 +12,7 @@ namespace DataAccessLayer.ExtensionsClass
     {
         public static void Seed(this ModelBuilder modelBuilder)
         {
+            DateTime dt = new DateTime(2023,12,1,0,0,0);
             modelBuilder.Entity<MRegistration>().HasData(
                     new MRegistration
                     {
@@ -20,7 +21,7 @@ namespace DataAccessLayer.ExtensionsClass
                         Order = 1,
                         Type = 1,
                         Updatedby = 1,
-                        UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"))
+                        UpdatedOn = dt
                     },
                     new MRegistration
                     {
@@ -29,7 +30,7 @@ namespace DataAccessLayer.ExtensionsClass
                         Order = 2,
                         Type = 1,
                         Updatedby = 1,
-                        UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"))
+                        UpdatedOn = dt
                     },
                     new MRegistration
                     {
@@ -38,7 +39,7 @@ namespace DataAccessLayer.ExtensionsClass
                         Order = 3,
                         Type = 1,
                         Updatedby = 1,
-                        UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"))
+                        UpdatedOn = dt
                     },
                     new MRegistration
                     {
@@ -47,7 +48,7 @@ namespace DataAccessLayer.ExtensionsClass
                         Order = 4,
                         Type = 2,
                         Updatedby = 1,
-                        UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"))
+                        UpdatedOn = dt
                     },
                     new MRegistration
                     {
@@ -56,8 +57,10 @@ namespace DataAccessLayer.ExtensionsClass
                         Order = 5,
                         Type = 2,
                         Updatedby = 1,
-                        UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"))
-                    },
+                        UpdatedOn = dt
+                    }
+                );
+            modelBuilder.Entity<MICardType>().HasData(
                     new MICardType
                     {
                         TypeId = 1,

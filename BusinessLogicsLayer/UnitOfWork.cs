@@ -28,7 +28,7 @@ namespace BusinessLogicsLayer
     {
 
 
-        public UnitOfWork(IUserBL _user, IComd _comds, ICorpsBL _corpsBL, IBdeBL _bdeCat, IDivBL divBL, IUnitBL unit, IMapUnitBL MapUnitBL, IFormationBL FormationBL, IApptBL apptBL, IArmedBL armedBL, IBasicDetailBL _basicDetailBL, IBasicDetailTempBL _basicDetailTempBL, IRankBL rankBL, IRegimentalBL regimentalBL,IArmedCatBL armedCatBL)
+        public UnitOfWork(IUserBL _user, IComd _comds, ICorpsBL _corpsBL, IBdeBL _bdeCat, IDivBL divBL, IUnitBL unit, IMapUnitBL MapUnitBL, IFormationBL FormationBL, IApptBL apptBL, IArmedBL armedBL, IRankBL rankBL, IRegimentalBL regimentalBL,IArmedCatBL armedCatBL)
         {
             Users = _user;
             Comds = _comds;
@@ -40,8 +40,6 @@ namespace BusinessLogicsLayer
             Appt = apptBL;
             Armed = armedBL;
             Unit = unit;
-            BasicDetail = _basicDetailBL;
-            BasicDetailTemp = _basicDetailTempBL;
             Rank = rankBL;
             Regimental= regimentalBL;
             ArmedCat = armedCatBL;
@@ -59,9 +57,6 @@ namespace BusinessLogicsLayer
         public IApptBL Appt { get; }
         public IArmedBL Armed { get; }
         public IRankBL Rank { get; }
-        public IBasicDetailBL BasicDetail { get; }
-        public IBasicDetailTempBL BasicDetailTemp { get; }
-
         public IRegimentalBL Regimental { get; }
 
         public IArmedCatBL ArmedCat { get; }

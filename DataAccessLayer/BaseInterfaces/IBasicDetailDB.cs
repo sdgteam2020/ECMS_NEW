@@ -12,5 +12,6 @@ namespace DataAccessLayer.BaseInterfaces
     public interface IBasicDetailDB:IGenericRepositoryDL<BasicDetail>
     {
         public Task<List<BasicDetailVM>> GetALLBasicDetail(int UserId,int step, int type);
+        public Task<List<DTOICardTypeRequest>> GetAllICardType();
     }
 }

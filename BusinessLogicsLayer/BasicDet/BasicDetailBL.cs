@@ -22,5 +22,9 @@ namespace BusinessLogicsLayer.BasicDet
         {
             return _iBasicDetailDB.GetALLBasicDetail(UserId ,step, type);
         }
+        public Task<List<DTOICardTypeRequest>> GetAllICardType()
+        {
+            return _iBasicDetailDB.GetAllICardType();
+        }
     }
 }

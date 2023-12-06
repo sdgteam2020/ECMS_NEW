@@ -23,6 +23,8 @@ using BusinessLogicsLayer.Bde;
 using Web.WebHelpers;
 using DataTransferObject.ViewModels;
 using System.Data.Entity;
+using BusinessLogicsLayer.BasicDet;
+using BusinessLogicsLayer.BasicDetTemp;
 
 namespace Web.Controllers
 {
@@ -30,25 +32,25 @@ namespace Web.Controllers
     {
         private readonly ApplicationDbContext context, contextTransaction;
         private readonly UserManager<ApplicationUser> userManager;
-        private readonly IUnitOfWork unitOfWork;
         private readonly IStepCounterBL iStepCounterBL;
         private readonly ITrnICardRequestBL iTrnICardRequestBL;
         private readonly IDomainMapBL iDomainMapBL;
         private readonly ITrnFwnBL iTrnFwnBL;
+        private readonly IBasicDetailBL basicDetailBL;
+        private readonly IBasicDetailTempBL basicDetailTempBL;
         private readonly IService service;
         private readonly IMapper _mapper;
         private readonly IWebHostEnvironment hostingEnvironment;
         private readonly IDataProtector protector;
         private readonly TimeZoneInfo INDIAN_ZONE = TimeZoneInfo.FindSystemTimeZoneById("India Standard Time");
         private readonly ILogger<BasicDetailController> _logger;
-        public const string SessionKeyStep = "_Step";
-        public const string SessionKeyCurStep = "_CurStep";
         public DateTime dateTimenow;
-        public BasicDetailController(IUnitOfWork unitOfWork, IService service, IMapper mapper, ApplicationDbContext context,
+        public BasicDetailController(IBasicDetailBL basicDetailBL, IBasicDetailTempBL basicDetailTempBL, IService service, IMapper mapper, ApplicationDbContext context,
             UserManager<ApplicationUser> userManager, IWebHostEnvironment hostingEnvironment, IDataProtectionProvider dataProtectionProvider,
                               DataProtectionPurposeStrings dataProtectionPurposeStrings, ILogger<BasicDetailController> logger, IStepCounterBL iStepCounterBL, ITrnFwnBL iTrnFwnBL, ITrnICardRequestBL iTrnICardRequestBL, IDomainMapBL iDomainMapBL )
         {
-            this.unitOfWork = unitOfWork;
+            this.basicDetailBL = basicDetailBL;
+            this.basicDetailTempBL = basicDetailTempBL;
             this.service = service;
             this._mapper = mapper;
             this.context = context;
@@ -72,7 +74,7 @@ namespace Web.Controllers
             userId = 4;
             int type = 0;
             ViewBag.Id = Id;    
-            var allrecord = await Task.Run(()=> unitOfWork.BasicDetail.GetALLBasicDetail(Convert.ToInt32(userId), Id, type)) ;
+            var allrecord = await Task.Run(()=> basicDetailBL.GetALLBasicDetail(Convert.ToInt32(userId), Id, type)) ;
             _logger.LogInformation(1001, "Index Page Of Basic Detail View");
             ViewBag.Title = "List of Register I-Card";
             return View(allrecord);
@@ -105,7 +107,7 @@ namespace Web.Controllers
                 userId = 29;
             }
 
-            var allrecord = await Task.Run(() => unitOfWork.BasicDetail.GetALLBasicDetail(Convert.ToInt32(userId), Id, type));
+            var allrecord = await Task.Run(() => basicDetailBL.GetALLBasicDetail(Convert.ToInt32(userId), Id, type));
             _logger.LogInformation(1001, "Index Page Of Basic Detail View");
             ViewBag.Title = "List of Register I-Card";
             return View(allrecord);
@@ -129,7 +131,7 @@ namespace Web.Controllers
                 _logger.LogError(1001, ex, "This error occure because Id value change by user.");
                 return RedirectToAction("Error", "Error");
             }
-            BasicDetail? basicDetail = await unitOfWork.BasicDetail.Get(decryptedIntId);
+            BasicDetail? basicDetail = await basicDetailBL.Get(decryptedIntId);
 
             if (basicDetail != null)
             {
@@ -157,17 +159,40 @@ namespace Web.Controllers
         public async Task<ActionResult> InaccurateData()
         {
             var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var allrecord = await Task.Run(() => unitOfWork.BasicDetailTemp.GetALLBasicDetailTemp(Convert.ToInt32(userId)));
+            var allrecord = await Task.Run(() => basicDetailTempBL.GetALLBasicDetailTemp(Convert.ToInt32(userId)));
             _logger.LogInformation(1001, "Index Page Of Basic Detail Temp View");
             ViewBag.Title = "List of Inaccurate Data";
             return View(allrecord);
         }
         [HttpGet]
         [Authorize(Roles = "Admin,User")]
-        public Task<ViewResult> Registration()
+        public async Task<ActionResult> RequestType()
         {
+            var allrecord = await Task.Run(() => basicDetailBL.GetAllICardType());
+            return View(allrecord);
+        }
+        [HttpGet]
+        [Authorize(Roles = "Admin,User")]
+        public async Task<IActionResult> Registration(string Id)
+        {
+            var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            string decryptedId = string.Empty;
+            int decryptedIntId = 0;
+            try
+            {
+                // Decrypt the  id using Unprotect method
+                decryptedId = protector.Unprotect(Id);
+                decryptedIntId = Convert.ToInt32(decryptedId);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "This error occure because Id value change by user.");
+                return RedirectToAction("Error", "Error");
+            }
+            DTORegistrationRequest dTORegistrationRequest = new DTORegistrationRequest();
+            dTORegistrationRequest.TypeId =(byte) decryptedIntId;
             ViewBag.OptionsRegistration = service.GetRegistration();
-            return Task.FromResult(View());
+            return View(dTORegistrationRequest);
         }
         [HttpPost]
         [Authorize(Roles = "Admin,User")]
@@ -222,7 +247,7 @@ namespace Web.Controllers
                             basicDetailTemp.Observations = model.Observations;
                             basicDetailTemp.Updatedby = model.Updatedby;
                             basicDetailTemp.UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
-                            await unitOfWork.BasicDetailTemp.Add(basicDetailTemp);
+                            await basicDetailTempBL.Add(basicDetailTemp);
                             TempData["success"] = "Request Submited Successfully.";
                             return RedirectToAction("Registration");
                         }
@@ -313,6 +338,7 @@ namespace Web.Controllers
                         dTOBasicDetailCrtRequest.PermanentAddress = model.PermanentAddress;
                         dTOBasicDetailCrtRequest.RegistrationId = model.RegId;
                         dTOBasicDetailCrtRequest.Type = mRegistration.Type;
+                        dTOBasicDetailCrtRequest.TypeId = model.TypeId;
                         dTOBasicDetailCrtRequest.DateOfIssue = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
                         return await Task.FromResult(View(dTOBasicDetailCrtRequest));
                     }
@@ -339,7 +365,7 @@ namespace Web.Controllers
                     _logger.LogError(1001, ex, "This error occure because Id value change by user.");
                     return RedirectToAction("Error", "Error");
                 }
-                BasicDetail? basicDetail = await unitOfWork.BasicDetail.Get(decryptedIntId);
+                BasicDetail? basicDetail = await basicDetailBL.Get(decryptedIntId);
 
                 if (basicDetail != null)
                 {
@@ -385,7 +411,7 @@ namespace Web.Controllers
                 var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
                 if (model.BasicDetailId > 0)
                 {
-                    BasicDetail basicDetail = await unitOfWork.BasicDetail.Get(model.BasicDetailId);
+                    BasicDetail basicDetail = await basicDetailBL.Get(model.BasicDetailId);
 
                     if (basicDetail != null)
                     {
@@ -494,7 +520,7 @@ namespace Web.Controllers
                             basicDetail.AadhaarNo = model.AadhaarNo;
                             basicDetail.Updatedby = Convert.ToInt32(userId);
                             basicDetail.UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
-                            await unitOfWork.BasicDetail.Update(basicDetail);
+                            await basicDetailBL.Update(basicDetail);
                             TempData["success"] = "Updated Successfully.";
                             return RedirectToAction("Index");
                         }
@@ -591,14 +617,14 @@ namespace Web.Controllers
                         //    newBasicDetail.AadhaarNo = model.AadhaarNo.Replace(" ", "");
                         //}
                         BasicDetail ret = new BasicDetail();
-                        ret = await unitOfWork.BasicDetail.AddWithReturn(newBasicDetail);
+                        ret = await basicDetailBL.AddWithReturn(newBasicDetail);
                         if (ret != null)
                         {
 
                             MTrnICardRequest mTrnICardRequest = new MTrnICardRequest();
                             mTrnICardRequest.BasicDetailId = ret.BasicDetailId;
                             mTrnICardRequest.Status = false;
-                            mTrnICardRequest.TypeId = 1;
+                            mTrnICardRequest.TypeId = model.TypeId;
                             TrnDomainMapping trnDomainMapping = new TrnDomainMapping();
                             trnDomainMapping.AspNetUsersId= Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                             trnDomainMapping=await iDomainMapBL.GetByAspnetUserIdBy(trnDomainMapping);
@@ -687,7 +713,7 @@ namespace Web.Controllers
                 _logger.LogError(1001, ex, "This error occure because Id value change by user.");
                 return RedirectToAction("Error", "Error");
             }
-            BasicDetail basicDetail = await unitOfWork.BasicDetail.Get(decryptedIntId);
+            BasicDetail basicDetail = await basicDetailBL.Get(decryptedIntId);
             if (basicDetail == null)
             {
                 Response.StatusCode = 404;
@@ -695,7 +721,7 @@ namespace Web.Controllers
             }
             else
             {
-                BasicDetail deleteBasicDetail = await unitOfWork.BasicDetail.Delete(basicDetail.BasicDetailId);
+                BasicDetail deleteBasicDetail = await basicDetailBL.Delete(basicDetail.BasicDetailId);
                 if (deleteBasicDetail != null)
                 {
                     if (deleteBasicDetail.PhotoImagePath != null)

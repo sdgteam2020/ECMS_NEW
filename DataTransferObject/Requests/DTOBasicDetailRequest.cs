@@ -198,5 +198,7 @@ namespace DataTransferObject.Requests
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
         public int SubmitType { get; set; }
 
+        public byte TypeId { get; set; }
+
     }
 }

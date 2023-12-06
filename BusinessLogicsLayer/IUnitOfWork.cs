@@ -33,8 +33,6 @@ namespace BusinessLogicsLayer
         IArmedBL Armed { get; }
         IRankBL Rank { get; }   
         IUnitBL Unit { get; }
-        IBasicDetailBL BasicDetail { get; }
-        IBasicDetailTempBL BasicDetailTemp { get; }
         IRegimentalBL Regimental { get; }
         IArmedCatBL ArmedCat { get; }
 

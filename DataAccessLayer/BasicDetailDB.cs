@@ -16,6 +16,7 @@ using DataTransferObject.Constants;
 using DataTransferObject.Domain.Master;
 using DataTransferObject.Domain;
 using DataTransferObject.ViewModels;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace DataAccessLayer
 {
@@ -32,6 +33,22 @@ namespace DataAccessLayer
             this.protector = dataProtectionProvider.CreateProtector(
                 dataProtectionPurposeStrings.AFSACIdRouteValue);
             this.protector = protector;
+        }
+        public async Task<List<DTOICardTypeRequest>> GetAllICardType()
+        {
+            string query = "Select * from MICardType";
+            using (var connection = _contextDP.CreateConnection())
+            {
+                var ICardTypeList = await connection.QueryAsync<DTOICardTypeRequest>(query);
+                var allrecord = (from e in ICardTypeList
+                                 select new DTOICardTypeRequest()
+                                 {
+                                     TypeId = e.TypeId,
+                                     EncryptedId = protector.Protect(e.TypeId.ToString()),
+                                     Name=e.Name,
+                                 }).ToList();
+                return await Task.FromResult(allrecord);
+            }
         }
         public async Task<List<BasicDetailVM>> GetALLBasicDetail(int UserId,int stepcount, int type)
         {

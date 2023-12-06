@@ -140,6 +140,8 @@ namespace DataTransferObject.ViewModels
         public string? ICardType { get; set; }
         [NotMapped]
         public int RequestId { get; set; }
+        [NotMapped]
+        public byte TypeId { get; set; }
     }
     public class BasicDetailCrtAndUpdVM : BasicDetailVM
     {
