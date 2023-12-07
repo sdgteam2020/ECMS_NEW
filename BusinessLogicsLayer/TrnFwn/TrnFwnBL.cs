@@ -19,12 +19,17 @@ namespace BusinessLogicsLayer.BdeCate
     public class TrnFwnBL : GenericRepositoryDL<MTrnFwd>, ITrnFwnBL
     {
 
+        private readonly ITrnFwnDB _ITrnFwnDB;
 
-        public TrnFwnBL(ApplicationDbContext context) : base(context)
+      
+        public TrnFwnBL(ApplicationDbContext context, ITrnFwnDB iTrnFwnDB) : base(context)
         {
-            
+            _ITrnFwnDB = iTrnFwnDB;
         }
 
-    
+        public Task<bool> UpdateAllBYRequestId(int RequestId)
+        {
+            return _ITrnFwnDB.UpdateAllBYRequestId(RequestId);
+        }
     }
 }

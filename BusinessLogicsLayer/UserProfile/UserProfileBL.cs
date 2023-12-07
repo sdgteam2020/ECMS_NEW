@@ -5,6 +5,8 @@ using DataTransferObject.Domain;
 using DataTransferObject.Domain.Master;
 using DataTransferObject.Response;
 using DataTransferObject.Response.User;
+using DataTransferObject.ViewModels;
+using Microsoft.SqlServer.Management.Smo;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,9 +30,9 @@ namespace BusinessLogicsLayer.Master
             return _iUserProfileDB.GetAll(DomainId, UserId);
         }
 
-        public Task<DTOUserProfileResponse> GetAllByArmyNo(string ArmyNo, int UserId)
+        public Task<List<DTOFwdICardResponse>> GetDataForFwd(int StepId, int UnitId,string Name, int TypeId)
         {
-            return _iUserProfileDB.GetAllByArmyNo(ArmyNo, UserId);
+            return _iUserProfileDB.GetDataForFwd(StepId, UnitId, Name,TypeId);
         }
 
         public Task<bool> GetByArmyNo(MUserProfile Data, int UserId)
@@ -46,6 +48,11 @@ namespace BusinessLogicsLayer.Master
         public Task<List<MUserProfile>> GetByMArmyNo(string ArmyNo, int UserId)
         {
             return _iUserProfileDB.GetByMArmyNo(ArmyNo, UserId);
+        }
+
+        public Task<List<BasicDetailVM>> GetByRequestId(int RequestId)
+        {
+            return _iUserProfileDB.GetByRequestId(RequestId);
         }
     }
 }

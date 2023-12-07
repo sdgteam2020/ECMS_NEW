@@ -5,8 +5,10 @@ using DapperRepo.Core.Constants;
 using DataTransferObject.Domain;
 using DataTransferObject.Domain.Master;
 using DataTransferObject.Domain.Model;
+using DataTransferObject.Requests;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using Web.WebHelpers;
 
 namespace Web.Controllers
 {
@@ -150,12 +152,13 @@ namespace Web.Controllers
             }
 
         }
-        public async Task<IActionResult> GetAllByArmyNo(string ArmyNo)
+        public async Task<IActionResult> GetDataForFwd(string Name,int TypeId, int StepId)
         {
             try
             {
-                int userid = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-                return Json(await _userProfileBL.GetAllByArmyNo(ArmyNo, userid));
+                //int DomainMapId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                int UnitId=SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").UnitId;
+                return Json(await _userProfileBL.GetDataForFwd(StepId, UnitId, Name, TypeId));
             }
             catch (Exception ex)
             {
@@ -177,5 +180,34 @@ namespace Web.Controllers
             }
 
         }
+        public async Task<IActionResult> GetByAspnetUserIdBy(TrnDomainMapping Data)
+        {
+            try
+            {
+               
+                return Json(await _iDomainMapBL.GetByAspnetUserIdBy(Data));
+
+            }
+            catch (Exception ex)
+            {
+                return Json(KeyConstants.InternalServerError);
+            }
+
+        }
+        public async Task<IActionResult> GetByRequestId(int RequestId)
+        {
+            try
+            {
+               
+                return Json(await _userProfileBL.GetByRequestId(RequestId));
+
+            }
+            catch (Exception ex)
+            {
+                return Json(KeyConstants.InternalServerError);
+            }
+
+        }
+
     }
 }

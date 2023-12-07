@@ -57,6 +57,11 @@ namespace Web.Controllers
                     dtoSession.ICNO = army.ArmyNo;
                     dtoSession.UserId = army.UserId;
                     dtoSession.UnitId=dTO.UnitId;
+
+                    TrnDomainMapping trnDomainMapping = new TrnDomainMapping();
+                    trnDomainMapping.AspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                    trnDomainMapping = await _iDomainMapBL.GetByAspnetUserIdBy(trnDomainMapping);
+                    dtoSession.TrnDomainMappingId = trnDomainMapping.Id;
                 }
                 SessionHeplers.SetObject(HttpContext.Session, "Token", dtoSession);
                 //SessionHeplers.SetObject(HttpContext.Session, "ArmyNo", dtoSession.ICNO);
@@ -74,10 +79,21 @@ namespace Web.Controllers
         {
             try
             {
-                TrnDomainMapping dTO = new TrnDomainMapping();
-                dTO.AspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-                var data = await _iDomainMapBL.GetByDomainIdbyUnit(dTO);
-                return Json(data);
+                if (this.User.FindFirstValue(ClaimTypes.Role) != "Admin")
+                {
+                    TrnDomainMapping dTO = new TrnDomainMapping();
+                    dTO.AspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                    var data = await _iDomainMapBL.GetByDomainIdbyUnit(dTO);
+                    return Json(data);
+                }
+                else
+                {
+                    TrnDomainMapping dTO = new TrnDomainMapping();
+                    dTO.UserId = 1;
+                    return Json(dTO);
+                }
+
+               
             }
             catch (Exception ex)
             {
@@ -107,7 +123,7 @@ namespace Web.Controllers
                
                 dtoSession.ICNO = ICNO;
                 dtoSession.UnitId = dTO.UnitId;
-                SessionHeplers.SetObject(HttpContext.Session, "Token", dtoSession);
+                
                 if (ModelState.IsValid)
                 {
                     if (!await _iDomainMapBL.GetByDomainId(dTO))
@@ -121,6 +137,15 @@ namespace Web.Controllers
                         {
 
                             await _iDomainMapBL.Add(dTO);
+                            TrnDomainMapping trnDomainMapping1 = new TrnDomainMapping();
+                            trnDomainMapping1.AspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                            trnDomainMapping1 = await _iDomainMapBL.GetByAspnetUserIdBy(trnDomainMapping1);
+                            if (trnDomainMapping1 != null)
+                                dtoSession.TrnDomainMappingId = trnDomainMapping1.Id;
+
+                            SessionHeplers.SetObject(HttpContext.Session, "Token", dtoSession);
+
+
                             return Json(KeyConstants.Save);
 
 
@@ -132,6 +157,15 @@ namespace Web.Controllers
                         trnDomainMapping =await _iDomainMapBL.GetByDomainIdbyUnit(dTO);
                         trnDomainMapping.UnitId = dTO.UnitId;
                        await _iDomainMapBL.Update(trnDomainMapping);
+
+
+                        TrnDomainMapping trnDomainMapping1 = new TrnDomainMapping();
+                        trnDomainMapping1.AspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                        trnDomainMapping1 = await _iDomainMapBL.GetByAspnetUserIdBy(trnDomainMapping1);
+                        if (trnDomainMapping1 != null)
+                            dtoSession.TrnDomainMappingId = trnDomainMapping1.Id;
+
+                        SessionHeplers.SetObject(HttpContext.Session, "Token", dtoSession);
                         return Json(KeyConstants.Update);
                     }
 

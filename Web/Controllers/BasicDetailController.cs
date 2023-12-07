@@ -81,7 +81,7 @@ namespace Web.Controllers
         public async Task<ActionResult> ApprovalForIO(int Id)
         {
             int type = 0;
-            var userId = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").UserId;
+            var userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier)); //SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").UserId;
             if (Id == 22)
             {
                 Id = 2;
@@ -599,10 +599,10 @@ namespace Web.Controllers
                             mTrnICardRequest.BasicDetailId = ret.BasicDetailId;
                             mTrnICardRequest.Status = false;
                             mTrnICardRequest.TypeId = 1;
-                            TrnDomainMapping trnDomainMapping = new TrnDomainMapping();
-                            trnDomainMapping.AspNetUsersId= Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-                            trnDomainMapping=await iDomainMapBL.GetByAspnetUserIdBy(trnDomainMapping);
-                            mTrnICardRequest.TrnDomainMappingId = trnDomainMapping.Id;
+                            //TrnDomainMapping trnDomainMapping = new TrnDomainMapping();
+                            //trnDomainMapping.AspNetUsersId= Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                            //trnDomainMapping=await iDomainMapBL.GetByAspnetUserIdBy(trnDomainMapping);
+                            mTrnICardRequest.TrnDomainMappingId = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").TrnDomainMappingId;
                             mTrnICardRequest.UpdatedOn = DateTime.Now;
                             mTrnICardRequest.Updatedby = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").UserId; //SessionHeplers.GetObject<string>(HttpContext.Session, "ArmyNo");
                             mTrnICardRequest = await iTrnICardRequestBL.AddWithReturn(mTrnICardRequest);
@@ -778,16 +778,34 @@ namespace Web.Controllers
         {
             try
             {
+                DtoSession sessiondata=SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+                data.FromUserId= sessiondata.UserId;
+                data.UnitId= sessiondata.UnitId;
+                data.FromAspNetUsersId= Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                 data.UpdatedOn = DateTime.Now;
                 data.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                 data.IsActive = true;
-                await iTrnFwnBL.Add(data);
+                data.TypeId= Convert.ToByte(data.TypeId-Convert.ToByte(1));
+                if(await iTrnFwnBL.UpdateAllBYRequestId(data.RequestId))
+                {
+                    await iTrnFwnBL.Add(data);
+                    return Ok(data);
+                }
+                else
+                {
+                    return BadRequest();
+                }
+                
             }
-            catch (Exception ex) { }
+            catch (Exception ex) 
+            { 
+                
+                return BadRequest();
+            }
 
           
 
-            return Ok(data);    
+           
         }
         [Authorize(Roles = "Admin,User")]
         [HttpPost]

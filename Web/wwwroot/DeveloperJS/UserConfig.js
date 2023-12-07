@@ -52,7 +52,7 @@
                 success: function (data) {
 
 
-                    $("#spnUnitIdMap").html(data.UnitId);
+                    $("#spnUnitIdMap").html(data.UnitMapId);
                     $("#lblProComd").html(data.ComdName);
                     $("#lblProCorps").html(data.CorpsName);
                     $("#lblProDiv").html(data.DivName);
