@@ -71,8 +71,6 @@ namespace Web.Controllers
 
 
 
-
-
         }
         [HttpPost]
         public async Task<IActionResult> CheckProfileExist(int Id)
