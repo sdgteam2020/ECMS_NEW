@@ -22,9 +22,13 @@ namespace BusinessLogicsLayer.BasicDet
         {
             return _iBasicDetailDB.GetALLBasicDetail(UserId ,step, type);
         }
-        public Task<List<DTOICardTypeRequest>> GetAllICardType()
+        public async Task<List<DTOICardTypeRequest>> GetAllICardType()
         {
-            return _iBasicDetailDB.GetAllICardType();
+            return await _iBasicDetailDB.GetAllICardType();
+        }
+        public async Task<BasicDetail?> FindServiceNo(string ServiceNo)
+        {
+            return await _iBasicDetailDB.FindServiceNo(ServiceNo);
         }
     }
 }

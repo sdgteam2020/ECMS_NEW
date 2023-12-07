@@ -34,6 +34,22 @@ namespace DataAccessLayer
                 dataProtectionPurposeStrings.AFSACIdRouteValue);
             this.protector = protector;
         }
+        public async Task<BasicDetail?> FindServiceNo(string ServiceNo)
+        {
+            string query = "Select * from BasicDetails where ServiceNo = @ServiceNo ";
+            using (var connection = _contextDP.CreateConnection())
+            {
+                BasicDetail basicDetail = await connection.QuerySingleOrDefaultAsync<BasicDetail>(query, new { ServiceNo });
+                if(basicDetail!=null)
+                {
+                    return basicDetail;
+                }
+                else
+                {
+                    return null;
+                }   
+            }
+        }
         public async Task<List<DTOICardTypeRequest>> GetAllICardType()
         {
             string query = "Select * from MICardType";

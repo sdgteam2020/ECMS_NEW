@@ -10,6 +10,7 @@ namespace DataAccessLayer.BaseInterfaces
     public interface ITrnICardRequestDB : IGenericRepositoryDL<MTrnICardRequest>
     {
         public Task<MTrnICardRequest> GetByAspNetUserBy(int AspnetuserId);
+        public Task<bool> GetRequestPending(int BasicDetailId);
 
     }
 }

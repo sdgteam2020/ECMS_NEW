@@ -13,6 +13,6 @@ namespace BusinessLogicsLayer.BasicDet
     {
         public Task<List<BasicDetailVM>> GetALLBasicDetail(int UserId,int step,int type);
         public Task<List<DTOICardTypeRequest>> GetAllICardType();
-
+        public Task<BasicDetail?> FindServiceNo(string ServiceNo);
     }
 }

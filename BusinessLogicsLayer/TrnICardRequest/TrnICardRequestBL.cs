@@ -30,5 +30,9 @@ namespace BusinessLogicsLayer.BdeCate
         {
            return await _iTrnICardRequestDB.GetByAspNetUserBy(AspnetuserId);
         }
+        //public async Task<MTrnICardRequest?> GetLastRecordByBasicDetailId(int BasicDetailId)
+        //{
+        //    return await _iTrnICardRequestDB.GetLastRecordByBasicDetailId(BasicDetailId);
+        //}
     }
 }

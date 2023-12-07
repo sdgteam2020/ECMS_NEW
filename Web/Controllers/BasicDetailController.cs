@@ -819,6 +819,26 @@ namespace Web.Controllers
         [HttpPost]
         public async Task<IActionResult> GetData(string ICNumber)
         {
+            if(ICNumber!=null)
+            {
+                BasicDetail? basicDetail = await basicDetailBL.FindServiceNo(ICNumber);
+                if(basicDetail!=null) 
+                {
+                    //MTrnICardRequest? mTrnICardRequest = await iTrnICardRequestBL.GetLastRecordByBasicDetailId(basicDetail.BasicDetailId);
+                    //if(mTrnICardRequest!=null) 
+                    //{
+                    //    TempData["error"] = "Your I-Card is under process. Please wait.";
+                    //}
+                    //else
+                    //{
+ 
+                    //}
+                }
+                else
+                {
+                    TempData["error"] = "Service no not valid.";
+                }
+            }
             using (var client = new HttpClient())
             {
                 //client.BaseAddress = new Uri("https://api.postalpincode.in/");
@@ -842,12 +862,13 @@ namespace Web.Controllers
                     }
                     else
                     {
-                        DTOApiDataResponse dTOApiDataResponse= new DTOApiDataResponse();
+                        DTOApiDataResponse dTOApiDataResponse = new DTOApiDataResponse();
                         dTOApiDataResponse.Status = false;
                         return Ok(dTOApiDataResponse);
                     }
                 }
             }
+
         }
         public async Task<DTOApiDataResponse> GetApiData(string ICNumber)
         {
