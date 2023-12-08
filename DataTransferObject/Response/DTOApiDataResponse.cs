@@ -14,5 +14,6 @@ namespace DataTransferObject.Response
         public DateTime DateOfCommissioning { get; set; }
         public string PermanentAddress { get; set; } = string.Empty;
         public bool Status { get; set; } = false;
+        public string Message { get; set; } = string.Empty;
     }
 }

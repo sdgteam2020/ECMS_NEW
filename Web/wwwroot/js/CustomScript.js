@@ -436,7 +436,7 @@ function getData(id) {
                     },
                     success: function (response, status) {
                         if (response.Status == false) {
-                            alert("Data Not Found.")
+                            alert(response.Message)
                         }
                         else {
                             //alert(JSON.stringify(response));
@@ -464,7 +464,7 @@ function getData(id) {
                         },
                         success: function (response, status) {
                             if (response.Status == false) {
-                                alert("Data Not Found.")
+                                alert(response.Message)
                             }
                             else {
                                 //alert(JSON.stringify(response));

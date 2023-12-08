@@ -4,8 +4,11 @@ $(document).ready(function () {
 
     
     Reset();
-    BindData()
     mMsater(0, "ddlArmType", 9, "");
+    BindData()
+    $("#btnReset").click(function () {
+        Reset();
+    });
    
     $("#btnsave").click(function () {
         if ($("#SaveForm")[0].checkValidity()) {
@@ -102,7 +105,7 @@ function BindData() {
                
                 else {
 
-                    /*$("#tblcommnd").DataTable().destroy();*/
+                    $("#tblData").DataTable().destroy();
                    
                     for (var i = 0; i < response.length; i++) {
                         

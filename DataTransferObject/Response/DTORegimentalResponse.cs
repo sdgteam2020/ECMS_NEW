@@ -12,10 +12,10 @@ namespace DataTransferObject.Response
     {
        
         public int RegId { get; set; }
-        public string Name { get; set; }
-        public string Abbreviation { get; set; } 
+        public string Name { get; set; } = string.Empty;
+        public string Abbreviation { get; set; } = string.Empty;
         public int ArmedId { get; set; }
-        public string ArmedName { get; set; }
+        public string ArmedName { get; set; } = string.Empty;
         public string Location { get; set; } = string.Empty;
     }
 }

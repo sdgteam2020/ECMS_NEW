@@ -14,7 +14,7 @@ namespace BusinessLogicsLayer.Bde
     public interface ITrnICardRequestBL : IGenericRepository<MTrnICardRequest>
     {
         public Task<MTrnICardRequest> GetByAspNetUserBy(int AspnetuserId);
-        //public Task<MTrnICardRequest?> GetLastRecordByBasicDetailId(int BasicDetailId);
+        public Task<bool> GetRequestPending(int BasicDetailId);
 
     }
 }

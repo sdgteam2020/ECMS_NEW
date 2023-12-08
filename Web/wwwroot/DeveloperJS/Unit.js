@@ -112,7 +112,7 @@ function BindData() {
                
                 else {
 
-                    $("#tbldata").DataTable().destroy();
+                    /*$("#tbldata").DataTable().destroy();*/
                   
                    
                     for (var i = 0; i < response.length; i++) {
@@ -128,7 +128,8 @@ function BindData() {
                             listItem += "<td class='align-middle'>" + (i+1) + "</td>";
                             listItem += "<td class='align-middle'><span id='sus_no'>" + response[i].Sus_no + "</span></td>";
                             listItem += "<td class='align-middle'><span id='suffix'>" + response[i].Suffix + "</span></td>";
-                        listItem += "<td class='align-middle'><span id='unit_desc'>" + response[i].UnitName + "</span></td>";
+                            listItem += "<td class='align-middle'><span id='unit_desc'>" + response[i].UnitName + "</span></td>";
+                            listItem += "<td class='align-middle'><span id='unit_abbreviation'>" + response[i].Abbreviation + "</span></td>";
 
                         if (response[i].IsVerify == true)
                             listItem += "<td class='align-middle'><span id='unit_desc'><span class='badge badge-pill badge-success'>Verifed</span></span></td>";
@@ -199,6 +200,7 @@ function BindData() {
                         $("#txtSusno").val($(this).closest("tr").find("#sus_no").html());
                         $("#txtSuffix").val($(this).closest("tr").find("#suffix").html());
                         $("#txtUnitDesc").val($(this).closest("tr").find("#unit_desc").html());
+                        $("#txtAbbreviation").val($(this).closest("tr").find("#unit_abbreviation").html());
 
                        // alert($(this).closest("tr").find("#SunitId").html())
                         $("#spnUnitId").html($(this).closest("tr").find("#SunitId").html());
@@ -256,7 +258,7 @@ function Save() {
     $.ajax({
         url: '/Master/SaveUnit',
         type: 'POST',
-        data: { "Sus_no": $("#txtSusno").val(), "UnitId": $("#spnUnitId").html(), "Suffix": $("#txtSuffix").val(), "UnitName": $("#txtUnitDesc").val(), "IsVerify": true }, //get the search string
+        data: { "Sus_no": $("#txtSusno").val(), "UnitId": $("#spnUnitId").html(), "Suffix": $("#txtSuffix").val(), "UnitName": $("#txtUnitDesc").val(), "Abbreviation": $("#txtAbbreviation").val(),"IsVerify": true }, //get the search string
         success: function (result) {
 
 
@@ -306,6 +308,7 @@ function Reset() {
     $("#txtSusno").val("");
     $("#txtSuffix").val("");
     $("#txtUnitDesc").val("");
+    $("#txtAbbreviation").val("");
     $("#spnUnitId").html("0");
 }
 

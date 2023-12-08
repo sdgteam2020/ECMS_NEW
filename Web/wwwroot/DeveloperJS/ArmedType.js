@@ -1,9 +1,11 @@
 $(document).ready(function () {
   
-   /* Reset();*/
+    Reset();
     mMsater(0, "ddlArmedCat", ArmyCat, "");
     BindData()
-  
+    $("#btnReset").click(function () {
+        Reset();
+    });
    
     $("#btnsave").click(function () {
         if ($("#SaveForm")[0].checkValidity()) {
@@ -99,10 +101,10 @@ function BindData() {
                 }
                
                 else {
-                    /*$("#tblcommnd").DataTable().destroy();*/
+                    $("#tblData").DataTable().destroy();
                     for (var i = 0; i < response.length; i++) {
                             listItem += "<tr>";
-                        listItem += "<td class='d-none'><span id='spnMarmedId'>" + response[i].ArmedId + "</span><span id='spnArmedCatId'>" + response[i].ArmedCatId + "</span></td>";
+                            listItem += "<td class='d-none'><span id='spnMarmedId'>" + response[i].ArmedId + "</span><span id='spnArmedCatId'>" + response[i].ArmedCatId + "</span></td>";
                             listItem += "<td>";
                             listItem += "<div class='custom-control custom-checkbox small'>";
                             listItem += "<input type='checkbox' class='custom-control-input' id='" + response[i].ArmedId + "'>";
@@ -234,7 +236,7 @@ function BindData() {
 function Save() {
 
      /* alert( $("#ddlArmedType").find(":selected").val());*/
-    alert($("#radioInfyes").prop("checked"));
+/*    alert($("#radioInfyes").prop("checked"));*/
     $.ajax({
         url: '/Master/SaveArmed',
         type: 'POST',

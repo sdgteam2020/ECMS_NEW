@@ -31,21 +31,20 @@ namespace DataAccessLayer
         }
         public async Task<bool> GetRequestPending(int BasicDetailId)
         {
-            //string query = "Select count(bd.BasicDetailId)as Total from BasicDetails bd "+
-            //                "LEFT JOIN TrnICardRequest tr ON bd.BasicDetailId = tr.BasicDetailId WHERE bd.BasicDetailId = @BasicDetailId and tr.Status = 0 ";
-            //using (var connection = _contextDP.CreateConnection())
-            //{
-            //    int PendingRequest = await connection.ExecuteAsync<int>(query , new { BasicDetailId });
-            //    if(PendingRequest > 0) 
-            //    {
-            //        return true;
-            //    }
-            //    else
-            //    {
-            //        return false;
-            //    }
-            //}
-            return true;
+            string query = "Select count(*) from BasicDetails bd " +
+                            "LEFT JOIN TrnICardRequest tr ON bd.BasicDetailId = tr.BasicDetailId WHERE bd.BasicDetailId = @BasicDetailId and tr.Status = 0 ";
+            using (var connection = _contextDP.CreateConnection())
+            {
+                int PendingRequest = await connection.QueryFirstAsync<int>(query, new { BasicDetailId });
+                if (PendingRequest > 0)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
         }
     }
 }

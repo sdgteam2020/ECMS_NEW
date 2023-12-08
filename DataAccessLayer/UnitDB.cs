@@ -26,7 +26,7 @@ namespace DataAccessLayer
 
         public async Task<bool> GetByName(MUnit Data)
         {
-            var ret = _context.MUnit.Any(p => p.UnitName.ToUpper() == Data.UnitName.ToUpper());
+            var ret = _context.MUnit.Any(p => p.UnitName.ToUpper() == Data.UnitName.ToUpper() && p.UnitId !=Data.UnitId);
             return ret;
         }
 

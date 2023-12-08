@@ -824,21 +824,32 @@ namespace Web.Controllers
                 BasicDetail? basicDetail = await basicDetailBL.FindServiceNo(ICNumber);
                 if(basicDetail!=null) 
                 {
-                    //MTrnICardRequest? mTrnICardRequest = await iTrnICardRequestBL.GetLastRecordByBasicDetailId(basicDetail.BasicDetailId);
-                    //if(mTrnICardRequest!=null) 
-                    //{
-                    //    TempData["error"] = "Your I-Card is under process. Please wait.";
-                    //}
-                    //else
-                    //{
- 
-                    //}
+                    bool result = await iTrnICardRequestBL.GetRequestPending(basicDetail.BasicDetailId);
+                    if (result)
+                    {
+                        DTOApiDataResponse dTOApiDataResponse = new DTOApiDataResponse();
+                        dTOApiDataResponse.Status = false;
+                        dTOApiDataResponse.Message = "Your I-Card is under process. Please wait.";
+                        return Ok(dTOApiDataResponse);
+                    }
+                    else
+                    {
+                        goto api;
+                    }
                 }
                 else
                 {
-                    TempData["error"] = "Service no not valid.";
+                    goto api;
                 }
             }
+            else
+            {
+                DTOApiDataResponse dTOApiDataResponse = new DTOApiDataResponse();
+                dTOApiDataResponse.Status = false;
+                dTOApiDataResponse.Message = "Service no required.";
+                return Ok(dTOApiDataResponse);
+            }
+            api:
             using (var client = new HttpClient())
             {
                 //client.BaseAddress = new Uri("https://api.postalpincode.in/");
@@ -864,6 +875,7 @@ namespace Web.Controllers
                     {
                         DTOApiDataResponse dTOApiDataResponse = new DTOApiDataResponse();
                         dTOApiDataResponse.Status = false;
+                        dTOApiDataResponse.Message = "Data Not Found.";
                         return Ok(dTOApiDataResponse);
                     }
                 }
