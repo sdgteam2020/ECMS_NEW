@@ -1,5 +1,12 @@
 ﻿$(document).ready(function () {
-    
+    mMsater(0, "ddlProFormation", Formation, "");
+    mMsater(0, "ddlProRank", Rank, "");
+
+    $('#ddlProFormation').on('change', function () {
+
+        mMsater(0, "ddlProAppointment", Appt, $('#ddlProFormation').val());
+
+    });
     $("#btnConfigsave").click(function () {
       
         if ($("#txtArmyNo").val() != "" && $("#spnUnitIdMap").html() != "0")
