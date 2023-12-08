@@ -67,7 +67,7 @@ namespace DataAccessLayer
                 return await Task.FromResult(allrecord);
             }
         }
-        public async Task<List<BasicDetailVM>> GetALLBasicDetail(int UserId,int stepcount, int type)
+        public async Task<List<BasicDetailVM>> GetALLBasicDetail(int UserId,int stepcount, int TypeId)
         {
             //var BasicDetailList = _context.BasicDetails.Where(x => x.IsDeleted == false && x.Updatedby == UserId).ToList();
 

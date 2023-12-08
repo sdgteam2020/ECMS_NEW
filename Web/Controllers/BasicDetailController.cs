@@ -131,7 +131,7 @@ namespace Web.Controllers
                 _logger.LogError(1001, ex, "This error occure because Id value change by user.");
                 return RedirectToAction("Error", "Error");
             }
-            BasicDetail? basicDetail = await unitOfWork.BasicDetail.Get(decryptedIntId);
+            
             
             BasicDetail? basicDetail = await basicDetailBL.Get(decryptedIntId);
 
@@ -628,9 +628,9 @@ namespace Web.Controllers
                             mTrnICardRequest.Status = false;
                             mTrnICardRequest.TypeId = model.TypeId;
                             //TrnDomainMapping trnDomainMapping = new TrnDomainMapping();
-                           // trnDomainMapping.AspNetUsersId= Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                            // trnDomainMapping.AspNetUsersId= Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                             //trnDomainMapping=await iDomainMapBL.GetByAspnetUserIdBy(trnDomainMapping);
-                            SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").TrnDomainMappingId;
+                            mTrnICardRequest.TrnDomainMappingId= SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").TrnDomainMappingId;
                             mTrnICardRequest.UpdatedOn = DateTime.Now;
                             mTrnICardRequest.Updatedby = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").UserId; //SessionHeplers.GetObject<string>(HttpContext.Session, "ArmyNo");
                             mTrnICardRequest = await iTrnICardRequestBL.AddWithReturn(mTrnICardRequest);
@@ -975,7 +975,7 @@ namespace Web.Controllers
 
         public async Task<IActionResult> GetDataByBasicDetailsId(int Id)
         {
-           return Json(await unitOfWork.BasicDetail.GetByBasicDetailsId(Id));
+           return Json(await basicDetailBL.GetByBasicDetailsId(Id));
         }
     }
 }
