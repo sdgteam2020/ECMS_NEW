@@ -6,6 +6,9 @@ $(document).ready(function () {
         dropdownParent: $('#BasicDetails'),
         closeOnSelect: false
     });
+    $(".historyRequest").click(function () {
+        $("#exampleModal").modal('show'); 
+    });
     $('#ddlPhotos').on('change', function () {
         photo= $('#ddlPhotos').val();
     });
@@ -34,7 +37,8 @@ $(document).ready(function () {
         $("#spnStepCounter").html($(this).closest("tr").find(".spnStepCounterId").html());
         var spnRequestId = $(this).closest("tr").find(".spnRequestId").html();
         $("#spnCurrentspnRequestId").html(spnRequestId);
-        spnStepId = $(this).closest("tr").find(".spnStepId").html();
+            spnStepId = $(this).closest("tr").find(".spnStepId").html();
+            
             var StepCounter = $(this).closest("tr").find(".spnStepCounterId").html();
             
             GetDataFromBasicDetails($(this).closest("tr").find(".spnBasicDetailId").html());
@@ -54,8 +58,12 @@ $(document).ready(function () {
         else if (StepCounter == 4) {
             $(".gsoio").html("HQ 54");
             $("#btnForward").html("Forward To HQ 54");
-        }
-
+            }
+            if (StepCounter == 1) {
+                $("#btnRejected").addClass("d-none");
+                
+                
+            }
        // GetForwardHHierarchy($(this).closest("tr").find(".ServiceNo").html(), StepCounter , spnRequestId)
        
     });
@@ -173,14 +181,14 @@ function GetDataFromBasicDetails(Id) {
                 $("#lblLfdarm").html(response.ArmedType);
                 $("#lblfdArmyNo").html(response.ServiceNo);
                 $("#lblfdMarks").html(response.IdentityMark);
-                $("#lblfddob").html(response.DOB);
+                $("#lblfddob").html(DateFormateMMMM_dd_yyyy(response.DOB));
                 $("#lblfdheight").html(response.Height);
                 $("#lblfdadhar").html(response.AadhaarNo);
                 $("#lblfdBloodGroup").html(response.BloodGroup);
                 $("#lblfdpoi").html(response.PlaceOfIssue);
-                $("#lblfddoi").html(response.DateOfIssue);
+                $("#lblfddoi").html(DateFormateMMMM_dd_yyyy(response.DateOfIssue));
                 $("#lblfdissuA").html(response.IssuingAuth);
-                $("#lblfddateo").html(response.DateOfCommissioning);
+                $("#lblfddateo").html(DateFormateMMMM_dd_yyyy(response.DateOfCommissioning));
                 $("#lblfdaddress").html(response.PermanentAddress);
             }
         }

@@ -142,6 +142,8 @@ namespace DataTransferObject.ViewModels
         public int RequestId { get; set; }
         [NotMapped]
         public byte TypeId { get; set; }
+        [NotMapped]
+        public string Reject { get; set; }
     }
     public class BasicDetailCrtAndUpdVM : BasicDetailVM
     {

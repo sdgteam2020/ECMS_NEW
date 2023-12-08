@@ -15326,7 +15326,7 @@ dl li {
   position: relative;
 }
 
-.timeline:before {
+/*.timeline:before {
   top: 0;
   bottom: 0;
   position: absolute;
@@ -15336,7 +15336,7 @@ dl li {
   left: 50%;
   margin-left: -1.5px;
 }
-
+*/
 .timeline .timeline-wrapper {
   display: block;
   margin-bottom: 20px;

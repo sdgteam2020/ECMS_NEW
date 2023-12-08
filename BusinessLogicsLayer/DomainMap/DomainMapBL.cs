@@ -40,6 +40,9 @@ namespace BusinessLogicsLayer.BdeCate
             return _IDomainMapDB.GetByDomainIdbyUnit(Data);
         }
 
-       
+        public Task<TrnDomainMapping> GetByRequestId(int RequestId)
+        {
+            return _IDomainMapDB.GetByRequestId(RequestId);
+        }
     }
 }

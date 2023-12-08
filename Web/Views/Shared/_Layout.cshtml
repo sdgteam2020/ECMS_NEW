@@ -40,8 +40,8 @@
    
     <link href="~/css/horizontaltimeline.css" rel="stylesheet" />
 
-    <script src="~/fonts/feather/feather.min.js"></script>
-    <script src="~/fonts/allfont/webfont.min.js"></script>
+    <script asp-src-include="~/fonts/feather/feather.min.js"></script>
+    <script asp-src-include="~/fonts/allfont/webfont.min.js"></script>
     <script asp-src-include="~/lib/jquery/jquery.js"></script>
     <script asp-src-include="~/lib/jquery-validate/jquery.validate.js" defer></script>
     <script asp-src-include="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js" defer></script>
@@ -491,7 +491,7 @@
 
 
 
-    @*  <script src="~/select2/dist/js/select2.min.js"></script>*@
+    @*  <script asp-src-include="~/select2/dist/js/select2.min.js"></script>*@
     @RenderSection("Scripts", false)
     @RenderSection("body_scripts", false)
     <script>
@@ -524,41 +524,41 @@
     </script>
 
    
-    <script src="~/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/moment.js"></script>
-    <script src="~/js/jssidemenu/vendor.bundle.base.js"></script>
-    <script src="~/js/jssidemenu/hoverable-collapse.js"></script>
-    <script src="~/js/jssidemenu/off-canvas.js"></script>
-    <script src="~/js/jssidemenu/template.js"></script>
-    <script src="~/lib/jqueryui/jquery-ui.min.js"></script>
-    <script src="~/select2/js/select2.min.js"></script>
-    <script src="~/js/datatables/jquery.datatables.min.js"></script>
-    <script src="~/js/datatables/dataTables.responsive.min.js"></script>
-    <script src="~/js/datatables/responsive.dataTables.min.js"></script>
-    <script src="~/js/datatables/dataTables.bootstrap4.min.js"></script>
-    <script src="~/js/datatables/responsive.bootstrap4.min.js"></script>
-    <script src="~/js/datatables/dataTables.buttons.min.js"></script>
-    <script src="~/js/datatables/buttons.bootstrap4.min.js"></script>
-    <script src="~/js/datatables/jszip.min.js"></script> 
-    <script src="~/js/datatables/pdfmake.min.js"></script>
-    <script src="~/js/datatables/vfs_fonts.js"></script>
-    <script src="~/js/datatables/buttons.html5.min.js"></script>
-    <script src="~/js/datatables/buttons.print.min.js"></script>
-    <script src="~/js/datatables/datatables-call.js"></script>
-    @*<script src="~/fonts/feather/feather.min.js"></script>*@
-    <script src="~/sweetalert2/sweetalert2.min.js"></script>
-    <script src="~/toastr/toastr.min.js"></script>
-    <script src="~/js/moment.min.js"></script>
-    <script src="~/js/bootstrap-datetimepicker.min.js"></script>
+    <script asp-src-include="~/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script asp-src-include="~/js/moment.js"></script>
+    <script asp-src-include="~/js/jssidemenu/vendor.bundle.base.js"></script>
+    <script asp-src-include="~/js/jssidemenu/hoverable-collapse.js"></script>
+    <script asp-src-include="~/js/jssidemenu/off-canvas.js"></script>
+    <script asp-src-include="~/js/jssidemenu/template.js"></script>
+    <script asp-src-include="~/lib/jqueryui/jquery-ui.min.js"></script>
+    <script asp-src-include="~/select2/js/select2.min.js"></script>
+    <script asp-src-include="~/js/datatables/jquery.datatables.min.js"></script>
+    <script asp-src-include="~/js/datatables/dataTables.responsive.min.js"></script>
+    <script asp-src-include="~/js/datatables/responsive.dataTables.min.js"></script>
+    <script asp-src-include="~/js/datatables/dataTables.bootstrap4.min.js"></script>
+    <script asp-src-include="~/js/datatables/responsive.bootstrap4.min.js"></script>
+    <script asp-src-include="~/js/datatables/dataTables.buttons.min.js"></script>
+    <script asp-src-include="~/js/datatables/buttons.bootstrap4.min.js"></script>
+    <script asp-src-include="~/js/datatables/jszip.min.js"></script> 
+    <script asp-src-include="~/js/datatables/pdfmake.min.js"></script>
+    <script asp-src-include="~/js/datatables/vfs_fonts.js"></script>
+    <script asp-src-include="~/js/datatables/buttons.html5.min.js"></script>
+    <script asp-src-include="~/js/datatables/buttons.print.min.js"></script>
+    <script asp-src-include="~/js/datatables/datatables-call.js"></script>
+    @*<script asp-src-include="~/fonts/feather/feather.min.js"></script>*@
+    <script asp-src-include="~/sweetalert2/sweetalert2.min.js"></script>
+    <script asp-src-include="~/toastr/toastr.min.js"></script>
+    <script asp-src-include="~/js/moment.min.js"></script>
+    <script asp-src-include="~/js/bootstrap-datetimepicker.min.js"></script>
    
-@*     <script src="~/developerjs/layout.js"></script> *@
-    <script src="~/developerjs/keyconstants.js"></script>
-    <script src="~/developerjs/commanvalidation.js"></script>
+    <script asp-src-include="~/developerjs/layout.js"></script>
+    <script asp-src-include="~/developerjs/keyconstants.js"></script>
+    <script asp-src-include="~/developerjs/commanvalidation.js"></script>
    
-    @*  <script src="~/developerjs/layout.js"></script>
-    <script src="~/developerjs/MedCate.js"></script> *@
-    @*<script src="/DeveloperJs/Master.js"></script>*@
-    @*     <script src="~/developerjs/master.js"></script>
+    @*  <script asp-src-include="~/developerjs/layout.js"></script>
+    <script asp-src-include="~/developerjs/MedCate.js"></script> *@
+    @*<script asp-src-include="/DeveloperJs/Master.js"></script>*@
+    @*     <script asp-src-include="~/developerjs/master.js"></script>
     *@
     @*
     <section class="page_copyright ls section_padding_25">
@@ -1020,60 +1020,47 @@
 </div>
 
 <div class="modal right fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-dialog modal-sm" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title" id="InstrustionLabel">Instructions</h4>
+                <h4 class="modal-title" id="lblHistory">History</h4>
             </div>
 
             <div class="modal-body">
-                <h5 class="text-center badge badge-success">Step Wise Publish Part-II Order</h5>
+                <h5 class="text-center badge badge-success">Step Wise I Card Request History</h5>
                 <div class="timeline timeline-xs">
                     <!-- Timeline Item 1-->
                     <div class="timeline-item">
                         <div class="timeline-item-marker">
-                            @*<div class="timeline-item-marker-text">27 min</div>*@
+                            <div class="timeline-item-marker-text">27 min</div>
                             <div class="timeline-item-marker-indicator bg-primary"></div>
                         </div>
                         <div class="timeline-item-content">
-                            Add Pers Info Details
-                            <a class="fw-bold text-dark" href="/PersInfo/PersInfo">Click Here</a>
+                            FWD to  IO
+                            
                         </div>
                     </div>
                     <div class="timeline-item">
                         <div class="timeline-item-marker">
-                            @*<div class="timeline-item-marker-text">27 min</div>*@
-                            <div class="timeline-item-marker-indicator bg-danger"></div>
-                        </div>
-                        <div class="timeline-item-content">
-                            Create Draft
-                            <a class="fw-bold text-dark" href="/OffrsPartIIOrder/PartIIDraftOff">Click Here</a>
-                            TEXT
-                        </div>
-                    </div>
-                    <div class="timeline-item">
-                        <div class="timeline-item-marker">
-                            @*<div class="timeline-item-marker-text">27 min</div>*@
+                            <div class="timeline-item-marker-text">27 min</div>
                             <div class="timeline-item-marker-indicator bg-warning"></div>
                         </div>
                         <div class="timeline-item-content">
-                            Seft Verification Part II Order
-                            <a class="fw-bold text-dark" href="/OffrsPartIIOrder/PartIIDraftOff">Click Here</a>
-                            TEXT
+                            Approved FROM IO
+                            
                         </div>
                     </div>
                     <div class="timeline-item">
                         <div class="timeline-item-marker">
-                            @*<div class="timeline-item-marker-text">27 min</div>*@
-                            <div class="timeline-item-marker-indicator bg-success"></div>
+                            <div class="timeline-item-marker-text">27 min</div>
+                            <div class="timeline-item-marker-indicator bg-danger"></div>
                         </div>
                         <div class="timeline-item-content">
-                            Publish Part II Order
-                            <a class="fw-bold text-dark" href="/OffrsPartIIOrder/PublishPartIIOrderOffrs">Click Here</a>
-                            TEXT
+                            Reject From GSO
                         </div>
                     </div>
+                   
                 </div>
             </div>
 

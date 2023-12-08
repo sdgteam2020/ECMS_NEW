@@ -87,23 +87,23 @@ namespace Web.Controllers
             if (Id == 22)
             {
                 Id = 2;
-                type = 1;
+                type = 2;
             }
             else if (Id == 33)
             {
                 Id = 3;
-                type = 2;
+                type = 3;
             }
             else if (Id == 44)
             {
                 Id = 4;
-                type = 3;
+                type = 4;
                 userId = 101;
             }
             else if (Id == 55)
             {
                 Id = 5;
-                type = 4;
+                type = 5;
                 userId = 29;
             }
 
@@ -816,7 +816,7 @@ namespace Web.Controllers
                 data.UpdatedOn = DateTime.Now;
                 data.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                 data.IsActive = true;
-                data.TypeId= Convert.ToByte(data.TypeId-Convert.ToByte(1));
+                data.TypeId= Convert.ToByte(data.TypeId);
                 if(await iTrnFwnBL.UpdateAllBYRequestId(data.RequestId))
                 {
                     await iTrnFwnBL.Add(data);
@@ -837,6 +837,51 @@ namespace Web.Controllers
           
 
            
+        }
+        public async Task<IActionResult> IcardRejecte(MTrnFwd data)
+        {
+            try
+            {
+                DtoSession sessiondata = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+                data.FromUserId = sessiondata.UserId;
+                data.UnitId = sessiondata.UnitId;
+                data.FromAspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                data.UpdatedOn = DateTime.Now;
+                data.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                data.IsActive = true;
+                data.TypeId =Convert.ToByte(1);
+                TrnDomainMapping Domain = new TrnDomainMapping();
+                Domain =await iDomainMapBL.GetByRequestId(data.RequestId);
+                if (Domain != null) {
+                    data.ToAspNetUsersId = Domain.AspNetUsersId;
+                    data.ToUserId = Convert.ToInt32(Domain.UserId);
+
+                    if (await iTrnFwnBL.UpdateAllBYRequestId(data.RequestId))
+                    {
+                        await iTrnFwnBL.Add(data);
+                        return Ok(data);
+                    }
+                    else
+                    {
+                        return BadRequest();
+                    }
+                }
+                else
+                {
+                    return BadRequest();
+                }
+               
+                
+            }
+            catch (Exception ex)
+            {
+
+                return BadRequest();
+            }
+
+
+
+
         }
         [Authorize(Roles = "Admin,User")]
         [HttpPost]

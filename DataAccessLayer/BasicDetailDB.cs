@@ -75,25 +75,32 @@ namespace DataAccessLayer
 
             if(TypeId == 0)//////For Fwd Record
             {
-                if(stepcount==1)
-                {
-                    query = "SELECT B.RegistrationId,B.BasicDetailId,B.Name,B.ServiceNo,B.DOB,B.DateOfCommissioning,B.PermanentAddress,C.StepId StepCounter,C.Id StepId,ty.TypeId ICardType,trnicrd.RequestId  FROM BasicDetails B " +
-                         "inner join TrnICardRequest trnicrd on trnicrd.BasicDetailId = B.BasicDetailId " +
-                         "inner join TrnStepCounter C on trnicrd.RequestId = C.RequestId " +
-                         "inner join MICardType ty on ty.TypeId = trnicrd.TypeId " +
-                         "inner join UserProfile pr on pr.UserId = trnicrd.Updatedby " +
-                         "WHERE pr.Updatedby = @UserId ORDER BY B.UpdatedOn DESC";
-                }
-                else
-                {
-                    query = "SELECT B.RegistrationId,B.BasicDetailId,B.Name,B.ServiceNo,B.DOB,B.DateOfCommissioning,B.PermanentAddress,C.StepId StepCounter,C.Id StepId,ty.TypeId ICardType,trnicrd.RequestId  FROM BasicDetails B " +
+                query = "SELECT B.RegistrationId,B.BasicDetailId,B.Name,B.ServiceNo,B.DOB,B.DateOfCommissioning,B.PermanentAddress,C.StepId StepCounter,C.Id StepId,ty.TypeId ICardType,trnicrd.RequestId,(Select Remark from TrnFwds where ToAspNetUsersId=map.AspNetUsersId and IsComplete=0 and RequestId=trnicrd.RequestId) as Reject  FROM BasicDetails B " +
                         "inner join TrnICardRequest trnicrd on trnicrd.BasicDetailId = B.BasicDetailId " +
                         "inner join TrnStepCounter C on trnicrd.RequestId = C.RequestId " +
                         "inner join MICardType ty on ty.TypeId = trnicrd.TypeId " +
                         "inner join UserProfile pr on pr.UserId = trnicrd.Updatedby " +
-                        "WHERE pr.Updatedby = @UserId and C.StepId = @stepcount ORDER BY B.UpdatedOn DESC";
-                }
-               
+                        "inner join TrnDomainMapping map on map.UserId=pr.UserId " +
+                        "WHERE pr.Updatedby = @UserId ORDER BY B.UpdatedOn DESC";
+                //if(stepcount==1)
+                //{
+                //    query = "SELECT B.RegistrationId,B.BasicDetailId,B.Name,B.ServiceNo,B.DOB,B.DateOfCommissioning,B.PermanentAddress,C.StepId StepCounter,C.Id StepId,ty.TypeId ICardType,trnicrd.RequestId  FROM BasicDetails B " +
+                //         "inner join TrnICardRequest trnicrd on trnicrd.BasicDetailId = B.BasicDetailId " +
+                //         "inner join TrnStepCounter C on trnicrd.RequestId = C.RequestId " +
+                //         "inner join MICardType ty on ty.TypeId = trnicrd.TypeId " +
+                //         "inner join UserProfile pr on pr.UserId = trnicrd.Updatedby " +
+                //         "WHERE pr.Updatedby = @UserId ORDER BY B.UpdatedOn DESC";
+                //}
+                //else
+                //{
+                //    query = "SELECT B.RegistrationId,B.BasicDetailId,B.Name,B.ServiceNo,B.DOB,B.DateOfCommissioning,B.PermanentAddress,C.StepId StepCounter,C.Id StepId,ty.TypeId ICardType,trnicrd.RequestId  FROM BasicDetails B " +
+                //        "inner join TrnICardRequest trnicrd on trnicrd.BasicDetailId = B.BasicDetailId " +
+                //        "inner join TrnStepCounter C on trnicrd.RequestId = C.RequestId " +
+                //        "inner join MICardType ty on ty.TypeId = trnicrd.TypeId " +
+                //        "inner join UserProfile pr on pr.UserId = trnicrd.Updatedby " +
+                //        "WHERE pr.Updatedby = @UserId and C.StepId = @stepcount ORDER BY B.UpdatedOn DESC";
+                //}
+
             }
             else if (TypeId == 1 || TypeId == 2)//IO
             {
@@ -163,6 +170,7 @@ namespace DataAccessLayer
                                                     select r).First(),
                                      RegistrationId = e.RegistrationId,
                                      RequestId=e.RequestId,
+                                     Reject=e.Reject,
                                  }).ToList();
                 return await Task.FromResult(allrecord);
 
