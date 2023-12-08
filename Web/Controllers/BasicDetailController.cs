@@ -130,7 +130,7 @@ namespace Web.Controllers
                 return RedirectToAction("Error", "Error");
             }
             BasicDetail? basicDetail = await unitOfWork.BasicDetail.Get(decryptedIntId);
-
+            
             if (basicDetail != null)
             {
                 DTOBasicDetailRequest basicDetailVM = _mapper.Map<BasicDetail, DTOBasicDetailRequest>(basicDetail);
@@ -766,13 +766,16 @@ namespace Web.Controllers
         }    
         public async Task<IActionResult> UpdateStepCounter(MStepCounter mStepCounter)
         {
-           
-           
-            mStepCounter.UpdatedOn = DateTime.Now;
-            mStepCounter.Updatedby = 1;
-            await iStepCounterBL.Update(mStepCounter);
+            try
+            {
+                mStepCounter.UpdatedOn = DateTime.Now;
+                mStepCounter.Updatedby = 1;
+                await iStepCounterBL.Update(mStepCounter);
 
-            return Ok(mStepCounter);    
+                
+            }
+            catch (Exception ex) { }
+            return Ok(mStepCounter);
         } 
         public async Task<IActionResult> IcardFwd(MTrnFwd data)
         {
@@ -907,6 +910,11 @@ namespace Web.Controllers
             basicDetail.DateOfCommissioning = DateTime.Now;
             basicDetail.PermanentAddress = "House No.-" + Random.Shared.Next(50, 999) + ", " + PermanentAddress[a];
             return Ok(basicDetail);
+        }
+
+        public async Task<IActionResult> GetDataByBasicDetailsId(int Id)
+        {
+           return Json(await unitOfWork.BasicDetail.GetByBasicDetailsId(Id));
         }
     }
 }

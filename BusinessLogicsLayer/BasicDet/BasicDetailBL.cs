@@ -2,6 +2,7 @@
 using DataAccessLayer.BaseInterfaces;
 using DataTransferObject.Domain.Model;
 using DataTransferObject.Requests;
+using DataTransferObject.Response;
 using DataTransferObject.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -21,6 +22,11 @@ namespace BusinessLogicsLayer.BasicDet
         public Task<List<BasicDetailVM>> GetALLBasicDetail(int UserId, int step, int type)
         {
             return _iBasicDetailDB.GetALLBasicDetail(UserId ,step, type);
+        }
+
+        public Task<DTOBasicDetailsResponse> GetByBasicDetailsId(int BasicDetailId)
+        {
+            return _iBasicDetailDB.GetByBasicDetailsId(BasicDetailId);
         }
     }
 }

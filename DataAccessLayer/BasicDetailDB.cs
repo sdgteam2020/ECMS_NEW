@@ -16,6 +16,7 @@ using DataTransferObject.Constants;
 using DataTransferObject.Domain.Master;
 using DataTransferObject.Domain;
 using DataTransferObject.ViewModels;
+using DataTransferObject.Response;
 
 namespace DataAccessLayer
 {
@@ -134,6 +135,25 @@ namespace DataAccessLayer
 
             }
 
+        }
+
+        public async Task<DTOBasicDetailsResponse> GetByBasicDetailsId(int BasicDetailId)
+        {
+            //DTOBasicDetailRequest dd = new DTOBasicDetailRequest();
+            //dd.MRank.RankAbbreviation = "";
+            //dd.MArmedType.Abbreviation
+            string query = "select bas.*,ran.RankAbbreviation RankName,arm.Abbreviation ArmedType from BasicDetails bas " +
+                " inner join MRank ran on ran.RankId=bas.RankId"+
+                " inner join MArmedType arm on arm.ArmedId=bas.ArmedId"+
+                " where bas.BasicDetailId=@BasicDetailId";
+            using (var connection = _contextDP.CreateConnection())
+            {
+                //data.MRank.RankAbbreviation
+                //data.MArmedType.Abbreviation
+                var BasicDetailList = await connection.QueryAsync<DTOBasicDetailsResponse>(query, new { BasicDetailId });
+                
+                return BasicDetailList.SingleOrDefault();
+            }
         }
     }
 }

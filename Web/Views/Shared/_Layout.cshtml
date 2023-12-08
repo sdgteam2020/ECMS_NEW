@@ -34,6 +34,7 @@
     <link href="~/css/extra.css" rel="stylesheet" />
     <link href="~/css/background.css" rel="stylesheet" />
     <link href="~/css/typography.css" rel="stylesheet" />
+    <link href="~/select2/css/select2.min.css" rel="stylesheet" />
     <link href="~/css/cssStyle.css" rel="stylesheet" />
     
    
@@ -51,12 +52,20 @@
 
     <link href="~/toastr/toastr.min.css" rel="stylesheet" />
     <link href="~/css/main.css" rel="stylesheet" />
+    
     <script type="text/javascript">
         function preventBack() { window.history.forward(); }
         setTimeout("preventBack()", 0);
         window.onunload = function () { null };
     </script>
-  
+    <style>
+
+
+        .select2-container--default .select2-selection--multiple .select2-selection__choice {
+            font-size: .925rem;
+        }
+    </style>
+
 </head>
 <body class="nav-fixed">
       <div id="loading" class="loader">
@@ -307,7 +316,7 @@
             <nav class="sidebar sidebar-offcanvas" id="sidebar">
                 <ul class="nav">
                     <li class="nav-item">
-                        <a class="nav-link" href="../Home/Dashboard">
+                        <a class="nav-link" href="/Home/Dashboard">
                             <i class="icon-grid menu-icon"></i>
                             <span class="menu-title">Dashboard</span>
                         </a>
@@ -522,6 +531,7 @@
     <script src="~/js/jssidemenu/off-canvas.js"></script>
     <script src="~/js/jssidemenu/template.js"></script>
     <script src="~/lib/jqueryui/jquery-ui.min.js"></script>
+    <script src="~/select2/js/select2.min.js"></script>
     <script src="~/js/datatables/jquery.datatables.min.js"></script>
     <script src="~/js/datatables/dataTables.responsive.min.js"></script>
     <script src="~/js/datatables/responsive.dataTables.min.js"></script>
@@ -838,30 +848,43 @@
                     <div class="row ">
                        
                        
-                                <div class="col-md-6 mb-3">
+                                <div class="col-md-4 mb-3">
                                     <div class="feature-box3  h-100 shadow-lg p-1 mb-5 bg-body rounded">
 
                                         <div class="content-block ">
                                             <div class="form-group row mb-0 ">
                                                 <div class="col-12 text-center">
-                                                    <img src="~/images/user4.png" width="300" class="border border-primary p-2" />
+                                                    <img src="~/images/user4.png" width="200" id="basicphotos" class="border border-primary p-2" />
 
                                                     <h6 class="mb-1 text-font2 font-weight500 text-center PersName"></h6>
                                                     @*  <div class="text-left"> <img src="~/images/rank/brigadier.svg" id="imgrank" height="100px" /></div> *@
                                                 </div>
                                             </div>
                                     <div class="form-group row mb-0">
-                                        <label class="col-form-label col-5 text-left">Select Photo Reject</label>
-                                        <div class="col-7"><label class="form-control-plaintext b text-black" id="lblFDName"></label></div>
+                                        <label class="col-form-label  text-left">Select Rejection Reasons for Photos</label>
+                                       
+                                        <select class="form-control select2 select2-accessible " multiple="" placeholder="Please select a Photos" style="width: 100%;" tabindex="-1" aria-hidden="true" name="Photos" required id="ddlPhotos">
+                                            <option value="0">Select Rejection Reasons for Photos</option>
+                                            <option value="Reasons 1">Reasons 1</option>
+                                            <option value="Reasons 2">Reasons 2</option>
+                                            <option value="Reasons 3">Reasons 3</option>
+                                        </select>
+                                
                                     </div>
                                         </div>
 
                                         <div class="content-block ">
                                             <div class="form-group row mb-0">
                                                 <div class="col-12 text-center">
-                                                    <img src="~/images/signature.png" width="300" height="100" class="border border-primary p-2" />
-                                                   
-                                                    <h6 class="mb-1 text-font2 font-weight500 text-center PersName"></h6>
+                                                    <img src="~/images/signature.png" width="200" height="100" id="Basicsing" class="border border-primary p-2" />
+                                            <label class="col-form-label  text-left">Select Rejection Reasons for Signature</label>
+                                               
+                                            <select class="form-control select2 select2-accessible " multiple="" placeholder="Please select a signature" style="width: 100%;" tabindex="-1" aria-hidden="true" name="signature" required id="ddlsignature">
+                                                    <option value="0">Select Rejection Reasons for Photos</option>
+                                                    <option value="Reasons 1">Reasons 1</option>
+                                                    <option value="Reasons 2">Reasons 2</option>
+                                                    <option value="Reasons 3">Reasons 3</option>
+                                                </select>
                                                     @*  <div class="text-left"> <img src="~/images/rank/brigadier.svg" id="imgrank" height="100px" /></div> *@
                                                 </div>
                                             </div>
@@ -870,7 +893,7 @@
                                     </div>
                                    
                                 </div>
-                                <div class="col-md-6 mb-3">
+                                <div class="col-md-8 mb-3">
                                     <div class="feature-box3 h-100 shadow-lg p-3 mb-3 bg-body rounded">
                                         <div class="top-block_ind d-flex">
 
@@ -882,24 +905,24 @@
                                         <div class="content-block ">
                                             <div class="form-group row mb-0">
                                                 <label class="col-form-label col-5 text-left">Name</label>
-                                                <div class="col-7"><label class="form-control-plaintext b text-black" id="lblFDName"></label></div>
+                                        <div class="col-7"><label class="form-control-plaintext b text-black" id="lblfdName"></label></div>
                                             </div>
                                             <div class="form-group row mb-0">
                                                 <label class="col-form-label col-5 text-left">Rank</label>
                                                 <div class="col-7">
-                                                    <label class="form-control-plaintext" id="lblFDRank"></label>
+                                            <label class="form-control-plaintext" id="lblfdRank"></label>
                                                 </div>
                                             </div>
                                             <div class="form-group row mb-0">
                                                 <label class="col-form-label col-5 text-left">Arm / Service</label>
                                                 <div class="col-7">
-                                                    <label class="form-control-plaintext" id="lblLFDarm"></label>
+                                            <label class="form-control-plaintext" id="lblLfdarm"></label>
                                                 </div>
                                             </div>
                                             <div class="form-group row mb-0">
                                                 <label class="col-form-label col-5 text-left">Army No</label>
                                                 <div class="col-7">
-                                                    <label class="form-control-plaintext" id="lblFDArmyNo"></label>
+                                            <label class="form-control-plaintext" id="lblfdArmyNo"></label>
                                                 </div>
                                             </div>
                                             <div class="form-group row mb-0">
@@ -924,6 +947,12 @@
                                                 <label class="col-form-label col-5 text-left">AADHAAR No</label>
                                                 <div class="col-7">
                                                     <label class="form-control-plaintext" id="lblfdadhar"></label>
+                                                </div>
+                                            </div>
+                                            <div class="form-group row mb-0">
+                                            <label class="col-form-label col-5 text-left">Blood Group</label>
+                                                <div class="col-7">
+                                            <label class="form-control-plaintext" id="lblfdBloodGroup"></label>
                                                 </div>
                                             </div>
                                             <div class="form-group row mb-0">
@@ -960,9 +989,21 @@
                                         </div>
                                     </div>
                                 </div>
-                      
-                           
 
+                        <div class="col-md-12 mb-3">
+                            <div class="form-group row mb-0">
+                                <label class="col-form-label col-12 text-center">Remarks</label>
+                                <div class="col-12">
+                                    <textarea class="form-control" id="txtFrejectedRemarks" rows="2"></textarea>
+                                </div>
+                            </div>
+                            </div>
+                       @*  <div class="col-md-12 mb-3 ml-3">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
+                            <label class="form-check-label" for="inlineCheckbox1">Rejected</label>
+                        </div>
+                        </div> *@
                     </div>
                 </div>
 
@@ -971,7 +1012,8 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
 
-                <button type="button" class="btn btn-primary" id="btnShowForward">Forward</button>
+                <button type="button" class="btn btn-danger" id="btnRejected">Rejected</button>
+                <button type="button" class="btn btn-primary" id="btnShowForward">Next</button>
             </div>
         </div>
     </div>

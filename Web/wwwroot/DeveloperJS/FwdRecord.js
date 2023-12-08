@@ -1,6 +1,27 @@
-﻿$(document).ready(function () {
+﻿var photo = "";
+var sing = "";
+$(document).ready(function () {
     var spnStepId = 0;
-    $(".fwdrecord").click(function () {
+    $('.select2').select2({
+        dropdownParent: $('#BasicDetails'),
+        closeOnSelect: false
+    });
+    $('#ddlPhotos').on('change', function () {
+        photo= $('#ddlPhotos').val();
+    });
+    $('#ddlsignature').on('change', function () {
+        sing=$('#ddlsignature').val();
+    });
+    $("#btnRejected").click(function () {
+
+        $("#txtFrejectedRemarks").val($("#txtFrejectedRemarks").val() + "" + photo + "" + sing);
+    });
+    $("#btnShowForward").click(function () {
+
+        $("#BasicDetails").modal('hide');
+        $("#FwdRecord").modal('show');
+    });
+        $(".fwdrecord").click(function () {
         // ResetMapUnit();
         //alert($(this).closest("tr").find(".spnRequestId").html())
 
@@ -14,7 +35,9 @@
         var spnRequestId = $(this).closest("tr").find(".spnRequestId").html();
         $("#spnCurrentspnRequestId").html(spnRequestId);
         spnStepId = $(this).closest("tr").find(".spnStepId").html();
-        var StepCounter = $(this).closest("tr").find(".spnStepCounterId").html();
+            var StepCounter = $(this).closest("tr").find(".spnStepCounterId").html();
+            
+            GetDataFromBasicDetails($(this).closest("tr").find(".spnBasicDetailId").html());
         if (StepCounter == 1) {
             $(".gsoio").html("IO");
             $("#btnForward").html("Forward To IO");
@@ -99,15 +122,70 @@
                 var Counter = parseInt($("#spnStepCounter").html()) + 1;
 
                
-                UpdateStepCounter(spnStepId, spnRequestId, Counter);
+                UpdateStepCounter(spnStepId, spnRequestId, Counter,"A");
 
                
             }
         })  
     });
 
-});
+    $("#btnRejected").click(function () {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be Forward!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, Forward it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                var spnRequestId = $("#spnCurrentspnRequestId").html();
+                var Counter = 1;
 
+
+                UpdateStepCounter(spnStepId, spnRequestId, Counter,"R");
+
+
+            }
+        })
+    });
+});
+function GetDataFromBasicDetails(Id) {
+    var userdata =
+    {
+        "Id": Id,
+
+
+    };
+    $.ajax({
+        url: '/BasicDetail/GetDataByBasicDetailsId',
+        contentType: 'application/x-www-form-urlencoded',
+        data: userdata,
+        type: 'POST',
+
+        success: function (response) {
+            if (response != "null" && response != null) {
+                $("#basicphotos").attr('src' ,response.PhotoImagePath);
+                $("#Basicsing").attr('src', response.SignatureImagePath);
+                $("#lblfdName").html(response.Name);
+                $("#lblfdRank").html(response.RankName);
+                $("#lblLfdarm").html(response.ArmedType);
+                $("#lblfdArmyNo").html(response.ServiceNo);
+                $("#lblfdMarks").html(response.IdentityMark);
+                $("#lblfddob").html(response.DOB);
+                $("#lblfdheight").html(response.Height);
+                $("#lblfdadhar").html(response.AadhaarNo);
+                $("#lblfdBloodGroup").html(response.BloodGroup);
+                $("#lblfdpoi").html(response.PlaceOfIssue);
+                $("#lblfddoi").html(response.DateOfIssue);
+                $("#lblfdissuA").html(response.IssuingAuth);
+                $("#lblfddateo").html(response.DateOfCommissioning);
+                $("#lblfdaddress").html(response.PermanentAddress);
+            }
+        }
+    })
+}
 function FwdData(AspNetUsersId) {
     var userdata =
     {
@@ -330,7 +408,36 @@ function ForwardTo(RequestId, HType) {
 
     });
 }
-function UpdateStepCounter(stepId, spnRequestId, Counter) {
+function RejecteTo(RequestId, HType) {
+
+    var userdata =
+    {
+        "TrnFwdId": 0,
+        "RequestId": RequestId,
+        "ToAspNetUsersId": $("#spnFwdToAspNetUsersId").html(),
+        "ToUserId": $("#spnFwdToUsersId").html(),
+        /*"FromUserId": $("#spnFrom").html(),*/
+        // "ToUserId": $("#spnForwardTo").html(),
+        /* "SusNo": $("#spnFwssusno").html(),*/
+        "Remark": $("#txtFrejectedRemarks").val(),
+        "Status": false,
+        "TypeId": HType,
+        "IsComplete": false,
+    };
+    $.ajax({
+        url: '/BasicDetail/IcardRejecte',
+        contentType: 'application/x-www-form-urlencoded',
+        data: userdata,
+        type: 'POST',
+        success: function (response) {
+            if (response != "null" && response != null) {
+                location.reload();
+            }
+        }
+
+    });
+}
+function UpdateStepCounter(stepId, spnRequestId, Counter,Flag) {
     var userdata =
     {
         "Id": stepId,
@@ -352,8 +459,11 @@ function UpdateStepCounter(stepId, spnRequestId, Counter) {
                 } else if (Counter == 4) {
                     HType = 2;
                 } 
-
-                ForwardTo(spnRequestId, Counter);
+                if (Flag == "R") {
+                    RejecteTo(spnRequestId, Counter);
+                } else {
+                    ForwardTo(spnRequestId, Counter);
+                }
             }
         }
 

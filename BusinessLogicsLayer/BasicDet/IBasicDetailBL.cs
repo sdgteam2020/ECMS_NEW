@@ -1,5 +1,6 @@
 ﻿using DataTransferObject.Domain.Model;
 using DataTransferObject.Requests;
+using DataTransferObject.Response;
 using DataTransferObject.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -12,6 +13,7 @@ namespace BusinessLogicsLayer.BasicDet
     public interface IBasicDetailBL:IGenericRepository<BasicDetail>
     {
         public Task<List<BasicDetailVM>> GetALLBasicDetail(int UserId,int step,int type);
+        public Task<DTOBasicDetailsResponse> GetByBasicDetailsId(int BasicDetailId);
       
     }
 }
