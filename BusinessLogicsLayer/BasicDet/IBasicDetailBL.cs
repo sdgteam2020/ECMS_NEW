@@ -1,5 +1,6 @@
 ﻿using DataTransferObject.Domain.Model;
 using DataTransferObject.Requests;
+using DataTransferObject.Response;
 using DataTransferObject.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -14,5 +15,7 @@ namespace BusinessLogicsLayer.BasicDet
         public Task<List<BasicDetailVM>> GetALLBasicDetail(int UserId,int step,int type);
         public Task<List<DTOICardTypeRequest>> GetAllICardType();
         public Task<BasicDetail?> FindServiceNo(string ServiceNo);
+        public Task<DTOBasicDetailsResponse> GetByBasicDetailsId(int BasicDetailId);
+      
     }
 }

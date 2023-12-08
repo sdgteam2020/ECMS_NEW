@@ -14,7 +14,7 @@ namespace BusinessLogicsLayer.Bde
 {
     public interface ITrnFwnBL : IGenericRepository<MTrnFwd>
     {
+        public Task<bool> UpdateAllBYRequestId(int RequestId);
 
-      
     }
 }

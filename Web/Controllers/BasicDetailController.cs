@@ -83,7 +83,7 @@ namespace Web.Controllers
         public async Task<ActionResult> ApprovalForIO(int Id)
         {
             int type = 0;
-            var userId = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").UserId;
+            var userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier)); //SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").UserId;
             if (Id == 22)
             {
                 Id = 2;
@@ -131,6 +131,8 @@ namespace Web.Controllers
                 _logger.LogError(1001, ex, "This error occure because Id value change by user.");
                 return RedirectToAction("Error", "Error");
             }
+            BasicDetail? basicDetail = await unitOfWork.BasicDetail.Get(decryptedIntId);
+            
             BasicDetail? basicDetail = await basicDetailBL.Get(decryptedIntId);
 
             if (basicDetail != null)
@@ -625,10 +627,10 @@ namespace Web.Controllers
                             mTrnICardRequest.BasicDetailId = ret.BasicDetailId;
                             mTrnICardRequest.Status = false;
                             mTrnICardRequest.TypeId = model.TypeId;
-                            TrnDomainMapping trnDomainMapping = new TrnDomainMapping();
-                            trnDomainMapping.AspNetUsersId= Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-                            trnDomainMapping=await iDomainMapBL.GetByAspnetUserIdBy(trnDomainMapping);
-                            mTrnICardRequest.TrnDomainMappingId = trnDomainMapping.Id;
+                            //TrnDomainMapping trnDomainMapping = new TrnDomainMapping();
+                           // trnDomainMapping.AspNetUsersId= Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                            //trnDomainMapping=await iDomainMapBL.GetByAspnetUserIdBy(trnDomainMapping);
+                            SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").TrnDomainMappingId;
                             mTrnICardRequest.UpdatedOn = DateTime.Now;
                             mTrnICardRequest.Updatedby = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").UserId; //SessionHeplers.GetObject<string>(HttpContext.Session, "ArmyNo");
                             mTrnICardRequest = await iTrnICardRequestBL.AddWithReturn(mTrnICardRequest);
@@ -792,28 +794,49 @@ namespace Web.Controllers
         }    
         public async Task<IActionResult> UpdateStepCounter(MStepCounter mStepCounter)
         {
-           
-           
-            mStepCounter.UpdatedOn = DateTime.Now;
-            mStepCounter.Updatedby = 1;
-            await iStepCounterBL.Update(mStepCounter);
+            try
+            {
+                mStepCounter.UpdatedOn = DateTime.Now;
+                mStepCounter.Updatedby = 1;
+                await iStepCounterBL.Update(mStepCounter);
 
-            return Ok(mStepCounter);    
+                
+            }
+            catch (Exception ex) { }
+            return Ok(mStepCounter);
         } 
         public async Task<IActionResult> IcardFwd(MTrnFwd data)
         {
             try
             {
+                DtoSession sessiondata=SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+                data.FromUserId= sessiondata.UserId;
+                data.UnitId= sessiondata.UnitId;
+                data.FromAspNetUsersId= Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                 data.UpdatedOn = DateTime.Now;
                 data.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                 data.IsActive = true;
-                await iTrnFwnBL.Add(data);
+                data.TypeId= Convert.ToByte(data.TypeId-Convert.ToByte(1));
+                if(await iTrnFwnBL.UpdateAllBYRequestId(data.RequestId))
+                {
+                    await iTrnFwnBL.Add(data);
+                    return Ok(data);
+                }
+                else
+                {
+                    return BadRequest();
+                }
+                
             }
-            catch (Exception ex) { }
+            catch (Exception ex) 
+            { 
+                
+                return BadRequest();
+            }
 
           
 
-            return Ok(data);    
+           
         }
         [Authorize(Roles = "Admin,User")]
         [HttpPost]
@@ -948,6 +971,11 @@ namespace Web.Controllers
             basicDetail.DateOfCommissioning = DateTime.Now;
             basicDetail.PermanentAddress = "House No.-" + Random.Shared.Next(50, 999) + ", " + PermanentAddress[a];
             return Ok(basicDetail);
+        }
+
+        public async Task<IActionResult> GetDataByBasicDetailsId(int Id)
+        {
+           return Json(await unitOfWork.BasicDetail.GetByBasicDetailsId(Id));
         }
     }
 }

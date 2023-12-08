@@ -84,7 +84,9 @@ namespace BusinessLogicsLayer
 
             services.AddTransient<iGetTokenBL, GetTokenBL>();
             services.AddTransient<IStepCounterBL, StepCounterBL>();
+
             services.AddTransient<ITrnFwnBL, TrnFwnBL>();
+            services.AddTransient<ITrnFwnDB, TrnFwnDB>();
 
             services.AddTransient<ITrnICardRequestBL, TrnICardRequestBL>();
             services.AddTransient<ITrnICardRequestDB, TrnICardRequestDB>();

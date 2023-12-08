@@ -17,6 +17,9 @@ toastr.options = {
     "hideMethod": "fadeOut"
 }
 $(document).ready(function () {
+
+   
+
     Getaspntokenarmyno()
     if (window.location.pathname !="/UserProfile/Profile")
     CheckProfileExist();
@@ -37,10 +40,13 @@ function CheckProfileExist() {
         success: function (response) {
             if (response != "null" && response != null) {
                 if (response.UserId == 0 || response.UserId == null) {
-                    alert('Please Add Profile First !'); 
+                    alert('Please Add Profile First !');
                     window.location = "/UserProfile/Profile";
                 }
-                
+
+            } else {
+                alert('Please Add Profile First !');
+                window.location = "/UserProfile/Profile";
             }
         }
     });

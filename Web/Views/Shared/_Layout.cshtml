@@ -34,6 +34,7 @@
     <link href="~/css/extra.css" rel="stylesheet" />
     <link href="~/css/background.css" rel="stylesheet" />
     <link href="~/css/typography.css" rel="stylesheet" />
+    <link href="~/select2/css/select2.min.css" rel="stylesheet" />
     <link href="~/css/cssStyle.css" rel="stylesheet" />
     
    
@@ -44,17 +45,27 @@
     <script asp-src-include="~/lib/jquery/jquery.js"></script>
     <script asp-src-include="~/lib/jquery-validate/jquery.validate.js" defer></script>
     <script asp-src-include="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js" defer></script>
-
+   
+  
     <link href="~/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
     <link href="~/lib/jqueryui/themes/base/jquery-ui.min.css" rel="stylesheet" />
 
     <link href="~/toastr/toastr.min.css" rel="stylesheet" />
     <link href="~/css/main.css" rel="stylesheet" />
+    
     <script type="text/javascript">
         function preventBack() { window.history.forward(); }
         setTimeout("preventBack()", 0);
         window.onunload = function () { null };
     </script>
+    <style>
+
+
+        .select2-container--default .select2-selection--multiple .select2-selection__choice {
+            font-size: .925rem;
+        }
+    </style>
+
 </head>
 <body class="nav-fixed">
       <div id="loading" class="loader">
@@ -305,7 +316,7 @@
             <nav class="sidebar sidebar-offcanvas" id="sidebar">
                 <ul class="nav">
                     <li class="nav-item">
-                        <a class="nav-link" href="../Home/Dashboard">
+                        <a class="nav-link" href="/Home/Dashboard">
                             <i class="icon-grid menu-icon"></i>
                             <span class="menu-title">Dashboard</span>
                         </a>
@@ -520,6 +531,7 @@
     <script src="~/js/jssidemenu/off-canvas.js"></script>
     <script src="~/js/jssidemenu/template.js"></script>
     <script src="~/lib/jqueryui/jquery-ui.min.js"></script>
+    <script src="~/select2/js/select2.min.js"></script>
     <script src="~/js/datatables/jquery.datatables.min.js"></script>
     <script src="~/js/datatables/dataTables.responsive.min.js"></script>
     <script src="~/js/datatables/responsive.dataTables.min.js"></script>
@@ -694,6 +706,7 @@
     </div><!-- modal-dialog -->
 </div>
 
+<!-- Fwd Record  -->
 <div class="modal fade" id="FwdRecord" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -732,28 +745,78 @@
                 <div class="card mt-2">
                     <div class="mt-2 ml-4">
                         <h5 class="card-title">Forward To <label class="gsoio"></label> Details</h5>
-                        <span id="spnFwssusno" class="d-none">0</span>
+                        <span id="spnFwdToAspNetUsersId" class="d-none">0</span>
+                        <span id="spnFwdToUsersId" class="d-none">0</span>
+                       @*  <span id="spnFwssusno" class="d-none">0</span>
                         <span id="spnFrom" class="d-none">0</span>
-                        <span id="spnForwardTo" class="d-none">0</span>
+                        <span id="spnForwardTo" class="d-none">0</span>*@
                         <span id="spnCurrentspnRequestId" class="d-none">0</span>
-                        <span id="spnStepCounter" class="d-none">0</span>
+                        <span id="spnStepCounter" class="d-none">0</span> 
                         <h5 class="card-title text-danger" id="ForwardDetails"></h5>
                         <div class="row HProfileDetails">
+                            <div class="form-group"> 
+                                <div class="col-sm-12">
+                                <div class="form-check form-check-inline">
+                                        <input class="form-check-input" checked type="radio" name="Intoffrs" id="intoffsArmyNo">
+                                    <label class="form-check-label" for="intoffsArmyNo">
+                                            Army No
+                                    </label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="Intoffrs" id="intoffName">
+                                        <label class="form-check-label" for="intoffName">
+                                        Name
+                                    </label>
+                                </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="Intoffrs" id="intoffDomainId">
+                                        <label class="form-check-label" for="intoffName">
+                                            DomainId
+                                        </label>
+                                    </div>
+
+                            </div> </div>
                             <div class="form-group row mb-2">
-                                <label class="col-form-label col-sm-4">Army No</label>
+                                <label class="col-form-label col-sm-4">Army No/Offrs Name/DomainId</label>
                                 <div class="col-sm-8">
 
-                                    <label class="form-control spnFtoarmyno"></label>
+                                    <input class="form-control Alphanumeric" placeholder="Enter Army No/Offrs Name/DomainId" id="txtFwdName" required pattern="^[a-zA-Z0-9 ]*$" title="Only Alphabets and Numbers allowed" />
 
                                 </div>
 
                             </div>
                             <div class="form-group row mb-2">
-                                <label class="col-form-label col-sm-4">Name</label>
+                                <label class="col-form-label col-sm-4">Army No</label>
+                                <div class="col-sm-8">
+
+                                    <label class="form-control spnFArmyNo"></label>
+
+                                </div>
+
+                            </div>
+                            <div class="form-group row mb-2">
+                                <label class="col-form-label col-sm-4">Offrs Name</label>
                                 <div class="col-sm-8">
 
                                     <label class="form-control spnFtoname"></label>
 
+                                </div>
+
+                            </div>
+                            <div class="form-group row mb-2">
+                                <label class="col-form-label col-sm-4">DomainId</label>
+                                <div class="col-sm-8">
+
+                                    <label class="form-control spnFDomainName"></label>
+
+                                </div>
+
+                            </div>
+                            <div class="form-group row mb-2">
+                                <label class="col-form-label col-sm-4">Remarks</label>
+                                <div class="col-sm-8">
+                                    <textarea class="form-control" id="txtFRemarks" rows="3"></textarea>
+                               
                                 </div>
 
                             </div>
@@ -765,6 +828,192 @@
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                
                 <button type="button" class="btn btn-primary" id="btnForward">Forward</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Basic Details   -->
+<div class="modal fade" id="BasicDetails" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Besic Details</h5>
+
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="card">
+                    <div class="row ">
+                       
+                       
+                                <div class="col-md-4 mb-3">
+                                    <div class="feature-box3  h-100 shadow-lg p-1 mb-5 bg-body rounded">
+
+                                        <div class="content-block ">
+                                            <div class="form-group row mb-0 ">
+                                                <div class="col-12 text-center">
+                                                    <img src="~/images/user4.png" width="200" id="basicphotos" class="border border-primary p-2" />
+
+                                                    <h6 class="mb-1 text-font2 font-weight500 text-center PersName"></h6>
+                                                    @*  <div class="text-left"> <img src="~/images/rank/brigadier.svg" id="imgrank" height="100px" /></div> *@
+                                                </div>
+                                            </div>
+                                    <div class="form-group row mb-0">
+                                        <label class="col-form-label  text-left">Select Rejection Reasons for Photos</label>
+                                       
+                                        <select class="form-control select2 select2-accessible " multiple="" placeholder="Please select a Photos" style="width: 100%;" tabindex="-1" aria-hidden="true" name="Photos" required id="ddlPhotos">
+                                            <option value="0">Select Rejection Reasons for Photos</option>
+                                            <option value="Reasons 1">Reasons 1</option>
+                                            <option value="Reasons 2">Reasons 2</option>
+                                            <option value="Reasons 3">Reasons 3</option>
+                                        </select>
+                                
+                                    </div>
+                                        </div>
+
+                                        <div class="content-block ">
+                                            <div class="form-group row mb-0">
+                                                <div class="col-12 text-center">
+                                                    <img src="~/images/signature.png" width="200" height="100" id="Basicsing" class="border border-primary p-2" />
+                                            <label class="col-form-label  text-left">Select Rejection Reasons for Signature</label>
+                                               
+                                            <select class="form-control select2 select2-accessible " multiple="" placeholder="Please select a signature" style="width: 100%;" tabindex="-1" aria-hidden="true" name="signature" required id="ddlsignature">
+                                                    <option value="0">Select Rejection Reasons for Photos</option>
+                                                    <option value="Reasons 1">Reasons 1</option>
+                                                    <option value="Reasons 2">Reasons 2</option>
+                                                    <option value="Reasons 3">Reasons 3</option>
+                                                </select>
+                                                    @*  <div class="text-left"> <img src="~/images/rank/brigadier.svg" id="imgrank" height="100px" /></div> *@
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                   
+                                </div>
+                                <div class="col-md-8 mb-3">
+                                    <div class="feature-box3 h-100 shadow-lg p-3 mb-3 bg-body rounded">
+                                        <div class="top-block_ind d-flex">
+
+                                            <div class="text-block">
+                                                <h5 class="mb-1 text-font2 font-weight600">Individual Details</h5>
+
+                                            </div>
+                                        </div>
+                                        <div class="content-block ">
+                                            <div class="form-group row mb-0">
+                                                <label class="col-form-label col-5 text-left">Name</label>
+                                        <div class="col-7"><label class="form-control-plaintext b text-black" id="lblfdName"></label></div>
+                                            </div>
+                                            <div class="form-group row mb-0">
+                                                <label class="col-form-label col-5 text-left">Rank</label>
+                                                <div class="col-7">
+                                            <label class="form-control-plaintext" id="lblfdRank"></label>
+                                                </div>
+                                            </div>
+                                            <div class="form-group row mb-0">
+                                                <label class="col-form-label col-5 text-left">Arm / Service</label>
+                                                <div class="col-7">
+                                            <label class="form-control-plaintext" id="lblLfdarm"></label>
+                                                </div>
+                                            </div>
+                                            <div class="form-group row mb-0">
+                                                <label class="col-form-label col-5 text-left">Army No</label>
+                                                <div class="col-7">
+                                            <label class="form-control-plaintext" id="lblfdArmyNo"></label>
+                                                </div>
+                                            </div>
+                                            <div class="form-group row mb-0">
+                                                <label class="col-form-label col-5 text-left">Identification Mark</label>
+                                                <div class="col-7">
+                                                    <label class="form-control-plaintext" id="lblfdMarks"></label>
+                                                </div>
+                                            </div> 
+                                            <div class="form-group row mb-0">
+                                                <label class="col-form-label col-5 text-left">Date of Birth</label>
+                                                <div class="col-7">
+                                                    <label class="form-control-plaintext" id="lblfddob"></label>
+                                                </div>
+                                            </div> 
+                                            <div class="form-group row mb-0">
+                                                <label class="col-form-label col-5 text-left">Height (Cm)</label>
+                                                <div class="col-7">
+                                                    <label class="form-control-plaintext" id="lblfdheight"></label>
+                                                </div>
+                                            </div> 
+                                            <div class="form-group row mb-0">
+                                                <label class="col-form-label col-5 text-left">AADHAAR No</label>
+                                                <div class="col-7">
+                                                    <label class="form-control-plaintext" id="lblfdadhar"></label>
+                                                </div>
+                                            </div>
+                                            <div class="form-group row mb-0">
+                                            <label class="col-form-label col-5 text-left">Blood Group</label>
+                                                <div class="col-7">
+                                            <label class="form-control-plaintext" id="lblfdBloodGroup"></label>
+                                                </div>
+                                            </div>
+                                            <div class="form-group row mb-0">
+                                                <label class="col-form-label col-5 text-left">Place of Issue</label>
+                                                <div class="col-7">
+                                                    <label class="form-control-plaintext" id="lblfdpoi"></label>
+                                                </div>
+                                            </div>
+                                            <div class="form-group row mb-0">
+                                                <label class="col-form-label col-5 text-left">Date of Issue</label>
+                                                <div class="col-7">
+                                                    <label class="form-control-plaintext" id="lblfddoi"></label>
+                                                </div>
+                                            </div> 
+                                            <div class="form-group row mb-0">
+                                                <label class="col-form-label col-5 text-left">Issuing Authority</label>
+                                                <div class="col-7">
+                                                    <label class="form-control-plaintext" id="lblfdissuA"></label>
+                                                </div>
+                                            </div>
+                                            <div class="form-group row mb-0">
+                                                <label class="col-form-label col-5 text-left">Date of Commissioning/ Enrollment</label>
+                                                <div class="col-7">
+                                                    <label class="form-control-plaintext" id="lblfddateo"></label>
+                                                </div>
+                                            </div> 
+                                            <div class="form-group row mb-0">
+                                                <label class="col-form-label col-5 text-left">Permt Address as per Service Records</label>
+                                                <div class="col-7">
+                                                    <label class="form-control-plaintext" id="lblfdaddress"></label>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                        <div class="col-md-12 mb-3">
+                            <div class="form-group row mb-0">
+                                <label class="col-form-label col-12 text-center">Remarks</label>
+                                <div class="col-12">
+                                    <textarea class="form-control" id="txtFrejectedRemarks" rows="2"></textarea>
+                                </div>
+                            </div>
+                            </div>
+                       @*  <div class="col-md-12 mb-3 ml-3">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
+                            <label class="form-check-label" for="inlineCheckbox1">Rejected</label>
+                        </div>
+                        </div> *@
+                    </div>
+                </div>
+
+                
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+
+                <button type="button" class="btn btn-danger" id="btnRejected">Rejected</button>
+                <button type="button" class="btn btn-primary" id="btnShowForward">Next</button>
             </div>
         </div>
     </div>

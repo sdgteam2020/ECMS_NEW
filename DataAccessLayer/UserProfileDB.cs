@@ -7,6 +7,7 @@ using DataTransferObject.Domain.Master;
 using DataTransferObject.Domain.Model;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
+using DataTransferObject.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System;
@@ -184,8 +185,125 @@ namespace DataAccessLayer
 
             //return Task.FromResult(ret);
         }
-        public Task<DTOUserProfileResponse> GetAllByArmyNo(string ArmyNo, int UserId)
+        public async Task<List<BasicDetailVM>> GetByRequestId(int RequestId)
         {
+            //var BasicDetailList = _context.BasicDetails.Where(x => x.IsDeleted == false && x.Updatedby == UserId).ToList();
+
+            string query = "SELECT B.RegistrationId,B.BasicDetailId,B.Name,B.ServiceNo,B.DOB,B.DateOfCommissioning,B.PermanentAddress," +
+                "C.StepId StepCounter,C.Id StepId,ty.TypeId ICardType,trnicrd.RequestId " +
+                " FROM BasicDetails B  inner join TrnICardRequest trnicrd on trnicrd.BasicDetailId = B.BasicDetailId " +
+                " inner join TrnStepCounter C on trnicrd.RequestId = C.RequestId " +
+                " inner join MICardType ty on ty.TypeId = trnicrd.TypeId " +
+                " inner join UserProfile pr on pr.UserId = trnicrd.Updatedby " +
+                " WHERE trnicrd.RequestId=@RequestId";
+
+     
+
+            using (var connection = _contextDP.CreateConnection())
+            {
+                var BasicDetailList = await connection.QueryAsync<BasicDetailVM>(query, new { RequestId });
+               
+                int sno = 1;
+                var allrecord = (from e in BasicDetailList
+                                 select new BasicDetailVM()
+                                 {
+                                     BasicDetailId = e.BasicDetailId,
+                                     
+                                     Sno = sno++,
+                                     Name = e.Name,
+                                     ServiceNo = e.ServiceNo,
+                                     DOB = e.DOB,
+                                     DateOfCommissioning = e.DateOfCommissioning,
+                                     PermanentAddress = e.PermanentAddress,
+                                     StepCounter = e.StepCounter,
+                                     StepId = e.StepId,
+                                     ICardType = e.ICardType, 
+                                     RegistrationId = e.RegistrationId,
+                                     RequestId = e.RequestId,
+                                 }).ToList();
+                return await Task.FromResult(allrecord);
+
+            }
+
+        }
+        public async Task<List<DTOFwdICardResponse>> GetDataForFwd(int StepId, int UnitId, string Name, int TypeId)
+        {
+            try
+            {
+                
+                string query = "";
+                if (TypeId == 0)
+                {
+                    query = "Select trndomain.AspNetUsersId,ISNULL(usep.UserId,0) UserId,users.DomainId,usep.ArmyNo,usep.Name from TrnDomainMapping trndomain" +
+              " inner join AspNetUsers users on trndomain.AspNetUsersId=users.Id" +
+              " inner join MapUnit mapu on mapu.UnitMapId=trndomain.UnitId" +
+              " left join UserProfile usep on usep.UserId=trndomain.UserId" +
+              " where trndomain.UnitId in (Select UnitMapId from MapUnit where ComdId in (Select ComdId from MapUnit where UnitMapId=@UnitId))" +
+              " And  trndomain.AspNetUsersId like @Name";
+
+                }
+              else  if (TypeId==1)
+                {
+                    Name = "%" + Name.Replace("[", "[[]").Replace("%", "[%]") + "%";
+                    query = "Select trndomain.AspNetUsersId,ISNULL(usep.UserId,0) UserId,users.DomainId,usep.ArmyNo,usep.Name from TrnDomainMapping trndomain" +
+              " inner join AspNetUsers users on trndomain.AspNetUsersId=users.Id" +
+              " inner join MapUnit mapu on mapu.UnitMapId=trndomain.UnitId" +
+              " left join UserProfile usep on usep.UserId=trndomain.UserId" +
+              " where trndomain.UnitId in (Select UnitMapId from MapUnit where ComdId in (Select ComdId from MapUnit where UnitMapId=@UnitId))" +
+              " And usep.ArmyNo like @Name";
+
+                }
+                else if (TypeId == 2)
+                {
+                    Name = "%" + Name.Replace("[", "[[]").Replace("%", "[%]") + "%";
+                    query = "Select trndomain.AspNetUsersId,ISNULL(usep.UserId,0) UserId,users.DomainId,usep.Name ArmyNo from TrnDomainMapping trndomain" +
+              " inner join AspNetUsers users on trndomain.AspNetUsersId=users.Id" +
+              " inner join MapUnit mapu on mapu.UnitId=trndomain.UnitId" +
+              " left join UserProfile usep on usep.UserId=trndomain.UserId" +
+              " where trndomain.UnitId in (Select UnitId from MapUnit where ComdId in (Select ComdId from MapUnit where UnitMapId=@UnitId))" +
+              " And usep.Name like @Name";
+
+                }
+                else if (TypeId == 3)
+                {
+                    Name = "%" + Name.Replace("[", "[[]").Replace("%", "[%]") + "%";
+                    query = "Select trndomain.AspNetUsersId,ISNULL(usep.UserId,0) UserId,users.DomainId ArmyNo from TrnDomainMapping trndomain" +
+              " inner join AspNetUsers users on trndomain.AspNetUsersId=users.Id" +
+              " inner join MapUnit mapu on mapu.UnitId=trndomain.UnitId" +
+              " left join UserProfile usep on usep.UserId=trndomain.UserId" +
+              " where trndomain.UnitId in (Select UnitId from MapUnit where ComdId in (Select ComdId from MapUnit where UnitMapId=@UnitId))" +
+              " And users.DomainId like @Name";
+
+                }
+                using (var connection = _contextDP.CreateConnection())
+            {
+                var BasicDetailList = await connection.QueryAsync<DTOFwdICardResponse>(query, new { UnitId, Name });
+                int sno = 1;
+                //var allrecord = (from e in BasicDetailList
+                //                 select new DTOBasicDetailRequest()
+                //                 {
+                //                     BasicDetailId = e.BasicDetailId,
+                //                     EncryptedId = protector.Protect(e.BasicDetailId.ToString()),
+                //                     Sno = sno++,
+                //                     Name = e.Name,
+                //                     ServiceNo = e.ServiceNo,
+                //                     DOB = e.DOB,
+                //                     DateOfCommissioning = e.DateOfCommissioning,
+                //                     PermanentAddress = e.PermanentAddress,
+                //                     StepCounter = e.StepCounter,
+                //                     StepId = e.StepId,
+                //                     ICardType = e.ICardType,
+                //                     RegistrationType = e.RegistrationType,
+                //                 }).ToList();
+                return BasicDetailList.ToList();
+
+            }
+
+            }
+            catch (Exception ex)
+            {
+
+            }
             // return _context.UserProfile.Where(P => P.ArmyNo == ArmyNo).SingleOrDefault();
             //var ret = (from user in _context.UserProfile
             //           join basicd in _context.BasicDetails on user.ArmyNo equals basicd.ServiceNo
@@ -232,7 +350,7 @@ namespace DataAccessLayer
             //               UnitIdGSO = UnGSO.UnitId,
             //               UnitGSO = UnGSO.UnitName,
             //               GSOSusNo = UnGSO.Sus_no + UnGSO.Suffix
-                           
+
 
             //           }
             //         ).Distinct().SingleOrDefault();

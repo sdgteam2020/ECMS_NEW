@@ -942,15 +942,15 @@ function DataBindAll() {
 }
 function GetALLByUnitById(param1) {
     $.ajax({
-        url: '/Master/GetALLByUnitById',
+        url: '/Master/GetALLByUnitMapId',
         contentType: 'application/x-www-form-urlencoded',
-        data: { "UnitId": param1 },
+        data: { "UnitMapId": param1 },
         type: 'POST',
         success: function (data)
         {
 
 
-            $("#spnUnitIdUserPro").html(data.UnitId);
+            $("#spnUnitIdUserPro").html(data.UnitMapId);
             $("#txtProUnit").val(data.UnitName);
             $("#lblProComd").html(data.ComdName);
             $("#lblProCorps").html(data.CorpsName);

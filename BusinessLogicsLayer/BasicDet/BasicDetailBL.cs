@@ -2,6 +2,7 @@
 using DataAccessLayer.BaseInterfaces;
 using DataTransferObject.Domain.Model;
 using DataTransferObject.Requests;
+using DataTransferObject.Response;
 using DataTransferObject.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -29,6 +30,11 @@ namespace BusinessLogicsLayer.BasicDet
         public async Task<BasicDetail?> FindServiceNo(string ServiceNo)
         {
             return await _iBasicDetailDB.FindServiceNo(ServiceNo);
+        }
+
+        public Task<DTOBasicDetailsResponse> GetByBasicDetailsId(int BasicDetailId)
+        {
+            return _iBasicDetailDB.GetByBasicDetailsId(BasicDetailId);
         }
     }
 }

@@ -46,5 +46,10 @@ namespace DataTransferObject.Domain.Model
        
         public MTrnFwdType? MTrnFwdType { get; set; }
 
-    }
+        public bool IsComplete { get; set; } = false;
+        //[ForeignKey("Fwd"), DatabaseGenerated(DatabaseGeneratedOption.None)]
+        //public int FwdId { get; set; }
+
+        //public MTrnFwd? Fwd { get; set; }
+}
 }

@@ -11,5 +11,6 @@ namespace DataTransferObject.Requests
         public string ICNO { get; set; }
         public int UserId { get; set; }
         public int UnitId { get; set; }
+        public int TrnDomainMappingId { get; set; }
     }
 }
