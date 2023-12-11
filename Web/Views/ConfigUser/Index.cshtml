@@ -96,16 +96,79 @@
                                                     <span class="text-danger" id="error-msg"></span>
                                                 </div>
                                                 <div class="pb-3 mt-3 d-grid gap-2 col-8 mx-auto">
-
-
-
                                                 <div class="col-xl-12 text-left">
                                                     <div class="form-group row mb-2">
                                                         <label class="col-form-label col-sm-4">User ID/ Domain ID</label>
                                                         <div class="col-sm-8">
-                                                           
-
                                                             <i class="fas fa-asterisk mand"></i><label class="form-control" id="txtDomainId">@ViewBag.DomainId</label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-xl-12 text-left">
+                                                    <div class="form-group row mb-2">
+                                                        <label class="col-form-label col-sm-4">Offrs Army No </label>
+                                                        <div class="col-sm-8">
+                                                            <i class="fas fa-asterisk mand"></i><input type="text" class="form-control" id="txtArmyNo" value="IC-00001" />
+                                                            IC No fetched from token (NE)
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-xl-12 text-left">
+                                                    <div class="form-group row mb-2">
+                                                        <label class="col-form-label col-sm-4">Name<i class="fas fa-asterisk mand1"></i></label>
+                                                        <div class="col-sm-8">
+                                                            <input class="form-control Alphanumeric" placeholder="Enter Name" id="txtName" required pattern="^[a-zA-Z0-9 ]*$" maxlength="8" title="Only Alphabets and Numbers allowed" />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-xl-12 text-left">
+                                                    <div class="form-group row mb-2">
+                                                        <label class="col-form-label col-sm-4">Rank<i class="fas fa-asterisk mand1"></i></label>
+                                                        <div class="col-sm-8">
+                                                            <select class="form-select" style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddlProRank" required id="ddlProRank">
+                                                                <option value="0">Select Rank </option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-xl-12 text-left">
+                                                    <div class="form-group row mb-2">
+                                                        <label class="col-form-label col-sm-4">Formation<i class="fas fa-asterisk mand1"></i></label>
+                                                        <div class="col-sm-8">
+
+                                                            <select class=" js-example-basic-single select2 form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddlProFormation" required id="ddlProFormation">
+                                                                <option value="0">Select Formation </option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-xl-12 text-left">
+                                                    <div class="form-group row mb-2">
+                                                        <label class="col-form-label col-sm-4">Appt.<i class="fas fa-asterisk mand1"></i></label>
+                                                        <div class="col-sm-8">
+
+                                                            <select class=" js-example-basic-single select2 form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddlProAppointment" required id="ddlProAppointment">
+                                                                <option value="0">Select Appointment </option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-xl-12 text-left">
+                                                    <div class="form-group row mb-2">
+                                                        <label class="col-form-label col-sm-4"> Int Offrs.<i class="fas fa-asterisk mand1"></i></label>
+                                                        <div class="col-sm-8">
+                                                            <div class="form-check form-check-inline">
+                                                                <input class="form-check-input" type="radio" name="Intoffrs" id="intoffsyes">
+                                                                <label class="form-check-label" for="intoffsyes">
+                                                                    Yes
+                                                                </label>
+                                                            </div>
+                                                            <div class="form-check form-check-inline">
+                                                                <input class="form-check-input" type="radio" name="Intoffrs" id="intoffsno">
+                                                                <label class="form-check-label" for="intoffsno">
+                                                                    No
+                                                                </label>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -175,66 +238,6 @@
                                                         <label class="col-form-label col-sm-4">Bde</label>
                                                         <div class="col-sm-8">
                                                             <label class="col-form-label" id="lblPrBde"></label>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-xl-12 text-left">
-                                                    <div class="form-group row mb-2">
-                                                        <label class="col-form-label col-sm-4">Offrs Army No </label>
-                                                        <div class="col-sm-8">
-                                                            <i class="fas fa-asterisk mand"></i><input type="text"  class="form-control" id="txtArmyNo" value="IC-00001" />
-                                                            IC No fetched from token (NE)
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-xl-12 text-left">
-                                                    <div class="form-group row mb-2">
-                                                        <label class="col-form-label col-sm-4">Rank<i class="fas fa-asterisk mand1"></i></label>
-                                                        <div class="col-sm-8">
-                                                            <select class="form-select" style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddlProRank" required id="ddlProRank">
-                                                                <option value="0">Select Rank </option>
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-xl-12 text-left">
-                                                    <div class="form-group row mb-2">
-                                                        <label class="col-form-label col-sm-4">Formation<i class="fas fa-asterisk mand1"></i></label>
-                                                        <div class="col-sm-8">
-
-                                                            <select class=" js-example-basic-single select2 form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddlProFormation" required id="ddlProFormation">
-                                                                <option value="0">Select Formation </option>
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-xl-12 text-left">
-                                                    <div class="form-group row mb-2">
-                                                        <label class="col-form-label col-sm-4">Appt.<i class="fas fa-asterisk mand1"></i></label>
-                                                        <div class="col-sm-8">
-
-                                                            <select class=" js-example-basic-single select2 form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddlProAppointment" required id="ddlProAppointment">
-                                                                <option value="0">Select Appointment </option>
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-xl-12 text-left">
-                                                    <div class="form-group row mb-2">
-                                                        <label class="col-form-label col-sm-4"> Int Offrs.<i class="fas fa-asterisk mand1"></i></label>
-                                                        <div class="col-sm-8">
-                                                            <div class="form-check form-check-inline">
-                                                                <input class="form-check-input" type="radio" name="Intoffrs" id="intoffsyes">
-                                                                <label class="form-check-label" for="intoffsyes">
-                                                                    Yes
-                                                                </label>
-                                                            </div>
-                                                            <div class="form-check form-check-inline">
-                                                                <input class="form-check-input" type="radio" name="Intoffrs" id="intoffsno">
-                                                                <label class="form-check-label" for="intoffsno">
-                                                                    No
-                                                                </label>
-                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
