@@ -59,10 +59,7 @@ namespace Web.Controllers
                                     trnDomainMapping.UserId = dTO.UserId;
                                     _iDomainMapBL.Update(trnDomainMapping);
                                 }
-
                                     return Json(KeyConstants.Save);
-
-
                             }
                         }
                         else
