@@ -78,14 +78,7 @@ function SaveMapping() {
         "UnitId": $("#spnUnitIdMap").html(),
         "ICNO": $("#txtArmyNo").val(),
     };
-    var profiledata =
-    {
-        "Name": $("txtName").val(),
-        "ArmyNo": $("#txtArmyNo").val(),
-        "RankId": $("#ddlProRank").val(),
-        "ApptId": $("#ddlProAppointment").val(),
-        "IntOffr": $("#intoffsyes").prop("checked")
-    };
+
     $.ajax({
         url: '/ConfigUser/SaveMapping',
         data: examdata,
@@ -97,47 +90,7 @@ function SaveMapping() {
 
                 if (response == 1 || response == 2)
                 {
-                    $.ajax({
-                        url: '/UserProfile/SaveUserProfile',
-                        data: profiledata,
-                        type: 'POST',
-                        contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
-                        success: function (result) {
-
-                            if (result == DataSave) {
-                                toastr.success('User has been saved');
-                            }
-                            else if (result == DataExists) {
-
-                                toastr.error('Army No Exits!');
-
-                            }
-                            else if (result == IncorrectData) {
-
-                                toastr.error('Incorrect Data!');
-
-                            }
-                            else if (result == InternalServerError) {
-                                Swal.fire({
-                                    icon: 'error',
-                                    title: 'Oops...',
-                                    text: 'Something went wrong or Invalid Entry!',
-
-                                })
-
-                            } else {
-                                if (result.length > 0) {
-                                    for (var i = 0; i < result.length; i++) {
-                                        toastr.error(result[i][0].ErrorMessage)
-                                    }
-
-
-                                }
-
-
-                            }
-                        }
-                    });
+                    SaveProfile();
                     Gotodashboard($("#txtArmyNo").val());
                 }
 
@@ -147,6 +100,57 @@ function SaveMapping() {
                 //    $("#tokenmsg").html('<div class="alert alert-danger alert-dismissible fade show "><i class="fa fa-times" aria-hidden="true"></i><span class="m-lg-2">This ICNO Profile Not Available</span>.</div>');
 
                 //}
+            }
+        }
+    });
+}
+function SaveProfile() {
+    var profiledata =
+    {
+        "Name": $("#txtName").val(),
+        "ArmyNo": $("#txtArmyNo").val(),
+        "RankId": $("#ddlProRank").val(),
+        "ApptId": $("#ddlProAppointment").val(),
+        "IntOffr": $("#intoffsyes").prop("checked")
+    };
+    $.ajax({
+        url: '/UserProfile/SaveUserProfile',
+        data: profiledata,
+        type: 'POST',
+        contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+        success: function (result) {
+
+            if (result == DataSave) {
+                toastr.success('User has been saved');
+            }
+            else if (result == DataExists) {
+
+                toastr.error('Army No Exits!');
+
+            }
+            else if (result == IncorrectData) {
+
+                toastr.error('Incorrect Data!');
+
+            }
+            else if (result == InternalServerError) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Something went wrong or Invalid Entry!',
+
+                })
+
+            } else {
+                if (result.length > 0) {
+                    for (var i = 0; i < result.length; i++) {
+                        toastr.error(result[i][0].ErrorMessage)
+                    }
+
+
+                }
+
+
             }
         }
     });
