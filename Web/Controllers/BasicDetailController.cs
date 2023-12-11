@@ -1022,5 +1022,9 @@ namespace Web.Controllers
         {
            return Json(await basicDetailBL.GetByBasicDetailsId(Id));
         }
+        public async Task<IActionResult> GetRequestHistory(int RequestId)
+        {
+            return Json(await basicDetailBL.ICardHistory(RequestId));
+        }
     }
 }

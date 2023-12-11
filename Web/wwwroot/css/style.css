@@ -20998,8 +20998,8 @@ i-feather {
 }
 
     .timeline.timeline-xs .timeline-item .timeline-item-marker .timeline-item-marker-text {
-        width: 3rem;
-        font-size: 0.7rem;
+        width: 5rem;
+        font-size: 0.9rem;
     }
 
     .timeline.timeline-xs .timeline-item .timeline-item-marker .timeline-item-marker-indicator {
@@ -22923,7 +22923,7 @@ a.bg-alternate:hover, a.bg-alternate:focus, button.bg-alternate:hover, button.bg
     width: 100px;
 }
 
-.nav-pills .nav-link {
+/*.nav-pills .nav-link {
     position: relative;
     border-radius: .35rem;
     font-weight: 500;
@@ -22978,7 +22978,7 @@ a.bg-alternate:hover, a.bg-alternate:focus, button.bg-alternate:hover, button.bg
     .nav-pills .nav-link span {
         position: relative;
         z-index: 5;
-    }
+    }*/
 
 .nav-fill .nav-item {
     flex: 1 1 auto;

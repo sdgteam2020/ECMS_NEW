@@ -16,5 +16,6 @@ namespace DataAccessLayer.BaseInterfaces
         public Task<DTOBasicDetailsResponse> GetByBasicDetailsId(int BasicDetailId);
         public Task<List<DTOICardTypeRequest>> GetAllICardType();
         public Task<BasicDetail?> FindServiceNo(string ServiceNo);
+        public Task<List<ICardHistoryResponse>> ICardHistory(int RequestId);
     }
 }

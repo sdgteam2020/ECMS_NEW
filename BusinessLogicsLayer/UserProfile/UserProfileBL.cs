@@ -54,5 +54,10 @@ namespace BusinessLogicsLayer.Master
         {
             return _iUserProfileDB.GetByRequestId(RequestId);
         }
+
+        public Task<List<DTOFwdICardResponse>> GetOffrsByUnitMapId(int UnitId)
+        {
+            return _iUserProfileDB.GetOffrsByUnitMapId(UnitId);
+        }
     }
 }

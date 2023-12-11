@@ -360,5 +360,20 @@ namespace DataAccessLayer
 
             return null;
         }
+
+        public async Task<List<DTOFwdICardResponse>> GetOffrsByUnitMapId(int UnitId)
+        {
+            string query = "Select trndomain.AspNetUsersId,ISNULL(usep.UserId,0) UserId,users.DomainId,usep.ArmyNo,usep.Name from TrnDomainMapping trndomain" +
+              " inner join AspNetUsers users on trndomain.AspNetUsersId=users.Id" +
+              " inner join MapUnit mapu on mapu.UnitMapId=trndomain.UnitId" +
+              " inner join UserProfile usep on usep.UserId=trndomain.UserId" +
+              " where trndomain.UnitId =@UnitId";
+            using (var connection = _contextDP.CreateConnection())
+            {
+                var BasicDetailList = await connection.QueryAsync<DTOFwdICardResponse>(query, new { UnitId });
+
+                return BasicDetailList.ToList();
+            }
+        }
     }
 }

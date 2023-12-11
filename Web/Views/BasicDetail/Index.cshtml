@@ -1,4 +1,5 @@
 ﻿@model List<BasicDetailVM>
+
 <div class="container1 mt-4">
     <div class="card mb-3 ">
         <div class="card-header">
@@ -23,7 +24,7 @@
                                     <th>@Html.DisplayNameFor(model => model[0].ServiceNo)</th>
                                     <th>@Html.DisplayNameFor(model => model[0].DOB)</th>
                                @*      <th>@Html.DisplayNameFor(model => model[0].DateOfCommissioning)</th> *@
-                                    <th>@Html.DisplayNameFor(model => model[0].PermanentAddress)</th>
+                                    <th>Address</th>
                                     
                                     <th>@Html.DisplayNameFor(model => model[0].ICardType)</th>
                                     <th>History</th>
@@ -42,32 +43,37 @@
                                         <td>@item.PermanentAddress</td>
                                         @* <td>@item.Registration.Name </td> *@
                                         <td>@item.ICardType</td>
-                                        <td><button class="btn btn-icon btn-round btn-primary mr-1 historyRequest"><i class="fa fa-history" aria-hidden="true"></i></button></td>
+                                        <td><button class="btn btn-icon btn-round btn-primary mr-1 historyRequest" data-toggle="tooltip" data-placement="left" title="@item.Reject"><i class="fa fa-history" aria-hidden="true"></i></button></td>
                                         <td class="noExport">
                                             <div class="d-flex p-2">
 
                                                 <a asp-controller="BasicDetail" asp-action="View" asp-route-Id="@item.EncryptedId" class="btn btn-icon btn-round btn-primary mr-1"><i class="fa fa-print mt-2"></i></a>
                                                 @if (ViewBag.Id == 1)
                                                 {
-                                                    <a asp-controller="BasicDetail" asp-action="BasicDetail" asp-route-Id="@item.EncryptedId" class="btn btn-icon btn-round btn-warning mr-1"><i class="fas fa-edit mt-2"></i></a>
+                                                    @if (item.StepCounter ==1)
+                                                    {
+                                                        <a asp-controller="BasicDetail" asp-action="BasicDetail" asp-route-Id="@item.EncryptedId" class="btn btn-icon btn-round btn-warning mr-1"><i class="fas fa-edit mt-2"></i></a>
 
-                                                    <form method="post" asp-controller="BasicDetail" asp-action="delete" asp-route-Id="@item.EncryptedId">
-                                                        <span id="confirmDeleteSpan_@item.BasicDetailId" style="display:none">
-                                                            <span>Are you sure you want to delete ?</span>
-                                                            <button type="submit" class="btn btn-danger">Yes</button>
-                                                            <a href="#" class="btn btn-primary" onclick="confirmDelete('@item.BasicDetailId',false)">No</a>
-                                                        </span>
-                                                        <span id="deleteSpan_@item.BasicDetailId">
-                                                            <a href="#" class="btn btn-icon btn-round btn-danger mr-1" onclick="confirmDelete('@item.BasicDetailId',true)"><i class="fas fa-trash-alt m-2"></i></a>
-                                                        </span>
-                                                    </form>
+                                                        <form method="post" asp-controller="BasicDetail" asp-action="delete" asp-route-Id="@item.EncryptedId">
+                                                            <span id="confirmDeleteSpan_@item.BasicDetailId" style="display:none">
+                                                                <span>Are you sure you want to delete ?</span>
+                                                                <button type="submit" class="btn btn-danger">Yes</button>
+                                                                <a href="#" class="btn btn-primary" onclick="confirmDelete('@item.BasicDetailId',false)">No</a>
+                                                            </span>
+                                                            <span id="deleteSpan_@item.BasicDetailId">
+                                                                <a href="#" class="btn btn-icon btn-round btn-danger mr-1" onclick="confirmDelete('@item.BasicDetailId',true)"><i class="fas fa-trash-alt m-2"></i></a>
+                                                            </span>
+                                                        </form>
+                                                    }
                                                     <spna class="spnBasicDetailId d-none">@item.BasicDetailId</spna>
                                                     <spna class="spnRequestId d-none">@item.RequestId</spna>
                                                     <spna class="spnStepCounterId d-none">@item.StepCounter</spna>
                                                     <spna class="spnStepId d-none">@item.StepId</spna>
-                                                    @if (item.StepCounter>1)
+                                                    @if (item.StepCounter>=2)
                                                     {
-                                                        <button class="btn btn-danger mr-1">Processed</button>
+                                                        <span class="badge rounded-pill bg-light text-primary mt-3">Processed</span>
+
+                                                        
 
                                                     }
                                                     else
@@ -78,8 +84,9 @@
                                                         }
                                                         else
                                                         {
-                                                            <button class="btn btn-primary mr-1" data-toggle="tooltip" data-placement="left" title="@item.Reject">Rejected</button>
-                                                            
+                                                          
+                                                            <span class="badge rounded-pill bg-light text-danger mt-3" data-toggle="tooltip" data-placement="left" title="@item.Reject">Rejected</span>
+                                                            <button class="btn btn-icon btn-round btn-primary mr-1 fwdrecord"><i class="fa fa-step-forward"></i></button>
                                                         }
 
                                                     }
@@ -103,4 +110,5 @@
     <script asp-src-include="~/js/CustomScript.js"></script>
     <script asp-src-include="~/developerjs/fwdrecord.js"></script>
     <script asp-src-include="~/developerjs/token.js"></script>
+    <script src="~/developerjs/mtables.js"></script>
 }

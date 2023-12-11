@@ -21,7 +21,7 @@ using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace DataAccessLayer
 {
-    public class BasicDetailDB:GenericRepositoryDL<BasicDetail>,IBasicDetailDB
+    public class BasicDetailDB : GenericRepositoryDL<BasicDetail>, IBasicDetailDB
     {
         protected readonly ApplicationDbContext _context;
         private readonly DapperContext _contextDP;
@@ -102,7 +102,7 @@ namespace DataAccessLayer
                 //}
 
             }
-            else if (TypeId == 1 || TypeId == 2)//IO
+            else if (TypeId == 1 || TypeId == 2 || TypeId == 3)//IO
             {
                 query = "SELECT B.RegistrationId,B.BasicDetailId,B.Name,B.ServiceNo,B.DOB,B.DateOfCommissioning,B.PermanentAddress,C.StepId StepCounter,C.Id StepId,ty.TypeId,ty.name ICardType,trnicrd.RequestId "+
                 " FROM BasicDetails B"+
@@ -121,7 +121,7 @@ namespace DataAccessLayer
             //               "inner join MMappingProfile mpro on mpro.UserId=pro.UserId " +
             //               "WHERE  mpro.GSOId = @UserId and C.Step = @stepcount ORDER BY B.UpdatedOn DESC";
             //}
-            else if (TypeId == 3)///MI-11
+            else if (TypeId == 4)///MI-11
             {
                 query = "SELECT B.RegistrationId,B.BasicDetailId,B.Name,B.ServiceNo,B.DOB,B.DateOfCommissioning,B.PermanentAddress,C.Step StepCounter,C.Id StepId,ty.TypeId ICardType,trnicrd.RequestId " + 
                             "FROM BasicDetails B "+
@@ -133,7 +133,7 @@ namespace DataAccessLayer
                             "inner join MUnit mUNI ON mUNI.UnitId = FWD.SusNo "+
                             "WHERE mUNI.UnitId = @UserId AND C.Step = @stepcount ORDER BY B.UpdatedOn DESC";
             }
-            else if (TypeId == 4)///Hq-54
+            else if (TypeId == 5)///Hq-54
             {
                 query = "SELECT B.RegistrationId,B.BasicDetailId,B.Name,B.ServiceNo,B.DOB,B.DateOfCommissioning,B.PermanentAddress,C.Step StepCounter,C.Id StepId,ty.TypeId ICardType,trnicrd.RequestId  FROM BasicDetails B " +
                            "inner join TrnICardRequest trnicrd on trnicrd.BasicDetailId = B.BasicDetailId " +
@@ -194,6 +194,34 @@ namespace DataAccessLayer
                 var BasicDetailList = await connection.QueryAsync<DTOBasicDetailsResponse>(query, new { BasicDetailId });
                 
                 return BasicDetailList.SingleOrDefault();
+            }
+        }
+
+        public async Task<List<ICardHistoryResponse>> ICardHistory(int RequestId)
+        {
+            string query = "select usersfrom.UserName FromDomain,profrom.Name FromProfile,ranlfrom.RankAbbreviation FromRank, " +
+            " usersto.UserName ToDomain,proto.Name ToProfile,ranlto.RankAbbreviation ToRank ,"+
+            " CASE fwd.Status WHEN 1 THEN 'Approved' WHEN 0 THEN 'Reject'  END Status,fwd.UpdatedOn,fwd.Remark,fwd.IsComplete from TrnFwds fwd " +
+            " inner join TrnStepCounter step"+
+            " on fwd.RequestId=step.RequestId"+
+            " inner join TrnDomainMapping mapfrom on mapfrom.AspNetUsersId=fwd.FromAspNetUsersId"+
+            " inner join AspNetUsers usersfrom on usersfrom.Id=mapfrom.AspNetUsersId"+
+            " inner join TrnDomainMapping mapto on mapto.AspNetUsersId=fwd.ToAspNetUsersId"+
+            " inner join AspNetUsers usersto on usersto.Id=mapto.AspNetUsersId"+
+            " left join UserProfile profrom"+
+            " on mapfrom.UserId=profrom.UserId"+
+            " inner join MRank ranlfrom on ranlfrom.RankId=profrom.RankId"+
+            " left join UserProfile proto"+
+            " on mapto.UserId=proto.UserId"+
+            " inner join MRank ranlto on ranlto.RankId=proto.RankId where fwd.RequestId=@RequestId" +
+            " order by fwd.TrnFwdId asc";
+            using (var connection = _contextDP.CreateConnection())
+            {
+                //data.MRank.RankAbbreviation
+                //data.MArmedType.Abbreviation
+                var BasicDetailList = await connection.QueryAsync<ICardHistoryResponse>(query, new { RequestId });
+
+                return BasicDetailList.ToList();
             }
         }
     }

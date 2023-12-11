@@ -155,3 +155,60 @@ function yeardata(sectid = '', ddl) {
 
     }
 }
+
+function GetAllOffsByUnitId(ddl, sectid) {
+    var userdata =
+    {
+        "id": 0,
+       
+
+    };
+    $.ajax({
+        url: '/UserProfile/GetOffrsByUnitMapId',
+        contentType: 'application/x-www-form-urlencoded',
+        data: userdata,
+        type: 'POST',
+
+        success: function (response) {
+            if (response != "null" && response != null) {
+                if (response == InternalServerError) {
+                    Swal.fire({
+                        text: errormsg
+                    });
+                }
+
+                else {
+
+                    var listItemddl = "";
+
+                    listItemddl += '<option value="">Please Offers</option>';
+
+                    for (var i = 0; i < response.length; i++) {
+                        listItemddl += '<option value="' + response[i].AspNetUsersId + '">' + response[i].Name + '</option>';
+                    }
+                    $("#" + ddl + "").html(listItemddl);
+
+                   
+                    if (sectid != '') {
+                        $("#" + ddl + "").val(sectid);
+
+                    }
+
+                    //}
+
+
+                }
+            }
+            else {
+                //Swal.fire({
+                //    text: "No data found Offrs"
+                //});
+            }
+        },
+        error: function (result) {
+            Swal.fire({
+                text: errormsg002
+            });
+        }
+    });
+}

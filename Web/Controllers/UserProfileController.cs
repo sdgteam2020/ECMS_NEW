@@ -166,6 +166,20 @@ namespace Web.Controllers
             }
 
         }
+        public async Task<IActionResult> GetOffrsByUnitMapId(int id)
+        {
+            try
+            {
+                //int DomainMapId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                int UnitId = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").UnitId;
+                return Json(await _userProfileBL.GetOffrsByUnitMapId(UnitId));
+            }
+            catch (Exception ex)
+            {
+                return Json(KeyConstants.InternalServerError);
+            }
+
+        }
         public async Task<IActionResult> GetByMasterArmyNo(string ArmyNo)
         {
             try

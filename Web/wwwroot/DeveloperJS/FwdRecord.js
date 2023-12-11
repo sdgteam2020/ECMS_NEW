@@ -6,8 +6,23 @@ $(document).ready(function () {
         dropdownParent: $('#BasicDetails'),
         closeOnSelect: false
     });
+    $('.select3').select2({
+        dropdownParent: $('#FwdRecord'),
+        closeOnSelect: false
+    });
+    GetAllOffsByUnitId("ddlfwdoffrs",0);
     $(".historyRequest").click(function () {
         $("#exampleModal").modal('show'); 
+        GetRequestHistory($(this).closest("tr").find(".spnRequestId").html());
+    });
+    $('#ddlfwdoffrs').on('change', function () {
+        $("#spnFwdToAspNetUsersId").html(0);
+        $("#spnFwdToUsersId").html(0);
+        $(".spnFArmyNo").html("");
+        $(".spnFtoname").html("");
+        $(".spnFDomainName").html("");
+
+        FwdData($('#ddlfwdoffrs').val());
     });
     $('#ddlPhotos').on('change', function () {
         photo= $('#ddlPhotos').val();
@@ -24,7 +39,17 @@ $(document).ready(function () {
         $("#BasicDetails").modal('hide');
         $("#FwdRecord").modal('show');
     });
-        $(".fwdrecord").click(function () {
+    $("input[name='Intoffrs']").change(function () {
+        $(".serchfwd").removeClass("d-none");
+
+        $("#spnFwdToAspNetUsersId").html(0);
+        $("#spnFwdToUsersId").html(0);
+        $(".spnFArmyNo").html("");
+        $(".spnFtoname").html("");
+        $(".spnFDomainName").html("");
+    });
+
+    $(".fwdrecord").click(function () {
         // ResetMapUnit();
         //alert($(this).closest("tr").find(".spnRequestId").html())
 
@@ -38,9 +63,13 @@ $(document).ready(function () {
         var spnRequestId = $(this).closest("tr").find(".spnRequestId").html();
         $("#spnCurrentspnRequestId").html(spnRequestId);
             spnStepId = $(this).closest("tr").find(".spnStepId").html();
-            
+           
             var StepCounter = $(this).closest("tr").find(".spnStepCounterId").html();
-            
+          
+            if (StepCounter == 1) {
+                $(".recectopt").addClass("d-none");
+               
+            }
             GetDataFromBasicDetails($(this).closest("tr").find(".spnBasicDetailId").html());
         if (StepCounter == 1) {
             $(".gsoio").html("IO");
@@ -472,6 +501,94 @@ function UpdateStepCounter(stepId, spnRequestId, Counter,Flag) {
                 } else {
                     ForwardTo(spnRequestId, Counter);
                 }
+            }
+        }
+
+    });
+}
+
+function GetRequestHistory(spnRequestId) {
+    var userdata =
+    {
+     
+        "RequestId": spnRequestId,
+      
+
+    };
+    var listItem = "";
+    $.ajax({
+        url: '/BasicDetail/GetRequestHistory',
+        contentType: 'application/x-www-form-urlencoded',
+        data: userdata,
+        type: 'POST',
+        success: function (response) {
+            if (response != "null" && response != null) {
+                if (response.length > 0) {
+                    for (var i = 0; i < response.length; i++) {
+                        if (i == 0) {
+                            listItem += '<div class="timeline-item">';
+                            listItem += '<div class="timeline-item-marker">';
+                            listItem += '<div class="timeline-item-marker-text "><span class="badge bg-success">' + DateFormateMM_dd_yyyy(response[i].UpdatedOn) + '</span></div>';
+                            listItem += '<div class="timeline-item-marker-indicator bg-primary"></div>';
+                            listItem += '</div>';
+                            listItem += '<div class="timeline-item-content">';
+                            listItem += 'I-Card Submit By -' + response[i].FromDomain + '(' + response[i].FromRank + ' ' + response[i].FromProfile + ')';
+
+                            listItem += '</div>';
+                            listItem += '</div>';
+                        }
+                        listItem += '<div class="timeline-item">';
+                        listItem += '<div class="timeline-item-marker">';
+
+                        if (response[i].Status == "Approved")
+                            listItem += '<div class="timeline-item-marker-text"><span class="badge bg-success">' + DateFormateMM_dd_yyyy(response[i].UpdatedOn) + '</span></div>';
+                        else
+                            listItem += '<div class="timeline-item-marker-text"><span class="badge bg-danger">' + DateFormateMM_dd_yyyy(response[i].UpdatedOn) + '</span></div>';
+
+
+                        listItem += '<div class="timeline-item-marker-indicator bg-primary"></div>';
+                        listItem += '</div>';
+                        listItem += '<div class="timeline-item-content">';
+
+
+                        listItem += '' + response[i].FromDomain + '(' + response[i].FromRank + ' ' + response[i].FromProfile + ')';
+                        if (response[i].Status == "Approved")
+                            listItem += '<br><span class="badge bg-success">' + response[i].Status + ' And Sent To</span>';
+                        else
+                            listItem += '<br><span class="badge bg-danger">' + response[i].Status + ' And Sent To</span>';
+
+                        listItem += '<br> <strong class="text-center">Remark</strong> <br>' + response[i].Remark + '';
+                        listItem += '<br><button type="button" class="btn btn-icon btn-round btn-light mr-1"><i class="fas fa-arrow-down"></i></button>'
+
+                        if (response[i].IsComplete == 0) {
+                            listItem += '<br><span class="badge bg-warning ">Pending from </span>';
+                        }
+                        listItem += '<br>' + response[i].ToDomain + '(' + response[i].ToRank + ' ' + response[i].ToProfile + ')';
+
+
+
+                        listItem += '</div>';
+                        listItem += '</div>';
+                    }
+                }
+                else {
+                    listItem += '<div class="timeline-item">';
+                    listItem += '<div class="timeline-item-marker">';
+                
+                   
+                    listItem += '</div>';
+                    listItem += '<div class="timeline-item-content">';
+                    listItem += 'I-Card Not Submited';
+
+                    listItem += '</div>';
+                    listItem += '</div>';
+
+                    $("#RequestHistory").html(listItem);
+                }
+               
+                $("#RequestHistory").html(listItem);
+            } else {
+                
             }
         }
 

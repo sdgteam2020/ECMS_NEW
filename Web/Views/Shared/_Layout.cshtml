@@ -65,7 +65,91 @@
             font-size: .925rem;
         }
     </style>
+    <style>
+        .select2-hidden-accessible {
+            border: 0 !important;
+            clip: rect(0 0 0 0) !important;
+            height: 1px !important;
+            margin: -1px !important;
+            overflow: hidden !important;
+            padding: 0 !important;
+            position: absolute !important;
+            width: 1px !important
+        }
 
+        .form-control {
+            display: block;
+            width: 100%;
+            height: 34px;
+            padding: 6px 12px;
+            font-size: 14px;
+            line-height: 1.42857143;
+            color: #555;
+            background-color: #fff;
+            background-image: none;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+            box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+            -webkit-transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
+            -o-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+            transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s
+        }
+
+        .select2-container--default .select2-selection--single,
+        .select2-selection .select2-selection--single {
+            border: 1px solid #d2d6de;
+            border-radius: 0;
+            padding: 6px 12px;
+            height: 34px
+        }
+
+        .select2-container--default .select2-selection--single {
+            background-color: #fff;
+            border: 1px solid #aaa;
+            border-radius: 4px
+        }
+
+        .select2-container .select2-selection--single {
+            box-sizing: border-box;
+            cursor: pointer;
+            display: block;
+            height: 28px;
+            user-select: none;
+            -webkit-user-select: none
+        }
+
+            .select2-container .select2-selection--single .select2-selection__rendered {
+                padding-right: 10px
+            }
+
+            .select2-container .select2-selection--single .select2-selection__rendered {
+                padding-left: 0;
+                padding-right: 0;
+                height: auto;
+                margin-top: -3px
+            }
+
+        .select2-container--default .select2-selection--single .select2-selection__rendered {
+            color: #444;
+            line-height: 28px
+        }
+
+        .select2-container--default .select2-selection--single,
+        .select2-selection .select2-selection--single {
+            border: 1px solid #d2d6de;
+            border-radius: 0 !important;
+            padding: 6px 12px;
+            height: 40px !important
+        }
+
+            .select2-container--default .select2-selection--single .select2-selection__arrow {
+                height: 26px;
+                position: absolute;
+                top: 6px !important;
+                right: 1px;
+                width: 20px
+    </style>
 </head>
 <body class="nav-fixed">
       <div id="loading" class="loader">
@@ -448,28 +532,14 @@
 
             <!-- partial -->
             <div class="main-panel">
-                @* <ul class="nav nav-tabs" style="background-color:#F8F8F8">
-                    <li class="nav-item">
-                        <a class="nav-link active" href="../Home/Dashboard">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Link</a>
-                    </li> *@
-                    @* <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Dropdown</a>
-                    <div class="dropdown-menu">
-                    <a class="dropdown-item" href="#">Action</a>
-                    <a class="dropdown-item" href="#">Another action</a>
-                    <a class="dropdown-item" href="#">Something else here</a>
-                    <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="#">Separated link</a>
-                    </div>
-                    </li> *@
-                    @*
-                    <li class="nav-item">
-                    <a class="nav-link disabled" href="#">Disabled</a>
-                    </li> *@
-                @* </ul> *@
+
+                <nav class="nav nav-pills nav-justified">
+                    <a class="nav-link active" aria-current="page" href="#">DashBoard</a>
+                    <a class="nav-link" href="##">Task</a>
+                    <a class="nav-link" href="###">Status</a>
+                    
+                </nav>
+
                 <div class="content-wrapper">
                     <partial name="_Notification" />
                     @RenderBody()
@@ -754,10 +824,23 @@
                         <span id="spnStepCounter" class="d-none">0</span> 
                         <h5 class="card-title text-danger" id="ForwardDetails"></h5>
                         <div class="row HProfileDetails">
+                            <div class="form-group row mb-2">
+                                <label class="col-form-label col-sm-4">Select Offrs</label>
+                                <div class="col-sm-8">
+
+                                    <select class="form-control select3 select2-hidden-accessible" style="width: 100%;" tabindex="-1"
+                                            aria-hidden="true" name="fwdoffrs" required id="ddlfwdoffrs">
+                                        <option value="0">Select Offrs</option>
+                                       
+                                    </select>
+
+                                </div>
+
+                            </div>
                             <div class="form-group"> 
                                 <div class="col-sm-12">
                                 <div class="form-check form-check-inline">
-                                        <input class="form-check-input" checked type="radio" name="Intoffrs" id="intoffsArmyNo">
+                                        <input class="form-check-input" type="radio" name="Intoffrs" id="intoffsArmyNo">
                                     <label class="form-check-label" for="intoffsArmyNo">
                                             Army No
                                     </label>
@@ -776,7 +859,7 @@
                                     </div>
 
                             </div> </div>
-                            <div class="form-group row mb-2">
+                            <div class="form-group row mb-2 serchfwd d-none">
                                 <label class="col-form-label col-sm-4">Army No/Offrs Name/DomainId</label>
                                 <div class="col-sm-8">
 
@@ -860,10 +943,10 @@
                                                     @*  <div class="text-left"> <img src="~/images/rank/brigadier.svg" id="imgrank" height="100px" /></div> *@
                                                 </div>
                                             </div>
-                                    <div class="form-group row mb-0">
-                                        <label class="col-form-label  text-left">Select Rejection Reasons for Photos</label>
+                                    <div class="form-group row mb-0 recectopt">
+                                        <label class="col-form-label  text-left ">Select Rejection Reasons for Photos</label>
                                        
-                                        <select class="form-control select2 select2-accessible " multiple="" placeholder="Please select a Photos" style="width: 100%;" tabindex="-1" aria-hidden="true" name="Photos" required id="ddlPhotos">
+                                        <select class="form-control select2 select2-accessible" multiple="" placeholder="Please select a Photos" style="width: 100%;" tabindex="-1" aria-hidden="true" name="Photos" required id="ddlPhotos">
                                             <option value="0">Select Rejection Reasons for Photos</option>
                                             <option value="Reasons 1">Reasons 1</option>
                                             <option value="Reasons 2">Reasons 2</option>
@@ -874,12 +957,14 @@
                                         </div>
 
                                         <div class="content-block ">
-                                            <div class="form-group row mb-0">
+                                    <div class="form-group row mb-0 ">
                                                 <div class="col-12 text-center">
                                                     <img src="~/images/signature.png" width="200" height="100" id="Basicsing" class="border border-primary p-2" />
-                                            <label class="col-form-label  text-left">Select Rejection Reasons for Signature</label>
-                                               
-                                            <select class="form-control select2 select2-accessible " multiple="" placeholder="Please select a signature" style="width: 100%;" tabindex="-1" aria-hidden="true" name="signature" required id="ddlsignature">
+                                            <label class="col-form-label recectopt text-left ">Select Rejection Reasons for Signature</label>
+                                               </div>
+                                               </div>
+                                    <div class="form-group row mb-0 recectopt">
+                                        <select class="form-control select2 select2-accessible " multiple="" placeholder="Please select a signature" style="width: 100%;" tabindex="-1" aria-hidden="true" name="signature" required id="ddlsignature">
                                                     <option value="0">Select Rejection Reasons for Photos</option>
                                                     <option value="Reasons 1">Reasons 1</option>
                                                     <option value="Reasons 2">Reasons 2</option>
@@ -890,7 +975,7 @@
                                             </div>
 
                                         </div>
-                                    </div>
+                                   
                                    
                                 </div>
                                 <div class="col-md-8 mb-3">
@@ -991,7 +1076,7 @@
                                 </div>
 
                         <div class="col-md-12 mb-3">
-                            <div class="form-group row mb-0">
+                            <div class="form-group row mb-0 recectopt">
                                 <label class="col-form-label col-12 text-center">Remarks</label>
                                 <div class="col-12">
                                     <textarea class="form-control" id="txtFrejectedRemarks" rows="2"></textarea>
@@ -1020,18 +1105,18 @@
 </div>
 
 <div class="modal right fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-sm" role="document">
+    <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title" id="lblHistory">History</h4>
+                <h4 class="modal-title" id="lblHistory">I-Card History</h4>
             </div>
 
             <div class="modal-body">
                 <h5 class="text-center badge badge-success">Step Wise I Card Request History</h5>
-                <div class="timeline timeline-xs">
+                <div class="timeline timeline-xs" id="RequestHistory">
                     <!-- Timeline Item 1-->
-                    <div class="timeline-item">
+                    @* <div class="timeline-item">
                         <div class="timeline-item-marker">
                             <div class="timeline-item-marker-text">27 min</div>
                             <div class="timeline-item-marker-indicator bg-primary"></div>
@@ -1059,7 +1144,7 @@
                         <div class="timeline-item-content">
                             Reject From GSO
                         </div>
-                    </div>
+                    </div> *@
                    
                 </div>
             </div>

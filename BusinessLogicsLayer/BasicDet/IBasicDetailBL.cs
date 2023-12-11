@@ -16,6 +16,6 @@ namespace BusinessLogicsLayer.BasicDet
         public Task<List<DTOICardTypeRequest>> GetAllICardType();
         public Task<BasicDetail?> FindServiceNo(string ServiceNo);
         public Task<DTOBasicDetailsResponse> GetByBasicDetailsId(int BasicDetailId);
-      
+        public Task<List<ICardHistoryResponse>> ICardHistory(int RequestId);
     }
 }
