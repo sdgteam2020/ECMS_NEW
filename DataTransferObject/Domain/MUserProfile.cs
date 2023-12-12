@@ -13,17 +13,23 @@ namespace DataTransferObject.Domain
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int UserId { get; set; } 
+        public int UserId { get; set; }
+
         [Required]
-        public string ArmyNo { get; set; }
+        [StringLength(20)]
+        [Column(TypeName = "nvarchar(20)")]
+        public string ArmyNo { get; set; } = string.Empty;
         [Required]
         public int RankId { get; set; }
+        
         [Required]
-        public string Name { get; set; }
+        [StringLength(50)]
+        [Column(TypeName = "nvarchar(50)")]
+        public string Name { get; set; } = string.Empty;
 
-        //[ForeignKey("MAppointment")]
+        [ForeignKey("MAppointment")]
         [Required]
-        public int ApptId { get; set; }
+        public byte ApptId { get; set; }
         public MAppointment? MAppointment { get; set; }
         // [Required]
         //public int UnitId { get; set; }

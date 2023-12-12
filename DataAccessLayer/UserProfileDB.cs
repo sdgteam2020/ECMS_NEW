@@ -38,6 +38,43 @@ namespace DataAccessLayer
             var ret = _context.UserProfile.Where(P=>P.ArmyNo.ToUpper().Contains(ArmyNo.ToUpper())).ToList();
             return ret;
         }
+        public async Task<DTOProfileResponse> CheckArmyNoInUserProfile(string ArmyNo, int AspNetUsersId)
+        {
+            DTOProfileResponse dTOProfileResponse = new DTOProfileResponse();
+            MUserProfile? mUserProfile = await _context.UserProfile.FirstOrDefaultAsync(x=>x.ArmyNo== ArmyNo);
+            if(mUserProfile!=null)
+            {
+                TrnDomainMapping? trnDomainMapping = await _context.TrnDomainMapping.FirstOrDefaultAsync(x => x.UserId == mUserProfile.UserId);
+                if(trnDomainMapping!=null)
+                {
+                    if(trnDomainMapping.AspNetUsersId != AspNetUsersId)
+                    {
+                        dTOProfileResponse.success = false;
+                        dTOProfileResponse.message = "Relief yourself from existing domain mapping";
+                        return dTOProfileResponse;
+                    }
+                    else
+                    {
+                        dTOProfileResponse.success = true;
+                        return dTOProfileResponse;
+                    }
+
+                }
+                else
+                {
+                    dTOProfileResponse.success = false;
+                    dTOProfileResponse.message = "Your Profile not mapping";
+                    return dTOProfileResponse;
+                }
+
+            }
+            else
+            {
+                dTOProfileResponse.success = true;
+                return dTOProfileResponse;
+            }
+
+        }
         public async Task<DTOUserProfileResponse> GetByArmyNo(string ArmyNo, int UserId)
         {
            // return _context.UserProfile.Where(P => P.ArmyNo == ArmyNo).SingleOrDefault();

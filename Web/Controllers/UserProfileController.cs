@@ -6,6 +6,7 @@ using DataTransferObject.Domain;
 using DataTransferObject.Domain.Master;
 using DataTransferObject.Domain.Model;
 using DataTransferObject.Requests;
+using DataTransferObject.Response;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using Web.WebHelpers;
@@ -204,6 +205,12 @@ namespace Web.Controllers
                 return Json(KeyConstants.InternalServerError);
             }
 
+        }
+        public async Task<IActionResult> CheckArmyNoInUserProfile(string ArmyNo)
+        {
+            int userid = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+            DTOProfileResponse dTOProfileResponse = await _userProfileBL.CheckArmyNoInUserProfile(ArmyNo, userid);
+            return Json(dTOProfileResponse);
         }
 
     }

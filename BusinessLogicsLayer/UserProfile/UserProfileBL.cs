@@ -54,5 +54,9 @@ namespace BusinessLogicsLayer.Master
         {
             return _iUserProfileDB.GetByRequestId(RequestId);
         }
+        public Task<DTOProfileResponse> CheckArmyNoInUserProfile(string ArmyNo, int AspNetUsersId)
+        {
+            return _iUserProfileDB.CheckArmyNoInUserProfile(ArmyNo, AspNetUsersId);
+        }
     }
 }
