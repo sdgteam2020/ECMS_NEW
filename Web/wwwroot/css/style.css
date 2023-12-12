@@ -22108,6 +22108,7 @@ i-feather {
     box-shadow: 0 3.21px 7.21px 0 rgba(0,0,0,.13), 0 0.6px 1.8px 0 rgba(0,0,0,.10);
     border-width: 0;
     transition: all .2s;
+
 }
 
 .card-header {
@@ -22164,7 +22165,7 @@ i-feather {
     text-align: center;
     font-weight: 900;
     content: "\f067";
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: 'Font Awesome\ 5 Free';
     color: #E91E63;
     font-size: 12px;
     width: 30px;

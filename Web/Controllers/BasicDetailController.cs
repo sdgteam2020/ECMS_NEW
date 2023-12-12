@@ -66,17 +66,43 @@ namespace Web.Controllers
             this.iTrnICardRequestBL = iTrnICardRequestBL;
             this.iDomainMapBL = iDomainMapBL;
         }
-        
+
         [Authorize(Roles = "Admin,User")]
-        public async Task<ActionResult> Index(int Id)
+        public async Task<ActionResult> Index(string Id)
         {
-            var userId = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").UserId;
-            userId = 4;
-            int type = 0;
-            ViewBag.Id = Id;    
-            var allrecord = await Task.Run(()=> basicDetailBL.GetALLBasicDetail(Convert.ToInt32(userId), Id, type)) ;
+            int retint = 0;
+            var userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+            int stepcounter = 0;
+
+            if (!string.IsNullOrEmpty(Id))
+            { 
+            var base64EncodedBytes = System.Convert.FromBase64String(Id);
+            var ret = System.Text.Encoding.UTF8.GetString(base64EncodedBytes);
+            retint = Convert.ToInt32(ret);
+                stepcounter = retint;
+            }
+            ViewBag.Id = retint;
+            var allrecord = await Task.Run(()=> basicDetailBL.GetALLBasicDetail(Convert.ToInt32(userId),stepcounter , retint)) ;
             _logger.LogInformation(1001, "Index Page Of Basic Detail View");
-            ViewBag.Title = "List of Register I-Card";
+
+            if(retint==1)
+                  ViewBag.Title = "List of Register I-Card";
+            else if(retint == 2)
+                ViewBag.Title = "I-Card Pending From Io";
+            else if (retint == 22)
+                 ViewBag.Title = "I-Card Rejectd From Io";
+            else if(retint == 3)
+                ViewBag.Title = "I-Card Pending From GSO";
+            else if (retint == 33)
+                ViewBag.Title = "I-Card Rejectd From GSO";
+            else if (retint == 4)
+                ViewBag.Title = "I-Card Pending From MI 11";
+            else if (retint == 44)
+                ViewBag.Title = "I-Card Rejectd From MI 11";
+            else if (retint == 5)
+                ViewBag.Title = "I-Card Pending From HQ 54";
+            else if (retint == 44)
+                ViewBag.Title = "I-Card Rejectd From HQ 54";
             return View(allrecord);
         }
         [Authorize(Roles = "Admin,User")]

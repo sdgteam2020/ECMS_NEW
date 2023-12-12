@@ -14,6 +14,7 @@
     @* <meta http-equiv="content-security-policy"content="default-src 'none'; script-src 'self'; connect-src 'self'; img-src 'self'; style-src 'self' 'sha256-CwE3Bg0VYQOIdNAkbB/Btdkhul49qZuwgNCMPgNY5zw=';" /> *@
     <title>AFSAC</title>
     <link href="~/fonts/css/all.min.css" rel="stylesheet" />
+  
    @*  <link href="~/css/steps.min.css" rel="stylesheet" /> *@
     <link href="~/css/sidemenu/feather/feather.css" rel="stylesheet" />
     <link href="~/css/sidemenu/style.css" rel="stylesheet" />
@@ -21,7 +22,6 @@
     <link href="~/css/DashBoard.css" rel="stylesheet" />
     <link href="~/css/nunito.css" rel="stylesheet" />
     <link href="~/css/roboto.css" rel="stylesheet" />
-
     <link href="~/sweetalert2/sweetalert2.min.css" rel="stylesheet" />
     <link href="~/css/bootstrap-datetimepicker.min.css" rel="stylesheet" />
     <link href="~/datatables/dataTables.bootstrap4.min.css" rel="stylesheet" />
@@ -431,13 +431,12 @@
                             </a>
                             <div class="collapse show" id="ui-basic1">
                                 <ul class="nav flex-column sub-menu">
-                                    <li class="nav-item"> <a class="nav-link" href="/UserProfile/Profile">Add Profile</a></li>
+                                    <li class="nav-item"> <a class="nav-link " href="/UserProfile/Profile">Add Profile</a></li>
                                     <li class="nav-item"> <a class="nav-link" href="/BasicDetail/RequestType">Add Request</a></li>
-                                    <li class="nav-item"> <a class="nav-link" href="/BasicDetail/Index/1">ICard List</a></li>
-                                    <li class="nav-item"> <a class="nav-link" href="/BasicDetail/Index/2">ICard Pending From IO</a></li>
-                                    <li class="nav-item"> <a class="nav-link" href="/BasicDetail/Index/3">ICard Pending From GSO</a></li>
+                                    <li class="nav-item"> <a class="nav-link" href="/BasicDetail/Index/MQ==">ICard List</a></li>
+                                   
                                     <li class="nav-item"> <a class="nav-link" href="/BasicDetail/InaccurateData">Inaccurate List</a></li>
-                                    <li class="nav-item"> <a class="nav-link" href="/BasicDetail/Index/4">ICard Pending Form MI 11</a></li>
+                                  
                                 </ul>
                             </div>
 
@@ -533,10 +532,10 @@
             <!-- partial -->
             <div class="main-panel">
 
-                <nav class="nav nav-pills nav-justified">
-                    <a class="nav-link active" aria-current="page" href="#">DashBoard</a>
-                    <a class="nav-link" href="##">Task</a>
-                    <a class="nav-link" href="###">Status</a>
+                <nav class="nav nav-pills nav-justified" id="layouttask">
+                    <a class="nav-link Dashboard" aria-current="page" href="/Home/Dashboard">DashBoard</a>
+                    <a class="nav-link MyTask" href="/Home/MyTask">Task</a>
+                    <a class="nav-link Status" href="###">Status</a>
                     
                 </nav>
 
