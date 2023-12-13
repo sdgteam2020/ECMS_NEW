@@ -41,5 +41,10 @@ namespace BusinessLogicsLayer.BasicDet
         {
             return _iBasicDetailDB.ICardHistory(RequestId);
         }
+
+        public Task<List<BasicDetailVM>> GetALLForIcardSttaus(int UserId, int step, int type)
+        {
+            return _iBasicDetailDB.GetALLForIcardSttaus(UserId, step, type);
+        }
     }
 }

@@ -13,6 +13,7 @@ namespace BusinessLogicsLayer.BasicDet
     public interface IBasicDetailBL:IGenericRepository<BasicDetail>
     {
         public Task<List<BasicDetailVM>> GetALLBasicDetail(int UserId,int step,int type);
+        public Task<List<BasicDetailVM>> GetALLForIcardSttaus(int UserId,int step,int type);
         public Task<List<DTOICardTypeRequest>> GetAllICardType();
         public Task<BasicDetail?> FindServiceNo(string ServiceNo);
         public Task<DTOBasicDetailsResponse> GetByBasicDetailsId(int BasicDetailId);

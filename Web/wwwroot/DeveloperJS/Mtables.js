@@ -156,11 +156,11 @@ function yeardata(sectid = '', ddl) {
     }
 }
 
-function GetAllOffsByUnitId(ddl, sectid) {
+function GetAllOffsByUnitId(ddl, sectid,UnitId) {
     var userdata =
     {
         "id": 0,
-       
+        "UnitId": UnitId
 
     };
     $.ajax({

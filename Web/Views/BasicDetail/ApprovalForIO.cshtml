@@ -5,7 +5,7 @@
             <div class="row">
                 <div class="col-xl-12 text-left">
                     <h3>
-                        Approval For Io
+                        @ViewBag.Title
                         <small class="text-muted"></small>
                     </h3>
                 </div>
@@ -25,6 +25,7 @@
                                     <th>@Html.DisplayNameFor(model => model[0].DateOfCommissioning)</th>
                                     <th>@Html.DisplayNameFor(model => model[0].PermanentAddress)</th>
                                     <th>@Html.DisplayNameFor(model => model[0].ICardType)</th>
+                                    <th>History</th>
                                     <th class="noExport">Action</th>
                                 </tr>
                             </thead>
@@ -39,18 +40,20 @@
                                         <td>@item.DateOfCommissioning.ToString("dd/MMM/yyyy")</td>
                                         <td>@item.PermanentAddress</td>
                                         <td>@item.ICardType</td>
+                                        <td><button class="btn btn-icon btn-round btn-primary mr-1 historyRequest" data-toggle="tooltip" data-placement="left" title="@item.Remark"><i class="fa fa-history" aria-hidden="true"></i></button></td>
                                         <td class="noExport">
                                             <div class="d-flex p-2">
 
                                                 <a asp-controller="BasicDetail" asp-action="View" asp-route-Id="@item.EncryptedId" class="btn btn-icon btn-round btn-primary mr-1"><i class="fa fa-print mt-2"></i></a>
-                                                @if (item.StepCounter == 2 || item.StepCounter == 3 || item.StepCounter == 4)
+                                                <spna class="spnBasicDetailId d-none">@item.BasicDetailId</spna>
+                                                <spna class="spnRequestId d-none">@item.RequestId</spna>
+                                                <spna class="spnStepCounterId d-none">@item.StepCounter</spna>
+                                                <spna class="spnStepId d-none">@item.StepId</spna>
+                                                @if (ViewBag.Id == 1 && (item.StepCounter == 2 || item.StepCounter == 3 || item.StepCounter == 4 ))
                                                 {
-                                                    <spna class="spnBasicDetailId d-none">@item.BasicDetailId</spna>
-                                                    <spna class="spnRequestId d-none">@item.RequestId</spna>
-                                                    <spna class="spnStepCounterId d-none">@item.StepCounter</spna>
-                                                    <spna class="spnStepId d-none">@item.StepId</spna>
+                                                   
                                                     <button class="btn btn-primary mr-1 fwdrecord">Verify And Send</button>
-                                                    <button class="btn btn-danger mr-1 Rejectdrecord">Rejected</button>
+                                                    @* <button class="btn btn-danger mr-1 Rejectdrecord">Rejected</button> *@
                                                 }
                                             </div>
 

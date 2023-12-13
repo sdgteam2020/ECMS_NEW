@@ -152,12 +152,14 @@ namespace Web.Controllers
             }
 
         }
-        public async Task<IActionResult> GetDataForFwd(string Name,int TypeId, int StepId)
+        public async Task<IActionResult> GetDataForFwd(string Name,int TypeId, int StepId,int UnitId)
         {
             try
             {
                 //int DomainMapId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-                int UnitId=SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").UnitId;
+                if(UnitId==0)
+                 UnitId=SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").UnitId;
+
                 return Json(await _userProfileBL.GetDataForFwd(StepId, UnitId, Name, TypeId));
             }
             catch (Exception ex)
@@ -166,13 +168,20 @@ namespace Web.Controllers
             }
 
         }
-        public async Task<IActionResult> GetOffrsByUnitMapId(int id)
+        public async Task<IActionResult> GetOffrsByUnitMapId(int id,int UnitId)
         {
             try
             {
                 //int DomainMapId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-                int UnitId = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").UnitId;
-                return Json(await _userProfileBL.GetOffrsByUnitMapId(UnitId));
+                if(UnitId==0)
+                {
+                     UnitId = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").UnitId;
+                    return Json(await _userProfileBL.GetOffrsByUnitMapId(UnitId));
+                }
+                else
+                {
+                    return Json(await _userProfileBL.GetOffrsByUnitMapId(UnitId));
+                }
             }
             catch (Exception ex)
             {

@@ -43,7 +43,7 @@
                                         <td>@item.PermanentAddress</td>
                                         @* <td>@item.Registration.Name </td> *@
                                         <td>@item.ICardType</td>
-                                        <td><button class="btn btn-icon btn-round btn-primary mr-1 historyRequest" data-toggle="tooltip" data-placement="left" title="@item.Reject"><i class="fa fa-history" aria-hidden="true"></i></button></td>
+                                        <td><button class="btn btn-icon btn-round btn-primary mr-1 historyRequest" data-toggle="tooltip" data-placement="left" title="@item.Remark"><i class="fa fa-history" aria-hidden="true"></i></button></td>
                                         <td class="noExport">
                                             <div class="d-flex p-2">
 
@@ -53,7 +53,7 @@
                                                     <spna class="spnRequestId d-none">@item.RequestId</spna>
                                                     <spna class="spnStepCounterId d-none">@item.StepCounter</spna>
                                                     <spna class="spnStepId d-none">@item.StepId</spna>
-                                                   @if (item.StepCounter == 1 && ViewBag.Id == 1)
+                                                   @if (item.StepCounter == 1 && ViewBag.Id==1)
                                                     {
                                                         <a asp-controller="BasicDetail" asp-action="BasicDetail" asp-route-Id="@item.EncryptedId" class="btn btn-icon btn-round btn-warning mr-1"><i class="fas fa-edit mt-2"></i></a>
 
@@ -67,6 +67,8 @@
                                                                 <a href="#" class="btn btn-icon btn-round btn-danger mr-1" onclick="confirmDelete('@item.BasicDetailId',true)"><i class="fas fa-trash-alt m-2"></i></a>
                                                             </span>
                                                         </form>
+                                                        <button class="btn btn-icon btn-round btn-primary mr-1 fwdrecord"><i class="fa fa-step-forward"></i></button>
+                                                   
                                                     }
                                                    
                                                   
@@ -79,19 +81,13 @@
                                                     }
                                                     else
                                                     {
-                                                     @if (string.IsNullOrEmpty(item.Reject))
+                                                    @if (item.Reject==0)
                                                      {
-                                                        if (ViewBag.Id == 1)
-                                                        {
-                                                            <button class="btn btn-icon btn-round btn-primary mr-1 fwdrecord"><i class="fa fa-step-forward"></i></button>
-                                                        }
+
+                                                        <span class="badge rounded-pill bg-light text-danger mt-3" data-toggle="tooltip" data-placement="left" title="@item.Remark">Rejected</span>
+                                                         
                                                      }
-                                                        else
-                                                        {
-                                                          
-                                                            <span class="badge rounded-pill bg-light text-danger mt-3" data-toggle="tooltip" data-placement="left" title="@item.Reject">Rejected</span>
-                                                            <button class="btn btn-icon btn-round btn-primary mr-1 fwdrecord"><i class="fa fa-step-forward"></i></button>
-                                                        }
+                                                        
 
                                                     }
                                                 

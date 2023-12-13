@@ -25,6 +25,8 @@ using DataTransferObject.ViewModels;
 using System.Data.Entity;
 using BusinessLogicsLayer.BasicDet;
 using BusinessLogicsLayer.BasicDetTemp;
+using BusinessLogicsLayer.BdeCate;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Web.Controllers
 {
@@ -70,7 +72,7 @@ namespace Web.Controllers
         [Authorize(Roles = "Admin,User")]
         public async Task<ActionResult> Index(string Id)
         {
-            int retint = 0;
+            int retint = 0;int type = 1;
             var userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
             int stepcounter = 0;
 
@@ -82,60 +84,119 @@ namespace Web.Controllers
                 stepcounter = retint;
             }
             ViewBag.Id = retint;
-            var allrecord = await Task.Run(()=> basicDetailBL.GetALLBasicDetail(Convert.ToInt32(userId),stepcounter , retint)) ;
+
+            if (retint == 1)
+            {
+                ViewBag.Title = "List of Register I-Card";
+                // type = 2; stepcounter = 2;
+            }
+
+            else if (retint == 2)
+            { ViewBag.Title = "I-Card Pending From Io"; type = 2; stepcounter = 2; }
+            else if (retint == 22)
+            { ViewBag.Title = "I-Card Rejectd From Io"; type = 1; }
+            else if (retint == 222)
+            { ViewBag.Title = "I-Card Approved From Io"; type = 3; stepcounter = 2; }
+            else if (retint == 3)
+            {
+                ViewBag.Title = "I-Card Pending From GSO";
+                type = 2; stepcounter = 3;
+            }
+            else if (retint == 33)
+            {
+                ViewBag.Title = "I-Card Rejectd From GSO";
+                type = 1;
+            }
+            else if (retint == 333)
+            {
+                ViewBag.Title = "I-Card Approved From GSO";
+                type = 3; stepcounter = 4;
+            }
+            else if (retint == 4)
+            { ViewBag.Title = "I-Card Pending From MI 11"; type = 2; stepcounter = 4; }
+            else if (retint == 44)
+            { ViewBag.Title = "I-Card Rejectd From MI 11"; type = 1; }
+            else if (retint == 444)
+            { ViewBag.Title = "I-Card Approved From MI 11"; type = 3; stepcounter = 5; }
+            else if (retint == 5)
+            { ViewBag.Title = "I-Card Pending From HQ 54"; type = 2; stepcounter = 5; }
+            else if (retint == 55)
+            { ViewBag.Title = "I-Card Rejectd From HQ 54"; type = 1; }
+            else if (retint == 555)
+            { ViewBag.Title = "I-Card Approved From HQ 54"; type = 2; stepcounter = 5; }
+
+            var allrecord = await Task.Run(()=> basicDetailBL.GetALLForIcardSttaus(Convert.ToInt32(userId),stepcounter , type)) ;
             _logger.LogInformation(1001, "Index Page Of Basic Detail View");
 
-            if(retint==1)
-                  ViewBag.Title = "List of Register I-Card";
-            else if(retint == 2)
-                ViewBag.Title = "I-Card Pending From Io";
-            else if (retint == 22)
-                 ViewBag.Title = "I-Card Rejectd From Io";
-            else if(retint == 3)
-                ViewBag.Title = "I-Card Pending From GSO";
-            else if (retint == 33)
-                ViewBag.Title = "I-Card Rejectd From GSO";
-            else if (retint == 4)
-                ViewBag.Title = "I-Card Pending From MI 11";
-            else if (retint == 44)
-                ViewBag.Title = "I-Card Rejectd From MI 11";
-            else if (retint == 5)
-                ViewBag.Title = "I-Card Pending From HQ 54";
-            else if (retint == 44)
-                ViewBag.Title = "I-Card Rejectd From HQ 54";
+           
             return View(allrecord);
         }
         [Authorize(Roles = "Admin,User")]
-        public async Task<ActionResult> ApprovalForIO(int Id)
+        public async Task<ActionResult> ApprovalForIO(string Id)
         {
-            int type = 0;
+            int type = 0; int retint = 0; int stepcounter = 0;
             var userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier)); //SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").UserId;
-            if (Id == 22)
+            if (!string.IsNullOrEmpty(Id))
             {
-                Id = 2;
-                type = 2;
-            }
-            else if (Id == 33)
-            {
-                Id = 3;
-                type = 3;
-            }
-            else if (Id == 44)
-            {
-                Id = 4;
-                type = 4;
-                userId = 101;
-            }
-            else if (Id == 55)
-            {
-                Id = 5;
-                type = 5;
-                userId = 29;
+                var base64EncodedBytes = System.Convert.FromBase64String(Id);
+                var ret = System.Text.Encoding.UTF8.GetString(base64EncodedBytes);
+                retint = Convert.ToInt32(ret);
+                stepcounter = retint;
             }
 
-            var allrecord = await Task.Run(() => basicDetailBL.GetALLBasicDetail(Convert.ToInt32(userId), Id, type));
+
+
+            if (retint == 1)
+                ViewBag.Title = "List of Register I-Card";
+            else if (retint == 2)
+            {
+                ViewBag.Title = "I-Card For Approval";
+                ViewBag.Id = 1;
+                type = 2;
+            }
+            else if (retint == 22)
+            {
+                ViewBag.Title = "Rejectd I-Card ";
+                type = 1;
+
+            }
+            else if (retint == 222)
+            {
+                ViewBag.Title = "Approved I-Card ";
+                type = 3; stepcounter = 3;
+            }
+
+            else if (retint == 3)
+            {
+                ViewBag.Title = "I-Card For Approval";
+                type = 2;
+                ViewBag.Id = 1; 
+            }
+            else if (retint == 33)
+            {
+                ViewBag.Title = "Rejectd I-Card ";
+                type = 1;
+            }
+            else if (retint == 333)
+            {
+                ViewBag.Title = "Approved I-Card "; type = 3; stepcounter = 4;
+            }
+            else if (retint == 4)
+            { ViewBag.Title = "I-Card For Approval"; type = 2; ViewBag.Id = 1; }
+            else if (retint == 44)
+            { ViewBag.Title = "Rejectd I-Card "; type = 1; }
+            else if (retint == 444)
+            { ViewBag.Title = "Approved I-Card "; type = 3; stepcounter = 5; }
+            else if (retint == 5)
+            { ViewBag.Title = "I-Card For Approval"; type = 2; ViewBag.Id = 1; }
+            else if (retint == 55)
+            { ViewBag.Title = "Rejectd I-Card "; type = 1; }
+            else if (retint == 555)
+            { ViewBag.Title = "Approved I-Card "; type = 3; stepcounter = 6; }
+
+            var allrecord = await Task.Run(() => basicDetailBL.GetALLBasicDetail(Convert.ToInt32(userId), stepcounter, type));
             _logger.LogInformation(1001, "Index Page Of Basic Detail View");
-            ViewBag.Title = "List of Register I-Card";
+
             return View(allrecord);
         }
 

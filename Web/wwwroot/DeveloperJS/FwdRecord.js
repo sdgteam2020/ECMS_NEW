@@ -1,5 +1,6 @@
 ﻿var photo = "";
 var sing = "";
+var StepCounter = 0;
 $(document).ready(function () {
     var spnStepId = 0;
     $('.select2').select2({
@@ -10,7 +11,8 @@ $(document).ready(function () {
         dropdownParent: $('#FwdRecord'),
         closeOnSelect: false
     });
-    GetAllOffsByUnitId("ddlfwdoffrs",0);
+    
+    GetAllOffsByUnitId("ddlfwdoffrs",0,0);
     $(".historyRequest").click(function () {
         $("#exampleModal").modal('show'); 
         GetRequestHistory($(this).closest("tr").find(".spnRequestId").html());
@@ -21,7 +23,6 @@ $(document).ready(function () {
         $(".spnFArmyNo").html("");
         $(".spnFtoname").html("");
         $(".spnFDomainName").html("");
-
         FwdData($('#ddlfwdoffrs').val());
     });
     $('#ddlPhotos').on('change', function () {
@@ -30,10 +31,10 @@ $(document).ready(function () {
     $('#ddlsignature').on('change', function () {
         sing=$('#ddlsignature').val();
     });
-    $("#btnRejected").click(function () {
+    //$("#btnRejected").click(function () {
 
-        $("#txtFrejectedRemarks").val($("#txtFrejectedRemarks").val() + "" + photo + "" + sing);
-    });
+    //    $("#txtFrejectedRemarks").val($("#txtFrejectedRemarks").val() + "" + photo + "" + sing);
+    //});
     $("#btnShowForward").click(function () {
 
         $("#BasicDetails").modal('hide');
@@ -64,8 +65,8 @@ $(document).ready(function () {
         $("#spnCurrentspnRequestId").html(spnRequestId);
             spnStepId = $(this).closest("tr").find(".spnStepId").html();
            
-            var StepCounter = $(this).closest("tr").find(".spnStepCounterId").html();
-          
+        StepCounter = $(this).closest("tr").find(".spnStepCounterId").html();
+      
             if (StepCounter == 1) {
                 $(".recectopt").addClass("d-none");
                
@@ -81,18 +82,22 @@ $(document).ready(function () {
             $("#btnForward").html("Forward To GSO");
         }
         else if (StepCounter == 3) {
+            $(".chkforserach").addClass("d-none");
             $(".gsoio").html("MI 11");
             $("#btnForward").html("Forward To MI 11");
+            GetAllOffsByUnitId("ddlfwdoffrs", 0, 13);
         }
         else if (StepCounter == 4) {
+            $(".chkforserach").addClass("d-none");
             $(".gsoio").html("HQ 54");
             $("#btnForward").html("Forward To HQ 54");
+            GetAllOffsByUnitId("ddlfwdoffrs", 0, 11);
             }
-            if (StepCounter == 1) {
-                $("#btnRejected").addClass("d-none");
+            //if (StepCounter == 1) {
+            //    $("#btnRejected").addClass("d-none");
                 
                 
-            }
+            //}
        // GetForwardHHierarchy($(this).closest("tr").find(".ServiceNo").html(), StepCounter , spnRequestId)
        
     });
@@ -107,7 +112,7 @@ $(document).ready(function () {
             } else if ($("#intoffDomainId").prop("checked")) {
                 TypeId = 3;
             }
-            var param = { "Name": request.term, "TypeId": TypeId,"StepId":1 };
+            var param = { "Name": request.term, "TypeId": TypeId, "StepId": 1, "UnitId": 0 };
            
             $("#spnFwdToAspNetUsersId").html(0);
             $.ajax({
@@ -167,6 +172,8 @@ $(document).ready(function () {
     });
 
     $("#btnRejected").click(function () {
+
+        $("#txtFrejectedRemarks").val($("#txtFrejectedRemarks").val() + "" + photo + "" + sing);
         Swal.fire({
             title: 'Are you sure?',
             text: "You won't be Forward!",
@@ -180,9 +187,11 @@ $(document).ready(function () {
                 var spnRequestId = $("#spnCurrentspnRequestId").html();
                 var Counter = 1;
 
+                if ($("#txtFrejectedRemarks").val()!="")
 
-                UpdateStepCounter(spnStepId, spnRequestId, Counter,"R");
-
+                    UpdateStepCounter(spnStepId, spnRequestId, Counter, "R");
+                else
+                    toastr.error('Please Enter Remarks To Reject');
 
             }
         })
@@ -311,7 +320,13 @@ function FwdData(AspNetUsersId) {
     });
 }
 function GetProfiledetailsByAspNetuserid(AspNetUsersId) {
-    var param = { "Name": AspNetUsersId, "TypeId": 0 };
+    var param = "";
+    if (StepCounter==3)
+        var param = { "Name": AspNetUsersId, "TypeId": 0, "UnitId": 13 };
+   else if (StepCounter == 4)
+        var param = { "Name": AspNetUsersId, "TypeId": 0,"UnitId":11 };
+    else
+        var param = { "Name": AspNetUsersId, "TypeId": 0, "UnitId": 0 };
     $.ajax({
         url: '/UserProfile/GetDataForFwd',
         contentType: 'application/x-www-form-urlencoded',
@@ -332,90 +347,90 @@ function GetProfiledetailsByAspNetuserid(AspNetUsersId) {
         }
     });
 }
-function GetForwardHHierarchy(ArmyNo, StepCounter, spnRequestId) {
+//function GetForwardHHierarchy(ArmyNo, StepCounter, spnRequestId) {
    
-    var userdata =
-    {
-        "StepId": StepCounter,
-        "RequestId": spnRequestId,
+//    var userdata =
+//    {
+//        "StepId": StepCounter,
+//        "RequestId": spnRequestId,
 
-    };
-    $.ajax({
-        url: '/UserProfile/GetDataForFwd',
-        contentType: 'application/x-www-form-urlencoded',
-        data: userdata,
-        type: 'POST',
+//    };
+//    $.ajax({
+//        url: '/UserProfile/GetDataForFwd',
+//        contentType: 'application/x-www-form-urlencoded',
+//        data: userdata,
+//        type: 'POST',
 
-        success: function (response) {
-            if (response != "null" && response != null) {
+//        success: function (response) {
+//            if (response != "null" && response != null) {
 
-                if (response == InternalServerError) {
-                    Swal.fire({
-                        text: errormsg
-                    });
-                }
-                else if (response == 0) {
+//                if (response == InternalServerError) {
+//                    Swal.fire({
+//                        text: errormsg
+//                    });
+//                }
+//                else if (response == 0) {
 
-                }
+//                }
 
-                else {
-                    $(".HProfileDetails").removeClass("d-none");
-                    $("#ForwardDetails").html("");
-                    $("#btnForward").removeClass("d-none");
-                    $("#spnCurrentspnRequestId").html(response.RequestId);
-                    //if (StepCounter == 1) {
-                    //    $(".spnFtoarmyno").html(response.IOArmyNo);
-                    //    $(".spnFtoname").html(response.IOName);
+//                else {
+//                    $(".HProfileDetails").removeClass("d-none");
+//                    $("#ForwardDetails").html("");
+//                    $("#btnForward").removeClass("d-none");
+//                    $("#spnCurrentspnRequestId").html(response.RequestId);
+//                    //if (StepCounter == 1) {
+//                    //    $(".spnFtoarmyno").html(response.IOArmyNo);
+//                    //    $(".spnFtoname").html(response.IOName);
 
 
-                    //    $("#spnFrom").html(response.UserId);
-                    //    $("#spnForwardTo").html(response.IOUserId);
-                    //    $("#spnFwssusno").html(0);
-                    //} else if (StepCounter == 2) {
-                    //    $(".spnFtoarmyno").html(response.GSOArmyNo);
-                    //    $(".spnFtoname").html(response.GSOName);
+//                    //    $("#spnFrom").html(response.UserId);
+//                    //    $("#spnForwardTo").html(response.IOUserId);
+//                    //    $("#spnFwssusno").html(0);
+//                    //} else if (StepCounter == 2) {
+//                    //    $(".spnFtoarmyno").html(response.GSOArmyNo);
+//                    //    $(".spnFtoname").html(response.GSOName);
 
-                    //    $("#spnFrom").html(response.IOUserId);
-                    //    $("#spnForwardTo").html(response.GSOUserId);
-                    //    $("#spnFwssusno").html(0);
-                    //}
-                    //else if (StepCounter == 3) {
+//                    //    $("#spnFrom").html(response.IOUserId);
+//                    //    $("#spnForwardTo").html(response.GSOUserId);
+//                    //    $("#spnFwssusno").html(0);
+//                    //}
+//                    //else if (StepCounter == 3) {
 
-                    //    $(".HProfileDetails").addClass("d-none");
-                    //    $("#spnFrom").html(response.GSOUserId);
-                    //    $("#spnFwssusno").html(101);
+//                    //    $(".HProfileDetails").addClass("d-none");
+//                    //    $("#spnFrom").html(response.GSOUserId);
+//                    //    $("#spnFwssusno").html(101);
 
-                    //}
-                    //else if (StepCounter == 4) {
+//                    //}
+//                    //else if (StepCounter == 4) {
 
-                    //    $(".HProfileDetails").addClass("d-none");
-                    //    $("#spnFrom").html(101);
-                    //    $("#spnForwardTo").html(29);
-                    //    $("#spnFwssusno").html(0);
+//                    //    $(".HProfileDetails").addClass("d-none");
+//                    //    $("#spnFrom").html(101);
+//                    //    $("#spnForwardTo").html(29);
+//                    //    $("#spnFwssusno").html(0);
 
-                    //}
-                }
-            }
-            else {
-                $(".HProfileDetails").addClass("d-none");
-                $("#btnForward").addClass("d-none");
-                $("#ForwardDetails").html("Please Add Self Profile");
+//                    //}
+//                }
+//            }
+//            else {
+//                $(".HProfileDetails").addClass("d-none");
+//                $("#btnForward").addClass("d-none");
+//                $("#ForwardDetails").html("Please Add Self Profile");
 
-                $(".spnFtoarmyno").html("");
-                $(".spnFtoname").html("");
-                $("#spnForwardTo").html(0);
-                $("#spnCurrentspnRequestId").html(0);
+//                $(".spnFtoarmyno").html("");
+//                $(".spnFtoname").html("");
+//                $("#spnForwardTo").html(0);
+//                $("#spnCurrentspnRequestId").html(0);
                
 
-            }
-        },
-        error: function (result) {
-            Swal.fire({
-                text: errormsg002
-            });
-        }
-    });
-}
+//            }
+//        },
+//        error: function (result) {
+//            Swal.fire({
+//                text: errormsg002
+//            });
+//        }
+//    });
+//}
 function ForwardTo(RequestId, HType) {
 
     var userdata =
