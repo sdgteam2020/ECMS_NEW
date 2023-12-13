@@ -49,20 +49,21 @@ namespace DataAccessLayer
                 {
                     if(trnDomainMapping.AspNetUsersId != AspNetUsersId)
                     {
-                        dTOProfileResponse.success = false;
+                        dTOProfileResponse.StatusCode = 3;
                         dTOProfileResponse.message = "Relief yourself from existing domain mapping";
                         return dTOProfileResponse;
                     }
                     else
                     {
-                        dTOProfileResponse.success = true;
+                        dTOProfileResponse.StatusCode = 4;
                         return dTOProfileResponse;
                     }
 
                 }
                 else
                 {
-                    dTOProfileResponse.success = false;
+                    dTOProfileResponse.StatusCode = 2;
+                    dTOProfileResponse.UserId = (int)(trnDomainMapping.UserId != null? trnDomainMapping.UserId:0);
                     dTOProfileResponse.message = "Your Profile not mapping";
                     return dTOProfileResponse;
                 }
@@ -70,7 +71,7 @@ namespace DataAccessLayer
             }
             else
             {
-                dTOProfileResponse.success = true;
+                dTOProfileResponse.StatusCode = 1;
                 return dTOProfileResponse;
             }
 

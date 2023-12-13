@@ -71,25 +71,11 @@
         appendTo: '#suggesstion-box'
     });
 });
-$("#btnfetchtoken").click(function () {
-    if ($("#txtArmyNo").val() != "") {
-        GetTokenDetailsFromUserConfig("FetchUniqueTokenDetails", "txtArmyNo");
-    }
-    else
-        toastr.error('Offrs Army No Not Blank!');
-});
 function Proceed() {
     let formId = '#msform';
     $.validator.unobtrusive.parse($(formId));
     if ($(formId).valid()) {
-        isResult = CheckICNumberInProfile("txtArmyNo");
-        if (isResult == true) {
-            SaveMapping();
-        }
-        else {
-            return false;
-        }
-
+        CheckICNumberInProfile("txtArmyNo");
     }
     else {
         toastr.error('Please fill required field.');
@@ -206,70 +192,6 @@ function Gotodashboard(ArmyNo) {
         }
     });
 }
-function GetTokenDetailsFromUserConfig(ApiId, txt) {
-
-    var examdata =
-    {
-        "ApiName": ApiId,
-
-    };
-    $.ajax({
-        url: '/ConfigUser/GetTokenDetails',
-        data: examdata,
-        type: 'POST',
-        contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
-        success: function (response) {
-
-            if (response != "null" && response != null) {
-                if (response == '') {
-                    $("#tokenmsg").html('<div class="alert alert-danger alert-dismissible fade show "><i class="fa fa-times" aria-hidden="true"></i><span class="m-lg-2">DGIS Application Not Running</span>.</div>');
-                    $("#" + txt).val("");
-                }
-
-                else if (response[0].Status == '200') {///&& response[0].TokenValid=='true'
-                    // $("#error-msg").html(response.message);
-                    var datef2 = new Date();
-                    if (response[0].ValidTo >= datef2) {
-                        $("#tokenmsg").html('<div class="alert alert-danger alert-dismissible fade show "><i class="fa fa-times" aria-hidden="true"></i><span class="m-lg-2">Token Expired</span>.</div>');
-                        $("#" + txt).val("");
-
-                    }
-                    else {
-                        $("#tokenmsg").html('<div class="alert alert-success alert-dismissible fade show "><i class="fa fa-check " aria-hidden="true"></i><span class="m-lg-2">Token Detected </span></div>');
-                        if (response[0].ArmyNo = "7f33df8ac6540b5cf7ccfd041d8c837641226444d9f1a4aa30a01924c0610996") {
-                            
-                            isResult = CheckICNumberInProfile(txt);
-                            if (isResult) {
-                                $("#" + txt).val("IC-00100");
-                            }
-                            //$("#" + txt).val("IC-00002");
-                        }
-                    }
-
-
-                }
-                else {
-                    if (response[0].Status == '404') {
-                        //$("#error-msg").html(response.message);
-                        $("#tokenmsg").html('<div class="alert alert-danger alert-dismissible fade show "><i class="fa fa-times" aria-hidden="true"></i><span class="m-lg-2">' + response[0].Remarks + '</span>.</div>');
-                        $("#" + txt).val("");
-                        $("#" + txt).val("IC-00005");
-                    }
-
-
-                }
-            }
-            else {
-                $("#tokenmsg").html(errormsg001);
-                return 0;
-            }
-        },
-        error: function (result) {
-            $("#tokenmsg").html(errormsg002);
-            return 0;
-        }
-    });
-}
 function CheckICNumberInProfile(txt) {
     $.ajax({
         url: "/UserProfile/CheckArmyNoInUserProfile",
@@ -278,14 +200,17 @@ function CheckICNumberInProfile(txt) {
             "ArmyNo": $("#" + txt).val()
         },
         success: function (response, status) {
-            alert(JSON.stringify(response));
-            if (response.success == false) {
-                toastr.error(response.message);
-                return false;
+
+            if (response.StatusCode == 1) {
+                SaveMapping();
             }
-            else {
-                return true;
+            else if (response.StatusCode == 2) {
+                toastr.error(response.message);
+                $("#UserId").val(response.UserId);
+            }
+            else if (response.StatusCode == 3) {
+                toastr.error(response.message);
             }
         }
-    });   
+    });  
 }

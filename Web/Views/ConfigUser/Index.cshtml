@@ -1,5 +1,7 @@
 ﻿@{
     Layout = null;
+    TrnDomainMapping trnDomainMapping = new TrnDomainMapping();
+    DTOMapUnitResponse dTOMapUnitResponse = new DTOMapUnitResponse();
 }
 <!DOCTYPE html>
 
@@ -83,9 +85,20 @@
                     <div class="row">
                         <div class="col-md-12 mx-0">
                             <form id="msform">
+                                <input hidden type="number" name="UserId" id="UserId"/>
+                                @if (ViewBag.TrnDomain!=null)
+                                {
+                                    trnDomainMapping = ViewBag.TrnDomain;
+@*                                     TrnDomainMapping trnDomainMappingVB = ViewBag.TrnDomain;
+                                    trnDomainMapping.Id = trnDomainMappingVB.Id;
+                                    trnDomainMapping.UnitId = trnDomainMappingVB.UnitId;
+                                    trnDomainMapping.AspNetUsersId = trnDomainMappingVB.AspNetUsersId; *@
+                                }
+                                @if (ViewBag.TrnDomain!=null)
+                                {
+                                    dTOMapUnitResponse = ViewBag.TrnDomain;
+                                }
 
-                               
-                              
                                     <div class="form-card">
                                         <div class="card-sigin">
                                             <div class="main-signup-header login-form">
@@ -197,7 +210,14 @@
                                                         <label class="col-form-label col-sm-4">Unit Name</label>
                                                         <div class="col-sm-6">
                                                             <i class="fas fa-asterisk mand"></i>
-                                                            <input class="form-control Alphanumeric" placeholder="Enter Unit" id="txtProUnit" name="txtProUnit" title="Only Alphabets and Numbers allowed" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="Unit is required." data-val-regex-pattern="^[a-zA-Z0-9 ]*$" />
+                                                            @if (dTOMapUnitResponse.UnitId > 0)
+                                                            {
+                                                                <input class="form-control Alphanumeric" placeholder="Enter Unit" id="txtProUnit" name="txtProUnit" title="Only Alphabets and Numbers allowed" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="Unit is required." data-val-regex-pattern="^[a-zA-Z0-9 ]*$" value="@dTOMapUnitResponse.UnitName" />
+                                                            }
+                                                            else
+                                                            {
+                                                                <input class="form-control Alphanumeric" placeholder="Enter Unit" id="txtProUnit" name="txtProUnit" title="Only Alphabets and Numbers allowed" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="Unit is required." data-val-regex-pattern="^[a-zA-Z0-9 ]*$" />
+                                                            }
                                                             <span class="text-danger field-validation-valid" data-valmsg-for="txtProUnit" data-valmsg-replace="true"></span>
                                                         </div>
                                                         <div class="col-sm-2">

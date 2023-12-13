@@ -11,7 +11,7 @@ namespace DataTransferObject.Response
     {
         public int UserId { get; set; }
         public string ArmyNo { get; set; } = string.Empty;
-        public bool success { get; set; }
+        public int StatusCode { get; set; } 
         public string? message { get; set; }
 
     }

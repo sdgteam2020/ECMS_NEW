@@ -2,15 +2,18 @@
 using BusinessLogicsLayer.Bde;
 using BusinessLogicsLayer.Master;
 using BusinessLogicsLayer.Token;
+using BusinessLogicsLayer.Unit;
 using DapperRepo.Core.Constants;
 using DataTransferObject.Domain;
 using DataTransferObject.Domain.Identitytable;
 using DataTransferObject.Domain.Model;
 using DataTransferObject.Requests;
+using DataTransferObject.Response;
 using Humanizer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.Drawing;
 using System.Net;
 using System.Security.Claims;
@@ -25,12 +28,14 @@ namespace Web.Controllers
         private readonly IUserProfileBL _userProfileBL;
         private readonly UserManager<ApplicationUser> userManager;
         public readonly IDomainMapBL _iDomainMapBL;
-        public ConfigUserController(iGetTokenBL iGetTokenBL, IUserProfileBL userProfileBL, UserManager<ApplicationUser> userManager, IDomainMapBL domainMapBL)
+        public readonly IMapUnitBL _IMapUnitBL;
+        public ConfigUserController(iGetTokenBL iGetTokenBL, IUserProfileBL userProfileBL, UserManager<ApplicationUser> userManager, IDomainMapBL domainMapBL, IMapUnitBL mapUnitBL)
         {
             _iGetTokenBL=iGetTokenBL;
             _userProfileBL=userProfileBL;
             this.userManager=userManager;
-            _iDomainMapBL=domainMapBL;  
+            _iDomainMapBL=domainMapBL;
+            _IMapUnitBL=mapUnitBL;
         }
         public async Task<IActionResult> IndexAsync()
         {
@@ -42,10 +47,15 @@ namespace Web.Controllers
             TrnDomainMapping dTO = new TrnDomainMapping();
             dTO.AspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
             dTO = await _iDomainMapBL.GetByDomainIdbyUnit(dTO);
-            if (dTO==null || dTO.UserId ==null)
+            if (dTO==null)
             {
                 return View();
-
+            }
+            else if(dTO != null && dTO.UserId == null)
+            {
+                DTOMapUnitResponse dTOMapUnitResponse = await _IMapUnitBL.GetALLByUnitMapId(dTO.UnitId);
+                ViewBag.TrnDomain(dTOMapUnitResponse);
+                return View();
             }
             else 
             {
