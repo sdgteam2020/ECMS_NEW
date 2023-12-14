@@ -71,13 +71,35 @@
         appendTo: '#suggesstion-box'
     });
 });
+$("#btncheckarmyno").click(function () {
+        if ($("#txtArmyNo").val() != "")
+        {
+            $("#UserId").val("");
+            $("#txtName").val("");
+            $("#ddlProRank").val("");
+            $("#ddlProFormation").val("");
+            $('#ddlProAppointment').find('option').not(':first').remove();
+            $("#intoffsyes").prop("checked", false);
+            $("#intoffsno").prop("checked", false);
+
+            CheckICNumberInProfile("txtArmyNo");
+        }
+        else
+            toastr.error('Offrs Army/Unit  No Not Blank!');
+    });
 function Proceed() {
     let formId = '#msform';
     $.validator.unobtrusive.parse($(formId));
     if ($(formId).valid()) {
-        CheckICNumberInProfile("txtArmyNo");
+        SaveMapping()
     }
     else {
+        Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'Please fill required field.',
+
+        })
         toastr.error('Please fill required field.');
         return false;
     }
@@ -87,6 +109,7 @@ function SaveMapping() {
     var examdata =
     {
         "UnitId": $("#spnUnitIdMap").html(),
+        "UserId": $("#UserId").val(),
         "ICNO": $("#txtArmyNo").val(),
     };
 
@@ -116,8 +139,10 @@ function SaveMapping() {
     });
 }
 function SaveProfile() {
+    alert($("#UserId").html())
     var profiledata =
     {
+        "UserId": $("#UserId").val(),
         "Name": $("#txtName").val(),
         "ArmyNo": $("#txtArmyNo").val(),
         "RankId": $("#ddlProRank").val(),
@@ -201,15 +226,35 @@ function CheckICNumberInProfile(txt) {
         },
         success: function (response, status) {
 
-            if (response.StatusCode == 1) {
-                SaveMapping();
-            }
-            else if (response.StatusCode == 2) {
-                toastr.error(response.message);
+            if (response.StatusCode == 2) {
+                Swal.fire({
+                    icon: 'info',
+                    title: response.Title,
+                    text: response.Message,
+
+                })
                 $("#UserId").val(response.UserId);
+                $("#txtName").val(response.Name);
+                $("#ddlProRank").val(response.RankId);
+                $("#ddlProFormation").val(response.FormationId);
+
+                mMsater(response.ApptId, "ddlProAppointment", Appt, response.FormationId);
+              
+                if (response.IntOffr == true) {
+                    $("#intoffsyes").prop("checked", true);
+                }
+                else {
+                    $("#intoffsno").prop("checked", true);
+                }
+
             }
-            else if (response.StatusCode == 3) {
-                toastr.error(response.message);
+            else if (response.StatusCode == 3) { 
+                Swal.fire({
+                    icon: 'error',
+                    title: response.Title,
+                    text: response.Message,
+
+                })
             }
         }
     });  

@@ -19,9 +19,12 @@ namespace DataTransferObject.Domain
         [StringLength(20)]
         [Column(TypeName = "nvarchar(20)")]
         public string ArmyNo { get; set; } = string.Empty;
-        [Required]
-        public int RankId { get; set; }
         
+        [Required]
+        [ForeignKey("MRank")]
+        public byte RankId { get; set; }
+        public MRank? MRank { get; set; }
+
         [Required]
         [StringLength(50)]
         [Column(TypeName = "nvarchar(50)")]

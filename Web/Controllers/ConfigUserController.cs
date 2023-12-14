@@ -54,7 +54,7 @@ namespace Web.Controllers
             else if(dTO != null && dTO.UserId == null)
             {
                 DTOMapUnitResponse dTOMapUnitResponse = await _IMapUnitBL.GetALLByUnitMapId(dTO.UnitId);
-                ViewBag.TrnDomain(dTOMapUnitResponse);
+                ViewBag.TrnDomain = dTOMapUnitResponse;
                 return View();
             }
             else 
@@ -164,7 +164,8 @@ namespace Web.Controllers
                         TrnDomainMapping trnDomainMapping = new TrnDomainMapping();
                         trnDomainMapping =await _iDomainMapBL.GetByDomainIdbyUnit(dTO);
                         trnDomainMapping.UnitId = dTO.UnitId;
-                       await _iDomainMapBL.Update(trnDomainMapping);
+                        trnDomainMapping.UserId = dTO.UserId!=null? dTO.UserId : null;
+                        await _iDomainMapBL.Update(trnDomainMapping);
 
 
                         TrnDomainMapping trnDomainMapping1 = new TrnDomainMapping();

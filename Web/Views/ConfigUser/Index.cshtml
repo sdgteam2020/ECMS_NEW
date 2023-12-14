@@ -85,15 +85,7 @@
                     <div class="row">
                         <div class="col-md-12 mx-0">
                             <form id="msform">
-                                <input hidden type="number" name="UserId" id="UserId"/>
-                                @if (ViewBag.TrnDomain!=null)
-                                {
-                                    trnDomainMapping = ViewBag.TrnDomain;
-@*                                     TrnDomainMapping trnDomainMappingVB = ViewBag.TrnDomain;
-                                    trnDomainMapping.Id = trnDomainMappingVB.Id;
-                                    trnDomainMapping.UnitId = trnDomainMappingVB.UnitId;
-                                    trnDomainMapping.AspNetUsersId = trnDomainMappingVB.AspNetUsersId; *@
-                                }
+                                <input hidden type="number" name="UserId" id="UserId" value="0"/>
                                 @if (ViewBag.TrnDomain!=null)
                                 {
                                     dTOMapUnitResponse = ViewBag.TrnDomain;
@@ -152,7 +144,7 @@
                                                         <label class="col-form-label col-sm-4">Formation<i class="fas fa-asterisk mand1"></i></label>
                                                         <div class="col-sm-8">
 
-                                                            <select class=" js-example-basic-single select2 form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddlProFormation" required id="ddlProFormation" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="Formation is required." data-val-regex-pattern="^[a-zA-Z0-9 ]*$">
+                                                            <select class="form-select" style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddlProFormation" required id="ddlProFormation" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="Formation is required." data-val-regex-pattern="^[a-zA-Z0-9 ]*$">
                                                                 <option value="0">Select Formation </option>
                                                             </select>
                                                             <span class="text-danger field-validation-valid" data-valmsg-for="ddlProFormation" data-valmsg-replace="true"></span>
@@ -164,7 +156,7 @@
                                                         <label class="col-form-label col-sm-4">Appt.<i class="fas fa-asterisk mand1"></i></label>
                                                         <div class="col-sm-8">
 
-                                                            <select class=" js-example-basic-single select2 form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddlProAppointment" id="ddlProAppointment" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="Appointment is required." data-val-regex-pattern="^[a-zA-Z0-9 ]*$">
+                                                            <select class="form-select" style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddlProAppointment" id="ddlProAppointment" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="Appointment is required." data-val-regex-pattern="^[a-zA-Z0-9 ]*$">
                                                                 <option value="0">Select Appointment </option>
                                                             </select>
                                                             <span class="text-danger field-validation-valid" data-valmsg-for="ddlProAppointment" data-valmsg-replace="true"></span>
@@ -206,7 +198,7 @@
                                                 </div>
                                                 <div class="col-xl-12 d-none1 text-left">
                                                     <div class="form-group row mb-2">
-                                                        <span id="spnUnitIdMap" class="d-none">0</span>
+                                                        <span id="spnUnitIdMap" class="d-none">@(dTOMapUnitResponse.UnitId > 0 ? dTOMapUnitResponse.UnitId : 0)</span>
                                                         <label class="col-form-label col-sm-4">Unit Name</label>
                                                         <div class="col-sm-6">
                                                             <i class="fas fa-asterisk mand"></i>
@@ -230,7 +222,7 @@
                                                         <label class="col-form-label col-sm-4">Sus No</label>
                                                         <div class="col-sm-6">
 
-                                                            <label id="lblProSusno" class="col-form-label"></label>
+                                                            <label id="lblProSusno" class="col-form-label">@(dTOMapUnitResponse.Sus_no != null ? dTOMapUnitResponse.Sus_no : "")</label>
                                                             @* <input class="form-control Alphanumeric" placeholder="Enter SUS No" id="txtProSusno" required pattern="^[a-zA-Z0-9 ]*$" maxlength="8" title="Only Alphabets and Numbers allowed" /> *@
                                                         </div>
                                                     </div>
@@ -239,7 +231,7 @@
                                                     <div class="form-group row mb-2">
                                                         <label class="col-form-label col-sm-4">Comd</label>
                                                         <div class="col-sm-8">
-                                                            <label class="col-form-label" id="lblProComd"></label>
+                                                            <label class="col-form-label" id="lblProComd">@(dTOMapUnitResponse.ComdName != null ? dTOMapUnitResponse.ComdName : "")</label>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -247,7 +239,7 @@
                                                     <div class="form-group row mb-2">
                                                         <label class="col-form-label col-sm-4">Corps</label>
                                                         <div class="col-sm-8">
-                                                            <label class="col-form-label" id="lblProCorps"></label>
+                                                            <label class="col-form-label" id="lblProCorps">@(dTOMapUnitResponse.CorpsName != null ? dTOMapUnitResponse.CorpsName : "")</label>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -255,7 +247,7 @@
                                                     <div class="form-group row mb-2">
                                                         <label class="col-form-label col-sm-4">Div</label>
                                                         <div class="col-sm-8">
-                                                            <label class="col-form-label" id="lblProDiv"></label>
+                                                            <label class="col-form-label" id="lblProDiv">@(dTOMapUnitResponse.DivName != null ? dTOMapUnitResponse.DivName : "")</label>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -263,7 +255,7 @@
                                                     <div class="form-group row mb-2">
                                                         <label class="col-form-label col-sm-4">Bde</label>
                                                         <div class="col-sm-8">
-                                                            <label class="col-form-label" id="lblPrBde"></label>
+                                                            <label class="col-form-label" id="lblPrBde">@(dTOMapUnitResponse.BdeName != null ? dTOMapUnitResponse.BdeName : "")</label>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -275,6 +267,9 @@
                                             <div class="col-md-12 text-center mb-4">
 
 
+                                                <button type="button" id="btncheckarmyno" class="btn btn-danger font-weight-600 btn-sm">
+                                                    Check Army No
+                                                </button>
                                                 <button type="button" id="btnfetchtoken" class="btn btn-danger font-weight-600 btn-sm">
                                                         Refresh to fetch Token Details
                                                     </button>

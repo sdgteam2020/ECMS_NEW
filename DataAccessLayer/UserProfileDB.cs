@@ -50,7 +50,8 @@ namespace DataAccessLayer
                     if(trnDomainMapping.AspNetUsersId != AspNetUsersId)
                     {
                         dTOProfileResponse.StatusCode = 3;
-                        dTOProfileResponse.message = "Relief yourself from existing domain mapping";
+                        dTOProfileResponse.Title = "You are already mapped to DID.";
+                        dTOProfileResponse.Message = "Pl handover the charge of already mapped previous DID- V to other person before registering again for Current DID";
                         return dTOProfileResponse;
                     }
                     else
@@ -62,9 +63,10 @@ namespace DataAccessLayer
                 }
                 else
                 {
+                    dTOProfileResponse = await GetByArmyNo(mUserProfile.UserId);
                     dTOProfileResponse.StatusCode = 2;
-                    dTOProfileResponse.UserId = (int)(trnDomainMapping.UserId != null? trnDomainMapping.UserId:0);
-                    dTOProfileResponse.message = "Your Profile not mapping";
+                    dTOProfileResponse.Title = "Your Profile details already exist in the Appl database.";
+                    dTOProfileResponse.Message = "Pl map myself to presently logged in?";
                     return dTOProfileResponse;
                 }
 
@@ -74,6 +76,41 @@ namespace DataAccessLayer
                 dTOProfileResponse.StatusCode = 1;
                 return dTOProfileResponse;
             }
+
+        }
+        public async Task<DTOProfileResponse> GetByArmyNo(int UserId)
+        {
+            // return _context.UserProfile.Where(P => P.ArmyNo == ArmyNo).SingleOrDefault();
+            try
+            {
+                var ret = await (from user in _context.UserProfile
+                                 join app in _context.MAppointment on user.ApptId equals app.ApptId
+                                 join forma in _context.MFormation on app.FormationId equals forma.FormationId
+                                 join rank in _context.MRank on user.RankId equals rank.RankId
+                                 join map in _context.TrnDomainMapping on user.UserId equals map.UserId into mapp
+                                 from xmapp in mapp.DefaultIfEmpty()
+                                 join Uni in _context.MUnit on xmapp.UnitId equals Uni.UnitId into muni
+                                 from xmuni in muni.DefaultIfEmpty()
+                                 where user.UserId == UserId 
+                                 select new DTOProfileResponse
+                                 {
+                                     ArmyNo = user.ArmyNo,
+                                     UserId = user.UserId,
+                                     Name = user.Name,
+                                     IntOffr = user.IntOffr,
+                                     FormationId = forma.FormationId,
+                                     FormationName = forma.FormationName,
+                                     ApptId = app.ApptId,
+                                     AppointmentName = app.AppointmentName,
+                                     RankId = rank.RankId,
+                                     RankName = rank.RankName,
+                                 }
+                         ).Distinct().SingleOrDefaultAsync();
+                return ret;
+
+            }
+            catch (Exception ex) { return null; }
+
 
         }
         public async Task<DTOUserProfileResponse> GetByArmyNo(string ArmyNo, int UserId)
