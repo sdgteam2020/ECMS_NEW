@@ -17,7 +17,7 @@ namespace DataTransferObject.Domain
         [Required]
         public string ArmyNo { get; set; }
         [Required]
-        public int RankId { get; set; }
+        public byte RankId { get; set; }
         [Required]
         public string Name { get; set; }
 

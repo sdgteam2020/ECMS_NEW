@@ -69,7 +69,7 @@ $(document).ready(function () {
       
             if (StepCounter == 1) {
                 $(".recectopt").addClass("d-none");
-               
+                $("#btnRejected").addClass("d-none");
             }
             GetDataFromBasicDetails($(this).closest("tr").find(".spnBasicDetailId").html());
         if (StepCounter == 1) {
