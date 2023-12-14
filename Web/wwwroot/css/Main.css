@@ -204,7 +204,7 @@
 .nav-pills {
     --bs-nav-pills-border-radius: var(--bs-border-radius);
     --bs-nav-pills-link-active-color: #000;
-    --bs-nav-pills-link-active-bg: #F5F7FF;
+    --bs-nav-pills-link-active-bg: #fff;
     margin-top: 10px;
     background-color: #F5F7FF;
 }
@@ -212,3 +212,16 @@
         background-color: #5b5b5b;
         color:#ffff
     }
+.tagline {
+    width: 100%;
+    text-align:center;
+    padding-left: 50px;
+    color: royalblue;
+    font-size: 30px;
+    font-weight: bold;
+}
+@media screen and (max-width:600px) {
+    .tagline {
+        font-size: 20px;
+    }
+}

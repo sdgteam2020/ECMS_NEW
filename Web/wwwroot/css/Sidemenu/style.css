@@ -15179,8 +15179,8 @@ dl li {
 }
 
 .nav-pills {
-  border-bottom: 1px solid #CED4DA;
-  padding-bottom: 1rem;
+ /* border-bottom: 1px solid #CED4DA;*/
+  padding-bottom: 0rem;
 }
 
 .nav-pills .nav-link {
@@ -18806,7 +18806,7 @@ div.tagsinput span.tag a {
 
 .content-wrapper {
   background: #F5F7FF;
-  padding: 2.375rem 2.375rem;
+  /*padding: 2.375rem 2.375rem;*/
   width: 100%;
   -webkit-flex-grow: 1;
   flex-grow: 1;

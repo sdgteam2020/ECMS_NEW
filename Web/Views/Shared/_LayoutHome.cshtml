@@ -148,8 +148,12 @@
                 position: absolute;
                 top: 6px !important;
                 right: 1px;
-                width: 20px
+                width: 20px;
+            }
+
     </style>
+
+    
 </head>
 <body class="nav-fixed">
       <div id="loading" class="loader">
@@ -181,8 +185,8 @@
         <!-- partial:partials/_navbar.html -->
         <nav class="navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row d-print-none">
             <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center">
-                <a class="navbar-brand brand-logo mr-5" href="/Home/index"><img src="~/Images/AFSAC_Logo.png" class="mr-2" alt="logo" /></a>
-                <a class="navbar-brand brand-logo-mini" href="/Home/index"><img src="~/Images/AFSAC.png" alt="logo" /></a>
+                <a class="navbar-brand brand-logo mr-5" href="Home/Dashboard"><img src="~/Images/AFSAC_Logo.png" class="mr-2" alt="logo" /></a>
+                <a class="navbar-brand brand-logo-mini" href="Home/Dashboard"><img src="~/Images/AFSAC.png" alt="logo" /></a>
             </div>
             <div class="navbar-menu-wrapper d-flex align-items-center justify-content-end">
                 <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
@@ -203,7 +207,7 @@
                 </ul> *@
                 <ul class="navbar-nav" >
                     <li class="text-center">
-                        <span class="tagline ml-4 text-center">Enterprise Card Management System(ECMS) </span>
+                        <span class="tagline ml-4">Enterprise Card Management System(ECMS) </span>
                     </li>
                     </ul>
                 @{
@@ -286,268 +290,16 @@
         </nav>
         <!-- partial -->
         <div class="page-body-wrapper">
-            <!-- partial:partials/_settings-panel.html -->
-            @* <div class="theme-setting-wrapper">
-            <div id="settings-trigger"><i class="ti-settings"></i></div>
-            <div id="theme-settings" class="settings-panel">
-            <i class="settings-close ti-close"></i>
-            <p class="settings-heading">SIDEBAR SKINS</p>
-            <div class="sidebar-bg-options selected" id="sidebar-light-theme"><div class="img-ss rounded-circle bg-light border mr-3"></div>Light</div>
-            <div class="sidebar-bg-options" id="sidebar-dark-theme"><div class="img-ss rounded-circle bg-dark border mr-3"></div>Dark</div>
-            <p class="settings-heading mt-2">HEADER SKINS</p>
-            <div class="color-tiles mx-0 px-4">
-            <div class="tiles success"></div>
-            <div class="tiles warning"></div>
-            <div class="tiles danger"></div>
-            <div class="tiles info"></div>
-            <div class="tiles dark"></div>
-            <div class="tiles default"></div>
-            </div>
-            </div>
-            </div>
-            <div id="right-sidebar" class="settings-panel">
-            <i class="settings-close ti-close"></i>
-            <ul class="nav nav-tabs border-top" id="setting-panel" role="tablist">
-            <li class="nav-item">
-            <a class="nav-link active" id="todo-tab" data-toggle="tab" href="#todo-section" role="tab" aria-controls="todo-section" aria-expanded="true">TO DO LIST</a>
-            </li>
-            <li class="nav-item">
-            <a class="nav-link" id="chats-tab" data-toggle="tab" href="#chats-section" role="tab" aria-controls="chats-section">CHATS</a>
-            </li>
-            </ul>
-            <div class="tab-content" id="setting-content">
-            <div class="tab-pane fade show active scroll-wrapper" id="todo-section" role="tabpanel" aria-labelledby="todo-section">
-            <div class="add-items d-flex px-3 mb-0">
-            <form class="form w-100">
-            <div class="form-group d-flex">
-            <input type="text" class="form-control todo-list-input" placeholder="Add To-do">
-            <button type="submit" class="add btn btn-primary todo-list-add-btn" id="add-task">Add</button>
-            </div>
-            </form>
-            </div>
-            <div class="list-wrapper px-3">
-            <ul class="d-flex flex-column-reverse todo-list">
-            <li>
-            <div class="form-check">
-            <label class="form-check-label">
-            <input class="checkbox" type="checkbox">
-            Team review meeting at 3.00 PM
-            </label>
-            </div>
-            <i class="remove ti-close"></i>
-            </li>
-            <li>
-            <div class="form-check">
-            <label class="form-check-label">
-            <input class="checkbox" type="checkbox">
-            Prepare for presentation
-            </label>
-            </div>
-            <i class="remove ti-close"></i>
-            </li>
-            <li>
-            <div class="form-check">
-            <label class="form-check-label">
-            <input class="checkbox" type="checkbox">
-            Resolve all the low priority tickets due today
-            </label>
-            </div>
-            <i class="remove ti-close"></i>
-            </li>
-            <li class="completed">
-            <div class="form-check">
-            <label class="form-check-label">
-            <input class="checkbox" type="checkbox" checked>
-            Schedule meeting for next week
-            </label>
-            </div>
-            <i class="remove ti-close"></i>
-            </li>
-            <li class="completed">
-            <div class="form-check">
-            <label class="form-check-label">
-            <input class="checkbox" type="checkbox" checked>
-            Project review
-            </label>
-            </div>
-            <i class="remove ti-close"></i>
-            </li>
-            </ul>
-            </div>
-            <h4 class="px-3 text-muted mt-5 font-weight-light mb-0">Events</h4>
-            <div class="events pt-4 px-3">
-            <div class="wrapper d-flex mb-2">
-            <i class="ti-control-record text-primary mr-2"></i>
-            <span>Feb 11 2018</span>
-            </div>
-            <p class="mb-0 font-weight-thin text-gray">Creating component page build a js</p>
-            <p class="text-gray mb-0">The total number of sessions</p>
-            </div>
-            <div class="events pt-4 px-3">
-            <div class="wrapper d-flex mb-2">
-            <i class="ti-control-record text-primary mr-2"></i>
-            <span>Feb 7 2018</span>
-            </div>
-            <p class="mb-0 font-weight-thin text-gray">Meeting with Alisa</p>
-            <p class="text-gray mb-0 ">Call Sarah Graves</p>
-            </div>
-            </div>
-
-            </div>
-            </div>*@
-            <!-- partial -->
-            <!-- partial:partials/_sidebar.html -->
-            <nav class="sidebar sidebar-offcanvas" id="sidebar">
-                <ul class="nav">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/Home/Dashboard">
-                            <i class="icon-grid menu-icon"></i>
-                            <span class="menu-title">Dashboard</span>
-                        </a>
-                    </li>
-                    @if (signInManager.IsSignedIn(User) && User.IsInRole("Super Admin"))
-                    {
-                        <li class="nav-item">
-                            <a class="nav-link collapsed" data-toggle="collapse" href="#ui-basic" aria-expanded="true" aria-controls="ui-basic">
-                                <i class="icon-layout menu-icon"></i>
-                                <span class="menu-title">Super Admin</span>
-                                <i class="menu-arrow"></i>
-                            </a>
-                            <div class="collapse show" id="ui-basic">
-                                <ul class="nav flex-column sub-menu">
-                                    <li class="nav-item"> <a class="nav-link" href="/Account/Index">Users</a></li>
-                                    <li class="nav-item"> <a class="nav-link" href="/Account/ListRoles">Roles</a></li>
-                                </ul>
-                            </div>
-                        </li>
-                    }
-                    else if (signInManager.IsSignedIn(User) && User.IsInRole("User"))
-                    {
-                        <li class="nav-item">
-                            <a class="nav-link collapsed" data-toggle="collapse" href="#ui-basic1" aria-expanded="true" aria-controls="ui-basic1">
-                                <i class="icon-layout menu-icon"></i>
-                                <span class="menu-title">ICard Request</span>
-                                <i class="menu-arrow"></i>
-                            </a>
-                            <div class="collapse show" id="ui-basic1">
-                                <ul class="nav flex-column sub-menu">
-                                    <li class="nav-item"> <a class="nav-link " href="/UserProfile/Profile">Add Profile</a></li>
-                                    <li class="nav-item"> <a class="nav-link" href="/BasicDetail/RequestType">Add Request</a></li>
-                                    <li class="nav-item"> <a class="nav-link" href="/BasicDetail/Index/MQ==">ICard List</a></li>
-                                   
-                                    <li class="nav-item"> <a class="nav-link" href="/BasicDetail/InaccurateData">Inaccurate List</a></li>
-                                  
-                                </ul>
-                            </div>
-
-                        </li>
-                       /*  <li class="nav-item">
-                            <a class="nav-link collapsed" data-toggle="collapse" href="#ui-basic1" aria-expanded="true" aria-controls="ui-basic1">
-                                <i class="icon-layout menu-icon"></i>
-                                <span class="menu-title">ICard Request For Approval</span>
-                                <i class="menu-arrow"></i>
-                            </a>
-                            <div class="collapse show" id="ui-basic1">
-                                <ul class="nav flex-column sub-menu">
-
-                                    <li class="nav-item"> <a class="nav-link" href="/BasicDetail/ApprovalForIO/22">ICard Approval For IO</a></li>
-                                    <li class="nav-item"> <a class="nav-link" href="/BasicDetail/ApprovalForIO/33">ICard Approval For GSO</a></li>
-                                    @if (user.UserName=="mi_11")
-                                    {
-                                        <li class="nav-item"> <a class="nav-link" href="/BasicDetail/ApprovalForIO/44">ICard Approval For MI 11</a></li>
-                                    } 
-                                    else if (user.UserName == "hq_54")
-                                    {
-                                        <li class="nav-item"> <a class="nav-link" href="/BasicDetail/ApprovalForIO/55">ICard Approvaled by MI 11</a></li>
-                                    }
-
-                                </ul>
-                            </div>
-
-                        </li> */
-                    }
-                    else if (signInManager.IsSignedIn(User) && (User.IsInRole("Admin")))
-                    {
-                    <li class="nav-item">
-                            <a class="nav-link collapsed" data-toggle="collapse" href="#ui-basic_Unit" aria-expanded="false" aria-controls="ui-basic_Unit">
-                                <i class="icon-layout menu-icon"></i>
-                                <span class="menu-title">Fmn/Unit </span>
-                                <i class="menu-arrow"></i>
-                            </a>
-                            <div class="collapse show" id="ui-basic_Unit">
-                                <ul class="nav flex-column sub-menu">
-                                    <li class="nav-item"> <a class="nav-link" href="/Master/Command">Comd / PSO</a></li>
-                                    <li class="nav-item"> <a class="nav-link" href="/Master/Corps">Corps / Dte / Area</a></li>
-                                    <li class="nav-item"> <a class="nav-link" href="/Master/Div">Div / Branch / SubArea</a></li>
-                                    <li class="nav-item"> <a class="nav-link" href="/Master/Bde">Bde </a></li>
-                                    <li class="nav-item"> <a class="nav-link" href="/Master/MapUnit"> Map Unit</a></li>
-                                </ul>
-                            </div>
-
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" data-toggle="collapse" href="#ui-Master" aria-expanded="false" aria-controls="ui-Master">
-                                <i class="icon-layout menu-icon"></i>
-                                <span class="menu-title">Master</span>
-                                <i class="menu-arrow"></i>
-                            </a>
-                            <div class="collapse show" id="ui-Master">
-                                <ul class="nav flex-column sub-menu">
-                                    <li class="nav-item"> <a class="nav-link" href="/Master/Unit/&$&&&">Unit</a></li>
-                                    <li class="nav-item"> <a class="nav-link" href="/Master/Rank">Rank</a></li>
-                                    <li class="nav-item"> <a class="nav-link" href="/Master/Formation">Formation</a></li>
-                                    <li class="nav-item"> <a class="nav-link" href="/Master/Appointment">Appointment</a></li>
-                                    <li class="nav-item"> <a class="nav-link" href="/Master/ArmedType">Armed Type</a></li>
-                                    <li class="nav-item"> <a class="nav-link" href="/Master/Regimental">Regimental</a></li>
-                                </ul>
-                            </div>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" data-toggle="collapse" href="#ui-ICard" aria-expanded="false" aria-controls="ui-ICard">
-                                <i class="icon-layout menu-icon"></i>
-                                <span class="menu-title">User Config</span>
-                                <i class="menu-arrow"></i>
-                            </a>
-                            <div class="collapse show" id="ui-ICard">
-                                <ul class="nav flex-column sub-menu">
-                                   
-                                    <li class="nav-item"> <a class="nav-link" href="/ConfigUser/index">Config User</a></li>
-
-                                </ul>
-                            </div>
-                        </li>
-
-
-
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">
-                                <i class="icon-paper menu-icon"></i>
-                                <span class="menu-title">Documentation</span>
-                            </a>
-                        </li>
-                    }
-                </ul>
-            </nav>
+         
 
             <!-- partial -->
-            <div class="main-panel">
-
-                <nav class="nav nav-pills nav-justified" id="layouttask">
-                    <a class="nav-link Dashboard" aria-current="page" href="/Home/Dashboard">DashBoard</a>
-                    <a class="nav-link MyTask" href="/Home/MyTask">Task</a>
-                    <a class="nav-link Status" href="###">Status</a>
-                    
-                </nav>
-
-                <div class="content-wrapper">
+           
                     <partial name="_Notification" />
                     @RenderBody()
 
                     <!-- partial -->
                     <!-- main-panel ends -->
-                </div>
-                <!-- page-body-wrapper ends -->
-            </div>
+                
 
             <!-- partial -->
             <!-- main-panel ends -->
