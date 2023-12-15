@@ -1,16 +1,18 @@
 ﻿using DataTransferObject.Domain.Master;
-using DataTransferObject.Requests;
 using DataTransferObject.Response;
+using DataTransferObject.Response.User;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BusinessLogicsLayer.Registration
+namespace DataAccessLayer.BaseInterfaces
 {
-    public interface IRegistrationBL : IGenericRepository<DataTransferObject.Domain.Master.MRegistration>
+    public interface IRegistrationDB : IGenericRepositoryDL<MRegistration>
     {
+       
         public Task<List<MRegistration>> GetByApplyFor(MRegistration Data);
+
     }
 }

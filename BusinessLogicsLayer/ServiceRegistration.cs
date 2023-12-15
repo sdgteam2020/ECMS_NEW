@@ -9,6 +9,7 @@ using BusinessLogicsLayer.Corps;
 using BusinessLogicsLayer.Div;
 using BusinessLogicsLayer.Formation;
 using BusinessLogicsLayer.Master;
+using BusinessLogicsLayer.Registration;
 using BusinessLogicsLayer.Token;
 using BusinessLogicsLayer.Unit;
 using BusinessLogicsLayer.User;
@@ -64,7 +65,9 @@ namespace BusinessLogicsLayer
             services.AddTransient<IRankDB, RankDB>();
 
             services.AddTransient<IUserProfileMappingBL, UserProfileMappingBL>();
-           
+
+            services.AddTransient<IRegistrationBL, RegistrationBL>();
+            services.AddTransient<IRegistrationDB, RegistrationDB>();
 
             services.AddTransient<IBasicDetailBL, BasicDetailBL>();
             services.AddTransient<IBasicDetailDB, BasicDetailDB>();

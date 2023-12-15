@@ -408,7 +408,7 @@ namespace Web.Controllers
                     if (model.SubmitType == 1)
                     {
                         MRegistration? mRegistration = await context.MRegistration.FindAsync(model.RegId);
-                        if(mRegistration.Type== (int)RegistrationType.Officer)
+                        if(mRegistration.ApplyForId == (int)RegistrationType.Officer)
                         {
                             ViewBag.OptionsRank = service.GetRank(1);
                         }
@@ -426,7 +426,7 @@ namespace Web.Controllers
                         dTOBasicDetailCrtRequest.DateOfCommissioning = model.DateOfCommissioning;
                         dTOBasicDetailCrtRequest.PermanentAddress = model.PermanentAddress;
                         dTOBasicDetailCrtRequest.RegistrationId = model.RegId;
-                        dTOBasicDetailCrtRequest.Type = mRegistration.Type;
+                        dTOBasicDetailCrtRequest.Type = mRegistration.ApplyForId;
                         dTOBasicDetailCrtRequest.TypeId = model.TypeId;
                         dTOBasicDetailCrtRequest.DateOfIssue = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
                         return await Task.FromResult(View(dTOBasicDetailCrtRequest));
@@ -478,7 +478,7 @@ namespace Web.Controllers
                     ViewBag.UnitName = await context.MUnit.FindAsync(basicDetailUpdVM.UnitId);
                     
                     MRegistration? mRegistration = await context.MRegistration.FindAsync(basicDetailUpdVM.RegistrationId);
-                    basicDetailUpdVM.Type = mRegistration != null ? mRegistration.Type : 1;
+                    basicDetailUpdVM.Type = mRegistration != null ? mRegistration.ApplyForId : 1;
 
                     return View(basicDetailUpdVM);
                 }
@@ -505,7 +505,7 @@ namespace Web.Controllers
                     if (basicDetail != null)
                     {
                         MRegistration? mRegistration = await context.MRegistration.FindAsync(model.RegistrationId);
-                        if (mRegistration.Type == 1)
+                        if (mRegistration.ApplyForId == 1)
                         {
                             ViewBag.OptionsRank = service.GetRank(1);
                         }
@@ -622,7 +622,7 @@ namespace Web.Controllers
                 else
                 {
                     MRegistration? mRegistration = await context.MRegistration.FindAsync(model.RegistrationId);
-                    if (mRegistration.Type == (int)RegistrationType.Officer)
+                    if (mRegistration.ApplyForId == (int)RegistrationType.Officer)
                     {
                         ViewBag.OptionsRank = service.GetRank(1);
                     }
