@@ -46,7 +46,7 @@ namespace Web.Controllers
             ViewBag.Role = this.User.FindFirstValue(ClaimTypes.Role);
             TrnDomainMapping dTO = new TrnDomainMapping();
             dTO.AspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-            dTO = await _iDomainMapBL.GetByDomainIdbyUnit(dTO);
+            dTO = await _iDomainMapBL.GetByAspnetUserIdBy(dTO);
             if (dTO==null)
             {
                 return View();
@@ -188,7 +188,7 @@ namespace Web.Controllers
             }
             catch (Exception ex) { return Json(KeyConstants.InternalServerError); }
 
-            return Json(1);
+           // return Json(1);
         }
         [HttpPost]
         public async Task<IActionResult> GotoDashboard(string ICNO)

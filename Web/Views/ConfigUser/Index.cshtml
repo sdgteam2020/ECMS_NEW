@@ -1,6 +1,5 @@
 ﻿@{
     Layout = null;
-    TrnDomainMapping trnDomainMapping = new TrnDomainMapping();
     DTOMapUnitResponse dTOMapUnitResponse = new DTOMapUnitResponse();
 }
 <!DOCTYPE html>
@@ -85,7 +84,7 @@
                     <div class="row">
                         <div class="col-md-12 mx-0">
                             <form id="msform">
-                                <input hidden type="number" name="UserId" id="UserId" value="0"/>
+                                <span class="d-none" id="spnUserId">0</span>
                                 @if (ViewBag.TrnDomain!=null)
                                 {
                                     dTOMapUnitResponse = ViewBag.TrnDomain;
@@ -123,7 +122,7 @@
                                                     <div class="form-group row mb-2">
                                                         <label class="col-form-label col-sm-4">Name<i class="fas fa-asterisk mand1"></i></label>
                                                         <div class="col-sm-8">
-                                                            <input class="form-control Alphanumeric" placeholder="Enter Name" maxlength="8" title="Only Alphabets and Numbers allowed" id="txtName" name="txtName" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="Name is required." data-val-regex-pattern="^[a-zA-Z0-9 ]*$" />
+                                                            <input class="form-control Alphanumeric" placeholder="Enter Name" maxlength="30" title="Only Alphabets and Numbers allowed" id="txtName" name="txtName" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="Name is required." data-val-regex-pattern="^[a-zA-Z0-9 ]*$" />
                                                             <span class="text-danger field-validation-valid" data-valmsg-for="txtName" data-valmsg-replace="true"></span>
                                                         </div>
                                                     </div>

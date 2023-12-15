@@ -139,10 +139,9 @@ function SaveMapping() {
     });
 }
 function SaveProfile() {
-    alert($("#UserId").html())
     var profiledata =
     {
-        "UserId": $("#UserId").val(),
+        "UserId": $("#spnUserId").html(),
         "Name": $("#txtName").val(),
         "ArmyNo": $("#txtArmyNo").val(),
         "RankId": $("#ddlProRank").val(),
@@ -233,7 +232,7 @@ function CheckICNumberInProfile(txt) {
                     text: response.Message,
 
                 })
-                $("#UserId").val(response.UserId);
+                $("#spnUserId").html(response.UserId);
                 $("#txtName").val(response.Name);
                 $("#ddlProRank").val(response.RankId);
                 $("#ddlProFormation").val(response.FormationId);

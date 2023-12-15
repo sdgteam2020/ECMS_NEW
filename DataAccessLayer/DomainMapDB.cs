@@ -18,7 +18,7 @@ namespace DataAccessLayer
             _context = context;
         }
 
-        public async Task<TrnDomainMapping> GetByAspnetUserIdBy(TrnDomainMapping Data)
+        public async Task<TrnDomainMapping?> GetByAspnetUserIdBy(TrnDomainMapping Data)
         {
             var ret =await _context.TrnDomainMapping.Where(p => p.AspNetUsersId == Data.AspNetUsersId).SingleOrDefaultAsync();
             return ret;
@@ -26,11 +26,11 @@ namespace DataAccessLayer
 
         public async Task<bool> GetByDomainId(TrnDomainMapping Data)
         {
-            var ret = _context.TrnDomainMapping.Any(p => p.AspNetUsersId == Data.AspNetUsersId);
+            var ret = await _context.TrnDomainMapping.AnyAsync(p => p.AspNetUsersId == Data.AspNetUsersId);
             return ret;
         }
 
-        public async Task<TrnDomainMapping> GetByDomainIdbyUnit(TrnDomainMapping Data)
+        public async Task<TrnDomainMapping?> GetByDomainIdbyUnit(TrnDomainMapping Data)
         {
             return await _context.TrnDomainMapping.Where(p => p.AspNetUsersId == Data.AspNetUsersId).SingleOrDefaultAsync();
         }
