@@ -1,11 +1,16 @@
 ﻿using BusinessLogicsLayer;
 using BusinessLogicsLayer.Account;
+using BusinessLogicsLayer.Bde;
 using BusinessLogicsLayer.Helpers;
+using BusinessLogicsLayer.Master;
 using BusinessLogicsLayer.Service;
 using DataAccessLayer;
+using DataTransferObject.Domain;
 using DataTransferObject.Domain.Identitytable;
+using DataTransferObject.Domain.Model;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
+using Humanizer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
@@ -19,6 +24,7 @@ using System;
 using System.Data.Entity;
 using System.Data.Entity.Hierarchy;
 using System.Security.Claims;
+using Web.WebHelpers;
 using ApplicationRole = DataTransferObject.Domain.Identitytable.ApplicationRole;
 
 namespace Web.Controllers
@@ -26,7 +32,9 @@ namespace Web.Controllers
     public class AccountController : Controller
     {
         private readonly IUnitOfWork unitOfWork;
-        private readonly IAccountBL iAccountBL;
+        private readonly IAccountBL _iAccountBL;
+        public readonly IDomainMapBL _iDomainMapBL;
+        private readonly IUserProfileBL _userProfileBL;
         private readonly ApplicationDbContext context, contextTransaction;
         private readonly IDataProtector protector;
         private readonly IService service;
@@ -36,14 +44,16 @@ namespace Web.Controllers
         public const string SessionKeySalt = "_Salt";
         private readonly ILogger<AccountController> _logger;
 
-        public AccountController(IUnitOfWork unitOfWork, IAccountBL iAccountBL , RoleManager<ApplicationRole> roleManager, UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, ApplicationDbContext context, ApplicationDbContext contextTransaction,
+        public AccountController(IUnitOfWork unitOfWork, IAccountBL iAccountBL , IDomainMapBL iDomainMapBL, IUserProfileBL userProfileBL, RoleManager<ApplicationRole> roleManager, UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, ApplicationDbContext context, ApplicationDbContext contextTransaction,
             IDataProtectionProvider dataProtectionProvider, IService service, DataProtectionPurposeStrings dataProtectionPurposeStrings, ILogger<AccountController> logger)
         {
             this.roleManager = roleManager;
             this.userManager = userManager;
             this.signInManager = signInManager;
             this.unitOfWork = unitOfWork;
-            this.iAccountBL= iAccountBL;
+            _iAccountBL= iAccountBL;
+            _iDomainMapBL = iDomainMapBL;
+            _userProfileBL = userProfileBL;
             this.context = context;
             this.contextTransaction = contextTransaction;
             this.service = service;
@@ -823,25 +833,60 @@ namespace Web.Controllers
         }
         [HttpGet]
         [AllowAnonymous]
-        public async Task<IActionResult> IMLogin(string DomainId,string Role)
+        public IActionResult IMLogin()
         {
-            DTOAccountResponse? dTOAccountResponse  = await iAccountBL.FindDomainId(DomainId);
-            if(dTOAccountResponse!=null)
+            return View();
+        }
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<IActionResult> IMLogin(DTOIMLoginRequest model)
+        {
+            if(ModelState.IsValid)
             {
-                if(dTOAccountResponse.AdminFlag==true)
+                // Check Domain Id in AspNetUser Table
+                DTOAccountResponse? dTOAccountResponse = await _iAccountBL.FindDomainId(model.DomainId);
+                if (dTOAccountResponse != null)
                 {
+                    if (dTOAccountResponse.AdminFlag == true)
+                    {
+                        // Check AspNetUserId in TrnDomainMapping Table 
+                        TrnDomainMapping? trnDomainMapping = await _iDomainMapBL.GetByAspnetUserIdBy(dTOAccountResponse.Id);
+                        if (trnDomainMapping!=null)
+                        {
+                            // Check Profile UserId in TrnDomainMapping Table 
+                            if (trnDomainMapping.UserId!=null)
+                            {
+                                //Get ArmyNo from UserProfile Table
+                                MUserProfile mUserProfile = await _userProfileBL.Get((int)trnDomainMapping.UserId);
+                                DtoSession dtoSession = new DtoSession();
+                                dtoSession.ICNO = mUserProfile.ArmyNo;
+                                dtoSession.UserId = mUserProfile.UserId;
+                                dtoSession.TrnDomainMappingId = trnDomainMapping.Id;
+                                SessionHeplers.SetObject(HttpContext.Session, "Token", dtoSession);
+                                return RedirectToActionPermanent("Dashboard", "Home");
 
+                            }
+                            else
+                            {
+                                // Get UserId from ProfileTable (Based on Input ArmyNo with token authorise.) and Update in TrnDomainMapping Table   
+                            }
+                        }
+                        else
+                        {
+                            // Create TrnDomainMapping using AspnetUserId,UnitId,UserId from Profile Table.
+                        }
+                    }
+                    else
+                    {
+                        //Your request under process. Please contact Admin.
+                    }
                 }
                 else
                 {
-                    //Your request under process. Please contact Admin.
+                    //Create DomainId in AspNetUser Table , Assign Role.,Create Mapping with add profile id.
                 }
             }
-            else
-            {
-                //Create DomainId in AspNetUser Table & Role.
-            }
-
+            return View(model);
         }
         [HttpGet]
         [AllowAnonymous]

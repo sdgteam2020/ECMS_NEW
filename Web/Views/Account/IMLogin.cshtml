@@ -1,0 +1,164 @@
+﻿@model DTOIMLoginRequest
+@{
+    ViewBag.Title = "IM Login Section";
+    ViewBag.Description = "IM Login Section";
+    ViewBag.Keywords = "";
+    Layout = null;
+}
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    @*  <meta http-equiv="content-security-policy"
+    content="default-src 'none'; script-src 'self';
+    connect-src 'self'; img-src 'self';
+    style-src 'self' 'sha256-CwE3Bg0VYQOIdNAkbB/Btdkhul49qZuwgNCMPgNY5zw=';" /> *@
+    <link rel="icon" type="image/x-icon" href="/images/AFSAC.png">
+    <title> AFSAC </title>
+    @*  <link href="/Fonts/css/all.min.css" rel="stylesheet" type="text/css"> *@
+
+    <link href="~/css/style.css" rel="stylesheet" />
+    <link href="~/css/nunito.css" rel="stylesheet" />
+    <link href="~/css/roboto.css" rel="stylesheet" />
+    <link href="~/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+
+    <link href="~/css/login.css" rel="stylesheet" />
+
+    <link href="~/sweetalert2/sweetalert2.min.css" rel="stylesheet" />
+    <link href="~/css/feed.css" rel="stylesheet" />
+
+    <link href="~/css/normalize.min.css" rel="stylesheet" />
+    @*   <link href="~/css/swiper.min.css" rel="stylesheet" /> *@
+    <link href="~/css/feed.css" rel="stylesheet" />
+    <link href="~/css/main.css" rel="stylesheet" />
+    <link href="~/css/sliders/style.css" rel="stylesheet" />
+    <style>
+        .swal2-confirm, .swal2-styled {
+            background: #D97924 !important;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="page">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="align-items-center col-lg-6 col-md-6 col-xl-8 d-flex login-img-block">
+
+
+                    <div class="mb-4 logo-sec">
+
+
+
+                        <h2 class="ml-sm-3"> <span>AFSAC</span> (Armed Forced Secure Access Card ) </h2>
+                    </div>
+
+                </div>
+                <div class="col-md-6 col-lg-6 col-xl-4 bg-white login-wrap align-items-center">
+                    <div class="login py-2 py-sm-4">
+                        <div class="row">
+                            <div class="col-md-10 col-lg-10 col-xl-9 mx-auto">
+                                <div class="card-sigin">
+                                    <div class="main-signup-header login-form">
+                                        @* <h1 class="font-weight-bold text-center mb-0 mt-3 logo"><color style="color: #D97904">Login</color></h1>*@
+                                        <div class="mb-1 logo-sec text-center">
+                                            <img src="/Images/AFSAC_Logo.png" />
+                                        </div>
+                                        <p class="font-weight-normal text-center mb-4 mt-1 ">Kindly login with your login id and password here.</p>
+                                        <div class="pb-3 mt-3">
+                                            <form asp-antiforgery="true" method="post" asp-action="IMLogin" autocomplete="off" role="form">
+                                                <div class="form-group">
+                                                    <label>Domain Id</label>
+                                                    <input asp-for="DomainId" class="form-control" placeholder="Enter Domain Id..." value="user1" />
+                                                    <span asp-validation-for="DomainId" class="text-danger"></span>
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <label asp-for="Role" class="form-label fs-6"></label>
+                                                    <input asp-for="Role" class="form-control" value="User" />
+                                                    <span asp-validation-for="Role" class="text-danger"></span>
+                                                </div>
+
+                                                @*   <div class="text-center"><button type="button" id="btnLogin" class="btn login-btn">Login</button></div> *@
+                                                <button type="submit" class="btn btn-primary text-uppercase py-2 fs-5 w-100 mt-2" onclick="SubmitsEncry();">Login</button>
+
+
+                                                @*<div class="text-center"><button type="button" id="btnForgotPassword" class="btn p-0 btn-link">Forgot Password</button></div>*@
+
+                                                <div class="alert alert-danger alert-dismissible fade show spnmsg d-none">
+                                                    <span class="text-danger" id="error-msg"></span>
+
+
+                                                </div>
+                                            </form>
+                                        </div>
+                                        <div id="tokenmsg">
+                                        </div>
+                                        <div id="tokenmsgafterverify">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script asp-src-include="~/lib/jquery/jquery.js"></script>
+    <script asp-src-include="~/lib/jquery-validate/jquery.validate.js" defer></script>
+    <script asp-src-include="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js" defer></script>
+    
+    <script src="~/bootstrap/js/bootstrap.bundle.min.js"></script>
+    @* <script src="~/fonts/feather/feather.min.js"></script> *@
+    <script src="~/sweetalert2/sweetalert2.min.js"></script>
+
+    @* <script src="~/js/swiper.min.js"></script> *@
+
+    @*    <script src="~/js/script.js"></script> *@
+    <script src="~/developerjs/login.js"></script>
+    <script src="~/js/aes.js"></script>
+    <script src="~/js/aesimpscript.js"></script>
+    <script>
+        $(document).ready(function () {
+
+
+            $('.registration-form .form-group .form-control').focus(function () {
+                $(this).closest('.form-group').addClass("focused");
+            });
+
+            $('.registration-form .form-group .form-control').focusout(function () {
+                var text_value = $(this).val();
+                if (text_value == "" || text_value == null) {
+                    $(this).closest('.form-group').removeClass("focused");
+                } else {
+                    // alert(multiSelectText);
+                    $(this).closest('.form-group').addClass("focused");
+                }
+            });
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+
+
+            //$("#loading").hide();
+            //$(document).ajaxStart(function () {
+            //    $("#loading").show();
+            //}).ajaxStop(function () {
+            //    $("#loading").hide();
+            //});
+
+
+
+
+        });
+    </script>
+</body>
+</html>
+
+@section Scripts{
+}

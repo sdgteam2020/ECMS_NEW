@@ -18,9 +18,9 @@ namespace DataAccessLayer
             _context = context;
         }
 
-        public async Task<TrnDomainMapping?> GetByAspnetUserIdBy(TrnDomainMapping Data)
+        public async Task<TrnDomainMapping?> GetByAspnetUserIdBy(int AspNetUsersId)
         {
-            var ret =await _context.TrnDomainMapping.Where(p => p.AspNetUsersId == Data.AspNetUsersId).SingleOrDefaultAsync();
+            var ret =await _context.TrnDomainMapping.Where(p => p.AspNetUsersId == AspNetUsersId).SingleOrDefaultAsync();
             return ret;
         }
 

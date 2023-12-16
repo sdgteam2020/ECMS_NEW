@@ -44,9 +44,9 @@ namespace Web.Controllers
 
             ViewBag.DomainId = this.User.FindFirstValue(ClaimTypes.Name);
             ViewBag.Role = this.User.FindFirstValue(ClaimTypes.Role);
-            TrnDomainMapping dTO = new TrnDomainMapping();
+            TrnDomainMapping? dTO = new TrnDomainMapping();
             dTO.AspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-            dTO = await _iDomainMapBL.GetByAspnetUserIdBy(dTO);
+            dTO = await _iDomainMapBL.GetByAspnetUserIdBy(dTO.AspNetUsersId);
             if (dTO==null)
             {
                 return View();
@@ -68,9 +68,9 @@ namespace Web.Controllers
                     dtoSession.UserId = army.UserId;
                     dtoSession.UnitId=dTO.UnitId;
 
-                    TrnDomainMapping trnDomainMapping = new TrnDomainMapping();
+                    TrnDomainMapping? trnDomainMapping = new TrnDomainMapping();
                     trnDomainMapping.AspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-                    trnDomainMapping = await _iDomainMapBL.GetByAspnetUserIdBy(trnDomainMapping);
+                    trnDomainMapping = await _iDomainMapBL.GetByAspnetUserIdBy(trnDomainMapping.AspNetUsersId);
                     dtoSession.TrnDomainMappingId = trnDomainMapping.Id;
                 }
                 SessionHeplers.SetObject(HttpContext.Session, "Token", dtoSession);
@@ -145,9 +145,9 @@ namespace Web.Controllers
                         {
 
                             await _iDomainMapBL.Add(dTO);
-                            TrnDomainMapping trnDomainMapping1 = new TrnDomainMapping();
+                            TrnDomainMapping? trnDomainMapping1 = new TrnDomainMapping();
                             trnDomainMapping1.AspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-                            trnDomainMapping1 = await _iDomainMapBL.GetByAspnetUserIdBy(trnDomainMapping1);
+                            trnDomainMapping1 = await _iDomainMapBL.GetByAspnetUserIdBy(trnDomainMapping1.AspNetUsersId);
                             if (trnDomainMapping1 != null)
                                 dtoSession.TrnDomainMappingId = trnDomainMapping1.Id;
 
@@ -168,9 +168,9 @@ namespace Web.Controllers
                         await _iDomainMapBL.Update(trnDomainMapping);
 
 
-                        TrnDomainMapping trnDomainMapping1 = new TrnDomainMapping();
+                        TrnDomainMapping? trnDomainMapping1 = new TrnDomainMapping();
                         trnDomainMapping1.AspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-                        trnDomainMapping1 = await _iDomainMapBL.GetByAspnetUserIdBy(trnDomainMapping1);
+                        trnDomainMapping1 = await _iDomainMapBL.GetByAspnetUserIdBy(trnDomainMapping1.AspNetUsersId);
                         if (trnDomainMapping1 != null)
                             dtoSession.TrnDomainMappingId = trnDomainMapping1.Id;
 

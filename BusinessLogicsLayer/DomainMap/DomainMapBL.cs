@@ -25,9 +25,9 @@ namespace BusinessLogicsLayer.BdeCate
             _IDomainMapDB = domainMapDB;
         }
 
-        public Task<TrnDomainMapping> GetByAspnetUserIdBy(TrnDomainMapping Data)
+        public async Task<TrnDomainMapping?> GetByAspnetUserIdBy(int AspNetUsersId)
         {
-            return _IDomainMapDB.GetByAspnetUserIdBy(Data);
+            return await _IDomainMapDB.GetByAspnetUserIdBy(AspNetUsersId);
         }
 
         public Task<bool> GetByDomainId(TrnDomainMapping Data)
