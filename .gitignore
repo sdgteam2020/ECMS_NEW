@@ -288,3 +288,6 @@ AppPackages/
 /.gitignore
 /.gitignore
 /Web/Properties/PublishProfiles/FolderProfile.pubxml.user
+/DapperRepo.Core/obj/Debug/net7.0/EFRepo.Core.assets.cache
+/DapperRepo.Core/obj/Debug/net7.0/EFRepo.Core.GeneratedMSBuildEditorConfig.editorconfig
+/TestConsoleReso/obj/Release/net7.0/TestConsoleReso.GeneratedMSBuildEditorConfig.editorconfig
