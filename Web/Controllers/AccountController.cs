@@ -1,4 +1,5 @@
 ﻿using BusinessLogicsLayer;
+using BusinessLogicsLayer.Account;
 using BusinessLogicsLayer.Helpers;
 using BusinessLogicsLayer.Service;
 using DataAccessLayer;
@@ -25,6 +26,7 @@ namespace Web.Controllers
     public class AccountController : Controller
     {
         private readonly IUnitOfWork unitOfWork;
+        private readonly IAccountBL iAccountBL;
         private readonly ApplicationDbContext context, contextTransaction;
         private readonly IDataProtector protector;
         private readonly IService service;
@@ -34,13 +36,14 @@ namespace Web.Controllers
         public const string SessionKeySalt = "_Salt";
         private readonly ILogger<AccountController> _logger;
 
-        public AccountController(IUnitOfWork unitOfWork, RoleManager<ApplicationRole> roleManager, UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, ApplicationDbContext context, ApplicationDbContext contextTransaction,
+        public AccountController(IUnitOfWork unitOfWork, IAccountBL iAccountBL , RoleManager<ApplicationRole> roleManager, UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, ApplicationDbContext context, ApplicationDbContext contextTransaction,
             IDataProtectionProvider dataProtectionProvider, IService service, DataProtectionPurposeStrings dataProtectionPurposeStrings, ILogger<AccountController> logger)
         {
             this.roleManager = roleManager;
             this.userManager = userManager;
             this.signInManager = signInManager;
             this.unitOfWork = unitOfWork;
+            this.iAccountBL= iAccountBL;
             this.context = context;
             this.contextTransaction = contextTransaction;
             this.service = service;
@@ -816,6 +819,28 @@ namespace Web.Controllers
             //await userManager.UpdateSecurityStampAsync(user);
             await signInManager.SignOutAsync();
             return View();
+
+        }
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<IActionResult> IMLogin(string DomainId,string Role)
+        {
+            DTOAccountResponse? dTOAccountResponse  = await iAccountBL.FindDomainId(DomainId);
+            if(dTOAccountResponse!=null)
+            {
+                if(dTOAccountResponse.AdminFlag==true)
+                {
+
+                }
+                else
+                {
+                    //Your request under process. Please contact Admin.
+                }
+            }
+            else
+            {
+                //Create DomainId in AspNetUser Table & Role.
+            }
 
         }
         [HttpGet]
