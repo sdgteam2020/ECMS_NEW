@@ -8,9 +8,11 @@ namespace DataTransferObject.Requests
 {
     public class DtoSession
     {
-        public string ICNO { get; set; }
+        public string ICNO { get; set; } = string.Empty;
         public int UserId { get; set; }
         public int UnitId { get; set; }
         public int TrnDomainMappingId { get; set; }
+        public int AspNetUsersId { get; set; }
+        public int Status { get; set; }
     }
 }

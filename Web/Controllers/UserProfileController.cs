@@ -52,9 +52,9 @@ namespace Web.Controllers
                             {
 
                                 dTO= await _userProfileBL.AddWithReturn(dTO);
-                                TrnDomainMapping trnDomainMapping = new TrnDomainMapping();
+                                TrnDomainMapping? trnDomainMapping = new TrnDomainMapping();
                                 trnDomainMapping.AspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-                                trnDomainMapping= await _iDomainMapBL.GetByAspnetUserIdBy(trnDomainMapping);
+                                trnDomainMapping= await _iDomainMapBL.GetByAspnetUserIdBy(trnDomainMapping.AspNetUsersId);
                                 if(trnDomainMapping!=null && dTO.UserId !=0)
                                 {
                                     trnDomainMapping.UserId = dTO.UserId;
@@ -183,7 +183,7 @@ namespace Web.Controllers
             try
             {
                
-                return Json(await _iDomainMapBL.GetByAspnetUserIdBy(Data));
+                return Json(await _iDomainMapBL.GetByAspnetUserIdBy(Data.AspNetUsersId));
 
             }
             catch (Exception ex)

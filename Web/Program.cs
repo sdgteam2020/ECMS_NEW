@@ -193,6 +193,6 @@ app.UseSession();
 //app.MapRazorPages();
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Account}/{action=Login}/{id?}");
+    pattern: "{controller=Account}/{action=IMLogin}/{id?}");
 
 app.Run();

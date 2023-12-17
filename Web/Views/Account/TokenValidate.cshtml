@@ -1,8 +1,5 @@
-﻿@model DTOIMLoginRequest
+﻿@model DTOTokenRequest
 @{
-    ViewBag.Title = "IM Login Section";
-    ViewBag.Description = "IM Login Section";
-    ViewBag.Keywords = "";
     Layout = null;
 }
 <html>
@@ -67,21 +64,15 @@
                                         <div class="mb-1 logo-sec text-center">
                                             <img src="/Images/AFSAC_Logo.png" />
                                         </div>
-                                        <p class="font-weight-normal text-center mb-4 mt-1 ">Kindly login with your login id and password here.</p>
+                                        <p class="font-weight-normal text-center mb-4 mt-1 ">Kindly Validate your IC Number here.</p>
                                         <div class="pb-3 mt-3">
-                                            <form asp-antiforgery="true" method="post" asp-action="IMLogin" autocomplete="off" role="form">
+                                            <form asp-antiforgery="true" method="post" asp-action="TokenValidate" autocomplete="off" role="form">
                                                 <div class="form-group">
-                                                    <label>Domain Id</label>
-                                                    <input asp-for="DomainId" class="form-control" placeholder="Enter Domain Id..." value="user1" />
-                                                    <span asp-validation-for="DomainId" class="text-danger"></span>
+                                                    <label asp-for="ICNo"></label>
+                                                    <input asp-for="ICNo" class="form-control" placeholder="Enter ICNo" />
+                                                    <span asp-validation-for="ICNo" class="text-danger"></span>
                                                 </div>
-
-                                                <div class="form-group">
-                                                    <label asp-for="Role" class="form-label fs-6"></label>
-                                                    <input asp-for="Role" class="form-control" value="User" />
-                                                    <span asp-validation-for="Role" class="text-danger"></span>
-                                                </div>
-                                                <button type="submit" class="btn btn-primary text-uppercase py-2 fs-5 w-100 mt-2" >Next</button>
+                                                <button type="submit" class="btn btn-primary text-uppercase py-2 fs-5 w-100 mt-2">Validate Token & Continue</button>
                                                 <div class="alert alert-danger alert-dismissible fade show spnmsg d-none">
                                                     <span asp-validation-for="ErrorMessage" class="text-danger"></span>
                                                 </div>
@@ -99,7 +90,7 @@
     <script asp-src-include="~/lib/jquery/jquery.js"></script>
     <script asp-src-include="~/lib/jquery-validate/jquery.validate.js" defer></script>
     <script asp-src-include="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js" defer></script>
-    
+
     <script src="~/bootstrap/js/bootstrap.bundle.min.js"></script>
     @* <script src="~/fonts/feather/feather.min.js"></script> *@
     <script src="~/sweetalert2/sweetalert2.min.js"></script>
