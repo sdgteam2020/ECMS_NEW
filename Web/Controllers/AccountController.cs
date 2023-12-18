@@ -6,6 +6,7 @@ using BusinessLogicsLayer.Helpers;
 using BusinessLogicsLayer.Master;
 using BusinessLogicsLayer.Service;
 using BusinessLogicsLayer.Token;
+using BusinessLogicsLayer.User;
 using DataAccessLayer;
 using DataTransferObject.Domain;
 using DataTransferObject.Domain.Identitytable;
@@ -850,7 +851,7 @@ namespace Web.Controllers
         {
             if(ModelState.IsValid)
             {
-                DtoSession dtoSession = new DtoSession();
+                DTOTempSession dTOTempSession = new DTOTempSession();
                 // Check Domain Id in AspNetUser Table
                 DTOAccountResponse? dTOAccountResponse = await _iAccountBL.FindDomainId(model.DomainId);
                 if (dTOAccountResponse != null)
@@ -866,86 +867,77 @@ namespace Web.Controllers
                             {
                                 //Get ArmyNo from UserProfile Table
                                 MUserProfile mUserProfile = await _userProfileBL.Get((int)trnDomainMapping.UserId);
-                                dtoSession.ICNO = mUserProfile.ArmyNo;
-                                dtoSession.UserId = mUserProfile.UserId;
-                                dtoSession.TrnDomainMappingId = trnDomainMapping.Id;
-                                dtoSession.AspNetUsersId = dTOAccountResponse.Id;
-                                dtoSession.Status = 3;
-                                SessionHeplers.SetObject(HttpContext.Session, "IMData", dtoSession);
+                                dTOTempSession.DomainId = dTOAccountResponse.DomainId;
+                                dTOTempSession.ICNO = mUserProfile.ArmyNo;
+                                dTOTempSession.UserId = mUserProfile.UserId;
+                                dTOTempSession.TrnDomainMappingId = trnDomainMapping.Id;
+                                dTOTempSession.AspNetUsersId = dTOAccountResponse.Id;
+                                dTOTempSession.Status = 5;
+                                SessionHeplers.SetObject(HttpContext.Session, "IMData", dTOTempSession);
                                 return RedirectToActionPermanent("TokenValidate","Account");
                             }
                             else
                             {
                                 /*Get UserId from ProfileTable (Based on Input ArmyNo with token authorise.) and Update in TrnDomainMapping Table*/
-                                dtoSession.TrnDomainMappingId = trnDomainMapping.Id;
-                                dtoSession.AspNetUsersId = dTOAccountResponse.Id;
-                                dtoSession.Status = 2;
-                                SessionHeplers.SetObject(HttpContext.Session, "IMData", dtoSession);
+                                dTOTempSession.DomainId = dTOAccountResponse.DomainId;
+                                dTOTempSession.TrnDomainMappingId = trnDomainMapping.Id;
+                                dTOTempSession.AspNetUsersId = dTOAccountResponse.Id;
+                                dTOTempSession.Status = 4;
+                                SessionHeplers.SetObject(HttpContext.Session, "IMData", dTOTempSession);
                                 return RedirectToActionPermanent("TokenValidate", "Account");
                             }
                         }
                         else
                         {
                             /*Create TrnDomainMapping using AspnetUserId,UnitId,UserId from Profile Table.*/
-                            dtoSession.AspNetUsersId = dTOAccountResponse.Id;
-                            dtoSession.Status = 1;
-                            SessionHeplers.SetObject(HttpContext.Session, "IMData", dtoSession);
+                            dTOTempSession.DomainId = dTOAccountResponse.DomainId;
+                            dTOTempSession.AspNetUsersId = dTOAccountResponse.Id;
+                            dTOTempSession.Status = 3;
+                            SessionHeplers.SetObject(HttpContext.Session, "IMData", dTOTempSession);
                             return RedirectToActionPermanent("TokenValidate", "Account");
                         }
                     }
                     else
                     {
-                        ModelState.AddModelError("ErrorMessage", "Your request under process. Please contact Admin");
-                        goto End;
+                        dTOTempSession.Status = 1;
+                        SessionHeplers.SetObject(HttpContext.Session, "IMData", dTOTempSession);
+                        TempData["error"] = "Your request under process. Please contact Admin.";
+                        return RedirectToActionPermanent("TokenValidate", "Account");
                     }
                 }
                 else
                 {
                     /*Create DomainId in AspNetUser Table , Assign Role.,Create Mapping with add profile id.*/
-                    var user = new ApplicationUser
-                    {
-                        Active = true,
-                        DomainId = model.DomainId,
-                        Updatedby = 1,
-                        UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time")),
-                        UserName = model.DomainId.ToLower(),
-                        Email = model.DomainId.ToLower() + "@army.mil",
-                    };
-                    var result = await userManager.CreateAsync(user, "Admin123#");
-
-                    if (result.Succeeded)
-                    {
-                        await userManager.AddToRoleAsync(user, "User");
-                        
-                        dtoSession.AspNetUsersId = user.Id;
-                        dtoSession.Status = 1;
-                        SessionHeplers.SetObject(HttpContext.Session, "IMData", dtoSession);
-                        
-                        TempData["success"] = "Domain ID has been successfully register.";
-                        return RedirectToActionPermanent("TokenValidate", "Account");
-                    }
-                    foreach (var error in result.Errors)
-                    {
-                        ModelState.AddModelError(string.Empty, error.Description);
-                    }
+                    dTOTempSession.DomainId = model.DomainId;
+                    dTOTempSession.RoleName = model.Role;
+                    dTOTempSession.Status = 2;
+                    SessionHeplers.SetObject(HttpContext.Session, "IMData", dTOTempSession);
+                    return RedirectToActionPermanent("TokenValidate", "Account");
                 }
             }
-            End:
             return View(model);
         }
         [HttpGet]
         [AllowAnonymous]
         public IActionResult TokenValidate()
         {
-            DtoSession? dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "IMData");
-            if(dtoSession!=null)
+            DTOTempSession? dTOTempSession = SessionHeplers.GetObject<DTOTempSession>(HttpContext.Session, "IMData");
+            if(dTOTempSession != null)
             {
-                return View();
+                if (dTOTempSession.Status == 1)
+                {
+                    TempData["error"] = "Your request under process. Please contact Admin.";
+                    return View();
+                }
+                else
+                {
+                    return View();
+                }
             }
             else
             {
                 TempData["error"] = "You are not authorized this page.";
-                return RedirectToActionPermanent("IMLogin", "Account");
+                return View();
             }
 
         }
@@ -953,8 +945,8 @@ namespace Web.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> TokenValidate(DTOTokenRequest model)
         {
-            DtoSession? dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "IMData");
-            if (dtoSession != null)
+            DTOTempSession? dTOTempSession = SessionHeplers.GetObject<DTOTempSession>(HttpContext.Session, "IMData");
+            if (dTOTempSession != null)
             {
                 if (ModelState.IsValid)
                 {
@@ -1003,13 +995,43 @@ namespace Web.Controllers
                     //    model.ICNo = "";
                     //    goto End;
                     //}
-                    if (dtoSession.Status == 3)
+                    if (dTOTempSession.Status == 1)
                     {
-
-                        if (dtoSession.ICNO == model.ICNo)
+                        return View(model);
+                    }
+                    else if (dTOTempSession.Status == 2)
+                    {
+                        /*Get UserProfile using ArmyNo*/
+                        DTOProfileResponse? dTOProfileResponse = await _userProfileBL.GetUserProfileByArmyNo(model.ICNo);
+                        if (dTOProfileResponse != null)
                         {
-                            var usera = await userManager.FindByIdAsync(dtoSession.AspNetUsersId.ToString());
-                            if(usera!=null)
+                            /*Check UserProfile Id in DomainMapping table*/
+                            TrnDomainMapping? trnDomainMapping = await _iDomainMapBL.GetTrnDomainMappingByUserId(dTOProfileResponse.UserId);
+                            if (trnDomainMapping != null)
+                            {
+                                TempData["error"] = "You are already mapped to DID. Pl handover the charge of already mapped previous DID- V to other person before registering again for Current DID";
+                                goto End;
+                            }
+                            else
+                            {
+                                dTOTempSession.ICNO = dTOProfileResponse.ArmyNo;
+                                dTOTempSession.UserId = dTOProfileResponse.UserId;
+                                SessionHeplers.SetObject(HttpContext.Session, "IMData", dTOTempSession);
+                                return RedirectToActionPermanent("Profile", "Account");
+                            }
+                        }
+                        else
+                        {
+                            SessionHeplers.SetObject(HttpContext.Session, "IMData", dTOTempSession);
+                            return RedirectToActionPermanent("Profile", "Account");
+                        }
+                    }
+                    else if (dTOTempSession.Status == 5)
+                    {
+                        if (dTOTempSession.ICNO == model.ICNo)
+                        {
+                            var usera = await userManager.FindByIdAsync(dTOTempSession.AspNetUsersId.ToString());
+                            if (usera != null)
                             {
                                 var result = await signInManager.PasswordSignInAsync(usera.UserName, "Admin123#", false, true);
                                 if (result.Succeeded)
@@ -1021,24 +1043,96 @@ namespace Web.Controllers
                                         return RedirectToActionPermanent("Dashboard", "Home");
                                     }
                                 }
-                             }
+                            }
                         }
                         else
                         {
                             TempData["error"] = "You are not authorized this page.";
-                            return RedirectToActionPermanent("IMLogin", "Account");
-                        }
+                            goto End;
 
+                        }
                     }
                 }
             }
             else
             {
                 TempData["error"] = "You are not authorized this page.";
-                return RedirectToActionPermanent("IMLogin", "Account");
+                goto End;
             }
         End:
             return View(model);
+        }
+        [HttpGet]
+        [AllowAnonymous]
+        public IActionResult Profile()
+        {
+            DTOTempSession? dTOTempSession = SessionHeplers.GetObject<DTOTempSession>(HttpContext.Session, "IMData");
+            if (dTOTempSession != null)
+            {
+                if (dTOTempSession.Status == 1)
+                {
+                    TempData["error"] = "Your request under process. Please contact Admin.";
+                    return View();
+                }
+                else
+                {
+                    return View();
+                }
+            }
+            else
+            {
+                TempData["error"] = "You are not authorized this page.";
+                return RedirectToActionPermanent("TokenValidate", "Account");
+            }
+        }
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<IActionResult> Profile(DTOProfileRequest model)
+        {
+            DTOTempSession? dTOTempSession = SessionHeplers.GetObject<DTOTempSession>(HttpContext.Session, "IMData");
+            if (dTOTempSession != null)
+            {
+                if (ModelState.IsValid)
+                {
+                    if (dTOTempSession.Status == 2)
+                    {
+                        var user = new ApplicationUser
+                        {
+                            Active = true,
+                            DomainId = dTOTempSession.DomainId,
+                            Updatedby = 1,
+                            UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time")),
+                            UserName = dTOTempSession.DomainId.ToLower(),
+                            Email = dTOTempSession.DomainId.ToLower() + "@army.mil",
+                        };
+                        var result = await userManager.CreateAsync(user, "Admin123#");
+
+                        if (result.Succeeded)
+                        {
+                            await userManager.AddToRoleAsync(user, dTOTempSession.RoleName);
+
+                            TempData["success"] = "Domain ID has been successfully register.";
+
+                            var roles = await userManager.GetRolesAsync(user);
+                            ViewBag.Message = "Sucessfully Logged In.";
+                            if (roles[0] == "User")
+                            {
+                                return RedirectToActionPermanent("Dashboard", "Home");
+                            }
+                        }
+                        foreach (var error in result.Errors)
+                        {
+                            ModelState.AddModelError(string.Empty, error.Description);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                TempData["error"] = "You are not authorized this page.";
+                return RedirectToActionPermanent("TokenValidate", "Account");
+            }
+            return View();
         }
         [HttpGet]
         [AllowAnonymous]

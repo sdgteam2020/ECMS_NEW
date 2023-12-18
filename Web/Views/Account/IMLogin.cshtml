@@ -34,7 +34,7 @@
     @*   <link href="~/css/swiper.min.css" rel="stylesheet" /> *@
     <link href="~/css/feed.css" rel="stylesheet" />
     <link href="~/css/main.css" rel="stylesheet" />
-    <link href="~/css/sliders/style.css" rel="stylesheet" />
+@*     <link href="~/css/sliders/style.css" rel="stylesheet" /> *@
     <style>
         .swal2-confirm, .swal2-styled {
             background: #D97924 !important;
@@ -67,7 +67,7 @@
                                         <div class="mb-1 logo-sec text-center">
                                             <img src="/Images/AFSAC_Logo.png" />
                                         </div>
-                                        <p class="font-weight-normal text-center mb-4 mt-1 ">Kindly login with your login id and password here.</p>
+                                        <p class="font-weight-normal text-center mb-4 mt-1 ">Kindly login with your Domain Id here.</p>
                                         <div class="pb-3 mt-3">
                                             <form asp-antiforgery="true" method="post" asp-action="IMLogin" autocomplete="off" role="form">
                                                 <div class="form-group">
@@ -82,9 +82,6 @@
                                                     <span asp-validation-for="Role" class="text-danger"></span>
                                                 </div>
                                                 <button type="submit" class="btn btn-primary text-uppercase py-2 fs-5 w-100 mt-2" >Next</button>
-                                                <div class="alert alert-danger alert-dismissible fade show spnmsg d-none">
-                                                    <span asp-validation-for="ErrorMessage" class="text-danger"></span>
-                                                </div>
                                             </form>
                                         </div>
                                     </div>
@@ -99,7 +96,6 @@
     <script asp-src-include="~/lib/jquery/jquery.js"></script>
     <script asp-src-include="~/lib/jquery-validate/jquery.validate.js" defer></script>
     <script asp-src-include="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js" defer></script>
-    
     <script src="~/bootstrap/js/bootstrap.bundle.min.js"></script>
     @* <script src="~/fonts/feather/feather.min.js"></script> *@
     <script src="~/sweetalert2/sweetalert2.min.js"></script>

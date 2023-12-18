@@ -10,6 +10,7 @@ namespace DataAccessLayer.BaseInterfaces
 {
     public interface IDomainMapDB : IGenericRepositoryDL<TrnDomainMapping>
     {
+        public Task<TrnDomainMapping?> GetTrnDomainMappingByUserId(int UserId);
         public Task<bool> GetByDomainId(TrnDomainMapping Data);
         public Task<TrnDomainMapping?> GetByDomainIdbyUnit(TrnDomainMapping Data);
         public Task<TrnDomainMapping?> GetByAspnetUserIdBy(int AspNetUsersId);

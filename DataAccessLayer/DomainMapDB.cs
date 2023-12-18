@@ -23,6 +23,11 @@ namespace DataAccessLayer
             var ret =await _context.TrnDomainMapping.Where(p => p.AspNetUsersId == AspNetUsersId).SingleOrDefaultAsync();
             return ret;
         }
+        public async Task<TrnDomainMapping?> GetTrnDomainMappingByUserId(int UserId)
+        {
+            var ret = await _context.TrnDomainMapping.Where(p => p.UserId == UserId).SingleOrDefaultAsync();
+            return ret;
+        }
 
         public async Task<bool> GetByDomainId(TrnDomainMapping Data)
         {

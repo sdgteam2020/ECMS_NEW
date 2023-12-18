@@ -50,6 +50,10 @@ namespace BusinessLogicsLayer.Master
             return _iUserProfileDB.GetByMArmyNo(ArmyNo, UserId);
         }
 
+        public async Task<DTOProfileResponse?> GetUserProfileByArmyNo(string ArmyNo)
+        {
+            return await _iUserProfileDB.GetUserProfileByArmyNo(ArmyNo);
+        }
         public Task<List<BasicDetailVM>> GetByRequestId(int RequestId)
         {
             return _iUserProfileDB.GetByRequestId(RequestId);

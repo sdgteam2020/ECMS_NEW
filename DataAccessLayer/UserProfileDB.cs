@@ -38,6 +38,21 @@ namespace DataAccessLayer
             var ret = _context.UserProfile.Where(P=>P.ArmyNo.ToUpper().Contains(ArmyNo.ToUpper())).ToList();
             return ret;
         }
+        public async Task<DTOProfileResponse?> GetUserProfileByArmyNo(string ArmyNo)
+        {
+            DTOProfileResponse dTOProfileResponse = new DTOProfileResponse();
+            MUserProfile? mUserProfile = await _context.UserProfile.FirstOrDefaultAsync(x => x.ArmyNo == ArmyNo);
+            if (mUserProfile != null)
+            {
+                dTOProfileResponse = await GetByArmyNo(mUserProfile.UserId);
+                return dTOProfileResponse;
+            }
+            else
+            {
+                return null;
+            }
+
+        }
         public async Task<DTOProfileResponse> CheckArmyNoInUserProfile(string ArmyNo, int AspNetUsersId)
         {
             DTOProfileResponse dTOProfileResponse = new DTOProfileResponse();
