@@ -1,8 +1,13 @@
-﻿$(document).ready(function () {
+﻿var OffType = 0;
+var RegistrationApplyFor = 0;
+var lCardType = 0;
+var IsValid = 0;
+var Message = "";
+$(document).ready(function () {
 
     $("#btnApplyCard").click(function () {
 
-
+        RegistrationApplyFor = 0;
 
         $("#btnApplyCard").removeClass("btn-outline-primary");
         $("#btnApplyCard").addClass("btn-primary");
@@ -19,6 +24,7 @@
         $("#btnJCOs").addClass("btn-outline-warning");
         $("#btnJCOs").removeClass("btn-warning");
         GetAllRegistrationApplyFor(1);
+
     });
     $("#btnJCOs").click(function () {
 
@@ -31,10 +37,54 @@
 
         GetAllRegistrationApplyFor(2);
     });
-  
+
+    $("#btnNext").click(function () {
+        if (parseInt(OffType)!= 0 && parseInt(RegistrationApplyFor) != 0 && parseInt(lCardType) != 0)
+        {
+                if(OffType == 1 && parseInt(RegistrationApplyFor) == 1) {
+            if ($("#txtApplyForArmyNo").val() == $("#aspntokenarmyno").html()) {
+                IsValid = 1;
+            }
+            else {
+                Message = "Invalid Token Inserted ArmyNo Not Match";
+                IsValid = 0;
+            }
+        }
+        else if (OffType == 1 && parseInt(RegistrationApplyFor) != 1) {
+            if ($("#txtApplyForArmyNo").val() != "") {
+                IsValid = 1;
+            }
+            else {
+                Message = "Please Inset Token";
+                IsValid = 0;
+            }
+        }
+        else if (OffType == 2) {
+            if ($("#txtApplyForArmyNo").val() == "") {
+                IsValid = 0;
+                Message = "Plase Enter Army No";
+            }
+            else {
+                IsValid = 1;
+            }
+        }
+            if (IsValid == 1) {
+
+                CheckArmyNOExist();
+        }
+        else {
+            toastr.error(Message);
+        }
+    }
+   else {
+       toastr.error("Invalid Selected");
+   }
+    });
 });
 function GetAllRegistrationApplyFor(Id) {
-   
+    $("#spnNext").addClass("d-none");
+    $("#txtApplyForArmyNo").addClass("d-none");
+    RegistrationApplyFor = 0;
     var listItem = "";
     var userdata =
     {
@@ -62,7 +112,7 @@ function GetAllRegistrationApplyFor(Id) {
 
                 else {
 
-
+                    OffType = Id;
 
                     for (var i = 0; i < response.length; i++) {
 
@@ -82,6 +132,7 @@ function GetAllRegistrationApplyFor(Id) {
                         $(this).removeClass("btn-outline-success");
                         $(this).addClass("btn-success");
 
+                        RegistrationApplyFor = $(this).closest("button").find(".spnRegistration").html();
                        // alert($(this).closest("button").find(".spnRegistration").html());
                         AddAllCardType();
                     });
@@ -102,12 +153,13 @@ function GetAllRegistrationApplyFor(Id) {
 
 }
 function AddAllCardType() {
+    lCardType = 0;
     var list = '';
-    list += '<button type="button" class="btn btn-outline-info mt-4 ml-2 applyforicard">First time Smart card</button>';
-    list += '<button type="button" class="btn btn-outline-info mt-4 ml-2 applyforicard">Fair wear and tear </button>';
-    list += '<button type="button" class="btn btn-outline-info mt-4 ml-2 applyforicard">Change of Rank</button>';
-    list += '<button type="button" class="btn btn-outline-info mt-4 ml-2 applyforicard">Change of Army No</button>';
-    list += '<button type="button" class="btn btn-outline-info mt-4 ml-2 applyforicard">Loss/ Damaged</button>';
+    list += '<button type="button" class="btn btn-outline-info mt-4 ml-2 applyforicard">First time Smart card <span class="spnApplyForcard d-none">1</span></button>';
+    list += '<button type="button" class="btn btn-outline-info mt-4 ml-2 applyforicard">Fair wear and tear <span class="spnApplyForcard d-none">2</span></button>';
+    list += '<button type="button" class="btn btn-outline-info mt-4 ml-2 applyforicard">Change of Rank <span class="spnApplyForcard d-none">3</span></button>';
+    list += '<button type="button" class="btn btn-outline-info mt-4 ml-2 applyforicard">Change of Army No <span class="spnApplyForcard d-none">4</span></button>';
+    list += '<button type="button" class="btn btn-outline-info mt-4 ml-2 applyforicard">Loss/ Damaged <span class="spnApplyForcard d-none">5</span></button>';
 
     $("#icardrequestfor").html(list);
 
@@ -115,11 +167,73 @@ function AddAllCardType() {
         $('.applyforicard').removeClass("btn-info");
         $('.applyforicard').addClass("btn-outline-info");
 
-
         $(this).removeClass("btn-outline-info");
         $(this).addClass("btn-info");
+
+        $("#spnNext").removeClass("d-none");
+       
+       
+        lCardType = $(this).closest("button").find(".spnApplyForcard").html();
+
+
+
+        $("#txtApplyForArmyNo").addClass("d-none");
+        $("#txtApplyForArmyNo").val("");
+        if (OffType == 1 && RegistrationApplyFor == 1) {
+            GetTokenDetails("FetchUniqueTokenDetails", "txtApplyForArmyNo");
+
+        }
+        else if (OffType == 1 && RegistrationApplyFor != 1) {
+            GetTokenDetails("FetchUniqueTokenDetails", "txtApplyForArmyNo");
+
+        }
+        else if (OffType == 2) {
+            $("#txtApplyForArmyNo").removeClass("d-none");
+        }
 
         // alert($(this).closest("button").find(".spnRegistration").html());
        // AddAllCardType();
     });
 }
+
+
+function CheckArmyNOExist() {
+
+
+
+
+                $.ajax({
+                    url: "/BasicDetail/GetData",
+                    type: "POST",
+                    data: {
+                        "ICNumber": $("#txtApplyForArmyNo").val()
+                    },
+                    success: function (response, status) {
+                        if (response.Status == false) {
+                            
+                            toastr.error(response.Message);
+                        }
+                        else {
+                            Swal.fire({
+                                title: "Are you sure?",
+                                text: "You want to submit!",
+                                icon: "warning",
+                                showCancelButton: true,
+                                confirmButtonColor: "#3085d6",
+                                cancelButtonColor: "#d33",
+                                confirmButtonText: "Yes, submit it!"
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    sessionStorage.setItem("OffType", OffType);
+                                    sessionStorage.setItem("RegistrationApplyFor", RegistrationApplyFor);
+                                    sessionStorage.setItem("lCardType", lCardType);
+                                    sessionStorage.setItem("ArmyNo", $("#txtApplyForArmyNo").val());
+                                    window.location.href = "/BasicDetail/Registration";
+                                }
+                            });
+                        }
+                    }
+                });
+     
+}
+

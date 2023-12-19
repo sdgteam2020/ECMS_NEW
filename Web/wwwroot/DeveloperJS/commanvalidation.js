@@ -104,6 +104,25 @@ function DateFormateYYYY_mm_dd(date) {
 
     //`${datef2.getFullYear()}/` + monthsans + `/` + dayans ;
 }
+function DateFormatedd_mm_yyyy(date) {
+    var datef2 = new Date(date);
+    var months = "" + `${(datef2.getMonth() + 1)}`;
+    var days = "" + `${(datef2.getDate())}`;
+    var pad = "00"
+    var monthsans = pad.substring(0, pad.length - months.length) + months
+    var dayans = pad.substring(0, pad.length - days.length) + days
+    var year = `${datef2.getFullYear()}`;
+    if (year > 1902) {
+
+        var datemmddyyyy = dayans + `-` + monthsans + `-` + year + ` ` + "00:00";
+        return datemmddyyyy;
+    }
+    else {
+        return '';
+    }
+
+    //`${datef2.getFullYear()}/` + monthsans + `/` + dayans ;
+}
 function DateCalculateago(fmDate) {
     ////////ago///////////
     var ago = "";

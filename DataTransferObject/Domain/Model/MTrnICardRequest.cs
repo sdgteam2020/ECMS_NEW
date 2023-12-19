@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace DataTransferObject.Domain.Model
 {
     public class MTrnICardRequest:Common
-    {
+    { 
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int RequestId { get; set; }
@@ -26,5 +26,7 @@ namespace DataTransferObject.Domain.Model
         [ForeignKey("TrnDomainMapping"), DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int TrnDomainMappingId { get; set; }
         public TrnDomainMapping? TrnDomainMapping { get; set; }
+
+        
     }
 }

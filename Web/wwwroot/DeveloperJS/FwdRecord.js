@@ -1,7 +1,11 @@
 ﻿var photo = "";
 var sing = "";
 var StepCounter = 0;
+var applyfor = 0;
 $(document).ready(function () {
+
+    sessionStorage.removeItem('ArmyNo');
+
     var spnStepId = 0;
     $('.select2').select2({
         dropdownParent: $('#BasicDetails'),
@@ -38,6 +42,7 @@ $(document).ready(function () {
     $("#btnShowForward").click(function () {
 
         $("#BasicDetails").modal('hide');
+        /*if (applyfor==1)*/
         $("#FwdRecord").modal('show');
     });
     $("input[name='Intoffrs']").change(function () {
@@ -66,7 +71,8 @@ $(document).ready(function () {
             spnStepId = $(this).closest("tr").find(".spnStepId").html();
            
         StepCounter = $(this).closest("tr").find(".spnStepCounterId").html();
-      
+        applyfor = $(this).closest("tr").find(".spnApplyFor").html();
+        
             if (StepCounter == 1) {
                 $(".recectopt").addClass("d-none");
                 $("#btnRejected").addClass("d-none");

@@ -1,5 +1,4 @@
 ﻿@model List<BasicDetailVM>
-
 <div class="container1 mt-4">
     <div class="card mb-3 ">
         <div class="card-header">
@@ -25,7 +24,7 @@
                                     <th>@Html.DisplayNameFor(model => model[0].DOB)</th>
                                @*      <th>@Html.DisplayNameFor(model => model[0].DateOfCommissioning)</th> *@
                                     <th>Address</th>
-                                    
+                                    <th>Type</th>
                                     <th>@Html.DisplayNameFor(model => model[0].ICardType)</th>
                                     <th>History</th>
                                     <th class="noExport">Action</th>
@@ -41,7 +40,7 @@
                                         <td>@item.DOB.ToString("dd/MMM/yyyy")</td>
                                         @* <td>@item.DateOfCommissioning.ToString("dd/MMM/yyyy")</td> *@
                                         <td>@item.PermanentAddress</td>
-                                        @* <td>@item.Registration.Name </td> *@
+                                        <td>@item.ApplyFor </td>
                                         <td>@item.ICardType</td>
                                         <td><button class="btn btn-icon btn-round btn-primary mr-1 historyRequest" data-toggle="tooltip" data-placement="left" title="@item.Remark"><i class="fa fa-history" aria-hidden="true"></i></button></td>
                                         <td class="noExport">
@@ -53,6 +52,8 @@
                                                     <spna class="spnRequestId d-none">@item.RequestId</spna>
                                                     <spna class="spnStepCounterId d-none">@item.StepCounter</spna>
                                                     <spna class="spnStepId d-none">@item.StepId</spna>
+                                                    <spna class="spnApplyFor d-none">@item.ApplyForId</spna>
+
                                                    @if (item.StepCounter == 1 && ViewBag.Id==1)
                                                     {
                                                         <a asp-controller="BasicDetail" asp-action="BasicDetail" asp-route-Id="@item.EncryptedId" class="btn btn-icon btn-round btn-warning mr-1"><i class="fas fa-edit mt-2"></i></a>

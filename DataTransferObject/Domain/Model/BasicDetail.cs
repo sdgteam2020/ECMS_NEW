@@ -72,11 +72,12 @@ namespace DataTransferObject.Domain.Model
         [ForeignKey("MRegimental")]
         public byte? RegimentalId { get; set; }
         public MRegimental? Regimental { get; set; }
-        
-        [ForeignKey("MRegistration")]
-        public byte RegistrationId { get; set; }
-        public MRegistration? Registration { get; set; }
-        
+
+        public byte ApplyForId { get; set; }
+        //[ForeignKey("MRegistration")]
+        //public byte RegistrationId { get; set; }
+        //public MRegistration? Registration { get; set; }
+
         [ForeignKey("MUnit")]
         public int UnitId { get; set; }
         public MUnit? Unit { get; set; }

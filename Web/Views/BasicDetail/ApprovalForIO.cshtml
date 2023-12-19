@@ -24,6 +24,7 @@
                                     <th>@Html.DisplayNameFor(model => model[0].DOB)</th>
                                     <th>@Html.DisplayNameFor(model => model[0].DateOfCommissioning)</th>
                                     <th>@Html.DisplayNameFor(model => model[0].PermanentAddress)</th>
+                                    <th>Type </th>
                                     <th>@Html.DisplayNameFor(model => model[0].ICardType)</th>
                                     <th>History</th>
                                     <th class="noExport">Action</th>
@@ -39,6 +40,7 @@
                                         <td>@item.DOB.ToString("dd/MMM/yyyy")</td>
                                         <td>@item.DateOfCommissioning.ToString("dd/MMM/yyyy")</td>
                                         <td>@item.PermanentAddress</td>
+                                        <td>@item.ApplyFor </td>
                                         <td>@item.ICardType</td>
                                         <td><button class="btn btn-icon btn-round btn-primary mr-1 historyRequest" data-toggle="tooltip" data-placement="left" title="@item.Remark"><i class="fa fa-history" aria-hidden="true"></i></button></td>
                                         <td class="noExport">
@@ -49,6 +51,7 @@
                                                 <spna class="spnRequestId d-none">@item.RequestId</spna>
                                                 <spna class="spnStepCounterId d-none">@item.StepCounter</spna>
                                                 <spna class="spnStepId d-none">@item.StepId</spna>
+                                                <spna class="spnApplyFor d-none">@item.ApplyForId</spna>
                                                 @if (ViewBag.Id == 1 && (item.StepCounter == 2 || item.StepCounter == 3 || item.StepCounter == 4 ))
                                                 {
                                                    

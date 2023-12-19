@@ -1,4 +1,5 @@
-﻿using BusinessLogicsLayer.Appt;
+﻿using BusinessLogicsLayer.API;
+using BusinessLogicsLayer.Appt;
 using BusinessLogicsLayer.ArmedCat;
 using BusinessLogicsLayer.BasicDet;
 using BusinessLogicsLayer.BasicDetTemp;
@@ -105,6 +106,10 @@ namespace BusinessLogicsLayer
             services.AddTransient<IChangeHierarchyMasterDB, ChangeHierarchyMasterDB>();
 
             services.AddTransient<IArmedCatBL, ArmedCatBL>();
+
+            //////Api Calll/////////////
+            services.AddTransient<IAPIBL, APIBL>();
+
             //services.AddDbContext<ApplicationDbContext>(opt => opt.UseSqlServer("Server=SDG20\\SQLEXPRESS; Database=AFSAC;Integrated Security=True;MultipleActiveResultSets=True;TrustServerCertificate=True"));
             //services.AddDbContext<ApplicationDbContext>(opt => opt.UseSqlServer("Server=.\\sqlexpress; Database=AFSAC;User Id=sa; Password=Admin@2018;MultipleActiveResultSets=True;TrustServerCertificate=True"));
             // services.AddDbContext<ApplicationDbContext>(opt => opt.UseSqlServer("Server=192.168.10.63; database=AFSAC_New; User Id=sa; Password=Admin@2018;Connect Timeout=30;TrustServerCertificate=True; MultipleActiveResultSets=true"));

@@ -7,6 +7,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="wwwroot\DeveloperJS\Registration.js" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="wwwroot\DeveloperJS\Registration.js" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="wwwroot\DeveloperJS\Registration.js" />
     <None Include="wwwroot\js\site.js" />
     <None Include="wwwroot\lib\bootstrap\dist\css\bootstrap-grid.css.map" />
     <None Include="wwwroot\lib\bootstrap\dist\css\bootstrap-grid.min.css.map" />

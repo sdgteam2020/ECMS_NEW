@@ -218,7 +218,7 @@ namespace DataAccessLayer
                                      StepCounter = e.StepCounter,
                                      StepId = e.StepId,
                                      ICardType = e.ICardType, 
-                                     RegistrationId = e.RegistrationId,
+                                     //RegistrationId = e.RegistrationId,
                                      RequestId = e.RequestId,
                                  }).ToList();
                 return await Task.FromResult(allrecord);
