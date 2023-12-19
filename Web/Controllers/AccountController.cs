@@ -1017,7 +1017,7 @@ namespace Web.Controllers
                                 dTOTempSession.ICNO = dTOProfileResponse.ArmyNo;
                                 dTOTempSession.UserId = dTOProfileResponse.UserId;
                                 SessionHeplers.SetObject(HttpContext.Session, "IMData", dTOTempSession);
-                                return RedirectToActionPermanent("Profile", "Account");
+                                return RedirectToActionPermanent("Profile", "Account",new { Id = protector.Protect(dTOProfileResponse.UserId.ToString()) });
                             }
                         }
                         else
@@ -1064,7 +1064,7 @@ namespace Web.Controllers
         }
         [HttpGet]
         [AllowAnonymous]
-        public IActionResult Profile()
+        public async Task<IActionResult> Profile(string? Id)
         {
             DTOTempSession? dTOTempSession = SessionHeplers.GetObject<DTOTempSession>(HttpContext.Session, "IMData");
             if (dTOTempSession != null)
@@ -1076,7 +1076,37 @@ namespace Web.Controllers
                 }
                 else
                 {
-                    return View();
+                    if(Id!=null)
+                    {
+                        string decryptedId = string.Empty;
+                        int decryptedIntId = 0;
+                        try
+                        {
+                            // Decrypt the  id using Unprotect method
+                            decryptedId = protector.Unprotect(Id);
+                            decryptedIntId = Convert.ToInt32(decryptedId);
+
+                            //Get ArmyNo from UserProfile Table
+                            MUserProfile mUserProfile = await _userProfileBL.Get(decryptedIntId);
+                            DTOProfileAndMappingRequest dTOProfileAndMappingRequest= new DTOProfileAndMappingRequest();
+                            dTOProfileAndMappingRequest.UserId = mUserProfile.UserId;
+                            dTOProfileAndMappingRequest.ArmyNo = mUserProfile.ArmyNo;
+                            dTOProfileAndMappingRequest.RankId= mUserProfile.RankId;
+                            dTOProfileAndMappingRequest.Name= mUserProfile.Name;
+                            dTOProfileAndMappingRequest.ApptId= mUserProfile.ApptId;
+                            dTOProfileAndMappingRequest.IntOffr= mUserProfile.IntOffr;
+                            return View(dTOProfileAndMappingRequest);
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.LogError(1001, ex, "This error occure because Id value change by user.");
+                            return RedirectToAction("Error", "Error");
+                        }
+                    }
+                    else
+                    {
+                        return View();
+                    }
                 }
             }
             else
@@ -1087,7 +1117,7 @@ namespace Web.Controllers
         }
         [HttpPost]
         [AllowAnonymous]
-        public async Task<IActionResult> Profile(DTOProfileRequest model)
+        public async Task<IActionResult> Profile(DTOProfileAndMappingRequest model)
         {
             DTOTempSession? dTOTempSession = SessionHeplers.GetObject<DTOTempSession>(HttpContext.Session, "IMData");
             if (dTOTempSession != null)

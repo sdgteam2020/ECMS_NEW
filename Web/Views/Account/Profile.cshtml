@@ -1,1 +1,134 @@
-﻿
+﻿@model DTOProfileAndMappingRequest
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        .row.mb-1.required .form-label::after {
+            content: "*";
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <div class="row g-3 row-deck mb-3">
+        <div class="card mb-4">
+            <div class="card-header py-3 d-flex  bg-transparent">
+                <h6 class="mb-0 fw-bold"></h6>
+            </div>
+            <form enctype="multipart/form-data" asp-controller="Account" asp-action="Profile" method="post" class="mt-3">
+                <div class="card-body">
+                    <input hidden asp-for="UserId" />
+                    <input hidden asp-for="UnitId" />
+                    <div class="row">
+                        <div class="col-xl-6">
+                            <div class="row mb-1">
+                                <label asp-for="ArmyNo" class="col-sm-3 col-form-label form-label">Offrs Army No</label>
+                                <div class="col-sm-6">
+                                    <input asp-for="ArmyNo" class="form-control" placeholder="" />
+                                    <span asp-validation-for="ArmyNo" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="row mb-1">
+                                <label asp-for="Name" class="col-sm-3 col-form-label form-label">Offrs Army No</label>
+                                <div class="col-sm-6">
+                                    <input asp-for="Name" class="form-control" placeholder="" />
+                                    <span asp-validation-for="Name" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="row mb-1 required">
+                                <label asp-for="RankId" class="col-sm-3 col-form-label form-label"></label>
+                                <div class="col-sm-6">
+                                    <select asp-for="RankId" class="form-select" asp-items="ViewBag.OptionsRank">
+                                    </select>
+                                    <span asp-validation-for="RankId" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="row mb-1 required">
+                                <label asp-for="FormationId" class="col-sm-3 col-form-label form-label">Formation</label>
+                                <div class="col-sm-6">
+                                    <select asp-for="FormationId" class="form-select" asp-items="ViewBag.OptionsRank">
+                                    </select>
+                                    <span asp-validation-for="FormationId" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="row mb-1 required">
+                                <label asp-for="ApptId" class="col-sm-3 col-form-label form-label">Appt.</label>
+                                <div class="col-sm-6">
+                                    <select asp-for="ApptId" class="form-select" asp-items="ViewBag.OptionsRank">
+                                    </select>
+                                    <span asp-validation-for="ApptId" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="row mb-1 required">
+                                <label asp-for="ApptId" class="col-sm-3 col-form-label form-label">Appt.</label>
+                                <div class="col-sm-6">
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="IntOffr" id="intoffsyes">
+                                        <label class="form-check-label" for="intoffsyes">
+                                            Yes
+                                        </label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="IntOffr" id="intoffsno">
+                                        <label class="form-check-label" for="intoffsno">
+                                            No
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mb-1">
+                                <label asp-for="UnitName" class="col-sm-3 col-form-label form-label">Offrs Army No</label>
+                                <div class="col-sm-6">
+                                    <input asp-for="UnitName" class="form-control" placeholder="" />
+                                    <span asp-validation-for="UnitName" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="row mb-1">
+                                <label class="col-form-label col-sm-4">Sus No</label>
+                                <div class="col-sm-6">
+                                    <label asp-for="Sus_no" class="col-sm-3 col-form-label form-label"></label>
+                                </div>
+                            </div>
+                            <div class="row mb-1">
+                                <label class="col-form-label col-sm-4">Comd</label>
+                                <div class="col-sm-6">
+                                    <label asp-for="ComdName" class="col-sm-3 col-form-label form-label"></label>
+                                </div>
+                            </div>
+                            <div class="row mb-1">
+                                <label class="col-form-label col-sm-4">Corps</label>
+                                <div class="col-sm-6">
+                                    <label asp-for="CorpsName" class="col-sm-3 col-form-label form-label"></label>
+                                </div>
+                            </div>
+                            <div class="row mb-1">
+                                <label class="col-form-label col-sm-4">Div</label>
+                                <div class="col-sm-6">
+                                    <label asp-for="DivName" class="col-sm-3 col-form-label form-label"></label>
+                                </div>
+                            </div>
+                            <div class="row mb-1">
+                                <label class="col-form-label col-sm-4">Bde</label>
+                                <div class="col-sm-6">
+                                    <label asp-for="BdeName" class="col-sm-3 col-form-label form-label"></label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-6">
+                        </div>
+                    </div>
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                </div>
+                <div class="card-footer text-center">
+                    <button type="submit" class="btn btn-primary" onclick="beforeSubmitValidateBasicDetail(this.form.id);">Save & Next</button>
+                    <a asp-action="Index" asp-controller="BasicDetail" class="btn btn-primary">Back</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
+
