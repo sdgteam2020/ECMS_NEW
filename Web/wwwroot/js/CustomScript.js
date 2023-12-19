@@ -1,17 +1,47 @@
 ﻿$(document).ready(function () {
-    $('#RegistrationId').on('change', function () {
-        if ($('#RegistrationId').val() == 1) {
-            $("#ServiceNumber").attr("readonly", true);
-            $("#btngetToken").removeClass("d-none");
-        }
-        else {
-            $("#ServiceNumber").val("");
-            $("#ServiceNumber").attr("readonly", false); 
-            $("#btngetToken").addClass("d-none");
-        }
-        
+    //$('#RegistrationId').on('change', function () {
+    //    if ($('#RegistrationId').val() == 1) {
+    //        $("#ServiceNumber").attr("readonly", true);
+    //        $("#btngetToken").removeClass("d-none");
+    //    }
+    //    else {
+    //        $("#ServiceNumber").val("");
+    //        $("#ServiceNumber").attr("readonly", false);
+    //        $("#btngetToken").addClass("d-none");
+    //    }
 
-    });
+
+    //});
+    /* alert(sessionStorage.getItem("OffType"))*/
+    if ($("#ApplyForId").val() == 1) {
+        $(".OptionsRegimental").addClass("d-none");
+        mMsater($("#RankId").val(), "RankId", Rank, "");
+    } else if ($("#ApplyForId").val() == 2) {
+        mMsater($("#RankId").val(), "RankId", RankJCo, "");
+        $(".OptionsRegimental").removeClass("d-none");
+    }
+
+    if (sessionStorage.getItem("ArmyNo") != null) {
+        $("#ServiceNumber").val(sessionStorage.getItem("ArmyNo"));
+
+        if (sessionStorage.getItem("OffType") == 1) {
+            $(".OptionsRegimental").addClass("d-none");
+            mMsater($("#RankId").val(), "RankId", Rank, "");
+        }
+        else if (sessionStorage.getItem("OffType") == 2) {
+            {
+                mMsater($("#RankId").val(), "RankId", RankJCo, "");
+                $(".OptionsRegimental").removeClass("d-none");
+            }
+        }
+        if (sessionStorage.getItem("OffType") != "")
+            $("#ApplyForId").val(sessionStorage.getItem("OffType"));
+        $("#Type").val(sessionStorage.getItem("OffType"));
+
+        if (sessionStorage.getItem("lCardType") != "")
+            $("#TypeId").val(sessionStorage.getItem("lCardType"));
+
+    }
 });
 function GetRegimentalListByArmedId(regimentalId) {
     $.ajax({
@@ -35,51 +65,8 @@ function printTable(divId) {
     newWin.print();
     newWin.close();
 }
-function Proceed(id) {
-    let formId = '#' + id;
-    // Check if the form exists
-    if ($(formId).length === 0) {
-        console.error("Form not found.");
-        return;
-    }
-    let stype = parseInt($("input[name='SubmitType']:checked").val());
-    if (stype !=1) {
-        $("#Observations").prop('required', true);
-        $("#lblObservations").text('Observations is required.')
-    }
-    if ($("#DOB_").val() == '') {
-        $("#lblDOB").text('Date of Birth is required.')
-    }
-    else {
-        $("#lblDOB").text('')
-    }
-    if ($("#DOC").val() == '') {
-        $("#lblDateOfCommissioning").text('Date of Commissioning/ Enrollment is required.')
-    }
-    else {
-        $("#lblDateOfCommissioning").text('')
-    }
-    $.validator.unobtrusive.parse($(formId));
-    if ($(formId).valid()) {
-        var formData = $(formId).serialize();
-        console.log(formData);
-    }
-    else {
-        return false;
-    }
-}
-function registrationEnableDisabledField(val) {
-    if (val==1) {
-        $("#btnsubmit").prop('disabled', false);
-        $("#Observations").val('');
-        $("#Observations").prop('readonly', true);
-    }
-    else {
-        $("#btnsubmit").prop('disabled', false);
-        $("#Observations").prop('readonly', false);
-    }
 
-}
+
 function Aadhaarformate(e, elemt) {
     if (e.which !== 8) {
         if (elemt.value.length === 4 || elemt.value.length === 9) {
@@ -393,14 +380,14 @@ function getUserData() {
         }
     });
 }
-function getData(id) {  
+function getData1(id) {  
     let formId = '#' + id;
     // Check if the form exists
     if ($(formId).length === 0) {
         console.error("Form not found.");
         return;
     }
-    $("#RegistrationId").prop('required', true);
+    /*$("#RegistrationId").prop('required', true);*/
     $("#ServiceNumber").prop('required', true);
     $.validator.unobtrusive.parse($(formId));
     if ($(formId).valid()) {

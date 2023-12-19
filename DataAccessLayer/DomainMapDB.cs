@@ -1,6 +1,8 @@
 ﻿using DataAccessLayer.BaseInterfaces;
 using DataTransferObject.Domain.Master;
 using DataTransferObject.Domain.Model;
+using DataTransferObject.Response;
+using DataTransferObject.Response.User;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -40,6 +42,20 @@ namespace DataAccessLayer
             return await _context.TrnDomainMapping.Where(p => p.AspNetUsersId == Data.AspNetUsersId).SingleOrDefaultAsync();
         }
 
-        
+        public async Task<TrnDomainMapping> GetByRequestId(int RequestId)
+        {
+            //SELECT trndom.AspNetUsersId,trndom.UserId from TrnDomainMapping trndom
+            //inner join TrnICardRequest trncard on trndom.id = trncard.TrnDomainMappingId
+            //where trncard.RequestId = 16
+            var ret = await (from trndomap in _context.TrnDomainMapping
+                      join trnicardreq in _context.TrnICardRequest on trndomap.Id equals trnicardreq.TrnDomainMappingId
+                      where trnicardreq.RequestId == RequestId
+                      select new TrnDomainMapping
+                      {
+                         AspNetUsersId=trndomap.AspNetUsersId,
+                          UserId= trndomap.UserId,
+                      }).SingleOrDefaultAsync();
+            return  ret;
+        }
     }
 }

@@ -37,6 +37,7 @@ namespace DataAccessLayer
         public DbSet<MRank> MRank { get; set; }
         public DbSet<MStepCounter> TrnStepCounter { get; set; }
         public DbSet<MTrnICardRequest> TrnICardRequest { get; set; }
+        public DbSet<MApplyFor> MApplyFor { get; set; }
         public DbSet<BasicDetail> BasicDetails { get; set; } = null!;
         public DbSet<BasicDetailTemp> BasicDetailTemps { get; set; } = null!;
         public DbSet<MUserProfile> UserProfile { get; set; } = null!;

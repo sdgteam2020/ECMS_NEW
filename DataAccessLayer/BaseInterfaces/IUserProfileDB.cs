@@ -20,6 +20,7 @@ namespace DataAccessLayer.BaseInterfaces
         public Task<List<DTOUserProfileResponse>> GetAll(int DomainId, int UserId);
         public Task<List<DTOFwdICardResponse>> GetDataForFwd(int StepId, int UnitId, string Name, int TypeId);
         public Task<List<BasicDetailVM>> GetByRequestId(int RequestId);
+        public Task<List<DTOFwdICardResponse>> GetOffrsByUnitMapId(int UnitId);
         public Task<DTOProfileResponse> CheckArmyNoInUserProfile(string ArmyNo,int AspNetUsersId);
     }
 }

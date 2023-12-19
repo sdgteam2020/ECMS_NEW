@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace BusinessLogicsLayer.BasicDet
 {
-    public class BasicDetailBL:GenericRepositoryDL<BasicDetail>,IBasicDetailBL
+    public class BasicDetailBL : GenericRepositoryDL<BasicDetail>, IBasicDetailBL
     {
         private readonly IBasicDetailDB _iBasicDetailDB;
         public BasicDetailBL(ApplicationDbContext context,IBasicDetailDB BasicDetail) : base(context)
@@ -35,6 +35,16 @@ namespace BusinessLogicsLayer.BasicDet
         public Task<DTOBasicDetailsResponse> GetByBasicDetailsId(int BasicDetailId)
         {
             return _iBasicDetailDB.GetByBasicDetailsId(BasicDetailId);
+        }
+
+        public Task<List<ICardHistoryResponse>> ICardHistory(int RequestId)
+        {
+            return _iBasicDetailDB.ICardHistory(RequestId);
+        }
+
+        public Task<List<BasicDetailVM>> GetALLForIcardSttaus(int UserId, int step, int type)
+        {
+            return _iBasicDetailDB.GetALLForIcardSttaus(UserId, step, type);
         }
     }
 }

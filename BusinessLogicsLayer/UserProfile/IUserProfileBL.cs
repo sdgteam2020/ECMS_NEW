@@ -19,6 +19,7 @@ namespace BusinessLogicsLayer.Master
         public Task<DTOProfileResponse?> GetUserProfileByArmyNo(string ArmyNo);
         public Task<List<DTOUserProfileResponse>> GetAll(int DomainId, int UserId);
         public Task<List<DTOFwdICardResponse>> GetDataForFwd(int StepId,int UnitId,string Name,int TypeId);
+        public Task<List<DTOFwdICardResponse>> GetOffrsByUnitMapId(int UnitId);
         public Task<List<BasicDetailVM>> GetByRequestId(int RequestId);
         public Task<DTOProfileResponse> CheckArmyNoInUserProfile(string ArmyNo, int AspNetUsersId);
     }

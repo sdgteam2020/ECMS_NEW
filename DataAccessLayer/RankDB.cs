@@ -56,5 +56,10 @@ namespace DataAccessLayer
             var ret=  _context.MRank.OrderBy(x => x.Orderby).ToList();   
             return ret;
         }
+        public async Task<IEnumerable<MRank>> GetAllByType(int Type)
+        {
+            var ret=  _context.MRank.Where(x => x.Type==Type).ToList();   
+            return ret;
+        }
     }
 }

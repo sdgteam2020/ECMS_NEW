@@ -15179,8 +15179,8 @@ dl li {
 }
 
 .nav-pills {
-  border-bottom: 1px solid #CED4DA;
-  padding-bottom: 1rem;
+ /* border-bottom: 1px solid #CED4DA;*/
+  padding-bottom: 0rem;
 }
 
 .nav-pills .nav-link {
@@ -15326,7 +15326,7 @@ dl li {
   position: relative;
 }
 
-.timeline:before {
+/*.timeline:before {
   top: 0;
   bottom: 0;
   position: absolute;
@@ -15336,7 +15336,7 @@ dl li {
   left: 50%;
   margin-left: -1.5px;
 }
-
+*/
 .timeline .timeline-wrapper {
   display: block;
   margin-bottom: 20px;
@@ -18806,7 +18806,7 @@ div.tagsinput span.tag a {
 
 .content-wrapper {
   background: #F5F7FF;
-  padding: 2.375rem 2.375rem;
+  /*padding: 2.375rem 2.375rem;*/
   width: 100%;
   -webkit-flex-grow: 1;
   flex-grow: 1;

@@ -22,10 +22,10 @@
                 <input hidden asp-for="DOB" />
                 <input hidden asp-for="DateOfCommissioning" />
                 <input hidden asp-for="EncryptedId" />
-                <input hidden asp-for="RegistrationId" />
-                <input hidden asp-for="Type"/>
+                <input hidden asp-for="ApplyForId" /> @* OffrsJCO/OR *@
+                <input hidden asp-for="Type" />    @* OffrsJCO/OR *@
                 <input hidden asp-for="UnitId"/>
-                <input hidden asp-for="TypeId" />
+                <input hidden asp-for="TypeId" /> 
                 <div class="row">
                     <div class="col-xl-6">
                         <div class="row mb-1">
@@ -71,9 +71,9 @@
                                 <span asp-validation-for="ArmedId" class="text-danger"></span>
                             </div>
                         </div>
-                        @if (Model.Type == (int)RegistrationType.JCO)
-                        {
-                            <div class="row mb-1 required">
+                        @* @if (Model.Type == (int)RegistrationType.JCO)
+                        { *@
+                        <div class="row mb-1 required OptionsRegimental">
                                 <label class="col-sm-1 col-form-label text-center font-weight-bold">@(sno++).</label>
                                 <label asp-for="RegimentalId" class="col-sm-3 col-form-label form-label"></label>
                                 <div class="col-sm-6">
@@ -82,7 +82,7 @@
                                     <span id="lblRegimentalId" class="text-danger"></span>
                                 </div>
                             </div>
-                        }
+                        @* } *@
                         <div class="row mb-1">
                             <label class="col-sm-1 col-form-label text-center font-weight-bold">@(sno++).</label>
                             <label asp-for="ServiceNo" class="col-sm-3 col-form-label form-label"></label>
@@ -234,6 +234,8 @@
     </div>
 </div>
 @section Scripts{
+    <script src="~/developerjs/mtables.js"></script>
     <script asp-src-include="~/developerjs/basicdetails.js"></script>
     <script asp-src-include="~/js/CustomScript.js"></script>
+    
     }

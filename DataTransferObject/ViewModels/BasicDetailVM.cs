@@ -106,8 +106,10 @@ namespace DataTransferObject.ViewModels
         public byte? RegimentalId { get; set; }
         public MRegimental? Regimental { get; set; }
 
-        public byte RegistrationId { get; set; }
-        public MRegistration? Registration { get; set; }
+        //[Display(Name = "ApplyForId", ResourceType = typeof(Resource))]
+        public byte ApplyForId { get; set; }
+        [NotMapped]
+        public string? ApplyFor { get; set; }
 
         public int UnitId { get; set; }
         public MUnit? Unit { get; set; }
@@ -142,6 +144,9 @@ namespace DataTransferObject.ViewModels
         public int RequestId { get; set; }
         [NotMapped]
         public byte TypeId { get; set; }
+        [NotMapped]
+        public int Reject { get; set; }
+        public string? Remark { get; set; }
     }
     public class BasicDetailCrtAndUpdVM : BasicDetailVM
     {

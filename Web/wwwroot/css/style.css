@@ -20998,8 +20998,8 @@ i-feather {
 }
 
     .timeline.timeline-xs .timeline-item .timeline-item-marker .timeline-item-marker-text {
-        width: 3rem;
-        font-size: 0.7rem;
+        width: 5rem;
+        font-size: 0.9rem;
     }
 
     .timeline.timeline-xs .timeline-item .timeline-item-marker .timeline-item-marker-indicator {
@@ -22108,6 +22108,7 @@ i-feather {
     box-shadow: 0 3.21px 7.21px 0 rgba(0,0,0,.13), 0 0.6px 1.8px 0 rgba(0,0,0,.10);
     border-width: 0;
     transition: all .2s;
+
 }
 
 .card-header {
@@ -22164,7 +22165,7 @@ i-feather {
     text-align: center;
     font-weight: 900;
     content: "\f067";
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: 'Font Awesome\ 5 Free';
     color: #E91E63;
     font-size: 12px;
     width: 30px;
@@ -22923,7 +22924,7 @@ a.bg-alternate:hover, a.bg-alternate:focus, button.bg-alternate:hover, button.bg
     width: 100px;
 }
 
-.nav-pills .nav-link {
+/*.nav-pills .nav-link {
     position: relative;
     border-radius: .35rem;
     font-weight: 500;
@@ -22978,7 +22979,7 @@ a.bg-alternate:hover, a.bg-alternate:focus, button.bg-alternate:hover, button.bg
     .nav-pills .nav-link span {
         position: relative;
         z-index: 5;
-    }
+    }*/
 
 .nav-fill .nav-item {
     flex: 1 1 auto;

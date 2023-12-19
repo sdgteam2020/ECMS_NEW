@@ -19,7 +19,7 @@ namespace DataAccessLayer.ExtensionsClass
                         RegistrationId = 1,
                         Name = "Apply for Self (Officer)",
                         Order = 1,
-                        Type = 1,
+                        ApplyForId = 1,
                         Updatedby = 1,
                         UpdatedOn = dt
                     },
@@ -28,7 +28,7 @@ namespace DataAccessLayer.ExtensionsClass
                         RegistrationId = 2,
                         Name = "Apply for Unit Officer",
                         Order = 2,
-                        Type = 1,
+                        ApplyForId = 1,
                         Updatedby = 1,
                         UpdatedOn = dt
                     },
@@ -37,7 +37,7 @@ namespace DataAccessLayer.ExtensionsClass
                         RegistrationId = 3,
                         Name = "Apply for Other Unit Officer",
                         Order = 3,
-                        Type = 1,
+                        ApplyForId = 1,
                         Updatedby = 1,
                         UpdatedOn = dt
                     },
@@ -46,7 +46,7 @@ namespace DataAccessLayer.ExtensionsClass
                         RegistrationId = 4,
                         Name = "Apply for Unit JCOs/OR",
                         Order = 4,
-                        Type = 2,
+                        ApplyForId = 2,
                         Updatedby = 1,
                         UpdatedOn = dt
                     },
@@ -55,7 +55,7 @@ namespace DataAccessLayer.ExtensionsClass
                         RegistrationId = 5,
                         Name = "Apply for Other Unit JCOs/OR",
                         Order = 5,
-                        Type = 2,
+                        ApplyForId = 2,
                         Updatedby = 1,
                         UpdatedOn = dt
                     }

@@ -1,15 +1,15 @@
 ﻿@if(TempData["success"]!=null)
 {
-    <script src="~/jquery/jquery.min.js"></script>
-    <script src="~/toastr/toastr.min.js"></script>
+    <script asp-src-include="~/jquery/jquery.min.js"></script>
+    <script asp-src-include="~/toastr/toastr.min.js"></script>
     <script type="text/javascript">
         toastr.success('@TempData["success"]');
     </script>
 }
 @if(TempData["error"]!=null)
 {
-    <script src="~/jquery/jquery.min.js"></script>
-    <script src="~/toastr/toastr.min.js"></script>
+    <script asp-src-include="~/jquery/jquery.min.js"></script>
+    <script asp-src-include="~/toastr/toastr.min.js"></script>
     <script type="text/javascript">
         toastr.error('@TempData["error"]');
     </script>

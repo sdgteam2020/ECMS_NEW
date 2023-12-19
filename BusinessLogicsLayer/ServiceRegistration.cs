@@ -1,5 +1,4 @@
-﻿using BusinessLogicsLayer.Account;
-using BusinessLogicsLayer.Appt;
+﻿using BusinessLogicsLayer.Appt;
 using BusinessLogicsLayer.ArmedCat;
 using BusinessLogicsLayer.BasicDet;
 using BusinessLogicsLayer.BasicDetTemp;
@@ -10,6 +9,7 @@ using BusinessLogicsLayer.Corps;
 using BusinessLogicsLayer.Div;
 using BusinessLogicsLayer.Formation;
 using BusinessLogicsLayer.Master;
+using BusinessLogicsLayer.Registration;
 using BusinessLogicsLayer.Token;
 using BusinessLogicsLayer.Unit;
 using BusinessLogicsLayer.User;
@@ -65,7 +65,9 @@ namespace BusinessLogicsLayer
             services.AddTransient<IRankDB, RankDB>();
 
             services.AddTransient<IUserProfileMappingBL, UserProfileMappingBL>();
-           
+
+            services.AddTransient<IRegistrationBL, RegistrationBL>();
+            services.AddTransient<IRegistrationDB, RegistrationDB>();
 
             services.AddTransient<IBasicDetailBL, BasicDetailBL>();
             services.AddTransient<IBasicDetailDB, BasicDetailDB>();
@@ -103,6 +105,10 @@ namespace BusinessLogicsLayer
             services.AddTransient<IChangeHierarchyMasterDB, ChangeHierarchyMasterDB>();
 
             services.AddTransient<IArmedCatBL, ArmedCatBL>();
+
+            //////Api Calll/////////////
+            services.AddTransient<IAPIBL, APIBL>();
+
 
             services.AddTransient<IAccountBL, AccountBL>();
             services.AddTransient<IAccountDB, AccountDB>();

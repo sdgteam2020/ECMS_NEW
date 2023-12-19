@@ -14,4 +14,5 @@ const Bde = 4;
 const Formation = 5;
 const Appt = 6;
 const Rank = 7;
+const RankJCo = 8;
 const ArmyCat = 10;

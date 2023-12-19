@@ -161,8 +161,8 @@ namespace BusinessLogicsLayer
             } 
             else if (Data.id == Convert.ToInt16(Constants.MasterTbl.RankOffrs))
             {
-                var Ret = await Rank.GetAll();
-                foreach (var Forma in Ret.Where(P=>P.Type==1))
+                var Ret = await Rank.GetAllByType(1);
+                foreach (var Forma in Ret)
                 {
 
                     DTOMasterResponse db = new DTOMasterResponse();
@@ -176,8 +176,8 @@ namespace BusinessLogicsLayer
             }
             else if (Data.id == Convert.ToInt16(Constants.MasterTbl.RankOrJco))
             {
-                var Ret = await Rank.GetAll();
-                foreach (var Forma in Ret.Where(P => P.Type == 2))
+                var Ret = await Rank.GetAllByType(2);
+                foreach (var Forma in Ret)
                 {
 
                     DTOMasterResponse db = new DTOMasterResponse();

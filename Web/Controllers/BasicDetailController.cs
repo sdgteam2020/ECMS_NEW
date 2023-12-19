@@ -25,6 +25,8 @@ using DataTransferObject.ViewModels;
 using System.Data.Entity;
 using BusinessLogicsLayer.BasicDet;
 using BusinessLogicsLayer.BasicDetTemp;
+using BusinessLogicsLayer.BdeCate;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Web.Controllers
 {
@@ -66,50 +68,135 @@ namespace Web.Controllers
             this.iTrnICardRequestBL = iTrnICardRequestBL;
             this.iDomainMapBL = iDomainMapBL;
         }
-        
+
         [Authorize(Roles = "Admin,User")]
-        public async Task<ActionResult> Index(int Id)
+        public async Task<ActionResult> Index(string Id)
         {
-            var userId = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").UserId;
-            userId = 4;
-            int type = 0;
-            ViewBag.Id = Id;    
-            var allrecord = await Task.Run(()=> basicDetailBL.GetALLBasicDetail(Convert.ToInt32(userId), Id, type)) ;
+            int retint = 0;int type = 1;
+            var userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+            int stepcounter = 0;
+
+            if (!string.IsNullOrEmpty(Id))
+            { 
+            var base64EncodedBytes = System.Convert.FromBase64String(Id);
+            var ret = System.Text.Encoding.UTF8.GetString(base64EncodedBytes);
+            retint = Convert.ToInt32(ret);
+                stepcounter = retint;
+            }
+            ViewBag.Id = retint;
+
+            if (retint == 1)
+            {
+                ViewBag.Title = "List of Register I-Card";
+                // type = 2; stepcounter = 2;
+            }
+
+            else if (retint == 2)
+            { ViewBag.Title = "I-Card Pending From Io"; type = 2; stepcounter = 2; }
+            else if (retint == 22)
+            { ViewBag.Title = "I-Card Rejectd From Io"; type = 1; }
+            else if (retint == 222)
+            { ViewBag.Title = "I-Card Approved From Io"; type = 3; stepcounter = 2; }
+            else if (retint == 3)
+            {
+                ViewBag.Title = "I-Card Pending From GSO";
+                type = 2; stepcounter = 3;
+            }
+            else if (retint == 33)
+            {
+                ViewBag.Title = "I-Card Rejectd From GSO";
+                type = 1;
+            }
+            else if (retint == 333)
+            {
+                ViewBag.Title = "I-Card Approved From GSO";
+                type = 3; stepcounter = 4;
+            }
+            else if (retint == 4)
+            { ViewBag.Title = "I-Card Pending From MI 11"; type = 2; stepcounter = 4; }
+            else if (retint == 44)
+            { ViewBag.Title = "I-Card Rejectd From MI 11"; type = 1; }
+            else if (retint == 444)
+            { ViewBag.Title = "I-Card Approved From MI 11"; type = 3; stepcounter = 5; }
+            else if (retint == 5)
+            { ViewBag.Title = "I-Card Pending From HQ 54"; type = 2; stepcounter = 5; }
+            else if (retint == 55)
+            { ViewBag.Title = "I-Card Rejectd From HQ 54"; type = 1; }
+            else if (retint == 555)
+            { ViewBag.Title = "I-Card Approved From HQ 54"; type = 2; stepcounter = 5; }
+
+            var allrecord = await Task.Run(()=> basicDetailBL.GetALLForIcardSttaus(Convert.ToInt32(userId),stepcounter , type)) ;
             _logger.LogInformation(1001, "Index Page Of Basic Detail View");
-            ViewBag.Title = "List of Register I-Card";
+
+           
             return View(allrecord);
         }
         [Authorize(Roles = "Admin,User")]
-        public async Task<ActionResult> ApprovalForIO(int Id)
+        public async Task<ActionResult> ApprovalForIO(string Id)
         {
-            int type = 0;
+            int type = 0; int retint = 0; int stepcounter = 0;
             var userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier)); //SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").UserId;
-            if (Id == 22)
+            if (!string.IsNullOrEmpty(Id))
             {
-                Id = 2;
-                type = 1;
-            }
-            else if (Id == 33)
-            {
-                Id = 3;
-                type = 2;
-            }
-            else if (Id == 44)
-            {
-                Id = 4;
-                type = 3;
-                userId = 101;
-            }
-            else if (Id == 55)
-            {
-                Id = 5;
-                type = 4;
-                userId = 29;
+                var base64EncodedBytes = System.Convert.FromBase64String(Id);
+                var ret = System.Text.Encoding.UTF8.GetString(base64EncodedBytes);
+                retint = Convert.ToInt32(ret);
+                stepcounter = retint;
             }
 
-            var allrecord = await Task.Run(() => basicDetailBL.GetALLBasicDetail(Convert.ToInt32(userId), Id, type));
+
+
+            if (retint == 1)
+                ViewBag.Title = "List of Register I-Card";
+            else if (retint == 2)
+            {
+                ViewBag.Title = "I-Card For Approval";
+                ViewBag.Id = 1;
+                type = 2;
+            }
+            else if (retint == 22)
+            {
+                ViewBag.Title = "Rejectd I-Card ";
+                type = 1;
+
+            }
+            else if (retint == 222)
+            {
+                ViewBag.Title = "Approved I-Card ";
+                type = 3; stepcounter = 3;
+            }
+
+            else if (retint == 3)
+            {
+                ViewBag.Title = "I-Card For Approval";
+                type = 2;
+                ViewBag.Id = 1; 
+            }
+            else if (retint == 33)
+            {
+                ViewBag.Title = "Rejectd I-Card ";
+                type = 1;
+            }
+            else if (retint == 333)
+            {
+                ViewBag.Title = "Approved I-Card "; type = 3; stepcounter = 4;
+            }
+            else if (retint == 4)
+            { ViewBag.Title = "I-Card For Approval"; type = 2; ViewBag.Id = 1; }
+            else if (retint == 44)
+            { ViewBag.Title = "Rejectd I-Card "; type = 1; }
+            else if (retint == 444)
+            { ViewBag.Title = "Approved I-Card "; type = 3; stepcounter = 5; }
+            else if (retint == 5)
+            { ViewBag.Title = "I-Card For Approval"; type = 2; ViewBag.Id = 1; }
+            else if (retint == 55)
+            { ViewBag.Title = "Rejectd I-Card "; type = 1; }
+            else if (retint == 555)
+            { ViewBag.Title = "Approved I-Card "; type = 3; stepcounter = 6; }
+
+            var allrecord = await Task.Run(() => basicDetailBL.GetALLBasicDetail(Convert.ToInt32(userId), stepcounter, type));
             _logger.LogInformation(1001, "Index Page Of Basic Detail View");
-            ViewBag.Title = "List of Register I-Card";
+
             return View(allrecord);
         }
 
@@ -183,8 +270,8 @@ namespace Web.Controllers
             try
             {
                 // Decrypt the  id using Unprotect method
-                decryptedId = protector.Unprotect(Id);
-                decryptedIntId = Convert.ToInt32(decryptedId);
+                //decryptedId = protector.Unprotect(Id);
+                //decryptedIntId = Convert.ToInt32(decryptedId);
             }
             catch (Exception ex)
             {
@@ -192,7 +279,7 @@ namespace Web.Controllers
                 return RedirectToAction("Error", "Error");
             }
             DTORegistrationRequest dTORegistrationRequest = new DTORegistrationRequest();
-            dTORegistrationRequest.TypeId =(byte) decryptedIntId;
+            //dTORegistrationRequest.TypeId =(byte) decryptedIntId;
             ViewBag.OptionsRegistration = service.GetRegistration();
             return View(dTORegistrationRequest);
         }
@@ -228,8 +315,20 @@ namespace Web.Controllers
                         //insertedBasicdetail.EncryptedId = protector.Protect(insertedBasicdetail.BasicDetailId.ToString());
                         //TempData["success"] = "Successfully created.";
                         //return RedirectToActionPermanent("Create", "BasicDetail", new { Id = insertedBasicdetail.EncryptedId });
-                        TempData["Registration"] = JsonConvert.SerializeObject(model);
-                        return RedirectToActionPermanent("BasicDetail", "BasicDetail");
+                        BasicDetail Data = new BasicDetail();
+                        Data =await basicDetailBL.FindServiceNo(model.ServiceNo);
+                        if (Data != null)
+                        {
+                            string id = protector.Protect(Data.BasicDetailId.ToString());
+                            return RedirectToActionPermanent("BasicDetail", "BasicDetail", new { Id = id });
+                        }
+                        else
+                        {
+                            TempData["Registration"] = JsonConvert.SerializeObject(model);
+                            return RedirectToActionPermanent("BasicDetail", "BasicDetail");
+                        }
+
+                        
                     }
                     else
                     {
@@ -320,15 +419,16 @@ namespace Web.Controllers
                     model = JsonConvert.DeserializeObject<DTORegistrationRequest>(TempData["Registration"].ToString());
                     if (model.SubmitType == 1)
                     {
-                        MRegistration? mRegistration = await context.MRegistration.FindAsync(model.RegId);
-                        if(mRegistration.Type== (int)RegistrationType.Officer)
-                        {
-                            ViewBag.OptionsRank = service.GetRank(1);
-                        }
-                        else
-                        {
-                            ViewBag.OptionsRank = service.GetRank(2);
-                        }
+                        // MRegistration? mRegistration = await context.MRegistration.FindAsync(model.RegId);
+                        //if(mRegistration.ApplyForId == (int)RegistrationType.Officer)
+                        //{
+                        //    ViewBag.OptionsRank = service.GetRank(1);
+                        //}
+                        //else
+                        //{
+                        //    ViewBag.OptionsRank = service.GetRank(2);
+                        //}
+                        
 
                         ViewBag.OptionsArmedType = service.GetArmedType();
                         ViewBag.OptionsBloodGroup = service.GetBloodGroup();
@@ -338,8 +438,8 @@ namespace Web.Controllers
                         dTOBasicDetailCrtRequest.DOB = model.DOB;
                         dTOBasicDetailCrtRequest.DateOfCommissioning = model.DateOfCommissioning;
                         dTOBasicDetailCrtRequest.PermanentAddress = model.PermanentAddress;
-                        dTOBasicDetailCrtRequest.RegistrationId = model.RegId;
-                        dTOBasicDetailCrtRequest.Type = mRegistration.Type;
+                       // dTOBasicDetailCrtRequest.RegistrationId = model.RegId;
+                       // dTOBasicDetailCrtRequest.Type = mRegistration.ApplyForId;
                         dTOBasicDetailCrtRequest.TypeId = model.TypeId;
                         dTOBasicDetailCrtRequest.DateOfIssue = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
                         return await Task.FromResult(View(dTOBasicDetailCrtRequest));
@@ -390,8 +490,8 @@ namespace Web.Controllers
                     ViewBag.OptionsRegimental = service.GetRegimentalDDLIdSelected(basicDetailUpdVM.ArmedId);
                     ViewBag.UnitName = await context.MUnit.FindAsync(basicDetailUpdVM.UnitId);
                     
-                    MRegistration? mRegistration = await context.MRegistration.FindAsync(basicDetailUpdVM.RegistrationId);
-                    basicDetailUpdVM.Type = mRegistration != null ? mRegistration.Type : 1;
+                    //MRegistration? mRegistration = await context.MRegistration.FindAsync(basicDetailUpdVM.RegistrationId);
+                    //basicDetailUpdVM.Type = mRegistration != null ? mRegistration.ApplyForId : 1;
 
                     return View(basicDetailUpdVM);
                 }
@@ -417,16 +517,16 @@ namespace Web.Controllers
 
                     if (basicDetail != null)
                     {
-                        MRegistration? mRegistration = await context.MRegistration.FindAsync(model.RegistrationId);
-                        if (mRegistration.Type == 1)
-                        {
-                            ViewBag.OptionsRank = service.GetRank(1);
-                        }
-                        else
-                        {
-                            ViewBag.OptionsRank = service.GetRank(2);
-                        }
-                        if(model.Type==2)
+                      //  MRegistration? mRegistration = await context.MRegistration.FindAsync(model.RegistrationId);
+                        //if (mRegistration.ApplyForId == 1)
+                        //{
+                        //    ViewBag.OptionsRank = service.GetRank(1);
+                        //}
+                        //else
+                        //{
+                        //    ViewBag.OptionsRank = service.GetRank(2);
+                        //}
+                        if (model.Type==2)
                         {
                             if(model.RegimentalId == null)
                             {
@@ -523,8 +623,40 @@ namespace Web.Controllers
                             basicDetail.Updatedby = Convert.ToInt32(userId);
                             basicDetail.UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
                             await basicDetailBL.Update(basicDetail);
+
+                            bool resultforisprocess = await iTrnICardRequestBL.GetRequestPending(basicDetail.BasicDetailId);
+                            if (!resultforisprocess)
+                            {
+                                MTrnICardRequest mTrnICardRequest = new MTrnICardRequest();
+                                mTrnICardRequest.BasicDetailId = basicDetail.BasicDetailId;
+                                mTrnICardRequest.Status = false;
+                                mTrnICardRequest.TypeId = model.TypeId;
+                                //TrnDomainMapping trnDomainMapping = new TrnDomainMapping();
+                                // trnDomainMapping.AspNetUsersId= Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                                //trnDomainMapping=await iDomainMapBL.GetByAspnetUserIdBy(trnDomainMapping);
+                                mTrnICardRequest.TrnDomainMappingId = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").TrnDomainMappingId;
+                                mTrnICardRequest.UpdatedOn = DateTime.Now;
+                                mTrnICardRequest.Updatedby = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").UserId; //SessionHeplers.GetObject<string>(HttpContext.Session, "ArmyNo");
+                                mTrnICardRequest = await iTrnICardRequestBL.AddWithReturn(mTrnICardRequest);
+                                if (mTrnICardRequest.RequestId > 0)
+                                {
+                                    MStepCounter mStepCounter = new MStepCounter();
+                                    mStepCounter.StepId = Convert.ToByte(1);
+                                    mStepCounter.RequestId = mTrnICardRequest.RequestId;
+                                    mStepCounter.UpdatedOn = DateTime.Now;
+                                    mStepCounter.Updatedby = 1;
+                                    await iStepCounterBL.Add(mStepCounter);
+                                }
+                                //DTOApiDataResponse dTOApiDataResponse = new DTOApiDataResponse();
+                                //dTOApiDataResponse.Status = false;
+                                //dTOApiDataResponse.Message = "Your I-Card is under process. Please wait.";
+                                //return Ok(dTOApiDataResponse);
+                            }
+                           
+
                             TempData["success"] = "Updated Successfully.";
-                            return RedirectToAction("Index");
+                            //return RedirectToAction("Index");
+                            return RedirectToAction("Index", new { Id = "MQ==" });
                         }
                     }
                     else
@@ -534,15 +666,15 @@ namespace Web.Controllers
                 }
                 else
                 {
-                    MRegistration? mRegistration = await context.MRegistration.FindAsync(model.RegistrationId);
-                    if (mRegistration.Type == (int)RegistrationType.Officer)
-                    {
-                        ViewBag.OptionsRank = service.GetRank(1);
-                    }
-                    else
-                    {
-                        ViewBag.OptionsRank = service.GetRank(2);
-                    }
+                    //MRegistration? mRegistration = await context.MRegistration.FindAsync(model.RegistrationId);
+                    //if (mRegistration.ApplyForId == (int)RegistrationType.Officer)
+                    //{
+                    //    ViewBag.OptionsRank = service.GetRank(1);
+                    //}
+                    //else
+                    //{
+                    //    ViewBag.OptionsRank = service.GetRank(2);
+                    //}
                     ViewBag.OptionsArmedType = service.GetArmedType();
 
                     model.Updatedby = Convert.ToInt32(userId);
@@ -646,7 +778,7 @@ namespace Web.Controllers
 
                         }
                         TempData["success"] = "Successfully created.";
-                        return RedirectToAction("Index", new { Id = 1 });
+                        return RedirectToAction("Index", new { Id = "MQ==" });
                     }
                     else
                     {
@@ -816,7 +948,7 @@ namespace Web.Controllers
                 data.UpdatedOn = DateTime.Now;
                 data.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                 data.IsActive = true;
-                data.TypeId= Convert.ToByte(data.TypeId-Convert.ToByte(1));
+                data.TypeId= Convert.ToByte(data.TypeId);
                 if(await iTrnFwnBL.UpdateAllBYRequestId(data.RequestId))
                 {
                     await iTrnFwnBL.Add(data);
@@ -838,11 +970,57 @@ namespace Web.Controllers
 
            
         }
+        public async Task<IActionResult> IcardRejecte(MTrnFwd data)
+        {
+            try
+            {
+                DtoSession sessiondata = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+                data.FromUserId = sessiondata.UserId;
+                data.UnitId = sessiondata.UnitId;
+                data.FromAspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                data.UpdatedOn = DateTime.Now;
+                data.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                data.IsActive = true;
+                data.TypeId =Convert.ToByte(1);
+                TrnDomainMapping Domain = new TrnDomainMapping();
+                Domain =await iDomainMapBL.GetByRequestId(data.RequestId);
+                if (Domain != null) {
+                    data.ToAspNetUsersId = Domain.AspNetUsersId;
+                    data.ToUserId = Convert.ToInt32(Domain.UserId);
+
+                    if (await iTrnFwnBL.UpdateAllBYRequestId(data.RequestId))
+                    {
+                        await iTrnFwnBL.Add(data);
+                        return Ok(data);
+                    }
+                    else
+                    {
+                        return BadRequest();
+                    }
+                }
+                else
+                {
+                    return BadRequest();
+                }
+               
+                
+            }
+            catch (Exception ex)
+            {
+
+                return BadRequest();
+            }
+
+
+
+
+        }
         [Authorize(Roles = "Admin,User")]
         [HttpPost]
         public async Task<IActionResult> GetData(string ICNumber)
         {
-            if(ICNumber!=null)
+            DTOApiDataResponse dTOApiDataResponse = new DTOApiDataResponse();
+            if (ICNumber!=null)
             {
                 BasicDetail? basicDetail = await basicDetailBL.FindServiceNo(ICNumber);
                 if(basicDetail!=null) 
@@ -850,59 +1028,63 @@ namespace Web.Controllers
                     bool result = await iTrnICardRequestBL.GetRequestPending(basicDetail.BasicDetailId);
                     if (result)
                     {
-                        DTOApiDataResponse dTOApiDataResponse = new DTOApiDataResponse();
+                       
                         dTOApiDataResponse.Status = false;
                         dTOApiDataResponse.Message = "Your I-Card is under process. Please wait.";
                         return Ok(dTOApiDataResponse);
                     }
                     else
                     {
-                        goto api;
+                        dTOApiDataResponse.Status = true;
+                       
+                        return Ok(dTOApiDataResponse);
                     }
                 }
                 else
                 {
-                    goto api;
+                    dTOApiDataResponse.Status = true;
+
+                    return Ok(dTOApiDataResponse);
                 }
             }
             else
             {
-                DTOApiDataResponse dTOApiDataResponse = new DTOApiDataResponse();
+                
                 dTOApiDataResponse.Status = false;
                 dTOApiDataResponse.Message = "Service no required.";
                 return Ok(dTOApiDataResponse);
             }
-            api:
-            using (var client = new HttpClient())
-            {
-                //client.BaseAddress = new Uri("https://api.postalpincode.in/");
-                client.BaseAddress = new Uri("https://localhost:7002/api/Fetch/GetData/");
-                //using (HttpResponseMessage response = await client.GetAsync("ICNumber/" + ICNumber))
-                using (HttpResponseMessage response = await client.GetAsync(ICNumber))
-                {
-                    if (response.IsSuccessStatusCode)
-                    {
-                        var responseContent = response.Content.ReadAsStringAsync().Result;
-                        response.EnsureSuccessStatusCode();
-                        DTOApiDataResponse? responseData = JsonConvert.DeserializeObject<DTOApiDataResponse>(responseContent);
-                        DateTime DOB, DOC;
-                        TimeSpan timeSpan = new TimeSpan(0, 0, 0, 0, 0, 0);
-                        DOB = responseData.DOB.Date + timeSpan;
-                        DOC = responseData.DateOfCommissioning.Date + timeSpan;
-                        responseData.DOB = DOB;
-                        responseData.DateOfCommissioning = DOC;
-                        responseData.Status = true;
-                        return Ok(responseData);
-                    }
-                    else
-                    {
-                        DTOApiDataResponse dTOApiDataResponse = new DTOApiDataResponse();
-                        dTOApiDataResponse.Status = false;
-                        dTOApiDataResponse.Message = "Data Not Found.";
-                        return Ok(dTOApiDataResponse);
-                    }
-                }
-            }
+            //api:
+            //using (var client = new HttpClient())
+            //{
+            //    //client.BaseAddress = new Uri("https://api.postalpincode.in/");
+            //    client.BaseAddress = new Uri("https://localhost:7002/api/Fetch/GetData/");
+            //    //using (HttpResponseMessage response = await client.GetAsync("ICNumber/" + ICNumber))
+            //    using (HttpResponseMessage response = await client.GetAsync(ICNumber))
+            //    {
+            //        if (response.IsSuccessStatusCode)
+            //        {
+            //            var responseContent = response.Content.ReadAsStringAsync().Result;
+            //            response.EnsureSuccessStatusCode();
+            //            DTOApiDataResponse? responseData = JsonConvert.DeserializeObject<DTOApiDataResponse>(responseContent);
+            //            DateTime DOB, DOC;
+            //            TimeSpan timeSpan = new TimeSpan(0, 0, 0, 0, 0, 0);
+            //            DOB = responseData.DOB.Date + timeSpan;
+            //            DOC = responseData.DateOfCommissioning.Date + timeSpan;
+            //            responseData.DOB = DOB;
+            //            responseData.DateOfCommissioning = DOC;
+            //            responseData.Status = true;
+            //            return Ok(responseData);
+            //        }
+            //        else
+            //        {
+            //            DTOApiDataResponse dTOApiDataResponse = new DTOApiDataResponse();
+            //            dTOApiDataResponse.Status = false;
+            //            dTOApiDataResponse.Message = "Data Not Found.";
+            //            return Ok(dTOApiDataResponse);
+            //        }
+            //    }
+            //}
 
         }
         public async Task<DTOApiDataResponse> GetApiData(string ICNumber)
@@ -977,5 +1159,12 @@ namespace Web.Controllers
         {
            return Json(await basicDetailBL.GetByBasicDetailsId(Id));
         }
+        public async Task<IActionResult> GetRequestHistory(int RequestId)
+        {
+            return Json(await basicDetailBL.ICardHistory(RequestId));
+        }
+
+
+      
     }
 }

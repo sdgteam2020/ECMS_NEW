@@ -19,11 +19,20 @@ toastr.options = {
 $(document).ready(function () {
 
    
+    var path = window.location.href; // because the 'href' property of the DOM element is the absolute path
+
+    $("#layouttask .nav-link").each(function () {
+       
+        if (this.href === path) {
+            $(this).addClass("active");
+        }
+    });
 
     Getaspntokenarmyno()
     if (window.location.pathname !="/UserProfile/Profile")
     CheckProfileExist();
 });
+
 function CheckProfileExist() {
     var listItem = "";
     var userdata =

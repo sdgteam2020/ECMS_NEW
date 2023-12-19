@@ -30,7 +30,8 @@ namespace DataTransferObject.Domain
         [Column(TypeName = "nvarchar(50)")]
         public string Name { get; set; } = string.Empty;
 
-        [ForeignKey("MAppointment")]
+        
+        [ForeignKey("MAppointment"), DatabaseGenerated(DatabaseGeneratedOption.None)]
         [Required]
         public byte ApptId { get; set; }
         public MAppointment? MAppointment { get; set; }

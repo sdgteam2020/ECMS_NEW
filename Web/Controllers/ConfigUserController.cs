@@ -76,7 +76,7 @@ namespace Web.Controllers
                 SessionHeplers.SetObject(HttpContext.Session, "Token", dtoSession);
                 //SessionHeplers.SetObject(HttpContext.Session, "ArmyNo", dtoSession.ICNO);
                 // var data=  await _iDomainMapBL.GetByDomainIdbyUnit(dTO);
-                return RedirectToActionPermanent("Dashboard", "Home");
+                return RedirectToActionPermanent("Index", "Home");
             }
 
 

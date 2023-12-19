@@ -15,6 +15,6 @@ namespace DataAccessLayer.BaseInterfaces
         public Task<int> GetByMaxOrder();
         public Task<int> GetRankIdbyOrderby(int OrderBy);
         public Task<IEnumerable<MRank>> GetAllByorder();
-
+        public Task<IEnumerable<MRank>> GetAllByType(int Type);
     }
 }

@@ -20,6 +20,6 @@ namespace DataTransferObject.Domain.Master
         public int Order { get; set; }
 
         [Required(ErrorMessage = "required!")]
-        public int Type { get; set; }
+        public int ApplyForId { get; set; }
     }
 }

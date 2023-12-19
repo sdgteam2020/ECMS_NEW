@@ -157,11 +157,13 @@ namespace DataTransferObject.Requests
         public string ServiceNo { get; set; } = string.Empty;
 
         [Display(Name = "DOB", ResourceType = typeof(Resource))]
+        [DataType(DataType.Date)]
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
         public DateTime DOB { get; set; }
 
         [Display(Name = "DateOfCommissioning", ResourceType = typeof(Resource))]
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
+        [DataType(DataType.Date)]
         public DateTime DateOfCommissioning { get; set; }
 
         [Display(Name = "PermanentAddress", ResourceType = typeof(Resource))]
@@ -182,11 +184,11 @@ namespace DataTransferObject.Requests
     }
     public class DTORegistrationRequest : DTOBasicDetailTempRequest
     {
-        public byte RegistrationId { get; set; }
-        public MRegistration? Registration { get; set; }
+        //public byte RegistrationId { get; set; }
+        //public MRegistration? Registration { get; set; }
 
-        [RegularExpression(@"^[\w \.\,\?\;\:\""\''\[\]\!\@\#\$\%\&\*\(\)\-\=\+\\\/]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
-        public byte RegId { get; set; }
+        //[RegularExpression(@"^[\w \.\,\?\;\:\""\''\[\]\!\@\#\$\%\&\*\(\)\-\=\+\\\/]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
+        //public byte RegId { get; set; }
        
         [Display(Name = "ServiceNo", ResourceType = typeof(Resource))]
         //[Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]

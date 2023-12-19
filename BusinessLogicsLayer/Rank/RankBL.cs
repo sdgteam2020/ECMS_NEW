@@ -31,6 +31,11 @@ namespace BusinessLogicsLayer.BdeCate
             return _iRankDB.GetAllByorder();
         }
 
+        public Task<IEnumerable<MRank>> GetAllByType(int Type)
+        {
+            return _iRankDB.GetAllByType(Type);
+        }
+
         public Task<int> GetByMaxOrder()
         {
             return _iRankDB.GetByMaxOrder();

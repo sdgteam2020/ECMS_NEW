@@ -16,6 +16,8 @@ namespace BusinessLogicsLayer.Bde
         public Task<TrnDomainMapping?> GetTrnDomainMappingByUserId(int UserId);
         public Task<bool> GetByDomainId(TrnDomainMapping Data);
         public Task<TrnDomainMapping> GetByDomainIdbyUnit(TrnDomainMapping Data);
+        public Task<TrnDomainMapping> GetByAspnetUserIdBy(TrnDomainMapping Data);
+        public Task<TrnDomainMapping> GetByRequestId(int RequestId);
         public Task<TrnDomainMapping?> GetByAspnetUserIdBy(int AspNetUsersId);
 
     }

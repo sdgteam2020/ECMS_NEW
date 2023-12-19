@@ -14,6 +14,7 @@
     @* <meta http-equiv="content-security-policy"content="default-src 'none'; script-src 'self'; connect-src 'self'; img-src 'self'; style-src 'self' 'sha256-CwE3Bg0VYQOIdNAkbB/Btdkhul49qZuwgNCMPgNY5zw=';" /> *@
     <title>AFSAC</title>
     <link href="~/fonts/css/all.min.css" rel="stylesheet" />
+  
    @*  <link href="~/css/steps.min.css" rel="stylesheet" /> *@
     <link href="~/css/sidemenu/feather/feather.css" rel="stylesheet" />
     <link href="~/css/sidemenu/style.css" rel="stylesheet" />
@@ -21,7 +22,6 @@
     <link href="~/css/DashBoard.css" rel="stylesheet" />
     <link href="~/css/nunito.css" rel="stylesheet" />
     <link href="~/css/roboto.css" rel="stylesheet" />
-
     <link href="~/sweetalert2/sweetalert2.min.css" rel="stylesheet" />
     <link href="~/css/bootstrap-datetimepicker.min.css" rel="stylesheet" />
     <link href="~/datatables/dataTables.bootstrap4.min.css" rel="stylesheet" />
@@ -40,8 +40,8 @@
    
     <link href="~/css/horizontaltimeline.css" rel="stylesheet" />
 
-    <script src="~/fonts/feather/feather.min.js"></script>
-    <script src="~/fonts/allfont/webfont.min.js"></script>
+    <script asp-src-include="~/fonts/feather/feather.min.js"></script>
+    <script asp-src-include="~/fonts/allfont/webfont.min.js"></script>
     <script asp-src-include="~/lib/jquery/jquery.js"></script>
     <script asp-src-include="~/lib/jquery-validate/jquery.validate.js" defer></script>
     <script asp-src-include="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js" defer></script>
@@ -65,7 +65,91 @@
             font-size: .925rem;
         }
     </style>
+    <style>
+        .select2-hidden-accessible {
+            border: 0 !important;
+            clip: rect(0 0 0 0) !important;
+            height: 1px !important;
+            margin: -1px !important;
+            overflow: hidden !important;
+            padding: 0 !important;
+            position: absolute !important;
+            width: 1px !important
+        }
 
+        .form-control {
+            display: block;
+            width: 100%;
+            height: 34px;
+            padding: 6px 12px;
+            font-size: 14px;
+            line-height: 1.42857143;
+            color: #555;
+            background-color: #fff;
+            background-image: none;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+            box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+            -webkit-transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
+            -o-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+            transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s
+        }
+
+        .select2-container--default .select2-selection--single,
+        .select2-selection .select2-selection--single {
+            border: 1px solid #d2d6de;
+            border-radius: 0;
+            padding: 6px 12px;
+            height: 34px
+        }
+
+        .select2-container--default .select2-selection--single {
+            background-color: #fff;
+            border: 1px solid #aaa;
+            border-radius: 4px
+        }
+
+        .select2-container .select2-selection--single {
+            box-sizing: border-box;
+            cursor: pointer;
+            display: block;
+            height: 28px;
+            user-select: none;
+            -webkit-user-select: none
+        }
+
+            .select2-container .select2-selection--single .select2-selection__rendered {
+                padding-right: 10px
+            }
+
+            .select2-container .select2-selection--single .select2-selection__rendered {
+                padding-left: 0;
+                padding-right: 0;
+                height: auto;
+                margin-top: -3px
+            }
+
+        .select2-container--default .select2-selection--single .select2-selection__rendered {
+            color: #444;
+            line-height: 28px
+        }
+
+        .select2-container--default .select2-selection--single,
+        .select2-selection .select2-selection--single {
+            border: 1px solid #d2d6de;
+            border-radius: 0 !important;
+            padding: 6px 12px;
+            height: 40px !important
+        }
+
+            .select2-container--default .select2-selection--single .select2-selection__arrow {
+                height: 26px;
+                position: absolute;
+                top: 6px !important;
+                right: 1px;
+                width: 20px
+    </style>
 </head>
 <body class="nav-fixed">
       <div id="loading" class="loader">
@@ -97,8 +181,8 @@
         <!-- partial:partials/_navbar.html -->
         <nav class="navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row d-print-none">
             <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center">
-                <a class="navbar-brand brand-logo mr-5" href="Home/Dashboard"><img src="~/Images/AFSAC_Logo.png" class="mr-2" alt="logo" /></a>
-                <a class="navbar-brand brand-logo-mini" href="Home/Dashboard"><img src="~/Images/AFSAC.png" alt="logo" /></a>
+                <a class="navbar-brand brand-logo mr-5" href="/Home/index"><img src="~/Images/AFSAC_Logo.png" class="mr-2" alt="logo" /></a>
+                <a class="navbar-brand brand-logo-mini" href="/Home/index"><img src="~/Images/AFSAC.png" alt="logo" /></a>
             </div>
             <div class="navbar-menu-wrapper d-flex align-items-center justify-content-end">
                 <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
@@ -118,8 +202,8 @@
                     </li>
                 </ul> *@
                 <ul class="navbar-nav" >
-                    <li>
-                        <img src="~/images/afsac9.jpg" width="180%" height="60px" />
+                    <li class="text-center">
+                        <span class="tagline ml-4 text-center">Enterprise Card Management System(ECMS) </span>
                     </li>
                     </ul>
                 @{
@@ -347,18 +431,17 @@
                             </a>
                             <div class="collapse show" id="ui-basic1">
                                 <ul class="nav flex-column sub-menu">
-                                    <li class="nav-item"> <a class="nav-link" href="/UserProfile/Profile">Add Profile</a></li>
+                                    <li class="nav-item"> <a class="nav-link " href="/UserProfile/Profile">Add Profile</a></li>
                                     <li class="nav-item"> <a class="nav-link" href="/BasicDetail/RequestType">Add Request</a></li>
-                                    <li class="nav-item"> <a class="nav-link" href="/BasicDetail/Index/1">ICard List</a></li>
-                                    <li class="nav-item"> <a class="nav-link" href="/BasicDetail/Index/2">ICard Pending From IO</a></li>
-                                    <li class="nav-item"> <a class="nav-link" href="/BasicDetail/Index/3">ICard Pending From GSO</a></li>
+                                    <li class="nav-item"> <a class="nav-link" href="/BasicDetail/Index/MQ==">ICard List</a></li>
+                                   
                                     <li class="nav-item"> <a class="nav-link" href="/BasicDetail/InaccurateData">Inaccurate List</a></li>
-                                    <li class="nav-item"> <a class="nav-link" href="/BasicDetail/Index/4">ICard Pending Form MI 11</a></li>
+                                  
                                 </ul>
                             </div>
 
                         </li>
-                        <li class="nav-item">
+                       /*  <li class="nav-item">
                             <a class="nav-link collapsed" data-toggle="collapse" href="#ui-basic1" aria-expanded="true" aria-controls="ui-basic1">
                                 <i class="icon-layout menu-icon"></i>
                                 <span class="menu-title">ICard Request For Approval</span>
@@ -381,7 +464,7 @@
                                 </ul>
                             </div>
 
-                        </li>
+                        </li> */
                     }
                     else if (signInManager.IsSignedIn(User) && (User.IsInRole("Admin")))
                     {
@@ -448,28 +531,17 @@
 
             <!-- partial -->
             <div class="main-panel">
-                @* <ul class="nav nav-tabs" style="background-color:#F8F8F8">
-                    <li class="nav-item">
-                        <a class="nav-link active" href="../Home/Dashboard">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Link</a>
-                    </li> *@
-                    @* <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Dropdown</a>
-                    <div class="dropdown-menu">
-                    <a class="dropdown-item" href="#">Action</a>
-                    <a class="dropdown-item" href="#">Another action</a>
-                    <a class="dropdown-item" href="#">Something else here</a>
-                    <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="#">Separated link</a>
-                    </div>
-                    </li> *@
-                    @*
-                    <li class="nav-item">
-                    <a class="nav-link disabled" href="#">Disabled</a>
-                    </li> *@
-                @* </ul> *@
+
+                <nav class="nav nav-pills nav-justified" id="layouttask">
+                    <a class="nav-link Dashboard" aria-current="page" href="/Home/Dashboard">DashBoard</a>
+                    <a class="nav-link Status" href="/Home/Request">
+                        Initiate Request
+                    </a>
+                    <a class="nav-link MyTask" href="/Home/MyTask">Task</a>
+                   
+                    
+                </nav>
+
                 <div class="content-wrapper">
                     <partial name="_Notification" />
                     @RenderBody()
@@ -491,7 +563,7 @@
 
 
 
-    @*  <script src="~/select2/dist/js/select2.min.js"></script>*@
+    @*  <script asp-src-include="~/select2/dist/js/select2.min.js"></script>*@
     @RenderSection("Scripts", false)
     @RenderSection("body_scripts", false)
     <script>
@@ -524,41 +596,41 @@
     </script>
 
    
-    <script src="~/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/moment.js"></script>
-    <script src="~/js/jssidemenu/vendor.bundle.base.js"></script>
-    <script src="~/js/jssidemenu/hoverable-collapse.js"></script>
-    <script src="~/js/jssidemenu/off-canvas.js"></script>
-    <script src="~/js/jssidemenu/template.js"></script>
-    <script src="~/lib/jqueryui/jquery-ui.min.js"></script>
-    <script src="~/select2/js/select2.min.js"></script>
-    <script src="~/js/datatables/jquery.datatables.min.js"></script>
-    <script src="~/js/datatables/dataTables.responsive.min.js"></script>
-    <script src="~/js/datatables/responsive.dataTables.min.js"></script>
-    <script src="~/js/datatables/dataTables.bootstrap4.min.js"></script>
-    <script src="~/js/datatables/responsive.bootstrap4.min.js"></script>
-    <script src="~/js/datatables/dataTables.buttons.min.js"></script>
-    <script src="~/js/datatables/buttons.bootstrap4.min.js"></script>
-    <script src="~/js/datatables/jszip.min.js"></script> 
-    <script src="~/js/datatables/pdfmake.min.js"></script>
-    <script src="~/js/datatables/vfs_fonts.js"></script>
-    <script src="~/js/datatables/buttons.html5.min.js"></script>
-    <script src="~/js/datatables/buttons.print.min.js"></script>
-    <script src="~/js/datatables/datatables-call.js"></script>
-    @*<script src="~/fonts/feather/feather.min.js"></script>*@
-    <script src="~/sweetalert2/sweetalert2.min.js"></script>
-    <script src="~/toastr/toastr.min.js"></script>
-    <script src="~/js/moment.min.js"></script>
-    <script src="~/js/bootstrap-datetimepicker.min.js"></script>
+    <script asp-src-include="~/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script asp-src-include="~/js/moment.js"></script>
+    <script asp-src-include="~/js/jssidemenu/vendor.bundle.base.js"></script>
+    <script asp-src-include="~/js/jssidemenu/hoverable-collapse.js"></script>
+    <script asp-src-include="~/js/jssidemenu/off-canvas.js"></script>
+    <script asp-src-include="~/js/jssidemenu/template.js"></script>
+    <script asp-src-include="~/lib/jqueryui/jquery-ui.min.js"></script>
+    <script asp-src-include="~/select2/js/select2.min.js"></script>
+    <script asp-src-include="~/js/datatables/jquery.datatables.min.js"></script>
+    <script asp-src-include="~/js/datatables/dataTables.responsive.min.js"></script>
+    <script asp-src-include="~/js/datatables/responsive.dataTables.min.js"></script>
+    <script asp-src-include="~/js/datatables/dataTables.bootstrap4.min.js"></script>
+    <script asp-src-include="~/js/datatables/responsive.bootstrap4.min.js"></script>
+    <script asp-src-include="~/js/datatables/dataTables.buttons.min.js"></script>
+    <script asp-src-include="~/js/datatables/buttons.bootstrap4.min.js"></script>
+    <script asp-src-include="~/js/datatables/jszip.min.js"></script> 
+    <script asp-src-include="~/js/datatables/pdfmake.min.js"></script>
+    <script asp-src-include="~/js/datatables/vfs_fonts.js"></script>
+    <script asp-src-include="~/js/datatables/buttons.html5.min.js"></script>
+    <script asp-src-include="~/js/datatables/buttons.print.min.js"></script>
+    <script asp-src-include="~/js/datatables/datatables-call.js"></script>
+    @*<script asp-src-include="~/fonts/feather/feather.min.js"></script>*@
+    <script asp-src-include="~/sweetalert2/sweetalert2.min.js"></script>
+    <script asp-src-include="~/toastr/toastr.min.js"></script>
+    <script asp-src-include="~/js/moment.min.js"></script>
+    <script asp-src-include="~/js/bootstrap-datetimepicker.min.js"></script>
    
-    <script src="~/developerjs/layout.js"></script>
-    <script src="~/developerjs/keyconstants.js"></script>
-    <script src="~/developerjs/commanvalidation.js"></script>
+    <script asp-src-include="~/developerjs/layout.js"></script>
+    <script asp-src-include="~/developerjs/keyconstants.js"></script>
+    <script asp-src-include="~/developerjs/commanvalidation.js"></script>
    
-    @*  <script src="~/developerjs/layout.js"></script>
-    <script src="~/developerjs/MedCate.js"></script> *@
-    @*<script src="/DeveloperJs/Master.js"></script>*@
-    @*     <script src="~/developerjs/master.js"></script>
+    @*  <script asp-src-include="~/developerjs/layout.js"></script>
+    <script asp-src-include="~/developerjs/MedCate.js"></script> *@
+    @*<script asp-src-include="/DeveloperJs/Master.js"></script>*@
+    @*     <script asp-src-include="~/developerjs/master.js"></script>
     *@
     @*
     <section class="page_copyright ls section_padding_25">
@@ -754,10 +826,23 @@
                         <span id="spnStepCounter" class="d-none">0</span> 
                         <h5 class="card-title text-danger" id="ForwardDetails"></h5>
                         <div class="row HProfileDetails">
-                            <div class="form-group"> 
+                            <div class="form-group row mb-2">
+                                <label class="col-form-label col-sm-4">Select Offrs</label>
+                                <div class="col-sm-8">
+
+                                    <select class="form-control select3 select2-hidden-accessible" style="width: 100%;" tabindex="-1"
+                                            aria-hidden="true" name="fwdoffrs" required id="ddlfwdoffrs">
+                                        <option value="0">Select Offrs</option>
+                                       
+                                    </select>
+
+                                </div>
+
+                            </div>
+                            <div class="form-group chkforserach">
                                 <div class="col-sm-12">
                                 <div class="form-check form-check-inline">
-                                        <input class="form-check-input" checked type="radio" name="Intoffrs" id="intoffsArmyNo">
+                                        <input class="form-check-input" type="radio" name="Intoffrs" id="intoffsArmyNo">
                                     <label class="form-check-label" for="intoffsArmyNo">
                                             Army No
                                     </label>
@@ -776,7 +861,7 @@
                                     </div>
 
                             </div> </div>
-                            <div class="form-group row mb-2">
+                            <div class="form-group row mb-2 serchfwd d-none">
                                 <label class="col-form-label col-sm-4">Army No/Offrs Name/DomainId</label>
                                 <div class="col-sm-8">
 
@@ -860,10 +945,10 @@
                                                     @*  <div class="text-left"> <img src="~/images/rank/brigadier.svg" id="imgrank" height="100px" /></div> *@
                                                 </div>
                                             </div>
-                                    <div class="form-group row mb-0">
-                                        <label class="col-form-label  text-left">Select Rejection Reasons for Photos</label>
+                                    <div class="form-group row mb-0 recectopt">
+                                        <label class="col-form-label  text-left ">Select Rejection Reasons for Photos</label>
                                        
-                                        <select class="form-control select2 select2-accessible " multiple="" placeholder="Please select a Photos" style="width: 100%;" tabindex="-1" aria-hidden="true" name="Photos" required id="ddlPhotos">
+                                        <select class="form-control select2 select2-accessible" multiple="" placeholder="Please select a Photos" style="width: 100%;" tabindex="-1" aria-hidden="true" name="Photos" required id="ddlPhotos">
                                             <option value="0">Select Rejection Reasons for Photos</option>
                                             <option value="Reasons 1">Reasons 1</option>
                                             <option value="Reasons 2">Reasons 2</option>
@@ -874,12 +959,14 @@
                                         </div>
 
                                         <div class="content-block ">
-                                            <div class="form-group row mb-0">
+                                    <div class="form-group row mb-0 ">
                                                 <div class="col-12 text-center">
                                                     <img src="~/images/signature.png" width="200" height="100" id="Basicsing" class="border border-primary p-2" />
-                                            <label class="col-form-label  text-left">Select Rejection Reasons for Signature</label>
-                                               
-                                            <select class="form-control select2 select2-accessible " multiple="" placeholder="Please select a signature" style="width: 100%;" tabindex="-1" aria-hidden="true" name="signature" required id="ddlsignature">
+                                            <label class="col-form-label recectopt text-left ">Select Rejection Reasons for Signature</label>
+                                               </div>
+                                               </div>
+                                    <div class="form-group row mb-0 recectopt">
+                                        <select class="form-control select2 select2-accessible " multiple="" placeholder="Please select a signature" style="width: 100%;" tabindex="-1" aria-hidden="true" name="signature" required id="ddlsignature">
                                                     <option value="0">Select Rejection Reasons for Photos</option>
                                                     <option value="Reasons 1">Reasons 1</option>
                                                     <option value="Reasons 2">Reasons 2</option>
@@ -890,7 +977,7 @@
                                             </div>
 
                                         </div>
-                                    </div>
+                                   
                                    
                                 </div>
                                 <div class="col-md-8 mb-3">
@@ -991,7 +1078,7 @@
                                 </div>
 
                         <div class="col-md-12 mb-3">
-                            <div class="form-group row mb-0">
+                            <div class="form-group row mb-0 recectopt">
                                 <label class="col-form-label col-12 text-center">Remarks</label>
                                 <div class="col-12">
                                     <textarea class="form-control" id="txtFrejectedRemarks" rows="2"></textarea>
@@ -1024,56 +1111,43 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title" id="InstrustionLabel">Instructions</h4>
+                <h4 class="modal-title" id="lblHistory">I-Card History</h4>
             </div>
 
             <div class="modal-body">
-                <h5 class="text-center badge badge-success">Step Wise Publish Part-II Order</h5>
-                <div class="timeline timeline-xs">
+                <h5 class="text-center badge badge-success">Step Wise I Card Request History</h5>
+                <div class="timeline timeline-xs" id="RequestHistory">
                     <!-- Timeline Item 1-->
-                    <div class="timeline-item">
+                    @* <div class="timeline-item">
                         <div class="timeline-item-marker">
-                            @*<div class="timeline-item-marker-text">27 min</div>*@
+                            <div class="timeline-item-marker-text">27 min</div>
                             <div class="timeline-item-marker-indicator bg-primary"></div>
                         </div>
                         <div class="timeline-item-content">
-                            Add Pers Info Details
-                            <a class="fw-bold text-dark" href="/PersInfo/PersInfo">Click Here</a>
+                            FWD to  IO
+                            
                         </div>
                     </div>
                     <div class="timeline-item">
                         <div class="timeline-item-marker">
-                            @*<div class="timeline-item-marker-text">27 min</div>*@
-                            <div class="timeline-item-marker-indicator bg-danger"></div>
-                        </div>
-                        <div class="timeline-item-content">
-                            Create Draft
-                            <a class="fw-bold text-dark" href="/OffrsPartIIOrder/PartIIDraftOff">Click Here</a>
-                            TEXT
-                        </div>
-                    </div>
-                    <div class="timeline-item">
-                        <div class="timeline-item-marker">
-                            @*<div class="timeline-item-marker-text">27 min</div>*@
+                            <div class="timeline-item-marker-text">27 min</div>
                             <div class="timeline-item-marker-indicator bg-warning"></div>
                         </div>
                         <div class="timeline-item-content">
-                            Seft Verification Part II Order
-                            <a class="fw-bold text-dark" href="/OffrsPartIIOrder/PartIIDraftOff">Click Here</a>
-                            TEXT
+                            Approved FROM IO
+                            
                         </div>
                     </div>
                     <div class="timeline-item">
                         <div class="timeline-item-marker">
-                            @*<div class="timeline-item-marker-text">27 min</div>*@
-                            <div class="timeline-item-marker-indicator bg-success"></div>
+                            <div class="timeline-item-marker-text">27 min</div>
+                            <div class="timeline-item-marker-indicator bg-danger"></div>
                         </div>
                         <div class="timeline-item-content">
-                            Publish Part II Order
-                            <a class="fw-bold text-dark" href="/OffrsPartIIOrder/PublishPartIIOrderOffrs">Click Here</a>
-                            TEXT
+                            Reject From GSO
                         </div>
-                    </div>
+                    </div> *@
+                   
                 </div>
             </div>
 
