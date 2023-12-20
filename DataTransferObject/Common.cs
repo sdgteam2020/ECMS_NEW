@@ -10,7 +10,7 @@ namespace DataTransferObject.Domain
     public class Common
     {
         [Required]
-        public bool IsActive { get; set; }
+        public bool IsActive { get; set; }=true;
         [Required]
         public int Updatedby { get; set;}
         [Required]

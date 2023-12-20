@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 namespace BusinessLogicsLayer.Service
 {
     public class ServiceRepository:IService
-    {
+    {   
         private readonly ApplicationDbContext context;
         private readonly UserManager<ApplicationUser> userManager;
         private readonly DateTime EndDate;
@@ -229,6 +229,40 @@ namespace BusinessLogicsLayer.Service
         {
             return await context.Set<MRegimental>().Where(o => o.ArmedId == RegimentalId).ToListAsync();
         }
+        public IEnumerable<SelectListItem> GetAppointment(byte FormationId)
+        {
+            var AppointmentOptions = context.MAppointment.Where(x=>x.FormationId == FormationId).OrderBy(o => o.AppointmentName)
+                 .Select(a =>
+                   new SelectListItem
+                   {
+                       Value = a.FormationId.ToString(),
+                       Text = a.AppointmentName,
+                   }).ToList();
+            var ddfirst = new SelectListItem()
+            {
+                Value = null,
+                Text = "Select Appointment"
+            };
+            AppointmentOptions.Insert(0, ddfirst);
+            return new SelectList(AppointmentOptions, "Value", "Text");
+        }
+        public IEnumerable<SelectListItem> GetFormation()
+        {
+            var FormationOptions = context.MFormation.OrderBy(o => o.FormationName)
+                 .Select(a =>
+                   new SelectListItem
+                   {
+                       Value = a.FormationId.ToString(),
+                       Text = a.FormationName,
+                   }).ToList();
+            var ddfirst = new SelectListItem()
+            {
+                Value = null,
+                Text = "Select Formation"
+            };
+            FormationOptions.Insert(0, ddfirst);
+            return new SelectList(FormationOptions, "Value", "Text");
+        }
         public IEnumerable<SelectListItem> GetRank(int Type)
         {
             var RankOptions = context.MRank.Where(x=>x.Type== Type).OrderBy(o => o.RankName)
@@ -241,7 +275,7 @@ namespace BusinessLogicsLayer.Service
             var ddfirst = new SelectListItem()
             {
                 Value = null,
-                Text = "Please Select"
+                Text = "Select Rank"
             };
             RankOptions.Insert(0, ddfirst);
             return new SelectList(RankOptions, "Value", "Text");
