@@ -17,17 +17,17 @@ namespace DataTransferObject.Domain
 
         [Required]
         [StringLength(20)]
-        [Column(TypeName = "nvarchar(20)")]
+        [Column(TypeName = "varchar(20)")]
         public string ArmyNo { get; set; } = string.Empty;
         
         [Required]
         [ForeignKey("MRank")]
-        public byte RankId { get; set; }
+        public short RankId { get; set; }
         public MRank? MRank { get; set; }
 
         [Required]
         [StringLength(50)]
-        [Column(TypeName = "nvarchar(50)")]
+        [Column(TypeName = "varchar(50)")]
         public string Name { get; set; } = string.Empty;
 
         

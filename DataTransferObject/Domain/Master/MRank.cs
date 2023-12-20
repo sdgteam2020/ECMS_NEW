@@ -13,7 +13,7 @@ namespace DataTransferObject.Domain.Master
     { 
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public byte RankId { get; set; }
+        public short RankId { get; set; }
 
         [Required(ErrorMessage = "required!")]
         [RegularExpression("^[a-zA-Z0-9 ]*$", ErrorMessage = "Only Alphabets and Numbers allowed.")]
@@ -22,7 +22,7 @@ namespace DataTransferObject.Domain.Master
         [RegularExpression("^[a-zA-Z0-9 ]*$", ErrorMessage = "Only Alphabets and Numbers allowed.")]
         public string RankAbbreviation { get; set; }
 
-        public byte Orderby { get; set; }
+        public short Orderby { get; set; }
         [Required(ErrorMessage = "required!")]
         public byte Type { get; set; }
     }

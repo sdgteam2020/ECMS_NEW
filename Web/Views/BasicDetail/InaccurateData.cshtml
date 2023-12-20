@@ -22,7 +22,7 @@
                                         <th>@Html.DisplayNameFor(model => model[0].ServiceNo)</th>
                                         <th>@Html.DisplayNameFor(model => model[0].DOB)</th>
                                         <th>@Html.DisplayNameFor(model => model[0].DateOfCommissioning)</th>
-                                        <th>@Html.DisplayNameFor(model => model[0].PermanentAddress)</th>
+                                        @* <th>@Html.DisplayNameFor(model => model[0].PermanentAddress)</th> *@
                                         <th>@Html.DisplayNameFor(model => model[0].Observations)</th>
                                         @*<th>Action</th> *@
                                     </tr>
@@ -36,7 +36,7 @@
                                             <td>@item.ServiceNo</td>
                                             <td>@(item.DOB.ToString("dd/MMM/yyyy"))</td>
                                             <td>@item.DateOfCommissioning.ToString("dd/MMM/yyyy")</td>
-                                            <td>@item.PermanentAddress</td>
+                                           @*  <td>@item.PermanentAddress</td> *@
                                             <td>@item.Observations</td>
                                             @*                                 <td>
                                         <div class="d-flex p-2">

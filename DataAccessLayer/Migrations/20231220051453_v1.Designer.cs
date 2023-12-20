@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccessLayer.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20231205063701_v1")]
+    [Migration("20231220051453_v1")]
     partial class v1
     {
         /// <inheritdoc />
@@ -34,7 +34,7 @@ namespace DataAccessLayer.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ErrorId"));
 
                     b.Property<DateTime>("Created")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime");
 
                     b.Property<string>("Values")
                         .IsRequired()
@@ -173,12 +173,13 @@ namespace DataAccessLayer.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UserId"));
 
-                    b.Property<int>("ApptId")
-                        .HasColumnType("int");
+                    b.Property<byte>("ApptId")
+                        .HasColumnType("tinyint");
 
                     b.Property<string>("ArmyNo")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(20)
+                        .HasColumnType("varchar(20)");
 
                     b.Property<bool>("IntOffr")
                         .HasColumnType("bit");
@@ -186,28 +187,45 @@ namespace DataAccessLayer.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
-                    b.Property<byte?>("MAppointmentApptId")
-                        .HasColumnType("tinyint");
-
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)");
 
-                    b.Property<int>("RankId")
-                        .HasColumnType("int");
+                    b.Property<short>("RankId")
+                        .HasColumnType("smallint");
 
                     b.Property<DateTime?>("UpdatedOn")
                         .IsRequired()
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime");
 
                     b.Property<int>("Updatedby")
                         .HasColumnType("int");
 
                     b.HasKey("UserId");
 
-                    b.HasIndex("MAppointmentApptId");
+                    b.HasIndex("ApptId");
+
+                    b.HasIndex("RankId");
 
                     b.ToTable("UserProfile");
+                });
+
+            modelBuilder.Entity("DataTransferObject.Domain.Master.MApplyFor", b =>
+                {
+                    b.Property<byte>("ApplyForId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("tinyint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<byte>("ApplyForId"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("VARCHAR(50)");
+
+                    b.HasKey("ApplyForId");
+
+                    b.ToTable("MApplyFor");
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Master.MAppointment", b =>
@@ -220,7 +238,7 @@ namespace DataAccessLayer.Migrations
 
                     b.Property<string>("AppointmentName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("VARCHAR(50)");
 
                     b.Property<byte>("FormationId")
                         .HasColumnType("tinyint");
@@ -230,7 +248,7 @@ namespace DataAccessLayer.Migrations
 
                     b.Property<DateTime?>("UpdatedOn")
                         .IsRequired()
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime");
 
                     b.Property<int>("Updatedby")
                         .HasColumnType("int");
@@ -265,7 +283,7 @@ namespace DataAccessLayer.Migrations
 
                     b.Property<DateTime?>("UpdatedOn")
                         .IsRequired()
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime");
 
                     b.Property<int>("Updatedby")
                         .HasColumnType("int");
@@ -302,7 +320,7 @@ namespace DataAccessLayer.Migrations
 
                     b.Property<DateTime?>("UpdatedOn")
                         .IsRequired()
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime");
 
                     b.Property<int>("Updatedby")
                         .HasColumnType("int");
@@ -340,7 +358,7 @@ namespace DataAccessLayer.Migrations
 
                     b.Property<DateTime?>("UpdatedOn")
                         .IsRequired()
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime");
 
                     b.Property<int>("Updatedby")
                         .HasColumnType("int");
@@ -380,7 +398,7 @@ namespace DataAccessLayer.Migrations
 
                     b.Property<DateTime?>("UpdatedOn")
                         .IsRequired()
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime");
 
                     b.Property<int>("Updatedby")
                         .HasColumnType("int");
@@ -410,7 +428,7 @@ namespace DataAccessLayer.Migrations
 
                     b.Property<DateTime?>("UpdatedOn")
                         .IsRequired()
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime");
 
                     b.Property<int>("Updatedby")
                         .HasColumnType("int");
@@ -445,7 +463,7 @@ namespace DataAccessLayer.Migrations
 
                     b.Property<DateTime?>("UpdatedOn")
                         .IsRequired()
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime");
 
                     b.Property<int>("Updatedby")
                         .HasColumnType("int");
@@ -476,7 +494,7 @@ namespace DataAccessLayer.Migrations
 
                     b.Property<DateTime?>("UpdatedOn")
                         .IsRequired()
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime");
 
                     b.Property<int>("Updatedby")
                         .HasColumnType("int");
@@ -525,7 +543,7 @@ namespace DataAccessLayer.Migrations
 
                     b.Property<DateTime?>("UpdatedOn")
                         .IsRequired()
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime");
 
                     b.Property<int>("Updatedby")
                         .HasColumnType("int");
@@ -540,17 +558,17 @@ namespace DataAccessLayer.Migrations
 
             modelBuilder.Entity("DataTransferObject.Domain.Master.MRank", b =>
                 {
-                    b.Property<byte>("RankId")
+                    b.Property<short>("RankId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("tinyint");
+                        .HasColumnType("smallint");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<byte>("RankId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<short>("RankId"));
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
-                    b.Property<byte>("Orderby")
-                        .HasColumnType("tinyint");
+                    b.Property<short>("Orderby")
+                        .HasColumnType("smallint");
 
                     b.Property<string>("RankAbbreviation")
                         .IsRequired()
@@ -565,7 +583,7 @@ namespace DataAccessLayer.Migrations
 
                     b.Property<DateTime?>("UpdatedOn")
                         .IsRequired()
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime");
 
                     b.Property<int>("Updatedby")
                         .HasColumnType("int");
@@ -603,7 +621,7 @@ namespace DataAccessLayer.Migrations
 
                     b.Property<DateTime?>("UpdatedOn")
                         .IsRequired()
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime");
 
                     b.Property<int>("Updatedby")
                         .HasColumnType("int");
@@ -623,6 +641,9 @@ namespace DataAccessLayer.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<byte>("RegistrationId"));
 
+                    b.Property<int>("ApplyForId")
+                        .HasColumnType("int");
+
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
@@ -633,12 +654,9 @@ namespace DataAccessLayer.Migrations
                     b.Property<int>("Order")
                         .HasColumnType("int");
 
-                    b.Property<int>("Type")
-                        .HasColumnType("int");
-
                     b.Property<DateTime?>("UpdatedOn")
                         .IsRequired()
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime");
 
                     b.Property<int>("Updatedby")
                         .HasColumnType("int");
@@ -646,58 +664,6 @@ namespace DataAccessLayer.Migrations
                     b.HasKey("RegistrationId");
 
                     b.ToTable("MRegistration");
-
-                    b.HasData(
-                        new
-                        {
-                            RegistrationId = (byte)1,
-                            IsActive = false,
-                            Name = "Apply for Self (Officer)",
-                            Order = 1,
-                            Type = 1,
-                            UpdatedOn = new DateTime(2023, 12, 5, 12, 6, 58, 899, DateTimeKind.Unspecified).AddTicks(1308),
-                            Updatedby = 1
-                        },
-                        new
-                        {
-                            RegistrationId = (byte)2,
-                            IsActive = false,
-                            Name = "Apply for Unit Officer",
-                            Order = 2,
-                            Type = 1,
-                            UpdatedOn = new DateTime(2023, 12, 5, 12, 6, 58, 899, DateTimeKind.Unspecified).AddTicks(1315),
-                            Updatedby = 1
-                        },
-                        new
-                        {
-                            RegistrationId = (byte)3,
-                            IsActive = false,
-                            Name = "Apply for Other Unit Officer",
-                            Order = 3,
-                            Type = 1,
-                            UpdatedOn = new DateTime(2023, 12, 5, 12, 6, 58, 899, DateTimeKind.Unspecified).AddTicks(1319),
-                            Updatedby = 1
-                        },
-                        new
-                        {
-                            RegistrationId = (byte)4,
-                            IsActive = false,
-                            Name = "Apply for Unit JCOs/OR",
-                            Order = 4,
-                            Type = 2,
-                            UpdatedOn = new DateTime(2023, 12, 5, 12, 6, 58, 899, DateTimeKind.Unspecified).AddTicks(1357),
-                            Updatedby = 1
-                        },
-                        new
-                        {
-                            RegistrationId = (byte)5,
-                            IsActive = false,
-                            Name = "Apply for Other Unit JCOs/OR",
-                            Order = 5,
-                            Type = 2,
-                            UpdatedOn = new DateTime(2023, 12, 5, 12, 6, 58, 899, DateTimeKind.Unspecified).AddTicks(1362),
-                            Updatedby = 1
-                        });
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Master.MStepCounterStep", b =>
@@ -769,7 +735,7 @@ namespace DataAccessLayer.Migrations
 
                     b.Property<DateTime?>("UpdatedOn")
                         .IsRequired()
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime");
 
                     b.Property<int>("Updatedby")
                         .HasColumnType("int");
@@ -810,7 +776,7 @@ namespace DataAccessLayer.Migrations
 
                     b.Property<DateTime?>("UpdatedOn")
                         .IsRequired()
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime");
 
                     b.Property<int>("Updatedby")
                         .HasColumnType("int");
@@ -838,111 +804,69 @@ namespace DataAccessLayer.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("BasicDetailId"));
 
-                    b.Property<string>("AadhaarNo")
-                        .IsRequired()
-                        .HasMaxLength(4)
-                        .HasColumnType("nvarchar(4)");
+                    b.Property<byte>("ApplyForId")
+                        .HasColumnType("tinyint");
 
                     b.Property<byte>("ArmedId")
                         .HasColumnType("tinyint");
 
-                    b.Property<string>("BloodGroup")
+                    b.Property<string>("ArmyNo")
                         .IsRequired()
-                        .HasMaxLength(3)
-                        .HasColumnType("nvarchar(3)");
+                        .HasMaxLength(10)
+                        .HasColumnType("varchar(10)");
 
                     b.Property<DateTime>("DOB")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime");
 
                     b.Property<DateTime>("DateOfCommissioning")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime");
 
                     b.Property<DateTime>("DateOfIssue")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("Height")
-                        .HasColumnType("int");
-
-                    b.Property<string>("IdentityMark")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
+                        .HasColumnType("datetime");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsSubmit")
                         .HasColumnType("bit");
 
                     b.Property<string>("IssuingAuth")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("varchar(50)");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(36)
-                        .HasColumnType("nvarchar(36)");
-
-                    b.Property<string>("PermanentAddress")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("PhotoImagePath")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
+                        .HasColumnType("varchar(50)");
 
                     b.Property<string>("PlaceOfIssue")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("varchar(50)");
 
-                    b.Property<byte>("RankId")
-                        .HasColumnType("tinyint");
+                    b.Property<short>("RankId")
+                        .HasColumnType("smallint");
 
                     b.Property<byte?>("RegimentalId")
                         .HasColumnType("tinyint");
-
-                    b.Property<byte>("RegistrationId")
-                        .HasColumnType("tinyint");
-
-                    b.Property<string>("ServiceNo")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<string>("SignatureImagePath")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.Property<byte>("StatusLevel")
-                        .HasColumnType("tinyint");
-
-                    b.Property<int>("Step")
-                        .HasColumnType("int");
 
                     b.Property<int>("UnitId")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("UpdatedOn")
                         .IsRequired()
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime");
 
                     b.Property<int>("Updatedby")
                         .HasColumnType("int");
 
                     b.HasKey("BasicDetailId");
 
+                    b.HasIndex("ApplyForId");
+
                     b.HasIndex("ArmedId");
 
                     b.HasIndex("RankId");
 
                     b.HasIndex("RegimentalId");
-
-                    b.HasIndex("RegistrationId");
 
                     b.HasIndex("UnitId");
 
@@ -988,7 +912,7 @@ namespace DataAccessLayer.Migrations
 
                     b.Property<DateTime?>("UpdatedOn")
                         .IsRequired()
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime");
 
                     b.Property<int>("Updatedby")
                         .HasColumnType("int");
@@ -1022,7 +946,7 @@ namespace DataAccessLayer.Migrations
 
                     b.Property<DateTime?>("UpdatedOn")
                         .IsRequired()
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime");
 
                     b.Property<int>("Updatedby")
                         .HasColumnType("int");
@@ -1082,7 +1006,7 @@ namespace DataAccessLayer.Migrations
 
                     b.Property<DateTime?>("UpdatedOn")
                         .IsRequired()
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime");
 
                     b.Property<int>("Updatedby")
                         .HasColumnType("int");
@@ -1094,6 +1018,45 @@ namespace DataAccessLayer.Migrations
                     b.HasIndex("StepId");
 
                     b.ToTable("TrnStepCounter");
+                });
+
+            modelBuilder.Entity("DataTransferObject.Domain.Model.MTrnAddress", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("BasicDetailId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("District")
+                        .HasColumnType("VARCHAR(50)");
+
+                    b.Property<string>("PO")
+                        .HasColumnType("VARCHAR(50)");
+
+                    b.Property<string>("PS")
+                        .HasColumnType("VARCHAR(50)");
+
+                    b.Property<int?>("PinCode")
+                        .HasColumnType("int");
+
+                    b.Property<string>("State")
+                        .HasColumnType("VARCHAR(50)");
+
+                    b.Property<string>("Tehsil")
+                        .HasColumnType("VARCHAR(50)");
+
+                    b.Property<string>("Village")
+                        .HasColumnType("VARCHAR(50)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BasicDetailId");
+
+                    b.ToTable("TrnAddress");
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Model.MTrnFwd", b =>
@@ -1111,6 +1074,9 @@ namespace DataAccessLayer.Migrations
                         .HasColumnType("int");
 
                     b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsComplete")
                         .HasColumnType("bit");
 
                     b.Property<string>("Remark")
@@ -1136,7 +1102,7 @@ namespace DataAccessLayer.Migrations
 
                     b.Property<DateTime?>("UpdatedOn")
                         .IsRequired()
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime");
 
                     b.Property<int>("Updatedby")
                         .HasColumnType("int");
@@ -1174,15 +1140,21 @@ namespace DataAccessLayer.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
+                    b.Property<byte>("RegistrationId")
+                        .HasColumnType("tinyint");
+
                     b.Property<bool>("Status")
                         .HasColumnType("bit");
+
+                    b.Property<int>("TrnDomainMappingId")
+                        .HasColumnType("int");
 
                     b.Property<byte>("TypeId")
                         .HasColumnType("tinyint");
 
                     b.Property<DateTime?>("UpdatedOn")
                         .IsRequired()
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime");
 
                     b.Property<int>("Updatedby")
                         .HasColumnType("int");
@@ -1191,9 +1163,79 @@ namespace DataAccessLayer.Migrations
 
                     b.HasIndex("BasicDetailId");
 
+                    b.HasIndex("RegistrationId");
+
+                    b.HasIndex("TrnDomainMappingId");
+
                     b.HasIndex("TypeId");
 
                     b.ToTable("TrnICardRequest");
+                });
+
+            modelBuilder.Entity("DataTransferObject.Domain.Model.MTrnIdentityInfo", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AadhaarNo")
+                        .HasMaxLength(12)
+                        .HasColumnType("int");
+
+                    b.Property<int>("BasicDetailId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("BloodGroup")
+                        .HasColumnType("int");
+
+                    b.Property<float>("Height")
+                        .HasColumnType("real");
+
+                    b.Property<string>("IdenMark1")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("VARCHAR(50)");
+
+                    b.Property<string>("IdenMark2")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("VARCHAR(50)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BasicDetailId");
+
+                    b.ToTable("TrnIdentityInfo");
+                });
+
+            modelBuilder.Entity("DataTransferObject.Domain.Model.MTrnUpload", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("BasicDetailId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("PhotoImagePath")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("VARCHAR(100)");
+
+                    b.Property<string>("SignatureImagePath")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("VARCHAR(100)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BasicDetailId");
+
+                    b.ToTable("TrnUpload");
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Model.TrnDomainMapping", b =>
@@ -1331,10 +1373,19 @@ namespace DataAccessLayer.Migrations
                 {
                     b.HasOne("DataTransferObject.Domain.Master.MAppointment", "MAppointment")
                         .WithMany()
-                        .HasForeignKey("MAppointmentApptId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .HasForeignKey("ApptId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("DataTransferObject.Domain.Master.MRank", "MRank")
+                        .WithMany()
+                        .HasForeignKey("RankId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("MAppointment");
+
+                    b.Navigation("MRank");
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Master.MAppointment", b =>
@@ -1471,6 +1522,12 @@ namespace DataAccessLayer.Migrations
 
             modelBuilder.Entity("DataTransferObject.Domain.Model.BasicDetail", b =>
                 {
+                    b.HasOne("DataTransferObject.Domain.Master.MApplyFor", "ApplyFor")
+                        .WithMany()
+                        .HasForeignKey("ApplyForId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("DataTransferObject.Domain.Master.MArmedType", "Armed")
                         .WithMany()
                         .HasForeignKey("ArmedId")
@@ -1488,25 +1545,19 @@ namespace DataAccessLayer.Migrations
                         .HasForeignKey("RegimentalId")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("DataTransferObject.Domain.Master.MRegistration", "Registration")
-                        .WithMany()
-                        .HasForeignKey("RegistrationId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("DataTransferObject.Domain.Master.MUnit", "Unit")
                         .WithMany()
                         .HasForeignKey("UnitId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.Navigation("ApplyFor");
+
                     b.Navigation("Armed");
 
                     b.Navigation("Rank");
 
                     b.Navigation("Regimental");
-
-                    b.Navigation("Registration");
 
                     b.Navigation("Unit");
                 });
@@ -1528,6 +1579,17 @@ namespace DataAccessLayer.Migrations
                     b.Navigation("MStepCounterStep");
 
                     b.Navigation("MTrnICardRequest");
+                });
+
+            modelBuilder.Entity("DataTransferObject.Domain.Model.MTrnAddress", b =>
+                {
+                    b.HasOne("DataTransferObject.Domain.Model.BasicDetail", "BasicDetail")
+                        .WithMany()
+                        .HasForeignKey("BasicDetailId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("BasicDetail");
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Model.MTrnFwd", b =>
@@ -1595,6 +1657,18 @@ namespace DataAccessLayer.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("DataTransferObject.Domain.Master.MRegistration", "Registration")
+                        .WithMany()
+                        .HasForeignKey("RegistrationId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("DataTransferObject.Domain.Model.TrnDomainMapping", "TrnDomainMapping")
+                        .WithMany()
+                        .HasForeignKey("TrnDomainMappingId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("DataTransferObject.Domain.Master.MICardType", "MICardType")
                         .WithMany()
                         .HasForeignKey("TypeId")
@@ -1604,6 +1678,32 @@ namespace DataAccessLayer.Migrations
                     b.Navigation("BasicDetail");
 
                     b.Navigation("MICardType");
+
+                    b.Navigation("Registration");
+
+                    b.Navigation("TrnDomainMapping");
+                });
+
+            modelBuilder.Entity("DataTransferObject.Domain.Model.MTrnIdentityInfo", b =>
+                {
+                    b.HasOne("DataTransferObject.Domain.Model.BasicDetail", "BasicDetail")
+                        .WithMany()
+                        .HasForeignKey("BasicDetailId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("BasicDetail");
+                });
+
+            modelBuilder.Entity("DataTransferObject.Domain.Model.MTrnUpload", b =>
+                {
+                    b.HasOne("DataTransferObject.Domain.Model.BasicDetail", "BasicDetail")
+                        .WithMany()
+                        .HasForeignKey("BasicDetailId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("BasicDetail");
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Model.TrnDomainMapping", b =>

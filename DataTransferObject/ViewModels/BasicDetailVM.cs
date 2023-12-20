@@ -30,7 +30,7 @@ namespace DataTransferObject.ViewModels
         [Display(Name = "Rank", ResourceType = typeof(Resource))]
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
         [RegularExpression(@"^[\w \.\,\?\;\:\""\''\[\]\!\@\#\$\%\&\*\(\)\-\=\+\\\/]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
-        public byte RankId { get; set; }
+        public short RankId { get; set; }
         public MRank? MRank { get; set; }
 
         [Display(Name = "ArmService", ResourceType = typeof(Resource))]
@@ -45,39 +45,41 @@ namespace DataTransferObject.ViewModels
         [RegularExpression(@"^[\w \.\,\?\;\:\""\''\[\]\!\@\#\$\%\&\*\(\)\-\=\+\\\/]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
         public string ServiceNo { get; set; } = string.Empty;
 
-        [Display(Name = "IdentityMark", ResourceType = typeof(Resource))]
-        [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
-        [MaxLength(20, ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "MaxLengthError")]
-        [RegularExpression(@"^[\w \.\,\?\;\:\""\''\[\]\!\@\#\$\%\&\*\(\)\-\=\+\\\/]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
-        public string IdentityMark { get; set; } = string.Empty;
+        //[Display(Name = "IdentityMark", ResourceType = typeof(Resource))]
+        //[Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
+        //[MaxLength(20, ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "MaxLengthError")]
+        //[RegularExpression(@"^[\w \.\,\?\;\:\""\''\[\]\!\@\#\$\%\&\*\(\)\-\=\+\\\/]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
+        //public string IdentityMark { get; set; } = string.Empty;
 
         [Display(Name = "DOB", ResourceType = typeof(Resource))]
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
+        [DataType(DataType.Date)]
         public DateTime DOB { get; set; }
 
         [Display(Name = "Height", ResourceType = typeof(Resource))]
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
-        [Range(typeof(int), "0", "120", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "HtError")]
+        [Range(typeof(int), "100", "120", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "HtError")]
         public int Height { get; set; }
 
         [Display(Name = "AadhaarNo", ResourceType = typeof(Resource))]
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
         //[RegularExpression(@"^[\d ]{14}$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "AadhaarNoDigit")]
-        [RegularExpression(@"^[\d ]{4}$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "AadhaarNoDigit")]
+        
         public string AadhaarNo { get; set; } = string.Empty;
 
         [Display(Name = "BloodGroup", ResourceType = typeof(Resource))]
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
         [RegularExpression(@"^[\w \.\,\?\;\:\""\''\[\]\!\@\#\$\%\&\*\(\)\-\=\+\\\/]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
-        public string BloodGroup { get; set; } = string.Empty;
+        public int BloodGroup { get; set; } 
 
         [Display(Name = "PlaceOfIssue", ResourceType = typeof(Resource))]
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
         [RegularExpression(@"^[\w \.\,\?\;\:\""\''\[\]\!\@\#\$\%\&\*\(\)\-\=\+\\\/]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
-        public string? PlaceOfIssue { get; set; } = string.Empty;
+        public string PlaceOfIssue { get; set; } = string.Empty;
 
         [Display(Name = "DateOfIssue", ResourceType = typeof(Resource))]
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
+        [DataType(DataType.Date)]
         public DateTime DateOfIssue { get; set; }
 
         [Display(Name = "IssuingAuth", ResourceType = typeof(Resource))]
@@ -93,6 +95,7 @@ namespace DataTransferObject.ViewModels
 
         [Display(Name = "DateOfCommissioning", ResourceType = typeof(Resource))]
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
+        [DataType(DataType.Date)]
         public DateTime DateOfCommissioning { get; set; }
 
         [Display(Name = "PermanentAddress", ResourceType = typeof(Resource))]
@@ -107,12 +110,41 @@ namespace DataTransferObject.ViewModels
         public MRegimental? Regimental { get; set; }
 
         //[Display(Name = "ApplyForId", ResourceType = typeof(Resource))]
+        [Required]
         public byte ApplyForId { get; set; }
-        [NotMapped]
-        public string? ApplyFor { get; set; }
+        [Required]
+        public byte RegistrationId { get; set; }
+        [Required]
+        public byte TypeId { get; set; }
 
+        [NotMapped]
+       
+        public string ApplyFor { get; set; } = string.Empty;
+        [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
+        public string State { get; set; } = string.Empty;
+        [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
+        public string District { get; set; } = string.Empty;
+        [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
+        public string PS { get; set; } = string.Empty;
+       
+        public string PO { get; set; } = string.Empty;
+       
+        public string? Tehsil { get; set; } = string.Empty;
+       
+        public string? Village { get; set; } = string.Empty;
+        [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
+        public int PinCode { get; set; }
+        /// <summary>
+        /// end address
+        /// </summary>
+        /// 
+        [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
+        public string IdenMark1 { get; set; } = string.Empty;
+        [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
+        public string IdenMark2 { get; set; } = string.Empty;
+
+        [Required]
         public int UnitId { get; set; }
-        public MUnit? Unit { get; set; }
 
         public bool IsSubmit { get; set; }
         
@@ -142,8 +174,7 @@ namespace DataTransferObject.ViewModels
         public string? ICardType { get; set; }
         [NotMapped]
         public int RequestId { get; set; }
-        [NotMapped]
-        public byte TypeId { get; set; }
+     
         [NotMapped]
         public int Reject { get; set; }
         public string? Remark { get; set; }

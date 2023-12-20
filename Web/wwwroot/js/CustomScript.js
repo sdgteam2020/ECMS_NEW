@@ -246,85 +246,85 @@ function ProfileDisabledField(value) {
 function resetForm(id) {
     document.getElementById(id).reset();
 }
-function ProfileDummyData() {
-    $.ajax({
-        url: "/ProfileData/DummyData",
-        type: "POST",
-        success: function (response, status) {
-            alert(JSON.stringify(response));
-            $("#ArmyNumberPart1").val(response.ArmyNumberPart1);
-            $("#ArmyNumberPart2").val(response.ArmyNumberPart2);
-            $("#ArmyNumberPart3").val(response.ArmyNumberPart3);
-            $("#Rank").val(response.Rank);
-            $("#Name").val(response.Name);
-            $("#Appointment").val(response.Appointment);
-            $("#DomainId").val(response.DomainId);
-            $("#UnitSusNoPart1").val(response.UnitSusNoPart1);
-            $("#UnitSusNoPart2").val(response.UnitSusNoPart2);
-            $("#UnitName").val(response.UnitName);
-            $("#Comd").val(response.Comd);
-            $("#Corps").val(response.Corps);
-            $("#Div").val(response.Div);
-            $("#Bde").val(response.Bde);
-            $("#TypeOfUnit").val(response.TypeOfUnit);
-            $("#IOArmyNumberPart1").val(response.IOArmyNumberPart1);
-            $("#IOArmyNumberPart2").val(response.IOArmyNumberPart2);
-            $("#IOArmyNumberPart3").val(response.IOArmyNumberPart3);
-            $("#IORank").val(response.IORank);
-            $("#IOName").val(response.IOName);
-            $("#IOAppointment").val(response.IOAppointment);
-            $("#IOUnitFormation").val(response.IOUnitFormation);
-            $("#GISArmyNumberPart1").val(response.GISArmyNumberPart1);
-            $("#GISArmyNumberPart2").val(response.GISArmyNumberPart2);
-            $("#GISArmyNumberPart3").val(response.GISArmyNumberPart3);
-            $("#GISRank").val(response.GISRank);
-            $("#GISName").val(response.GISName);
-            $("#GISAppointment").val(response.GISAppointment);
-            $("#GISUnitFormation").val(response.GISUnitFormation);
-            if (response.TypeOfUnit == 'Formation / Unit') {
-                $("#Comd").prop('disabled', false);
-                $("#Corps").prop('disabled', false);
-                $("#Div").prop('disabled', false);
-                $("#Bde").prop('disabled', false);
-                $("#Bde").prop('disabled', false);
-                $("#GISArmyNumberPart1").prop('disabled', false);
-                $("#GISArmyNumberPart2").prop('readonly', false);
-                $("#GISArmyNumberPart3").prop('disabled', false);
-                $("#GISRank").prop('disabled', false);
-                $("#GISName").prop('readonly', false);
-                $("#GISAppointment").prop('readonly', false);
-                $("#GISUnitFormation").prop('readonly', false);
-            }
-        }
-    });
-}
-function getDummyData() { 
-    //$(document).ready(function () {
-    //})
-        $.ajax({
-            url: "/BasicDetail/DummyData",
-            type: "POST",
-            success: function (response, status) {
-                alert(JSON.stringify(response));
-                $("#Name").val(response.Name);
-                $("#Rank").val(response.Rank);
-                $("#ArmService").val(response.ArmService);
-                $("#ServiceNo").val(response.ServiceNo);
-                $("#IdentityMark").val(response.IdentityMark);
-                $("#DOB").val(response.DOB.split('T')[0]);
-                $("#Height").val(response.Height);
-                $("#AadhaarNo").val(response.AadhaarNo);
-                $("#BloodGroup").val(response.BloodGroup);
-                $("#StateId").val(response.StateId);
-                $("#DistrictId").val(response.DistrictId);
-                $("#PlaceOfIssue").val(response.PlaceOfIssue);
-                $("#DateOfIssue").val(response.DateOfIssue.split('T')[0]);
-                $("#DateOfCommissioning").val(response.DateOfCommissioning.split('T')[0]);
-                $("#PermanentAddress").val(response.PermanentAddress);
-            }
-        });
+//function ProfileDummyData() {
+//    $.ajax({
+//        url: "/ProfileData/DummyData",
+//        type: "POST",
+//        success: function (response, status) {
+//            alert(JSON.stringify(response));
+//            $("#ArmyNumberPart1").val(response.ArmyNumberPart1);
+//            $("#ArmyNumberPart2").val(response.ArmyNumberPart2);
+//            $("#ArmyNumberPart3").val(response.ArmyNumberPart3);
+//            $("#Rank").val(response.Rank);
+//            $("#Name").val(response.Name);
+//            $("#Appointment").val(response.Appointment);
+//            $("#DomainId").val(response.DomainId);
+//            $("#UnitSusNoPart1").val(response.UnitSusNoPart1);
+//            $("#UnitSusNoPart2").val(response.UnitSusNoPart2);
+//            $("#UnitName").val(response.UnitName);
+//            $("#Comd").val(response.Comd);
+//            $("#Corps").val(response.Corps);
+//            $("#Div").val(response.Div);
+//            $("#Bde").val(response.Bde);
+//            $("#TypeOfUnit").val(response.TypeOfUnit);
+//            $("#IOArmyNumberPart1").val(response.IOArmyNumberPart1);
+//            $("#IOArmyNumberPart2").val(response.IOArmyNumberPart2);
+//            $("#IOArmyNumberPart3").val(response.IOArmyNumberPart3);
+//            $("#IORank").val(response.IORank);
+//            $("#IOName").val(response.IOName);
+//            $("#IOAppointment").val(response.IOAppointment);
+//            $("#IOUnitFormation").val(response.IOUnitFormation);
+//            $("#GISArmyNumberPart1").val(response.GISArmyNumberPart1);
+//            $("#GISArmyNumberPart2").val(response.GISArmyNumberPart2);
+//            $("#GISArmyNumberPart3").val(response.GISArmyNumberPart3);
+//            $("#GISRank").val(response.GISRank);
+//            $("#GISName").val(response.GISName);
+//            $("#GISAppointment").val(response.GISAppointment);
+//            $("#GISUnitFormation").val(response.GISUnitFormation);
+//            if (response.TypeOfUnit == 'Formation / Unit') {
+//                $("#Comd").prop('disabled', false);
+//                $("#Corps").prop('disabled', false);
+//                $("#Div").prop('disabled', false);
+//                $("#Bde").prop('disabled', false);
+//                $("#Bde").prop('disabled', false);
+//                $("#GISArmyNumberPart1").prop('disabled', false);
+//                $("#GISArmyNumberPart2").prop('readonly', false);
+//                $("#GISArmyNumberPart3").prop('disabled', false);
+//                $("#GISRank").prop('disabled', false);
+//                $("#GISName").prop('readonly', false);
+//                $("#GISAppointment").prop('readonly', false);
+//                $("#GISUnitFormation").prop('readonly', false);
+//            }
+//        }
+//    });
+//}
+//function getDummyData() { 
+//    //$(document).ready(function () {
+//    //})
+//        $.ajax({
+//            url: "/BasicDetail/DummyData",
+//            type: "POST",
+//            success: function (response, status) {
+//                alert(JSON.stringify(response));
+//                $("#Name").val(response.Name);
+//                $("#Rank").val(response.Rank);
+//                $("#ArmService").val(response.ArmService);
+//                $("#ServiceNo").val(response.ServiceNo);
+//                $("#IdentityMark").val(response.IdentityMark);
+//                $("#DOB").val(response.DOB.split('T')[0]);
+//                $("#Height").val(response.Height);
+//                $("#AadhaarNo").val(response.AadhaarNo);
+//                $("#BloodGroup").val(response.BloodGroup);
+//                $("#StateId").val(response.StateId);
+//                $("#DistrictId").val(response.DistrictId);
+//                $("#PlaceOfIssue").val(response.PlaceOfIssue);
+//                $("#DateOfIssue").val(response.DateOfIssue.split('T')[0]);
+//                $("#DateOfCommissioning").val(response.DateOfCommissioning.split('T')[0]);
+//                $("#PermanentAddress").val(response.PermanentAddress);
+//            }
+//        });
 
-}
+//}
 function GetDistrictListByStateId(stateId) {
     $.ajax({
         url: "/BasicDetail/GetDistrictListByStateId",

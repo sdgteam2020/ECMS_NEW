@@ -145,35 +145,60 @@ namespace DataTransferObject.Requests
     }
     public class DTOBasicDetailTempRequest : Common
     {
-        [Display(Name = "Name", ResourceType = typeof(Resource))]
+
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
-        [MaxLength(36, ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "MaxLengthError")]
-        [RegularExpression(@"^[\w \.\,\?\;\:\""\''\[\]\!\@\#\$\%\&\*\(\)\-\=\+\\\/]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
+     
         public string Name { get; set; } = string.Empty;
 
-        [Display(Name = "ServiceNo", ResourceType = typeof(Resource))]
+       
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
-        [RegularExpression(@"^[\w \.\,\?\;\:\""\''\[\]\!\@\#\$\%\&\*\(\)\-\=\+\\\/]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
+       
         public string ServiceNo { get; set; } = string.Empty;
 
-        [Display(Name = "DOB", ResourceType = typeof(Resource))]
+       
         [DataType(DataType.Date)]
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
         public DateTime DOB { get; set; }
 
-        [Display(Name = "DateOfCommissioning", ResourceType = typeof(Resource))]
+       
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
         [DataType(DataType.Date)]
         public DateTime DateOfCommissioning { get; set; }
 
-        [Display(Name = "PermanentAddress", ResourceType = typeof(Resource))]
-        [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
-        [RegularExpression(@"^[\w \.\,\?\;\:\""\''\[\]\!\@\#\$\%\&\*\(\)\-\=\+\\\/]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
-        public string PermanentAddress { get; set; } = string.Empty;
 
         [Display(Name = "Observations", ResourceType = typeof(Resource))]   
         [RegularExpression(@"^[\w \.\,\?\;\:\""\''\[\]\!\@\#\$\%\&\*\(\)\-\=\+\\\/]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
         public string? Observations { get; set; }
+
+        /// <summary>
+        /// address
+        /// </summary>
+      
+        public string? State { get; set; }
+
+       
+        public string? District { get; set; }
+        
+        public string? PS { get; set; }
+       
+        public string? PO { get; set; }
+       
+        public string? Tehsil { get; set; }
+       
+        public string? Village { get; set; }
+        public int PinCode { get; set; }
+        /// <summary>
+        /// end address
+        /// </summary>
+        public string IdenMark1 { get; set; } = string.Empty;
+        public string IdenMark2 { get; set; } = string.Empty;
+
+       
+        public long? AadhaarNo { get; set; }
+        //[NotMapped]
+        //public int? Height { get; set; }
+
+        public string? BloodGroup { get; set; }
 
         [NotMapped]
         public string? EncryptedId { get; set; }
@@ -181,7 +206,7 @@ namespace DataTransferObject.Requests
         [NotMapped]
         [Display(Name = "Sno", ResourceType = typeof(Resource))]
         public int Sno { get; set; }
-    }
+    } 
     public class DTORegistrationRequest : DTOBasicDetailTempRequest
     {
         //public byte RegistrationId { get; set; }
@@ -200,7 +225,13 @@ namespace DataTransferObject.Requests
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
         public int SubmitType { get; set; }
 
+        [Required]
+        public byte ApplyForId { get; set; }
+        [Required]
+        public byte RegistrationId { get; set; }
+        [Required]
         public byte TypeId { get; set; }
+        
 
     }
 }

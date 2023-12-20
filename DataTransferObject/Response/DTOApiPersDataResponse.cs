@@ -28,6 +28,7 @@ namespace DataTransferObject.Response
         public string Pers_Police_stn { get; set; }
         public string Pers_Pin_code { get; set; }
         public string Pers_Iden_mark_1 { get; set; }
+        public string Pers_Iden_mark_2 { get; set; }
         public string Pers_Gender { get; set; }
     }
     public class ApiPersDataResponseData

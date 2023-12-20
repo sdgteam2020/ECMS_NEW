@@ -38,7 +38,18 @@ namespace DataAccessLayer
         public DbSet<MStepCounter> TrnStepCounter { get; set; }
         public DbSet<MTrnICardRequest> TrnICardRequest { get; set; }
         public DbSet<MApplyFor> MApplyFor { get; set; }
+
+        /// <summary>
+        /// ////Basic details with all mapiing
+        /// </summary>
         public DbSet<BasicDetail> BasicDetails { get; set; } = null!;
+        public DbSet<MTrnAddress> TrnAddress { get; set; } = null!;
+        public DbSet<MTrnUpload> TrnUpload { get; set; } = null!;
+        public DbSet<MTrnIdentityInfo> TrnIdentityInfo { get; set; } = null!;
+
+        /// <summary>
+        /// /end Basic details with all mapiing
+        /// </summary>
         public DbSet<BasicDetailTemp> BasicDetailTemps { get; set; } = null!;
         public DbSet<MUserProfile> UserProfile { get; set; } = null!;
         public DbSet<MMappingProfile> MMappingProfile { get; set; } = null!;

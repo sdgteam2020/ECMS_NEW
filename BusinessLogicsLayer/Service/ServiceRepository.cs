@@ -277,14 +277,10 @@ namespace BusinessLogicsLayer.Service
             var roles = new List<SelectListItem>
             {
                 new SelectListItem{ Text="Please Select", Value = null },
-                new SelectListItem{ Text="A+", Value = "A+" },
-                new SelectListItem{ Text="A-", Value = "A-" },
-                new SelectListItem{ Text="B+", Value = "B+" },
-                new SelectListItem{ Text="B-", Value = "B-" },
-                new SelectListItem{ Text="O+", Value = "O+" },
-                new SelectListItem{ Text="O-", Value = "O-" },
-                new SelectListItem{ Text="AB+", Value = "AB+" },
-                new SelectListItem{ Text="AB-", Value = "AB-" },
+                new SelectListItem{ Text="A+", Value = "1" },
+                new SelectListItem{ Text="A-", Value = "2" },
+                new SelectListItem{ Text="B+", Value = "3" },
+             
             };
             return new SelectList(roles, "Value", "Text");
         }

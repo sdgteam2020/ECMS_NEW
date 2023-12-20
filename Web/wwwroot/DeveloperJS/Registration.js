@@ -1,9 +1,38 @@
 ﻿$(document).ready(function () {
     if (sessionStorage.getItem("ArmyNo") != null) {
         $("#ServiceNumber").val(sessionStorage.getItem("ArmyNo"));
+
+
+        $("#ApplyForId").val(sessionStorage.getItem("OffType"));
+        $("#RegistrationId").val(sessionStorage.getItem("RegistrationApplyFor"));
+        $("#TypeId").val(sessionStorage.getItem("lCardType"));
+
         Getdatafromapi();
+
+        getApplyIcardDetails();
     }
+
+
 });
+function getApplyIcardDetails()
+{
+    $.ajax({
+        url: "/Home/GetApplyCardDetails",
+        type: "POST",
+        data: {
+            "ApplyForId": $("#ApplyForId").val(),
+            "RegistrationId": $("#RegistrationId").val(),
+            "TypeId": $("#TypeId").val()
+        },
+        success: function (response, status) {
+            if (response != null) {
+
+                $("#icarddetails").html('For '+response.ApplyFor + ' And (' + response.Registraion + ') For ' + response.Type);
+            }
+            
+        }
+    }); 
+}
 
 function getData(id) {
     let formId = '#' + id;
@@ -81,8 +110,25 @@ function CallDataFromAPI() {
                 /*$("#DOB_").val(moment(response.Pers_birth_dt).format("DD-MM-YYYY"));*/
                 $("#DateOfCommissioning").val(response.Pers_enrol_dt);
                 /*$("#DOC").val(moment(response.Pers_enrol_dt).format("DD-MM-YYYY"));*/
-                $("#PermanentAddress").val(response.Pers_Village + ', ' + response.Pers_Post_office + ', ' + response.Pers_Tehsil + ', ' + response.Pers_District + ', ' + response.Pers_State + ', ' + response.Pers_Pin_code);
+                $("#PermanentAddress").val('Village - ' + response.Pers_Village + ', Post Office-' + response.Pers_Post_office + ', Tehsil- ' + response.Pers_Tehsil + ', District- ' + response.Pers_District + ', State- ' + response.Pers_State + ', Pin Code- ' + response.Pers_Pin_code);
                 //$("#RegId").val(regId);
+
+                $("#State").val(response.Pers_State);
+                $("#District").val(response.Pers_District);
+                $("#PS").val(response.Pers_Police_stn);
+                $("#PO").val(response.Pers_Post_office);
+                $("#Tehsil").val(response.Pers_Tehsil);
+                $("#Village").val(response.Pers_Village);
+                $("#PinCode").val(response.Pers_Pin_code);
+                $("#IdenMark1").val(response.Pers_Iden_mark_1);
+                $("#IdenMark2").val(response.Pers_Iden_mark_2);
+                $("#AadhaarNo").val(response.Pers_UID);
+                //if (response.Pers_Height!="")
+                //    $("#Height").val(response.Pers_Height);
+                //else
+                //    $("#Height").val(0);
+
+                $("#BloodGroup").val(response.Pers_Blood_Gp);
             }
         }
     });

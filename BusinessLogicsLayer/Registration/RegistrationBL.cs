@@ -2,6 +2,8 @@
 using DataAccessLayer;
 using DataAccessLayer.BaseInterfaces;
 using DataTransferObject.Domain.Master;
+using DataTransferObject.Requests;
+using DataTransferObject.Response;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,6 +18,11 @@ namespace BusinessLogicsLayer.Registration
         public RegistrationBL(ApplicationDbContext context, IRegistrationDB registrationDB) : base(context)
         {
             _registrationDB= registrationDB;
+        }
+
+        public async Task<DTOApplyCardDetailsResponse> GetApplyCardDetails(DTOApplyCardDetailsRequest Data)
+        {
+            return await _registrationDB.GetApplyCardDetails(Data);
         }
 
         public async Task<List<MRegistration>> GetByApplyFor(MRegistration Data)

@@ -2,6 +2,7 @@
 using BusinessLogicsLayer.Registration;
 using DataAccessLayer.BaseInterfaces;
 using DataTransferObject.Domain.Master;
+using DataTransferObject.Requests;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Web.Controllers
@@ -34,6 +35,11 @@ namespace Web.Controllers
         public async Task<IActionResult> GetRegistrationApplyfor(MRegistration Data)
         {
             return Json(await _registrationBL.GetByApplyFor(Data));
+
+        }
+        public async Task<IActionResult> GetApplyCardDetails(DTOApplyCardDetailsRequest Data)
+        {
+            return Json(await _registrationBL.GetApplyCardDetails(Data));
 
         }
     }
