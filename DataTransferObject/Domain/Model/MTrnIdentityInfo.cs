@@ -12,7 +12,7 @@ namespace DataTransferObject.Domain.Model
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
+        public int InfoId { get; set; }
         [ForeignKey("BasicDetail"), DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int BasicDetailId { get; set; }
         public BasicDetail? BasicDetail { get; set; }

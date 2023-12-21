@@ -1,7 +1,37 @@
 ﻿$(document).ready(function () {
 
 
-  
+    getunitbymapid($("#spnUnitIdid").val())
+
+    if ($("#ApplyForId").val() == 1) {
+        $(".OptionsRegimental").addClass("d-none");
+        mMsater($("#spnrankid").val(), "RankId", Rank, "");
+    } else if ($("#ApplyForId").val() == 2) {
+        mMsater($("#spnrankid").val(), "RankId", RankJCo, "");
+        $(".OptionsRegimental").removeClass("d-none");
+    }
+
+    if (sessionStorage.getItem("ArmyNo") != null) {
+        $("#ServiceNumber").val(sessionStorage.getItem("ArmyNo"));
+
+        if (sessionStorage.getItem("OffType") == 1) {
+            $(".OptionsRegimental").addClass("d-none");
+            mMsater($("#spnrankid").val(), "RankId", Rank, "");
+        }
+        else if (sessionStorage.getItem("OffType") == 2) {
+            {
+                mMsater($("#spnrankid").val(), "RankId", RankJCo, "");
+                $(".OptionsRegimental").removeClass("d-none");
+            }
+        }
+        if (sessionStorage.getItem("OffType") != "")
+            $("#ApplyForId").val(sessionStorage.getItem("OffType"));
+        $("#Type").val(sessionStorage.getItem("OffType"));
+
+        if (sessionStorage.getItem("lCardType") != "")
+            $("#TypeId").val(sessionStorage.getItem("lCardType"));
+
+    }
 
 
     $("#txtUnit").autocomplete({
@@ -34,28 +64,32 @@
         },
         select: function (e, i) {
             e.preventDefault();
-            $("#txtUnit").val(i.item.label);
+           /* $("#txtUnit").val(i.item.label);*/
             //alert(i.item.value)
-            var param1 = { "UnitMapId": i.item.value };
-            $.ajax({
-                url: '/Master/GetALLByUnitMapId',
-                contentType: 'application/x-www-form-urlencoded',
-                data: param1,
-                type: 'POST',
-                success: function (data) {
-
-
-                    $("#UnitId").val(data.UnitId);
-                    //$("#lblProComd").html(data.ComdName);
-                    //$("#lblProCorps").html(data.CorpsName);
-                    //$("#lblProDiv").html(data.DivName);
-                    //$("#lblPrBde").html(data.BdeName);
-                    //$("#lblProSusno").html(data.Sus_no + '' + data.Suffix);
-
-                }
-            });
+            getunitbymapid(i.item.value);
         },
         appendTo: '#suggesstion-box'
     });
 
 });
+function getunitbymapid(value)
+{
+    var param1 = { "UnitMapId": value };
+    $.ajax({
+        url: '/Master/GetALLByUnitMapId',
+        contentType: 'application/x-www-form-urlencoded',
+        data: param1,
+        type: 'POST',
+        success: function (data) {
+
+            $("#txtUnit").val(data.UnitName);
+            $("#UnitId").val(data.UnitId);
+            //$("#lblProComd").html(data.ComdName);
+            //$("#lblProCorps").html(data.CorpsName);
+            //$("#lblProDiv").html(data.DivName);
+            //$("#lblPrBde").html(data.BdeName);
+            //$("#lblProSusno").html(data.Sus_no + '' + data.Suffix);
+
+        }
+    });
+}

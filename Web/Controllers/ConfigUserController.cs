@@ -113,8 +113,8 @@ namespace Web.Controllers
         public async Task<IActionResult> GetTokenDetails(string ApiName)
         {
 
-            var data = await _iGetTokenBL.GetTokenDetails(ApiName);
-            return Json(data);
+           // var data = await _iGetTokenBL.GetTokenDetails(ApiName);
+            return Json(null);
         }
         [HttpPost]
         public async Task<IActionResult> SaveMapping(TrnDomainMapping dTO,string ICNO)

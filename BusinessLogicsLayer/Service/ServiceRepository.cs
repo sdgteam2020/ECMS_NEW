@@ -284,11 +284,11 @@ namespace BusinessLogicsLayer.Service
             };
             return new SelectList(roles, "Value", "Text");
         }
-        public string ProcessUploadedFile(IFormFile UploadDoc, string FileAddress)
+        public string ProcessUploadedFile(IFormFile UploadDoc, string FileAddress,string FileName)
         {
             string? uniqueFileName = null;
             string ext = System.IO.Path.GetExtension(UploadDoc.FileName);
-            uniqueFileName = Guid.NewGuid().ToString() + ext;
+            uniqueFileName = FileName + ext;// Guid.NewGuid().ToString() + ext;
             string filePath = Path.Combine(FileAddress, uniqueFileName);
             using (var fileStream = new FileStream(filePath, FileMode.Create))
             {

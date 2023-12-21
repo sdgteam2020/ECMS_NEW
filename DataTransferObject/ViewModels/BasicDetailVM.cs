@@ -39,7 +39,7 @@ namespace DataTransferObject.ViewModels
         public byte ArmedId { get; set; }
         public MArmedType? MArmedType { get; set; }
 
-        [Remote(action: "IsServiceNoInUse", controller: "BasicDetail", AdditionalFields = "initialServiceNo")]
+        //[Remote(action: "IsServiceNoInUse", controller: "BasicDetail", AdditionalFields = "initialServiceNo")]
         [Display(Name = "ServiceNo", ResourceType = typeof(Resource))]
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
         [RegularExpression(@"^[\w \.\,\?\;\:\""\''\[\]\!\@\#\$\%\&\*\(\)\-\=\+\\\/]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
@@ -87,6 +87,8 @@ namespace DataTransferObject.ViewModels
         [RegularExpression(@"^[\w \.\,\?\;\:\""\''\[\]\!\@\#\$\%\&\*\(\)\-\=\+\\\/]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
         public string IssuingAuth { get; set; } = string.Empty;
 
+        public int UploadId { get; set; }
+
         [Display(Name = "SignatureImagePath", ResourceType = typeof(Resource))]
         public string SignatureImagePath { get; set; } = string.Empty;
 
@@ -121,6 +123,8 @@ namespace DataTransferObject.ViewModels
        
         public string ApplyFor { get; set; } = string.Empty;
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
+
+        public int AddressId { get; set; }
         public string State { get; set; } = string.Empty;
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
         public string District { get; set; } = string.Empty;
@@ -138,12 +142,13 @@ namespace DataTransferObject.ViewModels
         /// end address
         /// </summary>
         /// 
+        public int InfoId { get; set; }
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
         public string IdenMark1 { get; set; } = string.Empty;
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
         public string IdenMark2 { get; set; } = string.Empty;
 
-        [Required]
+        [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
         public int UnitId { get; set; }
 
         public bool IsSubmit { get; set; }

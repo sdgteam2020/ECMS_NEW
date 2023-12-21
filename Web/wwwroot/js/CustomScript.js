@@ -13,48 +13,85 @@
 
     //});
     /* alert(sessionStorage.getItem("OffType"))*/
-    if ($("#ApplyForId").val() == 1) {
-        $(".OptionsRegimental").addClass("d-none");
-        mMsater($("#RankId").val(), "RankId", Rank, "");
-    } else if ($("#ApplyForId").val() == 2) {
-        mMsater($("#RankId").val(), "RankId", RankJCo, "");
-        $(".OptionsRegimental").removeClass("d-none");
-    }
-
-    if (sessionStorage.getItem("ArmyNo") != null) {
-        $("#ServiceNumber").val(sessionStorage.getItem("ArmyNo"));
-
-        if (sessionStorage.getItem("OffType") == 1) {
-            $(".OptionsRegimental").addClass("d-none");
-            mMsater($("#RankId").val(), "RankId", Rank, "");
-        }
-        else if (sessionStorage.getItem("OffType") == 2) {
-            {
-                mMsater($("#RankId").val(), "RankId", RankJCo, "");
-                $(".OptionsRegimental").removeClass("d-none");
-            }
-        }
-        if (sessionStorage.getItem("OffType") != "")
-            $("#ApplyForId").val(sessionStorage.getItem("OffType"));
-        $("#Type").val(sessionStorage.getItem("OffType"));
-
-        if (sessionStorage.getItem("lCardType") != "")
-            $("#TypeId").val(sessionStorage.getItem("lCardType"));
-
-    }
+ 
 });
-function GetRegimentalListByArmedId(regimentalId) {
+function GetRegimentalListByArmedId(regimentalId, sectid) {
+    //$('#RegimentalId').val("");
+    //$.ajax({
+    //    url: "/BasicDetail/GetRegimentalListByArmedId",
+    //    type: "POST",
+    //    data: {
+    //        "RegimentalId": regimentalId
+    //    },
+    //    success: function (response, status) {
+            
+    //        for (var i = 0; i < response.length; i++) {
+    //            $('#RegimentalId').append('<option value="' + response[i].RegId + '">' + response[i].Name + '</option>');
+    //        }
+    //    }
+    //});
+    var userdata =
+    {
+        "RegimentalId": regimentalId,
+       
+
+    };
     $.ajax({
-        url: "/BasicDetail/GetRegimentalListByArmedId",
-        type: "POST",
-        data: {
-            "RegimentalId": regimentalId
-        },
-        success: function (response, status) {
-            $('#RegimentalId').find('option').not(':first').remove();
-            for (var i = 0; i < response.length; i++) {
-                $('#RegimentalId').append('<option value="' + response[i].RegId + '">' + response[i].Name + '</option>');
+        url: '/BasicDetail/GetRegimentalListByArmedId',
+        contentType: 'application/x-www-form-urlencoded',
+        data: userdata,
+        type: 'POST',
+
+        success: function (response) {
+            if (response != "null" && response != null) {
+                if (response == InternalServerError) {
+                    Swal.fire({
+                        text: errormsg
+                    });
+                }
+
+                else {
+
+                    var listItemddl = "";
+
+                    listItemddl += '<option value="0">Please Select</option>';
+
+                    for (var i = 0; i < response.length; i++) {
+                        listItemddl += '<option value="' + response[i].RegId + '">' + response[i].Name + '</option>';
+                    }
+                    $("#RegimentalId").html(listItemddl);
+
+                    //if (TableId == 5 || TableId == 7 || TableId == 8) {
+
+                    //    if (sectid != '') {
+                    //        $("#" + ddl + " option").filter(function () {
+                    //            return this.text == sectid;
+                    //        }).attr('selected', true);
+
+                    //    }
+                    //}
+                    //else
+                    //{
+                    if (sectid != '') {
+                        $("#RegimentalId").val(sectid);
+
+                    }
+
+                    //}
+
+
+                }
             }
+            else {
+                //Swal.fire({
+                //    text: "No data found Offrs"
+                //});
+            }
+        },
+        error: function (result) {
+            Swal.fire({
+                text: errormsg002
+            });
         }
     });
 }
@@ -168,11 +205,13 @@ function beforeSubmitValidateBasicDetail(id) {
         }
     }
     $.validator.unobtrusive.parse($(formId));
-    if ($(formId).valid()) {
-    }
-    else {
-        return false;
-    }
+
+    return false;
+    //if ($(formId).valid()) {
+    //}
+    //else {
+    //    return false;
+    //}
 }
 function ProfileEnableDisabledField() {
     if ($("#TypeOfUnit").val() == 'Formation / Unit') {

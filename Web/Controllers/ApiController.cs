@@ -17,7 +17,7 @@ namespace Web.Controllers
        
         public async Task<IActionResult> LoginApi(string ICNumber)
         {
-            DTOApiPersDataResponse res=new DTOApiPersDataResponse();  
+            DTOApiPersDataResponse res1=new DTOApiPersDataResponse();  
             var remoteIpAddress = HttpContext.Connection.RemoteIpAddress;
             DTOAPILoginRequest data = new DTOAPILoginRequest();
             data.ClientName = "miso";
@@ -37,20 +37,22 @@ namespace Web.Controllers
                 
 
                 // ret.timestamp = DateTime.Today.ToString("dd-MMM-yy", CultureInfo.InvariantCulture);
-                res =await _aPIBL.GetData(retdat);
+               var res =await _aPIBL.GetData(retdat);
                 if (res != null)
                 {
                     res.Status = true;
                     res.Message = "OK";
+
+                    res1=res;
                 }
                 else
                 {
-                    
-                    res.Message = "Not Fetach Data From Api";
+                    res1.Status = false;
+                    res1.Message = "Not Fetach Data From Api";
                 }
             }
 
-            return Json(res);
+            return Json(res1);
         }
     }
 }

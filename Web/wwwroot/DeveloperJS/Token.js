@@ -1,9 +1,41 @@
 ﻿$(document).ready(function () {
     
     $("#btnfetchtoken").click(function () {
-        GetTokenDetails("FetchUniqueTokenDetails","txtArmyNo");
+        GetTokenDetails1("FetchUniqueTokenDetails","txtArmyNo");
     });
 });
+function GetTokenDetails1(ApiId, txt) {
+    alert(ApiId)
+    var examdata =
+    {
+        "ApiName": ApiId,
+
+    };
+    $.ajax({
+        url: 'http://localhost/Temporary_Listen_Addresses/' + ApiId,
+        type: 'GET',
+       
+        success: function (response) {
+            if (response) {
+
+            }
+            
+        },
+        error: function (result) {
+            $("#tokenmsg").html(errormsg002);
+            return 0;
+        }
+    });
+    //Swal.fire({
+    //    position: 'top-end',
+    //    icon: 'success',
+    //    title: 'Your work has been saved',
+    //    showConfirmButton: false,
+    //    timer: 1500
+    //})
+
+
+}
 function GetTokenDetails(ApiId,txt) {
 
     var examdata =

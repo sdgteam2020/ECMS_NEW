@@ -12,7 +12,9 @@ namespace DataTransferObject.Domain.Model
 { 
     public class BasicDetail: Common
     {
+        [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+       
         public int BasicDetailId { get; set; }
 
         [StringLength(36)]

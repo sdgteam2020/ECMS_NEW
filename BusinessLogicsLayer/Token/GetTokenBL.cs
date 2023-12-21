@@ -17,7 +17,7 @@ namespace BusinessLogicsLayer.Token
         public static HttpResponseMessage result;
      
         public const string ApiUrl = "http://localhost/Temporary_Listen_Addresses/";
-        public async Task<List<DTOTokenResponse>> GetTokenDetails(string ApiName)
+        public async Task<List<DTOTokenResponse>> GetTokenDetails(DTOTokenResponse Data)
         {
             try
             {
@@ -26,26 +26,26 @@ namespace BusinessLogicsLayer.Token
 
 
 
-                HttpResponseMessage result = null;
-                await GetAPI(ApiName, "").ContinueWith(task =>
-                {
-                    if (task.Status == TaskStatus.RanToCompletion)
-                    {
-                        result = task.Result;
-                    }
-                });
+                //HttpResponseMessage result = null;
+                //await GetAPI(ApiName, "").ContinueWith(task =>
+                //{
+                //    if (task.Status == TaskStatus.RanToCompletion)
+                //    {
+                //        result = task.Result;
+                //    }
+                //});
 
 
 
-                if (result != null)
-                {
+                //if (result != null)
+                //{
 
-                    // dynamicResponseDTO = result.Content.ReadAsAsync<DTOLoginResponse>().Result;
+                //    // dynamicResponseDTO = result.Content.ReadAsAsync<DTOLoginResponse>().Result;
 
-                    string responseBody = await result.Content.ReadAsStringAsync();
-                    dynamicResponseDTO = JsonSerializer.Deserialize<List<DTOTokenResponse>>(responseBody);
+                //    string responseBody = await result.Content.ReadAsStringAsync();
+                //    dynamicResponseDTO = JsonSerializer.Deserialize<List<DTOTokenResponse>>(responseBody);
 
-                }
+                //}
                 List<DTOTokenResponse> retdata = new List<DTOTokenResponse>();
                 foreach (var data in dynamicResponseDTO)
                 {
