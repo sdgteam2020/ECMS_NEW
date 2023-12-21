@@ -6,6 +6,7 @@ using BusinessLogicsLayer.Helpers;
 using BusinessLogicsLayer.Master;
 using BusinessLogicsLayer.Service;
 using BusinessLogicsLayer.Token;
+using BusinessLogicsLayer.Unit;
 using BusinessLogicsLayer.User;
 using DataAccessLayer;
 using DataTransferObject.Domain;
@@ -42,6 +43,7 @@ namespace Web.Controllers
         private readonly IAccountBL _iAccountBL;
         public readonly IDomainMapBL _iDomainMapBL;
         private readonly IUserProfileBL _userProfileBL;
+        public readonly IMapUnitBL _IMapUnitBL;
         public readonly iGetTokenBL _iGetTokenBL;
         private readonly ApplicationDbContext context, contextTransaction;
         private readonly IDataProtector protector;
@@ -52,7 +54,7 @@ namespace Web.Controllers
         public const string SessionKeySalt = "_Salt";
         private readonly ILogger<AccountController> _logger;
 
-        public AccountController(IUnitOfWork unitOfWork, IAccountBL iAccountBL , IDomainMapBL iDomainMapBL, IUserProfileBL userProfileBL, RoleManager<ApplicationRole> roleManager, iGetTokenBL iGetTokenBL, UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, ApplicationDbContext context, ApplicationDbContext contextTransaction,
+        public AccountController(IUnitOfWork unitOfWork, IAccountBL iAccountBL , IDomainMapBL iDomainMapBL, IUserProfileBL userProfileBL, IMapUnitBL mapUnitBL, RoleManager<ApplicationRole> roleManager, iGetTokenBL iGetTokenBL, UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, ApplicationDbContext context, ApplicationDbContext contextTransaction,
             IDataProtectionProvider dataProtectionProvider, IService service, DataProtectionPurposeStrings dataProtectionPurposeStrings, ILogger<AccountController> logger)
         {
             this.roleManager = roleManager;
@@ -63,6 +65,7 @@ namespace Web.Controllers
             _iDomainMapBL = iDomainMapBL;
             _userProfileBL = userProfileBL;
             _iGetTokenBL = iGetTokenBL;
+            _IMapUnitBL = mapUnitBL;
             this.context = context;
             this.contextTransaction = contextTransaction;
             this.service = service;
@@ -872,6 +875,7 @@ namespace Web.Controllers
                                 dTOTempSession.ICNO = mUserProfile.ArmyNo;
                                 dTOTempSession.UserId = mUserProfile.UserId;
                                 dTOTempSession.TrnDomainMappingId = trnDomainMapping.Id;
+                                dTOTempSession.UnitId = trnDomainMapping.UnitId;
                                 dTOTempSession.AspNetUsersId = dTOAccountResponse.Id;
                                 dTOTempSession.Status = 5;
                                 SessionHeplers.SetObject(HttpContext.Session, "IMData", dTOTempSession);
@@ -882,6 +886,7 @@ namespace Web.Controllers
                                 /*Get UserId from ProfileTable (Based on Input ArmyNo with token authorise.) and Update in TrnDomainMapping Table*/
                                 dTOTempSession.DomainId = dTOAccountResponse.DomainId;
                                 dTOTempSession.TrnDomainMappingId = trnDomainMapping.Id;
+                                dTOTempSession.UnitId = trnDomainMapping.UnitId;
                                 dTOTempSession.AspNetUsersId = dTOAccountResponse.Id;
                                 dTOTempSession.Status = 4;
                                 SessionHeplers.SetObject(HttpContext.Session, "IMData", dTOTempSession);
@@ -927,11 +932,10 @@ namespace Web.Controllers
             {
                 if (dTOTempSession.Status == 1)
                 {
-                    TempData["error"] = "Your request under process. Please contact Admin.";
                     return View();
                 }
                 else
-                {
+                {   
                     return View();
                 }
             }
@@ -1021,7 +1025,7 @@ namespace Web.Controllers
                                 dTOTempSession.ICNO = dTOProfileResponse.ArmyNo;
                                 dTOTempSession.UserId = dTOProfileResponse.UserId;
                                 SessionHeplers.SetObject(HttpContext.Session, "IMData", dTOTempSession);
-                                return RedirectToActionPermanent("Profile", "Account",new { Id = protector.Protect(dTOProfileResponse.UserId.ToString()) });
+                                return RedirectToActionPermanent("Profile", "Account");
                             }
                         }
                         else
@@ -1047,7 +1051,7 @@ namespace Web.Controllers
                                 dTOTempSession.ICNO = dTOProfileResponse.ArmyNo;
                                 dTOTempSession.UserId = dTOProfileResponse.UserId;
                                 SessionHeplers.SetObject(HttpContext.Session, "IMData", dTOTempSession);
-                                return RedirectToActionPermanent("Profile", "Account", new { Id = protector.Protect(dTOProfileResponse.UserId.ToString()) });
+                                return RedirectToActionPermanent("Profile", "Account");
                             }
                         }
                         else
@@ -1074,7 +1078,7 @@ namespace Web.Controllers
                                 dTOTempSession.ICNO = dTOProfileResponse.ArmyNo;
                                 dTOTempSession.UserId = dTOProfileResponse.UserId;
                                 SessionHeplers.SetObject(HttpContext.Session, "IMData", dTOTempSession);
-                                return RedirectToActionPermanent("Profile", "Account", new { Id = protector.Protect(dTOProfileResponse.UserId.ToString()) });
+                                return RedirectToActionPermanent("Profile", "Account");
                             }
                         }
                         else
@@ -1098,6 +1102,8 @@ namespace Web.Controllers
                                     ViewBag.Message = "Sucessfully Logged In.";
                                     if (roles[0] == "User")
                                     {
+                                        dTOTempSession.Status = 1;
+                                        SessionHeplers.SetObject(HttpContext.Session, "IMData", dTOTempSession);
                                         return RedirectToActionPermanent("Dashboard", "Home");
                                     }
                                 }
@@ -1122,7 +1128,7 @@ namespace Web.Controllers
         }
         [HttpGet]
         [AllowAnonymous]
-        public async Task<IActionResult> Profile(string? Id)
+        public async Task<IActionResult> Profile()
         {
             DTOTempSession? dTOTempSession = SessionHeplers.GetObject<DTOTempSession>(HttpContext.Session, "IMData");
             if (dTOTempSession != null)
@@ -1135,20 +1141,20 @@ namespace Web.Controllers
                 }
                 else
                 {
+                    if (dTOTempSession.Status == 4)
+                    {
+                        DTOMapUnitResponse dTOMapUnitResponse = await _IMapUnitBL.GetALLByUnitById(dTOTempSession.UnitId);
+                        ViewBag.TrnDomain = dTOMapUnitResponse;
+                    }
                     ViewBag.OptionsRank = service.GetRank(1);
                     ViewBag.OptionsFormation = service.GetFormation();
-                    if (Id!=null)
+                    if (dTOTempSession.UserId>0)
                     {
-                        string decryptedId = string.Empty;
-                        int decryptedIntId = 0;
                         try
                         {
-                            // Decrypt the  id using Unprotect method
-                            decryptedId = protector.Unprotect(Id);
-                            decryptedIntId = Convert.ToInt32(decryptedId);
 
                             //Get ArmyNo from UserProfile Table
-                            MUserProfile mUserProfile = await _userProfileBL.Get(decryptedIntId);
+                            MUserProfile mUserProfile = await _userProfileBL.Get(dTOTempSession.UserId);
                            
                             dTOProfileAndMappingRequest.UserId = mUserProfile.UserId;
                             dTOProfileAndMappingRequest.ArmyNo = mUserProfile.ArmyNo;
@@ -1167,8 +1173,9 @@ namespace Web.Controllers
                         }
                         catch (Exception ex)
                         {
-                            _logger.LogError(1001, ex, "This error occure because Id value change by user.");
-                            return RedirectToAction("Error", "Error");
+                            _logger.LogError(1001, ex, "Session variable timeout.");
+                            TempData["error"] = "Session time out.";
+                            return RedirectToActionPermanent("TokenValidate", "Account");
                         }
                     }
                     else
@@ -1214,7 +1221,6 @@ namespace Web.Controllers
                         {
                             ModelState.AddModelError(string.Empty, error.Description);
                         }
-                        MUserProfile mUserProfile = new MUserProfile();
                         
                         TrnDomainMapping trnDomainMapping = new TrnDomainMapping();
                         trnDomainMapping.AspNetUsersId = user.Id;
@@ -1222,13 +1228,15 @@ namespace Web.Controllers
                         
                         if (model.UserId>0)
                         {
+                            MUserProfile uptUserProfile = await _userProfileBL.Get(dTOTempSession.UserId);
+                            uptUserProfile.Updatedby = user.Id;
+                            await _userProfileBL.Update(uptUserProfile);
+
                             trnDomainMapping.UserId = dTOTempSession.UserId;
-                            mUserProfile.UserId= dTOTempSession.UserId;
-                            mUserProfile.Updatedby = user.Id;
-                            await _userProfileBL.Update(mUserProfile);
                         }
                         else
                         {
+                            MUserProfile mUserProfile = new MUserProfile();
                             mUserProfile.ArmyNo = dTOTempSession.ICNO;
                             mUserProfile.RankId = model.RankId; 
                             mUserProfile.Name= model.Name;
@@ -1242,31 +1250,33 @@ namespace Web.Controllers
                         await _iDomainMapBL.Add(trnDomainMapping);
 
                         TempData["success"] = "Domain ID and Profile has been successfully register. Please wait for admin approval.";
+                        dTOTempSession.Status = 1;
+                        SessionHeplers.SetObject(HttpContext.Session, "IMData", dTOTempSession);
                         return RedirectToActionPermanent("TokenValidate", "Account");
                     }
                     else if(dTOTempSession.Status == 3)
                     {
-                        MUserProfile mUserProfile = new MUserProfile();
-
                         TrnDomainMapping trnDomainMapping = new TrnDomainMapping();
                         trnDomainMapping.AspNetUsersId = dTOTempSession.AspNetUsersId;
                         trnDomainMapping.UnitId = model.UnitId;
 
                         if (model.UserId > 0)
                         {
+                            MUserProfile uptUserProfile = await _userProfileBL.Get(dTOTempSession.UserId);
+                            uptUserProfile.Updatedby = dTOTempSession.AspNetUsersId;
+                            await _userProfileBL.Update(uptUserProfile);
+
                             trnDomainMapping.UserId = dTOTempSession.UserId;
-                            mUserProfile.UserId = dTOTempSession.UserId;
-                            mUserProfile.Updatedby = dTOTempSession.UserId;
-                            await _userProfileBL.Update(mUserProfile);
                         }
                         else
                         {
+                            MUserProfile mUserProfile = new MUserProfile();
                             mUserProfile.ArmyNo = dTOTempSession.ICNO;
                             mUserProfile.RankId = model.RankId;
                             mUserProfile.Name = model.Name;
                             mUserProfile.ApptId = model.ApptId;
                             mUserProfile.IntOffr = model.IntOffr;
-                            mUserProfile.Updatedby = dTOTempSession.UserId;
+                            mUserProfile.Updatedby = dTOTempSession.AspNetUsersId;
                             MUserProfile insertMUserProfile = await _userProfileBL.AddWithReturn(mUserProfile);
                             trnDomainMapping.UserId = insertMUserProfile.UserId;
                         }
@@ -1274,30 +1284,30 @@ namespace Web.Controllers
                         await _iDomainMapBL.Add(trnDomainMapping);
 
                         TempData["success"] = "Mapping and Profile has been successfully register. Please wait for admin approval.";
+                        dTOTempSession.Status = 1;
+                        SessionHeplers.SetObject(HttpContext.Session, "IMData", dTOTempSession);
                         return RedirectToActionPermanent("TokenValidate", "Account");
                     }
                     else if (dTOTempSession.Status == 4)
                     {
-                        MUserProfile mUserProfile = new MUserProfile();
-
-                        TrnDomainMapping trnDomainMapping = new TrnDomainMapping();
-                        trnDomainMapping.Id = dTOTempSession.TrnDomainMappingId;
-
+                        TrnDomainMapping trnDomainMapping = await _iDomainMapBL.Get(dTOTempSession.TrnDomainMappingId);
                         if (model.UserId > 0)
                         {
+                            MUserProfile uptUserProfile = await _userProfileBL.Get(dTOTempSession.UserId);
+                            uptUserProfile.Updatedby = dTOTempSession.AspNetUsersId;
+                            await _userProfileBL.Update(uptUserProfile);
+
                             trnDomainMapping.UserId = dTOTempSession.UserId;
-                            mUserProfile.UserId = dTOTempSession.UserId;
-                            mUserProfile.Updatedby = dTOTempSession.UserId;
-                            await _userProfileBL.Update(mUserProfile);
                         }
                         else
                         {
+                            MUserProfile mUserProfile = new MUserProfile();
                             mUserProfile.ArmyNo = dTOTempSession.ICNO;
                             mUserProfile.RankId = model.RankId;
                             mUserProfile.Name = model.Name;
                             mUserProfile.ApptId = model.ApptId;
                             mUserProfile.IntOffr = model.IntOffr;
-                            mUserProfile.Updatedby = dTOTempSession.UserId;
+                            mUserProfile.Updatedby = dTOTempSession.AspNetUsersId;
                             MUserProfile insertMUserProfile = await _userProfileBL.AddWithReturn(mUserProfile);
                             trnDomainMapping.UserId = insertMUserProfile.UserId;
                         }
@@ -1314,6 +1324,7 @@ namespace Web.Controllers
                                 var roles = await userManager.GetRolesAsync(usera);
                                 if (roles[0] == "User")
                                 {
+                                    HttpContext.Session.Remove("IMData");
                                     return RedirectToActionPermanent("Dashboard", "Home");
                                 }
                             }

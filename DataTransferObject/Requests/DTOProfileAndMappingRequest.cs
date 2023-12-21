@@ -38,12 +38,8 @@ namespace DataTransferObject.Requests
 
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
         public int UnitId { get; set; }
-        public string? UnitName { get; set; } 
-        public string? BdeName { get; set; }
-        public string? ComdName { get; set; } 
-        public string? CorpsName { get; set; }
-        public string? DivName { get; set; } 
-        public string? Sus_no { get; set; } 
-        public string? Suffix { get; set; }
+
+        [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
+        public string UnitName { get; set; } = string.Empty;
     }
 }
