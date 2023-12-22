@@ -116,7 +116,7 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
 
     options.ExpireTimeSpan = TimeSpan.FromMinutes(20);
-    options.LoginPath = "/Account/Login";
+    options.LoginPath = "/Account/IMLogin";
     options.LogoutPath = "/Account/Logout";
     options.AccessDeniedPath = "/Account/AccessDenied";
     //options.SlidingExpiration = true; // IS OPTION KO BAAD ME UNCOMMENT.
