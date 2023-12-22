@@ -61,6 +61,14 @@
                     <div class="col-xl-6">
                         <div class="row mb-1">
                             <label class="col-sm-1 col-form-label text-center font-weight-bold">@(sno++).</label>
+                            <label asp-for="PaperIcardNo" class="col-sm-3 col-form-label form-label"></label>
+                            <div class="col-sm-6">
+                                <input asp-for="PaperIcardNo" class="form-control" placeholder="Enter Paper I card No" />
+                                <span asp-validation-for="PaperIcardNo" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="row mb-1">
+                            <label class="col-sm-1 col-form-label text-center font-weight-bold">@(sno++).</label>
                             <label asp-for="Name" class="col-sm-3 col-form-label form-label"></label>
                             <div class="col-sm-6">
                                 <input asp-for="Name" class="form-control" placeholder="Max 36 Characters incl spaces" readonly />
@@ -135,7 +143,7 @@
                             <label class="col-sm-1 col-form-label text-center font-weight-bold">@(sno++).</label>
                             <label asp-for="DOB" class="col-sm-3 col-form-label form-label"></label>
                             <div class="col-sm-6">
-                                <input asp-for="DOB" class="form-control" />
+                                <input asp-for="DOB" class="form-control" readonly />
                                @*  <input type="text" id="DOB_" name="DOB_" class="form-control" value="@Model.DOB.ToString("dd/MMM/yyyy")" readonly /> *@
                             </div>
                         </div>
@@ -195,7 +203,7 @@
                             <label class="col-sm-1 col-form-label text-center font-weight-bold">@(sno++).</label>
                             <label asp-for="DateOfCommissioning" class="col-sm-6 col-form-label form-label"></label>
                             <div class="col-sm-4">
-                                <input asp-for="DateOfCommissioning" class="form-control" />
+                                <input asp-for="DateOfCommissioning" class="form-control" readonly />
                                @*  <input type="text" id="DOC" name="DOC" class="form-control" value="@Model.DateOfCommissioning.ToString("dd/MMM/yyyy")" readonly /> *@
                             </div>
                         </div>

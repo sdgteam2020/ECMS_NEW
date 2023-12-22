@@ -65,6 +65,10 @@ namespace DataTransferObject.Domain.Model
         [ForeignKey("MUnit")]
         public int UnitId { get; set; }
         public MapUnit? Unit { get; set; }
-      
+
+        [StringLength(50)]
+        [Column(TypeName = "varchar(50)")]
+        public string PaperIcardNo { get; set; } = string.Empty;
+
     }
 }

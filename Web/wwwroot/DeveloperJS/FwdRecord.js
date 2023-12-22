@@ -218,13 +218,13 @@ function GetDataFromBasicDetails(Id) {
 
         success: function (response) {
             if (response != "null" && response != null) {
-                $("#basicphotos").attr('src' ,response.PhotoImagePath);
-                $("#Basicsing").attr('src', response.SignatureImagePath);
+                $("#basicphotos").attr('src',"/WriteReadData/photo/"+response.PhotoImagePath);
+                $("#Basicsing").attr('src', "/WriteReadData/Signature/"+response.SignatureImagePath);
                 $("#lblfdName").html(response.Name);
                 $("#lblfdRank").html(response.RankName);
-                $("#lblLfdarm").html(response.ArmedType);
+                $("#lblLfdarm").html(response.ArmedName);
                 $("#lblfdArmyNo").html(response.ServiceNo);
-                $("#lblfdMarks").html(response.IdentityMark);
+                $("#lblfdMarks").html(response.IdenMark1);
                 $("#lblfddob").html(DateFormateMMMM_dd_yyyy(response.DOB));
                 $("#lblfdheight").html(response.Height);
                 $("#lblfdadhar").html(response.AadhaarNo);
@@ -233,7 +233,7 @@ function GetDataFromBasicDetails(Id) {
                 $("#lblfddoi").html(DateFormateMMMM_dd_yyyy(response.DateOfIssue));
                 $("#lblfdissuA").html(response.IssuingAuth);
                 $("#lblfddateo").html(DateFormateMMMM_dd_yyyy(response.DateOfCommissioning));
-                $("#lblfdaddress").html(response.PermanentAddress);
+                $("#lblfdaddress").html(response.Village + ',' + response.Tehsil + ',' + response.PO + ',' + response.PS + ',' + response.District + ',' + response.State + '' + response.PinCode );
             }
         }
     })

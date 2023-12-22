@@ -9,6 +9,6 @@ namespace BusinessLogicsLayer.Token
 {
     public interface iGetTokenBL
     {
-        public Task<List<DTOTokenResponse>> GetTokenDetails(DTOTokenResponse Data);
+        public Task<DTOTokenResponse> GetTokenDetails(DTOTokenResponse Data);
     }
 }

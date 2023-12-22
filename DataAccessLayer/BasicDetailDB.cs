@@ -445,7 +445,7 @@ namespace DataAccessLayer
                             " trnadd.State,trnadd.District,trnadd.PS,trnadd.PO,trnadd.Tehsil,trnadd.Village,trnadd.PinCode,"+
                             " trnup.SignatureImagePath,trnup.PhotoImagePath,IdenMark1,IdenMark2,AadhaarNo,Height,BloodGroup,"+
                             " regi.Abbreviation RegimentalName,Muni.UnitName,uni.UnitMapId UnitId,icardreq.TypeId,icardreq.RegistrationId," +
-                            " ran.RankId,ran.RankAbbreviation RankName,arm.Abbreviation ArmedType,trnadd.AddressId,trnup.UploadId,trninfo.InfoId from BasicDetails bas" +
+                            " ran.RankId,ran.RankAbbreviation RankName,arm.Abbreviation ArmedName,trnadd.AddressId,trnup.UploadId,trninfo.InfoId from BasicDetails bas" +
                             " inner join TrnAddress trnadd on trnadd.BasicDetailId=bas.BasicDetailId"+
                             " inner join TrnUpload trnup on trnup.BasicDetailId=bas.BasicDetailId"+
                             " inner join TrnIdentityInfo trninfo on trninfo.BasicDetailId=bas.BasicDetailId"+

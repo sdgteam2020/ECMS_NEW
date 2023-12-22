@@ -1,7 +1,16 @@
 ﻿$(document).ready(function () {
 
+    if ($("#RegistrationId").val() == 1 || $("#RegistrationId").val() == 2 || $("#RegistrationId").val() == 6) {
+        GetUnit() 
+        $('#txtUnit').attr('readonly', true);
+      //  getunitbymapid($("#aspndomainUnitID").html())
+    }
+    else {
+        $('#txtUnit').attr('readonly', false);
+        getunitbymapid($("#spnUnitIdid").val())
 
-    getunitbymapid($("#spnUnitIdid").val())
+    }
+    getApplyIcardDetails();
 
     if ($("#ApplyForId").val() == 1) {
         $(".OptionsRegimental").addClass("d-none");
@@ -72,8 +81,36 @@
     });
 
 });
+function GetUnit() {
+    var listItem = "";
+    var userdata =
+    {
+        "Id": 0,
+
+    };
+    $.ajax({
+        url: '/ConfigUser/GetTokenArmyNo',
+        contentType: 'application/x-www-form-urlencoded',
+        data: userdata,
+        type: 'POST',
+
+        success: function (response) {
+            if (response != "null" && response != null) {
+                if (response == 0) {
+                    //  alert("Plase Add Profile")
+                }
+                else {
+                    getunitbymapid(response.UnitId)
+                    
+                   
+                }
+            }
+        }
+    });
+}
 function getunitbymapid(value)
 {
+   
     var param1 = { "UnitMapId": value };
     $.ajax({
         url: '/Master/GetALLByUnitMapId',
@@ -89,6 +126,25 @@ function getunitbymapid(value)
             //$("#lblProDiv").html(data.DivName);
             //$("#lblPrBde").html(data.BdeName);
             //$("#lblProSusno").html(data.Sus_no + '' + data.Suffix);
+
+        }
+    });
+}
+
+function getApplyIcardDetails() {
+    $.ajax({
+        url: "/Home/GetApplyCardDetails",
+        type: "POST",
+        data: {
+            "ApplyForId": $("#ApplyForId").val(),
+            "RegistrationId": $("#RegistrationId").val(),
+            "TypeId": $("#TypeId").val()
+        },
+        success: function (response, status) {
+            if (response != null) {
+
+                $("#icarddetails").html('For ' + response.ApplyFor + ' And (' + response.Registraion + ') For ' + response.Type);
+            }
 
         }
     });

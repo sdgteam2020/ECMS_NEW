@@ -232,11 +232,11 @@ namespace Web.Controllers
             }
             
             
-            BasicDetail? basicDetail = await basicDetailBL.Get(decryptedIntId);
-
-            if (basicDetail != null)
+           // BasicDetail? basicDetail = await basicDetailBL.Get(decryptedIntId);
+            BasicDetailCrtAndUpdVM? basicDetailCrtAndUpdVM = await basicDetailBL.GetByBasicDetailsId(decryptedIntId);
+            if (basicDetailCrtAndUpdVM != null)
             {
-                DTOBasicDetailRequest basicDetailVM = _mapper.Map<BasicDetail, DTOBasicDetailRequest>(basicDetail);
+                //DTOBasicDetailRequest basicDetailVM = _mapper.Map<BasicDetailCrtAndUpdVM, DTOBasicDetailRequest>(basicDetailCrtAndUpdVM);
                 //MRank? mRank = await context.MRank.FindAsync(basicDetail.RankId);
                 //if(mRank!=null)
                 //{
@@ -247,7 +247,7 @@ namespace Web.Controllers
                 //{
                 //    basicDetailVM.MArmedType = mArmedType;
                 //}
-                return View(basicDetailVM);
+                return View(basicDetailCrtAndUpdVM);
             }
             else
             {
@@ -463,7 +463,7 @@ namespace Web.Controllers
 
                         dTOBasicDetailCrtRequest.ApplyForId = model.ApplyForId;
                         dTOBasicDetailCrtRequest.RegistrationId = model.RegistrationId;
-                        dTOBasicDetailCrtRequest.RegistrationId = model.TypeId;
+                        dTOBasicDetailCrtRequest.TypeId = model.TypeId;
 
 
                         dTOBasicDetailCrtRequest.State = model.State;
@@ -472,7 +472,7 @@ namespace Web.Controllers
                         dTOBasicDetailCrtRequest.PO = model.PO;
                         dTOBasicDetailCrtRequest.Tehsil = model.Tehsil;
                         dTOBasicDetailCrtRequest.Village = model.Village;
-                        dTOBasicDetailCrtRequest.PinCode = model.PinCode;
+                        dTOBasicDetailCrtRequest.PinCode = Convert.ToInt32(model.PinCode);
                         dTOBasicDetailCrtRequest.PermanentAddress = "Village - " + model.Village + ", Post Office-" + model.PO + ", Tehsil- " + model.Tehsil + ", District- " + model.District + ", State- " + model.State + ", Pin Code- " + model.PinCode;
                         //dTOBasicDetailCrtRequest.PermanentAddress = model.PermanentAddress;
                         // dTOBasicDetailCrtRequest.RegistrationId = model.RegId;
@@ -863,6 +863,8 @@ namespace Web.Controllers
                         mTrnICardRequest.Status = false;
                         mTrnICardRequest.IsActive = true;
                         mTrnICardRequest.TypeId = model.TypeId;
+                        string tracid = model.DOB.Day.ToString("D2") + "" + model.DOB.Month.ToString("D2") + "" + model.DOB.Year+""+ Convert.ToInt32(model.AadhaarNo.Substring(model.AadhaarNo.Length - 3)).ToString("D4");
+                        mTrnICardRequest.TrackingId = Convert.ToInt64(tracid);
                         mTrnICardRequest.RegistrationId = model.RegistrationId;
                         mTrnICardRequest.TrnDomainMappingId = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").TrnDomainMappingId;
                         mTrnICardRequest.UpdatedOn = DateTime.Now;

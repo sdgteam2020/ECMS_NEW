@@ -180,11 +180,11 @@ function AddAllCardType() {
         $("#txtApplyForArmyNo").addClass("d-none");
         $("#txtApplyForArmyNo").val("");
         if (OffType == 1 && RegistrationApplyFor == 1) {
-            GetTokenDetails("FetchUniqueTokenDetails", "txtApplyForArmyNo");
+            GetTokenDetails1("FetchUniqueTokenDetails", "txtApplyForArmyNo");
 
         }
         else if (OffType == 1 && RegistrationApplyFor != 1) {
-            GetTokenDetails("FetchUniqueTokenDetails", "txtApplyForArmyNo");
+            GetTokenDetails1("FetchUniqueTokenDetails", "txtApplyForArmyNo");
 
         }
         else if (OffType == 2) {

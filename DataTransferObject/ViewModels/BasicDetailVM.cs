@@ -21,6 +21,9 @@ namespace DataTransferObject.ViewModels
         [Display(Name = "BasicDetailId", ResourceType = typeof(Resource))]
         public int BasicDetailId { get; set; }
 
+        [StringLength(50)]
+        [Column(TypeName = "varchar(50)")]
+        public string PaperIcardNo { get; set; } = string.Empty;
         [Display(Name = "Name", ResourceType = typeof(Resource))]
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
         [MaxLength(36, ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "MaxLengthError")]
@@ -31,13 +34,13 @@ namespace DataTransferObject.ViewModels
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
         [RegularExpression(@"^[\w \.\,\?\;\:\""\''\[\]\!\@\#\$\%\&\*\(\)\-\=\+\\\/]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
         public short RankId { get; set; }
-        public MRank? MRank { get; set; }
+        public string? RankName { get; set; }
 
         [Display(Name = "ArmService", ResourceType = typeof(Resource))]
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
         [RegularExpression(@"^[\w \.\,\?\;\:\""\''\[\]\!\@\#\$\%\&\*\(\)\-\=\+\\\/]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
         public byte ArmedId { get; set; }
-        public MArmedType? MArmedType { get; set; }
+        public string? ArmedName { get; set; }
 
         //[Remote(action: "IsServiceNoInUse", controller: "BasicDetail", AdditionalFields = "initialServiceNo")]
         [Display(Name = "ServiceNo", ResourceType = typeof(Resource))]

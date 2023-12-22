@@ -31,6 +31,6 @@ namespace DataTransferObject.Domain.Model
         public int TrnDomainMappingId { get; set; }
         public TrnDomainMapping? TrnDomainMapping { get; set; }
 
-        
+        public long TrackingId { get; set; }
     }
 }

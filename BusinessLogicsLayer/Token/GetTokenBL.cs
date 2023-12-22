@@ -17,12 +17,12 @@ namespace BusinessLogicsLayer.Token
         public static HttpResponseMessage result;
      
         public const string ApiUrl = "http://localhost/Temporary_Listen_Addresses/";
-        public async Task<List<DTOTokenResponse>> GetTokenDetails(DTOTokenResponse Data)
+        public async Task<DTOTokenResponse> GetTokenDetails(DTOTokenResponse Data)
         {
             try
             {
 
-                List<DTOTokenResponse> dynamicResponseDTO = new List<DTOTokenResponse>();
+                //List<DTOTokenResponse> dynamicResponseDTO = new List<DTOTokenResponse>();
 
 
 
@@ -46,23 +46,23 @@ namespace BusinessLogicsLayer.Token
                 //    dynamicResponseDTO = JsonSerializer.Deserialize<List<DTOTokenResponse>>(responseBody);
 
                 //}
-                List<DTOTokenResponse> retdata = new List<DTOTokenResponse>();
-                foreach (var data in dynamicResponseDTO)
-                {
-                    DTOTokenResponse db=new DTOTokenResponse();
-                    if (data.subject !=null)
+                //List<DTOTokenResponse> retdata = new List<DTOTokenResponse>();
+                //foreach (var data in dynamicResponseDTO)
+                //{
+                   // DTOTokenResponse db=new DTOTokenResponse();
+                    if (Data.subject !=null)
                     {
-                        var subdata = data.subject.Split(",");
-                   
-                        db.Name = subdata[0].Replace("CN=", "");
-                        db.ArmyNo = subdata[1].Replace("SERIALNUMBER=", "");
-                    }
-                    db.Status = data.Status;
-                    db.Remarks = data.Remarks;
-                    retdata.Add(db);
-                }
+                        var subdata = Data.subject.Split(",");
 
-                return retdata;
+                    Data.Name = subdata[0].Replace("CN=", "");
+                    Data.ArmyNo = subdata[1].Replace("SERIALNUMBER=", "");
+                    }
+               // Data.Status = data.Status;
+               // Data.Remarks = data.Remarks;
+                //    retdata.Add(db);
+                //}
+
+                return Data;
             }
             catch (Exception ex)
             {

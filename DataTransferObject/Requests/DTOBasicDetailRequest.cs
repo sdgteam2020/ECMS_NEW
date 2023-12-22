@@ -186,7 +186,7 @@ namespace DataTransferObject.Requests
         public string? Tehsil { get; set; }
        
         public string? Village { get; set; }
-        public int PinCode { get; set; }
+        public int? PinCode { get; set; }
         /// <summary>
         /// end address
         /// </summary>

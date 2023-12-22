@@ -110,11 +110,12 @@ namespace Web.Controllers
            
         }
         [HttpPost]
-        public async Task<IActionResult> GetTokenDetails(string ApiName)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> GetTokenDetails(DTOTokenResponse Data)
         {
 
-           // var data = await _iGetTokenBL.GetTokenDetails(ApiName);
-            return Json(null);
+            var data = await _iGetTokenBL.GetTokenDetails(Data);
+            return Json(data);
         }
         [HttpPost]
         public async Task<IActionResult> SaveMapping(TrnDomainMapping dTO,string ICNO)
