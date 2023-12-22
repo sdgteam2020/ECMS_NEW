@@ -1,4 +1,5 @@
-﻿@model DTOTokenRequest
+﻿@inject IHttpContextAccessor HttpContextAccessor
+@model DTOTokenRequest
 @{
     Layout = null;
 }
@@ -86,6 +87,10 @@
                                                     </div>
                                                 }
                                             </form>
+                                            @if (!string.IsNullOrEmpty(@HttpContextAccessor.HttpContext.Session.GetString("IMData")))
+                                            {
+                                                @Html.Raw(@HttpContextAccessor.HttpContext.Session.GetString("IMData"))
+                                            }
                                         </div>
                                     </div>
                                 </div>

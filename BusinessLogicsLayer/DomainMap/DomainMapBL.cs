@@ -48,5 +48,9 @@ namespace BusinessLogicsLayer.BdeCate
         {
             return _IDomainMapDB.GetByRequestId(RequestId);
         }
+        public async Task<TrnDomainMapping?> GetAllRelatedDataByDomainId(string DomainId)
+        {
+            return await _IDomainMapDB.GetAllRelatedDataByDomainId(DomainId);
+        }
     }
 }

@@ -856,52 +856,50 @@ namespace Web.Controllers
             if(ModelState.IsValid)
             {
                 DTOTempSession dTOTempSession = new DTOTempSession();
+
                 // Check Domain Id in AspNetUser Table
                 DTOAccountResponse? dTOAccountResponse = await _iAccountBL.FindDomainId(model.DomainId);
                 if (dTOAccountResponse != null)
                 {
-                    if (dTOAccountResponse.AdminFlag == true)
+                    // Check AspNetUserId in TrnDomainMapping Table 
+                    TrnDomainMapping? trnDomainMapping = await _iDomainMapBL.GetByAspnetUserIdBy(dTOAccountResponse.Id);
+                    if (dTOAccountResponse.AdminFlag == true && trnDomainMapping != null)
                     {
-                        // Check AspNetUserId in TrnDomainMapping Table 
-                        TrnDomainMapping? trnDomainMapping = await _iDomainMapBL.GetByAspnetUserIdBy(dTOAccountResponse.Id);
-                        if (trnDomainMapping!=null)
+                        // Check Profile UserId in TrnDomainMapping Table 
+                        if (trnDomainMapping.UserId != null)
                         {
-                            // Check Profile UserId in TrnDomainMapping Table 
-                            if (trnDomainMapping.UserId!=null)
-                            {
-                                //Get ArmyNo from UserProfile Table
-                                MUserProfile mUserProfile = await _userProfileBL.Get((int)trnDomainMapping.UserId);
-                                dTOTempSession.DomainId = dTOAccountResponse.DomainId;
-                                dTOTempSession.ICNO = mUserProfile.ArmyNo;
-                                dTOTempSession.UserId = mUserProfile.UserId;
-                                dTOTempSession.TrnDomainMappingId = trnDomainMapping.Id;
-                                dTOTempSession.UnitId = trnDomainMapping.UnitId;
-                                dTOTempSession.AspNetUsersId = dTOAccountResponse.Id;
-                                dTOTempSession.Status = 5;
-                                SessionHeplers.SetObject(HttpContext.Session, "IMData", dTOTempSession);
-                                return RedirectToActionPermanent("TokenValidate","Account");
-                            }
-                            else
-                            {
-                                /*Get UserId from ProfileTable (Based on Input ArmyNo with token authorise.) and Update in TrnDomainMapping Table*/
-                                dTOTempSession.DomainId = dTOAccountResponse.DomainId;
-                                dTOTempSession.TrnDomainMappingId = trnDomainMapping.Id;
-                                dTOTempSession.UnitId = trnDomainMapping.UnitId;
-                                dTOTempSession.AspNetUsersId = dTOAccountResponse.Id;
-                                dTOTempSession.Status = 4;
-                                SessionHeplers.SetObject(HttpContext.Session, "IMData", dTOTempSession);
-                                return RedirectToActionPermanent("TokenValidate", "Account");
-                            }
-                        }
-                        else
-                        {
-                            /*Create TrnDomainMapping using AspnetUserId,UnitId,UserId from Profile Table.*/
+                            //Get ArmyNo from UserProfile Table
+                            MUserProfile mUserProfile = await _userProfileBL.Get((int)trnDomainMapping.UserId);
                             dTOTempSession.DomainId = dTOAccountResponse.DomainId;
+                            dTOTempSession.ICNO = mUserProfile.ArmyNo;
+                            dTOTempSession.UserId = mUserProfile.UserId;
+                            dTOTempSession.TrnDomainMappingId = trnDomainMapping.Id;
+                            dTOTempSession.UnitId = trnDomainMapping.UnitId;
                             dTOTempSession.AspNetUsersId = dTOAccountResponse.Id;
-                            dTOTempSession.Status = 3;
+                            dTOTempSession.Status = 5;
                             SessionHeplers.SetObject(HttpContext.Session, "IMData", dTOTempSession);
                             return RedirectToActionPermanent("TokenValidate", "Account");
                         }
+                        else
+                        {
+                            /*Get UserId from ProfileTable (Based on Input ArmyNo with token authorise.) and Update in TrnDomainMapping Table*/
+                            dTOTempSession.DomainId = dTOAccountResponse.DomainId;
+                            dTOTempSession.TrnDomainMappingId = trnDomainMapping.Id;
+                            dTOTempSession.UnitId = trnDomainMapping.UnitId;
+                            dTOTempSession.AspNetUsersId = dTOAccountResponse.Id;
+                            dTOTempSession.Status = 4;
+                            SessionHeplers.SetObject(HttpContext.Session, "IMData", dTOTempSession);
+                            return RedirectToActionPermanent("TokenValidate", "Account");
+                        }
+                    }
+                    else if (trnDomainMapping == null)
+                    {
+                        /*Create TrnDomainMapping using AspnetUserId,UnitId,UserId from Profile Table.*/
+                        dTOTempSession.DomainId = dTOAccountResponse.DomainId;
+                        dTOTempSession.AspNetUsersId = dTOAccountResponse.Id;
+                        dTOTempSession.Status = 3;
+                        SessionHeplers.SetObject(HttpContext.Session, "IMData", dTOTempSession);
+                        return RedirectToActionPermanent("TokenValidate", "Account");
                     }
                     else
                     {
