@@ -86,11 +86,15 @@
                                                         <span class="text-danger">@TempData["error"]</span>
                                                     </div>
                                                 }
+                                                @if (!string.IsNullOrEmpty(@HttpContextAccessor.HttpContext.Session.GetString("IMData")))
+                                                {
+                                                    <div class="alert alert-danger alert-dismissible">
+                                                        @*   spnmsg d-none *@
+                                                        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                                                        <span class="text-danger text-break">@HttpContextAccessor.HttpContext.Session.GetString("IMData")</span>
+                                                    </div>
+                                                }
                                             </form>
-                                            @if (!string.IsNullOrEmpty(@HttpContextAccessor.HttpContext.Session.GetString("IMData")))
-                                            {
-                                                @Html.Raw(@HttpContextAccessor.HttpContext.Session.GetString("IMData"))
-                                            }
                                         </div>
                                     </div>
                                 </div>
