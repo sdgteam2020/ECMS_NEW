@@ -167,13 +167,13 @@
                                                                 {
                                                                     <div class="col-sm-8">
                                                                         <div class="form-check form-check-inline">
-                                                                            <input class="form-check-input" type="radio" name="IntOffr" value="true" id="intoffsyes" checked=@(Model.IntOffr == true?true:false)>
+                                                                            <input class="form-check-input" type="radio" name="IntOffr" value="true" id="intoffsyes" checked=@(Model.IntOffr == true?true:false) disabled="disabled">
                                                                             <label class="form-check-label" for="intoffsyes">
                                                                                 Yes
                                                                             </label>
                                                                         </div>
                                                                         <div class="form-check form-check-inline">
-                                                                            <input class="form-check-input" type="radio" name="IntOffr" value="false" id="intoffsno" checked=@(Model.IntOffr == false?true:false)>
+                                                                            <input class="form-check-input" type="radio" name="IntOffr" value="false" id="intoffsno" checked=@(Model.IntOffr == false?true:false) disabled="disabled">
                                                                             <label class="form-check-label" for="intoffsno">
                                                                                 No
                                                                             </label>
@@ -217,31 +217,31 @@
                                                             <div class="row mb-2">
                                                                 <label class="col-form-label col-sm-4">Sus No</label>
                                                                 <div class="col-sm-8">
-                                                                    <label id="lblProSusno" class="col-form-label">@(dTOMapUnitResponse.Sus_no != null ? dTOMapUnitResponse.Sus_no : "")</label>
+                                                                    <label id="lblProSusno" class="col-form-label" style="background-color:#e9ecef">@(dTOMapUnitResponse.Sus_no != null ? dTOMapUnitResponse.Sus_no : "")</label>
                                                                 </div>
                                                             </div>
                                                             <div class="row mb-2">
                                                                 <label class="col-form-label col-sm-4">Comd</label>
                                                                 <div class="col-sm-8">
-                                                                    <label class="col-form-label" id="lblProComd">@(dTOMapUnitResponse.ComdName != null ? dTOMapUnitResponse.ComdName : "")</label>
+                                                                    <label class="col-form-label" id="lblProComd" style="background-color:#e9ecef">@(dTOMapUnitResponse.ComdName != null ? dTOMapUnitResponse.ComdName : "")</label>
                                                                 </div>
                                                             </div>
                                                             <div class="row mb-2">
                                                                 <label class="col-form-label col-sm-4">Corps</label>
                                                                 <div class="col-sm-8">
-                                                                    <label class="col-form-label" id="lblProCorps">@(dTOMapUnitResponse.CorpsName != null ? dTOMapUnitResponse.CorpsName : "")</label>
+                                                                    <label class="col-form-label" id="lblProCorps" style="background-color:#e9ecef">@(dTOMapUnitResponse.CorpsName != null ? dTOMapUnitResponse.CorpsName : "")</label>
                                                                 </div>
                                                             </div>
                                                             <div class="row mb-2">
                                                                 <label class="col-form-label col-sm-4">Div</label>
                                                                 <div class="col-sm-8">
-                                                                    <label class="col-form-label" id="lblProDiv">@(dTOMapUnitResponse.DivName != null ? dTOMapUnitResponse.DivName : "")</label>
+                                                                    <label class="col-form-label" id="lblProDiv" style="background-color:#e9ecef">@(dTOMapUnitResponse.DivName != null ? dTOMapUnitResponse.DivName : "")</label>
                                                                 </div>
                                                             </div>
                                                             <div class="row mb-2">
                                                                 <label class="col-form-label col-sm-4">Bde</label>
                                                                 <div class="col-sm-8">
-                                                                    <label class="col-form-label" id="lblPrBde">@(dTOMapUnitResponse.BdeName != null ? dTOMapUnitResponse.BdeName : "")</label>
+                                                                    <label class="col-form-label" id="lblPrBde" style="background-color:#e9ecef">@(dTOMapUnitResponse.BdeName != null ? dTOMapUnitResponse.BdeName : "")</label>
                                                                 </div>
                                                             </div>
                                                         </div>

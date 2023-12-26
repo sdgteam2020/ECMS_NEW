@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using DataTransferObject.Domain.Identitytable;
 using DataTransferObject.Response;
+using DataTransferObject.Requests;
 
 namespace BusinessLogicsLayer.Account
 {
@@ -23,6 +24,10 @@ namespace BusinessLogicsLayer.Account
         public async Task<DTOAccountResponse?> FindDomainId(string DomainId)
         {
             return await _iAccountDB.FindDomainId(DomainId);
+        }
+        public async Task<List<DTORegisterListRequest>> DomainApproveList()
+        {
+            return await _iAccountDB.DomainApproveList();
         }
     }
 }

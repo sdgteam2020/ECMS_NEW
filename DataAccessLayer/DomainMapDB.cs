@@ -56,11 +56,12 @@ namespace DataAccessLayer
         {
             try
             {
-                var result = await (from au in _context.Users where au.DomainId == DomainId
+                var result = await (from au in _context.Users 
                                     join tdm in _context.TrnDomainMapping on au.Id equals tdm.AspNetUsersId into autdm_jointable
                                     from xtdm in autdm_jointable.DefaultIfEmpty()
                                     join up in _context.UserProfile on xtdm.UserId equals up.UserId into tdmup_jointable
                                     from xup in tdmup_jointable.DefaultIfEmpty()
+                                    where au.DomainId == DomainId
                                     select new TrnDomainMapping
                                     {
                                         Id = xtdm != null? xtdm.Id:0,
@@ -70,23 +71,36 @@ namespace DataAccessLayer
                                         ApplicationUser = au != null ? au:null,
                                         MUserProfile = xup!=null? xup:null,
                                     }).SingleOrDefaultAsync();
-                //var result = await (from au in _context.Users
-                //                    join tdm in _context.TrnDomainMapping on au.Id equals tdm.AspNetUsersId into autdm_jointable
-                //                    from column in autdm_jointable.DefaultIfEmpty()
-                //                    join up in _context.UserProfile on column.UserId equals up.UserId
-                //                    where au.DomainId == DomainId
-                //                    select new TrnDomainMapping
-                //                    {
-                //                        Id = column.Id,
-                //                        AspNetUsersId = column.AspNetUsersId,
-                //                        UserId = column.UserId,
-                //                        UnitId = column.UnitId,
-                //                        ApplicationUser = au,
-                //                        MUserProfile = up,
-                //                    }).SingleOrDefaultAsync();
                 return (TrnDomainMapping?)result;
             }
             catch(Exception ex)
+            {
+                return null;
+            }
+
+        }
+        public async Task<TrnDomainMapping?> GetProfileDataByAspNetUserId(int Id)
+        {
+            try
+            {
+                var result = await (from au in _context.Users
+                                    join tdm in _context.TrnDomainMapping on au.Id equals tdm.AspNetUsersId into autdm_jointable
+                                    from xtdm in autdm_jointable.DefaultIfEmpty()
+                                    join up in _context.UserProfile on xtdm.UserId equals up.UserId into tdmup_jointable
+                                    from xup in tdmup_jointable.DefaultIfEmpty()
+                                    where au.Id == Id
+                                    select new TrnDomainMapping
+                                    {
+                                        Id = xtdm != null ? xtdm.Id : 0,
+                                        AspNetUsersId = au != null ? au.Id : 0,
+                                        UserId = xtdm != null ? xtdm.UserId : 0,
+                                        UnitId = xtdm != null ? xtdm.UnitId : 0,
+                                        ApplicationUser = au != null ? au : null,
+                                        MUserProfile = xup != null ? xup : null,
+                                    }).SingleOrDefaultAsync();
+                return (TrnDomainMapping?)result;
+            }
+            catch (Exception ex)
             {
                 return null;
             }

@@ -715,24 +715,77 @@ namespace Web.Controllers
         {
             var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
             var usera = await userManager.FindByIdAsync(userId);
-            int sno = 1;
-            var UserList = context.Users.ToList();
-            //var UserRoleList = context.UserRoles.ToList();
-            //var UserRoleNameList = context.Roles.ToList();
-            var allrecord = from e in UserList
-                            //join r in UserRoleList on e.Id equals r.UserId
-                            //join n in UserRoleNameList on r.RoleId equals n.Id
-                            orderby e.Id
-                            select new DTORegisterListRequest()
-                            {
-                                EncryptedId = protector.Protect(e.Id.ToString()),
-                                Sno = sno++,
-                                DomainId = e.DomainId,
-                                //RoleName = n.Name,
-                            };
+            List<DTORegisterListRequest> dTORegisterListRequests = await _iAccountBL.DomainApproveList();
             ViewBag.Title = "List of Register User";
-            return View(allrecord);
+            return View(dTORegisterListRequests);
         }
+        [HttpGet]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> DomainApproveList()
+        {
+            var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var usera = await userManager.FindByIdAsync(userId);
+
+            ViewBag.Title = "List Register Users for Pending approval.";
+            List<DTORegisterListRequest> dTORegisterListRequests = await _iAccountBL.DomainApproveList();
+            return View(dTORegisterListRequests);
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpPost]
+        public async Task<IActionResult> DomainApprove(string Id)
+        {
+            string decryptedId = string.Empty;
+            int decryptedIntId = 0;
+            try
+            {
+                // Decrypt the  id using Unprotect method
+                decryptedId = protector.Unprotect(Id);
+                decryptedIntId = Convert.ToInt32(decryptedId);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "This error occure because Id value change by user.");
+                return RedirectToAction("Error", "Error");
+            }
+            var user = await userManager.FindByIdAsync(decryptedId);
+
+            if (user == null)
+            {
+                ViewBag.ErrorMessage = $"User with Id = {decryptedId} cannot be found";
+                return View("NotFound");
+            }
+            else
+            {
+                user.AdminFlag = true;
+                var result = await userManager.UpdateAsync(user);
+                if (result.Succeeded)
+                {
+                    TempData["success"] = "User detail Updated Successfully.";
+                    return RedirectToAction("DomainApproveList");
+                }
+                else
+                {
+                    TempData["error"] = "User detail not Updated";
+                    return RedirectToAction("DomainApproveList");
+                }
+            }
+        }
+        //[HttpGet]
+        //[Authorize(Roles = "User,Admin,Super Admin")]
+        //public async Task<IActionResult> EditProfile()
+        //{
+        //    var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+        //    var usera = await userManager.FindByIdAsync(userId);
+        //    if(usera!=null)
+        //    {
+        //        TrnDomainMapping? trnDomainMapping = await _iDomainMapBL.GetProfileDataByAspNetUserId(Convert.ToInt32(usera.Id));
+        //        if(trnDomainMapping!=null)
+        //        {
+
+        //        }
+        //    }
+        //}
         [HttpGet]
         [Authorize(Roles = "Super Admin")]
         public IActionResult Create()
@@ -991,12 +1044,20 @@ namespace Web.Controllers
                         TempData["error"] = "Your request under process. Please contact Admin.";
                         return View();
                     }
-                    else if ((dTOTempSession.Status == 2 || dTOTempSession.Status == 3 || dTOTempSession.Status == 4) && _dTOProfileResponse!=null && _dTOProfileResponse.TrnDomainMappingId>0)
+                    else if ( dTOTempSession.Status == 5 && _dTOProfileResponse != null && _dTOProfileResponse.TrnDomainMappingId > 0 && model.ICNo!= dTOTempSession.ICNO)
                     {
                         dTOTempSession.ICNoDomainId = _dTOProfileResponse.DomainId;
                         dTOTempSession.ICNOUnitId = _dTOProfileResponse.UnitId;
                         dTOTempSession.ICNoUnitName = _dTOProfileResponse.UnitName;
-                        TempData["error"] = "You are already mapped to DID (" + _dTOProfileResponse.DomainId + ").Pl handover the charge of already mapped previous DID" + _dTOProfileResponse.DomainId + ")- V to other person before registering again for Current DID";
+                        TempData["error"] = "You are already mapped to DID (" + _dTOProfileResponse.DomainId + ").Pl handover the charge of already mapped previous DID (" + _dTOProfileResponse.DomainId + ")- V to other person before registering again for Current DID";
+                        goto End;
+                    }
+                    else if ((dTOTempSession.Status == 2 || dTOTempSession.Status == 3 || dTOTempSession.Status == 4 ) && _dTOProfileResponse!=null && _dTOProfileResponse.TrnDomainMappingId>0)
+                    {
+                        dTOTempSession.ICNoDomainId = _dTOProfileResponse.DomainId;
+                        dTOTempSession.ICNOUnitId = _dTOProfileResponse.UnitId;
+                        dTOTempSession.ICNoUnitName = _dTOProfileResponse.UnitName;
+                        TempData["error"] = "You are already mapped to DID (" + _dTOProfileResponse.DomainId + ").Pl handover the charge of already mapped previous DID (" + _dTOProfileResponse.DomainId + ")- V to other person before registering again for Current DID";
                         goto End;
                     }
                     else if ((dTOTempSession.Status == 2 || dTOTempSession.Status == 3 || dTOTempSession.Status == 4) && _dTOProfileResponse != null && _dTOProfileResponse.TrnDomainMappingId == 0)
@@ -1027,6 +1088,15 @@ namespace Web.Controllers
                                     dTOTempSession.Status = 1;
                                     SessionHeplers.SetObject(HttpContext.Session, "IMData", dTOTempSession);
                                     return RedirectToActionPermanent("Dashboard", "Home");
+                                }
+                                else if (roles[0] == "Admin")
+                                {
+                                    return RedirectToActionPermanent("Dashboard", "Home");
+
+                                }
+                                else if (roles[0] == "Super Admin")
+                                {
+                                    return RedirectToActionPermanent("Index", "Account");
                                 }
                             }
                         }
@@ -1247,6 +1317,12 @@ namespace Web.Controllers
                                 {
                                     HttpContext.Session.Remove("IMData");
                                     return RedirectToActionPermanent("Dashboard", "Home");
+                                }
+                                else if (roles[0] == "Admin")
+                                {
+                                    HttpContext.Session.Remove("IMData");
+                                    return RedirectToActionPermanent("Dashboard", "Home");
+
                                 }
                             }
                         }

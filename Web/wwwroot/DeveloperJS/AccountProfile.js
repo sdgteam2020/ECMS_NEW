@@ -9,6 +9,12 @@
 
         source: function (request, response) {
             if (request.term.length > 2) {
+                $("#spnUnitIdMap").html('');
+                $("#lblProComd").html('');
+                $("#lblProCorps").html('');
+                $("#lblProDiv").html('');
+                $("#lblPrBde").html('');
+                $("#lblProSusno").html('');
                 var param = { "UnitName": request.term };
                 $("#spnUnitIdMap").html(0);
                 $.ajax({

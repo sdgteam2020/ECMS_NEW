@@ -1,6 +1,6 @@
 ﻿@model IEnumerable<DTORegisterListRequest>
 @{
-    int i = 1;
+    int i= 1;
 }
 <div class="container mt-4">
     <div class="card mb-3 ">
@@ -20,7 +20,6 @@
                     <div class="table-responsive">
                         <div class="mb-2 d-md-flex justify-content-md-between align-items-md-center">
                             <div>
-                                <a asp-controller="Account" asp-action="Create" class="btn btn-outline-success font-weight-600 btn-sm">Add User</a>
                             </div>
                         </div>
                         <table id="tbldatatabledata" class="table border border-purple table-striped no-footer dataTable table-hover" style="width:100%">
@@ -28,7 +27,7 @@
                                 <tr>
                                     <th>@Html.DisplayNameFor(model => model.Sno)</th>
                                     <th>@Html.DisplayNameFor(model => model.DomainId)</th>
-                                    @*<th>@Html.DisplayNameFor(model => model.RoleName)</th> *@
+                                    <th>@Html.DisplayNameFor(model => model.RoleName)</th> 
                                     <th>Action</th>
                                 </tr>
                             </thead>
@@ -38,24 +37,22 @@
                                     <tr>
                                         <td>@i</td>
                                         <td>@item.DomainId</td>
-                                        @*<td>@item.RoleName</td> *@
+                                        <td>@item.RoleName</td>
                                         <td>
                                             <div class="d-flex p-2">
-                                                <a asp-action="EditUser" asp-controller="Account" asp-route-Id="@item.EncryptedId" class="btn btn-icon btn-round btn-warning mr-1"><i class="fas fa-edit fa-lg"></i></a>
-                                                <form asp-action="DeleteUser" asp-route-Id="@item.EncryptedId" method="post">
+                                                <form asp-action="DomainApprove" asp-controller="Account" asp-route-Id="@item.EncryptedId" method="post">
                                                     <span id="confirmDeleteSpan_@item.EncryptedId" style="display:none">
-                                                        <span>Are you sure you want to delete?</span>
+                                                        <span>Are you sure you want to approve?</span>
                                                         <button type="submit" class="btn btn-danger">Yes</button>
                                                         <a href="#" class="btn btn-primary"
                                                            onclick="confirmDelete('@item.EncryptedId', false)">No</a>
                                                     </span>
 
                                                     <span id="deleteSpan_@item.Id">
-                                                        <a href="#" class="btn btn-icon btn-round btn-danger mr-1"
-                                                           onclick="confirmDelete('@item.EncryptedId', true)"><i class="fas fa-trash-alt fa-lg"></i></a>
+                                                        <a href="#" class="btn btn-danger mr-1"
+                                                           onclick="confirmDelete('@item.EncryptedId', true)">Approve</a>
                                                     </span>
                                                 </form>
-                                                <a asp-controller="Account" asp-action="ResetPassword" asp-route-Id="@(item.EncryptedId)" class="btn btn-primary">Reset Password</a>
                                             </div>
                                         </td>
                                     </tr>

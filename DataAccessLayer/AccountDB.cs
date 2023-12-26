@@ -8,15 +8,21 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using DataTransferObject.Requests;
+using Microsoft.AspNetCore.DataProtection;
 
 namespace DataAccessLayer
 {
     public class AccountDB : GenericRepositoryDL<ApplicationUser>, IAccountDB
     {
         protected new readonly ApplicationDbContext _context;
-        public AccountDB(ApplicationDbContext context) : base(context)
+        private readonly IDataProtector protector;
+        public AccountDB(ApplicationDbContext context, IDataProtectionProvider dataProtectionProvider, DataProtectionPurposeStrings dataProtectionPurposeStrings) : base(context)
         {
             _context = context;
+            // Pass the purpose string as a parameter
+            this.protector = dataProtectionProvider.CreateProtector(
+                dataProtectionPurposeStrings.AFSACIdRouteValue);
         }
         public async Task<DTOAccountResponse?> FindDomainId(string DomainId)
         {
@@ -31,6 +37,29 @@ namespace DataAccessLayer
                 return dTOAccountResponse;
             }
             else
+            {
+                return null;
+            }
+
+        }
+        public async Task<List<DTORegisterListRequest>> DomainApproveList()
+        {
+            try
+            {
+                var allrecord = await (from e in _context.Users
+                                       join r in _context.UserRoles on e.Id equals r.UserId
+                                       join n in _context.Roles on r.RoleId equals n.Id
+                                       where e.AdminFlag == false
+                                       orderby e.Id
+                                       select new DTORegisterListRequest()
+                                       {
+                                           EncryptedId = protector.Protect(e.Id.ToString()),
+                                           DomainId = e.DomainId,
+                                           RoleName = n.Name != null ? n.Name : "no role assign",
+                                       }).ToListAsync();
+                return allrecord;
+            }
+            catch (Exception ex) 
             {
                 return null;
             }

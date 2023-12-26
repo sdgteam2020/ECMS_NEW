@@ -1,5 +1,6 @@
 ﻿using DataTransferObject.Domain.Identitytable;
 using DataTransferObject.Domain.Master;
+using DataTransferObject.Requests;
 using DataTransferObject.Response;
 using System;
 using System.Collections.Generic;
@@ -12,5 +13,6 @@ namespace BusinessLogicsLayer.Account
     public interface IAccountBL : IGenericRepository<ApplicationUser>
     {
         public Task<DTOAccountResponse?> FindDomainId(string DomainId);
+        public Task<List<DTORegisterListRequest>> DomainApproveList();
     }
 }
