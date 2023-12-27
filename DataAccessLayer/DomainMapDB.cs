@@ -3,16 +3,18 @@ using DataTransferObject.Domain;
 using DataTransferObject.Domain.Identitytable;
 using DataTransferObject.Domain.Model;
 using Microsoft.EntityFrameworkCore;
-
+using Microsoft.Extensions.Logging;
 
 namespace DataAccessLayer
 {
     public class DomainMapDB : GenericRepositoryDL<TrnDomainMapping>, IDomainMapDB
     {
         protected readonly ApplicationDbContext _context;
-        public DomainMapDB(ApplicationDbContext context) : base(context)
+        private readonly ILogger<DomainMapDB> _logger;
+        public DomainMapDB(ApplicationDbContext context, ILogger<DomainMapDB> logger) : base(context)
         {
             _context = context;
+            _logger = logger;
         }
 
         public async Task<TrnDomainMapping?> GetByAspnetUserIdBy(int AspNetUsersId)
@@ -75,6 +77,7 @@ namespace DataAccessLayer
             }
             catch(Exception ex)
             {
+                _logger.LogInformation(1001, ex, "GetAllRelatedDataByDomainId");
                 return null;
             }
 
@@ -102,6 +105,7 @@ namespace DataAccessLayer
             }
             catch (Exception ex)
             {
+                _logger.LogInformation(1001, ex, "GetProfileDataByAspNetUserId");
                 return null;
             }
 
