@@ -1,4 +1,5 @@
-﻿using BusinessLogicsLayer.User;
+﻿using BusinessLogicsLayer.Unit;
+using BusinessLogicsLayer.User;
 using DataAccessLayer;
 using DataAccessLayer.BaseInterfaces;
 using DataTransferObject.Domain;
@@ -66,6 +67,10 @@ namespace BusinessLogicsLayer.Master
         public Task<List<DTOFwdICardResponse>> GetOffrsByUnitMapId(int UnitId)
         {
             return _iUserProfileDB.GetOffrsByUnitMapId(UnitId);
+        }
+        public async Task<DTOAllRelatedDataByArmyNoResponse?> GetAllRelatedDataByArmyNo(string ArmyNo)
+        {
+            return await _iUserProfileDB.GetAllRelatedDataByArmyNo(ArmyNo);
         }
     }
 }

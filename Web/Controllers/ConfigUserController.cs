@@ -53,7 +53,7 @@ namespace Web.Controllers
             }
             else if(dTO != null && dTO.UserId == null)
             {
-                DTOMapUnitResponse dTOMapUnitResponse = await _IMapUnitBL.GetALLByUnitMapId(dTO.UnitId);
+                DTOMapUnitResponse dTOMapUnitResponse = await _IMapUnitBL.GetALLByUnitById(dTO.UnitId);
                 ViewBag.TrnDomain = dTOMapUnitResponse;
                 return View();
             }

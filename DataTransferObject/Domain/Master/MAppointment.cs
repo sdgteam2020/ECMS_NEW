@@ -19,7 +19,7 @@ namespace DataTransferObject.Domain.Master
         public string AppointmentName { get; set; }
         [Required(ErrorMessage = "required!")]
        
-        [ForeignKey("Comd"), DatabaseGenerated(DatabaseGeneratedOption.None)]
+        [ForeignKey("MFormation")]
         public byte FormationId { get; set; }
         public MFormation? mFormation { get; set; }
     }

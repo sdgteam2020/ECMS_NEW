@@ -1,21 +1,12 @@
-﻿using Azure.Core;
-using Dapper;
+﻿using Dapper;
 using DataAccessLayer.BaseInterfaces;
 using DataAccessLayer.Logger;
 using DataTransferObject.Domain;
-using DataTransferObject.Domain.Master;
 using DataTransferObject.Domain.Model;
-using DataTransferObject.Requests;
 using DataTransferObject.Response;
 using DataTransferObject.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace DataAccessLayer
 {
@@ -171,6 +162,45 @@ namespace DataAccessLayer
             catch (Exception ex) { return null; }
 
             
+        }
+        public async Task<DTOAllRelatedDataByArmyNoResponse?> GetAllRelatedDataByArmyNo(string ArmyNo)
+        {
+            try
+            {
+                var ret = await (from user in _context.UserProfile
+                                 join app in _context.MAppointment on user.ApptId equals app.ApptId
+                                 join forma in _context.MFormation on app.FormationId equals forma.FormationId
+                                 join rank in _context.MRank on user.RankId equals rank.RankId
+                                 join map in _context.TrnDomainMapping on user.UserId equals map.UserId into mapp
+                                 from xmapp in mapp.DefaultIfEmpty()
+                                 join Uni in _context.MUnit on xmapp.UnitId equals Uni.UnitId into muni
+                                 from xmuni in muni.DefaultIfEmpty()
+                                 join Apluser in _context.Users on xmapp.AspNetUsersId equals Apluser.Id into mapluser
+                                 from xapluser in mapluser.DefaultIfEmpty()
+                                 where user.ArmyNo == ArmyNo 
+                                 select new DTOAllRelatedDataByArmyNoResponse
+                                 {
+                                     Name = user.Name,
+                                     ArmyNo = user.ArmyNo,
+                                     UserId = user.UserId,
+                                     IntOffr = user.IntOffr,
+                                     FormationId = forma.FormationId,
+                                     FormationName = forma.FormationName,
+                                     ApptId = app.ApptId,
+                                     AppointmentName = app.AppointmentName,
+                                     RankName = rank.RankName,
+                                     RankId = rank.RankId,
+                                     TrnDomainMappingId = xmapp!=null?xmapp.Id : 0,
+                                     UnitId = xmapp != null ? xmapp.UnitId : 0,
+                                     UnitName = xmapp != null ? xmuni.UnitName : null,
+                                     DomainId = xapluser != null ?xapluser.DomainId : null
+                                 }
+                         ).Distinct().SingleOrDefaultAsync();
+                return ret;
+
+            }
+            catch (Exception ex) { return null; }
+
         }
         public async Task<List<DTOUserProfileResponse>> GetAll(int DomainId, int UserId)
         {

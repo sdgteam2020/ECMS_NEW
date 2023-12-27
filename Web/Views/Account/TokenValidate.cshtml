@@ -1,4 +1,5 @@
-﻿@model DTOTokenRequest
+﻿@inject IHttpContextAccessor HttpContextAccessor
+@model DTOTokenRequest
 @{
     Layout = null;
 }
@@ -9,10 +10,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <meta name="author" content="">
-    @*  <meta http-equiv="content-security-policy"
-    content="default-src 'none'; script-src 'self';
-    connect-src 'self'; img-src 'self';
-    style-src 'self' 'sha256-CwE3Bg0VYQOIdNAkbB/Btdkhul49qZuwgNCMPgNY5zw=';" /> *@
     <link rel="icon" type="image/x-icon" href="/images/AFSAC.png">
     <title> AFSAC </title>
     @*  <link href="/Fonts/css/all.min.css" rel="stylesheet" type="text/css"> *@
@@ -72,7 +69,10 @@
                                                     <input asp-for="ICNo" class="form-control" placeholder="Enter ICNo" />
                                                     <span asp-validation-for="ICNo" class="text-danger"></span>
                                                 </div>
-                                                <button type="submit" class="btn btn-primary text-uppercase py-2 fs-5 w-100 mt-2">Validate Token & Continue</button>
+                                                <div class="text-center" >
+                                                    <button type="button" class="btn btn-primary mt-2">Refresh To Fetch Token Details</button>
+                                                    <button type="submit" class="btn btn-primary mt-2">Proceed</button>
+                                                </div>
                                                 @if (TempData["success"] != null)
                                                 {
                                                     <div class="alert alert-success alert-dismissible">
@@ -89,10 +89,14 @@
                                                         <span class="text-danger">@TempData["error"]</span>
                                                     </div>
                                                 }
-                                                <div class="alert alert-success alert-dismissible">
-                                                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                                                    <strong>Success!</strong> This alert box could indicate a successful or positive action.
-                                                </div>
+                                                @if (!string.IsNullOrEmpty(@HttpContextAccessor.HttpContext.Session.GetString("IMData")))
+                                                {
+                                                    <div class="alert alert-danger alert-dismissible">
+                                                        @*   spnmsg d-none *@
+                                                        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                                                        <span class="text-danger text-break">@HttpContextAccessor.HttpContext.Session.GetString("IMData")</span>
+                                                    </div>
+                                                }
                                             </form>
                                         </div>
                                     </div>
@@ -104,12 +108,11 @@
             </div>
         </div>
     </div>
-    <script asp-src-include="~/lib/jquery/jquery.js"></script>
+    <script asp-src-include="~/lib/jquery/jquery.min.js"></script>
     <script asp-src-include="~/lib/jquery-validate/jquery.validate.js" defer></script>
     <script asp-src-include="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js" defer></script>
-    <script src="~/bootstrap/js/bootstrap.min.js"></script>
-
-
+    <script asp-src-include="~/bootstrap/js/bootstrap.min.js"></script>
+    <script asp-src-include="~/lib/bootstrap/dist/js/bootstrap.min.js"></script>
     @* <script src="~/fonts/feather/feather.min.js"></script> *@
     <script src="~/sweetalert2/sweetalert2.min.js"></script>
 </body>

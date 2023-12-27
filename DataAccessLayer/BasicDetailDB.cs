@@ -33,7 +33,6 @@ namespace DataAccessLayer
             // Pass the purpose string as a parameter
             this.protector = dataProtectionProvider.CreateProtector(
                 dataProtectionPurposeStrings.AFSACIdRouteValue);
-            this.protector = protector;
         }
         public async Task<BasicDetail?> FindServiceNo(string ServiceNo)
         {

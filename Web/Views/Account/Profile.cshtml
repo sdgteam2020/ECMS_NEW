@@ -1,6 +1,8 @@
-﻿@model DTOProfileAndMappingRequest
+﻿@inject IHttpContextAccessor HttpContextAccessor
+@model DTOProfileAndMappingRequest
 @{
     Layout = null;
+    DTOMapUnitResponse dTOMapUnitResponse = new DTOMapUnitResponse();
 }
 <!DOCTYPE html>
 <html>
@@ -10,135 +12,278 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <meta name="author" content="">
-
+    <link rel="icon" type="image/x-icon" href="/images/AFSAC.png">
     <title> AFSAC </title>
+    @*  <link href="/Fonts/css/all.min.css" rel="stylesheet" type="text/css"> *@
+
+    <link href="~/css/style.css" rel="stylesheet" />
+    <link href="~/css/nunito.css" rel="stylesheet" />
+    <link href="~/css/roboto.css" rel="stylesheet" />
     <link href="~/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
-    <link href="~/lib/jqueryui/themes/base/jquery-ui.min.css" rel="stylesheet" />
+
+    <link href="~/css/login.css" rel="stylesheet" />
+
+    <link href="~/sweetalert2/sweetalert2.min.css" rel="stylesheet" />
+    <link href="~/css/feed.css" rel="stylesheet" />
+
+    <link href="~/css/normalize.min.css" rel="stylesheet" />
+    @*   <link href="~/css/swiper.min.css" rel="stylesheet" /> *@
+    <link href="~/css/feed.css" rel="stylesheet" />
+    <link href="~/css/main.css" rel="stylesheet" />
+    @*     <link href="~/css/sliders/style.css" rel="stylesheet" /> *@
+    <style>
+        .swal2-confirm, .swal2-styled {
+            background: #D97924 !important;
+        }
+    </style>
     <style>
         .row.mb-1.required .form-label::after {
             content: "*";
             color: red;
         }
+
+        .login-wrap {
+            margin-top: 100px;
+            margin-bottom: 100px;
+            margin-left: -50px;
+            /* border: 7px double #242c6d; */
+            border-radius: 10px;
+            box-shadow: 0px 0px 40px rgb(217 121 4 / 23%);
+            z-index: 1;
+        }
     </style>
 </head>
 <body>
-    <div class="row g-3 row-deck mb-3">
-        <div class="card mb-4">
-            <div class="card-header py-3 d-flex  bg-transparent">
-                <h6 class="mb-0 fw-bold"></h6>
-            </div>
-            <form enctype="multipart/form-data" asp-controller="Account" asp-action="Profile" method="post" class="mt-3">
-                <div class="card-body">
-                    <input hidden asp-for="UserId" />
-                    <input hidden asp-for="UnitId" />
-                    <div class="row">
-                        <div class="col-xl-6">
-                            <div class="row mb-1">
-                                <label asp-for="ArmyNo" class="col-sm-3 col-form-label form-label">Offrs Army No</label>
-                                <div class="col-sm-6">
-                                    <input asp-for="ArmyNo" class="form-control" placeholder="" />
-                                    <span asp-validation-for="ArmyNo" class="text-danger"></span>
-                                </div>
-                            </div>
-                            <div class="row mb-1">
-                                <label asp-for="Name" class="col-sm-3 col-form-label form-label">Offrs Army No</label>
-                                <div class="col-sm-6">
-                                    <input asp-for="Name" class="form-control" placeholder="" />
-                                    <span asp-validation-for="Name" class="text-danger"></span>
-                                </div>
-                            </div>
-                            <div class="row mb-1 required">
-                                <label asp-for="RankId" class="col-sm-3 col-form-label form-label"></label>
-                                <div class="col-sm-6"> 
-                                    <select asp-for="RankId" class="form-select">
-                                        <option value="0">Select Rank </option>
-                                    </select>
-                                    <span asp-validation-for="RankId" class="text-danger"></span>
-                                </div>
-                            </div>
-                            <div class="row mb-1 required">
-                                <label asp-for="FormationId" class="col-sm-3 col-form-label form-label">Formation</label>
-                                <div class="col-sm-6">
-                                    <select asp-for="FormationId" class="form-select">
-                                        <option value="0">Select Formation </option>
-                                    </select>
-                                    <span asp-validation-for="FormationId" class="text-danger"></span>
-                                </div>
-                            </div>
-                            <div class="row mb-1 required">
-                                <label asp-for="ApptId" class="col-sm-3 col-form-label form-label">Appt.</label>
-                                <div class="col-sm-6">
-                                    <select asp-for="ApptId" class="form-select">
-                                        <option value="0">Select Appointment </option>
-                                    </select>
-                                    <span asp-validation-for="ApptId" class="text-danger"></span>
-                                </div>
-                            </div>
-                            <div class="row mb-1 required">
-                                <label asp-for="IntOffr" class="col-sm-3 col-form-label form-label"> Int Offrs.</label>
-                                <div class="col-sm-6">
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="IntOffr" id="intoffsyes">
-                                        <label class="form-check-label" for="intoffsyes">
-                                            Yes
-                                        </label>
+    <div class="page">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="align-items-center col-lg-6 col-md-6 col-xl-8 d-flex login-img-block">
+
+
+                    <div class="mb-4 logo-sec">
+
+
+
+                        <h2 class="ml-sm-3"> <span>AFSAC</span> (Armed Forced Secure Access Card ) </h2>
+                    </div>
+
+                </div>
+                <div class="col-md-6 col-lg-6 col-xl-4 bg-white login-wrap align-items-center">
+                    <div class="login py-2 py-sm-4">
+                        <div class="row">
+                            <div class="col-md-10 col-lg-10 col-xl-9 mx-auto">
+                                <div class="card-sigin">
+                                    <div class="main-signup-header login-form">
+                                        @* <h1 class="font-weight-bold text-center mb-0 mt-3 logo"><color style="color: #D97904">Login</color></h1>*@
+                                        <div class="mb-1 logo-sec text-center">
+                                            <img src="/Images/AFSAC_Logo.png" />
+                                        </div>
+                                        <p class="font-weight-normal text-center mb-4 mt-1 ">Profile</p>
+                                        <div class="pb-3 mt-3">
+                                            <form asp-antiforgery="true" asp-controller="Account" asp-action="Profile" method="post" class="mt-3">
+                                                <div class="card-body">
+                                                    <input hidden asp-for="UserId" />
+                                                    <input hidden asp-for="UnitId" />
+                                                    @if (ViewBag.TrnDomain != null)
+                                                    {
+                                                        dTOMapUnitResponse = ViewBag.TrnDomain;
+                                                    }
+                                                    <div class="row">
+                                                        <div class="col-xl-12">
+                                                            <div class="row mb-2 required">
+                                                                <label asp-for="ArmyNo" class="col-sm-4 col-form-label form-label">Offrs Army No</label>
+                                                                <div class="col-sm-8">
+                                                                    <input asp-for="ArmyNo" class="form-control" placeholder="" readonly />
+                                                                    <span asp-validation-for="ArmyNo" class="text-danger"></span>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row mb-2 required">
+                                                                <label asp-for="Name" class="col-sm-4 col-form-label form-label">Name</label>
+                                                                <div class="col-sm-8">
+                                                                    @if (Model.UserId > 0)
+                                                                    {
+                                                                        <input asp-for="Name" class="form-control" placeholder="" readonly />
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <input asp-for="Name" class="form-control" placeholder="" />
+                                                                    }
+                                                                    <span asp-validation-for="Name" class="text-danger"></span>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row mb-2 required">
+                                                                <label asp-for="RankId" class="col-sm-4 col-form-label form-label">Rank</label>
+                                                                <div class="col-sm-8">
+                                                                    @if (Model.UserId > 0)
+                                                                    {
+                                                                        <select asp-for="RankId" class="form-select" asp-items="ViewBag.OptionsRank" disabled="disabled">
+                                                                        </select>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <select asp-for="RankId" class="form-select" asp-items="ViewBag.OptionsRank">
+                                                                        </select>
+                                                                    }
+
+                                                                    <span asp-validation-for="RankId" class="text-danger"></span>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row mb-2 required">
+                                                                <label asp-for="FormationId" class="col-sm-4 col-form-label form-label">Formation</label>
+                                                                <div class="col-sm-8">
+                                                                    @if (Model.UserId > 0)
+                                                                    {
+                                                                        <select asp-for="FormationId" class="form-select" asp-items="ViewBag.OptionsFormation" disabled="disabled">
+                                                                        </select>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <select asp-for="FormationId" class="form-select" asp-items="ViewBag.OptionsFormation">
+                                                                        </select>
+                                                                    }
+                                                                    <span asp-validation-for="FormationId" class="text-danger"></span>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row mb-2 required">
+                                                                <label asp-for="ApptId" class="col-sm-4 col-form-label form-label">Appt.</label>
+                                                                <div class="col-sm-8">
+                                                                    @if (Model.UserId > 0)
+                                                                    {
+                                                                        <select asp-for="ApptId" class="form-select" asp-items="ViewBag.OptionsAppointment" disabled="disabled">
+                                                                        </select>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <select asp-for="ApptId" class="form-select" asp-items="ViewBag.OptionsAppointment">
+                                                                        </select>
+                                                                    }
+
+                                                                    <span asp-validation-for="ApptId" class="text-danger"></span>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row mb-2 required">
+                                                                <label asp-for="IntOffr" class="col-sm-4 col-form-label form-label"> Int Offrs.</label>
+                                                                @if (Model.UserId > 0)
+                                                                {
+                                                                    <div class="col-sm-8">
+                                                                        <div class="form-check form-check-inline">
+                                                                            <input class="form-check-input" type="radio" name="IntOffr" value="true" id="intoffsyes" checked=@(Model.IntOffr == true?true:false) disabled="disabled">
+                                                                            <label class="form-check-label" for="intoffsyes">
+                                                                                Yes
+                                                                            </label>
+                                                                        </div>
+                                                                        <div class="form-check form-check-inline">
+                                                                            <input class="form-check-input" type="radio" name="IntOffr" value="false" id="intoffsno" checked=@(Model.IntOffr == false?true:false) disabled="disabled">
+                                                                            <label class="form-check-label" for="intoffsno">
+                                                                                No
+                                                                            </label>
+                                                                        </div>
+                                                                    </div>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <div class="col-sm-8">
+                                                                        <div class="form-check form-check-inline">
+                                                                            <input class="form-check-input" type="radio" name="IntOffr" value="true" id="intoffsyes">
+                                                                            <label class="form-check-label" for="intoffsyes">
+                                                                                Yes
+                                                                            </label>
+                                                                        </div>
+                                                                        <div class="form-check form-check-inline">
+                                                                            <input class="form-check-input" type="radio" name="IntOffr" value="false" id="intoffsno">
+                                                                            <label class="form-check-label" for="intoffsno">
+                                                                                No
+                                                                            </label>
+                                                                        </div>
+                                                                    </div>
+                                                                }
+
+                                                            </div>
+                                                            <div class="row mb-2 required">
+                                                                <span id="spnUnitIdMap" class="d-none"></span>
+                                                                <label asp-for="UnitName" class="col-sm-4 col-form-label form-label">Unit Name</label>
+                                                                <div class="col-sm-8">
+                                                                    @if (dTOMapUnitResponse.UnitId > 0)
+                                                                    {
+                                                                        <input asp-for="UnitName" class="form-control" placeholder="" value="@dTOMapUnitResponse.UnitName" readonly />
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <input asp-for="UnitName" class="form-control" placeholder="" />
+                                                                    }
+                                                                    <span asp-validation-for="UnitName" class="text-danger"></span>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row mb-2">
+                                                                <label class="col-form-label col-sm-4">Sus No</label>
+                                                                <div class="col-sm-8">
+                                                                    <label id="lblProSusno" class="col-form-label" style="background-color:#e9ecef">@(dTOMapUnitResponse.Sus_no != null ? dTOMapUnitResponse.Sus_no : "")</label>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row mb-2">
+                                                                <label class="col-form-label col-sm-4">Comd</label>
+                                                                <div class="col-sm-8">
+                                                                    <label class="col-form-label" id="lblProComd" style="background-color:#e9ecef">@(dTOMapUnitResponse.ComdName != null ? dTOMapUnitResponse.ComdName : "")</label>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row mb-2">
+                                                                <label class="col-form-label col-sm-4">Corps</label>
+                                                                <div class="col-sm-8">
+                                                                    <label class="col-form-label" id="lblProCorps" style="background-color:#e9ecef">@(dTOMapUnitResponse.CorpsName != null ? dTOMapUnitResponse.CorpsName : "")</label>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row mb-2">
+                                                                <label class="col-form-label col-sm-4">Div</label>
+                                                                <div class="col-sm-8">
+                                                                    <label class="col-form-label" id="lblProDiv" style="background-color:#e9ecef">@(dTOMapUnitResponse.DivName != null ? dTOMapUnitResponse.DivName : "")</label>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row mb-2">
+                                                                <label class="col-form-label col-sm-4">Bde</label>
+                                                                <div class="col-sm-8">
+                                                                    <label class="col-form-label" id="lblPrBde" style="background-color:#e9ecef">@(dTOMapUnitResponse.BdeName != null ? dTOMapUnitResponse.BdeName : "")</label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                                                </div>
+                                                <div class="card-footer text-center">
+                                                    <button type="submit" class="btn btn-primary">Submit</button>
+                                                    @if (TempData["success"] != null)
+                                                    {
+                                                        <div class="alert alert-success alert-dismissible">
+                                                            @* alert-dismissible fade show spnmsg d-none *@
+                                                            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                                                            <span class="text-success">@TempData["success"]</span>
+                                                        </div>
+                                                    }
+                                                    @if (TempData["error"] != null)
+                                                    {
+                                                        <div class="alert alert-danger alert-dismissible">
+                                                            @*   spnmsg d-none *@
+                                                            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                                                            <span class="text-danger">@TempData["error"]</span>
+                                                        </div>
+                                                    }
+                                                </div>
+                                            </form>
+                                            @if (!string.IsNullOrEmpty(@HttpContextAccessor.HttpContext.Session.GetString("IMData")))
+                                            {
+                                                <div class="alert alert-danger alert-dismissible">
+                                                    @*   spnmsg d-none *@
+                                                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                                                    <span class="text-danger text-break">@HttpContextAccessor.HttpContext.Session.GetString("IMData")</span>
+                                                </div>
+                                            }
+                                        </div>
                                     </div>
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="IntOffr" id="intoffsno">
-                                        <label class="form-check-label" for="intoffsno">
-                                            No
-                                        </label>
-                                    </div>
                                 </div>
                             </div>
-                            <div class="row mb-1">
-                                <span id="spnUnitIdMap" class="d-none"></span>
-                                <label asp-for="UnitName" class="col-sm-3 col-form-label form-label">Offrs Army No</label>
-                                <div class="col-sm-6">
-                                    <input asp-for="UnitName" class="form-control" placeholder="" />
-                                    <span asp-validation-for="UnitName" class="text-danger"></span>
-                                </div>
-                            </div>
-                            <div class="row mb-1">
-                                <label class="col-form-label col-sm-4">Sus No</label>
-                                <div class="col-sm-6">
-                                    <label id="lblProSusno" class="col-form-label"></label>
-                                </div>
-                            </div>
-                            <div class="row mb-1">
-                                <label class="col-form-label col-sm-4">Comd</label>
-                                <div class="col-sm-6">
-                                    <label class="col-form-label" id="lblProComd"></label>
-                                </div>
-                            </div>
-                            <div class="row mb-1">
-                                <label class="col-form-label col-sm-4">Corps</label>
-                                <div class="col-sm-6">
-                                    <label class="col-form-label" id="lblProCorps"></label>
-                                </div>
-                            </div>
-                            <div class="row mb-1">
-                                <label class="col-form-label col-sm-4">Div</label>
-                                <div class="col-sm-6">
-                                    <label class="col-form-label" id="lblProDiv"></label>
-                                </div>
-                            </div>
-                            <div class="row mb-1">
-                                <label class="col-form-label col-sm-4">Bde</label>
-                                <div class="col-sm-6">
-                                    <label class="col-form-label" id="lblPrBde"></label>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-xl-6">
                         </div>
                     </div>
-                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                 </div>
-                <div class="card-footer text-center">
-                    <button type="submit" class="btn btn-primary" onclick="beforeSubmitValidateBasicDetail(this.form.id);">Save & Next</button>
-                </div>
-            </form>
+            </div>
         </div>
     </div>
     <script asp-src-include="~/lib/jquery/jquery.js"></script>

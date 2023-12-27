@@ -1,25 +1,20 @@
 ﻿$(document).ready(function () {
-    mMsater(0, "FormationId", Formation, "");
-    mMsater(0, "RankId", Rank, "");
-
     $('#FormationId').on('change', function () {
         mMsater(0, "ApptId", Appt, $('#FormationId').val());
 
     });
 
-    //$("#btnConfigsave").click(function () {
-    //    if ($("#txtArmyNo").val() != "" && $("#spnUnitIdMap").html() != "0")
-    //    {
-    //       SaveMapping();
-    //    }
-    //    else
-    //        toastr.error('Offrs Army/Unit  No Not Blank!'); 
-    //});
     $("#UnitName").autocomplete({
 
 
         source: function (request, response) {
             if (request.term.length > 2) {
+                $("#spnUnitIdMap").html('');
+                $("#lblProComd").html('');
+                $("#lblProCorps").html('');
+                $("#lblProDiv").html('');
+                $("#lblPrBde").html('');
+                $("#lblProSusno").html('');
                 var param = { "UnitName": request.term };
                 $("#spnUnitIdMap").html(0);
                 $.ajax({
@@ -59,6 +54,7 @@
 
 
                     $("#spnUnitIdMap").html(data.UnitMapId);
+                    $("#UnitId").val(data.UnitMapId);
                     $("#lblProComd").html(data.ComdName);
                     $("#lblProCorps").html(data.CorpsName);
                     $("#lblProDiv").html(data.DivName);
