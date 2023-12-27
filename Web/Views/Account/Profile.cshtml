@@ -268,12 +268,39 @@
                                                     }
                                                 </div>
                                             </form>
-                                            @if (!string.IsNullOrEmpty(@HttpContextAccessor.HttpContext.Session.GetString("IMData")))
+                                            @{
+                                                DTOTempSession? dTOTempSession = new DTOTempSession();
+                                                StringBuilder m1 = new StringBuilder();
+                                                StringBuilder m2 = new StringBuilder();
+                                                if (!string.IsNullOrEmpty(@HttpContextAccessor.HttpContext.Session.GetString("IMData")))
+                                                {
+                                                    dTOTempSession = SessionHeplers.GetObject<DTOTempSession>(HttpContextAccessor.HttpContext.Session, "IMData");
+                                                    m1.Append("Status : " + dTOTempSession.Status);
+                                                    m1.Append(", AdminFlag : " + dTOTempSession.AdminFlag);
+                                                    m1.Append(", DomainId : " + dTOTempSession.DomainId);
+                                                    m1.Append(", RoleName : " + dTOTempSession.RoleName);
+                                                    m1.Append(", ICNO : " + dTOTempSession.ICNO);
+                                                    m1.Append(", UserId : " + dTOTempSession.UserId);
+                                                    m1.Append(", TrnDomainMappingUnitId : " + dTOTempSession.TrnDomainMappingUnitId);
+                                                    m1.Append(", TrnDomainMappingId : " + dTOTempSession.TrnDomainMappingId);
+                                                    m1.Append(", AspNetUsersId : " + dTOTempSession.AspNetUsersId);
+
+                                                    m2.Append("ICNoDomainId : " + dTOTempSession.ICNoDomainId);
+                                                    m2.Append(", ICNoTrnDomainMappingUnitId : " + dTOTempSession.ICNoTrnDomainMappingUnitId);
+                                                    m2.Append(", ICNoUnitName : " + dTOTempSession.ICNoUnitName);
+                                                }
+                                            }
+                                            @if (dTOTempSession != null)
                                             {
                                                 <div class="alert alert-danger alert-dismissible">
                                                     @*   spnmsg d-none *@
                                                     <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                                                    <span class="text-danger text-break">@HttpContextAccessor.HttpContext.Session.GetString("IMData")</span>
+                                                    <span class="text-danger text-break">@m1</span>
+                                                </div>
+                                                <div class="alert alert-danger alert-dismissible">
+                                                    @*   spnmsg d-none *@
+                                                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                                                    <span class="text-danger text-break">@m2</span>
                                                 </div>
                                             }
                                         </div>

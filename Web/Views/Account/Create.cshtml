@@ -1,16 +1,10 @@
 ﻿@model DTORegisterRequest
-@inject IHttpContextAccessor HttpContextAccessor
 @{
     ViewBag.Title = ViewBag.T;
 }
 <div class="row g-3 row-deck mb-3">
     <div class="col-xl-9">
         <div class="card">
-            @if (!string.IsNullOrEmpty(@HttpContextAccessor.HttpContext.Session.GetString("_AuthRemark")))
-                {
-                    @Html.Raw(@HttpContextAccessor.HttpContext.Session.GetString("_AuthRemark"))
-                    HttpContextAccessor.HttpContext.Session.Remove("_AuthRemark");
-                }
             <div class="card-header py-3 d-flex  bg-transparent">
                 <h6 class="mb-0 fw-bold">Create User(s)</h6>
             </div>

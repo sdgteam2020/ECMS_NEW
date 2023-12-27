@@ -21,6 +21,10 @@ namespace DataAccessLayer
             return await _context.Set<T>().FindAsync(id);
 
         }
+        public async Task<T> GetByByte(byte id)
+        {
+            return await _context.Set<T>().FindAsync(id);
+        }
 
         public async Task<IEnumerable<T>> GetAll()
         {

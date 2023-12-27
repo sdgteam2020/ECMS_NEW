@@ -35,6 +35,10 @@ namespace BusinessLogicsLayer
         {
             return Get(id);
         }
+        public Task<T> GetByByte(byte id)
+        {
+            return GetByByte(id);
+        }
 
         public Task<IEnumerable<T>> GetAll()
         {
