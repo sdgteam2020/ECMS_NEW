@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccessLayer.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20231221105757_v5")]
-    partial class v5
+    [Migration("20231227102957_first_init")]
+    partial class first_init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -832,6 +832,11 @@ namespace DataAccessLayer.Migrations
                         .HasMaxLength(36)
                         .HasColumnType("varchar(50)");
 
+                    b.Property<string>("PaperIcardNo")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)");
+
                     b.Property<string>("PlaceOfIssue")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -1146,6 +1151,9 @@ namespace DataAccessLayer.Migrations
                     b.Property<bool>("Status")
                         .HasColumnType("bit");
 
+                    b.Property<long>("TrackingId")
+                        .HasColumnType("bigint");
+
                     b.Property<int>("TrnDomainMappingId")
                         .HasColumnType("int");
 
@@ -1195,13 +1203,13 @@ namespace DataAccessLayer.Migrations
 
                     b.Property<string>("IdenMark1")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("VARCHAR(50)");
+                        .HasMaxLength(100)
+                        .HasColumnType("VARCHAR(100)");
 
                     b.Property<string>("IdenMark2")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("VARCHAR(50)");
+                        .HasMaxLength(100)
+                        .HasColumnType("VARCHAR(100)");
 
                     b.HasKey("InfoId");
 

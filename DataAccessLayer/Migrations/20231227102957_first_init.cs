@@ -574,63 +574,6 @@ namespace DataAccessLayer.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "BasicDetails",
-                columns: table => new
-                {
-                    BasicDetailId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "varchar(36)", maxLength: 36, nullable: false),
-                    ArmedId = table.Column<byte>(type: "tinyint", nullable: false),
-                    RankId = table.Column<short>(type: "smallint", nullable: false),
-                    ArmyNo = table.Column<string>(type: "varchar(10)", maxLength: 10, nullable: false),
-                    DOB = table.Column<DateTime>(type: "datetime", nullable: false),
-                    PlaceOfIssue = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: false),
-                    DateOfIssue = table.Column<DateTime>(type: "datetime", nullable: false),
-                    IssuingAuth = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: false),
-                    DateOfCommissioning = table.Column<DateTime>(type: "datetime", nullable: false),
-                    RegimentalId = table.Column<byte>(type: "tinyint", nullable: true),
-                    ApplyForId = table.Column<byte>(type: "tinyint", nullable: false),
-                    UnitId = table.Column<int>(type: "int", nullable: false),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false),
-                    Updatedby = table.Column<int>(type: "int", nullable: false),
-                    UpdatedOn = table.Column<DateTime>(type: "datetime", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_BasicDetails", x => x.BasicDetailId);
-                    table.ForeignKey(
-                        name: "FK_BasicDetails_MApplyFor_ApplyForId",
-                        column: x => x.ApplyForId,
-                        principalTable: "MApplyFor",
-                        principalColumn: "ApplyForId",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_BasicDetails_MArmedType_ArmedId",
-                        column: x => x.ArmedId,
-                        principalTable: "MArmedType",
-                        principalColumn: "ArmedId",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_BasicDetails_MRank_RankId",
-                        column: x => x.RankId,
-                        principalTable: "MRank",
-                        principalColumn: "RankId",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_BasicDetails_MRegimental_RegimentalId",
-                        column: x => x.RegimentalId,
-                        principalTable: "MRegimental",
-                        principalColumn: "RegId",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_BasicDetails_MUnit_UnitId",
-                        column: x => x.UnitId,
-                        principalTable: "MUnit",
-                        principalColumn: "UnitId",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "MBde",
                 columns: table => new
                 {
@@ -664,77 +607,6 @@ namespace DataAccessLayer.Migrations
                         column: x => x.DivId,
                         principalTable: "MDiv",
                         principalColumn: "DivId",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "TrnAddress",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    BasicDetailId = table.Column<int>(type: "int", nullable: false),
-                    State = table.Column<string>(type: "VARCHAR(50)", nullable: true),
-                    District = table.Column<string>(type: "VARCHAR(50)", nullable: true),
-                    PS = table.Column<string>(type: "VARCHAR(50)", nullable: true),
-                    PO = table.Column<string>(type: "VARCHAR(50)", nullable: true),
-                    Tehsil = table.Column<string>(type: "VARCHAR(50)", nullable: true),
-                    Village = table.Column<string>(type: "VARCHAR(50)", nullable: true),
-                    PinCode = table.Column<int>(type: "int", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_TrnAddress", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_TrnAddress_BasicDetails_BasicDetailId",
-                        column: x => x.BasicDetailId,
-                        principalTable: "BasicDetails",
-                        principalColumn: "BasicDetailId",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "TrnIdentityInfo",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    BasicDetailId = table.Column<int>(type: "int", nullable: false),
-                    IdenMark1 = table.Column<string>(type: "VARCHAR(50)", maxLength: 50, nullable: false),
-                    IdenMark2 = table.Column<string>(type: "VARCHAR(50)", maxLength: 50, nullable: false),
-                    AadhaarNo = table.Column<int>(type: "int", maxLength: 12, nullable: false),
-                    Height = table.Column<float>(type: "real", nullable: false),
-                    BloodGroup = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_TrnIdentityInfo", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_TrnIdentityInfo_BasicDetails_BasicDetailId",
-                        column: x => x.BasicDetailId,
-                        principalTable: "BasicDetails",
-                        principalColumn: "BasicDetailId",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "TrnUpload",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    BasicDetailId = table.Column<int>(type: "int", nullable: false),
-                    SignatureImagePath = table.Column<string>(type: "VARCHAR(100)", maxLength: 100, nullable: false),
-                    PhotoImagePath = table.Column<string>(type: "VARCHAR(100)", maxLength: 100, nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_TrnUpload", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_TrnUpload_BasicDetails_BasicDetailId",
-                        column: x => x.BasicDetailId,
-                        principalTable: "BasicDetails",
-                        principalColumn: "BasicDetailId",
                         onDelete: ReferentialAction.Restrict);
                 });
 
@@ -790,6 +662,64 @@ namespace DataAccessLayer.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "BasicDetails",
+                columns: table => new
+                {
+                    BasicDetailId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "varchar(36)", maxLength: 36, nullable: false),
+                    ArmedId = table.Column<byte>(type: "tinyint", nullable: false),
+                    RankId = table.Column<short>(type: "smallint", nullable: false),
+                    ServiceNo = table.Column<string>(type: "varchar(10)", maxLength: 10, nullable: false),
+                    DOB = table.Column<DateTime>(type: "datetime", nullable: false),
+                    PlaceOfIssue = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: false),
+                    DateOfIssue = table.Column<DateTime>(type: "datetime", nullable: false),
+                    IssuingAuth = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: false),
+                    DateOfCommissioning = table.Column<DateTime>(type: "datetime", nullable: false),
+                    RegimentalId = table.Column<byte>(type: "tinyint", nullable: true),
+                    ApplyForId = table.Column<byte>(type: "tinyint", nullable: false),
+                    UnitId = table.Column<int>(type: "int", nullable: false),
+                    PaperIcardNo = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    Updatedby = table.Column<int>(type: "int", nullable: false),
+                    UpdatedOn = table.Column<DateTime>(type: "datetime", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_BasicDetails", x => x.BasicDetailId);
+                    table.ForeignKey(
+                        name: "FK_BasicDetails_MApplyFor_ApplyForId",
+                        column: x => x.ApplyForId,
+                        principalTable: "MApplyFor",
+                        principalColumn: "ApplyForId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_BasicDetails_MArmedType_ArmedId",
+                        column: x => x.ArmedId,
+                        principalTable: "MArmedType",
+                        principalColumn: "ArmedId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_BasicDetails_MRank_RankId",
+                        column: x => x.RankId,
+                        principalTable: "MRank",
+                        principalColumn: "RankId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_BasicDetails_MRegimental_RegimentalId",
+                        column: x => x.RegimentalId,
+                        principalTable: "MRegimental",
+                        principalColumn: "RegId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_BasicDetails_MapUnit_UnitId",
+                        column: x => x.UnitId,
+                        principalTable: "MapUnit",
+                        principalColumn: "UnitMapId",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "TrnDomainMapping",
                 columns: table => new
                 {
@@ -823,6 +753,77 @@ namespace DataAccessLayer.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "TrnAddress",
+                columns: table => new
+                {
+                    AddressId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    BasicDetailId = table.Column<int>(type: "int", nullable: false),
+                    State = table.Column<string>(type: "VARCHAR(50)", nullable: true),
+                    District = table.Column<string>(type: "VARCHAR(50)", nullable: true),
+                    PS = table.Column<string>(type: "VARCHAR(50)", nullable: true),
+                    PO = table.Column<string>(type: "VARCHAR(50)", nullable: true),
+                    Tehsil = table.Column<string>(type: "VARCHAR(50)", nullable: true),
+                    Village = table.Column<string>(type: "VARCHAR(50)", nullable: true),
+                    PinCode = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TrnAddress", x => x.AddressId);
+                    table.ForeignKey(
+                        name: "FK_TrnAddress_BasicDetails_BasicDetailId",
+                        column: x => x.BasicDetailId,
+                        principalTable: "BasicDetails",
+                        principalColumn: "BasicDetailId",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TrnIdentityInfo",
+                columns: table => new
+                {
+                    InfoId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    BasicDetailId = table.Column<int>(type: "int", nullable: false),
+                    IdenMark1 = table.Column<string>(type: "VARCHAR(100)", maxLength: 100, nullable: false),
+                    IdenMark2 = table.Column<string>(type: "VARCHAR(100)", maxLength: 100, nullable: false),
+                    AadhaarNo = table.Column<long>(type: "bigint", maxLength: 12, nullable: false),
+                    Height = table.Column<float>(type: "real", nullable: false),
+                    BloodGroup = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TrnIdentityInfo", x => x.InfoId);
+                    table.ForeignKey(
+                        name: "FK_TrnIdentityInfo_BasicDetails_BasicDetailId",
+                        column: x => x.BasicDetailId,
+                        principalTable: "BasicDetails",
+                        principalColumn: "BasicDetailId",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TrnUpload",
+                columns: table => new
+                {
+                    UploadId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    BasicDetailId = table.Column<int>(type: "int", nullable: false),
+                    SignatureImagePath = table.Column<string>(type: "VARCHAR(100)", maxLength: 100, nullable: false),
+                    PhotoImagePath = table.Column<string>(type: "VARCHAR(100)", maxLength: 100, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TrnUpload", x => x.UploadId);
+                    table.ForeignKey(
+                        name: "FK_TrnUpload_BasicDetails_BasicDetailId",
+                        column: x => x.BasicDetailId,
+                        principalTable: "BasicDetails",
+                        principalColumn: "BasicDetailId",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "TrnICardRequest",
                 columns: table => new
                 {
@@ -831,7 +832,9 @@ namespace DataAccessLayer.Migrations
                     BasicDetailId = table.Column<int>(type: "int", nullable: false),
                     Status = table.Column<bool>(type: "bit", nullable: false),
                     TypeId = table.Column<byte>(type: "tinyint", nullable: false),
+                    RegistrationId = table.Column<byte>(type: "tinyint", nullable: false),
                     TrnDomainMappingId = table.Column<int>(type: "int", nullable: false),
+                    TrackingId = table.Column<long>(type: "bigint", nullable: false),
                     IsActive = table.Column<bool>(type: "bit", nullable: false),
                     Updatedby = table.Column<int>(type: "int", nullable: false),
                     UpdatedOn = table.Column<DateTime>(type: "datetime", nullable: false)
@@ -850,6 +853,12 @@ namespace DataAccessLayer.Migrations
                         column: x => x.TypeId,
                         principalTable: "MICardType",
                         principalColumn: "TypeId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_TrnICardRequest_MRegistration_RegistrationId",
+                        column: x => x.RegistrationId,
+                        principalTable: "MRegistration",
+                        principalColumn: "RegistrationId",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_TrnICardRequest_TrnDomainMapping_TrnDomainMappingId",
@@ -1150,6 +1159,11 @@ namespace DataAccessLayer.Migrations
                 column: "BasicDetailId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_TrnICardRequest_RegistrationId",
+                table: "TrnICardRequest",
+                column: "RegistrationId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_TrnICardRequest_TrnDomainMappingId",
                 table: "TrnICardRequest",
                 column: "TrnDomainMappingId");
@@ -1224,9 +1238,6 @@ namespace DataAccessLayer.Migrations
                 name: "MMappingProfile");
 
             migrationBuilder.DropTable(
-                name: "MRegistration");
-
-            migrationBuilder.DropTable(
                 name: "TrnAddress");
 
             migrationBuilder.DropTable(
@@ -1258,6 +1269,9 @@ namespace DataAccessLayer.Migrations
 
             migrationBuilder.DropTable(
                 name: "MICardType");
+
+            migrationBuilder.DropTable(
+                name: "MRegistration");
 
             migrationBuilder.DropTable(
                 name: "TrnDomainMapping");
