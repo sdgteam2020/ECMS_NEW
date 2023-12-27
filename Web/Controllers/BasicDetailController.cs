@@ -106,7 +106,7 @@ namespace Web.Controllers
             else if (retint == 2)
             { ViewBag.Title = "I-Card Pending From Io"; type = 2; stepcounter = 2; }
             else if (retint == 22)
-            { ViewBag.Title = "I-Card Rejectd From Io"; type = 1; }
+            { ViewBag.Title = "I-Card Rejectd From Io"; type = 1; stepcounter = 7; }
             else if (retint == 222)
             { ViewBag.Title = "I-Card Approved From Io"; type = 3; stepcounter = 2; }
             else if (retint == 3)
@@ -117,7 +117,7 @@ namespace Web.Controllers
             else if (retint == 33)
             {
                 ViewBag.Title = "I-Card Rejectd From GSO";
-                type = 1;
+                type = 1; stepcounter = 8;
             }
             else if (retint == 333)
             {
@@ -127,13 +127,13 @@ namespace Web.Controllers
             else if (retint == 4)
             { ViewBag.Title = "I-Card Pending From MI 11"; type = 2; stepcounter = 4; }
             else if (retint == 44)
-            { ViewBag.Title = "I-Card Rejectd From MI 11"; type = 1; }
+            { ViewBag.Title = "I-Card Rejectd From MI 11"; type = 1; stepcounter = 9; }
             else if (retint == 444)
             { ViewBag.Title = "I-Card Approved From MI 11"; type = 3; stepcounter = 5; }
             else if (retint == 5)
             { ViewBag.Title = "I-Card Pending From HQ 54"; type = 2; stepcounter = 5; }
             else if (retint == 55)
-            { ViewBag.Title = "I-Card Rejectd From HQ 54"; type = 1; }
+            { ViewBag.Title = "I-Card Rejectd From HQ 54"; type = 1; stepcounter = 10; }
             else if (retint == 555)
             { ViewBag.Title = "I-Card Approved From HQ 54"; type = 2; stepcounter = 5; }
 
@@ -170,7 +170,7 @@ namespace Web.Controllers
             {
                 ViewBag.Title = "Rejectd I-Card ";
                 type = 1;
-
+                stepcounter = 7;
             }
             else if (retint == 222)
             {
@@ -187,7 +187,7 @@ namespace Web.Controllers
             else if (retint == 33)
             {
                 ViewBag.Title = "Rejectd I-Card ";
-                type = 1;
+                type = 1; stepcounter = 8;
             }
             else if (retint == 333)
             {
@@ -196,13 +196,13 @@ namespace Web.Controllers
             else if (retint == 4)
             { ViewBag.Title = "I-Card For Approval"; type = 2; ViewBag.Id = 1; }
             else if (retint == 44)
-            { ViewBag.Title = "Rejectd I-Card "; type = 1; }
+            { ViewBag.Title = "Rejectd I-Card "; type = 1; stepcounter = 9; }
             else if (retint == 444)
             { ViewBag.Title = "Approved I-Card "; type = 3; stepcounter = 5; }
             else if (retint == 5)
             { ViewBag.Title = "I-Card For Approval"; type = 2; ViewBag.Id = 1; }
             else if (retint == 55)
-            { ViewBag.Title = "Rejectd I-Card "; type = 1; }
+            { ViewBag.Title = "Rejectd I-Card "; type = 1; stepcounter = 10; }
             else if (retint == 555)
             { ViewBag.Title = "Approved I-Card "; type = 3; stepcounter = 6; }
 
@@ -458,7 +458,10 @@ namespace Web.Controllers
                         dTOBasicDetailCrtRequest.IdenMark2 = model.IdenMark2;
                         //dTOBasicDetailCrtRequest.Height = model.Height;
                         
-                        dTOBasicDetailCrtRequest.AadhaarNo = Convert.ToString(model.AadhaarNo);
+                       // dTOBasicDetailCrtRequest.AadhaarNo = Convert.ToString(model.AadhaarNo);
+                        dTOBasicDetailCrtRequest.AadhaarNo = Convert.ToInt32(model.AadhaarNo.Substring(model.AadhaarNo.Length - 3)).ToString("D4");
+
+
                         //dTOBasicDetailCrtRequest.BloodGroup = model.BloodGroup;
 
                         dTOBasicDetailCrtRequest.ApplyForId = model.ApplyForId;

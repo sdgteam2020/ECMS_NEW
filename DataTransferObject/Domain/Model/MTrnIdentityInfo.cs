@@ -25,6 +25,7 @@ namespace DataTransferObject.Domain.Model
         public string IdenMark2 { get; set; } = string.Empty;
 
         [MaxLength(12)]
+        [MinLength(12)]
         public long AadhaarNo { get; set; }
         public float Height { get; set; }
 

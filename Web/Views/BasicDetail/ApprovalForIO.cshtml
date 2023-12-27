@@ -21,9 +21,10 @@
                                     <th>@Html.DisplayNameFor(model => model[0].Sno)</th>
                                     <th>@Html.DisplayNameFor(model => model[0].Name)</th>
                                     <th>@Html.DisplayNameFor(model => model[0].ServiceNo)</th>
-                                    <th>@Html.DisplayNameFor(model => model[0].DOB)</th>
+                                   @*  <th>@Html.DisplayNameFor(model => model[0].DOB)</th>
                                     <th>@Html.DisplayNameFor(model => model[0].DateOfCommissioning)</th>
-                                    <th>@Html.DisplayNameFor(model => model[0].PermanentAddress)</th>
+                                    <th>@Html.DisplayNameFor(model => model[0].PermanentAddress)</th> *@
+                                    <th>Tracking Id </th>
                                     <th>Type </th>
                                     <th>@Html.DisplayNameFor(model => model[0].ICardType)</th>
                                     <th>History</th>
@@ -37,9 +38,10 @@
                                         <td>@item.Sno</td>
                                         <td class="PersName">@item.Name</td>
                                         <td class="ServiceNo">@item.ServiceNo</td>
-                                        <td>@item.DOB.ToString("dd/MMM/yyyy")</td>
+                                      @*   <td>@item.DOB.ToString("dd/MMM/yyyy")</td>
                                         <td>@item.DateOfCommissioning.ToString("dd/MMM/yyyy")</td>
-                                        <td>@item.PermanentAddress</td>
+                                        <td>@item.PermanentAddress</td> *@
+                                        <td>@item.TrackingId</td>
                                         <td>@item.ApplyFor </td>
                                         <td>@item.ICardType</td>
                                         <td><button class="btn btn-icon btn-round btn-primary mr-1 historyRequest" data-toggle="tooltip" data-placement="left" title="@item.Remark"><i class="fa fa-history" aria-hidden="true"></i></button></td>

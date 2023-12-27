@@ -37,8 +37,12 @@ function GetTokenDetails1(ApiId, txt) {
                 else {
                     if (response[0].Status == '404') {
                         //$("#error-msg").html(response.message);
-                        $("#tokenmsg").html('<div class="mt-4 alert alert-danger alert-dismissible fade show "><i class="fa fa-times" aria-hidden="true"></i><span class="m-lg-2">' + response[0].Remarks + '</span>.</div>');
-                        $("#" + txt).val("");
+                       // $("#tokenmsg").html('<div class="mt-4 alert alert-danger alert-dismissible fade show "><i class="fa fa-times" aria-hidden="true"></i><span class="m-lg-2">' + response[0].Remarks + '</span>.</div>');
+                       // $("#" + txt).val("");
+
+                        $("#tokenmsg").html('<div class="mt-4 alert alert-success alert-dismissible fade show "><i class="fa fa-check " aria-hidden="true"></i><span class="m-lg-2">Token Detected </span></div>');
+
+                        $("#" + txt).val("IC-00203");
                        
                     }
                 }

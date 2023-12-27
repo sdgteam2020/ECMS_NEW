@@ -19,5 +19,6 @@ namespace BusinessLogicsLayer.BasicDet
         public Task<BasicDetailCrtAndUpdVM> GetByBasicDetailsId(int BasicDetailId);
         public Task<List<ICardHistoryResponse>> ICardHistory(int RequestId);
         public Task<bool> SaveBasicDetailsWithAll(BasicDetail Data, MTrnAddress address,MTrnUpload trnUpload, MTrnIdentityInfo mTrnIdentityInfo, MTrnICardRequest mTrnICardRequest, MStepCounter mStepCounter);
+        public Task<DTOICardTaskCountResponse> GetTaskCountICardRequest(int UserId, int Type);
     }
 }

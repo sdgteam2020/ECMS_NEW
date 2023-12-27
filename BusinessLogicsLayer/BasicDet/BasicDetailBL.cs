@@ -51,5 +51,10 @@ namespace BusinessLogicsLayer.BasicDet
         {
             return _iBasicDetailDB.SaveBasicDetailsWithAll(Data, address, trnUpload, mTrnIdentityInfo, mTrnICardRequest, mStepCounter);
         }
+
+        public Task<DTOICardTaskCountResponse> GetTaskCountICardRequest(int UserId, int Type)
+        {
+            return _iBasicDetailDB.GetTaskCountICardRequest(UserId, Type);
+        }
     }
 }

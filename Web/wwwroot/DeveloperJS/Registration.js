@@ -101,7 +101,7 @@ function CallDataFromAPI() {
                
             }
             else {
-
+                toastr.success('Data Get From Api');
                // $("#Name").val(response.Pers_name);
                 //alert(JSON.stringify(response));
                 $("#Name").val(response.Pers_name);

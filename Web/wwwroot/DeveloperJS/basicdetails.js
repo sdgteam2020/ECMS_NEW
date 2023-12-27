@@ -80,7 +80,20 @@
         appendTo: '#suggesstion-box'
     });
 
+  
 });
+function CheckValidation() {
+    
+    if ($("#TermsConditions").prop("checked")) {
+        alert("Your Tracking Id -" + DateFormateMMddyyyy($("#DOB").val()) +""+ $("#AadhaarNo").val() );
+        return true;
+        
+    }
+    else {
+        toastr.error('Please accept the Terms and Conditions');
+        return false;
+    }
+}
 function GetUnit() {
     var listItem = "";
     var userdata =

@@ -194,7 +194,7 @@ namespace DataTransferObject.Requests
         public string IdenMark2 { get; set; } = string.Empty;
 
        
-        public long? AadhaarNo { get; set; }
+        public string? AadhaarNo { get; set; }
         //[NotMapped]
         //public int? Height { get; set; }
 

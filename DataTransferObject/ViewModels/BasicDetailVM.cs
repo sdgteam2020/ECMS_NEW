@@ -186,6 +186,8 @@ namespace DataTransferObject.ViewModels
         [NotMapped]
         public int Reject { get; set; }
         public string? Remark { get; set; }
+        [NotMapped]
+        public string? TrackingId { get; set; }
     }
     public class BasicDetailCrtAndUpdVM : BasicDetailVM
     {

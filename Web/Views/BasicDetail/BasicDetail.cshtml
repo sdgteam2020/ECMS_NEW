@@ -61,7 +61,7 @@
                     <div class="col-xl-6">
                         <div class="row mb-1">
                             <label class="col-sm-1 col-form-label text-center font-weight-bold">@(sno++).</label>
-                            <label asp-for="PaperIcardNo" class="col-sm-3 col-form-label form-label"></label>
+                            <label class="col-sm-3 col-form-label form-label">Paper I-CardNo</label>
                             <div class="col-sm-6">
                                 <input asp-for="PaperIcardNo" class="form-control" placeholder="Enter Paper I card No" />
                                 <span asp-validation-for="PaperIcardNo" class="text-danger"></span>
@@ -159,7 +159,7 @@
                             <label class="col-sm-1 col-form-label text-center font-weight-bold">@(sno++).</label>
                             <label asp-for="AadhaarNo" class="col-sm-3 col-form-label form-label"></label>
                             <div class="col-sm-6">
-                                <input asp-for="AadhaarNo" class="form-control" placeholder="Last Four Digit" maxlength="12" /> @* onkeyup="Aadhaarformate(event,this);" *@
+                                <input asp-for="AadhaarNo" class="form-control" placeholder="Last Four Digit" maxlength="4" minlength="4" /> @* onkeyup="Aadhaarformate(event,this);" *@
                                 <span asp-validation-for="AadhaarNo" class="text-danger"></span>
                             </div>
                         </div>
@@ -297,8 +297,7 @@
 
                     </div>
                 </div>
-                @if (Model.ArmedId == 0)
-                {
+               
                     <div class="row">
                         <div class="row mb-3 required">
                             <div class="col-sm-12">
@@ -310,12 +309,12 @@
                             </div>
                         </div>
                     </div>
-                }
+                
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             </div>
             <div class="card-footer text-center">
-                    <button type="submit" class="btn btn-primary" onclick="beforeSubmitValidateBasicDetail(this.form.id);">Save & Next</button> @* // *@
-                <a asp-action="Index" asp-controller="BasicDetail" class="btn btn-primary">Back</a>
+                    <button type="submit" class="btn btn-primary" readonly onclick="return CheckValidation();">Save & Next</button> @* // *@
+                @* <a asp-action="Index" asp-controller="BasicDetail" class="btn btn-primary">Back</a> *@
             </div>
             </div>
         </form>
