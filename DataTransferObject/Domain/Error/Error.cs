@@ -12,6 +12,8 @@ namespace DataTransferObject.Domain.Error
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int ErrorId { get; set; }
         public string Values { get; set; } = string.Empty;
+
+        [Column(TypeName = "datetime")]
         public DateTime Created { get; set; }
     }
 }

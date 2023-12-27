@@ -73,12 +73,12 @@ $(document).ready(function () {
         StepCounter = $(this).closest("tr").find(".spnStepCounterId").html();
         applyfor = $(this).closest("tr").find(".spnApplyFor").html();
         
-            if (StepCounter == 1) {
+        if (StepCounter == 1 || StepCounter == 7 || StepCounter == 8 || StepCounter == 9 || StepCounter == 10) {
                 $(".recectopt").addClass("d-none");
                 $("#btnRejected").addClass("d-none");
             }
             GetDataFromBasicDetails($(this).closest("tr").find(".spnBasicDetailId").html());
-        if (StepCounter == 1) {
+        if (StepCounter == 1 ) {
             $(".gsoio").html("IO");
             $("#btnForward").html("Forward To IO");
 
@@ -97,7 +97,7 @@ $(document).ready(function () {
             $(".chkforserach").addClass("d-none");
             $(".gsoio").html("HQ 54");
             $("#btnForward").html("Forward To HQ 54");
-            GetAllOffsByUnitId("ddlfwdoffrs", 0, 11);
+            GetAllOffsByUnitId("ddlfwdoffrs", 0, 17);
             }
             //if (StepCounter == 1) {
             //    $("#btnRejected").addClass("d-none");
@@ -167,7 +167,13 @@ $(document).ready(function () {
         }).then((result) => {
             if (result.isConfirmed) {
                 var spnRequestId = $("#spnCurrentspnRequestId").html();
-                var Counter = parseInt($("#spnStepCounter").html()) + 1;
+                var Counter = parseInt($("#spnStepCounter").html());
+                if (Counter == 1 || Counter == 7 || Counter == 8 || Counter == 9 || Counter == 10) {
+                    Counter = 2;
+                }else
+                {
+                   Counter= parseInt($("#spnStepCounter").html()) + 1;
+                }
 
                
                 UpdateStepCounter(spnStepId, spnRequestId, Counter,"A");
@@ -191,8 +197,15 @@ $(document).ready(function () {
         }).then((result) => {
             if (result.isConfirmed) {
                 var spnRequestId = $("#spnCurrentspnRequestId").html();
-                var Counter = 1;
-
+                var Counter = parseInt($("#spnStepCounter").html());
+                if (Counter == 2)
+                    Counter = 7
+               else if (Counter == 3)
+                    Counter = 8
+                else if (Counter == 4)
+                    Counter = 9
+                else if (Counter == 5)
+                    Counter = 10
                 if ($("#txtFrejectedRemarks").val()!="")
 
                     UpdateStepCounter(spnStepId, spnRequestId, Counter, "R");
@@ -218,13 +231,13 @@ function GetDataFromBasicDetails(Id) {
 
         success: function (response) {
             if (response != "null" && response != null) {
-                $("#basicphotos").attr('src' ,response.PhotoImagePath);
-                $("#Basicsing").attr('src', response.SignatureImagePath);
+                $("#basicphotos").attr('src',"/WriteReadData/photo/"+response.PhotoImagePath);
+                $("#Basicsing").attr('src', "/WriteReadData/Signature/"+response.SignatureImagePath);
                 $("#lblfdName").html(response.Name);
                 $("#lblfdRank").html(response.RankName);
-                $("#lblLfdarm").html(response.ArmedType);
+                $("#lblLfdarm").html(response.ArmedName);
                 $("#lblfdArmyNo").html(response.ServiceNo);
-                $("#lblfdMarks").html(response.IdentityMark);
+                $("#lblfdMarks").html(response.IdenMark1);
                 $("#lblfddob").html(DateFormateMMMM_dd_yyyy(response.DOB));
                 $("#lblfdheight").html(response.Height);
                 $("#lblfdadhar").html(response.AadhaarNo);
@@ -233,7 +246,7 @@ function GetDataFromBasicDetails(Id) {
                 $("#lblfddoi").html(DateFormateMMMM_dd_yyyy(response.DateOfIssue));
                 $("#lblfdissuA").html(response.IssuingAuth);
                 $("#lblfddateo").html(DateFormateMMMM_dd_yyyy(response.DateOfCommissioning));
-                $("#lblfdaddress").html(response.PermanentAddress);
+                $("#lblfdaddress").html(response.Village + ',' + response.Tehsil + ',' + response.PO + ',' + response.PS + ',' + response.District + ',' + response.State + '' + response.PinCode );
             }
         }
     })
@@ -330,7 +343,7 @@ function GetProfiledetailsByAspNetuserid(AspNetUsersId) {
     if (StepCounter==3)
         var param = { "Name": AspNetUsersId, "TypeId": 0, "UnitId": 13 };
    else if (StepCounter == 4)
-        var param = { "Name": AspNetUsersId, "TypeId": 0,"UnitId":11 };
+        var param = { "Name": AspNetUsersId, "TypeId": 0,"UnitId":17 };
     else
         var param = { "Name": AspNetUsersId, "TypeId": 0, "UnitId": 0 };
     $.ajax({

@@ -32,7 +32,7 @@ namespace BusinessLogicsLayer.BasicDet
             return await _iBasicDetailDB.FindServiceNo(ServiceNo);
         }
 
-        public Task<DTOBasicDetailsResponse> GetByBasicDetailsId(int BasicDetailId)
+        public Task<BasicDetailCrtAndUpdVM> GetByBasicDetailsId(int BasicDetailId)
         {
             return _iBasicDetailDB.GetByBasicDetailsId(BasicDetailId);
         }
@@ -45,6 +45,16 @@ namespace BusinessLogicsLayer.BasicDet
         public Task<List<BasicDetailVM>> GetALLForIcardSttaus(int UserId, int step, int type)
         {
             return _iBasicDetailDB.GetALLForIcardSttaus(UserId, step, type);
+        }
+
+        public Task<bool> SaveBasicDetailsWithAll(BasicDetail Data, MTrnAddress address, MTrnUpload trnUpload, MTrnIdentityInfo mTrnIdentityInfo, MTrnICardRequest mTrnICardRequest, MStepCounter mStepCounter)
+        {
+            return _iBasicDetailDB.SaveBasicDetailsWithAll(Data, address, trnUpload, mTrnIdentityInfo, mTrnICardRequest, mStepCounter);
+        }
+
+        public Task<DTOICardTaskCountResponse> GetTaskCountICardRequest(int UserId, int Type)
+        {
+            return _iBasicDetailDB.GetTaskCountICardRequest(UserId, Type);
         }
     }
 }

@@ -44,7 +44,7 @@ namespace DataAccessLayer
                                      ServiceNo = e.ServiceNo,
                                      DOB = e.DOB,
                                      DateOfCommissioning = e.DateOfCommissioning,
-                                     PermanentAddress = e.PermanentAddress,
+                                     //PermanentAddress = e.PermanentAddress,
                                      Observations = e.Observations,
                                  }).ToList();
                 return await Task.FromResult(allrecord);

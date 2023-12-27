@@ -17,52 +17,52 @@ namespace BusinessLogicsLayer.Token
         public static HttpResponseMessage result;
      
         public const string ApiUrl = "http://localhost/Temporary_Listen_Addresses/";
-        public async Task<List<DTOTokenResponse>> GetTokenDetails(string ApiName)
+        public async Task<DTOTokenResponse> GetTokenDetails(DTOTokenResponse Data)
         {
             try
             {
 
-                List<DTOTokenResponse> dynamicResponseDTO = new List<DTOTokenResponse>();
+                //List<DTOTokenResponse> dynamicResponseDTO = new List<DTOTokenResponse>();
 
 
 
-                HttpResponseMessage result = null;
-                await GetAPI(ApiName, "").ContinueWith(task =>
-                {
-                    if (task.Status == TaskStatus.RanToCompletion)
+                //HttpResponseMessage result = null;
+                //await GetAPI(ApiName, "").ContinueWith(task =>
+                //{
+                //    if (task.Status == TaskStatus.RanToCompletion)
+                //    {
+                //        result = task.Result;
+                //    }
+                //});
+
+
+
+                //if (result != null)
+                //{
+
+                //    // dynamicResponseDTO = result.Content.ReadAsAsync<DTOLoginResponse>().Result;
+
+                //    string responseBody = await result.Content.ReadAsStringAsync();
+                //    dynamicResponseDTO = JsonSerializer.Deserialize<List<DTOTokenResponse>>(responseBody);
+
+                //}
+                //List<DTOTokenResponse> retdata = new List<DTOTokenResponse>();
+                //foreach (var data in dynamicResponseDTO)
+                //{
+                   // DTOTokenResponse db=new DTOTokenResponse();
+                    if (Data.subject !=null)
                     {
-                        result = task.Result;
+                        var subdata = Data.subject.Split(",");
+
+                    Data.Name = subdata[0].Replace("CN=", "");
+                    Data.ArmyNo = subdata[1].Replace("SERIALNUMBER=", "");
                     }
-                });
+               // Data.Status = data.Status;
+               // Data.Remarks = data.Remarks;
+                //    retdata.Add(db);
+                //}
 
-
-
-                if (result != null)
-                {
-
-                    // dynamicResponseDTO = result.Content.ReadAsAsync<DTOLoginResponse>().Result;
-
-                    string responseBody = await result.Content.ReadAsStringAsync();
-                    dynamicResponseDTO = JsonSerializer.Deserialize<List<DTOTokenResponse>>(responseBody);
-
-                }
-                List<DTOTokenResponse> retdata = new List<DTOTokenResponse>();
-                foreach (var data in dynamicResponseDTO)
-                {
-                    DTOTokenResponse db=new DTOTokenResponse();
-                    if (data.subject !=null)
-                    {
-                        var subdata = data.subject.Split(",");
-                   
-                        db.Name = subdata[0].Replace("CN=", "");
-                        db.ArmyNo = subdata[1].Replace("SERIALNUMBER=", "");
-                    }
-                    db.Status = data.Status;
-                    db.Remarks = data.Remarks;
-                    retdata.Add(db);
-                }
-
-                return retdata;
+                return Data;
             }
             catch (Exception ex)
             {

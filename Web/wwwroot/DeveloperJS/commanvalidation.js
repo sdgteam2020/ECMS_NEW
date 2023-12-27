@@ -44,6 +44,25 @@ function isNumeric(str) {
     return !isNaN(str) && // use type coercion to parse the _entirety_ of the string (`parseFloat` alone does not do this)...
         !isNaN(parseFloat(str)) // ...and ensure strings of whitespace fail
 }
+function DateFormateMMddyyyy(date) {
+    var datef2 = new Date(date);
+    var months = "" + `${(datef2.getMonth() + 1)}`;
+    var days = "" + `${(datef2.getDate())}`;
+    var pad = "00"
+    var monthsans = pad.substring(0, pad.length - months.length) + months
+    var dayans = pad.substring(0, pad.length - days.length) + days
+    var year = `${datef2.getFullYear()}`;
+    if (year > 1902) {
+
+        var datemmddyyyy = dayans + `` + monthsans + `` + year
+        return datemmddyyyy;
+    }
+    else {
+        return '';
+    }
+
+    //`${datef2.getFullYear()}/` + monthsans + `/` + dayans ;
+}
 function DateFormateMM_dd_yyyy(date) {
     var datef2 = new Date(date);
     var months = "" + `${(datef2.getMonth() + 1)}`;

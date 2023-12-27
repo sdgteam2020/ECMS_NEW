@@ -31,7 +31,7 @@ namespace BusinessLogicsLayer.Service
         public IEnumerable<SelectListItem> GetDiv();
         public bool IsValidHeader(string path);
         public bool IsValidDocHeader(string path);
-        public string ProcessUploadedFile(IFormFile UploadDoc, string FileAddress);
+        public string ProcessUploadedFile(IFormFile UploadDoc, string FileAddress,string FileName);
         public bool IsImage(IFormFile postedFile);
         public string GetContentType(string path);
         public Dictionary<string, string> GetMimeTypes();

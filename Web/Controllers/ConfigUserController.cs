@@ -87,18 +87,18 @@ namespace Web.Controllers
         {
             try
             {
-                if (this.User.FindFirstValue(ClaimTypes.Role) != "Admin")
+                if (this.User.FindFirstValue(ClaimTypes.Role) == "Admin" || this.User.FindFirstValue(ClaimTypes.Role) == "Super Admin")
+                {
+                    TrnDomainMapping dTO = new TrnDomainMapping();
+                    dTO.UserId = 1;
+                    return Json(dTO); 
+                }
+                else
                 {
                     TrnDomainMapping dTO = new TrnDomainMapping();
                     dTO.AspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                     var data = await _iDomainMapBL.GetByDomainIdbyUnit(dTO);
                     return Json(data);
-                }
-                else
-                {
-                    TrnDomainMapping dTO = new TrnDomainMapping();
-                    dTO.UserId = 1;
-                    return Json(dTO);
                 }
 
                
@@ -110,10 +110,11 @@ namespace Web.Controllers
            
         }
         [HttpPost]
-        public async Task<IActionResult> GetTokenDetails(string ApiName)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> GetTokenDetails(DTOTokenResponse Data)
         {
 
-            var data = await _iGetTokenBL.GetTokenDetails(ApiName);
+            var data = await _iGetTokenBL.GetTokenDetails(Data);
             return Json(data);
         }
         [HttpPost]

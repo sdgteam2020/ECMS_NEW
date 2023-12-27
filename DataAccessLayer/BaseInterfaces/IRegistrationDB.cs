@@ -1,4 +1,5 @@
 ﻿using DataTransferObject.Domain.Master;
+using DataTransferObject.Requests;
 using DataTransferObject.Response;
 using DataTransferObject.Response.User;
 using System;
@@ -13,6 +14,6 @@ namespace DataAccessLayer.BaseInterfaces
     {
        
         public Task<List<MRegistration>> GetByApplyFor(MRegistration Data);
-
+        public Task<DTOApplyCardDetailsResponse> GetApplyCardDetails(DTOApplyCardDetailsRequest Data);
     }
 }

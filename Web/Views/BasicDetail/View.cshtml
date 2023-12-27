@@ -1,4 +1,4 @@
-﻿@model DTOBasicDetailRequest
+﻿@model BasicDetailCrtAndUpdVM
 <style>
     .table td img, .jsgrid .jsgrid-table td img {
         width: 36px;
@@ -35,12 +35,12 @@
                                         <tr>
                                             <th>2.</th>
                                             <th>@Html.DisplayNameFor(model => model.RankId)</th>
-                                            <td>@(Model.MRank != null ? Model.MRank.RankName : "No Rank")</td>
+                                            <td>@(Model.RankName != null ? Model.RankName : "No Rank")</td>
                                         </tr>
                                         <tr>
                                             <th>3.</th>
                                             <th>@Html.DisplayNameFor(model => model.ArmedId)</th>
-                                            <td>@(Model.MArmedType != null ? Model.MArmedType.ArmedName : "No Armed")</td>
+                                            <td>@(Model.ArmedName != null ? Model.ArmedName : "No Armed")</td>
                                         </tr>
                                         <tr>
                                             <th>4.</th>
@@ -49,8 +49,8 @@
                                         </tr>
                                         <tr>
                                             <th>5.</th>
-                                            <th>@Html.DisplayNameFor(model => model.IdentityMark)</th>
-                                            <td>@Model.IdentityMark</td>
+                                            <th>@Html.DisplayNameFor(model => model.IdenMark1)</th>
+                                            <td>@Model.IdenMark1</td>
                                         </tr>
                                         <tr>
                                             <th>6.</th>
@@ -90,7 +90,7 @@
                                         <tr>
                                             <th>13.</th>
                                             <th>Signature</th>
-                                            <td><img id="SignaturePath" src="@Model.SignatureImagePath" height="80px" width="100px" /></td>
+                                            <td><img id="SignaturePath" src="/WriteReadData/Signature/@Model.SignatureImagePath" height="80px" width="100px" /></td>
                                         </tr>
                                         <tr>
                                             <th>14.</th>
@@ -100,12 +100,12 @@
                                         <tr>
                                             <th>15.</th>
                                             <th>@Html.DisplayNameFor(model => model.PermanentAddress)</th>
-                                            <td>@Model.PermanentAddress</td>
+                                            <td>@Model.Village @Model.Tehsil @Model.PO @Model.PS @Model.District @Model.State @Model.PinCode  </td>
                                         </tr>
                                         <tr>
                                             <th>16.</th>
                                             <th>Photograph</th>
-                                            <td><img src="@Model.PhotoImagePath" height="200px" width="200px" /></td>
+                                            <td><img src="/WriteReadData/photo/@Model.PhotoImagePath" height="200px" width="200px" /></td>
                                         </tr>   
                                     </tbody>
                                 </table>
@@ -125,14 +125,14 @@
                                 INDIAN ARMED FORCES INDENTITY CARD
                             </div>
                             <div class="col-xl-6">
-                                <img src="@Model.PhotoImagePath" height="180px" width="180px" />
+                                <img src="/WriteReadData/photo/@Model.PhotoImagePath" height="180px" width="180px" />
                             </div>
                             <div class="col-xl-6">
                                 <br/>
                                 <p class="fw-bold">@Model.Name</p>
-                                <p class="fw-bold">@(Model.MRank != null ? Model.MRank.RankAbbreviation : "No Rank")</p>
+                                <p class="fw-bold">@(Model.RankName != null ? Model.RankName : "No Rank")</p>
                                 <p class ="fw-bold">@Model.ServiceNo</p>
-                                <p class="fw-bold">@(Model.MArmedType != null ? Model.MArmedType.ArmedName : "No Armed")</p>
+                                <p class="fw-bold">@(Model.ArmedName != null ? Model.ArmedName : "No Armed")</p>
                             </div>
                             <p style="font-size:10px">रक्षा मंत्रालय, भारत सरकार MINISTRY OF DEFENCE, GOVERNMENT OF INDIA</p>
                         </div>
@@ -142,7 +142,7 @@
                         <div class="row mb-2 g-0 gy-0">
                             <div class="col-xl-2">
                                 <p class="mt-1 ml-3"><img src="~/writereaddata/images/indian-army-logo.jpg" height="40px" width="40px" /></p>
-                                <p class="mt-1 ml-3"><img src="@Model.PhotoImagePath" height="40px" width="40px" /></p>
+                                <p class="mt-1 ml-3"><img src="/WriteReadData/photo/@Model.PhotoImagePath" height="40px" width="40px" /></p>
                                 <p class="mt-1 ml-3"><img src="~/writereaddata/images/gov-india-logo_2.png" height="40px" width="40px" /></p>
                                 <p class="mt-1 ml-3" style="font-size:10px;margin:0;padding:0;line-height:12px;">SL.No.</p>
                                 <p class="mt-1 ml-3" style="font-size:10px;margin:0;padding:0;line-height:12px;">1010101</p>

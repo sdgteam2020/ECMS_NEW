@@ -1,7 +1,46 @@
 ﻿$(document).ready(function () {
 
+    if ($("#RegistrationId").val() == 1 || $("#RegistrationId").val() == 2 || $("#RegistrationId").val() == 6) {
+        GetUnit() 
+        $('#txtUnit').attr('readonly', true);
+      //  getunitbymapid($("#aspndomainUnitID").html())
+    }
+    else {
+        $('#txtUnit').attr('readonly', false);
+        getunitbymapid($("#spnUnitIdid").val())
 
-  
+    }
+    getApplyIcardDetails();
+
+    if ($("#ApplyForId").val() == 1) {
+        $(".OptionsRegimental").addClass("d-none");
+        mMsater($("#spnrankid").val(), "RankId", Rank, "");
+    } else if ($("#ApplyForId").val() == 2) {
+        mMsater($("#spnrankid").val(), "RankId", RankJCo, "");
+        $(".OptionsRegimental").removeClass("d-none");
+    }
+
+    if (sessionStorage.getItem("ArmyNo") != null) {
+        $("#ServiceNumber").val(sessionStorage.getItem("ArmyNo"));
+
+        if (sessionStorage.getItem("OffType") == 1) {
+            $(".OptionsRegimental").addClass("d-none");
+            mMsater($("#spnrankid").val(), "RankId", Rank, "");
+        }
+        else if (sessionStorage.getItem("OffType") == 2) {
+            {
+                mMsater($("#spnrankid").val(), "RankId", RankJCo, "");
+                $(".OptionsRegimental").removeClass("d-none");
+            }
+        }
+        if (sessionStorage.getItem("OffType") != "")
+            $("#ApplyForId").val(sessionStorage.getItem("OffType"));
+        $("#Type").val(sessionStorage.getItem("OffType"));
+
+        if (sessionStorage.getItem("lCardType") != "")
+            $("#TypeId").val(sessionStorage.getItem("lCardType"));
+
+    }
 
 
     $("#txtUnit").autocomplete({
@@ -34,28 +73,92 @@
         },
         select: function (e, i) {
             e.preventDefault();
-            $("#txtUnit").val(i.item.label);
+           /* $("#txtUnit").val(i.item.label);*/
             //alert(i.item.value)
-            var param1 = { "UnitMapId": i.item.value };
-            $.ajax({
-                url: '/Master/GetALLByUnitMapId',
-                contentType: 'application/x-www-form-urlencoded',
-                data: param1,
-                type: 'POST',
-                success: function (data) {
-
-
-                    $("#UnitId").val(data.UnitId);
-                    //$("#lblProComd").html(data.ComdName);
-                    //$("#lblProCorps").html(data.CorpsName);
-                    //$("#lblProDiv").html(data.DivName);
-                    //$("#lblPrBde").html(data.BdeName);
-                    //$("#lblProSusno").html(data.Sus_no + '' + data.Suffix);
-
-                }
-            });
+            getunitbymapid(i.item.value);
         },
         appendTo: '#suggesstion-box'
     });
 
+  
 });
+function CheckValidation() {
+    
+    if ($("#TermsConditions").prop("checked")) {
+        alert("Your Tracking Id -" + DateFormateMMddyyyy($("#DOB").val()) +""+ $("#AadhaarNo").val() );
+        return true;
+        
+    }
+    else {
+        toastr.error('Please accept the Terms and Conditions');
+        return false;
+    }
+}
+function GetUnit() {
+    var listItem = "";
+    var userdata =
+    {
+        "Id": 0,
+
+    };
+    $.ajax({
+        url: '/ConfigUser/GetTokenArmyNo',
+        contentType: 'application/x-www-form-urlencoded',
+        data: userdata,
+        type: 'POST',
+
+        success: function (response) {
+            if (response != "null" && response != null) {
+                if (response == 0) {
+                    //  alert("Plase Add Profile")
+                }
+                else {
+                    getunitbymapid(response.UnitId)
+                    
+                   
+                }
+            }
+        }
+    });
+}
+function getunitbymapid(value)
+{
+   
+    var param1 = { "UnitMapId": value };
+    $.ajax({
+        url: '/Master/GetALLByUnitMapId',
+        contentType: 'application/x-www-form-urlencoded',
+        data: param1,
+        type: 'POST',
+        success: function (data) {
+
+            $("#txtUnit").val(data.UnitName);
+            $("#UnitId").val(data.UnitId);
+            //$("#lblProComd").html(data.ComdName);
+            //$("#lblProCorps").html(data.CorpsName);
+            //$("#lblProDiv").html(data.DivName);
+            //$("#lblPrBde").html(data.BdeName);
+            //$("#lblProSusno").html(data.Sus_no + '' + data.Suffix);
+
+        }
+    });
+}
+
+function getApplyIcardDetails() {
+    $.ajax({
+        url: "/Home/GetApplyCardDetails",
+        type: "POST",
+        data: {
+            "ApplyForId": $("#ApplyForId").val(),
+            "RegistrationId": $("#RegistrationId").val(),
+            "TypeId": $("#TypeId").val()
+        },
+        success: function (response, status) {
+            if (response != null) {
+
+                $("#icarddetails").html('For ' + response.ApplyFor + ' And (' + response.Registraion + ') For ' + response.Type);
+            }
+
+        }
+    });
+}

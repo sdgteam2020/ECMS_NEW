@@ -23,10 +23,14 @@ namespace DataTransferObject.Domain.Model
         public byte TypeId { get; set; }
         public MICardType? MICardType { get; set; }
 
+        [ForeignKey("Registration"), DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public byte RegistrationId { get; set; }
+        public MRegistration? Registration { get; set; }
+
         [ForeignKey("TrnDomainMapping"), DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int TrnDomainMappingId { get; set; }
         public TrnDomainMapping? TrnDomainMapping { get; set; }
 
-        
+        public long TrackingId { get; set; }
     }
 }

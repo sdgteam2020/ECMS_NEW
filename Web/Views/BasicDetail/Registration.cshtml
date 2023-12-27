@@ -18,8 +18,9 @@
             <div class="row">
                 <div class="col-xl-12 text-left">
                     <h3>
-                        I-Card Request
-                        <small class="text-muted"></small>
+                        I-Card Request  
+                        <span id="icarddetails"></span>
+                        @* <small class="text-muted" id="icarddetails"></small> *@
                     </h3>
                 </div>
             </div>
@@ -66,9 +67,25 @@
                                 <div class="card-body">
                                    @*  <input hidden asp-for="DOB" />
                                    
-                                    <input hidden asp-for="DateOfCommissioning" /> *@
+                                    <input hidden asp-for="DateOfCommissioning" /> 
                                     
-                                    <input hidden asp-for="TypeId"/>
+                                    <input hidden asp-for="TypeId"/>*@
+                                    <input hidden asp-for="State" />
+                                    <input hidden asp-for="District" />
+                                    <input hidden asp-for="PS" />
+                                    <input hidden asp-for="PO" />
+                                    <input hidden asp-for="Tehsil" />
+                                    <input hidden asp-for="Village" />
+                                    <input hidden asp-for="PinCode" />
+                                    <input hidden asp-for="IdenMark1" />
+                                    <input hidden asp-for="IdenMark2" />
+                                    <input hidden asp-for="AadhaarNo" />
+                                    @* <input hidden asp-for="Height" /> *@
+                                    <input hidden asp-for="BloodGroup" />
+                                    <input hidden asp-for="ApplyForId" />
+                                    <input hidden asp-for="RegistrationId" />
+                                    <input hidden asp-for="TypeId" />
+
                                     <div class="row">
                                         <div class="col-xl-6">
                                             <div class="form-group row mb-2">
@@ -88,10 +105,10 @@
                                                 </div>
                                             </div>
                                             <div class="form-group row mb-2">
-                                                <label asp-for="PermanentAddress" class="col-form-label col-sm-6"></label>
+                                                <label class="col-form-label col-sm-6">Address</label>
                                                 <div class="col-sm-6">
-                                                    <textarea asp-for="PermanentAddress" rows="4" class="form-control" placeholder="" readonly></textarea>
-                                                    <span asp-validation-for="PermanentAddress" class="text-danger"></span>
+                                                    <textarea id="PermanentAddress" rows="4" class="form-control" placeholder="" readonly></textarea>
+                                                  
                                                 </div>
                                             </div>
                                         </div>

@@ -311,22 +311,18 @@ namespace BusinessLogicsLayer.Service
             var roles = new List<SelectListItem>
             {
                 new SelectListItem{ Text="Please Select", Value = null },
-                new SelectListItem{ Text="A+", Value = "A+" },
-                new SelectListItem{ Text="A-", Value = "A-" },
-                new SelectListItem{ Text="B+", Value = "B+" },
-                new SelectListItem{ Text="B-", Value = "B-" },
-                new SelectListItem{ Text="O+", Value = "O+" },
-                new SelectListItem{ Text="O-", Value = "O-" },
-                new SelectListItem{ Text="AB+", Value = "AB+" },
-                new SelectListItem{ Text="AB-", Value = "AB-" },
+                new SelectListItem{ Text="A+", Value = "1" },
+                new SelectListItem{ Text="A-", Value = "2" },
+                new SelectListItem{ Text="B+", Value = "3" },
+             
             };
             return new SelectList(roles, "Value", "Text");
         }
-        public string ProcessUploadedFile(IFormFile UploadDoc, string FileAddress)
+        public string ProcessUploadedFile(IFormFile UploadDoc, string FileAddress,string FileName)
         {
             string? uniqueFileName = null;
             string ext = System.IO.Path.GetExtension(UploadDoc.FileName);
-            uniqueFileName = Guid.NewGuid().ToString() + ext;
+            uniqueFileName = FileName + ext;// Guid.NewGuid().ToString() + ext;
             string filePath = Path.Combine(FileAddress, uniqueFileName);
             using (var fileStream = new FileStream(filePath, FileMode.Create))
             {

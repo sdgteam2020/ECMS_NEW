@@ -89,7 +89,7 @@ namespace Web.Controllers
 
                     if (model.Doc_ != null)
                     {
-                        string FileName = service.ProcessUploadedFile(model.Doc_, sourceFolderPhotoPhy);
+                        string FileName = service.ProcessUploadedFile(model.Doc_, sourceFolderPhotoPhy,"");
 
                         string path = Path.Combine(sourceFolderPhotoPhy, FileName);
 
@@ -169,7 +169,7 @@ namespace Web.Controllers
                         if (!Directory.Exists(sourceFolderPhotoPhy))
                             Directory.CreateDirectory(sourceFolderPhotoPhy);
 
-                        string FileName = service.ProcessUploadedFile(model.Doc_, sourceFolderPhotoPhy);
+                        string FileName = service.ProcessUploadedFile(model.Doc_, sourceFolderPhotoPhy,"");
 
                         string path = Path.Combine(sourceFolderPhotoPhy, FileName);
 

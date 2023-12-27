@@ -16,7 +16,9 @@ namespace BusinessLogicsLayer.BasicDet
         public Task<List<BasicDetailVM>> GetALLForIcardSttaus(int UserId,int step,int type);
         public Task<List<DTOICardTypeRequest>> GetAllICardType();
         public Task<BasicDetail?> FindServiceNo(string ServiceNo);
-        public Task<DTOBasicDetailsResponse> GetByBasicDetailsId(int BasicDetailId);
+        public Task<BasicDetailCrtAndUpdVM> GetByBasicDetailsId(int BasicDetailId);
         public Task<List<ICardHistoryResponse>> ICardHistory(int RequestId);
+        public Task<bool> SaveBasicDetailsWithAll(BasicDetail Data, MTrnAddress address,MTrnUpload trnUpload, MTrnIdentityInfo mTrnIdentityInfo, MTrnICardRequest mTrnICardRequest, MStepCounter mStepCounter);
+        public Task<DTOICardTaskCountResponse> GetTaskCountICardRequest(int UserId, int Type);
     }
 }

@@ -5,7 +5,10 @@ using ModernHttpClient;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
+using System.Net.Security;
+using System.Security.Cryptography.X509Certificates;
 using System.Security.Policy;
 using System.Text;
 using System.Text.Json;
@@ -16,14 +19,16 @@ namespace BusinessLogicsLayer.API
 {
     public class APIBL : IAPIBL
     {
-        public const string ApiUrl = "http://192.168.10.203/api/";
+        public const string ApiUrl = "http://192.168.10.200/api/";
+
         public async Task<DTOLoginAPIResponse> Getauthentication(DTOAPILoginRequest Data)
         {
             try
             {
-
-               DTOLoginAPIResponse dynamicResponseDTO = new DTOLoginAPIResponse();
-                HttpClient httpClient = new HttpClient(new NativeMessageHandler());
+              
+                DTOLoginAPIResponse dynamicResponseDTO = new DTOLoginAPIResponse();
+                HttpClient httpClient = new HttpClient(new NativeMessageHandler() { UseDefaultCredentials = true });
+                
                 var data1 = new[]
                 {
                     new KeyValuePair<string, string>("ClientKey", ""),

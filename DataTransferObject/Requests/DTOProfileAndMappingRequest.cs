@@ -20,7 +20,7 @@ namespace DataTransferObject.Requests
         public string ArmyNo { get; set; } = string.Empty;
 
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
-        public byte RankId { get; set; }
+        public short RankId { get; set; }
         public MRank? MRank { get; set; }
 
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
