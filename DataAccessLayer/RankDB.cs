@@ -58,7 +58,7 @@ namespace DataAccessLayer
         }
         public async Task<IEnumerable<MRank>> GetAllByType(int Type)
         {
-            var ret=  _context.MRank.Where(x => x.Type==Type).ToList();   
+            var ret=  _context.MRank.Where(x => x.ApplyForId==Type).ToList();   
             return ret;
         }
     }

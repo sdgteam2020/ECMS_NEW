@@ -18822,6 +18822,7 @@ div.tagsinput span.tag a {
 .sidebar {
     min-height: calc(100vh - 60px);
     background: #F8F8F8;
+    background-image: url('../../images/login-bg1.jpg');
     font-family: "Nunito", sans-serif;
     font-weight: 500;
     padding: 0;
@@ -19182,15 +19183,15 @@ div.tagsinput span.tag a {
 
     .navbar .navbar-brand-wrapper .navbar-brand img {
         max-width: 100%;
-        width: 160px;
-        /* height: 34px; */
+        width: 200px;
+        height: 56px;
         margin: auto;
         vertical-align: middle;
     }
 
 .navbar .navbar-brand-wrapper .brand-logo-mini {
-  padding-left: 0;
-  text-align: center;
+    padding-left: 0;
+    text-align: center;
 }
 
 .navbar .navbar-brand-wrapper .brand-logo-mini img {

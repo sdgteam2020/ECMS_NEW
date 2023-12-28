@@ -17,13 +17,22 @@ namespace DataTransferObject.Domain.Master
 
         [Required(ErrorMessage = "required!")]
         [RegularExpression("^[a-zA-Z0-9 ]*$", ErrorMessage = "Only Alphabets and Numbers allowed.")]
+        [Column(TypeName = "varchar(50)")]
+        [MaxLength(50)]
         public string RankName { get; set; }
+
         [Required(ErrorMessage = "required!")]
         [RegularExpression("^[a-zA-Z0-9 ]*$", ErrorMessage = "Only Alphabets and Numbers allowed.")]
+        [Column(TypeName = "varchar(30)")]
+        [MaxLength(30)]
         public string RankAbbreviation { get; set; }
 
         public short Orderby { get; set; }
         [Required(ErrorMessage = "required!")]
-        public byte Type { get; set; }
+        [ForeignKey("MApplyFor"), DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public byte ApplyForId { get; set; }
+        public MApplyFor? MApplyFor { get; set; }
+
+        public int? rank_cd { get; set; }
     }
 }

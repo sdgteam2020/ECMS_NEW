@@ -31,10 +31,7 @@ namespace DataTransferObject.Domain
         public string Name { get; set; } = string.Empty;
 
         
-        [ForeignKey("MAppointment"), DatabaseGenerated(DatabaseGeneratedOption.None)]
-        [Required]
-        public byte ApptId { get; set; }
-        public MAppointment? MAppointment { get; set; }
+       
         // [Required]
         //public int UnitId { get; set; }
         public Boolean IntOffr { get; set; }

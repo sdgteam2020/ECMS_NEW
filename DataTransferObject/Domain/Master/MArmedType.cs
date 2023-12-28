@@ -17,14 +17,18 @@ namespace DataTransferObject.Domain.Master
         
         [Required(ErrorMessage = "required!")]
         [RegularExpression("^[a-zA-Z0-9 ]*$", ErrorMessage = "Only Alphabets and Numbers allowed.")]
+        [Column(TypeName = "varchar(50)")]
+        [MaxLength(50)]
         public string ArmedName { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "required!")]
         [RegularExpression("^[a-zA-Z0-9 ]*$", ErrorMessage = "Only Alphabets and Numbers allowed.")]
+        [Column(TypeName = "varchar(10)")]
+        [MaxLength(10)]
         public string Abbreviation { get; set; } = string.Empty;
         public bool FlagInf { get; set; } = false;
 
-        [ForeignKey("MArmedCat")]
+        [ForeignKey("ArmedCat"), DatabaseGenerated(DatabaseGeneratedOption.None)]
         public byte ArmedCatId { get; set; }
         public MArmedCat? ArmedCat { get; set; }
     }

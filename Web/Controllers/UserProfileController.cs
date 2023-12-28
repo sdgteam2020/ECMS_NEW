@@ -33,7 +33,7 @@ namespace Web.Controllers
         {
             try
             {
-                if (dTO.RankId != 0 && dTO.ApptId != 0)
+                if (dTO.RankId != 0)
                 {
                     dTO.IsActive = true;
                     dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));

@@ -16,6 +16,7 @@ namespace DataTransferObject.Domain.Master
 
         [Required(ErrorMessage = "required!")]
         [RegularExpression("^[a-zA-Z0-9 ]*$", ErrorMessage = "Only Alphabets and Numbers allowed.")]
+        [Column(TypeName = "varchar(10)")]
         public string CorpsName { get; set; }
         [Required(ErrorMessage = "required!")]
 
