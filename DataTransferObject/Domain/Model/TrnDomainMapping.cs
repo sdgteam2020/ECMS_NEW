@@ -27,5 +27,10 @@ namespace DataTransferObject.Domain.Model
         [ForeignKey("MapUnit"), DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int UnitId { get; set; }
         public MapUnit? MapUnit { get; set; }
+
+        [ForeignKey("MAppointment"), DatabaseGenerated(DatabaseGeneratedOption.None)]
+        [Required]
+        public byte ApptId { get; set; }
+        public MAppointment? MAppointment { get; set; }
     }
 }

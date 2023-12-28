@@ -90,8 +90,8 @@ namespace DataAccessLayer
             try
             {
                 var ret = await (from user in _context.UserProfile
-                                 join app in _context.MAppointment on user.ApptId equals app.ApptId
-                                 join forma in _context.MFormation on app.FormationId equals forma.FormationId
+                                 //join app in _context.MAppointment on user.ApptId equals app.ApptId
+                                 //join forma in _context.MFormation on app.FormationId equals forma.FormationId
                                  join rank in _context.MRank on user.RankId equals rank.RankId
                                  join map in _context.TrnDomainMapping on user.UserId equals map.UserId into mapp
                                  from xmapp in mapp.DefaultIfEmpty()
@@ -104,10 +104,10 @@ namespace DataAccessLayer
                                      UserId = user.UserId,
                                      Name = user.Name,
                                      IntOffr = user.IntOffr,
-                                     FormationId = forma.FormationId,
-                                     FormationName = forma.FormationName,
-                                     ApptId = app.ApptId,
-                                     AppointmentName = app.AppointmentName,
+                                     //FormationId = forma.FormationId,
+                                     //FormationName = forma.FormationName,
+                                     //ApptId = app.ApptId,
+                                     //AppointmentName = app.AppointmentName,
                                      RankId = rank.RankId,
                                      RankName = rank.RankName,
                                  }
@@ -127,8 +127,8 @@ namespace DataAccessLayer
                 var ret = await (from user in _context.UserProfile
                                  //join map in _context.TrnDomainMapping on user.UserId equals map.UserId    
                                  //join Uni in _context.MUnit on map.UnitId equals Uni.UnitId
-                                 join app in _context.MAppointment on user.ApptId equals app.ApptId
-                                 join forma in _context.MFormation on app.FormationId equals forma.FormationId
+                                 //join app in _context.MAppointment on user.ApptId equals app.ApptId
+                                // join forma in _context.MFormation on app.FormationId equals forma.FormationId
                                  join rank in _context.MRank on user.RankId equals rank.RankId
                                  join map in _context.TrnDomainMapping on user.UserId equals map.UserId into mapp
                                  from xmapp in mapp.DefaultIfEmpty()
@@ -143,10 +143,10 @@ namespace DataAccessLayer
 
                                      ArmyNo = user.ArmyNo,
                                      UserId = user.UserId,
-                                     FormationId = forma.FormationId,
-                                     FormationName = forma.FormationName,
-                                     ApptId = app.ApptId,
-                                     AppointmentName = app.AppointmentName,
+                                     //FormationId = forma.FormationId,
+                                     //FormationName = forma.FormationName,
+                                     //ApptId = app.ApptId,
+                                     //AppointmentName = app.AppointmentName,
                                      Rank = rank.RankName,
                                      RankId = rank.RankId,
                                      Name = user.Name,
@@ -168,8 +168,8 @@ namespace DataAccessLayer
             try
             {
                 var ret = await (from user in _context.UserProfile
-                                 join app in _context.MAppointment on user.ApptId equals app.ApptId
-                                 join forma in _context.MFormation on app.FormationId equals forma.FormationId
+                                 //join app in _context.MAppointment on user.ApptId equals app.ApptId
+                                 //join forma in _context.MFormation on app.FormationId equals forma.FormationId
                                  join rank in _context.MRank on user.RankId equals rank.RankId
                                  join map in _context.TrnDomainMapping on user.UserId equals map.UserId into mapp
                                  from xmapp in mapp.DefaultIfEmpty()
@@ -184,10 +184,10 @@ namespace DataAccessLayer
                                      ArmyNo = user.ArmyNo,
                                      UserId = user.UserId,
                                      IntOffr = user.IntOffr,
-                                     FormationId = forma.FormationId,
-                                     FormationName = forma.FormationName,
-                                     ApptId = app.ApptId,
-                                     AppointmentName = app.AppointmentName,
+                                     //FormationId = forma.FormationId,
+                                     //FormationName = forma.FormationName,
+                                     //ApptId = app.ApptId,
+                                     //AppointmentName = app.AppointmentName,
                                      RankName = rank.RankName,
                                      RankId = rank.RankId,
                                      TrnDomainMappingId = xmapp!=null?xmapp.Id : 0,

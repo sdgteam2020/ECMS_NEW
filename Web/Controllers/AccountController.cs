@@ -796,14 +796,14 @@ namespace Web.Controllers
                         dTOProfileRequest.ArmyNo = trnDomainMapping.MUserProfile.ArmyNo;
                         dTOProfileRequest.RankId = trnDomainMapping.MUserProfile.RankId;
                         dTOProfileRequest.Name = trnDomainMapping.MUserProfile.Name;
-                        dTOProfileRequest.ApptId = trnDomainMapping.MUserProfile.ApptId;
+                        //dTOProfileRequest.ApptId = trnDomainMapping.MUserProfile.ApptId;
                         dTOProfileRequest.IntOffr = trnDomainMapping.MUserProfile.IntOffr;
                         
                         MAppointment? mAppointment = await unitOfWork.Appt.GetByByte(dTOProfileRequest.ApptId);
                         
                         if (mAppointment != null)
                         {
-                            dTOProfileRequest.FormationId = mAppointment.FormationId;
+                            //dTOProfileRequest.FormationId = mAppointment.FormationId;
                         }
                         ViewBag.OptionsAppointment = service.GetAppointment(dTOProfileRequest.ApptId);
                         return View(dTOProfileRequest);
@@ -838,7 +838,7 @@ namespace Web.Controllers
                 {
                     mUserProfile.Name = model.Name;
                     mUserProfile.RankId = model.RankId;
-                    mUserProfile.ApptId = model.ApptId;
+                    //mUserProfile.ApptId = model.ApptId;
                     mUserProfile.IntOffr = model.IntOffr;
                     await _userProfileBL.Update(mUserProfile);
                     TempData["success"] = "Profile Updated.";
@@ -1234,15 +1234,15 @@ namespace Web.Controllers
                             dTOProfileAndMappingRequest.ArmyNo = mUserProfile.ArmyNo;
                             dTOProfileAndMappingRequest.RankId= mUserProfile.RankId;
                             dTOProfileAndMappingRequest.Name= mUserProfile.Name;
-                            dTOProfileAndMappingRequest.ApptId= mUserProfile.ApptId;
+                            //dTOProfileAndMappingRequest.ApptId= mUserProfile.ApptId;
                             dTOProfileAndMappingRequest.IntOffr= mUserProfile.IntOffr;
 
-                            MAppointment? mAppointment = await context.MAppointment.FindAsync(mUserProfile.ApptId);
-                            if(mAppointment!=null)
-                            {
-                                dTOProfileAndMappingRequest.FormationId= mAppointment.FormationId;
-                            }
-                            ViewBag.OptionsAppointment = service.GetAppointment(mUserProfile.ApptId);
+                            //MAppointment? mAppointment = await context.MAppointment.FindAsync(mUserProfile.ApptId);
+                            //if(mAppointment!=null)
+                            //{
+                            //    //dTOProfileAndMappingRequest.FormationId= mAppointment.FormationId;
+                            //}
+                            //ViewBag.OptionsAppointment = service.GetAppointment(mUserProfile.ApptId);
                             return View(dTOProfileAndMappingRequest);
                         }
                         catch (Exception ex)
@@ -1314,7 +1314,7 @@ namespace Web.Controllers
                             mUserProfile.ArmyNo = dTOTempSession.ICNO;
                             mUserProfile.RankId = model.RankId; 
                             mUserProfile.Name= model.Name;
-                            mUserProfile.ApptId= model.ApptId;
+                            //mUserProfile.ApptId= model.ApptId;
                             mUserProfile.IntOffr = model.IntOffr;
                             mUserProfile.Updatedby = user.Id;
                             MUserProfile insertMUserProfile = await _userProfileBL.AddWithReturn(mUserProfile);
@@ -1352,7 +1352,7 @@ namespace Web.Controllers
                             mUserProfile.ArmyNo = dTOTempSession.ICNO;
                             mUserProfile.RankId = model.RankId;
                             mUserProfile.Name = model.Name;
-                            mUserProfile.ApptId = model.ApptId;
+                            //mUserProfile.ApptId = model.ApptId;
                             mUserProfile.IntOffr = model.IntOffr;
                             mUserProfile.Updatedby = dTOTempSession.AspNetUsersId;
                             MUserProfile insertMUserProfile = await _userProfileBL.AddWithReturn(mUserProfile);
@@ -1387,7 +1387,7 @@ namespace Web.Controllers
                             mUserProfile.ArmyNo = dTOTempSession.ICNO;
                             mUserProfile.RankId = model.RankId;
                             mUserProfile.Name = model.Name;
-                            mUserProfile.ApptId = model.ApptId;
+                            //mUserProfile.ApptId = model.ApptId;
                             mUserProfile.IntOffr = model.IntOffr;
                             mUserProfile.Updatedby = dTOTempSession.AspNetUsersId;
                             MUserProfile insertMUserProfile = await _userProfileBL.AddWithReturn(mUserProfile);

@@ -170,9 +170,6 @@ namespace DataAccessLayer.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UserId"));
 
-                    b.Property<byte>("ApptId")
-                        .HasColumnType("tinyint");
-
                     b.Property<string>("ArmyNo")
                         .IsRequired()
                         .HasMaxLength(20)
@@ -200,8 +197,6 @@ namespace DataAccessLayer.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("UserId");
-
-                    b.HasIndex("ApptId");
 
                     b.HasIndex("RankId");
 
@@ -237,9 +232,6 @@ namespace DataAccessLayer.Migrations
                         .IsRequired()
                         .HasColumnType("VARCHAR(50)");
 
-                    b.Property<byte>("FormationId")
-                        .HasColumnType("tinyint");
-
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
@@ -250,12 +242,7 @@ namespace DataAccessLayer.Migrations
                     b.Property<int>("Updatedby")
                         .HasColumnType("int");
 
-                    b.Property<byte?>("mFormationFormationId")
-                        .HasColumnType("tinyint");
-
                     b.HasKey("ApptId");
-
-                    b.HasIndex("mFormationFormationId");
 
                     b.ToTable("MAppointment");
                 });
@@ -300,14 +287,16 @@ namespace DataAccessLayer.Migrations
 
                     b.Property<string>("Abbreviation")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(10)
+                        .HasColumnType("varchar(10)");
 
                     b.Property<byte>("ArmedCatId")
                         .HasColumnType("tinyint");
 
                     b.Property<string>("ArmedName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)");
 
                     b.Property<bool>("FlagInf")
                         .HasColumnType("bit");
@@ -381,11 +370,13 @@ namespace DataAccessLayer.Migrations
 
                     b.Property<string>("ComdAbbreviation")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(20)
+                        .HasColumnType("varchar(20)");
 
                     b.Property<string>("ComdName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -418,7 +409,7 @@ namespace DataAccessLayer.Migrations
 
                     b.Property<string>("CorpsName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("varchar(10)");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -561,6 +552,9 @@ namespace DataAccessLayer.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<short>("RankId"));
 
+                    b.Property<byte>("ApplyForId")
+                        .HasColumnType("tinyint");
+
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
@@ -569,14 +563,13 @@ namespace DataAccessLayer.Migrations
 
                     b.Property<string>("RankAbbreviation")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(30)
+                        .HasColumnType("varchar(30)");
 
                     b.Property<string>("RankName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<byte>("Type")
-                        .HasColumnType("tinyint");
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)");
 
                     b.Property<DateTime?>("UpdatedOn")
                         .IsRequired()
@@ -585,7 +578,12 @@ namespace DataAccessLayer.Migrations
                     b.Property<int>("Updatedby")
                         .HasColumnType("int");
 
+                    b.Property<int?>("rank_cd")
+                        .HasColumnType("int");
+
                     b.HasKey("RankId");
+
+                    b.HasIndex("ApplyForId");
 
                     b.ToTable("MRank");
                 });
@@ -600,7 +598,8 @@ namespace DataAccessLayer.Migrations
 
                     b.Property<string>("Abbreviation")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(10)
+                        .HasColumnType("varchar(10)");
 
                     b.Property<byte>("ArmedId")
                         .HasColumnType("tinyint");
@@ -610,11 +609,13 @@ namespace DataAccessLayer.Migrations
 
                     b.Property<string>("Location")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)");
 
                     b.Property<DateTime?>("UpdatedOn")
                         .IsRequired()
@@ -706,8 +707,8 @@ namespace DataAccessLayer.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UnitId"));
 
                     b.Property<string>("Abbreviation")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(10)
+                        .HasColumnType("varchar(10)");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -718,17 +719,17 @@ namespace DataAccessLayer.Migrations
                     b.Property<string>("Suffix")
                         .IsRequired()
                         .HasMaxLength(1)
-                        .HasColumnType("nvarchar(1)");
+                        .HasColumnType("char(1)");
 
                     b.Property<string>("Sus_no")
                         .IsRequired()
                         .HasMaxLength(7)
-                        .HasColumnType("nvarchar(7)");
+                        .HasColumnType("varchar(7)");
 
                     b.Property<string>("UnitName")
                         .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)");
 
                     b.Property<DateTime?>("UpdatedOn")
                         .IsRequired()
@@ -1251,6 +1252,9 @@ namespace DataAccessLayer.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<byte>("ApptId")
+                        .HasColumnType("tinyint");
+
                     b.Property<int>("AspNetUsersId")
                         .HasColumnType("int");
 
@@ -1261,6 +1265,8 @@ namespace DataAccessLayer.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ApptId");
 
                     b.HasIndex("AspNetUsersId");
 
@@ -1376,31 +1382,13 @@ namespace DataAccessLayer.Migrations
 
             modelBuilder.Entity("DataTransferObject.Domain.MUserProfile", b =>
                 {
-                    b.HasOne("DataTransferObject.Domain.Master.MAppointment", "MAppointment")
-                        .WithMany()
-                        .HasForeignKey("ApptId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("DataTransferObject.Domain.Master.MRank", "MRank")
                         .WithMany()
                         .HasForeignKey("RankId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.Navigation("MAppointment");
-
                     b.Navigation("MRank");
-                });
-
-            modelBuilder.Entity("DataTransferObject.Domain.Master.MAppointment", b =>
-                {
-                    b.HasOne("DataTransferObject.Domain.Master.MFormation", "mFormation")
-                        .WithMany()
-                        .HasForeignKey("mFormationFormationId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("mFormation");
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Master.MArmedType", b =>
@@ -1469,6 +1457,17 @@ namespace DataAccessLayer.Migrations
                     b.Navigation("Comd");
 
                     b.Navigation("Corps");
+                });
+
+            modelBuilder.Entity("DataTransferObject.Domain.Master.MRank", b =>
+                {
+                    b.HasOne("DataTransferObject.Domain.Master.MApplyFor", "MApplyFor")
+                        .WithMany()
+                        .HasForeignKey("ApplyForId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("MApplyFor");
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Master.MRegimental", b =>
@@ -1713,6 +1712,12 @@ namespace DataAccessLayer.Migrations
 
             modelBuilder.Entity("DataTransferObject.Domain.Model.TrnDomainMapping", b =>
                 {
+                    b.HasOne("DataTransferObject.Domain.Master.MAppointment", "MAppointment")
+                        .WithMany()
+                        .HasForeignKey("ApptId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("DataTransferObject.Domain.Identitytable.ApplicationUser", "ApplicationUser")
                         .WithMany()
                         .HasForeignKey("AspNetUsersId")
@@ -1731,6 +1736,8 @@ namespace DataAccessLayer.Migrations
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("ApplicationUser");
+
+                    b.Navigation("MAppointment");
 
                     b.Navigation("MUserProfile");
 

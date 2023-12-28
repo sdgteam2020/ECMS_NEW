@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace DataTransferObject.Domain.Master
 {
-    public class MAppointment:Common
+    public class MAppointment : Common
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -17,10 +17,10 @@ namespace DataTransferObject.Domain.Master
         [Required(ErrorMessage = "required!")]
         [RegularExpression("^[a-zA-Z0-9 ]*$", ErrorMessage = "Only Alphabets and Numbers allowed.")]
         public string AppointmentName { get; set; }
-        [Required(ErrorMessage = "required!")]
-       
-        [ForeignKey("MFormation")]
-        public byte FormationId { get; set; }
-        public MFormation? mFormation { get; set; }
+       // [Required(ErrorMessage = "required!")]
+
+        //[ForeignKey("mFormation"), DatabaseGenerated(DatabaseGeneratedOption.None)]
+        //public byte FormationId { get; set; }
+        //public MFormation? mFormation { get; set; }
     }
 }

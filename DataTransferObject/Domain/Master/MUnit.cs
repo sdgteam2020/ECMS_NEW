@@ -16,21 +16,26 @@ namespace DataTransferObject.Domain.Master
         [Required(ErrorMessage = "required!")]
         [RegularExpression("^[a-zA-Z0-9 ]*$", ErrorMessage = "Only Alphabets and Numbers allowed.")]
         [MaxLength(7)]
+        [Column(TypeName = "varchar(7)")]
         public string Sus_no { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "required!")]
         [RegularExpression("^[a-zA-Z]*$", ErrorMessage = "Only Alphabets.")]
         [MaxLength(1)]
+        [Column(TypeName = "char(1)")]
         public string Suffix { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "required!")]
         [RegularExpression("^[a-zA-Z0-9 ]*$", ErrorMessage = "Only Alphabets and Numbers allowed.")]
-        [MaxLength(200)]
+        [MaxLength(100)]
+        [Column(TypeName = "varchar(100)")]
         public string UnitName { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "required!")]
+      
         [RegularExpression("^[a-zA-Z0-9 ]*$", ErrorMessage = "Only Alphabets and Numbers allowed.")]
-        public string Abbreviation { get; set; } = string.Empty;
+        [Column(TypeName = "varchar(10)")]
+        [MaxLength(10)]
+        public string? Abbreviation { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "required!")]
         public bool IsVerify { get; set; }

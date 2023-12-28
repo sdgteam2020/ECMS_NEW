@@ -231,12 +231,12 @@ namespace BusinessLogicsLayer.Service
         }
         public IEnumerable<SelectListItem> GetAppointment(byte FormationId)
         {
-            var AppointmentOptions = context.MAppointment.Where(x=>x.FormationId == FormationId).OrderBy(o => o.AppointmentName)
+            var AppointmentOptions = context.MAppointment.OrderBy(o => o.AppointmentName)
                  .Select(a =>
                    new SelectListItem
                    {
-                       Value = a.FormationId.ToString(),
-                       Text = a.AppointmentName,
+                       //Value = a.FormationId.ToString(),
+                       //Text = a.AppointmentName,
                    }).ToList();
             var ddfirst = new SelectListItem()
             {
@@ -265,7 +265,7 @@ namespace BusinessLogicsLayer.Service
         }
         public IEnumerable<SelectListItem> GetRank(int Type)
         {
-            var RankOptions = context.MRank.Where(x=>x.Type== Type).OrderBy(o => o.RankName)
+            var RankOptions = context.MRank.Where(x=>x.ApplyForId== Type).OrderBy(o => o.RankName)
                  .Select(a =>
                    new SelectListItem
                    {

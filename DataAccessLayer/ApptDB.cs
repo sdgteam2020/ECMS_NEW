@@ -23,22 +23,22 @@ namespace DataAccessLayer
 
         public async Task<bool> GetByName(MAppointment Data)
         {
-            var ret = _context.MAppointment.Where(p => p.FormationId == Data.FormationId).Select(p => p.AppointmentName.ToUpper() == Data.AppointmentName.ToUpper()).FirstOrDefault();
+            var ret = _context.MAppointment.Select(p => p.AppointmentName.ToUpper() == Data.AppointmentName.ToUpper()).FirstOrDefault();
              return ret;
         }
 
         public Task<List<DTOAppointmentResponse>> GetALLAppt()
         {
             var GetALL = (from A in _context.MAppointment
-                         join F in _context.MFormation
-                         on A.FormationId equals F.FormationId
+                         //join F in _context.MFormation
+                         //on A.FormationId equals F.FormationId
                         
                          select new DTOAppointmentResponse
                          {
                              ApptId=A.ApptId,
                              AppointmentName=A.AppointmentName,
-                             FormationId=F.FormationId,
-                             FormationName=F.FormationName, 
+                             //FormationId=F.FormationId,
+                             //FormationName=F.FormationName, 
 
 
                          }).ToList();
@@ -50,15 +50,15 @@ namespace DataAccessLayer
         public Task<List<DTOAppointmentResponse>> GetByFormationId(int FormationId)
         {
             var GetALL = (from A in _context.MAppointment
-                          join F in _context.MFormation
-                          on A.FormationId equals F.FormationId
-                          where F.FormationId == FormationId
+                          //join F in _context.MFormation
+                          //on A.FormationId equals F.FormationId
+                         // where F.FormationId == FormationId
                           select new DTOAppointmentResponse
                           {
                               ApptId = A.ApptId,
                               AppointmentName = A.AppointmentName,
-                              FormationId = F.FormationId,
-                              FormationName = F.FormationName,
+                             // FormationId = F.FormationId,
+                             // FormationName = F.FormationName,
 
 
                           }).ToList();
