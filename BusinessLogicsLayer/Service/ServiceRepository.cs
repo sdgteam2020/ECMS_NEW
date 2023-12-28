@@ -246,26 +246,9 @@ namespace BusinessLogicsLayer.Service
             AppointmentOptions.Insert(0, ddfirst);
             return new SelectList(AppointmentOptions, "Value", "Text");
         }
-        public IEnumerable<SelectListItem> GetFormation()
+        public IEnumerable<SelectListItem> GetRank(byte Type)
         {
-            var FormationOptions = context.MFormation.OrderBy(o => o.FormationName)
-                 .Select(a =>
-                   new SelectListItem
-                   {
-                       Value = a.FormationId.ToString(),
-                       Text = a.FormationName,
-                   }).ToList();
-            var ddfirst = new SelectListItem()
-            {
-                Value = null,
-                Text = "Select Formation"
-            };
-            FormationOptions.Insert(0, ddfirst);
-            return new SelectList(FormationOptions, "Value", "Text");
-        }
-        public IEnumerable<SelectListItem> GetRank(int Type)
-        {
-            var RankOptions = context.MRank.Where(x=>x.ApplyForId== Type).OrderBy(o => o.RankName)
+            var RankOptions = context.MRank.Where(x=>x.ApplyForId== Type).OrderBy(o => o.Orderby)
                  .Select(a =>
                    new SelectListItem
                    {

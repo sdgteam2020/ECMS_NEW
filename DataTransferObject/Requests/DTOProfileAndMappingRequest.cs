@@ -29,11 +29,10 @@ namespace DataTransferObject.Requests
         public string Name { get; set; } = string.Empty;
 
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
-        public byte FormationId { get; set; }
-
-        [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
         public byte ApptId { get; set; }
-        public MAppointment? MAppointment { get; set; }
+        
+        [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
+        public string AppointmentName { get; set; } = string.Empty;
         public Boolean IntOffr { get; set; }
 
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]

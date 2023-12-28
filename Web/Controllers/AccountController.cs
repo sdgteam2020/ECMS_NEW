@@ -789,23 +789,13 @@ namespace Web.Controllers
                     if (trnDomainMapping.MUserProfile != null)
                     {
                         ViewBag.OptionsRank = service.GetRank(1);
-                        ViewBag.OptionsFormation = service.GetFormation();
 
                         DTOProfileRequest dTOProfileRequest = new DTOProfileRequest();
                         dTOProfileRequest.UserId = trnDomainMapping.MUserProfile.UserId;
                         dTOProfileRequest.ArmyNo = trnDomainMapping.MUserProfile.ArmyNo;
                         dTOProfileRequest.RankId = trnDomainMapping.MUserProfile.RankId;
                         dTOProfileRequest.Name = trnDomainMapping.MUserProfile.Name;
-                        //dTOProfileRequest.ApptId = trnDomainMapping.MUserProfile.ApptId;
                         dTOProfileRequest.IntOffr = trnDomainMapping.MUserProfile.IntOffr;
-                        
-                        MAppointment? mAppointment = await unitOfWork.Appt.GetByByte(dTOProfileRequest.ApptId);
-                        
-                        if (mAppointment != null)
-                        {
-                            //dTOProfileRequest.FormationId = mAppointment.FormationId;
-                        }
-                        ViewBag.OptionsAppointment = service.GetAppointment(dTOProfileRequest.ApptId);
                         return View(dTOProfileRequest);
                     }
                     else
@@ -838,7 +828,6 @@ namespace Web.Controllers
                 {
                     mUserProfile.Name = model.Name;
                     mUserProfile.RankId = model.RankId;
-                    //mUserProfile.ApptId = model.ApptId;
                     mUserProfile.IntOffr = model.IntOffr;
                     await _userProfileBL.Update(mUserProfile);
                     TempData["success"] = "Profile Updated.";
@@ -987,6 +976,7 @@ namespace Web.Controllers
                     dTOTempSession.UserId = _trnDomainMapping.MUserProfile.UserId;
                     dTOTempSession.TrnDomainMappingId = _trnDomainMapping.Id;
                     dTOTempSession.TrnDomainMappingUnitId = _trnDomainMapping.UnitId;
+                    dTOTempSession.TrnDomainMappingApptId = _trnDomainMapping.ApptId;
                     dTOTempSession.AspNetUsersId = _trnDomainMapping.ApplicationUser.Id;
                     dTOTempSession.Status = 5;
                     SessionHeplers.SetObject(HttpContext.Session, "IMData", dTOTempSession);
@@ -1000,6 +990,7 @@ namespace Web.Controllers
                     dTOTempSession.RoleName = model.Role;
                     dTOTempSession.TrnDomainMappingId = _trnDomainMapping.Id;
                     dTOTempSession.TrnDomainMappingUnitId = _trnDomainMapping.UnitId;
+                    dTOTempSession.TrnDomainMappingApptId = _trnDomainMapping.ApptId;
                     dTOTempSession.AspNetUsersId = _trnDomainMapping.ApplicationUser.Id;
                     dTOTempSession.Status = 4;
                     SessionHeplers.SetObject(HttpContext.Session, "IMData", dTOTempSession);
@@ -1125,7 +1116,7 @@ namespace Web.Controllers
                         dTOTempSession.ICNoUserId = _dTOProfileResponse.UserId;
                         dTOTempSession.ICNoTrnDomainMappingUnitId = _dTOProfileResponse.UnitId;
                         dTOTempSession.ICNoTrnDomainMappingId = _dTOProfileResponse.TrnDomainMappingId;
-                        dTOTempSession.ICNoUnitName = _dTOProfileResponse.UnitName;
+                        dTOTempSession.ICNoTrnDomainMappingApptId = _dTOProfileResponse.ApptId;
                         TempData["error"] = "You are already mapped to DID (" + _dTOProfileResponse.DomainId + ").Pl handover the charge of already mapped previous DID (" + _dTOProfileResponse.DomainId + ")- V to other person before registering again for Current DID";
                         goto End;
                     }
@@ -1136,7 +1127,7 @@ namespace Web.Controllers
                         dTOTempSession.ICNoUserId = _dTOProfileResponse.UserId;
                         dTOTempSession.ICNoTrnDomainMappingUnitId = _dTOProfileResponse.UnitId;
                         dTOTempSession.ICNoTrnDomainMappingId = _dTOProfileResponse.TrnDomainMappingId;
-                        dTOTempSession.ICNoUnitName = _dTOProfileResponse.UnitName;
+                        dTOTempSession.ICNoTrnDomainMappingApptId = _dTOProfileResponse.ApptId;
                         TempData["error"] = "You are already mapped to DID (" + _dTOProfileResponse.DomainId + ").Pl handover the charge of already mapped previous DID (" + _dTOProfileResponse.DomainId + ")- V to other person before registering again for Current DID";
                         goto End;
                     }
@@ -1219,9 +1210,14 @@ namespace Web.Controllers
                     {
                         DTOMapUnitResponse dTOMapUnitResponse = await _IMapUnitBL.GetALLByUnitById(dTOTempSession.TrnDomainMappingUnitId);
                         ViewBag.TrnDomain = dTOMapUnitResponse;
+                        dTOProfileAndMappingRequest.ApptId = dTOTempSession.TrnDomainMappingApptId;
                     }
                     ViewBag.OptionsRank = service.GetRank(1);
-                    ViewBag.OptionsFormation = service.GetFormation();
+                    MAppointment? mAppointment = await context.MAppointment.FindAsync(dTOTempSession.TrnDomainMappingApptId);
+                    if (mAppointment != null)
+                    {
+                        dTOProfileAndMappingRequest.AppointmentName= mAppointment.AppointmentName;
+                    }
                     if (dTOTempSession.UserId>0)
                     {
                         try
@@ -1234,15 +1230,7 @@ namespace Web.Controllers
                             dTOProfileAndMappingRequest.ArmyNo = mUserProfile.ArmyNo;
                             dTOProfileAndMappingRequest.RankId= mUserProfile.RankId;
                             dTOProfileAndMappingRequest.Name= mUserProfile.Name;
-                            //dTOProfileAndMappingRequest.ApptId= mUserProfile.ApptId;
                             dTOProfileAndMappingRequest.IntOffr= mUserProfile.IntOffr;
-
-                            //MAppointment? mAppointment = await context.MAppointment.FindAsync(mUserProfile.ApptId);
-                            //if(mAppointment!=null)
-                            //{
-                            //    //dTOProfileAndMappingRequest.FormationId= mAppointment.FormationId;
-                            //}
-                            //ViewBag.OptionsAppointment = service.GetAppointment(mUserProfile.ApptId);
                             return View(dTOProfileAndMappingRequest);
                         }
                         catch (Exception ex)
@@ -1299,7 +1287,8 @@ namespace Web.Controllers
                         TrnDomainMapping trnDomainMapping = new TrnDomainMapping();
                         trnDomainMapping.AspNetUsersId = user.Id;
                         trnDomainMapping.UnitId = model.UnitId;
-                        
+                        trnDomainMapping.ApptId = model.ApptId;
+
                         if (model.UserId>0)
                         {
                             MUserProfile uptUserProfile = await _userProfileBL.Get(dTOTempSession.UserId);
@@ -1314,7 +1303,6 @@ namespace Web.Controllers
                             mUserProfile.ArmyNo = dTOTempSession.ICNO;
                             mUserProfile.RankId = model.RankId; 
                             mUserProfile.Name= model.Name;
-                            //mUserProfile.ApptId= model.ApptId;
                             mUserProfile.IntOffr = model.IntOffr;
                             mUserProfile.Updatedby = user.Id;
                             MUserProfile insertMUserProfile = await _userProfileBL.AddWithReturn(mUserProfile);
@@ -1337,6 +1325,7 @@ namespace Web.Controllers
                         TrnDomainMapping trnDomainMapping = new TrnDomainMapping();
                         trnDomainMapping.AspNetUsersId = dTOTempSession.AspNetUsersId;
                         trnDomainMapping.UnitId = model.UnitId;
+                        trnDomainMapping.ApptId = model.ApptId;
 
                         if (model.UserId > 0)
                         {
@@ -1352,7 +1341,6 @@ namespace Web.Controllers
                             mUserProfile.ArmyNo = dTOTempSession.ICNO;
                             mUserProfile.RankId = model.RankId;
                             mUserProfile.Name = model.Name;
-                            //mUserProfile.ApptId = model.ApptId;
                             mUserProfile.IntOffr = model.IntOffr;
                             mUserProfile.Updatedby = dTOTempSession.AspNetUsersId;
                             MUserProfile insertMUserProfile = await _userProfileBL.AddWithReturn(mUserProfile);
@@ -1387,7 +1375,6 @@ namespace Web.Controllers
                             mUserProfile.ArmyNo = dTOTempSession.ICNO;
                             mUserProfile.RankId = model.RankId;
                             mUserProfile.Name = model.Name;
-                            //mUserProfile.ApptId = model.ApptId;
                             mUserProfile.IntOffr = model.IntOffr;
                             mUserProfile.Updatedby = dTOTempSession.AspNetUsersId;
                             MUserProfile insertMUserProfile = await _userProfileBL.AddWithReturn(mUserProfile);

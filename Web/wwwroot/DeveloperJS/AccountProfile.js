@@ -1,7 +1,43 @@
 ﻿$(document).ready(function () {
-    $('#FormationId').on('change', function () {
-        mMsater(0, "ApptId", Appt, $('#FormationId').val());
 
+    $("#AppointmentName").autocomplete({
+
+
+        source: function (request, response) {
+            if (request.term.length > 2) {
+                var param = { "AppointmentName": request.term };
+                $("#spnApptIdMap").html(0);
+                $.ajax({
+                    url: '/Master/GetALLByAppointmentName',
+                    contentType: 'application/x-www-form-urlencoded',
+                    data: param,
+                    type: 'POST',
+                    success: function (data) {
+                        console.log(data);
+                        response($.map(data, function (item) {
+
+                            $("#loading").addClass("d-none");
+                            return { label: item.AppointmentName, value: item.ApptId };
+
+                        }))
+                    },
+                    error: function (response) {
+                        alert(response.responseText);
+                    },
+                    failure: function (response) {
+                        alert(response.responseText);
+                    }
+                });
+            }
+        },
+        select: function (e, i) {
+            e.preventDefault();
+            $("#AppointmentName").val(i.item.label);
+            $("#spnApptIdMap").html(i.item.value);
+            $("#ApptId").val(i.item.value);
+            //alert(i.item.value)
+         },
+        appendTo: '#suggesstion-box'
     });
 
     $("#UnitName").autocomplete({

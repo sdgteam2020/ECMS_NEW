@@ -84,6 +84,7 @@
                                                 <div class="card-body">
                                                     <input hidden asp-for="UserId" />
                                                     <input hidden asp-for="UnitId" />
+                                                    <input hidden asp-for="ApptId" />
                                                     @if (ViewBag.TrnDomain != null)
                                                     {
                                                         dTOMapUnitResponse = ViewBag.TrnDomain;
@@ -129,39 +130,6 @@
                                                                 </div>
                                                             </div>
                                                             <div class="row mb-2 required">
-                                                                <label asp-for="FormationId" class="col-sm-4 col-form-label form-label">Formation</label>
-                                                                <div class="col-sm-8">
-                                                                    @if (Model.UserId > 0)
-                                                                    {
-                                                                        <select asp-for="FormationId" class="form-select" asp-items="ViewBag.OptionsFormation" disabled="disabled">
-                                                                        </select>
-                                                                    }
-                                                                    else
-                                                                    {
-                                                                        <select asp-for="FormationId" class="form-select" asp-items="ViewBag.OptionsFormation">
-                                                                        </select>
-                                                                    }
-                                                                    <span asp-validation-for="FormationId" class="text-danger"></span>
-                                                                </div>
-                                                            </div>
-                                                            <div class="row mb-2 required">
-                                                                <label asp-for="ApptId" class="col-sm-4 col-form-label form-label">Appt.</label>
-                                                                <div class="col-sm-8">
-                                                                    @if (Model.UserId > 0)
-                                                                    {
-                                                                        <select asp-for="ApptId" class="form-select" asp-items="ViewBag.OptionsAppointment" disabled="disabled">
-                                                                        </select>
-                                                                    }
-                                                                    else
-                                                                    {
-                                                                        <select asp-for="ApptId" class="form-select" asp-items="ViewBag.OptionsAppointment">
-                                                                        </select>
-                                                                    }
-
-                                                                    <span asp-validation-for="ApptId" class="text-danger"></span>
-                                                                </div>
-                                                            </div>
-                                                            <div class="row mb-2 required">
                                                                 <label asp-for="IntOffr" class="col-sm-4 col-form-label form-label"> Int Offrs.</label>
                                                                 @if (Model.UserId > 0)
                                                                 {
@@ -197,7 +165,21 @@
                                                                         </div>
                                                                     </div>
                                                                 }
-
+                                                            </div>
+                                                            <div class="row mb-2 required">
+                                                                <span id="spnApptIdMap" class="d-none"></span>
+                                                                <label asp-for="AppointmentName" class="col-sm-4 col-form-label form-label">Appointment Name</label>
+                                                                <div class="col-sm-8">
+                                                                    @if (Model.ApptId > 0)
+                                                                    {
+                                                                        <input asp-for="AppointmentName" class="form-control" placeholder="" value="@Model.AppointmentName" readonly />
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <input asp-for="AppointmentName" class="form-control" placeholder="" />
+                                                                    }
+                                                                    <span asp-validation-for="AppointmentName" class="text-danger"></span>
+                                                                </div>
                                                             </div>
                                                             <div class="row mb-2 required">
                                                                 <span id="spnUnitIdMap" class="d-none"></span>
@@ -287,7 +269,6 @@
 
                                                     m2.Append("ICNoDomainId : " + dTOTempSession.ICNoDomainId);
                                                     m2.Append(", ICNoTrnDomainMappingUnitId : " + dTOTempSession.ICNoTrnDomainMappingUnitId);
-                                                    m2.Append(", ICNoUnitName : " + dTOTempSession.ICNoUnitName);
                                                 }
                                             }
                                             @if (dTOTempSession != null)
@@ -317,7 +298,6 @@
     <script asp-src-include="~/lib/jquery-validate/jquery.validate.js" defer></script>
     <script asp-src-include="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js" defer></script>
     <script asp-src-include="~/lib/jqueryui/jquery-ui.min.js"></script>
-    <script asp-src-include="~/developerjs/mtables.js"></script>
     <script asp-src-include="~/developerjs/accountprofile.js"></script>
     <script asp-src-include="~/developerjs/keyconstants.js"></script>
 </body>
