@@ -68,9 +68,10 @@
                                                     <label asp-for="ICNo"></label>
                                                     <input asp-for="ICNo" class="form-control" placeholder="Enter ICNo" />
                                                     <span asp-validation-for="ICNo" class="text-danger"></span>
+                                                    <label id="tokenmsg"></label>
                                                 </div>
                                                 <div class="text-center" >
-                                                    <button type="button" class="btn btn-primary mt-2">Refresh To Fetch Token Details</button>
+                                                    <button type="button" class="btn btn-primary mt-2" onclick="GetTokenDetails1('FetchUniqueTokenDetails' ,'ICNo');">Refresh To Fetch Token Details</button>
                                                     <button type="submit" class="btn btn-primary mt-2">Proceed</button>
                                                 </div>
                                                 @if (TempData["success"] != null)
@@ -137,6 +138,7 @@
     <script asp-src-include="~/lib/jquery/jquery.min.js"></script>
     <script asp-src-include="~/lib/jquery-validate/jquery.validate.js" defer></script>
     <script asp-src-include="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js" defer></script>
+    <script asp-src-include="~/developerjs/token.js"></script>
     <script asp-src-include="~/bootstrap/js/bootstrap.min.js"></script>
     <script asp-src-include="~/lib/bootstrap/dist/js/bootstrap.min.js"></script>
     @* <script src="~/fonts/feather/feather.min.js"></script> *@

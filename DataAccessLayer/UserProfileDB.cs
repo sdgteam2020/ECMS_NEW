@@ -189,7 +189,7 @@ namespace DataAccessLayer
                                      TrnDomainMappingId = xmapp != null? xmapp.Id : 0,
                                      UnitId = xmuni != null ? xmuni.UnitId : 0,
                                      UnitName = xmuni != null ? xmuni.UnitName : null,
-                                     ApptId = (byte)(xmappo != null ? xmappo.ApptId : 0),
+                                     ApptId = (short)(xmappo != null ? xmappo.ApptId : 0),
                                      AppointmentName = xmappo != null ? xmappo.AppointmentName:"No Appointment" ,
                                      DomainId = xapluser != null ?xapluser.DomainId : null
                                  }

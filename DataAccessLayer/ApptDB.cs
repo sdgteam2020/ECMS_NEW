@@ -54,7 +54,7 @@ namespace DataAccessLayer
                           {
                               ApptId = A.ApptId,
                               AppointmentName = A.AppointmentName,
-                          }).ToList();
+                          }).Take(5).ToList();
             return await Task.FromResult(GetALL);
         }
 

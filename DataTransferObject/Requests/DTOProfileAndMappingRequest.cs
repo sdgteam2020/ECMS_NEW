@@ -29,7 +29,7 @@ namespace DataTransferObject.Requests
         public string Name { get; set; } = string.Empty;
 
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
-        public byte ApptId { get; set; }
+        public short ApptId { get; set; }
         
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
         public string AppointmentName { get; set; } = string.Empty;

@@ -71,9 +71,9 @@ namespace DataAccessLayer
                                         Id = xtdm != null? xtdm.Id:0,
                                         UnitId = xtdm != null ? xtdm.UnitId : 0,
                                         MapUnit = xtdm != null ? xtdm.MapUnit : null,
-                                        ApptId = (byte)(xtdm != null ? xtdm.ApptId : 0),
+                                        ApptId = (short)(xtdm != null ? xtdm.ApptId : 0),
                                         AspNetUsersId = au != null ? au.Id:0,
-                                        UserId = xup != null ? xup.UserId : 0,
+                                        UserId = xup != null ? xup.UserId : null,
                                         ApplicationUser = au != null ? au : null,
                                         MUserProfile = xup != null ? xup : null,
                                     }).SingleOrDefaultAsync();

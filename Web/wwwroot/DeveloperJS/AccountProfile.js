@@ -1,10 +1,8 @@
 ﻿$(document).ready(function () {
 
     $("#AppointmentName").autocomplete({
-
-
         source: function (request, response) {
-            if (request.term.length > 2) {
+            if (request.term.length > 1) {
                 var param = { "AppointmentName": request.term };
                 $("#spnApptIdMap").html(0);
                 $.ajax({
@@ -87,8 +85,6 @@
                 data: param1,
                 type: 'POST',
                 success: function (data) {
-
-
                     $("#spnUnitIdMap").html(data.UnitMapId);
                     $("#UnitId").val(data.UnitMapId);
                     $("#lblProComd").html(data.ComdName);
