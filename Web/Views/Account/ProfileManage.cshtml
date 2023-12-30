@@ -1,14 +1,18 @@
-﻿@model IEnumerable<DTORegisterListRequest>
-@{
-    int i= 1;
+﻿@{
+    ViewData["Title"] = "Profile Manage";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
+
 <div class="container mt-4">
     <div class="card mb-3 ">
         <div class="card-header">
+
+            <span id="SpnTxnId" class="d-none">0</span>
+            @*<span id="PtoId" class="d-none">0</span>*@
             <div class="row">
                 <div class="col-xl-12 text-left">
                     <h3>
-                        @ViewBag.Title
+                        Profile Details
                         <small class="text-muted"></small>
                     </h3>
                 </div>
@@ -17,47 +21,56 @@
         <div class="card-body" style="min-height:150px;">
             <div class="row">
                 <div class="col-xl-12">
-                    <div class="table-responsive">
-                        <div class="mb-2 d-md-flex justify-content-md-between align-items-md-center">
-                            <div>
+                    <div class="mb-2 d-md-flex justify-content-md-between align-items-md-center">
+                        <h6 class="mb-3 mb-md-0">
+                            @* Total Command <span id="lblTotal" class="ml-3 border border-light b px-2 py-1">0</span> *@
+                        </h6>
+                        <div class="d-flex">
+
+                            @* <button type="button" id="btnAdd" class="btn btn-outline-success font-weight-600 btn-sm">Add Command</button> *@
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="choice" id="Id" value="Id">
+                                <label for="choice">Id</label>
                             </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="choice" id="DomainId" value="DomainId">
+                                <label for="choice">Domain Id</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="choice" id="ICNo" value="ICNo">
+                                <label for="choice">IC No</label>
+                            </div>
+
+
+
+                            <input class="btn-outline-light form-control ml-2" placeholder="Search Id / Domain /IC No" id="txtSearch" maxlength="10" pattern="^[a-zA-Z]*$" />
+
                         </div>
-                        <table id="tbldatatabledata" class="table border border-purple table-striped no-footer dataTable table-hover" style="width:100%">
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table border border-purple table-striped no-footer table-hover" role="grid" id="tbldata">
                             <thead>
                                 <tr>
-                                    <th>@Html.DisplayNameFor(model => model.Sno)</th>
-                                    <th>@Html.DisplayNameFor(model => model.DomainId)</th>
-                                    <th>@Html.DisplayNameFor(model => model.RoleName)</th> 
-                                    <th>Action</th>
+                                    <th class="noExport d-none"></th>
+                                    <th class="noExport wd-30-f">
+                                        <div class="custom-control custom-checkbox small">
+                                            <input type="checkbox" class="custom-control-input" id="chkAll">
+                                            <label class="custom-control-label font-weight-bold" for="chkAll"></label>
+                                        </div>
+                                    </th>
+                                    <th class=" wd-30-f">S No</th>
+                                    <th class="nowrap">ID</th>
+                                    <th class="nowrap">Domain Id</th>
+                                    <th class="nowrap">IC No</th>
+                                    <th class="nowrap">Role</th>
+                                    <th class="nowrap">Requested Genr On (DT)</th>
+                                    <th class="nowrap">Mapping</th>
+                                    <th class="nowrap">Status</th>
+                                    <th class="nowrap">IsActive</th>
+                                    <th class="nowrap">Action</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                @foreach (var item in Model)
-                                {
-                                    <tr>
-                                        <td>@i</td>
-                                        <td>@item.DomainId</td>
-                                        <td>@item.RoleName</td>
-                                        <td>
-                                            <div class="d-flex p-2">
-                                                <form asp-action="DomainApprove" asp-controller="Account" asp-route-Id="@item.EncryptedId" method="post">
-                                                    <span id="confirmDeleteSpan_@item.EncryptedId" style="display:none">
-                                                        <span>Are you sure you want to approve?</span>
-                                                        <button type="submit" class="btn btn-danger">Yes</button>
-                                                        <a href="#" class="btn btn-primary"
-                                                           onclick="confirmDelete('@item.EncryptedId', false)">No</a>
-                                                    </span>
-
-                                                    <span id="deleteSpan_@item.Id">
-                                                        <a href="#" class="btn btn-danger mr-1"
-                                                           onclick="confirmDelete('@item.EncryptedId', true)">Approve</a>
-                                                    </span>
-                                                </form>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    i++;
-                                }
+                            <tbody id="DetailBody">
                             </tbody>
                         </table>
                     </div>
@@ -66,6 +79,5 @@
         </div>
     </div>
 </div>
-@section Scripts{
-    <script asp-src-include="~/js/CustomScript.js"></script>
-}
+<script asp-src-include="~/developerjs/profilemanage.js"></script>
+<script asp-src-include="~/developerjs/commandvalidation.js"></script>

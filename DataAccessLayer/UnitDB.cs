@@ -38,7 +38,7 @@ namespace DataAccessLayer
         public async Task<List<MUnit>> GetAllUnit(string UnitName)
         {
             UnitName = string.IsNullOrEmpty(UnitName) ?"": UnitName.ToLower();
-            var ret=  _context.MUnit.Where(P => UnitName == "" || P.UnitName.ToLower().Contains(UnitName)).Take(200).ToList();
+            var ret=  await _context.MUnit.Where(P => UnitName == "" || P.UnitName.ToLower().Contains(UnitName)).Take(200).ToListAsync();
             return ret;
 
         }

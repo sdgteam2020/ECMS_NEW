@@ -9,6 +9,7 @@ using BusinessLogicsLayer.Service;
 using BusinessLogicsLayer.Token;
 using BusinessLogicsLayer.Unit;
 using BusinessLogicsLayer.User;
+using DapperRepo.Core.Constants;
 using DataAccessLayer;
 using DataTransferObject.Domain;
 using DataTransferObject.Domain.Identitytable;
@@ -723,16 +724,26 @@ namespace Web.Controllers
             ViewBag.Title = "List of Register User";
             return View(dTORegisterListRequests);
         }
-        [HttpGet]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> ProfileManage()
+        [HttpGet]
+        public IActionResult ProfileManage()
         {
-            var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var usera = await userManager.FindByIdAsync(userId);
+            return View();
+        }
+        [Authorize(Roles = "Admin")]
+        [HttpPost]
+        public async Task<IActionResult> GetAllProfileManage(string Search,string Choice)
+        {
+            try
+            {
+                return Json(await _iAccountBL.GetAllProfileManage(Search, Choice));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "Account->ProfileManage");
+                return Json(KeyConstants.InternalServerError);
+            }
 
-            ViewBag.Title = "List Register Users for Pending approval.";
-            List<DTORegisterListRequest> dTORegisterListRequests = await _iAccountBL.DomainApproveList();
-            return View(dTORegisterListRequests);
         }
 
         [Authorize(Roles = "Admin")]
@@ -1133,7 +1144,7 @@ namespace Web.Controllers
                                 }
                                 else if (roles[0] == "Admin")
                                 {
-                                    return RedirectToActionPermanent("Dashboard", "Home");
+                                    return RedirectToActionPermanent("ProfileManage", "Account");
 
                                 }
                                 else if (roles[0] == "Super Admin")
