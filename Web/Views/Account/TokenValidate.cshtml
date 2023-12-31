@@ -33,6 +33,16 @@
         .swal2-confirm, .swal2-styled {
             background: #D97924 !important;
         }
+
+        .login-wrap {
+            margin-top: 100px;
+            margin-bottom: 100px;
+            margin-left: -50px;
+            /* border: 7px double #242c6d; */
+            border-radius: 10px;
+            box-shadow: 0px 0px 40px rgb(217 121 4 / 23%);
+            z-index: 1;
+        }
     </style>
 </head>
 
@@ -41,12 +51,7 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="align-items-center col-lg-6 col-md-6 col-xl-8 d-flex login-img-block">
-
-
                     <div class="mb-4 logo-sec">
-
-
-
                         <h2 class="ml-sm-3"> <span>AFSAC</span> (Armed Forced Secure Access Card ) </h2>
                     </div>
 
@@ -79,7 +84,7 @@
                                                     <div class="alert alert-success alert-dismissible">
                                                         @* alert-dismissible fade show spnmsg d-none *@
                                                         <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                                                        <span class="text-success">@TempData["success"]</span>
+                                                        <span class="text-success">@Html.Raw(@TempData["success"])</span>
                                                     </div>
                                                 }
                                                 @if (TempData["error"] != null)
@@ -87,7 +92,7 @@
                                                     <div class="alert alert-danger alert-dismissible">
                                                         @*   spnmsg d-none *@
                                                         <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                                                        <span class="text-danger">@TempData["error"]</span>
+                                                        <span class="text-danger">@Html.Raw(@TempData["error"])</span>
                                                     </div>
                                                 }
                                                 @{
@@ -98,17 +103,17 @@
                                                     {
                                                         dTOTempSession = SessionHeplers.GetObject<DTOTempSession>(HttpContextAccessor.HttpContext.Session, "IMData");
                                                         m1.Append("Status : " + dTOTempSession.Status);
-                                                        m1.Append(", AdminFlag : " + dTOTempSession.AdminFlag);
-                                                        m1.Append(", DomainId : " + dTOTempSession.DomainId);
-                                                        m1.Append(", RoleName : " + dTOTempSession.RoleName);
-                                                        m1.Append(", ICNO : " + dTOTempSession.ICNO);
-                                                        m1.Append(", UserId : " + dTOTempSession.UserId);
-                                                        m1.Append(", TrnDomainMappingUnitId : " + dTOTempSession.TrnDomainMappingUnitId);
-                                                        m1.Append(", TrnDomainMappingId : " + dTOTempSession.TrnDomainMappingId);
-                                                        m1.Append(", AspNetUsersId : " + dTOTempSession.AspNetUsersId);
+                                                        m1.Append(",<br/> AdminFlag : " + dTOTempSession.AdminFlag);
+                                                        m1.Append(",<br/> DomainId : " + dTOTempSession.DomainId);
+                                                        m1.Append(",<br/> RoleName : " + dTOTempSession.RoleName);
+                                                        m1.Append(",<br/> ICNO : " + dTOTempSession.ICNO);
+                                                        m1.Append(",<br/> UserId : " + dTOTempSession.UserId);
+                                                        m1.Append(",<br/> TrnDomainMappingUnitId : " + dTOTempSession.TrnDomainMappingUnitId);
+                                                        m1.Append(",<br/> TrnDomainMappingId : " + dTOTempSession.TrnDomainMappingId);
+                                                        m1.Append(",<br/> AspNetUsersId : " + dTOTempSession.AspNetUsersId);
 
                                                         m2.Append("ICNoDomainId : " + dTOTempSession.ICNoDomainId);
-                                                        m2.Append(", ICNoTrnDomainMappingUnitId : " + dTOTempSession.ICNoTrnDomainMappingUnitId);
+                                                        m2.Append(",<br/> ICNoTrnDomainMappingUnitId : " + dTOTempSession.ICNoTrnDomainMappingUnitId);
                                                     }
                                                 }
                                                 @if (dTOTempSession!=null)
@@ -116,12 +121,12 @@
                                                     <div class="alert alert-danger alert-dismissible">
                                                         @*   spnmsg d-none *@
                                                         <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                                                        <span class="text-danger text-break">@m1</span>
+                                                        <span class="text-danger text-break">@Html.Raw(@m1)</span>
                                                     </div>
                                                     <div class="alert alert-danger alert-dismissible">
                                                         @*   spnmsg d-none *@
                                                         <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                                                        <span class="text-danger text-break">@m2</span>
+                                                        <span class="text-danger text-break">@Html.Raw(@m2)</span>
                                                     </div>
                                                 }
                                             </form>

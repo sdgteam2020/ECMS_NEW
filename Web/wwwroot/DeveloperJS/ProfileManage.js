@@ -2,15 +2,26 @@
     Reset();
     BindData()
     $("#txtSearch").keyup(function () {
+        var eThis = $(this);
         if ($("input[type='radio'][name=choice]:checked").length > 0) {
-            alert($("input[type='radio'][name=choice]:checked").val());
-            BindData()
+            if ($("input[type='radio'][name=choice]:checked").val() == "Id") {
+                var num_val = parseInt(eThis.val()); 
+                if (isNaN(num_val)) {
+                    alert("Enter only number");
+                    eThis.val('')
+                }
+                else {
+                    eThis.val(num_val)
+                    BindData()
+                }
+            }
+            else {
+                BindData()
+            }
         }
         else {
             alert("Select Choice");
         }
-      
-
     });
  
 
@@ -140,15 +151,15 @@ function BindData() {
                         else
                             listItem += "<td class='align-middle'><span id='unit_desc'><span class='badge badge-pill badge-danger'>No</span></span></td>";
 
-                        if (response[i].AdminFlag == true)
-                            listItem += "<td class='align-middle'><span id='unit_desc'><span class='badge badge-pill badge-success'>Verifed</span></span></td>";
-                        else
-                            listItem += "<td class='align-middle'><span id='unit_desc'><span class='badge badge-pill badge-danger'>Not Verify</span></span></td>";
-
                         if (response[i].Active == true)
                             listItem += "<td class='align-middle'><span id='unit_desc'><span class='badge badge-pill badge-success'>Yes</span></span></td>";
                         else
                             listItem += "<td class='align-middle'><span id='unit_desc'><span class='badge badge-pill badge-danger'>No</span></span></td>";
+
+                        if (response[i].AdminFlag == true)
+                            listItem += "<td class='align-middle'><span id='unit_desc'><span class='badge badge-pill badge-success'>Verifed</span></span></td>";
+                        else
+                            listItem += "<td class='align-middle'><span id='unit_desc'><span class='badge badge-pill badge-danger'>Not Verify</span></span></td>";
 
                         listItem += "<td class='align-middle'><span id='btnedit'><button type='button' class='cls-btnedit btn btn-icon btn-round btn-warning mr-1'><i class='fas fa-edit'></i></button></span><button type='button' class='cls-btnDelete btn-icon btn-round btn-danger mr-1'><i class='fas fa-trash-alt'></i></button></td>";
 
