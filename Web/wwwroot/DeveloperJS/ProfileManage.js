@@ -45,48 +45,6 @@
         } else {
             $("#SaveForm")[0].reportValidity();
         }
-
-
-
-        // 
-
-    });
-
-    $('#btnMultiDelete').click(function () {
-        var lst = new Array();
-
-        if (memberTable.$('input[type="checkbox"]:checked').length > 0) {
-
-            memberTable.$('input[type="checkbox"]:checked').each(function () {
-
-
-                var id = $(this).attr("Id");
-                lst.push(id);
-                console.log(id);
-
-            });
-
-            Swal.fire({
-                title: 'Are you sure?',
-                text: "You want to Delete",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#072697',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes, Delete it!'
-            }).then((result) => {
-                if (result.value) {
-
-                    DeleteMultiple(lst);
-
-                }
-            });
-        }
-        else {
-            Swal.fire({
-                text: "Please select atleast 1 data to Delete."
-            });
-        }
     });
 });
 
@@ -127,19 +85,12 @@ function BindData() {
 
                 else {
 
-                    /*$("#tbldata").DataTable().destroy();*/
-
+                    $("#tbldata").DataTable().destroy();
 
                     for (var i = 0; i < response.length; i++) {
 
                         listItem += "<tr>";
-                        listItem += "<td class='d-none'><span id='SunitId'>" + response[i].Id + "</span></td>";
-                        listItem += "<td>";
-                        listItem += "<div class='custom-control custom-checkbox small'>";
-                        listItem += "<input type='checkbox' class='custom-control-input' id='" + response[i].Id + "'>";
-                        listItem += "<label class='custom-control-label' for='" + response[i].Id + "'></label>";
-                        listItem += "</div>";
-                        listItem += "</td>";
+                        listItem += "<td class='d-none'><span id='SregId'>" + response[i].Id + "</span></td>";
                         listItem += "<td class='align-middle'>" + (i + 1) + "</td>";
                         listItem += "<td class='align-middle'><span id='sus_no'>" + response[i].Id + "</span></td>";
                         listItem += "<td class='align-middle'><span id='suffix'>" + response[i].DomainId + "</span></td>";
@@ -161,7 +112,7 @@ function BindData() {
                         else
                             listItem += "<td class='align-middle'><span id='unit_desc'><span class='badge badge-pill badge-danger'>Not Verify</span></span></td>";
 
-                        listItem += "<td class='align-middle'><span id='btnedit'><button type='button' class='cls-btnedit btn btn-icon btn-round btn-warning mr-1'><i class='fas fa-edit'></i></button></span><button type='button' class='cls-btnDelete btn-icon btn-round btn-danger mr-1'><i class='fas fa-trash-alt'></i></button></td>";
+                        listItem += "<td class='align-middle'><span id='btnedit'><button type='button' class='cls-btnedit btn btn-icon btn-round btn-warning mr-1'><i class='fas fa-edit'></i></button></span></td>";
 
 
                         /*    listItem += "<td class='nowrap'><button type='button' class='cls-btnSend btn btn-outline-success mr-1'>Send To Verification</button></td>";*/
@@ -200,24 +151,6 @@ function BindData() {
                     memberTable.buttons().container().appendTo('#tbldata_wrapper .col-md-6:eq(0)');
 
                     var rows;
-                    $("#tbldata #chkAll").click(function () {
-                        if ($(this).is(':checked')) {
-                            rows = memberTable.rows({ 'search': 'applied' }).nodes();
-                            $('input[type="checkbox"]', rows).prop('checked', this.checked);
-                        }
-                        else {
-                            rows = memberTable.rows({ 'search': 'applied' }).nodes();
-                            $('input[type="checkbox"]', rows).prop('checked', this.checked);
-                        }
-                    });
-                    $('#DetailBody').on('change', 'input[type="checkbox"]', function () {
-                        if (!this.checked) {
-                            var el = $('#chkAll').get(0);
-                            if (el && el.checked && ('indeterminate' in el)) {
-                                el.indeterminate = true;
-                            }
-                        }
-                    });
 
                     $("body").on("click", ".cls-btnedit", function () {
                         /*  $("#AddNewM").modal('show');*/
@@ -230,28 +163,6 @@ function BindData() {
                         $("#spnUnitId").html($(this).closest("tr").find("#SunitId").html());
 
                     });
-
-
-                    $("body").on("click", ".cls-btnDelete", function () {
-
-                        Swal.fire({
-                            title: 'Are you sure?',
-                            text: "You want to Delete ",
-                            icon: 'warning',
-                            showCancelButton: true,
-                            confirmButtonColor: '#072697',
-                            cancelButtonColor: '#d33',
-                            confirmButtonText: 'Yes, Delete It!'
-                        }).then((result) => {
-                            if (result.value) {
-
-                                Delete($(this).closest("tr").find("#SunitId").html());
-
-                            }
-                        });
-                    });
-
-
                 }
             }
             else {
@@ -322,97 +233,12 @@ function Save() {
 
                 }
 
-
+                        
             }
         }
     });
 }
 
 function Reset() {
-    $("#txtSusno").val("");
-    $("#txtSuffix").val("");
-    $("#txtUnitDesc").val("");
-    $("#txtAbbreviation").val("");
-    $("#spnUnitId").html("0");
-}
-
-function Delete(Id) {
-    var userdata =
-    {
-        "UnitId": Id,
-
-    };
-    $.ajax({
-        url: '/Master/DeleteUnit',
-        contentType: 'application/x-www-form-urlencoded',
-        data: userdata,
-        type: 'POST',
-        success: function (response) {
-            if (response != "null") {
-                if (response == InternalServerError) {
-                    Swal.fire({
-                        text: errormsg
-                    });
-                }
-
-                else if (response == Success) {
-                    //lol++;
-                    //if (lol == Tot) {
-
-                    toastr.success('Deleted Selected');
-                    BindData();
-                }
-
-                //}
-            }
-            else {
-                Swal.fire({
-                    text: errormsg001
-                });
-            }
-        },
-        error: function (result) {
-            Swal.fire({
-                text: errormsg002
-            });
-        }
-    });
-}
-
-function DeleteMultiple(Id) {
-
-    var userdata =
-    {
-        "ints": Id,
-
-    };
-    $.ajax({
-        url: '/Master/DeleteUnitMultiple',
-        contentType: 'application/x-www-form-urlencoded',
-        data: userdata,
-        type: 'POST',
-        success: function (response) {
-            if (response != "null") {
-                if (response == InternalServerError) {
-                    Swal.fire({
-                        text: errormsg
-                    });
-                }
-                else if (response == Success) {
-                    //lol++;
-                    //if (lol == Tot) {
-                    toastr.error('Deleted Selected');
-                    BindData();
-                }
-
-                //}
-            }
-
-        },
-        error: function (result) {
-            Swal.fire({
-                text: errormsg002
-            });
-        }
-    });
+    $("#txtSearch").val("");
 }

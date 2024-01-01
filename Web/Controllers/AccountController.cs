@@ -1104,7 +1104,7 @@ namespace Web.Controllers
                         dTOTempSession.ICNoTrnDomainMappingApptId = _dTOProfileResponse.ApptId;
                         
                         if(dTOTempSession.Status == 2)
-                            TempData["error"] = "Your Profile Id -" + _dTOProfileResponse.UserId + " is mapped to Domain Id - " + _dTOProfileResponse.DomainId + " in Sys.<br/>Pl get yourself relieved firs and try again.";
+                            TempData["error"] = "Your Profile Id -" + _dTOProfileResponse.UserId + " is mapped to Domain Id - " + _dTOProfileResponse.DomainId + " in Sys.<br/>Pl get yourself relieved first    and try again.";
                         else if (dTOTempSession.Status == 3)
                             TempData["error"] = "Your Profile Id - " + _dTOProfileResponse.UserId + " is already mapped to Domain Id -"+ _dTOProfileResponse.DomainId + ".<br/>Pl get yourself relieved first..Domain Id - " + dTOTempSession.DomainId + "(regd) is not mapped to any profile.";
                         else if (dTOTempSession.Status == 4)

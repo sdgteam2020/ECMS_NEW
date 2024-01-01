@@ -35,13 +35,19 @@
         }
 
         .login-wrap {
-            margin-top: 100px;
+            margin-top: 50px;
             margin-bottom: 100px;
-            margin-left: -50px;
+           
             /* border: 7px double #242c6d; */
             border-radius: 10px;
             box-shadow: 0px 0px 40px rgb(217 121 4 / 23%);
             z-index: 1;
+            margin-left:32%;
+        }
+        body{
+            background-image: url('/images/logo-white.jpg');
+            background-size:cover;
+            background-repeat:no-repeat;
         }
     </style>
 </head>
@@ -50,12 +56,6 @@
     <div class="page">
         <div class="container-fluid">
             <div class="row">
-                <div class="align-items-center col-lg-6 col-md-6 col-xl-8 d-flex login-img-block">
-                    <div class="mb-4 logo-sec">
-                        <h2 class="ml-sm-3"> <span>AFSAC</span> (Armed Forced Secure Access Card ) </h2>
-                    </div>
-
-                </div>
                 <div class="col-md-6 col-lg-6 col-xl-4 bg-white login-wrap align-items-center">
                     <div class="login py-2 py-sm-4">
                         <div class="row">
@@ -81,18 +81,16 @@
                                                 </div>
                                                 @if (TempData["success"] != null)
                                                 {
-                                                    <div class="alert alert-success alert-dismissible">
-                                                        @* alert-dismissible fade show spnmsg d-none *@
-                                                        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                                                    <div class="alert alert-success alert-dismissible fade show" role="alert">
                                                         <span class="text-success">@Html.Raw(@TempData["success"])</span>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                                                     </div>
                                                 }
                                                 @if (TempData["error"] != null)
                                                 {
-                                                    <div class="alert alert-danger alert-dismissible">
-                                                        @*   spnmsg d-none *@
-                                                        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                                                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
                                                         <span class="text-danger">@Html.Raw(@TempData["error"])</span>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                                                     </div>
                                                 }
                                                 @{
@@ -118,15 +116,13 @@
                                                 }
                                                 @if (dTOTempSession!=null)
                                                 {
-                                                    <div class="alert alert-danger alert-dismissible">
-                                                        @*   spnmsg d-none *@
-                                                        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                                                        <span class="text-danger text-break">@Html.Raw(@m1)</span>
+                                                    <div class="alert alert-info alert-dismissible fade show" role="alert">
+                                                        <span class="text-info text-break">@Html.Raw(@m1)</span>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                                                     </div>
-                                                    <div class="alert alert-danger alert-dismissible">
-                                                        @*   spnmsg d-none *@
-                                                        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                                                        <span class="text-danger text-break">@Html.Raw(@m2)</span>
+                                                    <div class="alert alert-info alert-dismissible fade show" role="alert">
+                                                        <span class="text-info text-break">@Html.Raw(@m2)</span>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                                                     </div>
                                                 }
                                             </form>
