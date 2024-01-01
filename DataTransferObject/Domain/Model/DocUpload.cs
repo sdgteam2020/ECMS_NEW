@@ -14,7 +14,6 @@ namespace DataTransferObject.Domain.Model
         public string DocName { get; set; } = string.Empty;
         public string DocPath { get; set; } = string.Empty;
         public bool IsDeleted { get; set; }
-
         [NotMapped]
         public string? EncryptedId { get; set; }
     }

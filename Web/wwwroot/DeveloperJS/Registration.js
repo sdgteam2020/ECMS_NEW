@@ -11,8 +11,17 @@
 
         getApplyIcardDetails();
     }
+    $('.select2').select2({
+       
+        closeOnSelect: false
+    });
+    var someNumbers = [1];
+    GetAllOffsByUnitId("ddlRemarks", 0, someNumbers);
 
 
+    $('#ddlRemarks').on('change', function () {
+        $("#RemarksIds").val($('#ddlRemarks').val()); 
+    });
 });
 function getApplyIcardDetails()
 {
@@ -110,7 +119,7 @@ function CallDataFromAPI() {
                 /*$("#DOB_").val(moment(response.Pers_birth_dt).format("DD-MM-YYYY"));*/
                 $("#DateOfCommissioning").val(response.Pers_enrol_dt);
                 /*$("#DOC").val(moment(response.Pers_enrol_dt).format("DD-MM-YYYY"));*/
-                $("#PermanentAddress").val('Village - ' + response.Pers_Village + ', Post Office-' + response.Pers_Post_office + ', Tehsil- ' + response.Pers_Tehsil + ', District- ' + response.Pers_District + ', State- ' + response.Pers_State + ', Pin Code- ' + response.Pers_Pin_code);
+                $("#PermanentAddress").val('Village - ' + response.Pers_Village + '\n Post Office-' + response.Pers_Post_office + ' \n Tehsil- ' + response.Pers_Tehsil + '\n District- ' + response.Pers_District + '\n State- ' + response.Pers_State + '\n Pin Code- ' + response.Pers_Pin_code);
                 //$("#RegId").val(regId);
 
                 $("#State").val(response.Pers_State);
@@ -134,14 +143,19 @@ function CallDataFromAPI() {
     });
 }
 function registrationEnableDisabledField(val) {
+    $("#ddlRemarks").val("");
+    $("#RemarksIds").val("");
     if (val == 1) {
         $("#btnsubmit").prop('disabled', false);
         $("#Observations").val('');
         $("#Observations").prop('readonly', true);
+        $(".Remarks").addClass("d-none");
     }
     else {
         $("#btnsubmit").prop('disabled', false);
         $("#Observations").prop('readonly', false);
+        $(".Remarks").removeClass("d-none");
+
     }
 
 }

@@ -560,5 +560,47 @@ namespace DataAccessLayer
                 return ret.SingleOrDefault();
             }
         }
+
+        public async Task<List<DTONotificationResponse>> GetNotification(int UserId, int Type)
+        {
+            string query = "select dis.DisplayId,Spanname,Message from TrnNotification noti" +
+                            " inner join TrnNotificationDisplay dis on noti.DisplayId=dis.DisplayId"+
+                            " inner join AspNetUsers users on users.Id=noti.SentAspNetUsersId"+
+                            " where noti.ReciverAspNetUsersId=@UserId and NotificationTypeId=@Type and [Read]=0 and ReciverAspNetUsersId!=SentAspNetUsersId";
+        
+            using (var connection = _contextDP.CreateConnection())
+            {
+                //data.MRank.RankAbbreviation
+                //data.MArmedType.Abbreviation
+                var ret = await connection.QueryAsync<DTONotificationResponse>(query, new { UserId, Type });
+
+
+                // var allProducts = ret.Concat(ret1) .ToList();
+
+
+                return ret.ToList();
+            }
+        }
+        public async Task<List<DTONotificationResponse>> GetNotificationRequestId(int UserId, int Type)
+        {
+
+            string query = "select dis.DisplayId,Spanname + 'self' Spanname,Message from TrnNotification noti " +
+                            " inner join TrnNotificationDisplay dis on noti.DisplayId = dis.DisplayId" +
+                            " inner join AspNetUsers users on users.Id = noti.SentAspNetUsersId" +
+                            " inner join TrnICardRequest tre on tre.RequestId = noti.RequestId" +
+                            " inner join TrnDomainMapping dmap on dmap.Id = tre.TrnDomainMappingId" +
+                            " where NotificationTypeId = @Type and dmap.AspNetUsersId = @UserId and [Read]=0 and ReciverAspNetUsersId=SentAspNetUsersId";
+
+            using (var connection = _contextDP.CreateConnection())
+            {
+                //data.MRank.RankAbbreviation
+                //data.MArmedType.Abbreviation
+                var ret = await connection.QueryAsync<DTONotificationResponse>(query, new { UserId, Type });
+               
+
+              
+                return ret.ToList();
+            }
+        }
     }
 }

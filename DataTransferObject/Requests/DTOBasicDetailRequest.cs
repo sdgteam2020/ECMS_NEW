@@ -231,7 +231,8 @@ namespace DataTransferObject.Requests
         public byte RegistrationId { get; set; }
         [Required]
         public byte TypeId { get; set; }
-        
 
+      
+        public string RemarksIds { get; set; }
     }
 }

@@ -229,7 +229,7 @@ namespace BusinessLogicsLayer.Service
         {
             return await context.Set<MRegimental>().Where(o => o.ArmedId == RegimentalId).ToListAsync();
         }
-        public IEnumerable<SelectListItem> GetAppointment(byte FormationId)
+        public IEnumerable<SelectListItem> GetAppointment(short FormationId)
         {
             var AppointmentOptions = context.MAppointment.OrderBy(o => o.AppointmentName)
                  .Select(a =>

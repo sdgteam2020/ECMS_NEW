@@ -19,7 +19,7 @@ namespace DataTransferObject.Response
         public string Name { get; set; } = string.Empty;
         public byte FormationId { get; set; }
         public string FormationName { get; set; } = string.Empty;
-        public byte ApptId { get; set; }
+        public short ApptId { get; set; }
         public string AppointmentName { get; set; } = string.Empty;
         public int StatusCode { get; set; }
         public string? Title { get; set; }

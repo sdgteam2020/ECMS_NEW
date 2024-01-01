@@ -3,6 +3,9 @@ $(document).ready(function () {
 
     GetTaskIcardRequestCount(1)
     GetTaskIcardRequestCount(2)
+
+    GetNotification(1);
+    GetNotificationRequestId(1);
 });
 function GetTaskIcardRequestCount(Id) {
     var userdata =

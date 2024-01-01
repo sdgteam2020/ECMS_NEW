@@ -34,5 +34,10 @@ namespace BusinessLogicsLayer.BdeCate
         {
             return await _iTrnICardRequestDB.GetRequestPending(BasicDetailId);
         }
+
+        public async Task<int> GetUserIdByRequestId(int RequestId)
+        {
+            return await _iTrnICardRequestDB.GetUserIdByRequestId(RequestId);
+        }
     }
 }

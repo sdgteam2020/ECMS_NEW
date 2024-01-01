@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccessLayer.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20231228055245_first_inits")]
-    partial class first_inits
+    [Migration("20231229090813_v4")]
+    partial class v4
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -225,11 +225,11 @@ namespace DataAccessLayer.Migrations
 
             modelBuilder.Entity("DataTransferObject.Domain.Master.MAppointment", b =>
                 {
-                    b.Property<byte>("ApptId")
+                    b.Property<short>("ApptId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("tinyint");
+                        .HasColumnType("smallint");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<byte>("ApptId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<short>("ApptId"));
 
                     b.Property<string>("AppointmentName")
                         .IsRequired()
@@ -665,6 +665,70 @@ namespace DataAccessLayer.Migrations
                     b.HasKey("RegistrationId");
 
                     b.ToTable("MRegistration");
+                });
+
+            modelBuilder.Entity("DataTransferObject.Domain.Master.MRemarkType", b =>
+                {
+                    b.Property<byte>("RemarkTypeId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("tinyint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<byte>("RemarkTypeId"));
+
+                    b.Property<string>("RemarksType")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("varchar(500)");
+
+                    b.HasKey("RemarkTypeId");
+
+                    b.ToTable("MRemarkType");
+                });
+
+            modelBuilder.Entity("DataTransferObject.Domain.Master.MRemarks", b =>
+                {
+                    b.Property<byte>("RemarksId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("tinyint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<byte>("RemarksId"));
+
+                    b.Property<byte>("RemarkApplyId")
+                        .HasColumnType("tinyint");
+
+                    b.Property<byte>("RemarkTypeId")
+                        .HasColumnType("tinyint");
+
+                    b.Property<string>("Remarks")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("varchar(500)");
+
+                    b.HasKey("RemarksId");
+
+                    b.HasIndex("RemarkApplyId");
+
+                    b.HasIndex("RemarkTypeId");
+
+                    b.ToTable("MRemarks");
+                });
+
+            modelBuilder.Entity("DataTransferObject.Domain.Master.MRemarksApply", b =>
+                {
+                    b.Property<byte>("RemarkApplyId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("tinyint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<byte>("RemarkApplyId"));
+
+                    b.Property<string>("RemarksApply")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)");
+
+                    b.HasKey("RemarkApplyId");
+
+                    b.ToTable("MRemarksApply");
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Master.MStepCounterStep", b =>
@@ -1219,6 +1283,67 @@ namespace DataAccessLayer.Migrations
                     b.ToTable("TrnIdentityInfo");
                 });
 
+            modelBuilder.Entity("DataTransferObject.Domain.Model.MTrnNotification", b =>
+                {
+                    b.Property<int>("NotificationId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("NotificationId"));
+
+                    b.Property<int>("DisplayId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("NotificationTypeId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("Read")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("ReciverAspNetUsersId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("RequestId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SentAspNetUsersId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Url")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("NotificationId");
+
+                    b.HasIndex("DisplayId");
+
+                    b.HasIndex("RequestId");
+
+                    b.ToTable("TrnNotification");
+                });
+
+            modelBuilder.Entity("DataTransferObject.Domain.Model.MTrnNotificationDisplay", b =>
+                {
+                    b.Property<int>("DisplayId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("DisplayId"));
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("VARCHAR(100)");
+
+                    b.Property<string>("Spanname")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("VARCHAR(100)");
+
+                    b.HasKey("DisplayId");
+
+                    b.ToTable("TrnNotificationDisplay");
+                });
+
             modelBuilder.Entity("DataTransferObject.Domain.Model.MTrnUpload", b =>
                 {
                     b.Property<int>("UploadId")
@@ -1255,8 +1380,8 @@ namespace DataAccessLayer.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<byte>("ApptId")
-                        .HasColumnType("tinyint");
+                    b.Property<short>("ApptId")
+                        .HasColumnType("smallint");
 
                     b.Property<int>("AspNetUsersId")
                         .HasColumnType("int");
@@ -1484,6 +1609,25 @@ namespace DataAccessLayer.Migrations
                     b.Navigation("MArmedType");
                 });
 
+            modelBuilder.Entity("DataTransferObject.Domain.Master.MRemarks", b =>
+                {
+                    b.HasOne("DataTransferObject.Domain.Master.MRemarksApply", "MRemarksApply")
+                        .WithMany()
+                        .HasForeignKey("RemarkApplyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("DataTransferObject.Domain.Master.MRemarkType", "MRemarkType")
+                        .WithMany()
+                        .HasForeignKey("RemarkTypeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("MRemarkType");
+
+                    b.Navigation("MRemarksApply");
+                });
+
             modelBuilder.Entity("DataTransferObject.Domain.Master.MapUnit", b =>
                 {
                     b.HasOne("DataTransferObject.Domain.Master.MBde", "Bde")
@@ -1700,6 +1844,25 @@ namespace DataAccessLayer.Migrations
                         .IsRequired();
 
                     b.Navigation("BasicDetail");
+                });
+
+            modelBuilder.Entity("DataTransferObject.Domain.Model.MTrnNotification", b =>
+                {
+                    b.HasOne("DataTransferObject.Domain.Model.MTrnNotificationDisplay", "Display")
+                        .WithMany()
+                        .HasForeignKey("DisplayId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("DataTransferObject.Domain.Model.MTrnICardRequest", "MTrnICardRequest")
+                        .WithMany()
+                        .HasForeignKey("RequestId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Display");
+
+                    b.Navigation("MTrnICardRequest");
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Model.MTrnUpload", b =>

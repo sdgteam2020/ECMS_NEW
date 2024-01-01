@@ -796,10 +796,11 @@ namespace Web.Controllers
                         dTOProfileRequest.ArmyNo = trnDomainMapping.MUserProfile.ArmyNo;
                         dTOProfileRequest.RankId = trnDomainMapping.MUserProfile.RankId;
                         dTOProfileRequest.Name = trnDomainMapping.MUserProfile.Name;
-                        //dTOProfileRequest.ApptId = trnDomainMapping.MUserProfile.ApptId;
+                        //dTOProfileRequest.
+                        //= trnDomainMapping.MUserProfile.ApptId;
                         dTOProfileRequest.IntOffr = trnDomainMapping.MUserProfile.IntOffr;
                         
-                        MAppointment? mAppointment = await unitOfWork.Appt.GetByByte(dTOProfileRequest.ApptId);
+                        MAppointment? mAppointment = await unitOfWork.Appt.Get(dTOProfileRequest.ApptId);
                         
                         if (mAppointment != null)
                         {

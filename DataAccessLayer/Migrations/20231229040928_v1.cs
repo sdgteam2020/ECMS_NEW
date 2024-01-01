@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace DataAccessLayer.Migrations
 {
     /// <inheritdoc />
-    public partial class first_inits : Migration
+    public partial class v1 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -146,7 +146,7 @@ namespace DataAccessLayer.Migrations
                 name: "MAppointment",
                 columns: table => new
                 {
-                    ApptId = table.Column<byte>(type: "tinyint", nullable: false)
+                    ApptId = table.Column<short>(type: "smallint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     AppointmentName = table.Column<string>(type: "VARCHAR(50)", nullable: false),
                     IsActive = table.Column<bool>(type: "bit", nullable: false),
@@ -303,6 +303,20 @@ namespace DataAccessLayer.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_MUnit", x => x.UnitId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TrnNotificationDisplay",
+                columns: table => new
+                {
+                    DisplayId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Spanname = table.Column<string>(type: "VARCHAR(100)", maxLength: 100, nullable: false),
+                    Message = table.Column<string>(type: "VARCHAR(100)", maxLength: 100, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TrnNotificationDisplay", x => x.DisplayId);
                 });
 
             migrationBuilder.CreateTable(
@@ -482,6 +496,30 @@ namespace DataAccessLayer.Migrations
                         column: x => x.ComdId,
                         principalTable: "MComd",
                         principalColumn: "ComdId",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TrnNotification",
+                columns: table => new
+                {
+                    NotificationId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    NotificationTypeId = table.Column<int>(type: "int", nullable: false),
+                    Read = table.Column<bool>(type: "bit", nullable: false),
+                    DisplayId = table.Column<int>(type: "int", nullable: false),
+                    SentAspNetUsersId = table.Column<int>(type: "int", nullable: false),
+                    ReciverAspNetUsersId = table.Column<int>(type: "int", nullable: false),
+                    Url = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TrnNotification", x => x.NotificationId);
+                    table.ForeignKey(
+                        name: "FK_TrnNotification_TrnNotificationDisplay_DisplayId",
+                        column: x => x.DisplayId,
+                        principalTable: "TrnNotificationDisplay",
+                        principalColumn: "DisplayId",
                         onDelete: ReferentialAction.Restrict);
                 });
 
@@ -720,7 +758,7 @@ namespace DataAccessLayer.Migrations
                     AspNetUsersId = table.Column<int>(type: "int", nullable: false),
                     UserId = table.Column<int>(type: "int", nullable: true),
                     UnitId = table.Column<int>(type: "int", nullable: false),
-                    ApptId = table.Column<byte>(type: "tinyint", nullable: false)
+                    ApptId = table.Column<short>(type: "smallint", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -1183,6 +1221,11 @@ namespace DataAccessLayer.Migrations
                 column: "BasicDetailId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_TrnNotification_DisplayId",
+                table: "TrnNotification",
+                column: "DisplayId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_TrnStepCounter_RequestId",
                 table: "TrnStepCounter",
                 column: "RequestId");
@@ -1249,6 +1292,9 @@ namespace DataAccessLayer.Migrations
                 name: "TrnIdentityInfo");
 
             migrationBuilder.DropTable(
+                name: "TrnNotification");
+
+            migrationBuilder.DropTable(
                 name: "TrnStepCounter");
 
             migrationBuilder.DropTable(
@@ -1259,6 +1305,9 @@ namespace DataAccessLayer.Migrations
 
             migrationBuilder.DropTable(
                 name: "MFwdType");
+
+            migrationBuilder.DropTable(
+                name: "TrnNotificationDisplay");
 
             migrationBuilder.DropTable(
                 name: "MStepCounterStep");

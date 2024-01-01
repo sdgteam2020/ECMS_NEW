@@ -28,37 +28,11 @@
         <div class="card-body" style="min-height:150px;">
             <div class="row g-3 row-deck mb-3">
 
-                <div class="card p-4">
+                @* <div class="card p-4">
                     <div class="mt-2">
-                        <form id="Reg" name="Reg" method="post">
-                            <div class="row">
-                                @* <div class="col-xl-4">
-                                    <div class="form-group row mb-2 required">
-                                        <label asp-for="RegistrationId" class="col-form-label col-sm-6 form-label"></label>
-                                        <div class="col-sm-6">
-                                            <select asp-for="RegistrationId" class="form-select" asp-items="ViewBag.OptionsRegistration">
-                                            </select>
-                                            <span asp-validation-for="RegistrationId" class="text-danger"></span>
-                                        </div>
-                                    </div>
-                                </div> *@
-                                <div class="col-xl-4">
-                                    <div class="form-group row mb-2 required">
-                                        <label asp-for="ServiceNumber" class="col-form-label col-sm-6 form-label"></label>
-                                        <div class="col-sm-6">
-                                            <input asp-for="ServiceNumber" class="form-control"  />
-                                            <span asp-validation-for="ServiceNumber" class="text-danger"></span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-xl-4">
-                                   @*  <button type="button" class="btn btn-round btn-primary" id="btngetToken">Get ICNO From Token</i></button> *@
-                                    <button type="button" id="btngetdata" name="btngetdata" class="btn btn-primary" onclick="getData(this.form.id);">Fetch Data</button>
-                                </div>
-                            </div>
-                        </form>
+                       
                     </div>
-                </div>
+                </div> *@
                 <div class="card p-4">
                     <div class="mt-2">
                         @* <h5 class="card-title"></h5> *@
@@ -85,9 +59,37 @@
                                     <input hidden asp-for="ApplyForId" />
                                     <input hidden asp-for="RegistrationId" />
                                     <input hidden asp-for="TypeId" />
-
+                                    <input hidden asp-for="RemarksIds" />
+                                    <form id="Reg" name="Reg" method="post">
+                                        <div class="row">
+                                            @* <div class="col-xl-4">
+                                            <div class="form-group row mb-2 required">
+                                            <label asp-for="RegistrationId" class="col-form-label col-sm-6 form-label"></label>
+                                            <div class="col-sm-6">
+                                            <select asp-for="RegistrationId" class="form-select" asp-items="ViewBag.OptionsRegistration">
+                                            </select>
+                                            <span asp-validation-for="RegistrationId" class="text-danger"></span>
+                                            </div>
+                                            </div>
+                                            </div> *@
+                                            <div class="col-xl-6">
+                                                <div class="form-group row mb-2 required">
+                                                    <label class="col-form-label col-sm-6 form-label">Service No</label>
+                                                    <div class="col-sm-6">
+                                                        <input asp-for="ServiceNumber" class="form-control" />
+                                                        <span asp-validation-for="ServiceNumber" class="text-danger"></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-xl-4">
+                                                @*  <button type="button" class="btn btn-round btn-primary" id="btngetToken">Get ICNO From Token</i></button> *@
+                                                <button type="button" id="btngetdata" name="btngetdata" class="btn btn-primary" onclick="getData(this.form.id);">Fetch Data</button>
+                                            </div>
+                                        </div>
+                                    </form>
                                     <div class="row">
                                         <div class="col-xl-6">
+                                            
                                             <div class="form-group row mb-2">
                                                 <label asp-for="Name" class="col-form-label col-sm-6"></label>
                                                 <div class="col-sm-6">
@@ -96,7 +98,7 @@
                                                 </div>
                                             </div>
                                             <div class="form-group row mb-2">
-                                                <label asp-for="DOB" class="col-form-label col-sm-6"></label>
+                                                <label class="col-form-label col-sm-6">Dt of Birth (DD-MM-YYYY)</label>
                                                 <div class="col-sm-6">
                                                     @* <input type="text" id="DOB_" name="DOB_" class="form-control" readonly /> *@
                                                     <input asp-for="DOB" class="form-control" readonly />
@@ -105,9 +107,9 @@
                                                 </div>
                                             </div>
                                             <div class="form-group row mb-2">
-                                                <label class="col-form-label col-sm-6">Address</label>
+                                                <label class="col-form-label col-sm-6">Permit Address as per Service Records</label>
                                                 <div class="col-sm-6">
-                                                    <textarea id="PermanentAddress" rows="4" class="form-control" placeholder="" readonly></textarea>
+                                                    <textarea id="PermanentAddress" rows="8" class="form-control" placeholder="" readonly></textarea>
                                                   
                                                 </div>
                                             </div>
@@ -121,7 +123,7 @@
                                                 </div>
                                             </div>
                                             <div class="form-group row mb-2">
-                                                <label asp-for="DateOfCommissioning " class="col-form-label col-sm-6"></label>
+                                                <label class="col-form-label col-sm-6">Dt of Commissioning/ Enrolment  (DD-MM-YYYY)</label>
                                                 <div class="col-sm-6">
                                                    @*  <input type="text" id="DOC" name="DOC" class="form-control" readonly />
                                                     <span id="lblDateOfCommissioning" class="text-danger"></span> *@
@@ -130,7 +132,10 @@
                                                 </div>
                                             </div>
                                             <div class="form-group row mb-2 required">
-                                                <label asp-for="SubmitType" class="col-form-label col-sm-6 form-label">I agree that data fetched from the API Is correct.</label>
+                                                <label asp-for="SubmitType" class="col-form-label col-sm-6 form-label">
+                                                    I hereby certify that all the details are correct and I am ready to proceed for filling I Card Appl.
+                                                    
+                                                </label>
                                                 <div class="col-sm-6">
                                                     <input asp-for="SubmitType" type="radio" value="1" onclick="registrationEnableDisabledField(this.value)" />
                                                     <label>Yes</label>
@@ -139,8 +144,11 @@
                                                     <span asp-validation-for="SubmitType" class="text-danger"></span>
                                                 </div>
                                             </div>
+                                           
                                             <div class="form-group row mb-2">
-                                                <label asp-for="Observations" class="col-form-label col-sm-6">Raised Observations</label>
+                                                <label  class="col-form-label col-sm-6">
+                                                    Raise Observation (s)
+                                                </label>
                                                 <div class="col-sm-6">
                                                     <textarea asp-for="Observations" rows="2" class="form-control" placeholder="" readonly></textarea>
                                                     <span id="lblObservations" name="lblObservations" class="text-danger"></span>
@@ -148,6 +156,16 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <div class="col-xl-12 Remarks d-none">
+                                        <div class="form-group row mb-2">
+                                            <label class="col-form-label col-sm-2">Remarks</label>
+                                            <div class="col-sm-10">
+
+                                                <select class="form-control select2 select2-accessible" multiple="" placeholder="Please select a Photos" style="width: 100%;" tabindex="-1" aria-hidden="true" name="Remarks" required id="ddlRemarks">
+                                                </select>
+                                            </div>
+                                        </div>
+                                        </div>
                                     <div class="col-xl-12">
                                         <div class="d-flax text-center">
                                             <button type="reset" id="btnclear" name="btnclear" class="btn btn-primary">Clear</button>

@@ -56,5 +56,15 @@ namespace BusinessLogicsLayer.BasicDet
         {
             return _iBasicDetailDB.GetTaskCountICardRequest(UserId, Type);
         }
+
+        public Task<List<DTONotificationResponse>> GetNotification(int UserId, int Type)
+        {
+            return _iBasicDetailDB.GetNotification(UserId, Type);
+        }
+
+        public Task<List<DTONotificationResponse>> GetNotificationRequestId(int UserId, int Type)
+        {
+            return _iBasicDetailDB.GetNotificationRequestId(UserId, Type);
+        }
     }
 }
