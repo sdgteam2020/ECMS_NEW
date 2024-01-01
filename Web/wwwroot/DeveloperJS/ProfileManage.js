@@ -1,6 +1,10 @@
 ﻿$(document).ready(function () {
     Reset();
     BindData()
+    $("#btnDomainAdd").click(function () {
+        Reset();
+        $("#AddNewDomain").modal('show');
+    });
     $("#txtSearch").keyup(function () {
         var eThis = $(this);
         if ($("input[type='radio'][name=choice]:checked").length > 0) {
@@ -90,27 +94,27 @@ function BindData() {
                     for (var i = 0; i < response.length; i++) {
 
                         listItem += "<tr>";
-                        listItem += "<td class='d-none'><span id='SregId'>" + response[i].Id + "</span></td>";
+                        listItem += "<td class='d-none'><span id='regId'>" + response[i].Id + "</span></td>";
                         listItem += "<td class='align-middle'>" + (i + 1) + "</td>";
-                        listItem += "<td class='align-middle'><span id='sus_no'>" + response[i].Id + "</span></td>";
-                        listItem += "<td class='align-middle'><span id='suffix'>" + response[i].DomainId + "</span></td>";
-                        listItem += "<td class='align-middle'><span id='unit_desc'>" + response[i].ArmyNo + "</span></td>";
-                        listItem += "<td class='align-middle'><span id='unit_desc'>" + response[i].RoleName + "</span></td>";
-                        listItem += "<td class='align-middle'><span id='unit_desc'>" + response[i].UpdatedOn + "</span></td>";
+                        listItem += "<td class='align-middle'><span id='reg_no'>" + response[i].Id + "</span></td>";
+                        listItem += "<td class='align-middle'><span id='domainId'>" + response[i].DomainId + "</span></td>";
+                        listItem += "<td class='align-middle'><span id='armyNo'>" + response[i].ArmyNo + "</span></td>";
+                        listItem += "<td class='align-middle'><span id='roleName'>" + response[i].RoleName + "</span></td>";
+                        listItem += "<td class='align-middle'><span id='updatedOn'>" + response[i].UpdatedOn + "</span></td>";
                         if (response[i].Mapped == true)
-                            listItem += "<td class='align-middle'><span id='unit_desc'><span class='badge badge-pill badge-success'>Yes</span></span></td>";
+                            listItem += "<td class='align-middle'><span id='domain_mapping'><span class='badge badge-pill badge-success'>Yes</span></span></td>";
                         else
-                            listItem += "<td class='align-middle'><span id='unit_desc'><span class='badge badge-pill badge-danger'>No</span></span></td>";
+                            listItem += "<td class='align-middle'><span id='domain_mapping'><span class='badge badge-pill badge-danger'>No</span></span></td>";
 
                         if (response[i].Active == true)
-                            listItem += "<td class='align-middle'><span id='unit_desc'><span class='badge badge-pill badge-success'>Yes</span></span></td>";
+                            listItem += "<td class='align-middle'><span><span class='badge badge-pill badge-success' id='domain_active'>Yes</span></span></td>";
                         else
-                            listItem += "<td class='align-middle'><span id='unit_desc'><span class='badge badge-pill badge-danger'>No</span></span></td>";
+                            listItem += "<td class='align-middle'><span><span class='badge badge-pill badge-danger' id='domain_active'>No</span></span></td>";
 
                         if (response[i].AdminFlag == true)
-                            listItem += "<td class='align-middle'><span id='unit_desc'><span class='badge badge-pill badge-success'>Verifed</span></span></td>";
+                            listItem += "<td class='align-middle'><span><span class='badge badge-pill badge-success' id='domain_approval'>Verifed</span></span></td>";
                         else
-                            listItem += "<td class='align-middle'><span id='unit_desc'><span class='badge badge-pill badge-danger'>Not Verify</span></span></td>";
+                            listItem += "<td class='align-middle'><span><span class='badge badge-pill badge-danger' id='domain_approval'>Not Verify</span></span></td>";
 
                         listItem += "<td class='align-middle'><span id='btnedit'><button type='button' class='cls-btnedit btn btn-icon btn-round btn-warning mr-1'><i class='fas fa-edit'></i></button></span></td>";
 
@@ -153,14 +157,27 @@ function BindData() {
                     var rows;
 
                     $("body").on("click", ".cls-btnedit", function () {
-                        /*  $("#AddNewM").modal('show');*/
-                        $("#txtSusno").val($(this).closest("tr").find("#sus_no").html());
-                        $("#txtSuffix").val($(this).closest("tr").find("#suffix").html());
-                        $("#txtUnitDesc").val($(this).closest("tr").find("#unit_desc").html());
-                        $("#txtAbbreviation").val($(this).closest("tr").find("#unit_abbreviation").html());
+                        $("#txtDomainId").val($(this).closest("tr").find("#domainId").html());
+                        $("#txtRole").val($(this).closest("tr").find("#roleName").html());
+                        $("#txtArmyNo").val($(this).closest("tr").find("#armyNo").html());
+                        $("#spnDomainRegId").html($(this).closest("tr").find("#regId").html());
+                        alert($(this).closest("tr").find("#domain_approval").html())
+                        if ($(this).closest("tr").find("#domain_approval").html() == 'Verifed' ) {
+                            $("#txtapprovalyes").prop("checked", true);
+                        }
+                        else {
+                            $("#txtapprovalno").prop("checked", true);
+                        }
 
-                        // alert($(this).closest("tr").find("#SunitId").html())
-                        $("#spnUnitId").html($(this).closest("tr").find("#SunitId").html());
+                        if ($(this).closest("tr").find("#domain_active").html() == 'Yes') {
+                            $("#txtactiveyes").prop("checked", true);
+                        }
+                        else {
+                            $("#txtactiveno").prop("checked", true);
+                        }
+
+                        $("#AddNewDomain").modal('show');
+                        $("#btnDomainsave").val("Update");
 
                     });
                 }

@@ -104,7 +104,11 @@ namespace DataAccessLayer
                                                Active=u.Active,
                                                UpdatedOn=u.UpdatedOn,
                                                Mapped = xtdm != null?true:false,
+                                               TrnDomainMappingId = xtdm != null ? xtdm.Id : 0,
+                                               TrnDomainMappingApptId = (short)(xtdm != null ? xtdm.ApptId : 0),
+                                               TrnDomainMappingUnitId = xtdm != null ? xtdm.UnitId : 0,
                                                ArmyNo = xup!=null? xup.ArmyNo:null,
+                                               UserId = xup != null ? xup.UserId : 0,
                                                RoleName = xr!=null? (xr.Name != null ? xr.Name : "Role name is blank."): "no role assign",
                                            }).Take(200).ToListAsync();
                     return allrecord;
@@ -129,7 +133,11 @@ namespace DataAccessLayer
                                                Active = xu != null ? xu.Active:null,
                                                UpdatedOn = xu != null ? xu.UpdatedOn:null,
                                                Mapped = xtdm != null ? true : null,
+                                               TrnDomainMappingId = xtdm != null ? xtdm.Id : 0,
+                                               TrnDomainMappingApptId = (short)(xtdm != null ? xtdm.ApptId : 0),
+                                               TrnDomainMappingUnitId = xtdm != null ? xtdm.UnitId : 0,
                                                ArmyNo = up.ArmyNo,
+                                               UserId = up != null ? up.UserId : 0,
                                                RoleName = xr != null ? (xr.Name != null ? xr.Name : "Role name is blank.") : null,
                                            }).Take(200).ToListAsync();
                     return allrecord;
