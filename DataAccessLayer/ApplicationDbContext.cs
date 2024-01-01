@@ -60,6 +60,14 @@ namespace DataAccessLayer
         public DbSet<MStepCounterStep> MStepCounterStep { get; set; }
         public DbSet<MTrnFwdType> MFwdType { get; set; }
         public DbSet<MICardType> MICardType { get; set; }
+
+        public DbSet<MTrnNotification> TrnNotification { get; set; }
+        public DbSet<MTrnNotificationDisplay> TrnNotificationDisplay { get; set; }
+
+        public DbSet<MRemarkType> MRemarkType { get; set; }
+        public DbSet<MRemarksApply> MRemarksApply { get; set; }
+        public DbSet<MRemarks> MRemarks { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);

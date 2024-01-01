@@ -4,6 +4,7 @@ using DataAccessLayer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccessLayer.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231229072653_v3")]
+    partial class v3
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -690,9 +693,6 @@ namespace DataAccessLayer.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<byte>("RemarksId"));
 
-                    b.Property<byte>("RemarkApplyId")
-                        .HasColumnType("tinyint");
-
                     b.Property<byte>("RemarkTypeId")
                         .HasColumnType("tinyint");
 
@@ -701,29 +701,32 @@ namespace DataAccessLayer.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("varchar(500)");
 
+                    b.Property<byte>("RemarksApplyId")
+                        .HasColumnType("tinyint");
+
                     b.HasKey("RemarksId");
 
-                    b.HasIndex("RemarkApplyId");
-
                     b.HasIndex("RemarkTypeId");
+
+                    b.HasIndex("RemarksApplyId");
 
                     b.ToTable("MRemarks");
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Master.MRemarksApply", b =>
                 {
-                    b.Property<byte>("RemarkApplyId")
+                    b.Property<byte>("RemarksApplyId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("tinyint");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<byte>("RemarkApplyId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<byte>("RemarksApplyId"));
 
                     b.Property<string>("RemarksApply")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("varchar(100)");
 
-                    b.HasKey("RemarkApplyId");
+                    b.HasKey("RemarksApplyId");
 
                     b.ToTable("MRemarksApply");
                 });
@@ -971,11 +974,6 @@ namespace DataAccessLayer.Migrations
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("RemarksIds")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("ServiceNo")
                         .IsRequired()
@@ -1613,15 +1611,15 @@ namespace DataAccessLayer.Migrations
 
             modelBuilder.Entity("DataTransferObject.Domain.Master.MRemarks", b =>
                 {
-                    b.HasOne("DataTransferObject.Domain.Master.MRemarksApply", "MRemarksApply")
-                        .WithMany()
-                        .HasForeignKey("RemarkApplyId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("DataTransferObject.Domain.Master.MRemarkType", "MRemarkType")
                         .WithMany()
                         .HasForeignKey("RemarkTypeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("DataTransferObject.Domain.Master.MRemarksApply", "MRemarksApply")
+                        .WithMany()
+                        .HasForeignKey("RemarksApplyId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 

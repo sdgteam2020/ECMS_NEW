@@ -11,6 +11,7 @@ namespace DataAccessLayer.BaseInterfaces
     {
         public Task<MTrnICardRequest> GetByAspNetUserBy(int AspnetuserId);
         public Task<bool> GetRequestPending(int BasicDetailId);
+        public Task<int> GetUserIdByRequestId(int RequestId);
 
     }
 }

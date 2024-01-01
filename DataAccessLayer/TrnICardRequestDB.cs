@@ -11,6 +11,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace DataAccessLayer
 {
@@ -44,6 +46,24 @@ namespace DataAccessLayer
                 {
                     return false;
                 }
+            }
+        }
+
+        public async Task<int> GetUserIdByRequestId(int RequestId)
+        {
+           string query = "Select AspNetUsersId from TrnICardRequest icard"+
+                        " inner join TrnDomainMapping map on icard.TrnDomainMappingId=map.Id"+
+                        " where RequestId=@RequestId and [Status]=0";
+            using (var connection = _contextDP.CreateConnection())
+            {
+                //data.MRank.RankAbbreviation
+                //data.MArmedType.Abbreviation
+              
+                var ret = await connection.QueryFirstAsync<int>(query, new { RequestId });
+
+
+
+                return Convert.ToInt32(ret);
             }
         }
     }

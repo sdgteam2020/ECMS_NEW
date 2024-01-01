@@ -28,6 +28,7 @@ using BusinessLogicsLayer.BasicDetTemp;
 using BusinessLogicsLayer.BdeCate;
 using Microsoft.IdentityModel.Tokens;
 using Azure;
+using BusinessLogicsLayer.Master;
 
 namespace Web.Controllers
 {
@@ -51,12 +52,15 @@ namespace Web.Controllers
         private readonly IDataProtector protector;
         private readonly TimeZoneInfo INDIAN_ZONE = TimeZoneInfo.FindSystemTimeZoneById("India Standard Time");
         private readonly ILogger<BasicDetailController> _logger;
+        private readonly INotificationBL _INotificationBL;
+        private readonly IMasterBL _IMasterBL;
+
         public DateTime dateTimenow;
         public BasicDetailController(IBasicDetailBL basicDetailBL, IBasicDetailTempBL basicDetailTempBL, IService service, IMapper mapper,
             UserManager<ApplicationUser> userManager, IWebHostEnvironment hostingEnvironment, IDataProtectionProvider dataProtectionProvider,
                               DataProtectionPurposeStrings dataProtectionPurposeStrings, ILogger<BasicDetailController> logger, IStepCounterBL iStepCounterBL, 
                               ITrnFwnBL iTrnFwnBL, ITrnICardRequestBL iTrnICardRequestBL, IDomainMapBL iDomainMapBL
-            ,IBasicUploadBL basicUploadBL, IBasicAddressBL basicAddressBL, IBasicinfoBL basicinfoBL, IRankBL rankBL
+            ,IBasicUploadBL basicUploadBL, IBasicAddressBL basicAddressBL, IBasicinfoBL basicinfoBL, IRankBL rankBL, INotificationBL notificationBL, IMasterBL masterBL
             )
         {
             this.basicDetailBL = basicDetailBL;
@@ -79,15 +83,19 @@ namespace Web.Controllers
             this.basicAddressBL = basicAddressBL;
             this.basicuploadBL = basicUploadBL;
             this.rankBL=rankBL;
+            _INotificationBL = notificationBL;
+            _IMasterBL = masterBL;
         }
 
         [Authorize(Roles = "Admin,User")]
         public async Task<ActionResult> Index(string Id)
         {
+            MTrnNotification noti = new MTrnNotification();
             int retint = 0;int type = 1;
             var userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
             int stepcounter = 0;
-
+            noti.ReciverAspNetUsersId = userId;
+            noti.DisplayId = 0;
             if (!string.IsNullOrEmpty(Id))
             { 
             var base64EncodedBytes = System.Convert.FromBase64String(Id);
@@ -136,18 +144,21 @@ namespace Web.Controllers
             { ViewBag.Title = "I-Card Rejectd From HQ 54"; type = 1; stepcounter = 10; }
             else if (retint == 555)
             { ViewBag.Title = "I-Card Approved From HQ 54"; type = 2; stepcounter = 5; }
-
+            noti.DisplayId = stepcounter;
             var allrecord = await Task.Run(()=> basicDetailBL.GetALLForIcardSttaus(Convert.ToInt32(userId),stepcounter , type)) ;
             _logger.LogInformation(1001, "Index Page Of Basic Detail View");
+            await _INotificationBL.UpdateRead(noti);
 
-           
             return View(allrecord);
         }
         [Authorize(Roles = "Admin,User")]
         public async Task<ActionResult> ApprovalForIO(string Id)
         {
+            MTrnNotification noti=new MTrnNotification();
             int type = 0; int retint = 0; int stepcounter = 0;
             var userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier)); //SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").UserId;
+            noti.ReciverAspNetUsersId = userId;
+            noti.DisplayId = 0;
             if (!string.IsNullOrEmpty(Id))
             {
                 var base64EncodedBytes = System.Convert.FromBase64String(Id);
@@ -165,6 +176,8 @@ namespace Web.Controllers
                 ViewBag.Title = "I-Card For Approval";
                 ViewBag.Id = 1;
                 type = 2;
+                noti.DisplayId = 2;
+                
             }
             else if (retint == 22)
             {
@@ -205,10 +218,11 @@ namespace Web.Controllers
             { ViewBag.Title = "Rejectd I-Card "; type = 1; stepcounter = 10; }
             else if (retint == 555)
             { ViewBag.Title = "Approved I-Card "; type = 3; stepcounter = 6; }
-
+            noti.DisplayId = stepcounter;
             var allrecord = await Task.Run(() => basicDetailBL.GetALLBasicDetail(Convert.ToInt32(userId), stepcounter, type));
             _logger.LogInformation(1001, "Index Page Of Basic Detail View");
 
+            await _INotificationBL.UpdateRead(noti);
             return View(allrecord);
         }
 
@@ -360,6 +374,7 @@ namespace Web.Controllers
                             //basicDetailTemp.PermanentAddress = model.PermanentAddress;
                             basicDetailTemp.Observations = model.Observations;
                             basicDetailTemp.Updatedby = model.Updatedby;
+                            basicDetailTemp.RemarksIds = model.RemarksIds;
                             basicDetailTemp.UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
                             await basicDetailTempBL.Add(basicDetailTemp);
                             TempData["success"] = "Request Submited Successfully.";
@@ -1298,6 +1313,14 @@ namespace Web.Controllers
         {
             return Json(await basicDetailBL.ICardHistory(RequestId));
         }
+
+        public async Task<IActionResult> GetRemarks(DTORemarksRequest Data)
+        {
+            return Json(await _IMasterBL.GetRemarksByTypeId(Data));
+        }
+
+
+
 
         public static DirectoryInfo GetCreateMyFolder(string baseFolder)
         {

@@ -116,9 +116,14 @@ namespace BusinessLogicsLayer
             //////Api Calll/////////////
             services.AddTransient<IAPIBL, APIBL>();
 
+            services.AddTransient<INotificationBL, NotificationBL>();
+            services.AddTransient<INotificationDB, NotificationDB>();
 
             services.AddTransient<IAccountBL, AccountBL>();
             services.AddTransient<IAccountDB, AccountDB>();
+
+            services.AddTransient<IMasterBL, MasterBL>();
+            services.AddTransient<IMasterDB, MasterDB>();
             //services.AddDbContext<ApplicationDbContext>(opt => opt.UseSqlServer("Server=SDG20\\SQLEXPRESS; Database=AFSAC;Integrated Security=True;MultipleActiveResultSets=True;TrustServerCertificate=True"));
             //services.AddDbContext<ApplicationDbContext>(opt => opt.UseSqlServer("Server=.\\sqlexpress; Database=AFSAC;User Id=sa; Password=Admin@2018;MultipleActiveResultSets=True;TrustServerCertificate=True"));
             // services.AddDbContext<ApplicationDbContext>(opt => opt.UseSqlServer("Server=192.168.10.63; database=AFSAC_New; User Id=sa; Password=Admin@2018;Connect Timeout=30;TrustServerCertificate=True; MultipleActiveResultSets=true"));

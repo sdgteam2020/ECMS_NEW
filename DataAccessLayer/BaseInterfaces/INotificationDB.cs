@@ -9,13 +9,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BusinessLogicsLayer.Bde
+namespace DataAccessLayer.BaseInterfaces
 {
-    public interface ITrnICardRequestBL : IGenericRepository<MTrnICardRequest>
+    public interface INotificationDB : IGenericRepositoryDL<MTrnNotification>
     {
-        public Task<MTrnICardRequest> GetByAspNetUserBy(int AspnetuserId);
-        public Task<bool> GetRequestPending(int BasicDetailId);
-        public Task<int> GetUserIdByRequestId(int RequestId);
 
+        public Task<bool> UpdateRead(MTrnNotification Data);
+        
     }
 }

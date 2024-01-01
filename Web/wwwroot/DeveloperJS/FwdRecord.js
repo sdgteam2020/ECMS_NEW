@@ -169,12 +169,15 @@ $(document).ready(function () {
                 var spnRequestId = $("#spnCurrentspnRequestId").html();
                 var Counter = parseInt($("#spnStepCounter").html());
                 if (Counter == 1 || Counter == 7 || Counter == 8 || Counter == 9 || Counter == 10) {
+
+
                     Counter = 2;
+
                 }else
                 {
                    Counter= parseInt($("#spnStepCounter").html()) + 1;
                 }
-
+               
                
                 UpdateStepCounter(spnStepId, spnRequestId, Counter,"A");
 
@@ -535,6 +538,7 @@ function UpdateStepCounter(stepId, spnRequestId, Counter,Flag) {
                 } else {
                     ForwardTo(spnRequestId, Counter);
                 }
+                SaveNotification(1, Counter, $("#spnFwdToAspNetUsersId").html(), spnRequestId)
             }
         }
 

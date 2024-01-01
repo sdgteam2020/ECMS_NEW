@@ -37,7 +37,9 @@ $(document).ready(function () {
 
         GetAllRegistrationApplyFor(2);
     });
-
+    $("#btntokenrefresh").click(function () {
+        GetTokenDetails1("FetchUniqueTokenDetails", "txtApplyForArmyNo");
+    });
     $("#btnNext").click(function () {
         if (parseInt(OffType)!= 0 && parseInt(RegistrationApplyFor) != 0 && parseInt(lCardType) != 0)
         {
@@ -181,14 +183,16 @@ function AddAllCardType() {
         $("#txtApplyForArmyNo").val("");
         if (OffType == 1 && RegistrationApplyFor == 1) {
             GetTokenDetails1("FetchUniqueTokenDetails", "txtApplyForArmyNo");
+            $("#btntokenrefresh").removeClass("d-none");
 
         }
         else if (OffType == 1 && RegistrationApplyFor != 1) {
             GetTokenDetails1("FetchUniqueTokenDetails", "txtApplyForArmyNo");
-
+            $("#btntokenrefresh").removeClass("d-none");
         }
         else if (OffType == 2) {
             $("#txtApplyForArmyNo").removeClass("d-none");
+            $("#btntokenrefresh").addClass("d-none");
         }
 
         // alert($(this).closest("button").find(".spnRegistration").html());

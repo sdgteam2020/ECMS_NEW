@@ -20,8 +20,9 @@ namespace BusinessLogicsLayer.Service
         public IEnumerable<SelectListItem> GetBloodGroup();
         public IEnumerable<SelectListItem> GetArmyNumberPart1();
         public IEnumerable<SelectListItem> GetArmyNumberPart3();
-        public IEnumerable<SelectListItem> GetAppointment(byte FormationId);
-        public IEnumerable<SelectListItem> GetRank(byte Type);
+        public IEnumerable<SelectListItem> GetAppointment(short FormationId);
+        public IEnumerable<SelectListItem> GetFormation();
+        public IEnumerable<SelectListItem> GetRank(int Type);
         public IEnumerable<SelectListItem> GetArmedType();
         public IEnumerable<SelectListItem> GetTypeOfUnit();
         public IEnumerable<SelectListItem> GetTemp();

@@ -26,6 +26,12 @@ namespace DataTransferObject.Requests
         [MaxLength(50, ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "MaxLengthError")]
         [RegularExpression(@"^[\w ]{1,50}$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
         public string Name { get; set; } = string.Empty;
+
+        [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
+        public byte FormationId { get; set; }
+
+        [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
+        public byte ApptId { get; set; }
         public MAppointment? MAppointment { get; set; }
         public Boolean IntOffr { get; set; }
     }

@@ -36,5 +36,9 @@ namespace DataTransferObject.Domain.Model
 
         [NotMapped]
         public string? EncryptedId { get; set; }
+
+        [StringLength(100)]
+        [Column(TypeName = "varchar(100)")]
+        public string RemarksIds { get; set; } = string.Empty;
     }
 }

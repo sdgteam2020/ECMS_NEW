@@ -4,6 +4,7 @@ using DataAccessLayer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccessLayer.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231229042742_v2")]
+    partial class v2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -664,70 +667,6 @@ namespace DataAccessLayer.Migrations
                     b.ToTable("MRegistration");
                 });
 
-            modelBuilder.Entity("DataTransferObject.Domain.Master.MRemarkType", b =>
-                {
-                    b.Property<byte>("RemarkTypeId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("tinyint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<byte>("RemarkTypeId"));
-
-                    b.Property<string>("RemarksType")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("varchar(500)");
-
-                    b.HasKey("RemarkTypeId");
-
-                    b.ToTable("MRemarkType");
-                });
-
-            modelBuilder.Entity("DataTransferObject.Domain.Master.MRemarks", b =>
-                {
-                    b.Property<byte>("RemarksId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("tinyint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<byte>("RemarksId"));
-
-                    b.Property<byte>("RemarkApplyId")
-                        .HasColumnType("tinyint");
-
-                    b.Property<byte>("RemarkTypeId")
-                        .HasColumnType("tinyint");
-
-                    b.Property<string>("Remarks")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("varchar(500)");
-
-                    b.HasKey("RemarksId");
-
-                    b.HasIndex("RemarkApplyId");
-
-                    b.HasIndex("RemarkTypeId");
-
-                    b.ToTable("MRemarks");
-                });
-
-            modelBuilder.Entity("DataTransferObject.Domain.Master.MRemarksApply", b =>
-                {
-                    b.Property<byte>("RemarkApplyId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("tinyint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<byte>("RemarkApplyId"));
-
-                    b.Property<string>("RemarksApply")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("varchar(100)");
-
-                    b.HasKey("RemarkApplyId");
-
-                    b.ToTable("MRemarksApply");
-                });
-
             modelBuilder.Entity("DataTransferObject.Domain.Master.MStepCounterStep", b =>
                 {
                     b.Property<byte>("StepId")
@@ -971,11 +910,6 @@ namespace DataAccessLayer.Migrations
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("RemarksIds")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("ServiceNo")
                         .IsRequired()
@@ -1609,25 +1543,6 @@ namespace DataAccessLayer.Migrations
                         .IsRequired();
 
                     b.Navigation("MArmedType");
-                });
-
-            modelBuilder.Entity("DataTransferObject.Domain.Master.MRemarks", b =>
-                {
-                    b.HasOne("DataTransferObject.Domain.Master.MRemarksApply", "MRemarksApply")
-                        .WithMany()
-                        .HasForeignKey("RemarkApplyId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("DataTransferObject.Domain.Master.MRemarkType", "MRemarkType")
-                        .WithMany()
-                        .HasForeignKey("RemarkTypeId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("MRemarkType");
-
-                    b.Navigation("MRemarksApply");
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Master.MapUnit", b =>
