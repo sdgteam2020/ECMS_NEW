@@ -28,8 +28,7 @@ namespace DataTransferObject.Requests
         [RegularExpression(@"^[\w ]{1,50}$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
         public string Name { get; set; } = string.Empty;
 
-        [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
-        public short ApptId { get; set; }
+       
         
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
         public short ApptId { get; set; }
