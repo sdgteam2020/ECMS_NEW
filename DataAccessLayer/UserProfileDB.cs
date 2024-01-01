@@ -168,13 +168,13 @@ namespace DataAccessLayer
             try
             {
                 var ret = await (from user in _context.UserProfile
-                                 //join app in _context.MAppointment on user.ApptId equals app.ApptId
-                                 //join forma in _context.MFormation on app.FormationId equals forma.FormationId
                                  join rank in _context.MRank on user.RankId equals rank.RankId
                                  join map in _context.TrnDomainMapping on user.UserId equals map.UserId into mapp
                                  from xmapp in mapp.DefaultIfEmpty()
                                  join Uni in _context.MUnit on xmapp.UnitId equals Uni.UnitId into muni
                                  from xmuni in muni.DefaultIfEmpty()
+                                 join Appo in _context.MAppointment on xmapp.ApptId equals Appo.ApptId into mappo
+                                 from xmappo in mappo.DefaultIfEmpty()
                                  join Apluser in _context.Users on xmapp.AspNetUsersId equals Apluser.Id into mapluser
                                  from xapluser in mapluser.DefaultIfEmpty()
                                  where user.ArmyNo == ArmyNo 
@@ -184,15 +184,13 @@ namespace DataAccessLayer
                                      ArmyNo = user.ArmyNo,
                                      UserId = user.UserId,
                                      IntOffr = user.IntOffr,
-                                     //FormationId = forma.FormationId,
-                                     //FormationName = forma.FormationName,
-                                     //ApptId = app.ApptId,
-                                     //AppointmentName = app.AppointmentName,
                                      RankName = rank.RankName,
                                      RankId = rank.RankId,
-                                     TrnDomainMappingId = xmapp!=null?xmapp.Id : 0,
-                                     UnitId = xmapp != null ? xmapp.UnitId : 0,
-                                     UnitName = xmapp != null ? xmuni.UnitName : null,
+                                     TrnDomainMappingId = xmapp != null? xmapp.Id : 0,
+                                     UnitId = xmuni != null ? xmuni.UnitId : 0,
+                                     UnitName = xmuni != null ? xmuni.UnitName : null,
+                                     ApptId = (short)(xmappo != null ? xmappo.ApptId : 0),
+                                     AppointmentName = xmappo != null ? xmappo.AppointmentName:"No Appointment" ,
                                      DomainId = xapluser != null ?xapluser.DomainId : null
                                  }
                          ).Distinct().SingleOrDefaultAsync();

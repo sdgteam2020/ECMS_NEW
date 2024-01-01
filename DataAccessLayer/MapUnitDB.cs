@@ -89,8 +89,7 @@ namespace DataAccessLayer
                            //&& (unit.DivId == 0 ? uni.DivId == uni.DivId : uni.DivId == unit.DivId)
                            //&& (unit.BdeId == 0 ? uni.BdeId == uni.BdeId : uni.BdeId == unit.BdeId)
                        join MUni in _context.MUnit on uni.UnitId equals MUni.UnitId
-                       join Com in _context.MComd
-                       on uni.ComdId equals Com.ComdId
+                       join Com in _context.MComd on uni.ComdId equals Com.ComdId
                        //   on new { uni.ComdId } equals new { Com.ComdId }
                        join cor in _context.MCorps on uni.CorpsId equals cor.CorpsId
                        join div in _context.MDiv on uni.DivId equals div.DivId

@@ -17,13 +17,13 @@ namespace DataTransferObject.Requests
         public int UserId { get; set; }
         public int TrnDomainMappingUnitId { get; set; }
         public int TrnDomainMappingId { get; set; }
+        public short TrnDomainMappingApptId { get; set; }
         public int AspNetUsersId { get; set; }
         public string ICNOInput { get; set; } = string.Empty;
         public string? ICNoDomainId { get; set; }
         public int ICNoUserId { get; set; }
         public int ICNoTrnDomainMappingUnitId { get; set; }
         public int ICNoTrnDomainMappingId { get; set; }
-        public string? ICNoUnitName { get; set; }
-
+        public short ICNoTrnDomainMappingApptId { get; set; }
     }
 }

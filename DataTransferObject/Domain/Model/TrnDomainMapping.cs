@@ -30,7 +30,7 @@ namespace DataTransferObject.Domain.Model
 
         [ForeignKey("MAppointment"), DatabaseGenerated(DatabaseGeneratedOption.None)]
         [Required]
-        public byte ApptId { get; set; }
+        public short ApptId { get; set; }
         public MAppointment? MAppointment { get; set; }
     }
 }

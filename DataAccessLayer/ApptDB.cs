@@ -46,6 +46,17 @@ namespace DataAccessLayer
 
             return Task.FromResult(GetALL);
         }
+        public async Task<List<DTOAppointmentResponse>> GetALLByAppointmentName(string AppointmentName)
+        {
+            var GetALL = (from A in _context.MAppointment
+                          where A.AppointmentName.Contains(AppointmentName)
+                          select new DTOAppointmentResponse
+                          {
+                              ApptId = A.ApptId,
+                              AppointmentName = A.AppointmentName,
+                          }).Take(5).ToList();
+            return await Task.FromResult(GetALL);
+        }
 
         public Task<List<DTOAppointmentResponse>> GetByFormationId(int FormationId)
         {

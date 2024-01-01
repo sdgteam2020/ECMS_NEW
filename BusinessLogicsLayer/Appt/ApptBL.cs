@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using DataTransferObject.Response;
 using BusinessLogicsLayer.Formation;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace BusinessLogicsLayer.Appt
 {
@@ -33,6 +34,10 @@ namespace BusinessLogicsLayer.Appt
         public Task<bool> GetByName(MAppointment Data)
         {
             return _apptDB.GetByName(Data);
+        }
+        public async Task<List<DTOAppointmentResponse>> GetALLByAppointmentName(string AppointmentName)
+        {
+            return await _apptDB.GetALLByAppointmentName(AppointmentName);
         }
     }
 }

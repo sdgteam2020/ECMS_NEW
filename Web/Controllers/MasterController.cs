@@ -864,6 +864,18 @@ namespace Web.Controllers
                 return Json(KeyConstants.InternalServerError);
             }
         }
+        public async Task<IActionResult> GetALLByAppointmentName(string AppointmentName)
+        {
+            try
+            {
+                return Json(await unitOfWork.Appt.GetALLByAppointmentName(AppointmentName));
+            }
+            catch (Exception ex)
+            {
+                return Json(KeyConstants.InternalServerError);
+            }
+
+        }
         #endregion End Appointment
 
         #region Rank Page

@@ -1,9 +1,11 @@
 ﻿using DataAccessLayer.BaseInterfaces;
 using DataTransferObject.Domain;
 using DataTransferObject.Domain.Identitytable;
+using DataTransferObject.Domain.Master;
 using DataTransferObject.Domain.Model;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System.Runtime.Intrinsics.Arm;
 
 namespace DataAccessLayer
 {
@@ -67,11 +69,13 @@ namespace DataAccessLayer
                                     select new TrnDomainMapping
                                     {
                                         Id = xtdm != null? xtdm.Id:0,
+                                        UnitId = xtdm != null ? xtdm.UnitId : 0,
+                                        MapUnit = xtdm != null ? xtdm.MapUnit : null,
+                                        ApptId = (short)(xtdm != null ? xtdm.ApptId : 0),
                                         AspNetUsersId = au != null ? au.Id:0,
-                                        UserId = xtdm != null ? xtdm.UserId:0,
-                                        UnitId = xtdm != null ? xtdm.UnitId:0,
-                                        ApplicationUser = au != null ? au:null,
-                                        MUserProfile = xup!=null? xup:null,
+                                        UserId = xup != null ? xup.UserId : null,
+                                        ApplicationUser = au != null ? au : null,
+                                        MUserProfile = xup != null ? xup : null,
                                     }).SingleOrDefaultAsync();
                 return (TrnDomainMapping?)result;
             }

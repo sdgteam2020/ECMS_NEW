@@ -33,6 +33,22 @@
         .swal2-confirm, .swal2-styled {
             background: #D97924 !important;
         }
+
+        .login-wrap {
+            margin-top: 50px;
+            margin-bottom: 100px;
+           
+            /* border: 7px double #242c6d; */
+            border-radius: 10px;
+            box-shadow: 0px 0px 40px rgb(217 121 4 / 23%);
+            z-index: 1;
+            margin-left:32%;
+        }
+        body{
+            background-image: url('/images/logo-white.jpg');
+            background-size:cover;
+            background-repeat:no-repeat;
+        }
     </style>
 </head>
 
@@ -40,17 +56,6 @@
     <div class="page">
         <div class="container-fluid">
             <div class="row">
-                <div class="align-items-center col-lg-6 col-md-6 col-xl-8 d-flex login-img-block">
-
-
-                    <div class="mb-4 logo-sec">
-
-
-
-                        <h2 class="ml-sm-3"> <span>AFSAC</span> (Armed Forced Secure Access Card ) </h2>
-                    </div>
-
-                </div>
                 <div class="col-md-6 col-lg-6 col-xl-4 bg-white login-wrap align-items-center">
                     <div class="login py-2 py-sm-4">
                         <div class="row">
@@ -68,25 +73,24 @@
                                                     <label asp-for="ICNo"></label>
                                                     <input asp-for="ICNo" class="form-control" placeholder="Enter ICNo" />
                                                     <span asp-validation-for="ICNo" class="text-danger"></span>
+                                                    <label id="tokenmsg"></label>
                                                 </div>
                                                 <div class="text-center" >
-                                                    <button type="button" class="btn btn-primary mt-2">Refresh To Fetch Token Details</button>
+                                                    <button type="button" class="btn btn-primary mt-2" onclick="GetTokenDetails1('FetchUniqueTokenDetails' ,'ICNo');">Refresh To Fetch Token Details</button>
                                                     <button type="submit" class="btn btn-primary mt-2">Proceed</button>
                                                 </div>
                                                 @if (TempData["success"] != null)
                                                 {
-                                                    <div class="alert alert-success alert-dismissible">
-                                                        @* alert-dismissible fade show spnmsg d-none *@
-                                                        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                                                        <span class="text-success">@TempData["success"]</span>
+                                                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                                        <span class="text-success">@Html.Raw(@TempData["success"])</span>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                                                     </div>
                                                 }
                                                 @if (TempData["error"] != null)
                                                 {
-                                                    <div class="alert alert-danger alert-dismissible">
-                                                        @*   spnmsg d-none *@
-                                                        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                                                        <span class="text-danger">@TempData["error"]</span>
+                                                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                                        <span class="text-danger">@Html.Raw(@TempData["error"])</span>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                                                     </div>
                                                 }
                                                 @{
@@ -97,31 +101,28 @@
                                                     {
                                                         dTOTempSession = SessionHeplers.GetObject<DTOTempSession>(HttpContextAccessor.HttpContext.Session, "IMData");
                                                         m1.Append("Status : " + dTOTempSession.Status);
-                                                        m1.Append(", AdminFlag : " + dTOTempSession.AdminFlag);
-                                                        m1.Append(", DomainId : " + dTOTempSession.DomainId);
-                                                        m1.Append(", RoleName : " + dTOTempSession.RoleName);
-                                                        m1.Append(", ICNO : " + dTOTempSession.ICNO);
-                                                        m1.Append(", UserId : " + dTOTempSession.UserId);
-                                                        m1.Append(", TrnDomainMappingUnitId : " + dTOTempSession.TrnDomainMappingUnitId);
-                                                        m1.Append(", TrnDomainMappingId : " + dTOTempSession.TrnDomainMappingId);
-                                                        m1.Append(", AspNetUsersId : " + dTOTempSession.AspNetUsersId);
+                                                        m1.Append(",<br/> AdminFlag : " + dTOTempSession.AdminFlag);
+                                                        m1.Append(",<br/> DomainId : " + dTOTempSession.DomainId);
+                                                        m1.Append(",<br/> RoleName : " + dTOTempSession.RoleName);
+                                                        m1.Append(",<br/> ICNO : " + dTOTempSession.ICNO);
+                                                        m1.Append(",<br/> UserId : " + dTOTempSession.UserId);
+                                                        m1.Append(",<br/> TrnDomainMappingUnitId : " + dTOTempSession.TrnDomainMappingUnitId);
+                                                        m1.Append(",<br/> TrnDomainMappingId : " + dTOTempSession.TrnDomainMappingId);
+                                                        m1.Append(",<br/> AspNetUsersId : " + dTOTempSession.AspNetUsersId);
 
                                                         m2.Append("ICNoDomainId : " + dTOTempSession.ICNoDomainId);
-                                                        m2.Append(", ICNoTrnDomainMappingUnitId : " + dTOTempSession.ICNoTrnDomainMappingUnitId);
-                                                        m2.Append(", ICNoUnitName : " + dTOTempSession.ICNoUnitName);
+                                                        m2.Append(",<br/> ICNoTrnDomainMappingUnitId : " + dTOTempSession.ICNoTrnDomainMappingUnitId);
                                                     }
                                                 }
                                                 @if (dTOTempSession!=null)
                                                 {
-                                                    <div class="alert alert-danger alert-dismissible">
-                                                        @*   spnmsg d-none *@
-                                                        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                                                        <span class="text-danger text-break">@m1</span>
+                                                    <div class="alert alert-info alert-dismissible fade show" role="alert">
+                                                        <span class="text-info text-break">@Html.Raw(@m1)</span>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                                                     </div>
-                                                    <div class="alert alert-danger alert-dismissible">
-                                                        @*   spnmsg d-none *@
-                                                        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                                                        <span class="text-danger text-break">@m2</span>
+                                                    <div class="alert alert-info alert-dismissible fade show" role="alert">
+                                                        <span class="text-info text-break">@Html.Raw(@m2)</span>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                                                     </div>
                                                 }
                                             </form>
@@ -138,6 +139,7 @@
     <script asp-src-include="~/lib/jquery/jquery.min.js"></script>
     <script asp-src-include="~/lib/jquery-validate/jquery.validate.js" defer></script>
     <script asp-src-include="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js" defer></script>
+    <script asp-src-include="~/developerjs/token.js"></script>
     <script asp-src-include="~/bootstrap/js/bootstrap.min.js"></script>
     <script asp-src-include="~/lib/bootstrap/dist/js/bootstrap.min.js"></script>
     @* <script src="~/fonts/feather/feather.min.js"></script> *@

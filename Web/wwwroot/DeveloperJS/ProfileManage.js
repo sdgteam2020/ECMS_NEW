@@ -1,0 +1,244 @@
+﻿$(document).ready(function () {
+    Reset();
+    BindData()
+    $("#txtSearch").keyup(function () {
+        var eThis = $(this);
+        if ($("input[type='radio'][name=choice]:checked").length > 0) {
+            if ($("input[type='radio'][name=choice]:checked").val() == "Id") {
+                var num_val = parseInt(eThis.val()); 
+                if (isNaN(num_val)) {
+                    alert("Enter only number");
+                    eThis.val('')
+                }
+                else {
+                    eThis.val(num_val)
+                    BindData()
+                }
+            }
+            else {
+                BindData()
+            }
+        }
+        else {
+            alert("Select Choice");
+        }
+    });
+ 
+
+    $("#btnsave").click(function () {
+        if ($("#SaveForm")[0].checkValidity()) {
+
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be Save!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, Save it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Save();
+                }
+            })
+
+        } else {
+            $("#SaveForm")[0].reportValidity();
+        }
+    });
+});
+
+function BindData() {
+    var listItem = "";
+    var userdata =
+    {
+        "Search": $("#txtSearch").val(),
+        "Choice": $("input[type='radio'][name=choice]:checked").val()
+    };
+    $.ajax({
+        url: '/Account/GetAllProfileManage',
+        contentType: 'application/x-www-form-urlencoded',
+        data: userdata,
+        type: 'POST',
+
+        success: function (response) {
+            if (response != "null" && response != null) {
+
+                if (response == InternalServerError) {
+                    Swal.fire({
+                        text: errormsg
+                    });
+
+                }
+                else if (response.length == 0) {
+                    $("#tbldata").DataTable().destroy();
+
+                    $("#DetailBody").html(listItem);
+                    memberTable = $('#tbldata').DataTable({
+                        "language": {
+                            "emptyTable": "No data available"
+                        }
+                    });
+
+
+                }
+
+                else {
+
+                    $("#tbldata").DataTable().destroy();
+
+                    for (var i = 0; i < response.length; i++) {
+
+                        listItem += "<tr>";
+                        listItem += "<td class='d-none'><span id='SregId'>" + response[i].Id + "</span></td>";
+                        listItem += "<td class='align-middle'>" + (i + 1) + "</td>";
+                        listItem += "<td class='align-middle'><span id='sus_no'>" + response[i].Id + "</span></td>";
+                        listItem += "<td class='align-middle'><span id='suffix'>" + response[i].DomainId + "</span></td>";
+                        listItem += "<td class='align-middle'><span id='unit_desc'>" + response[i].ArmyNo + "</span></td>";
+                        listItem += "<td class='align-middle'><span id='unit_desc'>" + response[i].RoleName + "</span></td>";
+                        listItem += "<td class='align-middle'><span id='unit_desc'>" + response[i].UpdatedOn + "</span></td>";
+                        if (response[i].Mapped == true)
+                            listItem += "<td class='align-middle'><span id='unit_desc'><span class='badge badge-pill badge-success'>Yes</span></span></td>";
+                        else
+                            listItem += "<td class='align-middle'><span id='unit_desc'><span class='badge badge-pill badge-danger'>No</span></span></td>";
+
+                        if (response[i].Active == true)
+                            listItem += "<td class='align-middle'><span id='unit_desc'><span class='badge badge-pill badge-success'>Yes</span></span></td>";
+                        else
+                            listItem += "<td class='align-middle'><span id='unit_desc'><span class='badge badge-pill badge-danger'>No</span></span></td>";
+
+                        if (response[i].AdminFlag == true)
+                            listItem += "<td class='align-middle'><span id='unit_desc'><span class='badge badge-pill badge-success'>Verifed</span></span></td>";
+                        else
+                            listItem += "<td class='align-middle'><span id='unit_desc'><span class='badge badge-pill badge-danger'>Not Verify</span></span></td>";
+
+                        listItem += "<td class='align-middle'><span id='btnedit'><button type='button' class='cls-btnedit btn btn-icon btn-round btn-warning mr-1'><i class='fas fa-edit'></i></button></span></td>";
+
+
+                        /*    listItem += "<td class='nowrap'><button type='button' class='cls-btnSend btn btn-outline-success mr-1'>Send To Verification</button></td>";*/
+                        listItem += "</tr>";
+
+                    }
+
+                    $("#DetailBody").html(listItem);
+                    $("#lblTotal").html(response.length - 1);
+
+                    memberTable = $('#tbldata').DataTable({
+                        retrieve: true,
+                        lengthChange: false,
+                        searching: false,
+                        "order": [[2, "asc"]],
+                        buttons: [{
+                            extend: 'copy',
+                            exportOptions: {
+                                columns: "thead th:not(.noExport)"
+                            }
+                        }, {
+                            extend: 'excel',
+                            exportOptions: {
+                                columns: "thead th:not(.noExport)"
+                            }
+                        }, {
+                            extend: 'pdfHtml5',
+                            orientation: 'landscape',
+                            pageSize: 'LEGAL',
+                            exportOptions: {
+                                columns: "thead th:not(.noExport)"
+                            }
+                        }]
+                    });
+
+                    memberTable.buttons().container().appendTo('#tbldata_wrapper .col-md-6:eq(0)');
+
+                    var rows;
+
+                    $("body").on("click", ".cls-btnedit", function () {
+                        /*  $("#AddNewM").modal('show');*/
+                        $("#txtSusno").val($(this).closest("tr").find("#sus_no").html());
+                        $("#txtSuffix").val($(this).closest("tr").find("#suffix").html());
+                        $("#txtUnitDesc").val($(this).closest("tr").find("#unit_desc").html());
+                        $("#txtAbbreviation").val($(this).closest("tr").find("#unit_abbreviation").html());
+
+                        // alert($(this).closest("tr").find("#SunitId").html())
+                        $("#spnUnitId").html($(this).closest("tr").find("#SunitId").html());
+
+                    });
+                }
+            }
+            else {
+                $("#tbldata").DataTable().destroy();
+
+                $("#DetailBody").html(listItem);
+                memberTable = $('#tbldata').DataTable({
+                    "language": {
+                        "emptyTable": "No data available"
+                    }
+                });
+
+
+            }
+        },
+        error: function (result) {
+            Swal.fire({
+                text: errormsg002
+            });
+        }
+    });
+
+}
+function Save() {
+
+    /*  alert($('#bdaymonth').val());*/
+
+    $.ajax({
+        url: '/Master/SaveUnit',
+        type: 'POST',
+        data: { "Sus_no": $("#txtSusno").val(), "UnitId": $("#spnUnitId").html(), "Suffix": $("#txtSuffix").val(), "UnitName": $("#txtUnitDesc").val(), "Abbreviation": $("#txtAbbreviation").val(), "IsVerify": true }, //get the search string
+        success: function (result) {
+
+
+            if (result == DataSave) {
+                toastr.success('Unit has been saved');
+
+                /*  $("#AddNewM").modal('hide');*/
+                BindData();
+                Reset();
+            }
+            else if (result == DataUpdate) {
+                toastr.success('Unit has been Updated');
+
+                /*  $("#AddNewM").modal('hide');*/
+                BindData();
+                Reset();
+            }
+            else if (result == DataExists) {
+
+                toastr.error('Unit Name Exits!');
+
+            }
+            else if (result == InternalServerError) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Something went wrong or Invalid Entry!',
+
+                })
+
+            } else {
+                if (result.length > 0) {
+                    for (var i = 0; i < result.length; i++) {
+                        toastr.error(result[i][0].ErrorMessage)
+                    }
+
+
+                }
+
+                        
+            }
+        }
+    });
+}
+
+function Reset() {
+    $("#txtSearch").val("");
+}

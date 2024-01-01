@@ -20,6 +20,7 @@
     <link href="~/css/nunito.css" rel="stylesheet" />
     <link href="~/css/roboto.css" rel="stylesheet" />
     <link href="~/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/lib/jqueryui/themes/base/jquery-ui.min.css" rel="stylesheet" />
 
     <link href="~/css/login.css" rel="stylesheet" />
 
@@ -43,13 +44,19 @@
         }
 
         .login-wrap {
-            margin-top: 100px;
+            margin-top: 50px;
             margin-bottom: 100px;
-            margin-left: -50px;
             /* border: 7px double #242c6d; */
             border-radius: 10px;
             box-shadow: 0px 0px 40px rgb(217 121 4 / 23%);
             z-index: 1;
+            margin-left: 32%;
+        }
+
+        body {
+            background-image: url('/images/logo-white.jpg');
+            background-size: cover;
+            background-repeat: no-repeat;
         }
     </style>
 </head>
@@ -57,17 +64,6 @@
     <div class="page">
         <div class="container-fluid">
             <div class="row">
-                <div class="align-items-center col-lg-6 col-md-6 col-xl-8 d-flex login-img-block">
-
-
-                    <div class="mb-4 logo-sec">
-
-
-
-                        <h2 class="ml-sm-3"> <span>E-IASC</span> (E-Indian Army Secure Card ) </h2>
-                    </div>
-
-                </div>
                 <div class="col-md-6 col-lg-6 col-xl-4 bg-white login-wrap align-items-center">
                     <div class="login py-2 py-sm-4">
                         <div class="row">
@@ -84,6 +80,7 @@
                                                 <div class="card-body">
                                                     <input hidden asp-for="UserId" />
                                                     <input hidden asp-for="UnitId" />
+                                                    <input hidden asp-for="ApptId" />
                                                     @if (ViewBag.TrnDomain != null)
                                                     {
                                                         dTOMapUnitResponse = ViewBag.TrnDomain;
@@ -129,39 +126,6 @@
                                                                 </div>
                                                             </div>
                                                             <div class="row mb-2 required">
-                                                                <label asp-for="FormationId" class="col-sm-4 col-form-label form-label">Formation</label>
-                                                                <div class="col-sm-8">
-                                                                    @if (Model.UserId > 0)
-                                                                    {
-                                                                        <select asp-for="FormationId" class="form-select" asp-items="ViewBag.OptionsFormation" disabled="disabled">
-                                                                        </select>
-                                                                    }
-                                                                    else
-                                                                    {
-                                                                        <select asp-for="FormationId" class="form-select" asp-items="ViewBag.OptionsFormation">
-                                                                        </select>
-                                                                    }
-                                                                    <span asp-validation-for="FormationId" class="text-danger"></span>
-                                                                </div>
-                                                            </div>
-                                                            <div class="row mb-2 required">
-                                                                <label asp-for="ApptId" class="col-sm-4 col-form-label form-label">Appt.</label>
-                                                                <div class="col-sm-8">
-                                                                    @if (Model.UserId > 0)
-                                                                    {
-                                                                        <select asp-for="ApptId" class="form-select" asp-items="ViewBag.OptionsAppointment" disabled="disabled">
-                                                                        </select>
-                                                                    }
-                                                                    else
-                                                                    {
-                                                                        <select asp-for="ApptId" class="form-select" asp-items="ViewBag.OptionsAppointment">
-                                                                        </select>
-                                                                    }
-
-                                                                    <span asp-validation-for="ApptId" class="text-danger"></span>
-                                                                </div>
-                                                            </div>
-                                                            <div class="row mb-2 required">
                                                                 <label asp-for="IntOffr" class="col-sm-4 col-form-label form-label"> Int Offrs.</label>
                                                                 @if (Model.UserId > 0)
                                                                 {
@@ -197,7 +161,21 @@
                                                                         </div>
                                                                     </div>
                                                                 }
-
+                                                            </div>
+                                                            <div class="row mb-2 required">
+                                                                <span id="spnApptIdMap" class="d-none"></span>
+                                                                <label asp-for="AppointmentName" class="col-sm-4 col-form-label form-label">Appointment Name</label>
+                                                                <div class="col-sm-8">
+                                                                    @if (Model.ApptId > 0)
+                                                                    {
+                                                                        <input asp-for="AppointmentName" class="form-control" placeholder="" value="@Model.AppointmentName" readonly />
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <input asp-for="AppointmentName" class="form-control" placeholder="" />
+                                                                    }
+                                                                    <span asp-validation-for="AppointmentName" class="text-danger"></span>
+                                                                </div>
                                                             </div>
                                                             <div class="row mb-2 required">
                                                                 <span id="spnUnitIdMap" class="d-none"></span>
@@ -252,18 +230,16 @@
                                                     <button type="submit" class="btn btn-primary">Submit</button>
                                                     @if (TempData["success"] != null)
                                                     {
-                                                        <div class="alert alert-success alert-dismissible">
-                                                            @* alert-dismissible fade show spnmsg d-none *@
-                                                            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                                                        <div class="alert alert-success alert-dismissible fade show" role="alert">
                                                             <span class="text-success">@TempData["success"]</span>
+                                                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                                                         </div>
                                                     }
                                                     @if (TempData["error"] != null)
                                                     {
-                                                        <div class="alert alert-danger alert-dismissible">
-                                                            @*   spnmsg d-none *@
-                                                            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                                                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
                                                             <span class="text-danger">@TempData["error"]</span>
+                                                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                                                         </div>
                                                     }
                                                 </div>
@@ -276,31 +252,28 @@
                                                 {
                                                     dTOTempSession = SessionHeplers.GetObject<DTOTempSession>(HttpContextAccessor.HttpContext.Session, "IMData");
                                                     m1.Append("Status : " + dTOTempSession.Status);
-                                                    m1.Append(", AdminFlag : " + dTOTempSession.AdminFlag);
-                                                    m1.Append(", DomainId : " + dTOTempSession.DomainId);
-                                                    m1.Append(", RoleName : " + dTOTempSession.RoleName);
-                                                    m1.Append(", ICNO : " + dTOTempSession.ICNO);
-                                                    m1.Append(", UserId : " + dTOTempSession.UserId);
-                                                    m1.Append(", TrnDomainMappingUnitId : " + dTOTempSession.TrnDomainMappingUnitId);
-                                                    m1.Append(", TrnDomainMappingId : " + dTOTempSession.TrnDomainMappingId);
-                                                    m1.Append(", AspNetUsersId : " + dTOTempSession.AspNetUsersId);
+                                                    m1.Append(",<br/>AdminFlag : " + dTOTempSession.AdminFlag);
+                                                    m1.Append(",<br/>DomainId : " + dTOTempSession.DomainId);
+                                                    m1.Append(",<br/>RoleName : " + dTOTempSession.RoleName);
+                                                    m1.Append(",<br/>ICNO : " + dTOTempSession.ICNO);
+                                                    m1.Append(",<br/>UserId : " + dTOTempSession.UserId);
+                                                    m1.Append(",<br/>TrnDomainMappingUnitId : " + dTOTempSession.TrnDomainMappingUnitId);
+                                                    m1.Append(",<br/>TrnDomainMappingId : " + dTOTempSession.TrnDomainMappingId);
+                                                    m1.Append(",<br/>AspNetUsersId : " + dTOTempSession.AspNetUsersId);
 
                                                     m2.Append("ICNoDomainId : " + dTOTempSession.ICNoDomainId);
-                                                    m2.Append(", ICNoTrnDomainMappingUnitId : " + dTOTempSession.ICNoTrnDomainMappingUnitId);
-                                                    m2.Append(", ICNoUnitName : " + dTOTempSession.ICNoUnitName);
+                                                    m2.Append(",<br/>ICNoTrnDomainMappingUnitId : " + dTOTempSession.ICNoTrnDomainMappingUnitId);
                                                 }
                                             }
                                             @if (dTOTempSession != null)
                                             {
-                                                <div class="alert alert-danger alert-dismissible">
-                                                    @*   spnmsg d-none *@
-                                                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                                                    <span class="text-danger text-break">@m1</span>
+                                                <div class="alert alert-info alert-dismissible fade show" role="alert">
+                                                    <span class="text-info text-break">@Html.Raw(@m1)</span>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                                                 </div>
-                                                <div class="alert alert-danger alert-dismissible">
-                                                    @*   spnmsg d-none *@
-                                                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                                                    <span class="text-danger text-break">@m2</span>
+                                                <div class="alert alert-info alert-dismissible fade show" role="alert">
+                                                    <span class="text-info text-break">@Html.Raw(@m2)</span>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                                                 </div>
                                             }
                                         </div>
@@ -317,7 +290,6 @@
     <script asp-src-include="~/lib/jquery-validate/jquery.validate.js" defer></script>
     <script asp-src-include="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js" defer></script>
     <script asp-src-include="~/lib/jqueryui/jquery-ui.min.js"></script>
-    <script asp-src-include="~/developerjs/mtables.js"></script>
     <script asp-src-include="~/developerjs/accountprofile.js"></script>
     <script asp-src-include="~/developerjs/keyconstants.js"></script>
 </body>
