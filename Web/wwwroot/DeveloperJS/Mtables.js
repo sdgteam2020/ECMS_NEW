@@ -214,7 +214,7 @@ function GetAllOffsByUnitId(ddl, sectid,UnitId) {
 }
 
 
-function GetAllOffsByUnitId(ddl, sectid, RemarkTypeId) {
+function GetRemarks(ddl, sectid, RemarkTypeId) {
     var userdata =
     {
         "RemarkTypeId": RemarkTypeId,

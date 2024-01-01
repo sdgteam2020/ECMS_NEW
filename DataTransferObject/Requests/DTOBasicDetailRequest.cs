@@ -233,6 +233,6 @@ namespace DataTransferObject.Requests
         public byte TypeId { get; set; }
 
       
-        public string RemarksIds { get; set; }
+        public string? RemarksIds { get; set; }
     }
 }

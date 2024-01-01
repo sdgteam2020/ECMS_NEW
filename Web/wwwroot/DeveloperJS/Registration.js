@@ -16,7 +16,7 @@
         closeOnSelect: false
     });
     var someNumbers = [1];
-    GetAllOffsByUnitId("ddlRemarks", 0, someNumbers);
+    GetRemarks("ddlRemarks", 0, someNumbers);
 
 
     $('#ddlRemarks').on('change', function () {
