@@ -4,6 +4,7 @@ using DataAccessLayer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccessLayer.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240102084050_v8")]
+    partial class v8
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -465,42 +468,6 @@ namespace DataAccessLayer.Migrations
                     b.ToTable("MDiv");
                 });
 
-            modelBuilder.Entity("DataTransferObject.Domain.Master.MFmnBranches", b =>
-                {
-                    b.Property<byte>("FmnBranchID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("tinyint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<byte>("FmnBranchID"));
-
-                    b.Property<string>("Abvr")
-                        .IsRequired()
-                        .HasMaxLength(10)
-                        .HasColumnType("varchar(10)");
-
-                    b.Property<string>("BranchName")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("varchar(50)");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("OrderId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("UpdatedOn")
-                        .IsRequired()
-                        .HasColumnType("datetime");
-
-                    b.Property<int>("Updatedby")
-                        .HasColumnType("int");
-
-                    b.HasKey("FmnBranchID");
-
-                    b.ToTable("MFmnBranches");
-                });
-
             modelBuilder.Entity("DataTransferObject.Domain.Master.MFormation", b =>
                 {
                     b.Property<byte>("FormationId")
@@ -578,42 +545,6 @@ namespace DataAccessLayer.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("MMappingProfile");
-                });
-
-            modelBuilder.Entity("DataTransferObject.Domain.Master.MPSO", b =>
-                {
-                    b.Property<byte>("PsoId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("tinyint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<byte>("PsoId"));
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("OrderId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("PSOAbvr")
-                        .IsRequired()
-                        .HasMaxLength(10)
-                        .HasColumnType("varchar(10)");
-
-                    b.Property<string>("PSOName")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("varchar(50)");
-
-                    b.Property<DateTime?>("UpdatedOn")
-                        .IsRequired()
-                        .HasColumnType("datetime");
-
-                    b.Property<int>("Updatedby")
-                        .HasColumnType("int");
-
-                    b.HasKey("PsoId");
-
-                    b.ToTable("MPso");
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Master.MRank", b =>
@@ -817,42 +748,6 @@ namespace DataAccessLayer.Migrations
                     b.ToTable("MStepCounterStep");
                 });
 
-            modelBuilder.Entity("DataTransferObject.Domain.Master.MSubDte", b =>
-                {
-                    b.Property<byte>("SubDteId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("tinyint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<byte>("SubDteId"));
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("OrderId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("SubDteAbvr")
-                        .IsRequired()
-                        .HasMaxLength(10)
-                        .HasColumnType("varchar(10)");
-
-                    b.Property<string>("SubDteName")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("varchar(50)");
-
-                    b.Property<DateTime?>("UpdatedOn")
-                        .IsRequired()
-                        .HasColumnType("datetime");
-
-                    b.Property<int>("Updatedby")
-                        .HasColumnType("int");
-
-                    b.HasKey("SubDteId");
-
-                    b.ToTable("MSubDte");
-                });
-
             modelBuilder.Entity("DataTransferObject.Domain.Master.MTrnFwdType", b =>
                 {
                     b.Property<byte>("TypeId")
@@ -935,22 +830,13 @@ namespace DataAccessLayer.Migrations
                     b.Property<byte>("DivId")
                         .HasColumnType("tinyint");
 
-                    b.Property<byte>("FmnBranchID")
-                        .HasColumnType("tinyint");
+                    b.Property<bool>("FmnBrach")
+                        .HasColumnType("bit");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
-                    b.Property<byte>("PsoId")
-                        .HasColumnType("tinyint");
-
-                    b.Property<byte>("SubDteId")
-                        .HasColumnType("tinyint");
-
                     b.Property<int>("UnitId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("UnitType")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("UpdatedOn")
@@ -969,12 +855,6 @@ namespace DataAccessLayer.Migrations
                     b.HasIndex("CorpsId");
 
                     b.HasIndex("DivId");
-
-                    b.HasIndex("FmnBranchID");
-
-                    b.HasIndex("PsoId");
-
-                    b.HasIndex("SubDteId");
 
                     b.HasIndex("UnitId");
 
@@ -1781,24 +1661,6 @@ namespace DataAccessLayer.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("DataTransferObject.Domain.Master.MFmnBranches", "MFmnBranches")
-                        .WithMany()
-                        .HasForeignKey("FmnBranchID")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("DataTransferObject.Domain.Master.MPSO", "MPSO")
-                        .WithMany()
-                        .HasForeignKey("PsoId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("DataTransferObject.Domain.Master.MSubDte", "MSubDte")
-                        .WithMany()
-                        .HasForeignKey("SubDteId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("DataTransferObject.Domain.Master.MUnit", "MUnit")
                         .WithMany()
                         .HasForeignKey("UnitId")
@@ -1812,12 +1674,6 @@ namespace DataAccessLayer.Migrations
                     b.Navigation("Corps");
 
                     b.Navigation("Div");
-
-                    b.Navigation("MFmnBranches");
-
-                    b.Navigation("MPSO");
-
-                    b.Navigation("MSubDte");
 
                     b.Navigation("MUnit");
                 });

@@ -1138,9 +1138,29 @@ namespace Web.Controllers
                                 var roles = await userManager.GetRolesAsync(usera);
                                 ViewBag.Message = "Sucessfully Logged In.";
 
+                                TrnDomainMapping? dTO = new TrnDomainMapping();
+                                dTO.AspNetUsersId = Convert.ToInt32(usera.Id);
+                                dTO = await _iDomainMapBL.GetByAspnetUserIdBy(dTO.AspNetUsersId);
+                                var army = await _userProfileBL.Get(Convert.ToInt32(dTO.UserId));
+                                DtoSession dtoSession = new DtoSession();
+                                if (army != null)
+                                {
+                                    dtoSession.ICNO = army.ArmyNo;
+                                    dtoSession.UserId = army.UserId;
+                                    dtoSession.UnitId = dTO.UnitId;
+
+                                    TrnDomainMapping? trnDomainMapping = new TrnDomainMapping();
+                                    trnDomainMapping.AspNetUsersId = Convert.ToInt32(usera.Id);
+                                    trnDomainMapping = await _iDomainMapBL.GetByAspnetUserIdBy(trnDomainMapping.AspNetUsersId);
+                                    dtoSession.TrnDomainMappingId = trnDomainMapping.Id;
+                                }
+                                SessionHeplers.SetObject(HttpContext.Session, "Token", dtoSession);
+
+
+
                                 if (roles[0] == "User")
                                 {
-                                    return RedirectToActionPermanent("Dashboard", "Home");
+                                    return RedirectToActionPermanent("Index", "Home");
                                 }
                                 else if (roles[0] == "Admin")
                                 {

@@ -16,12 +16,14 @@
         closeOnSelect: false
     });
     var someNumbers = [1];
-    GetAllOffsByUnitId("ddlRemarks", 0, someNumbers);
+    GetRemarks("ddlRemarks", 0, someNumbers);
 
 
     $('#ddlRemarks').on('change', function () {
         $("#RemarksIds").val($('#ddlRemarks').val()); 
     });
+
+
 });
 function getApplyIcardDetails()
 {
@@ -150,17 +152,20 @@ function registrationEnableDisabledField(val) {
         $("#Observations").val('');
         $("#Observations").prop('readonly', true);
         $(".Remarks").addClass("d-none");
+        $("#btnsubmit").text("Process I-Card");
     }
     else {
         $("#btnsubmit").prop('disabled', false);
         $("#Observations").prop('readonly', false);
         $(".Remarks").removeClass("d-none");
-
+        $("#btnsubmit").text("Send Inaccurate Data");
     }
 
 }
 function Proceed(id) {
     let formId = '#' + id;
+
+    
     // Check if the form exists
     if ($(formId).length === 0) {
         console.error("Form not found.");
@@ -185,8 +190,46 @@ function Proceed(id) {
     }
     $.validator.unobtrusive.parse($(formId));
     if ($(formId).valid()) {
-        var formData = $(formId).serialize();
-        console.log(formData);
+
+        if (stype == 1) {
+            Swal.fire({
+                title: "Are you sure?",
+                text: "You Want to Process I-Card Request",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Yes, Process it!"
+            }).then((result) => {
+                if (result.isConfirmed) {
+
+                    $("#Registration").submit();
+                }
+                else {
+                    return false;
+                }
+            });
+        }
+        else {
+            Swal.fire({
+                title: "Are you sure?",
+                text: "You Want to Send Inaccurate Data",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Yes, Send it!"
+            }).then((result) => {
+                if (result.isConfirmed) {
+
+                    $("#Registration").submit();
+                }
+                else {
+                    return false;
+                }
+            });
+        }
+       
     }
     else {
         return false;

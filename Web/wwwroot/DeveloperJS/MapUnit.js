@@ -1,30 +1,64 @@
 $(document).ready(function () {
     mMsater(0, "ddlCommand", 1, "");
     BindDataMapUnit()
+
+
+    $(".form-check-input").click(function () {
+        var val = $("input[type='radio']:checked").val();
+        if (val == "1") {
+            $(".unittype").removeClass("d-none");
+            $(".FmnBranch").addClass("d-none");
+            $(".DteBranch").addClass("d-none");
+
+        }
+        else if (val == "2") {
+           
+            mMsater(0, "ddlFmnBranch", FmnBranches, "");
+            $("#ddlPSODte").val(1);
+            $("#ddlDgSubDte").val(1);
+            $(".unittype").removeClass("d-none");
+            $(".FmnBranch").removeClass("d-none");
+            $(".DteBranch").addClass("d-none");
+        }
+        else if (val == "3") {
+            $(".unittype").addClass("d-none");
+            $(".FmnBranch").addClass("d-none");
+            $(".DteBranch").removeClass("d-none");
+            $("#ddlFmnBranch").val(1);
+
+            var lst = '<option value="1">Please Select</option>';
+
+            $("#ddlCommand").html(lst);
+            $("#ddlCorps").html(lst);
+            $("#ddlCorps").html(lst);
+            $("#ddlBde").html(lst);
+            $("#ddlDiv").html(lst);
+
+            mMsater(0, "ddlPSODte", PSO, "");
+            mMsater(0, "ddlDgSubDte", SubDte, "");
+            
+        }
+    });
     $("#btnMapUnitAdd").click(function () {
         ResetMapUnit();
         $("#AddNewUnitmap").modal('show');
-
     });
     $("#txtSerachunit").keyup(function () {
         BindDataMapUnit()
-
     });
-
     $('#ddlCommand').on('change', function () {
-       
         mMsater(0, "ddlCorps", 2, $('#ddlCommand').val());
         BindDataMapUnit();
     });
 
     $('#ddlCorps').on('change', function () {
 
-        mMsaterByParent(0, "ddlDiv", 3, $('#ddlCommand').val(), $('#ddlCorps').val(), 0, 0);///ComdId,CorpsId,DivId,BdeId
+        mMsaterByParent(0, "ddlDiv", 3, $('#ddlCommand').val(), $('#ddlCorps').val(), 0, 0); ///ComdId,CorpsId,DivId,BdeId
         BindDataMapUnit();
     });
     $('#ddlDiv').on('change', function () {
 
-        mMsaterByParent(0, "ddlBde", 4, $('#ddlCommand').val(), $('#ddlCorps').val(), $('#ddlDiv').val(), 0);///ComdId,CorpsId,DivId,BdeId
+        mMsaterByParent(0, "ddlBde", 4, $('#ddlCommand').val(), $('#ddlCorps').val(), $('#ddlDiv').val(), 0); ///ComdId,CorpsId,DivId,BdeId
         BindDataMapUnit();
 
     });
@@ -223,7 +257,8 @@ function BindDataMapUnit() {
                     for (var i = 0; i < response.length; i++) {
 
                         listItem += "<tr>";
-                        listItem += "<td class='d-none'><span id='spnMapUnitId'>" + response[i].UnitMapId + "</span><span id='spnMUnitId'>" + response[i].UnitId + "</span><span id='spnMbdeId'>" + response[i].BdeId + "</span><span id='spnMDivId'>" + response[i].DivId + "</span><span id='spnMcorpsId'>" + response[i].CorpsId + "</span><span id='spncomdId'>" + response[i].ComdId + "</span><span id='spnfmnBrach'>" + response[i].FmnBrach + "</span></td>";
+                        listItem += "<td class='d-none'><span id='spnMapUnitId'>" + response[i].UnitMapId + "</span><span id='spnMUnitId'>" + response[i].UnitId + "</span><span id='spnMbdeId'>" + response[i].BdeId + "</span><span id='spnMDivId'>" + response[i].DivId + "</span>";
+                        listItem += "<span id='spnMcorpsId'>" + response[i].CorpsId + "</span><span id='spncomdId'>" + response[i].ComdId + "</span><span id='spnUnitType'>" + response[i].UnitType + "</span><span id='spnPsoId'>" + response[i].PsoId + "</span><span id='spnFmnBranchID'>" + response[i].FmnBranchID + "</span><span id='spnSubDteId'>" + response[i].SubDteId + "</span></td>";
                         listItem += "<td>";
                         listItem += "<div class='custom-control custom-checkbox small'>";
                         listItem += "<input type='checkbox' class='custom-control-input' id='" + response[i].UnitMapId + "'>";
@@ -236,14 +271,20 @@ function BindDataMapUnit() {
                         listItem += "<td class='align-middle'><span id='corpsName'>" + response[i].CorpsName + "</span></td>";
                         listItem += "<td class='align-middle'><span id='divName'>" + response[i].DivName + "</span></td>";
                         listItem += "<td class='align-middle'><span id='bdeName'>" + response[i].BdeName + "</span></td>";
-                        if (response[i].FmnBrach == true) {
-                            listItem += "<td class='align-middle'><span class='badge bg-danger'>Yes</span></td>";
+                        if (parseInt(response[i].UnitType) == 1) {
+                            listItem += "<td class='align-middle'><span class='badge bg-danger'></span></td>";
                         }
-                        else {
-                            listItem += "<td class='align-middle'><span class='badge bg-primary'>No</span></td>";
+                        else if (parseInt(response[i].UnitType) == 2) {
+                            listItem += "<td class='align-middle'><span class='badge bg-primary'>Unit is Fmn HQ</span></td>";
+
+                        } else if (parseInt(response[i].UnitType) == 3) {
+                            listItem += "<td class='align-middle'><span class='badge bg-primary'>Unit is Dte/Branch</span></td>";
 
                         }
-                        
+                        listItem += "<td class='align-middle'><span id='BranchName'>" + response[i].BranchName + "</span></td>";
+                        listItem += "<td class='align-middle'><span id='PSOName'>" + response[i].PSOName + "</span></td>";
+                        listItem += "<td class='align-middle'><span id='SubDteName'>" + response[i].SubDteName + "</span></td>";
+
                         listItem += "<td class='align-middle'><span id='unitName'>" + response[i].UnitName + "</span></td>";
                         listItem += "<td class='align-middle'><span id='Sus_no'>" + response[i].Sus_no + response[i].Suffix + "</span></td>";
                         listItem += "<td class='align-middle'><span id='btnedit'><button type='button' class='cls-btnedit btn btn-icon btn-round btn-primary mr-1'><i class='fas fa-edit'></i></button></span><button type='button' class='cls-btnDelete btn-icon btn-round btn-danger mr-1'><i class='fas fa-trash-alt'></i></button></td>";
@@ -310,22 +351,47 @@ function BindDataMapUnit() {
                         mMsater($(this).closest("tr").find("#spnMcorpsId").html(), "ddlCorps", 2, $(this).closest("tr").find("#spncomdId").html());                     
                         mMsaterByParent($(this).closest("tr").find("#spnMDivId").html(), "ddlDiv", 3, $('#ddlCommand').val(), $(this).closest("tr").find("#spnMcorpsId").html(), 0, 0);///ComdId,CorpsId,DivId,BdeId
                         mMsaterByParent($(this).closest("tr").find("#spnMbdeId").html(), "ddlBde", 4, $('#ddlCommand').val(), $(this).closest("tr").find("#spnMcorpsId").html(), $(this).closest("tr").find("#spnMDivId").html(), 0);///ComdId,CorpsId,DivId,BdeId
-
-
+                      
+                        mMsater($(this).closest("tr").find("#spnPsoId").html(), "ddlPSODte", PSO, "");
+                        mMsater($(this).closest("tr").find("#spnSubDteId").html(), "ddlDgSubDte", SubDte,"" );
+                        mMsater($(this).closest("tr").find("#spnFmnBranchID").html(), "ddlFmnBranch", FmnBranches, "");
                         $("#spnUnitMapUnitId").html($(this).closest("tr").find("#spnMapUnitId").html());
 
                         $("#SpnUnitMapId").html($(this).closest("tr").find("#spnMUnitId").html());
 
                         $("#txtUnit").val($(this).closest("tr").find("#unitName").html());
                         $("#txtSusno").val($(this).closest("tr").find("#Sus_no").html());
-                        
-                        if ($(this).closest("tr").find("#spnfmnBrach").html() == 'true' || $(this).closest("tr").find("#spnfmnBrach").html() == true) {
-                            $("#ChkFmnBrach").prop("checked", true);
+
+                        if (parseInt($(this).closest("tr").find("#spnUnitType").html()) == 1) {
+                            $("#UnitType1").prop("checked", true);
+
+                            $(".unittype").removeClass("d-none");
+                            $(".FmnBranch").addClass("d-none");
+                            $(".DteBranch").addClass("d-none");
                            
+                        } else if (parseInt($(this).closest("tr").find("#spnUnitType").html()) == 2) {
+                            $("#UnitType2").prop("checked", true);
+                            $("#ddlPSODte").val(1);
+                            $("#ddlDgSubDte").val(1);
+                            $(".unittype").removeClass("d-none");
+                            $(".FmnBranch").removeClass("d-none");
+                            $(".DteBranch").addClass("d-none");
+
+                        } else if (parseInt($(this).closest("tr").find("#spnUnitType").html()) == 3) {
+                            $("#UnitType3").prop("checked", true);
+                            $(".unittype").addClass("d-none");
+                            $(".FmnBranch").addClass("d-none");
+                            $(".DteBranch").removeClass("d-none");
+                            $("#ddlFmnBranch").val(1);
+                            var lst = '<option value="1">Please Select</option>';
+
+                            $("#ddlCommand").html(lst);
+                            $("#ddlCorps").html(lst);
+                            $("#ddlCorps").html(lst);
+                            $("#ddlBde").html(lst);
+                            $("#ddlDiv").html(lst);
                         }
-                        else {
-                            $("#ChkFmnBrach").prop("checked", false);
-                        }
+                       
                         $("#AddNewUnitmap").modal('show');
                         $("#btnMapUnitsave").val("Update");
                     });
@@ -432,7 +498,7 @@ function SaveUnitMap() {
     $.ajax({
         url: '/Master/SaveMapUnit',
         type: 'POST',
-        data: { "UnitName": $("#txtUnit").val(), "ComdId": $("#ddlCommand").val(), "CorpsId": $("#ddlCorps").val(), "DivId": $("#ddlDiv").val(), "BdeId": $("#ddlBde").val(), "UnitMapId": $("#spnUnitMapUnitId").html(), "UnitId": $("#SpnUnitMapId").html(), "FmnBrach": $("#ChkFmnBrach").prop("checked") }, //get the search string
+        data: { "UnitName": $("#txtUnit").val(), "ComdId": $("#ddlCommand").val(), "CorpsId": $("#ddlCorps").val(), "DivId": $("#ddlDiv").val(), "BdeId": $("#ddlBde").val(), "UnitMapId": $("#spnUnitMapUnitId").html(), "UnitId": $("#SpnUnitMapId").html(), "UnitType": $("input[type='radio']:checked").val(), "PsoId": $("#ddlPSODte").val(), "FmnBranchID": $("#ddlFmnBranch").val(), "SubDteId": $("#ddlDgSubDte").val() }, //get the search string
         success: function (result) {
 
 
@@ -491,6 +557,10 @@ function ResetMapUnit() {
     $("#SpnUnitMapId").html("0");
     $("#btnsave").val("Save");
     $("#txtUnit").val("");
+
+    $("ddlPSODte").val("");
+    $("ddlDgSubDte").val("");
+    $("ddlFmnBranch").val("");
 }
 
 function DeleteMapUnit(Id) {

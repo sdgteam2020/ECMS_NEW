@@ -37,7 +37,7 @@ namespace DataTransferObject.Domain.Model
         public ApplicationUser? ApplicationUser1 { get; set; }
 
         [ForeignKey("MapUnit"), DatabaseGenerated(DatabaseGeneratedOption.None)]
-        public int UnitId { get; set; }
+        public int UnitId { get; set; } 
         public MapUnit? MapUnit { get; set; }
         public string? Remark { get; set; } = string.Empty;
         public bool Status { get; set; } = false;
@@ -47,9 +47,11 @@ namespace DataTransferObject.Domain.Model
         public MTrnFwdType? MTrnFwdType { get; set; }
 
         public bool IsComplete { get; set; } = false;
+
+        public string? RemarksIds { get; set; }
         //[ForeignKey("Fwd"), DatabaseGenerated(DatabaseGeneratedOption.None)]
         //public int FwdId { get; set; }
 
         //public MTrnFwd? Fwd { get; set; }
-}
+    }
 }

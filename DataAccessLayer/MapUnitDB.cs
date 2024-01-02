@@ -26,7 +26,7 @@ namespace DataAccessLayer
 
         public async Task<bool> GetByName(MapUnit Data)
         {
-            var ret = _context.MapUnit.Any(p => p.UnitId == Data.UnitId);
+            var ret = _context.MapUnit.Any(p => p.UnitId == Data.UnitId && p.UnitMapId!=Data.UnitMapId);
             return ret;
         }
 
@@ -51,7 +51,10 @@ namespace DataAccessLayer
                        join cor in _context.MCorps on uni.CorpsId equals cor.CorpsId
                        join div in _context.MDiv on uni.DivId equals div.DivId
                        join bde in _context.MBde on uni.BdeId equals bde.BdeId
-                      where MUni.UnitName == "" || MUni.UnitName.ToLower().Contains(Unit1)
+                       join pso in _context.MPso on uni.PsoId equals pso.PsoId
+                       join FmnBranch in _context.MFmnBranches on uni.FmnBranchID equals FmnBranch.FmnBranchID
+                       join SubDte in _context.MSubDte on uni.SubDteId equals SubDte.SubDteId
+                       where MUni.UnitName == "" || MUni.UnitName.ToLower().Contains(Unit1)
                        select new DTOMapUnitResponse
                        {
                            UnitMapId= uni.UnitMapId,
@@ -67,8 +70,17 @@ namespace DataAccessLayer
                            ComdId = Com.ComdId,
                            Suffix=MUni.Suffix,
                            Sus_no=MUni.Sus_no,
-                           FmnBrach= uni.FmnBrach
-                           
+                           UnitType = uni.UnitType,
+                           PsoId=pso.PsoId,
+                           PSOName=pso.PSOName,
+                           FmnBranchID= FmnBranch.FmnBranchID,
+                           BranchName= FmnBranch.BranchName,
+                           SubDteId=SubDte.SubDteId,
+                           SubDteName=SubDte.SubDteName,
+
+
+
+
                        }
                      ).Distinct().Take(200).ToList(); ;
 
@@ -136,6 +148,9 @@ namespace DataAccessLayer
                        join cor in _context.MCorps on uni.CorpsId equals cor.CorpsId
                        join div in _context.MDiv on uni.DivId equals div.DivId
                        join bde in _context.MBde on uni.BdeId equals bde.BdeId
+                       join pso in _context.MPso on uni.PsoId equals pso.PsoId
+                       join FmnBranch in _context.MFmnBranches on uni.FmnBranchID equals FmnBranch.FmnBranchID
+                       join SubDte in _context.MSubDte on uni.SubDteId equals SubDte.SubDteId
                        where uni.UnitMapId==UnitMapId
                        select new DTOMapUnitResponse
                        {
@@ -151,7 +166,14 @@ namespace DataAccessLayer
                            ComdName = Com.ComdName,
                            ComdId = Com.ComdId,
                            Suffix = MUni.Suffix,
-                           Sus_no = MUni.Sus_no
+                           Sus_no = MUni.Sus_no,
+                              UnitType = uni.UnitType,
+                           PsoId = pso.PsoId,
+                           PSOName = pso.PSOName,
+                           FmnBranchID = FmnBranch.FmnBranchID,
+                           BranchName = FmnBranch.BranchName,
+                           SubDteId = SubDte.SubDteId,
+                           SubDteName = SubDte.SubDteName,
                        }
                      ).Distinct().SingleOrDefault() ;
 
@@ -177,7 +199,10 @@ namespace DataAccessLayer
                        join cor in _context.MCorps on uni.CorpsId equals cor.CorpsId
                        join div in _context.MDiv on uni.DivId equals div.DivId
                        join bde in _context.MBde on uni.BdeId equals bde.BdeId
-                       where MUni.UnitId == UnitId
+                            join pso in _context.MPso on uni.PsoId equals pso.PsoId
+                            join FmnBranch in _context.MFmnBranches on uni.FmnBranchID equals FmnBranch.FmnBranchID
+                            join SubDte in _context.MSubDte on uni.SubDteId equals SubDte.SubDteId
+                            where MUni.UnitId == UnitId
                        select new DTOMapUnitResponse
                        {
                            UnitMapId = uni.UnitMapId,
@@ -192,7 +217,14 @@ namespace DataAccessLayer
                            ComdName = Com.ComdName,
                            ComdId = Com.ComdId,
                            Suffix = MUni.Suffix,
-                           Sus_no = MUni.Sus_no
+                           Sus_no = MUni.Sus_no,
+                           UnitType = uni.UnitType,
+                           PsoId = pso.PsoId,
+                           PSOName = pso.PSOName,
+                           FmnBranchID = FmnBranch.FmnBranchID,
+                           BranchName = FmnBranch.BranchName,
+                           SubDteId = SubDte.SubDteId,
+                           SubDteName = SubDte.SubDteName,
                        }
                      ).Distinct().SingleOrDefaultAsync();
 

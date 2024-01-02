@@ -24,8 +24,11 @@
                 else {
 
                     var listItemddl = "";
-
-                    listItemddl += '<option value="">Please Select</option>';
+                    if (parseInt(TableId) == 11 || parseInt(TableId) == 12 || parseInt(TableId) == 13) {
+                        listItemddl += '<option value="1">Please Select</option>';
+                    } else {
+                        listItemddl += '<option value="">Please Select</option>';
+                    }
                    
                     for (var i = 0; i < response.length; i++) {
                         listItemddl += '<option value="' + response[i].Id + '">' + response[i].Name + '</option>';
@@ -214,7 +217,7 @@ function GetAllOffsByUnitId(ddl, sectid,UnitId) {
 }
 
 
-function GetAllOffsByUnitId(ddl, sectid, RemarkTypeId) {
+function GetRemarks(ddl, sectid, RemarkTypeId) {
     var userdata =
     {
         "RemarkTypeId": RemarkTypeId,
@@ -241,22 +244,23 @@ function GetAllOffsByUnitId(ddl, sectid, RemarkTypeId) {
 
                     /* listItemddl += '<option value="">Please Offers</option>';*/
                     var RemarkTypeId = 0;
+                    var count = 1;
                     for (var i = 0; i < response.length; i++) {
 
                         if (response[i].RemarkTypeId != RemarkTypeId) {
                             if (RemarkTypeId != 0)
                                 listItemddl += '</optgroup>';
-
+                            count = 1;
                             listItemddl += '<optgroup label="' + response[i].RemarksType +'">';
                         }
 
-                        listItemddl += '<option value="' + response[i].RemarksId + '">' + response[i].Remarks + '</option>';
+                        listItemddl += '<option value="' + response[i].RemarksId + '">' +count+'. ' + response[i].Remarks + '</option>';
 
 
                         RemarkTypeId = response[i].RemarkTypeId;
 
 
-                        
+                        count++;
                     }
                     listItemddl += '</optgroup>';
                     $("#" + ddl + "").html(listItemddl);

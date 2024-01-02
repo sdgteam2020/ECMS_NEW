@@ -28,7 +28,7 @@ namespace BusinessLogicsLayer
     {
 
 
-        public UnitOfWork(IUserBL _user, IComd _comds, ICorpsBL _corpsBL, IBdeBL _bdeCat, IDivBL divBL, IUnitBL unit, IMapUnitBL MapUnitBL, IFormationBL FormationBL, IApptBL apptBL, IArmedBL armedBL, IRankBL rankBL, IRegimentalBL regimentalBL,IArmedCatBL armedCatBL)
+        public UnitOfWork(IUserBL _user, IComd _comds, ICorpsBL _corpsBL, IBdeBL _bdeCat, IDivBL divBL, IUnitBL unit, IMapUnitBL MapUnitBL, IFormationBL FormationBL, IApptBL apptBL, IArmedBL armedBL, IRankBL rankBL, IRegimentalBL regimentalBL,IArmedCatBL armedCatBL,IMasterBL masterBL)
         {
             Users = _user;
             Comds = _comds;
@@ -43,6 +43,7 @@ namespace BusinessLogicsLayer
             Rank = rankBL;
             Regimental= regimentalBL;
             ArmedCat = armedCatBL;
+            MasterBL = masterBL;
         }
         public IUserBL Users { get; }
 
@@ -60,6 +61,8 @@ namespace BusinessLogicsLayer
         public IRegimentalBL Regimental { get; }
 
         public IArmedCatBL ArmedCat { get; }
+
+        public IMasterBL MasterBL { get; }
 
         public async Task<List<DTOMasterResponse>> GetAllMMaster(DTOMasterRequest Data)
         {
@@ -216,6 +219,51 @@ namespace BusinessLogicsLayer
                     db.Name = Forma.Name;
                     lst.Add(db);
                 }
+            }
+            else if (Data.id == Convert.ToInt16(Constants.MasterTbl.FmnBranches))
+            {
+                var Ret = await MasterBL.GetMFmnBranches();
+
+                foreach (var Forma in Ret)
+                {
+
+                    DTOMasterResponse db = new DTOMasterResponse();
+
+                    db.Id = Forma.Id;
+                    db.Name = Forma.Name;
+                    lst.Add(db);
+                }
+
+            }
+            else if (Data.id == Convert.ToInt16(Constants.MasterTbl.PSO))
+            {
+                var Ret = await MasterBL.GetMPSO();
+
+                foreach (var Forma in Ret)
+                {
+
+                    DTOMasterResponse db = new DTOMasterResponse();
+
+                    db.Id = Forma.Id;
+                    db.Name = Forma.Name;
+                    lst.Add(db);
+                }
+
+            }
+            else if (Data.id == Convert.ToInt16(Constants.MasterTbl.SubDte))
+            {
+                var Ret = await MasterBL.GetMSubDte();
+
+                foreach (var Forma in Ret)
+                {
+
+                    DTOMasterResponse db = new DTOMasterResponse();
+
+                    db.Id = Forma.Id;
+                    db.Name = Forma.Name;
+                    lst.Add(db);
+                }
+
             }
             //Constants.MasterTbl.Command;
             return lst;

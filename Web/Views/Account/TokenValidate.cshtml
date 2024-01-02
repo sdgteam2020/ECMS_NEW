@@ -71,7 +71,7 @@
                                             <form asp-antiforgery="true" method="post" asp-action="TokenValidate" autocomplete="off" role="form">
                                                 <div class="form-group">
                                                     <label asp-for="ICNo"></label>
-                                                    <input asp-for="ICNo" class="form-control" placeholder="Enter ICNo" />
+                                                    <input asp-for="ICNo" class="form-control" placeholder="Enter ICNo" value="IC-00203" />
                                                     <span asp-validation-for="ICNo" class="text-danger"></span>
                                                     <label id="tokenmsg"></label>
                                                 </div>
@@ -116,14 +116,14 @@
                                                 }
                                                 @if (dTOTempSession!=null)
                                                 {
-                                                    <div class="alert alert-info alert-dismissible fade show" role="alert">
+                                                   @*  <div class="alert alert-info alert-dismissible fade show" role="alert">
                                                         <span class="text-info text-break">@Html.Raw(@m1)</span>
                                                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                                                     </div>
                                                     <div class="alert alert-info alert-dismissible fade show" role="alert">
                                                         <span class="text-info text-break">@Html.Raw(@m2)</span>
                                                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                                                    </div>
+                                                    </div> *@
                                                 }
                                             </form>
                                         </div>

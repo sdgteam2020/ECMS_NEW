@@ -703,19 +703,27 @@
                             </div>
                             <div class="form-group row mb-2">
 
-                                <label class="col-form-label col-sm-4">Fmn HQ/Branch <i class="fas fa-asterisk mand1"></i></label>
+                                <label class="col-form-label col-sm-4">Select Unit Type <i class="fas fa-asterisk mand1"></i></label>
                                 <div class="col-sm-8">
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" value="" id="ChkFmnBrach">
-                                        <label class="form-check-label" for="ChkFmnBrach">
-                                            Fmn HQ/Branch
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="UnitTyperdi" id="UnitType1" value="1" checked>
+                                        <label class="form-check-label" for="UnitType1">Unit</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="UnitTyperdi" id="UnitType2" value="2">
+                                        <label class="form-check-label" for="UnitType2">
+                                            Unit is Fmn HQ
                                         </label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="UnitTyperdi" id="UnitType3" value="3">
+                                        <label class="form-check-label" for="UnitType3">Unit is Dte/Branch</label>
                                     </div>
                                    
                                 </div>
 
                             </div>
-                            <div class="form-group row mb-2">
+                            <div class="form-group row mb-2 unittype">
 
                                 <label class="col-form-label col-sm-4">Comd / PSO<i class="fas fa-asterisk mand1"></i></label>
                                 <div class="col-sm-8">
@@ -729,7 +737,7 @@
                             </div>
 
 
-                            <div class="form-group row mb-4">
+                            <div class="form-group row mb-4 unittype">
 
                                 <label class="col-form-label col-sm-4">Corps / Dte / Area<i class="fas fa-asterisk mand1"></i></label>
                                 <div class="col-sm-8">
@@ -742,7 +750,7 @@
 
                             </div>
 
-                            <div class="form-group row mb-2">
+                            <div class="form-group row mb-2 unittype">
 
                                 <label class="col-form-label col-sm-4">Div  /Branch / SubArea<i class="fas fa-asterisk mand1"></i></label>
                                 <div class="col-sm-8">
@@ -755,7 +763,7 @@
 
                             </div>
 
-                            <div class="form-group row mb-2">
+                            <div class="form-group row mb-2 unittype">
                                 <label class="col-form-label col-sm-4">Bde<i class="fas fa-asterisk mand1"></i></label>
                                 <div class="col-sm-8">
                                     
@@ -767,8 +775,40 @@
 
                             </div>
 
-                          
+                            <div class="form-group row mb-2 FmnBranch  d-none">
+                                <label class="col-form-label col-sm-4">Type of Fmn /Branch<i class="fas fa-asterisk mand1"></i></label>
+                                <div class="col-sm-8">
 
+                                    <select class=" js-example-basic-single select2 form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddlFmnBranch" required id="ddlFmnBranch">
+                                        <option value="1">Select Fmn/Branch </option>
+
+                                    </select>
+                                </div>
+
+                            </div>
+
+                            <div class="form-group row mb-2 DteBranch d-none">
+                                <label class="col-form-label col-sm-4">PSO /Dte <i class="fas fa-asterisk mand1"></i></label>
+                                <div class="col-sm-8">
+
+                                    <select class=" js-example-basic-single select2 form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddlPSODte" required id="ddlPSODte">
+                                        <option value="1">Select DG / Sub Dte </option>
+
+                                    </select>
+                                </div>
+
+                            </div>
+                            <div class="form-group row mb-2 DteBranch d-none">
+                                <label class="col-form-label col-sm-4">DG / Sub Dte <i class="fas fa-asterisk mand1"></i></label>
+                                <div class="col-sm-8">
+
+                                    <select class=" js-example-basic-single select2 form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddlDgSubDte" required id="ddlDgSubDte">
+                                        <option value="1">Select DG / Sub Dte</option>
+
+                                    </select>
+                                </div>
+
+                            </div>
 
                             <div class="col-sm-12 text-right">
                                 <input type="button" class="btn btn-primary " value="Save" id="btnUnitMapsave" />
@@ -909,8 +949,18 @@
                                 </div>
 
                             </div>
+
+                            <div class="form-group row mb-2 Remarks d-none">
+                                    <label class="col-form-label col-sm-4">Select Remarks</label>
+                                    <div class="col-sm-8">
+
+                                    <select class="form-control select3 select2-accessible" multiple="" placeholder="Please select a Remarks" style="width: 100%;" tabindex="-1" aria-hidden="true" name="Remarks" required id="ddlRemarks">
+                                        </select>
+                                    </div>
+                                </div>
+                            
                             <div class="form-group row mb-2">
-                                <label class="col-form-label col-sm-4">Remarks</label>
+                                <label class="col-form-label col-sm-4">Enter Remarks</label>
                                 <div class="col-sm-8">
                                     <textarea class="form-control" id="txtFRemarks" rows="3"></textarea>
                                
@@ -943,160 +993,151 @@
             <div class="modal-body">
                 <div class="card">
                     <div class="row ">
+                      
                        
-                       
-                                <div class="col-md-4 mb-3">
-                                    <div class="feature-box3  h-100 shadow-lg p-1 mb-5 bg-body rounded">
+                                <div class="col-md-12 mb-3">
+                                 <div class="feature-box3 h-100 shadow-lg p-3 mb-3 bg-body rounded">
+                                <div class="top-block_ind d-flex">
 
-                                        <div class="content-block ">
-                                            <div class="form-group row mb-0 ">
-                                                <div class="col-12 text-center">
-                                                    <img src="~/images/user4.png" width="200" id="basicphotos" class="border border-primary p-2" />
+                                    <div class="text-block">
+                                        <h5 class="mb-1 text-font2 font-weight600">Individual Details</h5>
 
-                                                    <h6 class="mb-1 text-font2 font-weight500 text-center PersName"></h6>
-                                                    @*  <div class="text-left"> <img src="~/images/rank/brigadier.svg" id="imgrank" height="100px" /></div> *@
-                                                </div>
-                                            </div>
-                                    <div class="form-group row mb-0 recectopt">
-                                        <label class="col-form-label  text-left ">Select Rejection Reasons for Photos</label>
-                                       
-                                        <select class="form-control select2 select2-accessible" multiple="" placeholder="Please select a Photos" style="width: 100%;" tabindex="-1" aria-hidden="true" name="Photos" required id="ddlPhotos">
-                                            <option value="0">Select Rejection Reasons for Photos</option>
-                                            <option value="Reasons 1">Reasons 1</option>
-                                            <option value="Reasons 2">Reasons 2</option>
-                                            <option value="Reasons 3">Reasons 3</option>
-                                        </select>
-                                
                                     </div>
-                                        </div>
-
-                                        <div class="content-block ">
-                                    <div class="form-group row mb-0 ">
-                                                <div class="col-12 text-center">
-                                                    <img src="~/images/signature.png" width="200" height="100" id="Basicsing" class="border border-primary p-2" />
-                                            <label class="col-form-label recectopt text-left ">Select Rejection Reasons for Signature</label>
-                                               </div>
-                                               </div>
-                                    <div class="form-group row mb-0 recectopt">
-                                        <select class="form-control select2 select2-accessible " multiple="" placeholder="Please select a signature" style="width: 100%;" tabindex="-1" aria-hidden="true" name="signature" required id="ddlsignature">
-                                                    <option value="0">Select Rejection Reasons for Photos</option>
-                                                    <option value="Reasons 1">Reasons 1</option>
-                                                    <option value="Reasons 2">Reasons 2</option>
-                                                    <option value="Reasons 3">Reasons 3</option>
-                                                </select>
-                                                    @*  <div class="text-left"> <img src="~/images/rank/brigadier.svg" id="imgrank" height="100px" /></div> *@
-                                                </div>
-                                            </div>
-
-                                        </div>
-                                   
-                                   
                                 </div>
-                                <div class="col-md-8 mb-3">
-                                    <div class="feature-box3 h-100 shadow-lg p-3 mb-3 bg-body rounded">
-                                        <div class="top-block_ind d-flex">
-
-                                            <div class="text-block">
-                                                <h5 class="mb-1 text-font2 font-weight600">Individual Details</h5>
-
-                                            </div>
-                                        </div>
-                                        <div class="content-block ">
-                                            <div class="form-group row mb-0">
-                                                <label class="col-form-label col-5 text-left">Name</label>
+                                <div class="row">
+                                <div class="col-md-8">
+                                    <div class="form-group row mb-0">
+                                        <label class="col-form-label col-5 text-left">Name</label>
                                         <div class="col-7"><label class="form-control-plaintext b text-black" id="lblfdName"></label></div>
-                                            </div>
-                                            <div class="form-group row mb-0">
-                                                <label class="col-form-label col-5 text-left">Rank</label>
-                                                <div class="col-7">
+                                    </div>
+                                    <div class="form-group row mb-0">
+                                        <label class="col-form-label col-5 text-left">Rank</label>
+                                        <div class="col-7">
                                             <label class="form-control-plaintext" id="lblfdRank"></label>
-                                                </div>
-                                            </div>
-                                            <div class="form-group row mb-0">
-                                                <label class="col-form-label col-5 text-left">Arm / Service</label>
-                                                <div class="col-7">
-                                            <label class="form-control-plaintext" id="lblLfdarm"></label>
-                                                </div>
-                                            </div>
-                                            <div class="form-group row mb-0">
-                                                <label class="col-form-label col-5 text-left">Army No</label>
-                                                <div class="col-7">
-                                            <label class="form-control-plaintext" id="lblfdArmyNo"></label>
-                                                </div>
-                                            </div>
-                                            <div class="form-group row mb-0">
-                                                <label class="col-form-label col-5 text-left">Identification Mark</label>
-                                                <div class="col-7">
-                                                    <label class="form-control-plaintext" id="lblfdMarks"></label>
-                                                </div>
-                                            </div> 
-                                            <div class="form-group row mb-0">
-                                                <label class="col-form-label col-5 text-left">Date of Birth</label>
-                                                <div class="col-7">
-                                                    <label class="form-control-plaintext" id="lblfddob"></label>
-                                                </div>
-                                            </div> 
-                                            <div class="form-group row mb-0">
-                                                <label class="col-form-label col-5 text-left">Height (Cm)</label>
-                                                <div class="col-7">
-                                                    <label class="form-control-plaintext" id="lblfdheight"></label>
-                                                </div>
-                                            </div> 
-                                            <div class="form-group row mb-0">
-                                                <label class="col-form-label col-5 text-left">AADHAAR No</label>
-                                                <div class="col-7">
-                                                    <label class="form-control-plaintext" id="lblfdadhar"></label>
-                                                </div>
-                                            </div>
-                                            <div class="form-group row mb-0">
-                                            <label class="col-form-label col-5 text-left">Blood Group</label>
-                                                <div class="col-7">
-                                            <label class="form-control-plaintext" id="lblfdBloodGroup"></label>
-                                                </div>
-                                            </div>
-                                            <div class="form-group row mb-0">
-                                                <label class="col-form-label col-5 text-left">Place of Issue</label>
-                                                <div class="col-7">
-                                                    <label class="form-control-plaintext" id="lblfdpoi"></label>
-                                                </div>
-                                            </div>
-                                            <div class="form-group row mb-0">
-                                                <label class="col-form-label col-5 text-left">Date of Issue</label>
-                                                <div class="col-7">
-                                                    <label class="form-control-plaintext" id="lblfddoi"></label>
-                                                </div>
-                                            </div> 
-                                            <div class="form-group row mb-0">
-                                                <label class="col-form-label col-5 text-left">Issuing Authority</label>
-                                                <div class="col-7">
-                                                    <label class="form-control-plaintext" id="lblfdissuA"></label>
-                                                </div>
-                                            </div>
-                                            <div class="form-group row mb-0">
-                                                <label class="col-form-label col-5 text-left">Date of Commissioning/ Enrollment</label>
-                                                <div class="col-7">
-                                                    <label class="form-control-plaintext" id="lblfddateo"></label>
-                                                </div>
-                                            </div> 
-                                            <div class="form-group row mb-0">
-                                                <label class="col-form-label col-5 text-left">Permt Address as per Service Records</label>
-                                                <div class="col-7">
-                                                    <label class="form-control-plaintext" id="lblfdaddress"></label>
-                                                </div>
-                                            </div>
-
                                         </div>
                                     </div>
-                                </div>
+                                    <div class="form-group row mb-0">
+                                        <label class="col-form-label col-5 text-left">Arm / Service</label>
+                                        <div class="col-7">
+                                            <label class="form-control-plaintext" id="lblLfdarm"></label>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row mb-0">
+                                        <label class="col-form-label col-5 text-left">Army No</label>
+                                        <div class="col-7">
+                                            <label class="form-control-plaintext" id="lblfdArmyNo"></label>
+                                        </div>
+                                    </div>
+                                        <div class="form-group row mb-0">
+                                            <label class="col-form-label col-5 text-left">Date of Birth</label>
+                                            <div class="col-7">
+                                                <label class="form-control-plaintext" id="lblfddob"></label>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row mb-0">
+                                            <label class="col-form-label col-5 text-left">Height (Cm)</label>
+                                            <div class="col-7">
+                                                <label class="form-control-plaintext" id="lblfdheight"></label>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row mb-0">
+                                            <label class="col-form-label col-5 text-left">AADHAAR No</label>
+                                            <div class="col-7">
+                                                <label class="form-control-plaintext" id="lblfdadhar"></label>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row mb-0">
+                                            <label class="col-form-label col-5 text-left">Blood Group</label>
+                                            <div class="col-7">
+                                                <label class="form-control-plaintext" id="lblfdBloodGroup"></label>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row mb-0">
+                                            <label class="col-form-label col-5 text-left">Place of Issue</label>
+                                            <div class="col-7">
+                                                <label class="form-control-plaintext" id="lblfdpoi"></label>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row mb-0">
+                                            <label class="col-form-label col-5 text-left">Date of Issue</label>
+                                            <div class="col-7">
+                                                <label class="form-control-plaintext" id="lblfddoi"></label>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row mb-0">
+                                            <label class="col-form-label col-5 text-left">Issuing Authority</label>
+                                            <div class="col-7">
+                                                <label class="form-control-plaintext" id="lblfdissuA"></label>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row mb-0">
+                                            <label class="col-form-label col-5 text-left">Date of Commissioning/ Enrollment</label>
+                                            <div class="col-7">
+                                                <label class="form-control-plaintext" id="lblfddateo"></label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                 <div class="col-md-4">
+                                    <div class="form-group row mb-0 ">
+                                        <div class="col-12 text-center">
+                                            <img src="~/images/user4.png" width="200" id="basicphotos" class="border border-primary p-2" />
 
-                        <div class="col-md-12 mb-3">
-                            <div class="form-group row mb-0 recectopt">
-                                <label class="col-form-label col-12 text-center">Remarks</label>
-                                <div class="col-12">
-                                    <textarea class="form-control" id="txtFrejectedRemarks" rows="2"></textarea>
-                                </div>
+                                            <h6 class="mb-1 text-font2 font-weight500 text-center PersName"></h6>
+                                            @*  <div class="text-left"> <img src="~/images/rank/brigadier.svg" id="imgrank" height="100px" /></div> *@
+                                        </div>
+                                    </div>
+                                    <div class="form-group row mb-0 ">
+                                        <div class="col-12 text-center">
+                                            <img src="~/images/signature.png" width="200" height="100" id="Basicsing" class="border border-primary p-2" />
+                                            @*<label class="col-form-label recectopt text-left ">Select Rejection Reasons for Signature</label>*@
+                                        </div>
+                                    </div>
+                                 </div>
+
+                                    <div class="col-md-12">
+                                        <div class="form-group row mb-0">
+                                            <label class="col-form-label col-4 text-left">Identification Mark</label>
+                                            <div class="col-8">
+                                                <label class="form-control-plaintext" id="lblfdMarks"></label>
+                                            </div>
+                                        </div>
+
+
+                                        
+                                        <div class="form-group row mb-0">
+                                            <label class="col-form-label col-4 text-left">Permt Address as per Service Records</label>
+                                            <div class="col-8">
+                                                <label class="form-control-plaintext" id="lblfdaddress"></label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12 mb-3">
+
+
+                                        <div class="form-group row mb-2 recectopt">
+                                            <label class="col-form-label col-12 text-center">Select Remarks</label>
+                                            <div class="col-sm-12">
+
+                                                <select class="form-control select2 select2-accessible" multiple="" placeholder="Please select a Remarks" style="width: 100%;" tabindex="-1" aria-hidden="true" name="Remarks" required id="ddlRRemarks">
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12 mb-3">
+                                            <div class="form-group row mb-0 recectopt">
+                                                <label class="col-form-label col-12 text-center">Remarks</label>
+                                                <div class="col-12">
+                                                    <textarea class="form-control" id="txtFrejectedRemarks" rows="2"></textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                 </div>
                             </div>
-                            </div>
+                           </div>
+                              
+
+                      
                        @*  <div class="col-md-12 mb-3 ml-3">
                         <div class="form-check form-check-inline">
                             <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">

@@ -1,35 +1,30 @@
-﻿using DataTransferObject.Constants;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace DataTransferObject.Domain.Master
 {
-    public class MArmedType:Common
+    public class MFmnBranches:Common
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public byte ArmedId { get; set; }
-        
+        public byte FmnBranchID { get; set; }
+
         [Required(ErrorMessage = "required!")]
         [RegularExpression("^[a-zA-Z0-9 ]*$", ErrorMessage = "Only Alphabets and Numbers allowed.")]
-        [Column(TypeName = "varchar(100)")]
-        [MaxLength(100)]
-        public string ArmedName { get; set; } = string.Empty;
-
+        [Column(TypeName = "varchar(50)")]
+        [MaxLength(50)]
+        public string BranchName { get; set; } = string.Empty;
         [Required(ErrorMessage = "required!")]
         [RegularExpression("^[a-zA-Z0-9 ]*$", ErrorMessage = "Only Alphabets and Numbers allowed.")]
         [Column(TypeName = "varchar(10)")]
         [MaxLength(10)]
-        public string Abbreviation { get; set; } = string.Empty;
-        public bool FlagInf { get; set; } = false;
+        public string Abvr { get; set; } = string.Empty;
 
-        [ForeignKey("ArmedCat"), DatabaseGenerated(DatabaseGeneratedOption.None)]
-        public byte ArmedCatId { get; set; }
-        public MArmedCat? ArmedCat { get; set; }
+        public int OrderId { get; set; }
     }
 }

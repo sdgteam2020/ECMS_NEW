@@ -32,7 +32,7 @@ namespace DataTransferObject.Domain.Model
         
         [StringLength(100)]
         [Column(TypeName = "nvarchar(100)")]
-        public string Observations { get; set; } = string.Empty;
+        public string? Observations { get; set; } = string.Empty;
 
         [NotMapped]
         public string? EncryptedId { get; set; }

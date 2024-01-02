@@ -109,7 +109,7 @@
                                             <div class="form-group row mb-2">
                                                 <label class="col-form-label col-sm-6">Permit Address as per Service Records</label>
                                                 <div class="col-sm-6">
-                                                    <textarea id="PermanentAddress" rows="8" class="form-control" placeholder="" readonly></textarea>
+                                                    <textarea id="PermanentAddress" rows="6" class="form-control" placeholder="" readonly></textarea>
                                                   
                                                 </div>
                                             </div>
@@ -145,7 +145,7 @@
                                                 </div>
                                             </div>
                                            
-                                            <div class="form-group row mb-2">
+                                           @*  <div class="form-group row mb-2">
                                                 <label  class="col-form-label col-sm-6">
                                                     Raise Observation (s)
                                                 </label>
@@ -153,7 +153,7 @@
                                                     <textarea asp-for="Observations" rows="2" class="form-control" placeholder="" readonly></textarea>
                                                     <span id="lblObservations" name="lblObservations" class="text-danger"></span>
                                                 </div>
-                                            </div>
+                                            </div> *@
                                         </div>
                                     </div>
                                     <div class="col-xl-12 Remarks d-none">
@@ -169,7 +169,7 @@
                                     <div class="col-xl-12">
                                         <div class="d-flax text-center">
                                             <button type="reset" id="btnclear" name="btnclear" class="btn btn-primary">Clear</button>
-                                            <button type="submit" id="btnsubmit" name="btnsubmit" class="btn btn-primary" disabled onclick="Proceed(this.form.id)">Proceed</button>
+                                            <button type="button" id="btnsubmit" name="btnsubmit" class="btn btn-primary" disabled onclick="return Proceed(this.form.id)">Proceed</button>
                                         </div>
                                         <div class="col-xl-12 mt-2">
                                             <div class="col-sm-12 text-center">

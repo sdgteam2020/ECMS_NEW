@@ -359,13 +359,13 @@ namespace Web.Controllers
                     }
                     else
                     {
-                        if (model.Observations == null)
-                        {
-                            ModelState.AddModelError("Observations", "Observations is required.");
-                            goto end;
-                        }
-                        else
-                        {
+                        //if (model.Observations == null)
+                        //{
+                        //    ModelState.AddModelError("Observations", "Observations is required.");
+                        //    goto end;
+                        //}
+                        //else
+                        //{
                             BasicDetailTemp basicDetailTemp = new BasicDetailTemp();
                             basicDetailTemp.Name = model.Name;
                             basicDetailTemp.ServiceNo = model.ServiceNo;
@@ -379,7 +379,7 @@ namespace Web.Controllers
                             await basicDetailTempBL.Add(basicDetailTemp);
                             TempData["success"] = "Request Submited Successfully.";
                             return RedirectToAction("Registration");
-                        }
+                        //}
                     }
                 }
                 else

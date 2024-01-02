@@ -38,6 +38,11 @@ namespace DataAccessLayer
         public DbSet<MStepCounter> TrnStepCounter { get; set; }
         public DbSet<MTrnICardRequest> TrnICardRequest { get; set; }
         public DbSet<MApplyFor> MApplyFor { get; set; }
+        public DbSet<MPSO> MPso { get; set; }
+        public DbSet<MFmnBranches> MFmnBranches { get; set; }
+        public DbSet<MSubDte> MSubDte { get; set; }
+
+
 
         /// <summary>
         /// ////Basic details with all mapiing

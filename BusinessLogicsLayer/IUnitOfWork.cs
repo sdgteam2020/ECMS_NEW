@@ -35,6 +35,7 @@ namespace BusinessLogicsLayer
         IUnitBL Unit { get; }
         IRegimentalBL Regimental { get; }
         IArmedCatBL ArmedCat { get; }
+        IMasterBL MasterBL { get; }
 
 
         public Task<List<DTOMasterResponse>> GetAllMMaster(DTOMasterRequest Data);

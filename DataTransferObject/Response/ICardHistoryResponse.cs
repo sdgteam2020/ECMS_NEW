@@ -18,5 +18,6 @@ namespace DataTransferObject.Response
         public string? UpdatedOn { get; set; }
         public string? Remark { get; set; }
         public int IsComplete { get; set; }
+        public string? Remarks2 { get; set; }
     }
 }

@@ -23,6 +23,21 @@ namespace BusinessLogicsLayer.Master
             _iMasterDB = iMasterDB;   
         }
 
+        public async Task<List<DTOMasterResponse>> GetMFmnBranches()
+        {
+            return await _iMasterDB.GetMFmnBranches();
+        }
+
+        public async Task<List<DTOMasterResponse>> GetMPSO()
+        {
+            return await _iMasterDB.GetMPSO();
+        }
+
+        public async Task<List<DTOMasterResponse>> GetMSubDte()
+        {
+            return await _iMasterDB.GetMSubDte();
+        }
+
         public async Task<List<DTORemarksResponse>> GetRemarksByTypeId(DTORemarksRequest Data)
         {
           return  await _iMasterDB.GetRemarksByTypeId(Data);

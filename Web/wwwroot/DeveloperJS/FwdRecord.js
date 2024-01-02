@@ -1,11 +1,12 @@
-﻿var photo = "";
-var sing = "";
+﻿//var photo = "";
+//var sing = "";
 var StepCounter = 0;
 var applyfor = 0;
 $(document).ready(function () {
 
     sessionStorage.removeItem('ArmyNo');
 
+   
     var spnStepId = 0;
     $('.select2').select2({
         dropdownParent: $('#BasicDetails'),
@@ -29,12 +30,12 @@ $(document).ready(function () {
         $(".spnFDomainName").html("");
         FwdData($('#ddlfwdoffrs').val());
     });
-    $('#ddlPhotos').on('change', function () {
-        photo= $('#ddlPhotos').val();
-    });
-    $('#ddlsignature').on('change', function () {
-        sing=$('#ddlsignature').val();
-    });
+    //$('#ddlPhotos').on('change', function () {
+    //    photo= $('#ddlPhotos').val();
+    //});
+    //$('#ddlsignature').on('change', function () {
+    //    sing=$('#ddlsignature').val();
+    //});
     //$("#btnRejected").click(function () {
 
     //    $("#txtFrejectedRemarks").val($("#txtFrejectedRemarks").val() + "" + photo + "" + sing);
@@ -60,7 +61,7 @@ $(document).ready(function () {
         //alert($(this).closest("tr").find(".spnRequestId").html())
 
        
-       
+        $("#ddlRemarks").val("");
        // $("#FwdRecord").modal('show');
         $("#BasicDetails").modal('show');
         $(".spnFname").html($(this).closest("tr").find(".PersName").html());
@@ -75,29 +76,58 @@ $(document).ready(function () {
         
         if (StepCounter == 1 || StepCounter == 7 || StepCounter == 8 || StepCounter == 9 || StepCounter == 10) {
                 $(".recectopt").addClass("d-none");
-                $("#btnRejected").addClass("d-none");
+            $("#btnRejected").addClass("d-none");
+           
             }
             GetDataFromBasicDetails($(this).closest("tr").find(".spnBasicDetailId").html());
         if (StepCounter == 1 ) {
             $(".gsoio").html("IO");
             $("#btnForward").html("Forward To IO");
+            $(".Remarks").removeClass("d-none");
 
+
+            var someNumbers = [1];
+            GetRemarks("ddlRemarks", 0, someNumbers);
         }
         else if (StepCounter == 2) {
             $(".gsoio").html("GSO");
             $("#btnForward").html("Forward To GSO");
+            $(".Remarks").removeClass("d-none");
+            var someNumbers = [1];
+            GetRemarks("ddlRemarks", 0, someNumbers);
+
+            var Reject = [2];
+            GetRemarks("ddlRRemarks", 0, Reject);
+            
         }
         else if (StepCounter == 3) {
             $(".chkforserach").addClass("d-none");
+
             $(".gsoio").html("MI 11");
             $("#btnForward").html("Forward To MI 11");
             GetAllOffsByUnitId("ddlfwdoffrs", 0, 13);
+
+            $(".Remarks").removeClass("d-none");
+            var someNumbers = [1];
+            GetRemarks("ddlRemarks", 0, someNumbers);
+
+            var Reject = [2];
+            GetRemarks("ddlRRemarks", 0, Reject);
         }
         else if (StepCounter == 4) {
             $(".chkforserach").addClass("d-none");
             $(".gsoio").html("HQ 54");
             $("#btnForward").html("Forward To HQ 54");
             GetAllOffsByUnitId("ddlfwdoffrs", 0, 17);
+
+
+            $(".Remarks").removeClass("d-none");
+            var someNumbers = [1];
+            GetRemarks("ddlRemarks", 0, someNumbers);
+
+
+            var Reject = [2];
+            GetRemarks("ddlRRemarks", 0, Reject);
             }
             //if (StepCounter == 1) {
             //    $("#btnRejected").addClass("d-none");
@@ -188,7 +218,7 @@ $(document).ready(function () {
 
     $("#btnRejected").click(function () {
 
-        $("#txtFrejectedRemarks").val($("#txtFrejectedRemarks").val() + "" + photo + "" + sing);
+      /*  $("#txtFrejectedRemarks").val($("#txtFrejectedRemarks").val() + "" + photo + "" + sing);*/
         Swal.fire({
             title: 'Are you sure?',
             text: "You won't be Forward!",
@@ -454,7 +484,8 @@ function GetProfiledetailsByAspNetuserid(AspNetUsersId) {
 //    });
 //}
 function ForwardTo(RequestId, HType) {
-
+    
+    var remarks = ""+$("#ddlRemarks").val()+"";
     var userdata =
     {
         "TrnFwdId": 0,
@@ -468,6 +499,7 @@ function ForwardTo(RequestId, HType) {
         "Status": true,
         "TypeId": HType,
         "IsComplete": false,
+        "RemarksIds": remarks,
     };
     $.ajax({
         url: '/BasicDetail/IcardFwd',
@@ -483,7 +515,7 @@ function ForwardTo(RequestId, HType) {
     });
 }
 function RejecteTo(RequestId, HType) {
-
+    var remarks = "" + $("#ddlRRemarks").val() + "";
     var userdata =
     {
         "TrnFwdId": 0,
@@ -497,6 +529,7 @@ function RejecteTo(RequestId, HType) {
         "Status": false,
         "TypeId": HType,
         "IsComplete": false,
+        "RemarksIds": remarks
     };
     $.ajax({
         url: '/BasicDetail/IcardRejecte',
@@ -596,6 +629,17 @@ function GetRequestHistory(spnRequestId) {
                             listItem += '<br><span class="badge bg-danger">' + response[i].Status + ' And Sent To</span>';
 
                         listItem += '<br> <strong class="text-center">Remark</strong> <br>' + response[i].Remark + '';
+                        if (response[i].Remarks2 != null) {
+                            var rem = response[i].Remarks2.split('#');
+                            if (rem.length > 0) {
+                               
+                                listItem += '<ul>';
+                                for (var j = 0; j < rem.length; j++) {
+                                    listItem += '<li>' + rem[j] + '</li>';
+                                }
+                                listItem += '</ul>';
+                            }
+                        }
                         listItem += '<br><button type="button" class="btn btn-icon btn-round btn-light mr-1"><i class="fas fa-arrow-down"></i></button>'
 
                         if (response[i].IsComplete == 0) {

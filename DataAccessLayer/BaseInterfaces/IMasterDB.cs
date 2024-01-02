@@ -13,6 +13,9 @@ namespace DataAccessLayer.BaseInterfaces
     public interface IMasterDB 
     {
         public Task<List<DTORemarksResponse>> GetRemarksByTypeId(DTORemarksRequest Data);
+        public Task<List<DTOMasterResponse>> GetMFmnBranches();
+        public Task<List<DTOMasterResponse>> GetMPSO();
+        public Task<List<DTOMasterResponse>> GetMSubDte();
        
     }
 }

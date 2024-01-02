@@ -30,10 +30,13 @@ namespace DataAccessLayer
         public async Task<List<DTOBasicDetailTempRequest>> GetALLBasicDetailTemp(int UserId)
         {
             //var BasicDetailTempList = _context.BasicDetailTemps.Where(x => x.Updatedby == UserId).ToList();
-            var query = "SELECT * FROM BasicDetailTemps WHERE Updatedby=@UserId ORDER BY UpdatedOn DESC";
+            var query = "SELECT Temps.BasicDetailTempId,Temps.Name,Temps.ServiceNo,Temps.DOB,Temps.DateOfCommissioning,Temps.PermanentAddress,Temps.Observations,Temps.RemarksIds "+
+                        " ,(select STRING_AGG(Remarks,'#') from MRemarks where RemarksId in (select value from string_split(Temps.RemarksIds,','))) Remarks2"+
+                        " FROM BasicDetailTemps  Temps"+
+                        " WHERE Updatedby=@UserId ORDER BY UpdatedOn DESC";
             using (var connection = _contextDP.CreateConnection())
             {
-                var BasicDetailTempList = await connection.QueryAsync<BasicDetailTemp>(query, new { UserId });
+                var BasicDetailTempList = await connection.QueryAsync<DTOBasicDetailTempRequest>(query, new { UserId });
                 int sno = 1;
                 var allrecord = (from e in BasicDetailTempList
                                  select new DTOBasicDetailTempRequest()
@@ -46,6 +49,7 @@ namespace DataAccessLayer
                                      DateOfCommissioning = e.DateOfCommissioning,
                                      //PermanentAddress = e.PermanentAddress,
                                      Observations = e.Observations,
+                                     Remarks2=e.Remarks2,
                                  }).ToList();
                 return await Task.FromResult(allrecord);
 

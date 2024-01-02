@@ -483,7 +483,7 @@ namespace DataAccessLayer
         {
             string query = "select usersfrom.UserName FromDomain,profrom.Name FromProfile,ranlfrom.RankAbbreviation FromRank, " +
             " usersto.UserName ToDomain,proto.Name ToProfile,ranlto.RankAbbreviation ToRank ,"+
-            " CASE fwd.Status WHEN 1 THEN 'Approved' WHEN 0 THEN 'Reject'  END Status,fwd.UpdatedOn,fwd.Remark,fwd.IsComplete from TrnFwds fwd " +
+            " CASE fwd.Status WHEN 1 THEN 'Approved' WHEN 0 THEN 'Reject'  END Status,fwd.UpdatedOn,isnull(fwd.Remark,'Nill') Remark,fwd.IsComplete,(select STRING_AGG(Remarks,'#') from MRemarks where RemarksId in (select value from string_split(fwd.RemarksIds,','))) Remarks2 from TrnFwds fwd " +
             " inner join TrnStepCounter step"+
             " on fwd.RequestId=step.RequestId"+
             " inner join TrnDomainMapping mapfrom on mapfrom.AspNetUsersId=fwd.FromAspNetUsersId"+
