@@ -107,7 +107,7 @@ namespace DataAccessLayer
                                      RankId = rank.RankId,
                                      RankName = rank.RankName,
                                  }
-                                ).Distinct().SingleOrDefaultAsync();
+                                ).FirstOrDefaultAsync();
                 return ret;
 
             }
@@ -155,7 +155,7 @@ namespace DataAccessLayer
                                      IntOffr = user.IntOffr,
 
                                  }
-                         ).Distinct().SingleOrDefaultAsync();
+                         ).Distinct().FirstOrDefaultAsync();
                 return ret;
 
             }
@@ -193,7 +193,7 @@ namespace DataAccessLayer
                                      AppointmentName = xmappo != null ? xmappo.AppointmentName:"No Appointment" ,
                                      DomainId = xapluser != null ?xapluser.DomainId : null
                                  }
-                         ).Distinct().SingleOrDefaultAsync();
+                         ).Distinct().FirstOrDefaultAsync();
                 return ret;
 
             }
