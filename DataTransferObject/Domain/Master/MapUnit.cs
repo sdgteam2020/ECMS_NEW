@@ -20,7 +20,7 @@ namespace DataTransferObject.Domain.Master
         public int UnitId { get; set; }
         public MUnit? MUnit { get; set; }
         
-        public Boolean FmnBrach { get; set; }   
+        public int UnitType { get; set; }   
         [ForeignKey("Comd")]
         public byte ComdId { get; set; }
 
@@ -42,7 +42,24 @@ namespace DataTransferObject.Domain.Master
         [Required(ErrorMessage = "required!")]
         public byte BdeId { get; set; }
         public MBde? Bde { get; set;}
-  
 
+
+        [ForeignKey("MPSO")]
+
+        [Required(ErrorMessage = "required!")]
+        public byte PsoId { get; set; }
+        public MPSO? MPSO { get; set; }
+
+        [ForeignKey("MFmnBranches")]
+
+        [Required(ErrorMessage = "required!")]
+        public byte FmnBranchID { get; set; }
+        public MFmnBranches? MFmnBranches { get; set; }
+
+        [ForeignKey("MSubDte")]
+
+        [Required(ErrorMessage = "required!")]
+        public byte SubDteId { get; set; }
+        public MSubDte? MSubDte { get; set; }
     }
 }

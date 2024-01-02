@@ -146,6 +146,7 @@ namespace DataTransferObject.Requests
     public class DTOBasicDetailTempRequest : Common
     {
 
+        public int BasicDetailTempId { get; set; }
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
      
         public string Name { get; set; } = string.Empty;
@@ -206,6 +207,8 @@ namespace DataTransferObject.Requests
         [NotMapped]
         [Display(Name = "Sno", ResourceType = typeof(Resource))]
         public int Sno { get; set; }
+
+        public string? Remarks2 { get; set; }
     } 
     public class DTORegistrationRequest : DTOBasicDetailTempRequest
     {

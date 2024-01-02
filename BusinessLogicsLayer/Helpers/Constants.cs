@@ -20,6 +20,9 @@ namespace BusinessLogicsLayer.Helpers
             internal const string RankOrJco = "8";
             internal const string ArmyType = "9";
             internal const string ArmyCat = "10";
+            internal const string FmnBranches = "11";
+            internal const string PSO = "12";
+            internal const string SubDte = "13";
         }
     }
 }

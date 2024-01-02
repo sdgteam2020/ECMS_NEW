@@ -21,7 +21,13 @@ namespace DataTransferObject.Response
         public int DivId { get; set; }
         public string DivName { get; set; }
         public string Sus_no { get; set; }
-        public Boolean FmnBrach { get; set; }
+        public int UnitType { get; set; }
         public string Suffix { get; set; }
+        public byte PsoId { get; set; }
+        public string PSOName { get; set; }
+        public byte FmnBranchID { get; set; }
+        public string BranchName { get; set; }
+        public byte SubDteId { get; set; }
+        public string SubDteName { get; set; }
     }
 }

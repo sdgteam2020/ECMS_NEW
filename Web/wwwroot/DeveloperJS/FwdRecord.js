@@ -632,10 +632,10 @@ function GetRequestHistory(spnRequestId) {
                         if (response[i].Remarks2 != null) {
                             var rem = response[i].Remarks2.split('#');
                             if (rem.length > 0) {
-                                alert(rem.length)
+                               
                                 listItem += '<ul>';
                                 for (var j = 0; j < rem.length; j++) {
-                                    listItem += '<li>' + rem[j] + '<li>';
+                                    listItem += '<li>' + rem[j] + '</li>';
                                 }
                                 listItem += '</ul>';
                             }

@@ -4,6 +4,7 @@ using DataAccessLayer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccessLayer.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240102102906_v10")]
+    partial class v10
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -935,22 +938,22 @@ namespace DataAccessLayer.Migrations
                     b.Property<byte>("DivId")
                         .HasColumnType("tinyint");
 
-                    b.Property<byte>("FmnBranchID")
+                    b.Property<bool>("FmnBrach")
+                        .HasColumnType("bit");
+
+                    b.Property<byte?>("FmnBranchID")
                         .HasColumnType("tinyint");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
-                    b.Property<byte>("PsoId")
+                    b.Property<byte?>("PsoId")
                         .HasColumnType("tinyint");
 
-                    b.Property<byte>("SubDteId")
+                    b.Property<byte?>("SubDteId")
                         .HasColumnType("tinyint");
 
                     b.Property<int>("UnitId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("UnitType")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("UpdatedOn")
@@ -969,12 +972,6 @@ namespace DataAccessLayer.Migrations
                     b.HasIndex("CorpsId");
 
                     b.HasIndex("DivId");
-
-                    b.HasIndex("FmnBranchID");
-
-                    b.HasIndex("PsoId");
-
-                    b.HasIndex("SubDteId");
 
                     b.HasIndex("UnitId");
 
@@ -1781,24 +1778,6 @@ namespace DataAccessLayer.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("DataTransferObject.Domain.Master.MFmnBranches", "MFmnBranches")
-                        .WithMany()
-                        .HasForeignKey("FmnBranchID")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("DataTransferObject.Domain.Master.MPSO", "MPSO")
-                        .WithMany()
-                        .HasForeignKey("PsoId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("DataTransferObject.Domain.Master.MSubDte", "MSubDte")
-                        .WithMany()
-                        .HasForeignKey("SubDteId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("DataTransferObject.Domain.Master.MUnit", "MUnit")
                         .WithMany()
                         .HasForeignKey("UnitId")
@@ -1812,12 +1791,6 @@ namespace DataAccessLayer.Migrations
                     b.Navigation("Corps");
 
                     b.Navigation("Div");
-
-                    b.Navigation("MFmnBranches");
-
-                    b.Navigation("MPSO");
-
-                    b.Navigation("MSubDte");
 
                     b.Navigation("MUnit");
                 });

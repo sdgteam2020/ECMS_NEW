@@ -1160,7 +1160,7 @@ namespace Web.Controllers
 
                                 if (roles[0] == "User")
                                 {
-                                    return RedirectToActionPermanent("Dashboard", "Home");
+                                    return RedirectToActionPermanent("Index", "Home");
                                 }
                                 else if (roles[0] == "Admin")
                                 {
