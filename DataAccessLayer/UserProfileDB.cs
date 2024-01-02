@@ -7,6 +7,7 @@ using DataTransferObject.Response;
 using DataTransferObject.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 
 namespace DataAccessLayer
 {
@@ -14,9 +15,12 @@ namespace DataAccessLayer
     {
         protected readonly ApplicationDbContext _context;
         private readonly DapperContext _contextDP;
-        public UserProfileDB(ApplicationDbContext context, DapperContext contextDP) : base(context)
+        private readonly ILogger<UserProfileDB> _logger;
+        public UserProfileDB(ApplicationDbContext context, ILogger<UserProfileDB> logger, DapperContext contextDP) : base(context)
         {
-            _context = context; _contextDP = contextDP;
+            _context = context; 
+            _contextDP = contextDP;
+            _logger = logger;
         }
         private readonly IConfiguration configuration;
         public async Task<bool> GetByArmyNo(MUserProfile Data, int UserId)
@@ -31,11 +35,11 @@ namespace DataAccessLayer
         }
         public async Task<DTOProfileResponse?> GetUserProfileByArmyNo(string ArmyNo)
         {
-            DTOProfileResponse dTOProfileResponse = new DTOProfileResponse();
+            DTOProfileResponse? dTOProfileResponse = new DTOProfileResponse();
             MUserProfile? mUserProfile = await _context.UserProfile.FirstOrDefaultAsync(x => x.ArmyNo == ArmyNo);
             if (mUserProfile != null)
             {
-                dTOProfileResponse = await GetByArmyNo(mUserProfile.UserId);
+                dTOProfileResponse = await GetProfileByUserId(mUserProfile.UserId);
                 return dTOProfileResponse;
             }
             else
@@ -46,7 +50,7 @@ namespace DataAccessLayer
         }
         public async Task<DTOProfileResponse> CheckArmyNoInUserProfile(string ArmyNo, int AspNetUsersId)
         {
-            DTOProfileResponse dTOProfileResponse = new DTOProfileResponse();
+            DTOProfileResponse? dTOProfileResponse = new DTOProfileResponse();
             MUserProfile? mUserProfile = await _context.UserProfile.FirstOrDefaultAsync(x=>x.ArmyNo== ArmyNo);
             if(mUserProfile!=null)
             {
@@ -69,7 +73,7 @@ namespace DataAccessLayer
                 }
                 else
                 {
-                    dTOProfileResponse = await GetByArmyNo(mUserProfile.UserId);
+                    dTOProfileResponse = await GetProfileByUserId(mUserProfile.UserId);
                     dTOProfileResponse.StatusCode = 2;
                     dTOProfileResponse.Title = "Your Profile details already exist in the Appl database.";
                     dTOProfileResponse.Message = "Pl map myself to presently logged in?";
@@ -84,38 +88,34 @@ namespace DataAccessLayer
             }
 
         }
-        public async Task<DTOProfileResponse> GetByArmyNo(int UserId)
+        public async Task<DTOProfileResponse?> GetProfileByUserId(int UserId)
         {
-            // return _context.UserProfile.Where(P => P.ArmyNo == ArmyNo).SingleOrDefault();
             try
             {
-                var ret = await (from user in _context.UserProfile
-                                 //join app in _context.MAppointment on user.ApptId equals app.ApptId
-                                 //join forma in _context.MFormation on app.FormationId equals forma.FormationId
+                var ret = await (from user in _context.UserProfile.Where(x=>x.UserId == UserId)
                                  join rank in _context.MRank on user.RankId equals rank.RankId
                                  join map in _context.TrnDomainMapping on user.UserId equals map.UserId into mapp
                                  from xmapp in mapp.DefaultIfEmpty()
                                  join Uni in _context.MUnit on xmapp.UnitId equals Uni.UnitId into muni
                                  from xmuni in muni.DefaultIfEmpty()
-                                 where user.UserId == UserId 
                                  select new DTOProfileResponse
                                  {
                                      ArmyNo = user.ArmyNo,
                                      UserId = user.UserId,
                                      Name = user.Name,
                                      IntOffr = user.IntOffr,
-                                     //FormationId = forma.FormationId,
-                                     //FormationName = forma.FormationName,
-                                     //ApptId = app.ApptId,
-                                     //AppointmentName = app.AppointmentName,
                                      RankId = rank.RankId,
                                      RankName = rank.RankName,
                                  }
-                         ).Distinct().SingleOrDefaultAsync();
+                                ).Distinct().SingleOrDefaultAsync();
                 return ret;
 
             }
-            catch (Exception ex) { return null; }
+            catch (Exception ex) 
+            {
+                _logger.LogError(1001, ex, "UserProfileDB->GetByArmyNo");
+                return null; 
+            }
 
 
         }

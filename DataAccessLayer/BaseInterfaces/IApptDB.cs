@@ -15,5 +15,6 @@ namespace DataAccessLayer.BaseInterfaces
         public Task<List<DTOAppointmentResponse>> GetALLAppt();
         public Task<List<DTOAppointmentResponse>> GetByFormationId(int ApptId);
         public Task<List<DTOAppointmentResponse>> GetALLByAppointmentName(string AppointmentName);
+        public Task<DTOAppointmentResponse?> GetByApptId(int ApptId);
     }
 }

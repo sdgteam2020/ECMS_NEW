@@ -35,6 +35,10 @@ namespace BusinessLogicsLayer.Master
         {
             return _iUserProfileDB.GetDataForFwd(StepId, UnitId, Name,TypeId);
         }
+        public async Task<DTOProfileResponse?> GetProfileByUserId(int UserId)
+        {
+            return await _iUserProfileDB.GetProfileByUserId(UserId);
+        }
 
         public Task<bool> GetByArmyNo(MUserProfile Data, int UserId)
         {

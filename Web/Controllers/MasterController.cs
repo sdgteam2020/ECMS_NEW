@@ -834,6 +834,18 @@ namespace Web.Controllers
             }
 
         }
+        public async Task<IActionResult> GetByApptId(int ApptId)
+        {
+            try
+            {
+                return Json(await unitOfWork.Appt.GetByApptId(ApptId));
+            }
+            catch (Exception ex)
+            {
+                return Json(KeyConstants.InternalServerError);
+            }
+
+        }
         public async Task<IActionResult> DeleteAppointment(MAppointment dTO)
         {
             try

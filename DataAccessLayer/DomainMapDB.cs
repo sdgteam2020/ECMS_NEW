@@ -21,12 +21,12 @@ namespace DataAccessLayer
 
         public async Task<TrnDomainMapping?> GetByAspnetUserIdBy(int AspNetUsersId)
         {
-            var ret =await _context.TrnDomainMapping.Where(p => p.AspNetUsersId == AspNetUsersId).SingleOrDefaultAsync();
+            var ret =await _context.TrnDomainMapping.Where(p => p.AspNetUsersId == AspNetUsersId).FirstOrDefaultAsync();
             return ret;
         }
         public async Task<TrnDomainMapping?> GetTrnDomainMappingByUserId(int UserId)
         {
-            var ret = await _context.TrnDomainMapping.Where(p => p.UserId == UserId).SingleOrDefaultAsync();
+            var ret = await _context.TrnDomainMapping.Where(p => p.UserId == UserId).FirstOrDefaultAsync();
             return ret;
         }
 
@@ -38,7 +38,7 @@ namespace DataAccessLayer
 
         public async Task<TrnDomainMapping?> GetByDomainIdbyUnit(TrnDomainMapping Data)
         {
-            return await _context.TrnDomainMapping.Where(p => p.AspNetUsersId == Data.AspNetUsersId).SingleOrDefaultAsync();
+            return await _context.TrnDomainMapping.Where(p => p.AspNetUsersId == Data.AspNetUsersId).FirstOrDefaultAsync();
         }
 
         public async Task<TrnDomainMapping> GetByRequestId(int RequestId)
@@ -53,7 +53,7 @@ namespace DataAccessLayer
                       {
                          AspNetUsersId=trndomap.AspNetUsersId,
                           UserId= trndomap.UserId,
-                      }).SingleOrDefaultAsync();
+                      }).FirstOrDefaultAsync();
             return  ret;
         }
         public async Task<TrnDomainMapping?> GetAllRelatedDataByDomainId(string DomainId)
@@ -76,7 +76,7 @@ namespace DataAccessLayer
                                         UserId = xup != null ? xup.UserId : null,
                                         ApplicationUser = au != null ? au : null,
                                         MUserProfile = xup != null ? xup : null,
-                                    }).SingleOrDefaultAsync();
+                                    }).FirstOrDefaultAsync();
                 return (TrnDomainMapping?)result;
             }
             catch(Exception ex)
@@ -104,7 +104,7 @@ namespace DataAccessLayer
                                         UnitId = xtdm != null ? xtdm.UnitId : 0,
                                         ApplicationUser = au != null ? au : null,
                                         MUserProfile = xup != null ? xup : null,
-                                    }).SingleOrDefaultAsync();
+                                    }).FirstOrDefaultAsync();
                 return (TrnDomainMapping?)result;
             }
             catch (Exception ex)

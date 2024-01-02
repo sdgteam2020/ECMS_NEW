@@ -32,7 +32,8 @@ namespace DataAccessLayer
         {
             try
             {
-                var applicationUser = await _context.Users.Where(x => x.DomainId == DomainId).Select(x => new { x.Id, x.DomainId, x.Active, x.AdminFlag }).FirstOrDefaultAsync();
+                ApplicationUser? applicationUser = await _context.Users.Where(x => x.DomainId == DomainId).FirstOrDefaultAsync();
+
                 if (applicationUser != null)
                 {
                     DTOAccountResponse dTOAccountResponse = new DTOAccountResponse();
@@ -162,7 +163,11 @@ namespace DataAccessLayer
                                                Active = u.Active,
                                                UpdatedOn = u.UpdatedOn,
                                                Mapped = xtdm != null ? true : false,
+                                               TrnDomainMappingId = xtdm != null ? xtdm.Id : 0,
+                                               TrnDomainMappingApptId = (short)(xtdm != null ? xtdm.ApptId : 0),
+                                               TrnDomainMappingUnitId = xtdm != null ? xtdm.UnitId : 0,
                                                ArmyNo = xup != null ? xup.ArmyNo : null,
+                                               UserId = xup != null ? xup.UserId : 0,
                                                RoleName = xr != null ? (xr.Name != null ? xr.Name : "Role name is blank.") : null,
                                            }).ToListAsync();
                     return allrecord;
@@ -187,7 +192,11 @@ namespace DataAccessLayer
                                                Active = u.Active,
                                                UpdatedOn = u.UpdatedOn,
                                                Mapped = xtdm != null ? true : false,
+                                               TrnDomainMappingId = xtdm != null ? xtdm.Id : 0,
+                                               TrnDomainMappingApptId = (short)(xtdm != null ? xtdm.ApptId : 0),
+                                               TrnDomainMappingUnitId = xtdm != null ? xtdm.UnitId : 0,
                                                ArmyNo = xup != null ? xup.ArmyNo : null,
+                                               UserId = xup != null ? xup.UserId : 0,
                                                RoleName = xr != null ? (xr.Name != null ? xr.Name : "Role name is blank.") : null,
                                            }).ToListAsync();
                     return allrecord;
