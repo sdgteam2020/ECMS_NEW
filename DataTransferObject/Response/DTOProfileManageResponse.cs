@@ -16,6 +16,9 @@ namespace DataTransferObject.Response
         public bool? AdminFlag { get; set; }
         public bool? Active { get; set; }
         public bool? Mapped { get; set; }
-
+        public int TrnDomainMappingId { get; set; }
+        public int TrnDomainMappingUnitId { get; set; }
+        public short TrnDomainMappingApptId { get; set; }
+        public int UserId { get; set; }
     }
 }

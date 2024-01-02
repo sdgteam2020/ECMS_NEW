@@ -3,8 +3,10 @@ using DataTransferObject.Domain.Master;
 using DataTransferObject.Response;
 using DataTransferObject.Response.User;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,9 +17,11 @@ namespace DataAccessLayer
     public class ApptDB : GenericRepositoryDL<MAppointment>, IApptDB
     {
         protected readonly ApplicationDbContext _context;
-        public ApptDB(ApplicationDbContext context) : base(context)
+        private readonly ILogger<MAppointment> _logger;
+        public ApptDB(ApplicationDbContext context, ILogger<MAppointment> logger) : base(context)
         {
             _context = context;
+            _logger = logger;
         }
         private readonly IConfiguration configuration;
 
@@ -75,6 +79,25 @@ namespace DataAccessLayer
                           }).ToList();
 
             return Task.FromResult(GetALL);
+        }
+        public async Task<DTOAppointmentResponse?> GetByApptId(int ApptId)
+        {
+            try
+            {
+                var GetAppt = await (from app in _context.MAppointment.Where(x => x.ApptId == ApptId)
+                               select new DTOAppointmentResponse
+                               {
+                                   ApptId = app.ApptId,
+                                   AppointmentName = app.AppointmentName,
+                               }).FirstOrDefaultAsync();
+
+                return GetAppt;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "ApptDB->GetByApptId");
+                return null;
+            }
         }
 
         //public async Task<bool> GetByName(MCorps Data)

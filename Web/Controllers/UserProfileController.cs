@@ -150,6 +150,18 @@ namespace Web.Controllers
             }
 
         }
+        public async Task<IActionResult> GetProfileByUserId(int UserId)
+        {
+            try
+            {
+                return Json(await _userProfileBL.GetProfileByUserId(UserId));
+            }
+            catch (Exception ex)
+            {
+                return Json(KeyConstants.InternalServerError);
+            }
+
+        }
         public async Task<IActionResult> GetDataForFwd(string Name,int TypeId, int StepId,int UnitId)
         {
             try

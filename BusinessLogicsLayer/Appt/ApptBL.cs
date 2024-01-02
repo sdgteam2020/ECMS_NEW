@@ -39,5 +39,9 @@ namespace BusinessLogicsLayer.Appt
         {
             return await _apptDB.GetALLByAppointmentName(AppointmentName);
         }
+        public async Task<DTOAppointmentResponse?> GetByApptId(int ApptId)
+        {
+            return await _apptDB.GetByApptId(ApptId);
+        }
     }
 }
