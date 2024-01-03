@@ -2,6 +2,17 @@
     mMsater(0, "ddlRank", Rank, "");
     BindData()
 
+    $("#AddNewDomain input[name='txtapproval']").click(function () {
+        $("#txtapproval-error").html("");
+    });
+    $("#AddNewDomain input[name='txtactive']").click(function () {
+        $("#txtactive-error").html("");
+    });
+    $("#AddNewDomain input[name='IntOffr']").click(function () {
+        $("#IntOffr-error").html("");
+    });
+
+
     $("#txtAppointmentName").autocomplete({
         source: function (request, response) {
             if (request.term.length > 1) {
@@ -100,8 +111,14 @@
     });
     $("#btnDomainAdd").click(function () {
         Reset();
+        ResetErrorMessage();
         $("#AddNewDomain").modal('show');
     });
+    $("#btnDomainAddReset").click(function () {
+        Reset();
+        ResetErrorMessage();
+    });
+    
     $("#txtSearch").keyup(function () {
         var eThis = $(this);
         if ($("input[type='radio'][name=choice]:checked").length > 0) {
@@ -126,28 +143,86 @@
     });
  
 
-    $("#btnDomainsave").click(function () {
-        if ($("#SaveForm")[0].checkValidity()) {
+    //$("#btnDomainsave").click(function () {
+    //    if ($("#SaveDomain")[0].checkValidity()) {
 
-            Swal.fire({
-                title: 'Are you sure?',
-                text: "You won't be Save!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes, Save it!'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    Save();
-                }
-            })
+    //        Swal.fire({
+    //            title: 'Are you sure?',
+    //            text: "You won't be Save!",
+    //            icon: 'warning',
+    //            showCancelButton: true,
+    //            confirmButtonColor: '#3085d6',
+    //            cancelButtonColor: '#d33',
+    //            confirmButtonText: 'Yes, Save it!'
+    //        }).then((result) => {
+    //            if (result.isConfirmed) {
+    //                Save();
+    //            }
+    //        })
 
-        } else {
-            $("#SaveForm")[0].reportValidity();
-        }
-    });
+    //    } else {
+    //        $("#SaveDomain")[0].reportValidity();
+    //    }
+    //});
+
+
 });
+
+function Proceed() {
+    ResetErrorMessage();
+    let formId = '#SaveDomain';
+    $.validator.unobtrusive.parse($(formId));
+
+    ValidateRadioButton();
+
+    if ($(formId).valid()) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be Save!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, Save it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Save();
+            }
+        })
+    }
+    else {
+        Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'Please fill required field.',
+
+        })
+        toastr.error('Please fill required field.');
+        return false;
+    }
+}
+function ValidateRadioButton(){
+    if ($("input[type='radio'][name=txtapproval]:checked").length == 0) {
+        $("#txtapproval-error").html("Approval is required.");
+    }
+    else {
+        $("#txtapproval-error").html("");
+    }
+
+    if ($("input[type='radio'][name=txtactive]:checked").length == 0) {
+        $("#txtactive-error").html("Active is required.");
+    }
+    else {
+        $("#txtactive-error").html("");
+    }
+
+    if ($("input[type='radio'][name=IntOffr]:checked").length == 0) {
+        $("#IntOffr-error").html("IntOffr is required.");
+    }
+    else {
+        $("#IntOffr-error").html("");
+    }
+}
 
 function BindData() {
     var listItem = "";
@@ -284,10 +359,8 @@ function BindData() {
                             GetNameByApptId($(this).closest("tr").find("#regTrnDomainMappingApptId").html());
                         }
                         
-
+                        $("#btnDomainAdd").val("Update");
                         $("#AddNewDomain").modal('show');
-                        $("#btnDomainsave").val("Update");
-
                     });
                 }
             }
@@ -313,13 +386,26 @@ function BindData() {
 
 }
 function Save() {
-    debugger;
     /*  alert($('#bdaymonth').val());*/
     alert($("txtapproval").val());
     $.ajax({
         url: '/Account/SaveDomain',
         type: 'POST',
-        data: { "DomainId": $("#txtDomainId").val(), "Id": $("#spnDomainRegId").html(), "RoleName": $("#txtRole").val(), "IsVerify": $("txtapproval").val() }, //get the search string
+        data: {
+            "Id": $("#spnDomainRegId").html(),
+            "DomainId": $("#txtDomainId").val(),
+            "RoleName": $("#txtRole").val(),
+            "AdminFlag": $('input:radio[name=txtapproval]:checked').val(),
+            "Active": $('input:radio[name=txtactive]:checked').val(),
+            "UserId": $("#spnUserProfileId").html(),
+            "ArmyNo": $("#txtArmyNo").val(),
+            "Name": $("#txtName").val(),
+            "RankId": $("#ddlRank").val(),
+            "IntOffr": $('input:radio[name=txtactive]:checked').val(),
+            "TrnDomainMappingId": $("#spnTrnDomainMappingId").html(),
+            "ApptId": $("#spnUnitAppointmentId").html(),
+            "UnitId": $("#spnUnitIdMap").html(),
+        }, //get the search string
         success: function (result) {
 
 
@@ -329,6 +415,7 @@ function Save() {
                 /*  $("#AddNewM").modal('hide');*/
                 BindData();
                 Reset();
+                ResetErrorMessage();
             }
             else if (result == DataUpdate) {
                 toastr.success('Unit has been Updated');
@@ -336,6 +423,7 @@ function Save() {
                 /*  $("#AddNewM").modal('hide');*/
                 BindData();
                 Reset();
+                ResetErrorMessage();
             }
             else if (result == DataExists) {
 
@@ -396,6 +484,18 @@ function Reset() {
 
     $("#txtactiveyes").prop("checked", false);
     $("#txtactiveno").prop("checked", false);
+}
+function ResetErrorMessage() {
+    $("#txtDomainId-error").html("");
+    $("#txtRole-error").html("");
+    $("#txtapproval-error").html("");
+    $("#txtactive-error").html("");
+    $("#txtName-error").html("");
+    $("#ddlRank-error").html("");
+    $("#txtArmyNo-error").html("");
+    $("#IntOffr-error").html("");
+    $("#txtAppointmentName-error").html("");
+    $("#txtUnitName-error").html("");
 }
 function GetALLByUnitById(param1) {
     $.ajax({
