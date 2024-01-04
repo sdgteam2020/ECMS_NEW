@@ -85,6 +85,7 @@ $(document).ready(function () {
             $("#btnForward").html("Forward To IO");
             $(".Remarks").removeClass("d-none");
 
+            $(".chkforserach").addClass("d-none");
 
             var someNumbers = [1];
             GetRemarks("ddlRemarks", 0, someNumbers);
