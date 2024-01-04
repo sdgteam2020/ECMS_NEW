@@ -732,7 +732,7 @@ namespace Web.Controllers
         }
         [Authorize(Roles = "Admin")]
         [HttpPost]
-        public async Task<IActionResult> GetAllProfileManage(string Search,string Choice)
+        public async Task<IActionResult> GetAllProfileManage(string Search, string Choice)
         {
             try
             {
@@ -741,6 +741,27 @@ namespace Web.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(1001, ex, "Account->ProfileManage");
+                return Json(KeyConstants.InternalServerError);
+            }
+
+        }
+        [Authorize(Roles = "Admin")]
+        [HttpGet]
+        public IActionResult UserRegn()
+        {
+            return View();
+        }
+        [Authorize(Roles = "Admin")]
+        [HttpPost]
+        public async Task<IActionResult> GetAllUserRegn(string Search, string Choice)
+        {
+            try
+            {
+                return Json(await _iAccountBL.GetAllUserRegn(Search, Choice));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "Account->UserRegn");
                 return Json(KeyConstants.InternalServerError);
             }
 
@@ -1164,7 +1185,7 @@ namespace Web.Controllers
                                 }
                                 else if (roles[0] == "Admin")
                                 {
-                                    return RedirectToActionPermanent("ProfileManage", "Account");
+                                    return RedirectToActionPermanent("Dashboard", "Home");
 
                                 }
                                 else if (roles[0] == "Super Admin")

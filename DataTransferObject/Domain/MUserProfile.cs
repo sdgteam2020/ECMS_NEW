@@ -35,7 +35,9 @@ namespace DataTransferObject.Domain
         // [Required]
         //public int UnitId { get; set; }
         public Boolean IntOffr { get; set; }
+        public Boolean IsIO { get; set; }
+        public Boolean IsCO { get; set; }
         //public MUnit? MUnit { get; set; }
-       
+
     }
 }

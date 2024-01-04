@@ -29,9 +29,13 @@ namespace BusinessLogicsLayer.Account
         {
             return await _iAccountDB.DomainApproveList();
         }
-        public async Task<List<DTOProfileManageResponse>> GetAllProfileManage(string Search, string Choice)
+        public async Task<List<DTOProfileManageResponse>?> GetAllProfileManage(string Search, string Choice)
         {
             return await _iAccountDB.GetAllProfileManage(Search, Choice);
+        }
+        public async Task<List<DTOUserRegnResponse>?> GetAllUserRegn(string Search, string Choice)
+        {
+            return await _iAccountDB.GetAllUserRegn(Search, Choice);
         }
     }
 }
