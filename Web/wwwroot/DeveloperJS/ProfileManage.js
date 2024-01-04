@@ -330,6 +330,7 @@ function BindData() {
 
                     $("body").on("click", ".cls-btnedit", function () {
                         Reset();
+                        ResetErrorMessage();
                         $("#txtDomainId").val($(this).closest("tr").find("#domainId").html());
                         $("#txtRole").val($(this).closest("tr").find("#roleName").html());
                         $("#spnDomainRegId").html($(this).closest("tr").find("#regId").html());
@@ -351,7 +352,8 @@ function BindData() {
                             GetProfileByUserId($(this).closest("tr").find("#regUserId").html());
                         }
 
-                        if ($(this).closest("tr").find("#regTrnDomainMappingUnitId").html() > 0) {
+                        if ($(this).closest("tr").find("#regTrnDomainMappingId").html() > 0) {
+                            $("spnTrnDomainMappingId").val($(this).closest("tr").find("#regTrnDomainMappingId").html());
                             GetALLByUnitById($(this).closest("tr").find("#regTrnDomainMappingUnitId").html());
                         }
 
@@ -404,7 +406,7 @@ function Save() {
             "IntOffr": $('input:radio[name=txtactive]:checked').val(),
             "TrnDomainMappingId": $("#spnTrnDomainMappingId").html(),
             "ApptId": $("#spnUnitAppointmentId").html(),
-            "UnitId": $("#spnUnitIdMap").html(),
+            "UnitMappId": $("#spnUnitMapId").html(),
         }, //get the search string
         success: function (result) {
 
@@ -460,7 +462,8 @@ function Reset() {
     $("#txtDomainId").val("");
     $("#txtRole").val("");
 
-    $("#spnUnitIdMap").html("");
+    $("#spnTrnDomainMappingId").html("");
+    $("#spnUnitMapId").html("");
     $("#txtUnitName").val("");
     $("#lblComd").html("");
     $("#lblCorps").html("");
@@ -504,7 +507,7 @@ function GetALLByUnitById(param1) {
         data: { "UnitMapId": param1 },
         type: 'POST',
         success: function (data) {
-            $("#spnUnitIdMap").html(data.UnitMapId);
+            $("#spnUnitMapId").html(data.UnitMapId);
             $("#txtUnitName").val(data.UnitName);
             $("#lblComd").html(data.ComdName);
             $("#lblCorps").html(data.CorpsName);
