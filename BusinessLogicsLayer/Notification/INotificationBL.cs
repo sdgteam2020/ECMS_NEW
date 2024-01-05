@@ -15,5 +15,6 @@ namespace BusinessLogicsLayer.Bde
     {
 
         public Task<bool> UpdateRead(MTrnNotification Data);
+        public Task<bool> UpdatePrevious(MTrnNotification Data);
     }
 }

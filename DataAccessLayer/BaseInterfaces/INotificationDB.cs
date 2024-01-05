@@ -15,6 +15,6 @@ namespace DataAccessLayer.BaseInterfaces
     {
 
         public Task<bool> UpdateRead(MTrnNotification Data);
-        
+        public Task<bool> UpdatePrevious(MTrnNotification Data);
     }
 }

@@ -21,11 +21,12 @@ namespace Web.Controllers
             var remoteIpAddress = HttpContext.Connection.RemoteIpAddress;
             DTOAPILoginRequest data = new DTOAPILoginRequest();
             data.ClientName = "miso";
-            data.ClientKey  ="";
-            data.ClientIP   = remoteIpAddress.ToString();
-            data.ClientURL  ="";
-            data.ClientPW   = "";
-
+            data.ClientKey = "";
+            data.ClientIP = remoteIpAddress.ToString();
+            data.ClientURL = "";
+            data.ClientPW = "";
+            //data.email = "devopstasking@gmail.com";
+            //data.password = "Admin@123";
             var ret = await _aPIBL.Getauthentication(data);
           
            

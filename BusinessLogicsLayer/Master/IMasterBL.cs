@@ -1,5 +1,6 @@
 ﻿using DataTransferObject.Requests;
 using DataTransferObject.Response;
+using DataTransferObject.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +12,7 @@ namespace BusinessLogicsLayer.Master
     public interface IMasterBL
     {
         public Task<List<DTORemarksResponse>> GetRemarksByTypeId(DTORemarksRequest Data);
+
         public Task<List<DTOMasterResponse>> GetMFmnBranches();
         public Task<List<DTOMasterResponse>> GetMPSO();
         public Task<List<DTOMasterResponse>> GetMSubDte();

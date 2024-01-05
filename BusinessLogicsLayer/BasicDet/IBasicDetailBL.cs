@@ -22,6 +22,7 @@ namespace BusinessLogicsLayer.BasicDet
         public Task<DTOICardTaskCountResponse> GetTaskCountICardRequest(int UserId, int Type);
         public Task<List<DTONotificationResponse>> GetNotification(int UserId, int Type);
         public Task<List<DTONotificationResponse>> GetNotificationRequestId(int UserId, int Type);
+        public Task<List<DTODataExportsResponse>> GetBesicdetailsByRequestId(DTODataExportRequest Data);
 
     }
 }

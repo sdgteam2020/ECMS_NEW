@@ -37,6 +37,24 @@ $(document).ready(function () {
         }]
     });
     memberTable.buttons().container().appendTo('#tbldatatabledata_wrapper .col-md-6:eq(0)');
+    $("#tbldatatabledata #chkAll").click(function () {
+        if ($(this).is(':checked')) {
+            rows = memberTable.rows({ 'search': 'applied' }).nodes();
+            $('input[type="checkbox"]', rows).prop('checked', this.checked);
+        }
+        else {
+            rows = memberTable.rows({ 'search': 'applied' }).nodes();
+            $('input[type="checkbox"]', rows).prop('checked', this.checked);
+        }
+    });
+    $('#DetailBodyData').on('change', 'input[type="checkbox"]', function () {
+        if (!this.checked) {
+            var el = $('#chkAll').get(0);
+            if (el && el.checked && ('indeterminate' in el)) {
+                el.indeterminate = true;
+            }
+        }
+    });
 });
 
 function isNumeric(str) {

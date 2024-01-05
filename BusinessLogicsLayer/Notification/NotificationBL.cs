@@ -26,6 +26,12 @@ namespace BusinessLogicsLayer.BdeCate
         {
             _iNotificationDB = iNotificationDB;
         }
+
+        public async Task<bool> UpdatePrevious(MTrnNotification Data)
+        {
+            return await _iNotificationDB.UpdatePrevious(Data);
+        }
+
         public async Task<bool> UpdateRead(MTrnNotification Data)
         {
             return await _iNotificationDB.UpdateRead(Data);

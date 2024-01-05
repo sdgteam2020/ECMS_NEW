@@ -5,6 +5,7 @@ using DataTransferObject.Domain.Master;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
 using DataTransferObject.Response.User;
+using DataTransferObject.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System;
@@ -78,5 +79,7 @@ namespace DataAccessLayer
                 return ret.ToList();
             }
         }
+
+        
     }
 }

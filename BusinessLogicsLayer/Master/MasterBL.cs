@@ -6,6 +6,7 @@ using DataTransferObject.Domain.Master;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
 using DataTransferObject.Response.User;
+using DataTransferObject.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,6 +24,7 @@ namespace BusinessLogicsLayer.Master
             _iMasterDB = iMasterDB;   
         }
 
+       
         public async Task<List<DTOMasterResponse>> GetMFmnBranches()
         {
             return await _iMasterDB.GetMFmnBranches();
@@ -42,5 +44,6 @@ namespace BusinessLogicsLayer.Master
         {
           return  await _iMasterDB.GetRemarksByTypeId(Data);
         }
+
     }
 }

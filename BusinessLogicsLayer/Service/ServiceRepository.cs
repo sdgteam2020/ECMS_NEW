@@ -291,15 +291,31 @@ namespace BusinessLogicsLayer.Service
         }
         public IEnumerable<SelectListItem> GetBloodGroup()
         {
-            var roles = new List<SelectListItem>
+            var ArmedOptions = context.MBloodGroup
+                 .Select(a =>
+                   new SelectListItem
+                   {
+                       Value = a.BloodGroupId.ToString(),   
+                       Text = a.BloodGroup
+                   }).ToList();
+            var ddfirst = new SelectListItem()
             {
-                new SelectListItem{ Text="Please Select", Value = null },
-                new SelectListItem{ Text="A+", Value = "1" },
-                new SelectListItem{ Text="A-", Value = "2" },
-                new SelectListItem{ Text="B+", Value = "3" },
-             
+                Value = null,
+                Text = "Please Select"
             };
-            return new SelectList(roles, "Value", "Text");
+            ArmedOptions.Insert(0, ddfirst);
+            return new SelectList(ArmedOptions, "Value", "Text");
+
+
+            //var roles = new List<SelectListItem>
+            //{
+            //    new SelectListItem{ Text="Please Select", Value = null },
+            //    new SelectListItem{ Text="A+", Value = "1" },
+            //    new SelectListItem{ Text="A-", Value = "2" },
+            //    new SelectListItem{ Text="B+", Value = "3" },
+             
+            //};
+            //return new SelectList(roles, "Value", "Text");
         }
         public string ProcessUploadedFile(IFormFile UploadDoc, string FileAddress,string FileName)
         {
