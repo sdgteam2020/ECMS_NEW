@@ -80,11 +80,10 @@ namespace DataAccessLayer
             }
 
         }
-        public async Task<List<DTOProfileManageResponse>?> GetAllProfileManage(string Search,string Choice)
+        public async Task<List<DTOUserRegnResponse>?> GetAllUserRegn(string Search,string Choice)
         {
             try
             {
-                List<DTOProfileManageResponse> dTOProfileManageResponse = new List<DTOProfileManageResponse>();
                 if (Choice== "DomainId")
                 {
                     Search = string.IsNullOrEmpty(Search) ? "" : Search.ToLower();
@@ -97,7 +96,7 @@ namespace DataAccessLayer
                                            from xtdm in utdm_jointable.DefaultIfEmpty()
                                            join up in _context.UserProfile on xtdm.UserId equals up.UserId into xtdmup_jointable
                                            from xup in xtdmup_jointable.DefaultIfEmpty()
-                                           select new DTOProfileManageResponse()
+                                           select new DTOUserRegnResponse()
                                            {
                                                Id=u.Id,
                                                DomainId = u.DomainId,
@@ -126,7 +125,7 @@ namespace DataAccessLayer
                                            from xur in xuur_jointable.DefaultIfEmpty()
                                            join r in _context.Roles on xur.RoleId equals r.Id into xurr_jointable
                                            from xr in xurr_jointable.DefaultIfEmpty()
-                                           select new DTOProfileManageResponse()
+                                           select new DTOUserRegnResponse()
                                            {
                                                Id = xu!=null? xu.Id:null,
                                                DomainId = xu != null ? xu.DomainId:null,
@@ -155,7 +154,7 @@ namespace DataAccessLayer
                                            from xtdm in utdm_jointable.DefaultIfEmpty()
                                            join up in _context.UserProfile on xtdm.UserId equals up.UserId into tdmup_jointable
                                            from xup in tdmup_jointable.DefaultIfEmpty()
-                                           select new DTOProfileManageResponse()
+                                           select new DTOUserRegnResponse()
                                            {
                                                Id = u.Id,
                                                DomainId = u.DomainId,
@@ -184,7 +183,7 @@ namespace DataAccessLayer
                                            from xtdm in utdm_jointable.DefaultIfEmpty()
                                            join up in _context.UserProfile on xtdm.UserId equals up.UserId into xtdmup_jointable
                                            from xup in xtdmup_jointable.DefaultIfEmpty()
-                                           select new DTOProfileManageResponse()
+                                           select new DTOUserRegnResponse()
                                            {
                                                Id = u.Id,
                                                DomainId = u.DomainId,
@@ -205,9 +204,133 @@ namespace DataAccessLayer
             }
             catch (Exception ex)
             {
+                _logger.LogError(1001, ex, "AccountDB->UserRegn");
+                return null;
+            }
+        }
+        public async Task<List<DTOProfileManageResponse>?> GetAllProfileManage(string Search, string Choice)
+        {
+            try
+            {
+                if (Choice == "DomainId")
+                {
+                    Search = string.IsNullOrEmpty(Search) ? "" : Search.ToLower();
+                    var allrecord = await (from u in _context.Users.Where(P => Search == "" || P.DomainId.ToLower().Contains(Search))
+                                           join ur in _context.UserRoles on u.Id equals ur.UserId into uur_jointable
+                                           from xur in uur_jointable.DefaultIfEmpty()
+                                           join r in _context.Roles on xur.RoleId equals r.Id into xurr_jointable
+                                           from xr in xurr_jointable.DefaultIfEmpty()
+                                           join tdm in _context.TrnDomainMapping on u.Id equals tdm.AspNetUsersId into utdm_jointable
+                                           from xtdm in utdm_jointable.DefaultIfEmpty()
+                                           join up in _context.UserProfile on xtdm.UserId equals up.UserId
+                                           join rk in _context.MRank on up.RankId equals rk.RankId
+                                           select new DTOProfileManageResponse()
+                                           {
+                                               UserId = up.UserId,
+                                               ArmyNo = up.ArmyNo,
+                                               Name = up.Name,
+                                               IntOffr = up.IntOffr,
+                                               IsIO = up.IsIO,
+                                               IsCO = up.IsCO,
+                                               RankId=rk.RankId,
+                                               RankName=rk.RankName,
+                                               Id = u.Id,
+                                               DomainId = u.DomainId,
+                                           }).Take(200).ToListAsync();
+                    return allrecord;
+                }
+                else if (Choice == "ICNo")
+                {
+                    Search = string.IsNullOrEmpty(Search) ? "" : Search.ToLower();
+                    var allrecord = await (from up in _context.UserProfile.Where(P => Search == "" || P.ArmyNo.ToLower().Contains(Search))
+                                           join rk in _context.MRank on up.RankId equals rk.RankId
+                                           join tdm in _context.TrnDomainMapping on up.UserId equals tdm.UserId into uptdm_jointable
+                                           from xtdm in uptdm_jointable.DefaultIfEmpty()
+                                           join u in _context.Users on xtdm.AspNetUsersId equals u.Id into xtdmu_jointable
+                                           from xu in xtdmu_jointable.DefaultIfEmpty()
+                                           join ur in _context.UserRoles on xu.Id equals ur.UserId into xuur_jointable
+                                           from xur in xuur_jointable.DefaultIfEmpty()
+                                           join r in _context.Roles on xur.RoleId equals r.Id into xurr_jointable
+                                           from xr in xurr_jointable.DefaultIfEmpty()
+                                           select new DTOProfileManageResponse()
+                                           {
+                                               UserId = up.UserId,
+                                               ArmyNo = up.ArmyNo,
+                                               Name = up.Name,
+                                               IntOffr = up.IntOffr,
+                                               IsIO = up.IsIO,
+                                               IsCO = up.IsCO,
+                                               RankId = rk.RankId,
+                                               RankName = rk.RankName,
+                                               Id = xu != null ? xu.Id : 0,
+                                               DomainId = xu != null ? xu.DomainId : null,
+                                           }).Take(200).ToListAsync();
+                    return allrecord;
+                }
+                else if (Choice == "UserId")
+                {
+                    int UserId = string.IsNullOrEmpty(Search) ? 0 : Convert.ToInt32(Search);
+                    var allrecord = await (from up in _context.UserProfile.Where(x=>x.UserId == UserId)
+                                           join rk in _context.MRank on up.RankId equals rk.RankId
+                                           join tdm in _context.TrnDomainMapping on up.UserId equals tdm.UserId into uptdm_jointable
+                                           from xtdm in uptdm_jointable.DefaultIfEmpty()
+                                           join u in _context.Users on xtdm.AspNetUsersId equals u.Id into xtdmu_jointable
+                                           from xu in xtdmu_jointable.DefaultIfEmpty()
+                                           join ur in _context.UserRoles on xu.Id equals ur.UserId into xuur_jointable
+                                           from xur in xuur_jointable.DefaultIfEmpty()
+                                           join r in _context.Roles on xur.RoleId equals r.Id into xurr_jointable
+                                           from xr in xurr_jointable.DefaultIfEmpty()
+                                           select new DTOProfileManageResponse()
+                                           {
+                                               UserId = up.UserId,
+                                               ArmyNo = up.ArmyNo,
+                                               Name = up.Name,
+                                               IntOffr = up.IntOffr,
+                                               IsIO = up.IsIO,
+                                               IsCO = up.IsCO,
+                                               RankId = rk.RankId,
+                                               RankName = rk.RankName,
+                                               Id = xu != null ? xu.Id : 0,
+                                               DomainId = xu != null ? xu.DomainId : null,
+                                           }).ToListAsync();
+                    return allrecord;
+
+                }
+                else
+                {
+                    var allrecord = await (from up in _context.UserProfile.Take(200)
+                                           join rk in _context.MRank on up.RankId equals rk.RankId
+                                           join tdm in _context.TrnDomainMapping on up.UserId equals tdm.UserId into uptdm_jointable
+                                           from xtdm in uptdm_jointable.DefaultIfEmpty()
+                                           join u in _context.Users on xtdm.AspNetUsersId equals u.Id into xtdmu_jointable
+                                           from xu in xtdmu_jointable.DefaultIfEmpty()
+                                           join ur in _context.UserRoles on xu.Id equals ur.UserId into xuur_jointable
+                                           from xur in xuur_jointable.DefaultIfEmpty()
+                                           join r in _context.Roles on xur.RoleId equals r.Id into xurr_jointable
+                                           from xr in xurr_jointable.DefaultIfEmpty()
+                                           select new DTOProfileManageResponse()
+                                           {
+                                               UserId = up.UserId,
+                                               ArmyNo = up.ArmyNo,
+                                               Name = up.Name,
+                                               IntOffr = up.IntOffr,
+                                               IsIO = up.IsIO,
+                                               IsCO = up.IsCO,
+                                               RankId = rk.RankId,
+                                               RankName = rk.RankName,
+                                               Id = xu != null ?xu.Id : 0,
+                                               DomainId = xu != null ? xu.DomainId : null,
+                                           }).ToListAsync();
+                    return allrecord;
+                }
+
+            }
+            catch (Exception ex)
+            {
                 _logger.LogError(1001, ex, "AccountDB->ProfileManage");
                 return null;
             }
         }
     }
+    
 }
