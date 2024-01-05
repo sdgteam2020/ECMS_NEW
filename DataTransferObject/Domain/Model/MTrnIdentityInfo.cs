@@ -29,6 +29,6 @@ namespace DataTransferObject.Domain.Model
         public long AadhaarNo { get; set; }
         public float Height { get; set; }
 
-        public int BloodGroup { get; set; }
+        public int BloodGroupId { get; set; }
     }
 }
