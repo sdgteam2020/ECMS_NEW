@@ -224,6 +224,14 @@
 @media screen and (max-width:600px) {
     .tagline {
         font-size: 20px;
+        text-align: center;
+    }
+}
+
+@media screen and (max-width:1200px) {
+    .tagline {
+        font-size: 10px;
+        text-align: center;
     }
 }
 

@@ -462,7 +462,7 @@ namespace DataAccessLayer
                             " inner join TrnAddress trnadd on trnadd.BasicDetailId=bas.BasicDetailId"+
                             " inner join TrnUpload trnup on trnup.BasicDetailId=bas.BasicDetailId"+
                             " inner join TrnIdentityInfo trninfo on trninfo.BasicDetailId=bas.BasicDetailId"+
-                            " inner join MBloodGroup bld on bld.BloodGroupId=trninfo.BloodGroup" +
+                            " inner join MBloodGroup bld on bld.BloodGroupId=trninfo.BloodGroupId" +
                             " inner join MRank ran on ran.RankId=bas.RankId" +
                             " inner join MArmedType arm on arm.ArmedId=bas.ArmedId"+
                             " inner join MapUnit uni on uni.UnitMapId=bas.UnitId"+
@@ -497,7 +497,7 @@ namespace DataAccessLayer
                             " inner join TrnAddress trnadd on trnadd.BasicDetailId=bas.BasicDetailId" +
                             " inner join TrnUpload trnup on trnup.BasicDetailId=bas.BasicDetailId" +
                             " inner join TrnIdentityInfo trninfo on trninfo.BasicDetailId=bas.BasicDetailId" +
-                            " inner join MBloodGroup bld on bld.BloodGroupId=trninfo.BloodGroup"+
+                            " inner join MBloodGroup bld on bld.BloodGroupId=trninfo.BloodGroupId"+
                             " inner join MRank ran on ran.RankId=bas.RankId" +
                             " inner join MArmedType arm on arm.ArmedId=bas.ArmedId" +
                             " inner join MapUnit uni on uni.UnitMapId=bas.UnitId" +

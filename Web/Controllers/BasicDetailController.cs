@@ -264,6 +264,7 @@ namespace Web.Controllers
                 //{
                 //    basicDetailVM.MArmedType = mArmedType;
                 //}
+                basicDetailCrtAndUpdVM.AadhaarNo=Convert.ToInt32(basicDetailCrtAndUpdVM.AadhaarNo).ToString("D4");
                 return View(basicDetailCrtAndUpdVM);
             }
             else
@@ -295,6 +296,8 @@ namespace Web.Controllers
         {
             var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
             string decryptedId = string.Empty;
+            ViewBag.OptionsBloodGroup = service.GetBloodGroup();
+            ViewBag.OptionsArmedType = service.GetArmedType();
             int decryptedIntId = 0;
             try
             {
