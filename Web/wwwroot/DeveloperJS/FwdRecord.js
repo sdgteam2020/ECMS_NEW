@@ -80,9 +80,14 @@ $(document).ready(function () {
            
             }
             GetDataFromBasicDetails($(this).closest("tr").find(".spnBasicDetailId").html());
-        if (StepCounter == 1 ) {
-            $(".gsoio").html("IO");
-            $("#btnForward").html("Forward To IO");
+        if (StepCounter == 1) {
+            if (applyfor == 1) {
+                $(".gsoio").html("IO");
+                $("#btnForward").html("Forward To IO");
+            } else {
+                $(".gsoio").html("Commanding of Unit");
+                $("#btnForward").html("Forward To Commanding of Unit");
+            }
             $(".Remarks").removeClass("d-none");
 
             $(".chkforserach").addClass("d-none");
@@ -91,8 +96,15 @@ $(document).ready(function () {
             GetRemarks("ddlRemarks", 0, someNumbers);
         }
         else if (StepCounter == 2) {
-            $(".gsoio").html("GSO");
-            $("#btnForward").html("Forward To GSO");
+            if (applyfor == 1) {
+                $(".gsoio").html("GSO");
+                $("#btnForward").html("Forward To GSO");
+            }
+            else {
+                $(".gsoio").html("DID and finalized");
+                $("#btnForward").html("Forward To DID and finalized");
+            }
+          
             $(".Remarks").removeClass("d-none");
             var someNumbers = [1];
             GetRemarks("ddlRemarks", 0, someNumbers);
@@ -102,11 +114,22 @@ $(document).ready(function () {
             
         }
         else if (StepCounter == 3) {
-            $(".chkforserach").addClass("d-none");
+            if (applyfor == 1) {
+                $(".chkforserach").addClass("d-none");
 
-            $(".gsoio").html("MI 11");
-            $("#btnForward").html("Forward To MI 11");
-            GetAllOffsByUnitId("ddlfwdoffrs", 0, 13);
+                $(".gsoio").html("MI 11");
+                $("#btnForward").html("Forward To MI 11");
+                GetAllOffsByUnitId("ddlfwdoffrs", 0, 13);
+            }
+            else {
+                $(".chkforserach").addClass("d-none");
+
+                $(".gsoio").html("Export");
+                $("#btnForward").html("Forward To Export ");
+                GetAllOffsByUnitId("ddlfwdoffrs", 0, 17);
+            }
+
+            
 
             $(".Remarks").removeClass("d-none");
             var someNumbers = [1];
@@ -116,6 +139,8 @@ $(document).ready(function () {
             GetRemarks("ddlRRemarks", 0, Reject);
         }
         else if (StepCounter == 4) {
+
+
             $(".chkforserach").addClass("d-none");
             $(".gsoio").html("HQ 54");
             $("#btnForward").html("Forward To HQ 54");
@@ -206,7 +231,11 @@ $(document).ready(function () {
 
                 }else
                 {
-                   Counter= parseInt($("#spnStepCounter").html()) + 1;
+                  
+                    Counter = parseInt($("#spnStepCounter").html()) + 1;
+                    if (applyfor == 2 && parseInt($("#spnStepCounter").html())==3) {
+                        Counter = 5;
+                    }
                 }
                
                
@@ -374,10 +403,12 @@ function FwdData(AspNetUsersId) {
 }
 function GetProfiledetailsByAspNetuserid(AspNetUsersId) {
     var param = "";
-    if (StepCounter==3)
+    if (StepCounter == 3 && applyfor==1)
         var param = { "Name": AspNetUsersId, "TypeId": 0, "UnitId": 13 };
-   else if (StepCounter == 4)
-        var param = { "Name": AspNetUsersId, "TypeId": 0,"UnitId":17 };
+    else if (StepCounter == 4 && applyfor == 1)
+        var param = { "Name": AspNetUsersId, "TypeId": 0, "UnitId": 17 };
+    else if (StepCounter == 3 && applyfor == 2)
+        var param = { "Name": AspNetUsersId, "TypeId": 0, "UnitId": 17 };
     else
         var param = { "Name": AspNetUsersId, "TypeId": 0, "UnitId": 0 };
     $.ajax({

@@ -46,23 +46,23 @@ function getApplyIcardDetails()
 }
 
 function getData(id) {
-    let formId = '#' + id;
-    // Check if the form exists
-    if ($(formId).length === 0) {
-        console.error("Form not found.");
-        return;
-    }
+    //let formId = '#' + id;
+    //// Check if the form exists
+    //if ($(formId).length === 0) {
+    //    console.error("Form not found.");
+    //    return;
+    //}
     /*$("#RegistrationId").prop('required', true);*/
     $("#ServiceNumber").prop('required', true);
-    $.validator.unobtrusive.parse($(formId));
-    if ($(formId).valid()) {
-        var formData = $(formId).serialize();
-        console.log(formData);
-    }
-    else {
-        return false;
-    }
-    //let regId = $("#RegistrationId").find(":selected").val();
+    //$.validator.unobtrusive.parse($(formId));
+    //if ($(formId).valid()) {
+    //    var formData = $(formId).serialize();
+    //    console.log(formData);
+    //}
+    //else {
+    //    return false;
+    //}
+    ////let regId = $("#RegistrationId").find(":selected").val();
 
     var param = { "ArmyNo": $("#ServiceNumber").val() };
 
