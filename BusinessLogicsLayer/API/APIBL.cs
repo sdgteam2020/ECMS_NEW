@@ -1,12 +1,16 @@
 ﻿using BusinessLogicsLayer.Helpers;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
+using Microsoft.SqlServer.Management.Sdk.Sfc;
 using ModernHttpClient;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Net.Http.Json;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
 using System.Security.Policy;
@@ -20,15 +24,16 @@ namespace BusinessLogicsLayer.API
     public class APIBL : IAPIBL
     {
         public const string ApiUrl = "http://192.168.10.200/api/";
+        //public const string ApiUrl = "http://192.168.10.203:8088/api/";
 
         public async Task<DTOLoginAPIResponse> Getauthentication(DTOAPILoginRequest Data)
         {
             try
             {
-              
+
                 DTOLoginAPIResponse dynamicResponseDTO = new DTOLoginAPIResponse();
                 HttpClient httpClient = new HttpClient(new NativeMessageHandler() { UseDefaultCredentials = true });
-                
+
                 var data1 = new[]
                 {
                     new KeyValuePair<string, string>("ClientKey", ""),
@@ -49,9 +54,9 @@ namespace BusinessLogicsLayer.API
 
                     string responseBody = await result.Content.ReadAsStringAsync();
                     dynamicResponseDTO = JsonSerializer.Deserialize<DTOLoginAPIResponseData>(responseBody).ValidateRequest;
-                     
+
                 }
-               
+
                 return dynamicResponseDTO;
             }
             catch (Exception ex)
@@ -59,7 +64,50 @@ namespace BusinessLogicsLayer.API
                 return null;
             }
         }
+        //public async Task<DTOLoginAPIResponse> Getauthentication(DTOAPILoginRequest Data)
+        //{
+        //    try
+        //    {
+        //        DTOLoginAPIResponse dynamicResponseDTO = new DTOLoginAPIResponse();
 
+        //        HttpResponseMessage result = null;
+        //        await HRMSPostAPI("Auth/Login", Data, "").ContinueWith(task =>
+        //        {
+        //            if (task.Status == TaskStatus.RanToCompletion)
+
+        //            {
+        //                result = task.Result;
+        //            }
+        //        });
+
+
+
+        //        if (result != null)
+        //        {
+        //            using (var contentStream = await result.Content.ReadAsStreamAsync())
+        //            {
+        //                dynamicResponseDTO = await JsonSerializer.DeserializeAsync<DTOLoginAPIResponse>(contentStream);
+        //                //dynamicResponseDTO = await JsonSerializer.DeserializeAsync<IEnumerable<DTOLoginResponse>>(contentStream);
+        //            }
+        //            // dynamicResponseDTO = result.Content.ReadAsAsync<DTOLoginResponse>().Result;
+        //            // dynamicResponseDTO = result.Content.ReadFromJsonAsync<DTOLoginResponse>().Result;
+        //        }
+
+
+        //        // dTOLoginResponse.armyNo = jwtSecurityToken.Actor;
+        //        // dTOLoginResponse
+
+        //        return dynamicResponseDTO;
+
+
+
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return null;
+        //    }
+
+        //}
         public async Task<DTOApiPersDataResponse> GetData(DTOPersDataRequest Data)
         {
             try
@@ -109,5 +157,86 @@ namespace BusinessLogicsLayer.API
                 return null;
             }
         }
+        //public async Task<DTOApiPersDataResponse> GetData(DTOPersDataRequest Data)
+        //{
+        //    try
+        //    {
+        //        List<DTOApiPersDataResponse> dynamicResponseDTO = new List<DTOApiPersDataResponse>();
+
+        //        HttpResponseMessage result = null;
+        //        await HRMSPostAPI("User/GetPerdet?armyno="+Data.Pers_Army_No, "", Data.jwt).ContinueWith(task =>
+        //        {
+        //            if (task.Status == TaskStatus.RanToCompletion)
+
+        //            {
+        //                result = task.Result;
+        //            }
+        //        });
+
+
+
+        //        if (result != null)
+        //        {
+        //            using (var contentStream = await result.Content.ReadAsStreamAsync())
+        //            {
+        //                dynamicResponseDTO = await JsonSerializer.DeserializeAsync<List<DTOApiPersDataResponse>>(contentStream);
+        //                //dynamicResponseDTO = await JsonSerializer.DeserializeAsync<IEnumerable<DTOLoginResponse>>(contentStream);
+        //            }
+        //            // dynamicResponseDTO = result.Content.ReadAsAsync<DTOLoginResponse>().Result;
+        //            // dynamicResponseDTO = result.Content.ReadFromJsonAsync<DTOLoginResponse>().Result;
+        //        }
+
+
+        //        // dTOLoginResponse.armyNo = jwtSecurityToken.Actor;
+        //        // dTOLoginResponse
+
+        //        return null;
+
+
+
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return null;
+        //    }
+        //}
+        //public async Task<HttpResponseMessage> HRMSPostAPI<T>(string url, T data, string jwtToken)
+        //{
+        //    try
+        //    {
+
+        //        // HttpClient httpClient = new HttpClient(new NativeMessageHandler());
+        //        // HttpResponseMessage s = await httpClient.PostAsJsonAsync(HRMSApiUrl + url, data);
+
+
+
+        //        using (var httpClientHandler = new HttpClientHandler())
+        //        {
+        //            httpClientHandler.ServerCertificateCustomValidationCallback = (sender, certificate, chain, sslPolicyErrors) => true;
+
+        //            using (var httpClient = new HttpClient(httpClientHandler))
+        //            {
+        //                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken);
+        //                if (data is null || data.ToString() == "")
+        //                {
+        //                    return await httpClient.GetAsync(ApiUrl + url);
+        //                }
+        //                else
+        //                {
+        //                    return await httpClient.PostAsJsonAsync(ApiUrl + url, data);
+        //                }
+        //            }
+        //        }
+
+
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        var innerExceptionMessage = ex.InnerException.Message;
+        //        _ = ex;
+        //        return null;
+
+        //    }
+        //}
     }
 }

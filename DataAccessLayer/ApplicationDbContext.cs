@@ -41,6 +41,7 @@ namespace DataAccessLayer
         public DbSet<MPSO> MPso { get; set; }
         public DbSet<MFmnBranches> MFmnBranches { get; set; }
         public DbSet<MSubDte> MSubDte { get; set; }
+        public DbSet<MBloodGroup> MBloodGroup { get; set; }
 
 
 

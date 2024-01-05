@@ -29,6 +29,9 @@ using BusinessLogicsLayer.BdeCate;
 using Microsoft.IdentityModel.Tokens;
 using Azure;
 using BusinessLogicsLayer.Master;
+using static System.Net.Mime.MediaTypeNames;
+using System.Text;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Web.Controllers
 {
@@ -213,7 +216,7 @@ namespace Web.Controllers
             else if (retint == 444)
             { ViewBag.Title = "Approved I-Card "; type = 3; stepcounter = 5; }
             else if (retint == 5)
-            { ViewBag.Title = "I-Card For Approval"; type = 2; ViewBag.Id = 1; }
+            { ViewBag.Title = "I-Card For Approval"; type = 2; ViewBag.Id = 1; ViewBag.dataexport = 5; }
             else if (retint == 55)
             { ViewBag.Title = "Rejectd I-Card "; type = 1; stepcounter = 10; }
             else if (retint == 555)
@@ -1255,55 +1258,55 @@ namespace Web.Controllers
         }
         [Authorize(Roles = "Admin,User")]
         [HttpPost]
-        public async Task<IActionResult> DummyData()
-        {
-            Random rnd1 = new Random();
-            String[] first = new String[] {"Yogendra", "Ajay", "Dilshad", "Vijay", "Balbeer", "Hari", "Chandra", "Ram",
-                                            "Rahul", "Roy", "Nikhil", "Manoj", "Ankit", "Pradeep", "Vishkrma", "Ushman" };
-            String[] last = new String[] {"Kumar", "Gupta", "Garg", "Rajvanshi", "Gujjar", "Singh", "Pal", "Kaushik",
-                                              "Patel", "Modi", "Sharma", "Vasisth", "Khan", "Babra", "Hussain", "Tyagi" };
+        //public async Task<IActionResult> DummyData()
+        //{
+        //    Random rnd1 = new Random();
+        //    String[] first = new String[] {"Yogendra", "Ajay", "Dilshad", "Vijay", "Balbeer", "Hari", "Chandra", "Ram",
+        //                                    "Rahul", "Roy", "Nikhil", "Manoj", "Ankit", "Pradeep", "Vishkrma", "Ushman" };
+        //    String[] last = new String[] {"Kumar", "Gupta", "Garg", "Rajvanshi", "Gujjar", "Singh", "Pal", "Kaushik",
+        //                                      "Patel", "Modi", "Sharma", "Vasisth", "Khan", "Babra", "Hussain", "Tyagi" };
 
-            String[] BloodGroup = new string[] { "A+", "A-", "B+", "B-", "O+", "O-", "AB+", "AB-" };
-            String[] Rank = new string[] { "Lt", "Capt", "Maj", "Lt Col", "Col", "Brig", "Maj Gen" };
-            String[] ArmService = new string[] { "INF", "ARTY", "INT", "EME" };
-            String[] IdentityMark = new string[] { "Cut mark on thumb", "Cut mark on left leg", "Cut markon right leg" };
-            String[] PlaceOfIssue = new string[] { "New Mandi", "Ring Road", "Mal Road" };
-            String[] PermanentAddress = new string[] { "New Mandi", "Ring Road", "Masl Road" };
-            DateTime DOB = new DateTime(1980, 1, 1);
-            Random rnd = new Random();
-            int x = -1;
-            int y = -1;
-            int z = -1;
-            int r = -1;
-            int s = -1;
-            int i = -1;
-            int p = -1;
-            int a = -1;
+        //    String[] BloodGroup = new string[] { "A+", "A-", "B+", "B-", "O+", "O-", "AB+", "AB-" };
+        //    String[] Rank = new string[] { "Lt", "Capt", "Maj", "Lt Col", "Col", "Brig", "Maj Gen" };
+        //    String[] ArmService = new string[] { "INF", "ARTY", "INT", "EME" };
+        //    String[] IdentityMark = new string[] { "Cut mark on thumb", "Cut mark on left leg", "Cut markon right leg" };
+        //    String[] PlaceOfIssue = new string[] { "New Mandi", "Ring Road", "Mal Road" };
+        //    String[] PermanentAddress = new string[] { "New Mandi", "Ring Road", "Masl Road" };
+        //    DateTime DOB = new DateTime(1980, 1, 1);
+        //    Random rnd = new Random();
+        //    int x = -1;
+        //    int y = -1;
+        //    int z = -1;
+        //    int r = -1;
+        //    int s = -1;
+        //    int i = -1;
+        //    int p = -1;
+        //    int a = -1;
 
-            x = rnd.Next(0, first.Length);
-            y = rnd.Next(0, last.Length);
-            r = rnd.Next(0, Rank.Length);
-            s = rnd.Next(0, ArmService.Length);
-            i = rnd.Next(0, IdentityMark.Length);
-            z = rnd.Next(0, BloodGroup.Length);
-            p = rnd.Next(0, PlaceOfIssue.Length);
-            a = rnd.Next(0, PermanentAddress.Length);
+        //    x = rnd.Next(0, first.Length);
+        //    y = rnd.Next(0, last.Length);
+        //    r = rnd.Next(0, Rank.Length);
+        //    s = rnd.Next(0, ArmService.Length);
+        //    i = rnd.Next(0, IdentityMark.Length);
+        //    z = rnd.Next(0, BloodGroup.Length);
+        //    p = rnd.Next(0, PlaceOfIssue.Length);
+        //    a = rnd.Next(0, PermanentAddress.Length);
 
 
-            DTOBasicDetailRequest basicDetail = new DTOBasicDetailRequest();
-            basicDetail.Name = first[x] + " " + last[y];
-            basicDetail.ServiceNo = "IC" + Random.Shared.Next(50000, 99999) + "X";
-            basicDetail.IdentityMark = IdentityMark[i];
-            basicDetail.DOB = DOB.AddDays(Random.Shared.Next(1, 365));
-            basicDetail.Height = Random.Shared.Next(60, 84);
-            basicDetail.AadhaarNo = rnd1.Next(1000, 9999).ToString() + " " + rnd1.Next(1000, 9999).ToString() + " " + rnd1.Next(1000, 9999).ToString();
-            basicDetail.BloodGroup = BloodGroup[z];
-            basicDetail.PlaceOfIssue = PlaceOfIssue[p];
-            basicDetail.DateOfIssue = DateTime.Now;
-            basicDetail.DateOfCommissioning = DateTime.Now;
-            basicDetail.PermanentAddress = "House No.-" + Random.Shared.Next(50, 999) + ", " + PermanentAddress[a];
-            return Ok(basicDetail);
-        }
+        //    DTOBasicDetailRequest basicDetail = new DTOBasicDetailRequest();
+        //    basicDetail.Name = first[x] + " " + last[y];
+        //    basicDetail.ServiceNo = "IC" + Random.Shared.Next(50000, 99999) + "X";
+        //    basicDetail.IdentityMark = IdentityMark[i];
+        //    basicDetail.DOB = DOB.AddDays(Random.Shared.Next(1, 365));
+        //    basicDetail.Height = Random.Shared.Next(60, 84);
+        //    basicDetail.AadhaarNo = rnd1.Next(1000, 9999).ToString() + " " + rnd1.Next(1000, 9999).ToString() + " " + rnd1.Next(1000, 9999).ToString();
+        //    basicDetail.BloodGroup = BloodGroup[z];
+        //    basicDetail.PlaceOfIssue = PlaceOfIssue[p];
+        //    basicDetail.DateOfIssue = DateTime.Now;
+        //    basicDetail.DateOfCommissioning = DateTime.Now;
+        //    basicDetail.PermanentAddress = "House No.-" + Random.Shared.Next(50, 999) + ", " + PermanentAddress[a];
+        //    return Ok(basicDetail);
+        //}
 
         public async Task<IActionResult> GetDataByBasicDetailsId(int Id)
         {
@@ -1317,6 +1320,34 @@ namespace Web.Controllers
         public async Task<IActionResult> GetRemarks(DTORemarksRequest Data)
         {
             return Json(await _IMasterBL.GetRemarksByTypeId(Data));
+        }
+
+        public async Task<IActionResult> DataExport(DTODataExportRequest Data)
+        {
+            try
+            {
+                var retdata = await basicDetailBL.GetBesicdetailsByRequestId(Data);
+             
+                var jsonString = JsonConvert.SerializeObject(retdata);
+                var jsonde=JsonConvert.DeserializeObject(jsonString);
+                // Convert JSON string to bytes
+                var bytes = Encoding.UTF8.GetBytes(jsonString);
+
+                // Set the content type and file name
+                Response.Headers.Add("Content-Disposition", "attachment; filename=data.json");
+
+
+
+                // return File(bytes, "application/json");
+
+                return Json(jsonde);
+
+
+            }
+            catch(Exception ex)
+            {
+                return null;
+            }
         }
 
 

@@ -47,5 +47,22 @@ namespace DataAccessLayer
                 return true;
             }
         }
+
+        public async Task<bool> UpdatePrevious(MTrnNotification Data)
+        {
+
+            string query = "UPDATE TrnNotification set [Read]=1 where RequestId=@RequestId";
+
+            using (var connection = _contextDP.CreateConnection())
+            {
+              
+                int RequestId = Data.RequestId;
+                var ret = await connection.QueryAsync<string>(query, new { RequestId });
+
+
+
+                return true;
+            }
+        }
     }
 }

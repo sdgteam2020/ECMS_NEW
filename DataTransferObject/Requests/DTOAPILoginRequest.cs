@@ -13,7 +13,9 @@ namespace DataTransferObject.Requests
         public string? ClientIP { get; set; }
         public string? ClientURL { get; set; }
         public string? ClientPW { get; set; }
-       
+
         public string ClientName { get; set; }
+        //public string? email { get; set; }
+        //public string? password { get; set; }
     }
 }

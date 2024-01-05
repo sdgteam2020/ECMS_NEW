@@ -147,7 +147,7 @@ namespace DataAccessLayer
                         "inner join UserProfile pr on pr.UserId = trnicrd.Updatedby " +
                         "inner join TrnDomainMapping map on map.UserId=pr.UserId " +
                         "left join TrnFwds fwd on fwd.ToAspNetUsersId= map.AspNetUsersId and fwd.IsComplete=0 and fwd.RequestId=trnicrd.RequestId " +
-                        "WHERE pr.Updatedby = @UserId and trnicrd.Status=0 ORDER BY B.UpdatedOn DESC";
+                        "WHERE map.AspNetUsersId = @UserId and trnicrd.Status=0 ORDER BY B.UpdatedOn DESC";
 
             }
             else if (stepcount == 2 || stepcount == 3 || stepcount == 4 || stepcount == 5 || stepcount == 6)//IO
@@ -275,7 +275,7 @@ namespace DataAccessLayer
                         "inner join UserProfile pr on pr.UserId = trnicrd.Updatedby " +
                         "inner join TrnDomainMapping map on map.UserId=pr.UserId " +
                         "left join TrnFwds fwd on fwd.ToAspNetUsersId= map.AspNetUsersId and fwd.IsComplete=0 and fwd.RequestId=trnicrd.RequestId " +
-                        "WHERE pr.Updatedby = @UserId and trnicrd.Status=0 ORDER BY B.UpdatedOn DESC";
+                        "WHERE map.AspNetUsersId = @UserId and trnicrd.Status=0 ORDER BY B.UpdatedOn DESC";
                 
             }
             else if (stepcount == 2 || stepcount == 3 || stepcount == 4 || stepcount == 5)//IO
@@ -456,13 +456,14 @@ namespace DataAccessLayer
 
             string query = "select bas.*,"+
                             " trnadd.State,trnadd.District,trnadd.PS,trnadd.PO,trnadd.Tehsil,trnadd.Village,trnadd.PinCode,"+
-                            " trnup.SignatureImagePath,trnup.PhotoImagePath,IdenMark1,IdenMark2,AadhaarNo,Height,BloodGroup,"+
+                            " trnup.SignatureImagePath,trnup.PhotoImagePath,IdenMark1,IdenMark2,AadhaarNo,Height,bld.BloodGroup," +
                             " regi.Abbreviation RegimentalName,Muni.UnitName,uni.UnitMapId UnitId,icardreq.TypeId,icardreq.RegistrationId," +
                             " ran.RankId,ran.RankAbbreviation RankName,arm.Abbreviation ArmedName,trnadd.AddressId,trnup.UploadId,trninfo.InfoId from BasicDetails bas" +
                             " inner join TrnAddress trnadd on trnadd.BasicDetailId=bas.BasicDetailId"+
                             " inner join TrnUpload trnup on trnup.BasicDetailId=bas.BasicDetailId"+
                             " inner join TrnIdentityInfo trninfo on trninfo.BasicDetailId=bas.BasicDetailId"+
-                            " inner join MRank ran on ran.RankId=bas.RankId"+
+                            " inner join MBloodGroup bld on bld.BloodGroupId=trninfo.BloodGroup" +
+                            " inner join MRank ran on ran.RankId=bas.RankId" +
                             " inner join MArmedType arm on arm.ArmedId=bas.ArmedId"+
                             " inner join MapUnit uni on uni.UnitMapId=bas.UnitId"+
                             " inner join MUnit Muni on Muni.UnitId=uni.UnitId"+
@@ -478,7 +479,42 @@ namespace DataAccessLayer
                 return BasicDetailList.SingleOrDefault();
             }
         }
+        public async Task<List<DTODataExportsResponse>> GetBesicdetailsByRequestId(DTODataExportRequest Data)
+        {
+            //DTOBasicDetailRequest dd = new DTOBasicDetailRequest();
+            //dd.MRank.RankAbbreviation = "";
+            //dd.MArmedType.Abbreviation
+            //string query = "select bas.*,ran.RankAbbreviation RankName,arm.Abbreviation ArmedType from BasicDetails bas " +
+            //    " inner join MRank ran on ran.RankId=bas.RankId"+
+            //    " inner join MArmedType arm on arm.ArmedId=bas.ArmedId"+
+            //    " where bas.BasicDetailId=@BasicDetailId";
 
+            string query = "select bas.*," +
+                            " trnadd.State,trnadd.District,trnadd.PS,trnadd.PO,trnadd.Tehsil,trnadd.Village,trnadd.PinCode," +
+                            " trnup.SignatureImagePath,trnup.PhotoImagePath,IdenMark1,IdenMark2,AadhaarNo,Height,bld.BloodGroup," +
+                            " regi.Abbreviation RegimentalName,Muni.UnitName,uni.UnitMapId UnitId,icardreq.TypeId,icardreq.RegistrationId," +
+                            " ran.RankId,ran.RankAbbreviation RankName,arm.Abbreviation ArmedName,trnadd.AddressId,trnup.UploadId,trninfo.InfoId from BasicDetails bas" +
+                            " inner join TrnAddress trnadd on trnadd.BasicDetailId=bas.BasicDetailId" +
+                            " inner join TrnUpload trnup on trnup.BasicDetailId=bas.BasicDetailId" +
+                            " inner join TrnIdentityInfo trninfo on trninfo.BasicDetailId=bas.BasicDetailId" +
+                            " inner join MBloodGroup bld on bld.BloodGroupId=trninfo.BloodGroup"+
+                            " inner join MRank ran on ran.RankId=bas.RankId" +
+                            " inner join MArmedType arm on arm.ArmedId=bas.ArmedId" +
+                            " inner join MapUnit uni on uni.UnitMapId=bas.UnitId" +
+                            " inner join MUnit Muni on Muni.UnitId=uni.UnitId" +
+                            " inner join TrnICardRequest icardreq on icardreq.BasicDetailId=bas.BasicDetailId and icardreq.Status=0 " +
+                            " left join MRegimental regi on regi.RegId=bas.RegimentalId" +
+                            " where icardreq.RequestId in @Ids";
+            int[] Ids = Data.Ids;
+            using (var connection = _contextDP.CreateConnection())
+            {
+                //data.MRank.RankAbbreviation
+                //data.MArmedType.Abbreviation
+                var BasicDetailList = await connection.QueryAsync<DTODataExportsResponse>(query, new { Ids });
+
+                return BasicDetailList.ToList();
+            }
+        }
         public async Task<List<ICardHistoryResponse>> ICardHistory(int RequestId)
         {
             string query = "select usersfrom.UserName FromDomain,profrom.Name FromProfile,ranlfrom.RankAbbreviation FromRank, " +
@@ -602,5 +638,7 @@ namespace DataAccessLayer
                 return ret.ToList();
             }
         }
+
+       
     }
 }

@@ -13,7 +13,8 @@ $(document).ready(function () {
        
         GetTokenDetails();
     }, 4000); 
-    $("#btnLogin").click(function () {
+   
+        $("#btnLogin").click(function () {
 
         if ($("#txtUserId").val() == "") {
             $("#error-msg").html("Please Enter SusNo / ArmyNo.");

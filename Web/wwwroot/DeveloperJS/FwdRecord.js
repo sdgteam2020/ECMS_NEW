@@ -5,7 +5,42 @@ var applyfor = 0;
 $(document).ready(function () {
 
     sessionStorage.removeItem('ArmyNo');
+    $('#btnDataExports').click(function () {
+        var lst = new Array();
 
+        if (memberTable.$('input[type="checkbox"]:checked').length > 0) {
+
+            memberTable.$('input[type="checkbox"]:checked').each(function () {
+
+
+                var id = $(this).attr("Id");
+                lst.push(id);
+                console.log(id);
+
+            });
+
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You want to Export",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#072697',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, Export it!'
+            }).then((result) => {
+                if (result.value) {
+
+                    DataExport(lst);
+
+                }
+            });
+        }
+        else {
+            Swal.fire({
+                text: "Please select atleast 1 data to Export."
+            });
+        }
+    });
    
     var spnStepId = 0;
     $('.select2').select2({
@@ -269,7 +304,7 @@ $(document).ready(function () {
                     Counter = 9
                 else if (Counter == 5)
                     Counter = 10
-                if ($("#txtFrejectedRemarks").val()!="")
+                if ($("#txtFrejectedRemarks").val() != "" || $("#ddlRRemarks").val() != "")
 
                     UpdateStepCounter(spnStepId, spnRequestId, Counter, "R");
                 else
@@ -706,5 +741,71 @@ function GetRequestHistory(spnRequestId) {
             }
         }
 
+    });
+}
+
+function DataExport(Data) {
+    var userdata =
+    {
+        "Ids": Data,
+
+
+    };
+    $.ajax({
+        url: '/BasicDetail/DataExport',
+        contentType: 'application/x-www-form-urlencoded',
+        data: userdata,
+        type: 'POST',
+
+        success: function (response) {
+            if (response != "null" && response != null) {
+                if (response == InternalServerError) {
+                    Swal.fire({
+                        text: errormsg
+                    });
+                }
+
+                else
+                {
+                    //var blob = new Blob([response], {
+                    //    type: 'application/json'
+                    //});
+                    //var link = document.createElement('a');
+                    //link.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(blob);
+                    //link.download = "export.json";
+                    //link.click();
+                    var blob = new Blob([JSON.stringify(response, null, "\t")], { type: "application/json" });
+                   
+                    // Create a temporary anchor element
+                    var link = document.createElement("a");
+                    link.href = window.URL.createObjectURL(blob);
+
+                    // Set the file name
+                    link.download = "data.json";
+
+                    // Append the anchor to the body
+                    document.body.appendChild(link);
+
+                    // Trigger the click event
+                    link.click();
+
+                    // Remove the anchor from the body
+                    document.body.removeChild(link);
+                }
+
+
+            }
+
+               
+
+
+            
+           
+        },
+        error: function (result) {
+            Swal.fire({
+                text: errormsg002
+            });
+        }
     });
 }
