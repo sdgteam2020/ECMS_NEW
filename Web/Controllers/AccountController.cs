@@ -724,11 +724,58 @@ namespace Web.Controllers
             ViewBag.Title = "List of Register User";
             return View(dTORegisterListRequests);
         }
+        #region ProfileManage
         [Authorize(Roles = "Admin")]
         [HttpGet]
         public IActionResult ProfileManage()
         {
             return View();
+        }
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> SaveProfileManage(MUserProfile dTO)
+        {
+       
+            try
+            {
+
+                dTO.IsActive = true;
+                dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                dTO.UpdatedOn = DateTime.Now;
+
+                if (ModelState.IsValid)
+                {
+                    if (!await _userProfileBL.GetByArmyNo(dTO, dTO.UserId))
+                    {
+                        if (dTO.UserId > 0)
+                        {
+                            await _userProfileBL.Update(dTO);
+                            return Json(KeyConstants.Update);
+                        }
+                        else
+                        {
+                            await _userProfileBL.Add(dTO);
+                            return Json(KeyConstants.Save);
+                        }
+                    }
+                    else
+                    {
+                        return Json(KeyConstants.Exists);
+                    }
+
+                }
+                else
+                {
+
+                    return Json(ModelState.Select(x => x.Value.Errors).Where(y => y.Count > 0).ToList());
+                }
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "Account->SaveProfileManage");
+                return Json(KeyConstants.InternalServerError);
+            }
+
         }
         [Authorize(Roles = "Admin")]
         [HttpPost]
@@ -745,6 +792,9 @@ namespace Web.Controllers
             }
 
         }
+        #endregion End ProfileManage
+
+        #region UserRegn
         [Authorize(Roles = "Admin")]
         [HttpGet]
         public IActionResult UserRegn()
@@ -766,6 +816,8 @@ namespace Web.Controllers
             }
 
         }
+        #endregion End UserRegn
+
 
         [Authorize(Roles = "Admin")]
         [HttpPost]

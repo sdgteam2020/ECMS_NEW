@@ -1,4 +1,5 @@
 ﻿using DataTransferObject.Domain.Master;
+using DataTransferObject.Localize;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -15,9 +16,12 @@ namespace DataTransferObject.Domain
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int UserId { get; set; }
 
-        [Required]
         [StringLength(20)]
         [Column(TypeName = "varchar(20)")]
+        [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
+        [MinLength(7, ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "MinLengthError")]
+        [MaxLength(15, ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "MaxLengthError")]
+        [RegularExpression(@"^[\w\-]+$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
         public string ArmyNo { get; set; } = string.Empty;
         
         [Required]
@@ -25,19 +29,17 @@ namespace DataTransferObject.Domain
         public short RankId { get; set; }
         public MRank? MRank { get; set; }
 
-        [Required]
+
         [StringLength(50)]
         [Column(TypeName = "varchar(50)")]
+        [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
+        [MinLength(1, ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "MinLengthError")]
+        [MaxLength(50, ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "MaxLengthError")]
+        [RegularExpression(@"^[\w ]+$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
         public string Name { get; set; } = string.Empty;
 
-        
-       
-        // [Required]
-        //public int UnitId { get; set; }
         public Boolean IntOffr { get; set; }
         public Boolean IsIO { get; set; }
         public Boolean IsCO { get; set; }
-        //public MUnit? MUnit { get; set; }
-
     }
 }

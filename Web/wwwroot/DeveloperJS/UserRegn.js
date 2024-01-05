@@ -1,5 +1,4 @@
 ﻿$(document).ready(function () {
-    mMsater(0, "ddlRank", Rank, "");
     BindData()
 
     $("#AddNewDomain input[name='txtapproval']").click(function () {
@@ -51,8 +50,6 @@
     });
 
     $("#txtUnitName").autocomplete({
-
-
         source: function (request, response) {
             if (request.term.length > 2) {
                 $("#spnUnitIdMap").html('');
@@ -141,31 +138,6 @@
             alert("Select Choice");
         }
     });
-
-
-    //$("#btnDomainsave").click(function () {
-    //    if ($("#SaveDomain")[0].checkValidity()) {
-
-    //        Swal.fire({
-    //            title: 'Are you sure?',
-    //            text: "You won't be Save!",
-    //            icon: 'warning',
-    //            showCancelButton: true,
-    //            confirmButtonColor: '#3085d6',
-    //            cancelButtonColor: '#d33',
-    //            confirmButtonText: 'Yes, Save it!'
-    //        }).then((result) => {
-    //            if (result.isConfirmed) {
-    //                Save();
-    //            }
-    //        })
-
-    //    } else {
-    //        $("#SaveDomain")[0].reportValidity();
-    //    }
-    //});
-
-
 });
 
 function Proceed() {
@@ -473,8 +445,8 @@ function Reset() {
 
     $("#spnUserProfileId").html("");
     $("#txtArmyNo").val("");
-    $("#ddlRank").val("");
-    $("#txtName").val("");
+    $("#lblRank").val("");
+    $("#lblName").val("");
 
     $("#spnUnitAppointmentId").html("");
     $("#txtAppointmentName").val("");
@@ -493,9 +465,6 @@ function ResetErrorMessage() {
     $("#txtRole-error").html("");
     $("#txtapproval-error").html("");
     $("#txtactive-error").html("");
-    $("#txtName-error").html("");
-    $("#ddlRank-error").html("");
-    $("#txtArmyNo-error").html("");
     $("#IntOffr-error").html("");
     $("#txtAppointmentName-error").html("");
     $("#txtUnitName-error").html("");
@@ -527,14 +496,8 @@ function GetProfileByUserId(param1) {
         success: function (data) {
             $("#spnUserProfileId").html(data.UserId);
             $("#txtArmyNo").val(data.ArmyNo);
-            $("#ddlRank").val(data.RankId);
-            $("#txtName").val(data.Name);
-            if (data.IntOffr == true) {
-                $("#intoffsyes").prop("checked", true);
-            }
-            else {
-                $("#intoffsno").prop("checked", true);
-            }
+            $("#lblRank").val(data.RankId);
+            $("#lblName").val(data.Name);
         }
     });
 }

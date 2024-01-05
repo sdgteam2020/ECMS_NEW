@@ -144,11 +144,12 @@ function BindData() {
                     for (var i = 0; i < response.length; i++) {
 
                         listItem += "<tr>";
-                        listItem += "<td class='d-none'><span id='regId'>" + response[i].Id + "</span><span id='userId'>" + response[i].UserId + "</span></td>";
+                        listItem += "<td class='d-none'><span id='regId'>" + response[i].Id + "</span><span id='userId'>" + response[i].UserId + "</span><span id='rankId'>" + response[i].RankId + "</span></td>";
                         listItem += "<td class='align-middle'>" + (i + 1) + "</td>";
                         listItem += "<td class='align-middle'><span id='userId'>" + response[i].UserId + "</span></td>";
                         listItem += "<td class='align-middle'><span id='armyNo'>" + response[i].ArmyNo + "</span></td>";
-                        listItem += "<td class='align-middle'><span id='name'>" + response[i].Name + "</span></td>";
+                        listItem += "<td class='align-middle'><span id='username'>" + response[i].Name + "</span></td>";
+                        listItem += "<td class='align-middle'><span id='rankName'>" + response[i].RankName + "</span></td>";
                         listItem += "<td class='align-middle'><span id='domainId'>" + response[i].DomainId + "</span></td>";
                         if (response[i].IsIO == true)
                             listItem += "<td class='align-middle'><span><span class='badge badge-pill badge-success' id='isIO'>Yes</span></span></td>";
@@ -208,38 +209,34 @@ function BindData() {
                     $("body").on("click", ".cls-btnedit", function () {
                         Reset();
                         ResetErrorMessage();
-                        $("#txtDomainId").val($(this).closest("tr").find("#domainId").html());
-                        $("#txtArmyNo").val($(this).closest("tr").find("#roleName").html());
                         $("#spnUserProfileId").html($(this).closest("tr").find("#userId").html());
+                        $("#txtArmyNo").val($(this).closest("tr").find("#armyNo").html());
+                        $("#txtName").val($(this).closest("tr").find("#username").html());
+                        $("#ddlRank").val($(this).closest("tr").find("#rankId").html());
+
                         //alert($(this).closest("tr").find("#domain_approval").html())
-                        if ($(this).closest("tr").find("#domain_approval").html() == 'Verifed' ) {
-                            $("#txtapprovalyes").prop("checked", true);
+                        if ($(this).closest("tr").find("#isIO").html() == 'Yes' ) {
+                            $("#initatingOffryes").prop("checked", true);
                         }
                         else {
-                            $("#txtapprovalno").prop("checked", true);
+                            $("#initatingOffrno").prop("checked", true);
                         }
 
-                        if ($(this).closest("tr").find("#domain_active").html() == 'Yes') {
-                            $("#txtactiveyes").prop("checked", true);
+                        if ($(this).closest("tr").find("#isCO").html() == 'Yes') {
+                            $("#commandingOffryes").prop("checked", true);
                         }
                         else {
-                            $("#txtactiveno").prop("checked", true);
-                        }
-                        if ($(this).closest("tr").find("#regUserId").html() > 0) {
-                            GetProfileByUserId($(this).closest("tr").find("#regUserId").html());
+                            $("#commandingOffrno").prop("checked", true);
                         }
 
-                        if ($(this).closest("tr").find("#regTrnDomainMappingId").html() > 0) {
-                            $("spnTrnDomainMappingId").val($(this).closest("tr").find("#regTrnDomainMappingId").html());
-                            GetALLByUnitById($(this).closest("tr").find("#regTrnDomainMappingUnitId").html());
+                        if ($(this).closest("tr").find("#isInt").html() == 'Yes') {
+                            $("#intoffryes").prop("checked", true);
                         }
-
-                        if ($(this).closest("tr").find("#regTrnDomainMappingApptId").html() > 0) {
-                            GetNameByApptId($(this).closest("tr").find("#regTrnDomainMappingApptId").html());
+                        else {
+                            $("#intoffrno").prop("checked", true);
                         }
-                        
-                        $("#btnDomainAdd").val("Update");
-                        $("#AddNewDomain").modal('show');
+                        $("#btnProfileAdd").val("Update");
+                        $("#AddNewProfile").modal('show');
                     });
                 }
             }
@@ -265,48 +262,40 @@ function BindData() {
 
 }
 function Save() {
-    /*  alert($('#bdaymonth').val());*/
-    alert($("txtapproval").val());
     $.ajax({
-        url: '/Account/SaveDomain',
+        url: '/Account/SaveProfileManage',
         type: 'POST',
         data: {
-            "Id": $("#spnDomainRegId").html(),
-            "DomainId": $("#txtDomainId").val(),
-            "RoleName": $("#txtRole").val(),
-            "AdminFlag": $('input:radio[name=txtapproval]:checked').val(),
-            "Active": $('input:radio[name=txtactive]:checked').val(),
             "UserId": $("#spnUserProfileId").html(),
             "ArmyNo": $("#txtArmyNo").val(),
             "Name": $("#txtName").val(),
             "RankId": $("#ddlRank").val(),
-            "IntOffr": $('input:radio[name=txtactive]:checked').val(),
-            "TrnDomainMappingId": $("#spnTrnDomainMappingId").html(),
-            "ApptId": $("#spnUnitAppointmentId").html(),
-            "UnitMappId": $("#spnUnitMapId").html(),
+            "IsIO": $('input:radio[name=InitatingOffr]:checked').val(),
+            "IntOffr": $('input:radio[name=IntOffr]:checked').val(),
+            "IsCO": $('input:radio[name=CommandingOffr]:checked').val(),
         }, //get the search string
         success: function (result) {
 
 
             if (result == DataSave) {
-                toastr.success('Unit has been saved');
+                toastr.success('Profile has been saved');
 
-                /*  $("#AddNewM").modal('hide');*/
+                $("#AddNewProfile").modal('hide');
                 BindData();
                 Reset();
                 ResetErrorMessage();
             }
             else if (result == DataUpdate) {
-                toastr.success('Unit has been Updated');
+                toastr.success('Profile has been Updated');
 
-                /*  $("#AddNewM").modal('hide');*/
+                $("#AddNewProfile").modal('hide');
                 BindData();
                 Reset();
                 ResetErrorMessage();
             }
             else if (result == DataExists) {
 
-                toastr.error('Unit Name Exits!');
+                toastr.error('Army No. Exits!');
 
             }
             else if (result == InternalServerError) {
@@ -335,95 +324,25 @@ function Save() {
 function Reset() {
     $("#txtSearch").val("");
 
-    $("#spnDomainRegId").html("");
-    $("#txtDomainId").val("");
-    $("#txtRole").val("");
-
-    $("#spnTrnDomainMappingId").html("");
-    $("#spnUnitMapId").html("");
-    $("#txtUnitName").val("");
-    $("#lblComd").html("");
-    $("#lblCorps").html("");
-    $("#lblDiv").html("");
-    $("#lblBde").html("");
-    $("#lblSusno").html("");
-
     $("#spnUserProfileId").html("");
     $("#txtArmyNo").val("");
     $("#ddlRank").val("");
     $("#txtName").val("");
 
-    $("#spnUnitAppointmentId").html("");
-    $("#txtAppointmentName").val("");
+    $("#intoffryes").prop("checked", false);
+    $("#intoffrno").prop("checked", false);
 
-    $("#intoffsyes").prop("checked", false);
-    $("#intoffsno").prop("checked", false);
+    $("#initatingOffryes").prop("checked", false); 
+    $("#initatingOffrno").prop("checked", false);
 
-    $("#txtapprovalyes").prop("checked", false);
-    $("#txtapprovalno").prop("checked", false);
-
-    $("#txtactiveyes").prop("checked", false);
-    $("#txtactiveno").prop("checked", false);
+    $("#commandingOffryes").prop("checked", false);
+    $("#commandingOffrno").prop("checked", false);
 }
 function ResetErrorMessage() {
-    $("#txtDomainId-error").html("");
-    $("#txtRole-error").html("");
-    $("#txtapproval-error").html("");
-    $("#txtactive-error").html("");
     $("#txtName-error").html("");
     $("#ddlRank-error").html("");
     $("#txtArmyNo-error").html("");
     $("#IntOffr-error").html("");
-    $("#txtAppointmentName-error").html("");
-    $("#txtUnitName-error").html("");
-}
-function GetALLByUnitById(param1) {
-    $.ajax({
-        url: '/Master/GetALLByUnitMapId',
-        contentType: 'application/x-www-form-urlencoded',
-        data: { "UnitMapId": param1 },
-        type: 'POST',
-        success: function (data) {
-            $("#spnUnitMapId").html(data.UnitMapId);
-            $("#txtUnitName").val(data.UnitName);
-            $("#lblComd").html(data.ComdName);
-            $("#lblCorps").html(data.CorpsName);
-            $("#lblDiv").html(data.DivName);
-            $("#lblBde").html(data.BdeName);
-            $("#lblSusno").html(data.Sus_no + '' + data.Suffix);
-
-        }
-    });
-}
-function GetProfileByUserId(param1) {
-    $.ajax({
-        url: '/UserProfile/GetProfileByUserId',
-        contentType: 'application/x-www-form-urlencoded',
-        data: { "UserId": param1 },
-        type: 'POST',
-        success: function (data) {
-            $("#spnUserProfileId").html(data.UserId);
-            $("#txtArmyNo").val(data.ArmyNo);
-            $("#ddlRank").val(data.RankId);
-            $("#txtName").val(data.Name);
-            if (data.IntOffr == true) {
-                $("#intoffsyes").prop("checked", true);
-            }
-            else {
-                $("#intoffsno").prop("checked", true);
-            }
-        }
-    });
-}
-function GetNameByApptId(param1) {
-    $.ajax({
-        url: '/Master/GetByApptId',
-        contentType: 'application/x-www-form-urlencoded',
-        data: { "ApptId": param1 },
-        type: 'POST',
-        success: function (data) {
-            $("#spnUnitAppointmentId").html(data.ApptId);
-            $("#txtAppointmentName").val(data.AppointmentName);
-        }
-    });
+    $("#InitatingOffr-error").html("");
+    $("#CommandingOffr-error").html("");
 }

@@ -223,6 +223,7 @@ namespace DataAccessLayer
                                            join tdm in _context.TrnDomainMapping on u.Id equals tdm.AspNetUsersId into utdm_jointable
                                            from xtdm in utdm_jointable.DefaultIfEmpty()
                                            join up in _context.UserProfile on xtdm.UserId equals up.UserId
+                                           join rk in _context.MRank on up.RankId equals rk.RankId
                                            select new DTOProfileManageResponse()
                                            {
                                                UserId = up.UserId,
@@ -231,6 +232,8 @@ namespace DataAccessLayer
                                                IntOffr = up.IntOffr,
                                                IsIO = up.IsIO,
                                                IsCO = up.IsCO,
+                                               RankId=rk.RankId,
+                                               RankName=rk.RankName,
                                                Id = u.Id,
                                                DomainId = u.DomainId,
                                            }).Take(200).ToListAsync();
@@ -240,6 +243,7 @@ namespace DataAccessLayer
                 {
                     Search = string.IsNullOrEmpty(Search) ? "" : Search.ToLower();
                     var allrecord = await (from up in _context.UserProfile.Where(P => Search == "" || P.ArmyNo.ToLower().Contains(Search))
+                                           join rk in _context.MRank on up.RankId equals rk.RankId
                                            join tdm in _context.TrnDomainMapping on up.UserId equals tdm.UserId into uptdm_jointable
                                            from xtdm in uptdm_jointable.DefaultIfEmpty()
                                            join u in _context.Users on xtdm.AspNetUsersId equals u.Id into xtdmu_jointable
@@ -256,6 +260,8 @@ namespace DataAccessLayer
                                                IntOffr = up.IntOffr,
                                                IsIO = up.IsIO,
                                                IsCO = up.IsCO,
+                                               RankId = rk.RankId,
+                                               RankName = rk.RankName,
                                                Id = xu != null ? xu.Id : 0,
                                                DomainId = xu != null ? xu.DomainId : null,
                                            }).Take(200).ToListAsync();
@@ -265,6 +271,7 @@ namespace DataAccessLayer
                 {
                     int UserId = string.IsNullOrEmpty(Search) ? 0 : Convert.ToInt32(Search);
                     var allrecord = await (from up in _context.UserProfile.Where(x=>x.UserId == UserId)
+                                           join rk in _context.MRank on up.RankId equals rk.RankId
                                            join tdm in _context.TrnDomainMapping on up.UserId equals tdm.UserId into uptdm_jointable
                                            from xtdm in uptdm_jointable.DefaultIfEmpty()
                                            join u in _context.Users on xtdm.AspNetUsersId equals u.Id into xtdmu_jointable
@@ -281,6 +288,8 @@ namespace DataAccessLayer
                                                IntOffr = up.IntOffr,
                                                IsIO = up.IsIO,
                                                IsCO = up.IsCO,
+                                               RankId = rk.RankId,
+                                               RankName = rk.RankName,
                                                Id = xu != null ? xu.Id : 0,
                                                DomainId = xu != null ? xu.DomainId : null,
                                            }).ToListAsync();
@@ -290,6 +299,7 @@ namespace DataAccessLayer
                 else
                 {
                     var allrecord = await (from up in _context.UserProfile.Take(200)
+                                           join rk in _context.MRank on up.RankId equals rk.RankId
                                            join tdm in _context.TrnDomainMapping on up.UserId equals tdm.UserId into uptdm_jointable
                                            from xtdm in uptdm_jointable.DefaultIfEmpty()
                                            join u in _context.Users on xtdm.AspNetUsersId equals u.Id into xtdmu_jointable
@@ -306,6 +316,8 @@ namespace DataAccessLayer
                                                IntOffr = up.IntOffr,
                                                IsIO = up.IsIO,
                                                IsCO = up.IsCO,
+                                               RankId = rk.RankId,
+                                               RankName = rk.RankName,
                                                Id = xu != null ?xu.Id : 0,
                                                DomainId = xu != null ? xu.DomainId : null,
                                            }).ToListAsync();

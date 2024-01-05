@@ -25,7 +25,7 @@ namespace DataAccessLayer
         private readonly IConfiguration configuration;
         public async Task<bool> GetByArmyNo(MUserProfile Data, int UserId)
         { 
-            var ret = _context.UserProfile.Any(p => p.ArmyNo.ToUpper() == Data.ArmyNo.ToUpper() && p.UserId!=Data.UserId);
+            var ret = _context.UserProfile.Any(p => p.ArmyNo.ToUpper() == Data.ArmyNo.ToUpper() && p.UserId!= UserId);
             return ret;
         }
         public async Task<List<MUserProfile>> GetByMArmyNo(string ArmyNo, int UserId)
