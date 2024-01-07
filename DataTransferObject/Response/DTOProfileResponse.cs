@@ -17,6 +17,8 @@ namespace DataTransferObject.Response
         public int RankId { get; set; }
         public string RankName { get; set; } = string.Empty;
         public string Name { get; set; } = string.Empty;
+        public bool Mapping { get; set; }
+        public string? DomainId { get; set; }
         public byte FormationId { get; set; }
         public string FormationName { get; set; } = string.Empty;
         public short ApptId { get; set; }

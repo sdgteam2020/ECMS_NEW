@@ -324,7 +324,7 @@ function Save() {
 function Reset() {
     $("#txtSearch").val("");
 
-    $("#spnUserProfileId").html("");
+    $("#spnUserProfileId").html("0");
     $("#txtArmyNo").val("");
     $("#ddlRank").val("");
     $("#txtName").val("");

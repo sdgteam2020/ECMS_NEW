@@ -4,6 +4,7 @@ using DataAccessLayer.Logger;
 using DataTransferObject.Domain;
 using DataTransferObject.Domain.Model;
 using DataTransferObject.Response;
+using DataTransferObject.Response.User;
 using DataTransferObject.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -92,20 +93,22 @@ namespace DataAccessLayer
         {
             try
             {
-                var ret = await (from user in _context.UserProfile.Where(x=>x.UserId == UserId)
-                                 join rank in _context.MRank on user.RankId equals rank.RankId
-                                 join map in _context.TrnDomainMapping on user.UserId equals map.UserId into mapp
-                                 from xmapp in mapp.DefaultIfEmpty()
-                                 join Uni in _context.MUnit on xmapp.UnitId equals Uni.UnitId into muni
-                                 from xmuni in muni.DefaultIfEmpty()
+                var ret = await (from up in _context.UserProfile.Where(x=>x.UserId == UserId)
+                                 join rank in _context.MRank on up.RankId equals rank.RankId
+                                 join map in _context.TrnDomainMapping on up.UserId equals map.UserId into upmap_jointable
+                                 from xmap in upmap_jointable.DefaultIfEmpty()
+                                 join u in _context.Users on xmap.AspNetUsersId equals u.Id into xmapu_jointable
+                                 from xu in xmapu_jointable.DefaultIfEmpty()
                                  select new DTOProfileResponse
                                  {
-                                     ArmyNo = user.ArmyNo,
-                                     UserId = user.UserId,
-                                     Name = user.Name,
-                                     IntOffr = user.IntOffr,
+                                     ArmyNo = up.ArmyNo,
+                                     UserId = up.UserId,
+                                     Name = up.Name,
+                                     IntOffr = up.IntOffr,
                                      RankId = rank.RankId,
                                      RankName = rank.RankName,
+                                     Mapping = xmap!=null? true : false,
+                                     DomainId = xu != null ? xu.DomainId : null
                                  }
                                 ).FirstOrDefaultAsync();
                 return ret;
@@ -113,53 +116,46 @@ namespace DataAccessLayer
             }
             catch (Exception ex) 
             {
-                _logger.LogError(1001, ex, "UserProfileDB->GetByArmyNo");
+                _logger.LogError(1001, ex, "UserProfileDB->GetProfileByUserId");
                 return null; 
             }
 
 
         }
-        public async Task<DTOUserProfileResponse> GetByArmyNo(string ArmyNo, int UserId)
+        public async Task<DTOUserProfileResponse?> GetByArmyNo(string ArmyNo, int UserId)
         {
-           // return _context.UserProfile.Where(P => P.ArmyNo == ArmyNo).SingleOrDefault();
             try
             {
-                var ret = await (from user in _context.UserProfile
-                                 //join map in _context.TrnDomainMapping on user.UserId equals map.UserId    
-                                 //join Uni in _context.MUnit on map.UnitId equals Uni.UnitId
-                                 //join app in _context.MAppointment on user.ApptId equals app.ApptId
-                                // join forma in _context.MFormation on app.FormationId equals forma.FormationId
-                                 join rank in _context.MRank on user.RankId equals rank.RankId
-                                 join map in _context.TrnDomainMapping on user.UserId equals map.UserId into mapp
-                                 from xmapp in mapp.DefaultIfEmpty()
-                                 join Uni in _context.MUnit on xmapp.UnitId equals Uni.UnitId into muni
-                                 from xmuni in muni.DefaultIfEmpty()
-
-                                     //join UniO in _context.MUnit on xio.UnitId equals UniO.UnitId into Uio
-                                     //from xUio in Uio.DefaultIfEmpty()
-                                 where user.ArmyNo == ArmyNo //&&  user.Updatedby == UserId
+                var ret = await (from up in _context.UserProfile
+                                 join rank in _context.MRank on up.RankId equals rank.RankId
+                                 join map in _context.TrnDomainMapping on up.UserId equals map.UserId into upmap_jointable
+                                 from xmap in upmap_jointable.DefaultIfEmpty()
+                                 join mapunit in _context.MapUnit on xmap.UnitId equals mapunit.UnitId into xmapmapunit_jointable
+                                 from xmapunit in xmapmapunit_jointable.DefaultIfEmpty()
+                                 join munit in _context.MUnit on xmapunit.UnitId equals munit.UnitId into xmapunitmunit_jointable
+                                 from xmunit in xmapunitmunit_jointable.DefaultIfEmpty()
+                                 where up.ArmyNo == ArmyNo //&&  user.Updatedby == UserId
                                  select new DTOUserProfileResponse
                                  {
 
-                                     ArmyNo = user.ArmyNo,
-                                     UserId = user.UserId,
-                                     //FormationId = forma.FormationId,
-                                     //FormationName = forma.FormationName,
-                                     //ApptId = app.ApptId,
-                                     //AppointmentName = app.AppointmentName,
+                                     ArmyNo = up.ArmyNo,
+                                     UserId = up.UserId,
+                                     Name = up.Name,
+                                     IntOffr = up.IntOffr,
                                      Rank = rank.RankName,
                                      RankId = rank.RankId,
-                                     Name = user.Name,
-                                     UnitId = xmapp.UnitId,
-                                     UnitName = xmuni.UnitName,
-                                     IntOffr = user.IntOffr,
-
+                                     UnitId = xmunit!=null?xmunit.UnitId:0,
+                                     UnitName = xmunit!=null ? xmunit.UnitName:"No Unit",
                                  }
-                         ).Distinct().FirstOrDefaultAsync();
+                                ).Distinct().FirstOrDefaultAsync();
                 return ret;
 
             }
-            catch (Exception ex) { return null; }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "UserProfileDB->GetByArmyNo");
+                return null; 
+            }
 
             
         }
@@ -167,37 +163,80 @@ namespace DataAccessLayer
         {
             try
             {
-                var ret = await (from user in _context.UserProfile
-                                 join rank in _context.MRank on user.RankId equals rank.RankId
-                                 join map in _context.TrnDomainMapping on user.UserId equals map.UserId into mapp
-                                 from xmapp in mapp.DefaultIfEmpty()
-                                 join Uni in _context.MUnit on xmapp.UnitId equals Uni.UnitId into muni
-                                 from xmuni in muni.DefaultIfEmpty()
-                                 join Appo in _context.MAppointment on xmapp.ApptId equals Appo.ApptId into mappo
-                                 from xmappo in mappo.DefaultIfEmpty()
-                                 join Apluser in _context.Users on xmapp.AspNetUsersId equals Apluser.Id into mapluser
-                                 from xapluser in mapluser.DefaultIfEmpty()
-                                 where user.ArmyNo == ArmyNo 
+                var ret = await (from up in _context.UserProfile
+                                 join rank in _context.MRank on up.RankId equals rank.RankId
+                                 join map in _context.TrnDomainMapping on up.UserId equals map.UserId into upmap_jointable
+                                 from xmap in upmap_jointable.DefaultIfEmpty()
+                                 join mapunit in _context.MapUnit on xmap.UnitId equals mapunit.UnitId into xmapmapunit_jointable
+                                 from xmapunit in xmapmapunit_jointable.DefaultIfEmpty()
+                                 join munit in _context.MUnit on xmapunit.UnitId equals munit.UnitId into xmapunitmunit_jointable
+                                 from xmunit in xmapunitmunit_jointable.DefaultIfEmpty()
+                                 join appo in _context.MAppointment on xmap.ApptId equals appo.ApptId into xmapappo_jointable
+                                 from xappo in xmapappo_jointable.DefaultIfEmpty()
+                                 join u in _context.Users on xmap.AspNetUsersId equals u.Id into xmapu_jointable
+                                 from xu in xmapu_jointable.DefaultIfEmpty()
+                                 where up.ArmyNo == ArmyNo 
                                  select new DTOAllRelatedDataByArmyNoResponse
                                  {
-                                     Name = user.Name,
-                                     ArmyNo = user.ArmyNo,
-                                     UserId = user.UserId,
-                                     IntOffr = user.IntOffr,
+                                     Name = up.Name,
+                                     ArmyNo = up.ArmyNo,
+                                     UserId = up.UserId,
+                                     IntOffr = up.IntOffr,
                                      RankName = rank.RankName,
                                      RankId = rank.RankId,
-                                     TrnDomainMappingId = xmapp != null? xmapp.Id : 0,
-                                     UnitId = xmuni != null ? xmuni.UnitId : 0,
-                                     UnitName = xmuni != null ? xmuni.UnitName : null,
-                                     ApptId = (short)(xmappo != null ? xmappo.ApptId : 0),
-                                     AppointmentName = xmappo != null ? xmappo.AppointmentName:"No Appointment" ,
-                                     DomainId = xapluser != null ?xapluser.DomainId : null
+                                     TrnDomainMappingId = xmap != null? xmap.Id : 0,
+                                     UnitId = xmunit != null ? xmunit.UnitId : 0,
+                                     UnitName = xmunit != null ? xmunit.UnitName : null,
+                                     ApptId = (short)(xappo != null ? xappo.ApptId : 0),
+                                     AppointmentName = xappo != null ? xappo.AppointmentName:"No Appointment" ,
+                                     DomainId = xu != null ? xu.DomainId : null
                                  }
                          ).Distinct().FirstOrDefaultAsync();
                 return ret;
 
             }
             catch (Exception ex) { return null; }
+
+        }
+        public async Task<List<DTOAllRelatedDataByArmyNoResponse>?> GetTopByArmyNo(string ArmyNo)
+        {
+            try
+            {
+                var ret = await (from up in _context.UserProfile.Where(x=>x.ArmyNo.Contains(ArmyNo))
+                                 join rank in _context.MRank on up.RankId equals rank.RankId
+                                 join map in _context.TrnDomainMapping on up.UserId equals map.UserId into upmap_jointable
+                                 from xmap in upmap_jointable.DefaultIfEmpty()
+                                 join mapunit in _context.MapUnit on xmap.UnitId equals mapunit.UnitId into xmapmapunit_jointable
+                                 from xmapunit in xmapmapunit_jointable.DefaultIfEmpty()
+                                 join munit in _context.MUnit on xmapunit.UnitId equals munit.UnitId into xmapunitmunit_jointable
+                                 from xmunit in xmapunitmunit_jointable.DefaultIfEmpty()
+                                 join appo in _context.MAppointment on xmap.ApptId equals appo.ApptId into xmapappo_jointable
+                                 from xappo in xmapappo_jointable.DefaultIfEmpty()
+                                 join u in _context.Users on xmap.AspNetUsersId equals u.Id into xmapu_jointable
+                                 from xu in xmapu_jointable.DefaultIfEmpty()
+                                 select new DTOAllRelatedDataByArmyNoResponse
+                                 {
+                                     Name = up.Name,
+                                     ArmyNo = up.ArmyNo,
+                                     UserId = up.UserId,
+                                     RankName = rank.RankName,
+                                     RankId = rank.RankId,
+                                     TrnDomainMappingId = xmap != null ? xmap.Id : 0,
+                                     UnitId = xmunit != null ? xmunit.UnitId : 0,
+                                     UnitName = xmunit != null ? xmunit.UnitName : null,
+                                     ApptId = (short)(xappo != null ? xappo.ApptId : 0),
+                                     AppointmentName = xappo != null ? xappo.AppointmentName : "No Appointment",
+                                     DomainId = xu != null ? xu.DomainId : null
+                                 }
+                                ).Take(5).ToListAsync();
+                return ret;
+
+            }
+            catch (Exception ex) 
+            {
+                _logger.LogError(1001, ex, "UserProfileDB->GetTopByArmyNo");
+                return null; 
+            }
 
         }
         public async Task<List<DTOUserProfileResponse>> GetAll(int DomainId, int UserId)

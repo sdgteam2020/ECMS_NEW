@@ -123,7 +123,7 @@ namespace DataAccessLayer
                            //Suffix = MUni.Suffix,
                            //Sus_no = MUni.Sus_no
                        }
-                     ).Distinct().ToList(); ;
+                     ).Distinct().Take(5).ToList(); ;
 
 
 

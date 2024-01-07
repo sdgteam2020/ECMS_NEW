@@ -24,5 +24,6 @@ namespace BusinessLogicsLayer.Master
         public Task<List<BasicDetailVM>> GetByRequestId(int RequestId);
         public Task<DTOProfileResponse> CheckArmyNoInUserProfile(string ArmyNo, int AspNetUsersId);
         public Task<DTOAllRelatedDataByArmyNoResponse?> GetAllRelatedDataByArmyNo(string ArmyNo);
+        public Task<List<DTOAllRelatedDataByArmyNoResponse>?> GetTopByArmyNo(string ArmyNo);
     }
 }

@@ -29,6 +29,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.SqlServer.Management.Smo;
 using Microsoft.SqlServer.Management.Smo.Agent;
 using Microsoft.SqlServer.Management.Smo.Wmi;
+using Newtonsoft.Json;
 using System;
 using System.Data.Entity.Hierarchy;
 using System.Security.Claims;
@@ -83,6 +84,593 @@ namespace Web.Controllers
         {
             return View();
         }
+        #region Policy
+
+        [HttpGet]
+        [Authorize(Policy = "EditRolePolicy")]
+        public async Task<IActionResult> ManageUserRoles(string userId)
+        {
+            string decryptedId = string.Empty;
+            int decryptedIntId = 0;
+            try
+            {
+                // Decrypt the  id using Unprotect method
+                decryptedId = protector.Unprotect(userId);
+                decryptedIntId = Convert.ToInt32(decryptedId);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "This error occure because Id value change by user.");
+                return RedirectToAction("Error", "Error");
+            }
+
+            ViewBag.userId = userId;
+
+            var user = await userManager.FindByIdAsync(decryptedId);
+
+            if (user == null)
+            {
+                ViewBag.ErrorMessage = $"User with Id = {decryptedId} cannot be found";
+                return View("NotFound");
+            }
+
+            var model = new List<UserRolesViewModel>();
+
+            foreach (var role in roleManager.Roles)
+            {
+                var userRolesViewModel = new UserRolesViewModel
+                {
+                    RoleId = role.Id.ToString(),
+                    RoleName = role.Name
+                };
+
+                if (await userManager.IsInRoleAsync(user, role.Name))
+                {
+                    userRolesViewModel.IsSelected = true;
+                }
+                else
+                {
+                    userRolesViewModel.IsSelected = false;
+                }
+
+                model.Add(userRolesViewModel);
+            }
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [Authorize(Policy = "EditRolePolicy")]
+        public async Task<IActionResult> ManageUserRoles(List<UserRolesViewModel> model, string userId)
+        {
+            string decryptedId = string.Empty;
+            int decryptedIntId = 0;
+            try
+            {
+                // Decrypt the  id using Unprotect method
+                decryptedId = protector.Unprotect(userId);
+                decryptedIntId = Convert.ToInt32(decryptedId);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "This error occure because Id value change by user.");
+                return RedirectToAction("Error", "Error");
+            }
+            var user = await userManager.FindByIdAsync(decryptedId);
+
+            if (user == null)
+            {
+                ViewBag.ErrorMessage = $"User with Id = {userId} cannot be found";
+                return View("NotFound");
+            }
+
+            var roles = await userManager.GetRolesAsync(user);
+            var result = await userManager.RemoveFromRolesAsync(user, roles);
+
+            if (!result.Succeeded)
+            {
+                ModelState.AddModelError("", "Cannot remove user existing roles");
+                return View(model);
+            }
+
+            result = await userManager.AddToRolesAsync(user, model.Where(x => x.IsSelected).Select(y => y.RoleName));
+
+            if (!result.Succeeded)
+            {
+                ModelState.AddModelError("", "Cannot add selected roles to user");
+                return View(model);
+            }
+            TempData["success"] = "Updated Successfully.";
+            return RedirectToAction("EditUser", new { Id = userId });
+        }
+
+        [HttpPost]
+        [Authorize(Policy = "DeleteRolePolicy")]
+        public async Task<IActionResult> DeleteRole(string Id)
+        {
+            string decryptedId = string.Empty;
+            int decryptedIntId = 0;
+            try
+            {
+                // Decrypt the  id using Unprotect method
+                decryptedId = protector.Unprotect(Id);
+                decryptedIntId = Convert.ToInt32(decryptedId);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "This error occure because Id value change by user.");
+                return RedirectToAction("Error", "Error");
+            }
+            var role = await roleManager.FindByIdAsync(decryptedId);
+
+            if (role == null)
+            {
+                ViewBag.ErrorMessage = $"Role with Id = {decryptedId} cannot be found";
+                return View("NotFound");
+            }
+            else
+            {
+                try
+                {
+                    //throw new Exception("Test Exception");
+
+                    var result = await roleManager.DeleteAsync(role);
+
+                    if (result.Succeeded)
+                    {
+                        TempData["success"] = "Role Deleted Successfully.";
+                        return RedirectToAction("ListRoles");
+                    }
+
+                    foreach (var error in result.Errors)
+                    {
+                        ModelState.AddModelError("", error.Description);
+                    }
+
+                    return View("ListRoles");
+                }
+                catch (DbUpdateException ex)
+                {
+                    _logger.LogError($"Error deleting role {ex}");
+
+                    ViewBag.ErrorTitle = $"{role.Name} role is in use";
+                    ViewBag.ErrorMessage = $"{role.Name} role cannot be deleted as there are users " +
+                        $"in this role. If you want to delete this role, please remove the users from " +
+                        $"the role and then try to delete";
+                    return View("Error");
+                }
+            }
+        }
+
+        #endregion End Policy
+
+        #region ProfileManage
+        [Authorize(Roles = "Admin")]
+        [HttpGet]
+        public IActionResult ProfileManage()
+        {
+            return View();
+        }
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> SaveProfileManage(MUserProfile dTO)
+        {
+
+            try
+            {
+
+                dTO.IsActive = true;
+                dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                dTO.UpdatedOn = DateTime.Now;
+
+                if (ModelState.IsValid)
+                {
+                    if (!await _userProfileBL.GetByArmyNo(dTO, dTO.UserId))
+                    {
+                        if (dTO.UserId > 0)
+                        {
+                            await _userProfileBL.Update(dTO);
+                            return Json(KeyConstants.Update);
+                        }
+                        else
+                        {
+                            await _userProfileBL.Add(dTO);
+                            return Json(KeyConstants.Save);
+                        }
+                    }
+                    else
+                    {
+                        return Json(KeyConstants.Exists);
+                    }
+
+                }
+                else
+                {
+
+                    return Json(ModelState.Select(x => x.Value.Errors).Where(y => y.Count > 0).ToList());
+                }
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "Account->SaveProfileManage");
+                return Json(KeyConstants.InternalServerError);
+            }
+
+        }
+        [Authorize(Roles = "Admin")]
+        [HttpPost]
+        public async Task<IActionResult> GetAllProfileManage(string Search, string Choice)
+        {
+            try
+            {
+                return Json(await _iAccountBL.GetAllProfileManage(Search, Choice));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "Account->ProfileManage");
+                return Json(KeyConstants.InternalServerError);
+            }
+
+        }
+       
+        #endregion End ProfileManage
+
+        #region UserRegn
+        
+        [Authorize(Roles = "Admin")]
+        [HttpGet]
+        public IActionResult UserRegn()
+        {
+            return View();
+        }
+        
+        [Authorize(Roles = "Admin")]
+        [HttpPost]
+        public async Task<IActionResult> GetAllUserRegn(string Search, string Choice)
+        {
+            try
+            {
+                return Json(await _iAccountBL.GetAllUserRegn(Search, Choice));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "Account->UserRegn");
+                return Json(KeyConstants.InternalServerError);
+            }
+
+        }
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> SaveDomain(DTOUserRegnRequest dTO)
+        {
+            try
+            {
+                int Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                if (ModelState.IsValid)
+                {
+                    if (! _iAccountBL.GetByDomainId(dTO.DomainId, dTO.Id))
+                    {
+                        DTOUserRegnResultResponse? dTOUserRegnResultResponse = await _iAccountBL.SaveDomainWithAll(dTO, Updatedby);
+                        if (dTOUserRegnResultResponse != null)
+                        {
+                            if(dTOUserRegnResultResponse.Result==true)
+                            {
+                                if (dTO.Id > 0)
+                                {
+                                    return Json(KeyConstants.Update);
+                                }
+                                else
+                                {
+                                    return Json(KeyConstants.Save);
+                                }
+                            }
+                            else
+                            {
+                                string json = JsonConvert.SerializeObject(dTOUserRegnResultResponse);
+                                //return Json(json);
+                                return Json(json);
+                            }
+
+                        }
+                        else
+                        {
+                            return Json(KeyConstants.InternalServerError);
+                        }
+                    }
+                    else
+                    {
+                        return Json(KeyConstants.Exists);
+                    }
+
+                }
+                else
+                {
+
+                    return Json(ModelState.Select(x => x.Value.Errors).Where(y => y.Count > 0).ToList());
+                }
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "Account->SaveProfileManage");
+                return Json(KeyConstants.InternalServerError);
+            }
+
+        }
+
+        #endregion End UserRegn
+
+        #region Super Admin Section
+        [HttpGet]
+        [Authorize(Roles = "Super Admin")]
+        public IActionResult Create()
+        {
+            ViewBag.T = "Register User";
+            var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            ViewBag.RoleOptions = unitOfWork.Users.GetRole();
+            ViewBag.OptionsRank = service.GetRank(1);
+            DTORegisterRequest model = new DTORegisterRequest();
+            string dd = AESEncrytDecry.GetSalt();  // "8080808080808080"; //protector.Protect("1");
+            HttpContext.Session.SetString(SessionKeySalt, dd);
+            model.hdns = dd;
+            return View(model);
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Super Admin")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(DTORegisterRequest model)
+        {
+            //var data =await unitOfWork.Users.GetAll();
+            ////var data1 = unitOfWork.Users.GetByUserName("Kapoor").Result;
+            //int i = (int)ResponseMessage.Success;
+            //return View();
+            string rolename = "";
+            var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            ViewBag.RoleOptions = unitOfWork.Users.GetRole();
+            ViewBag.OptionsRank = service.GetRank(1);
+            if (userId == null)
+            {
+                userId = "0";
+                rolename = "Super Admin";
+            }
+            else
+            {
+                var usera = await userManager.FindByIdAsync(userId);
+                var roles = await userManager.GetRolesAsync(usera);
+
+                if (roles[0] == "Super Admin")
+                {
+                    rolename = model.UserRole;
+                }
+            }
+
+            if (ModelState.IsValid)
+            {
+                var user_ = await userManager.FindByIdAsync(userId);
+                string user_name = string.Empty;
+                string ipAddress;
+
+                string dd = HttpContext.Session.GetString(SessionKeySalt);
+                csConst.cSalt = dd;
+                //string Password = AESEncrytDecry.DecryptStringAES(model.Password);
+
+                user_name = model.DomainId;
+                ipAddress = Request.HttpContext.Connection.RemoteIpAddress.ToString();
+                var location = new Uri($"{Request.Scheme}://{Request.Host}{Request.Path}{Request.QueryString}");
+                var url = location.AbsoluteUri;
+
+                var user = new ApplicationUser
+                {
+                    Active = true,
+                    DomainId = model.DomainId,
+                    Updatedby = 1,
+                    UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time")),
+                    UserName = model.DomainId.ToLower(),
+                    Email = model.DomainId.ToLower() + "@army.mil",
+                };
+                //var password = Password.Generate(8, 6);
+                var result = await userManager.CreateAsync(user, "Admin123#");//model.Password);
+
+                if (result.Succeeded)
+                {
+                    await userManager.AddToRoleAsync(user, rolename);
+                    TempData["success"] = "User ID has been successfully created.";
+                    return RedirectToAction("Index");
+                }
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError(string.Empty, error.Description);
+                }
+            }
+            return View(model);
+
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "Super Admin")]
+        public IActionResult CreateRole()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Super Admin")]
+        public async Task<IActionResult> CreateRole(CreateRoleViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                ApplicationRole identityRole = new ApplicationRole
+                {
+                    Name = model.RoleName
+                };
+
+                IdentityResult result = await roleManager.CreateAsync(identityRole);
+
+                if (result.Succeeded)
+                {
+                    TempData["success"] = "Created Role Successfully.";
+                    return RedirectToAction("ListRoles", "Account");
+                }
+
+                foreach (IdentityError error in result.Errors)
+                {
+                    ModelState.AddModelError("", error.Description);
+                }
+                TempData["error"] = "Operation failed.";
+            }
+
+            return View(model);
+        }
+        [HttpGet]
+        [Authorize(Roles = "Super Admin")]
+        public IActionResult ListRoles()
+        {
+            int sno = 1;
+            var roles = roleManager.Roles;
+            List<ApplicationRole> rolesList = new List<ApplicationRole>();
+            foreach (var e in roles)
+            {
+                ApplicationRole applicationRole = new ApplicationRole()
+                {
+                    Id = e.Id,
+                    Sno = sno++,
+                    EncryptedId = protector.Protect(e.Id.ToString()),
+                    Name = e.Name,
+                };
+                rolesList.Add(applicationRole);
+            }
+            //var allrecord = (from e in roles
+            //                 select new ApplicationRole()
+            //                 {
+            //                     Id =e.Id,
+            //                     Sno = sno++,
+            //                     EncryptedId = protector.Protect(e.Id.ToString()),
+            //                     Name=e.Name,
+            //                 }).ToList();
+            return View(rolesList);
+        }
+        [HttpGet]
+        [Authorize(Roles = "Super Admin")]
+        public async Task<IActionResult> EditUsersInRole(string roleId)
+        {
+            string decryptedId = string.Empty;
+            int decryptedIntId = 0;
+            try
+            {
+                // Decrypt the  id using Unprotect method
+                decryptedId = protector.Unprotect(roleId);
+                decryptedIntId = Convert.ToInt32(decryptedId);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "This error occure because Id value change by user.");
+                return RedirectToAction("Error", "Error");
+            }
+            ViewBag.roleId = roleId;
+
+            var role = await roleManager.FindByIdAsync(decryptedId);
+
+            if (role == null)
+            {
+                ViewBag.ErrorMessage = $"Role with Id = {roleId} cannot be found";
+                return View("NotFound");
+            }
+
+            var model = new List<UserRoleViewModel>();
+
+            foreach (var user in userManager.Users)
+            {
+                var userRoleViewModel = new UserRoleViewModel
+                {
+                    UserId = user.Id,
+                    EncryptedId = protector.Protect(user.Id.ToString()),
+                    DomainId = user.DomainId
+                };
+
+                if (await userManager.IsInRoleAsync(user, role.Name))
+                {
+                    userRoleViewModel.IsSelected = true;
+                }
+                else
+                {
+                    userRoleViewModel.IsSelected = false;
+                }
+
+                model.Add(userRoleViewModel);
+            }
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Super Admin")]
+        public async Task<IActionResult> EditUsersInRole(List<UserRoleViewModel> model, string roleId)
+        {
+            string decryptedId = string.Empty;
+            int decryptedIntId = 0;
+            try
+            {
+                // Decrypt the  id using Unprotect method
+                decryptedId = protector.Unprotect(roleId);
+                decryptedIntId = Convert.ToInt32(decryptedId);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "This error occure because Id value change by user.");
+                return RedirectToAction("Error", "Error");
+            }
+            var role = await roleManager.FindByIdAsync(decryptedId);
+
+            if (role == null)
+            {
+                ViewBag.ErrorMessage = $"Role with Id = {decryptedId} cannot be found";
+                return View("NotFound");
+            }
+
+            for (int i = 0; i < model.Count; i++)
+            {
+                var user = await userManager.FindByIdAsync(model[i].UserId.ToString());
+
+                IdentityResult result = null;
+
+                if (model[i].IsSelected && !(await userManager.IsInRoleAsync(user, role.Name)))
+                {
+                    result = await userManager.AddToRoleAsync(user, role.Name);
+                }
+                else if (!model[i].IsSelected && await userManager.IsInRoleAsync(user, role.Name))
+                {
+                    result = await userManager.RemoveFromRoleAsync(user, role.Name);
+                }
+                else
+                {
+                    continue;
+                }
+
+                if (result.Succeeded)
+                {
+                    if (i < (model.Count - 1))
+                        continue;
+                    else
+                    {
+                        TempData["success"] = "Updated Successfully.";
+                        return RedirectToAction("EditRole", new { Id = roleId });
+                    }
+                }
+            }
+
+            return RedirectToAction("EditRole", new { Id = roleId });
+        }
+        [HttpGet]
+        [Authorize(Roles = "Super Admin")]
+        public async Task<IActionResult> Index()
+        {
+            var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var usera = await userManager.FindByIdAsync(userId);
+            List<DTORegisterListRequest> dTORegisterListRequests = await _iAccountBL.DomainApproveList();
+            ViewBag.Title = "List of Register User";
+            return View(dTORegisterListRequests);
+        }
+
         [HttpGet]
         [Authorize(Roles = "Super Admin")]
         public async Task<IActionResult> EditRole(string Id)
@@ -112,7 +700,7 @@ namespace Web.Controllers
             var model = new EditRoleViewModel
             {
                 RoleId = role.Id,
-                EncryptedId= protector.Protect(role.Id.ToString()),
+                EncryptedId = protector.Protect(role.Id.ToString()),
                 RoleName = role.Name
             };
 
@@ -254,789 +842,11 @@ namespace Web.Controllers
             TempData["success"] = "Updated Successfully.";
             return RedirectToAction("EditUser", new { Id = model.UserId });
         }
-        [HttpGet]
-        [Authorize(Policy = "EditRolePolicy")]
-        public async Task<IActionResult> ManageUserRoles(string userId)
-        {
-            string decryptedId = string.Empty;
-            int decryptedIntId = 0;
-            try
-            {
-                // Decrypt the  id using Unprotect method
-                decryptedId = protector.Unprotect(userId);
-                decryptedIntId = Convert.ToInt32(decryptedId);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(1001, ex, "This error occure because Id value change by user.");
-                return RedirectToAction("Error", "Error");
-            }
 
-            ViewBag.userId = userId;
+        #endregion End Super Admin Section
 
-            var user = await userManager.FindByIdAsync(decryptedId);
-
-            if (user == null)
-            {
-                ViewBag.ErrorMessage = $"User with Id = {decryptedId} cannot be found";
-                return View("NotFound");
-            }
-
-            var model = new List<UserRolesViewModel>();
-
-            foreach (var role in roleManager.Roles)
-            {
-                var userRolesViewModel = new UserRolesViewModel
-                {
-                    RoleId = role.Id.ToString(),
-                    RoleName = role.Name
-                };
-
-                if (await userManager.IsInRoleAsync(user, role.Name))
-                {
-                    userRolesViewModel.IsSelected = true;
-                }
-                else
-                {
-                    userRolesViewModel.IsSelected = false;
-                }
-
-                model.Add(userRolesViewModel);
-            }
-
-            return View(model);
-        }
-
-        [HttpPost]
-        [Authorize(Policy = "EditRolePolicy")]
-        public async Task<IActionResult> ManageUserRoles(List<UserRolesViewModel> model, string userId)
-        {
-            string decryptedId = string.Empty;
-            int decryptedIntId = 0;
-            try
-            {
-                // Decrypt the  id using Unprotect method
-                decryptedId = protector.Unprotect(userId);
-                decryptedIntId = Convert.ToInt32(decryptedId);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(1001, ex, "This error occure because Id value change by user.");
-                return RedirectToAction("Error", "Error");
-            }
-            var user = await userManager.FindByIdAsync(decryptedId);
-
-            if (user == null)
-            {
-                ViewBag.ErrorMessage = $"User with Id = {userId} cannot be found";
-                return View("NotFound");
-            }
-
-            var roles = await userManager.GetRolesAsync(user);
-            var result = await userManager.RemoveFromRolesAsync(user, roles);
-
-            if (!result.Succeeded)
-            {
-                ModelState.AddModelError("", "Cannot remove user existing roles");
-                return View(model);
-            }
-
-            result = await userManager.AddToRolesAsync(user,model.Where(x => x.IsSelected).Select(y => y.RoleName));
-
-            if (!result.Succeeded)
-            {
-                ModelState.AddModelError("", "Cannot add selected roles to user");
-                return View(model);
-            }
-            TempData["success"] = "Updated Successfully.";
-            return RedirectToAction("EditUser", new { Id = userId });
-        }
-        [HttpPost]
-        [Authorize(Roles = "Super Admin,Admin")]
-        public async Task<IActionResult> DeleteUser(string Id)
-        {
-            string decryptedId = string.Empty;
-            int decryptedIntId = 0;
-            try
-            {
-                // Decrypt the  id using Unprotect method
-                decryptedId = protector.Unprotect(Id);
-                decryptedIntId = Convert.ToInt32(decryptedId);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(1001, ex, "This error occure because Id value change by user.");
-                return RedirectToAction("Error", "Error");
-            }
-
-            var user = await userManager.FindByIdAsync(decryptedId);
-
-            if (user == null)
-            {
-                ViewBag.ErrorMessage = $"User with Id = {decryptedId} cannot be found";
-                return View("NotFound");
-            }
-            else
-            {
-                var result = await userManager.DeleteAsync(user);
-
-                if (result.Succeeded)
-                {
-                    TempData["success"] = "User Deleted Successfully.";
-                    return RedirectToAction("Index");
-                }
-
-                foreach (var error in result.Errors)
-                {
-                    ModelState.AddModelError("", error.Description);
-                }
-
-                return View("Index");
-            }
-        }
-
-        [HttpPost]
-        [Authorize(Policy = "DeleteRolePolicy")]
-        public async Task<IActionResult> DeleteRole(string Id)
-        {
-            string decryptedId = string.Empty;
-            int decryptedIntId = 0;
-            try
-            {
-                // Decrypt the  id using Unprotect method
-                decryptedId = protector.Unprotect(Id);
-                decryptedIntId = Convert.ToInt32(decryptedId);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(1001, ex, "This error occure because Id value change by user.");
-                return RedirectToAction("Error", "Error");
-            }
-            var role = await roleManager.FindByIdAsync(decryptedId);
-
-            if (role == null)
-            {
-                ViewBag.ErrorMessage = $"Role with Id = {decryptedId} cannot be found";
-                return View("NotFound");
-            }
-            else
-            {
-                try
-                {
-                    //throw new Exception("Test Exception");
-
-                    var result = await roleManager.DeleteAsync(role);
-
-                    if (result.Succeeded)
-                    {
-                        TempData["success"] = "Role Deleted Successfully.";
-                        return RedirectToAction("ListRoles");
-                    }
-
-                    foreach (var error in result.Errors)
-                    {
-                        ModelState.AddModelError("", error.Description);
-                    }
-
-                    return View("ListRoles");
-                }
-                catch (DbUpdateException ex)
-                {
-                    _logger.LogError($"Error deleting role {ex}");
-
-                    ViewBag.ErrorTitle = $"{role.Name} role is in use";
-                    ViewBag.ErrorMessage = $"{role.Name} role cannot be deleted as there are users " +
-                        $"in this role. If you want to delete this role, please remove the users from " +
-                        $"the role and then try to delete";
-                    return View("Error");
-                }
-            }
-        }
-        [HttpGet]
-        [Authorize(Roles = "Super Admin,Admin")]
-        public async Task<IActionResult> EditUser(string Id)
-        {
-            string decryptedId = string.Empty;
-            int decryptedIntId = 0;
-            try
-            {
-                // Decrypt the  id using Unprotect method
-                decryptedId = protector.Unprotect(Id);
-                decryptedIntId = Convert.ToInt32(decryptedId);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(1001, ex, "This error occure because Id value change by user.");
-                return RedirectToAction("Error", "Error");
-            }
-            var user = await userManager.FindByIdAsync(decryptedId);
-
-            if (user == null)
-            {
-                ViewBag.ErrorMessage = $"User with Id = {decryptedId} cannot be found";
-                return View("NotFound");
-            }
-
-            var userClaims = await userManager.GetClaimsAsync(user);
-            var userRoles = await userManager.GetRolesAsync(user);
-
-            var model = new EditUserViewModel
-            {
-                UserId = user.Id,
-                EncryptedId = protector.Protect(user.Id.ToString()),
-                DomainId = user.DomainId,
-                Active = user.Active,
-                AdminFlag = user.AdminFlag,
-                Claims = userClaims.Select(c => c.Type + " : " + c.Value).ToList(),
-                Roles = userRoles
-            };
-
-            return View(model);
-        }
-
-        [HttpPost]
-        [Authorize(Roles = "Super Admin,Admin")]
-        public async Task<IActionResult> EditUser(EditUserViewModel model)
-        {
-            string decryptedId = string.Empty;
-            int decryptedIntId = 0;
-            try
-            {
-                // Decrypt the  id using Unprotect method
-                decryptedId = protector.Unprotect(model.EncryptedId);
-                decryptedIntId = Convert.ToInt32(decryptedId);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(1001, ex, "This error occure because Id value change by user.");
-                return RedirectToAction("Error", "Error");
-            }
-            var user = await userManager.FindByIdAsync(decryptedId);
-
-            if (user == null)
-            {
-                ViewBag.ErrorMessage = $"User with Id = {decryptedId} cannot be found";
-                return View("NotFound");
-            }
-            else
-            {
-                user.DomainId = model.DomainId;
-                user.Active = model.Active;
-                user.AdminFlag = model.AdminFlag;
-
-                var result = await userManager.UpdateAsync(user);
-
-                if (result.Succeeded)
-                {
-                    TempData["success"] = "User detail Updated Successfully.";
-                    return RedirectToAction("Index");
-                }
-
-                foreach (var error in result.Errors)
-                {
-                    ModelState.AddModelError("", error.Description);
-                }
-
-                return View(model);
-            }
-        }
-        [HttpGet]
-        [Authorize(Roles = "Super Admin")]
-        public IActionResult CreateRole()
-        {
-            return View();
-        }
-
-        [HttpPost]
-        [Authorize(Roles = "Super Admin")]
-        public async Task<IActionResult> CreateRole(CreateRoleViewModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                ApplicationRole identityRole = new ApplicationRole
-                {
-                    Name = model.RoleName
-                };
-
-                IdentityResult result = await roleManager.CreateAsync(identityRole);
-
-                if (result.Succeeded)
-                {
-                    TempData["success"] = "Created Role Successfully.";
-                    return RedirectToAction("ListRoles", "Account");
-                }
-
-                foreach (IdentityError error in result.Errors)
-                {
-                    ModelState.AddModelError("", error.Description);
-                }
-                TempData["error"] = "Operation failed.";
-            }
-
-            return View(model);
-        }
-        [HttpGet]
-        [Authorize(Roles = "Super Admin")]
-        public IActionResult ListRoles()
-        {
-            int sno = 1;
-            var roles = roleManager.Roles;
-            List<ApplicationRole> rolesList = new List<ApplicationRole>();
-            foreach (var e in roles)
-            {
-                ApplicationRole applicationRole = new ApplicationRole()
-                {
-                   Id = e.Id,
-                   Sno = sno++,
-                   EncryptedId = protector.Protect(e.Id.ToString()),
-                   Name = e.Name,
-                };
-                rolesList.Add(applicationRole);
-            }
-            //var allrecord = (from e in roles
-            //                 select new ApplicationRole()
-            //                 {
-            //                     Id =e.Id,
-            //                     Sno = sno++,
-            //                     EncryptedId = protector.Protect(e.Id.ToString()),
-            //                     Name=e.Name,
-            //                 }).ToList();
-            return View(rolesList);
-        }
-        [HttpGet]
-        [Authorize(Roles = "Super Admin")]
-        public async Task<IActionResult> EditUsersInRole(string roleId)
-        {
-            string decryptedId = string.Empty;
-            int decryptedIntId = 0;
-            try
-            {
-                // Decrypt the  id using Unprotect method
-                decryptedId = protector.Unprotect(roleId);
-                decryptedIntId = Convert.ToInt32(decryptedId);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(1001, ex, "This error occure because Id value change by user.");
-                return RedirectToAction("Error", "Error");
-            }
-            ViewBag.roleId = roleId;
-
-            var role = await roleManager.FindByIdAsync(decryptedId);
-
-            if (role == null)
-            {
-                ViewBag.ErrorMessage = $"Role with Id = {roleId} cannot be found";
-                return View("NotFound");
-            }
-
-            var model = new List<UserRoleViewModel>();
-
-            foreach (var user in userManager.Users)
-            {
-                var userRoleViewModel = new UserRoleViewModel
-                {
-                    UserId = user.Id,
-                    EncryptedId= protector.Protect(user.Id.ToString()),
-                    DomainId = user.DomainId
-                };
-
-                if (await userManager.IsInRoleAsync(user, role.Name))
-                {
-                    userRoleViewModel.IsSelected = true;
-                }
-                else
-                {
-                    userRoleViewModel.IsSelected = false;
-                }
-
-                model.Add(userRoleViewModel);
-            }
-
-            return View(model);
-        }
-
-        [HttpPost]
-        [Authorize(Roles = "Super Admin")]
-        public async Task<IActionResult> EditUsersInRole(List<UserRoleViewModel> model, string roleId)
-        {
-            string decryptedId = string.Empty;
-            int decryptedIntId = 0;
-            try
-            {
-                // Decrypt the  id using Unprotect method
-                decryptedId = protector.Unprotect(roleId);
-                decryptedIntId = Convert.ToInt32(decryptedId);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(1001, ex, "This error occure because Id value change by user.");
-                return RedirectToAction("Error", "Error");
-            }
-            var role = await roleManager.FindByIdAsync(decryptedId);
-
-            if (role == null)
-            {
-                ViewBag.ErrorMessage = $"Role with Id = {decryptedId} cannot be found";
-                return View("NotFound");
-            }
-
-            for (int i = 0; i < model.Count; i++)
-            {
-                var user = await userManager.FindByIdAsync(model[i].UserId.ToString());
-
-                IdentityResult result = null;
-
-                if (model[i].IsSelected && !(await userManager.IsInRoleAsync(user, role.Name)))
-                {
-                    result = await userManager.AddToRoleAsync(user, role.Name);
-                }
-                else if (!model[i].IsSelected && await userManager.IsInRoleAsync(user, role.Name))
-                {
-                    result = await userManager.RemoveFromRoleAsync(user, role.Name);
-                }
-                else
-                {
-                    continue;
-                }
-
-                if (result.Succeeded)
-                {
-                    if (i < (model.Count - 1))
-                        continue;
-                    else
-                    {
-                        TempData["success"] = "Updated Successfully.";
-                        return RedirectToAction("EditRole", new { Id = roleId });
-                    }
-                }
-            }
-
-            return RedirectToAction("EditRole", new { Id = roleId });
-        }
-        [HttpGet]
-        [Authorize(Roles = "Super Admin")]
-        public async Task<IActionResult> Index()
-        {
-            var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var usera = await userManager.FindByIdAsync(userId);
-            List<DTORegisterListRequest> dTORegisterListRequests = await _iAccountBL.DomainApproveList();
-            ViewBag.Title = "List of Register User";
-            return View(dTORegisterListRequests);
-        }
-        #region ProfileManage
-        [Authorize(Roles = "Admin")]
-        [HttpGet]
-        public IActionResult ProfileManage()
-        {
-            return View();
-        }
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> SaveProfileManage(MUserProfile dTO)
-        {
-       
-            try
-            {
-
-                dTO.IsActive = true;
-                dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-                dTO.UpdatedOn = DateTime.Now;
-
-                if (ModelState.IsValid)
-                {
-                    if (!await _userProfileBL.GetByArmyNo(dTO, dTO.UserId))
-                    {
-                        if (dTO.UserId > 0)
-                        {
-                            await _userProfileBL.Update(dTO);
-                            return Json(KeyConstants.Update);
-                        }
-                        else
-                        {
-                            await _userProfileBL.Add(dTO);
-                            return Json(KeyConstants.Save);
-                        }
-                    }
-                    else
-                    {
-                        return Json(KeyConstants.Exists);
-                    }
-
-                }
-                else
-                {
-
-                    return Json(ModelState.Select(x => x.Value.Errors).Where(y => y.Count > 0).ToList());
-                }
-
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(1001, ex, "Account->SaveProfileManage");
-                return Json(KeyConstants.InternalServerError);
-            }
-
-        }
-        [Authorize(Roles = "Admin")]
-        [HttpPost]
-        public async Task<IActionResult> GetAllProfileManage(string Search, string Choice)
-        {
-            try
-            {
-                return Json(await _iAccountBL.GetAllProfileManage(Search, Choice));
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(1001, ex, "Account->ProfileManage");
-                return Json(KeyConstants.InternalServerError);
-            }
-
-        }
-        #endregion End ProfileManage
-
-        #region UserRegn
-        [Authorize(Roles = "Admin")]
-        [HttpGet]
-        public IActionResult UserRegn()
-        {
-            return View();
-        }
-        [Authorize(Roles = "Admin")]
-        [HttpPost]
-        public async Task<IActionResult> GetAllUserRegn(string Search, string Choice)
-        {
-            try
-            {
-                return Json(await _iAccountBL.GetAllUserRegn(Search, Choice));
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(1001, ex, "Account->UserRegn");
-                return Json(KeyConstants.InternalServerError);
-            }
-
-        }
-        #endregion End UserRegn
-
-
-        [Authorize(Roles = "Admin")]
-        [HttpPost]
-        public async Task<IActionResult> DomainApprove(string Id)
-        {
-            string decryptedId = string.Empty;
-            int decryptedIntId = 0;
-            try
-            {
-                // Decrypt the  id using Unprotect method
-                decryptedId = protector.Unprotect(Id);
-                decryptedIntId = Convert.ToInt32(decryptedId);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(1001, ex, "This error occure because Id value change by user.");
-                return RedirectToAction("Error", "Error");
-            }
-            var user = await userManager.FindByIdAsync(decryptedId);
-
-            if (user == null)
-            {
-                ViewBag.ErrorMessage = $"User with Id = {decryptedId} cannot be found";
-                return View("NotFound");
-            }
-            else
-            {
-                user.AdminFlag = true;
-                var result = await userManager.UpdateAsync(user);
-                if (result.Succeeded)
-                {
-                    TempData["success"] = "User detail Updated Successfully.";
-                    return RedirectToAction("ProfileManage");
-                }
-                else
-                {
-                    TempData["error"] = "User detail not Updated";
-                    return RedirectToAction("ProfileManage");
-                }
-            }
-        }
-        [HttpGet]
-        [Authorize(Roles = "User,Admin,Super Admin")]
-        public async Task<IActionResult> EditProfile()
-        {
-            var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var usera = await userManager.FindByIdAsync(userId);
-            if (usera != null)
-            {
-                TrnDomainMapping? trnDomainMapping = await _iDomainMapBL.GetProfileDataByAspNetUserId(Convert.ToInt32(usera.Id));
-                if (trnDomainMapping != null)
-                {
-                    if (trnDomainMapping.MUserProfile != null)
-                    {
-                        ViewBag.OptionsRank = service.GetRank(1);
-
-                        DTOProfileRequest dTOProfileRequest = new DTOProfileRequest();
-                        dTOProfileRequest.UserId = trnDomainMapping.MUserProfile.UserId;
-                        dTOProfileRequest.ArmyNo = trnDomainMapping.MUserProfile.ArmyNo;
-                        dTOProfileRequest.RankId = trnDomainMapping.MUserProfile.RankId;
-                        dTOProfileRequest.Name = trnDomainMapping.MUserProfile.Name;
-                        dTOProfileRequest.IntOffr = trnDomainMapping.MUserProfile.IntOffr;
-                        return View(dTOProfileRequest);
-                    }
-                    else
-                    {
-                        TempData["error"] = "Profile not present.";
-                        return RedirectToActionPermanent("Dashboard", "Home");
-                    }
-                }
-                else
-                {
-                    TempData["error"] = "Mapping not present.";
-                    return RedirectToActionPermanent("Dashboard", "Home");
-                }
-            }
-            else
-            {
-                TempData["error"] = "Domain Id not present.";
-                return RedirectToActionPermanent("Dashboard", "Home");
-            }
-        }
-        [HttpPost]
-        [Authorize(Roles = "User,Admin,Super Admin")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> EditProfile(DTOProfileRequest model)
-        {
-            MUserProfile mUserProfile = await _userProfileBL.Get(model.UserId);
-            if(mUserProfile!=null)
-            {
-                if (ModelState.IsValid)
-                {
-                    mUserProfile.Name = model.Name;
-                    mUserProfile.RankId = model.RankId;
-                    mUserProfile.IntOffr = model.IntOffr;
-                    await _userProfileBL.Update(mUserProfile);
-                    TempData["success"] = "Profile Updated.";
-                    return RedirectToActionPermanent("Dashboard", "Home");
-                }
-                else
-                {
-                    return View(model);
-                }
-            }
-            else
-            {
-                TempData["error"] = "Profile not present.";
-                return RedirectToActionPermanent("Dashboard", "Home");
-            }
-        }
-        [HttpGet]
-        [Authorize(Roles = "Super Admin")]
-        public IActionResult Create()
-        {
-            ViewBag.T = "Register User";
-            var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-            ViewBag.RoleOptions = unitOfWork.Users.GetRole();
-            ViewBag.OptionsRank = service.GetRank(1);
-            DTORegisterRequest model = new DTORegisterRequest();
-            string dd = AESEncrytDecry.GetSalt();  // "8080808080808080"; //protector.Protect("1");
-            HttpContext.Session.SetString(SessionKeySalt, dd);
-            model.hdns = dd;
-            return View(model);
-        }
-        [HttpPost]
-        [Authorize(Roles = "Super Admin")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(DTORegisterRequest model)
-        {
-            //var data =await unitOfWork.Users.GetAll();
-            ////var data1 = unitOfWork.Users.GetByUserName("Kapoor").Result;
-            //int i = (int)ResponseMessage.Success;
-            //return View();
-            string rolename = "";
-            var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-            ViewBag.RoleOptions = unitOfWork.Users.GetRole();
-            ViewBag.OptionsRank = service.GetRank(1);
-            if (userId == null)
-            {
-                userId = "0";
-                rolename = "Super Admin";
-            }
-            else
-            {
-                var usera = await userManager.FindByIdAsync(userId);
-                var roles = await userManager.GetRolesAsync(usera);
-
-                if (roles[0] == "Super Admin")
-                {
-                    rolename = model.UserRole;
-                }
-            }
-
-            if (ModelState.IsValid)
-            {
-                var user_ = await userManager.FindByIdAsync(userId);
-                string user_name = string.Empty;
-                string ipAddress;
-
-                string dd = HttpContext.Session.GetString(SessionKeySalt);
-                csConst.cSalt = dd;
-                //string Password = AESEncrytDecry.DecryptStringAES(model.Password);
-
-                user_name = model.DomainId;
-                ipAddress = Request.HttpContext.Connection.RemoteIpAddress.ToString();
-                var location = new Uri($"{Request.Scheme}://{Request.Host}{Request.Path}{Request.QueryString}");
-                var url = location.AbsoluteUri;
-
-                var user = new ApplicationUser
-                {
-                    Active = true,
-                    DomainId = model.DomainId,
-                    Updatedby=1,
-                    UpdatedOn= TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time")),
-                    UserName = model.DomainId.ToLower(),
-                    Email = model.DomainId.ToLower() +"@army.mil",
-                };
-                //var password = Password.Generate(8, 6);
-                var result = await userManager.CreateAsync(user, "Admin123#");//model.Password);
-
-                if (result.Succeeded)
-                {
-                    await userManager.AddToRoleAsync(user, rolename);
-                    TempData["success"] = "User ID has been successfully created.";
-                    return RedirectToAction("Index");
-                }
-                foreach (var error in result.Errors)
-                {
-                    ModelState.AddModelError(string.Empty, error.Description);
-                }
-            }
-            return View(model);
-
-        }
-        public async Task<ActionResult> Logout() {
-            var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var user = await userManager.FindByIdAsync(userId);
-
-            // for concurrent login
-            //if (userId != null)
-            //{
-            //    user.IsLogged = false;
-            //    await userManager.UpdateAsync(user);
-            //}
-            //await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-
-            // for concurrent login
-            if (userId != null)
-            {
-                //user.LastLogOutDate = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
-                //await userManager.UpdateAsync(user);
-            }
-
-            //Solved ---- Lack of session validation and server expiration 
-            //await userManager.UpdateSecurityStampAsync(user);
-            await signInManager.SignOutAsync();
-            return View();
-
-        }
+        #region IMLogin
+        
         [HttpGet]
         [AllowAnonymous]
         public IActionResult IMLogin()
@@ -1047,11 +857,11 @@ namespace Web.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> IMLogin(DTOIMLoginRequest model)
         {
-            if(ModelState.IsValid)
+            if (ModelState.IsValid)
             {
                 DTOTempSession dTOTempSession = new DTOTempSession();
                 TrnDomainMapping? _trnDomainMapping = await _iDomainMapBL.GetAllRelatedDataByDomainId(model.DomainId);
-                if (_trnDomainMapping != null && _trnDomainMapping.ApplicationUser.AdminFlag == true && _trnDomainMapping.Id>0 && _trnDomainMapping.UserId!=null)
+                if (_trnDomainMapping != null && _trnDomainMapping.ApplicationUser.AdminFlag == true && _trnDomainMapping.Id > 0 && _trnDomainMapping.UserId != null)
                 {
                     dTOTempSession.AdminFlag = _trnDomainMapping.ApplicationUser.AdminFlag;
                     dTOTempSession.DomainId = _trnDomainMapping.ApplicationUser.DomainId;
@@ -1080,7 +890,7 @@ namespace Web.Controllers
                     SessionHeplers.SetObject(HttpContext.Session, "IMData", dTOTempSession);
                     return RedirectToActionPermanent("TokenValidate", "Account");
                 }
-                else if (_trnDomainMapping != null &&  _trnDomainMapping.Id == 0)
+                else if (_trnDomainMapping != null && _trnDomainMapping.Id == 0)
                 {
                     /*Create TrnDomainMapping using AspnetUserId,UnitId,UserId from Profile Table.*/
                     dTOTempSession.DomainId = _trnDomainMapping.ApplicationUser.DomainId;
@@ -1102,7 +912,7 @@ namespace Web.Controllers
                     dTOTempSession.AspNetUsersId = _trnDomainMapping.ApplicationUser.Id;
                     dTOTempSession.Status = 1;
                     SessionHeplers.SetObject(HttpContext.Session, "IMData", dTOTempSession);
-                    TempData["error"] = "Domain Id - "+ dTOTempSession.DomainId + " & Profile Id - "+ dTOTempSession.UserId + ".<br/>Your regn request was successfully placed with Admin for necy Approval..<br/>Pl note regn No - " + dTOTempSession.AspNetUsersId + " for future correspondence. <br/>Contact Admin.";
+                    TempData["error"] = "Domain Id - " + dTOTempSession.DomainId + " & Profile Id - " + dTOTempSession.UserId + ".<br/>Your regn request was successfully placed with Admin for necy Approval..<br/>Pl note regn No - " + dTOTempSession.AspNetUsersId + " for future correspondence. <br/>Contact Admin.";
                     return RedirectToActionPermanent("TokenValidate", "Account");
                 }
                 else if (_trnDomainMapping == null)
@@ -1121,16 +931,16 @@ namespace Web.Controllers
         [HttpGet]
         [AllowAnonymous]
         public IActionResult TokenValidate()
-            {
+        {
             DTOTempSession? dTOTempSession = SessionHeplers.GetObject<DTOTempSession>(HttpContext.Session, "IMData");
-            if(dTOTempSession != null)
+            if (dTOTempSession != null)
             {
                 if (dTOTempSession.Status == 1)
                 {
                     return View();
                 }
                 else
-                {   
+                {
                     return View();
                 }
             }
@@ -1156,7 +966,7 @@ namespace Web.Controllers
                         TempData["error"] = "Domain Id - " + dTOTempSession.DomainId + " & Profile Id - " + dTOTempSession.UserId + ".<br/>Your regn request was successfully placed with Admin for necy Approval.. <br/>Pl note regn No - " + dTOTempSession.AspNetUsersId + " for future correspondence.<br/> Contact Admin.";
                         return View();
                     }
-                    else if ( dTOTempSession.Status == 5 && _dTOProfileResponse != null && _dTOProfileResponse.TrnDomainMappingId > 0 && model.ICNo!= dTOTempSession.ICNO)
+                    else if (dTOTempSession.Status == 5 && _dTOProfileResponse != null && _dTOProfileResponse.TrnDomainMappingId > 0 && model.ICNo != dTOTempSession.ICNO)
                     {
                         dTOTempSession.ICNOInput = model.ICNo;
                         dTOTempSession.ICNoDomainId = _dTOProfileResponse.DomainId;
@@ -1164,10 +974,10 @@ namespace Web.Controllers
                         dTOTempSession.ICNoTrnDomainMappingUnitId = _dTOProfileResponse.UnitId;
                         dTOTempSession.ICNoTrnDomainMappingId = _dTOProfileResponse.TrnDomainMappingId;
                         dTOTempSession.ICNoTrnDomainMappingApptId = _dTOProfileResponse.ApptId;
-                        TempData["error"] = "Not Authorized to access the current profile because Domain Id - "+ dTOTempSession.DomainId + " is presently mapped to Profile Id - "+ dTOTempSession.UserId + " ( IC No- "+ dTOTempSession.ICNO + ") .<br/>Pl change Token and try again!";
+                        TempData["error"] = "Not Authorized to access the current profile because Domain Id - " + dTOTempSession.DomainId + " is presently mapped to Profile Id - " + dTOTempSession.UserId + " ( IC No- " + dTOTempSession.ICNO + ") .<br/>Pl change Token and try again!";
                         goto End;
                     }
-                    else if ((dTOTempSession.Status == 2 || dTOTempSession.Status == 3 || dTOTempSession.Status == 4 ) && _dTOProfileResponse!=null && _dTOProfileResponse.TrnDomainMappingId>0)
+                    else if ((dTOTempSession.Status == 2 || dTOTempSession.Status == 3 || dTOTempSession.Status == 4) && _dTOProfileResponse != null && _dTOProfileResponse.TrnDomainMappingId > 0)
                     {
                         dTOTempSession.ICNOInput = model.ICNo;
                         dTOTempSession.ICNoDomainId = _dTOProfileResponse.DomainId;
@@ -1175,13 +985,13 @@ namespace Web.Controllers
                         dTOTempSession.ICNoTrnDomainMappingUnitId = _dTOProfileResponse.UnitId;
                         dTOTempSession.ICNoTrnDomainMappingId = _dTOProfileResponse.TrnDomainMappingId;
                         dTOTempSession.ICNoTrnDomainMappingApptId = _dTOProfileResponse.ApptId;
-                        
-                        if(dTOTempSession.Status == 2)
+
+                        if (dTOTempSession.Status == 2)
                             TempData["error"] = "Your Profile Id -" + _dTOProfileResponse.UserId + " is mapped to Domain Id - " + _dTOProfileResponse.DomainId + " in Sys.<br/>Pl get yourself relieved first    and try again.";
                         else if (dTOTempSession.Status == 3)
-                            TempData["error"] = "Your Profile Id - " + _dTOProfileResponse.UserId + " is already mapped to Domain Id -"+ _dTOProfileResponse.DomainId + ".<br/>Pl get yourself relieved first..Domain Id - " + dTOTempSession.DomainId + "(regd) is not mapped to any profile.";
+                            TempData["error"] = "Your Profile Id - " + _dTOProfileResponse.UserId + " is already mapped to Domain Id -" + _dTOProfileResponse.DomainId + ".<br/>Pl get yourself relieved first..Domain Id - " + dTOTempSession.DomainId + "(regd) is not mapped to any profile.";
                         else if (dTOTempSession.Status == 4)
-                            TempData["error"] = "You are presently mapped to Domain Id -"+ _dTOProfileResponse.DomainId + ".<br/>Pl relieve yourself and get your profile mapped to new domain ID - " + dTOTempSession.DomainId + ".";
+                            TempData["error"] = "You are presently mapped to Domain Id -" + _dTOProfileResponse.DomainId + ".<br/>Pl relieve yourself and get your profile mapped to new domain ID - " + dTOTempSession.DomainId + ".";
                         goto End;
                     }
                     else if ((dTOTempSession.Status == 2 || dTOTempSession.Status == 3 || dTOTempSession.Status == 4) && _dTOProfileResponse != null && _dTOProfileResponse.TrnDomainMappingId == 0)
@@ -1193,14 +1003,14 @@ namespace Web.Controllers
                         SessionHeplers.SetObject(HttpContext.Session, "IMData", dTOTempSession);
                         return RedirectToActionPermanent("Profile", "Account");
                     }
-                    else if ((dTOTempSession.Status == 2 || dTOTempSession.Status == 3 || dTOTempSession.Status == 4) && _dTOProfileResponse == null )
+                    else if ((dTOTempSession.Status == 2 || dTOTempSession.Status == 3 || dTOTempSession.Status == 4) && _dTOProfileResponse == null)
                     {
                         dTOTempSession.ICNOInput = model.ICNo;
                         dTOTempSession.ICNO = model.ICNo;
                         SessionHeplers.SetObject(HttpContext.Session, "IMData", dTOTempSession);
                         return RedirectToActionPermanent("Profile", "Account");
                     }
-                    else if (dTOTempSession.Status == 5  && dTOTempSession.ICNO == model.ICNo)
+                    else if (dTOTempSession.Status == 5 && dTOTempSession.ICNO == model.ICNo)
                     {
                         var usera = await userManager.FindByIdAsync(dTOTempSession.AspNetUsersId.ToString());
                         if (usera != null)
@@ -1288,21 +1098,21 @@ namespace Web.Controllers
                     MAppointment? mAppointment = await context.MAppointment.FindAsync(dTOTempSession.TrnDomainMappingApptId);
                     if (mAppointment != null)
                     {
-                        dTOProfileAndMappingRequest.AppointmentName= mAppointment.AppointmentName;
+                        dTOProfileAndMappingRequest.AppointmentName = mAppointment.AppointmentName;
                     }
-                    if (dTOTempSession.UserId>0)
+                    if (dTOTempSession.UserId > 0)
                     {
                         try
                         {
 
                             //Get ArmyNo from UserProfile Table
                             MUserProfile mUserProfile = await _userProfileBL.Get(dTOTempSession.UserId);
-                           
+
                             dTOProfileAndMappingRequest.UserId = mUserProfile.UserId;
                             dTOProfileAndMappingRequest.ArmyNo = mUserProfile.ArmyNo;
-                            dTOProfileAndMappingRequest.RankId= mUserProfile.RankId;
-                            dTOProfileAndMappingRequest.Name= mUserProfile.Name;
-                            dTOProfileAndMappingRequest.IntOffr= mUserProfile.IntOffr;
+                            dTOProfileAndMappingRequest.RankId = mUserProfile.RankId;
+                            dTOProfileAndMappingRequest.Name = mUserProfile.Name;
+                            dTOProfileAndMappingRequest.IntOffr = mUserProfile.IntOffr;
                             return View(dTOProfileAndMappingRequest);
                         }
                         catch (Exception ex)
@@ -1355,13 +1165,13 @@ namespace Web.Controllers
                         {
                             ModelState.AddModelError(string.Empty, error.Description);
                         }
-                        
+
                         TrnDomainMapping trnDomainMapping = new TrnDomainMapping();
                         trnDomainMapping.AspNetUsersId = user.Id;
                         trnDomainMapping.UnitId = model.UnitId;
                         trnDomainMapping.ApptId = model.ApptId;
 
-                        if (model.UserId>0)
+                        if (model.UserId > 0)
                         {
                             MUserProfile uptUserProfile = await _userProfileBL.Get(dTOTempSession.UserId);
                             uptUserProfile.Updatedby = user.Id;
@@ -1373,8 +1183,8 @@ namespace Web.Controllers
                         {
                             MUserProfile mUserProfile = new MUserProfile();
                             mUserProfile.ArmyNo = dTOTempSession.ICNO;
-                            mUserProfile.RankId = model.RankId; 
-                            mUserProfile.Name= model.Name;
+                            mUserProfile.RankId = model.RankId;
+                            mUserProfile.Name = model.Name;
                             mUserProfile.IntOffr = model.IntOffr;
                             mUserProfile.Updatedby = user.Id;
                             MUserProfile insertMUserProfile = await _userProfileBL.AddWithReturn(mUserProfile);
@@ -1384,15 +1194,15 @@ namespace Web.Controllers
                         TrnDomainMapping insertedtrnDomainMapping = await _iDomainMapBL.AddWithReturn(trnDomainMapping);
 
                         dTOTempSession.AspNetUsersId = user.Id;
-                        dTOTempSession.TrnDomainMappingId = insertedtrnDomainMapping.Id; 
+                        dTOTempSession.TrnDomainMappingId = insertedtrnDomainMapping.Id;
                         dTOTempSession.TrnDomainMappingUnitId = insertedtrnDomainMapping.UnitId;
-                        dTOTempSession.UserId = (int)(insertedtrnDomainMapping.UserId!=null? insertedtrnDomainMapping.UserId:0);
+                        dTOTempSession.UserId = (int)(insertedtrnDomainMapping.UserId != null ? insertedtrnDomainMapping.UserId : 0);
                         dTOTempSession.Status = 1;
                         SessionHeplers.SetObject(HttpContext.Session, "IMData", dTOTempSession);
                         TempData["success"] = "Domian Id - " + dTOTempSession.DomainId + " & Profile Id- " + dTOTempSession.UserId + ".<br/>Your regn request was successfully placed with Admin for necy Approval.. <br/>Pl note regn No - " + dTOTempSession.AspNetUsersId + " for future correspondence.<br/>Contact Admin or try login after 24 Hrs.";
                         return RedirectToActionPermanent("TokenValidate", "Account");
                     }
-                    else if(dTOTempSession.Status == 3)
+                    else if (dTOTempSession.Status == 3)
                     {
                         TrnDomainMapping trnDomainMapping = new TrnDomainMapping();
                         trnDomainMapping.AspNetUsersId = dTOTempSession.AspNetUsersId;
@@ -1426,7 +1236,7 @@ namespace Web.Controllers
                         dTOTempSession.UserId = (int)(insertedtrnDomainMapping.UserId != null ? insertedtrnDomainMapping.UserId : 0);
                         dTOTempSession.Status = 1;
                         SessionHeplers.SetObject(HttpContext.Session, "IMData", dTOTempSession);
-                        TempData["success"] = "Your Profile Id - "+ dTOTempSession.UserId + " has been successfully mapped to Domain Id - "+ dTOTempSession.DomainId + ". > DB ";
+                        TempData["success"] = "Your Profile Id - " + dTOTempSession.UserId + " has been successfully mapped to Domain Id - " + dTOTempSession.DomainId + ". > DB ";
                         return RedirectToActionPermanent("TokenValidate", "Account");
                     }
                     else if (dTOTempSession.Status == 4)
@@ -1456,7 +1266,7 @@ namespace Web.Controllers
                         dTOTempSession.Status = 5;
                         dTOTempSession.UserId = (int)(updatedtrnDomainMapping.UserId != null ? updatedtrnDomainMapping.UserId : 0);
                         SessionHeplers.SetObject(HttpContext.Session, "IMData", dTOTempSession);
-                        
+
                         TempData["success"] = "Your Profile Id - " + dTOTempSession.UserId + " has been successfully mapped to Domain Id - " + dTOTempSession.DomainId + ". > DB ";
                         return RedirectToActionPermanent("TokenValidate", "Account");
                     }
@@ -1469,6 +1279,38 @@ namespace Web.Controllers
             }
             return View();
         }
+
+        #endregion End IMLogin
+
+        #region Login & Logout
+
+        public async Task<ActionResult> Logout()
+        {
+            var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var user = await userManager.FindByIdAsync(userId);
+
+            // for concurrent login
+            //if (userId != null)
+            //{
+            //    user.IsLogged = false;
+            //    await userManager.UpdateAsync(user);
+            //}
+            //await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+
+            // for concurrent login
+            if (userId != null)
+            {
+                //user.LastLogOutDate = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
+                //await userManager.UpdateAsync(user);
+            }
+
+            //Solved ---- Lack of session validation and server expiration 
+            //await userManager.UpdateSecurityStampAsync(user);
+            await signInManager.SignOutAsync();
+            return View();
+
+        }
+
         [HttpGet]
         [AllowAnonymous]
         public IActionResult Login()
@@ -1610,7 +1452,7 @@ namespace Web.Controllers
                             if (roles[0] == "Admin")
                             {
                                 return RedirectToActionPermanent("Dashboard", "Home");
-                                
+
                             }
                             else if (roles[0] == "User")
                             {
@@ -1632,8 +1474,258 @@ namespace Web.Controllers
         xyz:
             return View(model);
         }
+
+        #endregion End Login & Logout
+
+        #region Common Method
+
+        [HttpPost]
+        [Authorize(Roles = "Super Admin,Admin")]
+        public async Task<IActionResult> DeleteUser(string Id)
+        {
+            string decryptedId = string.Empty;
+            int decryptedIntId = 0;
+            try
+            {
+                // Decrypt the  id using Unprotect method
+                decryptedId = protector.Unprotect(Id);
+                decryptedIntId = Convert.ToInt32(decryptedId);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "This error occure because Id value change by user.");
+                return RedirectToAction("Error", "Error");
+            }
+
+            var user = await userManager.FindByIdAsync(decryptedId);
+
+            if (user == null)
+            {
+                ViewBag.ErrorMessage = $"User with Id = {decryptedId} cannot be found";
+                return View("NotFound");
+            }
+            else
+            {
+                var result = await userManager.DeleteAsync(user);
+
+                if (result.Succeeded)
+                {
+                    TempData["success"] = "User Deleted Successfully.";
+                    return RedirectToAction("Index");
+                }
+
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError("", error.Description);
+                }
+
+                return View("Index");
+            }
+        }
+
+
+        [HttpGet]
+        [Authorize(Roles = "Super Admin,Admin")]
+        public async Task<IActionResult> EditUser(string Id)
+        {
+            string decryptedId = string.Empty;
+            int decryptedIntId = 0;
+            try
+            {
+                // Decrypt the  id using Unprotect method
+                decryptedId = protector.Unprotect(Id);
+                decryptedIntId = Convert.ToInt32(decryptedId);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "This error occure because Id value change by user.");
+                return RedirectToAction("Error", "Error");
+            }
+            var user = await userManager.FindByIdAsync(decryptedId);
+
+            if (user == null)
+            {
+                ViewBag.ErrorMessage = $"User with Id = {decryptedId} cannot be found";
+                return View("NotFound");
+            }
+
+            var userClaims = await userManager.GetClaimsAsync(user);
+            var userRoles = await userManager.GetRolesAsync(user);
+
+            var model = new EditUserViewModel
+            {
+                UserId = user.Id,
+                EncryptedId = protector.Protect(user.Id.ToString()),
+                DomainId = user.DomainId,
+                Active = user.Active,
+                AdminFlag = user.AdminFlag,
+                Claims = userClaims.Select(c => c.Type + " : " + c.Value).ToList(),
+                Roles = userRoles
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Super Admin,Admin")]
+        public async Task<IActionResult> EditUser(EditUserViewModel model)
+        {
+            string decryptedId = string.Empty;
+            int decryptedIntId = 0;
+            try
+            {
+                // Decrypt the  id using Unprotect method
+                decryptedId = protector.Unprotect(model.EncryptedId);
+                decryptedIntId = Convert.ToInt32(decryptedId);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "This error occure because Id value change by user.");
+                return RedirectToAction("Error", "Error");
+            }
+            var user = await userManager.FindByIdAsync(decryptedId);
+
+            if (user == null)
+            {
+                ViewBag.ErrorMessage = $"User with Id = {decryptedId} cannot be found";
+                return View("NotFound");
+            }
+            else
+            {
+                user.DomainId = model.DomainId;
+                user.Active = model.Active;
+                user.AdminFlag = model.AdminFlag;
+
+                var result = await userManager.UpdateAsync(user);
+
+                if (result.Succeeded)
+                {
+                    TempData["success"] = "User detail Updated Successfully.";
+                    return RedirectToAction("Index");
+                }
+
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError("", error.Description);
+                }
+
+                return View(model);
+            }
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpPost]
+        public async Task<IActionResult> DomainApprove(string Id)
+        {
+            string decryptedId = string.Empty;
+            int decryptedIntId = 0;
+            try
+            {
+                // Decrypt the  id using Unprotect method
+                decryptedId = protector.Unprotect(Id);
+                decryptedIntId = Convert.ToInt32(decryptedId);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "This error occure because Id value change by user.");
+                return RedirectToAction("Error", "Error");
+            }
+            var user = await userManager.FindByIdAsync(decryptedId);
+
+            if (user == null)
+            {
+                ViewBag.ErrorMessage = $"User with Id = {decryptedId} cannot be found";
+                return View("NotFound");
+            }
+            else
+            {
+                user.AdminFlag = true;
+                var result = await userManager.UpdateAsync(user);
+                if (result.Succeeded)
+                {
+                    TempData["success"] = "User detail Updated Successfully.";
+                    return RedirectToAction("ProfileManage");
+                }
+                else
+                {
+                    TempData["error"] = "User detail not Updated";
+                    return RedirectToAction("ProfileManage");
+                }
+            }
+        }
+        [HttpGet]
+        [Authorize(Roles = "User,Admin,Super Admin")]
+        public async Task<IActionResult> EditProfile()
+        {
+            var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var usera = await userManager.FindByIdAsync(userId);
+            if (usera != null)
+            {
+                TrnDomainMapping? trnDomainMapping = await _iDomainMapBL.GetProfileDataByAspNetUserId(Convert.ToInt32(usera.Id));
+                if (trnDomainMapping != null)
+                {
+                    if (trnDomainMapping.MUserProfile != null)
+                    {
+                        ViewBag.OptionsRank = service.GetRank(1);
+
+                        DTOProfileRequest dTOProfileRequest = new DTOProfileRequest();
+                        dTOProfileRequest.UserId = trnDomainMapping.MUserProfile.UserId;
+                        dTOProfileRequest.ArmyNo = trnDomainMapping.MUserProfile.ArmyNo;
+                        dTOProfileRequest.RankId = trnDomainMapping.MUserProfile.RankId;
+                        dTOProfileRequest.Name = trnDomainMapping.MUserProfile.Name;
+                        dTOProfileRequest.IntOffr = trnDomainMapping.MUserProfile.IntOffr;
+                        return View(dTOProfileRequest);
+                    }
+                    else
+                    {
+                        TempData["error"] = "Profile not present.";
+                        return RedirectToActionPermanent("Dashboard", "Home");
+                    }
+                }
+                else
+                {
+                    TempData["error"] = "Mapping not present.";
+                    return RedirectToActionPermanent("Dashboard", "Home");
+                }
+            }
+            else
+            {
+                TempData["error"] = "Domain Id not present.";
+                return RedirectToActionPermanent("Dashboard", "Home");
+            }
+        }
+        [HttpPost]
+        [Authorize(Roles = "User,Admin,Super Admin")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditProfile(DTOProfileRequest model)
+        {
+            MUserProfile mUserProfile = await _userProfileBL.Get(model.UserId);
+            if (mUserProfile != null)
+            {
+                if (ModelState.IsValid)
+                {
+                    mUserProfile.Name = model.Name;
+                    mUserProfile.RankId = model.RankId;
+                    mUserProfile.IntOffr = model.IntOffr;
+                    await _userProfileBL.Update(mUserProfile);
+                    TempData["success"] = "Profile Updated.";
+                    return RedirectToActionPermanent("Dashboard", "Home");
+                }
+                else
+                {
+                    return View(model);
+                }
+            }
+            else
+            {
+                TempData["error"] = "Profile not present.";
+                return RedirectToActionPermanent("Dashboard", "Home");
+            }
+        }
+
         [HttpGet]
         [Authorize(Roles = "Super Admin,Admin,User")]
+
         public async Task<IActionResult> SetPassword(string Id)
         {
             string decryptedId = string.Empty;
@@ -1666,6 +1758,7 @@ namespace Web.Controllers
         [HttpPost]
         [Authorize(Roles = "Super Admin,Admin,User")]
         [ValidateAntiForgeryToken]
+
         public async Task<IActionResult> SetPassword(DTOSetPasswordRequest model)
         {
             if (!ModelState.IsValid)
@@ -1701,6 +1794,7 @@ namespace Web.Controllers
         }
         [HttpGet]
         [Authorize(Roles = "Super Admin,Admin")]
+
         public async Task<IActionResult> ResetPassword(string Id)
         {
             string decryptedId = string.Empty;
@@ -1733,6 +1827,7 @@ namespace Web.Controllers
         [HttpPost]
         [Authorize(Roles = "Super Admin,Admin")]
         [ValidateAntiForgeryToken]
+
         public async Task<IActionResult> ResetPassword(DTOResetPasswordRequest model)
         {
             if (!ModelState.IsValid)
@@ -1768,9 +1863,10 @@ namespace Web.Controllers
         [HttpPost]
         [Authorize]
         [ValidateAntiForgeryToken]
+
         public async Task<ActionResult> Add(RegisterRequest model)
         {
-           return View(model);
+            return View(model);
         }
 
         //public async Task<ActionResult> Add(RegisterRequest model)
@@ -1868,6 +1964,7 @@ namespace Web.Controllers
         //    }
         //}
 
+        #endregion End Common Method
 
     }
 }
