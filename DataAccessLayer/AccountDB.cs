@@ -536,6 +536,83 @@ namespace DataAccessLayer
             }
 
         }
+        public async Task<bool?> SaveDomainRegn(DTODomainRegnRequest dTO, int Updatedby)
+        {
+            try
+            {
+                if (dTO.Id > 0)
+                {
+                    var userUpdate = await userManager.FindByIdAsync(dTO.Id.ToString());
+
+                    if (userUpdate == null)
+                    {
+                        return false;
+                    }
+                    else
+                    {
+                        userUpdate.DomainId = dTO.DomainId;
+                        userUpdate.Active = dTO.Active;
+                        userUpdate.Updatedby = Updatedby;
+                        userUpdate.UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
+                        userUpdate.UserName = dTO.DomainId.ToLower();
+                        userUpdate.Email = dTO.DomainId.ToLower() + "@army.mil";
+                        if (dTO.AdminFlag == true)
+                        {
+                            userUpdate.AdminFlag = dTO.AdminFlag;
+                            userUpdate.AdminFlagDate = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
+                        }
+                        else
+                        {
+                            userUpdate.AdminFlag = dTO.AdminFlag;
+                            userUpdate.AdminFlagDate = null;
+                        }
+                        var result = await userManager.UpdateAsync(userUpdate);
+
+                        if (!result.Succeeded)
+                        {
+                            return false;
+                        }
+
+                        foreach (var error in result.Errors)
+                        {
+                            return false;
+                        }
+                        return true;
+                    }
+                }
+                else
+                {
+                    var userAdd = new ApplicationUser
+                    {
+                        DomainId = dTO.DomainId,
+                        Active = dTO.Active,
+                        AdminFlag = dTO.AdminFlag,
+                        AdminFlagDate = dTO.AdminFlag == true? TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time")):null,
+                        Updatedby = Updatedby,
+                        UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time")),
+                        UserName = dTO.DomainId.ToLower(),
+                        Email = dTO.DomainId.ToLower() + "@army.mil",
+                    };
+                    var result = await userManager.CreateAsync(userAdd, "Admin123#");
+
+                    if (result.Succeeded)
+                    {
+                        await userManager.AddToRoleAsync(userAdd, dTO.RoleName);
+                    }
+                    foreach (var error in result.Errors)
+                    {
+                        return false;
+                    }
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "AccountDB->SaveDomainRegn");
+                return null;
+            }
+
+        }
     }
     
 }

@@ -235,7 +235,7 @@ function BindData() {
                         listItem += "<td class='align-middle'><span id='reg_no'>" + response[i].Id + "</span></td>";
                         listItem += "<td class='align-middle'><span id='domainId'>" + response[i].DomainId + "</span></td>";
                         listItem += "<td class='align-middle'><span id='roleName'>" + response[i].RoleName + "</span></td>";
-                        listItem += "<td class='align-middle'><span id='updatedOn'>" + response[i].UpdatedOn + "</span></td>";
+                        listItem += "<td class='align-middle'><span id='updatedOn'>" + DateFormateddMMyyyyhhmmss(response[i].UpdatedOn) + "</span></td>";
                         if (response[i].Mapped == true)
                             listItem += "<td class='align-middle'><span id='domain_mapping'><span class='badge badge-pill badge-success'>Yes</span></span></td>";
                         else
@@ -345,7 +345,7 @@ function BindData() {
 function Save() {
     //alert($("#spnDomainRegId").html());
     $.ajax({
-        url: '/Account/SaveDomain',
+        url: '/Account/SaveDomainRegn',
         type: 'POST',
         data: {
             "Id": $("#spnDomainRegId").html(),

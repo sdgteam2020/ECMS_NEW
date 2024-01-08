@@ -81,7 +81,7 @@ function DateFormateMMddyyyy(date) {
 
     //`${datef2.getFullYear()}/` + monthsans + `/` + dayans ;
 }
-function DateFormateMMddyyyyhhmmss(date) {
+function DateFormateddMMyyyyhhmmss(date) {
     var datef2 = new Date(date);
     var months = "" + `${(datef2.getMonth() + 1)}`;
     var days = "" + `${(datef2.getDate())}`;

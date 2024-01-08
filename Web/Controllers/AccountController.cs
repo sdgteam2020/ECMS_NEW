@@ -108,8 +108,67 @@ namespace Web.Controllers
             }
 
         }
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> SaveDomainRegn(DTODomainRegnRequest dTO)
+        {
+            try
+            {
+                int Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+                if (ModelState.IsValid)
+                {
+                    if (!_iAccountBL.GetByDomainId(dTO.DomainId, dTO.Id))
+                    {
+                        bool result;
+                        if (dTO.Id > 0)
+                        {
+                            result = (bool)await _iAccountBL.SaveDomainRegn(dTO, Updatedby);
+                            if(result==true)
+                            {
+                                return Json(KeyConstants.Update);
+                            }
+                            else
+                            {
+                                return Json(KeyConstants.InternalServerError);
+                            }
+                            
+                        }
+                        else
+                        {
+                            result = (bool)await _iAccountBL.SaveDomainRegn(dTO, Updatedby);
+                            if (result == true)
+                            {
+                                return Json(KeyConstants.Save);
+                            }
+                            else
+                            {
+                                return Json(KeyConstants.InternalServerError);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        return Json(KeyConstants.Exists);
+                    }
+
+                }
+                else
+                {
+
+                    return Json(ModelState.Select(x => x.Value.Errors).Where(y => y.Count > 0).ToList());
+                }
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "Account->SaveDomainRegn");
+                return Json(KeyConstants.InternalServerError);
+            }
+
+        }
 
         #endregion End Domain Regn.
+       
         #region Policy
 
         [HttpGet]
@@ -380,8 +439,9 @@ namespace Web.Controllers
             }
 
         }
+
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> SaveDomain(DTOUserRegnRequest dTO)
+        public async Task<IActionResult> SaveUserRegn(DTOUserRegnRequest dTO)
         {
             DTOUserRegnResultResponse dTOUserRegnResult = new DTOUserRegnResultResponse();
             try
@@ -389,12 +449,12 @@ namespace Web.Controllers
                 int Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                 if (ModelState.IsValid)
                 {
-                    if (! _iAccountBL.GetByDomainId(dTO.DomainId, dTO.Id))
+                    if (!_iAccountBL.GetByDomainId(dTO.DomainId, dTO.Id))
                     {
                         DTOUserRegnResultResponse? dTOUserRegnResultResponse = await _iAccountBL.SaveDomainWithAll(dTO, Updatedby);
                         if (dTOUserRegnResultResponse != null)
                         {
-                            if(dTOUserRegnResultResponse.Result==true)
+                            if (dTOUserRegnResultResponse.Result == true)
                             {
                                 if (dTO.Id > 0)
                                 {
