@@ -105,57 +105,6 @@
         },
         appendTo: '#suggesstion-box'
     });
-
-    $("#txtArmyNo").autocomplete({
-        source: function (request, response) {
-            if (request.term.length > 2) {
-                $("#spnUserProfileId").html('');
-                $("#lblName").html('');
-                $("#lblRank").html('');
-                var param = { "ArmyNo": request.term };
-                $("#spnUserProfileId").html(0);
-                $.ajax({
-                    url: '/UserProfile/GetTopByArmyNo',
-                    contentType: 'application/x-www-form-urlencoded',
-                    data: param,
-                    type: 'POST',
-                    success: function (data) {
-                        console.log(data);
-                        response($.map(data, function (item) {
-                            $("#loading").addClass("d-none");
-                            return { label: item.ArmyNo, value: item.UserId };
-
-                        }))
-                    },
-                    error: function (response) {
-                        alert(response.responseText);
-                    },
-                    failure: function (response) {
-                        alert(response.responseText);
-                    }
-                });
-            }
-        },
-        select: function (e, i) {
-            e.preventDefault();
-
-            $("#spnUserProfileId").html(i.item.value);
-            $("#txtArmyNo").val(i.item.label);
-            var param1 = { "UserId": i.item.value };
-            $.ajax({
-                url: '/UserProfile/GetProfileByUserId',
-                method:'POST',
-                contentType: 'application/x-www-form-urlencoded',
-                data: param1,
-                datatype:'json',
-                success: function (data) {
-                    $("#lblName").html(data.Name);
-                    $("#lblRank").html(data.RankName);
-                }
-            });
-        },
-        appendTo: '#suggesstion-box'
-    });
     $("#btnDomainAdd").click(function () {
         Reset();
         ResetErrorMessage();
@@ -237,13 +186,6 @@ function ValidateRadioButton() {
     else {
         $("#txtactive-error").html("");
     }
-
-    if ($("input[type='radio'][name=IntOffr]:checked").length == 0) {
-        $("#IntOffr-error").html("IntOffr is required.");
-    }
-    else {
-        $("#IntOffr-error").html("");
-    }
 }
 
 function BindData() {
@@ -254,7 +196,7 @@ function BindData() {
         "Choice": $("input[type='radio'][name=choice]:checked").val()
     };
     $.ajax({
-        url: '/Account/GetAllUserRegn',
+        url: '/Account/GetAllDomainRegn',
         contentType: 'application/x-www-form-urlencoded',
         data: userdata,
         type: 'POST',
@@ -292,7 +234,6 @@ function BindData() {
                         listItem += "<td class='align-middle'>" + (i + 1) + "</td>";
                         listItem += "<td class='align-middle'><span id='reg_no'>" + response[i].Id + "</span></td>";
                         listItem += "<td class='align-middle'><span id='domainId'>" + response[i].DomainId + "</span></td>";
-                        listItem += "<td class='align-middle'><span id='armyNo'>" + response[i].ArmyNo + "</span></td>";
                         listItem += "<td class='align-middle'><span id='roleName'>" + response[i].RoleName + "</span></td>";
                         listItem += "<td class='align-middle'><span id='updatedOn'>" + response[i].UpdatedOn + "</span></td>";
                         if (response[i].Mapped == true)
@@ -304,11 +245,6 @@ function BindData() {
                             listItem += "<td class='align-middle'><span><span class='badge badge-pill badge-success' id='domain_active'>Yes</span></span></td>";
                         else
                             listItem += "<td class='align-middle'><span><span class='badge badge-pill badge-danger' id='domain_active'>No</span></span></td>";
-
-                        if (response[i].AdminFlag == true)
-                            listItem += "<td class='align-middle'><span><span class='badge badge-pill badge-success' id='domain_approval'>Verifed</span></span></td>";
-                        else
-                            listItem += "<td class='align-middle'><span><span class='badge badge-pill badge-danger' id='domain_approval'>Not Verify</span></span></td>";
 
                         listItem += "<td class='align-middle'><span id='btnedit'><button type='button' class='cls-btnedit btn btn-icon btn-round btn-warning mr-1'><i class='fas fa-edit'></i></button></span></td>";
 
@@ -370,9 +306,6 @@ function BindData() {
                         else {
                             $("#txtactiveno").prop("checked", true);
                         }
-                        if ($(this).closest("tr").find("#regUserId").html() > 0) {
-                            GetProfileByUserId($(this).closest("tr").find("#regUserId").html());
-                        }
 
                         if ($(this).closest("tr").find("#regTrnDomainMappingId").html() > 0) {
                             $("spnTrnDomainMappingId").val($(this).closest("tr").find("#regTrnDomainMappingId").html());
@@ -423,79 +356,49 @@ function Save() {
             "TDMId": $("#spnTrnDomainMappingId").html(),
             "ApptId": $("#spnUnitAppointmentId").html(),
             "UnitMappId": $("#spnUnitMapId").html(),
-            "UserId": $("#spnUserProfileId").html(),
-            "ArmyNo": $("#txtArmyNo").val(),
-
         }, //get the search string
         success: function (response) {
-            var obj = jQuery.parseJSON(response);
-            if (obj.Result == true)
-            {
-                toastr.success(obj.Message);
+
+            if (result == DataSave) {
+                toastr.success('Domain Id has been saved');
 
                 $("#AddNewDomain").modal('hide');
                 BindData();
                 Reset();
                 ResetErrorMessage();
             }
-            else if (obj.Result == false)
-            {
-                toastr.error(obj.Message);
+            else if (result == DataUpdate) {
+                toastr.success('Domain Id has been Updated');
+
+                $("#AddNewDomain").modal('hide');
+                BindData();
+                Reset();
+                ResetErrorMessage();
+            }
+            else if (result == DataExists) {
+
+                toastr.error('Domain Id Exits!');
+
+            }
+            else if (result == InternalServerError) {
                 Swal.fire({
                     icon: 'error',
                     title: 'Oops...',
-                    html: obj.Message,
+                    text: 'Something went wrong or Invalid Entry!',
 
                 })
-            }
-            else if (obj.Result == false && obj.Message.length > 1)
-            {
 
-                for (var i = 0; i < obj.Message.length; i++) {
+            } else {
+                if (result.length > 0) {
+                    for (var i = 0; i < result.length; i++) {
                         toastr.error(result[i][0].Message)
                     }
+
+
+                }
+
+
             }
-
-            //if (result == DataSave) {
-            //    toastr.success('Domain Id has been saved');
-
-            //    $("#AddNewDomain").modal('hide');
-            //    BindData();
-            //    Reset();
-            //    ResetErrorMessage();
-            //}
-            //else if (result == DataUpdate) {
-            //    toastr.success('Domain Id has been Updated');
-
-            //    $("#AddNewDomain").modal('hide');
-            //    BindData();
-            //    Reset();
-            //    ResetErrorMessage();
-            //}
-            //else if (result == DataExists) {
-
-            //    toastr.error('Domain Id Exits!');
-
-            //}
-            //else if (result == InternalServerError) {
-            //    Swal.fire({
-            //        icon: 'error',
-            //        title: 'Oops...',
-            //        text: 'Something went wrong or Invalid Entry!',
-
-            //    })
-
-            //} else {
-            //    if (result.length > 0) {
-            //        for (var i = 0; i < result.length; i++) {
-            //            toastr.error(result[i][0].Message)
-            //        }
-
-
-            //    }
-
-
-            //}
         }
     });
 }
@@ -516,16 +419,8 @@ function Reset() {
     $("#lblBde").html("");
     $("#lblSusno").html("");
 
-    $("#spnUserProfileId").html("0");
-    $("#txtArmyNo").val("");
-    $("#lblRank").val("");
-    $("#lblName").val("");
-
     $("#spnUnitAppointmentId").html("0");
     $("#txtAppointmentName").val("");
-
-    $("#intoffsyes").prop("checked", false);
-    $("#intoffsno").prop("checked", false);
 
     $("#txtapprovalyes").prop("checked", false);
     $("#txtapprovalno").prop("checked", false);
@@ -538,7 +433,6 @@ function ResetErrorMessage() {
     $("#txtRole-error").html("");
     $("#txtapproval-error").html("");
     $("#txtactive-error").html("");
-    $("#IntOffr-error").html("");
     $("#txtAppointmentName-error").html("");
     $("#txtUnitName-error").html("");
 }
@@ -557,20 +451,6 @@ function GetALLByUnitById(param1) {
             $("#lblBde").html(data.BdeName);
             $("#lblSusno").html(data.Sus_no + '' + data.Suffix);
 
-        }
-    });
-}
-function GetProfileByUserId(param1) {
-    $.ajax({
-        url: '/UserProfile/GetProfileByUserId',
-        contentType: 'application/x-www-form-urlencoded',
-        data: { "UserId": param1 },
-        type: 'POST',
-        success: function (data) {
-            $("#spnUserProfileId").html(data.UserId);
-            $("#txtArmyNo").val(data.ArmyNo);
-            $("#lblRank").html(data.RankName);
-            $("#lblName").html(data.Name);
         }
     });
 }

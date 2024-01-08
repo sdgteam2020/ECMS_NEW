@@ -84,6 +84,32 @@ namespace Web.Controllers
         {
             return View();
         }
+        #region Domain Regn.
+
+        [Authorize(Roles = "Admin")]
+        [HttpGet]
+        public IActionResult DomainRegn()
+        {
+            return View();
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpPost]
+        public async Task<IActionResult> GetAllDomainRegn(string Search, string Choice)
+        {
+            try
+            {
+                return Json(await _iAccountBL.GetAllDomainRegn(Search, Choice));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "Account->DomainRegn");
+                return Json(KeyConstants.InternalServerError);
+            }
+
+        }
+
+        #endregion End Domain Regn.
         #region Policy
 
         [HttpGet]
@@ -312,11 +338,26 @@ namespace Web.Controllers
             }
 
         }
-       
+        [Authorize(Roles = "Admin")]
+        [HttpPost]
+        public async Task<IActionResult> TotalProfileCount()
+        {
+            try
+            {
+                return Json(await _iAccountBL.TotalProfileCount());
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "Account->TotalProfileCount");
+                return Json(KeyConstants.InternalServerError);
+            }
+
+        }
+
         #endregion End ProfileManage
 
         #region UserRegn
-        
+
         [Authorize(Roles = "Admin")]
         [HttpGet]
         public IActionResult UserRegn()
@@ -342,6 +383,7 @@ namespace Web.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> SaveDomain(DTOUserRegnRequest dTO)
         {
+            DTOUserRegnResultResponse dTOUserRegnResult = new DTOUserRegnResultResponse();
             try
             {
                 int Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
@@ -356,43 +398,55 @@ namespace Web.Controllers
                             {
                                 if (dTO.Id > 0)
                                 {
-                                    return Json(KeyConstants.Update);
+                                    dTOUserRegnResult.Result = true;
+                                    dTOUserRegnResult.Message = "Domain Id has been updated.";
+                                    return Json(dTOUserRegnResult);
                                 }
                                 else
                                 {
-                                    return Json(KeyConstants.Save);
+                                    dTOUserRegnResult.Result = true;
+                                    dTOUserRegnResult.Message = "Domain Id has been saved.";
+                                    return Json(dTOUserRegnResult);
                                 }
                             }
                             else
                             {
                                 string json = JsonConvert.SerializeObject(dTOUserRegnResultResponse);
-                                //return Json(json);
                                 return Json(json);
                             }
 
                         }
                         else
                         {
-                            return Json(KeyConstants.InternalServerError);
+                            dTOUserRegnResult.Result = false;
+                            dTOUserRegnResult.Message = "Something went wrong or Invalid Entry!";
+                            return Json(dTOUserRegnResult);
                         }
                     }
                     else
                     {
-                        return Json(KeyConstants.Exists);
+                        dTOUserRegnResult.Result = false;
+                        dTOUserRegnResult.Message = "Domain Id Exits!";
+                        return Json(dTOUserRegnResult);
                     }
-
                 }
                 else
                 {
-
-                    return Json(ModelState.Select(x => x.Value.Errors).Where(y => y.Count > 0).ToList());
+                    //working pending 
+                    string json = JsonConvert.SerializeObject(ModelState.Select(x => x.Value.Errors).Where(y => y.Count > 0).ToList());
+                    dTOUserRegnResult.Result = false;
+                    dTOUserRegnResult.Message = json;
+                    return Json(dTOUserRegnResult);
+                    //return Json(ModelState.Select(x => x.Value.Errors).Where(y => y.Count > 0).ToList());
                 }
 
             }
             catch (Exception ex)
             {
                 _logger.LogError(1001, ex, "Account->SaveProfileManage");
-                return Json(KeyConstants.InternalServerError);
+                dTOUserRegnResult.Result = false;
+                dTOUserRegnResult.Message = "Something went wrong or Invalid Entry!";
+                return Json(dTOUserRegnResult);
             }
 
         }
