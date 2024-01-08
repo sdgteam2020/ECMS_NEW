@@ -10,6 +10,7 @@ using BusinessLogicsLayer.BdeCate;
 using BusinessLogicsLayer.Corps;
 using BusinessLogicsLayer.Div;
 using BusinessLogicsLayer.Formation;
+using BusinessLogicsLayer.Home;
 using BusinessLogicsLayer.Master;
 using BusinessLogicsLayer.Registration;
 using BusinessLogicsLayer.Token;
@@ -124,6 +125,9 @@ namespace BusinessLogicsLayer
 
             services.AddTransient<IMasterBL, MasterBL>();
             services.AddTransient<IMasterDB, MasterDB>();
+
+            services.AddTransient<IHomeBL, HomeBL>();
+            services.AddTransient<IHomeDB, HomeDB>();
             //services.AddDbContext<ApplicationDbContext>(opt => opt.UseSqlServer("Server=SDG20\\SQLEXPRESS; Database=AFSAC;Integrated Security=True;MultipleActiveResultSets=True;TrustServerCertificate=True"));
             //services.AddDbContext<ApplicationDbContext>(opt => opt.UseSqlServer("Server=.\\sqlexpress; Database=AFSAC;User Id=sa; Password=Admin@2018;MultipleActiveResultSets=True;TrustServerCertificate=True"));
             // services.AddDbContext<ApplicationDbContext>(opt => opt.UseSqlServer("Server=192.168.10.63; database=AFSAC_New; User Id=sa; Password=Admin@2018;Connect Timeout=30;TrustServerCertificate=True; MultipleActiveResultSets=true"));

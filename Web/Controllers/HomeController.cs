@@ -2,6 +2,7 @@
 using BusinessLogicsLayer.BasicDet;
 using BusinessLogicsLayer.Bde;
 using BusinessLogicsLayer.BdeCate;
+using BusinessLogicsLayer.Home;
 using BusinessLogicsLayer.Registration;
 using DataAccessLayer.BaseInterfaces;
 using DataTransferObject.Domain.Master;
@@ -19,12 +20,14 @@ namespace Web.Controllers
         private readonly IBasicDetailBL _basicDetailBL;
         private readonly INotificationBL _INotificationBL;
         private readonly ITrnICardRequestBL _ITrnICardRequestBL;
-        public HomeController(IRegistrationBL registrationBL, IBasicDetailBL basicDetailBL, INotificationBL notificationBL, ITrnICardRequestBL iTrnICardRequestBL)
+        private readonly IHomeBL _home;
+        public HomeController(IRegistrationBL registrationBL, IBasicDetailBL basicDetailBL, INotificationBL notificationBL, ITrnICardRequestBL iTrnICardRequestBL, IHomeBL home)
         {
             _registrationBL = registrationBL;
             _basicDetailBL = basicDetailBL;
             _INotificationBL = notificationBL;
             _ITrnICardRequestBL = iTrnICardRequestBL;
+            _home = home;
         }
         public IActionResult Index()
         {
@@ -32,6 +35,9 @@ namespace Web.Controllers
         }
         public IActionResult Dashboard()
         {
+            string role = this.User.FindFirstValue(ClaimTypes.Role);
+
+            ViewBag.Role = role;    
             return View();
         }
         public IActionResult MyTask()
@@ -106,6 +112,11 @@ namespace Web.Controllers
             Data.SentAspNetUsersId = userId;
             return Json(await _INotificationBL.UpdateRead(Data));
 
+        }
+        public async Task<IActionResult> GetDashboardCount()
+        {
+            int userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+            return Json(await _home.GetDashBoardCount(userId));
         }
     }
 }

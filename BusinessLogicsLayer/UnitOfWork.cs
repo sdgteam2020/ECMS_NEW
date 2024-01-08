@@ -133,21 +133,7 @@ namespace BusinessLogicsLayer
             }
             else if (Data.id == Convert.ToInt16(Constants.MasterTbl.Appt))
             {
-                //var Ret = await Appt.GetAll();
-                //foreach (var Forma in Ret)
-                //{
-
-                //    DTOMasterResponse db = new DTOMasterResponse();
-
-                  
-
-                //    db.Id = Forma.ApptId;
-                //    db.Name = Forma.AppointmentName;
-                //    lst.Add(db);
-
-
-                //}
-                var Ret = await Appt.GetByFormationId(Convert.ToInt32(Data.ParentId));
+                var Ret = await Appt.GetAll();
                 foreach (var Forma in Ret)
                 {
 
@@ -161,6 +147,20 @@ namespace BusinessLogicsLayer
 
 
                 }
+                //var Ret = await Appt.GetByFormationId(Convert.ToInt32(Data.ParentId));
+                //foreach (var Forma in Ret)
+                //{
+
+                //    DTOMasterResponse db = new DTOMasterResponse();
+
+
+
+                //    db.Id = Forma.ApptId;
+                //    db.Name = Forma.AppointmentName;
+                //    lst.Add(db);
+
+
+                //}
             } 
             else if (Data.id == Convert.ToInt16(Constants.MasterTbl.RankOffrs))
             {

@@ -26,7 +26,7 @@ namespace DataAccessLayer
         private readonly IConfiguration configuration;
         public async Task<bool> GetByArmyNo(MUserProfile Data, int UserId)
         { 
-            var ret = _context.UserProfile.Any(p => p.ArmyNo.ToUpper() == Data.ArmyNo.ToUpper() && p.UserId!= UserId);
+            var ret = _context.UserProfile.Any(p => p.UserId == UserId && p.ArmyNo.ToUpper() == Data.ArmyNo.ToUpper());
             return ret;
         }
         public async Task<List<MUserProfile>> GetByMArmyNo(string ArmyNo, int UserId)
@@ -142,10 +142,13 @@ namespace DataAccessLayer
                                      UserId = up.UserId,
                                      Name = up.Name,
                                      IntOffr = up.IntOffr,
+                                     IsIO = up.IsIO,
+                                     IsCO = up.IsCO,
                                      Rank = rank.RankName,
                                      RankId = rank.RankId,
                                      UnitId = xmunit!=null?xmunit.UnitId:0,
                                      UnitName = xmunit!=null ? xmunit.UnitName:"No Unit",
+
                                  }
                                 ).Distinct().FirstOrDefaultAsync();
                 return ret;
@@ -242,24 +245,15 @@ namespace DataAccessLayer
         public async Task<List<DTOUserProfileResponse>> GetAll(int DomainId, int UserId)
         {
             // return _context.UserProfile.Where(P => P.ArmyNo == ArmyNo).SingleOrDefault();
-            string query = "select map.id MapId,users.ArmyNo,users.UserId,forma.FormationId,forma.FormationName,appo.ApptId,appo.AppointmentName, ran.RankAbbreviation Rank," +
-            " users.Name,dmap.UnitId,Uni.UnitName,Uni.Sus_no + Uni.Suffix SusNo,users.IntOffr,ISNULL(UsersIo.ArmyNo, '') IOArmyNo,ranio.RankAbbreviation + UsersIo.Name IOName,"+
-            " UsersIo.UserId IOUserId, Unio.UnitId UnitIdIO, Unio.UnitName UnitIo, Unio.Sus_no + Unio.Suffix IoSUSno, ISNULL(Usersgso.ArmyNo, '') GSOArmyNo,rangso.RankAbbreviation + Usersgso.Name GSOName,"+
-            " Usersgso.UserId GSOUserId, Ungso.UnitId UnitIdGSO, Ungso.UnitName UnitGSO, Ungso.Sus_no + Ungso.Suffix GSOSUSno from UserProfile users"+
-            " inner join TrnDomainMapping dmap on dmap.UserId = users.UserId"+
-            " inner join MUnit Uni on Uni.UnitId = dmap.UnitId"+
-            " inner join MAppointment appo on appo.ApptId = users.ApptId"+
-            " inner join MFormation forma on forma.FormationId = appo.FormationId"+
-            " inner join MRank ran on ran.RankId = users.RankId"+
-            " left join MMappingProfile map on map.UserId = users.UserId"+
-            " left join UserProfile UsersIo on UsersIo.UserId = map.UserId"+
-            " left join TrnDomainMapping dmapio on dmapio.UserId = UsersIo.UserId"+
-            " left join MUnit Unio on Unio.UnitId = dmapio.UnitId"+
-            " left join MRank ranio on ranio.RankId = UsersIo.RankId"+
-            " left join UserProfile Usersgso on Usersgso.UserId = map.UserId"+
-            " left join TrnDomainMapping dmapgso on dmapgso.UserId = Usersgso.UserId"+
-            " left join MUnit Ungso on Ungso.UnitId = dmapgso.UnitId"+
-            " left join MRank rangso on rangso.RankId = Usersgso.RankId where users.Updatedby = @DomainId";
+            string query = "select map.id MapId,users.ArmyNo,users.UserId,appo.ApptId,appo.AppointmentName, ran.RankAbbreviation Rank,"+
+                            " users.Name,dmap.UnitId,Uni.UnitName,Uni.Sus_no + Uni.Suffix SusNo,users.IntOffr,users.IsIO,users.IsCO"+
+                            " from UserProfile users "+
+                            " inner join TrnDomainMapping dmap on dmap.UserId = users.UserId "+
+                            " inner join MUnit Uni on Uni.UnitId = dmap.UnitId "+
+                            " inner join MAppointment appo on appo.ApptId = dmap.ApptId "+
+                            " inner join MRank ran on ran.RankId = users.RankId "+
+                            " left join MMappingProfile map on map.UserId = users.UserId "+
+                            " where dmap.AspNetUsersId = @DomainId";
             using (var connection = _contextDP.CreateConnection())
             {
                 var BasicDetailList = await connection.QueryAsync<DTOUserProfileResponse>(query, new { DomainId });

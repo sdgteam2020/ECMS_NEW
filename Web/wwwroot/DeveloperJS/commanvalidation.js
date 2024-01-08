@@ -81,6 +81,28 @@ function DateFormateMMddyyyy(date) {
 
     //`${datef2.getFullYear()}/` + monthsans + `/` + dayans ;
 }
+function DateFormateMMddyyyyhhmmss(date) {
+    var datef2 = new Date(date);
+    var months = "" + `${(datef2.getMonth() + 1)}`;
+    var days = "" + `${(datef2.getDate())}`;
+    var pad = "00"
+    var monthsans = pad.substring(0, pad.length - months.length) + months
+    var dayans = pad.substring(0, pad.length - days.length) + days
+    var year = `${datef2.getFullYear()}`;
+    var hh = `${datef2.getHours()}`;
+    var mm = `${datef2.getMinutes()}`;
+    var ss = `${datef2.getSeconds()}`;
+    if (year > 1902) {
+
+        var datemmddyyyy = dayans + `/` + monthsans + `/` + year + ` ` + hh + `:` + mm + `:` + ss
+        return datemmddyyyy;
+    }
+    else {
+        return '';
+    }
+
+    //`${datef2.getFullYear()}/` + monthsans + `/` + dayans ;
+}
 function DateFormateMM_dd_yyyy(date) {
     var datef2 = new Date(date);
     var months = "" + `${(datef2.getMonth() + 1)}`;
