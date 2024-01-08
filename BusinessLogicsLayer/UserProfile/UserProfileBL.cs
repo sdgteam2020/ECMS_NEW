@@ -76,5 +76,9 @@ namespace BusinessLogicsLayer.Master
         {
             return await _iUserProfileDB.GetAllRelatedDataByArmyNo(ArmyNo);
         }
+        public async Task<List<DTOAllRelatedDataByArmyNoResponse>?> GetTopByArmyNo(string ArmyNo)
+        {
+            return await _iUserProfileDB.GetTopByArmyNo(ArmyNo);
+        }
     }
 }

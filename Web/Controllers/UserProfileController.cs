@@ -247,6 +247,18 @@ namespace Web.Controllers
             DTOProfileResponse dTOProfileResponse = await _userProfileBL.CheckArmyNoInUserProfile(ArmyNo, userid);
             return Json(dTOProfileResponse);
         }
+        public async Task<IActionResult> GetTopByArmyNo(string ArmyNo)
+        {
+            try
+            {
+                return Json(await _userProfileBL.GetTopByArmyNo(ArmyNo));
+            }
+            catch (Exception ex)
+            {
+                return Json(KeyConstants.InternalServerError);
+            }
+
+        }
 
     }
 }

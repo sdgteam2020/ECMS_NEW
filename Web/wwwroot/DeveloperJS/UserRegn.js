@@ -52,14 +52,13 @@
     $("#txtUnitName").autocomplete({
         source: function (request, response) {
             if (request.term.length > 2) {
-                $("#spnUnitIdMap").html('');
                 $("#lblComd").html('');
                 $("#lblCorps").html('');
                 $("#lblDiv").html('');
                 $("#lblBde").html('');
                 $("#lblSusno").html('');
                 var param = { "UnitName": request.term };
-                $("#spnUnitIdMap").html(0);
+                $("#spnUnitMapId").html(0);
                 $.ajax({
                     url: '/Master/GetALLByUnitName',
                     contentType: 'application/x-www-form-urlencoded',
@@ -94,13 +93,64 @@
                 data: param1,
                 type: 'POST',
                 success: function (data) {
-                    $("#spnUnitIdMap").html(data.UnitMapId);
+                    $("#spnUnitMapId").html(data.UnitMapId);
                     $("#lblComd").html(data.ComdName);
                     $("#lblCorps").html(data.CorpsName);
                     $("#lblDiv").html(data.DivName);
                     $("#lblBde").html(data.BdeName);
                     $("#lblSusno").html(data.Sus_no + '' + data.Suffix);
 
+                }
+            });
+        },
+        appendTo: '#suggesstion-box'
+    });
+
+    $("#txtArmyNo").autocomplete({
+        source: function (request, response) {
+            if (request.term.length > 2) {
+                $("#spnUserProfileId").html('');
+                $("#lblName").html('');
+                $("#lblRank").html('');
+                var param = { "ArmyNo": request.term };
+                $("#spnUserProfileId").html(0);
+                $.ajax({
+                    url: '/UserProfile/GetTopByArmyNo',
+                    contentType: 'application/x-www-form-urlencoded',
+                    data: param,
+                    type: 'POST',
+                    success: function (data) {
+                        console.log(data);
+                        response($.map(data, function (item) {
+                            $("#loading").addClass("d-none");
+                            return { label: item.ArmyNo, value: item.UserId };
+
+                        }))
+                    },
+                    error: function (response) {
+                        alert(response.responseText);
+                    },
+                    failure: function (response) {
+                        alert(response.responseText);
+                    }
+                });
+            }
+        },
+        select: function (e, i) {
+            e.preventDefault();
+
+            $("#spnUserProfileId").html(i.item.value);
+            $("#txtArmyNo").val(i.item.label);
+            var param1 = { "UserId": i.item.value };
+            $.ajax({
+                url: '/UserProfile/GetProfileByUserId',
+                method:'POST',
+                contentType: 'application/x-www-form-urlencoded',
+                data: param1,
+                datatype:'json',
+                success: function (data) {
+                    $("#lblName").html(data.Name);
+                    $("#lblRank").html(data.RankName);
                 }
             });
         },
@@ -360,8 +410,7 @@ function BindData() {
 
 }
 function Save() {
-    /*  alert($('#bdaymonth').val());*/
-    alert($("txtapproval").val());
+    //alert($("#spnDomainRegId").html());
     $.ajax({
         url: '/Account/SaveDomain',
         type: 'POST',
@@ -371,58 +420,72 @@ function Save() {
             "RoleName": $("#txtRole").val(),
             "AdminFlag": $('input:radio[name=txtapproval]:checked').val(),
             "Active": $('input:radio[name=txtactive]:checked').val(),
-            "UserId": $("#spnUserProfileId").html(),
-            "ArmyNo": $("#txtArmyNo").val(),
-            "Name": $("#txtName").val(),
-            "RankId": $("#ddlRank").val(),
-            "IntOffr": $('input:radio[name=txtactive]:checked').val(),
-            "TrnDomainMappingId": $("#spnTrnDomainMappingId").html(),
+            "TDMId": $("#spnTrnDomainMappingId").html(),
             "ApptId": $("#spnUnitAppointmentId").html(),
             "UnitMappId": $("#spnUnitMapId").html(),
+            "UserId": $("#spnUserProfileId").html(),
+            "ArmyNo": $("#txtArmyNo").val(),
+
         }, //get the search string
-        success: function (result) {
+        success: function (response) {
+            var obj = jQuery.parseJSON(response);
+            if (obj.Result == true) {
+                toastr.success(obj.Message);
 
-
-            if (result == DataSave) {
-                toastr.success('Unit has been saved');
-
-                /*  $("#AddNewM").modal('hide');*/
+                $("#AddNewDomain").modal('hide');
                 BindData();
                 Reset();
                 ResetErrorMessage();
             }
-            else if (result == DataUpdate) {
-                toastr.success('Unit has been Updated');
-
-                /*  $("#AddNewM").modal('hide');*/
-                BindData();
-                Reset();
-                ResetErrorMessage();
-            }
-            else if (result == DataExists) {
-
-                toastr.error('Unit Name Exits!');
-
-            }
-            else if (result == InternalServerError) {
+            else {
+                toastr.error(obj.Message);
                 Swal.fire({
                     icon: 'error',
                     title: 'Oops...',
-                    text: 'Something went wrong or Invalid Entry!',
+                    html: obj.Message,
 
                 })
-
-            } else {
-                if (result.length > 0) {
-                    for (var i = 0; i < result.length; i++) {
-                        toastr.error(result[i][0].ErrorMessage)
-                    }
-
-
-                }
-
-
             }
+            //if (result == DataSave) {
+            //    toastr.success('Domain Id has been saved');
+
+            //    $("#AddNewDomain").modal('hide');
+            //    BindData();
+            //    Reset();
+            //    ResetErrorMessage();
+            //}
+            //else if (result == DataUpdate) {
+            //    toastr.success('Domain Id has been Updated');
+
+            //    $("#AddNewDomain").modal('hide');
+            //    BindData();
+            //    Reset();
+            //    ResetErrorMessage();
+            //}
+            //else if (result == DataExists) {
+
+            //    toastr.error('Domain Id Exits!');
+
+            //}
+            //else if (result == InternalServerError) {
+            //    Swal.fire({
+            //        icon: 'error',
+            //        title: 'Oops...',
+            //        text: 'Something went wrong or Invalid Entry!',
+
+            //    })
+
+            //} else {
+            //    if (result.length > 0) {
+            //        for (var i = 0; i < result.length; i++) {
+            //            toastr.error(result[i][0].Message)
+            //        }
+
+
+            //    }
+
+
+            //}
         }
     });
 }
@@ -430,12 +493,12 @@ function Save() {
 function Reset() {
     $("#txtSearch").val("");
 
-    $("#spnDomainRegId").html("");
+    $("#spnDomainRegId").html("0");
     $("#txtDomainId").val("");
     $("#txtRole").val("");
 
-    $("#spnTrnDomainMappingId").html("");
-    $("#spnUnitMapId").html("");
+    $("#spnTrnDomainMappingId").html("0");
+    $("#spnUnitMapId").html("0");
     $("#txtUnitName").val("");
     $("#lblComd").html("");
     $("#lblCorps").html("");
@@ -443,12 +506,12 @@ function Reset() {
     $("#lblBde").html("");
     $("#lblSusno").html("");
 
-    $("#spnUserProfileId").html("");
+    $("#spnUserProfileId").html("0");
     $("#txtArmyNo").val("");
     $("#lblRank").val("");
     $("#lblName").val("");
 
-    $("#spnUnitAppointmentId").html("");
+    $("#spnUnitAppointmentId").html("0");
     $("#txtAppointmentName").val("");
 
     $("#intoffsyes").prop("checked", false);
@@ -496,8 +559,8 @@ function GetProfileByUserId(param1) {
         success: function (data) {
             $("#spnUserProfileId").html(data.UserId);
             $("#txtArmyNo").val(data.ArmyNo);
-            $("#lblRank").val(data.RankId);
-            $("#lblName").val(data.Name);
+            $("#lblRank").html(data.RankName);
+            $("#lblName").html(data.Name);
         }
     });
 }

@@ -12,6 +12,11 @@ using DataTransferObject.Requests;
 using Microsoft.AspNetCore.DataProtection;
 using System.Runtime.Intrinsics.Arm;
 using Microsoft.Extensions.Logging;
+using DataTransferObject.Domain;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+using Microsoft.AspNetCore.Identity;
+using DataTransferObject.Domain.Model;
+using DataTransferObject.Domain.Error;
 
 namespace DataAccessLayer
 {
@@ -20,13 +25,23 @@ namespace DataAccessLayer
         protected new readonly ApplicationDbContext _context;
         private readonly ILogger<DomainMapDB> _logger;
         private readonly IDataProtector protector;
-        public AccountDB(ApplicationDbContext context, ILogger<DomainMapDB> logger, IDataProtectionProvider dataProtectionProvider, DataProtectionPurposeStrings dataProtectionPurposeStrings) : base(context)
+        private readonly UserManager<ApplicationUser> userManager;
+        private readonly IUserProfileDB userProfileDB;
+
+        public AccountDB(ApplicationDbContext context, ILogger<DomainMapDB> logger, UserManager<ApplicationUser> userManager, IUserProfileDB userProfileDB, IDataProtectionProvider dataProtectionProvider, DataProtectionPurposeStrings dataProtectionPurposeStrings) : base(context)
         {
             _context = context;
             _logger = logger;
+            this.userManager = userManager;
+            this.userProfileDB = userProfileDB;
             // Pass the purpose string as a parameter
             this.protector = dataProtectionProvider.CreateProtector(
                 dataProtectionPurposeStrings.AFSACIdRouteValue);
+        }
+        public bool GetByDomainId(string DomainId, int Id)
+        {
+            var ret = _context.Users.Any(x => x.DomainId.ToUpper() == DomainId.ToUpper() && x.Id != Id);
+            return ret;
         }
         public async Task<DTOAccountResponse?> FindDomainId(string DomainId)
         {
@@ -330,6 +345,89 @@ namespace DataAccessLayer
                 _logger.LogError(1001, ex, "AccountDB->ProfileManage");
                 return null;
             }
+        }
+        public async Task<DTOUserRegnResultResponse?> SaveDomainWithAll(DTOUserRegnRequest dTO, int Updatedby)
+        {
+            int Status = 0;
+            DTOUserRegnResultResponse dTOUserRegnResultResponse = new DTOUserRegnResultResponse();
+            try
+            {
+                if (dTO.Id > 0)
+                {
+                    dTOUserRegnResultResponse.Result = true;
+                    dTOUserRegnResultResponse.Message = "Save";
+                    return dTOUserRegnResultResponse;
+                }
+                else
+                {
+                    TrnDomainMapping trnDomainMapping = new TrnDomainMapping();
+                    if (dTO.UserId > 0)
+                    {
+                        DTOProfileResponse? dTOProfileResponse = await userProfileDB.GetProfileByUserId(dTO.UserId);
+                        if(dTOProfileResponse!=null && dTOProfileResponse.Mapping==false)
+                        {
+                            trnDomainMapping.UserId = dTO.UserId;
+                        }
+                        else if (dTOProfileResponse != null && dTOProfileResponse.Mapping == true && dTOProfileResponse.DomainId!=null)
+                        {
+                            dTOUserRegnResultResponse.Result = false;
+                            dTOUserRegnResultResponse.Message = "Profile Id -" + dTOProfileResponse.UserId + " is mapped to Domain Id - " + dTOProfileResponse.DomainId + " in Sys.<br/>Pl relieved first and try again.";
+                            return dTOUserRegnResultResponse;
+                        }
+                        else
+                        {
+                            dTOUserRegnResultResponse.Result = false;
+                            dTOUserRegnResultResponse.Message = "Army number not valid.";
+                            return dTOUserRegnResultResponse;
+                        }
+                            
+                    }
+                    else
+                    {
+                        trnDomainMapping.UserId = null;
+                    }
+                        
+                    var user = new ApplicationUser
+                    {
+                        DomainId = dTO.DomainId,
+                        Active = dTO.Active,
+                        AdminFlag = dTO.AdminFlag,
+                        Updatedby = Updatedby,
+                        UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time")),
+                        UserName = dTO.DomainId.ToLower(),
+                        Email = dTO.DomainId.ToLower() + "@army.mil",
+                    };
+                    var result = await userManager.CreateAsync(user, "Admin123#");
+
+                    if (result.Succeeded)
+                    {
+                        await userManager.AddToRoleAsync(user, dTO.RoleName);
+                    }
+                    foreach (var error in result.Errors)
+                    {
+                        dTOUserRegnResultResponse.Result = false;
+                        dTOUserRegnResultResponse.Message += error.Description;
+                        return dTOUserRegnResultResponse;
+                    }
+
+                    
+                    trnDomainMapping.AspNetUsersId = user.Id;
+                    trnDomainMapping.UnitId = dTO.UnitMappId;
+                    trnDomainMapping.ApptId = dTO.ApptId;
+                    await _context.TrnDomainMapping.AddAsync(trnDomainMapping);
+                    await _context.SaveChangesAsync();
+
+                    dTOUserRegnResultResponse.Result = true;
+                    dTOUserRegnResultResponse.Message = "Domain Id has been Updated";
+                    return dTOUserRegnResultResponse;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "AccountDB->SaveDomainWithAll");
+                return null;
+            }
+
         }
     }
     
