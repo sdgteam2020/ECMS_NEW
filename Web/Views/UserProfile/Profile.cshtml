@@ -11,7 +11,7 @@
             <div class="row">
                 <div class="col-xl-12 text-left">
                     <h3>
-                        Add Profile
+                        Update Profile
                         <small class="text-muted"> </small>
 
 
@@ -35,8 +35,8 @@
                             Total Profile <span id="lblTotalProfile" class="ml-3 border border-light b px-2 py-1">0</span>
                     </h6>
                     <div>
-                        <button type="button" id="btnAddProfile" class="btn btn-outline-success font-weight-600 btn-sm">Add New </button>
-                        <button type="button" id="btnMultiDelete" class="btn btn-outline-danger font-weight-600 btn-sm">Delete</button>
+                       @*  <button type="button" id="btnAddProfile" class="btn btn-outline-success font-weight-600 btn-sm">Add New </button>
+                        <button type="button" id="btnMultiDelete" class="btn btn-outline-danger font-weight-600 btn-sm">Delete</button> *@
 
                     </div>
                 </div>
@@ -57,10 +57,15 @@
                                 <th class="nowrap">Rank</th>
                                 <th class="nowrap">Appt.</th>
                                 <th class="nowrap">Unit Name(SUSNo)</th>
-                                <th class="nowrap">IO Army No</th>
+                                    <th class="nowrap">
+                                        IO for unit offrs
+                                    </th>
                                 @* <th class="nowrap">IO Name</th>
                                 <th class="nowrap">IO Unit Name(SUSNo)</th> *@
-                                <th class="nowrap">GSO Army No</th>
+                                    <th class="nowrap">INT Offr</th>
+                                    <th class="nowrap">
+                                        Comdt/ Cdr/ CO/ OC or Gen Offr
+                                    </th>
                               @*   <th class="nowrap">GSO Name</th>
                                 <th class="nowrap">GSO Unit Name(SUSNo)</th> *@
                                 <th class="nowrap">Action</th>
@@ -85,7 +90,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h5 class="modal-title" id="exampleModalToggleLabel">Add New Profile  </h5>
+                <h5 class="modal-title" id="exampleModalToggleLabel">Update Profile  </h5>
             </div>
 
             <div class="modal-body">
@@ -109,8 +114,8 @@
                                                 <input class="form-control" placeholder="Enter Army No" id="txtProArmy" required maxlength="8" readonly />
                                             </div>
                                                 <div class="col-sm-4">
-                                                    <button type="button" class="btn btn-icon btn-round btn-warning" id="btnProfileSerch"><i class="fas fa-search"></i></button>
-                                                    @* <button type="button" class="btn btn-icon btn-round btn-primary" id="btngetToken"><i class="fa fa-id-badge" aria-hidden="true"></i></button> *@
+                                                    @* <button type="button" class="btn btn-icon btn-round btn-warning" id="btnProfileSerch"><i class="fas fa-search"></i></button> *@
+                                                    <button type="button" class="btn btn-primary" id="btngetToken">Get Token</button>
                                                 </div>
                                         </div>
                                     </div>
@@ -130,11 +135,11 @@
                                                 <label class="col-form-label col-sm-4">Name<i class="fas fa-asterisk mand1"></i></label>
                                             <div class="col-sm-8">
                                                 
-                                                <input class="form-control Alphanumeric" placeholder="Enter Name" id="txtName" readonly required pattern="^[a-zA-Z0-9 ]*$" maxlength="8" title="Only Alphabets and Numbers allowed" />
+                                                <input class="form-control Alphanumeric" placeholder="Enter Name" id="txtName" required pattern="^[a-zA-Z0-9 ]*$" maxlength="8" title="Only Alphabets and Numbers allowed" />
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-sm-4">
+                                   @*  <div class="col-sm-4">
                                         <div class="form-group row mb-2">
                                                 <label class="col-form-label col-sm-4">Formation<i class="fas fa-asterisk mand1"></i></label>
                                             <div class="col-sm-8">
@@ -144,23 +149,29 @@
                                                 </select>
                                             </div>
                                         </div>
-                                    </div>
+                                    </div> *@
                                     <div class="col-sm-4">
                                         <div class="form-group row mb-2">
                                                 <label class="col-form-label col-sm-4">Appt.<i class="fas fa-asterisk mand1"></i></label>
                                             <div class="col-sm-8">
-                                                
-                                                <select class=" js-example-basic-single select2 form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddlProAppointment" required id="ddlProAppointment">
+                                                    <label id="lblApptId" class="col-form-label"></label>
+                                                @* <select class=" js-example-basic-single select2 form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddlProAppointment" required id="ddlProAppointment">
                                                     <option value="0">Select Appointment </option>
-                                                </select>
+                                                </select> *@
                                             </div>
                                         </div>
                                     </div> 
                                     <div class="col-sm-4">
                                         <div class="form-group row mb-2">
-                                                <label class="col-form-label col-sm-4"> Int Offrs.<i class="fas fa-asterisk mand1"></i></label>
+                                                <label class="col-form-label col-sm-4"> Are You Fmn INT Offr<i class="fas fa-asterisk mand1"></i></label>
                                                 <div class="col-sm-8">
-                                                    <div class="form-check form-check-inline">
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox" value="" id="Intoffrs">
+                                                       @*  <label class="form-check-label" for="Intoffrs">
+                                                            Default checkbox
+                                                        </label> *@
+                                                    </div>
+                                                   @*  <div class="form-check form-check-inline">
                                                         <input class="form-check-input" type="radio" name="Intoffrs" id="intoffsyes">
                                                             <label class="form-check-label" for="intoffsyes">
                                                             Yes
@@ -171,12 +182,35 @@
                                                         <label class="form-check-label" for="intoffsno">
                                                        No
                                                     </label>
-                                                    </div>
+                                                    </div> *@
                                                 </div>
                                         </div>
                                     </div>
-                                       
+                                        <div class="col-sm-4">
+                                            <div class="form-group row mb-2">
+                                                <label class="col-form-label col-sm-6"> Are you IO for unit offrs.<i class="fas fa-asterisk mand1"></i></label>
+                                                <div class="col-sm-6">
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox" value="" id="chkIO">
+                                                      
+                                                </div>
+                                            </div>
+                                        </div>
                                 </div>
+                                        <div class="col-sm-6">
+                                            <div class="form-group row mb-2">
+                                                <label class="col-form-label col-sm-8">
+                                                    Are you Commanding a unit or Fmn eg. Comdt/ Cdr/ CO/ OC or Gen Offr
+                                                    .<i class="fas fa-asterisk mand1"></i>
+                                                </label>
+                                                <div class="col-sm-4">
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox" value="" id="chkCO">
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                             </div>
                         </div>
                         <div class="card mt-2">
@@ -242,7 +276,7 @@
                             </div>
                         </div>
 
-                            <div class="card mt-2">
+                            <div class="card mt-2 d-none">
                                 <div class="mt-2 ml-4">
                                     <h5 class="card-title">IO Details</h5>
                                     <form action="" id="SaveIOForm" method="post" name="SaveIOForm">
@@ -351,7 +385,7 @@
                                 </div>
                             </div>
 
-                            <div class="card mt-2">
+                            <div class="card mt-2 d-none">
                                 <div class="mt-2 ml-4">
                                     <h5 class="card-title">GSO Details</h5>
 

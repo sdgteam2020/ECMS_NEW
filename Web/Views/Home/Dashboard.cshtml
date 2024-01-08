@@ -4,145 +4,111 @@
 }
 
 <div class="container1">
+    @if(ViewBag.Role=="User")
+    {
+        <div class="row">
 
-    <div class="row">
-       
             <div class="card p-4">
-            <div class="row">
-                <div class="col-md-2 col-sm-6">
-                    <div class="counter pink">
-                        <div class="counter-icon">
+                <div class="row">
+                    <div class="col-md-2 col-sm-6">
+                        <div class="counter pink">
                            
-                            <i class="fa fa-address-card"></i>
-                        </div>
-                        <span class="counter-value">10</span>
-                        <h3>I-Card Request</h3>
-                    </div>
-                </div>
-                <div class="col-md-2 col-sm-6">
-                    <div class="counter purple">
-                        <div class="counter-icon">
-                            <i class="fa fa-users"></i>
-                        </div>
-                        <span class="counter-value">1823</span>
-                        <h3>Users</h3>
-                    </div>
-                </div>
-                <div class="col-md-2 col-sm-6">
-                    <div class="counter">
-                        <div class="counter-icon">
-                            <i class="fa fa-magnet"></i>
-                           
-                        </div>
-                        <span class="counter-value">2000</span>
-                        <h3>Total Unit</h3>
-                    </div>
-                </div>
-                <div class="col-md-2 col-sm-6">
-                    <div class="counter blue">
-                        <div class="counter-icon">
-                            <i class="fa fa-american-sign-language-interpreting" aria-hidden="true"></i>
-                        </div>
-                        <span class="counter-value">1854</span>
-                        <h3>Mapping Unit</h3>
-                    </div>
-                </div>
-                <div class="col-md-2 col-sm-6">
-                    <div class="counter green">
-                        <div class="counter-icon">
-                            <i class="fa fa-user"></i>
-                        </div>
-                        <span class="counter-value">1756</span>
-                        <h3>Profile</h3>
-                    </div>
-                </div>
-                <div class="col-md-2 col-sm-6">
-                    <div class="counter yellow">
-                        <div class="counter-icon">
-                            <i class="fa fa-users"></i>
-                        </div>
-                        <span class="counter-value">1823</span>
-                        <h3>Profile With IO & GSO</h3>
-                    </div>
-                </div>
-                <div class="col-md-2 col-sm-6">
-                    <div class="counter purple">
-                        <div class="counter-icon">
-                            <i class="fa fa-address-card" aria-hidden="true"></i>
-                        </div>
-                        <span class="counter-value">1823</span>
-                        <h3>Icard Request Sent</h3>
-                    </div>
-                </div>
-                <div class="col-md-2 col-sm-6">
-                    <div class="counter blue">
-                        <div class="counter-icon">
-                            <i class="fa fa-address-book" aria-hidden="true"></i>
-                        </div>
-                        <span class="counter-value">88</span>
-                        <h3>Sent Request for Io</h3>
-                    </div>
-                </div>
-                <div class="col-md-2 col-sm-6">
-                    <div class="counter pink">
-                        <div class="counter-icon">
-                            <i class="fa fa-address-book" aria-hidden="true"></i>
-                        </div>
-                        <span class="counter-value">17</span>
-                        <h3>Sent Request for GSO</h3>
-                    </div>
-                </div>
-                <div class="col-md-2 col-sm-6">
-                    <div class="counter purple">
-                        <div class="counter-icon">
-                            <i class="fa fa-address-book" aria-hidden="true"></i>
-                        </div>
-                        <span class="counter-value">15</span>
-                        <h3>Icard Sent For Printing</h3>
-                    </div>
-                </div>
+                            <div class="counter-icon">
 
-               
-                <div class="col-md-2 col-sm-6">
-                    <div class="counter blue">
-                        <div class="counter-icon">
-                            <i class="fa fa-window-close" aria-hidden="true"></i>
+                                <i class="fa fa-address-card"></i>
+                            </div>
+                            <span class="counter-value" id="TotReq">0</span>
+                            <h3>I-Card Request</h3>
+                            
+                        </div>
+                    </div>
+                    <div class="col-md-2 col-sm-6">
+                        <div class="counter purple">
+                            <div class="counter-icon">
+                                <i class="fa fa-users"></i>
+                            </div>
+                            <span class="counter-value" id="TotReject">0</span>
+                            <h3>Rejected</h3>
+                        </div>
+                    </div>
+                    <div class="col-md-2 col-sm-6">
+                        <div class="counter">
+                            <div class="counter-icon">
+                                <i class="fa fa-magnet"></i>
 
+                            </div>
+                            <span class="counter-value" id="TotSelfPen">0</span>
+                            <h3>Self Pending</h3>
                         </div>
-                        <span class="counter-value">10</span>
-                        <h3>Rejected from Io</h3>
                     </div>
-                </div>
-                <div class="col-md-2 col-sm-6">
-                    <div class="counter pink">
-                        <div class="counter-icon">
-                            <i class="fa fa-times-circle" aria-hidden="true"></i>
+                    <div class="col-md-2 col-sm-6">
+                        <div class="counter blue">
+                            <div class="counter-icon">
+                                <i class="fa fa-american-sign-language-interpreting" aria-hidden="true"></i>
+                            </div>
+                            <span class="counter-value" id="TotIOPen">0</span>
+                            <h3>Pending From IO</h3>
                         </div>
-                        <span class="counter-value">20</span>
-                        <h3>Rejected from GSO</h3>
                     </div>
+                    <div class="col-md-2 col-sm-6">
+                        <div class="counter green">
+                            <div class="counter-icon">
+                                <i class="fa fa-user"></i>
+                            </div>
+                            <span class="counter-value" id="TotGsoPen">0</span>
+                            <h3>Pending From GSO</h3>
+                        </div>
+                    </div>
+                    <div class="col-md-2 col-sm-6">
+                        <div class="counter yellow">
+                            <div class="counter-icon">
+                                <i class="fa fa-users"></i>
+                            </div>
+                            <span class="counter-value" id="TotM11Pen">0</span>
+                            <h3>Pending From M11</h3>
+                        </div>
+                    </div>
+                    <div class="col-md-2 col-sm-6">
+                        <div class="counter purple">
+                            <div class="counter-icon">
+                                <i class="fa fa-address-card" aria-hidden="true"></i>
+                            </div>
+                            <span class="counter-value" id="TotGQ54Pen">0</span>
+                            <h3>Pending From HQ54 Pen</h3>
+                        </div>
+                    </div>
+                    <div class="col-md-2 col-sm-6">
+                        <div class="counter blue">
+                            <div class="counter-icon">
+                                <i class="fa fa-address-book" aria-hidden="true"></i>
+                            </div>
+                            <span class="counter-value" id="TotPrintPen">0</span>
+                            <h3>Print Pending </h3>
+                        </div>
+                    </div>
+                  
+
                 </div>
-               
             </div>
+
+
+
+
+
         </div>
-
-            
-               
-       
-     
-    </div>
+    }
 </div>
-
+<script src="~/developerjs/dashboard.js"></script>
 <script>
-    $('.counter-value').each(function () {
-        $(this).prop('Counter', 0).animate({
-            Counter: $(this).text()
-        }, {
-            duration: 3500,
-            easing: 'swing',
-            step: function (now) {
-                $(this).text(Math.ceil(now));
-            }
-        });
-    });
+    // $('.counter-value').each(function () {
+    //     $(this).prop('Counter', 0).animate({
+    //         Counter: $(this).text()
+    //     }, {
+    //         duration: 3500,
+    //         easing: 'swing',
+    //         step: function (now) {
+    //             $(this).text(Math.ceil(now));
+    //         }
+    //     });
+    // });
 </script>
