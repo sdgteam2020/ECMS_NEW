@@ -17,6 +17,7 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 using Microsoft.AspNetCore.Identity;
 using DataTransferObject.Domain.Model;
 using DataTransferObject.Domain.Error;
+using DataTransferObject.Response.User;
 
 namespace DataAccessLayer
 {
@@ -27,13 +28,14 @@ namespace DataAccessLayer
         private readonly IDataProtector protector;
         private readonly UserManager<ApplicationUser> userManager;
         private readonly IUserProfileDB userProfileDB;
-
-        public AccountDB(ApplicationDbContext context, ILogger<DomainMapDB> logger, UserManager<ApplicationUser> userManager, IUserProfileDB userProfileDB, IDataProtectionProvider dataProtectionProvider, DataProtectionPurposeStrings dataProtectionPurposeStrings) : base(context)
+        private readonly IDomainMapDB domainMapDB;
+        public AccountDB(ApplicationDbContext context, ILogger<DomainMapDB> logger, UserManager<ApplicationUser> userManager, IUserProfileDB userProfileDB, IDomainMapDB domainMapDB, IDataProtectionProvider dataProtectionProvider, DataProtectionPurposeStrings dataProtectionPurposeStrings) : base(context)
         {
             _context = context;
             _logger = logger;
             this.userManager = userManager;
             this.userProfileDB = userProfileDB;
+            this.domainMapDB = domainMapDB;
             // Pass the purpose string as a parameter
             this.protector = dataProtectionProvider.CreateProtector(
                 dataProtectionPurposeStrings.AFSACIdRouteValue);
@@ -107,7 +109,7 @@ namespace DataAccessLayer
                 if (Choice == "DomainId")
                 {
                     Search = string.IsNullOrEmpty(Search) ? "" : Search.ToLower();
-                    var allrecord = await (from u in _context.Users.Where(P => Search == "" || P.DomainId.ToLower().Contains(Search))
+                    var allrecord = await (from u in _context.Users.Where(P => Search == "" || P.DomainId.ToLower().Contains(Search)).OrderByDescending(x=>x.Id)
                                            join ur in _context.UserRoles on u.Id equals ur.UserId into uur_jointable
                                            from xur in uur_jointable.DefaultIfEmpty()
                                            join r in _context.Roles on xur.RoleId equals r.Id into xurr_jointable
@@ -165,7 +167,7 @@ namespace DataAccessLayer
                 }
                 else
                 {
-                    var allrecord = await (from u in _context.Users.Take(200)
+                    var allrecord = await (from u in _context.Users.OrderByDescending(x=>x.Id).Take(200)
                                            join ur in _context.UserRoles on u.Id equals ur.UserId into uur_jointable
                                            from xur in uur_jointable.DefaultIfEmpty()
                                            join r in _context.Roles on xur.RoleId equals r.Id into xurr_jointable
@@ -362,7 +364,7 @@ namespace DataAccessLayer
                 else if (Choice == "ICNo")
                 {
                     Search = string.IsNullOrEmpty(Search) ? "" : Search.ToLower();
-                    var allrecord = await (from up in _context.UserProfile.Where(P => Search == "" || P.ArmyNo.ToLower().Contains(Search))
+                    var allrecord = await (from up in _context.UserProfile.Where(P => Search == "" || P.ArmyNo.ToLower().Contains(Search)).OrderByDescending(x => x.UserId)
                                            join rk in _context.MRank on up.RankId equals rk.RankId
                                            join tdm in _context.TrnDomainMapping on up.UserId equals tdm.UserId into uptdm_jointable
                                            from xtdm in uptdm_jointable.DefaultIfEmpty()
@@ -420,7 +422,7 @@ namespace DataAccessLayer
                 }
                 else
                 {
-                    var allrecord = await (from up in _context.UserProfile.Take(200)
+                    var allrecord = await (from up in _context.UserProfile.OrderByDescending(x=>x.UserId).Take(200)
                                            join rk in _context.MRank on up.RankId equals rk.RankId
                                            join tdm in _context.TrnDomainMapping on up.UserId equals tdm.UserId into uptdm_jointable
                                            from xtdm in uptdm_jointable.DefaultIfEmpty()
@@ -577,6 +579,23 @@ namespace DataAccessLayer
                         {
                             return false;
                         }
+                        TrnDomainMapping trnDomainMapping = new TrnDomainMapping();
+                        if (dTO.TDMId>0)
+                        {
+                            trnDomainMapping = await domainMapDB.Get(dTO.TDMId);
+                            trnDomainMapping.AspNetUsersId = userUpdate.Id;
+                            trnDomainMapping.UnitId = dTO.UnitMappId;
+                            trnDomainMapping.ApptId = dTO.ApptId;
+                            await domainMapDB.Update(trnDomainMapping);
+                        }
+                        else
+                        {
+                            trnDomainMapping.AspNetUsersId = userUpdate.Id;
+                            trnDomainMapping.UnitId = dTO.UnitMappId;
+                            trnDomainMapping.ApptId = dTO.ApptId;
+                            await domainMapDB.Add(trnDomainMapping);
+                        }
+
                         return true;
                     }
                 }
@@ -602,6 +621,22 @@ namespace DataAccessLayer
                     foreach (var error in result.Errors)
                     {
                         return false;
+                    }
+                    TrnDomainMapping trnDomainMapping = new TrnDomainMapping();
+                    if (dTO.TDMId > 0)
+                    {
+                        trnDomainMapping = await domainMapDB.Get(dTO.TDMId);
+                        trnDomainMapping.AspNetUsersId = userAdd.Id;
+                        trnDomainMapping.UnitId = dTO.UnitMappId;
+                        trnDomainMapping.ApptId = dTO.ApptId;
+                        await domainMapDB.Update(trnDomainMapping);
+                    }
+                    else
+                    {
+                        trnDomainMapping.AspNetUsersId = userAdd.Id;
+                        trnDomainMapping.UnitId = dTO.UnitMappId;
+                        trnDomainMapping.ApptId = dTO.ApptId;
+                        await domainMapDB.Add(trnDomainMapping);
                     }
                     return true;
                 }

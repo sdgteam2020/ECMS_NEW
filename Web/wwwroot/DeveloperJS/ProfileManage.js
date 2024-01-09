@@ -182,7 +182,7 @@ function BindData() {
                         retrieve: true,
                         lengthChange: false,
                         searching: false,
-                        "order": [[2, "asc"]],
+                        "order": [[1, "asc"]],
                         buttons: [{
                             extend: 'copy',
                             exportOptions: {

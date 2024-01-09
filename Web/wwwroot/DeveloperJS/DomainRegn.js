@@ -224,7 +224,6 @@ function BindData() {
                 }
 
                 else {
-
                     $("#tbldata").DataTable().destroy();
 
                     for (var i = 0; i < response.length; i++) {
@@ -261,7 +260,7 @@ function BindData() {
                         retrieve: true,
                         lengthChange: false,
                         searching: false,
-                        "order": [[2, "asc"]],
+                        "order": [[1, "asc"]],
                         buttons: [{
                             extend: 'copy',
                             exportOptions: {
@@ -357,8 +356,7 @@ function Save() {
             "ApptId": $("#spnUnitAppointmentId").html(),
             "UnitMappId": $("#spnUnitMapId").html(),
         }, //get the search string
-        success: function (response) {
-
+        success: function (result) {
             if (result == DataSave) {
                 toastr.success('Domain Id has been saved');
 
