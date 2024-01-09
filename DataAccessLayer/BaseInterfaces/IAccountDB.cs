@@ -19,7 +19,7 @@ namespace DataAccessLayer.BaseInterfaces
         public Task<List<DTOProfileManageResponse>?> GetAllProfileManage(string Search, string Choice);
         public Task<List<DTOUserRegnResponse>?> GetAllUserRegn(string Search, string Choice);
         public Task<List<DTODomainRegnResponse>?> GetAllDomainRegn(string Search, string Choice);
-        public Task<DTOUserRegnResultResponse?> SaveDomainWithAll(DTOUserRegnRequest dTO, int Updatedby);
+        public Task<DTOUserRegnResultResponse?> SaveMapping(DTOUserRegnMappingRequest dTO, int Updatedby);
         public Task<bool?> SaveDomainRegn(DTODomainRegnRequest dTO, int Updatedby);
     }
 }

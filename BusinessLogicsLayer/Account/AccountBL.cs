@@ -49,9 +49,9 @@ namespace BusinessLogicsLayer.Account
         {
             return await _iAccountDB.GetAllDomainRegn(Search, Choice);
         }
-        public async Task<DTOUserRegnResultResponse?> SaveDomainWithAll(DTOUserRegnRequest dTO, int Updatedby)
+        public async Task<DTOUserRegnResultResponse?> SaveMapping(DTOUserRegnMappingRequest dTO, int Updatedby)
         {
-            return await _iAccountDB.SaveDomainWithAll(dTO, Updatedby);
+            return await _iAccountDB.SaveMapping(dTO, Updatedby);
         }
         public async Task<bool?> SaveDomainRegn(DTODomainRegnRequest dTO, int Updatedby)
         {

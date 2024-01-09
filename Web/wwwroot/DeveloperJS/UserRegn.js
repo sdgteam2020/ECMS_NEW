@@ -7,9 +7,6 @@
     $("#AddNewDomain input[name='txtactive']").click(function () {
         $("#txtactive-error").html("");
     });
-    $("#AddNewDomain input[name='IntOffr']").click(function () {
-        $("#IntOffr-error").html("");
-    });
 
     $("#txtArmyNo").autocomplete({
         source: function (request, response) {
@@ -61,16 +58,6 @@
         },
         appendTo: '#suggesstion-box'
     });
-    $("#btnDomainAdd").click(function () {
-        Reset();
-        ResetErrorMessage();
-        $("#AddNewDomain").modal('show');
-    });
-    $("#btnDomainAddReset").click(function () {
-        Reset();
-        ResetErrorMessage();
-    });
-
     $("#txtSearch").keyup(function () {
         var eThis = $(this);
         if ($("input[type='radio'][name=choice]:checked").length > 0) {
@@ -96,8 +83,8 @@
 });
 
 function Proceed() {
-    ResetErrorMessage();
-    let formId = '#SaveDomain';
+    ResetErrorMessageForMapping();
+    let formId = '#SaveMapping';
     $.validator.unobtrusive.parse($(formId));
 
     ValidateRadioButton();
@@ -114,6 +101,70 @@ function Proceed() {
         }).then((result) => {
             if (result.isConfirmed) {
                 Save();
+            }
+        })
+    }
+    else {
+        Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'Please fill required field.',
+
+        })
+        toastr.error('Please fill required field.');
+        return false;
+    }
+}
+function Proceed() {
+    ResetErrorMessageForMapping();
+    let formId = '#UpdateDomainFlag';
+    $.validator.unobtrusive.parse($(formId));
+
+    ValidateRadioButton();
+
+    if ($(formId).valid()) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be Save!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, Save it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                SaveMapping();
+            }
+        })
+    }
+    else {
+        Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'Please fill required field.',
+
+        })
+        toastr.error('Please fill required field.');
+        return false;
+    }
+}
+function ProceedForMapping() {
+    ResetErrorMessageForMapping();
+    let formId = '#SaveMapping';
+    $.validator.unobtrusive.parse($(formId));
+
+    if ($(formId).valid()) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be Save!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, Save it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                SaveMapping();
             }
         })
     }
@@ -201,7 +252,7 @@ function BindData() {
                         listItem += "<td class='align-middle'><span id='roleName'>" + response[i].RoleName + "</span></td>";
                         listItem += "<td class='align-middle'><span id='updatedOn'>" + response[i].UpdatedOn + "</span></td>";
                         if (response[i].Mapped == true)
-                            listItem += "<td class='align-middle'><span id='domain_mapping'><span class='badge badge-pill badge-success'>Yes</span></span></td>";
+                            listItem += "<td class='align-middle'><span id='domain_mapping'><span class='badge badge-pill badge-success'><span id='btneditMapping'><button type='button' class='cls-btneditMapping btn btn-icon btn-round btn-warning mr-1'>Yes</button></span></span></span></td>";
                         else
                             listItem += "<td class='align-middle'><span id='domain_mapping'><span class='badge badge-pill badge-danger'>No</span></span></td>";
 
@@ -230,7 +281,7 @@ function BindData() {
                         retrieve: true,
                         lengthChange: false,
                         searching: false,
-                        "order": [[2, "asc"]],
+                        "order": [[1, "asc"]],
                         buttons: [{
                             extend: 'copy',
                             exportOptions: {
@@ -254,7 +305,42 @@ function BindData() {
                     memberTable.buttons().container().appendTo('#tbldata_wrapper .col-md-6:eq(0)');
 
                     var rows;
+                    $("body").on("click", ".cls-btneditMapping", function () {
+                        ResetForMapping();
+                        ResetErrorMessageForMapping();
+                        $("#lblDomainIdForMapping").html($(this).closest("tr").find("#domainId").html());
+                        $("#lblRoleForMapping").html($(this).closest("tr").find("#roleName").html());
+                        $("#spnDomainRegIdForMapping").html($(this).closest("tr").find("#regId").html());
+                        //alert($(this).closest("tr").find("#domain_approval").html())
+                        if ($(this).closest("tr").find("#domain_approval").html() == 'Verifed') {
+                            $("#txtapprovalyesForMapping").prop("checked", true);
+                        }
+                        else {
+                            $("#txtapprovalnoForMapping").prop("checked", true);
+                        }
 
+                        if ($(this).closest("tr").find("#domain_active").html() == 'Yes') {
+                            $("#txtactiveyesForMapping").prop("checked", true);
+                        }
+                        else {
+                            $("#txtactivenoForMapping").prop("checked", true);
+                        }
+                        if ($(this).closest("tr").find("#regUserId").html() > 0) {
+                            GetProfileByUserId($(this).closest("tr").find("#regUserId").html());
+                        }
+
+                        if ($(this).closest("tr").find("#regTrnDomainMappingId").html() > 0) {
+                            $("#spnTrnDomainMappingIdForMapping").html($(this).closest("tr").find("#regTrnDomainMappingId").html());
+                            GetALLByUnitByIdForMapping($(this).closest("tr").find("#regTrnDomainMappingUnitId").html());
+                        }
+
+                        if ($(this).closest("tr").find("#regTrnDomainMappingApptId").html() > 0) {
+                            GetNameByApptIdForMapping($(this).closest("tr").find("#regTrnDomainMappingApptId").html());
+                        }
+
+                        $("#btnAddMapping").val("Update"); 
+                        $("#AddMapping").modal('show');
+                    });
                     $("body").on("click", ".cls-btnedit", function () {
                         Reset();
                         ResetErrorMessage();
@@ -314,20 +400,14 @@ function BindData() {
     });
 
 }
-function Save() {
+function SaveMapping() {
     //alert($("#spnDomainRegId").html());
     $.ajax({
-        url: '/Account/SaveDomain',
+        url: '/Account/SaveMapping',
         type: 'POST',
         data: {
-            "Id": $("#spnDomainRegId").html(),
-            "DomainId": $("#txtDomainId").val(),
-            "RoleName": $("#txtRole").val(),
-            "AdminFlag": $('input:radio[name=txtapproval]:checked').val(),
-            "Active": $('input:radio[name=txtactive]:checked').val(),
-            "TDMId": $("#spnTrnDomainMappingId").html(),
-            "ApptId": $("#spnUnitAppointmentId").html(),
-            "UnitMappId": $("#spnUnitMapId").html(),
+            "Id": $("#spnDomainRegIdForMapping").html(),
+            "TDMId": $("#spnTrnDomainMappingIdForMapping").html(),
             "UserId": $("#spnUserProfileId").html(),
             "ArmyNo": $("#txtArmyNo").val(),
 
@@ -340,8 +420,8 @@ function Save() {
 
                 $("#AddNewDomain").modal('hide');
                 BindData();
-                Reset();
-                ResetErrorMessage();
+                ResetForMapping();
+                ResetErrorMessageForMapping();
             }
             else if (obj.Result == false)
             {
@@ -404,7 +484,6 @@ function Save() {
         }
     });
 }
-
 function Reset() {
     $("#txtSearch").val("");
 
@@ -414,7 +493,7 @@ function Reset() {
 
     $("#spnTrnDomainMappingId").html("0");
     $("#spnUnitMapId").html("0");
-    $("#txtUnitName").val("");
+    $("#lblUnitName").html("");
     $("#lblComd").html("");
     $("#lblCorps").html("");
     $("#lblDiv").html("");
@@ -426,11 +505,7 @@ function Reset() {
     $("#lblRank").val("");
     $("#lblName").val("");
 
-    $("#spnUnitAppointmentId").html("0");
-    $("#txtAppointmentName").val("");
-
-    $("#intoffsyes").prop("checked", false);
-    $("#intoffsno").prop("checked", false);
+    $("#lblAppointmentName").html("");
 
     $("#txtapprovalyes").prop("checked", false);
     $("#txtapprovalno").prop("checked", false);
@@ -438,14 +513,10 @@ function Reset() {
     $("#txtactiveyes").prop("checked", false);
     $("#txtactiveno").prop("checked", false);
 }
+
 function ResetErrorMessage() {
-    $("#txtDomainId-error").html("");
-    $("#txtRole-error").html("");
     $("#txtapproval-error").html("");
     $("#txtactive-error").html("");
-    $("#IntOffr-error").html("");
-    $("#txtAppointmentName-error").html("");
-    $("#txtUnitName-error").html("");
 }
 function GetALLByUnitById(param1) {
     $.ajax({
@@ -455,7 +526,7 @@ function GetALLByUnitById(param1) {
         type: 'POST',
         success: function (data) {
             $("#spnUnitMapId").html(data.UnitMapId);
-            $("#txtUnitName").val(data.UnitName);
+            $("#lblUnitName").html(data.UnitName);
             $("#lblComd").html(data.ComdName);
             $("#lblCorps").html(data.CorpsName);
             $("#lblDiv").html(data.DivName);
@@ -486,8 +557,66 @@ function GetNameByApptId(param1) {
         data: { "ApptId": param1 },
         type: 'POST',
         success: function (data) {
-            $("#spnUnitAppointmentId").html(data.ApptId);
-            $("#txtAppointmentName").val(data.AppointmentName);
+            $("#lblAppointmentName").html(data.AppointmentName);
         }
     });
+}
+function GetALLByUnitByIdForMapping(param1) {
+    $.ajax({
+        url: '/Master/GetALLByUnitMapId',
+        contentType: 'application/x-www-form-urlencoded',
+        data: { "UnitMapId": param1 },
+        type: 'POST',
+        success: function (data) {
+            $("#lblUnitNameForMapping").html(data.UnitName);
+            $("#lblComdForMapping").html(data.ComdName);
+            $("#lblCorpsForMapping").html(data.CorpsName);
+            $("#lblDivForMapping").html(data.DivName);
+            $("#lblBdeForMapping").html(data.BdeName);
+            $("#lblSusnoForMapping").html(data.Sus_no + '' + data.Suffix);
+
+        }
+    });
+}
+function GetNameByApptIdForMapping(param1) {
+    $.ajax({
+        url: '/Master/GetByApptId',
+        contentType: 'application/x-www-form-urlencoded',
+        data: { "ApptId": param1 },
+        type: 'POST',
+        success: function (data) {
+            $("#lblAppointmentNameForMapping").html(data.AppointmentName);
+        }
+    });
+}
+function ResetForMapping() {
+    $("#txtSearch").val("");
+
+    $("#spnDomainRegIdForMapping").html("0");
+    $("#lblDomainIdForMapping").html("");
+    $("#lblRoleForMapping").html("");
+
+    $("#spnTrnDomainMappingIdForMapping").html("");
+    $("#lblUnitNameForMapping").html("");
+    $("#lblComdForMapping").html("");
+    $("#lblCorpsForMapping").html("");
+    $("#lblDivForMapping").html("");
+    $("#lblBdeForMapping").html("");
+    $("#lblSusnoForMapping").html("");
+
+    $("#spnUserProfileId").html("0");
+    $("#txtArmyNo").val("");
+    $("#lblRank").html("");
+    $("#lblName").html("");
+
+    $("#lblAppointmentNameForMapping").html("");
+
+    $("#txtapprovalyesForMapping").prop("checked", false);
+    $("#txtapprovalnoForMapping").prop("checked", false);
+
+    $("#txtactiveyesForMapping").prop("checked", false);
+    $("#txtactivenoForMapping").prop("checked", false);
+}
+function ResetErrorMessageForMapping() {
+    $("#txtArmyNo-error").html("");
 }
