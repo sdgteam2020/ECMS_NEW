@@ -638,7 +638,12 @@ function UpdateStepCounter(stepId, spnRequestId, Counter,Flag) {
                 } else {
                     ForwardTo(spnRequestId, Counter);
                 }
-                SaveNotification(1, Counter, $("#spnFwdToAspNetUsersId").html(), spnRequestId)
+                if (applyfor == 1) {
+                    SaveNotification(1, Counter, $("#spnFwdToAspNetUsersId").html(), spnRequestId)
+                }
+                else {
+                    SaveNotification(1, (parseInt(Counter)+10), $("#spnFwdToAspNetUsersId").html(), spnRequestId)
+                }
             }
         }
 

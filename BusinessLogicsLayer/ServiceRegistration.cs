@@ -94,7 +94,9 @@ namespace BusinessLogicsLayer
             //services.AddTransient<IBasicDetailTempDB, BasicDetailTempDB>();
 
             services.AddTransient<iGetTokenBL, GetTokenBL>();
+
             services.AddTransient<IStepCounterBL, StepCounterBL>();
+            services.AddTransient<IStepCounterDB, StepCounterDB>();
 
             services.AddTransient<ITrnFwnBL, TrnFwnBL>();
             services.AddTransient<ITrnFwnDB, TrnFwnDB>();

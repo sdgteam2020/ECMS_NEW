@@ -20,9 +20,9 @@ namespace BusinessLogicsLayer.BasicDet
         {
                 _iBasicDetailDB = BasicDetail;
         }
-        public Task<List<BasicDetailVM>> GetALLBasicDetail(int UserId, int step, int type)
+        public Task<List<BasicDetailVM>> GetALLBasicDetail(int UserId, int step, int type, int applyForId)
         {
-            return _iBasicDetailDB.GetALLBasicDetail(UserId ,step, type);
+            return _iBasicDetailDB.GetALLBasicDetail(UserId ,step, type, applyForId);
         }
         public async Task<List<DTOICardTypeRequest>> GetAllICardType()
         {
@@ -58,14 +58,14 @@ namespace BusinessLogicsLayer.BasicDet
             return _iBasicDetailDB.GetTaskCountICardRequest(UserId, Type, applyForId);
         }
 
-        public Task<List<DTONotificationResponse>> GetNotification(int UserId, int Type)
+        public Task<List<DTONotificationResponse>> GetNotification(int UserId, int Type, int applyForId)
         {
-            return _iBasicDetailDB.GetNotification(UserId, Type);
+            return _iBasicDetailDB.GetNotification(UserId, Type, applyForId);
         }
 
-        public Task<List<DTONotificationResponse>> GetNotificationRequestId(int UserId, int Type)
+        public Task<List<DTONotificationResponse>> GetNotificationRequestId(int UserId, int Type, int applyForId)
         {
-            return _iBasicDetailDB.GetNotificationRequestId(UserId, Type);
+            return _iBasicDetailDB.GetNotificationRequestId(UserId, Type, applyForId);
         }
 
         public Task<List<DTODataExportsResponse>> GetBesicdetailsByRequestId(DTODataExportRequest Data)

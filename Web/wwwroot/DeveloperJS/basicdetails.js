@@ -1,7 +1,7 @@
 ﻿$(document).ready(function () {
 
 
-    alert($("#BloodGroupId").val())
+
     if ($("#RegistrationId").val() == 1 || $("#RegistrationId").val() == 2 || $("#RegistrationId").val() == 6) {
         GetUnit() 
         $('#txtUnit').attr('readonly', true);
