@@ -4,6 +4,7 @@ using DataTransferObject.Domain.Model;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
 using DataTransferObject.ViewModels;
+using Microsoft.Extensions.Hosting.Internal;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -42,9 +43,9 @@ namespace BusinessLogicsLayer.BasicDet
             return _iBasicDetailDB.ICardHistory(RequestId);
         }
 
-        public Task<List<BasicDetailVM>> GetALLForIcardSttaus(int UserId, int step, int type)
+        public Task<List<BasicDetailVM>> GetALLForIcardSttaus(int UserId, int step, int type, int applyfor)
         {
-            return _iBasicDetailDB.GetALLForIcardSttaus(UserId, step, type);
+            return _iBasicDetailDB.GetALLForIcardSttaus(UserId, step, type,applyfor);
         }
 
         public Task<bool> SaveBasicDetailsWithAll(BasicDetail Data, MTrnAddress address, MTrnUpload trnUpload, MTrnIdentityInfo mTrnIdentityInfo, MTrnICardRequest mTrnICardRequest, MStepCounter mStepCounter)
@@ -52,9 +53,9 @@ namespace BusinessLogicsLayer.BasicDet
             return _iBasicDetailDB.SaveBasicDetailsWithAll(Data, address, trnUpload, mTrnIdentityInfo, mTrnICardRequest, mStepCounter);
         }
 
-        public Task<DTOICardTaskCountResponse> GetTaskCountICardRequest(int UserId, int Type)
+        public Task<DTOICardTaskCountResponse> GetTaskCountICardRequest(int UserId, int Type, int applyForId)
         {
-            return _iBasicDetailDB.GetTaskCountICardRequest(UserId, Type);
+            return _iBasicDetailDB.GetTaskCountICardRequest(UserId, Type, applyForId);
         }
 
         public Task<List<DTONotificationResponse>> GetNotification(int UserId, int Type)
@@ -69,7 +70,11 @@ namespace BusinessLogicsLayer.BasicDet
 
         public Task<List<DTODataExportsResponse>> GetBesicdetailsByRequestId(DTODataExportRequest Data)
         {
-            return _iBasicDetailDB.GetBesicdetailsByRequestId(Data);
+            
+            var data = _iBasicDetailDB.GetBesicdetailsByRequestId(Data);
+
+            return data;
         }
+       
     }
 }

@@ -2,6 +2,7 @@
 using DataAccessLayer.BaseInterfaces;
 using DataAccessLayer.Logger;
 using DataTransferObject.Domain;
+using DataTransferObject.Domain.Master;
 using DataTransferObject.Domain.Model;
 using DataTransferObject.Response;
 using DataTransferObject.Response.User;
@@ -126,33 +127,49 @@ namespace DataAccessLayer
         {
             try
             {
-                var ret = await (from up in _context.UserProfile
-                                 join rank in _context.MRank on up.RankId equals rank.RankId
-                                 join map in _context.TrnDomainMapping on up.UserId equals map.UserId into upmap_jointable
-                                 from xmap in upmap_jointable.DefaultIfEmpty()
-                                 join mapunit in _context.MapUnit on xmap.UnitId equals mapunit.UnitId into xmapmapunit_jointable
-                                 from xmapunit in xmapmapunit_jointable.DefaultIfEmpty()
-                                 join munit in _context.MUnit on xmapunit.UnitId equals munit.UnitId into xmapunitmunit_jointable
-                                 from xmunit in xmapunitmunit_jointable.DefaultIfEmpty()
-                                 where up.ArmyNo == ArmyNo //&&  user.Updatedby == UserId
-                                 select new DTOUserProfileResponse
-                                 {
+                //var ret = await (from up in _context.UserProfile
+                //                 join rank in _context.MRank on up.RankId equals rank.RankId
+                //                 join map in _context.TrnDomainMapping on up.UserId equals map.UserId into upmap_jointable
+                //                 from xmap in upmap_jointable.DefaultIfEmpty()
+                //                 join mapunit in _context.MapUnit on xmap.UnitId equals mapunit.UnitId into xmapmapunit_jointable
+                //                 from xmapunit in xmapmapunit_jointable.DefaultIfEmpty()
+                //                 join munit in _context.MUnit on xmapunit.UnitId equals munit.UnitId into xmapunitmunit_jointable
+                //                 from xmunit in xmapunitmunit_jointable.DefaultIfEmpty()
+                //                 where up.ArmyNo == ArmyNo //&&  user.Updatedby == UserId
+                //                 select new DTOUserProfileResponse
+                //                 {
 
-                                     ArmyNo = up.ArmyNo,
-                                     UserId = up.UserId,
-                                     Name = up.Name,
-                                     IntOffr = up.IntOffr,
-                                     IsIO = up.IsIO,
-                                     IsCO = up.IsCO,
-                                     Rank = rank.RankName,
-                                     RankId = rank.RankId,
-                                     UnitId = xmunit!=null?xmunit.UnitId:0,
-                                     UnitName = xmunit!=null ? xmunit.UnitName:"No Unit",
+                //                     ArmyNo = up.ArmyNo,
+                //                     UserId = up.UserId,
+                //                     Name = up.Name,
+                //                     IntOffr = up.IntOffr,
+                //                     IsIO = up.IsIO,
+                //                     IsCO = up.IsCO,
+                //                     Rank = rank.RankName,
+                //                     RankId = rank.RankId,
+                //                     UnitId = xmunit!=null?xmunit.UnitId:0,
+                //                     UnitName = xmunit!=null ? xmunit.UnitName:"No Unit",
 
-                                 }
-                                ).Distinct().FirstOrDefaultAsync();
-                return ret;
+                //                 }
+                //                ).Distinct().FirstOrDefaultAsync();
 
+                string query = "SELECT prof.ArmyNo,prof.UserId,prof.Name,prof.IntOffr,prof.IsIO,prof.IsCO,ran.RankName,ran.RankId,mapu.UnitMapId UnitId,munit.UnitName,users.DomainId,trnd.MappedDate,usermodify.DomainId MappedBy from UserProfile prof" +
+                                " inner join MRank ran on prof.RankId = ran.RankId"+
+                                " left join TrnDomainMapping trnd on trnd.UserId = prof.UserId"+
+                                " left join MapUnit mapu on mapu.UnitMapId = trnd.UnitId"+
+                                " left join MUnit munit on munit.UnitId = mapu.UnitId"+
+                                " left join AspNetUsers usermodify on usermodify.Id=trnd.MappedBy" +
+                                " left join AspNetUsers users on trnd.AspNetUsersId = users.Id"+
+                                " where prof.ArmyNo = @ArmyNo";
+                using (var connection = _contextDP.CreateConnection())
+                {
+                    var BasicDetailList = await connection.QueryAsync<DTOUserProfileResponse>(query, new { ArmyNo });
+                    int sno = 1;
+
+                    return BasicDetailList.SingleOrDefault();
+
+                }
+               
             }
             catch (Exception ex)
             {
@@ -258,22 +275,7 @@ namespace DataAccessLayer
             {
                 var BasicDetailList = await connection.QueryAsync<DTOUserProfileResponse>(query, new { DomainId });
                 int sno = 1;
-                //var allrecord = (from e in BasicDetailList
-                //                 select new DTOBasicDetailRequest()
-                //                 {
-                //                     BasicDetailId = e.BasicDetailId,
-                //                     EncryptedId = protector.Protect(e.BasicDetailId.ToString()),
-                //                     Sno = sno++,
-                //                     Name = e.Name,
-                //                     ServiceNo = e.ServiceNo,
-                //                     DOB = e.DOB,
-                //                     DateOfCommissioning = e.DateOfCommissioning,
-                //                     PermanentAddress = e.PermanentAddress,
-                //                     StepCounter = e.StepCounter,
-                //                     StepId = e.StepId,
-                //                     ICardType = e.ICardType,
-                //                     RegistrationType = e.RegistrationType,
-                //                 }).ToList();
+                
                 return BasicDetailList.ToList();
 
             }

@@ -131,7 +131,7 @@ namespace DataAccessLayer
             }
         }
 
-        public async Task<List<BasicDetailVM>> GetALLForIcardSttaus(int UserId, int stepcount, int TypeId)
+        public async Task<List<BasicDetailVM>> GetALLForIcardSttaus(int UserId, int stepcount, int TypeId, int applyfor)
         {
             //var BasicDetailList = _context.BasicDetails.Where(x => x.IsDeleted == false && x.Updatedby == UserId).ToList();
 
@@ -147,7 +147,7 @@ namespace DataAccessLayer
                         "inner join UserProfile pr on pr.UserId = trnicrd.Updatedby " +
                         "inner join TrnDomainMapping map on map.UserId=pr.UserId " +
                         "left join TrnFwds fwd on fwd.ToAspNetUsersId= map.AspNetUsersId and fwd.IsComplete=0 and fwd.RequestId=trnicrd.RequestId " +
-                        "WHERE map.AspNetUsersId = @UserId and trnicrd.Status=0 ORDER BY B.UpdatedOn DESC";
+                        "WHERE map.AspNetUsersId = @UserId and Afor.ApplyForId=@applyfor and trnicrd.Status=0 ORDER BY B.UpdatedOn DESC";
 
             }
             else if (stepcount == 2 || stepcount == 3 || stepcount == 4 || stepcount == 5 || stepcount == 6)//IO
@@ -160,7 +160,7 @@ namespace DataAccessLayer
             " inner join MApplyFor Afor on Afor.ApplyForId = B.ApplyForId " +
             " inner join TrnStepCounter C on trnicrd.RequestId = C.RequestId" +
             " inner join MICardType ty on ty.TypeId = trnicrd.TypeId" +
-            " inner join TrnFwds fwd on fwd.RequestId = trnicrd.RequestId and fwd.FromAspNetUsersId = @UserId and C.StepId = @stepcount where trnicrd.Status=0";
+            " inner join TrnFwds fwd on fwd.RequestId = trnicrd.RequestId and fwd.FromAspNetUsersId = @UserId and Afor.ApplyForId=@applyfor and C.StepId = @stepcount where trnicrd.Status=0";
                 }
                 else if (TypeId == 3)
                 {
@@ -170,7 +170,7 @@ namespace DataAccessLayer
             " inner join MApplyFor Afor on Afor.ApplyForId = B.ApplyForId " +
             " inner join TrnStepCounter C on trnicrd.RequestId = C.RequestId" +
             " inner join MICardType ty on ty.TypeId = trnicrd.TypeId" +
-            " inner join TrnFwds fwd on fwd.RequestId = trnicrd.RequestId and fwd.FromAspNetUsersId = @UserId and C.StepId = @stepcount where trnicrd.Status=0";
+            " inner join TrnFwds fwd on fwd.RequestId = trnicrd.RequestId and fwd.FromAspNetUsersId = @UserId and Afor.ApplyForId=@applyfor and C.StepId = @stepcount where trnicrd.Status=0";
                 }
 
 
@@ -184,7 +184,7 @@ namespace DataAccessLayer
                 " inner join MApplyFor Afor on Afor.ApplyForId = B.ApplyForId " +
                 " inner join TrnStepCounter C on trnicrd.RequestId = C.RequestId" +
                 " inner join MICardType ty on ty.TypeId = trnicrd.TypeId" +
-                " inner join TrnFwds fwd on fwd.RequestId = trnicrd.RequestId and fwd.ToAspNetUsersId = @UserId and fwd.Status=0 and C.StepId = @stepcount where trnicrd.Status=0";
+                " inner join TrnFwds fwd on fwd.RequestId = trnicrd.RequestId and fwd.ToAspNetUsersId = @UserId and Afor.ApplyForId=@applyfor and fwd.Status=0 and C.StepId = @stepcount where trnicrd.Status=0";
             }
          
             //else if (stepcount == 4)///MI-11
@@ -226,7 +226,7 @@ namespace DataAccessLayer
             //}
             using (var connection = _contextDP.CreateConnection())
             {
-                var BasicDetailList = await connection.QueryAsync<BasicDetailVM>(query, new { UserId, stepcount, TypeId });
+                var BasicDetailList = await connection.QueryAsync<BasicDetailVM>(query, new { UserId, stepcount, TypeId,applyfor });
                 //List<MRegistration> RegistrationList = await _context.MRegistration.ToListAsync();
                 int sno = 1;
                 var allrecord = (from e in BasicDetailList
@@ -543,7 +543,7 @@ namespace DataAccessLayer
             }
         }
 
-        public async Task<DTOICardTaskCountResponse> GetTaskCountICardRequest(int UserId,int Type)
+        public async Task<DTOICardTaskCountResponse> GetTaskCountICardRequest(int UserId,int Type, int applyForId)
         {
             string query = "";
             if (Type==1)
@@ -563,6 +563,7 @@ namespace DataAccessLayer
                        " from TrnStepCounter cou" +
                        " inner join TrnICardRequest req on cou.RequestId=req.RequestId" +
                        " inner join TrnDomainMapping trndo on trndo.Id=req.TrnDomainMappingId" +
+                       " inner join BasicDetails bs on bs.BasicDetailId=trndo.AspNetUsersId and bs.ApplyForId=@applyForId" +
                        " where AspNetUsersId=@UserId";
             }
             else if (Type == 2)
@@ -591,7 +592,7 @@ namespace DataAccessLayer
             {
                 //data.MRank.RankAbbreviation
                 //data.MArmedType.Abbreviation
-                var ret = await connection.QueryAsync<DTOICardTaskCountResponse>(query, new { UserId });
+                var ret = await connection.QueryAsync<DTOICardTaskCountResponse>(query, new { UserId, applyForId });
 
                 return ret.SingleOrDefault();
             }

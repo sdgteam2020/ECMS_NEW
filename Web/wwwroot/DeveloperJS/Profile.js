@@ -895,8 +895,8 @@ function DataBindAll() {
                         $("#spnUserId").html($(this).closest("tr").find("#spnproUserId").html());
                         GetByArmyNo($(this).closest("tr").find("#ArmyNo").html(), 0)
                         
-                        GetByArmyNo($(this).closest("tr").find("#IOArmyNo").html(), 1) 
-                        GetByArmyNo($(this).closest("tr").find("#GSOArmyNo").html(), 2) 
+                        //GetByArmyNo($(this).closest("tr").find("#IOArmyNo").html(), 1) 
+                       //GetByArmyNo($(this).closest("tr").find("#GSOArmyNo").html(), 2) 
 
                        /* mMsater($(this).closest("tr").find("#GSOArmyNo").html(), "ddlProAppointment", Appt, "");*/
                         //$(".spnCorpsId").html($(this).closest("tr").find("#spnMcorpsId").html());
@@ -1098,6 +1098,9 @@ function GetByArmyNo(ArmyNo, Type, Unit, IO, GSO) {
                         }
                         $("#txtName").val(response.Name);
                         GetALLByUnitById($("#aspndomainUnitID").html());
+                        $("#lblDomainId").html(response.DomainId);
+                        $("#lblMappedDate").html(DateFormateMMMM_dd_yyyy(response.MappedDate));
+                        $("#lblMappedBy").html(response.MappedBy);
                        // GetALLByUnitById(response.UnitId);
                         //$("#AddNewProfile").modal('hide');
 

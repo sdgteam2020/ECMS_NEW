@@ -59,10 +59,10 @@ namespace Web.Controllers
             return Json(await _registrationBL.GetApplyCardDetails(Data));
 
         }
-        public async Task<IActionResult> GetTaskCountICardRequest(int Id)
+        public async Task<IActionResult> GetTaskCountICardRequest(int Id,int applyForId)
         {
             int userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-            return Json(await _basicDetailBL.GetTaskCountICardRequest(userId, Id));
+            return Json(await _basicDetailBL.GetTaskCountICardRequest(userId, Id, applyForId));
 
         }
         public async Task<IActionResult> SaveNotification(MTrnNotification Data)
