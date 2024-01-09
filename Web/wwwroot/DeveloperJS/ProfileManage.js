@@ -140,17 +140,18 @@ function BindData() {
                 else {
 
                     $("#tbldata").DataTable().destroy();
-
+                    ProfileCount();
                     for (var i = 0; i < response.length; i++) {
 
                         listItem += "<tr>";
                         listItem += "<td class='d-none'><span id='regId'>" + response[i].Id + "</span><span id='userId'>" + response[i].UserId + "</span><span id='rankId'>" + response[i].RankId + "</span></td>";
                         listItem += "<td class='align-middle'>" + (i + 1) + "</td>";
                         listItem += "<td class='align-middle'><span id='userId'>" + response[i].UserId + "</span></td>";
-                        listItem += "<td class='align-middle'><span id='armyNo'>" + response[i].ArmyNo + "</span></td>";
-                        listItem += "<td class='align-middle'><span id='username'>" + response[i].Name + "</span></td>";
-                        listItem += "<td class='align-middle'><span id='rankName'>" + response[i].RankName + "</span></td>";
                         listItem += "<td class='align-middle'><span id='domainId'>" + response[i].DomainId + "</span></td>";
+                        listItem += "<td class='align-middle'><span id='armyNo'>" + response[i].ArmyNo + "</span></td>";
+                        listItem += "<td class='align-middle'><span id='rankName'>" + response[i].RankAbbreviation + "</span></td>";
+                        listItem += "<td class='align-middle'><span id='username'>" + response[i].Name + "</span></td>";
+
                         if (response[i].IsIO == true)
                             listItem += "<td class='align-middle'><span><span class='badge badge-pill badge-success' id='isIO'>Yes</span></span></td>";
                         else
@@ -175,13 +176,13 @@ function BindData() {
                     }
 
                     $("#DetailBody").html(listItem);
-                    $("#lblTotal").html(response.length - 1);
+                    //$("#lblTotal").html(response.length - 1);
 
                     memberTable = $('#tbldata').DataTable({
                         retrieve: true,
                         lengthChange: false,
                         searching: false,
-                        "order": [[2, "asc"]],
+                        "order": [[1, "asc"]],
                         buttons: [{
                             extend: 'copy',
                             exportOptions: {
@@ -261,6 +262,25 @@ function BindData() {
     });
 
 }
+function ProfileCount(){
+    $.ajax({
+        url: '/Account/TotalProfileCount',
+        type: 'POST',
+        success: function (result) {
+            if (result == InternalServerError) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Something went wrong or Invalid Entry!',
+
+                })
+            }
+            else {
+                $("#lblTotal").html(result);
+            }
+        }
+    });
+}
 function Save() {
     $.ajax({
         url: '/Account/SaveProfileManage',
@@ -281,6 +301,7 @@ function Save() {
                 toastr.success('Profile has been saved');
 
                 $("#AddNewProfile").modal('hide');
+                ProfileCount();
                 BindData();
                 Reset();
                 ResetErrorMessage();

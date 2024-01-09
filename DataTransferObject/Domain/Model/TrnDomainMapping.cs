@@ -32,5 +32,10 @@ namespace DataTransferObject.Domain.Model
         [Required]
         public short ApptId { get; set; }
         public MAppointment? MAppointment { get; set; }
+        public int? MappedBy { get; set; }
+
+        [DataType(DataType.Date)]
+        [Column(TypeName = "datetime")]
+        public DateTime? MappedDate { get; set; }
     }
 }

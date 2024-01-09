@@ -1,5 +1,5 @@
 ﻿@{
-    ViewData["Title"] = "Profile Manage";
+    ViewData["Title"] = "User Regn";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -44,9 +44,6 @@
                             <div>
                                 <input class="btn-outline-light form-control mr-2" placeholder="Search Id / Domain /IC No" id="txtSearch" maxlength="30" pattern="^[a-zA-Z0-9 ]*$" />
                             </div>
-                            <div>
-                                <button type="button" id="btnDomainAdd" class="btn btn-outline-success font-weight-600 btn-sm ml-4">Add Domain</button>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -78,7 +75,7 @@
 <script asp-src-include="~/developerjs/mtables.js"></script>
 <script asp-src-include="~/developerjs/userregn.js"></script>
 <script asp-src-include="~/developerjs/commandvalidation.js"></script>
-<div class="modal fade" id="AddNewDomain" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="UpdateDomain" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -210,6 +207,146 @@
                             <div class="col-sm-12 text-right">
                                 <input type="button" class="btn btn-primary" value="Save" id="btnDomainAdd" onclick="Proceed()" />
                                 <button type="button" id="btnDomainAddReset" class="btn btn-outline-danger">Reset</button>
+                            </div>
+                            <div class="col-sm-12" id="msg">
+                            </div>
+                        </div>
+                    </form>
+
+                    <div class="col-sm-12" id="msg">
+                    </div>
+                </div>
+            </div>
+
+        </div><!-- modal-content -->
+    </div><!-- modal-dialog -->
+</div>
+<div class="modal fade" id="SaveMapping" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Mapping Add / Remove</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <form action="" id="SaveMapping" name="SaveMapping" method="post">
+                        <div class="row">
+                            <span class=" d-none" id="spnDomainRegId">0</span>
+                            <div class="form-group row mb-2">
+                                <label class="col-form-label col-sm-4">Domain Id<i class="fas fa-asterisk mand1"></i></label>
+                                <div class="col-sm-8">
+                                    <label class="col-form-label unit-label-background" id="lblDomainId"></label>
+                                </div>
+                            </div>
+                            <div class="form-group row mb-2">
+                                <label class="col-form-label col-sm-4">Role<i class="fas fa-asterisk mand1"></i></label>
+                                <div class="col-sm-8">
+                                    <label class="col-form-label unit-label-background" id="lblRole"></label>
+                                </div>
+                            </div>
+                            <div class="form-group row mb-4">
+                                <label class="col-form-label col-sm-4">Approval<i class="fas fa-asterisk mand1"></i></label>
+                                <div class="col-sm-8">
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="txtapproval" value="true" id="txtapprovalyes" data-val-regex-pattern="^[\w]*$">
+                                        <label class="form-check-label" for="txtapprovalyes">
+                                            Yes
+                                        </label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="txtapproval" value="false" id="txtapprovalno" data-val-regex-pattern="^[\w]*$">
+                                        <label class="form-check-label" for="txtapprovalno">
+                                            No
+                                        </label>
+                                    </div>
+                                    <span class="text-danger field-validation-valid" id="txtapproval-error"></span>
+                                </div>
+                            </div>
+                            <div class="form-group row mb-4">
+                                <label class="col-form-label col-sm-4">Active<i class="fas fa-asterisk mand1"></i></label>
+                                <div class="col-sm-8">
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="txtactive" value="true" id="txtactiveyes" data-val="true" data-val-regex-pattern="^[\w]*$">
+                                        <label class="form-check-label" for="txtactiveyes">
+                                            Yes
+                                        </label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="txtactive" value="false" id="txtactiveno" data-val="true" data-val-regex-pattern="^[\w]*$">
+                                        <label class="form-check-label" for="txtactiveno">
+                                            No
+                                        </label>
+                                    </div>
+                                    <span class="text-danger field-validation-valid" id="txtactive-error"></span>
+                                </div>
+                            </div>
+                            <div class="form-group row mb-2">
+                                <span id="spnTrnDomainMappingId" class="d-none">0</span>
+                                <label class="col-form-label col-sm-4">Appointment Name<i class="fas fa-asterisk mand1"></i></label>
+                                <div class="col-sm-8">
+                                    <label class="col-form-label unit-label-background" id="lblAppointmentName"></label>
+                                </div>
+                            </div>
+                            <div class="form-group row mb-2">
+                                <label class="col-form-label col-sm-4">Unit Name<i class="fas fa-asterisk mand1"></i></label>
+                                <div class="col-sm-8">
+                                    <label class="col-form-label unit-label-background" id="lblUnitName"></label>
+                                </div>
+                            </div>
+                            <div class="row mb-2">
+                                <label class="col-form-label col-sm-4">Sus No</label>
+                                <div class="col-sm-8">
+                                    <label id="lblSusno" class="col-form-label unit-label-background"></label>
+                                </div>
+                            </div>
+                            <div class="row mb-2">
+                                <label class="col-form-label col-sm-4">Comd</label>
+                                <div class="col-sm-8">
+                                    <label class="col-form-label unit-label-background" id="lblComd"></label>
+                                </div>
+                            </div>
+                            <div class="row mb-2">
+                                <label class="col-form-label col-sm-4">Corps</label>
+                                <div class="col-sm-8">
+                                    <label class="col-form-label unit-label-background" id="lblCorps"></label>
+                                </div>
+                            </div>
+                            <div class="row mb-2">
+                                <label class="col-form-label col-sm-4">Div</label>
+                                <div class="col-sm-8">
+                                    <label class="col-form-label unit-label-background" id="lblDiv"></label>
+                                </div>
+                            </div>
+                            <div class="row mb-2">
+                                <label class="col-form-label col-sm-4">Bde</label>
+                                <div class="col-sm-8">
+                                    <label class="col-form-label unit-label-background" id="lblBde"></label>
+                                </div>
+                            </div>
+                            <div class="form-group row mb-2">
+                                <span class=" d-none" id="spnUserProfileId">0</span>
+                                <label class="col-form-label col-sm-4">Offrs Army No</label>
+                                <div class="col-sm-8">
+                                    <input class="form-control Alphanumeric" placeholder="Enter Army No" id="txtArmyNo" name="txtArmyNo" minlength="7" maxlength="15" data-val="true" data-val-regex="This special chars and space not allowed for security reasons." data-val-required="Offrs Army No is required." data-val-regex-pattern="^[\w\-]+$" />
+                                    <span class="text-danger field-validation-valid" data-valmsg-for="txtArmyNo" data-valmsg-replace="true"></span>
+                                </div>
+                            </div>
+                            <div class="form-group row mb-2">
+                                <label class="col-form-label col-sm-4">Name</label>
+                                <div class="col-sm-8">
+                                    <label class="col-form-label unit-label-background" id="lblName"></label>
+                                </div>
+                            </div>
+                            <div class="form-group row mb-2">
+                                <label class="col-form-label col-sm-4">Rank</label>
+                                <div class="col-sm-8">
+                                    <label class="col-form-label unit-label-background" id="lblRank"></label>
+                                </div>
+                            </div>
+                            <div class="col-sm-12 text-right">
+                                <input type="button" class="btn btn-primary" value="Save" id="btnSaveMapping" onclick="Proceed()" />
+                                <button type="button" id="btnSaveMappingReset" class="btn btn-outline-danger">Reset</button>
                             </div>
                             <div class="col-sm-12" id="msg">
                             </div>

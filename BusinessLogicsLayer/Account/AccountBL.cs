@@ -21,6 +21,10 @@ namespace BusinessLogicsLayer.Account
         {
             _iAccountDB = accountDB;
         }
+        public async Task<int> TotalProfileCount()
+        {
+            return await _iAccountDB.TotalProfileCount();
+        }
         public bool GetByDomainId(string DomainId, int Id)
         {
             return _iAccountDB.GetByDomainId(DomainId, Id);
@@ -41,9 +45,17 @@ namespace BusinessLogicsLayer.Account
         {
             return await _iAccountDB.GetAllUserRegn(Search, Choice);
         }
+        public async Task<List<DTODomainRegnResponse>?> GetAllDomainRegn(string Search, string Choice)
+        {
+            return await _iAccountDB.GetAllDomainRegn(Search, Choice);
+        }
         public async Task<DTOUserRegnResultResponse?> SaveDomainWithAll(DTOUserRegnRequest dTO, int Updatedby)
         {
             return await _iAccountDB.SaveDomainWithAll(dTO, Updatedby);
+        }
+        public async Task<bool?> SaveDomainRegn(DTODomainRegnRequest dTO, int Updatedby)
+        {
+            return await _iAccountDB.SaveDomainRegn(dTO, Updatedby);
         }
     }
 }

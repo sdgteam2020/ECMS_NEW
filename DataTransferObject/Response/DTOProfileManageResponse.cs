@@ -16,6 +16,7 @@ namespace DataTransferObject.Response
         public bool IntOffr { get; set; }
         public short RankId { get; set; }
         public string RankName { get; set; } = string.Empty;
+        public string RankAbbreviation { get; set; } = string.Empty;
         public int Id { get; set; }
         public string? DomainId { get; set; }
     }

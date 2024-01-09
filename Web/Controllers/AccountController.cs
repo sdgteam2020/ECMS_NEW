@@ -84,6 +84,91 @@ namespace Web.Controllers
         {
             return View();
         }
+        #region Domain Regn.
+
+        [Authorize(Roles = "Admin")]
+        [HttpGet]
+        public IActionResult DomainRegn()
+        {
+            return View();
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpPost]
+        public async Task<IActionResult> GetAllDomainRegn(string Search, string Choice)
+        {
+            try
+            {
+                return Json(await _iAccountBL.GetAllDomainRegn(Search, Choice));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "Account->DomainRegn");
+                return Json(KeyConstants.InternalServerError);
+            }
+
+        }
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> SaveDomainRegn(DTODomainRegnRequest dTO)
+        {
+            try
+            {
+                int Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+                if (ModelState.IsValid)
+                {
+                    if (!_iAccountBL.GetByDomainId(dTO.DomainId, dTO.Id))
+                    {
+                        bool result;
+                        if (dTO.Id > 0)
+                        {
+                            result = (bool)await _iAccountBL.SaveDomainRegn(dTO, Updatedby);
+                            if(result==true)
+                            {
+                                return Json(KeyConstants.Update);
+                            }
+                            else
+                            {
+                                return Json(KeyConstants.InternalServerError);
+                            }
+                            
+                        }
+                        else
+                        {
+                            result = (bool)await _iAccountBL.SaveDomainRegn(dTO, Updatedby);
+                            if (result == true)
+                            {
+                                return Json(KeyConstants.Save);
+                            }
+                            else
+                            {
+                                return Json(KeyConstants.InternalServerError);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        return Json(KeyConstants.Exists);
+                    }
+
+                }
+                else
+                {
+
+                    return Json(ModelState.Select(x => x.Value.Errors).Where(y => y.Count > 0).ToList());
+                }
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "Account->SaveDomainRegn");
+                return Json(KeyConstants.InternalServerError);
+            }
+
+        }
+
+        #endregion End Domain Regn.
+       
         #region Policy
 
         [HttpGet]
@@ -312,11 +397,26 @@ namespace Web.Controllers
             }
 
         }
-       
+        [Authorize(Roles = "Admin")]
+        [HttpPost]
+        public async Task<IActionResult> TotalProfileCount()
+        {
+            try
+            {
+                return Json(await _iAccountBL.TotalProfileCount());
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "Account->TotalProfileCount");
+                return Json(KeyConstants.InternalServerError);
+            }
+
+        }
+
         #endregion End ProfileManage
 
         #region UserRegn
-        
+
         [Authorize(Roles = "Admin")]
         [HttpGet]
         public IActionResult UserRegn()
@@ -339,60 +439,74 @@ namespace Web.Controllers
             }
 
         }
+
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> SaveDomain(DTOUserRegnRequest dTO)
+        public async Task<IActionResult> SaveUserRegn(DTOUserRegnRequest dTO)
         {
+            DTOUserRegnResultResponse dTOUserRegnResult = new DTOUserRegnResultResponse();
             try
             {
                 int Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                 if (ModelState.IsValid)
                 {
-                    if (! _iAccountBL.GetByDomainId(dTO.DomainId, dTO.Id))
+                    if (!_iAccountBL.GetByDomainId(dTO.DomainId, dTO.Id))
                     {
                         DTOUserRegnResultResponse? dTOUserRegnResultResponse = await _iAccountBL.SaveDomainWithAll(dTO, Updatedby);
                         if (dTOUserRegnResultResponse != null)
                         {
-                            if(dTOUserRegnResultResponse.Result==true)
+                            if (dTOUserRegnResultResponse.Result == true)
                             {
                                 if (dTO.Id > 0)
                                 {
-                                    return Json(KeyConstants.Update);
+                                    dTOUserRegnResult.Result = true;
+                                    dTOUserRegnResult.Message = "Domain Id has been updated.";
+                                    return Json(dTOUserRegnResult);
                                 }
                                 else
                                 {
-                                    return Json(KeyConstants.Save);
+                                    dTOUserRegnResult.Result = true;
+                                    dTOUserRegnResult.Message = "Domain Id has been saved.";
+                                    return Json(dTOUserRegnResult);
                                 }
                             }
                             else
                             {
                                 string json = JsonConvert.SerializeObject(dTOUserRegnResultResponse);
-                                //return Json(json);
                                 return Json(json);
                             }
 
                         }
                         else
                         {
-                            return Json(KeyConstants.InternalServerError);
+                            dTOUserRegnResult.Result = false;
+                            dTOUserRegnResult.Message = "Something went wrong or Invalid Entry!";
+                            return Json(dTOUserRegnResult);
                         }
                     }
                     else
                     {
-                        return Json(KeyConstants.Exists);
+                        dTOUserRegnResult.Result = false;
+                        dTOUserRegnResult.Message = "Domain Id Exits!";
+                        return Json(dTOUserRegnResult);
                     }
-
                 }
                 else
                 {
-
-                    return Json(ModelState.Select(x => x.Value.Errors).Where(y => y.Count > 0).ToList());
+                    //working pending 
+                    string json = JsonConvert.SerializeObject(ModelState.Select(x => x.Value.Errors).Where(y => y.Count > 0).ToList());
+                    dTOUserRegnResult.Result = false;
+                    dTOUserRegnResult.Message = json;
+                    return Json(dTOUserRegnResult);
+                    //return Json(ModelState.Select(x => x.Value.Errors).Where(y => y.Count > 0).ToList());
                 }
 
             }
             catch (Exception ex)
             {
                 _logger.LogError(1001, ex, "Account->SaveProfileManage");
-                return Json(KeyConstants.InternalServerError);
+                dTOUserRegnResult.Result = false;
+                dTOUserRegnResult.Message = "Something went wrong or Invalid Entry!";
+                return Json(dTOUserRegnResult);
             }
 
         }

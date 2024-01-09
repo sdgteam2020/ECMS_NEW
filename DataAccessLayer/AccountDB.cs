@@ -17,6 +17,7 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 using Microsoft.AspNetCore.Identity;
 using DataTransferObject.Domain.Model;
 using DataTransferObject.Domain.Error;
+using DataTransferObject.Response.User;
 
 namespace DataAccessLayer
 {
@@ -27,16 +28,22 @@ namespace DataAccessLayer
         private readonly IDataProtector protector;
         private readonly UserManager<ApplicationUser> userManager;
         private readonly IUserProfileDB userProfileDB;
-
-        public AccountDB(ApplicationDbContext context, ILogger<DomainMapDB> logger, UserManager<ApplicationUser> userManager, IUserProfileDB userProfileDB, IDataProtectionProvider dataProtectionProvider, DataProtectionPurposeStrings dataProtectionPurposeStrings) : base(context)
+        private readonly IDomainMapDB domainMapDB;
+        public AccountDB(ApplicationDbContext context, ILogger<DomainMapDB> logger, UserManager<ApplicationUser> userManager, IUserProfileDB userProfileDB, IDomainMapDB domainMapDB, IDataProtectionProvider dataProtectionProvider, DataProtectionPurposeStrings dataProtectionPurposeStrings) : base(context)
         {
             _context = context;
             _logger = logger;
             this.userManager = userManager;
             this.userProfileDB = userProfileDB;
+            this.domainMapDB = domainMapDB;
             // Pass the purpose string as a parameter
             this.protector = dataProtectionProvider.CreateProtector(
                 dataProtectionPurposeStrings.AFSACIdRouteValue);
+        }
+        public async Task<int> TotalProfileCount()
+        {
+            int ret = await _context.UserProfile.CountAsync();
+            return ret;
         }
         public bool GetByDomainId(string DomainId, int Id)
         {
@@ -94,6 +101,105 @@ namespace DataAccessLayer
                 return null;
             }
 
+        }
+        public async Task<List<DTODomainRegnResponse>?> GetAllDomainRegn(string Search, string Choice)
+        {
+            try
+            {
+                if (Choice == "DomainId")
+                {
+                    Search = string.IsNullOrEmpty(Search) ? "" : Search.ToLower();
+                    var allrecord = await (from u in _context.Users.Where(P => Search == "" || P.DomainId.ToLower().Contains(Search)).OrderByDescending(x=>x.Id)
+                                           join ur in _context.UserRoles on u.Id equals ur.UserId into uur_jointable
+                                           from xur in uur_jointable.DefaultIfEmpty()
+                                           join r in _context.Roles on xur.RoleId equals r.Id into xurr_jointable
+                                           from xr in xurr_jointable.DefaultIfEmpty()
+                                           join tdm in _context.TrnDomainMapping on u.Id equals tdm.AspNetUsersId into utdm_jointable
+                                           from xtdm in utdm_jointable.DefaultIfEmpty()
+                                           join up in _context.UserProfile on xtdm.UserId equals up.UserId into xtdmup_jointable
+                                           from xup in xtdmup_jointable.DefaultIfEmpty()
+                                           select new DTODomainRegnResponse()
+                                           {
+                                               Id = u.Id,
+                                               DomainId = u.DomainId,
+                                               AdminFlag = u.AdminFlag,
+                                               Active = u.Active,
+                                               UpdatedOn = u.UpdatedOn,
+                                               Mapped = xtdm != null ? true : false,
+                                               TrnDomainMappingId = xtdm != null ? xtdm.Id : 0,
+                                               TrnDomainMappingApptId = (short)(xtdm != null ? xtdm.ApptId : 0),
+                                               TrnDomainMappingUnitId = xtdm != null ? xtdm.UnitId : 0,
+                                               ArmyNo = xup != null ? xup.ArmyNo : null,
+                                               UserId = xup != null ? xup.UserId : 0,
+                                               RoleName = xr != null ? (xr.Name != null ? xr.Name : "Role name is blank.") : "no role assign",
+                                           }).Take(200).ToListAsync();
+                    return allrecord;
+                }
+                else if (Choice == "Id")
+                {
+                    int Id = string.IsNullOrEmpty(Search) ? 0 : Convert.ToInt32(Search);
+                    var allrecord = await (from u in _context.Users.Where(P => P.Id == Id)
+                                           join ur in _context.UserRoles on u.Id equals ur.UserId into uur_jointable
+                                           from xur in uur_jointable.DefaultIfEmpty()
+                                           join r in _context.Roles on xur.RoleId equals r.Id into xurr_jointable
+                                           from xr in xurr_jointable.DefaultIfEmpty()
+                                           join tdm in _context.TrnDomainMapping on u.Id equals tdm.AspNetUsersId into utdm_jointable
+                                           from xtdm in utdm_jointable.DefaultIfEmpty()
+                                           join up in _context.UserProfile on xtdm.UserId equals up.UserId into tdmup_jointable
+                                           from xup in tdmup_jointable.DefaultIfEmpty()
+                                           select new DTODomainRegnResponse()
+                                           {
+                                               Id = u.Id,
+                                               DomainId = u.DomainId,
+                                               AdminFlag = u.AdminFlag,
+                                               Active = u.Active,
+                                               UpdatedOn = u.UpdatedOn,
+                                               Mapped = xtdm != null ? true : false,
+                                               TrnDomainMappingId = xtdm != null ? xtdm.Id : 0,
+                                               TrnDomainMappingApptId = (short)(xtdm != null ? xtdm.ApptId : 0),
+                                               TrnDomainMappingUnitId = xtdm != null ? xtdm.UnitId : 0,
+                                               ArmyNo = xup != null ? xup.ArmyNo : null,
+                                               UserId = xup != null ? xup.UserId : 0,
+                                               RoleName = xr != null ? (xr.Name != null ? xr.Name : "Role name is blank.") : null,
+                                           }).ToListAsync();
+                    return allrecord;
+
+                }
+                else
+                {
+                    var allrecord = await (from u in _context.Users.OrderByDescending(x=>x.Id).Take(200)
+                                           join ur in _context.UserRoles on u.Id equals ur.UserId into uur_jointable
+                                           from xur in uur_jointable.DefaultIfEmpty()
+                                           join r in _context.Roles on xur.RoleId equals r.Id into xurr_jointable
+                                           from xr in xurr_jointable.DefaultIfEmpty()
+                                           join tdm in _context.TrnDomainMapping on u.Id equals tdm.AspNetUsersId into utdm_jointable
+                                           from xtdm in utdm_jointable.DefaultIfEmpty()
+                                           join up in _context.UserProfile on xtdm.UserId equals up.UserId into xtdmup_jointable
+                                           from xup in xtdmup_jointable.DefaultIfEmpty()
+                                           select new DTODomainRegnResponse()
+                                           {
+                                               Id = u.Id,
+                                               DomainId = u.DomainId,
+                                               AdminFlag = u.AdminFlag,
+                                               Active = u.Active,
+                                               UpdatedOn = u.UpdatedOn,
+                                               Mapped = xtdm != null ? true : false,
+                                               TrnDomainMappingId = xtdm != null ? xtdm.Id : 0,
+                                               TrnDomainMappingApptId = (short)(xtdm != null ? xtdm.ApptId : 0),
+                                               TrnDomainMappingUnitId = xtdm != null ? xtdm.UnitId : 0,
+                                               ArmyNo = xup != null ? xup.ArmyNo : null,
+                                               UserId = xup != null ? xup.UserId : 0,
+                                               RoleName = xr != null ? (xr.Name != null ? xr.Name : "Role name is blank.") : null,
+                                           }).ToListAsync();
+                    return allrecord;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "AccountDB->UserRegn");
+                return null;
+            }
         }
         public async Task<List<DTOUserRegnResponse>?> GetAllUserRegn(string Search,string Choice)
         {
@@ -249,6 +355,7 @@ namespace DataAccessLayer
                                                IsCO = up.IsCO,
                                                RankId=rk.RankId,
                                                RankName=rk.RankName,
+                                               RankAbbreviation=rk.RankAbbreviation,
                                                Id = u.Id,
                                                DomainId = u.DomainId,
                                            }).Take(200).ToListAsync();
@@ -257,7 +364,7 @@ namespace DataAccessLayer
                 else if (Choice == "ICNo")
                 {
                     Search = string.IsNullOrEmpty(Search) ? "" : Search.ToLower();
-                    var allrecord = await (from up in _context.UserProfile.Where(P => Search == "" || P.ArmyNo.ToLower().Contains(Search))
+                    var allrecord = await (from up in _context.UserProfile.Where(P => Search == "" || P.ArmyNo.ToLower().Contains(Search)).OrderByDescending(x => x.UserId)
                                            join rk in _context.MRank on up.RankId equals rk.RankId
                                            join tdm in _context.TrnDomainMapping on up.UserId equals tdm.UserId into uptdm_jointable
                                            from xtdm in uptdm_jointable.DefaultIfEmpty()
@@ -277,6 +384,7 @@ namespace DataAccessLayer
                                                IsCO = up.IsCO,
                                                RankId = rk.RankId,
                                                RankName = rk.RankName,
+                                               RankAbbreviation = rk.RankAbbreviation,
                                                Id = xu != null ? xu.Id : 0,
                                                DomainId = xu != null ? xu.DomainId : null,
                                            }).Take(200).ToListAsync();
@@ -305,6 +413,7 @@ namespace DataAccessLayer
                                                IsCO = up.IsCO,
                                                RankId = rk.RankId,
                                                RankName = rk.RankName,
+                                               RankAbbreviation = rk.RankAbbreviation,
                                                Id = xu != null ? xu.Id : 0,
                                                DomainId = xu != null ? xu.DomainId : null,
                                            }).ToListAsync();
@@ -313,7 +422,7 @@ namespace DataAccessLayer
                 }
                 else
                 {
-                    var allrecord = await (from up in _context.UserProfile.Take(200)
+                    var allrecord = await (from up in _context.UserProfile.OrderByDescending(x=>x.UserId).Take(200)
                                            join rk in _context.MRank on up.RankId equals rk.RankId
                                            join tdm in _context.TrnDomainMapping on up.UserId equals tdm.UserId into uptdm_jointable
                                            from xtdm in uptdm_jointable.DefaultIfEmpty()
@@ -333,6 +442,7 @@ namespace DataAccessLayer
                                                IsCO = up.IsCO,
                                                RankId = rk.RankId,
                                                RankName = rk.RankName,
+                                               RankAbbreviation = rk.RankAbbreviation,
                                                Id = xu != null ?xu.Id : 0,
                                                DomainId = xu != null ? xu.DomainId : null,
                                            }).ToListAsync();
@@ -380,7 +490,6 @@ namespace DataAccessLayer
                             dTOUserRegnResultResponse.Message = "Army number not valid.";
                             return dTOUserRegnResultResponse;
                         }
-                            
                     }
                     else
                     {
@@ -425,6 +534,116 @@ namespace DataAccessLayer
             catch (Exception ex)
             {
                 _logger.LogError(1001, ex, "AccountDB->SaveDomainWithAll");
+                return null;
+            }
+
+        }
+        public async Task<bool?> SaveDomainRegn(DTODomainRegnRequest dTO, int Updatedby)
+        {
+            try
+            {
+                if (dTO.Id > 0)
+                {
+                    var userUpdate = await userManager.FindByIdAsync(dTO.Id.ToString());
+
+                    if (userUpdate == null)
+                    {
+                        return false;
+                    }
+                    else
+                    {
+                        userUpdate.DomainId = dTO.DomainId;
+                        userUpdate.Active = dTO.Active;
+                        userUpdate.Updatedby = Updatedby;
+                        userUpdate.UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
+                        userUpdate.UserName = dTO.DomainId.ToLower();
+                        userUpdate.Email = dTO.DomainId.ToLower() + "@army.mil";
+                        if (dTO.AdminFlag == true)
+                        {
+                            userUpdate.AdminFlag = dTO.AdminFlag;
+                            userUpdate.AdminFlagDate = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
+                        }
+                        else
+                        {
+                            userUpdate.AdminFlag = dTO.AdminFlag;
+                            userUpdate.AdminFlagDate = null;
+                        }
+                        var result = await userManager.UpdateAsync(userUpdate);
+
+                        if (!result.Succeeded)
+                        {
+                            return false;
+                        }
+
+                        foreach (var error in result.Errors)
+                        {
+                            return false;
+                        }
+                        TrnDomainMapping trnDomainMapping = new TrnDomainMapping();
+                        if (dTO.TDMId>0)
+                        {
+                            trnDomainMapping = await domainMapDB.Get(dTO.TDMId);
+                            trnDomainMapping.AspNetUsersId = userUpdate.Id;
+                            trnDomainMapping.UnitId = dTO.UnitMappId;
+                            trnDomainMapping.ApptId = dTO.ApptId;
+                            await domainMapDB.Update(trnDomainMapping);
+                        }
+                        else
+                        {
+                            trnDomainMapping.AspNetUsersId = userUpdate.Id;
+                            trnDomainMapping.UnitId = dTO.UnitMappId;
+                            trnDomainMapping.ApptId = dTO.ApptId;
+                            await domainMapDB.Add(trnDomainMapping);
+                        }
+
+                        return true;
+                    }
+                }
+                else
+                {
+                    var userAdd = new ApplicationUser
+                    {
+                        DomainId = dTO.DomainId,
+                        Active = dTO.Active,
+                        AdminFlag = dTO.AdminFlag,
+                        AdminFlagDate = dTO.AdminFlag == true? TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time")):null,
+                        Updatedby = Updatedby,
+                        UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time")),
+                        UserName = dTO.DomainId.ToLower(),
+                        Email = dTO.DomainId.ToLower() + "@army.mil",
+                    };
+                    var result = await userManager.CreateAsync(userAdd, "Admin123#");
+
+                    if (result.Succeeded)
+                    {
+                        await userManager.AddToRoleAsync(userAdd, dTO.RoleName);
+                    }
+                    foreach (var error in result.Errors)
+                    {
+                        return false;
+                    }
+                    TrnDomainMapping trnDomainMapping = new TrnDomainMapping();
+                    if (dTO.TDMId > 0)
+                    {
+                        trnDomainMapping = await domainMapDB.Get(dTO.TDMId);
+                        trnDomainMapping.AspNetUsersId = userAdd.Id;
+                        trnDomainMapping.UnitId = dTO.UnitMappId;
+                        trnDomainMapping.ApptId = dTO.ApptId;
+                        await domainMapDB.Update(trnDomainMapping);
+                    }
+                    else
+                    {
+                        trnDomainMapping.AspNetUsersId = userAdd.Id;
+                        trnDomainMapping.UnitId = dTO.UnitMappId;
+                        trnDomainMapping.ApptId = dTO.ApptId;
+                        await domainMapDB.Add(trnDomainMapping);
+                    }
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "AccountDB->SaveDomainRegn");
                 return null;
             }
 
