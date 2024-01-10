@@ -19,6 +19,7 @@ namespace DataTransferObject.Response
         public string Name { get; set; } = string.Empty;
         public bool Mapping { get; set; }
         public string? DomainId { get; set; }
+        public int AspNetUsersId { get; set; }
         public byte FormationId { get; set; }
         public string FormationName { get; set; } = string.Empty;
         public short ApptId { get; set; }
