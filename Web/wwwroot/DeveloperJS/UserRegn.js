@@ -7,16 +7,13 @@
     $("#AddNewDomain input[name='txtactive']").click(function () {
         $("#txtactive-error").html("");
     });
-    $("#AddNewDomain input[name='IntOffr']").click(function () {
-        $("#IntOffr-error").html("");
-    });
 
     $("#txtArmyNo").autocomplete({
         source: function (request, response) {
+            $("#lblName").html('');
+            $("#lblRank").html('');
             if (request.term.length > 2) {
                 $("#spnUserProfileId").html('');
-                $("#lblName").html('');
-                $("#lblRank").html('');
                 var param = { "ArmyNo": request.term };
                 $("#spnUserProfileId").html(0);
                 $.ajax({
@@ -61,16 +58,14 @@
         },
         appendTo: '#suggesstion-box'
     });
-    $("#btnDomainAdd").click(function () {
-        Reset();
-        ResetErrorMessage();
-        $("#AddNewDomain").modal('show');
+    $('#txtArmyNo').keyup(function (e) {
+        if (e.keyCode == 46) {
+            $("#spnUserProfileId").html('0');
+            $("#txtArmyNo").val('');
+            $("#lblName").html('');
+            $("#lblRank").html('');
+        }
     });
-    $("#btnDomainAddReset").click(function () {
-        Reset();
-        ResetErrorMessage();
-    });
-
     $("#txtSearch").keyup(function () {
         var eThis = $(this);
         if ($("input[type='radio'][name=choice]:checked").length > 0) {
@@ -94,63 +89,6 @@
         }
     });
 });
-
-function Proceed() {
-    ResetErrorMessage();
-    let formId = '#SaveDomain';
-    $.validator.unobtrusive.parse($(formId));
-
-    ValidateRadioButton();
-
-    if ($(formId).valid()) {
-        Swal.fire({
-            title: 'Are you sure?',
-            text: "You won't be Save!",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, Save it!'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                Save();
-            }
-        })
-    }
-    else {
-        Swal.fire({
-            icon: 'error',
-            title: 'Oops...',
-            text: 'Please fill required field.',
-
-        })
-        toastr.error('Please fill required field.');
-        return false;
-    }
-}
-function ValidateRadioButton() {
-    if ($("input[type='radio'][name=txtapproval]:checked").length == 0) {
-        $("#txtapproval-error").html("Approval is required.");
-    }
-    else {
-        $("#txtapproval-error").html("");
-    }
-
-    if ($("input[type='radio'][name=txtactive]:checked").length == 0) {
-        $("#txtactive-error").html("Active is required.");
-    }
-    else {
-        $("#txtactive-error").html("");
-    }
-
-    if ($("input[type='radio'][name=IntOffr]:checked").length == 0) {
-        $("#IntOffr-error").html("IntOffr is required.");
-    }
-    else {
-        $("#IntOffr-error").html("");
-    }
-}
-
 function BindData() {
     var listItem = "";
     var userdata =
@@ -199,9 +137,12 @@ function BindData() {
                         listItem += "<td class='align-middle'><span id='domainId'>" + response[i].DomainId + "</span></td>";
                         listItem += "<td class='align-middle'><span id='armyNo'>" + response[i].ArmyNo + "</span></td>";
                         listItem += "<td class='align-middle'><span id='roleName'>" + response[i].RoleName + "</span></td>";
-                        listItem += "<td class='align-middle'><span id='updatedOn'>" + response[i].UpdatedOn + "</span></td>";
+                        if (response[i].Id != null && response[i].Id != "null")
+                            listItem += "<td class='align-middle'><span id='updatedOn'>" + DateFormateddMMyyyyhhmmss(response[i].UpdatedOn) + "</span></td>";
+                        else
+                            listItem += "<td class='align-middle'>NA</td>";
                         if (response[i].Mapped == true)
-                            listItem += "<td class='align-middle'><span id='domain_mapping'><span class='badge badge-pill badge-success'>Yes</span></span></td>";
+                            listItem += "<td class='align-middle'><span id='btneditMapping'><button type='button' class='cls-btneditMapping btn btn-icon btn-round btn-warning mr-1'><i class='fas fa-edit'></i></button></span></td>";
                         else
                             listItem += "<td class='align-middle'><span id='domain_mapping'><span class='badge badge-pill badge-danger'>No</span></span></td>";
 
@@ -215,9 +156,10 @@ function BindData() {
                         else
                             listItem += "<td class='align-middle'><span><span class='badge badge-pill badge-danger' id='domain_approval'>Not Verify</span></span></td>";
 
-                        listItem += "<td class='align-middle'><span id='btnedit'><button type='button' class='cls-btnedit btn btn-icon btn-round btn-warning mr-1'><i class='fas fa-edit'></i></button></span></td>";
-
-
+                        if (response[i].Id != null && response[i].Id != "null")
+                            listItem += "<td class='align-middle'><span id='btnedit'><button type='button' class='cls-btnedit btn btn-icon btn-round btn-warning mr-1'><i class='fas fa-edit'></i></button></span></td>";
+                        else
+                            listItem += "<td class='align-middle'>NA</td>";
                         /*    listItem += "<td class='nowrap'><button type='button' class='cls-btnSend btn btn-outline-success mr-1'>Send To Verification</button></td>";*/
                         listItem += "</tr>";
 
@@ -230,7 +172,7 @@ function BindData() {
                         retrieve: true,
                         lengthChange: false,
                         searching: false,
-                        "order": [[2, "asc"]],
+                        "order": [[1, "asc"]],
                         buttons: [{
                             extend: 'copy',
                             exportOptions: {
@@ -254,12 +196,47 @@ function BindData() {
                     memberTable.buttons().container().appendTo('#tbldata_wrapper .col-md-6:eq(0)');
 
                     var rows;
+                    $("body").on("click", ".cls-btneditMapping", function () {
+                        ResetForMapping();
+                        ResetErrorMessageForMapping();
+                        $("#lblDomainIdForMapping").html($(this).closest("tr").find("#domainId").html());
+                        $("#lblRoleForMapping").html($(this).closest("tr").find("#roleName").html());
+                        $("#spnDomainRegIdForMapping").html($(this).closest("tr").find("#regId").html());
+                        //alert($(this).closest("tr").find("#domain_approval").html())
+                        if ($(this).closest("tr").find("#domain_approval").html() == 'Verifed') {
+                            $("#txtapprovalyesForMapping").prop("checked", true);
+                        }
+                        else {
+                            $("#txtapprovalnoForMapping").prop("checked", true);
+                        }
 
+                        if ($(this).closest("tr").find("#domain_active").html() == 'Yes') {
+                            $("#txtactiveyesForMapping").prop("checked", true);
+                        }
+                        else {
+                            $("#txtactivenoForMapping").prop("checked", true);
+                        }
+                        if ($(this).closest("tr").find("#regUserId").html() > 0) {
+                            GetProfileByUserId($(this).closest("tr").find("#regUserId").html());
+                        }
+
+                        if ($(this).closest("tr").find("#regTrnDomainMappingId").html() > 0) {
+                            $("#spnTrnDomainMappingIdForMapping").html($(this).closest("tr").find("#regTrnDomainMappingId").html());
+                            GetALLByUnitByIdForMapping($(this).closest("tr").find("#regTrnDomainMappingUnitId").html());
+                        }
+
+                        if ($(this).closest("tr").find("#regTrnDomainMappingApptId").html() > 0) {
+                            GetNameByApptIdForMapping($(this).closest("tr").find("#regTrnDomainMappingApptId").html());
+                        }
+
+                        $("#btnAddMapping").val("Update");
+                        $("#AddMapping").modal('show');
+                    });
                     $("body").on("click", ".cls-btnedit", function () {
                         Reset();
                         ResetErrorMessage();
-                        $("#txtDomainId").val($(this).closest("tr").find("#domainId").html());
-                        $("#txtRole").val($(this).closest("tr").find("#roleName").html());
+                        $("#lblDomainId").html($(this).closest("tr").find("#domainId").html());
+                        $("#lblRole").html($(this).closest("tr").find("#roleName").html());
                         $("#spnDomainRegId").html($(this).closest("tr").find("#regId").html());
                         //alert($(this).closest("tr").find("#domain_approval").html())
                         if ($(this).closest("tr").find("#domain_approval").html() == 'Verifed') {
@@ -275,12 +252,8 @@ function BindData() {
                         else {
                             $("#txtactiveno").prop("checked", true);
                         }
-                        if ($(this).closest("tr").find("#regUserId").html() > 0) {
-                            GetProfileByUserId($(this).closest("tr").find("#regUserId").html());
-                        }
 
                         if ($(this).closest("tr").find("#regTrnDomainMappingId").html() > 0) {
-                            $("spnTrnDomainMappingId").val($(this).closest("tr").find("#regTrnDomainMappingId").html());
                             GetALLByUnitById($(this).closest("tr").find("#regTrnDomainMappingUnitId").html());
                         }
 
@@ -288,8 +261,8 @@ function BindData() {
                             GetNameByApptId($(this).closest("tr").find("#regTrnDomainMappingApptId").html());
                         }
 
-                        $("#btnDomainAdd").val("Update");
-                        $("#AddNewDomain").modal('show');
+                        $("#btnDomainFlag").val("Update");
+                        $("#AddDomainFlag").modal('show');
                     });
                 }
             }
@@ -314,20 +287,45 @@ function BindData() {
     });
 
 }
-function Save() {
+function ProceedForMapping() {
+    ResetErrorMessageForMapping();
+    let formId = '#SaveMapping';
+    $.validator.unobtrusive.parse($(formId));
+
+    if ($(formId).valid()) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be Save!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, Save it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                SaveMapping();
+            }
+        })
+    }
+    else {
+        Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'Please fill required field.',
+
+        })
+        toastr.error('Please fill required field.');
+        return false;
+    }
+}
+function SaveMapping() {
     //alert($("#spnDomainRegId").html());
     $.ajax({
-        url: '/Account/SaveDomain',
+        url: '/Account/SaveMapping',
         type: 'POST',
         data: {
-            "Id": $("#spnDomainRegId").html(),
-            "DomainId": $("#txtDomainId").val(),
-            "RoleName": $("#txtRole").val(),
-            "AdminFlag": $('input:radio[name=txtapproval]:checked').val(),
-            "Active": $('input:radio[name=txtactive]:checked').val(),
-            "TDMId": $("#spnTrnDomainMappingId").html(),
-            "ApptId": $("#spnUnitAppointmentId").html(),
-            "UnitMappId": $("#spnUnitMapId").html(),
+            "Id": $("#spnDomainRegIdForMapping").html(),
+            "TDMId": $("#spnTrnDomainMappingIdForMapping").html(),
             "UserId": $("#spnUserProfileId").html(),
             "ArmyNo": $("#txtArmyNo").val(),
 
@@ -338,10 +336,10 @@ function Save() {
             {
                 toastr.success(obj.Message);
 
-                $("#AddNewDomain").modal('hide');
+                $("#AddMapping").modal('hide');
                 BindData();
-                Reset();
-                ResetErrorMessage();
+                ResetForMapping();
+                ResetErrorMessageForMapping();
             }
             else if (obj.Result == false)
             {
@@ -355,113 +353,10 @@ function Save() {
             }
             else if (obj.Result == false && obj.Message.length > 1)
             {
-
                 for (var i = 0; i < obj.Message.length; i++) {
                         toastr.error(result[i][0].Message)
                     }
             }
-
-            //if (result == DataSave) {
-            //    toastr.success('Domain Id has been saved');
-
-            //    $("#AddNewDomain").modal('hide');
-            //    BindData();
-            //    Reset();
-            //    ResetErrorMessage();
-            //}
-            //else if (result == DataUpdate) {
-            //    toastr.success('Domain Id has been Updated');
-
-            //    $("#AddNewDomain").modal('hide');
-            //    BindData();
-            //    Reset();
-            //    ResetErrorMessage();
-            //}
-            //else if (result == DataExists) {
-
-            //    toastr.error('Domain Id Exits!');
-
-            //}
-            //else if (result == InternalServerError) {
-            //    Swal.fire({
-            //        icon: 'error',
-            //        title: 'Oops...',
-            //        text: 'Something went wrong or Invalid Entry!',
-
-            //    })
-
-            //} else {
-            //    if (result.length > 0) {
-            //        for (var i = 0; i < result.length; i++) {
-            //            toastr.error(result[i][0].Message)
-            //        }
-
-
-            //    }
-
-
-            //}
-        }
-    });
-}
-
-function Reset() {
-    $("#txtSearch").val("");
-
-    $("#spnDomainRegId").html("0");
-    $("#txtDomainId").val("");
-    $("#txtRole").val("");
-
-    $("#spnTrnDomainMappingId").html("0");
-    $("#spnUnitMapId").html("0");
-    $("#txtUnitName").val("");
-    $("#lblComd").html("");
-    $("#lblCorps").html("");
-    $("#lblDiv").html("");
-    $("#lblBde").html("");
-    $("#lblSusno").html("");
-
-    $("#spnUserProfileId").html("0");
-    $("#txtArmyNo").val("");
-    $("#lblRank").val("");
-    $("#lblName").val("");
-
-    $("#spnUnitAppointmentId").html("0");
-    $("#txtAppointmentName").val("");
-
-    $("#intoffsyes").prop("checked", false);
-    $("#intoffsno").prop("checked", false);
-
-    $("#txtapprovalyes").prop("checked", false);
-    $("#txtapprovalno").prop("checked", false);
-
-    $("#txtactiveyes").prop("checked", false);
-    $("#txtactiveno").prop("checked", false);
-}
-function ResetErrorMessage() {
-    $("#txtDomainId-error").html("");
-    $("#txtRole-error").html("");
-    $("#txtapproval-error").html("");
-    $("#txtactive-error").html("");
-    $("#IntOffr-error").html("");
-    $("#txtAppointmentName-error").html("");
-    $("#txtUnitName-error").html("");
-}
-function GetALLByUnitById(param1) {
-    $.ajax({
-        url: '/Master/GetALLByUnitMapId',
-        contentType: 'application/x-www-form-urlencoded',
-        data: { "UnitMapId": param1 },
-        type: 'POST',
-        success: function (data) {
-            $("#spnUnitMapId").html(data.UnitMapId);
-            $("#txtUnitName").val(data.UnitName);
-            $("#lblComd").html(data.ComdName);
-            $("#lblCorps").html(data.CorpsName);
-            $("#lblDiv").html(data.DivName);
-            $("#lblBde").html(data.BdeName);
-            $("#lblSusno").html(data.Sus_no + '' + data.Suffix);
-
         }
     });
 }
@@ -479,6 +374,171 @@ function GetProfileByUserId(param1) {
         }
     });
 }
+function GetALLByUnitByIdForMapping(param1) {
+    $.ajax({
+        url: '/Master/GetALLByUnitMapId',
+        contentType: 'application/x-www-form-urlencoded',
+        data: { "UnitMapId": param1 },
+        type: 'POST',
+        success: function (data) {
+            $("#lblUnitNameForMapping").html(data.UnitName);
+            $("#lblComdForMapping").html(data.ComdName);
+            $("#lblCorpsForMapping").html(data.CorpsName);
+            $("#lblDivForMapping").html(data.DivName);
+            $("#lblBdeForMapping").html(data.BdeName);
+            $("#lblSusnoForMapping").html(data.Sus_no + '' + data.Suffix);
+
+        }
+    });
+}
+function GetNameByApptIdForMapping(param1) {
+    $.ajax({
+        url: '/Master/GetByApptId',
+        contentType: 'application/x-www-form-urlencoded',
+        data: { "ApptId": param1 },
+        type: 'POST',
+        success: function (data) {
+            $("#lblAppointmentNameForMapping").html(data.AppointmentName);
+        }
+    });
+}
+function ResetForMapping() {
+    $("#txtSearch").val("");
+
+    $("#spnDomainRegIdForMapping").html("0");
+    $("#lblDomainIdForMapping").html("");
+    $("#lblRoleForMapping").html("");
+
+    $("#spnTrnDomainMappingIdForMapping").html("");
+    $("#lblUnitNameForMapping").html("");
+    $("#lblComdForMapping").html("");
+    $("#lblCorpsForMapping").html("");
+    $("#lblDivForMapping").html("");
+    $("#lblBdeForMapping").html("");
+    $("#lblSusnoForMapping").html("");
+
+    $("#spnUserProfileId").html("0");
+    $("#txtArmyNo").val("");
+    $("#lblRank").html("");
+    $("#lblName").html("");
+
+    $("#lblAppointmentNameForMapping").html("");
+
+    $("#txtapprovalyesForMapping").prop("checked", false);
+    $("#txtapprovalnoForMapping").prop("checked", false);
+
+    $("#txtactiveyesForMapping").prop("checked", false);
+    $("#txtactivenoForMapping").prop("checked", false);
+}
+function ResetErrorMessageForMapping() {
+    $("#txtArmyNo-error").html("");
+}
+
+function Proceed() {
+    ResetErrorMessageForMapping();
+    let formId = '#UpdateDomainFlag';
+    $.validator.unobtrusive.parse($(formId));
+
+    ValidateRadioButton();
+
+    if ($(formId).valid()) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be Save!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, Save it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                UpdateDomainFlag();
+            }
+        })
+    }
+    else {
+        Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'Please fill required field.',
+
+        })
+        toastr.error('Please fill required field.');
+        return false;
+    }
+}
+function UpdateDomainFlag() {
+    $.ajax({
+        url: '/Account/UpdateDomainFlag',
+        type: 'POST',
+        data: {
+            "Id": $("#spnDomainRegId").html(),
+            "AdminFlag": $('input:radio[name=txtapproval]:checked').val(),
+            "Active": $('input:radio[name=txtactive]:checked').val(),
+        }, 
+        success: function (result) {
+            if (result == DataUpdate) {
+                toastr.success('Domain Flag has been Updated');
+
+                $("#AddDomainFlag").modal('hide');
+                BindData();
+                Reset();
+                ResetErrorMessage();
+            }
+            else if (result == InternalServerError) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Something went wrong or Invalid Entry!',
+
+                })
+
+            } else {
+                if (result.length > 0) {
+                    for (var i = 0; i < result.length; i++) {
+                        toastr.error(result[i][0].Message)
+                    }
+
+
+                }
+
+
+            }
+        }
+    });
+}
+function ValidateRadioButton() {
+    if ($("input[type='radio'][name=txtapproval]:checked").length == 0) {
+        $("#txtapproval-error").html("Approval is required.");
+    }
+    else {
+        $("#txtapproval-error").html("");
+    }
+
+    if ($("input[type='radio'][name=txtactive]:checked").length == 0) {
+        $("#txtactive-error").html("Active is required.");
+    }
+    else {
+        $("#txtactive-error").html("");
+    }
+}
+function GetALLByUnitById(param1) {
+    $.ajax({
+        url: '/Master/GetALLByUnitMapId',
+        contentType: 'application/x-www-form-urlencoded',
+        data: { "UnitMapId": param1 },
+        type: 'POST',
+        success: function (data) {
+            $("#lblUnitName").html(data.UnitName);
+            $("#lblComd").html(data.ComdName);
+            $("#lblCorps").html(data.CorpsName);
+            $("#lblDiv").html(data.DivName);
+            $("#lblBde").html(data.BdeName);
+            $("#lblSusno").html(data.Sus_no + '' + data.Suffix);
+
+        }
+    });
+}
 function GetNameByApptId(param1) {
     $.ajax({
         url: '/Master/GetByApptId',
@@ -486,8 +546,33 @@ function GetNameByApptId(param1) {
         data: { "ApptId": param1 },
         type: 'POST',
         success: function (data) {
-            $("#spnUnitAppointmentId").html(data.ApptId);
-            $("#txtAppointmentName").val(data.AppointmentName);
+            $("#lblAppointmentName").html(data.AppointmentName);
         }
     });
+}
+function Reset() {
+    $("#txtSearch").val("");
+
+    $("#spnDomainRegId").html("0");
+    $("#lblDomainId").html("");
+    $("#lblRole").html("");
+
+    $("#lblUnitName").html("");
+    $("#lblComd").html("");
+    $("#lblCorps").html("");
+    $("#lblDiv").html("");
+    $("#lblBde").html("");
+    $("#lblSusno").html("");
+
+    $("#lblAppointmentName").html(""); 
+
+    $("#txtapprovalyes").prop("checked", false);
+    $("#txtapprovalno").prop("checked", false);
+
+    $("#txtactiveyes").prop("checked", false);
+    $("#txtactiveno").prop("checked", false);
+}
+function ResetErrorMessage() {
+    $("#txtapproval-error").html("");
+    $("#txtactive-error").html("");
 }

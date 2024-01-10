@@ -441,7 +441,7 @@ namespace Web.Controllers
         }
 
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> SaveUserRegn(DTOUserRegnRequest dTO)
+        public async Task<IActionResult> SaveMapping(DTOUserRegnMappingRequest dTO)
         {
             DTOUserRegnResultResponse dTOUserRegnResult = new DTOUserRegnResultResponse();
             try
@@ -449,44 +449,16 @@ namespace Web.Controllers
                 int Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                 if (ModelState.IsValid)
                 {
-                    if (!_iAccountBL.GetByDomainId(dTO.DomainId, dTO.Id))
+                    DTOUserRegnResultResponse? dTOUserRegnResultResponse = await _iAccountBL.SaveMapping(dTO, Updatedby);
+                    if (dTOUserRegnResultResponse != null)
                     {
-                        DTOUserRegnResultResponse? dTOUserRegnResultResponse = await _iAccountBL.SaveDomainWithAll(dTO, Updatedby);
-                        if (dTOUserRegnResultResponse != null)
-                        {
-                            if (dTOUserRegnResultResponse.Result == true)
-                            {
-                                if (dTO.Id > 0)
-                                {
-                                    dTOUserRegnResult.Result = true;
-                                    dTOUserRegnResult.Message = "Domain Id has been updated.";
-                                    return Json(dTOUserRegnResult);
-                                }
-                                else
-                                {
-                                    dTOUserRegnResult.Result = true;
-                                    dTOUserRegnResult.Message = "Domain Id has been saved.";
-                                    return Json(dTOUserRegnResult);
-                                }
-                            }
-                            else
-                            {
-                                string json = JsonConvert.SerializeObject(dTOUserRegnResultResponse);
-                                return Json(json);
-                            }
-
-                        }
-                        else
-                        {
-                            dTOUserRegnResult.Result = false;
-                            dTOUserRegnResult.Message = "Something went wrong or Invalid Entry!";
-                            return Json(dTOUserRegnResult);
-                        }
+                        string json = JsonConvert.SerializeObject(dTOUserRegnResultResponse);
+                        return Json(json);
                     }
                     else
                     {
                         dTOUserRegnResult.Result = false;
-                        dTOUserRegnResult.Message = "Domain Id Exits!";
+                        dTOUserRegnResult.Message = "Something went wrong or Invalid Entry!";
                         return Json(dTOUserRegnResult);
                     }
                 }
@@ -507,6 +479,47 @@ namespace Web.Controllers
                 dTOUserRegnResult.Result = false;
                 dTOUserRegnResult.Message = "Something went wrong or Invalid Entry!";
                 return Json(dTOUserRegnResult);
+            }
+
+        }
+
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> UpdateDomainFlag(DTOUserRegnUpdateDomainFlagRequest dTO)
+        {
+            DTOUserRegnResultResponse dTOUserRegnResult = new DTOUserRegnResultResponse();
+            try
+            {
+                int Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                if (ModelState.IsValid)
+                {
+                    bool? result = (bool)await _iAccountBL.UpdateDomainFlag(dTO, Updatedby);
+                    if(result!=null)
+                    {
+                        if(result == true)
+                        {
+                            return Json(KeyConstants.Update);
+                        }
+                        else
+                        {
+                            return Json(KeyConstants.InternalServerError);
+                        }
+                    }
+                    else
+                    {
+                        return Json(KeyConstants.InternalServerError);
+                    }
+                    
+                }
+                else
+                {
+                    return Json(ModelState.Select(x => x.Value.Errors).Where(y => y.Count > 0).ToList());
+                }
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "Account->UpdateDomainFlag");
+                return Json(KeyConstants.InternalServerError);
             }
 
         }

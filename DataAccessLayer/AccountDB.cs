@@ -456,87 +456,62 @@ namespace DataAccessLayer
                 return null;
             }
         }
-        public async Task<DTOUserRegnResultResponse?> SaveDomainWithAll(DTOUserRegnRequest dTO, int Updatedby)
+        public async Task<DTOUserRegnResultResponse?> SaveMapping(DTOUserRegnMappingRequest dTO, int Updatedby)
         {
-            int Status = 0;
             DTOUserRegnResultResponse dTOUserRegnResultResponse = new DTOUserRegnResultResponse();
+            
             try
             {
-                if (dTO.Id > 0)
+                TrnDomainMapping trnDomainMapping = await domainMapDB.Get(dTO.TDMId);
+                if (dTO.UserId > 0)
                 {
-                    dTOUserRegnResultResponse.Result = true;
-                    dTOUserRegnResultResponse.Message = "Save";
-                    return dTOUserRegnResultResponse;
-                }
-                else
-                {
-                    TrnDomainMapping trnDomainMapping = new TrnDomainMapping();
-                    if (dTO.UserId > 0)
+                    DTOProfileResponse? dTOProfileResponse = await userProfileDB.GetProfileByUserId(dTO.UserId);
+                    if (dTOProfileResponse != null && dTOProfileResponse.Mapping == false)
                     {
-                        DTOProfileResponse? dTOProfileResponse = await userProfileDB.GetProfileByUserId(dTO.UserId);
-                        if(dTOProfileResponse!=null && dTOProfileResponse.Mapping==false)
-                        {
-                            trnDomainMapping.UserId = dTO.UserId;
-                        }
-                        else if (dTOProfileResponse != null && dTOProfileResponse.Mapping == true && dTOProfileResponse.DomainId!=null)
-                        {
-                            dTOUserRegnResultResponse.Result = false;
-                            dTOUserRegnResultResponse.Message = "Profile Id -" + dTOProfileResponse.UserId + " is mapped to Domain Id - " + dTOProfileResponse.DomainId + " in Sys.<br/>Pl relieved first and try again.";
-                            return dTOUserRegnResultResponse;
-                        }
-                        else
-                        {
-                            dTOUserRegnResultResponse.Result = false;
-                            dTOUserRegnResultResponse.Message = "Army number not valid.";
-                            return dTOUserRegnResultResponse;
-                        }
+                        trnDomainMapping.UserId = dTO.UserId;
+                        trnDomainMapping.MappedBy = Updatedby;
+                        trnDomainMapping.MappedDate = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
+                        await domainMapDB.Update(trnDomainMapping);
+                        dTOUserRegnResultResponse.Result = true;
+                        dTOUserRegnResultResponse.Message = "Profile mapped.";
+                        return dTOUserRegnResultResponse;
+                    }
+                    else if (dTOProfileResponse != null && dTOProfileResponse.Mapping == true && dTOProfileResponse.DomainId != null && dTOProfileResponse.AspNetUsersId == dTO.Id)
+                    {
+                        dTOUserRegnResultResponse.Result = false;
+                        dTOUserRegnResultResponse.Message = "Profile Id -" + dTOProfileResponse.UserId + " is alredy mapped to Domain Id - " + dTOProfileResponse.DomainId + " in Sys.<br/>Action not required.";
+                        return dTOUserRegnResultResponse;
+                    }
+                    else if (dTOProfileResponse != null && dTOProfileResponse.Mapping == true && dTOProfileResponse.DomainId != null && dTOProfileResponse.AspNetUsersId != dTO.Id)
+                    {
+                        dTOUserRegnResultResponse.Result = false;
+                        dTOUserRegnResultResponse.Message = "Profile Id -" + dTOProfileResponse.UserId + " is mapped to Domain Id - " + dTOProfileResponse.DomainId + " in Sys.<br/>Pl relieved first and try again.";
+                        return dTOUserRegnResultResponse;
                     }
                     else
                     {
-                        trnDomainMapping.UserId = null;
-                    }
-                        
-                    var user = new ApplicationUser
-                    {
-                        DomainId = dTO.DomainId,
-                        Active = dTO.Active,
-                        AdminFlag = dTO.AdminFlag,
-                        Updatedby = Updatedby,
-                        UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time")),
-                        UserName = dTO.DomainId.ToLower(),
-                        Email = dTO.DomainId.ToLower() + "@army.mil",
-                    };
-                    var result = await userManager.CreateAsync(user, "Admin123#");
-
-                    if (result.Succeeded)
-                    {
-                        await userManager.AddToRoleAsync(user, dTO.RoleName);
-                    }
-                    foreach (var error in result.Errors)
-                    {
                         dTOUserRegnResultResponse.Result = false;
-                        dTOUserRegnResultResponse.Message += error.Description;
+                        dTOUserRegnResultResponse.Message = "Army number not valid.";
                         return dTOUserRegnResultResponse;
                     }
-
-                    
-                    trnDomainMapping.AspNetUsersId = user.Id;
-                    trnDomainMapping.UnitId = dTO.UnitMappId;
-                    trnDomainMapping.ApptId = dTO.ApptId;
-                    await _context.TrnDomainMapping.AddAsync(trnDomainMapping);
-                    await _context.SaveChangesAsync();
-
+                }
+                else
+                {
+                    trnDomainMapping.UserId = null;
+                    trnDomainMapping.MappedBy = null;
+                    trnDomainMapping.MappedDate = null;
+                    await domainMapDB.Update(trnDomainMapping);
                     dTOUserRegnResultResponse.Result = true;
-                    dTOUserRegnResultResponse.Message = "Domain Id has been Updated";
+                    dTOUserRegnResultResponse.Message = "Profile Unmapped.";
                     return dTOUserRegnResultResponse;
                 }
+                
             }
             catch (Exception ex)
             {
-                _logger.LogError(1001, ex, "AccountDB->SaveDomainWithAll");
+                _logger.LogError(1001, ex, "AccountDB->SaveMapping");
                 return null;
             }
-
         }
         public async Task<bool?> SaveDomainRegn(DTODomainRegnRequest dTO, int Updatedby)
         {
@@ -639,6 +614,50 @@ namespace DataAccessLayer
                         await domainMapDB.Add(trnDomainMapping);
                     }
                     return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "AccountDB->SaveDomainRegn");
+                return null;
+            }
+
+        }
+        public async Task<bool?> UpdateDomainFlag(DTOUserRegnUpdateDomainFlagRequest dTO, int Updatedby)
+        {
+            try
+            {
+                var userUpdate = await userManager.FindByIdAsync(dTO.Id.ToString());
+
+                if (userUpdate == null)
+                {
+                    return false;
+                }
+                else
+                {
+                    userUpdate.Active = dTO.Active;
+                    userUpdate.Updatedby = Updatedby;
+                    userUpdate.UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
+                    if (dTO.AdminFlag == true)
+                    {
+                        userUpdate.AdminFlag = dTO.AdminFlag;
+                        userUpdate.AdminFlagDate = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
+                    }
+                    else
+                    {
+                        userUpdate.AdminFlag = dTO.AdminFlag;
+                        userUpdate.AdminFlagDate = null;
+                    }
+                    var result = await userManager.UpdateAsync(userUpdate);
+
+                    if (result.Succeeded)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
                 }
             }
             catch (Exception ex)
