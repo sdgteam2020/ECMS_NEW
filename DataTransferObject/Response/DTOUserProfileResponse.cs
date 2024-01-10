@@ -30,6 +30,10 @@ namespace DataTransferObject.Response
         public string UnitName { get; set; }
         public string Rank { get; set;}
         public int RankId { get; set; }
+
+        public string DomainId { get; set; }
+        public string MappedDate { get; set; }
+        public string MappedBy { get; set; }
         //public int IOUserId { get; set; }
         //public string IOArmyNo { get; set; }
         //public string IOName { get; set; }

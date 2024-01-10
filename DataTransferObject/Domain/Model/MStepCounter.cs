@@ -20,5 +20,9 @@ namespace DataTransferObject.Domain.Model
         [ForeignKey("MStepCounterStep"), DatabaseGenerated(DatabaseGeneratedOption.None)]
         public byte StepId { get; set; }
         public MStepCounterStep? MStepCounterStep { get; set; }
+
+        [ForeignKey("MApplyFor"), DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public byte ApplyForId { get; set; }
+        public MApplyFor? MApplyFor { get; set; }
     }
 }

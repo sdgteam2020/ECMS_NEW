@@ -32,6 +32,8 @@ using BusinessLogicsLayer.Master;
 using static System.Net.Mime.MediaTypeNames;
 using System.Text;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using static NuGet.Packaging.PackagingConstants;
+using System.Diagnostics;
 
 namespace Web.Controllers
 {
@@ -91,7 +93,7 @@ namespace Web.Controllers
         }
 
         [Authorize(Roles = "Admin,User")]
-        public async Task<ActionResult> Index(string Id)
+        public async Task<ActionResult> Index(string Id,string jcoor)
         {
             MTrnNotification noti = new MTrnNotification();
             int retint = 0;int type = 1;
@@ -148,14 +150,34 @@ namespace Web.Controllers
             else if (retint == 555)
             { ViewBag.Title = "I-Card Approved From HQ 54"; type = 2; stepcounter = 5; }
             noti.DisplayId = stepcounter;
-            var allrecord = await Task.Run(()=> basicDetailBL.GetALLForIcardSttaus(Convert.ToInt32(userId),stepcounter , type)) ;
-            _logger.LogInformation(1001, "Index Page Of Basic Detail View");
-            await _INotificationBL.UpdateRead(noti);
+            if(stepcounter==1)
+            {
+                var allrecord = await Task.Run(() => basicDetailBL.GetALLForIcardSttaus(Convert.ToInt32(userId), stepcounter, type, 0));
 
-            return View(allrecord);
+                _logger.LogInformation(1001, "Index Page Of Basic Detail View");
+                return View(allrecord);
+            }
+           else if (string.IsNullOrEmpty(jcoor))
+            {
+                var allrecord = await Task.Run(() => basicDetailBL.GetALLForIcardSttaus(Convert.ToInt32(userId), stepcounter, type,1));
+
+                _logger.LogInformation(1001, "Index Page Of Basic Detail View");
+                await _INotificationBL.UpdateRead(noti);
+
+                return View(allrecord);
+            }
+            else
+            {
+                var allrecord = await Task.Run(() => basicDetailBL.GetALLForIcardSttaus(Convert.ToInt32(userId), stepcounter, type,2));
+
+                _logger.LogInformation(1001, "Index Page Of Basic Detail View");
+                await _INotificationBL.UpdateRead(noti);
+
+                return View(allrecord);
+            }
         }
         [Authorize(Roles = "Admin,User")]
-        public async Task<ActionResult> ApprovalForIO(string Id)
+        public async Task<ActionResult> ApprovalForIO(string Id, string jcoor)
         {
             MTrnNotification noti=new MTrnNotification();
             int type = 0; int retint = 0; int stepcounter = 0;
@@ -221,12 +243,26 @@ namespace Web.Controllers
             { ViewBag.Title = "Rejectd I-Card "; type = 1; stepcounter = 10; }
             else if (retint == 555)
             { ViewBag.Title = "Approved I-Card "; type = 3; stepcounter = 6; }
-            noti.DisplayId = stepcounter;
-            var allrecord = await Task.Run(() => basicDetailBL.GetALLBasicDetail(Convert.ToInt32(userId), stepcounter, type));
-            _logger.LogInformation(1001, "Index Page Of Basic Detail View");
+            
+            if (string.IsNullOrEmpty(jcoor))
+            {
+                noti.DisplayId = stepcounter;
+                var allrecord = await Task.Run(() => basicDetailBL.GetALLBasicDetail(Convert.ToInt32(userId), stepcounter, type,1));
+                _logger.LogInformation(1001, "Index Page Of Basic Detail View");
+                await _INotificationBL.UpdateRead(noti);
+                return View(allrecord);
+            }
+            else
+            {
+                noti.DisplayId = stepcounter+10;
+                var allrecord = await Task.Run(() => basicDetailBL.GetALLBasicDetail(Convert.ToInt32(userId), stepcounter, type,2));
+                _logger.LogInformation(1001, "Index Page Of Basic Detail View");
+                await _INotificationBL.UpdateRead(noti);
+                return View(allrecord);
+            }
+                
 
-            await _INotificationBL.UpdateRead(noti);
-            return View(allrecord);
+           
         }
 
         [HttpGet]
@@ -478,9 +514,9 @@ namespace Web.Controllers
                         dTOBasicDetailCrtRequest.IdenMark1 = model.IdenMark1;
                         dTOBasicDetailCrtRequest.IdenMark2 = model.IdenMark2;
                         //dTOBasicDetailCrtRequest.Height = model.Height;
-                        
-                       // dTOBasicDetailCrtRequest.AadhaarNo = Convert.ToString(model.AadhaarNo);
-                        dTOBasicDetailCrtRequest.AadhaarNo = Convert.ToInt32(model.AadhaarNo.Substring(model.AadhaarNo.Length - 3)).ToString("D4");
+
+                        // dTOBasicDetailCrtRequest.AadhaarNo = Convert.ToString(model.AadhaarNo);
+                        dTOBasicDetailCrtRequest.AadhaarNo = Convert.ToInt64(model.AadhaarNo).ToString("D12"); ;// Convert.ToInt32(model.AadhaarNo.Substring(model.AadhaarNo.Length - 3)).ToString("D4");
 
 
                         //dTOBasicDetailCrtRequest.BloodGroup = model.BloodGroup;
@@ -740,7 +776,8 @@ namespace Web.Controllers
                                         mStepCounter.StepId = Convert.ToByte(1);
                                         mStepCounter.RequestId = mTrnICardRequest.RequestId;
                                         mStepCounter.UpdatedOn = DateTime.Now;
-                                        mStepCounter.Updatedby = 1;
+                                        mStepCounter.Updatedby = Convert.ToInt32(userId);
+                                        mStepCounter.ApplyForId = newBasicDetail.ApplyForId;
                                         await iStepCounterBL.Add(mStepCounter);
                                     }
                                     //DTOApiDataResponse dTOApiDataResponse = new DTOApiDataResponse();
@@ -900,9 +937,9 @@ namespace Web.Controllers
                         mStepCounter.StepId = Convert.ToByte(1);
                         // mStepCounter.RequestId = mTrnICardRequest.RequestId;
                         mStepCounter.UpdatedOn = DateTime.Now;
-                        mStepCounter.Updatedby = 1;
+                        mStepCounter.Updatedby = Convert.ToInt32(userId);
                         mStepCounter.IsActive = true;
-
+                        mStepCounter.ApplyForId = newBasicDetail.ApplyForId;
                         //  await iStepCounterBL.Add(mStepCounter);
 
 
@@ -1086,7 +1123,7 @@ namespace Web.Controllers
             {
                 mStepCounter.UpdatedOn = DateTime.Now;
                 mStepCounter.Updatedby = 1;
-                await iStepCounterBL.Update(mStepCounter);
+                await iStepCounterBL.UpdateStepCounter(mStepCounter);
 
                 
             }
@@ -1333,11 +1370,22 @@ namespace Web.Controllers
              
                 var jsonString = JsonConvert.SerializeObject(retdata);
                 var jsonde=JsonConvert.DeserializeObject(jsonString);
-                // Convert JSON string to bytes
-                var bytes = Encoding.UTF8.GetBytes(jsonString);
 
-                // Set the content type and file name
-                Response.Headers.Add("Content-Disposition", "attachment; filename=data.json");
+
+                //string sourceFolderPhotoPhy = Convert.ToString(ForCreateFolderrandom(Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "tempdata")));
+                //string dataph = Convert.ToString(CreateFolder(Path.Combine(sourceFolderPhotoPhy, "photo")));
+                //string datasg = Convert.ToString(CreateFolder(Path.Combine(sourceFolderPhotoPhy, "singature")));
+
+                //foreach (var item in retdata)
+                //{
+                //    System.IO.File.Copy(Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "photo", item.PhotoImagePath), dataph+"//", true);
+                //}
+                
+                // Convert JSON string to bytes
+                //var bytes = Encoding.UTF8.GetBytes(jsonString);
+
+                //// Set the content type and file name
+                //Response.Headers.Add("Content-Disposition", "attachment; filename=data.json");
 
 
 
@@ -1386,5 +1434,25 @@ namespace Web.Controllers
 
             return Directory.CreateDirectory(folder);
         }
-    }
+        public static DirectoryInfo ForCreateFolderrandom(string baseFolder)
+        {
+            var now = DateTime.Now;
+            var yearName = now.ToString("yyyy");
+            var monthName = now.ToString("MMMM");
+            var dayName = now.ToString("dd");
+            var hh = now.ToString("hh");
+            var mm = now.ToString("mm");
+            var ss = now.ToString("ss");
+            var folder =
+                        Path.Combine(baseFolder,
+                           Path.Combine(yearName + "" + monthName + "" + dayName+ ""+hh + "" + mm + "" + ss));
+
+            return Directory.CreateDirectory(folder);
+        }
+        public static DirectoryInfo CreateFolder(string baseFolder)
+        {
+            return Directory.CreateDirectory(baseFolder);
+        }
+      
+        }
 }

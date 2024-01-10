@@ -16,15 +16,18 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace BusinessLogicsLayer.BdeCate
 {
-    public class StepCounterBL : GenericRepositoryDL<MStepCounter>, IStepCounterBL
+    public class StepCounterBL : GenericRepository<MStepCounter>, IStepCounterBL
     {
 
-
-        public StepCounterBL(ApplicationDbContext context) : base(context)
+        private readonly IStepCounterDB _iStepCounterDB;
+        public StepCounterBL(IStepCounterDB stepCounterDB)
         {
-            
+            _iStepCounterDB = stepCounterDB;
         }
 
-    
+        public async Task<MStepCounter> UpdateStepCounter(MStepCounter Data)
+        {
+            return await _iStepCounterDB.UpdateStepCounter(Data);
+        }
     }
 }

@@ -4,6 +4,7 @@ using DataAccessLayer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,13 +12,15 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccessLayer.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240109061628_v18")]
+    partial class v18
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.13")
+                .HasAnnotation("ProductVersion", "7.0.12")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -1183,70 +1186,22 @@ namespace DataAccessLayer.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Pers_Army_No")
+                    b.Property<DateTime>("DOB")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("DateOfCommissioning")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Pers_Blood_Gp")
+                    b.Property<string>("PermanentAddress")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Pers_District")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Pers_Father_Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Pers_Gender")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Pers_Height")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Pers_House_no")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Pers_Iden_mark_1")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Pers_Iden_mark_2")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Pers_Moh_st")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Pers_Pin_code")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Pers_Police_stn")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Pers_Post_office")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Pers_Rank")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Pers_Regt")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Pers_State")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Pers_Tehsil")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Pers_UID")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Pers_Village")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Pers_birth_dt")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Pers_enrol_dt")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Pers_name")
+                    b.Property<string>("ServiceNo")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");

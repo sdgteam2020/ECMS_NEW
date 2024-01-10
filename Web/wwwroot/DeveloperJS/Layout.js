@@ -116,12 +116,12 @@ function SaveNotification(NotificationTypeId, DisplayId, ReciverAspNetUsersId, R
     });
 }
 
-function GetNotification(NotificationTypeId) {
+function GetNotification(NotificationTypeId, ApplyForId) {
     var listItem = "";
     var userdata =
     {
         "TypeId": NotificationTypeId,
-       
+        "applyForId": ApplyForId
     };
     $.ajax({
         url: '/Home/GetNotification',
@@ -174,11 +174,12 @@ function GetNotification(NotificationTypeId) {
     });
 }
 
-function GetNotificationRequestId(NotificationTypeId) {
-    var listItem = "";
+function GetNotificationRequestId(NotificationTypeId,ApplyForId) {
+    var listItem = ""; 
     var userdata =
     {
         "TypeId": NotificationTypeId,
+        "applyForId": ApplyForId,
 
     };
     $.ajax({
@@ -197,29 +198,29 @@ function GetNotificationRequestId(NotificationTypeId) {
                             $("." + response[i].Spanname).html(0);
                        
                         $("." + response[i].Spanname).html(parseInt($("." + response[i].Spanname).html()) + 1);
-                        if (response[i].DisplayId == 2 || response[i].DisplayId == 3 || response[i].DisplayId == 7) {
-                            var SpnIOself = 0;
-                            var SpnGSOself = 0;
-                            var SpnIORejectself = 0;
-                            if ($(".SpnIOself").html() == "")
-                                SpnIOself = 0;
-                            else
-                                SpnIOself = $(".SpnIOself").html();
-                            if ($(".SpnGSOself").html() == "")
-                                SpnGSOself = 0;
-                            else
-                                SpnGSOself = $(".SpnGSOself").html();
-                            if ($(".SpnIORejectself").html() == "")
-                                SpnIORejectself = 0;
-                            else
-                                SpnIORejectself = $(".SpnIORejectself").html();
+                        //if (response[i].DisplayId == 2 || response[i].DisplayId == 3 || response[i].DisplayId == 7) {
+                        //    var SpnIOself = 0;
+                        //    var SpnGSOself = 0;
+                        //    var SpnIORejectself = 0;
+                        //    if ($(".SpnIOself").html() == "")
+                        //        SpnIOself = 0;
+                        //    else
+                        //        SpnIOself = $(".SpnIOself").html();
+                        //    if ($(".SpnGSOself").html() == "")
+                        //        SpnGSOself = 0;
+                        //    else
+                        //        SpnGSOself = $(".SpnGSOself").html();
+                        //    if ($(".SpnIORejectself").html() == "")
+                        //        SpnIORejectself = 0;
+                        //    else
+                        //        SpnIORejectself = $(".SpnIORejectself").html();
 
-                            //$("#IOTotal").html(parseInt(SpnIOself) + parseInt(SpnGSOself) + parseInt(SpnIORejectself));
+                        //    //$("#IOTotal").html(parseInt(SpnIOself) + parseInt(SpnGSOself) + parseInt(SpnIORejectself));
 
-                            //if ($("#IOTotal").html() == 0)
-                            //    $("#IOTotal").html("");
+                        //    //if ($("#IOTotal").html() == 0)
+                        //    //    $("#IOTotal").html("");
 
-                        }
+                        //}
                     }
                 }
 

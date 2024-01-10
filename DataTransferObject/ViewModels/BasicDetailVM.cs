@@ -61,13 +61,13 @@ namespace DataTransferObject.ViewModels
 
         [Display(Name = "Height", ResourceType = typeof(Resource))]
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
-        [Range(typeof(int), "100", "120", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "HtError")]
+        [Range(typeof(int), "100", "225", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "HtError")]
         public int Height { get; set; }
 
         [Display(Name = "AadhaarNo", ResourceType = typeof(Resource))]
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
         //[RegularExpression(@"^[\d ]{14}$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "AadhaarNoDigit")]
-        
+        [MaxLength(12)]
         public string AadhaarNo { get; set; } = string.Empty;
 
         [Display(Name = "BloodGroup", ResourceType = typeof(Resource))]

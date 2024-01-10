@@ -159,7 +159,7 @@
                             <label class="col-sm-1 col-form-label text-center font-weight-bold">@(sno++).</label>
                             <label asp-for="AadhaarNo" class="col-sm-3 col-form-label form-label"></label>
                             <div class="col-sm-6">
-                                <input asp-for="AadhaarNo" class="form-control" placeholder="Last Four Digit" maxlength="4" minlength="4" /> @* onkeyup="Aadhaarformate(event,this);" *@
+                                <input asp-for="AadhaarNo" class="form-control" placeholder="Last Four Digit" maxlength="12" minlength="12" /> @* onkeyup="Aadhaarformate(event,this);" *@
                                 <span asp-validation-for="AadhaarNo" class="text-danger"></span>
                             </div>
                         </div>

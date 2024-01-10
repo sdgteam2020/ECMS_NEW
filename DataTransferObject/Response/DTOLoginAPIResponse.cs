@@ -9,14 +9,14 @@ namespace DataTransferObject.Response
 {
     public class DTOLoginAPIResponse
     {
-        public int code { get; set; }
-        public bool error { get; set; }
-        public string msg { get; set; }
-        public int timestamp { get; set; }
-        public string jwt { get; set; }
+        //public int code { get; set; }
+        //public bool error { get; set; }
+        //public string msg { get; set; }
+        //public int timestamp { get; set; }
+        //public string jwt { get; set; }
 
-        //public string token { get; set; }
-        //public string refreshToken { get; set; }
+        public string token { get; set; }
+        public string expiration { get; set; }
 
     }
     public class DTOLoginAPIResponseData
