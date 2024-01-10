@@ -21,5 +21,6 @@ namespace BusinessLogicsLayer.Account
         public Task<List<DTODomainRegnResponse>?> GetAllDomainRegn(string Search, string Choice);
         public Task<DTOUserRegnResultResponse?> SaveMapping(DTOUserRegnMappingRequest dTO, int Updatedby);
         public Task<bool?> SaveDomainRegn(DTODomainRegnRequest dTO, int Updatedby);
+        public Task<bool?> UpdateDomainFlag(DTOUserRegnUpdateDomainFlagRequest dTO, int Updatedby);
     }
 }

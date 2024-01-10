@@ -57,5 +57,9 @@ namespace BusinessLogicsLayer.Account
         {
             return await _iAccountDB.SaveDomainRegn(dTO, Updatedby);
         }
+        public async Task<bool?> UpdateDomainFlag(DTOUserRegnUpdateDomainFlagRequest dTO, int Updatedby)
+        {
+            return await _iAccountDB.UpdateDomainFlag(dTO, Updatedby);
+        }
     }
 }

@@ -483,6 +483,47 @@ namespace Web.Controllers
 
         }
 
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> UpdateDomainFlag(DTOUserRegnUpdateDomainFlagRequest dTO)
+        {
+            DTOUserRegnResultResponse dTOUserRegnResult = new DTOUserRegnResultResponse();
+            try
+            {
+                int Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                if (ModelState.IsValid)
+                {
+                    bool? result = (bool)await _iAccountBL.UpdateDomainFlag(dTO, Updatedby);
+                    if(result!=null)
+                    {
+                        if(result == true)
+                        {
+                            return Json(KeyConstants.Update);
+                        }
+                        else
+                        {
+                            return Json(KeyConstants.InternalServerError);
+                        }
+                    }
+                    else
+                    {
+                        return Json(KeyConstants.InternalServerError);
+                    }
+                    
+                }
+                else
+                {
+                    return Json(ModelState.Select(x => x.Value.Errors).Where(y => y.Count > 0).ToList());
+                }
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "Account->UpdateDomainFlag");
+                return Json(KeyConstants.InternalServerError);
+            }
+
+        }
+
         #endregion End UserRegn
 
         #region Super Admin Section

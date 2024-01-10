@@ -623,6 +623,50 @@ namespace DataAccessLayer
             }
 
         }
+        public async Task<bool?> UpdateDomainFlag(DTOUserRegnUpdateDomainFlagRequest dTO, int Updatedby)
+        {
+            try
+            {
+                var userUpdate = await userManager.FindByIdAsync(dTO.Id.ToString());
+
+                if (userUpdate == null)
+                {
+                    return false;
+                }
+                else
+                {
+                    userUpdate.Active = dTO.Active;
+                    userUpdate.Updatedby = Updatedby;
+                    userUpdate.UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
+                    if (dTO.AdminFlag == true)
+                    {
+                        userUpdate.AdminFlag = dTO.AdminFlag;
+                        userUpdate.AdminFlagDate = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
+                    }
+                    else
+                    {
+                        userUpdate.AdminFlag = dTO.AdminFlag;
+                        userUpdate.AdminFlagDate = null;
+                    }
+                    var result = await userManager.UpdateAsync(userUpdate);
+
+                    if (result.Succeeded)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "AccountDB->SaveDomainRegn");
+                return null;
+            }
+
+        }
     }
     
 }

@@ -88,7 +88,7 @@
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Enter Domain Details With Profile</h5>
+                <h5 class="modal-title" id="exampleModalLabel">Update Approval / Active of Domain</h5>
                 <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
             </div>
             <div class="modal-body">
@@ -97,17 +97,15 @@
                         <div class="row">
                             <span class=" d-none" id="spnDomainRegId">0</span>
                             <div class="form-group row mb-2">
-                                <label class="col-form-label col-sm-4">Domain Id<i class="fas fa-asterisk mand1"></i></label>
+                                <label class="col-form-label col-sm-4">Domain Id</label>
                                 <div class="col-sm-8">
-                                    <input class="form-control" placeholder="Enter Domain Id" id="txtDomainId" name="txtDomainId" maxlength="20" data-val="true" data-val-regex="This special chars and space not allowed for security reasons." data-val-required="Domain Id is required." data-val-regex-pattern="^[\w\-]+$" />
-                                    <span class="text-danger field-validation-valid" data-valmsg-for="txtDomainId" data-valmsg-replace="true"></span>
+                                    <label class="col-form-label unit-label-background" id="lblDomainId"></label>
                                 </div>
                             </div>
                             <div class="form-group row mb-2">
                                 <label class="col-form-label col-sm-4">Role<i class="fas fa-asterisk mand1"></i></label>
                                 <div class="col-sm-8">
-                                    <input class="form-control" placeholder="Enter Role" id="txtRole" name="txtRole" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="Role is required." data-val-regex-pattern="^[\w ]*$" />
-                                    <span class="text-danger field-validation-valid" data-valmsg-for="txtRole" data-valmsg-replace="true"></span>
+                                    <label class="col-form-label unit-label-background" id="lblRole"></label>
                                 </div>
                             </div>
                             <div class="form-group row mb-4">
@@ -147,20 +145,15 @@
                                 </div>
                             </div>
                             <div class="form-group row mb-2">
-                                <span id="spnTrnDomainMappingId" class="d-none">0</span>
-                                <span id="spnUnitAppointmentId" class="d-none">0</span>
-                                <label class="col-form-label col-sm-4">Appointment Name<i class="fas fa-asterisk mand1"></i></label>
+                                <label class="col-form-label col-sm-4">Appointment Name</label>
                                 <div class="col-sm-8">
-                                    <input class="form-control Alphanumeric" placeholder="Type Appointment" id="txtAppointmentName" name="txtAppointmentName" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="Appointment Name is required." data-val-regex-pattern="^[\w \& \()]*$" />
-                                    <span class="text-danger field-validation-valid" data-valmsg-for="txtAppointmentName" data-valmsg-replace="true"></span>
+                                    <label class="col-form-label unit-label-background" id="lblAppointmentName"></label>
                                 </div>
                             </div>
                             <div class="form-group row mb-2">
-                                <span id="spnUnitMapId" class="d-none">0</span>
-                                <label class="col-form-label col-sm-4">Unit Name<i class="fas fa-asterisk mand1"></i></label>
+                                <label class="col-form-label col-sm-4">Unit Name</label>
                                 <div class="col-sm-8">
-                                    <input class="form-control Alphanumeric" placeholder="Type Unit Name" id="txtUnitName" name="txtUnitName" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="Unit Name is required." data-val-regex-pattern="^[\w ]*$" />
-                                    <span class="text-danger field-validation-valid" data-valmsg-for="txtUnitName" data-valmsg-replace="true"></span>
+                                    <label class="col-form-label unit-label-background" id="lblUnitName"></label>
                                 </div>
                             </div>
                             <div class="row mb-2">
@@ -194,8 +187,7 @@
                                 </div>
                             </div>
                             <div class="col-sm-12 text-right">
-                                <input type="button" class="btn btn-primary" value="Save" id="btnDomainAdd" onclick="Proceed()" />
-                                <button type="button" id="btnDomainAddReset" class="btn btn-outline-danger">Reset</button>
+                                <input type="button" class="btn btn-primary" value="Save" id="btnDomainFlag" onclick="Proceed()" />
                             </div>
                             <div class="col-sm-12" id="msg">
                             </div>
@@ -316,7 +308,7 @@
                                 <span class=" d-none" id="spnUserProfileId">0</span>
                                 <label class="col-form-label col-sm-4">Offrs Army No</label>
                                 <div class="col-sm-8">
-                                    <input class="form-control Alphanumeric" placeholder="Enter Army No" id="txtArmyNo" name="txtArmyNo" minlength="7" maxlength="15" data-val="true" data-val-regex="This special chars and space not allowed for security reasons." data-val-regex-pattern="^[\w\-]+$" />
+                                    <input class="form-control" placeholder="Enter Army No" id="txtArmyNo" name="txtArmyNo" minlength="7" maxlength="15" data-val="true" data-val-regex="This special chars and space not allowed for security reasons." data-val-regex-pattern="^[\w\-]+$" />
                                     <span class="text-danger field-validation-valid" data-valmsg-for="txtArmyNo" data-valmsg-replace="true"></span>
                                 </div>
                             </div>
