@@ -109,7 +109,8 @@ namespace DataAccessLayer
                                      RankId = rank.RankId,
                                      RankName = rank.RankName,
                                      Mapping = xmap!=null? true : false,
-                                     DomainId = xu != null ? xu.DomainId : null
+                                     DomainId = xu != null ? xu.DomainId : null,
+                                     AspNetUsersId = xu != null ? xu.Id : 0
                                  }
                                 ).FirstOrDefaultAsync();
                 return ret;
