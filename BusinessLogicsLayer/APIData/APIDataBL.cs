@@ -1,4 +1,5 @@
-﻿using BusinessLogicsLayer.Bde;
+﻿using BusinessLogicsLayer.APIData;
+using BusinessLogicsLayer.Bde;
 using DataAccessLayer;
 using DataAccessLayer.BaseInterfaces;
 using DataTransferObject.Domain.Master;
@@ -13,20 +14,20 @@ using System.Text;
 using System.Threading.Tasks;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
-namespace BusinessLogicsLayer.BdeCate
+namespace BusinessLogicsLayer.APIData
 {
-    public class APIDataBL : GenericRepositoryDL<MApiData>, IAPIDataBL
+    public class APIDataBL : GenericRepository<MApiData>, IAPIDataBL
     {
-        private readonly IAPIDataDB aPIDataDB;
+        private readonly IAPIDataDB _aPIDataDB;
 
-        public APIDataBL(ApplicationDbContext context, IAPIDataDB aPIDataDB) : base(context)
+        public APIDataBL(IAPIDataDB aPIDataDB) 
         {
-            this.aPIDataDB = aPIDataDB;
+            _aPIDataDB = aPIDataDB;
         }
 
         public Task<MApiData> GetByIC(string ICNo)
         {
-           return aPIDataDB.GetByIC(ICNo);
+           return _aPIDataDB.GetByIC(ICNo);
         }
     }
 }

@@ -9,7 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BusinessLogicsLayer.Bde
+namespace BusinessLogicsLayer.APIData
 {
     public interface IAPIDataBL : IGenericRepository<MApiData>
     {
