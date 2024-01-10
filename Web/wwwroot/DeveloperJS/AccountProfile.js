@@ -3,6 +3,7 @@
     $("#AppointmentName").autocomplete({
         source: function (request, response) {
             if (request.term.length > 1) {
+                $("#spnApptIdMap").html('');
                 var param = { "AppointmentName": request.term };
                 $("#spnApptIdMap").html(0);
                 $.ajax({
@@ -99,7 +100,3 @@
         appendTo: '#suggesstion-box'
     });
 });
-
-
-
-

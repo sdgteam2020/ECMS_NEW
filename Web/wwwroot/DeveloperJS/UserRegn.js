@@ -289,6 +289,7 @@ function BindData() {
 }
 function ProceedForMapping() {
     ResetErrorMessageForMapping();
+    ValidateMappingInput();
     let formId = '#SaveMapping';
     $.validator.unobtrusive.parse($(formId));
 
@@ -359,6 +360,16 @@ function SaveMapping() {
             }
         }
     });
+}
+function ValidateMappingInput() {
+
+    var UserProfileId = $("#spnUserProfileId").html();
+
+    if ((UserProfileId == 0 || UserProfileId == '') && $("#txtArmyNo").val().length > 0) {
+        $("#txtArmyNo").val('');
+        $("#txtArmyNo-error").html("ArmyNo is invalid.");
+        toastr.error('ArmyNo is invalid.');
+    }
 }
 function GetProfileByUserId(param1) {
     $.ajax({

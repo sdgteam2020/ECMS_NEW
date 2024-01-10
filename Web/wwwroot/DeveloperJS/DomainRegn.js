@@ -15,6 +15,7 @@
     $("#txtAppointmentName").autocomplete({
         source: function (request, response) {
             if (request.term.length > 1) {
+                $("#spnUnitAppointmentId").html('');
                 var param = { "AppointmentName": request.term };
                 $("#spnUnitAppointmentId").html(0);
                 $.ajax({
@@ -23,7 +24,6 @@
                     data: param,
                     type: 'POST',
                     success: function (data) {
-                        console.log(data);
                         response($.map(data, function (item) {
 
                             $("#loading").addClass("d-none");
@@ -51,21 +51,23 @@
 
     $("#txtUnitName").autocomplete({
         source: function (request, response) {
+            $("#lblComd").html('');
+            $("#lblCorps").html('');
+            $("#lblDiv").html('');
+            $("#lblBde").html('');
+            $("#lblSusno").html('');
             if (request.term.length > 2) {
-                $("#lblComd").html('');
-                $("#lblCorps").html('');
-                $("#lblDiv").html('');
-                $("#lblBde").html('');
-                $("#lblSusno").html('');
+                $("#spnUnitMapId").html('');
+                $("#spnTrnDomainMappingId").html('');
                 var param = { "UnitName": request.term };
                 $("#spnUnitMapId").html(0);
+                $("#spnTrnDomainMappingId").html(0);
                 $.ajax({
                     url: '/Master/GetALLByUnitName',
                     contentType: 'application/x-www-form-urlencoded',
                     data: param,
                     type: 'POST',
                     success: function (data) {
-                        console.log(data);
                         response($.map(data, function (item) {
 
                             $("#loading").addClass("d-none");
@@ -85,7 +87,6 @@
         select: function (e, i) {
             e.preventDefault();
             $("#txtUnitName").val(i.item.label);
-            //alert(i.item.value)
             var param1 = { "UnitMapId": i.item.value };
             $.ajax({
                 url: '/Master/GetALLByUnitMapId',
@@ -142,9 +143,8 @@
 function Proceed() {
     ResetErrorMessage();
     let formId = '#SaveDomain';
+    ValidateInput();
     $.validator.unobtrusive.parse($(formId));
-
-    ValidateRadioButton();
 
     if ($(formId).valid()) {
         Swal.fire({
@@ -153,7 +153,7 @@ function Proceed() {
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
+            cancelButtonColor: '#d33',  
             confirmButtonText: 'Yes, Save it!'
         }).then((result) => {
             if (result.isConfirmed) {
@@ -172,7 +172,7 @@ function Proceed() {
         return false;
     }
 }
-function ValidateRadioButton() {
+function ValidateInput() {
     if ($("input[type='radio'][name=txtapproval]:checked").length == 0) {
         $("#txtapproval-error").html("Approval is required.");
     }
@@ -185,6 +185,21 @@ function ValidateRadioButton() {
     }
     else {
         $("#txtactive-error").html("");
+    }
+
+    var AppointmentId = $("#spnUnitAppointmentId").html();
+    
+    if ((AppointmentId == 0 || AppointmentId == '') && $("#txtAppointmentName").val().length > 0) {
+        $("#txtAppointmentName").val('');
+        $("#txtAppointmentName-error").html("Appointment name is invalid.");
+        toastr.error('Appointment name is invalid.');
+    }
+
+    var UnitMapId = $("#spnUnitMapId").html();
+    if ((UnitMapId == 0 || UnitMapId == '') && $("#txtUnitName").val().length > 0 ) {
+        $("#txtUnitName").val('');
+        $("#txtAppointmentName-error").html("Unit name is invalid.");
+        toastr.error('Unit name is invalid.');
     }
 }
 
