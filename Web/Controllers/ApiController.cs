@@ -20,11 +20,11 @@ namespace Web.Controllers
             DTOApiPersDataResponse res1=new DTOApiPersDataResponse();  
             var remoteIpAddress = HttpContext.Connection.RemoteIpAddress;
             DTOAPILoginRequest data = new DTOAPILoginRequest();
-            data.ClientName = "miso";
+            data.ClientName = "admin";
             data.ClientKey = "";
             data.ClientIP = remoteIpAddress.ToString();
             data.ClientURL = "";
-            data.ClientPW = "";
+            data.ClientPW = "123";
             //data.email = "devopstasking@gmail.com";
             //data.password = "Admin@123";
             var ret = await _aPIBL.Getauthentication(data);
@@ -34,7 +34,7 @@ namespace Web.Controllers
             {
                 DTOPersDataRequest retdat = new DTOPersDataRequest();
                 retdat.Pers_Army_No = ICNumber;
-                retdat.jwt=ret.jwt;
+                retdat.jwt=ret.token;
                 
 
                 // ret.timestamp = DateTime.Today.ToString("dd-MMM-yy", CultureInfo.InvariantCulture);

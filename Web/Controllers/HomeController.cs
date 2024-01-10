@@ -93,16 +93,16 @@ namespace Web.Controllers
             }
 
         }
-        public async Task<IActionResult> GetNotification(int TypeId)
+        public async Task<IActionResult> GetNotification(int TypeId, int applyForId)
         {
             int userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-            return Json(await _basicDetailBL.GetNotification(userId, TypeId));
+            return Json(await _basicDetailBL.GetNotification(userId, TypeId, applyForId));
 
         }
-        public async Task<IActionResult> GetNotificationRequestId(int TypeId)
+        public async Task<IActionResult> GetNotificationRequestId(int TypeId,int applyForId)
         {
             int userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-            return Json(await _basicDetailBL.GetNotificationRequestId(userId, TypeId));
+            return Json(await _basicDetailBL.GetNotificationRequestId(userId, TypeId,applyForId));
 
         } 
         public async Task<IActionResult> UpdateNotification(MTrnNotification Data)

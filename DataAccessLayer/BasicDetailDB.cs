@@ -131,9 +131,11 @@ namespace DataAccessLayer
             }
         }
 
-        public async Task<List<BasicDetailVM>> GetALLForIcardSttaus(int UserId, int stepcount, int TypeId, int applyfor)
+        public async Task<List<BasicDetailVM>> GetALLForIcardSttaus(int UserId, int stepcount, int TypeId, int apply)
         {
             //var BasicDetailList = _context.BasicDetails.Where(x => x.IsDeleted == false && x.Updatedby == UserId).ToList();
+            int? applyfor = 0;
+            if (apply == 0) applyfor = null; else applyfor = apply;
 
             string query = "";
 
@@ -147,7 +149,7 @@ namespace DataAccessLayer
                         "inner join UserProfile pr on pr.UserId = trnicrd.Updatedby " +
                         "inner join TrnDomainMapping map on map.UserId=pr.UserId " +
                         "left join TrnFwds fwd on fwd.ToAspNetUsersId= map.AspNetUsersId and fwd.IsComplete=0 and fwd.RequestId=trnicrd.RequestId " +
-                        "WHERE map.AspNetUsersId = @UserId and Afor.ApplyForId=@applyfor and trnicrd.Status=0 ORDER BY B.UpdatedOn DESC";
+                        "WHERE map.AspNetUsersId = @UserId and Afor.ApplyForId=ISNULL(@applyfor,Afor.ApplyForId) and trnicrd.Status=0 ORDER BY B.UpdatedOn DESC";
 
             }
             else if (stepcount == 2 || stepcount == 3 || stepcount == 4 || stepcount == 5 || stepcount == 6)//IO
@@ -160,7 +162,7 @@ namespace DataAccessLayer
             " inner join MApplyFor Afor on Afor.ApplyForId = B.ApplyForId " +
             " inner join TrnStepCounter C on trnicrd.RequestId = C.RequestId" +
             " inner join MICardType ty on ty.TypeId = trnicrd.TypeId" +
-            " inner join TrnFwds fwd on fwd.RequestId = trnicrd.RequestId and fwd.FromAspNetUsersId = @UserId and Afor.ApplyForId=@applyfor and C.StepId = @stepcount where trnicrd.Status=0";
+            " inner join TrnFwds fwd on fwd.RequestId = trnicrd.RequestId and fwd.FromAspNetUsersId = @UserId and Afor.ApplyForId=ISNULL(@applyfor,Afor.ApplyForId) and C.StepId = @stepcount where trnicrd.Status=0";
                 }
                 else if (TypeId == 3)
                 {
@@ -170,7 +172,7 @@ namespace DataAccessLayer
             " inner join MApplyFor Afor on Afor.ApplyForId = B.ApplyForId " +
             " inner join TrnStepCounter C on trnicrd.RequestId = C.RequestId" +
             " inner join MICardType ty on ty.TypeId = trnicrd.TypeId" +
-            " inner join TrnFwds fwd on fwd.RequestId = trnicrd.RequestId and fwd.FromAspNetUsersId = @UserId and Afor.ApplyForId=@applyfor and C.StepId = @stepcount where trnicrd.Status=0";
+            " inner join TrnFwds fwd on fwd.RequestId = trnicrd.RequestId and fwd.FromAspNetUsersId = @UserId and Afor.ApplyForId=ISNULL(@applyfor,Afor.ApplyForId) and C.StepId = @stepcount where trnicrd.Status=0";
                 }
 
 
@@ -184,7 +186,7 @@ namespace DataAccessLayer
                 " inner join MApplyFor Afor on Afor.ApplyForId = B.ApplyForId " +
                 " inner join TrnStepCounter C on trnicrd.RequestId = C.RequestId" +
                 " inner join MICardType ty on ty.TypeId = trnicrd.TypeId" +
-                " inner join TrnFwds fwd on fwd.RequestId = trnicrd.RequestId and fwd.ToAspNetUsersId = @UserId and Afor.ApplyForId=@applyfor and fwd.Status=0 and C.StepId = @stepcount where trnicrd.Status=0";
+                " inner join TrnFwds fwd on fwd.RequestId = trnicrd.RequestId and fwd.ToAspNetUsersId = @UserId and Afor.ApplyForId=ISNULL(@applyfor,Afor.ApplyForId) and fwd.Status=0 and C.StepId = @stepcount where trnicrd.Status=0";
             }
          
             //else if (stepcount == 4)///MI-11
@@ -259,7 +261,7 @@ namespace DataAccessLayer
             }
 
         }
-        public async Task<List<BasicDetailVM>> GetALLBasicDetail(int UserId,int stepcount, int TypeId)
+        public async Task<List<BasicDetailVM>> GetALLBasicDetail(int UserId,int stepcount, int TypeId, int applyForId)
         {
             //var BasicDetailList = _context.BasicDetails.Where(x => x.IsDeleted == false && x.Updatedby == UserId).ToList();
 
@@ -274,7 +276,7 @@ namespace DataAccessLayer
                         "inner join MICardType ty on ty.TypeId = trnicrd.TypeId " +
                         "inner join UserProfile pr on pr.UserId = trnicrd.Updatedby " +
                         "inner join TrnDomainMapping map on map.UserId=pr.UserId " +
-                        "left join TrnFwds fwd on fwd.ToAspNetUsersId= map.AspNetUsersId and fwd.IsComplete=0 and fwd.RequestId=trnicrd.RequestId " +
+                        "left join TrnFwds fwd on fwd.ToAspNetUsersId= map.AspNetUsersId and fwd.IsComplete=0 and Afor.ApplyForId=IsNULL(@applyForId,Afor.ApplyForId) and fwd.RequestId=trnicrd.RequestId " +
                         "WHERE map.AspNetUsersId = @UserId and trnicrd.Status=0 ORDER BY B.UpdatedOn DESC";
                 
             }
@@ -288,7 +290,7 @@ namespace DataAccessLayer
                " inner join MApplyFor Afor on Afor.ApplyForId = B.ApplyForId " +
                " inner join TrnStepCounter C on trnicrd.RequestId = C.RequestId" +
                " inner join MICardType ty on ty.TypeId = trnicrd.TypeId" +
-               " inner join TrnFwds fwd on fwd.RequestId = trnicrd.RequestId and fwd.FromAspNetUsersId = @UserId and fwd.TypeId=@stepcount and C.StepId = @stepcount and trnicrd.Status=0";
+               " inner join TrnFwds fwd on fwd.RequestId = trnicrd.RequestId and fwd.FromAspNetUsersId = @UserId and Afor.ApplyForId=IsNULL(@applyForId,Afor.ApplyForId) and fwd.TypeId=@stepcount and C.StepId = @stepcount and trnicrd.Status=0";
                 }
                 else if (TypeId == 2) //// For For Action
                 {
@@ -298,7 +300,7 @@ namespace DataAccessLayer
                " inner join MApplyFor Afor on Afor.ApplyForId = B.ApplyForId " +
                " inner join TrnStepCounter C on trnicrd.RequestId = C.RequestId" +
                " inner join MICardType ty on ty.TypeId = trnicrd.TypeId" +
-               " inner join TrnFwds fwd on fwd.RequestId = trnicrd.RequestId and fwd.ToAspNetUsersId = @UserId and fwd.TypeId=@stepcount and C.StepId = @stepcount and trnicrd.Status=0";
+               " inner join TrnFwds fwd on fwd.RequestId = trnicrd.RequestId and fwd.ToAspNetUsersId = @UserId and Afor.ApplyForId=IsNULL(@applyForId,Afor.ApplyForId) and fwd.TypeId=@stepcount and C.StepId = @stepcount and trnicrd.Status=0";
 
 
                 }
@@ -314,7 +316,7 @@ namespace DataAccessLayer
                " inner join MApplyFor Afor on Afor.ApplyForId = B.ApplyForId " +
                " inner join TrnStepCounter C on trnicrd.RequestId = C.RequestId" +
                " inner join MICardType ty on ty.TypeId = trnicrd.TypeId" +
-               " inner join TrnFwds fwd on fwd.RequestId = trnicrd.RequestId and fwd.ToAspNetUsersId = @UserId and fwd.TypeId=@TypeId and fwd.IsComplete=1 and trnicrd.Status=0";
+               " inner join TrnFwds fwd on fwd.RequestId = trnicrd.RequestId and fwd.ToAspNetUsersId = @UserId and Afor.ApplyForId=IsNULL(@applyForId,Afor.ApplyForId) and fwd.TypeId=@TypeId and fwd.IsComplete=1 and trnicrd.Status=0";
 
 
                 }
@@ -328,7 +330,7 @@ namespace DataAccessLayer
                 " inner join MApplyFor Afor on Afor.ApplyForId = B.ApplyForId " +
                 " inner join TrnStepCounter C on trnicrd.RequestId = C.RequestId" +
                 " inner join MICardType ty on ty.TypeId = trnicrd.TypeId" +
-                " inner join TrnFwds fwd on fwd.RequestId = trnicrd.RequestId and fwd.FromAspNetUsersId = @UserId and fwd.Status=0 where trnicrd.Status=0";
+                " inner join TrnFwds fwd on fwd.RequestId = trnicrd.RequestId and fwd.FromAspNetUsersId = @UserId and Afor.ApplyForId=IsNULL(@applyForId,Afor.ApplyForId) and fwd.Status=0 where trnicrd.Status=0";
             }
 
             //else if (stepcount == 22)//Reject From IO
@@ -411,7 +413,7 @@ namespace DataAccessLayer
             //}
             using (var connection = _contextDP.CreateConnection())
             {
-                var BasicDetailList = await connection.QueryAsync<BasicDetailVM>(query, new { UserId, stepcount, TypeId });
+                var BasicDetailList = await connection.QueryAsync<BasicDetailVM>(query, new { UserId, stepcount, TypeId, applyForId });
                 //List<MRegistration> RegistrationList = await _context.MRegistration.ToListAsync();
                 int sno = 1;
                 var allrecord = (from e in BasicDetailList
@@ -561,9 +563,8 @@ namespace DataAccessLayer
                        " COUNT(CASE WHEN StepId = 6 then 1 ELSE NULL END) as  HQApproved," +
                        " COUNT(CASE WHEN StepId = 10 then 1 ELSE NULL END) as HQReject" +
                        " from TrnStepCounter cou" +
-                       " inner join TrnICardRequest req on cou.RequestId=req.RequestId" +
-                       " inner join TrnDomainMapping trndo on trndo.Id=req.TrnDomainMappingId" +
-                       " inner join BasicDetails bs on bs.BasicDetailId=trndo.AspNetUsersId and bs.ApplyForId=@applyForId" +
+                       " inner join TrnICardRequest req on cou.RequestId=req.RequestId and cou.ApplyForId=@applyForId" +
+                       " inner join TrnDomainMapping trndo on trndo.Id=req.TrnDomainMappingId" + 
                        " where AspNetUsersId=@UserId";
             }
             else if (Type == 2)
@@ -572,18 +573,18 @@ namespace DataAccessLayer
                         " declare @GSOPending int declare @GSOApproved int declare @GSOReject int"+
                         " declare @MIPending int declare @MIApproved int declare @MIReject int"+
                         " declare @HQPending int declare @HQApproved int declare @HQReject int"+
-                        " select @IOPending=COUNT(distinct fwd.RequestId) from TrnFwds fwd inner join TrnStepCounter cou on fwd.RequestId=cou.RequestId where ToAspNetUsersId=@UserId and IsComplete=0 and TypeId=2" +
-                        " select @IOApproved=COUNT(distinct fwd.RequestId)  from TrnFwds fwd inner join TrnStepCounter cou on fwd.RequestId=cou.RequestId where FromAspNetUsersId=@UserId and TypeId=3" +
-                        " select @IOReject=COUNT(distinct fwd.RequestId)  from TrnFwds fwd inner join TrnStepCounter cou on fwd.RequestId=cou.RequestId where FromAspNetUsersId=@UserId and Status=0 and TypeId=1" +
-                        " select @GSOPending=COUNT(distinct fwd.RequestId)  from TrnFwds fwd inner join TrnStepCounter cou on fwd.RequestId=cou.RequestId where ToAspNetUsersId=@UserId and IsComplete=0 and TypeId=3" +
-                        " select @GSOApproved=COUNT(distinct fwd.RequestId)  from TrnFwds fwd inner join TrnStepCounter cou on fwd.RequestId=cou.RequestId where FromAspNetUsersId=@UserId and TypeId=4" +
-                        " select @GSOReject=COUNT(distinct fwd.RequestId)  from TrnFwds fwd inner join TrnStepCounter cou on fwd.RequestId=cou.RequestId where FromAspNetUsersId=@UserId and Status=0 and TypeId=1" +
-                        " select @MIPending=COUNT(distinct fwd.RequestId)  from TrnFwds fwd inner join TrnStepCounter cou on fwd.RequestId=cou.RequestId where ToAspNetUsersId=@UserId and IsComplete=0 and TypeId=4" +
-                        " select @MIApproved=COUNT(distinct fwd.RequestId)  from TrnFwds fwd inner join TrnStepCounter cou on fwd.RequestId=cou.RequestId where FromAspNetUsersId=@UserId and TypeId=5" +
-                        " select @MIReject=COUNT(distinct fwd.RequestId)  from TrnFwds fwd inner join TrnStepCounter cou on fwd.RequestId=cou.RequestId where FromAspNetUsersId=@UserId and Status=0 and TypeId=1" +
-                        " select @HQPending=COUNT(distinct fwd.RequestId)  from TrnFwds fwd inner join TrnStepCounter cou on fwd.RequestId=cou.RequestId where ToAspNetUsersId=@UserId and IsComplete=0 and TypeId=5" +
-                        " select @HQApproved=COUNT(distinct fwd.RequestId)  from TrnFwds fwd inner join TrnStepCounter cou on fwd.RequestId=cou.RequestId where FromAspNetUsersId=@UserId and TypeId=6" +
-                        " select @HQReject=COUNT(distinct fwd.RequestId)  from TrnFwds fwd inner join TrnStepCounter cou on fwd.RequestId=cou.RequestId where FromAspNetUsersId=@UserId and Status=0 and TypeId=1" +
+                        " select @IOPending=COUNT(distinct fwd.RequestId) from TrnFwds fwd inner join TrnStepCounter cou on fwd.RequestId=cou.RequestId and cou.ApplyForId=@applyForId where ToAspNetUsersId=@UserId and IsComplete=0 and TypeId=2" +
+                        " select @IOApproved=COUNT(distinct fwd.RequestId)  from TrnFwds fwd inner join TrnStepCounter cou on fwd.RequestId=cou.RequestId and cou.ApplyForId=@applyForId where FromAspNetUsersId=@UserId and TypeId=3" +
+                        " select @IOReject=COUNT(distinct fwd.RequestId)  from TrnFwds fwd inner join TrnStepCounter cou on fwd.RequestId=cou.RequestId and cou.ApplyForId=@applyForId where FromAspNetUsersId=@UserId and Status=0 and TypeId=1" +
+                        " select @GSOPending=COUNT(distinct fwd.RequestId)  from TrnFwds fwd inner join TrnStepCounter cou on fwd.RequestId=cou.RequestId and cou.ApplyForId=@applyForId where ToAspNetUsersId=@UserId and IsComplete=0 and TypeId=3" +
+                        " select @GSOApproved=COUNT(distinct fwd.RequestId)  from TrnFwds fwd inner join TrnStepCounter cou on fwd.RequestId=cou.RequestId and cou.ApplyForId=@applyForId where FromAspNetUsersId=@UserId and TypeId=4" +
+                        " select @GSOReject=COUNT(distinct fwd.RequestId)  from TrnFwds fwd inner join TrnStepCounter cou on fwd.RequestId=cou.RequestId and cou.ApplyForId=@applyForId where FromAspNetUsersId=@UserId and Status=0 and TypeId=1" +
+                        " select @MIPending=COUNT(distinct fwd.RequestId)  from TrnFwds fwd inner join TrnStepCounter cou on fwd.RequestId=cou.RequestId and cou.ApplyForId=@applyForId where ToAspNetUsersId=@UserId and IsComplete=0 and TypeId=4" +
+                        " select @MIApproved=COUNT(distinct fwd.RequestId)  from TrnFwds fwd inner join TrnStepCounter cou on fwd.RequestId=cou.RequestId and cou.ApplyForId=@applyForId where FromAspNetUsersId=@UserId and TypeId=5" +
+                        " select @MIReject=COUNT(distinct fwd.RequestId)  from TrnFwds fwd inner join TrnStepCounter cou on fwd.RequestId=cou.RequestId and cou.ApplyForId=@applyForId where FromAspNetUsersId=@UserId and Status=0 and TypeId=1" +
+                        " select @HQPending=COUNT(distinct fwd.RequestId)  from TrnFwds fwd inner join TrnStepCounter cou on fwd.RequestId=cou.RequestId and cou.ApplyForId=@applyForId where ToAspNetUsersId=@UserId and IsComplete=0 and TypeId=5" +
+                        " select @HQApproved=COUNT(distinct fwd.RequestId)  from TrnFwds fwd inner join TrnStepCounter cou on fwd.RequestId=cou.RequestId and cou.ApplyForId=@applyForId where FromAspNetUsersId=@UserId and TypeId=6" +
+                        " select @HQReject=COUNT(distinct fwd.RequestId)  from TrnFwds fwd inner join TrnStepCounter cou on fwd.RequestId=cou.RequestId and cou.ApplyForId=@applyForId where FromAspNetUsersId=@UserId and Status=0 and TypeId=1" +
                         " select @IOPending IOPending,@IOApproved IOApproved,@IOReject IOReject,@GSOPending GSOPending,@GSOApproved GSOApproved,@GSOReject GSOReject, @MIPending MIPending,@MIApproved MIApproved,@MIReject MIReject,@HQPending HQPending,@HQApproved HQApproved,@HQReject HQReject";
                         
             }
@@ -598,18 +599,19 @@ namespace DataAccessLayer
             }
         }
 
-        public async Task<List<DTONotificationResponse>> GetNotification(int UserId, int Type)
+        public async Task<List<DTONotificationResponse>> GetNotification(int UserId, int Type, int applyForId)
         {
             string query = "select dis.DisplayId,Spanname,Message from TrnNotification noti" +
                             " inner join TrnNotificationDisplay dis on noti.DisplayId=dis.DisplayId"+
                             " inner join AspNetUsers users on users.Id=noti.SentAspNetUsersId"+
-                            " where noti.ReciverAspNetUsersId=@UserId and NotificationTypeId=@Type and [Read]=0 and ReciverAspNetUsersId!=SentAspNetUsersId";
+                            " inner join TrnStepCounter stepc on stepc.RequestId=noti.RequestId "+
+                            " where noti.ReciverAspNetUsersId=@UserId and NotificationTypeId=@Type and stepc.applyforId=@applyForId and [Read]=0 and ReciverAspNetUsersId!=SentAspNetUsersId";
         
             using (var connection = _contextDP.CreateConnection())
             {
                 //data.MRank.RankAbbreviation
                 //data.MArmedType.Abbreviation
-                var ret = await connection.QueryAsync<DTONotificationResponse>(query, new { UserId, Type });
+                var ret = await connection.QueryAsync<DTONotificationResponse>(query, new { UserId, Type, applyForId });
 
 
                 // var allProducts = ret.Concat(ret1) .ToList();
@@ -618,7 +620,7 @@ namespace DataAccessLayer
                 return ret.ToList();
             }
         }
-        public async Task<List<DTONotificationResponse>> GetNotificationRequestId(int UserId, int Type)
+        public async Task<List<DTONotificationResponse>> GetNotificationRequestId(int UserId, int Type, int applyForId)
         {
 
             string query = "select dis.DisplayId,Spanname + 'self' Spanname,Message from TrnNotification noti " +
@@ -626,13 +628,14 @@ namespace DataAccessLayer
                             " inner join AspNetUsers users on users.Id = noti.SentAspNetUsersId" +
                             " inner join TrnICardRequest tre on tre.RequestId = noti.RequestId" +
                             " inner join TrnDomainMapping dmap on dmap.Id = tre.TrnDomainMappingId" +
-                            " where NotificationTypeId = @Type and dmap.AspNetUsersId = @UserId and [Read]=0 and ReciverAspNetUsersId=SentAspNetUsersId";
+                            " inner join TrnStepCounter cou on cou.RequestId=tre.RequestId" +
+                            " where NotificationTypeId = @Type and dmap.AspNetUsersId = @UserId and [Read]=0 and cou.applyforId=@applyForId and ReciverAspNetUsersId=SentAspNetUsersId";
 
             using (var connection = _contextDP.CreateConnection())
             {
                 //data.MRank.RankAbbreviation
                 //data.MArmedType.Abbreviation
-                var ret = await connection.QueryAsync<DTONotificationResponse>(query, new { UserId, Type });
+                var ret = await connection.QueryAsync<DTONotificationResponse>(query, new { UserId, Type, applyForId });
                
 
               

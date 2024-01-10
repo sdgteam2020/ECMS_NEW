@@ -1,5 +1,6 @@
 ﻿using BusinessLogicsLayer;
 using DataTransferObject.Response.User;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Cryptography;
@@ -9,6 +10,7 @@ namespace WebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class UserController : ControllerBase
     {
         //private readonly IUnitOfWork unitOfWork;
@@ -25,8 +27,8 @@ namespace WebApi.Controllers
             public byte[] iv { get; set; }
         }
 
-        [HttpGet]
-        public IActionResult Get(string IcNo)
+        [HttpPost]
+        public IActionResult Post(string IcNo)
         {
 
             helpers helpers = new helpers();

@@ -12,7 +12,7 @@ namespace DataAccessLayer.BaseInterfaces
 {
     public interface IBasicDetailDB:IGenericRepositoryDL<BasicDetail>
     {
-        public Task<List<BasicDetailVM>> GetALLBasicDetail(int UserId,int step, int type); 
+        public Task<List<BasicDetailVM>> GetALLBasicDetail(int UserId,int step, int type, int applyForId); 
         public Task<List<BasicDetailVM>> GetALLForIcardSttaus(int UserId, int step, int type, int applyfor);
         public Task<BasicDetailCrtAndUpdVM> GetByBasicDetailsId(int BasicDetailId);
         public Task<List<DTOICardTypeRequest>> GetAllICardType();
@@ -20,8 +20,8 @@ namespace DataAccessLayer.BaseInterfaces
         public Task<List<ICardHistoryResponse>> ICardHistory(int RequestId);
         public Task<bool> SaveBasicDetailsWithAll(BasicDetail Data, MTrnAddress address, MTrnUpload trnUpload, MTrnIdentityInfo mTrnIdentityInfo, MTrnICardRequest mTrnICardRequest, MStepCounter mStepCounter);
         public Task<DTOICardTaskCountResponse> GetTaskCountICardRequest(int UserId,int Type, int applyForId);
-        public Task<List<DTONotificationResponse>> GetNotification(int UserId, int Type);
-        public Task<List<DTONotificationResponse>> GetNotificationRequestId(int UserId, int Type);
+        public Task<List<DTONotificationResponse>> GetNotification(int UserId, int Type,int applyForId);
+        public Task<List<DTONotificationResponse>> GetNotificationRequestId(int UserId, int Type, int applyForId);
         public Task<List<DTODataExportsResponse>> GetBesicdetailsByRequestId(DTODataExportRequest Data);
     }
 }

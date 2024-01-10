@@ -27,6 +27,7 @@ namespace DataTransferObject.Domain.Model
         [MaxLength(12)]
         [MinLength(12)]
         public long AadhaarNo { get; set; }
+       
         public float Height { get; set; }
 
         public int BloodGroupId { get; set; }
