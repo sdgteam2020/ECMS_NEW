@@ -10,7 +10,8 @@ namespace DataTransferObject.Response
     {
         public int Id { get; set; }
         public string DomainId { get; set; } = string.Empty;
-        public string? RoleName { get; set; }
+        public List<int>? RoleIds { get; set; }
+        public List<string>? RoleNames { get; set; }
         public string? ArmyNo { get; set; }
         public DateTime UpdatedOn { get; set; }
         public bool AdminFlag { get; set; }

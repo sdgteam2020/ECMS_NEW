@@ -112,10 +112,6 @@ namespace DataAccessLayer
                 {
                     Search = string.IsNullOrEmpty(Search) ? "" : Search.ToLower();
                     var allrecord = await (from u in _context.Users.Where(P => Search == "" || P.DomainId.ToLower().Contains(Search)).OrderByDescending(x=>x.Id)
-                                           join ur in _context.UserRoles on u.Id equals ur.UserId into uur_jointable
-                                           from xur in uur_jointable.DefaultIfEmpty()
-                                           join r in _context.Roles on xur.RoleId equals r.Id into xurr_jointable
-                                           from xr in xurr_jointable.DefaultIfEmpty()
                                            join tdm in _context.TrnDomainMapping on u.Id equals tdm.AspNetUsersId into utdm_jointable
                                            from xtdm in utdm_jointable.DefaultIfEmpty()
                                            join up in _context.UserProfile on xtdm.UserId equals up.UserId into xtdmup_jointable
@@ -133,7 +129,12 @@ namespace DataAccessLayer
                                                TrnDomainMappingUnitId = xtdm != null ? xtdm.UnitId : 0,
                                                ArmyNo = xup != null ? xup.ArmyNo : null,
                                                UserId = xup != null ? xup.UserId : 0,
-                                               RoleName = xr != null ? (xr.Name != null ? xr.Name : "Role name is blank.") : "no role assign",
+                                               RoleNames = (from ur in _context.UserRoles.Where(x => x.UserId == u.Id)
+                                                            join r in _context.Roles on ur.RoleId equals r.Id
+                                                            select r.Name).ToList(),
+                                               RoleIds = (from ur in _context.UserRoles
+                                                          where ur.UserId == u.Id
+                                                          select ur.RoleId).ToList(),
                                            }).Take(200).ToListAsync();
                     return allrecord;
                 }
@@ -141,10 +142,6 @@ namespace DataAccessLayer
                 {
                     int Id = string.IsNullOrEmpty(Search) ? 0 : Convert.ToInt32(Search);
                     var allrecord = await (from u in _context.Users.Where(P => P.Id == Id)
-                                           join ur in _context.UserRoles on u.Id equals ur.UserId into uur_jointable
-                                           from xur in uur_jointable.DefaultIfEmpty()
-                                           join r in _context.Roles on xur.RoleId equals r.Id into xurr_jointable
-                                           from xr in xurr_jointable.DefaultIfEmpty()
                                            join tdm in _context.TrnDomainMapping on u.Id equals tdm.AspNetUsersId into utdm_jointable
                                            from xtdm in utdm_jointable.DefaultIfEmpty()
                                            join up in _context.UserProfile on xtdm.UserId equals up.UserId into tdmup_jointable
@@ -162,7 +159,12 @@ namespace DataAccessLayer
                                                TrnDomainMappingUnitId = xtdm != null ? xtdm.UnitId : 0,
                                                ArmyNo = xup != null ? xup.ArmyNo : null,
                                                UserId = xup != null ? xup.UserId : 0,
-                                               RoleName = xr != null ? (xr.Name != null ? xr.Name : "Role name is blank.") : null,
+                                               RoleNames = (from ur in _context.UserRoles.Where(x => x.UserId == u.Id)
+                                                            join r in _context.Roles on ur.RoleId equals r.Id
+                                                            select r.Name).ToList(),
+                                               RoleIds = (from ur in _context.UserRoles
+                                                          where ur.UserId == u.Id
+                                                          select ur.RoleId).ToList(),
                                            }).ToListAsync();
                     return allrecord;
 
@@ -170,10 +172,6 @@ namespace DataAccessLayer
                 else
                 {
                     var allrecord = await (from u in _context.Users.OrderByDescending(x=>x.Id).Take(200)
-                                           join ur in _context.UserRoles on u.Id equals ur.UserId into uur_jointable
-                                           from xur in uur_jointable.DefaultIfEmpty()
-                                           join r in _context.Roles on xur.RoleId equals r.Id into xurr_jointable
-                                           from xr in xurr_jointable.DefaultIfEmpty()
                                            join tdm in _context.TrnDomainMapping on u.Id equals tdm.AspNetUsersId into utdm_jointable
                                            from xtdm in utdm_jointable.DefaultIfEmpty()
                                            join up in _context.UserProfile on xtdm.UserId equals up.UserId into xtdmup_jointable
@@ -191,7 +189,12 @@ namespace DataAccessLayer
                                                TrnDomainMappingUnitId = xtdm != null ? xtdm.UnitId : 0,
                                                ArmyNo = xup != null ? xup.ArmyNo : null,
                                                UserId = xup != null ? xup.UserId : 0,
-                                               RoleName = xr != null ? (xr.Name != null ? xr.Name : "Role name is blank.") : null,
+                                               RoleNames = (from ur in _context.UserRoles.Where(x=>x.UserId == u.Id)
+                                                           join r in _context.Roles on ur.RoleId equals r.Id
+                                                           select r.Name).ToList(),
+                                               RoleIds = (from ur in _context.UserRoles
+                                                            where ur.UserId == u.Id
+                                                            select ur.RoleId).ToList(),
                                            }).ToListAsync();
                     return allrecord;
                 }

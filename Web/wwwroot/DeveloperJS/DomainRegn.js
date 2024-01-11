@@ -254,11 +254,11 @@ function BindData() {
                     for (var i = 0; i < response.length; i++) {
 
                         listItem += "<tr>";
-                        listItem += "<td class='d-none'><span id='regId'>" + response[i].Id + "</span><span id='regTrnDomainMappingId'>" + response[i].TrnDomainMappingId + "</span><span id='regTrnDomainMappingApptId'>" + response[i].TrnDomainMappingApptId + "</span><span id='regTrnDomainMappingUnitId'>" + response[i].TrnDomainMappingUnitId + "</span><span id='regUserId'>" + response[i].UserId + "</span></td>";
+                        listItem += "<td class='d-none'><span id='regId'>" + response[i].Id + "</span><span id='regTrnDomainMappingId'>" + response[i].TrnDomainMappingId + "</span><span id='regTrnDomainMappingApptId'>" + response[i].TrnDomainMappingApptId + "</span><span id='regTrnDomainMappingUnitId'>" + response[i].TrnDomainMappingUnitId + "</span><span id='regUserId'>" + response[i].UserId + "</span><span id='roleIds'>" + response[i].RoleIds + "</span></td>";
                         listItem += "<td class='align-middle'>" + (i + 1) + "</td>";
                         listItem += "<td class='align-middle'><span id='reg_no'>" + response[i].Id + "</span></td>";
                         listItem += "<td class='align-middle'><span id='domainId'>" + response[i].DomainId + "</span></td>";
-                        listItem += "<td class='align-middle'><span id='roleName'>" + response[i].RoleName + "</span></td>";
+                        listItem += "<td class='align-middle'><span id='roleName'>" + response[i].RoleNames + "</span></td>";
                         listItem += "<td class='align-middle'><span id='updatedOn'>" + DateFormateddMMyyyyhhmmss(response[i].UpdatedOn) + "</span></td>";
                         if (response[i].Mapped == true)
                             listItem += "<td class='align-middle'><span id='domain_mapping'><span class='badge badge-pill badge-success'>Yes</span></span></td>";
@@ -340,7 +340,10 @@ function BindData() {
                         if ($(this).closest("tr").find("#regTrnDomainMappingApptId").html() > 0) {
                             GetNameByApptId($(this).closest("tr").find("#regTrnDomainMappingApptId").html());
                         }
-                        $("#ddlRoles").val([1, 2]);
+                        //$("#ddlRoles").val([1, 2]);
+                        //$("#ddlRoles").trigger("change");
+                        let arr2 = $(this).closest("tr").find("#roleIds").html().split(',');
+                        $("#ddlRoles").val(arr2);
                         $("#ddlRoles").trigger("change");
 
                         $("#btnDomainAdd").val("Update");
