@@ -322,6 +322,7 @@ function BindData() {
                         }
                         else {
                             $("#txtapprovalno").prop("checked", true);
+
                         }
 
                         if ($(this).closest("tr").find("#domain_active").html() == 'Yes') {
