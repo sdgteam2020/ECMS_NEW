@@ -166,9 +166,21 @@ namespace Web.Controllers
             }
 
         }
+        public async Task<IActionResult> GetAllRole()
+        {
+            try
+            {
+                return Json(await _iAccountBL.GetAllRole());
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "Account->GetAllRole");
+                return Json(KeyConstants.InternalServerError);
+            }
+        }
 
         #endregion End Domain Regn.
-       
+
         #region Policy
 
         [HttpGet]

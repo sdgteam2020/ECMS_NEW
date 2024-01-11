@@ -1,5 +1,15 @@
 ﻿$(document).ready(function () {
     BindData()
+    BindRoles();
+    $('.select2').select2({
+        dropdownParent: $('#AddNewDomain'),
+        closeOnSelect: false
+    });
+    //$('#ddlRoles').change(function () {
+       
+    //    alert($('#ddlRoles').val())
+       
+    //});
 
     $("#AddNewDomain input[name='txtapproval']").click(function () {
         $("#txtapproval-error").html("");
@@ -10,7 +20,6 @@
     $("#AddNewDomain input[name='IntOffr']").click(function () {
         $("#IntOffr-error").html("");
     });
-
 
     $("#txtAppointmentName").autocomplete({
         source: function (request, response) {
@@ -142,6 +151,7 @@
 
 function Proceed() {
     ResetErrorMessage();
+
     let formId = '#SaveDomain';
     ValidateInput();
     $.validator.unobtrusive.parse($(formId));
@@ -329,6 +339,8 @@ function BindData() {
                         if ($(this).closest("tr").find("#regTrnDomainMappingApptId").html() > 0) {
                             GetNameByApptId($(this).closest("tr").find("#regTrnDomainMappingApptId").html());
                         }
+                        $("#ddlRoles").val([1, 2]);
+                        $("#ddlRoles").trigger("change");
 
                         $("#btnDomainAdd").val("Update");
                         $("#AddNewDomain").modal('show');
@@ -364,7 +376,7 @@ function Save() {
         data: {
             "Id": $("#spnDomainRegId").html(),
             "DomainId": $("#txtDomainId").val(),
-            "RoleName": $("#txtRole").val(),
+            "RoleIds": $('#ddlRoles').val(),
             "AdminFlag": $('input:radio[name=txtapproval]:checked').val(),
             "Active": $('input:radio[name=txtactive]:checked').val(),
             "TDMId": $("#spnTrnDomainMappingId").html(),
@@ -421,7 +433,10 @@ function Reset() {
 
     $("#spnDomainRegId").html("0");
     $("#txtDomainId").val("");
-    $("#txtRole").val("");
+    //$("#ddlRoles").select2('data', null);
+
+    $('#ddlRoles').val(null).trigger('change');
+   
 
     $("#spnTrnDomainMappingId").html("0");
     $("#spnUnitMapId").html("0");
@@ -478,4 +493,17 @@ function GetNameByApptId(param1) {
             $("#txtAppointmentName").val(data.AppointmentName);
         }
     });
+}
+function BindRoles() {
+        $.ajax({
+        url: "/Account/GetAllRole",
+        type: "POST",
+        success: function (response, status) {
+            var list = "";
+            for (var i = 0; i < response.length; i++) {
+                list += '<option value="' + response[i].Id + '">' + response[i].Name + '</option>';
+            }
+            $('#ddlRoles').html(list)
+        }
+        });
 }

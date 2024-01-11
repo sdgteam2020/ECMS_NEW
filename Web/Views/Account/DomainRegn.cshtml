@@ -94,8 +94,11 @@
                             <div class="form-group row mb-2">
                                 <label class="col-form-label col-sm-4">Role<i class="fas fa-asterisk mand1"></i></label>
                                 <div class="col-sm-8">
-                                    <input class="form-control" placeholder="Enter Role" id="txtRole" name="txtRole" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="Role is required." data-val-regex-pattern="^[\w ]*$" />
-                                    <span class="text-danger field-validation-valid" data-valmsg-for="txtRole" data-valmsg-replace="true"></span>
+                                    <select class="form-control select2 select2-accessible" multiple="" placeholder="Select Role" style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddlRoles" id="ddlRoles" data-val="true" data-val-regex="This special chars and space not allowed for security reasons." data-val-required="Role is required.">
+                                    </select>
+
+                                    @*<select class="form-control select2 select2-accessible" multiple="" placeholder="Please select  Role" style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddlRoles" required id="ddlRoles">
+                                    </select> *@
                                 </div>
                             </div>
                             <div class="form-group row mb-4">

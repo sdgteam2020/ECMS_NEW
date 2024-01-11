@@ -29,10 +29,12 @@ namespace DataAccessLayer
         private readonly UserManager<ApplicationUser> userManager;
         private readonly IUserProfileDB userProfileDB;
         private readonly IDomainMapDB domainMapDB;
-        public AccountDB(ApplicationDbContext context, ILogger<DomainMapDB> logger, UserManager<ApplicationUser> userManager, IUserProfileDB userProfileDB, IDomainMapDB domainMapDB, IDataProtectionProvider dataProtectionProvider, DataProtectionPurposeStrings dataProtectionPurposeStrings) : base(context)
+        private readonly IPasswordHasher<ApplicationUser> _passwordHasher;
+        public AccountDB(ApplicationDbContext context, IPasswordHasher<ApplicationUser> passwordHasher, ILogger<DomainMapDB> logger, UserManager<ApplicationUser> userManager, IUserProfileDB userProfileDB, IDomainMapDB domainMapDB, IDataProtectionProvider dataProtectionProvider, DataProtectionPurposeStrings dataProtectionPurposeStrings) : base(context)
         {
             _context = context;
             _logger = logger;
+            _passwordHasher = passwordHasher;
             this.userManager = userManager;
             this.userProfileDB = userProfileDB;
             this.domainMapDB = domainMapDB;
@@ -576,44 +578,54 @@ namespace DataAccessLayer
                 }
                 else
                 {
-                    var userAdd = new ApplicationUser
+                    using (var transaction = _context.Database.BeginTransaction())
                     {
-                        DomainId = dTO.DomainId,
-                        Active = dTO.Active,
-                        AdminFlag = dTO.AdminFlag,
-                        AdminFlagDate = dTO.AdminFlag == true? TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time")):null,
-                        Updatedby = Updatedby,
-                        UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time")),
-                        UserName = dTO.DomainId.ToLower(),
-                        Email = dTO.DomainId.ToLower() + "@army.mil",
-                    };
-                    var result = await userManager.CreateAsync(userAdd, "Admin123#");
+                        try
+                        {
+                            var userAdd = new ApplicationUser
+                            {
+                                DomainId = dTO.DomainId,
+                                Active = dTO.Active,
+                                AdminFlag = dTO.AdminFlag,
+                                AdminFlagDate = dTO.AdminFlag == true ? TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time")) : null,
+                                Updatedby = Updatedby,
+                                UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time")),
+                                UserName = dTO.DomainId.ToLower(),
+                                NormalizedUserName = dTO.DomainId.ToUpper(),
+                                Email = dTO.DomainId.ToLower() + "@army.mil",
+                                NormalizedEmail = dTO.DomainId.ToUpper() + "@ARMY.MIL"
+                            };
 
-                    if (result.Succeeded)
-                    {
-                        await userManager.AddToRoleAsync(userAdd, dTO.RoleName);
+                            userAdd.PasswordHash = _passwordHasher.HashPassword(userAdd, "Admin123#");
+                            await _context.Users.AddAsync(userAdd);
+                            await _context.SaveChangesAsync();
+                            int Id = userAdd.Id;
+                            // Assign new roles to the user
+                            foreach (var roleId in dTO.RoleIds)
+                            {
+                                await _context.UserRoles.AddAsync(new IdentityUserRole<int> { RoleId = roleId, UserId = Id });
+                                await _context.SaveChangesAsync();
+                            }
+
+                            var trnmapAdd = new TrnDomainMapping
+                            {
+                                AspNetUsersId = Id,
+                                UnitId = dTO.UnitMappId,
+                                ApptId = dTO.ApptId,
+                            };
+                            await _context.TrnDomainMapping.AddAsync(trnmapAdd);
+                            await _context.SaveChangesAsync(true);
+                            transaction.Commit();
+                            await userManager.UpdateSecurityStampAsync(userAdd);
+                            return true;
+                        }
+                        catch (Exception ex)
+                        {
+                            transaction.Rollback();
+                            _logger.LogError(1001, ex, "AccountDB->SaveDomainRegn");
+                            return null;
+                        }
                     }
-                    foreach (var error in result.Errors)
-                    {
-                        return false;
-                    }
-                    TrnDomainMapping trnDomainMapping = new TrnDomainMapping();
-                    if (dTO.TDMId > 0)
-                    {
-                        trnDomainMapping = await domainMapDB.Get(dTO.TDMId);
-                        trnDomainMapping.AspNetUsersId = userAdd.Id;
-                        trnDomainMapping.UnitId = dTO.UnitMappId;
-                        trnDomainMapping.ApptId = dTO.ApptId;
-                        await domainMapDB.Update(trnDomainMapping);
-                    }
-                    else
-                    {
-                        trnDomainMapping.AspNetUsersId = userAdd.Id;
-                        trnDomainMapping.UnitId = dTO.UnitMappId;
-                        trnDomainMapping.ApptId = dTO.ApptId;
-                        await domainMapDB.Add(trnDomainMapping);
-                    }
-                    return true;
                 }
             }
             catch (Exception ex)
@@ -666,6 +678,21 @@ namespace DataAccessLayer
                 return null;
             }
 
+        }
+        public async Task<List<DTOMasterResponse>>GetAllRole()
+        {
+            List<DTOMasterResponse> lst = new List<DTOMasterResponse>();
+            var Ret = await _context.Roles.OrderBy(x=>x.Id).ToListAsync();
+            foreach (var r in Ret)
+            {
+                DTOMasterResponse db = new DTOMasterResponse()
+                {
+                    Id = r.Id,
+                    Name = r.Name != null ? r.Name : "Role Name Blank",
+                };
+                lst.Add(db);
+            }
+            return lst;
         }
     }
     

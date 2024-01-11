@@ -10,7 +10,7 @@ namespace DataTransferObject.Requests
     {
         public int Id { get; set; }
         public string DomainId { get; set; } = string.Empty;
-        public string RoleName { get; set; } = string.Empty;
+        public required List<int> RoleIds { get; set; }
         public bool AdminFlag { get; set; }
         public bool Active { get; set; }
         public int TDMId { get; set; }
