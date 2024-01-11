@@ -134,11 +134,37 @@ function GetNotification(NotificationTypeId, ApplyForId) {
                 if (response.length >0) {
                     //alert("Notofication Sent")
                     var countIo = 0;
+                    var list = "";
                     for (var i = 0; i < response.length; i++) {
                         if ($("." + response[i].Spanname).html() == "")
                             $("." + response[i].Spanname).html(0);
                         //if (response[i].DisplayId == 2) {
-                        $("." + response[i].Spanname).html(parseInt($("." + response[i].Spanname).html())+1);
+                        $("." + response[i].Spanname).html(parseInt($("." + response[i].Spanname).html()) + 1);
+
+                        var tot = $("#Totalnotification").html();
+                        if (tot == "")
+                            tot = 0;
+
+                        $("#Totalnotification").html(parseInt(tot) + parseInt($("." + response[i].Spanname).html()));
+
+                        list += '<div class="border border-1 p-1 mt-2">';
+                        list += '<a class="dropdown-item preview-item">';
+                        list += '<div class="preview-thumbnail ">';
+                        list += '<div class="preview-icon bg-success">';
+                        list += '<i class="ti-bell mx-0"></i>';
+                        list += '</div>';
+                        list += '</div>';
+                        list += ' <div class="preview-item-content">';
+                        list += '<h6 class="preview-subject font-weight-normal">' + response[i].Message + '</h6>';
+                        list += '<p class="font-weight-light small-text mb-0 text-muted">';
+
+
+                        list += ' </p>';
+                        list += '</div>';
+
+                        list += ' </a>';
+
+                        list += '</div>';
                        // }
 
                         //if (response[i].DisplayId == 2 || response[i].DisplayId == 3 || response[i].DisplayId == 7) {
@@ -165,6 +191,7 @@ function GetNotification(NotificationTypeId, ApplyForId) {
 
                         //}
                     }
+                    $(".preview-list").append(list);
                 }
 
             } else {
@@ -193,11 +220,39 @@ function GetNotificationRequestId(NotificationTypeId,ApplyForId) {
                 if (response.length > 0) {
                     //alert("Notofication Sent")
                     var countIo = 0;
+                    var list = "";
                     for (var i = 0; i < response.length; i++) {
                         if ($("." + response[i].Spanname).html() == "")
                             $("." + response[i].Spanname).html(0);
                        
                         $("." + response[i].Spanname).html(parseInt($("." + response[i].Spanname).html()) + 1);
+
+
+                        var tot = $("#Totalnotification").html();
+                        if (tot == "")
+                            tot = 0;
+
+                        $("#Totalnotification").html(parseInt(tot) + parseInt($("." + response[i].Spanname).html()));
+
+
+                        list += '<div class="border border-1 p-1 mt-2">';
+                        list += '<a class="dropdown-item preview-item">';
+                        list += '<div class="preview-thumbnail ">';
+                        list += '<div class="preview-icon bg-success">';
+                        list += '<i class="ti-bell mx-0"></i>';
+                        list += '</div>';
+                        list += '</div>';
+                        list += ' <div class="preview-item-content">';
+                        list += '<h6 class="preview-subject font-weight-normal">' + response[i].Message+'</h6>';
+                        list += '<p class="font-weight-light small-text mb-0 text-muted">';
+
+                        
+                        list += ' </p>';
+                        list += '</div>';
+
+                        list += ' </a>';
+                        
+                        list += '</div>';
                         //if (response[i].DisplayId == 2 || response[i].DisplayId == 3 || response[i].DisplayId == 7) {
                         //    var SpnIOself = 0;
                         //    var SpnGSOself = 0;
@@ -222,6 +277,7 @@ function GetNotificationRequestId(NotificationTypeId,ApplyForId) {
 
                         //}
                     }
+                    $(".preview-list").append(list);
                 }
 
             } else {

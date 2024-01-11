@@ -538,7 +538,11 @@ namespace DataTransferObject.Localize {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to I HEREBY DECLARE THAT THE DETAILS FURNISHED ABOVE ARE TRUE TO BEST OF MY KNOWLEDGE. I AM FULLY AWARE THAT, DECLARATION OF FALSE INFO IS AN OFFENCE WHICH WOULD MAKE ME LIABLE FOR PUNISHMENT AS PER EXTANT REGULATIONS..
+        ///   Looks up a localized string similar to 
+        ///		
+        ///		
+        ///	
+        ///	.
         /// </summary>
         public static string TermsConditions {
             get {

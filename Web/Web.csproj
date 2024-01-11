@@ -75,4 +75,11 @@
     <Folder Include="wwwroot\WriteReadData\Signature\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Update="wwwroot\DeveloperJS\Profile - Copy.js">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
+
 </Project>

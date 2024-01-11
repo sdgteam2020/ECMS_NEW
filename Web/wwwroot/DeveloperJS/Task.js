@@ -69,9 +69,9 @@ function GetTaskIcardRequestCount(Id, applyForId) {
                             $(".COPending").html(response.IOPending);
                             $(".COApproved").html(response.IOApproved);
                             $(".COReject").html(response.IOReject);
-                            $(".DIDPending").html(response.GSOPending);
-                            $(".DIDApproved").html(response.GSOApproved);
-                            $(".DIDReject").html(response.GSOReject);
+                            $(".DIDPending").html(response.MIPending);
+                            $(".DIDApproved").html(response.MIApproved);
+                            $(".DIDReject").html(response.MIReject);
                             //$(".MIPending").html(response.MIPending);
                             //$(".MIApproved").html(response.MIApproved);
                             //$(".MIReject").html(response.MIReject);
@@ -84,7 +84,7 @@ function GetTaskIcardRequestCount(Id, applyForId) {
                             $("#COApproved").html(response.IOApproved);
                             $("#COReject").html(response.IOReject);
                             $("#DIDPending").html(response.GSOPending);
-                            $("#DIDApproved").html(response.GSOApproved);
+                            $("#DIDApproved").html(response.MIApproved);
                             $("#DIDReject").html(response.GSOReject);                      
                             $("#ExportPending").html(response.HQPending);
                             $("#ExportApproved").html(response.HQApproved);

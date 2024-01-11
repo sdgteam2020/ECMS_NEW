@@ -149,12 +149,13 @@ namespace Web.Controllers
             { ViewBag.Title = "I-Card Rejectd From HQ 54"; type = 1; stepcounter = 10; }
             else if (retint == 555)
             { ViewBag.Title = "I-Card Approved From HQ 54"; type = 2; stepcounter = 5; }
-            noti.DisplayId = stepcounter;
+           
             if(stepcounter==1)
             {
                 var allrecord = await Task.Run(() => basicDetailBL.GetALLForIcardSttaus(Convert.ToInt32(userId), stepcounter, type, 0));
 
                 _logger.LogInformation(1001, "Index Page Of Basic Detail View");
+
                 return View(allrecord);
             }
            else if (string.IsNullOrEmpty(jcoor))
@@ -162,6 +163,7 @@ namespace Web.Controllers
                 var allrecord = await Task.Run(() => basicDetailBL.GetALLForIcardSttaus(Convert.ToInt32(userId), stepcounter, type,1));
 
                 _logger.LogInformation(1001, "Index Page Of Basic Detail View");
+                noti.DisplayId = stepcounter;
                 await _INotificationBL.UpdateRead(noti);
 
                 return View(allrecord);
@@ -171,6 +173,7 @@ namespace Web.Controllers
                 var allrecord = await Task.Run(() => basicDetailBL.GetALLForIcardSttaus(Convert.ToInt32(userId), stepcounter, type,2));
 
                 _logger.LogInformation(1001, "Index Page Of Basic Detail View");
+                noti.DisplayId = stepcounter+10;
                 await _INotificationBL.UpdateRead(noti);
 
                 return View(allrecord);
@@ -300,7 +303,7 @@ namespace Web.Controllers
                 //{
                 //    basicDetailVM.MArmedType = mArmedType;
                 //}
-                basicDetailCrtAndUpdVM.AadhaarNo=Convert.ToInt32(basicDetailCrtAndUpdVM.AadhaarNo).ToString("D4");
+                basicDetailCrtAndUpdVM.AadhaarNo=basicDetailCrtAndUpdVM.AadhaarNo.Substring((basicDetailCrtAndUpdVM.AadhaarNo.Length-4),4);
                 return View(basicDetailCrtAndUpdVM);
             }
             else
@@ -389,12 +392,12 @@ namespace Web.Controllers
                         {
                             TempData["Registration"] = JsonConvert.SerializeObject(model);
                             string id = protector.Protect(Data.BasicDetailId.ToString());
-                            return RedirectToActionPermanent("BasicDetail", "BasicDetail", new { Id = id });
+                            return RedirectToActionPermanent("BasicDetail", "BasicDetail", new { Id  = protector.Protect("0") });
                         }
                         else
                         {
                             TempData["Registration"] = JsonConvert.SerializeObject(model);
-                            return RedirectToActionPermanent("BasicDetail", "BasicDetail");
+                            return RedirectToActionPermanent("BasicDetail", "BasicDetail", new { Id= protector.Protect("0") });
                         }
 
                         
@@ -483,7 +486,7 @@ namespace Web.Controllers
             string decryptedId = string.Empty;
             int decryptedIntId = 0;
 
-            if (Id == null)
+            if (Id == null || protector.Unprotect(Id)== "0")
             {
                 TempData.Keep("Registration");
                 DTORegistrationRequest? model = new DTORegistrationRequest();
@@ -556,6 +559,7 @@ namespace Web.Controllers
                 try
                 {
                     // Decrypt the  id using Unprotect method
+                    //string s = protector.Protect("0");
                     decryptedId = protector.Unprotect(Id);
                     decryptedIntId = Convert.ToInt32(decryptedId);
                 }

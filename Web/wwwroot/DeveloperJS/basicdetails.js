@@ -24,7 +24,7 @@
 
     if (sessionStorage.getItem("ArmyNo") != null) {
         $("#ServiceNumber").val(sessionStorage.getItem("ArmyNo"));
-
+        $("#icarddetails").html('Request Details For ('+sessionStorage.getItem("ArmyNo")+')');
         if (sessionStorage.getItem("OffType") == 1) {
             $(".OptionsRegimental").addClass("d-none");
             mMsater($("#spnrankid").val(), "RankId", Rank, "");
@@ -87,7 +87,7 @@
 function CheckValidation() {
     
     if ($("#TermsConditions").prop("checked")) {
-        alert("Your Tracking Id -" + DateFormateMMddyyyy($("#DOB").val()) +""+ $("#AadhaarNo").val() );
+        alert("Your Tracking Id -" + DateFormateMMddyyyy($("#DOB").val()) + "" + $("#AadhaarNo").val().substr($("#AadhaarNo").val().length - 4) );
         return true;
         
     }
@@ -135,7 +135,7 @@ function getunitbymapid(value)
         success: function (data) {
 
             $("#txtUnit").val(data.UnitName);
-            $("#UnitId").val(data.UnitId);
+            $("#UnitId").val(data.UnitMapId);
             //$("#lblProComd").html(data.ComdName);
             //$("#lblProCorps").html(data.CorpsName);
             //$("#lblProDiv").html(data.DivName);
@@ -158,7 +158,18 @@ function getApplyIcardDetails() {
         success: function (response, status) {
             if (response != null) {
 
-                $("#icarddetails").html('For ' + response.ApplyFor + ' And (' + response.Registraion + ') For ' + response.Type);
+                $("#lblCategory").html(response.ApplyFor);
+                $("#lblReason").html(response.Type);
+
+                $("#RegdUser").html(response.RankAbbreviation + ' ' + response.Name + ' (' + response.ArmyNo + ') (' + response.DomainId + ')');
+
+                if ($("#RegistrationId").val() == '3' || $("#RegistrationId").val() == '7') {
+                    $("#lblunitname").html(response.Registraion);
+                } else {
+                    $("#lblunitname").html(response.UnitName + ' (' + response.Sus_no + '' + response.Suffix + ')');
+                }
+
+
             }
 
         }
