@@ -1157,7 +1157,7 @@ namespace Web.Controllers
                             var result = await signInManager.PasswordSignInAsync(usera.UserName, "Admin123#", false, true);
                             if (result.Succeeded)
                             {
-                                var roles = await userManager.GetRolesAsync(usera);
+                                //var roles = await userManager.GetRolesAsync(usera);
                                 ViewBag.Message = "Sucessfully Logged In.";
 
                                 TrnDomainMapping? dTO = new TrnDomainMapping();
@@ -1180,16 +1180,16 @@ namespace Web.Controllers
 
 
 
-                                if (roles[0] == "User")
+                                if (dTOTempSession.RoleName == "User")
                                 {
                                     return RedirectToActionPermanent("Index", "Home");
                                 }
-                                else if (roles[0] == "Admin")
+                                else if (dTOTempSession.RoleName == "Admin")
                                 {
                                     return RedirectToActionPermanent("Dashboard", "Home");
 
                                 }
-                                else if (roles[0] == "Super Admin")
+                                else if (dTOTempSession.RoleName == "Super Admin")
                                 {
                                     return RedirectToActionPermanent("Index", "Account");
                                 }

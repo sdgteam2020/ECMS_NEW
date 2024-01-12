@@ -124,7 +124,7 @@ function BindData() {
 
                 }
 
-                else {
+                else {  
 
                     $("#tbldata").DataTable().destroy();
 
@@ -135,16 +135,23 @@ function BindData() {
                         listItem += "<td class='align-middle'>" + (i + 1) + "</td>";
                         listItem += "<td class='align-middle'><span id='reg_no'>" + response[i].Id + "</span></td>";
                         listItem += "<td class='align-middle'><span id='domainId'>" + response[i].DomainId + "</span></td>";
-                        listItem += "<td class='align-middle'><span id='armyNo'>" + response[i].ArmyNo + "</span></td>";
-                        listItem += "<td class='align-middle'><span id='roleName'>" + response[i].RoleName + "</span></td>";
+                        if (response[i].ArmyNo != null && response[i].ArmyNo != "null")
+                            listItem += "<td class='align-middle'><span id='armyNo'>" + response[i].ArmyNo + "</span></td>";
+                        else
+                            listItem += "<td class='align-middle'><span><span class='badge badge-pill badge-danger' id='domain_approval'>IC No Not Mapped</span></span></td>";
+
+                        listItem += "<td class='align-middle'><span id='roleName'>" + response[i].RoleNames + "</span></td>";
+
+
+
                         if (response[i].Id != null && response[i].Id != "null")
                             listItem += "<td class='align-middle'><span id='updatedOn'>" + DateFormateddMMyyyyhhmmss(response[i].UpdatedOn) + "</span></td>";
                         else
                             listItem += "<td class='align-middle'>NA</td>";
                         if (response[i].Mapped == true)
-                            listItem += "<td class='align-middle'><span id='btneditMapping'><button type='button' class='cls-btneditMapping btn btn-icon btn-round btn-warning mr-1'><i class='fas fa-edit'></i></button></span></td>";
+                            listItem += "<td class='align-middle'><span id='btneditMapping'><button type='button' class='cls-btneditMapping btn btn-icon btn-round btn-warning mr-1'><i class='fas fa-link'></i></button></span></td>";
                         else
-                            listItem += "<td class='align-middle'><span id='domain_mapping'><span class='badge badge-pill badge-danger'>No</span></span></td>";
+                            listItem += "<td class='align-middle'><span id='btneditMapping'><button type='button' class='cls-btneditMapping btn btn-icon btn-round btn-warning mr-1'><i class='fas fa-unlink'></i></button></span></td>";
 
                         if (response[i].Active == true)
                             listItem += "<td class='align-middle'><span><span class='badge badge-pill badge-success' id='domain_active'>Yes</span></span></td>";

@@ -67,10 +67,8 @@
             $("#lblSusno").html('');
             if (request.term.length > 2) {
                 $("#spnUnitMapId").html('');
-                $("#spnTrnDomainMappingId").html('');
                 var param = { "UnitName": request.term };
                 $("#spnUnitMapId").html(0);
-                $("#spnTrnDomainMappingId").html(0);
                 $.ajax({
                     url: '/Master/GetALLByUnitName',
                     contentType: 'application/x-www-form-urlencoded',
@@ -115,11 +113,13 @@
         },
         appendTo: '#suggesstion-box'
     });
+
     $("#btnDomainAdd").click(function () {
         Reset();
         ResetErrorMessage();
         $("#AddNewDomain").modal('show');
     });
+
     $("#btnDomainAddReset").click(function () {
         Reset();
         ResetErrorMessage();
@@ -254,7 +254,7 @@ function BindData() {
                     for (var i = 0; i < response.length; i++) {
 
                         listItem += "<tr>";
-                        listItem += "<td class='d-none'><span id='regId'>" + response[i].Id + "</span><span id='regTrnDomainMappingId'>" + response[i].TrnDomainMappingId + "</span><span id='regTrnDomainMappingApptId'>" + response[i].TrnDomainMappingApptId + "</span><span id='regTrnDomainMappingUnitId'>" + response[i].TrnDomainMappingUnitId + "</span><span id='regUserId'>" + response[i].UserId + "</span><span id='roleIds'>" + response[i].RoleIds + "</span></td>";
+                        listItem += "<td class='d-none'><span id='regId'>" + response[i].Id + "</span><span id='regTrnDomainMappingId'>" + response[i].TrnDomainMappingId + "</span><span id='regTrnDomainMappingApptId'>" + response[i].TrnDomainMappingApptId + "</span><span id='regTrnDomainMappingUnitId'>" + response[i].TrnDomainMappingUnitId + "</span><span id='regUserId'>" + response[i].UserId + "</span><span id='roleIds'>" + response[i].RoleIds + "</span><span id='domain_approval'>" + response[i].AdminFlag + "</span></td>"; 
                         listItem += "<td class='align-middle'>" + (i + 1) + "</td>";
                         listItem += "<td class='align-middle'><span id='reg_no'>" + response[i].Id + "</span></td>";
                         listItem += "<td class='align-middle'><span id='domainId'>" + response[i].DomainId + "</span></td>";
@@ -317,7 +317,7 @@ function BindData() {
                         $("#txtRole").val($(this).closest("tr").find("#roleName").html());
                         $("#spnDomainRegId").html($(this).closest("tr").find("#regId").html());
                         //alert($(this).closest("tr").find("#domain_approval").html())
-                        if ($(this).closest("tr").find("#domain_approval").html() == 'Verifed') {
+                        if ($(this).closest("tr").find("#domain_approval").html() == 'true') {
                             $("#txtapprovalyes").prop("checked", true);
                         }
                         else {
@@ -333,7 +333,7 @@ function BindData() {
                         }
 
                         if ($(this).closest("tr").find("#regTrnDomainMappingId").html() > 0) {
-                            $("spnTrnDomainMappingId").val($(this).closest("tr").find("#regTrnDomainMappingId").html());
+                            $("#spnTrnDomainMappingId").html($(this).closest("tr").find("#regTrnDomainMappingId").html()); 
                             GetALLByUnitById($(this).closest("tr").find("#regTrnDomainMappingUnitId").html());
                         }
 
@@ -373,7 +373,6 @@ function BindData() {
 
 }
 function Save() {
-    //alert($("#spnDomainRegId").html());
     $.ajax({
         url: '/Account/SaveDomainRegn',
         type: 'POST',
