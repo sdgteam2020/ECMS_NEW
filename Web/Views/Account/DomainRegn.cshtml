@@ -136,6 +136,7 @@
                                 </div>
                             </div>
                             <div class="form-group row mb-2">
+                                <span id="spnTDMUnitType" class="d-none">0</span>
                                 <span id="spnTrnDomainMappingId" class="d-none">0</span>
                                 <span id="spnUnitAppointmentId" class="d-none">0</span>
                                 <label class="col-form-label col-sm-4">Appointment Name<i class="fas fa-asterisk mand1"></i></label>
@@ -158,28 +159,46 @@
                                     <label id="lblSusno" class="col-form-label unit-label-background"></label>
                                 </div>
                             </div>
-                            <div class="row mb-2">
-                                <label class="col-form-label col-sm-4">Comd</label>
+                            <div id="lbl1" class="row mb-2 d-none">
+                                <label class="col-form-label col-sm-4 ">PSO / Dte</label>
+                                <div class="col-sm-8">
+                                    <label class="col-form-label unit-label-background" id="lblPso"></label>
+                                </div>
+                            </div>
+                            <div id="lbl2" class="row mb-2 d-none">
+                                <label class="col-form-label col-sm-4 ">DG / Sub Dte</label>
+                                <div class="col-sm-8">
+                                    <label class="col-form-label unit-label-background" id="lblDG"></label>
+                                </div>
+                            </div>
+                            <div id="lbl3" class="row mb-2 d-none">
+                                <label class="col-form-label col-sm-4 ">Comd / PSO</label>
                                 <div class="col-sm-8">
                                     <label class="col-form-label unit-label-background" id="lblComd"></label>
                                 </div>
                             </div>
-                            <div class="row mb-2">
-                                <label class="col-form-label col-sm-4">Corps</label>
+                            <div id="lbl4" class="row mb-2 d-none">
+                                <label class="col-form-label col-sm-4">Corps / Dte / Area</label>
                                 <div class="col-sm-8">
                                     <label class="col-form-label unit-label-background" id="lblCorps"></label>
                                 </div>
                             </div>
-                            <div class="row mb-2">
-                                <label class="col-form-label col-sm-4">Div</label>
+                            <div id="lbl5" class="row mb-2 d-none">
+                                <label class="col-form-label col-sm-4">Div / Branch / Sub Area</label>
                                 <div class="col-sm-8">
                                     <label class="col-form-label unit-label-background" id="lblDiv"></label>
                                 </div>
                             </div>
-                            <div class="row mb-2">
+                            <div id="lbl6" class="row mb-2 d-none">
                                 <label class="col-form-label col-sm-4">Bde</label>
                                 <div class="col-sm-8">
                                     <label class="col-form-label unit-label-background" id="lblBde"></label>
+                                </div>
+                            </div>
+                            <div id="lbl7" class="row mb-2 d-none">
+                                <label class="col-form-label col-sm-4">Type of Fmn / Branch</label>
+                                <div class="col-sm-8">
+                                    <label class="col-form-label unit-label-background" id="lblFmn"></label>
                                 </div>
                             </div>
                             <div class="col-sm-12 text-right">

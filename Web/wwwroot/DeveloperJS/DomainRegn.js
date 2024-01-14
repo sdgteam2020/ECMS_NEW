@@ -5,11 +5,6 @@
         dropdownParent: $('#AddNewDomain'),
         closeOnSelect: false
     });
-    //$('#ddlRoles').change(function () {
-       
-    //    alert($('#ddlRoles').val())
-       
-    //});
 
     $("#AddNewDomain input[name='txtapproval']").click(function () {
         $("#txtapproval-error").html("");
@@ -60,11 +55,14 @@
 
     $("#txtUnitName").autocomplete({
         source: function (request, response) {
+            $("#lblSusno").html('');
+            $("#lblPso").html('');
+            $("#lblDG").html('');
             $("#lblComd").html('');
             $("#lblCorps").html('');
             $("#lblDiv").html('');
             $("#lblBde").html('');
-            $("#lblSusno").html('');
+            $("#lblFmn").html('');
             if (request.term.length > 2) {
                 $("#spnUnitMapId").html('');
                 var param = { "UnitName": request.term };
@@ -101,12 +99,50 @@
                 data: param1,
                 type: 'POST',
                 success: function (data) {
+                    $("#spnTDMUnitType").html(data.UnitType);
                     $("#spnUnitMapId").html(data.UnitMapId);
-                    $("#lblComd").html(data.ComdName);
-                    $("#lblCorps").html(data.CorpsName);
-                    $("#lblDiv").html(data.DivName);
-                    $("#lblBde").html(data.BdeName);
                     $("#lblSusno").html(data.Sus_no + '' + data.Suffix);
+
+                    if (data.UnitType == 1) {
+                        $("#lblComd").html(data.ComdName);
+                        $("#lblCorps").html(data.CorpsName);
+                        $("#lblDiv").html(data.DivName);
+                        $("#lblBde").html(data.BdeName);
+                        $("#lbl1").addClass("d-none");
+                        $("#lbl2").addClass("d-none");
+                        $("#lbl3").removeClass("d-none");
+                        $("#lbl4").removeClass("d-none");
+                        $("#lbl5").removeClass("d-none");
+                        $("#lbl6").removeClass("d-none");
+                        $("#lbl7").addClass("d-none");
+                    }
+                    else if (data.UnitType == 2) {
+                        $("#lblComd").html(data.ComdName);
+                        $("#lblCorps").html(data.CorpsName);
+                        $("#lblDiv").html(data.DivName);
+                        $("#lblBde").html(data.BdeName);
+                        $("#lblFmn").html(data.BranchName);
+                        $("#lbl1").addClass("d-none");
+                        $("#lbl2").addClass("d-none");
+                        $("#lbl3").removeClass("d-none");
+                        $("#lbl4").removeClass("d-none");
+                        $("#lbl5").removeClass("d-none");
+                        $("#lbl6").removeClass("d-none");
+                        $("#lbl7").removeClass("d-none");
+                    }
+                    else if (data.UnitType == 3) {
+                        $("#lblPso").html(data.PSOName);
+                        $("#lblDG").html(data.SubDteName);
+                        $("#lbl1").removeClass("d-none");
+                        $("#lbl2").removeClass("d-none");
+                        $("#lbl3").addClass("d-none");
+                        $("#lbl4").addClass("d-none");
+                        $("#lbl5").addClass("d-none");
+                        $("#lbl6").addClass("d-none");
+                        $("#lbl7").addClass("d-none");
+                    }
+
+                    
 
                 }
             });
@@ -444,11 +480,15 @@ function Reset() {
     $("#spnTrnDomainMappingId").html("0");
     $("#spnUnitMapId").html("0");
     $("#txtUnitName").val("");
+    $("#lblSusno").html("");
+    $("#lblPso").html("");
+    $("#lblDG").html("");
     $("#lblComd").html("");
     $("#lblCorps").html("");
     $("#lblDiv").html("");
     $("#lblBde").html("");
-    $("#lblSusno").html("");
+    $("#lblFmn").html("");
+
 
     $("#spnUnitAppointmentId").html("0");
     $("#txtAppointmentName").val("");
@@ -475,13 +515,47 @@ function GetALLByUnitById(param1) {
         type: 'POST',
         success: function (data) {
             $("#spnUnitMapId").html(data.UnitMapId);
-            $("#txtUnitName").val(data.UnitName);
-            $("#lblComd").html(data.ComdName);
-            $("#lblCorps").html(data.CorpsName);
-            $("#lblDiv").html(data.DivName);
-            $("#lblBde").html(data.BdeName);
             $("#lblSusno").html(data.Sus_no + '' + data.Suffix);
+            $("#txtUnitName").val(data.UnitName);
 
+            if (data.UnitType == 1) {
+                $("#lblComd").html(data.ComdName);
+                $("#lblCorps").html(data.CorpsName);
+                $("#lblDiv").html(data.DivName);
+                $("#lblBde").html(data.BdeName);
+                $("#lbl1").addClass("d-none");
+                $("#lbl2").addClass("d-none");
+                $("#lbl3").removeClass("d-none");
+                $("#lbl4").removeClass("d-none");
+                $("#lbl5").removeClass("d-none");
+                $("#lbl6").removeClass("d-none");
+                $("#lbl7").addClass("d-none");
+            }
+            else if (data.UnitType == 2) {
+                $("#lblComd").html(data.ComdName);
+                $("#lblCorps").html(data.CorpsName);
+                $("#lblDiv").html(data.DivName);
+                $("#lblBde").html(data.BdeName);
+                $("#lblFmn").html(data.BranchName);
+                $("#lbl1").addClass("d-none");
+                $("#lbl2").addClass("d-none");
+                $("#lbl3").removeClass("d-none");
+                $("#lbl4").removeClass("d-none");
+                $("#lbl5").removeClass("d-none");
+                $("#lbl6").removeClass("d-none");
+                $("#lbl7").removeClass("d-none");
+            }
+            else if (data.UnitType == 3) {
+                $("#lblPso").html(data.PSOName);
+                $("#lblDG").html(data.SubDteName);
+                $("#lbl1").removeClass("d-none");
+                $("#lbl2").removeClass("d-none");
+                $("#lbl3").addClass("d-none");
+                $("#lbl4").addClass("d-none");
+                $("#lbl5").addClass("d-none");
+                $("#lbl6").addClass("d-none");
+                $("#lbl7").addClass("d-none");
+            }
         }
     });
 }

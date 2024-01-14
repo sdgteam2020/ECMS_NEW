@@ -45,8 +45,7 @@ namespace DataAccessLayer
             //&& (unit.DivId == 0 ? uni.DivId == uni.DivId : uni.DivId == unit.DivId)
             //&& (unit.BdeId == 0 ? uni.BdeId == uni.BdeId : uni.BdeId == unit.BdeId)
             join MUni in _context.MUnit on uni.UnitId equals MUni.UnitId
-                       join Com in _context.MComd
-                       on uni.ComdId equals Com.ComdId
+                       join Com in _context.MComd on uni.ComdId equals Com.ComdId
                     //   on new { uni.ComdId } equals new { Com.ComdId }
                        join cor in _context.MCorps on uni.CorpsId equals cor.CorpsId
                        join div in _context.MDiv on uni.DivId equals div.DivId
@@ -77,10 +76,6 @@ namespace DataAccessLayer
                            BranchName= FmnBranch.BranchName,
                            SubDteId=SubDte.SubDteId,
                            SubDteName=SubDte.SubDteName,
-
-
-
-
                        }
                      ).Distinct().Take(200).ToList(); ;
 
@@ -92,8 +87,24 @@ namespace DataAccessLayer
 
         public Task<List<DTOMapUnitResponse>> GetALLByUnitName(string UnitName)
         {
+            var Div = (from uni in _context.MapUnit
+                           //where (unit.ComdId == 0 ? uni.ComdId == uni.ComdId : uni.ComdId == unit.ComdId)
+                           //&& (unit.CorpsId == 0 ? uni.CorpsId == uni.CorpsId : uni.CorpsId == unit.CorpsId)
+                           //&& (unit.DivId == 0 ? uni.DivId == uni.DivId : uni.DivId == unit.DivId)
+                           //&& (unit.BdeId == 0 ? uni.BdeId == uni.BdeId : uni.BdeId == unit.BdeId)
+                       join MUni in _context.MUnit on uni.UnitId equals MUni.UnitId
+                       where MUni.UnitName.Contains(UnitName)
+                       select new DTOMapUnitResponse
+                       {
+                           UnitMapId = uni.UnitMapId,
+                           UnitName = MUni.UnitName,
+                       }
+                     ).Distinct().Take(5).ToList(); ;
+            return Task.FromResult(Div);
+        }
 
-           
+        public Task<DTOMapUnitResponse> GetALLByUnitMapId(int UnitMapId)
+        {
             //on new { Div.UnitId, a.Years_Months } equals new { c.UnitId, c.Years_Months }
             var Div = (from uni in _context.MapUnit
                            //where (unit.ComdId == 0 ? uni.ComdId == uni.ComdId : uni.ComdId == unit.ComdId)
@@ -102,48 +113,6 @@ namespace DataAccessLayer
                            //&& (unit.BdeId == 0 ? uni.BdeId == uni.BdeId : uni.BdeId == unit.BdeId)
                        join MUni in _context.MUnit on uni.UnitId equals MUni.UnitId
                        join Com in _context.MComd on uni.ComdId equals Com.ComdId
-                       //   on new { uni.ComdId } equals new { Com.ComdId }
-                       join cor in _context.MCorps on uni.CorpsId equals cor.CorpsId
-                       join div in _context.MDiv on uni.DivId equals div.DivId
-                       join bde in _context.MBde on uni.BdeId equals bde.BdeId
-                       where MUni.UnitName.Contains(UnitName)
-                       select new DTOMapUnitResponse
-                       {
-                           UnitMapId = uni.UnitMapId,
-                           UnitName = MUni.UnitName,
-                           //UnitId = uni.UnitId,
-                           //BdeId = bde.BdeId,
-                           //BdeName = bde.BdeName,
-                           //DivId = div.DivId,
-                           //DivName = div.DivName,
-                           //CorpsId = cor.CorpsId,
-                           //CorpsName = cor.CorpsName,
-                           //ComdName = Com.ComdName,
-                           //ComdId = Com.ComdId,
-                           //Suffix = MUni.Suffix,
-                           //Sus_no = MUni.Sus_no
-                       }
-                     ).Distinct().Take(5).ToList(); ;
-
-
-
-
-            return Task.FromResult(Div);
-        }
-
-        public Task<DTOMapUnitResponse> GetALLByUnitMapId(int UnitMapId)
-        {
-
-
-            //on new { Div.UnitId, a.Years_Months } equals new { c.UnitId, c.Years_Months }
-            var Div = (from uni in _context.MapUnit
-                           //where (unit.ComdId == 0 ? uni.ComdId == uni.ComdId : uni.ComdId == unit.ComdId)
-                           //&& (unit.CorpsId == 0 ? uni.CorpsId == uni.CorpsId : uni.CorpsId == unit.CorpsId)
-                           //&& (unit.DivId == 0 ? uni.DivId == uni.DivId : uni.DivId == unit.DivId)
-                           //&& (unit.BdeId == 0 ? uni.BdeId == uni.BdeId : uni.BdeId == unit.BdeId)
-                       join MUni in _context.MUnit on uni.UnitId equals MUni.UnitId
-                       join Com in _context.MComd
-                       on uni.ComdId equals Com.ComdId
                        //   on new { uni.ComdId } equals new { Com.ComdId }
                        join cor in _context.MCorps on uni.CorpsId equals cor.CorpsId
                        join div in _context.MDiv on uni.DivId equals div.DivId
@@ -167,7 +136,7 @@ namespace DataAccessLayer
                            ComdId = Com.ComdId,
                            Suffix = MUni.Suffix,
                            Sus_no = MUni.Sus_no,
-                              UnitType = uni.UnitType,
+                           UnitType = uni.UnitType,
                            PsoId = pso.PsoId,
                            PSOName = pso.PSOName,
                            FmnBranchID = FmnBranch.FmnBranchID,

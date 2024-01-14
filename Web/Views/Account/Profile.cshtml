@@ -2,7 +2,6 @@
 @model DTOProfileAndMappingRequest
 @{
     Layout = null;
-    DTOMapUnitResponse dTOMapUnitResponse = new DTOMapUnitResponse();
 }
 <!DOCTYPE html>
 <html>
@@ -21,7 +20,6 @@
     <link href="~/css/roboto.css" rel="stylesheet" />
     <link href="~/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
     <link href="~/lib/jqueryui/themes/base/jquery-ui.min.css" rel="stylesheet" />
-
     <link href="~/css/login.css" rel="stylesheet" />
 
     <link href="~/sweetalert2/sweetalert2.min.css" rel="stylesheet" />
@@ -81,15 +79,11 @@
                                         </div>
                                         <p class="font-weight-normal text-center mb-4 mt-1 ">Profile</p>
                                         <div class="pb-3 mt-3">
-                                            <form asp-antiforgery="true" asp-controller="Account" asp-action="Profile" method="post" class="mt-3">
+                                            <form asp-antiforgery="true" asp-controller="Account" asp-action="Profile" id="Profile" name="Profile" method="post" class="mt-3">
                                                 <div class="card-body">
                                                     <input hidden asp-for="UserId" />
-                                                    <input hidden asp-for="UnitId" />
+                                                    <input hidden asp-for="UnitMapId" />
                                                     <input hidden asp-for="ApptId" />
-                                                    @if (ViewBag.TrnDomain != null)
-                                                    {
-                                                        dTOMapUnitResponse = ViewBag.TrnDomain;
-                                                    }
                                                     <div class="row">
                                                         <div class="col-xl-12">
                                                             <div class="row mb-2 required">
@@ -131,6 +125,86 @@
                                                                 </div>
                                                             </div>
                                                             <div class="row mb-2 required">
+                                                                <label asp-for="IsIO" class="col-sm-4 col-form-label form-label">Initating Offr</label>
+                                                                @if (Model.UserId > 0)
+                                                                {
+                                                                    <div class="col-sm-8">
+                                                                        <div class="form-check form-check-inline">
+                                                                            <input class="form-check-input" type="radio" name="IsIO" value="true" id="IsIOyes" checked=@(Model.IsIO == true?true:false) disabled="disabled">
+                                                                            <label class="form-check-label" for="IsIOyes">
+                                                                                Yes
+                                                                            </label>
+                                                                        </div>
+                                                                        <div class="form-check form-check-inline">
+                                                                            <input class="form-check-input" type="radio" name="IsIO" value="false" id="IsIOno" checked=@(Model.IsIO == false?true:false) disabled="disabled">
+                                                                            <label class="form-check-label" for="IsIOno">
+                                                                                No
+                                                                            </label>
+                                                                        </div>
+                                                                        <span asp-validation-for="IsIO" class="text-danger"></span>
+                                                                    </div>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <div class="col-sm-8">
+                                                                        <div class="form-check form-check-inline">
+                                                                            <input class="form-check-input" type="radio" name="IsIO" value="true" id="IsIOyes">
+                                                                            <label class="form-check-label" for="IsIOyes">
+                                                                                Yes
+                                                                            </label>
+                                                                        </div>
+                                                                        <div class="form-check form-check-inline">
+                                                                            <input class="form-check-input" type="radio" name="IsIO" value="false" id="IsIOno">
+                                                                            <label class="form-check-label" for="IsIOno">
+                                                                                No
+                                                                            </label>
+                                                                        </div>
+                                                                        <span class="text-danger field-validation-valid" id="IsIO-error"></span>
+                                                                    </div>
+                                                                }
+
+                                                            </div>
+                                                            <div class="row mb-2 required">
+                                                                <label asp-for="IsCO" class="col-sm-4 col-form-label form-label">Commanding Offr</label>
+                                                                @if (Model.UserId > 0)
+                                                                {
+                                                                    <div class="col-sm-8">
+                                                                        <div class="form-check form-check-inline">
+                                                                            <input class="form-check-input" type="radio" name="IsCO" value="true" id="IsCOyes" checked=@(Model.IsCO == true?true:false) disabled="disabled">
+                                                                            <label class="form-check-label" for="IsCOyes">
+                                                                                Yes
+                                                                            </label>
+                                                                        </div>
+                                                                        <div class="form-check form-check-inline">
+                                                                            <input class="form-check-input" type="radio" name="IsCO" value="false" id="IsCOno" checked=@(Model.IntOffr == false?true:false) disabled="disabled">
+                                                                            <label class="form-check-label" for="IsCOno">
+                                                                                No
+                                                                            </label>
+                                                                        </div>
+                                                                    </div>
+
+                                                                }
+                                                                else
+                                                                {
+                                                                    <div class="col-sm-8">
+                                                                        <div class="form-check form-check-inline">
+                                                                            <input class="form-check-input" type="radio" name="IsCO" value="true" id="IsCOyes">
+                                                                            <label class="form-check-label" for="IsCOyes">
+                                                                                Yes
+                                                                            </label>
+                                                                        </div>
+                                                                        <div class="form-check form-check-inline">
+                                                                            <input class="form-check-input" type="radio" name="IsCO" value="false" id="IsCOno">
+                                                                            <label class="form-check-label" for="IsCOno">
+                                                                                No
+                                                                            </label>
+                                                                        </div>
+                                                                        <span class="text-danger field-validation-valid" id="IsCO-error"></span>
+                                                                    </div>
+                                                                }
+                                                    
+                                                            </div>
+                                                            <div class="row mb-2 required">
                                                                 <label asp-for="IntOffr" class="col-sm-4 col-form-label form-label"> Int Offrs.</label>
                                                                 @if (Model.UserId > 0)
                                                                 {
@@ -164,67 +238,72 @@
                                                                                 No
                                                                             </label>
                                                                         </div>
+                                                                        <span class="text-danger field-validation-valid" id="IntOffr-error"></span>
                                                                     </div>
                                                                 }
                                                             </div>
                                                             <div class="row mb-2 required">
-                                                                <span id="spnApptIdMap" class="d-none"></span>
-                                                                <label asp-for="AppointmentName" class="col-sm-4 col-form-label form-label">Appointment Name</label>
+                                                                <span id="spnUnitAppointmentId" class="d-none">@(Model.ApptId > 0 ? Model.ApptId : 0)</span>
+                                                                <label class="col-form-label col-sm-4">Appointment Name<i class="fas fa-asterisk mand1"></i></label>
                                                                 <div class="col-sm-8">
-                                                                    @if (Model.ApptId > 0)
-                                                                    {
-                                                                        <input asp-for="AppointmentName" class="form-control" placeholder="" value="@Model.AppointmentName" readonly />
-                                                                    }
-                                                                    else
-                                                                    {
-                                                                        <input asp-for="AppointmentName" class="form-control" placeholder="" />
-                                                                    }
-                                                                    <span asp-validation-for="AppointmentName" class="text-danger"></span>
+                                                                    <input class="form-control" placeholder="Type Appointment" id="txtAppointmentName" name="txtAppointmentName" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="Appointment Name is required." data-val-regex-pattern="^[\w \& \()]*$" />
+                                                                    <span class="text-danger field-validation-valid" data-valmsg-for="txtAppointmentName" data-valmsg-replace="true"></span>
                                                                 </div>
                                                             </div>
-                                                            <div class="row mb-2 required">
-                                                                <span id="spnUnitIdMap" class="d-none"></span>
-                                                                <label asp-for="UnitName" class="col-sm-4 col-form-label form-label">Unit Name</label>
+                                                            <div class="form-group row mb-2">
+                                                                <span id="spnUnitMapId" class="d-none">@(Model.UnitMapId > 0 ? Model.UnitMapId : 0)</span>
+                                                                <label class="col-form-label col-sm-4">Unit Name<i class="fas fa-asterisk mand1"></i></label>
                                                                 <div class="col-sm-8">
-                                                                    @if (dTOMapUnitResponse.UnitId > 0)
-                                                                    {
-                                                                        <input asp-for="UnitName" class="form-control" placeholder="" value="@dTOMapUnitResponse.UnitName" readonly />
-                                                                    }
-                                                                    else
-                                                                    {
-                                                                        <input asp-for="UnitName" class="form-control" placeholder="" />
-                                                                    }
-                                                                    <span asp-validation-for="UnitName" class="text-danger"></span>
+                                                                    <input class="form-control" placeholder="Type Unit Name" id="txtUnitName" name="txtUnitName" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="Unit Name is required." data-val-regex-pattern="^[\w ]*$" />
+                                                                    <span class="text-danger field-validation-valid" data-valmsg-for="txtUnitName" data-valmsg-replace="true"></span>
                                                                 </div>
                                                             </div>
                                                             <div class="row mb-2">
                                                                 <label class="col-form-label col-sm-4">Sus No</label>
                                                                 <div class="col-sm-8">
-                                                                    <label id="lblProSusno" class="col-form-label unit-label-background">@(dTOMapUnitResponse.Sus_no != null ? dTOMapUnitResponse.Sus_no : "")</label>
+                                                                    <label id="lblSusno" class="col-form-label unit-label-background"></label>
                                                                 </div>
                                                             </div>
-                                                            <div class="row mb-2">
-                                                                <label class="col-form-label col-sm-4">Comd</label>
+                                                            <div id="lbl1" class="row mb-2 d-none">
+                                                                <label class="col-form-label col-sm-4 ">PSO / Dte</label>
                                                                 <div class="col-sm-8">
-                                                                    <label class="col-form-label unit-label-background" id="lblProComd">@(dTOMapUnitResponse.ComdName != null ? dTOMapUnitResponse.ComdName : "")</label>
+                                                                    <label class="col-form-label unit-label-background" id="lblPso"></label>
                                                                 </div>
                                                             </div>
-                                                            <div class="row mb-2">
-                                                                <label class="col-form-label col-sm-4">Corps</label>
+                                                            <div id="lbl2" class="row mb-2 d-none">
+                                                                <label class="col-form-label col-sm-4 ">DG / Sub Dte</label>
                                                                 <div class="col-sm-8">
-                                                                    <label class="col-form-label unit-label-background" id="lblProCorps">@(dTOMapUnitResponse.CorpsName != null ? dTOMapUnitResponse.CorpsName : "")</label>
+                                                                    <label class="col-form-label unit-label-background" id="lblDG"></label>
                                                                 </div>
                                                             </div>
-                                                            <div class="row mb-2">
-                                                                <label class="col-form-label col-sm-4">Div</label>
+                                                            <div id="lbl3" class="row mb-2 d-none">
+                                                                <label class="col-form-label col-sm-4 ">Comd / PSO</label>
                                                                 <div class="col-sm-8">
-                                                                    <label class="col-form-label unit-label-background" id="lblProDiv">@(dTOMapUnitResponse.DivName != null ? dTOMapUnitResponse.DivName : "")</label>
+                                                                    <label class="col-form-label unit-label-background" id="lblComd"></label>
                                                                 </div>
                                                             </div>
-                                                            <div class="row mb-2">
+                                                            <div id="lbl4" class="row mb-2 d-none">
+                                                                <label class="col-form-label col-sm-4">Corps / Dte / Area</label>
+                                                                <div class="col-sm-8">
+                                                                    <label class="col-form-label unit-label-background" id="lblCorps"></label>
+                                                                </div>
+                                                            </div>
+                                                            <div id="lbl5" class="row mb-2 d-none">
+                                                                <label class="col-form-label col-sm-4">Div / Branch / Sub Area</label>
+                                                                <div class="col-sm-8">
+                                                                    <label class="col-form-label unit-label-background" id="lblDiv"></label>
+                                                                </div>
+                                                            </div>
+                                                            <div id="lbl6" class="row mb-2 d-none">
                                                                 <label class="col-form-label col-sm-4">Bde</label>
                                                                 <div class="col-sm-8">
-                                                                    <label class="col-form-label unit-label-background" id="lblPrBde">@(dTOMapUnitResponse.BdeName != null ? dTOMapUnitResponse.BdeName : "")</label>
+                                                                    <label class="col-form-label unit-label-background" id="lblBde"></label>
+                                                                </div>
+                                                            </div>
+                                                            <div id="lbl7" class="row mb-2 d-none">
+                                                                <label class="col-form-label col-sm-4">Type of Fmn / Branch</label>
+                                                                <div class="col-sm-8">
+                                                                    <label class="col-form-label unit-label-background" id="lblFmn"></label>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -232,7 +311,7 @@
                                                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                                                 </div>
                                                 <div class="card-footer text-center">
-                                                    <button type="submit" class="btn btn-primary">Submit</button>
+                                                    <input type="button" class="btn btn-primary" value="Submit" id="btnSubmit" onclick="Proceed()" />
                                                     @if (TempData["success"] != null)
                                                     {
                                                         <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -262,12 +341,12 @@
                                                     m1.Append(",<br/>RoleName : " + dTOTempSession.RoleName);
                                                     m1.Append(",<br/>ICNO : " + dTOTempSession.ICNO);
                                                     m1.Append(",<br/>UserId : " + dTOTempSession.UserId);
-                                                    m1.Append(",<br/>TrnDomainMappingUnitId : " + dTOTempSession.TrnDomainMappingUnitId);
-                                                    m1.Append(",<br/>TrnDomainMappingId : " + dTOTempSession.TrnDomainMappingId);
+                                                    m1.Append(",<br/>TDMUnitMapId : " + dTOTempSession.TDMUnitMapId);
+                                                    m1.Append(",<br/>TDMId : " + dTOTempSession.TDMId);
                                                     m1.Append(",<br/>AspNetUsersId : " + dTOTempSession.AspNetUsersId);
 
                                                     m2.Append("ICNoDomainId : " + dTOTempSession.ICNoDomainId);
-                                                    m2.Append(",<br/>ICNoTrnDomainMappingUnitId : " + dTOTempSession.ICNoTrnDomainMappingUnitId);
+                                                    m2.Append(",<br/>ICNoTDMUnitMapId : " + dTOTempSession.ICNoTDMUnitMapId);
                                                 }
                                             }
                                             @if (dTOTempSession != null)
@@ -295,6 +374,8 @@
     <script asp-src-include="~/lib/jquery-validate/jquery.validate.js" defer></script>
     <script asp-src-include="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js" defer></script>
     <script asp-src-include="~/lib/jqueryui/jquery-ui.min.js"></script>
+    <script asp-src-include="~/lib/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script asp-src-include="~/sweetalert2/sweetalert2.min.js"></script>
     <script asp-src-include="~/developerjs/accountprofile.js"></script>
     <script asp-src-include="~/developerjs/keyconstants.js"></script>
 </body>

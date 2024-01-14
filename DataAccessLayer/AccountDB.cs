@@ -696,6 +696,226 @@ namespace DataAccessLayer
             }
             return lst;
         }
+
+        public async Task<DTOTempSession?> ProfileAndMappingSaving(DTOProfileAndMappingRequest model, DTOTempSession dTOTempSession)
+        {
+            if (dTOTempSession.Status == 2)
+            {
+                using (var transaction = _context.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        var user = new ApplicationUser
+                        {
+                            DomainId = dTOTempSession.DomainId,
+                            Active = true,
+                            Updatedby = 1,
+                            UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time")),
+                            UserName = dTOTempSession.DomainId.ToLower(),
+                            NormalizedUserName = dTOTempSession.DomainId.ToUpper(),
+                            Email = dTOTempSession.DomainId.ToLower() + "@army.mil",
+                            NormalizedEmail = dTOTempSession.DomainId.ToUpper() + "@ARMY.MIL"
+                        };
+                        user.PasswordHash = _passwordHasher.HashPassword(user, "Admin123#");
+                        await _context.Users.AddAsync(user);
+                        await _context.SaveChangesAsync();
+
+                        // Assign new roles to the user
+                        int RoleId = (from r in _context.Roles.Where(x => x.Name == dTOTempSession.RoleName)
+                                      select r.Id).FirstOrDefault();
+                        await _context.UserRoles.AddAsync(new IdentityUserRole<int> { RoleId = RoleId, UserId = user.Id });
+                        await _context.SaveChangesAsync();
+
+
+                        TrnDomainMapping trnDomainMapping = new TrnDomainMapping();
+                        trnDomainMapping.AspNetUsersId = user.Id;
+                        trnDomainMapping.UnitId = model.UnitMapId;
+                        trnDomainMapping.ApptId = model.ApptId;
+
+                        if (model.UserId > 0)
+                        {
+                            MUserProfile? uptUserProfile = await _context.UserProfile.FindAsync(dTOTempSession.UserId);
+                            if (uptUserProfile != null)
+                            {
+                                uptUserProfile.Updatedby = user.Id;
+                                await _context.SaveChangesAsync();
+                                trnDomainMapping.UserId = dTOTempSession.UserId;
+                            }
+                            else
+                            {
+                                return null;
+                            }
+
+                        }
+                        else
+                        {
+                            MUserProfile mUserProfile = new MUserProfile();
+                            mUserProfile.ArmyNo = dTOTempSession.ICNO;
+                            mUserProfile.RankId = model.RankId;
+                            mUserProfile.Name = model.Name;
+                            mUserProfile.IntOffr = model.IntOffr;
+                            mUserProfile.IsIO = model.IsIO;
+                            mUserProfile.IsCO = model.IsCO;
+                            mUserProfile.Updatedby = user.Id;
+                            await _context.UserProfile.AddAsync(mUserProfile);
+                            await _context.SaveChangesAsync();
+                            trnDomainMapping.UserId = mUserProfile.UserId;
+                        }
+                        await _context.TrnDomainMapping.AddAsync(trnDomainMapping);
+                        await _context.SaveChangesAsync();
+                        transaction.Commit();
+                        await userManager.UpdateSecurityStampAsync(user);
+
+                        DTOTempSession dTOTempSessionResult = new DTOTempSession();
+
+                        dTOTempSessionResult.AspNetUsersId = user.Id;
+                        dTOTempSessionResult.TDMId = trnDomainMapping.Id;
+                        dTOTempSessionResult.TDMUnitMapId = trnDomainMapping.UnitId;
+                        dTOTempSessionResult.UserId = (int)(trnDomainMapping.UserId != null ? trnDomainMapping.UserId : 0);
+                        dTOTempSessionResult.Status = 1;
+                        return dTOTempSessionResult;
+                    }
+                    catch (Exception ex)
+                    {
+                        transaction.Rollback();
+                        _logger.LogError(1001, ex, "AccountDB->ProfileAndMappingSaving");
+                        return null;
+                    }
+
+                }
+            }
+            else if (dTOTempSession.Status == 3)
+            {
+                using (var transaction = _context.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        TrnDomainMapping trnDomainMapping = new TrnDomainMapping();
+                        trnDomainMapping.AspNetUsersId = dTOTempSession.AspNetUsersId;
+                        trnDomainMapping.UnitId = model.UnitMapId;
+                        trnDomainMapping.ApptId = model.ApptId;
+                        if (model.UserId > 0)
+                        {
+                            MUserProfile? uptUserProfile = await _context.UserProfile.FindAsync(dTOTempSession.UserId);
+                            if (uptUserProfile != null)
+                            {
+                                uptUserProfile.Updatedby = dTOTempSession.AspNetUsersId;
+                                await _context.SaveChangesAsync();
+                                trnDomainMapping.UserId = dTOTempSession.UserId;
+                            }
+                            else
+                            {
+                                return null;
+                            }
+                        }
+                        else
+                        {
+                            MUserProfile mUserProfile = new MUserProfile();
+                            mUserProfile.ArmyNo = dTOTempSession.ICNO;
+                            mUserProfile.RankId = model.RankId;
+                            mUserProfile.Name = model.Name;
+                            mUserProfile.IntOffr = model.IntOffr;
+                            mUserProfile.IsIO = model.IsIO;
+                            mUserProfile.IsCO = model.IsCO;
+                            mUserProfile.Updatedby = dTOTempSession.AspNetUsersId;
+                            await _context.UserProfile.AddAsync(mUserProfile);
+                            await _context.SaveChangesAsync();
+
+                            trnDomainMapping.UserId = mUserProfile.UserId;
+                        }
+
+                        await _context.TrnDomainMapping.AddAsync(trnDomainMapping);
+                        await _context.SaveChangesAsync();
+                        transaction.Commit();
+
+                        DTOTempSession dTOTempSessionResult = new DTOTempSession();
+
+                        dTOTempSessionResult.TDMId = trnDomainMapping.Id;
+                        dTOTempSessionResult.TDMUnitMapId = trnDomainMapping.UnitId;
+                        dTOTempSessionResult.UserId = (int)(trnDomainMapping.UserId != null ? trnDomainMapping.UserId : 0);
+                        dTOTempSessionResult.Status = 1;
+                        return dTOTempSessionResult;
+
+                    }
+                    catch (Exception ex)
+                    {
+                        transaction.Rollback();
+                        _logger.LogError(1001, ex, "AccountDB->ProfileAndMappingSaving");
+                        return null;
+                    }
+
+                }
+            }
+            else if (dTOTempSession.Status == 4)
+            {
+                using (var transaction = _context.Database.BeginTransaction())
+                {
+                    try 
+                    {
+                        TrnDomainMapping? trnDomainMapping = await _context.TrnDomainMapping.FindAsync(dTOTempSession.TDMId);
+                        if(trnDomainMapping!=null)
+                        {
+                            if (model.UserId > 0)
+                            {
+                                MUserProfile? uptUserProfile = await _context.UserProfile.FindAsync(dTOTempSession.UserId);
+                                if(uptUserProfile!=null)
+                                {
+                                    uptUserProfile.Updatedby = dTOTempSession.AspNetUsersId;
+                                    await _context.SaveChangesAsync();
+
+                                    trnDomainMapping.UserId = dTOTempSession.UserId;
+                                }
+                                else
+                                {
+                                    return null;
+                                }
+                            }
+                            else
+                            {
+                                MUserProfile mUserProfile = new MUserProfile();
+                                mUserProfile.ArmyNo = dTOTempSession.ICNO;
+                                mUserProfile.RankId = model.RankId;
+                                mUserProfile.Name = model.Name;
+                                mUserProfile.IntOffr = model.IntOffr;
+                                mUserProfile.IsIO = model.IsIO;
+                                mUserProfile.IsCO = model.IsCO;
+                                mUserProfile.Updatedby = dTOTempSession.AspNetUsersId;
+                                
+                                await _context.UserProfile.AddAsync(mUserProfile);
+                                await _context.SaveChangesAsync();
+                                
+                                trnDomainMapping.UserId = mUserProfile.UserId;
+                            }
+                            _context.TrnDomainMapping.Update(trnDomainMapping);
+                            await _context.SaveChangesAsync();
+                            transaction.Commit();
+
+
+                            DTOTempSession dTOTempSessionResult = new DTOTempSession();
+                            dTOTempSessionResult.Status = 5;
+                            dTOTempSessionResult.UserId = (int)(trnDomainMapping.UserId != null ? trnDomainMapping.UserId : 0);
+                            return dTOTempSessionResult;
+                        }
+                        else
+                        {
+                            return null;
+                        }
+
+                    }
+                    catch (Exception ex)
+                    {
+                        transaction.Rollback();
+                        _logger.LogError(1001, ex, "AccountDB->ProfileAndMappingSaving");
+                        return null;
+                    }
+                }
+            }
+            else
+            {
+                return null;
+            }
+
+        }
     }
     
 }
