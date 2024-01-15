@@ -22,9 +22,15 @@
             <div class="row">
                 <div class="col-xl-6">
                     <div class="d-flex">
-                        Total Users - <label id="lblUser">0</label>
-                        Total Mapped User - <label id="lblMappedUser">0</label>
-                        Total Un Mapped User - <label id="lblUnMappedUser">0</label>
+                        <div class="border border-primary font-weight-bold p-1">
+                            Total Users - <label id="lblUser">0</label>
+                        </div>
+                        <div class="border border-primary font-weight-bold p-1">
+                            Mapped - <label id="lblMappedUser">0</label>
+                        </div>
+                        <div class="border border-primary font-weight-bold p-1">
+                             Not Mapped - <label id="lblUnMappedUser">0</label>
+                        </div>
                     </div>
                 </div>
                 <div class="col-xl-6">
@@ -51,6 +57,21 @@
                         </div>
                     </div>
                 </div>
+                <div class="d-flex">
+                    <div class="border border-primary font-weight-bold p-1">
+                        Active - <label id="lblActiveUser">0</label>
+                    </div>
+                    <div class="border border-primary font-weight-bold p-1">
+                        Inactive - <label id="lblInActiveUser">0</label>
+                    </div>
+                    <div class="border border-primary font-weight-bold p-1">
+                        Verified - <label id="lblVerifiedUser">0</label>
+                    </div>
+                    <div class="border border-primary font-weight-bold p-1">
+                        Not Verified  - <label id="lblNotVerifiedUser">0</label>
+                    </div>
+                </div>
+
                 <div class="table-responsive">
                     <table class="table border border-purple table-striped no-footer table-hover" role="grid" id="tbldata">
                         <thead>
