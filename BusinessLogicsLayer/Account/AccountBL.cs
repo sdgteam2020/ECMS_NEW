@@ -69,5 +69,9 @@ namespace BusinessLogicsLayer.Account
         {
             return await _iAccountDB.ProfileAndMappingSaving(model, dTOTempSession);
         }
+        public async Task<DTOAccountCountResponse> AccountCount()
+        {
+            return await _iAccountDB.AccountCount();
+        }
     }
 }

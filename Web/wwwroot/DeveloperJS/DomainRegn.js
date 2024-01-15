@@ -1,5 +1,6 @@
 ﻿$(document).ready(function () {
-    BindData()
+    BindData();
+    AccountCount();
     BindRoles();
     $('.select2').select2({
         dropdownParent: $('#AddNewDomain'),
@@ -583,4 +584,19 @@ function BindRoles() {
             $('#ddlRoles').html(list)
         }
         });
+}
+function AccountCount() {
+    $.ajax({
+        url: "/Account/AccountCount",
+        type: "POST",
+        success: function (response, status) {
+            $("#lblUser").html(response.User);
+            $("#lblActiveUser").html(response.ActiveUser);
+            $("#lblInActiveUser").html(response.InActiveUser);
+            $("#lblMappedUser").html(response.MappedUser);
+            $("#lblUnMappedUser").html(response.UnMappedUser);
+            $("#lblVerifiedUser").html(response.VerifiedUser);
+            $("#lblNotVerifiedUser").html(response.NotVerifiedUser);
+        }
+    });
 }

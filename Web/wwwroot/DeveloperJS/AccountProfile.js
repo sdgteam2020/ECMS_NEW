@@ -173,8 +173,11 @@ function Proceed() {
             cancelButtonColor: '#d33',
             confirmButtonText: 'Yes, Save it!'
         }).then((result) => {
-            if (result.isConfirmed) {
+            if (result.isConfirmed && $("input[type='radio'][name=IsIO]:checked").length > 0 && $("input[type='radio'][name=IsCO]:checked").length > 0 && $("input[type='radio'][name=IntOffr]:checked").length > 0) {
                 $(formId).submit();
+            }
+            else {
+                ValidateRadioButton();
             }
         })
     }

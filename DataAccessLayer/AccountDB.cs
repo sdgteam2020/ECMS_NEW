@@ -19,6 +19,7 @@ using DataTransferObject.Domain.Model;
 using DataTransferObject.Domain.Error;
 using DataTransferObject.Response.User;
 using static Dapper.SqlMapper;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace DataAccessLayer
 {
@@ -495,7 +496,7 @@ namespace DataAccessLayer
                 {
                     trnDomainMapping.UserId = null;
                     trnDomainMapping.MappedBy = null;
-                    trnDomainMapping.MappedDate = null;
+                    trnDomainMapping.MappedDate = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
                     await domainMapDB.Update(trnDomainMapping);
                     dTOUserRegnResultResponse.Result = true;
                     dTOUserRegnResultResponse.Message = "Profile Unmapped.";
@@ -915,6 +916,48 @@ namespace DataAccessLayer
                 return null;
             }
 
+        }
+
+        public async Task<DTOAccountCountResponse> AccountCount()
+        {
+            DTOAccountCountResponse dTOAccountCountResponse = new DTOAccountCountResponse();
+            var objActiveUser = from u in _context.Users
+                                    group u by new
+                                    {
+                                        Flag = u.AdminFlag,
+                                        VerifiedUser = u.AdminFlag ? 1 : 0,
+                                        NotVerifiedUser = u.AdminFlag ? 0 : 1
+                                    } into g
+                                    select new 
+                                {
+                                        VerifiedUserCount = g.Sum(x => x.VerifiedUser),
+                                        NotVerifiedUserCount = g.Sum(x => x.NotVerifiedUser),  
+                                };
+            DTOAccountCountResponse? objVerifiedUser = await (from u in _context.Users
+                                                    group u by u.AdminFlag into g
+                                                    select new DTOAccountCountResponse
+                                                    {
+                                                        VerifiedUser = g.Count(x => x.AdminFlag == true),
+                                                        NotVerifiedUser = g.Count(x => x.AdminFlag == false),
+                                                    }).FirstOrDefaultAsync();
+            DTOAccountCountResponse? objMappedUser = await (from u in _context.Users
+                                                     join tdm in _context.TrnDomainMapping on u.Id equals tdm.AspNetUsersId
+                                                     group tdm by tdm.UserId into g
+                                                    select new DTOAccountCountResponse
+                                                    {
+                                                        MappedUser = g.Count(x => x.UserId!=null),
+                                                        UnMappedUser = g.Count(x => x.UserId == null),
+                                                    }).FirstOrDefaultAsync();
+
+            dTOAccountCountResponse.User = 0;
+            //dTOAccountCountResponse.ActiveUser = objActiveUser!=null ? objActiveUser.ActiveUser : 0;
+            //dTOAccountCountResponse.InActiveUser = objActiveUser != null ? objActiveUser.InActiveUser : 0;
+            dTOAccountCountResponse.VerifiedUser = objVerifiedUser!=null ? objVerifiedUser.VerifiedUser : 0;
+            dTOAccountCountResponse.NotVerifiedUser = objVerifiedUser != null ? objVerifiedUser.NotVerifiedUser :0;
+            dTOAccountCountResponse.MappedUser = objMappedUser!=null ? objMappedUser.MappedUser : 0;
+            dTOAccountCountResponse.UnMappedUser = objMappedUser != null ? objMappedUser.UnMappedUser : 0;
+
+            return dTOAccountCountResponse;
         }
     }
     

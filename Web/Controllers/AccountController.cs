@@ -179,6 +179,21 @@ namespace Web.Controllers
                 return Json(KeyConstants.InternalServerError);
             }
         }
+        [Authorize(Roles = "Admin")]
+        [HttpPost]
+        public async Task<IActionResult> AccountCount()
+        {
+            try
+            {
+                return Json(await _iAccountBL.AccountCount());
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "Account->AccountCount");
+                return Json(KeyConstants.InternalServerError);
+            }
+
+        }
 
         #endregion End Domain Regn.
 

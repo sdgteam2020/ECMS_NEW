@@ -24,5 +24,6 @@ namespace DataAccessLayer.BaseInterfaces
         public Task<bool?> UpdateDomainFlag(DTOUserRegnUpdateDomainFlagRequest dTO, int Updatedby);
         public Task<List<DTOMasterResponse>> GetAllRole();
         public Task<DTOTempSession?> ProfileAndMappingSaving(DTOProfileAndMappingRequest model, DTOTempSession dTOTempSession);
+        public Task<DTOAccountCountResponse> AccountCount();
     }
 }
