@@ -1,5 +1,11 @@
 ﻿$(document).ready(function () {
-    BindData()
+    BindData();
+    AccountCount();
+    BindRoles();
+    $('.select2').select2({
+        dropdownParent: $('#AddNewDomain'),
+        closeOnSelect: false
+    });
 
     $("#AddNewDomain input[name='txtapproval']").click(function () {
         $("#txtapproval-error").html("");
@@ -11,10 +17,10 @@
         $("#IntOffr-error").html("");
     });
 
-
     $("#txtAppointmentName").autocomplete({
         source: function (request, response) {
             if (request.term.length > 1) {
+                $("#spnUnitAppointmentId").html('');
                 var param = { "AppointmentName": request.term };
                 $("#spnUnitAppointmentId").html(0);
                 $.ajax({
@@ -23,7 +29,6 @@
                     data: param,
                     type: 'POST',
                     success: function (data) {
-                        console.log(data);
                         response($.map(data, function (item) {
 
                             $("#loading").addClass("d-none");
@@ -51,12 +56,16 @@
 
     $("#txtUnitName").autocomplete({
         source: function (request, response) {
+            $("#lblSusno").html('');
+            $("#lblPso").html('');
+            $("#lblDG").html('');
+            $("#lblComd").html('');
+            $("#lblCorps").html('');
+            $("#lblDiv").html('');
+            $("#lblBde").html('');
+            $("#lblFmn").html('');
             if (request.term.length > 2) {
-                $("#lblComd").html('');
-                $("#lblCorps").html('');
-                $("#lblDiv").html('');
-                $("#lblBde").html('');
-                $("#lblSusno").html('');
+                $("#spnUnitMapId").html('');
                 var param = { "UnitName": request.term };
                 $("#spnUnitMapId").html(0);
                 $.ajax({
@@ -65,7 +74,6 @@
                     data: param,
                     type: 'POST',
                     success: function (data) {
-                        console.log(data);
                         response($.map(data, function (item) {
 
                             $("#loading").addClass("d-none");
@@ -85,7 +93,6 @@
         select: function (e, i) {
             e.preventDefault();
             $("#txtUnitName").val(i.item.label);
-            //alert(i.item.value)
             var param1 = { "UnitMapId": i.item.value };
             $.ajax({
                 url: '/Master/GetALLByUnitMapId',
@@ -93,23 +100,63 @@
                 data: param1,
                 type: 'POST',
                 success: function (data) {
+                    $("#spnTDMUnitType").html(data.UnitType);
                     $("#spnUnitMapId").html(data.UnitMapId);
-                    $("#lblComd").html(data.ComdName);
-                    $("#lblCorps").html(data.CorpsName);
-                    $("#lblDiv").html(data.DivName);
-                    $("#lblBde").html(data.BdeName);
                     $("#lblSusno").html(data.Sus_no + '' + data.Suffix);
+
+                    if (data.UnitType == 1) {
+                        $("#lblComd").html(data.ComdName);
+                        $("#lblCorps").html(data.CorpsName);
+                        $("#lblDiv").html(data.DivName);
+                        $("#lblBde").html(data.BdeName);
+                        $("#lbl1").addClass("d-none");
+                        $("#lbl2").addClass("d-none");
+                        $("#lbl3").removeClass("d-none");
+                        $("#lbl4").removeClass("d-none");
+                        $("#lbl5").removeClass("d-none");
+                        $("#lbl6").removeClass("d-none");
+                        $("#lbl7").addClass("d-none");
+                    }
+                    else if (data.UnitType == 2) {
+                        $("#lblComd").html(data.ComdName);
+                        $("#lblCorps").html(data.CorpsName);
+                        $("#lblDiv").html(data.DivName);
+                        $("#lblBde").html(data.BdeName);
+                        $("#lblFmn").html(data.BranchName);
+                        $("#lbl1").addClass("d-none");
+                        $("#lbl2").addClass("d-none");
+                        $("#lbl3").removeClass("d-none");
+                        $("#lbl4").removeClass("d-none");
+                        $("#lbl5").removeClass("d-none");
+                        $("#lbl6").removeClass("d-none");
+                        $("#lbl7").removeClass("d-none");
+                    }
+                    else if (data.UnitType == 3) {
+                        $("#lblPso").html(data.PSOName);
+                        $("#lblDG").html(data.SubDteName);
+                        $("#lbl1").removeClass("d-none");
+                        $("#lbl2").removeClass("d-none");
+                        $("#lbl3").addClass("d-none");
+                        $("#lbl4").addClass("d-none");
+                        $("#lbl5").addClass("d-none");
+                        $("#lbl6").addClass("d-none");
+                        $("#lbl7").addClass("d-none");
+                    }
+
+                    
 
                 }
             });
         },
         appendTo: '#suggesstion-box'
     });
+
     $("#btnDomainAdd").click(function () {
         Reset();
         ResetErrorMessage();
         $("#AddNewDomain").modal('show');
     });
+
     $("#btnDomainAddReset").click(function () {
         Reset();
         ResetErrorMessage();
@@ -141,10 +188,10 @@
 
 function Proceed() {
     ResetErrorMessage();
-    let formId = '#SaveDomain';
-    $.validator.unobtrusive.parse($(formId));
 
-    ValidateRadioButton();
+    let formId = '#SaveDomain';
+    ValidateInput();
+    $.validator.unobtrusive.parse($(formId));
 
     if ($(formId).valid()) {
         Swal.fire({
@@ -153,7 +200,7 @@ function Proceed() {
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
+            cancelButtonColor: '#d33',  
             confirmButtonText: 'Yes, Save it!'
         }).then((result) => {
             if (result.isConfirmed) {
@@ -172,7 +219,7 @@ function Proceed() {
         return false;
     }
 }
-function ValidateRadioButton() {
+function ValidateInput() {
     if ($("input[type='radio'][name=txtapproval]:checked").length == 0) {
         $("#txtapproval-error").html("Approval is required.");
     }
@@ -185,6 +232,21 @@ function ValidateRadioButton() {
     }
     else {
         $("#txtactive-error").html("");
+    }
+
+    var AppointmentId = $("#spnUnitAppointmentId").html();
+    
+    if ((AppointmentId == 0 || AppointmentId == '') && $("#txtAppointmentName").val().length > 0) {
+        $("#txtAppointmentName").val('');
+        $("#txtAppointmentName-error").html("Appointment name is invalid.");
+        toastr.error('Appointment name is invalid.');
+    }
+
+    var UnitMapId = $("#spnUnitMapId").html();
+    if ((UnitMapId == 0 || UnitMapId == '') && $("#txtUnitName").val().length > 0 ) {
+        $("#txtUnitName").val('');
+        $("#txtAppointmentName-error").html("Unit name is invalid.");
+        toastr.error('Unit name is invalid.');
     }
 }
 
@@ -229,11 +291,11 @@ function BindData() {
                     for (var i = 0; i < response.length; i++) {
 
                         listItem += "<tr>";
-                        listItem += "<td class='d-none'><span id='regId'>" + response[i].Id + "</span><span id='regTrnDomainMappingId'>" + response[i].TrnDomainMappingId + "</span><span id='regTrnDomainMappingApptId'>" + response[i].TrnDomainMappingApptId + "</span><span id='regTrnDomainMappingUnitId'>" + response[i].TrnDomainMappingUnitId + "</span><span id='regUserId'>" + response[i].UserId + "</span></td>";
+                        listItem += "<td class='d-none'><span id='regId'>" + response[i].Id + "</span><span id='regTrnDomainMappingId'>" + response[i].TrnDomainMappingId + "</span><span id='regTrnDomainMappingApptId'>" + response[i].TrnDomainMappingApptId + "</span><span id='regTrnDomainMappingUnitId'>" + response[i].TrnDomainMappingUnitId + "</span><span id='regUserId'>" + response[i].UserId + "</span><span id='roleIds'>" + response[i].RoleIds + "</span><span id='domain_approval'>" + response[i].AdminFlag + "</span></td>"; 
                         listItem += "<td class='align-middle'>" + (i + 1) + "</td>";
                         listItem += "<td class='align-middle'><span id='reg_no'>" + response[i].Id + "</span></td>";
                         listItem += "<td class='align-middle'><span id='domainId'>" + response[i].DomainId + "</span></td>";
-                        listItem += "<td class='align-middle'><span id='roleName'>" + response[i].RoleName + "</span></td>";
+                        listItem += "<td class='align-middle'><span id='roleName'>" + response[i].RoleNames + "</span></td>";
                         listItem += "<td class='align-middle'><span id='updatedOn'>" + DateFormateddMMyyyyhhmmss(response[i].UpdatedOn) + "</span></td>";
                         if (response[i].Mapped == true)
                             listItem += "<td class='align-middle'><span id='domain_mapping'><span class='badge badge-pill badge-success'>Yes</span></span></td>";
@@ -292,11 +354,12 @@ function BindData() {
                         $("#txtRole").val($(this).closest("tr").find("#roleName").html());
                         $("#spnDomainRegId").html($(this).closest("tr").find("#regId").html());
                         //alert($(this).closest("tr").find("#domain_approval").html())
-                        if ($(this).closest("tr").find("#domain_approval").html() == 'Verifed') {
+                        if ($(this).closest("tr").find("#domain_approval").html() == 'true') {
                             $("#txtapprovalyes").prop("checked", true);
                         }
                         else {
                             $("#txtapprovalno").prop("checked", true);
+
                         }
 
                         if ($(this).closest("tr").find("#domain_active").html() == 'Yes') {
@@ -307,13 +370,18 @@ function BindData() {
                         }
 
                         if ($(this).closest("tr").find("#regTrnDomainMappingId").html() > 0) {
-                            $("spnTrnDomainMappingId").val($(this).closest("tr").find("#regTrnDomainMappingId").html());
+                            $("#spnTrnDomainMappingId").html($(this).closest("tr").find("#regTrnDomainMappingId").html()); 
                             GetALLByUnitById($(this).closest("tr").find("#regTrnDomainMappingUnitId").html());
                         }
 
                         if ($(this).closest("tr").find("#regTrnDomainMappingApptId").html() > 0) {
                             GetNameByApptId($(this).closest("tr").find("#regTrnDomainMappingApptId").html());
                         }
+                        //$("#ddlRoles").val([1, 2]);
+                        //$("#ddlRoles").trigger("change");
+                        let arr2 = $(this).closest("tr").find("#roleIds").html().split(',');
+                        $("#ddlRoles").val(arr2);
+                        $("#ddlRoles").trigger("change");
 
                         $("#btnDomainAdd").val("Update");
                         $("#AddNewDomain").modal('show');
@@ -342,14 +410,13 @@ function BindData() {
 
 }
 function Save() {
-    //alert($("#spnDomainRegId").html());
     $.ajax({
         url: '/Account/SaveDomainRegn',
         type: 'POST',
         data: {
             "Id": $("#spnDomainRegId").html(),
             "DomainId": $("#txtDomainId").val(),
-            "RoleName": $("#txtRole").val(),
+            "RoleIds": $('#ddlRoles').val(),
             "AdminFlag": $('input:radio[name=txtapproval]:checked').val(),
             "Active": $('input:radio[name=txtactive]:checked').val(),
             "TDMId": $("#spnTrnDomainMappingId").html(),
@@ -406,16 +473,23 @@ function Reset() {
 
     $("#spnDomainRegId").html("0");
     $("#txtDomainId").val("");
-    $("#txtRole").val("");
+    //$("#ddlRoles").select2('data', null);
+
+    $('#ddlRoles').val(null).trigger('change');
+   
 
     $("#spnTrnDomainMappingId").html("0");
     $("#spnUnitMapId").html("0");
     $("#txtUnitName").val("");
+    $("#lblSusno").html("");
+    $("#lblPso").html("");
+    $("#lblDG").html("");
     $("#lblComd").html("");
     $("#lblCorps").html("");
     $("#lblDiv").html("");
     $("#lblBde").html("");
-    $("#lblSusno").html("");
+    $("#lblFmn").html("");
+
 
     $("#spnUnitAppointmentId").html("0");
     $("#txtAppointmentName").val("");
@@ -442,13 +516,47 @@ function GetALLByUnitById(param1) {
         type: 'POST',
         success: function (data) {
             $("#spnUnitMapId").html(data.UnitMapId);
-            $("#txtUnitName").val(data.UnitName);
-            $("#lblComd").html(data.ComdName);
-            $("#lblCorps").html(data.CorpsName);
-            $("#lblDiv").html(data.DivName);
-            $("#lblBde").html(data.BdeName);
             $("#lblSusno").html(data.Sus_no + '' + data.Suffix);
+            $("#txtUnitName").val(data.UnitName);
 
+            if (data.UnitType == 1) {
+                $("#lblComd").html(data.ComdName);
+                $("#lblCorps").html(data.CorpsName);
+                $("#lblDiv").html(data.DivName);
+                $("#lblBde").html(data.BdeName);
+                $("#lbl1").addClass("d-none");
+                $("#lbl2").addClass("d-none");
+                $("#lbl3").removeClass("d-none");
+                $("#lbl4").removeClass("d-none");
+                $("#lbl5").removeClass("d-none");
+                $("#lbl6").removeClass("d-none");
+                $("#lbl7").addClass("d-none");
+            }
+            else if (data.UnitType == 2) {
+                $("#lblComd").html(data.ComdName);
+                $("#lblCorps").html(data.CorpsName);
+                $("#lblDiv").html(data.DivName);
+                $("#lblBde").html(data.BdeName);
+                $("#lblFmn").html(data.BranchName);
+                $("#lbl1").addClass("d-none");
+                $("#lbl2").addClass("d-none");
+                $("#lbl3").removeClass("d-none");
+                $("#lbl4").removeClass("d-none");
+                $("#lbl5").removeClass("d-none");
+                $("#lbl6").removeClass("d-none");
+                $("#lbl7").removeClass("d-none");
+            }
+            else if (data.UnitType == 3) {
+                $("#lblPso").html(data.PSOName);
+                $("#lblDG").html(data.SubDteName);
+                $("#lbl1").removeClass("d-none");
+                $("#lbl2").removeClass("d-none");
+                $("#lbl3").addClass("d-none");
+                $("#lbl4").addClass("d-none");
+                $("#lbl5").addClass("d-none");
+                $("#lbl6").addClass("d-none");
+                $("#lbl7").addClass("d-none");
+            }
         }
     });
 }
@@ -461,6 +569,34 @@ function GetNameByApptId(param1) {
         success: function (data) {
             $("#spnUnitAppointmentId").html(data.ApptId);
             $("#txtAppointmentName").val(data.AppointmentName);
+        }
+    });
+}
+function BindRoles() {
+        $.ajax({
+        url: "/Account/GetAllRole",
+        type: "POST",
+        success: function (response, status) {
+            var list = "";
+            for (var i = 0; i < response.length; i++) {
+                list += '<option value="' + response[i].Id + '">' + response[i].Name + '</option>';
+            }
+            $('#ddlRoles').html(list)
+        }
+        });
+}
+function AccountCount() {
+    $.ajax({
+        url: "/Account/AccountCount",
+        type: "POST",
+        success: function (response, status) {
+            $("#lblUser").html(response.User);
+            $("#lblActiveUser").html(response.ActiveUser);
+            $("#lblInActiveUser").html(response.InActiveUser);
+            $("#lblMappedUser").html(response.MappedUser);
+            $("#lblUnMappedUser").html(response.UnMappedUser);
+            $("#lblVerifiedUser").html(response.VerifiedUser);
+            $("#lblNotVerifiedUser").html(response.NotVerifiedUser);
         }
     });
 }

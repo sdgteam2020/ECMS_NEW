@@ -15,15 +15,15 @@ namespace DataTransferObject.Requests
         public string RoleName { get; set; } = string.Empty;
         public string ICNO { get; set; } = string.Empty;
         public int UserId { get; set; }
-        public int TrnDomainMappingUnitId { get; set; }
-        public int TrnDomainMappingId { get; set; }
-        public short TrnDomainMappingApptId { get; set; }
+        public int TDMUnitMapId { get; set; }
+        public int TDMId { get; set; }
+        public short TDMApptId { get; set; }
         public int AspNetUsersId { get; set; }
         public string ICNOInput { get; set; } = string.Empty;
         public string? ICNoDomainId { get; set; }
         public int ICNoUserId { get; set; }
-        public int ICNoTrnDomainMappingUnitId { get; set; }
-        public int ICNoTrnDomainMappingId { get; set; }
-        public short ICNoTrnDomainMappingApptId { get; set; }
+        public int ICNoTDMUnitMapId { get; set; }
+        public int ICNoTDMId { get; set; }
+        public short ICNoTDMApptId { get; set; }
     }
 }

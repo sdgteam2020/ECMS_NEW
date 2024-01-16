@@ -4,10 +4,11 @@ using DataTransferObject.Requests;
 using DataTransferObject.Response;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
-using System.Data.Entity;
+using Microsoft.EntityFrameworkCore;
 using System.Data.Entity.Core.Mapping;
 using System.Linq;
 using System.Text;
@@ -18,9 +19,11 @@ namespace DataAccessLayer
     public class UnitDB : GenericRepositoryDL<MUnit>, IUnitDB
     {
         protected readonly ApplicationDbContext _context;
-        public UnitDB(ApplicationDbContext context) : base(context)
+        private readonly ILogger<UnitDB> _logger;
+        public UnitDB(ApplicationDbContext context, ILogger<UnitDB> logger) : base(context)
         {
             _context = context;
+            _logger = logger;
         }
         private readonly IConfiguration configuration;
 
@@ -32,14 +35,23 @@ namespace DataAccessLayer
 
         public async Task<MUnit> GetBySusNo(string Sus_no)
         {
-            return _context.MUnit.Where(P => P.Sus_no + P.Suffix == Sus_no).SingleOrDefault();
+            return _context.MUnit.Where(P => P.Sus_no + P.Suffix == Sus_no).FirstOrDefault();
         }
 
         public async Task<List<MUnit>> GetAllUnit(string UnitName)
         {
-            UnitName = string.IsNullOrEmpty(UnitName) ?"": UnitName.ToLower();
-            var ret=  await _context.MUnit.Where(P => UnitName == "" || P.UnitName.ToLower().Contains(UnitName)).Take(200).ToListAsync();
-            return ret;
+            try
+            {
+                UnitName = string.IsNullOrEmpty(UnitName) ? "" : UnitName.ToLower();
+                var ret = await _context.MUnit.Where(P => UnitName == "" || P.UnitName.ToLower().Contains(UnitName)).Take(200).ToListAsync();
+                return ret;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "UnitDB->GetAllUnit");
+                return null;
+            }
+
 
         }
     }

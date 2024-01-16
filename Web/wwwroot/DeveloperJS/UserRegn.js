@@ -124,7 +124,7 @@ function BindData() {
 
                 }
 
-                else {
+                else {  
 
                     $("#tbldata").DataTable().destroy();
 
@@ -135,16 +135,23 @@ function BindData() {
                         listItem += "<td class='align-middle'>" + (i + 1) + "</td>";
                         listItem += "<td class='align-middle'><span id='reg_no'>" + response[i].Id + "</span></td>";
                         listItem += "<td class='align-middle'><span id='domainId'>" + response[i].DomainId + "</span></td>";
-                        listItem += "<td class='align-middle'><span id='armyNo'>" + response[i].ArmyNo + "</span></td>";
-                        listItem += "<td class='align-middle'><span id='roleName'>" + response[i].RoleName + "</span></td>";
+                        if (response[i].ArmyNo != null && response[i].ArmyNo != "null")
+                            listItem += "<td class='align-middle'><span id='armyNo'>" + response[i].ArmyNo + "</span></td>";
+                        else
+                            listItem += "<td class='align-middle'><span><span class='badge badge-pill badge-danger' id='domain_approval'>IC No Not Mapped</span></span></td>";
+
+                        listItem += "<td class='align-middle'><span id='roleName'>" + response[i].RoleNames + "</span></td>";
+
+
+
                         if (response[i].Id != null && response[i].Id != "null")
                             listItem += "<td class='align-middle'><span id='updatedOn'>" + DateFormateddMMyyyyhhmmss(response[i].UpdatedOn) + "</span></td>";
                         else
                             listItem += "<td class='align-middle'>NA</td>";
                         if (response[i].Mapped == true)
-                            listItem += "<td class='align-middle'><span id='btneditMapping'><button type='button' class='cls-btneditMapping btn btn-icon btn-round btn-warning mr-1'><i class='fas fa-edit'></i></button></span></td>";
+                            listItem += "<td class='align-middle'><span id='btneditMapping'><button type='button' class='cls-btneditMapping btn btn-icon btn-round btn-warning mr-1'><i class='fas fa-link'></i></button></span></td>";
                         else
-                            listItem += "<td class='align-middle'><span id='domain_mapping'><span class='badge badge-pill badge-danger'>No</span></span></td>";
+                            listItem += "<td class='align-middle'><span id='btneditMapping'><button type='button' class='cls-btneditMapping btn btn-icon btn-round btn-warning mr-1'><i class='fas fa-unlink'></i></button></span></td>";
 
                         if (response[i].Active == true)
                             listItem += "<td class='align-middle'><span><span class='badge badge-pill badge-success' id='domain_active'>Yes</span></span></td>";
@@ -289,6 +296,7 @@ function BindData() {
 }
 function ProceedForMapping() {
     ResetErrorMessageForMapping();
+    ValidateMappingInput();
     let formId = '#SaveMapping';
     $.validator.unobtrusive.parse($(formId));
 
@@ -360,6 +368,16 @@ function SaveMapping() {
         }
     });
 }
+function ValidateMappingInput() {
+
+    var UserProfileId = $("#spnUserProfileId").html();
+
+    if ((UserProfileId == 0 || UserProfileId == '') && $("#txtArmyNo").val().length > 0) {
+        $("#txtArmyNo").val('');
+        $("#txtArmyNo-error").html("ArmyNo is invalid.");
+        toastr.error('ArmyNo is invalid.');
+    }
+}
 function GetProfileByUserId(param1) {
     $.ajax({
         url: '/UserProfile/GetProfileByUserId',
@@ -382,11 +400,48 @@ function GetALLByUnitByIdForMapping(param1) {
         type: 'POST',
         success: function (data) {
             $("#lblUnitNameForMapping").html(data.UnitName);
-            $("#lblComdForMapping").html(data.ComdName);
-            $("#lblCorpsForMapping").html(data.CorpsName);
-            $("#lblDivForMapping").html(data.DivName);
-            $("#lblBdeForMapping").html(data.BdeName);
             $("#lblSusnoForMapping").html(data.Sus_no + '' + data.Suffix);
+
+
+            if (data.UnitType == 1) {
+                $("#lblComdForMapping").html(data.ComdName);
+                $("#lblCorpsForMapping").html(data.CorpsName);
+                $("#lblDivForMapping").html(data.DivName);
+                $("#lblBdeForMapping").html(data.BdeName);
+                $("#lblM1").addClass("d-none");
+                $("#lblM2").addClass("d-none");
+                $("#lblM3").removeClass("d-none");
+                $("#lblM4").removeClass("d-none");
+                $("#lblM5").removeClass("d-none");
+                $("#lblM6").removeClass("d-none");
+                $("#lblM7").addClass("d-none");
+            }
+            else if (data.UnitType == 2) {
+                $("#lblComdForMapping").html(data.ComdName);
+                $("#lblCorpsForMapping").html(data.CorpsName);
+                $("#lblDivForMapping").html(data.DivName);
+                $("#lblBdeForMapping").html(data.BdeName);
+                $("#lblFmnForMapping").html(data.BranchName);
+                $("#lblM1").addClass("d-none");
+                $("#lblM2").addClass("d-none");
+                $("#lblM3").removeClass("d-none");
+                $("#lblM4").removeClass("d-none");
+                $("#lblM5").removeClass("d-none");
+                $("#lblM6").removeClass("d-none");
+                $("#lblM7").removeClass("d-none");
+            }
+            else if (data.UnitType == 3) {
+                $("#lblPsoForMapping").html(data.PSOName);
+                $("#lblDGForMapping").html(data.SubDteName);
+                $("#lblM1").removeClass("d-none");
+                $("#lblM2").removeClass("d-none");
+                $("#lblM3").addClass("d-none");
+                $("#lblM4").addClass("d-none");
+                $("#lblM5").addClass("d-none");
+                $("#lblM6").addClass("d-none");
+                $("#lblM7").addClass("d-none");
+            }
+
 
         }
     });
@@ -411,11 +466,15 @@ function ResetForMapping() {
 
     $("#spnTrnDomainMappingIdForMapping").html("");
     $("#lblUnitNameForMapping").html("");
+    $("#lblSusnoForMapping").html("");
+    $("#lblPsoForMapping").html("");
+    $("#lblDGForMapping").html("");
     $("#lblComdForMapping").html("");
     $("#lblCorpsForMapping").html("");
     $("#lblDivForMapping").html("");
     $("#lblBdeForMapping").html("");
-    $("#lblSusnoForMapping").html("");
+    $("#lblFmnForMapping").html("");
+
 
     $("#spnUserProfileId").html("0");
     $("#txtArmyNo").val("");
@@ -530,11 +589,46 @@ function GetALLByUnitById(param1) {
         type: 'POST',
         success: function (data) {
             $("#lblUnitName").html(data.UnitName);
-            $("#lblComd").html(data.ComdName);
-            $("#lblCorps").html(data.CorpsName);
-            $("#lblDiv").html(data.DivName);
-            $("#lblBde").html(data.BdeName);
             $("#lblSusno").html(data.Sus_no + '' + data.Suffix);
+            if (data.UnitType == 1) {
+                $("#lblComd").html(data.ComdName);
+                $("#lblCorps").html(data.CorpsName);
+                $("#lblDiv").html(data.DivName);
+                $("#lblBde").html(data.BdeName);
+                $("#lbl1").addClass("d-none");
+                $("#lbl2").addClass("d-none");
+                $("#lbl3").removeClass("d-none");
+                $("#lbl4").removeClass("d-none");
+                $("#lbl5").removeClass("d-none");
+                $("#lbl6").removeClass("d-none");
+                $("#lbl7").addClass("d-none");
+            }
+            else if (data.UnitType == 2) {
+                $("#lblComd").html(data.ComdName);
+                $("#lblCorps").html(data.CorpsName);
+                $("#lblDiv").html(data.DivName);
+                $("#lblBde").html(data.BdeName);
+                $("#lblFmn").html(data.BranchName);
+                $("#lbl1").addClass("d-none");
+                $("#lbl2").addClass("d-none");
+                $("#lbl3").removeClass("d-none");
+                $("#lbl4").removeClass("d-none");
+                $("#lbl5").removeClass("d-none");
+                $("#lbl6").removeClass("d-none");
+                $("#lbl7").removeClass("d-none");
+            }
+            else if (data.UnitType == 3) {
+                $("#lblPso").html(data.PSOName);
+                $("#lblDG").html(data.SubDteName);
+                $("#lbl1").removeClass("d-none");
+                $("#lbl2").removeClass("d-none");
+                $("#lbl3").addClass("d-none");
+                $("#lbl4").addClass("d-none");
+                $("#lbl5").addClass("d-none");
+                $("#lbl6").addClass("d-none");
+                $("#lbl7").addClass("d-none");
+            }
+
 
         }
     });
@@ -558,11 +652,15 @@ function Reset() {
     $("#lblRole").html("");
 
     $("#lblUnitName").html("");
+    $("#lblSusno").html("");
+    $("#lblPso").html("");
+    $("#lblDG").html("");
     $("#lblComd").html("");
     $("#lblCorps").html("");
     $("#lblDiv").html("");
     $("#lblBde").html("");
-    $("#lblSusno").html("");
+    $("#lblFmn").html("");
+
 
     $("#lblAppointmentName").html(""); 
 

@@ -8,14 +8,14 @@ namespace DataTransferObject.Response
 {
     public class DTOUserRegnResponse
     {
-        public int? Id { get; set; }
-        public string? DomainId { get; set; }
-        public string? RoleName { get; set; }
+        public int Id { get; set; }
+        public string DomainId { get; set; } = string.Empty;
+        public List<string>? RoleNames { get; set; }
         public string? ArmyNo { get; set; }
-        public DateTime? UpdatedOn { get; set; }
-        public bool? AdminFlag { get; set; }
-        public bool? Active { get; set; }
-        public bool? Mapped { get; set; }
+        public DateTime UpdatedOn { get; set; }
+        public bool AdminFlag { get; set; }
+        public bool Active { get; set; }
+        public bool Mapped { get; set; }
         public int TrnDomainMappingId { get; set; }
         public int TrnDomainMappingUnitId { get; set; }
         public short TrnDomainMappingApptId { get; set; }

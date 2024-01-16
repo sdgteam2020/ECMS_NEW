@@ -60,12 +60,11 @@ namespace DataAccessLayer
         {
             try
             {
-                var result = await (from au in _context.Users 
+                var result = await (from au in _context.Users.Where(x=>x.DomainId == DomainId) 
                                     join tdm in _context.TrnDomainMapping on au.Id equals tdm.AspNetUsersId into autdm_jointable
                                     from xtdm in autdm_jointable.DefaultIfEmpty()
                                     join up in _context.UserProfile on xtdm.UserId equals up.UserId into tdmup_jointable
                                     from xup in tdmup_jointable.DefaultIfEmpty()
-                                    where au.DomainId == DomainId
                                     select new TrnDomainMapping
                                     {
                                         Id = xtdm != null? xtdm.Id:0,

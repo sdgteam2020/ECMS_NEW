@@ -61,5 +61,17 @@ namespace BusinessLogicsLayer.Account
         {
             return await _iAccountDB.UpdateDomainFlag(dTO, Updatedby);
         }
+        public async Task<List<DTOMasterResponse>> GetAllRole()
+        {
+            return await _iAccountDB.GetAllRole();
+        }
+        public async Task<DTOTempSession?> ProfileAndMappingSaving(DTOProfileAndMappingRequest model, DTOTempSession dTOTempSession)
+        {
+            return await _iAccountDB.ProfileAndMappingSaving(model, dTOTempSession);
+        }
+        public async Task<DTOAccountCountResponse> AccountCount()
+        {
+            return await _iAccountDB.AccountCount();
+        }
     }
 }
