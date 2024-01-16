@@ -1200,7 +1200,7 @@ namespace Web.Controllers
                                 ///////////////login log//////////////////////
                                 TrnLogin_Log  log=new TrnLogin_Log();
                                 log.AspNetUsersId= Convert.ToInt32(usera.Id);
-                                var Role = await roleManager.FindByNameAsync(roles[0]);
+                                var Role = await roleManager.FindByNameAsync(dTOTempSession.RoleName);
                                 log.RoleId = Convert.ToInt32(Role.Id);
                                 log.UserId = Convert.ToInt32(dTO.UserId);
                                 log.IP = HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
