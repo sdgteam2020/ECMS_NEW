@@ -41,7 +41,7 @@
     }
 
     .timeline:before {
-     /*   content: "";
+        content: "";
         position: absolute;
         top: 0;
         left: 0;
@@ -51,7 +51,7 @@
         margin-left: 2px;
         border-right-width: 4px;
         border-right-style: solid;
-        border-right-color: rgba(52, 40, 104, .1)*/
+        border-right-color: rgba(52, 40, 104, .1)
     }
 
     .timeline .timeline-label .label {
@@ -458,7 +458,7 @@
 }
 
 .widget {
-    background: #fff;
+    background: #e9e3f3;
     border-radius: 0;
     border: none;
     margin-bottom: 30px

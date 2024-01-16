@@ -479,3 +479,24 @@ i.material-icons {
     border:1px solid;
    
 }
+
+.icardbg {
+    background-image: url('/images/asset/icardbg.jpg') !important;
+    background-repeat: no-repeat;
+    background-size: cover;
+    min-height: 300px;
+}
+.divicardbg {
+    display: inline-block;
+    overflow: hidden;
+    position: relative;
+    width: 100%;
+}
+
+.imgicardbg {
+    pointer-events: none;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+}

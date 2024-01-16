@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DataTransferObject.Domain.Identitytable;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -12,8 +13,11 @@ namespace DataTransferObject.Domain
     {
         [Required]
         public bool IsActive { get; set; }=true;
-        [Required]
+       
+        [ForeignKey("ApplicationUserUpdate"), DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int Updatedby { get; set;}
+        public ApplicationUser? ApplicationUserUpdate { get; set; }
+
         [Required]
         [DataType(DataType.Date)]
         [Column(TypeName = "datetime")]
