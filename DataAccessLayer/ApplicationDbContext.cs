@@ -8,6 +8,7 @@ using DataTransferObject.Response.User;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Abstractions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -73,6 +74,7 @@ namespace DataAccessLayer
         public DbSet<MRemarkType> MRemarkType { get; set; }
         public DbSet<MRemarksApply> MRemarksApply { get; set; }
         public DbSet<MRemarks> MRemarks { get; set; }
+        public DbSet<TrnLogin_Log> TrnLogin_Log { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -98,7 +100,7 @@ namespace DataAccessLayer
             builder.Entity<IdentityUserToken<int>>(entity =>
             {
             });
-
+         
             //Foreign key with NO ACTION ON DELETE
 
             foreach (var foreignKey in builder.Model.GetEntityTypes().SelectMany(e => e.GetForeignKeys()))

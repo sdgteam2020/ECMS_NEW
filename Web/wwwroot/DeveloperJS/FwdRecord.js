@@ -247,6 +247,7 @@ $(document).ready(function () {
         appendTo: '#suggesstion-box'
     });
     $("#btnForward").click(function () {
+        
         Swal.fire({
             title: 'Are you sure?',
             text: "You won't be Forward!",
@@ -257,26 +258,32 @@ $(document).ready(function () {
             confirmButtonText: 'Yes, Forward it!'
         }).then((result) => {
             if (result.isConfirmed) {
-                var spnRequestId = $("#spnCurrentspnRequestId").html();
-                var Counter = parseInt($("#spnStepCounter").html());
-                if (Counter == 1 || Counter == 7 || Counter == 8 || Counter == 9 || Counter == 10) {
+                if (parseInt($("#spnFwdToAspNetUsersId").html()) != 0) {
 
 
-                    Counter = 2;
+                    var spnRequestId = $("#spnCurrentspnRequestId").html();
 
-                }else
-                {
-                  
-                    Counter = parseInt($("#spnStepCounter").html()) + 1;
-                    if (applyfor == 2 && parseInt($("#spnStepCounter").html())==3) {
-                        Counter = 5;
+                    var Counter = parseInt($("#spnStepCounter").html());
+                    if (Counter == 1 || Counter == 7 || Counter == 8 || Counter == 9 || Counter == 10) {
+
+
+                        Counter = 2;
+
+                    } else {
+
+                        Counter = parseInt($("#spnStepCounter").html()) + 1;
+                        if (applyfor == 2 && parseInt($("#spnStepCounter").html()) == 3) {
+                            Counter = 5;
+                        }
                     }
-                }
-               
-               
-                UpdateStepCounter(spnStepId, spnRequestId, Counter,"A");
 
-               
+
+                    UpdateStepCounter(spnStepId, spnRequestId, Counter, "A");
+
+                }
+                else {
+                    toastr.error("Please Select Officer ");
+                }
             }
         })  
     });

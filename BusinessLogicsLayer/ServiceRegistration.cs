@@ -15,6 +15,7 @@ using BusinessLogicsLayer.Home;
 using BusinessLogicsLayer.Master;
 using BusinessLogicsLayer.Registration;
 using BusinessLogicsLayer.Token;
+using BusinessLogicsLayer.TrnLoginLog;
 using BusinessLogicsLayer.Unit;
 using BusinessLogicsLayer.User;
 using DataAccessLayer;
@@ -104,6 +105,9 @@ namespace BusinessLogicsLayer
 
             services.AddTransient<ITrnICardRequestBL, TrnICardRequestBL>();
             services.AddTransient<ITrnICardRequestDB, TrnICardRequestDB>();
+
+            services.AddTransient<ITrnLoginLogBL, TrnLoginLogBL>();
+            services.AddTransient<ITrnLoginLogDB, TrnLoginLogDB>();
 
             services.AddTransient<IAPIDataBL, APIDataBL>();
             services.AddTransient<IAPIDataDB, APIDataDB>();

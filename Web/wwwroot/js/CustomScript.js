@@ -1,4 +1,9 @@
 ﻿$(document).ready(function () {
+
+
+    $("#icardPrint").click(function () {
+        window.print();
+    });
     //$('#RegistrationId').on('change', function () {
     //    if ($('#RegistrationId').val() == 1) {
     //        $("#ServiceNumber").attr("readonly", true);

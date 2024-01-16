@@ -18,8 +18,8 @@
             <div class="row">
                 <div class="col-xl-12 text-left">
                     <h3>
-                        I-Card Request  
-                        <span id="icarddetails"></span>
+                        Request Details For ArmyNo   
+                        <small class="text-muted"><span id="icarddetails"></span></small>
                         @* <small class="text-muted" id="icarddetails"></small> *@
                     </h3>
                 </div>
@@ -33,9 +33,69 @@
                        
                     </div>
                 </div> *@
-                <div class="card p-4">
+                <div class="card ">
+
+                    <div class="row">
+                        <div class="col-md-12 ">
+                            <div class="card cardbg minheight mb-2 mt-2">
+                                <div class="seven">
+                                    <h1>Request Details</h1>
+                                </div>
+                                <div class="mt-2 ml-4">
+                                   
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <div class="form-group row mb-2">
+                                                <label class="col-form-label col-sm-6 labelprofile">Regd User Dtls</label>
+                                                <div class="col-sm-6">
+                                                    <label id="RegdUser" class="col-form-label"></label>
+
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="col-sm-6">
+                                            <div class="form-group row mb-2">
+                                                <label class="col-form-label col-sm-6 labelprofile">Category</label>
+                                                <div class="col-sm-6">
+                                                    <label id="lblCategory" class="col-form-label"></label>
+
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <div class="form-group row mb-2">
+                                                <label class="col-form-label col-sm-6 labelprofile">Unit Name</label>
+                                                <div class="col-sm-6">
+                                                    <label id="lblunitname" class="col-form-label"></label>
+
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <div class="form-group row mb-2">
+                                                <label class="col-form-label col-sm-6 labelprofile">Reason For Apply</label>
+                                                <div class="col-sm-6">
+                                                    <label id="lblReason" class="col-form-label"></label>
+
+                                                </div>
+
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12 ">
+                            <div class="card cardbg minheight mb-2 mt-2">
                     <div class="mt-2">
-                        @* <h5 class="card-title"></h5> *@
+                                <div class="seven">
+                                    <h1>Get Data From API</h1>
+                                </div>
                         <div class="row">
                             <form enctype="multipart/form-data" asp-controller="BasicDetail" asp-action="Registration" id="Registration" name="Registration" method="post" class="mt-3">
                                 <div class="card-body">
@@ -181,6 +241,9 @@
                                 </div>
                             </form>
                         </div>
+                    </div>
+                </div>
+                </div>
                     </div>
                 </div>
             </div>

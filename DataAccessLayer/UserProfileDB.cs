@@ -154,17 +154,21 @@ namespace DataAccessLayer
                 //                 }
                 //                ).Distinct().FirstOrDefaultAsync();
 
-                string query = "SELECT prof.ArmyNo,prof.UserId,prof.Name,prof.IntOffr,prof.IsIO,prof.IsCO,ran.RankName,ran.RankId,mapu.UnitMapId UnitId,munit.UnitName,users.DomainId,trnd.MappedDate,usermodify.DomainId MappedBy from UserProfile prof" +
-                                " inner join MRank ran on prof.RankId = ran.RankId"+
-                                " left join TrnDomainMapping trnd on trnd.UserId = prof.UserId"+
-                                " left join MapUnit mapu on mapu.UnitMapId = trnd.UnitId"+
-                                " left join MUnit munit on munit.UnitId = mapu.UnitId"+
-                                " left join AspNetUsers usermodify on usermodify.Id=trnd.MappedBy" +
+                string query = "SELECT prof.ArmyNo,prof.UserId,prof.Name,prof.IntOffr,prof.IsIO,prof.IsCO,ran.RankName Rank,ran.RankId,mapu.UnitMapId UnitId,munit.UnitName,users.DomainId," +
+                                " appt.AppointmentName,trnd.MappedDate,usermodify.DomainId MappedBy,roles.Name RoleName from UserProfile prof "+
+                                " inner join MRank ran on prof.RankId = ran.RankId "+
+                                " inner join TrnDomainMapping trnd  on trnd.UserId = prof.UserId "+
+                                " inner join AspNetUserRoles maprole on maprole.UserId=trnd.AspNetUsersId"+
+                                " inner join AspNetRoles roles on roles.Id=maprole.RoleId"+
+                                " inner join MAppointment appt on appt.ApptId=trnd.ApptId"+
+                                " left join MapUnit mapu on mapu.UnitMapId = trnd.UnitId "+
+                                " left join MUnit munit on munit.UnitId = mapu.UnitId "+
+                                " left join AspNetUsers usermodify on usermodify.Id=trnd.MappedBy "+
                                 " left join AspNetUsers users on trnd.AspNetUsersId = users.Id"+
-                                " where prof.ArmyNo = @ArmyNo";
+                                " where prof.ArmyNo = @ArmyNo  OR trnd.AspNetUsersId=@UserId";
                 using (var connection = _contextDP.CreateConnection())
                 {
-                    var BasicDetailList = await connection.QueryAsync<DTOUserProfileResponse>(query, new { ArmyNo });
+                    var BasicDetailList = await connection.QueryAsync<DTOUserProfileResponse>(query, new { ArmyNo, UserId });
                     int sno = 1;
 
                     return BasicDetailList.SingleOrDefault();

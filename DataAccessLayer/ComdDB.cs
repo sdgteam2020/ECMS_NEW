@@ -53,7 +53,7 @@ namespace DataAccessLayer
 
         public async Task<IEnumerable<MComd>> GetAllByorder()
         {
-            var ret=  _context.MComd.OrderBy(x => x.Orderby).ToList();   
+            var ret = _context.MComd.OrderBy(x => x.Orderby).ToList();
             return ret;
         }
     }

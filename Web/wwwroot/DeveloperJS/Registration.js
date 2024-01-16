@@ -2,7 +2,7 @@
     if (sessionStorage.getItem("ArmyNo") != null) {
         $("#ServiceNumber").val(sessionStorage.getItem("ArmyNo"));
 
-
+        $("#icarddetails").html(sessionStorage.getItem("ArmyNo"));
         $("#ApplyForId").val(sessionStorage.getItem("OffType"));
         $("#RegistrationId").val(sessionStorage.getItem("RegistrationApplyFor"));
         $("#TypeId").val(sessionStorage.getItem("lCardType"));
@@ -37,8 +37,23 @@ function getApplyIcardDetails()
         },
         success: function (response, status) {
             if (response != null) {
+                $("#lblCategory").html(response.ApplyFor);
+                $("#lblReason").html(response.Type);
 
-                $("#icarddetails").html('For '+response.ApplyFor + ' And (' + response.Registraion + ') For ' + response.Type);
+                $("#RegdUser").html(response.RankAbbreviation + ' ' + response.Name + ' (' + response.ArmyNo + ') (' + response.DomainId + ')');
+
+                if ($("#RegistrationId").val() == '3' || $("#RegistrationId").val() == '7') {
+                    $("#lblunitname").html(response.Registraion);
+                } else {
+                    $("#lblunitname").html(response.UnitName + ' (' + response.Sus_no + '' + response.Suffix + ')');
+                }
+
+
+               
+                
+               
+
+               
             }
             
         }

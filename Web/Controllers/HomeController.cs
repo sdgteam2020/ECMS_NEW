@@ -56,6 +56,7 @@ namespace Web.Controllers
         }
         public async Task<IActionResult> GetApplyCardDetails(DTOApplyCardDetailsRequest Data)
         {
+            Data.UserId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
             return Json(await _registrationBL.GetApplyCardDetails(Data));
 
         }

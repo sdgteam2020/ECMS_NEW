@@ -40,12 +40,18 @@ namespace DataAccessLayer
             try
             {
                
-                string query = "select App.Name ApplyFor,reg.Name Registraion,(select Name from MICardType where TypeId=@TypeId) Type from MApplyFor App inner join" +
+                string query = "select App.Name ApplyFor,reg.Name Registraion,(select Name from MICardType where TypeId=@TypeId) Type,users.DomainId,unit.UnitName,unit.Suffix,unit.Sus_no,pro.Name,ranks.RankAbbreviation,pro.ArmyNo  from MApplyFor App inner join" +
                                 " MRegistration reg on App.ApplyForId=reg.ApplyForId" +
-                                " and App.ApplyForId=@ApplyForId and reg.RegistrationId=@RegistrationId";
+                                " and App.ApplyForId=@ApplyForId and reg.RegistrationId=@RegistrationId"+
+                                " inner join TrnDomainMapping trn on trn.AspNetUsersId = @UserId" +
+                                " inner join AspNetUsers users on users.Id = trn.AspNetUsersId"+
+                                " inner join MapUnit mapuni on mapuni.UnitMapId = trn.UnitId"+
+                                " inner join MUnit unit on unit.UnitId = mapuni.UnitId"+
+                                " left join UserProfile pro on pro.UserId = trn.UnitId"+
+                                " inner join MRank ranks on ranks.RankId = pro.RankId";
                 using (var connection = _contextDP.CreateConnection())
                 {
-                    var BasicDetailList = await connection.QueryAsync<DTOApplyCardDetailsResponse>(query, new { Data.ApplyForId, Data.RegistrationId, Data.TypeId });
+                    var BasicDetailList = await connection.QueryAsync<DTOApplyCardDetailsResponse>(query, new { Data.ApplyForId, Data.RegistrationId, Data.TypeId,Data.UserId });
                     int sno = 1;
 
                     return BasicDetailList.SingleOrDefault();

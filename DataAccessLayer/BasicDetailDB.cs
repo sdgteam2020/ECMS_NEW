@@ -38,14 +38,14 @@ namespace DataAccessLayer
         }
         public async Task<bool> SaveBasicDetailsWithAll(BasicDetail Data, MTrnAddress address, MTrnUpload trnUpload, MTrnIdentityInfo mTrnIdentityInfo, MTrnICardRequest mTrnICardRequest, MStepCounter mStepCounter)
         {
-
+            using var transaction = _context.Database.BeginTransaction();
             try
             {
-                
+               
 
                 if (Data.BasicDetailId == 0)
                 {
-                    using var transaction = _context.Database.BeginTransaction();
+                   
                     _context.BasicDetails.Add(Data);
                    await _context.SaveChangesAsync();
                     int BasicDetailId = Data.BasicDetailId;
@@ -67,10 +67,11 @@ namespace DataAccessLayer
                     await _context.SaveChangesAsync();
 
                     transaction.Commit();
+                    return true;
                 }
                 else
                 {
-                    using var transaction = _context.Database.BeginTransaction();
+                   
                     address.BasicDetailId = Data.BasicDetailId;
                     trnUpload.BasicDetailId = Data.BasicDetailId;
                     mTrnIdentityInfo.BasicDetailId = Data.BasicDetailId;
@@ -86,13 +87,16 @@ namespace DataAccessLayer
                     _context.Update(mTrnIdentityInfo);
                     await _context.SaveChangesAsync();
                     transaction.Commit();
-
+                    return true;
                 }
                 //do other things, then commit or rollback
                
-                return true;
+               
             }
-           catch (Exception ex) { return false; }
+           catch (Exception ex) {
+                transaction.Rollback();
+                return false; 
+            }
             
 
             
@@ -623,7 +627,7 @@ namespace DataAccessLayer
         public async Task<List<DTONotificationResponse>> GetNotificationRequestId(int UserId, int Type, int applyForId)
         {
 
-            string query = "select dis.DisplayId,Spanname + 'self' Spanname,Message from TrnNotification noti " +
+            string query = "select Distinct tre.RequestId, dis.DisplayId,Spanname + 'self' Spanname,Message from TrnNotification noti " +
                             " inner join TrnNotificationDisplay dis on noti.DisplayId = dis.DisplayId" +
                             " inner join AspNetUsers users on users.Id = noti.SentAspNetUsersId" +
                             " inner join TrnICardRequest tre on tre.RequestId = noti.RequestId" +

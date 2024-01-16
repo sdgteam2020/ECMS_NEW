@@ -1,0 +1,136 @@
+﻿@model IEnumerable<DataTransferObject.Response.DTOLoginLogResponse>
+
+@{
+    ViewData["Title"] = "LoginLog";
+}
+<link href="~/css/offrstimeline.css" rel="stylesheet" />
+@* <link rel="stylesheet" href="https://maxcdn.icons8.com/fonts/line-awesome/1.1/css/line-awesome.min.css"> *@
+<link href="~/css/horizontaltimeline.css" rel="stylesheet" />
+<div class="container1">
+    <div class="card mb-3 ">
+        <div class="card-header">
+
+           
+            <div class="row">
+                <div class="col-xl-12 text-left">
+                    <h3>
+                        All User in Your Unit
+                        <small class="text-muted"></small>
+
+
+                    </h3>
+                </div>
+
+
+            </div>
+        </div>
+
+
+
+        <div class="card-body">
+            <div class="row">
+                <div class="col-xl-12">
+                    <div class="mb-2 d-md-flex justify-content-md-between align-items-md-center">
+                        <h6 class="mb-3 mb-md-0">
+                            @*   Total Units <span id="lblTotal" class="ml-3 border border-light b px-2 py-1">0</span> *@
+                        </h6>
+                        <div class="d-flex">
+                           
+                          
+
+                        </div>
+
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table border border-purple table-striped no-footer dataTable table-hover" role="grid" id="tbldatatabledata">
+
+
+                            <thead>
+                                <tr>
+                                  
+                                    <th>
+                                        Role Name
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.DomainID)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.ArmyNo)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.Name)
+                                    </th>
+                                    <th>
+                                        Rank Name
+                                    </th>
+                                    
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model)
+                                {
+                                    <tr>
+                                      
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.RoleName)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.DomainID)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.ArmyNo)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.Name)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.RankName)
+                                        </td>
+                                       
+                                        <td>
+                                            <span class="d-none" id="AspNetUsersId">@Html.DisplayFor(modelItem => item.AspNetUsersId)</span>
+                                            <button type='button' class='cls-btnhistory btn btn-icon btn-round btn-warning mr-1'><i class='fas fa-history'></i></button>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+
+
+                </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<script src="~/developerjs/loginlog.js"></script>
+
+<div class="modal fade" id="modalLoginLog" aria-hidden="true" aria-labelledby="exampleModalToggleLabel" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+
+                <h5 class="modal-title" id="exampleModalToggleLabel">Login Log last one Months <small class="text-muted"><span class="armypersname"></span></small></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+
+
+
+                    <div class="row justify-content-center">
+                        <div class="col-xl-10 col-12">
+                            <div class="timeline timeline-line-solid" id="timelineData">
+                            </div>
+                        </div>
+                        @* <div class="modal-footer">
+                        <button class="btn btn-primary" data-bs-dismiss="modal" aria-label="Close" id="">OK</button>
+                        </div>*@
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

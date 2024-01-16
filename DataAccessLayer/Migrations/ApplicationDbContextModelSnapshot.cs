@@ -17,7 +17,7 @@ namespace DataAccessLayer.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.13")
+                .HasAnnotation("ProductVersion", "7.0.12")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -209,6 +209,8 @@ namespace DataAccessLayer.Migrations
 
                     b.HasIndex("RankId");
 
+                    b.HasIndex("Updatedby");
+
                     b.ToTable("UserProfile");
                 });
 
@@ -253,6 +255,8 @@ namespace DataAccessLayer.Migrations
 
                     b.HasKey("ApptId");
 
+                    b.HasIndex("Updatedby");
+
                     b.ToTable("MAppointment");
                 });
 
@@ -282,6 +286,8 @@ namespace DataAccessLayer.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("ArmedCatId");
+
+                    b.HasIndex("Updatedby");
 
                     b.ToTable("MArmedCats");
                 });
@@ -324,6 +330,8 @@ namespace DataAccessLayer.Migrations
 
                     b.HasIndex("ArmedCatId");
 
+                    b.HasIndex("Updatedby");
+
                     b.ToTable("MArmedType");
                 });
 
@@ -365,6 +373,8 @@ namespace DataAccessLayer.Migrations
                     b.HasIndex("CorpsId");
 
                     b.HasIndex("DivId");
+
+                    b.HasIndex("Updatedby");
 
                     b.ToTable("MBde");
                 });
@@ -418,6 +428,8 @@ namespace DataAccessLayer.Migrations
 
                     b.HasKey("ComdId");
 
+                    b.HasIndex("Updatedby");
+
                     b.ToTable("MComd");
                 });
 
@@ -449,6 +461,8 @@ namespace DataAccessLayer.Migrations
                     b.HasKey("CorpsId");
 
                     b.HasIndex("ComdId");
+
+                    b.HasIndex("Updatedby");
 
                     b.ToTable("MCorps");
                 });
@@ -487,6 +501,8 @@ namespace DataAccessLayer.Migrations
 
                     b.HasIndex("CorpsId");
 
+                    b.HasIndex("Updatedby");
+
                     b.ToTable("MDiv");
                 });
 
@@ -523,6 +539,8 @@ namespace DataAccessLayer.Migrations
 
                     b.HasKey("FmnBranchID");
 
+                    b.HasIndex("Updatedby");
+
                     b.ToTable("MFmnBranches");
                 });
 
@@ -549,6 +567,8 @@ namespace DataAccessLayer.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("FormationId");
+
+                    b.HasIndex("Updatedby");
 
                     b.ToTable("MFormation");
                 });
@@ -602,6 +622,8 @@ namespace DataAccessLayer.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Updatedby");
+
                     b.ToTable("MMappingProfile");
                 });
 
@@ -637,6 +659,8 @@ namespace DataAccessLayer.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("PsoId");
+
+                    b.HasIndex("Updatedby");
 
                     b.ToTable("MPso");
                 });
@@ -682,6 +706,8 @@ namespace DataAccessLayer.Migrations
 
                     b.HasIndex("ApplyForId");
 
+                    b.HasIndex("Updatedby");
+
                     b.ToTable("MRank");
                 });
 
@@ -725,6 +751,8 @@ namespace DataAccessLayer.Migrations
 
                     b.HasIndex("ArmedId");
 
+                    b.HasIndex("Updatedby");
+
                     b.ToTable("MRegimental");
                 });
 
@@ -757,6 +785,8 @@ namespace DataAccessLayer.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("RegistrationId");
+
+                    b.HasIndex("Updatedby");
 
                     b.ToTable("MRegistration");
                 });
@@ -875,6 +905,8 @@ namespace DataAccessLayer.Migrations
 
                     b.HasKey("SubDteId");
 
+                    b.HasIndex("Updatedby");
+
                     b.ToTable("MSubDte");
                 });
 
@@ -936,6 +968,8 @@ namespace DataAccessLayer.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("UnitId");
+
+                    b.HasIndex("Updatedby");
 
                     b.ToTable("MUnit");
                 });
@@ -1002,6 +1036,8 @@ namespace DataAccessLayer.Migrations
                     b.HasIndex("SubDteId");
 
                     b.HasIndex("UnitId");
+
+                    b.HasIndex("Updatedby");
 
                     b.ToTable("MapUnit");
                 });
@@ -1085,6 +1121,8 @@ namespace DataAccessLayer.Migrations
 
                     b.HasIndex("UnitId");
 
+                    b.HasIndex("Updatedby");
+
                     b.ToTable("BasicDetails");
                 });
 
@@ -1138,6 +1176,8 @@ namespace DataAccessLayer.Migrations
 
                     b.HasKey("BasicDetailTempId");
 
+                    b.HasIndex("Updatedby");
+
                     b.ToTable("BasicDetailTemps");
                 });
 
@@ -1171,6 +1211,8 @@ namespace DataAccessLayer.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("DocUploadId");
+
+                    b.HasIndex("Updatedby");
 
                     b.ToTable("DocUploads");
                 });
@@ -1289,6 +1331,8 @@ namespace DataAccessLayer.Migrations
 
                     b.HasIndex("StepId");
 
+                    b.HasIndex("Updatedby");
+
                     b.ToTable("TrnStepCounter");
                 });
 
@@ -1398,6 +1442,8 @@ namespace DataAccessLayer.Migrations
 
                     b.HasIndex("UnitId");
 
+                    b.HasIndex("Updatedby");
+
                     b.ToTable("TrnFwds");
                 });
 
@@ -1446,6 +1492,8 @@ namespace DataAccessLayer.Migrations
                     b.HasIndex("TrnDomainMappingId");
 
                     b.HasIndex("TypeId");
+
+                    b.HasIndex("Updatedby");
 
                     b.ToTable("TrnICardRequest");
                 });
@@ -1616,6 +1664,50 @@ namespace DataAccessLayer.Migrations
                     b.ToTable("TrnDomainMapping");
                 });
 
+            modelBuilder.Entity("DataTransferObject.Domain.Model.TrnLogin_Log", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AspNetUsersId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("IP")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("RoleId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedOn")
+                        .IsRequired()
+                        .HasColumnType("datetime");
+
+                    b.Property<int>("Updatedby")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AspNetUsersId");
+
+                    b.HasIndex("RoleId");
+
+                    b.HasIndex("Updatedby");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("TrnLogin_Log");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
                 {
                     b.Property<int>("Id")
@@ -1727,7 +1819,37 @@ namespace DataAccessLayer.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("DataTransferObject.Domain.Identitytable.ApplicationUser", "ApplicationUserUpdate")
+                        .WithMany()
+                        .HasForeignKey("Updatedby")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("ApplicationUserUpdate");
+
                     b.Navigation("MRank");
+                });
+
+            modelBuilder.Entity("DataTransferObject.Domain.Master.MAppointment", b =>
+                {
+                    b.HasOne("DataTransferObject.Domain.Identitytable.ApplicationUser", "ApplicationUserUpdate")
+                        .WithMany()
+                        .HasForeignKey("Updatedby")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("ApplicationUserUpdate");
+                });
+
+            modelBuilder.Entity("DataTransferObject.Domain.Master.MArmedCat", b =>
+                {
+                    b.HasOne("DataTransferObject.Domain.Identitytable.ApplicationUser", "ApplicationUserUpdate")
+                        .WithMany()
+                        .HasForeignKey("Updatedby")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("ApplicationUserUpdate");
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Master.MArmedType", b =>
@@ -1737,6 +1859,14 @@ namespace DataAccessLayer.Migrations
                         .HasForeignKey("ArmedCatId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.HasOne("DataTransferObject.Domain.Identitytable.ApplicationUser", "ApplicationUserUpdate")
+                        .WithMany()
+                        .HasForeignKey("Updatedby")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("ApplicationUserUpdate");
 
                     b.Navigation("ArmedCat");
                 });
@@ -1761,11 +1891,30 @@ namespace DataAccessLayer.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("DataTransferObject.Domain.Identitytable.ApplicationUser", "ApplicationUserUpdate")
+                        .WithMany()
+                        .HasForeignKey("Updatedby")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("ApplicationUserUpdate");
+
                     b.Navigation("Comd");
 
                     b.Navigation("Corps");
 
                     b.Navigation("Div");
+                });
+
+            modelBuilder.Entity("DataTransferObject.Domain.Master.MComd", b =>
+                {
+                    b.HasOne("DataTransferObject.Domain.Identitytable.ApplicationUser", "ApplicationUserUpdate")
+                        .WithMany()
+                        .HasForeignKey("Updatedby")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("ApplicationUserUpdate");
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Master.MCorps", b =>
@@ -1775,6 +1924,14 @@ namespace DataAccessLayer.Migrations
                         .HasForeignKey("ComdId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.HasOne("DataTransferObject.Domain.Identitytable.ApplicationUser", "ApplicationUserUpdate")
+                        .WithMany()
+                        .HasForeignKey("Updatedby")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("ApplicationUserUpdate");
 
                     b.Navigation("Comd");
                 });
@@ -1793,9 +1950,61 @@ namespace DataAccessLayer.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("DataTransferObject.Domain.Identitytable.ApplicationUser", "ApplicationUserUpdate")
+                        .WithMany()
+                        .HasForeignKey("Updatedby")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("ApplicationUserUpdate");
+
                     b.Navigation("Comd");
 
                     b.Navigation("Corps");
+                });
+
+            modelBuilder.Entity("DataTransferObject.Domain.Master.MFmnBranches", b =>
+                {
+                    b.HasOne("DataTransferObject.Domain.Identitytable.ApplicationUser", "ApplicationUserUpdate")
+                        .WithMany()
+                        .HasForeignKey("Updatedby")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("ApplicationUserUpdate");
+                });
+
+            modelBuilder.Entity("DataTransferObject.Domain.Master.MFormation", b =>
+                {
+                    b.HasOne("DataTransferObject.Domain.Identitytable.ApplicationUser", "ApplicationUserUpdate")
+                        .WithMany()
+                        .HasForeignKey("Updatedby")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("ApplicationUserUpdate");
+                });
+
+            modelBuilder.Entity("DataTransferObject.Domain.Master.MMappingProfile", b =>
+                {
+                    b.HasOne("DataTransferObject.Domain.Identitytable.ApplicationUser", "ApplicationUserUpdate")
+                        .WithMany()
+                        .HasForeignKey("Updatedby")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("ApplicationUserUpdate");
+                });
+
+            modelBuilder.Entity("DataTransferObject.Domain.Master.MPSO", b =>
+                {
+                    b.HasOne("DataTransferObject.Domain.Identitytable.ApplicationUser", "ApplicationUserUpdate")
+                        .WithMany()
+                        .HasForeignKey("Updatedby")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("ApplicationUserUpdate");
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Master.MRank", b =>
@@ -1805,6 +2014,14 @@ namespace DataAccessLayer.Migrations
                         .HasForeignKey("ApplyForId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.HasOne("DataTransferObject.Domain.Identitytable.ApplicationUser", "ApplicationUserUpdate")
+                        .WithMany()
+                        .HasForeignKey("Updatedby")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("ApplicationUserUpdate");
 
                     b.Navigation("MApplyFor");
                 });
@@ -1817,7 +2034,26 @@ namespace DataAccessLayer.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("DataTransferObject.Domain.Identitytable.ApplicationUser", "ApplicationUserUpdate")
+                        .WithMany()
+                        .HasForeignKey("Updatedby")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("ApplicationUserUpdate");
+
                     b.Navigation("MArmedType");
+                });
+
+            modelBuilder.Entity("DataTransferObject.Domain.Master.MRegistration", b =>
+                {
+                    b.HasOne("DataTransferObject.Domain.Identitytable.ApplicationUser", "ApplicationUserUpdate")
+                        .WithMany()
+                        .HasForeignKey("Updatedby")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("ApplicationUserUpdate");
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Master.MRemarks", b =>
@@ -1837,6 +2073,28 @@ namespace DataAccessLayer.Migrations
                     b.Navigation("MRemarkType");
 
                     b.Navigation("MRemarksApply");
+                });
+
+            modelBuilder.Entity("DataTransferObject.Domain.Master.MSubDte", b =>
+                {
+                    b.HasOne("DataTransferObject.Domain.Identitytable.ApplicationUser", "ApplicationUserUpdate")
+                        .WithMany()
+                        .HasForeignKey("Updatedby")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("ApplicationUserUpdate");
+                });
+
+            modelBuilder.Entity("DataTransferObject.Domain.Master.MUnit", b =>
+                {
+                    b.HasOne("DataTransferObject.Domain.Identitytable.ApplicationUser", "ApplicationUserUpdate")
+                        .WithMany()
+                        .HasForeignKey("Updatedby")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("ApplicationUserUpdate");
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Master.MapUnit", b =>
@@ -1889,6 +2147,14 @@ namespace DataAccessLayer.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("DataTransferObject.Domain.Identitytable.ApplicationUser", "ApplicationUserUpdate")
+                        .WithMany()
+                        .HasForeignKey("Updatedby")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("ApplicationUserUpdate");
+
                     b.Navigation("Bde");
 
                     b.Navigation("Comd");
@@ -1937,6 +2203,14 @@ namespace DataAccessLayer.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("DataTransferObject.Domain.Identitytable.ApplicationUser", "ApplicationUserUpdate")
+                        .WithMany()
+                        .HasForeignKey("Updatedby")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("ApplicationUserUpdate");
+
                     b.Navigation("Armed");
 
                     b.Navigation("MApplyFor");
@@ -1946,6 +2220,28 @@ namespace DataAccessLayer.Migrations
                     b.Navigation("Regimental");
 
                     b.Navigation("Unit");
+                });
+
+            modelBuilder.Entity("DataTransferObject.Domain.Model.BasicDetailTemp", b =>
+                {
+                    b.HasOne("DataTransferObject.Domain.Identitytable.ApplicationUser", "ApplicationUserUpdate")
+                        .WithMany()
+                        .HasForeignKey("Updatedby")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("ApplicationUserUpdate");
+                });
+
+            modelBuilder.Entity("DataTransferObject.Domain.Model.DocUpload", b =>
+                {
+                    b.HasOne("DataTransferObject.Domain.Identitytable.ApplicationUser", "ApplicationUserUpdate")
+                        .WithMany()
+                        .HasForeignKey("Updatedby")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("ApplicationUserUpdate");
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Model.MStepCounter", b =>
@@ -1967,6 +2263,14 @@ namespace DataAccessLayer.Migrations
                         .HasForeignKey("StepId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.HasOne("DataTransferObject.Domain.Identitytable.ApplicationUser", "ApplicationUserUpdate")
+                        .WithMany()
+                        .HasForeignKey("Updatedby")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("ApplicationUserUpdate");
 
                     b.Navigation("MApplyFor");
 
@@ -2028,9 +2332,17 @@ namespace DataAccessLayer.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("DataTransferObject.Domain.Identitytable.ApplicationUser", "ApplicationUserUpdate")
+                        .WithMany()
+                        .HasForeignKey("Updatedby")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.Navigation("ApplicationUser");
 
                     b.Navigation("ApplicationUser1");
+
+                    b.Navigation("ApplicationUserUpdate");
 
                     b.Navigation("MTrnFwdType");
 
@@ -2068,6 +2380,14 @@ namespace DataAccessLayer.Migrations
                         .HasForeignKey("TypeId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.HasOne("DataTransferObject.Domain.Identitytable.ApplicationUser", "ApplicationUserUpdate")
+                        .WithMany()
+                        .HasForeignKey("Updatedby")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("ApplicationUserUpdate");
 
                     b.Navigation("BasicDetail");
 
@@ -2151,6 +2471,40 @@ namespace DataAccessLayer.Migrations
                     b.Navigation("MUserProfile");
 
                     b.Navigation("MapUnit");
+                });
+
+            modelBuilder.Entity("DataTransferObject.Domain.Model.TrnLogin_Log", b =>
+                {
+                    b.HasOne("DataTransferObject.Domain.Identitytable.ApplicationUser", "ApplicationUser")
+                        .WithMany()
+                        .HasForeignKey("AspNetUsersId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("DataTransferObject.Domain.Identitytable.ApplicationRole", "ApplicationRole")
+                        .WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("DataTransferObject.Domain.Identitytable.ApplicationUser", "ApplicationUserUpdate")
+                        .WithMany()
+                        .HasForeignKey("Updatedby")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("DataTransferObject.Domain.MUserProfile", "MUserProfile")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("ApplicationRole");
+
+                    b.Navigation("ApplicationUser");
+
+                    b.Navigation("ApplicationUserUpdate");
+
+                    b.Navigation("MUserProfile");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>

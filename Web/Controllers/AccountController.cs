@@ -7,6 +7,7 @@ using BusinessLogicsLayer.Helpers;
 using BusinessLogicsLayer.Master;
 using BusinessLogicsLayer.Service;
 using BusinessLogicsLayer.Token;
+using BusinessLogicsLayer.TrnLoginLog;
 using BusinessLogicsLayer.Unit;
 using BusinessLogicsLayer.User;
 using DapperRepo.Core.Constants;
@@ -49,6 +50,7 @@ namespace Web.Controllers
         private readonly IUserProfileBL _userProfileBL;
         public readonly IMapUnitBL _IMapUnitBL;
         public readonly iGetTokenBL _iGetTokenBL;
+        public readonly ITrnLoginLogBL _TrnLoginLogBL;
         private readonly ApplicationDbContext context, contextTransaction;
         private readonly IDataProtector protector;
         private readonly IService service;
@@ -58,9 +60,10 @@ namespace Web.Controllers
         public const string SessionKeySalt = "_Salt";
         private readonly ILogger<AccountController> _logger;
         private readonly IMapper _mapper;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
         public AccountController(IUnitOfWork unitOfWork, IAccountBL iAccountBL , IDomainMapBL iDomainMapBL, IUserProfileBL userProfileBL, IMapUnitBL mapUnitBL, RoleManager<ApplicationRole> roleManager, iGetTokenBL iGetTokenBL, UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, ApplicationDbContext context, ApplicationDbContext contextTransaction,
-            IDataProtectionProvider dataProtectionProvider, IService service, IMapper mapper, DataProtectionPurposeStrings dataProtectionPurposeStrings, ILogger<AccountController> logger)
+            IDataProtectionProvider dataProtectionProvider, IService service, IMapper mapper, DataProtectionPurposeStrings dataProtectionPurposeStrings, ILogger<AccountController> logger, ITrnLoginLogBL trnLoginLogBL, IHttpContextAccessor httpContextAccessor)
         {
             this.roleManager = roleManager;
             this.userManager = userManager;
@@ -78,6 +81,8 @@ namespace Web.Controllers
             this.protector = dataProtectionProvider.CreateProtector(
     dataProtectionPurposeStrings.AFSACIdRouteValue);
             _logger = logger;
+            _TrnLoginLogBL= trnLoginLogBL;
+            _httpContextAccessor= httpContextAccessor;
         }
         [HttpGet]
         [AllowAnonymous]
@@ -1175,8 +1180,8 @@ namespace Web.Controllers
                             {
                                 //var roles = await userManager.GetRolesAsync(usera);
                                 ViewBag.Message = "Sucessfully Logged In.";
-
-                                TrnDomainMapping? dTO = new TrnDomainMapping();
+                               
+                                TrnDomainMapping ? dTO = new TrnDomainMapping();
                                 dTO.AspNetUsersId = Convert.ToInt32(usera.Id);
                                 dTO = await _iDomainMapBL.GetByAspnetUserIdBy(dTO.AspNetUsersId);
                                 var army = await _userProfileBL.Get(Convert.ToInt32(dTO.UserId));
@@ -1192,6 +1197,19 @@ namespace Web.Controllers
                                     trnDomainMapping = await _iDomainMapBL.GetByAspnetUserIdBy(trnDomainMapping.AspNetUsersId);
                                     dtoSession.TrnDomainMappingId = trnDomainMapping.Id;
                                 }
+                                ///////////////login log//////////////////////
+                                TrnLogin_Log  log=new TrnLogin_Log();
+                                log.AspNetUsersId= Convert.ToInt32(usera.Id);
+                                var Role = await roleManager.FindByNameAsync(roles[0]);
+                                log.RoleId = Convert.ToInt32(Role.Id);
+                                log.UserId = Convert.ToInt32(dTO.UserId);
+                                log.IP = HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
+                                log.IsActive = true;
+                                log.Updatedby= Convert.ToInt32(usera.Id);
+                                log.UpdatedOn=DateTime.Now;
+                                await _TrnLoginLogBL.Add(log);
+                                ////////////////End Log////////////////////////
+                                
                                 SessionHeplers.SetObject(HttpContext.Session, "Token", dtoSession);
 
 

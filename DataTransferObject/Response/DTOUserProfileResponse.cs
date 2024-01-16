@@ -32,6 +32,7 @@ namespace DataTransferObject.Response
         public int RankId { get; set; }
 
         public string DomainId { get; set; }
+        public string RoleName { get; set; }
         public string MappedDate { get; set; }
         public string MappedBy { get; set; }
         //public int IOUserId { get; set; }

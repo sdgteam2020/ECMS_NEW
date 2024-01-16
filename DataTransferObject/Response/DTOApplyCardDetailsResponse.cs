@@ -11,5 +11,13 @@ namespace DataTransferObject.Response
         public string ApplyFor { get; set; }
         public string Registraion { get; set; }
         public string Type { get; set; }
+        public string DomainId { get; set; }
+        public string UnitName { get; set; }
+        public string Suffix { get; set; }
+        public string Sus_no { get; set; }
+        public string RankAbbreviation { get; set; }
+        public string ArmyNo { get; set; }
+        public string Name { get; set; }
+
     }
 }
