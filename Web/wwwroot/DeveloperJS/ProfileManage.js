@@ -147,7 +147,12 @@ function BindData() {
                         listItem += "<td class='d-none'><span id='regId'>" + response[i].Id + "</span><span id='userId'>" + response[i].UserId + "</span><span id='rankId'>" + response[i].RankId + "</span></td>";
                         listItem += "<td class='align-middle'>" + (i + 1) + "</td>";
                         listItem += "<td class='align-middle'><span id='userId'>" + response[i].UserId + "</span></td>";
-                        listItem += "<td class='align-middle'><span id='domainId'>" + response[i].DomainId + "</span></td>";
+                        
+                        if (response[i].DomainId != null && response[i].DomainId != "null")
+                            listItem += "<td class='align-middle'><span id='domainId'>" + response[i].DomainId + "</span></td>";
+                        else
+                            listItem += "<td class='align-middle'><span><span class='badge badge-pill badge-danger' id='domainId'>NA</span></span></td>";
+
                         listItem += "<td class='align-middle'><span id='armyNo'>" + response[i].ArmyNo + "</span></td>";
                         listItem += "<td class='align-middle'><span id='rankName'>" + response[i].RankAbbreviation + "</span></td>";
                         listItem += "<td class='align-middle'><span id='username'>" + response[i].Name + "</span></td>";
