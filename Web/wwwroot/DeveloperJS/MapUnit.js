@@ -9,10 +9,10 @@ $(document).ready(function () {
             $(".unittype").removeClass("d-none");
             $(".FmnBranch").addClass("d-none");
             $(".DteBranch").addClass("d-none");
-
+            mMsater(0, "ddlCommand", 1, "");
         }
         else if (val == "2") {
-           
+            mMsater(0, "ddlCommand", 1, "");
             mMsater(0, "ddlFmnBranch", FmnBranches, "");
             $("#ddlPSODte").val(1);
             $("#ddlDgSubDte").val(1);
