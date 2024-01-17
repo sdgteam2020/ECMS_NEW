@@ -3,12 +3,11 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <style>
-    .btn {
+    .btn1 {
         --bs-btn-padding-x: 5.75rem;
         --bs-btn-padding-y: 1.375rem;
        
     }
-
     .form-control{
         width: 300px;
         display: table; /* Instead of display:block */
@@ -23,28 +22,30 @@
         <div class="card p-4">
             <div class="row">
                 <div class="col-md-12 col-sm-6 text-center">
-                    <button type="button" class="btn btn-outline-primary" id="btnApplyCard">Apply for Smart I Card</button>
+                    <button type="button" class="btn btn-outline-primary btn1" id="btnApplyCard">Apply for Smart I Card</button>
+                    <button type="button" class="btn btn-outline-warning btn1" id="btnApplicantsPostingout">Applicants Posting out</button>
                 </div>
-                <div class="col-md-12 col-sm-6 text-center mt-4 d-none" id="btnarmytype">
-                    <button type="button" class="btn btn-outline-success" id="btnaddOffrs">Offrs</button>
-                    <button type="button" class="btn btn-outline-warning" id="btnJCOs">JCOs/ORs</button>
+
+                <div class="col-md-12 col-sm-6 text-center mt-4 ApplyCard d-none" id="btnarmytype">
+                    <button type="button" class="btn btn-outline-success btn1" id="btnaddOffrs">Offrs</button>
+                    <button type="button" class="btn btn-outline-warning btn1" id="btnJCOs">JCOs/ORs</button>
                 </div>
-                <div class="col-md-12 col-sm-6 text-center mt-4" id="btnIcardFor">
+                <div class="col-md-12 col-sm-6 text-center mt-4 ApplyCard" id="btnIcardFor">
                    
                 </div>
-                <div class="col-md-12 col-sm-6 text-center d-none1" id="icardrequestfor">
+                <div class="col-md-12 col-sm-6 text-center d-none1 ApplyCard" id="icardrequestfor">
                    
                 </div>
                 <div class="col-md-12 col-sm-6 mt-4 " id="">
-                    <input class="form-control mb-2 d-none " id="txtApplyForArmyNo" placeholder="Enter ArmyNo" />
+                    <input class="form-control mb-2 d-none ApplyCard" id="txtApplyForArmyNo" placeholder="Enter ArmyNo" />
                 </div>
-                <div class="col-md-12 col-sm-6 text-center mt-4 d-none" id="spnNext" >
-                    <button type="button" class="btn btn-danger mt-4 d-none mr-4" id="btntokenrefresh">Refresh Get Token Data</button>
-                    <button type="button" class="btn btn-warning mt-4" id="btnNext">Next</button>
+                <div class="col-md-12 col-sm-6 text-center mt-4 d-none ApplyCard" id="spnNext">
+                    <button type="button" class="btn btn-danger mt-4 d-none mr-4 btn1" id="btntokenrefresh">Refresh Get Token Data</button>
+                    <button type="button" class="btn btn-warning mt-4 btn1" id="btnNext">Next</button>
                     
                 </div>
                 
-                <div class="col-md-12 col-sm-6 text-center mt-4 d-none1" id="">
+                <div class="col-md-12 col-sm-6 text-center mt-4 d-none1 ApplyCard" id="">
                     <span id="tokenmsg"></span>
                 </div>
             </div>

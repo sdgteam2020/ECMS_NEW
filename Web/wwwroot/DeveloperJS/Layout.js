@@ -16,6 +16,7 @@ toastr.options = {
     "showMethod": "fadeIn",
     "hideMethod": "fadeOut"
 }
+
 $(document).ready(function () {
 
    
@@ -30,7 +31,64 @@ $(document).ready(function () {
 
     Getaspntokenarmyno()
     if (window.location.pathname !="/UserProfile/Profile")
-    CheckProfileExist();
+        CheckProfileExist();
+    $("#btnApplicantsPostingout").click(function () {
+        $("#armynosearchAllName").html("");
+        $("#txtarmynosearchAll").val("");
+        $("#armynosearchAllpic").attr("src", "");
+        $("#unitoffrsModal").modal("show");
+    });
+   
+    $("#txtarmynosearchAll").autocomplete({
+
+        source: function (request, response) {
+            var TypeId = 1;
+            
+            var param = { "ICNumber": request.term };
+
+            $("#armynosearchAllName").html("");
+            $("#txtarmynosearchAll").val("");
+            $("#armynosearchAllpic").attr("src", "");
+
+            $.ajax({
+                url: '/BasicDetail/SearchAllServiceNo',
+                contentType: 'application/x-www-form-urlencoded',
+                data: param,
+                type: 'POST',
+                success: function (data) {
+                    console.log(data);
+
+                    response($.map(data, function (item) {
+
+                        $("#loading").addClass("d-none");
+                        return { label: item.ServiceNo, value: item.BasicDetailId, Name: item.Name, Image: item.Image };
+
+                    }))
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                }
+            });
+        },
+        select: function (e, i) {
+            e.preventDefault();
+            //alert(i.item.value)
+            
+            $("#armynosearchAllName").html("Name : " + i.item.Name);
+           /* $("#armynosearchAllBasicId").val(i.item.value);*/
+            $("#txtarmynosearchAll").val(i.item.label);
+            $("#armynosearchAllpic").attr("src", "/WriteReadData/Photo/"+i.item.Image);
+            //alert(i.item.value)
+            // var param1 = { "UnitMapId": i.item.value };
+            //$("#btnIOProfileSerch").addClass('d-none');
+           
+        },
+        appendTo: '#suggesstion-box'
+    });
+
 });
 
 function CheckProfileExist() {

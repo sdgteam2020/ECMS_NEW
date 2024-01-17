@@ -118,6 +118,25 @@ namespace DataAccessLayer
             }
 
         }
+        public async Task<List<DTOSmartSearch>> SearchAllServiceNo(string ServiceNo)
+        {
+            string query = "Select basi.BasicDetailId,Name,ServiceNo,PhotoImagePath Image from BasicDetails basi inner join TrnUpload trnu on basi.BasicDetailId=trnu.BasicDetailId where ServiceNo like @ServiceNo ";
+            
+            ServiceNo = "%" + ServiceNo.Replace("[", "[[]").Replace("%", "[%]") + "%";
+            using (var connection = _contextDP.CreateConnection())
+            {
+                var basicDetail = await connection.QueryAsync<DTOSmartSearch>(query, new { ServiceNo });
+                if (basicDetail != null)
+                {
+                    return basicDetail.ToList();
+                }
+                else
+                {
+                    return null;
+                }
+            }
+
+        }
         public async Task<List<DTOICardTypeRequest>> GetAllICardType()
         {
             string query = "Select * from MICardType";
@@ -150,8 +169,8 @@ namespace DataAccessLayer
                         "inner join MApplyFor Afor on Afor.ApplyForId = B.ApplyForId " +
                         "inner join TrnStepCounter C on trnicrd.RequestId = C.RequestId " +
                         "inner join MICardType ty on ty.TypeId = trnicrd.TypeId " +
-                        "inner join UserProfile pr on pr.UserId = trnicrd.Updatedby " +
-                        "inner join TrnDomainMapping map on map.UserId=pr.UserId " +
+                        "inner join TrnDomainMapping map on map.Id= trnicrd.TrnDomainMappingId " +
+                        "inner join UserProfile pr on pr.UserId = map.UserId " +
                         "left join TrnFwds fwd on fwd.ToAspNetUsersId= map.AspNetUsersId and fwd.IsComplete=0 and fwd.RequestId=trnicrd.RequestId " +
                         "WHERE map.AspNetUsersId = @UserId and Afor.ApplyForId=ISNULL(@applyfor,Afor.ApplyForId) and trnicrd.Status=0 ORDER BY B.UpdatedOn DESC";
 
@@ -278,8 +297,8 @@ namespace DataAccessLayer
                         "inner join MApplyFor Afor on Afor.ApplyForId = B.ApplyForId " +
                         "inner join TrnStepCounter C on trnicrd.RequestId = C.RequestId " +
                         "inner join MICardType ty on ty.TypeId = trnicrd.TypeId " +
-                        "inner join UserProfile pr on pr.UserId = trnicrd.Updatedby " +
-                        "inner join TrnDomainMapping map on map.UserId=pr.UserId " +
+                         "inner join TrnDomainMapping map on map.Id= trnicrd.TrnDomainMappingId " +
+                        "inner join UserProfile pr on pr.UserId = map.UserId " +
                         "left join TrnFwds fwd on fwd.ToAspNetUsersId= map.AspNetUsersId and fwd.IsComplete=0 and Afor.ApplyForId=IsNULL(@applyForId,Afor.ApplyForId) and fwd.RequestId=trnicrd.RequestId " +
                         "WHERE map.AspNetUsersId = @UserId and trnicrd.Status=0 ORDER BY B.UpdatedOn DESC";
                 

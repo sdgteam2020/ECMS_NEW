@@ -500,3 +500,7 @@ i.material-icons {
     height: 100%;
     z-index: 0;
 }
+.armynosearchAllpic {
+    max-height: 200px;
+    max-width: 100px;
+}

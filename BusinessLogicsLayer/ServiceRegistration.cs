@@ -13,6 +13,7 @@ using BusinessLogicsLayer.Div;
 using BusinessLogicsLayer.Formation;
 using BusinessLogicsLayer.Home;
 using BusinessLogicsLayer.Master;
+using BusinessLogicsLayer.Posting;
 using BusinessLogicsLayer.Registration;
 using BusinessLogicsLayer.Token;
 using BusinessLogicsLayer.TrnLoginLog;
@@ -88,6 +89,10 @@ namespace BusinessLogicsLayer
 
             services.AddTransient<IUserProfileBL, UserProfileBL>();
             services.AddTransient<IUserProfileDB, UserProfileDB>();
+
+
+            services.AddTransient<IPostingBL, PostingBL>();
+            services.AddTransient<IPostingDB, PostingDB>();
 
 
 
