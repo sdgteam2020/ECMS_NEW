@@ -24,6 +24,7 @@ ConfigurationManager configuration = builder.Configuration;
 // Add services to the container.
 builder.Services.AddDbContextPool<ApplicationDbContext>(options => options.UseSqlServer(configration.GetConnectionString("AFSACDBConnection")));
 builder.Services.AddSingleton<DapperContext>();
+builder.Services.AddSingleton<DapperContextDb2>();
 //builder.Services.AddInfrastructure();
 builder.Services.AddCors();
 builder.Services.AddControllers().AddNewtonsoftJson(options =>

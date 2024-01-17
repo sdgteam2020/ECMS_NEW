@@ -9,9 +9,11 @@ using System.Threading.Tasks;
 
 namespace BusinessLogicsLayer.TrnLoginLog
 {
-   public interface ITrnLoginLogBL : IGenericRepository<TrnLogin_Log>
+   public interface ITrnLoginLogBL
     {
+
+        public Task<bool> Add(TrnLogin_Log Data);
         public Task<List<DTOLoginLogResponse>> GetAllUserByUnitId(int UnitId);
-        public Task<List<DTOLoginLogResponse>> GetLoginLogByUserId(int AspnetUserId);
+        public Task<List<DTOLoginLogResponse>> GetLoginLogByUserId(int AspnetUserId, DateTime? FmDate, DateTime? ToDate);
     }
 }

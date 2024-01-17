@@ -3,6 +3,8 @@ var errormsg001 = "Error 001. Due to network issue, please try after some time."
 var errormsg002 = "Error 002. Due to network issue, please try after some time.";
 var memberTable = "";
 $(document).ready(function () {
+
+    
     $('.Alphanumeric').on('change', function () {
       
         if ($('.Alphanumeric').val().match("^[a-zA-Z0-9 ]*$")) {
@@ -93,7 +95,9 @@ function DateFormatehhmmss(date) {
     var mm = `${datef2.getMinutes()}`;
     var ss = `${datef2.getSeconds()}`;
     if (year > 1902) {
-
+        hh = Pad(hh);
+        mm = Pad(mm);
+        ss = Pad(ss);
         var datemmddyyyy = hh + `:` + mm + `:` + ss
         return datemmddyyyy;
     }
@@ -272,4 +276,7 @@ function DateCalculateyearmonthago(fmDate) {
     month = Math.floor(Math.floor(Math.floor(hours / 24) / 30) % 12);
 
     return year + 'y' + month + 'm';
+}
+function Pad(d) {
+    return (d < 10) ? '0' + d.toString() : d.toString();
 }

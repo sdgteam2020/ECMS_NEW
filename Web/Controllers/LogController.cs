@@ -28,11 +28,11 @@ namespace Web.Controllers
                 return View(null); }  
            
         }
-        public async Task<IActionResult> LoginLogByAspNetUsersId(int AspNetUsersId)
+        public async Task<IActionResult> LoginLogByAspNetUsersId(int AspNetUsersId,DateTime? FmDate,DateTime? ToDate)
         {
             try
             {
-                return Json(await _iTrnLoginLogBL.GetLoginLogByUserId(AspNetUsersId));
+                return Json(await _iTrnLoginLogBL.GetLoginLogByUserId(AspNetUsersId, FmDate, ToDate));
             }
             catch (Exception ex)
             {

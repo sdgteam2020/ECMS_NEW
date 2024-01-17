@@ -1,17 +1,35 @@
-﻿$(document).ready(function () {
+﻿var memberTable = "";
+$(document).ready(function () {
 
     $("body").on("click", ".cls-btnhistory", function () {
         
-        $("#modalLoginLog").modal('show');
-        GetLog($(this).closest("tr").find("#AspNetUsersId").html())
+       
+        $(".loginlodetails").html($(this).closest("tr").find(".DomainID").html() + '(' + $(this).closest("tr").find(".ArmyNo").html() +') (' + $(this).closest("tr").find(".RankName").html() + '' + $(this).closest("tr").find(".Name").html() + ') ');
+
+        var fmdate = new Date($("#FmDate").val());
+        var todate = new Date($("#ToDate").val());
+        if (fmdate <= todate) {
+
+            $("#modalLoginLog").modal('show');
+            GetLog($(this).closest("tr").find("#AspNetUsersId").html(), $("#FmDate").val(), $("#ToDate").val())
+        } else {
+            if ($("#FmDate").val() == "" && $("#ToDate").val() == "") {
+                $("#modalLoginLog").modal('show');
+                GetLog($(this).closest("tr").find("#AspNetUsersId").html())
+            }else
+                toastr.error('Please Select Valid date');
+
+        }
     });
 
 });
-function GetLog(AspNetUsersId) {
+function GetLog(AspNetUsersId, FmDate,ToDate) {
     
     var userdata =
     {
         "AspNetUsersId": AspNetUsersId,
+        "FmDate": FmDate,
+        "ToDate": ToDate,
 
     };
     $.ajax({
@@ -23,17 +41,18 @@ function GetLog(AspNetUsersId) {
         success: function (response) {
             if (response != "null" && response != null) {
                 if (response == -1) {
-                    $("#timelineData").html('<span class="timeline-label"><span class="label">No Record</span></span>');
+                    $("#timelineData").html('<span class="timeline-label"><span class="label">No Login Log </span></span>');
                 }
                 else if (response == 0) {
-                    $("#timelineData").html('<span class="timeline-label"><span class="label">No Record</span></span>');
+                    $("#timelineData").html('<span class="timeline-label"><span class="label">No Login Log </span></span>');
                 }
                 else if (response.length == 0) {
-                    $("#timelineData").html('<span class="timeline-label"><span class="label">No Record</span></span>');
+                    $("#timelineData").html('<span class="timeline-label"><span class="label">No Login Log </span></span>');
                 }
 
                 else {
                     var listItem = "";
+                    var listItem2 = "";
                     var listItemProc = "";
                     var details = "";
                     var type = "";
@@ -47,6 +66,16 @@ function GetLog(AspNetUsersId) {
 
                    
                     for (var i = 0; i < response.length; i++) {
+                        listItem2 += '<tr>';
+                        listItem2 += '<td>' + response[i].RoleName +'</td>';
+                        listItem2 += '<td>' + response[i].DomainID +'</td>';
+                        listItem2 += '<td>' + response[i].ArmyNo +'</td>';
+                        listItem2 += '<td>' + response[i].RankName +'</td>';
+                        listItem2 += '<td>' + response[i].Name +'</td>';
+                        listItem2 += '<td>' + DateFormateddMMyyyyhhmmss(response[i].UpdatedOn) + '</td>';
+                        listItem2 += '<td>' + response[i].IP + '</td>';
+                        listItem2 += '</tr>';
+
 
 
                         var datef2 = new Date(response[i].UpdatedOn);
@@ -60,37 +89,7 @@ function GetLog(AspNetUsersId) {
 
                         }
                         years = datef2.getFullYear();
-                        //if (response[i].RoleName == "User") {
-                        //    type = "Leave Event";
-                        //    imgname = "leave.png";
-                        //    color = "badge badge-success";
-                        //    txt = "text-success";
-
-                        //}
-                        //else if (response[i].type == "admin") {
-                        //    type = "Family Event";
-                        //    imgname = "familyevent.jpg";
-                        //    color = "badge badge-orange";
-                        //    txt = "text-orange";
-                        //}
-                        //else if (response[i].type == 3) {
-                        //    type = "Persent Event";
-                        //    type = "Promotion Event";
-                        //    color = "badge badge-danger";
-                        //    txt = "text-danger";
-                        //}
-                        //else if (response[i].type == 4) {
-                        //    type = "Course Event";
-                        //    type = "Promotion Event";
-                        //    color = "badge badge-blue";
-                        //    txt = "text-blue";
-                        //}
-                        //else if (response[i].type == 5) {
-                        //    type = "Promotion Event";
-                        //    imgname = "promotion.png";
-                        //    color = "badge badge-purple";
-                        //    txt = "text-purple";
-                        //}
+                        
 
                         listItem += ' <div class="timeline-item">';
                         listItem += '<div class="timeline-point timeline-point"></div>';
@@ -115,10 +114,10 @@ function GetLog(AspNetUsersId) {
                         listItem += '</div>';
                         listItem += ' <div class="widget-body">';
                         listItem += '<p class="text-blue"> IP Address  : <span class="badge badge-purple">' + response[i].IP + '</span><p>';
-                        listItem += '<p class="text-blue"> DomainId  : ' + response[i].DomainID + '<p>';
-                        listItem += '<p class="text-blue"> RoleName  : ' + response[i].RoleName + '<p>';
-                        listItem += '<p class="text-blue"> ArmyNo  : ' + response[i].ArmyNo + '<p>';
-                        listItem += '<p class="text-blue"> User Name : ' + response[i].RankName + ' ' + response[i].Name+' </p>';
+                        //listItem += '<p class="text-blue"> DomainId  : ' + response[i].DomainID + '<p>';
+                        //listItem += '<p class="text-blue"> RoleName  : ' + response[i].RoleName + '<p>';
+                        //listItem += '<p class="text-blue"> ArmyNo  : ' + response[i].ArmyNo + '<p>';
+                        //listItem += '<p class="text-blue"> User Name : ' + response[i].RankName + ' ' + response[i].Name+' </p>';
                         listItem += '</div>';
                         listItem += ' </div>';
                         listItem += ' <div class="time-right">' + DateCalculateago(response[i].UpdatedOn) + '</div>';
@@ -136,7 +135,33 @@ function GetLog(AspNetUsersId) {
                     $("#timelineData").html(listItem);
 
 
+                    $("#DataBoady").html(listItem2);
 
+                    memberTable = $('#tbldata').DataTable({
+                        retrieve: true,
+                        lengthChange: false,
+                        searching: false,
+                        paging: false, info: false,
+                        buttons: [{
+                            extend: 'copy',
+                            exportOptions: {
+                                columns: "thead th:not(.noExport)"
+                            }
+                        }, {
+                            extend: 'excel',
+                            exportOptions: {
+                                columns: "thead th:not(.noExport)"
+                            }
+                        }, {
+                            extend: 'pdfHtml5',
+                            orientation: 'landscape',
+                            pageSize: 'LEGAL',
+                            exportOptions: {
+                                columns: "thead th:not(.noExport)"
+                            }
+                        }]
+                    });
+                    memberTable.buttons().container().appendTo('#tbldata_wrapper .col-md-6:eq(0)');
                 }
             }
             else {

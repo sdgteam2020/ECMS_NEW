@@ -13,24 +13,34 @@ using BusinessLogicsLayer.Unit;
 
 namespace BusinessLogicsLayer.TrnLoginLog
 {
-    public class TrnLoginLogBL : GenericRepositoryDL<TrnLogin_Log>, ITrnLoginLogBL
+    public class TrnLoginLogBL : ITrnLoginLogBL
     {
         private readonly ITrnLoginLogDB _iTrnLoginLogDB;
 
 
-        public TrnLoginLogBL(ApplicationDbContext context, ITrnLoginLogDB iTrnLoginLogDB) : base(context)
+        public TrnLoginLogBL(ITrnLoginLogDB iTrnLoginLogDB)
         {
             _iTrnLoginLogDB = iTrnLoginLogDB;
         }
-    
+
+        public async Task<bool> Add(TrnLogin_Log Data)
+        {
+            return await _iTrnLoginLogDB.Add(Data);
+        }
+
         public Task<List<DTOLoginLogResponse>> GetAllUserByUnitId(int UnitId)
         {
             return _iTrnLoginLogDB.GetAllUserByUnitId(UnitId);
         }
 
-        public Task<List<DTOLoginLogResponse>> GetLoginLogByUserId(int AspnetUserId)
+        public Task<List<DTOLoginLogResponse>> GetLoginLogByUserId(int AspnetUserId, DateTime? FmDate, DateTime? ToDate)
         {
-            return _iTrnLoginLogDB.GetLoginLogByUserId(AspnetUserId);
+            if(FmDate==null)
+                FmDate=DateTime.Now;
+            if (ToDate == null)
+                ToDate = DateTime.Now;
+
+            return _iTrnLoginLogDB.GetLoginLogByUserId(AspnetUserId, FmDate, ToDate);
         }
     }
 }

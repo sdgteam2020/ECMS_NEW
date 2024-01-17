@@ -74,7 +74,7 @@ namespace DataAccessLayer
         public DbSet<MRemarkType> MRemarkType { get; set; }
         public DbSet<MRemarksApply> MRemarksApply { get; set; }
         public DbSet<MRemarks> MRemarks { get; set; }
-        public DbSet<TrnLogin_Log> TrnLogin_Log { get; set; }
+        //public DbSet<TrnLogin_Log> TrnLogin_Log { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

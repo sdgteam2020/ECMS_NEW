@@ -35,15 +35,16 @@
                             @*   Total Units <span id="lblTotal" class="ml-3 border border-light b px-2 py-1">0</span> *@
                         </h6>
                         <div class="d-flex">
-                           
-                          
-
+                           <label class="form-label mr-2">From</label>
+                            <input type="date" class="form-control mr-2" id="FmDate" />
+                            <label class="form-label mr-2">To</label>
+                          <input type="date" class="form-control ml-2" id="ToDate" />
+                         
                         </div>
 
                     </div>
                     <div class="table-responsive">
                         <table class="table border border-purple table-striped no-footer dataTable table-hover" role="grid" id="tbldatatabledata">
-
 
                             <thead>
                                 <tr>
@@ -58,34 +59,34 @@
                                         @Html.DisplayNameFor(model => model.ArmyNo)
                                     </th>
                                     <th>
-                                        @Html.DisplayNameFor(model => model.Name)
-                                    </th>
-                                    <th>
                                         Rank Name
                                     </th>
+                                    <th>
+                                        Name
+                                    </th>
                                     
-                                    <th>Action</th>
+                                    <th>View Login History</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach (var item in Model)
                                 {
                                     <tr>
-                                      
+
                                         <td>
                                             @Html.DisplayFor(modelItem => item.RoleName)
                                         </td>
-                                        <td>
+                                        <td class="DomainID">
                                             @Html.DisplayFor(modelItem => item.DomainID)
                                         </td>
-                                        <td>
+                                        <td class="ArmyNo">
                                             @Html.DisplayFor(modelItem => item.ArmyNo)
                                         </td>
-                                        <td>
-                                            @Html.DisplayFor(modelItem => item.Name)
-                                        </td>
-                                        <td>
+                                        <td class="RankName">
                                             @Html.DisplayFor(modelItem => item.RankName)
+                                        </td>
+                                        <td class="Name">
+                                            @Html.DisplayFor(modelItem => item.Name)
                                         </td>
                                        
                                         <td>
@@ -112,10 +113,50 @@
         <div class="modal-content">
             <div class="modal-header">
 
-                <h5 class="modal-title" id="exampleModalToggleLabel">Login Log last one Months <small class="text-muted"><span class="armypersname"></span></small></h5>
+                <h5 class="modal-title" id="exampleModalToggleLabel">Login Logs For 30 days Of <span class="loginlodetails"></span><small class="text-muted"></small></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
+                <div class="row">
+                    <div class="table-responsive">
+                        <table class="table border border-purple table-striped no-footer dataTable table-hover" role="grid" id="tbldata">
+
+
+                            <thead class="d-none">
+                                <tr>
+
+                                    <th>
+                                        Role Name
+                                    </th>
+                                    <th>
+                                        DomainID
+                                    </th>
+                                    <th>
+                                        ArmyNo
+                                    </th>
+                                    <th>
+                                        Rank Name
+                                    </th>
+                                    <th>
+                                         Name
+                                    </th>
+                                    <th>
+                                        LoginOn
+                                    </th>
+                                    <th>
+                                        Login IP
+                                    </th>
+                                    
+                                </tr>
+                            </thead>
+                            <tbody id="DataBoady" class="d-none">
+                               
+                            </tbody>
+                        </table>
+
+
+                    </div>
+                </div>
                 <div class="row">
 
 

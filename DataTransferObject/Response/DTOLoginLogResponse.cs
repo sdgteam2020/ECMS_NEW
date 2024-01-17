@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace DataTransferObject.Response
-{
+{ 
     public class DTOLoginLogResponse
     { 
         public int Id { get; set; }

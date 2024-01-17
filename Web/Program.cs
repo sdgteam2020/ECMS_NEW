@@ -71,6 +71,7 @@ builder.Services.AddCors(options =>
 builder.Services.AddScoped<IService, ServiceRepository>();
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
 builder.Services.AddSingleton<DapperContext>();
+builder.Services.AddSingleton<DapperContextDb2>();
 builder.Services.AddControllersWithViews();
 builder.Services.AddSingleton<ITagHelperInitializer<ScriptTagHelper>, AppendVersionTagHelperInitializer>();
 builder.Services.AddSingleton<ITagHelperInitializer<LinkTagHelper>, AppendVersionTagHelperInitializer>();

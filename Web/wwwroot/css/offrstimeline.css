@@ -458,10 +458,11 @@
 }
 
 .widget {
-    background: #e9e3f3;
+    background: #ac9dff17;
     border-radius: 0;
     border: none;
-    margin-bottom: 30px
+    padding: 2px;
+    margin-bottom: 30px;
 }
 
 .widget-image {
