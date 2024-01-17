@@ -1218,7 +1218,7 @@ namespace Web.Controllers
                                 {
                                     return RedirectToActionPermanent("Index", "Home");
                                 }
-                                else if (dTOTempSession.RoleName == "Admin")
+                                else if (dTOTempSession.RoleName.ToUpper() == "ADMIN")
                                 {
                                     return RedirectToActionPermanent("Dashboard", "Home");
 
