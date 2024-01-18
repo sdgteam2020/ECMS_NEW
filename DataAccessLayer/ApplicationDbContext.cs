@@ -77,6 +77,8 @@ namespace DataAccessLayer
         public DbSet<MPostingReason> MPostingReason { get; set; }
 
 
+
+        public DbSet<TrnUnregdUser> TrnUnregdUser { get; set; }
         //public DbSet<TrnLogin_Log> TrnLogin_Log { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)

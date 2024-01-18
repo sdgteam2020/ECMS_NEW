@@ -153,6 +153,63 @@
         },
         appendTo: '#suggesstion-box'
     });
+
+    $("#btnAddUnit").click(function () {
+        $("#AddNewUnitmap").modal('show');
+    });
+
+    mMsater(0, "ddlCommand", 1, "");
+
+    $('#ddlCommand').on('change', function () {
+        mMsater(0, "ddlCorps", 2, $('#ddlCommand').val());
+    });
+
+    $('#ddlCorps').on('change', function () {
+        mMsaterByParent(0, "ddlDiv", 3, $('#ddlCommand').val(), $('#ddlCorps').val(), 0, 0);///ComdId,CorpsId,DivId,BdeId
+    });
+    $('#ddlDiv').on('change', function () {
+        mMsaterByParent(0, "ddlBde", 4, $('#ddlCommand').val(), $('#ddlCorps').val(), $('#ddlDiv').val(), 0);///ComdId,CorpsId,DivId,BdeId
+    });
+    $('#ddlBde').on('change', function () {
+
+    });
+
+    $(".form-check-input").click(function () {
+        var val = $("input[type='radio']:checked").val();
+        if (val == "1") {
+            $(".unittype").removeClass("d-none");
+            $(".FmnBranch").addClass("d-none");
+            $(".DteBranch").addClass("d-none");
+            mMsater(0, "ddlCommand", 1, "");
+        }
+        else if (val == "2") {
+            mMsater(0, "ddlCommand", 1, "");
+            mMsater(0, "ddlFmnBranch", FmnBranches, "");
+            $("#ddlPSODte").val(1);
+            $("#ddlDgSubDte").val(1);
+            $(".unittype").removeClass("d-none");
+            $(".FmnBranch").removeClass("d-none");
+            $(".DteBranch").addClass("d-none");
+        }
+        else if (val == "3") {
+            $(".unittype").addClass("d-none");
+            $(".FmnBranch").addClass("d-none");
+            $(".DteBranch").removeClass("d-none");
+            $("#ddlFmnBranch").val(1);
+
+            var lst = '<option value="1">Please Select</option>';
+
+            $("#ddlCommand").html(lst);
+            $("#ddlCorps").html(lst);
+            $("#ddlCorps").html(lst);
+            $("#ddlBde").html(lst);
+            $("#ddlDiv").html(lst);
+
+            mMsater(0, "ddlPSODte", PSO, "");
+            mMsater(0, "ddlDgSubDte", SubDte, "");
+
+        }
+    });
 });
 
 function Proceed() {
@@ -282,6 +339,100 @@ function GetNameByApptId(param1) {
             $("#spnUnitAppointmentId").html(data.ApptId);
             $("#txtAppointmentName").val(data.AppointmentName);
             $("#txtAppointmentName").prop('readonly', true);
+        }
+    });
+}
+
+function ProceedUnitSave() {
+    debugger;
+    ResetErrorMessage();
+    let formId = '#Profile';
+    $.validator.unobtrusive.parse($(formId));
+
+    ValidateRadioButton();
+
+    if ($(formId).valid()) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be Save!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, Save it!'
+        }).then((result) => {
+            if (result.isConfirmed && $("input[type='radio'][name=IsIO]:checked").length > 0 && $("input[type='radio'][name=IsCO]:checked").length > 0 && $("input[type='radio'][name=IntOffr]:checked").length > 0) {
+                UnitSave();
+            }
+            else {
+                ValidateRadioButton();
+            }
+        })
+    }
+    else {
+        Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'Please fill required field.',
+
+        })
+        return false;
+    }
+}
+function UnitSave() {
+    $.ajax({
+        url: '/Account/SaveUnitWithMapping',
+        type: 'POST',
+        data: {
+            "ServiceNo": $("#spnServiceNo").html(),
+            "Name": $("#spnName").html(),
+            "Rank": $("#spnRank").html(),
+            "DomainId": $("#spnDomainId").html(),
+            "Sus_no": $("#txtSusno").val().substring(0, 7),
+            "Suffix": $("#txtSusno").val().substring(8, 7),
+            "UnitName": $("#txtUnit").val(),
+            "UnitType": $("input[type='radio'][name=UnitTyperdi]:checked").val(),
+            "ComdId": $("#ddlCommand").val(),
+            "CorpsId": $("#ddlCorps").val(),
+            "DivId": $("#ddlDiv").val(),
+            "BdeId": $("#ddlBde").val(),
+            "PsoId": $("#ddlPSODte").val(),
+            "FmnBranchID": $("#ddlFmnBranch").val(),
+            "SubDteId": $("#ddlDgSubDte").val()
+        }, 
+        success: function (result) {
+
+
+            if (result == DataSave) {
+                toastr.success('Unit has been saved');
+                GetUnitDetails($("#txtSusno").val(), 2);
+                /*  $("#AddNewM").modal('hide');*/
+
+            }
+            else if (result == DataExists) {
+
+                toastr.error('Unit Name Exits!');
+
+            }
+            else if (result == InternalServerError) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Something went wrong or Invalid Entry!',
+
+                })
+
+            } else {
+                if (result.length > 0) {
+                    for (var i = 0; i < result.length; i++) {
+                        toastr.error(result[i][0].ErrorMessage)
+                    }
+
+
+                }
+
+
+            }
         }
     });
 }

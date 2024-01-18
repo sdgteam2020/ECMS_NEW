@@ -32,6 +32,11 @@ namespace DataAccessLayer
             var ret = _context.MUnit.Any(p => p.UnitName.ToUpper() == Data.UnitName.ToUpper() && p.UnitId !=Data.UnitId);
             return ret;
         }
+        public async Task<bool> FindSusNo(string Sus_no)
+        {
+            var ret = _context.MUnit.Any(x => (x.Sus_no.ToUpper() + x.Suffix.ToUpper()) == Sus_no.ToUpper());
+            return ret;
+        }
 
         public async Task<MUnit> GetBySusNo(string Sus_no)
         {

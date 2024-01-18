@@ -2,6 +2,19 @@
     ViewData["Title"] = "Domain Regn";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+<style>
+    .count-label{
+        background-color: #044C92;
+        text-align:center;
+        padding: 0.5rem !important;
+        margin-right: 0.25rem !important;
+        border:hidden;
+        font-weight: 700 !important;
+        color: #fff !important;
+        width:120px;
+        height:60px;
+    }
+</style>
 
 <div class="container mt-4">
     <div class="card mb-3 ">
@@ -21,17 +34,6 @@
         <div class="card-body" style="min-height:150px;">
             <div class="row">
                 <div class="col-xl-6">
-                    <div class="d-flex">
-                        <div class="border border-primary text-primary font-weight-bold p-2 mr-1">
-                            Total Users - <label id="lblUser">0</label>
-                        </div>
-                        <div class="border border-primary text-primary font-weight-bold p-2 mr-1">
-                            Mapped - <label id="lblMappedUser">0</label>
-                        </div>
-                        <div class="border border-primary text-primary font-weight-bold p-2 mr-1">
-                             Not Mapped - <label id="lblUnMappedUser">0</label>
-                        </div>
-                    </div>
                 </div>
                 <div class="col-xl-6">
                     <div class="d-flex d-md-flex justify-content-md-between align-items-md-center">
@@ -58,17 +60,26 @@
                     </div>
                 </div>
                 <div class="d-flex mt-1 mb-1">
-                    <div class="border border-primary text-primary font-weight-bold p-2 mr-1">
-                        Active - <label id="lblActiveUser">0</label>
+                    <div class="count-label">
+                        Total Users<br /><label id="lblUser">0</label>
                     </div>
-                    <div class="border border-primary text-primary font-weight-bold p-2 mr-1">
-                        Inactive - <label id="lblInActiveUser">0</label>
+                    <div class="count-label">
+                        Mapped<br /><label id="lblMappedUser">0</label>
                     </div>
-                    <div class="border border-primary text-primary font-weight-bold p-2 mr-1">
-                        Verified - <label id="lblVerifiedUser">0</label>
+                    <div class="count-label">
+                        Not Mapped<br /><label id="lblUnMappedUser">0</label>
                     </div>
-                    <div class="border border-primary text-primary font-weight-bold p-2 mr-1">
-                        Not Verified  - <label id="lblNotVerifiedUser">0</label>
+                    <div class="count-label">
+                        Active<br /><label id="lblActiveUser">0</label>
+                    </div>
+                    <div class="count-label">
+                        Inactive<br /><label id="lblInActiveUser">0</label>
+                    </div>
+                    <div class="count-label">
+                        Verified<br /><label id="lblVerifiedUser">0</label>
+                    </div>
+                    <div class="count-label">
+                        Not Verified<br /><label id="lblNotVerifiedUser">0</label>
                     </div>
                 </div>
 

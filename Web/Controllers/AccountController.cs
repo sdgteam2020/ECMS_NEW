@@ -51,6 +51,7 @@ namespace Web.Controllers
         public readonly IMapUnitBL _IMapUnitBL;
         public readonly iGetTokenBL _iGetTokenBL;
         public readonly ITrnLoginLogBL _TrnLoginLogBL;
+        private readonly IUnitBL _iUnitBL;
         private readonly ApplicationDbContext context, contextTransaction;
         private readonly IDataProtector protector;
         private readonly IService service;
@@ -62,14 +63,15 @@ namespace Web.Controllers
         private readonly IMapper _mapper;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public AccountController(IUnitOfWork unitOfWork, IAccountBL iAccountBL , IDomainMapBL iDomainMapBL, IUserProfileBL userProfileBL, IMapUnitBL mapUnitBL, RoleManager<ApplicationRole> roleManager, iGetTokenBL iGetTokenBL, UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, ApplicationDbContext context, ApplicationDbContext contextTransaction,
+        public AccountController(IUnitOfWork unitOfWork,IUnitBL unitBL, IAccountBL iAccountBL , IDomainMapBL iDomainMapBL, IUserProfileBL userProfileBL, IMapUnitBL mapUnitBL, RoleManager<ApplicationRole> roleManager, iGetTokenBL iGetTokenBL, UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, ApplicationDbContext context, ApplicationDbContext contextTransaction,
             IDataProtectionProvider dataProtectionProvider, IService service, IMapper mapper, DataProtectionPurposeStrings dataProtectionPurposeStrings, ILogger<AccountController> logger, ITrnLoginLogBL trnLoginLogBL, IHttpContextAccessor httpContextAccessor)
         {
             this.roleManager = roleManager;
             this.userManager = userManager;
             this.signInManager = signInManager;
             this.unitOfWork = unitOfWork;
-            _iAccountBL= iAccountBL;
+            _iUnitBL = unitBL;
+            _iAccountBL = iAccountBL;
             _iDomainMapBL = iDomainMapBL;
             _userProfileBL = userProfileBL;
             _iGetTokenBL = iGetTokenBL;
@@ -1377,6 +1379,50 @@ namespace Web.Controllers
                 return RedirectToActionPermanent("TokenValidate", "Account");
             }
             return View();
+        }
+
+        [AllowAnonymous]
+        public async Task<IActionResult> SaveUnitWithMapping(DTOSaveUnitWithMappingRequest dTO)
+        {
+            try
+            {
+                dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                dTO.UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
+
+                if (ModelState.IsValid)
+                {
+                    string Sus_no = dTO.Sus_no + dTO.Suffix;
+                    if (!await _iUnitBL.FindSusNo(Sus_no))
+                    {
+                        bool result = (bool)await _iAccountBL.SaveUnitWithMapping(dTO);
+                        if (result == true)
+                        {
+                            return Json(KeyConstants.Save);
+                        }
+                        else
+                        {
+                            return Json(KeyConstants.InternalServerError);
+                        }
+                    }
+                    else
+                    {
+                        return Json(KeyConstants.Exists);
+                    }
+
+                }
+                else
+                {
+
+                    return Json(ModelState.Select(x => x.Value.Errors).Where(y => y.Count > 0).ToList());
+                }
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "Account->SaveUnitWithMapping");
+                return Json(KeyConstants.InternalServerError);
+            }
+
         }
 
         #endregion End IMLogin
