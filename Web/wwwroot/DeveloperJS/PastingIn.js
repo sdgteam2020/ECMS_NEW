@@ -40,11 +40,64 @@
             $("#postingoutUnitName").val(i.item.label);
             $("#postingoutUnitId").html(i.item.value);
             
-           
+            GetAllOffsByUnitId("ddlaspnetiserpostout", 0, i.item.value)
         },
         appendTo: '#suggesstion-box'
     });
+
+    $("#ddlaspnetiserpostout").change(function () {
+        GetByArmyNo($("#ddlaspnetiserpostout").val());
+    });
 });
+function GetByArmyNo(userid) {
+
+    var userdata =
+    {
+        "userid": userid,
+
+    };
+    $.ajax({
+        url: '/UserProfile/GetByArmyNoOrAspnetuserId',
+        contentType: 'application/x-www-form-urlencoded',
+        data: userdata,
+        type: 'POST',
+
+        success: function (response) {
+            if (response != "null" && response != null) {
+
+                if (response == InternalServerError) {
+                    Swal.fire({
+                        text: errormsg
+                    });
+                }
+                else if (response == 0) {
+
+                }
+
+                else {
+
+
+                  
+                    
+                    $("#lbltoAppt").html(response.AppointmentName);
+                   
+                    $("#lblToName").html(response.Name);
+                    
+                    $("#lblToDomainId").html(response.DomainId);
+                   
+
+                }
+            }
+
+        },
+        error: function (result) {
+            Swal.fire({
+                text: errormsg002
+            });
+        }
+    });
+}
+
 function GetdataPostingData(ArmyNo) {
     $.ajax({
         url: "/Posting/GetPostingIn",
