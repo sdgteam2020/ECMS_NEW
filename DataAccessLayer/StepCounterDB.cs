@@ -26,7 +26,7 @@ namespace DataAccessLayer
             string query = "Update TrnStepCounter set StepId=@StepId,Updatedby=@Updatedby where Id=@Id";
 
             int StepId=Data.StepId;
-            int Updatedby=Data.Updatedby;
+            int Updatedby=(int)Data.Updatedby;
             int id=Data.Id;
             using (var connection = _contextDP.CreateConnection())
             {

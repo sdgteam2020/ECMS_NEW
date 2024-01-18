@@ -9,6 +9,10 @@
         $("#IntOffr-error").html("");
     });
 
+    $("#btnUnitMapReset").click(function () {
+        Reset();
+    });
+
 
     if ($("#spnUnitMapId").html() > 0) {
         GetNameByApptId($("#spnUnitMapId").html());
@@ -344,7 +348,6 @@ function GetNameByApptId(param1) {
 }
 
 function ProceedUnitSave() {
-    debugger;
     let formId = '#SaveUnitWithMap';
     $.validator.unobtrusive.parse($(formId));
 
@@ -395,26 +398,20 @@ function UnitSave() {
             "SubDteId": $("#ddlDgSubDte").val()
         }, 
         success: function (result) {
-
-
             if (result == DataSave) {
-                toastr.success('Unit has been saved');
                 Swal.fire({
                     icon: 'info',
                     title: 'Unit',
-                    html: 'Unit has been saved.',
-
+                    text: 'Unit has been saved.',
                 })
                 $("#AddNewUnitmap").modal('hide');
-
-
+                Reset();
             }
             else if (result == DataExists) {
                 Swal.fire({
                     icon: 'error',
                     title: 'Oops...',
                     text: 'Unit Name Exits!',
-
                 })
 
             }
@@ -439,4 +436,22 @@ function UnitSave() {
             }
         }
     });
+}
+function Reset() {
+
+    $("#spnDomainRegId").html("0");
+    $("#txtSusno").val(""); 
+    $("#txtUnit").val("");
+    $("#ddlCommand").val("");
+    $("#ddlCorps").val("");
+    $("#ddlDiv").val("");
+    $("#ddlBde").val("");
+    $("#ddlFmnBranch").val("1");
+    $("#ddlPSODte").val("1");
+    $("#ddlDgSubDte").val("1");
+
+    $("#UnitType1").prop("checked", true);
+    $(".unittype").removeClass("d-none");
+    $(".FmnBranch").addClass("d-none");
+    $(".DteBranch").addClass("d-none");
 }
