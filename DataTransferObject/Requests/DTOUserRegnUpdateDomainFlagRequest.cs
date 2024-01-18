@@ -15,5 +15,6 @@ namespace DataTransferObject.Requests
         public int Id { get; set; }
         public bool AdminFlag { get; set; }
         public bool Active { get; set; }
+        public int Updatedby { get; set; }
     }
 }

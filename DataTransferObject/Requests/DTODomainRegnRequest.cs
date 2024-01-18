@@ -42,5 +42,6 @@ namespace DataTransferObject.Requests
         
         [RegularExpression(@"^[\w\-]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
         public string? ArmyNo { get; set; }
+        public int Updatedby { get; set; }
     }
 }

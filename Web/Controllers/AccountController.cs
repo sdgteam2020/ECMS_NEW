@@ -121,7 +121,7 @@ namespace Web.Controllers
         {
             try
             {
-                int Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
 
                 if (ModelState.IsValid)
                 {
@@ -130,7 +130,7 @@ namespace Web.Controllers
                         bool result;
                         if (dTO.Id > 0)
                         {
-                            result = (bool)await _iAccountBL.SaveDomainRegn(dTO, Updatedby);
+                            result = (bool)await _iAccountBL.SaveDomainRegn(dTO);
                             if(result==true)
                             {
                                 return Json(KeyConstants.Update);
@@ -143,7 +143,7 @@ namespace Web.Controllers
                         }
                         else
                         {
-                            result = (bool)await _iAccountBL.SaveDomainRegn(dTO, Updatedby);
+                            result = (bool)await _iAccountBL.SaveDomainRegn(dTO);
                             if (result == true)
                             {
                                 return Json(KeyConstants.Save);
@@ -481,10 +481,10 @@ namespace Web.Controllers
             DTOUserRegnResultResponse dTOUserRegnResult = new DTOUserRegnResultResponse();
             try
             {
-                int Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                 if (ModelState.IsValid)
                 {
-                    DTOUserRegnResultResponse? dTOUserRegnResultResponse = await _iAccountBL.SaveMapping(dTO, Updatedby);
+                    DTOUserRegnResultResponse? dTOUserRegnResultResponse = await _iAccountBL.SaveMapping(dTO);
                     if (dTOUserRegnResultResponse != null)
                     {
                         string json = JsonConvert.SerializeObject(dTOUserRegnResultResponse);
@@ -524,10 +524,10 @@ namespace Web.Controllers
             DTOUserRegnResultResponse dTOUserRegnResult = new DTOUserRegnResultResponse();
             try
             {
-                int Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                 if (ModelState.IsValid)
                 {
-                    bool? result = (bool)await _iAccountBL.UpdateDomainFlag(dTO, Updatedby);
+                    bool? result = (bool)await _iAccountBL.UpdateDomainFlag(dTO);
                     if(result!=null)
                     {
                         if(result == true)

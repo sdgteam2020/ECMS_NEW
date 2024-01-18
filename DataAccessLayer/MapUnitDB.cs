@@ -93,7 +93,7 @@ namespace DataAccessLayer
                            //&& (unit.DivId == 0 ? uni.DivId == uni.DivId : uni.DivId == unit.DivId)
                            //&& (unit.BdeId == 0 ? uni.BdeId == uni.BdeId : uni.BdeId == unit.BdeId)
                        join MUni in _context.MUnit on uni.UnitId equals MUni.UnitId
-                       where MUni.UnitName.Contains(UnitName)
+                       where MUni.UnitName.Contains(UnitName) && MUni.IsVerify==true
                        select new DTOMapUnitResponse
                        {
                            UnitMapId = uni.UnitMapId,

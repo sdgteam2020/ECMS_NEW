@@ -49,17 +49,17 @@ namespace BusinessLogicsLayer.Account
         {
             return await _iAccountDB.GetAllDomainRegn(Search, Choice);
         }
-        public async Task<DTOUserRegnResultResponse?> SaveMapping(DTOUserRegnMappingRequest dTO, int Updatedby)
+        public async Task<DTOUserRegnResultResponse?> SaveMapping(DTOUserRegnMappingRequest dTO)
         {
-            return await _iAccountDB.SaveMapping(dTO, Updatedby);
+            return await _iAccountDB.SaveMapping(dTO);
         }
-        public async Task<bool?> SaveDomainRegn(DTODomainRegnRequest dTO, int Updatedby)
+        public async Task<bool?> SaveDomainRegn(DTODomainRegnRequest dTO)
         {
-            return await _iAccountDB.SaveDomainRegn(dTO, Updatedby);
+            return await _iAccountDB.SaveDomainRegn(dTO);
         }
-        public async Task<bool?> UpdateDomainFlag(DTOUserRegnUpdateDomainFlagRequest dTO, int Updatedby)
+        public async Task<bool?> UpdateDomainFlag(DTOUserRegnUpdateDomainFlagRequest dTO)
         {
-            return await _iAccountDB.UpdateDomainFlag(dTO, Updatedby);
+            return await _iAccountDB.UpdateDomainFlag(dTO);
         }
         public async Task<List<DTOMasterResponse>> GetAllRole()
         {

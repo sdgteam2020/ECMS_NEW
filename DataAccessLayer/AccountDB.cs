@@ -453,7 +453,7 @@ namespace DataAccessLayer
                 return null;
             }
         }
-        public async Task<DTOUserRegnResultResponse?> SaveMapping(DTOUserRegnMappingRequest dTO, int Updatedby)
+        public async Task<DTOUserRegnResultResponse?> SaveMapping(DTOUserRegnMappingRequest dTO)
         {
             DTOUserRegnResultResponse dTOUserRegnResultResponse = new DTOUserRegnResultResponse();
             
@@ -466,7 +466,7 @@ namespace DataAccessLayer
                     if (dTOProfileResponse != null && dTOProfileResponse.Mapping == false)
                     {
                         trnDomainMapping.UserId = dTO.UserId;
-                        trnDomainMapping.MappedBy = Updatedby;
+                        trnDomainMapping.MappedBy = dTO.Updatedby;
                         trnDomainMapping.MappedDate = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
                         await domainMapDB.Update(trnDomainMapping);
                         dTOUserRegnResultResponse.Result = true;
@@ -510,7 +510,7 @@ namespace DataAccessLayer
                 return null;
             }
         }
-        public async Task<bool?> SaveDomainRegn(DTODomainRegnRequest dTO, int Updatedby)
+        public async Task<bool?> SaveDomainRegn(DTODomainRegnRequest dTO)
         {
             using (var transaction = _context.Database.BeginTransaction())
             {
@@ -528,7 +528,7 @@ namespace DataAccessLayer
                         {
                             userUpdate.DomainId = dTO.DomainId;
                             userUpdate.Active = dTO.Active;
-                            userUpdate.Updatedby = Updatedby;
+                            userUpdate.Updatedby = dTO.Updatedby;
                             userUpdate.UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
                             userUpdate.UserName = dTO.DomainId.ToLower();
                             userUpdate.NormalizedUserName = dTO.DomainId.ToUpper();
@@ -598,7 +598,7 @@ namespace DataAccessLayer
                             Active = dTO.Active,
                             AdminFlag = dTO.AdminFlag,
                             AdminFlagDate = dTO.AdminFlag == true ? TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time")) : null,
-                            Updatedby = Updatedby,
+                            Updatedby = dTO.Updatedby,
                             UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time")),
                             UserName = dTO.DomainId.ToLower(),
                             NormalizedUserName = dTO.DomainId.ToUpper(),
@@ -638,7 +638,7 @@ namespace DataAccessLayer
                 }
             }
         }
-        public async Task<bool?> UpdateDomainFlag(DTOUserRegnUpdateDomainFlagRequest dTO, int Updatedby)
+        public async Task<bool?> UpdateDomainFlag(DTOUserRegnUpdateDomainFlagRequest dTO)
         {
             try
             {
@@ -651,7 +651,7 @@ namespace DataAccessLayer
                 else
                 {
                     userUpdate.Active = dTO.Active;
-                    userUpdate.Updatedby = Updatedby;
+                    userUpdate.Updatedby = dTO.Updatedby;
                     userUpdate.UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
                     if (dTO.AdminFlag == true)
                     {
@@ -987,7 +987,10 @@ namespace DataAccessLayer
                         Suffix=dTO.Suffix,
                         UnitName=dTO.UnitName,
                         IsVerify=false,
-                        UnregdUserId= trnRegUser.UnregdUserId,
+                        IsActive=true,
+                        Updatedby = null,
+                        UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time")),
+                        UnregdUserId = trnRegUser.UnregdUserId,
                     };
                     await _context.MUnit.AddAsync(mUnit);
                     await _context.SaveChangesAsync();
@@ -1003,7 +1006,7 @@ namespace DataAccessLayer
                         PsoId =dTO.PsoId,
                         SubDteId= dTO.SubDteId,
                         IsActive=true,
-                        Updatedby=0,
+                        Updatedby=null,
                         UpdatedOn= TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time")),
                     };
                     await _context.MapUnit.AddAsync(mapUnit);

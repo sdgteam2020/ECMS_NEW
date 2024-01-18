@@ -345,11 +345,8 @@ function GetNameByApptId(param1) {
 
 function ProceedUnitSave() {
     debugger;
-    ResetErrorMessage();
-    let formId = '#Profile';
+    let formId = '#SaveUnitWithMap';
     $.validator.unobtrusive.parse($(formId));
-
-    ValidateRadioButton();
 
     if ($(formId).valid()) {
         Swal.fire({
@@ -361,11 +358,8 @@ function ProceedUnitSave() {
             cancelButtonColor: '#d33',
             confirmButtonText: 'Yes, Save it!'
         }).then((result) => {
-            if (result.isConfirmed && $("input[type='radio'][name=IsIO]:checked").length > 0 && $("input[type='radio'][name=IsCO]:checked").length > 0 && $("input[type='radio'][name=IntOffr]:checked").length > 0) {
+            if (result.isConfirmed) {
                 UnitSave();
-            }
-            else {
-                ValidateRadioButton();
             }
         })
     }
