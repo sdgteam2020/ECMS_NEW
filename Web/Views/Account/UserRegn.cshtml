@@ -10,6 +10,18 @@
     .model-body-label{
        /*  background-color: #6189c3; */
     }
+
+    .count-label {
+        background-color: #044C92;
+        text-align: center;
+        padding: 0.5rem !important;
+        margin-right: 0.25rem !important;
+        border: hidden;
+        font-weight: 700 !important;
+        color: #fff !important;
+        width: 120px;
+        height: 60px;
+    }
 </style>
 
 <div class="container mt-4">
@@ -54,6 +66,29 @@
                                 <input class="btn-outline-light form-control mr-2" placeholder="Search Id / Domain /IC No" id="txtSearch" maxlength="30" pattern="^[a-zA-Z0-9 ]*$" />
                             </div>
                         </div>
+                    </div>
+                </div>
+                <div class="d-flex mt-1 mb-1">
+                    <div class="count-label">
+                        Total Users<br /><label id="lblUser">0</label>
+                    </div>
+                    <div class="count-label">
+                        Mapped<br /><label id="lblMappedUser">0</label>
+                    </div>
+                    <div class="count-label">
+                        Not Mapped<br /><label id="lblUnMappedUser">0</label>
+                    </div>
+                    <div class="count-label">
+                        Active<br /><label id="lblActiveUser">0</label>
+                    </div>
+                    <div class="count-label">
+                        Inactive<br /><label id="lblInActiveUser">0</label>
+                    </div>
+                    <div class="count-label">
+                        Verified<br /><label id="lblVerifiedUser">0</label>
+                    </div>
+                    <div class="count-label">
+                        Not Verified<br /><label id="lblNotVerifiedUser">0</label>
                     </div>
                 </div>
                 <div class="table-responsive">

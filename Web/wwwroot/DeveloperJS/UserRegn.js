@@ -1,6 +1,6 @@
 ﻿$(document).ready(function () {
     BindData()
-
+    AccountCount();
     $("#AddNewDomain input[name='txtapproval']").click(function () {
         $("#txtapproval-error").html("");
     });
@@ -345,6 +345,7 @@ function SaveMapping() {
                 toastr.success(obj.Message);
 
                 $("#AddMapping").modal('hide');
+                AccountCount();
                 BindData();
                 ResetForMapping();
                 ResetErrorMessageForMapping();
@@ -673,4 +674,19 @@ function Reset() {
 function ResetErrorMessage() {
     $("#txtapproval-error").html("");
     $("#txtactive-error").html("");
+}
+function AccountCount() {
+    $.ajax({
+        url: "/Account/AccountCount",
+        type: "POST",
+        success: function (response, status) {
+            $("#lblUser").html(response.User);
+            $("#lblActiveUser").html(response.ActiveUser);
+            $("#lblInActiveUser").html(response.InActiveUser);
+            $("#lblMappedUser").html(response.MappedUser);
+            $("#lblUnMappedUser").html(response.UnMappedUser);
+            $("#lblVerifiedUser").html(response.VerifiedUser);
+            $("#lblNotVerifiedUser").html(response.NotVerifiedUser);
+        }
+    });
 }

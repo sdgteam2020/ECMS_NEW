@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DataTransferObject.Domain.Model;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -39,5 +40,9 @@ namespace DataTransferObject.Domain.Master
 
         [Required(ErrorMessage = "required!")]
         public bool IsVerify { get; set; }
+
+        [ForeignKey("TrnUnregdUser")]
+        public short? UnregdUserId { get; set; }
+        public TrnUnregdUser? TrnUnregdUser { get; set; }
     }
 }

@@ -428,6 +428,7 @@ function Save() {
                 toastr.success('Domain Id has been saved');
 
                 $("#AddNewDomain").modal('hide');
+                AccountCount();
                 BindData();
                 Reset();
                 ResetErrorMessage();
