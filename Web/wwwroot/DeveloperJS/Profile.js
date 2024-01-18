@@ -162,7 +162,7 @@ function GetByArmyNo(ArmyNo) {
 
     };
     $.ajax({
-        url: '/UserProfile/GetByArmyNo',
+        url: '/UserProfile/GetByArmyNoOrAspnetuserId',
         contentType: 'application/x-www-form-urlencoded',
         data: userdata,
         type: 'POST',

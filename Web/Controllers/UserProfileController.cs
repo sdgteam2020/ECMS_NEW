@@ -137,11 +137,13 @@ namespace Web.Controllers
             }
 
         }
-        public async Task<IActionResult> GetByArmyNo(string ArmyNo)
+        public async Task<IActionResult> GetByArmyNoOrAspnetuserId(string ArmyNo,int userid)
         {
             try
             {
-                int userid = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                if(userid==0)
+                 userid = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+
                 return Json(await _userProfileBL.GetByArmyNo(ArmyNo, userid));
             }
             catch (Exception ex)
@@ -259,6 +261,7 @@ namespace Web.Controllers
             }
 
         }
+
 
     }
 }

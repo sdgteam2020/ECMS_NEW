@@ -4,6 +4,7 @@ using DataAccessLayer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccessLayer.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240118052309_v28")]
+    partial class v28
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1694,11 +1697,10 @@ namespace DataAccessLayer.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Authority")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("Authority")
+                        .HasColumnType("int");
 
-                    b.Property<int>("FromAspNetUsersId")
+                    b.Property<int>("FromDomainId")
                         .HasColumnType("int");
 
                     b.Property<int>("FromUnitID")
@@ -1713,10 +1715,10 @@ namespace DataAccessLayer.Migrations
                     b.Property<byte>("ReasonId")
                         .HasColumnType("tinyint");
 
-                    b.Property<DateTime>("SOSDate")
-                        .HasColumnType("datetime2");
+                    b.Property<int>("SOSDate")
+                        .HasColumnType("int");
 
-                    b.Property<int>("ToAspNetUsersId")
+                    b.Property<int>("ToDomainId")
                         .HasColumnType("int");
 
                     b.Property<int>("ToUnitID")
@@ -1734,19 +1736,7 @@ namespace DataAccessLayer.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("FromAspNetUsersId");
-
-                    b.HasIndex("FromUnitID");
-
-                    b.HasIndex("FromUserID");
-
                     b.HasIndex("ReasonId");
-
-                    b.HasIndex("ToAspNetUsersId");
-
-                    b.HasIndex("ToUnitID");
-
-                    b.HasIndex("ToUserID");
 
                     b.HasIndex("Updatedby");
 
@@ -2567,45 +2557,9 @@ namespace DataAccessLayer.Migrations
 
             modelBuilder.Entity("DataTransferObject.Domain.Model.TrnPostingOut", b =>
                 {
-                    b.HasOne("DataTransferObject.Domain.Identitytable.ApplicationUser", "ApplicationUser")
-                        .WithMany()
-                        .HasForeignKey("FromAspNetUsersId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("DataTransferObject.Domain.Master.MapUnit", "MapUnit")
-                        .WithMany()
-                        .HasForeignKey("FromUnitID")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("DataTransferObject.Domain.MUserProfile", "MUserProfile")
-                        .WithMany()
-                        .HasForeignKey("FromUserID")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("DataTransferObject.Domain.Master.MPostingReason", "MPostingReason")
                         .WithMany()
                         .HasForeignKey("ReasonId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("DataTransferObject.Domain.Identitytable.ApplicationUser", "ToApplicationUser")
-                        .WithMany()
-                        .HasForeignKey("ToAspNetUsersId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("DataTransferObject.Domain.Master.MapUnit", "ToMapUnit")
-                        .WithMany()
-                        .HasForeignKey("ToUnitID")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("DataTransferObject.Domain.MUserProfile", "ToMUserProfile")
-                        .WithMany()
-                        .HasForeignKey("ToUserID")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -2615,21 +2569,9 @@ namespace DataAccessLayer.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.Navigation("ApplicationUser");
-
                     b.Navigation("ApplicationUserUpdate");
 
                     b.Navigation("MPostingReason");
-
-                    b.Navigation("MUserProfile");
-
-                    b.Navigation("MapUnit");
-
-                    b.Navigation("ToApplicationUser");
-
-                    b.Navigation("ToMUserProfile");
-
-                    b.Navigation("ToMapUnit");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>

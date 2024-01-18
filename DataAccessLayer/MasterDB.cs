@@ -80,6 +80,15 @@ namespace DataAccessLayer
             }
         }
 
-        
+        public async Task<List<DTOMasterResponse>> GetPostingReason()
+        {
+            string query = "SELECT  Id, Reason Name FROM MPostingReason";
+
+            using (var connection = _contextDP.CreateConnection())
+            {
+                var ret = await connection.QueryAsync<DTOMasterResponse>(query);
+                return ret.ToList();
+            }
+        }
     }
 }

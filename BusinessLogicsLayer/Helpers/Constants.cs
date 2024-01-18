@@ -23,6 +23,7 @@ namespace BusinessLogicsLayer.Helpers
             internal const string FmnBranches = "11";
             internal const string PSO = "12";
             internal const string SubDte = "13";
+            internal const string PostingReason = "14";
         }
     }
 }

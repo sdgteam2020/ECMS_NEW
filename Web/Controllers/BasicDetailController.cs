@@ -1284,6 +1284,26 @@ namespace Web.Controllers
             //}
 
         }
+
+        [Authorize(Roles = "Admin,User")]
+        [HttpPost]
+        public async Task<IActionResult> SearchAllServiceNo(string ICNumber)
+        {
+            DTOApiDataResponse dTOApiDataResponse = new DTOApiDataResponse();
+            if (ICNumber != null)
+            {
+                int AspNetUsersId= Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                var Ret = await basicDetailBL.SearchAllServiceNo(ICNumber, AspNetUsersId);
+                if (Ret != null)
+                {
+                    return Ok(Ret);
+                }
+               
+            }
+            return BadRequest();
+           
+
+        }
         public async Task<DTOApiDataResponse> GetApiData(string ICNumber)
         {
             using (var client = new HttpClient())

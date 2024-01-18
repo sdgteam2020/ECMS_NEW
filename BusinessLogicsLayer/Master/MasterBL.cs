@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace BusinessLogicsLayer.Master
 { 
@@ -38,6 +39,11 @@ namespace BusinessLogicsLayer.Master
         public async Task<List<DTOMasterResponse>> GetMSubDte()
         {
             return await _iMasterDB.GetMSubDte();
+        }
+
+        public async Task<List<DTOMasterResponse>> GetPostingReason()
+        {
+            return await _iMasterDB.GetPostingReason();
         }
 
         public async Task<List<DTORemarksResponse>> GetRemarksByTypeId(DTORemarksRequest Data)

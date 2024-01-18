@@ -265,6 +265,21 @@ namespace BusinessLogicsLayer
                 }
 
             }
+            else if (Data.id == Convert.ToInt16(Constants.MasterTbl.PostingReason))
+            {
+                var Ret = await MasterBL.GetPostingReason();
+
+                foreach (var Forma in Ret)
+                {
+
+                    DTOMasterResponse db = new DTOMasterResponse();
+
+                    db.Id = Forma.Id;
+                    db.Name = Forma.Name;
+                    lst.Add(db);
+                }
+
+            }
             //Constants.MasterTbl.Command;
             return lst;
         }

@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace DataTransferObject.Response
 {
     public class DTOUserProfileResponse
-    {
+    { 
         public int MapId { get; set; }
         public int UserId { get; set; }
       

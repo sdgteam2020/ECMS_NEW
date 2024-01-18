@@ -1,0 +1,23 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace DataTransferObject.Response
+{
+    public class DTOPostingOutDetilsResponse
+    {
+        public string Reason { get; set; }
+        public string Authority { get; set; }
+        public string SOSDate { get; set; }
+        public string UpdatedOn { get; set; }
+        public string FromDomainId { get; set; }
+        public string FromUnitName { get; set; }
+        public string FromArmyNO { get; set; }
+        public string ToDomainId { get; set; }
+        public string ToUnitName { get; set; }
+        public string ToArmyNO { get; set; }
+    }
+}

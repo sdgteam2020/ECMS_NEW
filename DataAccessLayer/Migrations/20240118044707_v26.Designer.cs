@@ -4,6 +4,7 @@ using DataAccessLayer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccessLayer.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240118044707_v26")]
+    partial class v26
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1686,73 +1689,6 @@ namespace DataAccessLayer.Migrations
                     b.ToTable("TrnDomainMapping");
                 });
 
-            modelBuilder.Entity("DataTransferObject.Domain.Model.TrnPostingOut", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Authority")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("FromAspNetUsersId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("FromUnitID")
-                        .HasColumnType("int");
-
-                    b.Property<int>("FromUserID")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<byte>("ReasonId")
-                        .HasColumnType("tinyint");
-
-                    b.Property<DateTime>("SOSDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("ToAspNetUsersId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ToUnitID")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ToUserID")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("UpdatedOn")
-                        .IsRequired()
-                        .HasColumnType("datetime");
-
-                    b.Property<int>("Updatedby")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("FromAspNetUsersId");
-
-                    b.HasIndex("FromUnitID");
-
-                    b.HasIndex("FromUserID");
-
-                    b.HasIndex("ReasonId");
-
-                    b.HasIndex("ToAspNetUsersId");
-
-                    b.HasIndex("ToUnitID");
-
-                    b.HasIndex("ToUserID");
-
-                    b.HasIndex("Updatedby");
-
-                    b.ToTable("TrnPostingOut");
-                });
-
             modelBuilder.Entity("DataTransferObject.Domain.Model.TrnUnregdUser", b =>
                 {
                     b.Property<short>("UnregdUserId")
@@ -2563,73 +2499,6 @@ namespace DataAccessLayer.Migrations
                     b.Navigation("MUserProfile");
 
                     b.Navigation("MapUnit");
-                });
-
-            modelBuilder.Entity("DataTransferObject.Domain.Model.TrnPostingOut", b =>
-                {
-                    b.HasOne("DataTransferObject.Domain.Identitytable.ApplicationUser", "ApplicationUser")
-                        .WithMany()
-                        .HasForeignKey("FromAspNetUsersId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("DataTransferObject.Domain.Master.MapUnit", "MapUnit")
-                        .WithMany()
-                        .HasForeignKey("FromUnitID")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("DataTransferObject.Domain.MUserProfile", "MUserProfile")
-                        .WithMany()
-                        .HasForeignKey("FromUserID")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("DataTransferObject.Domain.Master.MPostingReason", "MPostingReason")
-                        .WithMany()
-                        .HasForeignKey("ReasonId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("DataTransferObject.Domain.Identitytable.ApplicationUser", "ToApplicationUser")
-                        .WithMany()
-                        .HasForeignKey("ToAspNetUsersId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("DataTransferObject.Domain.Master.MapUnit", "ToMapUnit")
-                        .WithMany()
-                        .HasForeignKey("ToUnitID")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("DataTransferObject.Domain.MUserProfile", "ToMUserProfile")
-                        .WithMany()
-                        .HasForeignKey("ToUserID")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("DataTransferObject.Domain.Identitytable.ApplicationUser", "ApplicationUserUpdate")
-                        .WithMany()
-                        .HasForeignKey("Updatedby")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("ApplicationUser");
-
-                    b.Navigation("ApplicationUserUpdate");
-
-                    b.Navigation("MPostingReason");
-
-                    b.Navigation("MUserProfile");
-
-                    b.Navigation("MapUnit");
-
-                    b.Navigation("ToApplicationUser");
-
-                    b.Navigation("ToMUserProfile");
-
-                    b.Navigation("ToMapUnit");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
