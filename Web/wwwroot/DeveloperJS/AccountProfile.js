@@ -399,13 +399,23 @@ function UnitSave() {
 
             if (result == DataSave) {
                 toastr.success('Unit has been saved');
-                GetUnitDetails($("#txtSusno").val(), 2);
-                /*  $("#AddNewM").modal('hide');*/
+                Swal.fire({
+                    icon: 'info',
+                    title: 'Unit',
+                    html: 'Unit has been saved.',
+
+                })
+                $("#AddNewUnitmap").modal('hide');
+
 
             }
             else if (result == DataExists) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Unit Name Exits!',
 
-                toastr.error('Unit Name Exits!');
+                })
 
             }
             else if (result == InternalServerError) {
