@@ -342,6 +342,43 @@ function GetNameByApptId(param1) {
         }
     });
 }
+
+function ProceedUnitSave() {
+    debugger;
+    ResetErrorMessage();
+    let formId = '#Profile';
+    $.validator.unobtrusive.parse($(formId));
+
+    ValidateRadioButton();
+
+    if ($(formId).valid()) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be Save!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, Save it!'
+        }).then((result) => {
+            if (result.isConfirmed && $("input[type='radio'][name=IsIO]:checked").length > 0 && $("input[type='radio'][name=IsCO]:checked").length > 0 && $("input[type='radio'][name=IntOffr]:checked").length > 0) {
+                UnitSave();
+            }
+            else {
+                ValidateRadioButton();
+            }
+        })
+    }
+    else {
+        Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'Please fill required field.',
+
+        })
+        return false;
+    }
+}
 function UnitSave() {
     $.ajax({
         url: '/Account/SaveUnitWithMapping',

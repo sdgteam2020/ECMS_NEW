@@ -25,5 +25,6 @@ namespace BusinessLogicsLayer.Account
         public Task<List<DTOMasterResponse>> GetAllRole();
         public Task<DTOTempSession?> ProfileAndMappingSaving(DTOProfileAndMappingRequest model, DTOTempSession dTOTempSession);
         public Task<DTOAccountCountResponse> AccountCount();
+        public Task<bool?> SaveUnitWithMapping(DTOSaveUnitWithMappingRequest dTO);
     }
 }

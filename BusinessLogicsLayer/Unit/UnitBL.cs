@@ -36,5 +36,9 @@ namespace BusinessLogicsLayer.Unit
         {
             return _UnitDB.GetBySusNo(Data.Sus_no+Data.Suffix);
         }
+        public async Task<bool> FindSusNo(string Sus_no)
+        {
+            return await _UnitDB.FindSusNo(Sus_no);
+        }
     }
 }

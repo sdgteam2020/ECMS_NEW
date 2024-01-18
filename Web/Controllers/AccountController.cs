@@ -1392,7 +1392,7 @@ namespace Web.Controllers
                 if (ModelState.IsValid)
                 {
                     string Sus_no = dTO.Sus_no + dTO.Suffix;
-                    if (!_iUnitBL.FindSusNo(Sus_no))
+                    if (!await _iUnitBL.FindSusNo(Sus_no))
                     {
                         bool result = (bool)await _iAccountBL.SaveUnitWithMapping(dTO);
                         if (result == true)

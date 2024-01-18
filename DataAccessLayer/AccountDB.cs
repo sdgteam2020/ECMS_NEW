@@ -964,6 +964,62 @@ namespace DataAccessLayer
             }
 
         }
+        public async Task<bool?> SaveUnitWithMapping(DTOSaveUnitWithMappingRequest dTO)
+        {
+            using (var transaction = _context.Database.BeginTransaction())
+            {
+                try
+                {
+                    var trnRegUser = new TrnUnregdUser
+                    {
+                        Name = dTO.Name,
+                        ServiceNo = dTO.ServiceNo,
+                        Rank = dTO.Rank,
+                        DomainId =dTO.DomainId,
+                        IsActive=true,
+                        UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time")),
+                    };
+                    await _context.TrnUnregdUser.AddAsync(trnRegUser);
+                    await _context.SaveChangesAsync();
+                    var mUnit = new MUnit
+                    {
+                        Sus_no= dTO.Sus_no,
+                        Suffix=dTO.Suffix,
+                        UnitName=dTO.UnitName,
+                        IsVerify=false,
+                        UnregdUserId= trnRegUser.UnregdUserId,
+                    };
+                    await _context.MUnit.AddAsync(mUnit);
+                    await _context.SaveChangesAsync();
+                    var mapUnit = new MapUnit
+                    {
+                        UnitId = mUnit.UnitId,
+                        UnitType= dTO.UnitType,
+                        ComdId = dTO.ComdId,
+                        CorpsId = dTO.CorpsId,
+                        DivId = dTO.DivId,
+                        BdeId= dTO.BdeId,
+                        FmnBranchID = dTO.FmnBranchID,
+                        PsoId =dTO.PsoId,
+                        SubDteId= dTO.SubDteId,
+                        IsActive=true,
+                        Updatedby=0,
+                        UpdatedOn= TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time")),
+                    };
+                    await _context.MapUnit.AddAsync(mapUnit);
+                    await _context.SaveChangesAsync();
+
+                    transaction.Commit();
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    _logger.LogError(1001, ex, "AccountDB->SaveDomainRegn");
+                    return null;
+                }
+            }
+        }
     }
     
 }
