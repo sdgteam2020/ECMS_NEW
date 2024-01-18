@@ -1292,7 +1292,8 @@ namespace Web.Controllers
             DTOApiDataResponse dTOApiDataResponse = new DTOApiDataResponse();
             if (ICNumber != null)
             {
-                var Ret = await basicDetailBL.SearchAllServiceNo(ICNumber);
+                int AspNetUsersId= Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                var Ret = await basicDetailBL.SearchAllServiceNo(ICNumber, AspNetUsersId);
                 if (Ret != null)
                 {
                     return Ok(Ret);

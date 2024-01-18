@@ -1,4 +1,5 @@
-﻿using DataTransferObject.Response;
+﻿using DataTransferObject.Domain.Model;
+using DataTransferObject.Response;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +10,8 @@ namespace DataAccessLayer.BaseInterfaces
 {
     public interface IPostingDB
     {
-        public Task<DTOPostingInResponse> GetArmyDataForPostingIn(string ArmyNo);
+        public Task<DTOPostingInResponse> GetArmyDataForPostingOut(string ArmyNo);
+        public Task<List<DTOPostingOutDetilsResponse>> GetAllPostingHistory(int AspNetUsersId);
+        public Task<bool> UpdateForPosting(TrnPostingOut Data);
     }
 }

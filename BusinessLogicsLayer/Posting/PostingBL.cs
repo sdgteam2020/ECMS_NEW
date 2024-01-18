@@ -1,6 +1,8 @@
 ﻿using BusinessLogicsLayer.Bde;
 using DataAccessLayer;
 using DataAccessLayer.BaseInterfaces;
+using DataTransferObject.Domain.Master;
+using DataTransferObject.Domain.Model;
 using DataTransferObject.Response;
 using System;
 using System.Collections.Generic;
@@ -10,16 +12,30 @@ using System.Threading.Tasks;
 
 namespace BusinessLogicsLayer.Posting
 {
-    public class PostingBL : IPostingBL
+    public class PostingBL : GenericRepositoryDL<TrnPostingOut>, IPostingBL
     {
+
+
+      
         private readonly IPostingDB postingDB;
-        public PostingBL(IPostingDB _postingDB)
+        public PostingBL(ApplicationDbContext context, IPostingDB _postingDB) : base(context)
         {
             postingDB = _postingDB;
         }
-        public async Task<DTOPostingInResponse> GetArmyDataForPostingIn(string ArmyNo)
+
+        public async Task<List<DTOPostingOutDetilsResponse>> GetAllPostingHistory(int AspNetUsersId)
         {
-           return await postingDB.GetArmyDataForPostingIn(ArmyNo);
+            return await postingDB.GetAllPostingHistory(AspNetUsersId);
+        }
+
+        public async Task<DTOPostingInResponse> GetArmyDataForPostingOut(string ArmyNo)
+        {
+           return await postingDB.GetArmyDataForPostingOut(ArmyNo);
+        }
+
+        public async Task<bool> UpdateForPosting(TrnPostingOut Date)
+        {
+            return await postingDB.UpdateForPosting(Date);
         }
     }
 }

@@ -118,14 +118,18 @@ namespace DataAccessLayer
             }
 
         }
-        public async Task<List<DTOSmartSearch>> SearchAllServiceNo(string ServiceNo)
+        public async Task<List<DTOSmartSearch>> SearchAllServiceNo(string ServiceNo,int AspNetUsersId)
         {
-            string query = "Select basi.BasicDetailId,Name,ServiceNo,PhotoImagePath Image from BasicDetails basi inner join TrnUpload trnu on basi.BasicDetailId=trnu.BasicDetailId where ServiceNo like @ServiceNo ";
+            string query = "Select basi.BasicDetailId,Name,ServiceNo,PhotoImagePath Image "+
+                           " from BasicDetails basi "+
+                           " inner join TrnICardRequest req on req.BasicDetailId=basi.BasicDetailId and req.Status=0"+
+                           " inner join TrnDomainMapping map on map.Id=req.TrnDomainMappingId and map.AspNetUsersId=@AspNetUsersId" +
+                           " inner join TrnUpload trnu on basi.BasicDetailId=trnu.BasicDetailId where ServiceNo like @ServiceNo ";
             
             ServiceNo = "%" + ServiceNo.Replace("[", "[[]").Replace("%", "[%]") + "%";
             using (var connection = _contextDP.CreateConnection())
             {
-                var basicDetail = await connection.QueryAsync<DTOSmartSearch>(query, new { ServiceNo });
+                var basicDetail = await connection.QueryAsync<DTOSmartSearch>(query, new { AspNetUsersId,ServiceNo });
                 if (basicDetail != null)
                 {
                     return basicDetail.ToList();

@@ -6,7 +6,7 @@ var Message = "";
 $(document).ready(function () {
 
     $("#btnSercharmynoSmart").click(function () {
-        if ($("#txtarmynosearchAll").val() != "") {
+        if ($("#armynosearchAllName").html() != "") {
             
             $("#unitoffrsModal").modal("hide");
             sessionStorage.setItem("ArmyNo", $("#txtarmynosearchAll").val());

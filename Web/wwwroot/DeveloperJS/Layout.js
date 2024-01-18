@@ -45,9 +45,9 @@ $(document).ready(function () {
             var TypeId = 1;
             
             var param = { "ICNumber": request.term };
-
+            $("#loading").addClass("d-none");
             $("#armynosearchAllName").html("");
-            $("#txtarmynosearchAll").val("");
+            /*$("#txtarmynosearchAll").val("");*/
             $("#armynosearchAllpic").attr("src", "");
 
             $.ajax({
@@ -60,7 +60,7 @@ $(document).ready(function () {
 
                     response($.map(data, function (item) {
 
-                        $("#loading").addClass("d-none");
+                        
                         return { label: item.ServiceNo, value: item.BasicDetailId, Name: item.Name, Image: item.Image };
 
                     }))

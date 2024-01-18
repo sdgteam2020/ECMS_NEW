@@ -24,5 +24,8 @@ namespace DataTransferObject.Response
         public string? Users_Name { get; set; }
         public string? Users_RankName { get; set; }
         public string? Users_AppointmentName { get; set; }
+        public int FromAspNetUsersId { get; set; }
+        public int FromUnitID { get; set; }
+        public int FromUserID { get; set; }
     }
 }

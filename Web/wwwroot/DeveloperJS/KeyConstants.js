@@ -19,3 +19,4 @@ const ArmyCat = 10;
 const FmnBranches = 11;
 const PSO = 12;
 const SubDte = 13;
+const PostingReason = 14;

@@ -1,4 +1,5 @@
 ﻿using DataTransferObject.Domain.Master;
+using DataTransferObject.Domain.Model;
 using DataTransferObject.Response;
 using System;
 using System.Collections.Generic;
@@ -8,8 +9,12 @@ using System.Threading.Tasks;
 
 namespace BusinessLogicsLayer.Posting
 {
-    public interface IPostingBL
+    public interface IPostingBL : IGenericRepository<TrnPostingOut>
     {
-        public Task<DTOPostingInResponse> GetArmyDataForPostingIn(string ArmyNo);
+        
+        public Task<DTOPostingInResponse> GetArmyDataForPostingOut(string ArmyNo);
+        public Task<List<DTOPostingOutDetilsResponse>> GetAllPostingHistory(int AspNetUsersId);
+        public Task<bool> UpdateForPosting(TrnPostingOut Data);
+
     }
 }
