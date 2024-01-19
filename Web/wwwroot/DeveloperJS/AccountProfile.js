@@ -188,6 +188,9 @@
             $(".FmnBranch").addClass("d-none");
             $(".DteBranch").addClass("d-none");
             mMsater(0, "ddlCommand", 1, "");
+            $("#ddlFmnBranch").val(1);
+            $("#ddlPSODte").val(1);
+            $("#ddlDgSubDte").val(1);
         }
         else if (val == "2") {
             mMsater(0, "ddlCommand", 1, "");
@@ -208,9 +211,9 @@
 
             $("#ddlCommand").html(lst);
             $("#ddlCorps").html(lst);
-            $("#ddlDiv").html(lst);
+            $("#ddlCorps").html(lst);
             $("#ddlBde").html(lst);
-
+            $("#ddlDiv").html(lst);
 
             mMsater(0, "ddlPSODte", PSO, "");
             mMsater(0, "ddlDgSubDte", SubDte, "");
@@ -477,13 +480,14 @@ function ResetErrorMessage() {
     $("#ddlDgSubDte-error").html("");
 }
 function ValidateDDLBasedUnitType() {
-    var val = $("input[type='radio'][name=UnitTyperdi]:checked").val();
-    if (val == "3") {
-        if ($("#ddlFmnBranch").val() == 1 || $("#ddlFmnBranch").val() == 0) {
-            $("#ddlFmnBranch-error").html("Type of Fmn /Branch is required.");
-        }
-        else {
-            $("#ddlFmnBranch-error").html("");
-        }
-    }
+    //var val = $("input[type='radio'][name=UnitTyperdi]:checked").val();
+    //if (val == "3") {
+    //    if ($("#ddlFmnBranch").val() == 1 || $("#ddlFmnBranch").val() == 0) {
+    //        $("#ddlFmnBranch-error").html("Type of Fmn /Branch is required.");
+    //        $("#ddlFmnBranch").val(null)
+    //    }
+    //    else {
+    //        $("#ddlFmnBranch-error").html("");
+    //    }
+    //}
 }
