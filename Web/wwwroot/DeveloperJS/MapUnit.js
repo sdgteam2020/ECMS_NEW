@@ -10,6 +10,11 @@ $(document).ready(function () {
             $(".FmnBranch").addClass("d-none");
             $(".DteBranch").addClass("d-none");
             mMsater(0, "ddlCommand", 1, "");
+
+
+            $("#ddlFmnBranch").html('<option value="">Please Select</option>');
+            $("#ddlPSODte").html('<option value="">Please Select</option>');
+            $("#ddlDgSubDte").html('<option value="">Please Select</option>');
             $("#ddlFmnBranch").val(1);
             $("#ddlPSODte").val(1);
             $("#ddlDgSubDte").val(1);
@@ -17,6 +22,10 @@ $(document).ready(function () {
         else if (val == "2") {
             mMsater(0, "ddlCommand", 1, "");
             mMsater(0, "ddlFmnBranch", FmnBranches, "");
+
+            
+            $("#ddlPSODte").html('<option value="">Please Select</option>');
+            $("#ddlDgSubDte").html('<option value="">Please Select</option>');
             $("#ddlPSODte").val(1);
             $("#ddlDgSubDte").val(1);
             $(".unittype").removeClass("d-none");
@@ -27,8 +36,9 @@ $(document).ready(function () {
             $(".unittype").addClass("d-none");
             $(".FmnBranch").addClass("d-none");
             $(".DteBranch").removeClass("d-none");
+           
+            $("#ddlFmnBranch").html('<option value="">Please Select</option>');
             $("#ddlFmnBranch").val(1);
-
             var lst = '<option value="1">Please Select</option>';
 
             $("#ddlCommand").html(lst);
