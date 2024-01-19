@@ -12,5 +12,6 @@ namespace DataTransferObject.Requests
         public int UserId { get; set; }
         public int UnitId { get; set; }
         public int TrnDomainMappingId { get; set; }
+        public string IpAddress { get; set; }
     }
 }

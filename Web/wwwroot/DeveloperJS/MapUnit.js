@@ -10,6 +10,9 @@ $(document).ready(function () {
             $(".FmnBranch").addClass("d-none");
             $(".DteBranch").addClass("d-none");
             mMsater(0, "ddlCommand", 1, "");
+            $("#ddlFmnBranch").val(1);
+            $("#ddlPSODte").val(1);
+            $("#ddlDgSubDte").val(1);
         }
         else if (val == "2") {
             mMsater(0, "ddlCommand", 1, "");

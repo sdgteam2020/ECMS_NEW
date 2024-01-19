@@ -24,9 +24,10 @@
                 else {
 
                     var listItemddl = "";
-                    if (parseInt(TableId) == 11 || parseInt(TableId) == 12 || parseInt(TableId) == 13) {
-                        listItemddl += '<option value="1">Please Select</option>';
-                    } else {
+                    //if (parseInt(TableId) == 11 || parseInt(TableId) == 12 || parseInt(TableId) == 13) {
+                    //    listItemddl += '<option value="1">Please Select</option>';
+                    //} else
+                    {
                         listItemddl += '<option value="">Please Select</option>';
                     }
                    

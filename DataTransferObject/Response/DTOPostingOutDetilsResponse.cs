@@ -16,6 +16,8 @@ namespace DataTransferObject.Response
         public string FromDomainId { get; set; }
         public string FromUnitName { get; set; }
         public string FromArmyNO { get; set; }
+        public string FromName { get; set; }
+        public string FromRankName { get; set; }
         public string ToDomainId { get; set; }
         public string ToUnitName { get; set; }
         public string ToArmyNO { get; set; }

@@ -206,7 +206,9 @@ namespace Web.Controllers
             {
 
                 DtoSession dtoSession = new DtoSession();
+               
                 dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+                dtoSession.IpAddress = HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
                 return Json(dtoSession);
 
             }
