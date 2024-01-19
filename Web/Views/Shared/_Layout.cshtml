@@ -9,13 +9,13 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <link rel="icon" type="image/x-icon" href="/images/AFSAC.png">
+    <link rel="icon" type="image/x-icon" href="/images/AFSAC_icon.png">
     <meta content='width=device-width, initial-scale=1.0, shrink-to-fit=no' name='viewport' />
     @* <meta http-equiv="content-security-policy"content="default-src 'none'; script-src 'self'; connect-src 'self'; img-src 'self'; style-src 'self' 'sha256-CwE3Bg0VYQOIdNAkbB/Btdkhul49qZuwgNCMPgNY5zw=';" /> *@
     <title> E-IASC </title>
     <link href="~/fonts/css/all.min.css" rel="stylesheet" />
-  
-   @*  <link href="~/css/steps.min.css" rel="stylesheet" /> *@
+
+    @*  <link href="~/css/steps.min.css" rel="stylesheet" /> *@
     <link href="~/css/sidemenu/feather/feather.css" rel="stylesheet" />
     <link href="~/css/sidemenu/style.css" rel="stylesheet" />
     <link href="~/css/sidemenu/ti-icons/css/themify-icons.css" rel="stylesheet" />
@@ -36,8 +36,8 @@
     <link href="~/css/typography.css" rel="stylesheet" />
     <link href="~/select2/css/select2.min.css" rel="stylesheet" />
     <link href="~/css/cssStyle.css" rel="stylesheet" />
-    
-   
+
+
     <link href="~/css/horizontaltimeline.css" rel="stylesheet" />
 
     <script asp-src-include="~/fonts/feather/feather.min.js"></script>
@@ -45,14 +45,14 @@
     <script asp-src-include="~/lib/jquery/jquery.js"></script>
     <script asp-src-include="~/lib/jquery-validate/jquery.validate.js" defer></script>
     <script asp-src-include="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js" defer></script>
-   
-  
+
+
     <link href="~/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
     <link href="~/lib/jqueryui/themes/base/jquery-ui.min.css" rel="stylesheet" />
 
     <link href="~/toastr/toastr.min.css" rel="stylesheet" />
     <link href="~/css/main.css" rel="stylesheet" />
-    
+
     <script type="text/javascript">
         function preventBack() { window.history.forward(); }
         setTimeout("preventBack()", 0);
@@ -143,14 +143,15 @@
             height: 40px !important
         }
 
-        .select2-container--default .select2-selection--single .select2-selection__arrow {
-            height: 26px;
-            position: absolute;
-            top: 6px !important;
-            right: 1px;
-            width: 20px;
-        }
-        .unit-label-background{
+            .select2-container--default .select2-selection--single .select2-selection__arrow {
+                height: 26px;
+                position: absolute;
+                top: 6px !important;
+                right: 1px;
+                width: 20px;
+            }
+
+        .unit-label-background {
             background-color: #e9ecef;
             max-width: 200px;
             min-width: 200px;
@@ -158,16 +159,16 @@
     </style>
 </head>
 <body class="nav-fixed">
-      <div id="loading" class="loader">
-    <div class="loader-container">
-    <img src="/Images/load.gif" width="100">
-    <div>
-    <h4 style="margin-top: -20px;">Loading...</h4>
-    <span>Please wait. This may take few seconds.</span>
+    <div id="loading" class="loader">
+        <div class="loader-container">
+            <img src="/Images/load.gif" width="100">
+            <div>
+                <h4 style="margin-top: -20px;">Loading...</h4>
+                <span>Please wait. This may take few seconds.</span>
+            </div>
+        </div>
     </div>
-    </div>
-    </div>
-@*<div id="loadingToken" class="loader">
+    @*<div id="loadingToken" class="loader">
     <div class="loader-container">
     <img src="/Images/load.gif" width="100">
     <div>
@@ -176,7 +177,8 @@
     </div>
     </div>
     </div> *@
-    
+
+    <div class="d-none1" id="IpaddresGloble"></div>
     <div class="d-none" id="postingouthtml"></div>
     <div class="d-none" id="content-container"></div>
     <div class="d-none" id="spnPostedOffrsfornoti"></div>
@@ -188,30 +190,30 @@
         <nav class="navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row d-print-none">
             <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center">
                 <a class="navbar-brand brand-logo mr-5" href="/Home/index"><img src="~/Images/AFSAC_Logo.png" class="mr-2" alt="logo" /></a>
-                <a class="navbar-brand brand-logo-mini" href="/Home/index"><img src="~/Images/AFSAC.png" height="50px"  alt="logo" /></a>
+                <a class="navbar-brand brand-logo-mini" href="/Home/index"><img src="~/Images/AFSAC.png" height="50px" alt="logo" /></a>
             </div>
             <div class="navbar-menu-wrapper d-flex align-items-center justify-content-end">
                 <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
                     <span class="icon-menu"></span>
                 </button>
                 @* <ul class="navbar-nav mr-lg-2">
-                    <li class="nav-item nav-search d-none d-lg-block">
-                        <div class="input-group">
-                            <div class="input-group-prepend hover-cursor" id="navbar-search-icon">
-                            <span class="input-group-text" id="search">
-                            <i class="icon-search"></i>
-                            </span>
-                            </div>
-                            <div id="tokenmsg" class="p-2"></div>
-                            <input type="text" class="form-control" id="navbar-search-input" placeholder="Search now" aria-label="search" aria-describedby="search">
-                        </div>
-                    </li>
+                <li class="nav-item nav-search d-none d-lg-block">
+                <div class="input-group">
+                <div class="input-group-prepend hover-cursor" id="navbar-search-icon">
+                <span class="input-group-text" id="search">
+                <i class="icon-search"></i>
+                </span>
+                </div>
+                <div id="tokenmsg" class="p-2"></div>
+                <input type="text" class="form-control" id="navbar-search-input" placeholder="Search now" aria-label="search" aria-describedby="search">
+                </div>
+                </li>
                 </ul> *@
-                <ul class="navbar-nav" >
+                <ul class="navbar-nav">
                     <li class="text-center">
-                        <span class="tagline ml-4 text-center"> E-Indian Army Secure Card (E-IASC)</span>
+                        <span class="tagline ml-4 text-center"> Enterprise - Armed Forces Secure Access Card (E-IASAC)</span>
                     </li>
-                    </ul>
+                </ul>
                 @{
                     var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
                     var user = await userManager.FindByIdAsync(userId);
@@ -274,15 +276,15 @@
                         <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="profileDropdown">
                             <a class="dropdown-item">
                                 <i class="ti-settings text-primary"></i>
-                                @user.UserName 
-                               (<span id="aspntokenarmyno"></span>)
+                                @user.UserName
+                                (<span id="aspntokenarmyno"></span>)
                                 <span id="aspndomainUnitID"></span>
                             </a>
                             <a class="dropdown-item" href="/Account/Logout">
                                 <i class="ti-power-off text-primary"></i>
                                 Logout
                             </a>
-                            <a  class="dropdown-item" asp-action="EditProfile" asp-controller="Account">
+                            <a class="dropdown-item" asp-action="EditProfile" asp-controller="Account">
                                 <i class="fas fa-edit fa-lg"></i>
                                 Edit Profile
                             </a>
@@ -445,43 +447,43 @@
                                     <li class="nav-item"> <a class="nav-link " href="/UserProfile/Profile">Update Profile</a></li>
                                     <li class="nav-item"> <a class="nav-link" href="/BasicDetail/RequestType">Add Request</a></li>
                                     <li class="nav-item"> <a class="nav-link" href="/BasicDetail/Index/MQ==">ICard List</a></li>
-                                   
+
                                     <li class="nav-item"> <a class="nav-link" href="/BasicDetail/InaccurateData">Inaccurate List</a></li>
                                     <li class="nav-item"> <a class="nav-link" href="/Log/LoginLog">Login Log</a></li>
                                     <li class="nav-item"> <a class="nav-link" href="/Posting/GetAllPostingOut">All Posting Out</a></li>
-                                  
+
                                 </ul>
                             </div>
 
                         </li>
-                       /*  <li class="nav-item">
-                            <a class="nav-link collapsed" data-toggle="collapse" href="#ui-basic1" aria-expanded="true" aria-controls="ui-basic1">
-                                <i class="icon-layout menu-icon"></i>
-                                <span class="menu-title">ICard Request For Approval</span>
-                                <i class="menu-arrow"></i>
-                            </a>
-                            <div class="collapse show" id="ui-basic1">
-                                <ul class="nav flex-column sub-menu">
+                        /*  <li class="nav-item">
+                        <a class="nav-link collapsed" data-toggle="collapse" href="#ui-basic1" aria-expanded="true" aria-controls="ui-basic1">
+                        <i class="icon-layout menu-icon"></i>
+                        <span class="menu-title">ICard Request For Approval</span>
+                        <i class="menu-arrow"></i>
+                        </a>
+                        <div class="collapse show" id="ui-basic1">
+                        <ul class="nav flex-column sub-menu">
 
-                                    <li class="nav-item"> <a class="nav-link" href="/BasicDetail/ApprovalForIO/22">ICard Approval For IO</a></li>
-                                    <li class="nav-item"> <a class="nav-link" href="/BasicDetail/ApprovalForIO/33">ICard Approval For GSO</a></li>
-                                    @if (user.UserName=="mi_11")
-                                    {
-                                        <li class="nav-item"> <a class="nav-link" href="/BasicDetail/ApprovalForIO/44">ICard Approval For MI 11</a></li>
-                                    } 
-                                    else if (user.UserName == "hq_54")
-                                    {
-                                        <li class="nav-item"> <a class="nav-link" href="/BasicDetail/ApprovalForIO/55">ICard Approvaled by MI 11</a></li>
-                                    }
+                        <li class="nav-item"> <a class="nav-link" href="/BasicDetail/ApprovalForIO/22">ICard Approval For IO</a></li>
+                        <li class="nav-item"> <a class="nav-link" href="/BasicDetail/ApprovalForIO/33">ICard Approval For GSO</a></li>
+                        @if (user.UserName=="mi_11")
+                        {
+                        <li class="nav-item"> <a class="nav-link" href="/BasicDetail/ApprovalForIO/44">ICard Approval For MI 11</a></li>
+                        }
+                        else if (user.UserName == "hq_54")
+                        {
+                        <li class="nav-item"> <a class="nav-link" href="/BasicDetail/ApprovalForIO/55">ICard Approvaled by MI 11</a></li>
+                        }
 
-                                </ul>
-                            </div>
+                        </ul>
+                        </div>
 
                         </li> */
                     }
                     else if (signInManager.IsSignedIn(User) && (User.IsInRole("Admin")))
                     {
-                    <li class="nav-item">
+                        <li class="nav-item">
                             <a class="nav-link collapsed" data-toggle="collapse" href="#ui-basic_Unit" aria-expanded="false" aria-controls="ui-basic_Unit">
                                 <i class="icon-layout menu-icon"></i>
                                 <span class="menu-title">Fmn/Unit </span>
@@ -523,7 +525,7 @@
                             </a>
                             <div class="collapse show" id="ui-ICard">
                                 <ul class="nav flex-column sub-menu">
-                                   
+
                                     <li class="nav-item"> <a class="nav-link" href="/ConfigUser/index">Config User</a></li>
                                     <li class="nav-item"> <a class="nav-link" href="/Account/DomainRegn">Domain Regn.</a></li>
                                     <li class="nav-item"> <a class="nav-link" href="/Account/UserRegn">User Regn.</a></li>
@@ -554,8 +556,8 @@
                         Initiate Request
                     </a>
                     <a class="nav-link MyTask" href="/Home/MyTask">Task</a>
-                   
-                    
+
+
                 </nav>
 
                 <div class="content-wrapper">
@@ -586,7 +588,7 @@
         $(document).ready(function () {
 
             $('[data-toggle="tooltip"]').tooltip();
-            
+
 
             $("#loading").hide();
             $(document).ajaxStart(function () {
@@ -608,10 +610,10 @@
                 sessionStorage.persid = null
             })
         });
-      
+
     </script>
 
-   
+
     <script asp-src-include="~/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script asp-src-include="~/js/moment.js"></script>
     <script asp-src-include="~/js/jssidemenu/vendor.bundle.base.js"></script>
@@ -627,7 +629,7 @@
     <script asp-src-include="~/js/datatables/responsive.bootstrap4.min.js"></script>
     <script asp-src-include="~/js/datatables/dataTables.buttons.min.js"></script>
     <script asp-src-include="~/js/datatables/buttons.bootstrap4.min.js"></script>
-    <script asp-src-include="~/js/datatables/jszip.min.js"></script> 
+    <script asp-src-include="~/js/datatables/jszip.min.js"></script>
     <script asp-src-include="~/js/datatables/pdfmake.min.js"></script>
     <script asp-src-include="~/js/datatables/vfs_fonts.js"></script>
     <script asp-src-include="~/js/datatables/buttons.html5.min.js"></script>
@@ -638,11 +640,11 @@
     <script asp-src-include="~/toastr/toastr.min.js"></script>
     <script asp-src-include="~/js/moment.min.js"></script>
     <script asp-src-include="~/js/bootstrap-datetimepicker.min.js"></script>
-   
+
     <script asp-src-include="~/developerjs/layout.js"></script>
     <script asp-src-include="~/developerjs/keyconstants.js"></script>
     <script asp-src-include="~/developerjs/commanvalidation.js"></script>
-   
+
     @*  <script asp-src-include="~/developerjs/layout.js"></script>
     <script asp-src-include="~/developerjs/MedCate.js"></script> *@
     @*<script asp-src-include="/DeveloperJs/Master.js"></script>*@
@@ -687,8 +689,8 @@
 
                                 <label class="col-form-label col-sm-4">SUS No <i class="fas fa-asterisk mand1"></i></label>
                                 <div class="col-sm-8">
-                                    
-                                    
+
+
                                     <input class="form-control Alphanumeric" placeholder="Enter SUS No" id="txtSusno" minlength="8" maxlength="8" required pattern="^[a-zA-Z0-9 ]*$" title="Only Alphabets and Numbers allowed" />
                                 </div>
 
@@ -698,7 +700,7 @@
 
                                 <label class="col-form-label col-sm-4">Unit <i class="fas fa-asterisk mand1"></i></label>
                                 <div class="col-sm-8">
-                                  
+
                                     <span id="SpnUnitMapId" class="d-none">0</span>
                                     <input class="form-control Alphanumeric" placeholder="Enter Unit" id="txtUnit" required pattern="^[a-zA-Z0-9 ]*$" title="Only Alphabets and Numbers allowed" />
 
@@ -723,7 +725,7 @@
                                         <input class="form-check-input" type="radio" name="UnitTyperdi" id="UnitType3" value="3">
                                         <label class="form-check-label" for="UnitType3">Unit is Dte/Branch</label>
                                     </div>
-                                   
+
                                 </div>
 
                             </div>
@@ -731,7 +733,7 @@
 
                                 <label class="col-form-label col-sm-4">Comd / PSO<i class="fas fa-asterisk mand1"></i></label>
                                 <div class="col-sm-8">
-                                   
+
                                     <select class=" js-example-basic-single select2 form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddlCommand" required id="ddlCommand">
                                         <option value="0">Select Comd / PSO </option>
 
@@ -745,7 +747,7 @@
 
                                 <label class="col-form-label col-sm-4">Corps / Dte / Area<i class="fas fa-asterisk mand1"></i></label>
                                 <div class="col-sm-8">
-                                  
+
                                     <select class=" js-example-basic-single select2 form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddlCorps" required id="ddlCorps">
                                         <option value="0">Select Corps / Dte / Area </option>
 
@@ -758,7 +760,7 @@
 
                                 <label class="col-form-label col-sm-4">Div  /Branch / SubArea<i class="fas fa-asterisk mand1"></i></label>
                                 <div class="col-sm-8">
-                                    
+
                                     <select class=" js-example-basic-single select2 form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddlDiv" required id="ddlDiv">
                                         <option value="0">Select Div  /Branch / SubArea </option>
 
@@ -770,7 +772,7 @@
                             <div class="form-group row mb-2 unittype">
                                 <label class="col-form-label col-sm-4">Bde<i class="fas fa-asterisk mand1"></i></label>
                                 <div class="col-sm-8">
-                                    
+
                                     <select class=" js-example-basic-single select2 form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddlBde" required id="ddlBde">
                                         <option value="0">Select Bde </option>
 
@@ -840,7 +842,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLabel">Forward Record</h5>
-                
+
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -848,25 +850,25 @@
                     <div class="mt-2 ml-4">
                         <h5 class="card-title">Forward Request</h5>
                         <div class="row">
-                    <div class="form-group row mb-2">
-                        <label class="col-form-label col-sm-4">Army No</label>
-                        <div class="col-sm-8">
+                            <div class="form-group row mb-2">
+                                <label class="col-form-label col-sm-4">Army No</label>
+                                <div class="col-sm-8">
 
-                            <label class="form-control spnFarmyno"></label>
+                                    <label class="form-control spnFarmyno"></label>
 
+                                </div>
+
+                            </div>
+                            <div class="form-group row mb-2">
+                                <label class="col-form-label col-sm-4">Name</label>
+                                <div class="col-sm-8">
+
+                                    <label class="form-control spnFname"></label>
+
+                                </div>
+
+                            </div>
                         </div>
-
-                    </div>
-                    <div class="form-group row mb-2">
-                        <label class="col-form-label col-sm-4">Name</label>
-                        <div class="col-sm-8">
-
-                            <label class="form-control spnFname"></label>
-
-                        </div>
-
-                    </div>
-                </div>
                     </div>
                 </div>
 
@@ -875,11 +877,11 @@
                         <h5 class="card-title">Forward To <label class="gsoio"></label></h5>
                         <span id="spnFwdToAspNetUsersId" class="d-none">0</span>
                         <span id="spnFwdToUsersId" class="d-none">0</span>
-                       @*  <span id="spnFwssusno" class="d-none">0</span>
+                        @*  <span id="spnFwssusno" class="d-none">0</span>
                         <span id="spnFrom" class="d-none">0</span>
                         <span id="spnForwardTo" class="d-none">0</span>*@
                         <span id="spnCurrentspnRequestId" class="d-none">0</span>
-                        <span id="spnStepCounter" class="d-none">0</span> 
+                        <span id="spnStepCounter" class="d-none">0</span>
                         <h5 class="card-title text-danger" id="ForwardDetails"></h5>
                         <div class="row HProfileDetails">
                             <div class="form-group row mb-2">
@@ -889,7 +891,7 @@
                                     <select class="form-control select3 select2-hidden-accessible" style="width: 100%;" tabindex="-1"
                                             aria-hidden="true" name="fwdoffrs" required id="ddlfwdoffrs">
                                         <option value="0">Select Offrs</option>
-                                       
+
                                     </select>
 
                                 </div>
@@ -897,18 +899,18 @@
                             </div>
                             <div class="form-group chkforserach">
                                 <div class="col-sm-12">
-                                <div class="form-check form-check-inline">
+                                    <div class="form-check form-check-inline">
                                         <input class="form-check-input" type="radio" name="Intoffrs" id="intoffsArmyNo">
-                                    <label class="form-check-label" for="intoffsArmyNo">
+                                        <label class="form-check-label" for="intoffsArmyNo">
                                             Army No
-                                    </label>
-                                </div>
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="Intoffrs" id="intoffName">
+                                        </label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="Intoffrs" id="intoffName">
                                         <label class="form-check-label" for="intoffName">
-                                        Name
-                                    </label>
-                                </div>
+                                            Name
+                                        </label>
+                                    </div>
                                     <div class="form-check form-check-inline">
                                         <input class="form-check-input" type="radio" name="Intoffrs" id="intoffDomainId">
                                         <label class="form-check-label" for="intoffName">
@@ -916,7 +918,8 @@
                                         </label>
                                     </div>
 
-                            </div> </div>
+                                </div>
+                            </div>
                             <div class="form-group row mb-2 serchfwd d-none">
                                 <label class="col-form-label col-sm-4">Army No/Offrs Name/DomainId</label>
                                 <div class="col-sm-8">
@@ -955,19 +958,19 @@
                             </div>
 
                             <div class="form-group row mb-2 Remarks d-none">
-                                    <label class="col-form-label col-sm-4">Select Remarks</label>
-                                    <div class="col-sm-8">
+                                <label class="col-form-label col-sm-4">Select Remarks</label>
+                                <div class="col-sm-8">
 
                                     <select class="form-control select3 select2-accessible" multiple="" placeholder="Please select a Remarks" style="width: 100%;" tabindex="-1" aria-hidden="true" name="Remarks" required id="ddlRemarks">
-                                        </select>
-                                    </div>
+                                    </select>
                                 </div>
-                            
+                            </div>
+
                             <div class="form-group row mb-2">
                                 <label class="col-form-label col-sm-4">Enter Remarks</label>
                                 <div class="col-sm-8">
                                     <textarea class="form-control" id="txtFRemarks" rows="3"></textarea>
-                               
+
                                 </div>
 
                             </div>
@@ -977,7 +980,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-               
+
                 <button type="button" class="btn btn-primary" id="btnForward">Forward</button>
             </div>
         </div>
@@ -997,10 +1000,10 @@
             <div class="modal-body">
                 <div class="card">
                     <div class="row ">
-                      
-                       
-                                <div class="col-md-12 mb-3">
-                                 <div class="feature-box3 h-100 shadow-lg p-3 mb-3 bg-body rounded">
+
+
+                        <div class="col-md-12 mb-3">
+                            <div class="feature-box3 h-100 shadow-lg p-3 mb-3 bg-body rounded">
                                 <div class="top-block_ind d-flex">
 
                                     <div class="text-block">
@@ -1009,29 +1012,29 @@
                                     </div>
                                 </div>
                                 <div class="row">
-                                <div class="col-md-8">
-                                    <div class="form-group row mb-0">
-                                        <label class="col-form-label col-5 text-left">Name</label>
-                                        <div class="col-7"><label class="form-control-plaintext b text-black" id="lblfdName"></label></div>
-                                    </div>
-                                    <div class="form-group row mb-0">
-                                        <label class="col-form-label col-5 text-left">Rank</label>
-                                        <div class="col-7">
-                                            <label class="form-control-plaintext" id="lblfdRank"></label>
+                                    <div class="col-md-8">
+                                        <div class="form-group row mb-0">
+                                            <label class="col-form-label col-5 text-left">Name</label>
+                                            <div class="col-7"><label class="form-control-plaintext b text-black" id="lblfdName"></label></div>
                                         </div>
-                                    </div>
-                                    <div class="form-group row mb-0">
-                                        <label class="col-form-label col-5 text-left">Arm / Service</label>
-                                        <div class="col-7">
-                                            <label class="form-control-plaintext" id="lblLfdarm"></label>
+                                        <div class="form-group row mb-0">
+                                            <label class="col-form-label col-5 text-left">Rank</label>
+                                            <div class="col-7">
+                                                <label class="form-control-plaintext" id="lblfdRank"></label>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="form-group row mb-0">
-                                        <label class="col-form-label col-5 text-left">Army No</label>
-                                        <div class="col-7">
-                                            <label class="form-control-plaintext" id="lblfdArmyNo"></label>
+                                        <div class="form-group row mb-0">
+                                            <label class="col-form-label col-5 text-left">Arm / Service</label>
+                                            <div class="col-7">
+                                                <label class="form-control-plaintext" id="lblLfdarm"></label>
+                                            </div>
                                         </div>
-                                    </div>
+                                        <div class="form-group row mb-0">
+                                            <label class="col-form-label col-5 text-left">Army No</label>
+                                            <div class="col-7">
+                                                <label class="form-control-plaintext" id="lblfdArmyNo"></label>
+                                            </div>
+                                        </div>
                                         <div class="form-group row mb-0">
                                             <label class="col-form-label col-5 text-left">Date of Birth</label>
                                             <div class="col-7">
@@ -1081,22 +1084,22 @@
                                             </div>
                                         </div>
                                     </div>
-                                 <div class="col-md-4">
-                                    <div class="form-group row mb-0 ">
-                                        <div class="col-12 text-center">
-                                            <img src="~/images/user4.png" width="200" id="basicphotos" class="border border-primary p-2" />
+                                    <div class="col-md-4">
+                                        <div class="form-group row mb-0 ">
+                                            <div class="col-12 text-center">
+                                                <img src="~/images/user4.png" width="200" id="basicphotos" class="border border-primary p-2" />
 
-                                            <h6 class="mb-1 text-font2 font-weight500 text-center PersName"></h6>
-                                            @*  <div class="text-left"> <img src="~/images/rank/brigadier.svg" id="imgrank" height="100px" /></div> *@
+                                                <h6 class="mb-1 text-font2 font-weight500 text-center PersName"></h6>
+                                                @*  <div class="text-left"> <img src="~/images/rank/brigadier.svg" id="imgrank" height="100px" /></div> *@
+                                            </div>
+                                        </div>
+                                        <div class="form-group row mb-0 ">
+                                            <div class="col-12 text-center">
+                                                <img src="~/images/signature.png" width="200" height="100" id="Basicsing" class="border border-primary p-2" />
+                                                @*<label class="col-form-label recectopt text-left ">Select Rejection Reasons for Signature</label>*@
+                                            </div>
                                         </div>
                                     </div>
-                                    <div class="form-group row mb-0 ">
-                                        <div class="col-12 text-center">
-                                            <img src="~/images/signature.png" width="200" height="100" id="Basicsing" class="border border-primary p-2" />
-                                            @*<label class="col-form-label recectopt text-left ">Select Rejection Reasons for Signature</label>*@
-                                        </div>
-                                    </div>
-                                 </div>
 
                                     <div class="col-md-12">
                                         <div class="form-group row mb-0">
@@ -1107,7 +1110,7 @@
                                         </div>
 
 
-                                        
+
                                         <div class="form-group row mb-0">
                                             <label class="col-form-label col-4 text-left">Permt Address as per Service Records</label>
                                             <div class="col-8">
@@ -1136,22 +1139,22 @@
                                         </div>
 
                                     </div>
-                                 </div>
+                                </div>
                             </div>
-                           </div>
-                              
+                        </div>
 
-                      
-                       @*  <div class="col-md-12 mb-3 ml-3">
+
+
+                        @*  <div class="col-md-12 mb-3 ml-3">
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
-                            <label class="form-check-label" for="inlineCheckbox1">Rejected</label>
+                        <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
+                        <label class="form-check-label" for="inlineCheckbox1">Rejected</label>
                         </div>
                         </div> *@
                     </div>
                 </div>
 
-                
+
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -1176,35 +1179,35 @@
                 <div class="timeline timeline-xs" id="RequestHistory">
                     <!-- Timeline Item 1-->
                     @* <div class="timeline-item">
-                        <div class="timeline-item-marker">
-                            <div class="timeline-item-marker-text">27 min</div>
-                            <div class="timeline-item-marker-indicator bg-primary"></div>
-                        </div>
-                        <div class="timeline-item-content">
-                            FWD to  IO
-                            
-                        </div>
+                    <div class="timeline-item-marker">
+                    <div class="timeline-item-marker-text">27 min</div>
+                    <div class="timeline-item-marker-indicator bg-primary"></div>
+                    </div>
+                    <div class="timeline-item-content">
+                    FWD to  IO
+
+                    </div>
                     </div>
                     <div class="timeline-item">
-                        <div class="timeline-item-marker">
-                            <div class="timeline-item-marker-text">27 min</div>
-                            <div class="timeline-item-marker-indicator bg-warning"></div>
-                        </div>
-                        <div class="timeline-item-content">
-                            Approved FROM IO
-                            
-                        </div>
+                    <div class="timeline-item-marker">
+                    <div class="timeline-item-marker-text">27 min</div>
+                    <div class="timeline-item-marker-indicator bg-warning"></div>
+                    </div>
+                    <div class="timeline-item-content">
+                    Approved FROM IO
+
+                    </div>
                     </div>
                     <div class="timeline-item">
-                        <div class="timeline-item-marker">
-                            <div class="timeline-item-marker-text">27 min</div>
-                            <div class="timeline-item-marker-indicator bg-danger"></div>
-                        </div>
-                        <div class="timeline-item-content">
-                            Reject From GSO
-                        </div>
+                    <div class="timeline-item-marker">
+                    <div class="timeline-item-marker-text">27 min</div>
+                    <div class="timeline-item-marker-indicator bg-danger"></div>
+                    </div>
+                    <div class="timeline-item-content">
+                    Reject From GSO
+                    </div>
                     </div> *@
-                   
+
                 </div>
             </div>
 
@@ -1216,19 +1219,19 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLabel">Serach ArmyNo</h5>
-                
+
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             @* <input type="hidden" id="armynosearchAllBasicId"> *@
             <div class="modal-body text-center">
                 <div class="row">
-                <div class="col-md-2">
-                    <img id="armynosearchAllpic" class="armynosearchAllpic">
-                </div>
-                <div class="col-md-10">
-                 <input type="text" id="txtarmynosearchAll" placeholder="Eneter Army No" class="form-control " />
-                 <label class="form-label mt-4" id="armynosearchAllName"></label>
-                </div>
+                    <div class="col-md-2">
+                        <img id="armynosearchAllpic" class="armynosearchAllpic">
+                    </div>
+                    <div class="col-md-10">
+                        <input type="text" id="txtarmynosearchAll" placeholder="Eneter Army No" class="form-control " />
+                        <label class="form-label mt-4" id="armynosearchAllName"></label>
+                    </div>
                 </div>
             </div>
             <div class="modal-footer">

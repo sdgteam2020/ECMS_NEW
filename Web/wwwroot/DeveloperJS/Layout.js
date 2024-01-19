@@ -137,6 +137,7 @@ function Getaspntokenarmyno() {
                   //  alert("Plase Add Profile")
                 }
                 else {
+                    $("#IpaddresGloble").html(response.IpAddress)
                     $("#aspntokenarmyno").html(response.ICNO)
                     $("#aspndomainUnitID").html(response.UnitId)
                 }

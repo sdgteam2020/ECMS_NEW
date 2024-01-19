@@ -19194,11 +19194,12 @@ div.tagsinput span.tag a {
     text-align: center;
 }
 
-.navbar .navbar-brand-wrapper .brand-logo-mini img {
-  width: calc(70px - 30px);
-  max-width: 100%;
-  margin: auto;
-}
+    .navbar .navbar-brand-wrapper .brand-logo-mini img {
+     /*   width: calc(70px - 30px);*/
+        height: 30px;
+        max-width: 100%;
+        margin: auto;
+    }
 
 .navbar .navbar-menu-wrapper {
   background: #ffffff;

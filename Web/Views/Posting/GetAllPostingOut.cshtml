@@ -1,8 +1,11 @@
 ﻿@model IEnumerable<DataTransferObject.Response.DTOPostingOutDetilsResponse>
 
 @{
+
     ViewData["Title"] = "GetAllPostingOut";
 }
+<script src="https://cdn.rawgit.com/eKoopmans/html2pdf/0.9.2/dist/html2pdf.bundle.js"></script>
+
 <div class="container1">
     <div class="card mb-3 ">
         <div class="card-header">
@@ -32,7 +35,7 @@
                             @*   Total Units <span id="lblTotal" class="ml-3 border border-light b px-2 py-1">0</span> *@
                         </h6>
                         <div class="d-flex">
-                          @*   <label class="form-label mr-2">From</label>
+                            @*   <label class="form-label mr-2">From</label>
                             <input type="date" class="form-control mr-2" id="FmDate" />
                             <label class="form-label mr-2">To</label>
                             <input type="date" class="form-control ml-2" id="ToDate" /> *@
@@ -40,70 +43,69 @@
                         </div>
 
                     </div>
-<table class="table border border-purple table-striped no-footer dataTable table-hover" role="grid" id="tbldatatabledata">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Reason)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Authority)
-            </th>
-            <th>  SOS Date</th>
-            <th>Posting Out Date </th>
-            <th> From Domain Id</th>
-            <th>From Unit Name </th>
-            <th>From Army NO</th>
-            <th>To DomainId</th>
-            <th>To Unit Name</th>
-             <th>To Army NO</th>
-          
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Reason)
-            </td>
-            <td>
-               
-                @Html.DisplayFor(modelItem => item.Authority)
-            </td>
-            <td>
-               @Html.DisplayFor(modelItem => item.SOSDate)
-            </td>
-            <td>
-              @Html.DisplayFor(modelItem => item.UpdatedOn)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.FromDomainId)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.FromUnitName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.FromArmyNO)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ToDomainId)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ToUnitName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ToArmyNO)
-            </td>
-           
-        </tr>
-}
-    </tbody>
-</table>
+                    <table class="table border border-purple table-striped no-footer dataTable table-hover" role="grid" id="tbldatatabledata">
+                        <thead>
+                            <tr>
+                                <th>Ser No</th>
+                                <th>Updated Dt</th>
+                                <th>Army No + Name</th>
+                                <th>Reason</th>
+                                <th>SOS Dt</th>
+                                <th>From Unit+Domain ID</th>
+                                <th>To Unit+Domain ID</th>
+                                <th>Auth</th>
 
-                </div>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{
+                                int asrl = 0;
+                            }
+                            @foreach (var item in Model)
+                            {
+                                asrl++;
+                                <tr>
+
+                                    <td> @asrl </td>
+                                    <td> @Html.DisplayFor(modelItem => item.UpdatedOn)</td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.FromArmyNO)
+
+                                        @Html.DisplayFor(modelItem => item.FromRankName)
+                                        @Html.DisplayFor(modelItem => item.FromName)
+
+                                        @* @Html.DisplayFor(modelItem => item.FromDomainId) *@
+                                    </td>
+                                    <td>
+
+                                        @Html.DisplayFor(modelItem => item.Reason)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.SOSDate)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.FromUnitName) <br />
+                                        @Html.DisplayFor(modelItem => item.FromDomainId) <br />
+
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.ToUnitName) <br />
+                                        @Html.DisplayFor(modelItem => item.ToDomainId) <br />
+                                    </td>
+
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Authority)
+                                    </td>
+
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+
                 </div>
             </div>
         </div>
-
     </div>
+
+</div>
 </div>
