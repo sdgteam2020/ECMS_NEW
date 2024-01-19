@@ -182,21 +182,29 @@
     });
 
     $(".form-check-input").click(function () {
-        var val = $("input[type='radio']:checked").val();
+
+        var lst = '<option value="1">Please Select</option>';
+        var val = $("input[type='radio'][name=UnitTyperdi]:checked").val();
         if (val == "1") {
             $(".unittype").removeClass("d-none");
             $(".FmnBranch").addClass("d-none");
             $(".DteBranch").addClass("d-none");
             mMsater(0, "ddlCommand", 1, "");
-            $("#ddlFmnBranch").val(1);
-            $("#ddlPSODte").val(1);
-            $("#ddlDgSubDte").val(1);
+
+
+            $("#ddlFmnBranch").html(lst);
+            $("#ddlPSODte").html(lst);
+            $("#ddlDgSubDte").html(lst);
+          
         }
         else if (val == "2") {
             mMsater(0, "ddlCommand", 1, "");
             mMsater(0, "ddlFmnBranch", FmnBranches, "");
-            $("#ddlPSODte").val(1);
-            $("#ddlDgSubDte").val(1);
+
+
+            $("#ddlPSODte").html(lst);
+            $("#ddlDgSubDte").html(lst);
+            
             $(".unittype").removeClass("d-none");
             $(".FmnBranch").removeClass("d-none");
             $(".DteBranch").addClass("d-none");
@@ -205,9 +213,10 @@
             $(".unittype").addClass("d-none");
             $(".FmnBranch").addClass("d-none");
             $(".DteBranch").removeClass("d-none");
-            $("#ddlFmnBranch").val(1);
 
-            var lst = '<option value="1">Please Select</option>';
+            $("#ddlFmnBranch").html(lst);
+          
+           
 
             $("#ddlCommand").html(lst);
             $("#ddlCorps").html(lst);
@@ -219,6 +228,8 @@
             mMsater(0, "ddlDgSubDte", SubDte, "");
 
         }
+
+     
     });
 });
 
@@ -353,7 +364,6 @@ function GetNameByApptId(param1) {
 
 function ProceedUnitSave() {
     let formId = '#SaveUnitWithMap';
-    ValidateDDLBasedUnitType();
     $.validator.unobtrusive.parse($(formId));
 
     if ($(formId).valid()) {
@@ -451,7 +461,6 @@ function UnitSave() {
     });
 }
 function Reset() {
-
     $("#spnDomainRegId").html("0");
     $("#txtSusno").val(""); 
     $("#txtUnit").val("");
@@ -459,14 +468,17 @@ function Reset() {
     $("#ddlCorps").val("");
     $("#ddlDiv").val("");
     $("#ddlBde").val("");
-    $("#ddlFmnBranch").val("1");
-    $("#ddlPSODte").val("1");
-    $("#ddlDgSubDte").val("1");
 
     $("#UnitType1").prop("checked", true);
     $(".unittype").removeClass("d-none");
     $(".FmnBranch").addClass("d-none");
     $(".DteBranch").addClass("d-none");
+    mMsater(0, "ddlCommand", 1, "");
+
+    var lst = '<option value="1">Please Select</option>';
+    $("#ddlFmnBranch").html(lst);
+    $("#ddlPSODte").html(lst);
+    $("#ddlDgSubDte").html(lst);
 }
 function ResetErrorMessage() {
     $("#txtSusno-error").html("");
@@ -478,16 +490,4 @@ function ResetErrorMessage() {
     $("#ddlFmnBranch-error").html("");
     $("#ddlPSODte-error").html("");
     $("#ddlDgSubDte-error").html("");
-}
-function ValidateDDLBasedUnitType() {
-    //var val = $("input[type='radio'][name=UnitTyperdi]:checked").val();
-    //if (val == "3") {
-    //    if ($("#ddlFmnBranch").val() == 1 || $("#ddlFmnBranch").val() == 0) {
-    //        $("#ddlFmnBranch-error").html("Type of Fmn /Branch is required.");
-    //        $("#ddlFmnBranch").val(null)
-    //    }
-    //    else {
-    //        $("#ddlFmnBranch-error").html("");
-    //    }
-    //}
 }

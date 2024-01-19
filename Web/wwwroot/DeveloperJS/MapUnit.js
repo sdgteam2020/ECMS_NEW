@@ -4,6 +4,7 @@ $(document).ready(function () {
 
 
     $(".form-check-input").click(function () {
+        var lst = '<option value="1">Please Select</option>';
         var val = $("input[type='radio']:checked").val();
         if (val == "1") {
             $(".unittype").removeClass("d-none");
@@ -12,22 +13,19 @@ $(document).ready(function () {
             mMsater(0, "ddlCommand", 1, "");
 
 
-            $("#ddlFmnBranch").html('<option value="">Please Select</option>');
-            $("#ddlPSODte").html('<option value="">Please Select</option>');
-            $("#ddlDgSubDte").html('<option value="">Please Select</option>');
-            $("#ddlFmnBranch").val(1);
-            $("#ddlPSODte").val(1);
-            $("#ddlDgSubDte").val(1);
+            $("#ddlFmnBranch").html(lst);
+            $("#ddlPSODte").html(lst);
+            $("#ddlDgSubDte").html(lst);
+
         }
         else if (val == "2") {
             mMsater(0, "ddlCommand", 1, "");
             mMsater(0, "ddlFmnBranch", FmnBranches, "");
 
-            
-            $("#ddlPSODte").html('<option value="">Please Select</option>');
-            $("#ddlDgSubDte").html('<option value="">Please Select</option>');
-            $("#ddlPSODte").val(1);
-            $("#ddlDgSubDte").val(1);
+
+            $("#ddlPSODte").html(lst);
+            $("#ddlDgSubDte").html(lst);
+
             $(".unittype").removeClass("d-none");
             $(".FmnBranch").removeClass("d-none");
             $(".DteBranch").addClass("d-none");
@@ -36,10 +34,10 @@ $(document).ready(function () {
             $(".unittype").addClass("d-none");
             $(".FmnBranch").addClass("d-none");
             $(".DteBranch").removeClass("d-none");
-           
-            $("#ddlFmnBranch").html('<option value="">Please Select</option>');
-            $("#ddlFmnBranch").val(1);
-            var lst = '<option value="1">Please Select</option>';
+
+            $("#ddlFmnBranch").html(lst);
+
+
 
             $("#ddlCommand").html(lst);
             $("#ddlCorps").html(lst);
@@ -49,7 +47,7 @@ $(document).ready(function () {
 
             mMsater(0, "ddlPSODte", PSO, "");
             mMsater(0, "ddlDgSubDte", SubDte, "");
-            
+
         }
     });
     $("#btnMapUnitAdd").click(function () {
@@ -271,35 +269,33 @@ function BindDataMapUnit() {
 
                         listItem += "<tr>";
                         listItem += "<td class='d-none'><span id='spnMapUnitId'>" + response[i].UnitMapId + "</span><span id='spnMUnitId'>" + response[i].UnitId + "</span><span id='spnMbdeId'>" + response[i].BdeId + "</span><span id='spnMDivId'>" + response[i].DivId + "</span>";
-                        listItem += "<span id='spnMcorpsId'>" + response[i].CorpsId + "</span><span id='spncomdId'>" + response[i].ComdId + "</span><span id='spnUnitType'>" + response[i].UnitType + "</span><span id='spnPsoId'>" + response[i].PsoId + "</span><span id='spnFmnBranchID'>" + response[i].FmnBranchID + "</span><span id='spnSubDteId'>" + response[i].SubDteId + "</span></td>";
-                        listItem += "<td>";
-                        listItem += "<div class='custom-control custom-checkbox small'>";
-                        listItem += "<input type='checkbox' class='custom-control-input' id='" + response[i].UnitMapId + "'>";
-                        listItem += "<label class='custom-control-label' for='" + response[i].UnitMapId + "'></label>";
-                        listItem += "</div>";
-                        listItem += "</td>";
+                        listItem += "<span id='spnMcorpsId'>" + response[i].CorpsId + "</span><span id='spncomdId'>" + response[i].ComdId + "</span><span id='spnUnitType'>" + response[i].UnitType + "</span><span id='spnPsoId'>" + response[i].PsoId + "</span><span id='spnFmnBranchID'>" + response[i].FmnBranchID + "</span><span id='spnSubDteId'>" + response[i].SubDteId + "</span><span id='spanIsVerify'>" + response[i].IsVerify + " </span></td>";
                         listItem += "<td class='align-middle'>" + (i + 1) + "</td>";
-                       
-                        listItem += "<td class='align-middle'><span id='comdName'>" + response[i].ComdName + "</span></td>";
-                        listItem += "<td class='align-middle'><span id='corpsName'>" + response[i].CorpsName + "</span></td>";
-                        listItem += "<td class='align-middle'><span id='divName'>" + response[i].DivName + "</span></td>";
-                        listItem += "<td class='align-middle'><span id='bdeName'>" + response[i].BdeName + "</span></td>";
+                        listItem += "<td class='align-middle'><span id='Sus_no'>" + response[i].Sus_no + response[i].Suffix + "</span></td>";
+                        listItem += "<td class='align-middle'><span id='unitName'>" + response[i].UnitName + "</span></td>";
+
                         if (parseInt(response[i].UnitType) == 1) {
-                            listItem += "<td class='align-middle'><span class='badge bg-danger'></span></td>";
+                            listItem += "<td class='align-middle'><span class='badge bg-primary'>Unit</span></td>";
                         }
                         else if (parseInt(response[i].UnitType) == 2) {
-                            listItem += "<td class='align-middle'><span class='badge bg-primary'>Unit is Fmn HQ</span></td>";
+                            listItem += "<td class='align-middle'><span class='badge bg-primary'>Fmn HQ</span></td>";
 
                         } else if (parseInt(response[i].UnitType) == 3) {
-                            listItem += "<td class='align-middle'><span class='badge bg-primary'>Unit is Dte/Branch</span></td>";
-
+                            listItem += "<td class='align-middle'><span class='badge bg-primary'>Dte/Br</span></td>";
                         }
+                        listItem += "<td class='align-middle'><span id='bdeName'>" + response[i].BdeName + "</span></td>";
+                        listItem += "<td class='align-middle'><span id='divName'>" + response[i].DivName + "</span></td>";
+                        listItem += "<td class='align-middle'><span id='corpsName'>" + response[i].CorpsName + "</span></td>";
+                        listItem += "<td class='align-middle'><span id='comdName'>" + response[i].ComdName + "</span></td>";
                         listItem += "<td class='align-middle'><span id='BranchName'>" + response[i].BranchName + "</span></td>";
-                        listItem += "<td class='align-middle'><span id='PSOName'>" + response[i].PSOName + "</span></td>";
                         listItem += "<td class='align-middle'><span id='SubDteName'>" + response[i].SubDteName + "</span></td>";
+                        listItem += "<td class='align-middle'><span id='PSOName'>" + response[i].PSOName + "</span></td>";
 
-                        listItem += "<td class='align-middle'><span id='unitName'>" + response[i].UnitName + "</span></td>";
-                        listItem += "<td class='align-middle'><span id='Sus_no'>" + response[i].Sus_no + response[i].Suffix + "</span></td>";
+                        if (response[i].IsVerify == true)
+                            listItem += "<td class='align-middle'><span id='unit_desc'><span class='badge badge-pill badge-success'>Verifed</span></span></td>";
+                        else
+                            listItem += "<td class='align-middle'><span id='unit_desc'><span class='badge badge-pill badge-danger'>Not Verify</span></span></td>";
+
                         listItem += "<td class='align-middle'><span id='btnedit'><button type='button' class='cls-btnedit btn btn-icon btn-round btn-primary mr-1'><i class='fas fa-edit'></i></button></span><button type='button' class='cls-btnDelete btn-icon btn-round btn-danger mr-1'><i class='fas fa-trash-alt'></i></button></td>";
 
                        
@@ -314,7 +310,7 @@ function BindDataMapUnit() {
                         retrieve: true,
                         lengthChange: false,
                         searching: false,
-                        "order": [[2, "asc"]],
+                        "order": [[1, "asc"]],
                         buttons: [{
                             extend: 'copy',
                             exportOptions: {
@@ -403,6 +399,12 @@ function BindDataMapUnit() {
                             $("#ddlCorps").html(lst);
                             $("#ddlBde").html(lst);
                             $("#ddlDiv").html(lst);
+                        }
+                        if ($(this).closest("tr").find("#spanIsVerify").html() == 'true') {
+                            $("#isverifyyes").prop("checked", true);
+                        }
+                        else {
+                            $("#isverifyno").prop("checked", true);
                         }
                        
                         $("#AddNewUnitmap").modal('show');

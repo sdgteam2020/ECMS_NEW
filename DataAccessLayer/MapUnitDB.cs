@@ -58,6 +58,7 @@ namespace DataAccessLayer
                        {
                            UnitMapId= uni.UnitMapId,
                            UnitName = MUni.UnitName,
+                           IsVerify = MUni.IsVerify,
                            UnitId = uni.UnitId,
                            BdeId = bde.BdeId,  
                            BdeName = bde.BdeName,   
@@ -77,7 +78,7 @@ namespace DataAccessLayer
                            SubDteId=SubDte.SubDteId,
                            SubDteName=SubDte.SubDteName,
                        }
-                     ).Distinct().Take(200).ToList(); ;
+                     ).Distinct().OrderByDescending(x=>x.UnitMapId).Take(200).ToList(); ;
 
 
 

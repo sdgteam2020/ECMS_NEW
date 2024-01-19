@@ -12,6 +12,7 @@ namespace DataTransferObject.Response
         public int UnitMapId { get; set; }
         public int UnitId { get; set; }
         public string UnitName { get; set; }
+        public bool IsVerify { get; set; }
         public int BdeId { get; set; }
         public string BdeName { get; set; }
         public int ComdId { get; set; }
