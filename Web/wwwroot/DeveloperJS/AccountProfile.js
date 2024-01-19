@@ -11,6 +11,7 @@
 
     $("#btnUnitMapReset").click(function () {
         Reset();
+        ResetErrorMessage();
     });
 
 
@@ -159,6 +160,8 @@
     });
 
     $("#btnAddUnit").click(function () {
+        Reset();
+        ResetErrorMessage();
         $("#AddNewUnitmap").modal('show');
     });
 
@@ -205,9 +208,9 @@
 
             $("#ddlCommand").html(lst);
             $("#ddlCorps").html(lst);
-            $("#ddlCorps").html(lst);
-            $("#ddlBde").html(lst);
             $("#ddlDiv").html(lst);
+            $("#ddlBde").html(lst);
+
 
             mMsater(0, "ddlPSODte", PSO, "");
             mMsater(0, "ddlDgSubDte", SubDte, "");
@@ -217,7 +220,6 @@
 });
 
 function Proceed() {
-    debugger;
     ResetErrorMessage();
     let formId = '#Profile';
     $.validator.unobtrusive.parse($(formId));
@@ -253,7 +255,6 @@ function Proceed() {
     }
 }
 function ValidateRadioButton() {
-    debugger
     if ($("input[type='radio'][name=IsIO]:checked").length == 0) {
         $("#IsIO-error").html("Initating Offr is required.");
     }
@@ -349,6 +350,7 @@ function GetNameByApptId(param1) {
 
 function ProceedUnitSave() {
     let formId = '#SaveUnitWithMap';
+    ValidateDDLBasedUnitType();
     $.validator.unobtrusive.parse($(formId));
 
     if ($(formId).valid()) {
@@ -402,7 +404,7 @@ function UnitSave() {
                 Swal.fire({
                     icon: 'info',
                     title: 'Unit',
-                    text: 'Unit has been saved.',
+                    html: 'Unit has been saved.<br/>Please wait Admin for necy Approval..',
                 })
                 $("#AddNewUnitmap").modal('hide');
                 Reset();
@@ -412,6 +414,14 @@ function UnitSave() {
                     icon: 'error',
                     title: 'Oops...',
                     text: 'Unit Name Exits!',
+                })
+
+            }
+            else if (result == 5) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    html: 'Unit Name Exits!.<br/>Please wait  Admin for necy Approval..',
                 })
 
             }
@@ -454,4 +464,26 @@ function Reset() {
     $(".unittype").removeClass("d-none");
     $(".FmnBranch").addClass("d-none");
     $(".DteBranch").addClass("d-none");
+}
+function ResetErrorMessage() {
+    $("#txtSusno-error").html("");
+    $("#txtUnit-error").html("");
+    $("#ddlCommand-error").html("");
+    $("#ddlCorps-error").html("");
+    $("#ddlDiv-error").html("");
+    $("#ddlBde-error").html("");
+    $("#ddlFmnBranch-error").html("");
+    $("#ddlPSODte-error").html("");
+    $("#ddlDgSubDte-error").html("");
+}
+function ValidateDDLBasedUnitType() {
+    var val = $("input[type='radio'][name=UnitTyperdi]:checked").val();
+    if (val == "3") {
+        if ($("#ddlFmnBranch").val() == 1 || $("#ddlFmnBranch").val() == 0) {
+            $("#ddlFmnBranch-error").html("Type of Fmn /Branch is required.");
+        }
+        else {
+            $("#ddlFmnBranch-error").html("");
+        }
+    }
 }

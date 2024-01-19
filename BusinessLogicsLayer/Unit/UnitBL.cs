@@ -32,9 +32,9 @@ namespace BusinessLogicsLayer.Unit
             return _UnitDB.GetByName(Data); 
         }
 
-        public Task<MUnit> GetBySusNo(MUnit Data)
+        public async Task<MUnit?> GetBySusNo(string Sus_no)
         {
-            return _UnitDB.GetBySusNo(Data.Sus_no+Data.Suffix);
+            return await _UnitDB.GetBySusNo(Sus_no);
         }
         public async Task<bool> FindSusNo(string Sus_no)
         {

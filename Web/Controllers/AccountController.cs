@@ -1392,7 +1392,19 @@ namespace Web.Controllers
                 if (ModelState.IsValid)
                 {
                     string Sus_no = dTO.Sus_no + dTO.Suffix;
-                    if (!await _iUnitBL.FindSusNo(Sus_no))
+                    MUnit? mUnit = await _iUnitBL.GetBySusNo(Sus_no);
+                    if(mUnit != null)
+                    {
+                        if(mUnit.IsVerify == true)
+                        {
+                            return Json(KeyConstants.Exists);
+                        }
+                        else
+                        {
+                            return Json(5);
+                        }
+                    }
+                    else
                     {
                         bool result = (bool)await _iAccountBL.SaveUnitWithMapping(dTO);
                         if (result == true)
@@ -1404,11 +1416,6 @@ namespace Web.Controllers
                             return Json(KeyConstants.InternalServerError);
                         }
                     }
-                    else
-                    {
-                        return Json(KeyConstants.Exists);
-                    }
-
                 }
                 else
                 {

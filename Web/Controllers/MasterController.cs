@@ -666,7 +666,7 @@ namespace Web.Controllers
         {
             try
             {
-                var ret = await unitOfWork.Unit.GetBySusNo(Data);
+                var ret = await unitOfWork.Unit.GetBySusNo(Data.Sus_no + Data.Suffix);
                 return Json(ret);
             }
             catch (Exception ex)

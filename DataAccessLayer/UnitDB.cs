@@ -38,9 +38,17 @@ namespace DataAccessLayer
             return ret;
         }
 
-        public async Task<MUnit> GetBySusNo(string Sus_no)
+        public async Task<MUnit?> GetBySusNo(string Sus_no)
         {
-            return _context.MUnit.Where(P => P.Sus_no + P.Suffix == Sus_no).FirstOrDefault();
+            try
+            {
+                return await _context.MUnit.Where(x => (x.Sus_no.ToUpper() + x.Suffix.ToUpper()) == Sus_no).FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "UnitDB->GetBySusNo");
+                return null;
+            }
         }
 
         public async Task<List<MUnit>> GetAllUnit(string UnitName)
