@@ -16,6 +16,7 @@ namespace BusinessLogicsLayer.Unit
         public Task<MUnit?> GetBySusNo(string Sus_no); 
         public Task<List<MUnit>> GetAllUnit(string Sus_no);
         public Task<bool> FindSusNo(string Sus_no);
+        public Task<bool?> GetBySusNoWithUnitId(string Sus_no, int UnitId);
     }
 }
 

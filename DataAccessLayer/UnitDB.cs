@@ -50,6 +50,18 @@ namespace DataAccessLayer
                 return null;
             }
         }
+        public async Task<bool?> GetBySusNoWithUnitId(string Sus_no,int UnitId)
+        {
+            try
+            {
+                return await _context.MUnit.AnyAsync(x => (x.Sus_no.ToUpper() + x.Suffix.ToUpper()) == Sus_no && x.UnitId !=UnitId);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "UnitDB->GetBySusNoWithUnitId");
+                return null;
+            }
+        }
 
         public async Task<List<MUnit>> GetAllUnit(string UnitName)
         {

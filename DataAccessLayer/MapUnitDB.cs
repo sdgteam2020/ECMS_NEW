@@ -228,7 +228,6 @@ namespace DataAccessLayer
                             mUnit.IsActive = true;
                             mUnit.Updatedby = dTO.Updatedby;
                             mUnit.UpdatedOn = dTO.UpdatedOn;
-                            mUnit.UnregdUserId = null;
                             
                             _context.MUnit.Update(mUnit);
                             await _context.SaveChangesAsync();
@@ -261,7 +260,52 @@ namespace DataAccessLayer
                     }
                     else if (dTO.UnitId > 0 && dTO.UnitMapId > 0)
                     {
+                        MUnit? mUnit = await _context.MUnit.FindAsync(dTO.UnitId);
+                        if (mUnit != null)
+                        {
+                            mUnit.Sus_no = dTO.Sus_no;
+                            mUnit.Suffix = dTO.Suffix;
+                            mUnit.UnitName = dTO.UnitName;
+                            mUnit.IsVerify = dTO.IsVerify;
+                            mUnit.IsActive = true;
+                            mUnit.Updatedby = dTO.Updatedby;
+                            mUnit.UpdatedOn = dTO.UpdatedOn;
 
+                            _context.MUnit.Update(mUnit);
+                            await _context.SaveChangesAsync();
+
+                            MapUnit? mapUnit = await _context.MapUnit.FindAsync(dTO.UnitMapId);
+                            if(mapUnit!=null)
+                            {
+
+                                mapUnit.UnitId = mUnit.UnitId;
+                                mapUnit.UnitType = dTO.UnitType;
+                                mapUnit.ComdId = dTO.ComdId;
+                                mapUnit.CorpsId = dTO.CorpsId;
+                                mapUnit.DivId = dTO.DivId;
+                                mapUnit.BdeId = dTO.BdeId;
+                                mapUnit.FmnBranchID = dTO.FmnBranchID;
+                                mapUnit.PsoId = dTO.PsoId;
+                                mapUnit.SubDteId = dTO.SubDteId;
+                                mapUnit.IsActive = true;
+                                mapUnit.Updatedby = dTO.Updatedby;
+                                mapUnit.UpdatedOn = dTO.UpdatedOn;
+
+                                _context.MapUnit.Update(mapUnit);
+                                await _context.SaveChangesAsync();
+                            }
+                            else
+                            {
+                                return false;
+                            }
+
+                            transaction.Commit();
+                            return true;
+                        }
+                        else
+                        {
+                            return false;
+                        }
                     }
                     else 
                     {

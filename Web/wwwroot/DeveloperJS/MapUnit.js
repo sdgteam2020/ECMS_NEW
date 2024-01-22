@@ -3,9 +3,9 @@ $(document).ready(function () {
     BindDataMapUnit()
 
 
-    $(".form-check-input").click(function () {
+    $('input[name="UnitTyperdi"]').click(function () {
         var lst = '<option value="1">Please Select</option>';
-        var val = $("input[type='radio']:checked").val();
+        var val = $("input[type='radio'][name=UnitTyperdi]:checked").val();
         if (val == "1") {
             $(".unittype").removeClass("d-none");
             $(".FmnBranch").addClass("d-none");
@@ -104,23 +104,23 @@ $(document).ready(function () {
                     }
 
                   
-                    if ($("#SpnUnitMapId").html() == 0) {
+                    //if ($("#SpnUnitMapId").html() == 0) {
 
-                        //$("#txtSusno").val().substring(0, 7), "UnitId": 0, "Suffix": $("#txtSusno").val().substring(8, 7),
-                        //alert($("#txtSusno").val().substring(8, 7))
-                        //alert(isNumeric($("#txtSusno").val().substring(8, 7)))
+                    //    //$("#txtSusno").val().substring(0, 7), "UnitId": 0, "Suffix": $("#txtSusno").val().substring(8, 7),
+                    //    //alert($("#txtSusno").val().substring(8, 7))
+                    //    //alert(isNumeric($("#txtSusno").val().substring(8, 7)))
 
-                        if (isNumeric($("#txtSusno").val().substring(0, 7)) == true && isNumeric($("#txtSusno").val().substring(8, 7)) == false) {
-                            UnitSave();
-                        }
-                        else {
-                            toastr.error('SUSNO Should be first 7 digit Numeric and last digit alphaBat!');
-                        }
-                        // 
+                    //    if (isNumeric($("#txtSusno").val().substring(0, 7)) == true && isNumeric($("#txtSusno").val().substring(8, 7)) == false) {
+                    //        UnitSave();
+                    //    }
+                    //    else {
+                    //        toastr.error('SUSNO Should be first 7 digit Numeric and last digit alphaBat!');
+                    //    }
+                    //    // 
                        
-                    } else {
-                        SaveUnitMap();
-                    }
+                    //} else {
+                    //    SaveUnitMap();
+                    //}
                 }
             })
 
@@ -173,14 +173,14 @@ $(document).ready(function () {
     });
    
 
-    $('#txtSusno').on('input', function () {
-        $("#txtUnit").val("");
-        $("#SpnUnitMapId").html(0);
-        $('#txtUnit').attr('readonly', false);
-        if ($(this).val().length > 7) {
-            GetUnitDetails($(this).val(),1);
-    }
-    });
+    //$('#txtSusno').on('input', function () {
+    //    $("#txtUnit").val("");
+    //    $("#SpnUnitMapId").html(0); spnUnitMapId
+    //    $('#txtUnit').attr('readonly', false);
+    //    if ($(this).val().length > 7) {
+    //        GetUnitDetails($(this).val(),1);
+    //}
+    //});
 });
 function GetUnitDetails(val,flag) {
     var userdata =
@@ -203,7 +203,7 @@ function GetUnitDetails(val,flag) {
                     });
                 }
                 else if (response == 0) {
-                    $("#txtUnit").val(""); $("#SpnUnitMapId").html(0); $('#txtUnit').attr('readonly', false);
+                    $("#txtUnit").val(""); $("#SpnUnitMapId").html(0); $('#txtUnit').attr('readonly', false); 
                 }
 
                 else {
@@ -484,10 +484,21 @@ function SaveUnitWithMapping() {
                 Swal.fire({
                     icon: 'info',
                     title: 'Unit',
-                    html: 'Unit has been saved.<br/>Please wait Admin for necy Approval..',
+                    html: 'Unit has been saved',
+                })
+                $("#AddNewUnitmap").modal('hide'); 
+                ResetMapUnit();
+                BindDataMapUnit();
+            }
+            else if (result == DataUpdate) {
+                Swal.fire({
+                    icon: 'info',
+                    title: 'Unit',
+                    html: 'Unit has been updated',
                 })
                 $("#AddNewUnitmap").modal('hide');
-                Reset();
+                ResetMapUnit();
+                BindDataMapUnit();
             }
             else if (result == DataExists) {
                 Swal.fire({
@@ -499,9 +510,9 @@ function SaveUnitWithMapping() {
             }
             else if (result == 5) {
                 Swal.fire({
-                    icon: 'error',
-                    title: 'Oops...',
-                    html: 'Unit Name Exits!.<br/>Please wait  Admin for necy Approval..',
+                    icon: 'info',
+                    title: 'Unit',
+                    html: 'Unit has been updated.<br/>Mapping has been saved.',
                 })
 
             }

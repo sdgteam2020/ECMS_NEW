@@ -463,40 +463,76 @@ namespace Web.Controllers
 
                 if (ModelState.IsValid)
                 {
+                    string Sus_no = dTO.Sus_no + dTO.Suffix;
                     if (dTO.UnitId > 0 && dTO.UnitMapId == 0)
                     {
-                        bool result = (bool)await unitOfWork.MappUnit.SaveUnitWithMapping(dTO);
-                        if (result == true)
+                        bool? CheckDuplicate = await unitOfWork.Unit.GetBySusNoWithUnitId(Sus_no, dTO.UnitId);
+                        if (CheckDuplicate == true)
                         {
-                            return Json(5);
+                            return Json(KeyConstants.Exists);
+
+                        }
+                        else if (CheckDuplicate == false)
+                        {
+                            bool result = (bool)await unitOfWork.MappUnit.SaveUnitWithMapping(dTO);
+                            if (result == true)
+                            {
+                                return Json(5);
+                            }
+                            else
+                            {
+                                return Json(KeyConstants.InternalServerError);
+                            }
                         }
                         else
                         {
                             return Json(KeyConstants.InternalServerError);
                         }
+
                     }
                     else if (dTO.UnitId > 0 && dTO.UnitMapId > 0)
                     {
-                        bool result = (bool)await unitOfWork.MappUnit.SaveUnitWithMapping(dTO);
-                        if (result == true)
+                        bool? CheckDuplicate = await unitOfWork.Unit.GetBySusNoWithUnitId(Sus_no, dTO.UnitId);
+                        if (CheckDuplicate == true)
                         {
-                            return Json(KeyConstants.Update);
+                            return Json(KeyConstants.Exists);
+
                         }
-                        else
+                        else if(CheckDuplicate == false)
+                        {
+                            bool result = (bool)await unitOfWork.MappUnit.SaveUnitWithMapping(dTO);
+                            if (result == true)
+                            {
+                                return Json(KeyConstants.Update);
+                            }
+                            else
+                            {
+                                return Json(KeyConstants.InternalServerError);
+                            }
+                        }
+                        else 
                         {
                             return Json(KeyConstants.InternalServerError);
                         }
                     }
                     else
                     {
-                        bool result = (bool)await unitOfWork.MappUnit.SaveUnitWithMapping(dTO);
-                        if (result == true)
+                        MUnit? mUnit = await unitOfWork.Unit.GetBySusNo(Sus_no);
+                        if(mUnit == null)
                         {
-                            return Json(KeyConstants.Save);
+                            bool result = (bool)await unitOfWork.MappUnit.SaveUnitWithMapping(dTO);
+                            if (result == true)
+                            {
+                                return Json(KeyConstants.Save);
+                            }
+                            else
+                            {
+                                return Json(KeyConstants.InternalServerError);
+                            }
                         }
                         else
                         {
-                            return Json(KeyConstants.InternalServerError);
+                            return Json(KeyConstants.Exists);
                         }
                     }
                 }
