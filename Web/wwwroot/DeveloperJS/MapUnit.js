@@ -96,6 +96,13 @@ $(document).ready(function () {
                 confirmButtonText: 'Yes, Save it!'
             }).then((result) => {
                 if (result.isConfirmed) {
+                    if (isNumeric($("#txtSusno").val().substring(0, 7)) == true && isNumeric($("#txtSusno").val().substring(8, 7)) == false) {
+                        SaveUnitWithMapping();
+                    }
+                    else {
+                        toastr.error('SUSNO Should be first 7 digit Numeric and last digit alphaBat!');
+                    }
+
                   
                     if ($("#SpnUnitMapId").html() == 0) {
 
@@ -262,14 +269,12 @@ function BindDataMapUnit() {
                 }
                 
                 else {
-
                   
-                   
                     for (var i = 0; i < response.length; i++) {
 
                         listItem += "<tr>";
                         listItem += "<td class='d-none'><span id='spnMapUnitId'>" + response[i].UnitMapId + "</span><span id='spnMUnitId'>" + response[i].UnitId + "</span><span id='spnMbdeId'>" + response[i].BdeId + "</span><span id='spnMDivId'>" + response[i].DivId + "</span>";
-                        listItem += "<span id='spnMcorpsId'>" + response[i].CorpsId + "</span><span id='spncomdId'>" + response[i].ComdId + "</span><span id='spnUnitType'>" + response[i].UnitType + "</span><span id='spnPsoId'>" + response[i].PsoId + "</span><span id='spnFmnBranchID'>" + response[i].FmnBranchID + "</span><span id='spnSubDteId'>" + response[i].SubDteId + "</span><span id='spanIsVerify'>" + response[i].IsVerify + " </span></td>";
+                        listItem += "<span id='spnMcorpsId'>" + response[i].CorpsId + "</span><span id='spncomdId'>" + response[i].ComdId + "</span><span id='spnUnitType'>" + response[i].UnitType + "</span><span id='spnPsoId'>" + response[i].PsoId + "</span><span id='spnFmnBranchID'>" + response[i].FmnBranchID + "</span><span id='spnSubDteId'>" + response[i].SubDteId + "</span><span id='spnIsVerify'>" + response[i].IsVerify + "</span></td>";
                         listItem += "<td class='align-middle'>" + (i + 1) + "</td>";
                         listItem += "<td class='align-middle'><span id='Sus_no'>" + response[i].Sus_no + response[i].Suffix + "</span></td>";
                         listItem += "<td class='align-middle'><span id='unitName'>" + response[i].UnitName + "</span></td>";
@@ -364,9 +369,9 @@ function BindDataMapUnit() {
                         mMsater($(this).closest("tr").find("#spnPsoId").html(), "ddlPSODte", PSO, "");
                         mMsater($(this).closest("tr").find("#spnSubDteId").html(), "ddlDgSubDte", SubDte,"" );
                         mMsater($(this).closest("tr").find("#spnFmnBranchID").html(), "ddlFmnBranch", FmnBranches, "");
-                        $("#spnUnitMapUnitId").html($(this).closest("tr").find("#spnMapUnitId").html());
+                        $("#spnUnitMapId").html($(this).closest("tr").find("#spnMapUnitId").html());
 
-                        $("#SpnUnitMapId").html($(this).closest("tr").find("#spnMUnitId").html());
+                        $("#spnUnitId").html($(this).closest("tr").find("#spnMUnitId").html());
 
                         $("#txtUnit").val($(this).closest("tr").find("#unitName").html());
                         $("#txtSusno").val($(this).closest("tr").find("#Sus_no").html());
@@ -400,7 +405,7 @@ function BindDataMapUnit() {
                             $("#ddlBde").html(lst);
                             $("#ddlDiv").html(lst);
                         }
-                        if ($(this).closest("tr").find("#spanIsVerify").html() == 'true') {
+                        if ($(this).closest("tr").find("#spnIsVerify").html() == 'true') {
                             $("#isverifyyes").prop("checked", true);
                         }
                         else {
@@ -453,6 +458,74 @@ function BindDataMapUnit() {
         }
     });
 
+}
+function SaveUnitWithMapping() {
+    $.ajax({
+        url: '/Master/SaveUnitWithMapping',
+        type: 'POST',
+        data: {
+            "UnitId": $("#spnUnitId").html(),
+            "UnitMapId": $("#spnUnitMapId").html(),
+            "Sus_no": $("#txtSusno").val().substring(0, 7),
+            "Suffix": $("#txtSusno").val().substring(8, 7),
+            "UnitName": $("#txtUnit").val(),
+            "IsVerify": $("input[type='radio'][name=IsVerify]:checked").val(),
+            "UnitType": $("input[type='radio'][name=UnitTyperdi]:checked").val(),
+            "ComdId": $("#ddlCommand").val(),
+            "CorpsId": $("#ddlCorps").val(),
+            "DivId": $("#ddlDiv").val(),
+            "BdeId": $("#ddlBde").val(),
+            "PsoId": $("#ddlPSODte").val(),
+            "FmnBranchID": $("#ddlFmnBranch").val(),
+            "SubDteId": $("#ddlDgSubDte").val()
+        },
+        success: function (result) {
+            if (result == DataSave) {
+                Swal.fire({
+                    icon: 'info',
+                    title: 'Unit',
+                    html: 'Unit has been saved.<br/>Please wait Admin for necy Approval..',
+                })
+                $("#AddNewUnitmap").modal('hide');
+                Reset();
+            }
+            else if (result == DataExists) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Unit Name Exits!',
+                })
+
+            }
+            else if (result == 5) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    html: 'Unit Name Exits!.<br/>Please wait  Admin for necy Approval..',
+                })
+
+            }
+            else if (result == InternalServerError) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Something went wrong or Invalid Entry!',
+
+                })
+
+            } else {
+                if (result.length > 0) {
+                    for (var i = 0; i < result.length; i++) {
+                        toastr.error(result[i][0].ErrorMessage)
+                    }
+
+
+                }
+
+
+            }
+        }
+    });
 }
 
 function UnitSave() {

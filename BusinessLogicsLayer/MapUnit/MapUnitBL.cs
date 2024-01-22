@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using DataTransferObject.Response;
 using DataTransferObject.Requests;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace BusinessLogicsLayer.Unit
 {
@@ -44,6 +45,10 @@ namespace BusinessLogicsLayer.Unit
         public Task<bool> GetByName(MapUnit Data)
         {
             return _UnitDB.GetByName(Data); 
+        }
+        public async Task<bool?> SaveUnitWithMapping(DTOSaveUnitWithMappingByAdminRequest dTO)
+        {
+            return await _UnitDB.SaveUnitWithMapping(dTO);
         }
 
     }

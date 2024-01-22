@@ -16,5 +16,6 @@ namespace DataAccessLayer.BaseInterfaces
         public Task<List<DTOMapUnitResponse>> GetALLByUnitName(string Unitname);
         public Task<DTOMapUnitResponse> GetALLByUnitMapId(int UnitMapId);
         public Task<DTOMapUnitResponse> GetALLByUnitById(int UnitId);
+        public Task<bool?> SaveUnitWithMapping(DTOSaveUnitWithMappingByAdminRequest dTO);
     }
 }

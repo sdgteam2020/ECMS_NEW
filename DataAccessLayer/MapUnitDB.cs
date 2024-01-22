@@ -1,10 +1,12 @@
 ﻿using DataAccessLayer.BaseInterfaces;
 using DataTransferObject.Domain.Master;
+using DataTransferObject.Domain.Model;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -18,8 +20,10 @@ namespace DataAccessLayer
     public class MapUnitDB : GenericRepositoryDL<MapUnit>, IMapUnitDB
     {
         protected readonly ApplicationDbContext _context;
-        public MapUnitDB(ApplicationDbContext context) : base(context)
+        private readonly ILogger<MapUnitDB> _logger;
+        public MapUnitDB(ApplicationDbContext context, ILogger<MapUnitDB> logger) : base(context)
         {
+            _logger = logger;
             _context = context;
         }
         private readonly IConfiguration configuration;
@@ -203,6 +207,106 @@ namespace DataAccessLayer
 
 
             return (Div);
+        }
+
+        public async Task<bool?> SaveUnitWithMapping(DTOSaveUnitWithMappingByAdminRequest dTO)
+        {
+            using (var transaction = _context.Database.BeginTransaction())
+            {
+                try
+                {
+                    if (dTO.UnitId > 0 && dTO.UnitMapId == 0)
+                    {
+                        MUnit? mUnit = await _context.MUnit.FindAsync(dTO.UnitId);
+                        if(mUnit!=null)
+                        {
+
+                            mUnit.Sus_no = dTO.Sus_no;
+                            mUnit.Suffix = dTO.Suffix;
+                            mUnit.UnitName = dTO.UnitName;
+                            mUnit.IsVerify = dTO.IsVerify;
+                            mUnit.IsActive = true;
+                            mUnit.Updatedby = dTO.Updatedby;
+                            mUnit.UpdatedOn = dTO.UpdatedOn;
+                            mUnit.UnregdUserId = null;
+                            
+                            _context.MUnit.Update(mUnit);
+                            await _context.SaveChangesAsync();
+                            
+                            var mapUnit = new MapUnit
+                            {
+                                UnitId = mUnit.UnitId,
+                                UnitType = dTO.UnitType,
+                                ComdId = dTO.ComdId,
+                                CorpsId = dTO.CorpsId,
+                                DivId = dTO.DivId,
+                                BdeId = dTO.BdeId,
+                                FmnBranchID = dTO.FmnBranchID,
+                                PsoId = dTO.PsoId,
+                                SubDteId = dTO.SubDteId,
+                                IsActive = true,
+                                Updatedby = dTO.Updatedby,
+                                UpdatedOn = dTO.UpdatedOn,
+                            };
+                            await _context.MapUnit.AddAsync(mapUnit);
+                            await _context.SaveChangesAsync();
+
+                            transaction.Commit();
+                            return true;
+                        }
+                        else
+                        {
+                            return false;
+                        }
+                    }
+                    else if (dTO.UnitId > 0 && dTO.UnitMapId > 0)
+                    {
+
+                    }
+                    else 
+                    {
+                        var mUnit = new MUnit
+                        {
+                            Sus_no = dTO.Sus_no,
+                            Suffix = dTO.Suffix,
+                            UnitName = dTO.UnitName,
+                            IsVerify = dTO.IsVerify,
+                            IsActive = true,
+                            Updatedby = dTO.Updatedby,
+                            UpdatedOn = dTO.UpdatedOn,
+                            UnregdUserId = null,
+                        };
+                        await _context.MUnit.AddAsync(mUnit);
+                        await _context.SaveChangesAsync();
+                        var mapUnit = new MapUnit
+                        {
+                            UnitId = mUnit.UnitId,
+                            UnitType = dTO.UnitType,
+                            ComdId = dTO.ComdId,
+                            CorpsId = dTO.CorpsId,
+                            DivId = dTO.DivId,
+                            BdeId = dTO.BdeId,
+                            FmnBranchID = dTO.FmnBranchID,
+                            PsoId = dTO.PsoId,
+                            SubDteId = dTO.SubDteId,
+                            IsActive = true,
+                            Updatedby = dTO.Updatedby,
+                            UpdatedOn = dTO.UpdatedOn,
+                        };
+                        await _context.MapUnit.AddAsync(mapUnit);
+                        await _context.SaveChangesAsync();
+
+                        transaction.Commit();
+                        return true;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    _logger.LogError(1001, ex, "MapUnitDB->SaveUnitWithMapping");
+                    return null;
+                }
+            }
         }
     }
  }

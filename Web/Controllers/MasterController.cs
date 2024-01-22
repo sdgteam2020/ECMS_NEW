@@ -5,8 +5,10 @@ using DataTransferObject.Domain.Master;
 using DataTransferObject.Requests;
 using DataTransferObject.Response.User;
 using Humanizer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using System.Security.Claims;
 
 namespace Web.Controllers
 {
@@ -14,10 +16,12 @@ namespace Web.Controllers
     {
         private readonly IUnitOfWork unitOfWork;
         private readonly IChangeHierarchyMasterBL changeHierarchyMaster;
-        public MasterController(IUnitOfWork unitOfWork, IChangeHierarchyMasterBL changeHierarchyMaster)
+        private readonly ILogger<MasterController> _logger;
+        public MasterController(IUnitOfWork unitOfWork, IChangeHierarchyMasterBL changeHierarchyMaster, ILogger<MasterController> logger)
         {
             this.unitOfWork = unitOfWork;
             this.changeHierarchyMaster = changeHierarchyMaster;
+            _logger = logger;
         }
 
         #region Command Page
@@ -447,6 +451,68 @@ namespace Web.Controllers
         {
 
             return View();
+        }
+
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> SaveUnitWithMapping(DTOSaveUnitWithMappingByAdminRequest dTO)
+        {
+            try
+            {
+                dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                dTO.UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
+
+                if (ModelState.IsValid)
+                {
+                    if (dTO.UnitId > 0 && dTO.UnitMapId == 0)
+                    {
+                        bool result = (bool)await unitOfWork.MappUnit.SaveUnitWithMapping(dTO);
+                        if (result == true)
+                        {
+                            return Json(5);
+                        }
+                        else
+                        {
+                            return Json(KeyConstants.InternalServerError);
+                        }
+                    }
+                    else if (dTO.UnitId > 0 && dTO.UnitMapId > 0)
+                    {
+                        bool result = (bool)await unitOfWork.MappUnit.SaveUnitWithMapping(dTO);
+                        if (result == true)
+                        {
+                            return Json(KeyConstants.Update);
+                        }
+                        else
+                        {
+                            return Json(KeyConstants.InternalServerError);
+                        }
+                    }
+                    else
+                    {
+                        bool result = (bool)await unitOfWork.MappUnit.SaveUnitWithMapping(dTO);
+                        if (result == true)
+                        {
+                            return Json(KeyConstants.Save);
+                        }
+                        else
+                        {
+                            return Json(KeyConstants.InternalServerError);
+                        }
+                    }
+                }
+                else
+                {
+
+                    return Json(ModelState.Select(x => x.Value.Errors).Where(y => y.Count > 0).ToList());
+                }
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "Account->SaveUnitWithMapping");
+                return Json(KeyConstants.InternalServerError);
+            }
+
         }
         public async Task<IActionResult> SaveMapUnit(MapUnit dTO)
         {
