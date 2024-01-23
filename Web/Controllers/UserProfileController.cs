@@ -7,12 +7,14 @@ using DataTransferObject.Domain.Master;
 using DataTransferObject.Domain.Model;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using Web.WebHelpers;
 
 namespace Web.Controllers
 {
+    [Authorize]
     public class UserProfileController : Controller
     {
         private readonly IUserProfileBL _userProfileBL;

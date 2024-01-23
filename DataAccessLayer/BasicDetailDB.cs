@@ -548,7 +548,10 @@ namespace DataAccessLayer
         {
             string query = "select usersfrom.UserName FromDomain,profrom.Name FromProfile,ranlfrom.RankAbbreviation FromRank, " +
             " usersto.UserName ToDomain,proto.Name ToProfile,ranlto.RankAbbreviation ToRank ,"+
-            " CASE fwd.Status WHEN 1 THEN 'Approved' WHEN 0 THEN 'Reject'  END Status,fwd.UpdatedOn,isnull(fwd.Remark,'Nill') Remark,fwd.IsComplete,(select STRING_AGG(Remarks,'#') from MRemarks where RemarksId in (select value from string_split(fwd.RemarksIds,','))) Remarks2 from TrnFwds fwd " +
+            " CASE fwd.Status WHEN 1 THEN 'Approved' WHEN 0 THEN 'Reject'  END Status,fwd.UpdatedOn,isnull(fwd.Remark,'Nill') Remark," +
+            " fwd.IsComplete,(select STRING_AGG(Remarks,'#') from MRemarks where RemarksId in (select value from string_split(fwd.RemarksIds,','))) Remarks2, " +
+            " reason.Reason,postind.Authority,initres.UnitName " +
+            " from TrnFwds fwd " +
             " inner join TrnStepCounter step"+
             " on fwd.RequestId=step.RequestId"+
             " inner join TrnDomainMapping mapfrom on mapfrom.AspNetUsersId=fwd.FromAspNetUsersId"+
@@ -560,6 +563,10 @@ namespace DataAccessLayer
             " inner join MRank ranlfrom on ranlfrom.RankId=profrom.RankId"+
             " left join UserProfile proto"+
             " on mapto.UserId=proto.UserId"+
+            " left join TrnPostingOut postind on postind.Id=fwd.PostingOutId" +
+            " left join MPostingReason reason on reason.Id=postind.ReasonId" +
+            " left join MapUnit Munitres on Munitres.UnitMapId=postind.ToUnitID" +
+            " left join MUnit initres on initres.UnitId=Munitres.UnitId" +
             " inner join MRank ranlto on ranlto.RankId=proto.RankId where fwd.RequestId=@RequestId" +
             " order by fwd.TrnFwdId asc";
             using (var connection = _contextDP.CreateConnection())

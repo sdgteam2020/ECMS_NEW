@@ -1371,21 +1371,22 @@ namespace Web.Controllers
         //    basicDetail.PermanentAddress = "House No.-" + Random.Shared.Next(50, 999) + ", " + PermanentAddress[a];
         //    return Ok(basicDetail);
         //}
-
+        [Authorize(Roles = "User")]
         public async Task<IActionResult> GetDataByBasicDetailsId(int Id)
         {
            return Json(await basicDetailBL.GetByBasicDetailsId(Id));
         }
+        [Authorize(Roles = "User")]
         public async Task<IActionResult> GetRequestHistory(int RequestId)
         {
             return Json(await basicDetailBL.ICardHistory(RequestId));
         }
-
+        [Authorize(Roles = "User")]
         public async Task<IActionResult> GetRemarks(DTORemarksRequest Data)
         {
             return Json(await _IMasterBL.GetRemarksByTypeId(Data));
         }
-
+        [Authorize(Roles = "User")]
         public async Task<IActionResult> DataExport(DTODataExportRequest Data)
         {
             try
@@ -1427,7 +1428,7 @@ namespace Web.Controllers
 
 
 
-
+        [Authorize(Roles = "User")]
         public static DirectoryInfo GetCreateMyFolder(string baseFolder)
         {
             var now = DateTime.Now;
@@ -1443,6 +1444,7 @@ namespace Web.Controllers
 
             return Directory.CreateDirectory(folder);
         }
+        [Authorize(Roles = "User")]
         public static DirectoryInfo GetCreateMyFolder()
         {
             var now = DateTime.Now;
@@ -1458,6 +1460,7 @@ namespace Web.Controllers
 
             return Directory.CreateDirectory(folder);
         }
+        [Authorize(Roles = "User")]
         public static DirectoryInfo ForCreateFolderrandom(string baseFolder)
         {
             var now = DateTime.Now;
@@ -1473,6 +1476,7 @@ namespace Web.Controllers
 
             return Directory.CreateDirectory(folder);
         }
+        [Authorize(Roles = "User")]
         public static DirectoryInfo CreateFolder(string baseFolder)
         {
             return Directory.CreateDirectory(baseFolder);

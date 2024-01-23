@@ -128,7 +128,7 @@
                     <div class="col-xl-5">
                         <div class="row mb-1">
                             <label class="col-sm-1 col-form-label text-center font-weight-bold">@(sno++).</label>
-                            <label class="col-sm-3 col-form-label form-label">Paper I-CardNo</label>
+                            <label class="col-sm-3 col-form-label form-label">Paper I-Card No</label>
                             <div class="col-sm-8">
                                 <input asp-for="PaperIcardNo" class="form-control" placeholder="Enter Paper I card No" />
                                 <span asp-validation-for="PaperIcardNo" class="text-danger"></span>
@@ -182,7 +182,7 @@
                         { *@
                         <div class="row mb-1 required OptionsRegimental">
                                 <label class="col-sm-1 col-form-label text-center font-weight-bold">@(sno++).</label>
-                                <label asp-for="RegimentalId" class="col-sm-3 col-form-label form-label"></label>
+                                        <label class="col-sm-3 col-form-label form-label">Regimental Centre</label>
                                 <div class="col-sm-8">
                                     <select asp-for="RegimentalId" class="form-select" asp-items="ViewBag.OptionsRegimental">
                                     </select>
@@ -192,7 +192,7 @@
                         @* } *@
                         <div class="row mb-1">
                             <label class="col-sm-1 col-form-label text-center font-weight-bold">@(sno++).</label>
-                            <label asp-for="ServiceNo" class="col-sm-3 col-form-label form-label"></label>
+                                        <label class="col-sm-3 col-form-label form-label">Service No</label>
                             <div class="col-sm-8">
                                 <input asp-for="ServiceNo" class="form-control" placeholder="IC-12345X/JC-12345X" readonly />
                                 <span asp-validation-for="ServiceNo" class="text-danger"></span>
@@ -200,7 +200,7 @@
                         </div>
                         <div class="row mb-1 required">
                             <label class="col-sm-1 col-form-label text-center font-weight-bold">@(sno++).</label>
-                            <label asp-for="IdenMark1" class="col-sm-3 col-form-label form-label"></label>
+                            <label class="col-sm-3 col-form-label form-label">Iden Mark</label>
                             <div class="col-sm-8">
                                 <input asp-for="IdenMark1" class="form-control" placeholder="Only one iden Mk (Max 20 characters incl spaces)" />
                                 <span asp-validation-for="IdenMark1" class="text-danger"></span>
@@ -216,7 +216,7 @@
                         </div>
                         <div class="row mb-1 required">
                             <label class="col-sm-1 col-form-label text-center font-weight-bold">@(sno++).</label>
-                            <label asp-for="Height" class="col-sm-3 col-form-label form-label"></label>
+                            <label class="col-sm-3 col-form-label form-label">Height(CM)</label>
                             <div class="col-sm-8">
                                 <input asp-for="Height" class="form-control" />
                                 <span asp-validation-for="Height" class="text-danger" placeholder="Height in CM"></span>
@@ -281,7 +281,7 @@
                             <label class="col-sm-2 col-form-label text-center font-weight-bold">@(sno++).</label>
                             <label asp-for="PermanentAddress" class="col-sm-4 col-form-label form-label"></label>
                             <div class="col-sm-6">
-                                <textarea asp-for="PermanentAddress" rows="4" class="form-control" placeholder="" readonly></textarea>
+                                <textarea asp-for="PermanentAddress" rows="6" class="form-control" placeholder="" readonly></textarea>
                                 <span asp-validation-for="PermanentAddress" class="text-danger"></span>
                             </div>
                         </div>
@@ -312,7 +312,7 @@
                                                     {
                                                         <div class="box">
                                                             <div class="js--image-preview"> <img id="PhotoPath" src="~/writereaddata/images/noimage.png" height="200px" width="200px" /></div>
-                                                            <div class="upload-options">
+                                                        <div class="upload-options">
                                                                 <label>
 
                                                                     <input asp-for="Photo_" class="form-control" onchange="beforeUploadPhotoSizeCheck(this);" accept="image/jpeg,image/jpg,image/png,image/gif" />
@@ -335,7 +335,7 @@
                                                     {
                                                         <div class="box_sig">
                                                             <div class="js--image-preview_sig"> <img id="SignaturePath" src="/WriteReadData/Signature/@Model.ExistingSignatureImagePath" height="80px" width="200px" /></div>
-                                                            <div class="upload-options">
+                                                        <div class="upload-options_sign">
                                                                 <label>
 
                                                                     <input asp-for="Signature_" class="form-control" onchange="beforeUploadSignatureSizeCheckInEdit(this)" accept="image/jpeg,image/jpg,image/png,image/gif" />
@@ -349,7 +349,7 @@
                                                     {
                                                         <div class="box_sig">
                                                             <div class="js--image-preview_sig">  <img id="SignaturePath" src="~/writereaddata/images/noimage.png" height="80px" width="200px" /></div>
-                                                            <div class="upload-options">
+                                                        <div class="upload-options_sign">
                                                                 <label>
 
                                                                     <input asp-for="Signature_" class="form-control" onchange="beforeUploadSignatureSizeCheck(this)" accept="image/jpeg,image/jpg,image/png,image/gif" />
@@ -378,7 +378,7 @@
                                     <label  class="">
                                      <ul class="notefont">
                                       <li>I HEREBY DECLARE THAT THE DETAILS FURNISHED ABOVE ARE TRUE TO BEST OF MY KNOWLEDGE. I AM FULLY AWARE THAT, DECLARATION OF FALSE INFO IS AN OFFENCE WHICH WOULD MAKE ME LIABLE FOR PUNISHMENT AS PER EXTANT REGULATIONS.</li>
-                                      <li>I HEREBY STATE THAT I HAVE NO OBJECTION IN AUTHENTICATING MYSELF WITH AADHAR BASED AUTHENTICATION SYSTEM AND CONSENT TO PROVIDING MY AADHAR NUMBER ALONG WITH THE AUTHENTICATION DETAILS FOR THE PURPOSE OF SMART I-CARD.</li>
+                                                        <li>I HEREBY STATE THAT I HAVE NO OBJECTION IN AUTHENTICATING MYSELF WITH AADHAAR BASED AUTHENTICATION SYSTEM AND CONSENT TO PROVIDING MY AADHAAR NUMBER ALONG WITH THE AUTHENTICATION DETAILS FOR THE PURPOSE OF SMART I-CARD.</li>
                                       </ul>
 
                                     </label>

@@ -92,16 +92,18 @@ namespace DataAccessLayer
         public async Task<bool> UpdateForPosting(TrnPostingOut Data)
         {
             string query = "update TrnICardRequest set TrnDomainMappingId=(select Id from TrnDomainMapping where AspNetUsersId=@ToAspNetUsersId) where RequestId=@RequestId " +
-                " update BasicDetails set UnitId=@ToUnitID where BasicDetailId =(select BasicDetailId from TrnICardRequest where RequestId=@RequestId)" +
-                " update TrnStepCounter set StepId=1 where RequestId=@RequestId" +
-                " update TrnFwds set Status=0 ,IsComplete=1,Remark='Posting Out' ,ToAspNetUsersId=@ToAspNetUsersId where RequestId=@RequestId and IsComplete=0";
+                // " update BasicDetails set UnitId=@ToUnitID where BasicDetailId =(select BasicDetailId from TrnICardRequest where RequestId=@RequestId)";
+                //" update TrnStepCounter set StepId=1 where RequestId=@RequestId" +
+                //" update TrnFwds set Status=0 ,IsComplete=1,Remark='Posting Out' ,ToAspNetUsersId=@ToAspNetUsersId where RequestId=@RequestId and IsComplete=0";
+                " update TrnFwds set PostingOutId= @Id where RequestId=@RequestId and IsComplete=0";
             int ToAspNetUsersId = Data.ToAspNetUsersId;
             int RequestId = Data.RequestId;
             int ToUnitID = Data.ToUnitID;
+            int Id=Data.Id;
 
             using (var connection = _contextDP.CreateConnection())
             {
-                 connection.Execute(query, new { ToAspNetUsersId, RequestId,ToUnitID });
+                 connection.Execute(query, new { ToAspNetUsersId, RequestId, Id });//,ToUnitID
 
                 return true;
 

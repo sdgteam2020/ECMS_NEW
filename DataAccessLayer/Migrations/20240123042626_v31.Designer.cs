@@ -4,6 +4,7 @@ using DataAccessLayer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccessLayer.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240123042626_v31")]
+    partial class v31
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -202,7 +205,7 @@ namespace DataAccessLayer.Migrations
                         .IsRequired()
                         .HasColumnType("datetime");
 
-                    b.Property<int?>("Updatedby")
+                    b.Property<int>("Updatedby")
                         .HasColumnType("int");
 
                     b.HasKey("UserId");
@@ -250,7 +253,7 @@ namespace DataAccessLayer.Migrations
                         .IsRequired()
                         .HasColumnType("datetime");
 
-                    b.Property<int?>("Updatedby")
+                    b.Property<int>("Updatedby")
                         .HasColumnType("int");
 
                     b.HasKey("ApptId");
@@ -282,7 +285,7 @@ namespace DataAccessLayer.Migrations
                         .IsRequired()
                         .HasColumnType("datetime");
 
-                    b.Property<int?>("Updatedby")
+                    b.Property<int>("Updatedby")
                         .HasColumnType("int");
 
                     b.HasKey("ArmedCatId");
@@ -323,7 +326,7 @@ namespace DataAccessLayer.Migrations
                         .IsRequired()
                         .HasColumnType("datetime");
 
-                    b.Property<int?>("Updatedby")
+                    b.Property<int>("Updatedby")
                         .HasColumnType("int");
 
                     b.HasKey("ArmedId");
@@ -363,7 +366,7 @@ namespace DataAccessLayer.Migrations
                         .IsRequired()
                         .HasColumnType("datetime");
 
-                    b.Property<int?>("Updatedby")
+                    b.Property<int>("Updatedby")
                         .HasColumnType("int");
 
                     b.HasKey("BdeId");
@@ -423,7 +426,7 @@ namespace DataAccessLayer.Migrations
                         .IsRequired()
                         .HasColumnType("datetime");
 
-                    b.Property<int?>("Updatedby")
+                    b.Property<int>("Updatedby")
                         .HasColumnType("int");
 
                     b.HasKey("ComdId");
@@ -455,7 +458,7 @@ namespace DataAccessLayer.Migrations
                         .IsRequired()
                         .HasColumnType("datetime");
 
-                    b.Property<int?>("Updatedby")
+                    b.Property<int>("Updatedby")
                         .HasColumnType("int");
 
                     b.HasKey("CorpsId");
@@ -492,7 +495,7 @@ namespace DataAccessLayer.Migrations
                         .IsRequired()
                         .HasColumnType("datetime");
 
-                    b.Property<int?>("Updatedby")
+                    b.Property<int>("Updatedby")
                         .HasColumnType("int");
 
                     b.HasKey("DivId");
@@ -534,7 +537,7 @@ namespace DataAccessLayer.Migrations
                         .IsRequired()
                         .HasColumnType("datetime");
 
-                    b.Property<int?>("Updatedby")
+                    b.Property<int>("Updatedby")
                         .HasColumnType("int");
 
                     b.HasKey("FmnBranchID");
@@ -563,7 +566,7 @@ namespace DataAccessLayer.Migrations
                         .IsRequired()
                         .HasColumnType("datetime");
 
-                    b.Property<int?>("Updatedby")
+                    b.Property<int>("Updatedby")
                         .HasColumnType("int");
 
                     b.HasKey("FormationId");
@@ -614,7 +617,7 @@ namespace DataAccessLayer.Migrations
                         .IsRequired()
                         .HasColumnType("datetime");
 
-                    b.Property<int?>("Updatedby")
+                    b.Property<int>("Updatedby")
                         .HasColumnType("int");
 
                     b.Property<int>("UserId")
@@ -655,7 +658,7 @@ namespace DataAccessLayer.Migrations
                         .IsRequired()
                         .HasColumnType("datetime");
 
-                    b.Property<int?>("Updatedby")
+                    b.Property<int>("Updatedby")
                         .HasColumnType("int");
 
                     b.HasKey("PsoId");
@@ -713,7 +716,7 @@ namespace DataAccessLayer.Migrations
                         .IsRequired()
                         .HasColumnType("datetime");
 
-                    b.Property<int?>("Updatedby")
+                    b.Property<int>("Updatedby")
                         .HasColumnType("int");
 
                     b.Property<int?>("rank_cd")
@@ -761,7 +764,7 @@ namespace DataAccessLayer.Migrations
                         .IsRequired()
                         .HasColumnType("datetime");
 
-                    b.Property<int?>("Updatedby")
+                    b.Property<int>("Updatedby")
                         .HasColumnType("int");
 
                     b.HasKey("RegId");
@@ -798,7 +801,7 @@ namespace DataAccessLayer.Migrations
                         .IsRequired()
                         .HasColumnType("datetime");
 
-                    b.Property<int?>("Updatedby")
+                    b.Property<int>("Updatedby")
                         .HasColumnType("int");
 
                     b.HasKey("RegistrationId");
@@ -917,7 +920,7 @@ namespace DataAccessLayer.Migrations
                         .IsRequired()
                         .HasColumnType("datetime");
 
-                    b.Property<int?>("Updatedby")
+                    b.Property<int>("Updatedby")
                         .HasColumnType("int");
 
                     b.HasKey("SubDteId");
@@ -984,7 +987,7 @@ namespace DataAccessLayer.Migrations
                         .IsRequired()
                         .HasColumnType("datetime");
 
-                    b.Property<int?>("Updatedby")
+                    b.Property<int>("Updatedby")
                         .HasColumnType("int");
 
                     b.HasKey("UnitId");
@@ -1038,7 +1041,7 @@ namespace DataAccessLayer.Migrations
                         .IsRequired()
                         .HasColumnType("datetime");
 
-                    b.Property<int?>("Updatedby")
+                    b.Property<int>("Updatedby")
                         .HasColumnType("int");
 
                     b.HasKey("UnitMapId");
@@ -1128,7 +1131,7 @@ namespace DataAccessLayer.Migrations
                         .IsRequired()
                         .HasColumnType("datetime");
 
-                    b.Property<int?>("Updatedby")
+                    b.Property<int>("Updatedby")
                         .HasColumnType("int");
 
                     b.HasKey("BasicDetailId");
@@ -1193,7 +1196,7 @@ namespace DataAccessLayer.Migrations
                         .IsRequired()
                         .HasColumnType("datetime");
 
-                    b.Property<int?>("Updatedby")
+                    b.Property<int>("Updatedby")
                         .HasColumnType("int");
 
                     b.HasKey("BasicDetailTempId");
@@ -1229,7 +1232,7 @@ namespace DataAccessLayer.Migrations
                         .IsRequired()
                         .HasColumnType("datetime");
 
-                    b.Property<int?>("Updatedby")
+                    b.Property<int>("Updatedby")
                         .HasColumnType("int");
 
                     b.HasKey("DocUploadId");
@@ -1342,7 +1345,7 @@ namespace DataAccessLayer.Migrations
                         .IsRequired()
                         .HasColumnType("datetime");
 
-                    b.Property<int?>("Updatedby")
+                    b.Property<int>("Updatedby")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -1448,7 +1451,7 @@ namespace DataAccessLayer.Migrations
                         .IsRequired()
                         .HasColumnType("datetime");
 
-                    b.Property<int?>("Updatedby")
+                    b.Property<int>("Updatedby")
                         .HasColumnType("int");
 
                     b.HasKey("TrnFwdId");
@@ -1505,7 +1508,7 @@ namespace DataAccessLayer.Migrations
                         .IsRequired()
                         .HasColumnType("datetime");
 
-                    b.Property<int?>("Updatedby")
+                    b.Property<int>("Updatedby")
                         .HasColumnType("int");
 
                     b.HasKey("RequestId");
@@ -1732,7 +1735,7 @@ namespace DataAccessLayer.Migrations
                         .IsRequired()
                         .HasColumnType("datetime");
 
-                    b.Property<int?>("Updatedby")
+                    b.Property<int>("Updatedby")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -1910,7 +1913,8 @@ namespace DataAccessLayer.Migrations
                     b.HasOne("DataTransferObject.Domain.Identitytable.ApplicationUser", "ApplicationUserUpdate")
                         .WithMany()
                         .HasForeignKey("Updatedby")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("ApplicationUserUpdate");
 
@@ -1922,7 +1926,8 @@ namespace DataAccessLayer.Migrations
                     b.HasOne("DataTransferObject.Domain.Identitytable.ApplicationUser", "ApplicationUserUpdate")
                         .WithMany()
                         .HasForeignKey("Updatedby")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("ApplicationUserUpdate");
                 });
@@ -1932,7 +1937,8 @@ namespace DataAccessLayer.Migrations
                     b.HasOne("DataTransferObject.Domain.Identitytable.ApplicationUser", "ApplicationUserUpdate")
                         .WithMany()
                         .HasForeignKey("Updatedby")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("ApplicationUserUpdate");
                 });
@@ -1948,7 +1954,8 @@ namespace DataAccessLayer.Migrations
                     b.HasOne("DataTransferObject.Domain.Identitytable.ApplicationUser", "ApplicationUserUpdate")
                         .WithMany()
                         .HasForeignKey("Updatedby")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("ApplicationUserUpdate");
 
@@ -1978,7 +1985,8 @@ namespace DataAccessLayer.Migrations
                     b.HasOne("DataTransferObject.Domain.Identitytable.ApplicationUser", "ApplicationUserUpdate")
                         .WithMany()
                         .HasForeignKey("Updatedby")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("ApplicationUserUpdate");
 
@@ -1994,7 +2002,8 @@ namespace DataAccessLayer.Migrations
                     b.HasOne("DataTransferObject.Domain.Identitytable.ApplicationUser", "ApplicationUserUpdate")
                         .WithMany()
                         .HasForeignKey("Updatedby")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("ApplicationUserUpdate");
                 });
@@ -2010,7 +2019,8 @@ namespace DataAccessLayer.Migrations
                     b.HasOne("DataTransferObject.Domain.Identitytable.ApplicationUser", "ApplicationUserUpdate")
                         .WithMany()
                         .HasForeignKey("Updatedby")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("ApplicationUserUpdate");
 
@@ -2034,7 +2044,8 @@ namespace DataAccessLayer.Migrations
                     b.HasOne("DataTransferObject.Domain.Identitytable.ApplicationUser", "ApplicationUserUpdate")
                         .WithMany()
                         .HasForeignKey("Updatedby")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("ApplicationUserUpdate");
 
@@ -2048,7 +2059,8 @@ namespace DataAccessLayer.Migrations
                     b.HasOne("DataTransferObject.Domain.Identitytable.ApplicationUser", "ApplicationUserUpdate")
                         .WithMany()
                         .HasForeignKey("Updatedby")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("ApplicationUserUpdate");
                 });
@@ -2058,7 +2070,8 @@ namespace DataAccessLayer.Migrations
                     b.HasOne("DataTransferObject.Domain.Identitytable.ApplicationUser", "ApplicationUserUpdate")
                         .WithMany()
                         .HasForeignKey("Updatedby")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("ApplicationUserUpdate");
                 });
@@ -2068,7 +2081,8 @@ namespace DataAccessLayer.Migrations
                     b.HasOne("DataTransferObject.Domain.Identitytable.ApplicationUser", "ApplicationUserUpdate")
                         .WithMany()
                         .HasForeignKey("Updatedby")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("ApplicationUserUpdate");
                 });
@@ -2078,7 +2092,8 @@ namespace DataAccessLayer.Migrations
                     b.HasOne("DataTransferObject.Domain.Identitytable.ApplicationUser", "ApplicationUserUpdate")
                         .WithMany()
                         .HasForeignKey("Updatedby")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("ApplicationUserUpdate");
                 });
@@ -2094,7 +2109,8 @@ namespace DataAccessLayer.Migrations
                     b.HasOne("DataTransferObject.Domain.Identitytable.ApplicationUser", "ApplicationUserUpdate")
                         .WithMany()
                         .HasForeignKey("Updatedby")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("ApplicationUserUpdate");
 
@@ -2112,7 +2128,8 @@ namespace DataAccessLayer.Migrations
                     b.HasOne("DataTransferObject.Domain.Identitytable.ApplicationUser", "ApplicationUserUpdate")
                         .WithMany()
                         .HasForeignKey("Updatedby")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("ApplicationUserUpdate");
 
@@ -2124,7 +2141,8 @@ namespace DataAccessLayer.Migrations
                     b.HasOne("DataTransferObject.Domain.Identitytable.ApplicationUser", "ApplicationUserUpdate")
                         .WithMany()
                         .HasForeignKey("Updatedby")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("ApplicationUserUpdate");
                 });
@@ -2153,7 +2171,8 @@ namespace DataAccessLayer.Migrations
                     b.HasOne("DataTransferObject.Domain.Identitytable.ApplicationUser", "ApplicationUserUpdate")
                         .WithMany()
                         .HasForeignKey("Updatedby")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("ApplicationUserUpdate");
                 });
@@ -2168,7 +2187,8 @@ namespace DataAccessLayer.Migrations
                     b.HasOne("DataTransferObject.Domain.Identitytable.ApplicationUser", "ApplicationUserUpdate")
                         .WithMany()
                         .HasForeignKey("Updatedby")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("ApplicationUserUpdate");
 
@@ -2228,7 +2248,8 @@ namespace DataAccessLayer.Migrations
                     b.HasOne("DataTransferObject.Domain.Identitytable.ApplicationUser", "ApplicationUserUpdate")
                         .WithMany()
                         .HasForeignKey("Updatedby")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("ApplicationUserUpdate");
 
@@ -2283,7 +2304,8 @@ namespace DataAccessLayer.Migrations
                     b.HasOne("DataTransferObject.Domain.Identitytable.ApplicationUser", "ApplicationUserUpdate")
                         .WithMany()
                         .HasForeignKey("Updatedby")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("ApplicationUserUpdate");
 
@@ -2303,7 +2325,8 @@ namespace DataAccessLayer.Migrations
                     b.HasOne("DataTransferObject.Domain.Identitytable.ApplicationUser", "ApplicationUserUpdate")
                         .WithMany()
                         .HasForeignKey("Updatedby")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("ApplicationUserUpdate");
                 });
@@ -2313,7 +2336,8 @@ namespace DataAccessLayer.Migrations
                     b.HasOne("DataTransferObject.Domain.Identitytable.ApplicationUser", "ApplicationUserUpdate")
                         .WithMany()
                         .HasForeignKey("Updatedby")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("ApplicationUserUpdate");
                 });
@@ -2341,7 +2365,8 @@ namespace DataAccessLayer.Migrations
                     b.HasOne("DataTransferObject.Domain.Identitytable.ApplicationUser", "ApplicationUserUpdate")
                         .WithMany()
                         .HasForeignKey("Updatedby")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("ApplicationUserUpdate");
 
@@ -2408,7 +2433,8 @@ namespace DataAccessLayer.Migrations
                     b.HasOne("DataTransferObject.Domain.Identitytable.ApplicationUser", "ApplicationUserUpdate")
                         .WithMany()
                         .HasForeignKey("Updatedby")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("ApplicationUser");
 
@@ -2456,7 +2482,8 @@ namespace DataAccessLayer.Migrations
                     b.HasOne("DataTransferObject.Domain.Identitytable.ApplicationUser", "ApplicationUserUpdate")
                         .WithMany()
                         .HasForeignKey("Updatedby")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("ApplicationUserUpdate");
 
@@ -2591,7 +2618,8 @@ namespace DataAccessLayer.Migrations
                     b.HasOne("DataTransferObject.Domain.Identitytable.ApplicationUser", "ApplicationUserUpdate")
                         .WithMany()
                         .HasForeignKey("Updatedby")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("ApplicationUser");
 
