@@ -708,6 +708,7 @@ function GetRequestHistory(spnRequestId) {
                             listItem += '<br><span class="badge bg-danger">' + response[i].Status + ' And Sent To</span>';
 
                         listItem += '<br> <strong class="text-center">Remark</strong> <br>' + response[i].Remark + '';
+
                         if (response[i].Remarks2 != null) {
                             var rem = response[i].Remarks2.split('#');
                             if (rem.length > 0) {
@@ -719,12 +720,19 @@ function GetRequestHistory(spnRequestId) {
                                 listItem += '</ul>';
                             }
                         }
+
+                      
                         listItem += '<br><button type="button" class="btn btn-icon btn-round btn-light mr-1"><i class="fas fa-arrow-down"></i></button>'
 
                         if (response[i].IsComplete == 0) {
                             listItem += '<br><span class="badge bg-warning ">Pending from </span>';
                         }
                         listItem += '<br>' + response[i].ToDomain + '(' + response[i].ToRank + ' ' + response[i].ToProfile + ')';
+
+
+                        if (response[i].Reason != null) {
+                            listItem += '<br> <strong class="text-center text-danger">' + response[i].Reason + '</strong> <br> Unit Name :-' + response[i].UnitName + '';
+                        }
 
 
 

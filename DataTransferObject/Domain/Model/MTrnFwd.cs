@@ -49,6 +49,7 @@ namespace DataTransferObject.Domain.Model
         public bool IsComplete { get; set; } = false;
 
         public string? RemarksIds { get; set; }
+        public int? PostingOutId { get; set; }
         //[ForeignKey("Fwd"), DatabaseGenerated(DatabaseGeneratedOption.None)]
         //public int FwdId { get; set; }
 

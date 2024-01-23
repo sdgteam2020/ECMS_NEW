@@ -1,11 +1,13 @@
 ﻿using BusinessLogicsLayer.TrnLoginLog;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Web.WebHelpers;
 
 namespace Web.Controllers
 {
+    [Authorize]
     public class LogController : Controller
     {
         private readonly ITrnLoginLogBL _iTrnLoginLogBL;

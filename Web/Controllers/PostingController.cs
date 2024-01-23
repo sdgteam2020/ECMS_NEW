@@ -4,11 +4,14 @@ using BusinessLogicsLayer.Posting;
 using DapperRepo.Core.Constants;
 using DataTransferObject.Domain.Model;
 using Humanizer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
 namespace Web.Controllers
 {
+    [Authorize]
+ 
     public class PostingController : Controller
     {
         private readonly IPostingBL _iPostingBL;

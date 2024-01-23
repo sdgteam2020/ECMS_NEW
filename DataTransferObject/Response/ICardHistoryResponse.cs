@@ -19,5 +19,8 @@ namespace DataTransferObject.Response
         public string? Remark { get; set; }
         public int IsComplete { get; set; }
         public string? Remarks2 { get; set; }
+        public string? Reason { get; set; }
+        public string? Authority { get; set; }
+        public string? UnitName { get; set; }
     }
 }

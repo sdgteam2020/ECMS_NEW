@@ -8,12 +8,13 @@ using DataAccessLayer.BaseInterfaces;
 using DataTransferObject.Domain.Master;
 using DataTransferObject.Domain.Model;
 using DataTransferObject.Requests;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
 namespace Web.Controllers
 {
-  
+    [Authorize]
     public class HomeController : Controller
     {
         private readonly IRegistrationBL _registrationBL;
@@ -40,10 +41,12 @@ namespace Web.Controllers
             ViewBag.Role = role;    
             return View();
         }
+        [Authorize(Roles = "User")]
         public IActionResult MyTask()
         {
             return View();
         }
+        [Authorize(Roles = "User")]
         public IActionResult Request()
         {
             return View();

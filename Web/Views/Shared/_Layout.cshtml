@@ -549,17 +549,18 @@
 
             <!-- partial -->
             <div class="main-panel">
+                @if(signInManager.IsSignedIn(User) && User.IsInRole("User"))
+                {
+                    <nav class="nav nav-pills nav-justified" id="layouttask">
+                        <a class="nav-link Dashboard" aria-current="page" href="/Home/Dashboard">DashBoard</a>
+                        <a class="nav-link Status" href="/Home/Request">
+                            Initiate Request
+                        </a>
+                        <a class="nav-link MyTask" href="/Home/MyTask">Task</a>
 
-                <nav class="nav nav-pills nav-justified" id="layouttask">
-                    <a class="nav-link Dashboard" aria-current="page" href="/Home/Dashboard">DashBoard</a>
-                    <a class="nav-link Status" href="/Home/Request">
-                        Initiate Request
-                    </a>
-                    <a class="nav-link MyTask" href="/Home/MyTask">Task</a>
 
-
-                </nav>
-
+                    </nav>
+                }
                 <div class="content-wrapper">
                     <partial name="_Notification" />
                     @RenderBody()
@@ -718,12 +719,12 @@
                                     <div class="form-check form-check-inline">
                                         <input class="form-check-input" type="radio" name="UnitTyperdi" id="UnitType2" value="2">
                                         <label class="form-check-label" for="UnitType2">
-                                            Unit is Fmn HQ
+                                            Unit(Fmn HQ)
                                         </label>
                                     </div>
                                     <div class="form-check form-check-inline">
                                         <input class="form-check-input" type="radio" name="UnitTyperdi" id="UnitType3" value="3">
-                                        <label class="form-check-label" for="UnitType3">Unit is Dte/Branch</label>
+                                        <label class="form-check-label" for="UnitType3">Unit(Dte/Branch)</label>
                                     </div>
 
                                 </div>
@@ -758,11 +759,11 @@
 
                             <div class="form-group row mb-2 unittype">
 
-                                <label class="col-form-label col-sm-4">Div  /Branch / SubArea<i class="fas fa-asterisk mand1"></i></label>
+                                <label class="col-form-label col-sm-4">Div/Sub Area<i class="fas fa-asterisk mand1"></i></label>
                                 <div class="col-sm-8">
 
                                     <select class=" js-example-basic-single select2 form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddlDiv" required id="ddlDiv">
-                                        <option value="0">Select Div  /Branch / SubArea </option>
+                                        <option value="0">Select One </option>
 
                                     </select>
                                 </div>
