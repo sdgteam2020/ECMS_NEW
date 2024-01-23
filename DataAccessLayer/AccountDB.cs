@@ -224,6 +224,7 @@ namespace DataAccessLayer
                                            {
                                                Id=u.Id,
                                                DomainId = u.DomainId,
+                                               AdminMsg = u.AdminMsg,
                                                AdminFlag=u.AdminFlag,
                                                Active=u.Active,
                                                UpdatedOn=u.UpdatedOn,
@@ -249,6 +250,7 @@ namespace DataAccessLayer
                                            {
                                                Id = u.Id,
                                                DomainId = u.DomainId,
+                                               AdminMsg = u.AdminMsg,
                                                AdminFlag = u.AdminFlag,
                                                Active = u.Active,
                                                UpdatedOn = u.UpdatedOn,
@@ -276,6 +278,7 @@ namespace DataAccessLayer
                                            {
                                                Id = u.Id,
                                                DomainId = u.DomainId,
+                                               AdminMsg = u.AdminMsg,
                                                AdminFlag = u.AdminFlag,
                                                Active = u.Active,
                                                UpdatedOn = u.UpdatedOn,
@@ -303,6 +306,7 @@ namespace DataAccessLayer
                                            {
                                                Id = u.Id,
                                                DomainId = u.DomainId,
+                                               AdminMsg = u.AdminMsg,
                                                AdminFlag = u.AdminFlag,
                                                Active = u.Active,
                                                UpdatedOn = u.UpdatedOn,
@@ -662,6 +666,7 @@ namespace DataAccessLayer
                     {
                         userUpdate.AdminFlag = dTO.AdminFlag;
                         userUpdate.AdminFlagDate = null;
+                        userUpdate.AdminMsg = dTO.AdminMsg;
                     }
                     var result = await userManager.UpdateAsync(userUpdate);
 
@@ -740,6 +745,7 @@ namespace DataAccessLayer
                             {
                                 uptUserProfile.Updatedby = user.Id;
                                 await _context.SaveChangesAsync();
+                                user.AdminMsg = "Domian Id - " + user.DomainId + " & Profile Id- " + uptUserProfile.UserId + ".Your regn request was successfully placed with Admin for necy Approval. Pl note regn No - " + user.Id + " for future correspondence.";
                                 trnDomainMapping.UserId = dTOTempSession.UserId;
                             }
                             else
@@ -750,16 +756,19 @@ namespace DataAccessLayer
                         }
                         else
                         {
-                            MUserProfile mUserProfile = new MUserProfile();
-                            mUserProfile.ArmyNo = dTOTempSession.ICNO;
-                            mUserProfile.RankId = model.RankId;
-                            mUserProfile.Name = model.Name;
-                            mUserProfile.IntOffr = model.IntOffr;
-                            mUserProfile.IsIO = model.IsIO;
-                            mUserProfile.IsCO = model.IsCO;
-                            mUserProfile.Updatedby = user.Id;
+                            var mUserProfile = new MUserProfile()
+                            {
+                                ArmyNo = dTOTempSession.ICNO,
+                                RankId = model.RankId,
+                                Name = model.Name,
+                                IntOffr = model.IntOffr,
+                                IsIO = model.IsIO,
+                                IsCO = model.IsCO,
+                                Updatedby = user.Id,
+                            };
                             await _context.UserProfile.AddAsync(mUserProfile);
                             await _context.SaveChangesAsync();
+                            user.AdminMsg = "Domian Id - " + user.DomainId + " & Profile Id- " + mUserProfile.UserId + ".Your regn request was successfully placed with Admin for necy Approval. Pl note regn No - " + user.Id + " for future correspondence.";
                             trnDomainMapping.UserId = mUserProfile.UserId;
                         }
                         await _context.TrnDomainMapping.AddAsync(trnDomainMapping);
@@ -821,7 +830,7 @@ namespace DataAccessLayer
                             mUserProfile.Updatedby = dTOTempSession.AspNetUsersId;
                             await _context.UserProfile.AddAsync(mUserProfile);
                             await _context.SaveChangesAsync();
-
+                            // TempData["success"] = "Your Profile Id - " + dTOTempSession.UserId + " has been successfully mapped to Domain Id - " + dTOTempSession.DomainId + ". > DB ";
                             trnDomainMapping.UserId = mUserProfile.UserId;
                         }
 

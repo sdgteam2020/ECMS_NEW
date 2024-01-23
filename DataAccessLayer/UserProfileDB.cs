@@ -214,7 +214,8 @@ namespace DataAccessLayer
                                      UnitName = xmunit != null ? xmunit.UnitName : null,
                                      ApptId = (short)(xappo != null ? xappo.ApptId : 0),
                                      AppointmentName = xappo != null ? xappo.AppointmentName:"No Appointment" ,
-                                     DomainId = xu != null ? xu.DomainId : null
+                                     DomainId = xu != null ? xu.DomainId : null,
+                                     AdminMsg = xu != null ? xu.AdminMsg : null
                                  }
                          ).Distinct().FirstOrDefaultAsync();
                 return ret;

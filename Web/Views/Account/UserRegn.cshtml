@@ -3,14 +3,6 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <style>
-    .model-body-background {
-        /* background-color: #e9ecef; */
-    }
-
-    .model-body-label{
-       /*  background-color: #6189c3; */
-    }
-
     .count-label {
         background-color: #044C92;
         text-align: center;
@@ -177,6 +169,12 @@
                                         </label>
                                     </div>
                                     <span class="text-danger field-validation-valid" id="txtactive-error"></span>
+                                </div>
+                            </div>
+                            <div class="form-group row mb-2">
+                                <label class="col-form-label col-sm-4">Message for User</label>
+                                <div class="col-sm-8">
+                                    <textarea name="txtadminmessage" id="txtadminmessage" rows="2" />
                                 </div>
                             </div>
                             <div class="form-group row mb-2">

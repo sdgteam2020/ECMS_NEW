@@ -35,7 +35,6 @@
                     data: param,
                     type: 'POST',
                     success: function (data) {
-                        console.log(data);
                         response($.map(data, function (item) {
 
                             $("#loading").addClass("d-none");
@@ -82,7 +81,6 @@
                     data: param,
                     type: 'POST',
                     success: function (data) {
-                        console.log(data);
                         response($.map(data, function (item) {
 
                             $("#loading").addClass("d-none");

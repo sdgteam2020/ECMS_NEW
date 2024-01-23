@@ -187,7 +187,7 @@ function GetByArmyNo(ArmyNo) {
                         $("#lblicno").html(response.ArmyNo);
                         $(".lblAppt").html(response.AppointmentName);
                         $("#lblrole").html(response.RoleName);
-                         GetALLByUnitById(response.UnitId);
+                        GetALLByUnitById(response.UnitId);
                         mMsater(response.RankId, "ddlProRank", Rank, "");
                        
                         if (response.IntOffr == false) {

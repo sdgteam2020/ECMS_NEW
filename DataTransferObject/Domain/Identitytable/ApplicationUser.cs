@@ -23,6 +23,7 @@ namespace DataTransferObject.Domain.Identitytable
         [DataType(DataType.Date)]
         [Column(TypeName = "datetime")]
         public DateTime UpdatedOn { get; set; }
+        public string? AdminMsg { get; set; }
 
         public string? Fd1 { get; set; }
         public string? Fd2 { get; set;}
