@@ -375,30 +375,38 @@ function BindDataMapUnit() {
 
                         $("#txtUnit").val($(this).closest("tr").find("#unitName").html());
                         $("#txtSusno").val($(this).closest("tr").find("#Sus_no").html());
-
+                        var lst = '<option value="1">Please Select</option>';
                         if (parseInt($(this).closest("tr").find("#spnUnitType").html()) == 1) {
                             $("#UnitType1").prop("checked", true);
 
                             $(".unittype").removeClass("d-none");
                             $(".FmnBranch").addClass("d-none");
                             $(".DteBranch").addClass("d-none");
-                           
-                        } else if (parseInt($(this).closest("tr").find("#spnUnitType").html()) == 2) {
+
+                            $("#ddlFmnBranch").html(lst);
+                            $("#ddlPSODte").html(lst);
+                            $("#ddlDgSubDte").html(lst);
+                        }
+                        else if (parseInt($(this).closest("tr").find("#spnUnitType").html()) == 2)
+                        {
                             $("#UnitType2").prop("checked", true);
-                            $("#ddlPSODte").val(1);
-                            $("#ddlDgSubDte").val(1);
+
+                            $("#ddlPSODte").html(lst);
+                            $("#ddlDgSubDte").html(lst);
+
                             $(".unittype").removeClass("d-none");
                             $(".FmnBranch").removeClass("d-none");
                             $(".DteBranch").addClass("d-none");
 
-                        } else if (parseInt($(this).closest("tr").find("#spnUnitType").html()) == 3) {
+                        }
+                        else if (parseInt($(this).closest("tr").find("#spnUnitType").html()) == 3)
+                        {
                             $("#UnitType3").prop("checked", true);
                             $(".unittype").addClass("d-none");
                             $(".FmnBranch").addClass("d-none");
                             $(".DteBranch").removeClass("d-none");
-                            $("#ddlFmnBranch").val(1);
-                            var lst = '<option value="1">Please Select</option>';
 
+                            $("#ddlFmnBranch").html(lst);
                             $("#ddlCommand").html(lst);
                             $("#ddlCorps").html(lst);
                             $("#ddlCorps").html(lst);
