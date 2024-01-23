@@ -4,6 +4,7 @@ using DataAccessLayer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccessLayer.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240123060514_v33")]
+    partial class v33
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1156,17 +1159,11 @@ namespace DataAccessLayer.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("BasicDetailTempId"));
 
-                    b.Property<byte>("ApplyForId")
-                        .HasColumnType("tinyint");
-
                     b.Property<DateTime>("DOB")
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime>("DateOfCommissioning")
                         .HasColumnType("datetime2");
-
-                    b.Property<string>("District")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -1180,17 +1177,10 @@ namespace DataAccessLayer.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<string>("PO")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PS")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("PinCode")
-                        .HasColumnType("int");
-
-                    b.Property<byte>("RegistrationId")
-                        .HasColumnType("tinyint");
+                    b.Property<string>("PermanentAddress")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("RemarksIds")
                         .IsRequired()
@@ -1202,15 +1192,6 @@ namespace DataAccessLayer.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<string>("State")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Tehsil")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<byte>("TypeId")
-                        .HasColumnType("tinyint");
-
                     b.Property<DateTime?>("UpdatedOn")
                         .IsRequired()
                         .HasColumnType("datetime");
@@ -1218,16 +1199,7 @@ namespace DataAccessLayer.Migrations
                     b.Property<int?>("Updatedby")
                         .HasColumnType("int");
 
-                    b.Property<string>("Village")
-                        .HasColumnType("nvarchar(max)");
-
                     b.HasKey("BasicDetailTempId");
-
-                    b.HasIndex("ApplyForId");
-
-                    b.HasIndex("RegistrationId");
-
-                    b.HasIndex("TypeId");
 
                     b.HasIndex("Updatedby");
 
@@ -1770,8 +1742,6 @@ namespace DataAccessLayer.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("BasicDetailId");
 
                     b.HasIndex("FromAspNetUsersId");
 
@@ -2336,36 +2306,12 @@ namespace DataAccessLayer.Migrations
 
             modelBuilder.Entity("DataTransferObject.Domain.Model.BasicDetailTemp", b =>
                 {
-                    b.HasOne("DataTransferObject.Domain.Master.MApplyFor", "MApplyFor")
-                        .WithMany()
-                        .HasForeignKey("ApplyForId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("DataTransferObject.Domain.Master.MRegistration", "Registration")
-                        .WithMany()
-                        .HasForeignKey("RegistrationId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("DataTransferObject.Domain.Master.MICardType", "MICardType")
-                        .WithMany()
-                        .HasForeignKey("TypeId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("DataTransferObject.Domain.Identitytable.ApplicationUser", "ApplicationUserUpdate")
                         .WithMany()
                         .HasForeignKey("Updatedby")
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("ApplicationUserUpdate");
-
-                    b.Navigation("MApplyFor");
-
-                    b.Navigation("MICardType");
-
-                    b.Navigation("Registration");
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Model.DocUpload", b =>
@@ -2606,12 +2552,6 @@ namespace DataAccessLayer.Migrations
 
             modelBuilder.Entity("DataTransferObject.Domain.Model.TrnPostingOut", b =>
                 {
-                    b.HasOne("DataTransferObject.Domain.Model.BasicDetail", "BasicDetail")
-                        .WithMany()
-                        .HasForeignKey("BasicDetailId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("DataTransferObject.Domain.Identitytable.ApplicationUser", "ApplicationUser")
                         .WithMany()
                         .HasForeignKey("FromAspNetUsersId")
@@ -2662,8 +2602,6 @@ namespace DataAccessLayer.Migrations
                     b.Navigation("ApplicationUser");
 
                     b.Navigation("ApplicationUserUpdate");
-
-                    b.Navigation("BasicDetail");
 
                     b.Navigation("MPostingReason");
 

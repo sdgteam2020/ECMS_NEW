@@ -4,6 +4,7 @@ using DataAccessLayer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccessLayer.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240123114723_v38")]
+    partial class v38
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1156,9 +1159,6 @@ namespace DataAccessLayer.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("BasicDetailTempId"));
 
-                    b.Property<byte>("ApplyForId")
-                        .HasColumnType("tinyint");
-
                     b.Property<DateTime>("DOB")
                         .HasColumnType("datetime2");
 
@@ -1222,8 +1222,6 @@ namespace DataAccessLayer.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("BasicDetailTempId");
-
-                    b.HasIndex("ApplyForId");
 
                     b.HasIndex("RegistrationId");
 
@@ -2336,12 +2334,6 @@ namespace DataAccessLayer.Migrations
 
             modelBuilder.Entity("DataTransferObject.Domain.Model.BasicDetailTemp", b =>
                 {
-                    b.HasOne("DataTransferObject.Domain.Master.MApplyFor", "MApplyFor")
-                        .WithMany()
-                        .HasForeignKey("ApplyForId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("DataTransferObject.Domain.Master.MRegistration", "Registration")
                         .WithMany()
                         .HasForeignKey("RegistrationId")
@@ -2360,8 +2352,6 @@ namespace DataAccessLayer.Migrations
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("ApplicationUserUpdate");
-
-                    b.Navigation("MApplyFor");
 
                     b.Navigation("MICardType");
 

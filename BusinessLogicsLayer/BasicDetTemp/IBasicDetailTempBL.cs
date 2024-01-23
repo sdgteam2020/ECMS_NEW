@@ -7,9 +7,10 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace BusinessLogicsLayer.BasicDetTemp
-{
+{ 
     public interface IBasicDetailTempBL : IGenericRepository<BasicDetailTemp>
     {
         public Task<List<DTOBasicDetailTempRequest>> GetALLBasicDetailTemp(int UserId);
+        public Task<DTOBasicDetailTempRequest> GetALLBasicDetailTempByBasicDetailId(int UserId,int BasicDetailId);
     }
 }

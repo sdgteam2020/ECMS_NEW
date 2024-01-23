@@ -9,6 +9,7 @@ namespace DataTransferObject.Response
     public class DTOPostingInResponse
     {
         public int RequestId { get; set; }
+        public int BasicDetailId { get; set; }
         public string? Name { get; set; }
         public string? ServiceNo { get; set; }
         public string? RankName { get; set; }

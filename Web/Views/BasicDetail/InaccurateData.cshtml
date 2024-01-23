@@ -1,5 +1,5 @@
 ﻿@model List<DTOBasicDetailTempRequest>
-<div class="container mt-4">
+<div class="container1 mt-4">
     <div class="card mb-3 ">
         <div class="card-header">
             <div class="row">
@@ -22,10 +22,10 @@
                                         <th>@Html.DisplayNameFor(model => model[0].Name)</th>
                                         <th>@Html.DisplayNameFor(model => model[0].ServiceNo)</th>
                                         <th>@Html.DisplayNameFor(model => model[0].DOB)</th>
-                                        <th>@Html.DisplayNameFor(model => model[0].DateOfCommissioning)</th>
+                                    <th class="wrap">Dt of Commissioning/Enrolment</th>
                                         @* <th>@Html.DisplayNameFor(model => model[0].PermanentAddress)</th> *@
                                         <th>@Html.DisplayNameFor(model => model[0].Observations)</th>
-                                        @*<th>Action</th> *@
+                                      <th>Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -41,7 +41,19 @@
                                             <td>@item.ServiceNo</td>
                                             <td>@(item.DOB.ToString("dd/MMM/yyyy"))</td>
                                             <td>@item.DateOfCommissioning.ToString("dd/MMM/yyyy")</td>
-                                           @*  <td>@item.PermanentAddress</td> *@
+                                           @*  <td>
+                                            <span>@item.Village , @item.Tehsil</span>
+                                            <span>@item.PO , @item.PS</span><br><br>
+                                            <span>@item.State , @item.District </span><br><br>
+                                            <span>@item.PinCode</span>
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                </td> *@
                                            <td>
                                                 <ul >
                                             @if (rem!=null)
@@ -53,6 +65,7 @@
                                             }
                                                 </ul>
                                             </td>
+                                        <td> <a asp-controller="BasicDetail" asp-action="InaccurateDataView" asp-route-Id="@item.EncryptedId" class="btn btn-primary mr-2">View Details</a></td>
                                             @*                                 <td>
                                         <div class="d-flex p-2">
                                         <a asp-controller="BasicDetail" asp-action="RegistrationEdit" asp-route-Id="@item.EncryptedId" class="text-primary mr-2"><i class="fas fa-edit fa-lg"></i></a>

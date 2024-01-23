@@ -324,6 +324,18 @@ namespace Web.Controllers
         }
         [HttpGet]
         [Authorize(Roles = "Admin,User")]
+        public async Task<ActionResult> InaccurateDataView(string Id)
+        {
+            var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+           string decryptedId = protector.Unprotect(Id);
+           int decryptedIntId = Convert.ToInt32(decryptedId);
+            var allrecord = await Task.Run(() => basicDetailTempBL.GetALLBasicDetailTempByBasicDetailId(Convert.ToInt32(userId), decryptedIntId));
+            _logger.LogInformation(1001, "Index Page Of Basic Detail Temp View");
+          
+            return View(allrecord);
+        }
+        [HttpGet]
+        [Authorize(Roles = "Admin,User")]
         public async Task<ActionResult> RequestType()
         {
             var allrecord = await Task.Run(() => basicDetailBL.GetAllICardType());
@@ -416,10 +428,19 @@ namespace Web.Controllers
                             basicDetailTemp.ServiceNo = model.ServiceNo;
                             basicDetailTemp.DOB = model.DOB;
                             basicDetailTemp.DateOfCommissioning = model.DateOfCommissioning;
-                            //basicDetailTemp.PermanentAddress = model.PermanentAddress;
+                            basicDetailTemp.State = model.State;
+                            basicDetailTemp.District = model.District;
+                            basicDetailTemp.PS = model.PS;
+                            basicDetailTemp.PO = model.PO;
+                            basicDetailTemp.Tehsil = model.Tehsil;
+                            basicDetailTemp.Village = model.Village;
+                            basicDetailTemp.PinCode = model.PinCode;
                             basicDetailTemp.Observations = model.Observations;
                             basicDetailTemp.Updatedby = model.Updatedby;
                             basicDetailTemp.RemarksIds = model.RemarksIds;
+                            basicDetailTemp.ApplyForId= model.ApplyForId;
+                            basicDetailTemp.RegistrationId= model.RegistrationId;
+                            basicDetailTemp.TypeId= model.TypeId;
                             basicDetailTemp.UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
                             await basicDetailTempBL.Add(basicDetailTemp);
                             TempData["success"] = "Request Submited Successfully.";

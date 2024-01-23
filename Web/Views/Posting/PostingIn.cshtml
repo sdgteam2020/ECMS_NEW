@@ -1,4 +1,9 @@
-﻿<div class="container mt-2">
+﻿<style>
+    .form-group .labelprofile {
+        font-weight:600;
+    }
+</style>
+<div class="container mt-2">
     <div class="card mb-3 ">
         <div class="card-header">
 
@@ -24,6 +29,9 @@
                 </div> *@
                
                 <form action="" id="SaveForm" method="post" name="SaveForm">
+
+
+                    <span class="spnBasicDetailIdOutID d-none">0</span>
                     <span class="spnPostingOutID d-none">0</span>
 
                     <span class="spnFromAspNetUsersId d-none">0</span>
@@ -55,9 +63,9 @@
                                         </div>
                                         <div class="col-sm-6">
                                             <div class="form-group row mb-2">
-                                                <label class="col-form-label col-sm-4 labelprofile">Appt</label>
+                                                <label class="col-form-label col-sm-4 labelprofile">Name</label>
                                                 <div class="col-sm-8">
-                                                    <label id="lblAppt" class="col-form-label"></label>
+                                                    <label id="lblName" class="col-form-label"></label>
 
                                                 </div>
 
@@ -85,14 +93,15 @@
                                         </div>
                                         <div class="col-sm-6">
                                             <div class="form-group row mb-2">
-                                                <label class="col-form-label col-sm-4 labelprofile">Name</label>
+                                                <label class="col-form-label col-sm-4 labelprofile">Appt</label>
                                                 <div class="col-sm-8">
-                                                    <label id="lblName" class="col-form-label"></label>
+                                                    <label id="lblAppt" class="col-form-label"></label>
 
                                                 </div>
 
                                             </div>
                                         </div>
+                                        
                                         <div class="col-sm-6">
                                             <div class="form-group row mb-2">
                                                 <label class="col-form-label col-sm-4 labelprofile">Status of Inds I Card</label>

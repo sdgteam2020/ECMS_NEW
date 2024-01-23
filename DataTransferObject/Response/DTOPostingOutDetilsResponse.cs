@@ -9,6 +9,9 @@ namespace DataTransferObject.Response
 {
     public class DTOPostingOutDetilsResponse
     {
+        public string ServiceNo { get; set; }
+        public string Name { get; set; }
+        public string Rank { get; set; }
         public string Reason { get; set; }
         public string Authority { get; set; }
         public string SOSDate { get; set; }

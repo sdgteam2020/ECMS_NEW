@@ -15,6 +15,11 @@ namespace DataTransferObject.Domain.Model
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Key]
         public int Id { get; set; }
+       
+
+        [ForeignKey("BasicDetail"), DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public int BasicDetailId { get; set; }
+        public BasicDetail? BasicDetail { get; set; }
 
         [ForeignKey("MPostingReason"), DatabaseGenerated(DatabaseGeneratedOption.None)]
         [Required]

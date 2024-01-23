@@ -48,7 +48,9 @@
                             <tr>
                                 <th>Ser No</th>
                                 <th>Updated Dt</th>
-                                <th>Army No + Name</th>
+                                <th>
+                                    Army No+Rank+Name
+                                </th>
                                 <th>Reason</th>
                                 <th>SOS Dt</th>
                                 <th>From Unit+Domain ID</th>
@@ -69,10 +71,12 @@
                                     <td> @asrl </td>
                                     <td> @Html.DisplayFor(modelItem => item.UpdatedOn)</td>
                                     <td>
-                                        @Html.DisplayFor(modelItem => item.FromArmyNO)
+                                        @Html.DisplayFor(modelItem => item.ServiceNo)
+                                        <br>
+                                        @Html.DisplayFor(modelItem => item.Rank)
 
-                                        @Html.DisplayFor(modelItem => item.FromRankName)
-                                        @Html.DisplayFor(modelItem => item.FromName)
+                                      
+                                        @Html.DisplayFor(modelItem => item.Name)
 
                                         @* @Html.DisplayFor(modelItem => item.FromDomainId) *@
                                     </td>

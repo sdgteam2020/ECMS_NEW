@@ -174,7 +174,7 @@ namespace DataTransferObject.Requests
         /// <summary>
         /// address
         /// </summary>
-      
+        public string? PermanentAddress { get; set; }
         public string? State { get; set; }
 
        
@@ -236,6 +236,7 @@ namespace DataTransferObject.Requests
         public byte TypeId { get; set; }
 
       
+
         public string? RemarksIds { get; set; }
     }
 }

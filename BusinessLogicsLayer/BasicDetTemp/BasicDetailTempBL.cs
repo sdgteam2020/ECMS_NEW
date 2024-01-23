@@ -22,5 +22,10 @@ namespace BusinessLogicsLayer.BasicDetTemp
         {
             return _iBasicDetailTempDB.GetALLBasicDetailTemp(UserId);
         }
+
+        public Task<DTOBasicDetailTempRequest> GetALLBasicDetailTempByBasicDetailId(int UserId, int BasicDetailId)
+        {
+            return _iBasicDetailTempDB.GetALLBasicDetailTempByBasicDetailId(UserId, BasicDetailId);
+        }
     }
 }
