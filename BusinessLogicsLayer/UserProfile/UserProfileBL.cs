@@ -40,9 +40,9 @@ namespace BusinessLogicsLayer.Master
             return await _iUserProfileDB.GetProfileByUserId(UserId);
         }
 
-        public Task<bool> GetByArmyNo(MUserProfile Data, int UserId)
+        public async Task<bool?> FindByArmyNoWithUserId(string ArmyNo, int UserId)
         {
-          return  _iUserProfileDB.GetByArmyNo(Data, UserId);
+          return  await _iUserProfileDB.FindByArmyNoWithUserId(ArmyNo, UserId);
         }
 
         public Task<DTOUserProfileResponse> GetByArmyNo(string ArmyNo, int UserId)
@@ -79,6 +79,10 @@ namespace BusinessLogicsLayer.Master
         public async Task<List<DTOAllRelatedDataByArmyNoResponse>?> GetTopByArmyNo(string ArmyNo)
         {
             return await _iUserProfileDB.GetTopByArmyNo(ArmyNo);
+        }
+        public async Task<bool?> FindByArmyNo(string ArmyNo)
+        {
+            return await _iUserProfileDB.FindByArmyNo(ArmyNo);
         }
     }
 }

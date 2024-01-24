@@ -44,16 +44,16 @@ namespace DataTransferObject.Domain
 
         [StringLength(10)]
         [Column(TypeName = "varchar(10)")]
-        public string? MobileNo { get; set; }
-        
-        
+        public string MobileNo { get; set; } = string.Empty;
+
+
         [StringLength(6)]
         [Column(TypeName = "varchar(6)")]
-        public string? DialingCode { get; set; }
+        public string DialingCode { get; set; } = string.Empty;
 
         [StringLength(5)]
         [Column(TypeName = "varchar(5)")]
-        public string? Extension { get; set; }
+        public string Extension { get; set; } = string.Empty;
 
         [StringLength(50)]
         [Column(TypeName = "varchar(50)")]

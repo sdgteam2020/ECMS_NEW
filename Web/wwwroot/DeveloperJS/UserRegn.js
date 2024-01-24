@@ -245,7 +245,13 @@ function BindData() {
                         $("#lblDomainId").html($(this).closest("tr").find("#domainId").html());
                         $("#lblRole").html($(this).closest("tr").find("#roleName").html());
                         $("#spnDomainRegId").html($(this).closest("tr").find("#regId").html());
-                        $("#txtadminmessage").html($(this).closest("tr").find("#spnAdminMsg").html());
+                        if ($(this).closest("tr").find("#spnAdminMsg").html() != "null") {
+                            $("#txtadminmessage").val($(this).closest("tr").find("#spnAdminMsg").html());
+                        }
+                        else {
+                            $("#txtadminmessage").val("");
+                        }
+
                         //alert($(this).closest("tr").find("#domain_approval").html())
                         if ($(this).closest("tr").find("#domain_approval").html() == 'Verifed') {
                             $("#txtapprovalyes").prop("checked", true);
@@ -651,6 +657,7 @@ function Reset() {
     $("#txtSearch").val("");
 
     $("#spnDomainRegId").html("0");
+    $("#txtadminmessage").val("");
     $("#lblDomainId").html("");
     $("#lblRole").html("");
 

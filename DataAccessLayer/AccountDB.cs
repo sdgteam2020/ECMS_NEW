@@ -655,6 +655,7 @@ namespace DataAccessLayer
                 else
                 {
                     userUpdate.Active = dTO.Active;
+                    userUpdate.AdminMsg = dTO.AdminMsg;
                     userUpdate.Updatedby = dTO.Updatedby;
                     userUpdate.UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
                     if (dTO.AdminFlag == true)
@@ -666,7 +667,6 @@ namespace DataAccessLayer
                     {
                         userUpdate.AdminFlag = dTO.AdminFlag;
                         userUpdate.AdminFlagDate = null;
-                        userUpdate.AdminMsg = dTO.AdminMsg;
                     }
                     var result = await userManager.UpdateAsync(userUpdate);
 
@@ -761,6 +761,9 @@ namespace DataAccessLayer
                                 ArmyNo = dTOTempSession.ICNO,
                                 RankId = model.RankId,
                                 Name = model.Name,
+                                MobileNo=model.MobileNo,
+                                DialingCode = model.DialingCode,
+                                Extension=model.Extension,
                                 IntOffr = model.IntOffr,
                                 IsIO = model.IsIO,
                                 IsCO = model.IsCO,
@@ -824,6 +827,9 @@ namespace DataAccessLayer
                             mUserProfile.ArmyNo = dTOTempSession.ICNO;
                             mUserProfile.RankId = model.RankId;
                             mUserProfile.Name = model.Name;
+                            mUserProfile.MobileNo = model.MobileNo;
+                            mUserProfile.DialingCode = model.DialingCode;
+                            mUserProfile.Extension = model.Extension;
                             mUserProfile.IntOffr = model.IntOffr;
                             mUserProfile.IsIO = model.IsIO;
                             mUserProfile.IsCO = model.IsCO;
@@ -886,6 +892,9 @@ namespace DataAccessLayer
                                 mUserProfile.ArmyNo = dTOTempSession.ICNO;
                                 mUserProfile.RankId = model.RankId;
                                 mUserProfile.Name = model.Name;
+                                mUserProfile.MobileNo = model.MobileNo;
+                                mUserProfile.DialingCode = model.DialingCode;
+                                mUserProfile.Extension = model.Extension;
                                 mUserProfile.IntOffr = model.IntOffr;
                                 mUserProfile.IsIO = model.IsIO;
                                 mUserProfile.IsCO = model.IsCO;

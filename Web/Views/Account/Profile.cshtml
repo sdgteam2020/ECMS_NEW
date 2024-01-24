@@ -103,28 +103,14 @@
                                     <input hidden asp-for="ApptId" />
                                     <div class="col-md-6 col-lg-6 col-xl-6">
                                         <div class="row mb-2 required">
-                                            <label asp-for="ArmyNo" class="col-sm-4 col-form-label form-label">Offrs Army No</label>
+                                            <label asp-for="ArmyNo" class="col-sm-4 col-form-label form-label">Offrs Army No<i class="fas fa-asterisk mand1"></i></label>
                                             <div class="col-sm-8">
                                                 <input asp-for="ArmyNo" class="form-control" placeholder="" readonly />
                                                 <span asp-validation-for="ArmyNo" class="text-danger"></span>
                                             </div>
                                         </div>
                                         <div class="row mb-2 required">
-                                            <label asp-for="Name" class="col-sm-4 col-form-label form-label">Name</label>
-                                            <div class="col-sm-8">
-                                                @if (Model.UserId > 0)
-                                                {
-                                                    <input asp-for="Name" class="form-control" placeholder="" readonly />
-                                                }
-                                                else
-                                                {
-                                                    <input asp-for="Name" class="form-control" placeholder="" />
-                                                }
-                                                <span asp-validation-for="Name" class="text-danger"></span>
-                                            </div>
-                                        </div>
-                                        <div class="row mb-2 required">
-                                            <label asp-for="RankId" class="col-sm-4 col-form-label form-label">Rank</label>
+                                            <label asp-for="RankId" class="col-sm-4 col-form-label form-label">Rank<i class="fas fa-asterisk mand1"></i></label>
                                             <div class="col-sm-8">
                                                 @if (Model.UserId > 0)
                                                 {
@@ -141,7 +127,63 @@
                                             </div>
                                         </div>
                                         <div class="row mb-2 required">
-                                            <label asp-for="IsIO" class="col-sm-4 col-form-label form-label">Initating Offr</label>
+                                            <label asp-for="Name" class="col-sm-4 col-form-label form-label">Name<i class="fas fa-asterisk mand1"></i></label>
+                                            <div class="col-sm-8">
+                                                @if (Model.UserId > 0)
+                                                {
+                                                    <input asp-for="Name" class="form-control" placeholder="" readonly />
+                                                }
+                                                else
+                                                {
+                                                    <input asp-for="Name" class="form-control" placeholder="" />
+                                                }
+                                                <span asp-validation-for="Name" class="text-danger"></span>
+                                            </div>
+                                        </div>
+                                        <div class="row mb-2 required">
+                                            <label asp-for="MobileNo" class="col-sm-4 col-form-label form-label">Mobile No<i class="fas fa-asterisk mand1"></i></label>
+                                            <div class="col-sm-8">
+                                                @if (Model.UserId > 0)
+                                                {
+                                                    <input asp-for="MobileNo" class="form-control allow-number" placeholder="" readonly />
+                                                }
+                                                else
+                                                {
+                                                    <input asp-for="MobileNo" class="form-control allow-number" placeholder="" />
+                                                }
+                                                <span asp-validation-for="MobileNo" class="text-danger"></span>
+                                            </div>
+                                        </div>
+                                        <div class="row mb-2 required">
+                                            <label asp-for="DialingCode" class="col-sm-4 col-form-label form-label">ASCON Dialing<i class="fas fa-asterisk mand1"></i></label>
+                                            <div class="col-sm-8">
+                                                @if (Model.UserId > 0)
+                                                {
+                                                    <input asp-for="DialingCode" class="form-control allow-number" placeholder="" readonly />
+                                                }
+                                                else
+                                                {
+                                                    <input asp-for="DialingCode" class="form-control allow-number" placeholder="" />
+                                                }
+                                                <span asp-validation-for="DialingCode" class="text-danger"></span>
+                                            </div>
+                                        </div>
+                                        <div class="row mb-2 required">
+                                            <label asp-for="Extension" class="col-sm-4 col-form-label form-label">Extension<i class="fas fa-asterisk mand1"></i></label>
+                                            <div class="col-sm-8">
+                                                @if (Model.UserId > 0)
+                                                {
+                                                    <input asp-for="Extension" class="form-control allow-number" placeholder="" readonly />
+                                                }
+                                                else
+                                                {
+                                                    <input asp-for="Extension" class="form-control allow-number" placeholder="" />
+                                                }
+                                                <span asp-validation-for="Extension" class="text-danger"></span>
+                                            </div>
+                                        </div>
+                                        <div class="row mb-2 required">
+                                            <label asp-for="IsIO" class="col-sm-4 col-form-label form-label">Initating Offr<i class="fas fa-asterisk mand1"></i></label>
                                             @if (Model.UserId > 0)
                                             {
                                                 <div class="col-sm-8">
@@ -180,7 +222,7 @@
 
                                         </div>
                                         <div class="row mb-2 required">
-                                            <label asp-for="IsCO" class="col-sm-4 col-form-label form-label">Commanding Offr</label>
+                                            <label asp-for="IsCO" class="col-sm-4 col-form-label form-label">Commanding Offr<i class="fas fa-asterisk mand1"></i></label>
                                             @if (Model.UserId > 0)
                                             {
                                                 <div class="col-sm-8">
@@ -220,7 +262,7 @@
 
                                         </div>
                                         <div class="row mb-2 required">
-                                            <label asp-for="IntOffr" class="col-sm-4 col-form-label form-label"> Int Offrs.</label>
+                                            <label asp-for="IntOffr" class="col-sm-4 col-form-label form-label"> Int Offrs.<i class="fas fa-asterisk mand1"></i>    </label>
                                             @if (Model.UserId > 0)
                                             {
                                                 <div class="col-sm-8">
@@ -379,7 +421,7 @@
 </body>
 </html>
 <div class="modal fade" id="AddNewUnitmap" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLabel">Enter Unit Details With Mapping</h5>
