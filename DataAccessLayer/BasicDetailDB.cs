@@ -466,6 +466,7 @@ namespace DataAccessLayer
                                      RequestId =e.RequestId,
                                      Reject=e.Reject,
                                      TrackingId = e.TrackingId,
+
                                  }).ToList();
                 return await Task.FromResult(allrecord);
 

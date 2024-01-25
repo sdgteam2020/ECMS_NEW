@@ -1,5 +1,7 @@
 ﻿$(document).ready(function () {
 
+    
+
     $("#TermsConditions").click(function () {
 
         if ($("#TermsConditions").prop("checked") == true) {
@@ -96,7 +98,9 @@
 function CheckValidation() {
     
     if ($("#TermsConditions").prop("checked")) {
-        alert("Your Tracking Id -" + DateFormateMMddyyyy($("#DOB").val()) + "" + $("#AadhaarNo").val().substr($("#AadhaarNo").val().length - 4) );
+        if ($("#SaveForm")[0].checkValidity()) {
+            alert("Your Tracking Id -" + DateFormateMMddyyyy($("#DOB").val()) + "" + $("#AadhaarNo").val().substr($("#AadhaarNo").val().length - 4));
+        }
         return true;
         
     }

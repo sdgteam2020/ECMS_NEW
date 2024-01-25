@@ -6,13 +6,26 @@ $(document).ready(function () {
 
     
     $('.Alphanumeric').on('change', function () {
-      
+        
         if ($('.Alphanumeric').val().match("^[a-zA-Z0-9 ]*$")) {
             return true
            
         }
         else {
             toastr.warning('Only Alphabets and Numbers allowed');
+
+        }
+    });
+    $('.isNumerictxt').on('keypress', function () {
+
+        if (isNumeric($('.isNumerictxt').val())) {
+           
+            return true
+
+        }
+        else {
+            $('.isNumerictxt').val("");
+            toastr.warning('Only Numbers allowed');
 
         }
     });
@@ -43,9 +56,10 @@ $(document).ready(function () {
                 orientation: 'portrait', //portrait//landscape
                 pageSize: 'A4', //A3 , A5 , A6 , legal , letter
                 exportOptions: {
-                    columns: ':visible',
+                   /* columns: ':visible',*/
                     search: 'applied',
-                    order: 'applied'
+                    order: 'applied',
+                    columns: "thead th:not(.noExport)"
                 },
                 customize: function (doc) {
                     //Remove the title created by datatTables
@@ -95,7 +109,7 @@ $(document).ready(function () {
                                 {
                                     alignment: 'right',
                                     fontSize: 14,
-                                    text: 'PDF Download From E-IASC'
+                                    text: 'PDF Download From E-IASAC'
                                 }
                             ],
                             margin: 20
@@ -157,9 +171,10 @@ $(document).ready(function () {
                 orientation: 'portrait', //portrait//landscape
                 pageSize: 'A4', //A3 , A5 , A6 , legal , letter
                 exportOptions: {
-                    columns: ':visible',
+                  /*  columns: ':visible',*/
                     search: 'applied',
-                    order: 'applied'
+                    order: 'applied',
+                    columns: "thead th:not(.noExport)"
                 },
                 customize: function (doc) {
                     //Remove the title created by datatTables
@@ -209,7 +224,7 @@ $(document).ready(function () {
                                 {
                                     alignment: 'right',
                                     fontSize: 14,
-                                    text: 'PDF Download From E-IASC'
+                                    text: 'PDF Download From E-IASAC'
                                 }
                             ],
                             margin: 20
@@ -543,7 +558,7 @@ function Pad(d) {
         var now = new Date();
         var jsDate = now.getDate() + '/' + (now.getMonth() + 1) + '/' + now.getFullYear() + ' ' + now.getHours() + ':' + now.getMinutes() + ':' + now.getSeconds();
 
-        var WaterMark = '<div style="position:fixed;top:40%;font-size:70px;font-weight:800;opacity:0.2;transform:rotate(300deg);color:blue">' + $("#IpaddresGloble").html() + ' ' + jsDate + '</div>';
+        var WaterMark = '<div style="position:fixed;top:50%;font-size:70px;font-weight:800;opacity:0.1;transform:rotate(300deg);color:blue">' + $("#IpaddresGloble").html() + ' ' + jsDate + '</div>';
         $(body).append(WaterMark);
 
         html = $(html).append(head).append(body);
@@ -554,7 +569,7 @@ function Pad(d) {
         fn_window.document.write(html.clone().html());
         
 
-        setTimeout(function () { fn_window.print();  }, 250);
+        setTimeout(function () { fn_window.print(); fn_window.close(); }, 250);
 
         return $(this);
     }

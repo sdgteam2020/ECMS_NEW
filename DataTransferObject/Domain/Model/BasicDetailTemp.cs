@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DataTransferObject.Domain.Master;
+using DataTransferObject.Localize;
 
 namespace DataTransferObject.Domain.Model
 {
@@ -24,6 +25,10 @@ namespace DataTransferObject.Domain.Model
         public string ServiceNo { get; set; } = string.Empty;
 
         public DateTime DOB { get; set; }
+        [Display(Name = "Rank", ResourceType = typeof(Resource))]
+        [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
+        [RegularExpression(@"^[\w \.\,\?\;\:\""\''\[\]\!\@\#\$\%\&\*\(\)\-\=\+\\\/]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
+        public short RankId { get; set; }
 
         public DateTime DateOfCommissioning { get; set; }
 

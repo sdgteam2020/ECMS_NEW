@@ -171,6 +171,11 @@ namespace DataTransferObject.Requests
         [RegularExpression(@"^[\w \.\,\?\;\:\""\''\[\]\!\@\#\$\%\&\*\(\)\-\=\+\\\/]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
         public string? Observations { get; set; }
 
+
+        [Display(Name = "Rank", ResourceType = typeof(Resource))]
+        [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
+        [RegularExpression(@"^[\w \.\,\?\;\:\""\''\[\]\!\@\#\$\%\&\*\(\)\-\=\+\\\/]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
+        public short RankId { get; set; }
         /// <summary>
         /// address
         /// </summary>
@@ -190,9 +195,9 @@ namespace DataTransferObject.Requests
         public int? PinCode { get; set; }
         /// <summary>
         /// end address
-        /// </summary>
-        public string IdenMark1 { get; set; } = string.Empty;
-        public string IdenMark2 { get; set; } = string.Empty;
+        /// </summary> 
+        public string? IdenMark1 { get; set; } = string.Empty;
+        public string? IdenMark2 { get; set; } = string.Empty;
 
        
         public string? AadhaarNo { get; set; }
@@ -209,7 +214,24 @@ namespace DataTransferObject.Requests
         public int Sno { get; set; }
 
         public string? Remarks2 { get; set; }
-    } 
+
+        public string? ApplyType { get; set; }
+        public string? RegistrationName { get; set; }
+        public string? CardType { get; set; }
+        public string? DomainId { get; set; }
+        public string? UnitName { get; set; }
+        public string? Suffix { get; set; }
+        public string? Sus_no { get; set; }
+        public string? OffName { get; set; }
+        public string? RankAbbreviation { get; set; }
+        public string? RankName { get; set; }
+        public string? ArmyNo { get; set; }
+
+        public byte ApplyForId { get; set; }
+        public byte RegistrationId { get; set; }
+        public byte TypeId { get; set; }
+
+    }  
     public class DTORegistrationRequest : DTOBasicDetailTempRequest
     {
         //public byte RegistrationId { get; set; }

@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DataTransferObject.ViewModels;
 
 namespace BusinessLogicsLayer.BasicDetTemp
 {
@@ -26,6 +27,16 @@ namespace BusinessLogicsLayer.BasicDetTemp
         public Task<DTOBasicDetailTempRequest> GetALLBasicDetailTempByBasicDetailId(int UserId, int BasicDetailId)
         {
             return _iBasicDetailTempDB.GetALLBasicDetailTempByBasicDetailId(UserId, BasicDetailId);
+        }
+
+        public Task<BasicDetailTemp> GetByArmyNo(string ArmyNo)
+        {
+            return _iBasicDetailTempDB.GetByArmyNo(ArmyNo);
+        }
+
+        public Task<bool> UpdateByArmyNo(string ArmyNo)
+        {
+            return _iBasicDetailTempDB.UpdateByArmyNo(ArmyNo);
         }
     }
 }

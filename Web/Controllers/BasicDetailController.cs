@@ -441,8 +441,23 @@ namespace Web.Controllers
                             basicDetailTemp.ApplyForId= model.ApplyForId;
                             basicDetailTemp.RegistrationId= model.RegistrationId;
                             basicDetailTemp.TypeId= model.TypeId;
+                            basicDetailTemp.RankId= model.RankId;
+
+                           
                             basicDetailTemp.UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
+                            BasicDetailTemp temp = new BasicDetailTemp();
+                            temp =await basicDetailTempBL.GetByArmyNo(model.ServiceNo);
+
+                        if(temp != null && temp.BasicDetailTempId>0)
+                        {
+                            basicDetailTemp.BasicDetailTempId= temp.BasicDetailTempId;
+                            await basicDetailTempBL.Update(basicDetailTemp);
+                        }
+                        else
+                        {
                             await basicDetailTempBL.Add(basicDetailTemp);
+                        }
+                        
                             TempData["success"] = "Request Submited Successfully.";
                             return RedirectToAction("Registration");
                         //}
@@ -499,7 +514,6 @@ namespace Web.Controllers
         {
 
             
-
             ViewBag.OptionsBloodGroup = service.GetBloodGroup();
             ViewBag.OptionsArmedType = service.GetArmedType();
 
@@ -526,7 +540,7 @@ namespace Web.Controllers
                         //    ViewBag.OptionsRank = service.GetRank(2);
                         //}
 
-                        ViewBag.OptionsRank = 0;
+                       
                         ViewBag.OptionsUnitId = 0;
                         ViewBag.OptionsArmedType = service.GetArmedType();
                         ViewBag.OptionsBloodGroup = service.GetBloodGroup();
@@ -537,6 +551,7 @@ namespace Web.Controllers
                         dTOBasicDetailCrtRequest.DateOfCommissioning = model.DateOfCommissioning;
                         dTOBasicDetailCrtRequest.IdenMark1 = model.IdenMark1;
                         dTOBasicDetailCrtRequest.IdenMark2 = model.IdenMark2;
+                        ViewBag.OptionsRank = model.RankId;
                         //dTOBasicDetailCrtRequest.Height = model.Height;
 
                         // dTOBasicDetailCrtRequest.AadhaarNo = Convert.ToString(model.AadhaarNo);
@@ -987,6 +1002,8 @@ namespace Web.Controllers
                             //TrnDomainMapping trnDomainMapping = new TrnDomainMapping();
                             // trnDomainMapping.AspNetUsersId= Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                             //trnDomainMapping=await iDomainMapBL.GetByAspnetUserIdBy(trnDomainMapping);
+                            await basicDetailTempBL.UpdateByArmyNo(newBasicDetail.ServiceNo);
+
                             TempData["success"] = "Successfully created.";
                             return RedirectToAction("Index", new { Id = "MQ==" });
 

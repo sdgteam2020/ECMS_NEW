@@ -52,7 +52,7 @@
                                     <th>Tracking Id </th>
                                     <th>Type </th>
                                     <th>@Html.DisplayNameFor(model => model[0].ICardType)</th>
-                                    <th>History</th>
+                                    <th class="noExport">History</th>
                                     <th class="noExport">Action</th>
                                 </tr>
                             </thead>
@@ -78,7 +78,7 @@
                                         <td>@item.TrackingId</td>
                                         <td>@item.ApplyFor </td>
                                         <td>@item.ICardType</td>
-                                        <td><button class="btn btn-icon btn-round btn-primary mr-1 historyRequest" data-toggle="tooltip" data-placement="left" title="@item.Remark"><i class="fa fa-history" aria-hidden="true"></i></button></td>
+                                        <td class="noExport"><button class="btn btn-icon btn-round btn-primary mr-1 historyRequest" data-toggle="tooltip" data-placement="left" title="@item.Remark"><i class="fa fa-history" aria-hidden="true"></i></button></td>
                                         <td class="noExport">
                                             <div class="d-flex p-2">
 

@@ -87,5 +87,13 @@ namespace WebApi.Controllers
             return ss;
 
         }
+
+        [HttpGet]
+        public ActionResult Get(string Id)
+        {
+           string ids= HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
+            return Ok(ids);
+        }
+
     }
 }

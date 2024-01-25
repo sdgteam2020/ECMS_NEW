@@ -3,15 +3,22 @@
 @{
     ViewData["Title"] = "InaccurateDataView";
 }
+<style>
+    .form-group .labelprofile {
+        font-size: 18px;
+        font-weight: 700;
+    }
+
+</style>
 <div class="container1" id="printdata">
 
     <div class="row section-to-print">
         <div class="col-sm-4  text-left">
            
-            <img src="/Images/afsac_logo.png" width="120" />
+            <img src="/Images/afsac_logo.png" width="200" />
         </div>
         <div class="col-sm-8  text-right">
-            <span>PDF Download From E-IASC</span>
+            <span>PDF Download From E-IASAC</span>
         </div>
     </div>
     <div class="card-body" style="min-height:150px;">
@@ -19,24 +26,81 @@
 
         <div class="row">
             <div class="col-md-12 ">
+               
+                    <div class="card cardbg minheight mb-2 mt-2">
+                        <div class="seven">
+                            <h1>Request Details</h1>
+                        </div>
+                        <div class="mt-2 ml-4">
 
-                <div class="card cardbg mb-2 mt-2">
-                    <div class="seven">
-                        <h1>Inaccurate Data </h1>
-                    </div>
-                    <div class="mt-2 ml-4 mr-4">
-                        <div class="row">
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group row mb-2">
+                                        <label class="col-form-label col-sm-4 labelprofile">Regd User Dtls</label>
+                                        <div class="col-sm-8">
+                                        <label id="" class="col-form-label">@Model.RankAbbreviation @Model.OffName (@Model.ArmyNo) (@Model.DomainId)</label>
+
+                                        </div>
+
+                                    </div>
+                                </div>
+
                             <div class="col-sm-6 ">
                                 <div class="form-group row mb-2">
-                                    <label class="col-form-label col-sm-4 labelprofile">@Html.DisplayNameFor(model => model.Name)</label>
+                                    <label class="col-form-label col-sm-4 labelprofile">Category</label>
                                     <div class="col-sm-8">
-                                        <label id="" class="col-form-label">@Model.Name</label>
+                                        <label id="" class="col-form-label">@Model.ApplyType</label>
+
+                                    </div>
+
+                                </div>
+                            </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group row mb-2">
+                                        <label class="col-form-label col-sm-4 labelprofile">Unit Name</label>
+                                        <div class="col-sm-8">
+                                        <label id="" class="col-form-label">@Model.UnitName (@Model.Sus_no<span></span>@Model.Suffix)</label>
+
+                                        </div>
+
+                                    </div>
+                                </div>
+                            <div class="col-sm-6 ">
+                                <div class="form-group row mb-2">
+                                    <label class="col-form-label col-sm-4 labelprofile">Applied For</label>
+                                    <div class="col-sm-8">
+                                        <label id="" class="col-form-label">@Model.RegistrationName</label>
+
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group row mb-2">
+                                    <label class="col-form-label col-sm-4 labelprofile">
+                                        Reason For Apply
+                                    </label>
+                                    <div class="col-sm-8">
+                                        <label id="" class="col-form-label">@Model.CardType</label>
 
                                     </div>
 
                                 </div>
                             </div>
 
+                            </div>
+                        </div>
+                    </div>
+                
+                <div class="card cardbg mb-2 mt-2">
+                    <div class="seven mt-4">
+                        <h1>Inaccurate Data </h1>
+                    </div>
+                    <div class="mt-2 ml-4 mr-4">
+                        <div class="row">
+
+                            
+                            
                             <div class="col-sm-6 ">
                                 <div class="form-group row mb-2">
                                     <label class="col-form-label col-sm-4 labelprofile">@Html.DisplayNameFor(model => model.ServiceNo)</label>
@@ -49,9 +113,21 @@
                             </div>
                             <div class="col-sm-6 ">
                                 <div class="form-group row mb-2">
+                                    <label class="col-form-label col-sm-4 labelprofile">@Html.DisplayNameFor(model => model.Name)</label>
+                                    <div class="col-sm-8">
+                                        <label id="" class="col-form-label">@Model.RankAbbreviation @Model.Name</label>
+
+                                    </div>
+
+                                </div>
+                            </div>
+
+                           
+                            <div class="col-sm-6 ">
+                                <div class="form-group row mb-2">
                                     <label class="col-form-label col-sm-4 labelprofile">@Html.DisplayNameFor(model => model.DOB)</label>
                                     <div class="col-sm-8">
-                                        <label id="" class="col-form-label">@Model.DOB</label>
+                                        <label id="" class="col-form-label">@Model.DOB.ToString().Replace("-","/").Replace("00:00:00","")</label>
 
                                     </div>
 
@@ -59,9 +135,9 @@
                             </div>
                             <div class="col-sm-6 ">
                                 <div class="form-group row mb-2">
-                                    <label class="col-form-label col-sm-4 labelprofile">@Html.DisplayNameFor(model => model.DateOfCommissioning)</label>
+                                    <label class="col-form-label col-sm-4 labelprofile">Dte Of Commission</label>
                                     <div class="col-sm-8">
-                                        <label id="" class="col-form-label">@Model.DateOfCommissioning</label>
+                                        <label id="" class="col-form-label">@Model.DateOfCommissioning.ToString().Replace("-","/").Replace("00:00:00","")</label>
 
                                     </div>
 
