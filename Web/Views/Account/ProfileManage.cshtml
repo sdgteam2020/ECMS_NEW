@@ -2,8 +2,7 @@
     ViewData["Title"] = "Profile Manage";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
-<div class="container mt-4">
+<div class="mt-4">
     <div class="card mb-3 ">
         <div class="card-header">
 
@@ -74,11 +73,10 @@
         </div>
     </div>
 </div>
-</div>
 <script asp-src-include="~/developerjs/mtables.js"></script>
 <script asp-src-include="~/developerjs/profilemanage.js"></script>
 <div class="modal fade" id="AddNewProfile" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLabel">Enter Profile Details</h5>
@@ -97,6 +95,15 @@
                                 </div>
                             </div>
                             <div class="form-group row mb-2">
+                                <label class="col-form-label col-sm-4">Rank<i class="fas fa-asterisk mand1"></i></label>
+                                <div class="col-sm-8">
+                                    <select class="form-select" style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddlRank" id="ddlRank" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="Rank is required." data-val-regex-pattern="^[\w ]*$">
+                                        <option value="0">Select Rank</option>
+                                    </select>
+                                    <span class="text-danger field-validation-valid" data-valmsg-for="ddlRank" data-valmsg-replace="true"></span>
+                                </div>
+                            </div>
+                            <div class="form-group row mb-2">
                                 <label class="col-form-label col-sm-4">Name<i class="fas fa-asterisk mand1"></i></label>
                                 <div class="col-sm-8">
                                     <input class="form-control" placeholder="Enter Name" id="txtName" name="txtName" maxlength="50" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="Name is required." data-val-regex-pattern="^[\w ]*$" />
@@ -104,12 +111,24 @@
                                 </div>
                             </div>
                             <div class="form-group row mb-2">
-                                <label class="col-form-label col-sm-4">Rank<i class="fas fa-asterisk mand1"></i></label>
+                                <label class="col-form-label col-sm-4">Mobile No<i class="fas fa-asterisk mand1"></i></label>
                                 <div class="col-sm-8">
-                                    <select class="form-select" style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddlRank" id="ddlRank" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="Rank is required." data-val-regex-pattern="^[\w ]*$">
-                                        <option value="0">Select Rank</option>
-                                    </select>
-                                    <span class="text-danger field-validation-valid" data-valmsg-for="ddlRank" data-valmsg-replace="true"></span>
+                                    <input class="form-control allow-number" placeholder="Enter Mobile No" id="txtMobileNo" name="txtMobileNo" maxlength="10" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="Mobile No is required." data-val-regex-pattern="^[\d]+$" />
+                                    <span class="text-danger field-validation-valid" data-valmsg-for="txtMobileNo" data-valmsg-replace="true"></span>
+                                </div>
+                            </div>
+                            <div class="form-group row mb-2">
+                                <label class="col-form-label col-sm-4">ASCON Dialing<i class="fas fa-asterisk mand1"></i></label>
+                                <div class="col-sm-8">
+                                    <input class="form-control allow-number" placeholder="Enter ASCON Dialing" id="txtDialingCode" name="txtDialingCode" maxlength="6" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="ASCON Dialing is required." data-val-regex-pattern="^[\d]+$" />
+                                    <span class="text-danger field-validation-valid" data-valmsg-for="txtDialingCode" data-valmsg-replace="true"></span>
+                                </div>
+                            </div>
+                            <div class="form-group row mb-2">
+                                <label class="col-form-label col-sm-4">Extension<i class="fas fa-asterisk mand1"></i></label>
+                                <div class="col-sm-8">
+                                    <input class="form-control allow-number" placeholder="Enter Extension" id="txtExtension" name="txtExtension" maxlength="5" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="Extension is required." data-val-regex-pattern="^[\d]+$" />
+                                    <span class="text-danger field-validation-valid" data-valmsg-for="txtExtension" data-valmsg-replace="true"></span>
                                 </div>
                             </div>
                             <div class="form-group row mb-4">

@@ -20,5 +20,6 @@ namespace DataTransferObject.Response
         public string? UnitName { get; set; }
         public int TrnDomainMappingId { get; set; }
         public string? DomainId { get; set; }
+        public string? AdminMsg { get; set; }
     }
 }

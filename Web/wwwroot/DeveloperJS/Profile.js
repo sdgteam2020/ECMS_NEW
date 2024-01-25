@@ -19,6 +19,9 @@ $(document).ready(function () {
                     var ArmyNo = $("#txtProArmy").val();
                     var Rank = $("#ddlProRank").val();
                     var Name = $("#txtName").val();
+                    var MobileNo = $("#txtMobileNo").val();
+                    var DialingCode = $("#txtDialingCode").val();
+                    var Extension = $("#txtExtension").val();
                   
                    
                     var userid = $("#spnUserId").html();
@@ -28,7 +31,7 @@ $(document).ready(function () {
                     IsIO = $("#chkIO").prop("checked");
                     IsCo = $("#chkCO").prop("checked")
                     
-                        SaveUserProfile(ArmyNo, Rank, Name, IntOffr, IsIO, IsCo, userid);
+                    SaveUserProfile(ArmyNo, Rank, Name, MobileNo, DialingCode, Extension, IntOffr, IsIO, IsCo, userid);
                         //SaveUserProfile(ArmyNo, Rank, Name, Appt, Unit, $("#intoffsyes").prop("checked"), 3, $("#spnUserIdIO").html(), $("#spnUserIdGSO").html(), userid)
                    
                     
@@ -98,14 +101,14 @@ function GetALLByUnitById(param1) {
     });
 }
 
-function SaveUserProfile(ArmyNo, Rank, Name, IntOffr, IsIO, IsCo, UserId) {
+function SaveUserProfile(ArmyNo, Rank, Name, MobileNo, DialingCode, Extension, IntOffr, IsIO, IsCo, UserId) {
 
     /*  alert($('#bdaymonth').val());*/
     
     $.ajax({
         url: '/UserProfile/SaveUserProfile',
         type: 'POST',
-        data: { "ArmyNo": ArmyNo, "RankId": Rank, "Name": Name, "UserId": UserId, "IntOffr": IntOffr, "IsIO": IsIO, "IsCo": IsCo }, //get the search string
+        data: { "ArmyNo": ArmyNo, "RankId": Rank, "Name": Name, "MobileNo": MobileNo, "DialingCode": DialingCode, "Extension": Extension, "UserId": UserId, "IntOffr": IntOffr, "IsIO": IsIO, "IsCo": IsCo }, //get the search string
         success: function (result) {
 
 
@@ -187,7 +190,7 @@ function GetByArmyNo(ArmyNo) {
                         $("#lblicno").html(response.ArmyNo);
                         $(".lblAppt").html(response.AppointmentName);
                         $("#lblrole").html(response.RoleName);
-                         GetALLByUnitById(response.UnitId);
+                        GetALLByUnitById(response.UnitId);
                         mMsater(response.RankId, "ddlProRank", Rank, "");
                        
                         if (response.IntOffr == false) {

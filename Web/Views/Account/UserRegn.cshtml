@@ -3,14 +3,6 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <style>
-    .model-body-background {
-        /* background-color: #e9ecef; */
-    }
-
-    .model-body-label{
-       /*  background-color: #6189c3; */
-    }
-
     .count-label {
         background-color: #044C92;
         text-align: center;
@@ -24,8 +16,8 @@
     }
 </style>
 
-<div class="container mt-4">
-    <div class="card mb-3 ">
+<div class="mt-4">
+    <div class="card mb-3">
         <div class="card-header">
 
             <span id="SpnTxnId" class="d-none">0</span>
@@ -118,15 +110,14 @@
 </div>
 <script asp-src-include="~/developerjs/mtables.js"></script>
 <script asp-src-include="~/developerjs/userregn.js"></script>
-<script asp-src-include="~/developerjs/commandvalidation.js"></script>
 <div class="modal fade" id="AddDomainFlag" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLabel">Update Approval / Active of Domain</h5>
                 <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
             </div>
-            <div class="modal-body">
+            <div class="modal-body">    
                 <div class="row">
                     <form action="" id="UpdateDomainFlag" name="UpdateDomainFlag" method="post">
                         <div class="row">
@@ -177,6 +168,12 @@
                                         </label>
                                     </div>
                                     <span class="text-danger field-validation-valid" id="txtactive-error"></span>
+                                </div>
+                            </div>
+                            <div class="form-group row mb-2">
+                                <label class="col-form-label col-sm-4">Message for User</label>
+                                <div class="col-sm-8">
+                                    <textarea name="txtadminmessage" id="txtadminmessage" rows="3" cols="50"></textarea>
                                 </div>
                             </div>
                             <div class="form-group row mb-2">
@@ -257,7 +254,7 @@
 </div>
 
 <div class="modal fade" id="AddMapping" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLabel">Mapping Add / Remove</h5>

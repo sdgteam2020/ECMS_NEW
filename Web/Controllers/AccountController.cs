@@ -374,34 +374,54 @@ namespace Web.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> SaveProfileManage(MUserProfile dTO)
         {
-
             try
             {
-
                 dTO.IsActive = true;
                 dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                 dTO.UpdatedOn = DateTime.Now;
 
                 if (ModelState.IsValid)
                 {
-                    if (!await _userProfileBL.GetByArmyNo(dTO, dTO.UserId))
+                    if (dTO.UserId > 0)
                     {
-                        if (dTO.UserId > 0)
+                        bool? result = await _userProfileBL.FindByArmyNoWithUserId(dTO.ArmyNo, dTO.UserId);
+                        if (result !=null)
                         {
-                            await _userProfileBL.Update(dTO);
-                            return Json(KeyConstants.Update);
+                            if(result == true)
+                            {
+                                return Json(KeyConstants.Exists);
+                            }
+                            else
+                            {
+                                await _userProfileBL.Update(dTO);
+                                return Json(KeyConstants.Update);
+                            }
                         }
                         else
                         {
-                            await _userProfileBL.Add(dTO);
-                            return Json(KeyConstants.Save);
+                            return Json(KeyConstants.InternalServerError);
                         }
                     }
                     else
                     {
-                        return Json(KeyConstants.Exists);
+                        bool? result = await _userProfileBL.FindByArmyNo(dTO.ArmyNo);
+                        if(result!=null)
+                        {
+                            if(result == true)
+                            {
+                                return Json(KeyConstants.Exists);
+                            }
+                            else
+                            {
+                                await _userProfileBL.Add(dTO);
+                                return Json(KeyConstants.Save);
+                            }
+                        }
+                        else
+                        {
+                            return Json(KeyConstants.InternalServerError);
+                        }
                     }
-
                 }
                 else
                 {
@@ -1074,7 +1094,11 @@ namespace Web.Controllers
                     dTOTempSession.AspNetUsersId = _trnDomainMapping.ApplicationUser.Id;
                     dTOTempSession.Status = 1;
                     SessionHeplers.SetObject(HttpContext.Session, "IMData", dTOTempSession);
-                    TempData["error"] = "Domain Id - " + dTOTempSession.DomainId + " & Profile Id - " + dTOTempSession.UserId + ".<br/>Your regn request was successfully placed with Admin for necy Approval..<br/>Pl note regn No - " + dTOTempSession.AspNetUsersId + " for future correspondence. <br/>Contact Admin.";
+                    //TempData["error"] = "Domain Id - " + dTOTempSession.DomainId + " & Profile Id - " + dTOTempSession.UserId + ".<br/>Your regn request was successfully placed with Admin for necy Approval..<br/>Pl note regn No - " + dTOTempSession.AspNetUsersId + " for future correspondence. <br/>Contact Admin.";
+                    if(_trnDomainMapping.ApplicationUser.AdminMsg != null)
+                    {
+                        TempData["error"] = _trnDomainMapping.ApplicationUser.AdminMsg;
+                    }
                     return RedirectToActionPermanent("TokenValidate", "Account");
                 }
                 else if (_trnDomainMapping == null)
@@ -1125,7 +1149,11 @@ namespace Web.Controllers
                     DTOAllRelatedDataByArmyNoResponse? _dTOProfileResponse = await _userProfileBL.GetAllRelatedDataByArmyNo(model.ICNo);
                     if (dTOTempSession.Status == 1)
                     {
-                        TempData["error"] = "Domain Id - " + dTOTempSession.DomainId + " & Profile Id - " + dTOTempSession.UserId + ".<br/>Your regn request was successfully placed with Admin for necy Approval.. <br/>Pl note regn No - " + dTOTempSession.AspNetUsersId + " for future correspondence.<br/> Contact Admin.";
+                        //TempData["error"] = "Domain Id - " + dTOTempSession.DomainId + " & Profile Id - " + dTOTempSession.UserId + ".<br/>Your regn request was successfully placed with Admin for necy Approval.. <br/>Pl note regn No - " + dTOTempSession.AspNetUsersId + " for future correspondence.<br/> Contact Admin.";
+                        if(_dTOProfileResponse!=null && _dTOProfileResponse.AdminMsg!=null)
+                        {
+                            TempData["error"] = _dTOProfileResponse.AdminMsg;
+                        }
                         return View();
                     }
                     else if (dTOTempSession.Status == 5 && _dTOProfileResponse != null && _dTOProfileResponse.TrnDomainMappingId > 0 && model.ICNo != dTOTempSession.ICNO)
@@ -1282,6 +1310,9 @@ namespace Web.Controllers
                             dTOProfileAndMappingRequest.ArmyNo = mUserProfile.ArmyNo;
                             dTOProfileAndMappingRequest.RankId = mUserProfile.RankId;
                             dTOProfileAndMappingRequest.Name = mUserProfile.Name;
+                            dTOProfileAndMappingRequest.MobileNo = mUserProfile.MobileNo;
+                            dTOProfileAndMappingRequest.DialingCode = mUserProfile.DialingCode;
+                            dTOProfileAndMappingRequest.Extension= mUserProfile.Extension;
                             dTOProfileAndMappingRequest.IntOffr = mUserProfile.IntOffr;
                             dTOProfileAndMappingRequest.IsCO = mUserProfile.IsCO;
                             dTOProfileAndMappingRequest.IsIO = mUserProfile.IsIO;
@@ -1764,117 +1795,6 @@ namespace Web.Controllers
                 return View(model);
             }
         }
-
-        [Authorize(Roles = "Admin")]
-        [HttpPost]
-        public async Task<IActionResult> DomainApprove(string Id)
-        {
-            string decryptedId = string.Empty;
-            int decryptedIntId = 0;
-            try
-            {
-                // Decrypt the  id using Unprotect method
-                decryptedId = protector.Unprotect(Id);
-                decryptedIntId = Convert.ToInt32(decryptedId);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(1001, ex, "This error occure because Id value change by user.");
-                return RedirectToAction("Error", "Error");
-            }
-            var user = await userManager.FindByIdAsync(decryptedId);
-
-            if (user == null)
-            {
-                ViewBag.ErrorMessage = $"User with Id = {decryptedId} cannot be found";
-                return View("NotFound");
-            }
-            else
-            {
-                user.AdminFlag = true;
-                var result = await userManager.UpdateAsync(user);
-                if (result.Succeeded)
-                {
-                    TempData["success"] = "User detail Updated Successfully.";
-                    return RedirectToAction("ProfileManage");
-                }
-                else
-                {
-                    TempData["error"] = "User detail not Updated";
-                    return RedirectToAction("ProfileManage");
-                }
-            }
-        }
-        [HttpGet]
-        [Authorize(Roles = "User,Admin,Super Admin")]
-        public async Task<IActionResult> EditProfile()
-        {
-            var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var usera = await userManager.FindByIdAsync(userId);
-            if (usera != null)
-            {
-                TrnDomainMapping? trnDomainMapping = await _iDomainMapBL.GetProfileDataByAspNetUserId(Convert.ToInt32(usera.Id));
-                if (trnDomainMapping != null)
-                {
-                    if (trnDomainMapping.MUserProfile != null)
-                    {
-                        ViewBag.OptionsRank = service.GetRank(1);
-
-                        DTOProfileRequest dTOProfileRequest = new DTOProfileRequest();
-                        dTOProfileRequest.UserId = trnDomainMapping.MUserProfile.UserId;
-                        dTOProfileRequest.ArmyNo = trnDomainMapping.MUserProfile.ArmyNo;
-                        dTOProfileRequest.RankId = trnDomainMapping.MUserProfile.RankId;
-                        dTOProfileRequest.Name = trnDomainMapping.MUserProfile.Name;
-                        dTOProfileRequest.IntOffr = trnDomainMapping.MUserProfile.IntOffr;
-                        return View(dTOProfileRequest);
-                    }
-                    else
-                    {
-                        TempData["error"] = "Profile not present.";
-                        return RedirectToActionPermanent("Dashboard", "Home");
-                    }
-                }
-                else
-                {
-                    TempData["error"] = "Mapping not present.";
-                    return RedirectToActionPermanent("Dashboard", "Home");
-                }
-            }
-            else
-            {
-                TempData["error"] = "Domain Id not present.";
-                return RedirectToActionPermanent("Dashboard", "Home");
-            }
-        }
-        [HttpPost]
-        [Authorize(Roles = "User,Admin,Super Admin")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> EditProfile(DTOProfileRequest model)
-        {
-            MUserProfile mUserProfile = await _userProfileBL.Get(model.UserId);
-            if (mUserProfile != null)
-            {
-                if (ModelState.IsValid)
-                {
-                    mUserProfile.Name = model.Name;
-                    mUserProfile.RankId = model.RankId;
-                    mUserProfile.IntOffr = model.IntOffr;
-                    await _userProfileBL.Update(mUserProfile);
-                    TempData["success"] = "Profile Updated.";
-                    return RedirectToActionPermanent("Dashboard", "Home");
-                }
-                else
-                {
-                    return View(model);
-                }
-            }
-            else
-            {
-                TempData["error"] = "Profile not present.";
-                return RedirectToActionPermanent("Dashboard", "Home");
-            }
-        }
-
         [HttpGet]
         [Authorize(Roles = "Super Admin,Admin,User")]
 

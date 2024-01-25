@@ -33,6 +33,19 @@ namespace DataTransferObject.Domain.Model
 
         public bool IsActive { get; set; } = true;
 
+        [StringLength(10)]
+        [Column(TypeName = "varchar(10)")]
+        public string? MobileNo { get; set; }
+
+
+        [StringLength(6)]
+        [Column(TypeName = "varchar(6)")]
+        public string? DialingCode { get; set; }
+
+        [StringLength(5)]
+        [Column(TypeName = "varchar(5)")]
+        public string? Extension { get; set; }
+
         [Required]
         [DataType(DataType.Date)]
         [Column(TypeName = "datetime")]

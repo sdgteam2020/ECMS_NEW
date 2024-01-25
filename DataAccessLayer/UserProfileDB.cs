@@ -25,10 +25,33 @@ namespace DataAccessLayer
             _logger = logger;
         }
         private readonly IConfiguration configuration;
-        public async Task<bool> GetByArmyNo(MUserProfile Data, int UserId)
-        { 
-            var ret = _context.UserProfile.Any(p => p.UserId == UserId && p.ArmyNo.ToUpper() == Data.ArmyNo.ToUpper());
-            return ret;
+        public async Task<bool?> FindByArmyNoWithUserId(string ArmyNo, int UserId)
+        {
+            try
+            {
+                var ret = await _context.UserProfile.AnyAsync(p => p.UserId != UserId && p.ArmyNo.ToUpper() == ArmyNo.ToUpper());
+                return ret;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "UserProfileDB->GetProfileByUserId");
+                return null;
+            }
+
+        }
+        public async Task<bool?> FindByArmyNo(string ArmyNo)
+        {
+            try
+            {
+                var ret = await _context.UserProfile.AnyAsync(x => x.ArmyNo.ToUpper() == ArmyNo.ToUpper());
+                return ret;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "UserProfileDB->GetProfileByUserId");
+                return null;
+            }
+
         }
         public async Task<List<MUserProfile>> GetByMArmyNo(string ArmyNo, int UserId)
         {
@@ -105,6 +128,9 @@ namespace DataAccessLayer
                                      ArmyNo = up.ArmyNo,
                                      UserId = up.UserId,
                                      Name = up.Name,
+                                     MobileNo = up.MobileNo,
+                                     DialingCode= up.DialingCode,
+                                     Extension= up.Extension,
                                      IntOffr = up.IntOffr,
                                      RankId = rank.RankId,
                                      RankName = rank.RankName,
@@ -214,7 +240,8 @@ namespace DataAccessLayer
                                      UnitName = xmunit != null ? xmunit.UnitName : null,
                                      ApptId = (short)(xappo != null ? xappo.ApptId : 0),
                                      AppointmentName = xappo != null ? xappo.AppointmentName:"No Appointment" ,
-                                     DomainId = xu != null ? xu.DomainId : null
+                                     DomainId = xu != null ? xu.DomainId : null,
+                                     AdminMsg = xu != null ? xu.AdminMsg : null
                                  }
                          ).Distinct().FirstOrDefaultAsync();
                 return ret;

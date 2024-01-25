@@ -20,12 +20,14 @@ namespace Web.Controllers
         private readonly IUserProfileBL _userProfileBL;
         private readonly IUserProfileMappingBL _userProfileMappingBL;
         public readonly IDomainMapBL _iDomainMapBL;
+        private readonly ILogger<UserProfileController> _logger;
 
-        public UserProfileController(IUserProfileBL userProfileBL, IUserProfileMappingBL userProfileMappingBL, IDomainMapBL domainMapBL)
+        public UserProfileController(IUserProfileBL userProfileBL, ILogger<UserProfileController> logger, IUserProfileMappingBL userProfileMappingBL, IDomainMapBL domainMapBL)
         {
             _userProfileBL=userProfileBL;
             _userProfileMappingBL = userProfileMappingBL;
             _iDomainMapBL = domainMapBL;
+            _logger = logger;
         }
         public IActionResult Profile()
         {
@@ -43,7 +45,7 @@ namespace Web.Controllers
                     int userid = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                     if (ModelState.IsValid)
                     {
-                        if (!await _userProfileBL.GetByArmyNo(dTO, userid))
+                        if ((bool)!await _userProfileBL.FindByArmyNoWithUserId(dTO.ArmyNo, userid))
                         {
                             if (dTO.UserId > 0)
                             {
@@ -154,6 +156,8 @@ namespace Web.Controllers
             }
 
         }
+
+        [Authorize]
         public async Task<IActionResult> GetProfileByUserId(int UserId)
         {
             try
@@ -162,6 +166,7 @@ namespace Web.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(1001, ex, "UserProfile->GetProfileByUserId");
                 return Json(KeyConstants.InternalServerError);
             }
 

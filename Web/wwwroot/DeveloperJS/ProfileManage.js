@@ -44,6 +44,17 @@
             alert("Select Choice");
         }
     });
+    $(".allow-number").on("keypress", function (event) {
+        // Allow only backspace , delete, numbers               
+        if (event.keyCode == 46 || event.keyCode == 8 || event.keyCode == 39 || event.keyCode == 37
+            || (event.keyCode >= 48 && event.keyCode <= 57)) {
+            // let it happen, don't do anything
+        }
+        else {
+            // Ensure that it is a number and stop the key press
+            event.preventDefault();
+        }
+    });
 });
 
 function Proceed() {
@@ -241,6 +252,7 @@ function BindData() {
                         else {
                             $("#intoffrno").prop("checked", true);
                         }
+                        GetProfileDetailById($(this).closest("tr").find("#userId").html()); 
                         $("#btnProfileAdd").val("Update");
                         $("#AddNewProfile").modal('show');
                     });
@@ -266,6 +278,32 @@ function BindData() {
         }
     });
 
+}
+function GetProfileDetailById(UserId) {
+    $.ajax({
+        url: '/UserProfile/GetProfileByUserId',
+        type: 'Post',
+        data: { "UserId": UserId },
+        success: function (response) {
+            if (response != "null" && response != null) {
+                if (response == InternalServerError) {
+                    Swal.fire({
+                        text: "Invalid Profile."
+                    });
+                }
+                else {
+                    $("#txtMobileNo").val(response.MobileNo);
+                    $("#txtDialingCode").val(response.DialingCode);
+                    $("#txtExtension").val(response.Extension);
+                }
+            }
+            else {
+                Swal.fire({
+                    text: "Profile not found."
+                });
+            }
+        }
+    });
 }
 function ProfileCount(){
     $.ajax({
@@ -294,6 +332,9 @@ function Save() {
             "UserId": $("#spnUserProfileId").html(),
             "ArmyNo": $("#txtArmyNo").val(),
             "Name": $("#txtName").val(),
+            "MobileNo": $("#txtMobileNo").val(),
+            "DialingCode": $("#txtDialingCode").val(),
+            "Extension": $("#txtExtension").val(),
             "RankId": $("#ddlRank").val(),
             "IsIO": $('input:radio[name=InitatingOffr]:checked').val(),
             "IntOffr": $('input:radio[name=IntOffr]:checked').val(),
@@ -354,7 +395,9 @@ function Reset() {
     $("#txtArmyNo").val("");
     $("#ddlRank").val("");
     $("#txtName").val("");
-
+    $("#txtMobileNo").val("");
+    $("#txtDialingCode").val("");
+    $("#txtExtension").val("");
     $("#intoffryes").prop("checked", false);
     $("#intoffrno").prop("checked", false);
 
@@ -368,6 +411,9 @@ function ResetErrorMessage() {
     $("#txtName-error").html("");
     $("#ddlRank-error").html("");
     $("#txtArmyNo-error").html("");
+    $("#txtMobileNo-error").html("");
+    $("#txtDialingCode-error").html("");
+    $("#txtExtension-error").html("");
     $("#IntOffr-error").html("");
     $("#InitatingOffr-error").html("");
     $("#CommandingOffr-error").html("");

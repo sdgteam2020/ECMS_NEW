@@ -14,6 +14,7 @@ namespace DataTransferObject.Requests
         [RegularExpression(@"^[\d]+$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "OnlyNumber")]
         public int Id { get; set; }
         public bool AdminFlag { get; set; }
+        public string? AdminMsg { get; set; }
         public bool Active { get; set; }
         public int Updatedby { get; set; }
     }

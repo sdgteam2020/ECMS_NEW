@@ -20,7 +20,7 @@ namespace DataTransferObject.Requests
         [RegularExpression(@"^[\w\-]+$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
         public string ArmyNo { get; set; } = string.Empty;
 
-        [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
+        [Required(ErrorMessage = "Rank is required.")]
         public short RankId { get; set; }
 
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
@@ -28,7 +28,25 @@ namespace DataTransferObject.Requests
         [MinLength(1, ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "MinLengthError")]
         [RegularExpression(@"^[\w ]+$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
         public string Name { get; set; } = string.Empty;
-        
+
+        [Required(ErrorMessage = "Mobile No  is required.")]
+        [MinLength(10, ErrorMessage = "Minimum length of Mobile No is ten digit.")]
+        [MaxLength(10, ErrorMessage = "Maximum length of Mobile No is ten digit.")]
+        [RegularExpression(@"^[\d]+$", ErrorMessage ="Mobile No. is invalid.")]
+        public string MobileNo { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "ASCON Dialing  is required.")]
+        [MinLength(6, ErrorMessage = "Minimum length of ASCON Dialing is six digit.")]
+        [MaxLength(6, ErrorMessage = "Maximum length of ASCON Dialing is six digit.")]
+        [RegularExpression(@"^[\d]+$", ErrorMessage = "Dialing code is invalid.")]
+        public string DialingCode { get; set; } = string.Empty;
+
+        [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
+        [MinLength(4, ErrorMessage = "Minimum length of Extension is four digit.")]
+        [MaxLength(5, ErrorMessage = "Maximum length of Extension is five digit.")]
+        [RegularExpression(@"^[\d]+$", ErrorMessage = "Extension is invalid.")]
+        public string Extension { get; set; } = string.Empty;
+
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
         public short ApptId { get; set; }
 

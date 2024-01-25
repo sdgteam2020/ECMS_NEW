@@ -13,7 +13,8 @@ namespace BusinessLogicsLayer.Master
 {
     public interface IUserProfileBL : IGenericRepository<MUserProfile>
     {
-        public Task<bool> GetByArmyNo(MUserProfile Data,int UserId);
+        public Task<bool?> FindByArmyNo(string ArmyNo);
+        public Task<bool?> FindByArmyNoWithUserId(string ArmyNo, int UserId);
         public Task<DTOProfileResponse?> GetProfileByUserId(int UserId);
         public Task<DTOUserProfileResponse> GetByArmyNo(string ArmyNo, int UserId);
         public Task<List<MUserProfile>> GetByMArmyNo(string ArmyNo, int UserId);

@@ -622,6 +622,7 @@ namespace Web.Controllers
             }
 
         }
+        [AllowAnonymous]
         public async Task<IActionResult> GetALLByUnitName(string UnitName)
         {
             try
@@ -633,8 +634,8 @@ namespace Web.Controllers
                 return Json(KeyConstants.InternalServerError);
             }
 
-        } 
-      
+        }
+        [AllowAnonymous]
         public async Task<IActionResult> GetALLByUnitMapId(int UnitMapId)
         {
             try
@@ -960,7 +961,7 @@ namespace Web.Controllers
             }
 
         }
-        [Authorize(Roles = "Admin")]
+        [AllowAnonymous]
         public async Task<IActionResult> GetByApptId(int ApptId)
         {
             try
@@ -1005,7 +1006,7 @@ namespace Web.Controllers
                 return Json(KeyConstants.InternalServerError);
             }
         }
-        [Authorize(Roles = "Admin")]
+        [AllowAnonymous]
         public async Task<IActionResult> GetALLByAppointmentName(string AppointmentName)
         {
             try
@@ -1346,7 +1347,7 @@ namespace Web.Controllers
         #endregion ArmedType
 
         #region Master Table 
-        [Authorize(Roles = "Admin,User")]
+        [AllowAnonymous]
         public async Task<IActionResult> GetAllMMaster(DTOMasterRequest Data)
         {
             try
@@ -1359,7 +1360,7 @@ namespace Web.Controllers
                 return Json(KeyConstants.InternalServerError);
             }
         }
-        [Authorize(Roles = "Admin,User")]
+        [AllowAnonymous]
         public async Task<IActionResult> GetAllMMasterByParent(DTOMHierarchyRequest Data)
         {
             try
