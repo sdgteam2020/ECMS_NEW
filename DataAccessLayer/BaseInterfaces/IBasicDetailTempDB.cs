@@ -11,5 +11,8 @@ namespace DataAccessLayer.BaseInterfaces
     public interface IBasicDetailTempDB:IGenericRepositoryDL<BasicDetailTemp>
     {
         public Task<List<DTOBasicDetailTempRequest>> GetALLBasicDetailTemp(int UserId);
+        public Task<DTOBasicDetailTempRequest> GetALLBasicDetailTempByBasicDetailId(int UserId, int BasicDetailId);
+        public Task<bool> UpdateByArmyNo(string ArmyNo);
+        public Task<BasicDetailTemp> GetByArmyNo(string ArmyNo);
     }
 }

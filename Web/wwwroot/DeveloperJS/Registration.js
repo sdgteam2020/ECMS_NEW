@@ -1,4 +1,13 @@
 ﻿$(document).ready(function () {
+   
+    $('.paddress').on('change', function () {
+        $("#PermanentAddress").val('Village - ' + $("#Village").val() + '\n Post Office-' + $("#PO").val() + ' \n Tehsil- ' + $("#Tehsil").val() + '\n District- ' + $("#District").val() + '\n State- ' + $("#State").val() + '\n Pin Code- ' + $("#PinCode").val());
+        $("#AadhaarNo").val("");
+       
+    });
+   
+
+
     if (sessionStorage.getItem("ArmyNo") != null) {
         $("#ServiceNumber").val(sessionStorage.getItem("ArmyNo"));
 
@@ -6,6 +15,24 @@
         $("#ApplyForId").val(sessionStorage.getItem("OffType"));
         $("#RegistrationId").val(sessionStorage.getItem("RegistrationApplyFor"));
         $("#TypeId").val(sessionStorage.getItem("lCardType"));
+
+        if (sessionStorage.getItem("RegistrationApplyFor") == '4' || sessionStorage.getItem("RegistrationApplyFor") == '9') {
+            $('#Name').attr('readonly', false);
+            $('#DOB').attr('readonly', false);
+            $('#ServiceNo').attr('readonly', false);
+            $('#DateOfCommissioning').attr('readonly', false);
+            $('.persAddress').addClass('d-none');
+            $('.entryaddress').removeClass('d-none');
+
+            
+        } else {
+            $('#Name').attr('readonly', true);
+            $('#DOB').attr('readonly', true);
+            $('#ServiceNo').attr('readonly', true);
+            $('#DateOfCommissioning').attr('readonly', true);
+            $('.persAddress').removeClass('d-none');
+            $('.entryaddress').addClass('d-none');
+        }
 
         Getdatafromapi();
 
@@ -51,7 +78,14 @@ function getApplyIcardDetails()
 
                
                 
-               
+              
+                if ($("#ApplyForId").val() == 1) {
+
+                    mMsater(0, "RankId", Rank, "");
+                } else if ($("#ApplyForId").val() == 2) {
+                    mMsater(0, "RankId", RankJCo, "");
+
+                }
 
                
             }

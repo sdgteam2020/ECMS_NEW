@@ -1,0 +1,257 @@
+﻿@model DataTransferObject.Requests.DTOBasicDetailTempRequest
+
+@{
+    ViewData["Title"] = "InaccurateDataView";
+}
+<style>
+    .form-group .labelprofile {
+        font-size: 18px;
+        font-weight: 700;
+    }
+
+</style>
+<div class="container1" id="printdata">
+
+    <div class="row section-to-print">
+        <div class="col-sm-4  text-left">
+           
+            <img src="/Images/afsac_logo.png" width="200" />
+        </div>
+        <div class="col-sm-8  text-right">
+            <span>PDF Download From E-IASAC</span>
+        </div>
+    </div>
+    <div class="card-body" style="min-height:150px;">
+
+
+        <div class="row">
+            <div class="col-md-12 ">
+               
+                    <div class="card cardbg minheight mb-2 mt-2">
+                        <div class="seven">
+                            <h1>Request Details</h1>
+                        </div>
+                        <div class="mt-2 ml-4">
+
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group row mb-2">
+                                        <label class="col-form-label col-sm-4 labelprofile">Regd User Dtls</label>
+                                        <div class="col-sm-8">
+                                        <label id="" class="col-form-label">@Model.RankAbbreviation @Model.OffName (@Model.ArmyNo) (@Model.DomainId)</label>
+
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                            <div class="col-sm-6 ">
+                                <div class="form-group row mb-2">
+                                    <label class="col-form-label col-sm-4 labelprofile">Category</label>
+                                    <div class="col-sm-8">
+                                        <label id="" class="col-form-label">@Model.ApplyType</label>
+
+                                    </div>
+
+                                </div>
+                            </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group row mb-2">
+                                        <label class="col-form-label col-sm-4 labelprofile">Unit Name</label>
+                                        <div class="col-sm-8">
+                                        <label id="" class="col-form-label">@Model.UnitName (@Model.Sus_no<span></span>@Model.Suffix)</label>
+
+                                        </div>
+
+                                    </div>
+                                </div>
+                            <div class="col-sm-6 ">
+                                <div class="form-group row mb-2">
+                                    <label class="col-form-label col-sm-4 labelprofile">Applied For</label>
+                                    <div class="col-sm-8">
+                                        <label id="" class="col-form-label">@Model.RegistrationName</label>
+
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group row mb-2">
+                                    <label class="col-form-label col-sm-4 labelprofile">
+                                        Reason For Apply
+                                    </label>
+                                    <div class="col-sm-8">
+                                        <label id="" class="col-form-label">@Model.CardType</label>
+
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            </div>
+                        </div>
+                    </div>
+                
+                <div class="card cardbg mb-2 mt-2">
+                    <div class="seven mt-4">
+                        <h1>Inaccurate Data </h1>
+                    </div>
+                    <div class="mt-2 ml-4 mr-4">
+                        <div class="row">
+
+                            
+                            
+                            <div class="col-sm-6 ">
+                                <div class="form-group row mb-2">
+                                    <label class="col-form-label col-sm-4 labelprofile">@Html.DisplayNameFor(model => model.ServiceNo)</label>
+                                    <div class="col-sm-8">
+                                        <label id="" class="col-form-label">@Model.ServiceNo</label>
+
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="col-sm-6 ">
+                                <div class="form-group row mb-2">
+                                    <label class="col-form-label col-sm-4 labelprofile">@Html.DisplayNameFor(model => model.Name)</label>
+                                    <div class="col-sm-8">
+                                        <label id="" class="col-form-label">@Model.RankAbbreviation @Model.Name</label>
+
+                                    </div>
+
+                                </div>
+                            </div>
+
+                           
+                            <div class="col-sm-6 ">
+                                <div class="form-group row mb-2">
+                                    <label class="col-form-label col-sm-4 labelprofile">@Html.DisplayNameFor(model => model.DOB)</label>
+                                    <div class="col-sm-8">
+                                        <label id="" class="col-form-label">@Model.DOB.ToString().Replace("-","/").Replace("00:00:00","")</label>
+
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="col-sm-6 ">
+                                <div class="form-group row mb-2">
+                                    <label class="col-form-label col-sm-4 labelprofile">Dte Of Commission</label>
+                                    <div class="col-sm-8">
+                                        <label id="" class="col-form-label">@Model.DateOfCommissioning.ToString().Replace("-","/").Replace("00:00:00","")</label>
+
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="col-sm-6 ">
+                                <div class="form-group row mb-2">
+                                    <label class="col-form-label col-sm-4 labelprofile">@Html.DisplayNameFor(model => model.State)</label>
+                                    <div class="col-sm-8">
+                                        <label id="" class="col-form-label">@Model.State</label>
+
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="col-sm-6 ">
+                                <div class="form-group row mb-2">
+                                    <label class="col-form-label col-sm-4 labelprofile">@Html.DisplayNameFor(model => model.Tehsil)</label>
+                                    <div class="col-sm-8">
+                                        <label id="" class="col-form-label">@Model.Tehsil</label>
+
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="col-sm-6 ">
+                                <div class="form-group row mb-2">
+                                    <label class="col-form-label col-sm-4 labelprofile">@Html.DisplayNameFor(model => model.Village)</label>
+                                    <div class="col-sm-8">
+                                        <label id="" class="col-form-label">@Model.Village</label>
+
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="col-sm-6 ">
+                                <div class="form-group row mb-2">
+                                    <label class="col-form-label col-sm-4 labelprofile">@Html.DisplayNameFor(model => model.PO)</label>
+                                    <div class="col-sm-8">
+                                        <label id="" class="col-form-label">@Model.PO</label>
+
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="col-sm-6 ">
+                                <div class="form-group row mb-2">
+                                    <label class="col-form-label col-sm-4 labelprofile">@Html.DisplayNameFor(model => model.PS)</label>
+                                    <div class="col-sm-8">
+                                        <label id="" class="col-form-label">@Model.PS</label>
+
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="col-sm-6 ">
+                                <div class="form-group row mb-2">
+                                    <label class="col-form-label col-sm-4 labelprofile">@Html.DisplayNameFor(model => model.State)</label>
+                                    <div class="col-sm-8">
+                                        <label id="" class="col-form-label">@Model.PS</label>
+
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="col-sm-6 ">
+                                <div class="form-group row mb-2">
+                                    <label class="col-form-label col-sm-4 labelprofile">@Html.DisplayNameFor(model => model.District)</label>
+                                    <div class="col-sm-8">
+                                        <label id="" class="col-form-label">@Model.District</label>
+
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="col-sm-6 ">
+                                <div class="form-group row mb-2">
+                                    <label class="col-form-label col-sm-4 labelprofile">@Html.DisplayNameFor(model => model.PinCode)</label>
+                                    <div class="col-sm-8">
+                                        <label id="" class="col-form-label">@Model.PinCode</label>
+
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="col-sm-12 ">
+                                <div class="form-group row mb-2">
+                                    <label class="col-form-label col-sm-2 labelprofile">@Html.DisplayNameFor(model => model.Observations)</label>
+                                    <div class="col-sm-10">
+                                        @{
+                                            string[] rem = null;
+                                            if (Model.Remarks2 != null)
+                                                rem = Model.Remarks2.Split("#");
+                                        }
+                                        <ul>
+                                            @if (rem != null)
+                                            {
+                                                foreach (var data in rem)
+                                                {
+                                                    <li>@data</li>
+                                                }
+                                            }
+                                        </ul>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="col-sm-12 text-center">
+                                <input type="button" class="btn btn-primary text-center mb-4 btnPrint d-print-none" value="Print" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </div>
+            </div>
+</div>

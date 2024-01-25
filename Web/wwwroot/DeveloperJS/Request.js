@@ -61,8 +61,10 @@ $(document).ready(function () {
                 IsValid = 1;
             }
             else {
-                Message = "Invalid Token Inserted ArmyNo Not Match";
-                IsValid = 0;
+                //Message = "Invalid Token Inserted ArmyNo Not Match";
+                //IsValid = 0;
+                //comment for bypass
+                IsValid = 1;
             }
         }
         else if (OffType == 1 && parseInt(RegistrationApplyFor) != 1) {
@@ -198,11 +200,12 @@ function AddAllCardType() {
         if (OffType == 1 && RegistrationApplyFor == 1) {
             GetTokenDetails1("FetchUniqueTokenDetails", "txtApplyForArmyNo");
             $("#btntokenrefresh").removeClass("d-none");
-
+            $("#txtApplyForArmyNo").removeClass("d-none");///for bypass for off
         }
         else if (OffType == 1 && RegistrationApplyFor != 1) {
             GetTokenDetails1("FetchUniqueTokenDetails", "txtApplyForArmyNo");
             $("#btntokenrefresh").removeClass("d-none");
+            $("#txtApplyForArmyNo").removeClass("d-none");///for bypass for off
         }
         else if (OffType == 2) {
             $("#txtApplyForArmyNo").removeClass("d-none");

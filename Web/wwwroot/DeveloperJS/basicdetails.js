@@ -1,5 +1,16 @@
 ﻿$(document).ready(function () {
 
+    
+
+    $("#TermsConditions").click(function () {
+
+        if ($("#TermsConditions").prop("checked") == true) {
+            $("#btnsave").removeClass("disabled");
+        }
+        else {
+            $("#btnsave").addClass("disabled");
+        }
+    });
 
 
     if ($("#RegistrationId").val() == 1 || $("#RegistrationId").val() == 2 || $("#RegistrationId").val() == 6) {
@@ -87,7 +98,9 @@
 function CheckValidation() {
     
     if ($("#TermsConditions").prop("checked")) {
-        alert("Your Tracking Id -" + DateFormateMMddyyyy($("#DOB").val()) + "" + $("#AadhaarNo").val().substr($("#AadhaarNo").val().length - 4) );
+        if ($("#SaveForm")[0].checkValidity()) {
+            alert("Your Tracking Id -" + DateFormateMMddyyyy($("#DOB").val()) + "" + $("#AadhaarNo").val().substr($("#AadhaarNo").val().length - 4));
+        }
         return true;
         
     }

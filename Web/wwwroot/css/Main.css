@@ -5,7 +5,16 @@
 .swal2-cancel {
     background: red !important;
 }
-
+.section-to-print {
+    visibility:hidden;
+}
+@media print {
+   
+    .section-to-print {
+        visibility: visible;
+       
+    }
+}
 .text-hrms {
     color: #D97904;
 }
@@ -533,8 +542,8 @@ i.material-icons {
     .seven h1:after, .seven h1:before {
         content: " ";
         display: block;
-        border-bottom: 1px solid #c50000;
-        border-top: 1px solid #c50000;
+        border-bottom: 1px solid #141ac6;
+        border-top: 1px solid #141ac6;
         height: 5px;
         background-color: #f8f8f8;
     }

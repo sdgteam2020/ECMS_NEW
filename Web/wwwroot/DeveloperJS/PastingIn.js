@@ -86,6 +86,7 @@ function Save() {
         type: 'POST',
         data: {
             "Id": $("#spnPostingOutID").html(),
+            "BasicDetailId": $(".spnBasicDetailIdOutID").html(),
             "ReasonId": $("#ddlpostingReason").val(),
             "Authority": $("#txtAuthority").val(),
             "SOSDate": $("#txtSosDate").val(),
@@ -221,7 +222,7 @@ function GetdataPostingData(ArmyNo) {
                 $(".spnFromUserID").html(response.FromUserID);
                 $(".spnRequestId").html(response.RequestId);
 
-
+                $(".spnBasicDetailIdOutID").html(response.BasicDetailId)
 
                 //if ($("#RegistrationId").val() == '3' || $("#RegistrationId").val() == '7') {
                 //    $("#lblunitname").html(response.Registraion);

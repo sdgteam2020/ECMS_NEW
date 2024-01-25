@@ -4,6 +4,7 @@ using DataAccessLayer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccessLayer.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240124071914_v41")]
+    partial class v41
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -91,9 +94,6 @@ namespace DataAccessLayer.Migrations
 
                     b.Property<DateTime?>("AdminFlagDate")
                         .HasColumnType("datetime2");
-
-                    b.Property<string>("AdminMsg")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
@@ -181,16 +181,6 @@ namespace DataAccessLayer.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("varchar(20)");
 
-                    b.Property<string>("DialingCode")
-                        .IsRequired()
-                        .HasMaxLength(6)
-                        .HasColumnType("varchar(6)");
-
-                    b.Property<string>("Extension")
-                        .IsRequired()
-                        .HasMaxLength(5)
-                        .HasColumnType("varchar(5)");
-
                     b.Property<bool>("IntOffr")
                         .HasColumnType("bit");
 
@@ -203,11 +193,6 @@ namespace DataAccessLayer.Migrations
                     b.Property<bool>("IsIO")
                         .HasColumnType("bit");
 
-                    b.Property<string>("MobileNo")
-                        .IsRequired()
-                        .HasMaxLength(10)
-                        .HasColumnType("varchar(10)");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -215,10 +200,6 @@ namespace DataAccessLayer.Migrations
 
                     b.Property<short>("RankId")
                         .HasColumnType("smallint");
-
-                    b.Property<string>("Thumbprint")
-                        .HasMaxLength(50)
-                        .HasColumnType("varchar(50)");
 
                     b.Property<DateTime?>("UpdatedOn")
                         .IsRequired()
@@ -1825,25 +1806,13 @@ namespace DataAccessLayer.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<short>("UnregdUserId"));
 
-                    b.Property<string>("DialingCode")
-                        .HasMaxLength(6)
-                        .HasColumnType("varchar(6)");
-
                     b.Property<string>("DomainId")
                         .IsRequired()
                         .HasMaxLength(20)
                         .HasColumnType("varchar(20)");
 
-                    b.Property<string>("Extension")
-                        .HasMaxLength(5)
-                        .HasColumnType("varchar(5)");
-
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
-
-                    b.Property<string>("MobileNo")
-                        .HasMaxLength(10)
-                        .HasColumnType("varchar(10)");
 
                     b.Property<string>("Name")
                         .IsRequired()

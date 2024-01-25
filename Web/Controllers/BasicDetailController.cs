@@ -324,6 +324,18 @@ namespace Web.Controllers
         }
         [HttpGet]
         [Authorize(Roles = "Admin,User")]
+        public async Task<ActionResult> InaccurateDataView(string Id)
+        {
+            var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+           string decryptedId = protector.Unprotect(Id);
+           int decryptedIntId = Convert.ToInt32(decryptedId);
+            var allrecord = await Task.Run(() => basicDetailTempBL.GetALLBasicDetailTempByBasicDetailId(Convert.ToInt32(userId), decryptedIntId));
+            _logger.LogInformation(1001, "Index Page Of Basic Detail Temp View");
+          
+            return View(allrecord);
+        }
+        [HttpGet]
+        [Authorize(Roles = "Admin,User")]
         public async Task<ActionResult> RequestType()
         {
             var allrecord = await Task.Run(() => basicDetailBL.GetAllICardType());
@@ -416,12 +428,36 @@ namespace Web.Controllers
                             basicDetailTemp.ServiceNo = model.ServiceNo;
                             basicDetailTemp.DOB = model.DOB;
                             basicDetailTemp.DateOfCommissioning = model.DateOfCommissioning;
-                            //basicDetailTemp.PermanentAddress = model.PermanentAddress;
+                            basicDetailTemp.State = model.State;
+                            basicDetailTemp.District = model.District;
+                            basicDetailTemp.PS = model.PS;
+                            basicDetailTemp.PO = model.PO;
+                            basicDetailTemp.Tehsil = model.Tehsil;
+                            basicDetailTemp.Village = model.Village;
+                            basicDetailTemp.PinCode = model.PinCode;
                             basicDetailTemp.Observations = model.Observations;
                             basicDetailTemp.Updatedby = model.Updatedby;
                             basicDetailTemp.RemarksIds = model.RemarksIds;
+                            basicDetailTemp.ApplyForId= model.ApplyForId;
+                            basicDetailTemp.RegistrationId= model.RegistrationId;
+                            basicDetailTemp.TypeId= model.TypeId;
+                            basicDetailTemp.RankId= model.RankId;
+
+                           
                             basicDetailTemp.UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
+                            BasicDetailTemp temp = new BasicDetailTemp();
+                            temp =await basicDetailTempBL.GetByArmyNo(model.ServiceNo);
+
+                        if(temp != null && temp.BasicDetailTempId>0)
+                        {
+                            basicDetailTemp.BasicDetailTempId= temp.BasicDetailTempId;
+                            await basicDetailTempBL.Update(basicDetailTemp);
+                        }
+                        else
+                        {
                             await basicDetailTempBL.Add(basicDetailTemp);
+                        }
+                        
                             TempData["success"] = "Request Submited Successfully.";
                             return RedirectToAction("Registration");
                         //}
@@ -478,7 +514,6 @@ namespace Web.Controllers
         {
 
             
-
             ViewBag.OptionsBloodGroup = service.GetBloodGroup();
             ViewBag.OptionsArmedType = service.GetArmedType();
 
@@ -505,7 +540,7 @@ namespace Web.Controllers
                         //    ViewBag.OptionsRank = service.GetRank(2);
                         //}
 
-                        ViewBag.OptionsRank = 0;
+                       
                         ViewBag.OptionsUnitId = 0;
                         ViewBag.OptionsArmedType = service.GetArmedType();
                         ViewBag.OptionsBloodGroup = service.GetBloodGroup();
@@ -516,6 +551,7 @@ namespace Web.Controllers
                         dTOBasicDetailCrtRequest.DateOfCommissioning = model.DateOfCommissioning;
                         dTOBasicDetailCrtRequest.IdenMark1 = model.IdenMark1;
                         dTOBasicDetailCrtRequest.IdenMark2 = model.IdenMark2;
+                        ViewBag.OptionsRank = model.RankId;
                         //dTOBasicDetailCrtRequest.Height = model.Height;
 
                         // dTOBasicDetailCrtRequest.AadhaarNo = Convert.ToString(model.AadhaarNo);
@@ -966,6 +1002,8 @@ namespace Web.Controllers
                             //TrnDomainMapping trnDomainMapping = new TrnDomainMapping();
                             // trnDomainMapping.AspNetUsersId= Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                             //trnDomainMapping=await iDomainMapBL.GetByAspnetUserIdBy(trnDomainMapping);
+                            await basicDetailTempBL.UpdateByArmyNo(newBasicDetail.ServiceNo);
+
                             TempData["success"] = "Successfully created.";
                             return RedirectToAction("Index", new { Id = "MQ==" });
 
