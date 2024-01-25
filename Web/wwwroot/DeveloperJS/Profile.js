@@ -187,6 +187,10 @@ function GetByArmyNo(ArmyNo) {
                  
                         $("#spnUserId").html(response.UserId);
                         $("#txtProArmy").val(response.ArmyNo);
+                        $("#txtMobileNo").val(response.MobileNo);
+                        $("#txtDialingCode").val(response.DialingCode);
+                        $("#txtExtension").val(response.Extension);
+                        response.Thumbprint != null ? $("#lblThumbPrint").html(response.Thumbprint) : $("#lblThumbPrint").html("-");
                         $("#lblicno").html(response.ArmyNo);
                         $(".lblAppt").html(response.AppointmentName);
                         $("#lblrole").html(response.RoleName);

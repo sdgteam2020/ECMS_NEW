@@ -408,6 +408,9 @@ function UnitSave() {
             "ServiceNo": $("#spnServiceNo").html(),
             "Name": $("#spnName").html(),
             "Rank": $("#spnRank").html(),
+            "MobileNo": $("#txtMobileNo").val(),
+            "DialingCode": $("#txtDialingCode").val(),
+            "Extension": $("#txtExtension").val(),
             "DomainId": $("#spnDomainId").html(),
             "Sus_no": $("#txtSusno").val().substring(0, 7),
             "Suffix": $("#txtSusno").val().substring(8, 7),
@@ -457,14 +460,16 @@ function UnitSave() {
 
             } else {
                 if (result.length > 0) {
+                    var err="";
                     for (var i = 0; i < result.length; i++) {
-                        toastr.error(result[i][0].ErrorMessage)
+                        err = err + result[i][0].ErrorMessage + '<br />';
                     }
-
-
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        html: err,
+                    })
                 }
-
-
             }
         }
     });
@@ -473,6 +478,9 @@ function Reset() {
     $("#spnDomainRegId").html("0");
     $("#txtSusno").val(""); 
     $("#txtUnit").val("");
+    $("#txtMobileNo").val("");
+    $("#txtDialingCode").val("");
+    $("#txtExtension").val("");
     $("#ddlCommand").val("");
     $("#ddlCorps").val("");
     $("#ddlDiv").val("");
@@ -492,6 +500,9 @@ function Reset() {
 function ResetErrorMessage() {
     $("#txtSusno-error").html("");
     $("#txtUnit-error").html("");
+    $("#txtMobileNo-error").html("");
+    $("#txtDialingCode-error").html("");
+    $("#txtExtension-error").html("");
     $("#ddlCommand-error").html("");
     $("#ddlCorps-error").html("");
     $("#ddlDiv-error").html("");
@@ -499,4 +510,22 @@ function ResetErrorMessage() {
     $("#ddlFmnBranch-error").html("");
     $("#ddlPSODte-error").html("");
     $("#ddlDgSubDte-error").html("");
+}
+function ValidationFormInput() {
+    $("#AddNewUnitmap").validate({
+        rules: {
+            txtMobileNo: {
+                required: true,
+                maxlength: 10,
+                minlength: 10
+            }
+        },
+        messages: {
+            name: {
+                required: "Mobile No is required ?",
+                minlength: jQuery.validator.format("Minimum length of Mobile No is {0} digit!"),
+                maxlength: jQuery.validator.format("Maximum length of Mobile No is {0} digit!")
+            }
+        }
+    });
 }
