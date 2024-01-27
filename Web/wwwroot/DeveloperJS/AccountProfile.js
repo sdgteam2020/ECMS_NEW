@@ -179,30 +179,40 @@
 
     });
 
-    $(".form-check-input").click(function () {
-
+    $('input[name="UnitTyperdi"]').click(function () {
         var lst = '<option value="1">Please Select</option>';
         var val = $("input[type='radio'][name=UnitTyperdi]:checked").val();
         if (val == "1") {
             $(".unittype").removeClass("d-none");
             $(".FmnBranch").addClass("d-none");
             $(".DteBranch").addClass("d-none");
-            mMsater(0, "ddlCommand", 1, "");
 
+            $('#ddlCommand option').remove();
+            $('#ddlCorps option').remove();
+            $('#ddlBde option').remove();
+            $('#ddlDiv option').remove();
+
+            mMsater(0, "ddlCommand", 1, "");
 
             $("#ddlFmnBranch").html(lst);
             $("#ddlPSODte").html(lst);
             $("#ddlDgSubDte").html(lst);
-          
+
         }
         else if (val == "2") {
+
+            $('#ddlCommand option').remove();
+            $('#ddlCorps option').remove();
+            $('#ddlBde option').remove();
+            $('#ddlDiv option').remove();
+            $('#ddlFmnBranch option').remove();
+
             mMsater(0, "ddlCommand", 1, "");
             mMsater(0, "ddlFmnBranch", FmnBranches, "");
 
-
             $("#ddlPSODte").html(lst);
             $("#ddlDgSubDte").html(lst);
-            
+
             $(".unittype").removeClass("d-none");
             $(".FmnBranch").removeClass("d-none");
             $(".DteBranch").addClass("d-none");
@@ -212,23 +222,21 @@
             $(".FmnBranch").addClass("d-none");
             $(".DteBranch").removeClass("d-none");
 
-            $("#ddlFmnBranch").html(lst);
-          
-           
+            $('#ddlPSODte option').remove();
+            $('#ddlDgSubDte option').remove();
 
             $("#ddlCommand").html(lst);
             $("#ddlCorps").html(lst);
-            $("#ddlCorps").html(lst);
             $("#ddlBde").html(lst);
             $("#ddlDiv").html(lst);
+            $("#ddlFmnBranch").html(lst);
 
             mMsater(0, "ddlPSODte", PSO, "");
             mMsater(0, "ddlDgSubDte", SubDte, "");
 
         }
-
-     
     });
+
     $(".allow-number").on("keypress", function (event) {
         // Allow only backspace , delete, numbers               
         if (event.keyCode == 46 || event.keyCode == 8 || event.keyCode == 39 || event.keyCode == 37

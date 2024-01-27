@@ -20,7 +20,7 @@ namespace DataTransferObject.Response
         public string MobileNo { get; set; } = string.Empty;
         public string DialingCode { get; set; } = string.Empty;
         public string Extension { get; set; } = string.Empty;
-        public string Thumbprint { get; set; } = string.Empty;
+        public string? Thumbprint { get; set; }
         public int ApptId { get; set; }
         public string AppointmentName { get; set; } = string.Empty;
         //public int FormationId { get; set; }

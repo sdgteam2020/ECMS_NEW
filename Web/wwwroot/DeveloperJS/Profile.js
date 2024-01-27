@@ -44,6 +44,18 @@ $(document).ready(function () {
     });
 
     mMsater(0, "ddlProRank", Rank, "");
+
+    $(".allow-number").on("keypress", function (event) {
+        // Allow only backspace , delete, numbers               
+        if (event.keyCode == 46 || event.keyCode == 8 || event.keyCode == 39 || event.keyCode == 37
+            || (event.keyCode >= 48 && event.keyCode <= 57)) {
+            // let it happen, don't do anything
+        }
+        else {
+            // Ensure that it is a number and stop the key press
+            event.preventDefault();
+        }
+    });
    
    
   
@@ -183,14 +195,12 @@ function GetByArmyNo(ArmyNo) {
                 }
 
                 else {
-
-                 
                         $("#spnUserId").html(response.UserId);
                         $("#txtProArmy").val(response.ArmyNo);
                         $("#txtMobileNo").val(response.MobileNo);
                         $("#txtDialingCode").val(response.DialingCode);
                         $("#txtExtension").val(response.Extension);
-                        response.Thumbprint != null ? $("#lblThumbPrint").html(response.Thumbprint) : $("#lblThumbPrint").html("-");
+                        $("#lblThumbPrint").html(response.Thumbprint != null ? response.Thumbprint : "-");
                         $("#lblicno").html(response.ArmyNo);
                         $(".lblAppt").html(response.AppointmentName);
                         $("#lblrole").html(response.RoleName);

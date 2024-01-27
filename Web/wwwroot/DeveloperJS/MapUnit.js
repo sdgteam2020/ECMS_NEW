@@ -10,8 +10,13 @@ $(document).ready(function () {
             $(".unittype").removeClass("d-none");
             $(".FmnBranch").addClass("d-none");
             $(".DteBranch").addClass("d-none");
-            mMsater(0, "ddlCommand", 1, "");
 
+            $('#ddlCommand option').remove();
+            $('#ddlCorps option').remove();
+            $('#ddlBde option').remove();
+            $('#ddlDiv option').remove();
+
+            mMsater(0, "ddlCommand", 1, "");
 
             $("#ddlFmnBranch").html(lst);
             $("#ddlPSODte").html(lst);
@@ -19,9 +24,15 @@ $(document).ready(function () {
 
         }
         else if (val == "2") {
+
+            $('#ddlCommand option').remove();
+            $('#ddlCorps option').remove();
+            $('#ddlBde option').remove();
+            $('#ddlDiv option').remove();
+            $('#ddlFmnBranch option').remove();
+
             mMsater(0, "ddlCommand", 1, "");
             mMsater(0, "ddlFmnBranch", FmnBranches, "");
-
 
             $("#ddlPSODte").html(lst);
             $("#ddlDgSubDte").html(lst);
@@ -35,15 +46,14 @@ $(document).ready(function () {
             $(".FmnBranch").addClass("d-none");
             $(".DteBranch").removeClass("d-none");
 
-            $("#ddlFmnBranch").html(lst);
-
-
+            $('#ddlPSODte option').remove();
+            $('#ddlDgSubDte option').remove();
 
             $("#ddlCommand").html(lst);
             $("#ddlCorps").html(lst);
-            $("#ddlCorps").html(lst);
             $("#ddlBde").html(lst);
             $("#ddlDiv").html(lst);
+            $("#ddlFmnBranch").html(lst);
 
             mMsater(0, "ddlPSODte", PSO, "");
             mMsater(0, "ddlDgSubDte", SubDte, "");
@@ -360,15 +370,6 @@ function BindDataMapUnit() {
 
                     $("body").on("click", ".cls-btnedit", function () {
                     
-                        $("#ddlCommand").val($(this).closest("tr").find("#spncomdId").html());
-
-                        mMsater($(this).closest("tr").find("#spnMcorpsId").html(), "ddlCorps", 2, $(this).closest("tr").find("#spncomdId").html());                     
-                        mMsaterByParent($(this).closest("tr").find("#spnMDivId").html(), "ddlDiv", 3, $('#ddlCommand').val(), $(this).closest("tr").find("#spnMcorpsId").html(), 0, 0);///ComdId,CorpsId,DivId,BdeId
-                        mMsaterByParent($(this).closest("tr").find("#spnMbdeId").html(), "ddlBde", 4, $('#ddlCommand').val(), $(this).closest("tr").find("#spnMcorpsId").html(), $(this).closest("tr").find("#spnMDivId").html(), 0);///ComdId,CorpsId,DivId,BdeId
-                      
-                        mMsater($(this).closest("tr").find("#spnPsoId").html(), "ddlPSODte", PSO, "");
-                        mMsater($(this).closest("tr").find("#spnSubDteId").html(), "ddlDgSubDte", SubDte,"" );
-                        mMsater($(this).closest("tr").find("#spnFmnBranchID").html(), "ddlFmnBranch", FmnBranches, "");
                         $("#spnUnitMapId").html($(this).closest("tr").find("#spnMapUnitId").html());
 
                         $("#spnUnitId").html($(this).closest("tr").find("#spnMUnitId").html());
@@ -378,6 +379,11 @@ function BindDataMapUnit() {
                         var lst = '<option value="1">Please Select</option>';
                         if (parseInt($(this).closest("tr").find("#spnUnitType").html()) == 1) {
                             $("#UnitType1").prop("checked", true);
+
+                            mMsater($(this).closest("tr").find("#spncomdId").html(), "ddlCommand", 1, "");
+                            mMsater($(this).closest("tr").find("#spnMcorpsId").html(), "ddlCorps", 2, $(this).closest("tr").find("#spncomdId").html());
+                            mMsaterByParent($(this).closest("tr").find("#spnMDivId").html(), "ddlDiv", 3, $(this).closest("tr").find("#spncomdId").html(), $(this).closest("tr").find("#spnMcorpsId").html(), 0, 0);///ComdId,CorpsId,DivId,BdeId
+                            mMsaterByParent($(this).closest("tr").find("#spnMbdeId").html(), "ddlBde", 4, $(this).closest("tr").find("#spncomdId").html(), $(this).closest("tr").find("#spnMcorpsId").html(), $(this).closest("tr").find("#spnMDivId").html(), 0);///ComdId,CorpsId,DivId,BdeId
 
                             $(".unittype").removeClass("d-none");
                             $(".FmnBranch").addClass("d-none");
@@ -391,6 +397,12 @@ function BindDataMapUnit() {
                         {
                             $("#UnitType2").prop("checked", true);
 
+                            mMsater($(this).closest("tr").find("#spncomdId").html(), "ddlCommand", 1, "");
+                            mMsater($(this).closest("tr").find("#spnMcorpsId").html(), "ddlCorps", 2, $(this).closest("tr").find("#spncomdId").html());
+                            mMsaterByParent($(this).closest("tr").find("#spnMDivId").html(), "ddlDiv", 3, $(this).closest("tr").find("#spncomdId").html(), $(this).closest("tr").find("#spnMcorpsId").html(), 0, 0);///ComdId,CorpsId,DivId,BdeId
+                            mMsaterByParent($(this).closest("tr").find("#spnMbdeId").html(), "ddlBde", 4, $(this).closest("tr").find("#spncomdId").html(), $(this).closest("tr").find("#spnMcorpsId").html(), $(this).closest("tr").find("#spnMDivId").html(), 0);///ComdId,CorpsId,DivId,BdeId
+                            mMsater($(this).closest("tr").find("#spnFmnBranchID").html(), "ddlFmnBranch", FmnBranches, "");
+
                             $("#ddlPSODte").html(lst);
                             $("#ddlDgSubDte").html(lst);
 
@@ -402,6 +414,10 @@ function BindDataMapUnit() {
                         else if (parseInt($(this).closest("tr").find("#spnUnitType").html()) == 3)
                         {
                             $("#UnitType3").prop("checked", true);
+
+                            mMsater($(this).closest("tr").find("#spnPsoId").html(), "ddlPSODte", PSO, "");
+                            mMsater($(this).closest("tr").find("#spnSubDteId").html(), "ddlDgSubDte", SubDte,"" );
+
                             $(".unittype").addClass("d-none");
                             $(".FmnBranch").addClass("d-none");
                             $(".DteBranch").removeClass("d-none");
@@ -438,7 +454,7 @@ function BindDataMapUnit() {
                         }).then((result) => {
                             if (result.value) {
                                 //alert($(this).closest("tr").find("#spnMbdeId").html());
-                                DeleteMapUnit($(this).closest("tr").find("#spnMUnitId").html());
+                                DeleteMapUnit($(this).closest("tr").find("#spnMapUnitId").html());
 
                             }
                         });
@@ -673,7 +689,7 @@ function ResetMapUnit() {
 function DeleteMapUnit(Id) {
     var userdata =
     {
-        "UnitId": Id,
+        "UnitMapId": Id,
 
     };
     $.ajax({
@@ -700,7 +716,7 @@ function DeleteMapUnit(Id) {
 
                     toastr.success('Deleted Selected!');
 
-                    BindData();
+                    BindDataMapUnit();
                 }
 
                 //}
@@ -750,7 +766,7 @@ function DeleteMapUnitMultiple(Id) {
 
                     toastr.success('Deleted Selected!');
 
-                    BindData();
+                    BindDataMapUnit();
                 }
 
                 //}
