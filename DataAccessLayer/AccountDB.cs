@@ -295,6 +295,195 @@ namespace DataAccessLayer
                     return allrecord;
 
                 }
+                else if (Choice == "User")
+                {
+                    var allrecord = await (from u in _context.Users.OrderByDescending(x => x.Id)
+                                           join tdm in _context.TrnDomainMapping on u.Id equals tdm.AspNetUsersId into utdm_jointable
+                                           from xtdm in utdm_jointable.DefaultIfEmpty()
+                                           join up in _context.UserProfile on xtdm.UserId equals up.UserId into xtdmup_jointable
+                                           from xup in xtdmup_jointable.DefaultIfEmpty()
+                                           select new DTOUserRegnResponse()
+                                           {
+                                               Id = u.Id,
+                                               DomainId = u.DomainId,
+                                               AdminMsg = u.AdminMsg,
+                                               AdminFlag = u.AdminFlag,
+                                               Active = u.Active,
+                                               UpdatedOn = u.UpdatedOn,
+                                               Mapped = xtdm.UserId != null ? true : false,
+                                               TrnDomainMappingId = xtdm != null ? xtdm.Id : 0,
+                                               TrnDomainMappingApptId = (short)(xtdm != null ? xtdm.ApptId : 0),
+                                               TrnDomainMappingUnitId = xtdm != null ? xtdm.UnitId : 0,
+                                               ArmyNo = xup != null ? xup.ArmyNo : null,
+                                               UserId = xup != null ? xup.UserId : 0,
+                                               RoleNames = (from ur in _context.UserRoles.Where(x => x.UserId == u.Id)
+                                                            join r in _context.Roles on ur.RoleId equals r.Id
+                                                            select r.Name).ToList(),
+                                           }).ToListAsync();
+                    return allrecord;
+                }
+                else if (Choice == "MappedUser")
+                {
+                    var allrecord = await (from u in _context.Users.OrderByDescending(x => x.Id)
+                                           join tdm in _context.TrnDomainMapping on u.Id equals tdm.AspNetUsersId 
+                                           join up in _context.UserProfile on tdm.UserId equals up.UserId into xtdmup_jointable
+                                           from xup in xtdmup_jointable.DefaultIfEmpty()
+                                           where tdm.UserId != null
+                                           select new DTOUserRegnResponse()
+                                           {
+                                               Id = u.Id,
+                                               DomainId = u.DomainId,
+                                               AdminMsg = u.AdminMsg,
+                                               AdminFlag = u.AdminFlag,
+                                               Active = u.Active,
+                                               UpdatedOn = u.UpdatedOn,
+                                               Mapped = true,
+                                               TrnDomainMappingId = tdm.Id,
+                                               TrnDomainMappingApptId = tdm.ApptId,
+                                               TrnDomainMappingUnitId = tdm.UnitId,
+                                               ArmyNo = xup != null ? xup.ArmyNo : null,
+                                               UserId = xup != null ? xup.UserId : 0,
+                                               RoleNames = (from ur in _context.UserRoles.Where(x => x.UserId == u.Id)
+                                                            join r in _context.Roles on ur.RoleId equals r.Id
+                                                            select r.Name).ToList(),
+                                           }).ToListAsync();
+                    return allrecord;
+                }
+                else if (Choice == "UnMappedUser")
+                {
+                    var allrecord = await (from u in _context.Users.OrderByDescending(x => x.Id)
+                                           join tdm in _context.TrnDomainMapping on u.Id equals tdm.AspNetUsersId
+                                           join up in _context.UserProfile on tdm.UserId equals up.UserId into xtdmup_jointable
+                                           from xup in xtdmup_jointable.DefaultIfEmpty()
+                                           where tdm.UserId == null
+                                           select new DTOUserRegnResponse()
+                                           {
+                                               Id = u.Id,
+                                               DomainId = u.DomainId,
+                                               AdminMsg = u.AdminMsg,
+                                               AdminFlag = u.AdminFlag,
+                                               Active = u.Active,
+                                               UpdatedOn = u.UpdatedOn,
+                                               Mapped = true,
+                                               TrnDomainMappingId = tdm.Id,
+                                               TrnDomainMappingApptId = tdm.ApptId,
+                                               TrnDomainMappingUnitId = tdm.UnitId,
+                                               ArmyNo = xup != null ? xup.ArmyNo : null,
+                                               UserId = xup != null ? xup.UserId : 0,
+                                               RoleNames = (from ur in _context.UserRoles.Where(x => x.UserId == u.Id)
+                                                            join r in _context.Roles on ur.RoleId equals r.Id
+                                                            select r.Name).ToList(),
+                                           }).ToListAsync();
+                    return allrecord;
+                }
+                else if (Choice == "ActiveUser")
+                {
+                    var allrecord = await (from u in _context.Users.Where(x =>x.Active == true).OrderByDescending(x => x.Id)
+                                           join tdm in _context.TrnDomainMapping on u.Id equals tdm.AspNetUsersId into utdm_jointable
+                                           from xtdm in utdm_jointable.DefaultIfEmpty()
+                                           join up in _context.UserProfile on xtdm.UserId equals up.UserId into xtdmup_jointable
+                                           from xup in xtdmup_jointable.DefaultIfEmpty()
+                                           select new DTOUserRegnResponse()
+                                           {
+                                               Id = u.Id,
+                                               DomainId = u.DomainId,
+                                               AdminMsg = u.AdminMsg,
+                                               AdminFlag = u.AdminFlag,
+                                               Active = u.Active,
+                                               UpdatedOn = u.UpdatedOn,
+                                               Mapped = xtdm.UserId != null ? true : false,
+                                               TrnDomainMappingId = xtdm != null ? xtdm.Id : 0,
+                                               TrnDomainMappingApptId = (short)(xtdm != null ? xtdm.ApptId : 0),
+                                               TrnDomainMappingUnitId = xtdm != null ? xtdm.UnitId : 0,
+                                               ArmyNo = xup != null ? xup.ArmyNo : null,
+                                               UserId = xup != null ? xup.UserId : 0,
+                                               RoleNames = (from ur in _context.UserRoles.Where(x => x.UserId == u.Id)
+                                                            join r in _context.Roles on ur.RoleId equals r.Id
+                                                            select r.Name).ToList(),
+                                           }).ToListAsync();
+                    return allrecord;
+                }
+                else if (Choice == "InActiveUser")
+                {
+                    var allrecord = await (from u in _context.Users.Where(x => x.Active == false).OrderByDescending(x => x.Id)
+                                           join tdm in _context.TrnDomainMapping on u.Id equals tdm.AspNetUsersId into utdm_jointable
+                                           from xtdm in utdm_jointable.DefaultIfEmpty()
+                                           join up in _context.UserProfile on xtdm.UserId equals up.UserId into xtdmup_jointable
+                                           from xup in xtdmup_jointable.DefaultIfEmpty()
+                                           select new DTOUserRegnResponse()
+                                           {
+                                               Id = u.Id,
+                                               DomainId = u.DomainId,
+                                               AdminMsg = u.AdminMsg,
+                                               AdminFlag = u.AdminFlag,
+                                               Active = u.Active,
+                                               UpdatedOn = u.UpdatedOn,
+                                               Mapped = xtdm.UserId != null ? true : false,
+                                               TrnDomainMappingId = xtdm != null ? xtdm.Id : 0,
+                                               TrnDomainMappingApptId = (short)(xtdm != null ? xtdm.ApptId : 0),
+                                               TrnDomainMappingUnitId = xtdm != null ? xtdm.UnitId : 0,
+                                               ArmyNo = xup != null ? xup.ArmyNo : null,
+                                               UserId = xup != null ? xup.UserId : 0,
+                                               RoleNames = (from ur in _context.UserRoles.Where(x => x.UserId == u.Id)
+                                                            join r in _context.Roles on ur.RoleId equals r.Id
+                                                            select r.Name).ToList(),
+                                           }).ToListAsync();
+                    return allrecord;
+                }
+                else if (Choice == "Verified")
+                {
+                    var allrecord = await (from u in _context.Users.Where(x => x.AdminFlag == true).OrderByDescending(x => x.Id)
+                                           join tdm in _context.TrnDomainMapping on u.Id equals tdm.AspNetUsersId into utdm_jointable
+                                           from xtdm in utdm_jointable.DefaultIfEmpty()
+                                           join up in _context.UserProfile on xtdm.UserId equals up.UserId into xtdmup_jointable
+                                           from xup in xtdmup_jointable.DefaultIfEmpty()
+                                           select new DTOUserRegnResponse()
+                                           {
+                                               Id = u.Id,
+                                               DomainId = u.DomainId,
+                                               AdminMsg = u.AdminMsg,
+                                               AdminFlag = u.AdminFlag,
+                                               Active = u.Active,
+                                               UpdatedOn = u.UpdatedOn,
+                                               Mapped = xtdm.UserId != null ? true : false,
+                                               TrnDomainMappingId = xtdm != null ? xtdm.Id : 0,
+                                               TrnDomainMappingApptId = (short)(xtdm != null ? xtdm.ApptId : 0),
+                                               TrnDomainMappingUnitId = xtdm != null ? xtdm.UnitId : 0,
+                                               ArmyNo = xup != null ? xup.ArmyNo : null,
+                                               UserId = xup != null ? xup.UserId : 0,
+                                               RoleNames = (from ur in _context.UserRoles.Where(x => x.UserId == u.Id)
+                                                            join r in _context.Roles on ur.RoleId equals r.Id
+                                                            select r.Name).ToList(),
+                                           }).ToListAsync();
+                    return allrecord;
+                }
+                else if (Choice == "NotVerifiedUser")
+                {
+                    var allrecord = await (from u in _context.Users.Where(x => x.AdminFlag == false).OrderByDescending(x => x.Id)
+                                           join tdm in _context.TrnDomainMapping on u.Id equals tdm.AspNetUsersId into utdm_jointable
+                                           from xtdm in utdm_jointable.DefaultIfEmpty()
+                                           join up in _context.UserProfile on xtdm.UserId equals up.UserId into xtdmup_jointable
+                                           from xup in xtdmup_jointable.DefaultIfEmpty()
+                                           select new DTOUserRegnResponse()
+                                           {
+                                               Id = u.Id,
+                                               DomainId = u.DomainId,
+                                               AdminMsg = u.AdminMsg,
+                                               AdminFlag = u.AdminFlag,
+                                               Active = u.Active,
+                                               UpdatedOn = u.UpdatedOn,
+                                               Mapped = xtdm.UserId != null ? true : false,
+                                               TrnDomainMappingId = xtdm != null ? xtdm.Id : 0,
+                                               TrnDomainMappingApptId = (short)(xtdm != null ? xtdm.ApptId : 0),
+                                               TrnDomainMappingUnitId = xtdm != null ? xtdm.UnitId : 0,
+                                               ArmyNo = xup != null ? xup.ArmyNo : null,
+                                               UserId = xup != null ? xup.UserId : 0,
+                                               RoleNames = (from ur in _context.UserRoles.Where(x => x.UserId == u.Id)
+                                                            join r in _context.Roles on ur.RoleId equals r.Id
+                                                            select r.Name).ToList(),
+                                           }).ToListAsync();
+                    return allrecord;
+                }
                 else
                 {
                     var allrecord = await (from u in _context.Users.OrderByDescending(x => x.Id).Take(200)
