@@ -113,7 +113,26 @@
     $("#btnNotVerifiedUser").click(function () {
         BindData("NotVerifiedUser");
     });
+    $("$btnDialog").click(function () {
+        BindDialog();
+    });
 });
+function BindDialog() {
+    $("#tbldatadialog").DataTable({
+        "processing": true,
+        "serverSide": true,
+        "ajax": {
+            url: "/Account/GetDataForDataTable",
+            type: "post"
+        },
+        "columns": [
+            { "data": "FullName" },
+            { "data": "PhoneNumber" },
+            { "data": "FaxNumber" },
+            { "data": "EmailAddress" }
+        ]    
+    });
+}
 function BindData(Choice) {
     var listItem = "";
     var userdata =
