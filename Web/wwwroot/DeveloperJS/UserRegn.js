@@ -113,22 +113,30 @@
     $("#btnNotVerifiedUser").click(function () {
         BindData("NotVerifiedUser");
     });
-    $("$btnDialog").click(function () {
+    $("#btnDialog").click(function () {
+        $("#DataTableDialog").modal('show');
         BindDialog();
     });
 });
 function BindDialog() {
+
     $("#tbldatadialog").DataTable({
-        "processing": true,
-        "serverSide": true,
-        "filter": true,
-        "ajax": {
+        processing: true,
+        serverSide: true,
+        filter: true,
+        ajax: {
             url: "/Account/GetDataForDataTable",
-            type: "post"
-        },
-        "columns": [
-            { data: "domainId", name: "DomainId" },
-            { data: "armyNo", name: "ArmyNo" },
+            type: "POST",
+        },  
+        columns: [
+            { data: "Id", name: "Id" },
+            { data: "DomainId", name: "DomainId" },
+            { data: "ArmyNo", name: "ArmyNo" },
+            { data: "RoleNames", name: "RoleNames" },
+            { data: "UpdatedOn", name: "UpdatedOn" },
+            { data: "Mapped", name: "Mapped" },
+            { data: "Active", name: "Active" },
+            { data: "AdminFlag", name: "AdminFlag" }
         ]    
     });
 }

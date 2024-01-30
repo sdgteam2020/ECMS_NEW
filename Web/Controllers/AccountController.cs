@@ -32,6 +32,7 @@ using Microsoft.SqlServer.Management.Smo.Agent;
 using Microsoft.SqlServer.Management.Smo.Wmi;
 using Newtonsoft.Json;
 using System;
+using System.Data.Entity;
 using System.Data.Entity.Hierarchy;
 using System.Security.Claims;
 using System.Security.Policy;
@@ -494,22 +495,70 @@ namespace Web.Controllers
             }
 
         }
-        //[Authorize(Roles = "Admin")]
-        //[HttpPost]
-        //public async Task<IActionResult> GetDataForDataTable()
-        //{
-            
-        //    try
-        //    {
-        //        return Json(await _iAccountBL.GetDataForDataTable());
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _logger.LogError(1001, ex, "Account->GetDataForDataTable");
-        //        return Json(KeyConstants.InternalServerError);
-        //    }
+        [Authorize(Roles = "Admin")]
+        [HttpPost]
+        public async Task<IActionResult> GetDataForDataTable()
+        {
+            #region commented code
+                //int totalRecord = 0;
+                //int filterRecord = 0;
+                //var draw = Request.Form["draw"].FirstOrDefault();
+                //var sortColumn = Request.Form["columns[" + Request.Form["order[0][column]"].FirstOrDefault() + "][name]"].FirstOrDefault();
+                //var sortColumnDirection = Request.Form["order[0][dir]"].FirstOrDefault();
+                //var searchValue = Request.Form["search[value]"].FirstOrDefault();
+                //int pageSize = Convert.ToInt32(Request.Form["length"].FirstOrDefault() ?? "0");
+                //int skip = Convert.ToInt32(Request.Form["start"].FirstOrDefault() ?? "0");
+                //var data = context.Set<ApplicationUser>().AsQueryable();
+                ////get total count of data in table
+                //totalRecord = data.Count();
+                //// search data when search value found
+                //if (!string.IsNullOrEmpty(searchValue))
+                //{
+                //    data = data.Where(x => x.DomainId.ToLower().Contains(searchValue.ToLower()));
+                //}
+                //// get total count of records after search
+                //filterRecord = data.Count();
+                ////sort data
+                ////if (!string.IsNullOrEmpty(sortColumn) && !string.IsNullOrEmpty(sortColumnDirection)) data = data.OrderBy(sortColumn + " " + sortColumnDirection);
+                ////pagination
+                //var empList = data.Skip(skip).Take(pageSize).ToList();
+                //var returnObj = new
+                //{
+                //    draw = draw,
+                //    recordsTotal = totalRecord,
+                //    recordsFiltered = filterRecord,
+                //    data = empList
+                //};
+                //return Ok(returnObj);
+            #endregion end commented code
+            try
+            {
+                // Read DataTables parameters from the request
+                var draw = int.Parse(HttpContext.Request.Form["draw"]);
+                var start = int.Parse(HttpContext.Request.Form["start"]);
+                var length = int.Parse(HttpContext.Request.Form["length"]);
+                var sortColumn = Request.Form["columns[" + Request.Form["order[0][column]"].FirstOrDefault() + "][name]"].FirstOrDefault();
+                var sortColumnDirection = Request.Form["order[0][dir]"].FirstOrDefault();
+                var searchValue = HttpContext.Request.Form["search[value]"];
+                var request = new DTODataTablesRequest
+                {   
+                    Draw = draw,
+                    Start = start,
+                    Length = length,
+                    SortColumn= sortColumn,
+                    SortColumnDirection= sortColumnDirection,
+                    searchValue = searchValue,
+                };
 
-        //}
+                return Json(await _iAccountBL.GetDataForDataTable(request));
+            }
+            catch (Exception ex)
+            {   
+                _logger.LogError(1001, ex, "Account->GetDataForDataTable");
+                return Json(KeyConstants.InternalServerError);
+            }
+
+        }
 
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> SaveMapping(DTOUserRegnMappingRequest dTO)

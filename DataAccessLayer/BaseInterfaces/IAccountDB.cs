@@ -26,5 +26,6 @@ namespace DataAccessLayer.BaseInterfaces
         public Task<DTOTempSession?> ProfileAndMappingSaving(DTOProfileAndMappingRequest model, DTOTempSession dTOTempSession);
         public Task<DTOAccountCountResponse> AccountCount();
         public Task<bool?> SaveUnitWithMapping(DTOSaveUnitWithMappingRequest dTO);
+        public Task<DTODataTablesResponse<DTOUserRegnResponse>> GetDataForDataTable(DTODataTablesRequest request);
     }
 }
