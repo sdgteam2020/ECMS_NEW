@@ -563,7 +563,7 @@ namespace Web.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(1001, ex, "Account->SaveUnitWithMapping");
+                _logger.LogError(1001, ex, "Master->SaveUnitWithMapping");
                 return Json(KeyConstants.InternalServerError);
             }
 
@@ -660,15 +660,25 @@ namespace Web.Controllers
             }
 
         }
-        public async Task<IActionResult> DeleteMapUnit(MapUnit dTO)
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> DeleteMapUnit(int UnitMapId)
         {
             try
             {
-                await unitOfWork.MappUnit.Delete(dTO);
-                return Json(KeyConstants.Success);
+                MapUnit mapUnit = await unitOfWork.MappUnit.Delete(UnitMapId);
+                if(mapUnit!=null)
+                {
+                    return Json(KeyConstants.Success);
+                }
+                else
+                {
+                    return Json(KeyConstants.InternalServerError);
+                }
+
             }
             catch (Exception ex)
             {
+                _logger.LogError(1001, ex, "Master->DeleteMapUnit");
                 return Json(KeyConstants.InternalServerError);
             }
         }

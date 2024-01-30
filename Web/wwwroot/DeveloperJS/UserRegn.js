@@ -1,5 +1,5 @@
 ﻿$(document).ready(function () {
-    BindData()
+    BindData("");
     AccountCount();
     $("#AddNewDomain input[name='txtapproval']").click(function () {
         $("#txtapproval-error").html("");
@@ -58,6 +58,7 @@
         },
         appendTo: '#suggesstion-box'
     });
+
     $('#txtArmyNo').keyup(function (e) {
         if (e.keyCode == 46) {
             $("#spnUserProfileId").html('0');
@@ -66,10 +67,12 @@
             $("#lblRank").html('');
         }
     });
+
     $("#txtSearch").keyup(function () {
         var eThis = $(this);
         if ($("input[type='radio'][name=choice]:checked").length > 0) {
-            if ($("input[type='radio'][name=choice]:checked").val() == "Id") {
+            var ChoiceValue = $("input[type='radio'][name=choice]:checked").val();
+            if (ChoiceValue == "Id") {
                 var num_val = parseInt(eThis.val());
                 if (isNaN(num_val)) {
                     alert("Enter only number");
@@ -77,24 +80,64 @@
                 }
                 else {
                     eThis.val(num_val)
-                    BindData()
+                    BindData(ChoiceValue);
                 }
             }
             else {
-                BindData()
+                BindData(ChoiceValue);
             }
         }
         else {
             alert("Select Choice");
         }
     });
+
+    $("#btnUser").click(function () {
+        BindData("User");
+    });
+    $("#btnMappedUser").click(function () {
+        BindData("MappedUser");
+    });
+    $("#btnUnMappedUser").click(function () {
+        BindData("UnMappedUser");
+    });
+    $("#btnActiveUser").click(function () {
+        BindData("ActiveUser");
+    });
+    $("#btnInActiveUser").click(function () {
+        BindData("InActiveUser");
+    });
+    $("#btnVerified").click(function () {
+        BindData("Verified");
+    });
+    $("#btnNotVerifiedUser").click(function () {
+        BindData("NotVerifiedUser");
+    });
+    $("$btnDialog").click(function () {
+        BindDialog();
+    });
 });
-function BindData() {
+function BindDialog() {
+    $("#tbldatadialog").DataTable({
+        "processing": true,
+        "serverSide": true,
+        "filter": true,
+        "ajax": {
+            url: "/Account/GetDataForDataTable",
+            type: "post"
+        },
+        "columns": [
+            { data: "domainId", name: "DomainId" },
+            { data: "armyNo", name: "ArmyNo" },
+        ]    
+    });
+}
+function BindData(Choice) {
     var listItem = "";
     var userdata =
     {
         "Search": $("#txtSearch").val(),
-        "Choice": $("input[type='radio'][name=choice]:checked").val()
+        "Choice": Choice
     };
     $.ajax({
         url: '/Account/GetAllUserRegn',
@@ -353,7 +396,7 @@ function SaveMapping() {
 
                 $("#AddMapping").modal('hide');
                 AccountCount();
-                BindData();
+                BindData("");
                 ResetForMapping();
                 ResetErrorMessageForMapping();
             }
@@ -549,7 +592,8 @@ function UpdateDomainFlag() {
                 toastr.success('Domain Flag has been Updated');
 
                 $("#AddDomainFlag").modal('hide');
-                BindData();
+                AccountCount();
+                BindData("");
                 Reset();
                 ResetErrorMessage();
             }

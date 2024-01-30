@@ -45,33 +45,54 @@ namespace Web.Controllers
                     int userid = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                     if (ModelState.IsValid)
                     {
-                        if ((bool)!await _userProfileBL.FindByArmyNoWithUserId(dTO.ArmyNo, userid))
+                        if (dTO.UserId > 0)
                         {
-                            if (dTO.UserId > 0)
+                            bool? result = await _userProfileBL.FindByArmyNoWithUserId(dTO.ArmyNo, dTO.UserId);
+                            if (result != null)
                             {
-                                _userProfileBL.Update(dTO);
-                                return Json(KeyConstants.Update);
+                                if (result == true)
+                                {
+                                    return Json(KeyConstants.Exists);
+                                }
+                                else
+                                {
+                                    await _userProfileBL.Update(dTO);
+                                    return Json(KeyConstants.Update);
+                                }
                             }
                             else
                             {
-
-                                dTO= await _userProfileBL.AddWithReturn(dTO);
-                                TrnDomainMapping? trnDomainMapping = new TrnDomainMapping();
-                                trnDomainMapping.AspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-                                trnDomainMapping= await _iDomainMapBL.GetByAspnetUserIdBy(trnDomainMapping.AspNetUsersId);
-                                if(trnDomainMapping!=null && dTO.UserId !=0)
-                                {
-                                    trnDomainMapping.UserId = dTO.UserId;
-                                    _iDomainMapBL.Update(trnDomainMapping);
-                                }
-                                    return Json(KeyConstants.Save);
+                                return Json(KeyConstants.InternalServerError);
                             }
                         }
                         else
                         {
-                            return Json(KeyConstants.Exists);
+                            bool? result = await _userProfileBL.FindByArmyNo(dTO.ArmyNo);
+                            if (result != null)
+                            {
+                                if (result == true)
+                                {
+                                    return Json(KeyConstants.Exists);
+                                }
+                                else
+                                {
+                                    dTO = await _userProfileBL.AddWithReturn(dTO);
+                                    TrnDomainMapping? trnDomainMapping = new TrnDomainMapping();
+                                    trnDomainMapping.AspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                                    trnDomainMapping = await _iDomainMapBL.GetByAspnetUserIdBy(trnDomainMapping.AspNetUsersId);
+                                    if (trnDomainMapping != null && dTO.UserId != 0)
+                                    {
+                                        trnDomainMapping.UserId = dTO.UserId;
+                                        await _iDomainMapBL.Update(trnDomainMapping);
+                                    }
+                                    return Json(KeyConstants.Save);
+                                }
+                            }
+                            else
+                            {
+                                return Json(KeyConstants.InternalServerError);
+                            }
                         }
-
                     }
                     else
                     {
