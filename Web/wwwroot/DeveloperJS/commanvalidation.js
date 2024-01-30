@@ -4,7 +4,15 @@ var errormsg002 = "Error 002. Due to network issue, please try after some time."
 var memberTable = "";
 $(document).ready(function () {
 
-    
+    $('.form-control').on('keypress', function () {
+      
+        if ($(this).val().match("^[a-zA-Z0-9 ]*$")) {
+            
+            $(this).val("");
+            toastr.warning('special characters Not Allow');
+        }
+       
+    });
     $('.Alphanumeric').on('change', function () {
         
         if ($('.Alphanumeric').val().match("^[a-zA-Z0-9 ]*$")) {
@@ -24,7 +32,7 @@ $(document).ready(function () {
 
         }
         else {
-            $('.isNumerictxt').val("");
+            $(this).val("");
             toastr.warning('Only Numbers allowed');
 
         }

@@ -201,7 +201,7 @@ ul {
 
 .login-img-block {
     height: 100vh;
-    background: url(../Images/logo-white.jpg) no-repeat;
+  /*  background: url(../Images/logo-white.jpg) no-repeat;*/
     background-color: white;
     background-color: #E8BDAD;
    

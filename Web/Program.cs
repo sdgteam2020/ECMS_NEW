@@ -18,6 +18,8 @@ using BusinessLogicsLayer.Service;
 using Microsoft.SqlServer.Management.Smo.Wmi;
 using DataAccessLayer.Security;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 
 var builder = WebApplication.CreateBuilder(args);
 var configration = builder.Configuration;
@@ -104,11 +106,11 @@ builder.Services.AddSession(options =>
     options.Cookie.IsEssential = true;
     options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
 });
-
-builder.Services.AddAntiforgery(options =>
-{
-    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-});
+builder.Services.AddAntiforgery(o => o.SuppressXFrameOptionsHeader = true);
+//builder.Services.AddAntiforgery(options =>
+//{
+//    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+//});
 builder.Services.ConfigureApplicationCookie(options =>
 {
     // Cookie settings
@@ -146,7 +148,24 @@ builder.Services.AddHsts(options =>
     options.IncludeSubDomains = true;
     options.MaxAge = TimeSpan.FromDays(180);
 });
+//builder.Services.AddAuthentication(options =>
+//{
+//    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+//    options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
+//})
+//.AddCookie()
+//.AddOpenIdConnect(options =>
+//{
+//    options.Authority = "https://localhost:7023/Account/Logout";
+//    options.ClientId = "your-client-id";
+//    options.ClientSecret = "your-client-secret";
+//    options.ResponseType = "code";
+//    options.Scope.Add("openid");
+//    options.Scope.Add("profile");
+//    options.CallbackPath = "/signin-oidc";
 
+//    // Additional configurations as needed
+//});
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -165,7 +184,7 @@ else
 }
 //app.Use(async (ctx, next) =>
 //{
-//    //ctx.Response.Headers.Add("Content-Security-Policy", "default-src *; style-src 'self' ");
+//    ctx.Response.Headers.Add("Content-Security-Policy", "default-src *; style-src 'self' ");
 //    ctx.Response.Headers.Add("Feature-Policy", "fullscreen 'none'");
 //    ctx.Response.Headers.Add("Referrer-Policy", "same-origin");
 //    ctx.Response.Headers.Add("X-Frame-Options", "DENY");

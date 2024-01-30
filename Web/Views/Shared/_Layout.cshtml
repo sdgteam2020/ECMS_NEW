@@ -563,7 +563,7 @@
                     
                     <partial name="_Notification" />
                     @RenderBody()
-
+                    @RenderSection("scripts", required: false)
                     <!-- partial -->
                     <!-- main-panel ends -->
                 </div>
@@ -582,8 +582,8 @@
 
 
     @*  <script asp-src-include="~/select2/dist/js/select2.min.js"></script>*@
-    @RenderSection("Scripts", false)
-    @RenderSection("body_scripts", false)
+   @*  @RenderSection("Scripts", false)
+    @RenderSection("body_scripts", false) *@
     <script>
         $(document).ready(function () {
 
