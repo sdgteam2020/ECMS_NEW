@@ -179,30 +179,40 @@
 
     });
 
-    $(".form-check-input").click(function () {
-
+    $('input[name="UnitTyperdi"]').click(function () {
         var lst = '<option value="1">Please Select</option>';
         var val = $("input[type='radio'][name=UnitTyperdi]:checked").val();
         if (val == "1") {
             $(".unittype").removeClass("d-none");
             $(".FmnBranch").addClass("d-none");
             $(".DteBranch").addClass("d-none");
-            mMsater(0, "ddlCommand", 1, "");
 
+            $('#ddlCommand option').remove();
+            $('#ddlCorps option').remove();
+            $('#ddlBde option').remove();
+            $('#ddlDiv option').remove();
+
+            mMsater(0, "ddlCommand", 1, "");
 
             $("#ddlFmnBranch").html(lst);
             $("#ddlPSODte").html(lst);
             $("#ddlDgSubDte").html(lst);
-          
+
         }
         else if (val == "2") {
+
+            $('#ddlCommand option').remove();
+            $('#ddlCorps option').remove();
+            $('#ddlBde option').remove();
+            $('#ddlDiv option').remove();
+            $('#ddlFmnBranch option').remove();
+
             mMsater(0, "ddlCommand", 1, "");
             mMsater(0, "ddlFmnBranch", FmnBranches, "");
 
-
             $("#ddlPSODte").html(lst);
             $("#ddlDgSubDte").html(lst);
-            
+
             $(".unittype").removeClass("d-none");
             $(".FmnBranch").removeClass("d-none");
             $(".DteBranch").addClass("d-none");
@@ -212,23 +222,21 @@
             $(".FmnBranch").addClass("d-none");
             $(".DteBranch").removeClass("d-none");
 
-            $("#ddlFmnBranch").html(lst);
-          
-           
+            $('#ddlPSODte option').remove();
+            $('#ddlDgSubDte option').remove();
 
             $("#ddlCommand").html(lst);
             $("#ddlCorps").html(lst);
-            $("#ddlCorps").html(lst);
             $("#ddlBde").html(lst);
             $("#ddlDiv").html(lst);
+            $("#ddlFmnBranch").html(lst);
 
             mMsater(0, "ddlPSODte", PSO, "");
             mMsater(0, "ddlDgSubDte", SubDte, "");
 
         }
-
-     
     });
+
     $(".allow-number").on("keypress", function (event) {
         // Allow only backspace , delete, numbers               
         if (event.keyCode == 46 || event.keyCode == 8 || event.keyCode == 39 || event.keyCode == 37
@@ -408,6 +416,9 @@ function UnitSave() {
             "ServiceNo": $("#spnServiceNo").html(),
             "Name": $("#spnName").html(),
             "Rank": $("#spnRank").html(),
+            "MobileNo": $("#txtMobileNo").val(),
+            "DialingCode": $("#txtDialingCode").val(),
+            "Extension": $("#txtExtension").val(),
             "DomainId": $("#spnDomainId").html(),
             "Sus_no": $("#txtSusno").val().substring(0, 7),
             "Suffix": $("#txtSusno").val().substring(8, 7),
@@ -457,14 +468,16 @@ function UnitSave() {
 
             } else {
                 if (result.length > 0) {
+                    var err="";
                     for (var i = 0; i < result.length; i++) {
-                        toastr.error(result[i][0].ErrorMessage)
+                        err = err + result[i][0].ErrorMessage + '<br />';
                     }
-
-
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        html: err,
+                    })
                 }
-
-
             }
         }
     });
@@ -473,6 +486,9 @@ function Reset() {
     $("#spnDomainRegId").html("0");
     $("#txtSusno").val(""); 
     $("#txtUnit").val("");
+    $("#txtMobileNo").val("");
+    $("#txtDialingCode").val("");
+    $("#txtExtension").val("");
     $("#ddlCommand").val("");
     $("#ddlCorps").val("");
     $("#ddlDiv").val("");
@@ -492,6 +508,9 @@ function Reset() {
 function ResetErrorMessage() {
     $("#txtSusno-error").html("");
     $("#txtUnit-error").html("");
+    $("#txtMobileNo-error").html("");
+    $("#txtDialingCode-error").html("");
+    $("#txtExtension-error").html("");
     $("#ddlCommand-error").html("");
     $("#ddlCorps-error").html("");
     $("#ddlDiv-error").html("");
@@ -499,4 +518,22 @@ function ResetErrorMessage() {
     $("#ddlFmnBranch-error").html("");
     $("#ddlPSODte-error").html("");
     $("#ddlDgSubDte-error").html("");
+}
+function ValidationFormInput() {
+    $("#AddNewUnitmap").validate({
+        rules: {
+            txtMobileNo: {
+                required: true,
+                maxlength: 10,
+                minlength: 10
+            }
+        },
+        messages: {
+            name: {
+                required: "Mobile No is required ?",
+                minlength: jQuery.validator.format("Minimum length of Mobile No is {0} digit!"),
+                maxlength: jQuery.validator.format("Maximum length of Mobile No is {0} digit!")
+            }
+        }
+    });
 }

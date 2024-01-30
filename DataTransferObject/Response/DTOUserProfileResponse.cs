@@ -14,27 +14,31 @@ namespace DataTransferObject.Response
         public int MapId { get; set; }
         public int UserId { get; set; }
       
-        public string ArmyNo { get; set; }
-       
-        public string Name { get; set; }
+        public string ArmyNo { get; set; } = string.Empty;
+
+        public string Name { get; set; } = string.Empty;
+        public string MobileNo { get; set; } = string.Empty;
+        public string DialingCode { get; set; } = string.Empty;
+        public string Extension { get; set; } = string.Empty;
+        public string? Thumbprint { get; set; }
         public int ApptId { get; set; }
-        public string AppointmentName { get; set; }
+        public string AppointmentName { get; set; } = string.Empty;
         //public int FormationId { get; set; }
         //public string FormationName { get; set; }
         public int UnitId { get; set; }
         public Boolean IntOffr { get; set; }
         public Boolean IsIO { get; set; }
         public Boolean IsCO { get; set; }
-        public string SusNo { get; set; }
+        public string SusNo { get; set; } = string.Empty;
         //public int RequestId { get; set; }
-        public string UnitName { get; set; }
-        public string Rank { get; set;}
+        public string UnitName { get; set; } = string.Empty;
+        public string Rank { get; set;} = string.Empty;
         public int RankId { get; set; }
 
-        public string DomainId { get; set; }
-        public string RoleName { get; set; }
-        public string MappedDate { get; set; }
-        public string MappedBy { get; set; }
+        public string DomainId { get; set; } = string.Empty;
+        public string RoleName { get; set; } = string.Empty;
+        public string MappedDate { get; set; } = string.Empty;
+        public string MappedBy { get; set; } = string.Empty;
         //public int IOUserId { get; set; }
         //public string IOArmyNo { get; set; }
         //public string IOName { get; set; }

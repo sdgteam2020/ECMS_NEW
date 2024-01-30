@@ -190,7 +190,7 @@ else
 //    ctx.Response.Headers.Add("X-Frame-Options", "DENY");
 //    ctx.Response.Headers.Add("X-XSS-Protection", "1; mode=block");
 //    ctx.Response.Headers.Add("X-Content-Type-Options", "nosniff");
-//    //ctx.Response.Headers.Add("Strict-Transport-Security", "max-age=31536000; includeSubDomains; preload");
+//    ctx.Response.Headers.Add("Strict-Transport-Security", "max-age=31536000; includeSubDomains; preload");
 //    ctx.Response.Headers.Remove("X-Powered-By");
 //    ctx.Response.Headers.Remove("x-aspnet-version");
 //    // Some headers won't remove
