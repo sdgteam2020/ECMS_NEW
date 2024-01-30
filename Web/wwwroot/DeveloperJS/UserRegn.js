@@ -121,15 +121,14 @@ function BindDialog() {
     $("#tbldatadialog").DataTable({
         "processing": true,
         "serverSide": true,
+        "filter": true,
         "ajax": {
             url: "/Account/GetDataForDataTable",
             type: "post"
         },
         "columns": [
-            { "data": "FullName" },
-            { "data": "PhoneNumber" },
-            { "data": "FaxNumber" },
-            { "data": "EmailAddress" }
+            { data: "domainId", name: "DomainId" },
+            { data: "armyNo", name: "ArmyNo" },
         ]    
     });
 }

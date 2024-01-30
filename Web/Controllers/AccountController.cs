@@ -494,6 +494,22 @@ namespace Web.Controllers
             }
 
         }
+        //[Authorize(Roles = "Admin")]
+        //[HttpPost]
+        //public async Task<IActionResult> GetDataForDataTable()
+        //{
+            
+        //    try
+        //    {
+        //        return Json(await _iAccountBL.GetDataForDataTable());
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.LogError(1001, ex, "Account->GetDataForDataTable");
+        //        return Json(KeyConstants.InternalServerError);
+        //    }
+
+        //}
 
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> SaveMapping(DTOUserRegnMappingRequest dTO)
