@@ -497,7 +497,7 @@ namespace Web.Controllers
         }
         [Authorize(Roles = "Admin")]
         [HttpPost]
-        public async Task<IActionResult> GetDataForDataTable()
+        public async Task<IActionResult> GetDataForDataTable(DTODataTablesRequest dTO)
         {
             #region commented code
                 //int totalRecord = 0;
@@ -533,24 +533,43 @@ namespace Web.Controllers
             #endregion end commented code
             try
             {
+                #region commented code
                 // Read DataTables parameters from the request
-                var draw = int.Parse(HttpContext.Request.Form["draw"]);
-                var start = int.Parse(HttpContext.Request.Form["start"]);
-                var length = int.Parse(HttpContext.Request.Form["length"]);
-                var sortColumn = Request.Form["columns[" + Request.Form["order[0][column]"].FirstOrDefault() + "][name]"].FirstOrDefault();
-                var sortColumnDirection = Request.Form["order[0][dir]"].FirstOrDefault();
-                var searchValue = HttpContext.Request.Form["search[value]"];
-                var request = new DTODataTablesRequest
-                {   
-                    Draw = draw,
-                    Start = start,
-                    Length = length,
-                    SortColumn= sortColumn,
-                    SortColumnDirection= sortColumnDirection,
-                    searchValue = searchValue,
-                };
+                //var draw = int.Parse(HttpContext.Request.Form["draw"]);
+                //var start = int.Parse(HttpContext.Request.Form["start"]);
+                //var length = int.Parse(HttpContext.Request.Form["length"]);
+                //var sortColumn = Request.Form["columns[" + Request.Form["order[0][column]"].FirstOrDefault() + "][name]"].FirstOrDefault();
+                //var sortColumnDirection = Request.Form["order[0][dir]"].FirstOrDefault();
+                //var searchValue = HttpContext.Request.Form["search[value]"];
+                //var request = new DTODataTablesRequest
+                //{   
+                //    Draw = draw,
+                //    Start = start,
+                //    Length = length,
+                //    SortColumn= sortColumn,
+                //    SortColumnDirection= sortColumnDirection,
+                //    searchValue = searchValue,
+                //    Choice= Choice
+                //};
+                #endregion
 
-                return Json(await _iAccountBL.GetDataForDataTable(request));
+                if (ModelState.IsValid)
+                {
+                    return Json(await _iAccountBL.GetDataForDataTable(dTO));
+                }
+                else
+                {
+                    List<DTOUserRegnResponse> dTOUserRegnResponses = new List<DTOUserRegnResponse>();
+                    var responseData = new DTODataTablesResponse<DTOUserRegnResponse>
+                    {
+                        draw = 0,
+                        recordsTotal = 0,
+                        recordsFiltered = 0, 
+                        data = dTOUserRegnResponses
+                    };
+                    return Json(responseData);
+                    //return Json(ModelState.Select(x => x.Value.Errors).Where(y => y.Count > 0).ToList());
+                }
             }
             catch (Exception ex)
             {   

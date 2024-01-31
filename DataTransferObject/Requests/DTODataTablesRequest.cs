@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,12 +9,26 @@ namespace DataTransferObject.Requests
 {
     public class DTODataTablesRequest
     {
+        [RegularExpression("^[0-9]+$", ErrorMessage = "Numbers allowed.")]
         public int Draw { get; set; }
+
+        [RegularExpression("^[0-9]+$", ErrorMessage = "Numbers allowed.")]
         public int Start { get; set; }
+        
+        [RegularExpression("^[0-9]+$", ErrorMessage = "Numbers allowed.")]
         public int Length { get; set; }
-        public string searchValue { get; set; } = string.Empty;
-        public string SortColumn { get; set; } = string.Empty;
-        public string SortColumnDirection { get; set; } = string.Empty;
+        
+        [RegularExpression("^[a-zA-Z0-9 ]*$", ErrorMessage = "Only Alphabets and Numbers allowed.")]
+        public string? searchValue { get; set; }
+        
+        [RegularExpression("^[a-zA-Z]*$", ErrorMessage = "Only Alphabets allowed.")]
+        public string sortColumn { get; set; } = string.Empty;
+
+        [RegularExpression("^[a-zA-Z]*$", ErrorMessage = "Only Alphabets allowed.")]
+        public string sortDirection { get; set; } = string.Empty;
+
+        [RegularExpression("^[a-zA-Z]*$", ErrorMessage = "Only Alphabets allowed.")]
+        public string Choice { get; set; } = string.Empty;
 
         //public DataTablesSearch Search { get; set; }
         //public List<DataTablesOrder> Order { get; set; }
