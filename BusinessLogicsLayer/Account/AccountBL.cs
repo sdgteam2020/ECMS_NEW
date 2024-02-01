@@ -77,5 +77,9 @@ namespace BusinessLogicsLayer.Account
         {
             return await _iAccountDB.SaveUnitWithMapping(dTO);
         }
+        public async Task<DTODataTablesResponse<DTOUserRegnResponse>> GetDataForDataTable(DTODataTablesRequest request)
+        {
+            return await _iAccountDB.GetDataForDataTable(request);
+        }
     }
 }

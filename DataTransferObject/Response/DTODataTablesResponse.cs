@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 namespace DataTransferObject.Response
 {
     public class DTODataTablesResponse<T>
-    {
-        public int Draw { get; set; }
-        public int RecordsTotal { get; set; }
-        public int RecordsFiltered { get; set; }
-        public required List<T> Data { get; set; }
+    {   
+        public int draw { get; set; }
+        public int recordsTotal { get; set; }
+        public int recordsFiltered { get; set; }
+        public List<T> data { get; set; }
     }
 }
