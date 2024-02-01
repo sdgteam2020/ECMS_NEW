@@ -42,7 +42,7 @@ function GetTokenDetails1(ApiId, txt) {
 
                         $("#tokenmsg").html('<div class="mt-4 alert alert-success alert-dismissible fade show "><i class="fa fa-check " aria-hidden="true"></i><span class="m-lg-2">Token Detected </span></div>');
 
-                        $("#" + txt).val("IC-00203");
+                        //$("#" + txt).val("IC-00203");
                        
                     }
                 }
@@ -103,8 +103,9 @@ function GetTokenDetails(CRL_OCSPCheck, CRL_OCSPMsg, Remarks, Thumbprint, Status
                     }
                     else {
                         $("#tokenmsg").html('<div class="mt-4 alert alert-success alert-dismissible fade show "><i class="fa fa-check " aria-hidden="true"></i><span class="m-lg-2">Token Detected </span></div>');
-                        if (response.ArmyNo = "7f33df8ac6540b5cf7ccfd041d8c837641226444d9f1a4aa30a01924c0610996")
-                            $("#" + txt).val("IC-00203");
+                        //  if (response.ArmyNo = "7f33df8ac6540b5cf7ccfd041d8c837641226444d9f1a4aa30a01924c0610996")
+                        
+                        $("#" + txt).val(response.ArmyNo);
                           //$("#" + txt).val("IC-00002");
                     }
 
@@ -115,7 +116,7 @@ function GetTokenDetails(CRL_OCSPCheck, CRL_OCSPMsg, Remarks, Thumbprint, Status
                         //$("#error-msg").html(response.message);
                         $("#tokenmsg").html('<div class="mt-4 alert alert-danger alert-dismissible fade show "><i class="fa fa-times" aria-hidden="true"></i><span class="m-lg-2">' + response.Remarks + '</span>.</div>');
                         $("#" + txt).val("");
-                        $("#" + txt).val("IC-00005");
+                       
                     }
                     
                     

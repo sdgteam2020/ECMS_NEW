@@ -22,7 +22,7 @@ namespace DataTransferObject.Domain.Model
         public string IdenMark1 { get; set; } = string.Empty;
         [StringLength(100)]
         [Column(TypeName = "VARCHAR(100)")]
-        public string IdenMark2 { get; set; } = string.Empty;
+        public string? IdenMark2 { get; set; } = string.Empty;
 
         [MaxLength(12)]
         [MinLength(12)]
