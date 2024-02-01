@@ -808,7 +808,7 @@ namespace Web.Controllers
                                     //trnDomainMapping=await iDomainMapBL.GetByAspnetUserIdBy(trnDomainMapping);
                                     mTrnICardRequest.TrnDomainMappingId = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").TrnDomainMappingId;
                                     mTrnICardRequest.UpdatedOn = DateTime.Now;
-                                    mTrnICardRequest.Updatedby = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").UserId; //SessionHeplers.GetObject<string>(HttpContext.Session, "ArmyNo");
+                                    mTrnICardRequest.Updatedby = Convert.ToInt32(userId); //SessionHeplers.GetObject<string>(HttpContext.Session, "ArmyNo");
                                     mTrnICardRequest = await iTrnICardRequestBL.AddWithReturn(mTrnICardRequest);
                                     if (mTrnICardRequest.RequestId > 0)
                                     {
@@ -969,8 +969,9 @@ namespace Web.Controllers
                         mTrnICardRequest.RegistrationId = model.RegistrationId;
                         mTrnICardRequest.TrnDomainMappingId = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").TrnDomainMappingId;
                         mTrnICardRequest.UpdatedOn = DateTime.Now;
-                        mTrnICardRequest.Updatedby = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").UserId; //SessionHeplers.GetObject<string>(HttpContext.Session, "ArmyNo");
-                       // mTrnICardRequest = await iTrnICardRequestBL.AddWithReturn(mTrnICardRequest);
+                        mTrnICardRequest.Updatedby = Convert.ToInt32(userId);
+                        //SessionHeplers.GetObject<string>(HttpContext.Session, "ArmyNo");
+                                                                              // mTrnICardRequest = await iTrnICardRequestBL.AddWithReturn(mTrnICardRequest);
 
 
                         MStepCounter mStepCounter = new MStepCounter();
