@@ -73,7 +73,7 @@
                                             <form asp-antiforgery="true" method="post" asp-action="IMLogin" autocomplete="off" role="form">
                                                 <div class="form-group">
                                                     <label>Domain Id</label>
-                                                    <input asp-for="DomainId" class="form-control" placeholder="Enter Domain Id..." value="user1" />
+                                                    <input asp-for="DomainId" class="form-control" maxlength="20" placeholder="Enter Domain Id..." value="user1" />
                                                     <span asp-validation-for="DomainId" class="text-danger"></span>
                                                 </div>
 
