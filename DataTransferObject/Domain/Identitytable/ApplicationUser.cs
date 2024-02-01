@@ -11,6 +11,8 @@ namespace DataTransferObject.Domain.Identitytable
 {
     public class ApplicationUser : IdentityUser<int>
     {
+        [StringLength(20)]
+        [Column(TypeName = "varchar(20)")]
         public string DomainId { get; set; } = string.Empty;
         public bool Active { get; set; } = false;
         public bool AdminFlag { get; set; } = false;
