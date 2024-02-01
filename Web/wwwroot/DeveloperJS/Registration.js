@@ -23,7 +23,8 @@
             $('.persAddress').addClass('d-none');
             $('.entryaddress').removeClass('d-none');
 
-            
+            $("#ServiceNo").val($("#ServiceNumber").val());
+            $(".spnhideServiceNo").addClass('d-none');
         } else {
             $('#Name').attr('readonly', true);
             $('#DOB').attr('readonly', true);
