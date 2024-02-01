@@ -1,5 +1,15 @@
 ﻿$(document).ready(function () {
-   
+
+    //const [today] = new Date().toISOString().split('T');
+    //const maxDate = new Date();
+    //maxDate.setDate(maxDate.getDate() + 30);
+    //const [maxDateFormatted] = maxDate.toISOString().split('T');
+    //const dateInput = document.getElementById('DOB');
+    //dateInput.setAttribute('min', today);
+    //dateInput.setAttribute('max', maxDateFormatted);
+    //const Commissioning = document.getElementById('Commissioning');
+    //Commissioning.setAttribute('min', today);
+    //Commissioning.setAttribute('max', maxDateFormatted);
     $('.paddress').on('change', function () {
         $("#PermanentAddress").val('Village - ' + $("#Village").val() + '\n Post Office-' + $("#PO").val() + ' \n Tehsil- ' + $("#Tehsil").val() + '\n District- ' + $("#District").val() + '\n State- ' + $("#State").val() + '\n Pin Code- ' + $("#PinCode").val());
         $("#AadhaarNo").val("");
@@ -23,7 +33,8 @@
             $('.persAddress').addClass('d-none');
             $('.entryaddress').removeClass('d-none');
 
-            
+            $("#ServiceNo").val($("#ServiceNumber").val());
+            $(".spnhideServiceNo").addClass('d-none');
         } else {
             $('#Name').attr('readonly', true);
             $('#DOB').attr('readonly', true);

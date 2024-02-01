@@ -1,11 +1,9 @@
 ﻿$(document).ready(function () {
 
     const [today] = new Date().toISOString().split('T');
-
     const maxDate = new Date();
     maxDate.setDate(maxDate.getDate() + 30);
     const [maxDateFormatted] = maxDate.toISOString().split('T');
-
     const dateInput = document.getElementById('DateOfIssue');
     dateInput.setAttribute('min', today);
     dateInput.setAttribute('max', maxDateFormatted);

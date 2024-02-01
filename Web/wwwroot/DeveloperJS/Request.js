@@ -4,6 +4,15 @@ var lCardType = 0;
 var IsValid = 0;
 var Message = "";
 $(document).ready(function () {
+
+   
+    $('#txtApplyForArmyNo').change(function (e) {
+        if ($('#txtApplyForArmyNo').val().length > 0) {
+            $('#btnNext').removeClass("disabled");
+        } else {
+            $('#btnNext').addClass("disabled");
+        }
+    });
     $('#txtApplyForArmyNo').keypress(function (e) {
         if ($('#txtApplyForArmyNo').val().length > 0) {
             $('#btnNext').removeClass("disabled");
