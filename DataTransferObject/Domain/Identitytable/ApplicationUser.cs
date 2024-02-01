@@ -25,6 +25,9 @@ namespace DataTransferObject.Domain.Identitytable
         [DataType(DataType.Date)]
         [Column(TypeName = "datetime")]
         public DateTime UpdatedOn { get; set; }
+
+        [StringLength(200)]
+        [Column(TypeName = "varchar(200)")]
         public string? AdminMsg { get; set; }
 
         public string? Fd1 { get; set; }

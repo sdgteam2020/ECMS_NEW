@@ -22,12 +22,17 @@
                     data: param,
                     type: 'POST',
                     success: function (data) {
-                        console.log(data);
-                        response($.map(data, function (item) {
-                            $("#loading").addClass("d-none");
-                            return { label: item.ArmyNo, value: item.UserId };
-
-                        }))
+                        if (data.length != 0) {
+                            response($.map(data, function (item) {
+                                $("#loading").addClass("d-none");
+                                return { label: item.ArmyNo, value: item.UserId };
+                            }))
+                        }
+                        else {
+                            $("#txtArmyNo").val("");
+                            $("#spnUserProfileId").html("");
+                            alert("Offrs Army No not found.")
+                        }
                     },
                     error: function (response) {
                         alert(response.responseText);
@@ -674,11 +679,7 @@ function UpdateDomainFlag() {
                     for (var i = 0; i < result.length; i++) {
                         toastr.error(result[i][0].Message)
                     }
-
-
                 }
-
-
             }
         }
     });
