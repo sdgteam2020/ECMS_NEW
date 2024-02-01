@@ -29,12 +29,19 @@
                     data: param,
                     type: 'POST',
                     success: function (data) {
-                        response($.map(data, function (item) {
+                        if (data.length != 0) {
+                            response($.map(data, function (item) {
 
-                            $("#loading").addClass("d-none");
-                            return { label: item.AppointmentName, value: item.ApptId };
+                                $("#loading").addClass("d-none");
+                                return { label: item.AppointmentName, value: item.ApptId };
 
-                        }))
+                            }))
+                        }
+                        else {
+                            $("#txtAppointmentName").val(""); 
+                            $("#spnUnitAppointmentId").html("");
+                            alert("Appointment not found.")
+                        }
                     },
                     error: function (response) {
                         alert(response.responseText);
@@ -74,12 +81,19 @@
                     data: param,
                     type: 'POST',
                     success: function (data) {
-                        response($.map(data, function (item) {
+                        if (data.length != 0) {
+                            response($.map(data, function (item) {
+                                $("#loading").addClass("d-none");
+                                return { label: item.UnitName, value: item.UnitMapId };
 
-                            $("#loading").addClass("d-none");
-                            return { label: item.UnitName, value: item.UnitMapId };
-
-                        }))
+                            }))
+                        }
+                        else {
+                            $("#txtUnitName").val("");
+                            $("#spnUnitMapId").html("");
+                            $("#spnTDMUnitType").html("");
+                            alert("Unit not found.")
+                        }
                     },
                     error: function (response) {
                         alert(response.responseText);
