@@ -1,5 +1,6 @@
 ﻿using DataTransferObject.Domain.Master;
 using DataTransferObject.Domain.Model;
+using DataTransferObject.Requests;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +11,6 @@ namespace DataAccessLayer.BaseInterfaces
 {
     public interface IAPIDataDB : IGenericRepositoryDL<MApiData>
     {
-        public Task<MApiData> GetByIC(string ICNo);
+        public Task<MApiData> GetByIC(DTOAPIDataRequest Data);
     }
 }

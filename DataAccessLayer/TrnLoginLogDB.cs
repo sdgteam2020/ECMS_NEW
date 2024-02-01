@@ -47,7 +47,7 @@ namespace DataAccessLayer
                            " inner join TrnDomainMapping map on map.AspNetUsersId=users.Id"+
                            " inner join AspNetUserRoles urole on urole.UserId=users.Id"+
                            " inner join AspNetRoles roles on roles.Id=urole.[RoleId]"+
-                           " inner join UserProfile prof on prof.UserId=users.Id"+
+                           " inner join UserProfile prof on prof.UserId=map.UserId " +
                            " inner join MRank ran on ran.RankId=prof.RankId"+
                            " and map.UnitId=@UnitId";
 

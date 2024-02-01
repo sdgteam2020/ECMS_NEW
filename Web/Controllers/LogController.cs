@@ -17,6 +17,8 @@ namespace Web.Controllers
         }
         public async Task<IActionResult> LoginLog()
         {
+            string referer = HttpContext.Request.Headers["Referer"].ToString();
+
             DtoSession dtoSession = new DtoSession();
             dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
              if (dtoSession != null )

@@ -434,7 +434,7 @@ namespace DataAccessLayer
               " inner join AspNetUsers users on trndomain.AspNetUsersId=users.Id" +
               " inner join MapUnit mapu on mapu.UnitMapId=trndomain.UnitId" +
               " left join UserProfile usep on usep.UserId=trndomain.UserId" +
-              " where trndomain.UnitId in (Select UnitMapId from MapUnit where ComdId in (Select ComdId from MapUnit where UnitMapId=@UnitId))" +
+              " where usep.IntOffr=1 and trndomain.UnitId in (Select UnitMapId from MapUnit where ComdId in (Select ComdId from MapUnit where UnitMapId=@UnitId))" +
               " And usep.ArmyNo like @Name";
 
                 }
@@ -445,7 +445,7 @@ namespace DataAccessLayer
               " inner join AspNetUsers users on trndomain.AspNetUsersId=users.Id" +
               " inner join MapUnit mapu on mapu.UnitId=trndomain.UnitId" +
               " left join UserProfile usep on usep.UserId=trndomain.UserId" +
-              " where trndomain.UnitId in (Select UnitId from MapUnit where ComdId in (Select ComdId from MapUnit where UnitMapId=@UnitId))" +
+              " where usep.IntOffr=1 and trndomain.UnitId in (Select UnitId from MapUnit where ComdId in (Select ComdId from MapUnit where UnitMapId=@UnitId))" +
               " And usep.Name like @Name";
 
                 }
@@ -456,7 +456,7 @@ namespace DataAccessLayer
               " inner join AspNetUsers users on trndomain.AspNetUsersId=users.Id" +
               " inner join MapUnit mapu on mapu.UnitId=trndomain.UnitId" +
               " left join UserProfile usep on usep.UserId=trndomain.UserId" +
-              " where trndomain.UnitId in (Select UnitId from MapUnit where ComdId in (Select ComdId from MapUnit where UnitMapId=@UnitId))" +
+              " where usep.IntOffr=1 and trndomain.UnitId in (Select UnitId from MapUnit where ComdId in (Select ComdId from MapUnit where UnitMapId=@UnitId))" +
               " And users.DomainId like @Name";
 
                 }
@@ -546,16 +546,44 @@ namespace DataAccessLayer
             return null;
         }
 
-        public async Task<List<DTOFwdICardResponse>> GetOffrsByUnitMapId(int UnitId)
+        public async Task<List<DTOFwdICardResponse>> GetOffrsByUnitMapId(int UnitId, int ISIO, int ISCO, int IntOffr)
         {
-            string query = "Select trndomain.AspNetUsersId,ISNULL(usep.UserId,0) UserId,users.DomainId,usep.ArmyNo,usep.Name from TrnDomainMapping trndomain" +
+            string query = "";
+            if(ISIO==1)
+            {
+                query = "Select trndomain.AspNetUsersId,ISNULL(usep.UserId,0) UserId,users.DomainId,usep.ArmyNo,usep.Name from TrnDomainMapping trndomain" +
               " inner join AspNetUsers users on trndomain.AspNetUsersId=users.Id" +
               " inner join MapUnit mapu on mapu.UnitMapId=trndomain.UnitId" +
               " inner join UserProfile usep on usep.UserId=trndomain.UserId" +
-              " where trndomain.UnitId =@UnitId";
+              " where trndomain.UnitId =@UnitId and usep.IsIO=@ISIO";
+
+            }else if (ISCO == 1)
+            {
+                query = "Select trndomain.AspNetUsersId,ISNULL(usep.UserId,0) UserId,users.DomainId,usep.ArmyNo,usep.Name from TrnDomainMapping trndomain" +
+             " inner join AspNetUsers users on trndomain.AspNetUsersId=users.Id" +
+             " inner join MapUnit mapu on mapu.UnitMapId=trndomain.UnitId" +
+             " inner join UserProfile usep on usep.UserId=trndomain.UserId" +
+             " where trndomain.UnitId =@UnitId and IsCO=@ISCO";
+            }
+            else if (IntOffr == 1)
+            {
+                query = "Select trndomain.AspNetUsersId,ISNULL(usep.UserId,0) UserId,users.DomainId,usep.ArmyNo,usep.Name from TrnDomainMapping trndomain" +
+             " inner join AspNetUsers users on trndomain.AspNetUsersId=users.Id" +
+             " inner join MapUnit mapu on mapu.UnitMapId=trndomain.UnitId" +
+             " inner join UserProfile usep on usep.UserId=trndomain.UserId" +
+             " where usep.IntOffr=1 and trndomain.UnitId in (Select UnitMapId from MapUnit where ComdId in (Select ComdId from MapUnit where UnitMapId=@UnitId))";
+            }
+            else
+            {
+                query = "Select trndomain.AspNetUsersId,ISNULL(usep.UserId,0) UserId,users.DomainId,usep.ArmyNo,usep.Name from TrnDomainMapping trndomain" +
+         " inner join AspNetUsers users on trndomain.AspNetUsersId=users.Id" +
+         " inner join MapUnit mapu on mapu.UnitMapId=trndomain.UnitId" +
+         " inner join UserProfile usep on usep.UserId=trndomain.UserId" +
+         " where trndomain.UnitId in (Select UnitMapId from MapUnit where ComdId in (Select ComdId from MapUnit where UnitMapId=@UnitId))";
+            }
             using (var connection = _contextDP.CreateConnection())
             {
-                var BasicDetailList = await connection.QueryAsync<DTOFwdICardResponse>(query, new { UnitId });
+                var BasicDetailList = await connection.QueryAsync<DTOFwdICardResponse>(query, new { UnitId, ISIO, ISCO, IntOffr });
 
                 return BasicDetailList.ToList();
             }

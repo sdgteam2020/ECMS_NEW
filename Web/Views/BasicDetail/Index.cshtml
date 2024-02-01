@@ -19,8 +19,9 @@
                             <thead>
                                 <tr>
                                     <th>@Html.DisplayNameFor(model => model[0].Sno)</th>
-                                    <th>@Html.DisplayNameFor(model => model[0].Name)</th>
                                     <th>@Html.DisplayNameFor(model => model[0].ServiceNo)</th>
+                                    <th>Rank + @Html.DisplayNameFor(model => model[0].Name)</th>
+                                   
                                   @*   <th>@Html.DisplayNameFor(model => model[0].DOB)</th> *@
                                @*      <th>@Html.DisplayNameFor(model => model[0].DateOfCommissioning)</th> *@
                                     @* <th>Address</th> *@
@@ -28,7 +29,7 @@
                                     <th>Type</th>
                                     <th>@Html.DisplayNameFor(model => model[0].ICardType)</th>
                                     <th class="noExport">History</th>
-                                    <th class="noExport">Action</th>
+                                    <th class="noExport">Print Edit Fwd</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -36,8 +37,9 @@
                                 {
                                     <tr>
                                         <td>@item.Sno</td>
-                                        <td class="PersName">@item.Name</td>
                                         <td class="ServiceNo">@item.ServiceNo</td>
+                                        <td class="PersName">@item.RankName @item.Name</td>
+                                        
                                        @*  <td>@item.DOB.ToString("dd/MMM/yyyy")</td> *@
                                         @* <td>@item.DateOfCommissioning.ToString("dd/MMM/yyyy")</td> *@
                                         @* <td>@item.PermanentAddress</td> *@
@@ -66,9 +68,9 @@
                                                                 <button type="submit" class="btn btn-danger">Yes</button>
                                                                 <a href="#" class="btn btn-primary" onclick="confirmDelete('@item.BasicDetailId',false)">No</a>
                                                             </span>
-                                                            <span id="deleteSpan_@item.BasicDetailId">
+                                                           @*  <span id="deleteSpan_@item.BasicDetailId">
                                                                 <a href="#" class="btn btn-icon btn-round btn-danger mr-1" onclick="confirmDelete('@item.BasicDetailId',true)"><i class="fas fa-trash-alt m-2"></i></a>
-                                                            </span>
+                                                            </span> *@
                                                         </form>
                                                         <button class="btn btn-icon btn-round btn-primary mr-1 fwdrecord"><i class="fa fa-step-forward"></i></button>
                                                    

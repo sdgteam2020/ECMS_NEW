@@ -7,7 +7,6 @@
     });
    
 
-
     if (sessionStorage.getItem("ArmyNo") != null) {
         $("#ServiceNumber").val(sessionStorage.getItem("ArmyNo"));
 
@@ -34,7 +33,7 @@
             $('.entryaddress').addClass('d-none');
         }
 
-        Getdatafromapi();
+       /* Getdatafromapi();*/
 
         getApplyIcardDetails();
     }
@@ -152,7 +151,8 @@ function CallDataFromAPI() {
         url: "/Api/LoginApi",
         type: "POST",
         data: {
-            "ICNumber": $("#ServiceNumber").val()
+            "ICNumber": $("#ServiceNumber").val(),
+            "Type": $("#ApplyForId").val()
         },
         success: function (response, status) {
             if (response.Status == false) {

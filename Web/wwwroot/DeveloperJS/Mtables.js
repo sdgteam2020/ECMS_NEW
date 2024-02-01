@@ -160,12 +160,14 @@ function yeardata(sectid = '', ddl) {
     }
 }
 
-function GetAllOffsByUnitId(ddl, sectid,UnitId) {
+function GetAllOffsByUnitId(ddl, sectid, UnitId, ISIO, IsCO, IntOffr) {
     var userdata =
     {
         "id": 0,
-        "UnitId": UnitId
-
+        "UnitId": UnitId,
+        "ISIO": ISIO,
+        "ISCO": IsCO,
+        "IntOffr": IntOffr
     };
     $.ajax({
         url: '/UserProfile/GetOffrsByUnitMapId',
@@ -176,9 +178,7 @@ function GetAllOffsByUnitId(ddl, sectid,UnitId) {
         success: function (response) {
             if (response != "null" && response != null) {
                 if (response == InternalServerError) {
-                    Swal.fire({
-                        text: errormsg
-                    });
+                   
                 }
 
                 else {

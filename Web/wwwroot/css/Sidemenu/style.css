@@ -18821,8 +18821,8 @@ div.tagsinput span.tag a {
 /* Sidebar */
 .sidebar {
     min-height: calc(100vh - 60px);
-    background: #F8F8F8;
-    background-image: url('../../images/login-bg1.jpg');
+    background: #5f79d1;
+    /* background-image: url('../../images/login-bg1.jpg');*/
     font-family: "Nunito", sans-serif;
     font-weight: 500;
     padding: 0;

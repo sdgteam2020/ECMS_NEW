@@ -13,6 +13,7 @@ namespace DataTransferObject.Domain.Model
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
+        public int? ApplyForId { get; set; }
         public string? Pers_Army_No { get; set; }
         public string? Pers_name { get; set; }
         public string? Pers_Rank { get; set; }

@@ -152,13 +152,6 @@ function GetLog(AspNetUsersId, FmDate,ToDate) {
                             exportOptions: {
                                 columns: "thead th:not(.noExport)"
                             }
-                        }, {
-                            extend: 'pdfHtml5',
-                            orientation: 'landscape',
-                            pageSize: 'LEGAL',
-                            exportOptions: {
-                                columns: "thead th:not(.noExport)"
-                            }
                         }]
                     });
                     memberTable.buttons().container().appendTo('#tbldata_wrapper .col-md-6:eq(0)');

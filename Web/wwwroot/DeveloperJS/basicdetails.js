@@ -1,6 +1,14 @@
 ﻿$(document).ready(function () {
 
-    
+    const [today] = new Date().toISOString().split('T');
+
+    const maxDate = new Date();
+    maxDate.setDate(maxDate.getDate() + 30);
+    const [maxDateFormatted] = maxDate.toISOString().split('T');
+
+    const dateInput = document.getElementById('DateOfIssue');
+    dateInput.setAttribute('min', today);
+    dateInput.setAttribute('max', maxDateFormatted);
 
     $("#TermsConditions").click(function () {
 
@@ -99,7 +107,7 @@ function CheckValidation() {
     
     if ($("#TermsConditions").prop("checked")) {
         if ($("#SaveForm")[0].checkValidity()) {
-            alert("Your Tracking Id -" + DateFormateMMddyyyy($("#DOB").val()) + "" + $("#AadhaarNo").val().substr($("#AadhaarNo").val().length - 4));
+           // alert("Your Tracking Id -" + DateFormateMMddyyyy($("#DOB").val()) + "" + $("#AadhaarNo").val().substr($("#AadhaarNo").val().length - 4));
         }
         return true;
         

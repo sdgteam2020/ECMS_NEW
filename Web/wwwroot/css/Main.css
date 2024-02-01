@@ -249,7 +249,7 @@
 /*File Upload ++++++++++++++++++++++++++++++++++++++++++++++++++*/
 .box {
     display: block;
-    max-width: 200px;
+    max-width: 180px;
     height: 235px;
     margin: 10px;
     background-color: white;
@@ -260,7 +260,7 @@
 }
 .box_sig {
     display: block;
-    max-width: 200px;
+    max-width: 180px;
     height: 118px;
     margin: 10px;
     background-color: white;
@@ -370,7 +370,7 @@
             content: 'Upload Signature';
             font-family: 'Material Icons';
             position: absolute;
-            font-size: 1.5rem;
+            font-size: 1.3rem;
             color: rgba(230, 230, 230, 1);
             top: calc(60% - 1.5rem);
             left: calc(20% - 1.25rem);

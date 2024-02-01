@@ -208,7 +208,7 @@ namespace Web.Controllers
             }
 
         }
-        public async Task<IActionResult> GetOffrsByUnitMapId(int id,int UnitId)
+        public async Task<IActionResult> GetOffrsByUnitMapId(int id,int UnitId, int ISIO, int ISCO,int IntOffr)
         {
             try
             {
@@ -216,11 +216,11 @@ namespace Web.Controllers
                 if(UnitId==0)
                 {
                      UnitId = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").UnitId;
-                    return Json(await _userProfileBL.GetOffrsByUnitMapId(UnitId));
+                    return Json(await _userProfileBL.GetOffrsByUnitMapId(UnitId, ISIO, ISCO, IntOffr));
                 }
                 else
                 {
-                    return Json(await _userProfileBL.GetOffrsByUnitMapId(UnitId));
+                    return Json(await _userProfileBL.GetOffrsByUnitMapId(UnitId, ISIO, ISCO, IntOffr));
                 }
             }
             catch (Exception ex)

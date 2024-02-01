@@ -20,6 +20,7 @@ using DataAccessLayer.Security;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Web.Healpers;
 
 var builder = WebApplication.CreateBuilder(args);
 var configration = builder.Configuration;
@@ -184,7 +185,7 @@ else
 }
 //app.Use(async (ctx, next) =>
 //{
-//    ctx.Response.Headers.Add("Content-Security-Policy", "default-src *; style-src 'self' ");
+//    //ctx.Response.Headers.Add("Content-Security-Policy", "default-src *; style-src 'self' ");
 //    ctx.Response.Headers.Add("Feature-Policy", "fullscreen 'none'");
 //    ctx.Response.Headers.Add("Referrer-Policy", "same-origin");
 //    ctx.Response.Headers.Add("X-Frame-Options", "DENY");
@@ -197,7 +198,7 @@ else
 //    ctx.Response.Headers.Remove("Server");
 //    await next();
 //});
-
+app.UseMyMiddleware();
 app.UseForwardedHeaders();
 app.UseHttpsRedirection();
 app.UseStaticFiles();

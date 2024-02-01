@@ -52,7 +52,7 @@ $(document).ready(function () {
         closeOnSelect: false
     });
     
-    GetAllOffsByUnitId("ddlfwdoffrs",0,0);
+   
     $(".historyRequest").click(function () {
         $("#exampleModal").modal('show'); 
         GetRequestHistory($(this).closest("tr").find(".spnRequestId").html());
@@ -119,9 +119,11 @@ $(document).ready(function () {
             if (applyfor == 1) {
                 $(".gsoio").html("IO");
                 $("#btnForward").html("Forward To IO");
+                GetAllOffsByUnitId("ddlfwdoffrs", 0, 0, spnISIO,0,0);
             } else {
                 $(".gsoio").html("Commanding of Unit");
                 $("#btnForward").html("Forward To Commanding of Unit");
+                GetAllOffsByUnitId("ddlfwdoffrs", 0, 0, 0, spnISCO,0);
             }
             $(".Remarks").removeClass("d-none");
 
@@ -134,10 +136,12 @@ $(document).ready(function () {
             if (applyfor == 1) {
                 $(".gsoio").html("GSO");
                 $("#btnForward").html("Forward To GSO");
+                GetAllOffsByUnitId("ddlfwdoffrs", 0, 0, 0, 0, spnIntOffr);
             }
             else {
                 $(".gsoio").html("DID and finalized");
                 $("#btnForward").html("Forward To DID and finalized");
+                GetAllOffsByUnitId("ddlfwdoffrs", 0, 0, 0, 0, 0);
             }
           
             $(".Remarks").removeClass("d-none");
@@ -154,14 +158,14 @@ $(document).ready(function () {
 
                 $(".gsoio").html("MI 11");
                 $("#btnForward").html("Forward To MI 11");
-                GetAllOffsByUnitId("ddlfwdoffrs", 0, 13);
+                GetAllOffsByUnitId("ddlfwdoffrs", 0, 12,0,0,0);
             }
             else {
                 $(".chkforserach").addClass("d-none");
 
                 $(".gsoio").html("Export");
                 $("#btnForward").html("Forward To Export ");
-                GetAllOffsByUnitId("ddlfwdoffrs", 0, 17);
+                GetAllOffsByUnitId("ddlfwdoffrs", 0, 6,0,0,0);
             }
 
             
@@ -179,7 +183,7 @@ $(document).ready(function () {
             $(".chkforserach").addClass("d-none");
             $(".gsoio").html("HQ 54");
             $("#btnForward").html("Forward To HQ 54");
-            GetAllOffsByUnitId("ddlfwdoffrs", 0, 17);
+            GetAllOffsByUnitId("ddlfwdoffrs", 0, 6,0,0,0);
 
 
             $(".Remarks").removeClass("d-none");
@@ -446,11 +450,11 @@ function FwdData(AspNetUsersId) {
 function GetProfiledetailsByAspNetuserid(AspNetUsersId) {
     var param = "";
     if (StepCounter == 3 && applyfor==1)
-        var param = { "Name": AspNetUsersId, "TypeId": 0, "UnitId": 13 };
+        var param = { "Name": AspNetUsersId, "TypeId": 0, "UnitId": 12 };
     else if (StepCounter == 4 && applyfor == 1)
-        var param = { "Name": AspNetUsersId, "TypeId": 0, "UnitId": 17 };
+        var param = { "Name": AspNetUsersId, "TypeId": 0, "UnitId": 6 };
     else if (StepCounter == 3 && applyfor == 2)
-        var param = { "Name": AspNetUsersId, "TypeId": 0, "UnitId": 17 };
+        var param = { "Name": AspNetUsersId, "TypeId": 0, "UnitId": 6 };
     else
         var param = { "Name": AspNetUsersId, "TypeId": 0, "UnitId": 0 };
     $.ajax({

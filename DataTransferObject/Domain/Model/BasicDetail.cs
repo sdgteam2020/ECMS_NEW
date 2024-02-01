@@ -11,14 +11,14 @@ using DataTransferObject.Constants;
 namespace DataTransferObject.Domain.Model
 { 
     public class BasicDetail: Common
-    {
+    { 
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
        
         public int BasicDetailId { get; set; }
 
         [StringLength(36)]
-        [Column(TypeName = "varchar(50)")]
+        [Column(TypeName = "varchar(36)")]
         public string Name { get; set; } = string.Empty;
         
         [ForeignKey("MArmedType")]

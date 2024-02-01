@@ -15,7 +15,7 @@ namespace Web.Controllers
             _aPIBL=aPIBL;
         }
        
-        public async Task<IActionResult> LoginApi(string ICNumber)
+        public async Task<IActionResult> LoginApi(string ICNumber,int Type)
         {
             DTOApiPersDataResponse res1=new DTOApiPersDataResponse();  
             var remoteIpAddress = HttpContext.Connection.RemoteIpAddress;
@@ -35,16 +35,27 @@ namespace Web.Controllers
                 DTOPersDataRequest retdat = new DTOPersDataRequest();
                 retdat.Pers_Army_No = ICNumber;
                 retdat.jwt=ret.token;
-                
+                retdat.ApplyForId = Type;
+
 
                 // ret.timestamp = DateTime.Today.ToString("dd-MMM-yy", CultureInfo.InvariantCulture);
                var res =await _aPIBL.GetData(retdat);
                 if (res != null)
                 {
-                    res.Status = true;
-                    res.Message = "OK";
+                    if(res.Pers_Army_No!=null)
+                    {
+                        res.Status = true;
+                        res.Message = "OK";
 
-                    res1=res;
+                        res1 = res;
+                    }
+                    else
+                    {
+                        res.Status = false;
+                        res.Message = "Not Fetach Data From Api";
+
+                        res1 = res;
+                    }
                 }
                 else
                 {

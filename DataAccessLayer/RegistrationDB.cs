@@ -47,7 +47,7 @@ namespace DataAccessLayer
                                 " inner join AspNetUsers users on users.Id = trn.AspNetUsersId"+
                                 " inner join MapUnit mapuni on mapuni.UnitMapId = trn.UnitId"+
                                 " inner join MUnit unit on unit.UnitId = mapuni.UnitId"+
-                                " left join UserProfile pro on pro.UserId = trn.UnitId"+
+                                " left join UserProfile pro on pro.UserId = trn.UserId" +
                                 " inner join MRank ranks on ranks.RankId = pro.RankId";
                 using (var connection = _contextDP.CreateConnection())
                 {

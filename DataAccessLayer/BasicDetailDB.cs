@@ -168,7 +168,8 @@ namespace DataAccessLayer
 
             if (stepcount == 0 || stepcount == 1)//////For Fwd Record
             {
-                query = "SELECT B.BasicDetailId,B.Name,B.ServiceNo,B.DOB,B.DateOfCommissioning,C.StepId StepCounter,C.Id StepId,ty.Name ICardType,trnicrd.RequestId,fwd.Remark,isnull(fwd.Status,1) Reject,Afor.Name ApplyFor,Afor.ApplyForId ,trnicrd.TrackingId FROM BasicDetails B " +
+                query = "SELECT B.BasicDetailId,B.Name,B.ServiceNo,B.DOB,B.DateOfCommissioning,C.StepId StepCounter,C.Id StepId,ty.Name ICardType,trnicrd.RequestId,fwd.Remark,isnull(fwd.Status,1) Reject,Afor.Name ApplyFor,Afor.ApplyForId ,trnicrd.TrackingId,ran.RankAbbreviation RankName FROM BasicDetails B " +
+                        " inner join MRank ran on ran.RankId=B.RankId "  +
                         "inner join TrnICardRequest trnicrd on trnicrd.BasicDetailId = B.BasicDetailId " +
                         "inner join MApplyFor Afor on Afor.ApplyForId = B.ApplyForId " +
                         "inner join TrnStepCounter C on trnicrd.RequestId = C.RequestId " +
@@ -183,8 +184,9 @@ namespace DataAccessLayer
             {
                if(TypeId==2)
                 {
-                    query = " SELECT distinct B.BasicDetailId,B.Name,B.ServiceNo,B.DOB,B.DateOfCommissioning,C.StepId StepCounter,C.Id StepId,ty.TypeId,ty.name ICardType,trnicrd.RequestId ,Afor.Name ApplyFor,Afor.ApplyForId ,trnicrd.TrackingId" +
+                    query = " SELECT distinct B.BasicDetailId,B.Name,B.ServiceNo,B.DOB,B.DateOfCommissioning,C.StepId StepCounter,C.Id StepId,ty.TypeId,ty.name ICardType,trnicrd.RequestId ,Afor.Name ApplyFor,Afor.ApplyForId ,trnicrd.TrackingId,ran.RankAbbreviation RankName" +
             " FROM BasicDetails B" +
+            " inner join MRank ran on ran.RankId=B.RankId" +
             " inner join TrnICardRequest trnicrd on trnicrd.BasicDetailId = B.BasicDetailId" +
             " inner join MApplyFor Afor on Afor.ApplyForId = B.ApplyForId " +
             " inner join TrnStepCounter C on trnicrd.RequestId = C.RequestId" +
@@ -193,8 +195,9 @@ namespace DataAccessLayer
                 }
                 else if (TypeId == 3)
                 {
-                    query = " SELECT distinct B.BasicDetailId,B.Name,B.ServiceNo,B.DOB,B.DateOfCommissioning,C.StepId StepCounter,C.Id StepId,ty.TypeId,ty.name ICardType,trnicrd.RequestId ,Afor.Name ApplyFor,Afor.ApplyForId ,trnicrd.TrackingId" +
+                    query = " SELECT distinct B.BasicDetailId,B.Name,B.ServiceNo,B.DOB,B.DateOfCommissioning,C.StepId StepCounter,C.Id StepId,ty.TypeId,ty.name ICardType,trnicrd.RequestId ,Afor.Name ApplyFor,Afor.ApplyForId ,trnicrd.TrackingId,ran.RankAbbreviation RankName" +
             " FROM BasicDetails B" +
+            " inner join MRank ran on ran.RankId=B.RankId" +
             " inner join TrnICardRequest trnicrd on trnicrd.BasicDetailId = B.BasicDetailId" +
             " inner join MApplyFor Afor on Afor.ApplyForId = B.ApplyForId " +
             " inner join TrnStepCounter C on trnicrd.RequestId = C.RequestId" +
@@ -207,8 +210,9 @@ namespace DataAccessLayer
             else if (stepcount == 7 || stepcount == 8 || stepcount == 9 || stepcount == 10 )//Reject From IO
             {
                
-                query = "SELECT distinct B.BasicDetailId,B.Name,B.ServiceNo,B.DOB,B.DateOfCommissioning,C.StepId StepCounter,C.Id StepId,ty.TypeId,ty.name ICardType,trnicrd.RequestId,isnull(fwd.Status,1) Reject ,Afor.Name ApplyFor,Afor.ApplyForId,trnicrd.TrackingId" +
+                query = "SELECT distinct B.BasicDetailId,B.Name,B.ServiceNo,B.DOB,B.DateOfCommissioning,C.StepId StepCounter,C.Id StepId,ty.TypeId,ty.name ICardType,trnicrd.RequestId,isnull(fwd.Status,1) Reject ,Afor.Name ApplyFor,Afor.ApplyForId,trnicrd.TrackingId,ran.RankAbbreviation RankName" +
                 " FROM BasicDetails B" +
+                " inner join MRank ran on ran.RankId=B.RankId" +
                 " inner join TrnICardRequest trnicrd on trnicrd.BasicDetailId = B.BasicDetailId" +
                 " inner join MApplyFor Afor on Afor.ApplyForId = B.ApplyForId " +
                 " inner join TrnStepCounter C on trnicrd.RequestId = C.RequestId" +
@@ -282,6 +286,7 @@ namespace DataAccessLayer
                                      Reject = e.Reject,
                                      Remark = e.Remark,
                                      TrackingId=e.TrackingId,
+                                     RankName = e.RankName
                                  }).ToList();
                 return await Task.FromResult(allrecord);
 
@@ -296,7 +301,8 @@ namespace DataAccessLayer
 
             if(stepcount == 0 || stepcount == 1)//////For Fwd Record
             {
-                query = "SELECT B.BasicDetailId,B.Name,B.ServiceNo,B.DOB,B.DateOfCommissioning,C.StepId StepCounter,C.Id StepId,ty.Name ICardType,trnicrd.RequestId,fwd.Remark,isnull(fwd.Status,1) Reject,Afor.Name ApplyFor,Afor.ApplyForId,trnicrd.TrackingId  FROM BasicDetails B " +
+                query = "SELECT B.BasicDetailId,B.Name,B.ServiceNo,B.DOB,B.DateOfCommissioning,C.StepId StepCounter,C.Id StepId,ty.Name ICardType,trnicrd.RequestId,fwd.Remark,isnull(fwd.Status,1) Reject,Afor.Name ApplyFor,Afor.ApplyForId,trnicrd.TrackingId,ran.RankAbbreviation RankName  FROM BasicDetails B " +
+                        " inner join MRank ran on ran.RankId=B.RankId " +
                         "inner join TrnICardRequest trnicrd on trnicrd.BasicDetailId = B.BasicDetailId " +
                         "inner join MApplyFor Afor on Afor.ApplyForId = B.ApplyForId " +
                         "inner join TrnStepCounter C on trnicrd.RequestId = C.RequestId " +
@@ -311,8 +317,9 @@ namespace DataAccessLayer
             {
                 if(TypeId==1)///For Icard Submit
                 {
-                    query = " SELECT distinct B.BasicDetailId,B.Name,B.ServiceNo,B.DOB,B.DateOfCommissioning,C.StepId StepCounter,C.Id StepId,ty.TypeId,ty.name ICardType,trnicrd.RequestId ,Afor.Name ApplyFor,Afor.ApplyForId,trnicrd.TrackingId" +
+                    query = " SELECT distinct B.BasicDetailId,B.Name,B.ServiceNo,B.DOB,B.DateOfCommissioning,C.StepId StepCounter,C.Id StepId,ty.TypeId,ty.name ICardType,trnicrd.RequestId ,Afor.Name ApplyFor,Afor.ApplyForId,trnicrd.TrackingId,ran.RankAbbreviation RankName" +
                " FROM BasicDetails B" +
+               " inner join MRank ran on ran.RankId=B.RankId " +
                " inner join TrnICardRequest trnicrd on trnicrd.BasicDetailId = B.BasicDetailId" +
                " inner join MApplyFor Afor on Afor.ApplyForId = B.ApplyForId " +
                " inner join TrnStepCounter C on trnicrd.RequestId = C.RequestId" +
@@ -321,8 +328,9 @@ namespace DataAccessLayer
                 }
                 else if (TypeId == 2) //// For For Action
                 {
-                    query = " SELECT distinct B.BasicDetailId,B.Name,B.ServiceNo,B.DOB,B.DateOfCommissioning,C.StepId StepCounter,C.Id StepId,ty.TypeId,ty.name ICardType,trnicrd.RequestId ,Afor.Name ApplyFor,Afor.ApplyForId,trnicrd.TrackingId" +
+                    query = " SELECT distinct B.BasicDetailId,B.Name,B.ServiceNo,B.DOB,B.DateOfCommissioning,C.StepId StepCounter,C.Id StepId,ty.TypeId,ty.name ICardType,trnicrd.RequestId ,Afor.Name ApplyFor,Afor.ApplyForId,trnicrd.TrackingId,ran.RankAbbreviation RankName" +
                " FROM BasicDetails B" +
+               " inner join MRank ran on ran.RankId=B.RankId" +
                " inner join TrnICardRequest trnicrd on trnicrd.BasicDetailId = B.BasicDetailId" +
                " inner join MApplyFor Afor on Afor.ApplyForId = B.ApplyForId " +
                " inner join TrnStepCounter C on trnicrd.RequestId = C.RequestId" +
@@ -337,8 +345,9 @@ namespace DataAccessLayer
                     //if (TypeId == 3) TypeId = 2;
                     //if (TypeId == 4) TypeId = 3;
                     //if (TypeId == 5) TypeId = 4;
-                    query = " SELECT distinct B.BasicDetailId,B.Name,B.ServiceNo,B.DOB,B.DateOfCommissioning,C.StepId StepCounter,C.Id StepId,ty.TypeId,ty.name ICardType,trnicrd.RequestId ,Afor.Name ApplyFor,Afor.ApplyForId" +
+                    query = " SELECT distinct B.BasicDetailId,B.Name,B.ServiceNo,B.DOB,B.DateOfCommissioning,C.StepId StepCounter,C.Id StepId,ty.TypeId,ty.name ICardType,trnicrd.RequestId ,Afor.Name ApplyFor,Afor.ApplyForId,ran.RankAbbreviation RankName" +
                " FROM BasicDetails B" +
+               " inner join MRank ran on ran.RankId=B.RankId" +
                " inner join TrnICardRequest trnicrd on trnicrd.BasicDetailId = B.BasicDetailId" +
                " inner join MApplyFor Afor on Afor.ApplyForId = B.ApplyForId " +
                " inner join TrnStepCounter C on trnicrd.RequestId = C.RequestId" +
@@ -351,8 +360,9 @@ namespace DataAccessLayer
             else if (stepcount == 7 || stepcount == 8 || stepcount == 9 || stepcount == 10)//Reject From IO
             {
 
-                query = "SELECT distinct B.BasicDetailId,B.Name,B.ServiceNo,B.DOB,B.DateOfCommissioning,C.StepId StepCounter,C.Id StepId,ty.TypeId,ty.name ICardType,trnicrd.RequestId,isnull(fwd.Status,1) Reject ,Afor.Name ApplyFor,Afor.ApplyForId,trnicrd.TrackingId" +
+                query = "SELECT distinct B.BasicDetailId,B.Name,B.ServiceNo,B.DOB,B.DateOfCommissioning,C.StepId StepCounter,C.Id StepId,ty.TypeId,ty.name ICardType,trnicrd.RequestId,isnull(fwd.Status,1) Reject ,Afor.Name ApplyFor,Afor.ApplyForId,trnicrd.TrackingId,ran.RankAbbreviation RankName" +
                 " FROM BasicDetails B" +
+                " inner join MRank ran on ran.RankId=B.RankId" +
                 " inner join TrnICardRequest trnicrd on trnicrd.BasicDetailId = B.BasicDetailId" +
                 " inner join MApplyFor Afor on Afor.ApplyForId = B.ApplyForId " +
                 " inner join TrnStepCounter C on trnicrd.RequestId = C.RequestId" +
@@ -466,7 +476,7 @@ namespace DataAccessLayer
                                      RequestId =e.RequestId,
                                      Reject=e.Reject,
                                      TrackingId = e.TrackingId,
-
+                                     RankName= e.RankName,
                                  }).ToList();
                 return await Task.FromResult(allrecord);
 

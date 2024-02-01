@@ -12,5 +12,6 @@ namespace DataTransferObject.Requests
         public string jwt { get; set; }
         public DateTime timestamp { get; set; }
         public string ClientName { get; set; }
+        public int ApplyForId { get; set; }
     }
 }

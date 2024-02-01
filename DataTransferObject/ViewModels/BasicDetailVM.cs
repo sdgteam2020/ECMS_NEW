@@ -21,8 +21,8 @@ namespace DataTransferObject.ViewModels
         [Display(Name = "BasicDetailId", ResourceType = typeof(Resource))]
         public int BasicDetailId { get; set; }
 
-        [StringLength(50)]
-        [Column(TypeName = "varchar(50)")]
+        [StringLength(20)]
+        [Column(TypeName = "varchar(20)")]
         public string PaperIcardNo { get; set; } = string.Empty;
         [Display(Name = "Name", ResourceType = typeof(Resource))]
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
@@ -62,6 +62,7 @@ namespace DataTransferObject.ViewModels
         [Display(Name = "Height", ResourceType = typeof(Resource))]
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
         [Range(typeof(int), "100", "200", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "HtError")]
+        
         public int Height { get; set; }
 
         [Display(Name = "AadhaarNo", ResourceType = typeof(Resource))]
@@ -77,6 +78,7 @@ namespace DataTransferObject.ViewModels
         [Display(Name = "PlaceOfIssue", ResourceType = typeof(Resource))]
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
         [RegularExpression(@"^[\w \.\,\?\;\:\""\''\[\]\!\@\#\$\%\&\*\(\)\-\=\+\\\/]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
+        [MaxLength(50)]
         public string PlaceOfIssue { get; set; } = string.Empty;
 
         [Display(Name = "DateOfIssue", ResourceType = typeof(Resource))]
@@ -146,6 +148,8 @@ namespace DataTransferObject.ViewModels
         /// 
         public int InfoId { get; set; }
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
+        [StringLength(100)]
+        [Column(TypeName = "VARCHAR(100)")]
         public string IdenMark1 { get; set; } = string.Empty;
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
         public string IdenMark2 { get; set; } = string.Empty;

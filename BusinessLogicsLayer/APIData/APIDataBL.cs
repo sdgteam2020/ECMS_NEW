@@ -25,9 +25,9 @@ namespace BusinessLogicsLayer.APIData
             _aPIDataDB = aPIDataDB;
         }
 
-        public Task<MApiData> GetByIC(string ICNo)
+        public Task<MApiData> GetByIC(DTOAPIDataRequest Data)
         {
-           return _aPIDataDB.GetByIC(ICNo);
+           return _aPIDataDB.GetByIC(Data);
         }
     }
 }

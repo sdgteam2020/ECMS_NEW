@@ -4,6 +4,13 @@ var lCardType = 0;
 var IsValid = 0;
 var Message = "";
 $(document).ready(function () {
+    $('#txtApplyForArmyNo').keypress(function (e) {
+        if ($('#txtApplyForArmyNo').val().length > 0) {
+            $('#btnNext').removeClass("disabled");
+        } else {
+            $('#btnNext').addClass("disabled");
+        }
+    });
 
     $("#btnSercharmynoSmart").click(function () {
         if ($("#armynosearchAllName").html() != "") {
@@ -130,7 +137,7 @@ function GetAllRegistrationApplyFor(Id) {
                 else {
 
                     OffType = Id;
-                    listItem += '<div class="seven"><h1>IC Applied For</h1>';
+                    listItem += '<div class="seven"><h1>I-Card Applied For</h1>';
                     for (var i = 0; i < response.length; i++) {
 
                         listItem += '</div><button type="button" class="btn btn-outline-success mt-4 mr-2 applyforoffs btn1" id="icardFor' + response[i].RegistrationId + '">' + response[i].Name + '<span class="spnRegistration d-none">' + response[i].RegistrationId +'</span></button>';
@@ -198,12 +205,12 @@ function AddAllCardType() {
         $("#txtApplyForArmyNo").addClass("d-none");
         $("#txtApplyForArmyNo").val("");
         if (OffType == 1 && RegistrationApplyFor == 1) {
-            GetTokenDetails1("FetchUniqueTokenDetails", "txtApplyForArmyNo");
+          //  GetTokenDetails1("FetchUniqueTokenDetails", "txtApplyForArmyNo");
             $("#btntokenrefresh").removeClass("d-none");
             $("#txtApplyForArmyNo").removeClass("d-none");///for bypass for off
         }
         else if (OffType == 1 && RegistrationApplyFor != 1) {
-            GetTokenDetails1("FetchUniqueTokenDetails", "txtApplyForArmyNo");
+           // GetTokenDetails1("FetchUniqueTokenDetails", "txtApplyForArmyNo");
             $("#btntokenrefresh").removeClass("d-none");
             $("#txtApplyForArmyNo").removeClass("d-none");///for bypass for off
         }

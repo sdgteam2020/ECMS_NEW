@@ -14,6 +14,6 @@ namespace BusinessLogicsLayer.APIData
     public interface IAPIDataBL : IGenericRepository<MApiData>
     {
 
-        public Task<MApiData> GetByIC(string ICNo);
+        public Task<MApiData> GetByIC(DTOAPIDataRequest Data);
     }
 }

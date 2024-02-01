@@ -5,6 +5,9 @@ const DataSave = 1;
 const DataUpdate = 2;
 const DataExists = 3;
 const IncorrectData = 4;
+const spnISIO = 1;
+const spnISCO = 1;
+const spnIntOffr = 1;
 
 
 const Command = 1;

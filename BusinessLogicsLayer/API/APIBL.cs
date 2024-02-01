@@ -164,6 +164,8 @@ namespace BusinessLogicsLayer.API
                 DTOApiPersDataResponse dynamicResponseDTO = new DTOApiPersDataResponse();
                 DTOAPIDataRequest dataRequest = new DTOAPIDataRequest();
                 dataRequest.ArmyNo = Data.Pers_Army_No;
+                dataRequest.ApplyForId = Data.ApplyForId;
+
                 HttpResponseMessage result = null;
                 await HRMSPostAPI("Fetch/GetData", dataRequest, Data.jwt).ContinueWith(task =>
                 {
