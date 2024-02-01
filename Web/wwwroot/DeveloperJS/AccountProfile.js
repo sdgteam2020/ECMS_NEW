@@ -35,12 +35,21 @@
                     data: param,
                     type: 'POST',
                     success: function (data) {
-                        response($.map(data, function (item) {
+                        if (data.length != 0) {
+                            response($.map(data, function (item) {
 
-                            $("#loading").addClass("d-none");
-                            return { label: item.AppointmentName, value: item.ApptId };
+                                $("#loading").addClass("d-none");
+                                return { label: item.AppointmentName, value: item.ApptId };
 
-                        }))
+                            }))
+                        }
+                        else {
+
+                            $("#txtAppointmentName").val("");
+                            $("#spnApptIdMap").html("");
+                            $("#ApptId").val("");
+                            alert("Appointment not found.")
+                        }
                     },
                     error: function (response) {
                         alert(response.responseText);
@@ -81,12 +90,20 @@
                     data: param,
                     type: 'POST',
                     success: function (data) {
-                        response($.map(data, function (item) {
+                        if (data.length != 0) {
+                            response($.map(data, function (item) {
+                                $("#loading").addClass("d-none");
+                                return { label: item.UnitName, value: item.UnitMapId };
 
-                            $("#loading").addClass("d-none");
-                            return { label: item.UnitName, value: item.UnitMapId };
+                            }))
+                        }
+                        else {
+                            $("#txtUnitName").val("");
+                            $("#spnUnitMapId").html("");
+                            $("#UnitMapId").val("");
+                            alert("Unit not found.")
+                        }
 
-                        }))
                     },
                     error: function (response) {
                         alert(response.responseText);
@@ -158,9 +175,22 @@
     });
 
     $("#btnAddUnit").click(function () {
-        Reset();
-        ResetErrorMessage();
-        $("#AddNewUnitmap").modal('show');
+        if ($("#Name").val().length > 0 && $("#RankId").val() > 0) {
+            Reset();
+            ResetErrorMessage();
+            $("#spnName").html($("#Name").val());
+            $("#spnRank").html($("#RankId option:selected").text());
+            $("#AddNewUnitmap").modal('show');
+        }
+        else {
+            if ($("#Name").val().length == 0 && $("#RankId").val() == 0)
+                alert("Please Select Rank & Type Name");
+            else if ($("#RankId").val() == 0)
+                alert("Please Select Rank.");
+            else
+                alert("Please Type Name");
+        }
+
     });
 
     mMsater(0, "ddlCommand", 1, "");

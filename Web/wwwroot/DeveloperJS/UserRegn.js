@@ -93,44 +93,108 @@
     });
 
     $("#btnUser").click(function () {
-        BindData("User");
+
+        if ($("#lblUser").html() > 5) {
+            $("#tbldatadialog").DataTable().destroy();
+            $("#DataTableDialog").modal('show');
+            BindDialog("User");
+        }
+        else {
+            BindData("User");
+        }
     });
     $("#btnMappedUser").click(function () {
-        BindData("MappedUser");
+
+        if ($("#lblMappedUser").html() > 5) {
+            $("#tbldatadialog").DataTable().destroy();
+            $("#DataTableDialog").modal('show');
+            BindDialog("MappedUser");
+        }
+        else {
+            BindData("MappedUser");
+        }
     });
     $("#btnUnMappedUser").click(function () {
-        BindData("UnMappedUser");
+        if ($("#lblUnMappedUser").html() > 5) {
+            $("#tbldatadialog").DataTable().destroy();
+            $("#DataTableDialog").modal('show');
+            BindDialog("UnMappedUser");
+        }
+        else {
+            BindData("UnMappedUser");
+        }
     });
     $("#btnActiveUser").click(function () {
-        BindData("ActiveUser");
+        if ($("#lblActiveUser").html() > 5) {
+            $("#tbldatadialog").DataTable().destroy();
+            $("#DataTableDialog").modal('show');
+            BindDialog("ActiveUser");
+        }
+        else {
+            BindData("ActiveUser");
+        }
     });
     $("#btnInActiveUser").click(function () {
-        BindData("InActiveUser");
+        if ($("#lblInActiveUser").html() > 5) {
+            $("#tbldatadialog").DataTable().destroy();
+            $("#DataTableDialog").modal('show');
+            BindDialog("InActiveUser");
+        }
+        else {
+            BindData("InActiveUser");
+        }
     });
     $("#btnVerified").click(function () {
-        BindData("Verified");
+        if ($("#lblVerifiedUser").html() > 5) {
+            $("#tbldatadialog").DataTable().destroy();
+            $("#DataTableDialog").modal('show');
+            BindDialog("Verified");
+        }
+        else {
+            BindData("Verified");
+        }
     });
     $("#btnNotVerifiedUser").click(function () {
-        BindData("NotVerifiedUser");
-    });
-    $("$btnDialog").click(function () {
-        BindDialog();
+        if ($("#lblNotVerifiedUser").html() > 5) {
+            $("#tbldatadialog").DataTable().destroy();
+            $("#DataTableDialog").modal('show');
+            BindDialog("NotVerifiedUser");
+        }
+        else {
+            BindData("NotVerifiedUser");
+        }
     });
 });
-function BindDialog() {
+function BindDialog(Choice) {
     $("#tbldatadialog").DataTable({
-        "processing": true,
-        "serverSide": true,
-        "filter": true,
-        "ajax": {
+        processing: true,
+        serverSide: true,
+        filter: true,
+        ajax: {
             url: "/Account/GetDataForDataTable",
-            type: "post"
-        },
-        "columns": [
-            { data: "domainId", name: "DomainId" },
-            { data: "armyNo", name: "ArmyNo" },
+            contentType: 'application/x-www-form-urlencoded',
+            type: "POST",
+            data: function (d) {
+                d.draw = d.draw;
+                d.start = d.start;
+                d.length = d.length;
+                d.searchValue = d.search.value;
+                d.sortColumn = d.columns[d.order[0].column].data;
+                d.sortDirection = d.order[0].dir;
+                d.Choice = Choice;
+            },
+        },  
+        columns: [
+            { data: "Id", name: "Id" },
+            { data: "DomainId", name: "DomainId" },
+            { data: "ArmyNo", name: "ArmyNo" },
+            { data: "RoleNames", name: "RoleNames" },
+            { data: "UpdatedOn", name: "UpdatedOn" },
+            { data: "Mapped", name: "Mapped" },
+            { data: "Active", name: "Active" },
+            { data: "AdminFlag", name: "AdminFlag" }
         ]    
-    });
+        });
 }
 function BindData(Choice) {
     var listItem = "";
