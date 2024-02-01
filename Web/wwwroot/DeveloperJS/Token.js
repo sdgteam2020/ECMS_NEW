@@ -5,7 +5,7 @@
     });
 });
 function GetTokenDetails1(ApiId, txt) {
-    
+    var ss = 'http://localhost/Temporary_Listen_Addresses/' + ApiId;
     var examdata =
     {
         "ApiName": ApiId,
@@ -15,11 +15,11 @@ function GetTokenDetails1(ApiId, txt) {
     $.ajax({
         url: 'http://localhost/Temporary_Listen_Addresses/' + ApiId,
         type: "GET",
-        dataType: "json",
+        
         
         success: function (response) {
             if (response) {
-
+                alert(1)
                 if (response[0].Status == '200') {
                     var CRL_OCSPCheck = response[0].CRL_OCSPCheck;
                     var CRL_OCSPMsg = response[0].CRL_OCSPMsg;
@@ -50,6 +50,7 @@ function GetTokenDetails1(ApiId, txt) {
             
         },
         error: function (result) {
+            alert(0)
             $("#tokenmsg").html('<div class="mt-4 alert alert-danger alert-dismissible fade show "><i class="fa fa-times" aria-hidden="true"></i><span class="m-lg-2">DGIS Application Not Running</span>.</div>');
             $("#" + txt).val("");
             return 0;
