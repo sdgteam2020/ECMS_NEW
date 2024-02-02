@@ -159,7 +159,8 @@
                             <div class="form-group row mb-2">
                                 <label class="col-form-label col-sm-4">Message for User</label>
                                 <div class="col-sm-8">
-                                    <textarea name="txtadminmessage" id="txtadminmessage" rows="3" cols="50" maxlength="200" data-val="true" data-val-regex-pattern="^[\w ]*$"></textarea>
+                                    <textarea class="form-control1" style="height:auto!important;" name="txtadminmessage" id="txtadminmessage" rows="3" maxlength="200" data-val="true" data-val-regex="This special chars and space not allowed for security reasons." data-val-regex-pattern="^[\w\& ]*$"></textarea>
+                                    <span class="text-danger field-validation-valid" data-valmsg-for="txtadminmessage" data-valmsg-replace="true"></span>
                                 </div>
                                 <span class="text-danger field-validation-valid" id="txtadminmessage-error"></span>
                             </div>

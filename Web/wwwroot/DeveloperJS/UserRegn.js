@@ -677,7 +677,7 @@ function UpdateDomainFlag() {
             } else {
                 if (result.length > 0) {
                     for (var i = 0; i < result.length; i++) {
-                        toastr.error(result[i][0].Message)
+                        toastr.error(result[i][0].ErrorMessage)
                     }
                 }
             }
