@@ -17,7 +17,7 @@ namespace DataTransferObject.Requests
         [RegularExpression("^[a-zA-Z]*$", ErrorMessage = "Only Alphabets allowed.")]
         public bool AdminFlag { get; set; }
 
-        [RegularExpression(@"^[\w\& ]*$", ErrorMessage = "Only Alphabets and Numbers allowed.")]
+        [RegularExpression(@"^[\w\&\.\-\; ]*$", ErrorMessage = "Only Alphabets ,Numbers and some symbol (& . -) allowed.")]
         [MaxLength(200, ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "MaxLengthError")]
         public string? AdminMsg { get; set; }
 

@@ -611,9 +611,11 @@ function ResetForMapping() {
 }
 function ResetErrorMessageForMapping() {
     $("#txtArmyNo-error").html("");
+    $("#txtadminmessage-error").html(""); 
 }
 
 function Proceed() {
+    debugger;
     ResetErrorMessageForMapping();
     let formId = '#UpdateDomainFlag';
     $.validator.unobtrusive.parse($(formId));

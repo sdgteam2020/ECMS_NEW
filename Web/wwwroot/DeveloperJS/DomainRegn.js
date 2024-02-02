@@ -517,7 +517,7 @@ function Reset() {
 }
 function ResetErrorMessage() {
     $("#txtDomainId-error").html("");
-    $("#txtRole-error").html("");
+    $("#ddlRoles-error").html("");
     $("#txtapproval-error").html("");
     $("#txtactive-error").html("");
     $("#txtAppointmentName-error").html("");
