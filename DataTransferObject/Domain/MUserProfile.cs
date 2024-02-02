@@ -14,13 +14,14 @@ namespace DataTransferObject.Domain
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        [RegularExpression(@"^[\d]+$", ErrorMessage = "UserId is number.")]
         public int UserId { get; set; }
 
-        [StringLength(20)]
-        [Column(TypeName = "varchar(20)")]
+        [StringLength(10)]
+        [Column(TypeName = "varchar(10)")]
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
-        [MinLength(7, ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "MinLengthError")]
-        [MaxLength(15, ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "MaxLengthError")]
+        [MinLength(8, ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "MinLengthError")]
+        [MaxLength(10, ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "MaxLengthError")]
         [RegularExpression(@"^[\w\-]+$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
         public string ArmyNo { get; set; } = string.Empty;
         

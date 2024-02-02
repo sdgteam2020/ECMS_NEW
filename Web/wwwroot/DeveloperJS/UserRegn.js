@@ -611,9 +611,11 @@ function ResetForMapping() {
 }
 function ResetErrorMessageForMapping() {
     $("#txtArmyNo-error").html("");
+    $("#txtadminmessage-error").html(""); 
 }
 
 function Proceed() {
+    debugger;
     ResetErrorMessageForMapping();
     let formId = '#UpdateDomainFlag';
     $.validator.unobtrusive.parse($(formId));
@@ -677,7 +679,7 @@ function UpdateDomainFlag() {
             } else {
                 if (result.length > 0) {
                     for (var i = 0; i < result.length; i++) {
-                        toastr.error(result[i][0].Message)
+                        toastr.error(result[i][0].ErrorMessage)
                     }
                 }
             }
