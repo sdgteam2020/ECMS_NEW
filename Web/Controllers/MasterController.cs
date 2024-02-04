@@ -714,8 +714,11 @@ namespace Web.Controllers
             try
             {
                 dTO.IsActive = true;
-                dTO.Updatedby = 1;
+                dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                 dTO.UpdatedOn = DateTime.Now;
+                dTO.UnitName = dTO.UnitName.Trim();
+                dTO.Abbreviation = dTO.Abbreviation != null ? dTO.Abbreviation.Trim() : dTO.Abbreviation;
+                dTO.Suffix = dTO.Suffix.Trim();
 
                 if (ModelState.IsValid)
                 {
@@ -748,7 +751,11 @@ namespace Web.Controllers
                 }
 
             }
-            catch (Exception ex) { return Json(KeyConstants.InternalServerError); }
+            catch (Exception ex) 
+            {
+                _logger.LogError(1001, ex, "Master->SaveUnit");
+                return Json(KeyConstants.InternalServerError); 
+            }
 
         }
         public async Task<IActionResult> GetAllUnit(string Unit)
