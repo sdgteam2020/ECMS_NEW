@@ -36,7 +36,7 @@ namespace BusinessLogicsLayer.BdeCate
             return _iRankDB.GetAllByType(Type);
         }
 
-        public Task<int> GetByMaxOrder()
+        public Task<short> GetByMaxOrder()
         {
             return _iRankDB.GetByMaxOrder();
         }
@@ -50,7 +50,7 @@ namespace BusinessLogicsLayer.BdeCate
         public async Task<int> OrderByChange(MRank Dto)
         {
             ////Current Order
-            int ComdIdnext = await _iRankDB.GetRankIdbyOrderby(Dto.Orderby + 1);
+            int ComdIdnext = await _iRankDB.GetRankIdbyOrderby((short)(Dto.Orderby + 1));
             if (ComdIdnext > 0)
             {
 
@@ -63,7 +63,7 @@ namespace BusinessLogicsLayer.BdeCate
                 ////////Change Order No For Click
                 MRank data = new MRank();
                 data = await Get(Dto.RankId);
-                data.Orderby = Convert.ToByte(Dto.Orderby + 1);
+                data.Orderby = Convert.ToInt16(Dto.Orderby + 1);
                 await Update(data);
                 /////////////////////////
             }

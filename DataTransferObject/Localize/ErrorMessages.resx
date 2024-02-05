@@ -157,7 +157,7 @@
     <value>Please select {0}.</value>
   </data>
   <data name="SpecialChars" xml:space="preserve">
-    <value>This &lt; &gt;^| special chars not allowed for security reasons.</value>
+    <value>Special chars not allowed for security reasons.</value>
   </data>
   <data name="SpecialCharsWithSymbol" xml:space="preserve">
     <value>Special chars not allowed except / -. :.</value>

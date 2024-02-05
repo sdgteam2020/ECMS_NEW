@@ -111,13 +111,7 @@ function BindData() {
                     for (var i = 0; i < response.length; i++) {
                        
                             listItem += "<tr>";
-                        listItem += "<td class='d-none'><span id='SRankId'>" + response[i].RankId + "</span><span id='SOrderby'>" + response[i].Orderby + "</span><span id='Stype'>" + response[i].Type + "</span></td>";
-                            listItem += "<td>";
-                            listItem += "<div class='custom-control custom-checkbox small'>";
-                            listItem += "<input type='checkbox' class='custom-control-input' id='" + response[i].RankId + "'>";
-                            listItem += "<label class='custom-control-label' for='" + response[i].RankId + "'></label>";
-                            listItem += "</div>";
-                            listItem += "</td>";
+                            listItem += "<td class='d-none'><span id='SRankId'>" + response[i].RankId + "</span><span id='SOrderby'>" + response[i].Orderby + "</span><span id='Stype'>" + response[i].Type + "</span></td>";
                             listItem += "<td class='align-middle'>" + (i+1) + "</td>";
                             listItem += "<td class='align-middle'><span id='RankName'>" + response[i].RankName + "</span></td>";
                             listItem += "<td class='align-middle'><span id='RankAbbreviation'>" + response[i].RankAbbreviation + "</span></td>";
@@ -143,7 +137,7 @@ function BindData() {
                     memberTable = $('#tblData').DataTable({
                         retrieve: true,
                         lengthChange: false,
-                        "order": [[2, "asc"]],
+                        "order": [[1, "asc"]],
                         buttons: [{
                             extend: 'copy',
                             exportOptions: {
@@ -248,7 +242,7 @@ function Save() {
     $.ajax({
         url: '/Master/SaveRank',
         type: 'POST',
-        data: { "RankName": $("#txtRank").val(), "RankId": $("#spnrankId").html(), "RankAbbreviation": $("#txtAbbreviation").val(), "Orderby": $("#spnSOrderby").html() }, //get the search string
+        data: { "ApplyForId": $("#ddlRankType").val(),"RankName": $("#txtRank").val().trim(), "RankId": $("#spnrankId").html().trim(), "RankAbbreviation": $("#txtAbbreviation").val().trim(), "Orderby": $("#spnSOrderby").html() }, //get the search string
         success: function (result) {
 
 
@@ -303,10 +297,10 @@ function Reset() {
 
 }
 
-function Delete(ComdId) {
+function Delete(RankId) {
     var userdata =
     {
-        "ComdId": ComdId,
+        "RankId": RankId,   
 
     };
     $.ajax({

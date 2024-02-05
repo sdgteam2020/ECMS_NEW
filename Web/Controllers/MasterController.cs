@@ -928,9 +928,9 @@ namespace Web.Controllers
             {
 
                 dTO.IsActive = true;
-                dTO.Updatedby = 1;
+                dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                 dTO.UpdatedOn = DateTime.Now;
-
+                dTO.AppointmentName = dTO.AppointmentName.Trim();
                 if (ModelState.IsValid)
                 {
                     if (!await unitOfWork.Appt.GetByName(dTO))
@@ -962,7 +962,10 @@ namespace Web.Controllers
                 }
 
             }
-            catch (Exception ex) { return Json(KeyConstants.InternalServerError); }
+            catch (Exception ex) {
+                _logger.LogError(1001, ex, "Master->SaveAppointment");
+                return Json(KeyConstants.InternalServerError); 
+            }
 
         }
         [Authorize(Roles = "Admin")]
@@ -1051,8 +1054,10 @@ namespace Web.Controllers
             try
             {
                 dTO.IsActive = true;
-                dTO.Updatedby = 1;
+                dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                 dTO.UpdatedOn = DateTime.Now;
+                dTO.RankName = dTO.RankName.Trim();
+                dTO.RankAbbreviation = dTO.RankAbbreviation.Trim();
 
                 if (ModelState.IsValid)
                 {
@@ -1065,11 +1070,9 @@ namespace Web.Controllers
                         }
                         else
                         {
-                            dTO.Orderby = Convert.ToByte(await unitOfWork.Comds.GetByMaxOrder());
+                            dTO.Orderby = await unitOfWork.Rank.GetByMaxOrder();
                             await unitOfWork.Rank.Add(dTO);
                             return Json(KeyConstants.Save);
-
-
                         }
                     }
                     else
@@ -1169,6 +1172,8 @@ namespace Web.Controllers
                 dTO.IsActive = true;
                 dTO.Updatedby = 1;
                 dTO.UpdatedOn = DateTime.Now;
+                dTO.ArmedName = dTO.ArmedName.Trim();
+                dTO.Abbreviation= dTO.Abbreviation.Trim();
 
                 if (ModelState.IsValid)
                 {

@@ -126,12 +126,6 @@ function BindData() {
                      
                             listItem += "<tr>";
                             listItem += "<td class='d-none'><span id='SunitId'>" + response[i].UnitId + "</span></td>";
-                            listItem += "<td>";
-                            listItem += "<div class='custom-control custom-checkbox small'>";
-                            listItem += "<input type='checkbox' class='custom-control-input' id='" + response[i].UnitId + "'>";
-                            listItem += "<label class='custom-control-label' for='" + response[i].UnitId + "'></label>";
-                            listItem += "</div>";
-                            listItem += "</td>";
                             listItem += "<td class='align-middle'>" + (i+1) + "</td>";
                             listItem += "<td class='align-middle'><span id='sus_no'>" + response[i].Sus_no + "</span></td>";
                             listItem += "<td class='align-middle'><span id='suffix'>" + response[i].Suffix + "</span></td>";

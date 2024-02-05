@@ -105,11 +105,6 @@ function BindData() {
                     for (var i = 0; i < response.length; i++) {
                             listItem += "<tr>";
                             listItem += "<td class='d-none'><span id='spnMarmedId'>" + response[i].ArmedId + "</span><span id='spnArmedCatId'>" + response[i].ArmedCatId + "</span></td>";
-                            listItem += "<td>";
-                            listItem += "<div class='custom-control custom-checkbox small'>";
-                            listItem += "<input type='checkbox' class='custom-control-input' id='" + response[i].ArmedId + "'>";
-                            listItem += "<label class='custom-control-label' for='" + response[i].ArmedId + "'></label>";
-                            listItem += "</div>";
                             listItem += "<td class='align-middle'>" + (i + 1) + "</td>";
                             listItem += "<td class='align-middle'><span id='armedName'>" + response[i].ArmedName + "</span></td>";
                             listItem += "<td class='align-middle'><span id='abbreviation'>" + response[i].Abbreviation + "</span></td>";
@@ -131,7 +126,7 @@ function BindData() {
                     memberTable = $('#tblData').DataTable({
                         retrieve: true,
                         lengthChange: false,
-                        "order": [[2, "asc"]],
+                        "order": [[1, "asc"]],
                         buttons: [{
                             extend: 'copy',
                             exportOptions: {
@@ -240,7 +235,7 @@ function Save() {
     $.ajax({
         url: '/Master/SaveArmed',
         type: 'POST',
-        data: { "ArmedName": $("#txtArmedName").val(), "ArmedCatId": $("#ddlArmedCat").val(), "ArmedId": $("#spnArmedId").html(), "Abbreviation": $("#txtAbbreviation").val(), "FlagInf": $("#radioInfyes").prop("checked") }, //get the search string 
+        data: { "ArmedName": $("#txtArmedName").val().trim(), "ArmedCatId": $("#ddlArmedCat").val(), "ArmedId": $("#spnArmedId").html(), "Abbreviation": $("#txtAbbreviation").val().trim(), "FlagInf": $("#radioInfyes").prop("checked") }, //get the search string 
         success: function (result) {
 
 
