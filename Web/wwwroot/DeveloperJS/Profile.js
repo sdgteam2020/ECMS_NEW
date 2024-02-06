@@ -1,7 +1,10 @@
 ﻿
 $(document).ready(function () {
     GetByArmyNo("")
-    
+    $("#btntokenrefresh").click(function () {
+       
+        GetTokenvalidatepersid2fawiththumbprint($("#txtProArmy").val(), "tokenmsg", "txtspnTokenArmyNo", "Thumbprint");
+    });
     $("#btnProfilesave").click(function () {
 
        /* alert($("#intoffsyes").prop("checked") )*/
@@ -22,6 +25,7 @@ $(document).ready(function () {
                     var MobileNo = $("#txtMobileNo").val();
                     var DialingCode = $("#txtDialingCode").val();
                     var Extension = $("#txtExtension").val();
+                    var Thumbprint = $("#Thumbprint").val();
                   
                    
                     var userid = $("#spnUserId").html();
@@ -31,7 +35,7 @@ $(document).ready(function () {
                     IsIO = $("#chkIO").prop("checked");
                     IsCo = $("#chkCO").prop("checked")
                     
-                    SaveUserProfile(ArmyNo, Rank, Name, MobileNo, DialingCode, Extension, IntOffr, IsIO, IsCo, userid);
+                    SaveUserProfile(ArmyNo, Rank, Name, MobileNo, DialingCode, Extension, IntOffr, IsIO, IsCo, userid, Thumbprint);
                         //SaveUserProfile(ArmyNo, Rank, Name, Appt, Unit, $("#intoffsyes").prop("checked"), 3, $("#spnUserIdIO").html(), $("#spnUserIdGSO").html(), userid)
                    
                     
@@ -113,14 +117,14 @@ function GetALLByUnitById(param1) {
     });
 }
 
-function SaveUserProfile(ArmyNo, Rank, Name, MobileNo, DialingCode, Extension, IntOffr, IsIO, IsCo, UserId) {
+function SaveUserProfile(ArmyNo, Rank, Name, MobileNo, DialingCode, Extension, IntOffr, IsIO, IsCo, UserId, Thumbprint) {
 
     /*  alert($('#bdaymonth').val());*/
     
     $.ajax({
         url: '/UserProfile/SaveUserProfile',
         type: 'POST',
-        data: { "ArmyNo": ArmyNo, "RankId": Rank, "Name": Name, "MobileNo": MobileNo, "DialingCode": DialingCode, "Extension": Extension, "UserId": UserId, "IntOffr": IntOffr, "IsIO": IsIO, "IsCo": IsCo }, //get the search string
+        data: { "ArmyNo": ArmyNo, "RankId": Rank, "Name": Name, "MobileNo": MobileNo, "DialingCode": DialingCode, "Extension": Extension, "UserId": UserId, "IntOffr": IntOffr, "IsIO": IsIO, "IsCo": IsCo, "Thumbprint": Thumbprint }, //get the search string
         success: function (result) {
 
 
@@ -200,7 +204,8 @@ function GetByArmyNo(ArmyNo) {
                         $("#txtMobileNo").val(response.MobileNo);
                         $("#txtDialingCode").val(response.DialingCode);
                         $("#txtExtension").val(response.Extension);
-                        $("#lblThumbPrint").html(response.Thumbprint != null ? response.Thumbprint : "-");
+                        $("#Thumbprint").val(response.Thumbprint);
+                      /*  $("#lblThumbPrint").html(response.Thumbprint != null ? response.Thumbprint : "-");*/
                         $("#lblicno").html(response.ArmyNo);
                         $(".lblAppt").html(response.AppointmentName);
                         $("#lblrole").html(response.RoleName);

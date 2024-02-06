@@ -1450,6 +1450,7 @@ namespace DataAccessLayer
                                 IsIO = model.IsIO,
                                 IsCO = model.IsCO,
                                 Updatedby = user.Id,
+                                Thumbprint=model.Thumbprint,
                             };
                             await _context.UserProfile.AddAsync(mUserProfile);
                             await _context.SaveChangesAsync();
@@ -1516,6 +1517,7 @@ namespace DataAccessLayer
                             mUserProfile.IsIO = model.IsIO;
                             mUserProfile.IsCO = model.IsCO;
                             mUserProfile.Updatedby = dTOTempSession.AspNetUsersId;
+                            mUserProfile.Thumbprint = model.Thumbprint;
                             await _context.UserProfile.AddAsync(mUserProfile);
                             await _context.SaveChangesAsync();
                             // TempData["success"] = "Your Profile Id - " + dTOTempSession.UserId + " has been successfully mapped to Domain Id - " + dTOTempSession.DomainId + ". > DB ";
@@ -1581,7 +1583,7 @@ namespace DataAccessLayer
                                 mUserProfile.IsIO = model.IsIO;
                                 mUserProfile.IsCO = model.IsCO;
                                 mUserProfile.Updatedby = dTOTempSession.AspNetUsersId;
-                                
+                                mUserProfile.Thumbprint = model.Thumbprint;
                                 await _context.UserProfile.AddAsync(mUserProfile);
                                 await _context.SaveChangesAsync();
                                 

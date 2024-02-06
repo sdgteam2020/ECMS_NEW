@@ -93,8 +93,12 @@
                 <div class="mb-1 logo-sec text-center">
                     <img src="/Images/AFSAC_Logo.png" style="max-width:25%" />
                 </div>
+
                 <p class="font-weight-normal text-center mb-4 mt-1">Fill your  Details to Register Profile in App!</p>
                 <div class="row">
+                    <div class="col-md-12 col-sm-6 mt-4 " id="">
+                        <input class="form-control mb-2 d-none form-space" id="txtProfileForArmyNo" maxlength="9" value="1" placeholder="Enter Army No" />
+                    </div>
                     <div class="col-md-12 col-lg-12 col-xl-12">
                         <form asp-antiforgery="true" asp-controller="Account" asp-action="Profile" id="Profile" name="Profile" method="post" class="mt-3">
                             <div class="card-body">
@@ -106,7 +110,7 @@
                                         <div class="row mb-2 required">
                                             <label asp-for="ArmyNo" class="col-sm-4 col-form-label form-label">Offrs Army No<i class="fas fa-asterisk mand1"></i></label>
                                             <div class="col-sm-8">
-                                                <input asp-for="ArmyNo" class="form-control" placeholder="" readonly />
+                                                <input asp-for="ArmyNo" class="form-control text-uppercase" placeholder="" readonly />
                                                 <span asp-validation-for="ArmyNo" class="text-danger"></span>
                                             </div>
                                         </div>
@@ -274,6 +278,18 @@
                                                 </div>
                                             }
                                         </div>
+                                        <div class="row mb-2 required">
+                                            <label asp-for="Thumbprint" class="col-sm-4 col-form-label form-label"> Thumb print<i class="fas fa-asterisk mand1"></i></label>
+                                           
+                                                <div class="col-sm-8">
+                                                    <div class="form-check form-check-inline">
+                                                    <input asp-for="Thumbprint" class="form-control" />
+                                                        
+                                                    </div>
+                                                    
+                                                </div>
+                                           
+                                        </div>
                                     </div>
                                     <div class="col-md-6 col-lg-6 col-xl-6">
                                         <div class="row mb-2 required">
@@ -368,9 +384,17 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="card-footer text-center">
+                            <div class="card-footer text-center mb-4">
                                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                                <input type="button" class="btn btn-primary" value="Submit" id="btnSubmit" onclick="Proceed()" />
+
+                                  <button type="button" class="btn btn-danger mt-4 mr-4" id="btntokenrefresh">
+                                    Refresh to Fetch Thumbprint from Token
+                                </button>
+
+                                <input type="button" class="btn btn-primary  mt-4 mr-4" value="Submit" id="btnSubmit" onclick="Proceed()" />
+
+                              
+
                                 @if (TempData["success"] != null)
                                 {
                                     <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -385,6 +409,9 @@
                                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                                     </div>
                                 }
+                            </div>
+                            <div class="col-md-12 col-sm-6 text-center mt-4" id="">
+                                <span id="tokenmsg"></span>
                             </div>
                             @{
 
@@ -416,6 +443,7 @@
     <script asp-src-include="~/sweetalert2/sweetalert2.min.js"></script>
     <script asp-src-include="~/developerjs/accountprofile.js"></script>
     <script asp-src-include="~/developerjs/keyconstants.js"></script>
+    <script src="~/developerjs/token.js"></script>
 </body>
 </html>
 <div class="modal fade" id="AddNewUnitmap" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">

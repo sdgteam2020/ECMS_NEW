@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -25,5 +27,7 @@ namespace DataTransferObject.Requests
         public int ICNoTDMUnitMapId { get; set; }
         public int ICNoTDMId { get; set; }
         public short ICNoTDMApptId { get; set; }
+       
+       
     }
 }

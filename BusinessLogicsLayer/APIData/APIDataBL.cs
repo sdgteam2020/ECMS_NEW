@@ -29,5 +29,10 @@ namespace BusinessLogicsLayer.APIData
         {
            return _aPIDataDB.GetByIC(Data);
         }
+
+        public Task<MApiDataOffrs> GetByoffrsIC(DTOAPIDataRequest Data)
+        {
+            return _aPIDataDB.GetByoffrsIC(Data);
+        }
     }
 }

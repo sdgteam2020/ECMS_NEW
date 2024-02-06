@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using DataTransferObject.Domain.Model;
 using DataTransferObject.Response;
 using BusinessLogicsLayer.Unit;
+using DataTransferObject.Requests;
 
 namespace BusinessLogicsLayer.TrnLoginLog
 {
@@ -41,6 +42,11 @@ namespace BusinessLogicsLayer.TrnLoginLog
                 ToDate = DateTime.Now;
 
             return _iTrnLoginLogDB.GetLoginLogByUserId(AspnetUserId, FmDate, ToDate);
+        }
+
+        public Task<bool> XmlFileDigitalSign(DTOXmlFilesFwdLogRequest Data)
+        {
+            return _iTrnLoginLogDB.XmlFileDigitalSign(Data);
         }
     }
 }

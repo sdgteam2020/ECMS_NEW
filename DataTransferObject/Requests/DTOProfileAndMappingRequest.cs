@@ -61,6 +61,9 @@ namespace DataTransferObject.Requests
 
         [RegularExpression(@"^[\w]+$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
         public Boolean IsCO { get; set; }
+        [StringLength(50)]
+        [Column(TypeName = "varchar(50)")]
+        public string? Thumbprint { get; set; }
 
     }
 }

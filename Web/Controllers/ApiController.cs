@@ -39,28 +39,58 @@ namespace Web.Controllers
 
 
                 // ret.timestamp = DateTime.Today.ToString("dd-MMM-yy", CultureInfo.InvariantCulture);
-               var res =await _aPIBL.GetData(retdat);
-                if (res != null)
+                if(retdat.ApplyForId==2)
                 {
-                    if(res.Pers_Army_No!=null)
+                    var res = await _aPIBL.GetData(retdat);
+                    if (res != null)
                     {
-                        res.Status = true;
-                        res.Message = "OK";
+                        if (res.Pers_Army_No != null)
+                        {
+                            res.Status = true;
+                            res.Message = "OK";
 
-                        res1 = res;
+                            res1 = res;
+                        }
+                        else
+                        {
+                            res.Status = false;
+                            res.Message = "Not Fetach Data From Api";
+
+                            res1 = res;
+                        }
                     }
                     else
                     {
-                        res.Status = false;
-                        res.Message = "Not Fetach Data From Api";
-
-                        res1 = res;
+                        res1.Status = false;
+                        res1.Message = "Not Fetach Data From Api";
                     }
+
                 }
                 else
                 {
-                    res1.Status = false;
-                    res1.Message = "Not Fetach Data From Api";
+                    var res = await _aPIBL.GetDataOffrs(retdat);
+                    if (res != null)
+                    {
+                        if (res.Pers_Army_No != null)
+                        {
+                            res.Status = true;
+                            res.Message = "OK";
+
+                            res1 = res;
+                        }
+                        else
+                        {
+                            res.Status = false;
+                            res.Message = "Not Fetach Data From Api";
+
+                            res1 = res;
+                        }
+                    }
+                    else
+                    {
+                        res1.Status = false;
+                        res1.Message = "Not Fetach Data From Api";
+                    }
                 }
             }
 

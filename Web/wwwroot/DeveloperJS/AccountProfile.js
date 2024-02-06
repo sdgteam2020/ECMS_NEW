@@ -1,4 +1,10 @@
 ﻿$(document).ready(function () {
+
+    $("#btntokenrefresh").click(function () {
+        
+        GetTokenvalidatepersid2fawiththumbprint($("#ArmyNo").val(), "tokenmsg", "txtProfileForArmyNo","Thumbprint");
+    });
+
     $("input[name='IsIO']").click(function () {
         $("#IsIO-error").html("");
     });

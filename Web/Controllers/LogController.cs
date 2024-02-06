@@ -3,6 +3,7 @@ using DataTransferObject.Requests;
 using DataTransferObject.Response;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using Web.WebHelpers;
 
 namespace Web.Controllers
@@ -43,6 +44,22 @@ namespace Web.Controllers
                 return Json(0);
             }
             
+        }
+        public async Task<IActionResult> XmlFileDigitalSign(DTOXmlFilesFwdLogRequest Data)
+        {
+
+            try
+            {
+                Data.UpdatedOn = DateTime.Now;
+                Data.Updatedby= Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                Data.IsActive = 1;
+                Data.Id = 0;
+                return Json(await _iTrnLoginLogBL.XmlFileDigitalSign(Data));
+            }
+            catch (Exception ex)
+            {
+                return Json(0);
+            }
         }
     }
 }

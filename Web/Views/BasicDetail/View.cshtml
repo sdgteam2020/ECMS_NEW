@@ -9,6 +9,7 @@
     .form-group .labelprofile {
         font-size: 18px;
         font-weight: 700;
+
     }
 
     .minheight {
@@ -44,9 +45,9 @@
                                     <div class="row">
                                         <div class="col-sm-6 ">
                                             <div class="form-group row mb-2">
-                                            <label class="col-form-label col-sm-4 labelprofile">@Html.DisplayNameFor(model => model.Name)</label>
+                                            <label class="col-form-label col-sm-4 labelprofile text-uppercase">@Html.DisplayNameFor(model => model.Name)</label>
                                                 <div class="col-sm-8">
-                                                    <label id="" class="col-form-label">@Model.Name</label>
+                                        <label id="" class="col-form-label text-uppercase">@Model.Name</label>
 
                                                 </div>
                                               
@@ -56,7 +57,7 @@
                                             <div class="form-group row mb-2">
                                                 <label class="col-form-label col-sm-4 labelprofile ">@Html.DisplayNameFor(model => model.RankId)</label>
                                                 <div class="col-sm-8">
-                                                    <label id="" class="col-form-label">@(Model.RankName != null ? Model.RankName : "No Rank")</label>
+                                        <label id="" class="col-form-label text-uppercase">@(Model.RankName != null ? Model.RankName : "No Rank")</label>
 
                                                 </div>
 
@@ -66,7 +67,7 @@
                                             <div class="form-group row mb-2">
                                                 <label class="col-form-label col-sm-4 labelprofile">@Html.DisplayNameFor(model => model.ArmedId)</label>
                                                 <div class="col-sm-8">
-                                                    <label id="" class="col-form-label">@(Model.ArmedName != null ? Model.ArmedName : "No Armed")</label>
+                                        <label id="" class="col-form-label text-uppercase">@(Model.ArmedName != null ? Model.ArmedName : "No Armed")</label>
 
                                                 </div>
 
@@ -76,7 +77,7 @@
                                             <div class="form-group row mb-2">
                                                 <label class="col-form-label col-sm-4 labelprofile">@Html.DisplayNameFor(model => model.ServiceNo)</label>
                                                 <div class="col-sm-8">
-                                                    <label id="" class="col-form-label">@Model.ServiceNo</label>
+                                        <label id="" class="col-form-label text-uppercase">@Model.ServiceNo</label>
 
                                                 </div>
 
@@ -86,7 +87,7 @@
                                             <div class="form-group row mb-2">
                                                 <label class="col-form-label col-sm-4 labelprofile">@Html.DisplayNameFor(model => model.IdenMark1)</label>
                                                 <div class="col-sm-8">
-                                                    <label id="" class="col-form-label">@Model.IdenMark1</label>
+                                        <label id="" class="col-form-label text-uppercase">@Model.IdenMark1</label>
 
                                                 </div>
 
@@ -106,7 +107,7 @@
                                             <div class="form-group row mb-2">
                                                 <label class="col-form-label col-sm-4 labelprofile">@Html.DisplayNameFor(model => model.Height)</label>
                                                 <div class="col-sm-8">
-                                                    <label id="" class="col-form-label">@Model.Height</label>
+                                                    <label id="" class="col-form-label ">@Model.Height</label>
 
                                                 </div>
 
@@ -116,7 +117,7 @@
                                             <div class="form-group row mb-2">
                                                 <label class="col-form-label col-sm-4 labelprofile">@Html.DisplayNameFor(model => model.AadhaarNo)</label>
                                                 <div class="col-sm-8">
-                                                    <label id="" class="col-form-label"><span>XXXXXXXX</span>@Model.AadhaarNo</label>
+                                                    <label id="" class="col-form-label "><span>XXXXXXXX</span>@Model.AadhaarNo</label>
 
                                                 </div>
 
@@ -126,7 +127,7 @@
                                             <div class="form-group row mb-2">
                                                 <label class="col-form-label col-sm-4 labelprofile">@Html.DisplayNameFor(model => model.BloodGroup)</label>
                                                 <div class="col-sm-8">
-                                                    <label id="" class="col-form-label">@Model.BloodGroup</label>
+                                        <label id="" class="col-form-label text-uppercase">@Model.BloodGroup</label>
                                                 </div>
                                             </div>
                                         </div>
@@ -134,7 +135,7 @@
                                             <div class="form-group row mb-2">
                                                 <label class="col-form-label col-sm-4 labelprofile">@Html.DisplayNameFor(model => model.PlaceOfIssue)</label>
                                                 <div class="col-sm-8">
-                                                    <label id="" class="col-form-label">@Model.PlaceOfIssue</label>
+                                        <label id="" class="col-form-label text-uppercase">@Model.PlaceOfIssue</label>
                                                 </div>
                                             </div>
                                         </div>
@@ -150,7 +151,7 @@
                                             <div class="form-group row mb-2">
                                                 <label class="col-form-label col-sm-4 labelprofile">@Html.DisplayNameFor(model => model.IssuingAuth)</label>
                                                 <div class="col-sm-8">
-                                                    <label id="" class="col-form-label">@Model.IssuingAuth</label>
+                                        <label id="" class="col-form-label text-uppercase">@Model.IssuingAuth</label>
                                                 </div>
                                             </div>
                                         </div>
@@ -167,7 +168,7 @@
                                             <div class="form-group row mb-2">
                                                 <label class="col-form-label col-sm-4 labelprofile">@Html.DisplayNameFor(model => model.PermanentAddress)</label>
                                                 <div class="col-sm-8">
-                                                    <label id="" class="col-form-label">@Model.Village @Model.Tehsil @Model.PO @Model.PS @Model.District @Model.State @Model.PinCode</label>
+                                        <label id="" class="col-form-label text-uppercase">@Model.Village @Model.Tehsil @Model.PO @Model.PS @Model.District @Model.State @Model.PinCode</label>
                                                 </div>
                                             </div>
                                         </div>
@@ -222,12 +223,12 @@
                                     </div>
                                         <div class="col-sm-6 mt-4">
 
-                                            <div class="fw-bold">@Model.Name</div>
-                                            <div class="fw-bold">@(Model.RankName != null ? Model.RankName : "No Rank")</div>
-                                            <div class="fw-bold">@(Model.ArmedName != null ? Model.ArmedName : "No Armed")</div>
-                                            <div class="fw-bold">@Model.ServiceNo</div>
+                                            <div class="fw-bold text-uppercase">@Model.Name</div>
+                                            <div class="fw-bold text-uppercase">@(Model.RankName != null ? Model.RankName : "No Rank")</div>
+                                            <div class="fw-bold text-uppercase">@(Model.ArmedName != null ? Model.ArmedName : "No Armed")</div>
+                                            <div class="fw-bold text-uppercase">@Model.ServiceNo</div>
                                             <div class="fw-bold" style="line-height:1">IDENTIFICATION MARKS</div>
-                                            <div class="font-weight-500">@Model.IdenMark1</div>
+                                            <div class="font-weight-500 text-uppercase">@Model.IdenMark1</div>
                                     </div>
                                         <div class="col-sm-12">
                                             <p class="font-weight-500 f16">रक्षा मंत्रालय, भारत सरकार MINISTRY OF DEFENCE, GOVERNMENT OF INDIA</p>
@@ -264,12 +265,12 @@
                                                 <span>XXXXXXXX</span>@Model.AadhaarNo
                                             </div>
                                                 <div >
-                                                <span class="f15 font-weight-700">BLOOD GROUP</span><br />
+                                                <span class="f15 font-weight-700 text-uppercase">BLOOD GROUP</span><br />
                                                 @Model.BloodGroup
                                                 </div>
                                                     <div >
-                                                <span class="f15 font-weight-700">PALCE & DATE OF ISSUE</span>
-                                                <div>@Model.PlaceOfIssue</div>
+                                                <span class="f15 font-weight-700 text-uppercase">PALCE & DATE OF ISSUE</span>
+                                                <div class="text-uppercase">@Model.PlaceOfIssue</div>
                                                <div>@Model.DateOfIssue.ToString("dd/MMM/yyyy").Replace("-"," ")</div>
                                                     </div>
                                         </div>
