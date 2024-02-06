@@ -12,20 +12,22 @@ namespace DataTransferObject.Domain.Master
     { 
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        [RegularExpression(@"^[\d]+$", ErrorMessage = "ComdId is number.")]
         public byte ComdId { get; set; }
 
         [Required(ErrorMessage = "required!")]
         [RegularExpression("^[a-zA-Z0-9 ]*$", ErrorMessage = "Only Alphabets and Numbers allowed.")]
         [Column(TypeName = "varchar(50)")]
-        [MaxLength(50)]  
-        public string ComdName { get; set; }
+        [MaxLength(50, ErrorMessage = "Maximum length of Comd Name is fifty character.")]
+        public string ComdName { get; set; } = string.Empty;
         [Required(ErrorMessage = "required!")]
         [RegularExpression("^[a-zA-Z0-9 ]*$", ErrorMessage = "Only Alphabets and Numbers allowed.")]
         [Column(TypeName = "varchar(20)")]
-        [MaxLength(20)]
-        public string ComdAbbreviation { get; set; }
+        [MaxLength(20, ErrorMessage = "Maximum length of Comd Abbreviation is twenty character.")]
+        public string ComdAbbreviation { get; set; } = string.Empty;
+
         [Required(ErrorMessage = "required!")]
-        
+        [RegularExpression(@"^[\d]+$", ErrorMessage = "Orderby is number.")]
         public int Orderby { get; set; }
     }
 }

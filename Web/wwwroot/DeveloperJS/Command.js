@@ -109,12 +109,6 @@ function BindData() {
                         if (response[i].ComdId != 1) {
                             listItem += "<tr>";
                             listItem += "<td class='d-none'><span id='ScomdId'>" + response[i].ComdId + "</span><span id='SOrderby'>" + response[i].Orderby + "</span></td>";
-                            listItem += "<td>";
-                            listItem += "<div class='custom-control custom-checkbox small'>";
-                            listItem += "<input type='checkbox' class='custom-control-input' id='" + response[i].ComdId + "'>";
-                            listItem += "<label class='custom-control-label' for='" + response[i].ComdId + "'></label>";
-                            listItem += "</div>";
-                            listItem += "</td>";
                             listItem += "<td class='align-middle'>" + i + "</td>";
                             listItem += "<td class='align-middle'><span id='comdName'>" + response[i].ComdName + "</span></td>";
                             listItem += "<td class='align-middle'><span id='comdAbbreviation'>" + response[i].ComdAbbreviation + "</span></td>";
@@ -140,7 +134,7 @@ function BindData() {
                     memberTable = $('#tblcommnd').DataTable({
                         retrieve: true,
                         lengthChange: false,
-                        "order": [[2, "asc"]],
+                        "order": [[1, "asc"]],
                         buttons: [{
                             extend: 'copy',
                             exportOptions: {
@@ -244,7 +238,7 @@ function Save() {
     $.ajax({
         url: '/Master/SaveCommand',
         type: 'POST',
-        data: { "ComdName": $("#txtComandName").val(), "ComdId": $("#spncomdId").html(), "ComdAbbreviation": $("#txtAbbreviation").val(), "Orderby": $("#spnSOrderby").html() }, //get the search string
+        data: { "ComdName": $("#txtComandName").val().trim(), "ComdId": $("#spncomdId").html(), "ComdAbbreviation": $("#txtAbbreviation").val().trim(), "Orderby": $("#spnSOrderby").html() }, //get the search string
         success: function (result) {
 
 
