@@ -153,8 +153,8 @@ $(document).ready(function () {
         $("#spnStepCounter").html($(this).closest("tr").find(".spnStepCounterId").html());
         var spnRequestId = $(this).closest("tr").find(".spnRequestId").html();
         $("#spnCurrentspnRequestId").html(spnRequestId);
-            spnStepId = $(this).closest("tr").find(".spnStepId").html();
-           
+        spnStepId = $(this).closest("tr").find(".spnStepId").html();
+       
         StepCounter = $(this).closest("tr").find(".spnStepCounterId").html();
         applyfor = $(this).closest("tr").find(".spnApplyFor").html();
         
@@ -163,7 +163,8 @@ $(document).ready(function () {
             $("#btnRejected").addClass("d-none");
            
             }
-            GetDataFromBasicDetails($(this).closest("tr").find(".spnBasicDetailId").html());
+        GetDataFromBasicDetails($(this).closest("tr").find(".spnBasicDetailId").html());
+      
         if (StepCounter == 1) {
 
             if (applyfor == 1) {
