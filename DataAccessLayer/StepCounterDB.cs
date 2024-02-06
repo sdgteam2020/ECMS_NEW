@@ -23,11 +23,11 @@ namespace DataAccessLayer
 
         public async Task<MStepCounter> UpdateStepCounter(MStepCounter Data)
         {
-            string query = "Update TrnStepCounter set StepId=@StepId,Updatedby=@Updatedby where Id=@Id";
+            string query = "Update TrnStepCounter set StepId=@StepId,Updatedby=@Updatedby where RequestId=@Id";
 
             int StepId=Data.StepId;
             int Updatedby=(int)Data.Updatedby;
-            int id=Data.Id;
+            int id=Data.RequestId;
             using (var connection = _contextDP.CreateConnection())
             {
                 //data.MRank.RankAbbreviation

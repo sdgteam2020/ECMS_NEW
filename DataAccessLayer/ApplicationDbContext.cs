@@ -62,6 +62,7 @@ namespace DataAccessLayer
         public DbSet<MMappingProfile> MMappingProfile { get; set; } = null!;
         public DbSet<MRegimental> MRegimental { get; set; } = null!;
         public DbSet<MApiData> MApiData { get; set; }
+        public  DbSet<MApiDataOffrs> MApiDataOffrs {  get; set; } = null!;    
         public DbSet<TrnDomainMapping> TrnDomainMapping { get; set; }
 
         public DbSet<MStepCounterStep> MStepCounterStep { get; set; }
@@ -84,6 +85,8 @@ namespace DataAccessLayer
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
+           
+
             base.OnModelCreating(builder);
             //builder.Seed();
             builder.Entity<IdentityUserRole<int>>(entity =>

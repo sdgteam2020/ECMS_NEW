@@ -197,7 +197,7 @@
     </style>
 </head>
 <body class="nav-fixed">
-    <div id="loading" class="loader">
+  @*   <div id="loading" class="loader">
         <div class="loader-container">
             <img src="/Images/load.gif" width="100">
             <div>
@@ -205,8 +205,8 @@
                 <span>Please wait. This may take few seconds.</span>
             </div>
         </div>
-    </div>
-    @*<div id="loadingToken" class="loader">
+    </div> *@
+    <div id="loadingToken" class="loader">
     <div class="loader-container">
     <img src="/Images/load.gif" width="100">
     <div>
@@ -214,12 +214,13 @@
     <span>Please wait. Read Token....... This may take few seconds.</span>
     </div>
     </div>
-    </div> *@
+    </div>
 
     <div class="d-none1" id="IpaddresGloble"></div>
     <div class="d-none" id="postingouthtml"></div>
     <div class="d-none" id="content-container"></div>
     <div class="d-none" id="spnPostedOffrsfornoti"></div>
+    <input class="form-control mb-2 d-none form-space" id="txtspnTokenArmyNo" maxlength="9"  placeholder="Enter Army No" />
     @* <span id="spnroleId" class="d-none">@User.Claims.First(c => c.Type.Contains("roleId")).Value</span>
     <span id="spnarmyno" class="d-none">@User.Claims.First(c => c.Type.Contains("armyNo")).Value</span>
     <span id="spnsunno" class="d-none1">@User.Claims.First(c => c.Type.Contains("SUSNo")).Value</span> *@
@@ -482,11 +483,11 @@
                                 <ul class="nav flex-column sub-menu">
                                     <li class="nav-item"> <a class="nav-link " href="/UserProfile/Profile">Update Profile</a></li>
                                    @*  <li class="nav-item"> <a class="nav-link" href="/BasicDetail/RequestType">Add Request</a></li> *@
-                                    <li class="nav-item"> <a class="nav-link" href="/BasicDetail/Index/MQ==">ICard List</a></li>
+                                    <li class="nav-item"> <a class="nav-link" href="/BasicDetail/Index/MQ==">I-Card List</a></li>
 
                                     <li class="nav-item"> <a class="nav-link" href="/BasicDetail/InaccurateData">Inaccurate List</a></li>
                                     <li class="nav-item"> <a class="nav-link" href="/Log/LoginLog">Login Log</a></li>
-                                    <li class="nav-item"> <a class="nav-link" href="/Posting/GetAllPostingOut">All Posting Out</a></li>
+                                    <li class="nav-item"> <a class="nav-link" href="/Posting/GetAllPostingOut">Posting Out</a></li>
 
                                 </ul>
                             </div>
@@ -624,7 +625,7 @@
         $(document).ready(function () {
 
             $('[data-toggle="tooltip"]').tooltip();
-
+            $("#loadingToken").hide();
 
             $("#loading").hide();
             $(document).ajaxStart(function () {
@@ -680,7 +681,7 @@
     <script asp-src-include="~/developerjs/layout.js"></script>
     <script asp-src-include="~/developerjs/keyconstants.js"></script>
     <script asp-src-include="~/developerjs/commanvalidation.js"></script>
-
+    
     @*  <script asp-src-include="~/developerjs/layout.js"></script>
     <script asp-src-include="~/developerjs/MedCate.js"></script> *@
     @*<script asp-src-include="/DeveloperJs/Master.js"></script>*@
@@ -863,7 +864,7 @@
 
 <!-- Fwd Record  -->
 <div class="modal fade" id="FwdRecord" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLabel">Forward Record</h5>
@@ -871,10 +872,10 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <div class="card">
+                <div class="card" id="multiplefed">
                     <div class="mt-2 ml-4">
                         <h5 class="card-title">Forward Request</h5>
-                        <div class="row">
+                        <div class="row ">
                             <div class="form-group row mb-2">
                                 <label class="col-form-label col-sm-4">Army No</label>
                                 <div class="col-sm-8">
@@ -910,12 +911,12 @@
                         <h5 class="card-title text-danger" id="ForwardDetails"></h5>
                         <div class="row HProfileDetails">
                             <div class="form-group row mb-2">
-                                <label class="col-form-label col-sm-4">Select Offrs</label>
+                                <label class="col-form-label col-sm-4">Select Offr’s</label>
                                 <div class="col-sm-8">
 
                                     <select class="form-control select3 select2-hidden-accessible" style="width: 100%;" tabindex="-1"
                                             aria-hidden="true" name="fwdoffrs" required id="ddlfwdoffrs">
-                                        <option value="0">Select Offrs</option>
+                                        <option value="0">Select Offr’s</option>
 
                                     </select>
 
@@ -1003,12 +1004,23 @@
                         </div>
                     </div>
                 </div>
+               
             </div>
             <div class="modal-footer">
-                
-
-                <button type="button" class="btn btn-primary" id="btnForward">Approved</button>
+                <div class="col-sm-12 text-center">
+                    <div id="tokenmsgforfwd" class="d-grid gap-2 col-12 mx-auto">
+                    </div>
+                </div>
+                <div class="col-sm-12 text-center">
+                    <div id="msgforfwd" class="d-grid gap-2 col-12 mx-auto">
+                    </div>
+                </div>
+                <button type="button" class="btn btn-danger" id="btntokenTofwd">
+                    Refresh to Fetch Token Details
+                </button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Not Approved</button>
+                <button type="button" class="btn btn-primary" id="btnForward">Approved</button>
+                
             </div>
         </div>
     </div>
@@ -1042,72 +1054,72 @@
                                     <div class="col-md-8">
                                         <div class="form-group row mb-0">
                                             <label class="col-form-label col-5 text-left">Name</label>
-                                            <div class="col-7"><label class="form-control-plaintext b text-black" id="lblfdName"></label></div>
+                                            <div class="col-7"><label class="form-control-plaintext b text-black text-uppercase" id="lblfdName"></label></div>
                                         </div>
                                         <div class="form-group row mb-0">
                                             <label class="col-form-label col-5 text-left">Rank</label>
                                             <div class="col-7">
-                                                <label class="form-control-plaintext" id="lblfdRank"></label>
+                                                <label class="form-control-plaintext text-uppercase" id="lblfdRank"></label>
                                             </div>
                                         </div>
                                         <div class="form-group row mb-0">
                                             <label class="col-form-label col-5 text-left">Arm / Service</label>
                                             <div class="col-7">
-                                                <label class="form-control-plaintext" id="lblLfdarm"></label>
+                                                <label class="form-control-plaintext text-uppercase" id="lblLfdarm"></label>
                                             </div>
                                         </div>
                                         <div class="form-group row mb-0">
                                             <label class="col-form-label col-5 text-left">Army No</label>
                                             <div class="col-7">
-                                                <label class="form-control-plaintext" id="lblfdArmyNo"></label>
+                                                <label class="form-control-plaintext text-uppercase" id="lblfdArmyNo"></label>
                                             </div>
                                         </div>
                                         <div class="form-group row mb-0">
                                             <label class="col-form-label col-5 text-left">Date of Birth</label>
                                             <div class="col-7">
-                                                <label class="form-control-plaintext" id="lblfddob"></label>
+                                                <label class="form-control-plaintext text-uppercase" id="lblfddob"></label>
                                             </div>
                                         </div>
                                         <div class="form-group row mb-0">
                                             <label class="col-form-label col-5 text-left">Height (Cm)</label>
                                             <div class="col-7">
-                                                <label class="form-control-plaintext" id="lblfdheight"></label>
+                                                <label class="form-control-plaintext text-uppercase" id="lblfdheight"></label>
                                             </div>
                                         </div>
                                         <div class="form-group row mb-0">
                                             <label class="col-form-label col-5 text-left">AADHAAR No</label>
                                             <div class="col-7">
-                                                <label class="form-control-plaintext" id="lblfdadhar"></label>
+                                                <label class="form-control-plaintext text-uppercase" id="lblfdadhar"></label>
                                             </div>
                                         </div>
                                         <div class="form-group row mb-0">
                                             <label class="col-form-label col-5 text-left">Blood Group</label>
                                             <div class="col-7">
-                                                <label class="form-control-plaintext" id="lblfdBloodGroup"></label>
+                                                <label class="form-control-plaintext text-uppercase" id="lblfdBloodGroup"></label>
                                             </div>
                                         </div>
                                         <div class="form-group row mb-0">
                                             <label class="col-form-label col-5 text-left">Place of Issue</label>
                                             <div class="col-7">
-                                                <label class="form-control-plaintext" id="lblfdpoi"></label>
+                                                <label class="form-control-plaintext text-uppercase" id="lblfdpoi"></label>
                                             </div>
                                         </div>
                                         <div class="form-group row mb-0">
                                             <label class="col-form-label col-5 text-left">Date of Issue</label>
                                             <div class="col-7">
-                                                <label class="form-control-plaintext" id="lblfddoi"></label>
+                                                <label class="form-control-plaintext text-uppercase" id="lblfddoi"></label>
                                             </div>
                                         </div>
                                         <div class="form-group row mb-0">
                                             <label class="col-form-label col-5 text-left">Issuing Authority</label>
                                             <div class="col-7">
-                                                <label class="form-control-plaintext" id="lblfdissuA"></label>
+                                                <label class="form-control-plaintext text-uppercase" id="lblfdissuA"></label>
                                             </div>
                                         </div>
                                         <div class="form-group row mb-0">
                                             <label class="col-form-label col-5 text-left">Date of Commissioning/ Enrollment</label>
                                             <div class="col-7">
-                                                <label class="form-control-plaintext" id="lblfddateo"></label>
+                                                <label class="form-control-plaintext text-uppercase" id="lblfddateo"></label>
                                             </div>
                                         </div>
                                     </div>
@@ -1132,7 +1144,7 @@
                                         <div class="form-group row mb-0">
                                             <label class="col-form-label col-4 text-left">Identification Mark</label>
                                             <div class="col-8">
-                                                <label class="form-control-plaintext" id="lblfdMarks"></label>
+                                                <label class="form-control-plaintext text-uppercase" id="lblfdMarks"></label>
                                             </div>
                                         </div>
 
@@ -1141,7 +1153,7 @@
                                         <div class="form-group row mb-0">
                                             <label class="col-form-label col-4 text-left">Permt Address as per Service Records</label>
                                             <div class="col-8">
-                                                <label class="form-control-plaintext" id="lblfdaddress"></label>
+                                                <label class="form-control-plaintext text-uppercase" id="lblfdaddress"></label>
                                             </div>
                                         </div>
                                     </div>
@@ -1152,7 +1164,7 @@
                                             <label class="col-form-label col-12 text-center">Select Remarks</label>
                                             <div class="col-sm-12">
 
-                                                <select class="form-control select2 select2-accessible" multiple="" placeholder="Please select a Remarks" style="width: 100%;" tabindex="-1" aria-hidden="true" name="Remarks" required id="ddlRRemarks">
+                                                <select class="form-control select2 select2-accessible text-uppercase" multiple="" placeholder="Please select a Remarks" style="width: 100%;" tabindex="-1" aria-hidden="true" name="Remarks" required id="ddlRRemarks">
                                                 </select>
                                             </div>
                                         </div>
@@ -1160,7 +1172,7 @@
                                             <div class="form-group row mb-0 recectopt">
                                                 <label class="col-form-label col-12 text-center">Remarks</label>
                                                 <div class="col-12">
-                                                    <textarea class="form-control" id="txtFrejectedRemarks" rows="2"></textarea>
+                                                    <textarea class="form-control text-uppercase" id="txtFrejectedRemarks" rows="2"></textarea>
                                                 </div>
                                             </div>
                                         </div>

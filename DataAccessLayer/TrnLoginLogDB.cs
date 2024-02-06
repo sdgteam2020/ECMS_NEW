@@ -11,6 +11,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DataTransferObject.ViewModels;
+using DataTransferObject.Requests;
 
 namespace DataAccessLayer
 {
@@ -39,7 +40,20 @@ namespace DataAccessLayer
                 return true;
             }
         }
+        public async Task<bool> XmlFileDigitalSign(DTOXmlFilesFwdLogRequest Data)
+        {
+            string query = "";
 
+            using (var connection = _contextDP2.CreateConnection())
+            {
+                //data.MRank.RankAbbreviation
+                //data.MArmedType.Abbreviation
+                //var Ret = await connection.QueryAsync<DTOLoginLogResponse>(query, new { UnitId });
+                connection.Execute("INSERT INTO [dbo].[XmlFilesFwdLog]([XmlFiles],[TrnFwdId],[Updatedby],[UpdatedOn],[IsActive]) VALUES (@XmlFiles,@TrnFwdId,@Updatedby,@UpdatedOn,@IsActive)", new { Data.XmlFiles, Data.TrnFwdId, Data.Updatedby, Data.UpdatedOn, Data.IsActive });
+               
+                return true;
+            }
+        }
         public async Task<List<DTOLoginLogResponse>> GetAllUserByUnitId(int UnitId)
         {
             string query = "select users.Id [AspNetUsersId],users.DomainId,roles.Name RoleName,"+
@@ -88,5 +102,7 @@ namespace DataAccessLayer
                 return Ret.ToList();
             }
         }
+
+       
     }
 }

@@ -235,7 +235,7 @@ namespace Web.Controllers
                 ViewBag.Title = "Approved I-Card "; type = 3; stepcounter = 4;
             }
             else if (retint == 4)
-            { ViewBag.Title = "I-Card For Approval"; type = 2; ViewBag.Id = 1; }
+            { ViewBag.Title = "I-Card For Approval"; type = 2; ViewBag.Id = 1; ViewBag.dataexport = 4; }
             else if (retint == 44)
             { ViewBag.Title = "Rejectd I-Card "; type = 1; stepcounter = 9; }
             else if (retint == 444)
@@ -1168,9 +1168,13 @@ namespace Web.Controllers
                 mStepCounter.Updatedby = 1;
                 await iStepCounterBL.UpdateStepCounter(mStepCounter);
 
-                
+
             }
-            catch (Exception ex) { }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "BasicDetails=>IcardFwd.");
+                return BadRequest();
+            }
             return Ok(mStepCounter);
         } 
         public async Task<IActionResult> IcardFwd(MTrnFwd data)
@@ -1187,24 +1191,25 @@ namespace Web.Controllers
                 data.TypeId= Convert.ToByte(data.TypeId);
                 if(await iTrnFwnBL.UpdateAllBYRequestId(data.RequestId))
                 {
-                    await iTrnFwnBL.Add(data);
+                    data= await iTrnFwnBL.AddWithReturn(data);
                     return Ok(data);
                 }
                 else
                 {
                     return BadRequest();
                 }
-                
+
+
             }
-            catch (Exception ex) 
-            { 
-                
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "BasicDetails=>IcardFwd.");
                 return BadRequest();
             }
 
-          
 
-           
+
+
         }
         public async Task<IActionResult> IcardRejecte(MTrnFwd data)
         {
@@ -1238,12 +1243,12 @@ namespace Web.Controllers
                 {
                     return BadRequest();
                 }
-               
-                
+
+
             }
             catch (Exception ex)
             {
-
+                _logger.LogError(1001, ex, "BasicDetails=>IcardRejecte.");
                 return BadRequest();
             }
 
@@ -1459,9 +1464,10 @@ namespace Web.Controllers
 
 
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                return null;
+                _logger.LogError(1001, ex, "BasicDetails=>DataExport.");
+                return RedirectToAction("Error", "Error");
             }
         }
 

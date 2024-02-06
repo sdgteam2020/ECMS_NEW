@@ -22,6 +22,7 @@ namespace DataTransferObject.Response
         public string? ArmyNo { get; set; }
         public string? Name { get; set; }
         public string? Rank { get; set; }
+       
 
     
       

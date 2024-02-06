@@ -25,30 +25,7 @@ namespace WebApi.Controllers
             _aPIDataBL = aPIDataBL;
           
         }
-        //[EnableCors("CorsPolicy")]
-        //[HttpGet("{ICNumber}")]
-        //public async Task<ActionResult> Get(string ICNumber)
-        //{
-
-        //    if (ICNumber != null)
-        //    {
-        //        UserData? userData = _userDataList.FirstOrDefault();
-        //        if (userData != null)
-        //        {
-        //            return Ok(userData);
-        //        }
-        //        else
-        //        {
-        //            return NotFound();
-        //        }
-        //    }
-        //    else
-        //    {
-        //        return NotFound();
-        //    }
-
-        //}
-        //[EnableCors("CorsPolicy")]
+        
         [HttpPost]
         public async Task<ActionResult> GetData(DTOAPIDataRequest Data)
         {
@@ -79,6 +56,37 @@ namespace WebApi.Controllers
             }
 
         }
-       
+        [HttpPost]
+        public async Task<ActionResult> GetDataoffrs(DTOAPIDataRequest Data)
+        {
+            try
+            {
+                // MApiData data = new MApiData();
+                // data = await _aPIDataBL.GetByIC(Data.ArmyNo);
+                if (Data.ArmyNo != null)
+                {
+                    MApiDataOffrs? apiData = (MApiDataOffrs?)await _aPIDataBL.GetByoffrsIC(Data);
+
+                    if (apiData != null)
+                    {
+                        return Ok(apiData);
+                    }
+                    else
+                    {
+                        return NotFound();
+                    }
+                }
+                else
+                {
+                    return NotFound();
+                }
+            }
+            catch (Exception ex)
+            {
+                return NotFound();
+            }
+
+        }
+
     }
 }

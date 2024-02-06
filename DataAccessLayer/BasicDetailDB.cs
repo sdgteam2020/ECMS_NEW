@@ -533,7 +533,7 @@ namespace DataAccessLayer
                             " trnadd.State,trnadd.District,trnadd.PS,trnadd.PO,trnadd.Tehsil,trnadd.Village,trnadd.PinCode," +
                             " trnup.SignatureImagePath,trnup.PhotoImagePath,IdenMark1,IdenMark2,AadhaarNo,Height,bld.BloodGroup," +
                             " regi.Abbreviation RegimentalName,Muni.UnitName,uni.UnitMapId UnitId,icardreq.TypeId,icardreq.RegistrationId," +
-                            " ran.RankId,ran.RankAbbreviation RankName,arm.Abbreviation ArmedName,trnadd.AddressId,trnup.UploadId,trninfo.InfoId from BasicDetails bas" +
+                            " ran.RankId,ran.RankAbbreviation RankName,arm.Abbreviation ArmedName,trnadd.AddressId,trnup.UploadId,trninfo.InfoId,MICardType.Name ICardType from BasicDetails bas" +
                             " inner join TrnAddress trnadd on trnadd.BasicDetailId=bas.BasicDetailId" +
                             " inner join TrnUpload trnup on trnup.BasicDetailId=bas.BasicDetailId" +
                             " inner join TrnIdentityInfo trninfo on trninfo.BasicDetailId=bas.BasicDetailId" +
@@ -543,6 +543,7 @@ namespace DataAccessLayer
                             " inner join MapUnit uni on uni.UnitMapId=bas.UnitId" +
                             " inner join MUnit Muni on Muni.UnitId=uni.UnitId" +
                             " inner join TrnICardRequest icardreq on icardreq.BasicDetailId=bas.BasicDetailId and icardreq.Status=0 " +
+                            " inner join MICardType MICardType on MICardType.TypeId=icardreq.TypeId "+
                             " left join MRegimental regi on regi.RegId=bas.RegimentalId" +
                             " where icardreq.RequestId in @Ids";
             int[] Ids = Data.Ids;

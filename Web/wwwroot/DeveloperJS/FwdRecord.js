@@ -2,8 +2,12 @@
 //var sing = "";
 var StepCounter = 0;
 var applyfor = 0;
+var lstmultifwdarr = new Array();
 $(document).ready(function () {
-
+    $("#btntokenTofwd").click(function () {
+        $("#msgforfwd").html('');
+        GetTokenvalidatepersid2fawiththumbprint($("#aspntokenarmyno").html(), "tokenmsgforfwd", "txtspnTokenArmyNo", "");
+    });
     sessionStorage.removeItem('ArmyNo');
     $('#btnDataExports').click(function () {
         var lst = new Array();
@@ -75,12 +79,55 @@ $(document).ready(function () {
 
     //    $("#txtFrejectedRemarks").val($("#txtFrejectedRemarks").val() + "" + photo + "" + sing);
     //});
-    $("#btnShowForward").click(function () {
+    $("#btnMultipleForward").click(function () {
 
+       
+
+        if (memberTable.$('input[type="checkbox"]:checked').length > 0) {
+
+            memberTable.$('input[type="checkbox"]:checked').each(function () {
+
+
+                var id = $(this).attr("Id");
+                lstmultifwdarr.push(id);
+                console.log(id);
+
+            });
+            $("#FwdRecord").modal('show');
+            $(".chkforserach").addClass("d-none");
+            $(".gsoio").html("HQ 54");
+            $("#btnForward").html("Forward To HQ 54");
+
+            StepCounter = 4;
+            applyfor = 1;
+            spnStepId = 0;
+            $("#multiplefed").addClass("d-none");
+            GetAllOffsByUnitId("ddlfwdoffrs", 0, 6, 0, 0, 0);
+
+
+            $(".Remarks").removeClass("d-none");
+            var someNumbers = [1];
+            GetRemarks("ddlRemarks", 0, someNumbers);
+
+
+            var Reject = [2];
+            GetRemarks("ddlRRemarks", 0, Reject);
+           
+        }
+        else {
+            Swal.fire({
+                text: "Please select atleast 1 data to Export."
+            });
+        }
+       
+    });
+    $("#btnShowForward").click(function () {
+        $("#multiplefed").removeClass("d-none");
         $("#BasicDetails").modal('hide');
         /*if (applyfor==1)*/
         $("#FwdRecord").modal('show');
     });
+
     $("input[name='Intoffrs']").change(function () {
         $(".serchfwd").removeClass("d-none");
 
@@ -89,13 +136,15 @@ $(document).ready(function () {
         $(".spnFArmyNo").html("");
         $(".spnFtoname").html("");
         $(".spnFDomainName").html("");
+
+      
     });
 
     $(".fwdrecord").click(function () {
         // ResetMapUnit();
         //alert($(this).closest("tr").find(".spnRequestId").html())
-
-       
+        $("#multiplefed").addClass("d-none");
+        $("#btntokenTofwd").addClass("d-none");
         $("#ddlRemarks").val("");
        // $("#FwdRecord").modal('show');
         $("#BasicDetails").modal('show');
@@ -116,34 +165,36 @@ $(document).ready(function () {
             }
             GetDataFromBasicDetails($(this).closest("tr").find(".spnBasicDetailId").html());
         if (StepCounter == 1) {
+
             if (applyfor == 1) {
-                $(".gsoio").html("IO");
-                $("#btnForward").html("Forward To IO");
+                $(".gsoio").html("Approver");
+                $("#btnForward").html("Forward To Approver");
                 GetAllOffsByUnitId("ddlfwdoffrs", 0, 0, spnISIO,0,0);
             } else {
-                $(".gsoio").html("Commanding of Unit");
-                $("#btnForward").html("Forward To Commanding of Unit");
+                $(".gsoio").html("Approver");
+                $("#btnForward").html("Forward To Regt Centre");
                 GetAllOffsByUnitId("ddlfwdoffrs", 0, 0, 0, spnISCO,0);
             }
             $(".Remarks").removeClass("d-none");
 
             $(".chkforserach").addClass("d-none");
+            $("#btntokenTofwd").removeClass("d-none");
 
             var someNumbers = [1];
             GetRemarks("ddlRemarks", 0, someNumbers);
         }
         else if (StepCounter == 2) {
             if (applyfor == 1) {
-                $(".gsoio").html("GSO");
-                $("#btnForward").html("Forward To GSO");
+                $(".gsoio").html("Issuing Authority");
+                $("#btnForward").html("Forward To Issuing Authority");
                 GetAllOffsByUnitId("ddlfwdoffrs", 0, 0, 0, 0, spnIntOffr);
             }
             else {
-                $(".gsoio").html("DID and finalized");
-                $("#btnForward").html("Forward To DID and finalized");
+                $(".gsoio").html("Regt Centre");
+                $("#btnForward").html("Forward To Regt Centre");
                 GetAllOffsByUnitId("ddlfwdoffrs", 0, 0, 0, 0, 0);
             }
-          
+            $("#btntokenTofwd").removeClass("d-none");
             $(".Remarks").removeClass("d-none");
             var someNumbers = [1];
             GetRemarks("ddlRemarks", 0, someNumbers);
@@ -157,7 +208,7 @@ $(document).ready(function () {
                 $(".chkforserach").addClass("d-none");
 
                 $(".gsoio").html("MI 11");
-                $("#btnForward").html("Forward To MI 11");
+                $("#btnForward").html("Approved and  Forward To MI 11");
                 GetAllOffsByUnitId("ddlfwdoffrs", 0, 12,0,0,0);
             }
             else {
@@ -251,45 +302,85 @@ $(document).ready(function () {
         appendTo: '#suggesstion-box'
     });
     $("#btnForward").click(function () {
-        
-        Swal.fire({
-            title: 'Are you sure?',
-            text: "You won't be Forward!",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, Forward it!'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                if (parseInt($("#spnFwdToAspNetUsersId").html()) != 0) {
+
+        /*  alert($("#txtspnTokenArmyNo").val());*/
 
 
-                    var spnRequestId = $("#spnCurrentspnRequestId").html();
+        /*  if ($("#aspntokenarmyno").html() == $("#txtspnTokenArmyNo").val()) {*/
+        $("#msgforfwd").html('');
 
-                    var Counter = parseInt($("#spnStepCounter").html());
-                    if (Counter == 1 || Counter == 7 || Counter == 8 || Counter == 9 || Counter == 10) {
+        if (parseInt(spnStepId) != 0) {
+            Swal.fire({
+                title: 'Are you sure?',
+                /*  text: "You want be Forward!",*/
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, Forward it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    if (parseInt($("#spnFwdToAspNetUsersId").html()) != 0) {
 
 
-                        Counter = 2;
+                        var spnRequestId = $("#spnCurrentspnRequestId").html();
 
-                    } else {
+                        var Counter = parseInt($("#spnStepCounter").html());
+                        if (Counter == 1 || Counter == 7 || Counter == 8 || Counter == 9 || Counter == 10) {
 
-                        Counter = parseInt($("#spnStepCounter").html()) + 1;
-                        if (applyfor == 2 && parseInt($("#spnStepCounter").html()) == 3) {
-                            Counter = 5;
+
+                            Counter = 2;
+
+                        } else {
+
+                            Counter = parseInt($("#spnStepCounter").html()) + 1;
+                            if (applyfor == 2 && parseInt($("#spnStepCounter").html()) == 3) {
+                                Counter = 5;
+                            }
                         }
+
+
+                        UpdateStepCounter(spnStepId, spnRequestId, Counter, "A");
+
                     }
-
-
-                    UpdateStepCounter(spnStepId, spnRequestId, Counter, "A");
-
+                    else {
+                        toastr.error("Please Select Officer ");
+                    }
                 }
-                else {
-                    toastr.error("Please Select Officer ");
+            })
+        }
+        else {
+            Swal.fire({
+                title: 'Are you sure?',
+                 /* text: "You want be Multiple Forward!",*/
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, Forward it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    if (parseInt($("#spnFwdToAspNetUsersId").html()) != 0) {
+
+
+
+                        
+                        for (var fw = 0; fw < lstmultifwdarr.length; fw++) {
+                            UpdateStepCounter(0, lstmultifwdarr[fw], 5, "A");
+                        }
+                       
+
+                    }
+                    else {
+                        toastr.error("Please Select Officer ");
+                    }
                 }
-            }
-        })  
+            })
+        }
+        //}
+        //else {
+        //    $("#msgforfwd").html('<div class="mt-4 alert alert-danger alert-dismissible fade show "><i class="fa fa-check " aria-hidden="true"></i><span class="m-lg-2">Please Correct Token insert and Click refresh Button </span></div>');
+        //}
     });
 
     $("#btnRejected").click(function () {
@@ -586,7 +677,22 @@ function ForwardTo(RequestId, HType) {
         type: 'POST',
         success: function (response) {
             if (response != "null" && response != null) {
-                location.reload();
+              
+                if ($("#txtspnTokenArmyNo").val() != "") {
+                    if (HType == 2 || HType == 3) {
+                        var lsts = new Array();
+                        var ids = $("#spnCurrentspnRequestId").html();
+                        lsts.push(ids);
+                        DataSignDigitaly(lsts, "tokenmsgforfwd", response.TrnFwdId);
+                    }
+                    else {
+                        location.reload();
+                    }
+                }
+                
+                else {
+                    location.reload();
+                }
             }
         }
 
@@ -682,7 +788,7 @@ function GetRequestHistory(spnRequestId) {
                         if (i == 0) {
                             listItem += '<div class="timeline-item">';
                             listItem += '<div class="timeline-item-marker">';
-                            listItem += '<div class="timeline-item-marker-text "><span class="badge bg-success">' + DateFormateMM_dd_yyyy(response[i].UpdatedOn) + '</span></div>';
+                            listItem += '<div class="timeline-item-marker-text "><span class="badge bg-success">' + DateFormateddMMyyyyhhmmss(response[i].UpdatedOn) + '</span></div>';
                             listItem += '<div class="timeline-item-marker-indicator bg-primary"></div>';
                             listItem += '</div>';
                             listItem += '<div class="timeline-item-content">';
@@ -695,9 +801,9 @@ function GetRequestHistory(spnRequestId) {
                         listItem += '<div class="timeline-item-marker">';
 
                         if (response[i].Status == "Approved")
-                            listItem += '<div class="timeline-item-marker-text"><span class="badge bg-success">' + DateFormateMM_dd_yyyy(response[i].UpdatedOn) + '</span></div>';
+                            listItem += '<div class="timeline-item-marker-text"><span class="badge bg-success">' + DateFormateddMMyyyyhhmmss(response[i].UpdatedOn) + '</span></div>';
                         else
-                            listItem += '<div class="timeline-item-marker-text"><span class="badge bg-danger">' + DateFormateMM_dd_yyyy(response[i].UpdatedOn) + '</span></div>';
+                            listItem += '<div class="timeline-item-marker-text"><span class="badge bg-danger">' + DateFormateddMMyyyyhhmmss(response[i].UpdatedOn) + '</span></div>';
 
 
                         listItem += '<div class="timeline-item-marker-indicator bg-primary"></div>';
@@ -751,7 +857,7 @@ function GetRequestHistory(spnRequestId) {
                    
                     listItem += '</div>';
                     listItem += '<div class="timeline-item-content">';
-                    listItem += 'I-Card Not Submited';
+                    listItem += 'I-Card Submitted Succesfully';
 
                     listItem += '</div>';
                     listItem += '</div>';
@@ -780,7 +886,7 @@ function DataExport(Data) {
         contentType: 'application/x-www-form-urlencoded',
         data: userdata,
         type: 'POST',
-
+       
         success: function (response) {
             if (response != "null" && response != null) {
                 if (response == InternalServerError) {
@@ -804,6 +910,10 @@ function DataExport(Data) {
                     var link = document.createElement("a");
                     link.href = window.URL.createObjectURL(blob);
 
+                   
+                   
+                  
+                   // GetTokenSignXml(blob);
                     // Set the file name
                     link.download = "data.json";
 
@@ -832,4 +942,181 @@ function DataExport(Data) {
             });
         }
     });
+}
+
+function DataSignDigitaly(Data, msgid, TrnFwdId) {
+    var userdata =
+    {
+        "Ids": Data,
+
+
+    };
+    $.ajax({
+        url: '/BasicDetail/DataExport',
+        contentType: 'application/x-www-form-urlencoded',
+        data: userdata,
+        type: 'POST',
+
+        success: function (response) {
+            if (response != "null" && response != null) {
+                if (response == InternalServerError) {
+                    Swal.fire({
+                        text: errormsg
+                    });
+                }
+
+                else {
+                    //var blob = new Blob([response], {
+                    //    type: 'application/json'
+                    //});
+                    //var link = document.createElement('a');
+                    //link.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(blob);
+                    //link.download = "export.json";
+                    //link.click();
+                  
+
+                    var xmlString = jsonToXml(response);
+
+                   
+                    GetTokenSignXml(xmlString, msgid, TrnFwdId)
+                }
+
+
+            }
+
+
+
+
+
+
+        },
+        error: function (result) {
+            Swal.fire({
+                text: errormsg002
+            });
+        }
+    });
+}
+function GetTokenSignXml(xml, msgid, TrnFwdId) {
+
+
+    /*    IcNo = "7f33df8ac6540b5cf7ccfd041d8c837641226444d9f1a4aa30a01924c0610996";*/
+    $.ajax({
+        url: 'http://localhost/Temporary_Listen_Addresses/SignXml',
+        type: "POST",
+        contentType: 'application/xml', // Set content type to XML
+        data: xml, // Set the XML data
+        success: function (response) {
+            if (response) {
+               
+                var xmlContent = new XMLSerializer().serializeToString(response);
+                
+              
+               // No Token Found
+                if (xmlContent.indexOf("<Root>No Token Found</Root>") == -1) {
+
+                    $("#" + msgid).html('<div class="mt-4 alert alert-success alert-dismissible fade show "><i class="fa fa-check " aria-hidden="true"></i><span class="m-lg-2">Token Detected  </span></div>');
+
+                    SignXmlSendTOdatabase(xmlContent, TrnFwdId);
+                    // Create a Blob from the XML string
+                    var blob = new Blob([xmlContent], { type: 'application/xml' });
+
+                    // Create a download link
+                    var downloadLink = document.createElement('a');
+                    downloadLink.href = window.URL.createObjectURL(blob);
+                    downloadLink.download = 'document.xml';
+
+                    // Trigger a click on the link to start the download
+                    document.body.appendChild(downloadLink);
+                    downloadLink.click();
+
+                    // Clean up: remove the download link
+                    document.body.removeChild(downloadLink);
+                }
+                else {
+                    $("#" + msgid).html('<div class="mt-4 alert alert-danger alert-dismissible fade show "><i class="fa fa-times" aria-hidden="true"></i><span class="m-lg-2"> No Token Found</span>.</div>');
+                   
+                }
+            }
+
+        },
+        error: function (result) {
+
+            $("#" + msgid).html('<div class="mt-4 alert alert-danger alert-dismissible fade show "><i class="fa fa-times" aria-hidden="true"></i><span class="m-lg-2">DGIS Application Not Running</span>.</div>');
+
+
+        }
+    });
+
+
+}
+function SignXmlSendTOdatabase(XmlFile, TrnFwdId) {
+    var userdata =
+    {
+        "TrnFwdId": TrnFwdId,
+        "XmlFiles": XmlFile,
+
+
+    };
+    $.ajax({
+        url: '/Log/XmlFileDigitalSign',
+        contentType: 'application/x-www-form-urlencoded',
+        data: userdata,
+        type: 'POST',
+
+        success: function (response) {
+            if (response != "null" && response != null) {
+                if (response == InternalServerError) {
+                    Swal.fire({
+                        text: errormsg
+                    });
+                }
+
+                else {
+                   
+                    location.reload();
+                  
+                }
+
+
+            }
+
+
+
+
+
+
+        },
+        error: function (result) {
+            Swal.fire({
+                text: errormsg002
+            });
+        }
+    });
+}
+function jsonToXml(json) {
+    var xml = '';
+
+    for (var key in json) {
+        if (json.hasOwnProperty(key)) {
+
+            if (key == '0')
+              xml += '<Header>';
+            else
+            xml += '<' + key + '>';
+
+            if (typeof json[key] === 'object') {
+                xml += jsonToXml(json[key]);
+            } else {
+                xml += json[key];
+            }
+
+            if (key == '0')
+                xml += '</Header>';
+            else
+                xml += '</' + key + '>';
+        }
+    }
+
+    return xml;
 }

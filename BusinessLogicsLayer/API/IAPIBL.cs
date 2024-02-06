@@ -12,5 +12,6 @@ namespace BusinessLogicsLayer.API
     {
         public Task<DTOLoginAPIResponse> Getauthentication(DTOAPILoginRequest Data);
         public Task<DTOApiPersDataResponse> GetData(DTOPersDataRequest Data);
+        public Task<DTOApiPersDataResponse> GetDataOffrs(DTOPersDataRequest Data);
     }
 }

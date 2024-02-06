@@ -65,6 +65,9 @@ namespace DataTransferObject.Requests
 
         [RegularExpression("^[a-zA-Z]*$", ErrorMessage = "Only Alphabets allowed.")]
         public Boolean IsCO { get; set; }
+        [StringLength(50)]
+        [Column(TypeName = "varchar(50)")]
+        public string? Thumbprint { get; set; }
 
     }
 }
