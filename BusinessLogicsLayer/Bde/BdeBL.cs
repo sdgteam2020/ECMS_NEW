@@ -37,7 +37,9 @@ namespace BusinessLogicsLayer.BdeCate
         {
            return _iBdeCatDB.GetByName(Data);
         }
-
-       
+        public async Task<bool?> FindByBdeWithId(string BdeName, byte BdeId)
+        {
+            return await _iBdeCatDB.FindByBdeWithId(BdeName, BdeId);
+        }
     }
 }

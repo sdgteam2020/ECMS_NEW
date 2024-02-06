@@ -391,33 +391,77 @@ namespace Web.Controllers
                 dTO.BdeName = dTO.BdeName.Trim();
                 if (ModelState.IsValid)
                 {
-                    if (!await unitOfWork.Bde.GetByName(dTO))
+                    if (dTO.BdeId > 0)
                     {
-                        if (dTO.BdeId > 0)
+                        bool? result = await unitOfWork.Bde.FindByBdeWithId(dTO.BdeName,dTO.BdeId);
+                        if(result!=null)
                         {
-                            unitOfWork.Bde.Update(dTO);
+                            if (result == true)
+                            {
+                                return Json(KeyConstants.Exists);
+                            }
+                            else
+                            {
+                                unitOfWork.Bde.Update(dTO);
 
-                            /////update Commd By CorpsId
-                            MapUnit dat = new MapUnit();
-                            dat.CorpsId = dTO.CorpsId;
-                            dat.ComdId = dTO.ComdId;
-                            dat.DivId = dTO.DivId;
-                            dat.BdeId=dTO.BdeId;
-                            changeHierarchyMaster.UpdateComdCorpsByDivs(dat);
-                            ////////End Code //////////////
-                            ///
-                            return Json(KeyConstants.Update);
+                                /////update Commd By CorpsId
+                                MapUnit dat = new MapUnit();
+                                dat.CorpsId = dTO.CorpsId;
+                                dat.ComdId = dTO.ComdId;
+                                dat.DivId = dTO.DivId;
+                                dat.BdeId = dTO.BdeId;
+                                changeHierarchyMaster.UpdateComdCorpsByDivs(dat);
+                                ////////End Code //////////////
+                                ///
+                                return Json(KeyConstants.Update);
+                            }
                         }
                         else
+                        {
+                            return Json(KeyConstants.InternalServerError);
+                        }
+
+                    }
+                    else
+                    {
+                        if(!await unitOfWork.Bde.GetByName(dTO))
                         {
                             await unitOfWork.Bde.Add(dTO);
                             return Json(KeyConstants.Save);
                         }
+                        else
+                        {
+                            return Json(KeyConstants.Exists);
+                        }
                     }
-                    else
-                    {
-                        return Json(KeyConstants.Exists);
-                    }
+
+                    //if (!await unitOfWork.Bde.GetByName(dTO))
+                    //{
+                    //    if (dTO.BdeId > 0)
+                    //    {
+                    //        unitOfWork.Bde.Update(dTO);
+
+                    //        /////update Commd By CorpsId
+                    //        MapUnit dat = new MapUnit();
+                    //        dat.CorpsId = dTO.CorpsId;
+                    //        dat.ComdId = dTO.ComdId;
+                    //        dat.DivId = dTO.DivId;
+                    //        dat.BdeId=dTO.BdeId;
+                    //        changeHierarchyMaster.UpdateComdCorpsByDivs(dat);
+                    //        ////////End Code //////////////
+                    //        ///
+                    //        return Json(KeyConstants.Update);
+                    //    }
+                    //    else
+                    //    {
+                    //        await unitOfWork.Bde.Add(dTO);
+                    //        return Json(KeyConstants.Save);
+                    //    }
+                    //}
+                    //else
+                    //{
+                    //    return Json(KeyConstants.Exists);
+                    //}
                 }
                 else
                 {
@@ -497,7 +541,9 @@ namespace Web.Controllers
             {
                 dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                 dTO.UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
-
+                dTO.UnitName = dTO.UnitName.Trim();
+                dTO.Suffix= dTO.Suffix.Trim();
+                dTO.Sus_no = dTO.Sus_no.Trim();
                 if (ModelState.IsValid)
                 {
                     string Sus_no = dTO.Sus_no + dTO.Suffix;
@@ -592,7 +638,7 @@ namespace Web.Controllers
             try
             {
                 dTO.IsActive = true;
-                dTO.Updatedby = 1;
+                dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                 dTO.UpdatedOn = DateTime.Now;
 
                 if (ModelState.IsValid)
@@ -606,27 +652,26 @@ namespace Web.Controllers
                         }
                         else
                         {
-
                             await unitOfWork.MappUnit.Add(dTO);
                             return Json(KeyConstants.Save);
-
-
                         }
                     }
                     else
                     {
                         return Json(KeyConstants.Exists);
                     }
-
                 }
                 else
                 {
-
                     return Json(ModelState.Select(x => x.Value.Errors).Where(y => y.Count > 0).ToList());
                 }
 
             }
-            catch (Exception ex) { return Json(KeyConstants.InternalServerError); }
+            catch (Exception ex) 
+            {
+                _logger.LogError(1001, ex, "Master->SaveMapUnit");
+                return Json(KeyConstants.InternalServerError); 
+            }
 
         }
         public async Task<IActionResult> GetAllMapUnit(DTOMHierarchyRequest Data,string Unit)
@@ -637,6 +682,7 @@ namespace Web.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(1001, ex, "Master->GetAllMapUnit");
                 return Json(KeyConstants.InternalServerError);
             }
 
@@ -650,6 +696,7 @@ namespace Web.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(1001, ex, "Master->GetALLByUnitName");
                 return Json(KeyConstants.InternalServerError);
             }
 
@@ -663,6 +710,7 @@ namespace Web.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(1001, ex, "Master->GetALLByUnitMapId");
                 return Json(KeyConstants.InternalServerError);
             }
 
@@ -675,6 +723,7 @@ namespace Web.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(1001, ex, "Master->GetALLByUnitById");
                 return Json(KeyConstants.InternalServerError);
             }
 
@@ -716,6 +765,7 @@ namespace Web.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(1001, ex, "Master->DeleteMapUnitMultiple");
                 return Json(KeyConstants.InternalServerError);
             }
         }
@@ -1122,6 +1172,7 @@ namespace Web.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(1001, ex, "Master->GetAllRank");
                 return Json(KeyConstants.InternalServerError);
             }
 
