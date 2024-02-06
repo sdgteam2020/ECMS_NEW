@@ -5,7 +5,7 @@ $(document).ready(function () {
        
         mMsater(0, "ddlCorps", 2, $('#ddlCommand').val());
     });
-
+        
     $('#ddlCorps').on('change', function () {
 
         mMsaterByParent(0, "ddlDiv", 3, $('#ddlCommand').val() ,$('#ddlCorps').val(),0,0);///ComdId,CorpsId,DivId,BdeId
@@ -117,14 +117,7 @@ function BindData() {
 
                         listItem += "<tr>";
                         listItem += "<td class='d-none'><span id='spnMbdeId'>" + response[i].BdeId + "</span><span id='spnMDivId'>" + response[i].DivId + "</span><span id='spnMcorpsId'>" + response[i].CorpsId + "</span><span id='spncomdId'>" + response[i].ComdId + "</span></td>";
-                        listItem += "<td>";
-                        listItem += "<div class='custom-control custom-checkbox small'>";
-                        listItem += "<input type='checkbox' class='custom-control-input' id='" + response[i].BdeId + "'>";
-                        listItem += "<label class='custom-control-label' for='" + response[i].BdeId + "'></label>";
-                        listItem += "</div>";
-                        listItem += "</td>";
                         listItem += "<td class='align-middle'>" + (i + 1) + "</td>";
-                       
                         listItem += "<td class='align-middle'><span id='comdName'>" + response[i].ComdName + "</span></td>";
                         listItem += "<td class='align-middle'><span id='corpsName'>" + response[i].CorpsName + "</span></td>";
                         listItem += "<td class='align-middle'><span id='divName'>" + response[i].DivName + "</span></td>";

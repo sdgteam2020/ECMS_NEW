@@ -37,8 +37,10 @@ namespace Web.Controllers
             try
             {
                 dTO.IsActive = true;
-                dTO.Updatedby = 1;
+                dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                 dTO.UpdatedOn = DateTime.Now;
+                dTO.ComdName = dTO.ComdName.Trim();
+                dTO.ComdAbbreviation= dTO.ComdAbbreviation.Trim();
 
                 if (ModelState.IsValid)
                 {
@@ -54,24 +56,24 @@ namespace Web.Controllers
                             dTO.Orderby=await unitOfWork.Comds.GetByMaxOrder();
                             await unitOfWork.Comds.Add(dTO);
                             return Json(KeyConstants.Save);
-
-
                         }
                     }
                     else
                     {
                         return Json(KeyConstants.Exists);
                     }
-
                 }
                 else
                 {
-
                     return Json(ModelState.Select(x => x.Value.Errors).Where(y => y.Count > 0).ToList());
                 }
 
             }
-            catch (Exception ex) { return Json(KeyConstants.InternalServerError); }
+            catch (Exception ex) 
+            {
+                _logger.LogError(1001, ex, "Master->SaveCommand");
+                return Json(KeyConstants.InternalServerError); 
+            }
 
         }
         [Authorize(Roles = "Admin")]
@@ -83,6 +85,7 @@ namespace Web.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(1001, ex, "Master->GetAllCommand");
                 return Json(KeyConstants.InternalServerError);
             }
 
@@ -97,6 +100,7 @@ namespace Web.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(1001, ex, "Master->DeleteCommand");
                 return Json(KeyConstants.InternalServerError);
             }
 
@@ -112,6 +116,7 @@ namespace Web.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(1001, ex, "Master->OrderByChange");
                 return Json(KeyConstants.InternalServerError);
             }
 
@@ -133,7 +138,7 @@ namespace Web.Controllers
             }
             catch (Exception ex)
             {
-
+                _logger.LogError(1001, ex, "Master->DeleteCommandMultiple");
                 return Json(KeyConstants.InternalServerError);
             }
         }
@@ -154,10 +159,10 @@ namespace Web.Controllers
         {
             try
             {
-
                 dTO.IsActive = true;
-                dTO.Updatedby = 1;
+                dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                 dTO.UpdatedOn = DateTime.Now;
+                dTO.CorpsName = dTO.CorpsName.Trim();
 
                 if (ModelState.IsValid)
                 {
@@ -193,12 +198,15 @@ namespace Web.Controllers
                 }
                 else
                 {
-
                     return Json(ModelState.Select(x => x.Value.Errors).Where(y => y.Count > 0).ToList());
                 }
 
             }
-            catch (Exception ex) { return Json(KeyConstants.InternalServerError); }
+            catch (Exception ex) 
+            {
+                _logger.LogError(1001, ex, "Master->SaveCorps");
+                return Json(KeyConstants.InternalServerError); 
+            }
 
         }
         [Authorize(Roles = "Admin")]
@@ -210,6 +218,7 @@ namespace Web.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(1001, ex, "Master->GetAllCorps");
                 return Json(KeyConstants.InternalServerError);
             }
 
@@ -224,7 +233,7 @@ namespace Web.Controllers
             }
             catch (Exception ex)
             {
-
+                _logger.LogError(1001, ex, "Master->DeleteCorps");
                 return Json(KeyConstants.InternalServerError);
             }
 
@@ -245,6 +254,7 @@ namespace Web.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(1001, ex, "Master->DeleteCorpsMultiple");
                 return Json(KeyConstants.InternalServerError);
             }
         }
@@ -264,9 +274,9 @@ namespace Web.Controllers
             try
             {
                 dTO.IsActive = true;
-                dTO.Updatedby = 1;
+                dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                 dTO.UpdatedOn = DateTime.Now;
-
+                dTO.DivName = dTO.DivName.Trim();
                 if (ModelState.IsValid)
                 {
                     if (!await unitOfWork.Div.GetByName(dTO))
@@ -306,7 +316,11 @@ namespace Web.Controllers
                 }
 
             }
-            catch (Exception ex) { return Json(KeyConstants.InternalServerError); }
+            catch (Exception ex) 
+            {
+                _logger.LogError(1001, ex, "Master->SaveDiv");
+                return Json(KeyConstants.InternalServerError); 
+            }
 
         }
         [Authorize(Roles = "Admin")]
@@ -318,6 +332,7 @@ namespace Web.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(1001, ex, "Master->GetAllDiv");
                 return Json(KeyConstants.InternalServerError);
             }
 
@@ -332,6 +347,7 @@ namespace Web.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(1001, ex, "Master->DeleteDiv");
                 return Json(KeyConstants.InternalServerError);
             }
         }
@@ -351,6 +367,7 @@ namespace Web.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(1001, ex, "Master->DeleteDivMultiple");
                 return Json(KeyConstants.InternalServerError);
             }
         }
@@ -369,9 +386,9 @@ namespace Web.Controllers
             try
             {
                 dTO.IsActive = true;
-                dTO.Updatedby = 1;
+                dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                 dTO.UpdatedOn = DateTime.Now;
-
+                dTO.BdeName = dTO.BdeName.Trim();
                 if (ModelState.IsValid)
                 {
                     if (!await unitOfWork.Bde.GetByName(dTO))
@@ -393,27 +410,26 @@ namespace Web.Controllers
                         }
                         else
                         {
-
                             await unitOfWork.Bde.Add(dTO);
                             return Json(KeyConstants.Save);
-
-
                         }
                     }
                     else
                     {
                         return Json(KeyConstants.Exists);
                     }
-
                 }
                 else
                 {
-
                     return Json(ModelState.Select(x => x.Value.Errors).Where(y => y.Count > 0).ToList());
                 }
 
             }
-            catch (Exception ex) { return Json(KeyConstants.InternalServerError); }
+            catch (Exception ex) 
+            {
+                _logger.LogError(1001, ex, "Master->SaveBde");
+                return Json(KeyConstants.InternalServerError); 
+            }
 
         }
         [Authorize(Roles = "Admin")]
@@ -425,6 +441,7 @@ namespace Web.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(1001, ex, "Master->GetAllBde");
                 return Json(KeyConstants.InternalServerError);
             }
 
@@ -439,6 +456,7 @@ namespace Web.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(1001, ex, "Master->DeleteBde");
                 return Json(KeyConstants.InternalServerError);
             }
         }
@@ -458,6 +476,7 @@ namespace Web.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(1001, ex, "Master->DeleteBdeMultiple");
                 return Json(KeyConstants.InternalServerError);
             }
         }
@@ -714,8 +733,11 @@ namespace Web.Controllers
             try
             {
                 dTO.IsActive = true;
-                dTO.Updatedby = 1;
+                dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                 dTO.UpdatedOn = DateTime.Now;
+                dTO.UnitName = dTO.UnitName.Trim();
+                dTO.Abbreviation = dTO.Abbreviation != null ? dTO.Abbreviation.Trim() : dTO.Abbreviation;
+                dTO.Suffix = dTO.Suffix.Trim();
 
                 if (ModelState.IsValid)
                 {
@@ -728,27 +750,26 @@ namespace Web.Controllers
                         }
                         else
                         {
-
                             await unitOfWork.Unit.Add(dTO);
                             return Json(KeyConstants.Save);
-
-
                         }
                     }
                     else
                     {
                         return Json(KeyConstants.Exists);
                     }
-
                 }
                 else
                 {
-
                     return Json(ModelState.Select(x => x.Value.Errors).Where(y => y.Count > 0).ToList());
                 }
 
             }
-            catch (Exception ex) { return Json(KeyConstants.InternalServerError); }
+            catch (Exception ex) 
+            {
+                _logger.LogError(1001, ex, "Master->SaveUnit");
+                return Json(KeyConstants.InternalServerError); 
+            }
 
         }
         public async Task<IActionResult> GetAllUnit(string Unit)
@@ -759,6 +780,7 @@ namespace Web.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(1001, ex, "Master->GetAllUnit");
                 return Json(KeyConstants.InternalServerError);
             }
 
@@ -772,6 +794,7 @@ namespace Web.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(1001, ex, "Master->DeleteUnit");
                 return Json(KeyConstants.InternalServerError);
             }
         }
@@ -790,6 +813,7 @@ namespace Web.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(1001, ex, "Master->DeleteUnitMultiple");
                 return Json(KeyConstants.InternalServerError);
             }
         }
@@ -802,6 +826,7 @@ namespace Web.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(1001, ex, "Master->GetBySusNO");
                 return Json(KeyConstants.InternalServerError);
             }
 
@@ -921,9 +946,9 @@ namespace Web.Controllers
             {
 
                 dTO.IsActive = true;
-                dTO.Updatedby = 1;
+                dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                 dTO.UpdatedOn = DateTime.Now;
-
+                dTO.AppointmentName = dTO.AppointmentName.Trim();
                 if (ModelState.IsValid)
                 {
                     if (!await unitOfWork.Appt.GetByName(dTO))
@@ -955,7 +980,10 @@ namespace Web.Controllers
                 }
 
             }
-            catch (Exception ex) { return Json(KeyConstants.InternalServerError); }
+            catch (Exception ex) {
+                _logger.LogError(1001, ex, "Master->SaveAppointment");
+                return Json(KeyConstants.InternalServerError); 
+            }
 
         }
         [Authorize(Roles = "Admin")]
@@ -1044,8 +1072,10 @@ namespace Web.Controllers
             try
             {
                 dTO.IsActive = true;
-                dTO.Updatedby = 1;
+                dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                 dTO.UpdatedOn = DateTime.Now;
+                dTO.RankName = dTO.RankName.Trim();
+                dTO.RankAbbreviation = dTO.RankAbbreviation.Trim();
 
                 if (ModelState.IsValid)
                 {
@@ -1058,11 +1088,9 @@ namespace Web.Controllers
                         }
                         else
                         {
-                            dTO.Orderby = Convert.ToByte(await unitOfWork.Comds.GetByMaxOrder());
+                            dTO.Orderby = await unitOfWork.Rank.GetByMaxOrder();
                             await unitOfWork.Rank.Add(dTO);
                             return Json(KeyConstants.Save);
-
-
                         }
                     }
                     else
@@ -1078,7 +1106,11 @@ namespace Web.Controllers
                 }
 
             }
-            catch (Exception ex) { return Json(KeyConstants.InternalServerError); }
+            catch (Exception ex) 
+            {
+                _logger.LogError(1001, ex, "Master->SaveRank");
+                return Json(KeyConstants.InternalServerError); 
+            }
 
         }
         [Authorize(Roles = "Admin")]
@@ -1104,6 +1136,7 @@ namespace Web.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(1001, ex, "Master->DeleteRank");
                 return Json(KeyConstants.InternalServerError);
             }
 
@@ -1119,6 +1152,7 @@ namespace Web.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(1001, ex, "Master->RankOrderByChange");
                 return Json(KeyConstants.InternalServerError);
             }
 
@@ -1140,7 +1174,7 @@ namespace Web.Controllers
             }
             catch (Exception ex)
             {
-
+                _logger.LogError(1001, ex, "Master->DeleteRankMultiple");
                 return Json(KeyConstants.InternalServerError);
             }
         }
@@ -1162,6 +1196,8 @@ namespace Web.Controllers
                 dTO.IsActive = true;
                 dTO.Updatedby = 1;
                 dTO.UpdatedOn = DateTime.Now;
+                dTO.ArmedName = dTO.ArmedName.Trim();
+                dTO.Abbreviation= dTO.Abbreviation.Trim();
 
                 if (ModelState.IsValid)
                 {
@@ -1174,11 +1210,8 @@ namespace Web.Controllers
                         }
                         else
                         {
-
                             await unitOfWork.Armed.Add(dTO);
                             return Json(KeyConstants.Save);
-
-
                         }
                     }
                     else
@@ -1189,12 +1222,15 @@ namespace Web.Controllers
                 }
                 else
                 {
-
                     return Json(ModelState.Select(x => x.Value.Errors).Where(y => y.Count > 0).ToList());
                 }
 
             }
-            catch (Exception ex) { return Json(KeyConstants.InternalServerError); }
+            catch (Exception ex) 
+            {
+                _logger.LogError(1001, ex, "Master->SaveArmed");
+                return Json(KeyConstants.InternalServerError); 
+            }
 
         }
         [Authorize(Roles = "Admin")]
@@ -1206,6 +1242,7 @@ namespace Web.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(1001, ex, "Master->GetAllArmed");
                 return Json(KeyConstants.InternalServerError);
             }
 
@@ -1220,6 +1257,7 @@ namespace Web.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(1001, ex, "Master->DeleteArmed");
                 return Json(KeyConstants.InternalServerError);
             }
 
@@ -1244,7 +1282,7 @@ namespace Web.Controllers
             }
             catch (Exception ex)
             {
-
+                _logger.LogError(1001, ex, "Master->DeleteArmedMultiple");
                 return Json(KeyConstants.InternalServerError);
             }
         }
@@ -1256,7 +1294,6 @@ namespace Web.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Regimental()
         {
-
             return View();
         }
         [Authorize(Roles = "Admin")]
@@ -1265,8 +1302,11 @@ namespace Web.Controllers
             try
             {
                 dTO.IsActive = true;
-                dTO.Updatedby = 1;
+                dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                 dTO.UpdatedOn = DateTime.Now;
+                dTO.Name = dTO.Name.Trim();
+                dTO.Abbreviation=dTO.Abbreviation.Trim();
+                dTO.Location= dTO.Location.Trim();
 
                 if (ModelState.IsValid)
                 {
@@ -1279,27 +1319,25 @@ namespace Web.Controllers
                         }
                         else
                         {
-
                             await unitOfWork.Regimental.Add(dTO);
                             return Json(KeyConstants.Save);
-
-
                         }
                     }
                     else
                     {
                         return Json(KeyConstants.Exists);
                     }
-
                 }
                 else
                 {
-
                     return Json(ModelState.Select(x => x.Value.Errors).Where(y => y.Count > 0).ToList());
                 }
-
             }
-            catch (Exception ex) { return Json(KeyConstants.InternalServerError); }
+            catch (Exception ex) 
+            {
+                _logger.LogError(1001, ex, "Master->SaveRegimental");
+                return Json(KeyConstants.InternalServerError); 
+            }
 
         }
         [Authorize(Roles = "Admin,User")]
@@ -1311,6 +1349,7 @@ namespace Web.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(1001, ex, "Master->GetAllRegimental");
                 return Json(KeyConstants.InternalServerError);
             }
 
@@ -1325,13 +1364,9 @@ namespace Web.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(1001, ex, "Master->DeleteRegimental");
                 return Json(KeyConstants.InternalServerError);
             }
-
-
-
-
-
         }
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteRegimentalMultiple(int[] ints)
@@ -1349,7 +1384,7 @@ namespace Web.Controllers
             }
             catch (Exception ex)
             {
-
+                _logger.LogError(1001, ex, "Master->DeleteRegimentalMultiple");
                 return Json(KeyConstants.InternalServerError);
             }
         }

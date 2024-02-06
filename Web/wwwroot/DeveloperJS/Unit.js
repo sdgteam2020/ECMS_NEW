@@ -1,13 +1,20 @@
 $(document).ready(function () {
-
-    
-
-    
     Reset();
     BindData()
     $("#txtSerachunit").keyup(function () {
         BindData()
 
+    });
+    $(".allow-number").on("keypress", function (event) {
+        // Allow only backspace , delete, numbers               
+        if (event.keyCode == 46 || event.keyCode == 8 || event.keyCode == 39 || event.keyCode == 37
+            || (event.keyCode >= 48 && event.keyCode <= 57)) {
+            // let it happen, don't do anything
+        }
+        else {
+            // Ensure that it is a number and stop the key press
+            event.preventDefault();
+        }
     });
    
     $("#btnsave").click(function () {
@@ -119,12 +126,6 @@ function BindData() {
                      
                             listItem += "<tr>";
                             listItem += "<td class='d-none'><span id='SunitId'>" + response[i].UnitId + "</span></td>";
-                            listItem += "<td>";
-                            listItem += "<div class='custom-control custom-checkbox small'>";
-                            listItem += "<input type='checkbox' class='custom-control-input' id='" + response[i].UnitId + "'>";
-                            listItem += "<label class='custom-control-label' for='" + response[i].UnitId + "'></label>";
-                            listItem += "</div>";
-                            listItem += "</td>";
                             listItem += "<td class='align-middle'>" + (i+1) + "</td>";
                             listItem += "<td class='align-middle'><span id='sus_no'>" + response[i].Sus_no + "</span></td>";
                             listItem += "<td class='align-middle'><span id='suffix'>" + response[i].Suffix + "</span></td>";
@@ -258,7 +259,7 @@ function Save() {
     $.ajax({
         url: '/Master/SaveUnit',
         type: 'POST',
-        data: { "Sus_no": $("#txtSusno").val(), "UnitId": $("#spnUnitId").html(), "Suffix": $("#txtSuffix").val(), "UnitName": $("#txtUnitDesc").val(), "Abbreviation": $("#txtAbbreviation").val(),"IsVerify": true }, //get the search string
+        data: { "Sus_no": $("#txtSusno").val().trim(), "UnitId": $("#spnUnitId").html().trim(), "Suffix": $("#txtSuffix").val().trim(), "UnitName": $("#txtUnitDesc").val().trim(), "Abbreviation": $("#txtAbbreviation").val().trim(),"IsVerify": true }, //get the search string
         success: function (result) {
 
 

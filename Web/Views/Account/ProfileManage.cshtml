@@ -28,18 +28,18 @@
                     <div class="d-flex d-md-flex justify-content-md-between align-items-md-center">
                         <div class="form-check form-check-inline">
                             <input class="form-check-input" type="radio" name="choice" id="UserId" value="UserId">
-                            <label for="choice">User Id</label>
+                            <label for="choice">User ID</label>
                         </div>
                         <div class="form-check form-check-inline">
                             <input class="form-check-input" type="radio" name="choice" id="DomainId" value="DomainId">
-                            <label for="choice">Domain Id</label>
+                            <label for="choice">Domain ID</label>
                         </div>
                         <div class="form-check form-check-inline">
                             <input class="form-check-input" type="radio" name="choice" id="ICNo" value="ICNo">
                             <label for="choice">IC No</label>
                         </div>
                         <div>
-                            <input type="text" class="form-control mr-2" placeholder="Search Id / Domain / IC" id="txtSearch" maxlength="30" width="100" pattern="^[a-zA-Z0-9 ]*$" />
+                            <input type="text" class="form-control mr-2" placeholder="Search ID / Domain / IC" id="txtSearch" maxlength="30" width="100" pattern="^[a-zA-Z0-9 ]*$" />
                         </div>
                         <div>
                             <button type="button" id="btnProfileAdd" class="btn btn-outline-success font-weight-600 btn-sm ml-4">Add Profile</button>
@@ -54,14 +54,14 @@
                             <tr>
                                 <th class="noExport d-none"></th>
                                 <th class="nowrap">S No</th>
-                                <th class="nowrap">User Id</th>
-                                <th class="nowrap">Domain Id</th>
+                                <th class="nowrap">User ID</th>
+                                <th class="nowrap">Domain ID</th>
                                 <th class="nowrap">IC No</th>
                                 <th class="nowrap">Rank</th>
                                 <th class="nowrap">Name</th>
                                 <th class="nowrap">IO</th>
-                                <th class="nowrap">CO</th>
-                                <th class="nowrap">Fmn IntOffr.</th>
+                                <th class="nowrap">Approver</th>
+                                <th class="nowrap">Issuing Authority</th>
                                 <th class="nowrap">Action</th>
                             </tr>
                         </thead>
@@ -88,16 +88,16 @@
                         <div class="row">
                             <div class="form-group row mb-2">
                                 <span class=" d-none" id="spnUserProfileId">0</span>
-                                <label class="col-form-label col-sm-4">Offrs Army No<i class="fas fa-asterisk mand1"></i></label>
+                                <label class="col-form-label col-sm-4">Service No<i class="fas fa-asterisk mand1"></i></label>
                                 <div class="col-sm-8">
-                                    <input class="form-control" placeholder="Enter Army No" id="txtArmyNo" name="txtArmyNo" maxlength="10" data-val-maxlength="Maximum length of Offr Army No is ten digit." data-val-maxlength-max="10" data-val-minlength="Minimum length of Offr Army No is eight digit." data-val-minlength-min="8" minlength="8" data-val="true" data-val-regex="This special chars and space not allowed for security reasons." data-val-required="Offr Army No is required." data-val-regex-pattern="^[\w\-]+$" />
+                                    <input class="form-control1" placeholder="Enter Service No" id="txtArmyNo" name="txtArmyNo" maxlength="10" data-val-maxlength="Maximum length of Offr Army No is ten character." data-val-maxlength-max="10" data-val-minlength="Minimum length of Offr Army No is eight character." data-val-minlength-min="8" minlength="8" data-val="true" data-val-regex="This special chars and space not allowed for security reasons." data-val-required="Offr Army No is required." data-val-regex-pattern="^[\w]+$" />
                                     <span class="text-danger field-validation-valid" data-valmsg-for="txtArmyNo" data-valmsg-replace="true"></span>
                                 </div>
                             </div>
                             <div class="form-group row mb-2">
                                 <label class="col-form-label col-sm-4">Rank<i class="fas fa-asterisk mand1"></i></label>
                                 <div class="col-sm-8">
-                                    <select class="form-select" style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddlRank" id="ddlRank" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="Rank is required." data-val-regex-pattern="^[\w ]*$">
+                                    <select class="form-select" style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddlRank" id="ddlRank" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="Rank is required." data-val-regex-pattern="^[\d]+$">
                                         <option value="0">Select Rank</option>
                                     </select>
                                     <span class="text-danger field-validation-valid" data-valmsg-for="ddlRank" data-valmsg-replace="true"></span>
@@ -135,54 +135,54 @@
                                 <label class="col-form-label col-sm-4">Initating Offr<i class="fas fa-asterisk mand1"></i></label>
                                 <div class="col-sm-8">
                                     <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="InitatingOffr" value="true" id="initatingOffryes" data-val-regex-pattern="^[\w]*$">
+                                        <input class="form-check-input" type="radio" name="InitatingOffr" value="true" id="initatingOffryes" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-regex-pattern="^[a-zA-Z]*$">
                                         <label class="form-check-label" for="initatingOffryes">
                                             Yes
                                         </label>
                                     </div>
                                     <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="InitatingOffr" value="false" id="initatingOffrno" data-val-regex-pattern="^[\w]*$">
+                                        <input class="form-check-input" type="radio" name="InitatingOffr" value="false" id="initatingOffrno" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-regex-pattern="^[a-zA-Z]*$">
                                         <label class="form-check-label" for="initatingOffrno">
                                             No
                                         </label>
                                     </div>
-                                    <span class="text-danger field-validation-valid" id="InitatingOffr-error"></span>
+                                    <span class="text-danger field-validation-valid" id="InitatingOffr-error" data-valmsg-for="InitatingOffr" data-valmsg-replace="true"></span>
                                 </div>
                             </div>
                             <div class="form-group row mb-4">
-                                <label class="col-form-label col-sm-4">Commanding Offr<i class="fas fa-asterisk mand1"></i></label>
+                                <label class="col-form-label col-sm-4">Approver<i class="fas fa-asterisk mand1"></i></label>
                                 <div class="col-sm-8">
                                     <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="CommandingOffr" value="true" id="commandingOffryes" data-val="true" data-val-regex-pattern="^[\w]*$">
+                                        <input class="form-check-input" type="radio" name="CommandingOffr" value="true" id="commandingOffryes" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-regex-pattern="^[a-zA-Z]*$">
                                         <label class="form-check-label" for="commandingOffryes">
                                             Yes
                                         </label>
                                     </div>
                                     <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="CommandingOffr" value="false" id="commandingOffrno" data-val="true" data-val-regex-pattern="^[\w]*$">
+                                        <input class="form-check-input" type="radio" name="CommandingOffr" value="false" id="commandingOffrno" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-regex-pattern="^[a-zA-Z]*$">
                                         <label class="form-check-label" for="commandingOffrno">
                                             No
                                         </label>
                                     </div>
-                                    <span class="text-danger field-validation-valid" id="CommandingOffr-error"></span>
+                                    <span class="text-danger field-validation-valid" id="CommandingOffr-error" data-valmsg-for="CommandingOffr" data-valmsg-replace="true"></span>
                                 </div>
                             </div>
                             <div class="form-group row mb-4">
-                                <label class="col-form-label col-sm-4">Formation Int Offr<i class="fas fa-asterisk mand1"></i></label>
+                                <label class="col-form-label col-sm-4">Issuing Authority<i class="fas fa-asterisk mand1"></i></label>
                                 <div class="col-sm-8">
                                     <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="IntOffr" value="true" id="intoffryes" data-val-regex-pattern="^[\w]*$">
+                                        <input class="form-check-input" type="radio" name="IntOffr" value="true" id="intoffryes" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-regex-pattern="^[a-zA-Z]*$">
                                         <label class="form-check-label" for="intoffsyes">
                                             Yes
                                         </label>
                                     </div>
                                     <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="IntOffr" value="false" id="intoffrno" data-val-regex-pattern="^[\w]*$">
+                                        <input class="form-check-input" type="radio" name="IntOffr" value="false" id="intoffrno" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-regex-pattern="^[a-zA-Z]*$">
                                         <label class="form-check-label" for="intoffsno">
                                             No
                                         </label>
                                     </div>
-                                    <span class="text-danger field-validation-valid" id="IntOffr-error"></span>
+                                    <span class="text-danger field-validation-valid" id="IntOffr-error" data-valmsg-for="IntOffr" data-valmsg-replace="true"></span>
                                 </div>
                             </div>
                             <div class="col-sm-12 text-right">

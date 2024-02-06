@@ -38,13 +38,13 @@ namespace DataAccessLayer
             return ret;
         }
 
-        public async Task<int> GetByMaxOrder()
+        public async Task<short> GetByMaxOrder()
         {
-            int ret = _context.MRank.Max(P => P.Orderby);
-            return ret+1;
+            short ret = _context.MRank.Max(P => P.Orderby);
+            return (short)(ret + 1);
         }
 
-        public async Task<int> GetRankIdbyOrderby(int OrderBy)
+        public async Task<int> GetRankIdbyOrderby(short OrderBy)
         {
             var ret= _context.MRank.Where(P => P.Orderby == OrderBy).Select(c=>c.RankId).SingleOrDefault(); 
            
