@@ -12,15 +12,17 @@ namespace DataTransferObject.Requests
 {
     public class DTOProfileAndMappingRequest
     {
+        [RegularExpression(@"^[\d]+$", ErrorMessage = "UserId is number.")]
         public int UserId { get; set; }
 
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
-        [MaxLength(15, ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "MaxLengthError")]
-        [MinLength(7, ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "MinLengthError")]
-        [RegularExpression(@"^[\w\-]+$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
+        [MinLength(8, ErrorMessage = "Minimum length of Offr Army No is eight character.")]
+        [MaxLength(10, ErrorMessage = "Maximum length of Offr Army No is ten character.")]
+        [RegularExpression(@"^[\w]+$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
         public string ArmyNo { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Rank is required.")]
+        [RegularExpression(@"^[\d]+$", ErrorMessage = "RankId is number.")]
         public short RankId { get; set; }
 
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
@@ -48,18 +50,20 @@ namespace DataTransferObject.Requests
         public string Extension { get; set; } = string.Empty;
 
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
+        [RegularExpression(@"^[\d]+$", ErrorMessage = "ApptId is number.")]
         public short ApptId { get; set; }
 
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
+        [RegularExpression(@"^[\d]+$", ErrorMessage = "UnitMapId is number.")]
         public int UnitMapId { get; set; }
 
-        [RegularExpression(@"^[\w]+$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
+        [RegularExpression("^[a-zA-Z]*$", ErrorMessage = "Only Alphabets allowed.")]
         public Boolean IntOffr { get; set; }
 
-        [RegularExpression(@"^[\w]+$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
+        [RegularExpression("^[a-zA-Z]*$", ErrorMessage = "Only Alphabets allowed.")]
         public Boolean IsIO { get; set; }
 
-        [RegularExpression(@"^[\w]+$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
+        [RegularExpression("^[a-zA-Z]*$", ErrorMessage = "Only Alphabets allowed.")]
         public Boolean IsCO { get; set; }
         [StringLength(50)]
         [Column(TypeName = "varchar(50)")]

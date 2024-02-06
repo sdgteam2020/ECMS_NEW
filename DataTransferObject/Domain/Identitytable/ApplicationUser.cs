@@ -11,6 +11,8 @@ namespace DataTransferObject.Domain.Identitytable
 {
     public class ApplicationUser : IdentityUser<int>
     {
+        [StringLength(20)]
+        [Column(TypeName = "varchar(20)")]
         public string DomainId { get; set; } = string.Empty;
         public bool Active { get; set; } = false;
         public bool AdminFlag { get; set; } = false;
@@ -23,6 +25,9 @@ namespace DataTransferObject.Domain.Identitytable
         [DataType(DataType.Date)]
         [Column(TypeName = "datetime")]
         public DateTime UpdatedOn { get; set; }
+
+        [StringLength(200)]
+        [Column(TypeName = "varchar(200)")]
         public string? AdminMsg { get; set; }
 
         public string? Fd1 { get; set; }

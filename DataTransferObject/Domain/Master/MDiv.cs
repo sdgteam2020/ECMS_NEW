@@ -12,14 +12,20 @@ namespace DataTransferObject.Domain.Master
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        [RegularExpression(@"^[\d]+$", ErrorMessage = "DivId is number.")]
         public byte DivId { get; set; }
 
         [Required(ErrorMessage = "required!")]
         [RegularExpression("^[a-zA-Z0-9 ]*$", ErrorMessage = "Only Alphabets and Numbers allowed.")]
-        public string DivName { get; set; }
+        [MaxLength(20, ErrorMessage = "Maximum length of Sus no is twenty character.")]
+        [Column(TypeName = "varchar(20)")]
+        public string DivName { get; set; } = string.Empty;
 
+        [RegularExpression(@"^[\d]+$", ErrorMessage = "ComdId is number.")]
         public byte ComdId { get; set; }
         public MComd? Comd { get; set; }
+
+        [RegularExpression(@"^[\d]+$", ErrorMessage = "CorpsId is number.")]
         public byte CorpsId { get; set; }
         public MCorps? Corps { get; set; }   
 

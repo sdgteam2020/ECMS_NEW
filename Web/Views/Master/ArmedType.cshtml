@@ -34,7 +34,7 @@
                                 <label class="col-form-label col-sm-4">Arms/ Service or Corps Name<i class="fas fa-asterisk mand1"></i></label>
                                 <div class="col-sm-8">
                                     
-                                    <input class="form-control Alphanumeric" placeholder="Enter Armed" id="txtArmedName" required pattern="^[a-zA-Z0-9 ]*$" title="Only Alphabets and Numbers allowed" />
+                                    <input class="form-control Alphanumeric" placeholder="Enter Armed" id="txtArmedName" maxlength="100" required pattern="^[a-zA-Z0-9 ]*$" title="Only Alphabets and Numbers allowed" />
                                 </div>
 
                             </div>
@@ -45,7 +45,7 @@
                                 <label class="col-form-label col-sm-4">Abbreviation<i class="fas fa-asterisk mand1"></i></label>
                                 <div class="col-sm-8">
                                     
-                                    <input class="form-control Alphanumeric" placeholder="Enter Abbreviation" id="txtAbbreviation" required pattern="^[a-zA-Z0-9 ]*$" title="Only Alphabets and Numbers allowed" />
+                                    <input class="form-control Alphanumeric" placeholder="Enter Abbreviation" id="txtAbbreviation" maxlength="10" required pattern="^[a-zA-Z0-9 ]*$" title="Only Alphabets and Numbers allowed" />
                                 </div>
 
                             </div>
@@ -107,12 +107,6 @@
                             <thead>
                                 <tr>
                                     <th class="noExport d-none"></th>
-                                    <th class="noExport wd-30-f">
-                                        <div class="custom-control custom-checkbox small">
-                                            <input type="checkbox" class="custom-control-input" id="chkAll">
-                                            <label class="custom-control-label font-weight-bold" for="chkAll"></label>
-                                        </div>
-                                    </th>
                                     <th class=" wd-30-f">S No</th>
                                     <th class="nowrap">Arms / Service & Corps</th>
                                     <th class="nowrap">Abbreviation</th>

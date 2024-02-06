@@ -1,5 +1,4 @@
 $(document).ready(function () {
-    mMsater(0, "ddlFormation", Formation, "");
     BindData()
     //$("#btnAdd").click(function () {
     //    Reset();
@@ -98,52 +97,39 @@ function BindData() {
                     });
                 }
                 else if (response == 0) {
-                    listItem += "<tr><td class='text-center' colspan=5>No Record Found</td></tr>";
+                    listItem += "<tr><td class='text-center' colspan=4>No Record Found</td></tr>";
                     $("#tbldata").DataTable().destroy();
                     $("#DetailBody").html(listItem);
                     $("#lblTotal").html(0);
                 }
                 else if (response == InternalServerError) {
-                    listItem += "<tr><td class='text-center' colspan=5>No Record Found</td></tr>";
+                    listItem += "<tr><td class='text-center' colspan=4>No Record Found</td></tr>";
                     $("#tbldata").DataTable().destroy();
                     $("#DetailBody").html(listItem);
                     $("#lblTotal").html(0);
                 }
               
                 else {
-
-                   
-                   
+                    $("#tbldata").DataTable().destroy();
                     for (var i = 0; i < response.length; i++) {
-                        if (response[i].comdId != 1) {
-                            listItem += "<tr>";
-                            listItem += "<td class='d-none'><span id='spnMapptId'>" + response[i].ApptId + "</span><span id='spnFormationId'>" + response[i].FormationId + "</span></td>";
-                            listItem += "<td>";
-                            listItem += "<div class='custom-control custom-checkbox small'>";
-                            listItem += "<input type='checkbox' class='custom-control-input' id='" + response[i].ApptId + "'>";
-                            listItem += "<label class='custom-control-label' for='" + response[i].ApptId + "'></label>";
-                            listItem += "</div>";
-                            listItem += "</td>";
-                            listItem += "<td class='align-middle'>" + (i + 1) + "</td>";
-                            listItem += "<td class='align-middle'><span id='appointmentName'>" + response[i].AppointmentName + "</span></td>";
-                            listItem += "<td class='align-middle'><span id='formationName'>" + response[i].FormationName + "</span></td>";
+                        listItem += "<tr>";
+                        listItem += "<td class='d-none'><span id='spnMapptId'>" + response[i].ApptId + "</span></td>";
+                        listItem += "<td class='align-middle'>" + (i + 1) + "</td>";
+                        listItem += "<td class='align-middle'><span id='appointmentName'>" + response[i].AppointmentName + "</span></td>";
+                        listItem += "<td class='align-middle'><span id='btnedit'><button type='button' class='cls-btnedit btn btn-icon btn-round btn-primary mr-1'><i class='fas fa-edit'></i></button></span><button type='button' class='cls-btnDelete btn-icon btn-round btn-danger mr-1'><i class='fas fa-trash-alt'></i></button></td>";
 
 
-                            listItem += "<td class='align-middle'><span id='btnedit'><button type='button' class='cls-btnedit btn btn-icon btn-round btn-primary mr-1'><i class='fas fa-edit'></i></button></span><button type='button' class='cls-btnDelete btn-icon btn-round btn-danger mr-1'><i class='fas fa-trash-alt'></i></button></td>";
-
-
-                            /*    listItem += "<td class='nowrap'><button type='button' class='cls-btnSend btn btn-outline-success mr-1'>Send To Verification</button></td>";*/
-                            listItem += "</tr>";
-                        }
+                        /*    listItem += "<td class='nowrap'><button type='button' class='cls-btnSend btn btn-outline-success mr-1'>Send To Verification</button></td>";*/
+                        listItem += "</tr>";
                     }
 
                     $("#DetailBody").html(listItem);
-                    $("#lblTotal").html(response.length);
+                    $("#lblTotal").html(response.length-1);
                   
                     memberTable = $('#tbldata').DataTable({
                         retrieve: true,
                         lengthChange: false,
-                        "order": [[2, "asc"]],
+                        "order": [[1, "asc"]],
                         buttons: [{
                             extend: 'copy',
                             exportOptions: {
@@ -187,9 +173,7 @@ function BindData() {
                     });
 
                     $("body").on("click", ".cls-btnedit", function () {
-                    
-                        $("#ddlFormation").val($(this).closest("tr").find("#spnFormationId").html());
-                       
+ 
                         $("#spnapptId").html($(this).closest("tr").find("#spnMapptId").html());
 
                         $("#txtAppoinment").val($(this).closest("tr").find("#appointmentName").html());
@@ -220,10 +204,14 @@ function BindData() {
                 }
             }
             else {
-                listItem += "<tr><td class='text-center' colspan=5>No Record Found</td></tr>";
                 $("#tbldata").DataTable().destroy();
                 $("#DetailBody").html(listItem);
                 $("#lblTotal").html(0);
+                memberTable = $('#tbldata').DataTable({
+                    "language": {
+                        "emptyTable": "No data available"
+                    }
+                });
             }
         },
         error: function (result) {
@@ -241,7 +229,7 @@ function Save() {
     $.ajax({
         url: '/Master/SaveAppointment',
         type: 'POST',
-        data: { "AppointmentName": $("#txtAppoinment").val(), "FormationId": $("#ddlFormation").val(), "ApptId": $("#spnapptId").html() }, //get the search string
+        data: { "AppointmentName": $("#txtAppoinment").val().trim(), "ApptId": $("#spnapptId").html() }, //get the search string
         success: function (result) {
 
 
@@ -249,17 +237,15 @@ function Save() {
 
 
                 toastr.success('Appointment has been saved');
-                Reset();
                 BindData();
-
+                Reset();
             }
             else if (result == DataUpdate) {
 
 
                 toastr.success('Appointment has been Updated');
-                Reset();
                 BindData();
-
+                Reset();
             }
             else if (result == DataExists) {
 
@@ -289,7 +275,6 @@ function Save() {
 }
 
 function Reset() {
-    $("#ddlFormation").val("");
     $("#spnapptId").html("0");
     $("#btnsave").val("Save");
     $("#txtAppoinment").val("");

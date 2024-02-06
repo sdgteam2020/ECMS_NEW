@@ -105,20 +105,12 @@ function BindData() {
                     for (var i = 0; i < response.length; i++) {
                             listItem += "<tr>";
                             listItem += "<td class='d-none'><span id='spnMarmedId'>" + response[i].ArmedId + "</span><span id='spnArmedCatId'>" + response[i].ArmedCatId + "</span></td>";
-                            listItem += "<td>";
-                            listItem += "<div class='custom-control custom-checkbox small'>";
-                            listItem += "<input type='checkbox' class='custom-control-input' id='" + response[i].ArmedId + "'>";
-                            listItem += "<label class='custom-control-label' for='" + response[i].ArmedId + "'></label>";
-                            listItem += "</div>";
                             listItem += "<td class='align-middle'>" + (i + 1) + "</td>";
                             listItem += "<td class='align-middle'><span id='armedName'>" + response[i].ArmedName + "</span></td>";
                             listItem += "<td class='align-middle'><span id='abbreviation'>" + response[i].Abbreviation + "</span></td>";
                             listItem += "<td class='align-middle'><span id='flagInf'>" + response[i].Inf + "</span></td>";
                             listItem += "<td class='align-middle'><span id='armedCat'>" + response[i].Name + "</span></td>";
-
-
                             listItem += "<td class='align-middle'><span id='btnedit'><button type='button' class='cls-btnedit btn btn-icon btn-round btn-warning mr-1'><i class='fas fa-edit'></i></button></span><button type='button' class='cls-btnDelete btn-icon btn-round btn-danger mr-1'><i class='fas fa-trash-alt'></i></button></td>";
-
 
                             /*    listItem += "<td class='nowrap'><button type='button' class='cls-btnSend btn btn-outline-success mr-1'>Send To Verification</button></td>";*/
                             listItem += "</tr>";
@@ -131,7 +123,7 @@ function BindData() {
                     memberTable = $('#tblData').DataTable({
                         retrieve: true,
                         lengthChange: false,
-                        "order": [[2, "asc"]],
+                        "order": [[1, "asc"]],
                         buttons: [{
                             extend: 'copy',
                             exportOptions: {
@@ -240,7 +232,7 @@ function Save() {
     $.ajax({
         url: '/Master/SaveArmed',
         type: 'POST',
-        data: { "ArmedName": $("#txtArmedName").val(), "ArmedCatId": $("#ddlArmedCat").val(), "ArmedId": $("#spnArmedId").html(), "Abbreviation": $("#txtAbbreviation").val(), "FlagInf": $("#radioInfyes").prop("checked") }, //get the search string 
+        data: { "ArmedName": $("#txtArmedName").val().trim(), "ArmedCatId": $("#ddlArmedCat").val(), "ArmedId": $("#spnArmedId").html(), "Abbreviation": $("#txtAbbreviation").val().trim(), "FlagInf": $("#radioInfyes").prop("checked") }, //get the search string 
         success: function (result) {
 
 

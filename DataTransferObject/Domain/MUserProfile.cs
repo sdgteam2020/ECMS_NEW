@@ -14,18 +14,20 @@ namespace DataTransferObject.Domain
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        [RegularExpression(@"^[\d]+$", ErrorMessage = "UserId is number.")]
         public int UserId { get; set; }
 
-        [StringLength(20)]
-        [Column(TypeName = "varchar(20)")]
+        [StringLength(10)]
+        [Column(TypeName = "varchar(10)")]
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
-        [MinLength(7, ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "MinLengthError")]
-        [MaxLength(15, ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "MaxLengthError")]
-        [RegularExpression(@"^[\w\-]+$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
+        [MinLength(8, ErrorMessage = "Minimum length of Offr Army No is eight character.")]
+        [MaxLength(10,ErrorMessage = "Maximum length of Offr Army No is ten character.")]
+        [RegularExpression(@"^[\w]+$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
         public string ArmyNo { get; set; } = string.Empty;
         
         [Required]
         [ForeignKey("MRank")]
+        [RegularExpression(@"^[\d]+$", ErrorMessage = "RankId is number.")]
         public short RankId { get; set; }
         public MRank? MRank { get; set; }
 
@@ -38,8 +40,13 @@ namespace DataTransferObject.Domain
         [RegularExpression(@"^[\w ]+$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
         public string Name { get; set; } = string.Empty;
 
+        [RegularExpression("^[a-zA-Z]*$", ErrorMessage = "Only Alphabets allowed.")]
         public Boolean IntOffr { get; set; }
+
+        [RegularExpression("^[a-zA-Z]*$", ErrorMessage = "Only Alphabets allowed.")]
         public Boolean IsIO { get; set; }
+
+        [RegularExpression("^[a-zA-Z]*$", ErrorMessage = "Only Alphabets allowed.")]
         public Boolean IsCO { get; set; }
 
         [StringLength(10)]
@@ -69,6 +76,7 @@ namespace DataTransferObject.Domain
 
         [StringLength(50)]
         [Column(TypeName = "varchar(50)")]
+        [RegularExpression(@"^[\w]+$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
         public string? Thumbprint { get; set; }
     }
 }

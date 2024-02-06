@@ -22,12 +22,17 @@
                     data: param,
                     type: 'POST',
                     success: function (data) {
-                        console.log(data);
-                        response($.map(data, function (item) {
-                            $("#loading").addClass("d-none");
-                            return { label: item.ArmyNo, value: item.UserId };
-
-                        }))
+                        if (data.length != 0) {
+                            response($.map(data, function (item) {
+                                $("#loading").addClass("d-none");
+                                return { label: item.ArmyNo, value: item.UserId };
+                            }))
+                        }
+                        else {
+                            $("#txtArmyNo").val("");
+                            $("#spnUserProfileId").html("");
+                            alert("Offrs Army No not found.")
+                        }
                     },
                     error: function (response) {
                         alert(response.responseText);
@@ -606,9 +611,11 @@ function ResetForMapping() {
 }
 function ResetErrorMessageForMapping() {
     $("#txtArmyNo-error").html("");
+    $("#txtadminmessage-error").html(""); 
 }
 
 function Proceed() {
+    debugger;
     ResetErrorMessageForMapping();
     let formId = '#UpdateDomainFlag';
     $.validator.unobtrusive.parse($(formId));
@@ -672,13 +679,9 @@ function UpdateDomainFlag() {
             } else {
                 if (result.length > 0) {
                     for (var i = 0; i < result.length; i++) {
-                        toastr.error(result[i][0].Message)
+                        toastr.error(result[i][0].ErrorMessage)
                     }
-
-
                 }
-
-
             }
         }
     });

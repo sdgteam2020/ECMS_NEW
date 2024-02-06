@@ -12,8 +12,8 @@ namespace DataAccessLayer.BaseInterfaces
     public interface IRankDB : IGenericRepositoryDL<MRank>
     {
         public Task<bool> GetByName(MRank Dto);
-        public Task<int> GetByMaxOrder();
-        public Task<int> GetRankIdbyOrderby(int OrderBy);
+        public Task<short> GetByMaxOrder();
+        public Task<int> GetRankIdbyOrderby(short OrderBy);
         public Task<IEnumerable<MRank>> GetAllByorder();
         public Task<IEnumerable<MRank>> GetAllByType(int Type);
     }

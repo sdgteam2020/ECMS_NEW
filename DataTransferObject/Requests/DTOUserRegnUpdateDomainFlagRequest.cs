@@ -13,8 +13,15 @@ namespace DataTransferObject.Requests
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
         [RegularExpression(@"^[\d]+$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "OnlyNumber")]
         public int Id { get; set; }
+
+        [RegularExpression("^[a-zA-Z]*$", ErrorMessage = "Only Alphabets allowed.")]
         public bool AdminFlag { get; set; }
+
+        [RegularExpression(@"^[\w\&\.\-\; ]*$", ErrorMessage = "Only Alphabets ,Numbers and some symbol (& . -) allowed.")]
+        [MaxLength(200, ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "MaxLengthError")]
         public string? AdminMsg { get; set; }
+
+        [RegularExpression("^[a-zA-Z]*$", ErrorMessage = "Only Alphabets allowed.")]
         public bool Active { get; set; }
         public int Updatedby { get; set; }
     }

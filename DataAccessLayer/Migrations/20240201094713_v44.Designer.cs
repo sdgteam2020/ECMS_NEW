@@ -4,6 +4,7 @@ using DataAccessLayer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,13 +12,15 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccessLayer.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240201094713_v44")]
+    partial class v44
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.13")
+                .HasAnnotation("ProductVersion", "7.0.12")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -93,8 +96,7 @@ namespace DataAccessLayer.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("AdminMsg")
-                        .HasMaxLength(200)
-                        .HasColumnType("varchar(200)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
@@ -180,8 +182,8 @@ namespace DataAccessLayer.Migrations
 
                     b.Property<string>("ArmyNo")
                         .IsRequired()
-                        .HasMaxLength(10)
-                        .HasColumnType("varchar(10)");
+                        .HasMaxLength(20)
+                        .HasColumnType("varchar(20)");
 
                     b.Property<string>("DialingCode")
                         .IsRequired()
@@ -265,7 +267,6 @@ namespace DataAccessLayer.Migrations
 
                     b.Property<string>("AppointmentName")
                         .IsRequired()
-                        .HasMaxLength(50)
                         .HasColumnType("VARCHAR(50)");
 
                     b.Property<bool>("IsActive")
@@ -370,8 +371,7 @@ namespace DataAccessLayer.Migrations
 
                     b.Property<string>("BdeName")
                         .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("varchar(20)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<byte>("ComdId")
                         .HasColumnType("tinyint");
@@ -472,7 +472,6 @@ namespace DataAccessLayer.Migrations
 
                     b.Property<string>("CorpsName")
                         .IsRequired()
-                        .HasMaxLength(10)
                         .HasColumnType("varchar(10)");
 
                     b.Property<bool>("IsActive")
@@ -510,8 +509,7 @@ namespace DataAccessLayer.Migrations
 
                     b.Property<string>("DivName")
                         .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("varchar(20)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -1381,88 +1379,6 @@ namespace DataAccessLayer.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("MApiData");
-                });
-
-            modelBuilder.Entity("DataTransferObject.Domain.Model.MApiDataOffrs", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int?>("ApplyForId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Pers_Army_No")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Pers_Blood_Gp")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Pers_District")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Pers_Father_Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Pers_Gender")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Pers_Height")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Pers_House_no")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Pers_Iden_mark_1")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Pers_Iden_mark_2")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Pers_Moh_st")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Pers_Pin_code")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Pers_Police_stn")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Pers_Post_office")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Pers_Rank")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Pers_Regt")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Pers_State")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Pers_Tehsil")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Pers_UID")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Pers_Village")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Pers_birth_dt")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Pers_enrol_dt")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Pers_name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("MApiDataOffrs");
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Model.MStepCounter", b =>

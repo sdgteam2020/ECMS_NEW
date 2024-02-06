@@ -12,10 +12,11 @@ namespace DataTransferObject.Domain.Master
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        [RegularExpression(@"^[\d]+$", ErrorMessage = "ApplyForId is number.")]
         public byte ApplyForId { get; set; }
         [Column(TypeName = "VARCHAR(50)")]
         [Required(ErrorMessage = "required!")]
         [RegularExpression("^[a-zA-Z0-9 ]*$", ErrorMessage = "Only Alphabets and Numbers allowed.")]
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
     }
 }

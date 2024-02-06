@@ -13,10 +13,12 @@ namespace DataTransferObject.Domain.Master
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public short ApptId { get; set; }
+
         [Column(TypeName = "VARCHAR(50)")]
         [Required(ErrorMessage = "required!")]
         [RegularExpression("^[a-zA-Z0-9 ]*$", ErrorMessage = "Only Alphabets and Numbers allowed.")]
-        public string AppointmentName { get; set; }
+        [MaxLength(50, ErrorMessage = "Maximum length of Appointment Name is fifty character.")]
+        public string AppointmentName { get; set; } = string.Empty;
        // [Required(ErrorMessage = "required!")]
 
         //[ForeignKey("mFormation"), DatabaseGenerated(DatabaseGeneratedOption.None)]

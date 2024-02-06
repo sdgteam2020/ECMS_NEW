@@ -111,24 +111,13 @@ function BindData() {
                 }
               
                 else {
-
-                   
-                   
                     for (var i = 0; i < response.length; i++) {
                         if (response[i].comdId != 1) {
                             listItem += "<tr>";
                             listItem += "<td class='d-none'><span id='spnMcorpsId'>" + response[i].CorpsId + "</span><span id='spncomdId'>" + response[i].ComdId + "</span></td>";
-                            listItem += "<td>";
-                            listItem += "<div class='custom-control custom-checkbox small'>";
-                            listItem += "<input type='checkbox' class='custom-control-input' id='" + response[i].CorpsId + "'>";
-                            listItem += "<label class='custom-control-label' for='" + response[i].CorpsId + "'></label>";
-                            listItem += "</div>";
-                            listItem += "</td>";
                             listItem += "<td class='align-middle'>" + (i + 1) + "</td>";
                             listItem += "<td class='align-middle'><span id='corpsName'>" + response[i].CorpsName + "</span></td>";
                             listItem += "<td class='align-middle'><span id='comdName'>" + response[i].ComdName + "</span></td>";
-
-
                             listItem += "<td class='align-middle'><span id='btnedit'><button type='button' class='cls-btnedit btn btn-icon btn-round btn-primary mr-1'><i class='fas fa-edit'></i></button></span><button type='button' class='cls-btnDelete btn-icon btn-round btn-danger mr-1'><i class='fas fa-trash-alt'></i></button></td>";
 
 
@@ -143,7 +132,7 @@ function BindData() {
                     memberTable = $('#tbldata').DataTable({
                         retrieve: true,
                         lengthChange: false,
-                        "order": [[2, "asc"]],
+                        "order": [[1, "asc"]],
                         buttons: [{
                             extend: 'copy',
                             exportOptions: {
@@ -240,7 +229,7 @@ function Save() {
     $.ajax({
         url: '/Master/SaveCorps',
         type: 'POST',
-        data: { "CorpsName": $("#txtCoprsName").val(), "ComdId": $("#ddlCommand").val(), "CorpsId": $(".spnCorpsId").html() }, //get the search string
+        data: { "CorpsName": $("#txtCoprsName").val().trim(), "ComdId": $("#ddlCommand").val(), "CorpsId": $(".spnCorpsId").html() }, //get the search string
         success: function (result) {
 
 

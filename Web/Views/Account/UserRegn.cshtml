@@ -25,7 +25,7 @@
             <div class="row">
                 <div class="col-xl-12 text-left">
                     <h3>
-                        User Regn Details
+                        User Registration Details
                         <small class="text-muted"></small>
                     </h3>
                 </div>
@@ -44,18 +44,18 @@
                             @* <button type="button" id="btnAdd" class="btn btn-outline-success font-weight-600 btn-sm">Add Command</button> *@
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" name="choice" id="Id" value="Id">
-                                <label for="choice">Id</label>
+                                <label for="choice">ID</label>
                             </div>
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" name="choice" id="DomainId" value="DomainId">
-                                <label for="choice">Domain Id</label>
+                                <label for="choice">Domain ID</label>
                             </div>
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" name="choice" id="ICNo" value="ICNo">
                                 <label for="choice">IC No</label>
                             </div>
                             <div>
-                                <input class="btn-outline-light form-control mr-2" placeholder="Search Id / Domain /IC No" id="txtSearch" maxlength="30" pattern="^[a-zA-Z0-9 ]*$" />
+                                <input class="btn-outline-light form-control mr-2" placeholder="Search ID / Domain /IC No" id="txtSearch" maxlength="30" pattern="^[a-zA-Z0-9 ]*$" />
                             </div>
                         </div>
                     </div>
@@ -75,13 +75,13 @@
                                 <tr>
                                     <th class="noExport d-none"></th>
                                     <th class="nowrap">S No</th>
-                                    <th class="nowrap">Reg Id</th>
-                                    <th class="nowrap">Domain Id</th>
+                                    <th class="nowrap">Registered ID</th>
+                                    <th class="nowrap">Domain ID</th>
                                     <th class="nowrap">IC No</th>
                                     <th class="nowrap">Role</th>
-                                    <th class="nowrap">Requested Genr On (DT)</th>
+                                    <th class="nowrap">Request Generated On (Dt)</th>
                                     <th class="nowrap">Mapping</th>
-                                    <th class="nowrap">IsActive</th>
+                                    <th class="nowrap">Active Yes/No</th>
                                     <th class="nowrap">Status</th>
                                     <th class="nowrap">Action</th>
                                 </tr>
@@ -109,7 +109,7 @@
                         <div class="row">
                             <span class=" d-none" id="spnDomainRegId">0</span>
                             <div class="form-group row mb-2">
-                                <label class="col-form-label col-sm-4">Domain Id</label>
+                                <label class="col-form-label col-sm-4">Domain ID</label>
                                 <div class="col-sm-8">
                                     <label class="col-form-label unit-label-background" id="lblDomainId"></label>
                                 </div>
@@ -159,7 +159,8 @@
                             <div class="form-group row mb-2">
                                 <label class="col-form-label col-sm-4">Message for User</label>
                                 <div class="col-sm-8">
-                                    <textarea name="txtadminmessage" id="txtadminmessage" rows="3" cols="50"></textarea>
+                                    <textarea class="form-control1" style="height:auto!important;" name="txtadminmessage" id="txtadminmessage" rows="3" maxlength="200" data-val-maxlength="Maximum length of Message is 200 character." data-val-maxlength-max="200" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-regex-pattern="^[\w\&\.\-\; ]*$"></textarea>
+                                    <span class="text-danger field-validation-valid" data-valmsg-for="txtadminmessage" data-valmsg-replace="true"></span>
                                 </div>
                             </div>
                             <div class="form-group row mb-2">
@@ -175,7 +176,7 @@
                                 </div>
                             </div>
                             <div class="row mb-2">
-                                <label class="col-form-label col-sm-4">Sus No</label>
+                                <label class="col-form-label col-sm-4">SUS No</label>
                                 <div class="col-sm-8">
                                     <label id="lblSusno" class="col-form-label unit-label-background"></label>
                                 </div>
@@ -252,7 +253,7 @@
                         <div class="row">
                             <span class=" d-none" id="spnDomainRegIdForMapping">0</span>
                             <div class="form-group row mb-2">
-                                <label class="col-form-label col-sm-4 model-body-label">Domain Id</label>
+                                <label class="col-form-label col-sm-4 model-body-label">Domain ID</label>
                                 <div class="col-sm-8">
                                     <label class="col-form-label unit-label-background" id="lblDomainIdForMapping"></label>
                                 </div>
@@ -311,7 +312,7 @@
                                 </div>
                             </div>
                             <div class="row mb-2">
-                                <label class="col-form-label col-sm-4">Sus No</label>
+                                <label class="col-form-label col-sm-4">SUS No</label>
                                 <div class="col-sm-8">
                                     <label id="lblSusnoForMapping" class="col-form-label unit-label-background"></label>
                                 </div>
@@ -360,22 +361,22 @@
                             </div>
                             <div class="form-group row mb-2">
                                 <span class=" d-none" id="spnUserProfileId">0</span>
-                                <label class="col-form-label col-sm-4">Offrs Army No</label>
+                                <label class="col-form-label col-sm-4">Service No</label>
                                 <div class="col-sm-8">
-                                    <input class="form-control" placeholder="Enter Army No" id="txtArmyNo" name="txtArmyNo" minlength="7" maxlength="15" data-val="true" data-val-regex="This special chars and space not allowed for security reasons." data-val-regex-pattern="^[\w\-]+$" />
+                                    <input class="form-control" placeholder="Enter Service No" id="txtArmyNo" name="txtArmyNo" minlength="7" maxlength="15" data-val="true" data-val-regex="This special chars and space not allowed for security reasons." data-val-regex-pattern="^[\w\-]+$" />
                                     <span class="text-danger field-validation-valid" data-valmsg-for="txtArmyNo" data-valmsg-replace="true"></span>
-                                </div>
-                            </div>
-                            <div class="form-group row mb-2">
-                                <label class="col-form-label col-sm-4">Name</label>
-                                <div class="col-sm-8">
-                                    <label class="col-form-label unit-label-background" id="lblName"></label>
                                 </div>
                             </div>
                             <div class="form-group row mb-2">
                                 <label class="col-form-label col-sm-4">Rank</label>
                                 <div class="col-sm-8">
                                     <label class="col-form-label unit-label-background" id="lblRank"></label>
+                                </div>
+                            </div>
+                            <div class="form-group row mb-2">
+                                <label class="col-form-label col-sm-4">Name</label>
+                                <div class="col-sm-8">
+                                    <label class="col-form-label unit-label-background" id="lblName"></label>
                                 </div>
                             </div>
                             <div class="col-sm-12 text-right">

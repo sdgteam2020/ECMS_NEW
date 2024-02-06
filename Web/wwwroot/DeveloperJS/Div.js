@@ -106,20 +106,13 @@ function BindData() {
                 
                 else {
 
-                  
+                    $("#tbldata").DataTable().destroy();
                    
                     for (var i = 0; i < response.length; i++) {
 
                         listItem += "<tr>";
                         listItem += "<td class='d-none'><span id='spnMDivId'>" + response[i].DivId + "</span><span id='spnMcorpsId'>" + response[i].CorpsId + "</span><span id='spncomdId'>" + response[i].ComdId + "</span></td>";
-                        listItem += "<td>";
-                        listItem += "<div class='custom-control custom-checkbox small'>";
-                        listItem += "<input type='checkbox' class='custom-control-input' id='" + response[i].DivId + "'>";
-                        listItem += "<label class='custom-control-label' for='" + response[i].DivId + "'></label>";
-                        listItem += "</div>";
-                        listItem += "</td>";
                         listItem += "<td class='align-middle'>" + (i + 1) + "</td>";
-                       
                         listItem += "<td class='align-middle'><span id='comdName'>" + response[i].ComdName + "</span></td>";
                         listItem += "<td class='align-middle'><span id='corpsName'>" + response[i].CorpsName + "</span></td>";
                         listItem += "<td class='align-middle'><span id='divName'>" + response[i].DivName + "</span></td>";
@@ -137,7 +130,7 @@ function BindData() {
                     memberTable = $('#tbldata').DataTable({
                         retrieve: true,
                         lengthChange: false,
-                        "order": [[2, "asc"]],
+                        "order": [[1, "asc"]],
                         buttons: [{
                             extend: 'copy',
                             exportOptions: {
@@ -237,7 +230,7 @@ function Save() {
     $.ajax({
         url: '/Master/SaveDiv',
         type: 'POST',
-        data: { "DivName": $("#txtDivName").val(), "ComdId": $("#ddlCommand").val(), "CorpsId": $("#ddlCorps").val(), "DivId": $(".spnDivId").html() }, //get the search string
+        data: { "DivName": $("#txtDivName").val().trim(), "ComdId": $("#ddlCommand").val(), "CorpsId": $("#ddlCorps").val(), "DivId": $(".spnDivId").html() }, //get the search string
         success: function (result) {
 
 
