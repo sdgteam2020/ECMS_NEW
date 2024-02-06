@@ -178,7 +178,7 @@ namespace DataTransferObject.Localize {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to This &lt; &gt;^| special chars not allowed for security reasons..
+        ///   Looks up a localized string similar to Special chars not allowed for security reasons..
         /// </summary>
         public static string SpecialChars {
             get {

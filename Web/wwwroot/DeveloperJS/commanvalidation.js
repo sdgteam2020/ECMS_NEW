@@ -42,6 +42,18 @@ $(document).ready(function () {
             return false; // Block the keypress
         }
     });
+    $('.form-control-domainId').keypress(function (e) {
+        // Get the key code of the pressed key
+        var keyCode = e.which;
+
+        // Allow only alphabets (A-Z, a-z) and numbers (0-9)
+        if ((keyCode >= 65 && keyCode <= 90) || (keyCode >= 97 && keyCode <= 122) || (keyCode >= 48 && keyCode <= 57) || (keyCode == 32) || keyCode == 95) {
+            return true; // Allow the keypress
+        } else {
+            toastr.warning('Only Alphabets, Underscore and Numbers allowed');
+            return false; // Block the keypress
+        }
+    });
     $('.Alphanumeric').on('change', function () {
         
         if ($('.Alphanumeric').val().match("^[a-zA-Z0-9 ]*$")) {
@@ -54,15 +66,15 @@ $(document).ready(function () {
         }
     });
     $('.isNumerictxt').on('keypress', function () {
-
         if (isNumeric($('.isNumerictxt').val())) {
            
-            return true
+            return true;
 
         }
         else {
             $(this).val("");
             toastr.warning('Only Numbers allowed');
+            return false;
 
         }
     });

@@ -14,7 +14,7 @@ namespace BusinessLogicsLayer.Bde
     {
 
         public Task<bool> GetByName(MRank DTo);
-        public Task<int> GetByMaxOrder();
+        public Task<short> GetByMaxOrder();
         public Task<int> OrderByChange(MRank DTo);
         public Task<IEnumerable<MRank>> GetAllByorder();
         public Task<IEnumerable<MRank>> GetAllByType(int Type);

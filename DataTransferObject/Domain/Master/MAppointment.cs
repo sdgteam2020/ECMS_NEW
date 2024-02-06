@@ -17,6 +17,7 @@ namespace DataTransferObject.Domain.Master
         [Column(TypeName = "VARCHAR(50)")]
         [Required(ErrorMessage = "required!")]
         [RegularExpression("^[a-zA-Z0-9 ]*$", ErrorMessage = "Only Alphabets and Numbers allowed.")]
+        [MaxLength(50, ErrorMessage = "Maximum length of Appointment Name is fifty character.")]
         public string AppointmentName { get; set; } = string.Empty;
        // [Required(ErrorMessage = "required!")]
 

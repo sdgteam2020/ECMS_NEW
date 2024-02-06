@@ -11,8 +11,8 @@ namespace DataTransferObject.Response
     public class DTOAppointmentResponse
     {
         public int ApptId { get; set; }
-        public string AppointmentName { get; set; }
-        public int FormationId { get; set; }
-        public string FormationName { get; set; }
+        public string AppointmentName { get; set; }=string.Empty;
+        //public int FormationId { get; set; }
+        //public string FormationName { get; set; }
     }
 }

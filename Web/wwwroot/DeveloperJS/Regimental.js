@@ -111,11 +111,6 @@ function BindData() {
                         
                             listItem += "<tr>";
                             listItem += "<td class='d-none'><span id='spnMRegId'>" + response[i].RegId + "</span><span id='spnArmedId'>" + response[i].ArmedId + "</span></td>";
-                            listItem += "<td>";
-                            listItem += "<div class='custom-control custom-checkbox small'>";
-                            listItem += "<input type='checkbox' class='custom-control-input' id='" + response[i].RegId + "'>";
-                            listItem += "<label class='custom-control-label' for='" + response[i].RegId + "'></label>";
-                            listItem += "</div>";
                             listItem += "<td class='align-middle'>" + (i+1) + "</td>";
                             listItem += "<td class='align-middle'><span id='Name'>" + response[i].Name + "</span></td>";
                             listItem += "<td class='align-middle'><span id='abbreviation'>" + response[i].Abbreviation + "</span></td>";
@@ -136,7 +131,7 @@ function BindData() {
                     memberTable = $('#tblData').DataTable({
                         retrieve: true,
                         lengthChange: false,
-                        "order": [[2, "asc"]],
+                        "order": [[1, "asc"]],
                         buttons: [{
                             extend: 'copy',
                             exportOptions: {
@@ -235,7 +230,7 @@ function Save() {
     $.ajax({
         url: '/Master/SaveRegimental',
         type: 'POST',
-        data: { "Name": $("#txtName").val(), "RegId": $("#spnRegId").html(), "Abbreviation": $("#txtAbbreviation").val(), "ArmedId": $("#ddlArmType").val(), "Location": $("#txtLocation").val(), }, //get the search string
+        data: { "Name": $("#txtName").val().trim(), "RegId": $("#spnRegId").html(), "Abbreviation": $("#txtAbbreviation").val().trim(), "ArmedId": $("#ddlArmType").val(), "Location": $("#txtLocation").val().trim(), }, //get the search string
         success: function (result) {
 
 

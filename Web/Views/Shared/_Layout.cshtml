@@ -114,6 +114,26 @@
             -o-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
             transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s
         }
+
+        .form-control-domainId {
+            display: block;
+            width: 100%;
+            height: 34px;
+            padding: 6px 12px;
+            font-size: 14px;
+            line-height: 1.42857143;
+            color: #555;
+            background-color: #fff;
+            background-image: none;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+            box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+            -webkit-transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
+            -o-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+            transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s
+        }
+
         .select2-container--default .select2-selection--single,
         .select2-selection .select2-selection--single {
             border: 1px solid #d2d6de;
@@ -509,7 +529,7 @@
                                 <ul class="nav flex-column sub-menu">
                                     <li class="nav-item"> <a class="nav-link" href="/Master/Command">Comd / PSO</a></li>
                                     <li class="nav-item"> <a class="nav-link" href="/Master/Corps">Corps / Dte / Area</a></li>
-                                    <li class="nav-item"> <a class="nav-link" href="/Master/Div">Div / Branch / SubArea</a></li>
+                                    <li class="nav-item"> <a class="nav-link" href="/Master/Div">Div / Branch / Sub Area</a></li>
                                     <li class="nav-item"> <a class="nav-link" href="/Master/Bde">Bde </a></li>
                                     <li class="nav-item"> <a class="nav-link" href="/Master/MapUnit"> Map Unit</a></li>
                                 </ul>
@@ -528,8 +548,8 @@
                                     <li class="nav-item"> <a class="nav-link" href="/Master/Rank">Rank</a></li>
                                     <li class="nav-item"> <a class="nav-link" href="/Master/Formation">Formation</a></li>
                                     <li class="nav-item"> <a class="nav-link" href="/Master/Appointment">Appointment</a></li>
-                                    <li class="nav-item"> <a class="nav-link" href="/Master/ArmedType">Armed Type</a></li>
-                                    <li class="nav-item"> <a class="nav-link" href="/Master/Regimental">Regimental</a></li>
+                                    <li class="nav-item"> <a class="nav-link" href="/Master/ArmedType">Arms / Service</a></li>
+                                    <li class="nav-item"> <a class="nav-link" href="/Master/Regimental">Regt Centre</a></li>
                                 </ul>
                             </div>
                         </li>
@@ -541,8 +561,8 @@
                             </a>
                             <div class="collapse show" id="ui-ICard">
                                 <ul class="nav flex-column sub-menu">
-                                    <li class="nav-item"> <a class="nav-link" href="/Account/DomainRegn">Domain Regn.</a></li>
-                                    <li class="nav-item"> <a class="nav-link" href="/Account/UserRegn">User Regn.</a></li>
+                                    <li class="nav-item"> <a class="nav-link" href="/Account/DomainRegn">Domain Regn</a></li>
+                                    <li class="nav-item"> <a class="nav-link" href="/Account/UserRegn">User Regn</a></li>
                                     <li class="nav-item"> <a class="nav-link" href="/Account/ProfileManage">User Profile</a></li>
 
                                 </ul>
@@ -551,12 +571,12 @@
 
 
 
-                        <li class="nav-item">
+@*                         <li class="nav-item">
                             <a class="nav-link" href="#">
                                 <i class="icon-paper menu-icon"></i>
                                 <span class="menu-title">Documentation</span>
                             </a>
-                        </li>
+                        </li> *@
                     }
                 </ul>
             </nav>
@@ -780,21 +800,16 @@
                                 <label class="col-form-label col-sm-4">Div/Sub Area<i class="fas fa-asterisk mand1"></i></label>
                                 <div class="col-sm-8">
 
-                                    <select class=" js-example-basic-single select2 form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddlDiv" required id="ddlDiv">
+                                    <select class="form-select" style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddlDiv" required id="ddlDiv">
                                         <option value="0">Select One </option>
-
                                     </select>
                                 </div>
-
                             </div>
-
                             <div class="form-group row mb-2 unittype">
                                 <label class="col-form-label col-sm-4">Bde<i class="fas fa-asterisk mand1"></i></label>
                                 <div class="col-sm-8">
-
-                                    <select class=" js-example-basic-single select2 form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddlBde" required id="ddlBde">
+                                    <select class="form-select" style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddlBde" required id="ddlBde">
                                         <option value="0">Select Bde </option>
-
                                     </select>
                                 </div>
 
@@ -803,36 +818,27 @@
                             <div class="form-group row mb-2 FmnBranch  d-none">
                                 <label class="col-form-label col-sm-4">Type of Fmn /Branch<i class="fas fa-asterisk mand1"></i></label>
                                 <div class="col-sm-8">
-
                                     <select class="form-select" style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddlFmnBranch" required id="ddlFmnBranch">
                                         <option value="1">Select Fmn/Branch </option>
-
                                     </select>
                                 </div>
-
                             </div>
 
                             <div class="form-group row mb-2 DteBranch d-none">
                                 <label class="col-form-label col-sm-4">PSO /Dte <i class="fas fa-asterisk mand1"></i></label>
                                 <div class="col-sm-8">
-
                                     <select class="form-select" style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddlPSODte" required id="ddlPSODte">
                                         <option value="1">Select DG / Sub Dte </option>
-
                                     </select>
                                 </div>
-
                             </div>
                             <div class="form-group row mb-2 DteBranch d-none">
                                 <label class="col-form-label col-sm-4">DG / Sub Dte <i class="fas fa-asterisk mand1"></i></label>
                                 <div class="col-sm-8">
-
                                     <select class="form-select" style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddlDgSubDte" required id="ddlDgSubDte">
                                         <option value="1">Select DG / Sub Dte</option>
-
                                     </select>
                                 </div>
-
                             </div>
 
                             <div class="col-sm-12 text-right">
