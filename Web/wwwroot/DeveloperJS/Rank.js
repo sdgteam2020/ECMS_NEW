@@ -1,14 +1,8 @@
 $(document).ready(function () {
-
-    
-
-    
     Reset();
     BindData()
     $("#btnReset").click(function () {
         Reset();
-       
-
     });
    
     $("#btnsave").click(function () {
@@ -111,7 +105,7 @@ function BindData() {
                     for (var i = 0; i < response.length; i++) {
                        
                             listItem += "<tr>";
-                            listItem += "<td class='d-none'><span id='SRankId'>" + response[i].RankId + "</span><span id='SOrderby'>" + response[i].Orderby + "</span><span id='Stype'>" + response[i].Type + "</span></td>";
+                            listItem += "<td class='d-none'><span id='SRankId'>" + response[i].RankId + "</span><span id='SOrderby'>" + response[i].Orderby + "</span><span id='SApplyForId'>" + response[i].ApplyForId + "</span></td>";
                             listItem += "<td class='align-middle'>" + (i+1) + "</td>";
                             listItem += "<td class='align-middle'><span id='RankName'>" + response[i].RankName + "</span></td>";
                             listItem += "<td class='align-middle'><span id='RankAbbreviation'>" + response[i].RankAbbreviation + "</span></td>";
@@ -190,7 +184,7 @@ function BindData() {
                       /*  $("#AddNewM").modal('show');*/
                         $("#txtRank").val($(this).closest("tr").find("#RankName").html());
                         $("#txtAbbreviation").val($(this).closest("tr").find("#RankAbbreviation").html());
-                        $("#ddlRankType").val($(this).closest("tr").find("#Stype").html());
+                        $("#ddlRankType").val($(this).closest("tr").find("#SApplyForId").html());
                        
                         $("#spnrankId").html($(this).closest("tr").find("#SRankId").html());
                         $("#spnSOrderby").html($(this).closest("tr").find("#SOrderby").html());

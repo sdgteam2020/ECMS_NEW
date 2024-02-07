@@ -12,17 +12,19 @@ using System.Text;
 using System.Threading.Tasks;
 using static Dapper.SqlMapper;
 using DataAccessLayer.Logger;
+using Microsoft.Extensions.Logging;
 
 namespace DataAccessLayer
 {
     public class BdeDB : GenericRepositoryDL<MBde>, IBdeDB
     {
         protected readonly ApplicationDbContext _context;
-       
-        public BdeDB(ApplicationDbContext context ) : base(context)
+        private readonly ILogger<BdeDB> _logger;
+
+        public BdeDB(ApplicationDbContext context, ILogger<BdeDB> logger) : base(context)
         {
             _context = context;
-          
+            _logger = logger;
         }
         private readonly IConfiguration configuration;
 
@@ -31,7 +33,21 @@ namespace DataAccessLayer
             var ret = _context.MBde.Any(p => p.BdeName.ToUpper() == Data.BdeName.ToUpper());
             return ret;
         }
-      
+        public async Task<bool?> FindByBdeWithId(string BdeName, byte BdeId)
+        {
+            try
+            {
+                var ret = await _context.MBde.AnyAsync(p => p.BdeId != BdeId && p.BdeName.ToUpper() == BdeName.ToUpper());
+                return ret;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "UserProfileDB->FindByBdeWithId");
+                return null;
+            }
+
+        }
+
 
         public Task<List<DTOBdeResponse>> GetALLBdeCat()
         {

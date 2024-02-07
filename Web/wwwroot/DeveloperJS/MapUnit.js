@@ -490,9 +490,9 @@ function SaveUnitWithMapping() {
         data: {
             "UnitId": $("#spnUnitId").html(),
             "UnitMapId": $("#spnUnitMapId").html(),
-            "Sus_no": $("#txtSusno").val().substring(0, 7),
-            "Suffix": $("#txtSusno").val().substring(8, 7),
-            "UnitName": $("#txtUnit").val(),
+            "Sus_no": $("#txtSusno").val().trim().substring(0, 7),
+            "Suffix": $("#txtSusno").val().trim().substring(8, 7),
+            "UnitName": $("#txtUnit").val().trim(),
             "IsVerify": $("input[type='radio'][name=IsVerify]:checked").val(),
             "UnitType": $("input[type='radio'][name=UnitTyperdi]:checked").val(),
             "ComdId": $("#ddlCommand").val(),

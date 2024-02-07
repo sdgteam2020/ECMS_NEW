@@ -16,28 +16,47 @@ namespace DataTransferObject.Domain.Model
         public int BasicDetailTempId { get; set; }
 
         [StringLength(36)]
-        [Column(TypeName = "nvarchar(36)")]
+        [Column(TypeName = "varchar(36)")]
         public string Name { get; set; } = string.Empty;
 
         [StringLength(50)]
-        [Column(TypeName = "nvarchar(50)")]
+        [Column(TypeName = "varchar(10)")]
         [Index("IX_BasicDetails_ServiceNo", IsClustered = false, IsUnique = true, Order = 1)]
         public string ServiceNo { get; set; } = string.Empty;
 
         public DateTime DOB { get; set; }
         [Display(Name = "Rank", ResourceType = typeof(Resource))]
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
-        [RegularExpression(@"^[\w \.\,\?\;\:\""\''\[\]\!\@\#\$\%\&\*\(\)\-\=\+\\\/]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
+        [RegularExpression(@"^[\d]+$", ErrorMessage = "RankId is number.")]
         public short RankId { get; set; }
 
         public DateTime DateOfCommissioning { get; set; }
 
+        [StringLength(50)]
+        [Column(TypeName = "varchar(50)")]
         public string? State { get; set; }
+
+        [StringLength(50)]
+        [Column(TypeName = "varchar(50)")]
         public string? District { get; set; }
+
+        [StringLength(50)]
+        [Column(TypeName = "varchar(50)")]
         public string? PS { get; set; }
+
+        [StringLength(50)]
+        [Column(TypeName = "varchar(50)")]
         public string? PO { get; set; }
+
+        [StringLength(50)]
+        [Column(TypeName = "varchar(50)")]
         public string? Tehsil { get; set; }
+
+        [StringLength(50)]
+        [Column(TypeName = "varchar(50)")]
         public string? Village { get; set; }
+
+        [RegularExpression(@"^[\d]+$", ErrorMessage = "PinCode is number.")]
         public int? PinCode { get; set; }
 
 
