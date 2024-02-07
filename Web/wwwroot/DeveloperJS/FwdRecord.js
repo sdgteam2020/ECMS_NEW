@@ -2,6 +2,7 @@
 //var sing = "";
 var StepCounter = 0;
 var applyfor = 0;
+var xmlsign = 0;
 var lstmultifwdarr = new Array();
 $(document).ready(function () {
     $("#btntokenTofwd").click(function () {
@@ -153,8 +154,8 @@ $(document).ready(function () {
         $("#spnStepCounter").html($(this).closest("tr").find(".spnStepCounterId").html());
         var spnRequestId = $(this).closest("tr").find(".spnRequestId").html();
         $("#spnCurrentspnRequestId").html(spnRequestId);
-            spnStepId = $(this).closest("tr").find(".spnStepId").html();
-           
+        spnStepId = $(this).closest("tr").find(".spnStepId").html();
+       
         StepCounter = $(this).closest("tr").find(".spnStepCounterId").html();
         applyfor = $(this).closest("tr").find(".spnApplyFor").html();
         
@@ -163,7 +164,8 @@ $(document).ready(function () {
             $("#btnRejected").addClass("d-none");
            
             }
-            GetDataFromBasicDetails($(this).closest("tr").find(".spnBasicDetailId").html());
+        GetDataFromBasicDetails($(this).closest("tr").find(".spnBasicDetailId").html());
+      
         if (StepCounter == 1) {
 
             if (applyfor == 1) {
@@ -952,7 +954,7 @@ function DataSignDigitaly(Data, msgid, TrnFwdId) {
 
     };
     $.ajax({
-        url: '/BasicDetail/DataExport',
+        url: '/BasicDetail/DataDigitalXmlSign',
         contentType: 'application/x-www-form-urlencoded',
         data: userdata,
         type: 'POST',
@@ -1096,13 +1098,14 @@ function SignXmlSendTOdatabase(XmlFile, TrnFwdId) {
 }
 function jsonToXml(json) {
     var xml = '';
-
+   
+   
+   
     for (var key in json) {
+        i = 1;
         if (json.hasOwnProperty(key)) {
 
-            if (key == '0')
-              xml += '<Header>';
-            else
+          
             xml += '<' + key + '>';
 
             if (typeof json[key] === 'object') {
@@ -1111,12 +1114,11 @@ function jsonToXml(json) {
                 xml += json[key];
             }
 
-            if (key == '0')
-                xml += '</Header>';
-            else
+         
                 xml += '</' + key + '>';
         }
     }
+   
 
     return xml;
 }

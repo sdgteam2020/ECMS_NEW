@@ -24,6 +24,7 @@ namespace BusinessLogicsLayer.BasicDet
         public Task<List<DTONotificationResponse>> GetNotification(int UserId, int Type, int applyForId);
         public Task<List<DTONotificationResponse>> GetNotificationRequestId(int UserId, int Type,int applyForId);
         public Task<List<DTODataExportsResponse>> GetBesicdetailsByRequestId(DTODataExportRequest Data);
+        public Task<DTOXMLDigitalResponse> GetDataDigitalXmlSign(DTODataExportRequest Data);
 
 
     }

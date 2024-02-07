@@ -1,5 +1,5 @@
 ﻿$(document).ready(function () {
-    
+    $("#loadingToken").hide();
     $("#btnfetchtoken").click(function () {
         GetTokenDetails1("FetchUniqueTokenDetails","txtArmyNo");
     });
