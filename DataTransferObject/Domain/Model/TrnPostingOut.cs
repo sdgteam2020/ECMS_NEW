@@ -26,6 +26,8 @@ namespace DataTransferObject.Domain.Model
         public byte ReasonId { get; set; }
         public MPostingReason? MPostingReason { get; set; }
         [Required]
+        [StringLength(50)]
+        [Column(TypeName = "varchar(50)")]
         public string Authority { get; set; }
 
         [Required]

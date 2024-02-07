@@ -39,6 +39,8 @@ namespace DataTransferObject.Domain.Model
         [ForeignKey("MapUnit"), DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int UnitId { get; set; } 
         public MapUnit? MapUnit { get; set; }
+        [StringLength(100)]
+        [Column(TypeName = "varchar(100)")]
         public string? Remark { get; set; } = string.Empty;
         public bool Status { get; set; } = false;
         [ForeignKey("MTrnFwdType"), DatabaseGenerated(DatabaseGeneratedOption.None)]

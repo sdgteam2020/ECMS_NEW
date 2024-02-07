@@ -65,14 +65,15 @@ $(document).ready(function () {
 
         }
     });
-    $('.isNumerictxt').on('keypress', function () {
-        if (isNumeric($('.isNumerictxt').val())) {
+    $('.isNumerictxt').keypress(function (e) {
+      
+        if (isNumeric(e.key)) {
            
             return true;
 
         }
         else {
-            $(this).val("");
+            $(this).val($(this).val().replace(e.key,""));
             toastr.warning('Only Numbers allowed');
             return false;
 
