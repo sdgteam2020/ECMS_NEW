@@ -521,14 +521,7 @@ namespace DataAccessLayer
         }
         public async Task<List<DTODataExportsResponse>> GetBesicdetailsByRequestId(DTODataExportRequest Data)
         {
-            //DTOBasicDetailRequest dd = new DTOBasicDetailRequest();
-            //dd.MRank.RankAbbreviation = "";
-            //dd.MArmedType.Abbreviation
-            //string query = "select bas.*,ran.RankAbbreviation RankName,arm.Abbreviation ArmedType from BasicDetails bas " +
-            //    " inner join MRank ran on ran.RankId=bas.RankId"+
-            //    " inner join MArmedType arm on arm.ArmedId=bas.ArmedId"+
-            //    " where bas.BasicDetailId=@BasicDetailId";
-
+            
             string query = "select bas.*," +
                             " trnadd.State,trnadd.District,trnadd.PS,trnadd.PO,trnadd.Tehsil,trnadd.Village,trnadd.PinCode," +
                             " trnup.SignatureImagePath,trnup.PhotoImagePath,IdenMark1,IdenMark2,AadhaarNo,Height,bld.BloodGroup," +
@@ -554,6 +547,97 @@ namespace DataAccessLayer
                 var BasicDetailList = await connection.QueryAsync<DTODataExportsResponse>(query, new { Ids });
 
                 return BasicDetailList.ToList();
+            }
+        }
+        public async Task<DTOXMLDigitalResponse> GetDataDigitalXmlSign(DTODataExportRequest Data)
+        {
+            DTOXMLDigitalSignResponse dTOXMLDigitalSignResponse = new DTOXMLDigitalSignResponse();
+            string query = "select bas.*, trnadd.State,trnadd.District,trnadd.PS,trnadd.PO,trnadd.Tehsil,trnadd.Village,trnadd.PinCode, "+
+                           " trnup.SignatureImagePath,trnup.PhotoImagePath,IdenMark1,IdenMark2,AadhaarNo,Height,bld.BloodGroup, "+
+                           " regi.Abbreviation RegimentalName,Muni.UnitName,uni.UnitMapId UnitId,icardreq.TypeId,icardreq.RegistrationId,"+ 
+                           " ran.RankId,ran.RankAbbreviation RankName,arm.Abbreviation ArmedName,trnadd.AddressId,trnup.UploadId,"+
+                           " trninfo.InfoId,MICardType.Name ICardType ,GETDATE() XmlCreatedOn," +
+                           " App.Name ProApplyFor,reg.Name ProRegistraion,(select Name from MICardType where TypeId=icardreq.TypeId) ProType,users.DomainId ProDomainId,unit.UnitName ProUnitName,unit.Suffix ProSuffix,unit.Sus_no ProSUSNO,pro.Name ProName,ranks.RankAbbreviation ProRankName,pro.ArmyNo ProArmyName"+
+                           " from BasicDetails bas "+
+                           " inner join TrnAddress trnadd on trnadd.BasicDetailId=bas.BasicDetailId "+
+                           " inner join TrnUpload trnup on trnup.BasicDetailId=bas.BasicDetailId "+
+                           " inner join TrnIdentityInfo trninfo on trninfo.BasicDetailId=bas.BasicDetailId "+
+                           " inner join MBloodGroup bld on bld.BloodGroupId=trninfo.BloodGroupId "+
+                           " inner join MRank ran on ran.RankId=bas.RankId "+
+                           " inner join MArmedType arm on arm.ArmedId=bas.ArmedId "+
+                           " inner join MapUnit uni on uni.UnitMapId=bas.UnitId "+
+                           " inner join MUnit Muni on Muni.UnitId=uni.UnitId "+
+                           " inner join TrnICardRequest icardreq on icardreq.BasicDetailId=bas.BasicDetailId and icardreq.Status=0  "+
+                           " inner join MICardType MICardType on MICardType.TypeId=icardreq.TypeId  "+
+                           " inner join TrnDomainMapping trn on trn.Id=icardreq.TrnDomainMappingId"+
+                           " inner join AspNetUsers users on users.Id = trn.AspNetUsersId "+
+                           " inner join MapUnit mapuni on mapuni.UnitMapId = trn.UnitId "+
+                           " inner join MUnit unit on unit.UnitId = mapuni.UnitId "+
+                           " left join UserProfile pro on pro.UserId = trn.UserId "+
+                           " inner join MRank ranks on ranks.RankId = pro.RankId"+
+                           " inner join MApplyFor App on App.ApplyForId=bas.ApplyForId"+
+                           " inner join MRegistration reg on App.ApplyForId=reg.ApplyForId and App.ApplyForId=bas.ApplyForId and reg.RegistrationId= icardreq.RegistrationId"+
+                           " left join MRegimental regi on regi.RegId=bas.RegimentalId where icardreq.RequestId in @Ids";
+            int[] Ids = Data.Ids;
+            using (var connection = _contextDP.CreateConnection())
+            {
+                //data.MRank.RankAbbreviation
+                //data.MArmedType.Abbreviation
+                var BasicDetailList = await connection.QueryFirstAsync<dynamic>(query, new { Ids });
+                if(BasicDetailList!=null)
+                {
+                    ApplicationDetails applicationDetails = new ApplicationDetails();
+                   
+                    applicationDetails.Name = BasicDetailList.Name;
+                   
+                   
+                    applicationDetails.ServiceNo = BasicDetailList.ServiceNo;
+                    applicationDetails.DOB = BasicDetailList.DOB;
+                    applicationDetails.PlaceOfIssue = BasicDetailList.PlaceOfIssue;
+                    applicationDetails.DateOfIssue = BasicDetailList.DateOfIssue;
+                    applicationDetails.IssuingAuth = BasicDetailList.IssuingAuth;
+                    applicationDetails.DateOfCommissioning = BasicDetailList.DateOfCommissioning;
+                    applicationDetails.PaperIcardNo = BasicDetailList.PaperIcardNo;
+                    applicationDetails.State = BasicDetailList.State;
+                    applicationDetails.District = BasicDetailList.District;
+                    applicationDetails.PS = BasicDetailList.PS;
+                    applicationDetails.PO = BasicDetailList.PO;
+                    applicationDetails.Tehsil = BasicDetailList.Tehsil;
+                    applicationDetails.Village = BasicDetailList.Village;
+                    applicationDetails.PinCode = BasicDetailList.PinCode;
+                    applicationDetails.SignatureImagePath = BasicDetailList.SignatureImagePath;
+                    applicationDetails.PhotoImagePath = BasicDetailList.PhotoImagePath;
+                    applicationDetails.IdenMark1 = BasicDetailList.IdenMark1;
+                    applicationDetails.IdenMark2 = BasicDetailList.IdenMark2;
+                    applicationDetails.AadhaarNo = Convert.ToString(BasicDetailList.AadhaarNo);
+                    applicationDetails.Height = Convert.ToString(BasicDetailList.Height);
+                    applicationDetails.BloodGroup = BasicDetailList.BloodGroup;
+                    applicationDetails.RegimentalName = BasicDetailList.RegimentalName;
+                    applicationDetails.UnitName = BasicDetailList.UnitName;
+                    applicationDetails.RankName = BasicDetailList.RankName;
+                    applicationDetails.ArmedName = BasicDetailList.ArmedName;
+
+                    applicationDetails.ICardType = BasicDetailList.ICardType;
+                    applicationDetails.XmlCreatedOn = BasicDetailList.XmlCreatedOn;
+
+                    Profiledtls profiledtls = new Profiledtls();
+                    profiledtls.ProApplyFor = BasicDetailList.ProApplyFor;
+                    profiledtls.ProRegistraion = BasicDetailList.ProRegistraion;
+                    profiledtls.ProType = BasicDetailList.ProType;
+                    profiledtls.ProDomainId = BasicDetailList.ProDomainId;
+                    profiledtls.ProUnitName = BasicDetailList.ProUnitName;
+                    profiledtls.ProSuffix = BasicDetailList.ProSuffix;
+                    profiledtls.ProSUSNO = BasicDetailList.ProSUSNO;
+                    profiledtls.ProName = BasicDetailList.ProName;
+                    profiledtls.ProRankName = BasicDetailList.ProRankName;
+                    profiledtls.ProArmyName = BasicDetailList.ProArmyName;
+
+                    dTOXMLDigitalSignResponse.applicationDetails = applicationDetails;
+                    dTOXMLDigitalSignResponse.profiledtls = profiledtls;
+                }
+                DTOXMLDigitalResponse dTOXMLDigitalResponse = new DTOXMLDigitalResponse();
+                dTOXMLDigitalResponse.Header = dTOXMLDigitalSignResponse;
+                return dTOXMLDigitalResponse;
             }
         }
         public async Task<List<ICardHistoryResponse>> ICardHistory(int RequestId)

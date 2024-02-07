@@ -1441,24 +1441,26 @@ namespace Web.Controllers
                 var jsonde=JsonConvert.DeserializeObject(jsonString);
 
 
-                //string sourceFolderPhotoPhy = Convert.ToString(ForCreateFolderrandom(Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "tempdata")));
-                //string dataph = Convert.ToString(CreateFolder(Path.Combine(sourceFolderPhotoPhy, "photo")));
-                //string datasg = Convert.ToString(CreateFolder(Path.Combine(sourceFolderPhotoPhy, "singature")));
-
-                //foreach (var item in retdata)
-                //{
-                //    System.IO.File.Copy(Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "photo", item.PhotoImagePath), dataph+"//", true);
-                //}
-                
-                // Convert JSON string to bytes
-                //var bytes = Encoding.UTF8.GetBytes(jsonString);
-
-                //// Set the content type and file name
-                //Response.Headers.Add("Content-Disposition", "attachment; filename=data.json");
+                return Json(jsonde);
 
 
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "BasicDetails=>DataExport.");
+                return RedirectToAction("Error", "Error");
+            }
+        }
+        [Authorize(Roles = "User")]
+        public async Task<IActionResult> DataDigitalXmlSign(DTODataExportRequest Data)
+        {
+            try
+            {
+                var retdata = await basicDetailBL.GetDataDigitalXmlSign(Data);
 
-                // return File(bytes, "application/json");
+                var jsonString = JsonConvert.SerializeObject(retdata);
+                var jsonde = JsonConvert.DeserializeObject(jsonString);
+
 
                 return Json(jsonde);
 
@@ -1470,7 +1472,6 @@ namespace Web.Controllers
                 return RedirectToAction("Error", "Error");
             }
         }
-
 
 
         [Authorize(Roles = "User")]

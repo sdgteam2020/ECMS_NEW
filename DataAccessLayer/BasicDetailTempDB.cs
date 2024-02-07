@@ -88,7 +88,7 @@ namespace DataAccessLayer
                         " inner join TrnDomainMapping trn on trn.AspNetUsersId = users.Id" +
                         " inner join MapUnit mapuni on mapuni.UnitMapId = trn.UnitId" +
                         " inner join MUnit unit on unit.UnitId = mapuni.UnitId" +
-                        " left join UserProfile pro on pro.UserId = trn.UnitId" +
+                        " left join UserProfile pro on pro.UserId = trn.UserId" +
                         " inner join MRank ranks on ranks.RankId = pro.RankId"+
                         " inner join MRank ranks1 on ranks1.RankId = Temps.RankId" +
                         " WHERE Temps.Updatedby=@UserId and Temps.BasicDetailTempId=@BasicDetailId ORDER BY Temps.UpdatedOn DESC";

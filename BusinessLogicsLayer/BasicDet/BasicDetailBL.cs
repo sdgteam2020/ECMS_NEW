@@ -79,6 +79,13 @@ namespace BusinessLogicsLayer.BasicDet
 
             return data;
         }
+        public Task<DTOXMLDigitalResponse> GetDataDigitalXmlSign(DTODataExportRequest Data)
+        {
+            
+            var data = _iBasicDetailDB.GetDataDigitalXmlSign(Data);
+
+            return data;
+        }
        
     }
 }
