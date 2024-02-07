@@ -19,7 +19,7 @@ namespace DataTransferObject.Domain.Model
         [Column(TypeName = "varchar(36)")]
         public string Name { get; set; } = string.Empty;
 
-        [StringLength(50)]
+        [StringLength(10)]
         [Column(TypeName = "varchar(10)")]
         [Index("IX_BasicDetails_ServiceNo", IsClustered = false, IsUnique = true, Order = 1)]
         public string ServiceNo { get; set; } = string.Empty;
@@ -61,7 +61,7 @@ namespace DataTransferObject.Domain.Model
 
 
         [StringLength(100)]
-        [Column(TypeName = "nvarchar(100)")]
+        [Column(TypeName = "varchar(100)")]
         public string? Observations { get; set; } = string.Empty;
 
         [NotMapped]
