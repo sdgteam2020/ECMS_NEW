@@ -13,6 +13,8 @@ namespace DataTransferObject.Domain.Master
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public byte Id { get; set; }
-        public string Reason { get; set; }
+
+        [Column(TypeName = "varchar(50)")]
+        public string Reason { get; set; } = string.Empty;
     }
 }

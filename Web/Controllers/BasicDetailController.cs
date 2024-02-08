@@ -708,7 +708,7 @@ namespace Web.Controllers
                             mTrnIdentityInfo.IdenMark1 = model.IdenMark1;
                             mTrnIdentityInfo.IdenMark2 = model.IdenMark2;
                             mTrnIdentityInfo.AadhaarNo = Convert.ToInt64(model.AadhaarNo);
-                            mTrnIdentityInfo.BloodGroupId = model.BloodGroupId;
+                            mTrnIdentityInfo.BloodGroupId =model.BloodGroupId;
                             mTrnIdentityInfo.Height = model.Height;
                             mTrnIdentityInfo.InfoId = model.InfoId;
                             //MTrnIdentityInfo mTrnIdentityInfo = _mapper.Map<BasicDetailCrtAndUpdVM, MTrnIdentityInfo>(model);
