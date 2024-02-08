@@ -56,15 +56,20 @@ namespace DataAccessLayer
                       }).FirstOrDefaultAsync();
             return  ret;
         }
-        public async Task<TrnDomainMapping?> GetAllRelatedDataByDomainId(string DomainId)
+        public async Task<TrnDomainMapping?> GetAllRelatedDataByDomainId(string DomainId,string Role)
         {
             try
             {
-                var result = await (from au in _context.Users.Where(x=>x.DomainId == DomainId) 
+                var result = await (from au in _context.Users.Where(x=>x.DomainId == DomainId)
+                                    join ur in _context.UserRoles on au.Id equals ur.UserId into uur_jointable
+                                    from xur in uur_jointable.DefaultIfEmpty()
+                                    join r in _context.Roles on xur.RoleId equals r.Id into xurr_jointable
+                                    from xr in xurr_jointable.DefaultIfEmpty()
                                     join tdm in _context.TrnDomainMapping on au.Id equals tdm.AspNetUsersId into autdm_jointable
                                     from xtdm in autdm_jointable.DefaultIfEmpty()
                                     join up in _context.UserProfile on xtdm.UserId equals up.UserId into tdmup_jointable
                                     from xup in tdmup_jointable.DefaultIfEmpty()
+                                    where au.DomainId == DomainId /*&& xr!=null ? xr.Name = xr.Name == Role :)*/
                                     select new TrnDomainMapping
                                     {
                                         Id = xtdm != null? xtdm.Id:0,

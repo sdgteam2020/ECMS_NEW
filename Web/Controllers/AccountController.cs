@@ -1228,6 +1228,7 @@ namespace Web.Controllers
             DTOTempSession? dTOTempSession = SessionHeplers.GetObject<DTOTempSession>(HttpContext.Session, "IMData");
             if (dTOTempSession != null)
             {
+                model.ICNo = model.ICNo.Trim();
                 if (ModelState.IsValid)
                 {
                     DTOAllRelatedDataByArmyNoResponse? _dTOProfileResponse = await _userProfileBL.GetAllRelatedDataByArmyNo(model.ICNo);
