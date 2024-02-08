@@ -25,10 +25,14 @@ namespace DataTransferObject.Domain.Model
         public string ServiceNo { get; set; } = string.Empty;
 
         public DateTime DOB { get; set; }
+        
         [Display(Name = "Rank", ResourceType = typeof(Resource))]
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
         [RegularExpression(@"^[\d]+$", ErrorMessage = "RankId is number.")]
+        [ForeignKey("MRank")]
         public short RankId { get; set; }
+        
+        public MRank? Rank { get; set; }
 
         public DateTime DateOfCommissioning { get; set; }
 

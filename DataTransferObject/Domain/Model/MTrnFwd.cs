@@ -50,6 +50,7 @@ namespace DataTransferObject.Domain.Model
 
         public bool IsComplete { get; set; } = false;
 
+        [Column(TypeName = "varchar(100)")]
         public string? RemarksIds { get; set; }
         public int? PostingOutId { get; set; }
         //[ForeignKey("Fwd"), DatabaseGenerated(DatabaseGeneratedOption.None)]

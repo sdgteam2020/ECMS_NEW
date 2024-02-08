@@ -4,6 +4,7 @@ using DataAccessLayer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccessLayer.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240207113324_v53")]
+    partial class v53
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -298,7 +301,7 @@ namespace DataAccessLayer.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("varchar(25)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<byte>("Order")
                         .HasColumnType("tinyint");
@@ -414,7 +417,7 @@ namespace DataAccessLayer.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("BloodGroupId"));
 
                     b.Property<string>("BloodGroup")
-                        .HasColumnType("varchar(10)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("BloodGroupId");
 
@@ -582,7 +585,7 @@ namespace DataAccessLayer.Migrations
 
                     b.Property<string>("FormationName")
                         .IsRequired()
-                        .HasColumnType("varchar(50)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -611,7 +614,7 @@ namespace DataAccessLayer.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("varchar(50)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("TypeId");
 
@@ -703,7 +706,7 @@ namespace DataAccessLayer.Migrations
 
                     b.Property<string>("Reason")
                         .IsRequired()
-                        .HasColumnType("varchar(50)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -817,7 +820,7 @@ namespace DataAccessLayer.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("varchar(50)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Order")
                         .HasColumnType("int");
@@ -910,7 +913,7 @@ namespace DataAccessLayer.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("varchar(50)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("StepId");
 
@@ -965,7 +968,7 @@ namespace DataAccessLayer.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("varchar(50)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("TypeId");
 
@@ -1261,8 +1264,6 @@ namespace DataAccessLayer.Migrations
                     b.HasKey("BasicDetailTempId");
 
                     b.HasIndex("ApplyForId");
-
-                    b.HasIndex("RankId");
 
                     b.HasIndex("RegistrationId");
 
@@ -1580,7 +1581,7 @@ namespace DataAccessLayer.Migrations
                         .HasColumnType("varchar(100)");
 
                     b.Property<string>("RemarksIds")
-                        .HasColumnType("varchar(100)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("RequestId")
                         .HasColumnType("int");
@@ -1694,8 +1695,8 @@ namespace DataAccessLayer.Migrations
                     b.Property<int>("BasicDetailId")
                         .HasColumnType("int");
 
-                    b.Property<byte>("BloodGroupId")
-                        .HasColumnType("tinyint");
+                    b.Property<int>("BloodGroupId")
+                        .HasColumnType("int");
 
                     b.Property<float>("Height")
                         .HasColumnType("real");
@@ -1876,7 +1877,7 @@ namespace DataAccessLayer.Migrations
                         .HasColumnType("tinyint");
 
                     b.Property<DateTime>("SOSDate")
-                        .HasColumnType("datetime");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("ToAspNetUsersId")
                         .HasColumnType("int");
@@ -2479,12 +2480,6 @@ namespace DataAccessLayer.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("DataTransferObject.Domain.Master.MRank", "Rank")
-                        .WithMany()
-                        .HasForeignKey("RankId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("DataTransferObject.Domain.Master.MRegistration", "Registration")
                         .WithMany()
                         .HasForeignKey("RegistrationId")
@@ -2507,8 +2502,6 @@ namespace DataAccessLayer.Migrations
                     b.Navigation("MApplyFor");
 
                     b.Navigation("MICardType");
-
-                    b.Navigation("Rank");
 
                     b.Navigation("Registration");
                 });

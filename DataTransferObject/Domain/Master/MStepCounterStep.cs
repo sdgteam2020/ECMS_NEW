@@ -13,6 +13,8 @@ namespace DataTransferObject.Domain.Master
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public byte StepId { get; set; }
-        public string Name { get; set; }
+
+        [Column(TypeName = "varchar(50)")]
+        public string Name { get; set; } = string.Empty;
     }
 }
