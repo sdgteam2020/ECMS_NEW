@@ -33,6 +33,10 @@ namespace BusinessLogicsLayer.Account
         {
             return await _iAccountDB.FindDomainId(DomainId);
         }
+        public async Task<bool?> FindRoleByName(string Role)
+        {
+            return await _iAccountDB.FindRoleByName(Role);
+        }
         public async Task<List<DTORegisterListRequest>> DomainApproveList()
         {
             return await _iAccountDB.DomainApproveList();

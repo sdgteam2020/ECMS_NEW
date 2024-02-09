@@ -84,6 +84,21 @@ namespace DataAccessLayer
             }
 
         }
+        public async Task<bool?> FindRoleByName(string Role)
+        {
+            try
+            {
+                var ret = await _context.Roles.AnyAsync(x => x.Name.ToUpper() == Role.ToUpper());
+                return ret;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "AccountDB->FindRoleByName");
+                return null;
+            }
+
+
+        }
         public async Task<List<DTORegisterListRequest>?> DomainApproveList()
         {
             try
