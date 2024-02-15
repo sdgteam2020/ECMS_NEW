@@ -13,6 +13,7 @@ using System.Data.Entity.Core.Mapping;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Data.Entity;
 
 namespace DataAccessLayer
 {
@@ -76,8 +77,49 @@ namespace DataAccessLayer
                 _logger.LogError(1001, ex, "UnitDB->GetAllUnit");
                 return null;
             }
+        }
+        public async Task<List<DTOUnitResponse>?> GetTopBySUSNo(string SUSNo)
+        {
+            try
+            {
+                var Unit = await (from unit in _context.MUnit.Where(x => (x.Sus_no + x.Suffix).Contains(SUSNo))
+                                  select new DTOUnitResponse
+                                  {
+                                      UnitId = unit.UnitId,
+                                      Sus_no = unit.Sus_no + unit.Suffix,
+                                      UnitName = unit.UnitName,
+                                      Abbreviation = unit.Abbreviation,
+                                      IsVerify = unit.IsVerify,
+                                  }).Take(5).ToListAsync();
+                return Unit;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "UnitDB->GetTopBySUSNo");
+                return null;
+            }
 
-
+        }
+        public async Task<DTOUnitResponse?> GetUnitByUnitId(int UnitId)
+        {
+            try
+            {
+                var result = await (from unit in _context.MUnit.Where(x=>x.UnitId == UnitId)
+                                   select new DTOUnitResponse
+                                   {
+                                       UnitId = unit.UnitId,
+                                       Sus_no = (unit.Sus_no + unit.Suffix).ToUpper(),
+                                       UnitName = unit.UnitName,
+                                       Abbreviation = unit.Abbreviation,
+                                       IsVerify = unit.IsVerify,
+                                   }).FirstOrDefaultAsync();
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "UnitDB->GetBySusNoWithSuffix");
+                return null;
+            }
         }
     }
  }

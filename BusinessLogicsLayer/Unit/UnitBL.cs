@@ -44,5 +44,13 @@ namespace BusinessLogicsLayer.Unit
         {
             return await _UnitDB.GetBySusNoWithUnitId(Sus_no, UnitId);
         }
+        public async Task<List<DTOUnitResponse>?> GetTopBySUSNo(string SUSNo)
+        {
+            return await _UnitDB.GetTopBySUSNo(SUSNo);
+        }
+        public async Task<DTOUnitResponse?> GetUnitByUnitId(int UnitId)
+        {
+            return await _UnitDB.GetUnitByUnitId(UnitId);
+        }
     }
 }

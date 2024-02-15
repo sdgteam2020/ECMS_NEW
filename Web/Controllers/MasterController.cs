@@ -533,6 +533,19 @@ namespace Web.Controllers
 
             return View();
         }
+        [AllowAnonymous]
+        public async Task<IActionResult> GetTopBySUSNo(string SUSNo)
+        {
+            try
+            {
+                return Json(await unitOfWork.Unit.GetTopBySUSNo(SUSNo));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "Master->GetTopBySUSNo");
+                return Json(KeyConstants.InternalServerError);
+            }
+        }
 
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> SaveUnitWithMapping(DTOSaveUnitWithMappingByAdminRequest dTO)
@@ -877,6 +890,20 @@ namespace Web.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(1001, ex, "Master->GetBySusNO");
+                return Json(KeyConstants.InternalServerError);
+            }
+
+        }
+        public async Task<IActionResult> GetUnitByUnitId(int UnitId)
+        {
+            try
+            {
+                var ret = await unitOfWork.Unit.GetUnitByUnitId(UnitId);
+                return Json(ret);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "Master->GetUnitByUnitId");
                 return Json(KeyConstants.InternalServerError);
             }
 

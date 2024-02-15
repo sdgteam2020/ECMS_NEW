@@ -2,6 +2,59 @@ $(document).ready(function () {
     mMsater(0, "ddlCommand", 1, "");
     BindDataMapUnit()
 
+    $("#txtSusno").autocomplete({
+        source: function (request, response) {
+            $("#lblUnit").html('');
+            if (request.term.length > 2) {
+                $("#spnUnitId").html('');
+                var param = { "SUSNo": request.term };
+                $("#spnUnitId").html(0);
+                $.ajax({
+                    url: '/Master/GetTopBySUSNo',
+                    contentType: 'application/x-www-form-urlencoded',
+                    data: param,
+                    type: 'POST',
+                    success: function (data) {
+                        if (data.length != 0) {
+                            response($.map(data, function (item) {
+                                $("#loading").addClass("d-none");
+                                return { label: item.Sus_no, value: item.UnitId };
+                            }))
+                        }
+                        else {
+                            $("#txtSusno").val("");
+                            $("#spnUnitId").html("");
+                            alert("SUS No not found.")
+                        }
+                    },
+                    error: function (response) {
+                        alert(response.responseText);
+                    },
+                    failure: function (response) {
+                        alert(response.responseText);
+                    }
+                });
+            }
+        },
+        select: function (e, i) {
+            e.preventDefault();
+
+            $("#spnUnitId").html(i.item.value);
+            $("#txtSusno").val(i.item.label);
+            var param1 = { "UnitId": i.item.value };
+            $.ajax({
+                url: '/Master/GetUnitByUnitId',
+                method: 'POST',
+                contentType: 'application/x-www-form-urlencoded',
+                data: param1,
+                datatype: 'json',
+                success: function (data) {
+                    $("#lblUnit").html(data.UnitName);
+                }
+            });
+        },
+        appendTo: '#suggesstion-box'
+    });
 
     $('input[name="UnitTyperdi"]').click(function () {
         var lst = '<option value="1">Please Select</option>';
