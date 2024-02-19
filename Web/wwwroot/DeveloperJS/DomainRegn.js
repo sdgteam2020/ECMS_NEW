@@ -165,6 +165,22 @@
         appendTo: '#suggesstion-box'
     });
 
+    $('#txtUnitName').keyup(function (e) {
+        if (e.keyCode == 46) {
+            $("#spnUnitMapId").html('0');
+            $("#txtUnitName").val("");
+            $("#spnTDMUnitType").html("");
+
+            $("#lblSusno").html('');
+            $("#lblPso").html('');
+            $("#lblDG").html('');
+            $("#lblComd").html('');
+            $("#lblCorps").html('');
+            $("#lblDiv").html('');
+            $("#lblBde").html('');
+            $("#lblFmn").html('');
+        }
+    });
     $("#btnDomainAdd").click(function () {
         Reset();
         ResetErrorMessage();

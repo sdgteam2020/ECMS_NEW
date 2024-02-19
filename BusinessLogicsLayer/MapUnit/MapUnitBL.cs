@@ -50,6 +50,14 @@ namespace BusinessLogicsLayer.Unit
         {
             return await _UnitDB.SaveUnitWithMapping(dTO);
         }
+        public async Task<bool?> FindUnitId(int UnitId)
+        {
+            return await _UnitDB.FindUnitId(UnitId);
+        }
+        public async Task<bool?> FindUnitIdMapped(int UnitId, int UnitMapId)
+        {
+            return await _UnitDB.FindUnitIdMapped(UnitId, UnitMapId);
+        }
 
     }
 }

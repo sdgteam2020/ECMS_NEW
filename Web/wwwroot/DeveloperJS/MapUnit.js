@@ -23,6 +23,7 @@ $(document).ready(function () {
                         }
                         else {
                             $("#txtSusno").val("");
+                            $("#lblUnit").html("");
                             $("#spnUnitId").html("");
                             alert("SUS No not found.")
                         }
@@ -54,6 +55,14 @@ $(document).ready(function () {
             });
         },
         appendTo: '#suggesstion-box'
+    });
+
+    $('#txtSusno').keyup(function (e) {
+        if (e.keyCode == 46) {
+            $("#spnUnitId").html('0');
+            $("#txtSusno").val('');
+            $("#lblUnit").html('');
+        }
     });
 
     $('input[name="UnitTyperdi"]').click(function () {
@@ -427,7 +436,7 @@ function BindDataMapUnit() {
 
                         $("#spnUnitId").html($(this).closest("tr").find("#spnMUnitId").html());
 
-                        $("#txtUnit").val($(this).closest("tr").find("#unitName").html());
+                        $("#lblUnit").html($(this).closest("tr").find("#unitName").html());
                         $("#txtSusno").val($(this).closest("tr").find("#Sus_no").html());
                         var lst = '<option value="1">Please Select</option>';
                         if (parseInt($(this).closest("tr").find("#spnUnitType").html()) == 1) {
@@ -545,7 +554,6 @@ function SaveUnitWithMapping() {
             "UnitMapId": $("#spnUnitMapId").html(),
             "Sus_no": $("#txtSusno").val().trim().substring(0, 7),
             "Suffix": $("#txtSusno").val().trim().substring(8, 7),
-            "UnitName": $("#txtUnit").val().trim(),
             "IsVerify": $("input[type='radio'][name=IsVerify]:checked").val(),
             "UnitType": $("input[type='radio'][name=UnitTyperdi]:checked").val(),
             "ComdId": $("#ddlCommand").val(),
@@ -561,7 +569,7 @@ function SaveUnitWithMapping() {
                 Swal.fire({
                     icon: 'info',
                     title: 'Unit',
-                    html: 'Unit has been saved',
+                    html: 'Unit has been successfully mapped',
                 })
                 $("#AddNewUnitmap").modal('hide'); 
                 ResetMapUnit();
@@ -571,7 +579,7 @@ function SaveUnitWithMapping() {
                 Swal.fire({
                     icon: 'info',
                     title: 'Unit',
-                    html: 'Unit has been updated',
+                    html: 'Unit has been successfully updated',
                 })
                 $("#AddNewUnitmap").modal('hide');
                 ResetMapUnit();
@@ -581,15 +589,7 @@ function SaveUnitWithMapping() {
                 Swal.fire({
                     icon: 'error',
                     title: 'Oops...',
-                    text: 'Unit Name Exits!',
-                })
-
-            }
-            else if (result == 5) {
-                Swal.fire({
-                    icon: 'info',
-                    title: 'Unit',
-                    html: 'Unit has been updated.<br/>Mapping has been saved.',
+                    text: 'Unit Name already mapped!',
                 })
 
             }
@@ -606,11 +606,7 @@ function SaveUnitWithMapping() {
                     for (var i = 0; i < result.length; i++) {
                         toastr.error(result[i][0].ErrorMessage)
                     }
-
-
                 }
-
-
             }
         }
     });
@@ -727,7 +723,7 @@ function ResetMapUnit() {
     $("#ddlDiv").val("");
     $("#ddlBde").val("");
     $("#txtSusno").val("");
-    $("#txtUnit").val("");
+    $("#lblUnit").html("");
 
     $("#spnUnitMapUnitId").html("0");
     $("#SpnUnitMapId").html("0");

@@ -157,6 +157,11 @@ function BindData() {
                         listItem += "<td class='align-middle'><span id='rankName'>" + response[i].RankAbbreviation + "</span></td>";
                         listItem += "<td class='align-middle'><span id='username'>" + response[i].Name + "</span></td>";
 
+                        if (response[i].IsToken == true)
+                            listItem += "<td class='align-middle'><span><span class='badge badge-pill badge-success' id='isToken'>Yes</span></span></td>";
+                        else
+                            listItem += "<td class='align-middle'><span><span class='badge badge-pill badge-danger' id='isToken'>No</span></span></td>";
+
                         if (response[i].IsIO == true)
                             listItem += "<td class='align-middle'><span><span class='badge badge-pill badge-success' id='isIO'>Yes</span></span></td>";
                         else
@@ -221,6 +226,14 @@ function BindData() {
                         $("#ddlRank").val($(this).closest("tr").find("#rankId").html());
 
                         //alert($(this).closest("tr").find("#domain_approval").html())
+
+                        if ($(this).closest("tr").find("#isToken").html() == 'Yes') {
+                            $("#isTokenyes").prop("checked", true);
+                        }
+                        else {
+                            $("#isTokenno").prop("checked", true);
+                        }
+
                         if ($(this).closest("tr").find("#isIO").html() == 'Yes' ) {
                             $("#initatingOffryes").prop("checked", true);
                         }
@@ -325,6 +338,7 @@ function Save() {
             "DialingCode": $("#txtDialingCode").val(),
             "Extension": $("#txtExtension").val(),
             "RankId": $("#ddlRank").val(),
+            "IsToken": $('input:radio[name=IsToken]:checked').val(),
             "IsIO": $('input:radio[name=InitatingOffr]:checked').val(),
             "IntOffr": $('input:radio[name=IntOffr]:checked').val(),
             "IsCO": $('input:radio[name=CommandingOffr]:checked').val(),
@@ -387,6 +401,9 @@ function Reset() {
     $("#txtMobileNo").val("");
     $("#txtDialingCode").val("");
     $("#txtExtension").val("");
+    $("#isTokenyes").prop("checked", false);
+    $("#isTokenno").prop("checked", false);
+
     $("#intoffryes").prop("checked", false);
     $("#intoffrno").prop("checked", false);
 
@@ -403,6 +420,7 @@ function ResetErrorMessage() {
     $("#txtMobileNo-error").html("");
     $("#txtDialingCode-error").html("");
     $("#txtExtension-error").html("");
+    $("#IsToken-error").html("");
     $("#IntOffr-error").html("");
     $("#InitatingOffr-error").html("");
     $("#CommandingOffr-error").html("");

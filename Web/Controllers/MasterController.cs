@@ -576,7 +576,7 @@ namespace Web.Controllers
                     string Sus_no = dTO.Sus_no + dTO.Suffix;
                     if (dTO.UnitId > 0 && dTO.UnitMapId == 0)
                     {
-                        bool? CheckDuplicate = await unitOfWork.Unit.GetBySusNoWithUnitId(Sus_no, dTO.UnitId);
+                        bool? CheckDuplicate = await unitOfWork.MappUnit.FindUnitId(dTO.UnitId);
                         if (CheckDuplicate == true)
                         {
                             return Json(KeyConstants.Exists);
@@ -587,7 +587,7 @@ namespace Web.Controllers
                             bool result = (bool)await unitOfWork.MappUnit.SaveUnitWithMapping(dTO);
                             if (result == true)
                             {
-                                return Json(5);
+                                return Json(KeyConstants.Save);
                             }
                             else
                             {
@@ -602,7 +602,7 @@ namespace Web.Controllers
                     }
                     else if (dTO.UnitId > 0 && dTO.UnitMapId > 0)
                     {
-                        bool? CheckDuplicate = await unitOfWork.Unit.GetBySusNoWithUnitId(Sus_no, dTO.UnitId);
+                        bool? CheckDuplicate = await unitOfWork.MappUnit.FindUnitIdMapped(dTO.UnitId,dTO.UnitMapId);
                         if (CheckDuplicate == true)
                         {
                             return Json(KeyConstants.Exists);
@@ -635,7 +635,6 @@ namespace Web.Controllers
 
                     return Json(ModelState.Select(x => x.Value.Errors).Where(y => y.Count > 0).ToList());
                 }
-
             }
             catch (Exception ex)
             {

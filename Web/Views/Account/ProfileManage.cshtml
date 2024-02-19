@@ -39,7 +39,7 @@
                             <label for="choice">IC No</label>
                         </div>
                         <div>
-                            <input type="text" class="form-control mr-2" placeholder="Search ID / Domain / IC" id="txtSearch" maxlength="30" width="100" pattern="^[a-zA-Z0-9 ]*$" />
+                            <input type="text" class="form-control-domainId mr-2" placeholder="Search ID / Domain / IC" id="txtSearch" maxlength="30" width="100" pattern="^[a-zA-Z0-9 ]*$" />
                         </div>
                         <div>
                             <button type="button" id="btnProfileAdd" class="btn btn-outline-success font-weight-600 btn-sm ml-4">Add Profile</button>
@@ -59,6 +59,7 @@
                                 <th class="nowrap">IC No</th>
                                 <th class="nowrap">Rank</th>
                                 <th class="nowrap">Name</th>
+                                <th class="nowrap">Token Required </th>
                                 <th class="nowrap">IO</th>
                                 <th class="nowrap">Approver</th>
                                 <th class="nowrap">Issuing Authority</th>
@@ -129,6 +130,24 @@
                                 <div class="col-sm-8">
                                     <input class="form-control1 isNumerictxt" placeholder="Enter Extension" id="txtExtension" name="txtExtension" maxlength="5" data-val-maxlength="Maximum length of Extension is five digit." data-val-maxlength-max="5" data-val-minlength="Minimum length of Extension is four digit." data-val-minlength-min="4" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="Extension is required." data-val-regex-pattern="^[\d]+$" />
                                     <span class="text-danger field-validation-valid" data-valmsg-for="txtExtension" data-valmsg-replace="true"></span>
+                                </div>
+                            </div>
+                            <div class="form-group row mb-4">
+                                <label class="col-form-label col-sm-4">Token required<i class="fas fa-asterisk mand1"></i></label>
+                                <div class="col-sm-8">
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="IsToken" value="true" id="isTokenyes" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-regex-pattern="^[a-zA-Z]*$">
+                                        <label class="form-check-label" for="isTokenyes">
+                                            Yes
+                                        </label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="IsToken" value="false" id="isTokenno" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-regex-pattern="^[a-zA-Z]*$">
+                                        <label class="form-check-label" for="isTokenno">
+                                            No
+                                        </label>
+                                    </div>
+                                    <span class="text-danger field-validation-valid" id="IsToken-error" data-valmsg-for="InitatingOffr" data-valmsg-replace="true"></span>
                                 </div>
                             </div>
                             <div class="form-group row mb-4">
