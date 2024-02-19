@@ -37,5 +37,7 @@ namespace DataTransferObject.Domain.Model
         [DataType(DataType.Date)]
         [Column(TypeName = "datetime")]
         public DateTime? MappedDate { get; set; }
+        [NotMapped]
+        public ApplicationRole? Role { get; set; }
     }
 }

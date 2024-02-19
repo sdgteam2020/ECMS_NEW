@@ -5,18 +5,6 @@ $(document).ready(function () {
         BindData()
 
     });
-    $(".allow-number").on("keypress", function (event) {
-        // Allow only backspace , delete, numbers               
-        if (event.keyCode == 46 || event.keyCode == 8 || event.keyCode == 39 || event.keyCode == 37
-            || (event.keyCode >= 48 && event.keyCode <= 57)) {
-            // let it happen, don't do anything
-        }
-        else {
-            // Ensure that it is a number and stop the key press
-            event.preventDefault();
-        }
-    });
-   
     $("#btnsave").click(function () {
         if ($("#SaveForm")[0].checkValidity()) {
 

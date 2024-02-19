@@ -16,7 +16,8 @@ namespace DataTransferObject.Domain.Master
 
         [Required(ErrorMessage = "required!")]
         [RegularExpression("^[a-zA-Z0-9 ]*$", ErrorMessage = "Only Alphabets and Numbers allowed.")]
-        public string FormationName { get; set; }
+        [Column(TypeName = "varchar(50)")]
+        public string FormationName { get; set; } = string.Empty;
        
     }
 }

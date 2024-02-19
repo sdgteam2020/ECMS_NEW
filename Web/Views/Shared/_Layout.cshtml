@@ -139,6 +139,12 @@
             transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s
         }
 
+        .form-control-domainId:focus {
+            border-color: #66afe9;
+            outline: 0;
+            -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgba(102,175,233,.6);
+        }
+
         .select2-container--default .select2-selection--single,
         .select2-selection .select2-selection--single {
             border: 1px solid #d2d6de;
@@ -482,6 +488,67 @@
                             </div>
                         </li>
                     }
+                    else if (signInManager.IsSignedIn(User) && (User.IsInRole("Admin")))
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link collapsed" data-toggle="collapse" href="#ui-basic_Unit" aria-expanded="false" aria-controls="ui-basic_Unit">
+                                <i class="icon-layout menu-icon"></i>
+                                <span class="menu-title">Fmn/Unit </span>
+                                <i class="menu-arrow"></i>
+                            </a>
+                            <div class="collapse show" id="ui-basic_Unit">
+                                <ul class="nav flex-column sub-menu">
+                                    <li class="nav-item"> <a class="nav-link" href="/Master/Command">Comd / PSO</a></li>
+                                    <li class="nav-item"> <a class="nav-link" href="/Master/Corps">Corps / Dte / Area</a></li>
+                                    <li class="nav-item"> <a class="nav-link" href="/Master/Div">Div / Branch / Sub Area</a></li>
+                                    <li class="nav-item"> <a class="nav-link" href="/Master/Bde">Bde </a></li>
+                                    <li class="nav-item"> <a class="nav-link" href="/Master/MapUnit"> Map Unit</a></li>
+                                </ul>
+                            </div>
+
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="collapse" href="#ui-Master" aria-expanded="false" aria-controls="ui-Master">
+                                <i class="icon-layout menu-icon"></i>
+                                <span class="menu-title">Master</span>
+                                <i class="menu-arrow"></i>
+                            </a>
+                            <div class="collapse show" id="ui-Master">
+                                <ul class="nav flex-column sub-menu">
+                                    <li class="nav-item"> <a class="nav-link" href="/Master/Unit/&$&&&">Unit</a></li>
+                                    <li class="nav-item"> <a class="nav-link" href="/Master/Rank">Rank</a></li>
+                                    <li class="nav-item"> <a class="nav-link" href="/Master/Formation">Formation</a></li>
+                                    <li class="nav-item"> <a class="nav-link" href="/Master/Appointment">Appointment</a></li>
+                                    <li class="nav-item"> <a class="nav-link" href="/Master/ArmedType">Arms / Service</a></li>
+                                    <li class="nav-item"> <a class="nav-link" href="/Master/Regimental">Regt Centre</a></li>
+                                </ul>
+                            </div>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="collapse" href="#ui-ICard" aria-expanded="false" aria-controls="ui-ICard">
+                                <i class="icon-layout menu-icon"></i>
+                                <span class="menu-title">User Config</span>
+                                <i class="menu-arrow"></i>
+                            </a>
+                            <div class="collapse show" id="ui-ICard">
+                                <ul class="nav flex-column sub-menu">
+                                    <li class="nav-item"> <a class="nav-link" href="/Account/DomainRegn">Domain Regn</a></li>
+                                    <li class="nav-item"> <a class="nav-link" href="/Account/UserRegn">User Regn</a></li>
+                                    <li class="nav-item"> <a class="nav-link" href="/Account/ProfileManage">User Profile</a></li>
+
+                                </ul>
+                            </div>
+                        </li>
+
+
+
+                        @*                         <li class="nav-item">
+                    <a class="nav-link" href="#">
+                    <i class="icon-paper menu-icon"></i>
+                    <span class="menu-title">Documentation</span>
+                    </a>
+                    </li> *@
+                    }
                     else if (signInManager.IsSignedIn(User) && User.IsInRole("User"))
                     {
                         <li class="nav-item">
@@ -529,67 +596,7 @@
 
                         </li> */
                     }
-                    else if (signInManager.IsSignedIn(User) && (User.IsInRole("Admin")))
-                    {
-                        <li class="nav-item">
-                            <a class="nav-link collapsed" data-toggle="collapse" href="#ui-basic_Unit" aria-expanded="false" aria-controls="ui-basic_Unit">
-                                <i class="icon-layout menu-icon"></i>
-                                <span class="menu-title">Fmn/Unit </span>
-                                <i class="menu-arrow"></i>
-                            </a>
-                            <div class="collapse show" id="ui-basic_Unit">
-                                <ul class="nav flex-column sub-menu">
-                                    <li class="nav-item"> <a class="nav-link" href="/Master/Command">Comd / PSO</a></li>
-                                    <li class="nav-item"> <a class="nav-link" href="/Master/Corps">Corps / Dte / Area</a></li>
-                                    <li class="nav-item"> <a class="nav-link" href="/Master/Div">Div / Branch / Sub Area</a></li>
-                                    <li class="nav-item"> <a class="nav-link" href="/Master/Bde">Bde </a></li>
-                                    <li class="nav-item"> <a class="nav-link" href="/Master/MapUnit"> Map Unit</a></li>
-                                </ul>
-                            </div>
 
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" data-toggle="collapse" href="#ui-Master" aria-expanded="false" aria-controls="ui-Master">
-                                <i class="icon-layout menu-icon"></i>
-                                <span class="menu-title">Master</span>
-                                <i class="menu-arrow"></i>  
-                            </a>
-                            <div class="collapse show" id="ui-Master">
-                                <ul class="nav flex-column sub-menu">
-                                    <li class="nav-item"> <a class="nav-link" href="/Master/Unit/&$&&&">Unit</a></li>
-                                    <li class="nav-item"> <a class="nav-link" href="/Master/Rank">Rank</a></li>
-                                    <li class="nav-item"> <a class="nav-link" href="/Master/Formation">Formation</a></li>
-                                    <li class="nav-item"> <a class="nav-link" href="/Master/Appointment">Appointment</a></li>
-                                    <li class="nav-item"> <a class="nav-link" href="/Master/ArmedType">Arms / Service</a></li>
-                                    <li class="nav-item"> <a class="nav-link" href="/Master/Regimental">Regt Centre</a></li>
-                                </ul>
-                            </div>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" data-toggle="collapse" href="#ui-ICard" aria-expanded="false" aria-controls="ui-ICard">
-                                <i class="icon-layout menu-icon"></i>
-                                <span class="menu-title">User Config</span>
-                                <i class="menu-arrow"></i>
-                            </a>
-                            <div class="collapse show" id="ui-ICard">
-                                <ul class="nav flex-column sub-menu">
-                                    <li class="nav-item"> <a class="nav-link" href="/Account/DomainRegn">Domain Regn</a></li>
-                                    <li class="nav-item"> <a class="nav-link" href="/Account/UserRegn">User Regn</a></li>
-                                    <li class="nav-item"> <a class="nav-link" href="/Account/ProfileManage">User Profile</a></li>
-
-                                </ul>
-                            </div>
-                        </li>
-
-
-
-@*                         <li class="nav-item">
-                            <a class="nav-link" href="#">
-                                <i class="icon-paper menu-icon"></i>
-                                <span class="menu-title">Documentation</span>
-                            </a>
-                        </li> *@
-                    }
                 </ul>
             </nav>
 

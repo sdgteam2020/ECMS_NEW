@@ -13,6 +13,8 @@ namespace DataTransferObject.Domain.Master
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int BloodGroupId { get; set; }
+
+        [Column(TypeName = "varchar(10)")]
         public string? BloodGroup { get; set; }
     }
 }

@@ -32,6 +32,7 @@ using Microsoft.SqlServer.Management.Smo.Agent;
 using Microsoft.SqlServer.Management.Smo.Wmi;
 using Newtonsoft.Json;
 using System;
+using System.Data;
 using System.Data.Entity;
 using System.Data.Entity.Hierarchy;
 using System.Security.Claims;
@@ -1126,7 +1127,7 @@ namespace Web.Controllers
             if (ModelState.IsValid)
             {
                 DTOTempSession dTOTempSession = new DTOTempSession();
-                TrnDomainMapping? _trnDomainMapping = await _iDomainMapBL.GetAllRelatedDataByDomainId(model.DomainId);
+                TrnDomainMapping? _trnDomainMapping = await _iDomainMapBL.GetAllRelatedDataByDomainId(model.DomainId,model.Role);
                 if (_trnDomainMapping != null && _trnDomainMapping.ApplicationUser.AdminFlag == true && _trnDomainMapping.Id > 0 && _trnDomainMapping.UserId != null)
                 {
                     dTOTempSession.AdminFlag = _trnDomainMapping.ApplicationUser.AdminFlag;
@@ -1138,9 +1139,21 @@ namespace Web.Controllers
                     dTOTempSession.TDMUnitMapId = _trnDomainMapping.UnitId;
                     dTOTempSession.TDMApptId = _trnDomainMapping.ApptId;
                     dTOTempSession.AspNetUsersId = _trnDomainMapping.ApplicationUser.Id;
-                    dTOTempSession.Status = 5;
-                    SessionHeplers.SetObject(HttpContext.Session, "IMData", dTOTempSession);
-                    return RedirectToActionPermanent("TokenValidate", "Account");
+                    
+                    if (_trnDomainMapping.Role !=null)
+                    {
+                        dTOTempSession.Status = 5;
+                        SessionHeplers.SetObject(HttpContext.Session, "IMData", dTOTempSession);
+                        return RedirectToActionPermanent("TokenValidate", "Account");
+                    }
+                    else
+                    {
+                        TempData["error"] = "Role not authorized.";
+                        dTOTempSession.Status = 6;
+                        SessionHeplers.SetObject(HttpContext.Session, "IMData", dTOTempSession);
+                        return RedirectToActionPermanent("TokenValidate", "Account");
+                    }
+
                 }
                 else if (_trnDomainMapping != null && _trnDomainMapping.ApplicationUser.AdminFlag == true && _trnDomainMapping.Id > 0 && _trnDomainMapping.UserId == null)
                 {
@@ -1152,9 +1165,21 @@ namespace Web.Controllers
                     dTOTempSession.TDMUnitMapId = _trnDomainMapping.UnitId;
                     dTOTempSession.TDMApptId = _trnDomainMapping.ApptId;
                     dTOTempSession.AspNetUsersId = _trnDomainMapping.ApplicationUser.Id;
-                    dTOTempSession.Status = 4;
-                    SessionHeplers.SetObject(HttpContext.Session, "IMData", dTOTempSession);
-                    return RedirectToActionPermanent("TokenValidate", "Account");
+                    
+                    if (_trnDomainMapping.Role != null)
+                    {
+                        dTOTempSession.Status = 4;
+                        SessionHeplers.SetObject(HttpContext.Session, "IMData", dTOTempSession);
+                        return RedirectToActionPermanent("TokenValidate", "Account");
+                    }
+                    else
+                    {
+                        TempData["error"] = "Role not authorized.";
+                        dTOTempSession.Status = 6;
+                        SessionHeplers.SetObject(HttpContext.Session, "IMData", dTOTempSession);
+                        return RedirectToActionPermanent("TokenValidate", "Account");
+                    }
+
                 }
                 else if (_trnDomainMapping != null && _trnDomainMapping.Id == 0)
                 {
@@ -1162,11 +1187,23 @@ namespace Web.Controllers
                     dTOTempSession.DomainId = _trnDomainMapping.ApplicationUser.DomainId;
                     dTOTempSession.RoleName = model.Role;
                     dTOTempSession.AspNetUsersId = _trnDomainMapping.ApplicationUser.Id;
-                    dTOTempSession.Status = 3;
-                    SessionHeplers.SetObject(HttpContext.Session, "IMData", dTOTempSession);
-                    return RedirectToActionPermanent("TokenValidate", "Account");
+
+                    if (_trnDomainMapping.Role != null)
+                    {
+                        dTOTempSession.Status = 3;
+                        SessionHeplers.SetObject(HttpContext.Session, "IMData", dTOTempSession);
+                        return RedirectToActionPermanent("TokenValidate", "Account");
+                    }
+                    else
+                    {
+                        TempData["error"] = "Role not authorized.";
+                        dTOTempSession.Status = 6;
+                        SessionHeplers.SetObject(HttpContext.Session, "IMData", dTOTempSession);
+                        return RedirectToActionPermanent("TokenValidate", "Account");
+                    }
+
                 }
-                else if (_trnDomainMapping != null && _trnDomainMapping.ApplicationUser.AdminFlag == false && _trnDomainMapping.Id > 0 && _trnDomainMapping.UserId != null)
+                else if (_trnDomainMapping != null && _trnDomainMapping.ApplicationUser.AdminFlag == false && _trnDomainMapping.Id > 0 && _trnDomainMapping.UserId != null) 
                 {
                     dTOTempSession.DomainId = _trnDomainMapping.ApplicationUser.DomainId;
                     dTOTempSession.RoleName = model.Role;
@@ -1176,14 +1213,26 @@ namespace Web.Controllers
                     dTOTempSession.TDMUnitMapId = _trnDomainMapping.UnitId;
                     dTOTempSession.TDMApptId = _trnDomainMapping.ApptId;
                     dTOTempSession.AspNetUsersId = _trnDomainMapping.ApplicationUser.Id;
-                    dTOTempSession.Status = 1;
-                    SessionHeplers.SetObject(HttpContext.Session, "IMData", dTOTempSession);
-                    //TempData["error"] = "Domain Id - " + dTOTempSession.DomainId + " & Profile Id - " + dTOTempSession.UserId + ".<br/>Your regn request was successfully placed with Admin for necy Approval..<br/>Pl note regn No - " + dTOTempSession.AspNetUsersId + " for future correspondence. <br/>Contact Admin.";
-                    if(_trnDomainMapping.ApplicationUser.AdminMsg != null)
+                    
+                    if (_trnDomainMapping.Role != null)
                     {
-                        TempData["error"] = _trnDomainMapping.ApplicationUser.AdminMsg;
+                        dTOTempSession.Status = 1;
+                        SessionHeplers.SetObject(HttpContext.Session, "IMData", dTOTempSession);
+                        //TempData["error"] = "Domain Id - " + dTOTempSession.DomainId + " & Profile Id - " + dTOTempSession.UserId + ".<br/>Your regn request was successfully placed with Admin for necy Approval..<br/>Pl note regn No - " + dTOTempSession.AspNetUsersId + " for future correspondence. <br/>Contact Admin.";
+                        if (_trnDomainMapping.ApplicationUser.AdminMsg != null)
+                        {
+                            TempData["error"] = _trnDomainMapping.ApplicationUser.AdminMsg;
+                        }
+                        return RedirectToActionPermanent("TokenValidate", "Account");
                     }
-                    return RedirectToActionPermanent("TokenValidate", "Account");
+                    else
+                    {
+                        TempData["error"] = "Role not authorized.";
+                        dTOTempSession.Status = 6;
+                        SessionHeplers.SetObject(HttpContext.Session, "IMData", dTOTempSession);
+                        return RedirectToActionPermanent("TokenValidate", "Account");
+                    }
+
                 }
                 else if (_trnDomainMapping == null)
                 {
@@ -1228,6 +1277,7 @@ namespace Web.Controllers
             DTOTempSession? dTOTempSession = SessionHeplers.GetObject<DTOTempSession>(HttpContext.Session, "IMData");
             if (dTOTempSession != null)
             {
+                model.ICNo = model.ICNo.Trim();
                 if (ModelState.IsValid)
                 {
                     DTOAllRelatedDataByArmyNoResponse? _dTOProfileResponse = await _userProfileBL.GetAllRelatedDataByArmyNo(model.ICNo);
@@ -1238,6 +1288,11 @@ namespace Web.Controllers
                         {
                             TempData["error"] = _dTOProfileResponse.AdminMsg;
                         }
+                        return View();
+                    }
+                    else if (dTOTempSession.Status == 6)
+                    {
+                        TempData["error"] = "Role not authorized.";
                         return View();
                     }
                     else if (dTOTempSession.Status == 5 && _dTOProfileResponse != null && _dTOProfileResponse.TrnDomainMappingId > 0 && model.ICNo != dTOTempSession.ICNO)
@@ -1385,6 +1440,11 @@ namespace Web.Controllers
                 if (dTOTempSession.Status == 1)
                 {
                     TempData["error"] = "Domain Id - " + dTOTempSession.DomainId + " & Profile Id - " + dTOTempSession.UserId + ".<br/>Your regn request was successfully placed with Admin for necy Approval.. Pl note regn No - " + dTOTempSession.AspNetUsersId + " for future correspondence.<br/>Contact Admin.";
+                    return View();
+                }
+                else if(dTOTempSession.Status == 6)
+                {
+                    TempData["error"] = "Role not authorized.";
                     return View();
                 }
                 else

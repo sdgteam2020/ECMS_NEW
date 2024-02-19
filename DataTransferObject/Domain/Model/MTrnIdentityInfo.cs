@@ -32,6 +32,6 @@ namespace DataTransferObject.Domain.Model
         [MinLength(ConstantsMinMax.IntMinLength)]
         public float Height { get; set; }
 
-        public int BloodGroupId { get; set; }
+        public byte BloodGroupId { get; set; }
     }
 }

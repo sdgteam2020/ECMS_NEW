@@ -4,6 +4,7 @@ using DataAccessLayer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccessLayer.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240208052114_v56")]
+    partial class v56
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1694,8 +1697,8 @@ namespace DataAccessLayer.Migrations
                     b.Property<int>("BasicDetailId")
                         .HasColumnType("int");
 
-                    b.Property<byte>("BloodGroupId")
-                        .HasColumnType("tinyint");
+                    b.Property<int>("BloodGroupId")
+                        .HasColumnType("int");
 
                     b.Property<float>("Height")
                         .HasColumnType("real");
@@ -1876,7 +1879,7 @@ namespace DataAccessLayer.Migrations
                         .HasColumnType("tinyint");
 
                     b.Property<DateTime>("SOSDate")
-                        .HasColumnType("datetime");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("ToAspNetUsersId")
                         .HasColumnType("int");
