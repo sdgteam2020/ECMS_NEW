@@ -18,9 +18,9 @@ namespace Web.Healpers
             string referer = context.Request.Headers["Referer"].ToString();
             if(referer!="" && myHeader!="/")
             await _next.Invoke(context);
-            else if(myHeader == "/")
+            else if(myHeader == "/" && !myHeader.Contains("DigitallysignaturePdf"))
                 await _next.Invoke(context);
-            else if (myHeader == "/Account/AccessDenied")
+            else if (myHeader == "/Account/AccessDenied" || myHeader.Contains("DigitallysignaturePdf"))
                 await _next.Invoke(context);
             else
             context.Response.Redirect("/Account/AccessDenied");

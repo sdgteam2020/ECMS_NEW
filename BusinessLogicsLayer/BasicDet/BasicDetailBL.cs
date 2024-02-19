@@ -41,6 +41,10 @@ namespace BusinessLogicsLayer.BasicDet
         {
             return _iBasicDetailDB.GetByBasicDetailsId(BasicDetailId);
         }
+        public Task<BasicDetailCrtAndUpdVM> GetByRequestIdBesicDetails(int RequestId)
+        {
+            return _iBasicDetailDB.GetByRequestIdBesicDetails(RequestId);
+        }
 
         public Task<List<ICardHistoryResponse>> ICardHistory(int RequestId)
         {

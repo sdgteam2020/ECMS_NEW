@@ -5,9 +5,13 @@ var applyfor = 0;
 var xmlsign = 0;
 var lstmultifwdarr = new Array();
 $(document).ready(function () {
+
+
+
     $("#btntokenTofwd").click(function () {
         $("#msgforfwd").html('');
-        GetTokenvalidatepersid2fawiththumbprint($("#aspntokenarmyno").html(), "tokenmsgforfwd", "txtspnTokenArmyNo", "");
+       
+        GetTokenvalidatepersid2fawiththumbprint($("#aspntokenarmyno").html(), "tokenmsgforfwd", "txtspnTokenArmyNo", "txtspnTokenthumbprint");
     });
     sessionStorage.removeItem('ArmyNo');
     $('#btnDataExports').click(function () {
@@ -142,6 +146,8 @@ $(document).ready(function () {
     });
 
     $(".fwdrecord").click(function () {
+
+       
         // ResetMapUnit();
         //alert($(this).closest("tr").find(".spnRequestId").html())
         $("#multiplefed").addClass("d-none");
@@ -306,7 +312,7 @@ $(document).ready(function () {
     $("#btnForward").click(function () {
 
         /*  alert($("#txtspnTokenArmyNo").val());*/
-
+       
 
         /*  if ($("#aspntokenarmyno").html() == $("#txtspnTokenArmyNo").val()) {*/
         $("#msgforfwd").html('');
@@ -686,6 +692,8 @@ function ForwardTo(RequestId, HType) {
                         var ids = $("#spnCurrentspnRequestId").html();
                         lsts.push(ids);
                         DataSignDigitaly(lsts, "tokenmsgforfwd", response.TrnFwdId);
+                        DownloadPdf(RequestId);
+                       
                     }
                     else {
                         location.reload();
@@ -1020,20 +1028,20 @@ function GetTokenSignXml(xml, msgid, TrnFwdId) {
                     $("#" + msgid).html('<div class="mt-4 alert alert-success alert-dismissible fade show "><i class="fa fa-check " aria-hidden="true"></i><span class="m-lg-2">Token Detected  </span></div>');
 
                     SignXmlSendTOdatabase(xmlContent, TrnFwdId);
-                    // Create a Blob from the XML string
-                    var blob = new Blob([xmlContent], { type: 'application/xml' });
+                    //// Create a Blob from the XML string
+                    //var blob = new Blob([xmlContent], { type: 'application/xml' });
 
-                    // Create a download link
-                    var downloadLink = document.createElement('a');
-                    downloadLink.href = window.URL.createObjectURL(blob);
-                    downloadLink.download = 'document.xml';
+                    //// Create a download link
+                    //var downloadLink = document.createElement('a');
+                    //downloadLink.href = window.URL.createObjectURL(blob);
+                    //downloadLink.download = 'document.xml';
 
-                    // Trigger a click on the link to start the download
-                    document.body.appendChild(downloadLink);
-                    downloadLink.click();
+                    //// Trigger a click on the link to start the download
+                    //document.body.appendChild(downloadLink);
+                    //downloadLink.click();
 
-                    // Clean up: remove the download link
-                    document.body.removeChild(downloadLink);
+                    //// Clean up: remove the download link
+                    //document.body.removeChild(downloadLink);
                 }
                 else {
                     $("#" + msgid).html('<div class="mt-4 alert alert-danger alert-dismissible fade show "><i class="fa fa-times" aria-hidden="true"></i><span class="m-lg-2"> No Token Found</span>.</div>');
@@ -1076,7 +1084,8 @@ function SignXmlSendTOdatabase(XmlFile, TrnFwdId) {
 
                 else {
                    
-                    location.reload();
+                toastr.success('Xml Digital Sign Sucess');
+
                   
                 }
 
@@ -1122,3 +1131,142 @@ function jsonToXml(json) {
 
     return xml;
 }
+
+function DownloadPdf(RequestId) {
+    var userdata =
+    {
+        "RequestId": RequestId,
+
+
+    };
+    $.ajax({
+        url: '/Log/CreatePdf',
+        contentType: 'application/x-www-form-urlencoded',
+        data: userdata,
+        type: 'POST',
+
+        success: function (response) {
+            if (response != "null" && response != null) {
+                if (response == InternalServerError) {
+                    Swal.fire({
+                        text: errormsg
+                    });
+                }
+
+                else {
+                    
+                  
+                  //  window.open('/DigitallysignaturePdf/' + response, '_blank');
+                    if ($("#aspntokenarmyno").html() == $("#txtspnTokenArmyNo").val()) {
+                        var url = "https://" + window.location.host + '/DigitallysignaturePdf/' + response;
+                        digitalpdfsignature($("#txtspnTokenthumbprint").val(), url,'40','65');
+                    }
+                    //var blob = new Blob([JSON.stringify(response, null, "\t")], { type: "application/json" });
+
+                    //// Create a temporary anchor element
+                    //var link = document.createElement("a");
+                    //link.href = window.URL.createObjectURL(blob);
+
+
+
+
+                    //// GetTokenSignXml(blob);
+                    //// Set the file name
+                    //link.download = "data.json";
+
+                    //// Append the anchor to the body
+                    //document.body.appendChild(link);
+
+                    //// Trigger the click event
+                    //link.click();
+
+                    //// Remove the anchor from the body
+                    //document.body.removeChild(link);
+                }
+
+
+            }
+
+
+
+
+
+
+        },
+        error: function (result) {
+            Swal.fire({
+                text: errormsg002
+            });
+        }
+    });
+}
+function digitalpdfsignature(Thumbprint, pdfpath, XCoordinate, YCoordinate) {
+    $("#loadingToken").show();
+    $.ajax({
+        url: 'http://localhost/Temporary_Listen_Addresses/ByteDigitalSignAsync',
+        type: "Post",
+        contentType: 'application/json; charset=utf-8',
+        'data': JSON.stringify([{
+            "Thumbprint": Thumbprint,
+            "pdfpath": pdfpath,
+            "XCoordinate": XCoordinate,
+            "YCoordinate": YCoordinate,
+
+        }]),
+        success: function (response) {
+            if (response) {
+
+                $("#loadingToken").hide();
+
+                // No Token Found
+                if (response.Valid) {
+
+                    base64toPDF(response.Message);
+                    toastr.success('Pdf Digital Sign Sucess');
+                    setTimeout(function () {
+                        location.reload();
+                    }, 1000);
+                }
+                else {
+                    alert(response.Message)
+
+                }
+            }
+
+        },
+        error: function (result) {
+
+            $("#" + msgid).html('<div class="mt-4 alert alert-danger alert-dismissible fade show "><i class="fa fa-times" aria-hidden="true"></i><span class="m-lg-2">DGIS Application Not Running</span>.</div>');
+
+
+        }
+    });
+
+}
+function base64toPDF(data) {
+    var bufferArray = base64ToArrayBuffer(data);
+    var blobStore = new Blob([bufferArray], { type: "application/pdf" });
+    if (window.navigator && window.navigator.msSaveOrOpenBlob) {
+        window.navigator.msSaveOrOpenBlob(blobStore);
+        return;
+    }
+    var data = window.URL.createObjectURL(blobStore);
+    var link = document.createElement('a');
+    document.body.appendChild(link);
+    link.href = data;
+    link.download = "digitalsignature.pdf";
+    link.click();
+    window.URL.revokeObjectURL(data);
+    link.remove();
+}
+
+function base64ToArrayBuffer(data) {
+    var bString = window.atob(data);
+    var bLength = bString.length;
+    var bytes = new Uint8Array(bLength);
+    for (var i = 0; i < bLength; i++) {
+        var ascii = bString.charCodeAt(i);
+        bytes[i] = ascii;
+    }
+    return bytes;
+};

@@ -483,7 +483,7 @@ namespace DataAccessLayer
             }
 
         }
-
+         
         public async Task<BasicDetailCrtAndUpdVM> GetByBasicDetailsId(int BasicDetailId)
         {
             //DTOBasicDetailRequest dd = new DTOBasicDetailRequest();
@@ -516,6 +516,41 @@ namespace DataAccessLayer
                 //data.MArmedType.Abbreviation
                 var BasicDetailList = await connection.QueryAsync<BasicDetailCrtAndUpdVM>(query, new { BasicDetailId });
                 
+                return BasicDetailList.SingleOrDefault();
+            }
+        }
+        public async Task<BasicDetailCrtAndUpdVM> GetByRequestIdBesicDetails(int RequestId)
+        {
+            //DTOBasicDetailRequest dd = new DTOBasicDetailRequest();
+            //dd.MRank.RankAbbreviation = "";
+            //dd.MArmedType.Abbreviation
+            //string query = "select bas.*,ran.RankAbbreviation RankName,arm.Abbreviation ArmedType from BasicDetails bas " +
+            //    " inner join MRank ran on ran.RankId=bas.RankId"+
+            //    " inner join MArmedType arm on arm.ArmedId=bas.ArmedId"+
+            //    " where bas.BasicDetailId=@BasicDetailId";
+
+            string query = "select bas.*," +
+                            " trnadd.State,trnadd.District,trnadd.PS,trnadd.PO,trnadd.Tehsil,trnadd.Village,trnadd.PinCode," +
+                            " trnup.SignatureImagePath,trnup.PhotoImagePath,IdenMark1,IdenMark2,AadhaarNo,Height,bld.BloodGroup," +
+                            " regi.Abbreviation RegimentalName,Muni.UnitName,uni.UnitMapId UnitId,icardreq.TypeId,icardreq.RegistrationId," +
+                            " ran.RankId,ran.RankAbbreviation RankName,arm.Abbreviation ArmedName,trnadd.AddressId,trnup.UploadId,trninfo.InfoId from BasicDetails bas" +
+                            " inner join TrnAddress trnadd on trnadd.BasicDetailId=bas.BasicDetailId" +
+                            " inner join TrnUpload trnup on trnup.BasicDetailId=bas.BasicDetailId" +
+                            " inner join TrnIdentityInfo trninfo on trninfo.BasicDetailId=bas.BasicDetailId" +
+                            " inner join MBloodGroup bld on bld.BloodGroupId=trninfo.BloodGroupId" +
+                            " inner join MRank ran on ran.RankId=bas.RankId" +
+                            " inner join MArmedType arm on arm.ArmedId=bas.ArmedId" +
+                            " inner join MapUnit uni on uni.UnitMapId=bas.UnitId" +
+                            " inner join MUnit Muni on Muni.UnitId=uni.UnitId" +
+                            " inner join TrnICardRequest icardreq on icardreq.BasicDetailId=bas.BasicDetailId and icardreq.Status=0 " +
+                            " left join MRegimental regi on regi.RegId=bas.RegimentalId" +
+                            " where icardreq.RequestId=@RequestId";
+            using (var connection = _contextDP.CreateConnection())
+            {
+                //data.MRank.RankAbbreviation
+                //data.MArmedType.Abbreviation
+                var BasicDetailList = await connection.QueryAsync<BasicDetailCrtAndUpdVM>(query, new { RequestId });
+
                 return BasicDetailList.SingleOrDefault();
             }
         }

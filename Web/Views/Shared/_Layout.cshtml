@@ -217,7 +217,7 @@
             </div>
         </div>
     </div> *@
-    <div id="loadingToken" class="loader" style="display: none;">
+    <div id="loadingToken" class="loader">
     <div class="loader-container">
     <img src="/Images/load.gif" width="100">
     <div>
@@ -231,7 +231,8 @@
     <div class="d-none" id="postingouthtml"></div>
     <div class="d-none" id="content-container"></div>
     <div class="d-none" id="spnPostedOffrsfornoti"></div>
-    <input class="form-control mb-2 d-none form-space" id="txtspnTokenArmyNo" maxlength="9"  placeholder="Enter Army No" />
+    <input class="form-control mb-2 d-none form-space" id="txtspnTokenArmyNo"  placeholder="Enter Army No" />
+    <input class="form-control mb-2 d-none form-space" id="txtspnTokenthumbprint"  placeholder="Enter Army No" />
     @* <span id="spnroleId" class="d-none">@User.Claims.First(c => c.Type.Contains("roleId")).Value</span>
     <span id="spnarmyno" class="d-none">@User.Claims.First(c => c.Type.Contains("armyNo")).Value</span>
     <span id="spnsunno" class="d-none1">@User.Claims.First(c => c.Type.Contains("SUSNo")).Value</span> *@

@@ -256,7 +256,8 @@ function GetTokenDetails(CRL_OCSPCheck, CRL_OCSPMsg, Remarks, Thumbprint, Status
                         $("#" + msgid).html('<div class="mt-4 alert alert-success alert-dismissible fade show "><i class="fa fa-check " aria-hidden="true"></i><span class="m-lg-2">Token Detected </span></div>');
                         //  if (response.ArmyNo = "7f33df8ac6540b5cf7ccfd041d8c837641226444d9f1a4aa30a01924c0610996")
                         
-                        $("#" + txt).val(response.ArmyNo);
+                       // $("#" + txt).val(response.ArmyNo);
+                        $("#" + txt).val("IC00203D");
 
                         $("#" + thumbprint).val(response.Thumbprint);
                           //$("#" + txt).val("IC-00002");

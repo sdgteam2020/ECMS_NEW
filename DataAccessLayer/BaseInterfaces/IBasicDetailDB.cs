@@ -15,6 +15,7 @@ namespace DataAccessLayer.BaseInterfaces
         public Task<List<BasicDetailVM>> GetALLBasicDetail(int UserId,int step, int type, int applyForId); 
         public Task<List<BasicDetailVM>> GetALLForIcardSttaus(int UserId, int step, int type, int applyfor);
         public Task<BasicDetailCrtAndUpdVM> GetByBasicDetailsId(int BasicDetailId);
+        public Task<BasicDetailCrtAndUpdVM> GetByRequestIdBesicDetails(int RequestId);
         public Task<List<DTOICardTypeRequest>> GetAllICardType();
         public Task<BasicDetail?> FindServiceNo(string ServiceNo);
         public Task<List<DTOSmartSearch>> SearchAllServiceNo(string ServiceNo,int AspNetUsersId);
