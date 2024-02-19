@@ -15,6 +15,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using static Dapper.SqlMapper;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace DataAccessLayer
 {
@@ -33,6 +34,33 @@ namespace DataAccessLayer
         {
             var ret = _context.MapUnit.Any(p => p.UnitId == Data.UnitId && p.UnitMapId!=Data.UnitMapId);
             return ret;
+        }
+        public async Task<bool?> FindUnitId(int UnitId)
+        {
+            try
+            {
+                var ret = await _context.MapUnit.AnyAsync(p => p.UnitId == UnitId);
+                return ret;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "MapUnitDB->FindUnitId");
+                return null;
+            }
+
+        }
+        public async Task<bool?> FindUnitIdMapped(int UnitId,int UnitMapId)
+        {
+            try
+            {
+                var ret = await _context.MapUnit.AnyAsync(p => p.UnitId == UnitId && p.UnitMapId != UnitMapId);
+                return ret;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "MapUnitDB->FindUnitIdMapped");
+                return null;
+            }
         }
 
         public Task<List<DTOMapUnitResponse>> GetALLUnit(DTOMHierarchyRequest unit, string Unit1)
