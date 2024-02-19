@@ -54,7 +54,7 @@ namespace Web.Controllers
                         else
                         {
                             res.Status = false;
-                            res.Message = "Not Fetach Data From Api";
+                            res.Message = "Data Could not be Fetched From Data Records";
 
                             res1 = res;
                         }
@@ -62,7 +62,7 @@ namespace Web.Controllers
                     else
                     {
                         res1.Status = false;
-                        res1.Message = "Not Fetach Data From Api";
+                        res1.Message = "Data Could not be Fetched From Data Records";
                     }
 
                 }

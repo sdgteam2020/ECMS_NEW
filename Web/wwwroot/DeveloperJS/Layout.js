@@ -141,6 +141,7 @@ function Getaspntokenarmyno() {
                     $("#IpaddresGloble").html(response.IpAddress)
                     $("#aspntokenarmyno").html(response.ICNO)
                     $("#aspndomainUnitID").html(response.UnitId)
+                    $("#ProfileName").html(response.Name)
                 }
             }
         }

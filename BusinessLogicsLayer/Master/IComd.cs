@@ -1,4 +1,5 @@
 ﻿using DataTransferObject.Domain.Master;
+using DataTransferObject.Response;
 using DataTransferObject.Response.User;
 using System;
 using System.Collections;
@@ -16,5 +17,6 @@ namespace BusinessLogicsLayer.Master
         public Task<int> GetByMaxOrder(); 
         public Task<int> OrderByChange(DataTransferObject.Domain.Master.MComd DTo);
         public Task<IEnumerable<DataTransferObject.Domain.Master.MComd>> GetAllByorder();
+        public Task<DTOTreeViewUnitResponse> GetBinaryTree(int Id);
     }
 }

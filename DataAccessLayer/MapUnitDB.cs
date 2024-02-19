@@ -14,6 +14,7 @@ using System.Data.Entity.Core.Mapping;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static Dapper.SqlMapper;
 
 namespace DataAccessLayer
 {
@@ -48,6 +49,7 @@ namespace DataAccessLayer
             //&& (unit.CorpsId == 0 ? uni.CorpsId == uni.CorpsId : uni.CorpsId == unit.CorpsId)
             //&& (unit.DivId == 0 ? uni.DivId == uni.DivId : uni.DivId == unit.DivId)
             //&& (unit.BdeId == 0 ? uni.BdeId == uni.BdeId : uni.BdeId == unit.BdeId)
+            
             join MUni in _context.MUnit on uni.UnitId equals MUni.UnitId
                        join Com in _context.MComd on uni.ComdId equals Com.ComdId
                     //   on new { uni.ComdId } equals new { Com.ComdId }
@@ -57,9 +59,10 @@ namespace DataAccessLayer
                        join pso in _context.MPso on uni.PsoId equals pso.PsoId
                        join FmnBranch in _context.MFmnBranches on uni.FmnBranchID equals FmnBranch.FmnBranchID
                        join SubDte in _context.MSubDte on uni.SubDteId equals SubDte.SubDteId
-                       where MUni.UnitName == "" || MUni.UnitName.ToLower().Contains(Unit1)
+                       where MUni.UnitName == "" ||  MUni.UnitName.ToLower().Contains(Unit1)//MUni.UnitName == "" ||
+
                        select new DTOMapUnitResponse
-                       {
+                       { 
                            UnitMapId= uni.UnitMapId,
                            UnitName = MUni.UnitName,
                            IsVerify = MUni.IsVerify,
@@ -98,7 +101,7 @@ namespace DataAccessLayer
                            //&& (unit.DivId == 0 ? uni.DivId == uni.DivId : uni.DivId == unit.DivId)
                            //&& (unit.BdeId == 0 ? uni.BdeId == uni.BdeId : uni.BdeId == unit.BdeId)
                        join MUni in _context.MUnit on uni.UnitId equals MUni.UnitId
-                       where MUni.UnitName.Contains(UnitName) && MUni.IsVerify==true
+                       where MUni.UnitName.ToLower().Contains(UnitName.ToLower()) && MUni.IsVerify==true
                        select new DTOMapUnitResponse
                        {
                            UnitMapId = uni.UnitMapId,

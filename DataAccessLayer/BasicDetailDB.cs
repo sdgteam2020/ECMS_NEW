@@ -725,6 +725,7 @@ namespace DataAccessLayer
                 //data.MArmedType.Abbreviation
                 var ret = await connection.QueryAsync<DTOICardTaskCountResponse>(query, new { UserId, applyForId });
 
+
                 return ret.SingleOrDefault();
             }
         }

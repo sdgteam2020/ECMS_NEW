@@ -226,24 +226,45 @@
     text-align: center;
     padding-left: 10px;
     color: royalblue;
-    font-size: 40px;
+    font-size: 30px;
     font-weight: bold;
     font-family: "Times New Roman", Times, serif;
 }
-@media screen and (max-width:600px) {
+.ProfileName {
+    font-size: 12px;
+}
+
+@media only screen and (max-width: 1199px) {
     .tagline {
         font-size: 20px;
         text-align: center;
     }
-}
-
-@media screen and (max-width:1200px) {
-    .tagline {
+    .ProfileName {
         font-size: 10px;
-        text-align: center;
     }
 }
 
+@media only screen and (max-width: 991px) {
+    .tagline {
+        font-size: 15px;
+        text-align: center;
+    }
+    .ProfileName {
+        font-size: 6px;
+        margin-top: -0.5rem !important;
+    }
+}
+
+@media only screen and (max-width: 767px) {
+    .tagline {
+        font-size: 5px;
+        text-align: center;
+    }
+    .ProfileName {
+        font-size: 2px;
+        margin-top: -0.5rem !important;
+    }
+}
 
 
 /*File Upload ++++++++++++++++++++++++++++++++++++++++++++++++++*/

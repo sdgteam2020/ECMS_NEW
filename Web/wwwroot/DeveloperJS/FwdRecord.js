@@ -103,7 +103,7 @@ $(document).ready(function () {
             applyfor = 1;
             spnStepId = 0;
             $("#multiplefed").addClass("d-none");
-            GetAllOffsByUnitId("ddlfwdoffrs", 0, 6, 0, 0, 0);
+            GetAllOffsByUnitId("ddlfwdoffrs", 0, spnHQ54UnitId, 0, 0, 0);
 
 
             $(".Remarks").removeClass("d-none");
@@ -211,14 +211,14 @@ $(document).ready(function () {
 
                 $(".gsoio").html("MI 11");
                 $("#btnForward").html("Approved and  Forward To MI 11");
-                GetAllOffsByUnitId("ddlfwdoffrs", 0, 12,0,0,0);
+                GetAllOffsByUnitId("ddlfwdoffrs", 0, spnMI11UnitId,0,0,0);
             }
             else {
                 $(".chkforserach").addClass("d-none");
 
                 $(".gsoio").html("Export");
                 $("#btnForward").html("Forward To Export ");
-                GetAllOffsByUnitId("ddlfwdoffrs", 0, 6,0,0,0);
+                GetAllOffsByUnitId("ddlfwdoffrs", 0, spnHQ54UnitId,0,0,0);
             }
 
             
@@ -543,11 +543,11 @@ function FwdData(AspNetUsersId) {
 function GetProfiledetailsByAspNetuserid(AspNetUsersId) {
     var param = "";
     if (StepCounter == 3 && applyfor==1)
-        var param = { "Name": AspNetUsersId, "TypeId": 0, "UnitId": 12 };
+        var param = { "Name": AspNetUsersId, "TypeId": 0, "UnitId": spnMI11UnitId };
     else if (StepCounter == 4 && applyfor == 1)
-        var param = { "Name": AspNetUsersId, "TypeId": 0, "UnitId": 6 };
+        var param = { "Name": AspNetUsersId, "TypeId": 0, "UnitId": spnHQ54UnitId };
     else if (StepCounter == 3 && applyfor == 2)
-        var param = { "Name": AspNetUsersId, "TypeId": 0, "UnitId": 6 };
+        var param = { "Name": AspNetUsersId, "TypeId": 0, "UnitId": spnHQ54UnitId };
     else
         var param = { "Name": AspNetUsersId, "TypeId": 0, "UnitId": 0 };
     $.ajax({

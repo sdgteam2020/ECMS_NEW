@@ -2,6 +2,8 @@
     ViewData["Title"] = "Create Draft";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+        
+<link href="~/css/hierarchy.css" rel="stylesheet" />
 
 <div class="container mt-4">
     <div class="card mb-3 ">
@@ -86,41 +88,35 @@
     </div>
 </div>
 
-
-@* <div class="modal fade" id="AddNewM" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
+<div class="modal fade" id="treeview" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl " role="document">
         <div class="modal-content">
             <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Hierarchy Chart</h5>
                 <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 
             </div>
 
-            <div class="modal-body">
-
-                <div class="row">
-
-                    <div class="form-group row mb-2">
-                        <span class="spncomdId d-none"></span>
-                        <label class="col-form-label col-sm-4">Enter Command Name</label>
-                        <div class="col-sm-8">
-                            <i class="fas fa-asterisk mand"></i>
-                            <input class="form-control" placeholder="Enter Command Name" id="txtComandName" />
-                        </div>
-
+            <div class="modal-body ">
+                <div class="container-fluid">
+                    <div class="scrolling-wrapper row flex-row flex-nowrap">
+                        <div class="col-md-12 text-center">
+                         
+                            <div class="tree" id="tree">
+                            </div>
+                          
                     </div>
+                
 
 
-                    <div class="col-sm-12 text-right">
-                        <input type="button" class="btn btn-primary " value="Save" id="btnsave" />
-                    </div>
-                    <div class="col-sm-12" id="msg">
-                    </div>
+                    
                 </div>
             </div>
-
+            </div>
         </div><!-- modal-content -->
     </div><!-- modal-dialog -->
 </div>
- *@
+
 <script asp-src-include="~/developerjs/command.js"></script>
 <script asp-src-include="~/developerjs/commandvalidation.js"></script>
+

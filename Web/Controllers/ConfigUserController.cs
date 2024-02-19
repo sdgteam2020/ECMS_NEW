@@ -65,6 +65,7 @@ namespace Web.Controllers
                 if (army!=null)
                 {
                     dtoSession.ICNO = army.ArmyNo;
+                    dtoSession.Name = army.Name;
                     dtoSession.UserId = army.UserId;
                     dtoSession.UnitId=dTO.UnitId;
 

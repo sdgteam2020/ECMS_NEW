@@ -11,6 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <_ContentIncludedByDefault Remove="wwwroot\css\Hierarchy.css" />
     <_ContentIncludedByDefault Remove="wwwroot\DeveloperJS\Registration.js" />
   </ItemGroup>
 
