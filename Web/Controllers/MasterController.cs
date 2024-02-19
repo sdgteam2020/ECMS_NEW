@@ -3,6 +3,7 @@ using BusinessLogicsLayer.Master;
 using DapperRepo.Core.Constants;
 using DataTransferObject.Domain.Master;
 using DataTransferObject.Requests;
+using DataTransferObject.Response;
 using DataTransferObject.Response.User;
 using Humanizer;
 using Microsoft.AspNetCore.Authorization;
@@ -554,7 +555,6 @@ namespace Web.Controllers
             {
                 dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                 dTO.UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
-                dTO.UnitName = dTO.UnitName.Trim();
                 dTO.Suffix= dTO.Suffix.Trim();
                 dTO.Sus_no = dTO.Sus_no.Trim();
                 if (ModelState.IsValid)
@@ -613,23 +613,7 @@ namespace Web.Controllers
                     }
                     else
                     {
-                        MUnit? mUnit = await unitOfWork.Unit.GetBySusNo(Sus_no);
-                        if(mUnit == null)
-                        {
-                            bool result = (bool)await unitOfWork.MappUnit.SaveUnitWithMapping(dTO);
-                            if (result == true)
-                            {
-                                return Json(KeyConstants.Save);
-                            }
-                            else
-                            {
-                                return Json(KeyConstants.InternalServerError);
-                            }
-                        }
-                        else
-                        {
-                            return Json(KeyConstants.Exists);
-                        }
+                        return Json(KeyConstants.InternalServerError);
                     }
                 }
                 else
@@ -898,8 +882,16 @@ namespace Web.Controllers
         {
             try
             {
-                var ret = await unitOfWork.Unit.GetUnitByUnitId(UnitId);
-                return Json(ret);
+                var ret = await unitOfWork.Unit.Get(UnitId);
+                var result = new DTOUnitResponse
+                {
+                    UnitId = ret.UnitId,
+                    Sus_no = (ret.Sus_no + ret.Suffix).ToUpper(),
+                    UnitName = ret.UnitName,
+                    Abbreviation = ret.Abbreviation,
+                    IsVerify = ret.IsVerify,
+                };
+                return Json(result);
             }
             catch (Exception ex)
             {

@@ -215,23 +215,11 @@ namespace DataAccessLayer
             {
                 try
                 {
-                    if (dTO.UnitId > 0 && dTO.UnitMapId == 0)
+                    if (dTO.UnitMapId == 0)
                     {
                         MUnit? mUnit = await _context.MUnit.FindAsync(dTO.UnitId);
                         if(mUnit!=null)
                         {
-
-                            mUnit.Sus_no = dTO.Sus_no;
-                            mUnit.Suffix = dTO.Suffix;
-                            mUnit.UnitName = dTO.UnitName;
-                            mUnit.IsVerify = dTO.IsVerify;
-                            mUnit.IsActive = true;
-                            mUnit.Updatedby = dTO.Updatedby;
-                            mUnit.UpdatedOn = dTO.UpdatedOn;
-                            
-                            _context.MUnit.Update(mUnit);
-                            await _context.SaveChangesAsync();
-                            
                             var mapUnit = new MapUnit
                             {
                                 UnitId = mUnit.UnitId,
@@ -258,22 +246,11 @@ namespace DataAccessLayer
                             return false;
                         }
                     }
-                    else if (dTO.UnitId > 0 && dTO.UnitMapId > 0)
+                    else
                     {
                         MUnit? mUnit = await _context.MUnit.FindAsync(dTO.UnitId);
                         if (mUnit != null)
                         {
-                            mUnit.Sus_no = dTO.Sus_no;
-                            mUnit.Suffix = dTO.Suffix;
-                            mUnit.UnitName = dTO.UnitName;
-                            mUnit.IsVerify = dTO.IsVerify;
-                            mUnit.IsActive = true;
-                            mUnit.Updatedby = dTO.Updatedby;
-                            mUnit.UpdatedOn = dTO.UpdatedOn;
-
-                            _context.MUnit.Update(mUnit);
-                            await _context.SaveChangesAsync();
-
                             MapUnit? mapUnit = await _context.MapUnit.FindAsync(dTO.UnitMapId);
                             if(mapUnit!=null)
                             {
@@ -306,42 +283,6 @@ namespace DataAccessLayer
                         {
                             return false;
                         }
-                    }
-                    else 
-                    {
-                        var mUnit = new MUnit
-                        {
-                            Sus_no = dTO.Sus_no,
-                            Suffix = dTO.Suffix,
-                            UnitName = dTO.UnitName,
-                            IsVerify = dTO.IsVerify,
-                            IsActive = true,
-                            Updatedby = dTO.Updatedby,
-                            UpdatedOn = dTO.UpdatedOn,
-                            UnregdUserId = null,
-                        };
-                        await _context.MUnit.AddAsync(mUnit);
-                        await _context.SaveChangesAsync();
-                        var mapUnit = new MapUnit
-                        {
-                            UnitId = mUnit.UnitId,
-                            UnitType = dTO.UnitType,
-                            ComdId = dTO.ComdId,
-                            CorpsId = dTO.CorpsId,
-                            DivId = dTO.DivId,
-                            BdeId = dTO.BdeId,
-                            FmnBranchID = dTO.FmnBranchID,
-                            PsoId = dTO.PsoId,
-                            SubDteId = dTO.SubDteId,
-                            IsActive = true,
-                            Updatedby = dTO.Updatedby,
-                            UpdatedOn = dTO.UpdatedOn,
-                        };
-                        await _context.MapUnit.AddAsync(mapUnit);
-                        await _context.SaveChangesAsync();
-
-                        transaction.Commit();
-                        return true;
                     }
                 }
                 catch (Exception ex)

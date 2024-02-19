@@ -27,10 +27,10 @@ namespace DataTransferObject.Requests
         [MaxLength(1, ErrorMessage = "Maximum length of Suffix is one character.")]
         public string Suffix { get; set; } = string.Empty;
 
-        [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
-        [RegularExpression("^[a-zA-Z0-9 ]*$", ErrorMessage = "Only Alphabets and Numbers allowed.")]
-        [MaxLength(100, ErrorMessage = "Maximum length of Suffix is one hundred character.")]
-        public string UnitName { get; set; } = string.Empty;
+        //[Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
+        //[RegularExpression("^[a-zA-Z0-9 ]*$", ErrorMessage = "Only Alphabets and Numbers allowed.")]
+        //[MaxLength(100, ErrorMessage = "Maximum length of Suffix is one hundred character.")]
+        //public string UnitName { get; set; } = string.Empty;
 
         public bool IsVerify { get; set; }
 
