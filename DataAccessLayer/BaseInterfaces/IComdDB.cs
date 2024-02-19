@@ -15,6 +15,6 @@ namespace DataAccessLayer.BaseInterfaces
         public Task<int> GetByMaxOrder();
         public Task<int> GetComdIdbyOrderby(int OrderBy);
         public Task<IEnumerable<DataTransferObject.Domain.Master.MComd>> GetAllByorder();
-
+        public Task<DTOTreeViewUnitResponse> GetBinaryTree(int Id);
     }
 }

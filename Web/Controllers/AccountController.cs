@@ -1342,11 +1342,15 @@ namespace Web.Controllers
                     else if (dTOTempSession.Status == 5 && dTOTempSession.ICNO == model.ICNo)
                     {
                         var usera = await userManager.FindByIdAsync(dTOTempSession.AspNetUsersId.ToString());
+
+                        //await userManager.UpdateSecurityStampAsync(usera);
+
                         if (usera != null)
                         {
                             var result = await signInManager.PasswordSignInAsync(usera.UserName, "Admin123#", false, true);
                             if (result.Succeeded)
                             {
+                               
                                 //var roles = await userManager.GetRolesAsync(usera);
                                 ViewBag.Message = "Sucessfully Logged In.";
                                
@@ -1360,7 +1364,7 @@ namespace Web.Controllers
                                     dtoSession.ICNO = army.ArmyNo;
                                     dtoSession.UserId = army.UserId;
                                     dtoSession.UnitId = dTO.UnitId;
-
+                                    dtoSession.Name = army.Name;
                                     TrnDomainMapping? trnDomainMapping = new TrnDomainMapping();
                                     trnDomainMapping.AspNetUsersId = Convert.ToInt32(usera.Id);
                                     trnDomainMapping = await _iDomainMapBL.GetByAspnetUserIdBy(trnDomainMapping.AspNetUsersId);
@@ -1396,6 +1400,16 @@ namespace Web.Controllers
                                 {
                                     return RedirectToActionPermanent("Index", "Account");
                                 }
+                            }
+                            else if (result.IsLockedOut)
+                            {
+                                TempData["error"] = "Account Locked Out Please Try after 10 minutes.";
+                                goto End;
+                            }
+                            else if (result.IsNotAllowed)
+                            {
+                                TempData["error"] = "Already Login "+ usera.UserName+ " Please Try Some Time";
+                                goto End;
                             }
                         }
 

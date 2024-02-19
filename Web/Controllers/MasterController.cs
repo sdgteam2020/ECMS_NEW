@@ -143,7 +143,21 @@ namespace Web.Controllers
                 return Json(KeyConstants.InternalServerError);
             }
         }
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> GetBinaryTree(int Id)
+        {
+            try
+            {
+                var ret = Json(await unitOfWork.Comds.GetBinaryTree(Id));
+                return ret;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "Master->GetAllCommand");
+                return Json(KeyConstants.InternalServerError);
+            }
 
+        }
         #endregion Command
 
 

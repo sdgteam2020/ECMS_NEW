@@ -17,7 +17,104 @@ $(document).ready(function () {
     //    }
 
     //});
-   
+    
+    $('.spnarmynoformula').keyup(function (e) {
+    //    if ($(this).val().length == 7) {
+    //        var orgarmyno = $(this).val().toUpperCase();
+    //        var armyno = $(this).val().toUpperCase().replace("IC", "").replace("JC", "");
+            
+    //        if (armyno == "") {
+    //            return false;
+    //        }
+    //        //var txt = document.getElementById('ctl00_ContentPlaceHolder1_txtsfx').value;IC-71152L
+    //        //if (txt == "") {
+    //        //    return false;
+    //        //}
+    //        var vlength = armyno.length;
+    //        var NumMulti = parseInt(vlength) + 1;
+    //        var vMulti = 0;
+    //        var vSum = 0;
+    //        var Sfx;
+    //        for (var i = 0; i < vlength; i++) {
+    //            vMulti = parseInt(armyno.charAt(i)) * parseInt(NumMulti);
+    //            vSum = parseInt(vSum) + parseInt(vMulti);
+    //            NumMulti = parseInt(NumMulti) - 1;
+
+    //        }
+
+    //        var Reminder = parseInt(vSum) % 11;
+    //        switch (Reminder) {
+    //            case (0):
+    //                {
+    //                    Sfx = "A"
+    //                    break;
+    //                }
+    //            case (1):
+    //                {
+    //                    Sfx = "F"
+    //                    break;
+    //                }
+    //            case (2):
+    //                {
+    //                    Sfx = "H"
+    //                    break;
+    //                }
+    //            case (3):
+    //                {
+    //                    Sfx = "K"
+    //                    break;
+    //                }
+    //            case (4):
+    //                {
+    //                    Sfx = "L"
+    //                    break;
+    //                }
+    //            case (5):
+    //                {
+    //                    Sfx = "M"
+    //                    break;
+    //                }
+    //            case (6):
+    //                {
+    //                    Sfx = "N"
+    //                    break;
+    //                }
+    //            case (7):
+    //                {
+    //                    Sfx = "P"
+    //                    break;
+    //                }
+    //            case (8):
+    //                {
+    //                    Sfx = "W"
+    //                    break;
+    //                }
+    //            case (9):
+    //                {
+    //                    Sfx = "X"
+    //                    break;
+    //                }
+    //            case (10):
+    //                {
+    //                    Sfx = "Y"
+    //                    break;
+    //                }
+    //        }
+
+         
+    //        $(this).val(orgarmyno + '' + Sfx);
+    ////var txtcalsfx = document.getElementById('ctl00_ContentPlaceHolder1_txtsfx');
+    ////txtcalsfx.value = Sfx;
+    ////if (txt.toUpperCase() == Sfx) {
+    ////    return true;
+    ////}
+    ////else {
+    ////    alert("Suffix Mismatch.Expected suffix is " + Sfx);
+    ////    return false;
+    ////}
+    //    }
+        
+    });
     $('.form-space').keypress(function (e) {
         // Get the key code of the pressed key
         var keyCode = e.which;
@@ -634,3 +731,5 @@ function Pad(d) {
         return $(this);
     }
 }(jQuery));
+
+

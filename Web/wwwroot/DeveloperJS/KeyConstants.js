@@ -8,6 +8,8 @@ const IncorrectData = 4;
 const spnISIO = 1;
 const spnISCO = 1;
 const spnIntOffr = 1;
+const spnMI11UnitId = 85;
+const spnHQ54UnitId = 86;
 
 
 const Command = 1;

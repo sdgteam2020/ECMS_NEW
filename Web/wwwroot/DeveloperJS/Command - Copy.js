@@ -121,7 +121,7 @@ function BindData() {
                               
 
                             listItem += "<td class='align-middle'><span id='btnedit'><button type='button' class='cls-btnedit btn btn-icon btn-round btn-warning mr-1'><i class='fas fa-edit'></i></button></span><button type='button' class='cls-btnDelete btn-icon btn-round btn-danger mr-1'><i class='fas fa-trash-alt'></i></button>";
-                            listItem += "<button type='button' class='cls-btntreeview btn btn-primary  mr-1'>Hierarchy Chart</button></td>";
+                            listItem += "<button type='button' class='cls-btntreeview btn btn-primary  mr-1'>Tree View</button></td>";
 
                             /*    listItem += "<td class='nowrap'><button type='button' class='cls-btnSend btn btn-outline-success mr-1'>Send To Verification</button></td>";*/
                             listItem += "</tr>";
@@ -435,155 +435,123 @@ function GetBinaryTree(ComdId) {
                     });
                 }
                 else {
-                    var MComd = response.MComd
-                    var MCorps = response.MCorps
-                    var MDiv = response.MDiv
-                    var MBde = response.MBde
-                    var Unit = response.Unit
-
-              
-
-                    listitem += ' <ul class="bullet-list-round">';
-                    listitem += ' <li>';
+                    var CorpsId = 1;
+                    var DivId = 1;
+                    var BdeId = 1;
                    
+                    listitem += '<table>';
                    
+                    for (var i = 0; i < response.length; i++) {
+                        if (response[i].CorpsId == 1) {
+                            if (i == 0) {
+                                listitem += '<a href="#">' + response[i].ComdName + '</a>';
+                                CorpsId = response[i].CorpsId;
+                                DivId = response[i].DivId
+                                BdeId = response[i].BdeId
+                                listitem += '<ul>';
+                            }
 
-                 
-                    for (var i = 0; i < MComd.length; i++) {
-                        listitem += '<a href="#" class="bg-danger text-white">' + MComd[i].ComdName + '</a>';
-                        listitem += ' <ul class="bullet-list-round">';
-                      
-                      
-                            for (var C = 0; C < MCorps.length; C++) {
+                          
+                            if (CorpsId != response[i].CorpsId) {
+                                if (response[i].CorpsId != 1) {
+                                    listitem += '<li>';
+                                    listitem += '<a href="#">' + response[i].CorpsName + '</a>';
+                                    listitem += '</li>';
 
-                                listitem += '<li><a href="#" class="bg-warning text-white">' + MCorps[C].CorpsName + '</a>';
-                                
-                                //////////////Div in Corps
-                                listitem += '<ul class="bullet-list-round">';
-                                for (var C1 = 0; C1 < MDiv.length; C1++) {
-                                  /*  if (C1 == 0)*/
-                                       
-
-                                    if (MCorps[C].CorpsId == MDiv[C1].CorpsId) {
-                                        listitem += '<li><a href="#" class="bg-primary text-white">' + MDiv[C1].DivName + '</a>';
-
-                                        listitem += '<ul class="bullet-list-round">';
-                                      
-                                    //////////////Bde direvct in Div
-
-                                    for (var db1 = 0; db1 < MBde.length; db1++) {
-
-
-                                        if (MCorps[C].CorpsId == MBde[db1].CorpsId && MDiv[C1].CorpsId == MBde[db1].CorpsId && MBde[db1].DivId == MDiv[C1].DivId) {
-
-                                            listitem += '<li><a href="#" class="bg-info text-white">' + MBde[db1].BdeName + '</a>';
-                                             //////////////unit direvct in bde
-                                           
-                                            var unitcount = 0;
-                                            for (var unit1 = 0; unit1 < Unit.length; unit1++) {
-
-
-                                                if (MCorps[C].CorpsId == Unit[unit1].CorpsId && MDiv[C1].DivId == Unit[unit1].DivId && MBde[db1].BdeId == Unit[unit1].BdeId ) {
-                                                    if (parseInt(unitcount) == 0)
-                                                        listitem += '<ul>';
-
-                                                    listitem += '<li><a href="#" class="bg-success text-white">' + Unit[unit1].UnitName + '</a>';
-                                                    //////////////unit direvct in bde
-
-                                                    unitcount = 1;
-                                                    //////////////end unit direvct in bde
-                                                    listitem += '</li>';
-                                                }
-
-                                                if (parseInt(unit1) + 1 == Unit.length && parseInt(unitcount) == 1)
-                                                    listitem += '</ul>';
-
-                                            }
-                                           
-
-                                              //////////////end unit direvct in bde
-                                            listitem += '</li>';
-                                        }
-
-
-
-                                    }  //////   end    Bde direvct in Div
-                                        listitem += '</ul>';
-
-                                        listitem += '</li>';
-                                    }
-
-                                   
-                                    //listitem += '</ul>';
-                                   
-                                    /*if (parseInt(C1)+1 == MDiv.length)*/
-                                       
                                 }
-                                ////////////Bde direvct in Corps
+                            }
+                            if (DivId != response[i].DivId) {
+                                if (response[i].DivId != 1) {
+                                    listitem += '<li>';
+                                    listitem += '<a href="#">' + response[i].DivName + '</a>';
+                                    listitem += '</li>';
 
-                                for (var C1 = 0; C1 < MBde.length; C1++) {
+                                }
+                            }
+                            if (BdeId != response[i].BdeId) {
+                                if (response[i].BdeId != 1) {
+                                    listitem += '<li>';
+                                    listitem += '<a href="#">' + response[i].BdeName + '</a>';
+                                    listitem += '</li>';
 
-
-                                    if (MCorps[C].CorpsId == MBde[C1].CorpsId && MBde[C1].DivId == 1) {
-
-                                        listitem += '<li><a href="#" class="bg-info text-dark">' + MBde[C1].BdeName + '</a></li>';
-
-                                    }
-
-
-
-                                }  //////   end    Bde direvct in Corps
-
-                                ////////////Unit direvct in Corps
-
-                                for (var C1 = 0; C1 < Unit.length; C1++) {
-
-
-                                    if (MCorps[C].CorpsId == Unit[C1].CorpsId && Unit[C1].DivId == 1 && Unit[C1].BdeId == 1) {
-
-                                        listitem += '<li><a href="#" class="bg-success text-white">' + Unit[C1].UnitName + '</a></li>';
-
-                                    }
-
-
-
-                                }  //////   end    Unit direvct in Corps
-
-
-                                listitem += '</ul>';
-                               
+                                }
+                            }
+                            if (response[i].CorpsId == 1 && response[i].DivId == 1 && response[i].BdeId == 1) {
+                                listitem += '<li>';
+                                listitem += '<a href="#">' + response[i].UnitName + '</a>';
                                 listitem += '</li>';
+                            }
+                            
+                          
+                            //listitem += '<ul>';
+                            //listitem += '<li> <a href="#">2.1</a></li>';
+                            //listitem += '<li> <a href="#">2.2</a></li>';
+                            //listitem += '</ul>';
+                            CorpsId = response[i].CorpsId;
+                            DivId = response[i].DivId
+                            BdeId = response[i].BdeId
                         }
-                        for (var C = 0; C < MDiv.length; C++) {
-
-                            if (MDiv[C].CorpsId==1)
-                                listitem += '<li><a href="#" class="bg-primary text-white">' + MDiv[C].DivName + '</a></li>';
-
-
-                        }
-                        for (var C = 0; C < MBde.length; C++) {
-
-                            if (MBde[C].DivId == 1 && MBde[C].CorpsId == 1)
-                                listitem += '<li><a href="#" class="bg-info text-dark">' + MBde[C].BdeName + '</a></li>';
-
-
-                        }
-                        for (var C = 0; C < Unit.length; C++) {
-
-                            if (Unit[C].BdeId == 1 && Unit[C].DivId == 1 && Unit[C].CorpsId == 1)
-                                listitem += '<li><a href="#" class="bg-success text-white">' + Unit[C].UnitName + '</a></li>';
-
-
-                        }
-                       
-                        listitem += ' </ul>';
                     }
-                  
-                
-                    listitem += ' </li>';
-                    listitem += ' </ul>';
+                    //for (var i = 0; i < response.length; i++) {
+                    //if (response[i].CorpsId != 1) {
+                    //        if (i == 0) {
+                               
+                    //            CorpsId = response[i].CorpsId;
+                    //            DivId = response[i].DivId
+                    //            BdeId = response[i].BdeId
+                    //            listitem += '<ul>';
+                    //        }
 
-                    $("#tree").html(listitem);
+
+                    //        if (CorpsId != response[i].CorpsId) {
+                    //            if (response[i].CorpsId != 1) {
+                    //                listitem += '<li>';
+                    //                listitem += '<a href="#">' + response[i].CorpsName + '</a>';
+                                   
+                    //                var spnDivId = 0;
+
+                    //                for (var j = 0; j < response.length; j++) {
+                    //                    if (response[j].DivId != 1) {
+                    //                        if (spnDivId == 0) {
+                    //                            DivId = response[j].DivId
+                    //                            listitem += '<ul>';
+                    //                        }
+                    //                        spnDivId = 1;
+
+                    //                       // if (DivId != response[j].DivId) {
+                    //                            if (response[j].DivId != 1) {
+                    //                                listitem += '<li>';
+                    //                                listitem += '<a href="#">' + response[j].DivName + '</a>';
+                    //                                listitem += '</li>';
+
+                    //                            }
+                    //                      //  }
+
+                                          
+                    //                    }
+                    //                    DivId = response[j].DivId
+                    //                    if (parseInt(j)+1 == response.length)
+                    //                        listitem += '</ul>';
+                    //                }
+                                  
+                    //                listitem += '</li>';
+                    //            }
+
+                    //        }
+                         
+                    //        //listitem += '<ul>';
+                    //        //listitem += '<li> <a href="#">2.1</a></li>';
+                    //        //listitem += '<li> <a href="#">2.2</a></li>';
+                    //        //listitem += '</ul>';
+                    //        CorpsId = response[i].CorpsId;
+                    //        DivId = response[i].DivId
+                    //        BdeId = response[i].BdeId
+                    //    }
+                    //}
+
+                  
+                    listitem += '</table>';
+                    $("#BinaryTree").html(listitem);
                 }
 
                 //}
@@ -597,4 +565,3 @@ function GetBinaryTree(ComdId) {
         }
     });
 }
-

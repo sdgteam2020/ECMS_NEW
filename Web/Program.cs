@@ -21,6 +21,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Web.Healpers;
+using Microsoft.AspNetCore.CookiePolicy;
 
 var builder = WebApplication.CreateBuilder(args);
 var configration = builder.Configuration;
@@ -88,7 +89,14 @@ builder.Services.AddControllers().AddNewtonsoftJson(options =>
 
 builder.Services.Configure<IdentityOptions>(opts =>
 {
+
+    //opts.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15);
+    //opts.Lockout.MaxFailedAccessAttempts = 3;
+    //opts.User.RequireUniqueEmail = false;
+    //opts.SignIn.RequireConfirmedAccount = true;
+    //opts.SignIn.RequireConfirmedEmail = false;
     //opts.Lockout.AllowedForNewUsers = true;
+    opts.Lockout.AllowedForNewUsers = true;
     opts.Lockout.MaxFailedAccessAttempts = 3;
     opts.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(10);
 });
@@ -168,6 +176,7 @@ builder.Services.AddHsts(options =>
 //    // Additional configurations as needed
 //});
 var app = builder.Build();
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

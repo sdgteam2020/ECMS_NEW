@@ -579,7 +579,9 @@ namespace DataAccessLayer
          " inner join AspNetUsers users on trndomain.AspNetUsersId=users.Id" +
          " inner join MapUnit mapu on mapu.UnitMapId=trndomain.UnitId" +
          " inner join UserProfile usep on usep.UserId=trndomain.UserId" +
-         " where trndomain.UnitId in (Select UnitMapId from MapUnit where ComdId in (Select ComdId from MapUnit where UnitMapId=@UnitId))";
+         " where trndomain.UnitId =@UnitId";
+
+               // in (Select UnitMapId from MapUnit where ComdId in (Select ComdId from MapUnit where UnitMapId = @UnitId))
             }
             using (var connection = _contextDP.CreateConnection())
             {

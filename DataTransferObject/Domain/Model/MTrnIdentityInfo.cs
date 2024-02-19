@@ -1,4 +1,6 @@
-﻿using System;
+﻿using DataTransferObject.Constants;
+using Microsoft.AspNetCore.Cors.Infrastructure;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -27,7 +29,7 @@ namespace DataTransferObject.Domain.Model
         [MaxLength(12)]
         [MinLength(12)]
         public long AadhaarNo { get; set; }
-       
+        [MinLength(ConstantsMinMax.IntMinLength)]
         public float Height { get; set; }
 
         public byte BloodGroupId { get; set; }

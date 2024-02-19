@@ -3,6 +3,7 @@ using DapperRepo.Core.Constants;
 using DataAccessLayer;
 using DataAccessLayer.BaseInterfaces;
 using DataTransferObject.Domain.Master;
+using DataTransferObject.Response;
 using DataTransferObject.Response.User;
 using System;
 using System.Collections.Generic;
@@ -24,6 +25,11 @@ namespace BusinessLogicsLayer.Master
         public Task<IEnumerable<DataTransferObject.Domain.Master.MComd>> GetAllByorder()
         {
             return _iComdDB.GetAllByorder();
+        }
+
+        public Task<DTOTreeViewUnitResponse> GetBinaryTree(int Id)
+        {
+            return _iComdDB.GetBinaryTree(Id);
         }
 
         public Task<int> GetByMaxOrder()
