@@ -2,6 +2,7 @@
 using Azure;
 using BusinessLogicsLayer;
 using BusinessLogicsLayer.Account;
+using BusinessLogicsLayer.BasicDet;
 using BusinessLogicsLayer.Bde;
 using BusinessLogicsLayer.Helpers;
 using BusinessLogicsLayer.Master;
@@ -1361,10 +1362,14 @@ namespace Web.Controllers
                                 DtoSession dtoSession = new DtoSession();
                                 if (army != null)
                                 {
+                                    MRank? mRank = await context.MRank.FindAsync(army.RankId);
                                     dtoSession.ICNO = army.ArmyNo;
                                     dtoSession.UserId = army.UserId;
                                     dtoSession.UnitId = dTO.UnitId;
                                     dtoSession.Name = army.Name;
+                                    dtoSession.IsToken = army.IsToken;
+                                    dtoSession.RankName = mRank.RankAbbreviation;
+
                                     TrnDomainMapping? trnDomainMapping = new TrnDomainMapping();
                                     trnDomainMapping.AspNetUsersId = Convert.ToInt32(usera.Id);
                                     trnDomainMapping = await _iDomainMapBL.GetByAspnetUserIdBy(trnDomainMapping.AspNetUsersId);
