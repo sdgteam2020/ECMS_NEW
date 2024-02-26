@@ -101,6 +101,7 @@
 
         if ($("#lblUser").html() > 5) {
             $("#tbldatadialog").DataTable().destroy();
+            $("#lblModelTitle").html('Total Users');
             $("#DataTableDialog").modal('show');
             BindDialog("User");
         }
@@ -112,6 +113,7 @@
 
         if ($("#lblMappedUser").html() > 5) {
             $("#tbldatadialog").DataTable().destroy();
+            $("#lblModelTitle").html('Total Mapped Users');
             $("#DataTableDialog").modal('show');
             BindDialog("MappedUser");
         }
@@ -122,6 +124,7 @@
     $("#btnUnMappedUser").click(function () {
         if ($("#lblUnMappedUser").html() > 5) {
             $("#tbldatadialog").DataTable().destroy();
+            $("#lblModelTitle").html('Total UnMapped Users');
             $("#DataTableDialog").modal('show');
             BindDialog("UnMappedUser");
         }
@@ -132,6 +135,7 @@
     $("#btnActiveUser").click(function () {
         if ($("#lblActiveUser").html() > 5) {
             $("#tbldatadialog").DataTable().destroy();
+            $("#lblModelTitle").html('Total Active Users');
             $("#DataTableDialog").modal('show');
             BindDialog("ActiveUser");
         }
@@ -142,6 +146,7 @@
     $("#btnInActiveUser").click(function () {
         if ($("#lblInActiveUser").html() > 5) {
             $("#tbldatadialog").DataTable().destroy();
+            $("#lblModelTitle").html('Total InActive Users');
             $("#DataTableDialog").modal('show');
             BindDialog("InActiveUser");
         }
@@ -152,6 +157,7 @@
     $("#btnVerified").click(function () {
         if ($("#lblVerifiedUser").html() > 5) {
             $("#tbldatadialog").DataTable().destroy();
+            $("#lblModelTitle").html('Total Verified Users');
             $("#DataTableDialog").modal('show');
             BindDialog("Verified");
         }
@@ -162,6 +168,7 @@
     $("#btnNotVerifiedUser").click(function () {
         if ($("#lblNotVerifiedUser").html() > 5) {
             $("#tbldatadialog").DataTable().destroy();
+            $("#lblModelTitle").html('Total Not Verified Users');
             $("#DataTableDialog").modal('show');
             BindDialog("NotVerifiedUser");
         }

@@ -14,6 +14,20 @@
         width: 120px;
         height: 60px;
     }
+    .modal-xl{
+        max-width: 1140px!important;
+        width: 100%!important;
+    }
+    .modal-content {
+        max-height :600px!important;
+        height: 600px!important; /* = 100% of the .modal-dialog block */
+    }
+    .table{
+        min-width:100% !important;
+    }
+    .modal .modal-body .table-responsive {
+        max-height: 500px;
+    }
 </style>
 
 <div class="mt-4">
@@ -397,32 +411,36 @@
 </div>
 
 <div class="modal fade" id="DataTableDialog" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
+    <div class="modal-dialog modal-xl" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Details</h5>
+                <h5 class="modal-title" id="exampleModalLabel"><span id="lblModelTitle"></span></h5>
                 <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
             </div>
-            <div class="modal-body model-body-background">
+            <div class="modal-body">
                 <div class="row">
-                    <div class="table-responsive">
+                   
+                        <div class="table-responsive">
                         <table class="table border border-purple table-striped no-footer table-hover" role="grid" id="tbldatadialog">
-                            <thead>
-                                <tr>
-                                    <th class="nowrap">Reg Id</th>
-                                    <th class="nowrap">Domain Id</th>
-                                    <th class="nowrap">IC No</th>
-                                    <th class="nowrap">Role</th>
-                                    <th class="nowrap">Requested Genr On (DT)</th>
-                                    <th class="nowrap">Mapping</th>
-                                    <th class="nowrap">IsActive</th>
-                                    <th class="nowrap">Status</th>
-                                </tr>
-                            </thead>
-                        </table>
+                                <thead>
+                                    <tr>
+                                        <th class="nowrap">Reg Id</th>
+                                        <th class="nowrap">Domain Id</th>
+                                        <th class="nowrap">IC No</th>
+                                        <th class="nowrap">Role</th>
+                                        <th class="nowrap">Requested Genr On (DT)</th>
+                                        <th class="nowrap">Mapping</th>
+                                        <th class="nowrap">IsActive</th>
+                                        <th class="nowrap">Status</th>
+                                    </tr>
+                                </thead>
+                            </table>
+                      
+
                     </div>
-                    <div class="col-sm-12" id="msg">
-                    </div>
+                   
+                </div>
+                <div class="col-sm-12" id="msg">
                 </div>
             </div>
         </div><!-- modal-content -->

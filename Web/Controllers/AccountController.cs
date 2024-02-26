@@ -1350,32 +1350,23 @@ namespace Web.Controllers
                             var result = await signInManager.PasswordSignInAsync(usera.UserName, "Admin123#", false, true);
                             if (result.Succeeded)
                             {
-                               
-                                //var roles = await userManager.GetRolesAsync(usera);
-                                ViewBag.Message = "Sucessfully Logged In.";
-                               
-                                TrnDomainMapping ? dTO = new TrnDomainMapping();
-                                dTO.AspNetUsersId = Convert.ToInt32(usera.Id);
-                                dTO = await _iDomainMapBL.GetByAspnetUserIdBy(dTO.AspNetUsersId);
-                                var army = await _userProfileBL.Get(Convert.ToInt32(dTO.UserId));
+                                var army = await _userProfileBL.Get(Convert.ToInt32(dTOTempSession.UserId));
+
                                 DtoSession dtoSession = new DtoSession();
                                 if (army != null)
                                 {
                                     dtoSession.ICNO = army.ArmyNo;
                                     dtoSession.UserId = army.UserId;
-                                    dtoSession.UnitId = dTO.UnitId;
+                                    dtoSession.UnitId = dTOTempSession.TDMUnitMapId;
                                     dtoSession.Name = army.Name;
-                                    TrnDomainMapping? trnDomainMapping = new TrnDomainMapping();
-                                    trnDomainMapping.AspNetUsersId = Convert.ToInt32(usera.Id);
-                                    trnDomainMapping = await _iDomainMapBL.GetByAspnetUserIdBy(trnDomainMapping.AspNetUsersId);
-                                    dtoSession.TrnDomainMappingId = trnDomainMapping.Id;
+                                    dtoSession.TrnDomainMappingId = dTOTempSession.TDMId;
                                 }
                                 ///////////////login log//////////////////////
                                 TrnLogin_Log  log=new TrnLogin_Log();
                                 log.AspNetUsersId= Convert.ToInt32(usera.Id);
                                 var Role = await roleManager.FindByNameAsync(dTOTempSession.RoleName);
                                 log.RoleId = Convert.ToInt32(Role.Id);
-                                log.UserId = Convert.ToInt32(dTO.UserId);
+                                log.UserId = Convert.ToInt32(dTOTempSession.UserId);
                                 log.IP = HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
                                 log.IsActive = true;
                                 log.Updatedby= Convert.ToInt32(usera.Id);
@@ -1387,19 +1378,22 @@ namespace Web.Controllers
 
 
 
-                                if (dTOTempSession.RoleName == "User")
-                                {
-                                    return RedirectToActionPermanent("Index", "Home");
-                                }
-                                else if (dTOTempSession.RoleName.ToUpper() == "ADMIN")
-                                {
-                                    return RedirectToActionPermanent("Dashboard", "Home");
+                            if (dTOTempSession.RoleName == "User")
+                            {
+                                HttpContext.Session.Remove("IMData");
+                                return RedirectToActionPermanent("Index", "Home");
+                            }
+                            else if (dTOTempSession.RoleName.ToUpper() == "ADMIN")
+                            {
+                                HttpContext.Session.Remove("IMData");
+                                return RedirectToActionPermanent("Dashboard", "Home");
 
-                                }
-                                else if (dTOTempSession.RoleName == "Super Admin")
-                                {
-                                    return RedirectToActionPermanent("Index", "Account");
-                                }
+                            }
+                            else if (dTOTempSession.RoleName == "Super Admin")
+                            {
+                                HttpContext.Session.Remove("IMData");
+                                return RedirectToActionPermanent("Index", "Account");
+                            }
                             }
                             else if (result.IsLockedOut)
                             {
