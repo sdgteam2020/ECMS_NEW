@@ -1134,6 +1134,7 @@ namespace Web.Controllers
                     dTOTempSession.DomainId = _trnDomainMapping.ApplicationUser.DomainId;
                     dTOTempSession.RoleName = model.Role;
                     dTOTempSession.ICNO = _trnDomainMapping.MUserProfile.ArmyNo;
+                    dTOTempSession.Name = _trnDomainMapping.MUserProfile.Name;
                     dTOTempSession.UserId = _trnDomainMapping.MUserProfile.UserId;
                     dTOTempSession.TDMId = _trnDomainMapping.Id;
                     dTOTempSession.TDMUnitMapId = _trnDomainMapping.UnitId;
@@ -1208,6 +1209,7 @@ namespace Web.Controllers
                     dTOTempSession.DomainId = _trnDomainMapping.ApplicationUser.DomainId;
                     dTOTempSession.RoleName = model.Role;
                     dTOTempSession.ICNO = _trnDomainMapping.MUserProfile.ArmyNo;
+                    dTOTempSession.Name = _trnDomainMapping.MUserProfile.Name;
                     dTOTempSession.UserId = _trnDomainMapping.MUserProfile.UserId;
                     dTOTempSession.TDMId = _trnDomainMapping.Id;
                     dTOTempSession.TDMUnitMapId = _trnDomainMapping.UnitId;
@@ -1280,66 +1282,7 @@ namespace Web.Controllers
                 model.ICNo = model.ICNo.Trim();
                 if (ModelState.IsValid)
                 {
-                    DTOAllRelatedDataByArmyNoResponse? _dTOProfileResponse = await _userProfileBL.GetAllRelatedDataByArmyNo(model.ICNo);
-                    if (dTOTempSession.Status == 1)
-                    {
-                        //TempData["error"] = "Domain Id - " + dTOTempSession.DomainId + " & Profile Id - " + dTOTempSession.UserId + ".<br/>Your regn request was successfully placed with Admin for necy Approval.. <br/>Pl note regn No - " + dTOTempSession.AspNetUsersId + " for future correspondence.<br/> Contact Admin.";
-                        if(_dTOProfileResponse!=null && _dTOProfileResponse.AdminMsg!=null)
-                        {
-                            TempData["error"] = _dTOProfileResponse.AdminMsg;
-                        }
-                        return View();
-                    }
-                    else if (dTOTempSession.Status == 6)
-                    {
-                        TempData["error"] = "Role not authorized.";
-                        return View();
-                    }
-                    else if (dTOTempSession.Status == 5 && _dTOProfileResponse != null && _dTOProfileResponse.TrnDomainMappingId > 0 && model.ICNo != dTOTempSession.ICNO)
-                    {
-                        dTOTempSession.ICNOInput = model.ICNo;
-                        dTOTempSession.ICNoDomainId = _dTOProfileResponse.DomainId;
-                        dTOTempSession.ICNoUserId = _dTOProfileResponse.UserId;
-                        dTOTempSession.ICNoTDMUnitMapId = _dTOProfileResponse.UnitId;
-                        dTOTempSession.ICNoTDMId = _dTOProfileResponse.TrnDomainMappingId;
-                        dTOTempSession.ICNoTDMApptId = _dTOProfileResponse.ApptId;
-                        TempData["error"] = "Not Authorized to access the current profile because Domain Id - " + dTOTempSession.DomainId + " is presently mapped to Profile Id - " + dTOTempSession.UserId + " ( IC No- " + dTOTempSession.ICNO + ") .<br/>Pl change Token and try again!";
-                        goto End;
-                    }
-                    else if ((dTOTempSession.Status == 2 || dTOTempSession.Status == 3 || dTOTempSession.Status == 4) && _dTOProfileResponse != null && _dTOProfileResponse.TrnDomainMappingId > 0)
-                    {
-                        dTOTempSession.ICNOInput = model.ICNo;
-                        dTOTempSession.ICNoDomainId = _dTOProfileResponse.DomainId;
-                        dTOTempSession.ICNoUserId = _dTOProfileResponse.UserId;
-                        dTOTempSession.ICNoTDMUnitMapId = _dTOProfileResponse.UnitId;
-                        dTOTempSession.ICNoTDMId = _dTOProfileResponse.TrnDomainMappingId;
-                        dTOTempSession.ICNoTDMApptId = _dTOProfileResponse.ApptId;
-
-                        if (dTOTempSession.Status == 2)
-                            TempData["error"] = "Your Profile Id -" + _dTOProfileResponse.UserId + " is mapped to Domain Id - " + _dTOProfileResponse.DomainId + " in Sys.<br/>Pl get yourself relieved first    and try again.";
-                        else if (dTOTempSession.Status == 3)
-                            TempData["error"] = "Your Profile Id - " + _dTOProfileResponse.UserId + " is already mapped to Domain Id -" + _dTOProfileResponse.DomainId + ".<br/>Pl get yourself relieved first..Domain Id - " + dTOTempSession.DomainId + "(regd) is not mapped to any profile.";
-                        else if (dTOTempSession.Status == 4)
-                            TempData["error"] = "You are presently mapped to Domain Id -" + _dTOProfileResponse.DomainId + ".<br/>Pl relieve yourself and get your profile mapped to new domain ID - " + dTOTempSession.DomainId + ".";
-                        goto End;
-                    }
-                    else if ((dTOTempSession.Status == 2 || dTOTempSession.Status == 3 || dTOTempSession.Status == 4) && _dTOProfileResponse != null && _dTOProfileResponse.TrnDomainMappingId == 0)
-                    {
-                        dTOTempSession.ICNOInput = model.ICNo;
-                        dTOTempSession.ICNoUserId = _dTOProfileResponse.UserId;
-                        dTOTempSession.ICNO = _dTOProfileResponse.ArmyNo;
-                        dTOTempSession.UserId = _dTOProfileResponse.UserId;
-                        SessionHeplers.SetObject(HttpContext.Session, "IMData", dTOTempSession);
-                        return RedirectToActionPermanent("Profile", "Account");
-                    }
-                    else if ((dTOTempSession.Status == 2 || dTOTempSession.Status == 3 || dTOTempSession.Status == 4) && _dTOProfileResponse == null)
-                    {
-                        dTOTempSession.ICNOInput = model.ICNo;
-                        dTOTempSession.ICNO = model.ICNo;
-                        SessionHeplers.SetObject(HttpContext.Session, "IMData", dTOTempSession);
-                        return RedirectToActionPermanent("Profile", "Account");
-                    }
-                    else if (dTOTempSession.Status == 5 && dTOTempSession.ICNO == model.ICNo)
+                    if(dTOTempSession.Status == 5 && dTOTempSession.ICNO == model.ICNo)
                     {
                         var usera = await userManager.FindByIdAsync(dTOTempSession.AspNetUsersId.ToString());
 
@@ -1350,50 +1293,48 @@ namespace Web.Controllers
                             var result = await signInManager.PasswordSignInAsync(usera.UserName, "Admin123#", false, true);
                             if (result.Succeeded)
                             {
-                                var army = await _userProfileBL.Get(Convert.ToInt32(dTOTempSession.UserId));
+                                //var army = await _userProfileBL.Get(Convert.ToInt32(dTOTempSession.UserId));
 
                                 DtoSession dtoSession = new DtoSession();
-                                if (army != null)
-                                {
-                                    dtoSession.ICNO = army.ArmyNo;
-                                    dtoSession.UserId = army.UserId;
-                                    dtoSession.UnitId = dTOTempSession.TDMUnitMapId;
-                                    dtoSession.Name = army.Name;
-                                    dtoSession.TrnDomainMappingId = dTOTempSession.TDMId;
-                                }
+                                dtoSession.ICNO = dTOTempSession.ICNO;
+                                dtoSession.UserId = dTOTempSession.UserId;
+                                dtoSession.UnitId = dTOTempSession.TDMUnitMapId;
+                                dtoSession.Name = dTOTempSession.Name;
+                                dtoSession.TrnDomainMappingId = dTOTempSession.TDMId;
+
                                 ///////////////login log//////////////////////
-                                TrnLogin_Log  log=new TrnLogin_Log();
-                                log.AspNetUsersId= Convert.ToInt32(usera.Id);
+                                TrnLogin_Log log = new TrnLogin_Log();
+                                log.AspNetUsersId = Convert.ToInt32(usera.Id);
                                 var Role = await roleManager.FindByNameAsync(dTOTempSession.RoleName);
                                 log.RoleId = Convert.ToInt32(Role.Id);
                                 log.UserId = Convert.ToInt32(dTOTempSession.UserId);
                                 log.IP = HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
                                 log.IsActive = true;
-                                log.Updatedby= Convert.ToInt32(usera.Id);
-                                log.UpdatedOn=DateTime.Now;
+                                log.Updatedby = Convert.ToInt32(usera.Id);
+                                log.UpdatedOn = DateTime.Now;
                                 await _TrnLoginLogBL.Add(log);
                                 ////////////////End Log////////////////////////
-                                
+
                                 SessionHeplers.SetObject(HttpContext.Session, "Token", dtoSession);
 
 
 
-                            if (dTOTempSession.RoleName == "User")
-                            {
-                                HttpContext.Session.Remove("IMData");
-                                return RedirectToActionPermanent("Index", "Home");
-                            }
-                            else if (dTOTempSession.RoleName.ToUpper() == "ADMIN")
-                            {
-                                HttpContext.Session.Remove("IMData");
-                                return RedirectToActionPermanent("Dashboard", "Home");
+                                if (dTOTempSession.RoleName == "User")
+                                {
+                                    HttpContext.Session.Remove("IMData");
+                                    return RedirectToActionPermanent("Index", "Home");
+                                }
+                                else if (dTOTempSession.RoleName.ToUpper() == "ADMIN")
+                                {
+                                    HttpContext.Session.Remove("IMData");
+                                    return RedirectToActionPermanent("Dashboard", "Home");
 
-                            }
-                            else if (dTOTempSession.RoleName == "Super Admin")
-                            {
-                                HttpContext.Session.Remove("IMData");
-                                return RedirectToActionPermanent("Index", "Account");
-                            }
+                                }
+                                else if (dTOTempSession.RoleName == "Super Admin")
+                                {
+                                    HttpContext.Session.Remove("IMData");
+                                    return RedirectToActionPermanent("Index", "Account");
+                                }
                             }
                             else if (result.IsLockedOut)
                             {
@@ -1402,16 +1343,77 @@ namespace Web.Controllers
                             }
                             else if (result.IsNotAllowed)
                             {
-                                TempData["error"] = "Already Login "+ usera.UserName+ " Please Try Some Time";
+                                TempData["error"] = "Already Login " + usera.UserName + " Please Try Some Time";
                                 goto End;
                             }
                         }
-
                     }
-                    else if (dTOTempSession.Status == 5 && dTOTempSession.ICNO != model.ICNo)
+                    else
                     {
-                        TempData["error"] = "Not Authorized to access the current profile because Domain Id - " + dTOTempSession.DomainId + " is presently mapped to Profile Id - " + dTOTempSession.UserId + " ( IC No " + dTOTempSession.ICNO + ") .<br/>Pl change Token and try again!";
-                        goto End;
+                        DTOAllRelatedDataByArmyNoResponse? _dTOProfileResponse = await _userProfileBL.GetAllRelatedDataByArmyNo(model.ICNo);
+                        if (dTOTempSession.Status == 1)
+                        {
+                            //TempData["error"] = "Domain Id - " + dTOTempSession.DomainId + " & Profile Id - " + dTOTempSession.UserId + ".<br/>Your regn request was successfully placed with Admin for necy Approval.. <br/>Pl note regn No - " + dTOTempSession.AspNetUsersId + " for future correspondence.<br/> Contact Admin.";
+                            if (_dTOProfileResponse != null && _dTOProfileResponse.AdminMsg != null)
+                            {
+                                TempData["error"] = _dTOProfileResponse.AdminMsg;
+                            }
+                            return View();
+                        }
+                        else if (dTOTempSession.Status == 6)
+                        {
+                            TempData["error"] = "Role not authorized.";
+                            return View();
+                        }
+                        else if (dTOTempSession.Status == 5 && _dTOProfileResponse != null && _dTOProfileResponse.TrnDomainMappingId > 0 && model.ICNo != dTOTempSession.ICNO)
+                        {
+                            dTOTempSession.ICNOInput = model.ICNo;
+                            dTOTempSession.ICNoDomainId = _dTOProfileResponse.DomainId;
+                            dTOTempSession.ICNoUserId = _dTOProfileResponse.UserId;
+                            dTOTempSession.ICNoTDMUnitMapId = _dTOProfileResponse.UnitId;
+                            dTOTempSession.ICNoTDMId = _dTOProfileResponse.TrnDomainMappingId;
+                            dTOTempSession.ICNoTDMApptId = _dTOProfileResponse.ApptId;
+                            TempData["error"] = "Not Authorized to access the current profile because Domain Id - " + dTOTempSession.DomainId + " is presently mapped to Profile Id - " + dTOTempSession.UserId + " ( IC No- " + dTOTempSession.ICNO + ") .<br/>Pl change Token and try again!";
+                            goto End;
+                        }
+                        else if ((dTOTempSession.Status == 2 || dTOTempSession.Status == 3 || dTOTempSession.Status == 4) && _dTOProfileResponse != null && _dTOProfileResponse.TrnDomainMappingId > 0)
+                        {
+                            dTOTempSession.ICNOInput = model.ICNo;
+                            dTOTempSession.ICNoDomainId = _dTOProfileResponse.DomainId;
+                            dTOTempSession.ICNoUserId = _dTOProfileResponse.UserId;
+                            dTOTempSession.ICNoTDMUnitMapId = _dTOProfileResponse.UnitId;
+                            dTOTempSession.ICNoTDMId = _dTOProfileResponse.TrnDomainMappingId;
+                            dTOTempSession.ICNoTDMApptId = _dTOProfileResponse.ApptId;
+
+                            if (dTOTempSession.Status == 2)
+                                TempData["error"] = "Your Profile Id -" + _dTOProfileResponse.UserId + " is mapped to Domain Id - " + _dTOProfileResponse.DomainId + " in Sys.<br/>Pl get yourself relieved first    and try again.";
+                            else if (dTOTempSession.Status == 3)
+                                TempData["error"] = "Your Profile Id - " + _dTOProfileResponse.UserId + " is already mapped to Domain Id -" + _dTOProfileResponse.DomainId + ".<br/>Pl get yourself relieved first..Domain Id - " + dTOTempSession.DomainId + "(regd) is not mapped to any profile.";
+                            else if (dTOTempSession.Status == 4)
+                                TempData["error"] = "You are presently mapped to Domain Id -" + _dTOProfileResponse.DomainId + ".<br/>Pl relieve yourself and get your profile mapped to new domain ID - " + dTOTempSession.DomainId + ".";
+                            goto End;
+                        }
+                        else if ((dTOTempSession.Status == 2 || dTOTempSession.Status == 3 || dTOTempSession.Status == 4) && _dTOProfileResponse != null && _dTOProfileResponse.TrnDomainMappingId == 0)
+                        {
+                            dTOTempSession.ICNOInput = model.ICNo;
+                            dTOTempSession.ICNoUserId = _dTOProfileResponse.UserId;
+                            dTOTempSession.ICNO = _dTOProfileResponse.ArmyNo;
+                            dTOTempSession.UserId = _dTOProfileResponse.UserId;
+                            SessionHeplers.SetObject(HttpContext.Session, "IMData", dTOTempSession);
+                            return RedirectToActionPermanent("Profile", "Account");
+                        }
+                        else if ((dTOTempSession.Status == 2 || dTOTempSession.Status == 3 || dTOTempSession.Status == 4) && _dTOProfileResponse == null)
+                        {
+                            dTOTempSession.ICNOInput = model.ICNo;
+                            dTOTempSession.ICNO = model.ICNo;
+                            SessionHeplers.SetObject(HttpContext.Session, "IMData", dTOTempSession);
+                            return RedirectToActionPermanent("Profile", "Account");
+                        }
+                        else if (dTOTempSession.Status == 5 && dTOTempSession.ICNO != model.ICNo)
+                        {
+                            TempData["error"] = "Not Authorized to access the current profile because Domain Id - " + dTOTempSession.DomainId + " is presently mapped to Profile Id - " + dTOTempSession.UserId + " ( IC No " + dTOTempSession.ICNO + ") .<br/>Pl change Token and try again!";
+                            goto End;
+                        }
                     }
                 }
             }

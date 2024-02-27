@@ -331,7 +331,7 @@ namespace DataAccessLayer
                         //queryableData = queryableData.OrderBy(request.SortColumn + " " + request.SortColumnDirection);
                         queryableData = request.sortDirection.ToLower() == "asc"
                         ? queryableData.OrderBy(item => EF.Property<object>(item, request.sortColumn))
-                        : queryableData.OrderByDescending(item => EF.Property<object>(item, request.sortDirection));
+                        : queryableData.OrderByDescending(item => EF.Property<object>(item, request.sortColumn));
                     }
 
                     // Total records after filtering
@@ -391,7 +391,7 @@ namespace DataAccessLayer
                         //queryableData = queryableData.OrderBy(request.SortColumn + " " + request.SortColumnDirection);
                         queryableData = request.sortDirection.ToLower() == "asc"
                         ? queryableData.OrderBy(item => EF.Property<object>(item, request.sortColumn))
-                        : queryableData.OrderByDescending(item => EF.Property<object>(item, request.sortDirection));
+                        : queryableData.OrderByDescending(item => EF.Property<object>(item, request.sortColumn));
                     }
 
                     // Total records after filtering
@@ -450,7 +450,7 @@ namespace DataAccessLayer
                         //queryableData = queryableData.OrderBy(request.SortColumn + " " + request.SortColumnDirection);
                         queryableData = request.sortDirection.ToLower() == "asc"
                         ? queryableData.OrderBy(item => EF.Property<object>(item, request.sortColumn))
-                        : queryableData.OrderByDescending(item => EF.Property<object>(item, request.sortDirection));
+                        : queryableData.OrderByDescending(item => EF.Property<object>(item, request.sortColumn));
                     }
 
                     // Total records after filtering
@@ -509,7 +509,7 @@ namespace DataAccessLayer
                         //queryableData = queryableData.OrderBy(request.SortColumn + " " + request.SortColumnDirection);
                         queryableData = request.sortDirection.ToLower() == "asc"
                         ? queryableData.OrderBy(item => EF.Property<object>(item, request.sortColumn))
-                        : queryableData.OrderByDescending(item => EF.Property<object>(item, request.sortDirection));
+                        : queryableData.OrderByDescending(item => EF.Property<object>(item, request.sortColumn));
                     }
 
                     // Total records after filtering
@@ -568,7 +568,7 @@ namespace DataAccessLayer
                         //queryableData = queryableData.OrderBy(request.SortColumn + " " + request.SortColumnDirection);
                         queryableData = request.sortDirection.ToLower() == "asc"
                         ? queryableData.OrderBy(item => EF.Property<object>(item, request.sortColumn))
-                        : queryableData.OrderByDescending(item => EF.Property<object>(item, request.sortDirection));
+                        : queryableData.OrderByDescending(item => EF.Property<object>(item, request.sortColumn));
                     }
 
                     // Total records after filtering
@@ -627,7 +627,7 @@ namespace DataAccessLayer
                         //queryableData = queryableData.OrderBy(request.SortColumn + " " + request.SortColumnDirection);
                         queryableData = request.sortDirection.ToLower() == "asc"
                         ? queryableData.OrderBy(item => EF.Property<object>(item, request.sortColumn))
-                        : queryableData.OrderByDescending(item => EF.Property<object>(item, request.sortDirection));
+                        : queryableData.OrderByDescending(item => EF.Property<object>(item, request.sortColumn));
                     }
 
                     // Total records after filtering
@@ -687,7 +687,7 @@ namespace DataAccessLayer
                         //queryableData = queryableData.OrderBy(request.SortColumn + " " + request.SortColumnDirection);
                         queryableData = request.sortDirection.ToLower() == "asc"
                         ? queryableData.OrderBy(item => EF.Property<object>(item, request.sortColumn))
-                        : queryableData.OrderByDescending(item => EF.Property<object>(item, request.sortDirection));
+                        : queryableData.OrderByDescending(item => EF.Property<object>(item, request.sortColumn));
                     }
 
                     // Total records after filtering

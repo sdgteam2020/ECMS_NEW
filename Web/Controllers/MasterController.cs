@@ -557,7 +557,7 @@ namespace Web.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(1001, ex, "Master->GetTopBySUSNo_");
+                _logger.LogError(1001, ex, "Master->GetTopBySUSNo");
                 return Json(KeyConstants.InternalServerError);
             }
         }
