@@ -96,6 +96,8 @@ namespace Web.Controllers
         [Authorize(Roles = "Admin,User")]
         public async Task<ActionResult> Index(string Id,string jcoor)
         {
+
+         
             MTrnNotification noti = new MTrnNotification();
             int retint = 0;int type = 1;
             var userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
@@ -242,12 +244,14 @@ namespace Web.Controllers
             else if (retint == 444)
             { ViewBag.Title = "Approved I-Card "; type = 3; stepcounter = 5; }
             else if (retint == 5)
-            { ViewBag.Title = "I-Card For Approval"; type = 2; ViewBag.Id = 1; ViewBag.dataexport = 5; }
+            { ViewBag.Title = "Export Data"; type = 2; ViewBag.Id = 1; ViewBag.dataexport = 5; }
             else if (retint == 55)
             { ViewBag.Title = "Rejectd I-Card "; type = 1; stepcounter = 10; }
             else if (retint == 555)
             { ViewBag.Title = "Approved I-Card "; type = 3; stepcounter = 6; }
-            
+            else if (retint == 6)
+            { ViewBag.Title = "Exported Data"; type = 6; ViewBag.Id = 1; ViewBag.dataexport = 6; }
+
             if (string.IsNullOrEmpty(jcoor))
             {
                 noti.DisplayId = stepcounter;
@@ -1333,7 +1337,7 @@ namespace Web.Controllers
         [Authorize(Roles = "Admin,User")]
         [HttpPost]
         public async Task<IActionResult> SearchAllServiceNo(string ICNumber)
-        {
+ {
             DTOApiDataResponse dTOApiDataResponse = new DTOApiDataResponse();
             if (ICNumber != null)
             {
@@ -1440,9 +1444,9 @@ namespace Web.Controllers
              
                 var jsonString = JsonConvert.SerializeObject(retdata);
                 var jsonde=JsonConvert.DeserializeObject(jsonString);
-
-
-                return Json(jsonde);
+                
+                
+                return Json(Encrypt.EncryptParameter(jsonde.ToString()));
 
 
             }

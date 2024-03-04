@@ -194,27 +194,27 @@ $(document).ready(function () {
             var someNumbers = [1];
             GetRemarks("ddlRemarks", 0, someNumbers);
         }
-        else if (StepCounter == 2) {
-            if (applyfor == 1) {
-                $(".gsoio").html("Issuing Authority");
-                $("#btnForward").html("Forward To Issuing Authority");
-                GetAllOffsByUnitId("ddlfwdoffrs", 0, 0, 0, 0, spnIntOffr);
-            }
-            else {
-                $(".gsoio").html("Regt Centre");
-                $("#btnForward").html("Forward To Regt Centre");
-                GetAllOffsByUnitId("ddlfwdoffrs", 0, 0, 0, 0, 0);
-            }
-            $("#btntokenTofwd").removeClass("d-none");
-            $(".Remarks").removeClass("d-none");
-            var someNumbers = [1];
-            GetRemarks("ddlRemarks", 0, someNumbers);
+        //else if (StepCounter == 2) {
+        //    if (applyfor == 1) {
+        //        $(".gsoio").html("Issuing Authority");
+        //        $("#btnForward").html("Forward To Issuing Authority");
+        //        GetAllOffsByUnitId("ddlfwdoffrs", 0, 0, 0, 0, spnIntOffr);
+        //    }
+        //    else {
+        //        $(".gsoio").html("Regt Centre");
+        //        $("#btnForward").html("Forward To Regt Centre");
+        //        GetAllOffsByUnitId("ddlfwdoffrs", 0, 0, 0, 0, 0);
+        //    }
+        //    $("#btntokenTofwd").removeClass("d-none");
+        //    $(".Remarks").removeClass("d-none");
+        //    var someNumbers = [1];
+        //    GetRemarks("ddlRemarks", 0, someNumbers);
 
-            var Reject = [2];
-            GetRemarks("ddlRRemarks", 0, Reject);
+        //    var Reject = [2];
+        //    GetRemarks("ddlRRemarks", 0, Reject);
             
-        }
-        else if (StepCounter == 3) {
+        //}
+        else if (StepCounter == 3 || StepCounter == 2) {
             if (applyfor == 1) {
                 $(".chkforserach").addClass("d-none");
 
@@ -245,7 +245,7 @@ $(document).ready(function () {
             $(".chkforserach").addClass("d-none");
             $(".gsoio").html("HQ 54");
             $("#btnForward").html("Forward To HQ 54");
-            GetAllOffsByUnitId("ddlfwdoffrs", 0, 6,0,0,0);
+            GetAllOffsByUnitId("ddlfwdoffrs", 0, spnHQ54UnitId,0,0,0);
 
 
             $(".Remarks").removeClass("d-none");
@@ -345,6 +345,11 @@ $(document).ready(function () {
                         } else {
 
                             Counter = parseInt($("#spnStepCounter").html()) + 1;
+                            if (applyfor == 1 || Counter == 3)/// for ACG
+                                Counter = 4;
+                            if (applyfor == 2 || Counter == 2)/// for ACG
+                                Counter = 5;
+
                             if (applyfor == 2 && parseInt($("#spnStepCounter").html()) == 3) {
                                 Counter = 5;
                             }
@@ -555,7 +560,7 @@ function GetProfiledetailsByAspNetuserid(AspNetUsersId) {
         var param = { "Name": AspNetUsersId, "TypeId": 0, "UnitId": spnMI11UnitId };
     else if (StepCounter == 4 && applyfor == 1)
         var param = { "Name": AspNetUsersId, "TypeId": 0, "UnitId": spnHQ54UnitId };
-    else if (StepCounter == 3 && applyfor == 2)
+    else if (StepCounter == 2 ||StepCounter == 3 && applyfor == 2)
         var param = { "Name": AspNetUsersId, "TypeId": 0, "UnitId": spnHQ54UnitId };
     else
         var param = { "Name": AspNetUsersId, "TypeId": 0, "UnitId": 0 };
@@ -952,6 +957,11 @@ function DataExport(Data) {
 
                     // Remove the anchor from the body
                     document.body.removeChild(link);
+
+
+                    setTimeout(function () {
+                        location.reload();
+                    }, 1000);
                 }
 
 

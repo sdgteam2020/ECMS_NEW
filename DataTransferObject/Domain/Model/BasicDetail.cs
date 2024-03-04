@@ -17,6 +17,8 @@ namespace DataTransferObject.Domain.Model
        
         public int BasicDetailId { get; set; }
 
+     
+
         [StringLength(36)]
         [Column(TypeName = "varchar(36)")]
         public string Name { get; set; } = string.Empty;

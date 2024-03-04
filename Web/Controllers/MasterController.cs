@@ -1,6 +1,7 @@
 ﻿using BusinessLogicsLayer;
 using BusinessLogicsLayer.Master;
 using DapperRepo.Core.Constants;
+using DataAccessLayer.BaseInterfaces;
 using DataTransferObject.Domain.Master;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
@@ -9,7 +10,9 @@ using Humanizer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using System.Collections;
 using System.Security.Claims;
+using System.Text;
 
 namespace Web.Controllers
 {
@@ -18,18 +21,20 @@ namespace Web.Controllers
         private readonly IUnitOfWork unitOfWork;
         private readonly IChangeHierarchyMasterBL changeHierarchyMaster;
         private readonly ILogger<MasterController> _logger;
-        public MasterController(IUnitOfWork unitOfWork, IChangeHierarchyMasterBL changeHierarchyMaster, ILogger<MasterController> logger)
+        private readonly IEncryptsqlDB _iEncryptsqlDB;
+        public MasterController(IUnitOfWork unitOfWork, IChangeHierarchyMasterBL changeHierarchyMaster, ILogger<MasterController> logger, IEncryptsqlDB iEncryptsqlDB)
         {
             this.unitOfWork = unitOfWork;
             this.changeHierarchyMaster = changeHierarchyMaster;
-            _logger = logger;
+            _logger = logger; 
+            _iEncryptsqlDB = iEncryptsqlDB;
         }
 
         #region Command Page
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Command()
         {
-
+        
             return View();
         }
         [Authorize(Roles = "Admin")]
@@ -799,7 +804,7 @@ namespace Web.Controllers
                 dTO.UnitName = dTO.UnitName.Trim();
                 dTO.Abbreviation = dTO.Abbreviation != null ? dTO.Abbreviation.Trim() : dTO.Abbreviation;
                 dTO.Suffix = dTO.Suffix.Trim();
-
+                //dTO.UnitDesc =  await _iEncryptsqlDB.GetEncryptString(ConnKeyConstants.EncryptByPassPhraseKey, dTO.UnitName);
                 if (ModelState.IsValid)
                 {
                     if (!await unitOfWork.Unit.GetByName(dTO))

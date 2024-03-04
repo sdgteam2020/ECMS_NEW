@@ -13,23 +13,27 @@ using System.Data.Entity.Core.Mapping;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DataAccessLayer.Logger;
+using Dapper;
 
 namespace DataAccessLayer
 {
     public class UnitDB : GenericRepositoryDL<MUnit>, IUnitDB
     {
         protected readonly ApplicationDbContext _context;
+        private readonly DapperContext _contextDP;
         private readonly ILogger<UnitDB> _logger;
-        public UnitDB(ApplicationDbContext context, ILogger<UnitDB> logger) : base(context)
+        public UnitDB(ApplicationDbContext context, ILogger<UnitDB> logger, DapperContext contextDP) : base(context)
         {
             _context = context;
             _logger = logger;
+            _contextDP = contextDP;
         }
         private readonly IConfiguration configuration;
 
         public async Task<bool> GetByName(MUnit Data)
         {
-            var ret = _context.MUnit.Any(p => p.UnitName.ToUpper() == Data.UnitName.ToUpper() && p.UnitId !=Data.UnitId);
+            var ret = _context.MUnit.Any(p => p.UnitName.ToUpper() == Data.UnitName.ToUpper() && p.UnitId != Data.UnitId);
             return ret;
         }
         public async Task<bool> FindSusNo(string Sus_no)
@@ -50,11 +54,11 @@ namespace DataAccessLayer
                 return null;
             }
         }
-        public async Task<bool?> GetBySusNoWithUnitId(string Sus_no,int UnitId)
+        public async Task<bool?> GetBySusNoWithUnitId(string Sus_no, int UnitId)
         {
             try
             {
-                return await _context.MUnit.AnyAsync(x => (x.Sus_no.ToUpper() + x.Suffix.ToUpper()) == Sus_no && x.UnitId !=UnitId);
+                return await _context.MUnit.AnyAsync(x => (x.Sus_no.ToUpper() + x.Suffix.ToUpper()) == Sus_no && x.UnitId != UnitId);
             }
             catch (Exception ex)
             {
@@ -67,8 +71,39 @@ namespace DataAccessLayer
         {
             try
             {
-                UnitName = string.IsNullOrEmpty(UnitName) ? "" : UnitName.ToLower();
-                var ret = await _context.MUnit.Where(P => UnitName == "" || P.UnitName.ToLower().Contains(UnitName)).Take(200).ToListAsync();
+                //UnitName = string.IsNullOrEmpty(UnitName) ? "" : UnitName.ToLower();
+                //string query = "";
+                //if(UnitName!="")
+                // query = " declare @UnitName varchar(Max)='"+ UnitName.ToUpper() + "' "+
+                //                " SELECT  [UnitId] ,[Sus_no],[Suffix],CONVERT(varchar(Max),[UnitName]) UnitName,[Abbreviation],[IsVerify],[IsActive]"+
+                //                " ,[Updatedby],[UpdatedOn],[UnregdUserId] "+
+                //                " FROM   dbo.MUnit where CONVERT(varchar(Max),[UnitName])=@UnitName";
+                //else
+                //{
+                //    query = " SELECT  [UnitId] ,[Sus_no],[Suffix],CONVERT(varchar(Max),[UnitName]) UnitName,[Abbreviation],[IsVerify],[IsActive]" +
+                //               " ,[Updatedby],[UpdatedOn],[UnregdUserId] " +
+                //               " FROM   dbo.MUnit";
+                //}
+
+               
+                //using (var connection = _contextDP.CreateConnection())
+                //{
+                //    var basicDetail = await connection.QueryAsync<MUnit>(query, new { });
+                //    if (basicDetail != null)
+                //    {
+                //        return basicDetail.ToList();
+                //    }
+                //    else
+                //    {
+                //        return null;
+                //    }
+                //}
+
+                //var ret = await _context.MUnit.Where(P => UnitName == "" || P.UnitName.ToLower().Contains(UnitName)).Take(200).ToListAsync();
+
+
+
+                var ret = await _context.MUnit.Take(200).ToListAsync();
                 return ret;
             }
             catch (Exception ex)
@@ -100,4 +135,4 @@ namespace DataAccessLayer
 
         }
     }
- }
+}

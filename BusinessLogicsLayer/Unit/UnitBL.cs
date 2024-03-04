@@ -10,21 +10,33 @@ using System.Threading.Tasks;
 using DataTransferObject.Response;
 using DataTransferObject.Requests;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using static Dapper.SqlMapper;
+using DapperRepo.Core.Constants;
 
 namespace BusinessLogicsLayer.Unit
 {
     public class UnitBL : GenericRepositoryDL<MUnit>, IUnitBL
     {
         private readonly IUnitDB _UnitDB;
+        
 
         public UnitBL(ApplicationDbContext context, IUnitDB UnitDB) : base(context)
         {
             _UnitDB = UnitDB;
+            
         }
-
-        public Task<List<MUnit>> GetAllUnit(string Sus_no)
+       
+        public async Task<List<MUnit>> GetAllUnit(string Sus_no)
         {
-            return _UnitDB.GetAllUnit(Sus_no);
+            //List<MUnit> List=await _UnitDB.GetAllUnit(Sus_no);
+            //List<MUnit> Ret=new List<MUnit>();
+            //foreach (MUnit item in List)
+            //{
+            //  //  item.UnitName=Encrypt.DecryptParameter(item.UnitName);
+            //   // item.Sus_no = Encrypt.DecryptParameter(item.Sus_no);
+            //    Ret.Add(item);
+            //}
+            return await _UnitDB.GetAllUnit(Sus_no);
         }
 
         public Task<bool> GetByName(MUnit Data)
@@ -48,5 +60,7 @@ namespace BusinessLogicsLayer.Unit
         {
             return await _UnitDB.GetTopBySUSNo(SUSNo);
         }
+
+       
     }
 }
