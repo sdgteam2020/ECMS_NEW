@@ -548,7 +548,8 @@ function GetALLByUnitById(param1) {
         success: function (data) {
             $("#spnUnitMapId").html(data.UnitMapId);
             $("#lblSusno").html(data.Sus_no + '' + data.Suffix);
-            $("#txtUnitName").val(data.UnitName);
+            /*$("#txtUnitName").val(data.UnitName);*/
+            $("#txtUnitName").val(data.Sus_no + '' + data.Suffix);
 
             if (data.UnitType == 1) {
                 $("#lblComd").html(data.ComdName);
