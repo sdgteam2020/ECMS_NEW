@@ -91,12 +91,12 @@
                                             <form asp-antiforgery="true" method="post" asp-action="TokenValidate" autocomplete="off" role="form">
                                                 <div class="form-group">
                                                     <label asp-for="ICNo"></label>
-                                                    <input asp-for="ICNo" class="form-control" placeholder="Enter IC No" value="@dTOTempSession.ICNO" />
+                                                    <input asp-for="ICNo" class="form-control" placeholder="Enter IC No" /> @* value="@dTOTempSession.ICNO" *@
                                                     <span asp-validation-for="ICNo" class="text-danger"></span>
                                                     <label id="tokenmsg"></label>
                                                 </div>
                                                 <div class="text-center" >
-                                                    <button type="button" class="btn btn-primary mt-2" onclick="GetTokenDetails1('FetchUniqueTokenDetails' ,'ICNo');">Refresh To Fetch Token Details</button>
+                                                    @* <button type="button" class="btn btn-primary mt-2" onclick="GetTokenDetails1('FetchUniqueTokenDetails' ,'ICNo');">Refresh To Fetch Token Details</button> *@
                                                     <button type="submit" class="btn btn-primary mt-2">Proceed</button>
                                                 </div>
                                                 @if (TempData["success"] != null)
@@ -114,7 +114,7 @@
                                                     </div>
                                                 }
                                               
-                                                @if (dTOTempSession!=null)
+@*                                                 @if (dTOTempSession!=null)
                                                 {
                                                    <div class="alert alert-info alert-dismissible fade show" role="alert">
                                                         <span class="text-info text-break">@Html.Raw(@m1)</span>
@@ -124,7 +124,7 @@
                                                         <span class="text-info text-break">@Html.Raw(@m2)</span>
                                                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                                                     </div>
-                                                }
+                                                } *@
                                             </form>
                                         </div>
                                     </div>
