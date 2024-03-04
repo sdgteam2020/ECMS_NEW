@@ -84,7 +84,7 @@
                         if (data.length != 0) {
                             response($.map(data, function (item) {
                                 $("#loading").addClass("d-none");
-                                return { label: item.UnitName, value: item.UnitMapId };
+                                return { label: item.Sus_no + item.Suffix +' '+ item.UnitName , value: item.UnitMapId };
 
                             }))
                         }
@@ -549,7 +549,7 @@ function GetALLByUnitById(param1) {
             $("#spnUnitMapId").html(data.UnitMapId);
             $("#lblSusno").html(data.Sus_no + '' + data.Suffix);
             /*$("#txtUnitName").val(data.UnitName);*/
-            $("#txtUnitName").val(data.Sus_no + '' + data.Suffix);
+            $("#txtUnitName").val(data.UnitName + ' '+ data.Sus_no + data.Suffix);
 
             if (data.UnitType == 1) {
                 $("#lblComd").html(data.ComdName);

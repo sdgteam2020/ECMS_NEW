@@ -133,7 +133,9 @@ namespace DataAccessLayer
                        select new DTOMapUnitResponse
                        {
                            UnitMapId = uni.UnitMapId,
-                           UnitName = MUni.Sus_no + MUni.Suffix,/* MUni.UnitName,*/
+                           UnitName = MUni.UnitName,
+                           Suffix=MUni.Suffix,
+                           Sus_no=MUni.Sus_no,
                        }
                      ).Distinct().Take(5).ToList(); ;
             return Task.FromResult(Div);
