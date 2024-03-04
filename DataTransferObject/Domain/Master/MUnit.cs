@@ -29,14 +29,19 @@ namespace DataTransferObject.Domain.Master
         [Column(TypeName = "char(1)")]
         public string Suffix { get; set; } = string.Empty;
 
+        //[Required(ErrorMessage = "required!")]
+        //[RegularExpression("^[a-zA-Z0-9 ]*$", ErrorMessage = "Only Alphabets and Numbers allowed.")]
+        //[MaxLength(100, ErrorMessage = "Maximum length of UnitName is 100 character.")]
+        //[Column(TypeName = "varbinary(Max)")]
+        //public Byte[]? UnitDesc { get; set; }
+
+
         [Required(ErrorMessage = "required!")]
         [RegularExpression("^[a-zA-Z0-9 ]*$", ErrorMessage = "Only Alphabets and Numbers allowed.")]
         [MaxLength(100, ErrorMessage = "Maximum length of UnitName is 100 character.")]
         [Column(TypeName = "varchar(100)")]
         public string UnitName { get; set; } = string.Empty;
 
-      
-        
         [Column(TypeName = "varchar(10)")]
         [MaxLength(10, ErrorMessage = "Maximum length of Abbreviation is ten character.")]
         [RegularExpression("^[a-zA-Z0-9 ]*$", ErrorMessage = "Only Alphabets and Numbers allowed.")]

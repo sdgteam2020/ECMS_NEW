@@ -25,6 +25,7 @@ using iText.Kernel.Pdf;
 using BusinessLogicsLayer.BasicDet;
 using DataTransferObject.ViewModels;
 using BusinessLogicsLayer.Bde;
+using Microsoft.AspNetCore.Identity;
 
 namespace Web.Controllers
 {
@@ -91,7 +92,7 @@ namespace Web.Controllers
             try
             {
                 BasicDetailCrtAndUpdVM? db = await BasicDetailBL.GetByRequestIdBesicDetails(RequestId);
-                var filePath1 = System.IO.Path.Combine(hostingEnvironment.ContentRootPath, "wwwroot\\DigitallysignaturePdf\\"+db.ArmedName+".pdf");
+                var filePath1 = System.IO.Path.Combine(hostingEnvironment.ContentRootPath, "wwwroot\\DigitallysignaturePdf\\"+db.ServiceNo+ "_"+RequestId+".pdf");
                 PdfWriter writer = new PdfWriter(filePath1);
                 PdfDocument pdf = new PdfDocument(writer);
                 Document document = new Document(pdf);
@@ -114,7 +115,7 @@ namespace Web.Controllers
                 table.AddCell("Arm / Service");
                 table.AddCell(db.ArmedName);
                 table.AddCell("Army No");
-                table.AddCell(db.ArmedName);
+                table.AddCell(db.ServiceNo);
                 table.AddCell("IdenMark1");
                 table.AddCell(db.IdenMark1);
                 table.AddCell("Date of Birth");
@@ -133,15 +134,24 @@ namespace Web.Controllers
                 table.AddCell(db.IssuingAuth);
                 table.AddCell("Date of Commissioning/ Enrollment");
                 table.AddCell(Convert.ToString(db.DateOfCommissioning.ToShortDateString()).Replace("-", "/"));
+
                 table.AddCell("Permt Address as per Service Records");
-                table.AddCell(db.PermanentAddress);
-              
+                //table.AddCell(new Cell(1, 3).Add(new Paragraph("Amount")));
+                table.AddCell("Village - " + db.Village + ", Post Office-" + db.PO + ", Tehsil- " + db.Tehsil + ", District- " + db.District + ", State- " + db.State + ", Pin Code- " + db.PinCode);
+                table.AddCell("Approved Date");
+                table.AddCell(Convert.ToString(DateTime.Now.ToShortDateString()).Replace("-", "/"));
+                table.AddCell("Approved By");
+                DtoSession dtoSession = new DtoSession();
+                dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+
+
+                table.AddCell(dtoSession.RankName+" " + dtoSession.Name+" ("+dtoSession.ICNO+")");
                 // Add the table to the document
                 document.Add(table);
 
 
                 document.Close();
-                return Json(db.ArmedName+".pdf");
+                return Json(db.ServiceNo+ "_"+RequestId+".pdf");
             }
             catch (Exception ex) { 
                 return Json(0);

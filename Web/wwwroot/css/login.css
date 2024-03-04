@@ -277,7 +277,7 @@ ul {
     .main-signup-header .form-group .field-icon svg{
         height:20px;
     }
-        .main-signup-header .form-control {
+      /*  .main-signup-header .form-control {
     color: #14112d;
     font-weight: 500;
     border-width: 2px;
@@ -288,7 +288,7 @@ ul {
     border-left: 3px solid #2f35df;
     border-radius: 8px;
     box-shadow: 0 0.125rem 0.625rem rgb(52 59 255 / 0.1), 0 0.0625rem 0.625rem rgb(48 55 255 / 0.3);
-}
+}*/
 
     .main-signup-header .form-control:focus {
         border-color: #b9c2d8;

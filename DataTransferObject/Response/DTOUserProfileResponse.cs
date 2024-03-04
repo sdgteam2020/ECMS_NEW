@@ -29,6 +29,7 @@ namespace DataTransferObject.Response
         public Boolean IntOffr { get; set; }
         public Boolean IsIO { get; set; }
         public Boolean IsCO { get; set; }
+        public Boolean IsToken { get; set; }
         public string SusNo { get; set; } = string.Empty;
         //public int RequestId { get; set; }
         public string UnitName { get; set; } = string.Empty;

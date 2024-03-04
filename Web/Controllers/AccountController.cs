@@ -2,6 +2,7 @@
 using Azure;
 using BusinessLogicsLayer;
 using BusinessLogicsLayer.Account;
+using BusinessLogicsLayer.BasicDet;
 using BusinessLogicsLayer.Bde;
 using BusinessLogicsLayer.Helpers;
 using BusinessLogicsLayer.Master;

@@ -17,6 +17,9 @@ namespace DataTransferObject.Domain
         [RegularExpression(@"^[\d]+$", ErrorMessage = "UserId is number.")]
         public int UserId { get; set; }
 
+
+     
+
         [StringLength(10)]
         [Column(TypeName = "varchar(10)")]
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
