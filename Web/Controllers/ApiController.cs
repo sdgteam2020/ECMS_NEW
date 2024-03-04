@@ -62,7 +62,7 @@ namespace Web.Controllers
                     else
                     {
                         res1.Status = false;
-                        res1.Message = "Data Could not be Fetched From Data Records";
+                        res1.Message = "Data Could not be Fetched From Data Records ";
                     }
 
                 }
