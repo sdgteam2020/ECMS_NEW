@@ -4,6 +4,7 @@ var StepCounter = 0;
 var applyfor = 0;
 var xmlsign = 0;
 var lstmultifwdarr = new Array();
+var isToken = false;
 $(document).ready(function () {
 
 
@@ -131,6 +132,8 @@ $(document).ready(function () {
         $("#BasicDetails").modal('hide');
         /*if (applyfor==1)*/
         $("#FwdRecord").modal('show');
+
+        GetByArmyNoIsToken();
     });
 
     $("input[name='Intoffrs']").change(function () {
@@ -191,27 +194,27 @@ $(document).ready(function () {
             var someNumbers = [1];
             GetRemarks("ddlRemarks", 0, someNumbers);
         }
-        else if (StepCounter == 2) {
-            if (applyfor == 1) {
-                $(".gsoio").html("Issuing Authority");
-                $("#btnForward").html("Forward To Issuing Authority");
-                GetAllOffsByUnitId("ddlfwdoffrs", 0, 0, 0, 0, spnIntOffr);
-            }
-            else {
-                $(".gsoio").html("Regt Centre");
-                $("#btnForward").html("Forward To Regt Centre");
-                GetAllOffsByUnitId("ddlfwdoffrs", 0, 0, 0, 0, 0);
-            }
-            $("#btntokenTofwd").removeClass("d-none");
-            $(".Remarks").removeClass("d-none");
-            var someNumbers = [1];
-            GetRemarks("ddlRemarks", 0, someNumbers);
+        //else if (StepCounter == 2) {
+        //    if (applyfor == 1) {
+        //        $(".gsoio").html("Issuing Authority");
+        //        $("#btnForward").html("Forward To Issuing Authority");
+        //        GetAllOffsByUnitId("ddlfwdoffrs", 0, 0, 0, 0, spnIntOffr);
+        //    }
+        //    else {
+        //        $(".gsoio").html("Regt Centre");
+        //        $("#btnForward").html("Forward To Regt Centre");
+        //        GetAllOffsByUnitId("ddlfwdoffrs", 0, 0, 0, 0, 0);
+        //    }
+        //    $("#btntokenTofwd").removeClass("d-none");
+        //    $(".Remarks").removeClass("d-none");
+        //    var someNumbers = [1];
+        //    GetRemarks("ddlRemarks", 0, someNumbers);
 
-            var Reject = [2];
-            GetRemarks("ddlRRemarks", 0, Reject);
+        //    var Reject = [2];
+        //    GetRemarks("ddlRRemarks", 0, Reject);
             
-        }
-        else if (StepCounter == 3) {
+        //}
+        else if (StepCounter == 3 || StepCounter == 2) {
             if (applyfor == 1) {
                 $(".chkforserach").addClass("d-none");
 
@@ -242,7 +245,7 @@ $(document).ready(function () {
             $(".chkforserach").addClass("d-none");
             $(".gsoio").html("HQ 54");
             $("#btnForward").html("Forward To HQ 54");
-            GetAllOffsByUnitId("ddlfwdoffrs", 0, 6,0,0,0);
+            GetAllOffsByUnitId("ddlfwdoffrs", 0, spnHQ54UnitId,0,0,0);
 
 
             $(".Remarks").removeClass("d-none");
@@ -314,7 +317,7 @@ $(document).ready(function () {
         /*  alert($("#txtspnTokenArmyNo").val());*/
        
 
-        /*  if ($("#aspntokenarmyno").html() == $("#txtspnTokenArmyNo").val()) {*/
+        if (($("#aspntokenarmyno").html() == $("#txtspnTokenArmyNo").val()) || isToken == false) {
         $("#msgforfwd").html('');
 
         if (parseInt(spnStepId) != 0) {
@@ -342,6 +345,11 @@ $(document).ready(function () {
                         } else {
 
                             Counter = parseInt($("#spnStepCounter").html()) + 1;
+                            if (applyfor == 1 || Counter == 3)/// for ACG
+                                Counter = 4;
+                            if (applyfor == 2 || Counter == 2)/// for ACG
+                                Counter = 5;
+
                             if (applyfor == 2 && parseInt($("#spnStepCounter").html()) == 3) {
                                 Counter = 5;
                             }
@@ -385,10 +393,10 @@ $(document).ready(function () {
                 }
             })
         }
-        //}
-        //else {
-        //    $("#msgforfwd").html('<div class="mt-4 alert alert-danger alert-dismissible fade show "><i class="fa fa-check " aria-hidden="true"></i><span class="m-lg-2">Please Correct Token insert and Click refresh Button </span></div>');
-        //}
+        }
+        else {
+            $("#msgforfwd").html('<div class="mt-4 alert alert-danger alert-dismissible fade show "><i class="fa fa-check " aria-hidden="true"></i><span class="m-lg-2">Please Correct Token insert and Click refresh Button </span></div>');
+        }
     });
 
     $("#btnRejected").click(function () {
@@ -552,7 +560,7 @@ function GetProfiledetailsByAspNetuserid(AspNetUsersId) {
         var param = { "Name": AspNetUsersId, "TypeId": 0, "UnitId": spnMI11UnitId };
     else if (StepCounter == 4 && applyfor == 1)
         var param = { "Name": AspNetUsersId, "TypeId": 0, "UnitId": spnHQ54UnitId };
-    else if (StepCounter == 3 && applyfor == 2)
+    else if (StepCounter == 2 ||StepCounter == 3 && applyfor == 2)
         var param = { "Name": AspNetUsersId, "TypeId": 0, "UnitId": spnHQ54UnitId };
     else
         var param = { "Name": AspNetUsersId, "TypeId": 0, "UnitId": 0 };
@@ -691,17 +699,29 @@ function ForwardTo(RequestId, HType) {
                         var lsts = new Array();
                         var ids = $("#spnCurrentspnRequestId").html();
                         lsts.push(ids);
-                        DataSignDigitaly(lsts, "tokenmsgforfwd", response.TrnFwdId);
-                        DownloadPdf(RequestId);
+                        if (isToken == true) {
+                            DataSignDigitaly(lsts, "tokenmsgforfwd", response.TrnFwdId);
+                            DownloadPdf(RequestId);
+                        }
+                        else {
+                            setTimeout(function () {
+                                location.reload();
+                            }, 2000);
+                        }
+                       
                        
                     }
                     else {
-                        location.reload();
+                        setTimeout(function () {
+                            location.reload();
+                        }, 2000);
                     }
                 }
                 
                 else {
-                    location.reload();
+                    setTimeout(function () {
+                        location.reload();
+                    }, 2000);
                 }
             }
         }
@@ -732,7 +752,9 @@ function RejecteTo(RequestId, HType) {
         type: 'POST',
         success: function (response) {
             if (response != "null" && response != null) {
-                location.reload();
+                setTimeout(function () {
+                    location.reload();
+                }, 2000);
             }
         }
 
@@ -935,6 +957,11 @@ function DataExport(Data) {
 
                     // Remove the anchor from the body
                     document.body.removeChild(link);
+
+
+                    setTimeout(function () {
+                        location.reload();
+                    }, 1000);
                 }
 
 
@@ -1028,7 +1055,7 @@ function GetTokenSignXml(xml, msgid, TrnFwdId) {
                     $("#" + msgid).html('<div class="mt-4 alert alert-success alert-dismissible fade show "><i class="fa fa-check " aria-hidden="true"></i><span class="m-lg-2">Token Detected  </span></div>');
 
                     SignXmlSendTOdatabase(xmlContent, TrnFwdId);
-                    //// Create a Blob from the XML string
+                    // Create a Blob from the XML string
                     //var blob = new Blob([xmlContent], { type: 'application/xml' });
 
                     //// Create a download link
@@ -1225,7 +1252,7 @@ function digitalpdfsignature(Thumbprint, pdfpath, XCoordinate, YCoordinate) {
                     toastr.success('Pdf Digital Sign Sucess');
                     setTimeout(function () {
                         location.reload();
-                    }, 1000);
+                    }, 2000);
                 }
                 else {
                     alert(response.Message)
@@ -1270,3 +1297,50 @@ function base64ToArrayBuffer(data) {
     }
     return bytes;
 };
+
+function GetByArmyNoIsToken(ArmyNo) {
+    var userdata =
+    {
+        "ArmyNo": ArmyNo,
+
+    };
+    $.ajax({
+        url: '/UserProfile/GetByArmyNoOrAspnetuserId',
+        contentType: 'application/x-www-form-urlencoded',
+        data: userdata,
+        type: 'POST',
+
+        success: function (response) {
+            if (response != "null" && response != null) {
+
+                if (response == InternalServerError) {
+                    Swal.fire({
+                        text: errormsg
+                    });
+                }
+                else if (response == 0) {
+
+                }
+
+                else {
+                    isToken = response.IsToken;
+                    if (response.IsToken == false)
+                        $("#btntokenTofwd").addClass("d-none");
+                    else
+                        $("#btntokenTofwd").removeClass("d-none");
+                    // GetALLByUnitById(response.UnitId);
+                    //$("#AddNewProfile").modal('hide');
+
+
+
+                }
+            }
+
+        },
+        error: function (result) {
+            Swal.fire({
+                text: errormsg002
+            });
+        }
+    });
+}

@@ -36,5 +36,9 @@ namespace DataTransferObject.Domain.Model
         public string? Pers_Iden_mark_1 { get; set; }
         public string? Pers_Iden_mark_2 { get; set; }
         public string? Pers_Gender { get; set; }
+        [NotMapped]
+        public Boolean Status { get; set; }
+        [NotMapped]
+        public string? Message { get; set; }
     }
 }

@@ -82,6 +82,9 @@ function GetALLByUnitById(param1) {
             $(".spnUnit").addClass('d-none');
             $(".spnFmnBranch").addClass('d-none');
             $(".spnDteBranch").addClass('d-none');
+
+
+
             if (data.UnitType == 1) {
                 $(".spnUnit").removeClass('d-none');
                 $("#lblunittype").html("Unit");
@@ -245,6 +248,11 @@ function GetByArmyNo(ArmyNo) {
                         $("#lblMappedDate").html(DateFormateMMMM_dd_yyyy(response.MappedDate));
                         $("#lblMappedBy").html(response.MappedBy);
 
+
+                    if (response.IsToken == false)
+                        $("#btntokenrefresh").addClass("d-none");
+                    else
+                        $("#btntokenrefresh").removeClass("d-none");
                        // GetALLByUnitById(response.UnitId);
                         //$("#AddNewProfile").modal('hide');
 

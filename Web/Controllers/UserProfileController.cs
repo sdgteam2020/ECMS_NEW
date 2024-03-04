@@ -31,6 +31,7 @@ namespace Web.Controllers
         }
         public IActionResult Profile()
         {
+          
             return View();
         }
         public async Task<IActionResult> SaveUserProfile(MUserProfile dTO)

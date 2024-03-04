@@ -104,11 +104,7 @@ function GetTokenvalidatepersid2fa(IcNo, msgid, txticno, thumbprint) {
 }
 function GetTokenValidate(ApiId, IcNo, msgid) {
     $("#loadingToken").show();
-    var examdata =
-    {
-        "inputpersId": IcNo,
-
-    };
+   
 
     $.ajax({
         url: 'http://localhost/Temporary_Listen_Addresses/' + ApiId,

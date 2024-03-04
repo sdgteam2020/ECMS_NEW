@@ -313,7 +313,7 @@ namespace DataAccessLayer
                         "WHERE map.AspNetUsersId = @UserId and trnicrd.Status=0 ORDER BY B.UpdatedOn DESC";
                 
             }
-            else if (stepcount == 2 || stepcount == 3 || stepcount == 4 || stepcount == 5)//IO
+            else if (stepcount == 2 || stepcount == 3 || stepcount == 4 || stepcount == 5 || stepcount == 6)//IO
             {
                 if(TypeId==1)///For Icard Submit
                 {
@@ -338,6 +338,17 @@ namespace DataAccessLayer
                " inner join TrnFwds fwd on fwd.RequestId = trnicrd.RequestId and fwd.ToAspNetUsersId = @UserId and Afor.ApplyForId=IsNULL(@applyForId,Afor.ApplyForId) and fwd.TypeId=@stepcount and C.StepId = @stepcount and trnicrd.Status=0";
 
 
+                }else if(TypeId == 6)///for exported data
+                {
+                    query = " SELECT distinct B.BasicDetailId,B.Name,B.ServiceNo,B.DOB,B.DateOfCommissioning,C.StepId StepCounter,C.Id StepId,ty.TypeId,ty.name ICardType,trnicrd.RequestId ,Afor.Name ApplyFor,Afor.ApplyForId,ran.RankAbbreviation RankName" +
+            " FROM BasicDetails B" +
+            " inner join MRank ran on ran.RankId=B.RankId" +
+            " inner join TrnICardRequest trnicrd on trnicrd.BasicDetailId = B.BasicDetailId" +
+            " inner join MApplyFor Afor on Afor.ApplyForId = B.ApplyForId " +
+            " inner join TrnStepCounter C on trnicrd.RequestId = C.RequestId" +
+            " inner join MICardType ty on ty.TypeId = trnicrd.TypeId" +
+            " inner join TrnFwds fwd on fwd.RequestId = trnicrd.RequestId and fwd.ToAspNetUsersId = @UserId and Afor.ApplyForId=IsNULL(@applyForId,Afor.ApplyForId)  and trnicrd.Status=1";
+
                 }
                 else //if (TypeId == 3) //// For For Show
                 {
@@ -357,7 +368,7 @@ namespace DataAccessLayer
 
                 }
             }
-            else if (stepcount == 7 || stepcount == 8 || stepcount == 9 || stepcount == 10)//Reject From IO
+            else if (stepcount == 7 || stepcount == 8 || stepcount == 9 || stepcount == 10 || stepcount == 11)//Reject From IO
             {
 
                 query = "SELECT distinct B.BasicDetailId,B.Name,B.ServiceNo,B.DOB,B.DateOfCommissioning,C.StepId StepCounter,C.Id StepId,ty.TypeId,ty.name ICardType,trnicrd.RequestId,isnull(fwd.Status,1) Reject ,Afor.Name ApplyFor,Afor.ApplyForId,trnicrd.TrackingId,ran.RankAbbreviation RankName" +
@@ -557,7 +568,7 @@ namespace DataAccessLayer
         public async Task<List<DTODataExportsResponse>> GetBesicdetailsByRequestId(DTODataExportRequest Data)
         {
             
-            string query = "select bas.*," +
+            string query = "update TrnStepCounter set StepId=6 where RequestId in @Ids  update TrnICardRequest set Status=1 where  RequestId in @Ids select bas.*," +
                             " trnadd.State,trnadd.District,trnadd.PS,trnadd.PO,trnadd.Tehsil,trnadd.Village,trnadd.PinCode," +
                             " trnup.SignatureImagePath,trnup.PhotoImagePath,IdenMark1,IdenMark2,AadhaarNo,Height,bld.BloodGroup," +
                             " regi.Abbreviation RegimentalName,Muni.UnitName,uni.UnitMapId UnitId,icardreq.TypeId,icardreq.RegistrationId," +
@@ -570,8 +581,8 @@ namespace DataAccessLayer
                             " inner join MArmedType arm on arm.ArmedId=bas.ArmedId" +
                             " inner join MapUnit uni on uni.UnitMapId=bas.UnitId" +
                             " inner join MUnit Muni on Muni.UnitId=uni.UnitId" +
-                            " inner join TrnICardRequest icardreq on icardreq.BasicDetailId=bas.BasicDetailId and icardreq.Status=0 " +
-                            " inner join MICardType MICardType on MICardType.TypeId=icardreq.TypeId "+
+                            " inner join TrnICardRequest icardreq on icardreq.BasicDetailId=bas.BasicDetailId " + //and icardreq.Status=0 
+                            " inner join MICardType MICardType on MICardType.TypeId=icardreq.TypeId " +
                             " left join MRegimental regi on regi.RegId=bas.RegimentalId" +
                             " where icardreq.RequestId in @Ids";
             int[] Ids = Data.Ids;
@@ -747,8 +758,8 @@ namespace DataAccessLayer
                         " select @MIPending=COUNT(distinct fwd.RequestId)  from TrnFwds fwd inner join TrnStepCounter cou on fwd.RequestId=cou.RequestId and cou.ApplyForId=@applyForId where ToAspNetUsersId=@UserId and IsComplete=0 and TypeId=4" +
                         " select @MIApproved=COUNT(distinct fwd.RequestId)  from TrnFwds fwd inner join TrnStepCounter cou on fwd.RequestId=cou.RequestId and cou.ApplyForId=@applyForId where FromAspNetUsersId=@UserId and TypeId=5" +
                         " select @MIReject=COUNT(distinct fwd.RequestId)  from TrnFwds fwd inner join TrnStepCounter cou on fwd.RequestId=cou.RequestId and cou.ApplyForId=@applyForId where FromAspNetUsersId=@UserId and Status=0 and TypeId=1" +
-                        " select @HQPending=COUNT(distinct fwd.RequestId)  from TrnFwds fwd inner join TrnStepCounter cou on fwd.RequestId=cou.RequestId and cou.ApplyForId=@applyForId where ToAspNetUsersId=@UserId and IsComplete=0 and TypeId=5" +
-                        " select @HQApproved=COUNT(distinct fwd.RequestId)  from TrnFwds fwd inner join TrnStepCounter cou on fwd.RequestId=cou.RequestId and cou.ApplyForId=@applyForId where FromAspNetUsersId=@UserId and TypeId=6" +
+                        " select @HQPending=COUNT(distinct fwd.RequestId)  from TrnFwds fwd inner join TrnStepCounter cou on fwd.RequestId=cou.RequestId and cou.ApplyForId=@applyForId inner join TrnICardRequest trncard  on trncard.RequestId=cou.RequestId where ToAspNetUsersId=@UserId and IsComplete=0 and trncard.Status=0" +
+                        " select @HQApproved=COUNT(distinct fwd.RequestId)  from TrnFwds fwd inner join TrnStepCounter cou on fwd.RequestId=cou.RequestId and cou.ApplyForId=@applyForId inner join TrnICardRequest trncard  on trncard.RequestId=cou.RequestId  where ToAspNetUsersId=@UserId and  trncard.Status=1" +
                         " select @HQReject=COUNT(distinct fwd.RequestId)  from TrnFwds fwd inner join TrnStepCounter cou on fwd.RequestId=cou.RequestId and cou.ApplyForId=@applyForId where FromAspNetUsersId=@UserId and Status=0 and TypeId=1" +
                         " select @IOPending IOPending,@IOApproved IOApproved,@IOReject IOReject,@GSOPending GSOPending,@GSOApproved GSOApproved,@GSOReject GSOReject, @MIPending MIPending,@MIApproved MIApproved,@MIReject MIReject,@HQPending HQPending,@HQApproved HQApproved,@HQReject HQReject";
                         
