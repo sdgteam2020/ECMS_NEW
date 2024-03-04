@@ -87,7 +87,7 @@ namespace DataAccessLayer
                        join pso in _context.MPso on uni.PsoId equals pso.PsoId
                        join FmnBranch in _context.MFmnBranches on uni.FmnBranchID equals FmnBranch.FmnBranchID
                        join SubDte in _context.MSubDte on uni.SubDteId equals SubDte.SubDteId
-                       where MUni.UnitName == "" ||  MUni.UnitName.ToLower().Contains(Unit1)//MUni.UnitName == "" ||
+                       where MUni.Sus_no == "" ||  MUni.Sus_no.ToLower().Contains(Unit1)//MUni.UnitName == "" ||
 
                        select new DTOMapUnitResponse
                        { 
@@ -129,11 +129,11 @@ namespace DataAccessLayer
                            //&& (unit.DivId == 0 ? uni.DivId == uni.DivId : uni.DivId == unit.DivId)
                            //&& (unit.BdeId == 0 ? uni.BdeId == uni.BdeId : uni.BdeId == unit.BdeId)
                        join MUni in _context.MUnit on uni.UnitId equals MUni.UnitId
-                       where MUni.UnitName.ToLower().Contains(UnitName.ToLower()) && MUni.IsVerify==true
+                       where MUni.Sus_no.ToLower().Contains(UnitName.ToLower()) && MUni.IsVerify==true
                        select new DTOMapUnitResponse
                        {
                            UnitMapId = uni.UnitMapId,
-                           UnitName = MUni.UnitName,
+                           UnitName = MUni.Sus_no + MUni.Suffix,/* MUni.UnitName,*/
                        }
                      ).Distinct().Take(5).ToList(); ;
             return Task.FromResult(Div);

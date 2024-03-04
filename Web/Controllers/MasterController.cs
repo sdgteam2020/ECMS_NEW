@@ -14,7 +14,7 @@ using System.Security.Claims;
 namespace Web.Controllers
 {
     public class MasterController : Controller
-    {
+    {   
         private readonly IUnitOfWork unitOfWork;
         private readonly IChangeHierarchyMasterBL changeHierarchyMaster;
         private readonly ILogger<MasterController> _logger;
@@ -760,6 +760,7 @@ namespace Web.Controllers
                 return Json(KeyConstants.InternalServerError);
             }
         }
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteMapUnitMultiple(int[] ints)
         {
             try

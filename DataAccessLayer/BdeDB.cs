@@ -30,15 +30,15 @@ namespace DataAccessLayer
 
         public async Task<bool> GetByName(MBde Data)
         {
-            var ret = _context.MBde.Any(p => p.BdeName.ToUpper() == Data.BdeName.ToUpper());
-            return ret;
+            //var ret = _context.MBde.Any(p => p.BdeName.ToUpper() == Data.BdeName.ToUpper());
+            return false;
         }
         public async Task<bool?> FindByBdeWithId(string BdeName, byte BdeId)
         {
             try
             {
-                var ret = await _context.MBde.AnyAsync(p => p.BdeId != BdeId && p.BdeName.ToUpper() == BdeName.ToUpper());
-                return ret;
+                //var ret = await _context.MBde.AnyAsync(p => p.BdeId != BdeId && p.BdeName.ToUpper() == BdeName.ToUpper());
+                return false;
             }
             catch (Exception ex)
             {

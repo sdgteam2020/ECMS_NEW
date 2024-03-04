@@ -111,7 +111,7 @@ function BindData() {
                 
                 else {
 
-                  
+                    $("#tbldata").DataTable().destroy();    
                    
                     for (var i = 0; i < response.length; i++) {
 
