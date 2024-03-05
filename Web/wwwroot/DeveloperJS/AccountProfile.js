@@ -99,7 +99,7 @@
                         if (data.length != 0) {
                             response($.map(data, function (item) {
                                 $("#loading").addClass("d-none");
-                                return { label: item.UnitName, value: item.UnitMapId };
+                                return { label: item.Sus_no + item.Suffix +' '+ item.UnitName, value: item.UnitMapId };
 
                             }))
                         }
