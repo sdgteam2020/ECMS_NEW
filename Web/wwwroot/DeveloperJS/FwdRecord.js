@@ -345,9 +345,9 @@ $(document).ready(function () {
                         } else {
 
                             Counter = parseInt($("#spnStepCounter").html()) + 1;
-                            if (applyfor == 1 || Counter == 3)/// for ACG
+                            if (applyfor == 1 && Counter == 3)/// for ACG
                                 Counter = 4;
-                            if (applyfor == 2 || Counter == 2)/// for ACG
+                            if (applyfor == 2 && Counter == 2)/// for ACG
                                 Counter = 5;
 
                             if (applyfor == 2 && parseInt($("#spnStepCounter").html()) == 3) {
