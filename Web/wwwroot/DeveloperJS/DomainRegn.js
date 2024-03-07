@@ -367,6 +367,7 @@ function BindData() {
                             extend: 'pdfHtml5',
                             orientation: 'portrait',
                             pageSize: 'A4',
+                            title: 'E-IASC_Domain_Regn',
                             exportOptions: {
                                 columns: "thead th:not(.noExport)"
                             },

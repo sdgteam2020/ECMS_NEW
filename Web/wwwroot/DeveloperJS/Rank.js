@@ -146,6 +146,7 @@ function BindData() {
                             extend: 'pdfHtml5',
                             orientation: 'portrait',
                             pageSize: 'A4',
+                            title: 'E-IASC_Rank',
                             exportOptions: {
                                 columns: "thead th:not(.noExport)"
                             },

@@ -207,6 +207,7 @@ function BindData() {
                             extend: 'pdfHtml5',
                             orientation: 'portrait',
                             pageSize: 'A4',
+                            title: 'E-IASC_User_Profile',
                             exportOptions: {
                                 columns: "thead th:not(.noExport)"
                             },

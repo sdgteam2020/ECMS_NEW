@@ -149,7 +149,7 @@ function BindData() {
                             extend: 'pdfHtml5',
                             orientation: 'portrait',
                             pageSize: 'A4',
-                            title: 'Data export',
+                            title: 'E-IASC_Command',
                             exportOptions: {
                                 columns: "thead th:not(.noExport)"
                             },

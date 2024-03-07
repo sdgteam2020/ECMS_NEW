@@ -402,6 +402,7 @@ function BindDataMapUnit() {
                             extend: 'pdfHtml5',
                             orientation: 'landscape',
                             pageSize: 'LEGAL',
+                            title: 'E-IASC_Map Unit',
                             exportOptions: {
                                 columns: "thead th:not(.noExport)"
                             },

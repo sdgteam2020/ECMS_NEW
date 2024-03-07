@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,14 +18,16 @@ namespace BusinessLogicsLayer.Service
     public class ServiceRepository:IService
     {   
         private readonly ApplicationDbContext context;
+        private readonly ILogger<ServiceRepository> _logger;
         private readonly UserManager<ApplicationUser> userManager;
         private readonly DateTime EndDate;
         private readonly static TimeZoneInfo INDIAN_ZONE = TimeZoneInfo.FindSystemTimeZoneById("India Standard Time");
         public const int ImageMinimumBytes = 512;
         public decimal filesize { get; set; }
-        public ServiceRepository(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
+        public ServiceRepository(ApplicationDbContext context, ILogger<ServiceRepository> logger, UserManager<ApplicationUser> userManager)
         {
             this.context = context;
+            _logger = logger;
             this.userManager = userManager;
             EndDate = new DateTime(2299, 01, 01);
         }
@@ -209,21 +212,30 @@ namespace BusinessLogicsLayer.Service
         }
         public IEnumerable<SelectListItem> GetRegimentalDDLIdSelected(int ArmedId)
         {
-            var RegimentalOptions = context.MRegimental.Where(s => s.ArmedId == ArmedId).OrderBy(o => o.Name)
-                .Select(a =>
-                  new SelectListItem
-                  {
-                      Value = a.RegId.ToString(),
-                      Text = a.Name
-                  }).ToList();
-
-            var ddfirst = new SelectListItem()
+            try
             {
-                Value = null,
-                Text = "Please Select"
-            };
-            RegimentalOptions.Insert(0, ddfirst);
-            return new SelectList(RegimentalOptions, "Value", "Text");
+                var RegimentalOptions = context.MRegimental.Where(s => s.ArmedId == ArmedId)
+                    .Select(a =>
+                      new SelectListItem
+                      {
+                          Value = a.RegId.ToString(),
+                          Text = a.Name
+                      }).ToList();
+
+                var ddfirst = new SelectListItem()
+                {
+                    Value = null,
+                    Text = "Please Select"
+                };
+                RegimentalOptions.Insert(0, ddfirst);
+                return new SelectList(RegimentalOptions, "Value", "Text");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "ServiceRepository->GetRegimentalDDLIdSelected");
+                return null;
+            }
+
         }
         public async Task<List<MRegimental>> GetRegimentalListByArmedId(int RegimentalId)
         {

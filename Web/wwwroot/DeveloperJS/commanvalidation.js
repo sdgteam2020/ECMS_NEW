@@ -230,9 +230,9 @@ $(document).ready(function () {
                         // It's important to create enough space at the top for a header !!!
                         doc.pageMargins = [20, 60, 20, 30];
                         // Set the font size fot the entire document
-                        doc.defaultStyle.fontSize = 7;
+                        doc.defaultStyle.fontSize = 12;
                         // Set the fontsize for the table header
-                        doc.styles.tableHeader.fontSize = 7;
+                        doc.styles.tableHeader.fontSize = 12;
                         // Create a header object with 3 columns
                         // Left side: Logo
                         // Middle: brandname

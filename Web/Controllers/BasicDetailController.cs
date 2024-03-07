@@ -1170,7 +1170,7 @@ namespace Web.Controllers
             try
             {
                 mStepCounter.UpdatedOn = DateTime.Now;
-                mStepCounter.Updatedby = 1;
+                mStepCounter.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                 await iStepCounterBL.UpdateStepCounter(mStepCounter);
 
 
