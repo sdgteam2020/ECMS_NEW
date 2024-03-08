@@ -1369,8 +1369,8 @@ namespace Web.Controllers
                 }
             }
         }
-        [Authorize(Roles = "Admin,User")]
-        [HttpPost]
+        //[Authorize(Roles = "Admin,User")]
+        //[HttpPost]
         //public async Task<IActionResult> DummyData()
         //{
         //    Random rnd1 = new Random();
