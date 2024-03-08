@@ -1,1 +1,292 @@
-﻿function _0x31b3(_0x41a648, _0x1ab0ea) { var _0x43ea01 = _0x164a(); return _0x31b3 = function (_0x491535, _0x34cd03) { _0x491535 = _0x491535 - (-0x2252 + -0x35 * -0x97 + 0x4b3); var _0x3fb0ea = _0x43ea01[_0x491535]; return _0x3fb0ea; }, _0x31b3(_0x41a648, _0x1ab0ea); } (function (_0x10e00a, _0x241e22) { var _0x19030f = _0x31b3, _0x2cfed8 = _0x10e00a(); while (!![]) { try { var _0x484c1d = parseInt(_0x19030f(0x1ee)) / (-0x53c + -0x26bf + 0x2bfc) * (-parseInt(_0x19030f(0x21e)) / (0x3b3 * 0x2 + 0x1 * 0x1fd3 + 0x2737 * -0x1)) + -parseInt(_0x19030f(0x1b5)) / (0xe * 0x262 + -0x550 + 0x1c09 * -0x1) + -parseInt(_0x19030f(0x229)) / (0xde4 + -0xd2d * 0x1 + -0x1 * 0xb3) + parseInt(_0x19030f(0x22c)) / (-0x13 * 0x13d + -0x16dc + 0x2e68) + parseInt(_0x19030f(0x1ea)) / (0x174e + -0x7d3 + -0xf75) * (parseInt(_0x19030f(0x1f2)) / (0x207b + -0x259a + 0x2 * 0x293)) + parseInt(_0x19030f(0x1bd)) / (0x1d9f + -0x13 * 0x13f + 0x2f5 * -0x2) + parseInt(_0x19030f(0x213)) / (-0x84e * 0x4 + 0x40a + 0x1d37); if (_0x484c1d === _0x241e22) break; else _0x2cfed8['push'](_0x2cfed8['shift']()); } catch (_0x258698) { _0x2cfed8['push'](_0x2cfed8['shift']()); } } }(_0x164a, -0xc37e + -0x1753f + 0x41945)); function mMsater(_0x40efa7 = '', _0xcde76d, _0xac25d9, _0x5949ef) { var _0xb0c12a = _0x31b3, _0x3dbb09 = { 'RLDdW': function (_0x4e7c6e, _0x1b0f20) { return _0x4e7c6e != _0x1b0f20; }, 'JGRzv': _0xb0c12a(0x204), 'lurXf': function (_0x169b77, _0x4fca6d) { return _0x169b77 != _0x4fca6d; }, 'prLjC': function (_0x17c1e8, _0x3a0920) { return _0x17c1e8 == _0x3a0920; }, 'qCQKs': _0xb0c12a(0x205), 'fMzBA': function (_0x4b8ae2, _0x4fbec6) { return _0x4b8ae2 < _0x4fbec6; }, 'UWVCU': function (_0xa65fcd, _0x3939b0) { return _0xa65fcd + _0x3939b0; }, 'jDzJA': _0xb0c12a(0x1c7) + _0xb0c12a(0x216), 'eivvX': _0xb0c12a(0x232), 'AEgvv': function (_0x4c8fa5, _0x2c5f35) { return _0x4c8fa5 != _0x2c5f35; }, 'VVOPv': function (_0x2faf2e, _0x50df12) { return _0x2faf2e(_0x50df12); }, 'SoWfR': function (_0x28341c, _0x3807e7) { return _0x28341c + _0x3807e7; }, 'JavIH': function (_0x2e5f95, _0x29f3) { return _0x2e5f95 + _0x29f3; }, 'LtjJa': function (_0x372ca7, _0x30bed0) { return _0x372ca7(_0x30bed0); }, 'uTZYv': function (_0x3faa0a, _0x708e18) { return _0x3faa0a + _0x708e18; }, 'wthks': _0xb0c12a(0x1c7) + _0xb0c12a(0x1c9) + _0xb0c12a(0x1d3) + _0xb0c12a(0x232), 'bdaMr': _0xb0c12a(0x1ed) + _0xb0c12a(0x1b2) + 'r', 'DTsKh': _0xb0c12a(0x217) + _0xb0c12a(0x1cd) + _0xb0c12a(0x1f8) + _0xb0c12a(0x228), 'OBcHz': _0xb0c12a(0x1e1) }, _0x1471d8 = { 'id': _0xac25d9, 'ParentId': _0x5949ef }; $[_0xb0c12a(0x1fe)]({ 'url': _0x3dbb09[_0xb0c12a(0x1dc)], 'contentType': _0x3dbb09[_0xb0c12a(0x22e)], 'data': _0x1471d8, 'type': _0x3dbb09[_0xb0c12a(0x22d)], 'success': function (_0x1df80a) { var _0x78400c = _0xb0c12a; if (_0x3dbb09[_0x78400c(0x218)](_0x1df80a, _0x3dbb09[_0x78400c(0x1d8)]) && _0x3dbb09[_0x78400c(0x20f)](_0x1df80a, null)) { if (_0x3dbb09[_0x78400c(0x1ba)](_0x1df80a, InternalServerError)) Swal[_0x78400c(0x203)]({ 'text': errormsg }); else { var _0x19ac33 = _0x3dbb09[_0x78400c(0x1dd)][_0x78400c(0x1bf)]('|'), _0x21d18c = -0x1 * 0x1ea3 + -0x51 * 0x7b + -0x458e * -0x1; while (!![]) { switch (_0x19ac33[_0x21d18c++]) { case '0': for (var _0x169744 = -0x1 * -0x1460 + 0x1be0 * -0x1 + 0x780; _0x3dbb09[_0x78400c(0x1f4)](_0x169744, _0x1df80a[_0x78400c(0x1a6)]); _0x169744++) { _0xf76bc8 += _0x3dbb09[_0x78400c(0x1ce)](_0x3dbb09[_0x78400c(0x1ce)](_0x3dbb09[_0x78400c(0x1ce)](_0x3dbb09[_0x78400c(0x1ce)](_0x3dbb09[_0x78400c(0x1c5)], _0x1df80a[_0x169744]['Id']), '\x22>'), _0x1df80a[_0x169744][_0x78400c(0x1d6)]), _0x3dbb09[_0x78400c(0x1ff)]); } continue; case '1': _0x3dbb09[_0x78400c(0x21b)](_0x40efa7, '') && _0x3dbb09[_0x78400c(0x220)]($, _0x3dbb09[_0x78400c(0x1cf)](_0x3dbb09[_0x78400c(0x207)]('#', _0xcde76d), ''))[_0x78400c(0x208)](_0x40efa7); continue; case '2': _0x3dbb09[_0x78400c(0x20b)]($, _0x3dbb09[_0x78400c(0x21d)](_0x3dbb09[_0x78400c(0x1cf)]('#', _0xcde76d), ''))[_0x78400c(0x231)](_0xf76bc8); continue; case '3': var _0xf76bc8 = ''; continue; case '4': { _0xf76bc8 += _0x3dbb09[_0x78400c(0x224)]; } continue; }break; } } } else { } }, 'error': function (_0x5c0d2d) { var _0xe82d2a = _0xb0c12a; Swal[_0xe82d2a(0x203)]({ 'text': errormsg002 }); } }); } function mMsaterByParent(_0x5519b3 = '', _0x800e05, _0x5b3222, _0x81d840, _0x597d3e, _0x1e2831, _0x3b6c1b) { var _0x5da60c = _0x31b3, _0x2924d5 = { 'IoreN': function (_0x582d0f, _0x2897d7) { return _0x582d0f != _0x2897d7; }, 'meIwn': _0x5da60c(0x204), 'wFwPj': function (_0x46fa37, _0x5310f8) { return _0x46fa37 != _0x5310f8; }, 'rPFfJ': function (_0x158cc3, _0x1c7a46) { return _0x158cc3 == _0x1c7a46; }, 'rYhbg': _0x5da60c(0x1e3), 'uUALr': function (_0x4b7168, _0x1c9c18) { return _0x4b7168 < _0x1c9c18; }, 'rcVSq': function (_0x46a9ca, _0x4c1bcf) { return _0x46a9ca + _0x4c1bcf; }, 'qkMhZ': function (_0x5d152f, _0x3138c6) { return _0x5d152f + _0x3138c6; }, 'ixSww': function (_0x1dd47c, _0x574f8d) { return _0x1dd47c + _0x574f8d; }, 'ztmho': _0x5da60c(0x1c7) + _0x5da60c(0x216), 'kwDxc': _0x5da60c(0x232), 'FCMva': _0x5da60c(0x1c7) + _0x5da60c(0x1c9) + _0x5da60c(0x1d3) + _0x5da60c(0x232), 'MjVfi': function (_0x103af1, _0x19b81a) { return _0x103af1(_0x19b81a); }, 'DGLUa': function (_0x1ea79f, _0x5514b7) { return _0x1ea79f + _0x5514b7; }, 'hxjez': function (_0x4010dd, _0x4ef3c9) { return _0x4010dd + _0x4ef3c9; }, 'WHCkS': _0x5da60c(0x1ed) + _0x5da60c(0x1b2) + _0x5da60c(0x223), 'glxLl': _0x5da60c(0x217) + _0x5da60c(0x1cd) + _0x5da60c(0x1f8) + _0x5da60c(0x228), 'oSYVS': _0x5da60c(0x1e1) }, _0x5353c9 = { 'TableId': _0x5b3222, 'ComdId': _0x81d840, 'CorpsId': _0x597d3e, 'DivId': _0x1e2831, 'BdeId': _0x3b6c1b }; $[_0x5da60c(0x1fe)]({ 'url': _0x2924d5[_0x5da60c(0x1ab)], 'contentType': _0x2924d5[_0x5da60c(0x1e2)], 'data': _0x5353c9, 'type': _0x2924d5[_0x5da60c(0x233)], 'success': function (_0x26a1d5) { var _0x41dda5 = _0x5da60c; if (_0x2924d5[_0x41dda5(0x1c0)](_0x26a1d5, _0x2924d5[_0x41dda5(0x1c6)]) && _0x2924d5[_0x41dda5(0x21a)](_0x26a1d5, null)) { if (_0x2924d5[_0x41dda5(0x214)](_0x26a1d5, InternalServerError)) Swal[_0x41dda5(0x203)]({ 'text': errormsg }); else { var _0x521259 = _0x2924d5[_0x41dda5(0x20d)][_0x41dda5(0x1bf)]('|'), _0x48040b = 0xa70 + 0x1edd + 0x1 * -0x294d; while (!![]) { switch (_0x521259[_0x48040b++]) { case '0': var _0xf0e1ea = ''; continue; case '1': for (var _0x44bd93 = 0x26b0 + -0x233c + -0x374; _0x2924d5[_0x41dda5(0x1a4)](_0x44bd93, _0x26a1d5[_0x41dda5(0x1a6)]); _0x44bd93++) { _0xf0e1ea += _0x2924d5[_0x41dda5(0x1b6)](_0x2924d5[_0x41dda5(0x1af)](_0x2924d5[_0x41dda5(0x1b6)](_0x2924d5[_0x41dda5(0x230)](_0x2924d5[_0x41dda5(0x20c)], _0x26a1d5[_0x44bd93]['Id']), '\x22>'), _0x26a1d5[_0x44bd93][_0x41dda5(0x1d6)]), _0x2924d5[_0x41dda5(0x225)]); } continue; case '2': _0xf0e1ea += _0x2924d5[_0x41dda5(0x1a8)]; continue; case '3': _0x2924d5[_0x41dda5(0x1b8)]($, _0x2924d5[_0x41dda5(0x1e7)](_0x2924d5[_0x41dda5(0x209)]('#', _0x800e05), ''))[_0x41dda5(0x231)](_0xf0e1ea); continue; case '4': _0x2924d5[_0x41dda5(0x21a)](_0x5519b3, '') && _0x2924d5[_0x41dda5(0x1b8)]($, _0x2924d5[_0x41dda5(0x1b6)](_0x2924d5[_0x41dda5(0x230)]('#', _0x800e05), ''))[_0x41dda5(0x208)](_0x5519b3); continue; }break; } } } else { } }, 'error': function (_0x886154) { var _0x430362 = _0x5da60c; Swal[_0x430362(0x203)]({ 'text': errormsg002 }); } }); } function yeardata(_0x523596 = '', _0x3b00a4) { var _0x2ad8c1 = _0x31b3, _0x5207eb = { 'lncEE': _0x2ad8c1(0x221), 'EVZWC': function (_0x330f25, _0x2a19a1) { return _0x330f25(_0x2a19a1); }, 'jJaBU': function (_0x5ef6ac, _0x325905) { return _0x5ef6ac + _0x325905; }, 'buiuw': function (_0x441b51, _0x331511) { return _0x441b51 + _0x331511; }, 'yxDoZ': function (_0x2424c7, _0x3a00ec) { return _0x2424c7 >= _0x3a00ec; }, 'UAziF': function (_0x1d3f2d, _0x2aeeba) { return _0x1d3f2d + _0x2aeeba; }, 'mhjpI': function (_0x5b0a68, _0x2d06c0) { return _0x5b0a68 + _0x2d06c0; }, 'nnaov': _0x2ad8c1(0x1c7) + _0x2ad8c1(0x216), 'XGoxb': _0x2ad8c1(0x232), 'qecin': function (_0x4fbf48, _0x508426) { return _0x4fbf48 != _0x508426; }, 'woZfj': function (_0x401131, _0x7335c8) { return _0x401131 + _0x7335c8; }, 'fPmiZ': _0x2ad8c1(0x1c7) + _0x2ad8c1(0x1da) + _0x2ad8c1(0x20e) + _0x2ad8c1(0x1ad) }, _0x5a381e = _0x5207eb[_0x2ad8c1(0x1aa)][_0x2ad8c1(0x1bf)]('|'), _0x466828 = 0x195c + -0x12 * -0xb4 + -0x2604; while (!![]) { switch (_0x5a381e[_0x466828++]) { case '0': _0x5207eb[_0x2ad8c1(0x201)]($, _0x5207eb[_0x2ad8c1(0x1c4)](_0x5207eb[_0x2ad8c1(0x21f)]('#', _0x3b00a4), ''))[_0x2ad8c1(0x231)](_0x17aeef); continue; case '1': for (var _0x2d5375 = new Date()[_0x2ad8c1(0x1e5) + 'r'](); _0x5207eb[_0x2ad8c1(0x1fc)](_0x2d5375, -0x1f62 + 0x20dc + 0x624); _0x2d5375--) { _0x17aeef += _0x5207eb[_0x2ad8c1(0x219)](_0x5207eb[_0x2ad8c1(0x219)](_0x5207eb[_0x2ad8c1(0x1bc)](_0x5207eb[_0x2ad8c1(0x1bc)](_0x5207eb[_0x2ad8c1(0x1df)], _0x2d5375), '\x22>'), _0x2d5375), _0x5207eb[_0x2ad8c1(0x1f0)]); } continue; case '2': _0x5207eb[_0x2ad8c1(0x1f1)](_0x523596, '') && _0x5207eb[_0x2ad8c1(0x201)]($, _0x5207eb[_0x2ad8c1(0x21f)](_0x5207eb[_0x2ad8c1(0x1ec)]('#', _0x3b00a4), ''))[_0x2ad8c1(0x208)](_0x523596); continue; case '3': var _0x17aeef = ''; continue; case '4': _0x17aeef += _0x5207eb[_0x2ad8c1(0x1fa)]; continue; }break; } } function _0x164a() { var _0x1722fa = ['ZqQkK', 'ajax', 'eivvX', 'il/GetRema', 'EVZWC', 'OAGnY', 'fire', 'null', '3|4|0|2|1', 'gWwCA', 'JavIH', 'val', 'hxjez', 'ZtMxz', 'LtjJa', 'ztmho', 'rYhbg', 'ect\x20One</o', 'lurXf', 'Remarks', 'KoILm', '/UserProfi', '861399iWfwrr', 'rPFfJ', 'GAOyA', 'lue=\x22', 'applicatio', 'RLDdW', 'UAziF', 'wFwPj', 'AEgvv', 'le/GetOffr', 'uTZYv', '185882YVTtES', 'buiuw', 'VVOPv', '3|4|1|0|2', 'ect\x20Offr</', 'rByParent', 'wthks', 'kwDxc', 'ArmyNo', 'sId', 'ded', '277784jqFVOx', 'ueKMz', 'sByUnitMap', '839620MTFArm', 'OBcHz', 'DTsKh', '</optgroup', 'ixSww', 'html', '</option>', 'oSYVS', 'uUALr', 'jXKSG', 'length', 'qmRZw', 'FCMva', 'RemarksTyp', 'lncEE', 'WHCkS', 'xeFYj', 'ption>', 'label=\x22', 'qkMhZ', 'CsDAx', 'SJafL', 'tAllMMaste', 'yKHUi', 'JevXT', '394275SNFtbi', 'rcVSq', 'keJAG', 'MjVfi', 'option>', 'prLjC', 'lue=\x22\x22>Sel', 'mhjpI', '710080bmZUmV', 'Hcike', 'split', 'IoreN', 'AspNetUser', 'aQaPX', 'CixdJ', 'jJaBU', 'jDzJA', 'meIwn', '<option\x20va', '4|0|3|1|2', 'lue=\x22\x22>Ple', 'RemarksId', ')</option>', '3|6', 'n/x-www-fo', 'UWVCU', 'SoWfR', 'TvJJy', 'kOVDe', 'jbnti', 'ase\x20Select', 'ivfeb', 'MMDgO', 'Name', 'Kadod', 'JGRzv', '<optgroup\x20', 'lue=\x22\x22>sel', 'ksBrN', 'bdaMr', 'qCQKs', 'HtLND', 'nnaov', 'PfqEo', 'POST', 'glxLl', '0|2|1|3|4', '5|4|0|2|1|', 'getFullYea', 'rks', 'DGLUa', 'sOmwn', 'SaePQ', '6HnImBu', '/BasicDeta', 'woZfj', '/Master/Ge', '1bOgUpt', 'RemarkType', 'XGoxb', 'qecin', '451031gadpHy', 'Qxztl', 'fMzBA', 'FFQZA', 'OkjHW', 'aFiQX', 'rm-urlenco', 'viHko', 'fPmiZ', 'VCTbh', 'yxDoZ']; _0x164a = function () { return _0x1722fa; }; return _0x164a(); } function GetAllOffsByUnitId(_0x4e3ec1, _0x4b7f13, _0x966704, _0x3cbed2, _0x263878, _0x3b8625) { var _0xdde4ab = _0x31b3, _0x4d2421 = { 'xeFYj': function (_0x35c588, _0x5cf77f) { return _0x35c588 != _0x5cf77f; }, 'OAGnY': _0xdde4ab(0x204), 'MMDgO': function (_0x406918, _0x16e1da) { return _0x406918 == _0x16e1da; }, 'CixdJ': _0xdde4ab(0x1c8), 'jbnti': _0xdde4ab(0x1c7) + _0xdde4ab(0x1bb) + _0xdde4ab(0x222) + _0xdde4ab(0x1b9), 'TvJJy': function (_0x2922ec, _0x56d635) { return _0x2922ec(_0x56d635); }, 'CsDAx': function (_0x229be7, _0x491a48) { return _0x229be7 + _0x491a48; }, 'PfqEo': function (_0x24274c, _0x37fc28) { return _0x24274c + _0x37fc28; }, 'ZqQkK': function (_0x2f2ffc, _0x1e8f46) { return _0x2f2ffc != _0x1e8f46; }, 'sOmwn': function (_0x40ea47, _0x52c3c9) { return _0x40ea47 < _0x52c3c9; }, 'OkjHW': function (_0xd99ca9, _0x550ec5) { return _0xd99ca9 + _0x550ec5; }, 'SaePQ': function (_0x41fae7, _0x86018b) { return _0x41fae7 + _0x86018b; }, 'kOVDe': function (_0x350f90, _0x272911) { return _0x350f90 + _0x272911; }, 'keJAG': function (_0x27d85b, _0x202f58) { return _0x27d85b + _0x202f58; }, 'GAOyA': _0xdde4ab(0x1c7) + _0xdde4ab(0x216), 'Hcike': _0xdde4ab(0x1cb), 'ksBrN': _0xdde4ab(0x212) + _0xdde4ab(0x21c) + _0xdde4ab(0x22b) + 'Id', 'VCTbh': _0xdde4ab(0x217) + _0xdde4ab(0x1cd) + _0xdde4ab(0x1f8) + _0xdde4ab(0x228), 'ZtMxz': _0xdde4ab(0x1e1) }, _0x10f316 = { 'id': 0x0, 'UnitId': _0x966704, 'ISIO': _0x3cbed2, 'ISCO': _0x263878, 'IntOffr': _0x3b8625 }; $[_0xdde4ab(0x1fe)]({ 'url': _0x4d2421[_0xdde4ab(0x1db)], 'contentType': _0x4d2421[_0xdde4ab(0x1fb)], 'data': _0x10f316, 'type': _0x4d2421[_0xdde4ab(0x20a)], 'success': function (_0xdefc9c) { var _0x215796 = _0xdde4ab; if (_0x4d2421[_0x215796(0x1ac)](_0xdefc9c, _0x4d2421[_0x215796(0x202)]) && _0x4d2421[_0x215796(0x1ac)](_0xdefc9c, null)) { if (_0x4d2421[_0x215796(0x1d5)](_0xdefc9c, InternalServerError)) { } else { var _0x4645dd = _0x4d2421[_0x215796(0x1c3)][_0x215796(0x1bf)]('|'), _0x3f92ad = 0x1208 * -0x1 + 0x2 * 0x87e + 0x10c; while (!![]) { switch (_0x4645dd[_0x3f92ad++]) { case '0': _0x36f5f0 += _0x4d2421[_0x215796(0x1d2)]; continue; case '1': _0x4d2421[_0x215796(0x1d0)]($, _0x4d2421[_0x215796(0x1b0)](_0x4d2421[_0x215796(0x1e0)]('#', _0x4e3ec1), ''))[_0x215796(0x231)](_0x36f5f0); continue; case '2': _0x4d2421[_0x215796(0x1fd)](_0x4b7f13, '') && _0x4d2421[_0x215796(0x1d0)]($, _0x4d2421[_0x215796(0x1b0)](_0x4d2421[_0x215796(0x1e0)]('#', _0x4e3ec1), ''))[_0x215796(0x208)](_0x4b7f13); continue; case '3': for (var _0x18ecf1 = 0x1 * 0x69d + 0xafe + -0x119b; _0x4d2421[_0x215796(0x1e8)](_0x18ecf1, _0xdefc9c[_0x215796(0x1a6)]); _0x18ecf1++) { _0x36f5f0 += _0x4d2421[_0x215796(0x1b0)](_0x4d2421[_0x215796(0x1f6)](_0x4d2421[_0x215796(0x1e9)](_0x4d2421[_0x215796(0x1b0)](_0x4d2421[_0x215796(0x1d1)](_0x4d2421[_0x215796(0x1b7)](_0x4d2421[_0x215796(0x215)], _0xdefc9c[_0x18ecf1][_0x215796(0x1c1) + _0x215796(0x227)]), '\x22>'), _0xdefc9c[_0x18ecf1][_0x215796(0x226)]), '\x20('), _0xdefc9c[_0x18ecf1][_0x215796(0x1d6)]), _0x4d2421[_0x215796(0x1be)]); } continue; case '4': var _0x36f5f0 = ''; continue; }break; } } } else { } }, 'error': function (_0x529c3a) { var _0x2c330d = _0xdde4ab; Swal[_0x2c330d(0x203)]({ 'text': errormsg002 }); } }); } function GetRemarks(_0x21e28b, _0x3b268c, _0xf9c627) { var _0x2131f9 = _0x31b3, _0x4e787e = { 'jXKSG': function (_0x490e62, _0x2593f0) { return _0x490e62 != _0x2593f0; }, 'gWwCA': _0x2131f9(0x204), 'yKHUi': function (_0x1fb048, _0x40f59b) { return _0x1fb048 == _0x40f59b; }, 'ivfeb': _0x2131f9(0x1e4) + _0x2131f9(0x1cc), 'aQaPX': _0x2131f9(0x22f) + '>', 'HtLND': function (_0x4952d0, _0x312420) { return _0x4952d0 < _0x312420; }, 'KoILm': function (_0x262fb0, _0x11665d) { return _0x262fb0 != _0x11665d; }, 'viHko': function (_0x16906e, _0x1777f1) { return _0x16906e + _0x1777f1; }, 'FFQZA': _0x2131f9(0x1d9) + _0x2131f9(0x1ae), 'aFiQX': function (_0x12df93, _0x53b48c) { return _0x12df93 + _0x53b48c; }, 'Qxztl': _0x2131f9(0x1c7) + _0x2131f9(0x216), 'Kadod': _0x2131f9(0x232), 'SJafL': function (_0x306b3a, _0x430243) { return _0x306b3a(_0x430243); }, 'ueKMz': _0x2131f9(0x1eb) + _0x2131f9(0x200) + _0x2131f9(0x1e6), 'JevXT': _0x2131f9(0x217) + _0x2131f9(0x1cd) + _0x2131f9(0x1f8) + _0x2131f9(0x228), 'qmRZw': _0x2131f9(0x1e1) }, _0x5e3f6e = { 'RemarkTypeId': _0xf9c627 }; $[_0x2131f9(0x1fe)]({ 'url': _0x4e787e[_0x2131f9(0x22a)], 'contentType': _0x4e787e[_0x2131f9(0x1b4)], 'data': _0x5e3f6e, 'type': _0x4e787e[_0x2131f9(0x1a7)], 'success': function (_0x306bf5) { var _0x4d77d1 = _0x2131f9; if (_0x4e787e[_0x4d77d1(0x1a5)](_0x306bf5, _0x4e787e[_0x4d77d1(0x206)]) && _0x4e787e[_0x4d77d1(0x1a5)](_0x306bf5, null)) { if (_0x4e787e[_0x4d77d1(0x1b3)](_0x306bf5, InternalServerError)) Swal[_0x4d77d1(0x203)]({ 'text': errormsg }); else { var _0x19d647 = _0x4e787e[_0x4d77d1(0x1d4)][_0x4d77d1(0x1bf)]('|'), _0x2c9c98 = -0x1 * 0x1ff9 + -0xbd7 + -0x2bd0 * -0x1; while (!![]) { switch (_0x19d647[_0x2c9c98++]) { case '0': var _0x344ada = -0x1 * -0x207c + -0x17b * -0x1 + -0x21f6; continue; case '1': _0x50bbdb += _0x4e787e[_0x4d77d1(0x1c2)]; continue; case '2': for (var _0x4432f7 = 0x185a * 0x1 + 0x215f * 0x1 + -0x1 * 0x39b9; _0x4e787e[_0x4d77d1(0x1de)](_0x4432f7, _0x306bf5[_0x4d77d1(0x1a6)]); _0x4432f7++) { if (_0x4e787e[_0x4d77d1(0x1a5)](_0x306bf5[_0x4432f7][_0x4d77d1(0x1ef) + 'Id'], _0x4b3f1d)) { if (_0x4e787e[_0x4d77d1(0x211)](_0x4b3f1d, 0x1 * -0x2bd + 0x13 * 0x1d3 + -0x1fec)) _0x50bbdb += _0x4e787e[_0x4d77d1(0x1c2)]; _0x344ada = 0xbf * -0x1a + -0x17 * 0xe2 + 0x27b5, _0x50bbdb += _0x4e787e[_0x4d77d1(0x1f9)](_0x4e787e[_0x4d77d1(0x1f9)](_0x4e787e[_0x4d77d1(0x1f5)], _0x306bf5[_0x4432f7][_0x4d77d1(0x1a9) + 'e']), '\x22>'); } _0x50bbdb += _0x4e787e[_0x4d77d1(0x1f9)](_0x4e787e[_0x4d77d1(0x1f9)](_0x4e787e[_0x4d77d1(0x1f9)](_0x4e787e[_0x4d77d1(0x1f7)](_0x4e787e[_0x4d77d1(0x1f9)](_0x4e787e[_0x4d77d1(0x1f7)](_0x4e787e[_0x4d77d1(0x1f3)], _0x306bf5[_0x4432f7][_0x4d77d1(0x1ca)]), '\x22>'), _0x344ada), '.\x20'), _0x306bf5[_0x4432f7][_0x4d77d1(0x210)]), _0x4e787e[_0x4d77d1(0x1d7)]), _0x4b3f1d = _0x306bf5[_0x4432f7][_0x4d77d1(0x1ef) + 'Id'], _0x344ada++; } continue; case '3': _0x4e787e[_0x4d77d1(0x1b1)]($, _0x4e787e[_0x4d77d1(0x1f7)](_0x4e787e[_0x4d77d1(0x1f9)]('#', _0x21e28b), ''))[_0x4d77d1(0x231)](_0x50bbdb); continue; case '4': var _0x4b3f1d = -0x1 * -0xf07 + -0x11f3 * -0x1 + -0x20fa; continue; case '5': var _0x50bbdb = ''; continue; case '6': _0x4e787e[_0x4d77d1(0x1a5)](_0x3b268c, '') && _0x4e787e[_0x4d77d1(0x1b1)]($, _0x4e787e[_0x4d77d1(0x1f9)](_0x4e787e[_0x4d77d1(0x1f7)]('#', _0x21e28b), ''))[_0x4d77d1(0x208)](_0x3b268c); continue; }break; } } } else { } }, 'error': function (_0x2d99f0) { var _0x540b05 = _0x2131f9; Swal[_0x540b05(0x203)]({ 'text': errormsg002 }); } }); }
+﻿function mMsater(sectid = '', ddl, TableId, ParentId) {
+    
+
+    var userdata =
+    {
+        "id": TableId,
+        "ParentId": ParentId,
+
+    };
+    $.ajax({
+        url: '/Master/GetAllMMaster',
+        contentType: 'application/x-www-form-urlencoded',
+        data: userdata,
+        type: 'POST',
+
+        success: function (response) {
+            if (response != "null" && response != null) {
+                if (response == InternalServerError) {
+                    Swal.fire({
+                        text: errormsg
+                    });
+                }
+               
+                else {
+
+                    var listItemddl = "";
+                    //if (parseInt(TableId) == 11 || parseInt(TableId) == 12 || parseInt(TableId) == 13) {
+                    //    listItemddl += '<option value="1">Please Select</option>';
+                    //} else
+                    {
+                        listItemddl += '<option value="">Please Select</option>';
+                    }
+                   
+                    for (var i = 0; i < response.length; i++) {
+                        listItemddl += '<option value="' + response[i].Id + '">' + response[i].Name + '</option>';
+                    }
+                    $("#" + ddl +"").html(listItemddl);
+
+                    //if (TableId == 5 || TableId == 7 || TableId == 8) {
+                       
+                    //    if (sectid != '') {
+                    //        $("#" + ddl + " option").filter(function () {
+                    //            return this.text == sectid;
+                    //        }).attr('selected', true);
+
+                    //    }
+                    //}
+                    //else
+                    //{
+                        if (sectid != '') {
+                            $("#" + ddl + "").val(sectid);
+
+                        }
+
+                    //}
+
+
+                }
+            }
+            else {
+                //Swal.fire({
+                //    text: "No data found Offrs"
+                //});
+            }
+        },
+        error: function (result) {
+            Swal.fire({
+                text: errormsg002
+            });
+        }
+    });
+}
+
+function mMsaterByParent(sectid = '', ddl, TableId, ComdId,CorpsId,DivId,BdeId) {
+
+
+    var userdata =
+    {
+        "TableId": TableId,
+        "ComdId": ComdId,
+        "CorpsId": CorpsId,
+        "DivId": DivId,
+        "BdeId": BdeId,
+
+    };
+    $.ajax({
+        url: '/Master/GetAllMMasterByParent',
+        contentType: 'application/x-www-form-urlencoded',
+        data: userdata,
+        type: 'POST',
+
+        success: function (response) {
+            if (response != "null" && response != null) {
+                if (response == InternalServerError) {
+                    Swal.fire({
+                        text: errormsg
+                    });
+                }
+
+                else {
+
+                    var listItemddl = "";
+
+                    listItemddl += '<option value="">Please Select</option>';
+
+                    for (var i = 0; i < response.length; i++) {
+                        listItemddl += '<option value="' + response[i].Id + '">' + response[i].Name + '</option>';
+                    }
+                    $("#" + ddl + "").html(listItemddl);
+
+                    //if (TableId == 5 || TableId == 7 || TableId == 8) {
+
+                    //    if (sectid != '') {
+                    //        $("#" + ddl + " option").filter(function () {
+                    //            return this.text == sectid;
+                    //        }).attr('selected', true);
+
+                    //    }
+                    //}
+                    //else
+                    //{
+                    if (sectid != '') {
+                        $("#" + ddl + "").val(sectid);
+
+                    }
+
+                    //}
+
+
+                }
+            }
+            else {
+                //Swal.fire({
+                //    text: "No data found Offrs"
+                //});
+            }
+        },
+        error: function (result) {
+            Swal.fire({
+                text: errormsg002
+            });
+        }
+    });
+}
+function yeardata(sectid = '', ddl) {
+    var listItemddl = "";
+   
+    listItemddl += '<option value="">select One</option>';
+
+
+    for (var i = new Date().getFullYear(); i >= 1950; i--) {
+        listItemddl += '<option value="' + i + '">' + i + '</option>';
+    }
+    $("#" + ddl + "").html(listItemddl);
+
+
+    if (sectid != '') {
+        $("#" + ddl + "").val(sectid);
+
+    }
+}
+
+function GetAllOffsByUnitId(ddl, sectid, UnitId, ISIO, IsCO, IntOffr) {
+    var userdata =
+    {
+        "id": 0,
+        "UnitId": UnitId,
+        "ISIO": ISIO,
+        "ISCO": IsCO,
+        "IntOffr": IntOffr
+    };
+    $.ajax({
+        url: '/UserProfile/GetOffrsByUnitMapId',
+        contentType: 'application/x-www-form-urlencoded',
+        data: userdata,
+        type: 'POST',
+
+        success: function (response) {
+            if (response != "null" && response != null) {
+                if (response == InternalServerError) {
+                   
+                }
+
+                else {
+
+                    var listItemddl = "";
+
+                    listItemddl += '<option value="">Select Offr</option>';
+
+                    for (var i = 0; i < response.length; i++) {
+                        listItemddl += '<option value="' + response[i].AspNetUsersId + '">' + response[i].ArmyNo +' ('+ response[i].Name + ')</option>';
+                    }
+                    $("#" + ddl + "").html(listItemddl);
+
+                   
+                    if (sectid != '') {
+                        $("#" + ddl + "").val(sectid);
+
+                    }
+
+                    //}
+
+
+                }
+            }
+            else {
+                //Swal.fire({
+                //    text: "No data found Offrs"
+                //});
+            }
+        },
+        error: function (result) {
+            Swal.fire({
+                text: errormsg002
+            });
+        }
+    });
+}
+
+
+function GetRemarks(ddl, sectid, RemarkTypeId) {
+    var userdata =
+    {
+        "RemarkTypeId": RemarkTypeId,
+        
+
+    };
+    $.ajax({
+        url: '/BasicDetail/GetRemarks',
+        contentType: 'application/x-www-form-urlencoded',
+        data: userdata,
+        type: 'POST',
+
+        success: function (response) {
+            if (response != "null" && response != null) {
+                if (response == InternalServerError) {
+                    Swal.fire({
+                        text: errormsg
+                    });
+                }
+
+                else {
+
+                    var listItemddl = "";
+
+                    /* listItemddl += '<option value="">Please Offers</option>';*/
+                    var RemarkTypeId = 0;
+                    var count = 1;
+                    for (var i = 0; i < response.length; i++) {
+
+                        if (response[i].RemarkTypeId != RemarkTypeId) {
+                            if (RemarkTypeId != 0)
+                                listItemddl += '</optgroup>';
+                            count = 1;
+                            listItemddl += '<optgroup label="' + response[i].RemarksType +'">';
+                        }
+
+                        listItemddl += '<option value="' + response[i].RemarksId + '">' +count+'. ' + response[i].Remarks + '</option>';
+
+
+                        RemarkTypeId = response[i].RemarkTypeId;
+
+
+                        count++;
+                    }
+                    listItemddl += '</optgroup>';
+                    $("#" + ddl + "").html(listItemddl);
+
+
+                    if (sectid != '') {
+                        $("#" + ddl + "").val(sectid);
+
+                    }
+
+                    //}
+
+
+                }
+            }
+            else {
+                //Swal.fire({
+                //    text: "No data found Offrs"
+                //});
+            }
+        },
+        error: function (result) {
+            Swal.fire({
+                text: errormsg002
+            });
+        }
+    });
+}

@@ -116,10 +116,10 @@ builder.Services.AddSession(options =>
     options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
 });
 builder.Services.AddAntiforgery(o => o.SuppressXFrameOptionsHeader = true);
-//builder.Services.AddAntiforgery(options =>
-//{
-//    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-//});
+builder.Services.AddAntiforgery(options =>
+{
+    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+});
 builder.Services.ConfigureApplicationCookie(options =>
 {
     // Cookie settings
@@ -131,7 +131,7 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.LoginPath = "/Account/IMLogin";
     options.LogoutPath = "/Account/Logout";
     options.AccessDeniedPath = "/Account/AccessDenied";
-    //options.SlidingExpiration = true; // IS OPTION KO BAAD ME UNCOMMENT.
+    options.SlidingExpiration = true; // IS OPTION KO BAAD ME UNCOMMENT.
 
     //options.ReturnUrlParameter=""
 });
