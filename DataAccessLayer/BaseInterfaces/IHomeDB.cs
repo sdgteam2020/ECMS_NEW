@@ -10,5 +10,6 @@ namespace DataAccessLayer.BaseInterfaces
     public interface IHomeDB
     {
         public Task<DTODashboardCountResponse> GetDashBoardCount(int UserId);
+        public Task<DTORequestDashboardCountResponse> GetRequestDashboardCount(int UserId);
     }
 }

@@ -44,9 +44,34 @@ namespace DataAccessLayer
                 //data.MRank.RankAbbreviation
                 //data.MArmedType.Abbreviation
                 var ret = await connection.QueryAsync<DTODashboardCountResponse>(query, new { UserId });
+                return ret.SingleOrDefault();
+            }
+        }
+        public async Task<DTORequestDashboardCountResponse> GetRequestDashboardCount(int UserId)
+        {
+            string query = "declare @ToSubmittedOffrs int=0 declare @ToSubmittedJCO int=0 declare @ToDraftedOffrs int=0 declare @ToDraftedJCO int=0" +
+                " select @ToDraftedOffrs=COUNT(distinct req.RequestId) from TrnDomainMapping domain"+
+                " inner join TrnICardRequest req on req.TrnDomainMappingId=domain.Id "+
+                " inner join MRegistration mreg on mreg.RegistrationId=req.RegistrationId where domain.AspNetUsersId=@UserId and mreg.ApplyForId=1" +
+                " select @ToDraftedJCO=COUNT(distinct req.RequestId) from TrnDomainMapping domain"+
+                " inner join TrnICardRequest req on req.TrnDomainMappingId=domain.Id "+
+                " inner join MRegistration mreg on mreg.RegistrationId=req.RegistrationId where domain.AspNetUsersId=@UserId and mreg.ApplyForId=2" +
+                " select @ToSubmittedOffrs=COUNT(distinct req.RequestId) from TrnDomainMapping domain" +
+                " inner join TrnICardRequest req on req.TrnDomainMappingId=domain.Id "+
+                " inner join TrnFwds trnfwd on trnfwd.RequestId=req.RequestId "+
+                " inner join MRegistration mreg on mreg.RegistrationId=req.RegistrationId where domain.AspNetUsersId=@UserId and mreg.ApplyForId=1" +
+                " select @ToSubmittedJCO=COUNT(distinct req.RequestId) from TrnDomainMapping domain"+
+                " inner join TrnICardRequest req on req.TrnDomainMappingId=domain.Id "+
+                " inner join TrnFwds trnfwd on trnfwd.RequestId=req.RequestId "+
+                " inner join MRegistration mreg on mreg.RegistrationId=req.RegistrationId where domain.AspNetUsersId=@UserId and mreg.ApplyForId=2" +
+                " select @ToSubmittedOffrs ToSubmittedOffrs,@ToSubmittedJCO ToSubmittedJCO,@ToSubmittedOffrs ToSubmittedOffrs,@ToSubmittedJCO ToSubmittedJCO";
 
 
-
+            using (var connection = _contextDP.CreateConnection())
+            {
+                //data.MRank.RankAbbreviation
+                //data.MArmedType.Abbreviation
+                var ret = await connection.QueryAsync<DTORequestDashboardCountResponse>(query, new { UserId });
                 return ret.SingleOrDefault();
             }
         }

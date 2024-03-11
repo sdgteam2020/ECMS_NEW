@@ -41,6 +41,13 @@ namespace Web.Controllers
             ViewBag.Role = role;    
             return View();
         }
+        public IActionResult RequestDashboard()
+        {
+            string role = this.User.FindFirstValue(ClaimTypes.Role);
+
+            ViewBag.Role = role;
+            return View();
+        }
         [Authorize(Roles = "User")]
         public IActionResult MyTask()
         {
@@ -122,5 +129,11 @@ namespace Web.Controllers
             int userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
             return Json(await _home.GetDashBoardCount(userId));
         }
+        public async Task<IActionResult> GetRequestDashboardCount()
+        {
+            int userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+            return Json(await _home.GetRequestDashboardCount(userId));
+        }
+
     }
 }
