@@ -13,7 +13,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <link rel="icon" type="image/x-icon" href="/images/AFSAC.png">
-    <title> E-IASAC </title>
+    <title> E-ISAC </title>
     @*  <link href="/Fonts/css/all.min.css" rel="stylesheet" type="text/css"> *@
 
     <link href="~/css/style.css" rel="stylesheet" />
@@ -33,6 +33,11 @@
     <style rel="stylesheet">
         .swal2-confirm, .swal2-styled {
             background: #D97924 !important;
+        }
+
+        .form-group .labellogin {
+            font-size: 16px;
+            font-weight: 700;
         }
 
         body {
@@ -62,13 +67,13 @@
                                         <div class="pb-3 mt-3">
                                             <form asp-antiforgery="true" method="post" asp-action="IMLogin" autocomplete="off" role="form">
                                                 <div class="form-group">
-                                                    <label>Domain ID</label>
+                                                    <label class="labellogin">Domain ID</label>
                                                     <input asp-for="DomainId" class="form-control" maxlength="20" placeholder="Enter Domain ID..." /> @* value="user1" *@
                                                     <span asp-validation-for="DomainId" class="text-danger"></span>
                                                 </div>
 
                                                 <div class="form-group">
-                                                    <label asp-for="Role" class="form-label fs-6"></label>
+                                                    <label asp-for="Role" class="form-label fs-6 labellogin"></label>
                                                     <select asp-for="Role" class="form-select">
                                                         <option value="">Select Role</option>
                                                         <option value="User">User</option>

@@ -1136,6 +1136,7 @@ namespace Web.Controllers
                     dTOTempSession.RoleName = model.Role;
                     dTOTempSession.ICNO = _trnDomainMapping.MUserProfile.ArmyNo;
                     dTOTempSession.Name = _trnDomainMapping.MUserProfile.Name;
+                    dTOTempSession.RankAbbreviation = _trnDomainMapping.Rank.RankAbbreviation;
                     dTOTempSession.UserId = _trnDomainMapping.MUserProfile.UserId;
                     dTOTempSession.TDMId = _trnDomainMapping.Id;
                     dTOTempSession.TDMUnitMapId = _trnDomainMapping.UnitId;
@@ -1300,7 +1301,8 @@ namespace Web.Controllers
                                 dtoSession.ICNO = dTOTempSession.ICNO;
                                 dtoSession.UserId = dTOTempSession.UserId;
                                 dtoSession.UnitId = dTOTempSession.TDMUnitMapId;
-                                dtoSession.Name = dTOTempSession.Name;
+                                dtoSession.Name = dTOTempSession.Name.ToUpper();
+                                dtoSession.RankName = dTOTempSession.RankAbbreviation.ToUpper();
                                 dtoSession.TrnDomainMappingId = dTOTempSession.TDMId;
 
                                 ///////////////login log//////////////////////

@@ -16,6 +16,7 @@ namespace DataTransferObject.Requests
         public bool AdminFlag { get; set; } 
         public string RoleName { get; set; } = string.Empty;
         public string ICNO { get; set; } = string.Empty;
+        public string RankAbbreviation { get; set; } = string.Empty;
         public string Name { get; set; } = string.Empty;
         public int UserId { get; set; }
         public int TDMUnitMapId { get; set; }
