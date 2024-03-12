@@ -276,7 +276,7 @@
                     <li>
                         <a class="nav-link " href="#">
                            
-                            <div class="mt-2 text-primary"><span class="font-weight-500">WELCOME</span> <span class="ProfileName font-weight-500" id="ProfileRankName"></span> <span class="ProfileName font-weight-500" id="ProfileName"></span> <span class="ProfileName font-weight-500">(@user.UserName.ToUpper())</span></div>
+                            <div class="mt-2 text-primary"><span class="font-weight-500">WELCOME</span> <span class="ProfileName font-weight-500" id="ProfileRankName"></span> <span class="ProfileName font-weight-500" id="ProfileName"></span> <span class="ProfileName font-weight-500">(<span id="aspntokenarmyno"></span>)</span></div>
                         </a>
                     </li>
                     <li class="nav-item dropdown">
@@ -336,8 +336,7 @@
                             <a class="dropdown-item" href="/UserProfile/Profile">
                                 <i class="ti-settings text-primary"></i>
                                 @user.UserName
-                                (<span id="aspntokenarmyno"></span>)
-                                <span class="d-none" id="aspndomainUnitID"></span>
+                                    <span class="d-none" id="aspndomainUnitID"></span>
                             </a>
                             <a class="dropdown-item" href="/Account/Logout">
                                 <i class="ti-power-off text-primary"></i>

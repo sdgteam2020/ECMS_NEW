@@ -1619,6 +1619,26 @@ namespace Web.Controllers
 
         }
 
+        //now switchrole method is implementaion stage
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> SwitchRole(string newRole)
+        {
+            var user = await userManager.GetUserAsync(User);
+
+            // Remove current roles
+            var currentRoles = await userManager.GetRolesAsync(user);
+            await userManager.RemoveFromRolesAsync(user, currentRoles);
+
+            // Add new role
+            await userManager.AddToRoleAsync(user, newRole);
+
+            // Sign in again with updated roles
+            await signInManager.RefreshSignInAsync(user);
+
+            return RedirectToAction("Index", "Home"); // Redirect to a suitable page
+        }
+
         #endregion End IMLogin
 
         #region Login & Logout
