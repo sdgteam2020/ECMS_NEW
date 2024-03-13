@@ -197,7 +197,7 @@ namespace DataAccessLayer
                     var BasicDetailList = await connection.QueryAsync<DTOUserProfileResponse>(query, new { ArmyNo, UserId });
                     int sno = 1;
 
-                    return BasicDetailList.SingleOrDefault();
+                    return BasicDetailList.FirstOrDefault();
 
                 }
                

@@ -1,6 +1,9 @@
 ﻿$(document).ready(function () {
+    GetDashboardCount()
+    $("#DraftedOffrs").click(function () {
 
-    GetDashboardCount();
+    });
+
 })
 function GetDashboardCount() {
     var userdata =
@@ -16,7 +19,7 @@ function GetDashboardCount() {
 
         success: function (response) {
             if (response != "null" && response != null) {
-
+                    
                 if (response == InternalServerError) {
                     Swal.fire({
                         text: errormsg

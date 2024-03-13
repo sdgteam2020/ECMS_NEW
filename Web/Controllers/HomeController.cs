@@ -41,10 +41,17 @@ namespace Web.Controllers
             ViewBag.Role = role;    
             return View();
         }
-        public IActionResult RequestDashboard()
+        public IActionResult InitiateRequest()
         {
             string role = this.User.FindFirstValue(ClaimTypes.Role);
 
+            ViewBag.Role = role;
+            return View();
+        }
+        public IActionResult RequestDashboard(string Id)
+        {
+            string role = this.User.FindFirstValue(ClaimTypes.Role);
+            ViewBag.Type = Id;    
             ViewBag.Role = role;
             return View();
         }

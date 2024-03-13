@@ -488,7 +488,7 @@
                             </div>
                         </li>
                     }
-                    else if (signInManager.IsSignedIn(User) && (User.IsInRole("Admin")))
+                    else if (signInManager.IsSignedIn(User) && User.IsInRole("Admin"))
                     {
                         <li class="nav-item">
                             <a class="nav-link collapsed" data-toggle="collapse" href="#ui-basic_Unit" aria-expanded="false" aria-controls="ui-basic_Unit">
@@ -606,7 +606,7 @@
                 {
                     <nav class="nav nav-pills nav-justified" id="layouttask">
                         <a class="nav-link Dashboard" aria-current="page" href="/Home/Dashboard">DashBoard</a>
-                        <a class="nav-link Status" href="/Home/RequestDashboard">
+                        <a class="nav-link Status" href="/Home/InitiateRequest">
                             Initiate Request
                         </a>
                         <a class="nav-link MyTask" href="/Home/MyTask">Task</a>

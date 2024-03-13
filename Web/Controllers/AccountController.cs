@@ -1624,19 +1624,24 @@ namespace Web.Controllers
         [Authorize]
         public async Task<IActionResult> SwitchRole(string newRole)
         {
-            var user = await userManager.GetUserAsync(User);
+            // Perform validation and authorization checks
+            if (User.IsInRole(newRole))
+            {
+                // Update user's role
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                // Example: Update user's role in the database
+                // userManager.RemoveFromRoleAsync(userId, oldRole);
+                // userManager.AddToRoleAsync(userId, newRole);
+                // Alternatively, update session variables or user tokens
 
-            // Remove current roles
-            var currentRoles = await userManager.GetRolesAsync(user);
-            await userManager.RemoveFromRolesAsync(user, currentRoles);
-
-            // Add new role
-            await userManager.AddToRoleAsync(user, newRole);
-
-            // Sign in again with updated roles
-            await signInManager.RefreshSignInAsync(user);
-
-            return RedirectToAction("Index", "Home"); // Redirect to a suitable page
+                // Redirect to appropriate page after role switch
+                return RedirectToAction("Index", "Home");
+            }
+            else
+            {
+                // Handle unauthorized access or invalid role
+                return RedirectToAction("AccessDenied", "Error");
+            }
         }
 
         #endregion End IMLogin

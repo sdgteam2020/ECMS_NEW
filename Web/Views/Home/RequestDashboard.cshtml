@@ -10,76 +10,70 @@
 
             <div class="card p-4">
                 <div class="row">
-                    <div class="col-md-2 col-sm-6">
-                        <a href="/Home/Request">
-                            <div class="counter purple">
-                                <div class="counter-icon">
-                                    <i class="fa fa-plus-circle"></i>
-                                </div>
-                                <h3 style="margin-top:3.5rem!important;">
-                                    Initiate Request
-                                </h3>
+                    @if (ViewBag.Type == "Drafted")
+                    {
+                        <div id="DraftedOffrs" class="col-md-2 col-sm-6">
+                            <a href="#">
+                                <div class="counter green">
+                                    <div class="counter-icon">
+                                        <i class="fa fa-water"></i>
+                                    </div>
+                                    <span class="counter-value" id="ToDraftedOffrs">0</span>
+                                    <h3>
+                                        Appl Drafted for Offrs
+                                    </h3>
 
-                            </div>
-                        </a>
-                    </div>
-                    <div class="col-md-2 col-sm-6">
-                        <a href="#">
-                            <div class="counter green">
-                                <div class="counter-icon">
-                                    <i class="fa fa-water"></i>
                                 </div>
-                                <span class="counter-value" id="ToDraftedOffrs">0</span>
-                                <h3>
-                                    Appl Drafted for Offrs
-                                </h3>
+                            </a>
+                        </div>
+                        <div id="DraftedJCO" class="col-md-2 col-sm-6">
+                            <a href="#">
+                                <div class="counter blue">
+                                    <div class="counter-icon">
+                                        <i class="fa fa-user"></i>
+                                    </div>
+                                    <span class="counter-value" id="ToDraftedJCO">0</span>
+                                    <h3>
+                                        Appl Drafted for JCOs/OR
+                                    </h3>
 
-                            </div>
-                        </a>
-                    </div>
-                    <div class="col-md-2 col-sm-6">
-                        <a href="#">
-                            <div class="counter blue">
-                                <div class="counter-icon">
-                                    <i class="fa fa-user"></i>
                                 </div>
-                                <span class="counter-value" id="ToDraftedJCO">0</span>
-                                <h3>
-                                    Appl Drafted for JCOs/OR
-                                </h3>
+                            </a>
+                        </div>
+                    }
+                    else if (ViewBag.Type == "Submitted")
+                    {
+                        <div id="SubmittedOffrs" class="col-md-2 col-sm-6">
+                            <a href="#">
+                                <div class="counter green">
+                                    <div class="counter-icon">
+                                        <i class="fa fa-water"></i>
+                                    </div>
+                                    <span class="counter-value" id="ToSubmittedOffrs">0</span>
+                                    <h3>
+                                        Appl Submitted for Offrs
+                                    </h3>
 
-                            </div>
-                        </a>
-                    </div>
-                    <div class="col-md-2 col-sm-6">
-                        <a href="#">
-                            <div class="counter green">
-                                <div class="counter-icon">
-                                    <i class="fa fa-water"></i>
                                 </div>
-                                <span class="counter-value" id="ToSubmittedOffrs">0</span>
-                                <h3>
-                                    Appl Submitted for Offrs
-                                </h3>
+                            </a>
+                        </div>
+                        <div id="SubmittedJCO" class="col-md-2 col-sm-6">
+                            <a href="#">
+                                <div class="counter blue">
+                                    <div class="counter-icon">
+                                        <i class="fa fa-user"></i>
+                                    </div>
+                                    <span class="counter-value" id="ToSubmittedJCO">0</span>
+                                    <h3>
+                                        Appl Submitted for JCOs/OR
+                                    </h3>
 
-                            </div>
-                        </a>
-                    </div>
-                    <div class="col-md-2 col-sm-6">
-                        <a href="#">
-                            <div class="counter blue">
-                                <div class="counter-icon">
-                                    <i class="fa fa-user"></i>
                                 </div>
-                                <span class="counter-value" id="ToSubmittedJCO">0</span>
-                                <h3>
-                                    Appl Submitted for JCOs/OR
-                                </h3>
+                            </a>
+                        </div>
+                    }
 
-                            </div>
-                        </a>
-                    </div>
-                    <div class="col-md-2 col-sm-6">
+                    @* <div class="col-md-2 col-sm-6">
                         <a href="#">
                             <div class="counter purple">
                                 <div class="counter-icon">
@@ -176,7 +170,7 @@
 
                             </div>
                         </a>
-                    </div>
+                    </div> *@
                     @*  <div class="col-md-2 col-sm-6">
                 <div class="counter purple">
                 <div class="counter-icon">
