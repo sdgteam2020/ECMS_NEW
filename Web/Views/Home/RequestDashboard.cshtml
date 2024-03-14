@@ -1,4 +1,5 @@
-﻿@{
+﻿@model DTORequestDashboardCountResponse;
+@{
     ViewData["Title"] = "Initiate Request DashBoard";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
@@ -13,12 +14,12 @@
                     @if (ViewBag.Type == "Drafted")
                     {
                         <div id="DraftedOffrs" class="col-md-2 col-sm-6">
-                            <a href="#">
+                            <a href="/BasicDetail/Index/MQ==">
                                 <div class="counter green">
                                     <div class="counter-icon">
                                         <i class="fa fa-water"></i>
                                     </div>
-                                    <span class="counter-value" id="ToDraftedOffrs">0</span>
+                                    <span class="counter-value" id="ToDraftedOffrs">@Model.ToDraftedOffrs</span>
                                     <h3>
                                         Appl Drafted for Offrs
                                     </h3>
@@ -27,12 +28,12 @@
                             </a>
                         </div>
                         <div id="DraftedJCO" class="col-md-2 col-sm-6">
-                            <a href="#">
+                            <a href="/BasicDetail/Index/?Id=MQ==&jcoor=SmNvL09ycw==">
                                 <div class="counter blue">
                                     <div class="counter-icon">
                                         <i class="fa fa-user"></i>
                                     </div>
-                                    <span class="counter-value" id="ToDraftedJCO">0</span>
+                                    <span class="counter-value" id="ToDraftedJCO">@Model.ToDraftedJCO</span>
                                     <h3>
                                         Appl Drafted for JCOs/OR
                                     </h3>
@@ -44,12 +45,12 @@
                     else if (ViewBag.Type == "Submitted")
                     {
                         <div id="SubmittedOffrs" class="col-md-2 col-sm-6">
-                            <a href="#">
+                            <a href="/BasicDetail/Index/Mg==">
                                 <div class="counter green">
                                     <div class="counter-icon">
                                         <i class="fa fa-water"></i>
                                     </div>
-                                    <span class="counter-value" id="ToSubmittedOffrs">0</span>
+                                    <span class="counter-value" id="ToSubmittedOffrs">@Model.ToSubmittedOffrs</span>
                                     <h3>
                                         Appl Submitted for Offrs
                                     </h3>
@@ -58,14 +59,45 @@
                             </a>
                         </div>
                         <div id="SubmittedJCO" class="col-md-2 col-sm-6">
+                            <a href="/BasicDetail/Index/?Id=Mg==&jcoor=SmNvL09ycw==">
+                                <div class="counter blue">
+                                    <div class="counter-icon">
+                                        <i class="fa fa-user"></i>
+                                    </div>
+                                    <span class="counter-value" id="ToSubmittedJCO">@Model.ToSubmittedJCO</span>
+                                    <h3>
+                                        Appl Submitted for JCOs/OR
+                                    </h3>
+
+                                </div>
+                            </a>
+                        </div>
+                    }
+                    else if (ViewBag.Type == "Rejected")
+                    {
+                        <div id="RejectedOffrs" class="col-md-2 col-sm-6">
+                            <a href="#">
+                                <div class="counter green">
+                                    <div class="counter-icon">
+                                        <i class="fa fa-water"></i>
+                                    </div>
+                                    <span class="counter-value" id="ToSubmittedOffrs">@Model.ToRejectedOffrs</span>
+                                    <h3>
+                                        Appl Rejected for Offrs
+                                    </h3>
+
+                                </div>
+                            </a>
+                        </div>
+                        <div id="RejectedJCO" class="col-md-2 col-sm-6">
                             <a href="#">
                                 <div class="counter blue">
                                     <div class="counter-icon">
                                         <i class="fa fa-user"></i>
                                     </div>
-                                    <span class="counter-value" id="ToSubmittedJCO">0</span>
+                                    <span class="counter-value" id="ToSubmittedJCO">@Model.ToRejectedJCO</span>
                                     <h3>
-                                        Appl Submitted for JCOs/OR
+                                        Appl Rejected for JCOs/OR
                                     </h3>
 
                                 </div>

@@ -10,6 +10,6 @@ namespace BusinessLogicsLayer.Home
    public interface IHomeBL
     {
         public Task<DTODashboardCountResponse> GetDashBoardCount(int UserId);
-        public Task<DTORequestDashboardCountResponse> GetRequestDashboardCount(int UserId);
+        public Task<DTORequestDashboardCountResponse> GetRequestDashboardCount(int UserId, string Type);
     }
 }

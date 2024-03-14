@@ -28,13 +28,13 @@ namespace DataAccessLayer
     public class AccountDB : GenericRepositoryDL<ApplicationUser>, IAccountDB
     {
         protected new readonly ApplicationDbContext _context;
-        private readonly ILogger<DomainMapDB> _logger;
+        private readonly ILogger<AccountDB> _logger;
         private readonly IDataProtector protector;
         private readonly UserManager<ApplicationUser> userManager;
         private readonly IUserProfileDB userProfileDB;
         private readonly IDomainMapDB domainMapDB;
         private readonly IPasswordHasher<ApplicationUser> _passwordHasher;
-        public AccountDB(ApplicationDbContext context, IPasswordHasher<ApplicationUser> passwordHasher, ILogger<DomainMapDB> logger, UserManager<ApplicationUser> userManager, IUserProfileDB userProfileDB, IDomainMapDB domainMapDB, IDataProtectionProvider dataProtectionProvider, DataProtectionPurposeStrings dataProtectionPurposeStrings) : base(context)
+        public AccountDB(ApplicationDbContext context, IPasswordHasher<ApplicationUser> passwordHasher, ILogger<AccountDB> logger, UserManager<ApplicationUser> userManager, IUserProfileDB userProfileDB, IDomainMapDB domainMapDB, IDataProtectionProvider dataProtectionProvider, DataProtectionPurposeStrings dataProtectionPurposeStrings) : base(context)
         {
             _context = context;
             _logger = logger;

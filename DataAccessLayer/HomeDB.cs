@@ -2,6 +2,7 @@
 using DataAccessLayer.BaseInterfaces;
 using DataAccessLayer.Logger;
 using DataTransferObject.Response;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,9 +15,11 @@ namespace DataAccessLayer
     public class HomeDB : IHomeDB
     {
         private readonly DapperContext _contextDP;
-        public HomeDB(DapperContext contextDP)
+        private readonly ILogger<HomeDB> _logger;
+        public HomeDB(DapperContext contextDP, ILogger<HomeDB> logger)
         {
             _contextDP = contextDP;
+            _logger = logger;
         }
         public async Task<DTODashboardCountResponse> GetDashBoardCount(int UserId)
         {
@@ -47,32 +50,64 @@ namespace DataAccessLayer
                 return ret.SingleOrDefault();
             }
         }
-        public async Task<DTORequestDashboardCountResponse> GetRequestDashboardCount(int UserId)
+        public async Task<DTORequestDashboardCountResponse> GetRequestDashboardCount(int UserId,string Type)
         {
-            string query = "declare @ToSubmittedOffrs int=0 declare @ToSubmittedJCO int=0 declare @ToDraftedOffrs int=0 declare @ToDraftedJCO int=0" +
-                " select @ToDraftedOffrs=COUNT(distinct req.RequestId) from TrnDomainMapping domain"+
-                " inner join TrnICardRequest req on req.TrnDomainMappingId=domain.Id "+
-                " inner join MRegistration mreg on mreg.RegistrationId=req.RegistrationId where domain.AspNetUsersId=@UserId and mreg.ApplyForId=1" +
-                " select @ToDraftedJCO=COUNT(distinct req.RequestId) from TrnDomainMapping domain"+
-                " inner join TrnICardRequest req on req.TrnDomainMappingId=domain.Id "+
-                " inner join MRegistration mreg on mreg.RegistrationId=req.RegistrationId where domain.AspNetUsersId=@UserId and mreg.ApplyForId=2" +
-                " select @ToSubmittedOffrs=COUNT(distinct req.RequestId) from TrnDomainMapping domain" +
-                " inner join TrnICardRequest req on req.TrnDomainMappingId=domain.Id "+
-                " inner join TrnFwds trnfwd on trnfwd.RequestId=req.RequestId "+
-                " inner join MRegistration mreg on mreg.RegistrationId=req.RegistrationId where domain.AspNetUsersId=@UserId and mreg.ApplyForId=1" +
-                " select @ToSubmittedJCO=COUNT(distinct req.RequestId) from TrnDomainMapping domain"+
-                " inner join TrnICardRequest req on req.TrnDomainMappingId=domain.Id "+
-                " inner join TrnFwds trnfwd on trnfwd.RequestId=req.RequestId "+
-                " inner join MRegistration mreg on mreg.RegistrationId=req.RegistrationId where domain.AspNetUsersId=@UserId and mreg.ApplyForId=2" +
-                " select @ToSubmittedOffrs ToSubmittedOffrs,@ToSubmittedJCO ToSubmittedJCO,@ToSubmittedOffrs ToSubmittedOffrs,@ToSubmittedJCO ToSubmittedJCO";
-
-
-            using (var connection = _contextDP.CreateConnection())
+            string query="";
+            switch (Type)
             {
-                //data.MRank.RankAbbreviation
-                //data.MArmedType.Abbreviation
-                var ret = await connection.QueryAsync<DTORequestDashboardCountResponse>(query, new { UserId });
-                return ret.SingleOrDefault();
+                case "Drafted":
+                    query = "declare @ToDraftedOffrs int=0 declare @ToDraftedJCO int=0" +
+                            " select @ToDraftedOffrs=COUNT(distinct req.RequestId) from TrnDomainMapping domain" +
+                            " inner join TrnICardRequest req on req.TrnDomainMappingId=domain.Id " +
+                            " inner join TrnStepCounter trnstepcout on trnstepcout.RequestId= req.RequestId " +
+                            " inner join MRegistration mreg on mreg.RegistrationId=req.RegistrationId where domain.AspNetUsersId=@UserId and trnstepcout.StepId=1 and mreg.ApplyForId=1 " +
+                            
+                            " select @ToDraftedJCO=COUNT(distinct req.RequestId) from TrnDomainMapping domain" +
+                            " inner join TrnICardRequest req on req.TrnDomainMappingId=domain.Id " +
+                            " inner join TrnStepCounter trnstepcout on trnstepcout.RequestId= req.RequestId " +
+                            " inner join MRegistration mreg on mreg.RegistrationId=req.RegistrationId where domain.AspNetUsersId=@UserId and trnstepcout.StepId=1 and mreg.ApplyForId=2 " +
+                            " select @ToDraftedOffrs ToDraftedOffrs,@ToDraftedJCO ToDraftedJCO";
+                    break;
+                case "Submitted":
+                    query = "declare @ToSubmittedOffrs int=0 declare @ToSubmittedJCO int=0" +
+                            " select @ToSubmittedOffrs=COUNT(distinct req.RequestId) from TrnDomainMapping domain" +
+                            " inner join TrnICardRequest req on req.TrnDomainMappingId=domain.Id " +
+                            " inner join TrnStepCounter trnstepcout on trnstepcout.RequestId= req.RequestId " +
+                            " inner join MRegistration mreg on mreg.RegistrationId=req.RegistrationId where domain.AspNetUsersId=@UserId and trnstepcout.StepId=2 and mreg.ApplyForId=1" +
+                            " select @ToSubmittedJCO=COUNT(distinct req.RequestId) from TrnDomainMapping domain" +
+                            " inner join TrnICardRequest req on req.TrnDomainMappingId=domain.Id " +
+                            " inner join TrnStepCounter trnstepcout on trnstepcout.RequestId= req.RequestId " +
+                            " inner join MRegistration mreg on mreg.RegistrationId=req.RegistrationId where domain.AspNetUsersId=@UserId and trnstepcout.StepId=2 and mreg.ApplyForId=2" +
+                            " select @ToSubmittedOffrs ToSubmittedOffrs,@ToSubmittedJCO ToSubmittedJCO";
+                    break;
+                case "Rejected":
+                    query = "declare @ToRejectedOffrs int=0 declare @ToRejectedJCO int=0" +
+                            " select @ToRejectedOffrs=COUNT(distinct req.RequestId) from TrnDomainMapping domain" +
+                            " inner join TrnICardRequest req on req.TrnDomainMappingId=domain.Id " +
+                            " inner join TrnStepCounter trnstepcout on trnstepcout.RequestId= req.RequestId " +
+                            " inner join MRegistration mreg on mreg.RegistrationId=req.RegistrationId where domain.AspNetUsersId=@UserId and trnstepcout.StepId in(7,8,9,10) and mreg.ApplyForId=1" +
+                            " select @ToRejectedJCO=COUNT(distinct req.RequestId) from TrnDomainMapping domain" +
+                            " inner join TrnICardRequest req on req.TrnDomainMappingId=domain.Id " +
+                            " inner join TrnStepCounter trnstepcout on trnstepcout.RequestId= req.RequestId " +
+                            " inner join MRegistration mreg on mreg.RegistrationId=req.RegistrationId where domain.AspNetUsersId=@UserId and trnstepcout.StepId in(7,8,9,10) and mreg.ApplyForId=2" +
+                            " select @ToRejectedOffrs ToRejectedOffrs,@ToRejectedJCO ToRejectedJCO";
+                    break;
+            }
+
+            try
+            {
+                using (var connection = _contextDP.CreateConnection())
+                {
+                    //data.MRank.RankAbbreviation
+                    //data.MArmedType.Abbreviation
+                    var ret = await connection.QueryAsync<DTORequestDashboardCountResponse>(query, new { UserId });
+                    return ret.SingleOrDefault();
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "HomeDB->GetRequestDashboardCount");
+                return null;
             }
         }
     }

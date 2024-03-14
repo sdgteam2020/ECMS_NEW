@@ -1,5 +1,5 @@
 ﻿$(document).ready(function () {
-    GetDashboardCount()
+    //GetDashboardCount()
     $("#DraftedOffrs").click(function () {
 
     });
