@@ -138,7 +138,7 @@ function BindData() {
                         buttons: [{
                             extend: 'copy',
                             exportOptions: {
-                                columns: "thead th:not(.noExport)"
+                                columns: "thead th:not(.noExport)",
                             }
                         }, {
                             extend: 'excel',
@@ -147,10 +147,14 @@ function BindData() {
                             }
                         }, {
                             extend: 'pdfHtml5',
-                            orientation: 'landscape',
-                            pageSize: 'LEGAL',
+                            orientation: 'portrait',
+                            pageSize: 'A4',
+                            title: 'E-IASC_Command',
                             exportOptions: {
                                 columns: "thead th:not(.noExport)"
+                            },
+                            customize: function (doc) {
+                                WaterMarkOnPdf(doc)
                             }
                         }]
                     });
@@ -597,4 +601,3 @@ function GetBinaryTree(ComdId) {
         }
     });
 }
-

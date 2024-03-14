@@ -145,10 +145,14 @@ function BindData() {
                             }
                         }, {
                             extend: 'pdfHtml5',
-                            orientation: 'landscape',
-                            pageSize: 'LEGAL',
+                            orientation: 'portrait',
+                            pageSize: 'A4',
+                            title: 'E-IASC_Corps',
                             exportOptions: {
                                 columns: "thead th:not(.noExport)"
+                            },
+                            customize: function (doc) {
+                                WaterMarkOnPdf(doc)
                             }
                         }]
                     });

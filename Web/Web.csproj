@@ -7,16 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Remove="wwwroot\DeveloperJS\Registration.js" />
-  </ItemGroup>
-
-  <ItemGroup>
     <_ContentIncludedByDefault Remove="wwwroot\css\Hierarchy.css" />
-    <_ContentIncludedByDefault Remove="wwwroot\DeveloperJS\Registration.js" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="wwwroot\DeveloperJS\Registration.js" />
     <None Include="wwwroot\js\site.js" />
     <None Include="wwwroot\lib\bootstrap\dist\css\bootstrap-grid.css.map" />
     <None Include="wwwroot\lib\bootstrap\dist\css\bootstrap-grid.min.css.map" />
@@ -79,13 +73,6 @@
     <Folder Include="wwwroot\WriteReadData\Document\" />
     <Folder Include="wwwroot\WriteReadData\Photo\" />
     <Folder Include="wwwroot\WriteReadData\Signature\" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Update="wwwroot\DeveloperJS\Profile - Copy.js">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
   </ItemGroup>
 
 </Project>

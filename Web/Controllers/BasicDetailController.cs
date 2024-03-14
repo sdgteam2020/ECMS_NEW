@@ -1170,7 +1170,7 @@ namespace Web.Controllers
             try
             {
                 mStepCounter.UpdatedOn = DateTime.Now;
-                mStepCounter.Updatedby = 1;
+                mStepCounter.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                 await iStepCounterBL.UpdateStepCounter(mStepCounter);
 
 
@@ -1369,8 +1369,8 @@ namespace Web.Controllers
                 }
             }
         }
-        [Authorize(Roles = "Admin,User")]
-        [HttpPost]
+        //[Authorize(Roles = "Admin,User")]
+        //[HttpPost]
         //public async Task<IActionResult> DummyData()
         //{
         //    Random rnd1 = new Random();
