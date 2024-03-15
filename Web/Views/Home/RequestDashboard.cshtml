@@ -1,0 +1,295 @@
+﻿@model DTORequestDashboardCountResponse;
+@{
+    ViewData["Title"] = "Initiate Request DashBoard";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container1">
+    @if (ViewBag.Role == "User")
+    {
+        <div class="row">
+
+            <div class="card p-4">
+                <div class="row">
+                    @if (ViewBag.Type == "Drafted")
+                    {
+                        <div id="DraftedOffrs" class="col-md-2 col-sm-6">
+                            <a href="/BasicDetail/Index/MQ==">
+                                <div class="counter green">
+                                    <div class="counter-icon">
+                                        <i class="fa fa-water"></i>
+                                    </div>
+                                    <span class="counter-value" id="ToDraftedOffrs">@Model.ToDraftedOffrs</span>
+                                    <h3>
+                                        Appl Drafted for Offrs
+                                    </h3>
+
+                                </div>
+                            </a>
+                        </div>
+                        <div id="DraftedJCO" class="col-md-2 col-sm-6">
+                            <a href="/BasicDetail/Index/?Id=MQ==&jcoor=SmNvL09ycw==">
+                                <div class="counter blue">
+                                    <div class="counter-icon">
+                                        <i class="fa fa-user"></i>
+                                    </div>
+                                    <span class="counter-value" id="ToDraftedJCO">@Model.ToDraftedJCO</span>
+                                    <h3>
+                                        Appl Drafted for JCOs/OR
+                                    </h3>
+
+                                </div>
+                            </a>
+                        </div>
+                    }
+                    else if (ViewBag.Type == "Submitted")
+                    {
+                        <div id="SubmittedOffrs" class="col-md-2 col-sm-6">
+                            <a href="/BasicDetail/Index/ODg4">
+                                <div class="counter green">
+                                    <div class="counter-icon">
+                                        <i class="fa fa-water"></i>
+                                    </div>
+                                    <span class="counter-value" id="ToSubmittedOffrs">@Model.ToSubmittedOffrs</span>
+                                    <h3>
+                                        Appl Submitted for Offrs
+                                    </h3>
+
+                                </div>
+                            </a>
+                        </div>
+                        <div id="SubmittedJCO" class="col-md-2 col-sm-6">
+                            <a href="/BasicDetail/Index/?Id=ODg4&jcoor=SmNvL09ycw==">
+                                <div class="counter blue">
+                                    <div class="counter-icon">
+                                        <i class="fa fa-user"></i>
+                                    </div>
+                                    <span class="counter-value" id="ToSubmittedJCO">@Model.ToSubmittedJCO</span>
+                                    <h3>
+                                        Appl Submitted for JCOs/OR
+                                    </h3>
+
+                                </div>
+                            </a>
+                        </div>
+                    }
+                    else if (ViewBag.Type == "Rejected")
+                    {
+                        <div id="RejectedOffrs" class="col-md-2 col-sm-6">
+                            <a href="/BasicDetail/Index/OTk5">
+                                <div class="counter green">
+                                    <div class="counter-icon">
+                                        <i class="fa fa-water"></i>
+                                    </div>
+                                    <span class="counter-value" id="ToSubmittedOffrs">@Model.ToRejectedOffrs</span>
+                                    <h3>
+                                        Appl Rejected for Offrs
+                                    </h3>
+
+                                </div>
+                            </a>
+                        </div>
+                        <div id="RejectedJCO" class="col-md-2 col-sm-6">
+                            <a href="/BasicDetail/Index?Id=OTk5&jcoor=SmNvL09ycw==">
+                                <div class="counter blue">
+                                    <div class="counter-icon">
+                                        <i class="fa fa-user"></i>
+                                    </div>
+                                    <span class="counter-value" id="ToSubmittedJCO">@Model.ToRejectedJCO</span>
+                                    <h3>
+                                        Appl Rejected for JCOs/OR
+                                    </h3>
+
+                                </div>
+                            </a>
+                        </div>
+                    }
+
+                    @* <div class="col-md-2 col-sm-6">
+                        <a href="#">
+                            <div class="counter purple">
+                                <div class="counter-icon">
+                                    <i class="fa fa-users"></i>
+                                </div>
+                                <span class="counter-value" id="ToPostingOutJCO">0</span>
+                                <h3>
+                                    Posting Out JCO's/OR
+                                </h3>
+
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-md-2 col-sm-6">
+                        <a href="#">
+                            <div class="counter green">
+                                <div class="counter-icon">
+                                    <i class="fa fa-user-circle"></i>
+                                </div>
+                                <span class="counter-value" id="ToCourseJCO">0</span>
+                                <h3>
+                                    Course/TD JCO's/OR
+                                </h3>
+
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-md-2 col-sm-6">
+                        <a href="#">
+                            <div class="counter blue">
+                                <div class="counter-icon">
+                                    <i class="fa fa-share-alt"></i>
+                                </div>
+                                <span class="counter-value" id="ToObsnRaisedOASIS">0</span>
+                                <h3>
+                                    Obsn Raised with OASIS
+                                </h3>
+
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-md-2 col-sm-6">
+                        <a href="#">
+                            <div class="counter purple">
+                                <div class="counter-icon">
+                                    <i class="fa fa-street-view"></i>
+                                </div>
+                                <span class="counter-value" id="ToObsnRaisedINDRA">0</span>
+                                <h3>
+                                    Obsn Raised with INDRA
+                                </h3>
+
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-md-2 col-sm-6">
+                        <a href="#">
+                            <div class="counter yellow">
+                                <div class="counter-icon">
+                                    <i class="fa fa-hourglass-half"></i>
+                                </div>
+                                <span class="counter-value" id="ToHotlistedICard">0</span>
+                                <h3>
+                                    Hotlisted I-Card
+                                </h3>
+
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-md-2 col-sm-6">
+                        <a href="#">
+                            <div class="counter red">
+                                <div class="counter-icon">
+                                    <i class="fa fa-ban"></i>
+                                </div>
+                                <span class="counter-value" id="ToBlockExistingICard">0</span>
+                                <h3>
+                                    Block Existing<br/> I-Card
+                                </h3>   
+
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-md-2 col-sm-6">
+                        <a href="#">
+                            <div class="counter yellow">
+                                <div class="counter-icon">
+                                    <i class="fa fa-sign-language"></i>
+                                </div>
+                                <span class="counter-value" id="ToDepositICard">0</span>
+                                <h3>
+                                    Deposit I-Card
+                                </h3>
+
+                            </div>
+                        </a>
+                    </div> *@
+                    @*  <div class="col-md-2 col-sm-6">
+                <div class="counter purple">
+                <div class="counter-icon">
+                <i class="fa fa-users"></i>
+                </div>
+                <span class="counter-value" id="TotReject">0</span>
+                <h3>Rejected</h3>
+                </div>
+                </div>
+                <div class="col-md-2 col-sm-6">
+                <div class="counter">
+                <div class="counter-icon">
+                <i class="fa fa-magnet"></i>
+
+                </div>
+                <span class="counter-value" id="TotSelfPen">0</span>
+                <h3>Self Pending</h3>
+                </div>
+                </div>
+                <div class="col-md-2 col-sm-6">
+                <div class="counter blue">
+                <div class="counter-icon">
+                <i class="fa fa-american-sign-language-interpreting" aria-hidden="true"></i>
+                </div>
+                <span class="counter-value" id="TotIOPen">0</span>
+                <h3>Pending From IO</h3>
+                </div>
+                </div>
+                <div class="col-md-2 col-sm-6">
+                <div class="counter green">
+                <div class="counter-icon">
+                <i class="fa fa-user"></i>
+                </div>
+                <span class="counter-value" id="TotGsoPen">0</span>
+                <h3>Pending From GSO</h3>
+                </div>
+                </div>
+                <div class="col-md-2 col-sm-6">
+                <div class="counter yellow">
+                <div class="counter-icon">
+                <i class="fa fa-users"></i>
+                </div>
+                <span class="counter-value" id="TotM11Pen">0</span>
+                <h3>Pending From M11</h3>
+                </div>
+                </div>
+                <div class="col-md-2 col-sm-6">
+                <div class="counter purple">
+                <div class="counter-icon">
+                <i class="fa fa-address-card" aria-hidden="true"></i>
+                </div>
+                <span class="counter-value" id="TotGQ54Pen">0</span>
+                <h3>Pending From HQ54 Pen</h3>
+                </div>
+                </div>
+                <div class="col-md-2 col-sm-6">
+                <div class="counter blue">
+                <div class="counter-icon">
+                <i class="fa fa-address-book" aria-hidden="true"></i>
+                </div>
+                <span class="counter-value" id="TotPrintPen">0</span>
+                <h3>Print Pending </h3>
+                </div>
+                </div> *@
+
+
+                </div>
+            </div>
+
+
+
+
+                    
+        </div>
+    }
+</div>
+<script src="~/developerjs/RequestDashboard.js"></script>
+<script>
+    // $('.counter-value').each(function () {
+    //     $(this).prop('Counter', 0).animate({
+    //         Counter: $(this).text()
+    //     }, {
+    //         duration: 3500,
+    //         easing: 'swing',
+    //         step: function (now) {
+    //             $(this).text(Math.ceil(now));
+    //         }
+    //     });
+    // });
+</script>

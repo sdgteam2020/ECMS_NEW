@@ -12,7 +12,7 @@
     <link rel="icon" type="image/x-icon" href="/images/AFSAC_icon.png">
     <meta content='width=device-width, initial-scale=1.0, shrink-to-fit=no' name='viewport' />
     @* <meta http-equiv="content-security-policy"content="default-src 'none'; script-src 'self'; connect-src 'self'; img-src 'self'; style-src 'self' 'sha256-CwE3Bg0VYQOIdNAkbB/Btdkhul49qZuwgNCMPgNY5zw=';" /> *@
-    <title> E-IASAC</title>
+    <title> E-ISAC</title>
     <link href="~/fonts/css/all.min.css" rel="stylesheet" />
 
     @*  <link href="~/css/steps.min.css" rel="stylesheet" /> *@
@@ -264,7 +264,7 @@
                     <li class="text-center">
               @*           <span class="tagline ml-4 text-center"> Enterprise - Indian Army Secure Access Card (E-IASAC)</span> *@
 
-                        <span class="tagline ml-4 text-center"> Enterprise - Independent Active Secure Access Card (E-IASAC)</span>
+                        <span class="tagline ml-4 text-center"> Enterprise - Indian Army Secure Access Card Appl (E-ISAC)</span>
                     </li>
                 </ul>
                 @{
@@ -276,7 +276,7 @@
                     <li>
                         <a class="nav-link " href="#">
                            
-                            <div class="mt-2 text-primary"> <span class="ProfileName font-weight-500" id="ProfileName"></span> <span class="ProfileName font-weight-500">(@user.UserName.ToUpper())</span></div>
+                            <div class="mt-2 text-primary"><span class="font-weight-500">WELCOME</span> <span class="ProfileName font-weight-500" id="ProfileRankName"></span> <span class="ProfileName font-weight-500" id="ProfileName"></span> <span class="ProfileName font-weight-500">(<span id="aspntokenarmyno"></span>)</span></div>
                         </a>
                     </li>
                     <li class="nav-item dropdown">
@@ -336,8 +336,7 @@
                             <a class="dropdown-item" href="/UserProfile/Profile">
                                 <i class="ti-settings text-primary"></i>
                                 @user.UserName
-                                (<span id="aspntokenarmyno"></span>)
-                                <span class="d-none" id="aspndomainUnitID"></span>
+                                    <span class="d-none" id="aspndomainUnitID"></span>
                             </a>
                             <a class="dropdown-item" href="/Account/Logout">
                                 <i class="ti-power-off text-primary"></i>
@@ -489,7 +488,7 @@
                             </div>
                         </li>
                     }
-                    else if (signInManager.IsSignedIn(User) && (User.IsInRole("Admin")))
+                    else if (signInManager.IsSignedIn(User) && User.IsInRole("Admin"))
                     {
                         <li class="nav-item">
                             <a class="nav-link collapsed" data-toggle="collapse" href="#ui-basic_Unit" aria-expanded="false" aria-controls="ui-basic_Unit">
@@ -607,7 +606,7 @@
                 {
                     <nav class="nav nav-pills nav-justified" id="layouttask">
                         <a class="nav-link Dashboard" aria-current="page" href="/Home/Dashboard">DashBoard</a>
-                        <a class="nav-link Status" href="/Home/Request">
+                        <a class="nav-link Status" href="/Home/InitiateRequest">
                             Initiate Request
                         </a>
                         <a class="nav-link MyTask" href="/Home/MyTask">Task</a>
