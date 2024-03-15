@@ -773,7 +773,7 @@ function WaterMarkOnPdf(doc) {
                     alignment: 'left',
                     italics: true,
                     text: '',
-                    fontSize: 18,
+                    fontSize: 12,
                     margin: [10, 0]
                 },
                 {
@@ -782,7 +782,7 @@ function WaterMarkOnPdf(doc) {
                     text: 'PDF Download From E-IASAC'
                 }
             ],
-            margin: 20
+            margin: 10
         }
     });
     // Create a footer object with 2 columns
@@ -800,7 +800,7 @@ function WaterMarkOnPdf(doc) {
                     text: ['page ', { text: page.toString() }, ' of ', { text: pages.toString() }]
                 }
             ],
-            margin: 20
+            margin: 10
         }
     });
     // Change dataTable layout (Table styling)

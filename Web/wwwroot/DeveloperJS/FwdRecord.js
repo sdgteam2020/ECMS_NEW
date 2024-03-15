@@ -315,7 +315,7 @@ $(document).ready(function () {
     $("#btnForward").click(function () {
 
         /*  alert($("#txtspnTokenArmyNo").val());*/
-       
+
 
         if (($("#aspntokenarmyno").html() == $("#txtspnTokenArmyNo").val()) || isToken == false) {
         $("#msgforfwd").html('');
@@ -347,7 +347,7 @@ $(document).ready(function () {
                             Counter = parseInt($("#spnStepCounter").html()) + 1;
                             if (applyfor == 1 && Counter == 3)/// for ACG
                                 Counter = 4;
-                            if (applyfor == 2 && Counter == 2)/// for ACG
+                            if (applyfor == 2 && Counter == 3)/// for ACG
                                 Counter = 5;
 
                             if (applyfor == 2 && parseInt($("#spnStepCounter").html()) == 3) {
@@ -695,7 +695,7 @@ function ForwardTo(RequestId, HType) {
             if (response != "null" && response != null) {
               
                 if ($("#txtspnTokenArmyNo").val() != "") {
-                    if (HType == 2 || HType == 3) {
+                    if (HType == 2 || HType == 3 || HType == 4 || HType == 5) {
                         var lsts = new Array();
                         var ids = $("#spnCurrentspnRequestId").html();
                         lsts.push(ids);
@@ -1271,6 +1271,7 @@ function digitalpdfsignature(Thumbprint, pdfpath, XCoordinate, YCoordinate) {
 
 }
 function base64toPDF(data) {
+    var datat = data;
     var bufferArray = base64ToArrayBuffer(data);
     var blobStore = new Blob([bufferArray], { type: "application/pdf" });
     if (window.navigator && window.navigator.msSaveOrOpenBlob) {
@@ -1283,6 +1284,19 @@ function base64toPDF(data) {
     link.href = data;
     link.download = "digitalsignature.pdf";
     link.click();
+
+    const fileWindow = window.open();
+    const url = 'data:application/pdf;base64,' + btoa(
+        new Uint8Array(bufferArray)
+            .reduce((data1, byte) => data1 + String.fromCharCode(byte), '')
+    );
+    fileWindow.document.write(
+        '<title>Digital Signature Pdf</title>' +
+        '<body style="overflow: hidden; margin: 0">' +
+        '<object width="100%" width="-webkit-fill-available" height="100%" height="-webkit-fill-available" type="application/pdf" data="' + encodeURI(url) + '"></object>' +
+        '</body>'
+    );
+
     window.URL.revokeObjectURL(data);
     link.remove();
 }

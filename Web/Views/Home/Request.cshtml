@@ -6,10 +6,35 @@
     .btn1 {
         --bs-btn-padding-x: 2.75rem;
         --bs-btn-padding-y: 1.075rem;
+        font-size:20px;
        
     }
-    .form-control{
-        width: 300px;
+
+    .btn-primary {
+        background-color: #2970e7bf;
+        color:white;
+    }
+
+    .btn-outline-primary:hover {
+            color: #fff;
+            background-color: #2970e7bf;
+            border-color: #2970e7bf;
+        }
+
+    .btn-primary:hover {
+        color: #fff;
+        background-color: #2970e7bf;
+        border-color: #2970e7bf;
+    }
+
+    .btn-primary:focus, .btn-primary.focus {
+        color: #fff;
+        background-color: #2970e7bf;
+        border-color: #2970e7bf;
+        box-shadow: 0 0 0 0.2rem rgba(38, 121, 244, 0.5);
+    }
+    .form-control1{
+        width: 500px;
         display: table; /* Instead of display:block */
         margin-left: auto;
         margin-right: auto;
@@ -24,12 +49,12 @@
                 <div class="col-md-12 col-sm-6 text-center">
 
                     <button type="button" class="btn btn-outline-primary btn1" id="btnApplyCard">Apply for Smart I-Card</button>
-                    <button type="button" class="btn btn-outline-warning btn1" id="btnApplicantsPostingout">Applicants Posting out</button>
+                    <button type="button" class="btn btn-outline-primary btn1" id="btnApplicantsPostingout">Applicants Posting out</button>
                 </div>
 
                 <div class="col-md-12 col-sm-6 text-center mt-4 ApplyCard d-none" id="btnarmytype">
-                    <button type="button" class="btn btn-outline-success btn1" id="btnaddOffrs">Offr's</button>
-                    <button type="button" class="btn btn-outline-warning btn1" id="btnJCOs">JCOs/OR's </button>
+                    <button type="button" class="btn btn-outline-primary btn1" id="btnaddOffrs">Offr's</button>
+                    <button type="button" class="btn btn-outline-primary btn1" id="btnJCOs">JCOs/OR's </button>
                 </div>
 
                 <div class="col-md-12 col-sm-6 text-center mt-4 ApplyCard" id="btnIcardFor">
@@ -39,7 +64,7 @@
                    
                 </div>
                 <div class="col-md-12 col-sm-6 mt-4 " id="">
-                    <input class="form-control mb-2 d-none ApplyCard form-space spnarmynoformula" id="txtApplyForArmyNo" maxlength="9" value="1" placeholder="Enter Army No" />
+                    <input class="form-control1 mb-2 d-none ApplyCard form-space spnarmynoformula" id="txtApplyForArmyNo" maxlength="9" value="1" placeholder="Enter Army No With pfx & sfx Ex.ICXXXXXP,JC391516M,15698645A" />
                 </div>
                 <div class="col-md-12 col-sm-6 text-center mt-4 d-none ApplyCard" id="spnNext">
                    @*  <button type="button" class="btn btn-danger mt-4 d-none mr-4 btn1 " id="btntokenrefresh">

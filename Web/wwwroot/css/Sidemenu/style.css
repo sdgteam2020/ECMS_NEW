@@ -19183,8 +19183,8 @@ div.tagsinput span.tag a {
 
     .navbar .navbar-brand-wrapper .navbar-brand img {
         max-width: 100%;
-        width: 200px;
-        height: 56px;
+        width: 185px;
+        height: 50px;
         margin: auto;
         vertical-align: middle;
     }
@@ -19196,7 +19196,7 @@ div.tagsinput span.tag a {
 
     .navbar .navbar-brand-wrapper .brand-logo-mini img {
      /*   width: calc(70px - 30px);*/
-        height: 30px;
+        height: 50px;
         max-width: 100%;
         margin: auto;
     }

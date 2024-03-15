@@ -169,9 +169,12 @@ function CallDataFromAPI() {
             if (response.Status == false) {
 
                 toastr.error(response.Message);
-               
+                $("#btngetdata").removeClass("btn-primary");
+                $("#btngetdata").addClass("btn-danger");
             }
             else {
+                $("#btngetdata").removeClass("btn-primary");
+                $("#btngetdata").addClass("btn-success");
                 toastr.success('Data Fetched From Api');
                // $("#Name").val(response.Pers_name);
                 //alert(JSON.stringify(response));
@@ -213,12 +216,16 @@ function registrationEnableDisabledField(val) {
         $("#Observations").prop('readonly', true);
         $(".Remarks").addClass("d-none");
         $("#btnsubmit").text("Process I-Card");
+        $("#btnsubmit").removeClass("btn-danger");
+        $("#btnsubmit").addClass("btn-success");
     }
     else {
         $("#btnsubmit").prop('disabled', false);
         $("#Observations").prop('readonly', false);
         $(".Remarks").removeClass("d-none");
         $("#btnsubmit").text("Raised Obsn");
+        $("#btnsubmit").removeClass("btn-success");
+        $("#btnsubmit").addClass("btn-danger");
     }
 
 }

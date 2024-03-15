@@ -226,9 +226,15 @@
     text-align: center;
     padding-left: 10px;
     color: royalblue;
-    font-size: 30px;
+    font-size: 40px;
     font-weight: bold;
-    font-family: "Times New Roman", Times, serif;
+    /* background: #070563;*/
+    font-family: Colonna MT;
+    background: #41B44B;
+    background: linear-gradient(to bottom, #41B44B 29%, #EB1814 80%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    display:block;
 }
 .ProfileName {
     font-size: 12px;
@@ -238,9 +244,10 @@
     .tagline {
         font-size: 20px;
         text-align: center;
+        display:none
     }
     .ProfileName {
-        font-size: 10px;
+        font-size: 20px;
     }
 }
 
@@ -248,9 +255,10 @@
     .tagline {
         font-size: 15px;
         text-align: center;
+        display: none
     }
     .ProfileName {
-        font-size: 6px;
+        font-size: 15px;
         margin-top: -0.5rem !important;
     }
 }
@@ -259,9 +267,10 @@
     .tagline {
         font-size: 5px;
         text-align: center;
+        display: none
     }
     .ProfileName {
-        font-size: 2px;
+        font-size: 8px;
         margin-top: -0.5rem !important;
     }
 }
@@ -270,8 +279,8 @@
 /*File Upload ++++++++++++++++++++++++++++++++++++++++++++++++++*/
 .box {
     display: block;
-    max-width: 180px;
-    height: 235px;
+    max-width: 179px;
+    height: 196px;
     margin: 10px;
     background-color: white;
     border-radius: 5px;
@@ -414,7 +423,7 @@
             }
 /**************************End Signature**************************/
 .js--image-preview {
-    height: 200px;
+    height: 156px;
     width: 100%;
     position: relative;
     overflow: hidden;
@@ -546,18 +555,17 @@ i.material-icons {
     }
 .seven h1 {
     text-align: center;
-    font-size: 19px;
+    font-size: 25px;
     /* font-weight: 500; */
     color: #222;
     letter-spacing: 1px;
-    text-transform: uppercase;
+    text-transform:capitalize;
     display: grid;
     grid-template-columns: 1fr max-content 1fr;
     grid-template-rows: 4px 0;
     grid-gap: 11px;
     align-items: center;
-    margin-top:10px;
-    
+    margin-top: 10px;
 }
 
     .seven h1:after, .seven h1:before {

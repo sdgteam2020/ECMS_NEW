@@ -12,9 +12,16 @@
     
     .notefont {
         font-size:12px;
-        font-weight:500;
+        font-weight:700;
     }
 
+    .form-group .labelprofile {
+        font-weight: 700;
+    }
+
+    .row .labelprofile {
+        font-weight: 700;
+    }
 </style>
 @* <div class="container1"> *@
     <div class="card">
@@ -72,7 +79,7 @@
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="form-group row mb-2">
-                                            <label class="col-form-label col-sm-4 labelprofile">Regd User Detls</label>
+                                        <label class="col-form-label col-sm-4 labelprofile">Logged in User Detls</label>
                                             <div class="col-sm-8">
                                                 <label id="RegdUser" class="col-form-label"></label>
 
@@ -127,6 +134,7 @@
                                 <div class="col-xl-2">
                                     <div class="row mb-1 required">
                                         <div class="col-xl-12">
+                                            <span class="text-danger text-center">Please upload only jpeg,jpg,png format</span>
                                             @*  <label class="col-sm-4 col-form-label font-weight-bold">@(sno++).</label> *@
                                             @* <label class="col-sm-3 col-form-label form-label">Photograph</label> *@
                                             <div class="col-sm-12">
@@ -134,7 +142,7 @@
                                                 @if (Model.ArmedId > 0)
                                                 {
                                                     <div class="box">
-                                                        <div class="js--image-preview"> <img id="PhotoPath" src="/WriteReadData/photo/@Model.ExistingPhotoImagePath" height="200px" width="180px" /></div>
+                                                        <div class="js--image-preview"> <img id="PhotoPath" src="/WriteReadData/photo/@Model.ExistingPhotoImagePath" height="158px" width="180px" /></div>
                                                         <div class="upload-options">
                                                             <label>
 
@@ -148,7 +156,7 @@
                                                 else
                                                 {
                                                     <div class="box">
-                                                        <div class="js--image-preview"> <img id="PhotoPath" src="~/writereaddata/images/noimage.png" height="200px" width="180px" /></div>
+                                                        <div class="js--image-preview"> <img id="PhotoPath" src="~/writereaddata/images/noimage.png" height="158px" width="180px" /></div>
                                                         <div class="upload-options">
                                                             <label>
 
@@ -178,7 +186,7 @@
                                                         <div class="upload-options_sign">
                                                             <label>
 
-                                                                <input asp-for="Signature_" class="form-control" onchange="beforeUploadSignatureSizeCheckInEdit(this)" accept="image/jpeg,image/jpg,image/png,image/gif" />
+                                                                <input asp-for="Signature_" class="form-control" onchange="beforeUploadSignatureSizeCheckInEdit(this)" accept="image/jpeg,image/jpg,image/png" />
                                                             </label>
                                                         </div>
                                                     </div>
@@ -192,7 +200,7 @@
                                                         <div class="upload-options_sign">
                                                             <label>
 
-                                                                <input asp-for="Signature_" class="form-control" onchange="beforeUploadSignatureSizeCheck(this)" accept="image/jpeg,image/jpg,image/png,image/gif" />
+                                                                <input asp-for="Signature_" class="form-control" onchange="beforeUploadSignatureSizeCheck(this)" accept="image/jpeg,image/jpg,image/png" />
                                                             </label>
                                                         </div>
                                                     </div>
@@ -201,7 +209,7 @@
                                                 }
                                                 <span id="lblSignature" style="color: red;"></span>
                                                 <span asp-validation-for="Signature_" class="text-danger"></span>
-                                                <span class="text-danger">Signature Upload Upto 50KB</span>
+                                                <span class="text-danger"> Signature Upload Upto 50KB</span>
                                             </div>
                                         </div>
 
@@ -214,15 +222,15 @@
                                 <div class="col-xl-5">
                         <div class="row mb-1">
                             <label class="col-sm-1 col-form-label text-center font-weight-bold">@(sno++).</label>
-                            <label class="col-sm-3 col-form-label form-label">Paper I-Card No</label>
+                                        <label class="col-sm-3 col-form-label form-label labelprofile">Paper I-Card No</label>
                             <div class="col-sm-8">
                                 <input asp-for="PaperIcardNo" class="form-control text-uppercase" placeholder="Enter Paper I card No" maxlength="20" required />
                                 <span asp-validation-for="PaperIcardNo" class="text-danger"></span>
                             </div>
                         </div>
                                     <div class="row mb-1">
-                                        <label class="col-sm-1 col-form-label text-center font-weight-bold">@(sno++).</label>
-                                        <label class="col-sm-3 col-form-label form-label">Service No</label>
+                                        <label class="col-sm-1 col-form-label text-center font-weight-bold labelprofile">@(sno++).</label>
+                                        <label class="col-sm-3 col-form-label form-label labelprofile">Service No</label>
                                         <div class="col-sm-8">
                                             <input asp-for="ServiceNo" class="form-control text-uppercase" placeholder="IC-12345X/JC-12345X" readonly required />
                                             <span asp-validation-for="ServiceNo" class="text-danger"></span>
@@ -230,7 +238,7 @@
                                     </div>
                                     <div class="row mb-1 required">
                                         <label class="col-sm-1 col-form-label text-center font-weight-bold">@(sno++).</label>
-                                        <label asp-for="RankId" class="col-sm-3 col-form-label form-label"></label>
+                                        <label asp-for="RankId" class="col-sm-3 col-form-label form-label labelprofile"></label>
                                         <div class="col-sm-8">
                                             <select asp-for="RankId" class="form-select">
                                                 @*  asp-items="ViewBag.OptionsRank" *@
@@ -240,7 +248,7 @@
                                     </div>
                         <div class="row mb-1">
                             <label class="col-sm-1 col-form-label text-center font-weight-bold">@(sno++).</label>
-                             <label asp-for="Name" class="col-sm-3 col-form-label form-label "></label>
+                                        <label asp-for="Name" class="col-sm-3 col-form-label form-label labelprofile"></label>
                             <div class="col-sm-8">
                                 <input asp-for="Name" class="form-control text-uppercase" maxlength="36" placeholder="Max 36 Characters incl spaces" readonly required />
                                 <span asp-validation-for="Name" class="text-danger"></span>
@@ -249,7 +257,7 @@
                        
                         <div class="row mb-1 required">
                             <label class="col-sm-1 col-form-label text-center font-weight-bold">@(sno++).</label>
-                            <label asp-for="UnitId" class="col-sm-3 col-form-label form-label">Unit Name</label>
+                                        <label asp-for="UnitId" class="col-sm-3 col-form-label form-label labelprofile">Unit Name</label>
                             <div class="col-sm-8">
                                 @if (ViewBag.UnitName!=null)
                                 {
@@ -266,7 +274,7 @@
                         </div>
                         <div class="row mb-1 required">
                             <label class="col-sm-1 col-form-label text-center font-weight-bold">@(sno++).</label>
-                            <label asp-for="ArmedId" class="col-sm-3 col-form-label form-label"></label>
+                                        <label asp-for="ArmedId" class="col-sm-3 col-form-label form-label labelprofile"></label>
                             <div class="col-sm-8">
                                             <select asp-for="ArmedId" class="form-select" asp-items="ViewBag.OptionsArmedType" required onchange="GetRegimentalListByArmedId(this.value)">
                                 </select>
@@ -277,7 +285,7 @@
                         { *@
                         <div class="row mb-1 required OptionsRegimental">
                                 <label class="col-sm-1 col-form-label text-center font-weight-bold">@(sno++).</label>
-                                        <label class="col-sm-3 col-form-label form-label">Regimental Centre</label>
+                                        <label class="col-sm-3 col-form-label form-label labelprofile">Regimental Centre</label>
                                 <div class="col-sm-8">
                                             <select asp-for="RegimentalId" class="form-select" required asp-items="ViewBag.OptionsRegimental">
                                     </select>
@@ -288,7 +296,7 @@
                        
                         <div class="row mb-1 required">
                             <label class="col-sm-1 col-form-label text-center font-weight-bold">@(sno++).</label>
-                            <label class="col-sm-3 col-form-label form-label">Iden Mark</label>
+                                        <label class="col-sm-3 col-form-label form-label labelprofile">Iden Mark</label>
                             <div class="col-sm-8">
                                             <input asp-for="IdenMark1" class="form-control text-uppercase" maxlength="100" placeholder="Only one iden Mk (Max 10 characters incl spaces)" required />
                                 <span asp-validation-for="IdenMark1" class="text-danger"></span>
@@ -296,7 +304,7 @@
                         </div>
                         <div class="row mb-1">
                             <label class="col-sm-1 col-form-label text-center font-weight-bold">@(sno++).</label>
-                            <label asp-for="DOB" class="col-sm-3 col-form-label form-label"></label>
+                                        <label asp-for="DOB" class="col-sm-3 col-form-label form-label labelprofile"></label>
                             <div class="col-sm-8">
                                             <input asp-for="DOB" class="form-control" readonly required />
                                @*  <input type="text" id="DOB_" name="DOB_" class="form-control" value="@Model.DOB.ToString("dd/MMM/yyyy")" readonly /> *@
@@ -304,7 +312,7 @@
                         </div>
                         <div class="row mb-1 required">
                             <label class="col-sm-1 col-form-label text-center font-weight-bold">@(sno++).</label>
-                            <label class="col-sm-3 col-form-label form-label">Height(CM)</label>
+                                        <label class="col-sm-3 col-form-label form-label labelprofile">Height(CM)</label>
                             <div class="col-sm-8">
                                             <input asp-for="Height" class="form-control" min="100" max="250" required />
                                 <span asp-validation-for="Height" class="text-danger"  placeholder="Height in CM"></span>
@@ -317,7 +325,7 @@
                     <div class="col-xl-4">
                         <div class="row mb-1 required">
                             <label class="col-sm-2 col-form-label text-center font-weight-bold">@(sno++).</label>
-                            <label asp-for="AadhaarNo" class="col-sm-4 col-form-label form-label"></label>
+                                        <label asp-for="AadhaarNo" class="col-sm-4 col-form-label form-label labelprofile"></label>
                             <div class="col-sm-6">
                                             <input asp-for="AadhaarNo" class="form-control isNumerictxt" required placeholder="AadhaarNo" maxlength="12" minlength="12" /> @* onkeyup="Aadhaarformate(event,this);" *@
                                 <span asp-validation-for="AadhaarNo" class="text-danger"></span>
@@ -326,7 +334,7 @@
 
                             <div class="row mb-1 required">
                             <label class="col-sm-2 col-form-label text-center font-weight-bold">@(sno++).</label>
-                            <label asp-for="BloodGroupId" class="col-sm-4 col-form-label form-label"></label>
+                                        <label asp-for="BloodGroupId" class="col-sm-4 col-form-label form-label labelprofile"></label>
                             <div class="col-sm-6">
                                             <select asp-for="BloodGroupId" class="form-select" asp-items="ViewBag.OptionsBloodGroup" required>
                                 </select>
@@ -335,7 +343,7 @@
                         </div>
                         <div class="row mb-1 required">
                             <label class="col-sm-2 col-form-label text-center font-weight-bold">@(sno++).</label>
-                            <label asp-for="PlaceOfIssue" class="col-sm-4 col-form-label form-label"></label>
+                                        <label asp-for="PlaceOfIssue" class="col-sm-4 col-form-label form-label labelprofile"></label>
                             <div class="col-sm-6">
                                             <input asp-for="PlaceOfIssue" class="form-control Alphanumeric text-uppercase" maxlength="50" required placeholder="Place Of Issue" />
                                 <span asp-validation-for="PlaceOfIssue" class="text-danger"></span>
@@ -343,7 +351,7 @@
                         </div>
                         <div class="row mb-3">
                             <label class="col-sm-2 col-form-label text-center font-weight-bold">@(sno++).</label>
-                            <label asp-for="DateOfIssue" class="col-sm-4 col-form-label form-label"></label>
+                                        <label asp-for="DateOfIssue" class="col-sm-4 col-form-label form-label labelprofile"></label>
                             <div class="col-sm-6">
                                 <input asp-for="DateOfIssue" class="form-control todaydate" value=""  required />
                                 <span asp-validation-for="DateOfIssue" class="text-danger"></span>
@@ -351,7 +359,7 @@
                         </div>
                         <div class="row mb-1 required">
                             <label class="col-sm-2 col-form-label text-center font-weight-bold">@(sno++).</label>
-                            <label asp-for="IssuingAuth" class="col-sm-4 col-form-label form-label"></label>
+                                        <label asp-for="IssuingAuth" class="col-sm-4 col-form-label form-label labelprofile"></label>
                             <div class="col-sm-6">
                                             <input asp-for="IssuingAuth " class="form-control1 text-uppercase" required />
                                 <span asp-validation-for="IssuingAuth" class="text-danger"></span>
@@ -359,7 +367,7 @@
                         </div>
                         <div class="row mb-1">
                             <label class="col-sm-2 col-form-label text-center font-weight-bold">@(sno++).</label>
-                            <label asp-for="DateOfCommissioning" class="col-sm-4 col-form-label form-label"></label>
+                                        <label asp-for="DateOfCommissioning" class="col-sm-4 col-form-label form-label labelprofile"></label>
                             <div class="col-sm-6">
                                             <input asp-for="DateOfCommissioning" class="form-control" readonly required />
                                @*  <input type="text" id="DOC" name="DOC" class="form-control" value="@Model.DateOfCommissioning.ToString("dd/MMM/yyyy")" readonly /> *@
@@ -367,7 +375,7 @@
                         </div>
                         <div class="row mb-1 required">
                             <label class="col-sm-2 col-form-label text-center font-weight-bold">@(sno++).</label>
-                            <label asp-for="PermanentAddress" class="col-sm-4 col-form-label form-label"></label>
+                                        <label asp-for="PermanentAddress" class="col-sm-4 col-form-label form-label labelprofile"></label>
                             <div class="col-sm-6">
                                             <textarea asp-for="PermanentAddress" rows="6" class="form-control text-uppercase" placeholder="" required readonly></textarea>
                                 <span asp-validation-for="PermanentAddress" class="text-danger"></span>
@@ -384,7 +392,7 @@
                                     <label  class="">
                                      <ul class="notefont">
                                       <li>I HEREBY DECLARE THAT THE DETAILS FURNISHED ABOVE ARE TRUE TO BEST OF MY KNOWLEDGE. I AM FULLY AWARE THAT, DECLARATION OF FALSE INFO IS AN OFFENCE WHICH WOULD MAKE ME LIABLE FOR PUNISHMENT AS PER EXTANT REGULATIONS.</li>
-                                                        <li>I HEREBY STATE THAT I HAVE NO OBJECTION IN AUTHENTICATING MYSELF WITH AADHAAR BASED AUTHENTICATION SYSTEM AND CONSENT TO PROVIDING MY AADHAAR NUMBER ALONG WITH THE AUTHENTICATION DETAILS FOR THE PURPOSE OF SMART I-CARD.</li>
+                                        <li>I HEREBY STATE THAT I HAVE NO OBJECTION IN AUTHENTICATING MYSELF WITH AADHAAR BASED AUTHENTICATION SYSTEM AND CONSENT TO PROVIDING MY AADHAAR NUMBER ALONG WITH THE AUTHENTICATION DETAILS FOR THE PURPOSE OF SMART I-CARD.</li>
                                       </ul>
 
                                     </label>

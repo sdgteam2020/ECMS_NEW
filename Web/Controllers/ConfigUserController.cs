@@ -111,7 +111,7 @@ namespace Web.Controllers
            
         }
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        //[ValidateAntiForgeryToken]
         public async Task<IActionResult> GetTokenDetails(DTOTokenResponse Data)
         {
 

@@ -41,7 +41,7 @@
 
     if (sessionStorage.getItem("ArmyNo") != null) {
         $("#ServiceNumber").val(sessionStorage.getItem("ArmyNo"));
-        $("#icarddetails").html('Request Details For ('+sessionStorage.getItem("ArmyNo")+')');
+        $("#icarddetails").html('I-Card Appl Request For  ('+sessionStorage.getItem("ArmyNo")+')');
         if (sessionStorage.getItem("OffType") == 1) {
             $(".OptionsRegimental").addClass("d-none");
             mMsater($("#spnrankid").val(), "RankId", Rank, "");
