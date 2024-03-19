@@ -1299,6 +1299,7 @@ namespace Web.Controllers
 
                                 DtoSession dtoSession = new DtoSession();
                                 dtoSession.ICNO = dTOTempSession.ICNO;
+                                dtoSession.RoleName = dTOTempSession.RoleName.Trim();
                                 dtoSession.UserId = dTOTempSession.UserId;
                                 dtoSession.UnitId = dTOTempSession.TDMUnitMapId;
                                 dtoSession.Name = dTOTempSession.Name.ToUpper();

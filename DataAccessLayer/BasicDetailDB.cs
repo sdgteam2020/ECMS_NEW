@@ -205,7 +205,7 @@ namespace DataAccessLayer
                         "inner join TrnDomainMapping map on map.Id= trnicrd.TrnDomainMappingId " +
                         "inner join UserProfile pr on pr.UserId = map.UserId " +
                         "left join TrnFwds fwd on fwd.ToAspNetUsersId= map.AspNetUsersId and fwd.IsComplete=0 and fwd.RequestId=trnicrd.RequestId " +
-                        "WHERE map.AspNetUsersId = @UserId and Afor.ApplyForId=ISNULL(@applyfor,Afor.ApplyForId) and trnicrd.Status=0  and C.StepId > 1  ORDER BY B.UpdatedOn DESC";
+                        "WHERE map.AspNetUsersId = @UserId and Afor.ApplyForId=ISNULL(@applyfor,Afor.ApplyForId) and C.StepId > 1  ORDER BY B.UpdatedOn DESC";
 
             }
             else if (stepcount == 2 || stepcount == 3 || stepcount == 4 || stepcount == 5 || stepcount == 6)//IO
@@ -558,7 +558,7 @@ namespace DataAccessLayer
                             " inner join MArmedType arm on arm.ArmedId=bas.ArmedId"+
                             " inner join MapUnit uni on uni.UnitMapId=bas.UnitId"+
                             " inner join MUnit Muni on Muni.UnitId=uni.UnitId"+
-                            " inner join TrnICardRequest icardreq on icardreq.BasicDetailId=bas.BasicDetailId and icardreq.Status=0 "+
+                            " inner join TrnICardRequest icardreq on icardreq.BasicDetailId=bas.BasicDetailId "+
                             " left join MRegimental regi on regi.RegId=bas.RegimentalId" +
                             " where bas.BasicDetailId=@BasicDetailId";
             using (var connection = _contextDP.CreateConnection())

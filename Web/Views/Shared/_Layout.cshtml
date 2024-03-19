@@ -3,6 +3,7 @@
 @using Microsoft.AspNetCore.Mvc;
 @inject SignInManager<ApplicationUser> signInManager;
 @inject UserManager<ApplicationUser> userManager;
+@inject IHttpContextAccessor HttpContextAccessor
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -271,6 +272,14 @@
                     var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
                     var user = await userManager.FindByIdAsync(userId);
 
+                    DtoSession? dtoSession = new DtoSession();
+                    if (!string.IsNullOrEmpty(@HttpContextAccessor.HttpContext.Session.GetString("Token")))
+                    {
+                        dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContextAccessor.HttpContext.Session, "Token");
+
+                    }
+                    var RoleName = dtoSession != null ? dtoSession.RoleName : "User";
+
                 }
                 <ul class="navbar-nav navbar-nav-right">
                     <li>
@@ -472,7 +481,8 @@
                             <span class="menu-title">Dashboard</span>
                         </a>
                     </li>
-                    @if (signInManager.IsSignedIn(User) && User.IsInRole("Super Admin"))
+                    
+                    @if (signInManager.IsSignedIn(User) && RoleName == "Super Admin") //User.IsInRole("Super Admin")
                     {
                         <li class="nav-item">
                             <a class="nav-link collapsed" data-toggle="collapse" href="#ui-basic" aria-expanded="true" aria-controls="ui-basic">
@@ -488,7 +498,7 @@
                             </div>
                         </li>
                     }
-                    else if (signInManager.IsSignedIn(User) && User.IsInRole("Admin"))
+                    else if (signInManager.IsSignedIn(User) && RoleName == "Admin") //User.IsInRole("Admin")
                     {
                         <li class="nav-item">
                             <a class="nav-link collapsed" data-toggle="collapse" href="#ui-basic_Unit" aria-expanded="false" aria-controls="ui-basic_Unit">
@@ -549,7 +559,7 @@
                     </a>
                     </li> *@
                     }
-                    else if (signInManager.IsSignedIn(User) && User.IsInRole("User"))
+                    else if (signInManager.IsSignedIn(User) && RoleName == "User") //User.IsInRole("User")
                     {
                         <li class="nav-item">
                             <a class="nav-link collapsed" data-toggle="collapse" href="#ui-basic1" aria-expanded="true" aria-controls="ui-basic1">
@@ -602,7 +612,7 @@
 
             <!-- partial -->
             <div class="main-panel">
-                @if(signInManager.IsSignedIn(User) && User.IsInRole("User"))
+                @if (signInManager.IsSignedIn(User) && RoleName == "User") // User.IsInRole("User")
                 {
                     <nav class="nav nav-pills nav-justified" id="layouttask">
                         <a class="nav-link Dashboard" aria-current="page" href="/Home/Dashboard">DashBoard</a>
