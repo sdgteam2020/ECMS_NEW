@@ -12,6 +12,7 @@ using DataTransferObject.Response;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using Web.WebHelpers;
 
 namespace Web.Controllers
 {
@@ -31,28 +32,37 @@ namespace Web.Controllers
             _ITrnICardRequestBL = iTrnICardRequestBL;
             _home = home;
         }
+        private string GetSessionValue()
+        {
+            DtoSession? dtoSession = new DtoSession();
+            if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
+            {
+                dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+
+            }
+            string role = dtoSession != null ? dtoSession.RoleName : "";
+            return role;
+        }
         public IActionResult Index()
         {
             return View();
         }
         public IActionResult Dashboard()
         {
-            string role = this.User.FindFirstValue(ClaimTypes.Role);
+            string role = GetSessionValue();
 
             ViewBag.Role = role;    
             return View();
         }
         public IActionResult InitiateRequest()
         {
-            string role = this.User.FindFirstValue(ClaimTypes.Role);
-
-            ViewBag.Role = role;
+            ViewBag.Role = GetSessionValue();
             return View();
         }
         public async Task<IActionResult> RequestDashboardAsync(string Id)
         {
             DTORequestDashboardCountResponse dTORequestDashboardCountResponse = new DTORequestDashboardCountResponse();
-            string role = this.User.FindFirstValue(ClaimTypes.Role);
+            string role = GetSessionValue();
             var base64EncodedBytes = System.Convert.FromBase64String(Id);
             var ret = System.Text.Encoding.UTF8.GetString(base64EncodedBytes);
             ViewBag.Type = ret;    
