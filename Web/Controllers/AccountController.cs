@@ -1632,25 +1632,26 @@ namespace Web.Controllers
         //now switchrole method is implementaion stage
         [HttpPost]
         [Authorize]
-        public async Task<IActionResult> SwitchRole(string newRole)
+        public IActionResult SwitchRole(string Id)
         {
-            // Perform validation and authorization checks
-            if (User.IsInRole(newRole))
+            DtoSession? dtoSession = new DtoSession();
+            if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
             {
-                // Update user's role
-                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                // Example: Update user's role in the database
-                // userManager.RemoveFromRoleAsync(userId, oldRole);
-                // userManager.AddToRoleAsync(userId, newRole);
-                // Alternatively, update session variables or user tokens
-
-                // Redirect to appropriate page after role switch
-                return RedirectToAction("Index", "Home");
+                dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+                dtoSession.RoleName = Id;
+                SessionHeplers.SetObject(HttpContext.Session, "Token", dtoSession);
+            }
+            if (Id == "Admin")
+            {
+                return RedirectToActionPermanent("Dashboard", "Home");
+            }
+            else if (Id == "Super Admin")
+            {
+                return RedirectToActionPermanent("Index", "Account");
             }
             else
             {
-                // Handle unauthorized access or invalid role
-                return RedirectToAction("AccessDenied", "Error");
+                return RedirectToActionPermanent("Index", "Home");
             }
         }
 

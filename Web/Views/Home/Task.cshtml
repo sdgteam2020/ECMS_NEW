@@ -1,0 +1,69 @@
+﻿@{
+    ViewData["Title"] = "DashBoard";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container1">
+    @if (ViewBag.Role == "User")
+    {
+        <div class="row">
+            <div class="card p-4">
+                <div class="row">
+                    <div class="col-md-2 col-sm-6">
+                        <a href="/Home/MyTask/T2ZmcnNTdWJtaXR0ZWQ=">
+                            @*  OffrsSubmitted *@
+                            <div class="counter purple">
+                                <div class="counter-icon">
+                                    <i class="fa fa-user"></i>
+                                </div>
+                                <h3 style="margin-top:2.0rem!important;">
+                                    Status Of Appl(Offrs) You Have Submitted
+                                </h3>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-md-2 col-sm-6">
+                        <a href="/Home/MyTask/SkNPc1N1Ym1pdHRlZA==">
+                            @*  JCOsSubmitted *@
+                            <div class="counter purple">
+                                <div class="counter-icon">
+                                    <i class="fa fa-street-view"></i>
+                                </div>
+                                <h3 style="margin-top:2.0rem!important;">
+                                    Status Of Appl(JCOs/Other Ranks) You Have Submitted
+                                </h3>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-md-2 col-sm-6">
+                        <a href="/Home/MyTask/T2ZmcnNQZW5kaW5n">
+                            @*  OffrsPending *@
+                            <div class="counter purple">
+                                <div class="counter-icon">
+                                    <i class="fa fa-user-circle"></i>
+                                </div>
+                                <h3 style="margin-top:2.0rem!important;">
+                                    Approver Pending Actions(offr` s)
+                                </h3>
+                            </div>
+                        </a>
+                    </div>
+
+                    <div class="col-md-2 col-sm-6">
+                        <a href="/Home/MyTask/SkNPc1BlbmRpbmc=">
+                            @*  JCOsPending *@
+                            <div class="counter red">
+                                <div class="counter-icon">
+                                    <i class="fa fa-ban"></i>
+                                </div>
+                                <h3 style="margin-top:2.0rem!important;">
+                                    Approver Pending Actions(JCOs\OR)
+                                </h3>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>

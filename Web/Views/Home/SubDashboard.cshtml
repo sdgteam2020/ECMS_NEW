@@ -1,0 +1,64 @@
+﻿@{
+    ViewData["Title"] = "DashBoard";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container1">
+    @if (ViewBag.Role == "User")
+    {
+        <div class="row">
+            <div class="card p-4">
+                <div class="row">
+                    <div class="col-md-2 col-sm-6">
+                        <a href="/Home/RequestDashboard/RHJhZnRlZA==">
+                            <div class="counter purple">
+                                <div class="counter-icon">
+                                    <i class="fa fa-user"></i>
+                                </div>
+                                <h3 style="margin-top:3.5rem!important;">
+                                    Drafted Appl
+                                </h3>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-md-2 col-sm-6">
+                        <a href="/Home/RequestDashboard/U3VibWl0dGVk">
+                            <div class="counter purple">
+                                <div class="counter-icon">
+                                    <i class="fa fa-user-circle"></i>
+                                </div>
+                                <h3 style="margin-top:3.5rem!important;">
+                                    Submitted Appl
+                                </h3>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-md-2 col-sm-6">
+                        <a href="#">
+                            <div class="counter purple">
+                                <div class="counter-icon">
+                                    <i class="fa fa-street-view"></i>
+                                </div>
+                                <h3 style="margin-top:3.5rem!important;">
+                                    Raised Obsn
+                                </h3>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-md-2 col-sm-6">
+                        <a href="/Home/RequestDashboard/UmVqZWN0ZWQ=">
+                            <div class="counter red">
+                                <div class="counter-icon">
+                                    <i class="fa fa-ban"></i>
+                                </div>
+                                <h3 style="margin-top:3.5rem!important;">
+                                    Rejected Appl
+                                </h3>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
