@@ -1035,10 +1035,6 @@ namespace DataAccessLayer
                 {
                     Search = string.IsNullOrEmpty(Search) ? "" : Search.ToLower();
                     var allrecord = await (from u in _context.Users.Where(P => Search == "" || P.DomainId.ToLower().Contains(Search))
-                                           join ur in _context.UserRoles on u.Id equals ur.UserId into uur_jointable
-                                           from xur in uur_jointable.DefaultIfEmpty()
-                                           join r in _context.Roles on xur.RoleId equals r.Id into xurr_jointable
-                                           from xr in xurr_jointable.DefaultIfEmpty()
                                            join tdm in _context.TrnDomainMapping on u.Id equals tdm.AspNetUsersId into utdm_jointable
                                            from xtdm in utdm_jointable.DefaultIfEmpty()
                                            join up in _context.UserProfile on xtdm.UserId equals up.UserId
@@ -1069,10 +1065,6 @@ namespace DataAccessLayer
                                            from xtdm in uptdm_jointable.DefaultIfEmpty()
                                            join u in _context.Users on xtdm.AspNetUsersId equals u.Id into xtdmu_jointable
                                            from xu in xtdmu_jointable.DefaultIfEmpty()
-                                           join ur in _context.UserRoles on xu.Id equals ur.UserId into xuur_jointable
-                                           from xur in xuur_jointable.DefaultIfEmpty()
-                                           join r in _context.Roles on xur.RoleId equals r.Id into xurr_jointable
-                                           from xr in xurr_jointable.DefaultIfEmpty()
                                            select new DTOProfileManageResponse()
                                            {
                                                UserId = up.UserId,
@@ -1099,10 +1091,6 @@ namespace DataAccessLayer
                                            from xtdm in uptdm_jointable.DefaultIfEmpty()
                                            join u in _context.Users on xtdm.AspNetUsersId equals u.Id into xtdmu_jointable
                                            from xu in xtdmu_jointable.DefaultIfEmpty()
-                                           join ur in _context.UserRoles on xu.Id equals ur.UserId into xuur_jointable
-                                           from xur in xuur_jointable.DefaultIfEmpty()
-                                           join r in _context.Roles on xur.RoleId equals r.Id into xurr_jointable
-                                           from xr in xurr_jointable.DefaultIfEmpty()
                                            select new DTOProfileManageResponse()
                                            {
                                                UserId = up.UserId,
@@ -1129,10 +1117,6 @@ namespace DataAccessLayer
                                            from xtdm in uptdm_jointable.DefaultIfEmpty()
                                            join u in _context.Users on xtdm.AspNetUsersId equals u.Id into xtdmu_jointable
                                            from xu in xtdmu_jointable.DefaultIfEmpty()
-                                           join ur in _context.UserRoles on xu.Id equals ur.UserId into xuur_jointable
-                                           from xur in xuur_jointable.DefaultIfEmpty()
-                                           join r in _context.Roles on xur.RoleId equals r.Id into xurr_jointable
-                                           from xr in xurr_jointable.DefaultIfEmpty()
                                            select new DTOProfileManageResponse()
                                            {
                                                UserId = up.UserId,
