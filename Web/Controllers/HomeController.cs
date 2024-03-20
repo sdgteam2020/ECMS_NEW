@@ -17,6 +17,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.SqlServer.Management.Smo;
 using System.Security.Claims;
 using Web.WebHelpers;
+using static iText.StyledXmlParser.Jsoup.Select.Evaluator;
 
 namespace Web.Controllers
 {
@@ -62,6 +63,13 @@ namespace Web.Controllers
             ViewBag.Role = role;    
             return View();
         }
+        public async Task<IActionResult> SubDashboard()
+        {
+            string role = GetSessionValue();
+
+            ViewBag.Role = role;
+            return View();
+        }
         public IActionResult InitiateRequest()
         {
             ViewBag.Role = GetSessionValue();
@@ -75,21 +83,19 @@ namespace Web.Controllers
             var ret = System.Text.Encoding.UTF8.GetString(base64EncodedBytes);
             ViewBag.Type = ret;    
             ViewBag.Role = role;
-            if(ret == "Drafted")
+            int userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+            if (ret == "Drafted")
             {
-                int userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                 dTORequestDashboardCountResponse = await _home.GetRequestDashboardCount(userId, ret);
                 return View(dTORequestDashboardCountResponse);
             }
             else if(ret == "Submitted")
             {
-                int userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                 dTORequestDashboardCountResponse = await _home.GetRequestDashboardCount(userId, ret);
                 return View(dTORequestDashboardCountResponse);
             }
             else if(ret == "Rejected")
             {
-                int userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                 dTORequestDashboardCountResponse = await _home.GetRequestDashboardCount(userId, ret);
                 return View(dTORequestDashboardCountResponse);
             }
@@ -97,8 +103,20 @@ namespace Web.Controllers
             return View(dTORequestDashboardCountResponse);
         }
         [Authorize(Roles = "User")]
-        public IActionResult MyTask()
+        public async Task<IActionResult> Task()
         {
+            string role = GetSessionValue();
+            ViewBag.Role = role;
+            return View();
+        }
+        [Authorize(Roles = "User")]
+        public IActionResult MyTask(string Id)
+        {
+            string role = GetSessionValue();
+            var base64EncodedBytes = System.Convert.FromBase64String(Id);
+            var ret = System.Text.Encoding.UTF8.GetString(base64EncodedBytes);
+            ViewBag.Type = ret;
+            ViewBag.Role = role;
             return View();
         }
         [Authorize(Roles = "User")]

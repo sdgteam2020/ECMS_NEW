@@ -271,6 +271,7 @@
                 @{
                     var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
                     var user = await userManager.FindByIdAsync(userId);
+                    var RoleList = await userManager.GetRolesAsync(user);
 
                     DtoSession? dtoSession = new DtoSession();
                     if (!string.IsNullOrEmpty(@HttpContextAccessor.HttpContext.Session.GetString("Token")))
@@ -344,9 +345,25 @@
                         <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="profileDropdown">
                             <a class="dropdown-item" href="/UserProfile/Profile">
                                 <i class="ti-settings text-primary"></i>
-                                @user.UserName
+                                Edit Profile
                                     <span class="d-none" id="aspndomainUnitID"></span>
                             </a>
+
+                            @foreach (var item in RoleList)
+                            {
+                                @if (RoleName == item)
+                                {
+                                    <form method="post" asp-controller="Account" asp-action="SwitchRole" asp-route-Id="@item">
+                                        <button type="submit" class="dropdown-item disabled" style="opacity: 0.6;cursor: not-allowed;color:blue;"><i class="ti-settings text-primary"></i><span class="fw-bold">@(user.UserName + " (" + item + ")")</span></button>
+                                    </form>
+                                }
+                                else
+                                {
+                                    <form method="post" asp-controller="Account" asp-action="SwitchRole" asp-route-Id="@item">
+                                        <button type="submit" class="dropdown-item"><i class="ti-settings text-primary"></i><span>@(user.UserName + " (" + item + ")")</span></button>
+                                    </form>
+                                }
+                            }
                             <a class="dropdown-item" href="/Account/Logout">
                                 <i class="ti-power-off text-primary"></i>
                                 Logout
@@ -571,7 +588,7 @@
                                 <ul class="nav flex-column sub-menu">
                                     <li class="nav-item"> <a class="nav-link " href="/UserProfile/Profile">Update Profile</a></li>
                                    @*  <li class="nav-item"> <a class="nav-link" href="/BasicDetail/RequestType">Add Request</a></li> *@
-                                    <li class="nav-item"> <a class="nav-link" href="/BasicDetail/Index/MQ==">I-Card List</a></li>
+                                    <li class="nav-item"> <a class="nav-link" href="/BasicDetail/Index/MA==">I-Card List</a></li>
 
                                     <li class="nav-item"> <a class="nav-link" href="/BasicDetail/InaccurateData">Inaccurate List</a></li>
                                     <li class="nav-item"> <a class="nav-link" href="/Log/LoginLog">Login Log</a></li>
@@ -619,7 +636,7 @@
                         <a class="nav-link Status" href="/Home/InitiateRequest">
                             Initiate Request
                         </a>
-                        <a class="nav-link MyTask" href="/Home/MyTask">Task</a>
+                        <a class="nav-link MyTask" href="/Home/Task">Task</a>
 
 
                     </nav>

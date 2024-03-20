@@ -177,7 +177,7 @@ namespace DataAccessLayer
                         "inner join TrnDomainMapping map on map.Id= trnicrd.TrnDomainMappingId " +
                         "inner join UserProfile pr on pr.UserId = map.UserId " +
                         "left join TrnFwds fwd on fwd.ToAspNetUsersId= map.AspNetUsersId and fwd.IsComplete=0 and fwd.RequestId=trnicrd.RequestId " +
-                        "WHERE map.AspNetUsersId = @UserId and Afor.ApplyForId=ISNULL(@applyfor,Afor.ApplyForId) and trnicrd.Status=0 ORDER BY B.UpdatedOn DESC";
+                        "WHERE map.AspNetUsersId = @UserId and Afor.ApplyForId=ISNULL(@applyfor,Afor.ApplyForId) ORDER BY B.UpdatedOn DESC";
 
             }
            else if (stepcount == 1)//////For Draft
