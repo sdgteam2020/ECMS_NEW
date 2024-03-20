@@ -1,14 +1,16 @@
 ﻿using Microsoft.AspNetCore.Hosting.Server;
+using System.Security.Claims;
 
 namespace Web.Healpers
-{
+{ 
     public class MyModule 
     {
         private readonly RequestDelegate _next;
-
+      
         public MyModule(RequestDelegate next)
         {
             _next = next;
+           
         }
 
         public async Task Invoke(HttpContext context)
@@ -26,6 +28,9 @@ namespace Web.Healpers
             context.Response.Redirect("/Account/AccessDenied");
 
             // Clean up.
+            
+
+
         }
     }
 

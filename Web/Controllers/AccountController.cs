@@ -39,6 +39,7 @@ using System.Data.Entity.Hierarchy;
 using System.Security.Claims;
 using System.Security.Policy;
 using Web.WebHelpers;
+using static iText.StyledXmlParser.Jsoup.Select.Evaluator;
 using static System.Net.Mime.MediaTypeNames;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using ApplicationRole = DataTransferObject.Domain.Identitytable.ApplicationRole;
@@ -1277,6 +1278,7 @@ namespace Web.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> TokenValidate(DTOTokenRequest model)
         {
+            await signInManager.SignOutAsync();
             DTOTempSession? dTOTempSession = SessionHeplers.GetObject<DTOTempSession>(HttpContext.Session, "IMData");
             if (dTOTempSession != null)
             {
@@ -1292,9 +1294,16 @@ namespace Web.Controllers
                         if (usera != null)
                         {
                             var result = await signInManager.PasswordSignInAsync(usera.UserName, "Admin123#", false, true);
+                           // var rolelist = await signInManager.UserManager.GetRolesAsync(usera);
+                            //var user1 = await signInManager.UserManager.IsInRoleAsync(usera, "User");
                             if (result.Succeeded)
                             {
                                 //var army = await _userProfileBL.Get(Convert.ToInt32(dTOTempSession.UserId));
+                              
+                              //  await userManager.RemoveClaimAsync(usera, new Claim("Roles", dTOTempSession.RoleName));
+                              //  await userManager.AddClaimAsync(usera, new Claim("Roles", dTOTempSession.RoleName));
+                                
+
 
                                 DtoSession dtoSession = new DtoSession();
                                 dtoSession.ICNO = dTOTempSession.ICNO;
@@ -1302,7 +1311,7 @@ namespace Web.Controllers
                                 dtoSession.UnitId = dTOTempSession.TDMUnitMapId;
                                 dtoSession.Name = dTOTempSession.Name;
                                 dtoSession.TrnDomainMappingId = dTOTempSession.TDMId;
-
+                                dtoSession.RoleName = dTOTempSession.RoleName;
                                 ///////////////login log//////////////////////
                                 TrnLogin_Log log = new TrnLogin_Log();
                                 log.AspNetUsersId = Convert.ToInt32(usera.Id);

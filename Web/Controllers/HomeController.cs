@@ -5,12 +5,20 @@ using BusinessLogicsLayer.BdeCate;
 using BusinessLogicsLayer.Home;
 using BusinessLogicsLayer.Registration;
 using DataAccessLayer.BaseInterfaces;
+using DataTransferObject.Domain.Identitytable;
 using DataTransferObject.Domain.Master;
 using DataTransferObject.Domain.Model;
 using DataTransferObject.Requests;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.SqlServer.Management.Smo;
 using System.Security.Claims;
+using Web.WebHelpers;
+using static iText.StyledXmlParser.Jsoup.Select.Evaluator;
 
 namespace Web.Controllers
 {
@@ -22,20 +30,28 @@ namespace Web.Controllers
         private readonly INotificationBL _INotificationBL;
         private readonly ITrnICardRequestBL _ITrnICardRequestBL;
         private readonly IHomeBL _home;
-        public HomeController(IRegistrationBL registrationBL, IBasicDetailBL basicDetailBL, INotificationBL notificationBL, ITrnICardRequestBL iTrnICardRequestBL, IHomeBL home)
+        SignInManager<ApplicationUser> signInManager;
+        private readonly UserManager<ApplicationUser> userManager;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        public HomeController(IRegistrationBL registrationBL, IBasicDetailBL basicDetailBL, INotificationBL notificationBL, ITrnICardRequestBL iTrnICardRequestBL, IHomeBL home, SignInManager<ApplicationUser> signInManager, UserManager<ApplicationUser> userManager, IHttpContextAccessor httpContextAccessor)
         {
             _registrationBL = registrationBL;
             _basicDetailBL = basicDetailBL;
             _INotificationBL = notificationBL;
             _ITrnICardRequestBL = iTrnICardRequestBL;
             _home = home;
-        }
-        public IActionResult Index()
+            this.signInManager = signInManager;
+            this.userManager = userManager;
+            _httpContextAccessor = httpContextAccessor;
+            }
+        public async Task<IActionResult> IndexAsync()
         {
+            string role = this.User.FindFirstValue(ClaimTypes.Role);
             return View();
         }
-        public IActionResult Dashboard()
+        public async Task<IActionResult> DashboardAsync()
         {
+          
             string role = this.User.FindFirstValue(ClaimTypes.Role);
 
             ViewBag.Role = role;    

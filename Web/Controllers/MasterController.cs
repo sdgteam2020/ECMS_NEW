@@ -34,7 +34,7 @@ namespace Web.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Command()
         {
-        
+            string role = this.User.FindFirstValue(ClaimTypes.Role);
             return View();
         }
         [Authorize(Roles = "Admin")]

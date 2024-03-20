@@ -107,7 +107,16 @@ var mapperConfig = new MapperConfiguration(mc =>
 
 IMapper mapper = mapperConfig.CreateMapper();
 builder.Services.AddSingleton(mapper);
-
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+           .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
+           {
+               // Configure cookie options if needed
+               options.Cookie.HttpOnly = true;
+               options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
+               options.LoginPath = "/Account/Login";
+               options.AccessDeniedPath = "/Account/AccessDenied";
+               // Add other configuration options as needed
+           });
 builder.Services.AddSession(options =>
 {
     options.IdleTimeout = TimeSpan.FromMinutes(20);
@@ -147,6 +156,8 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy("AdminRolePolicy",
         policy => policy.RequireRole("Admin"));
 });
+
+
 builder.Services.AddSingleton<IAuthorizationHandler, CanEditOnlyOtherAdminRolesAndClaimsHandler>();
 builder.Services.AddSingleton<IAuthorizationHandler, SuperAdminHandler>();
 builder.Services.AddSingleton<DataProtectionPurposeStrings>();
@@ -208,6 +219,7 @@ else
 //    await next();
 //});
 app.UseMyMiddleware();
+
 app.UseForwardedHeaders();
 app.UseHttpsRedirection();
 app.UseStaticFiles();
@@ -220,7 +232,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseSession();
-
+//app.UseSessionMiddleware();
 //app.MapRazorPages();
 app.MapControllerRoute(
     name: "default",

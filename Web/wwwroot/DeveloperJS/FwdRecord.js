@@ -936,6 +936,7 @@ function DataExport(Data) {
                     //link.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(blob);
                     //link.download = "export.json";
                     //link.click();
+
                     var blob = new Blob([JSON.stringify(response, null, "\t")], { type: "application/json" });
                    
                     // Create a temporary anchor element

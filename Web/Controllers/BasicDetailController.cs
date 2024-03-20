@@ -96,8 +96,8 @@ namespace Web.Controllers
         [Authorize(Roles = "Admin,User")]
         public async Task<ActionResult> Index(string Id,string jcoor)
         {
+            string role = this.User.FindFirstValue(ClaimTypes.Role);
 
-         
             MTrnNotification noti = new MTrnNotification();
             int retint = 0;int type = 1;
             var userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
