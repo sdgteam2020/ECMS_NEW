@@ -102,6 +102,8 @@ namespace DataAccessLayer
                                                 join r in _context.Roles on ur.RoleId equals r.Id
                                                 where  r.Name.ToUpper() == Role.ToUpper()
                                                 select r).FirstOrDefault(),
+                                        Rank = xup == null ? null :(from rank in _context.MRank.Where(x=>x.RankId == xup.RankId)
+                                                                          select rank).FirstOrDefault(),
                                     }).FirstOrDefaultAsync();
                 return (TrnDomainMapping?)result;
             }

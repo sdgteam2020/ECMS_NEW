@@ -96,8 +96,6 @@ namespace Web.Controllers
         [Authorize(Roles = "Admin,User")]
         public async Task<ActionResult> Index(string Id,string jcoor)
         {
-            string role = this.User.FindFirstValue(ClaimTypes.Role);
-
             MTrnNotification noti = new MTrnNotification();
             int retint = 0;int type = 1;
             var userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
@@ -152,8 +150,12 @@ namespace Web.Controllers
             { ViewBag.Title = "I-Card Rejectd From HQ 54"; type = 1; stepcounter = 10; }
             else if (retint == 555)
             { ViewBag.Title = "I-Card Approved From HQ 54"; type = 2; stepcounter = 5; }
-           
-            if(stepcounter==1)
+            else if (retint == 888)
+            { ViewBag.Title = "I-Card Submited"; type = 2; stepcounter = 888; }
+            else if (retint == 999)
+            { ViewBag.Title = "I-Card Rejectd From IO,MI11 and HQ 54"; type = 2; stepcounter = 999; }
+
+            if (stepcounter==0)
             {
                 var allrecord = await Task.Run(() => basicDetailBL.GetALLForIcardSttaus(Convert.ToInt32(userId), stepcounter, type, 0));
 

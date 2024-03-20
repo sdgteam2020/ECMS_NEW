@@ -142,6 +142,7 @@ function Getaspntokenarmyno() {
                     $("#aspntokenarmyno").html(response.ICNO)
                     $("#aspndomainUnitID").html(response.UnitId)
                     $("#ProfileName").html(response.Name)
+                    $("#ProfileRankName").html(response.RankName)
                 }
             }
         }

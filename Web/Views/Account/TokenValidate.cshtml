@@ -11,7 +11,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <link rel="icon" type="image/x-icon" href="/images/AFSAC.png">
-    <title> E-IASAC </title>
+    <title> E-ISAC </title>
     @*  <link href="/Fonts/css/all.min.css" rel="stylesheet" type="text/css"> *@
 
     <link href="~/css/style.css" rel="stylesheet" />
@@ -42,6 +42,11 @@
             /*    margin-left: -50px;*/
             /*  border: 7px double #242c6d;*/
             width: 33%;
+        }
+
+        .form-group .labeltoken {
+            font-size: 16px;
+            font-weight: 700;
         }
         body{
             /*   background-image: url('/images/logo-white.jpg'); */
@@ -90,13 +95,13 @@
                                         <div class="pb-3 mt-3">
                                             <form asp-antiforgery="true" method="post" asp-action="TokenValidate" autocomplete="off" role="form">
                                                 <div class="form-group">
-                                                    <label asp-for="ICNo"></label>
-                                                    <input asp-for="ICNo" class="form-control" placeholder="Enter IC No" /> @* value="@dTOTempSession.ICNO" *@
+                                                    <label class="labeltoken" asp-for="ICNo"></label>
+                                                    <input asp-for="ICNo" class="form-control" placeholder="Enter IC No" value="@dTOTempSession.ICNO" /> @* value="@dTOTempSession.ICNO" *@
                                                     <span asp-validation-for="ICNo" class="text-danger"></span>
                                                     <label id="tokenmsg"></label>
                                                 </div>
                                                 <div class="text-center" >
-                                                    @* <button type="button" class="btn btn-primary mt-2" onclick="GetTokenDetails1('FetchUniqueTokenDetails' ,'ICNo');">Refresh To Fetch Token Details</button> *@
+                                                    <button type="button" class="btn btn-primary mt-2" onclick="GetTokenDetails1('FetchUniqueTokenDetails' ,'ICNo');">Refresh To Fetch Token Details</button>
                                                     <button type="submit" class="btn btn-primary mt-2">Proceed</button>
                                                 </div>
                                                 @if (TempData["success"] != null)
@@ -124,7 +129,7 @@
                                                         <span class="text-info text-break">@Html.Raw(@m2)</span>
                                                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                                                     </div>
-                                                }
+                                                } 
                                             </form>
                                         </div>
                                     </div>

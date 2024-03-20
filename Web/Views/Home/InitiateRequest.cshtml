@@ -1,0 +1,41 @@
+﻿@{
+    ViewData["Title"] = "Initiate Request DashBoard";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container1">
+    @if (ViewBag.Role == "User")
+    {
+        <div class="row">
+            <div class="card p-4">
+                <div class="row">
+                    <div class="col-md-2 col-sm-6">
+                        <a href="/Home/Request">
+                            <div class="counter purple">
+                                <div class="counter-icon">
+                                    <i class="fa fa-plus-circle"></i>
+                                </div>
+                                <h3 style="margin-top:3.5rem!important;">
+                                    Initiate Request
+                                </h3>
+
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-md-2 col-sm-6">
+                        <a href="/Home/MyTask">
+                            <div class="counter blue">
+                                <div class="counter-icon">
+                                    <i class="fa fa-tasks"></i>
+                                </div>
+                                <h3 style="margin-top:3.5rem!important;">
+                                    MyTask
+                                </h3>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>

@@ -9,8 +9,7 @@ using DataTransferObject.Domain.Identitytable;
 using DataTransferObject.Domain.Master;
 using DataTransferObject.Domain.Model;
 using DataTransferObject.Requests;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
+using DataTransferObject.Response;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -18,7 +17,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.SqlServer.Management.Smo;
 using System.Security.Claims;
 using Web.WebHelpers;
-using static iText.StyledXmlParser.Jsoup.Select.Evaluator;
 
 namespace Web.Controllers
 {
@@ -40,22 +38,63 @@ namespace Web.Controllers
             _INotificationBL = notificationBL;
             _ITrnICardRequestBL = iTrnICardRequestBL;
             _home = home;
-            this.signInManager = signInManager;
-            this.userManager = userManager;
-            _httpContextAccessor = httpContextAccessor;
+        }
+        private string GetSessionValue()
+        {
+            DtoSession? dtoSession = new DtoSession();
+            if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
+            {
+                dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+
             }
-        public async Task<IActionResult> IndexAsync()
+            string role = dtoSession != null ? dtoSession.RoleName : "";
+            return role;
+        }
+        public IActionResult Index()
         {
             string role = this.User.FindFirstValue(ClaimTypes.Role);
             return View();
         }
         public async Task<IActionResult> DashboardAsync()
         {
-          
-            string role = this.User.FindFirstValue(ClaimTypes.Role);
+            string role = GetSessionValue();
 
             ViewBag.Role = role;    
             return View();
+        }
+        public IActionResult InitiateRequest()
+        {
+            ViewBag.Role = GetSessionValue();
+            return View();
+        }
+        public async Task<IActionResult> RequestDashboardAsync(string Id)
+        {
+            DTORequestDashboardCountResponse dTORequestDashboardCountResponse = new DTORequestDashboardCountResponse();
+            string role = GetSessionValue();
+            var base64EncodedBytes = System.Convert.FromBase64String(Id);
+            var ret = System.Text.Encoding.UTF8.GetString(base64EncodedBytes);
+            ViewBag.Type = ret;    
+            ViewBag.Role = role;
+            if(ret == "Drafted")
+            {
+                int userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                dTORequestDashboardCountResponse = await _home.GetRequestDashboardCount(userId, ret);
+                return View(dTORequestDashboardCountResponse);
+            }
+            else if(ret == "Submitted")
+            {
+                int userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                dTORequestDashboardCountResponse = await _home.GetRequestDashboardCount(userId, ret);
+                return View(dTORequestDashboardCountResponse);
+            }
+            else if(ret == "Rejected")
+            {
+                int userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                dTORequestDashboardCountResponse = await _home.GetRequestDashboardCount(userId, ret);
+                return View(dTORequestDashboardCountResponse);
+            }
+
+            return View(dTORequestDashboardCountResponse);
         }
         [Authorize(Roles = "User")]
         public IActionResult MyTask()
@@ -138,5 +177,11 @@ namespace Web.Controllers
             int userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
             return Json(await _home.GetDashBoardCount(userId));
         }
+        public async Task<IActionResult> GetRequestDashboardCount()
+        {
+            int userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+            return Json(await _home.GetRequestDashboardCount(userId, "Drafted"));
+        }
+
     }
 }

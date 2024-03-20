@@ -1137,6 +1137,7 @@ namespace Web.Controllers
                     dTOTempSession.RoleName = model.Role;
                     dTOTempSession.ICNO = _trnDomainMapping.MUserProfile.ArmyNo;
                     dTOTempSession.Name = _trnDomainMapping.MUserProfile.Name;
+                    dTOTempSession.RankAbbreviation = _trnDomainMapping.Rank.RankAbbreviation;
                     dTOTempSession.UserId = _trnDomainMapping.MUserProfile.UserId;
                     dTOTempSession.TDMId = _trnDomainMapping.Id;
                     dTOTempSession.TDMUnitMapId = _trnDomainMapping.UnitId;
@@ -1307,9 +1308,11 @@ namespace Web.Controllers
 
                                 DtoSession dtoSession = new DtoSession();
                                 dtoSession.ICNO = dTOTempSession.ICNO;
+                                dtoSession.RoleName = dTOTempSession.RoleName.Trim();
                                 dtoSession.UserId = dTOTempSession.UserId;
                                 dtoSession.UnitId = dTOTempSession.TDMUnitMapId;
-                                dtoSession.Name = dTOTempSession.Name;
+                                dtoSession.Name = dTOTempSession.Name.ToUpper();
+                                dtoSession.RankName = dTOTempSession.RankAbbreviation.ToUpper();
                                 dtoSession.TrnDomainMappingId = dTOTempSession.TDMId;
                                 dtoSession.RoleName = dTOTempSession.RoleName;
                                 ///////////////login log//////////////////////
@@ -1624,6 +1627,31 @@ namespace Web.Controllers
                 return Json(KeyConstants.InternalServerError);
             }
 
+        }
+
+        //now switchrole method is implementaion stage
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> SwitchRole(string newRole)
+        {
+            // Perform validation and authorization checks
+            if (User.IsInRole(newRole))
+            {
+                // Update user's role
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                // Example: Update user's role in the database
+                // userManager.RemoveFromRoleAsync(userId, oldRole);
+                // userManager.AddToRoleAsync(userId, newRole);
+                // Alternatively, update session variables or user tokens
+
+                // Redirect to appropriate page after role switch
+                return RedirectToAction("Index", "Home");
+            }
+            else
+            {
+                // Handle unauthorized access or invalid role
+                return RedirectToAction("AccessDenied", "Error");
+            }
         }
 
         #endregion End IMLogin
