@@ -77,30 +77,12 @@ namespace Web.Controllers
         }
         public async Task<IActionResult> RequestDashboardAsync(string Id)
         {
-            DTORequestDashboardCountResponse dTORequestDashboardCountResponse = new DTORequestDashboardCountResponse();
             string role = GetSessionValue();
             var base64EncodedBytes = System.Convert.FromBase64String(Id);
             var ret = System.Text.Encoding.UTF8.GetString(base64EncodedBytes);
             ViewBag.Type = ret;    
             ViewBag.Role = role;
-            int userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-            if (ret == "Drafted")
-            {
-                dTORequestDashboardCountResponse = await _home.GetRequestDashboardCount(userId, ret);
-                return View(dTORequestDashboardCountResponse);
-            }
-            else if(ret == "Submitted")
-            {
-                dTORequestDashboardCountResponse = await _home.GetRequestDashboardCount(userId, ret);
-                return View(dTORequestDashboardCountResponse);
-            }
-            else if(ret == "Rejected")
-            {
-                dTORequestDashboardCountResponse = await _home.GetRequestDashboardCount(userId, ret);
-                return View(dTORequestDashboardCountResponse);
-            }
-
-            return View(dTORequestDashboardCountResponse);
+            return View();
         }
         [Authorize(Roles = "User")]
         public async Task<IActionResult> Task()
@@ -195,10 +177,15 @@ namespace Web.Controllers
             int userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
             return Json(await _home.GetDashBoardCount(userId));
         }
-        public async Task<IActionResult> GetRequestDashboardCount()
+        public async Task<IActionResult> GetRequestDashboardCount(string Id)
         {
             int userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-            return Json(await _home.GetRequestDashboardCount(userId, "Drafted"));
+            return Json(await _home.GetRequestDashboardCount(userId, Id));
+        }
+        public async Task<IActionResult> GetSubDashboardCount()
+        {
+            int userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+            return Json(await _home.GetSubDashboardCount(userId));
         }
 
     }

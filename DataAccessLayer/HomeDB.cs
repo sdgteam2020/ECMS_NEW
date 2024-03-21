@@ -92,9 +92,37 @@ namespace DataAccessLayer
             {
                 using (var connection = _contextDP.CreateConnection())
                 {
-                    //data.MRank.RankAbbreviation
-                    //data.MArmedType.Abbreviation
                     var ret = await connection.QueryAsync<DTORequestDashboardCountResponse>(query, new { UserId });
+                    return ret.SingleOrDefault();
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "HomeDB->GetRequestDashboardCount");
+                return null;
+            }
+        }
+        public async Task<DTORequestSubDashboardCountResponse> GetSubDashboardCount(int UserId)
+        {
+            string query = "declare @TotDrafted int=0 declare @TotSubmitted int=0 declare @TotRejected int=0" +
+                            " select @TotDrafted=COUNT(distinct req.RequestId) from TrnDomainMapping domain" +
+                            " inner join TrnICardRequest req on req.TrnDomainMappingId=domain.Id " +
+                            " inner join TrnStepCounter trnstepcout on trnstepcout.RequestId= req.RequestId where domain.AspNetUsersId=@UserId and trnstepcout.StepId=1 " +
+
+                            " select @TotSubmitted=COUNT(distinct req.RequestId) from TrnDomainMapping domain" +
+                            " inner join TrnICardRequest req on req.TrnDomainMappingId=domain.Id " +
+                            " inner join TrnStepCounter trnstepcout on trnstepcout.RequestId= req.RequestId where domain.AspNetUsersId=@UserId and trnstepcout.StepId>2" +
+
+                            " select @TotRejected=COUNT(distinct req.RequestId) from TrnDomainMapping domain" +
+                            " inner join TrnICardRequest req on req.TrnDomainMappingId=domain.Id " +
+                            " inner join TrnStepCounter trnstepcout on trnstepcout.RequestId= req.RequestId where domain.AspNetUsersId=@UserId and trnstepcout.StepId in(7,8,9,10) " +
+
+                            " select @TotDrafted TotDrafted,@TotSubmitted TotSubmitted,@TotRejected TotRejected";
+            try
+            {
+                using (var connection = _contextDP.CreateConnection())
+                {
+                    var ret = await connection.QueryAsync<DTORequestSubDashboardCountResponse>(query, new { UserId });
                     return ret.SingleOrDefault();
                 }
             }
