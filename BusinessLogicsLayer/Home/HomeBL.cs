@@ -25,5 +25,9 @@ namespace BusinessLogicsLayer.Home
         {
             return await _iHomeDB.GetRequestDashboardCount(UserId,Type);
         }
+        public async Task<DTORequestSubDashboardCountResponse> GetSubDashboardCount(int UserId)
+        {
+            return await _iHomeDB.GetSubDashboardCount(UserId);
+        }
     }
 }

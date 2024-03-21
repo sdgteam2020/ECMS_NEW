@@ -1,9 +1,8 @@
-﻿@model DTORequestDashboardCountResponse;
-@{
+﻿@{
     ViewData["Title"] = "Initiate Request DashBoard";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
+<span id="Type" name="Type" class="d-none">@ViewBag.Type</span>
 <div class="container1">
     @if (ViewBag.Role == "User")
     {
@@ -19,7 +18,7 @@
                                     <div class="counter-icon">
                                         <i class="fa fa-water"></i>
                                     </div>
-                                    <span class="counter-value" id="ToDraftedOffrs">@Model.ToDraftedOffrs</span>
+                                    <span class="counter-value" id="ToDraftedOffrs">0</span>
                                     <h3>
                                         Appl Drafted for Offrs
                                     </h3>
@@ -33,7 +32,7 @@
                                     <div class="counter-icon">
                                         <i class="fa fa-user"></i>
                                     </div>
-                                    <span class="counter-value" id="ToDraftedJCO">@Model.ToDraftedJCO</span>
+                                    <span class="counter-value" id="ToDraftedJCO">0</span>
                                     <h3>
                                         Appl Drafted for JCOs/OR
                                     </h3>
@@ -50,7 +49,7 @@
                                     <div class="counter-icon">
                                         <i class="fa fa-water"></i>
                                     </div>
-                                    <span class="counter-value" id="ToSubmittedOffrs">@Model.ToSubmittedOffrs</span>
+                                    <span class="counter-value" id="ToSubmittedOffrs">0</span>
                                     <h3>
                                         Appl Submitted for Offrs
                                     </h3>
@@ -64,7 +63,7 @@
                                     <div class="counter-icon">
                                         <i class="fa fa-user"></i>
                                     </div>
-                                    <span class="counter-value" id="ToSubmittedJCO">@Model.ToSubmittedJCO</span>
+                                    <span class="counter-value" id="ToSubmittedJCO">0</span>
                                     <h3>
                                         Appl Submitted for JCOs/OR
                                     </h3>
@@ -81,7 +80,7 @@
                                     <div class="counter-icon">
                                         <i class="fa fa-water"></i>
                                     </div>
-                                    <span class="counter-value" id="ToSubmittedOffrs">@Model.ToRejectedOffrs</span>
+                                    <span class="counter-value" id="ToRejectedOffrs">0</span>
                                     <h3>
                                         Appl Rejected for Offrs
                                     </h3>
@@ -95,7 +94,7 @@
                                     <div class="counter-icon">
                                         <i class="fa fa-user"></i>
                                     </div>
-                                    <span class="counter-value" id="ToSubmittedJCO">@Model.ToRejectedJCO</span>
+                                    <span class="counter-value" id="ToRejectedJCO">0</span>
                                     <h3>
                                         Appl Rejected for JCOs/OR
                                     </h3>
@@ -203,79 +202,8 @@
                             </div>
                         </a>
                     </div> *@
-                    @*  <div class="col-md-2 col-sm-6">
-                <div class="counter purple">
-                <div class="counter-icon">
-                <i class="fa fa-users"></i>
-                </div>
-                <span class="counter-value" id="TotReject">0</span>
-                <h3>Rejected</h3>
-                </div>
-                </div>
-                <div class="col-md-2 col-sm-6">
-                <div class="counter">
-                <div class="counter-icon">
-                <i class="fa fa-magnet"></i>
-
-                </div>
-                <span class="counter-value" id="TotSelfPen">0</span>
-                <h3>Self Pending</h3>
-                </div>
-                </div>
-                <div class="col-md-2 col-sm-6">
-                <div class="counter blue">
-                <div class="counter-icon">
-                <i class="fa fa-american-sign-language-interpreting" aria-hidden="true"></i>
-                </div>
-                <span class="counter-value" id="TotIOPen">0</span>
-                <h3>Pending From IO</h3>
-                </div>
-                </div>
-                <div class="col-md-2 col-sm-6">
-                <div class="counter green">
-                <div class="counter-icon">
-                <i class="fa fa-user"></i>
-                </div>
-                <span class="counter-value" id="TotGsoPen">0</span>
-                <h3>Pending From GSO</h3>
-                </div>
-                </div>
-                <div class="col-md-2 col-sm-6">
-                <div class="counter yellow">
-                <div class="counter-icon">
-                <i class="fa fa-users"></i>
-                </div>
-                <span class="counter-value" id="TotM11Pen">0</span>
-                <h3>Pending From M11</h3>
-                </div>
-                </div>
-                <div class="col-md-2 col-sm-6">
-                <div class="counter purple">
-                <div class="counter-icon">
-                <i class="fa fa-address-card" aria-hidden="true"></i>
-                </div>
-                <span class="counter-value" id="TotGQ54Pen">0</span>
-                <h3>Pending From HQ54 Pen</h3>
-                </div>
-                </div>
-                <div class="col-md-2 col-sm-6">
-                <div class="counter blue">
-                <div class="counter-icon">
-                <i class="fa fa-address-book" aria-hidden="true"></i>
-                </div>
-                <span class="counter-value" id="TotPrintPen">0</span>
-                <h3>Print Pending </h3>
-                </div>
-                </div> *@
-
-
                 </div>
             </div>
-
-
-
-
-                    
         </div>
     }
 </div>

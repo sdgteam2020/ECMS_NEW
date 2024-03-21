@@ -1,21 +1,22 @@
 ﻿$(document).ready(function () {
-    GetDashboardCount($("#Type").html())
+
+    GetSubDashboardCount();
 })
-function GetDashboardCount(type) {
+function GetSubDashboardCount() {
     var userdata =
     {
-        "Id": type,
+        "Id": 0,
 
     };
     $.ajax({
-        url: '/Home/GetRequestDashboardCount',
+        url: '/Home/GetSubDashboardCount',
         contentType: 'application/x-www-form-urlencoded',
         data: userdata,
         type: 'POST',
 
         success: function (response) {
             if (response != "null" && response != null) {
-                    
+
                 if (response == InternalServerError) {
                     Swal.fire({
                         text: errormsg
@@ -26,20 +27,11 @@ function GetDashboardCount(type) {
                 }
 
                 else {
-                    $("#ToDraftedOffrs").html(response.ToDraftedOffrs);
-                    $("#ToDraftedJCO").html(response.ToDraftedJCO);
-                    $("#ToSubmittedOffrs").html(response.ToSubmittedOffrs);
-                    $("#ToSubmittedJCO").html(response.ToSubmittedJCO);
-                    $("#ToRejectedOffrs").html(response.ToRejectedOffrs);
-                    $("#ToRejectedJCO").html(response.ToRejectedJCO);
-                    $("#ToPostingOutJCO").html(0);
-                    $("#ToCourseJCO").html(0);
-                    $("#ToObsnRaisedOASIS").html(0);
-                    $("#ToObsnRaisedINDRA").html(0);
-                    $("#ToHotlistedICard").html(0);
-                    $("#ToBlockExistingICard").html(0);
-                    $("#ToDepositICard").html(0);
 
+                    $("#TotDrafted").html(response.TotDrafted);
+                    $("#TotSubmitted").html(response.TotSubmitted);
+                    $("#TotRaisedObsn").html(response.TotRaisedObsn);
+                    $("#TotRejected").html(response.TotRejected);
 
                     $('.counter-value').each(function () {
                         $(this).prop('Counter', 0).animate({
