@@ -1,21 +1,22 @@
 ﻿$(document).ready(function () {
-    GetDashboardCount($("#Type").html())
+
+    GetDashboardCount();
 })
-function GetDashboardCount(type) {
+function GetDashboardCount() {
     var userdata =
     {
-        "Id": type,
+        "Id": 0,
 
     };
     $.ajax({
-        url: '/Home/GetRequestDashboardCount',
+        url: '/Master/GetDashboardFormationCount',
         contentType: 'application/x-www-form-urlencoded',
         data: userdata,
         type: 'POST',
 
         success: function (response) {
             if (response != "null" && response != null) {
-                    
+
                 if (response == InternalServerError) {
                     Swal.fire({
                         text: errormsg
@@ -26,20 +27,12 @@ function GetDashboardCount(type) {
                 }
 
                 else {
-                    $("#ToDraftedOffrs").html(response.ToDraftedOffrs);
-                    $("#ToDraftedJCO").html(response.ToDraftedJCO);
-                    $("#ToSubmittedOffrs").html(response.ToSubmittedOffrs);
-                    $("#ToSubmittedJCO").html(response.ToSubmittedJCO);
-                    $("#ToRejectedOffrs").html(response.ToRejectedOffrs);
-                    $("#ToRejectedJCO").html(response.ToRejectedJCO);
-                    $("#ToPostingOutOffrs").html(response.ToPostingOutOffrs);
-                    $("#ToPostingOutJCO").html(response.ToPostingOutJCO);
-                    $("#ToCourseJCO").html(0);
-                    $("#ToObsnRaisedOASIS").html(0);
-                    $("#ToObsnRaisedINDRA").html(0);
-                    $("#ToHotlistedICard").html(0);
-                    $("#ToBlockExistingICard").html(0);
-                    $("#ToDepositICard").html(0);
+
+                    $("#TotComd").html(response.TotComd);
+                    $("#TotCorps").html(response.TotCorps);
+                    $("#TotDiv").html(response.TotDiv);
+                    $("#TotBde").html(response.TotBde);
+                    $("#TotMapUnit").html(response.TotMapUnit);
 
 
                     $('.counter-value').each(function () {

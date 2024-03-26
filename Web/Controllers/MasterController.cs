@@ -1508,5 +1508,28 @@ namespace Web.Controllers
             }
         }
         #endregion End Master
+
+        #region Dashboard
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> DashboardFormation()
+        {
+            return View();
+        }
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> DashboardMaster()
+        {
+            return View();
+        }
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> DashboardUserConfig()
+        {
+            return View();
+        }
+        public async Task<IActionResult> GetDashboardFormationCount()
+        {
+            int userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+            return Json(await _home.GetDashboardFormationCount(userId));
+        }
+        #endregion Dashboard
     }
 }

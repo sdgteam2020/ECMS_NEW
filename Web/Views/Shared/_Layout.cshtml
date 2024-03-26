@@ -641,6 +641,16 @@
 
                     </nav>
                 }
+                else if (signInManager.IsSignedIn(User) && RoleName == "Admin") 
+                {
+                    <nav class="nav nav-pills nav-justified" id="layouttask">
+                        <a class="nav-link Dashboard" aria-current="page" href="/Master/DashboardFormation">Fmn/Unit</a>
+                        <a class="nav-link Status" href="/Master/DashboardMaster">Master</a>
+                        <a class="nav-link MyTask" href="/Master/DashboardUserConfig">User Config</a>
+
+
+                    </nav>
+                }
                 <div class="content-wrapper">
                     
                     <partial name="_Notification" />

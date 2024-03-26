@@ -29,7 +29,7 @@ namespace Web.Controllers
         private readonly INotificationBL _INotificationBL;
         private readonly ITrnICardRequestBL _ITrnICardRequestBL;
         private readonly IHomeBL _home;
-        SignInManager<ApplicationUser> signInManager;
+        private readonly SignInManager<ApplicationUser> signInManager;
         private readonly UserManager<ApplicationUser> userManager;
         private readonly IHttpContextAccessor _httpContextAccessor;
         public HomeController(IRegistrationBL registrationBL, IBasicDetailBL basicDetailBL, INotificationBL notificationBL, ITrnICardRequestBL iTrnICardRequestBL, IHomeBL home, SignInManager<ApplicationUser> signInManager, UserManager<ApplicationUser> userManager, IHttpContextAccessor httpContextAccessor)
@@ -133,10 +133,7 @@ namespace Web.Controllers
 
                 await _INotificationBL.UpdatePrevious(Data);
 
-
-
                 await _INotificationBL.Add(Data);
-
 
                 int requestUserId = await _ITrnICardRequestBL.GetUserIdByRequestId(Data.RequestId);
                 Data.NotificationId = 0;

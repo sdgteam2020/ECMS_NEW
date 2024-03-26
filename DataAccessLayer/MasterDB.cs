@@ -90,5 +90,15 @@ namespace DataAccessLayer
                 return ret.ToList();
             }
         }
+        public async Task<List<DTODashboardFormationCountResponse>> GetDashboardFormationCount()
+        {
+            string query = "SELECT  Id, Reason Name FROM MPostingReason";
+
+            using (var connection = _contextDP.CreateConnection())
+            {
+                var ret = await connection.QueryAsync<DTODashboardFormationCountResponse>(query);
+                return ret.ToList();
+            }
+        }
     }
 }
