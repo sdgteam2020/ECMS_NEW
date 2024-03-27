@@ -165,8 +165,6 @@ namespace Web.Controllers
         }
         #endregion Command
 
-
-
         #region Corps 
         [Authorize(Roles = "Admin")]
         public IActionResult Corps()
@@ -279,7 +277,6 @@ namespace Web.Controllers
             }
         }
         #endregion End Corps
-
 
         #region Div  
         [Authorize(Roles = "Admin")]
@@ -1019,7 +1016,6 @@ namespace Web.Controllers
         }
         #endregion End Formation
 
-
         #region Appt  
         [Authorize(Roles = "Admin")]
         public IActionResult Appointment()
@@ -1378,7 +1374,6 @@ namespace Web.Controllers
 
         #endregion ArmedType
 
-
         #region Regimental Page
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Regimental()
@@ -1525,10 +1520,20 @@ namespace Web.Controllers
         {
             return View();
         }
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetDashboardFormationCount()
         {
-            int userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-            return Json(await _home.GetDashboardFormationCount(userId));
+            return Json(await unitOfWork.MasterBL.GetDashboardFormationCount());
+        }
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> GetDashboardMasterCount()
+        {
+            return Json(await unitOfWork.MasterBL.GetDashboardMasterCount());
+        }
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> GetDashboardUserConfigCount()
+        {
+            return Json(await unitOfWork.MasterBL.GetDashboardUserConfigCount());
         }
         #endregion Dashboard
     }

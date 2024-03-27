@@ -112,7 +112,7 @@ namespace DataAccessLayer
         }
         public async Task<DTORequestSubDashboardCountResponse> GetSubDashboardCount(int UserId)
         {
-            string query = "declare @TotDrafted int=0 declare @TotSubmitted int=0 declare @TotRejected int=0 declare @TotPostingOut int=0 " +
+            string query = "declare @TotDrafted int=0 declare @TotSubmitted int=0 declare @TotRejected int=0 declare @TotPostingOut int=0 declare @TotPrinted int=0 " +
                             " select @TotDrafted=COUNT(distinct req.RequestId) from TrnDomainMapping domain" +
                             " inner join TrnICardRequest req on req.TrnDomainMappingId=domain.Id " +
                             " inner join TrnStepCounter trnstepcout on trnstepcout.RequestId= req.RequestId where domain.AspNetUsersId=@UserId and trnstepcout.StepId=1 " +
@@ -121,13 +121,16 @@ namespace DataAccessLayer
                             " inner join TrnICardRequest req on req.TrnDomainMappingId=domain.Id " +
                             " inner join TrnStepCounter trnstepcout on trnstepcout.RequestId= req.RequestId where domain.AspNetUsersId=@UserId and trnstepcout.StepId>1" +
 
+                            " select @TotPrinted=COUNT(distinct req.RequestId) from TrnDomainMapping domain" +
+                            " inner join TrnICardRequest req on req.TrnDomainMappingId=domain.Id where domain.AspNetUsersId=@UserId and req.Status=1 " +
+
                             " select @TotRejected=COUNT(distinct req.RequestId) from TrnDomainMapping domain" +
                             " inner join TrnICardRequest req on req.TrnDomainMappingId=domain.Id " +
                             " inner join TrnStepCounter trnstepcout on trnstepcout.RequestId= req.RequestId where domain.AspNetUsersId=@UserId and trnstepcout.StepId in(7,8,9,10) " +
 
                             " select @TotPostingOut=COUNT(Id) from TrnPostingOut where FromAspNetUsersId=@UserId " +
 
-                            " select @TotDrafted TotDrafted,@TotSubmitted TotSubmitted,@TotRejected TotRejected,@TotPostingOut TotPostingOut";
+                            " select @TotDrafted TotDrafted,@TotSubmitted TotSubmitted,@TotPrinted TotPrinted,@TotRejected TotRejected,@TotPostingOut TotPostingOut";
             try
             {
                 using (var connection = _contextDP.CreateConnection())

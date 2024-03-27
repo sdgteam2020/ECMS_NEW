@@ -114,7 +114,7 @@ namespace Web.Controllers
                 return Json(await _iAccountBL.GetAllDomainRegn(Search, Choice));
             }
             catch (Exception ex)
-            {
+            {   
                 _logger.LogError(1001, ex, "Account->DomainRegn");
                 return Json(KeyConstants.InternalServerError);
             }
@@ -1340,7 +1340,7 @@ namespace Web.Controllers
                                 else if (dTOTempSession.RoleName.ToUpper() == "ADMIN")
                                 {
                                     HttpContext.Session.Remove("IMData");
-                                    return RedirectToActionPermanent("Dashboard", "Home");
+                                    return RedirectToActionPermanent("DashboardFormation", "Master");
 
                                 }
                                 else if (dTOTempSession.RoleName == "Super Admin")

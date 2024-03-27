@@ -1,8 +1,8 @@
 ﻿$(document).ready(function () {
 
-    GetDashboardCount();
+    GetDashboardFormationCount();
 })
-function GetDashboardCount() {
+function GetDashboardFormationCount() {
     var userdata =
     {
         "Id": 0,
@@ -27,13 +27,11 @@ function GetDashboardCount() {
                 }
 
                 else {
-
-                    $("#TotComd").html(response.TotComd);
-                    $("#TotCorps").html(response.TotCorps);
-                    $("#TotDiv").html(response.TotDiv);
-                    $("#TotBde").html(response.TotBde);
+                    $("#TotComd").html(response.TotComd == 1 ? 0 : response.TotComd-1);
+                    $("#TotCorps").html(response.TotCorps == 1 ? 0 : response.TotCorps - 1);
+                    $("#TotDiv").html(response.TotDiv == 1 ? 0 : response.TotDiv - 1);
+                    $("#TotBde").html(response.TotBde == 1 ? 0 : response.TotBde - 1);
                     $("#TotMapUnit").html(response.TotMapUnit);
-
 
                     $('.counter-value').each(function () {
                         $(this).prop('Counter', 0).animate({
