@@ -12,5 +12,6 @@ namespace DataAccessLayer.BaseInterfaces
         public Task<DTODashboardCountResponse> GetDashBoardCount(int UserId);
         public Task<DTORequestDashboardCountResponse> GetRequestDashboardCount(int UserId, string Type);
         public Task<DTORequestSubDashboardCountResponse> GetSubDashboardCount(int UserId);
+        public Task<List<DTORegisterUserResponse>> GetAllRegisterUser(int UnitId);
     }
 }

@@ -2,10 +2,12 @@
 using DataAccessLayer.BaseInterfaces;
 using DataAccessLayer.Logger;
 using DataTransferObject.Response;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Intrinsics.Arm;
 using System.Text;
 using System.Threading.Tasks;
 using static System.Runtime.InteropServices.JavaScript.JSType;
@@ -14,10 +16,12 @@ namespace DataAccessLayer
 {
     public class HomeDB : IHomeDB
     {
+        protected new readonly ApplicationDbContext _context;
         private readonly DapperContext _contextDP;
         private readonly ILogger<HomeDB> _logger;
-        public HomeDB(DapperContext contextDP, ILogger<HomeDB> logger)
+        public HomeDB(ApplicationDbContext context,DapperContext contextDP, ILogger<HomeDB> logger)
         {
+            _context = context;
             _contextDP = contextDP;
             _logger = logger;
         }
@@ -144,6 +148,24 @@ namespace DataAccessLayer
                 _logger.LogError(1001, ex, "HomeDB->GetRequestDashboardCount");
                 return null;
             }
+        }
+        public async Task<List<DTORegisterUserResponse>> GetAllRegisterUser(int UnitId)
+        {
+            var allrecord = await (from tdm in _context.TrnDomainMapping.Where(x=>x.UnitId == UnitId)
+                                   join u in _context.Users on tdm.AspNetUsersId  equals u.Id
+                                   join app in _context.MAppointment on tdm.ApptId equals app.ApptId
+                                   join up in _context.UserProfile on tdm.UserId equals up.UserId
+                                   join rk in _context.MRank on up.RankId equals rk.RankId
+
+                                   select new DTORegisterUserResponse()
+                                   {
+                                       DomainId = u.DomainId,
+                                       AppointmentName = app.AppointmentName,
+                                       ArmyNo = up.ArmyNo,
+                                       Rank = rk.RankAbbreviation,
+                                       Name =up.Name,
+                                   }).ToListAsync();
+            return allrecord;
         }
     }
 }

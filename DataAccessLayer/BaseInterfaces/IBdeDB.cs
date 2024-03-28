@@ -12,7 +12,7 @@ namespace DataAccessLayer.BaseInterfaces
 {
     public interface IBdeDB : IGenericRepositoryDL<MBde>
     {
-        public Task<bool> GetByName(MBde Data);
+        public Task<bool?> GetByName(MBde Data);
         public Task<List<DTOBdeResponse>> GetALLBdeCat();
         public Task<List<DTOBdeResponse>> GetByHId(DTOMHierarchyRequest Data);
         public Task<bool?> FindByBdeWithId(string BdeName, byte BdeId);

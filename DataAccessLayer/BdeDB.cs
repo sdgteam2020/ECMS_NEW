@@ -13,24 +13,37 @@ using System.Threading.Tasks;
 using static Dapper.SqlMapper;
 using DataAccessLayer.Logger;
 using Microsoft.Extensions.Logging;
+using Dapper;
 
 namespace DataAccessLayer
 {
     public class BdeDB : GenericRepositoryDL<MBde>, IBdeDB
     {
-        protected readonly ApplicationDbContext _context;
+        protected new readonly ApplicationDbContext _context;
+        protected readonly DapperContext _contextDP;
         private readonly ILogger<BdeDB> _logger;
 
-        public BdeDB(ApplicationDbContext context, ILogger<BdeDB> logger) : base(context)
+        public BdeDB(ApplicationDbContext context, DapperContext contextDP, ILogger<BdeDB> logger) : base(context)
         {
             _context = context;
+            _contextDP = contextDP;
             _logger = logger;
         }
         private readonly IConfiguration configuration;
 
-        public async Task<bool> GetByName(MBde Data)
+        public async Task<bool?> GetByName(MBde Data)
         {
-            //var ret = _context.MBde.Any(p => p.BdeName.ToUpper() == Data.BdeName.ToUpper());
+            //try
+            //{
+            //    var ret = await _context.MBde.AnyAsync(p => p.BdeName.ToUpper() == Data.BdeName.ToUpper() && p.BdeId != Data.BdeId);
+            //    return ret;
+            //    //return false;
+            //}
+            //catch (Exception ex)
+            //{
+            //    _logger.LogError(1001, ex, "BdeDB->GetByName");
+            //    return null;
+            //}
             return false;
         }
         public async Task<bool?> FindByBdeWithId(string BdeName, byte BdeId)
@@ -42,25 +55,25 @@ namespace DataAccessLayer
             }
             catch (Exception ex)
             {
-                _logger.LogError(1001, ex, "UserProfileDB->FindByBdeWithId");
+                _logger.LogError(1001, ex, "BdeDB->FindByBdeWithId");
                 return null;
             }
 
         }
 
 
-        public Task<List<DTOBdeResponse>> GetALLBdeCat()
+        public async Task<List<DTOBdeResponse>> GetALLBdeCat()
         {
-            var Corps = (from bde in _context.MBde
+            var Corps = await (from bde in _context.MBde
                          join div in _context.MDiv
                          on bde.DivId equals div.DivId
                         
                          join cor in _context.MCorps
-                        on bde.CorpsId equals cor.CorpsId
+                         on bde.CorpsId equals cor.CorpsId
                          join Com in _context.MComd
                          on bde.ComdId equals Com.ComdId
                          
-                       where  bde.BdeId!=1
+                         where  bde.BdeId!=1
                          select new DTOBdeResponse
                          {
                              BdeId=bde.BdeId,
@@ -72,15 +85,15 @@ namespace DataAccessLayer
                              ComdName = Com.ComdName,
                              ComdId= Com.ComdId,
 
-                         }).ToList();
+                         }).ToListAsync();
 
 
-            return Task.FromResult(Corps);  
+            return Corps;  
         }
 
-        public Task<List<DTOBdeResponse>> GetByHId(DTOMHierarchyRequest Data)
+        public async Task<List<DTOBdeResponse>> GetByHId(DTOMHierarchyRequest Data)
         {
-            var Bde = (from bde in _context.MBde
+            var Bde = await (from bde in _context.MBde
                          join div in _context.MDiv
                          on bde.DivId equals div.DivId
 
@@ -96,10 +109,10 @@ namespace DataAccessLayer
                              BdeName = bde.BdeName,
                            
 
-                         }).ToList();
+                         }).ToListAsync();
 
 
-            return Task.FromResult(Bde);
+            return Bde;
         }
 
 

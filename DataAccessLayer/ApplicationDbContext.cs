@@ -26,23 +26,23 @@ namespace DataAccessLayer
         public DbSet<MTrnFwd> TrnFwds { get; set; } = null!;
         public DbSet<DocUpload> DocUploads { get; set; } = null!;
         public DbSet<Error> Errors { get; set; } = null!;
-        public DbSet<MComd> MComd { get; set; }
-        public DbSet<MCorps> MCorps { get; set; }
-        public DbSet<MBde> MBde { get; set; }
-        public DbSet<MDiv> MDiv { get; set; }
-        public DbSet<MUnit> MUnit { get; set; }
-        public DbSet<MapUnit> MapUnit { get; set; }
-        public DbSet<MFormation> MFormation { get; set; }
-        public DbSet<MAppointment> MAppointment { get; set; }
-        public DbSet<MArmedType> MArmedType { get; set; }
-        public DbSet<MRank> MRank { get; set; }
-        public DbSet<MStepCounter> TrnStepCounter { get; set; }
-        public DbSet<MTrnICardRequest> TrnICardRequest { get; set; }
-        public DbSet<MApplyFor> MApplyFor { get; set; }
-        public DbSet<MPSO> MPso { get; set; }
-        public DbSet<MFmnBranches> MFmnBranches { get; set; }
-        public DbSet<MSubDte> MSubDte { get; set; }
-        public DbSet<MBloodGroup> MBloodGroup { get; set; }
+        public DbSet<MComd> MComd { get; set; } = null!;
+        public DbSet<MCorps> MCorps { get; set; } = null!;
+        public DbSet<MBde> MBde { get; set; } = null!;
+        public DbSet<MDiv> MDiv { get; set; } = null!;
+        public DbSet<MUnit> MUnit { get; set; } = null!;
+        public DbSet<MapUnit> MapUnit { get; set; } = null!;
+        public DbSet<MFormation> MFormation { get; set; } = null!;
+        public DbSet<MAppointment> MAppointment { get; set; } = null!;
+        public DbSet<MArmedType> MArmedType { get; set; } = null!;
+        public DbSet<MRank> MRank { get; set; } = null!;
+        public DbSet<MStepCounter> TrnStepCounter { get; set; } = null!;
+        public DbSet<MTrnICardRequest> TrnICardRequest { get; set; } = null!;
+        public DbSet<MApplyFor> MApplyFor { get; set; } = null!;
+        public DbSet<MPSO> MPso { get; set; } = null!;
+        public DbSet<MFmnBranches> MFmnBranches { get; set; } = null!;
+        public DbSet<MSubDte> MSubDte { get; set; } = null!;
+        public DbSet<MBloodGroup> MBloodGroup { get; set; } = null!;
 
 
 
@@ -66,17 +66,17 @@ namespace DataAccessLayer
         public DbSet<TrnDomainMapping> TrnDomainMapping { get; set; }
 
         public DbSet<MStepCounterStep> MStepCounterStep { get; set; }
-        public DbSet<MTrnFwdType> MFwdType { get; set; }
-        public DbSet<MICardType> MICardType { get; set; }
+        public DbSet<MTrnFwdType> MFwdType { get; set; } = null!;
+        public DbSet<MICardType> MICardType { get; set; } = null!;
 
-        public DbSet<MTrnNotification> TrnNotification { get; set; }
-        public DbSet<MTrnNotificationDisplay> TrnNotificationDisplay { get; set; }
+        public DbSet<MTrnNotification> TrnNotification { get; set; } = null!;
+        public DbSet<MTrnNotificationDisplay> TrnNotificationDisplay { get; set; } = null!;
 
-        public DbSet<MRemarkType> MRemarkType { get; set; }
-        public DbSet<MRemarksApply> MRemarksApply { get; set; }
-        public DbSet<MRemarks> MRemarks { get; set; }
-        public DbSet<MPostingReason> MPostingReason { get; set; }
-        public DbSet<TrnPostingOut> TrnPostingOut { get; set; }
+        public DbSet<MRemarkType> MRemarkType { get; set; } = null!;
+        public DbSet<MRemarksApply> MRemarksApply { get; set; } = null!;
+        public DbSet<MRemarks> MRemarks { get; set; } = null!;
+        public DbSet<MPostingReason> MPostingReason { get; set; } = null!;
+        public DbSet<TrnPostingOut> TrnPostingOut { get; set; } = null!;
 
 
 
