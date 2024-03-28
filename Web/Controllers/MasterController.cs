@@ -165,8 +165,6 @@ namespace Web.Controllers
         }
         #endregion Command
 
-
-
         #region Corps 
         [Authorize(Roles = "Admin")]
         public IActionResult Corps()
@@ -190,7 +188,7 @@ namespace Web.Controllers
                     {
                         if (dTO.CorpsId > 0)
                         {
-                            unitOfWork.Corps.Update(dTO);
+                            await unitOfWork.Corps.Update(dTO);
 
                             /////update Commd By CorpsId
                             MapUnit dat = new MapUnit();
@@ -203,11 +201,8 @@ namespace Web.Controllers
                         }
                         else
                         {
-
                             await unitOfWork.Corps.Add(dTO);
                             return Json(KeyConstants.Save);
-
-
                         }
                     }
                     else
@@ -280,12 +275,10 @@ namespace Web.Controllers
         }
         #endregion End Corps
 
-
         #region Div  
         [Authorize(Roles = "Admin")]
         public IActionResult Div()
         {
-
             return View();
         }
         [Authorize(Roles = "Admin")]
@@ -303,7 +296,7 @@ namespace Web.Controllers
                     {
                         if (dTO.DivId > 0)
                         {
-                            unitOfWork.Div.Update(dTO);
+                            await unitOfWork.Div.Update(dTO);
 
                             /////update Commd By CorpsId
                             MapUnit dat = new MapUnit();
@@ -316,22 +309,17 @@ namespace Web.Controllers
                         }
                         else
                         {
-
                             await unitOfWork.Div.Add(dTO);
                             return Json(KeyConstants.Save);
-
-
                         }
                     }
                     else
                     {
                         return Json(KeyConstants.Exists);
                     }
-
                 }
                 else
                 {
-
                     return Json(ModelState.Select(x => x.Value.Errors).Where(y => y.Count > 0).ToList());
                 }
 
@@ -411,16 +399,62 @@ namespace Web.Controllers
                 dTO.BdeName = dTO.BdeName.Trim();
                 if (ModelState.IsValid)
                 {
-                    if (dTO.BdeId > 0)
+                    #region old code
+                    //if (dTO.BdeId > 0)
+                    //{
+                    //    bool? result = await unitOfWork.Bde.FindByBdeWithId(dTO.BdeName,dTO.BdeId);
+                    //    if(result!=null)
+                    //    {
+                    //        if (result == true)
+                    //        {
+                    //            return Json(KeyConstants.Exists);
+                    //        }
+                    //        else
+                    //        {
+                    //            unitOfWork.Bde.Update(dTO);
+
+                    //            /////update Commd By CorpsId
+                    //            MapUnit dat = new MapUnit();
+                    //            dat.CorpsId = dTO.CorpsId;
+                    //            dat.ComdId = dTO.ComdId;
+                    //            dat.DivId = dTO.DivId;
+                    //            dat.BdeId = dTO.BdeId;
+                    //            changeHierarchyMaster.UpdateComdCorpsByDivs(dat);
+                    //            ////////End Code //////////////
+                    //            ///
+                    //            return Json(KeyConstants.Update);
+                    //        }
+                    //    }
+                    //    else
+                    //    {
+                    //        return Json(KeyConstants.InternalServerError);
+                    //    }
+
+                    //}
+                    //else
+                    //{
+                    //    if(!await unitOfWork.Bde.GetByName(dTO))
+                    //    {
+                    //        await unitOfWork.Bde.Add(dTO);
+                    //        return Json(KeyConstants.Save);
+                    //    }
+                    //    else
+                    //    {
+                    //        return Json(KeyConstants.Exists);
+                    //    }
+                    //}
+                    #endregion
+
+                    bool? result = await unitOfWork.Bde.GetByName(dTO);
+                    if (result != null)
                     {
-                        bool? result = await unitOfWork.Bde.FindByBdeWithId(dTO.BdeName,dTO.BdeId);
-                        if(result!=null)
+                        if (result == true)
                         {
-                            if (result == true)
-                            {
-                                return Json(KeyConstants.Exists);
-                            }
-                            else
+                            return Json(KeyConstants.Exists);
+                        }
+                        else
+                        {
+                            if (dTO.BdeId > 0)
                             {
                                 unitOfWork.Bde.Update(dTO);
 
@@ -435,53 +469,17 @@ namespace Web.Controllers
                                 ///
                                 return Json(KeyConstants.Update);
                             }
+                            else
+                            {
+                                await unitOfWork.Bde.Add(dTO);
+                                return Json(KeyConstants.Save);
+                            }
                         }
-                        else
-                        {
-                            return Json(KeyConstants.InternalServerError);
-                        }
-
                     }
                     else
                     {
-                        if(!await unitOfWork.Bde.GetByName(dTO))
-                        {
-                            await unitOfWork.Bde.Add(dTO);
-                            return Json(KeyConstants.Save);
-                        }
-                        else
-                        {
-                            return Json(KeyConstants.Exists);
-                        }
+                        return Json(KeyConstants.InternalServerError);
                     }
-
-                    //if (!await unitOfWork.Bde.GetByName(dTO))
-                    //{
-                    //    if (dTO.BdeId > 0)
-                    //    {
-                    //        unitOfWork.Bde.Update(dTO);
-
-                    //        /////update Commd By CorpsId
-                    //        MapUnit dat = new MapUnit();
-                    //        dat.CorpsId = dTO.CorpsId;
-                    //        dat.ComdId = dTO.ComdId;
-                    //        dat.DivId = dTO.DivId;
-                    //        dat.BdeId=dTO.BdeId;
-                    //        changeHierarchyMaster.UpdateComdCorpsByDivs(dat);
-                    //        ////////End Code //////////////
-                    //        ///
-                    //        return Json(KeyConstants.Update);
-                    //    }
-                    //    else
-                    //    {
-                    //        await unitOfWork.Bde.Add(dTO);
-                    //        return Json(KeyConstants.Save);
-                    //    }
-                    //}
-                    //else
-                    //{
-                    //    return Json(KeyConstants.Exists);
-                    //}
                 }
                 else
                 {
@@ -1019,7 +1017,6 @@ namespace Web.Controllers
         }
         #endregion End Formation
 
-
         #region Appt  
         [Authorize(Roles = "Admin")]
         public IActionResult Appointment()
@@ -1378,7 +1375,6 @@ namespace Web.Controllers
 
         #endregion ArmedType
 
-
         #region Regimental Page
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Regimental()
@@ -1508,5 +1504,38 @@ namespace Web.Controllers
             }
         }
         #endregion End Master
+
+        #region Dashboard
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> DashboardFormation()
+        {
+            return View();
+        }
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> DashboardMaster()
+        {
+            return View();
+        }
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> DashboardUserConfig()
+        {
+            return View();
+        }
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> GetDashboardFormationCount()
+        {
+            return Json(await unitOfWork.MasterBL.GetDashboardFormationCount());
+        }
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> GetDashboardMasterCount()
+        {
+            return Json(await unitOfWork.MasterBL.GetDashboardMasterCount());
+        }
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> GetDashboardUserConfigCount()
+        {
+            return Json(await unitOfWork.MasterBL.GetDashboardUserConfigCount());
+        }
+        #endregion Dashboard
     }
 }

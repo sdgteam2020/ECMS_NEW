@@ -271,6 +271,8 @@ namespace DataAccessLayer
                             await _context.MapUnit.AddAsync(mapUnit);
                             await _context.SaveChangesAsync();
 
+                            mUnit.IsVerify = dTO.IsVerify;
+                            await _context.SaveChangesAsync();
                             transaction.Commit();
                             return true;
                         }
@@ -298,7 +300,7 @@ namespace DataAccessLayer
                                 mapUnit.PsoId = dTO.PsoId;
                                 mapUnit.SubDteId = dTO.SubDteId;
                                 mapUnit.IsActive = true;
-                                mapUnit.Updatedby = dTO.Updatedby;
+                                mapUnit.Updatedby = dTO.Updatedby;  
                                 mapUnit.UpdatedOn = dTO.UpdatedOn;
 
                                 _context.MapUnit.Update(mapUnit);
@@ -308,7 +310,10 @@ namespace DataAccessLayer
                             {
                                 return false;
                             }
-
+                            
+                            mUnit.IsVerify = dTO.IsVerify;
+                            await _context.SaveChangesAsync();
+                            
                             transaction.Commit();
                             return true;
                         }

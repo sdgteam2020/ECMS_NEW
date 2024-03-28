@@ -103,21 +103,38 @@
                             </a>
                         </div>
                     }
+                    else if (ViewBag.Type == "PostingOut")
+                    {
+                        <div class="col-md-2 col-sm-6">
+                            <a href="/Posting/GetPostingOutWithType?Type=MQ==">
+                                <div class="counter purple">
+                                    <div class="counter-icon">
+                                        <i class="fa fa-users"></i>
+                                    </div>
+                                    <span class="counter-value" id="ToPostingOutOffrs">0</span>
+                                    <h3>
+                                        Appl Posting Out for Offrs
+                                    </h3>
 
-                    @* <div class="col-md-2 col-sm-6">
-                        <a href="#">
-                            <div class="counter purple">
-                                <div class="counter-icon">
-                                    <i class="fa fa-users"></i>
                                 </div>
-                                <span class="counter-value" id="ToPostingOutJCO">0</span>
-                                <h3>
-                                    Posting Out JCO's/OR
-                                </h3>
+                            </a>
+                        </div>
+                        <div class="col-md-2 col-sm-6">
+                            <a href="/Posting/GetPostingOutWithType?Type=Mg==">
+                                <div class="counter purple">
+                                    <div class="counter-icon">
+                                        <i class="fa fa-users"></i>
+                                    </div>
+                                    <span class="counter-value" id="ToPostingOutJCO">0</span>
+                                    <h3>
+                                        Appl Posting Out for JCO's/OR
+                                    </h3>
+                                </div>
+                            </a>
+                        </div>
+                    }
 
-                            </div>
-                        </a>
-                    </div>
+                    @*
                     <div class="col-md-2 col-sm-6">
                         <a href="#">
                             <div class="counter green">

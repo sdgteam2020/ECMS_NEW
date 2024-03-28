@@ -124,7 +124,7 @@ function BindData() {
                     }
 
                     $("#DetailBody").html(listItem);
-                    $("#lblTotal").html(response.length-1);
+                    $("#lblTotal").html(response.length);
                   
                     memberTable = $('#tbldata').DataTable({
                         retrieve: true,

@@ -33,7 +33,7 @@ namespace BusinessLogicsLayer.BdeCate
             return _iBdeCatDB.GetByHId(Data);
         }
 
-        public Task<bool> GetByName(MBde Data)
+        public Task<bool?> GetByName(MBde Data)
         {
            return _iBdeCatDB.GetByName(Data);
         }

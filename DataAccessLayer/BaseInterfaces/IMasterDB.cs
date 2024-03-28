@@ -18,6 +18,9 @@ namespace DataAccessLayer.BaseInterfaces
         public Task<List<DTOMasterResponse>> GetMPSO();
         public Task<List<DTOMasterResponse>> GetMSubDte();
         public Task<List<DTOMasterResponse>> GetPostingReason();
+        public Task<DTODashboardFormationCountResponse> GetDashboardFormationCount();
+        public Task<DTODashboardMasterCountResponse> GetDashboardMasterCount();
+        public Task<DTODashboardUserConfigCountResponse> GetDashboardUserConfigCount();
 
     }
 }
