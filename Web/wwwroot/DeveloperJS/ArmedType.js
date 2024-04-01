@@ -241,14 +241,14 @@ function Save() {
 
 
             if (result == DataSave) {
-                toastr.success('Armed Type has been saved');
+                toastr.success('Arms, Service & Corps has been saved');
 
                 /*  $("#AddNewM").modal('hide');*/
                 BindData();
                 Reset();
             }
             else if (result == DataUpdate) {
-                toastr.success('Armed Type has been Updated');
+                toastr.success('Arms, Service & Corps has been Updated');
 
                 /*  $("#AddNewM").modal('hide');*/
                 BindData();
@@ -256,7 +256,7 @@ function Save() {
             }
             else if (result == DataExists) {
 
-                toastr.error('Armed Type Name Exits!');
+                toastr.error('Armes / Abbreviation Name Exits!');
 
             }
             else if (result == InternalServerError) {

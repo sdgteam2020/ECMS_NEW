@@ -2,6 +2,7 @@
 using DataTransferObject.Domain.Master;
 using DataTransferObject.Response;
 using DataTransferObject.Response.User;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
@@ -26,7 +27,8 @@ namespace DataAccessLayer
        
         public async Task<bool> GetByName(MRegimental Dto)
         {
-            var ret = _context.MArmedType.Where(P => P.ArmedId != Dto.RegId).Select(p => p.ArmedName.ToUpper() == Dto.Name.ToUpper()).FirstOrDefault();
+            List<MRegimental> mRegimentals = await _context.MRegimental.ToListAsync();
+            var ret = mRegimentals.Any(x => (x.Name.ToUpper() == Dto.Name.ToUpper() || x.Abbreviation.ToUpper() == Dto.Abbreviation.ToUpper()) && x.RegId != Dto.RegId);
             return ret;
         }
 

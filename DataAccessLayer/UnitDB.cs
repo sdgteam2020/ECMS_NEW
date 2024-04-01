@@ -33,7 +33,8 @@ namespace DataAccessLayer
 
         public async Task<bool> GetByName(MUnit Data)
         {
-            var ret = _context.MUnit.Any(p => p.Sus_no.ToUpper() == Data.Sus_no.ToUpper() && p.UnitId !=Data.UnitId);
+            List<MUnit> mUnits = await _context.MUnit.ToListAsync();
+            var ret = mUnits.Any(p => p.UnitName.ToUpper() == Data.UnitName.ToUpper() && p.UnitId !=Data.UnitId);
             return ret;
         }
         public async Task<bool> FindSusNo(string Sus_no)
