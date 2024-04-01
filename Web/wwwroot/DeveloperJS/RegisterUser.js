@@ -44,9 +44,22 @@ function BindData(unitId) {
                         listItem += "<tr>";
                         listItem += "<td class='align-middle'>" + (i + 1) + "</td>";
                         listItem += "<td class='align-middle'>" + response[i].DomainId;
-                        listItem += "<td class='align-middle'>" + response[i].ArmyNo;
-                        listItem += "<td class='align-middle'>" + response[i].Rank;
-                        listItem += "<td class='align-middle'>" + response[i].Name;
+
+                        if (response[i].ArmyNo != null && response[i].ArmyNo != "null")
+                            listItem += "<td class='align-middle'>" + response[i].ArmyNo + "</td>";
+                        else
+                            listItem += "<td class='align-middle'><span class='badge badge-pill badge-danger' id='domain_approval'>IC No Not Mapped</span></td>";
+
+                        if (response[i].Rank != null && response[i].Rank != "null")
+                            listItem += "<td class='align-middle'>" + response[i].Rank + "</td>";
+                        else
+                            listItem += "<td class='align-middle'><span><span class='badge badge-pill badge-danger' id='domain_approval'>NA</span></span></td>";
+
+                        if (response[i].Name != null && response[i].Name != "null")
+                            listItem += "<td class='align-middle'>" + response[i].Name + "</td>";
+                        else
+                            listItem += "<td class='align-middle'><span><span class='badge badge-pill badge-danger' id='domain_approval'>NA</span></span></td>";
+
                         listItem += "<td class='align-middle'>" + response[i].AppointmentName;
                     }
 
