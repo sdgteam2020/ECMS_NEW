@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Runtime.Intrinsics.Arm;
 using System.Text;
 using System.Threading.Tasks;
@@ -154,16 +155,16 @@ namespace DataAccessLayer
             var allrecord = await (from tdm in _context.TrnDomainMapping.Where(x=>x.UnitId == UnitId)
                                    join u in _context.Users on tdm.AspNetUsersId  equals u.Id
                                    join app in _context.MAppointment on tdm.ApptId equals app.ApptId
-                                   join up in _context.UserProfile on tdm.UserId equals up.UserId
-                                   join rk in _context.MRank on up.RankId equals rk.RankId
+                                   join up in _context.UserProfile on tdm.UserId equals up.UserId into tdmup_jointable
+                                   from xup in tdmup_jointable.DefaultIfEmpty()
 
                                    select new DTORegisterUserResponse()
                                    {
                                        DomainId = u.DomainId,
                                        AppointmentName = app.AppointmentName,
-                                       ArmyNo = up.ArmyNo,
-                                       Rank = rk.RankAbbreviation,
-                                       Name =up.Name,
+                                       ArmyNo = xup!=null ? xup.ArmyNo:null,
+                                       Rank = tdm.UserId!=null ? (from r in _context.MRank.Where(x=>x.RankId == xup.RankId) select r.RankName).FirstOrDefault():null,
+                                       Name = xup != null ? xup.Name : null,
                                    }).ToListAsync();
             return allrecord;
         }
