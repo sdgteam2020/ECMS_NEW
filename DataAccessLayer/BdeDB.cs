@@ -33,18 +33,18 @@ namespace DataAccessLayer
 
         public async Task<bool?> GetByName(MBde Data)
         {
-            //try
-            //{
-            //    var ret = await _context.MBde.AnyAsync(p => p.BdeName.ToUpper() == Data.BdeName.ToUpper() && p.BdeId != Data.BdeId);
-            //    return ret;
-            //    //return false;
-            //}
-            //catch (Exception ex)
-            //{
-            //    _logger.LogError(1001, ex, "BdeDB->GetByName");
-            //    return null;
-            //}
-            return false;
+            try
+            {
+                List<MBde> mBdes = await _context.MBde.ToListAsync();
+                
+                var ret = mBdes.Any(p => p.BdeName.ToUpper() == Data.BdeName.ToUpper() && p.BdeId != Data.BdeId);
+                return ret;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "BdeDB->GetByName");
+                return null;
+            }
         }
         public async Task<bool?> FindByBdeWithId(string BdeName, byte BdeId)
         {

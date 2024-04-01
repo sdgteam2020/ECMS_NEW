@@ -1168,7 +1168,7 @@ namespace Web.Controllers
                     {
                         if (dTO.RankId > 0)
                         {
-                            unitOfWork.Rank.Update(dTO);
+                            await unitOfWork.Rank.Update(dTO);
                             return Json(KeyConstants.Update);
                         }
                         else
@@ -1291,7 +1291,7 @@ namespace Web.Controllers
                     {
                         if (dTO.ArmedId > 0)
                         {
-                            unitOfWork.Armed.Update(dTO);
+                            await unitOfWork.Armed.Update(dTO);
                             return Json(KeyConstants.Update);
                         }
                         else

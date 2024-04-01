@@ -27,7 +27,7 @@ namespace DataAccessLayer
 
         public async Task<bool> GetByName(MAppointment Data)
         {
-            var ret = _context.MAppointment.Select(p => p.AppointmentName.ToUpper() == Data.AppointmentName.ToUpper()).FirstOrDefault();
+            var ret = await _context.MAppointment.AnyAsync(p => p.AppointmentName.ToUpper() == Data.AppointmentName.ToUpper() && p.ApptId != Data.ApptId);
              return ret;
         }
 

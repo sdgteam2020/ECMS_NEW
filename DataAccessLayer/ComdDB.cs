@@ -37,7 +37,7 @@ namespace DataAccessLayer
 
          public async Task<bool> GetByName(MComd DTo)
          {
-            var ret = await _context.MComd.AnyAsync(p => p.ComdName.ToUpper() == DTo.ComdName.ToUpper() && p.ComdId != DTo.ComdId);
+            var ret = await _context.MComd.AnyAsync(p =>( p.ComdName.ToUpper() == DTo.ComdName.ToUpper() || p.ComdAbbreviation.ToUpper() == DTo.ComdAbbreviation.ToUpper()) && p.ComdId != DTo.ComdId);
             return ret;
         }
 
