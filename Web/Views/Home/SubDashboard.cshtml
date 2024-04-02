@@ -1,0 +1,83 @@
+﻿@{
+    ViewData["Title"] = "DashBoard";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container1">
+    @if (ViewBag.Role == "User")
+    {
+        <div class="row">
+            <div class="card p-4">
+                <div class="row">
+                    <div class="col-md-2 col-sm-6">
+                        <a href="/Home/RequestDashboard/RHJhZnRlZA==">
+                            <div class="counter purple">
+                                <div class="counter-icon">
+                                    <i class="fa fa-user"></i>
+                                </div>
+                                <span class="counter-value" id="TotDrafted">0</span>
+                                <h3>Drafted Appl</h3>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-md-2 col-sm-6">
+                        <a href="/Home/RequestDashboard/U3VibWl0dGVk">
+                            <div class="counter purple">
+                                <div class="counter-icon">
+                                    <i class="fa fa-user-circle"></i>
+                                </div>
+                                <span class="counter-value" id="TotSubmitted">0</span>
+                                <h3>Submitted Appl</h3>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-md-2 col-sm-6">
+                        <a href="/Home/RequestDashboard/U3VibWl0dGVk">
+                            <div class="counter purple">
+                                <div class="counter-icon">
+                                    <i class="fa fa-user-circle"></i>
+                                </div>
+                                <span class="counter-value" id="TotPrinted">0</span>
+                                <h3>Printed Appl</h3>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-md-2 col-sm-6">
+                        <a href="#">
+                            <div class="counter purple">
+                                <div class="counter-icon">
+                                    <i class="fa fa-street-view"></i>
+                                </div>
+                                <span class="counter-value" id="TotRaisedObsn">0</span>
+                                <h3>Raised Obsn</h3>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-md-2 col-sm-6">
+                        <a href="/Home/RequestDashboard/UmVqZWN0ZWQ=">
+                            <div class="counter red">
+                                <div class="counter-icon">
+                                    <i class="fa fa-ban"></i>
+                                </div>
+                                <span class="counter-value" id="TotRejected">0</span>
+                                <h3>Rejected Appl</h3>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-md-2 col-sm-6">
+                        <a href="/Home/RequestDashboard/UG9zdGluZ091dA==">
+                            <div class="counter red">
+                                <div class="counter-icon">
+                                    <i class="fa fa-ban"></i>
+                                </div>
+                                <span class="counter-value" id="TotPostingOut">0</span>
+                                <h3>Posting Out Appl</h3>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+<script src="~/developerjs/Subdashboard.js"></script>

@@ -7,6 +7,7 @@ using Humanizer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using static iText.StyledXmlParser.Jsoup.Select.Evaluator;
 
 namespace Web.Controllers
 {
@@ -35,7 +36,19 @@ namespace Web.Controllers
            
             return View(data);
         }
-      
+        public async Task<IActionResult> GetPostingOutWithType(string Type)
+        {
+            var base64EncodedBytes = System.Convert.FromBase64String(Type);
+            var ret = System.Text.Encoding.UTF8.GetString(base64EncodedBytes);
+            int t = Convert.ToInt32(ret);
+            ViewBag.Type = t;
+
+            int userid = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var data = await _iPostingBL.GetPostingOutWithType(userid, t);
+
+            return View(data);
+        }
+
         public async Task<IActionResult> SavePoasingOut(TrnPostingOut dTO)
         {
             try

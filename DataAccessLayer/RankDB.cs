@@ -5,7 +5,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
-using System.Data.Entity;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -31,10 +30,9 @@ namespace DataAccessLayer
 
        
 
-         public async Task<bool> GetByName(MRank DTo)
+         public async Task<bool> GetByName(MRank Dto)
          {
-            // && p.ComdId != DTo.ComdId && p.IsDeleted==true
-            var ret = _context.MRank.Select(p => p.RankAbbreviation.ToUpper() == DTo.RankAbbreviation.ToUpper()).FirstOrDefault();
+            var ret = await _context.MRank.AnyAsync(p =>( p.RankAbbreviation.ToUpper() == Dto.RankAbbreviation.ToUpper() || p.RankName.ToUpper() == Dto.RankName) && p.RankId != Dto.RankId);
             return ret;
         }
 

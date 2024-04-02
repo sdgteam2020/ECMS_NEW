@@ -8,7 +8,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
-using System.Data.Entity;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,7 +17,7 @@ namespace DataAccessLayer
 {
     public class ComdDB : GenericRepositoryDL<MComd>, IComdDB
     {
-        protected readonly ApplicationDbContext _context;
+        protected new readonly ApplicationDbContext _context;
         protected readonly DapperContext _contextDP;
         public ComdDB(ApplicationDbContext context, DapperContext contextDP) : base(context)
         {
@@ -38,27 +37,26 @@ namespace DataAccessLayer
 
          public async Task<bool> GetByName(MComd DTo)
          {
-            // && p.ComdId != DTo.ComdId && p.IsDeleted==true
-            var ret = _context.MComd.Select(p => p.ComdName.ToUpper() == DTo.ComdName.ToUpper()).FirstOrDefault();
+            var ret = await _context.MComd.AnyAsync(p =>( p.ComdName.ToUpper() == DTo.ComdName.ToUpper() || p.ComdAbbreviation.ToUpper() == DTo.ComdAbbreviation.ToUpper()) && p.ComdId != DTo.ComdId);
             return ret;
         }
 
         public async Task<int> GetByMaxOrder()
         {
-            int ret = _context.MComd.Max(P => P.Orderby);
+            int ret = await _context.MComd.MaxAsync(P => P.Orderby);
             return ret+1;
         }
 
         public async Task<int> GetComdIdbyOrderby(int OrderBy)
         {
-            var ret= _context.MComd.Where(P => P.Orderby == OrderBy).Select(c=>c.ComdId).SingleOrDefault(); 
+            var ret= await _context.MComd.Where(P => P.Orderby == OrderBy).Select(c=>c.ComdId).FirstOrDefaultAsync(); 
            
             return ret;
         }
 
         public async Task<IEnumerable<MComd>> GetAllByorder()
         {
-            var ret = _context.MComd.OrderBy(x => x.Orderby).ToList();
+            var ret = await _context.MComd.OrderBy(x => x.Orderby).ToListAsync();
             return ret;
         }
         public async Task<DTOTreeViewUnitResponse> GetBinaryTree(int Id)

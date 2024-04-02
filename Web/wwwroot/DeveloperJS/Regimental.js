@@ -239,14 +239,14 @@ function Save() {
 
 
             if (result == DataSave) {
-                toastr.success('Data has been saved');
+                toastr.success('Regimental has been saved');
 
                 /*  $("#AddNewM").modal('hide');*/
                 BindData();
                 Reset();
             }
             else if (result == DataUpdate) {
-                toastr.success('Data has been Updated');
+                toastr.success('Regimental has been Updated');
 
                 /*  $("#AddNewM").modal('hide');*/
                 BindData();
@@ -254,7 +254,7 @@ function Save() {
             }
             else if (result == DataExists) {
 
-                toastr.error('Data Name Exits!');
+                toastr.error('Regimental / Abbreviation Name Exits!');
 
             }
             else if (result == InternalServerError) {

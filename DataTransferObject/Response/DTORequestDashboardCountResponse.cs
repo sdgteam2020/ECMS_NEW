@@ -14,6 +14,7 @@ namespace DataTransferObject.Response
         public int ToSubmittedJCO { get; set; }
         public int ToRejectedOffrs { get; set; }
         public int ToRejectedJCO { get; set; }
+        public int ToPostingOutOffrs { get; set; }
         public int ToPostingOutJCO { get; set; }
         public int ToCourseJCO { get; set; }
         public int ToObsnRaisedOASIS { get; set; }

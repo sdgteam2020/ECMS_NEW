@@ -1,14 +1,10 @@
 ﻿$(document).ready(function () {
-    //GetDashboardCount()
-    $("#DraftedOffrs").click(function () {
-
-    });
-
+    GetDashboardCount($("#Type").html())
 })
-function GetDashboardCount() {
+function GetDashboardCount(type) {
     var userdata =
     {
-        "Id": 0,
+        "Id": type,
 
     };
     $.ajax({
@@ -34,7 +30,10 @@ function GetDashboardCount() {
                     $("#ToDraftedJCO").html(response.ToDraftedJCO);
                     $("#ToSubmittedOffrs").html(response.ToSubmittedOffrs);
                     $("#ToSubmittedJCO").html(response.ToSubmittedJCO);
-                    $("#ToPostingOutJCO").html(0);
+                    $("#ToRejectedOffrs").html(response.ToRejectedOffrs);
+                    $("#ToRejectedJCO").html(response.ToRejectedJCO);
+                    $("#ToPostingOutOffrs").html(response.ToPostingOutOffrs);
+                    $("#ToPostingOutJCO").html(response.ToPostingOutJCO);
                     $("#ToCourseJCO").html(0);
                     $("#ToObsnRaisedOASIS").html(0);
                     $("#ToObsnRaisedINDRA").html(0);

@@ -1,0 +1,52 @@
+﻿@{
+    ViewData["Title"] = "DashBoard";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container1">
+    @if (ViewBag.Role == "User")
+    {
+        <div class="row">
+            <div class="card p-4">
+                <div class="row">
+                    <div class="col-md-2 col-sm-6">
+                        <a href="/Home/RegisterUser">
+                            <div class="counter purple">
+                                <div class="counter-icon">
+                                    <i class="fa fa-user"></i>
+                                </div>
+                                <span class="counter-value" id="TotRegisterUser">0</span>
+                                <h3>Register User</h3>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-md-2 col-sm-6">
+                        <a href="/Log/LoginLog">
+                            <div class="counter pink">
+                                <div class="counter-icon">
+                                    <i class="fa fa-address-card"></i>
+                                </div>
+                                <h3 style="margin-top:3.0rem!important;">
+                                    Login Log
+                                </h3>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-md-2 col-sm-6">
+                        <a href="/UserProfile/Profile">
+                            <div class="counter pink">
+                                <div class="counter-icon">
+                                    <i class="fa fa-address-card"></i>
+                                </div>
+                                <h3 style="margin-top:3.0rem!important;">
+                                    Update Profile
+                                </h3>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+<script src="~/developerjs/DashboardUserMgt.js"></script>
