@@ -154,7 +154,7 @@ namespace Web.Controllers
             {
                 int userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                 Data.SentAspNetUsersId = userId;
-
+               
                 await _INotificationBL.UpdatePrevious(Data);
 
                 await _INotificationBL.Add(Data);

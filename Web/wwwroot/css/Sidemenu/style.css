@@ -14977,12 +14977,14 @@ dl li {
   position: relative;
 }
 
-.preview-list .preview-item .preview-thumbnail img,
-.preview-list .preview-item .preview-thumbnail .preview-icon {
-  width: 36px;
-  height: 36px;
-  border-radius: 100%;
-}
+    .preview-list .preview-item .preview-thumbnail img,
+    .preview-list .preview-item .preview-thumbnail .preview-icon {
+        /* width: 36px;
+  height: 36px;*/
+        width: 61px;
+        height: 78px;
+        border-radius: 100%;
+    }
 
 .preview-list .preview-item .preview-thumbnail .preview-icon {
   padding: 6px;

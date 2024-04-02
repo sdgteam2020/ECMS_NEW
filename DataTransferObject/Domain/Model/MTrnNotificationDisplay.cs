@@ -23,5 +23,9 @@ namespace DataTransferObject.Domain.Model
         [Required]
         [Column(TypeName = "VARCHAR(100)")]
         public string Message { get; set; }
+        [StringLength(200)]
+     
+        [Column(TypeName = "VARCHAR(200)")]
+        public string Url { get; set; }
     }
 }

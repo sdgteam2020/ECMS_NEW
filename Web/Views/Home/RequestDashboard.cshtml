@@ -2,8 +2,25 @@
     ViewData["Title"] = "Initiate Request DashBoard";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<span id="Type" name="Type" class="d-none">@ViewBag.Type</span>
-<div class="container1">
+
+<header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
+    <div class="containerMain">
+        <div class="page-header-content pt-4">
+            <div class="row align-items-center justify-content-between">
+                <div class="col-auto">
+                    <h1 class="page-header-title">
+                        <div class="page-header-icon"> <i class="fa fa-bars"></i></div>
+                      
+                        <a href="/Home/Index" class="mr-2">Home</a> > <a href="/Home/Dashboard" class="mr-2">Dashboard</a>  > @ViewBag.Type
+                       
+                    </h1>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</header>
+<div class="containerMain mt-n10">
     @if (ViewBag.Role == "User")
     {
         <div class="row">

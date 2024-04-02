@@ -14,15 +14,11 @@
     <meta content='width=device-width, initial-scale=1.0, shrink-to-fit=no' name='viewport' />
     @* <meta http-equiv="content-security-policy"content="default-src 'none'; script-src 'self'; connect-src 'self'; img-src 'self'; style-src 'self' 'sha256-CwE3Bg0VYQOIdNAkbB/Btdkhul49qZuwgNCMPgNY5zw=';" /> *@
     <title> E-ISAC</title>
+   
     <link href="~/fonts/css/all.min.css" rel="stylesheet" />
-
-    @*  <link href="~/css/steps.min.css" rel="stylesheet" /> *@
-    <link href="~/css/sidemenu/feather/feather.css" rel="stylesheet" />
-    <link href="~/css/sidemenu/style.css" rel="stylesheet" />
-    <link href="~/css/sidemenu/ti-icons/css/themify-icons.css" rel="stylesheet" />
-    <link href="~/css/DashBoard.css" rel="stylesheet" />
     <link href="~/css/nunito.css" rel="stylesheet" />
     <link href="~/css/roboto.css" rel="stylesheet" />
+   
     <link href="~/sweetalert2/sweetalert2.min.css" rel="stylesheet" />
     <link href="~/css/bootstrap-datetimepicker.min.css" rel="stylesheet" />
     <link href="~/datatables/dataTables.bootstrap4.min.css" rel="stylesheet" />
@@ -37,33 +33,51 @@
     <link href="~/css/typography.css" rel="stylesheet" />
     <link href="~/select2/css/select2.min.css" rel="stylesheet" />
     <link href="~/css/cssStyle.css" rel="stylesheet" />
+   @*  <link href="~/css/cssStyle.css" rel="stylesheet" /> *@
 
 
     <link href="~/css/horizontaltimeline.css" rel="stylesheet" />
 
     <script asp-src-include="~/fonts/feather/feather.min.js"></script>
     <script asp-src-include="~/fonts/allfont/webfont.min.js"></script>
-    <script asp-src-include="~/lib/jquery/jquery.js"></script>
-    <script asp-src-include="~/lib/jquery-validate/jquery.validate.js" defer></script>
-    <script asp-src-include="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js" defer></script>
-
-
     <link href="~/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
     <link href="~/lib/jqueryui/themes/base/jquery-ui.min.css" rel="stylesheet" />
 
     <link href="~/toastr/toastr.min.css" rel="stylesheet" />
     <link href="~/css/main.css" rel="stylesheet" />
+    <link href="~/css/DashBoard.css" rel="stylesheet" />
 
-    <script type="text/javascript">
+    <script asp-src-include="~/lib/jquery/jquery.js"></script>
+    <script asp-src-include="~/lib/jquery-validate/jquery.validate.js" defer></script>
+    <script asp-src-include="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js" defer></script>
+  
+  @*   <script>
+        WebFont.load({
+            google: { "families": ["Roboto:300,400,500,700,900"] },
+            custom: { "families": ["Flaticon", "Font Awesome 5 Solid", "Font Awesome 5 Regular", "Font Awesome 5 Brands", "simple-line-icons"], urls: ['../fonts/AllFont/fonts.min.css'] },
+            active: function () {
+                sessionStorage.fonts = true;
+            }
+        });
+
+    </script> *@
+    @* <script type="text/javascript">
         function preventBack() { window.history.forward(); }
         setTimeout("preventBack()", 0);
         window.onunload = function () { null };
-    </script>
+    </script> *@
     <style>
 
 
         .select2-container--default .select2-selection--multiple .select2-selection__choice {
             font-size: .925rem;
+        }
+
+        footer {
+            text-align: center;
+            padding: 3px;
+            background-color: royalblue;
+            color: white;
         }
     </style>
     <style>
@@ -206,9 +220,23 @@
             max-width: 200px;
             min-width: 200px;
         }
+        .select2-dropdown{
+            color:black;
+            text-align:left;
+        }
+        .select2-container--default .select2-results>.select2-results__options {
+    max-height: 200px;
+    overflow-y: auto;
+    text-align: left;
+}
+.modal-body {
+   
+    color: black;
+   
+}
     </style>
 </head>
-<body class="nav-fixed">
+<body class="nav-fixed sidenav-toggled">
   @*   <div id="loading" class="loader">
         <div class="loader-container">
             <img src="/Images/load.gif" width="100">
@@ -227,7 +255,19 @@
     </div>
     </div>
     </div> *@
+    @{
+        var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var user = await userManager.FindByIdAsync(userId);
 
+        DtoSession? dtoSession = new DtoSession();
+        if (!string.IsNullOrEmpty(@HttpContextAccessor.HttpContext.Session.GetString("Token")))
+        {
+            dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContextAccessor.HttpContext.Session, "Token");
+
+        }
+        var RoleName = dtoSession != null ? dtoSession.RoleName : "User";
+
+    }
     <div class="d-none1" id="IpaddresGloble"></div>
     <div class="d-none" id="postingouthtml"></div>
     <div class="d-none" id="content-container"></div>
@@ -237,440 +277,105 @@
     @* <span id="spnroleId" class="d-none">@User.Claims.First(c => c.Type.Contains("roleId")).Value</span>
     <span id="spnarmyno" class="d-none">@User.Claims.First(c => c.Type.Contains("armyNo")).Value</span>
     <span id="spnsunno" class="d-none1">@User.Claims.First(c => c.Type.Contains("SUSNo")).Value</span> *@
-    <div class="container-scroller">
-        <!-- partial:partials/_navbar.html -->
-        <nav class="navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row d-print-none">
-            <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center">
-                <a class="navbar-brand brand-logo mr-5" href="/Home/index"><img src="~/Images/AFSAC_Logo.png" class="mr-2" alt="logo" /></a>
-                <a class="navbar-brand brand-logo-mini" href="/Home/index"><img src="~/Images/AFSAC.png" height="50px" alt="logo" /></a>
-            </div>
-            <div class="navbar-menu-wrapper d-flex align-items-center justify-content-end">
-                <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
-                    <span class="icon-menu"></span>
-                </button>
-                @* <ul class="navbar-nav mr-lg-2">
-                <li class="nav-item nav-search d-none d-lg-block">
-                <div class="input-group">
-                <div class="input-group-prepend hover-cursor" id="navbar-search-icon">
-                <span class="input-group-text" id="search">
-                <i class="icon-search"></i>
-                </span>
-                </div>
-                <div id="tokenmsg" class="p-2"></div>
-                <input type="text" class="form-control" id="navbar-search-input" placeholder="Search now" aria-label="search" aria-describedby="search">
-                </div>
-                </li>
-                </ul> *@
-                <ul class="navbar-nav">
-                    <li class="text-center">
-              @*           <span class="tagline ml-4 text-center"> Enterprise - Indian Army Secure Access Card (E-IASAC)</span> *@
+    <nav class="topnav navbar navbar-expand shadow navbar-light bg-white show" id="sidenavAccordion">
+        <a class="navbar-brand" href="/Home/index"><img src="~/Images/AFSAC_Logo.png"></a>
+        <span class="tagline ml-4 text-center"> Enterprise - Independent Active Secure Access Card (E-IASAC)</span>
 
-                        <span class="tagline ml-4 text-center"> Enterprise - Indian Army Secure Access Card Appl (E-ISAC)</span>
-                    </li>
-                </ul>
-                @{
-                    var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-                    var user = await userManager.FindByIdAsync(userId);
-                    var RoleList = await userManager.GetRolesAsync(user);
+        @*    <span class="tagline ml-4 text-center"> Enterprise - Indian Army Secure Access Card Appl (E-ISAC)</span> *@
+        <ul class="navbar-nav align-items-center ml-auto">
+            <!--<li class="mr-3">-->
+            @*<a class="p-2 f13 mr-1 rounded-pill shadow-sm mr-1">
+            <label id="" class="mb-0">Academic Session : </label>
+            <label id="session_month" class="text-pink font-weight-500 mb-0"></label>
+            <label id="session_year" class="text-pink font-weight-500 mb-0"></label>
+            </a>
+            <a class="p-2 f13 mr-1 rounded-pill shadow-sm">
+            <label id="" class="mb-0">Supervisor Session : </label>
+            <label id="session_monthSup" class="text-pink font-weight-500 mb-0"></label>
+            <label id="session_yearSup" class="text-pink font-weight-500 mb-0"></label>
+            </a>
+            <a class="p-2 f13 rounded-pill shadow-sm">
+            <label id="" class="mb-0">Staff Session : </label>
+            <label id="session_monthStaff" class="text-pink font-weight-500 mb-0"></label>
+            <label id="session_yearStaff" class="text-pink font-weight-500 mb-0"></label>
+            </a>*@
 
-                    DtoSession? dtoSession = new DtoSession();
-                    if (!string.IsNullOrEmpty(@HttpContextAccessor.HttpContext.Session.GetString("Token")))
-                    {
-                        dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContextAccessor.HttpContext.Session, "Token");
+            <!--<span id="session_yearID" class="d-none"></span>
+                <span id="session_monthID" class="d-none"></span>
+            </li>-->
 
-                    }
-                    var RoleName = dtoSession != null ? dtoSession.RoleName : "User";
+            <li class="nav-item dropdown no-caret mr-2 dropdown-user">
+                <a class="dropdown-toggle" id="navbarDropdownUserImage" href="javascript:void(0);" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span id="ProfileName" class="font-weight-500 mr-2 text-black ProfileName">Username</span><span class="btn btn-icon btn-transparent-dark"><img src="/Images/user.png" /></span></a>
+                <div class="dropdown-menu dropdown-menu-right border-0 pb-0 shadow animated--fade-in-up" aria-labelledby="navbarDropdownUserImage">
 
-                }
-                <ul class="navbar-nav navbar-nav-right">
-                    <li>
-                        <a class="nav-link " href="#">
-                           
-                            <div class="mt-2 text-primary"><span class="font-weight-500">WELCOME</span> <span class="ProfileName font-weight-500" id="ProfileRankName"></span> <span class="ProfileName font-weight-500" id="ProfileName"></span> <span class="ProfileName font-weight-500">(<span id="aspntokenarmyno"></span>)</span></div>
-                        </a>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link count-indicator dropdown-toggle" id="notificationDropdown" href="#" data-toggle="dropdown">
-                            <i class="icon-bell mx-0"></i>
+                    <h6 class="dropdown-header d-flex align-items-center">
+                        <img class="dropdown-user-img" src="/Images/user.png" />
+                        <div class="dropdown-user-details">
+                            <div class="dropdown-user-details-name">
+                                @user.UserName
+                            </div>
+                    </h6>
 
-                            <div class="number" id="Totalnotification"></div>
-                        </a>
-                        <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list" aria-labelledby="notificationDropdown">
-                            @* <p class="mb-0 font-weight-normal float-left dropdown-header">Notifications</p>
-                            <a class="dropdown-item preview-item">
-                            <div class="preview-thumbnail">
-                            <div class="preview-icon bg-success">
-                            <i class="ti-info-alt mx-0"></i>
-                            </div>
-                            </div>
-                            <div class="preview-item-content">
-                            <h6 class="preview-subject font-weight-normal">Application Error</h6>
-                            <p class="font-weight-light small-text mb-0 text-muted">
-                            Just now
-                            </p>
-                            </div>
-                            </a>
-                            <a class="dropdown-item preview-item">
-                            <div class="preview-thumbnail">
-                            <div class="preview-icon bg-warning">
-                            <i class="ti-settings mx-0"></i>
-                            </div>
-                            </div>
-                            <div class="preview-item-content">
-                            <h6 class="preview-subject font-weight-normal">Settings</h6>
-                            <p class="font-weight-light small-text mb-0 text-muted">
-                            Private message
-                            </p>
-                            </div>
-                            </a>
-                            <a class="dropdown-item preview-item">
-                            <div class="preview-thumbnail">
-                            <div class="preview-icon bg-info">
-                            <i class="ti-user mx-0"></i>
-                            </div>
-                            </div>
-                            <div class="preview-item-content">
-                            <h6 class="preview-subject font-weight-normal">New user registration</h6>
-                            <p class="font-weight-light small-text mb-0 text-muted">
-                            2 days ago
-                            </p>
-                            </div>
-                            </a>*@
-                        </div>
-                    </li>
-                    <li class="nav-item nav-profile dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" id="profileDropdown">
-                            <img src="~/Images/user4.png" alt="profile" />
-                        </a>
-                        <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="profileDropdown">
-                            <a class="dropdown-item" href="/UserProfile/Profile">
-                                <i class="ti-settings text-primary"></i>
-                                Edit Profile
-                                    <span class="d-none" id="aspndomainUnitID"></span>
-                            </a>
-
-                            @foreach (var item in RoleList)
-                            {
-                                @if (RoleName == item)
-                                {
-                                    <form method="post" asp-controller="Account" asp-action="SwitchRole" asp-route-Id="@item">
-                                        <button type="submit" class="dropdown-item disabled" style="opacity: 0.6;cursor: not-allowed;color:blue;"><i class="ti-settings text-primary"></i><span class="fw-bold">@(user.UserName + " (" + item + ")")</span></button>
-                                    </form>
-                                }
-                                else
-                                {
-                                    <form method="post" asp-controller="Account" asp-action="SwitchRole" asp-route-Id="@item">
-                                        <button type="submit" class="dropdown-item"><i class="ti-settings text-primary"></i><span>@(user.UserName + " (" + item + ")")</span></button>
-                                    </form>
-                                }
-                            }
-                            <a class="dropdown-item" href="/Account/Logout">
-                                <i class="ti-power-off text-primary"></i>
-                                Logout
-                            </a>
-                        </div>
-                    </li>
-
-                </ul>
-                <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" data-toggle="offcanvas">
-                    <span class="icon-menu"></span>
-                </button>
-            </div>
-        </nav>
-        <!-- partial -->
-        <div class="page-body-wrapper">
-            <!-- partial:partials/_settings-panel.html -->
-            @* <div class="theme-setting-wrapper">
-            <div id="settings-trigger"><i class="ti-settings"></i></div>
-            <div id="theme-settings" class="settings-panel">
-            <i class="settings-close ti-close"></i>
-            <p class="settings-heading">SIDEBAR SKINS</p>
-            <div class="sidebar-bg-options selected" id="sidebar-light-theme"><div class="img-ss rounded-circle bg-light border mr-3"></div>Light</div>
-            <div class="sidebar-bg-options" id="sidebar-dark-theme"><div class="img-ss rounded-circle bg-dark border mr-3"></div>Dark</div>
-            <p class="settings-heading mt-2">HEADER SKINS</p>
-            <div class="color-tiles mx-0 px-4">
-            <div class="tiles success"></div>
-            <div class="tiles warning"></div>
-            <div class="tiles danger"></div>
-            <div class="tiles info"></div>
-            <div class="tiles dark"></div>
-            <div class="tiles default"></div>
-            </div>
-            </div>
-            </div>
-            <div id="right-sidebar" class="settings-panel">
-            <i class="settings-close ti-close"></i>
-            <ul class="nav nav-tabs border-top" id="setting-panel" role="tablist">
-            <li class="nav-item">
-            <a class="nav-link active" id="todo-tab" data-toggle="tab" href="#todo-section" role="tab" aria-controls="todo-section" aria-expanded="true">TO DO LIST</a>
-            </li>
-            <li class="nav-item">
-            <a class="nav-link" id="chats-tab" data-toggle="tab" href="#chats-section" role="tab" aria-controls="chats-section">CHATS</a>
-            </li>
-            </ul>
-            <div class="tab-content" id="setting-content">
-            <div class="tab-pane fade show active scroll-wrapper" id="todo-section" role="tabpanel" aria-labelledby="todo-section">
-            <div class="add-items d-flex px-3 mb-0">
-            <form class="form w-100">
-            <div class="form-group d-flex">
-            <input type="text" class="form-control todo-list-input" placeholder="Add To-do">
-            <button type="submit" class="add btn btn-primary todo-list-add-btn" id="add-task">Add</button>
-            </div>
-            </form>
-            </div>
-            <div class="list-wrapper px-3">
-            <ul class="d-flex flex-column-reverse todo-list">
-            <li>
-            <div class="form-check">
-            <label class="form-check-label">
-            <input class="checkbox" type="checkbox">
-            Team review meeting at 3.00 PM
-            </label>
-            </div>
-            <i class="remove ti-close"></i>
-            </li>
-            <li>
-            <div class="form-check">
-            <label class="form-check-label">
-            <input class="checkbox" type="checkbox">
-            Prepare for presentation
-            </label>
-            </div>
-            <i class="remove ti-close"></i>
-            </li>
-            <li>
-            <div class="form-check">
-            <label class="form-check-label">
-            <input class="checkbox" type="checkbox">
-            Resolve all the low priority tickets due today
-            </label>
-            </div>
-            <i class="remove ti-close"></i>
-            </li>
-            <li class="completed">
-            <div class="form-check">
-            <label class="form-check-label">
-            <input class="checkbox" type="checkbox" checked>
-            Schedule meeting for next week
-            </label>
-            </div>
-            <i class="remove ti-close"></i>
-            </li>
-            <li class="completed">
-            <div class="form-check">
-            <label class="form-check-label">
-            <input class="checkbox" type="checkbox" checked>
-            Project review
-            </label>
-            </div>
-            <i class="remove ti-close"></i>
-            </li>
-            </ul>
-            </div>
-            <h4 class="px-3 text-muted mt-5 font-weight-light mb-0">Events</h4>
-            <div class="events pt-4 px-3">
-            <div class="wrapper d-flex mb-2">
-            <i class="ti-control-record text-primary mr-2"></i>
-            <span>Feb 11 2018</span>
-            </div>
-            <p class="mb-0 font-weight-thin text-gray">Creating component page build a js</p>
-            <p class="text-gray mb-0">The total number of sessions</p>
-            </div>
-            <div class="events pt-4 px-3">
-            <div class="wrapper d-flex mb-2">
-            <i class="ti-control-record text-primary mr-2"></i>
-            <span>Feb 7 2018</span>
-            </div>
-            <p class="mb-0 font-weight-thin text-gray">Meeting with Alisa</p>
-            <p class="text-gray mb-0 ">Call Sarah Graves</p>
-            </div>
-            </div>
-
-            </div>
-            </div>*@
-            <!-- partial -->
-            <!-- partial:partials/_sidebar.html -->
-            <nav class="sidebar sidebar-offcanvas" id="sidebar">
-                <ul class="nav">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/Home/Dashboard">
-                            <i class="icon-grid menu-icon"></i>
-                            <span class="menu-title">Dashboard</span>
-                        </a>
-                    </li>
-                    
-                    @if (signInManager.IsSignedIn(User) && RoleName == "Super Admin") //User.IsInRole("Super Admin")
-                    {
-                        <li class="nav-item">
-                            <a class="nav-link collapsed" data-toggle="collapse" href="#ui-basic" aria-expanded="true" aria-controls="ui-basic">
-                                <i class="icon-layout menu-icon"></i>
-                                <span class="menu-title">Super Admin</span>
-                                <i class="menu-arrow"></i>
-                            </a>
-                            <div class="collapse show" id="ui-basic">
-                                <ul class="nav flex-column sub-menu">
-                                    <li class="nav-item"> <a class="nav-link" href="/Account/Index">Users</a></li>
-                                    <li class="nav-item"> <a class="nav-link" href="/Account/ListRoles">Roles</a></li>
-                                </ul>
-                            </div>
-                        </li>
-                    }
-                    else if (signInManager.IsSignedIn(User) && RoleName == "Admin") //User.IsInRole("Admin")
-                    {
-                        <li class="nav-item">
-                            <a class="nav-link collapsed" data-toggle="collapse" href="#ui-basic_Unit" aria-expanded="false" aria-controls="ui-basic_Unit">
-                                <i class="icon-layout menu-icon"></i>
-                                <span class="menu-title">Fmn/Unit </span>
-                                <i class="menu-arrow"></i>
-                            </a>
-                            <div class="collapse show" id="ui-basic_Unit">
-                                <ul class="nav flex-column sub-menu">
-                                    <li class="nav-item"> <a class="nav-link" href="/Master/Command">Comd / PSO</a></li>
-                                    <li class="nav-item"> <a class="nav-link" href="/Master/Corps">Corps / Dte / Area</a></li>
-                                    <li class="nav-item"> <a class="nav-link" href="/Master/Div">Div / Branch / Sub Area</a></li>
-                                    <li class="nav-item"> <a class="nav-link" href="/Master/Bde">Bde </a></li>
-                                    <li class="nav-item"> <a class="nav-link" href="/Master/MapUnit"> Map Unit</a></li>
-                                </ul>
-                            </div>
-
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" data-toggle="collapse" href="#ui-Master" aria-expanded="false" aria-controls="ui-Master">
-                                <i class="icon-layout menu-icon"></i>
-                                <span class="menu-title">Master</span>
-                                <i class="menu-arrow"></i>
-                            </a>
-                            <div class="collapse show" id="ui-Master">
-                                <ul class="nav flex-column sub-menu">
-                                    <li class="nav-item"> <a class="nav-link" href="/Master/Unit/&$&&&">Unit</a></li>
-                                    <li class="nav-item"> <a class="nav-link" href="/Master/Rank">Rank</a></li>
-                                    @* <li class="nav-item"> <a class="nav-link" href="/Master/Formation">Formation</a></li> *@
-                                    <li class="nav-item"> <a class="nav-link" href="/Master/Appointment">Appointment</a></li>
-                                    <li class="nav-item"> <a class="nav-link" href="/Master/ArmedType">Arms / Service</a></li>
-                                    <li class="nav-item"> <a class="nav-link" href="/Master/Regimental">Regt Centre</a></li>
-                                </ul>
-                            </div>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" data-toggle="collapse" href="#ui-ICard" aria-expanded="false" aria-controls="ui-ICard">
-                                <i class="icon-layout menu-icon"></i>
-                                <span class="menu-title">User Config</span>
-                                <i class="menu-arrow"></i>
-                            </a>
-                            <div class="collapse show" id="ui-ICard">
-                                <ul class="nav flex-column sub-menu">
-                                    <li class="nav-item"> <a class="nav-link" href="/Account/DomainRegn">Domain Regn</a></li>
-                                    <li class="nav-item"> <a class="nav-link" href="/Account/UserRegn">User Regn</a></li>
-                                    <li class="nav-item"> <a class="nav-link" href="/Account/ProfileManage">User Profile</a></li>
-
-                                </ul>
-                            </div>
-                        </li>
-
-
-
-                        @*                         <li class="nav-item">
-                    <a class="nav-link" href="#">
-                    <i class="icon-paper menu-icon"></i>
-                    <span class="menu-title">Documentation</span>
+                    <div class="dropdown-divider"></div>
+                   @*  <a class="dropdown-item" href="#" id="btnChangePassword">
+                        <div class="dropdown-item-icon"><i class="fa fa-key" aria-hidden="true"></i></div>
+                       
+                    </a> *@
+                    @*<div class="dropdown-divider"></div>*@
+                    <a class="dropdown-item active" style="background-color: rebeccapurple" href="/Account/Logout" id="btnLogout">
+                        <div class="dropdown-item-icon"><i data-feather="log-out"></i></div>
+                        Logout
                     </a>
-                    </li> *@
-                    }
-                    else if (signInManager.IsSignedIn(User) && RoleName == "User") //User.IsInRole("User")
-                    {
-                        <li class="nav-item">
-                            <a class="nav-link collapsed" data-toggle="collapse" href="#ui-basic1" aria-expanded="true" aria-controls="ui-basic1">
-                                <i class="icon-layout menu-icon"></i>
-                                <span class="menu-title">ICard Request</span>
-                                <i class="menu-arrow"></i>
-                            </a>
-                            <div class="collapse show" id="ui-basic1">
-                                <ul class="nav flex-column sub-menu">
-                                    <li class="nav-item"> <a class="nav-link " href="/UserProfile/Profile">Update Profile</a></li>
-                                   @*  <li class="nav-item"> <a class="nav-link" href="/BasicDetail/RequestType">Add Request</a></li> *@
-                                    <li class="nav-item"> <a class="nav-link" href="/BasicDetail/Index/MA==">I-Card List</a></li>
-
-                                    <li class="nav-item"> <a class="nav-link" href="/BasicDetail/InaccurateData">Inaccurate List</a></li>
-                                    <li class="nav-item"> <a class="nav-link" href="/Log/LoginLog">Login Log</a></li>
-                                    <li class="nav-item"> <a class="nav-link" href="/Posting/GetAllPostingOut">Posting Out</a></li>
-
-                                </ul>
-                            </div>
-
-                        </li>
-                        /*  <li class="nav-item">
-                        <a class="nav-link collapsed" data-toggle="collapse" href="#ui-basic1" aria-expanded="true" aria-controls="ui-basic1">
-                        <i class="icon-layout menu-icon"></i>
-                        <span class="menu-title">ICard Request For Approval</span>
-                        <i class="menu-arrow"></i>
-                        </a>
-                        <div class="collapse show" id="ui-basic1">
-                        <ul class="nav flex-column sub-menu">
-
-                        <li class="nav-item"> <a class="nav-link" href="/BasicDetail/ApprovalForIO/22">ICard Approval For IO</a></li>
-                        <li class="nav-item"> <a class="nav-link" href="/BasicDetail/ApprovalForIO/33">ICard Approval For GSO</a></li>
-                        @if (user.UserName=="mi_11")
-                        {
-                        <li class="nav-item"> <a class="nav-link" href="/BasicDetail/ApprovalForIO/44">ICard Approval For MI 11</a></li>
-                        }
-                        else if (user.UserName == "hq_54")
-                        {
-                        <li class="nav-item"> <a class="nav-link" href="/BasicDetail/ApprovalForIO/55">ICard Approvaled by MI 11</a></li>
-                        }
-
-                        </ul>
-                        </div>
-
-                        </li> */
-                    }
-
-                </ul>
-            </nav>
-
-            <!-- partial -->
-            <div class="main-panel">
-                @if (signInManager.IsSignedIn(User) && RoleName == "User") // User.IsInRole("User")
-                {
-                    <nav class="nav nav-pills nav-justified" id="layouttask">
-                        <a class="nav-link Dashboard" aria-current="page" href="/Home/Dashboard">DashBoard</a>
-                        <a class="nav-link Status" href="/Home/InitiateRequest">
-                            Initiate Request
-                        </a>
-                        <a class="nav-link MyTask" href="/Home/Task">Task</a>
-
-
-                    </nav>
-                }
-                else if (signInManager.IsSignedIn(User) && RoleName == "Admin") 
-                {
-                    <nav class="nav nav-pills nav-justified" id="layouttask">
-                        <a class="nav-link Dashboard" aria-current="page" href="/Master/DashboardFormation">Fmn/Unit</a>
-                        <a class="nav-link Status" href="/Master/DashboardMaster">Master</a>
-                        <a class="nav-link MyTask" href="/Master/DashboardUserConfig">User Config</a>
-
-
-                    </nav>
-                }
-                <div class="content-wrapper">
-                    
-                    <partial name="_Notification" />
-                    @RenderBody()
-                    @RenderSection("scripts", required: false)
-                    <!-- partial -->
-                    <!-- main-panel ends -->
                 </div>
-                <!-- page-body-wrapper ends -->
-            </div>
+            </li>
+        </ul>
+    </nav>
+    <div id="layoutSidenav">
+      @*   <div id="layoutSidenav_nav">
+            <nav class="sidenav shadow-right sidenav-light" id="SideFirstMenu">
+                <div class="sidenav-menu">
+                      <div class="nav accordion" id="accordionSidenav">
 
-            <!-- partial -->
-            <!-- main-panel ends -->
+                    </div>
+                    </div>
+                    </nav>
+        </div> *@
+        <div id="layoutSidenav_content">
+            <main>
+                @RenderBody()
+            </main>
         </div>
-        <!-- page-body-wrapper ends -->
     </div>
+@* 
 
+    @if (IsSectionDefined("Modal"))
+    {
+        <div class="">
+            @RenderSection("Modal", required: false)
+        </div>
+    }
+ *@
 
-
-
+    @if (IsSectionDefined("Modal"))
+    {
+        <div class="">
+            @RenderSection("Modal", required: false)
+        </div>
+    }
+    <footer>
+         <section class="page_copyright ls section_padding_25">
+    <div class="container">
+    <div class="row">
+    <div class="col-sm-12 text-center darklinks">
+    <h5 class="font-weight-600">
+    &copy; 2023 HRMS
+    (DGIS).
+    </h5>
+    </div>
+    </div>
+    </div>
+    </section
+    </footer>
 
 
     @*  <script asp-src-include="~/select2/dist/js/select2.min.js"></script>*@
@@ -705,14 +410,12 @@
 
     </script>
 
-
-    <script asp-src-include="~/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script asp-src-include="~/js/moment.js"></script>
-    <script asp-src-include="~/js/jssidemenu/vendor.bundle.base.js"></script>
-    <script asp-src-include="~/js/jssidemenu/hoverable-collapse.js"></script>
-    <script asp-src-include="~/js/jssidemenu/off-canvas.js"></script>
-    <script asp-src-include="~/js/jssidemenu/template.js"></script>
     <script asp-src-include="~/lib/jqueryui/jquery-ui.min.js"></script>
+    <script src="~/js/bootstrap.bundle.min.js"></script>
+    <script asp-src-include="~/bootstrap/js/bootstrap.bundle.min.js"></script>
+    @* <a href="~/js/bootstrap.bundle.min.js.map">~/js/bootstrap.bundle.min.js.map</a> *@
+
+    <script src="~/js/scripts.js"></script>
     <script asp-src-include="~/select2/js/select2.min.js"></script>
     <script asp-src-include="~/js/datatables/jquery.datatables.min.js"></script>
     <script asp-src-include="~/js/datatables/dataTables.responsive.min.js"></script>
@@ -721,9 +424,9 @@
     <script asp-src-include="~/js/datatables/responsive.bootstrap4.min.js"></script>
     <script asp-src-include="~/js/datatables/dataTables.buttons.min.js"></script>
     <script asp-src-include="~/js/datatables/buttons.bootstrap4.min.js"></script>
-    <script asp-src-include="~/js/datatables/jszip.min.js"></script>
+   @*  <script asp-src-include="~/js/datatables/jszip.min.js"></script>
     <script asp-src-include="~/js/datatables/pdfmake.min.js"></script>
-    <script asp-src-include="~/js/datatables/vfs_fonts.js"></script>
+    <script asp-src-include="~/js/datatables/vfs_fonts.js"></script> *@
     <script asp-src-include="~/js/datatables/buttons.html5.min.js"></script>
     <script asp-src-include="~/js/datatables/buttons.print.min.js"></script>
     <script asp-src-include="~/js/datatables/datatables-call.js"></script>
@@ -732,11 +435,13 @@
     <script asp-src-include="~/toastr/toastr.min.js"></script>
     <script asp-src-include="~/js/moment.min.js"></script>
     <script asp-src-include="~/js/bootstrap-datetimepicker.min.js"></script>
-
+   
+    <script src="~/js/moment.min.js"></script>
+   
     <script asp-src-include="~/developerjs/layout.js"></script>
     <script asp-src-include="~/developerjs/keyconstants.js"></script>
     <script asp-src-include="~/developerjs/commanvalidation.js"></script>
-    
+    @RenderSection("Scripts", false)
     @*  <script asp-src-include="~/developerjs/layout.js"></script>
     <script asp-src-include="~/developerjs/MedCate.js"></script> *@
     @*<script asp-src-include="/DeveloperJs/Master.js"></script>*@

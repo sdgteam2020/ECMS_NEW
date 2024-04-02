@@ -96,7 +96,7 @@
         content: "";
         background: #f3f3f3;
         border-radius: 20px;
-        box-shadow: 10px 4px 2px rgba(0,0,0,0.2);
+        box-shadow: 10px -9px 4px 0px rgba(0,0,0,0.2);
         position: absolute;
         left: 15px;
         top: 15px;
@@ -128,7 +128,8 @@
     }
 
     .counter:hover .counter-icon {
-        transform: rotateY(360deg);
+      /*  transform: rotateY(360deg);*/
+        transform: scale(1.5);
     }
 
     .counter .counter-value {
@@ -226,20 +227,30 @@
     text-align: center;
     padding-left: 10px;
     color: royalblue;
-    font-size: 40px;
+    font-size: 30px;
     font-weight: bold;
     /* background: #070563;*/
-    font-family: Colonna MT;
-    background: #41B44B;
-    background: linear-gradient(to bottom, #41B44B 29%, #EB1814 80%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    display:block;
-}
+        font-family: Colonna MT;
+        background: #41B44B;
+        background: linear-gradient(to bottom, #41B44B 29%, #EB1814 80%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        display: block;
+    }
 .ProfileName {
     font-size: 12px;
 }
+@media only screen and (max-width: 1299px) {
+    .tagline {
+        font-size: 15px;
+        text-align: center;
+      
+    }
 
+    .ProfileName {
+        font-size: 20px;
+    }
+}
 @media only screen and (max-width: 1199px) {
     .tagline {
         font-size: 20px;
@@ -253,12 +264,12 @@
 
 @media only screen and (max-width: 991px) {
     .tagline {
-        font-size: 15px;
+        font-size: 12px;
         text-align: center;
         display: none
     }
     .ProfileName {
-        font-size: 15px;
+        font-size: 12px;
         margin-top: -0.5rem !important;
     }
 }
@@ -270,7 +281,7 @@
         display: none
     }
     .ProfileName {
-        font-size: 8px;
+        font-size: 6px;
         margin-top: -0.5rem !important;
     }
 }
@@ -604,4 +615,7 @@ i.material-icons {
 .armynosearchAllpic {
     max-height: 200px;
     max-width: 100px;
+}
+a {
+    text-decoration: none !important;
 }

@@ -210,14 +210,15 @@ function GetNotification(NotificationTypeId, ApplyForId) {
                         $("#Totalnotification").html(parseInt(tot) + parseInt($("." + response[i].Spanname).html()));
 
                         list += '<div class="border border-1 p-1 mt-2">';
-                        list += '<a class="dropdown-item preview-item">';
+                        list += '<a class="dropdown-item preview-item" href="' + response[i].Url + '">';
                         list += '<div class="preview-thumbnail ">';
                         list += '<div class="preview-icon bg-success">';
-                        list += '<i class="ti-bell mx-0"></i>';
+                        list += '<i class="ti-bell1 mx-0"></i>';
+                        list += '<img src="/WriteReadData/photo/' + response[i].PhotoImagePath + '" alt="profile">';
                         list += '</div>';
                         list += '</div>';
                         list += ' <div class="preview-item-content">';
-                        list += '<h6 class="preview-subject font-weight-normal">' + response[i].Message + '</h6>';
+                        list += '<h6 class="preview-subject font-weight-normal"> Application No: ' + response[i].TrackingId + '<br> Applicant Name:-' + response[i].RankAbbreviation + ' ' + response[i].Name + ' (' + response[i].ServiceNo + ') <br>' + response[i].Message + '</h6>';
                         list += '<p class="font-weight-light small-text mb-0 text-muted">';
 
 
@@ -298,14 +299,15 @@ function GetNotificationRequestId(NotificationTypeId,ApplyForId) {
 
 
                         list += '<div class="border border-1 p-1 mt-2">';
-                        list += '<a class="dropdown-item preview-item">';
+                        list += '<a class="dropdown-item preview-item" href="' + response[i].Url + '">';
                         list += '<div class="preview-thumbnail ">';
                         list += '<div class="preview-icon bg-success">';
-                        list += '<i class="ti-bell mx-0"></i>';
+                        list += '<i class="ti-bell1 mx-0"></i>';
+                        list += '<img src="/WriteReadData/photo/' + response[i].PhotoImagePath +'" alt="profile">';
                         list += '</div>';
                         list += '</div>';
                         list += ' <div class="preview-item-content">';
-                        list += '<h6 class="preview-subject font-weight-normal">' + response[i].Message+'</h6>';
+                        list += '<h6 class="preview-subject font-weight-normal"> Application No: ' + response[i].TrackingId + '<br> Applicant Name:-' + response[i].RankAbbreviation + ' ' + response[i].Name + ' (' + response[i].ServiceNo +') <br>' + response[i].Message+'</h6>';
                         list += '<p class="font-weight-light small-text mb-0 text-muted">';
 
                         

@@ -224,7 +224,7 @@
                             <label class="col-sm-1 col-form-label text-center font-weight-bold">@(sno++).</label>
                                         <label class="col-sm-3 col-form-label form-label labelprofile">Paper I-Card No</label>
                             <div class="col-sm-8">
-                                <input asp-for="PaperIcardNo" class="form-control text-uppercase" placeholder="Enter Paper I card No" maxlength="20" required />
+                                            <input asp-for="PaperIcardNo" class="form-control text-uppercase" data-toggle="tooltip" title="Enter Paper I card No" placeholder="Enter Paper I card No" maxlength="20" required />
                                 <span asp-validation-for="PaperIcardNo" class="text-danger"></span>
                             </div>
                         </div>
@@ -232,7 +232,7 @@
                                         <label class="col-sm-1 col-form-label text-center font-weight-bold labelprofile">@(sno++).</label>
                                         <label class="col-sm-3 col-form-label form-label labelprofile">Service No</label>
                                         <div class="col-sm-8">
-                                            <input asp-for="ServiceNo" class="form-control text-uppercase" placeholder="IC-12345X/JC-12345X" readonly required />
+                                            <input asp-for="ServiceNo" class="form-control text-uppercase" data-toggle="tooltip" title="IC No Not Editable" placeholder="IC-12345X/JC-12345X" readonly required />
                                             <span asp-validation-for="ServiceNo" class="text-danger"></span>
                                         </div>
                                     </div>
@@ -240,7 +240,7 @@
                                         <label class="col-sm-1 col-form-label text-center font-weight-bold">@(sno++).</label>
                                         <label asp-for="RankId" class="col-sm-3 col-form-label form-label labelprofile"></label>
                                         <div class="col-sm-8">
-                                            <select asp-for="RankId" class="form-select">
+                                            <select asp-for="RankId" class="form-select" data-toggle="tooltip" title="Select Rank">
                                                 @*  asp-items="ViewBag.OptionsRank" *@
                                             </select>
                                             <span asp-validation-for="RankId" class="text-danger"></span>
@@ -250,7 +250,7 @@
                             <label class="col-sm-1 col-form-label text-center font-weight-bold">@(sno++).</label>
                                         <label asp-for="Name" class="col-sm-3 col-form-label form-label labelprofile"></label>
                             <div class="col-sm-8">
-                                <input asp-for="Name" class="form-control text-uppercase" maxlength="36" placeholder="Max 36 Characters incl spaces" readonly required />
+                                            <input asp-for="Name" class="form-control text-uppercase" maxlength="36" data-toggle="tooltip" title="Name Not Editable" placeholder="Max 36 Characters incl spaces" readonly required />
                                 <span asp-validation-for="Name" class="text-danger"></span>
                             </div>
                         </div>
@@ -262,11 +262,11 @@
                                 @if (ViewBag.UnitName!=null)
                                 {
                                     MUnit mUnit = ViewBag.UnitName;
-                                                <input type="text" id="txtUnit" name="txtUnit" class="form-control text-uppercase" placeholder="Unit Name" value="@mUnit.UnitName" />
+                                                <input type="text" id="txtUnit" name="txtUnit" class="form-control text-uppercase" data-toggle="tooltip" title="Enter SUS No And Select Unit Name" placeholder="Unit Name" value="@mUnit.UnitName" />
                                 }
                                 else
                                 {
-                                                <input type="text" id="txtUnit" name="txtUnit" class="form-control text-uppercase" placeholder="Unit Name" />
+                                                <input type="text" id="txtUnit" name="txtUnit" class="form-control text-uppercase" data-toggle="tooltip" title="Enter SUS No And Select Unit Name" placeholder="Unit Name" />
                                 }
                                 <input hidden asp-for="UnitId" />
                                 <span asp-validation-for="UnitId" class="text-danger"></span>
@@ -276,7 +276,7 @@
                             <label class="col-sm-1 col-form-label text-center font-weight-bold">@(sno++).</label>
                                         <label asp-for="ArmedId" class="col-sm-3 col-form-label form-label labelprofile"></label>
                             <div class="col-sm-8">
-                                            <select asp-for="ArmedId" class="form-select" asp-items="ViewBag.OptionsArmedType" required onchange="GetRegimentalListByArmedId(this.value)">
+                                            <select asp-for="ArmedId" class="form-select" data-toggle="tooltip" title="Select Armed" asp-items="ViewBag.OptionsArmedType" required onchange="GetRegimentalListByArmedId(this.value)">
                                 </select>
                                 <span asp-validation-for="ArmedId" class="text-danger"></span>
                             </div>
@@ -287,7 +287,7 @@
                                 <label class="col-sm-1 col-form-label text-center font-weight-bold">@(sno++).</label>
                                         <label class="col-sm-3 col-form-label form-label labelprofile">Regimental Centre</label>
                                 <div class="col-sm-8">
-                                            <select asp-for="RegimentalId" class="form-select" required asp-items="ViewBag.OptionsRegimental">
+                                            <select asp-for="RegimentalId" class="form-select" required asp-items="ViewBag.OptionsRegimental" data-toggle="tooltip" title="Select Regimental Name">
                                     </select>
                                     <span id="lblRegimentalId" class="text-danger"></span>
                                 </div>
@@ -298,7 +298,7 @@
                             <label class="col-sm-1 col-form-label text-center font-weight-bold">@(sno++).</label>
                                         <label class="col-sm-3 col-form-label form-label labelprofile">Iden Mark</label>
                             <div class="col-sm-8">
-                                            <input asp-for="IdenMark1" class="form-control text-uppercase" maxlength="100" placeholder="Only one iden Mk (Max 10 characters incl spaces)" required />
+                                            <input asp-for="IdenMark1" class="form-control text-uppercase" maxlength="100" data-toggle="tooltip" title="Enter IdenMark " placeholder="Only one iden Mk (Max 10 characters incl spaces)" required />
                                 <span asp-validation-for="IdenMark1" class="text-danger"></span>
                             </div>
                         </div>
@@ -306,7 +306,7 @@
                             <label class="col-sm-1 col-form-label text-center font-weight-bold">@(sno++).</label>
                                         <label asp-for="DOB" class="col-sm-3 col-form-label form-label labelprofile"></label>
                             <div class="col-sm-8">
-                                            <input asp-for="DOB" class="form-control" readonly required />
+                                            <input asp-for="DOB" class="form-control" readonly required data-toggle="tooltip" title="Enter DOB " />
                                @*  <input type="text" id="DOB_" name="DOB_" class="form-control" value="@Model.DOB.ToString("dd/MMM/yyyy")" readonly /> *@
                             </div>
                         </div>
@@ -315,7 +315,7 @@
                                         <label class="col-sm-3 col-form-label form-label labelprofile">Height(CM)</label>
                             <div class="col-sm-8">
                                             <input asp-for="Height" class="form-control" min="100" max="250" required />
-                                <span asp-validation-for="Height" class="text-danger"  placeholder="Height in CM"></span>
+                                            <span asp-validation-for="Height" class="text-danger" placeholder="Height in CM" data-toggle="tooltip" title="Height in CM "></span>
                             </div>
                         </div>
                         
@@ -327,7 +327,7 @@
                             <label class="col-sm-2 col-form-label text-center font-weight-bold">@(sno++).</label>
                                         <label asp-for="AadhaarNo" class="col-sm-4 col-form-label form-label labelprofile"></label>
                             <div class="col-sm-6">
-                                            <input asp-for="AadhaarNo" class="form-control isNumerictxt" required placeholder="AadhaarNo" maxlength="12" minlength="12" /> @* onkeyup="Aadhaarformate(event,this);" *@
+                                            <input asp-for="AadhaarNo" class="form-control isNumerictxt" required placeholder="AadhaarNo" data-toggle="tooltip" title="Enter Height in CM " maxlength="12" minlength="12" /> @* onkeyup="Aadhaarformate(event,this);" *@
                                 <span asp-validation-for="AadhaarNo" class="text-danger"></span>
                             </div>
                         </div>
@@ -336,7 +336,7 @@
                             <label class="col-sm-2 col-form-label text-center font-weight-bold">@(sno++).</label>
                                         <label asp-for="BloodGroupId" class="col-sm-4 col-form-label form-label labelprofile"></label>
                             <div class="col-sm-6">
-                                            <select asp-for="BloodGroupId" class="form-select" asp-items="ViewBag.OptionsBloodGroup" required>
+                                            <select asp-for="BloodGroupId" class="form-select" asp-items="ViewBag.OptionsBloodGroup" data-toggle="tooltip" title="Select Blood Group Name " required>
                                 </select>
                                 <span asp-validation-for="BloodGroupId" class="text-danger"></span>
                             </div>
@@ -345,7 +345,7 @@
                             <label class="col-sm-2 col-form-label text-center font-weight-bold">@(sno++).</label>
                                         <label asp-for="PlaceOfIssue" class="col-sm-4 col-form-label form-label labelprofile"></label>
                             <div class="col-sm-6">
-                                            <input asp-for="PlaceOfIssue" class="form-control Alphanumeric text-uppercase" maxlength="50" required placeholder="Place Of Issue" />
+                                            <input asp-for="PlaceOfIssue" class="form-control Alphanumeric text-uppercase" data-toggle="tooltip" title="Enter Place Of Issue" maxlength="50" required placeholder="Place Of Issue" />
                                 <span asp-validation-for="PlaceOfIssue" class="text-danger"></span>
                             </div>
                         </div>
@@ -353,7 +353,7 @@
                             <label class="col-sm-2 col-form-label text-center font-weight-bold">@(sno++).</label>
                                         <label asp-for="DateOfIssue" class="col-sm-4 col-form-label form-label labelprofile"></label>
                             <div class="col-sm-6">
-                                <input asp-for="DateOfIssue" class="form-control todaydate" value=""  required />
+                                            <input asp-for="DateOfIssue" class="form-control todaydate" data-toggle="tooltip" title="Enter Issue Of Date" value="" required />
                                 <span asp-validation-for="DateOfIssue" class="text-danger"></span>
                             </div>
                         </div>
@@ -361,7 +361,7 @@
                             <label class="col-sm-2 col-form-label text-center font-weight-bold">@(sno++).</label>
                                         <label asp-for="IssuingAuth" class="col-sm-4 col-form-label form-label labelprofile"></label>
                             <div class="col-sm-6">
-                                            <input asp-for="IssuingAuth " class="form-control1 text-uppercase" required />
+                                            <input asp-for="IssuingAuth " class="form-control1 text-uppercase" data-toggle="tooltip" title="Enter Issuing Auth" required />
                                 <span asp-validation-for="IssuingAuth" class="text-danger"></span>
                             </div>
                         </div>

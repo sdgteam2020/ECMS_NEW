@@ -110,8 +110,14 @@ namespace Web.Controllers
                 stepcounter = retint;
             }
             ViewBag.Id = retint;
+            ViewBag.jcoor = jcoor;
 
-            if (retint == 1)
+            if (retint == 0)
+            {
+                ViewBag.Title = "List of Register I-Card";
+                // type = 2; stepcounter = 2;
+            }
+           else if (retint == 1)
             {
                 ViewBag.Title = "List of Register I-Card";
                 // type = 2; stepcounter = 2;
