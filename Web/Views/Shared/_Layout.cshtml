@@ -76,7 +76,7 @@
         footer {
             text-align: center;
             padding: 3px;
-            background-color: royalblue;
+            background-color: #000e5a;
             color: white;
         }
     </style>
@@ -258,6 +258,7 @@
     @{
         var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
         var user = await userManager.FindByIdAsync(userId);
+        var RoleList = await userManager.GetRolesAsync(user);
 
         DtoSession? dtoSession = new DtoSession();
         if (!string.IsNullOrEmpty(@HttpContextAccessor.HttpContext.Session.GetString("Token")))
@@ -315,7 +316,27 @@
                                 @user.UserName
                             </div>
                     </h6>
+                            <a class="dropdown-item" href="/UserProfile/Profile">
+                                <i class="ti-settings text-primary"></i>
+                                Edit Profile
+                                    <span class="d-none" id="aspndomainUnitID"></span>
+                            </a>
 
+                            @foreach (var item in RoleList)
+                            {
+                                @if (RoleName == item)
+                                {
+                                    <form method="post" asp-controller="Account" asp-action="SwitchRole" asp-route-Id="@item">
+                                        <button type="submit" class="dropdown-item disabled" style="opacity: 0.6;cursor: not-allowed;color:blue;"><i class="ti-settings text-primary"></i><span class="fw-bold">@(user.UserName + " (" + item + ")")</span></button>
+                                    </form>
+                                }
+                                else
+                                {
+                                    <form method="post" asp-controller="Account" asp-action="SwitchRole" asp-route-Id="@item">
+                                        <button type="submit" class="dropdown-item"><i class="ti-settings text-primary"></i><span>@(user.UserName + " (" + item + ")")</span></button>
+                                    </form>
+                                }
+                            }
                     <div class="dropdown-divider"></div>
                    @*  <a class="dropdown-item" href="#" id="btnChangePassword">
                         <div class="dropdown-item-icon"><i class="fa fa-key" aria-hidden="true"></i></div>
@@ -374,7 +395,7 @@
     </div>
     </div>
     </div>
-    </section
+    </section>
     </footer>
 
 

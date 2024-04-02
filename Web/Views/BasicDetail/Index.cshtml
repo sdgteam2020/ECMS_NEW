@@ -25,7 +25,8 @@
                         
                         else @if (Convert.ToString(ViewBag.Id) == "1")
                         {
-                            <div> <a href="/Home/Index" class="mr-2">Home</a> > <a href="/Home/Dashboard" class="mr-2">Dashboard</a>  ><a href="/Home/RequestDashboard/RHJhZnRlZA==" class="mr-2">Drafted Appl</a> >
+                            <div>
+                                <a href="/Home/Index" class="mr-2">Home</a> > <a href="/Home/Dashboard" class="mr-2">Dashboard</a>  > <a href="/Home/SubDashboard" class="mr-2">Sub Dashboard</a>  > <a href="/Home/RequestDashboard/RHJhZnRlZA==" class="mr-2">Drafted Appl</a> >
                                 @if (string.IsNullOrEmpty(Convert.ToString(ViewBag.jcoor)))
                                 {
                                     <span>Appl Drafted for Offrs</span>
@@ -40,7 +41,7 @@
                        else @if (Convert.ToString(ViewBag.Id) == "888")
                         {
                             <div>
-                                <a href="/Home/Index" class="mr-2">Home</a> > <a href="/Home/Dashboard" class="mr-2">Dashboard</a>  ><a href="/Home/RequestDashboard/U3VibWl0dGVk" class="mr-2">Submitted</a> >
+                                <a href="/Home/Index" class="mr-2">Home</a> > <a href="/Home/Dashboard" class="mr-2">Dashboard</a>  > <a href="/Home/SubDashboard" class="mr-2">Sub Dashboard</a>  > <a href="/Home/RequestDashboard/U3VibWl0dGVk" class="mr-2">Submitted</a> >
                                 @if (string.IsNullOrEmpty(Convert.ToString(ViewBag.jcoor)))
                                 {
                                     <span>Appl Submitted for Offrs</span>
@@ -55,7 +56,7 @@
                        else @if (Convert.ToString(ViewBag.Id) == "999")
                         {
                             <div>
-                                <a href="/Home/Index" class="mr-2">Home</a> > <a href="/Home/Dashboard" class="mr-2">Dashboard</a>  ><a href="/Home/RequestDashboard/UmVqZWN0ZWQ=" class="mr-2">Rejected</a> >
+                                <a href="/Home/Index" class="mr-2">Home</a> > <a href="/Home/Dashboard" class="mr-2">Dashboard</a>  > <a href="/Home/SubDashboard" class="mr-2">Sub Dashboard</a>  > <a href="/Home/RequestDashboard/UmVqZWN0ZWQ=" class="mr-2">Rejected</a> >
                                 @if (string.IsNullOrEmpty(Convert.ToString(ViewBag.jcoor)))
                                 {
                                     <span>Appl Rejected for Offrs</span>
@@ -70,7 +71,7 @@
                         else
                         {
                             <div>
-                                <a href="/Home/Index" class="mr-2">Home</a> > <a href="/Home/MyTask" class="mr-2">Task</a> > @ViewBag.Title
+                                <a href="/Home/Index" class="mr-2">Home</a> > <a href="/Home/Task" class="mr-2">Task</a> > @ViewBag.Title
                                
 
                             </div>
