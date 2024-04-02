@@ -291,3 +291,8 @@ AppPackages/
 /DapperRepo.Core/obj/Debug/net7.0/EFRepo.Core.assets.cache
 /DapperRepo.Core/obj/Debug/net7.0/EFRepo.Core.GeneratedMSBuildEditorConfig.editorconfig
 /TestConsoleReso/obj/Release/net7.0/TestConsoleReso.GeneratedMSBuildEditorConfig.editorconfig
+/Web/wwwroot/WriteReadData/Photo/2024/April/02/15690012A.jpg
+/Web/wwwroot/WriteReadData/Photo/2024/April/02/IC00201L.jpg
+/Web/wwwroot/WriteReadData/Signature/2024/April/02/IC00201L.jpg
+/Web/wwwroot/WriteReadData/Signature/2024/April/02/15690012A.jpg
+/.gitignore
