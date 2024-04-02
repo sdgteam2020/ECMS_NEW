@@ -1,5 +1,89 @@
 ﻿@model List<BasicDetailVM>
-<div class="container1 mt-4">
+
+<header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
+    <div class="containerMain">
+        <div class="page-header-content pt-4">
+            <div class="row align-items-center justify-content-between">
+                <div class="col-auto">
+                    <h1 class="page-header-title">
+                        <div class="page-header-icon"> <i class="fa fa-bars"></i></div>
+                        @if (Convert.ToString(ViewBag.Id) == "0")
+                        {
+                            <div>
+                                <a href="/Home/Index" class="mr-2">Home</a> > <a href="/Home/Dashboard" class="mr-2">Dashboard</a>  >
+                                @if (string.IsNullOrEmpty(Convert.ToString(ViewBag.jcoor)))
+                                {
+                                    <span>Appl All I-Card</span>
+                                }
+                                else
+                                {
+                                    <span>Appl All I-Card</span>
+                                }
+
+                            </div>
+                        }
+                        
+                        else @if (Convert.ToString(ViewBag.Id) == "1")
+                        {
+                            <div> <a href="/Home/Index" class="mr-2">Home</a> > <a href="/Home/Dashboard" class="mr-2">Dashboard</a>  ><a href="/Home/RequestDashboard/RHJhZnRlZA==" class="mr-2">Drafted Appl</a> >
+                                @if (string.IsNullOrEmpty(Convert.ToString(ViewBag.jcoor)))
+                                {
+                                    <span>Appl Drafted for Offrs</span>
+                                }
+                                else
+                                {
+                                    <span>Appl Drafted for JCO/OR</span>
+                                }
+                               
+                            </div>
+                        }
+                       else @if (Convert.ToString(ViewBag.Id) == "888")
+                        {
+                            <div>
+                                <a href="/Home/Index" class="mr-2">Home</a> > <a href="/Home/Dashboard" class="mr-2">Dashboard</a>  ><a href="/Home/RequestDashboard/U3VibWl0dGVk" class="mr-2">Submitted</a> >
+                                @if (string.IsNullOrEmpty(Convert.ToString(ViewBag.jcoor)))
+                                {
+                                    <span>Appl Submitted for Offrs</span>
+                                }
+                                else
+                                {
+                                    <span>Appl Submitted for JCO/OR</span>
+                                }
+
+                            </div>
+                        }
+                       else @if (Convert.ToString(ViewBag.Id) == "999")
+                        {
+                            <div>
+                                <a href="/Home/Index" class="mr-2">Home</a> > <a href="/Home/Dashboard" class="mr-2">Dashboard</a>  ><a href="/Home/RequestDashboard/UmVqZWN0ZWQ=" class="mr-2">Rejected</a> >
+                                @if (string.IsNullOrEmpty(Convert.ToString(ViewBag.jcoor)))
+                                {
+                                    <span>Appl Rejected for Offrs</span>
+                                }
+                                else
+                                {
+                                    <span>Appl Rejected for Jco/Or</span>
+                                }
+
+                            </div>
+                        }
+                        else
+                        {
+                            <div>
+                                <a href="/Home/Index" class="mr-2">Home</a> > <a href="/Home/MyTask" class="mr-2">Task</a> > @ViewBag.Title
+                               
+
+                            </div>
+                        }
+                       
+                    </h1>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</header>
+<div class="containerMain mt-n10">
     <div class="card mb-3 ">
         <div class="card-header">
             <div class="row">
@@ -58,7 +142,7 @@
                                                     <spna class="spnStepId d-none">@item.StepId</spna>
                                                     <spna class="spnApplyFor d-none">@item.ApplyForId</spna>
 
-                                                @if ((item.StepCounter == 1 || item.StepCounter == 7 || item.StepCounter == 8 || item.StepCounter == 9 || item.StepCounter == 10)  && ViewBag.Id == 1)
+                                                @if ((item.StepCounter == 1 || item.StepCounter == 7 || item.StepCounter == 8 || item.StepCounter == 9 || item.StepCounter == 10)  && ViewBag.Id == 0)
                                                     {
                                                         <a asp-controller="BasicDetail" asp-action="BasicDetail" asp-route-Id="@item.EncryptedId" class="btn btn-icon btn-round btn-warning mr-2"><i class="fas fa-edit mt-2"></i></a>
 

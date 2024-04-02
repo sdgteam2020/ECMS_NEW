@@ -177,7 +177,7 @@ namespace DataAccessLayer
                         "inner join TrnDomainMapping map on map.Id= trnicrd.TrnDomainMappingId " +
                         "inner join UserProfile pr on pr.UserId = map.UserId " +
                         "left join TrnFwds fwd on fwd.ToAspNetUsersId= map.AspNetUsersId and fwd.IsComplete=0 and fwd.RequestId=trnicrd.RequestId " +
-                        "WHERE map.AspNetUsersId = @UserId and Afor.ApplyForId=ISNULL(@applyfor,Afor.ApplyForId) and trnicrd.Status=0 ORDER BY B.UpdatedOn DESC";
+                        "WHERE map.AspNetUsersId = @UserId and Afor.ApplyForId=ISNULL(@applyfor,Afor.ApplyForId) ORDER BY B.UpdatedOn DESC";
 
             }
            else if (stepcount == 1)//////For Draft
@@ -803,7 +803,7 @@ namespace DataAccessLayer
                         " select @HQReject=COUNT(distinct fwd.RequestId)  from TrnFwds fwd inner join TrnStepCounter cou on fwd.RequestId=cou.RequestId and cou.ApplyForId=@applyForId where FromAspNetUsersId=@UserId and Status=0 and TypeId=1" +
                         " select @IOPending IOPending,@IOApproved IOApproved,@IOReject IOReject,@GSOPending GSOPending,@GSOApproved GSOApproved,@GSOReject GSOReject, @MIPending MIPending,@MIApproved MIApproved,@MIReject MIReject,@HQPending HQPending,@HQApproved HQApproved,@HQReject HQReject";
                         
-            }
+            } 
           
             using (var connection = _contextDP.CreateConnection())
             {
@@ -818,10 +818,14 @@ namespace DataAccessLayer
 
         public async Task<List<DTONotificationResponse>> GetNotification(int UserId, int Type, int applyForId)
         {
-            string query = "select dis.DisplayId,Spanname,Message from TrnNotification noti" +
+            string query = "select dis.DisplayId,Spanname,Message,ranks.RankAbbreviation,bas.Name,bas.ServiceNo,tre.TrackingId,uplod.PhotoImagePath,dis.Url  from TrnNotification noti" +
                             " inner join TrnNotificationDisplay dis on noti.DisplayId=dis.DisplayId"+
                             " inner join AspNetUsers users on users.Id=noti.SentAspNetUsersId"+
                             " inner join TrnStepCounter stepc on stepc.RequestId=noti.RequestId "+
+                            " inner join TrnICardRequest tre on tre.RequestId = noti.RequestId " +
+                             " inner join BasicDetails bas on bas.BasicDetailId=tre.BasicDetailId" +
+                            " inner join MRank ranks on ranks.RankId=bas.RankId" +
+                            " inner join TrnUpload uplod on uplod.BasicDetailId=bas.BasicDetailId" +
                             " where noti.ReciverAspNetUsersId=@UserId and NotificationTypeId=@Type and stepc.applyforId=@applyForId and [Read]=0 and ReciverAspNetUsersId!=SentAspNetUsersId";
         
             using (var connection = _contextDP.CreateConnection())
@@ -840,12 +844,15 @@ namespace DataAccessLayer
         public async Task<List<DTONotificationResponse>> GetNotificationRequestId(int UserId, int Type, int applyForId)
         {
 
-            string query = "select Distinct tre.RequestId, dis.DisplayId,Spanname + 'self' Spanname,Message from TrnNotification noti " +
+            string query = "select Distinct tre.RequestId, dis.DisplayId,Spanname + 'self' Spanname,Message,ranks.RankAbbreviation,bas.Name,bas.ServiceNo,tre.TrackingId,uplod.PhotoImagePath,CASE WHEN dis.DisplayId in (7,8,9,10,17,18,19,20) THEN dis.Url ELSE '' END AS Url  from TrnNotification noti " +
                             " inner join TrnNotificationDisplay dis on noti.DisplayId = dis.DisplayId" +
                             " inner join AspNetUsers users on users.Id = noti.SentAspNetUsersId" +
                             " inner join TrnICardRequest tre on tre.RequestId = noti.RequestId" +
                             " inner join TrnDomainMapping dmap on dmap.Id = tre.TrnDomainMappingId" +
                             " inner join TrnStepCounter cou on cou.RequestId=tre.RequestId" +
+                            " inner join BasicDetails bas on bas.BasicDetailId=tre.BasicDetailId" +
+                            " inner join MRank ranks on ranks.RankId=bas.RankId"+
+                             " inner join TrnUpload uplod on uplod.BasicDetailId=bas.BasicDetailId" +
                             " where NotificationTypeId = @Type and dmap.AspNetUsersId = @UserId and [Read]=0 and cou.applyforId=@applyForId and ReciverAspNetUsersId=SentAspNetUsersId";
 
             using (var connection = _contextDP.CreateConnection())

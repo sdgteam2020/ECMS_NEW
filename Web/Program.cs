@@ -157,6 +157,10 @@ builder.Services.AddAuthorization(options =>
         policy => policy.RequireRole("Admin"));
 });
 
+builder.Services.AddResponseCompression(options =>
+{
+    options.EnableForHttps = true;
+});
 
 builder.Services.AddSingleton<IAuthorizationHandler, CanEditOnlyOtherAdminRolesAndClaimsHandler>();
 builder.Services.AddSingleton<IAuthorizationHandler, SuperAdminHandler>();
@@ -218,13 +222,12 @@ else
 //    ctx.Response.Headers.Remove("Server");
 //    await next();
 //});
-app.UseMyMiddleware();
 
 app.UseForwardedHeaders();
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRequestLocalization();
-
+app.UseResponseCompression();
 app.UseRouting();
 
 app.UseCors("CorsPolicy");
@@ -232,6 +235,8 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseSession();
+//app.UseMyMiddleware();
+
 //app.UseSessionMiddleware();
 //app.MapRazorPages();
 app.MapControllerRoute(

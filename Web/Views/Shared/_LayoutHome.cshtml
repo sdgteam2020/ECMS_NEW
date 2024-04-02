@@ -14,14 +14,9 @@
     @* <meta http-equiv="content-security-policy"content="default-src 'none'; script-src 'self'; connect-src 'self'; img-src 'self'; style-src 'self' 'sha256-CwE3Bg0VYQOIdNAkbB/Btdkhul49qZuwgNCMPgNY5zw=';" /> *@
     <title> E-ISAC </title>
     <link href="~/fonts/css/all.min.css" rel="stylesheet" />
-  
-   @*  <link href="~/css/steps.min.css" rel="stylesheet" /> *@
-    <link href="~/css/sidemenu/feather/feather.css" rel="stylesheet" />
-    <link href="~/css/sidemenu/style.css" rel="stylesheet" />
-    <link href="~/css/sidemenu/ti-icons/css/themify-icons.css" rel="stylesheet" />
-    <link href="~/css/DashBoard.css" rel="stylesheet" />
     <link href="~/css/nunito.css" rel="stylesheet" />
     <link href="~/css/roboto.css" rel="stylesheet" />
+    <link href="~/css/DashBoard.css" rel="stylesheet" />
     <link href="~/sweetalert2/sweetalert2.min.css" rel="stylesheet" />
     <link href="~/css/bootstrap-datetimepicker.min.css" rel="stylesheet" />
     <link href="~/datatables/dataTables.bootstrap4.min.css" rel="stylesheet" />
@@ -36,33 +31,33 @@
     <link href="~/css/typography.css" rel="stylesheet" />
     <link href="~/select2/css/select2.min.css" rel="stylesheet" />
     <link href="~/css/cssStyle.css" rel="stylesheet" />
-    
-   
-    <link href="~/css/horizontaltimeline.css" rel="stylesheet" />
 
+
+    <link href="~/css/horizontaltimeline.css" rel="stylesheet" />
+    @*
     <script asp-src-include="~/fonts/feather/feather.min.js"></script>
-    <script asp-src-include="~/fonts/allfont/webfont.min.js"></script>
+    <script asp-src-include="~/fonts/allfont/webfont.min.js"></script> *@
     <script asp-src-include="~/lib/jquery/jquery.js"></script>
     <script asp-src-include="~/lib/jquery-validate/jquery.validate.js" defer></script>
     <script asp-src-include="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js" defer></script>
-   
-  
+
+
     <link href="~/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
     <link href="~/lib/jqueryui/themes/base/jquery-ui.min.css" rel="stylesheet" />
 
     <link href="~/toastr/toastr.min.css" rel="stylesheet" />
     <link href="~/css/main.css" rel="stylesheet" />
-    
-    <script type="text/javascript">
-        function preventBack() { window.history.forward(); }
-        setTimeout("preventBack()", 0);
-        window.onunload = function () { null };
-    </script>
-  
-    
+
+    @*  <script type="text/javascript">
+    function preventBack() { window.history.forward(); }
+    setTimeout("preventBack()", 0);
+    window.onunload = function () { null };
+    </script> *@
+
+
 </head>
 <body class="nav-fixed">
-     @*  <div id="loading" class="loader">
+    @*  <div id="loading" class="loader">
     <div class="loader-container">
     <img src="/Images/load.gif" width="100">
     <div>
@@ -71,7 +66,7 @@
     </div>
     </div>
     </div> *@
-@*<div id="loadingToken" class="loader">
+    @*<div id="loadingToken" class="loader">
     <div class="loader-container">
     <img src="/Images/load.gif" width="100">
     <div>
@@ -80,149 +75,89 @@
     </div>
     </div>
     </div> *@
-    
+    @{
+        var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var user = await userManager.FindByIdAsync(userId);
+
+
+
+    }
     <div class="d-none" id="postingouthtml"></div>
     <div class="d-none" id="content-container"></div>
     <div class="d-none" id="spnPostedOffrsfornoti"></div>
     @* <span id="spnroleId" class="d-none">@User.Claims.First(c => c.Type.Contains("roleId")).Value</span>
     <span id="spnarmyno" class="d-none">@User.Claims.First(c => c.Type.Contains("armyNo")).Value</span>
     <span id="spnsunno" class="d-none1">@User.Claims.First(c => c.Type.Contains("SUSNo")).Value</span> *@
-    <div class="container-scroller">
-        <!-- partial:partials/_navbar.html -->
-        <nav class="navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row d-print-none">
-            <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center">
-                <a class="navbar-brand brand-logo mr-5" href="Home/Dashboard"><img src="~/Images/AFSAC_Logo.png" class="mr-2" alt="logo" /></a>
-                <a class="navbar-brand brand-logo-mini" href="Home/Dashboard"><img src="~/Images/AFSAC.png" alt="logo" /></a>
-            </div>
-            <div class="navbar-menu-wrapper d-flex align-items-center justify-content-end">
-                <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
-                    <span class="icon-menu"></span>
-                </button>
-                @* <ul class="navbar-nav mr-lg-2">
-                    <li class="nav-item nav-search d-none d-lg-block">
-                        <div class="input-group">
-                            <div class="input-group-prepend hover-cursor" id="navbar-search-icon">
-                            <span class="input-group-text" id="search">
-                            <i class="icon-search"></i>
-                            </span>
-                            </div>
-                            <div id="tokenmsg" class="p-2"></div>
-                            <input type="text" class="form-control" id="navbar-search-input" placeholder="Search now" aria-label="search" aria-describedby="search">
-                        </div>
-                    </li>
-                </ul> *@
-                <ul class="navbar-nav" >
-                    <li class="text-center">
-                        <span class="tagline ml-4 text-center"> Enterprise - Indian Army Secure Access Card Appl (E-ISAC)</span>
-                    </li>
-                    </ul>
-                @{
-                    var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-                    var user = await userManager.FindByIdAsync(userId);
 
-                }
-                <ul class="navbar-nav navbar-nav-right">
-                    <li>
-                        <a class="nav-link " href="#">
+    <!-- partial:partials/_navbar.html -->
+    <nav class="topnav navbar navbar-expand shadow navbar-light bg-white show" id="sidenavAccordion">
+        <a class="navbar-brand" href="#"><img src="~/Images/AFSAC_Logo.png"></a>
+        <span class="tagline ml-4 text-center"> Enterprise - Independent Active Secure Access Card (E-IASAC)</span>
 
-                            <div class="mt-2 font-weight-600 text-primary">  <span id="ProfileName"></span> (@user.UserName)</div>
-                        </a>
-                    </li>
-                    <li class="nav-item dropdown">
-                        @* <a class="nav-link count-indicator dropdown-toggle" id="notificationDropdown" href="#" data-toggle="dropdown">
-                            <i class="icon-bell mx-0"></i>
-                            <span class="isnotification"></span>
-                        </a> *@
-                       @*  <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list" aria-labelledby="notificationDropdown"> *@
-                            @* <p class="mb-0 font-weight-normal float-left dropdown-header">Notifications</p>
-                            <a class="dropdown-item preview-item">
-                            <div class="preview-thumbnail">
-                            <div class="preview-icon bg-success">
-                            <i class="ti-info-alt mx-0"></i>
-                            </div>
-                            </div>
-                            <div class="preview-item-content">
-                            <h6 class="preview-subject font-weight-normal">Application Error</h6>
-                            <p class="font-weight-light small-text mb-0 text-muted">
-                            Just now
-                            </p>
-                            </div>
-                            </a>
-                            <a class="dropdown-item preview-item">
-                            <div class="preview-thumbnail">
-                            <div class="preview-icon bg-warning">
-                            <i class="ti-settings mx-0"></i>
-                            </div>
-                            </div>
-                            <div class="preview-item-content">
-                            <h6 class="preview-subject font-weight-normal">Settings</h6>
-                            <p class="font-weight-light small-text mb-0 text-muted">
-                            Private message
-                            </p>
-                            </div>
-                            </a>
-                            <a class="dropdown-item preview-item">
-                            <div class="preview-thumbnail">
-                            <div class="preview-icon bg-info">
-                            <i class="ti-user mx-0"></i>
-                            </div>
-                            </div>
-                            <div class="preview-item-content">
-                            <h6 class="preview-subject font-weight-normal">New user registration</h6>
-                            <p class="font-weight-light small-text mb-0 text-muted">
-                            2 days ago
-                            </p>
-                            </div>
-                            </a>*@
-                       @*  </div> *@
-                    </li>
-                    <li class="nav-item nav-profile dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" id="profileDropdown">
-                            <img src="~/Images/user4.png" alt="profile" />
-                        </a>
-                        <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="profileDropdown">
-                            <a class="dropdown-item" href="/UserProfile/Profile">
-                                <i class="ti-settings text-primary"></i>
+        @*    <span class="tagline ml-4 text-center"> Enterprise - Indian Army Secure Access Card Appl (E-ISAC)</span> *@
+        <ul class="navbar-nav align-items-center ml-auto">
+            <!--<li class="mr-3">-->
+            @*<a class="p-2 f13 mr-1 rounded-pill shadow-sm mr-1">
+            <label id="" class="mb-0">Academic Session : </label>
+            <label id="session_month" class="text-pink font-weight-500 mb-0"></label>
+            <label id="session_year" class="text-pink font-weight-500 mb-0"></label>
+            </a>
+            <a class="p-2 f13 mr-1 rounded-pill shadow-sm">
+            <label id="" class="mb-0">Supervisor Session : </label>
+            <label id="session_monthSup" class="text-pink font-weight-500 mb-0"></label>
+            <label id="session_yearSup" class="text-pink font-weight-500 mb-0"></label>
+            </a>
+            <a class="p-2 f13 rounded-pill shadow-sm">
+            <label id="" class="mb-0">Staff Session : </label>
+            <label id="session_monthStaff" class="text-pink font-weight-500 mb-0"></label>
+            <label id="session_yearStaff" class="text-pink font-weight-500 mb-0"></label>
+            </a>*@
+
+            <!--<span id="session_yearID" class="d-none"></span>
+                <span id="session_monthID" class="d-none"></span>
+            </li>-->
+
+            <li class="nav-item dropdown no-caret mr-2 dropdown-user">
+                <a class="dropdown-toggle" id="navbarDropdownUserImage" href="javascript:void(0);" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span id="ProfileName" class="font-weight-500 mr-2 text-black">Username</span><span class="btn btn-icon btn-transparent-dark"><img src="/Images/user.png" /></span></a>
+                <div class="dropdown-menu dropdown-menu-right border-0 pb-0 shadow animated--fade-in-up" aria-labelledby="navbarDropdownUserImage">
+
+                    <h6 class="dropdown-header d-flex align-items-center">
+                        <img class="dropdown-user-img" src="/Images/user.png" />
+                        <div class="dropdown-user-details">
+                            <div class="dropdown-user-details-name">
                                 @user.UserName
-                                <span class="d-none" id="aspndomainUnitID"></span>
-                            </a>
-                            <a class="dropdown-item" href="/Account/Logout">
-                                <i class="ti-power-off text-primary"></i>
-                                Logout
-                            </a>
-                        </div>
-                    </li>
+                            </div>
+                    </h6>
 
-                </ul>
-                <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" data-toggle="offcanvas">
-                    <span class="icon-menu"></span>
-                </button>
-            </div>
-        </nav>
+                    <div class="dropdown-divider"></div>
+                    @*  <a class="dropdown-item" href="#" id="btnChangePassword">
+                    <div class="dropdown-item-icon"><i class="fa fa-key" aria-hidden="true"></i></div>
+
+                    </a> *@
+                    @*<div class="dropdown-divider"></div>*@
+                    <a class="dropdown-item active" style="background-color: rebeccapurple" href="/Account/Logout" id="btnLogout">
+                        <div class="dropdown-item-icon"><i data-feather="log-out"></i></div>
+                        Logout
+                    </a>
+                </div>
+            </li>
+        </ul>
+    </nav>
+    <!-- partial -->
+    <div class="page-body-wrapper">
+
+
         <!-- partial -->
-        <div class="page-body-wrapper">
-         
 
-            <!-- partial -->
-           
-                    <partial name="_Notification" />
-                    @RenderBody()
+        <partial name="_Notification" />
+        @RenderBody()
 
-                    <!-- partial -->
-                    <!-- main-panel ends -->
-                
-
-            <!-- partial -->
-            <!-- main-panel ends -->
-        </div>
-        <!-- page-body-wrapper ends -->
+        <!-- partial -->
+        <!-- main-panel ends -->
+        <!-- partial -->
+        <!-- main-panel ends -->
     </div>
-
-
-
-
-
-
+    <!-- page-body-wrapper ends -->
     @*  <script asp-src-include="~/select2/dist/js/select2.min.js"></script>*@
     @RenderSection("Scripts", false)
     @RenderSection("body_scripts", false)
@@ -230,7 +165,7 @@
         $(document).ready(function () {
 
             $('[data-toggle="tooltip"]').tooltip();
-            
+
 
             $("#loading").hide();
             $(document).ajaxStart(function () {
@@ -252,696 +187,27 @@
                 sessionStorage.persid = null
             })
         });
-      
+
     </script>
 
-   
+
     <script asp-src-include="~/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script asp-src-include="~/js/moment.js"></script>
-    <script asp-src-include="~/js/jssidemenu/vendor.bundle.base.js"></script>
-    <script asp-src-include="~/js/jssidemenu/hoverable-collapse.js"></script>
-    <script asp-src-include="~/js/jssidemenu/off-canvas.js"></script>
-    <script asp-src-include="~/js/jssidemenu/template.js"></script>
+
     <script asp-src-include="~/lib/jqueryui/jquery-ui.min.js"></script>
-    <script asp-src-include="~/select2/js/select2.min.js"></script>
-    <script asp-src-include="~/js/datatables/jquery.datatables.min.js"></script>
-    <script asp-src-include="~/js/datatables/dataTables.responsive.min.js"></script>
-    <script asp-src-include="~/js/datatables/responsive.dataTables.min.js"></script>
-    <script asp-src-include="~/js/datatables/dataTables.bootstrap4.min.js"></script>
-    <script asp-src-include="~/js/datatables/responsive.bootstrap4.min.js"></script>
-    <script asp-src-include="~/js/datatables/dataTables.buttons.min.js"></script>
-    <script asp-src-include="~/js/datatables/buttons.bootstrap4.min.js"></script>
-    <script asp-src-include="~/js/datatables/jszip.min.js"></script> 
-    <script asp-src-include="~/js/datatables/pdfmake.min.js"></script>
-    <script asp-src-include="~/js/datatables/vfs_fonts.js"></script>
-    <script asp-src-include="~/js/datatables/buttons.html5.min.js"></script>
-    <script asp-src-include="~/js/datatables/buttons.print.min.js"></script>
-    <script asp-src-include="~/js/datatables/datatables-call.js"></script>
+
     @*<script asp-src-include="~/fonts/feather/feather.min.js"></script>*@
     <script asp-src-include="~/sweetalert2/sweetalert2.min.js"></script>
     <script asp-src-include="~/toastr/toastr.min.js"></script>
     <script asp-src-include="~/js/moment.min.js"></script>
     <script asp-src-include="~/js/bootstrap-datetimepicker.min.js"></script>
-   
+
     <script asp-src-include="~/developerjs/layout.js"></script>
     <script asp-src-include="~/developerjs/keyconstants.js"></script>
     <script asp-src-include="~/developerjs/commanvalidation.js"></script>
-   
-    @*  <script asp-src-include="~/developerjs/layout.js"></script>
-    <script asp-src-include="~/developerjs/MedCate.js"></script> *@
-    @*<script asp-src-include="/DeveloperJs/Master.js"></script>*@
-    @*     <script asp-src-include="~/developerjs/master.js"></script>
-    *@
-    @*
-    <section class="page_copyright ls section_padding_25">
-    <div class="container">
-    <div class="row">
-    <div class="col-sm-12 text-center darklinks">
-    <h5 class="font-weight-600">
-    &copy; 2023 HRMS
-    (DGIS).
-    </h5>
-    </div>
-    </div>
-    </div>
-    </section>*@
+
 
 </body>
 </html>
 
-<div class="modal fade" id="AddNewUnitmap" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Enter Unit Details With Mapping</h5>
-                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 
-            </div>
-
-            <div class="modal-body">
-
-                <div class="row">
-
-
-
-                    <form action="" id="SaveFormMapUnit" method="post" name="SaveForm">
-                        <div class="row">
-                            <span class=" d-none" id="spnUnitMapUnitId">0</span>
-                            <div class="form-group row mb-2">
-
-                                <label class="col-form-label col-sm-4">SUS No <i class="fas fa-asterisk mand1"></i></label>
-                                <div class="col-sm-8">
-                                    
-                                    
-                                    <input class="form-control Alphanumeric" placeholder="Enter SUS No" id="txtSusno" minlength="8" maxlength="8" required pattern="^[a-zA-Z0-9 ]*$" title="Only Alphabets and Numbers allowed" />
-                                </div>
-
-                            </div>
-
-                            <div class="form-group row mb-2">
-
-                                <label class="col-form-label col-sm-4">Unit <i class="fas fa-asterisk mand1"></i></label>
-                                <div class="col-sm-8">
-                                  
-                                    <span id="SpnUnitMapId" class="d-none">0</span>
-                                    <input class="form-control Alphanumeric" placeholder="Enter Unit" id="txtUnit" required pattern="^[a-zA-Z0-9 ]*$" title="Only Alphabets and Numbers allowed" />
-
-                                </div>
-
-                            </div>
-                            <div class="form-group row mb-2">
-
-                                <label class="col-form-label col-sm-4">Fmn HQ/Branch <i class="fas fa-asterisk mand1"></i></label>
-                                <div class="col-sm-8">
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" value="" id="ChkFmnBrach">
-                                        <label class="form-check-label" for="ChkFmnBrach">
-                                            Fmn HQ/Branch
-                                        </label>
-                                    </div>
-                                   
-                                </div>
-
-                            </div>
-                            <div class="form-group row mb-2">
-
-                                <label class="col-form-label col-sm-4">Comd / PSO<i class="fas fa-asterisk mand1"></i></label>
-                                <div class="col-sm-8">
-                                   
-                                    <select class=" js-example-basic-single select2 form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddlCommand" required id="ddlCommand">
-                                        <option value="0">Select Comd / PSO </option>
-
-                                    </select>
-                                </div>
-
-                            </div>
-
-
-                            <div class="form-group row mb-4">
-
-                                <label class="col-form-label col-sm-4">Corps / Dte / Area<i class="fas fa-asterisk mand1"></i></label>
-                                <div class="col-sm-8">
-                                  
-                                    <select class=" js-example-basic-single select2 form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddlCorps" required id="ddlCorps">
-                                        <option value="0">Select Corps / Dte / Area </option>
-
-                                    </select>
-                                </div>
-
-                            </div>
-
-                            <div class="form-group row mb-2">
-
-                                <label class="col-form-label col-sm-4">Div  /Branch / SubArea<i class="fas fa-asterisk mand1"></i></label>
-                                <div class="col-sm-8">
-                                    
-                                    <select class=" js-example-basic-single select2 form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddlDiv" required id="ddlDiv">
-                                        <option value="0">Select Div  /Branch / SubArea </option>
-
-                                    </select>
-                                </div>
-
-                            </div>
-
-                            <div class="form-group row mb-2">
-                                <label class="col-form-label col-sm-4">Bde<i class="fas fa-asterisk mand1"></i></label>
-                                <div class="col-sm-8">
-                                    
-                                    <select class=" js-example-basic-single select2 form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddlBde" required id="ddlBde">
-                                        <option value="0">Select Bde </option>
-
-                                    </select>
-                                </div>
-
-                            </div>
-
-                          
-
-
-                            <div class="col-sm-12 text-right">
-                                <input type="button" class="btn btn-primary " value="Save" id="btnUnitMapsave" />
-                                <button type="button" id="btnUnitMapReset" class="btn btn-outline-danger">Reset</button>
-                            </div>
-                            <div class="col-sm-12" id="msg">
-                            </div>
-
-
-                        </div>
-                    </form>
-
-                    <div class="col-sm-12" id="msg">
-                    </div>
-                </div>
-            </div>
-
-        </div><!-- modal-content -->
-    </div><!-- modal-dialog -->
-</div>
-
-<!-- Fwd Record  -->
-<div class="modal fade" id="FwdRecord" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Forward Record</h5>
-                
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div class="card">
-                    <div class="mt-2 ml-4">
-                        <h5 class="card-title">Forward Request</h5>
-                        <div class="row">
-                    <div class="form-group row mb-2">
-                        <label class="col-form-label col-sm-4">Army No</label>
-                        <div class="col-sm-8">
-
-                            <label class="form-control spnFarmyno"></label>
-
-                        </div>
-
-                    </div>
-                    <div class="form-group row mb-2">
-                        <label class="col-form-label col-sm-4">Name</label>
-                        <div class="col-sm-8">
-
-                            <label class="form-control spnFname"></label>
-
-                        </div>
-
-                    </div>
-                </div>
-                    </div>
-                </div>
-
-                <div class="card mt-2">
-                    <div class="mt-2 ml-4">
-                        <h5 class="card-title">Forward To <label class="gsoio"></label> Details</h5>
-                        <span id="spnFwdToAspNetUsersId" class="d-none">0</span>
-                        <span id="spnFwdToUsersId" class="d-none">0</span>
-                       @*  <span id="spnFwssusno" class="d-none">0</span>
-                        <span id="spnFrom" class="d-none">0</span>
-                        <span id="spnForwardTo" class="d-none">0</span>*@
-                        <span id="spnCurrentspnRequestId" class="d-none">0</span>
-                        <span id="spnStepCounter" class="d-none">0</span> 
-                        <h5 class="card-title text-danger" id="ForwardDetails"></h5>
-                        <div class="row HProfileDetails">
-                            <div class="form-group row mb-2">
-                                <label class="col-form-label col-sm-4">Select Offrs</label>
-                                <div class="col-sm-8">
-
-                                    <select class="form-control select3 select2-hidden-accessible" style="width: 100%;" tabindex="-1"
-                                            aria-hidden="true" name="fwdoffrs" required id="ddlfwdoffrs">
-                                        <option value="0">Select Offrs</option>
-                                       
-                                    </select>
-
-                                </div>
-
-                            </div>
-                            <div class="form-group chkforserach">
-                                <div class="col-sm-12">
-                                <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="Intoffrs" id="intoffsArmyNo">
-                                    <label class="form-check-label" for="intoffsArmyNo">
-                                            Army No
-                                    </label>
-                                </div>
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="Intoffrs" id="intoffName">
-                                        <label class="form-check-label" for="intoffName">
-                                        Name
-                                    </label>
-                                </div>
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="Intoffrs" id="intoffDomainId">
-                                        <label class="form-check-label" for="intoffName">
-                                            DomainId
-                                        </label>
-                                    </div>
-
-                            </div> </div>
-                            <div class="form-group row mb-2 serchfwd d-none">
-                                <label class="col-form-label col-sm-4">Army No/Offrs Name/DomainId</label>
-                                <div class="col-sm-8">
-
-                                    <input class="form-control Alphanumeric" placeholder="Enter Army No/Offrs Name/DomainId" id="txtFwdName" required pattern="^[a-zA-Z0-9 ]*$" title="Only Alphabets and Numbers allowed" />
-
-                                </div>
-
-                            </div>
-                            <div class="form-group row mb-2">
-                                <label class="col-form-label col-sm-4">Army No</label>
-                                <div class="col-sm-8">
-
-                                    <label class="form-control spnFArmyNo"></label>
-
-                                </div>
-
-                            </div>
-                            <div class="form-group row mb-2">
-                                <label class="col-form-label col-sm-4">Offrs Name</label>
-                                <div class="col-sm-8">
-
-                                    <label class="form-control spnFtoname"></label>
-
-                                </div>
-
-                            </div>
-                            <div class="form-group row mb-2">
-                                <label class="col-form-label col-sm-4">DomainId</label>
-                                <div class="col-sm-8">
-
-                                    <label class="form-control spnFDomainName"></label>
-
-                                </div>
-
-                            </div>
-                            <div class="form-group row mb-2">
-                                <label class="col-form-label col-sm-4">Remarks</label>
-                                <div class="col-sm-8">
-                                    <textarea class="form-control" id="txtFRemarks" rows="3"></textarea>
-                               
-                                </div>
-
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-               
-                <button type="button" class="btn btn-primary" id="btnForward">Forward</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-
-<!-- Basic Details   -->
-<div class="modal fade" id="BasicDetails" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Besic Details</h5>
-
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div class="card">
-                    <div class="row ">
-                       
-                       
-                                <div class="col-md-4 mb-3">
-                                    <div class="feature-box3  h-100 shadow-lg p-1 mb-5 bg-body rounded">
-
-                                        <div class="content-block ">
-                                            <div class="form-group row mb-0 ">
-                                                <div class="col-12 text-center">
-                                                    <img src="~/images/user4.png" width="200" id="basicphotos" class="border border-primary p-2" />
-
-                                                    <h6 class="mb-1 text-font2 font-weight500 text-center PersName"></h6>
-                                                    @*  <div class="text-left"> <img src="~/images/rank/brigadier.svg" id="imgrank" height="100px" /></div> *@
-                                                </div>
-                                            </div>
-                                    <div class="form-group row mb-0 recectopt">
-                                        <label class="col-form-label  text-left ">Select Rejection Reasons for Photos</label>
-                                       
-                                        <select class="form-control select2 select2-accessible" multiple="" placeholder="Please select a Photos" style="width: 100%;" tabindex="-1" aria-hidden="true" name="Photos" required id="ddlPhotos">
-                                            <option value="0">Select Rejection Reasons for Photos</option>
-                                            <option value="Reasons 1">Reasons 1</option>
-                                            <option value="Reasons 2">Reasons 2</option>
-                                            <option value="Reasons 3">Reasons 3</option>
-                                        </select>
-                                
-                                    </div>
-                                        </div>
-
-                                        <div class="content-block ">
-                                    <div class="form-group row mb-0 ">
-                                                <div class="col-12 text-center">
-                                                    <img src="~/images/signature.png" width="200" height="100" id="Basicsing" class="border border-primary p-2" />
-                                            <label class="col-form-label recectopt text-left ">Select Rejection Reasons for Signature</label>
-                                               </div>
-                                               </div>
-                                    <div class="form-group row mb-0 recectopt">
-                                        <select class="form-control select2 select2-accessible " multiple="" placeholder="Please select a signature" style="width: 100%;" tabindex="-1" aria-hidden="true" name="signature" required id="ddlsignature">
-                                                    <option value="0">Select Rejection Reasons for Photos</option>
-                                                    <option value="Reasons 1">Reasons 1</option>
-                                                    <option value="Reasons 2">Reasons 2</option>
-                                                    <option value="Reasons 3">Reasons 3</option>
-                                                </select>
-                                                    @*  <div class="text-left"> <img src="~/images/rank/brigadier.svg" id="imgrank" height="100px" /></div> *@
-                                                </div>
-                                            </div>
-
-                                        </div>
-                                   
-                                   
-                                </div>
-                                <div class="col-md-8 mb-3">
-                                    <div class="feature-box3 h-100 shadow-lg p-3 mb-3 bg-body rounded">
-                                        <div class="top-block_ind d-flex">
-
-                                            <div class="text-block">
-                                                <h5 class="mb-1 text-font2 font-weight600">Individual Details</h5>
-
-                                            </div>
-                                        </div>
-                                        <div class="content-block ">
-                                            <div class="form-group row mb-0">
-                                                <label class="col-form-label col-5 text-left">Name</label>
-                                        <div class="col-7"><label class="form-control-plaintext b text-black" id="lblfdName"></label></div>
-                                            </div>
-                                            <div class="form-group row mb-0">
-                                                <label class="col-form-label col-5 text-left">Rank</label>
-                                                <div class="col-7">
-                                            <label class="form-control-plaintext" id="lblfdRank"></label>
-                                                </div>
-                                            </div>
-                                            <div class="form-group row mb-0">
-                                                <label class="col-form-label col-5 text-left">Arm / Service</label>
-                                                <div class="col-7">
-                                            <label class="form-control-plaintext" id="lblLfdarm"></label>
-                                                </div>
-                                            </div>
-                                            <div class="form-group row mb-0">
-                                                <label class="col-form-label col-5 text-left">Army No</label>
-                                                <div class="col-7">
-                                            <label class="form-control-plaintext" id="lblfdArmyNo"></label>
-                                                </div>
-                                            </div>
-                                            <div class="form-group row mb-0">
-                                                <label class="col-form-label col-5 text-left">Identification Mark</label>
-                                                <div class="col-7">
-                                                    <label class="form-control-plaintext" id="lblfdMarks"></label>
-                                                </div>
-                                            </div> 
-                                            <div class="form-group row mb-0">
-                                                <label class="col-form-label col-5 text-left">Date of Birth</label>
-                                                <div class="col-7">
-                                                    <label class="form-control-plaintext" id="lblfddob"></label>
-                                                </div>
-                                            </div> 
-                                            <div class="form-group row mb-0">
-                                                <label class="col-form-label col-5 text-left">Height (Cm)</label>
-                                                <div class="col-7">
-                                                    <label class="form-control-plaintext" id="lblfdheight"></label>
-                                                </div>
-                                            </div> 
-                                            <div class="form-group row mb-0">
-                                                <label class="col-form-label col-5 text-left">AADHAAR No</label>
-                                                <div class="col-7">
-                                                    <label class="form-control-plaintext" id="lblfdadhar"></label>
-                                                </div>
-                                            </div>
-                                            <div class="form-group row mb-0">
-                                            <label class="col-form-label col-5 text-left">Blood Group</label>
-                                                <div class="col-7">
-                                            <label class="form-control-plaintext" id="lblfdBloodGroup"></label>
-                                                </div>
-                                            </div>
-                                            <div class="form-group row mb-0">
-                                                <label class="col-form-label col-5 text-left">Place of Issue</label>
-                                                <div class="col-7">
-                                                    <label class="form-control-plaintext" id="lblfdpoi"></label>
-                                                </div>
-                                            </div>
-                                            <div class="form-group row mb-0">
-                                                <label class="col-form-label col-5 text-left">Date of Issue</label>
-                                                <div class="col-7">
-                                                    <label class="form-control-plaintext" id="lblfddoi"></label>
-                                                </div>
-                                            </div> 
-                                            <div class="form-group row mb-0">
-                                                <label class="col-form-label col-5 text-left">Issuing Authority</label>
-                                                <div class="col-7">
-                                                    <label class="form-control-plaintext" id="lblfdissuA"></label>
-                                                </div>
-                                            </div>
-                                            <div class="form-group row mb-0">
-                                                <label class="col-form-label col-5 text-left">Date of Commissioning/ Enrollment</label>
-                                                <div class="col-7">
-                                                    <label class="form-control-plaintext" id="lblfddateo"></label>
-                                                </div>
-                                            </div> 
-                                            <div class="form-group row mb-0">
-                                                <label class="col-form-label col-5 text-left">Permt Address as per Service Records</label>
-                                                <div class="col-7">
-                                                    <label class="form-control-plaintext" id="lblfdaddress"></label>
-                                                </div>
-                                            </div>
-
-                                        </div>
-                                    </div>
-                                </div>
-
-                        <div class="col-md-12 mb-3">
-                            <div class="form-group row mb-0 recectopt">
-                                <label class="col-form-label col-12 text-center">Remarks</label>
-                                <div class="col-12">
-                                    <textarea class="form-control" id="txtFrejectedRemarks" rows="2"></textarea>
-                                </div>
-                            </div>
-                            </div>
-                       @*  <div class="col-md-12 mb-3 ml-3">
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
-                            <label class="form-check-label" for="inlineCheckbox1">Rejected</label>
-                        </div>
-                        </div> *@
-                    </div>
-                </div>
-
-                
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-
-                <button type="button" class="btn btn-danger" id="btnRejected">Rejected</button>
-                <button type="button" class="btn btn-primary" id="btnShowForward">Next</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="modal right fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title" id="lblHistory">I-Card History</h4>
-            </div>
-
-            <div class="modal-body">
-                <h5 class="text-center badge badge-success">Step Wise I Card Request History</h5>
-                <div class="timeline timeline-xs" id="RequestHistory">
-                    <!-- Timeline Item 1-->
-                    @* <div class="timeline-item">
-                        <div class="timeline-item-marker">
-                            <div class="timeline-item-marker-text">27 min</div>
-                            <div class="timeline-item-marker-indicator bg-primary"></div>
-                        </div>
-                        <div class="timeline-item-content">
-                            FWD to  IO
-                            
-                        </div>
-                    </div>
-                    <div class="timeline-item">
-                        <div class="timeline-item-marker">
-                            <div class="timeline-item-marker-text">27 min</div>
-                            <div class="timeline-item-marker-indicator bg-warning"></div>
-                        </div>
-                        <div class="timeline-item-content">
-                            Approved FROM IO
-                            
-                        </div>
-                    </div>
-                    <div class="timeline-item">
-                        <div class="timeline-item-marker">
-                            <div class="timeline-item-marker-text">27 min</div>
-                            <div class="timeline-item-marker-indicator bg-danger"></div>
-                        </div>
-                        <div class="timeline-item-content">
-                            Reject From GSO
-                        </div>
-                    </div> *@
-                   
-                </div>
-            </div>
-
-        </div><!-- modal-content -->
-    </div><!-- modal-dialog -->
-</div>
-<div class="modal fade" id="MedCateModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">SHAPE FACTOR</h5>
-                <span id="spnfillcontrol" class="d-none"></span>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-
-            <div class="modal-body">
-
-                <div class="row mt-2">
-                    <div class="col-2">
-                    </div>
-                    <div class="col-2">
-                        <div class="text-center">S</div>
-                    </div>
-                    <div class="col-2 text-center">
-                        <div class="text-center">H</div>
-                    </div>
-                    <div class="col-2 text-center">
-                        <div class="text-center">A</div>
-                    </div>
-                    <div class="col-2 text-center">
-                        <div class="text-center">P</div>
-                    </div>
-                    <div class="col-2 text-center">
-                        <div class="text-center">E</div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-2">
-                        Value
-                    </div>
-                    <div class="col-2">
-                        <input type="number" class="form-control medvalue" value="1" id="S" maxlength="1" />
-                    </div>
-                    <div class="col-2">
-                        <input type="number" class="form-control medvalue" value="1" id="H" maxlength="1" width="50" />
-                    </div>
-                    <div class="col-2">
-                        <input type="number" class="form-control medvalue" value="1" id="A" maxlength="1" width="50" />
-                    </div>
-                    <div class="col-2">
-                        <input type="number" class="form-control medvalue" value="1" id="P" maxlength="1" width="50" />
-                    </div>
-                    <div class="col-2">
-                        <input type="number" class="form-control medvalue" value="1" id="E" placeholder="E" maxlength="1" />
-                    </div>
-                </div>
-                <div class="row mt-2">
-                    <div class="col-2">
-                        Temp/Perm
-                    </div>
-                    <div class="col-2">
-                        <select class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddlS" required id="ddlS">
-                            <option value=""></option>
-                            <option value="P">P</option>
-                            <option value="T">T</option>
-
-
-                        </select>
-
-                    </div>
-                    <div class="col-2">
-                        <select class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddlH" required id="ddlH">
-                            <option value=""></option>
-                            <option value="P">P</option>
-                            <option value="T">T</option>
-
-
-                        </select>
-                    </div>
-                    <div class="col-2">
-                        <select class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddlA" required id="ddlA">
-                            <option value=""></option>
-                            <option value="P">P</option>
-                            <option value="T">T</option>
-
-
-                        </select>
-                    </div>
-                    <div class="col-2">
-                        <select class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddlP" required id="ddlP">
-                            <option value=""></option>
-                            <option value="P">P</option>
-                            <option value="T">T</option>
-
-
-                        </select>
-                    </div>
-                    <div class="col-2">
-                        <select class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddlE" required id="ddlE">
-                            <option value=""></option>
-                            <option value="P">P</option>
-                            <option value="T">T</option>
-
-
-                        </select>
-                    </div>
-                </div>
-                <div class="row mt-2">
-                    <div class="col-2">
-                        Period
-                    </div>
-                    <div class="col-2">
-                        <input type="number" class="form-control" id="PS" maxlength="1" />
-                    </div>
-                    <div class="col-2">
-                        <input type="number" class="form-control" id="PH" maxlength="1" width="50" />
-                    </div>
-                    <div class="col-2">
-                        <input type="number" class="form-control" id="PA" maxlength="1" width="50" />
-                    </div>
-                    <div class="col-2">
-                        <input type="number" class="form-control" id="PP" maxlength="1" width="50" />
-                    </div>
-                    <div class="col-2">
-                        <input type="number" class="form-control" id="PE" maxlength="1" />
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <h6 class="fw-bold mt-3 mb-1 p-3" id="medcatemsg"></h6>
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-
-                <button type="button" class="btn btn-primary" id="btnmedcategen">Ok</button>
-            </div>
-        </div>
-    </div>
-</div>
