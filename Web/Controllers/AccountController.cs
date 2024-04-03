@@ -1643,7 +1643,7 @@ namespace Web.Controllers
             }
             if (Id == "Admin")
             {
-                return RedirectToActionPermanent("Dashboard", "Home");
+                return RedirectToActionPermanent("DashboardMaster", "Master");
             }
             else if (Id == "Super Admin")
             {

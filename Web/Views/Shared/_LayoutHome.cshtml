@@ -79,8 +79,8 @@
     @{
         var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
         var user = await userManager.FindByIdAsync(userId);
-
         var RoleList = await userManager.GetRolesAsync(user);
+
         DtoSession? dtoSession = new DtoSession();
         if (!string.IsNullOrEmpty(@HttpContextAccessor.HttpContext.Session.GetString("Token")))
         {
@@ -125,7 +125,7 @@
             </li>-->
 
             <li class="nav-item dropdown no-caret mr-2 dropdown-user">
-                <a class="dropdown-toggle" id="navbarDropdownUserImage" href="javascript:void(0);" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span id="ProfileName" class="font-weight-500 mr-2 text-black ProfileName">Username</span><span class="btn btn-icon btn-transparent-dark"><img src="/Images/user4.png" /></span></a>
+                <a class="dropdown-toggle" id="navbarDropdownUserImage" href="javascript:void(0);" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="text-black ProfileName font-weight-500 mr-2">WELCOME</span> <span class="text-black ProfileName font-weight-500 mr-2" id="ProfileRankName"></span><span id="ProfileName" class="font-weight-500 mr-2 text-black ProfileName">Username</span><span class="text-black ProfileName font-weight-500 mr-2">(<span class="text-black ProfileName font-weight-500" id="aspntokenarmyno"></span>)</span><span class="btn btn-icon btn-transparent-dark"><img src="/Images/user4.png" /></span></a>
                 <div class="dropdown-menu dropdown-menu-right border-0 pb-0 shadow animated--fade-in-up" aria-labelledby="navbarDropdownUserImage">
 
                     <h6 class="dropdown-header d-flex align-items-center">
