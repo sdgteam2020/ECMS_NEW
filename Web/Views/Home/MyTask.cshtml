@@ -13,8 +13,7 @@
                 <div class="col-auto">
                     <h1 class="page-header-title">
                         <div class="page-header-icon"> <i class="fa fa-bars"></i></div>
-                        <a href="/Home/Index" class="mr-2">Home</a> > Task
-
+                        <a href="/Home/Index" class="mr-2">Home</a> > <a href="/Home/Task" class="mr-2">Task</a>  > I-Card Status
                     </h1>
                 </div>
             </div>
@@ -24,10 +23,9 @@
 </header>
 <div class="containerMain mt-n10">
 
-   
-        <div class="row">
-
-            <div class="col-xl-6 col-sm-6 col-6">
+    <div class="row">
+        @if (ViewBag.Type == "OffrsSubmitted")
+        {
             <div class="card p-4">
                 <div class="row">
                     <h5 class="card-title">Status of Appl(Offrs) you have submitted</h5>
@@ -920,8 +918,8 @@
 
                                                 <div class="col-xl-4 col-sm-4 col-12 mt-2">
                                                     <div class="card box-shadow">
-                                                        <a href="/BasicDetail/Index?IdNQ==&jcoor=SmNvL09ycw==">
-                                                            <div class="number1 SpnExportself" id=""></div>
+                                                        <a href="/BasicDetail/ApprovalForIO/NQ==">
+                                                            <div class="number1 SpnHQ54"></div>
                                                             <div class="card-content">
                                                                 <div class="card-body">
                                                                     <div class="media d-flex">
@@ -940,8 +938,7 @@
                                                 </div>
                                                 <div class="col-xl-4 col-sm-4 col-12 mt-2">
                                                     <div class="card box-shadow">
-                                                        <a href="/BasicDetail/Index?IdNTU1&jcoor=SmNvL09ycw==">
-                                                            <div class="number1 " id="SpnPrintself"></div>
+                                                        <a href="/BasicDetail/ApprovalForIO/Ng==">
                                                             <div class="card-content">
                                                                 <div class="card-body">
                                                                     <div class="media d-flex">
@@ -960,8 +957,7 @@
                                                 </div>
                                                 <div class="col-xl-4 col-sm-4 col-12 mt-2 d-none">
                                                     <div class="card box-shadow">
-                                                        <a href="/BasicDetail/Index?IdNTU=&jcoor=SmNvL09ycw==">
-                                                            <div class="number1 SpnExport54Rejectself" id=""></div>
+                                                        <a href="/BasicDetail/ApprovalForIO/NTU=">
                                                             <div class="card-content">
                                                                 <div class="card-body">
                                                                     <div class="media d-flex">
