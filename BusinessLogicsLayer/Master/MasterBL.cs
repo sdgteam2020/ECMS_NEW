@@ -50,17 +50,9 @@ namespace BusinessLogicsLayer.Master
         {
           return  await _iMasterDB.GetRemarksByTypeId(Data);
         }
-        public async Task<DTODashboardFormationCountResponse> GetDashboardFormationCount()
-        {
-            return await _iMasterDB.GetDashboardFormationCount();
-        }
         public async Task<DTODashboardMasterCountResponse> GetDashboardMasterCount()
         {
             return await _iMasterDB.GetDashboardMasterCount();
-        }
-        public async Task<DTODashboardUserConfigCountResponse> GetDashboardUserConfigCount()
-        {
-            return await _iMasterDB.GetDashboardUserConfigCount();
         }
     }
 }

@@ -1340,7 +1340,7 @@ namespace Web.Controllers
                                 else if (dTOTempSession.RoleName.ToUpper() == "ADMIN")
                                 {
                                     HttpContext.Session.Remove("IMData");
-                                    return RedirectToActionPermanent("DashboardFormation", "Master");
+                                    return RedirectToActionPermanent("DashboardMaster", "Master");
 
                                 }
                                 else if (dTOTempSession.RoleName == "Super Admin")

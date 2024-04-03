@@ -1507,34 +1507,14 @@ namespace Web.Controllers
 
         #region Dashboard
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> DashboardFormation()
-        {
-            return View();
-        }
-        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DashboardMaster()
         {
             return View();
         }
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> DashboardUserConfig()
-        {
-            return View();
-        }
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> GetDashboardFormationCount()
-        {
-            return Json(await unitOfWork.MasterBL.GetDashboardFormationCount());
-        }
-        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetDashboardMasterCount()
         {
             return Json(await unitOfWork.MasterBL.GetDashboardMasterCount());
-        }
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> GetDashboardUserConfigCount()
-        {
-            return Json(await unitOfWork.MasterBL.GetDashboardUserConfigCount());
         }
         #endregion Dashboard
     }
