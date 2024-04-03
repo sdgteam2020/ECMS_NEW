@@ -78,6 +78,7 @@
             padding: 3px;
             background-color: #000e5a;
             color: white;
+            margin-top:20px;
         }
     </style>
     <style>
@@ -232,8 +233,12 @@
 .modal-body {
    
     color: black;
-   
-}
+        }
+
+        .page-header-title a {
+            text-decoration: none !important;
+            color: white;
+        }
     </style>
 </head>
 <body class="nav-fixed sidenav-toggled">
@@ -306,11 +311,11 @@
             </li>-->
 
             <li class="nav-item dropdown no-caret mr-2 dropdown-user">
-                <a class="dropdown-toggle" id="navbarDropdownUserImage" href="javascript:void(0);" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="text-black ProfileName font-weight-500 mr-2">WELCOME</span> <span class="text-black ProfileName font-weight-500 mr-2" id="ProfileRankName"></span><span id="ProfileName" class="font-weight-500 mr-2 text-black ProfileName">Username</span><span class="text-black ProfileName font-weight-500 mr-2">(<span class="text-black ProfileName font-weight-500" id="aspntokenarmyno"></span>)</span><span class="btn btn-icon btn-transparent-dark"><img src="/Images/user.png" /></span></a>
+                <a class="dropdown-toggle" id="navbarDropdownUserImage" href="javascript:void(0);" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="text-black ProfileName font-weight-500 mr-2">WELCOME</span> <span class="text-black ProfileName font-weight-500 mr-2" id="ProfileRankName"></span><span id="ProfileName" class="font-weight-500 mr-2 text-black ProfileName">Username</span><span class="text-black ProfileName font-weight-500 mr-2">(<span class="text-black ProfileName font-weight-500" id="aspntokenarmyno"></span>)</span><span class="btn btn-icon btn-transparent-dark"><img src="/Images/user4.png" /></span></a>
                 <div class="dropdown-menu dropdown-menu-right border-0 pb-0 shadow animated--fade-in-up" aria-labelledby="navbarDropdownUserImage">
 
                     <h6 class="dropdown-header d-flex align-items-center">
-                        <img class="dropdown-user-img" src="/Images/user.png" />
+                        <img class="dropdown-user-img" src="/Images/user4.png" />
                         <div class="dropdown-user-details">
                             <div class="dropdown-user-details-name">
                                 @user.UserName
@@ -421,7 +426,7 @@
     <div class="row">
     <div class="col-sm-12 text-center darklinks">
     <h5 class="font-weight-600">
-    &copy; 2023 HRMS
+    &copy;ASDC 2024
     (DGIS).
     </h5>
     </div>
@@ -851,10 +856,10 @@
             @* <input type="hidden" id="armynosearchAllBasicId"> *@
             <div class="modal-body text-center">
                 <div class="row">
-                    <div class="col-md-2">
+                    <div class="col-md-4">
                         <img id="armynosearchAllpic" class="armynosearchAllpic">
                     </div>
-                    <div class="col-md-10">
+                    <div class="col-md-8">
                         <input type="text" id="txtarmynosearchAll" placeholder="Eneter Army No" class="form-control " />
                         <label class="form-label mt-4" id="armynosearchAllName"></label>
                     </div>

@@ -220,14 +220,19 @@
 }
     .nav-pills .nav-link {
         background-color: #2355e3;
-        color: #ffff
+        color: #ffff;
+        font-size: 24px;
+    }
+    .nav-pills .nav-link {
+        border-radius: 0;
+       margin-left:1px;
     }
 .tagline {
     width: 100%;
     text-align: center;
     padding-left: 10px;
     color: royalblue;
-    font-size: 50px;
+    font-size: 40px;
     font-weight: bold;
     /* background: #070563;*/
         font-family: Colonna MT;
@@ -618,4 +623,5 @@ i.material-icons {
 }
 a {
     text-decoration: none !important;
+    
 }
