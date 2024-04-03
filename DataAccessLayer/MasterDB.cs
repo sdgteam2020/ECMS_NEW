@@ -90,49 +90,31 @@ namespace DataAccessLayer
                 return ret.ToList();
             }
         }
-        public async Task<DTODashboardFormationCountResponse> GetDashboardFormationCount()
+        public async Task<DTODashboardMasterCountResponse> GetDashboardMasterCount()
         {
-            string query = "declare @TotComd int=0 declare @TotCorps int=0 declare @TotDiv int=0 declare @TotBde int=0  declare @TotMapUnit int=0 " +
+            string query = " declare @TotComd int=0 declare @TotCorps int=0 declare @TotDiv int=0 declare @TotBde int=0  declare @TotMapUnit int=0 " +
+                            " declare @TotUnit int=0 declare @TotRank int=0 declare @TotAppointment int=0 declare @TotArms int=0  declare @TotRegtCentre int=0 " +
+                            " declare @TotDomainRegn int=0 declare @TotUserProfile int=0 " +
                             " select @TotComd=COUNT(ComdId) from MComd " +
                             " select @TotCorps=COUNT(CorpsId) from MCorps " +
                             " select @TotDiv=COUNT(DivId) from MDiv " +
                             " select @TotBde=COUNT(BdeId) from MBde " +
-                            " select @TotMapUnit=COUNT(UnitMapId) from MapUnit "+
-                            " select @TotComd TotComd,@TotCorps TotCorps,@TotDiv TotDiv,@TotBde TotBde,@TotMapUnit TotMapUnit ";
-
-            using (var connection = _contextDP.CreateConnection())
-            {
-                var ret = await connection.QueryAsync<DTODashboardFormationCountResponse>(query);
-                return ret.FirstOrDefault();
-            }
-        }
-        public async Task<DTODashboardMasterCountResponse> GetDashboardMasterCount()
-        {
-            string query = "declare @TotUnit int=0 declare @TotRank int=0 declare @TotAppointment int=0 declare @TotArms int=0  declare @TotRegtCentre int=0 " +
+                            " select @TotMapUnit=COUNT(UnitMapId) from MapUnit " +
                             " select @TotUnit=COUNT(UnitId) from MUnit " +
                             " select @TotRank=COUNT(RankId) from MRank " +
                             " select @TotAppointment=COUNT(ApptId) from MAppointment " +
                             " select @TotArms=COUNT(ArmedId) from MArmedType " +
                             " select @TotRegtCentre=COUNT(RegId) from MRegimental " +
-                            " select @TotUnit TotUnit,@TotRank TotRank,@TotAppointment TotAppointment,@TotArms TotArms,@TotRegtCentre TotRegtCentre ";
+
+                            " select @TotDomainRegn=COUNT(u.Id) from AspNetUsers u " +
+                            " inner join TrnDomainMapping trn on u.Id = trn.AspNetUsersId  " +
+                            " select @TotUserProfile=COUNT(UserId) from UserProfile " +
+
+                            " select @TotComd TotComd,@TotCorps TotCorps,@TotDiv TotDiv,@TotBde TotBde,@TotMapUnit TotMapUnit,@TotUnit TotUnit,@TotRank TotRank,@TotAppointment TotAppointment,@TotArms TotArms,@TotRegtCentre TotRegtCentre,@TotDomainRegn TotDomainRegn,@TotUserProfile TotUserProfile ";
 
             using (var connection = _contextDP.CreateConnection())
             {
                 var ret = await connection.QueryAsync<DTODashboardMasterCountResponse>(query);
-                return ret.FirstOrDefault();
-            }
-        }
-        public async Task<DTODashboardUserConfigCountResponse> GetDashboardUserConfigCount()
-        {
-            string query = "declare @TotDomainRegn int=0 declare @TotUserProfile int=0 " +
-                            " select @TotDomainRegn=COUNT(u.Id) from AspNetUsers u " +
-                            " inner join TrnDomainMapping trn on u.Id = trn.AspNetUsersId  " +
-                            " select @TotUserProfile=COUNT(UserId) from UserProfile " +
-                            " select @TotDomainRegn TotDomainRegn,@TotUserProfile TotUserProfile ";
-
-            using (var connection = _contextDP.CreateConnection())
-            {
-                var ret = await connection.QueryAsync<DTODashboardUserConfigCountResponse>(query);
                 return ret.FirstOrDefault();
             }
         }
