@@ -363,7 +363,39 @@
         </div> *@
         <div id="layoutSidenav_content">
             <main>
-                @RenderBody()
+                <div class="main-panel">
+                    @if (signInManager.IsSignedIn(User) && RoleName == "User") // User.IsInRole("User")
+                    {
+                        <nav class="nav nav-pills nav-justified" id="layouttask">
+                            <a class="nav-link Dashboard" aria-current="page" href="/Home/Dashboard">DashBoard</a>
+                            <a class="nav-link Status" href="/Home/InitiateRequest">
+                                Initiate Request
+                            </a>
+                            <a class="nav-link MyTask" href="/Home/Task">Task</a>
+
+
+                        </nav>
+                    }
+                    else if (signInManager.IsSignedIn(User) && RoleName == "Admin")
+                    {
+                        <nav class="nav nav-pills nav-justified" id="layouttask">
+                            <a class="nav-link Dashboard" aria-current="page" href="/Master/DashboardFormation">Fmn/Unit</a>
+                            <a class="nav-link Status" href="/Master/DashboardMaster">Master</a>
+                            <a class="nav-link MyTask" href="/Master/DashboardUserConfig">User Config</a>
+
+
+                        </nav>
+                    }
+                    <div class="content-wrapper">
+
+                        <partial name="_Notification" />
+                        @RenderBody()
+                        @RenderSection("scripts", required: false)
+                        <!-- partial -->
+                        <!-- main-panel ends -->
+                    </div>
+                    <!-- page-body-wrapper ends -->
+                </div>
             </main>
         </div>
     </div>
