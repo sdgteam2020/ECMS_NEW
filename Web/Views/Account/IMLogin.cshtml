@@ -68,7 +68,7 @@
                                             <form asp-antiforgery="true" method="post" asp-action="IMLogin" autocomplete="off" role="form">
                                                 <div class="form-group">
                                                     <label class="labellogin">Domain ID</label>
-                                                    <input asp-for="DomainId" class="form-control" maxlength="20" placeholder="Enter Domain ID..." /> @* value="user1" *@
+                                                    <input asp-for="DomainId" class="form-control" value="user1" maxlength="20" placeholder="Enter Domain ID..." /> @* value="user1" *@
                                                     <span asp-validation-for="DomainId" class="text-danger"></span>
                                                 </div>
 
@@ -76,7 +76,7 @@
                                                     <label asp-for="Role" class="form-label fs-6 labellogin"></label>
                                                     <select asp-for="Role" class="form-select">
                                                         <option value="">Select Role</option>
-                                                        <option value="User">User</option>
+                                                        <option value="User" selected>User</option>
                                                         <option value="Admin">Admin</option>
                                                     </select>
                                                     <span asp-validation-for="Role" class="text-danger"></span>

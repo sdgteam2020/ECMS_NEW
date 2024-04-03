@@ -20,12 +20,12 @@
     <link href="~/css/DashBoard.css" rel="stylesheet" />
     <link href="~/sweetalert2/sweetalert2.min.css" rel="stylesheet" />
     <link href="~/css/bootstrap-datetimepicker.min.css" rel="stylesheet" />
-    <link href="~/datatables/dataTables.bootstrap4.min.css" rel="stylesheet" />
+   @*  <link href="~/datatables/dataTables.bootstrap4.min.css" rel="stylesheet" />
     <link href="~/datatables/responsive.bootstrap4.min.css" rel="stylesheet" />
     <link href="~/datatables/responsive.dataTables.min.css" rel="stylesheet" />
     <link href="~/datatables/buttons.bootstrap4.min.css" rel="stylesheet" />
     <link href="~/datatables/fixedHeader.dataTables.min.css" rel="stylesheet" />
-    <link href="~/datatables/jquery.dataTables.min.css" rel="stylesheet" />
+    <link href="~/datatables/jquery.dataTables.min.css" rel="stylesheet" /> *@
     <link href="~/css/style.css" rel="stylesheet" />
     <link href="~/css/extra.css" rel="stylesheet" />
     <link href="~/css/background.css" rel="stylesheet" />
@@ -34,13 +34,13 @@
     <link href="~/css/cssStyle.css" rel="stylesheet" />
 
 
-    <link href="~/css/horizontaltimeline.css" rel="stylesheet" />
+   @*  <link href="~/css/horizontaltimeline.css" rel="stylesheet" /> *@
     @*
     <script asp-src-include="~/fonts/feather/feather.min.js"></script>
     <script asp-src-include="~/fonts/allfont/webfont.min.js"></script> *@
     <script asp-src-include="~/lib/jquery/jquery.js"></script>
-    <script asp-src-include="~/lib/jquery-validate/jquery.validate.js" defer></script>
-    <script asp-src-include="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js" defer></script>
+@*     <script asp-src-include="~/lib/jquery-validate/jquery.validate.js" defer></script>
+    <script asp-src-include="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js" defer></script> *@
 
 
     <link href="~/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
@@ -80,8 +80,14 @@
         var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
         var user = await userManager.FindByIdAsync(userId);
 
+        var RoleList = await userManager.GetRolesAsync(user);
+        DtoSession? dtoSession = new DtoSession();
+        if (!string.IsNullOrEmpty(@HttpContextAccessor.HttpContext.Session.GetString("Token")))
+        {
+            dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContextAccessor.HttpContext.Session, "Token");
 
-
+        }
+        var RoleName = dtoSession != null ? dtoSession.RoleName : "User";
     }
     <div class="d-none" id="postingouthtml"></div>
     <div class="d-none" id="content-container"></div>
@@ -119,7 +125,7 @@
             </li>-->
 
             <li class="nav-item dropdown no-caret mr-2 dropdown-user">
-                <a class="dropdown-toggle" id="navbarDropdownUserImage" href="javascript:void(0);" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span id="ProfileName" class="font-weight-500 mr-2 text-black">Username</span><span class="btn btn-icon btn-transparent-dark"><img src="/Images/user.png" /></span></a>
+                <a class="dropdown-toggle" id="navbarDropdownUserImage" href="javascript:void(0);" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span id="ProfileName" class="font-weight-500 mr-2 text-black ProfileName">Username</span><span class="btn btn-icon btn-transparent-dark"><img src="/Images/user.png" /></span></a>
                 <div class="dropdown-menu dropdown-menu-right border-0 pb-0 shadow animated--fade-in-up" aria-labelledby="navbarDropdownUserImage">
 
                     <h6 class="dropdown-header d-flex align-items-center">
@@ -129,7 +135,27 @@
                                 @user.UserName
                             </div>
                     </h6>
+                    <a class="dropdown-item" href="/UserProfile/Profile">
+                        <i class="ti-settings text-primary"></i>
+                        Edit Profile
+                        <span class="d-none" id="aspndomainUnitID"></span>
+                    </a>
 
+                    @foreach (var item in RoleList)
+                    {
+                        @if (RoleName == item)
+                        {
+                            <form method="post" asp-controller="Account" asp-action="SwitchRole" asp-route-Id="@item">
+                                <button type="submit" class="dropdown-item disabled" style="opacity: 0.6;cursor: not-allowed;color:blue;"><i class="ti-settings text-primary"></i><span class="fw-bold">@(user.UserName + " (" + item + ")")</span></button>
+                            </form>
+                        }
+                        else
+                        {
+                            <form method="post" asp-controller="Account" asp-action="SwitchRole" asp-route-Id="@item">
+                                <button type="submit" class="dropdown-item"><i class="ti-settings text-primary"></i><span>@(user.UserName + " (" + item + ")")</span></button>
+                            </form>
+                        }
+                    }
                     <div class="dropdown-divider"></div>
                     @*  <a class="dropdown-item" href="#" id="btnChangePassword">
                     <div class="dropdown-item-icon"><i class="fa fa-key" aria-hidden="true"></i></div>
@@ -192,19 +218,19 @@
     </script>
 
 
-    <script asp-src-include="~/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script asp-src-include="~/js/moment.js"></script>
-
     <script asp-src-include="~/lib/jqueryui/jquery-ui.min.js"></script>
+     <script src="~/js/bootstrap.bundle.min.js"></script>
+    <script asp-src-include="~/bootstrap/js/bootstrap.bundle.min.js"></script>
 
-    @*<script asp-src-include="~/fonts/feather/feather.min.js"></script>*@
+    <script src="~/js/scripts.js"></script>
+
+
     <script asp-src-include="~/sweetalert2/sweetalert2.min.js"></script>
-    <script asp-src-include="~/toastr/toastr.min.js"></script>
+  @*    <script asp-src-include="~/toastr/toastr.min.js"></script> *@
     <script asp-src-include="~/js/moment.min.js"></script>
     <script asp-src-include="~/js/bootstrap-datetimepicker.min.js"></script>
-
-    <script asp-src-include="~/developerjs/layout.js"></script>
-    <script asp-src-include="~/developerjs/keyconstants.js"></script>
+    <script asp-src-include="~/toastr/toastr.min.js"></script>
+    <script asp-src-include="~/developerjs/layout.js"></script> 
     <script asp-src-include="~/developerjs/commanvalidation.js"></script>
 
 

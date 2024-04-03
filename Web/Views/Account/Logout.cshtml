@@ -2,113 +2,73 @@
     Layout = null;
 }
 <!DOCTYPE html>
+@{
+    ViewData["Title"] = "Final Logout";
+    Layout = null;
+}
 
-<html>
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="">
-    <meta name="author" content="">
-    <link rel="icon" type="image/x-icon" href="/images/DOST.png">
-    <title> E-IASAC </title>
-    <link href="/Fonts/css/all.min.css" rel="stylesheet" type="text/css">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+    <title>IAM Logout</title>
+    <style type="text/css">
 
-    <link href="~/css/style.css" rel="stylesheet" />
-    <link href="~/css/nunito.css" rel="stylesheet" />
-    <link href="~/css/roboto.css" rel="stylesheet" />
-    <link href="~/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+        .headerText {
+            font-size: 30px;
+            font-weight: bold;
+            color: white;
+        }
 
-    <link href="~/css/login.css" rel="stylesheet" />
+        .header_customTxt-wrapper {
+            position: absolute;
+            display: inline-block;
+            top: 22%;
+            left: 52%;
+        }
 
-    <link href="~/sweetalert2/sweetalert2.min.css" rel="stylesheet" />
-    <link href="~/css/feed.css" rel="stylesheet" />
+            .header_customTxt-wrapper a {
+                color: #fff;
+                font-weight: bold;
+                font-size: 24px;
+            }
 
-    <link href="~/css/normalize.min.css" rel="stylesheet" />
-    <link href="~/css/swiper.min.css" rel="stylesheet" />
-    <link href="~/css/feed.css" rel="stylesheet" />
-    <link href="~/css/main.css" rel="stylesheet" />
-    <link href="~/css/sliders/style.css" rel="stylesheet" />
-    <style>
-        .swal2-confirm, .swal2-styled {
-            background: #D97924 !important;
+        .quick-area {
+            display: inline-block;
+            width: 80%;
+        }
+
+        header {
+            position: fixed;
+            top: 40%;
+            left: 0;
+            width: 100%;
+            padding-top: 10px;
+            background: right 0 #3367d6;
+            height: 65px;
+            box-shadow: 1px 3px 1px rgba(0, 0, 0, 0.2);
+            display: block;
+            z-index: 999;
+            box-sizing: border-box;
+        }
+
+        .headerText {
+            font-size: 30px;
+            font-weight: bold;
+            color: white;
         }
     </style>
 </head>
-
 <body>
-    @* <div id="loading" class="loader">
-    <div class="loader-container">
-    <img src="/Images/load.gif" width="100">
-    <div>
-    <h4 style="margin-top: -20px;">Loading...</h4>
-    <span>Please wait. This may take few seconds.</span>
-    </div>
-    </div>
-    </div>*@
-    <div class="page">
-        <div class="container-fluid">
-            <div class="row">
-               
-                        <h2 class="ml-sm-3 mt-15 text-center" > Logout Suceesfuly </h2>
-                <a class="btn btn-primary ml-sm-3 mt-15 text-center" href="/Account/IMLogin"> Login</a>
-                    </div>
+    <form id="form1" runat="server">
 
-                </div>
+        <header>
+            <center>
 
-              
-            </div>
-      
+                <a class="headerText" id="headerCustText">You are successfully logged out of the application</a>
+            </center>
 
-
-    <script asp-src-include="~/lib/jquery/dist/jquery.min.js"></script>
-
-    <script asp-src-include="~/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script asp-src-include="~/fonts/feather/feather.min.js"></script>
-    <script asp-src-include="~/sweetalert2/sweetalert2.min.js"></script>
-
-    <script asp-src-include="~/js/swiper.min.js"></script>
-
-    <script asp-src-include="~/js/script.js"></script>
-   
-    <script>
-        $(document).ready(function () {
-
-
-            $('.registration-form .form-group .form-control').focus(function () {
-                $(this).closest('.form-group').addClass("focused");
-            });
-
-            $('.registration-form .form-group .form-control').focusout(function () {
-                var text_value = $(this).val();
-                if (text_value == "" || text_value == null) {
-                    $(this).closest('.form-group').removeClass("focused");
-                } else {
-                    // alert(multiSelectText);
-                    $(this).closest('.form-group').addClass("focused");
-                }
-            });
-        });
-    </script>
-    <script>
-        $(document).ready(function () {
-
-
-            //$("#loading").hide();
-            //$(document).ajaxStart(function () {
-            //    $("#loading").show();
-            //}).ajaxStop(function () {
-            //    $("#loading").hide();
-            //});
-
-
-
-
-        });
-    </script>
-    <script>
-        feather.replace();
-    </script>
+        </header>
+        <div class="quick-area">
+        </div>
+    </form>
 </body>
 </html>
-

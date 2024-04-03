@@ -390,7 +390,7 @@
 
                         <partial name="_Notification" />
                         @RenderBody()
-                        @RenderSection("scripts", required: false)
+                       
                         <!-- partial -->
                         <!-- main-panel ends -->
                     </div>
@@ -466,10 +466,10 @@
     <script asp-src-include="~/lib/jqueryui/jquery-ui.min.js"></script>
     <script src="~/js/bootstrap.bundle.min.js"></script>
     <script asp-src-include="~/bootstrap/js/bootstrap.bundle.min.js"></script>
-    @* <a href="~/js/bootstrap.bundle.min.js.map">~/js/bootstrap.bundle.min.js.map</a> *@
 
     <script src="~/js/scripts.js"></script>
     <script asp-src-include="~/select2/js/select2.min.js"></script>
+
     <script asp-src-include="~/js/datatables/jquery.datatables.min.js"></script>
     <script asp-src-include="~/js/datatables/dataTables.responsive.min.js"></script>
     <script asp-src-include="~/js/datatables/responsive.dataTables.min.js"></script>
@@ -477,9 +477,9 @@
     <script asp-src-include="~/js/datatables/responsive.bootstrap4.min.js"></script>
     <script asp-src-include="~/js/datatables/dataTables.buttons.min.js"></script>
     <script asp-src-include="~/js/datatables/buttons.bootstrap4.min.js"></script>
-   @*  <script asp-src-include="~/js/datatables/jszip.min.js"></script>
+    <script asp-src-include="~/js/datatables/jszip.min.js"></script>
     <script asp-src-include="~/js/datatables/pdfmake.min.js"></script>
-    <script asp-src-include="~/js/datatables/vfs_fonts.js"></script> *@
+    <script asp-src-include="~/js/datatables/vfs_fonts.js"></script>
     <script asp-src-include="~/js/datatables/buttons.html5.min.js"></script>
     <script asp-src-include="~/js/datatables/buttons.print.min.js"></script>
     <script asp-src-include="~/js/datatables/datatables-call.js"></script>
@@ -495,24 +495,7 @@
     <script asp-src-include="~/developerjs/keyconstants.js"></script>
     <script asp-src-include="~/developerjs/commanvalidation.js"></script>
     @RenderSection("Scripts", false)
-    @*  <script asp-src-include="~/developerjs/layout.js"></script>
-    <script asp-src-include="~/developerjs/MedCate.js"></script> *@
-    @*<script asp-src-include="/DeveloperJs/Master.js"></script>*@
-    @*     <script asp-src-include="~/developerjs/master.js"></script>
-    *@
-    @*
-    <section class="page_copyright ls section_padding_25">
-    <div class="container">
-    <div class="row">
-    <div class="col-sm-12 text-center darklinks">
-    <h5 class="font-weight-600">
-    &copy; 2023 HRMS
-    (DGIS).
-    </h5>
-    </div>
-    </div>
-    </div>
-    </section>*@
+   
 
 </body>
 </html>
