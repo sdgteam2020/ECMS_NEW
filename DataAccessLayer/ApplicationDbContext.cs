@@ -61,6 +61,7 @@ namespace DataAccessLayer
         public DbSet<MUserProfile> UserProfile { get; set; } = null!;
         public DbSet<MMappingProfile> MMappingProfile { get; set; } = null!;
         public DbSet<MRegimental> MRegimental { get; set; } = null!;
+        public DbSet<MRecordOffice> MRecordOffice { get; set; } = null!;    
         public DbSet<MApiData> MApiData { get; set; }
         public  DbSet<MApiDataOffrs> MApiDataOffrs {  get; set; } = null!;    
         public DbSet<TrnDomainMapping> TrnDomainMapping { get; set; }
@@ -77,6 +78,8 @@ namespace DataAccessLayer
         public DbSet<MRemarks> MRemarks { get; set; } = null!;
         public DbSet<MPostingReason> MPostingReason { get; set; } = null!;
         public DbSet<TrnPostingOut> TrnPostingOut { get; set; } = null!;
+
+
 
 
 

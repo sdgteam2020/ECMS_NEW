@@ -6,7 +6,29 @@
 }
 <script src="https://cdn.rawgit.com/eKoopmans/html2pdf/0.9.2/dist/html2pdf.bundle.js"></script>
 
-<div class="container1">
+<header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
+    <div class="containerMain">
+        <div class="page-header-content pt-4">
+            <div class="row align-items-center justify-content-between">
+                <div class="col-auto">
+                    <h1 class="page-header-title">
+                        <div class="page-header-icon"> <i class="fa fa-bars"></i></div>
+                        @if (ViewBag.Type == 1)
+                        {
+                            <div><a href="/Home/Index" class="mr-2">Home</a> > <a href="/Home/Dashboard" class="mr-2">Dashboard</a>  > <a href="/Home/SubDashboard" class="mr-2">I-Card Request</a>  >  <a href="/Home/RequestDashboard/UG9zdGluZ091dA==" class="mr-2">PostingOut</a> >Posting Out Offrs</div>
+                        }
+                        else if (ViewBag.Type == 2)
+                        {
+                            <div><a href="/Home/Index" class="mr-2">Home</a> > <a href="/Home/Dashboard" class="mr-2">Dashboard</a>  > <a href="/Home/SubDashboard" class="mr-2">I-Card Request</a>  >  <a href="/Home/RequestDashboard/UG9zdGluZ091dA==" class="mr-2">PostingOut</a> >Posting Out JCO's/OR</div>
+                        }
+                    </h1>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</header>
+<div class="containerMain mt-n10">
     <div class="card mb-3 ">
         <div class="card-header">
 
