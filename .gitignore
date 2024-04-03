@@ -293,5 +293,6 @@ AppPackages/
 /TestConsoleReso/obj/Release/net7.0/TestConsoleReso.GeneratedMSBuildEditorConfig.editorconfig
 /Web/wwwroot/WriteReadData/Photo/2024/April/02/15690012A.jpg
 /Web/wwwroot/WriteReadData/Photo/2024/April/02/IC00201L.jpg
-/Web/wwwroot/WriteReadData/Signature/2024/April/02/15690012A.jpg
 /Web/wwwroot/WriteReadData/Signature/2024/April/02/IC00201L.jpg
+/Web/wwwroot/WriteReadData/Signature/2024/April/02/15690012A.jpg
+/.gitignore
