@@ -9,6 +9,7 @@ using BusinessLogicsLayer.Div;
 using BusinessLogicsLayer.Formation;
 using BusinessLogicsLayer.Helpers;
 using BusinessLogicsLayer.Master;
+using BusinessLogicsLayer.RecordOffice;
 using BusinessLogicsLayer.Unit;
 using BusinessLogicsLayer.User;
 using DataAccessLayer;
@@ -28,7 +29,7 @@ namespace BusinessLogicsLayer
     {
 
 
-        public UnitOfWork(IUserBL _user, IComd _comds, ICorpsBL _corpsBL, IBdeBL _bdeCat, IDivBL divBL, IUnitBL unit, IMapUnitBL MapUnitBL, IFormationBL FormationBL, IApptBL apptBL, IArmedBL armedBL, IRankBL rankBL, IRegimentalBL regimentalBL,IArmedCatBL armedCatBL,IMasterBL masterBL)
+        public UnitOfWork(IUserBL _user, IComd _comds, ICorpsBL _corpsBL, IBdeBL _bdeCat, IDivBL divBL, IUnitBL unit, IMapUnitBL MapUnitBL, IFormationBL FormationBL, IApptBL apptBL, IArmedBL armedBL, IRankBL rankBL, IRegimentalBL regimentalBL,IRecordOfficeBL recordOfficeBL,IArmedCatBL armedCatBL,IMasterBL masterBL)
         {
             Users = _user;
             Comds = _comds;
@@ -42,6 +43,7 @@ namespace BusinessLogicsLayer
             Unit = unit;
             Rank = rankBL;
             Regimental= regimentalBL;
+            RecordOffice = recordOfficeBL;
             ArmedCat = armedCatBL;
             MasterBL = masterBL;
         }
@@ -59,6 +61,7 @@ namespace BusinessLogicsLayer
         public IArmedBL Armed { get; }
         public IRankBL Rank { get; }
         public IRegimentalBL Regimental { get; }
+        public IRecordOfficeBL RecordOffice { get; }
 
         public IArmedCatBL ArmedCat { get; }
 
