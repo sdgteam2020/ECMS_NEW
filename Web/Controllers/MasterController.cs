@@ -1476,6 +1476,86 @@ namespace Web.Controllers
 
         #endregion ArmedType
 
+        #region Record Office
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> RecordOffice()
+        {
+            return View();
+        }
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> SaveRecordOffice(MRecordOffice dTO)
+        {
+            try
+            {
+                dTO.IsActive = true;
+                dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                dTO.UpdatedOn = DateTime.Now;
+                dTO.Name = dTO.Name.Trim();
+                dTO.Abbreviation = dTO.Abbreviation.Trim();
+                dTO.ArmedId = dTO.ArmedId;
+
+                if (ModelState.IsValid)
+                {
+                    //if (!await unitOfWork.RecordOffice.GetByName(dTO))
+                    //{
+                        if (dTO.RecordOfficeId > 0)
+                        {
+                            await unitOfWork.RecordOffice.Update(dTO);
+                            return Json(KeyConstants.Update);
+                        }
+                        else
+                        {
+                            await unitOfWork.RecordOffice.Add(dTO);
+                            return Json(KeyConstants.Save);
+                        }
+                //}
+                //else
+                //{
+                //    return Json(KeyConstants.Exists);
+                //}
+            }
+                else
+                {
+                    return Json(ModelState.Select(x => x.Value.Errors).Where(y => y.Count > 0).ToList());
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "Master->SaveRecordOffice");
+                return Json(KeyConstants.InternalServerError);
+            }
+
+        }
+        [Authorize(Roles = "Admin,User")]
+        public async Task<IActionResult> GetAllRecordOffice(int[] Id)
+        {
+            try
+            {
+                return Json(await unitOfWork.RecordOffice.GetAllData());
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "Master->GetAllRecordOffice");
+                return Json(KeyConstants.InternalServerError);
+            }
+
+        }
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> DeleteRecordOffice(MRecordOffice dTO)
+        {
+            try
+            {
+                await unitOfWork.RecordOffice.Delete(dTO);
+                return Json(KeyConstants.Success);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "Master->DeleteRecordOffice");
+                return Json(KeyConstants.InternalServerError);
+            }
+        }
+        #endregion
+
         #region Master Table 
         [AllowAnonymous]
         public async Task<IActionResult> GetAllMMaster(DTOMasterRequest Data)

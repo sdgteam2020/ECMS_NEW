@@ -8,6 +8,7 @@ using BusinessLogicsLayer.Corps;
 using BusinessLogicsLayer.Div;
 using BusinessLogicsLayer.Formation;
 using BusinessLogicsLayer.Master;
+using BusinessLogicsLayer.RecordOffice;
 using BusinessLogicsLayer.Unit;
 using BusinessLogicsLayer.User;
 using DataTransferObject.Requests;
@@ -34,6 +35,7 @@ namespace BusinessLogicsLayer
         IRankBL Rank { get; }   
         IUnitBL Unit { get; }
         IRegimentalBL Regimental { get; }
+        IRecordOfficeBL RecordOffice { get; }
         IArmedCatBL ArmedCat { get; }
         IMasterBL MasterBL { get; }
 
