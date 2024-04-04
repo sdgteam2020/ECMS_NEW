@@ -15,6 +15,7 @@ using BusinessLogicsLayer.Formation;
 using BusinessLogicsLayer.Home;
 using BusinessLogicsLayer.Master;
 using BusinessLogicsLayer.Posting;
+using BusinessLogicsLayer.RecordOffice;
 using BusinessLogicsLayer.Registration;
 using BusinessLogicsLayer.Token;
 using BusinessLogicsLayer.TrnLoginLog;
@@ -67,6 +68,9 @@ namespace BusinessLogicsLayer
 
             services.AddTransient<IRegimentalBL, RegimentalBL>();
             services.AddTransient<IRegimentalDB, RegimentalDB>();
+
+            services.AddTransient<IRecordOfficeBL, RecordOfficeBL>();
+            services.AddTransient<IRecordOfficeDB, RecordOfficeDB>();
 
             services.AddTransient<IRankBL, RankBL>();
             services.AddTransient<IRankDB, RankDB>();
