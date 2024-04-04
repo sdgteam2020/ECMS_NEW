@@ -219,9 +219,10 @@
     background-color: #F5F7FF;
 }
     .nav-pills .nav-link {
-        background-color: #2355e3;
+        background-color: rgba(22,125,207,1);
         color: #ffff;
         font-size: 24px;
+        margin-bottom: 1px;
     }
     .nav-pills .nav-link {
         border-radius: 0;

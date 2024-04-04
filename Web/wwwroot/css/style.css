@@ -16899,7 +16899,7 @@ body {
         justify-content: space-between;
         min-width: 0;
         flex-grow: 1;
-        min-height: calc(100vh - 3.625rem);
+        min-height: calc(98vh - 3.625rem);
         margin-left: -17rem;
     }
 
@@ -17227,8 +17227,9 @@ body {
     /*background-color: #0061f2;*/
     /*background-image: linear-gradient(135deg, #0061f2 0%, rgba(105, 0, 199, 0.8) 100%);*/
     /*background-image: url('../images/allpageheader.jpg');*/
-    background-color: #000e5a;
-    background-blend-mode: color-burn;
+   /* background-color: #000e5a;
+    background-blend-mode: color-burn;*/
+    background: linear-gradient(90deg, rgba(0,211,255,1) 0%, rgba(12,141,242,1) 66%, rgba(22,125,207,1) 99%);
 }
 
 .bg-gray-100 {
