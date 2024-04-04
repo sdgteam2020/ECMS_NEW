@@ -6,11 +6,16 @@ using DataTransferObject.Domain.Master;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
 using DataTransferObject.Response.User;
+using EntityFramework.Exceptions.Common;
 using Humanizer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using System.Collections;
+using System.Data.Common;
 using System.Security.Claims;
 using System.Text;
 
@@ -1508,16 +1513,26 @@ namespace Web.Controllers
                             await unitOfWork.RecordOffice.Add(dTO);
                             return Json(KeyConstants.Save);
                         }
-                //}
-                //else
-                //{
-                //    return Json(KeyConstants.Exists);
-                //}
-            }
+                    //}
+                    //else
+                    //{
+                    //    return Json(KeyConstants.Exists);
+                    //}
+                }
                 else
                 {
                     return Json(ModelState.Select(x => x.Value.Errors).Where(y => y.Count > 0).ToList());
                 }
+            }
+            //catch (DbUpdateException ex) when (ex.InnerException?.InnerException is SqlException sqlEx && (sqlEx.Number == 2601 || sqlEx.Number == 2627))
+            //{
+            //    _logger.LogError(1001, ex, "Master->SaveRecordOffice");
+            //    return Json(KeyConstants.Exists);
+            //}
+            catch (UniqueConstraintException ex)
+            {
+                _logger.LogError(1001, ex, "Master->SaveRecordOffice");
+                return Json(KeyConstants.Exists);
             }
             catch (Exception ex)
             {

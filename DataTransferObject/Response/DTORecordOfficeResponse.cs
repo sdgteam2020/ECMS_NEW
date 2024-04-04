@@ -11,7 +11,7 @@ namespace DataTransferObject.Response
         public byte RecordOfficeId { get; set; }
         public string Name { get; set; } = string.Empty;
         public string Abbreviation { get; set; } = string.Empty;
-        public int ArmedId { get; set; }
+        public byte ArmedId { get; set; }
         public string ArmedName { get; set; } = string.Empty;
     }
 }
