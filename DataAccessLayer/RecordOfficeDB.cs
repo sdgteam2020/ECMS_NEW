@@ -13,7 +13,7 @@ namespace DataAccessLayer
 {
     public class RecordOfficeDB : GenericRepositoryDL<MRecordOffice>, IRecordOfficeDB
     {
-        protected readonly ApplicationDbContext _context;
+        protected new readonly ApplicationDbContext _context;
         public RecordOfficeDB(ApplicationDbContext context) : base(context)
         {
             _context = context;
