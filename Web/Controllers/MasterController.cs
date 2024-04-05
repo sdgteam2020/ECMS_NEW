@@ -1497,7 +1497,6 @@ namespace Web.Controllers
                 dTO.UpdatedOn = DateTime.Now;
                 dTO.Name = dTO.Name.Trim();
                 dTO.Abbreviation = dTO.Abbreviation.Trim();
-                dTO.ArmedId = dTO.ArmedId;
 
                 if (ModelState.IsValid)
                 {
@@ -1529,11 +1528,11 @@ namespace Web.Controllers
             //    _logger.LogError(1001, ex, "Master->SaveRecordOffice");
             //    return Json(KeyConstants.Exists);
             //}
-            catch (UniqueConstraintException ex)
-            {
-                _logger.LogError(1001, ex, "Master->SaveRecordOffice");
-                return Json(KeyConstants.Exists);
-            }
+            //catch (UniqueConstraintException ex)
+            //{
+            //    _logger.LogError(1001, ex, "Master->SaveRecordOffice");
+            //    return Json(KeyConstants.Exists);
+            //}
             catch (Exception ex)
             {
                 _logger.LogError(1001, ex, "Master->SaveRecordOffice");
