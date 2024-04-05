@@ -80,6 +80,7 @@
             color: white;
             margin-top:20px;
         }
+          
     </style>
     <style>
         .select2-hidden-accessible {
@@ -383,8 +384,6 @@
                                 Initiate Request
                             </a>
                             <a class="nav-link MyTask" href="/Home/Task">Task</a>
-
-
                         </nav>
                     }
                     <div class="content-wrapper">
@@ -506,22 +505,22 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Forward Record</h5>
+                <h5 class="modal-title" id="exampleModalLabel">Forward Appl for  <label class="gsoiotitle"></label></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <div class="card" id="multiplefed">
                     <div class="mt-2 ml-4">
-                        <h5 class="card-title">Forward Request</h5>
+                        <h5 class="card-title fw-bold">Details of Applicant</h5>
                         <div class="row ">
                             <div class="form-group row mb-2">
-                                <label class="col-form-label col-sm-4">Army No</label>
+                                <label class="col-form-label col-sm-4 fw-bold">Army No</label>
                                 <div class="col-sm-8">
                                     <label class="form-control spnFarmyno"></label>
                                 </div>
                             </div>
                             <div class="form-group row mb-2">
-                                <label class="col-form-label col-sm-4">Name</label>
+                                <label class="col-form-label col-sm-4 fw-bold">Name</label>
                                 <div class="col-sm-8">
                                     <label class="form-control spnFname"></label>
                                 </div>
@@ -531,7 +530,7 @@
                 </div>
                 <div class="card mt-2">
                     <div class="mt-2 ml-4">
-                        <h5 class="card-title">Forward To <label class="gsoio"></label></h5>
+                        <h5 class="card-title fw-bold">Forward To <label class="gsoio"></label></h5>
                         <span id="spnFwdToAspNetUsersId" class="d-none">0</span>
                         <span id="spnFwdToUsersId" class="d-none">0</span>
                         @*  <span id="spnFwssusno" class="d-none">0</span>
@@ -542,11 +541,11 @@
                         <h5 class="card-title text-danger" id="ForwardDetails"></h5>
                         <div class="row HProfileDetails">
                             <div class="form-group row mb-2">
-                                <label class="col-form-label col-sm-4">Select Offr’s</label>
+                                <label class="col-form-label col-sm-4 fw-bold">Select Offr</label>
                                 <div class="col-sm-8">
                                     <select class="form-control select3 select2-hidden-accessible" style="width: 100%;" tabindex="-1"
                                             aria-hidden="true" name="fwdoffrs" required id="ddlfwdoffrs">
-                                        <option value="0">Select Offr’s</option>
+                                        <option value="0">Select Offr</option>
                                     </select>
                                 </div>
                             </div>
@@ -561,7 +560,7 @@
                                     <div class="form-check form-check-inline d-none">
                                         <input class="form-check-input" type="radio" name="Intoffrs" id="intoffName">
                                         <label class="form-check-label" for="intoffName">
-                                            Offr’s Name
+                                            Offr Name
                                         </label>
                                     </div>
                                     <div class="form-check form-check-inline ">
@@ -573,38 +572,38 @@
                                 </div>
                             </div>
                             <div class="form-group row mb-2 serchfwd d-none">
-                                <label class="col-form-label col-sm-4">Army No/Offr’s Name/DomainId</label>
+                                <label class="col-form-label col-sm-4 fw-bold">Army No/Offr Name/DomainId</label>
                                 <div class="col-sm-8">
                                     <input class="form-control Alphanumeric" placeholder="Enter Army No/Offrs Name/DomainId" id="txtFwdName" required pattern="^[a-zA-Z0-9 ]*$" title="Only Alphabets and Numbers allowed" />
                                 </div>
                             </div>
                             <div class="form-group row mb-2">
-                                <label class="col-form-label col-sm-4">Service No</label>
+                                <label class="col-form-label col-sm-4 fw-bold">Army No</label>
                                 <div class="col-sm-8">
                                     <label class="form-control spnFArmyNo"></label>
                                 </div>
                             </div>
                             <div class="form-group row mb-2">
-                                <label class="col-form-label col-sm-4"> Offr’s Name</label>
+                                <label class="col-form-label col-sm-4 fw-bold"> Rk & Offr Name</label>
                                 <div class="col-sm-8">
                                     <label class="form-control spnFtoname"></label>
                                 </div>
                             </div>
                             <div class="form-group row mb-2">
-                                <label class="col-form-label col-sm-4">Domain ID</label>
+                                <label class="col-form-label col-sm-4 fw-bold">Domain ID</label>
                                 <div class="col-sm-8">
                                     <label class="form-control spnFDomainName"></label>
                                 </div>
                             </div>
                             <div class="form-group row mb-2 Remarks d-none">
-                                <label class="col-form-label col-sm-4">Select Remarks</label>
+                                <label class="col-form-label col-sm-4 fw-bold">Select Remarks</label>
                                 <div class="col-sm-8">
                                     <select class="form-control select3 select2-accessible" multiple="" placeholder="Please select a Remarks" style="width: 100%;" tabindex="-1" aria-hidden="true" name="Remarks" required id="ddlRemarks">
                                     </select>
                                 </div>
                             </div>
                             <div class="form-group row mb-2">
-                                <label class="col-form-label col-sm-4">Other Obsn</label>
+                                <label class="col-form-label col-sm-4 fw-bold">Other Obsn</label>
                                 <div class="col-sm-8">
                                     <textarea class="form-control" id="txtFRemarks" rows="3" maxlength="100"></textarea>
                                 </div>
@@ -625,8 +624,8 @@
                 <button type="button" class="btn btn-danger" id="btntokenTofwd">
                     Refresh to Fetch Token Details
                 </button>
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Not Approved</button>
-                <button type="button" class="btn btn-primary" id="btnForward">Approved</button>
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Not Approved</button>
+                <button type="button" class="btn btn-success" id="btnForward">Approved</button>
             </div>
         </div>
     </div>
@@ -845,7 +844,7 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Serach ArmyNo</h5>
+                <h5 class="modal-title" id="exampleModalLabel">Search ArmyNo</h5>
 
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>

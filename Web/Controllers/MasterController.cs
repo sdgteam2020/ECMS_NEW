@@ -1500,8 +1500,8 @@ namespace Web.Controllers
 
                 if (ModelState.IsValid)
                 {
-                    //if (!await unitOfWork.RecordOffice.GetByName(dTO))
-                    //{
+                    if (!await unitOfWork.RecordOffice.GetByName(dTO))
+                    {
                         if (dTO.RecordOfficeId > 0)
                         {
                             await unitOfWork.RecordOffice.Update(dTO);
@@ -1512,11 +1512,11 @@ namespace Web.Controllers
                             await unitOfWork.RecordOffice.Add(dTO);
                             return Json(KeyConstants.Save);
                         }
-                    //}
-                    //else
-                    //{
-                    //    return Json(KeyConstants.Exists);
-                    //}
+                    }
+                    else
+                    {
+                        return Json(KeyConstants.Exists);
+                    }
                 }
                 else
                 {
