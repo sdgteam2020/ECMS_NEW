@@ -103,7 +103,7 @@
                         <thead>
                             <tr>
                                 <th class="noExport d-none"></th>
-                                <th class="nowrap">S No</th>
+                                <th class="wd-40-f">S No</th>
                                 <th class="nowrap">Registered ID</th>
                                 <th class="nowrap">Domain ID</th>
                                 <th class="nowrap">Role</th>
@@ -137,14 +137,14 @@
                         <div class="row">
                             <span class=" d-none" id="spnDomainRegId">0</span>
                             <div class="form-group row mb-2">
-                                <label class="col-form-label col-sm-4">Domain ID<i class="fas fa-asterisk mand1"></i></label>
+                                <label class="col-form-label col-sm-4 fw-bold">Domain ID<i class="fas fa-asterisk mand1"></i></label>
                                 <div class="col-sm-8">
                                     <input class="form-control-domainId" placeholder="Enter Domain ID" id="txtDomainId" name="txtDomainId" maxlength="20" data-val="true" data-val-regex="This special chars and space not allowed for security reasons." data-val-required="Domain Id is required." data-val-regex-pattern="^[\w]+$" />
                                     <span class="text-danger field-validation-valid" data-valmsg-for="txtDomainId" data-valmsg-replace="true"></span>
                                 </div>
                             </div>
                             <div class="form-group row mb-2">
-                                <label class="col-form-label col-sm-4">Role<i class="fas fa-asterisk mand1"></i></label>
+                                <label class="col-form-label col-sm-4 fw-bold">Role<i class="fas fa-asterisk mand1"></i></label>
                                 <div class="col-sm-8">
                                     <select class="form-control select2 select2-accessible" multiple="" placeholder="Select Role" style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddlRoles" id="ddlRoles" data-val="true" data-val-regex="This special chars and space not allowed for security reasons." data-val-required="Role is required.">
                                     </select>
@@ -152,7 +152,7 @@
                                 </div>
                             </div>
                             <div class="form-group row mb-4">
-                                <label class="col-form-label col-sm-4">Approval<i class="fas fa-asterisk mand1"></i></label>
+                                <label class="col-form-label col-sm-4 fw-bold">Approval<i class="fas fa-asterisk mand1"></i></label>
                                 <div class="col-sm-8">
                                     <div class="form-check form-check-inline">
                                         <input class="form-check-input" type="radio" name="txtapproval" value="true" id="txtapprovalyes" data-val-regex-pattern="^[\w]*$">
@@ -170,7 +170,7 @@
                                 </div>
                             </div>
                             <div class="form-group row mb-4">
-                                <label class="col-form-label col-sm-4">Active<i class="fas fa-asterisk mand1"></i></label>
+                                <label class="col-form-label col-sm-4 fw-bold">Active<i class="fas fa-asterisk mand1"></i></label>
                                 <div class="col-sm-8">
                                     <div class="form-check form-check-inline">
                                         <input class="form-check-input" type="radio" name="txtactive" value="true" id="txtactiveyes" data-val="true" data-val-regex-pattern="^[\w]*$">
@@ -191,7 +191,7 @@
                                 <span id="spnTDMUnitType" class="d-none">0</span>
                                 <span id="spnTrnDomainMappingId" class="d-none">0</span>
                                 <span id="spnUnitAppointmentId" class="d-none">0</span>
-                                <label class="col-form-label col-sm-4">Appointment<i class="fas fa-asterisk mand1"></i></label>
+                                <label class="col-form-label col-sm-4 fw-bold">Appointment<i class="fas fa-asterisk mand1"></i></label>
                                 <div class="col-sm-8">
                                     <input class="form-control" placeholder="Type Appointment" id="txtAppointmentName" name="txtAppointmentName" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="Appointment Name is required." data-val-regex-pattern="^[\w \& \()]*$" />
                                     <span class="text-danger field-validation-valid" data-valmsg-for="txtAppointmentName" data-valmsg-replace="true"></span>
@@ -199,56 +199,56 @@
                             </div>
                             <div class="form-group row mb-2">
                                 <span id="spnUnitMapId" class="d-none">0</span>
-                                <label class="col-form-label col-sm-4">Unit Name<i class="fas fa-asterisk mand1"></i></label>@* Unit Name *@
+                                <label class="col-form-label col-sm-4 fw-bold">Unit Name<i class="fas fa-asterisk mand1"></i></label>@* Unit Name *@
                                 <div class="col-sm-8">
                                     <input class="form-control" placeholder="Type SUS No" id="txtUnitName" name="txtUnitName" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="Unit Name is required." data-val-regex-pattern="^[\w ]*$" />
                                     <span class="text-danger field-validation-valid" data-valmsg-for="txtUnitName" data-valmsg-replace="true"></span>
                                 </div>
                             </div>
                              <div class="row mb-2">
-                                <label class="col-form-label col-sm-4">SUS No</label>
+                                <label class="col-form-label col-sm-4 fw-bold">SUS No</label>
                                 <div class="col-sm-8">
                                     <label id="lblSusno" class="col-form-label unit-label-background"></label>
                                 </div>
                             </div> 
                             <div id="lbl1" class="row mb-2 d-none">
-                                <label class="col-form-label col-sm-4 ">PSO / Dte</label>
+                                <label class="col-form-label col-sm-4 fw-bold">PSO / Dte</label>
                                 <div class="col-sm-8">
                                     <label class="col-form-label unit-label-background" id="lblPso"></label>
                                 </div>
                             </div>
                             <div id="lbl2" class="row mb-2 d-none">
-                                <label class="col-form-label col-sm-4 ">DG / Sub Dte</label>
+                                <label class="col-form-label col-sm-4 fw-bold">DG / Sub Dte</label>
                                 <div class="col-sm-8">
                                     <label class="col-form-label unit-label-background" id="lblDG"></label>
                                 </div>
                             </div>
                             <div id="lbl3" class="row mb-2 d-none">
-                                <label class="col-form-label col-sm-4 ">Comd / PSO</label>
+                                <label class="col-form-label col-sm-4 fw-bold">Comd / PSO</label>
                                 <div class="col-sm-8">
                                     <label class="col-form-label unit-label-background" id="lblComd"></label>
                                 </div>
                             </div>
                             <div id="lbl4" class="row mb-2 d-none">
-                                <label class="col-form-label col-sm-4">Corps / Dte / Area</label>
+                                <label class="col-form-label col-sm-4 fw-bold">Corps / Dte / Area</label>
                                 <div class="col-sm-8">
                                     <label class="col-form-label unit-label-background" id="lblCorps"></label>
                                 </div>
                             </div>
                             <div id="lbl5" class="row mb-2 d-none">
-                                <label class="col-form-label col-sm-4">Div / Branch / Sub Area</label>
+                                <label class="col-form-label col-sm-4 fw-bold">Div / Branch / Sub Area</label>
                                 <div class="col-sm-8">
                                     <label class="col-form-label unit-label-background" id="lblDiv"></label>
                                 </div>
                             </div>
                             <div id="lbl6" class="row mb-2 d-none">
-                                <label class="col-form-label col-sm-4">Bde</label>
+                                <label class="col-form-label col-sm-4 fw-bold">Bde</label>
                                 <div class="col-sm-8">
                                     <label class="col-form-label unit-label-background" id="lblBde"></label>
                                 </div>
                             </div>
                             <div id="lbl7" class="row mb-2 d-none">
-                                <label class="col-form-label col-sm-4">Type of Fmn / Branch</label>
+                                <label class="col-form-label col-sm-4 fw-bold">Type of Fmn / Branch</label>
                                 <div class="col-sm-8">
                                     <label class="col-form-label unit-label-background" id="lblFmn"></label>
                                 </div>
