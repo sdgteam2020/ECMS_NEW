@@ -113,6 +113,7 @@
                                     <th>Appl Id</th>
                                     <th>Type</th>
                                     <th>Reason for Requisition</th>
+                                    <th class="noExport">Posting</th>
                                     <th class="noExport">History</th>
                                     <th class="noExport">Print / Edit / Fwd</th>
                                 </tr>
@@ -131,7 +132,18 @@
                                         <td>@item.TrackingId</td>
                                         <td>@item.ApplyFor </td>
                                         <td>@item.ICardType</td>
+                                        <td>
+                                            @if(item.IsPosting>0)
+                                            {
+                                                <span class="badge badge-pill badge-danger">Yes</span> 
+                                            }
+                                            else
+                                            {
+                                                <span class="badge badge-pill badge-success">No</span>
+                                            }
+                                        </td>
                                         <td class="noExport"><button class="btn btn-icon btn-round btn-primary mr-1 historyRequest" data-toggle="tooltip" data-placement="left" title="@item.Remark"><i class="fa fa-history" aria-hidden="true"></i></button></td>
+                                       
                                         <td class="noExport">
                                             <div class="d-flex p-2">
 

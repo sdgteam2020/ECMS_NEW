@@ -77,18 +77,18 @@
     z-index: 2147483647;
 }
 .counter {
-    color: #f27f21;
+    color: rgba(22, 125, 207, 1);
     font-family: 'Open Sans', sans-serif;
     text-align: center;
     height: 190px;
     width: 190px;
     padding: 30px 25px 25px;
     margin: 0 auto;
-    border: 3px solid #f27f21;
+    border: 3px solid rgba(22, 125, 207, 1);
     border-radius: 20px 20px;
     position: relative;
     z-index: 1;
-    margin-bottom:15px;
+    margin-bottom: 15px;
 }
 
     .counter:before,
@@ -154,8 +154,8 @@
     }
 
     .counter.blue {
-        color: #346AA7;
-        border-color: #346AA7;
+        color: rgba(22, 125, 207, 1);
+        border-color: rgba(22, 125, 207, 1);
     }
 
         .counter.blue:after {
@@ -164,8 +164,8 @@
         }
 
     .counter.pink {
-        color: #EE436D;
-        border-color: #EE436D;
+        color: rgba(22, 125, 207, 1);
+        border-color: rgba(22, 125, 207, 1);
     }
 
         .counter.pink:after {
@@ -174,8 +174,8 @@
         }
 
     .counter.purple {
-        color: #9C52A1;
-        border-color: #9C52A1;
+        color: rgba(22, 125, 207, 1);
+        border-color: rgba(22, 125, 207, 1);
     }
 
         .counter.purple:after {
@@ -184,8 +184,8 @@
         }
 
     .counter.green {
-        color: #68BD55;
-        border-color: #68BD55;
+        color: rgba(22, 125, 207, 1);
+        border-color: rgba(22, 125, 207, 1);
     }
 
         .counter.green:after {
@@ -193,8 +193,8 @@
             border-left-color: #68BD55;
         }
     .counter.yellow {
-        color: #C1C353;
-        border-color: #C1C353;
+        color: rgba(22, 125, 207, 1);
+        border-color: rgba(22, 125, 207, 1);
     }
 
         .counter.yellow:after {
@@ -215,7 +215,7 @@
     --bs-nav-pills-border-radius: var(--bs-border-radius);
     --bs-nav-pills-link-active-color: #000;
     --bs-nav-pills-link-active-bg: #fff;
-    margin-top: 10px;
+    margin-top: 41px;
     background-color: #F5F7FF;
 }
     .nav-pills .nav-link {
@@ -245,6 +245,7 @@
     }
 .ProfileName {
     font-size: 12px;
+    
 }
 @media only screen and (max-width: 1299px) {
     .tagline {
@@ -320,7 +321,7 @@
 .upload-options {
     position: relative;
     height: 40px;
-    background-color: cadetblue;
+    background-color: rgba(22,125,207,1);
     cursor: pointer;
     overflow: hidden;
     text-align: center;
@@ -381,7 +382,7 @@
 .upload-options_sign {
     position: relative;
     height: 40px;
-    background-color: cadetblue;
+    background-color: rgba(22,125,207,1);
     cursor: pointer;
     overflow: hidden;
     text-align: center;
@@ -572,25 +573,27 @@ i.material-icons {
     }
 .seven h1 {
     text-align: center;
-    font-size: 25px;
+    font-size: 20px;
     /* font-weight: 500; */
-    color: #222;
+    color: #fff;
     letter-spacing: 1px;
-    text-transform:capitalize;
-    display: grid;
-    grid-template-columns: 1fr max-content 1fr;
+    text-transform: capitalize;
+    /*  display: grid;*/
+    /*grid-template-columns: 1fr max-content 1fr;
     grid-template-rows: 4px 0;
-    grid-gap: 11px;
+    grid-gap: 11px;*/
     align-items: center;
-    margin-top: 10px;
+    /* margin-top: 10px;*/
+    background-color: rgba(22,125,207,1);
+    padding:5px;
 }
 
     .seven h1:after, .seven h1:before {
         content: " ";
         display: block;
-        border-bottom: 1px solid #141ac6;
-        border-top: 1px solid #141ac6;
-        height: 5px;
+       /* border-bottom: 1px solid #141ac6;
+        border-top: 1px solid #141ac6;*/
+       /* height: 5px;*/
         background-color: #f8f8f8;
     }
 .form-check-input[type=checkbox]{
@@ -625,4 +628,11 @@ i.material-icons {
 a {
     text-decoration: none !important;
     
+}
+.pt-4 {
+    padding-top: 0.5rem !important;
+}
+
+.ProfileName {
+    color:#fff;
 }

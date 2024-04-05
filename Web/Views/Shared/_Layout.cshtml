@@ -284,9 +284,11 @@
     <span id="spnarmyno" class="d-none">@User.Claims.First(c => c.Type.Contains("armyNo")).Value</span>
     <span id="spnsunno" class="d-none1">@User.Claims.First(c => c.Type.Contains("SUSNo")).Value</span> *@
     <nav class="topnav navbar navbar-expand shadow navbar-light bg-white show" id="sidenavAccordion">
-        <a class="navbar-brand" href="/Home/index"><img src="~/Images/AFSAC_Logo.png"></a>
-        <span class="tagline ml-4 text-center"> Enterprise - Independent Active Secure Access Card (E-IASAC)</span>
-
+        <a class="navbar-brand" href="#"><img src="~/Images/dgis_ico.png"></a>
+        @* <span class="tagline ml-4 text-center"> Enterprise - Independent Active Secure Access Card (E-IASAC)</span> *@
+        <a class="navbar-brand" href="#"><img src="~/Images/EISAC.png"></a>
+        @*    <span class="tagline ml-4 text-center"> Enterprise - Indian Army Secure Access Card Appl (E-ISAC)</span> *@
+      
         @*    <span class="tagline ml-4 text-center"> Enterprise - Indian Army Secure Access Card Appl (E-ISAC)</span> *@
         <ul class="navbar-nav align-items-center ml-auto">
             <!--<li class="mr-3">-->
@@ -311,7 +313,11 @@
             </li>-->
 
             <li class="nav-item dropdown no-caret mr-2 dropdown-user">
-                <a class="dropdown-toggle" id="navbarDropdownUserImage" href="javascript:void(0);" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="text-black ProfileName font-weight-500 mr-2">WELCOME</span> <span class="text-black ProfileName font-weight-500 mr-2" id="ProfileRankName"></span><span id="ProfileName" class="font-weight-500 mr-2 text-black ProfileName">Username</span><span class="text-black ProfileName font-weight-500 mr-2">(<span class="text-black ProfileName font-weight-500" id="aspntokenarmyno"></span>)</span><span class="btn btn-icon btn-transparent-dark"><img src="/Images/user4.png" /></span></a>
+                <a class="dropdown-toggle" id="navbarDropdownUserImage" href="javascript:void(0);" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <span class="text-white ProfileName font-weight-500 mr-2">WELCOME</span> 
+                    <span class="text-white ProfileName font-weight-500 mr-2" id="ProfileRankName"></span>
+                    <span id="ProfileName" class="font-weight-500 mr-2 text-white ProfileName">Username</span><span class="text-white ProfileName font-weight-500 mr-2">(<span class="text-white ProfileName font-weight-500" id="aspntokenarmyno"></span>)</span><span class="btn btn-icon btn-transparent-dark"><img src="/Images/user4.png" /></span>
+                </a>
                 <div class="dropdown-menu dropdown-menu-right border-0 pb-0 shadow animated--fade-in-up" aria-labelledby="navbarDropdownUserImage">
 
                     <h6 class="dropdown-header d-flex align-items-center">
@@ -416,7 +422,7 @@
     <div class="row">
     <div class="col-sm-12 text-center darklinks">
     <h5 class="font-weight-600">
-    Copyright © 2022. Developed by ASDC , DGIS : Sponsor Dte : ___________
+    Copyright © 2024. Developed by ASDC , DGIS : Sponsor Dte : ___________
    
     </h5>
     </div>

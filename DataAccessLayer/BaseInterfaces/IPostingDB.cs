@@ -12,7 +12,7 @@ namespace DataAccessLayer.BaseInterfaces
     {
         public Task<DTOPostingInResponse> GetArmyDataForPostingOut(string ArmyNo);
         public Task<List<DTOPostingOutDetilsResponse>> GetAllPostingHistory(int AspNetUsersId);
-        public Task<List<DTOPostingOutDetilsResponse>> GetPostingOutWithType(int AspNetUsersId, int Type);
+        public Task<List<DTOPostingOutDetilsResponse>> GetPostingOutWithType(int AspNetUsersId, int Type, string PostingTy);
         public Task<bool> UpdateForPosting(TrnPostingOut Data);
     }
 }

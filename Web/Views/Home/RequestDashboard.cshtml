@@ -124,7 +124,7 @@
                     else if (ViewBag.Type == "PostingOut")
                     {
                         <div class="col-md-2 col-sm-6">
-                            <a href="/Posting/GetPostingOutWithType?Type=MQ==">
+                            <a href="/Posting/GetPostingOutWithType?Type=MQ==&PostingType=UG9zdGluZ091dA==">
                                 <div class="counter purple">
                                     <div class="counter-icon">
                                         <i class="fa fa-users"></i>
@@ -138,7 +138,7 @@
                             </a>
                         </div>
                         <div class="col-md-2 col-sm-6">
-                            <a href="/Posting/GetPostingOutWithType?Type=Mg==">
+                            <a href="/Posting/GetPostingOutWithType?Type=Mg==&PostingType=UG9zdGluZ091dA==">
                                 <div class="counter purple">
                                     <div class="counter-icon">
                                         <i class="fa fa-users"></i>
@@ -151,7 +151,36 @@
                             </a>
                         </div>
                     }
+                    else if (ViewBag.Type == "PostingIn")
+                    {
+                        <div class="col-md-2 col-sm-6">
+                            <a href="/Posting/GetPostingOutWithType?Type=MQ==&PostingType=UG9zdGluZ0lu">
+                                <div class="counter purple">
+                                    <div class="counter-icon">
+                                        <i class="fa fa-users"></i>
+                                    </div>
+                                    <span class="counter-value" id="ToPostingInOffrs">0</span>
+                                    <h3>
+                                        Appl Posting In for Offrs
+                                    </h3>
 
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-md-2 col-sm-6">
+                            <a href="/Posting/GetPostingOutWithType?Type=Mg==&PostingType=UG9zdGluZ0lu">
+                                <div class="counter purple">
+                                    <div class="counter-icon">
+                                        <i class="fa fa-users"></i>
+                                    </div>
+                                    <span class="counter-value" id="ToPostingInJCO">0</span>
+                                    <h3>
+                                        Appl Posting In for JCO's/OR
+                                    </h3>
+                                </div>
+                            </a>
+                        </div>
+                    }
                     @*
                     <div class="col-md-2 col-sm-6">
                         <a href="#">

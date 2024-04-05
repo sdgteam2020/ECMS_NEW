@@ -55,7 +55,8 @@ namespace DataTransferObject.Domain.Model
         
         public MUserProfile? ToMUserProfile { get; set; }
 
-        [NotMapped]
+        [ForeignKey("MTrnICardRequest"), DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int RequestId { get; set; }
+        public MTrnICardRequest? MTrnICardRequest { get; set; }
     }
 }

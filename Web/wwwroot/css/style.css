@@ -17031,6 +17031,8 @@ body {
 
 .nav-fixed .topnav {
     z-index: 1039;
+    background: linear-gradient(90deg, rgba(0, 211, 255, 1) 0%, rgba(12, 141, 242, 1) 66%, rgba(22, 125, 207, 1) 99%);
+    height: 90px;
 }
 
 .nav-fixed #layoutSidenav #layoutSidenav_nav {
@@ -19857,7 +19859,7 @@ body {
 
 .page-header .page-header-content {
     padding-top: 3rem;
-    padding-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
 }
 
     .page-header .page-header-content .page-header-title {
@@ -20150,7 +20152,7 @@ body {
     }
 
         .topnav .navbar-brand img {
-            height: 3.5rem;
+            height: 5.5rem;
         }
 
     .topnav.navbar-dark #sidebarToggle {

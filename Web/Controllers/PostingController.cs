@@ -36,15 +36,17 @@ namespace Web.Controllers
            
             return View(data);
         }
-        public async Task<IActionResult> GetPostingOutWithType(string Type)
+        public async Task<IActionResult> GetPostingOutWithType(string Type,string PostingType)
         {
             var base64EncodedBytes = System.Convert.FromBase64String(Type);
             var ret = System.Text.Encoding.UTF8.GetString(base64EncodedBytes);
+            var PostingTy = System.Text.Encoding.UTF8.GetString(System.Convert.FromBase64String(PostingType));
             int t = Convert.ToInt32(ret);
             ViewBag.Type = t;
+            ViewBag.PostingType = PostingTy;
 
             int userid = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-            var data = await _iPostingBL.GetPostingOutWithType(userid, t);
+            var data = await _iPostingBL.GetPostingOutWithType(userid, t, PostingTy);
 
             return View(data);
         }

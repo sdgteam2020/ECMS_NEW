@@ -13,13 +13,21 @@
                 <div class="col-auto">
                     <h1 class="page-header-title">
                         <div class="page-header-icon"> <i class="fa fa-bars"></i></div>
-                        @if (ViewBag.Type == 1)
+                        @if (ViewBag.Type == 1 && ViewBag.PostingType == "PostingOut")
                         {
                             <div><a href="/Home/Index" class="mr-2">Home</a> > <a href="/Home/Dashboard" class="mr-2">Dashboard</a>  > <a href="/Home/SubDashboard" class="mr-2">I-Card Request</a>  >  <a href="/Home/RequestDashboard/UG9zdGluZ091dA==" class="mr-2">PostingOut</a> >Posting Out Offrs</div>
                         }
-                        else if (ViewBag.Type == 2)
+                        else if (ViewBag.Type == 2 && ViewBag.PostingType == "PostingOut")
                         {
                             <div><a href="/Home/Index" class="mr-2">Home</a> > <a href="/Home/Dashboard" class="mr-2">Dashboard</a>  > <a href="/Home/SubDashboard" class="mr-2">I-Card Request</a>  >  <a href="/Home/RequestDashboard/UG9zdGluZ091dA==" class="mr-2">PostingOut</a> >Posting Out JCO's/OR</div>
+                        }
+                        else @if (ViewBag.Type == 1 && ViewBag.PostingType == "PostingIn")
+                        {
+                            <div><a href="/Home/Index" class="mr-2">Home</a> > <a href="/Home/Dashboard" class="mr-2">Dashboard</a>  > <a href="/Home/SubDashboard" class="mr-2">I-Card Request</a>  >  <a href="/Home/RequestDashboard/UG9zdGluZ0lu" class="mr-2">PostingIn</a> >Posting In Offrs</div>
+                        }
+                        else if (ViewBag.Type == 2 && ViewBag.PostingType == "PostingIn")
+                        {
+                            <div><a href="/Home/Index" class="mr-2">Home</a> > <a href="/Home/Dashboard" class="mr-2">Dashboard</a>  > <a href="/Home/SubDashboard" class="mr-2">I-Card Request</a>  >  <a href="/Home/RequestDashboard/UG9zdGluZ0lu" class="mr-2">PostingIN</a> >Posting IN JCO's/OR</div>
                         }
                     </h1>
                 </div>
@@ -35,15 +43,27 @@
 
             <div class="row">
                 <div class="col-xl-12 text-left">
-                    @if (ViewBag.Type == 1)
+                    @if (ViewBag.Type == 1 && ViewBag.PostingType == "PostingOut")
                     {
                         <h3>Posting Out Offrs Details</h3>
 
                         <small class="text-muted"></small>
                     }
-                    else if (ViewBag.Type == 2)
+                    else if (ViewBag.Type == 2 && ViewBag.PostingType == "PostingOut")
                     {
                         <h3>Posting Out JCO's/OR Details</h3>
+
+                        <small class="text-muted"></small>
+                    }
+                    else  @if (ViewBag.Type == 1 && ViewBag.PostingType == "PostingIn")
+                    {
+                        <h3>Posting In Offrs Details</h3>
+
+                        <small class="text-muted"></small>
+                    }
+                    else if (ViewBag.Type == 2 && ViewBag.PostingType == "PostingIn")
+                    {
+                        <h3>Posting In JCO's/OR Details</h3>
 
                         <small class="text-muted"></small>
                     }
