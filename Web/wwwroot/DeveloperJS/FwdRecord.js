@@ -178,17 +178,19 @@ $(document).ready(function () {
         if (StepCounter == 1) {
 
             if (applyfor == 1) {
-                $(".gsoio").html("Approver");
-                $("#btnForward").html("Forward To Approver");
+                $(".gsoio").html("Initiating Offr (IO)");
+                $(".gsoiotitle").html("Initiating Offr (IO) Approval");
+                $("#btnForward").html("Forward To IO");
                 GetAllOffsByUnitId("ddlfwdoffrs", 0, 0, spnISIO,0,0);
             } else {
-                $(".gsoio").html("Approver");
-                $("#btnForward").html("Forward To Regt Centre");
+                $(".gsoio").html("Initiating Offr (IO)");
+                $(".gsoiotitle").html("Initiating Offr (IO) Approval");
+                $("#btnForward").html("Forward To IO");
                 GetAllOffsByUnitId("ddlfwdoffrs", 0, 0, 0, spnISCO,0);
             }
             $(".Remarks").removeClass("d-none");
 
-            $(".chkforserach").addClass("d-none");
+            //$(".chkforserach").addClass("d-none");
             $("#btntokenTofwd").removeClass("d-none");
 
             var someNumbers = [1];
@@ -572,7 +574,7 @@ function GetProfiledetailsByAspNetuserid(AspNetUsersId) {
         success: function (data) {
             if (data != null) {
                 $(".spnFArmyNo").html(data[0].ArmyNo);
-                $(".spnFtoname").html(data[0].Name);
+                $(".spnFtoname").html(data[0].RankAbbreviation +" "+ data[0].Name);
                 $(".spnFDomainName").html(data[0].DomainId);
             }
         },

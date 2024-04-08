@@ -419,10 +419,11 @@ namespace DataAccessLayer
                 string query = "";
                 if (TypeId == 0)
                 {
-                    query = "Select trndomain.AspNetUsersId,ISNULL(usep.UserId,0) UserId,users.DomainId,usep.ArmyNo,usep.Name from TrnDomainMapping trndomain" +
+                    query = "Select trndomain.AspNetUsersId,ISNULL(usep.UserId,0) UserId,users.DomainId,usep.ArmyNo,ra.RankAbbreviation,usep.Name from TrnDomainMapping trndomain" +
               " inner join AspNetUsers users on trndomain.AspNetUsersId=users.Id" +
               " inner join MapUnit mapu on mapu.UnitMapId=trndomain.UnitId" +
               " left join UserProfile usep on usep.UserId=trndomain.UserId" +
+              " inner join MRank ra on ra.RankId=usep.RankId " +
               " where trndomain.UnitId in (Select UnitMapId from MapUnit where ComdId in (Select ComdId from MapUnit where UnitMapId=@UnitId))" +
               " And  trndomain.AspNetUsersId like @Name";
 
@@ -430,10 +431,11 @@ namespace DataAccessLayer
               else  if (TypeId==1)
                 {
                     Name = "%" + Name.Replace("[", "[[]").Replace("%", "[%]") + "%";
-                    query = "Select trndomain.AspNetUsersId,ISNULL(usep.UserId,0) UserId,users.DomainId,usep.ArmyNo,usep.Name from TrnDomainMapping trndomain" +
+                    query = "Select trndomain.AspNetUsersId,ISNULL(usep.UserId,0) UserId,users.DomainId,usep.ArmyNo,ra.RankAbbreviation,usep.Name from TrnDomainMapping trndomain" +
               " inner join AspNetUsers users on trndomain.AspNetUsersId=users.Id" +
               " inner join MapUnit mapu on mapu.UnitMapId=trndomain.UnitId" +
               " left join UserProfile usep on usep.UserId=trndomain.UserId" +
+              " inner join MRank ra on ra.RankId=usep.RankId " +
               " where usep.IntOffr=1 and trndomain.UnitId in (Select UnitMapId from MapUnit where ComdId in (Select ComdId from MapUnit where UnitMapId=@UnitId))" +
               " And usep.ArmyNo like @Name";
 
@@ -441,10 +443,11 @@ namespace DataAccessLayer
                 else if (TypeId == 2)
                 {
                     Name = "%" + Name.Replace("[", "[[]").Replace("%", "[%]") + "%";
-                    query = "Select trndomain.AspNetUsersId,ISNULL(usep.UserId,0) UserId,users.DomainId,usep.Name ArmyNo from TrnDomainMapping trndomain" +
+                    query = "Select trndomain.AspNetUsersId,ISNULL(usep.UserId,0) UserId,users.DomainId,usep.Name, usep.ArmyNo,ra.RankAbbreviation from TrnDomainMapping trndomain" +
               " inner join AspNetUsers users on trndomain.AspNetUsersId=users.Id" +
               " inner join MapUnit mapu on mapu.UnitId=trndomain.UnitId" +
               " left join UserProfile usep on usep.UserId=trndomain.UserId" +
+              " inner join MRank ra on ra.RankId=usep.RankId " +
               " where usep.IntOffr=1 and trndomain.UnitId in (Select UnitId from MapUnit where ComdId in (Select ComdId from MapUnit where UnitMapId=@UnitId))" +
               " And usep.Name like @Name";
 
@@ -452,10 +455,11 @@ namespace DataAccessLayer
                 else if (TypeId == 3)
                 {
                     Name = "%" + Name.Replace("[", "[[]").Replace("%", "[%]") + "%";
-                    query = "Select trndomain.AspNetUsersId,ISNULL(usep.UserId,0) UserId,users.DomainId ArmyNo from TrnDomainMapping trndomain" +
+                    query = "Select trndomain.AspNetUsersId,ISNULL(usep.UserId,0) UserId,users.DomainId,usep.ArmyNo,ra.RankAbbreviation,usep.Name from TrnDomainMapping trndomain" +
               " inner join AspNetUsers users on trndomain.AspNetUsersId=users.Id" +
               " inner join MapUnit mapu on mapu.UnitId=trndomain.UnitId" +
               " left join UserProfile usep on usep.UserId=trndomain.UserId" +
+              " inner join MRank ra on ra.RankId=usep.RankId " +
               " where usep.IntOffr=1 and trndomain.UnitId in (Select UnitId from MapUnit where ComdId in (Select ComdId from MapUnit where UnitMapId=@UnitId))" +
               " And users.DomainId like @Name";
 

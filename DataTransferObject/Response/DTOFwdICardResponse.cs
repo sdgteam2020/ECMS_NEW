@@ -13,5 +13,6 @@ namespace DataTransferObject.Response
         public string DomainId { get; set; }
         public string ArmyNo { get; set; }
         public string Name { get; set; }
+        public string RankAbbreviation { get; set; }
     }
 }

@@ -158,49 +158,61 @@
         border-color: rgba(22, 125, 207, 1);
     }
 
-        .counter.blue:after {
-            border-bottom-color: #346AA7;
-            border-left-color: #346AA7;
-        }
+    .counter.blue:after {
+        border-bottom-color: #346AA7;
+        border-left-color: #346AA7;
+    }
 
     .counter.pink {
         color: rgba(22, 125, 207, 1);
         border-color: rgba(22, 125, 207, 1);
     }
 
-        .counter.pink:after {
-            border-bottom-color: #EE436D;
-            border-left-color: #EE436D;
-        }
+    .counter.pink:after {
+        border-bottom-color: #EE436D;
+        border-left-color: #EE436D;
+    }
 
     .counter.purple {
         color: rgba(22, 125, 207, 1);
         border-color: rgba(22, 125, 207, 1);
     }
 
-        .counter.purple:after {
-            border-bottom-color: #9C52A1;
-            border-left-color: #9C52A1;
-        }
+    .counter.purple:after {
+        border-bottom-color: #9C52A1;
+        border-left-color: #9C52A1;
+    }
 
     .counter.green {
-        color: rgba(22, 125, 207, 1);
-        border-color: rgba(22, 125, 207, 1);
+    color: rgb(34 207 22);
+    border-color: rgb(34 207 22);
+    }
+    .counter.green:after {
+        border-bottom-color: #9C52A1;
+        border-left-color: #9C52A1;
+    }
+    .counter.orange {
+    color: #f4a100;
+    border-color: #f4a100;
+    }
+    .counter.orange:after {
+        border-bottom-color: #9C52A1;
+        border-left-color: #9C52A1;
     }
 
-        .counter.green:after {
-            border-bottom-color: #68BD55;
-            border-left-color: #68BD55;
-        }
+    .counter.green:after {
+        border-bottom-color: #68BD55;
+        border-left-color: #68BD55;
+    }
     .counter.yellow {
-        color: rgba(22, 125, 207, 1);
-        border-color: rgba(22, 125, 207, 1);
+    color: rgba(22, 125, 207, 1);
+    border-color: rgba(22, 125, 207, 1);
     }
 
-        .counter.yellow:after {
-            border-bottom-color: #C1C353;
-            border-left-color: #C1C353;
-        }
+    .counter.yellow:after {
+        border-bottom-color: #C1C353;
+        border-left-color: #C1C353;
+    }
 @media screen and (max-width:990px) {
     .counter {
         margin-bottom: 40px;
