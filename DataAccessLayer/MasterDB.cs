@@ -92,7 +92,7 @@ namespace DataAccessLayer
         }
         public async Task<DTODashboardMasterCountResponse> GetDashboardMasterCount()
         {
-            string query = " declare @TotComd int=0 declare @TotCorps int=0 declare @TotDiv int=0 declare @TotBde int=0  declare @TotMapUnit int=0 " +
+            string query = " declare @TotComd int=0 declare @TotCorps int=0 declare @TotDiv int=0 declare @TotBde int=0  declare @TotMapUnit int=0 declare @TotRecordOffice int=0 " +
                             " declare @TotUnit int=0 declare @TotRank int=0 declare @TotAppointment int=0 declare @TotArms int=0  declare @TotRegtCentre int=0 " +
                             " declare @TotDomainRegn int=0 declare @TotUserProfile int=0 " +
                             " select @TotComd=COUNT(ComdId) from MComd " +
@@ -105,12 +105,13 @@ namespace DataAccessLayer
                             " select @TotAppointment=COUNT(ApptId) from MAppointment " +
                             " select @TotArms=COUNT(ArmedId) from MArmedType " +
                             " select @TotRegtCentre=COUNT(RegId) from MRegimental " +
+                            " select @TotRecordOffice=COUNT(RecordOfficeId) from MRecordOffice " +
 
                             " select @TotDomainRegn=COUNT(u.Id) from AspNetUsers u " +
                             " inner join TrnDomainMapping trn on u.Id = trn.AspNetUsersId  " +
                             " select @TotUserProfile=COUNT(UserId) from UserProfile " +
 
-                            " select @TotComd TotComd,@TotCorps TotCorps,@TotDiv TotDiv,@TotBde TotBde,@TotMapUnit TotMapUnit,@TotUnit TotUnit,@TotRank TotRank,@TotAppointment TotAppointment,@TotArms TotArms,@TotRegtCentre TotRegtCentre,@TotDomainRegn TotDomainRegn,@TotUserProfile TotUserProfile ";
+                            " select @TotComd TotComd,@TotCorps TotCorps,@TotDiv TotDiv,@TotBde TotBde,@TotMapUnit TotMapUnit,@TotUnit TotUnit,@TotRank TotRank,@TotAppointment TotAppointment,@TotArms TotArms,@TotRegtCentre TotRegtCentre,@TotRecordOffice TotRecordOffice,@TotDomainRegn TotDomainRegn,@TotUserProfile TotUserProfile ";
 
             using (var connection = _contextDP.CreateConnection())
             {

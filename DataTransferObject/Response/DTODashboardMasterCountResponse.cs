@@ -20,6 +20,7 @@ namespace DataTransferObject.Response
         public int TotArms { get; set; }
         public int TotRegtCentre { get; set; }
 
+        public int TotRecordOffice { get; set; }
         public int TotDomainRegn { get; set; }
         public int TotUserProfile { get; set; }
     }
