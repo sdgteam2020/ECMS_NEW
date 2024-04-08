@@ -23,7 +23,7 @@ namespace DataAccessLayer
 
         public async Task<bool> GetByName(MRecordOffice Dto)
         {
-            List<MRecordOffice> mRecordOffices = await _context.MRecordOffice.ToListAsync();
+            List<MRecordOffice> mRecordOffices = await _context.MRecordOffice.AsNoTracking().ToListAsync();
             var ret = mRecordOffices.Any(x => (x.Name.ToUpper() == Dto.Name.ToUpper() || x.Abbreviation.ToUpper() == Dto.Abbreviation.ToUpper()) && x.RecordOfficeId != Dto.RecordOfficeId);
             return ret;
         }
