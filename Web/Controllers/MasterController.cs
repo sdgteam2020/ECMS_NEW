@@ -59,7 +59,7 @@ namespace Web.Controllers
                     {
                         if (dTO.ComdId > 0)
                         {
-                            unitOfWork.Comds.Update(dTO);
+                            await unitOfWork.Comds.Update(dTO);
                             return Json(KeyConstants.Update);
                         }
                         else
@@ -461,7 +461,7 @@ namespace Web.Controllers
                         {
                             if (dTO.BdeId > 0)
                             {
-                                unitOfWork.Bde.Update(dTO);
+                                await unitOfWork.Bde.Update(dTO);
 
                                 /////update Commd By CorpsId
                                 MapUnit dat = new MapUnit();
@@ -814,7 +814,7 @@ namespace Web.Controllers
                     {
                         if (dTO.UnitId > 0)
                         {
-                            unitOfWork.Unit.Update(dTO);
+                            await unitOfWork.Unit.Update(dTO);
                             return Json(KeyConstants.Update);
                         }
                         else
@@ -947,7 +947,7 @@ namespace Web.Controllers
                     {
                         if (dTO.FormationId > 0)
                         {
-                            unitOfWork.Formation.Update(dTO);
+                            await unitOfWork.Formation.Update(dTO);
                             return Json(KeyConstants.Update);
                         }
                         else
@@ -1045,7 +1045,7 @@ namespace Web.Controllers
                     {
                         if (dTO.ApptId > 0)
                         {
-                            unitOfWork.Appt.Update(dTO);
+                            await unitOfWork.Appt.Update(dTO);
                             return Json(KeyConstants.Update);
                         }
                         else
@@ -1404,7 +1404,7 @@ namespace Web.Controllers
                     {
                         if (dTO.RegId > 0)
                         {
-                            unitOfWork.Regimental.Update(dTO);
+                            await unitOfWork.Regimental.Update(dTO);
                             return Json(KeyConstants.Update);
                         }
                         else

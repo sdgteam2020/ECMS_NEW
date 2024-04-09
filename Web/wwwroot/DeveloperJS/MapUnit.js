@@ -593,7 +593,7 @@ function SaveUnitWithMapping() {
                 Swal.fire({
                     icon: 'error',
                     title: 'Oops...',
-                    text: 'Unit Name already mapped!',
+                    text: 'Unit Already Exist!',
                 })
 
             }

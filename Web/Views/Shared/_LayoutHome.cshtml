@@ -127,9 +127,16 @@
 
             <li class="nav-item dropdown no-caret mr-2 dropdown-user">
                 <a class="dropdown-toggle" id="navbarDropdownUserImage" href="javascript:void(0);" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <span class="text-white ProfileName font-weight-500 mr-2">WELCOME</span>
-                    <span class="text-white ProfileName font-weight-500 mr-2" id="ProfileRankName"></span>
-                    <span id="ProfileName" class="font-weight-500 mr-2 text-white ProfileName">Username</span><span class="text-white ProfileName font-weight-500 mr-2">(<span class="text-white ProfileName font-weight-500" id="aspntokenarmyno"></span>)</span><span class="btn btn-icon btn-transparent-dark"><img src="/Images/user4.png" /></span>
+                    <div class="row">
+                        <div class="col-md-8">
+                            <span class="text-white ProfileName font-weight-500">WELCOME</span><br />
+                            <span class="text-white ProfileName font-weight-500 mr-1" id="ProfileRankName"></span><span id="ProfileName" class="font-weight-500 mr-2 text-white ProfileName">Username</span><br />
+                            <span class="text-white ProfileName font-weight-500">(<span class="text-white ProfileName font-weight-500" id="aspntokenarmyno"></span>)</span>
+                        </div>
+                        <div class="col-md-4">
+                            <img class="mr-2 mt-2" src="/Images/user4.png" />
+                        </div>
+                    </div>
                 </a>
                 <div class="dropdown-menu dropdown-menu-right border-0 pb-0 shadow animated--fade-in-up" aria-labelledby="navbarDropdownUserImage">
 
@@ -167,7 +174,7 @@
 
                     </a> *@
                     @*<div class="dropdown-divider"></div>*@
-                    <a class="dropdown-item active" style="background-color: rebeccapurple" href="/Account/Logout" id="btnLogout">
+                    <a class="dropdown-item active" style="background-color: #0d6efd" href="/Account/Logout" id="btnLogout">
                         <div class="dropdown-item-icon"><i data-feather="log-out"></i></div>
                         Logout
                     </a>

@@ -28,8 +28,10 @@ namespace BusinessLogicsLayer.API
         //public const string ApiUrloffrs = "https://131.3.47.13:7002/api/";
         //public const string ApiUrl = "http://192.168.10.40:7002/api/";
         //public const string ApiUrloffrs = "http://192.168.10.40:7002/api/";
-        public const string ApiUrl = "https://192.168.10.203:8443/api/";
-        public const string ApiUrloffrs = "https://192.168.10.203:8443/api/";
+        //public const string ApiUrl = "https://192.168.10.203:8443/api/";
+        //public const string ApiUrloffrs = "https://192.168.10.203:8443/api/";
+        public const string ApiUrl = "https://localhost:7002/api/";
+        public const string ApiUrloffrs = "https://localhost:7002/api/";
         //public const string ApiUrl = "http://192.168.10.40:7002/api/";
         // public const string ApiUrloffrs = "http://192.168.10.40:7002/api/";
         //public const string ApiUrl = "http://131.3.47.13:7002/api/";
