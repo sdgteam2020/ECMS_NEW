@@ -158,11 +158,12 @@
                                                 <span asp-validation-for="Extension" class="text-danger"></span>
                                             </div>
                                         </div>
+                                        
                                         <div class="row mb-2 required">
-                                            <label asp-for="IsIO" class="col-sm-4 col-form-label form-label fw-bold">Initating Offr<i class="fas fa-asterisk mand1"></i></label>
+                                            <label asp-for="IsIO" class="col-sm-9 col-form-label form-label fw-bold">Are you performing the Duties of Initating Offr<i class="fas fa-asterisk mand1"></i></label>
                                             @if (Model.UserId > 0)
                                             {
-                                                <div class="col-sm-8">
+                                                <div class="col-sm-3">
                                                     <div class="form-check form-check-inline">
                                                         <input class="form-check-input" type="radio" name="IsIO" value="true" id="IsIOyes" checked=@(Model.IsIO == true?true:false) disabled="disabled">
                                                         <label class="form-check-label" for="IsIOyes">
@@ -179,7 +180,7 @@
                                             }
                                             else
                                             {
-                                                <div class="col-sm-8">
+                                                <div class="col-sm-3">
                                                     <div class="form-check form-check-inline">
                                                         <input class="form-check-input" type="radio" name="IsIO" value="true" id="IsIOyes">
                                                         <label class="form-check-label" for="IsIOyes">
@@ -198,10 +199,10 @@
 
                                         </div>
                                         <div class="row mb-2 required">
-                                            <label asp-for="IsCO" class="col-sm-4 col-form-label form-label fw-bold">Approver<i class="fas fa-asterisk mand1"></i></label>
+                                            <label asp-for="IsCO" class="col-sm-9 col-form-label form-label fw-bold">Are you performing the Duties of CO, Record Office/ Col Records?<i class="fas fa-asterisk mand1"></i></label>
                                             @if (Model.UserId > 0)
                                             {
-                                                <div class="col-sm-8">
+                                                <div class="col-sm-3">
                                                     <div class="form-check form-check-inline">
                                                         <input class="form-check-input" type="radio" name="IsCO" value="true" id="IsCOyes" checked=@(Model.IsCO == true?true:false) disabled="disabled">
                                                         <label class="form-check-label" for="IsCOyes">
@@ -219,7 +220,7 @@
                                             }
                                             else
                                             {
-                                                <div class="col-sm-8">
+                                                <div class="col-sm-3">
                                                     <div class="form-check form-check-inline">
                                                         <input class="form-check-input" type="radio" name="IsCO" value="true" id="IsCOyes">
                                                         <label class="form-check-label" for="IsCOyes">
@@ -238,10 +239,10 @@
 
                                         </div>
                                         <div class="row mb-2 required">
-                                            <label asp-for="IntOffr" class="col-sm-4 col-form-label form-label fw-bold">Issuing Authority<i class="fas fa-asterisk mand1"></i></label>
+                                            <label asp-for="IntOffr" class="col-sm-9 col-form-label form-label fw-bold">Are you performing the Duties of Brig ORO?<i class="fas fa-asterisk mand1"></i></label>
                                             @if (Model.UserId > 0)
                                             {
-                                                <div class="col-sm-8">
+                                                <div class="col-sm-3">
                                                     <div class="form-check form-check-inline">
                                                         <input class="form-check-input" type="radio" name="IntOffr" value="true" id="intoffsyes" checked=@(Model.IntOffr == true?true:false) disabled="disabled">
                                                         <label class="form-check-label" for="intoffsyes">
@@ -258,7 +259,7 @@
                                             }
                                             else
                                             {
-                                                <div class="col-sm-8">
+                                                <div class="col-sm-3">
                                                     <div class="form-check form-check-inline">
                                                         <input class="form-check-input" type="radio" name="IntOffr" value="true" id="intoffsyes">
                                                         <label class="form-check-label" for="intoffsyes">
