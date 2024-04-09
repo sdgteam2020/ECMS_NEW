@@ -235,11 +235,15 @@
         color: #ffff;
         font-size: 24px;
         margin-bottom: 1px;
+        box-shadow: 10px -9px 4px 0px rgba(0,0,0,0.2);
     }
     .nav-pills .nav-link {
         border-radius: 0;
        margin-left:1px;
     }
+        .nav-pills .nav-link:hover {
+            background-color: #55BF54;
+        }
 .tagline {
     width: 100%;
     text-align: center;

@@ -40,6 +40,7 @@ $(document).ready(function () {
        
         $("#btnApplyCard").removeClass("btn-outline-primary");
         $("#btnApplyCard").addClass("btn-primary");
+        $(".cardmain").addClass("d-none");
         //var list = '';
         //list += '';
         $("#btnarmytype").removeClass("d-none");

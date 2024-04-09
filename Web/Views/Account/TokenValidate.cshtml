@@ -49,18 +49,27 @@
         .form-group .labeltoken {
             font-size: 16px;
             font-weight: 700;
-            color: #fff;
+            
         }
-        body{
+
+        body {
+            /*   background-image: url('/images/logo-white.jpg'); */
             background-size: cover;
-            background-color: rgba(0, 211, 255, 1);
+            background-color: lightskyblue;
             background-repeat: no-repeat;
+            /* background: linear-gradient(90deg, rgba(0,211,255,1) 0%, rgba(12,141,242,1) 66%, rgba(22,125,207,1) 99%); */
         }
 
         .bg-white {
-            background: rgba(12,141,242,1) !important;
-            color: #fff;
+            background: #fff !important;
         }
+
+        .logoheader {
+            background: linear-gradient(90deg, rgba(0,211,255,1) 0%, rgba(12,141,242,1) 66%, rgba(22,125,207,1) 99%);
+        }
+      /*   img {
+            width: 500px;
+        } */
     </style>
 </head>
 @{
@@ -87,6 +96,13 @@
 <body>
     <div class="page">
         <div class="container-fluid">
+            <div class="row logoheader">
+                <div class="mb-1 logo-sec d-flex">
+                    <a class="navbar-brand" href="#"><img src="~/Images/dgis_ico.png" width="50%"></a>
+                    <div class="text-center mr-lg-15"><img class="mr-lg-15" src="~/Images/EISAC.png" width="50%"></div>
+
+                </div>
+            </div>
             <div class="row">
                 <div class="bg-white login-wrap align-items-center">
                     <div class="login py-2 py-sm-4">
@@ -95,14 +111,12 @@
                                 <div class="card-sigin">
                                     <div class="main-signup-header login-form">
                                         @* <h1 class="font-weight-bold text-center mb-0 mt-3 logo"><color style="color: #D97904">Login</color></h1>*@
-                                        <div class="mb-1 logo-sec text-center">
-                                            <img src="/Images/EISAC.png" />
-                                        </div>
-                                        <p class="font-weight-normal text-center mb-4 mt-1 ">Kindly Validate your IC Number here.</p>
+                                      
+                                        <p class="font-weight-normal font-weight-700 text-center mb-4 mt-1 ">Kindly Validate your IC Number here.</p>
                                         <div class="pb-3 mt-3">
                                             <form asp-antiforgery="true" method="post" asp-action="TokenValidate" autocomplete="off" role="form">
                                                 <div class="form-group">
-                                                    <label class="labeltoken" asp-for="ICNo"></label>
+                                                    <label class="labeltoken">Army No</label>
                                                     <input asp-for="ICNo" class="form-control" placeholder="Enter IC No" value="@dTOTempSession.ICNO" /> @* value="@dTOTempSession.ICNO" *@
                                                     <span asp-validation-for="ICNo" class="text-danger"></span>
                                                     <label id="tokenmsg"></label>

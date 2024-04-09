@@ -46,7 +46,7 @@ namespace DataTransferObject.Domain.Model
 
         [DataType(DataType.Date)]
         [Column(TypeName = "datetime")]
-        public DateTime DateOfIssue { get; set; }
+        public DateTime? DateOfIssue { get; set; }
 
         [StringLength(50)]
         [Column(TypeName = "varchar(50)")]

@@ -43,15 +43,15 @@
                                 @*   Total Units <span id="lblTotal" class="ml-3 border border-light b px-2 py-1">0</span> *@
                             </h6>
                             <div class="d-flex">
-                                 @if (ViewBag.dataexport == 5)
+                                @if (ViewBag.dataexport == 4 || ViewBag.dataexport == 5)
                                 {
                                     <button type="button" id="btnDataExports" class="btn btn-warning font-weight-600 btn-sm">Data Exports</button>
                                 }
-
+@* 
                                 @if (ViewBag.dataexport == 4)
                                 {
                                     <button type="button" id="btnMultipleForward" class="btn btn-warning font-weight-600 btn-sm">Multiple Forward</button>
-                                }
+                                } *@
 
                             </div>
 
@@ -118,7 +118,7 @@
                                                 <spna class="spnStepCounterId d-none">@item.StepCounter</spna>
                                                 <spna class="spnStepId d-none">@item.StepId</spna>
                                                 <spna class="spnApplyFor d-none">@item.ApplyForId</spna>
-                                                @if (ViewBag.Id == 1 && (item.StepCounter == 2 || item.StepCounter == 3 || item.StepCounter == 4 ))
+                                                @if (ViewBag.Id == 1 && (item.StepCounter == 2 || item.StepCounter == 3 ))
                                                 {
                                                    
                                                     <button class="btn btn-primary mr-1 fwdrecord">Verify And Send</button>

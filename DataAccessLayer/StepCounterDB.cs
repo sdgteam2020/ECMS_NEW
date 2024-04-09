@@ -23,7 +23,17 @@ namespace DataAccessLayer
 
         public async Task<MStepCounter> UpdateStepCounter(MStepCounter Data)
         {
-            string query = "Update TrnStepCounter set StepId=@StepId,Updatedby=@Updatedby where RequestId=@Id";
+            string query = "";
+            if (Data.StepId==4)
+            {
+                query = "Update TrnStepCounter set StepId=@StepId,Updatedby=@Updatedby where RequestId=@Id" +
+               " Update BasicDetails set DateOfIssue=GETDATE() where BasicDetailId=(select BasicDetailId from TrnICardRequest where RequestId=@Id)";
+            }
+            else
+            {
+                query = "Update TrnStepCounter set StepId=@StepId,Updatedby=@Updatedby where RequestId=@Id";
+            }
+           
 
             int StepId=Data.StepId;
             int Updatedby=(int)Data.Updatedby;

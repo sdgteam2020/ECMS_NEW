@@ -55,11 +55,12 @@ $(document).ready(function () {
     var spnStepId = 0;
     $('.select2').select2({
         dropdownParent: $('#BasicDetails'),
-        closeOnSelect: false
+        closeOnSelect: true
+       
     });
     $('.select3').select2({
         dropdownParent: $('#FwdRecord'),
-        closeOnSelect: false
+        closeOnSelect: true
     });
     
    
@@ -73,6 +74,11 @@ $(document).ready(function () {
         $(".spnFArmyNo").html("");
         $(".spnFtoname").html("");
         $(".spnFDomainName").html("");
+
+        $("#intoffsArmyNo").prop("checked", false); 
+        $("#intoffDomainId").prop("checked", false); 
+        $(".serchfwd").addClass("d-none");
+
         FwdData($('#ddlfwdoffrs').val());
     });
     //$('#ddlPhotos').on('change', function () {
@@ -144,8 +150,8 @@ $(document).ready(function () {
         $(".spnFArmyNo").html("");
         $(".spnFtoname").html("");
         $(".spnFDomainName").html("");
-
-      
+        
+       
     });
 
     $(".fwdrecord").click(function () {
@@ -196,39 +202,42 @@ $(document).ready(function () {
             var someNumbers = [1];
             GetRemarks("ddlRemarks", 0, someNumbers);
         }
-        //else if (StepCounter == 2) {
-        //    if (applyfor == 1) {
-        //        $(".gsoio").html("Issuing Authority");
-        //        $("#btnForward").html("Forward To Issuing Authority");
-        //        GetAllOffsByUnitId("ddlfwdoffrs", 0, 0, 0, 0, spnIntOffr);
-        //    }
-        //    else {
-        //        $(".gsoio").html("Regt Centre");
-        //        $("#btnForward").html("Forward To Regt Centre");
-        //        GetAllOffsByUnitId("ddlfwdoffrs", 0, 0, 0, 0, 0);
-        //    }
-        //    $("#btntokenTofwd").removeClass("d-none");
-        //    $(".Remarks").removeClass("d-none");
-        //    var someNumbers = [1];
-        //    GetRemarks("ddlRemarks", 0, someNumbers);
+        else if (StepCounter == 2) {
+            if (applyfor == 1) {
+                $(".gsoio").html("Record Office");
+                $(".gsoiotitle").html("Offr Record Office (ORO) Approval");
+                $("#btnForward").html("Forward To Record Office");
+                GetAllOffsByUnitId("ddlfwdoffrs", 0, 0, 0, 0, spnIntOffr);
+            }
+            else {
+                $(".gsoio").html("Record Office (RO)");
+                $(".gsoiotitle").html("Record Office (RO) Approval");
+                $("#btnForward").html("Forward To Record Office (RO)");
+                GetAllOffsByUnitId("ddlfwdoffrs", 0, 0, 0, 0, spnIntOffr);
+            }
+            $("#btntokenTofwd").removeClass("d-none");
+            $(".Remarks").removeClass("d-none");
+            var someNumbers = [1];
+            GetRemarks("ddlRemarks", 0, someNumbers);
 
-        //    var Reject = [2];
-        //    GetRemarks("ddlRRemarks", 0, Reject);
+            var Reject = [2];
+            GetRemarks("ddlRRemarks", 0, Reject);
             
-        //}
-        else if (StepCounter == 3 || StepCounter == 2) {
+        }
+        else if (StepCounter == 3 ) {
             if (applyfor == 1) {
                 $(".chkforserach").addClass("d-none");
 
-                $(".gsoio").html("MI 11");
-                $("#btnForward").html("Approved and  Forward To MI 11");
+                $(".gsoio").html("AFSAC Cell");
+                $(".gsoiotitle").html("AFSAC Cell");
+                $("#btnForward").html("Forward To AFSAC Cell");
                 GetAllOffsByUnitId("ddlfwdoffrs", 0, spnMI11UnitId,0,0,0);
             }
             else {
                 $(".chkforserach").addClass("d-none");
-
-                $(".gsoio").html("Export");
-                $("#btnForward").html("Forward To Export ");
+                $(".gsoiotitle").html("AFSAC Cell");
+                $(".gsoio").html("AFSAC Cell");
+                $("#btnForward").html("Forward To AFSAC Cell ");
                 GetAllOffsByUnitId("ddlfwdoffrs", 0, spnHQ54UnitId,0,0,0);
             }
 
@@ -277,7 +286,18 @@ $(document).ready(function () {
             } else if ($("#intoffDomainId").prop("checked")) {
                 TypeId = 3;
             }
-            var param = { "Name": request.term, "TypeId": TypeId, "StepId": 1, "UnitId": 0 };
+            var IsIO = 0;
+            var IsCO = 0;
+            var IntOffr = 0;
+            if (applyfor == 1 && StepCounter == 1)
+                IsIO = 1;
+           else if (applyfor == 1 && StepCounter == 2)
+                IntOffr = 1;
+           else if (applyfor == 2 && StepCounter == 1)
+                IsCO = 1;
+            else if (applyfor == 2 && StepCounter == 2)
+                IntOffr = 1;
+            var param = { "Name": request.term, "TypeId": TypeId, "StepId": 1, "UnitId": 0, "IsIO": IsIO, "IsCO": IsCO, "IntOffr": IntOffr };
            
             $("#spnFwdToAspNetUsersId").html(0);
             $.ajax({
@@ -291,7 +311,7 @@ $(document).ready(function () {
                     response($.map(data, function (item) {
 
                         $("#loading").addClass("d-none");
-                        return { label: item.ArmyNo, value: item.AspNetUsersId };
+                        return { label: item.ArmyNo + ' ' + item.RankAbbreviation + ' ' + ' ' + item.Name + ' ' + item.DomainId + ' ', value: item.AspNetUsersId };
 
                     }))
                 },
@@ -347,14 +367,14 @@ $(document).ready(function () {
                         } else {
 
                             Counter = parseInt($("#spnStepCounter").html()) + 1;
-                            if (applyfor == 1 && Counter == 3)/// for ACG
-                                Counter = 4;
-                            if (applyfor == 2 && Counter == 3)/// for ACG
-                                Counter = 5;
+                            //if (applyfor == 1 && Counter == 3)/// for ACG
+                            //    Counter = 4;
+                            //if (applyfor == 2 && Counter == 3)/// for ACG
+                            //    Counter = 5;
 
-                            if (applyfor == 2 && parseInt($("#spnStepCounter").html()) == 3) {
-                                Counter = 5;
-                            }
+                            //if (applyfor == 2 && parseInt($("#spnStepCounter").html()) == 3) {
+                            //    Counter = 5;
+                            //}
                         }
 
 

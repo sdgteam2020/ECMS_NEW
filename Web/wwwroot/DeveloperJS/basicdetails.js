@@ -4,10 +4,10 @@
     const maxDate = new Date();
     maxDate.setDate(maxDate.getDate() + 30);
     const [maxDateFormatted] = maxDate.toISOString().split('T');
-    const dateInput = document.getElementById('DateOfIssue');
-    dateInput.setAttribute('min', today);
-    dateInput.setAttribute('max', maxDateFormatted);
-
+    //const dateInput = document.getElementById('DateOfIssue');
+    //dateInput.setAttribute('min', today);
+    //dateInput.setAttribute('max', maxDateFormatted);
+    document.getElementById('DateOfIssue').value = today;
     $("#TermsConditions").click(function () {
 
         if ($("#TermsConditions").prop("checked") == true) {
@@ -17,7 +17,11 @@
             $("#btnsave").addClass("disabled");
         }
     });
-
+    $('#RegimentalId').on('change', function () {
+       
+        $("#IssuingAuth").val("Comdt, " + $('#RegimentalId option:selected').text());
+        $("#PlaceOfIssue").val($('#RegimentalId option:selected').text());
+    });
 
     if ($("#RegistrationId").val() == 1 || $("#RegistrationId").val() == 2 || $("#RegistrationId").val() == 6) {
         GetUnit() 
@@ -176,7 +180,12 @@ function getApplyIcardDetails() {
         },
         success: function (response, status) {
             if (response != null) {
-
+                
+                if (response.ApplyFor == "Offrs") {
+                    $("#PlaceOfIssue").val("RO");
+                    $("#IssuingAuth").val("Comdt, RO");
+                    $("#tempDateOfIssue").val("As per Finalization by ORO");
+                }
                 $("#lblCategory").html(response.ApplyFor);
                 $("#lblReason").html(response.Type);
 

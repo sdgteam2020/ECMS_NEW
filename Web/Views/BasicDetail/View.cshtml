@@ -143,7 +143,23 @@
                                             <div class="form-group row mb-2">
                                                 <label class="col-form-label col-sm-4 labelprofile">@Html.DisplayNameFor(model => model.DateOfIssue)</label>
                                                 <div class="col-sm-8">
-                                                    <label id="" class="col-form-label">@Model.DateOfIssue.ToString("dd/MMM/yyyy")</label>
+                                                    <label id="" class="col-form-label">
+                                            @if (Model.DateOfIssue.Year==1)
+                                            {
+                                                if (Model.ApplyForId==1)
+                                                {
+                                                    <span>As per Finalization by ORO</span>
+                                                }else
+                                                {
+                                                    <span>As per Finalization by RO</span>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <span>@Model.DateOfIssue.ToString("dd/MMM/yyyy")</span>
+                                            }
+
+                                            </label>
                                                 </div>
                                             </div>
                                         </div>

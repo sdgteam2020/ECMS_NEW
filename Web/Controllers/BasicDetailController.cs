@@ -246,11 +246,11 @@ namespace Web.Controllers
                 ViewBag.Title = "Approved I-Card "; type = 3; stepcounter = 4;
             }
             else if (retint == 4)
-            { ViewBag.Title = "I-Card For Approval"; type = 2; ViewBag.Id = 1; ViewBag.dataexport = 4; }
+            { ViewBag.Title = "I-Card For Export Data"; type = 2; ViewBag.Id = 1; ViewBag.dataexport = 4; }
             else if (retint == 44)
             { ViewBag.Title = "Rejectd I-Card "; type = 1; stepcounter = 9; }
             else if (retint == 444)
-            { ViewBag.Title = "Approved I-Card "; type = 3; stepcounter = 5; }
+            { ViewBag.Title = "Exported I-Card "; type = 3; stepcounter = 5; }
             else if (retint == 5)
             { ViewBag.Title = "Export Data"; type = 2; ViewBag.Id = 1; ViewBag.dataexport = 5; }
             else if (retint == 55)
@@ -693,6 +693,7 @@ namespace Web.Controllers
                         if (ModelState.IsValid)
                         {
                             BasicDetail newBasicDetail = _mapper.Map<BasicDetailCrtAndUpdVM, BasicDetail>(model);
+                            newBasicDetail.DateOfIssue = null;
                             //newBasicDetail.RankId = model.RankId;
                             //newBasicDetail.ArmedId = model.ArmedId;
                             //newBasicDetail.UnitId= model.UnitId;
@@ -842,12 +843,19 @@ namespace Web.Controllers
 
                                 TempData["success"] = "Updated Successfully.";
                                 //return RedirectToAction("Index");
+                                if(newBasicDetail.ApplyForId==1)
                                 return RedirectToAction("Index", new { Id = "MQ==" });
+                                else
+                                    return RedirectToAction("Index", new { Id = "MQ==", jcoor = "SmNvL09ycw ==" });
 
-                            }else
+                            }
+                            else
                             {
                                 TempData["success"] = "Updated Not Successfully.";
-                                return RedirectToAction("Index", new { Id = "MQ==" });
+                                if (newBasicDetail.ApplyForId == 1)
+                                    return RedirectToAction("Index", new { Id = "MQ==" });
+                                else
+                                    return RedirectToAction("Index", new { Id = "MQ==", jcoor = "SmNvL09ycw ==" });
                             }
                            
                         }
@@ -875,7 +883,7 @@ namespace Web.Controllers
                     if (ModelState.IsValid)
                     {
                         BasicDetail newBasicDetail = _mapper.Map<BasicDetailCrtAndUpdVM, BasicDetail>(model);
-
+                        newBasicDetail.DateOfIssue = null;
                         MTrnUpload mTrnUpload = new MTrnUpload();
 
                         MTrnAddress mTrnAddress = new MTrnAddress();
@@ -1019,7 +1027,10 @@ namespace Web.Controllers
                             await basicDetailTempBL.UpdateByArmyNo(newBasicDetail.ServiceNo);
 
                             TempData["success"] = "Successfully created.";
-                            return RedirectToAction("Index", new { Id = "MQ==" });
+                            if (newBasicDetail.ApplyForId == 1)
+                                return RedirectToAction("Index", new { Id = "MQ==" });
+                            else
+                                return RedirectToAction("Index", new { Id = "MQ==", jcoor = "SmNvL09ycw ==" });
 
                         }
                         else

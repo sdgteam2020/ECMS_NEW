@@ -188,7 +188,7 @@ function GetAllOffsByUnitId(ddl, sectid, UnitId, ISIO, IsCO, IntOffr) {
                     listItemddl += '<option value="">Select Offr</option>';
 
                     for (var i = 0; i < response.length; i++) {
-                        listItemddl += '<option value="' + response[i].AspNetUsersId + '">' + response[i].ArmyNo +' ('+ response[i].Name + ')</option>';
+                        listItemddl += '<option value="' + response[i].AspNetUsersId + '">' + response[i].ArmyNo + ' (' + response[i].RankAbbreviation + ' ' + response[i].Name + ')</option>';
                     }
                     $("#" + ddl + "").html(listItemddl);
 

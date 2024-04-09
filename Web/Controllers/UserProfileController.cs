@@ -193,7 +193,7 @@ namespace Web.Controllers
             }
 
         }
-        public async Task<IActionResult> GetDataForFwd(string Name,int TypeId, int StepId,int UnitId)
+        public async Task<IActionResult> GetDataForFwd(string Name,int TypeId, int StepId,int UnitId, int IsIO, int IsCO, int IntOffr)
         {
             try
             {
@@ -201,7 +201,7 @@ namespace Web.Controllers
                 if(UnitId==0)
                  UnitId=SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").UnitId;
 
-                return Json(await _userProfileBL.GetDataForFwd(StepId, UnitId, Name, TypeId));
+                return Json(await _userProfileBL.GetDataForFwd(StepId, UnitId, Name, TypeId, IsIO, IsCO, IntOffr));
             }
             catch (Exception ex)
             {

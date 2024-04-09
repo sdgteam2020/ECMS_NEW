@@ -288,7 +288,8 @@
     <nav class="topnav navbar navbar-expand shadow navbar-light bg-white show" id="sidenavAccordion">
         <a class="navbar-brand" href="#"><img src="~/Images/dgis_ico.png"></a>
         @* <span class="tagline ml-4 text-center"> Enterprise - Independent Active Secure Access Card (E-IASAC)</span> *@
-        <a class="navbar-brand" href="#"><img src="~/Images/EISAC.png"></a>
+       @*  <a class="navbar-brand text-center" href="#"><img src="~/Images/EISAC.png"></a> *@
+        <div class="ml-4 text-center"><img src="~/Images/EISAC.png" width="50%"></div>
         @*    <span class="tagline ml-4 text-center"> Enterprise - Indian Army Secure Access Card Appl (E-ISAC)</span> *@
       
         @*    <span class="tagline ml-4 text-center"> Enterprise - Indian Army Secure Access Card Appl (E-ISAC)</span> *@
@@ -515,15 +516,21 @@
                         <h5 class="card-title fw-bold">Details of Applicant</h5>
                         <div class="row ">
                             <div class="form-group row mb-2">
-                                <label class="col-form-label col-sm-4 fw-bold">Army No</label>
+                                <label class="col-form-label col-sm-4 fw-bold" >Army No</label>
                                 <div class="col-sm-8">
-                                    <label class="form-control spnFarmyno"></label>
+                                    <label class="form-control spnFarmyno " readonly></label>
                                 </div>
                             </div>
                             <div class="form-group row mb-2">
-                                <label class="col-form-label col-sm-4 fw-bold">Name</label>
+                                <label class="col-form-label col-sm-4 fw-bold" >Name</label>
                                 <div class="col-sm-8">
-                                    <label class="form-control spnFname"></label>
+                                    <label class="form-control spnFname" readonly></label>
+                                </div>
+                            </div>
+                            <div class="form-group row mb-2">
+                                <label class="col-form-label col-sm-4 fw-bold">Date & Time</label>
+                                <div class="col-sm-8">
+                                    <label class="form-control" readonly>@DateTime.Now</label>
                                 </div>
                             </div>
                         </div>
@@ -551,10 +558,10 @@
                                 </div>
                             </div>
                             <div class="form-group chkforserach">
-                                <div class="col-sm-12">
+                                <div class="col-sm-12 d-flex justify-content-center">
                                     <div class="form-check form-check-inline">
                                         <input class="form-check-input" type="radio" name="Intoffrs" id="intoffsArmyNo">
-                                        <label class="form-check-label" for="intoffsArmyNo">
+                                        <label class="form-check-label" for="intoffsArmyNo" >
                                             Army No
                                         </label>
                                     </div>
@@ -573,7 +580,7 @@
                                 </div>
                             </div>
                             <div class="form-group row mb-2 serchfwd d-none">
-                                <label class="col-form-label col-sm-4 fw-bold">Army No/Offr Name/DomainId</label>
+                                <label class="col-form-label col-sm-4 fw-bold">Army No/Offr Name/Domain ID</label>
                                 <div class="col-sm-8">
                                     <input class="form-control Alphanumeric" placeholder="Enter Army No/Offrs Name/DomainId" id="txtFwdName" required pattern="^[a-zA-Z0-9 ]*$" title="Only Alphabets and Numbers allowed" />
                                 </div>
@@ -581,19 +588,19 @@
                             <div class="form-group row mb-2">
                                 <label class="col-form-label col-sm-4 fw-bold">Army No</label>
                                 <div class="col-sm-8">
-                                    <label class="form-control spnFArmyNo"></label>
+                                    <label class="form-control spnFArmyNo" readonly></label>
                                 </div>
                             </div>
                             <div class="form-group row mb-2">
                                 <label class="col-form-label col-sm-4 fw-bold"> Rk & Offr Name</label>
                                 <div class="col-sm-8">
-                                    <label class="form-control spnFtoname"></label>
+                                    <label class="form-control spnFtoname" readonly></label>
                                 </div>
                             </div>
                             <div class="form-group row mb-2">
                                 <label class="col-form-label col-sm-4 fw-bold">Domain ID</label>
                                 <div class="col-sm-8">
-                                    <label class="form-control spnFDomainName"></label>
+                                    <label class="form-control spnFDomainName" readonly></label>
                                 </div>
                             </div>
                             <div class="form-group row mb-2 Remarks d-none">
@@ -625,7 +632,7 @@
                 <button type="button" class="btn btn-danger" id="btntokenTofwd">
                     Refresh to Fetch Token Details
                 </button>
-                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Not Approved</button>
+                @* <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Not Approved</button> *@
                 <button type="button" class="btn btn-success" id="btnForward">Approved</button>
             </div>
         </div>
@@ -786,7 +793,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-danger" id="btnRejected">Rejected</button>
+                <button type="button" class="btn btn-danger" id="btnRejected">Rejected Appl</button>
                 <button type="button" class="btn btn-primary" id="btnShowForward">Next</button>
             </div>
         </div>
@@ -845,7 +852,7 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Search ArmyNo</h5>
+                <h5 class="modal-title" id="exampleModalLabel">Search Army No</h5>
 
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
@@ -856,7 +863,7 @@
                         <img id="armynosearchAllpic" class="armynosearchAllpic">
                     </div>
                     <div class="col-md-8">
-                        <input type="text" id="txtarmynosearchAll" placeholder="Eneter Army No" class="form-control " />
+                        <input type="text" id="txtarmynosearchAll" placeholder="Enter Army No" class="form-control " />
                         <label class="form-label mt-4" id="armynosearchAllName"></label>
                     </div>
                 </div>

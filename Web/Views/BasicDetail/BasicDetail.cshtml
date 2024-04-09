@@ -345,7 +345,7 @@
                             <label class="col-sm-2 col-form-label text-center font-weight-bold">@(sno++).</label>
                                         <label asp-for="PlaceOfIssue" class="col-sm-4 col-form-label form-label labelprofile"></label>
                             <div class="col-sm-6">
-                                            <input asp-for="PlaceOfIssue" class="form-control Alphanumeric text-uppercase" data-toggle="tooltip" title="Enter Place Of Issue" maxlength="50" required placeholder="Place Of Issue" />
+                                            <input asp-for="PlaceOfIssue" readonly class="form-control Alphanumeric text-uppercase" data-toggle="tooltip" title="Enter Place Of Issue" maxlength="50" required placeholder="Place Of Issue" />
                                 <span asp-validation-for="PlaceOfIssue" class="text-danger"></span>
                             </div>
                         </div>
@@ -353,15 +353,16 @@
                             <label class="col-sm-2 col-form-label text-center font-weight-bold">@(sno++).</label>
                                         <label asp-for="DateOfIssue" class="col-sm-4 col-form-label form-label labelprofile"></label>
                             <div class="col-sm-6">
-                                            <input asp-for="DateOfIssue" class="form-control todaydate" data-toggle="tooltip" title="Enter Issue Of Date" value="" required />
-                                <span asp-validation-for="DateOfIssue" class="text-danger"></span>
+                                            <input asp-for="DateOfIssue" readonly class="form-control todaydate d-none" data-toggle="tooltip" title="As per Finalization by RO"  />
+                                            <input type="text" placeholder="As per Finalization by RO " id="tempDateOfIssue" class="form-control " readonly />
+                                            <span asp-validation-for="DateOfIssue" class="text-danger"></span>
                             </div>
                         </div>
                         <div class="row mb-1 required">
                             <label class="col-sm-2 col-form-label text-center font-weight-bold">@(sno++).</label>
                                         <label asp-for="IssuingAuth" class="col-sm-4 col-form-label form-label labelprofile"></label>
                             <div class="col-sm-6">
-                                            <input asp-for="IssuingAuth " class="form-control1 text-uppercase" data-toggle="tooltip" title="Enter Issuing Auth" required />
+                                            <input asp-for="IssuingAuth" readonly class="form-control text-uppercase" data-toggle="tooltip" title="Enter Issuing Auth" required />
                                 <span asp-validation-for="IssuingAuth" class="text-danger"></span>
                             </div>
                         </div>

@@ -31,9 +31,9 @@ namespace BusinessLogicsLayer.Master
             return _iUserProfileDB.GetAll(DomainId, UserId);
         }
 
-        public Task<List<DTOFwdICardResponse>> GetDataForFwd(int StepId, int UnitId,string Name, int TypeId)
+        public Task<List<DTOFwdICardResponse>> GetDataForFwd(int StepId, int UnitId, string Name, int TypeId, int IsIO, int IsCO, int IntOffr)
         {
-            return _iUserProfileDB.GetDataForFwd(StepId, UnitId, Name,TypeId);
+            return _iUserProfileDB.GetDataForFwd(StepId, UnitId, Name,TypeId, IsIO, IsCO, IntOffr);
         }
         public async Task<DTOProfileResponse?> GetProfileByUserId(int UserId)
         {
