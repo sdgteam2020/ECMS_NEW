@@ -72,7 +72,7 @@ namespace DataAccessLayer
         {
             try
             {
-                //UnitName = string.IsNullOrEmpty(UnitName) ? "" : UnitName.ToLower();
+                UnitName = string.IsNullOrEmpty(UnitName) ? "" : UnitName.ToLower();
                 //string query = "";
                 //if(UnitName!="")
                 // query = " declare @UnitName varchar(Max)='"+ UnitName.ToUpper() + "' "+
@@ -86,7 +86,7 @@ namespace DataAccessLayer
                 //               " FROM   dbo.MUnit";
                 //}
 
-               
+
                 //using (var connection = _contextDP.CreateConnection())
                 //{
                 //    var basicDetail = await connection.QueryAsync<MUnit>(query, new { });
@@ -102,9 +102,11 @@ namespace DataAccessLayer
 
                 //var ret = await _context.MUnit.Where(P => UnitName == "" || P.UnitName.ToLower().Contains(UnitName)).Take(200).ToListAsync();
 
+                //var ret = await _context.MUnit.Take(200).ToListAsync();
+                
+                var ret = await _context.MUnit.Where(x => UnitName == "" || x.Sus_no.ToLower().Contains(UnitName)).Take(200).ToListAsync();
 
-
-                var ret = await _context.MUnit.Take(200).ToListAsync();
+                
                 return ret;
             }
             catch (Exception ex)
