@@ -114,12 +114,12 @@ namespace Web.Controllers
 
             if (retint == 0)
             {
-                ViewBag.Title = "List of Register I-Card";
+                ViewBag.Title = "List of Drafted Appl";
                 // type = 2; stepcounter = 2;
             }
            else if (retint == 1)
             {
-                ViewBag.Title = "List of Register I-Card";
+                ViewBag.Title = "List of Drafted Appl";
                 // type = 2; stepcounter = 2;
             }
 
