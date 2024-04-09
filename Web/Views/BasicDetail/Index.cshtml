@@ -146,7 +146,7 @@
                                        
                                         <td class="noExport">
                                             <div class="d-flex p-2">
-
+                                                
                                                 <a asp-controller="BasicDetail" asp-action="View" asp-route-Id="@item.EncryptedId" class="btn btn-icon btn-round btn-primary mr-2"><i class="fa fa-print mt-2"></i></a>
                                                 
                                                     <spna class="spnBasicDetailId d-none">@item.BasicDetailId</spna>
@@ -155,7 +155,7 @@
                                                     <spna class="spnStepId d-none">@item.StepId</spna>
                                                     <spna class="spnApplyFor d-none">@item.ApplyForId</spna>
 
-                                                @if ((item.StepCounter == 1 || item.StepCounter == 7 || item.StepCounter == 8 || item.StepCounter == 9 || item.StepCounter == 10) && (ViewBag.Id == 0 || ViewBag.Id == 1))
+                                                @if ((item.StepCounter == 1 || item.StepCounter == 7 || item.StepCounter == 8 || item.StepCounter == 9 || item.StepCounter == 10) && (ViewBag.Id == 0 || ViewBag.Id == 1 || item.Reject == 0))
                                                     {
                                                         <a asp-controller="BasicDetail" asp-action="BasicDetail" asp-route-Id="@item.EncryptedId" class="btn btn-icon btn-round btn-warning mr-2"><i class="fas fa-edit mt-2"></i></a>
 

@@ -182,8 +182,8 @@ function getApplyIcardDetails() {
             if (response != null) {
                 
                 if (response.ApplyFor == "Offrs") {
-                    $("#PlaceOfIssue").val("RO");
-                    $("#IssuingAuth").val("Comdt, RO");
+                    $("#PlaceOfIssue").val("ORO");
+                    $("#IssuingAuth").val("brig, ORO");
                     $("#tempDateOfIssue").val("As per Finalization by ORO");
                 }
                 $("#lblCategory").html(response.ApplyFor);

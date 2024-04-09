@@ -114,7 +114,7 @@ namespace DataAccessLayer
                 _logger.LogError(1001, ex, "HomeDB->GetRequestDashboardCount");
                 return null;
             }
-        }
+        } 
         public async Task<DTORequestSubDashboardCountResponse> GetSubDashboardCount(int UserId)
         {
             string query = "declare @TotDrafted int=0 declare @TotSubmitted int=0 declare @TotRejected int=0 declare @TotPostingOut int=0 declare @TotPrinted int=0 " +

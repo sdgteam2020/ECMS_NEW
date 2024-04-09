@@ -181,7 +181,7 @@ $(document).ready(function () {
             }
         GetDataFromBasicDetails($(this).closest("tr").find(".spnBasicDetailId").html());
       
-        if (StepCounter == 1) {
+        if (StepCounter == 1 || StepCounter == 7 || StepCounter == 8 || StepCounter == 9 || StepCounter == 10 || StepCounter == 11 || StepCounter == 12 || StepCounter == 13 || StepCounter == 15) {
 
             if (applyfor == 1) {
                 $(".gsoio").html("Initiating Offr (IO)");
@@ -444,6 +444,8 @@ $(document).ready(function () {
                     Counter = 9
                 else if (Counter == 5)
                     Counter = 10
+
+
                 if ($("#txtFrejectedRemarks").val() != "" || $("#ddlRRemarks").val() != "")
 
                     UpdateStepCounter(spnStepId, spnRequestId, Counter, "R");
