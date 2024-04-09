@@ -30,6 +30,8 @@ function GetDashboardCount(type) {
                     $("#ToDraftedJCO").html(response.ToDraftedJCO);
                     $("#ToSubmittedOffrs").html(response.ToSubmittedOffrs);
                     $("#ToSubmittedJCO").html(response.ToSubmittedJCO);
+                    $("#ToPrintedOffrs").html(response.ToPrintedOffrs);
+                    $("#ToPrintedJCO").html(response.ToPrintedJCO);
                     $("#ToRejectedOffrs").html(response.ToRejectedOffrs);
                     $("#ToRejectedJCO").html(response.ToRejectedJCO);
                     $("#ToPostingOutOffrs").html(response.ToPostingOutOffrs);

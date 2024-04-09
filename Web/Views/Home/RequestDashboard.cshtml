@@ -90,6 +90,37 @@
                             </a>
                         </div>
                     }
+                    else if (ViewBag.Type == "Printed")
+                    {
+                        <div id="SubmittedOffrs" class="col-md-2 col-sm-6">
+                            <a href="/BasicDetail/Index/Nzc3">
+                                <div class="counter blue">
+                                    <div class="counter-icon">
+                                        <i class="fa fa-water"></i>
+                                    </div>
+                                    <span class="counter-value" id="ToPrintedOffrs">0</span>
+                                    <h3>
+                                        Appl Printed for Offr's
+                                    </h3>
+
+                                </div>
+                            </a>
+                        </div>
+                        <div id="SubmittedJCO" class="col-md-2 col-sm-6">
+                            <a href="/BasicDetail/Index/?Id=Nzc3&jcoor=SmNvL09ycw==">
+                                <div class="counter blue">
+                                    <div class="counter-icon">
+                                        <i class="fa fa-user"></i>
+                                    </div>
+                                    <span class="counter-value" id="ToPrintedJCO">0</span>
+                                    <h3>
+                                        Appl Printed for JCOs/OR
+                                    </h3>
+
+                                </div>
+                            </a>
+                        </div>
+                    }
                     else if (ViewBag.Type == "Rejected")
                     {
                         <div id="RejectedOffrs" class="col-md-2 col-sm-6">
