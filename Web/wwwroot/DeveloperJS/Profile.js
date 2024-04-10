@@ -120,14 +120,14 @@ function GetALLByUnitById(param1) {
     });
 }
 
-function SaveUserProfile(ArmyNo, Rank, Name, MobileNo, DialingCode, Extension, IntOffr, IsIO, IsCo, UserId, Thumbprint) {
+function SaveUserProfile(ArmyNo, Rank, Name, MobileNo, DialingCode, Extension, IsRO, IsIO, IsCo,IsORO, UserId, Thumbprint) {
 
     /*  alert($('#bdaymonth').val());*/
     
     $.ajax({
         url: '/UserProfile/SaveUserProfile',
         type: 'POST',
-        data: { "ArmyNo": ArmyNo, "RankId": Rank, "Name": Name, "MobileNo": MobileNo, "DialingCode": DialingCode, "Extension": Extension, "UserId": UserId, "IntOffr": IntOffr, "IsIO": IsIO, "IsCo": IsCo, "Thumbprint": Thumbprint }, //get the search string
+        data: { "ArmyNo": ArmyNo, "RankId": Rank, "Name": Name, "MobileNo": MobileNo, "DialingCode": DialingCode, "Extension": Extension, "UserId": UserId, "IsRO": IsRO, "IsIO": IsIO, "IsCo": IsCo, "IsORO": IsORO, "Thumbprint": Thumbprint }, //get the search string
         success: function (result) {
 
 
@@ -215,13 +215,13 @@ function GetByArmyNo(ArmyNo) {
                         GetALLByUnitById(response.UnitId);
                         mMsater(response.RankId, "ddlProRank", Rank, "");
                        
-                        if (response.IntOffr == false) {
+                        if (response.IsRO == false) {
 
-                            $("#Intoffrs").prop("checked", false); 
+                            $("#chkRO").prop("checked", false); 
                         }
                         else {
                             
-                            $("#Intoffrs").prop("checked", true); 
+                            $("#chkRO").prop("checked", true); 
                            
                         }
                         if (response.IsIO == false) {
@@ -240,6 +240,15 @@ function GetByArmyNo(ArmyNo) {
                         else {
 
                             $("#chkCO").prop("checked", true);
+
+                        }
+                        if (response.IsORO == false) {
+
+                            $("#chkORO").prop("checked", false);
+                        }
+                        else {
+
+                            $("#chkORO").prop("checked", true);
 
                         }
                         $("#txtName").val(response.Name);

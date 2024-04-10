@@ -1456,6 +1456,7 @@ namespace DataAccessLayer
                                 IsRO = model.IsRO,
                                 IsIO = model.IsIO,
                                 IsCO = model.IsCO,
+                                IsORO = model.IsORO,
                                 Updatedby = user.Id,
                                 Thumbprint=model.Thumbprint,
                             };
@@ -1523,6 +1524,7 @@ namespace DataAccessLayer
                             mUserProfile.IsRO = model.IsRO;
                             mUserProfile.IsIO = model.IsIO;
                             mUserProfile.IsCO = model.IsCO;
+                            mUserProfile.IsORO = model.IsORO;
                             mUserProfile.Updatedby = dTOTempSession.AspNetUsersId;
                             mUserProfile.Thumbprint = model.Thumbprint;
                             await _context.UserProfile.AddAsync(mUserProfile);
@@ -1589,6 +1591,7 @@ namespace DataAccessLayer
                                 mUserProfile.IsRO = model.IsRO;
                                 mUserProfile.IsIO = model.IsIO;
                                 mUserProfile.IsCO = model.IsCO;
+                                mUserProfile.IsORO = model.IsORO;
                                 mUserProfile.Updatedby = dTOTempSession.AspNetUsersId;
                                 mUserProfile.Thumbprint = model.Thumbprint;
                                 await _context.UserProfile.AddAsync(mUserProfile);
