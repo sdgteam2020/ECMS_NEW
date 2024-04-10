@@ -17,9 +17,6 @@ namespace DataTransferObject.Domain
         [RegularExpression(@"^[\d]+$", ErrorMessage = "UserId is number.")]
         public int UserId { get; set; }
 
-
-     
-
         [StringLength(10)]
         [Column(TypeName = "varchar(10)")]
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
@@ -44,13 +41,16 @@ namespace DataTransferObject.Domain
         public string Name { get; set; } = string.Empty;
 
         [RegularExpression("^[a-zA-Z]*$", ErrorMessage = "Only Alphabets allowed.")]
-        public Boolean IntOffr { get; set; }
+        public Boolean IsRO { get; set; }
 
         [RegularExpression("^[a-zA-Z]*$", ErrorMessage = "Only Alphabets allowed.")]
         public Boolean IsIO { get; set; }
 
         [RegularExpression("^[a-zA-Z]*$", ErrorMessage = "Only Alphabets allowed.")]
         public Boolean IsCO { get; set; }
+
+        [RegularExpression("^[a-zA-Z]*$", ErrorMessage = "Only Alphabets allowed.")]
+        public Boolean IsORO { get; set; }
 
         [StringLength(10)]
         [Column(TypeName = "varchar(10)")]

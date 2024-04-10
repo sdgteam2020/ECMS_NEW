@@ -58,7 +58,7 @@ namespace DataTransferObject.Requests
         public int UnitMapId { get; set; }
 
         [RegularExpression("^[a-zA-Z]*$", ErrorMessage = "Only Alphabets allowed.")]
-        public Boolean IntOffr { get; set; }
+        public Boolean IsRO { get; set; }
 
         [RegularExpression("^[a-zA-Z]*$", ErrorMessage = "Only Alphabets allowed.")]
         public Boolean IsIO { get; set; }
