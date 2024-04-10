@@ -1045,9 +1045,10 @@ namespace DataAccessLayer
                                                ArmyNo = up.ArmyNo,
                                                Name = up.Name,
                                                IsToken=up.IsToken,
-                                               IntOffr = up.IntOffr,
+                                               IsRO = up.IsRO,
                                                IsIO = up.IsIO,
                                                IsCO = up.IsCO,
+                                               IsORO=up.IsORO,
                                                RankId=rk.RankId,
                                                RankName=rk.RankName,
                                                RankAbbreviation=rk.RankAbbreviation,
@@ -1071,9 +1072,10 @@ namespace DataAccessLayer
                                                ArmyNo = up.ArmyNo,
                                                Name = up.Name,
                                                IsToken = up.IsToken,
-                                               IntOffr = up.IntOffr,
+                                               IsRO = up.IsRO,
                                                IsIO = up.IsIO,
                                                IsCO = up.IsCO,
+                                               IsORO = up.IsORO,
                                                RankId = rk.RankId,
                                                RankName = rk.RankName,
                                                RankAbbreviation = rk.RankAbbreviation,
@@ -1097,9 +1099,10 @@ namespace DataAccessLayer
                                                ArmyNo = up.ArmyNo,
                                                Name = up.Name,
                                                IsToken = up.IsToken,
-                                               IntOffr = up.IntOffr,
+                                               IsRO = up.IsRO,
                                                IsIO = up.IsIO,
                                                IsCO = up.IsCO,
+                                               IsORO = up.IsORO,
                                                RankId = rk.RankId,
                                                RankName = rk.RankName,
                                                RankAbbreviation = rk.RankAbbreviation,
@@ -1123,9 +1126,10 @@ namespace DataAccessLayer
                                                ArmyNo = up.ArmyNo,
                                                Name = up.Name,
                                                IsToken = up.IsToken,
-                                               IntOffr = up.IntOffr,
+                                               IsRO = up.IsRO,
                                                IsIO = up.IsIO,
                                                IsCO = up.IsCO,
+                                               IsORO = up.IsORO,
                                                RankId = rk.RankId,
                                                RankName = rk.RankName,
                                                RankAbbreviation = rk.RankAbbreviation,
@@ -1449,7 +1453,7 @@ namespace DataAccessLayer
                                 MobileNo=model.MobileNo,
                                 DialingCode = model.DialingCode,
                                 Extension=model.Extension,
-                                IntOffr = model.IntOffr,
+                                IsRO = model.IsRO,
                                 IsIO = model.IsIO,
                                 IsCO = model.IsCO,
                                 Updatedby = user.Id,
@@ -1516,7 +1520,7 @@ namespace DataAccessLayer
                             mUserProfile.MobileNo = model.MobileNo;
                             mUserProfile.DialingCode = model.DialingCode;
                             mUserProfile.Extension = model.Extension;
-                            mUserProfile.IntOffr = model.IntOffr;
+                            mUserProfile.IsRO = model.IsRO;
                             mUserProfile.IsIO = model.IsIO;
                             mUserProfile.IsCO = model.IsCO;
                             mUserProfile.Updatedby = dTOTempSession.AspNetUsersId;
@@ -1582,7 +1586,7 @@ namespace DataAccessLayer
                                 mUserProfile.MobileNo = model.MobileNo;
                                 mUserProfile.DialingCode = model.DialingCode;
                                 mUserProfile.Extension = model.Extension;
-                                mUserProfile.IntOffr = model.IntOffr;
+                                mUserProfile.IsRO = model.IsRO;
                                 mUserProfile.IsIO = model.IsIO;
                                 mUserProfile.IsCO = model.IsCO;
                                 mUserProfile.Updatedby = dTOTempSession.AspNetUsersId;

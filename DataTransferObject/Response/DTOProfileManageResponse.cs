@@ -14,7 +14,8 @@ namespace DataTransferObject.Response
         public bool IsToken { get; set; }
         public bool IsIO { get; set; }
         public bool IsCO { get; set; }
-        public bool IntOffr { get; set; }
+        public bool IsRO { get; set; }
+        public bool IsORO{ get; set; }
         public short RankId { get; set; }
         public string RankName { get; set; } = string.Empty;
         public string RankAbbreviation { get; set; } = string.Empty;
