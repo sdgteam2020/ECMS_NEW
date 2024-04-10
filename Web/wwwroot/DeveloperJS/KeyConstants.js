@@ -7,7 +7,9 @@ const DataExists = 3;
 const IncorrectData = 4;
 const spnISIO = 1;
 const spnISCO = 1;
-const spnIntOffr = 1;
+const spnIntRO = 1;
+const spnIntORO = 1;
+const spnIntAfsaccellUnitId = 85;
 const spnMI11UnitId = 85;
 const spnHQ54UnitId = 85;
 

@@ -8,10 +8,27 @@
                         <div class="page-header-icon"> <i class="fa fa-bars"></i></div>
                      
                             <div>
-                                <a href="/Home/Index" class="mr-2">Home</a> > <a href="/Home/MyTask" class="mr-2">Task</a>  > @ViewBag.Title
+                           
+                            @if (Convert.ToString(ViewBag.jcoor) == "1")
+                            {
+                                <span>
+                                    <a href="/Home/Index" class="mr-2">Home</a> > 
+                                    <a href="/Home/Task" class="mr-2">Task</a> >
+                                    <a href="/Home/MyTask/SkNPc1BlbmRpbmc=" class="mr-2">I-Card Status</a>  >
+                                    @ViewBag.Title</span>
+
+                            }else
+                            {
+                                <span>
+                                    <a href="/Home/Index" class="mr-2">Home</a> >
+                                    <a href="/Home/Task" class="mr-2">Task</a> >
+                                    <a href="/Home/MyTask/T2ZmcnNQZW5kaW5n" class="mr-2">I-Card Status</a>  >
+                                    @ViewBag.Title
+                                </span>
+                            }
 
 
-                            </div>
+                        </div>
                        
 
                     </h1>

@@ -160,14 +160,15 @@ function yeardata(sectid = '', ddl) {
     }
 }
 
-function GetAllOffsByUnitId(ddl, sectid, UnitId, ISIO, IsCO, IntOffr) {
+function GetAllOffsByUnitId(ddl, sectid, UnitId, ISIO, IsCO, IsRO, IsORO) {
     var userdata =
     {
         "id": 0,
         "UnitId": UnitId,
         "ISIO": ISIO,
         "ISCO": IsCO,
-        "IntOffr": IntOffr
+        "IsRO": IsRO,
+        "IsORO": IsORO
     };
     $.ajax({
         url: '/UserProfile/GetOffrsByUnitMapId',

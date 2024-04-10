@@ -20473,8 +20473,9 @@ body {
 }
 
 .dropdown-user a img {
-    height: 42px;
-    width: 42px;
+    height: 54px;
+    width: 54px;
+    border-radius:50%;
 }
 
 .dropdown-user .dropdown-menu .dropdown-header {

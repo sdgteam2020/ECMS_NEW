@@ -265,13 +265,16 @@ namespace Web.Controllers
             if (string.IsNullOrEmpty(jcoor))
             {
                 noti.DisplayId = stepcounter;
+                ViewBag.jcoor = 1;
                 var allrecord = await Task.Run(() => basicDetailBL.GetALLBasicDetail(Convert.ToInt32(userId), stepcounter, type,1));
                 _logger.LogInformation(1001, "Index Page Of Basic Detail View");
                 await _INotificationBL.UpdateRead(noti);
                 return View(allrecord);
+
             }
             else
             {
+                ViewBag.jcoor = 0;
                 noti.DisplayId = stepcounter+10;
                 var allrecord = await Task.Run(() => basicDetailBL.GetALLBasicDetail(Convert.ToInt32(userId), stepcounter, type,2));
                 _logger.LogInformation(1001, "Index Page Of Basic Detail View");
