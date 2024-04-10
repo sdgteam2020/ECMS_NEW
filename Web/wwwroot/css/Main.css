@@ -293,7 +293,7 @@
     }
     .ProfileName {
         font-size: 12px;
-        margin-top: -0.5rem !important;
+        /*margin-top: -0.5rem !important;*/
     }
 }
 
@@ -305,7 +305,7 @@
     }
     .ProfileName {
         font-size: 6px;
-        margin-top: -0.5rem !important;
+        /*margin-top: -0.5rem !important;*/
     }
 }
 
