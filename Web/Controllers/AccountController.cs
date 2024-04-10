@@ -1480,7 +1480,7 @@ namespace Web.Controllers
                             dTOProfileAndMappingRequest.MobileNo = mUserProfile.MobileNo;
                             dTOProfileAndMappingRequest.DialingCode = mUserProfile.DialingCode;
                             dTOProfileAndMappingRequest.Extension= mUserProfile.Extension;
-                            dTOProfileAndMappingRequest.IntOffr = mUserProfile.IntOffr;
+                            dTOProfileAndMappingRequest.IsRO = mUserProfile.IsRO;
                             dTOProfileAndMappingRequest.IsCO = mUserProfile.IsCO;
                             dTOProfileAndMappingRequest.IsIO = mUserProfile.IsIO;
                             return View(dTOProfileAndMappingRequest);

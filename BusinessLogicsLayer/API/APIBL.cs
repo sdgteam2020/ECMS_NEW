@@ -23,12 +23,13 @@ namespace BusinessLogicsLayer.API
 {
     public class APIBL : IAPIBL
     {
-       
+
         //public const string ApiUrl = "https://192.168.10.203:8443/api/";
         //public const string ApiUrloffrs = "https://192.168.10.203:8443/api/";
-        public const string ApiUrl = "http://131.3.47.30:8443/api/";
-        public const string ApiUrloffrs = "http://131.3.47.30:8443/api/";
-
+        //public const string ApiUrl = "http://131.3.47.30:8443/api/";
+        //public const string ApiUrloffrs = "http://131.3.47.30:8443/api/";
+        public const string ApiUrl = "https://localhost:7002/api/";
+        public const string ApiUrloffrs = "https://localhost:7002/api/";
 
         //public async Task<DTOLoginAPIResponse> Getauthentication(DTOAPILoginRequest Data)
         //{

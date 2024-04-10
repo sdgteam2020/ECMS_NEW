@@ -10,7 +10,7 @@ namespace DataTransferObject.Response
     {
         public int UserId { get; set; }
         public string ArmyNo { get; set; } = string.Empty;
-        public Boolean IntOffr { get; set; }
+        public Boolean IsRO { get; set; }
         public int RankId { get; set; }
         public string RankName { get; set; } = string.Empty;
         public string Name { get; set; } = string.Empty;

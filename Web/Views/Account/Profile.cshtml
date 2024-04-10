@@ -239,18 +239,18 @@
 
                                         </div>
                                         <div class="row mb-2 required">
-                                            <label asp-for="IntOffr" class="col-sm-9 col-form-label form-label fw-bold">Are you performing the Duties of Brig ORO?<i class="fas fa-asterisk mand1"></i></label>
+                                            <label asp-for="IsRO" class="col-sm-9 col-form-label form-label fw-bold">Are you performing the Duties of Brig ORO?<i class="fas fa-asterisk mand1"></i></label>
                                             @if (Model.UserId > 0)
                                             {
                                                 <div class="col-sm-3">
                                                     <div class="form-check form-check-inline">
-                                                        <input class="form-check-input" type="radio" name="IntOffr" value="true" id="intoffsyes" checked=@(Model.IntOffr == true?true:false) disabled="disabled">
+                                                        <input class="form-check-input" type="radio" name="IntOffr" value="true" id="intoffsyes" checked=@(Model.IsRO == true?true:false) disabled="disabled">
                                                         <label class="form-check-label" for="intoffsyes">
                                                             Yes
                                                         </label>
                                                     </div>
                                                     <div class="form-check form-check-inline">
-                                                        <input class="form-check-input" type="radio" name="IntOffr" value="false" id="intoffsno" checked=@(Model.IntOffr == false?true:false) disabled="disabled">
+                                                        <input class="form-check-input" type="radio" name="IntOffr" value="false" id="intoffsno" checked=@(Model.IsRO == false?true:false) disabled="disabled">
                                                         <label class="form-check-label" for="intoffsno">
                                                             No
                                                         </label>

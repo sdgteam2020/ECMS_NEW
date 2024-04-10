@@ -81,6 +81,14 @@ namespace DataAccessLayer
                             " inner join TrnStepCounter trnstepcout on trnstepcout.RequestId= req.RequestId where domain.AspNetUsersId=@UserId and trnstepcout.StepId>1 and trnstepcout.ApplyForId=2 " +
                             " select @ToSubmittedOffrs ToSubmittedOffrs,@ToSubmittedJCO ToSubmittedJCO";
                     break;
+                case "Printed":
+                    query = "declare @ToPrintedOffrs int=0 declare @ToPrintedJCO int=0" +
+                            " select @ToPrintedOffrs=COUNT(distinct req.RequestId) from TrnDomainMapping domain" +
+                            " inner join TrnICardRequest req on req.TrnDomainMappingId=domain.Id where domain.AspNetUsersId=@UserId and req.Status=1 and trnstepcout.ApplyForId=1 " +
+                            " select @ToPrintedJCO=COUNT(distinct req.RequestId) from TrnDomainMapping domain" +
+                            " inner join TrnICardRequest req on req.TrnDomainMappingId=domain.Id where domain.AspNetUsersId=@UserId and req.Status=1 and trnstepcout.ApplyForId=2 " +
+                            " select @ToPrintedOffrs ToPrintedOffrs,@ToPrintedJCO ToPrintedJCO";
+                    break;
                 case "Rejected":
                     query = "declare @ToRejectedOffrs int=0 declare @ToRejectedJCO int=0" +
                             " select @ToRejectedOffrs=COUNT(distinct req.RequestId) from TrnDomainMapping domain" +

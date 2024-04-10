@@ -158,6 +158,8 @@ namespace Web.Controllers
             { ViewBag.Title = "I-Card Approved From HQ 54"; type = 2; stepcounter = 5; }
             else if (retint == 888)
             { ViewBag.Title = "I-Card Submited"; type = 2; stepcounter = 888; }
+            else if (retint == 777)
+            { ViewBag.Title = "I-Card Printed"; type = 2; stepcounter = 777; }
             else if (retint == 999)
             { ViewBag.Title = "I-Card Rejectd From IO,MI11 and HQ 54"; type = 2; stepcounter = 999; }
 
