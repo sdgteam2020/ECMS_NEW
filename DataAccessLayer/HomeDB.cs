@@ -2,6 +2,7 @@
 using DataAccessLayer.BaseInterfaces;
 using DataAccessLayer.Logger;
 using DataTransferObject.Response;
+using DataTransferObject.Response.User;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
@@ -175,6 +176,25 @@ namespace DataAccessLayer
                                        Name = xup != null ? xup.Name : null,
                                    }).ToListAsync();
             return allrecord;
+        }
+        public async Task<DTORequestDashboardUserMgtCountResponse> GetDashboardUserMgtCount(int UnitId)
+        {
+            string query = "declare @TotRegisterUser int=0 " +
+                            " select @TotRegisterUser=COUNT(Id) from TrnDomainMapping where UnitId=@UnitId " +
+                            " select @TotRegisterUser TotRegisterUser ";
+            try
+            {
+                using (var connection = _contextDP.CreateConnection())
+                {
+                    var ret = await connection.QueryAsync<DTORequestDashboardUserMgtCountResponse>(query, new { UnitId });
+                    return ret.SingleOrDefault();
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "HomeDB->GetRequestDashboardCount");
+                return null;
+            }
         }
     }
 }

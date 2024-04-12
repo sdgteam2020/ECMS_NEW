@@ -33,5 +33,9 @@ namespace BusinessLogicsLayer.Home
         {
             return await _iHomeDB.GetAllRegisterUser(UnitId);
         }
+        public async Task<DTORequestDashboardUserMgtCountResponse> GetDashboardUserMgtCount(int UnitId)
+        {
+            return await _iHomeDB.GetDashboardUserMgtCount(UnitId);
+        }
     }
 }
