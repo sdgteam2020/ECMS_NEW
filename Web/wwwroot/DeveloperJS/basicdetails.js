@@ -17,7 +17,14 @@
             $("#btnsave").addClass("disabled");
         }
     });
-    $('#RegimentalId').on('change', function () {
+    $('#Height').on('keyup', function () {
+
+        if ($('#Height').val() > 250) {
+            toastr.error('Please enter a value less than or equal to 250. ');
+        }
+    });
+
+        $('#RegimentalId').on('change', function () {
        
         $("#IssuingAuth").val("Comdt, " + $('#RegimentalId option:selected').text());
         $("#PlaceOfIssue").val($('#RegimentalId option:selected').text());
