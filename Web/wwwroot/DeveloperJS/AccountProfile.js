@@ -11,8 +11,11 @@
     $("input[name='IsCO']").click(function () {
         $("#IsCO-error").html("");
     });
-    $("input[name='IntOffr']").click(function () {
-        $("#IntOffr-error").html("");
+    $("input[name='IsRO']").click(function () {
+        $("#IsRO-error").html("");
+    });
+    $("input[name='IsORO']").click(function () {
+        $("#IsORO-error").html("");
     });
 
     $("#btnUnitMapReset").click(function () {
@@ -303,7 +306,7 @@ function Proceed() {
             cancelButtonColor: '#d33',
             confirmButtonText: 'Yes, Save it!'
         }).then((result) => {
-            if (result.isConfirmed && $("input[type='radio'][name=IsIO]:checked").length > 0 && $("input[type='radio'][name=IsCO]:checked").length > 0 && $("input[type='radio'][name=IntOffr]:checked").length > 0) {
+            if (result.isConfirmed && $("input[type='radio'][name=IsIO]:checked").length > 0 && $("input[type='radio'][name=IsCO]:checked").length > 0 && $("input[type='radio'][name=IsRO]:checked").length > 0 && $("input[type='radio'][name=IsORO]:checked").length > 0 ) {
                 $(formId).submit();
             }
             else {
@@ -336,15 +339,23 @@ function ValidateRadioButton() {
         $("#IsCO-error").html("");
     }
 
-    if ($("input[type='radio'][name=IntOffr]:checked").length == 0) {
-        $("#IntOffr-error").html("IntOffr is required.");
+    if ($("input[type='radio'][name=IsRO]:checked").length == 0) {
+        $("#IsRO-error").html("Record Office is required.");
     }
     else {
-        $("#IntOffr-error").html("");
+        $("#IsRO-error").html("");
+    }
+
+    if ($("input[type='radio'][name=IsORO]:checked").length == 0) {
+        $("#IsORO-error").html("Officer Record Office is required.");
+    }
+    else {
+        $("#IsORO-error").html("");
     }
 }
 function ResetErrorMessage() {
-    $("#IntOffr-error").html("");
+    $("#IsRO-error").html("");
+    $("#IsORO-error").html("");
     $("#IsIO-error").html("");
     $("#IsCO-error").html("");
 }

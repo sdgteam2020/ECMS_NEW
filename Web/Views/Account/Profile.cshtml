@@ -199,7 +199,7 @@
 
                                         </div>
                                         <div class="row mb-2 required">
-                                            <label asp-for="IsCO" class="col-sm-9 col-form-label form-label fw-bold">Are you performing the Duties of CO, Record Office/ Col Records?<i class="fas fa-asterisk mand1"></i></label>
+                                            <label asp-for="IsCO" class="col-sm-9 col-form-label form-label fw-bold">Are you performing the Duties of Commanding Offr?<i class="fas fa-asterisk mand1"></i></label>
                                             @if (Model.UserId > 0)
                                             {
                                                 <div class="col-sm-3">
@@ -239,19 +239,19 @@
 
                                         </div>
                                         <div class="row mb-2 required">
-                                            <label asp-for="IsRO" class="col-sm-9 col-form-label form-label fw-bold">Are you performing the Duties of Brig ORO?<i class="fas fa-asterisk mand1"></i></label>
+                                            <label asp-for="IsRO" class="col-sm-9 col-form-label form-label fw-bold">Are you performing the Duties of CO, Record Office/ Col Records?<i class="fas fa-asterisk mand1"></i></label>
                                             @if (Model.UserId > 0)
                                             {
                                                 <div class="col-sm-3">
                                                     <div class="form-check form-check-inline">
-                                                        <input class="form-check-input" type="radio" name="IntOffr" value="true" id="intoffsyes" checked=@(Model.IsRO == true?true:false) disabled="disabled">
-                                                        <label class="form-check-label" for="intoffsyes">
+                                                        <input class="form-check-input" type="radio" name="IsRO" value="true" id="isroyes" checked=@(Model.IsRO == true?true:false) disabled="disabled">
+                                                        <label class="form-check-label" for="isroyes">
                                                             Yes
                                                         </label>
                                                     </div>
                                                     <div class="form-check form-check-inline">
-                                                        <input class="form-check-input" type="radio" name="IntOffr" value="false" id="intoffsno" checked=@(Model.IsRO == false?true:false) disabled="disabled">
-                                                        <label class="form-check-label" for="intoffsno">
+                                                        <input class="form-check-input" type="radio" name="IsRO" value="false" id="isrono" checked=@(Model.IsRO == false?true:false) disabled="disabled">
+                                                        <label class="form-check-label" for="isrono">
                                                             No
                                                         </label>
                                                     </div>
@@ -261,18 +261,56 @@
                                             {
                                                 <div class="col-sm-3">
                                                     <div class="form-check form-check-inline">
-                                                        <input class="form-check-input" type="radio" name="IntOffr" value="true" id="intoffsyes">
-                                                        <label class="form-check-label" for="intoffsyes">
+                                                        <input class="form-check-input" type="radio" name="IsRO" value="true" id="isroyes">
+                                                        <label class="form-check-label" for="isroyes">
                                                             Yes
                                                         </label>
                                                     </div>
                                                     <div class="form-check form-check-inline">
-                                                        <input class="form-check-input" type="radio" name="IntOffr" value="false" id="intoffsno">
-                                                        <label class="form-check-label" for="intoffsno">
+                                                        <input class="form-check-input" type="radio" name="IsRO" value="false" id="isrono">
+                                                        <label class="form-check-label" for="isrono">
                                                             No
                                                         </label>
                                                     </div>
-                                                    <span class="text-danger field-validation-valid" id="IntOffr-error"></span>
+                                                    <span class="text-danger field-validation-valid" id="IsRO-error"></span>
+                                                </div>
+                                            }
+                                        </div>
+                                        <div class="row mb-2 required">
+                                            <label asp-for="IsORO" class="col-sm-9 col-form-label form-label fw-bold">Are you performing the Duties of Brig ORO?<i class="fas fa-asterisk mand1"></i></label>
+                                            @if (Model.UserId > 0)
+                                            {
+                                                <div class="col-sm-3">
+                                                    <div class="form-check form-check-inline">
+                                                        <input class="form-check-input" type="radio" name="IsORO" value="true" id="isoroyes" checked=@(Model.IsORO == true?true:false) disabled="disabled">
+                                                        <label class="form-check-label" for="isoroyes">
+                                                            Yes
+                                                        </label>
+                                                    </div>
+                                                    <div class="form-check form-check-inline">
+                                                        <input class="form-check-input" type="radio" name="IsORO" value="false" id="isorono" checked=@(Model.IsORO == false?true:false) disabled="disabled">
+                                                        <label class="form-check-label" for="isorono">
+                                                            No
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            }
+                                            else
+                                            {
+                                                <div class="col-sm-3">
+                                                    <div class="form-check form-check-inline">
+                                                        <input class="form-check-input" type="radio" name="IsORO" value="true" id="isoroyes">
+                                                        <label class="form-check-label" for="isoroyes">
+                                                            Yes
+                                                        </label>
+                                                    </div>
+                                                    <div class="form-check form-check-inline">
+                                                        <input class="form-check-input" type="radio" name="IsORO" value="false" id="isorono">
+                                                        <label class="form-check-label" for="isorono">
+                                                            No
+                                                        </label>
+                                                    </div>
+                                                    <span class="text-danger field-validation-valid" id="IsORO-error"></span>
                                                 </div>
                                             }
                                         </div>

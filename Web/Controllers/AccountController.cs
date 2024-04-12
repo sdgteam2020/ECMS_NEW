@@ -1483,6 +1483,7 @@ namespace Web.Controllers
                             dTOProfileAndMappingRequest.IsRO = mUserProfile.IsRO;
                             dTOProfileAndMappingRequest.IsCO = mUserProfile.IsCO;
                             dTOProfileAndMappingRequest.IsIO = mUserProfile.IsIO;
+                            dTOProfileAndMappingRequest.IsORO = mUserProfile.IsORO;
                             return View(dTOProfileAndMappingRequest);
                         }
                         catch (Exception ex)

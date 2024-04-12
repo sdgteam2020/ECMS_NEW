@@ -4,14 +4,13 @@
 }
 <style>
     .form-group .labelprofile {
-
-        font-size:14px;
-        font-weight:700;
+        font-size: 14px;
+        font-weight: 700;
     }
 
-    .cardbg{
-       /*  background: rgb(255,255,255);
-        background: radial-gradient(circle, rgba(255,255,255,0) 0%, rgba(63,251,217,0.3225665266106442) 100%); */
+    .cardbg {
+        /*  background: rgb(255,255,255);
+            background: radial-gradient(circle, rgba(255,255,255,0) 0%, rgba(63,251,217,0.3225665266106442) 100%); */
     }
 
     .minheight {
@@ -35,70 +34,60 @@
     </div>
 </header>
 <div class="containerMain mt-n10">
-<div class="row">
-    <div class="col-12 mb-4">
-        <div class="card h-100">
-        <div class="card-header">
-          
-         
-            <div class="row">
-                <div class="col-xl-12 text-left">
-                    <h3>
-                        Profile Mapping Details
-                        <small class="text-muted"> </small>
+    <div class="row">
+        <div class="col-12 mb-4">
+            <div class="card h-100">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col-xl-12 text-left">
+                            <h3>
+                                Profile Mapping Details
+                                <small class="text-muted"> </small>
 
 
-                    </h3>
+                            </h3>
+                        </div>
+
+
+                    </div>
                 </div>
-
-
-            </div>
-        </div>
-
-            <div class="card-body" style="min-height:150px;">
-                <div class="row">
-
-
-
-                    <form action="" id="SaveFormProfile" method="post" name="SaveForm">
-                        <div class="row">
-                          
-                            <span class=" d-none" id="spnUserId">0</span>
-
-                               
-                                    <div class="row">
+                <div class="card-body" style="min-height:150px;">
+                    <div class="row">
+                        <form action="" id="SaveFormProfile" method="post" name="SaveForm">
+                            <div class="row">
+                                <span class=" d-none" id="spnUserId">0</span>
+                                <div class="row">
                                     <div class="col-md-6 ">
-
                                         <div class="card minheight cardbg mb-2 mt-2">
                                             <div class="seven">
                                                 <h1>Unit Mapping Details</h1>
                                             </div>
                                             <div class="mt-2 ml-4 ">
-                                                
-                                                    <div class="row">
-                                                       <div class="col-sm-6 ">
-                                                            <div class="form-group row mb-2">
-                                                                <span id="spnUnitIdUserPro" class="d-none"></span>
+
+                                                <div class="row">
+                                                    <div class="col-sm-6 ">
+                                                        <div class="form-group row mb-2">
+                                                            <span id="spnUnitIdUserPro" class="d-none"></span>
                                                             <label class="col-form-label col-sm-4 labelprofile">Unit</label>
-                                                                <div class="col-sm-8">
-                                                                    <label id="lblProUnit" class="col-form-label"></label>
+                                                            <div class="col-sm-8">
+                                                                <label id="lblProUnit" class="col-form-label"></label>
 
-                                                                </div>
-                                                                @*  <div class="col-sm-2">
-                                                                <button type="button" class="btn btn-icon btn-round btn-warning" id="btnProUnitAdd"><i class="fas fa-plus"></i></button>
-                                                                </div> *@
                                                             </div>
+                                                            @*  <div class="col-sm-2">
+                                                            <button type="button" class="btn btn-icon btn-round btn-warning" id="btnProUnitAdd"><i class="fas fa-plus"></i></button>
+                                                            </div> *@
                                                         </div>
-                                                        <div class="col-sm-6">
-                                                            <div class="form-group row mb-2">
+                                                    </div>
+                                                    <div class="col-sm-6">
+                                                        <div class="form-group row mb-2">
                                                             <label class="col-form-label col-sm-4  labelprofile">SUS No</label>
-                                                                <div class="col-sm-8">
+                                                            <div class="col-sm-8">
 
-                                                                    <label id="lblProSusno" class="col-form-label"></label>
-                                                                    @* <input class="form-control Alphanumeric" placeholder="Enter SUS No" id="txtProSusno" required pattern="^[a-zA-Z0-9 ]*$" maxlength="8" title="Only Alphabets and Numbers allowed" /> *@
-                                                                </div>
+                                                                <label id="lblProSusno" class="col-form-label"></label>
+                                                                @* <input class="form-control Alphanumeric" placeholder="Enter SUS No" id="txtProSusno" required pattern="^[a-zA-Z0-9 ]*$" maxlength="8" title="Only Alphabets and Numbers allowed" /> *@
                                                             </div>
                                                         </div>
+                                                    </div>
                                                     <div class="col-sm-6">
                                                         <div class="form-group row mb-2">
                                                             <label class="col-form-label col-sm-4 labelprofile">Unit Type</label>
@@ -108,37 +97,37 @@
                                                         </div>
                                                     </div>
                                                     <div class="col-sm-6 spnUnit">
-                                                            <div class="form-group row mb-2">
+                                                        <div class="form-group row mb-2">
                                                             <label class="col-form-label col-sm-4 labelprofile">Comd</label>
-                                                                <div class="col-sm-8">
-                                                                    <label class="col-form-label " id="lblProComd"></label>
-                                                                </div>
+                                                            <div class="col-sm-8">
+                                                                <label class="col-form-label " id="lblProComd"></label>
                                                             </div>
                                                         </div>
+                                                    </div>
                                                     <div class="col-sm-6 spnUnit">
-                                                            <div class="form-group row mb-2">
+                                                        <div class="form-group row mb-2">
                                                             <label class="col-form-label col-sm-4 labelprofile">Corps</label>
-                                                                <div class="col-sm-8">
-                                                                    <label class="col-form-label" id="lblProCorps"></label>
-                                                                </div>
+                                                            <div class="col-sm-8">
+                                                                <label class="col-form-label" id="lblProCorps"></label>
                                                             </div>
                                                         </div>
+                                                    </div>
                                                     <div class="col-sm-6 spnUnit">
-                                                            <div class="form-group row mb-2">
+                                                        <div class="form-group row mb-2">
                                                             <label class="col-form-label col-sm-4 labelprofile">Div</label>
-                                                                <div class="col-sm-8">
-                                                                    <label class="col-form-label" id="lblProDiv"></label>
-                                                                </div>
+                                                            <div class="col-sm-8">
+                                                                <label class="col-form-label" id="lblProDiv"></label>
                                                             </div>
                                                         </div>
+                                                    </div>
                                                     <div class="col-sm-6 spnUnit">
-                                                            <div class="form-group row mb-2">
+                                                        <div class="form-group row mb-2">
                                                             <label class="col-form-label col-sm-4 labelprofile">Bde</label>
-                                                                <div class="col-sm-8">
-                                                                    <label class="col-form-label" id="lblPrBde"></label>
-                                                                </div>
+                                                            <div class="col-sm-8">
+                                                                <label class="col-form-label" id="lblPrBde"></label>
                                                             </div>
                                                         </div>
+                                                    </div>
                                                     <div class="col-sm-6 spnDteBranch">
                                                         <div class="form-group row mb-2">
                                                             <label class="col-form-label col-sm-4 labelprofile">PSO/Dte</label>
@@ -163,94 +152,93 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
+                                    </div>
                                     <div class="col-md-6 ">
                                         <div class="card cardbg minheight mb-2 mt-2">
                                             <div class="seven">
                                                 <h1>Domain Details</h1>
                                             </div>
                                             <div class="mt-2 ml-4">
-                                                
-                                                    <div class="row">
-                                                        <div class="col-sm-6">
-                                                            <div class="form-group row mb-2">
+
+                                                <div class="row">
+                                                    <div class="col-sm-6">
+                                                        <div class="form-group row mb-2">
                                                             <label class="col-form-label col-sm-6 labelprofile">Mapped Domain ID</label>
-                                                                <div class="col-sm-6">
-                                                                    <label id="lblDomainId" class="col-form-label"></label>
-
-                                                                </div>
+                                                            <div class="col-sm-6">
+                                                                <label id="lblDomainId" class="col-form-label"></label>
 
                                                             </div>
+
                                                         </div>
-                                                        <div class="col-sm-6">
-                                                            <div class="form-group row mb-2">
-                                                            <label class="col-form-label col-sm-6 labelprofile">Army No</label>
-                                                                <div class="col-sm-6">
-                                                                    <label id="lblicno" class="col-form-label"></label>
-
-                                                                </div>
-
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-sm-6">
-                                                            <div class="form-group row mb-2">
-                                                            <label class="col-form-label col-sm-6 labelprofile">Role</label>
-                                                                <div class="col-sm-6">
-                                                                    <label id="lblrole" class="col-form-label"></label>
-
-                                                                </div>
-
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-sm-6">
-                                                            <div class="form-group row mb-2">
-                                                            <label class="col-form-label col-sm-6 labelprofile">Appt</label>
-                                                                <div class="col-sm-6">
-                                                                    <label id="lblAppt" class="lblAppt col-form-label"></label>
-
-                                                                </div>
-
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-sm-6">
-                                                            <div class="form-group row mb-2">
-                                                            <label class="col-form-label col-sm-6 labelprofile">Mapped By</label>
-                                                                <div class="col-sm-6">
-                                                                    <label id="lblMappedBy" class="col-form-label"></label>
-
-                                                                </div>
-
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-sm-6">
-                                                            <div class="form-group row mb-2">
-                                                            <label class="col-form-label col-sm-6 labelprofile">Mapped Date</label>
-                                                                <div class="col-sm-6">
-                                                                    <label id="lblMappedDate" class="col-form-label"></label>
-
-                                                                </div>
-
-                                                            </div>
-                                                        </div>
-
                                                     </div>
+                                                    <div class="col-sm-6">
+                                                        <div class="form-group row mb-2">
+                                                            <label class="col-form-label col-sm-6 labelprofile">Army No</label>
+                                                            <div class="col-sm-6">
+                                                                <label id="lblicno" class="col-form-label"></label>
+
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-6">
+                                                        <div class="form-group row mb-2">
+                                                            <label class="col-form-label col-sm-6 labelprofile">Role</label>
+                                                            <div class="col-sm-6">
+                                                                <label id="lblrole" class="col-form-label"></label>
+
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-6">
+                                                        <div class="form-group row mb-2">
+                                                            <label class="col-form-label col-sm-6 labelprofile">Appt</label>
+                                                            <div class="col-sm-6">
+                                                                <label id="lblAppt" class="lblAppt col-form-label"></label>
+
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-6">
+                                                        <div class="form-group row mb-2">
+                                                            <label class="col-form-label col-sm-6 labelprofile">Mapped By</label>
+                                                            <div class="col-sm-6">
+                                                                <label id="lblMappedBy" class="col-form-label"></label>
+
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-6">
+                                                        <div class="form-group row mb-2">
+                                                            <label class="col-form-label col-sm-6 labelprofile">Mapped Date</label>
+                                                            <div class="col-sm-6">
+                                                                <label id="lblMappedDate" class="col-form-label"></label>
+
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+
                                                 </div>
                                             </div>
-                                         </div>
+                                        </div>
+                                    </div>
                                     <div class="col-md-12 ">
                                         <div class="card cardbg">
                                             <div class="seven">
                                                 <h1>Personal information</h1>
                                             </div>
                                             <div class="mt-2 ml-4 p-2">
-                                                
                                                 <div class="row">
                                                     <div class="col-sm-4">
                                                         <div class="form-group row mb-2">
-                                                        <label class="col-form-label col-sm-4 labelprofile">Service No</label>
+                                                            <label class="col-form-label col-sm-4 labelprofile">Service No</label>
                                                             <div class="col-sm-4">
 
                                                                 <input class="form-control" placeholder="Enter Army No" id="txtProArmy" required maxlength="8" readonly />
@@ -276,7 +264,7 @@
                                                         <div class="form-group row mb-2">
                                                             <label class="col-form-label col-sm-4 labelprofile">Name<i class="fas fa-asterisk mand1"></i></label>
                                                             <div class="col-sm-8">
-                                                            <input class="form-control Alphanumeric" placeholder="Enter Name" data-toggle="tooltip" id="txtName" required pattern="^[a-zA-Z0-9 ]*$" maxlength="8" title="Only Alphabets and Numbers allowed" />
+                                                                <input class="form-control Alphanumeric" placeholder="Enter Name" data-toggle="tooltip" id="txtName" required pattern="^[a-zA-Z0-9 ]*$" maxlength="8" title="Only Alphabets and Numbers allowed" />
                                                             </div>
                                                         </div>
                                                     </div>
@@ -295,30 +283,29 @@
                                                         <div class="form-group row mb-2">
                                                             <label class="col-form-label col-sm-4 labelprofile">Mobile No<i class="fas fa-asterisk mand1"></i></label>
                                                             <div class="col-sm-8">
-                                                            <input class="form-control allow-number" title="Mobile No" data-toggle="tooltip" placeholder="Enter Mobile No" id="txtMobileNo" required pattern="^[0-9]+$" minlength="10" maxlength="10" />
+                                                                <input class="form-control allow-number" title="Mobile No" data-toggle="tooltip" placeholder="Enter Mobile No" id="txtMobileNo" required pattern="^[0-9]+$" minlength="10" maxlength="10" />
                                                             </div>
                                                         </div>
                                                     </div>
-                                                <div class="col-sm-4">
-                                                    <div class="form-group row mb-2">
-                                                        <label class="col-form-label col-sm-4 labelprofile">Army Contact No<i class="fas fa-asterisk mand1"></i></label>
-                                                        <div class="col-sm-4">
-                                                            <input class="form-control allow-number" title="ASCON Dialing" data-toggle="tooltip" placeholder="ASCON Dialing" id="txtDialingCode" required pattern="^[0-9]+$" minlength="6" maxlength="6" />
-                                                        </div>
-                                                        <div class="col-sm-4">
-                                                            <input class="form-control allow-number" title="Extension" data-toggle="tooltip" placeholder="Extension" id="txtExtension" required pattern="^[0-9]+$" minlength="4" maxlength="5" />
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-sm-4">
-                                                    <div class="form-group row mb-2">
-                                                        <label class="col-form-label col-sm-4 labelprofile">Thumb Print</label>
-                                                        <div class="col-sm-8">
-                                                            <label id="lblThumbPrint" class="col-form-label"></label>
+                                                    <div class="col-sm-4">
+                                                        <div class="form-group row mb-2">
+                                                            <label class="col-form-label col-sm-4 labelprofile">Army Contact No<i class="fas fa-asterisk mand1"></i></label>
+                                                            <div class="col-sm-4">
+                                                                <input class="form-control allow-number" title="ASCON Dialing" data-toggle="tooltip" placeholder="ASCON Dialing" id="txtDialingCode" required pattern="^[0-9]+$" minlength="6" maxlength="6" />
+                                                            </div>
+                                                            <div class="col-sm-4">
+                                                                <input class="form-control allow-number" title="Extension" data-toggle="tooltip" placeholder="Extension" id="txtExtension" required pattern="^[0-9]+$" minlength="4" maxlength="5" />
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                </div>
-
+                                                    <div class="col-sm-4">
+                                                        <div class="form-group row mb-2">
+                                                            <label class="col-form-label col-sm-4 labelprofile">Thumb Print</label>
+                                                            <div class="col-sm-8">
+                                                                <label id="lblThumbPrint" class="col-form-label"></label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                     <div class="col-sm-4">
                                                         <div class="form-group row mb-2">
                                                             <label class="col-form-label col-sm-4 labelprofile">Appt.</label>
@@ -330,39 +317,22 @@
                                                             </div>
                                                         </div>
                                                     </div>
-
                                                     <div class="col-sm-4">
                                                         <div class="form-group row mb-2">
                                                             <label class="col-form-label col-sm-9 labelprofile"> Are you performing the Duties of Initating Offr?</label>
                                                             <div class="col-sm-3">
                                                                 <div class="form-check">
-                                                                    <input class="form-check-input" type="checkbox" value="" id="Intoffrs">
-                                                                    @*  <label class="form-check-label" for="Intoffrs">
-                                                                    Default checkbox
-                                                                    </label> *@
+                                                                    <input class="form-check-input" type="checkbox" value="" id="chkIO">
                                                                 </div>
-                                                                @*  <div class="form-check form-check-inline">
-                                                                <input class="form-check-input" type="radio" name="Intoffrs" id="intoffsyes">
-                                                                <label class="form-check-label" for="intoffsyes">
-                                                                Yes
-                                                                </label>
-                                                                </div>
-                                                                <div class="form-check form-check-inline">  
-                                                                <input class="form-check-input" type="radio" name="Intoffrs" id="intoffsno" >
-                                                                <label class="form-check-label" for="intoffsno">
-                                                                No
-                                                                </label>
-                                                                </div> *@
                                                             </div>
                                                         </div>
                                                     </div>
                                                     <div class="col-sm-4">
                                                         <div class="form-group row mb-2">
-                                                            <label class="col-form-label col-sm-9 labelprofile">Are you performing the Duties of CO, Record Office/ Col Records?</label>
+                                                            <label class="col-form-label col-sm-8 labelprofile"> Are you performing the Duties of Commanding Offr?</label>
                                                             <div class="col-sm-3">
                                                                 <div class="form-check">
-                                                                    <input class="form-check-input" type="checkbox" value="" id="chkIO">
-
+                                                                    <input class="form-check-input" type="checkbox" value="" id="chkCO">
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -370,137 +340,133 @@
                                                     <div class="col-sm-4">
                                                         <div class="form-group row mb-2">
                                                             <label class="col-form-label col-sm-8 labelprofile">
-                                                                Are you performing the Duties of Brig ORO?
+                                                                Are you performing the Duties of CO, Record Office/ Col Records?
                                                             </label>
                                                             <div class="col-sm-4">
                                                                 <div class="form-check">
-                                                                    <input class="form-check-input" type="checkbox" value="" id="chkCO">
+                                                                    <input class="form-check-input" type="checkbox" value="" id="chkRO">
 
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                    </div>
-                                                <div class="col-sm-4">
-                                                    <div class="form-group row mb-2">
-                                                    <label class="col-form-label col-sm-4 labelprofile"> Thumb print<i class="fas fa-asterisk mand1"></i></label>
-
-                                                    <div class="col-sm-8">
-                                                       
-                                                            <input id="Thumbprint" class="form-control" readonly />
-
+                                                    </div>  
+                                                    <div class="col-sm-4">
+                                                        <div class="form-group row mb-2">
+                                                            <label class="col-form-label col-sm-8 labelprofile">
+                                                                Are you performing the Duties of Brig ORO?
+                                                            </label>
+                                                            <div class="col-sm-4">
+                                                                <div class="form-check">
+                                                                    <input class="form-check-input" type="checkbox" value="" id="chkORO">
+                                                                </div>
+                                                            </div>
                                                         </div>
-
                                                     </div>
-
-                                                </div>
+                                                    <div class="col-sm-4">
+                                                        <div class="form-group row mb-2">
+                                                            <label class="col-form-label col-sm-4 labelprofile"> Thumb print<i class="fas fa-asterisk mand1"></i></label>
+                                                            <div class="col-sm-8">
+                                                                <input id="Thumbprint" class="form-control" readonly />
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
+                                    </div>
+                                    </div>
+                                    <div class="col-sm-12 text-right mt-2">
+                                        <button type="button" class="btn btn-danger mt-4 mr-4" id="btntokenrefresh">
+                                            Refresh to Fetch Thumbprint from Token
+                                        </button>
+                                        <input type="button" class="btn btn-primary mt-4 mr-4" value="Submit" id="btnProfilesave" />
+                                    </div>
+                                    <div class="col-sm-12 text-center">
+                                        <div id="tokenmsg" class="d-grid gap-2 col-4 mx-auto">
                                         </div>
                                     </div>
-                         
-
-                            <div class="col-sm-12 text-right mt-2">
-                                <button type="button" class="btn btn-danger mt-4 mr-4" id="btntokenrefresh">
-                                    Refresh to Fetch Thumbprint from Token
-                                </button>
-
-                                <input type="button" class="btn btn-primary mt-4 mr-4" value="Submit" id="btnProfilesave" />
-                             
-                               
-                            </div>
-                            <div class="col-sm-12 text-center">
-                                <div id="tokenmsg" class="d-grid gap-2 col-4 mx-auto">
+                                    <div class="col-sm-12" id="msg">
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="col-sm-12" id="msg">
-                            </div>
-                        </div>
-
-                    </form>
-
-                  
+                        </form>
+                    </div>
                 </div>
 
-             </div>
+                @*
+                <div class="card-body" style="min-height:150px;">
 
-@*   
-    <div class="card-body" style="min-height:150px;">
 
-          
 
-            <div class="col-xl-12">
+                <div class="col-xl-12">
                 <div class="mb-2 d-md-flex justify-content-md-between align-items-md-center">
-                    <h6 class="mb-3 mb-md-0">
-                            Total Profile <span id="lblTotalProfile" class="ml-3 border border-light b px-2 py-1">0</span>
-                    </h6>
-                    <div> *@
-                       @*  <button type="button" id="btnAddProfile" class="btn btn-outline-success font-weight-600 btn-sm">Add New </button>
-                        <button type="button" id="btnMultiDelete" class="btn btn-outline-danger font-weight-600 btn-sm">Delete</button> *@
+                <h6 class="mb-3 mb-md-0">
+                Total Profile <span id="lblTotalProfile" class="ml-3 border border-light b px-2 py-1">0</span>
+                </h6>
+                <div> *@
+                @*  <button type="button" id="btnAddProfile" class="btn btn-outline-success font-weight-600 btn-sm">Add New </button>
+                <button type="button" id="btnMultiDelete" class="btn btn-outline-danger font-weight-600 btn-sm">Delete</button> *@
 
-             @*        </div>
+                @*        </div>
                 </div>
                 <div class="table-responsive">
-                    <table class="table border border-purple table-striped no-footer dataTable table-hover" role="grid" id="tbldataProfile">
-                        <thead>
-                            <tr>
-                                <th class="noExport d-none"></th>
-                                <th class="noExport wd-30-f">
-                                    <div class="custom-control custom-checkbox small">
-                                        <input type="checkbox" class="custom-control-input" id="chkAll">
-                                        <label class="custom-control-label font-weight-bold" for="chkAll"></label>
-                                    </div>
-                                </th>
-                                <th class=" wd-30-f">S No</th>
-                                <th class="nowrap">Army No</th>
-                                <th class="nowrap">Name</th>
-                                <th class="nowrap">Rank</th>
-                                <th class="nowrap">Appt.</th>
-                                <th class="nowrap">Unit Name(SUSNo)</th>
-                                    <th class="nowrap">
-                                        IO for unit offrs
-                                    </th> *@
-                                @* <th class="nowrap">IO Name</th>
-                                <th class="nowrap">IO Unit Name(SUSNo)</th> *@
-                                    @* <th class="nowrap">INT Offr</th>
-                                    <th class="nowrap">
-                                        Comdt/ Cdr/ CO/ OC or Gen Offr
-                                    </th> *@
-                              @*   <th class="nowrap">GSO Name</th>
-                                <th class="nowrap">GSO Unit Name(SUSNo)</th> *@
- @*                                <th class="nowrap">Action</th>
-
-
-                            </tr>
-                        </thead>
-                            <tbody id="DetailBodyProfile">
-                        </tbody>
-                    </table>
+                <table class="table border border-purple table-striped no-footer dataTable table-hover" role="grid" id="tbldataProfile">
+                <thead>
+                <tr>
+                <th class="noExport d-none"></th>
+                <th class="noExport wd-30-f">
+                <div class="custom-control custom-checkbox small">
+                <input type="checkbox" class="custom-control-input" id="chkAll">
+                <label class="custom-control-label font-weight-bold" for="chkAll"></label>
                 </div>
+                </th>
+                <th class=" wd-30-f">S No</th>
+                <th class="nowrap">Army No</th>
+                <th class="nowrap">Name</th>
+                <th class="nowrap">Rank</th>
+                <th class="nowrap">Appt.</th>
+                <th class="nowrap">Unit Name(SUSNo)</th>
+                <th class="nowrap">
+                IO for unit offrs
+                </th> *@
+                @* <th class="nowrap">IO Name</th>
+                <th class="nowrap">IO Unit Name(SUSNo)</th> *@
+                @* <th class="nowrap">INT Offr</th>
+                <th class="nowrap">
+                Comdt/ Cdr/ CO/ OC or Gen Offr
+                </th> *@
+                @*   <th class="nowrap">GSO Name</th>
+                <th class="nowrap">GSO Unit Name(SUSNo)</th> *@
+                @*                                <th class="nowrap">Action</th>
+
+
+                </tr>
+                </thead>
+                <tbody id="DetailBodyProfile">
+                </tbody>
+                </table>
+                </div>
+                </div>
+
+
+                </div> *@
+
             </div>
+        </div>
+    </div>
+    <div class="modal fade" id="AddNewProfile" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h5 class="modal-title" id="exampleModalToggleLabel">Update Profile  </h5>
+                </div>
 
+                <div class="modal-body">
+                </div>
 
-    </div> *@
-
-</div>
-</div>
-</div>
-<div class="modal fade" id="AddNewProfile" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-xl" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h5 class="modal-title" id="exampleModalToggleLabel">Update Profile  </h5>
-            </div>
-
-            <div class="modal-body">
-              
-                
-            </div>
-
-        </div><!-- modal-content -->
-    </div><!-- modal-dialog -->
-</div>
+            </div><!-- modal-content -->
+        </div><!-- modal-dialog -->
+    </div>
 </div>
 <script asp-src-include="~/developerjs/mtables.js"></script>
 <script asp-src-include="~/developerjs/mapunit.js"></script>
