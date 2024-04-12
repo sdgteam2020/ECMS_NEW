@@ -90,6 +90,14 @@ namespace Web.Controllers
         public async Task<IActionResult> DashboardUserMgt()
         {
             string role = GetSessionValue();
+            DtoSession? dtoSession = new DtoSession();
+            if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
+            {
+                dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+
+            }
+            int UnitId = dtoSession != null ? dtoSession.UnitId : 0;
+            ViewBag.UnitId = UnitId;
 
             ViewBag.Role = role;
             return View();
@@ -219,6 +227,21 @@ namespace Web.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(1001, ex, "Home->GetAllRegisterUser");
+                return Json(KeyConstants.InternalServerError);
+            }
+
+        }
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> GetDashboardUserMgtCount(int UnitId)
+        {
+            try
+            {
+                return Json(await _home.GetDashboardUserMgtCount(UnitId));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "Home->GetDashboardUserMgtCount");
                 return Json(KeyConstants.InternalServerError);
             }
 

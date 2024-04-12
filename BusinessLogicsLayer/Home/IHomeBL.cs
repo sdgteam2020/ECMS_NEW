@@ -13,5 +13,6 @@ namespace BusinessLogicsLayer.Home
         public Task<DTORequestDashboardCountResponse> GetRequestDashboardCount(int UserId, string Type);
         public Task<DTORequestSubDashboardCountResponse> GetSubDashboardCount(int UserId);
         public Task<List<DTORegisterUserResponse>> GetAllRegisterUser(int UnitId);
+        public Task<DTORequestDashboardUserMgtCountResponse> GetDashboardUserMgtCount(int UnitId);
     }
 }

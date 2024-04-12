@@ -31,11 +31,12 @@ $(document).ready(function () {
                     var userid = $("#spnUserId").html();
                    
 
-                    IntOffr = $("#Intoffrs").prop("checked");
+                    IsRO = $("#chkRO").prop("checked");
                     IsIO = $("#chkIO").prop("checked");
-                    IsCo = $("#chkCO").prop("checked")
+                    IsCO = $("#chkCO").prop("checked");
+                    IsORO = $("#chkORO").prop("checked");
                     
-                    SaveUserProfile(ArmyNo, Rank, Name, MobileNo, DialingCode, Extension, IntOffr, IsIO, IsCo, userid, Thumbprint);
+                    SaveUserProfile(ArmyNo, Rank, Name, MobileNo, DialingCode, Extension, IsRO, IsIO, IsCO,IsORO, userid, Thumbprint);
                         //SaveUserProfile(ArmyNo, Rank, Name, Appt, Unit, $("#intoffsyes").prop("checked"), 3, $("#spnUserIdIO").html(), $("#spnUserIdGSO").html(), userid)
                    
                     
@@ -120,14 +121,14 @@ function GetALLByUnitById(param1) {
     });
 }
 
-function SaveUserProfile(ArmyNo, Rank, Name, MobileNo, DialingCode, Extension, IsRO, IsIO, IsCo,IsORO, UserId, Thumbprint) {
+function SaveUserProfile(ArmyNo, Rank, Name, MobileNo, DialingCode, Extension, IsRO, IsIO, IsCO,IsORO, UserId, Thumbprint) {
 
     /*  alert($('#bdaymonth').val());*/
     
     $.ajax({
         url: '/UserProfile/SaveUserProfile',
         type: 'POST',
-        data: { "ArmyNo": ArmyNo, "RankId": Rank, "Name": Name, "MobileNo": MobileNo, "DialingCode": DialingCode, "Extension": Extension, "UserId": UserId, "IsRO": IsRO, "IsIO": IsIO, "IsCo": IsCo, "IsORO": IsORO, "Thumbprint": Thumbprint }, //get the search string
+        data: { "ArmyNo": ArmyNo, "RankId": Rank, "Name": Name, "MobileNo": MobileNo, "DialingCode": DialingCode, "Extension": Extension, "UserId": UserId, "IsRO": IsRO, "IsIO": IsIO, "IsCO": IsCO, "IsORO": IsORO, "Thumbprint": Thumbprint }, //get the search string
         success: function (result) {
 
 
