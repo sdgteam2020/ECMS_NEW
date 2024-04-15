@@ -33,7 +33,7 @@ function GetSubDashboardCount() {
                     $("#TotPrinted").html(response.TotPrinted);
                     $("#TotRaisedObsn").html(response.TotRaisedObsn);
                     $("#TotRejected").html(response.TotRejected);
-                    $("#TotPostingOut").html(response.TotPostingOut);
+
 
                     $('.counter-value').each(function () {
                         $(this).prop('Counter', 0).animate({

@@ -13,6 +13,5 @@ namespace DataTransferObject.Response
         public int TotPrinted { get; set; }
         public int TotRaisedObsn { get; set; }
         public int TotRejected { get; set; }
-        public int TotPostingOut { get; set; }
     }
 }

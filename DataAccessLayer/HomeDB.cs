@@ -126,7 +126,7 @@ namespace DataAccessLayer
         } 
         public async Task<DTORequestSubDashboardCountResponse> GetSubDashboardCount(int UserId)
         {
-            string query = "declare @TotDrafted int=0 declare @TotSubmitted int=0 declare @TotRejected int=0 declare @TotPostingOut int=0 declare @TotPrinted int=0 " +
+            string query = "declare @TotDrafted int=0 declare @TotSubmitted int=0 declare @TotRejected int=0 declare declare @TotPrinted int=0 " +
                             " select @TotDrafted=COUNT(distinct req.RequestId) from TrnDomainMapping domain" +
                             " inner join TrnICardRequest req on req.TrnDomainMappingId=domain.Id " +
                             " inner join TrnStepCounter trnstepcout on trnstepcout.RequestId= req.RequestId where domain.AspNetUsersId=@UserId and trnstepcout.StepId=1 " +
@@ -142,9 +142,7 @@ namespace DataAccessLayer
                             " inner join TrnICardRequest req on req.TrnDomainMappingId=domain.Id " +
                             " inner join TrnStepCounter trnstepcout on trnstepcout.RequestId= req.RequestId where domain.AspNetUsersId=@UserId and trnstepcout.StepId in(7,8,9,10) " +
 
-                            " select @TotPostingOut=COUNT(Id) from TrnPostingOut where FromAspNetUsersId=@UserId " +
-
-                            " select @TotDrafted TotDrafted,@TotSubmitted TotSubmitted,@TotPrinted TotPrinted,@TotRejected TotRejected,@TotPostingOut TotPostingOut";
+                            " select @TotDrafted TotDrafted,@TotSubmitted TotSubmitted,@TotPrinted TotPrinted,@TotRejected TotRejected ";
             try
             {
                 using (var connection = _contextDP.CreateConnection())
@@ -179,9 +177,10 @@ namespace DataAccessLayer
         }
         public async Task<DTORequestDashboardUserMgtCountResponse> GetDashboardUserMgtCount(int UnitId)
         {
-            string query = "declare @TotRegisterUser int=0 " +
+            string query = "declare @TotRegisterUser int=0 @TotPostingOut int=0 " +
                             " select @TotRegisterUser=COUNT(Id) from TrnDomainMapping where UnitId=@UnitId " +
-                            " select @TotRegisterUser TotRegisterUser ";
+                            " select @TotPostingOut=COUNT(Id) from TrnPostingOut where FromAspNetUsersId=@UserId " +
+                            " select @TotRegisterUser TotRegisterUser,@TotPostingOut TotPostingOut";
             try
             {
                 using (var connection = _contextDP.CreateConnection())
