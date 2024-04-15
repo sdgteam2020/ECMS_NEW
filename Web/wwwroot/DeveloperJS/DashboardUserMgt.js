@@ -29,6 +29,7 @@ function GetDashboardUserMgtCount(UnitId) {
                 else {
 
                     $("#TotRegisterUser").html(response.TotRegisterUser);
+                    $("#TotPostingIn").html(response.TotPostingIn);
                     $("#TotPostingOut").html(response.TotPostingOut);
 
                     $('.counter-value').each(function () {

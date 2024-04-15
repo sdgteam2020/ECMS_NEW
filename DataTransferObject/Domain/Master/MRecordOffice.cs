@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DataTransferObject.Domain.Model;
 
 namespace DataTransferObject.Domain.Master
 {
@@ -31,5 +32,10 @@ namespace DataTransferObject.Domain.Master
         [RegularExpression(@"^[\d]+$", ErrorMessage = "ArmedId is number.")]
         public byte ArmedId { get; set; }
         public MArmedType? MArmedType { get; set; }
+
+        [ForeignKey("TrnDomainMapping"), DatabaseGenerated(DatabaseGeneratedOption.None)]
+        [RegularExpression(@"^[\d]+$", ErrorMessage = "TDMId is number.")]
+        public int? TDMId { get; set; }
+        public TrnDomainMapping? TrnDomainMapping { get; set; }
     }
 }

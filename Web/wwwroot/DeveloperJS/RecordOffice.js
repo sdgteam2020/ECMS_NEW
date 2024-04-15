@@ -2,8 +2,123 @@
     Reset();
     mMsater(0, "ddlArmType", 9, "");
     BindData()
+    $("#txtmappedbyDID").click(function () {
+        $("#txtmappedbySearch").attr("placeholder", "Enter Domain ID");  
+        $("#DivSearchField").removeClass("d-none");
+    });
+    $("#txtmappedbyArmyNo").click(function () {
+        $("#txtmappedbySearch").attr("placeholder", "Enter Army No");
+        $("#DivSearchField").removeClass("d-none");
+    });
+    $("#btnAdd").click(function () {
+        //Reset();
+        //ResetErrorMessage();
+        $("#AddNewRecordOffice").modal('show');
+    });
     $("#btnReset").click(function () {
         Reset();
+    });
+    $("#txtmappedbySearch").autocomplete({
+        if(true) {
+            source: function (request, response) {
+                if (request.term.length > 2) {
+                    $("#spnTrnDomainMappingId").html('');
+                    var param = { "UnitName": request.term };
+                    $("#spnTrnDomainMappingId").html(0);
+                    $.ajax({
+                        url: '/Master/GetALLByUnitName',
+                        contentType: 'application/x-www-form-urlencoded',
+                        data: param,
+                        type: 'POST',
+                        success: function (data) {
+                            if (data.length != 0) {
+                                response($.map(data, function (item) {
+                                    $("#loading").addClass("d-none");
+                                    return { label: item.Sus_no + item.Suffix + ' ' + item.UnitName, value: item.UnitMapId };
+
+                                }))
+                            }
+                            else {
+                                $("#txtUnitName").val("");
+                                $("#spnUnitMapId").html("");
+                                $("#spnTDMUnitType").html("");
+                                alert("Unit not found.")
+                            }
+                        },
+                        error: function (response) {
+                            alert(response.responseText);
+                        },
+                        failure: function (response) {
+                            alert(response.responseText);
+                        }
+                    });
+                }
+            },
+            select: function (e, i) {
+                e.preventDefault();
+                $("#txtUnitName").val(i.item.label);
+                var param1 = { "UnitMapId": i.item.value };
+                $.ajax({
+                    url: '/Master/GetALLByUnitMapId',
+                    contentType: 'application/x-www-form-urlencoded',
+                    data: param1,
+                    type: 'POST',
+                    success: function (data) {
+                        $("#spnTDMUnitType").html(data.UnitType);
+                        $("#spnUnitMapId").html(data.UnitMapId);
+                        $("#lblSusno").html(data.Sus_no + '' + data.Suffix);
+
+                        if (data.UnitType == 1) {
+                            $("#lblComd").html(data.ComdName);
+                            $("#lblCorps").html(data.CorpsName);
+                            $("#lblDiv").html(data.DivName);
+                            $("#lblBde").html(data.BdeName);
+                            $("#lbl1").addClass("d-none");
+                            $("#lbl2").addClass("d-none");
+                            $("#lbl3").removeClass("d-none");
+                            $("#lbl4").removeClass("d-none");
+                            $("#lbl5").removeClass("d-none");
+                            $("#lbl6").removeClass("d-none");
+                            $("#lbl7").addClass("d-none");
+                        }
+                        else if (data.UnitType == 2) {
+                            $("#lblComd").html(data.ComdName);
+                            $("#lblCorps").html(data.CorpsName);
+                            $("#lblDiv").html(data.DivName);
+                            $("#lblBde").html(data.BdeName);
+                            $("#lblFmn").html(data.BranchName);
+                            $("#lbl1").addClass("d-none");
+                            $("#lbl2").addClass("d-none");
+                            $("#lbl3").removeClass("d-none");
+                            $("#lbl4").removeClass("d-none");
+                            $("#lbl5").removeClass("d-none");
+                            $("#lbl6").removeClass("d-none");
+                            $("#lbl7").removeClass("d-none");
+                        }
+                        else if (data.UnitType == 3) {
+                            $("#lblPso").html(data.PSOName);
+                            $("#lblDG").html(data.SubDteName);
+                            $("#lbl1").removeClass("d-none");
+                            $("#lbl2").removeClass("d-none");
+                            $("#lbl3").addClass("d-none");
+                            $("#lbl4").addClass("d-none");
+                            $("#lbl5").addClass("d-none");
+                            $("#lbl6").addClass("d-none");
+                            $("#lbl7").addClass("d-none");
+                        }
+
+
+
+                    }
+                });
+            },
+            appendTo: '#suggesstion-box'
+        }
+        else
+        {
+
+        }
+
     });
 
     $("#btnsave").click(function () {
