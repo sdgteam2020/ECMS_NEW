@@ -18,5 +18,7 @@ namespace BusinessLogicsLayer.Master
         public Task<List<DTOMasterResponse>> GetMSubDte();
         public Task<List<DTOMasterResponse>> GetPostingReason();
         public Task<DTODashboardMasterCountResponse> GetDashboardMasterCount();
+        public Task<List<DTOGetMappedForRecordResponse>> GetMappedForRecord(int TypeId, string SearchName);
+        public Task<DTOGetDomainIdByTDMIdResponse?> GetDomainIdByTDMId(int TDMId);
     }
 }

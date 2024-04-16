@@ -41,6 +41,7 @@ namespace DataAccessLayer
                              Abbreviation = c.Abbreviation,
                              ArmedId = c.ArmedId,
                              ArmedName = d.ArmedName,
+                             TDMId = c.TDMId,
                          }).ToList();
 
 

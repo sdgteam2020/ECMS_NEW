@@ -1,154 +1,125 @@
 ﻿$(document).ready(function () {
-    Reset();
     mMsater(0, "ddlArmType", 9, "");
     BindData()
     $("#txtmappedbyDID").click(function () {
+        $("#txtmappedbySearch").val("");  
+        $("#spnTrnDomainMappingId").html(0);
         $("#txtmappedbySearch").attr("placeholder", "Enter Domain ID");  
         $("#DivSearchField").removeClass("d-none");
     });
     $("#txtmappedbyArmyNo").click(function () {
+        $("#txtmappedbySearch").val("");  
+        $("#spnTrnDomainMappingId").html(0);
         $("#txtmappedbySearch").attr("placeholder", "Enter Army No");
         $("#DivSearchField").removeClass("d-none");
     });
     $("#btnAdd").click(function () {
-        //Reset();
-        //ResetErrorMessage();
+        Reset();
+        ResetErrorMessage();
         $("#AddNewRecordOffice").modal('show');
     });
-    $("#btnReset").click(function () {
+    $("#btnRecordOfficeReset").click(function () {
         Reset();
+        ResetErrorMessage();
     });
     $("#txtmappedbySearch").autocomplete({
-        if(true) {
-            source: function (request, response) {
-                if (request.term.length > 2) {
-                    $("#spnTrnDomainMappingId").html('');
-                    var param = { "UnitName": request.term };
-                    $("#spnTrnDomainMappingId").html(0);
-                    $.ajax({
-                        url: '/Master/GetALLByUnitName',
-                        contentType: 'application/x-www-form-urlencoded',
-                        data: param,
-                        type: 'POST',
-                        success: function (data) {
-                            if (data.length != 0) {
-                                response($.map(data, function (item) {
-                                    $("#loading").addClass("d-none");
-                                    return { label: item.Sus_no + item.Suffix + ' ' + item.UnitName, value: item.UnitMapId };
-
-                                }))
-                            }
-                            else {
-                                $("#txtUnitName").val("");
-                                $("#spnUnitMapId").html("");
-                                $("#spnTDMUnitType").html("");
-                                alert("Unit not found.")
-                            }
-                        },
-                        error: function (response) {
-                            alert(response.responseText);
-                        },
-                        failure: function (response) {
-                            alert(response.responseText);
-                        }
-                    });
-                }
-            },
-            select: function (e, i) {
-                e.preventDefault();
-                $("#txtUnitName").val(i.item.label);
-                var param1 = { "UnitMapId": i.item.value };
+        source: function (request, response) {
+            var TypeId = 1;
+            if ($("#txtmappedbyDID").prop("checked")) {
+                TypeId = 1;
+            } else if ($("#txtmappedbyArmyNo").prop("checked")) {
+                TypeId = 2;
+            } 
+            if (request.term.length > 2) {
+                $("#spnTrnDomainMappingId").html('');
+                var param = { "SearchName": request.term,"TypeId": TypeId };
+                $("#spnTrnDomainMappingId").html(0);
                 $.ajax({
-                    url: '/Master/GetALLByUnitMapId',
+                    url: '/Master/GetMappedForRecord',
                     contentType: 'application/x-www-form-urlencoded',
-                    data: param1,
+                    data: param,
                     type: 'POST',
                     success: function (data) {
-                        $("#spnTDMUnitType").html(data.UnitType);
-                        $("#spnUnitMapId").html(data.UnitMapId);
-                        $("#lblSusno").html(data.Sus_no + '' + data.Suffix);
+                        if (data.length != 0) {
+                            response($.map(data, function (item) {
+                                {
+                                    $("#loading").addClass("d-none");
+                                    if ($("#txtmappedbyDID").prop("checked")) {
+                                        return {
+                                            label: item.DomainId + ' ' + item.RankAbbreviation + ' ' + item.Name + ' ' + item.ArmyNo,
+                                            value: item.TDMId
+                                        }
+                                    }
+                                    else
+                                    {
+                                        return {
+                                            label: item.ArmyNo + ' ' + item.RankAbbreviation + ' ' + item.Name + ' ' + item.DomainId,
+                                            value: item.TDMId
+                                        }
+                                    }
+                                    
+                                };
 
-                        if (data.UnitType == 1) {
-                            $("#lblComd").html(data.ComdName);
-                            $("#lblCorps").html(data.CorpsName);
-                            $("#lblDiv").html(data.DivName);
-                            $("#lblBde").html(data.BdeName);
-                            $("#lbl1").addClass("d-none");
-                            $("#lbl2").addClass("d-none");
-                            $("#lbl3").removeClass("d-none");
-                            $("#lbl4").removeClass("d-none");
-                            $("#lbl5").removeClass("d-none");
-                            $("#lbl6").removeClass("d-none");
-                            $("#lbl7").addClass("d-none");
+                            }))
                         }
-                        else if (data.UnitType == 2) {
-                            $("#lblComd").html(data.ComdName);
-                            $("#lblCorps").html(data.CorpsName);
-                            $("#lblDiv").html(data.DivName);
-                            $("#lblBde").html(data.BdeName);
-                            $("#lblFmn").html(data.BranchName);
-                            $("#lbl1").addClass("d-none");
-                            $("#lbl2").addClass("d-none");
-                            $("#lbl3").removeClass("d-none");
-                            $("#lbl4").removeClass("d-none");
-                            $("#lbl5").removeClass("d-none");
-                            $("#lbl6").removeClass("d-none");
-                            $("#lbl7").removeClass("d-none");
+                        else {
+                            $("#txtmappedbySearch").val("");
+                            $("#spnTrnDomainMappingId").html("");
+                            alert("DomainId / ArmyNo not found.")
                         }
-                        else if (data.UnitType == 3) {
-                            $("#lblPso").html(data.PSOName);
-                            $("#lblDG").html(data.SubDteName);
-                            $("#lbl1").removeClass("d-none");
-                            $("#lbl2").removeClass("d-none");
-                            $("#lbl3").addClass("d-none");
-                            $("#lbl4").addClass("d-none");
-                            $("#lbl5").addClass("d-none");
-                            $("#lbl6").addClass("d-none");
-                            $("#lbl7").addClass("d-none");
-                        }
-
-
-
+                    },
+                    error: function (response) {
+                        alert(response.responseText);
+                    },
+                    failure: function (response) {
+                        alert(response.responseText);
                     }
                 });
-            },
-            appendTo: '#suggesstion-box'
-        }
-        else
-        {
-
-        }
-
-    });
-
-    $("#btnsave").click(function () {
-        if ($("#SaveForm")[0].checkValidity()) {
-
-            Swal.fire({
-                title: 'Are you sure?',
-                text: "You won't be Save!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes, Save it!'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    Save();
-                }
-            })
-
-        } else {
-            $("#SaveForm")[0].reportValidity();
-        }
-
-
-
-        // 
+            }
+        },
+        select: function (e, i) {
+            e.preventDefault();
+            $("#txtmappedbySearch").val(i.item.label);
+            $("#spnTrnDomainMappingId").html(i.item.value);
+        },
+        appendTo: '#suggesstion-box'
 
     });
 });
 
+function Proceed() {
+    ResetErrorMessage();
+
+    let formId = '#SaveRecordOffice';
+    ValidateInput();
+    $.validator.unobtrusive.parse($(formId));
+
+    if ($(formId).valid()) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be Save!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, Save it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Save();
+            }
+        })
+    }
+    else {
+        Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'Please fill required field.',
+
+        })
+        toastr.error('Please fill required field.');
+        return false;
+    }
+}
 function BindData() {
     var listItem = "";
     var userdata =
@@ -184,7 +155,7 @@ function BindData() {
                     for (var i = 0; i < response.length; i++) {
 
                         listItem += "<tr>";
-                        listItem += "<td class='d-none'><span id='spnMRecordOfficeId'>" + response[i].RecordOfficeId + "</span><span id='spnArmedId'>" + response[i].ArmedId + "</span></td>";
+                        listItem += "<td class='d-none'><span id='spnMRecordOfficeId'>" + response[i].RecordOfficeId + "</span><span id='spnArmedId'>" + response[i].ArmedId + "</span><span id='spnTDMId'>" + response[i].TDMId + "</span></td>";
                         listItem += "<td class='align-middle'>" + (i + 1) + "</td>";
                         listItem += "<td class='align-middle'><span id='Name'>" + response[i].Name + "</span></td>";
                         listItem += "<td class='align-middle'><span id='abbreviation'>" + response[i].Abbreviation + "</span></td>";
@@ -231,34 +202,24 @@ function BindData() {
 
                     memberTable.buttons().container().appendTo('#tblData_wrapper .col-md-6:eq(0)');
 
-                    var rows;
-                    $("#tblData #chkAll").click(function () {
-                        if ($(this).is(':checked')) {
-                            rows = memberTable.rows({ 'search': 'applied' }).nodes();
-                            $('input[type="checkbox"]', rows).prop('checked', this.checked);
-                        }
-                        else {
-                            rows = memberTable.rows({ 'search': 'applied' }).nodes();
-                            $('input[type="checkbox"]', rows).prop('checked', this.checked);
-                        }
-                    });
-                    $('#DetailBody').on('change', 'input[type="checkbox"]', function () {
-                        if (!this.checked) {
-                            var el = $('#chkAll').get(0);
-                            if (el && el.checked && ('indeterminate' in el)) {
-                                el.indeterminate = true;
-                            }
-                        }
-                    });
-
-
                     $("body").on("click", ".cls-btnedit", function () {
-                        /*  $("#AddNewM").modal('show');*/
+                        Reset();
+                        ResetErrorMessage();
                         $("#txtName").val($(this).closest("tr").find("#Name").html());
                         $("#txtAbbreviation").val($(this).closest("tr").find("#abbreviation").html());
                         $("#spnRecordOfficeId").html($(this).closest("tr").find("#spnMRecordOfficeId").html());
                         $("#ddlArmType").val($(this).closest("tr").find("#spnArmedId").html());
-
+                        if ($(this).closest("tr").find("#spnTDMId").html() != null && $(this).closest("tr").find("#spnTDMId").html() != "null") {
+                            $("#spnTrnDomainMappingId").html($(this).closest("tr").find("#spnTDMId").html());
+                            $("#txtmappedbyDID").prop("checked", true);
+                            GetDomainIdByTDMId($(this).closest("tr").find("#spnTDMId").html());
+                            $("#DivSearchField").removeClass("d-none");
+                        }
+                        else {
+                            $("#spnTrnDomainMappingId").html(0);
+                        }
+                        $("#btnRecordOfficeAdd").val("Update");
+                        $("#AddNewRecordOffice").modal('show');
                     });
 
 
@@ -304,23 +265,25 @@ function Save() {
     $.ajax({
         url: '/Master/SaveRecordOffice',
         type: 'POST',
-        data: { "Name": $("#txtName").val().trim(), "RecordOfficeId": $("#spnRecordOfficeId").html(), "Abbreviation": $("#txtAbbreviation").val().trim(), "ArmedId": $("#ddlArmType").val() }, //get the search string
+        data: { "Name": $("#txtName").val().trim(), "Abbreviation": $("#txtAbbreviation").val().trim(), "ArmedId": $("#ddlArmType").val(), "RecordOfficeId": $("#spnRecordOfficeId").html(), "TDMId": $("#spnTrnDomainMappingId").html() }, //get the search string
         success: function (result) {
 
 
             if (result == DataSave) {
                 toastr.success('Record Office has been saved');
 
-                /*  $("#AddNewM").modal('hide');*/
+                $("#AddNewRecordOffice").modal('hide');
                 BindData();
                 Reset();
+                ResetErrorMessage();
             }
             else if (result == DataUpdate) {
                 toastr.success('Record Office has been Updated');
 
-                /*  $("#AddNewM").modal('hide');*/
+                $("#AddNewRecordOffice").modal('hide');
                 BindData();
                 Reset();
+                ResetErrorMessage();
             }
             else if (result == DataExists) {
 
@@ -351,12 +314,52 @@ function Save() {
 }
 
 function Reset() {
+    $("#DivSearchField").addClass("d-none");
+    $("#txtmappedbySearch").val("");
     $("#txtName").val("");
     $("#txtAbbreviation").val("");
+    $("#ddlArmType").val("");
+
     $("#spnRecordOfficeId").html("0");
-    $("#ddlArmType").val("0");
+    $("#spnTrnDomainMappingId").html("0");
+
+    $("#txtmappedbyDID").prop("checked", false);
+    $("#txtmappedbyArmyNo").prop("checked", false);
+}
+function ResetErrorMessage() {
+    $("#txtName-error").html("");
+    $("#txtAbbreviation-error").html("");
+    $("#ddlArmType-error").html("");
+    $("#txtmappedbySearch-error").html("");
 }
 
+function ValidateInput() {
+    if ($("input[type='radio'][name=txtmappedby]:checked").length == 0) {
+        $("#txtmappedby-error").html("Domain ID / Army No is required.");
+    }
+    else {
+        $("#txtmappedby-error").html("");
+    }
+
+    var TDMId = $("#spnTrnDomainMappingId").html();
+
+    if ((TDMId == 0 || TDMId == '') && $("#txtmappedbySearch").val().length > 0) {
+        $("#txtmappedbySearch").val('');
+        $("#txtmappedbySearch-error").html("Search name is invalid.");
+        toastr.error('Search name is invalid.');
+    }
+}
+function GetDomainIdByTDMId(TDMId) {
+    $.ajax({
+        url: '/Master/GetDomainIdByTDMId',
+        contentType: 'application/x-www-form-urlencoded',
+        data: { "TDMId": TDMId },
+        type: 'POST',
+        success: function (data) {
+            $("#txtmappedbySearch").val(data.DomainId + ' ' + data.RankAbbreviation + ' ' + data.Name + ' ' + data.ArmyNo);
+        }
+    });
+}
 function Delete(Id) {
     var userdata =
     {

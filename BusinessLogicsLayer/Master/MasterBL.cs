@@ -54,5 +54,13 @@ namespace BusinessLogicsLayer.Master
         {
             return await _iMasterDB.GetDashboardMasterCount();
         }
+        public async Task<List<DTOGetMappedForRecordResponse>> GetMappedForRecord(int TypeId, string SearchName)
+        {
+            return await _iMasterDB.GetMappedForRecord(TypeId, SearchName);
+        }
+        public async Task<DTOGetDomainIdByTDMIdResponse?> GetDomainIdByTDMId(int TDMId)
+        {
+            return await _iMasterDB.GetDomainIdByTDMId(TDMId);
+        }
     }
 }
