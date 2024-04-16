@@ -8,9 +8,9 @@ using DataTransferObject.Response.User;
 using DataTransferObject.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
-using System.Data.Entity;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -22,9 +22,13 @@ namespace DataAccessLayer
     public class MasterDB : IMasterDB
     {
         private readonly DapperContext _contextDP;
-        public MasterDB(DapperContext contextDP)
+        protected readonly ApplicationDbContext _context;
+        private readonly ILogger<MasterDB> _logger;
+        public MasterDB(DapperContext contextDP, ApplicationDbContext context, ILogger<MasterDB> logger)
         {
             _contextDP = contextDP;
+            _context = context;
+            _logger = logger;
         }
       
         private readonly IConfiguration configuration;
@@ -118,6 +122,145 @@ namespace DataAccessLayer
                 var ret = await connection.QueryAsync<DTODashboardMasterCountResponse>(query);
                 return ret.FirstOrDefault();
             }
+        }
+        public async Task<List<DTOGetMappedForRecordResponse>?> GetMappedForRecord(int TypeId, string SearchName)
+        {
+            #region using linq
+            //try
+            //{
+            //    if (TypeId == 1)
+            //    {
+            //        SearchName = string.IsNullOrEmpty(SearchName) ? "" : SearchName.ToLower();
+            //        var query = await (from u in _context.Users.Where(P => SearchName == "" || P.DomainId.ToLower().Contains(SearchName)).OrderByDescending(x => x.Id)
+            //                           join tdm in _context.TrnDomainMapping on u.Id equals tdm.AspNetUsersId into utdm_jointable
+            //                           from xtdm in utdm_jointable.DefaultIfEmpty()
+            //                           join up in _context.UserProfile on xtdm.UserId equals up.UserId into xtdmup_jointable
+            //                           from xup in xtdmup_jointable.DefaultIfEmpty()
+            //                           join rk in _context.MRank on xup.RankId equals rk.RankId
+            //                           select new DTOGetMappedForRecordResponse()
+            //                           {
+            //                               DomainId = u.DomainId,
+            //                               TDMId = xtdm != null ? xtdm.Id : 0,
+            //                               ArmyNo = xup != null ? xup.ArmyNo : "No Army No",
+            //                               Name = xup != null ? xup.Name : "No Name",
+            //                               RankAbbreviation = xup != null ? rk.RankAbbreviation : "No RK",
+            //                           }).Take(5).ToListAsync();
+            //        return query;
+
+            //    }
+            //    else if (TypeId == 2)
+            //    {
+            //        SearchName = string.IsNullOrEmpty(SearchName) ? "" : SearchName.ToLower();
+            //        var allrecord = await (from up in _context.UserProfile.Where(P => SearchName == "" || P.ArmyNo.ToLower().Contains(SearchName)).OrderByDescending(x => x.UserId)
+            //                               join rk in _context.MRank on up.RankId equals rk.RankId
+            //                               join tdm in _context.TrnDomainMapping on up.UserId equals tdm.UserId
+            //                               join u in _context.Users on tdm.AspNetUsersId equals u.Id
+            //                               select new DTOGetMappedForRecordResponse()
+            //                               {
+            //                                   ArmyNo = up.ArmyNo,
+            //                                   Name = up.Name,
+            //                                   RankAbbreviation = rk.RankAbbreviation,
+            //                                   TDMId = tdm.Id,
+            //                                   DomainId = u.DomainId,
+            //                               }).Take(5).ToListAsync();
+            //        return allrecord;
+            //    }
+            //    else
+            //    {
+            //        SearchName = string.IsNullOrEmpty(SearchName) ? "" : SearchName.ToLower();
+            //        var query = await (from u in _context.Users.Where(P => SearchName == "" || P.DomainId.ToLower().Contains(SearchName)).OrderByDescending(x => x.Id)
+            //                           join tdm in _context.TrnDomainMapping on u.Id equals tdm.AspNetUsersId into utdm_jointable
+            //                           from xtdm in utdm_jointable.DefaultIfEmpty()
+            //                           join up in _context.UserProfile on xtdm.UserId equals up.UserId into xtdmup_jointable
+            //                           from xup in xtdmup_jointable.DefaultIfEmpty()
+            //                           join rk in _context.MRank on xup.RankId equals rk.RankId
+            //                           select new DTOGetMappedForRecordResponse()
+            //                           {
+            //                               DomainId = u.DomainId,
+            //                               TDMId = xtdm != null ? xtdm.Id : 0,
+            //                               ArmyNo = xup != null ? xup.ArmyNo : "No Army No",
+            //                               Name = xup != null ? xup.Name : "No Name",
+            //                               RankAbbreviation = xup != null ? rk.RankAbbreviation : "No RK",
+            //                           }).Take(5).ToListAsync();
+            //        return query;
+
+            //    }
+            //}
+            //catch (Exception ex)
+            //{
+            //    _logger.LogError(1001, ex, "AccountDB->ProfileManage");
+            //    return null;
+            //}
+            #endregion
+            try { 
+                string query = "";
+                if (TypeId == 1)
+                {
+                    SearchName = "%" + SearchName.Replace("[", "[[]").Replace("%", "[%]") + "%";
+                    query = "Select TOP 5 users.DomainId,usep.ArmyNo,ra.RankAbbreviation,usep.Name,trndomain.Id as TDMId from AspNetUsers users" +
+                            " inner join TrnDomainMapping trndomain on users.Id=trndomain.AspNetUsersId" +
+                            " left join UserProfile usep on usep.UserId=trndomain.UserId" +
+                            " left join MRank ra on ra.RankId=usep.RankId " +
+                            " where users.DomainId like @SearchName";
+
+                }
+                else if (TypeId == 2)
+                {
+                    SearchName = "%" + SearchName.Replace("[", "[[]").Replace("%", "[%]") + "%";
+                    query = "Select TOP 5 users.DomainId,usep.ArmyNo,ra.RankAbbreviation,usep.Name,trndomain.Id as TDMId from UserProfile usep" +
+                            " inner join MRank ra on ra.RankId=usep.RankId " +
+                            " inner join TrnDomainMapping trndomain on trndomain.UserId=usep.UserId" +
+                            " inner join AspNetUsers users on users.Id=trndomain.AspNetUsersId" +
+                            " where usep.ArmyNo like @SearchName";
+
+                }
+                else
+                {
+                    SearchName = "%" + SearchName.Replace("[", "[[]").Replace("%", "[%]") + "%";
+                    query = "Select TOP 5 users.DomainId,usep.ArmyNo,ra.RankAbbreviation,usep.Name,trndomain.Id as TDMId from AspNetUsers users" +
+                            " inner join TrnDomainMapping trndomain on users.Id=trndomain.AspNetUsersId" +
+                            " left join UserProfile usep on usep.UserId=trndomain.UserId" +
+                            " left join MRank ra on ra.RankId=usep.RankId " +
+                            " where users.DomainId like @SearchName";
+
+                }
+                using (var connection = _contextDP.CreateConnection())
+                {
+                    var allrecord = await connection.QueryAsync<DTOGetMappedForRecordResponse>(query, new { TypeId, SearchName });
+                    return allrecord.ToList();
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "MasterDB->GetMappedForRecord");
+                return null;
+            }
+
+        }
+        public async Task<DTOGetDomainIdByTDMIdResponse?> GetDomainIdByTDMId(int TDMId)
+        {
+            try
+            {
+                string query = "";
+                query = "Select users.DomainId,ra.RankAbbreviation,usep.Name,usep.ArmyNo from TrnDomainMapping trndomain" +
+                        " inner join AspNetUsers users on users.Id=trndomain.AspNetUsersId" +
+                        " left join UserProfile usep on usep.UserId=trndomain.UserId" +
+                        " left join MRank ra on ra.RankId=usep.RankId " +
+                        " where trndomain.Id=@TDMId";
+                using (var connection = _contextDP.CreateConnection())
+                {
+                    var allrecord = await connection.QueryAsync<DTOGetDomainIdByTDMIdResponse>(query, new { TDMId });
+                    return allrecord.FirstOrDefault();
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "MasterDB->GetMappedForRecord");
+                return null;
+            }
+
         }
     }
 }

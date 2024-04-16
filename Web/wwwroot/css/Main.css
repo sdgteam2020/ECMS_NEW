@@ -147,7 +147,7 @@
     }
 
     .counter h3 {
-        font-size: 13px;
+        font-size: 14px;
         font-weight: 700;
         text-transform: uppercase;
         margin: 0 0 15px;
@@ -242,7 +242,7 @@
        margin-left:1px;
     }
         .nav-pills .nav-link:hover {
-            background-color: #55BF54;
+            background-color: #f3a919;
         }
 .tagline {
     width: 100%;
@@ -651,4 +651,7 @@ a {
 
 .ProfileName {
     color:#fff;
+}
+.nav-pills .nav-link.active{
+    background-color:rgb(133 215 127);
 }

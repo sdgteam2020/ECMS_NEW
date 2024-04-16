@@ -114,6 +114,14 @@ namespace Web.Controllers
             var ret = System.Text.Encoding.UTF8.GetString(base64EncodedBytes);
             ViewBag.Type = ret;    
             ViewBag.Role = role;
+            if(ret == "Posting Out" || ret == "Posting In")
+            {
+                ViewBag.PreviousLink = "DashboardUserMgt";
+            }
+            else
+            {
+                ViewBag.PreviousLink = "SubDashboard";
+            }
             return View();
         }
         [Authorize(Roles = "User")]
@@ -237,7 +245,8 @@ namespace Web.Controllers
         {
             try
             {
-                return Json(await _home.GetDashboardUserMgtCount(UnitId));
+                int UserId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                return Json(await _home.GetDashboardUserMgtCount(UnitId, UserId));
             }
             catch (Exception ex)
             {

@@ -100,13 +100,21 @@ namespace DataAccessLayer
                             " inner join TrnStepCounter trnstepcout on trnstepcout.RequestId= req.RequestId where domain.AspNetUsersId=@UserId and trnstepcout.StepId in(7,8,9,10) and trnstepcout.ApplyForId=2 " +
                             " select @ToRejectedOffrs ToRejectedOffrs,@ToRejectedJCO ToRejectedJCO";
                     break;
-                case "PostingOut":
+                case "Posting Out":
                     query = "declare @ToPostingOutOffrs int=0 declare @ToPostingOutJCO int=0 " + 
                             " select @ToPostingOutOffrs=COUNT(distinct pout.Id) from TrnPostingOut pout "+
                             " inner join BasicDetails basic on basic.BasicDetailId=pout.BasicDetailId where pout.FromAspNetUsersId=@UserId and basic.ApplyForId=1 " +
                             " select @ToPostingOutJCO=COUNT(distinct pout.Id) from TrnPostingOut pout "+
                             " inner join BasicDetails basic on basic.BasicDetailId=pout.BasicDetailId where pout.FromAspNetUsersId=@UserId and basic.ApplyForId=2 " +
                             " select @ToPostingOutOffrs ToPostingOutOffrs,@ToPostingOutJCO ToPostingOutJCO";
+                    break;
+                case "Posting In":
+                    query = "declare @ToPostingInOffrs int=0 declare @ToPostingInJCO int=0 " +
+                            " select @ToPostingInOffrs=COUNT(distinct pout.Id) from TrnPostingOut pout " +
+                            " inner join BasicDetails basic on basic.BasicDetailId=pout.BasicDetailId where pout.ToAspNetUsersId=@UserId and basic.ApplyForId=1 " +
+                            " select @ToPostingInJCO=COUNT(distinct pout.Id) from TrnPostingOut pout " +
+                            " inner join BasicDetails basic on basic.BasicDetailId=pout.BasicDetailId where pout.ToAspNetUsersId=@UserId and basic.ApplyForId=2 " +
+                            " select @ToPostingInOffrs ToPostingInOffrs,@ToPostingInJCO ToPostingInJCO";
                     break;
             }
 
@@ -175,17 +183,18 @@ namespace DataAccessLayer
                                    }).ToListAsync();
             return allrecord;
         }
-        public async Task<DTORequestDashboardUserMgtCountResponse> GetDashboardUserMgtCount(int UnitId)
+        public async Task<DTORequestDashboardUserMgtCountResponse> GetDashboardUserMgtCount(int UnitId, int UserId)
         {
-            string query = "declare @TotRegisterUser int=0 @TotPostingOut int=0 " +
+            string query = "declare @TotRegisterUser int=0 declare @TotPostingIn int=0 declare @TotPostingOut int=0 " +
                             " select @TotRegisterUser=COUNT(Id) from TrnDomainMapping where UnitId=@UnitId " +
+                            " select @TotPostingIn=COUNT(Id) from TrnPostingOut where ToAspNetUsersId=@UserId " +
                             " select @TotPostingOut=COUNT(Id) from TrnPostingOut where FromAspNetUsersId=@UserId " +
-                            " select @TotRegisterUser TotRegisterUser,@TotPostingOut TotPostingOut";
+                            " select @TotRegisterUser TotRegisterUser,@TotPostingIn TotPostingIn,@TotPostingOut TotPostingOut";
             try
             {
                 using (var connection = _contextDP.CreateConnection())
                 {
-                    var ret = await connection.QueryAsync<DTORequestDashboardUserMgtCountResponse>(query, new { UnitId });
+                    var ret = await connection.QueryAsync<DTORequestDashboardUserMgtCountResponse>(query, new { UnitId, UserId });
                     return ret.SingleOrDefault();
                 }
             }

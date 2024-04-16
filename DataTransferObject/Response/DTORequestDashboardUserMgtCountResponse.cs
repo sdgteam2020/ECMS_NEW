@@ -9,6 +9,7 @@ namespace DataTransferObject.Response
     public class DTORequestDashboardUserMgtCountResponse
     {
         public int TotRegisterUser { get; set; }
+        public int TotPostingIn { get; set; }
         public int TotPostingOut { get; set; }
     }
 }

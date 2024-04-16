@@ -18,6 +18,7 @@ using System.Collections;
 using System.Data.Common;
 using System.Security.Claims;
 using System.Text;
+using Web.WebHelpers;
 
 namespace Web.Controllers
 {
@@ -1568,6 +1569,32 @@ namespace Web.Controllers
                 return Json(KeyConstants.InternalServerError);
             }
         }
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> GetMappedForRecord(int TypeId, string SearchName)
+        {
+            try
+            {
+                return Json(await unitOfWork.MasterBL.GetMappedForRecord(TypeId, SearchName));
+            }
+            catch (Exception ex)
+            {
+                return Json(KeyConstants.InternalServerError);
+            }
+
+        }
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> GetDomainIdByTDMId(int TDMId)
+        {
+            try
+            {
+                return Json(await unitOfWork.MasterBL.GetDomainIdByTDMId(TDMId));
+            }
+            catch (Exception ex)
+            {
+                return Json(KeyConstants.InternalServerError);
+            }
+        }
+        
         #endregion
 
         #region Master Table 

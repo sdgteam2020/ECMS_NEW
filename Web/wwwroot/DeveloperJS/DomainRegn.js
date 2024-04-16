@@ -503,7 +503,7 @@ function Save() {
     });
 }
 
-function Reset() {
+function Reset()     {
     $("#txtSearch").val("");
 
     $("#spnDomainRegId").html("0");
