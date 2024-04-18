@@ -10,7 +10,8 @@ namespace BusinessLogicsLayer.RecordOffice
 {
     public interface IRecordOfficeBL : IGenericRepository<MRecordOffice>
     {
-        public Task<bool> GetByName(MRecordOffice Dto);
+        public Task<int> GetByName(MRecordOffice Dto);
+        public Task<bool> GetByTDMId(int TDMId);
         public Task<List<DTORecordOfficeResponse>> GetAllData();
     }
 }

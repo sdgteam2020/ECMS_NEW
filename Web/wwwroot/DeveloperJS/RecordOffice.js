@@ -30,7 +30,7 @@
             } else if ($("#txtmappedbyArmyNo").prop("checked")) {
                 TypeId = 2;
             } 
-            if (request.term.length > 2) {
+            if (request.term.length > 1) {
                 $("#spnTrnDomainMappingId").html('');
                 var param = { "SearchName": request.term,"TypeId": TypeId };
                 $("#spnTrnDomainMappingId").html(0);
@@ -269,7 +269,7 @@ function Save() {
         success: function (result) {
 
 
-            if (result == DataSave) {
+            if (result == 5) {
                 toastr.success('Record Office has been saved');
 
                 $("#AddNewRecordOffice").modal('hide');
@@ -277,7 +277,7 @@ function Save() {
                 Reset();
                 ResetErrorMessage();
             }
-            else if (result == DataUpdate) {
+            else if (result == 6) {
                 toastr.success('Record Office has been Updated');
 
                 $("#AddNewRecordOffice").modal('hide');
@@ -285,10 +285,14 @@ function Save() {
                 Reset();
                 ResetErrorMessage();
             }
-            else if (result == DataExists) {
-
+            else if (result == 2) {
                 toastr.error('Record Office / Abbreviation Name Exits!');
-
+            }
+            else if (result == 3) {
+                toastr.error('Armed Id Exits!');
+            }
+            else if (result == 4) {
+                toastr.error('Domain Id Exits!');
             }
             else if (result == InternalServerError) {
                 Swal.fire({

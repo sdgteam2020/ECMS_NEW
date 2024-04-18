@@ -24,11 +24,15 @@ namespace BusinessLogicsLayer.RecordOffice
         {
             return _RecordOfficeDB.GetAllData();
         }
+        public async Task<bool> GetByTDMId(int TDMId)
+        {
+            return await _RecordOfficeDB.GetByTDMId(TDMId);
+        }
 
-        public Task<bool> GetByName(MRecordOffice Dto)
+        public async Task<int> GetByName(MRecordOffice Dto)
         {
             Dto.Name = Dto.Name.Trim().TrimEnd().TrimStart();
-            return _RecordOfficeDB.GetByName(Dto);
+            return await _RecordOfficeDB.GetByName(Dto);
         }
     }
 }
