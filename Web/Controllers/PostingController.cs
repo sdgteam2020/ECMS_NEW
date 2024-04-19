@@ -90,5 +90,10 @@ namespace Web.Controllers
             }
             catch (Exception ex) { return Json(KeyConstants.InternalServerError); }
         }
+
+        public async Task<IActionResult> ApplicationClose()
+        {
+            return View();  
+        }
     }
 }

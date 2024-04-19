@@ -7,50 +7,8 @@
         mMsater(0, "ddlpostingReason", PostingReason, "");
     }
    
-    $("#postingoutUnitName").autocomplete({
-
-
-        source: function (request, response) {
-
-            var param = { "UnitName": request.term };
-            $(".spnToUserID").html(0);
-            $("#postingoutUnitId").html(0);
-            $.ajax({
-                url: '/Master/GetALLByUnitName',
-                contentType: 'application/x-www-form-urlencoded',
-                data: param,
-                type: 'POST',
-                success: function (data) {
-                    console.log(data);
-                    response($.map(data, function (item) {
-
-                        $("#loading").addClass("d-none");
-                        return { label: item.UnitName, value: item.UnitMapId };
-
-                    }))
-                },
-                error: function (response) {
-                    alert(response.responseText);
-                },
-                failure: function (response) {
-                    alert(response.responseText);
-                }
-            });
-        },
-        select: function (e, i) {
-            e.preventDefault();
-            $("#postingoutUnitName").val(i.item.label);
-            $("#postingoutUnitId").html(i.item.value);
-            
-            GetAllOffsByUnitId("ddlaspnetiserpostout", 0, i.item.value)
-        },
-        appendTo: '#suggesstion-box'
-    });
-
-    $("#ddlaspnetiserpostout").change(function () {
-        GetByArmyNo($("#ddlaspnetiserpostout").val());
-    });
-    $("#btnPostingOut").click(function () {
+   
+    $("#btnApplicationClose").click(function () {
         if ($("#SaveForm")[0].checkValidity()) {
 
             Swal.fire({
@@ -82,7 +40,7 @@ function Save() {
     /*  alert($('#bdaymonth').val());*/
    
     $.ajax({
-        url: '/Posting/SavePoasingOut',
+        url: '/Posting/ApplicationClose',
         type: 'POST',
         data: {
             "Id": $("#spnPostingOutID").html(),
@@ -144,55 +102,7 @@ function Save() {
         }
     });
 }
-function GetByArmyNo(userid) {
 
-    var userdata =
-    {
-        "userid": userid,
-
-    };
-    $.ajax({
-        url: '/UserProfile/GetByArmyNoOrAspnetuserId',
-        contentType: 'application/x-www-form-urlencoded',
-        data: userdata,
-        type: 'POST',
-
-        success: function (response) {
-            if (response != "null" && response != null) {
-
-                if (response == InternalServerError) {
-                    Swal.fire({
-                        text: errormsg
-                    });
-                }
-                else if (response == 0) {
-
-                }
-
-                else {
-
-
-                  
-                    
-                    $("#lbltoAppt").html(response.AppointmentName);
-                   
-                    $("#lblToName").html(response.Name);
-                    
-                    $("#lblToDomainId").html(response.DomainId);
-                    $(".spnToUserID").html(response.UserId);
-                    
-                   
-                }
-            }
-
-        },
-        error: function (result) {
-            Swal.fire({
-                text: errormsg002
-            });
-        }
-    });
-}
 
 function GetdataPostingData(ArmyNo) {
     $.ajax({
@@ -219,23 +129,10 @@ function GetdataPostingData(ArmyNo) {
                 $("#lblFromName").html(response.Users_RankName + ' ' + response.Users_Name );
                 $("#lblFromDomainId").html(response.Users_DomainId);
 
-                $(".spnFromAspNetUsersId").html(response.FromAspNetUsersId);
-                $(".spnFromUnitID").html(response.FromUnitID);
-                $(".spnFromUserID").html(response.FromUserID);
+        
                 $(".spnRequestId").html(response.RequestId);
 
                 $(".spnBasicDetailIdOutID").html(response.BasicDetailId)
-
-                //if ($("#RegistrationId").val() == '3' || $("#RegistrationId").val() == '7') {
-                //    $("#lblunitname").html(response.Registraion);
-                //} else {
-                //    $("#lblunitname").html(response.UnitName + ' (' + response.Sus_no + '' + response.Suffix + ')');
-                //}
-
-
-
-
-
 
 
             }
