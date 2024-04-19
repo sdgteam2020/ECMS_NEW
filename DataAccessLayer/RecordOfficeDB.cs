@@ -21,11 +21,31 @@ namespace DataAccessLayer
 
         private readonly IConfiguration configuration;
 
-        public async Task<bool> GetByName(MRecordOffice Dto)
+        public async Task<int> GetByName(MRecordOffice Dto)
         {
             List<MRecordOffice> mRecordOffices = await _context.MRecordOffice.AsNoTracking().ToListAsync();
-            var ret = mRecordOffices.Any(x => (x.Name.ToUpper() == Dto.Name.ToUpper() || x.Abbreviation.ToUpper() == Dto.Abbreviation.ToUpper()) && x.RecordOfficeId != Dto.RecordOfficeId);
-            return ret;
+            if (mRecordOffices.Any(x => (x.Name.ToUpper() == Dto.Name.ToUpper() || x.Abbreviation.ToUpper() == Dto.Abbreviation.ToUpper()) && x.RecordOfficeId != Dto.RecordOfficeId))
+            {
+                return 2;
+            }
+            else if (mRecordOffices.Any(x => x.ArmedId == Dto.ArmedId && x.RecordOfficeId != Dto.RecordOfficeId))
+            {
+                return 3;
+            }
+            else if (mRecordOffices.Any(x => x.TDMId == Dto.TDMId && x.RecordOfficeId != Dto.RecordOfficeId))
+            {
+                return 4;
+            }
+            else
+            {
+                return 1;
+            }
+        }
+        public async Task<bool> GetByTDMId(int TDMId)
+        {
+            List<MRecordOffice> mRecordOffices = await _context.MRecordOffice.AsNoTracking().ToListAsync();
+            var result = mRecordOffices.Any(x => x.TDMId == TDMId);
+            return result;
         }
 
         public Task<List<DTORecordOfficeResponse>> GetAllData()

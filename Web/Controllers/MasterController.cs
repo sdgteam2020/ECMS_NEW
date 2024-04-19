@@ -1501,22 +1501,39 @@ namespace Web.Controllers
 
                 if (ModelState.IsValid)
                 {
-                    if (!await unitOfWork.RecordOffice.GetByName(dTO))
+                    int result = await unitOfWork.RecordOffice.GetByName(dTO);
+                    if (result == 1)
                     {
                         if (dTO.RecordOfficeId > 0)
                         {
                             await unitOfWork.RecordOffice.Update(dTO);
-                            return Json(KeyConstants.Update);
+                            return Json(6);
                         }
                         else
                         {
                             await unitOfWork.RecordOffice.Add(dTO);
-                            return Json(KeyConstants.Save);
+                            return Json(5);
                         }
                     }
                     else
                     {
-                        return Json(KeyConstants.Exists);
+                        if(result == 2)
+                        {
+                            return Json(2);
+                        }
+                        else if(result == 3)
+                        {
+                            return Json(3);
+                        }
+                        else if(result == 4)
+                        {
+                            return Json(4);
+                        }
+                        else
+                        {
+                            return Json(0);
+                        }
+                        
                     }
                 }
                 else

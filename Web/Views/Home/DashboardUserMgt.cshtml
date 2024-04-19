@@ -21,6 +21,7 @@
 </header>
 <div class="containerMain mt-n10">
     <span id="UnitId" class="d-none">@ViewBag.UnitId</span>
+    <span id="TDMId" class="d-none">@ViewBag.TDMId</span>
     @if (ViewBag.Role == "User")
     {
         <div class="row">
@@ -83,6 +84,21 @@
                             </div>
                         </a>
                     </div>
+                    @if (ViewBag.TDMId>0)
+                    {
+                        <div class="col-md-2 col-sm-6">
+                            <a href="/UserProfile/Profile">
+                                <div class="counter pink">
+                                    <div class="counter-icon">
+                                        <i class="fa fa-user"></i>
+                                    </div>
+                                    <h3 style="margin-top:3.0rem!important;">
+                                        Update Record Office
+                                    </h3>
+                                </div>
+                            </a>
+                        </div>
+                    }
                 </div>
             </div>
         </div>
