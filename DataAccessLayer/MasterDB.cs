@@ -257,7 +257,7 @@ namespace DataAccessLayer
             }
             catch (Exception ex)
             {
-                _logger.LogError(1001, ex, "MasterDB->GetMappedForRecord");
+                _logger.LogError(1001, ex, "MasterDB->GetDomainIdByTDMId");
                 return null;
             }
 

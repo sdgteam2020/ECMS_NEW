@@ -1586,7 +1586,8 @@ namespace Web.Controllers
                 return Json(KeyConstants.InternalServerError);
             }
         }
-        [Authorize(Roles = "Admin")]
+       
+        [Authorize]
         public async Task<IActionResult> GetMappedForRecord(int TypeId, string SearchName)
         {
             try
@@ -1611,7 +1612,59 @@ namespace Web.Controllers
                 return Json(KeyConstants.InternalServerError);
             }
         }
-        
+
+        [Authorize(Roles = "User")]
+        public async Task<IActionResult> GetUpdateRecordOffice()
+        {
+            try
+            {
+                DtoSession? dtoSession = new DtoSession();
+                if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
+                {
+                    dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+
+                }
+                int UnitId = dtoSession != null ? dtoSession.UnitId : 0;
+                int TDMId = dtoSession != null ? dtoSession.TrnDomainMappingId : 0;
+                return Json(await unitOfWork.RecordOffice.GetUpdateRecordOffice(TDMId));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "Master->GetUpdateRecordOffice");
+                return Json(KeyConstants.InternalServerError);
+            }
+
+        }
+
+        [Authorize(Roles = "User")]
+        public async Task<IActionResult> UpdateRecordOffice()
+        {
+            DtoSession? dtoSession = new DtoSession();
+            if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
+            {
+                dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+
+            }
+            int UnitId = dtoSession != null ? dtoSession.UnitId : 0;
+            int TDMId = dtoSession != null ? dtoSession.TrnDomainMappingId : 0;
+            ViewBag.UnitId = UnitId;
+            ViewBag.TDMId = TDMId;
+            return View();
+        }
+        [Authorize(Roles = "User")]
+        public async Task<IActionResult> GetDDMappedForRecord(int UnitMapId)
+        {
+            try
+            {
+                return Json(await unitOfWork.RecordOffice.GetDDMappedForRecord(UnitMapId));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "Master->GetDDMappedForRecord");
+                return Json(KeyConstants.InternalServerError);
+            }
+
+        }
         #endregion
 
         #region Master Table 

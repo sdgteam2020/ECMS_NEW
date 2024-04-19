@@ -12,6 +12,8 @@ namespace DataAccessLayer.BaseInterfaces
     {
         public Task<int> GetByName(MRecordOffice Dto);
         public Task<bool> GetByTDMId(int TDMId);
+        public Task<DTOGetUpdateRecordOfficeResponse?> GetUpdateRecordOffice(int TDMId);
         public Task<List<DTORecordOfficeResponse>> GetAllData();
+        public Task<List<DTOGetMappedForRecordResponse>?> GetDDMappedForRecord(int UnitMapId);
     }
 }
