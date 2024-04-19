@@ -78,6 +78,7 @@ namespace DataAccessLayer
         public DbSet<MRemarks> MRemarks { get; set; } = null!;
         public DbSet<MPostingReason> MPostingReason { get; set; } = null!;
         public DbSet<TrnPostingOut> TrnPostingOut { get; set; } = null!;
+        public DbSet<TrnApplClose> TrnApplClose { get; set; } = null!;
 
 
 

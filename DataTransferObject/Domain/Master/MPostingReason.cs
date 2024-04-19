@@ -16,5 +16,7 @@ namespace DataTransferObject.Domain.Master
 
         [Column(TypeName = "varchar(50)")]
         public string Reason { get; set; } = string.Empty;
+
+        public int Type { get; set; }
     }
 }

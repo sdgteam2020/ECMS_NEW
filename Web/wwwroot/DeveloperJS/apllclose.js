@@ -4,7 +4,7 @@
         $("#iarmynopostingin").html(sessionStorage.getItem("ArmyNo"));
         GetdataPostingData(sessionStorage.getItem("ArmyNo"));
 
-        mMsater(0, "ddlpostingReason", PostingReason, "");
+        mMsater(0, "ddlpostingReason", PostingReason, "2");
     }
    
    
@@ -40,21 +40,15 @@ function Save() {
     /*  alert($('#bdaymonth').val());*/
    
     $.ajax({
-        url: '/Posting/ApplicationClose',
+        url: '/Posting/SaveApplicationClose',
         type: 'POST',
         data: {
             "Id": $("#spnPostingOutID").html(),
             "BasicDetailId": $(".spnBasicDetailIdOutID").html(),
             "ReasonId": $("#ddlpostingReason").val(),
             "Authority": $("#txtAuthority").val(),
-            "SOSDate": $("#txtSosDate").val(),
-            "FromAspNetUsersId": $(".spnFromAspNetUsersId").html(),
-            "FromUnitID": $(".spnFromUnitID").html(),
-            "FromUserID": $(".spnFromUserID").html(),
-            "ToAspNetUsersId": $("#ddlaspnetiserpostout").val(),
-            "ToUnitID": $("#postingoutUnitId").html(),
-            "ToUserID": $(".spnToUserID").html(),
             "RequestId": $(".spnRequestId").html(),
+            "Remarks": $("#txtremarks").val(),
         }, //get the search string
         success: function (result) {
 
@@ -64,21 +58,19 @@ function Save() {
 
                 toastr.success('Data has been saved');
 
-                alert("Posting Out successfully");
-                location.href = '/Posting/GetAllPostingOut';
+              
 
             }
             else if (result == DataUpdate) {
 
 
                 toastr.success('Data has been Updated');
-                alert("Posting Out successfully");
-                location.href = '/Posting/GetAllPostingOut';
+               
 
             }
             else if (result == DataExists) {
 
-                toastr.error(' Exits!');
+                toastr.error('Appl Allready Closed!');
             }
             else if (result == InternalServerError) {
                 Swal.fire({

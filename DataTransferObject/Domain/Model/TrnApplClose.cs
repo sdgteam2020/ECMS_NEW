@@ -31,7 +31,7 @@ namespace DataTransferObject.Domain.Model
 
         [Required]
         [Column(TypeName = "varchar(50)")]
-        public DateTime Remarks { get; set; }
+        public string Remarks { get; set; }
        
 
         [ForeignKey("MTrnICardRequest"), DatabaseGenerated(DatabaseGeneratedOption.None)]

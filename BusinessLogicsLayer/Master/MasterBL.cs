@@ -41,9 +41,9 @@ namespace BusinessLogicsLayer.Master
             return await _iMasterDB.GetMSubDte();
         }
 
-        public async Task<List<DTOMasterResponse>> GetPostingReason()
+        public async Task<List<DTOMasterResponse>> GetPostingReason(int TypeId)
         {
-            return await _iMasterDB.GetPostingReason();
+            return await _iMasterDB.GetPostingReason(TypeId);
         }
 
         public async Task<List<DTORemarksResponse>> GetRemarksByTypeId(DTORemarksRequest Data)
