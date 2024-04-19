@@ -3,6 +3,7 @@ using BusinessLogicsLayer.BasicDet;
 using BusinessLogicsLayer.Bde;
 using BusinessLogicsLayer.BdeCate;
 using BusinessLogicsLayer.Home;
+using BusinessLogicsLayer.RecordOffice;
 using BusinessLogicsLayer.Registration;
 using DapperRepo.Core.Constants;
 using DataAccessLayer.BaseInterfaces;
@@ -31,17 +32,19 @@ namespace Web.Controllers
         private readonly INotificationBL _INotificationBL;
         private readonly ITrnICardRequestBL _ITrnICardRequestBL;
         private readonly IHomeBL _home;
+        private readonly IRecordOfficeBL _recordOfficeBL;
         private readonly SignInManager<ApplicationUser> signInManager;
         private readonly UserManager<ApplicationUser> userManager;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ILogger<HomeController> _logger;
-        public HomeController(IRegistrationBL registrationBL, IBasicDetailBL basicDetailBL, INotificationBL notificationBL, ITrnICardRequestBL iTrnICardRequestBL, IHomeBL home, SignInManager<ApplicationUser> signInManager, UserManager<ApplicationUser> userManager, ILogger<HomeController> logger, IHttpContextAccessor httpContextAccessor)
+        public HomeController(IRegistrationBL registrationBL, IBasicDetailBL basicDetailBL, INotificationBL notificationBL, ITrnICardRequestBL iTrnICardRequestBL, IHomeBL home, IRecordOfficeBL recordOfficeBL, SignInManager<ApplicationUser> signInManager, UserManager<ApplicationUser> userManager, ILogger<HomeController> logger, IHttpContextAccessor httpContextAccessor)
         {
             _registrationBL = registrationBL;
             _basicDetailBL = basicDetailBL;
             _INotificationBL = notificationBL;
             _ITrnICardRequestBL = iTrnICardRequestBL;
             _home = home;
+            _recordOfficeBL = recordOfficeBL;
             _logger = logger;
         }
         private string GetSessionValue()
@@ -97,8 +100,18 @@ namespace Web.Controllers
 
             }
             int UnitId = dtoSession != null ? dtoSession.UnitId : 0;
+            int TDMId = dtoSession!=null? dtoSession.TrnDomainMappingId : 0;
+            bool result = await _recordOfficeBL.GetByTDMId(TDMId);
+            if (result)
+            {
+                ViewBag.TDMId = TDMId;
+            }
+            else
+            {
+                ViewBag.TDMId = 0;
+            }
             ViewBag.UnitId = UnitId;
-
+            
             ViewBag.Role = role;
             return View();
         }
