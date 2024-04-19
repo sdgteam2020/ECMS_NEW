@@ -108,7 +108,7 @@ namespace Web.Controllers
             }
             else
             {
-                ViewBag.TDMId = TDMId;
+                ViewBag.TDMId = 0;
             }
             ViewBag.UnitId = UnitId;
             
