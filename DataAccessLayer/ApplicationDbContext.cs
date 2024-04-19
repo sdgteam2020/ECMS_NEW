@@ -92,6 +92,10 @@ namespace DataAccessLayer
 
             base.OnModelCreating(builder);
             //builder.Seed();
+            
+            //builder.Entity<MRecordOffice>()
+            //        .HasIndex(x => new { x.ArmedId, x.TDMId })
+            //        .IsUnique();
             builder.Entity<IdentityUserRole<int>>(entity =>
             {
             });

@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DataTransferObject.Domain.Model;
+using System.Security.Policy;
 
 namespace DataTransferObject.Domain.Master
 {
@@ -35,7 +36,7 @@ namespace DataTransferObject.Domain.Master
 
         [ForeignKey("TrnDomainMapping"), DatabaseGenerated(DatabaseGeneratedOption.None)]
         [RegularExpression(@"^[\d]+$", ErrorMessage = "TDMId is number.")]
-        public int? TDMId { get; set; }
+        public int TDMId { get; set; }
         public TrnDomainMapping? TrnDomainMapping { get; set; }
     }
 }

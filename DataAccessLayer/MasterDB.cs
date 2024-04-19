@@ -199,9 +199,9 @@ namespace DataAccessLayer
                     SearchName = "%" + SearchName.Replace("[", "[[]").Replace("%", "[%]") + "%";
                     query = "Select TOP 5 users.DomainId,usep.ArmyNo,ra.RankAbbreviation,usep.Name,trndomain.Id as TDMId from AspNetUsers users" +
                             " inner join TrnDomainMapping trndomain on users.Id=trndomain.AspNetUsersId" +
-                            " left join UserProfile usep on usep.UserId=trndomain.UserId" +
-                            " left join MRank ra on ra.RankId=usep.RankId " +
-                            " where users.DomainId like @SearchName";
+                            " inner join UserProfile usep on usep.UserId=trndomain.UserId" +
+                            " inner join MRank ra on ra.RankId=usep.RankId " +
+                            " where users.DomainId like @SearchName and usep.IsRO=1";
 
                 }
                 else if (TypeId == 2)
@@ -211,7 +211,7 @@ namespace DataAccessLayer
                             " inner join MRank ra on ra.RankId=usep.RankId " +
                             " inner join TrnDomainMapping trndomain on trndomain.UserId=usep.UserId" +
                             " inner join AspNetUsers users on users.Id=trndomain.AspNetUsersId" +
-                            " where usep.ArmyNo like @SearchName";
+                            " where usep.ArmyNo like @SearchName and usep.IsRO=1";
 
                 }
                 else
@@ -219,9 +219,9 @@ namespace DataAccessLayer
                     SearchName = "%" + SearchName.Replace("[", "[[]").Replace("%", "[%]") + "%";
                     query = "Select TOP 5 users.DomainId,usep.ArmyNo,ra.RankAbbreviation,usep.Name,trndomain.Id as TDMId from AspNetUsers users" +
                             " inner join TrnDomainMapping trndomain on users.Id=trndomain.AspNetUsersId" +
-                            " left join UserProfile usep on usep.UserId=trndomain.UserId" +
-                            " left join MRank ra on ra.RankId=usep.RankId " +
-                            " where users.DomainId like @SearchName";
+                            " inner join UserProfile usep on usep.UserId=trndomain.UserId" +
+                            " inner join MRank ra on ra.RankId=usep.RankId " +
+                            " where users.DomainId like @SearchName and usep.IsRO=1";
 
                 }
                 using (var connection = _contextDP.CreateConnection())
