@@ -13,6 +13,6 @@ namespace DataTransferObject.Response
         public string Abbreviation { get; set; } = string.Empty;
         public byte ArmedId { get; set; }
         public string ArmedName { get; set; } = string.Empty;
-        public int? TDMId { get; set; }
+        public int TDMId { get; set; }
     }
 }

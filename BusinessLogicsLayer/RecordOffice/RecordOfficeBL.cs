@@ -34,5 +34,13 @@ namespace BusinessLogicsLayer.RecordOffice
             Dto.Name = Dto.Name.Trim().TrimEnd().TrimStart();
             return await _RecordOfficeDB.GetByName(Dto);
         }
+        public async Task<DTOGetUpdateRecordOfficeResponse?> GetUpdateRecordOffice(int TDMId)
+        {
+            return await _RecordOfficeDB.GetUpdateRecordOffice(TDMId);
+        }
+        public async Task<List<DTOGetMappedForRecordResponse>?> GetDDMappedForRecord(int UnitMapId)
+        {
+            return await _RecordOfficeDB.GetDDMappedForRecord(UnitMapId);
+        }
     }
 }
