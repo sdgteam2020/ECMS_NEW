@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BusinessLogicsLayer.Master;
+using DataTransferObject.Requests;
 
 namespace BusinessLogicsLayer.RecordOffice
 {
@@ -41,6 +42,10 @@ namespace BusinessLogicsLayer.RecordOffice
         public async Task<List<DTOGetMappedForRecordResponse>?> GetDDMappedForRecord(int UnitMapId)
         {
             return await _RecordOfficeDB.GetDDMappedForRecord(UnitMapId);
+        }
+        public async Task<bool?> UpdateROValue(DTOUpdateROValueRequest dTO)
+        {
+            return await _RecordOfficeDB.UpdateROValue(dTO);
         }
     }
 }

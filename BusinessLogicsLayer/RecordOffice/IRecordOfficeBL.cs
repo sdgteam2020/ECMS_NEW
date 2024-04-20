@@ -1,4 +1,5 @@
 ﻿using DataTransferObject.Domain.Master;
+using DataTransferObject.Requests;
 using DataTransferObject.Response;
 using System;
 using System.Collections.Generic;
@@ -15,5 +16,6 @@ namespace BusinessLogicsLayer.RecordOffice
         public Task<List<DTORecordOfficeResponse>> GetAllData();
         public Task<DTOGetUpdateRecordOfficeResponse?> GetUpdateRecordOffice(int TDMId);
         public Task<List<DTOGetMappedForRecordResponse>?> GetDDMappedForRecord(int UnitMapId);
+        public Task<bool?> UpdateROValue(DTOUpdateROValueRequest dTO);
     }
 }
