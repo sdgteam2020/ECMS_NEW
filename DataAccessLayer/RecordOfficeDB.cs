@@ -1,8 +1,12 @@
 ﻿using Dapper;
 using DataAccessLayer.BaseInterfaces;
 using DataAccessLayer.Logger;
+using DataTransferObject.Domain.Identitytable;
 using DataTransferObject.Domain.Master;
+using DataTransferObject.Domain.Model;
+using DataTransferObject.Requests;
 using DataTransferObject.Response;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -80,12 +84,10 @@ namespace DataAccessLayer
             try
             {
                 string query = "";
-                query = "Select trndomain.UnitId as UnitMapId,users.DomainId,ra.RankAbbreviation,usep.Name,usep.ArmyNo,mrecord.RecordOfficeId,mrecord.Name as RecordOfficeName ,mrecord.Abbreviation,mrecord.TDMId,marmed.ArmedName from TrnDomainMapping trndomain" +
+                query = "Select mrecord.RecordOfficeId,mrecord.Name as RecordOfficeName,mrecord.Abbreviation,marmed.ArmedName from TrnDomainMapping trndomain" +
                         " inner join AspNetUsers users on users.Id=trndomain.AspNetUsersId" +
                         " inner join MRecordOffice mrecord on mrecord.TDMId=trndomain.Id" +
                         " inner join MArmedType marmed on marmed.ArmedId=mrecord.ArmedId" +
-                        " left join UserProfile usep on usep.UserId=trndomain.UserId" +
-                        " left join MRank ra on ra.RankId=usep.RankId " +
                         " where trndomain.Id=@TDMId";
                 using (var connection = _contextDP.CreateConnection())
                 {
@@ -122,6 +124,79 @@ namespace DataAccessLayer
                 return null;
             }
 
+        }
+        public async Task<bool?> UpdateROValue(DTOUpdateROValueRequest dTO)
+        {
+            using (var transaction = _context.Database.BeginTransaction())
+            {
+                try
+                {
+                    var roUpdate = await _context.MRecordOffice.FindAsync(dTO.RecordOfficeId); 
+                    if(roUpdate == null)
+                    {
+                        return false;
+                    }
+                    else
+                    {
+                        roUpdate.TDMId = dTO.TDMId;
+                        roUpdate.Updatedby = dTO.Updatedby;
+                        roUpdate.UpdatedOn = dTO.UpdatedOn;
+                        _context.MRecordOffice.Update(roUpdate);
+                        await _context.SaveChangesAsync();
+
+                        var TDM = await _context.TrnDomainMapping.FindAsync(dTO.TDMId);
+
+                        if(TDM != null)
+                        {
+                            if(TDM.UserId != null)
+                            {
+                                var newprofileUpdate = await _context.UserProfile.FindAsync(TDM.UserId);
+                                if(newprofileUpdate == null)
+                                {
+                                    return false;
+                                }
+                                else
+                                {
+                                    newprofileUpdate.IsRO = true;
+                                    _context.UserProfile.Update(newprofileUpdate);
+                                    await _context.SaveChangesAsync();
+                                }
+
+                            }
+                            else
+                            {
+                                return false;
+                            }
+                        }
+                        else
+                        {
+                            return false;
+                        }
+
+                        var oldprofileUpdate = await _context.UserProfile.FindAsync(dTO.OldUserId);
+                        if(oldprofileUpdate == null)
+                        {
+                            return false;
+                        }
+                        else
+                        {
+                            oldprofileUpdate.IsRO = false;
+                            _context.UserProfile.Update(oldprofileUpdate);
+                            await _context.SaveChangesAsync();
+                        }
+                        
+                        transaction.Commit();
+                        return true;
+                    }
+
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    _logger.LogError(1001, ex, "RecordOfficeDB->UpdateROValue");
+                    return null;
+                }
+            }
         }
     }
 }

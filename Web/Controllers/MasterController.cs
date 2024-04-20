@@ -1647,8 +1647,10 @@ namespace Web.Controllers
             }
             int UnitId = dtoSession != null ? dtoSession.UnitId : 0;
             int TDMId = dtoSession != null ? dtoSession.TrnDomainMappingId : 0;
+            int UserId = dtoSession != null ? dtoSession.UserId : 0;
             ViewBag.UnitId = UnitId;
             ViewBag.TDMId = TDMId;
+            ViewBag.UserId = UserId;
             return View();
         }
         [Authorize(Roles = "User")]
@@ -1661,6 +1663,49 @@ namespace Web.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(1001, ex, "Master->GetDDMappedForRecord");
+                return Json(KeyConstants.InternalServerError);
+            }
+
+        }
+        [Authorize(Roles = "User")]
+        public async Task<IActionResult> UpdateROValue(DTOUpdateROValueRequest dTO)
+        {
+            try
+            {
+                dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                dTO.UpdatedOn = DateTime.Now;
+
+                if (ModelState.IsValid)
+                {
+                    if (dTO.TDMId == dTO.OldTDMId)
+                    {
+                        return Json(1);
+                    }
+                    else
+                    {
+                        bool? result = (bool)await unitOfWork.RecordOffice.UpdateROValue(dTO);
+                        if (result ==true)
+                        {
+                            return Json(2);
+                        }
+                        else if(result == null)
+                        {
+                            return Json(4);
+                        }
+                        else
+                        {
+                            return Json(3);
+                        }
+                    }
+                }
+                else
+                {
+                    return Json(ModelState.Select(x => x.Value.Errors).Where(y => y.Count > 0).ToList());
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "Master->SaveRecordOffice");
                 return Json(KeyConstants.InternalServerError);
             }
 
