@@ -422,7 +422,7 @@ namespace Web.Controllers
                         {
                             TempData["Registration"] = JsonConvert.SerializeObject(model);
                             string id = protector.Protect(Data.BasicDetailId.ToString());
-                            return RedirectToActionPermanent("BasicDetail", "BasicDetail", new { Id  = protector.Protect("0") });
+                            return RedirectToActionPermanent("BasicDetail", "BasicDetail", new { Id  = protector.Protect(Convert.ToString(Data.BasicDetailId)) });
                         }
                         else
                         {
@@ -645,8 +645,45 @@ namespace Web.Controllers
                     basicDetailUpdVM.ExistingSignatureImagePath = basicDetailUpdVM.SignatureImagePath;
                     basicDetailUpdVM.EncryptedId = Id;
                     ViewBag.OptionsRegimental = service.GetRegimentalDDLIdSelected(basicDetailUpdVM.ArmedId);
-                   // ViewBag.UnitName = await context.MUnit.FindAsync(basicDetailUpdVM.UnitId);
-                    
+
+                    ///////////////////////for close appl
+                    ///
+                    if (TempData["Registration"] != null)
+                    {
+                        var modelex = JsonConvert.DeserializeObject<DTORegistrationRequest>(TempData["Registration"].ToString());
+
+                        basicDetailUpdVM.Name = modelex.Name;
+                        basicDetailUpdVM.ServiceNo = modelex.ServiceNo;
+                        basicDetailUpdVM.DOB = modelex.DOB;
+                        basicDetailUpdVM.DateOfCommissioning = modelex.DateOfCommissioning;
+                        basicDetailUpdVM.IdenMark1 = modelex.IdenMark1;
+                        basicDetailUpdVM.IdenMark2 = modelex.IdenMark2;
+                        ViewBag.OptionsRank = modelex.RankId;
+                        //dTOBasicDetailCrtRequest.Height = model.Height;
+
+                        // dTOBasicDetailCrtRequest.AadhaarNo = Convert.ToString(model.AadhaarNo);
+                        basicDetailUpdVM.AadhaarNo = Convert.ToInt64(modelex.AadhaarNo).ToString("D12"); ;// Convert.ToInt32(model.AadhaarNo.Substring(model.AadhaarNo.Length - 3)).ToString("D4");
+
+
+                        //dTOBasicDetailCrtRequest.BloodGroup = model.BloodGroup;
+
+                        basicDetailUpdVM.ApplyForId = modelex.ApplyForId;
+                        basicDetailUpdVM.RegistrationId = modelex.RegistrationId;
+                        basicDetailUpdVM.TypeId = modelex.TypeId;
+
+
+                        basicDetailUpdVM.State = modelex.State;
+                        basicDetailUpdVM.District = modelex.District;
+                        basicDetailUpdVM.PS = modelex.PS;
+                        basicDetailUpdVM.PO = modelex.PO;
+                        basicDetailUpdVM.Tehsil = modelex.Tehsil;
+                        basicDetailUpdVM.Village = modelex.Village;
+                        basicDetailUpdVM.PinCode = Convert.ToInt32(modelex.PinCode);
+                        basicDetailUpdVM.PermanentAddress = "Village - " + modelex.Village + ", Post Office-" + modelex.PO + ", Tehsil- " + modelex.Tehsil + ", District- " + modelex.District + ", State- " + modelex.State + ", Pin Code- " + modelex.PinCode;
+
+                    }
+                    // ViewBag.UnitName = await context.MUnit.FindAsync(basicDetailUpdVM.UnitId);
+
                     //MRegistration? mRegistration = await context.MRegistration.FindAsync(basicDetailUpdVM.RegistrationId);
                     //basicDetailUpdVM.Type = mRegistration != null ? mRegistration.ApplyForId : 1;
 
@@ -674,15 +711,7 @@ namespace Web.Controllers
 
                     if (basicDetail != null)
                     {
-                      //  MRegistration? mRegistration = await context.MRegistration.FindAsync(model.RegistrationId);
-                        //if (mRegistration.ApplyForId == 1)
-                        //{
-                        //    ViewBag.OptionsRank = service.GetRank(1);
-                        //}
-                        //else
-                        //{
-                        //    ViewBag.OptionsRank = service.GetRank(2);
-                        //}
+                      
                         if (model.Type==2)
                         {
                             if(model.RegimentalId == null)
@@ -820,8 +849,11 @@ namespace Web.Controllers
                                 {
                                     MTrnICardRequest mTrnICardRequest = new MTrnICardRequest();
                                     mTrnICardRequest.BasicDetailId = basicDetail.BasicDetailId;
-                                    mTrnICardRequest.Status = false;
+                                    mTrnICardRequest.Status = 0;
                                     mTrnICardRequest.TypeId = model.TypeId;
+                                    string tracid = model.DOB.Day.ToString("D2") + "" + model.DOB.Month.ToString("D2") + "" + model.DOB.Year + "" + Convert.ToInt32(model.AadhaarNo.Substring(model.AadhaarNo.Length - 3)).ToString("D4");
+                                    mTrnICardRequest.TrackingId = Convert.ToInt64(tracid);
+                                    mTrnICardRequest.RegistrationId = model.RegistrationId;
                                     //TrnDomainMapping trnDomainMapping = new TrnDomainMapping();
                                     // trnDomainMapping.AspNetUsersId= Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                                     //trnDomainMapping=await iDomainMapBL.GetByAspnetUserIdBy(trnDomainMapping);
@@ -987,7 +1019,7 @@ namespace Web.Controllers
                         //}
 
                         MTrnICardRequest mTrnICardRequest = new MTrnICardRequest();
-                        mTrnICardRequest.Status = false;
+                        mTrnICardRequest.Status = 0;
                         mTrnICardRequest.IsActive = true;
                         mTrnICardRequest.TypeId = model.TypeId;
                         string tracid = model.DOB.Day.ToString("D2") + "" + model.DOB.Month.ToString("D2") + "" + model.DOB.Year+""+ Convert.ToInt32(model.AadhaarNo.Substring(model.AadhaarNo.Length - 3)).ToString("D4");

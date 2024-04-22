@@ -84,13 +84,13 @@ namespace DataAccessLayer
             }
         }
 
-        public async Task<List<DTOMasterResponse>> GetPostingReason()
+        public async Task<List<DTOMasterResponse>> GetPostingReason(int TypeId)
         {
-            string query = "SELECT  Id, Reason Name FROM MPostingReason";
+            string query = "SELECT  Id, Reason Name FROM MPostingReason where Type=@TypeId";
 
             using (var connection = _contextDP.CreateConnection())
             {
-                var ret = await connection.QueryAsync<DTOMasterResponse>(query);
+                var ret = await connection.QueryAsync<DTOMasterResponse>(query,new { TypeId });
                 return ret.ToList();
             }
         }

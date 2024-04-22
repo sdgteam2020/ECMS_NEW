@@ -207,7 +207,7 @@ function GetdataPostingData(ArmyNo) {
                 $("#lblAppt").html(response.Users_AppointmentName);
                 $("#lblName").html(response.Name);
                 if (response.Status == 'False')
-                    $("#lblStatusofInds").html('User Process');
+                    $("#lblStatusofInds").html('Under Process');
                 else
                     $("#lblStatusofInds").html('Complete');
 
@@ -215,7 +215,9 @@ function GetdataPostingData(ArmyNo) {
                 $("#pstimage").attr("src", "/WriteReadData/Photo/" + response.PhotoImagePath);
                 $("#lblUnitname").html(response.UnitName + ' (' + response.Sus_no + '' + response.Suffix+')');
 
-                $("#lblRegdUser").html(response.Users_RankName + ' ' + response.Users_Name + ' (' + response.Users_ArmyNo + ') (' + response.Users_DomainId + ')');
+                $("#lblRegdUser").html(response.Users_ArmyNo);
+                $("#lblFromName").html(response.Users_RankName + ' ' + response.Users_Name );
+                $("#lblFromDomainId").html(response.Users_DomainId);
 
                 $(".spnFromAspNetUsersId").html(response.FromAspNetUsersId);
                 $(".spnFromUnitID").html(response.FromUnitID);

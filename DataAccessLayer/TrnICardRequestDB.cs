@@ -66,5 +66,18 @@ namespace DataAccessLayer
                 return Convert.ToInt32(ret);
             }
         }
+
+        public async Task<bool> UpdateStatus(int RequestId)
+        {
+
+            string query = "";
+            using (var connection = _contextDP.CreateConnection())
+            {
+                connection.Execute("UPDATE TrnICardRequest set Status=2 where RequestId=@RequestId", new { RequestId });
+
+                return true;
+
+            }
+        }
     }
 }

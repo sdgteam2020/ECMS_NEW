@@ -16,9 +16,13 @@ namespace Web.Controllers
     public class PostingController : Controller
     {
         private readonly IPostingBL _iPostingBL;
-        public PostingController(IPostingBL postingBL)
+        private readonly IApplCloseBL _iApplCloseBL;
+        private readonly ITrnICardRequestBL _iTrnICardRequestBL;
+        public PostingController(IPostingBL postingBL, IApplCloseBL iApplCloseBL, ITrnICardRequestBL trnICardRequestBL)
         {
             _iPostingBL = postingBL;
+            _iApplCloseBL = iApplCloseBL;
+            _iTrnICardRequestBL = trnICardRequestBL;
         }
         public IActionResult PostingIn()
         {
@@ -79,6 +83,58 @@ namespace Web.Controllers
 
                         }
                    
+
+                }
+                else
+                {
+
+                    return Json(ModelState.Select(x => x.Value.Errors).Where(y => y.Count > 0).ToList());
+                }
+
+            }
+            catch (Exception ex) { return Json(KeyConstants.InternalServerError); }
+        }
+
+        public async Task<IActionResult> ApplicationClose()
+        {
+            return View();  
+        }
+        public async Task<IActionResult> SaveApplicationClose(TrnApplClose dTO)
+        {
+            try
+            {
+                dTO.IsActive = true;
+                dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier)); ;
+                dTO.UpdatedOn = DateTime.Now;
+
+                if (ModelState.IsValid)
+                {
+
+                    //if (dTO.Id > 0)
+                    //{
+                    //    await _iApplCloseBL.Update(dTO);
+                    //    return Json(KeyConstants.Update);
+                    //}
+                    //else
+                    //{
+                    if(!await _iApplCloseBL.RequestIdExists(dTO))
+                    {
+                        await _iApplCloseBL.Add(dTO);
+                        await _iTrnICardRequestBL.UpdateStatus(dTO.RequestId);
+
+
+
+                        return Json(KeyConstants.Save);
+                    }
+                    else
+                    {
+                        return Json(KeyConstants.Exists);
+                    }
+                       
+
+
+                    //}
+
 
                 }
                 else
