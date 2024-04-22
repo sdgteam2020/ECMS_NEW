@@ -5,7 +5,20 @@ var IsValid = 0;
 var Message = "";
 $(document).ready(function () {
 
-   
+    $("#btnApplicantsPostingout").click(function () {
+        $("#armynosearchAllName").html("");
+        $("#txtarmynosearchAll").val("");
+        $("#armynosearchAllpic").attr("src", "");
+        $("#unitoffrsModal").modal("show");
+        $("#armynosearchTypeId").val(1);
+    });
+    $("#btnApplicantsClose").click(function () {
+        $("#armynosearchAllName").html("");
+        $("#txtarmynosearchAll").val("");
+        $("#armynosearchAllpic").attr("src", "");
+        $("#unitoffrsModal").modal("show");
+        $("#armynosearchTypeId").val(2);
+    });
     $('#txtApplyForArmyNo').change(function (e) {
         if ($('#txtApplyForArmyNo').val().length > 0) {
             $('#btnNext').removeClass("disabled");
@@ -26,7 +39,10 @@ $(document).ready(function () {
             
             $("#unitoffrsModal").modal("hide");
             sessionStorage.setItem("ArmyNo", $("#txtarmynosearchAll").val());
-            window.location.href = "/Posting/PostingIn";
+            if ($("#armynosearchTypeId").val()==1)
+                window.location.href = "/Posting/PostingIn";
+           else if ($("#armynosearchTypeId").val() == 2)
+                window.location.href = "/Posting/ApplicationClose";
 
         } else {
             toastr.error("Please Enter Army No");

@@ -66,7 +66,7 @@ namespace BusinessLogicsLayer
         public IArmedCatBL ArmedCat { get; }
 
         public IMasterBL MasterBL { get; }
-
+         
         public async Task<List<DTOMasterResponse>> GetAllMMaster(DTOMasterRequest Data)
         {
             List<DTOMasterResponse> lst = new List<DTOMasterResponse>();
@@ -270,7 +270,7 @@ namespace BusinessLogicsLayer
             }
             else if (Data.id == Convert.ToInt16(Constants.MasterTbl.PostingReason))
             {
-                var Ret = await MasterBL.GetPostingReason();
+                var Ret = await MasterBL.GetPostingReason(Convert.ToInt32(Data.ParentId));
 
                 foreach (var Forma in Ret)
                 {

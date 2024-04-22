@@ -18,7 +18,7 @@ namespace DataTransferObject.Domain.Model
         [ForeignKey("BasicDetail"), DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int BasicDetailId { get; set; }
         public BasicDetail? BasicDetail { get; set; }
-        public Boolean Status { get; set; }
+        public int Status { get; set; }
         [ForeignKey("MICardType"), DatabaseGenerated(DatabaseGeneratedOption.None)]
         public byte TypeId { get; set; }
         public MICardType? MICardType { get; set; }

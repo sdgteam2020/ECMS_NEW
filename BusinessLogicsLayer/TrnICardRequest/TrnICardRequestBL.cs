@@ -39,5 +39,10 @@ namespace BusinessLogicsLayer.BdeCate
         {
             return await _iTrnICardRequestDB.GetUserIdByRequestId(RequestId);
         }
+
+        public async Task<bool> UpdateStatus(int RequestId)
+        {
+            return await _iTrnICardRequestDB.UpdateStatus(RequestId);
+        }
     }
 }

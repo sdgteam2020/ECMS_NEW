@@ -33,12 +33,7 @@ $(document).ready(function () {
     Getaspntokenarmyno()
     if (window.location.pathname !="/UserProfile/Profile")
         CheckProfileExist();
-    $("#btnApplicantsPostingout").click(function () {
-        $("#armynosearchAllName").html("");
-        $("#txtarmynosearchAll").val("");
-        $("#armynosearchAllpic").attr("src", "");
-        $("#unitoffrsModal").modal("show");
-    });
+    
    
     $("#txtarmynosearchAll").autocomplete({
 

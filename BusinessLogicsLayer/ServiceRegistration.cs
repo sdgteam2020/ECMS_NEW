@@ -99,7 +99,8 @@ namespace BusinessLogicsLayer
             services.AddTransient<IPostingBL, PostingBL>();
             services.AddTransient<IPostingDB, PostingDB>();
 
-
+            services.AddTransient<IApplCloseBL, ApplCloseBL>();
+            services.AddTransient<IApplCloseDB, ApplCloseDB>();
 
 
             //services.AddTransient<IBasicDetailTempBL, BasicDetailTempBL>();
