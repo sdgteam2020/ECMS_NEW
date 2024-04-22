@@ -226,6 +226,19 @@ namespace DataAccessLayer
                         "WHERE map.AspNetUsersId = @UserId and Afor.ApplyForId=ISNULL(@applyfor,Afor.ApplyForId) and C.StepId > 1  ORDER BY B.UpdatedOn DESC";
 
             }
+            else if (stepcount == 5)
+            {
+                query = " SELECT distinct B.BasicDetailId,B.Name,B.ServiceNo,B.DOB,B.DateOfCommissioning,C.StepId StepCounter,C.Id StepId,ty.TypeId,ty.name ICardType,trnicrd.RequestId ,Afor.Name ApplyFor,Afor.ApplyForId ,trnicrd.TrackingId,ran.RankAbbreviation RankName,ISNULL(Postout.Id,0) IsPosting" +
+        " FROM BasicDetails B" +
+        " inner join MRank ran on ran.RankId=B.RankId" +
+        " inner join TrnICardRequest trnicrd on trnicrd.BasicDetailId = B.BasicDetailId" +
+        " inner join MApplyFor Afor on Afor.ApplyForId = B.ApplyForId " +
+        " inner join TrnStepCounter C on trnicrd.RequestId = C.RequestId" +
+        " inner join MICardType ty on ty.TypeId = trnicrd.TypeId" +
+        " left join TrnPostingOut Postout on Postout.RequestId=trnicrd.RequestId and trnicrd.Status=1 " +
+        " inner join TrnFwds fwd on fwd.RequestId = trnicrd.RequestId and fwd.FromAspNetUsersId = @UserId and Afor.ApplyForId=ISNULL(@applyfor,Afor.ApplyForId) and C.StepId = @stepcount where trnicrd.Status=1";
+            }
+
             else if (stepcount == 2 || stepcount == 3 || stepcount == 4 || stepcount == 5 || stepcount == 6)//IO
             {
                if(TypeId==2)
@@ -644,7 +657,7 @@ namespace DataAccessLayer
         public async Task<List<DTODataExportsResponse>> GetBesicdetailsByRequestId(DTODataExportRequest Data)
         {
             
-            string query = "update TrnStepCounter set StepId=5 where RequestId in @Ids  update TrnICardRequest set Status=1 where  RequestId in @Ids select bas.*," +
+            string query = "update TrnFwds set IsComplete=1 where RequestId in @Ids update TrnStepCounter set StepId=5 where RequestId in @Ids  update TrnICardRequest set Status=1 where  RequestId in @Ids select bas.*," +
                             " trnadd.State,trnadd.District,trnadd.PS,trnadd.PO,trnadd.Tehsil,trnadd.Village,trnadd.PinCode," +
                             " trnup.SignatureImagePath,trnup.PhotoImagePath,IdenMark1,IdenMark2,AadhaarNo,Height,bld.BloodGroup," +
                             " regi.Abbreviation RegimentalName,Muni.UnitName,uni.UnitMapId UnitId,icardreq.TypeId,icardreq.RegistrationId," +
