@@ -95,6 +95,7 @@
                                     <th class="nowrap">Record Office</th>
                                     <th class="nowrap">Abbreviation</th>
                                     <th class="nowrap">Arms / Service</th>
+                                    <th class="nowrap">DID & Army No.</th>
                                     <th class="noExport nowrap">Action</th>
                                 </tr>
                             </thead>
@@ -142,6 +143,13 @@
                                         <option value="0">Select Arms</option>
                                     </select>
                                     <span class="text-danger field-validation-valid" data-valmsg-for="ddlArmType" data-valmsg-replace="true"></span>
+                                </div>
+                            </div>
+                            <div class="form-group row mb-2">
+                                <label class="col-form-label col-sm-4 fw-bold">Message for RO</label>
+                                <div class="col-sm-8">
+                                    <textarea class="form-control1" style="height:auto!important;" name="txtMessage" id="txtMessage" rows="3" maxlength="150" data-val-maxlength="Maximum length of Message is 150 character." data-val-maxlength-max="150" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-regex-pattern="^[\w\&\.\-\; ]*$"></textarea>
+                                    <span class="text-danger field-validation-valid" data-valmsg-for="txtMessage" data-valmsg-replace="true"></span>
                                 </div>
                             </div>
                             <div class="form-group row mb-4">

@@ -63,6 +63,7 @@ function GetUpdateRecordOffice() {
             $("#lblROName").html(data.RecordOfficeName);
             $("#lblROAbbreviation").html(data.Abbreviation);
             $("#lblArms").html(data.ArmedName);
+            $("#txtMessage").val(data.Message != null && data.Message != "null" ? data.Message :"");
         }
     });
 }
@@ -104,7 +105,13 @@ function Update() {
     $.ajax({
         url: '/Master/UpdateROValue',
         type: 'POST',
-        data: { "RecordOfficeId": $("#spnRecordOfficeId").html(), "TDMId": $("#ddlTDMId").val(), "OldTDMId": $("#spnOldTDMId").html(), "OldUserId": $("#spnOldUserId").html() }, 
+        data: {
+            "RecordOfficeId": $("#spnRecordOfficeId").html(),
+            "TDMId": $("#ddlTDMId").val(),
+            "OldTDMId": $("#spnOldTDMId").html(),
+            "OldUserId": $("#spnOldUserId").html(),
+            "Message": $("#txtMessage").val().length > 0 ? $("#txtMessage").val() : null,
+        }, 
         success: function (result) {
             if(result == 1) {
                 toastr.error('Select diffrent Domain Id.');
@@ -145,7 +152,9 @@ function Reset() {
     $("#spnRecordOfficeId").html("0");
     $("#spnTrnDomainMappingId").html("0");
     $("#ddlTDMId").val("");
+    $("#txtMessage").val("");
 }
 function ResetErrorMessage() {
     $("#ddlTDMId-error").html("");
+    $("#txtMessage-error").html("");
 }

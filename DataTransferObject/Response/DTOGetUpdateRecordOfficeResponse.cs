@@ -12,6 +12,7 @@ namespace DataTransferObject.Response
         public string RecordOfficeName { get; set; } = string.Empty;
         public string Abbreviation { get; set; } = string.Empty;
         public string ArmedName { get; set; } = string.Empty;
+        public string? Message { get; set; }
 
     }
 }
