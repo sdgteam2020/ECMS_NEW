@@ -21,9 +21,9 @@ namespace BusinessLogicsLayer.RecordOffice
             _RecordOfficeDB = iRecordOfficeDB;
         }
 
-        public Task<List<DTORecordOfficeResponse>> GetAllData()
+        public async Task<List<DTORecordOfficeResponse>?> GetAllData()
         {
-            return _RecordOfficeDB.GetAllData();
+            return await _RecordOfficeDB.GetAllData();
         }
         public async Task<bool> GetByTDMId(int TDMId)
         {

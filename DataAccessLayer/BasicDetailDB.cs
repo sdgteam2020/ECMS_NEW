@@ -196,7 +196,7 @@ namespace DataAccessLayer
                         "WHERE map.AspNetUsersId = @UserId and Afor.ApplyForId=ISNULL(@applyfor,Afor.ApplyForId) and trnicrd.Status=0  and C.StepId = @stepcount  ORDER BY B.UpdatedOn DESC";
 
             }
-            else if (stepcount == 777)//////For Printed
+            else if (stepcount == 777)//////For Completed   
             {
                 query = "SELECT B.BasicDetailId,B.Name,B.ServiceNo,B.DOB,B.DateOfCommissioning,C.StepId StepCounter,C.Id StepId,ty.Name ICardType,trnicrd.RequestId,fwd.Remark,isnull(fwd.Status,1) Reject,Afor.Name ApplyFor,Afor.ApplyForId ,trnicrd.TrackingId,ran.RankAbbreviation RankName,ISNULL(Postout.Id,0) IsPosting FROM BasicDetails B " +
                         " inner join MRank ran on ran.RankId=B.RankId " +

@@ -30,8 +30,8 @@ function GetDashboardCount(type) {
                     $("#ToDraftedJCO").html(response.ToDraftedJCO);
                     $("#ToSubmittedOffrs").html(response.ToSubmittedOffrs);
                     $("#ToSubmittedJCO").html(response.ToSubmittedJCO);
-                    $("#ToPrintedOffrs").html(response.ToPrintedOffrs);
-                    $("#ToPrintedJCO").html(response.ToPrintedJCO);
+                    $("#ToCompletedOffrs").html(response.ToCompletedOffrs);
+                    $("#ToCompletedJCO").html(response.ToCompletedJCO);
                     $("#ToRejectedOffrs").html(response.ToRejectedOffrs);
                     $("#ToRejectedJCO").html(response.ToRejectedJCO);
                     $("#ToPostingInOffrs").html(response.ToPostingInOffrs);
@@ -50,7 +50,7 @@ function GetDashboardCount(type) {
                         $(this).prop('Counter', 0).animate({
                             Counter: $(this).text()
                         }, {
-                            duration: 3500,
+                            duration: 500,
                             easing: 'swing',
                             step: function (now) {
                                 $(this).text(Math.ceil(now));
