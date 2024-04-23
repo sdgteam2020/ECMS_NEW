@@ -59,32 +59,36 @@ namespace DataAccessLayer
             return result;
         }
 
-        public Task<List<DTORecordOfficeResponse>> GetAllData()
+        public async Task<List<DTORecordOfficeResponse>?> GetAllData()
         {
-            var Corps = (from c in _context.MRecordOffice
-                         join d in _context.MArmedType
-                         on c.ArmedId equals d.ArmedId
+            try
+            {
+                string query = "";
+                query = "Select mrecord.RecordOfficeId,mrecord.Name as RecordOfficeName,mrecord.Message,mrecord.Abbreviation,marmed.ArmedId,marmed.ArmedName,users.DomainId,usep.ArmyNo,ra.RankAbbreviation,usep.Name,trndomain.Id as TDMId from MRecordOffice mrecord" +
+                        " inner join MArmedType marmed on marmed.ArmedId=mrecord.ArmedId" +
+                        " inner join TrnDomainMapping trndomain on trndomain.Id=mrecord.TDMId" +
+                        " inner join AspNetUsers users on users.Id=trndomain.AspNetUsersId" +
+                        " inner join UserProfile usep on usep.UserId=trndomain.UserId" +
+                        " inner join MRank ra on ra.RankId=usep.RankId ";
+                using (var connection = _contextDP.CreateConnection())
+                {
+                    var allrecord = await connection.QueryAsync<DTORecordOfficeResponse>(query);
+                    return allrecord.ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "RecordOfficeDB->GetAllData");
+                return null;
+            }
 
-                         select new DTORecordOfficeResponse
-                         {
-                             RecordOfficeId = c.RecordOfficeId,
-                             Name = c.Name,
-                             Abbreviation = c.Abbreviation,
-                             ArmedId = c.ArmedId,
-                             ArmedName = d.ArmedName,
-                             TDMId = c.TDMId,
-                         }).ToList();
-
-
-
-            return Task.FromResult(Corps);
         }
         public async Task<DTOGetUpdateRecordOfficeResponse?> GetUpdateRecordOffice(int TDMId)
         {
             try
             {
                 string query = "";
-                query = "Select mrecord.RecordOfficeId,mrecord.Name as RecordOfficeName,mrecord.Abbreviation,marmed.ArmedName from TrnDomainMapping trndomain" +
+                query = "Select mrecord.RecordOfficeId,mrecord.Name as RecordOfficeName,mrecord.Abbreviation,mrecord.Message,marmed.ArmedName from TrnDomainMapping trndomain" +
                         " inner join AspNetUsers users on users.Id=trndomain.AspNetUsersId" +
                         " inner join MRecordOffice mrecord on mrecord.TDMId=trndomain.Id" +
                         " inner join MArmedType marmed on marmed.ArmedId=mrecord.ArmedId" +
@@ -97,7 +101,7 @@ namespace DataAccessLayer
             }
             catch (Exception ex)
             {
-                _logger.LogError(1001, ex, "MasterDB->GetMappedForRecord");
+                _logger.LogError(1001, ex, "RecordOfficeDB->GetMappedForRecord");
                 return null;
             }
         }
@@ -120,7 +124,7 @@ namespace DataAccessLayer
             }
             catch (Exception ex)
             {
-                _logger.LogError(1001, ex, "MasterDB->GetDDMappedForRecord");
+                _logger.LogError(1001, ex, "RecordOfficeDB->GetDDMappedForRecord");
                 return null;
             }
 
@@ -139,6 +143,7 @@ namespace DataAccessLayer
                     else
                     {
                         roUpdate.TDMId = dTO.TDMId;
+                        roUpdate.Message = dTO.Message;
                         roUpdate.Updatedby = dTO.Updatedby;
                         roUpdate.UpdatedOn = dTO.UpdatedOn;
                         _context.MRecordOffice.Update(roUpdate);

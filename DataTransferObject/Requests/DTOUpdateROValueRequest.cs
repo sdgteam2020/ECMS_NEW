@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DataTransferObject.Localize;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -20,7 +21,11 @@ namespace DataTransferObject.Requests
         
         [RegularExpression(@"^[\d]+$", ErrorMessage = "Old UserId is number.")]
         public int OldUserId { get; set; }
-       
+
+        [RegularExpression(@"^[\w\&\.\-\; ]*$", ErrorMessage = "Only Alphabets ,Numbers and some symbol (& . -) allowed.")]
+        [MaxLength(150, ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "MaxLengthError")]
+        public string? Message { get; set; }
+
         public int Updatedby { get; set; }
         
         public DateTime UpdatedOn { get; set; }

@@ -155,11 +155,12 @@ function BindData() {
                     for (var i = 0; i < response.length; i++) {
 
                         listItem += "<tr>";
-                        listItem += "<td class='d-none'><span id='spnMRecordOfficeId'>" + response[i].RecordOfficeId + "</span><span id='spnArmedId'>" + response[i].ArmedId + "</span><span id='spnTDMId'>" + response[i].TDMId + "</span></td>";
+                        listItem += "<td class='d-none'><span id='spnMRecordOfficeId'>" + response[i].RecordOfficeId + "</span><span id='spnArmedId'>" + response[i].ArmedId + "</span><span id='spnTDMId'>" + response[i].TDMId + "</span><span id='spnMessage'>" + response[i].Message + "</span></td>";
                         listItem += "<td class='align-middle'>" + (i + 1) + "</td>";
-                        listItem += "<td class='align-middle'><span id='Name'>" + response[i].Name + "</span></td>";
+                        listItem += "<td class='align-middle'><span id='RecordOfficeName'>" + response[i].RecordOfficeName + "</span></td>";
                         listItem += "<td class='align-middle'><span id='abbreviation'>" + response[i].Abbreviation + "</span></td>";
                         listItem += "<td class='align-middle'><span id='ArmedName'>" + response[i].ArmedName + "</span></td>";
+                        listItem += "<td class='align-middle'><span id='DID'>" + response[i].DomainId + ' ' + response[i].RankAbbreviation + ' ' + response[i].Name + ' ' + response[i].ArmyNo + "</span></td>";
 
                         listItem += "<td class='align-middle'><span id='btnedit'><button type='button' class='cls-btnedit btn btn-icon btn-round btn-warning mr-1'><i class='fas fa-edit'></i></button></span><button type='button' class='cls-btnDelete btn-icon btn-round btn-danger mr-1'><i class='fas fa-trash-alt'></i></button></td>";
 
@@ -205,10 +206,16 @@ function BindData() {
                     $("body").on("click", ".cls-btnedit", function () {
                         Reset();
                         ResetErrorMessage();
-                        $("#txtName").val($(this).closest("tr").find("#Name").html());
+                        $("#txtName").val($(this).closest("tr").find("#RecordOfficeName").html());
                         $("#txtAbbreviation").val($(this).closest("tr").find("#abbreviation").html());
                         $("#spnRecordOfficeId").html($(this).closest("tr").find("#spnMRecordOfficeId").html());
                         $("#ddlArmType").val($(this).closest("tr").find("#spnArmedId").html());
+                        if ($(this).closest("tr").find("#spnMessage").html() != null && $(this).closest("tr").find("#spnMessage").html() != "null") {
+                            $("#txtMessage").val($(this).closest("tr").find("#spnMessage").html());
+                        }
+                        else {
+                            $("#txtMessage").val("");
+                        }
                         if ($(this).closest("tr").find("#spnTDMId").html() != null && $(this).closest("tr").find("#spnTDMId").html() != "null") {
                             $("#spnTrnDomainMappingId").html($(this).closest("tr").find("#spnTDMId").html());
                             $("#txtmappedbyDID").prop("checked", true);
@@ -265,7 +272,14 @@ function Save() {
     $.ajax({
         url: '/Master/SaveRecordOffice',
         type: 'POST',
-        data: { "Name": $("#txtName").val().trim(), "Abbreviation": $("#txtAbbreviation").val().trim(), "ArmedId": $("#ddlArmType").val(), "RecordOfficeId": $("#spnRecordOfficeId").html(), "TDMId": $("#spnTrnDomainMappingId").html() }, //get the search string
+        data: {
+            "Name": $("#txtName").val().trim(),
+            "Abbreviation": $("#txtAbbreviation").val().trim(),
+            "ArmedId": $("#ddlArmType").val(),
+            "RecordOfficeId": $("#spnRecordOfficeId").html(),
+            "TDMId": $("#spnTrnDomainMappingId").html(),
+            "Message": $("#txtMessage").val().length > 0 ? $("#txtMessage").val():null,
+        }, //get the search string
         success: function (result) {
 
 
@@ -323,6 +337,7 @@ function Reset() {
     $("#txtName").val("");
     $("#txtAbbreviation").val("");
     $("#ddlArmType").val("");
+    $("#txtMessage").val("");
 
     $("#spnRecordOfficeId").html("0");
     $("#spnTrnDomainMappingId").html("0");
@@ -334,6 +349,7 @@ function ResetErrorMessage() {
     $("#txtName-error").html("");
     $("#txtAbbreviation-error").html("");
     $("#ddlArmType-error").html("");
+    $("#txtMessage-error").html("");
     $("#txtmappedbySearch-error").html("");
 }
 
