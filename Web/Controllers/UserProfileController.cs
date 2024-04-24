@@ -209,7 +209,7 @@ namespace Web.Controllers
             }
 
         }
-        public async Task<IActionResult> GetOffrsByUnitMapId(int id,int UnitId, int ISIO, int ISCO,int IsRO,int IsORO)
+        public async Task<IActionResult> GetOffrsByUnitMapId(int id,int UnitId, int ISIO, int ISCO,int IsRO,int IsORO,int BasicDetailsId)
         {
             try
             {
@@ -217,11 +217,11 @@ namespace Web.Controllers
                 if(UnitId==0)
                 {
                      UnitId = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").UnitId;
-                    return Json(await _userProfileBL.GetOffrsByUnitMapId(UnitId, ISIO, ISCO, IsRO, IsORO));
+                    return Json(await _userProfileBL.GetOffrsByUnitMapId(UnitId, ISIO, ISCO, IsRO, IsORO, BasicDetailsId));
                 }
                 else
                 {
-                    return Json(await _userProfileBL.GetOffrsByUnitMapId(UnitId, ISIO, ISCO, IsRO, IsORO));
+                    return Json(await _userProfileBL.GetOffrsByUnitMapId(UnitId, ISIO, ISCO, IsRO, IsORO,BasicDetailsId));
                 }
             }
             catch (Exception ex)

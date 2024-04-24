@@ -18,8 +18,11 @@ toastr.options = {
 }
 
 $(document).ready(function () {
-
    
+    $("img").on('error', function () {
+       
+        $(this).attr("src", "/Images/user4.png");
+    });
     var path = window.location.href; // because the 'href' property of the DOM element is the absolute path
 
     
@@ -175,6 +178,7 @@ function SaveNotification(NotificationTypeId, DisplayId, ReciverAspNetUsersId, R
 
 function GetNotification(NotificationTypeId, ApplyForId) {
     var listItem = "";
+    var tot = "0";
     var userdata =
     {
         "TypeId": NotificationTypeId,
@@ -198,18 +202,18 @@ function GetNotification(NotificationTypeId, ApplyForId) {
                         //if (response[i].DisplayId == 2) {
                         $("." + response[i].Spanname).html(parseInt($("." + response[i].Spanname).html()) + 1);
 
-                        var tot = $("#Totalnotification").html();
+                       // var tot = $("#Totalnotification").html();
                         if (tot == "")
                             tot = 0;
 
-                        $("#Totalnotification").html(parseInt(tot) + parseInt($("." + response[i].Spanname).html()));
-
+                        // $("#Totalnotification").html(parseInt(tot) + parseInt($("." + response[i].Spanname).html()));
+                        $("#Totalnotification").html(parseInt($("#Totalnotification").html()) + 1);
                         list += '<div class="border border-1 p-1 mt-2">';
                         list += '<a class="dropdown-item preview-item" href="' + response[i].Url + '">';
                         list += '<div class="preview-thumbnail ">';
-                        list += '<div class="preview-icon bg-success">';
+                        list += '<div class="preview-icon p-2">';
                         list += '<i class="ti-bell1 mx-0"></i>';
-                        list += '<img src="/WriteReadData/photo/' + response[i].PhotoImagePath + '" alt="profile">';
+                        list += '<img id="notificationimg" src="/WriteReadData/photo/' + response[i].PhotoImagePath + '" alt="profile" width="65px">';
                         list += '</div>';
                         list += '</div>';
                         list += ' <div class="preview-item-content">';
@@ -261,6 +265,7 @@ function GetNotification(NotificationTypeId, ApplyForId) {
 
 function GetNotificationRequestId(NotificationTypeId,ApplyForId) {
     var listItem = ""; 
+    var tot = "0";
     var userdata =
     {
         "TypeId": NotificationTypeId,
@@ -286,19 +291,19 @@ function GetNotificationRequestId(NotificationTypeId,ApplyForId) {
                         $("." + response[i].Spanname).html(parseInt($("." + response[i].Spanname).html()) + 1);
 
 
-                        var tot = $("#Totalnotification").html();
+                       // var tot = $("#Totalnotification").html();
                         if (tot == "")
                             tot = 0;
 
-                        $("#Totalnotification").html(parseInt(tot) + parseInt($("." + response[i].Spanname).html()));
-
+                       // $("#Totalnotification").html(parseInt(tot) + parseInt($("." + response[i].Spanname).html()));
+                        $("#Totalnotification").html(parseInt($("#Totalnotification").html()) + 1);
 
                         list += '<div class="border border-1 p-1 mt-2">';
                         list += '<a class="dropdown-item preview-item" href="' + response[i].Url + '">';
                         list += '<div class="preview-thumbnail ">';
-                        list += '<div class="preview-icon bg-success">';
+                        list += '<div class="preview-icon p-2">';
                         list += '<i class="ti-bell1 mx-0"></i>';
-                        list += '<img src="/WriteReadData/photo/' + response[i].PhotoImagePath +'" alt="profile">';
+                        list += '<img id="notificationimg" src="/WriteReadData/photo/' + response[i].PhotoImagePath + '" alt="profile" width="65px">';
                         list += '</div>';
                         list += '</div>';
                         list += ' <div class="preview-item-content">';

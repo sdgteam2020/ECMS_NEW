@@ -655,3 +655,42 @@ a {
 .nav-pills .nav-link.active{
     background-color:rgb(133 215 127);
 }
+
+/*
+/////////////Notification//////////*/
+
+
+   
+.notification-bell {
+    font-size: 20px;
+}
+
+.btn__badge {
+    background: #FF5D5D;
+    color: white;
+    font-size: 12px;
+    position: absolute;
+    top: 0;
+    right: 0px;
+    padding: 3px 10px;
+    border-radius: 50%;
+}
+
+.pulse-button {
+    box-shadow: 0 0 0 0 rgba(255, 0, 0, 0.5);
+    -webkit-animation: pulse 1.5s infinite;
+}
+
+    .pulse-button:hover {
+        -webkit-animation: none;
+    }
+
+
+.notification-text {
+    font-size: 14px;
+    font-weight: bold;
+}
+
+    .notification-text span {
+        float: right;
+    }

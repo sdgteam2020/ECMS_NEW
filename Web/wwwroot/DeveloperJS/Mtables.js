@@ -160,7 +160,7 @@ function yeardata(sectid = '', ddl) {
     }
 }
 
-function GetAllOffsByUnitId(ddl, sectid, UnitId, ISIO, IsCO, IsRO, IsORO) {
+function GetAllOffsByUnitId(ddl, sectid, UnitId, ISIO, IsCO, IsRO, IsORO,BasicDetailsId) {
     var userdata =
     {
         "id": 0,
@@ -168,7 +168,8 @@ function GetAllOffsByUnitId(ddl, sectid, UnitId, ISIO, IsCO, IsRO, IsORO) {
         "ISIO": ISIO,
         "ISCO": IsCO,
         "IsRO": IsRO,
-        "IsORO": IsORO
+        "IsORO": IsORO,
+        "BasicDetailsId": BasicDetailsId
     };
     $.ajax({
         url: '/UserProfile/GetOffrsByUnitMapId',
@@ -190,6 +191,7 @@ function GetAllOffsByUnitId(ddl, sectid, UnitId, ISIO, IsCO, IsRO, IsORO) {
 
                     for (var i = 0; i < response.length; i++) {
                         listItemddl += '<option value="' + response[i].AspNetUsersId + '">' + response[i].ArmyNo + ' (' + response[i].RankAbbreviation + ' ' + response[i].Name + ')</option>';
+                        
                     }
                     $("#" + ddl + "").html(listItemddl);
 

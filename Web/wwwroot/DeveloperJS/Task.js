@@ -5,6 +5,7 @@ $(document).ready(function () {
     GetTaskIcardRequestCount(2,1)
     GetTaskIcardRequestCount(1, 2)
     GetTaskIcardRequestCount(2, 2)
+   
     GetNotification(1, 1);
     GetNotification(1, 2);
     GetNotificationRequestId(1, 1);
@@ -69,26 +70,26 @@ function GetTaskIcardRequestCount(Id, applyForId) {
                             $(".COPending").html(response.IOPending);
                             $(".COApproved").html(response.IOApproved);
                             $(".COReject").html(response.IOReject);
-                            $(".DIDPending").html(response.MIPending);
-                            $(".DIDApproved").html(response.MIApproved);
-                            $(".DIDReject").html(response.MIReject);
+                            $(".DIDPending").html(response.GSOPending);
+                            $(".DIDApproved").html(response.GSOApproved);
+                            $(".DIDReject").html(response.GSOReject);
                             //$(".MIPending").html(response.MIPending);
                             //$(".MIApproved").html(response.MIApproved);
                             //$(".MIReject").html(response.MIReject);
-                            $(".ExportPending").html(response.HQPending);
-                            $(".ExportApproved").html(response.HQApproved);
-                            $(".ExportReject").html(response.HQReject);
+                            $(".ExportPending").html(response.MIPending);
+                            $(".ExportApproved").html(response.MIApproved);
+                            $(".ExportReject").html(response.MIReject);
                         }
                         else if (Id == 2) {
                             $("#COPending").html(response.IOPending);
                             $("#COApproved").html(response.IOApproved);
                             $("#COReject").html(response.IOReject);
                             $("#DIDPending").html(response.GSOPending);
-                            $("#DIDApproved").html(response.MIApproved);
+                            $("#DIDApproved").html(response.GSOApproved);
                             $("#DIDReject").html(response.GSOReject);                      
-                            $("#ExportPending").html(response.HQPending);
-                            $("#ExportApproved").html(response.HQApproved);
-                            $("#ExportReject").html(response.HQReject);
+                            $("#ExportPending").html(response.MIPending);
+                            $("#ExportApproved").html(response.MIApproved);
+                            $("#ExportReject").html(response.MIReject);
                         }
                     }
                 }

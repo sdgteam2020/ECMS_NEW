@@ -114,7 +114,7 @@ $(document).ready(function () {
             applyfor = 1;
             spnStepId = 0;
             $("#multiplefed").addClass("d-none");
-            GetAllOffsByUnitId("ddlfwdoffrs", 0, spnHQ54UnitId, 0, 0, 0,0);
+            GetAllOffsByUnitId("ddlfwdoffrs", 0, spnHQ54UnitId, 0, 0, 0,0,0);
 
 
             $(".Remarks").removeClass("d-none");
@@ -173,7 +173,7 @@ $(document).ready(function () {
        
         StepCounter = $(this).closest("tr").find(".spnStepCounterId").html();
         applyfor = $(this).closest("tr").find(".spnApplyFor").html();
-        
+
         if (StepCounter == 1 || StepCounter == 7 || StepCounter == 8 || StepCounter == 9 || StepCounter == 10) {
                 $(".recectopt").addClass("d-none");
             $("#btnRejected").addClass("d-none");
@@ -187,12 +187,12 @@ $(document).ready(function () {
                 $(".gsoio").html("Initiating Offr (IO)");
                 $(".gsoiotitle").html("Initiating Offr (IO) Approval");
                 $("#btnForward").html("Forward To IO");
-                GetAllOffsByUnitId("ddlfwdoffrs", 0, 0, spnISIO,0,0,0);
+                GetAllOffsByUnitId("ddlfwdoffrs", 0, 0, spnISIO,0,0,0,0);
             } else {
                 $(".gsoio").html("Initiating Offr (IO)");
                 $(".gsoiotitle").html("Initiating Offr (IO) Approval");
                 $("#btnForward").html("Forward To IO");
-                GetAllOffsByUnitId("ddlfwdoffrs", 0, 0, 0, spnISCO,0,0);
+                GetAllOffsByUnitId("ddlfwdoffrs", 0, 0, 0, spnISCO,0,0,0);
             }
             $(".Remarks").removeClass("d-none");
 
@@ -207,13 +207,13 @@ $(document).ready(function () {
                 $(".gsoio").html("Record Office");
                 $(".gsoiotitle").html("Offr Record Office (ORO) Approval");
                 $("#btnForward").html("Forward To Record Office");
-                GetAllOffsByUnitId("ddlfwdoffrs", 0, 0, 0, 0, 0, spnIntORO);
+                GetAllOffsByUnitId("ddlfwdoffrs", 0, 0, 0, 0, 0, spnIntORO, $(this).closest("tr").find(".spnBasicDetailId").html());
             }
             else {
                 $(".gsoio").html("Record Office (RO)");
                 $(".gsoiotitle").html("Record Office (RO) Approval");
                 $("#btnForward").html("Forward To Record Office (RO)");
-                GetAllOffsByUnitId("ddlfwdoffrs", 0, 0, 0, 0, spnIntRO,0);
+                GetAllOffsByUnitId("ddlfwdoffrs", 0, 0, 0, 0, spnIntRO, 0, $(this).closest("tr").find(".spnBasicDetailId").html());
             }
             $("#btntokenTofwd").removeClass("d-none");
             $(".Remarks").removeClass("d-none");
@@ -231,14 +231,14 @@ $(document).ready(function () {
                 $(".gsoio").html("AFSAC Cell");
                 $(".gsoiotitle").html("AFSAC Cell");
                 $("#btnForward").html("Forward To AFSAC Cell");
-                GetAllOffsByUnitId("ddlfwdoffrs", 0, spnIntAfsaccellUnitId,0,0,0,0);
+                GetAllOffsByUnitId("ddlfwdoffrs", 0, spnIntAfsaccellUnitId,0,0,0,0,0);
             }
             else {
                 $(".chkforserach").addClass("d-none");
                 $(".gsoiotitle").html("AFSAC Cell");
                 $(".gsoio").html("AFSAC Cell");
                 $("#btnForward").html("Forward To AFSAC Cell ");
-                GetAllOffsByUnitId("ddlfwdoffrs", 0, spnIntAfsaccellUnitId,0,0,0,0);
+                GetAllOffsByUnitId("ddlfwdoffrs", 0, spnIntAfsaccellUnitId,0,0,0,0,0);
             }
 
             
