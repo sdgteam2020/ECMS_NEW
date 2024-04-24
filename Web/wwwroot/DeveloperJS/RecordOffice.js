@@ -1,18 +1,6 @@
 ﻿$(document).ready(function () {
     mMsater(0, "ddlArmType", 9, "");
     BindData()
-    $("#txtmappedbyDID").click(function () {
-        $("#txtmappedbySearch").val("");  
-        $("#spnTrnDomainMappingId").html(0);
-        $("#txtmappedbySearch").attr("placeholder", "Enter Domain ID");  
-        $("#DivSearchField").removeClass("d-none");
-    });
-    $("#txtmappedbyArmyNo").click(function () {
-        $("#txtmappedbySearch").val("");  
-        $("#spnTrnDomainMappingId").html(0);
-        $("#txtmappedbySearch").attr("placeholder", "Enter Army No");
-        $("#DivSearchField").removeClass("d-none");
-    });
     $("#btnAdd").click(function () {
         Reset();
         ResetErrorMessage();
@@ -22,50 +10,32 @@
         Reset();
         ResetErrorMessage();
     });
-    $("#txtmappedbySearch").autocomplete({
+
+    $("#txtUnitName").autocomplete({
         source: function (request, response) {
-            var TypeId = 1;
-            if ($("#txtmappedbyDID").prop("checked")) {
-                TypeId = 1;
-            } else if ($("#txtmappedbyArmyNo").prop("checked")) {
-                TypeId = 2;
-            } 
-            if (request.term.length > 1) {
-                $("#spnTrnDomainMappingId").html('');
-                var param = { "SearchName": request.term,"TypeId": TypeId };
-                $("#spnTrnDomainMappingId").html(0);
+            if (request.term.length > 2) {
+                $("#spnUnitMapId").html('');
+                var param = { "UnitName": request.term };
+                $("#spnUnitMapId").html(0);
                 $.ajax({
-                    url: '/Master/GetMappedForRecord',
+                    url: '/Master/GetALLByUnitName',
                     contentType: 'application/x-www-form-urlencoded',
                     data: param,
                     type: 'POST',
                     success: function (data) {
                         if (data.length != 0) {
                             response($.map(data, function (item) {
-                                {
-                                    $("#loading").addClass("d-none");
-                                    if ($("#txtmappedbyDID").prop("checked")) {
-                                        return {
-                                            label: item.DomainId + ' ' + item.RankAbbreviation + ' ' + item.Name + ' ' + item.ArmyNo,
-                                            value: item.TDMId
-                                        }
-                                    }
-                                    else
-                                    {
-                                        return {
-                                            label: item.ArmyNo + ' ' + item.RankAbbreviation + ' ' + item.Name + ' ' + item.DomainId,
-                                            value: item.TDMId
-                                        }
-                                    }
-                                    
-                                };
+                                $("#loading").addClass("d-none");
+                                return { label: item.Sus_no + item.Suffix + ' ' + item.UnitName, value: item.UnitMapId };
 
                             }))
                         }
                         else {
-                            $("#txtmappedbySearch").val("");
-                            $("#spnTrnDomainMappingId").html("");
-                            alert("DomainId / ArmyNo not found.")
+                            $("#txtUnitName").val("");
+                            $("#spnUnitMapId").html("");
+                            $("#ddlTDMId").find("option").not(":first").remove();
+                            $("#ddlTDMId").val("0");
+                            alert("Unit not found.")
                         }
                     },
                     error: function (response) {
@@ -79,11 +49,49 @@
         },
         select: function (e, i) {
             e.preventDefault();
-            $("#txtmappedbySearch").val(i.item.label);
-            $("#spnTrnDomainMappingId").html(i.item.value);
+            $("#txtUnitName").val(i.item.label);
+            $("#spnUnitMapId").html(i.item.value);
+            var param1 = { "UnitMapId": i.item.value };
+            $.ajax({
+                url: '/Master/GetDDMappedForRecord',
+                contentType: 'application/x-www-form-urlencoded',
+                data: param1,
+                type: 'POST',
+
+                success: function (response) {
+                    if (response != "null" && response != null) {
+                        if (response == InternalServerError) {
+                            Swal.fire({
+                                text: errormsg
+                            });
+                        }
+
+                        else {
+
+                            var listItemddl = "";
+
+                            listItemddl += '<option value="0">Please Select</option>';
+
+                            for (var i = 0; i < response.length; i++) {
+                                listItemddl += '<option value="' + response[i].TDMId + '">' + response[i].DomainId + ' ' + response[i].RankAbbreviation + ' ' + response[i].Name + ' ' + response[i].ArmyNo + '</option>';
+                            }
+                            $("#ddlTDMId").html(listItemddl);
+                        }
+                    }
+                    else {
+                        //Swal.fire({
+                        //    text: "No data found Offrs"
+                        //});
+                    }
+                },
+                error: function (result) {
+                    Swal.fire({
+                        text: errormsg002
+                    });
+                }
+            });
         },
         appendTo: '#suggesstion-box'
-
     });
 });
 
@@ -91,7 +99,6 @@ function Proceed() {
     ResetErrorMessage();
 
     let formId = '#SaveRecordOffice';
-    ValidateInput();
     $.validator.unobtrusive.parse($(formId));
 
     if ($(formId).valid()) {
@@ -155,12 +162,17 @@ function BindData() {
                     for (var i = 0; i < response.length; i++) {
 
                         listItem += "<tr>";
-                        listItem += "<td class='d-none'><span id='spnMRecordOfficeId'>" + response[i].RecordOfficeId + "</span><span id='spnArmedId'>" + response[i].ArmedId + "</span><span id='spnTDMId'>" + response[i].TDMId + "</span><span id='spnMessage'>" + response[i].Message + "</span></td>";
+                        listItem += "<td class='d-none'><span id='spnMRecordOfficeId'>" + response[i].RecordOfficeId + "</span><span id='spnArmedId'>" + response[i].ArmedId + "</span><span id='spnTDMId'>" + response[i].TDMId + "</span><span id='spnMessage'>" + response[i].Message + "</span><span id='spnUnitId'>" + response[i].UnitId + "</span><span id='spnSus_no'>" + response[i].Sus_no + "</span><span id='spnSuffix'>" + response[i].Suffix + "</span><span id='spnUnitName'>" + response[i].UnitName + "</span></td>";
                         listItem += "<td class='align-middle'>" + (i + 1) + "</td>";
                         listItem += "<td class='align-middle'><span id='RecordOfficeName'>" + response[i].RecordOfficeName + "</span></td>";
                         listItem += "<td class='align-middle'><span id='abbreviation'>" + response[i].Abbreviation + "</span></td>";
                         listItem += "<td class='align-middle'><span id='ArmedName'>" + response[i].ArmedName + "</span></td>";
-                        listItem += "<td class='align-middle'><span id='DID'>" + response[i].DomainId + ' ' + response[i].RankAbbreviation + ' ' + response[i].Name + ' ' + response[i].ArmyNo + "</span></td>";
+                        if (response[i].TDMId != null) {
+                            listItem += "<td class='align-middle'><span id='DID'>" + response[i].DomainId + ' ' + response[i].RankAbbreviation + ' ' + response[i].Name + ' ' + response[i].ArmyNo + "</span></td>";
+                        }
+                        else {
+                            listItem += "<td class='align-middle'></td>";
+                        }
 
                         listItem += "<td class='align-middle'><span id='btnedit'><button type='button' class='cls-btnedit btn btn-icon btn-round btn-warning mr-1'><i class='fas fa-edit'></i></button></span><button type='button' class='cls-btnDelete btn-icon btn-round btn-danger mr-1'><i class='fas fa-trash-alt'></i></button></td>";
 
@@ -216,14 +228,19 @@ function BindData() {
                         else {
                             $("#txtMessage").val("");
                         }
-                        if ($(this).closest("tr").find("#spnTDMId").html() != null && $(this).closest("tr").find("#spnTDMId").html() != "null") {
-                            $("#spnTrnDomainMappingId").html($(this).closest("tr").find("#spnTDMId").html());
-                            $("#txtmappedbyDID").prop("checked", true);
-                            GetDomainIdByTDMId($(this).closest("tr").find("#spnTDMId").html());
-                            $("#DivSearchField").removeClass("d-none");
+                        if ($(this).closest("tr").find("#spnUnitId").html() != null && $(this).closest("tr").find("#spnUnitId").html() != "null") {
+                            $("#spnUnitMapId").html($(this).closest("tr").find("#spnUnitId").html());
+                            $("#txtUnitName").val($(this).closest("tr").find("#spnSus_no").html() + $(this).closest("tr").find("#spnSuffix").html() +" "+ $(this).closest("tr").find("#spnUnitName").html() );
                         }
                         else {
-                            $("#spnTrnDomainMappingId").html(0);
+                            $("#spnUnitMapId").html("0");
+                            $("#txtUnitName").val("");
+                        }
+                        if ($(this).closest("tr").find("#spnTDMId").html() != null && $(this).closest("tr").find("#spnTDMId").html() != "null") {
+                            GetDDMappedForRecord($(this).closest("tr").find("#spnUnitId").html(),$(this).closest("tr").find("#spnTDMId").html());
+                        }
+                        else {
+                            $("#ddlTDMId").val("0");
                         }
                         $("#btnRecordOfficeAdd").val("Update");
                         $("#AddNewRecordOffice").modal('show');
@@ -277,9 +294,10 @@ function Save() {
             "Abbreviation": $("#txtAbbreviation").val().trim(),
             "ArmedId": $("#ddlArmType").val(),
             "RecordOfficeId": $("#spnRecordOfficeId").html(),
-            "TDMId": $("#spnTrnDomainMappingId").html(),
+            "UnitId": $("#spnUnitMapId").html() == "0" ? null : $("#spnUnitMapId").html(),
+            "TDMId": $("#ddlTDMId").val() == 0 ? null : $("#ddlTDMId").val(),
             "Message": $("#txtMessage").val().length > 0 ? $("#txtMessage").val():null,
-        }, //get the search string
+        }, 
         success: function (result) {
 
 
@@ -332,51 +350,66 @@ function Save() {
 }
 
 function Reset() {
-    $("#DivSearchField").addClass("d-none");
-    $("#txtmappedbySearch").val("");
     $("#txtName").val("");
     $("#txtAbbreviation").val("");
-    $("#ddlArmType").val("");
+    $("#ddlArmType").val("0");
     $("#txtMessage").val("");
+    $("#txtUnitName").val("");
+    $("#ddlTDMId").val("0");
 
     $("#spnRecordOfficeId").html("0");
-    $("#spnTrnDomainMappingId").html("0");
-
-    $("#txtmappedbyDID").prop("checked", false);
-    $("#txtmappedbyArmyNo").prop("checked", false);
+    $("#spnUnitMapId").html("0");
 }
 function ResetErrorMessage() {
     $("#txtName-error").html("");
     $("#txtAbbreviation-error").html("");
     $("#ddlArmType-error").html("");
     $("#txtMessage-error").html("");
-    $("#txtmappedbySearch-error").html("");
+    $("#txtUnitName-error").html("");
+    $("#ddlTDMId-error").html("");
 }
 
-function ValidateInput() {
-    if ($("input[type='radio'][name=txtmappedby]:checked").length == 0) {
-        $("#txtmappedby-error").html("Domain ID / Army No is required.");
-    }
-    else {
-        $("#txtmappedby-error").html("");
-    }
-
-    var TDMId = $("#spnTrnDomainMappingId").html();
-
-    if ((TDMId == 0 || TDMId == '') && $("#txtmappedbySearch").val().length > 0) {
-        $("#txtmappedbySearch").val('');
-        $("#txtmappedbySearch-error").html("Search name is invalid.");
-        toastr.error('Search name is invalid.');
-    }
-}
-function GetDomainIdByTDMId(TDMId) {
+function GetDDMappedForRecord(UnitId,TDMId) {
+    var param1 = { "UnitMapId": UnitId };
     $.ajax({
-        url: '/Master/GetDomainIdByTDMId',
+        url: '/Master/GetDDMappedForRecord',
         contentType: 'application/x-www-form-urlencoded',
-        data: { "TDMId": TDMId },
+        data: param1,
         type: 'POST',
-        success: function (data) {
-            $("#txtmappedbySearch").val(data.DomainId + ' ' + data.RankAbbreviation + ' ' + data.Name + ' ' + data.ArmyNo);
+
+        success: function (response) {
+            if (response != "null" && response != null) {
+                if (response == InternalServerError) {
+                    Swal.fire({
+                        text: errormsg
+                    });
+                }
+
+                else {
+
+                    var listItemddl = "";
+
+                    listItemddl += '<option value="0">Please Select</option>';
+
+                    for (var i = 0; i < response.length; i++) {
+                        listItemddl += '<option value="' + response[i].TDMId + '">' + response[i].DomainId + ' ' + response[i].RankAbbreviation + ' ' + response[i].Name + ' ' + response[i].ArmyNo + '</option>';
+                    }
+                    $("#ddlTDMId").html(listItemddl);
+                    if (TDMId != '') {
+                        $("#ddlTDMId").val(TDMId);
+                    }
+                }
+            }
+            else {
+                //Swal.fire({
+                //    text: "No data found Offrs"
+                //});
+            }
+        },
+        error: function (result) {
+            Swal.fire({
+                text: errormsg002
+            });
         }
     });
 }

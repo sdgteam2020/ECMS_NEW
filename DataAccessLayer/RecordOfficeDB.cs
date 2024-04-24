@@ -64,12 +64,14 @@ namespace DataAccessLayer
             try
             {
                 string query = "";
-                query = "Select mrecord.RecordOfficeId,mrecord.Name as RecordOfficeName,mrecord.Message,mrecord.Abbreviation,marmed.ArmedId,marmed.ArmedName,users.DomainId,usep.ArmyNo,ra.RankAbbreviation,usep.Name,trndomain.Id as TDMId from MRecordOffice mrecord" +
+                query = "Select mrecord.RecordOfficeId,mrecord.Name as RecordOfficeName,mrecord.Message,mrecord.Abbreviation,mrecord.TDMId,mrecord.UnitId,marmed.ArmedId,marmed.ArmedName,users.DomainId,usep.ArmyNo,ra.RankAbbreviation,usep.Name, munit.Sus_no,munit.Suffix,munit.UnitName from MRecordOffice mrecord" +
                         " inner join MArmedType marmed on marmed.ArmedId=mrecord.ArmedId" +
-                        " inner join TrnDomainMapping trndomain on trndomain.Id=mrecord.TDMId" +
-                        " inner join AspNetUsers users on users.Id=trndomain.AspNetUsersId" +
-                        " inner join UserProfile usep on usep.UserId=trndomain.UserId" +
-                        " inner join MRank ra on ra.RankId=usep.RankId ";
+                        " left join TrnDomainMapping trndomain on trndomain.Id=mrecord.TDMId" +
+                        " left join AspNetUsers users on users.Id=trndomain.AspNetUsersId" +
+                        " left join UserProfile usep on usep.UserId=trndomain.UserId" +
+                        " left join MRank ra on ra.RankId=usep.RankId " +
+                        " left join MapUnit mapunit on mapunit.UnitMapId = mrecord.UnitId " +
+                        " left join MUnit munit on munit.UnitId =mapunit.UnitId ";
                 using (var connection = _contextDP.CreateConnection())
                 {
                     var allrecord = await connection.QueryAsync<DTORecordOfficeResponse>(query);

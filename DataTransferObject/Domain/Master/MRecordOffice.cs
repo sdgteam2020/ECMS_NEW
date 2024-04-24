@@ -37,8 +37,12 @@ namespace DataTransferObject.Domain.Master
 
         [ForeignKey("TrnDomainMapping"), DatabaseGenerated(DatabaseGeneratedOption.None)]
         [RegularExpression(@"^[\d]+$", ErrorMessage = "TDMId is number.")]
-        public int TDMId { get; set; }
+        public int? TDMId { get; set; }
         public TrnDomainMapping? TrnDomainMapping { get; set; }
+
+        [ForeignKey("MapUnit"), DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public int? UnitId { get; set; }
+        public MapUnit? MapUnit { get; set; }
 
         [StringLength(150)]
         [Column(TypeName = "varchar(150)")]
