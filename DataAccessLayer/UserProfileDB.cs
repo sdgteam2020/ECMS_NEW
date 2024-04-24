@@ -425,7 +425,7 @@ namespace DataAccessLayer
               " inner join MapUnit mapu on mapu.UnitMapId=trndomain.UnitId" +
               " left join UserProfile usep on usep.UserId=trndomain.UserId" +
               " inner join MRank ra on ra.RankId=usep.RankId " +
-              " where trndomain.UnitId in (Select UnitMapId from MapUnit where ComdId in (Select ComdId from MapUnit where UnitMapId=@UnitId))" +
+              //" where trndomain.UnitId in (Select UnitMapId from MapUnit where ComdId in (Select ComdId from MapUnit where UnitMapId=@UnitId))" +
               " And  trndomain.AspNetUsersId like @Name";
 
                 }

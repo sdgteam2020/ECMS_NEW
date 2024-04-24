@@ -580,14 +580,14 @@ function FwdData(AspNetUsersId) {
     });
 }
 function GetProfiledetailsByAspNetuserid(AspNetUsersId) {
-    var param = "";
-    if (StepCounter == 3 && applyfor==1)
-        var param = { "Name": AspNetUsersId, "TypeId": 0, "UnitId": spnMI11UnitId };
-    else if (StepCounter == 4 && applyfor == 1)
-        var param = { "Name": AspNetUsersId, "TypeId": 0, "UnitId": spnHQ54UnitId };
-    else if ((StepCounter == 2 ||StepCounter == 3) && applyfor == 2)
-        var param = { "Name": AspNetUsersId, "TypeId": 0, "UnitId": spnHQ54UnitId };
-    else
+    //var param = "";
+    //if (StepCounter == 3 && applyfor==1)
+    //    var param = { "Name": AspNetUsersId, "TypeId": 0, "UnitId": 0 };
+    //else if (StepCounter == 4 && applyfor == 1)
+    //    var param = { "Name": AspNetUsersId, "TypeId": 0, "UnitId": 0 };
+    //else if ((StepCounter == 2 ||StepCounter == 3) && applyfor == 2)
+    //    var param = { "Name": AspNetUsersId, "TypeId": 0, "UnitId": 0 };
+    //else
         var param = { "Name": AspNetUsersId, "TypeId": 0, "UnitId": 0 };
     $.ajax({
         url: '/UserProfile/GetDataForFwd',
