@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using DataTransferObject.Domain.Model;
 using System.Security.Policy;
+using DataTransferObject.Localize;
 
 namespace DataTransferObject.Domain.Master
 {
@@ -36,7 +37,17 @@ namespace DataTransferObject.Domain.Master
 
         [ForeignKey("TrnDomainMapping"), DatabaseGenerated(DatabaseGeneratedOption.None)]
         [RegularExpression(@"^[\d]+$", ErrorMessage = "TDMId is number.")]
-        public int TDMId { get; set; }
+        public int? TDMId { get; set; }
         public TrnDomainMapping? TrnDomainMapping { get; set; }
+
+        [ForeignKey("MapUnit"), DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public int? UnitId { get; set; }
+        public MapUnit? MapUnit { get; set; }
+
+        [StringLength(150)]
+        [Column(TypeName = "varchar(150)")]
+        [RegularExpression(@"^[\w\&\.\-\; ]*$", ErrorMessage = "Only Alphabets ,Numbers and some symbol (& . -) allowed.")]
+        [MaxLength(150, ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "MaxLengthError")]
+        public string? Message { get; set; }
     }
 }

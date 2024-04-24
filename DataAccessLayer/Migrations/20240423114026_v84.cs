@@ -6,11 +6,33 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace DataAccessLayer.Migrations
 {
     /// <inheritdoc />
-    public partial class v80 : Migration
+    public partial class v84 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.AlterColumn<int>(
+                name: "Status",
+                table: "TrnICardRequest",
+                type: "int",
+                nullable: false,
+                oldClrType: typeof(bool),
+                oldType: "bit");
+
+            migrationBuilder.AlterColumn<int>(
+                name: "TDMId",
+                table: "MRecordOffice",
+                type: "int",
+                nullable: true,
+                oldClrType: typeof(int),
+                oldType: "int");
+
+            migrationBuilder.AddColumn<int>(
+                name: "UnitId",
+                table: "MRecordOffice",
+                type: "int",
+                nullable: true);
+
             migrationBuilder.AddColumn<int>(
                 name: "Type",
                 table: "MPostingReason",
@@ -63,6 +85,11 @@ namespace DataAccessLayer.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_MRecordOffice_UnitId",
+                table: "MRecordOffice",
+                column: "UnitId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_TrnApplClose_BasicDetailId",
                 table: "TrnApplClose",
                 column: "BasicDetailId");
@@ -81,17 +108,55 @@ namespace DataAccessLayer.Migrations
                 name: "IX_TrnApplClose_Updatedby",
                 table: "TrnApplClose",
                 column: "Updatedby");
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_MRecordOffice_MapUnit_UnitId",
+                table: "MRecordOffice",
+                column: "UnitId",
+                principalTable: "MapUnit",
+                principalColumn: "UnitMapId",
+                onDelete: ReferentialAction.Restrict);
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropForeignKey(
+                name: "FK_MRecordOffice_MapUnit_UnitId",
+                table: "MRecordOffice");
+
             migrationBuilder.DropTable(
                 name: "TrnApplClose");
+
+            migrationBuilder.DropIndex(
+                name: "IX_MRecordOffice_UnitId",
+                table: "MRecordOffice");
+
+            migrationBuilder.DropColumn(
+                name: "UnitId",
+                table: "MRecordOffice");
 
             migrationBuilder.DropColumn(
                 name: "Type",
                 table: "MPostingReason");
+
+            migrationBuilder.AlterColumn<bool>(
+                name: "Status",
+                table: "TrnICardRequest",
+                type: "bit",
+                nullable: false,
+                oldClrType: typeof(int),
+                oldType: "int");
+
+            migrationBuilder.AlterColumn<int>(
+                name: "TDMId",
+                table: "MRecordOffice",
+                type: "int",
+                nullable: false,
+                defaultValue: 0,
+                oldClrType: typeof(int),
+                oldType: "int",
+                oldNullable: true);
         }
     }
 }

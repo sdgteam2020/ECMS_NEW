@@ -4,6 +4,7 @@ using DataAccessLayer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccessLayer.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240423045915_v81")]
+    partial class v81
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -711,9 +714,6 @@ namespace DataAccessLayer.Migrations
                         .IsRequired()
                         .HasColumnType("varchar(50)");
 
-                    b.Property<int>("Type")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.ToTable("MPostingReason");
@@ -793,10 +793,7 @@ namespace DataAccessLayer.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("varchar(50)");
 
-                    b.Property<int?>("TDMId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("UnitId")
+                    b.Property<int>("TDMId")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("UpdatedOn")
@@ -811,8 +808,6 @@ namespace DataAccessLayer.Migrations
                     b.HasIndex("ArmedId");
 
                     b.HasIndex("TDMId");
-
-                    b.HasIndex("UnitId");
 
                     b.HasIndex("Updatedby");
 
@@ -1708,8 +1703,8 @@ namespace DataAccessLayer.Migrations
                     b.Property<byte>("RegistrationId")
                         .HasColumnType("tinyint");
 
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
+                    b.Property<bool>("Status")
+                        .HasColumnType("bit");
 
                     b.Property<long>("TrackingId")
                         .HasColumnType("bigint");
@@ -1871,55 +1866,6 @@ namespace DataAccessLayer.Migrations
                     b.HasIndex("BasicDetailId");
 
                     b.ToTable("TrnUpload");
-                });
-
-            modelBuilder.Entity("DataTransferObject.Domain.Model.TrnApplClose", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Authority")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("varchar(50)");
-
-                    b.Property<int>("BasicDetailId")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<byte>("ReasonId")
-                        .HasColumnType("tinyint");
-
-                    b.Property<string>("Remarks")
-                        .IsRequired()
-                        .HasColumnType("varchar(50)");
-
-                    b.Property<int>("RequestId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("UpdatedOn")
-                        .IsRequired()
-                        .HasColumnType("datetime");
-
-                    b.Property<int?>("Updatedby")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("BasicDetailId");
-
-                    b.HasIndex("ReasonId");
-
-                    b.HasIndex("RequestId");
-
-                    b.HasIndex("Updatedby");
-
-                    b.ToTable("TrnApplClose");
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Model.TrnDomainMapping", b =>
@@ -2407,12 +2353,8 @@ namespace DataAccessLayer.Migrations
                     b.HasOne("DataTransferObject.Domain.Model.TrnDomainMapping", "TrnDomainMapping")
                         .WithMany()
                         .HasForeignKey("TDMId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("DataTransferObject.Domain.Master.MapUnit", "MapUnit")
-                        .WithMany()
-                        .HasForeignKey("UnitId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.HasOne("DataTransferObject.Domain.Identitytable.ApplicationUser", "ApplicationUserUpdate")
                         .WithMany()
@@ -2422,8 +2364,6 @@ namespace DataAccessLayer.Migrations
                     b.Navigation("ApplicationUserUpdate");
 
                     b.Navigation("MArmedType");
-
-                    b.Navigation("MapUnit");
 
                     b.Navigation("TrnDomainMapping");
                 });
@@ -2867,40 +2807,6 @@ namespace DataAccessLayer.Migrations
                         .IsRequired();
 
                     b.Navigation("BasicDetail");
-                });
-
-            modelBuilder.Entity("DataTransferObject.Domain.Model.TrnApplClose", b =>
-                {
-                    b.HasOne("DataTransferObject.Domain.Model.BasicDetail", "BasicDetail")
-                        .WithMany()
-                        .HasForeignKey("BasicDetailId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("DataTransferObject.Domain.Master.MPostingReason", "MPostingReason")
-                        .WithMany()
-                        .HasForeignKey("ReasonId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("DataTransferObject.Domain.Model.MTrnICardRequest", "MTrnICardRequest")
-                        .WithMany()
-                        .HasForeignKey("RequestId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("DataTransferObject.Domain.Identitytable.ApplicationUser", "ApplicationUserUpdate")
-                        .WithMany()
-                        .HasForeignKey("Updatedby")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("ApplicationUserUpdate");
-
-                    b.Navigation("BasicDetail");
-
-                    b.Navigation("MPostingReason");
-
-                    b.Navigation("MTrnICardRequest");
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Model.TrnDomainMapping", b =>

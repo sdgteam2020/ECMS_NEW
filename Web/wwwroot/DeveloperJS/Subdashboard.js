@@ -30,7 +30,7 @@ function GetSubDashboardCount() {
 
                     $("#TotDrafted").html(response.TotDrafted);
                     $("#TotSubmitted").html(response.TotSubmitted);
-                    $("#TotPrinted").html(response.TotPrinted);
+                    $("#TotCompleted").html(response.TotCompleted);
                     $("#TotRaisedObsn").html(response.TotRaisedObsn);
                     $("#TotRejected").html(response.TotRejected);
 
@@ -39,7 +39,7 @@ function GetSubDashboardCount() {
                         $(this).prop('Counter', 0).animate({
                             Counter: $(this).text()
                         }, {
-                            duration: 3500,
+                            duration: 200,
                             easing: 'swing',
                             step: function (now) {
                                 $(this).text(Math.ceil(now));

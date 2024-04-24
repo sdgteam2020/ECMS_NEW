@@ -1559,7 +1559,7 @@ namespace Web.Controllers
 
         }
         [Authorize(Roles = "Admin,User")]
-        public async Task<IActionResult> GetAllRecordOffice(int[] Id)
+        public async Task<IActionResult> GetAllRecordOffice()
         {
             try
             {

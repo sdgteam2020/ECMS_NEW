@@ -68,6 +68,21 @@
 
                             </div>
                         }
+                        else @if (Convert.ToString(ViewBag.Id) == "777")
+                        {
+                            <div>
+                                <a href="/Home/Index" class="mr-2">Home</a> > <a href="/Home/Dashboard" class="mr-2">Dashboard</a>  > <a href="/Home/SubDashboard" class="mr-2">I-Card Request</a>  > <a href="/Home/RequestDashboard/Q29tcGxldGVk" class="mr-2">Completed</a> >
+                                @if (string.IsNullOrEmpty(Convert.ToString(ViewBag.jcoor)))
+                                {
+                                    <span>Appl Completed for Offrs</span>
+                                }
+                                else
+                                {
+                                    <span>Appl Completed for Jco/Or</span>
+                                }
+
+                            </div>
+                        }
                         else
                         {
                             <div>

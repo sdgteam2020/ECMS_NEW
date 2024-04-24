@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccessLayer.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240419070338_v80")]
-    partial class v80
+    [Migration("20240423114026_v84")]
+    partial class v84
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -787,12 +787,19 @@ namespace DataAccessLayer.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
+                    b.Property<string>("Message")
+                        .HasMaxLength(150)
+                        .HasColumnType("varchar(150)");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("varchar(50)");
 
-                    b.Property<int>("TDMId")
+                    b.Property<int?>("TDMId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("UnitId")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("UpdatedOn")
@@ -807,6 +814,8 @@ namespace DataAccessLayer.Migrations
                     b.HasIndex("ArmedId");
 
                     b.HasIndex("TDMId");
+
+                    b.HasIndex("UnitId");
 
                     b.HasIndex("Updatedby");
 
@@ -1702,8 +1711,8 @@ namespace DataAccessLayer.Migrations
                     b.Property<byte>("RegistrationId")
                         .HasColumnType("tinyint");
 
-                    b.Property<bool>("Status")
-                        .HasColumnType("bit");
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
 
                     b.Property<long>("TrackingId")
                         .HasColumnType("bigint");
@@ -2401,8 +2410,12 @@ namespace DataAccessLayer.Migrations
                     b.HasOne("DataTransferObject.Domain.Model.TrnDomainMapping", "TrnDomainMapping")
                         .WithMany()
                         .HasForeignKey("TDMId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("DataTransferObject.Domain.Master.MapUnit", "MapUnit")
+                        .WithMany()
+                        .HasForeignKey("UnitId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("DataTransferObject.Domain.Identitytable.ApplicationUser", "ApplicationUserUpdate")
                         .WithMany()
@@ -2412,6 +2425,8 @@ namespace DataAccessLayer.Migrations
                     b.Navigation("ApplicationUserUpdate");
 
                     b.Navigation("MArmedType");
+
+                    b.Navigation("MapUnit");
 
                     b.Navigation("TrnDomainMapping");
                 });

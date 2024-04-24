@@ -10,7 +10,7 @@ namespace DataTransferObject.Response
     {
         public int TotDrafted { get; set; }
         public int TotSubmitted { get; set; }
-        public int TotPrinted { get; set; }
+        public int TotCompleted { get; set; }
         public int TotRaisedObsn { get; set; }
         public int TotRejected { get; set; }
     }
