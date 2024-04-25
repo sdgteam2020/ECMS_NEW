@@ -2,6 +2,7 @@
 using BusinessLogicsLayer.Master;
 using DapperRepo.Core.Constants;
 using DataAccessLayer.BaseInterfaces;
+using DataTransferObject.Domain;
 using DataTransferObject.Domain.Master;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
@@ -25,11 +26,13 @@ namespace Web.Controllers
     public class MasterController : Controller
     {   
         private readonly IUnitOfWork unitOfWork;
+        private readonly IUserProfileBL userProfileBL;
         private readonly IChangeHierarchyMasterBL changeHierarchyMaster;
         private readonly ILogger<MasterController> _logger;
         private readonly IEncryptsqlDB _iEncryptsqlDB;
-        public MasterController(IUnitOfWork unitOfWork, IChangeHierarchyMasterBL changeHierarchyMaster, ILogger<MasterController> logger, IEncryptsqlDB iEncryptsqlDB)
+        public MasterController(IUnitOfWork unitOfWork, IUserProfileBL userProfileBL, IChangeHierarchyMasterBL changeHierarchyMaster, ILogger<MasterController> logger, IEncryptsqlDB iEncryptsqlDB)
         {
+            this.userProfileBL = userProfileBL;
             this.unitOfWork = unitOfWork;
             this.changeHierarchyMaster = changeHierarchyMaster;
             _logger = logger; 
@@ -1614,7 +1617,7 @@ namespace Web.Controllers
         }
 
         [Authorize(Roles = "User")]
-        public async Task<IActionResult> GetUpdateRecordOffice()
+        public async Task<IActionResult> GetUpdateRecordOffice(int RecordOfficeId)
         {
             try
             {
@@ -1626,7 +1629,7 @@ namespace Web.Controllers
                 }
                 int UnitId = dtoSession != null ? dtoSession.UnitId : 0;
                 int TDMId = dtoSession != null ? dtoSession.TrnDomainMappingId : 0;
-                return Json(await unitOfWork.RecordOffice.GetUpdateRecordOffice(TDMId));
+                return Json(await unitOfWork.RecordOffice.GetUpdateRecordOffice(RecordOfficeId));
             }
             catch (Exception ex)
             {
@@ -1649,9 +1652,25 @@ namespace Web.Controllers
             int TDMId = dtoSession != null ? dtoSession.TrnDomainMappingId : 0;
             int UserId = dtoSession != null ? dtoSession.UserId : 0;
             ViewBag.UnitId = UnitId;
-            ViewBag.TDMId = TDMId;
-            ViewBag.UserId = UserId;
-            return View();
+
+
+            DTOGetROByUserIdResponse? dTOGetROByUserIdResponse = await unitOfWork.RecordOffice.GetROByUserId(UserId);
+            if (dTOGetROByUserIdResponse == null)
+            {
+                TempData["error"] = "You are not authorizes this page.";
+                return RedirectToActionPermanent("DashboardUserMgt", "Home");
+            }
+            else if (dTOGetROByUserIdResponse.IsRO == true || dTOGetROByUserIdResponse.IsORO == true || dTOGetROByUserIdResponse.TDMId == TDMId)
+            {
+                ViewBag.ROId = dTOGetROByUserIdResponse.RecordOfficeId;
+                ViewBag.TDMId = dTOGetROByUserIdResponse.TDMId;
+                return View();
+            }
+            else
+            {
+                TempData["error"] = "You are not authorizes this page.";
+                return RedirectToActionPermanent("DashboardUserMgt", "Home");
+            }
         }
         [Authorize(Roles = "User")]
         public async Task<IActionResult> GetDDMappedForRecord(int UnitMapId)

@@ -1,6 +1,6 @@
 ﻿$(document).ready(function () {
     GetDDMappedForRecord($("#spnUnitMapId").html(), $("#spnOldTDMId").html());
-    GetUpdateRecordOffice();
+    GetUpdateRecordOffice($("#spnRecordOfficeId").html());
     $("#btnROUpdate").on("click", function () {
         Proceed();
     });
@@ -53,17 +53,20 @@ function GetDDMappedForRecord(UnitMapId, TDMId) {
         }
     });
 }
-function GetUpdateRecordOffice() {
+function GetUpdateRecordOffice(RecordOfficeId) {
     $.ajax({
         url: '/Master/GetUpdateRecordOffice',
         contentType: 'application/x-www-form-urlencoded',
         type: 'POST',
-        success: function (data) {
-            $("#spnRecordOfficeId").html(data.RecordOfficeId);
-            $("#lblROName").html(data.RecordOfficeName);
-            $("#lblROAbbreviation").html(data.Abbreviation);
-            $("#lblArms").html(data.ArmedName);
-            $("#txtMessage").val(data.Message != null && data.Message != "null" ? data.Message :"");
+        data: {
+            "RecordOfficeId": RecordOfficeId,
+        }, 
+        success: function (result) {
+/*            $("#spnRecordOfficeId").html(result.RecordOfficeId);*/
+            $("#lblROName").html(result.RecordOfficeName);
+            $("#lblROAbbreviation").html(result.Abbreviation);
+            $("#lblArms").html(result.ArmedName);
+            $("#txtMessage").val(result.Message != null && result.Message != "null" ? result.Message :"");
         }
     });
 }
@@ -109,7 +112,6 @@ function Update() {
             "RecordOfficeId": $("#spnRecordOfficeId").html(),
             "TDMId": $("#ddlTDMId").val(),
             "OldTDMId": $("#spnOldTDMId").html(),
-            "OldUserId": $("#spnOldUserId").html(),
             "Message": $("#txtMessage").val().length > 0 ? $("#txtMessage").val() : null,
         }, 
         success: function (result) {

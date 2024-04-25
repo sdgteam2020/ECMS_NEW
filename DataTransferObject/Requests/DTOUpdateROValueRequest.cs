@@ -19,9 +19,6 @@ namespace DataTransferObject.Requests
         [RegularExpression(@"^[\d]+$", ErrorMessage = "Old TDMId is number.")]
         public int OldTDMId { get; set; }
         
-        [RegularExpression(@"^[\d]+$", ErrorMessage = "Old UserId is number.")]
-        public int OldUserId { get; set; }
-
         [RegularExpression(@"^[\w\&\.\-\; ]*$", ErrorMessage = "Only Alphabets ,Numbers and some symbol (& . -) allowed.")]
         [MaxLength(150, ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "MaxLengthError")]
         public string? Message { get; set; }

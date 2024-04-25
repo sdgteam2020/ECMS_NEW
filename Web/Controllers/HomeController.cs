@@ -3,10 +3,13 @@ using BusinessLogicsLayer.BasicDet;
 using BusinessLogicsLayer.Bde;
 using BusinessLogicsLayer.BdeCate;
 using BusinessLogicsLayer.Home;
+using BusinessLogicsLayer.Master;
 using BusinessLogicsLayer.RecordOffice;
 using BusinessLogicsLayer.Registration;
+using BusinessLogicsLayer.User;
 using DapperRepo.Core.Constants;
 using DataAccessLayer.BaseInterfaces;
+using DataTransferObject.Domain;
 using DataTransferObject.Domain.Identitytable;
 using DataTransferObject.Domain.Master;
 using DataTransferObject.Domain.Model;
@@ -30,6 +33,7 @@ namespace Web.Controllers
         private readonly IRegistrationBL _registrationBL;
         private readonly IBasicDetailBL _basicDetailBL;
         private readonly INotificationBL _INotificationBL;
+        private readonly IUserProfileBL _userProfileBL;
         private readonly ITrnICardRequestBL _ITrnICardRequestBL;
         private readonly IHomeBL _home;
         private readonly IRecordOfficeBL _recordOfficeBL;
@@ -37,8 +41,9 @@ namespace Web.Controllers
         private readonly UserManager<ApplicationUser> userManager;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ILogger<HomeController> _logger;
-        public HomeController(IRegistrationBL registrationBL, IBasicDetailBL basicDetailBL, INotificationBL notificationBL, ITrnICardRequestBL iTrnICardRequestBL, IHomeBL home, IRecordOfficeBL recordOfficeBL, SignInManager<ApplicationUser> signInManager, UserManager<ApplicationUser> userManager, ILogger<HomeController> logger, IHttpContextAccessor httpContextAccessor)
+        public HomeController(IRegistrationBL registrationBL, IUserProfileBL userProfileBL,IBasicDetailBL basicDetailBL, INotificationBL notificationBL, ITrnICardRequestBL iTrnICardRequestBL, IHomeBL home, IRecordOfficeBL recordOfficeBL, SignInManager<ApplicationUser> signInManager, UserManager<ApplicationUser> userManager, ILogger<HomeController> logger, IHttpContextAccessor httpContextAccessor)
         {
+            _userProfileBL = userProfileBL;
             _registrationBL = registrationBL;
             _basicDetailBL = basicDetailBL;
             _INotificationBL = notificationBL;
@@ -101,17 +106,23 @@ namespace Web.Controllers
             }
             int UnitId = dtoSession != null ? dtoSession.UnitId : 0;
             int TDMId = dtoSession!=null? dtoSession.TrnDomainMappingId : 0;
-            bool result = await _recordOfficeBL.GetByTDMId(TDMId);
-            if (result)
+            int UserId = dtoSession!=null?dtoSession.UserId:0;
+
+            DTOGetROByUserIdResponse? dTOGetROByUserIdResponse = await _recordOfficeBL.GetROByUserId(UserId);
+            if(dTOGetROByUserIdResponse== null)
             {
-                ViewBag.TDMId = TDMId;
+                ViewBag.ROFound = 0;
+            }
+            else if(dTOGetROByUserIdResponse.IsRO==true || dTOGetROByUserIdResponse.IsORO ==true || dTOGetROByUserIdResponse.TDMId == TDMId)
+            {
+                ViewBag.ROFound = 1;
             }
             else
             {
-                ViewBag.TDMId = 0;
+                ViewBag.ROFound = 0;
             }
+
             ViewBag.UnitId = UnitId;
-            
             ViewBag.Role = role;
             return View();
         }

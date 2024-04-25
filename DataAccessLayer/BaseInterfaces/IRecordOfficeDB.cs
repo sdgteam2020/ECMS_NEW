@@ -12,8 +12,9 @@ namespace DataAccessLayer.BaseInterfaces
     public interface IRecordOfficeDB : IGenericRepositoryDL<MRecordOffice>
     {
         public Task<int> GetByName(MRecordOffice Dto);
-        public Task<bool> GetByTDMId(int TDMId);
-        public Task<DTOGetUpdateRecordOfficeResponse?> GetUpdateRecordOffice(int TDMId);
+        public Task<bool> GetByTDMId(int UnitId, int? TDMId);
+        public Task<DTOGetROByUserIdResponse?> GetROByUserId(int UserId);
+        public Task<DTOGetUpdateRecordOfficeResponse?> GetUpdateRecordOffice(int RecordOfficeId);
         public Task<List<DTORecordOfficeResponse>?> GetAllData();
         public Task<List<DTOGetMappedForRecordResponse>?> GetDDMappedForRecord(int UnitMapId);
         public Task<bool?> UpdateROValue(DTOUpdateROValueRequest dTO);
