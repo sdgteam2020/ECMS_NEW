@@ -1,4 +1,5 @@
 ﻿using DataAccessLayer.BaseInterfaces;
+using DataAccessLayer.Logger;
 using DataTransferObject.Domain.Master;
 using DataTransferObject.Domain.Model;
 using DataTransferObject.Requests;
@@ -22,10 +23,12 @@ namespace DataAccessLayer
     public class MapUnitDB : GenericRepositoryDL<MapUnit>, IMapUnitDB
     {
         protected readonly ApplicationDbContext _context;
+        protected readonly DapperContext _contextDP;
         private readonly ILogger<MapUnitDB> _logger;
-        public MapUnitDB(ApplicationDbContext context, ILogger<MapUnitDB> logger) : base(context)
+        public MapUnitDB(ApplicationDbContext context, DapperContext contextDP, ILogger<MapUnitDB> logger) : base(context)
         {
             _logger = logger;
+            _contextDP = contextDP;
             _context = context;
         }
         private readonly IConfiguration configuration;
@@ -329,6 +332,31 @@ namespace DataAccessLayer
                     _logger.LogError(1001, ex, "MapUnitDB->SaveUnitWithMapping");
                     return null;
                 }
+            }
+        }
+        public async Task<DTOUnitMapIdCheckInFKTableResponse?> UnitMapIdCheckInFKTable(int UnitMapId)
+        {
+            try
+            {
+                string query = "Select count(distinct bd.BasicDetailId) as TotalBD, count(distinct mro.RecordOfficeId) as TotalRO, count(distinct tdm.Id) as TotalTDM, count(distinct tfwd.TrnFwdId) as TotalTF,count(distinct tpo.Id)as TotalTPOFrom,count(distinct tpo_.Id)as TotalTPOTo from MapUnit munit" +
+                                " left join BasicDetails bd on bd.UnitId = munit.UnitMapId " +
+                                " left join MRecordOffice mro on mro.UnitId =  munit.UnitMapId " +
+                                " left join TrnDomainMapping tdm on tdm.UnitId = munit.UnitMapId " +
+                                " left join TrnFwds tfwd on tfwd.UnitId = munit.UnitMapId " +
+                                " left join TrnPostingOut tpo on tpo.FromUnitID= munit.UnitMapId " +
+                                " left join TrnPostingOut tpo_ on tpo_.ToUnitID= munit.UnitMapId " +
+                                " where munit.UnitMapId=@UnitMapId";
+
+                using (var connection = _contextDP.CreateConnection())
+                {
+                    var ret = await connection.QueryAsync<DTOUnitMapIdCheckInFKTableResponse>(query, new { UnitMapId });
+                    return ret.FirstOrDefault();
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "MapUnitDB->UnitMapIdCheckInFKTable");
+                return null;
             }
         }
     }

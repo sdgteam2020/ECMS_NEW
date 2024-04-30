@@ -29,9 +29,22 @@ namespace Web.Controllers
             _iDomainMapBL = domainMapBL;
             _logger = logger;
         }
+        private string GetSessionValue()
+        {
+            DtoSession? dtoSession = new DtoSession();
+            if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
+            {
+                dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+
+            }
+            string role = dtoSession != null ? dtoSession.RoleName : "";
+            return role;
+        }
         public IActionResult Profile()
         {
-          
+            string role = GetSessionValue();
+
+            ViewBag.Role = role;
             return View();
         }
         public async Task<IActionResult> SaveUserProfile(MUserProfile dTO)

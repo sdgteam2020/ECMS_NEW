@@ -43,27 +43,31 @@ namespace BusinessLogicsLayer.Master
            return _iComdDB.GetByName(Dto);   
         }
 
-        public async Task<int> OrderByChange(DataTransferObject.Domain.Master.MComd Dto)
+        public async Task<byte> OrderByChange(DataTransferObject.Domain.Master.MComd Dto)
         {
             ////Current Order
-            int ComdIdnext =await _iComdDB.GetComdIdbyOrderby(Dto.Orderby+1);
+            byte ComdIdnext =await _iComdDB.GetComdIdbyOrderby(Dto.Orderby+1);
             if (ComdIdnext > 0)
             {
-             
                 ///
                 /////Subtraction order no Next Comd
-                var datanext = await Get(ComdIdnext);
+                var datanext = await GetByByte(ComdIdnext);
                 datanext.Orderby = Dto.Orderby;
                 await Update(datanext);
 
                 ////////Change Order No For Click
                 DataTransferObject.Domain.Master.MComd data = new DataTransferObject.Domain.Master.MComd();
-                data = await Get(Dto.ComdId);
+                data = await GetByByte(Dto.ComdId);
                 data.Orderby = Dto.Orderby + 1;
                 await Update(data);
                 /////////////////////////
+
             }
             return KeyConstants.Success;
+        }
+        public async Task<DTOComdIdCheckInFKTableResponse?> ComdIdCheckInFKTable(byte ComdId)
+        {
+            return await _iComdDB.ComdIdCheckInFKTable(ComdId);
         }
     }
 }

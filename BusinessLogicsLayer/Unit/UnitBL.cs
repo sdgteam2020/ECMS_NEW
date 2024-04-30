@@ -60,7 +60,9 @@ namespace BusinessLogicsLayer.Unit
         {
             return await _UnitDB.GetTopBySUSNo(SUSNo);
         }
-
-       
+        public async Task<DTOUnitIdCheckInFKTableResponse?> UnitIdCheckInFKTable(int UnitId)
+        {
+            return await _UnitDB.UnitIdCheckInFKTable(UnitId);
+        }
     }
 }

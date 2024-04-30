@@ -36,5 +36,9 @@ namespace BusinessLogicsLayer.Corps
         {
            return _iCorpsDB.GetByName(Data);
         }
+        public async Task<DTOCorpsIdCheckInFKTableResponse?> CorpsIdCheckInFKTable(byte CorpsId)
+        {
+            return await _iCorpsDB.CorpsIdCheckInFKTable(CorpsId);
+        }
     }
 }

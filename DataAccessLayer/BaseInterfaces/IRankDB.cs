@@ -16,5 +16,6 @@ namespace DataAccessLayer.BaseInterfaces
         public Task<int> GetRankIdbyOrderby(short OrderBy);
         public Task<IEnumerable<MRank>> GetAllByorder();
         public Task<IEnumerable<MRank>> GetAllByType(int Type);
+        public Task<DTORankIdCheckInFKTableResponse?> RankIdCheckInFKTable(short RankId);
     }
 }

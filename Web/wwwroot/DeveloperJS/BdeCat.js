@@ -322,6 +322,9 @@ function Delete(BdeId) {
                         text: "No found."
                     });
                 }
+                else if (response == "5") {
+                    toastr.error('BdeId is used in child table.');
+                }
 
                 else if (response == Success) {
                     //lol++;

@@ -17,6 +17,7 @@ namespace BusinessLogicsLayer.Bde
         public Task<List<DTOBdeResponse>> GetALLBdeCat();
         public Task<List<DTOBdeResponse>> GetByHId(DTOMHierarchyRequest Data);
         public Task<bool?> FindByBdeWithId(string BdeName, byte BdeId);
+        public Task<DTOBdeIdCheckInFKTableResponse?> BdeIdCheckInFKTable(byte BdeId);
 
 
     }

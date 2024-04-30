@@ -313,7 +313,9 @@ function Delete(RankId) {
                         text: errormsg
                     });
                 }
-
+                else if (response == "5") {
+                    toastr.error('RankId is used in child table.');
+                }
                 else if (response == Success) {
                     //lol++;
                     //if (lol == Tot) {

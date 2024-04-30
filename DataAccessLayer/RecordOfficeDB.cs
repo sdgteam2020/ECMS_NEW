@@ -52,13 +52,44 @@ namespace DataAccessLayer
                 return 1;
             }
         }
-        public async Task<bool> GetByTDMId(int TDMId)
+        public async Task<bool> GetByTDMId(int UnitId,int? TDMId)
         {
             List<MRecordOffice> mRecordOffices = await _context.MRecordOffice.AsNoTracking().ToListAsync();
-            var result = mRecordOffices.Any(x => x.TDMId == TDMId);
-            return result;
-        }
+            if(TDMId!=null)
+            {
+                var result = mRecordOffices.Any(x => x.TDMId == TDMId && x.UnitId== UnitId);
+                return result;
+            }
+            else
+            {
+                var result = mRecordOffices.Any(x => x.UnitId == UnitId);
+                return result;
+            }
 
+        }
+        public async Task<DTOGetROByUserIdResponse?> GetROByUserId(int UserId)
+        {
+            try
+            {
+                string query = "";
+                query = "Select up.IsRO, up.IsORO, mrecord.TDMId,mrecord.RecordOfficeId,mrecord.UnitId from UserProfile up" +
+                        " inner join TrnDomainMapping tdm on tdm.UserId = up.UserId" +
+                        " inner join MapUnit mapunit on mapunit.UnitMapId = tdm.UnitId" +
+                        " inner join MRecordOffice mrecord on mrecord.UnitId = mapunit.UnitMapId" +
+                        " where up.UserId=@UserId ";
+                using (var connection = _contextDP.CreateConnection())
+                {
+                    var allrecord = await connection.QueryAsync<DTOGetROByUserIdResponse>(query, new { UserId });
+                    return allrecord.FirstOrDefault();
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "RecordOfficeDB->GetByUserId");
+                return null;
+            }
+
+        }
         public async Task<List<DTORecordOfficeResponse>?> GetAllData()
         {
             try
@@ -85,7 +116,7 @@ namespace DataAccessLayer
             }
 
         }
-        public async Task<DTOGetUpdateRecordOfficeResponse?> GetUpdateRecordOffice(int TDMId)
+        public async Task<DTOGetUpdateRecordOfficeResponse?> GetUpdateRecordOffice(int RecordOfficeId)
         {
             try
             {
@@ -94,10 +125,10 @@ namespace DataAccessLayer
                         " inner join AspNetUsers users on users.Id=trndomain.AspNetUsersId" +
                         " inner join MRecordOffice mrecord on mrecord.TDMId=trndomain.Id" +
                         " inner join MArmedType marmed on marmed.ArmedId=mrecord.ArmedId" +
-                        " where trndomain.Id=@TDMId";
+                        " where mrecord.RecordOfficeId=@RecordOfficeId";
                 using (var connection = _contextDP.CreateConnection())
                 {
-                    var allrecord = await connection.QueryAsync<DTOGetUpdateRecordOfficeResponse>(query, new { TDMId });
+                    var allrecord = await connection.QueryAsync<DTOGetUpdateRecordOfficeResponse>(query, new { RecordOfficeId });
                     return allrecord.FirstOrDefault();
                 }
             }
@@ -150,47 +181,6 @@ namespace DataAccessLayer
                         roUpdate.UpdatedOn = dTO.UpdatedOn;
                         _context.MRecordOffice.Update(roUpdate);
                         await _context.SaveChangesAsync();
-
-                        var TDM = await _context.TrnDomainMapping.FindAsync(dTO.TDMId);
-
-                        if(TDM != null)
-                        {
-                            if(TDM.UserId != null)
-                            {
-                                var newprofileUpdate = await _context.UserProfile.FindAsync(TDM.UserId);
-                                if(newprofileUpdate == null)
-                                {
-                                    return false;
-                                }
-                                else
-                                {
-                                    newprofileUpdate.IsRO = true;
-                                    _context.UserProfile.Update(newprofileUpdate);
-                                    await _context.SaveChangesAsync();
-                                }
-
-                            }
-                            else
-                            {
-                                return false;
-                            }
-                        }
-                        else
-                        {
-                            return false;
-                        }
-
-                        var oldprofileUpdate = await _context.UserProfile.FindAsync(dTO.OldUserId);
-                        if(oldprofileUpdate == null)
-                        {
-                            return false;
-                        }
-                        else
-                        {
-                            oldprofileUpdate.IsRO = false;
-                            _context.UserProfile.Update(oldprofileUpdate);
-                            await _context.SaveChangesAsync();
-                        }
                         
                         transaction.Commit();
                         return true;
