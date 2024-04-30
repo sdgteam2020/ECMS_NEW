@@ -306,6 +306,9 @@ function Delete(Id) {
                         text: errormsg
                     });
                 }
+                else if (response == "5") {
+                    toastr.error('DivId is used in child table.');
+                }
                 else if (response == 0) {
                     Swal.fire({
                         text: "No found."

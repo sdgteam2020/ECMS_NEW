@@ -762,6 +762,9 @@ function DeleteMapUnit(Id) {
                         text: "No found."
                     });
                 }
+                else if (response == "5") {
+                    toastr.error('UnitMapId is used in child table.');
+                }
 
                 else if (response == Success) {
                     //lol++;

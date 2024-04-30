@@ -18,5 +18,6 @@ namespace BusinessLogicsLayer.Bde
         public Task<int> OrderByChange(MRank DTo);
         public Task<IEnumerable<MRank>> GetAllByorder();
         public Task<IEnumerable<MRank>> GetAllByType(int Type);
+        public Task<DTORankIdCheckInFKTableResponse?> RankIdCheckInFKTable(short RankId);
     }
 }

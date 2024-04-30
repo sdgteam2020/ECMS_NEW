@@ -15,5 +15,6 @@ namespace BusinessLogicsLayer.Corps
         public Task<bool> GetByName(MCorps Data);
         public Task<List<DTOCorpsResponse>> GetByComdId(int ComdId);
         public Task<List<DTOCorpsResponse>> GetALLCorps();
+        public Task<DTOCorpsIdCheckInFKTableResponse?> CorpsIdCheckInFKTable(byte CorpsId);
     }
 }

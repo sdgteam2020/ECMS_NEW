@@ -1,9 +1,12 @@
-﻿using DataAccessLayer.BaseInterfaces;
+﻿using Dapper;
+using DataAccessLayer.BaseInterfaces;
+using DataAccessLayer.Logger;
 using DataTransferObject.Domain.Master;
 using DataTransferObject.Response;
 using DataTransferObject.Response.User;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,9 +19,13 @@ namespace DataAccessLayer
     public class CorpsDB : GenericRepositoryDL<MCorps>, ICorpsDB
     {
         protected new readonly ApplicationDbContext _context;
-        public CorpsDB(ApplicationDbContext context) : base(context)
+        protected readonly DapperContext _contextDP;
+        private readonly ILogger<CorpsDB> _logger;
+        public CorpsDB(ApplicationDbContext context, DapperContext contextDP, ILogger<CorpsDB> logger) : base(context)
         {
+            _logger = logger;
             _context = context;
+            _contextDP = contextDP;
         }
         private readonly IConfiguration configuration;
 
@@ -57,6 +64,28 @@ namespace DataAccessLayer
                                      CorpsName = c.CorpsName,
                                  }).ToListAsync();
             return Corps;
+        }
+        public async Task<DTOCorpsIdCheckInFKTableResponse?> CorpsIdCheckInFKTable(byte CorpsId)
+        {
+            try
+            {
+                string query = "Select  count(distinct mbd.BdeId) as TotalBde ,count(distinct mdiv.DivId) as TotalDiv,count(distinct mapunit.UnitMapId) as TotalMapUnit from MCorps mcor" +
+                                " left join MBde mbd on mbd.CorpsId = mcor.CorpsId " +
+                                " left join MDiv mdiv on mdiv.CorpsId = mcor.CorpsId " +
+                                " left join MapUnit mapunit on mapunit.CorpsId = mcor.CorpsId " +
+                                " where mcor.CorpsId = @CorpsId";
+
+                using (var connection = _contextDP.CreateConnection())
+                {
+                    var ret = await connection.QueryAsync<DTOCorpsIdCheckInFKTableResponse>(query, new { CorpsId });
+                    return ret.FirstOrDefault();
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "CorpsDB->CorpsIdCheckInFKTable");
+                return null;
+            }
         }
 
 

@@ -41,5 +41,9 @@ namespace BusinessLogicsLayer.BdeCate
         {
             return await _iBdeCatDB.FindByBdeWithId(BdeName, BdeId);
         }
+        public async Task<DTOBdeIdCheckInFKTableResponse?> BdeIdCheckInFKTable(byte BdeId)
+        {
+            return await _iBdeCatDB.BdeIdCheckInFKTable(BdeId);
+        }
     }
 }

@@ -1,9 +1,12 @@
-﻿using DataAccessLayer.BaseInterfaces;
+﻿using Dapper;
+using DataAccessLayer.BaseInterfaces;
+using DataAccessLayer.Logger;
 using DataTransferObject.Domain.Master;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,9 +18,13 @@ namespace DataAccessLayer
     public class DivDB : GenericRepositoryDL<MDiv>, IDivDB
     {
         protected new readonly ApplicationDbContext _context;
-        public DivDB(ApplicationDbContext context) : base(context)
+        protected readonly DapperContext _contextDP;
+        private readonly ILogger<DivDB> _logger;
+        public DivDB(ApplicationDbContext context, DapperContext contextDP, ILogger<DivDB> logger) : base(context)
         {
+            _logger = logger;
             _context = context;
+            _contextDP = contextDP;
         }
         private readonly IConfiguration configuration;
 
@@ -60,6 +67,27 @@ namespace DataAccessLayer
                                  DivName = div.DivName,
                              }).ToListAsync();
             return Div;
+        }
+        public async Task<DTODivIdCheckInFKTableResponse?> DivIdCheckInFKTable(byte DivId)
+        {
+            try
+            {
+                string query = "Select  count(distinct mbd.BdeId) as TotalBde ,count(distinct mapunit.UnitMapId) as TotalMapUnit from MDiv mdiv" +
+                                " left join MBde mbd on mbd.DivId = mdiv.DivId " +
+                                " left join MapUnit mapunit on mapunit.DivId = mdiv.DivId " +
+                                " where mdiv.DivId = @DivId";
+
+                using (var connection = _contextDP.CreateConnection())
+                {
+                    var ret = await connection.QueryAsync<DTODivIdCheckInFKTableResponse>(query, new { DivId });
+                    return ret.FirstOrDefault();
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "DivDB->DivIdCheckInFKTable");
+                return null;
+            }
         }
     }
 }

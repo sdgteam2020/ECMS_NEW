@@ -315,6 +315,10 @@ function Delete(ComdId) {
                         text: errormsg
                     });
                 }
+                else if (response == "5")
+                {
+                    toastr.error('ComdId is used in child table.');
+                }
 
                 else if (response == Success) {
                     //lol++;

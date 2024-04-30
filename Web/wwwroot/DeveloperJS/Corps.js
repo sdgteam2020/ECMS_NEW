@@ -306,7 +306,9 @@ function Delete(CorpsId) {
                         text: errormsg
                     });
                 }
-               
+                else if (response == "5") {
+                    toastr.error('CorpsId is used in child table.');
+                }
 
                 else if (response == Success) {
                     //lol++;
