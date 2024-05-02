@@ -17,6 +17,19 @@
         $("#IntOffr-error").html("");
     });
 
+    $("#AddNewDomain input[name='InitatingOffr']").click(function () {
+        $("#InitatingOffr-error").html("");
+    });
+    $("#AddNewDomain input[name='CommandingOffr']").click(function () {
+        $("#CommandingOffr-error").html("");
+    });
+    $("#AddNewDomain input[name='IsRO']").click(function () {
+        $("#IsRO-error").html("");
+    });
+    $("#AddNewDomain input[name='IsORO']").click(function () {
+        $("#IsORO-error").html("");
+    });
+
     $("#txtAppointmentName").autocomplete({
         source: function (request, response) {
             if (request.term.length > 1) {
@@ -264,6 +277,34 @@ function ValidateInput() {
         $("#txtactive-error").html("");
     }
 
+    if ($("input[type='radio'][name=InitatingOffr]:checked").length == 0) {
+        $("#InitatingOffr-error").html("Initating Offr is required.");
+    }
+    else {
+        $("#InitatingOffr-error").html("");
+    }
+
+    if ($("input[type='radio'][name=CommandingOffr]:checked").length == 0) {
+        $("#CommandingOffr-error").html("Commanding Offr is required.");
+    }
+    else {
+        $("#CommandingOffr-error").html("");
+    }
+
+    if ($("input[type='radio'][name=IsRO]:checked").length == 0) {
+        $("#IsRO-error").html("Record Office is required.");
+    }
+    else {
+        $("#IsRO-error").html("");
+    }
+
+    if ($("input[type='radio'][name=IsORO]:checked").length == 0) {
+        $("#IsORO-error").html("Officer Record Office is required.");
+    }
+    else {
+        $("#IsORO-error").html("");
+    }
+
     var AppointmentId = $("#spnUnitAppointmentId").html();
     
     if ((AppointmentId == 0 || AppointmentId == '') && $("#txtAppointmentName").val().length > 0) {
@@ -321,7 +362,7 @@ function BindData() {
                     for (var i = 0; i < response.length; i++) {
 
                         listItem += "<tr>";
-                        listItem += "<td class='d-none'><span id='regId'>" + response[i].Id + "</span><span id='regTrnDomainMappingId'>" + response[i].TrnDomainMappingId + "</span><span id='regTrnDomainMappingApptId'>" + response[i].TrnDomainMappingApptId + "</span><span id='regTrnDomainMappingUnitId'>" + response[i].TrnDomainMappingUnitId + "</span><span id='regUserId'>" + response[i].UserId + "</span><span id='roleIds'>" + response[i].RoleIds + "</span><span id='domain_approval'>" + response[i].AdminFlag + "</span></td>"; 
+                        listItem += "<td class='d-none'><span id='regId'>" + response[i].Id + "</span><span id='regTrnDomainMappingId'>" + response[i].TrnDomainMappingId + "</span><span id='regTrnDomainMappingApptId'>" + response[i].TrnDomainMappingApptId + "</span><span id='regTrnDomainMappingUnitId'>" + response[i].TrnDomainMappingUnitId + "</span><span id='regUserId'>" + response[i].UserId + "</span><span id='roleIds'>" + response[i].RoleIds + "</span><span id='domain_approval'>" + response[i].AdminFlag + "</span><span id='extension'>" + response[i].Extension + "</span><span id='dialingCode'>" + response[i].DialingCode + "</span></td>"; 
                         listItem += "<td class='align-middle'>" + (i + 1) + "</td>";
                         listItem += "<td class='align-middle'><span id='reg_no'>" + response[i].Id + "</span></td>";
                         listItem += "<td class='align-middle'><span id='domainId'>" + response[i].DomainId + "</span></td>";
@@ -336,6 +377,26 @@ function BindData() {
                             listItem += "<td class='align-middle'><span><span class='badge badge-pill badge-success' id='domain_active'>Yes</span></span></td>";
                         else
                             listItem += "<td class='align-middle'><span><span class='badge badge-pill badge-danger' id='domain_active'>No</span></span></td>";
+
+                        if (response[i].IsIO == true)
+                            listItem += "<td class='align-middle'><span><span class='badge badge-pill badge-success' id='isIO'>Yes</span></span></td>";
+                        else
+                            listItem += "<td class='align-middle'><span><span class='badge badge-pill badge-danger' id='isIO'>No</span></span></td>";
+
+                        if (response[i].IsCO == true)
+                            listItem += "<td class='align-middle'><span><span class='badge badge-pill badge-success' id='isCO'>Yes</span></span></td>";
+                        else
+                            listItem += "<td class='align-middle'><span><span class='badge badge-pill badge-danger' id='isCO'>No</span></span></td>";
+
+                        if (response[i].IsRO == true)
+                            listItem += "<td class='align-middle'><span><span class='badge badge-pill badge-success' id='isRO'>Yes</span></span></td>";
+                        else
+                            listItem += "<td class='align-middle'><span><span class='badge badge-pill badge-danger' id='isRO'>No</span></span></td>";
+
+                        if (response[i].IsORO == true)
+                            listItem += "<td class='align-middle'><span><span class='badge badge-pill badge-success' id='isORO'>Yes</span></span></td>";
+                        else
+                            listItem += "<td class='align-middle'><span><span class='badge badge-pill badge-danger' id='isORO'>No</span></span></td>";
 
                         listItem += "<td class='align-middle'><span id='btnedit'><button type='button' class='cls-btnedit btn btn-icon btn-round btn-warning mr-1'><i class='fas fa-edit'></i></button></span></td>";
 
@@ -386,6 +447,8 @@ function BindData() {
                         ResetErrorMessage();
                         $("#txtDomainId").val($(this).closest("tr").find("#domainId").html());
                         $("#txtRole").val($(this).closest("tr").find("#roleName").html());
+                        $("#txtDialingCode").val($(this).closest("tr").find("#dialingCode").html());
+                        $("#txtExtension").val($(this).closest("tr").find("#extension").html());
                         $("#spnDomainRegId").html($(this).closest("tr").find("#regId").html());
                         //alert($(this).closest("tr").find("#domain_approval").html())
                         if ($(this).closest("tr").find("#domain_approval").html() == 'true') {
@@ -401,6 +464,34 @@ function BindData() {
                         }
                         else {
                             $("#txtactiveno").prop("checked", true);
+                        }
+
+                        if ($(this).closest("tr").find("#isIO").html() == 'Yes') {
+                            $("#initatingOffryes").prop("checked", true);
+                        }
+                        else {
+                            $("#initatingOffrno").prop("checked", true);
+                        }
+
+                        if ($(this).closest("tr").find("#isCO").html() == 'Yes') {
+                            $("#commandingOffryes").prop("checked", true);
+                        }
+                        else {
+                            $("#commandingOffrno").prop("checked", true);
+                        }
+
+                        if ($(this).closest("tr").find("#isRO").html() == 'Yes') {
+                            $("#isroyes").prop("checked", true);
+                        }
+                        else {
+                            $("#isrono").prop("checked", true);
+                        }
+
+                        if ($(this).closest("tr").find("#isORO").html() == 'Yes') {
+                            $("#isoroyes").prop("checked", true);
+                        }
+                        else {
+                            $("#isorono").prop("checked", true);
                         }
 
                         if ($(this).closest("tr").find("#regTrnDomainMappingId").html() > 0) {
@@ -451,8 +542,14 @@ function Save() {
             "Id": $("#spnDomainRegId").html(),
             "DomainId": $("#txtDomainId").val(),
             "RoleIds": $('#ddlRoles').val(),
+            "DialingCode": $("#txtDialingCode").val(),
+            "Extension": $("#txtExtension").val(),
             "AdminFlag": $('input:radio[name=txtapproval]:checked').val(),
             "Active": $('input:radio[name=txtactive]:checked').val(),
+            "IsIO": $('input:radio[name=InitatingOffr]:checked').val(),
+            "IsRO": $('input:radio[name=IsRO]:checked').val(),
+            "IsCO": $('input:radio[name=CommandingOffr]:checked').val(),
+            "IsORO": $('input:radio[name=IsORO]:checked').val(),
             "TDMId": $("#spnTrnDomainMappingId").html(),
             "ApptId": $("#spnUnitAppointmentId").html(),
             "UnitMappId": $("#spnUnitMapId").html(),
@@ -471,6 +568,7 @@ function Save() {
                 toastr.success('Domain Id has been Updated');
 
                 $("#AddNewDomain").modal('hide');
+                AccountCount();
                 BindData();
                 Reset();
                 ResetErrorMessage();
@@ -509,6 +607,8 @@ function Reset()     {
     $("#spnDomainRegId").html("0");
     $("#txtDomainId").val("");
     //$("#ddlRoles").select2('data', null);
+    $("#txtDialingCode").val("");
+    $("#txtExtension").val("");
 
     $('#ddlRoles').val(null).trigger('change');
    
@@ -534,12 +634,30 @@ function Reset()     {
 
     $("#txtactiveyes").prop("checked", false);
     $("#txtactiveno").prop("checked", false);
+
+    $("#isroyes").prop("checked", false);
+    $("#isrono").prop("checked", false);
+
+    $("#initatingOffryes").prop("checked", false);
+    $("#initatingOffrno").prop("checked", false);
+
+    $("#commandingOffryes").prop("checked", false);
+    $("#commandingOffrno").prop("checked", false);
+
+    $("#isoroyes").prop("checked", false);
+    $("#isorono").prop("checked", false);
 }
 function ResetErrorMessage() {
     $("#txtDomainId-error").html("");
     $("#ddlRoles-error").html("");
+    $("#txtDialingCode-error").html("");
+    $("#txtExtension-error").html("");
     $("#txtapproval-error").html("");
     $("#txtactive-error").html("");
+    $("#IsRO-error").html("");
+    $("#InitatingOffr-error").html("");
+    $("#CommandingOffr-error").html("");
+    $("#IsORO-error").html("");
     $("#txtAppointmentName-error").html("");
     $("#txtUnitName-error").html("");
 }
@@ -633,6 +751,10 @@ function AccountCount() {
             $("#lblUnMappedUser").html(response.UnMappedUser);
             $("#lblVerifiedUser").html(response.VerifiedUser);
             $("#lblNotVerifiedUser").html(response.NotVerifiedUser);
+            $("#lblIO").html(response.IO);
+            $("#lblApprover").html(response.CO);
+            $("#lblRO").html(response.RO);
+            $("#lblORO").html(response.ORO);
         }
     });
 }

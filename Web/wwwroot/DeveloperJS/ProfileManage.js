@@ -2,19 +2,6 @@
     mMsater(0, "ddlRank", Rank, "");
     BindData()
 
-    $("#AddNewProfile input[name='InitatingOffr']").click(function () {
-        $("#InitatingOffr-error").html("");
-    });
-    $("#AddNewProfile input[name='CommandingOffr']").click(function () {
-        $("#CommandingOffr-error").html("");
-    });
-    $("#AddNewProfile input[name='IsRO']").click(function () {
-        $("#IsRO-error").html("");
-    });
-    $("#AddNewProfile input[name='IsORO']").click(function () {
-        $("#IsORO-error").html("");
-    });
-
     $("#btnProfileAdd").click(function () {
         Reset();
         ResetErrorMessage();
@@ -54,8 +41,6 @@ function Proceed() {
     let formId = '#SaveProfile';
     $.validator.unobtrusive.parse($(formId));
 
-    ValidateRadioButton();
-
     if ($(formId).valid()) {
         Swal.fire({
             title: 'Are you sure?',
@@ -82,36 +67,6 @@ function Proceed() {
         return false;
     }
 }
-function ValidateRadioButton(){
-    if ($("input[type='radio'][name=InitatingOffr]:checked").length == 0) {
-        $("#InitatingOffr-error").html("Initating Offr is required.");
-    }
-    else {
-        $("#InitatingOffr-error").html("");
-    }
-
-    if ($("input[type='radio'][name=CommandingOffr]:checked").length == 0) {
-        $("#CommandingOffr-error").html("Commanding Offr is required.");
-    }
-    else {
-        $("#CommandingOffr-error").html("");
-    }
-
-    if ($("input[type='radio'][name=IsRO]:checked").length == 0) {
-        $("#IsRO-error").html("Record Office is required.");
-    }
-    else {
-        $("#IsRO-error").html("");
-    }
-
-    if ($("input[type='radio'][name=IsORO]:checked").length == 0) {
-        $("#IsORO-error").html("Officer Record Office is required.");
-    }
-    else {
-        $("#IsORO-error").html("");
-    }
-}
-
 function BindData() {
     var listItem = "";
     var userdata =
@@ -154,7 +109,7 @@ function BindData() {
                     for (var i = 0; i < response.length; i++) {
 
                         listItem += "<tr>";
-                        listItem += "<td class='d-none'><span id='regId'>" + response[i].Id + "</span><span id='userId'>" + response[i].UserId + "</span><span id='rankId'>" + response[i].RankId + "</span></td>";
+                        listItem += "<td class='d-none'><span id='regId'>" + response[i].Id + "</span><span id='userId'>" + response[i].UserId + "</span><span id='rankId'>" + response[i].RankId + "</span><span id='mobileNo'>" + response[i].MobileNo + "</span></td>";
                         listItem += "<td class='align-middle'>" + (i + 1) + "</td>";
                         listItem += "<td class='align-middle'><span id='userId'>" + response[i].UserId + "</span></td>";
                         
@@ -171,26 +126,6 @@ function BindData() {
                             listItem += "<td class='align-middle'><span><span class='badge badge-pill badge-success' id='isToken'>Yes</span></span></td>";
                         else
                             listItem += "<td class='align-middle'><span><span class='badge badge-pill badge-danger' id='isToken'>No</span></span></td>";
-
-                        if (response[i].IsIO == true)
-                            listItem += "<td class='align-middle'><span><span class='badge badge-pill badge-success' id='isIO'>Yes</span></span></td>";
-                        else
-                            listItem += "<td class='align-middle'><span><span class='badge badge-pill badge-danger' id='isIO'>No</span></span></td>";
-
-                        if (response[i].IsCO == true)
-                            listItem += "<td class='align-middle'><span><span class='badge badge-pill badge-success' id='isCO'>Yes</span></span></td>";
-                        else
-                            listItem += "<td class='align-middle'><span><span class='badge badge-pill badge-danger' id='isCO'>No</span></span></td>";
-
-                        if (response[i].IsRO == true)
-                            listItem += "<td class='align-middle'><span><span class='badge badge-pill badge-success' id='isRO'>Yes</span></span></td>";
-                        else
-                            listItem += "<td class='align-middle'><span><span class='badge badge-pill badge-danger' id='isRO'>No</span></span></td>";
-
-                        if (response[i].IsORO == true)
-                            listItem += "<td class='align-middle'><span><span class='badge badge-pill badge-success' id='isORO'>Yes</span></span></td>";
-                        else
-                            listItem += "<td class='align-middle'><span><span class='badge badge-pill badge-danger' id='isORO'>No</span></span></td>";
 
                         listItem += "<td class='align-middle'><span id='btnedit'><button type='button' class='cls-btnedit btn btn-icon btn-round btn-warning mr-1'><i class='fas fa-edit'></i></button></span></td>";
 
@@ -243,6 +178,7 @@ function BindData() {
                         $("#txtArmyNo").val($(this).closest("tr").find("#armyNo").html());
                         $("#txtName").val($(this).closest("tr").find("#username").html());
                         $("#ddlRank").val($(this).closest("tr").find("#rankId").html());
+                        $("#txtMobileNo").val($(this).closest("tr").find("#mobileNo").html());
 
                         //alert($(this).closest("tr").find("#domain_approval").html())
 
@@ -253,34 +189,6 @@ function BindData() {
                             $("#isTokenno").prop("checked", true);
                         }
 
-                        if ($(this).closest("tr").find("#isIO").html() == 'Yes' ) {
-                            $("#initatingOffryes").prop("checked", true);
-                        }
-                        else {
-                            $("#initatingOffrno").prop("checked", true);
-                        }
-
-                        if ($(this).closest("tr").find("#isCO").html() == 'Yes') {
-                            $("#commandingOffryes").prop("checked", true);
-                        }
-                        else {
-                            $("#commandingOffrno").prop("checked", true);
-                        }
-
-                        if ($(this).closest("tr").find("#isRO").html() == 'Yes') {
-                            $("#isroyes").prop("checked", true);
-                        }
-                        else {
-                            $("#isrono").prop("checked", true);
-                        }
-
-                        if ($(this).closest("tr").find("#isORO").html() == 'Yes') {
-                            $("#isoroyes").prop("checked", true);
-                        }
-                        else {
-                            $("#isorono").prop("checked", true);
-                        }
-                        GetProfileDetailById($(this).closest("tr").find("#userId").html()); 
                         $("#btnProfileAdd").val("Update");
                         $("#AddNewProfile").modal('show');
                     });
@@ -306,32 +214,6 @@ function BindData() {
         }
     });
 
-}
-function GetProfileDetailById(UserId) {
-    $.ajax({
-        url: '/UserProfile/GetProfileByUserId',
-        type: 'Post',
-        data: { "UserId": UserId },
-        success: function (response) {
-            if (response != "null" && response != null) {
-                if (response == InternalServerError) {
-                    Swal.fire({
-                        text: "Invalid Profile."
-                    });
-                }
-                else {
-                    $("#txtMobileNo").val(response.MobileNo);
-                    $("#txtDialingCode").val(response.DialingCode);
-                    $("#txtExtension").val(response.Extension);
-                }
-            }
-            else {
-                Swal.fire({
-                    text: "Profile not found."
-                });
-            }
-        }
-    });
 }
 function ProfileCount(){
     $.ajax({
@@ -361,14 +243,9 @@ function Save() {
             "ArmyNo": $("#txtArmyNo").val(),
             "Name": $("#txtName").val(),
             "MobileNo": $("#txtMobileNo").val(),
-            "DialingCode": $("#txtDialingCode").val(),
-            "Extension": $("#txtExtension").val(),
             "RankId": $("#ddlRank").val(),
             "IsToken": $('input:radio[name=IsToken]:checked').val(),
-            "IsIO": $('input:radio[name=InitatingOffr]:checked').val(),
-            "IsRO": $('input:radio[name=IsRO]:checked').val(),
-            "IsCO": $('input:radio[name=CommandingOffr]:checked').val(),
-            "IsORO": $('input:radio[name=IsORO]:checked').val(),
+
         }, //get the search string
         success: function (result) {
 
@@ -426,33 +303,14 @@ function Reset() {
     $("#ddlRank").val("");
     $("#txtName").val("");
     $("#txtMobileNo").val("");
-    $("#txtDialingCode").val("");
-    $("#txtExtension").val("");
     $("#isTokenyes").prop("checked", false);
     $("#isTokenno").prop("checked", false);
-
-    $("#isroyes").prop("checked", false);
-    $("#isrono").prop("checked", false);
-
-    $("#initatingOffryes").prop("checked", false); 
-    $("#initatingOffrno").prop("checked", false);
-
-    $("#commandingOffryes").prop("checked", false);
-    $("#commandingOffrno").prop("checked", false);
-
-    $("#isoroyes").prop("checked", false);
-    $("#isorono").prop("checked", false);
 }
 function ResetErrorMessage() {
     $("#txtName-error").html("");
     $("#ddlRank-error").html("");
     $("#txtArmyNo-error").html("");
     $("#txtMobileNo-error").html("");
-    $("#txtDialingCode-error").html("");
-    $("#txtExtension-error").html("");
     $("#IsToken-error").html("");
-    $("#IsRO-error").html("");
-    $("#InitatingOffr-error").html("");
-    $("#CommandingOffr-error").html("");
-    $("#IsORO-error").html("");
+
 }

@@ -1139,7 +1139,7 @@ namespace Web.Controllers
 
         }
         [AllowAnonymous]
-        public async Task<IActionResult> GetByApptId(int ApptId)
+        public async Task<IActionResult> GetByApptId(short ApptId)
         {
             try
             {
@@ -1156,11 +1156,20 @@ namespace Web.Controllers
         {
             try
             {
-                await unitOfWork.Appt.Delete(dTO);
-                return Json(KeyConstants.Success);
+                DTOApptIdCheckInFKTableResponse? dTOApptIdCheckIn = await unitOfWork.Appt.ApptIdCheckInFKTable(dTO.ApptId);
+                if (dTOApptIdCheckIn != null && (dTOApptIdCheckIn.TotalTDM > 0))
+                {
+                    return Json(5);
+                }
+                else
+                {
+                    await unitOfWork.Appt.Delete(dTO);
+                    return Json(KeyConstants.Success);
+                }
             }
             catch (Exception ex)
             {
+                _logger.LogError(1001, ex, "Master->DeleteAppointment");
                 return Json(KeyConstants.InternalServerError);
             }
         }
@@ -1399,19 +1408,22 @@ namespace Web.Controllers
         {
             try
             {
-                await unitOfWork.Armed.Delete(dTO);
-                return Json(KeyConstants.Success);
+                DTOArmedIdCheckInFKTableResponse? dTOArmedIdCheckIn = await unitOfWork.Armed.ArmedIdCheckInFKTable(dTO.ArmedId);
+                if (dTOArmedIdCheckIn != null && (dTOArmedIdCheckIn.TotalBD > 0 || dTOArmedIdCheckIn.TotalRO >0))
+                {
+                    return Json(5);
+                }
+                else
+                {
+                    await unitOfWork.Armed.Delete(dTO);
+                    return Json(KeyConstants.Success);
+                }
             }
             catch (Exception ex)
             {
                 _logger.LogError(1001, ex, "Master->DeleteArmed");
                 return Json(KeyConstants.InternalServerError);
             }
-
-
-
-
-
         }
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteArmedMultiple(int[] ints)

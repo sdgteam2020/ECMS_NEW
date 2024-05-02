@@ -58,16 +58,16 @@ namespace DataTransferObject.Requests
         public int UnitMapId { get; set; }
 
         [RegularExpression("^[a-zA-Z]*$", ErrorMessage = "Only Alphabets allowed.")]
-        public Boolean IsRO { get; set; }
+        public bool IsRO { get; set; }
 
         [RegularExpression("^[a-zA-Z]*$", ErrorMessage = "Only Alphabets allowed.")]
-        public Boolean IsIO { get; set; }
+        public bool IsIO { get; set; }
 
         [RegularExpression("^[a-zA-Z]*$", ErrorMessage = "Only Alphabets allowed.")]
-        public Boolean IsCO { get; set; }
+        public bool IsCO { get; set; }
 
         [RegularExpression("^[a-zA-Z]*$", ErrorMessage = "Only Alphabets allowed.")]
-        public Boolean IsORO { get; set; }
+        public bool IsORO { get; set; }
         
         [StringLength(50)]
         [Column(TypeName = "varchar(50)")]

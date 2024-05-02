@@ -5,6 +5,9 @@ $(document).ready(function () {
         BindData()
 
     });
+    $("#btnReset").click(function () {
+        Reset();
+    });
     $("#btnsave").click(function () {
         if ($("#SaveForm")[0].checkValidity()) {
 

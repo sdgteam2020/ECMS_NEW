@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace BusinessLogicsLayer.Master
 { 
-    public class Comd : GenericRepositoryDL<DataTransferObject.Domain.Master.MComd>, IComd
+    public class Comd : GenericRepositoryDL<MComd>, IComd
     {
         private readonly IComdDB _iComdDB;
 
@@ -22,7 +22,7 @@ namespace BusinessLogicsLayer.Master
             _iComdDB= comdDB;   
         }
 
-        public Task<IEnumerable<DataTransferObject.Domain.Master.MComd>> GetAllByorder()
+        public Task<IEnumerable<MComd>> GetAllByorder()
         {
             return _iComdDB.GetAllByorder();
         }
@@ -37,17 +37,24 @@ namespace BusinessLogicsLayer.Master
             return _iComdDB.GetByMaxOrder();    
         }
 
-        public Task<bool> GetByName(DataTransferObject.Domain.Master.MComd Dto)
+        public Task<bool> GetByName(MComd Dto)
         {
             Dto.ComdName = Dto.ComdName.Trim().TrimEnd().TrimStart();    
            return _iComdDB.GetByName(Dto);   
         }
 
-        public async Task<byte> OrderByChange(DataTransferObject.Domain.Master.MComd Dto)
+        public async Task<byte> OrderByChange(MComd Dto)
         {
             ////Current Order
-            byte ComdIdnext =await _iComdDB.GetComdIdbyOrderby(Dto.Orderby+1);
-            if (ComdIdnext > 0)
+            int i = Dto.Orderby;
+            increment:
+            i++;
+            byte ComdIdnext =await _iComdDB.GetComdIdbyOrderby(i);
+            if (ComdIdnext == 0)
+            {
+                goto increment;
+            }
+            else 
             {
                 ///
                 /////Subtraction order no Next Comd
@@ -56,9 +63,9 @@ namespace BusinessLogicsLayer.Master
                 await Update(datanext);
 
                 ////////Change Order No For Click
-                DataTransferObject.Domain.Master.MComd data = new DataTransferObject.Domain.Master.MComd();
+                MComd data = new MComd();
                 data = await GetByByte(Dto.ComdId);
-                data.Orderby = Dto.Orderby + 1;
+                data.Orderby = i;
                 await Update(data);
                 /////////////////////////
 

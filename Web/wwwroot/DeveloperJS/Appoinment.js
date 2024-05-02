@@ -303,8 +303,9 @@ function Delete(Id) {
                         text: errormsg
                     });
                 }
-               
-
+                else if (response == "5") {
+                    toastr.error('AppId is used in child table.');
+                }
                 else if (response == Success) {
                     //lol++;
                     //if (lol == Tot) {

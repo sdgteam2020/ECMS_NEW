@@ -98,6 +98,10 @@
                     <button class="count-label" id="btnInActiveUser" name="btnActiveUser">Inactive <br /><span id="lblInActiveUser">0</span></button>
                     <button class="count-label" id="btnVerified" name="btnVerified">Verified <br /><span id="lblVerifiedUser">0</span></button>
                     <button class="count-label" id="btnNotVerifiedUser" name="btnNotVerifiedUser">Not Verified <br /><span id="lblNotVerifiedUser">0</span></button>
+                    <button class="count-label" id="btnIO" name="btnIO">IO <br /><span id="lblIO">0</span></button>
+                    <button class="count-label" id="btnApprover" name="btnApprover">Approver <br /><span id="lblApprover">0</span></button>
+                    <button class="count-label" id="btnRO" name="btnRO">RO <br /><span id="lblRO">0</span></button>
+                    <button class="count-label" id="btnORO" name="btnOROr">ORO <br /><span id="lblORO">0</span></button>
                 </div>
                 <div class="table-responsive">
                         <table class="table border border-purple table-striped no-footer table-hover" role="grid" id="tbldata">
@@ -113,6 +117,10 @@
                                     <th class="noExport nowrap">Mapping</th>
                                     <th class="nowrap">Active Yes/No</th>
                                     <th class="nowrap">Status</th>
+                                    <th class="nowrap">IO</th>
+                                    <th class="nowrap">Approver</th>
+                                    <th class="nowrap">Record Office (JCO)</th>
+                                    <th class="nowrap">Record Office (Offier)</th>
                                     <th class="noExport nowrap">Action</th>
                                 </tr>
                             </thead>
@@ -254,7 +262,7 @@
                                 </div>
                             </div>
                             <div class="col-sm-12 text-right">
-                                <input type="button" class="btn btn-primary" value="Save" id="btnDomainFlag" onclick="Proceed()" />
+                                <input type="button" class="btn btn-outline-primary" value="Save" id="btnDomainFlag" onclick="Proceed()" />
                             </div>
                             <div class="col-sm-12" id="msg">
                             </div>
@@ -410,7 +418,7 @@
                                 </div>
                             </div>
                             <div class="col-sm-12 text-right">
-                                <input type="button" class="btn btn-primary" value="Save" id="btnAddMapping" onclick="ProceedForMapping()" />
+                                <input type="button" class="btn btn-outline-primary" value="Save" id="btnAddMapping" onclick="ProceedForMapping()" />
                             </div>
                             <div class="col-sm-12" id="msg">
                             </div>
@@ -447,6 +455,10 @@
                                         <th class="nowrap">Requested Genr On (DT)</th>
                                         <th class="nowrap">Mapping</th>
                                         <th class="nowrap">IsActive</th>
+                                        <th class="nowrap">IO</th>
+                                        <th class="nowrap">Approver</th>
+                                        <th class="nowrap">RO</th>
+                                        <th class="nowrap">ORO</th>
                                         <th class="nowrap">Status</th>
                                     </tr>
                                 </thead>

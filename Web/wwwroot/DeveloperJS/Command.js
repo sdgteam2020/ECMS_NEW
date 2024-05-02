@@ -114,7 +114,7 @@ function BindData() {
                             listItem += "<td class='align-middle'><span id='comdAbbreviation'>" + response[i].ComdAbbreviation + "</span></td>";
                             
 
-                            if (response[i].Orderby != response.length-1)
+                            if (response[i].Orderby != response.length)
                                 listItem += "<td class='align-middle'><span id=''><button type='button' class='cls-btnorder btn btn-icon btn-round btn-info mr-1'><i class='fas fa-arrow-down'></i></button></span></td>";
                             else
                                 listItem += "<td></td>";

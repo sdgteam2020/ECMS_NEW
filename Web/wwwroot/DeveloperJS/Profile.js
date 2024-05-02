@@ -134,45 +134,28 @@ function SaveUserProfile(ArmyNo, Rank, Name, MobileNo, DialingCode, Extension, I
 
             if (result == DataSave) {
                 toastr.success('User has been saved');
-               
-                
-                
-               
             }
             else if (result == DataUpdate) {
                 toastr.success('User has been Updated');
-               
-               
-               
             }
             else if (result == DataExists) {
-
                 toastr.error('Army No Exits!');
-
             }
             else if (result == IncorrectData) {
-
                 toastr.error('Incorrect Data!');
-
             }
             else if (result == InternalServerError) {
                 Swal.fire({
                     icon: 'error',
                     title: 'Oops...',
                     text: 'Something went wrong or Invalid Entry!',
-
                 })
-
             } else {
                 if (result.length > 0) {
                     for (var i = 0; i < result.length; i++) {
                         toastr.error(result[i][0].ErrorMessage)
                     }
-
-
                 }
-
-
             }
         }
     });

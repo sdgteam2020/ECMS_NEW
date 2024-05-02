@@ -29,7 +29,11 @@ namespace DataTransferObject.Requests
         public int ICNoTDMUnitMapId { get; set; }
         public int ICNoTDMId { get; set; }
         public short ICNoTDMApptId { get; set; }
-       
-       
+        public bool IsRO { get; set; }
+        public bool IsIO { get; set; }
+        public bool IsCO { get; set; }
+        public bool IsORO { get; set; }
+        public string DialingCode { get; set; } = string.Empty;
+        public string Extension { get; set; } = string.Empty;
     }
 }
