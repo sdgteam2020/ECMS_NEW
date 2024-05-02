@@ -15,5 +15,9 @@ namespace DataTransferObject.Response
         public int UnMappedUser { get; set; }
         public int VerifiedUser { get; set; }
         public int NotVerifiedUser { get; set; }
+        public int IO { get; set; }
+        public int CO { get; set; }
+        public int RO { get; set; }
+        public int ORO { get; set; }
     }
 }

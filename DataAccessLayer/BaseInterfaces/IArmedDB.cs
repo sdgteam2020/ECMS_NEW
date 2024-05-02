@@ -13,5 +13,6 @@ namespace DataAccessLayer.BaseInterfaces
     {
         public Task<bool> GetByName(MArmedType Dto);
         public Task<List<DTOArmedResponse>> GetALLArmed();
+        public Task<DTOArmedIdCheckInFKTableResponse?> ArmedIdCheckInFKTable(byte ArmedId);
     }
 }

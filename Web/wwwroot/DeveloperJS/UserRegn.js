@@ -176,6 +176,50 @@
             BindData("NotVerifiedUser");
         }
     });
+    $("#btnIO").click(function () {
+        if ($("#lblIO").html() > 0) {
+            $("#tbldatadialog").DataTable().destroy();
+            $("#lblModelTitle").html('Total Not Verified Users');
+            $("#DataTableDialog").modal('show');
+            BindDialog("IO");
+        }
+        else {
+            BindData("IO");
+        }
+    });
+    $("#btnApprover").click(function () {
+        if ($("#lblApprover").html() > 0) {
+            $("#tbldatadialog").DataTable().destroy();
+            $("#lblModelTitle").html('Total Not Verified Users');
+            $("#DataTableDialog").modal('show');
+            BindDialog("CO");
+        }
+        else {
+            BindData("CO");
+        }
+    });
+    $("#btnRO").click(function () {
+        if ($("#lblRO").html() > 0) {
+            $("#tbldatadialog").DataTable().destroy();
+            $("#lblModelTitle").html('Total Not Verified Users');
+            $("#DataTableDialog").modal('show');
+            BindDialog("RO");
+        }
+        else {
+            BindData("RO");
+        }
+    });
+    $("#btnORO").click(function () {
+        if ($("#lblORO").html() > 0) {
+            $("#tbldatadialog").DataTable().destroy();
+            $("#lblModelTitle").html('Total Not Verified Users');
+            $("#DataTableDialog").modal('show');
+            BindDialog("ORO");
+        }
+        else {
+            BindData("ORO");
+        }
+    });
 });
 function BindDialog(Choice) {
     $("#tbldatadialog").DataTable({
@@ -204,7 +248,11 @@ function BindDialog(Choice) {
             { data: "UpdatedOn", name: "UpdatedOn" },
             { data: "Mapped", name: "Mapped" },
             { data: "Active", name: "Active" },
-            { data: "AdminFlag", name: "AdminFlag" }
+            { data: "AdminFlag", name: "AdminFlag" },
+            { data: "IsIO", name: "IsIO" },
+            { data: "IsCO", name: "IsCO" },
+            { data: "IsRO", name: "IsRO" },
+            { data: "IsORO", name: "IsORO" }
         ]    
         });
 }
@@ -281,6 +329,26 @@ function BindData(Choice) {
                             listItem += "<td class='align-middle'><span><span class='badge badge-pill badge-success' id='domain_approval'>Verifed</span></span></td>";
                         else
                             listItem += "<td class='align-middle'><span><span class='badge badge-pill badge-danger' id='domain_approval'>Not Verify</span></span></td>";
+
+                        if (response[i].IsIO == true)
+                            listItem += "<td class='align-middle'><span><span class='badge badge-pill badge-success' id='isIO'>Yes</span></span></td>";
+                        else
+                            listItem += "<td class='align-middle'><span><span class='badge badge-pill badge-danger' id='isIO'>No</span></span></td>";
+
+                        if (response[i].IsCO == true)
+                            listItem += "<td class='align-middle'><span><span class='badge badge-pill badge-success' id='isCO'>Yes</span></span></td>";
+                        else
+                            listItem += "<td class='align-middle'><span><span class='badge badge-pill badge-danger' id='isCO'>No</span></span></td>";
+
+                        if (response[i].IsRO == true)
+                            listItem += "<td class='align-middle'><span><span class='badge badge-pill badge-success' id='isRO'>Yes</span></span></td>";
+                        else
+                            listItem += "<td class='align-middle'><span><span class='badge badge-pill badge-danger' id='isRO'>No</span></span></td>";
+
+                        if (response[i].IsORO == true)
+                            listItem += "<td class='align-middle'><span><span class='badge badge-pill badge-success' id='isORO'>Yes</span></span></td>";
+                        else
+                            listItem += "<td class='align-middle'><span><span class='badge badge-pill badge-danger' id='isORO'>No</span></span></td>";
 
                         if (response[i].Id != null && response[i].Id != "null")
                             listItem += "<td class='align-middle'><span id='btnedit'><button type='button' class='cls-btnedit btn btn-icon btn-round btn-warning mr-1'><i class='fas fa-edit'></i></button></span></td>";
@@ -626,7 +694,6 @@ function ResetErrorMessageForMapping() {
 }
 
 function Proceed() {
-    debugger;
     ResetErrorMessageForMapping();
     let formId = '#UpdateDomainFlag';
     $.validator.unobtrusive.parse($(formId));
@@ -818,6 +885,10 @@ function AccountCount() {
             $("#lblUnMappedUser").html(response.UnMappedUser);
             $("#lblVerifiedUser").html(response.VerifiedUser);
             $("#lblNotVerifiedUser").html(response.NotVerifiedUser);
+            $("#lblIO").html(response.IO);
+            $("#lblApprover").html(response.CO);
+            $("#lblRO").html(response.RO);
+            $("#lblORO").html(response.ORO);
         }
     });
 }
