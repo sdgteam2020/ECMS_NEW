@@ -687,7 +687,7 @@ namespace DataAccessLayer
               " inner join MapUnit mapu on mapu.UnitMapId=trndomain.UnitId" +
               " inner join UserProfile usep on usep.UserId=trndomain.UserId" +
               " inner join MRank ran on ran.RankId=usep.RankId"+
-              " where trndomain.UnitId =@UnitId and usep.IsIO=@ISIO";
+              " where trndomain.UnitId =@UnitId and trndomain.IsIO=@ISIO";
 
             }else if (ISCO == 1)
             { 
@@ -696,7 +696,7 @@ namespace DataAccessLayer
              " inner join MapUnit mapu on mapu.UnitMapId=trndomain.UnitId" +
              " inner join UserProfile usep on usep.UserId=trndomain.UserId" +
              " inner join MRank ran on ran.RankId=usep.RankId" +
-             " where trndomain.UnitId =@UnitId and IsCO=@ISCO";
+             " where trndomain.UnitId =@UnitId and trndomain.IsCO=@ISCO";
             }
             else if (RO == 1)
             {
@@ -722,8 +722,10 @@ namespace DataAccessLayer
                         " inner join MapUnit mapu on mapu.UnitMapId=trndomain.UnitId " +
                         " inner join UserProfile usep on usep.UserId=trndomain.UserId " +
                         " inner join MRank ran on ran.RankId=usep.RankId " +
-                        " inner join MRecordOffice rec on trndomain.id=rec.TDMId " +
-                        " where usep.IsORO=1";
+                        " inner join MRecordOffice rec on trndomain.id=rec.TDMId and rec.ArmedId=56";
+                        //" inner join BasicDetails bas on bas.ArmedId=rec.ArmedId"+
+                        //" where  bas.BasicDetailId=@BasicDetailsId";
+                //" where usep.IsORO=1";
                 //   query = "Select trndomain.AspNetUsersId,ISNULL(usep.UserId,0) UserId,users.DomainId,usep.ArmyNo,usep.Name,ran.RankAbbreviation from TrnDomainMapping trndomain" +
                 //" inner join AspNetUsers users on trndomain.AspNetUsersId=users.Id" +
                 //" inner join MapUnit mapu on mapu.UnitMapId=trndomain.UnitId" +
