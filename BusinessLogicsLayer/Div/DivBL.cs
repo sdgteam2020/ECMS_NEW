@@ -34,5 +34,9 @@ namespace BusinessLogicsLayer.Div
         {
             return _DivDB.GetByName(Data);
         }
+        public async Task<DTODivIdCheckInFKTableResponse?> DivIdCheckInFKTable(byte DivId)
+        {
+            return await _DivDB.DivIdCheckInFKTable(DivId);
+        }
     }
 }

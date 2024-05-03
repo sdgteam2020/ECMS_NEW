@@ -6,6 +6,7 @@ using DataTransferObject.Response;
 using DataTransferObject.Response.User;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,8 +20,10 @@ namespace DataAccessLayer
     {
         protected new readonly ApplicationDbContext _context;
         protected readonly DapperContext _contextDP;
-        public ComdDB(ApplicationDbContext context, DapperContext contextDP) : base(context)
+        private readonly ILogger<ComdDB> _logger;
+        public ComdDB(ApplicationDbContext context, DapperContext contextDP, ILogger<ComdDB> logger) : base(context)
         {
+            _logger = logger;
             _context = context;
             _contextDP = contextDP;
         }
@@ -47,7 +50,7 @@ namespace DataAccessLayer
             return ret+1;
         }
 
-        public async Task<int> GetComdIdbyOrderby(int OrderBy)
+        public async Task<byte> GetComdIdbyOrderby(int OrderBy)
         {
             var ret= await _context.MComd.Where(P => P.Orderby == OrderBy).Select(c=>c.ComdId).FirstOrDefaultAsync(); 
            
@@ -135,6 +138,29 @@ namespace DataAccessLayer
 
 
             
+        }
+        public async Task<DTOComdIdCheckInFKTableResponse?> ComdIdCheckInFKTable(byte ComdId)
+        {
+            try
+            {
+                string query = "Select  count(distinct mcor.CorpsId) as TotalCorps,count(distinct mbd.BdeId) as TotalBde ,count(distinct mdiv.DivId) as TotalDiv,count(distinct mapunit.UnitMapId) as TotalMapUnit from MComd mcom"+
+                                " left join MCorps mcor on mcor.ComdId = mcom.ComdId " +
+                                " left join MBde mbd on mbd.ComdId = mcom.ComdId " +
+                                " left join MDiv mdiv on mdiv.ComdId = mcom.ComdId " +
+                                " left join MapUnit mapunit on mapunit.ComdId = mcom.ComdId " +
+                                " where mcom.ComdId = @ComdId";
+
+                using (var connection = _contextDP.CreateConnection())
+                {
+                    var ret = await connection.QueryAsync<DTOComdIdCheckInFKTableResponse>(query, new { ComdId });
+                    return ret.FirstOrDefault();
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "ComdDB->ComdIdCheckInFKTable");
+                return null;
+            }
         }
     }
 }

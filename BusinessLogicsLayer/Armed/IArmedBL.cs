@@ -14,5 +14,6 @@ namespace BusinessLogicsLayer.Master
 
         public Task<bool> GetByName(MArmedType DTo);
         public Task<List<DTOArmedResponse>> GetALLArmed();
+        public Task<DTOArmedIdCheckInFKTableResponse?> ArmedIdCheckInFKTable(byte ArmedId);
     }
 }

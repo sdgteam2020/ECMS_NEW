@@ -183,29 +183,7 @@ namespace DataAccessLayer.Migrations
                         .HasMaxLength(10)
                         .HasColumnType("varchar(10)");
 
-                    b.Property<string>("DialingCode")
-                        .IsRequired()
-                        .HasMaxLength(6)
-                        .HasColumnType("varchar(6)");
-
-                    b.Property<string>("Extension")
-                        .IsRequired()
-                        .HasMaxLength(5)
-                        .HasColumnType("varchar(5)");
-
                     b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsCO")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsIO")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsORO")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsRO")
                         .HasColumnType("bit");
 
                     b.Property<bool>("IsToken")
@@ -1935,6 +1913,28 @@ namespace DataAccessLayer.Migrations
 
                     b.Property<int>("AspNetUsersId")
                         .HasColumnType("int");
+
+                    b.Property<string>("DialingCode")
+                        .IsRequired()
+                        .HasMaxLength(6)
+                        .HasColumnType("varchar(6)");
+
+                    b.Property<string>("Extension")
+                        .IsRequired()
+                        .HasMaxLength(5)
+                        .HasColumnType("varchar(5)");
+
+                    b.Property<bool>("IsCO")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsIO")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsORO")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsRO")
+                        .HasColumnType("bit");
 
                     b.Property<int?>("MappedBy")
                         .HasColumnType("int");

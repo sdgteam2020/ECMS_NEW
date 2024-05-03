@@ -5,6 +5,9 @@ $(document).ready(function () {
         BindData()
 
     });
+    $("#btnReset").click(function () {
+        Reset();
+    });
     $("#btnsave").click(function () {
         if ($("#SaveForm")[0].checkValidity()) {
 
@@ -323,7 +326,9 @@ function Delete(Id) {
                         text: errormsg
                     });
                 }
-
+                else if (response == "5") {
+                    toastr.error('UnitId is used in child table.');
+                }
                 else if (response == Success) {
                     //lol++;
                     //if (lol == Tot) {

@@ -115,7 +115,26 @@ namespace DataAccessLayer
             return Bde;
         }
 
+        public async Task<DTOBdeIdCheckInFKTableResponse?> BdeIdCheckInFKTable(byte BdeId)
+        {
+            try
+            {
+                string query = "Select  count(distinct mapunit.UnitMapId) as TotalMapUnit from MBde mbd" +
+                                " left join MapUnit mapunit on mapunit.BdeId = mbd.BdeId " +
+                                " where mbd.BdeId = @BdeId";
 
+                using (var connection = _contextDP.CreateConnection())
+                {
+                    var ret = await connection.QueryAsync<DTOBdeIdCheckInFKTableResponse>(query, new { BdeId });
+                    return ret.FirstOrDefault();
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "BdeDB->BdeIdCheckInFKTable");
+                return null;
+            }
+        }
 
         //public UserDB(IConfiguration configuration)
         //{

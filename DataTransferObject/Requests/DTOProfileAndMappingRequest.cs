@@ -14,6 +14,9 @@ namespace DataTransferObject.Requests
     {
         [RegularExpression(@"^[\d]+$", ErrorMessage = "UserId is number.")]
         public int UserId { get; set; }
+        
+        [RegularExpression(@"^[\d]+$", ErrorMessage = "TDMId is number.")]
+        public int TDMId { get; set; }
 
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
         [MinLength(8, ErrorMessage = "Minimum length of Offr Army No is eight character.")]
@@ -58,16 +61,16 @@ namespace DataTransferObject.Requests
         public int UnitMapId { get; set; }
 
         [RegularExpression("^[a-zA-Z]*$", ErrorMessage = "Only Alphabets allowed.")]
-        public Boolean IsRO { get; set; }
+        public bool IsRO { get; set; }
 
         [RegularExpression("^[a-zA-Z]*$", ErrorMessage = "Only Alphabets allowed.")]
-        public Boolean IsIO { get; set; }
+        public bool IsIO { get; set; }
 
         [RegularExpression("^[a-zA-Z]*$", ErrorMessage = "Only Alphabets allowed.")]
-        public Boolean IsCO { get; set; }
+        public bool IsCO { get; set; }
 
         [RegularExpression("^[a-zA-Z]*$", ErrorMessage = "Only Alphabets allowed.")]
-        public Boolean IsORO { get; set; }
+        public bool IsORO { get; set; }
         
         [StringLength(50)]
         [Column(TypeName = "varchar(50)")]

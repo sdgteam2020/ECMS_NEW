@@ -69,6 +69,10 @@ namespace BusinessLogicsLayer.BdeCate
             }
             return KeyConstants.Success;
         }
+        public async Task<DTORankIdCheckInFKTableResponse?> RankIdCheckInFKTable(short RankId)
+        {
+            return await _iRankDB.RankIdCheckInFKTable(RankId);
+        }
 
     }
 }

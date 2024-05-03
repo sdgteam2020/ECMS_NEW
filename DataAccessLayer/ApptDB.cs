@@ -11,16 +11,20 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using DataAccessLayer.Logger;
+using Dapper;
 
 namespace DataAccessLayer
 {
     public class ApptDB : GenericRepositoryDL<MAppointment>, IApptDB
     {
         protected readonly ApplicationDbContext _context;
+        private readonly DapperContext _contextDP;
         private readonly ILogger<MAppointment> _logger;
-        public ApptDB(ApplicationDbContext context, ILogger<MAppointment> logger) : base(context)
+        public ApptDB(ApplicationDbContext context, ILogger<MAppointment> logger, DapperContext contextDP) : base(context)
         {
             _context = context;
+            _contextDP = contextDP;
             _logger = logger;
         }
         private readonly IConfiguration configuration;
@@ -89,7 +93,7 @@ namespace DataAccessLayer
 
             return Task.FromResult(GetALL);
         }
-        public async Task<DTOAppointmentResponse?> GetByApptId(int ApptId)
+        public async Task<DTOAppointmentResponse?> GetByApptId(short ApptId)
         {
             try
             {
@@ -160,8 +164,25 @@ namespace DataAccessLayer
         //{
         //    this.configuration = configuration;
         //}
+        public async Task<DTOApptIdCheckInFKTableResponse?> ApptIdCheckInFKTable(short ApptId)
+        {
+            try
+            {
+                string query = "Select count(distinct mapp.ApptId)as TotalTDM from MAppointment mapp" +
+                                " left join TrnDomainMapping tdm on tdm.ApptId = mapp.ApptId " +
+                                " where mapp.ApptId =@ApptId";
 
-
-
+                using (var connection = _contextDP.CreateConnection())
+                {
+                    var ret = await connection.QueryAsync<DTOApptIdCheckInFKTableResponse>(query, new { ApptId });
+                    return ret.FirstOrDefault();
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "ApptDB->ApptIdCheckInFKTable");
+                return null;
+            }
+        }
     }
 }

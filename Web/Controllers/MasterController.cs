@@ -2,6 +2,7 @@
 using BusinessLogicsLayer.Master;
 using DapperRepo.Core.Constants;
 using DataAccessLayer.BaseInterfaces;
+using DataTransferObject.Domain;
 using DataTransferObject.Domain.Master;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
@@ -25,11 +26,13 @@ namespace Web.Controllers
     public class MasterController : Controller
     {   
         private readonly IUnitOfWork unitOfWork;
+        private readonly IUserProfileBL userProfileBL;
         private readonly IChangeHierarchyMasterBL changeHierarchyMaster;
         private readonly ILogger<MasterController> _logger;
         private readonly IEncryptsqlDB _iEncryptsqlDB;
-        public MasterController(IUnitOfWork unitOfWork, IChangeHierarchyMasterBL changeHierarchyMaster, ILogger<MasterController> logger, IEncryptsqlDB iEncryptsqlDB)
+        public MasterController(IUnitOfWork unitOfWork, IUserProfileBL userProfileBL, IChangeHierarchyMasterBL changeHierarchyMaster, ILogger<MasterController> logger, IEncryptsqlDB iEncryptsqlDB)
         {
+            this.userProfileBL = userProfileBL;
             this.unitOfWork = unitOfWork;
             this.changeHierarchyMaster = changeHierarchyMaster;
             _logger = logger; 
@@ -107,8 +110,17 @@ namespace Web.Controllers
         {
             try
             {
-                await unitOfWork.Comds.Delete(dTO);
-                return Json(KeyConstants.Success);
+                DTOComdIdCheckInFKTableResponse? dTOComdIdCheckInFKTableResponse = await unitOfWork.Comds.ComdIdCheckInFKTable(dTO.ComdId);
+                if(dTOComdIdCheckInFKTableResponse != null && (dTOComdIdCheckInFKTableResponse.TotalCorps >0 || dTOComdIdCheckInFKTableResponse.TotalBde >0 || dTOComdIdCheckInFKTableResponse.TotalDiv >0 || dTOComdIdCheckInFKTableResponse.TotalMapUnit >0))
+                {
+                    return Json(5);
+                }
+                else
+                {
+                    await unitOfWork.Comds.Delete(dTO);
+                    return Json(KeyConstants.Success);
+                }
+
             }
             catch (Exception ex)
             {
@@ -249,8 +261,16 @@ namespace Web.Controllers
         {
             try
             {
-                await unitOfWork.Corps.Delete(dTO);
-                return Json(KeyConstants.Success);
+                DTOCorpsIdCheckInFKTableResponse? dTOCorpsIdCheckIn = await unitOfWork.Corps.CorpsIdCheckInFKTable(dTO.CorpsId);
+                if (dTOCorpsIdCheckIn != null && (dTOCorpsIdCheckIn.TotalBde > 0 || dTOCorpsIdCheckIn.TotalDiv > 0 || dTOCorpsIdCheckIn.TotalMapUnit > 0))
+                {
+                    return Json(5);
+                }
+                else
+                {
+                    await unitOfWork.Corps.Delete(dTO);
+                    return Json(KeyConstants.Success);
+                }
             }
             catch (Exception ex)
             {
@@ -356,8 +376,17 @@ namespace Web.Controllers
         {
             try
             {
-                await unitOfWork.Div.Delete(dTO);
-                return Json(KeyConstants.Success);
+                DTODivIdCheckInFKTableResponse? dTODivIdCheckIn = await unitOfWork.Div.DivIdCheckInFKTable(dTO.DivId);
+                if (dTODivIdCheckIn != null && (dTODivIdCheckIn.TotalBde > 0 || dTODivIdCheckIn.TotalMapUnit > 0))
+                {
+                    return Json(5);
+                }
+                else
+                {
+                    await unitOfWork.Div.Delete(dTO);
+                    return Json(KeyConstants.Success);
+                }
+
             }
             catch (Exception ex)
             {
@@ -519,8 +548,18 @@ namespace Web.Controllers
         {
             try
             {
-                await unitOfWork.Bde.Delete(dTO);
-                return Json(KeyConstants.Success);
+                DTOBdeIdCheckInFKTableResponse? dTOBdeIdCheckIn = await unitOfWork.Bde.BdeIdCheckInFKTable(dTO.BdeId);
+                if (dTOBdeIdCheckIn != null && (dTOBdeIdCheckIn.TotalMapUnit > 0))
+                {
+                    return Json(5);
+                }
+                else
+                {
+                    await unitOfWork.Bde.Delete(dTO);
+                    return Json(KeyConstants.Success);
+                }
+
+
             }
             catch (Exception ex)
             {
@@ -752,16 +791,16 @@ namespace Web.Controllers
         {
             try
             {
-                MapUnit mapUnit = await unitOfWork.MappUnit.Delete(UnitMapId);
-                if(mapUnit!=null)
+                DTOUnitMapIdCheckInFKTableResponse? dTOUnitMapId = await unitOfWork.MappUnit.UnitMapIdCheckInFKTable(UnitMapId);
+                if (dTOUnitMapId != null && (dTOUnitMapId.TotalBD > 0 || dTOUnitMapId.TotalRO >0 || dTOUnitMapId.TotalTDM >0 || dTOUnitMapId.TotalTF> 0 || dTOUnitMapId.TotalTPOFrom>0 || dTOUnitMapId.TotalTPOTo>0))
                 {
-                    return Json(KeyConstants.Success);
+                    return Json(5);
                 }
                 else
                 {
-                    return Json(KeyConstants.InternalServerError);
+                    await unitOfWork.MappUnit.Delete(UnitMapId);
+                    return Json(KeyConstants.Success);
                 }
-
             }
             catch (Exception ex)
             {
@@ -859,8 +898,17 @@ namespace Web.Controllers
         {
             try
             {
-                await unitOfWork.Unit.Delete(dTO);
-                return Json(KeyConstants.Success);
+                DTOUnitIdCheckInFKTableResponse? dTOUnitIdCheckIn = await unitOfWork.Unit.UnitIdCheckInFKTable(dTO.UnitId);
+                if (dTOUnitIdCheckIn != null && (dTOUnitIdCheckIn.TotalMapUnit > 0))
+                {
+                    return Json(5);
+                }
+                else
+                {
+                    await unitOfWork.Unit.Delete(dTO);
+                    return Json(KeyConstants.Success);
+                }
+
             }
             catch (Exception ex)
             {
@@ -1091,7 +1139,7 @@ namespace Web.Controllers
 
         }
         [AllowAnonymous]
-        public async Task<IActionResult> GetByApptId(int ApptId)
+        public async Task<IActionResult> GetByApptId(short ApptId)
         {
             try
             {
@@ -1108,11 +1156,20 @@ namespace Web.Controllers
         {
             try
             {
-                await unitOfWork.Appt.Delete(dTO);
-                return Json(KeyConstants.Success);
+                DTOApptIdCheckInFKTableResponse? dTOApptIdCheckIn = await unitOfWork.Appt.ApptIdCheckInFKTable(dTO.ApptId);
+                if (dTOApptIdCheckIn != null && (dTOApptIdCheckIn.TotalTDM > 0))
+                {
+                    return Json(5);
+                }
+                else
+                {
+                    await unitOfWork.Appt.Delete(dTO);
+                    return Json(KeyConstants.Success);
+                }
             }
             catch (Exception ex)
             {
+                _logger.LogError(1001, ex, "Master->DeleteAppointment");
                 return Json(KeyConstants.InternalServerError);
             }
         }
@@ -1223,16 +1280,23 @@ namespace Web.Controllers
         {
             try
             {
-                await unitOfWork.Rank.Delete(dTO);
-                return Json(KeyConstants.Success);
+                DTORankIdCheckInFKTableResponse? dTORankIdCheckIn = await unitOfWork.Rank.RankIdCheckInFKTable(dTO.RankId);
+                if (dTORankIdCheckIn != null && (dTORankIdCheckIn.TotalBD > 0 || dTORankIdCheckIn.TotalBDT > 0 || dTORankIdCheckIn.TotalUP >0))
+                {
+                    return Json(5);
+                }
+                else
+                {
+                    await unitOfWork.Rank.Delete(dTO);
+                    return Json(KeyConstants.Success);
+                }
+
             }
             catch (Exception ex)
             {
                 _logger.LogError(1001, ex, "Master->DeleteRank");
                 return Json(KeyConstants.InternalServerError);
             }
-
-
         }
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> RankOrderByChange(MRank dTO)
@@ -1344,19 +1408,22 @@ namespace Web.Controllers
         {
             try
             {
-                await unitOfWork.Armed.Delete(dTO);
-                return Json(KeyConstants.Success);
+                DTOArmedIdCheckInFKTableResponse? dTOArmedIdCheckIn = await unitOfWork.Armed.ArmedIdCheckInFKTable(dTO.ArmedId);
+                if (dTOArmedIdCheckIn != null && (dTOArmedIdCheckIn.TotalBD > 0 || dTOArmedIdCheckIn.TotalRO >0))
+                {
+                    return Json(5);
+                }
+                else
+                {
+                    await unitOfWork.Armed.Delete(dTO);
+                    return Json(KeyConstants.Success);
+                }
             }
             catch (Exception ex)
             {
                 _logger.LogError(1001, ex, "Master->DeleteArmed");
                 return Json(KeyConstants.InternalServerError);
             }
-
-
-
-
-
         }
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteArmedMultiple(int[] ints)
@@ -1614,7 +1681,7 @@ namespace Web.Controllers
         }
 
         [Authorize(Roles = "User")]
-        public async Task<IActionResult> GetUpdateRecordOffice()
+        public async Task<IActionResult> GetUpdateRecordOffice(int RecordOfficeId)
         {
             try
             {
@@ -1626,7 +1693,7 @@ namespace Web.Controllers
                 }
                 int UnitId = dtoSession != null ? dtoSession.UnitId : 0;
                 int TDMId = dtoSession != null ? dtoSession.TrnDomainMappingId : 0;
-                return Json(await unitOfWork.RecordOffice.GetUpdateRecordOffice(TDMId));
+                return Json(await unitOfWork.RecordOffice.GetUpdateRecordOffice(RecordOfficeId));
             }
             catch (Exception ex)
             {
@@ -1649,9 +1716,25 @@ namespace Web.Controllers
             int TDMId = dtoSession != null ? dtoSession.TrnDomainMappingId : 0;
             int UserId = dtoSession != null ? dtoSession.UserId : 0;
             ViewBag.UnitId = UnitId;
-            ViewBag.TDMId = TDMId;
-            ViewBag.UserId = UserId;
-            return View();
+
+
+            DTOGetROByTDMIdResponse? dTOGetROByUserIdResponse = await unitOfWork.RecordOffice.GetROByTDMId(TDMId);
+            if (dTOGetROByUserIdResponse == null)
+            {
+                TempData["error"] = "You are not authorizes this page.";
+                return RedirectToActionPermanent("DashboardUserMgt", "Home");
+            }
+            else if (dTOGetROByUserIdResponse.IsRO == true || dTOGetROByUserIdResponse.IsORO == true || dTOGetROByUserIdResponse.TDMId == TDMId)
+            {
+                ViewBag.ROId = dTOGetROByUserIdResponse.RecordOfficeId;
+                ViewBag.TDMId = dTOGetROByUserIdResponse.TDMId;
+                return View();
+            }
+            else
+            {
+                TempData["error"] = "You are not authorizes this page.";
+                return RedirectToActionPermanent("DashboardUserMgt", "Home");
+            }
         }
         [Authorize(Roles = "User")]
         public async Task<IActionResult> GetDDMappedForRecord(int UnitMapId)

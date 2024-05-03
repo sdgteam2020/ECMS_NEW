@@ -1,9 +1,12 @@
-﻿using DataAccessLayer.BaseInterfaces;
+﻿using Dapper;
+using DataAccessLayer.BaseInterfaces;
+using DataAccessLayer.Logger;
 using DataTransferObject.Domain.Master;
 using DataTransferObject.Response;
 using DataTransferObject.Response.User;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,9 +19,13 @@ namespace DataAccessLayer
     public class ArmedDB : GenericRepositoryDL<MArmedType>, IArmedDB
     {
         protected readonly ApplicationDbContext _context;
-        public ArmedDB(ApplicationDbContext context) : base(context)
+        private readonly DapperContext _contextDP;
+        private readonly ILogger<ArmedDB> _logger;
+        public ArmedDB(ApplicationDbContext context, ILogger<ArmedDB> logger, DapperContext contextDP) : base(context)
         {
             _context = context;
+            _contextDP = contextDP;
+            _logger = logger;
         }
       
 
@@ -55,6 +62,27 @@ namespace DataAccessLayer
 
 
             return Task.FromResult(GetALL);
+        }
+        public async Task<DTOArmedIdCheckInFKTableResponse?> ArmedIdCheckInFKTable(byte ArmedId)
+        {
+            try
+            {
+                string query = "Select count(distinct bd.BasicDetailId) as TotalBD, count(mrec.RecordOfficeId)as TotalRO from MArmedType marm" +
+                                " left join BasicDetails bd on bd.ArmedId = marm.ArmedId " +
+                                " left join MRecordOffice mrec on mrec.ArmedId = marm.ArmedId " +
+                                " where marm.ArmedId=@ArmedId";
+
+                using (var connection = _contextDP.CreateConnection())
+                {
+                    var ret = await connection.QueryAsync<DTOArmedIdCheckInFKTableResponse>(query, new { ArmedId });
+                    return ret.FirstOrDefault();
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "ArmedDB->ArmedIdCheckInFKTable");
+                return null;
+            }
         }
     }
 }

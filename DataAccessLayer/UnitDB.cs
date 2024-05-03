@@ -137,5 +137,25 @@ namespace DataAccessLayer
             }
 
         }
+        public async Task<DTOUnitIdCheckInFKTableResponse?> UnitIdCheckInFKTable(int UnitId)
+        {
+            try
+            {
+                string query = "Select  count(mapunit.UnitMapId) as TotalMapUnit from MUnit munit" +
+                                " left join MapUnit mapunit on mapunit.UnitId = munit.UnitId " +
+                                " where munit.UnitId = @UnitId";
+
+                using (var connection = _contextDP.CreateConnection())
+                {
+                    var ret = await connection.QueryAsync<DTOUnitIdCheckInFKTableResponse>(query, new { UnitId });
+                    return ret.FirstOrDefault();
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "UnitDB->UnitIdCheckInFKTable");
+                return null;
+            }
+        }
     }
 }

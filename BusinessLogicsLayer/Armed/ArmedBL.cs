@@ -30,5 +30,9 @@ namespace BusinessLogicsLayer.Master
         {
             return _iArmedDB.GetALLArmed();
         }
+        public async Task<DTOArmedIdCheckInFKTableResponse?> ArmedIdCheckInFKTable(byte ArmedId)
+        {
+            return await _iArmedDB.ArmedIdCheckInFKTable(ArmedId);
+        }
     }
 }

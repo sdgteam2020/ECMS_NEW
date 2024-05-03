@@ -22,7 +22,7 @@
                 <div class="col-auto">
                     <h1 class="page-header-title">
                         <div class="page-header-icon"> <i class="fa fa-bars"></i></div>
-                        <a href="/Master/DashboardMaster" class="mr-2">Dashboard</a> > Unit
+                        <a href="/Master/DashboardMaster" class="mr-2">Dashboard</a> > Domain Registration
 
                     </h1>
                 </div>
@@ -96,6 +96,18 @@
                     <div class="count-label">
                         Not Verified<br /><label id="lblNotVerifiedUser">0</label>
                     </div>
+                    <div class="count-label">
+                        IO<br /><label id="lblIO">0</label>
+                    </div>
+                    <div class="count-label">
+                        Approver<br /><label id="lblApprover">0</label>
+                    </div>
+                    <div class="count-label">
+                        RO<br /><label id="lblRO">0</label>
+                    </div>
+                    <div class="count-label">
+                        ORO<br /><label id="lblORO">0</label>
+                    </div>
                 </div>
 
                 <div class="table-responsive">
@@ -110,6 +122,10 @@
                                 <th class="nowrap">Requested Generated On (Dt)</th>
                                 <th class="nowrap">Mapping</th>
                                 <th class="nowrap">Active Yes/No</th>
+                                <th class="nowrap">IO</th>
+                                <th class="nowrap">Approver</th>
+                                <th class="nowrap">Record Office (JCO)</th>
+                                <th class="nowrap">Record Office (Offier)</th>
                                 <th class="noExport nowrap">Action</th>
                             </tr>
                         </thead>
@@ -151,40 +167,18 @@
                                     <span class="text-danger field-validation-valid" data-valmsg-for="ddlRoles" data-valmsg-replace="true"></span>
                                 </div>
                             </div>
-                            <div class="form-group row mb-4">
-                                <label class="col-form-label col-sm-4 fw-bold">Approval<i class="fas fa-asterisk mand1"></i></label>
+                            <div class="form-group row mb-2">
+                                <label class="col-form-label col-sm-4 fw-bold">ASCON Dialing<i class="fas fa-asterisk mand1"></i></label>
                                 <div class="col-sm-8">
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="txtapproval" value="true" id="txtapprovalyes" data-val-regex-pattern="^[\w]*$">
-                                        <label class="form-check-label" for="txtapprovalyes">
-                                            Yes
-                                        </label>
-                                    </div>
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="txtapproval" value="false" id="txtapprovalno" data-val-regex-pattern="^[\w]*$">
-                                        <label class="form-check-label" for="txtapprovalno">
-                                            No
-                                        </label>
-                                    </div>
-                                    <span class="text-danger field-validation-valid" id="txtapproval-error"></span>
+                                    <input class="form-control1 isNumerictxt" placeholder="Enter ASCON Dialing" id="txtDialingCode" name="txtDialingCode" maxlength="6" data-val-maxlength="Maximum length of ASCON Dialing is six digit." data-val-maxlength-max="6" data-val-minlength="Minimum length of ASCON Dialing is six digit." data-val-minlength-min="6" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="ASCON Dialing is required." data-val-regex-pattern="^[\d]+$" />
+                                    <span class="text-danger field-validation-valid" data-valmsg-for="txtDialingCode" data-valmsg-replace="true"></span>
                                 </div>
                             </div>
-                            <div class="form-group row mb-4">
-                                <label class="col-form-label col-sm-4 fw-bold">Active<i class="fas fa-asterisk mand1"></i></label>
+                            <div class="form-group row mb-2">
+                                <label class="col-form-label col-sm-4 fw-bold">Extension<i class="fas fa-asterisk mand1"></i></label>
                                 <div class="col-sm-8">
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="txtactive" value="true" id="txtactiveyes" data-val="true" data-val-regex-pattern="^[\w]*$">
-                                        <label class="form-check-label" for="txtactiveyes">
-                                            Yes
-                                        </label>
-                                    </div>
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="txtactive" value="false" id="txtactiveno" data-val="true" data-val-regex-pattern="^[\w]*$">
-                                        <label class="form-check-label" for="txtactiveno">
-                                            No
-                                        </label>
-                                    </div>
-                                    <span class="text-danger field-validation-valid" id="txtactive-error"></span>
+                                    <input class="form-control1 isNumerictxt" placeholder="Enter Extension" id="txtExtension" name="txtExtension" maxlength="5" data-val-maxlength="Maximum length of Extension is five digit." data-val-maxlength-max="5" data-val-minlength="Minimum length of Extension is four digit." data-val-minlength-min="4" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="Extension is required." data-val-regex-pattern="^[\d]+$" />
+                                    <span class="text-danger field-validation-valid" data-valmsg-for="txtExtension" data-valmsg-replace="true"></span>
                                 </div>
                             </div>
                             <div class="form-group row mb-2">
@@ -205,12 +199,12 @@
                                     <span class="text-danger field-validation-valid" data-valmsg-for="txtUnitName" data-valmsg-replace="true"></span>
                                 </div>
                             </div>
-                             <div class="row mb-2">
+                            <div class="row mb-2">
                                 <label class="col-form-label col-sm-4 fw-bold">SUS No</label>
                                 <div class="col-sm-8">
                                     <label id="lblSusno" class="col-form-label unit-label-background"></label>
                                 </div>
-                            </div> 
+                            </div>
                             <div id="lbl1" class="row mb-2 d-none">
                                 <label class="col-form-label col-sm-4 fw-bold">PSO / Dte</label>
                                 <div class="col-sm-8">
@@ -253,8 +247,116 @@
                                     <label class="col-form-label unit-label-background" id="lblFmn"></label>
                                 </div>
                             </div>
+                            <div class="form-group row mb-2">
+                                <label class="col-form-label col-sm-9 fw-bold">Approval<i class="fas fa-asterisk mand1"></i></label>
+                                <div class="col-sm-3">
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="txtapproval" value="true" id="txtapprovalyes" data-val-regex-pattern="^[\w]*$">
+                                        <label class="form-check-label" for="txtapprovalyes">
+                                            Yes
+                                        </label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="txtapproval" value="false" id="txtapprovalno" data-val-regex-pattern="^[\w]*$">
+                                        <label class="form-check-label" for="txtapprovalno">
+                                            No
+                                        </label>
+                                    </div>
+                                    <span class="text-danger field-validation-valid" id="txtapproval-error"></span>
+                                </div>
+                            </div>
+                            <div class="form-group row mb-2">
+                                <label class="col-form-label col-sm-9 fw-bold">Active<i class="fas fa-asterisk mand1"></i></label>
+                                <div class="col-sm-3">
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="txtactive" value="true" id="txtactiveyes" data-val="true" data-val-regex-pattern="^[\w]*$">
+                                        <label class="form-check-label" for="txtactiveyes">
+                                            Yes
+                                        </label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="txtactive" value="false" id="txtactiveno" data-val="true" data-val-regex-pattern="^[\w]*$">
+                                        <label class="form-check-label" for="txtactiveno">
+                                            No
+                                        </label>
+                                    </div>
+                                    <span class="text-danger field-validation-valid" id="txtactive-error"></span>
+                                </div>
+                            </div>
+                            <div class="form-group row mb-2">
+                                <label class="col-form-label col-sm-9 fw-bold">Are you performing the Duties of OC / CO / OC Tps?<i class="fas fa-asterisk mand1"></i></label>
+                                <div class="col-sm-3">
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="InitatingOffr" value="true" id="initatingOffryes" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-regex-pattern="^[a-zA-Z]*$">
+                                        <label class="form-check-label" for="initatingOffryes">
+                                            Yes
+                                        </label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="InitatingOffr" value="false" id="initatingOffrno" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-regex-pattern="^[a-zA-Z]*$">
+                                        <label class="form-check-label" for="initatingOffrno">
+                                            No
+                                        </label>
+                                    </div>
+                                    <span class="text-danger field-validation-valid" id="InitatingOffr-error" data-valmsg-for="InitatingOffr" data-valmsg-replace="true"></span>
+                                </div>
+                            </div>
+                            <div class="form-group row mb-2">
+                                <label class="col-form-label col-sm-9 fw-bold">Are you Commanding a Unit/ Sub Unit/ Fmn / Dte?<i class="fas fa-asterisk mand1"></i></label>
+                                <div class="col-sm-3">
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="CommandingOffr" value="true" id="commandingOffryes" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-regex-pattern="^[a-zA-Z]*$">
+                                        <label class="form-check-label" for="commandingOffryes">
+                                            Yes
+                                        </label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="CommandingOffr" value="false" id="commandingOffrno" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-regex-pattern="^[a-zA-Z]*$">
+                                        <label class="form-check-label" for="commandingOffrno">
+                                            No
+                                        </label>
+                                    </div>
+                                    <span class="text-danger field-validation-valid" id="CommandingOffr-error" data-valmsg-for="CommandingOffr" data-valmsg-replace="true"></span>
+                                </div>
+                            </div>
+                            <div class="form-group row mb-2">
+                                <label class="col-form-label col-sm-9 fw-bold">Are you performing the Duties of CO, Record Office/ Col Records?<i class="fas fa-asterisk mand1"></i></label>
+                                <div class="col-sm-3">
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="IsRO" value="true" id="isroyes" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-regex-pattern="^[a-zA-Z]*$">
+                                        <label class="form-check-label" for="isroyes">
+                                            Yes
+                                        </label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="IsRO" value="false" id="isrono" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-regex-pattern="^[a-zA-Z]*$">
+                                        <label class="form-check-label" for="isrono">
+                                            No
+                                        </label>
+                                    </div>
+                                    <span class="text-danger field-validation-valid" id="IsRO-error" data-valmsg-for="IsRO" data-valmsg-replace="true"></span>
+                                </div>
+                            </div>
+                            <div class="form-group row mb-2">
+                                <label class="col-form-label col-sm-9 fw-bold">Are you performing the Duties of Brig ORO?<i class="fas fa-asterisk mand1"></i></label>
+                                <div class="col-sm-3">
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="IsORO" value="true" id="isoroyes" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-regex-pattern="^[a-zA-Z]*$">
+                                        <label class="form-check-label" for="isoroyes">
+                                            Yes
+                                        </label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="IsORO" value="false" id="isorono" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-regex-pattern="^[a-zA-Z]*$">
+                                        <label class="form-check-label" for="isorono">
+                                            No
+                                        </label>
+                                    </div>
+                                    <span class="text-danger field-validation-valid" id="IsORO-error" data-valmsg-for="IsORO" data-valmsg-replace="true"></span>
+                                </div>
+                            </div>
                             <div class="col-sm-12 text-right">
-                                <input type="button" class="btn btn-primary" value="Save" id="btnDomainAdd" onclick="Proceed()" />
+                                <input type="button" class="btn btn-outline-primary" value="Save" id="btnDomainAdd" onclick="Proceed()" />
                                 <button type="button" id="btnDomainAddReset" class="btn btn-outline-danger">Reset</button>
                             </div>
                             <div class="col-sm-12" id="msg">

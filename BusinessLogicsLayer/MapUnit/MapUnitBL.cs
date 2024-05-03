@@ -58,6 +58,9 @@ namespace BusinessLogicsLayer.Unit
         {
             return await _UnitDB.FindUnitIdMapped(UnitId, UnitMapId);
         }
-
+        public async Task<DTOUnitMapIdCheckInFKTableResponse?> UnitMapIdCheckInFKTable(int UnitMapId)
+        {
+            return await _UnitDB.UnitMapIdCheckInFKTable(UnitMapId);
+        }
     }
 }

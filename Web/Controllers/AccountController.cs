@@ -1143,7 +1143,14 @@ namespace Web.Controllers
                     dTOTempSession.TDMUnitMapId = _trnDomainMapping.UnitId;
                     dTOTempSession.TDMApptId = _trnDomainMapping.ApptId;
                     dTOTempSession.AspNetUsersId = _trnDomainMapping.ApplicationUser.Id;
-                    
+                    dTOTempSession.IsIO = _trnDomainMapping.IsIO;
+                    dTOTempSession.IsCO = _trnDomainMapping.IsCO;
+                    dTOTempSession.IsRO = _trnDomainMapping.IsRO;
+                    dTOTempSession.IsORO = _trnDomainMapping.IsORO;
+                    dTOTempSession.DialingCode = _trnDomainMapping.DialingCode;
+                    dTOTempSession.Extension = _trnDomainMapping.Extension;
+
+
                     if (_trnDomainMapping.Role !=null)
                     {
                         dTOTempSession.Status = 5;
@@ -1169,7 +1176,13 @@ namespace Web.Controllers
                     dTOTempSession.TDMUnitMapId = _trnDomainMapping.UnitId;
                     dTOTempSession.TDMApptId = _trnDomainMapping.ApptId;
                     dTOTempSession.AspNetUsersId = _trnDomainMapping.ApplicationUser.Id;
-                    
+                    dTOTempSession.IsIO = _trnDomainMapping.IsIO;
+                    dTOTempSession.IsCO = _trnDomainMapping.IsCO;
+                    dTOTempSession.IsRO = _trnDomainMapping.IsRO;
+                    dTOTempSession.IsORO = _trnDomainMapping.IsORO;
+                    dTOTempSession.DialingCode = _trnDomainMapping.DialingCode;
+                    dTOTempSession.Extension = _trnDomainMapping.Extension;
+
                     if (_trnDomainMapping.Role != null)
                     {
                         dTOTempSession.Status = 4;
@@ -1218,7 +1231,13 @@ namespace Web.Controllers
                     dTOTempSession.TDMUnitMapId = _trnDomainMapping.UnitId;
                     dTOTempSession.TDMApptId = _trnDomainMapping.ApptId;
                     dTOTempSession.AspNetUsersId = _trnDomainMapping.ApplicationUser.Id;
-                    
+                    dTOTempSession.IsIO = _trnDomainMapping.IsIO;
+                    dTOTempSession.IsCO = _trnDomainMapping.IsCO;
+                    dTOTempSession.IsRO = _trnDomainMapping.IsRO;
+                    dTOTempSession.IsORO = _trnDomainMapping.IsORO;
+                    dTOTempSession.DialingCode = _trnDomainMapping.DialingCode;
+                    dTOTempSession.Extension = _trnDomainMapping.Extension;
+
                     if (_trnDomainMapping.Role != null)
                     {
                         dTOTempSession.Status = 1;
@@ -1460,8 +1479,15 @@ namespace Web.Controllers
                 {
                     if (dTOTempSession.Status == 4)
                     {
+                        dTOProfileAndMappingRequest.TDMId = dTOTempSession.TDMId;
                         dTOProfileAndMappingRequest.ApptId = dTOTempSession.TDMApptId;
                         dTOProfileAndMappingRequest.UnitMapId = dTOTempSession.TDMUnitMapId;
+                        dTOProfileAndMappingRequest.DialingCode = dTOTempSession.DialingCode;
+                        dTOProfileAndMappingRequest.Extension = dTOTempSession.Extension;
+                        dTOProfileAndMappingRequest.IsRO = dTOTempSession.IsRO;
+                        dTOProfileAndMappingRequest.IsCO = dTOTempSession.IsCO;
+                        dTOProfileAndMappingRequest.IsIO = dTOTempSession.IsIO;
+                        dTOProfileAndMappingRequest.IsORO = dTOTempSession.IsORO;
                     }
                     ViewBag.OptionsRank = service.GetRank(1);
 
@@ -1478,12 +1504,7 @@ namespace Web.Controllers
                             dTOProfileAndMappingRequest.RankId = mUserProfile.RankId;
                             dTOProfileAndMappingRequest.Name = mUserProfile.Name;
                             dTOProfileAndMappingRequest.MobileNo = mUserProfile.MobileNo;
-                            dTOProfileAndMappingRequest.DialingCode = mUserProfile.DialingCode;
-                            dTOProfileAndMappingRequest.Extension= mUserProfile.Extension;
-                            dTOProfileAndMappingRequest.IsRO = mUserProfile.IsRO;
-                            dTOProfileAndMappingRequest.IsCO = mUserProfile.IsCO;
-                            dTOProfileAndMappingRequest.IsIO = mUserProfile.IsIO;
-                            dTOProfileAndMappingRequest.IsORO = mUserProfile.IsORO;
+
                             return View(dTOProfileAndMappingRequest);
                         }
                         catch (Exception ex)

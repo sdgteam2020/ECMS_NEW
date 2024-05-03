@@ -21,6 +21,7 @@ namespace BusinessLogicsLayer.Unit
         public Task<bool?> SaveUnitWithMapping(DTOSaveUnitWithMappingByAdminRequest dTO);
         public Task<bool?> FindUnitId(int UnitId);
         public Task<bool?> FindUnitIdMapped(int UnitId, int UnitMapId);
+        public Task<DTOUnitMapIdCheckInFKTableResponse?> UnitMapIdCheckInFKTable(int UnitMapId);
     }
 }
 

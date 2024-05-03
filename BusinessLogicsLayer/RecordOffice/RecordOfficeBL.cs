@@ -25,9 +25,9 @@ namespace BusinessLogicsLayer.RecordOffice
         {
             return await _RecordOfficeDB.GetAllData();
         }
-        public async Task<bool> GetByTDMId(int TDMId)
+        public async Task<bool> GetByTDMId(int UnitId, int? TDMId)
         {
-            return await _RecordOfficeDB.GetByTDMId(TDMId);
+            return await _RecordOfficeDB.GetByTDMId(UnitId,TDMId);
         }
 
         public async Task<int> GetByName(MRecordOffice Dto)
@@ -35,9 +35,9 @@ namespace BusinessLogicsLayer.RecordOffice
             Dto.Name = Dto.Name.Trim().TrimEnd().TrimStart();
             return await _RecordOfficeDB.GetByName(Dto);
         }
-        public async Task<DTOGetUpdateRecordOfficeResponse?> GetUpdateRecordOffice(int TDMId)
+        public async Task<DTOGetUpdateRecordOfficeResponse?> GetUpdateRecordOffice(int RecordOfficeId)
         {
-            return await _RecordOfficeDB.GetUpdateRecordOffice(TDMId);
+            return await _RecordOfficeDB.GetUpdateRecordOffice(RecordOfficeId);
         }
         public async Task<List<DTOGetMappedForRecordResponse>?> GetDDMappedForRecord(int UnitMapId)
         {
@@ -46,6 +46,10 @@ namespace BusinessLogicsLayer.RecordOffice
         public async Task<bool?> UpdateROValue(DTOUpdateROValueRequest dTO)
         {
             return await _RecordOfficeDB.UpdateROValue(dTO);
+        }
+        public async Task<DTOGetROByTDMIdResponse?> GetROByTDMId(int TDMId)
+        {
+            return await _RecordOfficeDB.GetROByTDMId(TDMId);
         }
     }
 }

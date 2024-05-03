@@ -14,6 +14,7 @@ namespace DataAccessLayer.BaseInterfaces
         public Task<bool> GetByName(MDiv Data);
         public Task<List<DTODivResponse>> GetALLDiv();
         public Task<List<DTODivResponse>> GetByHId(DTOMHierarchyRequest Data);
+        public Task<DTODivIdCheckInFKTableResponse?> DivIdCheckInFKTable(byte DivId);
     }
    
 }

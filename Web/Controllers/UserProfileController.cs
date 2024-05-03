@@ -29,9 +29,22 @@ namespace Web.Controllers
             _iDomainMapBL = domainMapBL;
             _logger = logger;
         }
+        private string GetSessionValue()
+        {
+            DtoSession? dtoSession = new DtoSession();
+            if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
+            {
+                dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+
+            }
+            string role = dtoSession != null ? dtoSession.RoleName : "";
+            return role;
+        }
         public IActionResult Profile()
         {
-          
+            string role = GetSessionValue();
+
+            ViewBag.Role = role;
             return View();
         }
         public async Task<IActionResult> SaveUserProfile(MUserProfile dTO)
@@ -169,8 +182,9 @@ namespace Web.Controllers
             {
                 if(userid==0)
                  userid = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-
-                return Json(await _userProfileBL.GetByArmyNo(ArmyNo, userid));
+                DTOUserProfileResponse dTOUserProfileResponse = await _userProfileBL.GetByArmyNo(ArmyNo, userid);
+                dTOUserProfileResponse.RoleName = GetSessionValue();
+                return Json(dTOUserProfileResponse);
             }
             catch (Exception ex)
             {
