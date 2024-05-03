@@ -67,19 +67,18 @@ namespace DataAccessLayer
             }
 
         }
-        public async Task<DTOGetROByUserIdResponse?> GetROByUserId(int UserId)
+        public async Task<DTOGetROByTDMIdResponse?> GetROByTDMId(int TDMId)
         {
             try
             {
                 string query = "";
-                query = "Select up.IsRO, up.IsORO, mrecord.TDMId,mrecord.RecordOfficeId,mrecord.UnitId from UserProfile up" +
-                        " inner join TrnDomainMapping tdm on tdm.UserId = up.UserId" +
+                query = "Select tdm.IsRO, tdm.IsORO, mrecord.TDMId,mrecord.RecordOfficeId,mrecord.UnitId from TrnDomainMapping tdm" +
                         " inner join MapUnit mapunit on mapunit.UnitMapId = tdm.UnitId" +
                         " inner join MRecordOffice mrecord on mrecord.UnitId = mapunit.UnitMapId" +
-                        " where up.UserId=@UserId ";
+                        " where tdm.Id=@TDMId ";
                 using (var connection = _contextDP.CreateConnection())
                 {
-                    var allrecord = await connection.QueryAsync<DTOGetROByUserIdResponse>(query, new { UserId });
+                    var allrecord = await connection.QueryAsync<DTOGetROByTDMIdResponse>(query, new { TDMId });
                     return allrecord.FirstOrDefault();
                 }
             }

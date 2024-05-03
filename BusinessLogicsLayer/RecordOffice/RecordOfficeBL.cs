@@ -47,9 +47,9 @@ namespace BusinessLogicsLayer.RecordOffice
         {
             return await _RecordOfficeDB.UpdateROValue(dTO);
         }
-        public async Task<DTOGetROByUserIdResponse?> GetROByUserId(int UserId)
+        public async Task<DTOGetROByTDMIdResponse?> GetROByTDMId(int TDMId)
         {
-            return await _RecordOfficeDB.GetROByUserId(UserId);
+            return await _RecordOfficeDB.GetROByTDMId(TDMId);
         }
     }
 }

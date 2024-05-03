@@ -1718,7 +1718,7 @@ namespace Web.Controllers
             ViewBag.UnitId = UnitId;
 
 
-            DTOGetROByUserIdResponse? dTOGetROByUserIdResponse = await unitOfWork.RecordOffice.GetROByUserId(UserId);
+            DTOGetROByTDMIdResponse? dTOGetROByUserIdResponse = await unitOfWork.RecordOffice.GetROByTDMId(TDMId);
             if (dTOGetROByUserIdResponse == null)
             {
                 TempData["error"] = "You are not authorizes this page.";

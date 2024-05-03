@@ -108,7 +108,7 @@ namespace Web.Controllers
             int TDMId = dtoSession!=null? dtoSession.TrnDomainMappingId : 0;
             int UserId = dtoSession!=null?dtoSession.UserId:0;
 
-            DTOGetROByUserIdResponse? dTOGetROByUserIdResponse = await _recordOfficeBL.GetROByUserId(UserId);
+            DTOGetROByTDMIdResponse? dTOGetROByUserIdResponse = await _recordOfficeBL.GetROByTDMId(TDMId);
             if(dTOGetROByUserIdResponse== null)
             {
                 ViewBag.ROFound = 0;

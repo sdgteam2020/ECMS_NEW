@@ -26,12 +26,12 @@ namespace DataTransferObject.Response
         //public int FormationId { get; set; }
         //public string FormationName { get; set; }
         public int UnitId { get; set; }
-        public Boolean IsRO { get; set; }
-        public Boolean IsIO { get; set; }
-        public Boolean IsCO { get; set; }
-        public Boolean IsORO { get; set; }
+        public bool IsRO { get; set; }
+        public bool IsIO { get; set; }
+        public bool IsCO { get; set; }
+        public bool IsORO { get; set; }
 
-        public Boolean IsToken { get; set; }
+        public bool IsToken { get; set; }
         public string SusNo { get; set; } = string.Empty;
         //public int RequestId { get; set; }
         public string UnitName { get; set; } = string.Empty;

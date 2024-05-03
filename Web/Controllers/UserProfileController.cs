@@ -182,8 +182,9 @@ namespace Web.Controllers
             {
                 if(userid==0)
                  userid = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-
-                return Json(await _userProfileBL.GetByArmyNo(ArmyNo, userid));
+                DTOUserProfileResponse dTOUserProfileResponse = await _userProfileBL.GetByArmyNo(ArmyNo, userid);
+                dTOUserProfileResponse.RoleName = GetSessionValue();
+                return Json(dTOUserProfileResponse);
             }
             catch (Exception ex)
             {

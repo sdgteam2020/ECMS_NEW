@@ -1479,6 +1479,7 @@ namespace Web.Controllers
                 {
                     if (dTOTempSession.Status == 4)
                     {
+                        dTOProfileAndMappingRequest.TDMId = dTOTempSession.TDMId;
                         dTOProfileAndMappingRequest.ApptId = dTOTempSession.TDMApptId;
                         dTOProfileAndMappingRequest.UnitMapId = dTOTempSession.TDMUnitMapId;
                         dTOProfileAndMappingRequest.DialingCode = dTOTempSession.DialingCode;
