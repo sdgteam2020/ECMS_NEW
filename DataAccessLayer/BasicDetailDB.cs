@@ -168,7 +168,7 @@ namespace DataAccessLayer
 
             if (stepcount == 0)//////For all record
             {
-                query = "SELECT B.BasicDetailId,B.Name,B.ServiceNo,B.DOB,B.DateOfCommissioning,C.StepId StepCounter,C.Id StepId,ty.Name ICardType,trnicrd.RequestId,fwd.Remark,isnull(fwd.Status,1) Reject,Afor.Name ApplyFor,Afor.ApplyForId ,trnicrd.TrackingId,ran.RankAbbreviation RankName,ISNULL(Postout.Id,0) IsPosting FROM BasicDetails B " +
+                query = "SELECT B.UnitId,B.BasicDetailId,B.Name,B.ServiceNo,B.DOB,B.DateOfCommissioning,C.StepId StepCounter,C.Id StepId,ty.Name ICardType,trnicrd.RequestId,fwd.Remark,isnull(fwd.Status,1) Reject,Afor.Name ApplyFor,Afor.ApplyForId ,trnicrd.TrackingId,ran.RankAbbreviation RankName,ISNULL(Postout.Id,0) IsPosting FROM BasicDetails B " +
                         " inner join MRank ran on ran.RankId=B.RankId "  +
                         "inner join TrnICardRequest trnicrd on trnicrd.BasicDetailId = B.BasicDetailId " +
                         "inner join MApplyFor Afor on Afor.ApplyForId = B.ApplyForId " +
@@ -183,7 +183,7 @@ namespace DataAccessLayer
             }
            else if (stepcount == 1)//////For Draft
             {
-                query = "SELECT B.BasicDetailId,B.Name,B.ServiceNo,B.DOB,B.DateOfCommissioning,C.StepId StepCounter,C.Id StepId,ty.Name ICardType,trnicrd.RequestId,fwd.Remark,isnull(fwd.Status,1) Reject,Afor.Name ApplyFor,Afor.ApplyForId ,trnicrd.TrackingId,ran.RankAbbreviation RankName,ISNULL(Postout.Id,0) IsPosting FROM BasicDetails B " +
+                query = "SELECT B.UnitId,B.BasicDetailId,B.Name,B.ServiceNo,B.DOB,B.DateOfCommissioning,C.StepId StepCounter,C.Id StepId,ty.Name ICardType,trnicrd.RequestId,fwd.Remark,isnull(fwd.Status,1) Reject,Afor.Name ApplyFor,Afor.ApplyForId ,trnicrd.TrackingId,ran.RankAbbreviation RankName,ISNULL(Postout.Id,0) IsPosting FROM BasicDetails B " +
                         " inner join MRank ran on ran.RankId=B.RankId " +
                         "inner join TrnICardRequest trnicrd on trnicrd.BasicDetailId = B.BasicDetailId " +
                         "inner join MApplyFor Afor on Afor.ApplyForId = B.ApplyForId " +
@@ -198,7 +198,7 @@ namespace DataAccessLayer
             }
             else if (stepcount == 777)//////For Completed   
             {
-                query = "SELECT B.BasicDetailId,B.Name,B.ServiceNo,B.DOB,B.DateOfCommissioning,C.StepId StepCounter,C.Id StepId,ty.Name ICardType,trnicrd.RequestId,fwd.Remark,isnull(fwd.Status,1) Reject,Afor.Name ApplyFor,Afor.ApplyForId ,trnicrd.TrackingId,ran.RankAbbreviation RankName,ISNULL(Postout.Id,0) IsPosting FROM BasicDetails B " +
+                query = "SELECT B.UnitId,B.BasicDetailId,B.Name,B.ServiceNo,B.DOB,B.DateOfCommissioning,C.StepId StepCounter,C.Id StepId,ty.Name ICardType,trnicrd.RequestId,fwd.Remark,isnull(fwd.Status,1) Reject,Afor.Name ApplyFor,Afor.ApplyForId ,trnicrd.TrackingId,ran.RankAbbreviation RankName,ISNULL(Postout.Id,0) IsPosting FROM BasicDetails B " +
                         " inner join MRank ran on ran.RankId=B.RankId " +
                         "inner join TrnICardRequest trnicrd on trnicrd.BasicDetailId = B.BasicDetailId " +
                         "inner join MApplyFor Afor on Afor.ApplyForId = B.ApplyForId " +
@@ -213,7 +213,7 @@ namespace DataAccessLayer
             }
             else if (stepcount == 888)//////For Submitted
             {
-                query = "SELECT B.BasicDetailId,B.Name,B.ServiceNo,B.DOB,B.DateOfCommissioning,C.StepId StepCounter,C.Id StepId,ty.Name ICardType,trnicrd.RequestId,fwd.Remark,isnull(fwd.Status,1) Reject,Afor.Name ApplyFor,Afor.ApplyForId ,trnicrd.TrackingId,ran.RankAbbreviation RankName,ISNULL(Postout.Id,0) IsPosting FROM BasicDetails B " +
+                query = "SELECT B.UnitId,B.BasicDetailId,B.Name,B.ServiceNo,B.DOB,B.DateOfCommissioning,C.StepId StepCounter,C.Id StepId,ty.Name ICardType,trnicrd.RequestId,fwd.Remark,isnull(fwd.Status,1) Reject,Afor.Name ApplyFor,Afor.ApplyForId ,trnicrd.TrackingId,ran.RankAbbreviation RankName,ISNULL(Postout.Id,0) IsPosting FROM BasicDetails B " +
                         " inner join MRank ran on ran.RankId=B.RankId " +
                         "inner join TrnICardRequest trnicrd on trnicrd.BasicDetailId = B.BasicDetailId and trnicrd.Status=0 " +
                         "inner join MApplyFor Afor on Afor.ApplyForId = B.ApplyForId " +
@@ -228,7 +228,7 @@ namespace DataAccessLayer
             }
             else if (stepcount == 5)
             {
-                query = " SELECT distinct B.BasicDetailId,B.Name,B.ServiceNo,B.DOB,B.DateOfCommissioning,C.StepId StepCounter,C.Id StepId,ty.TypeId,ty.name ICardType,trnicrd.RequestId ,Afor.Name ApplyFor,Afor.ApplyForId ,trnicrd.TrackingId,ran.RankAbbreviation RankName,ISNULL(Postout.Id,0) IsPosting" +
+                query = " SELECT distinct B.UnitId,B.BasicDetailId,B.Name,B.ServiceNo,B.DOB,B.DateOfCommissioning,C.StepId StepCounter,C.Id StepId,ty.TypeId,ty.name ICardType,trnicrd.RequestId ,Afor.Name ApplyFor,Afor.ApplyForId ,trnicrd.TrackingId,ran.RankAbbreviation RankName,ISNULL(Postout.Id,0) IsPosting" +
         " FROM BasicDetails B" +
         " inner join MRank ran on ran.RankId=B.RankId" +
         " inner join TrnICardRequest trnicrd on trnicrd.BasicDetailId = B.BasicDetailId" +
@@ -243,7 +243,7 @@ namespace DataAccessLayer
             {
                //if(TypeId==2)
                 {
-                    query = " SELECT distinct B.BasicDetailId,B.Name,B.ServiceNo,B.DOB,B.DateOfCommissioning,C.StepId StepCounter,C.Id StepId,ty.TypeId,ty.name ICardType,trnicrd.RequestId ,Afor.Name ApplyFor,Afor.ApplyForId ,trnicrd.TrackingId,ran.RankAbbreviation RankName,ISNULL(Postout.Id,0) IsPosting" +
+                    query = " SELECT distinct B.UnitId,B.BasicDetailId,B.Name,B.ServiceNo,B.DOB,B.DateOfCommissioning,C.StepId StepCounter,C.Id StepId,ty.TypeId,ty.name ICardType,trnicrd.RequestId ,Afor.Name ApplyFor,Afor.ApplyForId ,trnicrd.TrackingId,ran.RankAbbreviation RankName,ISNULL(Postout.Id,0) IsPosting" +
             " FROM BasicDetails B" +
             " inner join MRank ran on ran.RankId=B.RankId" +
             " inner join TrnICardRequest trnicrd on trnicrd.BasicDetailId = B.BasicDetailId" +
@@ -271,7 +271,7 @@ namespace DataAccessLayer
             else if (stepcount == 7 || stepcount == 8 || stepcount == 9 || stepcount == 10 )//Reject From IO
             {
                
-                query = "SELECT distinct B.BasicDetailId,B.Name,B.ServiceNo,B.DOB,B.DateOfCommissioning,C.StepId StepCounter,C.Id StepId,ty.TypeId,ty.name ICardType,trnicrd.RequestId,isnull(fwd.Status,1) Reject ,Afor.Name ApplyFor,Afor.ApplyForId,trnicrd.TrackingId,ran.RankAbbreviation RankName,ISNULL(Postout.Id,0) IsPosting" +
+                query = "SELECT distinct B.UnitId,B.BasicDetailId,B.Name,B.ServiceNo,B.DOB,B.DateOfCommissioning,C.StepId StepCounter,C.Id StepId,ty.TypeId,ty.name ICardType,trnicrd.RequestId,isnull(fwd.Status,1) Reject ,Afor.Name ApplyFor,Afor.ApplyForId,trnicrd.TrackingId,ran.RankAbbreviation RankName,ISNULL(Postout.Id,0) IsPosting" +
                 " FROM BasicDetails B" +
                 " inner join MRank ran on ran.RankId=B.RankId" +
                 " inner join TrnICardRequest trnicrd on trnicrd.BasicDetailId = B.BasicDetailId" +
@@ -284,7 +284,7 @@ namespace DataAccessLayer
             else if (stepcount == 999)//Reject From IO,MI11 and HQ 54
             {
 
-                query = "SELECT distinct B.BasicDetailId,B.Name,B.ServiceNo,B.DOB,B.DateOfCommissioning,C.StepId StepCounter,C.Id StepId,ty.TypeId,ty.name ICardType,trnicrd.RequestId,isnull(fwd.Status,1) Reject ,Afor.Name ApplyFor,Afor.ApplyForId,trnicrd.TrackingId,ran.RankAbbreviation RankName,ISNULL(Postout.Id,0) IsPosting" +
+                query = "SELECT distinct B.UnitId,B.BasicDetailId,B.Name,B.ServiceNo,B.DOB,B.DateOfCommissioning,C.StepId StepCounter,C.Id StepId,ty.TypeId,ty.name ICardType,trnicrd.RequestId,isnull(fwd.Status,1) Reject ,Afor.Name ApplyFor,Afor.ApplyForId,trnicrd.TrackingId,ran.RankAbbreviation RankName,ISNULL(Postout.Id,0) IsPosting" +
                 " FROM BasicDetails B" +
                 " inner join MRank ran on ran.RankId=B.RankId" +
                 " inner join TrnICardRequest trnicrd on trnicrd.BasicDetailId = B.BasicDetailId" +
@@ -362,7 +362,8 @@ namespace DataAccessLayer
                                      Remark = e.Remark,
                                      TrackingId=e.TrackingId,
                                      RankName = e.RankName,
-                                     IsPosting = e.IsPosting
+                                     IsPosting = e.IsPosting,
+                                     UnitId=e.UnitId
                                  }).ToList();
                 return await Task.FromResult(allrecord);
 
@@ -377,7 +378,7 @@ namespace DataAccessLayer
 
             if(stepcount == 0 || stepcount == 1)//////For Fwd Record
             {
-                query = "SELECT B.BasicDetailId,B.Name,B.ServiceNo,B.DOB,B.DateOfCommissioning,C.StepId StepCounter,C.Id StepId,ty.Name ICardType,trnicrd.RequestId,fwd.Remark,isnull(fwd.Status,1) Reject,Afor.Name ApplyFor,Afor.ApplyForId,trnicrd.TrackingId,ran.RankAbbreviation RankName  FROM BasicDetails B " +
+                query = "SELECT B.UnitId,B.BasicDetailId,B.Name,B.ServiceNo,B.DOB,B.DateOfCommissioning,C.StepId StepCounter,C.Id StepId,ty.Name ICardType,trnicrd.RequestId,fwd.Remark,isnull(fwd.Status,1) Reject,Afor.Name ApplyFor,Afor.ApplyForId,trnicrd.TrackingId,ran.RankAbbreviation RankName  FROM BasicDetails B " +
                         " inner join MRank ran on ran.RankId=B.RankId " +
                         "inner join TrnICardRequest trnicrd on trnicrd.BasicDetailId = B.BasicDetailId " +
                         "inner join MApplyFor Afor on Afor.ApplyForId = B.ApplyForId " +
@@ -393,7 +394,7 @@ namespace DataAccessLayer
             {
                 if(TypeId==1)///For Icard Submit
                 {
-                    query = " SELECT distinct B.BasicDetailId,B.Name,B.ServiceNo,B.DOB,B.DateOfCommissioning,C.StepId StepCounter,C.Id StepId,ty.TypeId,ty.name ICardType,trnicrd.RequestId ,Afor.Name ApplyFor,Afor.ApplyForId,trnicrd.TrackingId,ran.RankAbbreviation RankName" +
+                    query = " SELECT distinct B.UnitId,B.BasicDetailId,B.Name,B.ServiceNo,B.DOB,B.DateOfCommissioning,C.StepId StepCounter,C.Id StepId,ty.TypeId,ty.name ICardType,trnicrd.RequestId ,Afor.Name ApplyFor,Afor.ApplyForId,trnicrd.TrackingId,ran.RankAbbreviation RankName" +
                " FROM BasicDetails B" +
                " inner join MRank ran on ran.RankId=B.RankId " +
                " inner join TrnICardRequest trnicrd on trnicrd.BasicDetailId = B.BasicDetailId" +
@@ -404,7 +405,7 @@ namespace DataAccessLayer
                 }
                 else if (TypeId == 2) //// For For Action
                 {
-                    query = " SELECT distinct B.BasicDetailId,B.Name,B.ServiceNo,B.DOB,B.DateOfCommissioning,C.StepId StepCounter,C.Id StepId,ty.TypeId,ty.name ICardType,trnicrd.RequestId ,Afor.Name ApplyFor,Afor.ApplyForId,trnicrd.TrackingId,ran.RankAbbreviation RankName" +
+                    query = " SELECT distinct B.UnitId,B.BasicDetailId,B.Name,B.ServiceNo,B.DOB,B.DateOfCommissioning,C.StepId StepCounter,C.Id StepId,ty.TypeId,ty.name ICardType,trnicrd.RequestId ,Afor.Name ApplyFor,Afor.ApplyForId,trnicrd.TrackingId,ran.RankAbbreviation RankName" +
                " FROM BasicDetails B" +
                " inner join MRank ran on ran.RankId=B.RankId" +
                " inner join TrnICardRequest trnicrd on trnicrd.BasicDetailId = B.BasicDetailId" +
@@ -416,7 +417,7 @@ namespace DataAccessLayer
 
                 }else if(stepcount == 5 || stepcount == 6)///for exported data
                 {
-                    query = " SELECT distinct B.BasicDetailId,B.Name,B.ServiceNo,B.DOB,B.DateOfCommissioning,C.StepId StepCounter,C.Id StepId,ty.TypeId,ty.name ICardType,trnicrd.RequestId ,Afor.Name ApplyFor,Afor.ApplyForId,ran.RankAbbreviation RankName" +
+                    query = " SELECT distinct B.UnitId,B.BasicDetailId,B.Name,B.ServiceNo,B.DOB,B.DateOfCommissioning,C.StepId StepCounter,C.Id StepId,ty.TypeId,ty.name ICardType,trnicrd.RequestId ,Afor.Name ApplyFor,Afor.ApplyForId,ran.RankAbbreviation RankName" +
             " FROM BasicDetails B" +
             " inner join MRank ran on ran.RankId=B.RankId" +
             " inner join TrnICardRequest trnicrd on trnicrd.BasicDetailId = B.BasicDetailId" +
@@ -445,7 +446,7 @@ namespace DataAccessLayer
                     //if (TypeId == 3) TypeId = 2;
                     //if (TypeId == 4) TypeId = 3;
                     //if (TypeId == 5) TypeId = 4;
-                    query = " SELECT distinct B.BasicDetailId,B.Name,B.ServiceNo,B.DOB,B.DateOfCommissioning,C.StepId StepCounter,C.Id StepId,ty.TypeId,ty.name ICardType,trnicrd.RequestId ,Afor.Name ApplyFor,Afor.ApplyForId,ran.RankAbbreviation RankName" +
+                    query = " SELECT distinct B.UnitId,B.BasicDetailId,B.Name,B.ServiceNo,B.DOB,B.DateOfCommissioning,C.StepId StepCounter,C.Id StepId,ty.TypeId,ty.name ICardType,trnicrd.RequestId ,Afor.Name ApplyFor,Afor.ApplyForId,ran.RankAbbreviation RankName" +
                " FROM BasicDetails B" +
                " inner join MRank ran on ran.RankId=B.RankId" +
                " inner join TrnICardRequest trnicrd on trnicrd.BasicDetailId = B.BasicDetailId" +
@@ -460,7 +461,7 @@ namespace DataAccessLayer
             else if (stepcount == 7 || stepcount == 8 || stepcount == 9 || stepcount == 10 || stepcount == 11)//Reject From IO
             {
 
-                query = "SELECT distinct B.BasicDetailId,B.Name,B.ServiceNo,B.DOB,B.DateOfCommissioning,C.StepId StepCounter,C.Id StepId,ty.TypeId,ty.name ICardType,trnicrd.RequestId,isnull(fwd.Status,1) Reject ,Afor.Name ApplyFor,Afor.ApplyForId,trnicrd.TrackingId,ran.RankAbbreviation RankName" +
+                query = "SELECT distinct B.UnitId,B.BasicDetailId,B.Name,B.ServiceNo,B.DOB,B.DateOfCommissioning,C.StepId StepCounter,C.Id StepId,ty.TypeId,ty.name ICardType,trnicrd.RequestId,isnull(fwd.Status,1) Reject ,Afor.Name ApplyFor,Afor.ApplyForId,trnicrd.TrackingId,ran.RankAbbreviation RankName" +
                 " FROM BasicDetails B" +
                 " inner join MRank ran on ran.RankId=B.RankId" +
                 " inner join TrnICardRequest trnicrd on trnicrd.BasicDetailId = B.BasicDetailId" +
@@ -577,6 +578,7 @@ namespace DataAccessLayer
                                      Reject=e.Reject,
                                      TrackingId = e.TrackingId,
                                      RankName= e.RankName,
+                                     UnitId = e.UnitId
                                  }).ToList();
                 return await Task.FromResult(allrecord);
 
