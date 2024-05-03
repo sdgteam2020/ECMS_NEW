@@ -22,7 +22,12 @@
         Reset();    
         ResetErrorMessage();
     });
-
+    $("#btnSubmit").on("click", function () {
+        Proceed();
+    });
+    $("#btnUnitMapsave").on("click", function () {
+        ProceedUnitSave();
+    });
 
     if ($("#spnUnitMapId").html() > 0) {
         GetNameByApptId($("#spnUnitMapId").html());

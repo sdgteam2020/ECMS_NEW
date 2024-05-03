@@ -181,7 +181,7 @@ namespace DataAccessLayer
                 //                ).Distinct().FirstOrDefaultAsync();
 
                
-                string query = "SELECT prof.ArmyNo,prof.UserId,prof.Name,prof.MobileNo,prof.DialingCode,prof.Extension,prof.Thumbprint,prof.IsRO,prof.IsIO,prof.IsCO,prof.IsORO,prof.IsToken,ran.RankName Rank,ran.RankId,mapu.UnitMapId UnitId,munit.UnitName,users.DomainId," +
+                string query = "SELECT prof.ArmyNo,prof.UserId,prof.Name,prof.MobileNo,trnd.DialingCode,trnd.Extension,prof.Thumbprint,trnd.IsRO,trnd.IsIO,trnd.IsCO,trnd.IsORO,prof.IsToken,ran.RankName Rank,ran.RankId,mapu.UnitMapId UnitId,munit.UnitName,users.DomainId," +
                                 " appt.AppointmentName,trnd.MappedDate,usermodify.DomainId MappedBy,roles.Name RoleName from UserProfile prof "+
                                 " inner join MRank ran on prof.RankId = ran.RankId "+
                                 " inner join TrnDomainMapping trnd  on trnd.UserId = prof.UserId "+
@@ -301,7 +301,7 @@ namespace DataAccessLayer
         {
             // return _context.UserProfile.Where(P => P.ArmyNo == ArmyNo).SingleOrDefault();
             string query = "select map.id MapId,users.ArmyNo,users.UserId,appo.ApptId,appo.AppointmentName, ran.RankAbbreviation Rank,"+
-                            " users.Name,dmap.UnitId,Uni.UnitName,Uni.Sus_no + Uni.Suffix SusNo,users.IntOffr,users.IsIO,users.IsCO"+
+                            " users.Name,dmap.UnitId,Uni.UnitName,Uni.Sus_no + Uni.Suffix SusNo,dmap.IsRO,dmap.IsIO,dmap.IsCO" +
                             " from UserProfile users "+
                             " inner join TrnDomainMapping dmap on dmap.UserId = users.UserId "+
                             " inner join MUnit Uni on Uni.UnitId = dmap.UnitId "+
@@ -445,7 +445,7 @@ namespace DataAccessLayer
                   " inner join MapUnit mapu on mapu.UnitMapId=trndomain.UnitId" +
                   " left join UserProfile usep on usep.UserId=trndomain.UserId" +
                   " inner join MRank ra on ra.RankId=usep.RankId " +
-                  " where usep.IsIO=1 and trndomain.UnitId in (Select UnitMapId from MapUnit where ComdId in (Select ComdId from MapUnit where UnitMapId=@UnitId))" +
+                  " where trndomain.IsIO=1 and trndomain.UnitId in (Select UnitMapId from MapUnit where ComdId in (Select ComdId from MapUnit where UnitMapId=@UnitId))" +
                   " And usep.ArmyNo like @Name";
 
                     }
@@ -457,7 +457,7 @@ namespace DataAccessLayer
                   " inner join MapUnit mapu on mapu.UnitMapId=trndomain.UnitId" +
                   " left join UserProfile usep on usep.UserId=trndomain.UserId" +
                   " inner join MRank ra on ra.RankId=usep.RankId " +
-                  " where usep.IsIO=1 and trndomain.UnitId in (Select UnitMapId from MapUnit where ComdId in (Select ComdId from MapUnit where UnitMapId=@UnitId))" +
+                  " where trndomain.IsIO=1 and trndomain.UnitId in (Select UnitMapId from MapUnit where ComdId in (Select ComdId from MapUnit where UnitMapId=@UnitId))" +
                   " And usep.Name like @Name";
 
                     }
@@ -469,7 +469,7 @@ namespace DataAccessLayer
                   " inner join MapUnit mapu on mapu.UnitMapId=trndomain.UnitId" +
                   " left join UserProfile usep on usep.UserId=trndomain.UserId" +
                   " inner join MRank ra on ra.RankId=usep.RankId " +
-                  " where usep.IsIO=1 and trndomain.UnitId in (Select UnitMapId from MapUnit where ComdId in (Select ComdId from MapUnit where UnitMapId=@UnitId))" +
+                  " where trndomain.IsIO=1 and trndomain.UnitId in (Select UnitMapId from MapUnit where ComdId in (Select ComdId from MapUnit where UnitMapId=@UnitId))" +
                   " And users.DomainId like @Name";
 
                     }
@@ -496,7 +496,7 @@ namespace DataAccessLayer
                   " inner join MapUnit mapu on mapu.UnitMapId=trndomain.UnitId" +
                   " left join UserProfile usep on usep.UserId=trndomain.UserId" +
                   " inner join MRank ra on ra.RankId=usep.RankId " +
-                  " where usep.IsRO=1 and trndomain.UnitId in (Select UnitMapId from MapUnit where ComdId in (Select ComdId from MapUnit where UnitMapId=@UnitId))" +
+                  " where trndomain.IsRO=1 and trndomain.UnitId in (Select UnitMapId from MapUnit where ComdId in (Select ComdId from MapUnit where UnitMapId=@UnitId))" +
                   " And usep.Name like @Name";
 
                     }
@@ -508,7 +508,7 @@ namespace DataAccessLayer
                   " inner join MapUnit mapu on mapu.UnitMapId=trndomain.UnitId" +
                   " left join UserProfile usep on usep.UserId=trndomain.UserId" +
                   " inner join MRank ra on ra.RankId=usep.RankId " +
-                  " where usep.IsRO=1 and trndomain.UnitId in (Select UnitMapId from MapUnit where ComdId in (Select ComdId from MapUnit where UnitMapId=@UnitId))" +
+                  " where trndomain.IsRO=1 and trndomain.UnitId in (Select UnitMapId from MapUnit where ComdId in (Select ComdId from MapUnit where UnitMapId=@UnitId))" +
                   " And users.DomainId like @Name";
 
                     }
@@ -523,7 +523,7 @@ namespace DataAccessLayer
                   " inner join MapUnit mapu on mapu.UnitMapId=trndomain.UnitId" +
                   " left join UserProfile usep on usep.UserId=trndomain.UserId" +
                   " inner join MRank ra on ra.RankId=usep.RankId " +
-                  " where usep.IsORO=1 and trndomain.UnitId in (Select UnitMapId from MapUnit where ComdId in (Select ComdId from MapUnit where UnitMapId=@UnitId))" +
+                  " where trndomain.IsORO=1 and trndomain.UnitId in (Select UnitMapId from MapUnit where ComdId in (Select ComdId from MapUnit where UnitMapId=@UnitId))" +
                   " And usep.ArmyNo like @Name";
 
                     }
@@ -535,7 +535,7 @@ namespace DataAccessLayer
                   " inner join MapUnit mapu on mapu.UnitMapId=trndomain.UnitId" +
                   " left join UserProfile usep on usep.UserId=trndomain.UserId" +
                   " inner join MRank ra on ra.RankId=usep.RankId " +
-                  " where usep.IsORO=1 and trndomain.UnitId in (Select UnitMapId from MapUnit where ComdId in (Select ComdId from MapUnit where UnitMapId=@UnitId))" +
+                  " where trndomain.IsORO=1 and trndomain.UnitId in (Select UnitMapId from MapUnit where ComdId in (Select ComdId from MapUnit where UnitMapId=@UnitId))" +
                   " And usep.Name like @Name";
 
                     }
@@ -547,7 +547,7 @@ namespace DataAccessLayer
                   " inner join MapUnit mapu on mapu.UnitMapId=trndomain.UnitId" +
                   " left join UserProfile usep on usep.UserId=trndomain.UserId" +
                   " inner join MRank ra on ra.RankId=usep.RankId " +
-                  " where usep.IsORO=1 and trndomain.UnitId in (Select UnitMapId from MapUnit where ComdId in (Select ComdId from MapUnit where UnitMapId=@UnitId))" +
+                  " where trndomain.IsORO=1 and trndomain.UnitId in (Select UnitMapId from MapUnit where ComdId in (Select ComdId from MapUnit where UnitMapId=@UnitId))" +
                   " And users.DomainId like @Name";
 
                     }
@@ -562,7 +562,7 @@ namespace DataAccessLayer
                   " inner join MapUnit mapu on mapu.UnitMapId=trndomain.UnitId" +
                   " left join UserProfile usep on usep.UserId=trndomain.UserId" +
                   " inner join MRank ra on ra.RankId=usep.RankId " +
-                  " where usep.IsCO=1 and trndomain.UnitId in (Select UnitMapId from MapUnit where ComdId in (Select ComdId from MapUnit where UnitMapId=@UnitId))" +
+                  " where trndomain.IsCO=1 and trndomain.UnitId in (Select UnitMapId from MapUnit where ComdId in (Select ComdId from MapUnit where UnitMapId=@UnitId))" +
                   " And usep.ArmyNo like @Name";
 
                     }
@@ -574,7 +574,7 @@ namespace DataAccessLayer
                   " inner join MapUnit mapu on mapu.UnitMapId=trndomain.UnitId" +
                   " left join UserProfile usep on usep.UserId=trndomain.UserId" +
                   " inner join MRank ra on ra.RankId=usep.RankId " +
-                  " where usep.IsCO=1 and trndomain.UnitId in (Select UnitMapId from MapUnit where ComdId in (Select ComdId from MapUnit where UnitMapId=@UnitId))" +
+                  " where trndomain.IsCO=1 and trndomain.UnitId in (Select UnitMapId from MapUnit where ComdId in (Select ComdId from MapUnit where UnitMapId=@UnitId))" +
                   " And usep.Name like @Name";
 
                     }
@@ -586,7 +586,7 @@ namespace DataAccessLayer
                   " inner join MapUnit mapu on mapu.UnitMapId=trndomain.UnitId" +
                   " left join UserProfile usep on usep.UserId=trndomain.UserId" +
                   " inner join MRank ra on ra.RankId=usep.RankId " +
-                  " where usep.IsCO=1 and trndomain.UnitId in (Select UnitMapId from MapUnit where ComdId in (Select ComdId from MapUnit where UnitMapId=@UnitId))" +
+                  " where trndomain.IsCO=1 and trndomain.UnitId in (Select UnitMapId from MapUnit where ComdId in (Select ComdId from MapUnit where UnitMapId=@UnitId))" +
                   " And users.DomainId like @Name";
 
                     }
@@ -713,7 +713,7 @@ namespace DataAccessLayer
                         " inner join MRank ran on ran.RankId=usep.RankId "+
                         " inner join MRecordOffice rec on trndomain.id=rec.TDMId "+
                         " inner join BasicDetails bas on bas.ArmedId=rec.ArmedId"+
-                        " where usep.IsRO=1 and bas.BasicDetailId=@BasicDetailsId";
+                        " where trndomain.IsRO=1 and bas.BasicDetailId=@BasicDetailsId";
             }
             else if (ORO == 1)
             {
@@ -723,7 +723,7 @@ namespace DataAccessLayer
                         " inner join UserProfile usep on usep.UserId=trndomain.UserId " +
                         " inner join MRank ran on ran.RankId=usep.RankId " +
                         " inner join MRecordOffice rec on trndomain.id=rec.TDMId " +
-                        " where usep.IsORO=1";
+                        " where trndomain.IsORO=1";
                 //   query = "Select trndomain.AspNetUsersId,ISNULL(usep.UserId,0) UserId,users.DomainId,usep.ArmyNo,usep.Name,ran.RankAbbreviation from TrnDomainMapping trndomain" +
                 //" inner join AspNetUsers users on trndomain.AspNetUsersId=users.Id" +
                 //" inner join MapUnit mapu on mapu.UnitMapId=trndomain.UnitId" +

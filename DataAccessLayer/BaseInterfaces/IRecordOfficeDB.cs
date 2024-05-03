@@ -13,7 +13,7 @@ namespace DataAccessLayer.BaseInterfaces
     {
         public Task<int> GetByName(MRecordOffice Dto);
         public Task<bool> GetByTDMId(int UnitId, int? TDMId);
-        public Task<DTOGetROByUserIdResponse?> GetROByUserId(int UserId);
+        public Task<DTOGetROByTDMIdResponse?> GetROByTDMId(int TDMId);
         public Task<DTOGetUpdateRecordOfficeResponse?> GetUpdateRecordOffice(int RecordOfficeId);
         public Task<List<DTORecordOfficeResponse>?> GetAllData();
         public Task<List<DTOGetMappedForRecordResponse>?> GetDDMappedForRecord(int UnitMapId);

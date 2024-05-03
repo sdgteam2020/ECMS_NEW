@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DataTransferObject.Response
 {
-    public class DTOGetROByUserIdResponse
+    public class DTOGetROByTDMIdResponse
     {
         public byte RecordOfficeId { get; set; }
         public int UnitId { get; set; }

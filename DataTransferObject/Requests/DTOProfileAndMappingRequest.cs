@@ -14,6 +14,9 @@ namespace DataTransferObject.Requests
     {
         [RegularExpression(@"^[\d]+$", ErrorMessage = "UserId is number.")]
         public int UserId { get; set; }
+        
+        [RegularExpression(@"^[\d]+$", ErrorMessage = "TDMId is number.")]
+        public int TDMId { get; set; }
 
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
         [MinLength(8, ErrorMessage = "Minimum length of Offr Army No is eight character.")]

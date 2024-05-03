@@ -13,7 +13,7 @@ namespace BusinessLogicsLayer.RecordOffice
     {
         public Task<int> GetByName(MRecordOffice Dto);
         public Task<bool> GetByTDMId(int UnitId, int? TDMId);
-        public Task<DTOGetROByUserIdResponse?> GetROByUserId(int UserId);
+        public Task<DTOGetROByTDMIdResponse?> GetROByTDMId(int TDMId);
         public Task<List<DTORecordOfficeResponse>?> GetAllData();
         public Task<DTOGetUpdateRecordOfficeResponse?> GetUpdateRecordOffice(int TDMId);
         public Task<List<DTOGetMappedForRecordResponse>?> GetDDMappedForRecord(int UnitMapId);
