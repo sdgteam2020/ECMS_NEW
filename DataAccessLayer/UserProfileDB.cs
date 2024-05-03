@@ -708,7 +708,7 @@ namespace DataAccessLayer
                         " inner join MRank ran on ran.RankId=usep.RankId "+
                         " inner join MRecordOffice rec on trndomain.id=rec.TDMId "+
                         " inner join BasicDetails bas on bas.ArmedId=rec.ArmedId"+
-                        " where usep.IsRO=1 and bas.BasicDetailId=@BasicDetailsId";
+                        " where  bas.BasicDetailId=@BasicDetailsId";///usep.IsRO=1 and
             }
             else if (ORO == 1)
             {
@@ -717,8 +717,8 @@ namespace DataAccessLayer
                         " inner join MapUnit mapu on mapu.UnitMapId=trndomain.UnitId " +
                         " inner join UserProfile usep on usep.UserId=trndomain.UserId " +
                         " inner join MRank ran on ran.RankId=usep.RankId " +
-                        " inner join MRecordOffice rec on trndomain.id=rec.TDMId " +
-                        " where usep.IsORO=1";
+                        " inner join MRecordOffice rec on trndomain.id=rec.TDMId ";
+                        //" where usep.IsORO=1";
                 //   query = "Select trndomain.AspNetUsersId,ISNULL(usep.UserId,0) UserId,users.DomainId,usep.ArmyNo,usep.Name,ran.RankAbbreviation from TrnDomainMapping trndomain" +
                 //" inner join AspNetUsers users on trndomain.AspNetUsersId=users.Id" +
                 //" inner join MapUnit mapu on mapu.UnitMapId=trndomain.UnitId" +
