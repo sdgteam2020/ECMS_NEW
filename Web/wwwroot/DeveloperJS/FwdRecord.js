@@ -170,7 +170,9 @@ $(document).ready(function () {
         var spnRequestId = $(this).closest("tr").find(".spnRequestId").html();
         $("#spnCurrentspnRequestId").html(spnRequestId);
         spnStepId = $(this).closest("tr").find(".spnStepId").html();
-       
+        const Unitidarmy = $(this).closest("tr").find(".spnarmyUnitId").html();
+        alert(Unitidarmy)
+
         StepCounter = $(this).closest("tr").find(".spnStepCounterId").html();
         applyfor = $(this).closest("tr").find(".spnApplyFor").html();
 
@@ -187,12 +189,12 @@ $(document).ready(function () {
                 $(".gsoio").html("Initiating Offr (IO)");
                 $(".gsoiotitle").html("Initiating Offr (IO) Approval");
                 $("#btnForward").html("Forward To IO");
-                GetAllOffsByUnitId("ddlfwdoffrs", 0, 0, spnISIO,0,0,0,0);
+                GetAllOffsByUnitId("ddlfwdoffrs", 0, Unitidarmy, spnISIO,0,0,0,0);
             } else {
                 $(".gsoio").html("Initiating Offr (IO)");
                 $(".gsoiotitle").html("Initiating Offr (IO) Approval");
                 $("#btnForward").html("Forward To IO");
-                GetAllOffsByUnitId("ddlfwdoffrs", 0, 0, 0, spnISCO,0,0,0);
+                GetAllOffsByUnitId("ddlfwdoffrs", 0, Unitidarmy, 0, spnISCO,0,0,0);
             }
             $(".Remarks").removeClass("d-none");
 
@@ -207,13 +209,13 @@ $(document).ready(function () {
                 $(".gsoio").html("Record Office");
                 $(".gsoiotitle").html("Offr Record Office (ORO) Approval");
                 $("#btnForward").html("Forward To Record Office");
-                GetAllOffsByUnitId("ddlfwdoffrs", 0, 0, 0, 0, 0, spnIntORO, $(this).closest("tr").find(".spnBasicDetailId").html());
+                GetAllOffsByUnitId("ddlfwdoffrs", 0, Unitidarmy, 0, 0, 0, spnIntORO, $(this).closest("tr").find(".spnBasicDetailId").html());
             }
             else {
                 $(".gsoio").html("Record Office (RO)");
                 $(".gsoiotitle").html("Record Office (RO) Approval");
                 $("#btnForward").html("Forward To Record Office (RO)");
-                GetAllOffsByUnitId("ddlfwdoffrs", 0, 0, 0, 0, spnIntRO, 0, $(this).closest("tr").find(".spnBasicDetailId").html());
+                GetAllOffsByUnitId("ddlfwdoffrs", 0, Unitidarmy, 0, 0, spnIntRO, 0, $(this).closest("tr").find(".spnBasicDetailId").html());
             }
             $("#btntokenTofwd").removeClass("d-none");
             $(".Remarks").removeClass("d-none");
