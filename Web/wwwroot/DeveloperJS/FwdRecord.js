@@ -171,7 +171,7 @@ $(document).ready(function () {
         $("#spnCurrentspnRequestId").html(spnRequestId);
         spnStepId = $(this).closest("tr").find(".spnStepId").html();
         const Unitidarmy = $(this).closest("tr").find(".spnarmyUnitId").html();
-        alert(Unitidarmy)
+        //alert(Unitidarmy)
 
         StepCounter = $(this).closest("tr").find(".spnStepCounterId").html();
         applyfor = $(this).closest("tr").find(".spnApplyFor").html();

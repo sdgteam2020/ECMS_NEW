@@ -104,7 +104,7 @@ namespace DataAccessLayer
 
                 //var ret = await _context.MUnit.Take(200).ToListAsync();
                 
-                var ret = await _context.MUnit.Where(x => UnitName == "" || x.Sus_no.ToLower().Contains(UnitName)).Take(200).ToListAsync();
+                var ret = await _context.MUnit.Where(x => UnitName == "" || x.Sus_no.ToLower().Contains(UnitName)).Take(200).OrderByDescending(x=>x.UnitId).ToListAsync();
 
                 
                 return ret;

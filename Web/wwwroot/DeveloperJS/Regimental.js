@@ -15,7 +15,7 @@ $(document).ready(function () {
 
             Swal.fire({
                 title: 'Are you sure?',
-                text: "You won't be Save!",
+                text: "",
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
@@ -182,7 +182,7 @@ function BindData() {
                     $("body").on("click", ".cls-btnedit", function () {
                       /*  $("#AddNewM").modal('show');*/
                         $("#txtName").val($(this).closest("tr").find("#Name").html());
-                        $("#txtAbbreviation").val($(this).closest("tr").find("#abbreviation").html());
+                        $("#txtAbbreviation").val($(this).closest("tr").find("#abbreviation").html().toUpperCase());
                         $("#txtLocation").val($(this).closest("tr").find("#Location").html());
                        
                         $("#spnRegId").html($(this).closest("tr").find("#spnMRegId").html());

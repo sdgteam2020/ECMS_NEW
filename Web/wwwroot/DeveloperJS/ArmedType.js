@@ -12,7 +12,7 @@ $(document).ready(function () {
 
             Swal.fire({
                 title: 'Are you sure?',
-                text: "You won't be Save!",
+                text: "",
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
@@ -175,7 +175,7 @@ function BindData() {
                         
                         $("#ddlArmedCat").val($(this).closest("tr").find("#spnArmedCatId").html());
                         $("#txtArmedName").val($(this).closest("tr").find("#armedName").html());
-                        $("#txtAbbreviation").val($(this).closest("tr").find("#abbreviation").html());
+                        $("#txtAbbreviation").val($(this).closest("tr").find("#abbreviation").html().toUpperCase());
 
 
                         if ($(this).closest("tr").find("#flagInf").html() == "Yes") {

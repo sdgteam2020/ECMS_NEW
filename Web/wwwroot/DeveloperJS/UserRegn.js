@@ -99,81 +99,60 @@
 
     $("#btnUser").click(function () {
 
-        if ($("#lblUser").html() > 5) {
+        if ($("#lblUser").html() > 0) {
             $("#tbldatadialog").DataTable().destroy();
             $("#lblModelTitle").html('Total Users');
             $("#DataTableDialog").modal('show');
             BindDialog("User");
         }
-        else {
-            BindData("User");
-        }
     });
     $("#btnMappedUser").click(function () {
 
-        if ($("#lblMappedUser").html() > 5) {
+        if ($("#lblMappedUser").html() > 0) {
             $("#tbldatadialog").DataTable().destroy();
             $("#lblModelTitle").html('Total Mapped Users');
             $("#DataTableDialog").modal('show');
             BindDialog("MappedUser");
         }
-        else {
-            BindData("MappedUser");
-        }
     });
     $("#btnUnMappedUser").click(function () {
-        if ($("#lblUnMappedUser").html() > 5) {
+        if ($("#lblUnMappedUser").html() > 0) {
             $("#tbldatadialog").DataTable().destroy();
             $("#lblModelTitle").html('Total UnMapped Users');
             $("#DataTableDialog").modal('show');
             BindDialog("UnMappedUser");
         }
-        else {
-            BindData("UnMappedUser");
-        }
     });
     $("#btnActiveUser").click(function () {
-        if ($("#lblActiveUser").html() > 5) {
+        if ($("#lblActiveUser").html() > 0) {
             $("#tbldatadialog").DataTable().destroy();
             $("#lblModelTitle").html('Total Active Users');
             $("#DataTableDialog").modal('show');
             BindDialog("ActiveUser");
         }
-        else {
-            BindData("ActiveUser");
-        }
     });
     $("#btnInActiveUser").click(function () {
-        if ($("#lblInActiveUser").html() > 5) {
+        if ($("#lblInActiveUser").html() > 0) {
             $("#tbldatadialog").DataTable().destroy();
             $("#lblModelTitle").html('Total InActive Users');
             $("#DataTableDialog").modal('show');
             BindDialog("InActiveUser");
         }
-        else {
-            BindData("InActiveUser");
-        }
     });
     $("#btnVerified").click(function () {
-        if ($("#lblVerifiedUser").html() > 5) {
+        if ($("#lblVerifiedUser").html() > 0) {
             $("#tbldatadialog").DataTable().destroy();
             $("#lblModelTitle").html('Total Verified Users');
             $("#DataTableDialog").modal('show');
             BindDialog("Verified");
         }
-        else {
-            BindData("Verified");
-        }
     });
     $("#btnNotVerifiedUser").click(function () {
-        if ($("#lblNotVerifiedUser").html() > 5) {
+        if ($("#lblNotVerifiedUser").html() > 0) {
             $("#tbldatadialog").DataTable().destroy();
             $("#lblModelTitle").html('Total Not Verified Users');
             $("#DataTableDialog").modal('show');
             BindDialog("NotVerifiedUser");
-        }
-        else {
-            BindData("NotVerifiedUser");
         }
     });
     $("#btnIO").click(function () {
@@ -194,9 +173,6 @@
             $("#DataTableDialog").modal('show');
             BindDialog("CO");
         }
-        else {
-            BindData("CO");
-        }
     });
     $("#btnRO").click(function () {
         if ($("#lblRO").html() > 0) {
@@ -205,9 +181,6 @@
             $("#DataTableDialog").modal('show');
             BindDialog("RO");
         }
-        else {
-            BindData("RO");
-        }
     });
     $("#btnORO").click(function () {
         if ($("#lblORO").html() > 0) {
@@ -215,9 +188,6 @@
             $("#lblModelTitle").html('Total Not Verified Users');
             $("#DataTableDialog").modal('show');
             BindDialog("ORO");
-        }
-        else {
-            BindData("ORO");
         }
     });
 });
@@ -501,7 +471,7 @@ function ProceedForMapping() {
     if ($(formId).valid()) {
         Swal.fire({
             title: 'Are you sure?',
-            text: "You won't be Save!",
+            text: "",
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
@@ -703,7 +673,7 @@ function Proceed() {
     if ($(formId).valid()) {
         Swal.fire({
             title: 'Are you sure?',
-            text: "You won't be Save!",
+            text: "",
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',

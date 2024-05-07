@@ -4,6 +4,7 @@ using DataAccessLayer;
 using DataAccessLayer.BaseInterfaces;
 using DataTransferObject.Domain;
 using DataTransferObject.Domain.Master;
+using DataTransferObject.Requests;
 using DataTransferObject.Response;
 using DataTransferObject.Response.User;
 using DataTransferObject.ViewModels;
@@ -24,6 +25,10 @@ namespace BusinessLogicsLayer.Master
         public UserProfileBL(ApplicationDbContext context, IUserProfileDB userProfileDB) : base(context)
         {
             _iUserProfileDB = userProfileDB;   
+        }
+        public async Task<bool?> UpdateProfileWithMapping(DTOUpdateProfileWithMappingRequest dTO)
+        {
+            return await _iUserProfileDB.UpdateProfileWithMapping(dTO);
         }
 
         public Task<List<DTOUserProfileResponse>> GetAll(int DomainId, int UserId)

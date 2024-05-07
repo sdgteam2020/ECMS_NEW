@@ -104,7 +104,7 @@ function Proceed() {
     if ($(formId).valid()) {
         Swal.fire({
             title: 'Are you sure?',
-            text: "You won't be Save!",
+            text: "",
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
@@ -165,10 +165,10 @@ function BindData() {
                         listItem += "<td class='d-none'><span id='spnMRecordOfficeId'>" + response[i].RecordOfficeId + "</span><span id='spnArmedId'>" + response[i].ArmedId + "</span><span id='spnTDMId'>" + response[i].TDMId + "</span><span id='spnMessage'>" + response[i].Message + "</span><span id='spnUnitId'>" + response[i].UnitId + "</span><span id='spnSus_no'>" + response[i].Sus_no + "</span><span id='spnSuffix'>" + response[i].Suffix + "</span><span id='spnUnitName'>" + response[i].UnitName + "</span></td>";
                         listItem += "<td class='align-middle'>" + (i + 1) + "</td>";
                         listItem += "<td class='align-middle'><span id='RecordOfficeName'>" + response[i].RecordOfficeName + "</span></td>";
-                        listItem += "<td class='align-middle'><span id='abbreviation'>" + response[i].Abbreviation + "</span></td>";
+                        listItem += "<td class='align-middle'><span id='abbreviation'>" + response[i].Abbreviation.toUpperCase() + "</span></td>";
                         listItem += "<td class='align-middle'><span id='ArmedName'>" + response[i].ArmedName + "</span></td>";
                         if (response[i].TDMId != null) {
-                            listItem += "<td class='align-middle'><span id='DID'>" + response[i].DomainId + ' ' + response[i].RankAbbreviation + ' ' + response[i].Name + ' ' + response[i].ArmyNo + "</span></td>";
+                            listItem += "<td class='align-middle'><span id='DID'>" + response[i].DomainId + ' & ' + response[i].ArmyNo +' '+ response[i].RankAbbreviation + ' ' + response[i].Name  + "</span></td>";
                         }
                         else {
                             listItem += "<td class='align-middle'></td>";

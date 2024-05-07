@@ -11,7 +11,7 @@ $(document).ready(function () {
         if ($("#SaveFormProfile")[0].checkValidity()) {
             Swal.fire({
                 title: 'Are you sure?',
-                text: "You won't be Save!",
+                text: "",
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
@@ -19,15 +19,14 @@ $(document).ready(function () {
                 confirmButtonText: 'Yes, Save it!'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    var ArmyNo = $("#txtProArmy").val();
-                    var Rank = $("#ddlProRank").val();
+                    var RankId = $("#ddlProRank").val();
                     var Name = $("#txtName").val();
                     var MobileNo = $("#txtMobileNo").val();
                     var DialingCode = $("#txtDialingCode").val();
                     var Extension = $("#txtExtension").val();
                     var Thumbprint = $("#Thumbprint").val();
                   
-                   
+                    var TDMId = $("#spnTDMId").html();                   
                     var userid = $("#spnUserId").html();
                    
 
@@ -36,7 +35,7 @@ $(document).ready(function () {
                     IsCO = $("#chkCO").prop("checked");
                     IsORO = $("#chkORO").prop("checked");
                     
-                    SaveUserProfile(ArmyNo, Rank, Name, MobileNo, DialingCode, Extension, IsRO, IsIO, IsCO,IsORO, userid, Thumbprint);
+                    UpdateProfileWithMapping(RankId, Name, MobileNo, DialingCode, Extension, IsRO, IsIO, IsCO, IsORO, userid, TDMId, Thumbprint);
                         //SaveUserProfile(ArmyNo, Rank, Name, Appt, Unit, $("#intoffsyes").prop("checked"), 3, $("#spnUserIdIO").html(), $("#spnUserIdGSO").html(), userid)
                    
                     
@@ -121,25 +120,20 @@ function GetALLByUnitById(param1) {
     });
 }
 
-function SaveUserProfile(ArmyNo, Rank, Name, MobileNo, DialingCode, Extension, IsRO, IsIO, IsCO,IsORO, UserId, Thumbprint) {
+function UpdateProfileWithMapping(RankId, Name, MobileNo, DialingCode, Extension, IsRO, IsIO, IsCO, IsORO, UserId, TDMId,Thumbprint) {
 
     /*  alert($('#bdaymonth').val());*/
     
     $.ajax({
-        url: '/UserProfile/SaveUserProfile',
+        url: '/UserProfile/UpdateProfileWithMapping',
         type: 'POST',
-        data: { "ArmyNo": ArmyNo, "RankId": Rank, "Name": Name, "MobileNo": MobileNo, "DialingCode": DialingCode, "Extension": Extension, "UserId": UserId, "IsRO": IsRO, "IsIO": IsIO, "IsCO": IsCO, "IsORO": IsORO, "Thumbprint": Thumbprint }, //get the search string
+        data: {
+             "RankId": RankId, "Name": Name, "MobileNo": MobileNo, "DialingCode": DialingCode, "Extension": Extension, "UserId": UserId, "IsRO": IsRO, "IsIO": IsIO, "IsCO": IsCO, "IsORO": IsORO, "TDMId": TDMId,"Thumbprint": Thumbprint }, //get the search string
         success: function (result) {
 
 
-            if (result == DataSave) {
-                toastr.success('User has been saved');
-            }
-            else if (result == DataUpdate) {
+            if (result == DataUpdate) {
                 toastr.success('User has been Updated');
-            }
-            else if (result == DataExists) {
-                toastr.error('Army No Exits!');
             }
             else if (result == IncorrectData) {
                 toastr.error('Incorrect Data!');
@@ -187,6 +181,7 @@ function GetByArmyNo(ArmyNo) {
 
                 else {
                         $("#spnUserId").html(response.UserId);
+                        $("#spnTDMId").html(response.TDMId);
                         $("#txtProArmy").val(response.ArmyNo);
                         $("#txtMobileNo").val(response.MobileNo);
                         $("#txtDialingCode").val(response.DialingCode);

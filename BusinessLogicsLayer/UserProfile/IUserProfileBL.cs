@@ -1,5 +1,6 @@
 ﻿using DataTransferObject.Domain;
 using DataTransferObject.Domain.Master;
+using DataTransferObject.Requests;
 using DataTransferObject.Response;
 using DataTransferObject.Response.User;
 using DataTransferObject.ViewModels;
@@ -13,6 +14,7 @@ namespace BusinessLogicsLayer.Master
 {
     public interface IUserProfileBL : IGenericRepository<MUserProfile>
     {
+        public Task<bool?> UpdateProfileWithMapping(DTOUpdateProfileWithMappingRequest dTO);
         public Task<bool?> FindByArmyNo(string ArmyNo);
         public Task<bool?> FindByArmyNoWithUserId(string ArmyNo, int UserId);
         public Task<DTOProfileResponse?> GetProfileByUserId(int UserId);

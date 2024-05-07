@@ -13,7 +13,7 @@ $(document).ready(function () {
 
             Swal.fire({
                 title: 'Are you sure?',
-                text: "You won't be Save!",
+                text: "",
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
@@ -144,7 +144,7 @@ function BindData() {
                         retrieve: true,
                         lengthChange: false,
                         searching: false,
-                        "order": [[2, "asc"]],
+                        "order": [[1, "asc"]],
                         buttons: [{
                             extend: 'copy',
                             exportOptions: {

@@ -27,7 +27,7 @@ namespace DataAccessLayer
        
         public async Task<bool> GetByName(MRegimental Dto)
         {
-            List<MRegimental> mRegimentals = await _context.MRegimental.ToListAsync();
+            List<MRegimental> mRegimentals = await _context.MRegimental.AsNoTracking().ToListAsync();
             var ret = mRegimentals.Any(x => (x.Name.ToUpper() == Dto.Name.ToUpper() || x.Abbreviation.ToUpper() == Dto.Abbreviation.ToUpper()) && x.RegId != Dto.RegId);
             return ret;
         }
@@ -47,7 +47,7 @@ namespace DataAccessLayer
                              ArmedName=d.ArmedName,
                              Location=c.Location,
 
-                         }).ToList();
+                         }).OrderByDescending(x=>x.RegId).ToList();
 
 
 
