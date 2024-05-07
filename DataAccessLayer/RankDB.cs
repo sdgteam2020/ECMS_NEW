@@ -64,7 +64,7 @@ namespace DataAccessLayer
         }
         public async Task<IEnumerable<MRank>> GetAllByType(int Type)
         {
-            var ret=  _context.MRank.Where(x => x.ApplyForId==Type && x.IsActive==true).ToList();   
+            var ret=  _context.MRank.Where(x => x.ApplyForId==Type && x.IsActive==true).OrderBy(x=>x.Orderby).ToList();   
             return ret;
         }
         public async Task<DTORankIdCheckInFKTableResponse?> RankIdCheckInFKTable(short RankId)

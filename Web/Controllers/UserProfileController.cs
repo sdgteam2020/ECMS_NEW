@@ -121,6 +121,46 @@ namespace Web.Controllers
             }
             catch (Exception ex) { return Json(KeyConstants.InternalServerError); }
         }
+        public async Task<IActionResult> UpdateProfileWithMapping(DTOUpdateProfileWithMappingRequest dTO)
+        {
+            try
+            {
+                if (dTO.UserId > 0 && dTO.TDMId>0)
+                {
+                    dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                    dTO.UpdatedOn = DateTime.Now;
+                    if (ModelState.IsValid)
+                    {
+                        bool? result = await _userProfileBL.UpdateProfileWithMapping(dTO);
+                        if (result != null)
+                        {
+                            if (result == true)
+                            {
+                                return Json(KeyConstants.Update);
+                            }
+                            else
+                            {
+                                return Json(KeyConstants.InternalServerError);
+                            }
+                        }
+                        else
+                        {
+                            return Json(KeyConstants.InternalServerError);
+                        }
+                    }
+                    else
+                    {
+
+                        return Json(ModelState.Select(x => x.Value.Errors).Where(y => y.Count > 0).ToList());
+                    }
+                }
+                else
+                {
+                    return Json(KeyConstants.IncorrectData);
+                }
+            }
+            catch (Exception ex) { return Json(KeyConstants.InternalServerError); }
+        }
         public async Task<IActionResult> MappingIOGSOUNIT(MMappingProfile dTO)
         {
             try

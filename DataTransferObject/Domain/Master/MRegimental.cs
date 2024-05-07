@@ -22,7 +22,7 @@ namespace DataTransferObject.Domain.Master
         public string Name { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "required!")]
-        [RegularExpression("^[a-zA-Z0-9 ]*$", ErrorMessage = "Only Alphabets and Numbers allowed.")]
+        [RegularExpression("^[A-Z0-9 ]*$", ErrorMessage = "Abbreviation only UpperCase Alphabets and Numbers allowed.")]
         [Column(TypeName = "varchar(10)")]
         [MaxLength(10, ErrorMessage = "Maximum length of Abbreviation is ten character.")]
         public string Abbreviation { get; set; } = string.Empty;

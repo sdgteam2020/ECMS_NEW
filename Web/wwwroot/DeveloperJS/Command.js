@@ -13,7 +13,7 @@ $(document).ready(function () {
 
             Swal.fire({
                 title: 'Are you sure?',
-                text: "You won't be Save!",
+                text: "",
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
@@ -111,7 +111,7 @@ function BindData() {
                             listItem += "<td class='d-none'><span id='ScomdId'>" + response[i].ComdId + "</span><span id='SOrderby'>" + response[i].Orderby + "</span></td>";
                             listItem += "<td class='align-middle'>" + i + "</td>";
                             listItem += "<td class='align-middle'><span id='comdName'>" + response[i].ComdName + "</span></td>";
-                            listItem += "<td class='align-middle'><span id='comdAbbreviation'>" + response[i].ComdAbbreviation + "</span></td>";
+                            listItem += "<td class='align-middle'><span id='comdAbbreviation'>" + response[i].ComdAbbreviation.toUpperCase() + "</span></td>";
                             
 
                             if (response[i].Orderby != response.length)
@@ -245,7 +245,7 @@ function Save() {
     $.ajax({
         url: '/Master/SaveCommand',
         type: 'POST',
-        data: { "ComdName": $("#txtComandName").val().trim(), "ComdId": $("#spncomdId").html(), "ComdAbbreviation": $("#txtAbbreviation").val().trim(), "Orderby": $("#spnSOrderby").html() }, //get the search string
+        data: { "ComdName": $("#txtComandName").val().trim(), "ComdId": $("#spncomdId").html(), "ComdAbbreviation": $("#txtAbbreviation").val().trim().toUpperCase(), "Orderby": $("#spnSOrderby").html() }, //get the search string
         success: function (result) {
 
 

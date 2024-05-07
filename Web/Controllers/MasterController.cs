@@ -55,7 +55,7 @@ namespace Web.Controllers
                 dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                 dTO.UpdatedOn = DateTime.Now;
                 dTO.ComdName = dTO.ComdName.Trim();
-                dTO.ComdAbbreviation= dTO.ComdAbbreviation.Trim();
+                dTO.ComdAbbreviation= dTO.ComdAbbreviation.Trim().ToUpper();
 
                 if (ModelState.IsValid)
                 {
@@ -987,7 +987,7 @@ namespace Web.Controllers
             {
                
                 dTO.IsActive = true;
-                dTO.Updatedby = 1;
+                dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                 dTO.UpdatedOn = DateTime.Now;
 
                 if (ModelState.IsValid)
@@ -1350,10 +1350,10 @@ namespace Web.Controllers
             try
             {
                 dTO.IsActive = true;
-                dTO.Updatedby = 1;
+                dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                 dTO.UpdatedOn = DateTime.Now;
                 dTO.ArmedName = dTO.ArmedName.Trim();
-                dTO.Abbreviation= dTO.Abbreviation.Trim();
+                dTO.Abbreviation= dTO.Abbreviation.Trim().ToUpper();
 
                 if (ModelState.IsValid)
                 {
@@ -1463,7 +1463,7 @@ namespace Web.Controllers
                 dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                 dTO.UpdatedOn = DateTime.Now;
                 dTO.Name = dTO.Name.Trim();
-                dTO.Abbreviation=dTO.Abbreviation.Trim();
+                dTO.Abbreviation=dTO.Abbreviation.Trim().ToUpper();
                 dTO.Location= dTO.Location.Trim();
 
                 if (ModelState.IsValid)
@@ -1564,7 +1564,7 @@ namespace Web.Controllers
                 dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                 dTO.UpdatedOn = DateTime.Now;
                 dTO.Name = dTO.Name.Trim();
-                dTO.Abbreviation = dTO.Abbreviation.Trim();
+                dTO.Abbreviation = dTO.Abbreviation.Trim().ToUpper();
 
                 if (ModelState.IsValid)
                 {

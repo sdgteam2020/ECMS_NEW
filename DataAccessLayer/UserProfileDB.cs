@@ -2,14 +2,19 @@
 using DataAccessLayer.BaseInterfaces;
 using DataAccessLayer.Logger;
 using DataTransferObject.Domain;
+using DataTransferObject.Domain.Identitytable;
 using DataTransferObject.Domain.Master;
 using DataTransferObject.Domain.Model;
+using DataTransferObject.Requests;
 using DataTransferObject.Response;
 using DataTransferObject.Response.User;
 using DataTransferObject.ViewModels;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json.Linq;
+using System.Data.Entity;
 
 namespace DataAccessLayer
 {
@@ -52,6 +57,61 @@ namespace DataAccessLayer
                 return null;
             }
 
+        }
+        public async Task<bool?> UpdateProfileWithMapping(DTOUpdateProfileWithMappingRequest dTO)
+        {
+            using (var transaction = _context.Database.BeginTransaction())
+            {
+                try
+                {
+                    //_context.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
+                    var userUpdate = await _context.TrnDomainMapping.FindAsync(dTO.TDMId);
+
+                    if (userUpdate == null)
+                    {
+                        return false;
+                    }
+                    else
+                    {
+                        userUpdate.Extension = dTO.Extension;
+                        userUpdate.DialingCode = dTO.DialingCode;
+                        userUpdate.IsIO = dTO.IsIO;
+                        userUpdate.IsCO = dTO.IsCO;
+                        userUpdate.IsRO = dTO.IsRO;
+                        userUpdate.IsORO = dTO.IsORO;
+
+                        _context.TrnDomainMapping.Update(userUpdate);
+                        await _context.SaveChangesAsync();
+
+                        var mUserProfile = await _context.UserProfile.FindAsync(dTO.UserId);
+                        if (mUserProfile == null)
+                        {
+                            return false;
+                        }
+                        else
+                        {
+                            mUserProfile.UserId = dTO.UserId;
+                            mUserProfile.Name = dTO.Name;
+                            mUserProfile.RankId = dTO.RankId;
+                            mUserProfile.MobileNo = dTO.MobileNo;
+                            mUserProfile.IsToken = dTO.IsToken;
+                            mUserProfile.Thumbprint = dTO.Thumbprint;
+
+                            _context.UserProfile.Update(mUserProfile);
+                            await _context.SaveChangesAsync();
+                        }
+                        transaction.Commit();
+                        return true;
+
+                    }
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    _logger.LogError(1001, ex, "UserProfileDB->UpdateProfileWithMapping");
+                    return null;
+                }
+            }
         }
         public async Task<List<MUserProfile>> GetByMArmyNo(string ArmyNo, int UserId)
         {
@@ -181,7 +241,7 @@ namespace DataAccessLayer
                 //                ).Distinct().FirstOrDefaultAsync();
 
                
-                string query = "SELECT prof.ArmyNo,prof.UserId,prof.Name,prof.MobileNo,trnd.DialingCode,trnd.Extension,prof.Thumbprint,trnd.IsRO,trnd.IsIO,trnd.IsCO,trnd.IsORO,prof.IsToken,ran.RankName Rank,ran.RankId,mapu.UnitMapId UnitId,munit.UnitName,users.DomainId," +
+                string query = "SELECT prof.ArmyNo,prof.UserId,prof.Name,prof.MobileNo,trnd.Id as TDMId,trnd.DialingCode,trnd.Extension,prof.Thumbprint,trnd.IsRO,trnd.IsIO,trnd.IsCO,trnd.IsORO,prof.IsToken,ran.RankName Rank,ran.RankId,mapu.UnitMapId UnitId,munit.UnitName,users.DomainId," +
                                 " appt.AppointmentName,trnd.MappedDate,usermodify.DomainId MappedBy,roles.Name RoleName from UserProfile prof "+
                                 " inner join MRank ran on prof.RankId = ran.RankId "+
                                 " inner join TrnDomainMapping trnd  on trnd.UserId = prof.UserId "+
