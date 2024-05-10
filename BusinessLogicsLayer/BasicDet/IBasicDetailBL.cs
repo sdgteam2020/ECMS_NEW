@@ -1,7 +1,9 @@
-﻿using DataTransferObject.Domain.Model;
+﻿using DataTransferObject.Domain.Master;
+using DataTransferObject.Domain.Model;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
 using DataTransferObject.ViewModels;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,7 +28,7 @@ namespace BusinessLogicsLayer.BasicDet
         public Task<List<DTONotificationResponse>> GetNotificationRequestId(int UserId, int Type,int applyForId);
         public Task<List<DTODataExportsResponse>> GetBesicdetailsByRequestId(DTODataExportRequest Data);
         public Task<DTOXMLDigitalResponse> GetDataDigitalXmlSign(DTODataExportRequest Data);
-
-
+        public Task<List<MRecordOffice>> GetROListByArmedId(byte ArmedId);
+        public Task<IEnumerable<SelectListItem>> GetRODDLIdSelected(byte ArmedId);
     }
 }

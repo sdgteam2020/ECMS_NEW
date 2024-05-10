@@ -13,7 +13,7 @@ namespace DataAccessLayer.BaseInterfaces
     {
         public Task<bool> GetByName(MRank Dto);
         public Task<short> GetByMaxOrder();
-        public Task<int> GetRankIdbyOrderby(short OrderBy);
+        public Task<short> GetRankIdbyOrderby(short OrderBy);
         public Task<IEnumerable<MRank>> GetAllByorder();
         public Task<IEnumerable<MRank>> GetAllByType(int Type);
         public Task<DTORankIdCheckInFKTableResponse?> RankIdCheckInFKTable(short RankId);

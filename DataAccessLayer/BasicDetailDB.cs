@@ -18,8 +18,9 @@ using DataTransferObject.Domain;
 using DataTransferObject.ViewModels;
 using DataTransferObject.Response;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
-using System.Data.Entity;
 using static Dapper.SqlMapper;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Extensions.Logging;
 
 namespace DataAccessLayer
 {
@@ -28,10 +29,12 @@ namespace DataAccessLayer
         protected readonly ApplicationDbContext _context;
         private readonly DapperContext _contextDP;
         private readonly IDataProtector protector;
-        public BasicDetailDB(ApplicationDbContext context, DapperContext contextDP, IDataProtectionProvider dataProtectionProvider, DataProtectionPurposeStrings dataProtectionPurposeStrings) : base(context)
+        private readonly ILogger<BasicDetailDB> _logger;
+        public BasicDetailDB(ApplicationDbContext context, DapperContext contextDP, IDataProtectionProvider dataProtectionProvider, ILogger<BasicDetailDB> logger, DataProtectionPurposeStrings dataProtectionPurposeStrings) : base(context)
         {
             _context = context;
             _contextDP=contextDP;
+            _logger = logger;
             // Pass the purpose string as a parameter
             this.protector = dataProtectionProvider.CreateProtector(
                 dataProtectionPurposeStrings.AFSACIdRouteValue);
@@ -76,9 +79,9 @@ namespace DataAccessLayer
                     trnUpload.BasicDetailId = Data.BasicDetailId;
                     mTrnIdentityInfo.BasicDetailId = Data.BasicDetailId;
 
-                    //_context.Entry(Data).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
-                    //_context.Update(Data);
-                    //_context.SaveChangesAsync();
+                    _context.Entry(Data).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+                    _context.Update(Data);
+                    await _context.SaveChangesAsync();
 
                     _context.Update(address);
                     await _context.SaveChangesAsync();
@@ -598,7 +601,7 @@ namespace DataAccessLayer
 
             string query = "select bas.*,"+
                             " trnadd.State,trnadd.District,trnadd.PS,trnadd.PO,trnadd.Tehsil,trnadd.Village,trnadd.PinCode,"+
-                            " trnup.SignatureImagePath,trnup.PhotoImagePath,IdenMark1,IdenMark2,AadhaarNo,Height,bld.BloodGroup," +
+                            " trnup.SignatureImagePath,trnup.PhotoImagePath,IdenMark1,IdenMark2,AadhaarNo,Height,bld.BloodGroup,bld.BloodGroupId," +
                             " regi.Abbreviation RegimentalName,Muni.UnitName,uni.UnitMapId UnitId,icardreq.TypeId,icardreq.RegistrationId," +
                             " ran.RankId,ran.RankAbbreviation RankName,arm.Abbreviation ArmedName,trnadd.AddressId,trnup.UploadId,trninfo.InfoId from BasicDetails bas" +
                             " inner join TrnAddress trnadd on trnadd.BasicDetailId=bas.BasicDetailId"+
@@ -917,7 +920,38 @@ namespace DataAccessLayer
                 return ret.ToList();
             }
         }
+        public async Task<List<MRecordOffice>> GetROListByArmedId(byte ArmedId)
+        {
+            return await _context.MRecordOffice.Where(x => x.ArmedId == ArmedId).ToListAsync();
+        }
+        public async Task<IEnumerable<SelectListItem>> GetRODDLIdSelected(byte ArmedId)
+        {
+            try
+            {
+                var ROOptions = await _context.MRecordOffice.Where(x => x.ArmedId == ArmedId)
+                    .Select(a =>
+                      new SelectListItem
+                      {
+                          Value = a.RecordOfficeId.ToString(),
+                          Text = a.Name
+                      }).ToListAsync();
 
-       
+                var ddfirst = new SelectListItem()
+                {
+                    Value = null,
+                    Text = "Please Select"
+                };
+                ROOptions.Insert(0, ddfirst);
+                return new SelectList(ROOptions, "Value", "Text");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "BasicDetailDB->GetRODDLIdSelected");
+                return null;
+            }
+
+        }
+
+
     }
 }

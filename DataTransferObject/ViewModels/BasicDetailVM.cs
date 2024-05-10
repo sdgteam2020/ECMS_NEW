@@ -112,9 +112,13 @@ namespace DataTransferObject.ViewModels
         public byte StatusLevel { get; set; }
 
         [Display(Name = "RegimentalId", ResourceType = typeof(Resource))]
-        [RegularExpression(@"^[\w \.\,\?\;\:\""\''\[\]\!\@\#\$\%\&\*\(\)\-\=\+\\\/]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
+        [RegularExpression(@"^[\d]+$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "OnlyNumber")]
         public byte? RegimentalId { get; set; }
         public MRegimental? Regimental { get; set; }
+
+        [RegularExpression(@"^[\d]+$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "OnlyNumber")]
+        public byte? RecordOfficeId { get; set; }
+        public MRecordOffice? MRecordOffice { get; set; }
 
         //[Display(Name = "ApplyForId", ResourceType = typeof(Resource))]
         [Required]

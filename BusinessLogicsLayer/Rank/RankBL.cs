@@ -50,20 +50,25 @@ namespace BusinessLogicsLayer.BdeCate
         public async Task<int> OrderByChange(MRank Dto)
         {
             ////Current Order
-            int ComdIdnext = await _iRankDB.GetRankIdbyOrderby((short)(Dto.Orderby + 1));
-            if (ComdIdnext > 0)
+            short i = Dto.Orderby;
+            increment:
+            i++;
+            short ComdIdnext = await _iRankDB.GetRankIdbyOrderby(i);
+            if (ComdIdnext == 0)
             {
-
-                ///
+                goto increment;
+            }
+            else
+            {
                 /////Subtraction order no Next Comd
-                var datanext = await Get(ComdIdnext);
+                var datanext = await GetByGen<short>(ComdIdnext);
                 datanext.Orderby = Dto.Orderby;
                 await Update(datanext);
 
                 ////////Change Order No For Click
                 MRank data = new MRank();
-                data = await Get(Dto.RankId);
-                data.Orderby = Convert.ToInt16(Dto.Orderby + 1);
+                data = await GetByGen<short>(Dto.RankId);
+                data.Orderby = i;
                 await Update(data);
                 /////////////////////////
             }
