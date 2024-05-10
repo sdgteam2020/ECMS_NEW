@@ -1588,10 +1588,10 @@ namespace Web.Controllers
                         {
                             return Json(2);
                         }
-                        else if(result == 3)
-                        {
-                            return Json(3);
-                        }
+                        //else if(result == 3)
+                        //{
+                        //    return Json(3);
+                        //}
                         else if(result == 4)
                         {
                             return Json(4);

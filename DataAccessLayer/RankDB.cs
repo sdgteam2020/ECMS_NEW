@@ -50,7 +50,7 @@ namespace DataAccessLayer
             return (short)(ret + 1);
         }
 
-        public async Task<int> GetRankIdbyOrderby(short OrderBy)
+        public async Task<short> GetRankIdbyOrderby(short OrderBy)
         {
             var ret= _context.MRank.Where(P => P.Orderby == OrderBy).Select(c=>c.RankId).SingleOrDefault(); 
            

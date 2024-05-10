@@ -14,10 +14,7 @@ namespace DataTransferObject.Domain.Model
     { 
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-       
         public int BasicDetailId { get; set; }
-
-     
 
         [StringLength(36)]
         [Column(TypeName = "varchar(36)")]
@@ -59,6 +56,10 @@ namespace DataTransferObject.Domain.Model
         [ForeignKey("MRegimental")]
         public byte? RegimentalId { get; set; }
         public MRegimental? Regimental { get; set; }
+
+        [ForeignKey("MRecordOffice")]
+        public byte? RecordOfficeId { get; set; }
+        public MRecordOffice? MRecordOffice { get; set; }
 
         [ForeignKey("MApplyFor"), DatabaseGenerated(DatabaseGeneratedOption.None)]
         public byte ApplyForId { get; set; }

@@ -320,12 +320,12 @@ function Save() {
             else if (result == 2) {
                 toastr.error('Record Office / Abbreviation Name Exits!');
             }
-            else if (result == 3) {
-                toastr.error('Armed Id Exits!');
-            }
-            else if (result == 4) {
-                toastr.error('Domain Id Exits!');
-            }
+            //else if (result == 3) {
+            //    toastr.error('Armed Id Exits!');
+            //}
+            //else if (result == 4) {
+            //    toastr.error('Domain Id Exits!');
+            //}
             else if (result == InternalServerError) {
                 Swal.fire({
                     icon: 'error',

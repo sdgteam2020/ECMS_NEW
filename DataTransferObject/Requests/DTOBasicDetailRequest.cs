@@ -204,6 +204,8 @@ namespace DataTransferObject.Requests
         //[NotMapped]
         //public int? Height { get; set; }
 
+        public byte BloodGroupId { get; set; }
+
         public string? BloodGroup { get; set; }
 
         [NotMapped]

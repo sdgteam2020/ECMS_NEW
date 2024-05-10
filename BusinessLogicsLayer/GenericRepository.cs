@@ -35,6 +35,10 @@ namespace BusinessLogicsLayer
         {
             return Get(id);
         }
+        public Task<T> GetByGen<T2>(T2 val1)
+        {
+            return GetByGen(val1);
+        }
         public Task<T> GetByByte(byte id)
         {
             return GetByByte(id);

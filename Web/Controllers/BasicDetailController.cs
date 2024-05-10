@@ -530,8 +530,6 @@ namespace Web.Controllers
         [Authorize(Roles = "Admin,User")]
         public async Task<ActionResult> BasicDetail(string? Id)
         {
-
-            
             ViewBag.OptionsBloodGroup = service.GetBloodGroup();
             ViewBag.OptionsArmedType = service.GetArmedType();
 
@@ -640,11 +638,14 @@ namespace Web.Controllers
                     //}
                     //basicDetailUpdVM.RegistrationType = basicDetailUpdVM.RegistrationType;
                     //basicDetailUpdVM.RegimentalId = basicDetailUpdVM.RegimentalId;
+                    basicDetailUpdVM.BloodGroupId = basicDetailUpdVM.BloodGroupId;
+                    basicDetailUpdVM.RecordOfficeId = basicDetailUpdVM.RecordOfficeId;
                     basicDetailUpdVM.PermanentAddress = "Village - " + basicDetailUpdVM.Village + ", Post Office-" + basicDetailUpdVM.PO + ", Tehsil- " + basicDetailUpdVM.Tehsil + ", District- " + basicDetailUpdVM.District + ", State- " + basicDetailUpdVM.State + ", Pin Code- " + basicDetailUpdVM.PinCode;
                     basicDetailUpdVM.ExistingPhotoImagePath = basicDetailUpdVM.PhotoImagePath;
                     basicDetailUpdVM.ExistingSignatureImagePath = basicDetailUpdVM.SignatureImagePath;
                     basicDetailUpdVM.EncryptedId = Id;
                     ViewBag.OptionsRegimental = service.GetRegimentalDDLIdSelected(basicDetailUpdVM.ArmedId);
+                    ViewBag.OptionsRecordOffice = await basicDetailBL.GetRODDLIdSelected(basicDetailUpdVM.ArmedId);
 
                     ///////////////////////for close appl
                     ///
@@ -1178,11 +1179,19 @@ namespace Web.Controllers
         }
         [Authorize(Roles = "Admin,User")]
         [HttpPost]
-        public async Task<JsonResult> GetRegimentalListByArmedId(int RegimentalId)
+        public async Task<JsonResult> GetRegimentalListByArmedId(byte ArmedId)
         {
-            var regimentals = await service.GetRegimentalListByArmedId(RegimentalId);
+            var regimentals = await service.GetRegimentalListByArmedId(ArmedId);
             return Json(regimentals);
         }
+        [Authorize(Roles = "Admin,User")]
+        [HttpPost]
+        public async Task<IActionResult> GetROListByArmedId(byte ArmedId)
+        {
+            var ro = await basicDetailBL.GetROListByArmedId(ArmedId);
+            return Ok(ro);
+        }
+
         [AcceptVerbs("Get", "Post")]
         [AllowAnonymous]
         public async Task<IActionResult> IsServiceNoInUse(string ServiceNo, string initialServiceNo)

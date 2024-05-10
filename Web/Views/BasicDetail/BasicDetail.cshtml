@@ -8,11 +8,11 @@
         content: "*";
         color: red;
     }
-   
-    
+
+
     .notefont {
-        font-size:12px;
-        font-weight:700;
+        font-size: 12px;
+        font-weight: 700;
     }
 
     .form-group .labelprofile {
@@ -24,112 +24,112 @@
     }
 </style>
 @* <div class="container1"> *@
-    <div class="card">
+<div class="card">
     <span id="SpnTxnId" class="d-none">0</span>
-     @*    <div class="card-header">
+    @*    <div class="card-header">
 
-            
-           
-            <div class="row">
-                <div class="col-xl-12 text-left">
-                    <h3>
-                        I-Card Request
-                        <span id="icarddetails"></span>
-                       
-                    </h3>
-                </div>
-            </div>
-        </div> *@
+
+
+    <div class="row">
+    <div class="col-xl-12 text-left">
+    <h3>
+    I-Card Request
+    <span id="icarddetails"></span>
+
+    </h3>
+    </div>
+    </div>
+    </div> *@
     <form enctype="multipart/form-data" asp-controller="BasicDetail" asp-action="BasicDetail" id="SaveForm" method="post" class="">
-            <div class="p-2">
-                <input hidden asp-for="BasicDetailId" />
-                <input hidden asp-for="ExistingPhotoImagePath" />
-                <input hidden asp-for="ExistingSignatureImagePath" />
+        <div class="p-2">
+            <input hidden asp-for="BasicDetailId" />
+            <input hidden asp-for="ExistingPhotoImagePath" />
+            <input hidden asp-for="ExistingSignatureImagePath" />
             @*  <input hidden asp-for="DOB" /> *@
-           @*   <input hidden asp-for="DateOfCommissioning" /> *@
-                <input hidden asp-for="EncryptedId" />
-                <input hidden asp-for="ApplyForId" /> @* OffrsJCO/OR *@
-                <input hidden asp-for="RegistrationId" /> @* OffrsJCO/OR *@
-                <input hidden asp-for="TypeId" />    @* OffrsJCO/OR *@       
-                <input hidden asp-for="State" />
-                <input hidden asp-for="District" />
-                <input hidden asp-for="PS" />
-                <input hidden asp-for="PO" />
-                <input hidden asp-for="Tehsil" />
-                <input hidden asp-for="Village" />
-                <input hidden asp-for="PinCode" />
-                <input hidden asp-for="IdenMark2" />
-                <input hidden asp-for="AddressId" />
-                <input hidden asp-for="UploadId" />
-                <input hidden asp-for="InfoId" />
+            @*   <input hidden asp-for="DateOfCommissioning" /> *@
+            <input hidden asp-for="EncryptedId" />
+            <input hidden asp-for="ApplyForId" /> @* OffrsJCO/OR *@
+            <input hidden asp-for="RegistrationId" /> @* OffrsJCO/OR *@
+            <input hidden asp-for="TypeId" />    @* OffrsJCO/OR *@
+            <input hidden asp-for="State" />
+            <input hidden asp-for="District" />
+            <input hidden asp-for="PS" />
+            <input hidden asp-for="PO" />
+            <input hidden asp-for="Tehsil" />
+            <input hidden asp-for="Village" />
+            <input hidden asp-for="PinCode" />
+            <input hidden asp-for="IdenMark2" />
+            <input hidden asp-for="AddressId" />
+            <input hidden asp-for="UploadId" />
+            <input hidden asp-for="InfoId" />
 
 
 
-                <input hidden id="spnrankid" value="@ViewBag.OptionsRank" />
-                <input hidden id="spnUnitIdid" value="@ViewBag.OptionsUnitId" />
+            <input hidden id="spnrankid" value="@ViewBag.OptionsRank" />
+            <input hidden id="spnUnitIdid" value="@ViewBag.OptionsUnitId" />
 
-                <div class="row">
-                    <div class="col-md-12 ">
-                        <div class="card cardbg minheight mb-2 mt-2">
+            <div class="row">
+                <div class="col-md-12 ">
+                    <div class="card cardbg minheight mb-2 mt-2">
                         <div class="seven">
                             <h1><span id="icarddetails"></span></h1>
                         </div>
-                            <div class="mt-2 ml-4">
-                                
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="form-group row mb-2">
+                        <div class="mt-2 ml-4">
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group row mb-2">
                                         <label class="col-form-label col-sm-4 labelprofile">Logged in User Detls</label>
-                                            <div class="col-sm-8">
-                                                <label id="RegdUser" class="col-form-label"></label>
-
-                                            </div>
+                                        <div class="col-sm-8">
+                                            <label id="RegdUser" class="col-form-label"></label>
 
                                         </div>
+
                                     </div>
-
-                                    <div class="col-md-6">
-                                        <div class="form-group row mb-2">
-                                            <label class="col-form-label col-sm-4 labelprofile">Category</label>
-                                            <div class="col-sm-8">
-                                                <label id="lblCategory" class="col-form-label"></label>
-
-                                            </div>
-
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group row mb-2">
-                                            <label class="col-form-label col-sm-4 labelprofile">Unit Name</label>
-                                            <div class="col-sm-8">
-                                                <label id="lblunitname" class="col-form-label"></label>
-
-                                            </div>
-
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group row mb-2">
-                                            <label class="col-form-label col-sm-4 labelprofile">Reason For Apply</label>
-                                            <div class="col-sm-8">
-                                                <label id="lblReason" class="col-form-label"></label>
-
-                                            </div>
-
-                                        </div>
-                                    </div>
-
                                 </div>
+
+                                <div class="col-md-6">
+                                    <div class="form-group row mb-2">
+                                        <label class="col-form-label col-sm-4 labelprofile">Category</label>
+                                        <div class="col-sm-8">
+                                            <label id="lblCategory" class="col-form-label"></label>
+
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group row mb-2">
+                                        <label class="col-form-label col-sm-4 labelprofile">Unit Name</label>
+                                        <div class="col-sm-8">
+                                            <label id="lblunitname" class="col-form-label"></label>
+
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group row mb-2">
+                                        <label class="col-form-label col-sm-4 labelprofile">Reason For Apply</label>
+                                        <div class="col-sm-8">
+                                            <label id="lblReason" class="col-form-label"></label>
+
+                                        </div>
+
+                                    </div>
+                                </div>
+
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-12 ">
-                        <div class="card">
+                </div>
+                <div class="col-md-12 ">
+                    <div class="card">
                         <div class="seven">
                             <h1>Initiate Request</h1>
                         </div>
                         <div class="mt-2 ml-4">
-                           
+
                             <div class="row">
                                 <div class="col-xl-2">
                                     <div class="row mb-1 required">
@@ -138,7 +138,7 @@
                                             @*  <label class="col-sm-4 col-form-label font-weight-bold">@(sno++).</label> *@
                                             @* <label class="col-sm-3 col-form-label form-label">Photograph</label> *@
                                             <div class="col-sm-12">
-                                              
+
                                                 @if (Model.ArmedId > 0)
                                                 {
                                                     <div class="box">
@@ -150,8 +150,6 @@
                                                             </label>
                                                         </div>
                                                     </div>
-
-
                                                 }
                                                 else
                                                 {
@@ -176,11 +174,10 @@
                                         <div class="col-xl-12">
                                             @* <label class="col-sm-4 col-form-label text-center font-weight-bold">@(sno++).</label> *@
                                             @*<label class="col-sm-3 col-form-label form-label">Signature</label> *@
-                                           
+
                                             <div class="col-sm-12">
                                                 @if (Model.ArmedId > 0)
                                                 {
-                                                    
                                                     <div class="box_sig">
                                                         <div class="js--image-preview_sig"> <img id="SignaturePath" src="/WriteReadData/Signature/@Model.ExistingSignatureImagePath" height="80px" width="180px" /></div>
                                                         <div class="upload-options_sign">
@@ -190,8 +187,6 @@
                                                             </label>
                                                         </div>
                                                     </div>
-
-
                                                 }
                                                 else
                                                 {
@@ -204,30 +199,23 @@
                                                             </label>
                                                         </div>
                                                     </div>
-
-
                                                 }
                                                 <span id="lblSignature" style="color: red;"></span>
                                                 <span asp-validation-for="Signature_" class="text-danger"></span>
                                                 <span class="text-danger"> Signature Upload Upto 50KB</span>
                                             </div>
                                         </div>
-
-
-
-
-
                                     </div>
                                 </div>
                                 <div class="col-xl-5">
-                        <div class="row mb-1">
-                            <label class="col-sm-1 col-form-label text-center font-weight-bold">@(sno++).</label>
+                                    <div class="row mb-1">
+                                        <label class="col-sm-1 col-form-label text-center font-weight-bold">@(sno++).</label>
                                         <label class="col-sm-3 col-form-label form-label labelprofile">Paper I-Card No</label>
-                            <div class="col-sm-8">
+                                        <div class="col-sm-8">
                                             <input asp-for="PaperIcardNo" class="form-control text-uppercase" data-toggle="tooltip" title="Enter Paper I card No" placeholder="Enter Paper I card No" maxlength="20" required />
-                                <span asp-validation-for="PaperIcardNo" class="text-danger"></span>
-                            </div>
-                        </div>
+                                            <span asp-validation-for="PaperIcardNo" class="text-danger"></span>
+                                        </div>
+                                    </div>
                                     <div class="row mb-1">
                                         <label class="col-sm-1 col-form-label text-center font-weight-bold labelprofile">@(sno++).</label>
                                         <label class="col-sm-3 col-form-label form-label labelprofile">Service No</label>
@@ -246,183 +234,190 @@
                                             <span asp-validation-for="RankId" class="text-danger"></span>
                                         </div>
                                     </div>
-                        <div class="row mb-1">
-                            <label class="col-sm-1 col-form-label text-center font-weight-bold">@(sno++).</label>
+                                    <div class="row mb-1">
+                                        <label class="col-sm-1 col-form-label text-center font-weight-bold">@(sno++).</label>
                                         <label asp-for="Name" class="col-sm-3 col-form-label form-label labelprofile"></label>
-                            <div class="col-sm-8">
+                                        <div class="col-sm-8">
                                             <input asp-for="Name" class="form-control text-uppercase" maxlength="36" data-toggle="tooltip" title="Name Not Editable" placeholder="Max 36 Characters incl spaces" readonly required />
-                                <span asp-validation-for="Name" class="text-danger"></span>
-                            </div>
-                        </div>
-                       
-                        <div class="row mb-1 required">
-                            <label class="col-sm-1 col-form-label text-center font-weight-bold">@(sno++).</label>
+                                            <span asp-validation-for="Name" class="text-danger"></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-1 required">
+                                        <label class="col-sm-1 col-form-label text-center font-weight-bold">@(sno++).</label>
                                         <label asp-for="UnitId" class="col-sm-3 col-form-label form-label labelprofile">Unit Name</label>
-                            <div class="col-sm-8">
-                                @if (ViewBag.UnitName!=null)
-                                {
-                                    MUnit mUnit = ViewBag.UnitName;
+                                        <div class="col-sm-8">
+                                            @if (ViewBag.UnitName != null)
+                                            {
+                                                MUnit mUnit = ViewBag.UnitName;
                                                 <input type="text" id="txtUnit" name="txtUnit" class="form-control text-uppercase" data-toggle="tooltip" title="Enter SUS No And Select Unit Name" placeholder="Unit Name" value="@mUnit.UnitName" />
-                                }
-                                else
-                                {
+                                            }
+                                            else
+                                            {
                                                 <input type="text" id="txtUnit" name="txtUnit" class="form-control text-uppercase" data-toggle="tooltip" title="Enter SUS No And Select Unit Name" placeholder="Unit Name" />
-                                }
-                                <input hidden asp-for="UnitId" />
-                                <span asp-validation-for="UnitId" class="text-danger"></span>
-                            </div>
-                        </div>
-                        <div class="row mb-1 required">
-                            <label class="col-sm-1 col-form-label text-center font-weight-bold">@(sno++).</label>
+                                            }
+                                            <input hidden asp-for="UnitId" />
+                                            <span asp-validation-for="UnitId" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-1 required">
+                                        <label class="col-sm-1 col-form-label text-center font-weight-bold">@(sno++).</label>
                                         <label asp-for="ArmedId" class="col-sm-3 col-form-label form-label labelprofile"></label>
-                            <div class="col-sm-8">
-                                            <select asp-for="ArmedId" class="form-select" data-toggle="tooltip" title="Select Armed" asp-items="ViewBag.OptionsArmedType" required onchange="GetRegimentalListByArmedId(this.value)">
-                                </select>
-                                <span asp-validation-for="ArmedId" class="text-danger"></span>
-                            </div>
-                        </div>
-                        @* @if (Model.Type == (int)RegistrationType.JCO)
-                        { *@
-                        <div class="row mb-1 required OptionsRegimental">
-                                <label class="col-sm-1 col-form-label text-center font-weight-bold">@(sno++).</label>
+                                        <div class="col-sm-8">
+                                            <select asp-for="ArmedId" class="form-select" data-toggle="tooltip" title="Select Armed" asp-items="ViewBag.OptionsArmedType" required>
+                                                @* onchange="GetRegimentalListByArmedId(this.value)" *@
+                                            </select>
+                                            <span asp-validation-for="ArmedId" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                    @* @if (Model.Type == (int)RegistrationType.JCO)
+                                    { *@
+                                    <div class="row mb-1 required OptionsRegimental">
+                                        <label class="col-sm-1 col-form-label text-center font-weight-bold">@(sno++).</label>
                                         <label class="col-sm-3 col-form-label form-label labelprofile">Regimental Centre</label>
-                                <div class="col-sm-8">
+                                        <div class="col-sm-8">
                                             <select asp-for="RegimentalId" class="form-select" required asp-items="ViewBag.OptionsRegimental" data-toggle="tooltip" title="Select Regimental Name">
-                                    </select>
-                                    <span id="lblRegimentalId" class="text-danger"></span>
-                                </div>
-                            </div>
-                        @* } *@
-                       
-                        <div class="row mb-1 required">
-                            <label class="col-sm-1 col-form-label text-center font-weight-bold">@(sno++).</label>
+                                            </select>
+                                            <span id="lblRegimentalId" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                    @* } *@
+                                    <div class="row mb-1 required OptionsRecordOffice">
+                                        <label class="col-sm-1 col-form-label text-center font-weight-bold">@(sno++).</label>
+                                        <label class="col-sm-3 col-form-label form-label labelprofile">Record Office</label>
+                                        <div class="col-sm-8">
+                                            <select asp-for="RecordOfficeId" class="form-select" required asp-items="ViewBag.OptionsRecordOffice" data-toggle="tooltip" title="Select Record Office">
+                                            </select>
+                                            <span id="lblRecordOfficeId" class="text-danger"></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-1 required">
+                                        <label class="col-sm-1 col-form-label text-center font-weight-bold">@(sno++).</label>
                                         <label class="col-sm-3 col-form-label form-label labelprofile">Iden Mark</label>
-                            <div class="col-sm-8">
+                                        <div class="col-sm-8">
                                             <input asp-for="IdenMark1" class="form-control text-uppercase" maxlength="100" data-toggle="tooltip" title="Enter IdenMark " placeholder="Only one iden Mk (Max 10 characters incl spaces)" required />
-                                <span asp-validation-for="IdenMark1" class="text-danger"></span>
-                            </div>
-                        </div>
-                        <div class="row mb-1">
-                            <label class="col-sm-1 col-form-label text-center font-weight-bold">@(sno++).</label>
+                                            <span asp-validation-for="IdenMark1" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-1">
+                                        <label class="col-sm-1 col-form-label text-center font-weight-bold">@(sno++).</label>
                                         <label asp-for="DOB" class="col-sm-3 col-form-label form-label labelprofile"></label>
-                            <div class="col-sm-8">
+                                        <div class="col-sm-8">
                                             <input asp-for="DOB" class="form-control" readonly required data-toggle="tooltip" title="Enter DOB " />
-                               @*  <input type="text" id="DOB_" name="DOB_" class="form-control" value="@Model.DOB.ToString("dd/MMM/yyyy")" readonly /> *@
-                            </div>
-                        </div>
-                        <div class="row mb-1 required">
-                            <label class="col-sm-1 col-form-label text-center font-weight-bold">@(sno++).</label>
+                                            @*  <input type="text" id="DOB_" name="DOB_" class="form-control" value="@Model.DOB.ToString("dd/MMM/yyyy")" readonly /> *@
+                                        </div>
+                                    </div>
+                                    <div class="row mb-1 required">
+                                        <label class="col-sm-1 col-form-label text-center font-weight-bold">@(sno++).</label>
                                         <label class="col-sm-3 col-form-label form-label labelprofile">Height(CM)</label>
-                            <div class="col-sm-8">
+                                        <div class="col-sm-8">
                                             <input asp-for="Height" class="form-control" min="100" max="250" required />
                                             <span asp-validation-for="Height" class="text-danger" placeholder="Height in CM" data-toggle="tooltip" title="Height in CM "></span>
-                            </div>
-                        </div>
-                        
-                    
-                      
-                    </div>
-                    <div class="col-xl-4">
-                        <div class="row mb-1 required">
-                            <label class="col-sm-2 col-form-label text-center font-weight-bold">@(sno++).</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xl-4">
+                                    <div class="row mb-1 required">
+                                        <label class="col-sm-2 col-form-label text-center font-weight-bold">@(sno++).</label>
                                         <label asp-for="AadhaarNo" class="col-sm-4 col-form-label form-label labelprofile"></label>
-                            <div class="col-sm-6">
+                                        <div class="col-sm-6">
                                             <input asp-for="AadhaarNo" class="form-control isNumerictxt" required placeholder="AadhaarNo" data-toggle="tooltip" title="Enter Height in CM " maxlength="12" minlength="12" /> @* onkeyup="Aadhaarformate(event,this);" *@
-                                <span asp-validation-for="AadhaarNo" class="text-danger"></span>
-                            </div>
-                        </div>
+                                            <span asp-validation-for="AadhaarNo" class="text-danger"></span>
+                                        </div>
+                                    </div>
 
-                            <div class="row mb-1 required">
-                            <label class="col-sm-2 col-form-label text-center font-weight-bold">@(sno++).</label>
+                                    <div class="row mb-1 required">
+                                        <label class="col-sm-2 col-form-label text-center font-weight-bold">@(sno++).</label>
                                         <label asp-for="BloodGroupId" class="col-sm-4 col-form-label form-label labelprofile"></label>
-                            <div class="col-sm-6">
+                                        <div class="col-sm-6">
                                             <select asp-for="BloodGroupId" class="form-select" asp-items="ViewBag.OptionsBloodGroup" data-toggle="tooltip" title="Select Blood Group Name " required>
-                                </select>
-                                <span asp-validation-for="BloodGroupId" class="text-danger"></span>
-                            </div>
-                        </div>
-                        <div class="row mb-1 required">
-                            <label class="col-sm-2 col-form-label text-center font-weight-bold">@(sno++).</label>
+                                            </select>
+                                            <span asp-validation-for="BloodGroupId" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-1 required">
+                                        <label class="col-sm-2 col-form-label text-center font-weight-bold">@(sno++).</label>
                                         <label asp-for="PlaceOfIssue" class="col-sm-4 col-form-label form-label labelprofile"></label>
-                            <div class="col-sm-6">
+                                        <div class="col-sm-6">
                                             <input asp-for="PlaceOfIssue" readonly class="form-control Alphanumeric text-uppercase" data-toggle="tooltip" title="Enter Place Of Issue" maxlength="50" required placeholder="Place Of Issue" />
-                                <span asp-validation-for="PlaceOfIssue" class="text-danger"></span>
-                            </div>
-                        </div>
-                        <div class="row mb-3">
-                            <label class="col-sm-2 col-form-label text-center font-weight-bold">@(sno++).</label>
+                                            <span asp-validation-for="PlaceOfIssue" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <label class="col-sm-2 col-form-label text-center font-weight-bold">@(sno++).</label>
                                         <label asp-for="DateOfIssue" class="col-sm-4 col-form-label form-label labelprofile"></label>
-                            <div class="col-sm-6">
-                                            <input asp-for="DateOfIssue" readonly class="form-control todaydate d-none" data-toggle="tooltip" title="As per Finalization by RO"  />
+                                        <div class="col-sm-6">
+                                            <input asp-for="DateOfIssue" readonly class="form-control todaydate d-none" data-toggle="tooltip" title="As per Finalization by RO" />
                                             <input type="text" placeholder="As per Finalization by RO " id="tempDateOfIssue" class="form-control " readonly />
                                             <span asp-validation-for="DateOfIssue" class="text-danger"></span>
-                            </div>
-                        </div>
-                        <div class="row mb-1 required">
-                            <label class="col-sm-2 col-form-label text-center font-weight-bold">@(sno++).</label>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-1 required">
+                                        <label class="col-sm-2 col-form-label text-center font-weight-bold">@(sno++).</label>
                                         <label asp-for="IssuingAuth" class="col-sm-4 col-form-label form-label labelprofile"></label>
-                            <div class="col-sm-6">
+                                        <div class="col-sm-6">
                                             <input asp-for="IssuingAuth" readonly class="form-control text-uppercase" data-toggle="tooltip" title="Enter Issuing Auth" required />
-                                <span asp-validation-for="IssuingAuth" class="text-danger"></span>
-                            </div>
-                        </div>
-                        <div class="row mb-1">
-                            <label class="col-sm-2 col-form-label text-center font-weight-bold">@(sno++).</label>
+                                            <span asp-validation-for="IssuingAuth" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-1">
+                                        <label class="col-sm-2 col-form-label text-center font-weight-bold">@(sno++).</label>
                                         <label asp-for="DateOfCommissioning" class="col-sm-4 col-form-label form-label labelprofile"></label>
-                            <div class="col-sm-6">
+                                        <div class="col-sm-6">
                                             <input asp-for="DateOfCommissioning" class="form-control" readonly required />
-                               @*  <input type="text" id="DOC" name="DOC" class="form-control" value="@Model.DateOfCommissioning.ToString("dd/MMM/yyyy")" readonly /> *@
-                            </div>
-                        </div>
-                        <div class="row mb-1 required">
-                            <label class="col-sm-2 col-form-label text-center font-weight-bold">@(sno++).</label>
+                                            @*  <input type="text" id="DOC" name="DOC" class="form-control" value="@Model.DateOfCommissioning.ToString("dd/MMM/yyyy")" readonly /> *@
+                                        </div>
+                                    </div>
+                                    <div class="row mb-1 required">
+                                        <label class="col-sm-2 col-form-label text-center font-weight-bold">@(sno++).</label>
                                         <label asp-for="PermanentAddress" class="col-sm-4 col-form-label form-label labelprofile"></label>
-                            <div class="col-sm-6">
+                                        <div class="col-sm-6">
                                             <textarea asp-for="PermanentAddress" rows="6" class="form-control text-uppercase" placeholder="" required readonly></textarea>
-                                <span asp-validation-for="PermanentAddress" class="text-danger"></span>
-                            </div>
-                        </div>
-                      
-                </div>
-                 
-                    <div class="col-xl-12">
-                        <div class="row required">
-                            <div class="col-sm-12">
-                                <div class="form-check">
-                                    <input type="checkbox" id="TermsConditions" class="form-check-input" />
-                                    <label  class="">
-                                     <ul class="notefont">
-                                      <li>I HEREBY DECLARE THAT THE DETAILS FURNISHED ABOVE ARE TRUE TO BEST OF MY KNOWLEDGE. I AM FULLY AWARE THAT, DECLARATION OF FALSE INFO IS AN OFFENCE WHICH WOULD MAKE ME LIABLE FOR PUNISHMENT AS PER EXTANT REGULATIONS.</li>
-                                        <li>I HEREBY STATE THAT I HAVE NO OBJECTION IN AUTHENTICATING MYSELF WITH AADHAAR BASED AUTHENTICATION SYSTEM AND CONSENT TO PROVIDING MY AADHAAR NUMBER ALONG WITH THE AUTHENTICATION DETAILS FOR THE PURPOSE OF SMART I-CARD.</li>
-                                      </ul>
+                                            <span asp-validation-for="PermanentAddress" class="text-danger"></span>
+                                        </div>
+                                    </div>
 
-                                    </label>
-                                    <span asp-validation-for="TermsConditions" class="text-danger"></span>
                                 </div>
-                            </div>
-                        </div>
+
+                                <div class="col-xl-12">
+                                    <div class="row required">
+                                        <div class="col-sm-12">
+                                            <div class="form-check">
+                                                <input type="checkbox" id="TermsConditions" class="form-check-input" />
+                                                <label class="">
+                                                    <ul class="notefont">
+                                                        <li>I HEREBY DECLARE THAT THE DETAILS FURNISHED ABOVE ARE TRUE TO BEST OF MY KNOWLEDGE. I AM FULLY AWARE THAT, DECLARATION OF FALSE INFO IS AN OFFENCE WHICH WOULD MAKE ME LIABLE FOR PUNISHMENT AS PER EXTANT REGULATIONS.</li>
+                                                        <li>I HEREBY STATE THAT I HAVE NO OBJECTION IN AUTHENTICATING MYSELF WITH AADHAAR BASED AUTHENTICATION SYSTEM AND CONSENT TO PROVIDING MY AADHAAR NUMBER ALONG WITH THE AUTHENTICATION DETAILS FOR THE PURPOSE OF SMART I-CARD.</li>
+                                                    </ul>
+
+                                                </label>
+                                                <span asp-validation-for="TermsConditions" class="text-danger"></span>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                                     <div class="text-center mb-2">
                                         <button type="submit" class="btn btn-primary disabled" id="btnsave" onclick="return CheckValidation();">Save & Next</button> @* // *@
                                         @* <a asp-action="Index" asp-controller="BasicDetail" class="btn btn-primary">Back</a> *@
                                     </div>
-                    </div>
-                
-           
+                                </div>
+
+
                             </div>
                         </div>
-                        </div>
                     </div>
-           
                 </div>
+
             </div>
-        </form>
-    </div>
+        </div>
+    </form>
+</div>
 @* </div> *@
 @section Scripts{
     <script src="~/developerjs/mtables.js"></script>
     <script asp-src-include="~/developerjs/basicdetails.js"></script>
     <script asp-src-include="~/js/CustomScript.js"></script>
-   
-    
+
+
     }
