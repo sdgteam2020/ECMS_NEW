@@ -17,7 +17,6 @@ namespace DataAccessLayer
         }
         public async Task<T> Get(int id)
         {
-
             return await _context.Set<T>().FindAsync(id);
 
         }

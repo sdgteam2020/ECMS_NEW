@@ -30,7 +30,7 @@
         }
     });
 
-        $('#RegimentalId').on('change', function () {
+    $('#RegimentalId').on('change', function () {
        
         $("#IssuingAuth").val("Comdt, " + $('#RegimentalId option:selected').text());
         $("#PlaceOfIssue").val($('#RegimentalId option:selected').text());
@@ -50,10 +50,12 @@
 
     if ($("#ApplyForId").val() == 1) {
         $(".OptionsRegimental").addClass("d-none");
+        $(".OptionsRecordOffice").addClass("d-none");
         mMsater($("#spnrankid").val(), "RankId", Rank, "");
     } else if ($("#ApplyForId").val() == 2) {
         mMsater($("#spnrankid").val(), "RankId", RankJCo, "");
         $(".OptionsRegimental").removeClass("d-none");
+        $(".OptionsRecordOffice").removeClass("d-none");
     }
 
     if (sessionStorage.getItem("ArmyNo") != null) {
@@ -61,12 +63,14 @@
         $("#icarddetails").html('I-Card Appl Request For  ('+sessionStorage.getItem("ArmyNo")+')');
         if (sessionStorage.getItem("OffType") == 1) {
             $(".OptionsRegimental").addClass("d-none");
+            $(".OptionsRecordOffice").addClass("d-none");
             mMsater($("#spnrankid").val(), "RankId", Rank, "");
         }
         else if (sessionStorage.getItem("OffType") == 2) {
             {
                 mMsater($("#spnrankid").val(), "RankId", RankJCo, "");
                 $(".OptionsRegimental").removeClass("d-none");
+                $(".OptionsRecordOffice").removeClass("d-none");
             }
         }
         if (sessionStorage.getItem("OffType") != "")
