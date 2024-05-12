@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("TestConsoleReso")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+84b547aef0c4ed0871f480a82fe641321c7e79e3")]
 [assembly: System.Reflection.AssemblyProductAttribute("TestConsoleReso")]
 [assembly: System.Reflection.AssemblyTitleAttribute("TestConsoleReso")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

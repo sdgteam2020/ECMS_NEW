@@ -44,11 +44,8 @@ namespace DataAccessLayer
             using var transaction = _context.Database.BeginTransaction();
             try
             {
-               
-
                 if (Data.BasicDetailId == 0)
                 {
-                   
                     _context.BasicDetails.Add(Data);
                    await _context.SaveChangesAsync();
                     int BasicDetailId = Data.BasicDetailId;
@@ -79,16 +76,17 @@ namespace DataAccessLayer
                     trnUpload.BasicDetailId = Data.BasicDetailId;
                     mTrnIdentityInfo.BasicDetailId = Data.BasicDetailId;
 
-                    _context.Entry(Data).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
-                    _context.Update(Data);
-                    await _context.SaveChangesAsync();
-
                     _context.Update(address);
                     await _context.SaveChangesAsync();
                     _context.Update(trnUpload);
                     await _context.SaveChangesAsync();
                     _context.Update(mTrnIdentityInfo);
                     await _context.SaveChangesAsync();
+
+                    _context.Entry(Data).State = EntityState.Modified;
+                    _context.Update(Data);
+                    await _context.SaveChangesAsync();
+
                     transaction.Commit();
                     return true;
                 }
