@@ -73,9 +73,9 @@ namespace BusinessLogicsLayer.Master
             return _iUserProfileDB.CheckArmyNoInUserProfile(ArmyNo, AspNetUsersId);
         }
 
-        public Task<List<DTOFwdICardResponse>> GetOffrsByUnitMapId(int UnitId, int ISIO,int ISCO, int IsRO, int IsORO, int BasicDetailsId)
+        public Task<List<DTOFwdICardResponse>> GetOffrsByUnitMapId(int UnitId, int ISIO,int ISCO, int IsRO, int IsORO, int BasicDetailsId,int DomainMapId)
         {
-            return _iUserProfileDB.GetOffrsByUnitMapId(UnitId, ISIO, ISCO, IsRO, IsORO, BasicDetailsId);
+            return _iUserProfileDB.GetOffrsByUnitMapId(UnitId, ISIO, ISCO, IsRO, IsORO, BasicDetailsId, DomainMapId);
         }
         public async Task<DTOAllRelatedDataByArmyNoResponse?> GetAllRelatedDataByArmyNo(string ArmyNo)
         {

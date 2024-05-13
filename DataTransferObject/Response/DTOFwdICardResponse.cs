@@ -10,9 +10,10 @@ namespace DataTransferObject.Response
     {
         public int AspNetUsersId { get; set; }
         public int UserId { get; set; }
-        public string DomainId { get; set; }
-        public string ArmyNo { get; set; }
-        public string Name { get; set; }
-        public string RankAbbreviation { get; set; }
+        public string DomainId { get; set; } = string.Empty;
+        public string AppointmentName { get; set; } = string.Empty;
+        public string ArmyNo { get; set; } = string.Empty;
+        public string Name { get; set; } = string.Empty;
+        public string RankAbbreviation { get; set; } = string.Empty;
     }
 }

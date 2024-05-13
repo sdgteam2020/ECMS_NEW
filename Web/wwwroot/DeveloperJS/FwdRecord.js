@@ -74,6 +74,7 @@ $(document).ready(function () {
         $(".spnFArmyNo").html("");
         $(".spnFtoname").html("");
         $(".spnFDomainName").html("");
+        $(".spnFAppName").html("");
 
         $("#intoffsArmyNo").prop("checked", false); 
         $("#intoffDomainId").prop("checked", false); 
@@ -150,6 +151,7 @@ $(document).ready(function () {
         $(".spnFArmyNo").html("");
         $(".spnFtoname").html("");
         $(".spnFDomainName").html("");
+        $(".spnFAppName").html("");
         
        
     });
@@ -186,14 +188,14 @@ $(document).ready(function () {
         if (StepCounter == 1 || StepCounter == 7 || StepCounter == 8 || StepCounter == 9 || StepCounter == 10 || StepCounter == 11 || StepCounter == 12 || StepCounter == 13 || StepCounter == 15) {
 
             if (applyfor == 1) {
-                $(".gsoio").html("Initiating Offr (IO)");
-                $(".gsoiotitle").html("Initiating Offr (IO) Approval");
-                $("#btnForward").html("Forward To IO");
+                $(".gsoio").html("Nominated Offr");
+                $(".gsoiotitle").html("Nominated Offr");
+                $("#btnForward").html("Forward To Nominated");
                 GetAllOffsByUnitId("ddlfwdoffrs", 0, Unitidarmy, spnISIO,0,0,0,0);
             } else {
-                $(".gsoio").html("Initiating Offr (IO)");
-                $(".gsoiotitle").html("Initiating Offr (IO) Approval");
-                $("#btnForward").html("Forward To IO");
+                $(".gsoio").html("Nominated Offr");
+                $(".gsoiotitle").html("Nominated Offr");
+                $("#btnForward").html("Forward To Nominated");
                 GetAllOffsByUnitId("ddlfwdoffrs", 0, Unitidarmy, 0, spnISCO,0,0,0);
             }
             $(".Remarks").removeClass("d-none");
@@ -310,13 +312,26 @@ $(document).ready(function () {
                 type: 'POST',
                 success: function (data) {
                     console.log(data);
+                    if (data.length != 0) {
+                        response($.map(data, function (item) {
 
-                    response($.map(data, function (item) {
+                            $("#loading").addClass("d-none");
+                            return { label: item.ArmyNo + ' ' + item.RankAbbreviation + ' ' + item.Name + ' ' + item.DomainId, value: item.AspNetUsersId };
 
-                        $("#loading").addClass("d-none");
-                        return { label: item.ArmyNo + ' ' + item.RankAbbreviation + ' ' + ' ' + item.Name + ' ' + item.DomainId + ' ', value: item.AspNetUsersId };
+                        }))
+                    }
+                    else {
 
-                    }))
+                        $(".spnFArmyNo").html("");
+                        $(".spnFtoname").html("");
+                        $(".spnFDomainName").html("");
+                        $(".spnFAppName").html("");
+
+                        $("#txtFwdName").val("");
+                        $("#spnFwdToAspNetUsersId").html("0");
+                        $("#spnFwdToUsersId").html("0");
+                        alert("Army No/Offr Name/Domain ID not found.")
+                    }
                 },
                 error: function (response) {
                     alert(response.responseText);
@@ -601,6 +616,7 @@ function GetProfiledetailsByAspNetuserid(AspNetUsersId) {
                 $(".spnFArmyNo").html(data[0].ArmyNo);
                 $(".spnFtoname").html(data[0].RankAbbreviation +" "+ data[0].Name);
                 $(".spnFDomainName").html(data[0].DomainId);
+                $(".spnFAppName").html(data[0].AppointmentName);
             }
         },
         error: function (response) {

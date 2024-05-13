@@ -24,7 +24,7 @@ namespace DataAccessLayer.BaseInterfaces
         public Task<List<DTOUserProfileResponse>> GetAll(int DomainId, int UserId);
         public Task<List<DTOFwdICardResponse>> GetDataForFwd(int StepId, int UnitId, string Name, int TypeId, int IsIO, int IsCO, int IsRO, int IsORO);
         public Task<List<BasicDetailVM>> GetByRequestId(int RequestId);
-        public Task<List<DTOFwdICardResponse>> GetOffrsByUnitMapId(int UnitId, int ISIO, int ISCO, int IsRO,int IsORO, int BasicDetailsId);
+        public Task<List<DTOFwdICardResponse>> GetOffrsByUnitMapId(int UnitId, int ISIO, int ISCO, int IsRO,int IsORO, int BasicDetailsId, int DomainMapId);
         public Task<DTOProfileResponse> CheckArmyNoInUserProfile(string ArmyNo,int AspNetUsersId);
         public  Task<DTOAllRelatedDataByArmyNoResponse?> GetAllRelatedDataByArmyNo(string ArmyNo);
         public Task<List<DTOAllRelatedDataByArmyNoResponse>?> GetTopByArmyNo(string ArmyNo);
