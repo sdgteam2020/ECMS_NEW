@@ -267,15 +267,15 @@ namespace Web.Controllers
         {
             try
             {
-                //int DomainMapId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                int DomainMapId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                 if(UnitId==0)
                 {
                      UnitId = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").UnitId;
-                    return Json(await _userProfileBL.GetOffrsByUnitMapId(UnitId, ISIO, ISCO, IsRO, IsORO, BasicDetailsId));
+                    return Json(await _userProfileBL.GetOffrsByUnitMapId(UnitId, ISIO, ISCO, IsRO, IsORO, BasicDetailsId, DomainMapId));
                 }
                 else
                 {
-                    return Json(await _userProfileBL.GetOffrsByUnitMapId(UnitId, ISIO, ISCO, IsRO, IsORO,BasicDetailsId));
+                    return Json(await _userProfileBL.GetOffrsByUnitMapId(UnitId, ISIO, ISCO, IsRO, IsORO,BasicDetailsId, DomainMapId));
                 }
             }
             catch (Exception ex)
