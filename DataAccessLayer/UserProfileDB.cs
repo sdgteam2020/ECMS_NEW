@@ -769,7 +769,7 @@ namespace DataAccessLayer
              " inner join MapUnit mapu on mapu.UnitMapId=trndomain.UnitId" +
              " inner join UserProfile usep on usep.UserId=trndomain.UserId" +
              " inner join MRank ran on ran.RankId=usep.RankId" +
-             " where trndomain.UnitId =@UnitId order by ran.Orderby";
+             " where trndomain.UnitId =@UnitId and trndomain.AspNetUsersId !=@DomainMapId order by ran.Orderby";
                 //and trndomain.IsCO=@ISCO
             }
             else if (RO == 1)

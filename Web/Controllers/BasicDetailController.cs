@@ -35,6 +35,7 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 using static NuGet.Packaging.PackagingConstants;
 using System.Diagnostics;
 using System.Drawing.Printing;
+using BusinessLogicsLayer.Unit;
 
 namespace Web.Controllers
 {
@@ -54,6 +55,7 @@ namespace Web.Controllers
         private readonly IBasicDetailTempBL basicDetailTempBL;
         private readonly IService service;
         private readonly IMapper _mapper;
+        private readonly IMapUnitBL mapUnitBL;
         private readonly IWebHostEnvironment hostingEnvironment;
         private readonly IDataProtector protector;
         private readonly TimeZoneInfo INDIAN_ZONE = TimeZoneInfo.FindSystemTimeZoneById("India Standard Time");
@@ -62,7 +64,7 @@ namespace Web.Controllers
         private readonly IMasterBL _IMasterBL;
 
         public DateTime dateTimenow;
-        public BasicDetailController(IBasicDetailBL basicDetailBL, IBasicDetailTempBL basicDetailTempBL, IService service, IMapper mapper,
+        public BasicDetailController(IBasicDetailBL basicDetailBL, IMapUnitBL mapUnitBL, IBasicDetailTempBL basicDetailTempBL, IService service, IMapper mapper,
             UserManager<ApplicationUser> userManager, IWebHostEnvironment hostingEnvironment, IDataProtectionProvider dataProtectionProvider,
                               DataProtectionPurposeStrings dataProtectionPurposeStrings, ILogger<BasicDetailController> logger, IStepCounterBL iStepCounterBL, 
                               ITrnFwnBL iTrnFwnBL, ITrnICardRequestBL iTrnICardRequestBL, IDomainMapBL iDomainMapBL
@@ -73,6 +75,7 @@ namespace Web.Controllers
             this.basicDetailTempBL = basicDetailTempBL;
             this.service = service;
             this._mapper = mapper;
+            this.mapUnitBL= mapUnitBL;
             //this.context = context;
             //this.contextTransaction = context;
             this.userManager = userManager;
@@ -639,13 +642,11 @@ namespace Web.Controllers
                     //basicDetailUpdVM.RegistrationType = basicDetailUpdVM.RegistrationType;
                     //basicDetailUpdVM.RegimentalId = basicDetailUpdVM.RegimentalId;
                     basicDetailUpdVM.BloodGroupId = basicDetailUpdVM.BloodGroupId;
-                    basicDetailUpdVM.RecordOfficeId = basicDetailUpdVM.RecordOfficeId;
                     basicDetailUpdVM.PermanentAddress = "Village - " + basicDetailUpdVM.Village + ", Post Office-" + basicDetailUpdVM.PO + ", Tehsil- " + basicDetailUpdVM.Tehsil + ", District- " + basicDetailUpdVM.District + ", State- " + basicDetailUpdVM.State + ", Pin Code- " + basicDetailUpdVM.PinCode;
                     basicDetailUpdVM.ExistingPhotoImagePath = basicDetailUpdVM.PhotoImagePath;
                     basicDetailUpdVM.ExistingSignatureImagePath = basicDetailUpdVM.SignatureImagePath;
                     basicDetailUpdVM.EncryptedId = Id;
                     ViewBag.OptionsRegimental = service.GetRegimentalDDLIdSelected(basicDetailUpdVM.ArmedId);
-                    ViewBag.OptionsRecordOffice = await basicDetailBL.GetRODDLIdSelected(basicDetailUpdVM.ArmedId);
 
                     ///////////////////////for close appl
                     ///
@@ -723,6 +724,7 @@ namespace Web.Controllers
                     {
                         BasicDetail newBasicDetail = _mapper.Map<BasicDetailCrtAndUpdVM, BasicDetail>(model);
                         newBasicDetail.DateOfIssue = null;
+                        newBasicDetail.PlaceOfIssue = null;
                         //newBasicDetail.RankId = model.RankId;
                         //newBasicDetail.ArmedId = model.ArmedId;
                         //newBasicDetail.UnitId= model.UnitId;
@@ -911,6 +913,7 @@ namespace Web.Controllers
                     {
                         BasicDetail newBasicDetail = _mapper.Map<BasicDetailCrtAndUpdVM, BasicDetail>(model);
                         newBasicDetail.DateOfIssue = null;
+                        newBasicDetail.PlaceOfIssue = null;
                         MTrnUpload mTrnUpload = new MTrnUpload();
 
                         MTrnAddress mTrnAddress = new MTrnAddress();
@@ -1223,8 +1226,12 @@ namespace Web.Controllers
         {
             try
             {
+                DtoSession sessiondata = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+                DTOMapUnitResponse dTOMapUnitResponse = await mapUnitBL.GetALLByUnitMapId(sessiondata.UnitId);
+
                 mStepCounter.UpdatedOn = DateTime.Now;
                 mStepCounter.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                mStepCounter.UnitName = dTOMapUnitResponse.UnitName;
                 await iStepCounterBL.UpdateStepCounter(mStepCounter);
 
 

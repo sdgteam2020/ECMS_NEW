@@ -4,6 +4,7 @@ using DataAccessLayer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccessLayer.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240515044340_v89")]
+    partial class v89
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1850,36 +1853,6 @@ namespace DataAccessLayer.Migrations
                     b.ToTable("TrnUpload");
                 });
 
-            modelBuilder.Entity("DataTransferObject.Domain.Model.OROMapping", b =>
-                {
-                    b.Property<short>("OROMappingId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("smallint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<short>("OROMappingId"));
-
-                    b.Property<string>("ArmedIdList")
-                        .IsRequired()
-                        .HasColumnType("varchar(100)");
-
-                    b.Property<byte>("RecordOfficeId")
-                        .HasColumnType("tinyint");
-
-                    b.Property<int?>("TDMId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("UnitId")
-                        .HasColumnType("int");
-
-                    b.HasKey("OROMappingId");
-
-                    b.HasIndex("TDMId");
-
-                    b.HasIndex("UnitId");
-
-                    b.ToTable("OROMapping");
-                });
-
             modelBuilder.Entity("DataTransferObject.Domain.Model.TrnApplClose", b =>
                 {
                     b.Property<int>("Id")
@@ -2896,23 +2869,6 @@ namespace DataAccessLayer.Migrations
                         .IsRequired();
 
                     b.Navigation("BasicDetail");
-                });
-
-            modelBuilder.Entity("DataTransferObject.Domain.Model.OROMapping", b =>
-                {
-                    b.HasOne("DataTransferObject.Domain.Model.TrnDomainMapping", "TrnDomainMapping")
-                        .WithMany()
-                        .HasForeignKey("TDMId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("DataTransferObject.Domain.Master.MapUnit", "MapUnit")
-                        .WithMany()
-                        .HasForeignKey("UnitId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("MapUnit");
-
-                    b.Navigation("TrnDomainMapping");
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Model.TrnApplClose", b =>

@@ -78,10 +78,9 @@ namespace DataTransferObject.ViewModels
         public string? BloodGroup { get; set; }
         
         [Display(Name = "PlaceOfIssue", ResourceType = typeof(Resource))]
-        [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
         [RegularExpression(@"^[\w ]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
         [MaxLength(50)]
-        public string PlaceOfIssue { get; set; } = string.Empty;
+        public string? PlaceOfIssue { get; set; }
 
         [Display(Name = "DateOfIssue", ResourceType = typeof(Resource))]
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
@@ -116,10 +115,6 @@ namespace DataTransferObject.ViewModels
         [RegularExpression(@"^[\d]+$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "OnlyNumber")]
         public byte? RegimentalId { get; set; }
         public MRegimental? Regimental { get; set; }
-
-        [RegularExpression(@"^[\d]+$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "OnlyNumber")]
-        public byte? RecordOfficeId { get; set; }
-        public MRecordOffice? MRecordOffice { get; set; }
 
         //[Display(Name = "ApplyForId", ResourceType = typeof(Resource))]
         [Required]
