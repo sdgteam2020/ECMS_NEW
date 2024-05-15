@@ -147,8 +147,10 @@ namespace DataTransferObject.Requests
     {
 
         public int BasicDetailTempId { get; set; }
+        
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
-     
+        [RegularExpression(@"^[\w ]*$", ErrorMessage = "Only Alphabets ,Numbers allowed.")]
+        [MaxLength(18, ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "MaxLengthError")]
         public string Name { get; set; } = string.Empty;
 
        
@@ -174,7 +176,7 @@ namespace DataTransferObject.Requests
 
         [Display(Name = "Rank", ResourceType = typeof(Resource))]
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
-        [RegularExpression(@"^[\w \.\,\?\;\:\""\''\[\]\!\@\#\$\%\&\*\(\)\-\=\+\\\/]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
+        [RegularExpression(@"^[\d]+$", ErrorMessage = "RankId is number.")]
         public short RankId { get; set; }
         /// <summary>
         /// address

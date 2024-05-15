@@ -30,13 +30,15 @@ namespace Web.Controllers
         private readonly IChangeHierarchyMasterBL changeHierarchyMaster;
         private readonly ILogger<MasterController> _logger;
         private readonly IEncryptsqlDB _iEncryptsqlDB;
-        public MasterController(IUnitOfWork unitOfWork, IUserProfileBL userProfileBL, IChangeHierarchyMasterBL changeHierarchyMaster, ILogger<MasterController> logger, IEncryptsqlDB iEncryptsqlDB)
+        private readonly IMasterBL _IMasterBL;
+        public MasterController(IUnitOfWork unitOfWork, IUserProfileBL userProfileBL, IChangeHierarchyMasterBL changeHierarchyMaster, ILogger<MasterController> logger, IEncryptsqlDB iEncryptsqlDB, IMasterBL masterBL)
         {
             this.userProfileBL = userProfileBL;
             this.unitOfWork = unitOfWork;
             this.changeHierarchyMaster = changeHierarchyMaster;
             _logger = logger; 
             _iEncryptsqlDB = iEncryptsqlDB;
+            _IMasterBL = masterBL;
         }
 
         #region Command Page
@@ -1794,6 +1796,16 @@ namespace Web.Controllers
 
         }
         #endregion
+
+        #region OROMapping
+
+        [Authorize(Roles = "User")]
+        public async Task<IActionResult> GetArmsList()
+        {
+            return Json(await _IMasterBL.GetArmsList());
+        }
+
+        #endregion OROMapping
 
         #region Master Table 
         [AllowAnonymous]

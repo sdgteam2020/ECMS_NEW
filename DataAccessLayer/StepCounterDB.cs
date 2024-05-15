@@ -24,10 +24,10 @@ namespace DataAccessLayer
         public async Task<MStepCounter> UpdateStepCounter(MStepCounter Data)
         {
             string query = "";
-            if (Data.StepId==4)
+            if (Data.StepId==3)
             {
                 query = "Update TrnStepCounter set StepId=@StepId,Updatedby=@Updatedby where RequestId=@Id" +
-               " Update BasicDetails set DateOfIssue=GETDATE() where BasicDetailId=(select BasicDetailId from TrnICardRequest where RequestId=@Id)";
+               " Update BasicDetails set DateOfIssue=GETDATE(),PlaceOfIssue=@UnitName where BasicDetailId=(select BasicDetailId from TrnICardRequest where RequestId=@Id)";
             }
             else
             {
@@ -38,11 +38,12 @@ namespace DataAccessLayer
             int StepId=Data.StepId;
             int Updatedby=(int)Data.Updatedby;
             int id=Data.RequestId;
+            string UnitName = Data.UnitName;
             using (var connection = _contextDP.CreateConnection())
             {
                 //data.MRank.RankAbbreviation
                 //data.MArmedType.Abbreviation
-                var ret = connection.Execute(query, new { StepId, Updatedby, id });
+                var ret = connection.Execute(query, new { StepId, Updatedby, id,UnitName });
 
 
 

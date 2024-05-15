@@ -39,7 +39,7 @@ namespace DataTransferObject.Domain.Model
 
         [StringLength(50)] 
         [Column(TypeName = "varchar(50)")]
-        public string PlaceOfIssue { get; set; } = string.Empty;
+        public string? PlaceOfIssue { get; set; }
 
         [DataType(DataType.Date)]
         [Column(TypeName = "datetime")]
@@ -56,10 +56,6 @@ namespace DataTransferObject.Domain.Model
         [ForeignKey("MRegimental")]
         public byte? RegimentalId { get; set; }
         public MRegimental? Regimental { get; set; }
-
-        [ForeignKey("MRecordOffice")]
-        public byte? RecordOfficeId { get; set; }
-        public MRecordOffice? MRecordOffice { get; set; }
 
         [ForeignKey("MApplyFor"), DatabaseGenerated(DatabaseGeneratedOption.None)]
         public byte ApplyForId { get; set; }

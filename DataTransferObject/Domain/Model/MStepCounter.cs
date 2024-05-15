@@ -24,5 +24,8 @@ namespace DataTransferObject.Domain.Model
         [ForeignKey("MApplyFor"), DatabaseGenerated(DatabaseGeneratedOption.None)]
         public byte ApplyForId { get; set; }
         public MApplyFor? MApplyFor { get; set; }
+        
+        [NotMapped]
+        public string UnitName { get; set; } = string.Empty;
     }
 }

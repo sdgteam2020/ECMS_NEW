@@ -1,0 +1,134 @@
+﻿@{
+    ViewData["Title"] = "ORO Mapping";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
+    <div class="containerMain">
+        <div class="page-header-content pt-5">
+            <div class="row align-items-center justify-content-between">
+                <div class="col-auto">
+                    <h1 class="page-header-title">
+                        <div class="page-header-icon"> <i class="fa fa-bars"></i></div>
+                        <a href="/Master/DashboardMaster" class="mr-2">Dashboard</a> > ORO Mapping
+
+                    </h1>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</header>
+<div class="containerMain mt-n10">
+    <div class="card mb-3 ">
+        <div class="card-header">
+            <span id="SpnTxnId" class="d-none">0</span>
+            @*<span id="PtoId" class="d-none">0</span>*@
+            <div class="row">
+                <div class="col-xl-12 text-left">
+                    <h3>
+                        ORO Mapping  Details
+                        <small class="text-muted"></small>
+                    </h3>
+                </div>
+            </div>
+        </div>
+        <div class="card-body" style="min-height:150px;">
+            <div class="row">
+                <div class="col-xl-12">
+                    <div class="mb-2 d-md-flex justify-content-md-between align-items-md-center">
+                        <h6 class="mb-3 mb-md-0">
+                            Total ORO Mapping  <span id="lblTotal" class="ml-3 border border-light b px-2 py-1">0</span>
+                        </h6>
+                        <div>
+                            <button type="button" id="btnAdd" class="btn btn-outline-success font-weight-600 btn-sm">Add ORO Mapping</button>
+                            @* <button type="button" id="btnMultiDelete" class="btn btn-outline-danger font-weight-600 btn-sm">Delete</button> *@
+
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table border border-purple table-striped no-footer dataTable table-hover" role="grid" id="tblData">
+                            <thead>
+                                <tr>
+                                    <th class="noExport d-none"></th>
+                                    <th class="wd-40-f">S No</th>
+                                    <th class="nowrap">Record Office</th>
+                                    <th class="nowrap">Arms / Service</th>
+                                    <th class="nowrap">Linked Domain ID & Pers Details</th>
+                                    <th class="noExport nowrap">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="DetailBody">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script asp-src-include="~/developerjs/mtables.js"></script>
+<script asp-src-include="~/developerjs/OROMapping.js"></script>
+<div class="modal fade" id="AddNewOROMapping" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Enter Officer Record Office Details</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <form action="" id="SaveOROMapping" name="SaveOROMapping" method="post">
+                        <div class="row">
+                            <span class=" d-none" id="spnOROMappingId">0</span>
+                            <div class="form-group row mb-2">
+                                <label class="col-form-label col-sm-4 fw-bold">Record Office<i class="fas fa-asterisk mand1"></i></label>
+                                <div class="col-sm-8">
+                                    <select class="form-select" style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddlRO" id="ddlRO" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="Record Office is required." data-val-regex-pattern="^[\d]+$">
+                                        <option value="0">Select Record Office</option>
+                                    </select>
+                                    <span class="text-danger field-validation-valid" data-valmsg-for="ddlRO" data-valmsg-replace="true"></span>
+                                </div>
+                            </div>
+                            <div class="form-group row mb-2">
+                                <label class="col-form-label col-sm-4 fw-bold">Select Arms</label>
+                                <div class="col-sm-8">
+                                    <select class="form-control select2 select2-accessible text-uppercase" multiple="" placeholder="Please select a Arms" style="width: 100%;" tabindex="-1" aria-hidden="true" name="ArmedIdList" required id="ddlArmedIdList">
+                                    </select>
+                                    <span class="text-danger field-validation-valid" data-valmsg-for="ArmedIdList" data-valmsg-replace="true"></span>
+                                </div>
+                            </div>
+                            <div class="form-group row mb-2">
+                                <span id="spnUnitMapId" class="d-none">0</span>
+                                <label class="col-form-label col-sm-4 fw-bold">SUS No</label>
+                                <div class="col-sm-8">
+                                    <input class="form-control" placeholder="Type SUS No" id="txtUnitName" name="txtUnitName" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-regex-pattern="^[\w ]*$" />
+                                    <span class="text-danger field-validation-valid" data-valmsg-for="txtUnitName" data-valmsg-replace="true"></span>
+                                </div>
+                            </div>
+                            <div class="form-group row mb-2">
+                                <label class="col-form-label col-sm-4 fw-bold">Linked Domain ID & Pers Details</label>
+                                <div class="col-sm-8">
+                                    <select class="form-select" style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddlTDMId" id="ddlTDMId" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-regex-pattern="^[\d]+$">
+                                        <option value="0">Select Domain Id</option>
+                                    </select>
+                                    <span class="text-danger field-validation-valid" data-valmsg-for="ddlTDMId" data-valmsg-replace="true"></span>
+                                </div>
+                            </div>
+                            <div class="col-sm-12 text-right">
+                                <input type="button" class="btn btn-outline-primary" value="Save" id="btnOROMappingAdd" onclick="Proceed()" />
+                                <button type="button" id="btnOROMappingReset" class="btn btn-outline-danger">Reset</button>
+                            </div>
+                            <div class="col-sm-12" id="msg">
+                            </div>
+                        </div>
+                    </form>
+
+                    <div class="col-sm-12" id="msg">
+                    </div>
+                </div>
+            </div>
+
+        </div><!-- modal-content -->
+    </div><!-- modal-dialog -->
+</div>

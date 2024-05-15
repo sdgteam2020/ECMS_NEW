@@ -178,6 +178,12 @@ function CallDataFromAPI() {
                 toastr.success('Data Fetched From Api');
                // $("#Name").val(response.Pers_name);
                 //alert(JSON.stringify(response));
+                if (response.Pers_name.length >18) {
+                    $('#Name').attr('readonly', false);
+                }
+                else {
+                    $('#Name').attr('readonly', true);
+                }
                 $("#Name").val(response.Pers_name);
                 $("#ServiceNo").val(response.Pers_Army_No);
                 $("#DOB").val(response.Pers_birth_dt);

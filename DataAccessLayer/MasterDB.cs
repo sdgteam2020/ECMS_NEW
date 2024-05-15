@@ -50,6 +50,16 @@ namespace DataAccessLayer
                 return ret.ToList();
             }
         }
+        public async Task<List<DTOArmsListResponse>> GetArmsList()
+        {
+            string query = "Select marm.ArmedId,marm.ArmedName from MArmedType marm order by ArmedName";
+
+            using (var connection = _contextDP.CreateConnection())
+            {
+                var ret = await connection.QueryAsync<DTOArmsListResponse>(query);
+                return ret.ToList();
+            }
+        }
 
         public async Task<List<DTOMasterResponse>> GetMFmnBranches()
         {

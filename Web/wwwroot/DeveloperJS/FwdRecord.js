@@ -188,14 +188,15 @@ $(document).ready(function () {
         if (StepCounter == 1 || StepCounter == 7 || StepCounter == 8 || StepCounter == 9 || StepCounter == 10 || StepCounter == 11 || StepCounter == 12 || StepCounter == 13 || StepCounter == 15) {
 
             if (applyfor == 1) {
-                $(".gsoio").html("Nominated Offr");
-                $(".gsoiotitle").html("Nominated Offr");
-                $("#btnForward").html("Forward To Nominated");
+                $(".gsoio").html("IO / Next Superior Offr");
+                $(".gsoiotitle").html("IO / Next Superior Offr");
+                $("#btnForward").html("Forward To IO / Superior");
                 GetAllOffsByUnitId("ddlfwdoffrs", 0, Unitidarmy, spnISIO,0,0,0,0);
             } else {
-                $(".gsoio").html("Nominated Offr");
-                $(".gsoiotitle").html("Nominated Offr");
-                $("#btnForward").html("Forward To Nominated");
+                $(".gsoio").html("CO /OC / OC TPS or Offr Nominated by him/ her");
+                $(".gsoiotitle").html("CO / OC / OC TPS or Offr Nominated by him/ her");
+                $("#btnForward").html("Forward To CO / OC / OC TPS or Offr Nominated");
+
                 GetAllOffsByUnitId("ddlfwdoffrs", 0, Unitidarmy, 0, spnISCO,0,0,0);
             }
             $(".Remarks").removeClass("d-none");

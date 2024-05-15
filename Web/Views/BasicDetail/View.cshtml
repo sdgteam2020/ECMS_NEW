@@ -3,23 +3,20 @@
     .table td img, .jsgrid .jsgrid-table td img {
         width: 36px;
         height: 36px;
-        border-radius:0%;
+        border-radius: 0%;
     }
 
     .form-group .labelprofile {
         font-size: 18px;
         font-weight: 700;
-
     }
 
     .minheight {
         min-height: 300px;
     }
-    
-    
 </style>
 <div class="container1" id="printdata">
-    
+
 
     <div class="row section-to-print">
         <div class="col-sm-4  text-left">
@@ -30,128 +27,138 @@
             <span>PDF Download From E-IASAC</span>
         </div>
     </div>
-        <div class="card-body" style="min-height:150px;">
-            
+    <div class="card-body" style="min-height:150px;">
 
-                    <div class="row">
-                        <div class="col-md-12 ">
 
-                            <div class="card cardbg mb-2 mt-2">
-                                <div class="seven">
-                                    <h1>Pers Info Details</h1>
-                                </div>
-                                <div class="mt-2 ml-4 mr-4">
+        <div class="row">
+            <div class="col-md-12 ">
 
-                                    <div class="row">
-                                        <div class="col-sm-6 ">
-                                            <div class="form-group row mb-2">
-                                            <label class="col-form-label col-sm-4 labelprofile text-uppercase">@Html.DisplayNameFor(model => model.Name)</label>
-                                                <div class="col-sm-8">
+                <div class="card cardbg mb-2 mt-2">
+                    <div class="seven">
+                        <h1>Pers Info Details</h1>
+                    </div>
+                    <div class="mt-2 ml-4 mr-4">
+
+                        <div class="row">
+                            <div class="col-sm-6 ">
+                                <div class="form-group row mb-2">
+                                    <label class="col-form-label col-sm-4 labelprofile text-uppercase">@Html.DisplayNameFor(model => model.Name)</label>
+                                    <div class="col-sm-8">
                                         <label id="" class="col-form-label text-uppercase">@Model.Name</label>
 
-                                                </div>
-                                              
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-6 ">
-                                            <div class="form-group row mb-2">
-                                                <label class="col-form-label col-sm-4 labelprofile ">@Html.DisplayNameFor(model => model.RankId)</label>
-                                                <div class="col-sm-8">
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="col-sm-6 ">
+                                <div class="form-group row mb-2">
+                                    <label class="col-form-label col-sm-4 labelprofile ">@Html.DisplayNameFor(model => model.RankId)</label>
+                                    <div class="col-sm-8">
                                         <label id="" class="col-form-label text-uppercase">@(Model.RankName != null ? Model.RankName : "No Rank")</label>
 
-                                                </div>
+                                    </div>
 
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-6 ">
-                                            <div class="form-group row mb-2">
-                                                <label class="col-form-label col-sm-4 labelprofile">@Html.DisplayNameFor(model => model.ArmedId)</label>
-                                                <div class="col-sm-8">
+                                </div>
+                            </div>
+                            <div class="col-sm-6 ">
+                                <div class="form-group row mb-2">
+                                    <label class="col-form-label col-sm-4 labelprofile">@Html.DisplayNameFor(model => model.ArmedId)</label>
+                                    <div class="col-sm-8">
                                         <label id="" class="col-form-label text-uppercase">@(Model.ArmedName != null ? Model.ArmedName : "No Armed")</label>
 
-                                                </div>
+                                    </div>
 
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-6 ">
-                                            <div class="form-group row mb-2">
-                                                <label class="col-form-label col-sm-4 labelprofile">@Html.DisplayNameFor(model => model.ServiceNo)</label>
-                                                <div class="col-sm-8">
+                                </div>
+                            </div>
+                            <div class="col-sm-6 ">
+                                <div class="form-group row mb-2">
+                                    <label class="col-form-label col-sm-4 labelprofile">@Html.DisplayNameFor(model => model.ServiceNo)</label>
+                                    <div class="col-sm-8">
                                         <label id="" class="col-form-label text-uppercase">@Model.ServiceNo</label>
 
-                                                </div>
+                                    </div>
 
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-6 ">
-                                            <div class="form-group row mb-2">
-                                                <label class="col-form-label col-sm-4 labelprofile">@Html.DisplayNameFor(model => model.IdenMark1)</label>
-                                                <div class="col-sm-8">
+                                </div>
+                            </div>
+                            <div class="col-sm-6 ">
+                                <div class="form-group row mb-2">
+                                    <label class="col-form-label col-sm-4 labelprofile">@Html.DisplayNameFor(model => model.IdenMark1)</label>
+                                    <div class="col-sm-8">
                                         <label id="" class="col-form-label text-uppercase">@Model.IdenMark1</label>
 
-                                                </div>
+                                    </div>
 
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-6 ">
-                                            <div class="form-group row mb-2">
-                                                <label class="col-form-label col-sm-4 labelprofile">@Html.DisplayNameFor(model => model.DOB)</label>
-                                                <div class="col-sm-8">
-                                                    <label id="" class="col-form-label">@Model.DOB.ToString("dd/MMM/yyyy")</label>
+                                </div>
+                            </div>
+                            <div class="col-sm-6 ">
+                                <div class="form-group row mb-2">
+                                    <label class="col-form-label col-sm-4 labelprofile">@Html.DisplayNameFor(model => model.DOB)</label>
+                                    <div class="col-sm-8">
+                                        <label id="" class="col-form-label">@Model.DOB.ToString("dd/MMM/yyyy")</label>
 
-                                                </div>
+                                    </div>
 
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-6 ">
-                                            <div class="form-group row mb-2">
-                                                <label class="col-form-label col-sm-4 labelprofile">@Html.DisplayNameFor(model => model.Height)</label>
-                                                <div class="col-sm-8">
-                                                    <label id="" class="col-form-label ">@Model.Height</label>
+                                </div>
+                            </div>
+                            <div class="col-sm-6 ">
+                                <div class="form-group row mb-2">
+                                    <label class="col-form-label col-sm-4 labelprofile">@Html.DisplayNameFor(model => model.Height)</label>
+                                    <div class="col-sm-8">
+                                        <label id="" class="col-form-label ">@Model.Height</label>
 
-                                                </div>
+                                    </div>
 
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-6 ">
-                                            <div class="form-group row mb-2">
-                                                <label class="col-form-label col-sm-4 labelprofile">@Html.DisplayNameFor(model => model.AadhaarNo)</label>
-                                                <div class="col-sm-8">
-                                                    <label id="" class="col-form-label "><span>XXXXXXXX</span>@Model.AadhaarNo</label>
+                                </div>
+                            </div>
+                            <div class="col-sm-6 ">
+                                <div class="form-group row mb-2">
+                                    <label class="col-form-label col-sm-4 labelprofile">@Html.DisplayNameFor(model => model.AadhaarNo)</label>
+                                    <div class="col-sm-8">
+                                        <label id="" class="col-form-label "><span>XXXXXXXX</span>@Model.AadhaarNo</label>
 
-                                                </div>
+                                    </div>
 
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-6 ">
-                                            <div class="form-group row mb-2">
-                                                <label class="col-form-label col-sm-4 labelprofile">@Html.DisplayNameFor(model => model.BloodGroup)</label>
-                                                <div class="col-sm-8">
+                                </div>
+                            </div>
+                            <div class="col-sm-6 ">
+                                <div class="form-group row mb-2">
+                                    <label class="col-form-label col-sm-4 labelprofile">@Html.DisplayNameFor(model => model.BloodGroup)</label>
+                                    <div class="col-sm-8">
                                         <label id="" class="col-form-label text-uppercase">@Model.BloodGroup</label>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-6 ">
-                                            <div class="form-group row mb-2">
-                                                <label class="col-form-label col-sm-4 labelprofile">@Html.DisplayNameFor(model => model.PlaceOfIssue)</label>
-                                                <div class="col-sm-8">
-                                        <label id="" class="col-form-label text-uppercase">@Model.PlaceOfIssue</label>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-6 ">
-                                            <div class="form-group row mb-2">
-                                                <label class="col-form-label col-sm-4 labelprofile">@Html.DisplayNameFor(model => model.DateOfIssue)</label>
-                                                <div class="col-sm-8">
-                                                    <label id="" class="col-form-label">
-                                            @if (Model.DateOfIssue.Year==1)
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6 ">
+                                <div class="form-group row mb-2">
+                                    <label class="col-form-label col-sm-4 labelprofile">@Html.DisplayNameFor(model => model.PlaceOfIssue)</label>
+                                    <div class="col-sm-8">
+                                        @if (Model.PlaceOfIssue == null)
+                                        {
+                                            <span class="text-uppercase">Depends on Second level approver.</span>
+                                        }
+                                        else
+                                        {
+                                            <label id="" class="col-form-label text-uppercase">@Model.PlaceOfIssue</label>
+                                        }
+
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6 ">
+                                <div class="form-group row mb-2">
+                                    <label class="col-form-label col-sm-4 labelprofile">@Html.DisplayNameFor(model => model.DateOfIssue)</label>
+                                    <div class="col-sm-8">
+                                        <label id="" class="col-form-label">
+                                            @if (Model.DateOfIssue.Year == 1)
                                             {
-                                                if (Model.ApplyForId==1)
+                                                if (Model.ApplyForId == 1)
                                                 {
-                                                    <span>As per Finalization by ORO</span>
-                                                }else
+                                                    <span>DEPENDS ON UNIT OF SECOND LEVEL APPROVER.</span>
+                                                }
+                                                else
                                                 {
-                                                    <span>As per Finalization by RO</span>
+                                                    <span>DEPENDS ON UNIT OF SECOND LEVEL APPROVER.</span>
                                                 }
                                             }
                                             else
@@ -159,84 +166,84 @@
                                                 <span>@Model.DateOfIssue.ToString("dd/MMM/yyyy")</span>
                                             }
 
-                                            </label>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-6 ">
-                                            <div class="form-group row mb-2">
-                                                <label class="col-form-label col-sm-4 labelprofile">@Html.DisplayNameFor(model => model.IssuingAuth)</label>
-                                                <div class="col-sm-8">
-                                        <label id="" class="col-form-label text-uppercase">@Model.IssuingAuth</label>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="col-sm-6 ">
-                                            <div class="form-group row mb-2">
-                                                <label class="col-form-label col-sm-4 labelprofile">@Html.DisplayNameFor(model => model.DateOfCommissioning)</label>
-                                                <div class="col-sm-8">
-                                                    <label id="" class="col-form-label">@Model.DateOfCommissioning.ToString("dd/MMM/yyyy")</label>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-6 ">
-                                            <div class="form-group row mb-2">
-                                                <label class="col-form-label col-sm-4 labelprofile">@Html.DisplayNameFor(model => model.PermanentAddress)</label>
-                                                <div class="col-sm-8">
-                                        <label id="" class="col-form-label text-uppercase">@Model.Village @Model.Tehsil @Model.PO @Model.PS @Model.District @Model.State @Model.PinCode</label>
-                                                </div>
-                                            </div>
-                                        </div>
-                                     @*    <div class="col-sm-6 ">
-                                            <div class="form-group row mb-2">
-                                                <label class="col-form-label col-sm-4 labelprofile">Signature</label>
-                                                <div class="col-sm-8">
-                                                    <img id="SignaturePath" src="/WriteReadData/Signature/@Model.SignatureImagePath" height="80px" width="100px" />
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-6 ">
-                                            <div class="form-group row mb-2">
-                                                <label class="col-form-label col-sm-4 labelprofile">Photograph</label>
-                                                <div class="col-sm-8">
-                                                    <img id="SignaturePath" src="/WriteReadData/photo/@Model.PhotoImagePath" height="80px" width="100px" />
-                                                </div>
-                                            </div>
-                                        </div> *@
+                                        </label>
                                     </div>
-                                
-                                
                                 </div>
+                            </div>
+                            <div class="col-sm-6 ">
+                                <div class="form-group row mb-2">
+                                    <label class="col-form-label col-sm-4 labelprofile">@Html.DisplayNameFor(model => model.IssuingAuth)</label>
+                                    <div class="col-sm-8">
+                                        <label id="" class="col-form-label text-uppercase">@Model.IssuingAuth</label>
+                                    </div>
+                                </div>
+                            </div>
 
-                                <div class="seven">
-                                    <h1>I-Card Print Preview</h1>
+                            <div class="col-sm-6 ">
+                                <div class="form-group row mb-2">
+                                    <label class="col-form-label col-sm-4 labelprofile">@Html.DisplayNameFor(model => model.DateOfCommissioning)</label>
+                                    <div class="col-sm-8">
+                                        <label id="" class="col-form-label">@Model.DateOfCommissioning.ToString("dd/MMM/yyyy")</label>
+                                    </div>
                                 </div>
-                                 <div class="mt-2 ml-4 mr-4">
-                            <div class="row">
+                            </div>
+                            <div class="col-sm-6 ">
+                                <div class="form-group row mb-2">
+                                    <label class="col-form-label col-sm-4 labelprofile">@Html.DisplayNameFor(model => model.PermanentAddress)</label>
+                                    <div class="col-sm-8">
+                                        <label id="" class="col-form-label text-uppercase">@Model.Village @Model.Tehsil @Model.PO @Model.PS @Model.District @Model.State @Model.PinCode</label>
+                                    </div>
+                                </div>
+                            </div>
+                            @*    <div class="col-sm-6 ">
+                            <div class="form-group row mb-2">
+                            <label class="col-form-label col-sm-4 labelprofile">Signature</label>
+                            <div class="col-sm-8">
+                            <img id="SignaturePath" src="/WriteReadData/Signature/@Model.SignatureImagePath" height="80px" width="100px" />
+                            </div>
+                            </div>
+                            </div>
+                            <div class="col-sm-6 ">
+                            <div class="form-group row mb-2">
+                            <label class="col-form-label col-sm-4 labelprofile">Photograph</label>
+                            <div class="col-sm-8">
+                            <img id="SignaturePath" src="/WriteReadData/photo/@Model.PhotoImagePath" height="80px" width="100px" />
+                            </div>
+                            </div>
+                            </div> *@
+                        </div>
+
+
+                    </div>
+
+                    <div class="seven">
+                        <h1>I-Card Print Preview</h1>
+                    </div>
+                    <div class="mt-2 ml-4 mr-4">
+                        <div class="row">
                             <div class="col-sm-2">
-                                </div>
+                            </div>
                             <div class="col-sm-8">
                                 <div class="card divicardbg minheight">
                                     <img class="imgicardbg" src="~/images/asset/icardbg.jpg" />
                                     <div class="row p-4">
                                         <div class="col-sm-12">
-                                    <div  style="line-height:0 !important">
-                                        <p style="text-align:left;" class="f19 font-weight-600">
-                                            भारतीय सशस्त्र सेनाएँ पहचान कार्ड
-                                            <span style="float:right;">(IAFZ-2015)</span>
-                                        </p>
-                                        
-                                    </div>
-                                           
-                                    </div>
-                                    <div class="col-sm-12">
+                                            <div style="line-height:0 !important">
+                                                <p style="text-align:left;" class="f19 font-weight-600">
+                                                    भारतीय सशस्त्र सेनाएँ पहचान कार्ड
+                                                    <span style="float:right;">(IAFZ-2015)</span>
+                                                </p>
+
+                                            </div>
+
+                                        </div>
+                                        <div class="col-sm-12">
                                             <div class="d-flex f19 font-weight-800"> INDIAN ARMED FORCES INDENTITY CARD</div>
                                         </div>
 
                                         <div class="col-sm-6 mt-4">
                                             <img src="/WriteReadData/photo/@Model.PhotoImagePath" onerror="this.src='/Images/user4.png'" height="200" width="200" />
-                                    </div>
+                                        </div>
                                         <div class="col-sm-6 mt-4">
 
                                             <div class="fw-bold text-uppercase">@Model.Name</div>
@@ -245,20 +252,20 @@
                                             <div class="fw-bold text-uppercase">@Model.ServiceNo</div>
                                             <div class="fw-bold" style="line-height:1">IDENTIFICATION MARK</div>
                                             <div class="font-weight-500 text-uppercase">@Model.IdenMark1</div>
-                                    </div>
+                                        </div>
                                         <div class="col-sm-12">
                                             <p class="font-weight-500 f16">रक्षा मंत्रालय, भारत सरकार MINISTRY OF DEFENCE, GOVERNMENT OF INDIA</p>
-                                    </div>
+                                        </div>
                                     </div>
                                 </div>
-                                 </div>
-                            <div class="col-sm-2">
                             </div>
                             <div class="col-sm-2">
                             </div>
-                                 <div class="col-sm-8">
+                            <div class="col-sm-2">
+                            </div>
+                            <div class="col-sm-8">
                                 <div class="card divicardbg minheight">
-                                   
+
                                     <img class="imgicardbg" src="~/images/asset/icardbg1.jpg" />
                                     <div class="row p-4">
                                         <div class="col-sm-2 justify-content-center">
@@ -266,29 +273,50 @@
                                             <div class="mt-4 ml-3"><img src="/WriteReadData/photo/@Model.PhotoImagePath" onerror="this.src='/Images/Signature.png'" height="60" width="50" /></div>
                                             <div class="mt-4 ml-3"><img src="~/images/asset/hologrambg.png" height="60" width="50" /></div>
 
-                                    </div>
+                                        </div>
                                         <div class="col-sm-3">
                                             <div class="">
                                                 <div class="f15 font-weight-700">DATE OF BIRTH</div>
                                                 <div>@Model.DOB.ToString("dd/MMM/yyyy").Replace("-"," ")</div>
-                                                </div>
-                                            <div >
+                                            </div>
+                                            <div>
                                                 <div class="f15 font-weight-700">HEIGHT </div>
                                                 <div> @(Model.Height + " CM")</div>
-                                                </div>
-                                            <div >
+                                            </div>
+                                            <div>
                                                 <span class="f15 font-weight-700">AADHAAR No</span><br />
                                                 <span>XXXXXXXX</span>@Model.AadhaarNo
                                             </div>
-                                                <div >
+                                            <div>
                                                 <span class="f15 font-weight-700 text-uppercase">BLOOD GROUP</span><br />
                                                 @Model.BloodGroup
-                                                </div>
-                                                    <div >
+                                            </div>
+                                            <div>
                                                 <span class="f15 font-weight-700 text-uppercase">PLACE & DATE OF ISSUE</span>
-                                                <div class="text-uppercase">@Model.PlaceOfIssue</div>
-                                               <div>@Model.DateOfIssue.ToString("dd/MMM/yyyy").Replace("-"," ")</div>
-                                                    </div>
+                                                @if (Model.PlaceOfIssue == null)
+                                                {
+                                                    <span class="text-uppercase">Depends on Second level approver.</span>
+                                                }
+                                                else
+                                                {
+                                                    <div class="text-uppercase">@Model.PlaceOfIssue</div>
+                                                }
+                                                @if (Model.DateOfIssue.Year == 1)
+                                                {
+                                                    if (Model.ApplyForId == 1)
+                                                    {
+                                                        <span>DEPENDS ON UNIT OF SECOND LEVEL APPROVER.</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span>DEPENDS ON UNIT OF SECOND LEVEL APPROVER.</span>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <div>@Model.DateOfIssue.ToString("dd/MMM/yyyy").Replace("-"," ")</div>
+                                                }
+                                            </div>
                                         </div>
                                         <div class="col-sm-6">
                                             <div class="f13 font-weight-400">
@@ -313,26 +341,26 @@
                                         </div>
                                         <div class="col-sm-6 text-center mt-2 p-2 border border-dark" style="background-color:white">
                                             <span class="p-2"><img id="SignaturePath" src="/WriteReadData/Signature/@Model.SignatureImagePath" onerror="this.src='/Images/Signature.png'" height="30" width="80" /></span>
-                                           
+
                                         </div>
-                                </div>
+                                    </div>
                                 </div>
                             </div>
                             <div class="col-sm-2">
                             </div>
-                            
+
                             <div class="col-md-12 mb-4 text-center">
                                 <button class="btn btn-primary d-print-none btnPrint">Print</button>
                             </div>
-                                </div>
-                                </div>
-                                </div>
                         </div>
-           
-                    
+                    </div>
+                </div>
             </div>
+
+
         </div>
-       
+    </div>
+
 </div>
 @section Scripts{
     <script asp-src-include="~/js/CustomScript.js"></script>
