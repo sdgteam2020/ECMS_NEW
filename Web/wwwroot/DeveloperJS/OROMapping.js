@@ -1,13 +1,22 @@
 ﻿$(document).ready(function () {
-    mMsater(0, "ddlArmType", 9, "");
+    mMsater(0, "ddlRO", RecordOffice, "");
+    mMsater(0, "ddlRank", Rank, "");
     GetArmsList("ddlArmedIdList", 0);
-    BindData()
-    $("#btnAdd").click(function () {
+    BindData();
+    $('.select2').select2({
+        dropdownParent: $('#AddNewOROMapping'),
+        closeOnSelect: false
+    });
+    $("#btnAdd").on("click",function () {
         Reset();
         ResetErrorMessage();
-        $("#AddNewRecordOffice").modal('show');
+        $("#btnOROMappingAdd").val("Save");
+        $("#AddNewOROMapping").modal('show');
     });
-    $("#btnRecordOfficeReset").click(function () {
+    $("#btnOROMappingAdd").on("click", function () {
+        Proceed();
+    });
+    $("#btnOROMappingReset").on("click", function () {
         Reset();
         ResetErrorMessage();
     });
@@ -98,8 +107,12 @@
 
 function Proceed() {
     ResetErrorMessage();
+    if (($("#ddlRank").val() == 0 || $("#ddlRank").val() == "null") && ($('#ddlArmedIdList').val().length == 0 || $('#ddlArmedIdList').val() == "null")) {
+        toastr.error('Rank / Arme any one required.');
+        return false;
+    }
 
-    let formId = '#SaveRecordOffice';
+    let formId = '#SaveOROMapping';
     $.validator.unobtrusive.parse($(formId));
 
     if ($(formId).valid()) {
@@ -129,14 +142,14 @@ function Proceed() {
     }
 }
 function BindData() {
-    var listItem = "";
+     var listItem = "";
     var userdata =
     {
         "Id": 0,
 
     };
     $.ajax({
-        url: '/Master/GetAllRecordOffice',
+        url: '/Master/GetAllOROMapping',
         contentType: 'application/x-www-form-urlencoded',
         data: userdata,
         type: 'POST',
@@ -163,11 +176,30 @@ function BindData() {
                     for (var i = 0; i < response.length; i++) {
 
                         listItem += "<tr>";
-                        listItem += "<td class='d-none'><span id='spnMRecordOfficeId'>" + response[i].RecordOfficeId + "</span><span id='spnArmedId'>" + response[i].ArmedId + "</span><span id='spnTDMId'>" + response[i].TDMId + "</span><span id='spnMessage'>" + response[i].Message + "</span><span id='spnUnitId'>" + response[i].UnitId + "</span><span id='spnSus_no'>" + response[i].Sus_no + "</span><span id='spnSuffix'>" + response[i].Suffix + "</span><span id='spnUnitName'>" + response[i].UnitName + "</span></td>";
+                        listItem += "<td class='d-none'><span id='spnMOROMappingId'>" + response[i].OROMappingId + "</span><span id='spnRecordOfficeId'>" + response[i].RecordOfficeId + "</span><span id='spnRankId'>" + response[i].RankId + "</span><span id='spnArmedIds'>" + response[i].ArmedIdList + "</span><span id='spnTDMId'>" + response[i].TDMId + "</span><span id='spnUnitId'>" + response[i].UnitId + "</span><span id='spnSus_no'>" + response[i].Sus_no + "</span><span id='spnSuffix'>" + response[i].Suffix + "</span><span id='spnUnitName'>" + response[i].UnitName + "</span></td>";
                         listItem += "<td class='align-middle'>" + (i + 1) + "</td>";
                         listItem += "<td class='align-middle'><span id='RecordOfficeName'>" + response[i].RecordOfficeName + "</span></td>";
-                        listItem += "<td class='align-middle'><span id='abbreviation'>" + response[i].Abbreviation.toUpperCase() + "</span></td>";
-                        listItem += "<td class='align-middle'><span id='ArmedName'>" + response[i].ArmedName + "</span></td>";
+                       
+                        if (response[i].ArmedIdList != null) {
+                            var armsArray = response[i].ArmNameList.split('#');
+                            if (armsArray != null) {
+                                listItem += "<td class='align-middle'><ul>";
+                                    for (var j = 0; j < armsArray.length; j++) {
+                                        listItem += "<li>" + armsArray[j] +"</li>";
+                                }
+                                listItem += "</ul></td>";
+                            }
+                        }
+                        else {
+                            listItem += "<td class='align-middle'></td>";
+                        }
+                        if (response[i].RankId != null) {
+                            listItem += "<td class='align-middle'><span id='ArmedIdList'>" + response[i].RankName + "</span></td>";
+                        }
+                        else {
+                            listItem += "<td class='align-middle'></td>";
+                        }
+
                         if (response[i].TDMId != null) {
                             listItem += "<td class='align-middle'><span id='DID'>" + response[i].DomainId + ' & ' + response[i].ArmyNo + ' ' + response[i].RankAbbreviation + ' ' + response[i].Name + "</span></td>";
                         }
@@ -219,16 +251,17 @@ function BindData() {
                     $("body").on("click", ".cls-btnedit", function () {
                         Reset();
                         ResetErrorMessage();
-                        $("#txtName").val($(this).closest("tr").find("#RecordOfficeName").html());
-                        $("#txtAbbreviation").val($(this).closest("tr").find("#abbreviation").html());
-                        $("#spnRecordOfficeId").html($(this).closest("tr").find("#spnMRecordOfficeId").html());
-                        $("#ddlArmType").val($(this).closest("tr").find("#spnArmedId").html());
-                        if ($(this).closest("tr").find("#spnMessage").html() != null && $(this).closest("tr").find("#spnMessage").html() != "null") {
-                            $("#txtMessage").val($(this).closest("tr").find("#spnMessage").html());
+                        $("#spnOROMappingId").html($(this).closest("tr").find("#spnMOROMappingId").html());
+                        $("#ddlRO").val($(this).closest("tr").find("#spnRecordOfficeId").html());
+
+                        if ($(this).closest("tr").find("#spnRankId").html() != null && $(this).closest("tr").find("#spnRankId").html() != "null") {
+                            $("#ddlRank").val($(this).closest("tr").find("#spnRankId").html());
                         }
                         else {
-                            $("#txtMessage").val("");
+                            $("#ddlRank").val("0");
                         }
+                        
+
                         if ($(this).closest("tr").find("#spnUnitId").html() != null && $(this).closest("tr").find("#spnUnitId").html() != "null") {
                             $("#spnUnitMapId").html($(this).closest("tr").find("#spnUnitId").html());
                             $("#txtUnitName").val($(this).closest("tr").find("#spnSus_no").html() + $(this).closest("tr").find("#spnSuffix").html() + " " + $(this).closest("tr").find("#spnUnitName").html());
@@ -243,8 +276,13 @@ function BindData() {
                         else {
                             $("#ddlTDMId").val("0");
                         }
-                        $("#btnRecordOfficeAdd").val("Update");
-                        $("#AddNewRecordOffice").modal('show');
+
+                        let arr2 = $(this).closest("tr").find("#spnArmedIds").html().split(',');
+                        $("#ddlArmedIdList").val(arr2);
+                        $("#ddlArmedIdList").trigger("change");
+
+                        $("#btnOROMappingAdd").val("Update");
+                        $("#AddNewOROMapping").modal('show');
                     });
 
 
@@ -261,7 +299,7 @@ function BindData() {
                         }).then((result) => {
                             if (result.value) {
 
-                                Delete($(this).closest("tr").find("#spnMRecordOfficeId").html());
+                                Delete($(this).closest("tr").find("#spnMOROMappingId").html());
 
                             }
                         });
@@ -286,47 +324,40 @@ function BindData() {
 
 }
 function Save() {
-
+    var ArmedIds = "" + $("#ddlArmedIdList").val() + "";
     $.ajax({
-        url: '/Master/SaveRecordOffice',
+        url: '/Master/SaveOROMapping',
         type: 'POST',
         data: {
-            "Name": $("#txtName").val().trim(),
-            "Abbreviation": $("#txtAbbreviation").val().trim(),
-            "ArmedId": $("#ddlArmType").val(),
-            "RecordOfficeId": $("#spnRecordOfficeId").html(),
-            "UnitId": $("#spnUnitMapId").html() == "0" ? null : $("#spnUnitMapId").html(),
+            "OROMappingId": $("#spnOROMappingId").html(),
+            "ArmedIdList": $("#ddlArmedIdList").val().length >0 ? ArmedIds : null,
+            "RecordOfficeId": $("#ddlRO").val(),
+            "RankId": $("#ddlRank").val() == 0 ? null : $("#ddlRank").val(),
             "TDMId": $("#ddlTDMId").val() == 0 ? null : $("#ddlTDMId").val(),
-            "Message": $("#txtMessage").val().length > 0 ? $("#txtMessage").val() : null,
+            "UnitId": $("#spnUnitMapId").html() == "0" ? null : $("#spnUnitMapId").html(),
         },
         success: function (result) {
 
 
-            if (result == 5) {
-                toastr.success('Record Office has been saved');
+            if (result == DataSave) {
+                toastr.success('Officer Record Office Mapping has been saved');
 
-                $("#AddNewRecordOffice").modal('hide');
+                $("#AddNewOROMapping").modal('hide');
                 BindData();
                 Reset();
                 ResetErrorMessage();
             }
-            else if (result == 6) {
-                toastr.success('Record Office has been Updated');
+            else if (result == DataUpdate) {
+                toastr.success('Officer Record Office Mapping has been Updated');
 
-                $("#AddNewRecordOffice").modal('hide');
+                $("#AddNewOROMapping").modal('hide');
                 BindData();
                 Reset();
                 ResetErrorMessage();
             }
-            else if (result == 2) {
-                toastr.error('Record Office / Abbreviation Name Exits!');
+            else if (result == "5") {
+                toastr.error('Rank / Arme any one required.');
             }
-            //else if (result == 3) {
-            //    toastr.error('Armed Id Exits!');
-            //}
-            //else if (result == 4) {
-            //    toastr.error('Domain Id Exits!');
-            //}
             else if (result == InternalServerError) {
                 Swal.fire({
                     icon: 'error',
@@ -351,21 +382,18 @@ function Save() {
 }
 
 function Reset() {
-    $("#txtName").val("");
-    $("#txtAbbreviation").val("");
-    $("#ddlArmType").val("0");
-    $("#txtMessage").val("");
+    $("#spnOROMappingId").html("0"); 
+    $('#ddlArmedIdList').val(null).trigger('change');
+    $("#ddlRO").val("0");
+    $("#ddlRank").val("0");
     $("#txtUnitName").val("");
     $("#ddlTDMId").val("0");
-
-    $("#spnRecordOfficeId").html("0");
     $("#spnUnitMapId").html("0");
 }
 function ResetErrorMessage() {
-    $("#txtName-error").html("");
-    $("#txtAbbreviation-error").html("");
-    $("#ddlArmType-error").html("");
-    $("#txtMessage-error").html("");
+    $("#ddlArmedIdList-error").html(""); 
+    $("#ddlRO-error").html("");
+    $("#ddlRank-error").html("");
     $("#txtUnitName-error").html("");
     $("#ddlTDMId-error").html("");
 }
@@ -417,11 +445,11 @@ function GetDDMappedForRecord(UnitId, TDMId) {
 function Delete(Id) {
     var userdata =
     {
-        "RecordOfficeId": Id,
+        "OROMappingId": Id,
 
     };
     $.ajax({
-        url: '/Master/DeleteRecordOffice',
+        url: '/Master/DeleteOROMapping',
         contentType: 'application/x-www-form-urlencoded',
         data: userdata,
         type: 'POST',

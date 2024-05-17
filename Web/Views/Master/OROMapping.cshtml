@@ -2,6 +2,20 @@
     ViewData["Title"] = "ORO Mapping";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+<style>
+    .modal-xl {
+        max-width: 1140px !important;
+        width: 100% !important;
+    }
+
+    .table {
+        min-width: 100% !important;
+    }
+
+    .modal .modal-body .table-responsive {
+        max-height: 500px;
+    }
+</style>
 
 <header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
     <div class="containerMain">
@@ -54,6 +68,7 @@
                                     <th class="wd-40-f">S No</th>
                                     <th class="nowrap">Record Office</th>
                                     <th class="nowrap">Arms / Service</th>
+                                    <th class="nowrap">Rank</th>
                                     <th class="nowrap">Linked Domain ID & Pers Details</th>
                                     <th class="noExport nowrap">Action</th>
                                 </tr>
@@ -73,7 +88,7 @@
     <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Enter Officer Record Office Details</h5>
+                <h5 class="modal-title" id="exampleModalLabel">Enter Officer Record Office Mapping Details</h5>
                 <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
             </div>
             <div class="modal-body">
@@ -93,9 +108,18 @@
                             <div class="form-group row mb-2">
                                 <label class="col-form-label col-sm-4 fw-bold">Select Arms</label>
                                 <div class="col-sm-8">
-                                    <select class="form-control select2 select2-accessible text-uppercase" multiple="" placeholder="Please select a Arms" style="width: 100%;" tabindex="-1" aria-hidden="true" name="ArmedIdList" required id="ddlArmedIdList">
+                                    <select class="form-control select2 select2-accessible" multiple="" placeholder="Select Arms" style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddlArmedIdList" id="ddlArmedIdList" data-val="true" data-val-regex="This special chars and space not allowed for security reasons.">
                                     </select>
-                                    <span class="text-danger field-validation-valid" data-valmsg-for="ArmedIdList" data-valmsg-replace="true"></span>
+                                    <span class="text-danger field-validation-valid" data-valmsg-for="ddlArmedIdList" data-valmsg-replace="true"></span>
+                                </div>
+                            </div>
+                            <div class="form-group row mb-2">
+                                <label class="col-form-label col-sm-4 fw-bold">Select Rank</label>
+                                <div class="col-sm-8">
+                                    <select class="form-select" style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddlRank" id="ddlRank" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-regex-pattern="^[\d]+$">
+                                        <option value="0">Select Rank</option>
+                                    </select>
+                                    <span class="text-danger field-validation-valid" data-valmsg-for="ddlRank" data-valmsg-replace="true"></span>
                                 </div>
                             </div>
                             <div class="form-group row mb-2">
@@ -116,7 +140,7 @@
                                 </div>
                             </div>
                             <div class="col-sm-12 text-right">
-                                <input type="button" class="btn btn-outline-primary" value="Save" id="btnOROMappingAdd" onclick="Proceed()" />
+                                <input type="button" class="btn btn-outline-primary" value="Save" id="btnOROMappingAdd" />
                                 <button type="button" id="btnOROMappingReset" class="btn btn-outline-danger">Reset</button>
                             </div>
                             <div class="col-sm-12" id="msg">

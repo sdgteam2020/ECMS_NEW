@@ -4,6 +4,7 @@ using DataAccessLayer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccessLayer.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240516102724_v91")]
+    partial class v91
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1859,10 +1862,8 @@ namespace DataAccessLayer.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<short>("OROMappingId"));
 
                     b.Property<string>("ArmedIdList")
+                        .IsRequired()
                         .HasColumnType("varchar(100)");
-
-                    b.Property<short?>("RankId")
-                        .HasColumnType("smallint");
 
                     b.Property<byte>("RecordOfficeId")
                         .HasColumnType("tinyint");
@@ -1874,8 +1875,6 @@ namespace DataAccessLayer.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("OROMappingId");
-
-                    b.HasIndex("RankId");
 
                     b.HasIndex("RecordOfficeId");
 
@@ -2906,11 +2905,6 @@ namespace DataAccessLayer.Migrations
 
             modelBuilder.Entity("DataTransferObject.Domain.Model.OROMapping", b =>
                 {
-                    b.HasOne("DataTransferObject.Domain.Master.MRank", "MRank")
-                        .WithMany()
-                        .HasForeignKey("RankId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.HasOne("DataTransferObject.Domain.Master.MRecordOffice", "MRecordOffice")
                         .WithMany()
                         .HasForeignKey("RecordOfficeId")
@@ -2926,8 +2920,6 @@ namespace DataAccessLayer.Migrations
                         .WithMany()
                         .HasForeignKey("UnitId")
                         .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("MRank");
 
                     b.Navigation("MRecordOffice");
 

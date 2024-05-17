@@ -4,6 +4,7 @@ using DapperRepo.Core.Constants;
 using DataAccessLayer.BaseInterfaces;
 using DataTransferObject.Domain;
 using DataTransferObject.Domain.Master;
+using DataTransferObject.Domain.Model;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
 using DataTransferObject.Response.User;
@@ -1799,10 +1800,81 @@ namespace Web.Controllers
 
         #region OROMapping
 
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> OROMapping()
+        {
+            return View();
+        }
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> GetAllOROMapping()
+        {
+            try
+            {
+                return Json(await unitOfWork.OROMapping.GetAllOROMapping());
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "Master->GetAllOROMapping");
+                return Json(KeyConstants.InternalServerError);
+            }
+
+        }
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> SaveOROMapping(OROMapping dTO)
+        {
+            try
+            {
+                if((dTO.RankId == null || dTO.RankId == 0) && (dTO.ArmedIdList == null || dTO.ArmedIdList ==""))
+                {
+                    return Json("5");
+                }
+                else
+                {
+                    if (ModelState.IsValid)
+                    {
+                        if (dTO.OROMappingId > 0)
+                        {
+                            await unitOfWork.OROMapping.Update(dTO);
+                            return Json(KeyConstants.Update);
+                        }
+                        else
+                        {
+                            await unitOfWork.OROMapping.Add(dTO);
+                            return Json(KeyConstants.Save);
+                        }
+                    }
+                    else
+                    {
+                        return Json(ModelState.Select(x => x.Value.Errors).Where(y => y.Count > 0).ToList());
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "Master->SaveRegimental");
+                return Json(KeyConstants.InternalServerError);
+            }
+
+        }
         [Authorize(Roles = "User")]
         public async Task<IActionResult> GetArmsList()
         {
             return Json(await _IMasterBL.GetArmsList());
+        }
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> DeleteOROMapping(OROMapping dTO)
+        {
+            try
+            {
+                await unitOfWork.OROMapping.Delete(dTO);
+                return Json(KeyConstants.Success);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "Master->DeleteOROMapping");
+                return Json(KeyConstants.InternalServerError);
+            }
         }
 
         #endregion OROMapping
