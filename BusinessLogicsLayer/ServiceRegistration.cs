@@ -14,6 +14,7 @@ using BusinessLogicsLayer.EncryptBySql;
 using BusinessLogicsLayer.Formation;
 using BusinessLogicsLayer.Home;
 using BusinessLogicsLayer.Master;
+using BusinessLogicsLayer.OROMapp;
 using BusinessLogicsLayer.Posting;
 using BusinessLogicsLayer.RecordOffice;
 using BusinessLogicsLayer.Registration;
@@ -143,6 +144,9 @@ namespace BusinessLogicsLayer
 
             services.AddTransient<IMasterBL, MasterBL>();
             services.AddTransient<IMasterDB, MasterDB>();
+
+            services.AddTransient<IOROMappingBL, OROMappingBL>();
+            services.AddTransient<IOROMappingDB, OROMappingDB>();
 
             services.AddTransient<IHomeBL, HomeBL>();
             services.AddTransient<IHomeDB, HomeDB>();

@@ -38,6 +38,7 @@ function GetDashboardMasterCount() {
                     $("#TotArms").html(response.TotArms);
                     $("#TotRegtCentre").html(response.TotRegtCentre);
                     $("#TotRecordOffice").html(response.TotRecordOffice);
+                    $("#TotOROMapping").html(response.TotOROMapping);
                     $("#TotDomainRegn").html(response.TotDomainRegn);
                     $("#TotUserRegn").html(response.TotDomainRegn);
                     $("#TotUserProfile").html(response.TotUserProfile);

@@ -17,12 +17,18 @@ namespace DataTransferObject.Domain.Model
         public short OROMappingId { get; set; }
 
         [Column(TypeName = "varchar(100)")]
-        [RegularExpression(@"^[\d\,]+$", ErrorMessage = "ArmedId is number.")]
-        public string ArmedIdList { get; set; } = string.Empty;
+        //[RegularExpression(@"^[\d\,]+$", ErrorMessage = "ArmedId is number.")]
+        public string? ArmedIdList { get; set; }
+
+        [ForeignKey("MRank")]
+        [RegularExpression(@"^[\d]+$", ErrorMessage = "RankId is number.")]
+        public short? RankId { get; set; }
+        public MRank? MRank { get; set; }
 
         [ForeignKey("MRecordOffice"), DatabaseGenerated(DatabaseGeneratedOption.None)]
         [RegularExpression(@"^[\d]+$", ErrorMessage = "RecordOfficeId is number.")]
         public byte RecordOfficeId { get; set; }
+        public MRecordOffice? MRecordOffice { get; set; }
 
         [ForeignKey("TrnDomainMapping"), DatabaseGenerated(DatabaseGeneratedOption.None)]
         [RegularExpression(@"^[\d]+$", ErrorMessage = "TDMId is number.")]

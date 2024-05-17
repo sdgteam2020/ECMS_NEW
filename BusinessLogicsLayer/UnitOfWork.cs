@@ -9,6 +9,7 @@ using BusinessLogicsLayer.Div;
 using BusinessLogicsLayer.Formation;
 using BusinessLogicsLayer.Helpers;
 using BusinessLogicsLayer.Master;
+using BusinessLogicsLayer.OROMapp;
 using BusinessLogicsLayer.RecordOffice;
 using BusinessLogicsLayer.Unit;
 using BusinessLogicsLayer.User;
@@ -29,7 +30,7 @@ namespace BusinessLogicsLayer
     {
 
 
-        public UnitOfWork(IUserBL _user, IComd _comds, ICorpsBL _corpsBL, IBdeBL _bdeCat, IDivBL divBL, IUnitBL unit, IMapUnitBL MapUnitBL, IFormationBL FormationBL, IApptBL apptBL, IArmedBL armedBL, IRankBL rankBL, IRegimentalBL regimentalBL,IRecordOfficeBL recordOfficeBL,IArmedCatBL armedCatBL,IMasterBL masterBL)
+        public UnitOfWork(IUserBL _user, IComd _comds, ICorpsBL _corpsBL, IBdeBL _bdeCat, IDivBL divBL, IUnitBL unit, IMapUnitBL MapUnitBL, IFormationBL FormationBL, IApptBL apptBL, IArmedBL armedBL, IRankBL rankBL, IRegimentalBL regimentalBL,IRecordOfficeBL recordOfficeBL,IArmedCatBL armedCatBL,IMasterBL masterBL,IOROMappingBL oroMappingBL)
         {
             Users = _user;
             Comds = _comds;
@@ -46,6 +47,7 @@ namespace BusinessLogicsLayer
             RecordOffice = recordOfficeBL;
             ArmedCat = armedCatBL;
             MasterBL = masterBL;
+            OROMapping= oroMappingBL;
         }
         public IUserBL Users { get; }
 
@@ -66,6 +68,7 @@ namespace BusinessLogicsLayer
         public IArmedCatBL ArmedCat { get; }
 
         public IMasterBL MasterBL { get; }
+        public IOROMappingBL OROMapping { get; }
          
         public async Task<List<DTOMasterResponse>> GetAllMMaster(DTOMasterRequest Data)
         {
@@ -282,6 +285,18 @@ namespace BusinessLogicsLayer
                     lst.Add(db);
                 }
 
+            }
+            else if (Data.id == Convert.ToInt16(Constants.MasterTbl.RecordOffice))
+            {
+                var Ret = await RecordOffice.GetAll();
+                foreach (var recordOffice in Ret)
+                {
+
+                    DTOMasterResponse db = new DTOMasterResponse();
+                    db.Id = recordOffice.RecordOfficeId;
+                    db.Name = recordOffice.Name;
+                    lst.Add(db);
+                }
             }
             //Constants.MasterTbl.Command;
             return lst;
