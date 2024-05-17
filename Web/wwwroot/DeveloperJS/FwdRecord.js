@@ -196,6 +196,7 @@ $(document).ready(function () {
                 $(".gsoio").html("CO /OC / OC TPS or Offr Nominated by him/ her");
                 $(".gsoiotitle").html("CO / OC / OC TPS or Offr Nominated by him/ her");
                 $("#btnForward").html("Forward To CO / OC / OC TPS or Offr Nominated");
+
                 GetAllOffsByUnitId("ddlfwdoffrs", 0, Unitidarmy, 0, spnISCO,0,0,0);
             }
             $(".Remarks").removeClass("d-none");
