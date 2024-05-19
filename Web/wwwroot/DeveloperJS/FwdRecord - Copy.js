@@ -5,14 +5,17 @@ var applyfor = 0;
 var xmlsign = 0;
 var lstmultifwdarr = new Array();
 var isToken = false;
-$(function () {
-    $("#btntokenTofwd").on("click",function () {
+$(document).ready(function () {
+
+
+
+    $("#btntokenTofwd").click(function () {
         $("#msgforfwd").html('');
        
         GetTokenvalidatepersid2fawiththumbprint($("#aspntokenarmyno").html(), "tokenmsgforfwd", "txtspnTokenArmyNo", "txtspnTokenthumbprint");
     });
     sessionStorage.removeItem('ArmyNo');
-    $('#btnDataExports').on("click",function () {
+    $('#btnDataExports').click(function () {
         var lst = new Array();
 
         if (memberTable.$('input[type="checkbox"]:checked').length > 0) {
@@ -61,11 +64,10 @@ $(function () {
     });
     
    
-    $(".historyRequest").on("click",function () {
+    $(".historyRequest").click(function () {
         $("#exampleModal").modal('show'); 
         GetRequestHistory($(this).closest("tr").find(".spnRequestId").html());
     });
-
     $('#ddlfwdoffrs').on('change', function () {
         $("#spnFwdToAspNetUsersId").html(0);
         $("#spnFwdToUsersId").html(0);
@@ -80,7 +82,6 @@ $(function () {
 
         FwdData($('#ddlfwdoffrs').val());
     });
-
     //$('#ddlPhotos').on('change', function () {
     //    photo= $('#ddlPhotos').val();
     //});
@@ -91,7 +92,7 @@ $(function () {
 
     //    $("#txtFrejectedRemarks").val($("#txtFrejectedRemarks").val() + "" + photo + "" + sing);
     //});
-    $("#btnMultipleForward").on("click",function () {
+    $("#btnMultipleForward").click(function () {
 
        
 
@@ -133,8 +134,7 @@ $(function () {
         }
        
     });
-
-    $("#btnShowForward").on("click", function () {
+    $("#btnShowForward").click(function () {
         $("#multiplefed").removeClass("d-none");
         $("#BasicDetails").modal('hide');
         /*if (applyfor==1)*/
@@ -143,7 +143,7 @@ $(function () {
         GetByArmyNoIsToken();
     });
 
-    $("input[name='Intoffrs']").on("change",function () {
+    $("input[name='Intoffrs']").change(function () {
         $(".serchfwd").removeClass("d-none");
 
         $("#spnFwdToAspNetUsersId").html(0);
@@ -156,7 +156,7 @@ $(function () {
        
     });
 
-    $(".fwdrecord").on("click",function () {
+    $(".fwdrecord").click(function () {
 
        
         // ResetMapUnit();
@@ -280,7 +280,6 @@ $(function () {
        // GetForwardHHierarchy($(this).closest("tr").find(".ServiceNo").html(), StepCounter , spnRequestId)
        
     });
-
     $("#txtFwdName").autocomplete({
        
         source: function (request, response) {
@@ -354,8 +353,7 @@ $(function () {
         },
         appendTo: '#suggesstion-box'
     });
-
-    $("#btnForward").on("click", function () {
+    $("#btnForward").click(function () {
 
         /*  alert($("#txtspnTokenArmyNo").val());*/
 
@@ -442,7 +440,7 @@ $(function () {
         }
     });
 
-    $("#btnRejected").on("click",function () {
+    $("#btnRejected").click(function () {
 
       /*  $("#txtFrejectedRemarks").val($("#txtFrejectedRemarks").val() + "" + photo + "" + sing);*/
         Swal.fire({
