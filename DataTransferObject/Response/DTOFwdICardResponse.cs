@@ -15,5 +15,7 @@ namespace DataTransferObject.Response
         public string ArmyNo { get; set; } = string.Empty;
         public string Name { get; set; } = string.Empty;
         public string RankAbbreviation { get; set; } = string.Empty;
+        public bool IsError { get; set; } = false;
+        public string ErrorMessage { get; set; } = string.Empty;
     }
 }

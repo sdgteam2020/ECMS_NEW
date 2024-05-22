@@ -137,6 +137,25 @@ $(function () {
     $("#btnShowForward").on("click", function () {
         $("#multiplefed").removeClass("d-none");
         $("#BasicDetails").modal('hide');
+        alert($("#spndefaultAspNetUsersId").html());
+        if ($("#spndefaultAspNetUsersId").html() > 0) {
+            $("#ddlfwdoffrs").val($("#spndefaultAspNetUsersId").html());
+
+
+            $("#spnFwdToAspNetUsersId").html(0);
+            $("#spnFwdToUsersId").html(0);
+            $(".spnFArmyNo").html("");
+            $(".spnFtoname").html("");
+            $(".spnFDomainName").html("");
+            $(".spnFAppName").html("");
+
+            $("#intoffsArmyNo").prop("checked", false);
+            $("#intoffDomainId").prop("checked", false);
+            $(".serchfwd").addClass("d-none");
+            FwdData($("#spndefaultAspNetUsersId").html());
+        }
+
+
         /*if (applyfor==1)*/
         $("#FwdRecord").modal('show');
 
@@ -157,8 +176,6 @@ $(function () {
     });
 
     $(".fwdrecord").on("click",function () {
-
-       
         // ResetMapUnit();
         //alert($(this).closest("tr").find(".spnRequestId").html())
         $("#multiplefed").addClass("d-none");
@@ -208,6 +225,8 @@ $(function () {
             GetRemarks("ddlRemarks", 0, someNumbers);
         }
         else if (StepCounter == 2) {
+            $(".chkforserach").addClass("d-none");
+            $(".serchfwd").addClass("d-none");
             if (applyfor == 1) {
                 $(".gsoio").html("Record Office");
                 $(".gsoiotitle").html("Offr Record Office (ORO) Approval");
