@@ -180,10 +180,23 @@ function GetAllOffsByUnitId(ddl, sectid, UnitId, ISIO, IsCO, IsRO, IsORO,BasicDe
         success: function (response) {
             if (response != "null" && response != null) {
                 if (response == InternalServerError) {
-                   
+                    
                 }
 
                 else {
+                    if (response[0].IsError == true) {
+                        $("#ErrMess1").removeClass("d-none");
+                        $("#ErrMess1").html(response[0].ErrorMessage);
+                        $("#btnForward").prop("disabled", true);
+
+                    }
+                    else {
+                        $("#ErrMess1").addClass("d-none");
+                        $("#ErrMess1").html("");
+                        $("#spndefaultAspNetUsersId").html(0);
+                        $("#spndefaultAspNetUsersId").html(response[0].AspNetUsersId);
+                        $("#btnForward").prop("disabled", false);
+                    }
 
                     var listItemddl = "";
 
@@ -200,7 +213,6 @@ function GetAllOffsByUnitId(ddl, sectid, UnitId, ISIO, IsCO, IsRO, IsORO,BasicDe
                         $("#" + ddl + "").val(sectid);
 
                     }
-
                     //}
 
 
