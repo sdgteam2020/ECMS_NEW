@@ -137,24 +137,6 @@ $(function () {
     $("#btnShowForward").on("click", function () {
         $("#multiplefed").removeClass("d-none");
         $("#BasicDetails").modal('hide');
-        alert($("#spndefaultAspNetUsersId").html());
-        if ($("#spndefaultAspNetUsersId").html() > 0) {
-            $("#ddlfwdoffrs").val($("#spndefaultAspNetUsersId").html());
-
-
-            $("#spnFwdToAspNetUsersId").html(0);
-            $("#spnFwdToUsersId").html(0);
-            $(".spnFArmyNo").html("");
-            $(".spnFtoname").html("");
-            $(".spnFDomainName").html("");
-            $(".spnFAppName").html("");
-
-            $("#intoffsArmyNo").prop("checked", false);
-            $("#intoffDomainId").prop("checked", false);
-            $(".serchfwd").addClass("d-none");
-            FwdData($("#spndefaultAspNetUsersId").html());
-        }
-
 
         /*if (applyfor==1)*/
         $("#FwdRecord").modal('show');

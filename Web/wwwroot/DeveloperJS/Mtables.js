@@ -193,10 +193,11 @@ function GetAllOffsByUnitId(ddl, sectid, UnitId, ISIO, IsCO, IsRO, IsORO,BasicDe
                     else {
                         $("#ErrMess1").addClass("d-none");
                         $("#ErrMess1").html("");
-                        $("#spndefaultAspNetUsersId").html(0);
-                        $("#spndefaultAspNetUsersId").html(response[0].AspNetUsersId);
+
                         $("#btnForward").prop("disabled", false);
                     }
+
+
 
                     var listItemddl = "";
 
@@ -212,6 +213,25 @@ function GetAllOffsByUnitId(ddl, sectid, UnitId, ISIO, IsCO, IsRO, IsORO,BasicDe
                     if (sectid != '') {
                         $("#" + ddl + "").val(sectid);
 
+                    }
+
+                    if (IsORO == 1 && response.length == 1) {
+                        //$("#spndefaultAspNetUsersId").html(0);
+                        //$("#spndefaultAspNetUsersId").html(response[0].AspNetUsersId);
+
+                        $("#" + ddl + "").val(response[0].AspNetUsersId)
+
+                        $("#spnFwdToAspNetUsersId").html(0);
+                        $("#spnFwdToUsersId").html(0);
+                        $(".spnFArmyNo").html("");
+                        $(".spnFtoname").html("");
+                        $(".spnFDomainName").html("");
+                        $(".spnFAppName").html("");
+
+                        $("#intoffsArmyNo").prop("checked", false);
+                        $("#intoffDomainId").prop("checked", false);
+                        $(".serchfwd").addClass("d-none");
+                        FwdData(response[0].AspNetUsersId);
                     }
                     //}
 
