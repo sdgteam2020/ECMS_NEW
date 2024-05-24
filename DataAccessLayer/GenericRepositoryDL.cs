@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using static Dapper.SqlMapper;
 
 namespace DataAccessLayer
-{
+{ 
     public abstract class GenericRepositoryDL<T> : IGenericRepositoryDL<T> where T : class
     {
         protected readonly ApplicationDbContext _context;

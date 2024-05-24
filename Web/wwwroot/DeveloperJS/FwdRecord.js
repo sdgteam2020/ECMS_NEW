@@ -151,7 +151,6 @@ $(document).ready(function () {
         $(".spnFtoname").html("");
         $(".spnFDomainName").html("");
         
-       
     });
 
     $(".fwdrecord").click(function () {
