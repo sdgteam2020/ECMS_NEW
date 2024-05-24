@@ -216,8 +216,6 @@ function GetAllOffsByUnitId(ddl, sectid, UnitId, ISIO, IsCO, IsRO, IsORO,BasicDe
                     }
 
                     if (IsORO == 1 && response.length == 1) {
-                        //$("#spndefaultAspNetUsersId").html(0);
-                        //$("#spndefaultAspNetUsersId").html(response[0].AspNetUsersId);
 
                         $("#" + ddl + "").val(response[0].AspNetUsersId)
 
