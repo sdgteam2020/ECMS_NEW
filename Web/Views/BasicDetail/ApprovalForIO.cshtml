@@ -74,11 +74,17 @@
 
                         </div>
                     }
+                    @if (ViewBag.Role == "Coordinator")
+                    {
+                        <div class="d-flex justify-content-end">
+                            <button type="button" id="btnFwd" class="btn btn-warning font-weight-600 btn-sm mb-2">Forward</button>
+                        </div>
+                    }
                     <div class="table-responsive">
                         <table id="tbldatatabledata" class="table border border-purple table-striped no-footer dataTable table-hover" style="width:100%">
                             <thead>
                                 <tr>
-                                    @if (ViewBag.dataexport == 5 || ViewBag.dataexport == 4)
+                                    @if (ViewBag.dataexport == 5 || ViewBag.dataexport == 4 || ViewBag.Role == "Coordinator")
                                     {
                                        
                                         <th class="noExport wd-30-f">
@@ -106,7 +112,7 @@
                                 @foreach (var item in Model)
                                 {
                                     <tr>
-                                        @if (ViewBag.dataexport == 5 || ViewBag.dataexport == 4)
+                                        @if (ViewBag.dataexport == 5 || ViewBag.dataexport == 4 || ViewBag.Role == "Coordinator")
                                         {
                                            <td>
                                            <div class="custom-control custom-checkbox small">
