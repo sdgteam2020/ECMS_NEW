@@ -148,14 +148,12 @@ namespace Web.Controllers
             }
             return View();
         }
-        [Authorize(Roles = "User")]
         public async Task<IActionResult> Task()
         {
             string role = GetSessionValue();
             ViewBag.Role = role;
             return View();
         }
-        [Authorize(Roles = "User")]
         public IActionResult MyTask(string Id)
         {
             string role = GetSessionValue();
@@ -165,7 +163,6 @@ namespace Web.Controllers
             ViewBag.Role = role;
             return View();
         }
-        [Authorize(Roles = "User")]
         public IActionResult Request()
         {
             return View();
@@ -248,7 +245,7 @@ namespace Web.Controllers
             int userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
             return Json(await _home.GetSubDashboardCount(userId));
         }
-        [Authorize]
+
         [HttpPost]
         public async Task<IActionResult> GetAllRegisterUser(int UnitId)
         {
@@ -263,7 +260,6 @@ namespace Web.Controllers
             }
 
         }
-        [Authorize]
         [HttpPost]
         public async Task<IActionResult> GetDashboardUserMgtCount(int UnitId)
         {
