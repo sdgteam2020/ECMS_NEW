@@ -5,17 +5,14 @@ var applyfor = 0;
 var xmlsign = 0;
 var lstmultifwdarr = new Array();
 var isToken = false;
-$(document).ready(function () {
-
-
-
-    $("#btntokenTofwd").click(function () {
+$(function () {
+    $("#btntokenTofwd").on("click",function () {
         $("#msgforfwd").html('');
        
         GetTokenvalidatepersid2fawiththumbprint($("#aspntokenarmyno").html(), "tokenmsgforfwd", "txtspnTokenArmyNo", "txtspnTokenthumbprint");
     });
     sessionStorage.removeItem('ArmyNo');
-    $('#btnDataExports').click(function () {
+    $('#btnDataExports').on("click",function () {
         var lst = new Array();
 
         if (memberTable.$('input[type="checkbox"]:checked').length > 0) {
@@ -64,16 +61,18 @@ $(document).ready(function () {
     });
     
    
-    $(".historyRequest").click(function () {
+    $(".historyRequest").on("click",function () {
         $("#exampleModal").modal('show'); 
         GetRequestHistory($(this).closest("tr").find(".spnRequestId").html());
     });
+
     $('#ddlfwdoffrs').on('change', function () {
         $("#spnFwdToAspNetUsersId").html(0);
         $("#spnFwdToUsersId").html(0);
         $(".spnFArmyNo").html("");
         $(".spnFtoname").html("");
         $(".spnFDomainName").html("");
+        $(".spnFAppName").html("");
 
         $("#intoffsArmyNo").prop("checked", false); 
         $("#intoffDomainId").prop("checked", false); 
@@ -81,6 +80,7 @@ $(document).ready(function () {
 
         FwdData($('#ddlfwdoffrs').val());
     });
+
     //$('#ddlPhotos').on('change', function () {
     //    photo= $('#ddlPhotos').val();
     //});
@@ -91,7 +91,7 @@ $(document).ready(function () {
 
     //    $("#txtFrejectedRemarks").val($("#txtFrejectedRemarks").val() + "" + photo + "" + sing);
     //});
-    $("#btnMultipleForward").click(function () {
+    $("#btnMultipleForward").on("click",function () {
 
        
 
@@ -133,16 +133,18 @@ $(document).ready(function () {
         }
        
     });
-    $("#btnShowForward").click(function () {
+
+    $("#btnShowForward").on("click", function () {
         $("#multiplefed").removeClass("d-none");
         $("#BasicDetails").modal('hide');
+
         /*if (applyfor==1)*/
         $("#FwdRecord").modal('show');
 
         GetByArmyNoIsToken();
     });
 
-    $("input[name='Intoffrs']").change(function () {
+    $("input[name='Intoffrs']").on("change",function () {
         $(".serchfwd").removeClass("d-none");
 
         $("#spnFwdToAspNetUsersId").html(0);
@@ -150,12 +152,12 @@ $(document).ready(function () {
         $(".spnFArmyNo").html("");
         $(".spnFtoname").html("");
         $(".spnFDomainName").html("");
+        $(".spnFAppName").html("");
         
     });
 
-    $(".fwdrecord").click(function () {
-
-       
+    $(".fwdrecord").on("click", function () {
+        Reset();
         // ResetMapUnit();
         //alert($(this).closest("tr").find(".spnRequestId").html())
         $("#multiplefed").addClass("d-none");
@@ -170,7 +172,7 @@ $(document).ready(function () {
         $("#spnCurrentspnRequestId").html(spnRequestId);
         spnStepId = $(this).closest("tr").find(".spnStepId").html();
         const Unitidarmy = $(this).closest("tr").find(".spnarmyUnitId").html();
-        alert(Unitidarmy)
+        //alert(Unitidarmy)
 
         StepCounter = $(this).closest("tr").find(".spnStepCounterId").html();
         applyfor = $(this).closest("tr").find(".spnApplyFor").html();
@@ -185,14 +187,15 @@ $(document).ready(function () {
         if (StepCounter == 1 || StepCounter == 7 || StepCounter == 8 || StepCounter == 9 || StepCounter == 10 || StepCounter == 11 || StepCounter == 12 || StepCounter == 13 || StepCounter == 15) {
 
             if (applyfor == 1) {
-                $(".gsoio").html("Initiating Offr (IO)");
-                $(".gsoiotitle").html("Initiating Offr (IO) Approval");
-                $("#btnForward").html("Forward To IO");
+                $(".gsoio").html("IO / Next Superior Offr");
+                $(".gsoiotitle").html("IO / Next Superior Offr");
+                $("#btnForward").html("Forward To IO / Superior");
                 GetAllOffsByUnitId("ddlfwdoffrs", 0, Unitidarmy, spnISIO,0,0,0,0);
             } else {
-                $(".gsoio").html("Initiating Offr (IO)");
-                $(".gsoiotitle").html("Initiating Offr (IO) Approval");
-                $("#btnForward").html("Forward To IO");
+                $(".gsoio").html("CO /OC / OC TPS or Offr Nominated by him/ her");
+                $(".gsoiotitle").html("CO / OC / OC TPS or Offr Nominated by him/ her");
+                $("#btnForward").html("Forward To CO / OC / OC TPS or Offr Nominated");
+
                 GetAllOffsByUnitId("ddlfwdoffrs", 0, Unitidarmy, 0, spnISCO,0,0,0);
             }
             $(".Remarks").removeClass("d-none");
@@ -204,6 +207,8 @@ $(document).ready(function () {
             GetRemarks("ddlRemarks", 0, someNumbers);
         }
         else if (StepCounter == 2) {
+            $(".chkforserach").addClass("d-none");
+            $(".serchfwd").addClass("d-none");
             if (applyfor == 1) {
                 $(".gsoio").html("Record Office");
                 $(".gsoiotitle").html("Offr Record Office (ORO) Approval");
@@ -276,6 +281,7 @@ $(document).ready(function () {
        // GetForwardHHierarchy($(this).closest("tr").find(".ServiceNo").html(), StepCounter , spnRequestId)
        
     });
+
     $("#txtFwdName").autocomplete({
        
         source: function (request, response) {
@@ -309,13 +315,26 @@ $(document).ready(function () {
                 type: 'POST',
                 success: function (data) {
                     console.log(data);
+                    if (data.length != 0) {
+                        response($.map(data, function (item) {
 
-                    response($.map(data, function (item) {
+                            $("#loading").addClass("d-none");
+                            return { label: item.ArmyNo + ' ' + item.RankAbbreviation + ' ' + item.Name + ' ' + item.DomainId, value: item.AspNetUsersId };
 
-                        $("#loading").addClass("d-none");
-                        return { label: item.ArmyNo + ' ' + item.RankAbbreviation + ' ' + ' ' + item.Name + ' ' + item.DomainId + ' ', value: item.AspNetUsersId };
+                        }))
+                    }
+                    else {
 
-                    }))
+                        $(".spnFArmyNo").html("");
+                        $(".spnFtoname").html("");
+                        $(".spnFDomainName").html("");
+                        $(".spnFAppName").html("");
+
+                        $("#txtFwdName").val("");
+                        $("#spnFwdToAspNetUsersId").html("0");
+                        $("#spnFwdToUsersId").html("0");
+                        alert("Army No/Offr Name/Domain ID not found.")
+                    }
                 },
                 error: function (response) {
                     alert(response.responseText);
@@ -336,7 +355,8 @@ $(document).ready(function () {
         },
         appendTo: '#suggesstion-box'
     });
-    $("#btnForward").click(function () {
+
+    $("#btnForward").on("click", function () {
 
         /*  alert($("#txtspnTokenArmyNo").val());*/
 
@@ -423,7 +443,7 @@ $(document).ready(function () {
         }
     });
 
-    $("#btnRejected").click(function () {
+    $("#btnRejected").on("click",function () {
 
       /*  $("#txtFrejectedRemarks").val($("#txtFrejectedRemarks").val() + "" + photo + "" + sing);*/
         Swal.fire({
@@ -458,6 +478,19 @@ $(document).ready(function () {
         })
     });
 });
+function Reset() {
+    $("#spnFwdToAspNetUsersId").html(0);
+    $("#spnFwdToUsersId").html(0);
+    $(".spnFArmyNo").html("");
+    $(".spnFtoname").html("");
+    $(".spnFDomainName").html("");  
+    $(".spnFAppName").html("");
+
+    $("#intoffsArmyNo").prop("checked", false);
+    $("#intoffDomainId").prop("checked", false);
+    $("#txtFwdName").val("");
+    $(".serchfwd").addClass("d-none");
+}
 function GetDataFromBasicDetails(Id) {
     var userdata =
     {
@@ -600,6 +633,7 @@ function GetProfiledetailsByAspNetuserid(AspNetUsersId) {
                 $(".spnFArmyNo").html(data[0].ArmyNo);
                 $(".spnFtoname").html(data[0].RankAbbreviation +" "+ data[0].Name);
                 $(".spnFDomainName").html(data[0].DomainId);
+                $(".spnFAppName").html(data[0].AppointmentName);
             }
         },
         error: function (response) {

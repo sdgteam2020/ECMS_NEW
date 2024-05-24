@@ -227,8 +227,137 @@
             alert("Select Choice");
         }
     });
+
+    $("#btnUser").click(function () {
+
+        if ($("#lblUser").html() > 0) {
+            $("#tbldatadialog").DataTable().destroy();
+            $("#lblModelTitle").html('Total Users');
+            $("#DataTableDialog").modal('show');
+            BindDialog("User");
+        }
+    });
+    $("#btnMappedUser").click(function () {
+
+        if ($("#lblMappedUser").html() > 0) {
+            $("#tbldatadialog").DataTable().destroy();
+            $("#lblModelTitle").html('Total Mapped Users');
+            $("#DataTableDialog").modal('show');
+            BindDialog("MappedUser");
+        }
+    });
+    $("#btnUnMappedUser").click(function () {
+        if ($("#lblUnMappedUser").html() > 0) {
+            $("#tbldatadialog").DataTable().destroy();
+            $("#lblModelTitle").html('Total UnMapped Users');
+            $("#DataTableDialog").modal('show');
+            BindDialog("UnMappedUser");
+        }
+    });
+    $("#btnActiveUser").click(function () {
+        if ($("#lblActiveUser").html() > 0) {
+            $("#tbldatadialog").DataTable().destroy();
+            $("#lblModelTitle").html('Total Active Users');
+            $("#DataTableDialog").modal('show');
+            BindDialog("ActiveUser");
+        }
+    });
+    $("#btnInActiveUser").click(function () {
+        if ($("#lblInActiveUser").html() > 0) {
+            $("#tbldatadialog").DataTable().destroy();
+            $("#lblModelTitle").html('Total InActive Users');
+            $("#DataTableDialog").modal('show');
+            BindDialog("InActiveUser");
+        }
+    });
+    $("#btnVerified").click(function () {
+        if ($("#lblVerifiedUser").html() > 0) {
+            $("#tbldatadialog").DataTable().destroy();
+            $("#lblModelTitle").html('Total Verified Users');
+            $("#DataTableDialog").modal('show');
+            BindDialog("Verified");
+        }
+    });
+    $("#btnNotVerifiedUser").click(function () {
+        if ($("#lblNotVerifiedUser").html() > 0) {
+            $("#tbldatadialog").DataTable().destroy();
+            $("#lblModelTitle").html('Total Not Verified Users');
+            $("#DataTableDialog").modal('show');
+            BindDialog("NotVerifiedUser");
+        }
+    });
+    $("#btnIO").click(function () {
+        if ($("#lblIO").html() > 0) {
+            $("#tbldatadialog").DataTable().destroy();
+            $("#lblModelTitle").html('Total Not Verified Users');
+            $("#DataTableDialog").modal('show');
+            BindDialog("IO");
+        }
+        else {
+            BindData("IO");
+        }
+    });
+    $("#btnApprover").click(function () {
+        if ($("#lblApprover").html() > 0) {
+            $("#tbldatadialog").DataTable().destroy();
+            $("#lblModelTitle").html('Total Not Verified Users');
+            $("#DataTableDialog").modal('show');
+            BindDialog("CO");
+        }
+    });
+    $("#btnRO").click(function () {
+        if ($("#lblRO").html() > 0) {
+            $("#tbldatadialog").DataTable().destroy();
+            $("#lblModelTitle").html('Total Not Verified Users');
+            $("#DataTableDialog").modal('show');
+            BindDialog("RO");
+        }
+    });
+    $("#btnORO").click(function () {
+        if ($("#lblORO").html() > 0) {
+            $("#tbldatadialog").DataTable().destroy();
+            $("#lblModelTitle").html('Total Not Verified Users');
+            $("#DataTableDialog").modal('show');
+            BindDialog("ORO");
+        }
+    });
 });
 
+function BindDialog(Choice) {
+    $("#tbldatadialog").DataTable({
+        processing: true,
+        serverSide: true,
+        filter: true,
+        ajax: {
+            url: "/Account/GetDataForDataTable",
+            contentType: 'application/x-www-form-urlencoded',
+            type: "POST",
+            data: function (d) {
+                d.draw = d.draw;
+                d.start = d.start;
+                d.length = d.length;
+                d.searchValue = d.search.value;
+                d.sortColumn = d.columns[d.order[0].column].data;
+                d.sortDirection = d.order[0].dir;
+                d.Choice = Choice;
+            },
+        },
+        columns: [
+            { data: "Id", name: "Id" },
+            { data: "DomainId", name: "DomainId" },
+            { data: "ArmyNo", name: "ArmyNo" },
+            { data: "RoleNames", name: "RoleNames" },
+            { data: "UpdatedOn", name: "UpdatedOn" },
+            { data: "Mapped", name: "Mapped" },
+            { data: "Active", name: "Active" },
+            { data: "AdminFlag", name: "AdminFlag" },
+            { data: "IsIO", name: "IsIO" },
+            { data: "IsCO", name: "IsCO" },
+            { data: "IsRO", name: "IsRO" },
+            { data: "IsORO", name: "IsORO" }
+        ]
+    });
+}
 function Proceed() {
     ResetErrorMessage();
 
@@ -239,7 +368,7 @@ function Proceed() {
     if ($(formId).valid()) {
         Swal.fire({
             title: 'Are you sure?',
-            text: "You won't be Save!",
+            text: "",
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',

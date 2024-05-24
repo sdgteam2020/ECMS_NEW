@@ -237,9 +237,9 @@ namespace BusinessLogicsLayer.Service
             }
 
         }
-        public async Task<List<MRegimental>> GetRegimentalListByArmedId(int RegimentalId)
+        public async Task<List<MRegimental>> GetRegimentalListByArmedId(byte ArmedId)
         {
-            return await context.Set<MRegimental>().Where(o => o.ArmedId == RegimentalId).ToListAsync();
+            return await context.Set<MRegimental>().Where(o => o.ArmedId == ArmedId).ToListAsync();
         }
         public IEnumerable<SelectListItem> GetAppointment(short FormationId)
         {
@@ -277,12 +277,12 @@ namespace BusinessLogicsLayer.Service
         }
         public IEnumerable<SelectListItem> GetArmedType()
         {
-            var ArmedOptions = context.MArmedType.OrderBy(o => o.Abbreviation)
+            var ArmedOptions = context.MArmedType.OrderBy(o => o.ArmedName)
                  .Select(a =>
                    new SelectListItem
                    {
                        Value = a.ArmedId.ToString(),
-                       Text = a.Abbreviation,
+                       Text = a.ArmedName,
                    }).ToList();
             var ddfirst = new SelectListItem()
             {

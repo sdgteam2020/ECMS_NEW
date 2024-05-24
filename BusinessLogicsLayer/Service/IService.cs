@@ -13,7 +13,7 @@ namespace BusinessLogicsLayer.Service
     {
         public IEnumerable<SelectListItem> GetArmedCat();
         public IEnumerable<SelectListItem> GetRegimentalDDLIdSelected(int ArmedId);
-        public Task<List<MRegimental>> GetRegimentalListByArmedId(int RegimentalId);
+        public Task<List<MRegimental>> GetRegimentalListByArmedId(byte ArmedId);
         public IEnumerable<SelectListItem> GetRegistrationType();
         public IEnumerable<SelectListItem> GetRegistration();
         public IEnumerable<SelectListItem> GetRole();

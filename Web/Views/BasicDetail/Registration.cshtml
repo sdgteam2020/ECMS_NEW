@@ -171,7 +171,7 @@
                                                         <div class="form-group row mb-2">
                                                             <label asp-for="Name" class="col-form-label col-sm-6 labelprofile"></label>
                                                             <div class="col-sm-6">
-                                                                <input asp-for="Name" class="form-control text-uppercase" placeholder="Max 36 Characters incl spaces" />
+                                                                <input asp-for="Name" class="form-control text-uppercase" placeholder="Max 18 Characters incl spaces" />
                                                                 <span asp-validation-for="Name" class="text-danger"></span>
                                                             </div>
                                                         </div>
@@ -272,7 +272,6 @@
                                                                 <span asp-validation-for="SubmitType" class="text-danger"></span>
                                                             </div>
                                                         </div>
-
                                                         @*  <div class="form-group row mb-2">
                                                         <label  class="col-form-label col-sm-6">
                                                         Raise Observation (s)
@@ -282,6 +281,16 @@
                                                         <span id="lblObservations" name="lblObservations" class="text-danger"></span>
                                                         </div>
                                                         </div> *@
+                                                    </div>
+                                                    <div class="col-xl-12">
+                                                        <div class="col-sm-12">
+                                                            <div class="form-group labelprofile">
+                                                                <label class="col-form-label form-label labelprofile">
+                                                                    Note :- "In case your data ie Name, DoB, DoC & Add as reflected above is incorrect, kindly login on OASIS and raise an obsn alongwith sp docu for rectification / update by ORO/MP-6".
+                                                                </label>
+                                                            </div>
+
+                                                        </div>
                                                     </div>
                                                 </div>
                                                 <div class="col-xl-12 Remarks d-none">
@@ -321,10 +330,10 @@
 
 @section Scripts{
     @*     <script asp-src-include="~/js/CustomScript.js"></script> *@
-    <script src="~/developerjs/registration.js"></script>
+    <script asp-src-include="~/developerjs/registration.js"></script>
     <script asp-src-include="~/developerjs/token.js"></script>
-    <script src="~/developerjs/mtables.js"></script>
-    <script src="~/developerjs/commanvalidation.js"></script>
+    <script asp-src-include="~/developerjs/mtables.js"></script>
+    <script asp-src-include="~/developerjs/commanvalidation.js"></script>
     }
 <script>
     $(document).ready(function () {

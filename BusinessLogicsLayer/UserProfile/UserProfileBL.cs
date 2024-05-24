@@ -4,6 +4,7 @@ using DataAccessLayer;
 using DataAccessLayer.BaseInterfaces;
 using DataTransferObject.Domain;
 using DataTransferObject.Domain.Master;
+using DataTransferObject.Requests;
 using DataTransferObject.Response;
 using DataTransferObject.Response.User;
 using DataTransferObject.ViewModels;
@@ -25,15 +26,19 @@ namespace BusinessLogicsLayer.Master
         {
             _iUserProfileDB = userProfileDB;   
         }
+        public async Task<bool?> UpdateProfileWithMapping(DTOUpdateProfileWithMappingRequest dTO)
+        {
+            return await _iUserProfileDB.UpdateProfileWithMapping(dTO);
+        }
 
         public Task<List<DTOUserProfileResponse>> GetAll(int DomainId, int UserId)
         {
             return _iUserProfileDB.GetAll(DomainId, UserId);
         }
 
-        public Task<List<DTOFwdICardResponse>> GetDataForFwd(int StepId, int UnitId, string Name, int TypeId, int IsIO, int IsCO, int RO,int ORO)
+        public Task<List<DTOFwdICardResponse>> GetDataForFwd(int StepId, int UnitId, string Name, int TypeId, int IsIO, int IsCO, int RO,int ORO, int DomainMapId)
         {
-            return _iUserProfileDB.GetDataForFwd(StepId, UnitId, Name,TypeId, IsIO, IsCO, RO, ORO);
+            return _iUserProfileDB.GetDataForFwd(StepId, UnitId, Name,TypeId, IsIO, IsCO, RO, ORO, DomainMapId);
         }
         public async Task<DTOProfileResponse?> GetProfileByUserId(int UserId)
         {
@@ -68,9 +73,9 @@ namespace BusinessLogicsLayer.Master
             return _iUserProfileDB.CheckArmyNoInUserProfile(ArmyNo, AspNetUsersId);
         }
 
-        public Task<List<DTOFwdICardResponse>> GetOffrsByUnitMapId(int UnitId, int ISIO,int ISCO, int IsRO, int IsORO, int BasicDetailsId)
+        public Task<List<DTOFwdICardResponse>> GetOffrsByUnitMapId(int UnitId, int ISIO,int ISCO, int IsRO, int IsORO, int BasicDetailsId,int DomainMapId)
         {
-            return _iUserProfileDB.GetOffrsByUnitMapId(UnitId, ISIO, ISCO, IsRO, IsORO, BasicDetailsId);
+            return _iUserProfileDB.GetOffrsByUnitMapId(UnitId, ISIO, ISCO, IsRO, IsORO, BasicDetailsId, DomainMapId);
         }
         public async Task<DTOAllRelatedDataByArmyNoResponse?> GetAllRelatedDataByArmyNo(string ArmyNo)
         {

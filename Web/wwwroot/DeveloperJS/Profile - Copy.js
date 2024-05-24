@@ -85,7 +85,7 @@ $(document).ready(function () {
 
             Swal.fire({
                 title: 'Are you sure?',
-                text: "You won't be Save!",
+                text: "",
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
@@ -118,7 +118,7 @@ $(document).ready(function () {
 
         Swal.fire({
             title: 'Are you sure?',
-            text: "You won't be Save!",
+            text: "",
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
@@ -153,7 +153,7 @@ $(document).ready(function () {
         if ($("#SaveFormProfile")[0].checkValidity()) {
             Swal.fire({
                 title: 'Are you sure?',
-                text: "You won't be Save!",
+                text: "",
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',

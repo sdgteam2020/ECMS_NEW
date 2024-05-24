@@ -8,6 +8,12 @@
     //dateInput.setAttribute('min', today);
     //dateInput.setAttribute('max', maxDateFormatted);
     document.getElementById('DateOfIssue').value = today;
+
+    $("#ArmedId").on("change", function () {
+        GetRegimentalListByArmedId(this.value,"");
+        GetROListByArmedId(this.value,"");
+    });
+
     $("#TermsConditions").click(function () {
 
         if ($("#TermsConditions").prop("checked") == true) {
@@ -24,10 +30,10 @@
         }
     });
 
-        $('#RegimentalId').on('change', function () {
+    $('#RegimentalId').on('change', function () {
        
-        $("#IssuingAuth").val("Comdt, " + $('#RegimentalId option:selected').text());
-        $("#PlaceOfIssue").val($('#RegimentalId option:selected').text());
+        //$("#IssuingAuth").val("Comdt, " + $('#RegimentalId option:selected').text());
+        //$("#PlaceOfIssue").val($('#RegimentalId option:selected').text());
     });
 
     if ($("#RegistrationId").val() == 1 || $("#RegistrationId").val() == 2 || $("#RegistrationId").val() == 6) {
@@ -112,6 +118,119 @@
 
   
 });
+function GetROListByArmedId(ArmedId, sectid) {
+    var userdata =
+    {
+        "ArmedId": ArmedId,
+    };
+    $.ajax({
+        url: '/BasicDetail/GetROListByArmedId',
+        contentType: 'application/x-www-form-urlencoded',
+        data: userdata,
+        type: 'POST',
+        success: function (response) {
+            if (response != "null" && response != null) {
+                if (response == InternalServerError) {
+                    Swal.fire({
+                        text: errormsg
+                    });
+                }
+
+                else {
+
+                    var listItemddl = "";
+
+                    listItemddl += '<option value="0">Please Select</option>';
+
+                    for (var i = 0; i < response.length; i++) {
+                        listItemddl += '<option value="' + response[i].RecordOfficeId + '">' + response[i].Name + '</option>';
+                    }
+                    $("#RecordOfficeId").html(listItemddl);
+                    if (sectid != '') {
+                        $("#RecordOfficeId").val(sectid);
+
+                    }
+                }
+            }
+            else {
+                //Swal.fire({
+                //    text: "No data found Offrs"
+                //});
+            }
+        },
+        error: function (result) {
+            Swal.fire({
+                text: errormsg002
+            });
+        }
+    });
+}
+function GetRegimentalListByArmedId(ArmedId, sectid) {
+    var userdata =
+    {
+        "ArmedId": ArmedId,
+
+
+    };
+    $.ajax({
+        url: '/BasicDetail/GetRegimentalListByArmedId',
+        contentType: 'application/x-www-form-urlencoded',
+        data: userdata,
+        type: 'POST',
+
+        success: function (response) {
+            if (response != "null" && response != null) {
+                if (response == InternalServerError) {
+                    Swal.fire({
+                        text: errormsg
+                    });
+                }
+
+                else {
+
+                    var listItemddl = "";
+
+                    listItemddl += '<option value="0">Please Select</option>';
+
+                    for (var i = 0; i < response.length; i++) {
+                        listItemddl += '<option value="' + response[i].RegId + '">' + response[i].Name + '</option>';
+                    }
+                    $("#RegimentalId").html(listItemddl);
+
+                    //if (TableId == 5 || TableId == 7 || TableId == 8) {
+
+                    //    if (sectid != '') {
+                    //        $("#" + ddl + " option").filter(function () {
+                    //            return this.text == sectid;
+                    //        }).attr('selected', true);
+
+                    //    }
+                    //}
+                    //else
+                    //{
+                    if (sectid != '') {
+                        $("#RegimentalId").val(sectid);
+
+                    }
+
+                    //}
+
+
+                }
+            }
+            else {
+                //Swal.fire({
+                //    text: "No data found Offrs"
+                //});
+            }
+        },
+        error: function (result) {
+            Swal.fire({
+                text: errormsg002
+            });
+        }
+    });
+}
 function CheckValidation() {
     
     if ($("#TermsConditions").prop("checked")) {
@@ -189,9 +308,12 @@ function getApplyIcardDetails() {
             if (response != null) {
                 
                 if (response.ApplyFor == "Offrs") {
-                    $("#PlaceOfIssue").val("ORO");
-                    $("#IssuingAuth").val("brig, ORO");
-                    $("#tempDateOfIssue").val("As per Finalization by ORO");
+                    $("#PlaceOfIssue").val("Depends on Second level approver");
+                    $("#IssuingAuth").val("OIC Unit");
+                    $("#tempDateOfIssue").val("Depends on Unit of Second level approver");
+                }
+                else {
+                    $("#IssuingAuth").val("OIC Unit");
                 }
                 $("#lblCategory").html(response.ApplyFor);
                 $("#lblReason").html(response.Type);

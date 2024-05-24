@@ -14,10 +14,7 @@ namespace DataTransferObject.Domain.Model
     { 
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-       
         public int BasicDetailId { get; set; }
-
-     
 
         [StringLength(36)]
         [Column(TypeName = "varchar(36)")]
@@ -42,7 +39,7 @@ namespace DataTransferObject.Domain.Model
 
         [StringLength(50)] 
         [Column(TypeName = "varchar(50)")]
-        public string PlaceOfIssue { get; set; } = string.Empty;
+        public string? PlaceOfIssue { get; set; }
 
         [DataType(DataType.Date)]
         [Column(TypeName = "datetime")]

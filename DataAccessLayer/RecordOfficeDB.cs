@@ -39,14 +39,14 @@ namespace DataAccessLayer
             {
                 return 2;
             }
-            else if (mRecordOffices.Any(x => x.ArmedId == Dto.ArmedId && x.RecordOfficeId != Dto.RecordOfficeId))
-            {
-                return 3;
-            }
-            else if (mRecordOffices.Any(x => x.TDMId == Dto.TDMId && x.RecordOfficeId != Dto.RecordOfficeId))
-            {
-                return 4;
-            }
+            //else if (mRecordOffices.Any(x => x.ArmedId == Dto.ArmedId && x.RecordOfficeId != Dto.RecordOfficeId))
+            //{
+            //    return 3;
+            //}
+            //else if (mRecordOffices.Any(x => x.TDMId == Dto.TDMId && x.RecordOfficeId != Dto.RecordOfficeId))
+            //{
+            //    return 4;
+            //}
             else
             {
                 return 1;
@@ -101,7 +101,7 @@ namespace DataAccessLayer
                         " left join UserProfile usep on usep.UserId=trndomain.UserId" +
                         " left join MRank ra on ra.RankId=usep.RankId " +
                         " left join MapUnit mapunit on mapunit.UnitMapId = mrecord.UnitId " +
-                        " left join MUnit munit on munit.UnitId =mapunit.UnitId ";
+                        " left join MUnit munit on munit.UnitId =mapunit.UnitId order by mrecord.RecordOfficeId desc";
                 using (var connection = _contextDP.CreateConnection())
                 {
                     var allrecord = await connection.QueryAsync<DTORecordOfficeResponse>(query);

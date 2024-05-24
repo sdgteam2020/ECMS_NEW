@@ -50,7 +50,7 @@ namespace DataAccessLayer
             return (short)(ret + 1);
         }
 
-        public async Task<int> GetRankIdbyOrderby(short OrderBy)
+        public async Task<short> GetRankIdbyOrderby(short OrderBy)
         {
             var ret= _context.MRank.Where(P => P.Orderby == OrderBy).Select(c=>c.RankId).SingleOrDefault(); 
            
@@ -64,7 +64,7 @@ namespace DataAccessLayer
         }
         public async Task<IEnumerable<MRank>> GetAllByType(int Type)
         {
-            var ret=  _context.MRank.Where(x => x.ApplyForId==Type && x.IsActive==true).ToList();   
+            var ret=  _context.MRank.Where(x => x.ApplyForId==Type && x.IsActive==true).OrderBy(x=>x.Orderby).ToList();   
             return ret;
         }
         public async Task<DTORankIdCheckInFKTableResponse?> RankIdCheckInFKTable(short RankId)

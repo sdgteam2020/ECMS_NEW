@@ -8,6 +8,7 @@ using BusinessLogicsLayer.Corps;
 using BusinessLogicsLayer.Div;
 using BusinessLogicsLayer.Formation;
 using BusinessLogicsLayer.Master;
+using BusinessLogicsLayer.OROMapp;
 using BusinessLogicsLayer.RecordOffice;
 using BusinessLogicsLayer.Unit;
 using BusinessLogicsLayer.User;
@@ -38,6 +39,7 @@ namespace BusinessLogicsLayer
         IRecordOfficeBL RecordOffice { get; }
         IArmedCatBL ArmedCat { get; }
         IMasterBL MasterBL { get; }
+        IOROMappingBL OROMapping { get; }
 
 
         public Task<List<DTOMasterResponse>> GetAllMMaster(DTOMasterRequest Data);

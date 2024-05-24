@@ -180,17 +180,31 @@ function GetAllOffsByUnitId(ddl, sectid, UnitId, ISIO, IsCO, IsRO, IsORO,BasicDe
         success: function (response) {
             if (response != "null" && response != null) {
                 if (response == InternalServerError) {
-                   
+                    
                 }
 
                 else {
+                    if (response[0].IsError == true) {
+                        $("#ErrMess1").removeClass("d-none");
+                        $("#ErrMess1").html(response[0].ErrorMessage);
+                        $("#btnForward").prop("disabled", true);
+
+                    }
+                    else {
+                        $("#ErrMess1").addClass("d-none");
+                        $("#ErrMess1").html("");
+
+                        $("#btnForward").prop("disabled", false);
+                    }
+
+
 
                     var listItemddl = "";
 
                     listItemddl += '<option value="">Select Offr</option>';
 
                     for (var i = 0; i < response.length; i++) {
-                        listItemddl += '<option value="' + response[i].AspNetUsersId + '">' + response[i].ArmyNo + ' (' + response[i].RankAbbreviation + ' ' + response[i].Name + ')</option>';
+                        listItemddl += '<option value="' + response[i].AspNetUsersId + '">' + response[i].ArmyNo + ' ' + response[i].RankAbbreviation + ' ' + response[i].Name + '</option>';
                         
                     }
                     $("#" + ddl + "").html(listItemddl);
@@ -201,6 +215,22 @@ function GetAllOffsByUnitId(ddl, sectid, UnitId, ISIO, IsCO, IsRO, IsORO,BasicDe
 
                     }
 
+                    if (IsORO == 1 && response.length == 1) {
+
+                        $("#" + ddl + "").val(response[0].AspNetUsersId)
+
+                        $("#spnFwdToAspNetUsersId").html(0);
+                        $("#spnFwdToUsersId").html(0);
+                        $(".spnFArmyNo").html("");
+                        $(".spnFtoname").html("");
+                        $(".spnFDomainName").html("");
+                        $(".spnFAppName").html("");
+
+                        $("#intoffsArmyNo").prop("checked", false);
+                        $("#intoffDomainId").prop("checked", false);
+                        $(".serchfwd").addClass("d-none");
+                        FwdData(response[0].AspNetUsersId);
+                    }
                     //}
 
 

@@ -57,7 +57,7 @@
                             <div class="form-group row mb-2">
                                 <label class="col-form-label col-sm-5 fw-bold">Abbreviation<i class="fas fa-asterisk mand1"></i></label>
                                 <div class="col-sm-7">
-                                    <input class="form-control Alphanumeric" placeholder="Enter Abbreviation" id="txtAbbreviation" maxlength="10" required pattern="^[a-zA-Z0-9 ]*$" title="Only Alphabets and Numbers allowed" />
+                                    <input class="form-control Alphanumeric" placeholder="Enter Abbreviation" id="txtAbbreviation" maxlength="10" required pattern="^[A-Z0-9 ]*$" title="Only UpperCase Alphabets and Numbers allowed" oninput="this.value = this.value.toUpperCase()" />
                                 </div>
                             </div>
                         </div>

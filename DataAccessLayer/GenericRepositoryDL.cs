@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 using static Dapper.SqlMapper;
 
 namespace DataAccessLayer
-{ 
-    public abstract class GenericRepositoryDL<T> : IGenericRepositoryDL<T> where T : class
+{
+    public abstract class GenericRepositoryDL<T> : IGenericRepositoryDL<T> where T : class 
     {
         protected readonly ApplicationDbContext _context;
 
@@ -17,9 +17,12 @@ namespace DataAccessLayer
         }
         public async Task<T> Get(int id)
         {
-
             return await _context.Set<T>().FindAsync(id);
 
+        }
+        public async Task<T> GetByGen<T2>(T2 val1)
+        {
+            return await _context.Set<T>().FindAsync(val1);
         }
         public async Task<T> GetByByte(byte id)
         {

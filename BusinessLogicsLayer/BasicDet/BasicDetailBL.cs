@@ -1,15 +1,18 @@
 ﻿using DataAccessLayer;
 using DataAccessLayer.BaseInterfaces;
+using DataTransferObject.Domain.Master;
 using DataTransferObject.Domain.Model;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
 using DataTransferObject.ViewModels;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Hosting.Internal;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace BusinessLogicsLayer.BasicDet
 {
@@ -87,11 +90,18 @@ namespace BusinessLogicsLayer.BasicDet
         }
         public Task<DTOXMLDigitalResponse> GetDataDigitalXmlSign(DTODataExportRequest Data)
         {
-            
             var data = _iBasicDetailDB.GetDataDigitalXmlSign(Data);
-
             return data;
         }
-       
+        public async Task<List<MRecordOffice>> GetROListByArmedId(byte ArmedId)
+        {
+            var data = await _iBasicDetailDB.GetROListByArmedId(ArmedId);
+            return data;
+        }
+        public async Task<IEnumerable<SelectListItem>> GetRODDLIdSelected(byte ArmedId)
+        {
+            var data = await _iBasicDetailDB.GetRODDLIdSelected(ArmedId);
+            return data;
+        }
     }
 }

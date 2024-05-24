@@ -21,5 +21,6 @@ namespace DataAccessLayer.BaseInterfaces
         public Task<DTODashboardMasterCountResponse> GetDashboardMasterCount();
         public Task<List<DTOGetMappedForRecordResponse>> GetMappedForRecord(int TypeId, string SearchName);
         public Task<DTOGetDomainIdByTDMIdResponse?> GetDomainIdByTDMId(int TDMId);
+        public Task<List<DTOArmsListResponse>> GetArmsList();
     }
 }

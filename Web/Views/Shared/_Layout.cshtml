@@ -287,10 +287,12 @@
     <span id="spnarmyno" class="d-none">@User.Claims.First(c => c.Type.Contains("armyNo")).Value</span>
     <span id="spnsunno" class="d-none1">@User.Claims.First(c => c.Type.Contains("SUSNo")).Value</span> *@
     <nav class="topnav navbar navbar-expand shadow navbar-light bg-white show" id="sidenavAccordion">
-        <a class="navbar-brand" href="/Home/index"><img src="~/Images/dgis_ico.png"></a>
+@*         <a class="navbar-brand" href="/Home/index"><img src="~/Images/dgis_ico.png"></a>
+        <div class="ml-4 text-center tagline"><img src="~/Images/EISAC.png" width="80%"></div> *@
+        <div class="text-center tagline"><img src="~/Images/demologo.jpg" width="100%" height="85"></div>
         @* <span class="tagline ml-4 text-center"> Enterprise - Independent Active Secure Access Card (E-IASAC)</span> *@
        @*  <a class="navbar-brand text-center" href="#"><img src="~/Images/EISAC.png"></a> *@
-        <div class="ml-4 text-center tagline"><img src="~/Images/EISAC.png" width="80%"></div>
+
         @*    <span class="tagline ml-4 text-center"> Enterprise - Indian Army Secure Access Card Appl (E-ISAC)</span> *@
       
         @*    <span class="tagline ml-4 text-center"> Enterprise - Indian Army Secure Access Card Appl (E-ISAC)</span> *@
@@ -519,7 +521,7 @@
 </html>
 
 <!-- Fwd Record  -->
-<div class="modal fade" id="FwdRecord" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="FwdRecord" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
@@ -554,7 +556,7 @@
                 </div>
                 <div class="card mt-2">
                     <div class="mt-2 ml-4">
-                        <h5 class="card-title fw-bold">Forward To <label class="gsoio"></label></h5>
+                        <h5 class="card-title fw-bold">Forward To <label class="gsoio"></label></h5>    
                         <span id="spnFwdToAspNetUsersId" class="d-none">0</span>
                         <span id="spnFwdToUsersId" class="d-none">0</span>
                         @*  <span id="spnFwssusno" class="d-none">0</span>
@@ -567,10 +569,10 @@
                             <div class="form-group row mb-2">
                                 <label class="col-form-label col-sm-4 fw-bold">Select Offr</label>
                                 <div class="col-sm-8">
-                                    <select class="form-control select3 select2-hidden-accessible" style="width: 100%;" tabindex="-1"
-                                            aria-hidden="true" name="fwdoffrs" required id="ddlfwdoffrs">
+                                    <select class="form-control select3 select2-hidden-accessible" style="width: 100%;" tabindex="-1" aria-hidden="true" name="fwdoffrs" required id="ddlfwdoffrs">
                                         <option value="0">Select Offr</option>
                                     </select>
+                                    <span class="fw-bold text-danger d-none" id="ErrMess1"></span>
                                 </div>
                             </div>
                             <div class="form-group chkforserach">
@@ -619,6 +621,12 @@
                                     <label class="form-control spnFDomainName" readonly></label>
                                 </div>
                             </div>
+                            <div class="form-group row mb-2">
+                                <label class="col-form-label col-sm-4 fw-bold">App.</label>
+                                <div class="col-sm-8">
+                                    <label class="form-control spnFAppName" readonly></label>
+                                </div>
+                            </div>
                             <div class="form-group row mb-2 Remarks d-none">
                                 <label class="col-form-label col-sm-4 fw-bold">Select Remarks</label>
                                 <div class="col-sm-8">
@@ -655,9 +663,8 @@
     </div>
 </div>
 
-
 <!-- Basic Details   -->
-<div class="modal fade " id="BasicDetails" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade " id="BasicDetails" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
@@ -864,6 +871,7 @@
         </div><!-- modal-content -->
     </div><!-- modal-dialog -->
 </div>
+
 <div class="modal fade" id="unitoffrsModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">

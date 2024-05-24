@@ -949,6 +949,9 @@ namespace DataAccessLayer.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<byte>("StepId"));
 
+                    b.Property<bool>("IsDashboard")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("varchar(50)");
@@ -1175,7 +1178,6 @@ namespace DataAccessLayer.Migrations
                         .HasColumnType("varchar(50)");
 
                     b.Property<string>("PlaceOfIssue")
-                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("varchar(50)");
 
@@ -1849,6 +1851,42 @@ namespace DataAccessLayer.Migrations
                     b.HasIndex("BasicDetailId");
 
                     b.ToTable("TrnUpload");
+                });
+
+            modelBuilder.Entity("DataTransferObject.Domain.Model.OROMapping", b =>
+                {
+                    b.Property<short>("OROMappingId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("smallint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<short>("OROMappingId"));
+
+                    b.Property<string>("ArmedIdList")
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<short?>("RankId")
+                        .HasColumnType("smallint");
+
+                    b.Property<byte>("RecordOfficeId")
+                        .HasColumnType("tinyint");
+
+                    b.Property<int?>("TDMId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("UnitId")
+                        .HasColumnType("int");
+
+                    b.HasKey("OROMappingId");
+
+                    b.HasIndex("RankId");
+
+                    b.HasIndex("RecordOfficeId");
+
+                    b.HasIndex("TDMId");
+
+                    b.HasIndex("UnitId");
+
+                    b.ToTable("OROMapping");
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Model.TrnApplClose", b =>
@@ -2867,6 +2905,38 @@ namespace DataAccessLayer.Migrations
                         .IsRequired();
 
                     b.Navigation("BasicDetail");
+                });
+
+            modelBuilder.Entity("DataTransferObject.Domain.Model.OROMapping", b =>
+                {
+                    b.HasOne("DataTransferObject.Domain.Master.MRank", "MRank")
+                        .WithMany()
+                        .HasForeignKey("RankId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("DataTransferObject.Domain.Master.MRecordOffice", "MRecordOffice")
+                        .WithMany()
+                        .HasForeignKey("RecordOfficeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("DataTransferObject.Domain.Model.TrnDomainMapping", "TrnDomainMapping")
+                        .WithMany()
+                        .HasForeignKey("TDMId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("DataTransferObject.Domain.Master.MapUnit", "MapUnit")
+                        .WithMany()
+                        .HasForeignKey("UnitId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("MRank");
+
+                    b.Navigation("MRecordOffice");
+
+                    b.Navigation("MapUnit");
+
+                    b.Navigation("TrnDomainMapping");
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Model.TrnApplClose", b =>

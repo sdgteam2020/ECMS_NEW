@@ -9,6 +9,7 @@ namespace DataAccessLayer
     public interface IGenericRepositoryDL<T> where T : class
     {
         Task<T> Get(int id);
+        Task<T> GetByGen<T2>( T2 val1);
         Task<T> GetByByte(byte id);
         Task<IEnumerable<T>> GetAll();
         Task Add(T entity);

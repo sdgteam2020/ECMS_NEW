@@ -35,6 +35,7 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 using static NuGet.Packaging.PackagingConstants;
 using System.Diagnostics;
 using System.Drawing.Printing;
+using BusinessLogicsLayer.Unit;
 
 namespace Web.Controllers
 {
@@ -54,6 +55,7 @@ namespace Web.Controllers
         private readonly IBasicDetailTempBL basicDetailTempBL;
         private readonly IService service;
         private readonly IMapper _mapper;
+        private readonly IMapUnitBL mapUnitBL;
         private readonly IWebHostEnvironment hostingEnvironment;
         private readonly IDataProtector protector;
         private readonly TimeZoneInfo INDIAN_ZONE = TimeZoneInfo.FindSystemTimeZoneById("India Standard Time");
@@ -62,7 +64,7 @@ namespace Web.Controllers
         private readonly IMasterBL _IMasterBL;
 
         public DateTime dateTimenow;
-        public BasicDetailController(IBasicDetailBL basicDetailBL, IBasicDetailTempBL basicDetailTempBL, IService service, IMapper mapper,
+        public BasicDetailController(IBasicDetailBL basicDetailBL, IMapUnitBL mapUnitBL, IBasicDetailTempBL basicDetailTempBL, IService service, IMapper mapper,
             UserManager<ApplicationUser> userManager, IWebHostEnvironment hostingEnvironment, IDataProtectionProvider dataProtectionProvider,
                               DataProtectionPurposeStrings dataProtectionPurposeStrings, ILogger<BasicDetailController> logger, IStepCounterBL iStepCounterBL, 
                               ITrnFwnBL iTrnFwnBL, ITrnICardRequestBL iTrnICardRequestBL, IDomainMapBL iDomainMapBL
@@ -73,6 +75,7 @@ namespace Web.Controllers
             this.basicDetailTempBL = basicDetailTempBL;
             this.service = service;
             this._mapper = mapper;
+            this.mapUnitBL= mapUnitBL;
             //this.context = context;
             //this.contextTransaction = context;
             this.userManager = userManager;
@@ -530,8 +533,6 @@ namespace Web.Controllers
         [Authorize(Roles = "Admin,User")]
         public async Task<ActionResult> BasicDetail(string? Id)
         {
-
-            
             ViewBag.OptionsBloodGroup = service.GetBloodGroup();
             ViewBag.OptionsArmedType = service.GetArmedType();
 
@@ -640,6 +641,7 @@ namespace Web.Controllers
                     //}
                     //basicDetailUpdVM.RegistrationType = basicDetailUpdVM.RegistrationType;
                     //basicDetailUpdVM.RegimentalId = basicDetailUpdVM.RegimentalId;
+                    basicDetailUpdVM.BloodGroupId = basicDetailUpdVM.BloodGroupId;
                     basicDetailUpdVM.PermanentAddress = "Village - " + basicDetailUpdVM.Village + ", Post Office-" + basicDetailUpdVM.PO + ", Tehsil- " + basicDetailUpdVM.Tehsil + ", District- " + basicDetailUpdVM.District + ", State- " + basicDetailUpdVM.State + ", Pin Code- " + basicDetailUpdVM.PinCode;
                     basicDetailUpdVM.ExistingPhotoImagePath = basicDetailUpdVM.PhotoImagePath;
                     basicDetailUpdVM.ExistingSignatureImagePath = basicDetailUpdVM.SignatureImagePath;
@@ -707,198 +709,188 @@ namespace Web.Controllers
                 var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
                 if (model.BasicDetailId > 0)
                 {
-                    BasicDetail basicDetail = await basicDetailBL.Get(model.BasicDetailId);
-
-                    if (basicDetail != null)
+                    if (model.UnitId == 0)
                     {
-                      
-                        if (model.Type==2)
+                        ModelState.AddModelError("UnitId", "Please Enter Unit Name");
+                        goto end;
+                    }
+                    if (model.ApplyForId != 1 && model.RegimentalId == 0)
+                    {
+                        ModelState.AddModelError("RegimentalId", "Please Select Regimental ");
+                        goto end;
+                    }
+
+                    if (ModelState.IsValid)
+                    {
+                        BasicDetail newBasicDetail = _mapper.Map<BasicDetailCrtAndUpdVM, BasicDetail>(model);
+                        newBasicDetail.DateOfIssue = null;
+                        newBasicDetail.PlaceOfIssue = null;
+                        //newBasicDetail.RankId = model.RankId;
+                        //newBasicDetail.ArmedId = model.ArmedId;
+                        //newBasicDetail.UnitId= model.UnitId;
+                        // basicDetail.IdentityMark = model.IdentityMark;
+                        //basicDetail.Height = model.Height;
+                        // basicDetail.BloodGroup = model.BloodGroup;
+                        //basicDetail.PlaceOfIssue = model.PlaceOfIssue;
+                        //newBasicDetail.DateOfIssue = model.DateOfIssue;
+                        //newBasicDetail.IssuingAuth = model.IssuingAuth;
+
+                        newBasicDetail.Updatedby = Convert.ToInt32(userId);
+                        newBasicDetail.UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
+                        MTrnUpload mTrnUpload = new MTrnUpload();
+                        mTrnUpload.UploadId = model.UploadId;
+                        MTrnAddress mTrnAddress = new MTrnAddress();
+                        mTrnAddress.State = model.State;
+                        mTrnAddress.District = model.District;
+                        mTrnAddress.PS = model.PS;
+                        mTrnAddress.PO = model.PO;
+                        mTrnAddress.Tehsil = model.Tehsil;
+                        mTrnAddress.Village = model.Village;
+                        mTrnAddress.PinCode = model.PinCode;
+                        mTrnAddress.AddressId = model.AddressId;
+
+                        MTrnIdentityInfo mTrnIdentityInfo = new MTrnIdentityInfo();
+                        mTrnIdentityInfo.IdenMark1 = model.IdenMark1;
+                        mTrnIdentityInfo.IdenMark2 = model.IdenMark2;
+                        mTrnIdentityInfo.AadhaarNo = Convert.ToInt64(model.AadhaarNo);
+                        mTrnIdentityInfo.BloodGroupId = model.BloodGroupId;
+                        mTrnIdentityInfo.Height = model.Height;
+                        mTrnIdentityInfo.InfoId = model.InfoId;
+                        //MTrnIdentityInfo mTrnIdentityInfo = _mapper.Map<BasicDetailCrtAndUpdVM, MTrnIdentityInfo>(model);
+                        //if (model.UnitId == 0)
+                        //{
+                        //    ModelState.AddModelError("", "Please Enter Unit Name");
+                        //}
+                        //if (model.ApplyForId != 1 && model.RegimentalId == 0)
+                        //{
+                        //    ModelState.AddModelError("", "Please Select Regimental ");
+                        //}
+
+
+                        //string sourceFolderPhotoDB = "/WriteReadData/" + "Photo";
+                        //string sourceFolderPhotoPhy = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "Photo");
+                        string sourceFolderPhotoPhy = Convert.ToString(GetCreateMyFolder(Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "Photo")));
+                        if (!Directory.Exists(sourceFolderPhotoPhy))
+                            Directory.CreateDirectory(sourceFolderPhotoPhy);
+
+                        if (model.Photo_ != null)
                         {
-                            if(model.RegimentalId == null)
+                            string FileName = service.ProcessUploadedFile(model.Photo_, sourceFolderPhotoPhy, model.ServiceNo);
+
+                            string path = Path.Combine(sourceFolderPhotoPhy, FileName);
+
+                            bool result = service.IsValidHeader(path);
+                            bool imgcontentresult = service.IsImage(model.Photo_);
+
+                            if (!result || !imgcontentresult)
                             {
-                                ModelState.AddModelError("RegimentalId", "Regimental is required.");
+                                ModelState.AddModelError("", "File format not correct");
+                                if (System.IO.File.Exists(path))
+                                {
+                                    System.IO.File.Delete(path);
+                                }
                                 goto end;
                             }
-                            else
-                            {
-                                basicDetail.RegimentalId= model.RegimentalId;
-                            }
+
+                            mTrnUpload.PhotoImagePath = GetCreateMyFolder() + "/" + FileName;
+                            // ViewBag.PhotoImagePath = mTrnUpload.PhotoImagePath;
                         }
-                        if (ModelState.IsValid)
+                        else
                         {
-                            BasicDetail newBasicDetail = _mapper.Map<BasicDetailCrtAndUpdVM, BasicDetail>(model);
-                            newBasicDetail.DateOfIssue = null;
-                            //newBasicDetail.RankId = model.RankId;
-                            //newBasicDetail.ArmedId = model.ArmedId;
-                            //newBasicDetail.UnitId= model.UnitId;
-                            // basicDetail.IdentityMark = model.IdentityMark;
-                            //basicDetail.Height = model.Height;
-                            // basicDetail.BloodGroup = model.BloodGroup;
-                            //basicDetail.PlaceOfIssue = model.PlaceOfIssue;
-                            //newBasicDetail.DateOfIssue = model.DateOfIssue;
-                            //newBasicDetail.IssuingAuth = model.IssuingAuth;
-
-                            newBasicDetail.Updatedby = Convert.ToInt32(userId);
-                            newBasicDetail.UpdatedOn =  TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
-                            MTrnUpload mTrnUpload = new MTrnUpload();
-                            mTrnUpload.UploadId=model.UploadId;
-                            MTrnAddress mTrnAddress = new MTrnAddress();
-                            mTrnAddress.State = model.State;
-                            mTrnAddress.District = model.District;
-                            mTrnAddress.PS = model.PS;
-                            mTrnAddress.PO = model.PO;
-                            mTrnAddress.Tehsil = model.Tehsil;
-                            mTrnAddress.Village = model.Village;
-                            mTrnAddress.PinCode = model.PinCode;
-                            mTrnAddress.AddressId = model.AddressId;
-
-                            MTrnIdentityInfo mTrnIdentityInfo = new MTrnIdentityInfo();
-                            mTrnIdentityInfo.IdenMark1 = model.IdenMark1;
-                            mTrnIdentityInfo.IdenMark2 = model.IdenMark2;
-                            mTrnIdentityInfo.AadhaarNo = Convert.ToInt64(model.AadhaarNo);
-                            mTrnIdentityInfo.BloodGroupId =model.BloodGroupId;
-                            mTrnIdentityInfo.Height = model.Height;
-                            mTrnIdentityInfo.InfoId = model.InfoId;
-                            //MTrnIdentityInfo mTrnIdentityInfo = _mapper.Map<BasicDetailCrtAndUpdVM, MTrnIdentityInfo>(model);
-                            if (model.UnitId == 0)
-                            {
-                                ModelState.AddModelError("", "Please Enter Unit Name");
-                            }
-                            if (model.ApplyForId != 1 && model.RegimentalId == 0)
-                            {
-                                ModelState.AddModelError("", "Please Select Regimental ");
-                            }
-
-
-                            //string sourceFolderPhotoDB = "/WriteReadData/" + "Photo";
-                            //string sourceFolderPhotoPhy = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "Photo");
-                            string sourceFolderPhotoPhy = Convert.ToString(GetCreateMyFolder(Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "Photo")));
-                            if (!Directory.Exists(sourceFolderPhotoPhy))
-                                Directory.CreateDirectory(sourceFolderPhotoPhy);
-
-                            if (model.Photo_ != null)
-                            {
-                                string FileName = service.ProcessUploadedFile(model.Photo_, sourceFolderPhotoPhy, model.ServiceNo);
-
-                                string path = Path.Combine(sourceFolderPhotoPhy, FileName);
-
-                                bool result = service.IsValidHeader(path);
-                                bool imgcontentresult = service.IsImage(model.Photo_);
-
-                                if (!result || !imgcontentresult)
-                                {
-                                    ModelState.AddModelError("", "File format not correct");
-                                    if (System.IO.File.Exists(path))
-                                    {
-                                        System.IO.File.Delete(path);
-                                    }
-                                    goto end;
-                                }
-
-                                mTrnUpload.PhotoImagePath = GetCreateMyFolder() + "/" + FileName;
-                                // ViewBag.PhotoImagePath = mTrnUpload.PhotoImagePath;
-                            }
-                            else
-                            {
-                                mTrnUpload.PhotoImagePath = model.ExistingPhotoImagePath;
-                            }
-
-                            //string sourceFolderSignatureDB = "/WriteReadData/" + "Signature";
-                            //string sourceFolderSignaturePhy = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "Signature");
-                            string sourceFolderSignaturePhy = Convert.ToString(GetCreateMyFolder(Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "Signature")));
-                            if (!Directory.Exists(sourceFolderSignaturePhy))
-                                Directory.CreateDirectory(sourceFolderSignaturePhy);
-
-                            if (model.Signature_ != null)
-                            {
-                                string FileName = service.ProcessUploadedFile(model.Signature_, sourceFolderSignaturePhy, model.ServiceNo);
-
-                                string path = Path.Combine(sourceFolderSignaturePhy, FileName);
-
-                                bool result = service.IsValidHeader(path);
-                                bool imgcontentresult = service.IsImage(model.Signature_);
-
-                                if (!result || !imgcontentresult)
-                                {
-                                    ModelState.AddModelError("", "File format not correct");
-                                    if (System.IO.File.Exists(path))
-                                    {
-                                        System.IO.File.Delete(path);
-                                    }
-                                    goto end;
-                                }
-
-                                mTrnUpload.SignatureImagePath = GetCreateMyFolder() + "/" + FileName;
-                            }
-                            else
-                            {
-                                mTrnUpload.SignatureImagePath = model.ExistingSignatureImagePath;
-                            }
-                            //if (model.AadhaarNo != null)
-                            //{
-                            //    newBasicDetail.AadhaarNo = model.AadhaarNo.Replace(" ", "");
-                            //}
-                            basicDetail.Updatedby = Convert.ToInt32(userId);
-                            basicDetail.UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
-                            // await basicDetailBL.Update(basicDetail);
-                            var ret1 = await basicDetailBL.SaveBasicDetailsWithAll(newBasicDetail, mTrnAddress, mTrnUpload, mTrnIdentityInfo,null,null);
-                            if(ret1==true)
-                            {
-                                bool resultforisprocess = await iTrnICardRequestBL.GetRequestPending(basicDetail.BasicDetailId);
-                                if (!resultforisprocess)
-                                {
-                                    MTrnICardRequest mTrnICardRequest = new MTrnICardRequest();
-                                    mTrnICardRequest.BasicDetailId = basicDetail.BasicDetailId;
-                                    mTrnICardRequest.Status = 0;
-                                    mTrnICardRequest.TypeId = model.TypeId;
-                                    string tracid = model.DOB.Day.ToString("D2") + "" + model.DOB.Month.ToString("D2") + "" + model.DOB.Year + "" + Convert.ToInt32(model.AadhaarNo.Substring(model.AadhaarNo.Length - 3)).ToString("D4");
-                                    mTrnICardRequest.TrackingId = Convert.ToInt64(tracid);
-                                    mTrnICardRequest.RegistrationId = model.RegistrationId;
-                                    //TrnDomainMapping trnDomainMapping = new TrnDomainMapping();
-                                    // trnDomainMapping.AspNetUsersId= Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-                                    //trnDomainMapping=await iDomainMapBL.GetByAspnetUserIdBy(trnDomainMapping);
-                                    mTrnICardRequest.TrnDomainMappingId = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").TrnDomainMappingId;
-                                    mTrnICardRequest.UpdatedOn = DateTime.Now;
-                                    mTrnICardRequest.Updatedby = Convert.ToInt32(userId); //SessionHeplers.GetObject<string>(HttpContext.Session, "ArmyNo");
-                                    mTrnICardRequest = await iTrnICardRequestBL.AddWithReturn(mTrnICardRequest);
-                                    if (mTrnICardRequest.RequestId > 0)
-                                    {
-                                        MStepCounter mStepCounter = new MStepCounter();
-                                        mStepCounter.StepId = Convert.ToByte(1);
-                                        mStepCounter.RequestId = mTrnICardRequest.RequestId;
-                                        mStepCounter.UpdatedOn = DateTime.Now;
-                                        mStepCounter.Updatedby = Convert.ToInt32(userId);
-                                        mStepCounter.ApplyForId = newBasicDetail.ApplyForId;
-                                        await iStepCounterBL.Add(mStepCounter);
-                                    }
-                                    //DTOApiDataResponse dTOApiDataResponse = new DTOApiDataResponse();
-                                    //dTOApiDataResponse.Status = false;
-                                    //dTOApiDataResponse.Message = "Your I-Card is under process. Please wait.";
-                                    //return Ok(dTOApiDataResponse);
-                                }
-
-
-                                TempData["success"] = "Updated Successfully.";
-                                //return RedirectToAction("Index");
-                                if(newBasicDetail.ApplyForId==1)
-                                return RedirectToAction("Index", new { Id = "MQ==" });
-                                else
-                                    return RedirectToAction("Index", new { Id = "MQ==", jcoor = "SmNvL09ycw ==" });
-
-                            }
-                            else
-                            {
-                                TempData["success"] = "Updated Not Successfully.";
-                                if (newBasicDetail.ApplyForId == 1)
-                                    return RedirectToAction("Index", new { Id = "MQ==" });
-                                else
-                                    return RedirectToAction("Index", new { Id = "MQ==", jcoor = "SmNvL09ycw ==" });
-                            }
-                           
+                            mTrnUpload.PhotoImagePath = model.ExistingPhotoImagePath;
                         }
-                    }
-                    else
-                    {
+
+                        //string sourceFolderSignatureDB = "/WriteReadData/" + "Signature";
+                        //string sourceFolderSignaturePhy = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "Signature");
+                        string sourceFolderSignaturePhy = Convert.ToString(GetCreateMyFolder(Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "Signature")));
+                        if (!Directory.Exists(sourceFolderSignaturePhy))
+                            Directory.CreateDirectory(sourceFolderSignaturePhy);
+
+                        if (model.Signature_ != null)
+                        {
+                            string FileName = service.ProcessUploadedFile(model.Signature_, sourceFolderSignaturePhy, model.ServiceNo);
+
+                            string path = Path.Combine(sourceFolderSignaturePhy, FileName);
+
+                            bool result = service.IsValidHeader(path);
+                            bool imgcontentresult = service.IsImage(model.Signature_);
+
+                            if (!result || !imgcontentresult)
+                            {
+                                ModelState.AddModelError("", "File format not correct");
+                                if (System.IO.File.Exists(path))
+                                {
+                                    System.IO.File.Delete(path);
+                                }
+                                goto end;
+                            }
+
+                            mTrnUpload.SignatureImagePath = GetCreateMyFolder() + "/" + FileName;
+                        }
+                        else
+                        {
+                            mTrnUpload.SignatureImagePath = model.ExistingSignatureImagePath;
+                        }
+                        //if (model.AadhaarNo != null)
+                        //{
+                        //    newBasicDetail.AadhaarNo = model.AadhaarNo.Replace(" ", "");
+                        //}
+
+                        // await basicDetailBL.Update(basicDetail);
+                        var ret1 = await basicDetailBL.SaveBasicDetailsWithAll(newBasicDetail, mTrnAddress, mTrnUpload, mTrnIdentityInfo, null, null);
+                        BasicDetail basicDetail = await basicDetailBL.Get(model.BasicDetailId);
+                        if (ret1 == true)
+                        {
+                            bool resultforisprocess = await iTrnICardRequestBL.GetRequestPending(basicDetail.BasicDetailId);
+                            if (!resultforisprocess)
+                            {
+                                MTrnICardRequest mTrnICardRequest = new MTrnICardRequest();
+                                mTrnICardRequest.BasicDetailId = basicDetail.BasicDetailId;
+                                mTrnICardRequest.Status = 0;
+                                mTrnICardRequest.TypeId = model.TypeId;
+                                string tracid = model.DOB.Day.ToString("D2") + "" + model.DOB.Month.ToString("D2") + "" + model.DOB.Year + "" + Convert.ToInt32(model.AadhaarNo.Substring(model.AadhaarNo.Length - 3)).ToString("D4");
+                                mTrnICardRequest.TrackingId = Convert.ToInt64(tracid);
+                                mTrnICardRequest.RegistrationId = model.RegistrationId;
+                                //TrnDomainMapping trnDomainMapping = new TrnDomainMapping();
+                                // trnDomainMapping.AspNetUsersId= Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                                //trnDomainMapping=await iDomainMapBL.GetByAspnetUserIdBy(trnDomainMapping);
+                                mTrnICardRequest.TrnDomainMappingId = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").TrnDomainMappingId;
+                                mTrnICardRequest.UpdatedOn = DateTime.Now;
+                                mTrnICardRequest.Updatedby = Convert.ToInt32(userId); //SessionHeplers.GetObject<string>(HttpContext.Session, "ArmyNo");
+                                mTrnICardRequest = await iTrnICardRequestBL.AddWithReturn(mTrnICardRequest);
+                                if (mTrnICardRequest.RequestId > 0)
+                                {
+                                    MStepCounter mStepCounter = new MStepCounter();
+                                    mStepCounter.StepId = Convert.ToByte(1);
+                                    mStepCounter.RequestId = mTrnICardRequest.RequestId;
+                                    mStepCounter.UpdatedOn = DateTime.Now;
+                                    mStepCounter.Updatedby = Convert.ToInt32(userId);
+                                    mStepCounter.ApplyForId = newBasicDetail.ApplyForId;
+                                    await iStepCounterBL.Add(mStepCounter);
+                                }
+                                //DTOApiDataResponse dTOApiDataResponse = new DTOApiDataResponse();
+                                //dTOApiDataResponse.Status = false;
+                                //dTOApiDataResponse.Message = "Your I-Card is under process. Please wait.";
+                                //return Ok(dTOApiDataResponse);
+                            }
+
+
+                            TempData["success"] = "Updated Successfully.";
+                            //return RedirectToAction("Index");
+                            if (newBasicDetail.ApplyForId == 1)
+                                return RedirectToAction("Index", new { Id = "MQ==" });
+                            else
+                                return RedirectToAction("Index", new { Id = "MQ==", jcoor = "SmNvL09ycw ==" });
+
+                        }
+                        else
+                        {
+                            TempData["success"] = "Updated Not Successfully.";
+                            if (newBasicDetail.ApplyForId == 1)
+                                return RedirectToAction("Index", new { Id = "MQ==" });
+                            else
+                                return RedirectToAction("Index", new { Id = "MQ==", jcoor = "SmNvL09ycw ==" });
+                        }
 
                     }
                 }
@@ -921,6 +913,7 @@ namespace Web.Controllers
                     {
                         BasicDetail newBasicDetail = _mapper.Map<BasicDetailCrtAndUpdVM, BasicDetail>(model);
                         newBasicDetail.DateOfIssue = null;
+                        newBasicDetail.PlaceOfIssue = null;
                         MTrnUpload mTrnUpload = new MTrnUpload();
 
                         MTrnAddress mTrnAddress = new MTrnAddress();
@@ -1178,11 +1171,19 @@ namespace Web.Controllers
         }
         [Authorize(Roles = "Admin,User")]
         [HttpPost]
-        public async Task<JsonResult> GetRegimentalListByArmedId(int RegimentalId)
+        public async Task<JsonResult> GetRegimentalListByArmedId(byte ArmedId)
         {
-            var regimentals = await service.GetRegimentalListByArmedId(RegimentalId);
+            var regimentals = await service.GetRegimentalListByArmedId(ArmedId);
             return Json(regimentals);
         }
+        [Authorize(Roles = "Admin,User")]
+        [HttpPost]
+        public async Task<IActionResult> GetROListByArmedId(byte ArmedId)
+        {
+            var ro = await basicDetailBL.GetROListByArmedId(ArmedId);
+            return Ok(ro);
+        }
+
         [AcceptVerbs("Get", "Post")]
         [AllowAnonymous]
         public async Task<IActionResult> IsServiceNoInUse(string ServiceNo, string initialServiceNo)
@@ -1225,8 +1226,12 @@ namespace Web.Controllers
         {
             try
             {
+                DtoSession sessiondata = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+                DTOMapUnitResponse dTOMapUnitResponse = await mapUnitBL.GetALLByUnitMapId(sessiondata.UnitId);
+
                 mStepCounter.UpdatedOn = DateTime.Now;
                 mStepCounter.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                mStepCounter.UnitName = dTOMapUnitResponse.UnitName;
                 await iStepCounterBL.UpdateStepCounter(mStepCounter);
 
 

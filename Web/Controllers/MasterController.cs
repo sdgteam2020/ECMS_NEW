@@ -4,6 +4,7 @@ using DapperRepo.Core.Constants;
 using DataAccessLayer.BaseInterfaces;
 using DataTransferObject.Domain;
 using DataTransferObject.Domain.Master;
+using DataTransferObject.Domain.Model;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
 using DataTransferObject.Response.User;
@@ -30,13 +31,15 @@ namespace Web.Controllers
         private readonly IChangeHierarchyMasterBL changeHierarchyMaster;
         private readonly ILogger<MasterController> _logger;
         private readonly IEncryptsqlDB _iEncryptsqlDB;
-        public MasterController(IUnitOfWork unitOfWork, IUserProfileBL userProfileBL, IChangeHierarchyMasterBL changeHierarchyMaster, ILogger<MasterController> logger, IEncryptsqlDB iEncryptsqlDB)
+        private readonly IMasterBL _IMasterBL;
+        public MasterController(IUnitOfWork unitOfWork, IUserProfileBL userProfileBL, IChangeHierarchyMasterBL changeHierarchyMaster, ILogger<MasterController> logger, IEncryptsqlDB iEncryptsqlDB, IMasterBL masterBL)
         {
             this.userProfileBL = userProfileBL;
             this.unitOfWork = unitOfWork;
             this.changeHierarchyMaster = changeHierarchyMaster;
             _logger = logger; 
             _iEncryptsqlDB = iEncryptsqlDB;
+            _IMasterBL = masterBL;
         }
 
         #region Command Page
@@ -55,7 +58,7 @@ namespace Web.Controllers
                 dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                 dTO.UpdatedOn = DateTime.Now;
                 dTO.ComdName = dTO.ComdName.Trim();
-                dTO.ComdAbbreviation= dTO.ComdAbbreviation.Trim();
+                dTO.ComdAbbreviation= dTO.ComdAbbreviation.Trim().ToUpper();
 
                 if (ModelState.IsValid)
                 {
@@ -987,7 +990,7 @@ namespace Web.Controllers
             {
                
                 dTO.IsActive = true;
-                dTO.Updatedby = 1;
+                dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                 dTO.UpdatedOn = DateTime.Now;
 
                 if (ModelState.IsValid)
@@ -1350,10 +1353,10 @@ namespace Web.Controllers
             try
             {
                 dTO.IsActive = true;
-                dTO.Updatedby = 1;
+                dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                 dTO.UpdatedOn = DateTime.Now;
                 dTO.ArmedName = dTO.ArmedName.Trim();
-                dTO.Abbreviation= dTO.Abbreviation.Trim();
+                dTO.Abbreviation= dTO.Abbreviation.Trim().ToUpper();
 
                 if (ModelState.IsValid)
                 {
@@ -1463,7 +1466,7 @@ namespace Web.Controllers
                 dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                 dTO.UpdatedOn = DateTime.Now;
                 dTO.Name = dTO.Name.Trim();
-                dTO.Abbreviation=dTO.Abbreviation.Trim();
+                dTO.Abbreviation=dTO.Abbreviation.Trim().ToUpper();
                 dTO.Location= dTO.Location.Trim();
 
                 if (ModelState.IsValid)
@@ -1564,7 +1567,7 @@ namespace Web.Controllers
                 dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                 dTO.UpdatedOn = DateTime.Now;
                 dTO.Name = dTO.Name.Trim();
-                dTO.Abbreviation = dTO.Abbreviation.Trim();
+                dTO.Abbreviation = dTO.Abbreviation.Trim().ToUpper();
 
                 if (ModelState.IsValid)
                 {
@@ -1588,10 +1591,10 @@ namespace Web.Controllers
                         {
                             return Json(2);
                         }
-                        else if(result == 3)
-                        {
-                            return Json(3);
-                        }
+                        //else if(result == 3)
+                        //{
+                        //    return Json(3);
+                        //}
                         else if(result == 4)
                         {
                             return Json(4);
@@ -1794,6 +1797,87 @@ namespace Web.Controllers
 
         }
         #endregion
+
+        #region OROMapping
+
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> OROMapping()
+        {
+            return View();
+        }
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> GetAllOROMapping()
+        {
+            try
+            {
+                return Json(await unitOfWork.OROMapping.GetAllOROMapping());
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "Master->GetAllOROMapping");
+                return Json(KeyConstants.InternalServerError);
+            }
+
+        }
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> SaveOROMapping(OROMapping dTO)
+        {
+            try
+            {
+                if((dTO.RankId == null || dTO.RankId == 0) && (dTO.ArmedIdList == null || dTO.ArmedIdList ==""))
+                {
+                    return Json("5");
+                }
+                else
+                {
+                    if (ModelState.IsValid)
+                    {
+                        if (dTO.OROMappingId > 0)
+                        {
+                            await unitOfWork.OROMapping.Update(dTO);
+                            return Json(KeyConstants.Update);
+                        }
+                        else
+                        {
+                            await unitOfWork.OROMapping.Add(dTO);
+                            return Json(KeyConstants.Save);
+                        }
+                    }
+                    else
+                    {
+                        return Json(ModelState.Select(x => x.Value.Errors).Where(y => y.Count > 0).ToList());
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "Master->SaveRegimental");
+                return Json(KeyConstants.InternalServerError);
+            }
+
+        }
+        [Authorize(Roles = "User")]
+        public async Task<IActionResult> GetArmsList()
+        {
+            return Json(await _IMasterBL.GetArmsList());
+        }
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> DeleteOROMapping(OROMapping dTO)
+        {
+            try
+            {
+                await unitOfWork.OROMapping.Delete(dTO);
+                return Json(KeyConstants.Success);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "Master->DeleteOROMapping");
+                return Json(KeyConstants.InternalServerError);
+            }
+        }
+
+        #endregion OROMapping
 
         #region Master Table 
         [AllowAnonymous]

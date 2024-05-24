@@ -1356,6 +1356,11 @@ namespace Web.Controllers
                                     HttpContext.Session.Remove("IMData");
                                     return RedirectToActionPermanent("Index", "Home");
                                 }
+                                else if (dTOTempSession.RoleName == "Coordinator")
+                                {
+                                    HttpContext.Session.Remove("IMData");
+                                    return RedirectToActionPermanent("Index", "Home");
+                                }
                                 else if (dTOTempSession.RoleName.ToUpper() == "ADMIN")
                                 {
                                     HttpContext.Session.Remove("IMData");

@@ -62,5 +62,9 @@ namespace BusinessLogicsLayer.Master
         {
             return await _iMasterDB.GetDomainIdByTDMId(TDMId);
         }
+        public async Task<List<DTOArmsListResponse>> GetArmsList()
+        {
+            return await _iMasterDB.GetArmsList();
+        }
     }
 }

@@ -58,7 +58,7 @@ namespace DataAccessLayer
                               Inf= A.FlagInf==true?"Yes":"No",
                               ArmedCatId = F.ArmedCatId,
                               Name = F.Name,
-                          }).ToList();
+                          }).OrderByDescending(x=>x.ArmedId).ToList();
 
 
             return Task.FromResult(GetALL);
