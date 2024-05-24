@@ -157,7 +157,8 @@ $(function () {
        
     });
 
-    $(".fwdrecord").on("click",function () {
+    $(".fwdrecord").on("click", function () {
+        Reset();
         // ResetMapUnit();
         //alert($(this).closest("tr").find(".spnRequestId").html())
         $("#multiplefed").addClass("d-none");
@@ -478,6 +479,19 @@ $(function () {
         })
     });
 });
+function Reset() {
+    $("#spnFwdToAspNetUsersId").html(0);
+    $("#spnFwdToUsersId").html(0);
+    $(".spnFArmyNo").html("");
+    $(".spnFtoname").html("");
+    $(".spnFDomainName").html("");  
+    $(".spnFAppName").html("");
+
+    $("#intoffsArmyNo").prop("checked", false);
+    $("#intoffDomainId").prop("checked", false);
+    $("#txtFwdName").val("");
+    $(".serchfwd").addClass("d-none");
+}
 function GetDataFromBasicDetails(Id) {
     var userdata =
     {
