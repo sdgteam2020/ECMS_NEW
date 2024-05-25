@@ -4,6 +4,7 @@ var StepCounter = 0;
 var applyfor = 0;
 var xmlsign = 0;
 var lstmultifwdarr = new Array();
+var lstInternalFwd = new Array();
 var isToken = false;
 $(function () {
     $("#btntokenTofwd").on("click",function () {
@@ -501,6 +502,13 @@ $(function () {
             $(".RemarksInternalFwd").removeClass("d-none");
             var someNumbers = [1];
             GetRemarks("ddlInternalRemarks", 0, someNumbers);
+            memberTable.$('input[type="checkbox"]:checked').each(function () {
+                var id = $(this).attr("Id");
+                lstInternalFwd.push(id);
+                console.log(id);
+            });
+
+
             $("#FwdInternalRecord").modal('show');
         }
         else {
@@ -510,32 +518,12 @@ $(function () {
         }
     });
     $("#btnInternalFwdSubmit").on("click", function () {
-        alert(memberTable.$('input[type="checkbox"]:checked').length);
-        
-        var lst = new Array();
-
-        if (memberTable.$('input[type="checkbox"]:checked').length > 0) {
-
-            memberTable.$('input[type="checkbox"]:checked').each(function () {
-
-
-                var id = $(this).attr("Id");
-                lst.push(id);
-                console.log(id);
-
-            });
-            ProceedForInternalFwd(lst);
-        }
-        else {
-            Swal.fire({
-                text: "Please select atleast 1 request to Approval."
-            });
-        }
-    });
+        ProceedForInternalFwd();
+     });
 });
-function ProceedForInternalFwd(lst) {
+function ProceedForInternalFwd() {
     ResetErrorMessage();
-    let formId = '#FwdInternalRecord';
+    let formId = '#SaveInternalRecordFwd';
     $.validator.unobtrusive.parse($(formId));
 
 
@@ -550,7 +538,7 @@ function ProceedForInternalFwd(lst) {
             confirmButtonText: 'Yes, Forwad it!'
         }).then((result) => {
             if (result.isConfirmed) {
-                SaveInternalFwd(lst);
+                SaveInternalFwd();
             }
         })
     }
@@ -564,12 +552,12 @@ function ProceedForInternalFwd(lst) {
         return false;
     }
 }
-function SaveInternalFwd(lst) {
+function SaveInternalFwd() {
     var remarks = "" + $("#ddlInternalRemarks").val() + "";
     var userdata =
     {
         "TrnFwdId": 0,
-        "RequestIds": lst,
+        "RequestIds": lstInternalFwd,
         "ToAspNetUsersId": $('#ddlfwdInternaloffrs').val(),
         "ToUserId": $("#spnFwdToInternalUsersId").html(),
         "Remark": $('#txtFRemarksInternal').val().length > 0 ? $('#txtFRemarksInternal').val() : null,
@@ -607,7 +595,9 @@ function SaveInternalFwd(lst) {
     });
 }
 function ResetErrorMessage() {
-
+    $("#ddlfwdInternaloffrs-error").html("");
+    $("#ddlInternalRemarks-error").html("");
+    $("#txtFRemarksInternal-error").html("");
 }
 function Reset() {
     $("#spnFwdToAspNetUsersId").html(0);
