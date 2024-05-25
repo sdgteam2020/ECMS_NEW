@@ -36,6 +36,7 @@ using static NuGet.Packaging.PackagingConstants;
 using System.Diagnostics;
 using System.Drawing.Printing;
 using BusinessLogicsLayer.Unit;
+using DapperRepo.Core.Constants;
 
 namespace Web.Controllers
 {
@@ -1244,7 +1245,54 @@ namespace Web.Controllers
                 return BadRequest();
             }
             return Ok(mStepCounter);
-        } 
+        }
+        [Authorize(Roles = "Coordinator")]
+        public async Task<IActionResult> SaveInternalFwd(DTOSaveInternalFwdRequest data)
+        {
+            try
+            {
+                DtoSession sessiondata = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+                data.FromUserId = sessiondata.UserId;
+                data.UnitId = sessiondata.UnitId;
+                data.FromAspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                data.Status = true;
+                data.IsComplete = true;
+                data.UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
+                data.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                data.IsActive = true;
+                data.TypeId = Convert.ToByte(data.TypeId);
+                if (ModelState.IsValid)
+                {
+                    bool? result = (bool)await iTrnFwnBL.SaveInternalFwd(data);
+                    if (result != null)
+                    {
+                        if (result == true)
+                        {
+                            return Json(true);
+                        }
+                        else
+                        {
+                            return Json(false);
+                        }
+                    }
+                    else
+                    {
+                        return Json(null);
+                    }
+
+                }
+                else
+                {
+                    return Json(ModelState.Select(x => x.Value.Errors).Where(y => y.Count > 0).ToList());
+                }
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "BasicDetails=>SaveInternalFwd");
+                return BadRequest();
+            }
+        }
         public async Task<IActionResult> IcardFwd(MTrnFwd data)
         {
             try
@@ -1266,18 +1314,12 @@ namespace Web.Controllers
                 {
                     return BadRequest();
                 }
-
-
             }
             catch (Exception ex)
             {
                 _logger.LogError(1001, ex, "BasicDetails=>IcardFwd.");
                 return BadRequest();
             }
-
-
-
-
         }
         public async Task<IActionResult> IcardRejecte(MTrnFwd data)
         {

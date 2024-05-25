@@ -757,9 +757,9 @@ namespace DataAccessLayer
                               " inner join AspNetUsers users on trndomain.AspNetUsersId=users.Id" +
                               " inner join MapUnit mapu on mapu.UnitMapId=trndomain.UnitId" +
                               " inner join MAppointment mapp on mapp.ApptId=trndomain.ApptId" +
-                              " left join UserProfile usep on usep.UserId=trndomain.UserId" +
+                              " inner join UserProfile usep on usep.UserId=trndomain.UserId" +
                               " inner join MRank ra on ra.RankId=usep.RankId  " +
-                              " where trndomain.AspNetUsersId like @Name and trndomain.AspNetUsersId !=@DomainMapId";
+                              " where trndomain.AspNetUsersId like @Name ";
 
                 }
                 else if (TypeId == 1)
@@ -1014,8 +1014,6 @@ namespace DataAccessLayer
                          " inner join UserProfile usep on usep.UserId=trndomain.UserId" +
                          " inner join MRank ran on ran.RankId=usep.RankId" +
                          " where trndomain.UnitId =@UnitId and trndomain.AspNetUsersId !=@DomainMapId order by ran.Orderby";
-
-               // in (Select UnitMapId from MapUnit where ComdId in (Select ComdId from MapUnit where UnitMapId = @UnitId))
             }
             using (var connection = _contextDP.CreateConnection())
             {

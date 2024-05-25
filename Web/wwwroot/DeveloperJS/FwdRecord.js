@@ -59,6 +59,10 @@ $(function () {
         dropdownParent: $('#FwdRecord'),
         closeOnSelect: true
     });
+    $('.select4').select2({
+        dropdownParent: $('#FwdInternalRecord'),
+        closeOnSelect: true
+    });
     
    
     $(".historyRequest").on("click",function () {
@@ -79,6 +83,15 @@ $(function () {
         $(".serchfwd").addClass("d-none");
 
         FwdData($('#ddlfwdoffrs').val());
+    });
+    $('#ddlfwdInternaloffrs').on('change', function () {
+        $("#spnFwdToInternalUsersId").html(0);
+        $(".spnInternalFArmyNo").html("");
+        $(".spnInternalFtoname").html("");
+        $(".spnInternalFDomainName").html("");
+        $(".spnInternalFAppName").html("");
+
+        GetProfiledetailsByAspNetuseridForInternalFwd($('#ddlfwdInternaloffrs').val());
     });
 
     //$('#ddlPhotos').on('change', function () {
@@ -178,7 +191,7 @@ $(function () {
         StepCounter = $(this).closest("tr").find(".spnStepCounterId").html();
         applyfor = $(this).closest("tr").find(".spnApplyFor").html();
 
-        if (StepCounter == 1 || StepCounter == 7 || StepCounter == 8 || StepCounter == 9 || StepCounter == 10) {
+        if (StepCounter == 1 || StepCounter == 8 || StepCounter == 9 || StepCounter == 10 || StepCounter == 11) {
                 $(".recectopt").addClass("d-none");
             $("#btnRejected").addClass("d-none");
            
@@ -231,7 +244,7 @@ $(function () {
             GetRemarks("ddlRRemarks", 0, Reject);
             
         }
-        else if (StepCounter == 3 ) {
+        else if (StepCounter == 3 || StepCounter == 4) {
             if (applyfor == 1) {
                 $(".chkforserach").addClass("d-none");
 
@@ -382,7 +395,7 @@ $(function () {
                         var spnRequestId = $("#spnCurrentspnRequestId").html();
 
                         var Counter = parseInt($("#spnStepCounter").html());
-                        if (Counter == 1 || Counter == 7 || Counter == 8 || Counter == 9 || Counter == 10) {
+                        if (Counter == 1 || Counter == 8 || Counter == 9 || Counter == 10 || Counter == 11) {
 
 
                             Counter = 2;
@@ -460,13 +473,15 @@ $(function () {
                 var spnRequestId = $("#spnCurrentspnRequestId").html();
                 var Counter = parseInt($("#spnStepCounter").html());
                 if (Counter == 2)
-                    Counter = 7
-               else if (Counter == 3)
                     Counter = 8
+                else if (Counter == 3)
+                    Counter = 9
                 else if (Counter == 4)
                     Counter = 9
                 else if (Counter == 5)
                     Counter = 10
+                else if (Counter == 6)
+                    Counter = 11
 
 
                 if ($("#txtFrejectedRemarks").val() != "" || $("#ddlRRemarks").val() != "")
@@ -478,7 +493,122 @@ $(function () {
             }
         })
     });
+
+    $("#btnInternalFwd").on("click", function () {
+
+        if (memberTable.$('input[type="checkbox"]:checked').length > 0) {
+            GetAllOffsByUnitId("ddlfwdInternaloffrs", 0, 0, 0, 0, 0, 0, 0);
+            $(".RemarksInternalFwd").removeClass("d-none");
+            var someNumbers = [1];
+            GetRemarks("ddlInternalRemarks", 0, someNumbers);
+            $("#FwdInternalRecord").modal('show');
+        }
+        else {
+            Swal.fire({
+                text: "Please select atleast 1 request to Approval."
+            });
+        }
+    });
+    $("#btnInternalFwdSubmit").on("click", function () {
+        alert(memberTable.$('input[type="checkbox"]:checked').length);
+        
+        var lst = new Array();
+
+        if (memberTable.$('input[type="checkbox"]:checked').length > 0) {
+
+            memberTable.$('input[type="checkbox"]:checked').each(function () {
+
+
+                var id = $(this).attr("Id");
+                lst.push(id);
+                console.log(id);
+
+            });
+            ProceedForInternalFwd(lst);
+        }
+        else {
+            Swal.fire({
+                text: "Please select atleast 1 request to Approval."
+            });
+        }
+    });
 });
+function ProceedForInternalFwd(lst) {
+    ResetErrorMessage();
+    let formId = '#FwdInternalRecord';
+    $.validator.unobtrusive.parse($(formId));
+
+
+    if ($(formId).valid()) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You want to Forwad",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, Forwad it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                SaveInternalFwd(lst);
+            }
+        })
+    }
+    else {
+        Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'Please fill required field.',
+
+        })
+        return false;
+    }
+}
+function SaveInternalFwd(lst) {
+    var remarks = "" + $("#ddlInternalRemarks").val() + "";
+    var userdata =
+    {
+        "TrnFwdId": 0,
+        "RequestIds": lst,
+        "ToAspNetUsersId": $('#ddlfwdInternaloffrs').val(),
+        "ToUserId": $("#spnFwdToInternalUsersId").html(),
+        "Remark": $('#txtFRemarksInternal').val().length > 0 ? $('#txtFRemarksInternal').val() : null,
+        "TypeId": 2,
+        "RemarksIds": remarks,
+    };
+    $.ajax({
+        url: '/BasicDetail/SaveInternalFwd',
+        type: 'POST',
+        data: userdata,
+        success: function (response) {
+            if (response == true) {
+                toastr.success('Fwd successfully.');
+
+                $("#FwdInternalRecord").modal('hide');
+            }
+            else if (response == false) {
+                toastr.error('Something went wrong or Invalid Entry!');
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    html: 'Something went wrong or Invalid Entry!',
+                })
+            }
+            else if (response != "null" && response != null)
+            {
+                toastr.error('Something went wrong or Invalid Entry!');
+            }
+            //else if (response.length > 1) {
+            //    for (var i = 0; i < response.length; i++) {
+            //        toastr.error(response[i][0])
+            //    }
+            //}
+        }
+    });
+}
+function ResetErrorMessage() {
+
+}
 function Reset() {
     $("#spnFwdToAspNetUsersId").html(0);
     $("#spnFwdToUsersId").html(0);
@@ -645,6 +775,32 @@ function GetProfiledetailsByAspNetuserid(AspNetUsersId) {
         }
     });
 }
+function GetProfiledetailsByAspNetuseridForInternalFwd(AspNetUsersId) {
+
+    var param = { "Name": AspNetUsersId, "TypeId": 0, "UnitId": 0 };
+    $.ajax({
+        url: '/UserProfile/GetDataForFwd',
+        contentType: 'application/x-www-form-urlencoded',
+        data: param,
+        type: 'POST',
+        success: function (data) {
+            if (data != null) {
+                $(".spnInternalFArmyNo").html(data[0].ArmyNo);
+                $(".spnInternalFtoname").html(data[0].RankAbbreviation + " " + data[0].Name);
+                $(".spnInternalFDomainName").html(data[0].DomainId);
+                $(".spnInternalFAppName").html(data[0].AppointmentName);
+                $("#spnFwdToInternalUsersId").html(data[0].UserId);
+            }
+        },
+        error: function (response) {
+            alert(response.responseText);
+        },
+        failure: function (response) {
+            alert(response.responseText);
+        }
+    });
+}
+
 //function GetForwardHHierarchy(ArmyNo, StepCounter, spnRequestId) {
    
 //    var userdata =
@@ -859,7 +1015,6 @@ function UpdateStepCounter(stepId, spnRequestId, Counter,Flag) {
 
     });
 }
-
 function GetRequestHistory(spnRequestId) {
     var userdata =
     {
@@ -966,7 +1121,6 @@ function GetRequestHistory(spnRequestId) {
 
     });
 }
-
 function DataExport(Data) {
     var userdata =
     {
@@ -1042,7 +1196,6 @@ function DataExport(Data) {
         }
     });
 }
-
 function DataSignDigitaly(Data, msgid, TrnFwdId) {
     var userdata =
     {
@@ -1220,7 +1373,6 @@ function jsonToXml(json) {
 
     return xml;
 }
-
 function DownloadPdf(RequestId) {
     var userdata =
     {
@@ -1362,7 +1514,6 @@ function base64toPDF(data) {
     window.URL.revokeObjectURL(data);
     link.remove();
 }
-
 function base64ToArrayBuffer(data) {
     var bString = window.atob(data);
     var bLength = bString.length;
@@ -1373,7 +1524,6 @@ function base64ToArrayBuffer(data) {
     }
     return bytes;
 };
-
 function GetByArmyNoIsToken(ArmyNo) {
     var userdata =
     {
