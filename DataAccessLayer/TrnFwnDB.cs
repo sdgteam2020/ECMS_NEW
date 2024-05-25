@@ -84,10 +84,9 @@ namespace DataAccessLayer
                         {
                             return false;
                         }
-                        transaction.Commit();
-                        return true;
                     }
-                    return false;
+                    transaction.Commit();
+                    return true;
                 }
                 catch (Exception ex)
                 {
