@@ -520,6 +520,76 @@
 </body>
 </html>
 
+<!-- Fwd Internal Record  -->
+<div class="modal fade" id="FwdInternalRecord" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Forward Appl for Approval</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="card mt-2">
+                    <div class="mt-2 ml-4">
+                        <h5 class="card-title text-danger" id="ForwardDetails"></h5>
+                        <div class="row HProfileDetails">
+                            <span id="spnFwdToInternalUsersId" class="d-none">0</span>
+                            <div class="form-group row mb-2">
+                                <label class="col-form-label col-sm-4 fw-bold">Select Offr</label>
+                                <div class="col-sm-8">
+                                    <select class="form-control select4 select2-hidden-accessible" style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddlfwdInternaloffrs" required id="ddlfwdInternaloffrs">
+                                        <option value="0">Select Offr</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group row mb-2">
+                                <label class="col-form-label col-sm-4 fw-bold">Army No</label>
+                                <div class="col-sm-8">
+                                    <label class="form-control spnInternalFArmyNo" readonly></label>
+                                </div>
+                            </div>
+                            <div class="form-group row mb-2">
+                                <label class="col-form-label col-sm-4 fw-bold"> Rk & Offr Name</label>
+                                <div class="col-sm-8">
+                                    <label class="form-control spnInternalFtoname" readonly></label>
+                                </div>
+                            </div>
+                            <div class="form-group row mb-2">
+                                <label class="col-form-label col-sm-4 fw-bold">Domain ID</label>
+                                <div class="col-sm-8">
+                                    <label class="form-control spnInternalFDomainName" readonly></label>
+                                </div>
+                            </div>
+                            <div class="form-group row mb-2">
+                                <label class="col-form-label col-sm-4 fw-bold">App.</label>
+                                <div class="col-sm-8">
+                                    <label class="form-control spnInternalFAppName" readonly></label>
+                                </div>
+                            </div>
+                            <div class="form-group row mb-2 RemarksInternalFwd d-none">
+                                <label class="col-form-label col-sm-4 fw-bold">Select Remarks</label>
+                                <div class="col-sm-8">
+                                    <select class="form-control select4 select2-accessible" multiple="" placeholder="Please select a Remarks" style="width: 100%;" tabindex="-1" aria-hidden="true" name="InternalRemarks" id="ddlInternalRemarks">
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group row mb-2">
+                                <label class="col-form-label col-sm-4 fw-bold">Other Obsn</label>
+                                <div class="col-sm-8">
+                                    <textarea class="form-control" id="txtFRemarksInternal" rows="3" maxlength="100"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" id="btnInternalFwdSubmit">Forward</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Fwd Record  -->
 <div class="modal fade" id="FwdRecord" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
     <div class="modal-dialog modal-lg">
