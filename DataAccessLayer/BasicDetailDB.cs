@@ -391,7 +391,7 @@ namespace DataAccessLayer
                         "WHERE map.AspNetUsersId = @UserId and trnicrd.Status=0 ORDER BY B.UpdatedOn DESC";
                 
             }
-            else if (stepcount == 2 || stepcount == 3 || stepcount == 4 || stepcount == 5 || stepcount == 6)//IO
+            else if (stepcount == 2 || stepcount == 3 || stepcount == 4 || stepcount == 5 || stepcount == 6 || stepcount == 7)//IO
             {
                 if(TypeId==1)///For Icard Submit
                 {
@@ -416,7 +416,8 @@ namespace DataAccessLayer
                " inner join TrnFwds fwd on fwd.RequestId = trnicrd.RequestId and fwd.ToAspNetUsersId = @UserId and Afor.ApplyForId=IsNULL(@applyForId,Afor.ApplyForId) and fwd.TypeId=@stepcount and C.StepId = @stepcount and trnicrd.Status=0";
 
 
-                }else if(stepcount == 5 || stepcount == 6)///for exported data
+                }
+                else if(stepcount == 6 || stepcount == 7)///for exported data
                 {
                     query = " SELECT distinct B.UnitId,B.BasicDetailId,B.Name,B.ServiceNo,B.DOB,B.DateOfCommissioning,C.StepId StepCounter,C.Id StepId,ty.TypeId,ty.name ICardType,trnicrd.RequestId ,Afor.Name ApplyFor,Afor.ApplyForId,ran.RankAbbreviation RankName" +
             " FROM BasicDetails B" +
@@ -459,7 +460,7 @@ namespace DataAccessLayer
 
                 }
             }
-            else if (stepcount == 7 || stepcount == 8 || stepcount == 9 || stepcount == 10 || stepcount == 11)//Reject From IO
+            else if (stepcount == 8 || stepcount == 9 || stepcount == 10 || stepcount == 11 || stepcount == 12)//Reject From IO
             {
 
                 query = "SELECT distinct B.UnitId,B.BasicDetailId,B.Name,B.ServiceNo,B.DOB,B.DateOfCommissioning,C.StepId StepCounter,C.Id StepId,ty.TypeId,ty.name ICardType,trnicrd.RequestId,isnull(fwd.Status,1) Reject ,Afor.Name ApplyFor,Afor.ApplyForId,trnicrd.TrackingId,ran.RankAbbreviation RankName" +

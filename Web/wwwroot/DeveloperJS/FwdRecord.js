@@ -192,7 +192,7 @@ $(function () {
         StepCounter = $(this).closest("tr").find(".spnStepCounterId").html();
         applyfor = $(this).closest("tr").find(".spnApplyFor").html();
 
-        if (StepCounter == 1 || StepCounter == 8 || StepCounter == 9 || StepCounter == 10 || StepCounter == 11) {
+        if (StepCounter == 1 || StepCounter == 7 || StepCounter == 8 || StepCounter == 9 || StepCounter == 10) {
                 $(".recectopt").addClass("d-none");
             $("#btnRejected").addClass("d-none");
            
@@ -245,7 +245,7 @@ $(function () {
             GetRemarks("ddlRRemarks", 0, Reject);
             
         }
-        else if (StepCounter == 3 || StepCounter == 4) {
+        else if (StepCounter == 3) {
             if (applyfor == 1) {
                 $(".chkforserach").addClass("d-none");
 
@@ -396,7 +396,7 @@ $(function () {
                         var spnRequestId = $("#spnCurrentspnRequestId").html();
 
                         var Counter = parseInt($("#spnStepCounter").html());
-                        if (Counter == 1 || Counter == 8 || Counter == 9 || Counter == 10 || Counter == 11) {
+                        if (Counter == 1 || Counter == 7 || Counter == 8 || Counter == 9 || Counter == 10) {
 
 
                             Counter = 2;
@@ -474,15 +474,13 @@ $(function () {
                 var spnRequestId = $("#spnCurrentspnRequestId").html();
                 var Counter = parseInt($("#spnStepCounter").html());
                 if (Counter == 2)
-                    Counter = 8
+                    Counter = 7
                 else if (Counter == 3)
-                    Counter = 9
+                    Counter = 8
                 else if (Counter == 4)
                     Counter = 9
                 else if (Counter == 5)
                     Counter = 10
-                else if (Counter == 6)
-                    Counter = 11
 
 
                 if ($("#txtFrejectedRemarks").val() != "" || $("#ddlRRemarks").val() != "")
