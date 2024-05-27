@@ -11,8 +11,7 @@ namespace DataTransferObject.Requests
 {
     public class DTOSaveInternalFwdRequest
     {
-        public int TrnFwdId { get; set; }
-        public required int[] RequestIds { get; set; }
+        public required int[] TrnFwdIds { get; set; }
         public int ToUserId { get; set; }
         public int FromUserId { get; set; }
         public int? FromAspNetUsersId { get; set; }
@@ -22,7 +21,7 @@ namespace DataTransferObject.Requests
         [StringLength(100)]
         [Column(TypeName = "varchar(100)")]
         public string? Remark { get; set; } = string.Empty;
-        public bool Status { get; set; } = false;
+        public byte FwdStatusId { get; set; }
         public byte TypeId { get; set; }
         public bool IsComplete { get; set; } = false;
 

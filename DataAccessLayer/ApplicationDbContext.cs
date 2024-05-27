@@ -21,6 +21,7 @@ namespace DataAccessLayer
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         { }
+        public DbSet<MTrnFwdStatus> MTrnFwdStatus { get; set; } = null!;
         public DbSet<OROMapping> OROMapping { get; set; } = null!;
         public DbSet<MRegistration> MRegistration { get; set; } = null!;
         public DbSet <MArmedCat> MArmedCats { get; set; } = null!;

@@ -1255,8 +1255,8 @@ namespace Web.Controllers
                 data.FromUserId = sessiondata.UserId;
                 data.UnitId = sessiondata.UnitId;
                 data.FromAspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-                data.Status = true;
-                data.IsComplete = true;
+                data.FwdStatusId = 3;
+                data.IsComplete = false;
                 data.UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
                 data.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                 data.IsActive = true;
