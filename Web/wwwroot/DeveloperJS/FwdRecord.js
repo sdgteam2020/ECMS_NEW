@@ -554,12 +554,11 @@ function SaveInternalFwd() {
     var remarks = "" + $("#ddlInternalRemarks").val() + "";
     var userdata =
     {
-        "TrnFwdId": 0,
-        "RequestIds": lstInternalFwd,
+        "TrnFwdIds": lstInternalFwd,
         "ToAspNetUsersId": $('#ddlfwdInternaloffrs').val(),
         "ToUserId": $("#spnFwdToInternalUsersId").html(),
         "Remark": $('#txtFRemarksInternal').val().length > 0 ? $('#txtFRemarksInternal').val() : null,
-        "TypeId": 2,
+        "TypeId": 3,
         "RemarksIds": remarks,
     };
     $.ajax({
@@ -571,6 +570,9 @@ function SaveInternalFwd() {
                 toastr.success('Fwd successfully.');
 
                 $("#FwdInternalRecord").modal('hide');
+                setTimeout(function () {
+                    location.reload();
+                }, 2000);
             }
             else if (response == false) {
                 toastr.error('Something went wrong or Invalid Entry!');
@@ -886,7 +888,7 @@ function ForwardTo(RequestId, HType) {
        // "ToUserId": $("#spnForwardTo").html(),
         /* "SusNo": $("#spnFwssusno").html(),*/
         "Remark": $("#txtFRemarks").val(),
-        "Status": true,
+        "FwdStatusId": 1,
         "TypeId": HType,
         "IsComplete": false,
         "RemarksIds": remarks,
@@ -945,7 +947,7 @@ function RejecteTo(RequestId, HType) {
         // "ToUserId": $("#spnForwardTo").html(),
         /* "SusNo": $("#spnFwssusno").html(),*/
         "Remark": $("#txtFrejectedRemarks").val(),
-        "Status": false,
+        "FwdStatusId": 2,
         "TypeId": HType,
         "IsComplete": false,
         "RemarksIds": remarks

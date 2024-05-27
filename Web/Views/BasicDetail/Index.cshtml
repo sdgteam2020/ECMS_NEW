@@ -171,7 +171,7 @@
                                                     <spna class="spnApplyFor d-none">@item.ApplyForId</spna>
                                                     <spna class="spnarmyUnitId d-none">@item.UnitId</spna>
 
-                                                @if ((item.StepCounter == 1 || item.StepCounter == 7 || item.StepCounter == 8 || item.StepCounter == 9 || item.StepCounter == 10) && (ViewBag.Id == 0 || ViewBag.Id == 1 || item.Reject == 0))
+                                                @if ((item.StepCounter == 1 || item.StepCounter == 7 || item.StepCounter == 8 || item.StepCounter == 9 || item.StepCounter == 10) && (ViewBag.Id == 0 || ViewBag.Id == 1 || item.IsFwdStatusId == 2))
                                                     {
                                                         <a asp-controller="BasicDetail" asp-action="BasicDetail" asp-route-Id="@item.EncryptedId" class="btn btn-icon btn-round btn-warning mr-2"><i class="fas fa-edit mt-2"></i></a>
 
@@ -199,7 +199,7 @@
                                                     }
                                                     else
                                                     {
-                                                    @if (item.Reject==0)
+                                                    @if (item.IsFwdStatusId==2)
                                                      {
 
                                                         <span class="badge rounded-pill bg-light text-danger mt-3" data-toggle="tooltip" data-placement="left" title="@item.Remark">Rejected</span>

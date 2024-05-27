@@ -42,7 +42,11 @@ namespace DataTransferObject.Domain.Model
         [StringLength(100)]
         [Column(TypeName = "varchar(100)")]
         public string? Remark { get; set; } = string.Empty;
-        public bool Status { get; set; } = false;
+
+        [ForeignKey("MTrnFwdStatus"), DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public byte FwdStatusId { get; set; }
+        public MTrnFwdStatus? MTrnFwdStatus { get; set; }
+        
         [ForeignKey("MTrnFwdType"), DatabaseGenerated(DatabaseGeneratedOption.None)]
         public byte TypeId { get; set; }
        

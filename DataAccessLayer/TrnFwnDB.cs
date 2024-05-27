@@ -101,28 +101,41 @@ namespace DataAccessLayer
             {
                 try
                 {
-                    foreach (int item in dTO.RequestIds)
+                    foreach (int item in dTO.TrnFwdIds)
                     {
-                        var trnfwd = new MTrnFwd
+                        MTrnFwd? mTrnFwd = await _context.TrnFwds.FindAsync(item);
+                        if(mTrnFwd!=null)
                         {
-                            RequestId = item,
-                            ToUserId = dTO.ToUserId,
-                            FromUserId = dTO.FromUserId,
-                            FromAspNetUsersId = dTO.FromAspNetUsersId,
-                            ToAspNetUsersId = dTO.ToAspNetUsersId,
-                            UnitId = dTO.UnitId,
-                            Remark = dTO.Remark,
-                            Status = dTO.Status,
-                            TypeId = dTO.TypeId,
-                            IsComplete = dTO.IsComplete,
-                            RemarksIds = dTO.RemarksIds,
-                            PostingOutId = null,
-                            IsActive = dTO.IsActive,
-                            Updatedby = dTO.FromAspNetUsersId,
-                            UpdatedOn = dTO.UpdatedOn,
-                        };
-                        await _context.TrnFwds.AddAsync(trnfwd);
-                        await _context.SaveChangesAsync();
+                            mTrnFwd.IsComplete = true;
+                            mTrnFwd.Updatedby = dTO.FromAspNetUsersId;
+                            mTrnFwd.UpdatedOn = dTO.UpdatedOn;
+                            await _context.SaveChangesAsync();
+
+                            var trnfwd = new MTrnFwd
+                            {
+                                RequestId = mTrnFwd.RequestId,
+                                ToUserId = dTO.ToUserId,
+                                FromUserId = dTO.FromUserId,
+                                FromAspNetUsersId = dTO.FromAspNetUsersId,
+                                ToAspNetUsersId = dTO.ToAspNetUsersId,
+                                UnitId = dTO.UnitId,
+                                Remark = dTO.Remark,
+                                FwdStatusId = dTO.FwdStatusId,
+                                TypeId = dTO.TypeId,
+                                IsComplete = dTO.IsComplete,
+                                RemarksIds = dTO.RemarksIds,
+                                PostingOutId = null,
+                                IsActive = dTO.IsActive,
+                                Updatedby = dTO.FromAspNetUsersId,
+                                UpdatedOn = dTO.UpdatedOn,
+                            };
+                            await _context.TrnFwds.AddAsync(trnfwd);
+                            await _context.SaveChangesAsync();
+                        }
+                        else
+                        {
+                            return false;
+                        }
                     }
                     transaction.Commit();
                     return true;

@@ -186,9 +186,12 @@ namespace DataTransferObject.ViewModels
         public string? ICardType { get; set; }
         [NotMapped]
         public int RequestId { get; set; }
-     
+        
         [NotMapped]
-        public int Reject { get; set; }
+        public int TrnFwdId { get; set; }
+
+        [NotMapped]
+        public byte IsFwdStatusId { get; set; }
         public string? Remark { get; set; }
         [NotMapped]
         public string? TrackingId { get; set; }
