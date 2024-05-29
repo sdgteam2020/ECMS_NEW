@@ -403,6 +403,9 @@ else
                                         <button type="button" class="btn btn-danger mt-4 mr-4" id="btntokenrefresh">
                                             Refresh to Fetch Thumbprint from Token
                                         </button>
+                                    <button type="button" class="btn btn-danger mt-4 mr-4" id="btnderegprofile">
+                                        DE-Register Profile
+                                    </button>
                                         <input type="button" class="btn btn-primary mt-4 mr-4" value="Submit" id="btnProfilesave" />
                                     </div>
                                     <div class="col-sm-12 text-center">
@@ -496,3 +499,25 @@ else
 <script asp-src-include="~/developerjs/mapunit.js"></script>
 <script asp-src-include="~/developerjs/profile.js"></script>
 <script asp-src-include="~/developerjs/token.js"></script>
+
+<div class="modal fade" id="DeRegisterConfirmModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">DE-REGISTER Profile</h5>
+
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                <div class="row">
+                    Are you Sure you want to DE-Register your profile? Yes/No
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                <button type="button" class="btn btn-primary" id="btnDeRegisterConfirmModalSubmit">Yes</button>
+            </div>
+        </div>
+    </div>
+</div>

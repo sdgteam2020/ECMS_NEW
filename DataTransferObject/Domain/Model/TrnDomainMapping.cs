@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace DataTransferObject.Domain.Model
 {
-    public class TrnDomainMapping
+    public class TrnDomainMapping: Common
     { 
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

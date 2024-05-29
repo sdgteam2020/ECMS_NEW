@@ -32,7 +32,7 @@ namespace DataAccessLayer
             string query = "declare @TotReq int=0 declare @TotReject int=0 declare @TotSelfPen int=0 declare @TotIOPen int=0 declare @TotGsoPen int=0 declare @TotM11Pen int=0 declare @TotGQ54Pen int=0 declare @TotPrintPen int=0" +
                             " select @TotReq=COUNT(distinct req.RequestId) from TrnDomainMapping domain inner join TrnICardRequest req on req.TrnDomainMappingId=domain.Id where domain.AspNetUsersId=@UserId" +
                             " select @TotReject=COUNT(distinct req.RequestId) from TrnDomainMapping domain inner join TrnICardRequest req on req.TrnDomainMappingId=domain.Id " +
-                            " inner join TrnFwds fwd on fwd.ToAspNetUsersId= domain.AspNetUsersId and fwd.IsComplete=0 and fwd.[Status]=0 and fwd.RequestId=req.RequestId where domain.AspNetUsersId=@UserId" +
+                            " inner join TrnFwds fwd on fwd.ToAspNetUsersId= domain.AspNetUsersId and fwd.IsComplete=0 and fwd.[FwdStatusId]=2 and fwd.RequestId=req.RequestId where domain.AspNetUsersId=@UserId" +
                             " select @TotSelfPen=COUNT(distinct req.RequestId)   from TrnDomainMapping domain inner join TrnICardRequest req on req.TrnDomainMappingId=domain.Id " +
                             " inner join TrnStepCounter step on step.RequestId=req.RequestId where domain.AspNetUsersId=@UserId and StepId=1" +
                             " select @TotIOPen=COUNT(distinct req.RequestId)  from TrnDomainMapping domain inner join TrnICardRequest req on req.TrnDomainMappingId=domain.Id " +

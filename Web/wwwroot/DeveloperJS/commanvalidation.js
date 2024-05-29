@@ -815,5 +815,3 @@ function WaterMarkOnPdf(doc) {
     objLayout['paddingRight'] = function (i) { return 4; };
     doc.content[0].layout = objLayout;
 }
-
-
