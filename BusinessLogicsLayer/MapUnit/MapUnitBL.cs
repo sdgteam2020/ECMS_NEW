@@ -62,5 +62,10 @@ namespace BusinessLogicsLayer.Unit
         {
             return await _UnitDB.UnitMapIdCheckInFKTable(UnitMapId);
         }
+
+        public async Task<List<DTOUnitResponse>> GetUnitByHierarchy(DTOMHierarchyRequest Data)
+        {
+            return await _UnitDB.GetUnitByHierarchy(Data);
+        }
     }
 }

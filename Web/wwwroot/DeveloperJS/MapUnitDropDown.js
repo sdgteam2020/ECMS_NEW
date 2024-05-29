@@ -18,9 +18,9 @@ $(document).ready(function () {
        
 
     });
-    $('#ddlBde').on('change', function () {
+    //$('#ddlBde').on('change', function () {
        
-    });
+    //});
   
     $('#txtSusno').on('input', function () {
         $("#txtUnit").val("");
