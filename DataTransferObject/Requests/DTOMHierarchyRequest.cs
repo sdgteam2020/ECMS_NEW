@@ -17,5 +17,10 @@ namespace DataTransferObject.Requests
         public int? DivId { get; set; }
                   
         public int? BdeId { get; set; }
+        public int? FmnBranchID { get; set; }
+        public int? PsoId { get; set; }
+        public int? SubDteId { get; set; }
+        public int? GroupId { get; set; }
+
     }
 }

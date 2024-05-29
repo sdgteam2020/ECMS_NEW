@@ -776,7 +776,26 @@ namespace Web.Controllers
                 return Json(KeyConstants.InternalServerError);
             }
 
-        } 
+        }
+        public async Task<IActionResult> GetALLByUnitMapWonUnit(int Id)
+        {
+            try
+            {
+                DtoSession? dtoSession = new DtoSession();
+                if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
+                {
+                    dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+
+                }
+                return Json(await unitOfWork.MappUnit.GetALLByUnitMapId(dtoSession.UnitId));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "Master->GetALLByUnitMapId");
+                return Json(KeyConstants.InternalServerError);
+            }
+
+        }
         public async Task<IActionResult> GetALLByUnitById(int UnitId)
         {
             try
@@ -831,6 +850,20 @@ namespace Web.Controllers
                 _logger.LogError(1001, ex, "Master->DeleteMapUnitMultiple");
                 return Json(KeyConstants.InternalServerError);
             }
+        }
+
+        public async Task<IActionResult> GetUnitByHierarchy(DTOMHierarchyRequest Data)
+        {
+            try
+            {
+                return Json(await unitOfWork.MappUnit.GetUnitByHierarchy(Data));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "Master->GetUnitByHierarchy");
+                return Json(KeyConstants.InternalServerError);
+            }
+
         }
         #endregion End Unit
 

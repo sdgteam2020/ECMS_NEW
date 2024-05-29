@@ -20,5 +20,6 @@ namespace DataAccessLayer.BaseInterfaces
         public Task<bool?> FindUnitId(int UnitId);
         public Task<bool?> FindUnitIdMapped(int UnitId, int UnitMapId);
         public Task<DTOUnitMapIdCheckInFKTableResponse?> UnitMapIdCheckInFKTable(int UnitMapId);
+        public Task<List<DTOUnitResponse>> GetUnitByHierarchy(DTOMHierarchyRequest Data);
     }
 }

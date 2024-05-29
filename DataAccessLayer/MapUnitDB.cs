@@ -359,5 +359,40 @@ namespace DataAccessLayer
                 return null;
             }
         }
+
+        public async Task<List<DTOUnitResponse>> GetUnitByHierarchy(DTOMHierarchyRequest Data)
+        {
+            try
+            {
+                string query = "SELECT unt.UnitId,unt.UnitName,unt.Suffix,unt.Sus_no FROM MapUnit Map " +
+                                " Inner join MUnit unt on Map.UnitId = unt.UnitId" +
+                                " where Map.ComdId = ISNULL(@ComdId,Map.ComdId)" +
+                                " AND Map.CorpsId = ISNULL(@CorpsId,Map.CorpsId)" +
+                                " AND Map.DivId = ISNULL(@DivId,Map.DivId)" +
+                                " AND Map.BdeId = ISNULL(@BdeId,Map.BdeId)" +
+                                " AND Map.FmnBranchID = ISNULL(@FmnBranchID,Map.FmnBranchID)" +
+                                " AND Map.PsoId = ISNULL(@PsoId,Map.PsoId)" +
+                                " AND Map.SubDteId = ISNULL(@SubDteId,Map.SubDteId)";
+
+                using (var connection = _contextDP.CreateConnection())
+                {
+                    var ret = await connection.QueryAsync<DTOUnitResponse>(query, new { 
+                        Data.ComdId, 
+                        Data.CorpsId ,
+                        Data.DivId,
+                        Data.BdeId,
+                        Data.FmnBranchID,
+                        Data.PsoId,
+                        Data.SubDteId
+                    });
+                    return ret.ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "MapUnitDB->GetUnitByHierarchy");
+                return null;
+            }
+        }
     }
  }

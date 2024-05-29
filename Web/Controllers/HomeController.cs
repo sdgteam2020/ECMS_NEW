@@ -6,6 +6,7 @@ using BusinessLogicsLayer.Home;
 using BusinessLogicsLayer.Master;
 using BusinessLogicsLayer.RecordOffice;
 using BusinessLogicsLayer.Registration;
+using BusinessLogicsLayer.ReportReturn;
 using BusinessLogicsLayer.User;
 using DapperRepo.Core.Constants;
 using DataAccessLayer.BaseInterfaces;
@@ -41,7 +42,13 @@ namespace Web.Controllers
         private readonly UserManager<ApplicationUser> userManager;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ILogger<HomeController> _logger;
-        public HomeController(IRegistrationBL registrationBL, IUserProfileBL userProfileBL,IBasicDetailBL basicDetailBL, INotificationBL notificationBL, ITrnICardRequestBL iTrnICardRequestBL, IHomeBL home, IRecordOfficeBL recordOfficeBL, SignInManager<ApplicationUser> signInManager, UserManager<ApplicationUser> userManager, ILogger<HomeController> logger, IHttpContextAccessor httpContextAccessor)
+        public readonly IReportReturnBL _reportReturnBL;
+        public HomeController(IRegistrationBL registrationBL, IUserProfileBL userProfileBL,
+            IBasicDetailBL basicDetailBL, INotificationBL notificationBL, ITrnICardRequestBL iTrnICardRequestBL,
+            IHomeBL home, IRecordOfficeBL recordOfficeBL, SignInManager<ApplicationUser> signInManager, 
+            UserManager<ApplicationUser> userManager, ILogger<HomeController> logger, IHttpContextAccessor httpContextAccessor,
+            IReportReturnBL reportReturnBL
+            )
         {
             _userProfileBL = userProfileBL;
             _registrationBL = registrationBL;
@@ -51,6 +58,7 @@ namespace Web.Controllers
             _home = home;
             _recordOfficeBL = recordOfficeBL;
             _logger = logger;
+            _reportReturnBL = reportReturnBL;
         }
         private string GetSessionValue()
         {
@@ -81,13 +89,27 @@ namespace Web.Controllers
             ViewBag.UnitId = UnitId;
             return View();
         }
-        public async Task<IActionResult> DashboardAsync()
+        public async Task<IActionResult> Dashboard()
         {
             string role = GetSessionValue();
 
             ViewBag.Role = role;    
             return View();
         }
+        #region Report Return
+        public async Task<IActionResult> ReportAndReturn()
+        {
+            
+            return View();
+        }
+
+        public async Task<IActionResult> GetReportReturnCount()
+        {
+            int UserId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var ret =await _reportReturnBL.GetMstepCount(UserId);
+            return Json(ret);
+        }
+        #endregion
         public async Task<IActionResult> SubDashboard()
         {
             string role = GetSessionValue();

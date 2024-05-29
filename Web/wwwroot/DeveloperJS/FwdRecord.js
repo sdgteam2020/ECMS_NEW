@@ -168,7 +168,6 @@ $(function () {
         $(".spnFDomainName").html("");
         $(".spnFAppName").html("");
         
-       
     });
 
     $(".fwdrecord").on("click", function () {

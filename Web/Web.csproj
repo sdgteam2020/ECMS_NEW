@@ -7,6 +7,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="wwwroot\DeveloperJS\ReportAndReturn.js" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="wwwroot\DeveloperJS\ReportAndReturn.js" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Include="wwwroot\css\bootstrap-grid.css.map" />
     <None Include="wwwroot\css\bootstrap-grid.min.css.map" />
     <None Include="wwwroot\css\bootstrap-grid.rtl.css.map" />
@@ -25,6 +33,7 @@
     <None Include="wwwroot\css\bootstrap.rtl.min.css.map" />
     <None Include="wwwroot\css\Sidemenu\feather\fonts\feather-webfont.svg" />
     <None Include="wwwroot\css\Sidemenu\ti-icons\fonts\themify.svg" />
+    <None Include="wwwroot\DeveloperJS\ReportAndReturn.js" />
     <None Include="wwwroot\js\site.js" />
     <None Include="wwwroot\lib\bootstrap\dist\css\bootstrap-grid.css.map" />
     <None Include="wwwroot\lib\bootstrap\dist\css\bootstrap-grid.min.css.map" />
