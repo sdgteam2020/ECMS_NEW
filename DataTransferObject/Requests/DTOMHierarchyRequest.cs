@@ -20,5 +20,7 @@ namespace DataTransferObject.Requests
         public int? FmnBranchID { get; set; }
         public int? PsoId { get; set; }
         public int? SubDteId { get; set; }
+        public int? GroupId { get; set; }
+
     }
 }
