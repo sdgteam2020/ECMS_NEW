@@ -1,6 +1,7 @@
 ﻿using BusinessLogicsLayer;
 using BusinessLogicsLayer.Bde;
 using BusinessLogicsLayer.Master;
+using BusinessLogicsLayer.TrnMappingUnMappingLog;
 using DapperRepo.Core.Constants;
 using DataTransferObject.Domain;
 using DataTransferObject.Domain.Master;
@@ -19,14 +20,16 @@ namespace Web.Controllers
     {
         private readonly IUserProfileBL _userProfileBL;
         private readonly IUserProfileMappingBL _userProfileMappingBL;
-        public readonly IDomainMapBL _iDomainMapBL;
+        private readonly IDomainMapBL _iDomainMapBL;
+        private readonly ITrnMappingUnMappingLogBL _iTrnMappingUnMappingLogBL;
         private readonly ILogger<UserProfileController> _logger;
 
-        public UserProfileController(IUserProfileBL userProfileBL, ILogger<UserProfileController> logger, IUserProfileMappingBL userProfileMappingBL, IDomainMapBL domainMapBL)
+        public UserProfileController(IUserProfileBL userProfileBL, ILogger<UserProfileController> logger, IUserProfileMappingBL userProfileMappingBL, IDomainMapBL domainMapBL,ITrnMappingUnMappingLogBL trnMappingUnMappingLogBL)
         {
             _userProfileBL=userProfileBL;
             _userProfileMappingBL = userProfileMappingBL;
             _iDomainMapBL = domainMapBL;
+            _iTrnMappingUnMappingLogBL = trnMappingUnMappingLogBL;
             _logger = logger;
         }
         private string GetSessionValue()
@@ -35,10 +38,47 @@ namespace Web.Controllers
             if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
             {
                 dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
-
             }
             string role = dtoSession != null ? dtoSession.RoleName : "";
             return role;
+        }
+        [HttpPost]
+        public async Task<IActionResult> DeRegisterUserId()
+        {
+            int DomainId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+            DateTime UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
+            DtoSession? dtoSession = new DtoSession();
+            if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
+            {
+                dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+                if (dtoSession != null)
+                {
+                    TrnDomainMapping trnDomainMapping = await _iDomainMapBL.Get(dtoSession.TrnDomainMappingId);
+                    trnDomainMapping.UserId = null;
+                    trnDomainMapping.UpdatedOn = UpdatedOn;
+                    await _iDomainMapBL.Update(trnDomainMapping);
+                    var mapping_Log = new TrnMappingUnMapping_Log()
+                    {
+                        TrnMappUnMapLogId=0,
+                        TDMId= dtoSession.TrnDomainMappingId,
+                        UserId= dtoSession.UserId,
+                        DeregisterUserId= dtoSession.UserId,
+                        IsActive=true,
+                        Updatedby = DomainId,
+                        UpdatedOn= UpdatedOn,
+                    };
+                    await _iTrnMappingUnMappingLogBL.Add(mapping_Log);
+                    return Json(true);
+                }
+                else
+                {
+                    return Json(false);
+                }
+            }
+            else
+            {
+                return Json(false);
+            }
         }
         public IActionResult Profile()
         {

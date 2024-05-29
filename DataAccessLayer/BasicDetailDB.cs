@@ -946,28 +946,33 @@ namespace DataAccessLayer
                         " declare @HQPending int declare @HQApproved int declare @HQReject int"+
                         " select @IOPending=COUNT(distinct fwd.RequestId) from TrnFwds fwd inner join TrnStepCounter cou on fwd.RequestId=cou.RequestId and cou.ApplyForId=@applyForId where ToAspNetUsersId=@UserId and IsComplete=0 and TypeId=2" +
                         " select @IOApproved=COUNT(distinct fwd.RequestId)  from TrnFwds fwd inner join TrnStepCounter cou on fwd.RequestId=cou.RequestId and cou.ApplyForId=@applyForId where FromAspNetUsersId=@UserId and TypeId=3" +
-                        " select @IOReject=COUNT(distinct fwd.RequestId)  from TrnFwds fwd inner join TrnStepCounter cou on fwd.RequestId=cou.RequestId and cou.ApplyForId=@applyForId where FromAspNetUsersId=@UserId and Status=0 and TypeId=1" +
+                        " select @IOReject=COUNT(distinct fwd.RequestId)  from TrnFwds fwd inner join TrnStepCounter cou on fwd.RequestId=cou.RequestId and cou.ApplyForId=@applyForId where FromAspNetUsersId=@UserId and fwd.FwdStatusId=2 and TypeId=1" +
                         " select @GSOPending=COUNT(distinct fwd.RequestId)  from TrnFwds fwd inner join TrnStepCounter cou on fwd.RequestId=cou.RequestId and cou.ApplyForId=@applyForId where ToAspNetUsersId=@UserId and IsComplete=0 and TypeId=3" +
                         " select @GSOApproved=COUNT(distinct fwd.RequestId)  from TrnFwds fwd inner join TrnStepCounter cou on fwd.RequestId=cou.RequestId and cou.ApplyForId=@applyForId where FromAspNetUsersId=@UserId and TypeId=4" +
-                        " select @GSOReject=COUNT(distinct fwd.RequestId)  from TrnFwds fwd inner join TrnStepCounter cou on fwd.RequestId=cou.RequestId and cou.ApplyForId=@applyForId where FromAspNetUsersId=@UserId and Status=0 and TypeId=1" +
+                        " select @GSOReject=COUNT(distinct fwd.RequestId)  from TrnFwds fwd inner join TrnStepCounter cou on fwd.RequestId=cou.RequestId and cou.ApplyForId=@applyForId where FromAspNetUsersId=@UserId and fwd.FwdStatusId=2 and TypeId=1" +
                         " select @MIPending=COUNT(distinct fwd.RequestId)  from TrnFwds fwd inner join TrnStepCounter cou on fwd.RequestId=cou.RequestId and cou.ApplyForId=@applyForId where ToAspNetUsersId=@UserId and IsComplete=0 and cou.StepId=4" +
                         " select @MIApproved=COUNT(distinct fwd.RequestId)  from TrnFwds fwd inner join TrnStepCounter cou on fwd.RequestId=cou.RequestId and cou.ApplyForId=@applyForId inner join TrnICardRequest trncard  on trncard.RequestId=cou.RequestId  where ToAspNetUsersId=@UserId and  trncard.Status=1" +
-                        " select @MIReject=COUNT(distinct fwd.RequestId)  from TrnFwds fwd inner join TrnStepCounter cou on fwd.RequestId=cou.RequestId and cou.ApplyForId=@applyForId where FromAspNetUsersId=@UserId and Status=0 and TypeId=1" +
+                        " select @MIReject=COUNT(distinct fwd.RequestId)  from TrnFwds fwd inner join TrnStepCounter cou on fwd.RequestId=cou.RequestId and cou.ApplyForId=@applyForId where FromAspNetUsersId=@UserId and fwd.FwdStatusId=2 and TypeId=1" +
                         " select @HQPending=COUNT(distinct fwd.RequestId)  from TrnFwds fwd inner join TrnStepCounter cou on fwd.RequestId=cou.RequestId and cou.ApplyForId=@applyForId inner join TrnICardRequest trncard  on trncard.RequestId=cou.RequestId where ToAspNetUsersId=@UserId and IsComplete=0 and trncard.Status=0" +
                         " select @HQApproved=COUNT(distinct fwd.RequestId)  from TrnFwds fwd inner join TrnStepCounter cou on fwd.RequestId=cou.RequestId and cou.ApplyForId=@applyForId inner join TrnICardRequest trncard  on trncard.RequestId=cou.RequestId  where ToAspNetUsersId=@UserId and  trncard.Status=1" +
-                        " select @HQReject=COUNT(distinct fwd.RequestId)  from TrnFwds fwd inner join TrnStepCounter cou on fwd.RequestId=cou.RequestId and cou.ApplyForId=@applyForId where FromAspNetUsersId=@UserId and Status=0 and TypeId=1" +
+                        " select @HQReject=COUNT(distinct fwd.RequestId)  from TrnFwds fwd inner join TrnStepCounter cou on fwd.RequestId=cou.RequestId and cou.ApplyForId=@applyForId where FromAspNetUsersId=@UserId and fwd.FwdStatusId=2 and TypeId=1" +
                         " select @IOPending IOPending,@IOApproved IOApproved,@IOReject IOReject,@GSOPending GSOPending,@GSOApproved GSOApproved,@GSOReject GSOReject, @MIPending MIPending,@MIApproved MIApproved,@MIReject MIReject,@HQPending HQPending,@HQApproved HQApproved,@HQReject HQReject";
                         
             } 
           
             using (var connection = _contextDP.CreateConnection())
             {
-                //data.MRank.RankAbbreviation
-                //data.MArmedType.Abbreviation
-                var ret = await connection.QueryAsync<DTOICardTaskCountResponse>(query, new { UserId, applyForId });
+                try
+                {
+                    var ret = await connection.QueryAsync<DTOICardTaskCountResponse>(query, new { UserId, applyForId });
+                    return ret.SingleOrDefault();
+                }
+                catch(Exception ex)
+                {
+                    _logger.LogError(1001, ex, "BasicDetailDB->GetTaskCountICardRequest");
+                    return null;
+                }
 
-
-                return ret.SingleOrDefault();
             }
         }
 

@@ -20,6 +20,7 @@ using BusinessLogicsLayer.RecordOffice;
 using BusinessLogicsLayer.Registration;
 using BusinessLogicsLayer.Token;
 using BusinessLogicsLayer.TrnLoginLog;
+using BusinessLogicsLayer.TrnMappingUnMappingLog;
 using BusinessLogicsLayer.Unit;
 using BusinessLogicsLayer.User;
 using DataAccessLayer;
@@ -121,6 +122,9 @@ namespace BusinessLogicsLayer
             services.AddTransient<ITrnLoginLogBL, TrnLoginLogBL>();
             services.AddTransient<ITrnLoginLogDB, TrnLoginLogDB>();
 
+            services.AddTransient<ITrnMappingUnMappingLogBL, TrnMappingUnMappingLogBL>();
+            services.AddTransient<ITrnMappingUnMappingLogDB, TrnMappingUnMappingLogDB>();
+
             services.AddTransient<IAPIDataBL, APIDataBL>();
             services.AddTransient<IAPIDataDB, APIDataDB>();
 
@@ -130,6 +134,8 @@ namespace BusinessLogicsLayer
 
             services.AddTransient<IChangeHierarchyMasterBL, ChangeHierarchyMasterBL>();
             services.AddTransient<IChangeHierarchyMasterDB, ChangeHierarchyMasterDB>();
+
+
 
             services.AddTransient<IArmedCatBL, ArmedCatBL>();
 
