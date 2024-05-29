@@ -24,6 +24,7 @@ using Web.WebHelpers;
 
 namespace Web.Controllers
 {
+    [Authorize]
     public class MasterController : Controller
     {   
         private readonly IUnitOfWork unitOfWork;
@@ -1534,7 +1535,6 @@ namespace Web.Controllers
             }
 
         }
-        [Authorize(Roles = "Admin,User")]
         public async Task<IActionResult> GetAllRegimental(int[] Id)
         {
             try
@@ -1661,7 +1661,6 @@ namespace Web.Controllers
             }
 
         }
-        [Authorize(Roles = "Admin,User")]
         public async Task<IActionResult> GetAllRecordOffice()
         {
             try
@@ -1690,7 +1689,6 @@ namespace Web.Controllers
             }
         }
        
-        [Authorize]
         public async Task<IActionResult> GetMappedForRecord(int TypeId, string SearchName)
         {
             try
@@ -1716,7 +1714,6 @@ namespace Web.Controllers
             }
         }
 
-        [Authorize(Roles = "User")]
         public async Task<IActionResult> GetUpdateRecordOffice(int RecordOfficeId)
         {
             try
@@ -1739,7 +1736,6 @@ namespace Web.Controllers
 
         }
 
-        [Authorize(Roles = "User")]
         public async Task<IActionResult> UpdateRecordOffice()
         {
             DtoSession? dtoSession = new DtoSession();
@@ -1772,7 +1768,6 @@ namespace Web.Controllers
                 return RedirectToActionPermanent("DashboardUserMgt", "Home");
             }
         }
-        [Authorize(Roles = "User")]
         public async Task<IActionResult> GetDDMappedForRecord(int UnitMapId)
         {
             try
@@ -1786,7 +1781,6 @@ namespace Web.Controllers
             }
 
         }
-        [Authorize(Roles = "User")]
         public async Task<IActionResult> UpdateROValue(DTOUpdateROValueRequest dTO)
         {
             try
@@ -1890,7 +1884,6 @@ namespace Web.Controllers
             }
 
         }
-        [Authorize(Roles = "User")]
         public async Task<IActionResult> GetArmsList()
         {
             return Json(await _IMasterBL.GetArmsList());

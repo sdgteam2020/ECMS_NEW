@@ -126,6 +126,7 @@ namespace Web.Controllers
             try
             {
                 dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                dTO.UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
 
                 if (ModelState.IsValid)
                 {
@@ -589,6 +590,7 @@ namespace Web.Controllers
             try
             {
                 dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                dTO.UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
                 if (ModelState.IsValid)
                 {
                     DTOUserRegnResultResponse? dTOUserRegnResultResponse = await _iAccountBL.SaveMapping(dTO);
@@ -1537,6 +1539,7 @@ namespace Web.Controllers
         public async Task<IActionResult> Profile(DTOProfileAndMappingRequest model)
         {
             DTOTempSession? dTOTempSession = SessionHeplers.GetObject<DTOTempSession>(HttpContext.Session, "IMData");
+            model.UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
             if (dTOTempSession != null)
             {
                 if (ModelState.IsValid)

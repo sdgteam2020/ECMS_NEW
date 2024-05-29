@@ -22,7 +22,7 @@
 <div class="containerMain mt-n10">
     <span id="UnitId" class="d-none">@ViewBag.UnitId</span>
     <span id="TDMId" class="d-none">@ViewBag.TDMId</span>
-    @if (ViewBag.Role == "User")
+    @if (ViewBag.Role == "User" || ViewBag.Role == "Coordinator")
     {
         <div class="row">
             <div class="card p-4">

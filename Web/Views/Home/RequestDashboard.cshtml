@@ -31,7 +31,7 @@
 </header>
 <div class="containerMain mt-n10">
 <span id="Type" name="Type" class="d-none">@ViewBag.Type</span>
-    @if (ViewBag.Role == "User")
+    @if (ViewBag.Role == "User" || ViewBag.Role == "Coordinator")
     {
         <div class="row">
 
