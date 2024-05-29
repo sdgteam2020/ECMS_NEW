@@ -17,5 +17,7 @@ namespace DataTransferObject.Domain.Master
         [Column(TypeName = "varchar(50)")]
         public string Name { get; set; } = string.Empty;
         public bool IsDashboard { get; set; } = false;
+        public int OrderBy { get; set; }
+        public int GroupId { get; set; }
     }
 }

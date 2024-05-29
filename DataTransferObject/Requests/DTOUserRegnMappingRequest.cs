@@ -22,5 +22,6 @@ namespace DataTransferObject.Requests
         [RegularExpression(@"^[\d]+$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "OnlyNumber")]
         public int UserId { get; set; }
         public int Updatedby { get; set; }
+        public DateTime UpdatedOn { get; set; }
     }
 }
