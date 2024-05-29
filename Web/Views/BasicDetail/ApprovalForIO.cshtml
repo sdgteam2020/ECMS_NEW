@@ -74,11 +74,17 @@
 
                         </div>
                     }
+                    @if (ViewBag.Role == "Coordinator")
+                    {
+                        <div class="d-flex justify-content-end">
+                            <button type="button" id="btnInternalFwd" class="btn btn-warning font-weight-600 btn-sm mb-2">Forward</button>
+                        </div>
+                    }
                     <div class="table-responsive">
                         <table id="tbldatatabledata" class="table border border-purple table-striped no-footer dataTable table-hover" style="width:100%">
                             <thead>
                                 <tr>
-                                    @if (ViewBag.dataexport == 5 || ViewBag.dataexport == 4)
+                                    @if (ViewBag.dataexport == 5 || ViewBag.dataexport == 4 || ViewBag.Role == "Coordinator")
                                     {
                                        
                                         <th class="noExport wd-30-f">
@@ -106,7 +112,7 @@
                                 @foreach (var item in Model)
                                 {
                                     <tr>
-                                        @if (ViewBag.dataexport == 5 || ViewBag.dataexport == 4)
+                                        @if (ViewBag.dataexport == 5 || ViewBag.dataexport == 4 )
                                         {
                                            <td>
                                            <div class="custom-control custom-checkbox small">
@@ -114,6 +120,15 @@
                                                     <label class="custom-control-label" for="@item.RequestId"></label>
                                            </div>
                                            </td>
+                                        }
+                                        @if (ViewBag.Role == "Coordinator")
+                                        {
+                                            <td>
+                                                <div class="custom-control custom-checkbox small">
+                                                    <input type="checkbox" class="custom-control-input" id="@item.TrnFwdId">
+                                                    <label class="custom-control-label" for="@item.TrnFwdId"></label>
+                                                </div>
+                                            </td>
                                         }
                                         <td>@item.Sno</td>
                                         <td class="ServiceNo">@item.ServiceNo</td>
@@ -160,9 +175,10 @@
     <script asp-src-include="~/js/CustomScript.js"></script>
     <script asp-src-include="~/developerjs/fwdrecord.js"></script>
     <script asp-src-include="~/developerjs/token.js"></script>
-    <script src="~/developerjs/mtables.js"></script>
+    <script asp-src-include="~/developerjs/mtables.js"></script>
 }@*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
 @{
 }
+

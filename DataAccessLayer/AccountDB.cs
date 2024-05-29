@@ -1498,7 +1498,9 @@ namespace DataAccessLayer
                     {
                         trnDomainMapping.UserId = dTO.UserId;
                         trnDomainMapping.MappedBy = dTO.Updatedby;
-                        trnDomainMapping.MappedDate = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
+                        trnDomainMapping.MappedDate = dTO.UpdatedOn;
+                        trnDomainMapping.Updatedby = dTO.Updatedby;
+                        trnDomainMapping.UpdatedOn = dTO.UpdatedOn;
                         await domainMapDB.Update(trnDomainMapping);
                         dTOUserRegnResultResponse.Result = true;
                         dTOUserRegnResultResponse.Message = "Profile mapped.";
@@ -1527,7 +1529,9 @@ namespace DataAccessLayer
                 {
                     trnDomainMapping.UserId = null;
                     trnDomainMapping.MappedBy = null;
-                    trnDomainMapping.MappedDate = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
+                    trnDomainMapping.MappedDate = null;
+                    trnDomainMapping.Updatedby = dTO.Updatedby;
+                    trnDomainMapping.UpdatedOn = dTO.UpdatedOn;
                     await domainMapDB.Update(trnDomainMapping);
                     dTOUserRegnResultResponse.Result = true;
                     dTOUserRegnResultResponse.Message = "Profile Unmapped.";
@@ -1560,7 +1564,7 @@ namespace DataAccessLayer
                             userUpdate.DomainId = dTO.DomainId;
                             userUpdate.Active = dTO.Active;
                             userUpdate.Updatedby = dTO.Updatedby;
-                            userUpdate.UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
+                            userUpdate.UpdatedOn = dTO.UpdatedOn;
                             userUpdate.UserName = dTO.DomainId.ToLower();
                             userUpdate.NormalizedUserName = dTO.DomainId.ToUpper();
                             userUpdate.Email = dTO.DomainId.ToLower() + "@army.mil";
@@ -1611,6 +1615,10 @@ namespace DataAccessLayer
                                 trnDomainMapping.IsCO = dTO.IsCO;
                                 trnDomainMapping.IsRO = dTO.IsRO;
                                 trnDomainMapping.IsORO = dTO.IsORO;
+                                trnDomainMapping.IsActive = true;
+                                trnDomainMapping.Updatedby = dTO.Updatedby;
+                                trnDomainMapping.UpdatedOn = dTO.UpdatedOn;
+
                                 _context.TrnDomainMapping.Update(trnDomainMapping);
                                 await _context.SaveChangesAsync();
                             }
@@ -1625,6 +1633,9 @@ namespace DataAccessLayer
                                 trnDomainMapping.IsCO = dTO.IsCO;
                                 trnDomainMapping.IsRO = dTO.IsRO;
                                 trnDomainMapping.IsORO = dTO.IsORO;
+                                trnDomainMapping.IsActive = true;
+                                trnDomainMapping.Updatedby = dTO.Updatedby;
+                                trnDomainMapping.UpdatedOn = dTO.UpdatedOn;
                                 await _context.TrnDomainMapping.AddAsync(trnDomainMapping);
                                 await _context.SaveChangesAsync();
                             }
@@ -1670,7 +1681,10 @@ namespace DataAccessLayer
                             IsIO =dTO.IsIO,
                             IsCO=dTO.IsCO,
                             IsRO=dTO.IsRO,
-                            IsORO=dTO.IsORO
+                            IsORO=dTO.IsORO,
+                            IsActive=true,
+                            Updatedby= dTO.Updatedby,
+                            UpdatedOn=dTO.UpdatedOn
                         };
                         await _context.TrnDomainMapping.AddAsync(trnmapAdd);
                         await _context.SaveChangesAsync();
@@ -1761,7 +1775,7 @@ namespace DataAccessLayer
                             DomainId = dTOTempSession.DomainId,
                             Active = true,
                             Updatedby = 1,
-                            UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time")),
+                            UpdatedOn = model.UpdatedOn,
                             UserName = dTOTempSession.DomainId.ToLower(),
                             NormalizedUserName = dTOTempSession.DomainId.ToUpper(),
                             Email = dTOTempSession.DomainId.ToLower() + "@army.mil",
@@ -1788,6 +1802,8 @@ namespace DataAccessLayer
                         trnDomainMapping.IsIO = model.IsIO;
                         trnDomainMapping.IsCO = model.IsCO;
                         trnDomainMapping.IsORO = model.IsORO;
+                        trnDomainMapping.Updatedby = user.Id;
+                        trnDomainMapping.UpdatedOn = model.UpdatedOn;
 
                         if (model.UserId > 0)
                         {
@@ -1860,6 +1876,8 @@ namespace DataAccessLayer
                         trnDomainMapping.IsIO = model.IsIO;
                         trnDomainMapping.IsCO = model.IsCO;
                         trnDomainMapping.IsORO = model.IsORO;
+                        trnDomainMapping.Updatedby = dTOTempSession.AspNetUsersId;
+                        trnDomainMapping.UpdatedOn = model.UpdatedOn;
                         if (model.UserId > 0)
                         {
                             MUserProfile? uptUserProfile = await _context.UserProfile.FindAsync(dTOTempSession.UserId);
@@ -1926,6 +1944,7 @@ namespace DataAccessLayer
                                 if(uptUserProfile!=null)
                                 {
                                     uptUserProfile.Updatedby = dTOTempSession.AspNetUsersId;
+                                    uptUserProfile.UpdatedOn = model.UpdatedOn;
                                     await _context.SaveChangesAsync();
 
                                     trnDomainMapping.UserId = dTOTempSession.UserId;
@@ -1943,6 +1962,7 @@ namespace DataAccessLayer
                                 mUserProfile.Name = model.Name;
                                 mUserProfile.MobileNo = model.MobileNo;
                                 mUserProfile.Updatedby = dTOTempSession.AspNetUsersId;
+                                mUserProfile.UpdatedOn = model.UpdatedOn;
                                 mUserProfile.Thumbprint = model.Thumbprint;
                                 await _context.UserProfile.AddAsync(mUserProfile);
                                 await _context.SaveChangesAsync();

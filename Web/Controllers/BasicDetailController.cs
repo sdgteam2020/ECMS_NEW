@@ -36,9 +36,11 @@ using static NuGet.Packaging.PackagingConstants;
 using System.Diagnostics;
 using System.Drawing.Printing;
 using BusinessLogicsLayer.Unit;
+using DapperRepo.Core.Constants;
 
 namespace Web.Controllers
 {
+    [Authorize]
     public class BasicDetailController : Controller
     {
         //private readonly ApplicationDbContext context, contextTransaction;
@@ -95,8 +97,18 @@ namespace Web.Controllers
             _INotificationBL = notificationBL;
             _IMasterBL = masterBL;
         }
+        private string GetSessionValue()
+        {
+            DtoSession? dtoSession = new DtoSession();
+            if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
+            {
+                dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
 
-        [Authorize(Roles = "Admin,User")]
+            }
+            string role = dtoSession != null ? dtoSession.RoleName : "";
+            return role;
+        }
+
         public async Task<ActionResult> Index(string Id,string jcoor)
         {
             MTrnNotification noti = new MTrnNotification();
@@ -195,9 +207,12 @@ namespace Web.Controllers
                 return View(allrecord);
             }
         }
-        [Authorize(Roles = "Admin,User")]
         public async Task<ActionResult> ApprovalForIO(string Id, string jcoor)
         {
+            string role = GetSessionValue();
+
+            ViewBag.Role = role;
+
             MTrnNotification noti=new MTrnNotification();
             int type = 0; int retint = 0; int stepcounter = 0;
             var userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier)); //SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").UserId;
@@ -290,7 +305,6 @@ namespace Web.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "Admin,User")]
         public async Task<ActionResult> View(string Id)
         {
             var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -334,7 +348,6 @@ namespace Web.Controllers
             }
         }
         [HttpGet]
-        [Authorize(Roles = "Admin,User")]
         public async Task<ActionResult> InaccurateData()
         {
             var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -344,7 +357,6 @@ namespace Web.Controllers
             return View(allrecord);
         }
         [HttpGet]
-        [Authorize(Roles = "Admin,User")]
         public async Task<ActionResult> InaccurateDataView(string Id)
         {
             var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -356,14 +368,12 @@ namespace Web.Controllers
             return View(allrecord);
         }
         [HttpGet]
-        [Authorize(Roles = "Admin,User")]
         public async Task<ActionResult> RequestType()
         {
             var allrecord = await Task.Run(() => basicDetailBL.GetAllICardType());
             return View(allrecord);
         }
         [HttpGet]
-        [Authorize(Roles = "Admin,User")]
         public async Task<IActionResult> Registration(string Id)
         {
             var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -388,7 +398,6 @@ namespace Web.Controllers
             return View(dTORegistrationRequest);
         }
         [HttpPost]
-        [Authorize(Roles = "Admin,User")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Registration(DTORegistrationRequest model)
         {
@@ -530,7 +539,6 @@ namespace Web.Controllers
             return View(model);
         }
         [HttpGet]
-        [Authorize(Roles = "Admin,User")]
         public async Task<ActionResult> BasicDetail(string? Id)
         {
             ViewBag.OptionsBloodGroup = service.GetBloodGroup();
@@ -699,8 +707,7 @@ namespace Web.Controllers
             }
         }
         [HttpPost]
-        [Authorize(Roles = "Admin,User")]
-        
+    
         public async Task<IActionResult> BasicDetail(BasicDetailCrtAndUpdVM model)
         {
             try
@@ -1118,7 +1125,6 @@ namespace Web.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Admin,User")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(string Id)
         {
@@ -1169,14 +1175,12 @@ namespace Web.Controllers
                 return RedirectToAction("index");
             }
         }
-        [Authorize(Roles = "Admin,User")]
         [HttpPost]
         public async Task<JsonResult> GetRegimentalListByArmedId(byte ArmedId)
         {
             var regimentals = await service.GetRegimentalListByArmedId(ArmedId);
             return Json(regimentals);
         }
-        [Authorize(Roles = "Admin,User")]
         [HttpPost]
         public async Task<IActionResult> GetROListByArmedId(byte ArmedId)
         {
@@ -1204,7 +1208,6 @@ namespace Web.Controllers
             //}
             return Json(true);
         }
-        [Authorize(Roles = "Admin,User")]
         [HttpPost]
         public async Task<IActionResult> GetUserData(string ICNumber)
         {
@@ -1242,7 +1245,54 @@ namespace Web.Controllers
                 return BadRequest();
             }
             return Ok(mStepCounter);
-        } 
+        }
+        [Authorize(Roles = "Coordinator")]
+        public async Task<IActionResult> SaveInternalFwd(DTOSaveInternalFwdRequest data)
+        {
+            try
+            {
+                DtoSession sessiondata = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+                data.FromUserId = sessiondata.UserId;
+                data.UnitId = sessiondata.UnitId;
+                data.FromAspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                data.FwdStatusId = 3;
+                data.IsComplete = false;
+                data.UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
+                data.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                data.IsActive = true;
+                data.TypeId = Convert.ToByte(data.TypeId);
+                if (ModelState.IsValid)
+                {
+                    bool? result = (bool)await iTrnFwnBL.SaveInternalFwd(data);
+                    if (result != null)
+                    {
+                        if (result == true)
+                        {
+                            return Json(true);
+                        }
+                        else
+                        {
+                            return Json(false);
+                        }
+                    }
+                    else
+                    {
+                        return Json(null);
+                    }
+
+                }
+                else
+                {
+                    return Json(ModelState.Select(x => x.Value.Errors).Where(y => y.Count > 0).ToList());
+                }
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "BasicDetails=>SaveInternalFwd");
+                return BadRequest();
+            }
+        }
         public async Task<IActionResult> IcardFwd(MTrnFwd data)
         {
             try
@@ -1264,18 +1314,12 @@ namespace Web.Controllers
                 {
                     return BadRequest();
                 }
-
-
             }
             catch (Exception ex)
             {
                 _logger.LogError(1001, ex, "BasicDetails=>IcardFwd.");
                 return BadRequest();
             }
-
-
-
-
         }
         public async Task<IActionResult> IcardRejecte(MTrnFwd data)
         {
@@ -1322,7 +1366,6 @@ namespace Web.Controllers
 
 
         }
-        [Authorize(Roles = "Admin,User")]
         [HttpPost]
         public async Task<IActionResult> GetData(string ICNumber)
         {
@@ -1395,7 +1438,6 @@ namespace Web.Controllers
 
         }
 
-        [Authorize(Roles = "Admin,User")]
         [HttpPost]
         public async Task<IActionResult> SearchAllServiceNo(string ICNumber)
  {
@@ -1430,7 +1472,6 @@ namespace Web.Controllers
                 }
             }
         }
-        //[Authorize(Roles = "Admin,User")]
         //[HttpPost]
         //public async Task<IActionResult> DummyData()
         //{
@@ -1481,22 +1522,18 @@ namespace Web.Controllers
         //    basicDetail.PermanentAddress = "House No.-" + Random.Shared.Next(50, 999) + ", " + PermanentAddress[a];
         //    return Ok(basicDetail);
         //}
-        [Authorize(Roles = "User")]
         public async Task<IActionResult> GetDataByBasicDetailsId(int Id)
         {
            return Json(await basicDetailBL.GetByBasicDetailsId(Id));
         }
-        [Authorize(Roles = "User")]
         public async Task<IActionResult> GetRequestHistory(int RequestId)
         {
             return Json(await basicDetailBL.ICardHistory(RequestId));
         }
-        [Authorize(Roles = "User")]
         public async Task<IActionResult> GetRemarks(DTORemarksRequest Data)
         {
             return Json(await _IMasterBL.GetRemarksByTypeId(Data));
         }
-        [Authorize(Roles = "User")]
         public async Task<IActionResult> DataExport(DTODataExportRequest Data)
         {
             try
@@ -1517,7 +1554,6 @@ namespace Web.Controllers
                 return RedirectToAction("Error", "Error");
             }
         }
-        [Authorize(Roles = "User")]
         public async Task<IActionResult> DataDigitalXmlSign(DTODataExportRequest Data)
         {
             try
@@ -1538,9 +1574,6 @@ namespace Web.Controllers
                 return RedirectToAction("Error", "Error");
             }
         }
-
-
-        [Authorize(Roles = "User")]
         public static DirectoryInfo GetCreateMyFolder(string baseFolder)
         {
             var now = DateTime.Now;
@@ -1556,7 +1589,6 @@ namespace Web.Controllers
 
             return Directory.CreateDirectory(folder);
         }
-        [Authorize(Roles = "User")]
         public static DirectoryInfo GetCreateMyFolder()
         {
             var now = DateTime.Now;
@@ -1572,7 +1604,6 @@ namespace Web.Controllers
 
             return Directory.CreateDirectory(folder);
         }
-        [Authorize(Roles = "User")]
         public static DirectoryInfo ForCreateFolderrandom(string baseFolder)
         {
             var now = DateTime.Now;
@@ -1588,7 +1619,6 @@ namespace Web.Controllers
 
             return Directory.CreateDirectory(folder);
         }
-        [Authorize(Roles = "User")]
         public static DirectoryInfo CreateFolder(string baseFolder)
         {
             return Directory.CreateDirectory(baseFolder);

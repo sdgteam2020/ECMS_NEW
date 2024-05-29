@@ -949,12 +949,18 @@ namespace DataAccessLayer.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<byte>("StepId"));
 
+                    b.Property<int>("GroupId")
+                        .HasColumnType("int");
+
                     b.Property<bool>("IsDashboard")
                         .HasColumnType("bit");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("varchar(50)");
+
+                    b.Property<int>("OrderBy")
+                        .HasColumnType("int");
 
                     b.HasKey("StepId");
 
@@ -997,6 +1003,23 @@ namespace DataAccessLayer.Migrations
                     b.HasIndex("Updatedby");
 
                     b.ToTable("MSubDte");
+                });
+
+            modelBuilder.Entity("DataTransferObject.Domain.Master.MTrnFwdStatus", b =>
+                {
+                    b.Property<byte>("FwdStatusId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("tinyint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<byte>("FwdStatusId"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("varchar(50)");
+
+                    b.HasKey("FwdStatusId");
+
+                    b.ToTable("MTrnFwdStatus");
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Master.MTrnFwdType", b =>
@@ -1609,6 +1632,9 @@ namespace DataAccessLayer.Migrations
                     b.Property<int>("FromUserId")
                         .HasColumnType("int");
 
+                    b.Property<byte>("FwdStatusId")
+                        .HasColumnType("tinyint");
+
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
@@ -1627,9 +1653,6 @@ namespace DataAccessLayer.Migrations
 
                     b.Property<int>("RequestId")
                         .HasColumnType("int");
-
-                    b.Property<bool>("Status")
-                        .HasColumnType("bit");
 
                     b.Property<int?>("ToAspNetUsersId")
                         .HasColumnType("int");
@@ -1655,6 +1678,8 @@ namespace DataAccessLayer.Migrations
                     b.HasIndex("FromAspNetUsersId");
 
                     b.HasIndex("FromUserId");
+
+                    b.HasIndex("FwdStatusId");
 
                     b.HasIndex("RequestId");
 
@@ -1962,6 +1987,9 @@ namespace DataAccessLayer.Migrations
                         .HasMaxLength(5)
                         .HasColumnType("varchar(5)");
 
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
                     b.Property<bool>("IsCO")
                         .HasColumnType("bit");
 
@@ -1983,6 +2011,13 @@ namespace DataAccessLayer.Migrations
                     b.Property<int>("UnitId")
                         .HasColumnType("int");
 
+                    b.Property<DateTime?>("UpdatedOn")
+                        .IsRequired()
+                        .HasColumnType("datetime");
+
+                    b.Property<int?>("Updatedby")
+                        .HasColumnType("int");
+
                     b.Property<int?>("UserId")
                         .HasColumnType("int");
 
@@ -1993,6 +2028,8 @@ namespace DataAccessLayer.Migrations
                     b.HasIndex("AspNetUsersId");
 
                     b.HasIndex("UnitId");
+
+                    b.HasIndex("Updatedby");
 
                     b.HasIndex("UserId");
 
@@ -2773,6 +2810,12 @@ namespace DataAccessLayer.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("DataTransferObject.Domain.Master.MTrnFwdStatus", "MTrnFwdStatus")
+                        .WithMany()
+                        .HasForeignKey("FwdStatusId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("DataTransferObject.Domain.Model.MTrnICardRequest", "MTrnICardRequest")
                         .WithMany()
                         .HasForeignKey("RequestId")
@@ -2812,6 +2855,8 @@ namespace DataAccessLayer.Migrations
                     b.Navigation("ApplicationUser1");
 
                     b.Navigation("ApplicationUserUpdate");
+
+                    b.Navigation("MTrnFwdStatus");
 
                     b.Navigation("MTrnFwdType");
 
@@ -2993,12 +3038,19 @@ namespace DataAccessLayer.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("DataTransferObject.Domain.Identitytable.ApplicationUser", "ApplicationUserUpdate")
+                        .WithMany()
+                        .HasForeignKey("Updatedby")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("DataTransferObject.Domain.MUserProfile", "MUserProfile")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("ApplicationUser");
+
+                    b.Navigation("ApplicationUserUpdate");
 
                     b.Navigation("MAppointment");
 

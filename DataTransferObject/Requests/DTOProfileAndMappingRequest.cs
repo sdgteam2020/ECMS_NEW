@@ -75,6 +75,7 @@ namespace DataTransferObject.Requests
         [StringLength(50)]
         [Column(TypeName = "varchar(50)")]
         public string? Thumbprint { get; set; }
+        public DateTime UpdatedOn { get; set; }
 
     }
 }

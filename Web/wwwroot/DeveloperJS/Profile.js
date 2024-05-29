@@ -61,7 +61,24 @@ $(document).ready(function () {
         }
     });
    
-   
+    $("#btnderegprofile").on("click", function () {
+        $("#DeRegisterConfirmModal").modal('show');
+    });
+    $("#btnDeRegisterConfirmModalSubmit").on("click", function () {
+        $.ajax({
+            url: '/UserProfile/DeRegisterUserId',
+            contentType: 'application/x-www-form-urlencoded',
+            type: 'POST',
+            success: function (result) {
+                if (result == true) {
+                    toastr.success('User successfully Unmapped');
+                }
+                else if (result == false) {
+                    toastr.error('Incorrect Data!');
+                }
+            }
+        });
+    });
   
 });
 
