@@ -52,6 +52,10 @@ namespace DataTransferObject.Domain.Model
        
         public MTrnFwdType? MTrnFwdType { get; set; }
 
+        [ForeignKey("MStepCounterStep"), DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public byte StepId { get; set; }
+        public MStepCounterStep? MStepCounterStep { get; set; }
+
         public bool IsComplete { get; set; } = false;
 
         [Column(TypeName = "varchar(100)")]

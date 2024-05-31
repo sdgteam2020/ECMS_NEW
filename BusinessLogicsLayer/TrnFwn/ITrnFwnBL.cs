@@ -15,6 +15,7 @@ namespace BusinessLogicsLayer.Bde
     public interface ITrnFwnBL : IGenericRepository<MTrnFwd>
     {
         public Task<bool> UpdateAllBYRequestId(int RequestId);
+        public Task<bool> UpdateFieldBYTrnFwdId(int TrnFwdId);
         public Task<bool?> SaveInternalFwd(DTOSaveInternalFwdRequest dTO);
 
     }
