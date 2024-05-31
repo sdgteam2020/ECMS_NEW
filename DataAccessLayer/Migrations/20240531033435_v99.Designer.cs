@@ -4,6 +4,7 @@ using DataAccessLayer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccessLayer.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240531033435_v99")]
+    partial class v99
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -959,12 +962,10 @@ namespace DataAccessLayer.Migrations
                     b.Property<int>("OrderBy")
                         .HasColumnType("int");
 
-                    b.Property<byte?>("TypeId")
-                        .HasColumnType("tinyint");
+                    b.Property<int?>("TempId")
+                        .HasColumnType("int");
 
                     b.HasKey("StepId");
-
-                    b.HasIndex("TypeId");
 
                     b.ToTable("MStepCounterStep");
                 });
@@ -2550,16 +2551,6 @@ namespace DataAccessLayer.Migrations
                     b.Navigation("MRemarkType");
 
                     b.Navigation("MRemarksApply");
-                });
-
-            modelBuilder.Entity("DataTransferObject.Domain.Master.MStepCounterStep", b =>
-                {
-                    b.HasOne("DataTransferObject.Domain.Master.MTrnFwdType", "Type")
-                        .WithMany()
-                        .HasForeignKey("TypeId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("Type");
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Master.MSubDte", b =>

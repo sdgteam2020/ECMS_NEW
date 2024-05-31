@@ -8,18 +8,18 @@ namespace DataTransferObject.Response
 { 
     public class DTOICardTaskCountResponse
     {
-        public int IOPending { get; set; }
-        public int IOApproved { get; set; }
-        public int IOReject { get; set; }
-        public int GSOPending { get; set; }
-        public int GSOApproved { get; set; }
-        public int GSOReject { get; set; }
-        public int MIPending { get; set; }
-        public int MIApproved { get; set; }
-        public int MIReject { get; set; }
-        public int HQPending { get; set; }
-        public int HQApproved { get; set; }
-        public int HQReject { get; set; }
-       
+        public int _2ndLevelPending { get; set; }
+        public int _2ndLevelApproved { get; set; }
+        public int _2ndLevelReject { get; set; }
+        public int _3rdLevelPending { get; set; }
+        public int _3rdLevelApproved { get; set; }
+        public int _3rdLevelReject { get; set; }
+        public int _4thLevelPending { get; set; }
+        public int _4thLevelApproved { get; set; }
+        public int _4thLevelReject { get; set; }
+        public int ExportPending { get; set; }
+        public int ExportApproved { get; set; }
+        public int ExportReject { get; set; }
+
     }
 }

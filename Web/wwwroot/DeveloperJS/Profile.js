@@ -65,6 +65,7 @@ $(document).ready(function () {
         $("#DeRegisterConfirmModal").modal('show');
     });
     $("#btnDeRegisterConfirmModalSubmit").on("click", function () {
+        $("#DeRegisterConfirmModal").modal('hide');
         $.ajax({
             url: '/UserProfile/DeRegisterUserId',
             contentType: 'application/x-www-form-urlencoded',
@@ -72,6 +73,15 @@ $(document).ready(function () {
             success: function (result) {
                 if (result == true) {
                     toastr.success('User successfully Unmapped');
+                    $.ajax({
+                        url: '/Account/Logout',
+                        contentType: 'application/x-www-form-urlencoded',
+                        type: 'POST',
+                        success: function () {
+                            window.location.href = "/Account/Logout";
+                        }
+                    });
+
                 }
                 else if (result == false) {
                     toastr.error('Incorrect Data!');

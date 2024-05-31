@@ -23,8 +23,15 @@ namespace DataAccessLayer
         {
             using (var connection = _contextDB2.CreateConnection())
             {
-                connection.Execute("INSERT INTO [dbo].[TrnMappingUnMapping_Log]([TDMId],[UserId],[DeregisterUserId],[IsActive],[Updatedby],[UpdatedOn]) VALUES (@AspNetUsersId,@UserId,@IP,@IsActive,@Updatedby,@UpdatedOn,@RoleId)", new { Data.TDMId, Data.UserId, Data.DeregisterUserId, Data.IsActive, Data.Updatedby, Data.UpdatedOn });
-                return Task.FromResult(true);
+                try
+                {
+                    connection.Execute("INSERT INTO [dbo].[TrnMappingUnMapping_Log]([TDMId],[UserId],[DeregisterUserId],[IsActive],[Updatedby],[UpdatedOn]) VALUES (@TDMId,@UserId,@DeregisterUserId,@IsActive,@Updatedby,@UpdatedOn)", new { Data.TDMId, Data.UserId, Data.DeregisterUserId, Data.IsActive, Data.Updatedby, Data.UpdatedOn });
+                    return Task.FromResult(true);
+                }
+                catch(Exception ex) {
+                    return Task.FromResult(false);
+                }
+
             }
         }
     }
