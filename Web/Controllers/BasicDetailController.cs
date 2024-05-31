@@ -1255,7 +1255,6 @@ namespace Web.Controllers
                 data.FromUserId = sessiondata.UserId;
                 data.UnitId = sessiondata.UnitId;
                 data.FromAspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-                data.FwdStatusId = 3;
                 data.IsComplete = false;
                 data.UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
                 data.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
@@ -1305,9 +1304,14 @@ namespace Web.Controllers
                 data.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                 data.IsActive = true;
                 data.TypeId= Convert.ToByte(data.TypeId);
+                if(data.TrnFwdId >0)
+                {
+                    await iTrnFwnBL.UpdateFieldBYTrnFwdId(data.TrnFwdId);
+                }
                 if(await iTrnFwnBL.UpdateAllBYRequestId(data.RequestId))
                 {
-                    data= await iTrnFwnBL.AddWithReturn(data);
+                    data.TrnFwdId = 0;
+                    data = await iTrnFwnBL.AddWithReturn(data);
                     return Ok(data);
                 }
                 else

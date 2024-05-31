@@ -33,14 +33,28 @@ namespace DataAccessLayer
 
         public async Task<bool> UpdateAllBYRequestId(int RequestId)
         {
-            string query = "";
             using (var connection = _contextDP.CreateConnection())
             {
                 connection.Execute("UPDATE TrnFwds set IsComplete=1 where RequestId=@RequestId", new { RequestId });
-               
-                return true;
-
+                return await Task.FromResult(true);
             }
+        }
+        public async Task<bool> UpdateFieldBYTrnFwdId(int TrnFwdId)
+        {
+            try
+            {
+                using (var connection = _contextDP.CreateConnection())
+                {
+                    connection.Execute("UPDATE TrnFwds set FwdStatusId=2 where TrnFwdId=@TrnFwdId and FwdStatusId != 3", new { TrnFwdId });
+                    return await Task.FromResult(true);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "TrnFwnDB->UpdateFieldBYTrnFwdId");
+                return false;
+            }
+
         }
         public async Task<bool?> SaveInternalFwd(DTOSaveInternalFwdRequest dTO)
         {
@@ -138,7 +152,7 @@ namespace DataAccessLayer
                         }
                     }
                     transaction.Commit();
-                    return true;
+                    return await Task.FromResult(true); ;
                 }
                 catch (Exception ex)
                 {

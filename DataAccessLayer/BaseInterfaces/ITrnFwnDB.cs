@@ -11,6 +11,7 @@ namespace DataAccessLayer.BaseInterfaces
     public interface ITrnFwnDB : IGenericRepositoryDL<MTrnFwd>
     {
         public Task<bool> UpdateAllBYRequestId(int RequestId);
+        public Task<bool> UpdateFieldBYTrnFwdId(int TrnFwdId);
         public Task<bool?> SaveInternalFwd(DTOSaveInternalFwdRequest dTO);
 
     }

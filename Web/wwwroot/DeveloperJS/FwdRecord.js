@@ -182,6 +182,8 @@ $(function () {
         $(".spnFname").html($(this).closest("tr").find(".PersName").html());
         $(".spnFarmyno").html($(this).closest("tr").find(".ServiceNo").html());
         $("#spnStepCounter").html($(this).closest("tr").find(".spnStepCounterId").html());
+        var spnTrnFwdId = $(this).closest("tr").find(".spnTrnFwdId").html();
+        $("#spnCurrentspnTrnFwdId").html(spnTrnFwdId);
         var spnRequestId = $(this).closest("tr").find(".spnRequestId").html();
         $("#spnCurrentspnRequestId").html(spnRequestId);
         spnStepId = $(this).closest("tr").find(".spnStepId").html();
@@ -557,6 +559,7 @@ function SaveInternalFwd() {
         "ToAspNetUsersId": $('#ddlfwdInternaloffrs').val(),
         "ToUserId": $("#spnFwdToInternalUsersId").html(),
         "Remark": $('#txtFRemarksInternal').val().length > 0 ? $('#txtFRemarksInternal').val() : null,
+        "FwdStatusId":4,
         "TypeId": 3,
         "RemarksIds": remarks,
     };
@@ -879,7 +882,7 @@ function ForwardTo(RequestId, HType) {
     var remarks = ""+$("#ddlRemarks").val()+"";
     var userdata =
     {
-        "TrnFwdId": 0,
+        "TrnFwdId": $("#spnCurrentspnTrnFwdId").html(),
         "RequestId": RequestId,
         "ToAspNetUsersId": $("#spnFwdToAspNetUsersId").html(),
         "ToUserId": $("#spnFwdToUsersId").html(),
@@ -889,6 +892,7 @@ function ForwardTo(RequestId, HType) {
         "Remark": $("#txtFRemarks").val(),
         "FwdStatusId": 1,
         "TypeId": HType,
+        "StepId": HType,
         "IsComplete": false,
         "RemarksIds": remarks,
     };
@@ -946,8 +950,9 @@ function RejecteTo(RequestId, HType) {
         // "ToUserId": $("#spnForwardTo").html(),
         /* "SusNo": $("#spnFwssusno").html(),*/
         "Remark": $("#txtFrejectedRemarks").val(),
-        "FwdStatusId": 2,
+        "FwdStatusId": 3,
         "TypeId": HType,
+        "StepId": HType,
         "IsComplete": false,
         "RemarksIds": remarks
     };

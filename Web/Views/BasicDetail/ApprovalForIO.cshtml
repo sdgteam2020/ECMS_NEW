@@ -125,8 +125,8 @@
                                         {
                                             <td>
                                                 <div class="custom-control custom-checkbox small">
-                                                    <input type="checkbox" class="custom-control-input" id="@item.TrnFwdId">
-                                                    <label class="custom-control-label" for="@item.TrnFwdId"></label>
+                                                    <input type="checkbox" class="custom-control-input" id="@item.IsTrnFwdId">
+                                                    <label class="custom-control-label" for="@item.IsTrnFwdId"></label>
                                                 </div>
                                             </td>
                                         }
@@ -146,6 +146,7 @@
 
                                                 <a asp-controller="BasicDetail" asp-action="View" asp-route-Id="@item.EncryptedId" class="btn btn-icon btn-round btn-primary mr-1"><i class="fa fa-print mt-2"></i></a>
                                                 <spna class="spnBasicDetailId d-none">@item.BasicDetailId</spna>
+                                                <spna class="spnTrnFwdId d-none">@item.IsTrnFwdId</spna>
                                                 <spna class="spnRequestId d-none">@item.RequestId</spna>
                                                 <spna class="spnStepCounterId d-none">@item.StepCounter</spna>
                                                 <spna class="spnStepId d-none">@item.StepId</spna>
