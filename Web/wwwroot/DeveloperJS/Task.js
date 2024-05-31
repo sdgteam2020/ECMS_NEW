@@ -38,58 +38,53 @@ function GetTaskIcardRequestCount(Id, applyForId) {
                 else {
                     if (applyForId == 1) {
                         if (Id == 1) {
-                            $(".IOPending").html(response.IOPending);
-                            $(".IOApproved").html(response.IOApproved);
-                            $(".IOReject").html(response.IOReject);
-                            $(".GSOPending").html(response.GSOPending);
-                            $(".GSOApproved").html(response.GSOApproved);
-                            $(".GSOReject").html(response.GSOReject);
-                            $(".MIPending").html(response.MIPending);
-                            $(".MIApproved").html(response.MIApproved);
-                            $(".MIReject").html(response.MIReject);
-                            $(".HQPending").html(response.HQPending);
-                            $(".HQApproved").html(response.HQApproved);
-                            $(".HQReject").html(response.HQReject);
+                            $("._2ndLevelPending").html(response._2ndLevelPending);
+                            $("._2ndLevelApproved").html(response._2ndLevelApproved);
+                            $("._2ndLevelReject").html(response._2ndLevelReject);
+                            $("._3rdLevelPending").html(response._3rdLevelPending);
+                            $("._3rdLevelApproved").html(response._3rdLevelApproved);
+                            $("._3rdLevelReject").html(response._3rdLevelReject);
+                            $("._4thLevelPending").html(response._4thLevelPending);
+                            $("._4thLevelApproved").html(response._4thLevelApproved);
+                            $("._4thLevelReject").html(response._4thLevelReject);
+                            $(".ExportPending").html(response.ExportPending);
+                            $(".ExportApproved").html(response.ExportApproved);
+                            $(".ExportReject").html(response.ExportReject);
                         }
                         else if (Id == 2) {
-                            $("#IOPending").html(response.IOPending);
-                            $("#IOApproved").html(response.IOApproved);
-                            $("#IOReject").html(response.IOReject);
-                            $("#GSOPending").html(response.GSOPending);
-                            $("#GSOApproved").html(response.GSOApproved);
-                            $("#GSOReject").html(response.GSOReject);
-                            $("#MIPending").html(response.MIPending);
-                            $("#MIApproved").html(response.MIApproved);
-                            $("#MIReject").html(response.MIReject);
-                            $("#HQPending").html(response.HQPending);
-                            $("#HQApproved").html(response.HQApproved);
-                            $("#HQReject").html(response.HQReject);
+                            $("#_2ndLevelPending").html(response._2ndLevelPending);
+                            $("#_2ndLevelApproved").html(response._2ndLevelApproved);
+                            $("#_2ndLevelReject").html(response._2ndLevelReject);
+                            $("#_3rdLevelPending").html(response._3rdLevelPending);
+                            $("#_3rdLevelApproved").html(response._3rdLevelApproved);
+                            $("#_3rdLevelReject").html(response._3rdLevelReject);
+                            $("#_4thLevelPending").html(response._4thLevelPending);
+                            $("#_4thLevelApproved").html(response._4thLevelApproved);
+                            $("#_4thLevelReject").html(response._4thLevelReject);
+                            $("#ExportPending").html(response.ExportPending);
+                            $("#ExportApproved").html(response.ExportApproved);
+                            $("#ExportReject").html(response.ExportReject);
                         }
                     } else {
                         if (Id == 1) {
-                            $(".COPending").html(response.IOPending);
-                            $(".COApproved").html(response.IOApproved);
-                            $(".COReject").html(response.IOReject);
-                            $(".DIDPending").html(response.GSOPending);
-                            $(".DIDApproved").html(response.GSOApproved);
-                            $(".DIDReject").html(response.GSOReject);
-                            //$(".MIPending").html(response.MIPending);
-                            //$(".MIApproved").html(response.MIApproved);
-                            //$(".MIReject").html(response.MIReject);
-                            $(".ExportPending").html(response.MIPending);
-                            $(".ExportApproved").html(response.MIApproved);
-                            $(".ExportReject").html(response.MIReject);
+                            $(".COPending").html(response._2ndLevelPending);
+                            $(".COApproved").html(response._2ndLevelApproved);
+                            $(".COReject").html(response._2ndLevelReject);
+                            $(".DIDPending").html(response._3rdLevelPending);
+                            $(".DIDApproved").html(response._3rdLevelReject);
+                            $(".DIDReject").html(response._3rdLevelReject);
+                            $(".ExportPending").html(response.ExportPending);
+                            $(".ExportApproved").html(response.ExportApproved);
                         }
                         else if (Id == 2) {
-                            $("#COPending").html(response.IOPending);
-                            $("#COApproved").html(response.IOApproved);
-                            $("#COReject").html(response.IOReject);
-                            $("#DIDPending").html(response.GSOPending);
-                            $("#DIDApproved").html(response.GSOApproved);
-                            $("#DIDReject").html(response.GSOReject);                      
-                            $("#ExportPending").html(response.MIPending);
-                            $("#ExportApproved").html(response.MIApproved);
-                            $("#ExportReject").html(response.MIReject);
+                            $("#COPending").html(response._2ndLevelPending);
+                            $("#COApproved").html(response._2ndLevelApproved);
+                            $("#COReject").html(response._2ndLevelReject);
+                            $("#DIDPending").html(response._3rdLevelPending);
+                            $("#DIDApproved").html(response._3rdLevelApproved);
+                            $("#DIDReject").html(response._3rdLevelReject);                      
+                            $("#ExportPending").html(response.ExportPending);
+                            $("#ExportApproved").html(response.ExportPending);
                         }
                     }
                 }
@@ -106,8 +101,3 @@ function GetTaskIcardRequestCount(Id, applyForId) {
     });
 
 }
-
-
-
-
-

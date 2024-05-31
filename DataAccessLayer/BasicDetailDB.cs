@@ -160,8 +160,189 @@ namespace DataAccessLayer
         }
 
         public async Task<List<BasicDetailVM>> GetALLForIcardSttaus(int UserId, int stepcount, int TypeId, int apply)
-        { 
-            //var BasicDetailList = _context.BasicDetails.Where(x => x.IsDeleted == false && x.Updatedby == UserId).ToList();
+        {
+            #region old code write by kapoor sir
+            //int? applyfor = 0;
+            //if (apply == 0) applyfor = null; else applyfor = apply;
+
+            //string query = "";
+
+            //if (stepcount == 0)//////For all record
+            //{
+            //    query = "SELECT B.UnitId,B.BasicDetailId,B.Name,B.ServiceNo,B.DOB,B.DateOfCommissioning,C.StepId StepCounter,C.Id StepId,ty.Name ICardType,trnicrd.RequestId,fwd.Remark,ISNULL(fwd.FwdStatusId,0) IsFwdStatusId,Afor.Name ApplyFor,Afor.ApplyForId ,trnicrd.TrackingId,ran.RankAbbreviation RankName,ISNULL(Postout.Id,0) IsPosting FROM BasicDetails B " +
+            //            "inner join MRank ran on ran.RankId=B.RankId " +
+            //            "inner join TrnICardRequest trnicrd on trnicrd.BasicDetailId = B.BasicDetailId " +
+            //            "inner join MApplyFor Afor on Afor.ApplyForId = B.ApplyForId " +
+            //            "inner join TrnStepCounter C on trnicrd.RequestId = C.RequestId " +
+            //            "inner join MICardType ty on ty.TypeId = trnicrd.TypeId " +
+            //            "inner join TrnDomainMapping map on map.Id= trnicrd.TrnDomainMappingId " +
+            //            "inner join UserProfile pr on pr.UserId = map.UserId " +
+            //            "left join TrnFwds fwd on fwd.ToAspNetUsersId= map.AspNetUsersId and fwd.IsComplete=0 and fwd.RequestId=trnicrd.RequestId " +
+            //            "left join MTrnFwdStatus mtrnfwdstatus on mtrnfwdstatus.FwdStatusId = fwd.FwdStatusId " +
+            //            "left join TrnPostingOut Postout on Postout.RequestId=trnicrd.RequestId and trnicrd.Status=0 " +
+            //            "WHERE map.AspNetUsersId = @UserId and Afor.ApplyForId=ISNULL(@applyfor,Afor.ApplyForId) ORDER BY B.UpdatedOn DESC";
+
+            //}
+            //else if (stepcount == 1)//////For Draft
+            //{
+            //    query = "SELECT B.UnitId,B.BasicDetailId,B.Name,B.ServiceNo,B.DOB,B.DateOfCommissioning,C.StepId StepCounter,C.Id StepId,ty.Name ICardType,trnicrd.RequestId,fwd.Remark,ISNULL(fwd.FwdStatusId,0) IsFwdStatusId,Afor.Name ApplyFor,Afor.ApplyForId ,trnicrd.TrackingId,ran.RankAbbreviation RankName,ISNULL(Postout.Id,0) IsPosting FROM BasicDetails B " +
+            //            "inner join MRank ran on ran.RankId=B.RankId " +
+            //            "inner join TrnICardRequest trnicrd on trnicrd.BasicDetailId = B.BasicDetailId " +
+            //            "inner join MApplyFor Afor on Afor.ApplyForId = B.ApplyForId " +
+            //            "inner join TrnStepCounter C on trnicrd.RequestId = C.RequestId " +
+            //            "inner join MICardType ty on ty.TypeId = trnicrd.TypeId " +
+            //            "inner join TrnDomainMapping map on map.Id= trnicrd.TrnDomainMappingId " +
+            //            "inner join UserProfile pr on pr.UserId = map.UserId " +
+            //            "left join TrnFwds fwd on fwd.ToAspNetUsersId= map.AspNetUsersId and fwd.IsComplete=0 and fwd.RequestId=trnicrd.RequestId " +
+            //            "left join MTrnFwdStatus mtrnfwdstatus on mtrnfwdstatus.FwdStatusId = fwd.FwdStatusId " +
+            //            "left join TrnPostingOut Postout on Postout.RequestId=trnicrd.RequestId and trnicrd.Status=0 " +
+            //            "WHERE map.AspNetUsersId = @UserId and Afor.ApplyForId=ISNULL(@applyfor,Afor.ApplyForId) and trnicrd.Status=0  and C.StepId = @stepcount  ORDER BY B.UpdatedOn DESC";
+
+            //}
+            //else if (stepcount == 777)//////For Completed   
+            //{
+            //    query = "SELECT B.UnitId,B.BasicDetailId,B.Name,B.ServiceNo,B.DOB,B.DateOfCommissioning,C.StepId StepCounter,C.Id StepId,ty.Name ICardType,trnicrd.RequestId,fwd.Remark,ISNULL(fwd.FwdStatusId,0) IsFwdStatusId,Afor.Name ApplyFor,Afor.ApplyForId ,trnicrd.TrackingId,ran.RankAbbreviation RankName,ISNULL(Postout.Id,0) IsPosting FROM BasicDetails B " +
+            //            " inner join MRank ran on ran.RankId=B.RankId " +
+            //            "inner join TrnICardRequest trnicrd on trnicrd.BasicDetailId = B.BasicDetailId " +
+            //            "inner join MApplyFor Afor on Afor.ApplyForId = B.ApplyForId " +
+            //            "inner join TrnStepCounter C on trnicrd.RequestId = C.RequestId " +
+            //            "inner join MICardType ty on ty.TypeId = trnicrd.TypeId " +
+            //            "inner join TrnDomainMapping map on map.Id= trnicrd.TrnDomainMappingId " +
+            //            "inner join UserProfile pr on pr.UserId = map.UserId " +
+            //            "left join TrnFwds fwd on fwd.ToAspNetUsersId= map.AspNetUsersId and fwd.IsComplete=0 and fwd.RequestId=trnicrd.RequestId " +
+            //            "left join MTrnFwdStatus mtrnfwdstatus on mtrnfwdstatus.FwdStatusId = fwd.FwdStatusId " +
+            //            "left join TrnPostingOut Postout on Postout.RequestId=trnicrd.RequestId and trnicrd.Status=0 " +
+            //            "WHERE map.AspNetUsersId = @UserId and Afor.ApplyForId=ISNULL(@applyfor,Afor.ApplyForId) and trnicrd.Status = 1  ORDER BY B.UpdatedOn DESC";
+
+            //}
+            //else if (stepcount == 888)//////For Submitted
+            //{
+            //    query = "SELECT B.UnitId,B.BasicDetailId,B.Name,B.ServiceNo,B.DOB,B.DateOfCommissioning,C.StepId StepCounter,C.Id StepId,ty.Name ICardType,trnicrd.RequestId,fwd.Remark,ISNULL(fwd.FwdStatusId,0) IsFwdStatusId,Afor.Name ApplyFor,Afor.ApplyForId ,trnicrd.TrackingId,ran.RankAbbreviation RankName,ISNULL(Postout.Id,0) IsPosting FROM BasicDetails B " +
+            //            "inner join MRank ran on ran.RankId=B.RankId " +
+            //            "inner join TrnICardRequest trnicrd on trnicrd.BasicDetailId = B.BasicDetailId and trnicrd.Status=0 " +
+            //            "inner join MApplyFor Afor on Afor.ApplyForId = B.ApplyForId " +
+            //            "inner join TrnStepCounter C on trnicrd.RequestId = C.RequestId " +
+            //            "inner join MICardType ty on ty.TypeId = trnicrd.TypeId " +
+            //            "inner join TrnDomainMapping map on map.Id= trnicrd.TrnDomainMappingId " +
+            //            "inner join UserProfile pr on pr.UserId = map.UserId " +
+            //            "left join TrnFwds fwd on fwd.ToAspNetUsersId= map.AspNetUsersId and fwd.IsComplete=0 and fwd.RequestId=trnicrd.RequestId " +
+            //            "left join MTrnFwdStatus mtrnfwdstatus on mtrnfwdstatus.FwdStatusId = fwd.FwdStatusId " +
+            //            "left join TrnPostingOut Postout on Postout.RequestId=trnicrd.RequestId  " +
+            //            "WHERE map.AspNetUsersId = @UserId and Afor.ApplyForId=ISNULL(@applyfor,Afor.ApplyForId) and C.StepId > 1  ORDER BY B.UpdatedOn DESC";
+
+            //}
+            //else if (stepcount == 5)
+            //{
+            //    query = " SELECT distinct B.UnitId,B.BasicDetailId,B.Name,B.ServiceNo,B.DOB,B.DateOfCommissioning,C.StepId StepCounter,C.Id StepId,ty.TypeId,ty.name ICardType,trnicrd.RequestId, ISNULL(fwd.FwdStatusId,0) IsFwdStatusId, Afor.Name ApplyFor,Afor.ApplyForId ,trnicrd.TrackingId,ran.RankAbbreviation RankName,ISNULL(Postout.Id,0) IsPosting" +
+            //            " FROM BasicDetails B" +
+            //            " inner join MRank ran on ran.RankId=B.RankId" +
+            //            " inner join TrnICardRequest trnicrd on trnicrd.BasicDetailId = B.BasicDetailId" +
+            //            " inner join MApplyFor Afor on Afor.ApplyForId = B.ApplyForId " +
+            //            " inner join TrnStepCounter C on trnicrd.RequestId = C.RequestId" +
+            //            " inner join MICardType ty on ty.TypeId = trnicrd.TypeId" +
+            //            " left join TrnPostingOut Postout on Postout.RequestId=trnicrd.RequestId and trnicrd.Status=1 " +
+            //            " inner join TrnFwds fwd on fwd.RequestId = trnicrd.RequestId and fwd.FromAspNetUsersId = @UserId and Afor.ApplyForId=ISNULL(@applyfor,Afor.ApplyForId) and C.StepId = @stepcount where trnicrd.Status=1" +
+            //            " inner join MTrnFwdStatus mtrnfwdstatus on mtrnfwdstatus.FwdStatusId = fwd.FwdStatusId ";
+            //}
+
+            //else if (stepcount == 2 || stepcount == 3 || stepcount == 4 || stepcount == 5 || stepcount == 6)//IO
+            //{
+            //    //if(TypeId==2)
+            //    {
+            //        query = " SELECT distinct B.UnitId,B.BasicDetailId,B.Name,B.ServiceNo,B.DOB,B.DateOfCommissioning,C.StepId StepCounter,C.Id StepId,ty.TypeId,ty.name ICardType,trnicrd.RequestId, ISNULL(fwd.FwdStatusId,0) IsFwdStatusId ,Afor.Name ApplyFor,Afor.ApplyForId ,trnicrd.TrackingId,ran.RankAbbreviation RankName,ISNULL(Postout.Id,0) IsPosting" +
+            //                " FROM BasicDetails B" +
+            //                " inner join MRank ran on ran.RankId=B.RankId" +
+            //                " inner join TrnICardRequest trnicrd on trnicrd.BasicDetailId = B.BasicDetailId" +
+            //                " inner join MApplyFor Afor on Afor.ApplyForId = B.ApplyForId " +
+            //                " inner join TrnStepCounter C on trnicrd.RequestId = C.RequestId" +
+            //                " inner join MICardType ty on ty.TypeId = trnicrd.TypeId" +
+            //                " left join TrnPostingOut Postout on Postout.RequestId=trnicrd.RequestId and trnicrd.Status=0 " +
+            //                " inner join TrnFwds fwd on fwd.RequestId = trnicrd.RequestId and fwd.FromAspNetUsersId = @UserId and Afor.ApplyForId=ISNULL(@applyfor,Afor.ApplyForId) and C.StepId = @stepcount where trnicrd.Status=0" +
+            //                " inner join MTrnFwdStatus mtrnfwdstatus on mtrnfwdstatus.FwdStatusId = fwd.FwdStatusId ";
+            //    }
+            //    //    else if (TypeId == 3)
+            //    //    {
+            //    //        query = " SELECT distinct B.BasicDetailId,B.Name,B.ServiceNo,B.DOB,B.DateOfCommissioning,C.StepId StepCounter,C.Id StepId,ty.TypeId,ty.name ICardType,trnicrd.RequestId ,Afor.Name ApplyFor,Afor.ApplyForId ,trnicrd.TrackingId,ran.RankAbbreviation RankName,ISNULL(Postout.Id,0) IsPosting" +
+            //    //" FROM BasicDetails B" +
+            //    //" inner join MRank ran on ran.RankId=B.RankId" +
+            //    //" inner join TrnICardRequest trnicrd on trnicrd.BasicDetailId = B.BasicDetailId" +
+            //    //" inner join MApplyFor Afor on Afor.ApplyForId = B.ApplyForId " +
+            //    //" inner join TrnStepCounter C on trnicrd.RequestId = C.RequestId" +
+            //    //" inner join MICardType ty on ty.TypeId = trnicrd.TypeId" +
+            //    //" left join TrnPostingOut Postout on Postout.RequestId=trnicrd.RequestId and trnicrd.Status=0 " +
+            //    //" inner join TrnFwds fwd on fwd.RequestId = trnicrd.RequestId and fwd.FromAspNetUsersId = @UserId and Afor.ApplyForId=ISNULL(@applyfor,Afor.ApplyForId) and C.StepId = @stepcount where trnicrd.Status=0";
+            //    //    }
+
+
+            //}
+            //else if (stepcount == 7 || stepcount == 8 || stepcount == 9 || stepcount == 10)//Reject From IO
+            //{
+
+            //    query = "SELECT distinct B.UnitId,B.BasicDetailId,B.Name,B.ServiceNo,B.DOB,B.DateOfCommissioning,C.StepId StepCounter,C.Id StepId,ty.TypeId,ty.name ICardType,trnicrd.RequestId, ISNULL(fwd.FwdStatusId,0) IsFwdStatusId, Afor.Name ApplyFor,Afor.ApplyForId,trnicrd.TrackingId,ran.RankAbbreviation RankName,ISNULL(Postout.Id,0) IsPosting" +
+            //            " FROM BasicDetails B" +
+            //            " inner join MRank ran on ran.RankId=B.RankId" +
+            //            " inner join TrnICardRequest trnicrd on trnicrd.BasicDetailId = B.BasicDetailId" +
+            //            " inner join MApplyFor Afor on Afor.ApplyForId = B.ApplyForId " +
+            //            " inner join TrnStepCounter C on trnicrd.RequestId = C.RequestId" +
+            //            " inner join MICardType ty on ty.TypeId = trnicrd.TypeId" +
+            //            " left join TrnPostingOut Postout on Postout.RequestId=trnicrd.RequestId and trnicrd.Status=0 " +
+            //            " inner join TrnFwds fwd on fwd.RequestId = trnicrd.RequestId and fwd.ToAspNetUsersId = @UserId and Afor.ApplyForId=ISNULL(@applyfor,Afor.ApplyForId) and fwd.Status=0 and C.StepId = @stepcount where trnicrd.Status=0" +
+            //            " inner join MTrnFwdStatus mtrnfwdstatus on mtrnfwdstatus.FwdStatusId = fwd.FwdStatusId ";
+            //}
+            //else if (stepcount == 999)//Reject From IO,MI11 and HQ 54
+            //{
+
+            //    query = "SELECT distinct B.UnitId,B.BasicDetailId,B.Name,B.ServiceNo,B.DOB,B.DateOfCommissioning,C.StepId StepCounter,C.Id StepId,ty.TypeId,ty.name ICardType,trnicrd.RequestId, ISNULL(fwd.FwdStatusId,0) IsFwdStatusId ,Afor.Name ApplyFor,Afor.ApplyForId,trnicrd.TrackingId,ran.RankAbbreviation RankName,ISNULL(Postout.Id,0) IsPosting" +
+            //            " FROM BasicDetails B" +
+            //            " inner join MRank ran on ran.RankId=B.RankId" +
+            //            " inner join TrnICardRequest trnicrd on trnicrd.BasicDetailId = B.BasicDetailId" +
+            //            " inner join MApplyFor Afor on Afor.ApplyForId = B.ApplyForId " +
+            //            " inner join TrnStepCounter C on trnicrd.RequestId = C.RequestId" +
+            //            " inner join MICardType ty on ty.TypeId = trnicrd.TypeId" +
+            //            " left join TrnPostingOut Postout on Postout.RequestId=trnicrd.RequestId and trnicrd.Status=0 " +
+            //            " inner join TrnFwds fwd on fwd.RequestId = trnicrd.RequestId and fwd.ToAspNetUsersId = @UserId and Afor.ApplyForId=ISNULL(@applyfor,Afor.ApplyForId) and fwd.Status=0 and C.StepId in (7,8,9,10) where trnicrd.Status=0" +
+            //            " inner join MTrnFwdStatus mtrnfwdstatus on mtrnfwdstatus.FwdStatusId = fwd.FwdStatusId ";
+            //}
+
+            //else if (stepcount == 4)///MI-11
+            //{
+            //    query = "SELECT B.BasicDetailId,B.Name,B.ServiceNo,B.DOB,B.DateOfCommissioning,C.Step StepCounter,C.Id StepId,ty.Name ICardType,trnicrd.RequestId ,Afor.Name ApplyFor,Afor.ApplyForId,trnicrd.TrackingId" +
+            //                "FROM BasicDetails B " +
+            //                "inner join TrnICardRequest trnicrd on trnicrd.BasicDetailId = B.BasicDetailId " +
+            //                " inner join MApplyFor Afor on Afor.ApplyForId = B.ApplyForId " +
+            //                "inner join TrnStepCounter C on trnicrd.RequestId = C.RequestId " +
+            //                "inner join MICardType ty on ty.TypeId = trnicrd.TypeId inner join UserProfile pro on pro.ArmyNo = B.ServiceNo " +
+            //                "inner join MMappingProfile mpro on mpro.UserId = pro.UserId " +
+            //                "inner join TrnFwds FWD ON FWD.RequestId = c.RequestId " +
+            //                "inner join MUnit mUNI ON mUNI.UnitId = FWD.SusNo " +
+            //                "WHERE mUNI.UnitId = @UserId and trnicrd.Status=0 AND C.Step = @stepcount ORDER BY B.UpdatedOn DESC";
+            //}
+            //else if (stepcount == 5)///Hq-54
+            //{
+            //    query = "SELECT B.BasicDetailId,B.Name,B.ServiceNo,B.DOB,B.DateOfCommissioning,C.Step StepCounter,C.Id StepId,ty.Name ICardType,trnicrd.RequestId ,Afor.Name ApplyFor,Afor.ApplyForId,trnicrd.TrackingId FROM BasicDetails B " +
+            //               "inner join TrnICardRequest trnicrd on trnicrd.BasicDetailId = B.BasicDetailId " +
+            //               " inner join MApplyFor Afor on Afor.ApplyForId = B.ApplyForId " +
+            //               "inner join TrnStepCounter C on trnicrd.RequestId = C.RequestId " +
+            //               "inner join MICardType ty on ty.TypeId = trnicrd.TypeId " +
+            //               "inner join UserProfile pro on pro.ArmyNo=B.ServiceNo " +
+            //               "inner join TrnFwds FWD ON FWD.RequestId = c.RequestId " +
+            //               "inner join MMappingProfile mpro on mpro.UserId = pro.UserId" +
+            //               " WHERE FWD.ToUserId = @UserId and trnicrd.Status=0 and C.Step = 5 ORDER BY B.UpdatedOn DESC";
+            //}
+
+            //else if (stepcount == 33)//Reject From GsO
+            //{
+            //    stepcount = 1;
+            //    query = "SELECT distinct B.BasicDetailId,B.Name,B.ServiceNo,B.DOB,B.DateOfCommissioning,C.StepId StepCounter,C.Id StepId,ty.TypeId,ty.name ICardType,trnicrd.RequestId ,Afor.Name ApplyFor,Afor.ApplyForId,trnicrd.TrackingId" +
+            //    " FROM BasicDetails B" +
+            //    " inner join TrnICardRequest trnicrd on trnicrd.BasicDetailId = B.BasicDetailId" +
+            //    " inner join MApplyFor Afor on Afor.ApplyForId = B.ApplyForId " +
+            //    " inner join TrnStepCounter C on trnicrd.RequestId = C.RequestId" +
+            //    " inner join MICardType ty on ty.TypeId = trnicrd.TypeId" +
+            //    " inner join TrnFwds fwd on fwd.RequestId = trnicrd.RequestId and fwd.ToAspNetUsersId = @UserId and fwd.TypeId=@TypeId and C.StepId = @stepcount and trnicrd.Status=0";
+            //}
+            #endregion end old code write by kapoor sir
+
             int? applyfor = 0;
             if (apply == 0) applyfor = null; else applyfor = apply;
 
@@ -183,7 +364,7 @@ namespace DataAccessLayer
                         "WHERE map.AspNetUsersId = @UserId and Afor.ApplyForId=ISNULL(@applyfor,Afor.ApplyForId) ORDER BY B.UpdatedOn DESC";
 
             }
-           else if (stepcount == 1)//////For Draft
+            else if (stepcount == 1)//////For Draft
             {
                 query = "SELECT B.UnitId,B.BasicDetailId,B.Name,B.ServiceNo,B.DOB,B.DateOfCommissioning,C.StepId StepCounter,C.Id StepId,ty.Name ICardType,trnicrd.RequestId,fwd.Remark,ISNULL(fwd.FwdStatusId,0) IsFwdStatusId,Afor.Name ApplyFor,Afor.ApplyForId ,trnicrd.TrackingId,ran.RankAbbreviation RankName,ISNULL(Postout.Id,0) IsPosting FROM BasicDetails B " +
                         "inner join MRank ran on ran.RankId=B.RankId " +
@@ -241,8 +422,9 @@ namespace DataAccessLayer
                         " inner join TrnStepCounter C on trnicrd.RequestId = C.RequestId" +
                         " inner join MICardType ty on ty.TypeId = trnicrd.TypeId" +
                         " left join TrnPostingOut Postout on Postout.RequestId=trnicrd.RequestId and trnicrd.Status=1 " +
-                        " inner join TrnFwds fwd on fwd.RequestId = trnicrd.RequestId and fwd.FromAspNetUsersId = @UserId and Afor.ApplyForId=ISNULL(@applyfor,Afor.ApplyForId) and C.StepId = @stepcount where trnicrd.Status=1" +
-                        " inner join MTrnFwdStatus mtrnfwdstatus on mtrnfwdstatus.FwdStatusId = fwd.FwdStatusId ";
+                        " inner join TrnFwds fwd on fwd.RequestId = trnicrd.RequestId and fwd.FromAspNetUsersId = @UserId and Afor.ApplyForId=ISNULL(@applyfor,Afor.ApplyForId) and C.StepId = @stepcount " +
+                        " inner join MTrnFwdStatus mtrnfwdstatus on mtrnfwdstatus.FwdStatusId = fwd.FwdStatusId " +
+                        " where trnicrd.Status=1 ";
             }
 
             else if (stepcount == 2 || stepcount == 3 || stepcount == 4 || stepcount == 5 || stepcount == 6)//IO
@@ -257,8 +439,9 @@ namespace DataAccessLayer
                             " inner join TrnStepCounter C on trnicrd.RequestId = C.RequestId" +
                             " inner join MICardType ty on ty.TypeId = trnicrd.TypeId" +
                             " left join TrnPostingOut Postout on Postout.RequestId=trnicrd.RequestId and trnicrd.Status=0 " +
-                            " inner join TrnFwds fwd on fwd.RequestId = trnicrd.RequestId and fwd.FromAspNetUsersId = @UserId and Afor.ApplyForId=ISNULL(@applyfor,Afor.ApplyForId) and C.StepId = @stepcount where trnicrd.Status=0" +
-                            " inner join MTrnFwdStatus mtrnfwdstatus on mtrnfwdstatus.FwdStatusId = fwd.FwdStatusId ";
+                            " inner join TrnFwds fwd on fwd.RequestId = trnicrd.RequestId and fwd.FromAspNetUsersId = @UserId and Afor.ApplyForId=ISNULL(@applyfor,Afor.ApplyForId) and C.StepId = @stepcount " +
+                            " inner join MTrnFwdStatus mtrnfwdstatus on mtrnfwdstatus.FwdStatusId = fwd.FwdStatusId " +
+                            " where trnicrd.Status=0 ";
                 }
             //    else if (TypeId == 3)
             //    {
@@ -277,7 +460,7 @@ namespace DataAccessLayer
             }
             else if (stepcount == 7 || stepcount == 8 || stepcount == 9 || stepcount == 10 )//Reject From IO
             {
-               
+
                 query = "SELECT distinct B.UnitId,B.BasicDetailId,B.Name,B.ServiceNo,B.DOB,B.DateOfCommissioning,C.StepId StepCounter,C.Id StepId,ty.TypeId,ty.name ICardType,trnicrd.RequestId, ISNULL(fwd.FwdStatusId,0) IsFwdStatusId, Afor.Name ApplyFor,Afor.ApplyForId,trnicrd.TrackingId,ran.RankAbbreviation RankName,ISNULL(Postout.Id,0) IsPosting" +
                         " FROM BasicDetails B" +
                         " inner join MRank ran on ran.RankId=B.RankId" +
@@ -286,8 +469,9 @@ namespace DataAccessLayer
                         " inner join TrnStepCounter C on trnicrd.RequestId = C.RequestId" +
                         " inner join MICardType ty on ty.TypeId = trnicrd.TypeId" +
                         " left join TrnPostingOut Postout on Postout.RequestId=trnicrd.RequestId and trnicrd.Status=0 " +
-                        " inner join TrnFwds fwd on fwd.RequestId = trnicrd.RequestId and fwd.ToAspNetUsersId = @UserId and Afor.ApplyForId=ISNULL(@applyfor,Afor.ApplyForId) and fwd.Status=0 and C.StepId = @stepcount where trnicrd.Status=0" +
-                        " inner join MTrnFwdStatus mtrnfwdstatus on mtrnfwdstatus.FwdStatusId = fwd.FwdStatusId ";
+                        " inner join TrnFwds fwd on fwd.RequestId = trnicrd.RequestId and fwd.ToAspNetUsersId = @UserId and Afor.ApplyForId=ISNULL(@applyfor,Afor.ApplyForId) and fwd.FwdStatusId=3 and C.StepId = @stepcount " +
+                        " inner join MTrnFwdStatus mtrnfwdstatus on mtrnfwdstatus.FwdStatusId = fwd.FwdStatusId " +
+                        " where trnicrd.Status=0 ";
             }
             else if (stepcount == 999)//Reject From IO,MI11 and HQ 54
             {
@@ -300,80 +484,49 @@ namespace DataAccessLayer
                         " inner join TrnStepCounter C on trnicrd.RequestId = C.RequestId" +
                         " inner join MICardType ty on ty.TypeId = trnicrd.TypeId" +
                         " left join TrnPostingOut Postout on Postout.RequestId=trnicrd.RequestId and trnicrd.Status=0 " +
-                        " inner join TrnFwds fwd on fwd.RequestId = trnicrd.RequestId and fwd.ToAspNetUsersId = @UserId and Afor.ApplyForId=ISNULL(@applyfor,Afor.ApplyForId) and fwd.Status=0 and C.StepId in (7,8,9,10) where trnicrd.Status=0" +
-                        " inner join MTrnFwdStatus mtrnfwdstatus on mtrnfwdstatus.FwdStatusId = fwd.FwdStatusId ";
+                        " inner join TrnFwds fwd on fwd.RequestId = trnicrd.RequestId and fwd.ToAspNetUsersId = @UserId and Afor.ApplyForId=ISNULL(@applyfor,Afor.ApplyForId) and fwd.Status=0 and C.StepId in (7,8,9,10) " +
+                        " inner join MTrnFwdStatus mtrnfwdstatus on mtrnfwdstatus.FwdStatusId = fwd.FwdStatusId "+
+                        " where trnicrd.Status=0";
             }
-
-            //else if (stepcount == 4)///MI-11
-            //{
-            //    query = "SELECT B.BasicDetailId,B.Name,B.ServiceNo,B.DOB,B.DateOfCommissioning,C.Step StepCounter,C.Id StepId,ty.Name ICardType,trnicrd.RequestId ,Afor.Name ApplyFor,Afor.ApplyForId,trnicrd.TrackingId" +
-            //                "FROM BasicDetails B " +
-            //                "inner join TrnICardRequest trnicrd on trnicrd.BasicDetailId = B.BasicDetailId " +
-            //                " inner join MApplyFor Afor on Afor.ApplyForId = B.ApplyForId " +
-            //                "inner join TrnStepCounter C on trnicrd.RequestId = C.RequestId " +
-            //                "inner join MICardType ty on ty.TypeId = trnicrd.TypeId inner join UserProfile pro on pro.ArmyNo = B.ServiceNo " +
-            //                "inner join MMappingProfile mpro on mpro.UserId = pro.UserId " +
-            //                "inner join TrnFwds FWD ON FWD.RequestId = c.RequestId " +
-            //                "inner join MUnit mUNI ON mUNI.UnitId = FWD.SusNo " +
-            //                "WHERE mUNI.UnitId = @UserId and trnicrd.Status=0 AND C.Step = @stepcount ORDER BY B.UpdatedOn DESC";
-            //}
-            //else if (stepcount == 5)///Hq-54
-            //{
-            //    query = "SELECT B.BasicDetailId,B.Name,B.ServiceNo,B.DOB,B.DateOfCommissioning,C.Step StepCounter,C.Id StepId,ty.Name ICardType,trnicrd.RequestId ,Afor.Name ApplyFor,Afor.ApplyForId,trnicrd.TrackingId FROM BasicDetails B " +
-            //               "inner join TrnICardRequest trnicrd on trnicrd.BasicDetailId = B.BasicDetailId " +
-            //               " inner join MApplyFor Afor on Afor.ApplyForId = B.ApplyForId " +
-            //               "inner join TrnStepCounter C on trnicrd.RequestId = C.RequestId " +
-            //               "inner join MICardType ty on ty.TypeId = trnicrd.TypeId " +
-            //               "inner join UserProfile pro on pro.ArmyNo=B.ServiceNo " +
-            //               "inner join TrnFwds FWD ON FWD.RequestId = c.RequestId " +
-            //               "inner join MMappingProfile mpro on mpro.UserId = pro.UserId" +
-            //               " WHERE FWD.ToUserId = @UserId and trnicrd.Status=0 and C.Step = 5 ORDER BY B.UpdatedOn DESC";
-            //}
-
-            //else if (stepcount == 33)//Reject From GsO
-            //{
-            //    stepcount = 1;
-            //    query = "SELECT distinct B.BasicDetailId,B.Name,B.ServiceNo,B.DOB,B.DateOfCommissioning,C.StepId StepCounter,C.Id StepId,ty.TypeId,ty.name ICardType,trnicrd.RequestId ,Afor.Name ApplyFor,Afor.ApplyForId,trnicrd.TrackingId" +
-            //    " FROM BasicDetails B" +
-            //    " inner join TrnICardRequest trnicrd on trnicrd.BasicDetailId = B.BasicDetailId" +
-            //    " inner join MApplyFor Afor on Afor.ApplyForId = B.ApplyForId " +
-            //    " inner join TrnStepCounter C on trnicrd.RequestId = C.RequestId" +
-            //    " inner join MICardType ty on ty.TypeId = trnicrd.TypeId" +
-            //    " inner join TrnFwds fwd on fwd.RequestId = trnicrd.RequestId and fwd.ToAspNetUsersId = @UserId and fwd.TypeId=@TypeId and C.StepId = @stepcount and trnicrd.Status=0";
-            //}
-            using (var connection = _contextDP.CreateConnection())
+            try
             {
-                var BasicDetailList = await connection.QueryAsync<BasicDetailVM>(query, new { UserId, stepcount, TypeId,applyfor });
-                //List<MRegistration> RegistrationList = await _context.MRegistration.ToListAsync();
-                int sno = 1;
-                var allrecord = (from e in BasicDetailList
-                                 select new BasicDetailVM()
-                                 {
-                                     BasicDetailId = e.BasicDetailId,
-                                     EncryptedId = protector.Protect(e.BasicDetailId.ToString()),
-                                     Sno = sno++,
-                                     Name = e.Name,
-                                     ServiceNo = e.ServiceNo,
-                                     DOB = e.DOB,
-                                     DateOfCommissioning = e.DateOfCommissioning,
-                                     PermanentAddress = e.PermanentAddress,
-                                     StepCounter = e.StepCounter,
-                                     StepId = e.StepId,
-                                     ICardType = e.ICardType,
-                                     ApplyFor=e.ApplyFor,
-                                     ApplyForId=e.ApplyForId,
-                                     RequestId = e.RequestId,
-                                     IsFwdStatusId = e.IsFwdStatusId,
-                                     Remark = e.Remark,
-                                     TrackingId=e.TrackingId,
-                                     RankName = e.RankName,
-                                     IsPosting = e.IsPosting,
-                                     UnitId=e.UnitId
-                                 }).ToList();
-                return await Task.FromResult(allrecord);
+                using (var connection = _contextDP.CreateConnection())
+                {
+                        var BasicDetailList = await connection.QueryAsync<BasicDetailVM>(query, new { UserId, stepcount, TypeId, applyfor });
+                    int sno = 1;
+                    var allrecord = (from e in BasicDetailList
+                                     select new BasicDetailVM()
+                                     {
+                                         BasicDetailId = e.BasicDetailId,
+                                         EncryptedId = protector.Protect(e.BasicDetailId.ToString()),
+                                         Sno = sno++,
+                                         Name = e.Name,
+                                         ServiceNo = e.ServiceNo,
+                                         DOB = e.DOB,
+                                         DateOfCommissioning = e.DateOfCommissioning,
+                                         PermanentAddress = e.PermanentAddress,
+                                         StepCounter = e.StepCounter,
+                                         StepId = e.StepId,
+                                         ICardType = e.ICardType,
+                                         ApplyFor = e.ApplyFor,
+                                         ApplyForId = e.ApplyForId,
+                                         RequestId = e.RequestId,
+                                         IsFwdStatusId = e.IsFwdStatusId,
+                                         Remark = e.Remark,
+                                         TrackingId = e.TrackingId,
+                                         RankName = e.RankName,
+                                         IsPosting = e.IsPosting,
+                                         UnitId = e.UnitId
+                                     }).ToList();
+                    return await Task.FromResult(allrecord);
 
+                }
             }
-
+            catch(Exception ex)
+            {
+                _logger.LogError(1001, ex, "BasicDetailDB->GetALLForIcardSttaus");
+                return null;
+            }
         }
         public async Task<List<BasicDetailVM>> GetALLBasicDetail(int UserId,int stepcount, int TypeId, int applyForId)
         {
@@ -653,40 +806,50 @@ namespace DataAccessLayer
                         " inner join MApplyFor Afor on Afor.ApplyForId = B.ApplyForId " +
                         " inner join TrnStepCounter C on trnicrd.RequestId = C.RequestId" +
                         " inner join MICardType ty on ty.TypeId = trnicrd.TypeId" +
-                        " inner join TrnFwds fwd on fwd.RequestId = trnicrd.RequestId and fwd.FromAspNetUsersId = @UserId and Afor.ApplyForId=IsNULL(@applyForId,Afor.ApplyForId) and fwd.FwdStatusId=2 where trnicrd.Status=0" +
-                        " inner join MTrnFwdStatus mtrnfwdstatus on mtrnfwdstatus.FwdStatusId = fwd.FwdStatusId ";
+                        " inner join TrnFwds fwd on fwd.RequestId = trnicrd.RequestId and fwd.FromAspNetUsersId = @UserId and Afor.ApplyForId=IsNULL(@applyForId,Afor.ApplyForId) and fwd.FwdStatusId=3 " +
+                        " inner join MTrnFwdStatus mtrnfwdstatus on mtrnfwdstatus.FwdStatusId = fwd.FwdStatusId " +
+                        " where trnicrd.Status=0";
             }
-
-            using (var connection = _contextDP.CreateConnection())
+            try
             {
-                var BasicDetailList = await connection.QueryAsync<BasicDetailVM>(query, new { UserId, stepcount, TypeId, applyForId });
-                int sno = 1;
-                var allrecord = (from e in BasicDetailList
-                                 select new BasicDetailVM()
-                                 {
-                                     BasicDetailId = e.BasicDetailId,
-                                     EncryptedId = protector.Protect(e.BasicDetailId.ToString()),
-                                     Sno = sno++,
-                                     Name = e.Name,
-                                     ServiceNo = e.ServiceNo,
-                                     DOB = e.DOB,
-                                     DateOfCommissioning = e.DateOfCommissioning,
-                                     PermanentAddress = e.PermanentAddress,
-                                     TrnFwdId = e.TrnFwdId,
-                                     StepCounter = e.StepCounter,
-                                     StepId = e.StepId,
-                                     ICardType=e.ICardType,
-                                     ApplyFor = e.ApplyFor,
-                                     ApplyForId = e.ApplyForId,
-                                     RequestId =e.RequestId,
-                                     IsFwdStatusId=e.IsFwdStatusId,
-                                     TrackingId = e.TrackingId,
-                                     RankName= e.RankName,
-                                     UnitId = e.UnitId
-                                 }).ToList();
-                return await Task.FromResult(allrecord);
+                using (var connection = _contextDP.CreateConnection())
+                {
+                    var BasicDetailList = await connection.QueryAsync<BasicDetailVM>(query, new { UserId, stepcount, TypeId, applyForId });
+                    int sno = 1;
+                    var allrecord = (from e in BasicDetailList
+                                     select new BasicDetailVM()
+                                     {
+                                         BasicDetailId = e.BasicDetailId,
+                                         EncryptedId = protector.Protect(e.BasicDetailId.ToString()),
+                                         Sno = sno++,
+                                         Name = e.Name,
+                                         ServiceNo = e.ServiceNo,
+                                         DOB = e.DOB,
+                                         DateOfCommissioning = e.DateOfCommissioning,
+                                         PermanentAddress = e.PermanentAddress,
+                                         TrnFwdId = e.TrnFwdId,
+                                         StepCounter = e.StepCounter,
+                                         StepId = e.StepId,
+                                         ICardType = e.ICardType,
+                                         ApplyFor = e.ApplyFor,
+                                         ApplyForId = e.ApplyForId,
+                                         RequestId = e.RequestId,
+                                         IsFwdStatusId = e.IsFwdStatusId,
+                                         TrackingId = e.TrackingId,
+                                         RankName = e.RankName,
+                                         UnitId = e.UnitId
+                                     }).ToList();
+                    return await Task.FromResult(allrecord);
 
+                }
             }
+            catch(Exception ex)
+            {
+                _logger.LogError(1001, ex, "BasicDetailDB->GetALLBasicDetail");
+                return null;
+            }
+
+
 
         }
          
@@ -921,18 +1084,18 @@ namespace DataAccessLayer
             string query = "";
             if (Type==1)
             {
-                query = "select COUNT(CASE WHEN StepId = 2 then 1 ELSE NULL END) as IOPending," +
-                       " COUNT(CASE WHEN StepId = 3 then 1 ELSE NULL END) as IOApproved," +
-                       " COUNT(CASE WHEN StepId = 7 then 1 ELSE NULL END) as IOReject," +
-                       " COUNT(CASE WHEN StepId = 3 then 1 ELSE NULL END) as GSOPending," +
-                       " COUNT(CASE WHEN StepId = 4 then 1 ELSE NULL END) as GSOApproved," +
-                       " COUNT(CASE WHEN StepId = 8 then 1 ELSE NULL END) as GSOReject," +
-                       " COUNT(CASE WHEN StepId = 4 then 1 ELSE NULL END) as MIPending," +
-                       " COUNT(CASE WHEN StepId = 5 then 1 ELSE NULL END) as  MIApproved," +
-                       " COUNT(CASE WHEN StepId = 9 then 1 ELSE NULL END) as  MIReject," +
-                       " COUNT(CASE WHEN StepId = 5 then 1 ELSE NULL END) as  HQPending," +
-                       " COUNT(CASE WHEN StepId = 6 then 1 ELSE NULL END) as  HQApproved," +
-                       " COUNT(CASE WHEN StepId = 10 then 1 ELSE NULL END) as HQReject" +
+                query = "select COUNT(CASE WHEN StepId = 2 then 1 ELSE NULL END) as _2ndLevelPending," +
+                       " COUNT(CASE WHEN StepId = 3 then 1 ELSE NULL END) as _2ndLevelApproved," +
+                       " COUNT(CASE WHEN StepId = 7 then 1 ELSE NULL END) as _2ndLevelReject," +
+                       " COUNT(CASE WHEN StepId = 3 then 1 ELSE NULL END) as _3rdLevelPending," +
+                       " COUNT(CASE WHEN StepId = 4 then 1 ELSE NULL END) as _3rdLevelApproved," +
+                       " COUNT(CASE WHEN StepId = 8 then 1 ELSE NULL END) as _3rdLevelReject," +
+                       " COUNT(CASE WHEN StepId = 4 then 1 ELSE NULL END) as _4thLevelPending," +
+                       " COUNT(CASE WHEN StepId = 5 then 1 ELSE NULL END) as  _4thLevelApproved," +
+                       " COUNT(CASE WHEN StepId = 9 then 1 ELSE NULL END) as  _4thLevelReject," +
+                       " COUNT(CASE WHEN StepId = 5 then 1 ELSE NULL END) as  ExportPending," +
+                       " COUNT(CASE WHEN StepId = 6 then 1 ELSE NULL END) as  ExportApproved," +
+                       " COUNT(CASE WHEN StepId = 10 then 1 ELSE NULL END) as ExportReject" +
                        " from TrnStepCounter cou" +
                        " inner join TrnICardRequest req on cou.RequestId=req.RequestId and cou.ApplyForId=@applyForId" +
                        " inner join TrnDomainMapping trndo on trndo.Id=req.TrnDomainMappingId" + 
@@ -940,23 +1103,23 @@ namespace DataAccessLayer
             }
             else if (Type == 2)
             {
-                query = "declare @IOPending int declare @IOApproved int declare @IOReject int"+
-                        " declare @GSOPending int declare @GSOApproved int declare @GSOReject int"+
-                        " declare @MIPending int declare @MIApproved int declare @MIReject int"+
-                        " declare @HQPending int declare @HQApproved int declare @HQReject int"+
-                        " select @IOPending=COUNT(distinct fwd.RequestId) from TrnFwds fwd inner join TrnStepCounter cou on fwd.RequestId=cou.RequestId and cou.ApplyForId=@applyForId where ToAspNetUsersId=@UserId and IsComplete=0 and TypeId=2" +
-                        " select @IOApproved=COUNT(distinct fwd.RequestId)  from TrnFwds fwd inner join TrnStepCounter cou on fwd.RequestId=cou.RequestId and cou.ApplyForId=@applyForId where FromAspNetUsersId=@UserId and TypeId=3" +
-                        " select @IOReject=COUNT(distinct fwd.RequestId)  from TrnFwds fwd inner join TrnStepCounter cou on fwd.RequestId=cou.RequestId and cou.ApplyForId=@applyForId where FromAspNetUsersId=@UserId and fwd.FwdStatusId=2 and TypeId=1" +
-                        " select @GSOPending=COUNT(distinct fwd.RequestId)  from TrnFwds fwd inner join TrnStepCounter cou on fwd.RequestId=cou.RequestId and cou.ApplyForId=@applyForId where ToAspNetUsersId=@UserId and IsComplete=0 and TypeId=3" +
-                        " select @GSOApproved=COUNT(distinct fwd.RequestId)  from TrnFwds fwd inner join TrnStepCounter cou on fwd.RequestId=cou.RequestId and cou.ApplyForId=@applyForId where FromAspNetUsersId=@UserId and TypeId=4" +
-                        " select @GSOReject=COUNT(distinct fwd.RequestId)  from TrnFwds fwd inner join TrnStepCounter cou on fwd.RequestId=cou.RequestId and cou.ApplyForId=@applyForId where FromAspNetUsersId=@UserId and fwd.FwdStatusId=2 and TypeId=1" +
-                        " select @MIPending=COUNT(distinct fwd.RequestId)  from TrnFwds fwd inner join TrnStepCounter cou on fwd.RequestId=cou.RequestId and cou.ApplyForId=@applyForId where ToAspNetUsersId=@UserId and IsComplete=0 and cou.StepId=4" +
-                        " select @MIApproved=COUNT(distinct fwd.RequestId)  from TrnFwds fwd inner join TrnStepCounter cou on fwd.RequestId=cou.RequestId and cou.ApplyForId=@applyForId inner join TrnICardRequest trncard  on trncard.RequestId=cou.RequestId  where ToAspNetUsersId=@UserId and  trncard.Status=1" +
-                        " select @MIReject=COUNT(distinct fwd.RequestId)  from TrnFwds fwd inner join TrnStepCounter cou on fwd.RequestId=cou.RequestId and cou.ApplyForId=@applyForId where FromAspNetUsersId=@UserId and fwd.FwdStatusId=2 and TypeId=1" +
-                        " select @HQPending=COUNT(distinct fwd.RequestId)  from TrnFwds fwd inner join TrnStepCounter cou on fwd.RequestId=cou.RequestId and cou.ApplyForId=@applyForId inner join TrnICardRequest trncard  on trncard.RequestId=cou.RequestId where ToAspNetUsersId=@UserId and IsComplete=0 and trncard.Status=0" +
-                        " select @HQApproved=COUNT(distinct fwd.RequestId)  from TrnFwds fwd inner join TrnStepCounter cou on fwd.RequestId=cou.RequestId and cou.ApplyForId=@applyForId inner join TrnICardRequest trncard  on trncard.RequestId=cou.RequestId  where ToAspNetUsersId=@UserId and  trncard.Status=1" +
-                        " select @HQReject=COUNT(distinct fwd.RequestId)  from TrnFwds fwd inner join TrnStepCounter cou on fwd.RequestId=cou.RequestId and cou.ApplyForId=@applyForId where FromAspNetUsersId=@UserId and fwd.FwdStatusId=2 and TypeId=1" +
-                        " select @IOPending IOPending,@IOApproved IOApproved,@IOReject IOReject,@GSOPending GSOPending,@GSOApproved GSOApproved,@GSOReject GSOReject, @MIPending MIPending,@MIApproved MIApproved,@MIReject MIReject,@HQPending HQPending,@HQApproved HQApproved,@HQReject HQReject";
+                query = "declare @_2ndLevelPending int declare @_2ndLevelApproved int declare @_2ndLevelReject int" +
+                        " declare @_3rdLevelPending int declare @_3rdLevelApproved int declare @_3rdLevelReject int" +
+                        " declare @_4thLevelPending int declare @_4thLevelApproved int declare @_4thLevelReject int" +
+                        " declare @ExportPending int declare @ExportApproved int declare @ExportReject int" +
+                        " select @_2ndLevelPending=COUNT(distinct fwd.RequestId) from TrnFwds fwd inner join TrnStepCounter cou on fwd.RequestId=cou.RequestId and cou.ApplyForId=@applyForId where ToAspNetUsersId=@UserId and IsComplete=0 and TypeId=2" +
+                        " select @_2ndLevelApproved=COUNT(distinct fwd.RequestId)  from TrnFwds fwd inner join TrnStepCounter cou on fwd.RequestId=cou.RequestId and cou.ApplyForId=@applyForId where FromAspNetUsersId=@UserId and TypeId=3" +
+                        " select @_2ndLevelReject=COUNT(distinct fwd.RequestId)  from TrnFwds fwd inner join TrnStepCounter cou on fwd.RequestId=cou.RequestId and cou.ApplyForId=@applyForId where FromAspNetUsersId=@UserId and fwd.FwdStatusId=3 and TypeId=1" +
+                        " select @_3rdLevelPending=COUNT(distinct fwd.RequestId)  from TrnFwds fwd inner join TrnStepCounter cou on fwd.RequestId=cou.RequestId and cou.ApplyForId=@applyForId where ToAspNetUsersId=@UserId and IsComplete=0 and TypeId=3" +
+                        " select @_3rdLevelApproved=COUNT(distinct fwd.RequestId)  from TrnFwds fwd inner join TrnStepCounter cou on fwd.RequestId=cou.RequestId and cou.ApplyForId=@applyForId where FromAspNetUsersId=@UserId and TypeId=4" +
+                        " select @_3rdLevelReject=COUNT(distinct fwd.RequestId)  from TrnFwds fwd inner join TrnStepCounter cou on fwd.RequestId=cou.RequestId and cou.ApplyForId=@applyForId where FromAspNetUsersId=@UserId and fwd.FwdStatusId=3 and TypeId=1" +
+                        " select @_4thLevelPending=COUNT(distinct fwd.RequestId)  from TrnFwds fwd inner join TrnStepCounter cou on fwd.RequestId=cou.RequestId and cou.ApplyForId=@applyForId where ToAspNetUsersId=@UserId and IsComplete=0 and cou.StepId=4" +
+                        " select @_4thLevelApproved=COUNT(distinct fwd.RequestId)  from TrnFwds fwd inner join TrnStepCounter cou on fwd.RequestId=cou.RequestId and cou.ApplyForId=@applyForId inner join TrnICardRequest trncard  on trncard.RequestId=cou.RequestId  where ToAspNetUsersId=@UserId and  trncard.Status=1" +
+                        " select @_4thLevelReject=COUNT(distinct fwd.RequestId)  from TrnFwds fwd inner join TrnStepCounter cou on fwd.RequestId=cou.RequestId and cou.ApplyForId=@applyForId where FromAspNetUsersId=@UserId and fwd.FwdStatusId=3 and TypeId=1" +
+                        " select @ExportPending=COUNT(distinct fwd.RequestId)  from TrnFwds fwd inner join TrnStepCounter cou on fwd.RequestId=cou.RequestId and cou.ApplyForId=@applyForId inner join TrnICardRequest trncard  on trncard.RequestId=cou.RequestId where ToAspNetUsersId=@UserId and IsComplete=0 and trncard.Status=0" +
+                        " select @ExportApproved=COUNT(distinct fwd.RequestId)  from TrnFwds fwd inner join TrnStepCounter cou on fwd.RequestId=cou.RequestId and cou.ApplyForId=@applyForId inner join TrnICardRequest trncard  on trncard.RequestId=cou.RequestId  where ToAspNetUsersId=@UserId and  trncard.Status=1" +
+                        " select @ExportReject=COUNT(distinct fwd.RequestId)  from TrnFwds fwd inner join TrnStepCounter cou on fwd.RequestId=cou.RequestId and cou.ApplyForId=@applyForId where FromAspNetUsersId=@UserId and fwd.FwdStatusId=3 and TypeId=1" +
+                        " select @_2ndLevelPending _2ndLevelPending,@_2ndLevelApproved _2ndLevelApproved,@_2ndLevelReject _2ndLevelReject,@_3rdLevelPending _3rdLevelPending,@_3rdLevelApproved _3rdLevelApproved,@_3rdLevelReject _3rdLevelReject, @_4thLevelPending _4thLevelPending,@_4thLevelApproved _4thLevelApproved,@_4thLevelReject _4thLevelReject,@ExportPending ExportPending,@ExportApproved ExportApproved,@ExportReject ExportReject";
                         
             } 
           
