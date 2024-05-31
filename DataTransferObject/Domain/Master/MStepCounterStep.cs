@@ -18,6 +18,9 @@ namespace DataTransferObject.Domain.Master
         public string Name { get; set; } = string.Empty;
         public bool IsDashboard { get; set; } = false;
         public int OrderBy { get; set; }
-        public int GroupId { get; set; }
+        
+        [ForeignKey("MFwdType"), DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public byte? TypeId { get; set; }
+        public MTrnFwdType? Type { get; set; }
     }
 }

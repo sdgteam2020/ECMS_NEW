@@ -57,17 +57,19 @@ namespace Web.Controllers
                     trnDomainMapping.UserId = null;
                     trnDomainMapping.UpdatedOn = UpdatedOn;
                     await _iDomainMapBL.Update(trnDomainMapping);
+
                     var mapping_Log = new TrnMappingUnMapping_Log()
                     {
-                        TrnMappUnMapLogId=0,
-                        TDMId= dtoSession.TrnDomainMappingId,
-                        UserId= dtoSession.UserId,
-                        DeregisterUserId= dtoSession.UserId,
-                        IsActive=true,
+                        TrnMappUnMapLogId = 0,
+                        TDMId = dtoSession.TrnDomainMappingId,
+                        UserId = dtoSession.UserId,
+                        DeregisterUserId = dtoSession.UserId,
+                        IsActive = true,
                         Updatedby = DomainId,
-                        UpdatedOn= UpdatedOn,
+                        UpdatedOn = UpdatedOn,
                     };
                     await _iTrnMappingUnMappingLogBL.Add(mapping_Log);
+
                     return Json(true);
                 }
                 else

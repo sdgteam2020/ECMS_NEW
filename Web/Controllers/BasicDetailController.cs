@@ -139,32 +139,32 @@ namespace Web.Controllers
             }
 
             else if (retint == 2)
-            { ViewBag.Title = "I-Card Pending From Io"; type = 2; stepcounter = 2; }
+            { ViewBag.Title = "I-Card Pending From IO / Superior"; type = 2; stepcounter = 2; }
             else if (retint == 22)
-            { ViewBag.Title = "I-Card Rejectd From Io"; type = 1; stepcounter = 7; }
+            { ViewBag.Title = "I-Card Rejectd From IO / Superior"; type = 1; stepcounter = 7; }
             else if (retint == 222)
-            { ViewBag.Title = "I-Card Approved From Io"; type = 3; stepcounter = 2; }
+            { ViewBag.Title = "I-Card Approved From IO / Superior"; type = 3; stepcounter = 2; }
             else if (retint == 3)
             {
-                ViewBag.Title = "I-Card Pending From GSO";
+                ViewBag.Title = "I-Card Pending From RO / ORO";
                 type = 2; stepcounter = 3;
             }
             else if (retint == 33)
             {
-                ViewBag.Title = "I-Card Rejectd From GSO";
+                ViewBag.Title = "I-Card Rejectd From RO / ORO";
                 type = 1; stepcounter = 8;
             }
             else if (retint == 333)
             {
-                ViewBag.Title = "I-Card Approved From GSO";
+                ViewBag.Title = "I-Card Approved From RO / ORO";
                 type = 3; stepcounter = 4;
             }
             else if (retint == 4)
-            { ViewBag.Title = "I-Card Pending From MI 11"; type = 2; stepcounter = 4; }
+            { ViewBag.Title = "I-Card Pending From AFSAC Cell"; type = 2; stepcounter = 4; }
             else if (retint == 44)
-            { ViewBag.Title = "I-Card Rejectd From MI 11"; type = 1; stepcounter = 9; }
+            { ViewBag.Title = "I-Card Rejectd From AFSAC Cell"; type = 1; stepcounter = 9; }
             else if (retint == 444)
-            { ViewBag.Title = "I-Card Approved From MI 11"; type = 3; stepcounter = 5; }
+            { ViewBag.Title = "I-Card Approved From AFSAC Cell"; type = 3; stepcounter = 5; }
             else if (retint == 5)
             { ViewBag.Title = "I-Card Pending From HQ 54"; type = 2; stepcounter = 5; }
             else if (retint == 55)
@@ -176,7 +176,7 @@ namespace Web.Controllers
             else if (retint == 777)
             { ViewBag.Title = "I-Card Completed"; type = 2; stepcounter = 777; }
             else if (retint == 999)
-            { ViewBag.Title = "I-Card Rejectd From IO,MI11 and HQ 54"; type = 2; stepcounter = 999; }
+            { ViewBag.Title = "I-Card Rejectd From IO / Superior, RO / ORO and AFSAC Cell"; type = 2; stepcounter = 999; }
 
             if (stepcounter==0)
             {

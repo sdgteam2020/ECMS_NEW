@@ -4,6 +4,7 @@ using DataAccessLayer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccessLayer.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240530111931_v97")]
+    partial class v97
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -949,8 +952,14 @@ namespace DataAccessLayer.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<byte>("StepId"));
 
+                    b.Property<byte>("GroupId")
+                        .HasColumnType("tinyint");
+
                     b.Property<bool>("IsDashboard")
                         .HasColumnType("bit");
+
+                    b.Property<byte?>("MTrnFwdTypeTypeId")
+                        .HasColumnType("tinyint");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -959,12 +968,9 @@ namespace DataAccessLayer.Migrations
                     b.Property<int>("OrderBy")
                         .HasColumnType("int");
 
-                    b.Property<byte?>("TypeId")
-                        .HasColumnType("tinyint");
-
                     b.HasKey("StepId");
 
-                    b.HasIndex("TypeId");
+                    b.HasIndex("MTrnFwdTypeTypeId");
 
                     b.ToTable("MStepCounterStep");
                 });
@@ -2554,12 +2560,12 @@ namespace DataAccessLayer.Migrations
 
             modelBuilder.Entity("DataTransferObject.Domain.Master.MStepCounterStep", b =>
                 {
-                    b.HasOne("DataTransferObject.Domain.Master.MTrnFwdType", "Type")
+                    b.HasOne("DataTransferObject.Domain.Master.MTrnFwdType", "MTrnFwdType")
                         .WithMany()
-                        .HasForeignKey("TypeId")
+                        .HasForeignKey("MTrnFwdTypeTypeId")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.Navigation("Type");
+                    b.Navigation("MTrnFwdType");
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Master.MSubDte", b =>

@@ -33,8 +33,9 @@ namespace DataAccessLayer
         private readonly UserManager<ApplicationUser> userManager;
         private readonly IUserProfileDB userProfileDB;
         private readonly IDomainMapDB domainMapDB;
+        private readonly ITrnMappingUnMappingLogDB _trnMappingUnMappingLogDB;
         private readonly IPasswordHasher<ApplicationUser> _passwordHasher;
-        public AccountDB(ApplicationDbContext context, IPasswordHasher<ApplicationUser> passwordHasher, ILogger<AccountDB> logger, UserManager<ApplicationUser> userManager, IUserProfileDB userProfileDB, IDomainMapDB domainMapDB, IDataProtectionProvider dataProtectionProvider, DataProtectionPurposeStrings dataProtectionPurposeStrings) : base(context)
+        public AccountDB(ApplicationDbContext context, IPasswordHasher<ApplicationUser> passwordHasher, ILogger<AccountDB> logger, UserManager<ApplicationUser> userManager, IUserProfileDB userProfileDB, IDomainMapDB domainMapDB, ITrnMappingUnMappingLogDB trnMappingUnMappingLogDB, IDataProtectionProvider dataProtectionProvider, DataProtectionPurposeStrings dataProtectionPurposeStrings) : base(context)
         {
             _context = context;
             _logger = logger;
@@ -42,6 +43,7 @@ namespace DataAccessLayer
             this.userManager = userManager;
             this.userProfileDB = userProfileDB;
             this.domainMapDB = domainMapDB;
+            _trnMappingUnMappingLogDB = trnMappingUnMappingLogDB;
             // Pass the purpose string as a parameter
             this.protector = dataProtectionProvider.CreateProtector(
                 dataProtectionPurposeStrings.AFSACIdRouteValue);
@@ -1490,12 +1492,40 @@ namespace DataAccessLayer
             
             try
             {
+                //Get Admin Profile Id for Mapping Log History
+                TrnDomainMapping? trnDomainMappingAdmin = await domainMapDB.GetByAspnetUserIdBy(dTO.Updatedby);
+
                 TrnDomainMapping trnDomainMapping = await domainMapDB.Get(dTO.TDMId);
                 if (dTO.UserId > 0)
                 {
                     DTOProfileResponse? dTOProfileResponse = await userProfileDB.GetProfileByUserId(dTO.UserId);
                     if (dTOProfileResponse != null && dTOProfileResponse.Mapping == false)
                     {
+                        //Insert Log History
+                        var mapping_Log_Old = new TrnMappingUnMapping_Log()
+                        {
+                            TrnMappUnMapLogId = 0,
+                            TDMId = trnDomainMapping.Id,
+                            UserId = (int)(trnDomainMapping.UserId != null ? trnDomainMapping.UserId : 0),
+                            DeregisterUserId = (int)(trnDomainMappingAdmin != null ? (trnDomainMappingAdmin.UserId != null ? trnDomainMappingAdmin.UserId : 0) : 0),
+                            IsActive = true,
+                            Updatedby = dTO.Updatedby,
+                            UpdatedOn = dTO.UpdatedOn,
+                        };
+                        await _trnMappingUnMappingLogDB.Add(mapping_Log_Old);
+
+                        var mapping_Log_New = new TrnMappingUnMapping_Log()
+                        {
+                            TrnMappUnMapLogId = 0,
+                            TDMId = trnDomainMapping.Id,
+                            UserId = dTO.UserId,
+                            DeregisterUserId = (int)(trnDomainMappingAdmin != null ? (trnDomainMappingAdmin.UserId != null ? trnDomainMappingAdmin.UserId : 0) : 0),
+                            IsActive = true,
+                            Updatedby = dTO.Updatedby,
+                            UpdatedOn = dTO.UpdatedOn,
+                        };
+                        await _trnMappingUnMappingLogDB.Add(mapping_Log_New);
+
                         trnDomainMapping.UserId = dTO.UserId;
                         trnDomainMapping.MappedBy = dTO.Updatedby;
                         trnDomainMapping.MappedDate = dTO.UpdatedOn;
@@ -1527,6 +1557,19 @@ namespace DataAccessLayer
                 }
                 else
                 {
+                    //Insert Log History
+                    var mapping_Log = new TrnMappingUnMapping_Log()
+                    {
+                        TrnMappUnMapLogId = 0,
+                        TDMId = trnDomainMapping.Id,
+                        UserId = (int)(trnDomainMapping.UserId != null ? trnDomainMapping.UserId : 0),
+                        DeregisterUserId = (int)(trnDomainMappingAdmin != null ? (trnDomainMappingAdmin.UserId!=null? trnDomainMappingAdmin.UserId : 0):0),
+                        IsActive = true,
+                        Updatedby = dTO.Updatedby,
+                        UpdatedOn = dTO.UpdatedOn,
+                    };
+                    await _trnMappingUnMappingLogDB.Add(mapping_Log);
+
                     trnDomainMapping.UserId = null;
                     trnDomainMapping.MappedBy = null;
                     trnDomainMapping.MappedDate = null;
@@ -1841,6 +1884,18 @@ namespace DataAccessLayer
                         await _context.SaveChangesAsync();
                         transaction.Commit();
                         await userManager.UpdateSecurityStampAsync(user);
+                        
+                        var mapping_Log = new TrnMappingUnMapping_Log()
+                        {
+                            TrnMappUnMapLogId = 0,
+                            TDMId = trnDomainMapping.Id,
+                            UserId = (int)trnDomainMapping.UserId,
+                            DeregisterUserId = (int)trnDomainMapping.UserId,
+                            IsActive = true,
+                            Updatedby = user.Id,
+                            UpdatedOn = model.UpdatedOn,
+                        };
+                        await _trnMappingUnMappingLogDB.Add(mapping_Log);
 
                         DTOTempSession dTOTempSessionResult = new DTOTempSession();
 
@@ -1911,6 +1966,18 @@ namespace DataAccessLayer
                         await _context.SaveChangesAsync();
                         transaction.Commit();
 
+                        var mapping_Log = new TrnMappingUnMapping_Log()
+                        {
+                            TrnMappUnMapLogId = 0,
+                            TDMId = trnDomainMapping.Id,
+                            UserId = (int)trnDomainMapping.UserId,
+                            DeregisterUserId = (int)trnDomainMapping.UserId,
+                            IsActive = true,
+                            Updatedby = trnDomainMapping.AspNetUsersId,
+                            UpdatedOn = model.UpdatedOn,
+                        };
+                        await _trnMappingUnMappingLogDB.Add(mapping_Log);
+
                         DTOTempSession dTOTempSessionResult = new DTOTempSession();
 
                         dTOTempSessionResult.TDMId = trnDomainMapping.Id;
@@ -1972,6 +2039,18 @@ namespace DataAccessLayer
                             _context.TrnDomainMapping.Update(trnDomainMapping);
                             await _context.SaveChangesAsync();
                             transaction.Commit();
+
+                            var mapping_Log = new TrnMappingUnMapping_Log()
+                            {
+                                TrnMappUnMapLogId = 0,
+                                TDMId = trnDomainMapping.Id,
+                                UserId = (int)trnDomainMapping.UserId,
+                                DeregisterUserId = (int)trnDomainMapping.UserId,
+                                IsActive = true,
+                                Updatedby = trnDomainMapping.AspNetUsersId,
+                                UpdatedOn = model.UpdatedOn,
+                            };
+                            await _trnMappingUnMappingLogDB.Add(mapping_Log);
 
 
                             DTOTempSession dTOTempSessionResult = new DTOTempSession();
