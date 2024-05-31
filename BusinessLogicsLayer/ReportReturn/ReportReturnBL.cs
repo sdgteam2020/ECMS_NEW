@@ -1,4 +1,5 @@
 ﻿using DataAccessLayer.BaseInterfaces;
+using DataTransferObject.Requests;
 using DataTransferObject.Response;
 using System;
 using System.Collections.Generic;
@@ -16,15 +17,24 @@ namespace BusinessLogicsLayer.ReportReturn
             _IReportReturnDB = reportReturnDB;
 
         }
-        public async Task<DTOReportReturnCountlst> GetMstepCount(int UserId)
+        public async Task<DTOReportReturnCountlst> GetMstepCount(DTOMHierarchyRequest Data)
         {
             DTOReportReturnCountlst dTOReportReturnCountlst = new DTOReportReturnCountlst();
 
-            dTOReportReturnCountlst.dTOReportReturnCount = await _IReportReturnDB.GetMstepCount(UserId);
+            dTOReportReturnCountlst.dTOReportReturnCountOffs = await _IReportReturnDB.GetMstepCount(Data, 1);
+            dTOReportReturnCountlst.dTOReportReturnCountJco = await _IReportReturnDB.GetMstepCount(Data, 2);
             dTOReportReturnCountlst.RecordOff = await _IReportReturnDB.GetRecordOffOffers();
-            dTOReportReturnCountlst.RecordoffCount = await _IReportReturnDB.GetRecordOffOffersCount(UserId);
+            dTOReportReturnCountlst.RecordoffCount = await _IReportReturnDB.GetRecordOffOffersCount(Data);
 
+            //dTOReportReturnCountlst.RecordJco = await _IReportReturnDB.GetRecordJco();
+            dTOReportReturnCountlst.RecordJcoPending = await _IReportReturnDB.GetRecordJcoCount(Data,0);
+            dTOReportReturnCountlst.RecordJcoCountApproved = await _IReportReturnDB.GetRecordJcoCount(Data,1);
             return dTOReportReturnCountlst;
+        }
+
+        public Task<List<DTOReportReturnListResponse>> GetRecordHistory(DTOMHierarchyRequest Data, int ApplyForId ,int StepId)
+        {
+            return _IReportReturnDB.GetRecordHistory(Data, ApplyForId, StepId);
         }
     }
 }

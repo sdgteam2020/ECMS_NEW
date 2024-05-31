@@ -103,11 +103,26 @@ namespace Web.Controllers
             return View();
         }
 
-        public async Task<IActionResult> GetReportReturnCount()
+        public async Task<IActionResult> GetReportReturnCount(DTOMHierarchyRequest Data)
         {
-            int UserId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-            var ret =await _reportReturnBL.GetMstepCount(UserId);
+            try
+            {
+                int UserId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var ret =await _reportReturnBL.GetMstepCount(Data);
             return Json(ret);
+        }
+            catch (Exception ex) { return Json(KeyConstants.InternalServerError);
+            }
+        }
+        public async Task<IActionResult> GetRecordHistory(DTOMHierarchyRequest Data,int ApplyForId,int StepId)
+        {
+            try
+            {
+                var ret = await _reportReturnBL.GetRecordHistory(Data, ApplyForId, StepId);
+                return Json(ret);
+            }
+            catch (Exception ex) { return Json(KeyConstants.InternalServerError); }
+            
         }
         #endregion
         public async Task<IActionResult> SubDashboard()

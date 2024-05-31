@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace DataTransferObject.Requests
-{
+{ 
     public class DTOMHierarchyRequest
     {
         public int? TableId { get; set; }
@@ -20,7 +20,8 @@ namespace DataTransferObject.Requests
         public int? FmnBranchID { get; set; }
         public int? PsoId { get; set; }
         public int? SubDteId { get; set; }
-        public int? GroupId { get; set; }
+        public int? UnitMapId { get; set; }
+       
 
     }
 }

@@ -11,11 +11,21 @@ namespace DataTransferObject.Response
         public int StepId { get; set; }
         public int Total { get; set; }
         public string? Name { get; set; }
+        public string? RecordOfficeId { get; set; }
+        public int GroupId { get; set; }
     }
     public class DTOReportReturnCountlst
     {
-        public List<DTOReportReturnCount> dTOReportReturnCount { get; set; }
+        public List<DTOReportReturnCount> dTOReportReturnCountOffs { get; set; }
+
+        public List<DTOReportReturnCount> dToCountApprovedRejectOffs { get; set; }
+        public List<DTOReportReturnCount> dTOReportReturnCountJco { get; set; }
+        public List<DTOReportReturnCount> dToCountApprovedRejectJco { get; set; }
+
         public List<DTOReportReturnCount> RecordOff { get; set; }
         public List<DTOReportReturnCount> RecordoffCount { get; set; }
+        public List<DTOReportReturnCount> RecordJco { get; set; }
+        public List<DTOReportReturnCount> RecordJcoPending { get; set; }
+        public List<DTOReportReturnCount> RecordJcoCountApproved { get; set; }
     }
   }
