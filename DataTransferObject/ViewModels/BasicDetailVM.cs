@@ -188,7 +188,7 @@ namespace DataTransferObject.ViewModels
         public int RequestId { get; set; }
         
         [NotMapped]
-        public int TrnFwdId { get; set; }
+        public int IsTrnFwdId { get; set; }
 
         [NotMapped]
         public byte IsFwdStatusId { get; set; }

@@ -31,6 +31,10 @@ namespace BusinessLogicsLayer.BdeCate
         {
             return _ITrnFwnDB.UpdateAllBYRequestId(RequestId);
         }
+        public async Task<bool> UpdateFieldBYTrnFwdId(int TrnFwdId)
+        {
+            return await _ITrnFwnDB.UpdateFieldBYTrnFwdId(TrnFwdId);
+        }
         public async Task<bool?> SaveInternalFwd(DTOSaveInternalFwdRequest dTO)
         {
             return await _ITrnFwnDB.SaveInternalFwd(dTO);
