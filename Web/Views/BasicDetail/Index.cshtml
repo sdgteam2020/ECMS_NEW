@@ -85,11 +85,23 @@
                         }
                         else
                         {
-                            <div>
-                                <a href="/Home/Index" class="mr-2">Home</a> > <a href="/Home/Task" class="mr-2">Task</a> > @ViewBag.Title
-                               
+                            if (Convert.ToString(ViewBag.jcoor) == "SmNvL09ycw==")
+                            {
+                                <div>
+                                    <a href="/Home/Index" class="mr-2">Home</a> >
+                                    <a href="/Home/Task" class="mr-2">Task</a> >
+                                    <a href="/Home/MyTask/SkNPc1N1Ym1pdHRlZA==" class="mr-2">I-Card Status</a> > @ViewBag.Title
+                                </div>
+                            }
+                            else
+                            {
+                                <div>
+                                    <a href="/Home/Index" class="mr-2">Home</a> > 
+                                    <a href="/Home/Task" class="mr-2">Task</a> >
+                                    <a href="/Home/MyTask/T2ZmcnNTdWJtaXR0ZWQ=" class="mr-2">I-Card Status</a> > @ViewBag.Title
+                                </div>
+                            }
 
-                            </div>
                         }
                        
                     </h1>
@@ -127,7 +139,7 @@
                                     @* <th>Address</th> *@
                                     <th>Appl Id</th>
                                     <th>Type</th>
-                                    <th>Reason for Requisition</th>
+                                    <th>Reason for Requisition</th>     
                                     <th class="noExport">Posting</th>
                                     <th class="noExport">History</th>
                                     <th class="noExport">Print / Edit / Fwd</th>
