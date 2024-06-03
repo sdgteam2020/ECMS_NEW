@@ -9,19 +9,20 @@
 
         .c-dashboardInfo .wrap {
             background: #ffffff;
-            box-shadow: 0px 20px 20px 14px rgba(0, 0, 0, 0.1);
+            box-shadow: 2px 10px 20px rgba(0, 0, 0, 0.1);
             border-radius: 7px;
             text-align: center;
             position: relative;
             overflow: hidden;
-            padding: 15px 10px 5px;
+            padding: 12px 5px 0px;
             height: 100%;
         }
 
     .c-dashboardInfo__title,
     .c-dashboardInfo__subInfo {
         color: #6c6c6c;
-        font-size: 0.90em;
+        font-size: 0.8em;
+        font-weight:800;
     }
 
     .c-dashboardInfo span {
@@ -44,6 +45,7 @@
         height: 10px;
         content: "";
     }
+
 
     .c-dashboardInfo:nth-child(1) .wrap:after {
         background: linear-gradient(82.59deg, #00c48c 0%, #00a173 100%);
@@ -136,8 +138,8 @@
 <div class="containerMain mt-n10">
     <div class="row">
 
-        <div class="card p-4">
-            <div class="row">
+        <div class="card">
+            <div class="row pt-1 SearchTab">
                 <div class="form-group row mb-2">
 
                     <label class="col-form-label col-sm-2 fw-bold">Select Unit Type <i class="fas fa-asterisk mand1"></i></label>
@@ -159,7 +161,7 @@
                     </div>
                 </div>
                 </div>
-                <div class="form-row">
+            <div class="form-row SearchTab">
                 <div class="form-group col-md-3 unittype">
                     <label class="col-form-label fw-bold">Comd / PSO<i class="fas fa-asterisk mand1"></i></label>
                     <select class="form-select" style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddlCommand" required id="ddlCommand">
@@ -229,28 +231,66 @@
 
                 </div>
             </div>
-       
-          
 
-                <div id="root">
-                    <div class="pt-5">
-                        <div class="row align-items-stretch" id="countlistreport">
-                        
-                           @*  <div class="c-dashboardInfo col-lg-3 col-md-6">
-                                <div class="wrap">
-                                    <h4 class="heading heading5 hind-font medium-font-weight c-dashboardInfo__title">
-                                        Rental income
-                                    </h4>
-                                    <span class="hind-font caption-12 c-dashboardInfo__count">00</span>
-                                    <span class="hind-font caption-12 c-dashboardInfo__subInfo"></span>
-                                </div>
-                            </div> *@
-                          
-                        </div>
+
+
+            <div id="root">
+                <div class="pt-1 RecordCount" id="countlistreport">
+                    @*  <div class="row align-items-stretch" >
+
+                    <div class="c-dashboardInfo col-lg-3 col-md-6">
+                    <div class="wrap">
+                    <h4 class="heading heading5 hind-font medium-font-weight c-dashboardInfo__title">
+                    Rental income
+                    </h4>
+                    <span class="hind-font caption-12 c-dashboardInfo__count">00</span>
+                    <span class="hind-font caption-12 c-dashboardInfo__subInfo"></span>
                     </div>
+                    </div>
+
+                    </div> *@
                 </div>
-               
+                <div class="pt-1 d-none" id="RecordOfficeCountPendding" >
+                </div>
+                <div class="pt-1 d-none" id="RecordOfficeCountApprove">
+                </div>
+            </div>
                 </div>
     </div>
 </div>
+<div class="modal fade" id="RepotReturnHistory" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="lblRepotReturnHistory"></h4>
+            </div>
+
+            <div class="modal-body">
+                <table class="table border border-purple table-striped no-footer dataTable table-hover" style="width: 100%;" role="grid" id="tbldata">
+                    <thead>
+                        <tr>
+                            
+                            <th class="wd-40-f">S No</th>
+                            <th class="nowrap">Army No</th>
+                            <th class="nowrap">Rank,Name</th>
+                            <th class="nowrap">From </th>
+                            <th class="nowrap">To</th>
+                            <th class="nowrap">TrackingId</th>
+                            <th class="nowrap">Action On</th>
+                            <th class="nowrap" id="spn99Status">Status</th>
+                          
+
+
+                        </tr>
+                    </thead>
+                    <tbody id="DetailBody">
+                    </tbody>
+                </table>
+            </div>
+
+        </div><!-- modal-content -->
+    </div><!-- modal-dialog -->
+</div>
+
 <script asp-src-include="~/developerjs/reportandreturn.js"></script>
