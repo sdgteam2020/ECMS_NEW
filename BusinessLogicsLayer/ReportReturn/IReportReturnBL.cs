@@ -11,7 +11,7 @@ namespace BusinessLogicsLayer.ReportReturn
     public interface IReportReturnBL
     {
         public Task<DTOReportReturnCountlst> GetMstepCount(DTOMHierarchyRequest Data);
-        public Task<List<DTOReportReturnListResponse>> GetRecordHistory(DTOMHierarchyRequest Data, int ApplyForId, int StepId);
+        public Task<List<DTOReportReturnListResponse>> GetRecordHistory(DTOMHierarchyRequest Data, int ApplyForId, int StepId,int IsApproveId);
 
     }
 }

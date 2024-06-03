@@ -25,5 +25,7 @@ namespace DataTransferObject.Response
         public string? DomainIdTo { get; set; }
         public string? Status { get; set; }
 
+        public DateTime UpdatedOn { get; set; }
+
     }
 }

@@ -157,7 +157,8 @@ function GetCount() {
                     var dTOReportReturnCountOffs = response.dTOReportReturnCountOffs;
                     var GroupId = 0;
                     var totalaproved = 0;
-                  
+                    var dToCountApprovedRejectOffs = response.dToCountApprovedRejectOffs;
+                    var dToCountApprovedRejectJco = response.dToCountApprovedRejectJco;
                     Itemlist += '<div class="seven">';
                     Itemlist += '<h1>Offrs</h1>';
                     Itemlist += '</div>';
@@ -167,40 +168,47 @@ function GetCount() {
 
                             if (dTOReportReturnCountOffs[i].TypeId == 2) {
 
-                                Itemlist += '<div class="c-dashboardInfo col-lg-1 col-md-6"><a href="#"><span class="d-none IsApproveId">1</span><span class="d-none applyTypeId">1</span><span class="d-none spnStepId" >' + dTOReportReturnCountOffs[i].StepId +'</span>';
+                                Itemlist += '<div class="c-dashboardInfo col-lg-1 col-md-6"><a href="#"><span class="d-none applyTypeId">1</span><span class="d-none spnStepId" >' + dTOReportReturnCountOffs[i].StepId +'</span>';
                                 Itemlist += '<div class="wrap">';
                                 Itemlist += '<h4 class="heading heading5 hind-font medium-font-weight c-dashboardInfo__title">';
                                 Itemlist += 'Appls Approved & Fwd to Next Level (1st Level to 2nd Level)';
                                 Itemlist += '</h4>';
-                                Total1apro = dTOReportReturnCountOffs[i + 1].Total;
-                                Total1apro = Total1apro + dTOReportReturnCountOffs[i].Total;
-                                Itemlist += ' <span class="hind-font caption-12 c-dashboardInfo__count">' + Total1apro + '</span>';
+                                var totalaprroveoffs = dToCountApprovedRejectOffs.filter(v => v.StepId === 2 && v.TypeId==2);
+                                totalaproved=0;
+                                if (totalaprroveoffs.length > 0) {
+                                    totalaproved = totalaprroveoffs[0].Total;
+                                }
+                                totalaproved = parseInt(dTOReportReturnCountOffs[i].Total) + parseInt(totalaproved)
+                                Itemlist += ' <span class="hind-font caption-12 c-dashboardInfo__count">' + totalaproved + '</span>';
+
                                 Itemlist += ' <span class="hind-font caption-12 c-dashboardInfo__subInfo"></span>';
                                 Itemlist += '</div>';
                                 Itemlist += '</a></div>';
                             }
                             if (dTOReportReturnCountOffs[i].TypeId == 3) {
-                                Itemlist += '<div class="c-dashboardInfo col-lg-1 col-md-6"><a href="#"><span class="d-none IsApproveId">1</span><span class="d-none applyTypeId">1</span><span class="d-none spnStepId" >' + dTOReportReturnCountOffs[i].StepId + '</span>';
+                                Itemlist += '<div class="c-dashboardInfo col-lg-1 col-md-6"><a href="#"><span class="d-none applyTypeId">1</span><span class="d-none spnStepId" >' + dTOReportReturnCountOffs[i].StepId + '</span>';
+
                                 Itemlist += '<div class="wrap">';
                                 Itemlist += '<h4 class="heading heading5 hind-font medium-font-weight c-dashboardInfo__title">';
                                 Itemlist += 'Appls Approved & Fwd to Next Level (2nd Level to 3rd Level)';
                                 Itemlist += '</h4>';
-
-                                Total1apro = dTOReportReturnCountOffs[i + 1].Total;
-                                Total1apro = Total1apro + dTOReportReturnCountOffs[i].Total;
-                                Itemlist += ' <span class="hind-font caption-12 c-dashboardInfo__count">' + Total1apro + '</span>';
+                                var totalaprroveoffs = dToCountApprovedRejectOffs.filter(v => v.StepId === 2 && v.TypeId == 3);
+                                totalaproved = 0;
+                                if (totalaprroveoffs.length > 0) {
+                                    totalaproved = totalaprroveoffs[0].Total;
+                                }
+                                totalaproved = parseInt(dTOReportReturnCountOffs[i].Total) + parseInt(totalaproved)
+                                Itemlist += ' <span class="hind-font caption-12 c-dashboardInfo__count">' + totalaproved + '</span>';
                                 Itemlist += ' <span class="hind-font caption-12 c-dashboardInfo__subInfo"></span>';
                                 Itemlist += '</div>';
                                 Itemlist += '</a></div>';
                             }
                             if (dTOReportReturnCountOffs[i].TypeId == 4) {
-                               
                                 var RecordOff = response.RecordOff;
                                 var RecordoffCount = response.RecordoffCount;
-                          
                                 for (var j = 0; j < RecordOff.length; j++) {
                                     Itemlist += '<div class="c-dashboardInfo col-lg-1 col-md-6">';
-                                    Itemlist += '<a href="#"><span class="d-none applyTypeId">1</span><span class="d-none spnStepId" >99</span><span class="d-none spnRecordOfficeId" >' + RecordOff[j].RecordOfficeId + '</span>';
+                                    Itemlist += '<a href="#"><span class="d-none applyTypeId">1</span><span class="d-none spnStepId" >99</span><span class="d-none spnRecordOfficeId" >' + RecordOff[j].RecordOfficeId +'</span>';
                                     Itemlist += '<div class="wrap">';
                                     Itemlist += '<h4 class="heading heading5 hind-font medium-font-weight c-dashboardInfo__title">';
                                     Itemlist += 'Approved / Reject / Pending';
@@ -217,8 +225,8 @@ function GetCount() {
                                         if (RecordOff[j].RecordOfficeId == RecordoffCount[x].RecordOfficeId) {
 
                                             //Itemlist += '<span class="hind-font caption-12 c-dashboardInfo__count">';
-                                            if (RecordoffCount[x].Name == "Approved")
-                                                Approved = RecordoffCount[x].Total;
+                                            if (RecordoffCount[x].Name =="Approved")
+                                                Approved=RecordoffCount[x].Total;
                                             else if (RecordoffCount[x].Name == "Rejected")
                                                 Rejected = RecordoffCount[x].Total;
                                             else if (RecordoffCount[x].Name == "Pending")
@@ -229,7 +237,7 @@ function GetCount() {
                                         }
                                     }
                                     if (counttot == 0) {
-
+                                       
                                     }
                                     Itemlist += ' <span class="hind-font caption-12 c-dashboardInfo__count">';
                                     Itemlist += '' + Approved + '/' + Rejected + '/' + Pending + '';
@@ -241,16 +249,19 @@ function GetCount() {
 
                                 }
 
-                                Itemlist += '<div class="c-dashboardInfo col-lg-1 col-md-6"><a href="#"><span class="d-none IsApproveId">1</span><span class="d-none applyTypeId">1</span><span class="d-none spnStepId" >' + dTOReportReturnCountOffs[i].StepId + '</span>';
+                                Itemlist += '<div class="c-dashboardInfo col-lg-1 col-md-6"><a href="#"><span class="d-none applyTypeId">1</span><span class="d-none spnStepId" >' + dTOReportReturnCountOffs[i].StepId + '</span>';
 
                                 Itemlist += '<div class="wrap">';
                                 Itemlist += '<h4 class="heading heading5 hind-font medium-font-weight c-dashboardInfo__title">';
                                 Itemlist += 'Appls Approved & Fwd to Next Level (3nd Level to 4th Level)';
                                 Itemlist += '</h4>';
-                               
-                                Total1apro = dTOReportReturnCountOffs[i + 1].Total;
-                                Total1apro = Total1apro + dTOReportReturnCountOffs[i].Total;
-                                Itemlist += ' <span class="hind-font caption-12 c-dashboardInfo__count">' + Total1apro + '</span>';
+                                var totalaprroveoffs = dToCountApprovedRejectOffs.filter(v => v.StepId === 2 && v.TypeId == 4);
+                                totalaproved = 0;
+                                if (totalaprroveoffs.length > 0) {
+                                    totalaproved = totalaprroveoffs[0].Total;
+                                }
+                                totalaproved = parseInt(dTOReportReturnCountOffs[i].Total) + parseInt(totalaproved)
+                                Itemlist += ' <span class="hind-font caption-12 c-dashboardInfo__count">' + totalaproved + '</span>';
                                 Itemlist += ' <span class="hind-font caption-12 c-dashboardInfo__subInfo"></span>';
                                 Itemlist += '</div>';
                                 Itemlist += '</a></div>';
@@ -262,19 +273,21 @@ function GetCount() {
                             
                         }
 
-                        if (dTOReportReturnCountOffs[i].IsApprove == 0) {
-                            Itemlist += '<div class="c-dashboardInfo col-lg-1 col-md-6"><a href="#"><span class="d-none IsApproveId">0</span><span class="d-none applyTypeId">1</span><span class="d-none spnStepId" >' + dTOReportReturnCountOffs[i].StepId + '</span>';
+                            Itemlist += '<div class="c-dashboardInfo col-lg-1 col-md-6"><a href="#"><span class="d-none applyTypeId">1</span><span class="d-none spnStepId" >' + dTOReportReturnCountOffs[i].StepId + '</span>';
                             Itemlist += '<div class="wrap">';
                             Itemlist += '<h4 class="heading heading5 hind-font medium-font-weight c-dashboardInfo__title">';
                             Itemlist += '' + dTOReportReturnCountOffs[i].Name + '';
                             Itemlist += '</h4>';
-
-                            Itemlist += ' <span class="hind-font caption-12 c-dashboardInfo__count">' + dTOReportReturnCountOffs[i].Total + '</span>';
-
+                            var totalaprroveoffs = dToCountApprovedRejectOffs.filter(v => v.StepId === 3 && v.TypeId == 1);
+                                totalaproved = 0;
+                                if (totalaprroveoffs.length > 0) {
+                                    totalaproved = totalaprroveoffs[0].Total;
+                                }
+                                totalaproved = parseInt(dTOReportReturnCountOffs[i].Total) + parseInt(totalaproved)
+                                Itemlist += ' <span class="hind-font caption-12 c-dashboardInfo__count">' + totalaproved + '</span>';
                             Itemlist += ' <span class="hind-font caption-12 c-dashboardInfo__subInfo"></span>';
                             Itemlist += '</div>';
                             Itemlist += '</a></div>';
-                        }
                         
                         GroupId = dTOReportReturnCountOffs[i].TypeId;
                     }
@@ -283,49 +296,57 @@ function GetCount() {
                     Itemlist += '<h1>JCOs/OR</h1>';
                     Itemlist += '</div>';
                     dTOReportReturnCountJco = response.dTOReportReturnCountJco;
-                   
                     for (var i = 0; i < dTOReportReturnCountJco.length; i++) {
-                        var Total1apro = 0
+
                         if (dTOReportReturnCountJco[i].TypeId != GroupId) {
 
                             if (dTOReportReturnCountJco[i].TypeId == 2) {
-                                Itemlist += '<div class="c-dashboardInfo col-lg-1 col-md-6"><a href="#"><span class="d-none IsApproveId">1</span><span class="d-none applyTypeId">2</span><span class="d-none spnStepId" >' + dTOReportReturnCountJco[i].StepId + '</span>';
+                                Itemlist += '<div class="c-dashboardInfo col-lg-1 col-md-6"><a href="#"><span class="d-none applyTypeId">2</span><span class="d-none spnStepId" >' + dTOReportReturnCountJco[i].StepId + '</span>';
                                 Itemlist += '<div class="wrap">';
                                 Itemlist += '<h4 class="heading heading5 hind-font medium-font-weight c-dashboardInfo__title">';
                                 Itemlist += 'Appls Approved & Fwd to Next Level (1st Level to 2nd Level)';
                                 Itemlist += '</h4>';
-                                Total1apro = dTOReportReturnCountJco[i+1].Total;
-                                Total1apro = Total1apro + dTOReportReturnCountJco[i].Total;
-                                Itemlist += ' <span class="hind-font caption-12 c-dashboardInfo__count">' + Total1apro + '</span>';
+                                var totalaprrovejco = dToCountApprovedRejectJco.filter(v => v.StepId === 2 && v.TypeId == 2);
+                                totalaproved = 0;
+                                if (totalaprrovejco.length > 0) {
+                                    totalaproved = totalaprrovejco[0].Total;
+                                }
+                                totalaproved = parseInt(dTOReportReturnCountJco[i].Total) + parseInt(totalaproved)
+                                Itemlist += ' <span class="hind-font caption-12 c-dashboardInfo__count">' + totalaproved + '</span>';
                                 Itemlist += ' <span class="hind-font caption-12 c-dashboardInfo__subInfo"></span>';
                                 Itemlist += '</div>';
                                 Itemlist += '</a></div>';
                             }
-                           else if (dTOReportReturnCountJco[i].TypeId == 3 ) {
-
-                                Itemlist += '<div class="c-dashboardInfo col-lg-1 col-md-6"><a href="#"><span class="d-none IsApproveId">1</span><span class="d-none applyTypeId">2</span><span class="d-none spnStepId" >' + dTOReportReturnCountJco[i].StepId + '</span>';
+                            if (dTOReportReturnCountJco[i].TypeId == 3) {
+                                Itemlist += '<div class="c-dashboardInfo col-lg-1 col-md-6"><a href="#"><span class="d-none applyTypeId">2</span><span class="d-none spnStepId" >' + dTOReportReturnCountJco[i].StepId + '</span>';
                                 Itemlist += '<div class="wrap">';
                                 Itemlist += '<h4 class="heading heading5 hind-font medium-font-weight c-dashboardInfo__title">';
                                 Itemlist += 'Appls Approved & Fwd to Next Level (2nd Level to 3rd Level)';
                                 Itemlist += '</h4>';
-                                Total1apro = dTOReportReturnCountJco[i + 1].Total;
-                                Total1apro = Total1apro + dTOReportReturnCountJco[i].Total;
-                                Itemlist += ' <span class="hind-font caption-12 c-dashboardInfo__count">' + Total1apro + '</span>';
+                                var totalaprrovejco = dToCountApprovedRejectJco.filter(v => v.StepId === 2 && v.TypeId == 3);
+                                totalaproved = 0;
+                                if (totalaprrovejco.length > 0) {
+                                    totalaproved = totalaprrovejco[0].Total;
+                                }
+                                totalaproved = parseInt(dTOReportReturnCountJco[i].Total) + parseInt(totalaproved)
+                                Itemlist += ' <span class="hind-font caption-12 c-dashboardInfo__count">' + totalaproved + '</span>';
                                 Itemlist += ' <span class="hind-font caption-12 c-dashboardInfo__subInfo"></span>';
                                 Itemlist += '</div>';
                                 Itemlist += '</a></div>';
                             }
-                            if (dTOReportReturnCountJco[i].TypeId == 4 ) {
-
-                                Itemlist += '<div class="c-dashboardInfo col-lg-1 col-md-6"><a href="#"><span class="d-none IsApproveId">1</span><span class="d-none applyTypeId">2</span><span class="d-none spnStepId" >' + dTOReportReturnCountJco[i].StepId + '</span>';
+                            if (dTOReportReturnCountJco[i].TypeId == 4) {
+                                Itemlist += '<div class="c-dashboardInfo col-lg-1 col-md-6"><a href="#"><span class="d-none applyTypeId">2</span><span class="d-none spnStepId" >' + dTOReportReturnCountJco[i].StepId + '</span>';
                                 Itemlist += '<div class="wrap">';
                                 Itemlist += '<h4 class="heading heading5 hind-font medium-font-weight c-dashboardInfo__title">';
                                 Itemlist += 'Appls Approved & Fwd to Next Level (3nd Level to 4th Level)';
                                 Itemlist += '</h4>';
-                               
-                                Total1apro = dTOReportReturnCountJco[i + 1].Total;
-                                Total1apro = Total1apro + dTOReportReturnCountJco[i].Total;
-                                Itemlist += ' <span class="hind-font caption-12 c-dashboardInfo__count">' + Total1apro + '</span>';
+                                var totalaprrovejco = dToCountApprovedRejectJco.filter(v => v.StepId === 2 && v.TypeId == 4);
+                                totalaproved = 0;
+                                if (totalaprrovejco.length > 0) {
+                                    totalaproved = totalaprrovejco[0].Total;
+                                }
+                                totalaproved = parseInt(dTOReportReturnCountJco[i].Total) + parseInt(totalaproved)
+                                Itemlist += ' <span class="hind-font caption-12 c-dashboardInfo__count">' + totalaproved + '</span>';
                                 Itemlist += ' <span class="hind-font caption-12 c-dashboardInfo__subInfo"></span>';
                                 Itemlist += '</div>';
                                 Itemlist += '</a></div>';
@@ -336,19 +357,18 @@ function GetCount() {
 
 
                         }
-                        if (dTOReportReturnCountJco[i].IsApprove == 0) {
-                            Itemlist += '<div class="c-dashboardInfo col-lg-1 col-md-6"><a href="#"><span class="d-none IsApproveId">0</span><span class="d-none applyTypeId">2</span><span class="d-none spnStepId" >' + dTOReportReturnCountJco[i].StepId + '</span>';
-                            Itemlist += '<div class="wrap">';
-                            Itemlist += '<h4 class="heading heading5 hind-font medium-font-weight c-dashboardInfo__title">';
-                            Itemlist += '' + dTOReportReturnCountJco[i].Name + '';
-                            Itemlist += '</h4>';
 
-                            Itemlist += ' <span class="hind-font caption-12 c-dashboardInfo__count">' + dTOReportReturnCountJco[i].Total + '</span>';
+                        Itemlist += '<div class="c-dashboardInfo col-lg-1 col-md-6"><a href="#"><span class="d-none applyTypeId">2</span><span class="d-none spnStepId" >' + dTOReportReturnCountJco[i].StepId + '</span>';
+                        Itemlist += '<div class="wrap">';
+                        Itemlist += '<h4 class="heading heading5 hind-font medium-font-weight c-dashboardInfo__title">';
+                        Itemlist += '' + dTOReportReturnCountJco[i].Name + '';
+                        Itemlist += '</h4>';
+                       
+                        Itemlist += ' <span class="hind-font caption-12 c-dashboardInfo__count">' + dTOReportReturnCountJco[i].Total + '</span>';
+                        Itemlist += ' <span class="hind-font caption-12 c-dashboardInfo__subInfo"></span>';
+                        Itemlist += '</div>';
+                        Itemlist += '</a></div>';
 
-                            Itemlist += ' <span class="hind-font caption-12 c-dashboardInfo__subInfo"></span>';
-                            Itemlist += '</div>';
-                            Itemlist += '</a></div>';
-                        }
                         GroupId = dTOReportReturnCountJco[i].TypeId;
                     }
 
@@ -378,24 +398,24 @@ function GetCount() {
                   
                     
 
-                    //ItemlistA += '<div class="seven">';
-                    //ItemlistA += '<h1>Record Office Reject</h1>';
-                    //ItemlistA += '</div>';
-                    //ItemlistA += '<div class="row align-items-stretch">';
-                    //var RecordJcoCountApproved = response.RecordJcoCountApproved;
-                    //for (var j = 0; j < RecordJcoCountApproved.length; j++) {
-                    //    ItemlistA += '<div class="c-dashboardInfo col-lg-1 col-md-6">';
-                    //    ItemlistA += '<div class="wrap">';
-                    //    ItemlistA += '<h4 class="heading heading5 hind-font medium-font-weight c-dashboardInfo__title">';
-                    //    ItemlistA += '' + RecordJcoCountApproved[j].Name + '';
-                    //    ItemlistA += '</h4>';
-                    //    ItemlistA += ' <span class="hind-font caption-12 c-dashboardInfo__count">' + RecordJcoCountApproved[j].Total + '</span>';
-                    //    ItemlistA += ' <span class="hind-font caption-12 c-dashboardInfo__subInfo"></span>';
-                    //    ItemlistA += '</div>';
-                    //    ItemlistA += '</div>';
+                    ItemlistA += '<div class="seven">';
+                    ItemlistA += '<h1>Record Office Reject</h1>';
+                    ItemlistA += '</div>';
+                    ItemlistA += '<div class="row align-items-stretch">';
+                    var RecordJcoCountApproved = response.RecordJcoCountApproved;
+                    for (var j = 0; j < RecordJcoCountApproved.length; j++) {
+                        ItemlistA += '<div class="c-dashboardInfo col-lg-1 col-md-6">';
+                        ItemlistA += '<div class="wrap">';
+                        ItemlistA += '<h4 class="heading heading5 hind-font medium-font-weight c-dashboardInfo__title">';
+                        ItemlistA += '' + RecordJcoCountApproved[j].Name + '';
+                        ItemlistA += '</h4>';
+                        ItemlistA += ' <span class="hind-font caption-12 c-dashboardInfo__count">' + RecordJcoCountApproved[j].Total + '</span>';
+                        ItemlistA += ' <span class="hind-font caption-12 c-dashboardInfo__subInfo"></span>';
+                        ItemlistA += '</div>';
+                        ItemlistA += '</div>';
                        
 
-                    //}
+                    }
                     ItemlistA += '</div>';
                    
 
@@ -404,9 +424,8 @@ function GetCount() {
                     $("#RecordOfficeCountApprove").html(ItemlistA);
 
                     $("body").on("click", ".c-dashboardInfo", function () {
-                        
                        // alert($(this).closest("div").find(".spnStepId").html())
-                        if ($(this).closest("div").find(".IsApproveId").html() == "0" && $(this).closest("div").find(".spnStepId").html() == "3" && $(this).closest("div").find(".applyTypeId").html()=="2") {
+                        if ($(this).closest("div").find(".spnStepId").html() == "3" && $(this).closest("div").find(".applyTypeId").html()=="2") {
 
                             $("#RecordOfficeCountPendding").removeClass("d-none");
                             $(".RecordCount").addClass("d-none");
@@ -416,23 +435,21 @@ function GetCount() {
                         //    $("#RecordOfficeCountApprove").removeClass("d-none");
                         //    $(".RecordCount").addClass("d-none");
                         //}
-                        //else
-                       else if ($(this).closest("div").find(".spnStepId").html() == "99") {
+                        else if ($(this).closest("div").find(".spnStepId").html() == "99") {
                           //  alert($(this).closest("div").find(".spnRecordOfficeId").html())
                             $("#lblRepotReturnHistory").html($(this).closest("div").find(".c-dashboardInfo__title").html().replace("<br>", ""));
 
                             $("#RepotReturnHistory").modal("show");
-                            GetReportReturnHistory($(this).closest("div").find(".spnStepId").html(), $(this).closest("div").find(".spnRecordOfficeId").html(), $(this).closest("div").find(".IsApproveId").html());
+                            GetReportReturnHistory($(this).closest("div").find(".spnStepId").html(), $(this).closest("div").find(".spnRecordOfficeId").html());
 
                         }
                         else {
-                          //  alert($(this).closest("div").find(".spnStepId").html()+'-' + $(this).closest("div").find(".IsApproveId").html());
+                          //  alert($(this).closest("div").find(".spnStepId").html()+'-' + $(this).closest("div").find(".applyTypeId").html());
 
-                          
+                            
                             $("#lblRepotReturnHistory").html($(this).closest("div").find(".c-dashboardInfo__title").html().replace("<br>", ""));
                             $("#RepotReturnHistory").modal("show");
-                            
-                            GetReportReturnHistory($(this).closest("div").find(".spnStepId").html(), $(this).closest("div").find(".applyTypeId").html(), $(this).closest("div").find(".IsApproveId").html());
+                            GetReportReturnHistory($(this).closest("div").find(".spnStepId").html(), $(this).closest("div").find(".applyTypeId").html());
                         }
                     });
                 }
@@ -450,7 +467,7 @@ function GetCount() {
         }
     });
 }
-function GetReportReturnHistory(spnStepId, applyTypeId, IsApproveId) {
+function GetReportReturnHistory(spnStepId, applyTypeId) {
     var listItem = "";
     var userdata =
     {
@@ -464,8 +481,7 @@ function GetReportReturnHistory(spnStepId, applyTypeId, IsApproveId) {
         "SubDteId": $('#ddlDgSubDte').val(),
         "UnitMapId": $('#ddlUnit').val(),
         "ApplyForId": applyTypeId,
-        "StepId": spnStepId,
-        "IsApproveId": IsApproveId
+        "StepId" : spnStepId
     };
     $.ajax({
         url: '/Home/GetRecordHistory',
@@ -482,7 +498,7 @@ function GetReportReturnHistory(spnStepId, applyTypeId, IsApproveId) {
                     });
                 }
                 else if (response == 0) {
-                    listItem += "<tr><td class='text-center' colspan=8>No Record Found</td></tr>";
+                    listItem += "<tr><td class='text-center' colspan=7>No Record Found</td></tr>";
                    
                     $("#DetailBody").html(listItem);
                     $("#lblTotal").html(0);
@@ -493,8 +509,7 @@ function GetReportReturnHistory(spnStepId, applyTypeId, IsApproveId) {
                     
                     //RequestId	StepId	Name	ServiceNo	DOB	RankName	TrackingId	
                     //ArmyNoTo	NameTo	RankTo	ArmyNoFrom	NameFrom	RankFrom
-                    
-                    $('#tbldata').DataTable().destroy();
+
                     for (var i = 0; i < response.length; i++) {
 
                         listItem += "<tr>";
@@ -502,17 +517,9 @@ function GetReportReturnHistory(spnStepId, applyTypeId, IsApproveId) {
                         listItem += "<td class='align-middle'>" + (i + 1) + "</td>";
                         listItem += "<td class='align-middle nowrap'><span id='comdName'>" + response[i].ServiceNo + "</span></td>";
                         listItem += "<td class='align-middle nowrap'><span id='corpsName'>" + response[i].RankName + " " + response[i].Name + "</span></td>";
-                        if (response[i].RankFrom == null)
-                            listItem += "<td class='align-middle nowrap'><span id='divName'>-</td>";
-                        else
                         listItem += "<td class='align-middle nowrap'><span id='divName'>" + response[i].RankFrom + " " + response[i].NameFrom + " (" + response[i].ArmyNoFrom + ") (" + response[i].DomainIdFrom + ")</span></td>";
-                        if (response[i].RankTo == null)
-                            listItem += "<td class='align-middle nowrap'><span id='divName'>-</td>";
-                        else
                         listItem += "<td class='align-middle nowrap'><span id='divName'>" + response[i].RankTo + " " + response[i].NameTo + " (" + response[i].ArmyNoTo + ") (" + response[i].DomainIdTo + ")</span></td>";
-
                         listItem += "<td class='align-middle nowrap'><span id='comdName'>" + response[i].TrackingId + "</span></td>";
-                        listItem += "<td class='align-middle nowrap'><span id='comdName'>" + DateFormateddMMyyyyhhmmss(response[i].UpdatedOn) + "</span></td>";
                         if (spnStepId == "99")
                         {
                             $("#spn99Status").removeClass("d-none");
@@ -530,7 +537,7 @@ function GetReportReturnHistory(spnStepId, applyTypeId, IsApproveId) {
                     }
 
                     $("#DetailBody").html(listItem);
-                   
+                    $("#lblTotal").html(response.length);
 
                     memberTable = $('#tbldata').DataTable({
                         retrieve: true,
@@ -652,7 +659,7 @@ function GetReportReturnHistory(spnStepId, applyTypeId, IsApproveId) {
                 }
             }
             else {
-                listItem += "<tr><td class='text-center' colspan=8>No Record Found</td></tr>";
+                listItem += "<tr><td class='text-center' colspan=7>No Record Found</td></tr>";
                
                 $("#DetailBody").html(listItem);
                 $("#lblTotal").html(0);

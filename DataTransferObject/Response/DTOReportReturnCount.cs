@@ -12,13 +12,16 @@ namespace DataTransferObject.Response
         public int Total { get; set; }
         public string? Name { get; set; }
         public string? RecordOfficeId { get; set; }
-        public int GroupId { get; set; }
+        public int TypeId { get; set; }
+        public int IsComplete { get; set; }
+        public int IsApprove { get; set; }
     }
     public class DTOReportReturnCountlst
     {
         public List<DTOReportReturnCount> dTOReportReturnCountOffs { get; set; }
 
         public List<DTOReportReturnCount> dToCountApprovedRejectOffs { get; set; }
+
         public List<DTOReportReturnCount> dTOReportReturnCountJco { get; set; }
         public List<DTOReportReturnCount> dToCountApprovedRejectJco { get; set; }
 

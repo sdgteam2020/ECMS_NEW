@@ -114,11 +114,11 @@ namespace Web.Controllers
             catch (Exception ex) { return Json(KeyConstants.InternalServerError);
             }
         }
-        public async Task<IActionResult> GetRecordHistory(DTOMHierarchyRequest Data,int ApplyForId,int StepId)
+        public async Task<IActionResult> GetRecordHistory(DTOMHierarchyRequest Data,int ApplyForId,int StepId,int IsApproveId)
         {
             try
             {
-                var ret = await _reportReturnBL.GetRecordHistory(Data, ApplyForId, StepId);
+                var ret = await _reportReturnBL.GetRecordHistory(Data, ApplyForId, StepId, IsApproveId);
                 return Json(ret);
             }
             catch (Exception ex) { return Json(KeyConstants.InternalServerError); }
