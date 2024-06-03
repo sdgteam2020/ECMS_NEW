@@ -484,7 +484,7 @@ namespace DataAccessLayer
                         " inner join TrnStepCounter C on trnicrd.RequestId = C.RequestId" +
                         " inner join MICardType ty on ty.TypeId = trnicrd.TypeId" +
                         " left join TrnPostingOut Postout on Postout.RequestId=trnicrd.RequestId and trnicrd.Status=0 " +
-                        " inner join TrnFwds fwd on fwd.RequestId = trnicrd.RequestId and fwd.ToAspNetUsersId = @UserId and Afor.ApplyForId=ISNULL(@applyfor,Afor.ApplyForId) and fwd.Status=0 and C.StepId in (7,8,9,10) " +
+                        " inner join TrnFwds fwd on fwd.RequestId = trnicrd.RequestId and fwd.ToAspNetUsersId = @UserId and Afor.ApplyForId=ISNULL(@applyfor,Afor.ApplyForId) and fwd.FwdStatusId=3 and C.StepId in (7,8,9,10) " +
                         " inner join MTrnFwdStatus mtrnfwdstatus on mtrnfwdstatus.FwdStatusId = fwd.FwdStatusId "+
                         " where trnicrd.Status=0";
             }
@@ -492,7 +492,7 @@ namespace DataAccessLayer
             {
                 using (var connection = _contextDP.CreateConnection())
                 {
-                        var BasicDetailList = await connection.QueryAsync<BasicDetailVM>(query, new { UserId, stepcount, TypeId, applyfor });
+                    var BasicDetailList = await connection.QueryAsync<BasicDetailVM>(query, new { UserId, stepcount, TypeId, applyfor });
                     int sno = 1;
                     var allrecord = (from e in BasicDetailList
                                      select new BasicDetailVM()
@@ -791,7 +791,7 @@ namespace DataAccessLayer
                             " inner join MApplyFor Afor on Afor.ApplyForId = B.ApplyForId " +
                             " inner join TrnStepCounter C on trnicrd.RequestId = C.RequestId" +
                             " inner join MICardType ty on ty.TypeId = trnicrd.TypeId" +
-                            " inner join TrnFwds fwd on fwd.RequestId = trnicrd.RequestId and fwd.ToAspNetUsersId = @UserId and Afor.ApplyForId=IsNULL(@applyForId,Afor.ApplyForId) and fwd.TypeId=@TypeId and fwd.IsComplete=1 and trnicrd.Status=0" +
+                            " inner join TrnFwds fwd on fwd.RequestId = trnicrd.RequestId and fwd.ToAspNetUsersId = @UserId and Afor.ApplyForId=IsNULL(@applyForId,Afor.ApplyForId) and fwd.TypeId=@TypeId and fwd.IsComplete=1 and fwd.FwdStatusId=2 " +
                             " inner join MTrnFwdStatus mtrnfwdstatus on mtrnfwdstatus.FwdStatusId = fwd.FwdStatusId ";
 
 
