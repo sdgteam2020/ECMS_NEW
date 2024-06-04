@@ -890,7 +890,7 @@ function ForwardTo(RequestId, HType) {
        // "ToUserId": $("#spnForwardTo").html(),
         /* "SusNo": $("#spnFwssusno").html(),*/
         "Remark": $("#txtFRemarks").val(),
-        "FwdStatusId": 1,
+        "FwdStatusId": 2,
         "TypeId": HType,
         "StepId": HType,
         "IsComplete": false,
@@ -1042,10 +1042,14 @@ function GetRequestHistory(spnRequestId) {
                         listItem += '<div class="timeline-item">';
                         listItem += '<div class="timeline-item-marker">';
 
-                        if (response[i].Status == "Approved")
+                        if (response[i].Status == "Pending")
+                            listItem += '<div class="timeline-item-marker-text"><span class="badge bg-warning">' + DateFormateddMMyyyyhhmmss(response[i].UpdatedOn) + '</span></div>';
+                        else if (response[i].Status == "Approved")
                             listItem += '<div class="timeline-item-marker-text"><span class="badge bg-success">' + DateFormateddMMyyyyhhmmss(response[i].UpdatedOn) + '</span></div>';
-                        else
+                        else if (response[i].Status == "Reject")
                             listItem += '<div class="timeline-item-marker-text"><span class="badge bg-danger">' + DateFormateddMMyyyyhhmmss(response[i].UpdatedOn) + '</span></div>';
+                        else if (response[i].Status == "Internal Forward")
+                            listItem += '<div class="timeline-item-marker-text"><span class="badge bg-success">' + DateFormateddMMyyyyhhmmss(response[i].UpdatedOn) + '</span></div>';
 
 
                         listItem += '<div class="timeline-item-marker-indicator bg-primary"></div>';
@@ -1054,10 +1058,14 @@ function GetRequestHistory(spnRequestId) {
 
 
                         listItem += '' + response[i].FromDomain + '(' + response[i].FromRank + ' ' + response[i].FromProfile + ')';
-                        if (response[i].Status == "Approved")
+                        if (response[i].Status == "Pending")
+                            listItem += '<br><span class="badge bg-warning">' + response[i].Status + ' And Sent To</span>';
+                        else if (response[i].Status == "Approved")
                             listItem += '<br><span class="badge bg-success">' + response[i].Status + ' And Sent To</span>';
-                        else
+                        else if (response[i].Status == "Reject")
                             listItem += '<br><span class="badge bg-danger">' + response[i].Status + ' And Sent To</span>';
+                        else if (response[i].Status == "Internal Forward")
+                            listItem += '<br><span class="badge bg-success">' + response[i].Status + ' And Sent To</span>';
 
                         listItem += '<br> <strong class="text-center">Remark</strong> <br>' + response[i].Remark + '';
 
