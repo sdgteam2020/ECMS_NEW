@@ -128,6 +128,7 @@ namespace DataAccessLayer
                             var trnfwd = new MTrnFwd
                             {
                                 RequestId = mTrnFwd.RequestId,
+                                StepId = mTrnFwd.StepId,
                                 ToUserId = dTO.ToUserId,
                                 FromUserId = dTO.FromUserId,
                                 FromAspNetUsersId = dTO.FromAspNetUsersId,

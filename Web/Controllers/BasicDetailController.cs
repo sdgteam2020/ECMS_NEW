@@ -1304,10 +1304,10 @@ namespace Web.Controllers
                 data.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                 data.IsActive = true;
                 data.TypeId= Convert.ToByte(data.TypeId);
-                if(data.TrnFwdId >0)
-                {
-                    await iTrnFwnBL.UpdateFieldBYTrnFwdId(data.TrnFwdId);
-                }
+                //if(data.TrnFwdId >0)
+                //{
+                //    await iTrnFwnBL.UpdateFieldBYTrnFwdId(data.TrnFwdId);
+                //}
                 if(await iTrnFwnBL.UpdateAllBYRequestId(data.RequestId))
                 {
                     data.TrnFwdId = 0;
