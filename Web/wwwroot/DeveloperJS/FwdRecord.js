@@ -890,7 +890,7 @@ function ForwardTo(RequestId, HType) {
        // "ToUserId": $("#spnForwardTo").html(),
         /* "SusNo": $("#spnFwssusno").html(),*/
         "Remark": $("#txtFRemarks").val(),
-        "FwdStatusId": 2,
+        "FwdStatusId": 1,
         "TypeId": HType,
         "StepId": HType,
         "IsComplete": false,
@@ -1042,7 +1042,9 @@ function GetRequestHistory(spnRequestId) {
                         listItem += '<div class="timeline-item">';
                         listItem += '<div class="timeline-item-marker">';
 
-                        if (response[i].Status == "Pending")
+                        if (response[i].IsComplete == 0 && response[i].Status == "Pending")
+                            listItem += '<div class="timeline-item-marker-text"><span class="badge bg-success">' + DateFormateddMMyyyyhhmmss(response[i].UpdatedOn) + '</span></div>';
+                        else if (response[i].IsComplete == 1 && response[i].Status == "Pending")
                             listItem += '<div class="timeline-item-marker-text"><span class="badge bg-warning">' + DateFormateddMMyyyyhhmmss(response[i].UpdatedOn) + '</span></div>';
                         else if (response[i].Status == "Approved")
                             listItem += '<div class="timeline-item-marker-text"><span class="badge bg-success">' + DateFormateddMMyyyyhhmmss(response[i].UpdatedOn) + '</span></div>';
@@ -1058,7 +1060,10 @@ function GetRequestHistory(spnRequestId) {
 
 
                         listItem += '' + response[i].FromDomain + '(' + response[i].FromRank + ' ' + response[i].FromProfile + ')';
-                        if (response[i].Status == "Pending")
+
+                        if (response[i].IsComplete == 0 && response[i].Status == "Pending")
+                            listItem += '<br><span class="badge bg-success">' + 'Forward' + ' And Sent To</span>';
+                        else if (response[i].IsComplete == 1 && response[i].Status == "Pending")
                             listItem += '<br><span class="badge bg-warning">' + response[i].Status + ' And Sent To</span>';
                         else if (response[i].Status == "Approved")
                             listItem += '<br><span class="badge bg-success">' + response[i].Status + ' And Sent To</span>';
