@@ -43,9 +43,23 @@ namespace DataAccessLayer
         {
             try
             {
+                MTrnFwd? mTrnFwd = await _context.TrnFwds.FindAsync(TrnFwdId);
+                if(mTrnFwd!=null)
+                {
+                    if(mTrnFwd.FwdStatusId==4)
+                    {
+                        MTrnFwd? mTrnFwd1 = await _context.TrnFwds.FirstOrDefaultAsync(x => x.RequestId == mTrnFwd.RequestId && x.ToAspNetUsersId == mTrnFwd.FromAspNetUsersId && x.UpdatedOn == mTrnFwd.UpdatedOn);
+                        if(mTrnFwd1!=null)
+                        {
+                            mTrnFwd1.FwdStatusId = 2;
+                            await _context.SaveChangesAsync();
+                        }
+                    }
+
+                }
                 using (var connection = _contextDP.CreateConnection())
                 {
-                    connection.Execute("UPDATE TrnFwds set FwdStatusId=2 where TrnFwdId=@TrnFwdId and FwdStatusId != 3", new { TrnFwdId });
+                    connection.Execute("UPDATE TrnFwds set FwdStatusId=2 where TrnFwdId=@TrnFwdId AND FwdStatusId NOT IN (3,4)", new { TrnFwdId });
                     return await Task.FromResult(true);
                 }
             }
