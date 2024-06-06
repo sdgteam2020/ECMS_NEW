@@ -513,15 +513,23 @@ function GetReportReturnHistory(spnStepId, applyTypeId, IsApproveId) {
 
                         listItem += "<td class='align-middle nowrap'><span id='comdName'>" + response[i].TrackingId + "</span></td>";
                         listItem += "<td class='align-middle nowrap'><span id='comdName'>" + DateFormateddMMyyyyhhmmss(response[i].UpdatedOn) + "</span></td>";
-                        if (spnStepId == "99")
-                        {
-                            $("#spn99Status").removeClass("d-none");
-                            listItem += "<td class='align-middle nowrap'><span id='comdName'>" + response[i].Status + "</span></td>";
-                        }
-                        else {
-                            listItem += "<td class='d-none'></td>";
-                            $("#spn99Status").addClass("d-none");
-                        }
+                        //if (spnStepId == "99")
+                        //{
+                        $("#spn99Status").removeClass("d-none");
+                        if (response[i].StatusName == null)
+                            listItem += "<td class='align-middle nowrap'><span id='comdName'><span class='badge badge-primary' >Action Pending</span></span></td>";
+
+                       else if (response[i].StatusName =="Pending")
+                            listItem += "<td class='align-middle nowrap'><span id='comdName'><span class='badge badge-warning' >" + response[i].StatusName + "</span></span></td>";
+                        else if (response[i].StatusName == "Rejected")
+                            listItem += "<td class='align-middle nowrap'><span id='comdName'><span class='badge badge-danger' >" + response[i].StatusName + "</span></span></td>";
+                        else 
+                            listItem += "<td class='align-middle nowrap'><span id='comdName'><span class='badge badge-success' >" + response[i].StatusName + "</span></span></td>";
+                            //}
+                        //else {
+                        //    listItem += "<td class='d-none'></td>";
+                        //    $("#spn99Status").addClass("d-none");
+                        //}
                        // listItem += "<td class='align-middle'><span id='btnedit'><button type='button' class='cls-btnedit btn btn-icon btn-round btn-primary mr-1'><i class='fas fa-edit'></i></button></span><button type='button' class='cls-btnDelete btn-icon btn-round btn-danger mr-1'><i class='fas fa-trash-alt'></i></button></td>";
 
 

@@ -262,18 +262,18 @@ namespace DataAccessLayer
                     query = " select req.RequestId,Mstep.StepId,basi.Name,ServiceNo,DOB,ranks.RankAbbreviation RankName,TrackingId," +
                             " aspusersto.DomainId DomainIdTo,userto.ArmyNo ArmyNoTo ,userto.Name NameTo,ranksto.RankAbbreviation RankTo," +
                             " aspusersfrom.DomainId DomainIdFrom,userfrom.ArmyNo ArmyNoFrom ,userfrom.Name NameFrom,ranksfrom.RankAbbreviation RankFrom" +
-                            " ,fwd.UpdatedOn from MStepCounterStep Mstep  " +
+                            " ,fwd.UpdatedOn,fwdsts.Name StatusName from MStepCounterStep Mstep  " +
                             " left join TrnStepCounter step on Mstep.StepId=step.StepId " +
                             " left join TrnICardRequest req on step.RequestId=req.RequestId and req.Status=0 " +
                             " left join TrnFwds fwd on req.RequestId=fwd.RequestId " +
                             " left join UserProfile userto on fwd.ToUserId=userto.UserId" +
-                            "  LEFT join TrnDomainMapping mapto on userto.UserId=mapto.UserId" +
-                            "  LEFT join AspNetUsers aspusersto on mapto.AspNetUsersId=aspusersto.Id" +
+                            " LEFT join TrnDomainMapping mapto on userto.UserId=mapto.UserId" +
+                            " LEFT join AspNetUsers aspusersto on mapto.AspNetUsersId=aspusersto.Id" +
                             " left join MRank ranksto on ranksto.RankId=userto.RankId" +
                             " left join MTrnFwdStatus fwdsts on fwd.FwdStatusId=fwdsts.FwdStatusId" +
                             " left join UserProfile userfrom on fwd.FromUserId=userfrom.UserId" +
-                            "  LEFT join TrnDomainMapping mapfrom on userfrom.UserId=mapfrom.UserId" +
-                            "  LEFT join AspNetUsers aspusersfrom on mapfrom.AspNetUsersId=aspusersfrom.Id" +
+                            " LEFT join TrnDomainMapping mapfrom on userfrom.UserId=mapfrom.UserId" +
+                            " LEFT join AspNetUsers aspusersfrom on mapfrom.AspNetUsersId=aspusersfrom.Id" +
                             " left join MRank ranksfrom on ranksfrom.RankId=userfrom.RankId" +
                             " left join  BasicDetails basi on req.BasicDetailId=basi.BasicDetailId " +
                             " left join MRank ranks on ranks.RankId=basi.RankId" +
@@ -296,7 +296,7 @@ namespace DataAccessLayer
                         query = " select req.RequestId,Mstep.StepId,basi.Name,ServiceNo,DOB,ranks.RankAbbreviation RankName,TrackingId," +
                       " aspusersto.DomainId DomainIdTo,userto.ArmyNo ArmyNoTo ,userto.Name NameTo,ranksto.RankAbbreviation RankTo," +
                       " aspusersfrom.DomainId DomainIdFrom,userfrom.ArmyNo ArmyNoFrom ,userfrom.Name NameFrom,ranksfrom.RankAbbreviation RankFrom" +
-                      " ,fwd.UpdatedOn from MStepCounterStep Mstep  " +
+                      " ,fwd.UpdatedOn,fwdsts.Name StatusName from MStepCounterStep Mstep  " +
                       " left join TrnStepCounter step on Mstep.StepId=step.StepId and Mstep.StepId=@StepId" +
                       " left join TrnICardRequest req on step.RequestId=req.RequestId and req.Status=0 " +
                       " left join TrnFwds fwd on req.RequestId=fwd.RequestId and fwd.IsComplete=0 " +
@@ -327,7 +327,7 @@ namespace DataAccessLayer
                         query = " select req.RequestId,Mstep.StepId,basi.Name,ServiceNo,DOB,ranks.RankAbbreviation RankName,TrackingId," +
                       " aspusersto.DomainId DomainIdTo,userto.ArmyNo ArmyNoTo ,userto.Name NameTo,ranksto.RankAbbreviation RankTo," +
                       " aspusersfrom.DomainId DomainIdFrom,userfrom.ArmyNo ArmyNoFrom ,userfrom.Name NameFrom,ranksfrom.RankAbbreviation RankFrom" +
-                      " ,fwd.UpdatedOn from MStepCounterStep Mstep  " +
+                      " ,fwd.UpdatedOn,fwdsts.Name StatusName from MStepCounterStep Mstep  " +
                       " left join TrnStepCounter step on Mstep.StepId=step.StepId " +
                       " left join TrnICardRequest req on step.RequestId=req.RequestId and req.Status=0 " +
                       " left join TrnFwds fwd on req.RequestId=fwd.RequestId and fwd.IsComplete=0 " +
@@ -361,7 +361,7 @@ namespace DataAccessLayer
                 query = " select req.RequestId,Mstep.StepId,basi.Name,ServiceNo,DOB,ranks.RankAbbreviation RankName,TrackingId, " +
                         " aspusersto.DomainId DomainIdTo,userto.ArmyNo ArmyNoTo ,userto.Name NameTo,ranksto.RankAbbreviation RankTo, " +
                         " aspusersfrom.DomainId DomainIdFrom,userfrom.ArmyNo ArmyNoFrom ,userfrom.Name NameFrom,ranksfrom.RankAbbreviation RankFrom,fwdsts.Name Status" +
-                        " ,fwd.UpdatedOn from MStepCounterStep Mstep   " +
+                        " ,fwd.UpdatedOn,fwdsts.Name StatusName from MStepCounterStep Mstep   " +
                         " inner join TrnStepCounter step on Mstep.StepId=step.StepId  " +
                         " inner join TrnICardRequest req on step.RequestId=req.RequestId and req.Status=0  " +
                         " inner join TrnFwds fwd on req.RequestId=fwd.RequestId " +

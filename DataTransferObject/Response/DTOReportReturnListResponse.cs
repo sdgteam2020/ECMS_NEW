@@ -23,7 +23,7 @@ namespace DataTransferObject.Response
         public string? RankFrom { get; set; }
         public string? DomainIdFrom { get; set; }
         public string? DomainIdTo { get; set; }
-        public string? Status { get; set; }
+        public string? StatusName { get; set; } 
 
         public DateTime UpdatedOn { get; set; }
 
