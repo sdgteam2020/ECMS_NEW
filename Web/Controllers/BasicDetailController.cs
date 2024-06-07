@@ -122,7 +122,7 @@ namespace Web.Controllers
             var base64EncodedBytes = System.Convert.FromBase64String(Id);
             var ret = System.Text.Encoding.UTF8.GetString(base64EncodedBytes);
             retint = Convert.ToInt32(ret);
-                stepcounter = retint;
+            stepcounter = retint;
             }
             ViewBag.Id = retint;
             ViewBag.jcoor = jcoor;
@@ -132,8 +132,17 @@ namespace Web.Controllers
                 ViewBag.Title = "List of Drafted Appl";
                 // type = 2; stepcounter = 2;
             }
-           else if (retint == 1)
+            else if (retint == 1)
             {
+                // request from DashBoard
+                ViewBag.Title = "List of Drafted Appl";
+                // type = 2; stepcounter = 2;
+            }
+            else if (retint == 11)
+            {
+                retint = 1;
+                stepcounter = 1;
+                // request from Task Board
                 ViewBag.Title = "List of Drafted Appl";
                 // type = 2; stepcounter = 2;
             }
@@ -141,7 +150,15 @@ namespace Web.Controllers
             else if (retint == 2)
             { ViewBag.Title = "I-Card Pending From IO / Superior"; type = 2; stepcounter = 2; }
             else if (retint == 22)
-            { ViewBag.Title = "I-Card Rejectd From IO / Superior"; type = 1; stepcounter = 7; }
+            {
+                // request from DashBoard
+                ViewBag.Title = "I-Card Rejectd From IO / Superior"; type = 1; stepcounter = 7; 
+            }
+            else if (retint == 2222)
+            {
+                // request from Task Board
+                ViewBag.Title = "I-Card Rejectd From IO / Superior"; type = 1; stepcounter = 7;
+            }
             else if (retint == 222)
             { ViewBag.Title = "I-Card Approved From IO / Superior"; type = 3; stepcounter = 2; }
             else if (retint == 3)
@@ -171,12 +188,34 @@ namespace Web.Controllers
             { ViewBag.Title = "I-Card Rejectd From HQ 54"; type = 1; stepcounter = 10; }
             else if (retint == 555)
             { ViewBag.Title = "I-Card Approved From HQ 54"; type = 2; stepcounter = 5; }
-            else if (retint == 888)
-            { ViewBag.Title = "I-Card Submited"; type = 2; stepcounter = 888; }
+            else if (retint == 888) 
+            {
+                // request from DashBoard
+                ViewBag.Title = "I-Card Submited"; type = 2; stepcounter = 888; 
+            }
+            else if (retint == 88)
+            {
+                // request from Task Board
+                ViewBag.Title = "I-Card Submited"; type = 2; stepcounter = 888; 
+            }
             else if (retint == 777)
-            { ViewBag.Title = "I-Card Completed"; type = 2; stepcounter = 777; }
+            { 
+                ViewBag.Title = "I-Card Completed"; type = 2; stepcounter = 777; 
+            }
+            else if (retint == 77)
+            {
+                ViewBag.Title = "I-Card Completed"; type = 2; stepcounter = 777;
+            }
             else if (retint == 999)
-            { ViewBag.Title = "I-Card Rejectd From IO / Superior, RO / ORO and AFSAC Cell"; type = 2; stepcounter = 999; }
+            {
+                // request from DashBoard
+                ViewBag.Title = "I-Card Rejectd From IO / Superior, RO / ORO and AFSAC Cell"; type = 2; stepcounter = 999; 
+            }
+            else if (retint == 99)
+            {
+                // request from Task Board
+                ViewBag.Title = "I-Card Rejectd From IO / Superior, RO / ORO and AFSAC Cell"; type = 2; stepcounter = 999;
+            }
 
             if (stepcounter==0)
             {
@@ -1304,10 +1343,10 @@ namespace Web.Controllers
                 data.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                 data.IsActive = true;
                 data.TypeId= Convert.ToByte(data.TypeId);
-                if (data.TrnFwdId > 0)
-                {
-                    await iTrnFwnBL.UpdateFieldBYTrnFwdId(data.TrnFwdId);
-                }
+                //if (data.TrnFwdId > 0)
+                //{
+                //    await iTrnFwnBL.UpdateFieldBYTrnFwdId(data.TrnFwdId);
+                //}
                 if (await iTrnFwnBL.UpdateAllBYRequestId(data.RequestId))
                 {
                     data.TrnFwdId = 0;
