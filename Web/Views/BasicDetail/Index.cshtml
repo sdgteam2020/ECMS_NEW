@@ -44,11 +44,11 @@
                                 <a href="/Home/Index" class="mr-2">Home</a> > <a href="/Home/Task" class="mr-2">Task</a> >
                                 @if (string.IsNullOrEmpty(Convert.ToString(ViewBag.jcoor)))
                                 {
-                                    <span>Appl Drafted for Offrs</span>
+                                    <span><a href="/Home/MyTask/T2ZmcnNTdWJtaXR0ZWQ=">I-Card Status</a> >Appl Drafted for Offrs</span>
                                 }
                                 else
                                 {
-                                    <span>Appl Drafted for JCO/OR</span>
+                                    <span><a href="/Home/MyTask/SkNPc1N1Ym1pdHRlZA==">I-Card Status</a> >Appl Drafted for JCO/OR</span>
                                 }
                             </div>
                         }
@@ -73,11 +73,11 @@
                                 <a href="/Home/Index" class="mr-2">Home</a> > <a href="/Home/Task" class="mr-2">Task</a> >
                                 @if (string.IsNullOrEmpty(Convert.ToString(ViewBag.jcoor)))
                                 {
-                                    <span>Appl Submitted for Offrs</span>
+                                    <span><a href="/Home/MyTask/T2ZmcnNTdWJtaXR0ZWQ=">I-Card Status</a> >Appl Submitted for Offrs</span>
                                 }
                                 else
                                 {
-                                    <span>Appl Submitted for JCO/OR</span>
+                                    <span><a href="/Home/MyTask/SkNPc1N1Ym1pdHRlZA==">I-Card Status</a> >Appl Submitted for JCO/OR</span>
                                 }
                             </div>
                         }
@@ -102,11 +102,11 @@
                                 <a href="/Home/Index" class="mr-2">Home</a> > <a href="/Home/Task" class="mr-2">Task</a> >
                                 @if (string.IsNullOrEmpty(Convert.ToString(ViewBag.jcoor)))
                                 {
-                                    <span>Appl Rejected for Offrs</span>
+                                    <span><a href="/Home/MyTask/T2ZmcnNTdWJtaXR0ZWQ=">I-Card Status</a> >Appl Rejected for Offrs</span>
                                 }
                                 else
                                 {
-                                    <span>Appl Rejected for Jco/Or</span>
+                                    <span><a href="/Home/MyTask/SkNPc1N1Ym1pdHRlZA==">I-Card Status</a> >Appl Rejected for Jco/Or</span>
                                 }
                             </div>
                         }
@@ -123,6 +123,20 @@
                                     <span>Appl Completed for Jco/Or</span>
                                 }
 
+                            </div>
+                        }
+                        else @if (Convert.ToString(ViewBag.Id) == "77")
+                        {
+                            <div>
+                                <a href="/Home/Index" class="mr-2">Home</a> > <a href="/Home/Task" class="mr-2">Task</a> >
+                                @if (string.IsNullOrEmpty(Convert.ToString(ViewBag.jcoor)))
+                                {
+                                    <span><a href="/Home/MyTask/T2ZmcnNTdWJtaXR0ZWQ=">I-Card Status</a> >Appl Completed for Offrs</span>
+                                }
+                                else
+                                {
+                                    <span><a href="/Home/MyTask/SkNPc1N1Ym1pdHRlZA==">I-Card Status</a> >Appl Completed for Jco/Or</span>
+                                }
                             </div>
                         }
                         else
