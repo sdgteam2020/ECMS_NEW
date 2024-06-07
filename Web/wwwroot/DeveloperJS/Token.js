@@ -3,6 +3,7 @@
     $("#btnfetchtoken").click(function () {
         GetTokenDetails1("FetchUniqueTokenDetails","txtArmyNo");
     });
+
 });
 
 function GetTokenvalidatepersid2fawiththumbprint(IcNo, msgid, txticno, thumbprint) {
@@ -19,27 +20,14 @@ function GetTokenvalidatepersid2fawiththumbprint(IcNo, msgid, txticno, thumbprin
             if (response) {
 
                 if (response[0].Status == '200') {
-                    //var CRL_OCSPCheck = response[0].CRL_OCSPCheck;
-                    //var CRL_OCSPMsg = response[0].CRL_OCSPMsg;
-                    //var Remarks = response[0].Remarks;
-                    //var Thumbprint = response[0].Thumbprint;
-                    //var Status = response[0].Status;
-                    //var TokenValid = response[0].TokenValid;
-                    //var ValidFrom = response[0].ValidFrom;
-                    //var ValidTo = response[0].ValidTo;
-                    //var issuer = response[0].issuer;
-                    //var subject = response[0].subject;
+                    
 
                     GetTokenvalidatepersid2fa(IcNo, msgid, txticno, thumbprint);
                 }
                 else {
                     if (response[0].Status == '404') {
-                        //$("#error-msg").html(response.message);
-                        // $("#tokenmsg").html('<div class="mt-4 alert alert-danger alert-dismissible fade show "><i class="fa fa-times" aria-hidden="true"></i><span class="m-lg-2">' + response[0].Remarks + '</span>.</div>');
-                        // $("#" + txt).val("");
-
+                       
                         $("#" + msgid).html('<div class="mt-4 alert alert-danger alert-dismissible fade show "><i class="fa fa-check " aria-hidden="true"></i><span class="m-lg-2">' + response[0].Remarks +' </span></div>');
-                       /* $("#" + thumbprint).val("");*/
                         $("#" + txticno).val("");
 
                     }
@@ -80,15 +68,9 @@ function GetTokenvalidatepersid2fa(IcNo, msgid, txticno, thumbprint) {
                 }
                 else {
                     if (data == false) {
-                        //$("#error-msg").html(response.message);
-                        // $("#tokenmsg").html('<div class="mt-4 alert alert-danger alert-dismissible fade show "><i class="fa fa-times" aria-hidden="true"></i><span class="m-lg-2">' + response[0].Remarks + '</span>.</div>');
-                        // $("#" + txt).val("");
-
                         $("#" + msgid).html('<div class="mt-4 alert alert-danger alert-dismissible fade show "><i class="fa fa-check " aria-hidden="true"></i><span class="m-lg-2">ICNO Not Match Inserted Token </span></div>');
-
                         $("#" + txticno).val("");
-                        /*$("#" + thumbprint).val("");*/
-
+                        $("#txtspnIsToken").val("");
                     }
                 }
             }
@@ -125,14 +107,9 @@ function GetTokenValidate(ApiId, IcNo, msgid) {
                 }
                 else {
                     if (data[0].Status == '404') {
-                        //$("#error-msg").html(response.message);
-                        // $("#tokenmsg").html('<div class="mt-4 alert alert-danger alert-dismissible fade show "><i class="fa fa-times" aria-hidden="true"></i><span class="m-lg-2">' + response[0].Remarks + '</span>.</div>');
-                        // $("#" + txt).val("");
 
                         $("#" + msgid).html('<div class="mt-4 alert alert-danger alert-dismissible fade show "><i class="fa fa-check " aria-hidden="true"></i><span class="m-lg-2">' + data[0].Remark + ' </span></div>');
-
-                        //$("#" + txt).val("IC-00203");
-
+                        $("#txtspnIsToken").val("");
                     }
                 }
             }
@@ -179,14 +156,9 @@ function GetTokenDetails1(ApiId, txt, thumbprint, msgid) {
                 }
                 else {
                     if (response[0].Status == '404') {
-                        //$("#error-msg").html(response.message);
-                       // $("#tokenmsg").html('<div class="mt-4 alert alert-danger alert-dismissible fade show "><i class="fa fa-times" aria-hidden="true"></i><span class="m-lg-2">' + response[0].Remarks + '</span>.</div>');
-                       // $("#" + txt).val("");
-
-                        $("#" + msgid).html('<div class="mt-4 alert alert-danger alert-dismissible fade show "><i class="fa fa-check " aria-hidden="true"></i><span class="m-lg-2">' + response[0].Remarks + ' </span></div>');
-
-                        //$("#" + txt).val("IC-00203");
-                       
+                         $("#" + msgid).html('<div class="mt-4 alert alert-danger alert-dismissible fade show "><i class="fa fa-check " aria-hidden="true"></i><span class="m-lg-2">' + response[0].Remarks + ' </span></div>');
+                         $("#" + txt).val("");
+                        $("#txtspnIsToken").val("");
                     }
                 }
             }
@@ -237,7 +209,9 @@ function GetTokenDetails(CRL_OCSPCheck, CRL_OCSPMsg, Remarks, Thumbprint, Status
                 if (response == '') {
                     $("#" + msgid).html('<div class="mt-4 alert alert-danger alert-dismissible fade show "><i class="fa fa-times" aria-hidden="true"></i><span class="m-lg-2">DGIS Application Not Running</span>.</div>');
                     $("#" + txt).val("");
-                    $("#" + thumbprint).val("");
+                    if (thumbprint == "")
+                        $("#" + thumbprint).val("");
+                    $("#txtspnIsToken").val("");
                 }
 
                 else if (response.Status == '200') {///&& response[0].TokenValid=='true'
@@ -246,17 +220,26 @@ function GetTokenDetails(CRL_OCSPCheck, CRL_OCSPMsg, Remarks, Thumbprint, Status
                     if (response.ValidTo >= datef2) {
                         $("#" + msgid).html('<div class="mt-4 alert alert-danger alert-dismissible fade show "><i class="fa fa-times" aria-hidden="true"></i><span class="m-lg-2">Token Expired</span>.</div>');
                         $("#" + txt).val("");
-                        $("#" + thumbprint).val("");
+                        if (thumbprint != "")
+                            $("#" + thumbprint).val("");
+                        $("#txtspnIsToken").val("");
                     }
                     else {
                         $("#" + msgid).html('<div class="mt-4 alert alert-success alert-dismissible fade show "><i class="fa fa-check " aria-hidden="true"></i><span class="m-lg-2">Token Detected </span></div>');
                         //  if (response.ArmyNo = "7f33df8ac6540b5cf7ccfd041d8c837641226444d9f1a4aa30a01924c0610996")
                         
                         // $("#" + txt).val(response.ArmyNo);
-                        $("#" + txt).val($("#aspntokenarmyno").html());
+                       // $("#" + txt).val(response.ArmyNo);
+                        if (thumbprint!="")
+                            $("#" + thumbprint).val(response.Thumbprint);
+                        $("#txtspnIsToken").val("Ok");
+                     
+                        let foo = prompt('Type here');
+                        let bar = confirm('Confirm or deny');
+                        $("#" + txt).val(foo);
 
-                        $("#" + thumbprint).val(response.Thumbprint);
-                          //$("#" + txt).val("IC-00002");
+
+                        //$("#" + txt).val("IC-00002");
                     }
 
                    
@@ -266,7 +249,9 @@ function GetTokenDetails(CRL_OCSPCheck, CRL_OCSPMsg, Remarks, Thumbprint, Status
                         //$("#error-msg").html(response.message);
                         $("#" + msgid).html('<div class="mt-4 alert alert-danger alert-dismissible fade show "><i class="fa fa-times" aria-hidden="true"></i><span class="m-lg-2">' + response.Remarks + '</span>.</div>');
                         $("#" + txt).val("");
-                        $("#" + thumbprint).val("");
+                        if (thumbprint != "")
+                            $("#" + thumbprint).val("");
+                        $("#txtspnIsToken").val("");
                     }
                     
                     

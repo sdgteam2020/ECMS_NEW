@@ -166,7 +166,7 @@ namespace DataAccessLayer
                        {
                            UnitMapId = uni.UnitMapId,
                            UnitName = MUni.UnitName,
-                           UnitId = uni.UnitId,
+                           UnitId = uni.UnitMapId,
                            BdeId = bde.BdeId,
                            BdeName = bde.BdeName,
                            DivId = div.DivId,
@@ -364,15 +364,15 @@ namespace DataAccessLayer
         {
             try
             {
-                string query = "SELECT unt.UnitId,unt.UnitName,unt.Suffix,unt.Sus_no FROM MapUnit Map " +
+                string query = "SELECT Map.UnitMapId UnitId,unt.UnitName,unt.Suffix,unt.Sus_no FROM MapUnit Map " +
                                 " Inner join MUnit unt on Map.UnitId = unt.UnitId" +
                                 " where Map.ComdId = ISNULL(@ComdId,Map.ComdId)" +
                                 " AND Map.CorpsId = ISNULL(@CorpsId,Map.CorpsId)" +
                                 " AND Map.DivId = ISNULL(@DivId,Map.DivId)" +
-                                " AND Map.BdeId = ISNULL(@BdeId,Map.BdeId)" +
-                                " AND Map.FmnBranchID = ISNULL(@FmnBranchID,Map.FmnBranchID)" +
-                                " AND Map.PsoId = ISNULL(@PsoId,Map.PsoId)" +
-                                " AND Map.SubDteId = ISNULL(@SubDteId,Map.SubDteId)";
+                                " AND Map.BdeId = ISNULL(@BdeId,Map.BdeId)";
+                                //" AND Map.FmnBranchID = ISNULL(@FmnBranchID,Map.FmnBranchID)" +
+                                //" AND Map.PsoId = ISNULL(@PsoId,Map.PsoId)" +
+                                //" AND Map.SubDteId = ISNULL(@SubDteId,Map.SubDteId)";
 
                 using (var connection = _contextDP.CreateConnection())
                 {

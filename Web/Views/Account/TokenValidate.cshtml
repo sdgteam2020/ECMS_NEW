@@ -119,14 +119,26 @@
                                             <form asp-antiforgery="true" method="post" asp-action="TokenValidate" autocomplete="off" role="form">
                                                 <div class="form-group">
                                                     <label class="labeltoken">Army No</label>
-                                                    <input asp-for="ICNo" class="form-control" placeholder="Enter IC No" value="@dTOTempSession.ICNO" /> @* value="@dTOTempSession.ICNO" *@
+                                                    @if (dTOTempSession.IsToken==true)
+                                                    {
+                                                        <input asp-for="ICNo" class="form-control" placeholder="Enter IC No" readonly  /> @* value="@dTOTempSession.ICNO" *@
+                                                    }
+                                                    else
+                                                    {
+                                                        <input asp-for="ICNo" class="form-control" placeholder="Enter IC No" value="@dTOTempSession.ICNO" /> @* value="@dTOTempSession.ICNO" *@
+                                                    }
+
                                                     <span asp-validation-for="ICNo" class="text-danger"></span>
                                                     <label id="tokenmsg"></label>
                                                 </div>
                                                 <div class="text-center" >
-                                                    <button type="button" class="btn btn-primary mt-2" onclick="GetTokenDetails1('FetchUniqueTokenDetails' ,'ICNo');">Refresh To Fetch Token Details</button>
-                                                    <button type="submit" class="btn btn-primary mt-2">Proceed</button>
+                                                    @if (dTOTempSession.IsToken == true)
+                                                    {
+                                                        <button type="button" class="btn btn-primary mt-2" onclick="GetTokenDetails1('FetchUniqueTokenDetails' ,'ICNo','','tokenmsg');">Refresh To Fetch Token Details</button>
+                                                    }
+                                                    <button type="submit" class="btn btn-primary mt-2" >Proceed</button>
                                                 </div>
+                                                
                                                 @if (TempData["success"] != null)
                                                 {
                                                     <div class="alert alert-success alert-dismissible fade show" role="alert">

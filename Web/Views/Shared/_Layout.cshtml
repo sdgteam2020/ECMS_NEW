@@ -283,6 +283,7 @@
     <div class="d-none" id="spnPostedOffrsfornoti"></div>
     <input class="form-control mb-2 d-none form-space" id="txtspnTokenArmyNo"  placeholder="Enter Army No" />
     <input class="form-control mb-2 d-none form-space" id="txtspnTokenthumbprint"  placeholder="Enter Army No" />
+    <input class="form-control mb-2 d-none form-space" id="txtspnIsToken" />
     @* <span id="spnroleId" class="d-none">@User.Claims.First(c => c.Type.Contains("roleId")).Value</span>
     <span id="spnarmyno" class="d-none">@User.Claims.First(c => c.Type.Contains("armyNo")).Value</span>
     <span id="spnsunno" class="d-none1">@User.Claims.First(c => c.Type.Contains("SUSNo")).Value</span> *@
@@ -396,7 +397,7 @@
         <div id="layoutSidenav_content">
             <main>
                 <div class="main-panel">
-                    @if (signInManager.IsSignedIn(User) && RoleName == "User") // User.IsInRole("User")
+                    @if (signInManager.IsSignedIn(User) && (RoleName == "User" || RoleName == "Coordinator")) // User.IsInRole("User")
                     {
                         <nav class="nav nav-pills nav-justified" id="layouttask">
                             <a class="nav-link Dashboard" aria-current="page" href="/Home/Dashboard">DashBoard</a>

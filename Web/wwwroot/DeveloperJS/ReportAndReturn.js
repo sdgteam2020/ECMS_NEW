@@ -16,7 +16,7 @@ $(document).ready(function () {
     });
     $('#ddlCorps').on('change', function () {
         corId = $(this).val();
-       mMsaterByParent(0, "ddlDiv", 3, $('#ddlCommand').val(), $('#ddlCorps').val(), 0, 0);///ComdId,CorpsId,DivId,BdeId
+       mMsaterByParent(0,0, "ddlDiv", 3, $('#ddlCommand').val(), $('#ddlCorps').val(), 0, 0);///ComdId,CorpsId,DivId,BdeId
             $("#ddlBde").html(lst);
             $("#ddlFmnBranch").html(lst);
             $("#ddlPSODte").html(lst);
@@ -25,7 +25,7 @@ $(document).ready(function () {
     });
     $('#ddlDiv').on('change', function () {
         divId = $(this).val();
-        mMsaterByParent(0, "ddlBde", 4, $('#ddlCommand').val(), $('#ddlCorps').val(), $('#ddlDiv').val(), 0);///ComdId,CorpsId,DivId,BdeId     
+        mMsaterByParent(0,0, "ddlBde", 4, $('#ddlCommand').val(), $('#ddlCorps').val(), $('#ddlDiv').val(), 0);///ComdId,CorpsId,DivId,BdeId     
         $("#ddlFmnBranch").html(lst);
         $("#ddlPSODte").html(lst);
         $("#ddlDgSubDte").html(lst);
@@ -34,6 +34,8 @@ $(document).ready(function () {
     $('#ddlBde').on('change', function () {
         bdeId = $(this).val();
         mMsater(0, "ddlFmnBranch", FmnBranches, "");
+        GetUnitByHierarchy(false, "ddlUnit", 0, $('#ddlCommand').val(), $('#ddlCorps').val(), $('#ddlDiv').val(), $('#ddlBde').val(), 1, 1, 1);
+
     });
     $('#ddlPSODte').on('change', function () {
         SubDteId = $(this).val();
@@ -362,13 +364,25 @@ function GetCount() {
                     ItemlistR += '</div>';
                     ItemlistR += '<div class="row align-items-stretch">';
                     var RecordJcoPending = response.RecordJcoPending;
-                    for (var j = 0; j < RecordJcoPending.length; j++) {
-                        ItemlistR += '<div class="c-dashboardInfo col-lg-1 col-md-6"><a href="#"><span class="d-none applyTypeId">2</span><span class="d-none spnStepId" >' + RecordJcoPending[j].StepId + '</span>';
+                    var RecordJco = response.RecordJco;
+                    var countpending = 0;
+                    for (var j = 0; j < RecordJco.length; j++) {
+                        countpending = 0;
+                        ItemlistR += '<div class="c-dashboardInfo col-lg-1 col-md-6"><a href="#"><span class="d-none applyTypeId">2</span>';
                         ItemlistR += '<div class="wrap">';
                         ItemlistR += '<h4 class="heading heading5 hind-font medium-font-weight c-dashboardInfo__title">';
-                        ItemlistR += '' + RecordJcoPending[j].Name + '';
+                        ItemlistR += '' + RecordJco[j].Name + '';
                         ItemlistR += '</h4>';
-                        ItemlistR += ' <span class="hind-font caption-12 c-dashboardInfo__count">' + RecordJcoPending[j].Total + '</span>';
+                        for (var Z = 0; Z < RecordJcoPending.length; Z++) {
+                            if (RecordJcoPending[Z].RecordOfficeId == RecordJco[j].RecordOfficeId) {
+                                ItemlistR += ' <span class="d-none spnStepId" >' + RecordJcoPending[Z].StepId + '</span><span class="hind-font caption-12 c-dashboardInfo__count">' + RecordJcoPending[Z].Total + '</span>';
+                                countpending=1
+                            }
+                        }
+                        if (countpending == 0) {
+                            ItemlistR += ' <span class="d-none spnStepId" >0</span><span class="hind-font caption-12 c-dashboardInfo__count">0</span>';
+
+                        }
                         ItemlistR += ' <span class="hind-font caption-12 c-dashboardInfo__subInfo"></span>';
                         ItemlistR += '</div>';
                         ItemlistR += '</a></div>';
@@ -848,7 +862,7 @@ function GetUnitByHierarchy(IsOnly,ddl, sectid, ComdId, CorpsId, DivId, BdeId, F
 
                   
 
-
+                    listItem += '<option value="">All</option>';
                     for (var i = 0; i < response.length; i++) {
                         if (IsOnly == true && response[i].UnitId == sectid) {
 

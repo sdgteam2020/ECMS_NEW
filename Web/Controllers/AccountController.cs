@@ -1151,6 +1151,7 @@ namespace Web.Controllers
                     dTOTempSession.IsORO = _trnDomainMapping.IsORO;
                     dTOTempSession.DialingCode = _trnDomainMapping.DialingCode;
                     dTOTempSession.Extension = _trnDomainMapping.Extension;
+                    dTOTempSession.IsToken = _trnDomainMapping.IsToken;
 
 
                     if (_trnDomainMapping.Role !=null)
@@ -1184,7 +1185,7 @@ namespace Web.Controllers
                     dTOTempSession.IsORO = _trnDomainMapping.IsORO;
                     dTOTempSession.DialingCode = _trnDomainMapping.DialingCode;
                     dTOTempSession.Extension = _trnDomainMapping.Extension;
-
+                    dTOTempSession.IsToken = _trnDomainMapping.IsToken;
                     if (_trnDomainMapping.Role != null)
                     {
                         dTOTempSession.Status = 4;
@@ -1239,7 +1240,7 @@ namespace Web.Controllers
                     dTOTempSession.IsORO = _trnDomainMapping.IsORO;
                     dTOTempSession.DialingCode = _trnDomainMapping.DialingCode;
                     dTOTempSession.Extension = _trnDomainMapping.Extension;
-
+                    dTOTempSession.IsToken = _trnDomainMapping.IsToken;
                     if (_trnDomainMapping.Role != null)
                     {
                         dTOTempSession.Status = 1;

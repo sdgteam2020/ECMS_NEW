@@ -95,6 +95,7 @@ namespace DataAccessLayer
                                         MapUnit = xtdm != null ? xtdm.MapUnit : null,
                                         ApptId = (short)(xtdm != null ? xtdm.ApptId : 0),
                                         IsIO = xtdm != null ? xtdm.IsIO : false,
+                                        IsToken = xup.IsToken,
                                         IsCO = xtdm != null ? xtdm.IsCO : false,
                                         IsRO = xtdm != null ? xtdm.IsRO : false,
                                         IsORO = xtdm != null ? xtdm.IsORO : false,

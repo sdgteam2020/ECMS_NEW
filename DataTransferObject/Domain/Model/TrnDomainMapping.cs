@@ -72,5 +72,7 @@ namespace DataTransferObject.Domain.Model
 
         [NotMapped]
         public MRank? Rank { get; set; }
+        [NotMapped]
+        public bool IsToken { get; set; }
     }
 }

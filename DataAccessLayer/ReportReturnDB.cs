@@ -31,13 +31,13 @@ namespace DataAccessLayer
                            "  left join TrnICardRequest req on step.RequestId=req.RequestId and req.Status=0  " +
                            "  left join  BasicDetails basi on req.BasicDetailId=basi.BasicDetailId  " +
                            "  left join MapUnit unit on basi.UnitId=unit.UnitMapId " +
-                           " and unit.ComdId=ISNULL(@ComdId,unit.ComdId) " +
+                           " where unit.ComdId=ISNULL(@ComdId,unit.ComdId) " +
                            " and unit.CorpsId=ISNULL(@CorpsId,unit.CorpsId)" +
                            " and unit.DivId=ISNULL(@DivId,unit.DivId)" +
                            " and unit.BdeId=ISNULL(@BdeId,unit.BdeId)" +
-                           " and unit.BdeId=ISNULL(@FmnBranchID,unit.FmnBranchID)" +
-                           " and unit.BdeId=ISNULL(@PsoId,unit.PsoId)" +
-                           " and unit.BdeId=ISNULL(@SubDteId,unit.SubDteId)" +
+                           //" and unit.FmnBranchID=ISNULL(@FmnBranchID,unit.FmnBranchID)" +
+                           //" and unit.PsoId=ISNULL(@PsoId,unit.PsoId)" +
+                           //" and unit.SubDteId=ISNULL(@SubDteId,unit.SubDteId)" +
                            " and unit.UnitMapId=ISNULL(@UnitMapId,unit.UnitMapId) " +
                            " group by fwd.StepId,fwd.IsComplete,fwd.TrnFwdId " +
                            " create table #Temp(StepId int, IsApprove int, Total int)" +
@@ -53,7 +53,20 @@ namespace DataAccessLayer
                            " Select Top 1 @StepId=StepId from tempstep" +
                            " if exists(select * from tempstep where StepId=@StepId and @StepId=1)" +
                            " begin" +
-                           " SELECT @Total=COUNT(*) from TrnStepCounter where ApplyForId=@ApplyForId and StepId=@StepId" +
+                           " SELECT @Total=COUNT(*) from TrnStepCounter step" +
+                           "  left join TrnICardRequest req on step.RequestId=req.RequestId and req.Status=0  " +
+                           "  left join  BasicDetails basi on req.BasicDetailId=basi.BasicDetailId  " +
+                           "  left join MapUnit unit on basi.UnitId=unit.UnitMapId " +
+                           "  where unit.ComdId=ISNULL(@ComdId,unit.ComdId) " +
+                           "  and unit.CorpsId=ISNULL(@CorpsId,unit.CorpsId)" +
+                           "  and unit.DivId=ISNULL(@DivId,unit.DivId)" +
+                           "  and unit.BdeId=ISNULL(@BdeId,unit.BdeId)" +
+                           //"  and unit.FmnBranchID=ISNULL(@FmnBranchID,unit.FmnBranchID)" +
+                           //"  and unit.PsoId=ISNULL(@PsoId,unit.PsoId)" +
+                           //"  and unit.SubDteId=ISNULL(@SubDteId,unit.SubDteId)" +
+                           "  and unit.UnitMapId=ISNULL(@UnitMapId,unit.UnitMapId) " +
+                           "  and step.ApplyForId=@ApplyForId and step.StepId=@StepId" +
+
                            " INSERT INTO #Temp(StepId,IsApprove,Total)VALUES(@StepId,@IsApprove,@Total)" +
                            " end" +
                            " else if exists(select * from tempstep where StepId=@StepId and @StepId in (2,3,4) )" +
@@ -115,9 +128,9 @@ namespace DataAccessLayer
                            " and unit.CorpsId=ISNULL(@CorpsId,unit.CorpsId)" +
                            " and unit.DivId=ISNULL(@DivId,unit.DivId)" +
                            " and unit.BdeId=ISNULL(@BdeId,unit.BdeId)" +
-                           " and unit.BdeId=ISNULL(@FmnBranchID,unit.FmnBranchID)" +
-                           " and unit.BdeId=ISNULL(@PsoId,unit.PsoId)" +
-                           " and unit.BdeId=ISNULL(@SubDteId,unit.SubDteId)" +
+                           //" and unit.FmnBranchID=ISNULL(@FmnBranchID,unit.FmnBranchID)" +
+                           //" and unit.PsoId=ISNULL(@PsoId,unit.PsoId)" +
+                           //" and unit.SubDteId=ISNULL(@SubDteId,unit.SubDteId)" +
                            " and unit.UnitMapId=ISNULL(@UnitMapId,unit.UnitMapId)" +
                            " where basi.ApplyForId=@ApplyForId and  fwd.FwdStatusId in (3) " +
                            " group by Mfsts.FwdStatusId,fwd.TypeId";
@@ -135,13 +148,13 @@ namespace DataAccessLayer
                           " inner join  BasicDetails basi on req.BasicDetailId=basi.BasicDetailId " +
                           " left join MapUnit unit on basi.UnitId=unit.UnitMapId " +
                           " and unit.ComdId=ISNULL(@ComdId,unit.ComdId) " +
-                          " and unit.CorpsId=ISNULL(@CorpsId,unit.CorpsId)" +
-                          " and unit.DivId=ISNULL(@DivId,unit.DivId)" +
-                          " and unit.BdeId=ISNULL(@BdeId,unit.BdeId)" +
-                          " and unit.BdeId=ISNULL(@FmnBranchID,unit.FmnBranchID)" +
-                          " and unit.BdeId=ISNULL(@PsoId,unit.PsoId)" +
-                          " and unit.BdeId=ISNULL(@SubDteId,unit.SubDteId)" +
-                          " and unit.UnitMapId=ISNULL(@UnitMapId,unit.UnitMapId)" +
+                           " and unit.CorpsId=ISNULL(@CorpsId,unit.CorpsId)" +
+                           " and unit.DivId=ISNULL(@DivId,unit.DivId)" +
+                           " and unit.BdeId=ISNULL(@BdeId,unit.BdeId)" +
+                           //" and unit.FmnBranchID=ISNULL(@FmnBranchID,unit.FmnBranchID)" +
+                           //" and unit.PsoId=ISNULL(@PsoId,unit.PsoId)" +
+                           //" and unit.SubDteId=ISNULL(@SubDteId,unit.SubDteId)" +
+                           " and unit.UnitMapId=ISNULL(@UnitMapId,unit.UnitMapId)" +
                           " where basi.ApplyForId=@ApplyForId and  fwd.FwdStatusId in (2)  and IsComplete=1 " +
                           " group by Mfsts.FwdStatusId,fwd.TypeId";
 
@@ -198,15 +211,15 @@ namespace DataAccessLayer
                            " inner join OROMapping mrec on map.Id=mrec.TDMId " +
                            " inner join  BasicDetails basi on req.BasicDetailId=basi.BasicDetailId " +
                            " left join MapUnit unit on basi.UnitId=unit.UnitMapId " +
-                           " and unit.ComdId=ISNULL(@ComdId,unit.ComdId) " +
+                          " where unit.ComdId=ISNULL(@ComdId,unit.ComdId) " +
                            " and unit.CorpsId=ISNULL(@CorpsId,unit.CorpsId)" +
                            " and unit.DivId=ISNULL(@DivId,unit.DivId)" +
                            " and unit.BdeId=ISNULL(@BdeId,unit.BdeId)" +
-                           " and unit.BdeId=ISNULL(@FmnBranchID,unit.FmnBranchID)" +
-                           " and unit.BdeId=ISNULL(@PsoId,unit.PsoId)" +
-                           " and unit.BdeId=ISNULL(@SubDteId,unit.SubDteId)" +
+                           //" and unit.FmnBranchID=ISNULL(@FmnBranchID,unit.FmnBranchID)" +
+                           //" and unit.PsoId=ISNULL(@PsoId,unit.PsoId)" +
+                           //" and unit.SubDteId=ISNULL(@SubDteId,unit.SubDteId)" +
                            " and unit.UnitMapId=ISNULL(@UnitMapId,unit.UnitMapId)" +
-                           " where fwd.IsComplete=0" +
+                           //" where fwd.IsComplete=0" +
                            " group by fwdsts.Name,fwdsts.FwdStatusId,mrec.RecordOfficeId";
 
             using (var connection = _contextDP.CreateConnection())
@@ -229,21 +242,21 @@ namespace DataAccessLayer
         {
             string query = " select count(req.RequestId) Total ,recf.RecordOfficeId,recf.Name,step.StepId from MRecordOffice recf" +
                            " left join TrnDomainMapping map on recf.TDMId=map.Id" +
-                           " left join TrnFwds fwd on map.AspNetUsersId=fwd.FromAspNetUsersId and fwd.IsComplete=@IsComplete and fwd.StepId=3" +
+                           " left join TrnFwds fwd on map.AspNetUsersId=fwd.ToAspNetUsersId and fwd.IsComplete=@IsComplete and fwd.StepId=3" +
                            " left join TrnICardRequest req on fwd.RequestId=req.RequestId and req.Status=0  " +
                            " left join TrnStepCounter step on req.RequestId=step.RequestId " +
                            " left join MRecordOffice mrec on map.Id=mrec.TDMId and mrec.ArmedId!=56 " +
                            " left join BasicDetails basi on req.BasicDetailId=basi.BasicDetailId " +
                            " left join MapUnit unit on basi.UnitId=unit.UnitMapId" +
-                           " and unit.ComdId=ISNULL(@ComdId,unit.ComdId) " +
+                         " where unit.ComdId=ISNULL(@ComdId,unit.ComdId) " +
                            " and unit.CorpsId=ISNULL(@CorpsId,unit.CorpsId)" +
                            " and unit.DivId=ISNULL(@DivId,unit.DivId)" +
                            " and unit.BdeId=ISNULL(@BdeId,unit.BdeId)" +
-                           " and unit.BdeId=ISNULL(@FmnBranchID,unit.FmnBranchID)" +
-                           " and unit.BdeId=ISNULL(@PsoId,unit.PsoId)" +
-                           " and unit.BdeId=ISNULL(@SubDteId,unit.SubDteId)" +
+                           //" and unit.FmnBranchID=ISNULL(@FmnBranchID,unit.FmnBranchID)" +
+                           //" and unit.PsoId=ISNULL(@PsoId,unit.PsoId)" +
+                           //" and unit.SubDteId=ISNULL(@SubDteId,unit.SubDteId)" +
                            " and unit.UnitMapId=ISNULL(@UnitMapId,unit.UnitMapId)" +
-                           " where recf.ArmedId!=56   group by recf.RecordOfficeId,recf.Name,step.StepId";
+                           " and recf.ArmedId!=56   group by recf.RecordOfficeId,recf.Name,step.StepId";
 
             using (var connection = _contextDP.CreateConnection())
             {
@@ -278,15 +291,15 @@ namespace DataAccessLayer
                             " left join  BasicDetails basi on req.BasicDetailId=basi.BasicDetailId " +
                             " left join MRank ranks on ranks.RankId=basi.RankId" +
                             " left join MapUnit unit on basi.UnitId=unit.UnitMapId " +
-                            " and unit.ComdId=ISNULL(@ComdId,unit.ComdId) " +
-                            " and unit.CorpsId=ISNULL(@CorpsId,unit.CorpsId)" +
-                            " and unit.DivId=ISNULL(@DivId,unit.DivId)" +
-                            " and unit.BdeId=ISNULL(@BdeId,unit.BdeId)" +
-                            " and unit.BdeId=ISNULL(@FmnBranchID,unit.FmnBranchID)" +
-                            " and unit.BdeId=ISNULL(@PsoId,unit.PsoId)" +
-                            " and unit.BdeId=ISNULL(@SubDteId,unit.SubDteId)" +
-                            " and unit.UnitMapId=ISNULL(@UnitMapId,unit.UnitMapId)" +
-                            " where step.ApplyForId=@ApplyForId and fwd.StepId=@StepId";
+                            " where unit.ComdId=ISNULL(@ComdId,unit.ComdId) " +
+                           " and unit.CorpsId=ISNULL(@CorpsId,unit.CorpsId)" +
+                           " and unit.DivId=ISNULL(@DivId,unit.DivId)" +
+                           " and unit.BdeId=ISNULL(@BdeId,unit.BdeId)" +
+                           //" and unit.FmnBranchID=ISNULL(@FmnBranchID,unit.FmnBranchID)" +
+                           //" and unit.PsoId=ISNULL(@PsoId,unit.PsoId)" +
+                           //" and unit.SubDteId=ISNULL(@SubDteId,unit.SubDteId)" +
+                           " and unit.UnitMapId=ISNULL(@UnitMapId,unit.UnitMapId)" +
+                            " and step.ApplyForId=@ApplyForId and fwd.StepId=@StepId";
                         
                      }
                 else
@@ -312,15 +325,15 @@ namespace DataAccessLayer
                       " left join  BasicDetails basi on req.BasicDetailId=basi.BasicDetailId " +
                       " left join MRank ranks on ranks.RankId=basi.RankId" +
                       " left join MapUnit unit on basi.UnitId=unit.UnitMapId " +
-                      " and unit.ComdId=ISNULL(@ComdId,unit.ComdId) " +
-                      " and unit.CorpsId=ISNULL(@CorpsId,unit.CorpsId)" +
-                      " and unit.DivId=ISNULL(@DivId,unit.DivId)" +
-                      " and unit.BdeId=ISNULL(@BdeId,unit.BdeId)" +
-                      " and unit.BdeId=ISNULL(@FmnBranchID,unit.FmnBranchID)" +
-                      " and unit.BdeId=ISNULL(@PsoId,unit.PsoId)" +
-                      " and unit.BdeId=ISNULL(@SubDteId,unit.SubDteId)" +
-                      " and unit.UnitMapId=ISNULL(@UnitMapId,unit.UnitMapId)" +
-                      " where step.ApplyForId=@ApplyForId ";
+                      " where unit.ComdId=ISNULL(@ComdId,unit.ComdId) " +
+                           " and unit.CorpsId=ISNULL(@CorpsId,unit.CorpsId)" +
+                           " and unit.DivId=ISNULL(@DivId,unit.DivId)" +
+                           " and unit.BdeId=ISNULL(@BdeId,unit.BdeId)" +
+                           //" and unit.FmnBranchID=ISNULL(@FmnBranchID,unit.FmnBranchID)" +
+                           //" and unit.PsoId=ISNULL(@PsoId,unit.PsoId)" +
+                           //" and unit.SubDteId=ISNULL(@SubDteId,unit.SubDteId)" +
+                           " and unit.UnitMapId=ISNULL(@UnitMapId,unit.UnitMapId)" +
+                      " and step.ApplyForId=@ApplyForId ";
                     }
                     else
                     {
@@ -343,15 +356,15 @@ namespace DataAccessLayer
                       " left join  BasicDetails basi on req.BasicDetailId=basi.BasicDetailId " +
                       " left join MRank ranks on ranks.RankId=basi.RankId" +
                       " left join MapUnit unit on basi.UnitId=unit.UnitMapId " +
-                      " and unit.ComdId=ISNULL(@ComdId,unit.ComdId) " +
-                      " and unit.CorpsId=ISNULL(@CorpsId,unit.CorpsId)" +
-                      " and unit.DivId=ISNULL(@DivId,unit.DivId)" +
-                      " and unit.BdeId=ISNULL(@BdeId,unit.BdeId)" +
-                      " and unit.BdeId=ISNULL(@FmnBranchID,unit.FmnBranchID)" +
-                      " and unit.BdeId=ISNULL(@PsoId,unit.PsoId)" +
-                      " and unit.BdeId=ISNULL(@SubDteId,unit.SubDteId)" +
-                      " and unit.UnitMapId=ISNULL(@UnitMapId,unit.UnitMapId)" +
-                      " where step.ApplyForId=@ApplyForId and fwd.StepId=@StepId";
+                      " where unit.ComdId=ISNULL(@ComdId,unit.ComdId) " +
+                           " and unit.CorpsId=ISNULL(@CorpsId,unit.CorpsId)" +
+                           " and unit.DivId=ISNULL(@DivId,unit.DivId)" +
+                           " and unit.BdeId=ISNULL(@BdeId,unit.BdeId)" +
+                           //" and unit.FmnBranchID=ISNULL(@FmnBranchID,unit.FmnBranchID)" +
+                           //" and unit.PsoId=ISNULL(@PsoId,unit.PsoId)" +
+                           //" and unit.SubDteId=ISNULL(@SubDteId,unit.SubDteId)" +
+                           " and unit.UnitMapId=ISNULL(@UnitMapId,unit.UnitMapId)" +
+                      " and step.ApplyForId=@ApplyForId and fwd.StepId=@StepId";
                     }
                       
                 }
@@ -379,15 +392,15 @@ namespace DataAccessLayer
                         " left join  BasicDetails basi on req.BasicDetailId=basi.BasicDetailId  " +
                         " left join MRank ranks on ranks.RankId=basi.RankId " +
                         " left join MapUnit unit on basi.UnitId=unit.UnitMapId  " +
-                        "  and unit.ComdId=ISNULL(@ComdId,unit.ComdId) " +
-                          " and unit.CorpsId=ISNULL(@CorpsId,unit.CorpsId)" +
-                          " and unit.DivId=ISNULL(@DivId,unit.DivId)" +
-                          " and unit.BdeId=ISNULL(@BdeId,unit.BdeId)" +
-                          " and unit.BdeId=ISNULL(@FmnBranchID,unit.FmnBranchID)" +
-                          " and unit.BdeId=ISNULL(@PsoId,unit.PsoId)" +
-                          " and unit.BdeId=ISNULL(@SubDteId,unit.SubDteId)" +
-                          " and unit.UnitMapId=ISNULL(@UnitMapId,unit.UnitMapId)" +
-                        " where step.ApplyForId=1 and fwd.StepId=3 and mrec.RecordOfficeId=@ApplyForId ";
+                       " where unit.ComdId=ISNULL(@ComdId,unit.ComdId) " +
+                           " and unit.CorpsId=ISNULL(@CorpsId,unit.CorpsId)" +
+                           " and unit.DivId=ISNULL(@DivId,unit.DivId)" +
+                           " and unit.BdeId=ISNULL(@BdeId,unit.BdeId)" +
+                           //" and unit.FmnBranchID=ISNULL(@FmnBranchID,unit.FmnBranchID)" +
+                           //" and unit.PsoId=ISNULL(@PsoId,unit.PsoId)" +
+                           //" and unit.SubDteId=ISNULL(@SubDteId,unit.SubDteId)" +
+                           " and unit.UnitMapId=ISNULL(@UnitMapId,unit.UnitMapId)" +
+                        " and step.ApplyForId=1 and fwd.StepId=3 and mrec.RecordOfficeId=@ApplyForId ";
 
             }
             using (var connection = _contextDP.CreateConnection())
