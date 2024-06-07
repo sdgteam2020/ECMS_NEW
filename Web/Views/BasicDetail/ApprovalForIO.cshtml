@@ -97,6 +97,7 @@
                                     <th>@Html.DisplayNameFor(model => model[0].Sno)</th>
                                     <th>@Html.DisplayNameFor(model => model[0].ServiceNo)</th>
                                     <th>Rank , @Html.DisplayNameFor(model => model[0].Name)</th>
+                                    <th>Unit Name</th>
                                     
                                    @*  <th>@Html.DisplayNameFor(model => model[0].DOB)</th>
                                     <th>@Html.DisplayNameFor(model => model[0].DateOfCommissioning)</th>
@@ -133,6 +134,7 @@
                                         <td>@item.Sno</td>
                                         <td class="ServiceNo">@item.ServiceNo</td>
                                         <td class="PersName">@item.RankName @item.Name</td>
+                                        <td class="UnitName">@item.UnitName</td>
                                         
                                       @*   <td>@item.DOB.ToString("dd/MMM/yyyy")</td>
                                         <td>@item.DateOfCommissioning.ToString("dd/MMM/yyyy")</td>

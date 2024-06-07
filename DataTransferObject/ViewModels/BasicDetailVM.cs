@@ -157,6 +157,9 @@ namespace DataTransferObject.ViewModels
 
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
         public int UnitId { get; set; }
+        
+        [NotMapped]
+        public string UnitName { get; set; } = string.Empty;
 
         public bool IsSubmit { get; set; }
         

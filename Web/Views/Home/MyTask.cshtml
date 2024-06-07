@@ -265,7 +265,7 @@
                 </div>
             </div>
         }
-        
+
         else if (ViewBag.Type == "OffrsPending")
         {
             <div class="card p-4">
@@ -495,7 +495,7 @@
                 </div>
             </div>
         }
-        
+
         else if (ViewBag.Type == "JCOsSubmitted")
         {
             <div class="card p-4">
@@ -519,18 +519,16 @@
                                 <div class="card-body">
                                     <div class="feature-icon-box3 mb-3">
                                         <div class="row">
-
-                                            <div class="col-xl-4 col-sm-4 col-12 mt-2">
+                                            <div class="col-xl-3 col-sm-4 col-12 mt-2">
                                                 <div class="card box-shadow">
-
-                                                    <a href="/BasicDetail/Index?Id=Mg==&jcoor=SmNvL09ycw==">
+                                                    <a href="/BasicDetail/Index/?Id=MTE=&jcoor=SmNvL09ycw==">
                                                         <div class="number1 SpnCOself" id=""></div>
                                                         <div class="card-content">
                                                             <div class="card-body">
                                                                 <div class="media d-flex">
                                                                     <div class="media-body text-left">
-                                                                        <h3 class="success COPending">0</h3>
-                                                                        <span class="badge badge-pill badge-warning p-2">Pending</span>
+                                                                        <h3 class="success CODrafted">0</h3>
+                                                                        <span class="badge badge-pill badge-warning p-2">Drafted</span>
                                                                     </div>
                                                                     <div class="align-self-center">
                                                                         <i class="text-success fa fa-check-circle fa-3x"></i>
@@ -541,16 +539,16 @@
                                                     </a>
                                                 </div>
                                             </div>
-                                            <div class="col-xl-4 col-sm-4 col-12 mt-2">
+                                            <div class="col-xl-3 col-sm-4 col-12 mt-2">
                                                 <div class="card box-shadow">
-                                                    <a href="/BasicDetail/Index?Id=Mw==&jcoor=SmNvL09ycw==">
-                                                        <div class="number1 SpnDIDself" id=""></div>
+                                                    <a href="/BasicDetail/Index?Id=ODg=&jcoor=SmNvL09ycw==">
+                                                        <div class="number1 SpnCOself" id=""></div>
                                                         <div class="card-content">
                                                             <div class="card-body">
                                                                 <div class="media d-flex">
                                                                     <div class="media-body text-left">
-                                                                        <h3 class="success COApproved">0</h3>
-                                                                        <span class="badge badge-pill badge-success p-2">Approved</span>
+                                                                        <h3 class="success COSubmitted">0</h3>
+                                                                        <span class="badge badge-pill badge-warning p-2">Submitted</span>
                                                                     </div>
                                                                     <div class="align-self-center">
                                                                         <i class="text-success fa fa-check-circle fa-3x"></i>
@@ -561,9 +559,9 @@
                                                     </a>
                                                 </div>
                                             </div>
-                                            <div class="col-xl-4 col-sm-4 col-12 mt-2">
+                                            <div class="col-xl-3 col-sm-4 col-12 mt-2">
                                                 <div class="card box-shadow">
-                                                    <a href="/BasicDetail/Index?Id=MjI=&jcoor=SmNvL09ycw==">
+                                                    <a href="/BasicDetail/Index?Id=OTk=&jcoor=SmNvL09ycw==">
                                                         <div class="number1 SpnCORejectself" id=""></div>
                                                         <div class="card-content">
                                                             <div class="card-body">
@@ -574,6 +572,26 @@
                                                                     </div>
                                                                     <div class="align-self-center">
                                                                         <i class="text-danger fa fa-times-circle fa-3x" aria-hidden="true"></i>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                            <div class="col-xl-3 col-sm-4 col-12 mt-2">
+                                                <div class="card box-shadow">
+                                                    <a href="/BasicDetail/Index?Id=Nzc=&jcoor=SmNvL09ycw==">
+                                                        <div class="number1 SpnDIDself" id=""></div>
+                                                        <div class="card-content">
+                                                            <div class="card-body">
+                                                                <div class="media d-flex">
+                                                                    <div class="media-body text-left">
+                                                                        <h3 class="success COCompleted">0</h3>
+                                                                        <span class="badge badge-pill badge-success p-2">Completed</span>
+                                                                    </div>
+                                                                    <div class="align-self-center">
+                                                                        <i class="text-success fa fa-check-circle fa-3x"></i>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -682,7 +700,7 @@
                     <div class="col-xl-12 col-sm-12 col-12">
                         <div class="card card-collapsable mb-3">
                             <a class="card-header collapsed" href="#Export54" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="collapseCardExample">
-                               AFSAC Cell
+                                AFSAC Cell
                                 <div class="card-collapsable-arrow">
                                     <i class="fas fa-angle-double-down"></i>
                                 </div>
@@ -919,7 +937,7 @@
                         <div class="col-xl-12 col-sm-12 col-12">
                             <div class="card card-collapsable mb-3">
                                 <a class="card-header collapsed" href="#AExport" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="collapseCardExample">
-                                   AFSAC Cell
+                                    AFSAC Cell
                                     <div class="card-collapsable-arrow">
                                         <i class="fas fa-angle-double-down"></i>
                                     </div>
@@ -961,7 +979,6 @@
                                                                             <span class="badge badge-pill badge-success p-2">Approved</span>
                                                                         </div>
                                                                         <div class="align-self-center">
-                                                                          
                                                                         </div>
                                                                     </div>
                                                                 </div>
