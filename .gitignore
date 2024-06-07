@@ -297,3 +297,4 @@ AppPackages/
 /Web/wwwroot/WriteReadData/Signature/2024/April/02/15690012A.jpg
 /.gitignore
 *.jpg
+/Web/Web.csproj.user
