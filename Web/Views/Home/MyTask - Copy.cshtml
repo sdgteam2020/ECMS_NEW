@@ -7,19 +7,19 @@
 }
 @if (ViewBag.Type == "OffrsSubmitted" || ViewBag.Type == "OffrsPending")
 {
-    <span class="d-none" id="applyForId">1</span>
+    <span id="applyForId">1</span>
 }
 else if (ViewBag.Type == "JCOsSubmitted" || ViewBag.Type == "JCOsPending")
 {
-    <span class="d-none" id="applyForId">2</span>
+    <span id="applyForId">2</span>
 }
 @if (ViewBag.Type == "OffrsSubmitted" || ViewBag.Type == "JCOsSubmitted")
 {
-    <span class="d-none" id="Id">1</span>
+    <span id="Id">1</span>
 }
 else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
 {
-    <span class="d-none" id="Id">2</span>
+    <span id="Id">2</span>
 }
 <header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
     <div class="containerMain">
@@ -47,7 +47,7 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
                     <div class="col-xl-12 col-sm-12 col-12">
                         <div class="card card-collapsable mb-3">
                             <a class="card-header collapsed" href="#IO" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="collapseCardExample">
-                                Status
+                                Approver Status
                                 <div class="card-collapsable-arrow">
                                     <i class="fas fa-angle-double-down"></i>
 
@@ -68,7 +68,7 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
                                                             <div class="card-body">
                                                                 <div class="media d-flex">
                                                                     <div class="media-body text-left">
-                                                                        <h3 class="success" id="ToDrafted">0</h3>
+                                                                        <h3 class="success" id="ToDraftedOffrs">0</h3>
                                                                         <span class="badge badge-pill badge-warning p-2">Drafted</span>
                                                                     </div>
                                                                     <div class="align-self-center">
@@ -88,7 +88,7 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
                                                             <div class="card-body">
                                                                 <div class="media d-flex">
                                                                     <div class="media-body text-left">
-                                                                        <h3 class="success" id="ToSubmitted">0</h3>
+                                                                        <h3 class="success" id="ToSubmittedOffrs">0</h3>
                                                                         <span class="badge badge-pill badge-warning p-2">Submitted</span>
                                                                     </div>
                                                                     <div class="align-self-center">
@@ -108,7 +108,7 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
                                                             <div class="card-body">
                                                                 <div class="media d-flex">
                                                                     <div class="media-body text-left">
-                                                                        <h3 class="success" id="ToRejected">0</h3>
+                                                                        <h3 class="success" id="ToRejectedOffrs">0</h3>
                                                                         <span class="badge badge-pill badge-success p-2">Rejected</span>
                                                                     </div>
                                                                     <div class="align-self-center">
@@ -128,11 +128,160 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
                                                             <div class="card-body">
                                                                 <div class="media d-flex">
                                                                     <div class="media-body text-left">
-                                                                        <h3 class="success" id="ToCompleted">0</h3>
+                                                                        <h3 class="success" id="ToCompletedOffrs">0</h3>
                                                                         <span class="badge badge-pill badge-danger p-2">Completed</span>
                                                                     </div>
                                                                     <div class="align-self-center">
                                                                         <i class="text-danger fa fa-times-circle fa-3x" aria-hidden="true"></i>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+                    <div class="col-xl-12 col-sm-12 col-12">
+                        <div class="card card-collapsable mb-3">
+                            <a class="card-header collapsed" href="#GSO" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="collapseCardExample">
+                                Offr's Record Office (ORO)
+                                <div class="card-collapsable-arrow">
+                                    <i class="fas fa-angle-double-down"></i>
+                                </div>
+                            </a>
+                            <div class="collapse show" id="GSO" style="">
+                                <div class="card-body">
+                                    <div class="feature-icon-box3 mb-3">
+
+                                        <div class="row">
+
+                                            <div class="col-xl-4 col-sm-4 col-12 mt-2">
+                                                <div class="card box-shadow">
+                                                    <a href="/BasicDetail/index/Mw==">
+                                                        <div class="number1 SpnGSOself" id=""></div>
+                                                        <div class="card-content">
+                                                            <div class="card-body">
+                                                                <div class="media d-flex">
+                                                                    <div class="media-body text-left">
+                                                                        <h3 class="success _3rdLevelPending">0</h3>
+
+                                                                        <span class="badge badge-pill badge-warning p-2">Pending</span>
+
+                                                                    </div>
+                                                                    <div class="align-self-center">
+
+                                                                        @*  <i class="text-warning fa fa-clock fa-3x"></i> *@
+
+                                                                    </div>
+
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                            <div class="col-xl-4 col-sm-4 col-12 mt-2">
+                                                <div class="card box-shadow">
+                                                    <a href="/BasicDetail/Index/MzMz">
+                                                        <div class="number1 SpnMI11self" id=""></div>
+                                                        <div class="card-content">
+                                                            <div class="card-body">
+                                                                <div class="media d-flex">
+                                                                    <div class="media-body text-left">
+                                                                        <h3 class="success _3rdLevelApproved">0</h3>
+                                                                        <span class="badge badge-pill badge-success p-2">Approved</span>
+                                                                    </div>
+                                                                    <div class="align-self-center">
+                                                                        @* <i class="text-success fa fa-check-circle fa-3x"></i> *@
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                            <div class="col-xl-4 col-sm-4 col-12 mt-2">
+                                                <div class="card box-shadow">
+                                                    <a href="/BasicDetail/Index/MzM=">
+                                                        <div class="number1 SpnGSORejectself" id=""></div>
+                                                        <div class="card-content">
+                                                            <div class="card-body">
+                                                                <div class="media d-flex">
+                                                                    <div class="media-body text-left">
+                                                                        <h3 class="success _3rdLevelReject">0</h3>
+                                                                        <span class="badge badge-pill badge-danger p-2">Rejected</span>
+                                                                    </div>
+                                                                    <div class="align-self-center">
+                                                                        @* <i class="text-danger fa fa-times-circle fa-3x" aria-hidden="true"></i> *@
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xl-12 col-sm-12 col-12">
+                        <div class="card card-collapsable mb-3">
+                            <a class="card-header collapsed" href="#MI11" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="collapseCardExample">
+                                AFSAC Cell
+                                <div class="card-collapsable-arrow">
+                                    <i class="fas fa-angle-double-down"></i>
+                                </div>
+                            </a>
+                            <div class="collapse show" id="MI11" style="">
+                                <div class="card-body">
+                                    <div class="feature-icon-box3 mb-3">
+
+                                        <div class="row">
+
+                                            <div class="col-xl-4 col-sm-4 col-12 mt-2">
+                                                <div class="card box-shadow">
+                                                    <a href="/BasicDetail/Index/NA==">
+                                                        <div class="number1 SpnMI11self" id=""></div>
+                                                        <div class="card-content">
+                                                            <div class="card-body">
+                                                                <div class="media d-flex">
+                                                                    <div class="media-body text-left">
+                                                                        <h3 class="success _4thLevelPending">0</h3>
+                                                                        <span class="badge badge-pill badge-warning p-2">Pending</span>
+                                                                    </div>
+                                                                    <div class="align-self-center">
+                                                                        <i class="text-success fa fa-check-circle fa-3x"></i>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                            <div class="col-xl-4 col-sm-4 col-12 mt-2">
+                                                <div class="card box-shadow">
+                                                    <a href="/BasicDetail/Index/NDQ0">
+                                                        <div class="number1 SpnHQ54self" id=""></div>
+                                                        <div class="card-content">
+                                                            <div class="card-body">
+                                                                <div class="media d-flex">
+                                                                    <div class="media-body text-left">
+                                                                        <h3 class="success _4thLevelApproved">0</h3>
+                                                                        <span class="badge badge-pill badge-success p-2">Exported Data</span>
+                                                                    </div>
+                                                                    <div class="align-self-center">
+                                                                        <i class="text-success fa fa-check-circle fa-3x"></i>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -390,7 +539,7 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
                     <div class="col-xl-12 col-sm-12 col-12">
                         <div class="card card-collapsable mb-3">
                             <a class="card-header collapsed" href="#CO" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="collapseCardExample">
-                                Status
+                                Approver Status
                                 <div class="card-collapsable-arrow">
                                     <i class="fas fa-angle-double-down"></i>
 
@@ -411,7 +560,7 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
                                                             <div class="card-body">
                                                                 <div class="media d-flex">
                                                                     <div class="media-body text-left">
-                                                                        <h3 class="success" id="ToDrafted">0</h3>
+                                                                        <h3 class="success" id="ToDraftedJCO">0</h3>
                                                                         <span class="badge badge-pill badge-warning p-2">Drafted</span>
                                                                     </div>
                                                                     <div class="align-self-center">
@@ -431,7 +580,7 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
                                                             <div class="card-body">
                                                                 <div class="media d-flex">
                                                                     <div class="media-body text-left">
-                                                                        <h3 class="success" id="ToSubmitted">0</h3>
+                                                                        <h3 class="success" id="ToSubmittedJCO">0</h3>
                                                                         <span class="badge badge-pill badge-warning p-2">Submitted</span>
                                                                     </div>
                                                                     <div class="align-self-center">
@@ -451,7 +600,7 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
                                                             <div class="card-body">
                                                                 <div class="media d-flex">
                                                                     <div class="media-body text-left">
-                                                                        <h3 class="success" id="ToRejected">0</h3>
+                                                                        <h3 class="success" id="ToRejectedJCO">0</h3>
                                                                         <span class="badge badge-pill badge-danger p-2">Rejected</span>
                                                                     </div>
                                                                     <div class="align-self-center">
@@ -471,7 +620,7 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
                                                             <div class="card-body">
                                                                 <div class="media d-flex">
                                                                     <div class="media-body text-left">
-                                                                        <h3 class="success" id="ToCompleted">0</h3>
+                                                                        <h3 class="success" id="ToCompletedJCO">0</h3>
                                                                         <span class="badge badge-pill badge-success p-2">Completed</span>
                                                                     </div>
                                                                     <div class="align-self-center">
@@ -489,6 +638,161 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
                             </div>
                         </div>
                     </div>
+
+
+
+                    <div class="col-xl-12 col-sm-12 col-12 d-none1">
+                        <div class="card card-collapsable mb-3">
+                            <a class="card-header collapsed" href="#DID" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="collapseCardExample">
+                                Record Office
+
+                                <div class="card-collapsable-arrow">
+                                    <i class="fas fa-angle-double-down"></i>
+                                </div>
+                            </a>
+                            <div class="collapse show" id="DID" style="">
+                                <div class="card-body">
+                                    <div class="feature-icon-box3 mb-3">
+
+                                        <div class="row">
+
+                                            <div class="col-xl-4 col-sm-4 col-12 mt-2">
+                                                <div class="card box-shadow">
+                                                    <a href="/BasicDetail/Index?Id=Mw==&jcoor=SmNvL09ycw==">
+                                                        <div class="number1 SpnDIDself" id=""></div>
+                                                        <div class="card-content">
+                                                            <div class="card-body">
+                                                                <div class="media d-flex">
+                                                                    <div class="media-body text-left">
+                                                                        <h3 class="success DIDPending">0</h3>
+
+                                                                        <span class="badge badge-pill badge-warning p-2">Pending</span>
+
+                                                                    </div>
+                                                                    <div class="align-self-center">
+
+                                                                        @*  <i class="text-warning fa fa-clock fa-3x"></i> *@
+
+                                                                    </div>
+
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                            <div class="col-xl-4 col-sm-4 col-12 mt-2">
+                                                <div class="card box-shadow">
+                                                    <a href="/BasicDetail/Index?Id=MzMz&jcoor=SmNvL09ycw==">
+                                                        <div class="number1 SpnExportself" id=""></div>
+                                                        <div class="card-content">
+                                                            <div class="card-body">
+                                                                <div class="media d-flex">
+                                                                    <div class="media-body text-left">
+                                                                        <h3 class="success DIDApproved">0</h3>
+                                                                        <span class="badge badge-pill badge-success p-2">Approved</span>
+                                                                    </div>
+                                                                    <div class="align-self-center">
+                                                                        @* <i class="text-success fa fa-check-circle fa-3x"></i> *@
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                            <div class="col-xl-4 col-sm-4 col-12 mt-2">
+                                                <div class="card box-shadow">
+                                                    <a href="/BasicDetail/Index?Id=MzM=&jcoor=SmNvL09ycw==">
+                                                        <div class="number1 SpnDIDRejectself" id=""></div>
+                                                        <div class="card-content">
+                                                            <div class="card-body">
+                                                                <div class="media d-flex">
+                                                                    <div class="media-body text-left">
+                                                                        <h3 class="success DIDReject">0</h3>
+                                                                        <span class="badge badge-pill badge-danger p-2">Rejected</span>
+                                                                    </div>
+                                                                    <div class="align-self-center">
+                                                                        @* <i class="text-danger fa fa-times-circle fa-3x" aria-hidden="true"></i> *@
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+                    <div class="col-xl-12 col-sm-12 col-12">
+                        <div class="card card-collapsable mb-3">
+                            <a class="card-header collapsed" href="#Export54" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="collapseCardExample">
+                                AFSAC Cell
+                                <div class="card-collapsable-arrow">
+                                    <i class="fas fa-angle-double-down"></i>
+                                </div>
+                            </a>
+                            <div class="collapse show" id="Export54" style="">
+                                <div class="card-body">
+                                    <div class="feature-icon-box3 mb-3">
+
+                                        <div class="row">
+
+                                            <div class="col-xl-4 col-sm-4 col-12 mt-2">
+                                                <div class="card box-shadow">
+                                                    <a href="/BasicDetail/Index?Id=NA==&jcoor=SmNvL09ycw==">
+                                                        <div class="number1 SpnExportself" id=""></div>
+                                                        <div class="card-content">
+                                                            <div class="card-body">
+                                                                <div class="media d-flex">
+                                                                    <div class="media-body text-left">
+                                                                        <h3 class="success ExportPending">0</h3>
+                                                                        <span class="badge badge-pill badge-warning p-2">Pending1</span>
+                                                                    </div>
+                                                                    <div class="align-self-center">
+                                                                        @*  <i class="text-warning fa fa-clock fa-3x"></i> *@
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                            <div class="col-xl-4 col-sm-4 col-12 mt-2">
+                                                <div class="card box-shadow">
+                                                    <a href="/BasicDetail/Index?Id=NTU1&jcoor=SmNvL09ycw==">
+                                                        <div class="number1 " id="SpnPrintself"></div>
+                                                        <div class="card-content">
+                                                            <div class="card-body">
+                                                                <div class="media d-flex">
+                                                                    <div class="media-body text-left">
+                                                                        <h3 class="success ExportApproved">0</h3>
+                                                                        <span class="badge badge-pill badge-success p-2">Exported Data</span>
+                                                                    </div>
+                                                                    <div class="align-self-center">
+                                                                        @* <i class="text-success fa fa-check-circle fa-3x"></i> *@
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+
                 </div>
             </div>
         }

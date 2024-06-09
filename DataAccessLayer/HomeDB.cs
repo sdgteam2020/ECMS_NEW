@@ -77,6 +77,7 @@ namespace DataAccessLayer
                             " select @ToSubmittedOffrs=COUNT(distinct req.RequestId) from TrnDomainMapping domain" +
                             " inner join TrnICardRequest req on req.TrnDomainMappingId=domain.Id " +
                             " inner join TrnStepCounter trnstepcout on trnstepcout.RequestId= req.RequestId where domain.AspNetUsersId=@UserId and trnstepcout.StepId>1 and trnstepcout.ApplyForId=1 " +
+                            
                             " select @ToSubmittedJCO=COUNT(distinct req.RequestId) from TrnDomainMapping domain" +
                             " inner join TrnICardRequest req on req.TrnDomainMappingId=domain.Id " +
                             " inner join TrnStepCounter trnstepcout on trnstepcout.RequestId= req.RequestId where domain.AspNetUsersId=@UserId and trnstepcout.StepId>1 and trnstepcout.ApplyForId=2 " +
@@ -87,6 +88,7 @@ namespace DataAccessLayer
                             " select @ToCompletedOffrs=COUNT(distinct req.RequestId) from TrnDomainMapping domain" +
                             " inner join TrnICardRequest req on req.TrnDomainMappingId=domain.Id " +
                             " inner join TrnStepCounter trnstepcout on trnstepcout.RequestId= req.RequestId where domain.AspNetUsersId=@UserId and req.Status=1 and trnstepcout.ApplyForId=1 " +
+                            
                             " select @ToCompletedJCO=COUNT(distinct req.RequestId) from TrnDomainMapping domain" +
                             " inner join TrnICardRequest req on req.TrnDomainMappingId=domain.Id " +
                             " inner join TrnStepCounter trnstepcout on trnstepcout.RequestId= req.RequestId where domain.AspNetUsersId=@UserId and req.Status=1 and trnstepcout.ApplyForId=2 " +
@@ -94,20 +96,22 @@ namespace DataAccessLayer
                     break;
                 case "Rejected":
                     query = "declare @ToRejectedOffrs int=0 declare @ToRejectedJCO int=0" +
-                            " select @ToRejectedOffrs=COUNT(fwd.TrnFwdId) from TrnDomainMapping domain" +
+                            " select @ToRejectedOffrs=COUNT(distinct fwd.RequestId) from TrnDomainMapping domain" +
                             " inner join TrnICardRequest req on req.TrnDomainMappingId=domain.Id " +
                             " inner join TrnStepCounter trnstepcout on trnstepcout.RequestId= req.RequestId" +
-                            " inner join TrnFwds fwd on fwd.RequestId= trnstepcout.RequestId where domain.AspNetUsersId=@UserId and fwd.StepId in(7,8,9,10) and trnstepcout.ApplyForId=1 " +
-                            " select @ToRejectedJCO=COUNT(distinct req.RequestId) from TrnDomainMapping domain" +
+                            " inner join TrnFwds fwd on fwd.RequestId= trnstepcout.RequestId where fwd.ToAspNetUsersId=@UserId and req.Status=0 and fwd.StepId in(7,8,9,10) and trnstepcout.ApplyForId=1 " +
+
+                            " select @ToRejectedJCO=COUNT(distinct fwd.RequestId) from TrnDomainMapping domain" +
                             " inner join TrnICardRequest req on req.TrnDomainMappingId=domain.Id " +
                             " inner join TrnStepCounter trnstepcout on trnstepcout.RequestId= req.RequestId" +
-                            " inner join TrnFwds fwd on fwd.RequestId= trnstepcout.RequestId where domain.AspNetUsersId=@UserId and fwd.StepId in(7,8,9,10) and trnstepcout.ApplyForId=2 " +
+                            " inner join TrnFwds fwd on fwd.RequestId= trnstepcout.RequestId where fwd.ToAspNetUsersId=@UserId and req.Status=0 and fwd.StepId in(7,8,9,10) and trnstepcout.ApplyForId=2 " +
                             " select @ToRejectedOffrs ToRejectedOffrs,@ToRejectedJCO ToRejectedJCO";
                     break;
                 case "Posting Out":
                     query = "declare @ToPostingOutOffrs int=0 declare @ToPostingOutJCO int=0 " + 
                             " select @ToPostingOutOffrs=COUNT(distinct pout.Id) from TrnPostingOut pout "+
                             " inner join BasicDetails basic on basic.BasicDetailId=pout.BasicDetailId where pout.FromAspNetUsersId=@UserId and basic.ApplyForId=1 " +
+                            
                             " select @ToPostingOutJCO=COUNT(distinct pout.Id) from TrnPostingOut pout "+
                             " inner join BasicDetails basic on basic.BasicDetailId=pout.BasicDetailId where pout.FromAspNetUsersId=@UserId and basic.ApplyForId=2 " +
                             " select @ToPostingOutOffrs ToPostingOutOffrs,@ToPostingOutJCO ToPostingOutJCO";
@@ -116,6 +120,7 @@ namespace DataAccessLayer
                     query = "declare @ToPostingInOffrs int=0 declare @ToPostingInJCO int=0 " +
                             " select @ToPostingInOffrs=COUNT(distinct pout.Id) from TrnPostingOut pout " +
                             " inner join BasicDetails basic on basic.BasicDetailId=pout.BasicDetailId where pout.ToAspNetUsersId=@UserId and basic.ApplyForId=1 " +
+                            
                             " select @ToPostingInJCO=COUNT(distinct pout.Id) from TrnPostingOut pout " +
                             " inner join BasicDetails basic on basic.BasicDetailId=pout.BasicDetailId where pout.ToAspNetUsersId=@UserId and basic.ApplyForId=2 " +
                             " select @ToPostingInOffrs ToPostingInOffrs,@ToPostingInJCO ToPostingInJCO";
@@ -150,9 +155,10 @@ namespace DataAccessLayer
                             " select @TotCompleted=COUNT(distinct req.RequestId) from TrnDomainMapping domain" +
                             " inner join TrnICardRequest req on req.TrnDomainMappingId=domain.Id where domain.AspNetUsersId=@UserId and req.Status=1 " +
 
-                            " select @TotRejected=COUNT(distinct req.RequestId) from TrnDomainMapping domain" +
+                            " select @TotRejected=COUNT(distinct fwd.RequestId) from TrnDomainMapping domain" +
                             " inner join TrnICardRequest req on req.TrnDomainMappingId=domain.Id " +
-                            " inner join TrnStepCounter trnstepcout on trnstepcout.RequestId= req.RequestId where domain.AspNetUsersId=@UserId and trnstepcout.StepId in(7,8,9,10) " +
+                            " inner join TrnStepCounter trnstepcout on trnstepcout.RequestId= req.RequestId" +
+                            " inner join TrnFwds fwd on fwd.RequestId= trnstepcout.RequestId where fwd.ToAspNetUsersId=@UserId and req.Status=0 and fwd.StepId in(7,8,9,10)" +
 
                             " select @TotDrafted TotDrafted,@TotSubmitted TotSubmitted,@TotCompleted TotCompleted,@TotRejected TotRejected ";
             try
