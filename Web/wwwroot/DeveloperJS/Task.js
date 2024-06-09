@@ -70,6 +70,7 @@ function GetTaskIcardRequestCount(Id, applyForId) {
                             $("#DIDReject").html(response._3rdLevelReject);                      
                             $("#ExportPending").html(response.ExportPending);
                             $("#ExportApproved").html(response.ExportPending);
+                            $("#ToInternalForward").html(response.ToInternalForward);
                         }
                     }
                 }

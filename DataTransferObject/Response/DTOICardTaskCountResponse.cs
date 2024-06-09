@@ -12,6 +12,7 @@ namespace DataTransferObject.Response
         public int ToSubmitted { get; set; }
         public int ToCompleted { get; set; }
         public int ToRejected { get; set; }
+        public int ToInternalForward { get; set; }
         public int _2ndLevelPending { get; set; }
         public int _2ndLevelApproved { get; set; }
         public int _2ndLevelReject { get; set; }

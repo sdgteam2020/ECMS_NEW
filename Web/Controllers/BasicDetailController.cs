@@ -293,7 +293,8 @@ namespace Web.Controllers
             {
                 ViewBag.Title = "I-Card For Approval";
                 type = 2;
-                ViewBag.Id = 1; 
+                ViewBag.Id = 1;
+                ViewBag.StepCounter = retint;
             }
             else if (retint == 33)
             {
@@ -303,6 +304,10 @@ namespace Web.Controllers
             else if (retint == 333)
             {
                 ViewBag.Title = "Approved I-Card "; type = 3; stepcounter = 4;
+            }
+            else if (retint == 11)
+            {
+                ViewBag.Title = "Internal Forward I-Card "; type = 3; stepcounter = 11;
             }
             else if (retint == 4)
             { ViewBag.Title = "I-Card For Export Data"; type = 2; ViewBag.Id = 1; ViewBag.dataexport = 4; }
