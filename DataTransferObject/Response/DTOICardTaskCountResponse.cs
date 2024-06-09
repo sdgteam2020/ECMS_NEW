@@ -8,6 +8,10 @@ namespace DataTransferObject.Response
 { 
     public class DTOICardTaskCountResponse
     {
+        public int ToDrafted { get; set; }
+        public int ToSubmitted { get; set; }
+        public int ToCompleted { get; set; }
+        public int ToRejected { get; set; }
         public int _2ndLevelPending { get; set; }
         public int _2ndLevelApproved { get; set; }
         public int _2ndLevelReject { get; set; }
