@@ -394,5 +394,33 @@ namespace DataAccessLayer
                 return null;
             }
         }
+
+        public async Task<List<DTOUnitResponse>> GetUnitByHierarchyForIcardRequest(DTOMHierarchyRequest Data)
+        {
+            try
+            {
+                string query = " SELECT distinct munit.UnitMapId UnitId FROM TrnICardRequest trnicrd" +
+                               " inner join BasicDetails B on trnicrd.BasicDetailId = B.BasicDetailId" +
+                               " inner join TrnDomainMapping map on map.Id= trnicrd.TrnDomainMappingId" +
+                               " inner join MapUnit munit on map.UnitId=munit.UnitMapId" +
+                               " where munit.ComdId=ISNULL(@ComdId,munit.ComdId) " +
+                               " and munit.CorpsId=ISNULL(@CorpsId,munit.CorpsId)" +
+                               " and munit.DivId=ISNULL(@DivId,munit.DivId)" +
+                               " and munit.BdeId=ISNULL(@BdeId,munit.BdeId)" +
+                               " and munit.UnitMapId=ISNULL(@UnitId,munit.UnitMapId)";
+
+
+                using (var connection = _contextDP.CreateConnection())
+                {
+                    var ret = await connection.QueryAsync<DTOUnitResponse>(query, new { Data.ComdId, Data.CorpsId, Data.DivId, Data.BdeId, Data.UnitMapId });
+                    return ret.ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "MapUnitDB->GetUnitByHierarchy");
+                return null;
+            }
+        }
     }
  }

@@ -1,4 +1,5 @@
-﻿using DataAccessLayer.BaseInterfaces;
+﻿using DataAccessLayer;
+using DataAccessLayer.BaseInterfaces;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
 using System;
@@ -12,15 +13,16 @@ namespace BusinessLogicsLayer.ReportReturn
     public class ReportReturnBL : IReportReturnBL
     {
         private readonly IReportReturnDB _IReportReturnDB;
-        public ReportReturnBL(IReportReturnDB reportReturnDB)
+        private readonly IMapUnitDB _IMapUnitDB;
+        public ReportReturnBL(IReportReturnDB reportReturnDB, IMapUnitDB iMapUnitDB)
         {
             _IReportReturnDB = reportReturnDB;
-
-        }
+            _IMapUnitDB = iMapUnitDB;   
+        } 
         public async Task<DTOReportReturnCountlst> GetMstepCount(DTOMHierarchyRequest Data)
         {
             DTOReportReturnCountlst dTOReportReturnCountlst = new DTOReportReturnCountlst();
-
+            var listunit=await _IMapUnitDB.GetUnitByHierarchyForIcardRequest(Data);
             dTOReportReturnCountlst.dTOReportReturnCountOffs = await _IReportReturnDB.GetMstepCount(Data, 1);
             dTOReportReturnCountlst.dTOReportReturnCountJco = await _IReportReturnDB.GetMstepCount(Data, 2);
 
