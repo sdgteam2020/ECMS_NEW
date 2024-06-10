@@ -28,3 +28,4 @@ const PSO = 12;
 const SubDte = 13;
 const PostingReason = 14;
 const RecordOffice = 15;
+const IssuingAuthority = 16;

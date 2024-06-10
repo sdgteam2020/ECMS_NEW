@@ -86,12 +86,6 @@ namespace DataTransferObject.ViewModels
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
         [DataType(DataType.Date)]
         public DateTime DateOfIssue { get; set; }
-
-        [Display(Name = "IssuingAuth", ResourceType = typeof(Resource))]
-        [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
-        [RegularExpression(@"^[\w \,]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
-        public string IssuingAuth { get; set; } = string.Empty;
-
         public int UploadId { get; set; }
 
         [Display(Name = "SignatureImagePath", ResourceType = typeof(Resource))]
@@ -157,7 +151,12 @@ namespace DataTransferObject.ViewModels
 
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
         public int UnitId { get; set; }
-        
+
+        [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
+        [Display(Name = "IssuingAuth", ResourceType = typeof(Resource))]
+        [RegularExpression(@"^[\d]+$", ErrorMessage = "IssuingAuthorityId is number.")]
+        public byte IssuingAuthorityId { get; set; }
+
         [NotMapped]
         public string UnitName { get; set; } = string.Empty;
 
