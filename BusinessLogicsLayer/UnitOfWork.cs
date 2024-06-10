@@ -8,6 +8,7 @@ using BusinessLogicsLayer.Corps;
 using BusinessLogicsLayer.Div;
 using BusinessLogicsLayer.Formation;
 using BusinessLogicsLayer.Helpers;
+using BusinessLogicsLayer.IssuingAuthority;
 using BusinessLogicsLayer.Master;
 using BusinessLogicsLayer.OROMapp;
 using BusinessLogicsLayer.RecordOffice;
@@ -30,7 +31,7 @@ namespace BusinessLogicsLayer
     {
 
 
-        public UnitOfWork(IUserBL _user, IComd _comds, ICorpsBL _corpsBL, IBdeBL _bdeCat, IDivBL divBL, IUnitBL unit, IMapUnitBL MapUnitBL, IFormationBL FormationBL, IApptBL apptBL, IArmedBL armedBL, IRankBL rankBL, IRegimentalBL regimentalBL,IRecordOfficeBL recordOfficeBL,IArmedCatBL armedCatBL,IMasterBL masterBL,IOROMappingBL oroMappingBL)
+        public UnitOfWork(IUserBL _user, IComd _comds, ICorpsBL _corpsBL, IBdeBL _bdeCat, IDivBL divBL, IUnitBL unit, IMapUnitBL MapUnitBL, IFormationBL FormationBL, IApptBL apptBL, IArmedBL armedBL, IRankBL rankBL, IRegimentalBL regimentalBL,IRecordOfficeBL recordOfficeBL,IArmedCatBL armedCatBL,IMasterBL masterBL,IOROMappingBL oroMappingBL,IIssuingAuthorityBL issuingAuthorityBL)
         {
             Users = _user;
             Comds = _comds;
@@ -48,11 +49,10 @@ namespace BusinessLogicsLayer
             ArmedCat = armedCatBL;
             MasterBL = masterBL;
             OROMapping= oroMappingBL;
+            IssuingAuthorityBL = issuingAuthorityBL;
         }
         public IUserBL Users { get; }
-
         public IComd Comds { get; }
-
         public ICorpsBL Corps { get; }
         public IDivBL Div { get; }
         public IBdeBL Bde { get; }
@@ -64,11 +64,10 @@ namespace BusinessLogicsLayer
         public IRankBL Rank { get; }
         public IRegimentalBL Regimental { get; }
         public IRecordOfficeBL RecordOffice { get; }
-
         public IArmedCatBL ArmedCat { get; }
-
         public IMasterBL MasterBL { get; }
         public IOROMappingBL OROMapping { get; }
+        public IIssuingAuthorityBL IssuingAuthorityBL { get; }
          
         public async Task<List<DTOMasterResponse>> GetAllMMaster(DTOMasterRequest Data)
         {
@@ -295,6 +294,18 @@ namespace BusinessLogicsLayer
                     DTOMasterResponse db = new DTOMasterResponse();
                     db.Id = recordOffice.RecordOfficeId;
                     db.Name = recordOffice.Name;
+                    lst.Add(db);
+                }
+            }
+            else if (Data.id == Convert.ToInt16(Constants.MasterTbl.IssuingAuthority))
+            {
+                var result = await IssuingAuthorityBL.GetByApplyForId(Convert.ToByte(Data.ParentId));
+
+                foreach (var item in result)
+                {
+                    DTOMasterResponse db = new DTOMasterResponse();
+                    db.Id = item.IssuingAuthorityId;
+                    db.Name = item.IssuingAuthorityName;
                     lst.Add(db);
                 }
             }

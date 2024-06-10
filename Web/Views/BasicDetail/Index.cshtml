@@ -44,11 +44,11 @@
                                 <a href="/Home/Index" class="mr-2">Home</a> > <a href="/Home/Task" class="mr-2">Task</a> >
                                 @if (string.IsNullOrEmpty(Convert.ToString(ViewBag.jcoor)))
                                 {
-                                    <span>Appl Drafted for Offrs</span>
+                                    <span><a href="/Home/MyTask/T2ZmcnNTdWJtaXR0ZWQ=">I-Card Status</a> >Appl Drafted for Offrs</span>
                                 }
                                 else
                                 {
-                                    <span>Appl Drafted for JCO/OR</span>
+                                    <span><a href="/Home/MyTask/SkNPc1N1Ym1pdHRlZA==">I-Card Status</a> >Appl Drafted for JCO/OR</span>
                                 }
                             </div>
                         }
@@ -73,11 +73,11 @@
                                 <a href="/Home/Index" class="mr-2">Home</a> > <a href="/Home/Task" class="mr-2">Task</a> >
                                 @if (string.IsNullOrEmpty(Convert.ToString(ViewBag.jcoor)))
                                 {
-                                    <span>Appl Submitted for Offrs</span>
+                                    <span><a href="/Home/MyTask/T2ZmcnNTdWJtaXR0ZWQ=">I-Card Status</a> >Appl Submitted for Offrs</span>
                                 }
                                 else
                                 {
-                                    <span>Appl Submitted for JCO/OR</span>
+                                    <span><a href="/Home/MyTask/SkNPc1N1Ym1pdHRlZA==">I-Card Status</a> >Appl Submitted for JCO/OR</span>
                                 }
                             </div>
                         }
@@ -102,11 +102,11 @@
                                 <a href="/Home/Index" class="mr-2">Home</a> > <a href="/Home/Task" class="mr-2">Task</a> >
                                 @if (string.IsNullOrEmpty(Convert.ToString(ViewBag.jcoor)))
                                 {
-                                    <span>Appl Rejected for Offrs</span>
+                                    <span><a href="/Home/MyTask/T2ZmcnNTdWJtaXR0ZWQ=">I-Card Status</a> >Appl Rejected for Offrs</span>
                                 }
                                 else
                                 {
-                                    <span>Appl Rejected for Jco/Or</span>
+                                    <span><a href="/Home/MyTask/SkNPc1N1Ym1pdHRlZA==">I-Card Status</a> >Appl Rejected for Jco/Or</span>
                                 }
                             </div>
                         }
@@ -123,6 +123,20 @@
                                     <span>Appl Completed for Jco/Or</span>
                                 }
 
+                            </div>
+                        }
+                        else @if (Convert.ToString(ViewBag.Id) == "77")
+                        {
+                            <div>
+                                <a href="/Home/Index" class="mr-2">Home</a> > <a href="/Home/Task" class="mr-2">Task</a> >
+                                @if (string.IsNullOrEmpty(Convert.ToString(ViewBag.jcoor)))
+                                {
+                                    <span><a href="/Home/MyTask/T2ZmcnNTdWJtaXR0ZWQ=">I-Card Status</a> >Appl Completed for Offrs</span>
+                                }
+                                else
+                                {
+                                    <span><a href="/Home/MyTask/SkNPc1N1Ym1pdHRlZA==">I-Card Status</a> >Appl Completed for Jco/Or</span>
+                                }
                             </div>
                         }
                         else
@@ -227,7 +241,7 @@
                                                     <spna class="spnApplyFor d-none">@item.ApplyForId</spna>
                                                     <spna class="spnarmyUnitId d-none">@item.UnitId</spna>
 
-                                                @if ((item.StepCounter == 1 || item.StepCounter == 7 || item.StepCounter == 8 || item.StepCounter == 9 || item.StepCounter == 10) && (ViewBag.Id == 0 || ViewBag.Id == 1 || item.IsFwdStatusId == 3))
+                                                @if ((item.StepCounter == 1 || item.StepCounter == 7 || item.StepCounter == 8 || item.StepCounter == 9 || item.StepCounter == 10) && (ViewBag.Id == 0 || ViewBag.Id == 1 || ViewBag.Id == 11 || item.IsFwdStatusId == 3))
                                                     {
                                                         <a asp-controller="BasicDetail" asp-action="BasicDetail" asp-route-Id="@item.EncryptedId" class="btn btn-icon btn-round btn-warning mr-2"><i class="fas fa-edit mt-2"></i></a>
 
