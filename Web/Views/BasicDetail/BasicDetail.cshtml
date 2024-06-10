@@ -345,10 +345,11 @@
                                     </div>
                                     <div class="row mb-1 required">
                                         <label class="col-sm-2 col-form-label text-center font-weight-bold">@(sno++).</label>
-                                        <label asp-for="IssuingAuth" class="col-sm-4 col-form-label form-label labelprofile"></label>
+                                        <label asp-for="IssuingAuthorityId" class="col-sm-4 col-form-label form-label labelprofile"></label>
                                         <div class="col-sm-6">
-                                            <input asp-for="IssuingAuth" readonly class="form-control text-uppercase" data-toggle="tooltip" title="Enter OIC Unit" placeholder="OIC Unit" required />
-                                            <span asp-validation-for="IssuingAuth" class="text-danger"></span>
+                                            <select asp-for="IssuingAuthorityId" class="form-select" data-toggle="tooltip" title="Select Authority">
+                                            </select>
+                                            <span asp-validation-for="IssuingAuthorityId" class="text-danger"></span>
                                         </div>
                                     </div>
                                     <div class="row mb-1">

@@ -51,8 +51,10 @@
     if ($("#ApplyForId").val() == 1) {
         $(".OptionsRegimental").addClass("d-none");
         mMsater($("#spnrankid").val(), "RankId", Rank, "");
+        mMsater("", "IssuingAuthorityId", IssuingAuthority, $("#ApplyForId").val());
     } else if ($("#ApplyForId").val() == 2) {
         mMsater($("#spnrankid").val(), "RankId", RankJCo, "");
+        mMsater("", "IssuingAuthorityId", IssuingAuthority, $("#ApplyForId").val());
         $(".OptionsRegimental").removeClass("d-none");
     }
 
