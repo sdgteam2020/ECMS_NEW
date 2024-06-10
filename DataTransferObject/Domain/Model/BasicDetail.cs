@@ -45,10 +45,6 @@ namespace DataTransferObject.Domain.Model
         [Column(TypeName = "datetime")]
         public DateTime? DateOfIssue { get; set; }
 
-        [StringLength(50)]
-        [Column(TypeName = "varchar(50)")]
-        public string IssuingAuth { get; set; } = string.Empty;
-
         [DataType(DataType.Date)]
         [Column(TypeName = "datetime")]
         public DateTime DateOfCommissioning { get; set; }
@@ -64,6 +60,8 @@ namespace DataTransferObject.Domain.Model
         [ForeignKey("MUnit")]
         public int UnitId { get; set; }
         public MapUnit? Unit { get; set; }
+        public byte IssuingAuthorityId { get; set; }
+        public MIssuingAuthority? IssuingAuthority { get; set; }
 
         [StringLength(50)]
         [Column(TypeName = "varchar(50)")]

@@ -13,6 +13,7 @@ using BusinessLogicsLayer.Div;
 using BusinessLogicsLayer.EncryptBySql;
 using BusinessLogicsLayer.Formation;
 using BusinessLogicsLayer.Home;
+using BusinessLogicsLayer.IssuingAuthority;
 using BusinessLogicsLayer.Master;
 using BusinessLogicsLayer.OROMapp;
 using BusinessLogicsLayer.Posting;
@@ -163,7 +164,10 @@ namespace BusinessLogicsLayer
 
             services.AddTransient<IReportReturnDB, ReportReturnDB>();
             services.AddTransient<IReportReturnBL, ReportReturnBL>();
-            
+
+            services.AddTransient<IIssuingAuthorityDB, IssuingAuthorityDB>();
+            services.AddTransient<IIssuingAuthorityBL, IssuingAuthorityBL>();
+
 
             //services.AddDbContext<ApplicationDbContext>(opt => opt.UseSqlServer("Server=SDG20\\SQLEXPRESS; Database=AFSAC;Integrated Security=True;MultipleActiveResultSets=True;TrustServerCertificate=True"));
             //services.AddDbContext<ApplicationDbContext>(opt => opt.UseSqlServer("Server=.\\sqlexpress; Database=AFSAC;User Id=sa; Password=Admin@2018;MultipleActiveResultSets=True;TrustServerCertificate=True"));
