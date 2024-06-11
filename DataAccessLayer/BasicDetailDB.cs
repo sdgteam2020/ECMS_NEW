@@ -396,7 +396,7 @@ namespace DataAccessLayer
                         "inner join MICardType ty on ty.TypeId = trnicrd.TypeId " +
                         "inner join TrnDomainMapping map on map.Id= trnicrd.TrnDomainMappingId " +
                         "inner join UserProfile pr on pr.UserId = map.UserId " +
-                        "inner join TrnFwds fwd on fwd.FromAspNetUsersId= map.AspNetUsersId and fwd.IsComplete=0 and fwd.RequestId=trnicrd.RequestId " +
+                        "inner join TrnFwds fwd on fwd.FromAspNetUsersId= map.AspNetUsersId and fwd.IsComplete=1 and fwd.RequestId=trnicrd.RequestId " +
                         "inner join MTrnFwdStatus mtrnfwdstatus on mtrnfwdstatus.FwdStatusId = fwd.FwdStatusId " +
                         "left join TrnPostingOut Postout on Postout.RequestId=trnicrd.RequestId and trnicrd.Status=0 " +
                         "WHERE map.AspNetUsersId = @UserId and Afor.ApplyForId=ISNULL(@applyfor,Afor.ApplyForId) and trnicrd.Status = 1  ORDER BY B.UpdatedOn DESC";
@@ -404,7 +404,7 @@ namespace DataAccessLayer
             }
             else if (stepcount == 888)//////For Submitted
             {
-                query = "SELECT distinct munit.UnitName,B.UnitId,B.BasicDetailId,B.Name,B.ServiceNo,B.DOB,B.DateOfCommissioning,C.StepId StepCounter,C.Id StepId,ty.Name ICardType,trnicrd.RequestId,fwd.Remark,ISNULL(fwd.FwdStatusId,0) IsFwdStatusId,Afor.Name ApplyFor,Afor.ApplyForId ,trnicrd.TrackingId,ran.RankAbbreviation RankName,ISNULL(Postout.Id,0) IsPosting FROM BasicDetails B " +
+                query = "SELECT distinct munit.UnitName,B.UnitId,B.BasicDetailId,B.Name,B.ServiceNo,B.DOB,B.DateOfCommissioning,C.StepId StepCounter,C.Id StepId,ty.Name ICardType,trnicrd.RequestId,Afor.Name ApplyFor,Afor.ApplyForId ,trnicrd.TrackingId,ran.RankAbbreviation RankName,ISNULL(Postout.Id,0) IsPosting FROM BasicDetails B " +
                         "inner join MRank ran on ran.RankId=B.RankId " +
                         "inner join MapUnit mapunit on mapunit.UnitMapId=B.UnitId " +
                         "inner join MUnit munit on munit.UnitId=mapunit.UnitId " +
@@ -414,8 +414,6 @@ namespace DataAccessLayer
                         "inner join MICardType ty on ty.TypeId = trnicrd.TypeId " +
                         "inner join TrnDomainMapping map on map.Id= trnicrd.TrnDomainMappingId " +
                         "inner join UserProfile pr on pr.UserId = map.UserId " +
-                        "inner join TrnFwds fwd on fwd.FromAspNetUsersId = map.AspNetUsersId and fwd.RequestId=trnicrd.RequestId " +
-                        "inner join MTrnFwdStatus mtrnfwdstatus on mtrnfwdstatus.FwdStatusId = fwd.FwdStatusId " +
                         "left join TrnPostingOut Postout on Postout.RequestId=trnicrd.RequestId  " +
                         "WHERE map.AspNetUsersId = @UserId and Afor.ApplyForId=ISNULL(@applyfor,Afor.ApplyForId) and C.StepId > 1 ";
 
@@ -500,7 +498,7 @@ namespace DataAccessLayer
                         " inner join TrnStepCounter C on trnicrd.RequestId = C.RequestId" +
                         " inner join MICardType ty on ty.TypeId = trnicrd.TypeId" +
                         " left join TrnPostingOut Postout on Postout.RequestId=trnicrd.RequestId and trnicrd.Status=0 " +
-                        " inner join TrnFwds fwd on fwd.RequestId = trnicrd.RequestId and fwd.ToAspNetUsersId = @UserId and Afor.ApplyForId=ISNULL(@applyfor,Afor.ApplyForId) and fwd.FwdStatusId=3 and fwd.StepId in (7,8,9,10) " +
+                        " inner join TrnFwds fwd on fwd.RequestId = trnicrd.RequestId and fwd.ToAspNetUsersId = @UserId and Afor.ApplyForId=ISNULL(@applyfor,Afor.ApplyForId) and fwd.FwdStatusId=3 and C.StepId in (7,8,9,10) " +
                         " inner join MTrnFwdStatus mtrnfwdstatus on mtrnfwdstatus.FwdStatusId = fwd.FwdStatusId "+
                         " where trnicrd.Status=0";
             }
@@ -911,11 +909,12 @@ namespace DataAccessLayer
             //    " where bas.BasicDetailId=@BasicDetailId";
 
             string query = "select bas.*,"+
-                            " trnadd.State,trnadd.District,trnadd.PS,trnadd.PO,trnadd.Tehsil,trnadd.Village,trnadd.PinCode,"+
+                            " issaut.Name IssuingAuthorityName,trnadd.State,trnadd.District,trnadd.PS,trnadd.PO,trnadd.Tehsil,trnadd.Village,trnadd.PinCode," +
                             " trnup.SignatureImagePath,trnup.PhotoImagePath,IdenMark1,IdenMark2,AadhaarNo,Height,bld.BloodGroup,bld.BloodGroupId," +
                             " regi.Abbreviation RegimentalName,Muni.UnitName,uni.UnitMapId UnitId,icardreq.TypeId,icardreq.RegistrationId," +
                             " ran.RankId,ran.RankAbbreviation RankName,arm.Abbreviation ArmedName,trnadd.AddressId,trnup.UploadId,trninfo.InfoId from BasicDetails bas" +
-                            " inner join TrnAddress trnadd on trnadd.BasicDetailId=bas.BasicDetailId"+
+                            " inner join MIssuingAuthority issaut on issaut.IssuingAuthorityId=bas.IssuingAuthorityId" +
+                            " inner join TrnAddress trnadd on trnadd.BasicDetailId=bas.BasicDetailId" +
                             " inner join TrnUpload trnup on trnup.BasicDetailId=bas.BasicDetailId"+
                             " inner join TrnIdentityInfo trninfo on trninfo.BasicDetailId=bas.BasicDetailId"+
                             " inner join MBloodGroup bld on bld.BloodGroupId=trninfo.BloodGroupId" +
@@ -946,10 +945,11 @@ namespace DataAccessLayer
             //    " where bas.BasicDetailId=@BasicDetailId";
 
             string query = "select bas.*," +
-                            " trnadd.State,trnadd.District,trnadd.PS,trnadd.PO,trnadd.Tehsil,trnadd.Village,trnadd.PinCode," +
+                            " issaut.Name IssuingAuthorityName,trnadd.State,trnadd.District,trnadd.PS,trnadd.PO,trnadd.Tehsil,trnadd.Village,trnadd.PinCode," +
                             " trnup.SignatureImagePath,trnup.PhotoImagePath,IdenMark1,IdenMark2,AadhaarNo,Height,bld.BloodGroup," +
                             " regi.Abbreviation RegimentalName,Muni.UnitName,uni.UnitMapId UnitId,icardreq.TypeId,icardreq.RegistrationId," +
                             " ran.RankId,ran.RankAbbreviation RankName,arm.Abbreviation ArmedName,trnadd.AddressId,trnup.UploadId,trninfo.InfoId from BasicDetails bas" +
+                            " inner join MIssuingAuthority issaut on issaut.IssuingAuthorityId=bas.IssuingAuthorityId" +
                             " inner join TrnAddress trnadd on trnadd.BasicDetailId=bas.BasicDetailId" +
                             " inner join TrnUpload trnup on trnup.BasicDetailId=bas.BasicDetailId" +
                             " inner join TrnIdentityInfo trninfo on trninfo.BasicDetailId=bas.BasicDetailId" +
@@ -1214,7 +1214,7 @@ namespace DataAccessLayer
                         " select @ToRejected=COUNT(distinct fwd.RequestId) from TrnDomainMapping domain" +
                         " inner join TrnICardRequest req on req.TrnDomainMappingId=domain.Id " +
                         " inner join TrnStepCounter trnstepcout on trnstepcout.RequestId= req.RequestId" +
-                        " inner join TrnFwds fwd on fwd.RequestId= trnstepcout.RequestId where fwd.ToAspNetUsersId=@UserId and req.Status=0 and fwd.StepId in(7,8,9,10) and trnstepcout.ApplyForId=@applyForId " +
+                        " inner join TrnFwds fwd on fwd.RequestId= trnstepcout.RequestId where fwd.ToAspNetUsersId=@UserId and req.Status=0 and req.StepId in(7,8,9,10) and trnstepcout.ApplyForId=@applyForId " +
 
                         " select @ToDrafted ToDrafted,@ToSubmitted ToSubmitted,@ToCompleted ToCompleted,@ToRejected ToRejected";
             }

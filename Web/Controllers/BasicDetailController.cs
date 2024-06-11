@@ -582,6 +582,7 @@ namespace Web.Controllers
         end:
             return View(model);
         }
+        
         [HttpGet]
         public async Task<ActionResult> BasicDetail(string? Id)
         {
@@ -750,8 +751,8 @@ namespace Web.Controllers
                 }
             }
         }
+        
         [HttpPost]
-    
         public async Task<IActionResult> BasicDetail(BasicDetailCrtAndUpdVM model)
         {
             try
@@ -1290,6 +1291,7 @@ namespace Web.Controllers
             }
             return Ok(mStepCounter);
         }
+       
         [Authorize(Roles = "Coordinator")]
         public async Task<IActionResult> SaveInternalFwd(DTOSaveInternalFwdRequest data)
         {
@@ -1520,6 +1522,7 @@ namespace Web.Controllers
                 }
             }
         }
+       
         //[HttpPost]
         //public async Task<IActionResult> DummyData()
         //{

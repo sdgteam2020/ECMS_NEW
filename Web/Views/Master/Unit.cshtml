@@ -55,35 +55,43 @@
                         </div>
                         <div class="col-sm-4">
                             <div class="form-group row mb-2">
-                                <label class="col-form-label col-sm-5 fw-bold">Unit Abbreviation<i class="fas fa-asterisk mand1"></i></label>
-                                <div class="col-sm-7">
-                                    <input class="form-control Alphanumeric" placeholder="Enter Abbreviation" id="txtAbbreviation" maxlength="10" required pattern="^[a-zA-Z0-9 ]*$" title="Only Alphabets and Numbers allowed" />
+                                <label class="col-form-label col-sm-4 fw-bold">Unit Abbreviation<i class="fas fa-asterisk mand1"></i>
+                                </label>
+                                <div class="col-sm-8">
+                                    <input class="form-control Alphanumeric" placeholder="Abbreviation as Per Unit Name to be Displayed on I-Card" id="txtAbbreviation" maxlength="10" required pattern="^[a-zA-Z0-9 ]*$" title="Only Alphabets and Numbers allowed" />
                                 </div>
                             </div>
                         </div>
+                        <div class="col-sm-4">
+                        </div>
+                    </div>
+                    <div class="row">
                         <div class="col-sm-4">
                             <div class="form-group row mb-2">
                                 <label class="col-form-label col-sm-4 fw-bold">Unit SUS No<i class="fas fa-asterisk mand1"></i></label>
                                 <div class="col-sm-8">
                                     <input class="form-control1 isNumerictxt" placeholder="Enter SUS No" id="txtSusno" minlength="7" maxlength="7" required pattern="^[0-9]+$" title="Only Numbers allowed" />
                                 </div>
-
                             </div>
                         </div>
-                    </div>
-                    <div class="row">
+
                         <div class="col-sm-4">
                             <div class="form-group row mb-2">
                                 <label class="col-form-label col-sm-4 fw-bold">Suffix<i class="fas fa-asterisk mand1"></i></label>
-                                <div class="col-sm-8">
-                                    <input class="form-control1" placeholder="Enter Suffix" id="txtSuffix" maxlength="1" required pattern="^[a-zA-Z]*$" title="Only Alphabets allowed" />
+                                <div class="col-sm-8 d-flex">
+                                    <div class="col-sm-6">
+                                        <input class="form-control1" placeholder="Enter Suffix" id="txtSuffix" maxlength="1" required pattern="^[a-zA-Z]*$" title="Only Alphabets allowed" />
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <input type="button" class="btn btn-outline-primary " value="Save" id="btnsave" />
+                                        <button type="button" id="btnReset" class="btn btn-outline-danger">Reset</button>
+                                    </div>
                                 </div>
+
                             </div>
                         </div>
                         <div class="col-sm-4">
                             <div class="col-sm-12 text-left">
-                                <input type="button" class="btn btn-outline-primary " value="Save" id="btnsave" />
-                                <button type="button" id="btnReset" class="btn btn-outline-danger">Reset</button>
                             </div>
                             <div class="col-sm-12" id="msg">
                             </div>
