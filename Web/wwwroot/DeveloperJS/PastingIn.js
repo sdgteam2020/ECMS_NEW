@@ -4,7 +4,7 @@
         $("#iarmynopostingin").html(sessionStorage.getItem("ArmyNo"));
         GetdataPostingData(sessionStorage.getItem("ArmyNo"));
 
-        mMsater(0, "ddlpostingReason", PostingReason, "");
+        mMsater(0, "ddlpostingReason", PostingReason, "1");
     }
    
     $("#postingoutUnitName").autocomplete({

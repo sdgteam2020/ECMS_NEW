@@ -1488,7 +1488,7 @@ namespace Web.Controllers
 
         [HttpPost]
         public async Task<IActionResult> SearchAllServiceNo(string ICNumber)
- {
+        {
             DTOApiDataResponse dTOApiDataResponse = new DTOApiDataResponse();
             if (ICNumber != null)
             {

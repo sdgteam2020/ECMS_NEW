@@ -405,14 +405,7 @@ $(function () {
                         } else {
 
                             Counter = parseInt($("#spnStepCounter").html()) + 1;
-                            //if (applyfor == 1 && Counter == 3)/// for ACG
-                            //    Counter = 4;
-                            //if (applyfor == 2 && Counter == 3)/// for ACG
-                            //    Counter = 5;
-
-                            //if (applyfor == 2 && parseInt($("#spnStepCounter").html()) == 3) {
-                            //    Counter = 5;
-                            //}
+                           
                         }
 
 
@@ -911,7 +904,7 @@ function ForwardTo(RequestId, HType) {
                         lsts.push(ids);
                         if (isToken == true) {
                             DataSignDigitaly(lsts, "tokenmsgforfwd", response.TrnFwdId);
-                            DownloadPdf(RequestId);
+                            //DownloadPdf(RequestId);
                         }
                         else {
                             setTimeout(function () {

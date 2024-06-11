@@ -31,7 +31,7 @@ namespace DataTransferObject.Response
         public string? RegimentalName { get; set; }
         public string? UnitName { get; set; }
         public string PlaceOfIssue { get; set; } = string.Empty;
-        public DateTime DateOfIssue { get; set; }
+        public DateTime? DateOfIssue { get; set; }
         public string IssuingAuth { get; set; } = string.Empty;
         public int UploadId { get; set; }
         public string SignatureImagePath { get; set; } = string.Empty;

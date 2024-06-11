@@ -17031,7 +17031,7 @@ body {
 
 .nav-fixed .topnav {
     z-index: 1039;
-    background: linear-gradient(90deg, rgba(0, 211, 255, 1) 0%, rgba(12, 141, 242, 1) 66%, rgba(22, 125, 207, 1) 99%);
+    background: linear-gradient(90deg, rgba(0, 211, 255, 1) 0%, rgb(19 0 121) 66%, rgba(22, 125, 207, 1) 99%);
     height: 90px;
 }
 

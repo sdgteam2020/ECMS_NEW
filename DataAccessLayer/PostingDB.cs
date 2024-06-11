@@ -147,11 +147,34 @@ namespace DataAccessLayer
 
         public async Task<bool> UpdateForPosting(TrnPostingOut Data)
         {
-            string query = "update TrnICardRequest set TrnDomainMappingId=(select Id from TrnDomainMapping where AspNetUsersId=@ToAspNetUsersId) where RequestId=@RequestId " +
-                // " update BasicDetails set UnitId=@ToUnitID where BasicDetailId =(select BasicDetailId from TrnICardRequest where RequestId=@RequestId)";
-                //" update TrnStepCounter set StepId=1 where RequestId=@RequestId" +
-                //" update TrnFwds set Status=0 ,IsComplete=1,Remark='Posting Out' ,ToAspNetUsersId=@ToAspNetUsersId where RequestId=@RequestId and IsComplete=0";
-                " update TrnFwds set PostingOutId= @Id where RequestId=@RequestId and IsComplete=0";
+
+            //string query = " select StepId from TrnStepCounter where RequestId=@RequestId" +
+            //   " if ((select StepId from TrnStepCounter where RequestId=2)<=2) begin" +
+            //   " update TrnICardRequest set TrnDomainMappingId=(select Id from TrnDomainMapping where AspNetUsersId=@ToAspNetUsersId) where RequestId=@RequestId " +
+            //    " update BasicDetails set UnitId=@ToUnitID where BasicDetailId =(select BasicDetailId from TrnICardRequest where RequestId=@RequestId and Status=0)" +
+            //   " update TrnStepCounter set StepId=1 where RequestId=@RequestId" +
+            //   " update TrnFwds set FwdStatusId=2 ,IsComplete=1,Remark='Posting Out' ,ToAspNetUsersId=@ToAspNetUsersId where RequestId=@RequestId and IsComplete=0" +
+            //   " update TrnFwds set PostingOutId= @Id where RequestId=@RequestId and IsComplete=0" +
+            //   " end" +
+            //   " Else begin" +
+            //    " update TrnICardRequest set TrnDomainMappingId=(select Id from TrnDomainMapping where AspNetUsersId=@ToAspNetUsersId) where RequestId=@RequestId " +
+            //     " update BasicDetails set UnitId=@ToUnitID where BasicDetailId =(select BasicDetailId from TrnICardRequest where RequestId=@RequestId)" +
+            //    //" update TrnStepCounter set StepId=1 where RequestId=@RequestId" +
+            //    //" update TrnFwds set Status=0 ,IsComplete=1,Remark='Posting Out' ,ToAspNetUsersId=@ToAspNetUsersId where RequestId=@RequestId and IsComplete=0";
+            //    " update TrnFwds set PostingOutId= @Id where RequestId=@RequestId and IsComplete=0" +
+            //    " End";
+
+            string query = " update TrnICardRequest set TrnDomainMappingId=(select Id from TrnDomainMapping where AspNetUsersId=@ToAspNetUsersId) where RequestId=@RequestId " +
+               " update BasicDetails set UnitId=@ToUnitID where BasicDetailId =(select BasicDetailId from TrnICardRequest where RequestId=@RequestId and Status=0)" +
+              //" update TrnStepCounter set StepId=1 where RequestId=@RequestId" +
+              //" update TrnFwds set FwdStatusId=2 ,IsComplete=1,Remark='Posting Out' ,ToAspNetUsersId=@ToAspNetUsersId where RequestId=@RequestId and IsComplete=0" +
+              " update TrnFwds set PostingOutId= @Id where RequestId=@RequestId and IsComplete=0" +
+              " if exists (select top 1 * from TrnFwds where FwdStatusId=3 and IsComplete=0 and RequestId=@RequestId)" +
+              " begin" +
+              " update TrnFwds set ToAspNetUsersId=@ToAspNetUsersId where FwdStatusId=3 and IsComplete=0 and RequestId=@RequestId " +
+              " end";
+             
+
             int ToAspNetUsersId = Data.ToAspNetUsersId;
             int RequestId = Data.RequestId;
             int ToUnitID = Data.ToUnitID;
@@ -159,7 +182,7 @@ namespace DataAccessLayer
 
             using (var connection = _contextDP.CreateConnection())
             {
-                 connection.Execute(query, new { ToAspNetUsersId, RequestId, Id });//,ToUnitID
+                 connection.Execute(query, new { ToAspNetUsersId, RequestId, ToUnitID, Id });//,ToUnitID
 
                 return true;
 
