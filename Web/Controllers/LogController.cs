@@ -131,7 +131,7 @@ namespace Web.Controllers
                 table.AddCell("Date of Issue");
                 table.AddCell(Convert.ToString(db.DateOfIssue.ToShortDateString()).Replace("-", "/"));
                 table.AddCell("Issuing Authority");
-                table.AddCell(Convert.ToString(db.IssuingAuthorityId));
+                table.AddCell(db.IssuingAuthorityName);
                 table.AddCell("Date of Commissioning/ Enrollment");
                 table.AddCell(Convert.ToString(db.DateOfCommissioning.ToShortDateString()).Replace("-", "/"));
 

@@ -45,7 +45,7 @@ namespace DataTransferObject.Domain.Master
         [Column(TypeName = "varchar(10)")]
         [MaxLength(10, ErrorMessage = "Maximum length of Abbreviation is ten character.")]
         [RegularExpression("^[a-zA-Z0-9 ]*$", ErrorMessage = "Only Alphabets and Numbers allowed.")]
-        public string? Abbreviation { get; set; } = string.Empty;
+        public string Abbreviation { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "required!")]
         [RegularExpression("^[a-zA-Z]*$", ErrorMessage = "Only Alphabets allowed.")]

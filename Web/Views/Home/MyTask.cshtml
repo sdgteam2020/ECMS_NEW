@@ -594,84 +594,148 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
                                     <div class="feature-icon-box3 mb-3">
 
                                         <div class="row">
+                                            @if (ViewBag.Role == "Coordinator")
+                                            {
+                                                <div class="col-xl-3 col-sm-3 col-12 mt-2">
+                                                    <div class="card box-shadow">
+                                                        <a href="/BasicDetail/ApprovalForIO?Id=Mw==&jcoor=SmNvL09ycw==">
+                                                            <div class="number1 SpnDID"></div>
+                                                            <div class="card-content">
+                                                                <div class="card-body">
+                                                                    <div class="media d-flex">
+                                                                        <div class="media-body text-left">
+                                                                            <h3 class="success" id="DIDPending">0</h3>
+                                                                            <span class="badge badge-pill badge-warning p-2">Pending</span>
+                                                                        </div>
+                                                                        <div class="align-self-center">
+                                                                            <i class="text-success fa fa-check-circle fa-3x"></i>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                                <div class="col-xl-3 col-sm-3 col-12 mt-2">
+                                                    <div class="card box-shadow">
+                                                        <a href="/BasicDetail/ApprovalForIO?Id=MTE=&jcoor=SmNvL09ycw==">
+                                                            <div class="card-content">
+                                                                <div class="card-body">
+                                                                    <div class="media d-flex">
+                                                                        <div class="media-body text-left">
+                                                                            <h3 class="success" id="ToInternalForward">0</h3>
+                                                                            <span class="badge badge-pill badge-success p-2">Forward</span>
+                                                                        </div>
+                                                                        <div class="align-self-center">
+                                                                            @* <i class="text-success fa fa-check-circle fa-3x"></i> *@
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                                <div class="col-xl-3 col-sm-3 col-12 mt-2">
+                                                    <div class="card box-shadow">
+                                                        <a href="/BasicDetail/ApprovalForIO?Id=MzMz&jcoor=SmNvL09ycw==">
+                                                            <div class="card-content">
+                                                                <div class="card-body">
+                                                                    <div class="media d-flex">
+                                                                        <div class="media-body text-left">
+                                                                            <h3 class="success" id="DIDApproved">0</h3>
+                                                                            <span class="badge badge-pill badge-success p-2">Approved</span>
+                                                                        </div>
+                                                                        <div class="align-self-center">
+                                                                            @* <i class="text-success fa fa-check-circle fa-3x"></i> *@
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                                <div class="col-xl-3 col-sm-3 col-12 mt-2">
+                                                    <div class="card box-shadow">
+                                                        <a href="/BasicDetail/ApprovalForIO?Id=MzM=&jcoor=SmNvL09ycw==">
+                                                            <div class="card-content">
+                                                                <div class="card-body">
+                                                                    <div class="media d-flex">
+                                                                        <div class="media-body text-left">
+                                                                            <h3 class="success" id="DIDReject">0</h3>
+                                                                            <span class="badge badge-pill badge-danger p-2">Rejected</span>
+                                                                        </div>
+                                                                        <div class="align-self-center">
+                                                                            <i class="text-danger fa fa-times-circle fa-3x" aria-hidden="true"></i>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            }
+                                            else
+                                            {
+                                                <div class="col-xl-4 col-sm-3 col-12 mt-2">
+                                                    <div class="card box-shadow">
+                                                        <a href="/BasicDetail/ApprovalForIO?Id=Mw==&jcoor=SmNvL09ycw==">
+                                                            <div class="number1 SpnDID"></div>
+                                                            <div class="card-content">
+                                                                <div class="card-body">
+                                                                    <div class="media d-flex">
+                                                                        <div class="media-body text-left">
+                                                                            <h3 class="success" id="DIDPending">0</h3>
+                                                                            <span class="badge badge-pill badge-warning p-2">Pending</span>
+                                                                        </div>
+                                                                        <div class="align-self-center">
+                                                                            <i class="text-success fa fa-check-circle fa-3x"></i>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                                <div class="col-xl-4 col-sm-3 col-12 mt-2">
+                                                    <div class="card box-shadow">
+                                                        <a href="/BasicDetail/ApprovalForIO?Id=MzMz&jcoor=SmNvL09ycw==">
+                                                            <div class="card-content">
+                                                                <div class="card-body">
+                                                                    <div class="media d-flex">
+                                                                        <div class="media-body text-left">
+                                                                            <h3 class="success" id="DIDApproved">0</h3>
+                                                                            <span class="badge badge-pill badge-success p-2">Approved</span>
+                                                                        </div>
+                                                                        <div class="align-self-center">
+                                                                            @* <i class="text-success fa fa-check-circle fa-3x"></i> *@
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                                <div class="col-xl-4 col-sm-3 col-12 mt-2">
+                                                    <div class="card box-shadow">
+                                                        <a href="/BasicDetail/ApprovalForIO?Id=MzM=&jcoor=SmNvL09ycw==">
+                                                            <div class="card-content">
+                                                                <div class="card-body">
+                                                                    <div class="media d-flex">
+                                                                        <div class="media-body text-left">
+                                                                            <h3 class="success" id="DIDReject">0</h3>
+                                                                            <span class="badge badge-pill badge-danger p-2">Rejected</span>
+                                                                        </div>
+                                                                        <div class="align-self-center">
+                                                                            <i class="text-danger fa fa-times-circle fa-3x" aria-hidden="true"></i>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            }
 
-                                            <div class="col-xl-3 col-sm-3 col-12 mt-2">
-                                                <div class="card box-shadow">
-                                                    <a href="/BasicDetail/ApprovalForIO?Id=Mw==&jcoor=SmNvL09ycw==">
-                                                        <div class="number1 SpnDID"></div>
-                                                        <div class="card-content">
-                                                            <div class="card-body">
-                                                                <div class="media d-flex">
-                                                                    <div class="media-body text-left">
-                                                                        <h3 class="success" id="DIDPending">0</h3>
-                                                                        <span class="badge badge-pill badge-warning p-2">Pending</span>
-                                                                    </div>
-                                                                    <div class="align-self-center">
-                                                                        <i class="text-success fa fa-check-circle fa-3x"></i>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </a>
-                                                </div>
-                                            </div>
-                                            <div class="col-xl-3 col-sm-3 col-12 mt-2">
-                                                <div class="card box-shadow">
-                                                    <a href="/BasicDetail/ApprovalForIO?Id=MTE=&jcoor=SmNvL09ycw==">
-                                                        <div class="card-content">
-                                                            <div class="card-body">
-                                                                <div class="media d-flex">
-                                                                    <div class="media-body text-left">
-                                                                        <h3 class="success" id="ToInternalForward">0</h3>
-                                                                        <span class="badge badge-pill badge-success p-2">Forward</span>
-                                                                    </div>
-                                                                    <div class="align-self-center">
-                                                                        @* <i class="text-success fa fa-check-circle fa-3x"></i> *@
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </a>
-                                                </div>
-                                            </div>
-                                            <div class="col-xl-3 col-sm-3 col-12 mt-2">
-                                                <div class="card box-shadow">
-                                                    <a href="/BasicDetail/ApprovalForIO?Id=MzMz&jcoor=SmNvL09ycw==">
-                                                        <div class="card-content">
-                                                            <div class="card-body">
-                                                                <div class="media d-flex">
-                                                                    <div class="media-body text-left">
-                                                                        <h3 class="success" id="DIDApproved">0</h3>
-                                                                        <span class="badge badge-pill badge-success p-2">Approved</span>
-                                                                    </div>
-                                                                    <div class="align-self-center">
-                                                                        @* <i class="text-success fa fa-check-circle fa-3x"></i> *@
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </a>
-                                                </div>
-                                            </div>
-                                            <div class="col-xl-3 col-sm-3 col-12 mt-2">
-                                                <div class="card box-shadow">
-                                                    <a href="/BasicDetail/ApprovalForIO?Id=MzM=&jcoor=SmNvL09ycw==">
-                                                        <div class="card-content">
-                                                            <div class="card-body">
-                                                                <div class="media d-flex">
-                                                                    <div class="media-body text-left">
-                                                                        <h3 class="success" id="DIDReject">0</h3>
-                                                                        <span class="badge badge-pill badge-danger p-2">Rejected</span>
-                                                                    </div>
-                                                                    <div class="align-self-center">
-                                                                        <i class="text-danger fa fa-times-circle fa-3x" aria-hidden="true"></i>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </a>
-                                                </div>
-                                            </div>
                                         </div>
                                     </div>
                                 </div>
