@@ -51,11 +51,22 @@
     if ($("#ApplyForId").val() == 1) {
         $(".OptionsRegimental").addClass("d-none");
         mMsater($("#spnrankid").val(), "RankId", Rank, "");
-        mMsater("", "IssuingAuthorityId", IssuingAuthority, $("#ApplyForId").val());
+        if ($("#spnIssuingAuthorityId").val() > 0) {
+            mMsater($("#spnIssuingAuthorityId").val(), "IssuingAuthorityId", IssuingAuthority, $("#ApplyForId").val());
+        }
+        else {
+            mMsater("", "IssuingAuthorityId", IssuingAuthority, $("#ApplyForId").val());
+        }
+
     } else if ($("#ApplyForId").val() == 2) {
         mMsater($("#spnrankid").val(), "RankId", RankJCo, "");
-        mMsater("", "IssuingAuthorityId", IssuingAuthority, $("#ApplyForId").val());
         $(".OptionsRegimental").removeClass("d-none");
+        if ($("#spnIssuingAuthorityId").val() > 0) {
+            mMsater($("#spnIssuingAuthorityId").val(), "IssuingAuthorityId", IssuingAuthority, $("#ApplyForId").val());
+        }
+        else {
+            mMsater("", "IssuingAuthorityId", IssuingAuthority, $("#ApplyForId").val());
+        }
     }
 
     if (sessionStorage.getItem("ArmyNo") != null) {
@@ -286,6 +297,7 @@ function getunitbymapid(value)
         success: function (data) {
 
             $("#txtUnit").val(data.UnitName);
+            $("#PlaceOfIssue").val(data.UnitAbbreviation);
             $("#UnitId").val(data.UnitMapId);
             //$("#lblProComd").html(data.ComdName);
             //$("#lblProCorps").html(data.CorpsName);
@@ -310,7 +322,6 @@ function getApplyIcardDetails() {
             if (response != null) {
                 
                 if (response.ApplyFor == "Offrs") {
-                    $("#PlaceOfIssue").val("Depends on Second level approver");
                     $("#IssuingAuth").val("OIC Unit");
                     $("#tempDateOfIssue").val("Depends on Unit of Second level approver");
                 }

@@ -158,6 +158,10 @@ namespace DataTransferObject.ViewModels
         public byte IssuingAuthorityId { get; set; }
 
         [NotMapped]
+        [Display(Name = "IssuingAuth", ResourceType = typeof(Resource))]
+        public string IssuingAuthorityName { get; set; } = string.Empty;
+
+        [NotMapped]
         public string UnitName { get; set; } = string.Empty;
 
         public bool IsSubmit { get; set; }

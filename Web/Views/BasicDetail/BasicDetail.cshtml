@@ -67,6 +67,7 @@
 
             <input hidden id="spnrankid" value="@ViewBag.OptionsRank" />
             <input hidden id="spnUnitIdid" value="@ViewBag.OptionsUnitId" />
+            <input hidden id="spnIssuingAuthorityId" value=@(Model.IssuingAuthorityId > 0 ? Model.IssuingAuthorityId : 0) />
 
             <div class="row">
                 <div class="col-md-12 ">
@@ -347,7 +348,7 @@
                                         <label class="col-sm-2 col-form-label text-center font-weight-bold">@(sno++).</label>
                                         <label asp-for="IssuingAuthorityId" class="col-sm-4 col-form-label form-label labelprofile"></label>
                                         <div class="col-sm-6">
-                                            <select asp-for="IssuingAuthorityId" class="form-select" data-toggle="tooltip" title="Select Authority">
+                                            <select asp-for="IssuingAuthorityId" class="form-select" data-toggle="tooltip" title="Select Your Approver Appt.">
                                             </select>
                                             <span asp-validation-for="IssuingAuthorityId" class="text-danger"></span>
                                         </div>

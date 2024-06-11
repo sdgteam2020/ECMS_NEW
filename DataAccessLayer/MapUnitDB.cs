@@ -166,6 +166,7 @@ namespace DataAccessLayer
                        {
                            UnitMapId = uni.UnitMapId,
                            UnitName = MUni.UnitName,
+                           UnitAbbreviation= MUni.Abbreviation,
                            UnitId = uni.UnitMapId,
                            BdeId = bde.BdeId,
                            BdeName = bde.BdeName,
