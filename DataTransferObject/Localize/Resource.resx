@@ -130,7 +130,7 @@
     <value>Arm / Service</value>
   </data>
   <data name="ArmyNumber" xml:space="preserve">
-    <value>Service No</value>
+    <value>Army Number</value>
   </data>
   <data name="BasicDetailId" xml:space="preserve">
     <value>Id</value>
