@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Web.Data
 {
-    public class ApplicationUser: IdentityUser
+    public class ApplicationUser1: IdentityUser
     {
         public int IntId { get; set; }
         //  public string DEFwdAuth { get; set; }

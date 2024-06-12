@@ -28,6 +28,10 @@ namespace DataTransferObject.Requests
         [RegularExpression(@"^[\d]+$", ErrorMessage = "RankId is number.")]
         public short RankId { get; set; }
 
+        [Required(ErrorMessage = "Armed is required.")]
+        [RegularExpression(@"^[\d]+$", ErrorMessage = "ArmedId is number.")]
+        public byte ArmedId { get; set; }
+
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
         [MaxLength(50, ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "MaxLengthError")]
         [MinLength(1, ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "MinLengthError")]
@@ -72,6 +76,13 @@ namespace DataTransferObject.Requests
         [RegularExpression("^[a-zA-Z]*$", ErrorMessage = "Only Alphabets allowed.")]
         public bool IsORO { get; set; }
         
+        [RegularExpression("^[a-zA-Z]*$", ErrorMessage = "Only Alphabets allowed.")]
+        public bool IsToken { get; set; }
+
+        [RegularExpression(@"^[\w \.]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
+        [MaxLength(100, ErrorMessage = "Maximum length of Token Waiver is hundred character.")]
+        public string? ReasonTokenWaiver { get; set; }
+
         [StringLength(50)]
         [Column(TypeName = "varchar(50)")]
         public string? Thumbprint { get; set; }

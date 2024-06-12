@@ -53,7 +53,15 @@ namespace DataTransferObject.Domain
         [Column(TypeName = "varchar(50)")]
         [RegularExpression(@"^[\w]+$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
         public string? Thumbprint { get; set; }
-
         public bool IsToken { get; set; }
+        
+        [RegularExpression(@"^[\d]+$", ErrorMessage = "ArmedId is number.")]
+        public byte ArmedId { get; set; }
+        public MArmedType? Armed { get; set; }
+        
+        [Column(TypeName = "varchar(100)")]
+        [MaxLength(100, ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "MaxLengthError")]
+        [RegularExpression(@"^[\w\&\.\-\; ]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
+        public string? ReasonTokenWaiver { get; set; }
     }
 }

@@ -97,7 +97,7 @@ namespace DataTransferObject.Localize {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Service No.
+        ///   Looks up a localized string similar to Army Number.
         /// </summary>
         public static string ArmyNumber {
             get {
