@@ -15,8 +15,11 @@ namespace DataTransferObject.Response
         public bool IsToken { get; set; }
         public short RankId { get; set; }
         public string RankName { get; set; } = string.Empty;
+        public byte ArmedId { get; set; }
+        public string ArmedName { get; set; } = string.Empty;
         public string RankAbbreviation { get; set; } = string.Empty;
         public int Id { get; set; }
         public string? DomainId { get; set; }
+        public string? ReasonTokenWaiver { get; set; }
     }
 }

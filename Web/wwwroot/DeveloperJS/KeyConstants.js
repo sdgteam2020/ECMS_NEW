@@ -22,6 +22,7 @@ const Formation = 5;
 const Appt = 6;
 const Rank = 7;
 const RankJCo = 8;
+const ArmyType = 9;
 const ArmyCat = 10;
 const FmnBranches = 11;
 const PSO = 12;

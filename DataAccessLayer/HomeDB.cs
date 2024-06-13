@@ -158,7 +158,7 @@ namespace DataAccessLayer
                             " select @TotRejected=COUNT(distinct fwd.RequestId) from TrnDomainMapping domain" +
                             " inner join TrnICardRequest req on req.TrnDomainMappingId=domain.Id " +
                             " inner join TrnStepCounter trnstepcout on trnstepcout.RequestId= req.RequestId" +
-                            " inner join TrnFwds fwd on fwd.RequestId= trnstepcout.RequestId where fwd.ToAspNetUsersId=@UserId and req.Status=0 and req.StepId in(7,8,9,10)" +
+                            " inner join TrnFwds fwd on fwd.RequestId= trnstepcout.RequestId where fwd.ToAspNetUsersId=@UserId and req.Status=0 and trnstepcout.StepId in(7,8,9,10)" +
 
                             " select @TotDrafted TotDrafted,@TotSubmitted TotSubmitted,@TotCompleted TotCompleted,@TotRejected TotRejected ";
             try
