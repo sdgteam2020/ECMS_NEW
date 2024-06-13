@@ -1,5 +1,5 @@
 ﻿$(document).ready(function () {
-    mMsater(0, "ddlArmType", 9, "");
+    mMsater(0, "ddlArmType", ArmyType, "");
     BindData()
     $("#btnAdd").click(function () {
         Reset();
@@ -92,6 +92,15 @@
             });
         },
         appendTo: '#suggesstion-box'
+    });
+
+    $('#txtUnitName').keyup(function (e) {
+        if (e.keyCode == 46) {
+            $("#txtUnitName").val("");
+            $("#spnUnitMapId").html("");
+            $("#ddlTDMId").find("option").not(":first").remove();
+            $("#ddlTDMId").val("0");
+        }
     });
 });
 
@@ -285,7 +294,6 @@ function BindData() {
 
 }
 function Save() {
-
     $.ajax({
         url: '/Master/SaveRecordOffice',
         type: 'POST',

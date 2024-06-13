@@ -776,7 +776,6 @@ namespace Web.Controllers
                     {
                         BasicDetail newBasicDetail = _mapper.Map<BasicDetailCrtAndUpdVM, BasicDetail>(model);
                         newBasicDetail.DateOfIssue = null;
-                        newBasicDetail.PlaceOfIssue = null;
                         //newBasicDetail.RankId = model.RankId;
                         //newBasicDetail.ArmedId = model.ArmedId;
                         //newBasicDetail.UnitId= model.UnitId;
@@ -965,7 +964,6 @@ namespace Web.Controllers
                     {
                         BasicDetail newBasicDetail = _mapper.Map<BasicDetailCrtAndUpdVM, BasicDetail>(model);
                         newBasicDetail.DateOfIssue = null;
-                        newBasicDetail.PlaceOfIssue = null;
                         MTrnUpload mTrnUpload = new MTrnUpload();
 
                         MTrnAddress mTrnAddress = new MTrnAddress();
