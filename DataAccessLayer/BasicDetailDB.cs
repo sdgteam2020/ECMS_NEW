@@ -386,7 +386,7 @@ namespace DataAccessLayer
             }
             else if (stepcount == 777)//////For Completed   
             {
-                query = "SELECT munit.UnitName,B.UnitId,B.BasicDetailId,B.Name,B.ServiceNo,B.DOB,B.DateOfCommissioning,C.StepId StepCounter,C.Id StepId,ty.Name ICardType,trnicrd.RequestId,ISNULL(fwd.TrnFwdId,0) IsTrnFwdId,fwd.Remark,ISNULL(fwd.FwdStatusId,0) IsFwdStatusId,Afor.Name ApplyFor,Afor.ApplyForId ,trnicrd.TrackingId,ran.RankAbbreviation RankName,ISNULL(Postout.Id,0) IsPosting FROM BasicDetails B " +
+                query = "SELECT distinct munit.UnitName,B.UnitId,B.BasicDetailId,B.Name,B.ServiceNo,B.DOB,B.DateOfCommissioning,C.StepId StepCounter,C.Id StepId,ty.Name ICardType,trnicrd.RequestId,fwd.Remark,ISNULL(fwd.FwdStatusId,0) IsFwdStatusId,Afor.Name ApplyFor,Afor.ApplyForId ,trnicrd.TrackingId,ran.RankAbbreviation RankName,ISNULL(Postout.Id,0) IsPosting FROM BasicDetails B " +
                         "inner join MRank ran on ran.RankId=B.RankId " +
                         "inner join MapUnit mapunit on mapunit.UnitMapId=B.UnitId " +
                         "inner join MUnit munit on munit.UnitId=mapunit.UnitId " +
@@ -399,7 +399,7 @@ namespace DataAccessLayer
                         "inner join TrnFwds fwd on fwd.FromAspNetUsersId= map.AspNetUsersId and fwd.IsComplete=1 and fwd.RequestId=trnicrd.RequestId " +
                         "inner join MTrnFwdStatus mtrnfwdstatus on mtrnfwdstatus.FwdStatusId = fwd.FwdStatusId " +
                         "left join TrnPostingOut Postout on Postout.RequestId=trnicrd.RequestId and trnicrd.Status=0 " +
-                        "WHERE map.AspNetUsersId = @UserId and Afor.ApplyForId=ISNULL(@applyfor,Afor.ApplyForId) and trnicrd.Status = 1  ORDER BY B.UpdatedOn DESC";
+                        "WHERE map.AspNetUsersId = @UserId and Afor.ApplyForId=ISNULL(@applyfor,Afor.ApplyForId) and trnicrd.Status = 1 ";
 
             }
             else if (stepcount == 888)//////For Submitted
@@ -838,7 +838,7 @@ namespace DataAccessLayer
                         " inner join MICardType ty on ty.TypeId = trnicrd.TypeId" +
                         " inner join TrnFwds fwd on fwd.RequestId = trnicrd.RequestId and fwd.FromAspNetUsersId = @UserId and Afor.ApplyForId=IsNULL(@applyForId,Afor.ApplyForId) and fwd.StepId=@stepcount " +
                         " inner join MTrnFwdStatus mtrnfwdstatus on mtrnfwdstatus.FwdStatusId = fwd.FwdStatusId " +
-                        " where trnicrd.Status=0";
+                        " where trnicrd.Status=1";
             }
             else if(stepcount == 11)
             {
