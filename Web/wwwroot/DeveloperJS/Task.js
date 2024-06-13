@@ -62,14 +62,14 @@ function GetTaskIcardRequestCount(Id, applyForId) {
                             $("#ToRejected").html(response.ToRejected);
                         }
                         else if (Id == 2) { // Pending
-                            $("#COPending").html(response._2ndLevelPending);
-                            $("#COApproved").html(response._2ndLevelApproved);
-                            $("#COReject").html(response._2ndLevelReject);
-                            $("#DIDPending").html(response._3rdLevelPending);
-                            $("#DIDApproved").html(response._3rdLevelApproved);
-                            $("#DIDReject").html(response._3rdLevelReject);                      
-                            $("#ExportPending").html(response.ExportPending);
-                            $("#ExportApproved").html(response.ExportPending);
+                            $("#_2ndLevelPending").html(response._2ndLevelPending);
+                            $("#_2ndLevelApproved").html(response._2ndLevelApproved);
+                            $("#_2ndLevelReject").html(response._2ndLevelReject);
+                            $("#_3rdLevelPending").html(response._3rdLevelPending);
+                            $("#_3rdLevelApproved").html(response._3rdLevelApproved);
+                            $("#_3rdLevelReject").html(response._3rdLevelReject);                     
+                            $("#_4thLevelPending").html(response._4thLevelPending);
+                            $("#_4thLevelApproved").html(response._4thLevelApproved);
                             $("#ToInternalForward").html(response.ToInternalForward);
                         }
                     }
