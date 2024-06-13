@@ -238,7 +238,6 @@ function GetTokenDetails(CRL_OCSPCheck, CRL_OCSPMsg, Remarks, Thumbprint, Status
                         let bar = confirm('Confirm or deny');
                         $("#" + txt).val(foo);
 
-
                         //$("#" + txt).val("IC-00002");
                     }
 
