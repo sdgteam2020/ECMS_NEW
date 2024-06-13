@@ -38,6 +38,7 @@ using System.Data.Entity;
 using System.Data.Entity.Hierarchy;
 using System.Security.Claims;
 using System.Security.Policy;
+using Web.Data;
 using Web.WebHelpers;
 using static iText.StyledXmlParser.Jsoup.Select.Evaluator;
 using static System.Net.Mime.MediaTypeNames;
@@ -1169,7 +1170,7 @@ namespace Web.Controllers
                     }
 
                 }
-                else if (_trnDomainMapping != null && _trnDomainMapping.ApplicationUser.AdminFlag == true && _trnDomainMapping.Id > 0 && _trnDomainMapping.UserId == null)
+                else if (_trnDomainMapping != null && _trnDomainMapping.Id > 0 && _trnDomainMapping.UserId == null)
                 {
                     /*Get UserId from ProfileTable (Based on Input ArmyNo with token authorise.) and Update in TrnDomainMapping Table*/
                     dTOTempSession.AdminFlag = _trnDomainMapping.ApplicationUser.AdminFlag;
@@ -1498,6 +1499,7 @@ namespace Web.Controllers
                         dTOProfileAndMappingRequest.IsORO = dTOTempSession.IsORO;
                     }
                     ViewBag.OptionsRank = service.GetRank(1);
+                    ViewBag.OptionsArmedType = service.GetArmedType();
 
                     if (dTOTempSession.UserId > 0)
                     {
@@ -1512,6 +1514,9 @@ namespace Web.Controllers
                             dTOProfileAndMappingRequest.RankId = mUserProfile.RankId;
                             dTOProfileAndMappingRequest.Name = mUserProfile.Name;
                             dTOProfileAndMappingRequest.MobileNo = mUserProfile.MobileNo;
+                            dTOProfileAndMappingRequest.ArmedId = mUserProfile.ArmedId;
+                            dTOProfileAndMappingRequest.ReasonTokenWaiver = mUserProfile.ReasonTokenWaiver;
+                            dTOProfileAndMappingRequest.IsToken = mUserProfile.IsToken;
 
                             return View(dTOProfileAndMappingRequest);
                         }
@@ -1554,7 +1559,10 @@ namespace Web.Controllers
                             dTOTempSession.TDMId = resultfinal.TDMId;
                             dTOTempSession.TDMUnitMapId = resultfinal.TDMUnitMapId;
                             dTOTempSession.UserId = resultfinal.UserId;
-                            dTOTempSession.Status = resultfinal.Status;
+                            dTOTempSession.Status = 1;
+                            dTOTempSession.IsToken = true;
+
+
                             SessionHeplers.SetObject(HttpContext.Session, "IMData", dTOTempSession);
                             TempData["success"] = "Domian Id - " + dTOTempSession.DomainId + " & Profile Id- " + dTOTempSession.UserId + ".<br/>Your regn request was successfully placed with Admin for necy Approval.. <br/>Pl note regn No - " + dTOTempSession.AspNetUsersId + " for future correspondence.<br/>Contact Admin or try login after 24 Hrs.";
                             return RedirectToActionPermanent("TokenValidate", "Account");
@@ -1573,9 +1581,18 @@ namespace Web.Controllers
                             dTOTempSession.TDMId = resultfinal.TDMId;
                             dTOTempSession.TDMUnitMapId = resultfinal.TDMUnitMapId;
                             dTOTempSession.UserId = resultfinal.UserId;
-                            dTOTempSession.Status = resultfinal.Status;
+                            dTOTempSession.Status = 1;
+                            dTOTempSession.IsToken = true;
+
                             SessionHeplers.SetObject(HttpContext.Session, "IMData", dTOTempSession);
-                            TempData["success"] = "Your Profile Id - " + dTOTempSession.UserId + " has been successfully mapped to Domain Id - " + dTOTempSession.DomainId + ". > DB ";
+                            if(model.IsToken == true)
+                            {
+                                TempData["success"] = "Your Profile Id - " + dTOTempSession.UserId + " has been successfully mapped to Domain Id - " + dTOTempSession.DomainId + ". > Your token request was successfully placed with Admin for necy Approval.";
+                            }
+                            else
+                            {
+                                TempData["success"] = "Your Profile Id - " + dTOTempSession.UserId + " has been successfully mapped to Domain Id - " + dTOTempSession.DomainId + ". > DB ";
+                            }
                             return RedirectToActionPermanent("TokenValidate", "Account");
                         }
                         else
@@ -1588,10 +1605,18 @@ namespace Web.Controllers
                     {
                         if (resultfinal != null)
                         {
-                            dTOTempSession.Status = resultfinal.Status;
+                            dTOTempSession.Status = 1;
+                            dTOTempSession.IsToken = true;
                             dTOTempSession.UserId = resultfinal.UserId;
                             SessionHeplers.SetObject(HttpContext.Session, "IMData", dTOTempSession);
-                            TempData["success"] = "Your Profile Id - " + dTOTempSession.UserId + " has been successfully mapped to Domain Id - " + dTOTempSession.DomainId + ". > DB ";
+                            if (model.IsToken == true)
+                            {
+                                TempData["success"] = "Your Profile Id - " + dTOTempSession.UserId + " has been successfully mapped to Domain Id - " + dTOTempSession.DomainId + ". > Your token request was successfully placed with Admin for necy Approval.";
+                            }
+                            else
+                            {
+                                TempData["success"] = "Your Profile Id - " + dTOTempSession.UserId + " has been successfully mapped to Domain Id - " + dTOTempSession.DomainId + ". > DB ";
+                            }
                             return RedirectToActionPermanent("TokenValidate", "Account");
                         }
                         else

@@ -408,7 +408,7 @@ namespace DataAccessLayer
                         "inner join MRank ran on ran.RankId=B.RankId " +
                         "inner join MapUnit mapunit on mapunit.UnitMapId=B.UnitId " +
                         "inner join MUnit munit on munit.UnitId=mapunit.UnitId " +
-                        "inner join TrnICardRequest trnicrd on trnicrd.BasicDetailId = B.BasicDetailId and trnicrd.Status=0 " +
+                        "inner join TrnICardRequest trnicrd on trnicrd.BasicDetailId = B.BasicDetailId " +
                         "inner join MApplyFor Afor on Afor.ApplyForId = B.ApplyForId " +
                         "inner join TrnStepCounter C on trnicrd.RequestId = C.RequestId " +
                         "inner join MICardType ty on ty.TypeId = trnicrd.TypeId " +
@@ -507,7 +507,7 @@ namespace DataAccessLayer
                 using (var connection = _contextDP.CreateConnection())
                 {
                     var BasicDetailList = await connection.QueryAsync<BasicDetailVM>(query, new { UserId, stepcount, TypeId, applyfor });
-                    int sno = 1;
+                        int sno = 1;
                     var allrecord = (from e in BasicDetailList
                                      select new BasicDetailVM()
                                      {
@@ -538,7 +538,7 @@ namespace DataAccessLayer
 
                 }
             }
-            catch(Exception ex)
+                catch(Exception ex)
             {
                 _logger.LogError(1001, ex, "BasicDetailDB->GetALLForIcardSttaus");
                 return null;
@@ -1214,7 +1214,7 @@ namespace DataAccessLayer
                         " select @ToRejected=COUNT(distinct fwd.RequestId) from TrnDomainMapping domain" +
                         " inner join TrnICardRequest req on req.TrnDomainMappingId=domain.Id " +
                         " inner join TrnStepCounter trnstepcout on trnstepcout.RequestId= req.RequestId" +
-                        " inner join TrnFwds fwd on fwd.RequestId= trnstepcout.RequestId where fwd.ToAspNetUsersId=@UserId and req.Status=0 and req.StepId in(7,8,9,10) and trnstepcout.ApplyForId=@applyForId " +
+                        " inner join TrnFwds fwd on fwd.RequestId= trnstepcout.RequestId where fwd.ToAspNetUsersId=@UserId and req.Status=0 and trnstepcout.StepId in(7,8,9,10) and trnstepcout.ApplyForId=@applyForId " +
 
                         " select @ToDrafted ToDrafted,@ToSubmitted ToSubmitted,@ToCompleted ToCompleted,@ToRejected ToRejected";
             }

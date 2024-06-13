@@ -27,7 +27,7 @@ namespace DataAccessLayer
             if (Data.StepId==3)
             {
                 query = "Update TrnStepCounter set StepId=@StepId,Updatedby=@Updatedby where RequestId=@Id" +
-               " Update BasicDetails set DateOfIssue=GETDATE(),PlaceOfIssue=@UnitName where BasicDetailId=(select BasicDetailId from TrnICardRequest where RequestId=@Id)";
+               " Update BasicDetails set DateOfIssue=GETDATE() where BasicDetailId=(select BasicDetailId from TrnICardRequest where RequestId=@Id)";
             }
             else
             {

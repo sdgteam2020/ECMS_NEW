@@ -22,6 +22,7 @@ using static Dapper.SqlMapper;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.Diagnostics.Eventing.Reader;
+using Newtonsoft.Json.Linq;
 
 namespace DataAccessLayer
 {
@@ -1391,6 +1392,7 @@ namespace DataAccessLayer
                                            from xtdm in utdm_jointable.DefaultIfEmpty()
                                            join up in _context.UserProfile on xtdm.UserId equals up.UserId
                                            join rk in _context.MRank on up.RankId equals rk.RankId
+                                           join at in _context.MArmedType on up.ArmedId equals at.ArmedId
                                            select new DTOProfileManageResponse()
                                            {
                                                UserId = up.UserId,
@@ -1398,8 +1400,11 @@ namespace DataAccessLayer
                                                Name = up.Name,
                                                IsToken=up.IsToken,
                                                MobileNo = up.MobileNo,
+                                               ReasonTokenWaiver =up.ReasonTokenWaiver,
                                                RankId =rk.RankId,
                                                RankName=rk.RankName,
+                                               ArmedId=at.ArmedId,
+                                               ArmedName=at.ArmedName,
                                                RankAbbreviation=rk.RankAbbreviation,
                                                Id = u.Id,
                                                DomainId = u.DomainId,
@@ -1411,6 +1416,7 @@ namespace DataAccessLayer
                     Search = string.IsNullOrEmpty(Search) ? "" : Search.ToLower();
                     var allrecord = await (from up in _context.UserProfile.Where(P => Search == "" || P.ArmyNo.ToLower().Contains(Search)).OrderByDescending(x => x.UserId)
                                            join rk in _context.MRank on up.RankId equals rk.RankId
+                                           join at in _context.MArmedType on up.ArmedId equals at.ArmedId
                                            join tdm in _context.TrnDomainMapping on up.UserId equals tdm.UserId into uptdm_jointable
                                            from xtdm in uptdm_jointable.DefaultIfEmpty()
                                            join u in _context.Users on xtdm.AspNetUsersId equals u.Id into xtdmu_jointable
@@ -1422,9 +1428,12 @@ namespace DataAccessLayer
                                                Name = up.Name,
                                                IsToken = up.IsToken,
                                                MobileNo = up.MobileNo,
+                                               ReasonTokenWaiver = up.ReasonTokenWaiver,
                                                RankId = rk.RankId,
                                                RankName = rk.RankName,
                                                RankAbbreviation = rk.RankAbbreviation,
+                                               ArmedId = at.ArmedId,
+                                               ArmedName = at.ArmedName,
                                                Id = xu != null ? xu.Id : 0,
                                                DomainId = xu != null ? xu.DomainId : null,
                                            }).Take(200).ToListAsync();
@@ -1435,6 +1444,7 @@ namespace DataAccessLayer
                     int UserId = string.IsNullOrEmpty(Search) ? 0 : Convert.ToInt32(Search);
                     var allrecord = await (from up in _context.UserProfile.Where(x=>x.UserId == UserId)
                                            join rk in _context.MRank on up.RankId equals rk.RankId
+                                           join at in _context.MArmedType on up.ArmedId equals at.ArmedId
                                            join tdm in _context.TrnDomainMapping on up.UserId equals tdm.UserId into uptdm_jointable
                                            from xtdm in uptdm_jointable.DefaultIfEmpty()
                                            join u in _context.Users on xtdm.AspNetUsersId equals u.Id into xtdmu_jointable
@@ -1446,9 +1456,12 @@ namespace DataAccessLayer
                                                Name = up.Name,
                                                IsToken = up.IsToken,
                                                MobileNo = up.MobileNo,
+                                               ReasonTokenWaiver = up.ReasonTokenWaiver,
                                                RankId = rk.RankId,
                                                RankName = rk.RankName,
                                                RankAbbreviation = rk.RankAbbreviation,
+                                               ArmedId = at.ArmedId,
+                                               ArmedName = at.ArmedName,
                                                Id = xu != null ? xu.Id : 0,
                                                DomainId = xu != null ? xu.DomainId : null,
                                            }).ToListAsync();
@@ -1459,6 +1472,7 @@ namespace DataAccessLayer
                 {
                     var allrecord = await (from up in _context.UserProfile.OrderByDescending(x=>x.UserId).Take(200)
                                            join rk in _context.MRank on up.RankId equals rk.RankId
+                                           join at in _context.MArmedType on up.ArmedId equals at.ArmedId
                                            join tdm in _context.TrnDomainMapping on up.UserId equals tdm.UserId into uptdm_jointable
                                            from xtdm in uptdm_jointable.DefaultIfEmpty()
                                            join u in _context.Users on xtdm.AspNetUsersId equals u.Id into xtdmu_jointable
@@ -1470,9 +1484,12 @@ namespace DataAccessLayer
                                                Name = up.Name,
                                                IsToken = up.IsToken,
                                                MobileNo = up.MobileNo,
+                                               ReasonTokenWaiver = up.ReasonTokenWaiver,
                                                RankId = rk.RankId,
                                                RankName = rk.RankName,
                                                RankAbbreviation = rk.RankAbbreviation,
+                                               ArmedId = at.ArmedId,
+                                               ArmedName = at.ArmedName,
                                                Id = xu != null ?xu.Id : 0,
                                                DomainId = xu != null ? xu.DomainId : null,
                                            }).ToListAsync();
@@ -1817,6 +1834,7 @@ namespace DataAccessLayer
                         {
                             DomainId = dTOTempSession.DomainId,
                             Active = true,
+                            AdminFlag = false,
                             Updatedby = 1,
                             UpdatedOn = model.UpdatedOn,
                             UserName = dTOTempSession.DomainId.ToLower(),
@@ -1853,7 +1871,14 @@ namespace DataAccessLayer
                             MUserProfile? uptUserProfile = await _context.UserProfile.FindAsync(dTOTempSession.UserId);
                             if (uptUserProfile != null)
                             {
+                                uptUserProfile.RankId = model.RankId;
+                                uptUserProfile.Name = model.Name;
+                                uptUserProfile.MobileNo = model.MobileNo;
+                                uptUserProfile.ArmedId = model.ArmedId;
+                                uptUserProfile.IsToken = true;
+                                uptUserProfile.ReasonTokenWaiver = model.ReasonTokenWaiver;
                                 uptUserProfile.Updatedby = user.Id;
+                                uptUserProfile.UpdatedOn = model.UpdatedOn;
                                 await _context.SaveChangesAsync();
                                 user.AdminMsg = "Domian Id - " + user.DomainId + " & Profile Id- " + uptUserProfile.UserId + ".Your regn request was successfully placed with Admin for necy Approval. Pl note regn No - " + user.Id + " for future correspondence.";
                                 trnDomainMapping.UserId = dTOTempSession.UserId;
@@ -1872,8 +1897,12 @@ namespace DataAccessLayer
                                 RankId = model.RankId,
                                 Name = model.Name,
                                 MobileNo=model.MobileNo,
+                                ArmedId = model.ArmedId,
+                                IsToken = true,
+                                ReasonTokenWaiver = model.ReasonTokenWaiver,
                                 Updatedby = user.Id,
-                                Thumbprint=model.Thumbprint,
+                                UpdatedOn = model.UpdatedOn,
+                                Thumbprint =model.Thumbprint,
                             };
                             await _context.UserProfile.AddAsync(mUserProfile);
                             await _context.SaveChangesAsync();
@@ -1921,71 +1950,95 @@ namespace DataAccessLayer
                 {
                     try
                     {
-                        TrnDomainMapping trnDomainMapping = new TrnDomainMapping();
-                        trnDomainMapping.AspNetUsersId = dTOTempSession.AspNetUsersId;
-                        trnDomainMapping.UnitId = model.UnitMapId;
-                        trnDomainMapping.ApptId = model.ApptId;
-                        trnDomainMapping.DialingCode = model.DialingCode;
-                        trnDomainMapping.Extension = model.Extension;
-                        trnDomainMapping.IsRO = model.IsRO;
-                        trnDomainMapping.IsIO = model.IsIO;
-                        trnDomainMapping.IsCO = model.IsCO;
-                        trnDomainMapping.IsORO = model.IsORO;
-                        trnDomainMapping.Updatedby = dTOTempSession.AspNetUsersId;
-                        trnDomainMapping.UpdatedOn = model.UpdatedOn;
-                        if (model.UserId > 0)
+                        ApplicationUser? applicationUser = await _context.Users.FindAsync(dTOTempSession.AspNetUsersId);
+                        if (applicationUser != null)
                         {
-                            MUserProfile? uptUserProfile = await _context.UserProfile.FindAsync(dTOTempSession.UserId);
-                            if (uptUserProfile != null)
+                            TrnDomainMapping trnDomainMapping = new TrnDomainMapping();
+                            trnDomainMapping.AspNetUsersId = dTOTempSession.AspNetUsersId;
+                            trnDomainMapping.UnitId = model.UnitMapId;
+                            trnDomainMapping.ApptId = model.ApptId;
+                            trnDomainMapping.DialingCode = model.DialingCode;
+                            trnDomainMapping.Extension = model.Extension;
+                            trnDomainMapping.IsRO = model.IsRO;
+                            trnDomainMapping.IsIO = model.IsIO;
+                            trnDomainMapping.IsCO = model.IsCO;
+                            trnDomainMapping.IsORO = model.IsORO;
+                            trnDomainMapping.Updatedby = dTOTempSession.AspNetUsersId;
+                            trnDomainMapping.UpdatedOn = model.UpdatedOn;
+                            if (model.UserId > 0)
                             {
-                                uptUserProfile.Updatedby = dTOTempSession.AspNetUsersId;
-                                await _context.SaveChangesAsync();
-                                trnDomainMapping.UserId = dTOTempSession.UserId;
+                                MUserProfile? uptUserProfile = await _context.UserProfile.FindAsync(dTOTempSession.UserId);
+                                if (uptUserProfile != null)
+                                {
+                                    uptUserProfile.RankId = model.RankId;
+                                    uptUserProfile.Name = model.Name;
+                                    uptUserProfile.MobileNo = model.MobileNo;
+                                    uptUserProfile.ArmedId = model.ArmedId;
+                                    uptUserProfile.IsToken = true;
+                                    uptUserProfile.ReasonTokenWaiver = model.ReasonTokenWaiver;
+                                    uptUserProfile.Updatedby = dTOTempSession.AspNetUsersId;
+                                    uptUserProfile.UpdatedOn = model.UpdatedOn;
+                                    await _context.SaveChangesAsync();
+                                    trnDomainMapping.UserId = dTOTempSession.UserId;
+                                }
+                                else
+                                {
+                                    return null;
+                                }
                             }
                             else
                             {
-                                return null;
+                                MUserProfile mUserProfile = new MUserProfile();
+                                mUserProfile.ArmyNo = dTOTempSession.ICNO;
+                                mUserProfile.RankId = model.RankId;
+                                mUserProfile.Name = model.Name;
+                                mUserProfile.MobileNo = model.MobileNo;
+                                mUserProfile.ArmedId = model.ArmedId;
+                                mUserProfile.IsToken = true;
+                                mUserProfile.ReasonTokenWaiver = model.ReasonTokenWaiver;
+                                mUserProfile.Updatedby = dTOTempSession.AspNetUsersId;
+                                mUserProfile.UpdatedOn = model.UpdatedOn;
+                                mUserProfile.Thumbprint = model.Thumbprint;
+                                await _context.UserProfile.AddAsync(mUserProfile);
+                                await _context.SaveChangesAsync();
+                                // TempData["success"] = "Your Profile Id - " + dTOTempSession.UserId + " has been successfully mapped to Domain Id - " + dTOTempSession.DomainId + ". > DB ";
+                                trnDomainMapping.UserId = mUserProfile.UserId;
                             }
+
+                            await _context.TrnDomainMapping.AddAsync(trnDomainMapping);
+                            await _context.SaveChangesAsync();
+                            if (model.IsToken == true)
+                            {
+                                applicationUser.AdminFlag = false;
+                                applicationUser.AdminMsg = "Domian Id - " + applicationUser.DomainId + " & Profile Id- " + trnDomainMapping.UserId + ".Your token request was successfully placed with Admin for necy Approval. Pl note regn No - " + trnDomainMapping.UserId + " for future correspondence.";
+                                await _context.SaveChangesAsync();
+                            }
+                            transaction.Commit();
+
+                            var mapping_Log = new TrnMappingUnMapping_Log()
+                            {
+                                TrnMappUnMapLogId = 0,
+                                TDMId = trnDomainMapping.Id,
+                                UserId = (int)trnDomainMapping.UserId,
+                                DeregisterUserId = (int)trnDomainMapping.UserId,
+                                IsActive = true,
+                                Updatedby = trnDomainMapping.AspNetUsersId,
+                                UpdatedOn = model.UpdatedOn,
+                            };
+                            await _trnMappingUnMappingLogDB.Add(mapping_Log);
+
+                            DTOTempSession dTOTempSessionResult = new DTOTempSession();
+
+                            dTOTempSessionResult.TDMId = trnDomainMapping.Id;
+                            dTOTempSessionResult.TDMUnitMapId = trnDomainMapping.UnitId;
+                            dTOTempSessionResult.UserId = (int)(trnDomainMapping.UserId != null ? trnDomainMapping.UserId : 0);
+                            dTOTempSessionResult.Status = 1;
+                            return dTOTempSessionResult;
                         }
                         else
                         {
-                            MUserProfile mUserProfile = new MUserProfile();
-                            mUserProfile.ArmyNo = dTOTempSession.ICNO;
-                            mUserProfile.RankId = model.RankId;
-                            mUserProfile.Name = model.Name;
-                            mUserProfile.MobileNo = model.MobileNo;
-                            mUserProfile.Updatedby = dTOTempSession.AspNetUsersId;
-                            mUserProfile.Thumbprint = model.Thumbprint;
-                            await _context.UserProfile.AddAsync(mUserProfile);
-                            await _context.SaveChangesAsync();
-                            // TempData["success"] = "Your Profile Id - " + dTOTempSession.UserId + " has been successfully mapped to Domain Id - " + dTOTempSession.DomainId + ". > DB ";
-                            trnDomainMapping.UserId = mUserProfile.UserId;
+                            return null;
                         }
-
-                        await _context.TrnDomainMapping.AddAsync(trnDomainMapping);
-                        await _context.SaveChangesAsync();
-                        transaction.Commit();
-
-                        var mapping_Log = new TrnMappingUnMapping_Log()
-                        {
-                            TrnMappUnMapLogId = 0,
-                            TDMId = trnDomainMapping.Id,
-                            UserId = (int)trnDomainMapping.UserId,
-                            DeregisterUserId = (int)trnDomainMapping.UserId,
-                            IsActive = true,
-                            Updatedby = trnDomainMapping.AspNetUsersId,
-                            UpdatedOn = model.UpdatedOn,
-                        };
-                        await _trnMappingUnMappingLogDB.Add(mapping_Log);
-
-                        DTOTempSession dTOTempSessionResult = new DTOTempSession();
-
-                        dTOTempSessionResult.TDMId = trnDomainMapping.Id;
-                        dTOTempSessionResult.TDMUnitMapId = trnDomainMapping.UnitId;
-                        dTOTempSessionResult.UserId = (int)(trnDomainMapping.UserId != null ? trnDomainMapping.UserId : 0);
-                        dTOTempSessionResult.Status = 1;
-                        return dTOTempSessionResult;
-
                     }
                     catch (Exception ex)
                     {
@@ -2005,58 +2058,84 @@ namespace DataAccessLayer
                         TrnDomainMapping? trnDomainMapping = await _context.TrnDomainMapping.FindAsync(dTOTempSession.TDMId);
                         if(trnDomainMapping!=null)
                         {
-                            if (model.UserId > 0)
+                            ApplicationUser? applicationUser = await _context.Users.FindAsync(trnDomainMapping.AspNetUsersId);
+                            if(applicationUser!=null)
                             {
-                                MUserProfile? uptUserProfile = await _context.UserProfile.FindAsync(dTOTempSession.UserId);
-                                if(uptUserProfile!=null)
+                                if (model.UserId > 0)
                                 {
-                                    uptUserProfile.Updatedby = dTOTempSession.AspNetUsersId;
-                                    uptUserProfile.UpdatedOn = model.UpdatedOn;
-                                    await _context.SaveChangesAsync();
+                                    MUserProfile? uptUserProfile = await _context.UserProfile.FindAsync(dTOTempSession.UserId);
+                                    if (uptUserProfile != null)
+                                    {
+                                        uptUserProfile.RankId = model.RankId;
+                                        uptUserProfile.Name = model.Name;
+                                        uptUserProfile.MobileNo = model.MobileNo;
+                                        uptUserProfile.ArmedId = model.ArmedId;
+                                        uptUserProfile.IsToken = true;
+                                        uptUserProfile.ReasonTokenWaiver = model.ReasonTokenWaiver;
+                                        uptUserProfile.Updatedby = dTOTempSession.AspNetUsersId;
+                                        uptUserProfile.UpdatedOn = model.UpdatedOn;
+                                        await _context.SaveChangesAsync();
 
-                                    trnDomainMapping.UserId = dTOTempSession.UserId;
+                                        trnDomainMapping.UserId = dTOTempSession.UserId;
+                                    }
+                                    else
+                                    {
+                                        return null;
+                                    }
                                 }
                                 else
                                 {
-                                    return null;
+                                    MUserProfile mUserProfile = new MUserProfile();
+                                    mUserProfile.ArmyNo = dTOTempSession.ICNO;
+                                    mUserProfile.RankId = model.RankId;
+                                    mUserProfile.Name = model.Name;
+                                    mUserProfile.MobileNo = model.MobileNo;
+                                    mUserProfile.ArmedId = model.ArmedId;
+                                    mUserProfile.IsToken = true;
+                                    mUserProfile.ReasonTokenWaiver = model.ReasonTokenWaiver;
+                                    mUserProfile.Updatedby = dTOTempSession.AspNetUsersId;
+                                    mUserProfile.UpdatedOn = model.UpdatedOn;
+                                    mUserProfile.Thumbprint = model.Thumbprint;
+                                    await _context.UserProfile.AddAsync(mUserProfile);
+                                    await _context.SaveChangesAsync();
+
+                                    trnDomainMapping.UserId = mUserProfile.UserId;
                                 }
+                                _context.TrnDomainMapping.Update(trnDomainMapping);
+                                await _context.SaveChangesAsync();
+
+                                if (model.IsToken == true)
+                                {
+                                    applicationUser.AdminFlag = false;
+                                    applicationUser.AdminMsg = "Domian Id - " + applicationUser.DomainId + " & Profile Id- " + trnDomainMapping.UserId + ".Your token request was successfully placed with Admin for necy Approval. Pl note regn No - " + trnDomainMapping.UserId + " for future correspondence.";
+                                    await _context.SaveChangesAsync();
+                                }
+
+                                transaction.Commit();
+
+                                var mapping_Log = new TrnMappingUnMapping_Log()
+                                {
+                                    TrnMappUnMapLogId = 0,
+                                    TDMId = trnDomainMapping.Id,
+                                    UserId = (int)trnDomainMapping.UserId,
+                                    DeregisterUserId = (int)trnDomainMapping.UserId,
+                                    IsActive = true,
+                                    Updatedby = trnDomainMapping.AspNetUsersId,
+                                    UpdatedOn = model.UpdatedOn,
+                                };
+                                await _trnMappingUnMappingLogDB.Add(mapping_Log);
+
+
+                                DTOTempSession dTOTempSessionResult = new DTOTempSession();
+                                dTOTempSessionResult.Status = 5;
+                                dTOTempSessionResult.UserId = (int)(trnDomainMapping.UserId != null ? trnDomainMapping.UserId : 0);
+                                return dTOTempSessionResult;
                             }
                             else
                             {
-                                MUserProfile mUserProfile = new MUserProfile();
-                                mUserProfile.ArmyNo = dTOTempSession.ICNO;
-                                mUserProfile.RankId = model.RankId;
-                                mUserProfile.Name = model.Name;
-                                mUserProfile.MobileNo = model.MobileNo;
-                                mUserProfile.Updatedby = dTOTempSession.AspNetUsersId;
-                                mUserProfile.UpdatedOn = model.UpdatedOn;
-                                mUserProfile.Thumbprint = model.Thumbprint;
-                                await _context.UserProfile.AddAsync(mUserProfile);
-                                await _context.SaveChangesAsync();
-                                
-                                trnDomainMapping.UserId = mUserProfile.UserId;
+                                return null;
                             }
-                            _context.TrnDomainMapping.Update(trnDomainMapping);
-                            await _context.SaveChangesAsync();
-                            transaction.Commit();
 
-                            var mapping_Log = new TrnMappingUnMapping_Log()
-                            {
-                                TrnMappUnMapLogId = 0,
-                                TDMId = trnDomainMapping.Id,
-                                UserId = (int)trnDomainMapping.UserId,
-                                DeregisterUserId = (int)trnDomainMapping.UserId,
-                                IsActive = true,
-                                Updatedby = trnDomainMapping.AspNetUsersId,
-                                UpdatedOn = model.UpdatedOn,
-                            };
-                            await _trnMappingUnMappingLogDB.Add(mapping_Log);
-
-
-                            DTOTempSession dTOTempSessionResult = new DTOTempSession();
-                            dTOTempSessionResult.Status = 5;
-                            dTOTempSessionResult.UserId = (int)(trnDomainMapping.UserId != null ? trnDomainMapping.UserId : 0);
-                            return dTOTempSessionResult;
                         }
                         else
                         {
