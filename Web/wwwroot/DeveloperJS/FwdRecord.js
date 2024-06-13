@@ -372,6 +372,19 @@ $(function () {
         appendTo: '#suggesstion-box'
     });
 
+    $('#txtFwdName').keyup(function (e) {
+        if (e.keyCode == 46) {
+            $(".spnFArmyNo").html("");
+            $(".spnFtoname").html("");
+            $(".spnFDomainName").html("");
+            $(".spnFAppName").html("");
+
+            $("#txtFwdName").val("");
+            $("#spnFwdToAspNetUsersId").html("0");
+            $("#spnFwdToUsersId").html("0");
+        }
+    });
+
     $("#btnForward").on("click", function () {
 
         /*  alert($("#txtspnTokenArmyNo").val());*/
