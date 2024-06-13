@@ -1,0 +1,412 @@
+﻿@model DTOApplicationTrack
+@{
+    ViewBag.Title = "Application Status";
+    ViewBag.Description = "Application Status";
+    ViewBag.Keywords = "";
+    Layout = null;
+}
+
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" type="image/x-icon" href="/images/AFSAC.png">
+    <title> E-ISAC </title>
+    @*  <link href="/Fonts/css/all.min.css" rel="stylesheet" type="text/css"> *@
+
+    <link href="~/css/style.css" rel="stylesheet" />
+    <link href="~/css/nunito.css" rel="stylesheet" />
+    <link href="~/css/roboto.css" rel="stylesheet" />
+    <link href="~/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/css/login.css" rel="stylesheet" />
+
+    <link href="~/sweetalert2/sweetalert2.min.css" rel="stylesheet" />
+    <link href="~/css/feed.css" rel="stylesheet" />
+
+    <link href="~/css/normalize.min.css" rel="stylesheet" />
+    @*   <link href="~/css/swiper.min.css" rel="stylesheet" /> *@
+    <link href="~/css/feed.css" rel="stylesheet" />
+    <link href="~/css/main.css" rel="stylesheet" />
+    @*     <link href="~/css/sliders/style.css" rel="stylesheet" /> *@
+   <style>
+
+h2, h4, h6 {
+  margin: 0;
+  padding: 0;
+  display: inline-block;
+}
+.root {
+  padding: 3rem 1.5rem;
+  border-radius: 5px;
+  box-shadow: 0 2rem 6rem rgba(0, 0, 0, 0.3);
+}
+figure {
+  display: flex;
+  margin: 0em 10px;
+}
+figure img {
+  width: 8rem;
+  height: 8rem;
+  border-radius: 50%;
+  border: 1px solid #009688;
+  margin-right: 1.5rem;
+}
+figure figcaption {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+}
+figure figcaption h4 {
+  font-size: 1.4rem;
+  font-weight: 500;
+}
+figure figcaption h6 {
+  font-size: 1rem;
+  font-weight: 300;
+}
+figure figcaption h2 {
+  font-size: 1.6rem;
+  font-weight: 500;
+}
+.order-track {
+  margin-top: 2rem;
+  padding: 0 1rem;
+  border-top: 1px dashed #2c3e50;
+  padding-top: 2.5rem;
+  display: flex;
+  flex-direction: column;
+}
+.order-track-step {
+  display: flex;
+ 
+}
+.order-track-step:last-child {
+  overflow: hidden;
+  /* height: 4rem; */
+}
+.order-track-step:last-child .order-track-status span:last-of-type {
+  display: none;
+}
+.order-track-status {
+  margin-right: 1.5rem;
+  position: relative;
+}
+.order-track-status-dot {
+  display: block;
+  width: 2.2rem;
+  height: 2.2rem;
+  border-radius: 50%;
+  background: #009688;
+}
+.order-track-status-line {
+  display: block;
+  margin: 0 auto;
+  width: 2px;
+            height: 100%;
+  background: #009688;
+}
+
+        .order-track-status-dot-danger {
+            display: block;
+            width: 2.2rem;
+            height: 2.2rem;
+            border-radius: 50%;
+            background: red
+        }
+        .order-track-status-dot-pending {
+            display: block;
+            width: 2.2rem;
+            height: 100%;
+            border-radius: 50%;
+            background: #b8bcbe
+        }
+
+        .order-track-status-line-pending {
+            display: block;
+            margin: 0 auto;
+            width: 2px;
+            height: 7rem;
+            background: #b8bcbe
+        }
+.order-track-text-stat {
+  font-size: 1.3rem;
+  font-weight: 500;
+  margin-bottom: 3px;
+}
+.order-track-text-sub {
+  font-size: 1rem;
+  font-weight: 300;
+}
+.order-track {
+  transition: all 0.3s height 0.3s;
+  transform-origin: top center;
+}
+
+   </style>
+</head>
+
+<body>
+    <div class="page">
+        <div class="container-fluid">
+            <div class="row logoheader">
+                <div class="mb-1 logo-sec d-flex">
+                    @*                     <a class="navbar-brand" href="#"><img src="~/Images/dgis_ico.png" width="50%"></a>
+                    <div class="text-center mr-lg-15"><img class="mr-lg-15" src="~/Images/EISAC.png" width="50%"></div> *@
+                    <div class="text-center"><img src="~/Images/demologo.jpg" width="100%"></div>
+
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6 col-lg-6 col-xl-4 bg-white login-wrap align-items-center">
+                    <div class="login py-2 py-sm-4">
+                        <div class="row">
+                            <div class="col-md-12 col-lg-12 col-xl-11 mx-auto">
+                                <div class="card-sigin">
+                                    <form enctype="multipart/form-data" asp-controller="ApplicationStatus" asp-action="AppStatus" id="SaveForm" method="post" class="">
+                                    <div class="main-signup-header login-form">
+                                        @* <h1 class="font-weight-bold text-center mb-0 mt-3 logo"><color style="color: #D97904">Login</color></h1>*@
+
+                                            <p class="font-weight-bold font-weight-700 text-center mb-4 mt-1"><h4>Enter Application TrackingId.</h4></p>
+                                            <input type="text" class="form-control" placeholder="Enter TrackingId" required maxlength="12" name="TrackingId" id="TrackingId" />
+                                            <span>TrackingId Exm.: DOB(12012024) and  Last 4 Digit of AadharNo (120120241235)</span>
+                                      <input type="submit" class="btn btn-primary text-uppercase py-2 fs-5 w-100 mt-2" value="Track" />
+                                     
+                                    </div>
+                                    </form>
+                                    @if (ViewBag.IsData==1)
+                                    {
+                                        <div class="row mt-3">
+                                            <section class="root">
+                                                <figure>
+                                                    <img src="/WriteReadData/photo/@Model.dTOApplicationDetails.PhotoImagePath" alt="">
+                                                    <figcaption>
+                                                        <h6>@Model.dTOApplicationDetails.RankName @Model.dTOApplicationDetails.Name </h6>
+                                                        <h6>@Model.dTOApplicationDetails.ArmyNo</h6>
+                                                        <h4>Appl Submited By :-</h4>
+                                                        <h6>
+                                                            @Model.dTOApplicationDetails.FromRank @Model.dTOApplicationDetails.FromName
+                                                            (@Model.dTOApplicationDetails.FromArmyNo)
+                                                            (@Model.dTOApplicationDetails.DomainId)
+                                                        </h6>
+                                                    </figcaption>
+                                                </figure>
+                                                <div class="order-track">
+                                                    @{
+                                                        int IsResubmit = 0;
+                                                    }
+                                                    @if (Model.dTOTrackHistory.Count()==0)
+                                                    {
+                                                         <div class="order-track-step">
+                                                                <div class="order-track-status">
+                                                                    <span class="order-track-status-dot"></span>
+                                                                    <span class="order-track-status-line"></span>
+                                                                </div>
+                                                                <div class="order-track-text">
+                                                                     <p class="order-track-text-stat">Application UnderProcess</p>
+                                                             </div>
+                                                        </div>
+                                                    }
+                                                    @foreach (var Data in Model.dTOTrackHistory)
+                                                    {
+                                                        if (Data.IsComplete == 1)
+                                                        {
+                                                            <div class="order-track-step">
+                                                                <div class="order-track-status">
+                                                                    @if(Data.FwdStatusId==3)
+                                                                    {
+                                                                        <span class="order-track-status-dot-danger"></span>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <span class="order-track-status-dot"></span>
+                                                                    }
+                                                                    <span class="order-track-status-line"></span>
+                                                                </div>
+                                                                <div class="order-track-text">
+                                                                   
+                                                                    @if (Data.stepId == 2 && IsResubmit == 1)
+                                                                    {
+                                                                        IsResubmit = 1;
+
+                                                                        <p class="order-track-text-stat">Application Re-Submitted</p>
+                                                                    }
+                                                                   else @if (Data.stepId == 2 && IsResubmit == 0)
+                                                                    {
+                                                                        IsResubmit = 1;
+
+                                                                        <p class="order-track-text-stat">Application Submitted</p>
+                                                                    }
+                                                                    else @if (Data.stepId == 3)
+                                                                    {
+                                                                        <p class="order-track-text-stat"> Approved Appl (2nd LEVEL  ) </p>
+                                                                    }
+                                                                    else @if (Data.stepId == 4)
+                                                                    {
+                                                                        <p class="order-track-text-stat"> Approved Appl (3nd LEVEL  ) </p>
+                                                                    }
+                                                                    else @if (Data.stepId == 5)
+                                                                    {
+                                                                        <p class="order-track-text-stat">Appl Exported </p>
+                                                                    }
+                                                                    else @if (Data.stepId == 7)
+                                                                    {
+                                                                        <p class="order-track-text-stat">Rejected Appl (2nd LEVEL) </p>
+                                                                        <span class="badge bg-danger">Remarks</span>
+
+                                                                        <br />
+                                                                        <span class="order-track-text-sub">@Data.Remark</span>
+
+                                                                        <br />
+                                                                        <span class="order-track-text-sub">@Data.Remark2</span> <br />
+                                                                    }
+                                                                    else @if (Data.stepId == 8)
+                                                                    {
+                                                                        <p class="order-track-text-stat">Rejected Appl (3nd LEVEL) </p>
+                                                                        <span class="badge bg-danger">Remarks</span>
+
+                                                                       
+                                                                        <br />
+                                                                        <span class="order-track-text-sub">@Data.Remark</span>
+
+                                                                        <br />
+                                                                        <span class="order-track-text-sub">@Data.Remark2</span> <br />
+                                                                    }
+                                                                    else @if (Data.stepId == 9)
+                                                                    {
+                                                                        <p class="order-track-text-stat">Rejected Appl (4nd LEVEL) </p>
+                                                                        <span class="badge bg-danger">Remarks</span>
+
+                                                                        
+                                                                        <br />
+                                                                        <span class="order-track-text-sub">@Data.Remark</span>
+
+                                                                        <br />
+                                                                        <span class="order-track-text-sub">@Data.Remark2</span> <br />
+                                                                    }
+                                                                    <span class="order-track-text-sub">@Data.UpdatedOn</span>
+
+                                                                </div>
+                                                            </div>
+
+
+
+                                                        }
+                                                        else if (Data.IsComplete == 0)
+                                                        {
+                                                            <div class="order-track-step">
+                                                                <div class="order-track-status">
+                                                                    <span class="order-track-status-dot-pending"></span>
+                                                                    <span class="order-track-status-line"></span>
+                                                                </div>
+                                                                <div class="order-track-text">
+                                                                    @if (Data.stepId == 2)
+                                                                    {
+                                                                        <p class="order-track-text-stat">Application Submitted</p>
+                                                                        
+                                                                    }
+                                                                    else @if (Data.stepId == 3)
+                                                                    {
+                                                                        <p class="order-track-text-stat"> Pendding Appl (2nd LEVEL  ) </p>
+                                                                    }
+                                                                    else @if (Data.stepId == 4)
+                                                                    {
+                                                                        <p class="order-track-text-stat"> Pendding Appl (3nd LEVEL  ) </p>
+                                                                    }
+                                                                    else @if (Data.stepId == 5)
+                                                                    {
+                                                                        <p class="order-track-text-stat">Pendding Exported </p>
+                                                                    }
+                                                                    else @if (Data.stepId == 7)
+                                                                    {
+                                                                        <p class="order-track-text-stat">Rejected Appl (2nd LEVEL) </p>
+
+
+                                                                        <span class="order-track-text-sub">@Data.UpdatedOn</span>
+
+                                                                        <br />
+
+                                                                        <span class="badge bg-danger">Remarks</span>
+
+                                                                        <br />
+                                                                        <span class="order-track-text-sub">@Data.Remark</span>
+
+                                                                        <br />
+                                                                        <span class="order-track-text-sub">@Data.Remark2</span>
+                                                                       
+                                                                    }
+                                                                    else @if (Data.stepId == 8)
+                                                                    {
+                                                                        <span class="order-track-text-stat">Rejected Appl (3nd LEVEL) </span>
+                                                                        <span class="order-track-text-sub">@Data.UpdatedOn</span>
+
+                                                                        <br />
+                                                                        <span class="badge bg-danger">Remarks</span>
+
+                                                                        <br />
+                                                                        
+                                                                        <span class="order-track-text-sub">@Data.Remark</span>
+
+                                                                        <br />
+                                                                        <span class="order-track-text-sub">@Data.Remark2</span>
+                                                                    }
+                                                                    else @if (Data.stepId == 9)
+                                                                    {
+                                                                        <p class="order-track-text-stat">Rejected Appl (4nd LEVEL) </p>
+                                                                        <span class="order-track-text-sub">@Data.UpdatedOn</span>
+
+                                                                        <br />
+                                                                        <span class="badge bg-danger">Remarks</span>
+
+                                                                        <br />
+                                                                       
+                                                                        <span class="order-track-text-sub">@Data.Remark</span>
+
+                                                                        <br />
+                                                                        <span class="order-track-text-sub">@Data.Remark2</span>
+                                                                    }
+
+                                                                  
+                                                                    
+                                                                </div>
+                                                            </div>
+
+
+
+                                                        }
+                                                    }
+                                                </div>
+                                            </section>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger">TrackingId Not Found</span>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+           
+        </div>
+    </div>
+
+
+
+</body>
+</html>
+
+@section Scripts{
+    <script asp-src-include="~/lib/jquery/jquery.js"></script>
+    <script asp-src-include="~/lib/jquery-validate/jquery.validate.js" defer></script>
+    <script asp-src-include="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js" defer></script>
+    <script src="~/bootstrap/js/bootstrap.bundle.min.js"></script>
+    @* <script src="~/fonts/feather/feather.min.js"></script> *@
+    <script src="~/sweetalert2/sweetalert2.min.js"></script>
+
+    
+}

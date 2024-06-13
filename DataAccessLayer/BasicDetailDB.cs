@@ -1339,6 +1339,64 @@ namespace DataAccessLayer
 
         }
 
+        public async Task<DTOApplicationTrack> ApplicationHistory(string TrackingId)
+        {
+            DTOApplicationTrack lst=new DTOApplicationTrack();
+                    
+            string query = " select ran.RankAbbreviation RankName,bas.Name,bas.ServiceNo ArmyNo,unit.UnitName,uplod.PhotoImagePath," +
+                           " ranfrom.RankAbbreviation FromRank,pr.Name FromName,pr.ArmyNo FromArmyNo,users.DomainId" +
+                           " from BasicDetails bas " +
+                           " inner join TrnICardRequest req on bas.BasicDetailId=req.BasicDetailId" +
+                           " inner join TrnUpload uplod on bas.BasicDetailId=uplod.BasicDetailId" +
+                           " inner join MRank ran on bas.RankId=ran.RankId" +
+                           " inner join MapUnit muni on bas.UnitId=muni.UnitMapId" +
+                           " inner join MUnit unit on  muni.UnitId=unit.UnitId" +
+                           " inner join TrnDomainMapping map on map.Id= req.TrnDomainMappingId" +
+                           " inner join AspNetUsers users on map.AspNetUsersId=users.Id" +
+                           " inner join UserProfile pr on pr.UserId = map.UserId" +
+                           " inner join MRank ranfrom on pr.RankId=ranfrom.RankId" +
+                           " where req.Status=0 and req.TrackingId=@TrackingId";
 
+                           //" select fwd.FwdStatusId,fwd.stepId,fwd.UpdatedOn,step.Name,fwd.IsComplete" +
+                           //" from TrnFwds fwd " +
+                           //" inner join TrnICardRequest req on fwd.RequestId=req.RequestId" +
+                           //" inner join MStepCounterStep step on fwd.StepId=step.StepId" +
+                           //"  where fwd.RequestId=@RequestId" +
+                           //" order by fwd.TrnFwdId asc";
+            using (var connection = _contextDP.CreateConnection())
+            {
+                //data.MRank.RankAbbreviation
+                //data.MArmedType.Abbreviation
+                var ret = await connection.QueryAsync<DTOApplicationDetails>(query, new { TrackingId });
+
+
+                // var allProducts = ret.Concat(ret1) .ToList();
+
+
+                lst.dTOApplicationDetails = ret.FirstOrDefault();
+            }
+            query = " select fwd.FwdStatusId,fwd.stepId,fwd.UpdatedOn,step.Name,fwd.IsComplete," +
+                " isnull(fwd.Remark,'') Remark," +
+                " (select STRING_AGG(Remarks,'#') from MRemarks where RemarksId in (select value from string_split(fwd.RemarksIds,','))) Remark2" +
+            " from TrnFwds fwd " +
+            " inner join TrnICardRequest req on fwd.RequestId=req.RequestId" +
+            " inner join MStepCounterStep step on fwd.StepId=step.StepId" +
+            "  where req.Status=0 and req.TrackingId=@TrackingId" +
+            " order by fwd.TrnFwdId asc";
+            using (var connection = _contextDP.CreateConnection())
+            {
+                //data.MRank.RankAbbreviation
+                //data.MArmedType.Abbreviation
+                var ret1 = await connection.QueryAsync<DTOTrackHistory>(query, new { TrackingId });
+
+
+                // var allProducts = ret.Concat(ret1) .ToList();
+
+
+                lst.dTOTrackHistory = ret1.ToList();
+            }
+
+            return lst; 
+        }
     }
 }

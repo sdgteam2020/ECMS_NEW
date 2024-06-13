@@ -1,4 +1,5 @@
-﻿using DataAccessLayer;
+﻿using BusinessLogicsLayer.Master;
+using DataAccessLayer;
 using DataAccessLayer.BaseInterfaces;
 using DataTransferObject.Domain.Master;
 using DataTransferObject.Domain.Model;
@@ -101,6 +102,12 @@ namespace BusinessLogicsLayer.BasicDet
         public async Task<IEnumerable<SelectListItem>> GetRODDLIdSelected(byte ArmedId)
         {
             var data = await _iBasicDetailDB.GetRODDLIdSelected(ArmedId);
+            return data;
+        }
+
+        public async Task<DTOApplicationTrack> ApplicationHistory(string TrackingId)
+        {
+            var data = await _iBasicDetailDB.ApplicationHistory(TrackingId);
             return data;
         }
     }
