@@ -12,7 +12,6 @@ using Microsoft.AspNetCore.Mvc.TagHelpers;
 using Newtonsoft.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
 using System;
-using Web.Data;
 using ApplicationUser = DataTransferObject.Domain.Identitytable.ApplicationUser;
 using BusinessLogicsLayer.Service;
 using Microsoft.SqlServer.Management.Smo.Wmi;
