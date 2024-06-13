@@ -35,7 +35,6 @@
                         listItemddl += '<option value="' + response[i].Id + '">' + response[i].Name + '</option>';
                     }
                     $("#" + ddl +"").html(listItemddl);
-
                     //if (TableId == 5 || TableId == 7 || TableId == 8) {
                        
                     //    if (sectid != '') {

@@ -1,8 +1,16 @@
 ﻿$(document).ready(function () {
-
     $("#btntokenrefresh").click(function () {
         
         GetTokenvalidatepersid2fawiththumbprint($("#ArmyNo").val(), "tokenmsg", "txtProfileForArmyNo","Thumbprint");
+    });
+    $("#isTokenyes").on("click",function () {
+        $("#spnReasonTokenWaiver").removeClass("d-none");
+    });
+    $("#isTokenno").on("click", function () {
+        $("#spnReasonTokenWaiver").addClass("d-none");
+    });
+    $("input[name='IsToken']").click(function () {
+        $("#IsToken-error").html("");
     });
 
     $("input[name='IsIO']").click(function () {
@@ -207,17 +215,17 @@
 
     });
 
-    mMsater(0, "ddlCommand", 1, "");
+    mMsater(0, "ddlCommand", Command, "");
 
     $('#ddlCommand').on('change', function () {
-        mMsater(0, "ddlCorps", 2, $('#ddlCommand').val());
+        mMsater(0, "ddlCorps", Corps, $('#ddlCommand').val());
     });
 
     $('#ddlCorps').on('change', function () {
-        mMsaterByParent(0, "ddlDiv", 3, $('#ddlCommand').val(), $('#ddlCorps').val(), 0, 0);///ComdId,CorpsId,DivId,BdeId
+        mMsaterByParent(0, "ddlDiv", Div, $('#ddlCommand').val(), $('#ddlCorps').val(), 0, 0);///ComdId,CorpsId,DivId,BdeId
     });
     $('#ddlDiv').on('change', function () {
-        mMsaterByParent(0, "ddlBde", 4, $('#ddlCommand').val(), $('#ddlCorps').val(), $('#ddlDiv').val(), 0);///ComdId,CorpsId,DivId,BdeId
+        mMsaterByParent(0, "ddlBde", Bde, $('#ddlCommand').val(), $('#ddlCorps').val(), $('#ddlDiv').val(), 0);///ComdId,CorpsId,DivId,BdeId
     });
     $('#ddlBde').on('change', function () {
 
@@ -311,7 +319,7 @@ function Proceed() {
             cancelButtonColor: '#d33',
             confirmButtonText: 'Yes, Save it!'
         }).then((result) => {
-            if (result.isConfirmed && $("input[type='radio'][name=IsIO]:checked").length > 0 && $("input[type='radio'][name=IsCO]:checked").length > 0 && $("input[type='radio'][name=IsRO]:checked").length > 0 && $("input[type='radio'][name=IsORO]:checked").length > 0 ) {
+            if (result.isConfirmed && $("input[type='radio'][name=IsIO]:checked").length > 0 && $("input[type='radio'][name=IsCO]:checked").length > 0 && $("input[type='radio'][name=IsRO]:checked").length > 0 && $("input[type='radio'][name=IsORO]:checked").length > 0 && $("input[type='radio'][name=IsToken]:checked").length > 0) {
                 $(formId).submit();
             }
             else {
@@ -357,12 +365,20 @@ function ValidateRadioButton() {
     else {
         $("#IsORO-error").html("");
     }
+
+    if ($("input[type='radio'][name=IsToken]:checked").length == 0) {
+        $("#IsToken-error").html("Token Waiver to access Appl is required.");
+    }
+    else {
+        $("#IsToken-error").html("");
+    }
 }
 function ResetErrorMessage() {
     $("#IsRO-error").html("");
     $("#IsORO-error").html("");
     $("#IsIO-error").html("");
     $("#IsCO-error").html("");
+    $("#IsToken-error").html("");
 }
 function GetALLByUnitById(param1) {
     $.ajax({

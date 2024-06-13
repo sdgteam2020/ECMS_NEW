@@ -1,5 +1,6 @@
 ﻿$(document).ready(function () {
     mMsater(0, "ddlRank", Rank, "");
+    mMsater(0, "ddlArmType", ArmyType, "");
     BindData()
 
     $("#btnProfileAdd").click(function () {
@@ -109,7 +110,7 @@ function BindData() {
                     for (var i = 0; i < response.length; i++) {
 
                         listItem += "<tr>";
-                        listItem += "<td class='d-none'><span id='regId'>" + response[i].Id + "</span><span id='userId'>" + response[i].UserId + "</span><span id='rankId'>" + response[i].RankId + "</span><span id='mobileNo'>" + response[i].MobileNo + "</span></td>";
+                        listItem += "<td class='d-none'><span id='regId'>" + response[i].Id + "</span><span id='userId'>" + response[i].UserId + "</span><span id='rankId'>" + response[i].RankId + "</span><span id='armedId'>" + response[i].ArmedId + "</span><span id='reasonTokenWaiver'>" + response[i].ReasonTokenWaiver + "</span><span id='mobileNo'>" + response[i].MobileNo + "</span></td>";
                         listItem += "<td class='align-middle'>" + (i + 1) + "</td>";
                         listItem += "<td class='align-middle'><span id='userId'>" + response[i].UserId + "</span></td>";
                         
@@ -121,6 +122,7 @@ function BindData() {
                         listItem += "<td class='align-middle'><span id='armyNo'>" + response[i].ArmyNo + "</span></td>";
                         listItem += "<td class='align-middle'><span id='rankName'>" + response[i].RankAbbreviation + "</span></td>";
                         listItem += "<td class='align-middle'><span id='username'>" + response[i].Name + "</span></td>";
+                        listItem += "<td class='align-middle'><span id='ArmedName'>" + response[i].ArmedName + "</span></td>";
 
                         if (response[i].IsToken == true)
                             listItem += "<td class='align-middle'><span><span class='badge badge-pill badge-success' id='isToken'>Yes</span></span></td>";
@@ -179,6 +181,7 @@ function BindData() {
                         $("#txtName").val($(this).closest("tr").find("#username").html());
                         $("#ddlRank").val($(this).closest("tr").find("#rankId").html());
                         $("#txtMobileNo").val($(this).closest("tr").find("#mobileNo").html());
+                        $("#ddlArmType").val($(this).closest("tr").find("#armedId").html());
 
                         //alert($(this).closest("tr").find("#domain_approval").html())
 
@@ -187,6 +190,12 @@ function BindData() {
                         }
                         else {
                             $("#isTokenno").prop("checked", true);
+                        }
+                        if ($(this).closest("tr").find("#reasonTokenWaiver").html() != null && $(this).closest("tr").find("#reasonTokenWaiver").html() != "null") {
+                            $("#txtMessage").val($(this).closest("tr").find("#reasonTokenWaiver").html());
+                        }
+                        else {
+                            $("#txtMessage").val("");
                         }
 
                         $("#btnProfileAdd").val("Update");
@@ -244,6 +253,8 @@ function Save() {
             "Name": $("#txtName").val(),
             "MobileNo": $("#txtMobileNo").val(),
             "RankId": $("#ddlRank").val(),
+            "ArmedId": $("#ddlArmType").val(),
+            "ReasonTokenWaiver": $("#txtMessage").val().length > 0 ? $("#txtMessage").val() : null,
             "IsToken": $('input:radio[name=IsToken]:checked').val(),
 
         }, //get the search string
@@ -303,6 +314,8 @@ function Reset() {
     $("#ddlRank").val("");
     $("#txtName").val("");
     $("#txtMobileNo").val("");
+    $("#ddlArmType").val("");
+    $("#txtMessage").val("");
     $("#isTokenyes").prop("checked", false);
     $("#isTokenno").prop("checked", false);
 }
@@ -311,6 +324,8 @@ function ResetErrorMessage() {
     $("#ddlRank-error").html("");
     $("#txtArmyNo-error").html("");
     $("#txtMobileNo-error").html("");
+    $("#ddlArmType-error").html("");
+    $("#txtMessage-error").html("");
     $("#IsToken-error").html("");
 
 }
