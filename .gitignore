@@ -298,3 +298,4 @@ AppPackages/
 /.gitignore
 *.jpg
 /Web/Web.csproj.user
+/Web/Web.csproj.user
