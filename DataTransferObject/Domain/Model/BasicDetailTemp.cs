@@ -86,5 +86,9 @@ namespace DataTransferObject.Domain.Model
         [ForeignKey("MICardType"), DatabaseGenerated(DatabaseGeneratedOption.None)]
         public byte TypeId { get; set; }
         public MICardType? MICardType { get; set; }
+
+        [ForeignKey("MArmedType")]
+        public byte? ArmedId { get; set; }
+        public MArmedType? Armed { get; set; }
     }
 }
