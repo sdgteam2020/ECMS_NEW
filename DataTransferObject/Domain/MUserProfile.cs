@@ -63,5 +63,6 @@ namespace DataTransferObject.Domain
         [MaxLength(100, ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "MaxLengthError")]
         [RegularExpression(@"^[\w\&\.\-\; ]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
         public string? ReasonTokenWaiver { get; set; }
+        public bool IsTokenWaiver { get; set; } = false;
     }
 }

@@ -179,6 +179,9 @@ namespace DataTransferObject.ViewModels
         public string? EncryptedId { get; set; }
 
         [NotMapped]
+        public string? EncryptedRequestId { get; set; }
+
+        [NotMapped]
         [Display(Name = "Sno", ResourceType = typeof(Resource))]
         public int Sno { get; set; }
 
