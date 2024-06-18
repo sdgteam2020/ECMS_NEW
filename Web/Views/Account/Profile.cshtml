@@ -118,7 +118,6 @@
                                                     <input hidden asp-for="UserId" />
                                                     <input hidden asp-for="UnitMapId" />
                                                     <input hidden asp-for="ApptId" />
-                                                    <input hidden asp-for="ArmedId" />
                                                     <div class="col-md-6 col-lg-6 col-xl-6">
                                                         <div class="row mb-2 required">
                                                             <label asp-for="ArmyNo" class="col-sm-4 col-form-label form-label fw-bold">Army No<i class="fas fa-asterisk mand1"></i></label>
@@ -395,25 +394,25 @@
                                                             <label class="col-form-label col-sm-9 fw-bold">Do You want IACA Token Waiver to access Appl?<i class="fas fa-asterisk mand1"></i></label>
                                                             <div class="col-sm-3">
                                                                 <div class="form-check form-check-inline">
-                                                                    <input class="form-check-input" type="radio" name="IsToken" value="true" id="isTokenyes" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-regex-pattern="^[a-zA-Z]*$">
-                                                                    <label class="form-check-label" for="isTokenyes">
+                                                                    <input class="form-check-input" type="radio" name="IsTokenWaiver" value="true" id="IsTokenWaiverYes" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-regex-pattern="^[a-zA-Z]*$">
+                                                                    <label class="form-check-label" for="IsTokenWaiverYes">
                                                                         Yes
                                                                     </label>
                                                                 </div>
                                                                 <div class="form-check form-check-inline">
-                                                                    <input class="form-check-input" type="radio" name="IsToken" value="false" id="isTokenno" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-regex-pattern="^[a-zA-Z]*$">
-                                                                    <label class="form-check-label" for="isTokenno">
+                                                                    <input class="form-check-input" type="radio" name="IsTokenWaiver" value="false" id="IsTokenWaiverNo" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-regex-pattern="^[a-zA-Z]*$">
+                                                                    <label class="form-check-label" for="IsTokenWaiverNo">
                                                                         No
                                                                     </label>
                                                                 </div>
-                                                                <span class="text-danger field-validation-valid" id="IsToken-error" data-valmsg-for="IsToken" data-valmsg-replace="true"></span>
+                                                                <span class="text-danger field-validation-valid" id="IsTokenWaiver-error" data-valmsg-for="IsTokenWaiver" data-valmsg-replace="true"></span>
                                                             </div>
                                                         </div>
                                                         <div class="form-group row mb-2 d-none" id="spnReasonTokenWaiver">
                                                             <label class="col-form-label col-sm-4 fw-bold">Reason for IACA Token Waiver</label>
                                                             <div class="col-sm-8">
                                                                 <textarea asp-for="ReasonTokenWaiver" class="form-control" style="height:auto!important;" rows="3"></textarea>
-                                                                <span asp-validation-for="ReasonTokenWaiver" class="text-danger"></span>
+                                                                <span id="ReasonTokenWaiver-error" class="text-danger field-validation-valid" data-valmsg-for="ReasonTokenWaiver" data-valmsg-replace="true"></span>
                                                             </div>
                                                         </div>
 

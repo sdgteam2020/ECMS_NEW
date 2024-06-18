@@ -3,14 +3,19 @@
         
         GetTokenvalidatepersid2fawiththumbprint($("#ArmyNo").val(), "tokenmsg", "txtProfileForArmyNo","Thumbprint");
     });
-    $("#isTokenyes").on("click",function () {
+    $("#IsTokenWaiverYes").on("click",function () {
         $("#spnReasonTokenWaiver").removeClass("d-none");
+        $('#ReasonTokenWaiver').prop('required', true);
+        $("#ReasonTokenWaiver-error").html('Reason for IACA Token Waiver is required.');
     });
-    $("#isTokenno").on("click", function () {
+    $("#IsTokenWaiverNo").on("click", function () {
         $("#spnReasonTokenWaiver").addClass("d-none");
+        $('#ReasonTokenWaiver').prop('required', false);
+        $('#ReasonTokenWaiver').val('');
+        $("#ReasonTokenWaiver-error").html('');
     });
-    $("input[name='IsToken']").click(function () {
-        $("#IsToken-error").html("");
+    $("input[name='IsTokenWaiver']").click(function () {
+        $("#IsTokenWaiver-error").html("");
     });
 
     $("input[name='IsIO']").click(function () {
@@ -319,7 +324,7 @@ function Proceed() {
             cancelButtonColor: '#d33',
             confirmButtonText: 'Yes, Save it!'
         }).then((result) => {
-            if (result.isConfirmed && $("input[type='radio'][name=IsIO]:checked").length > 0 && $("input[type='radio'][name=IsCO]:checked").length > 0 && $("input[type='radio'][name=IsRO]:checked").length > 0 && $("input[type='radio'][name=IsORO]:checked").length > 0 && $("input[type='radio'][name=IsToken]:checked").length > 0) {
+            if (result.isConfirmed && $("input[type='radio'][name=IsIO]:checked").length > 0 && $("input[type='radio'][name=IsCO]:checked").length > 0 && $("input[type='radio'][name=IsRO]:checked").length > 0 && $("input[type='radio'][name=IsORO]:checked").length > 0 && $("input[type='radio'][name=IsTokenWaiver]:checked").length > 0) {
                 $(formId).submit();
             }
             else {
@@ -366,11 +371,11 @@ function ValidateRadioButton() {
         $("#IsORO-error").html("");
     }
 
-    if ($("input[type='radio'][name=IsToken]:checked").length == 0) {
-        $("#IsToken-error").html("Token Waiver to access Appl is required.");
+    if ($("input[type='radio'][name=IsTokenWaiver]:checked").length == 0) {
+        $("#IsTokenWaiver-error").html("Token Waiver to access Appl is required.");
     }
     else {
-        $("#IsToken-error").html("");
+        $("#IsTokenWaiver-error").html("");
     }
 }
 function ResetErrorMessage() {
@@ -378,7 +383,7 @@ function ResetErrorMessage() {
     $("#IsORO-error").html("");
     $("#IsIO-error").html("");
     $("#IsCO-error").html("");
-    $("#IsToken-error").html("");
+    $("#IsTokenWaiver-error").html("");
 }
 function GetALLByUnitById(param1) {
     $.ajax({
@@ -586,22 +591,4 @@ function ResetErrorMessage() {
     $("#ddlFmnBranch-error").html("");
     $("#ddlPSODte-error").html("");
     $("#ddlDgSubDte-error").html("");
-}
-function ValidationFormInput() {
-    $("#AddNewUnitmap").validate({
-        rules: {
-            txtMobileNo: {
-                required: true,
-                maxlength: 10,
-                minlength: 10
-            }
-        },
-        messages: {
-            name: {
-                required: "Mobile No is required ?",
-                minlength: jQuery.validator.format("Minimum length of Mobile No is {0} digit!"),
-                maxlength: jQuery.validator.format("Maximum length of Mobile No is {0} digit!")
-            }
-        }
-    });
 }

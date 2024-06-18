@@ -53,7 +53,7 @@ namespace DataTransferObject.Domain
         [Column(TypeName = "varchar(50)")]
         [RegularExpression(@"^[\w]+$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
         public string? Thumbprint { get; set; }
-        public bool IsToken { get; set; }
+        public bool IsToken { get; set; }=true;
         
         [RegularExpression(@"^[\d]+$", ErrorMessage = "ArmedId is number.")]
         public byte ArmedId { get; set; }

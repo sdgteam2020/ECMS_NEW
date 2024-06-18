@@ -77,7 +77,7 @@ namespace DataTransferObject.Requests
         public bool IsORO { get; set; }
         
         [RegularExpression("^[a-zA-Z]*$", ErrorMessage = "Only Alphabets allowed.")]
-        public bool IsToken { get; set; }
+        public bool IsTokenWaiver { get; set; }
 
         [RegularExpression(@"^[\w \.]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
         [MaxLength(100, ErrorMessage = "Maximum length of Token Waiver is hundred character.")]
