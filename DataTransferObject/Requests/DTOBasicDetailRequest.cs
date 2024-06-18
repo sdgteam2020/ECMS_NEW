@@ -19,6 +19,7 @@ namespace DataTransferObject.Requests
     public class DTOBasicDetailRequest: Common
     {
         [Display(Name = "BasicDetailId", ResourceType = typeof(Resource))]
+        [RegularExpression(@"^[\d]+$", ErrorMessage = "BasicDetailId is number.")]
         public int BasicDetailId { get; set; }
         public RegistrationType RegistrationType { get; set; }
 
@@ -30,13 +31,13 @@ namespace DataTransferObject.Requests
 
         [Display(Name = "Rank", ResourceType = typeof(Resource))]
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
-        [RegularExpression(@"^[\w \.\,\?\;\:\""\''\[\]\!\@\#\$\%\&\*\(\)\-\=\+\\\/]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
+        [RegularExpression(@"^[\d]+$", ErrorMessage = "RankId is number.")]
         public int RankId { get; set; }
         public MRank? MRank { get; set; }
 
         [Display(Name = "ArmService", ResourceType = typeof(Resource))]
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
-        [RegularExpression(@"^[\w \.\,\?\;\:\""\''\[\]\!\@\#\$\%\&\*\(\)\-\=\+\\\/]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
+        [RegularExpression(@"^[\d]+$", ErrorMessage = "ArmedId is number.")]
         public int ArmedId { get; set; }
         public MArmedType? MArmedType { get; set; }
 
@@ -115,7 +116,7 @@ namespace DataTransferObject.Requests
         public byte StatusLevel { get; set; }
         
         [Display(Name = "RegimentalId", ResourceType = typeof(Resource))]
-        [RegularExpression(@"^[\w \.\,\?\;\:\""\''\[\]\!\@\#\$\%\&\*\(\)\-\=\+\\\/]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
+        [RegularExpression(@"^[\d]+$", ErrorMessage = "RegimentalId is number.")]
         public int? RegimentalId { get; set; }
         public bool IsSubmit { get; set; }
 
@@ -258,11 +259,13 @@ namespace DataTransferObject.Requests
         public byte ApplyForId { get; set; }
         [Required]
         public byte RegistrationId { get; set; }
+        
         [Required]
+        [RegularExpression(@"^[\d]+$", ErrorMessage = "RegimentalId is number.")]
         public byte TypeId { get; set; }
 
-      
 
+        [RegularExpression(@"^[\d]+$", ErrorMessage = "RegimentalId is number.")]
         public string? RemarksIds { get; set; }
     }
 }

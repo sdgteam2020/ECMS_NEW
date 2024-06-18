@@ -19,6 +19,10 @@ namespace DataTransferObject.Domain.Model
         [Column(TypeName = "varchar(36)")]
         public string Name { get; set; } = string.Empty;
 
+        [StringLength(36)]
+        [Column(TypeName = "varchar(36)")]
+        public string? NameAsPerRecord { get; set; } = string.Empty;
+
         [StringLength(10)]
         [Column(TypeName = "varchar(10)")]
         [Index("IX_BasicDetails_ServiceNo", IsClustered = false, IsUnique = true, Order = 1)]
@@ -86,5 +90,9 @@ namespace DataTransferObject.Domain.Model
         [ForeignKey("MICardType"), DatabaseGenerated(DatabaseGeneratedOption.None)]
         public byte TypeId { get; set; }
         public MICardType? MICardType { get; set; }
+
+        [ForeignKey("MArmedType")]
+        public byte? ArmedId { get; set; }
+        public MArmedType? Armed { get; set; }
     }
 }

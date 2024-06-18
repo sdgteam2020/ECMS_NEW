@@ -41,9 +41,9 @@ namespace BusinessLogicsLayer.BasicDet
             return await _iBasicDetailDB.SearchAllServiceNo(ServiceNo, AspNetUsersId);
         }
 
-        public Task<BasicDetailCrtAndUpdVM> GetByBasicDetailsId(int BasicDetailId)
+        public Task<BasicDetailCrtAndUpdVM> GetByBasicDetailsId(int RequestId)
         {
-            return _iBasicDetailDB.GetByBasicDetailsId(BasicDetailId);
+            return _iBasicDetailDB.GetByBasicDetailsId(RequestId);
         }
         public Task<BasicDetailCrtAndUpdVM> GetByRequestIdBesicDetails(int RequestId)
         {

@@ -20,6 +20,7 @@ namespace DataTransferObject.Response
         public string RankAbbreviation { get; set; } = string.Empty;
         public int Id { get; set; }
         public string? DomainId { get; set; }
+        public bool IsTokenWaiver { get; set; }
         public string? ReasonTokenWaiver { get; set; }
     }
 }
