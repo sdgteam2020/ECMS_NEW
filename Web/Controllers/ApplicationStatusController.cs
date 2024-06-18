@@ -15,28 +15,33 @@ namespace Web.Controllers
         }
         public async Task<IActionResult> AppStatus(string TrackingId)
         {
-            DTOApplicationTrack dTOApplicationTrack=new DTOApplicationTrack();
-            try
-            {
-                 dTOApplicationTrack = await _basicDetailBL.ApplicationHistory(TrackingId);
-                if (dTOApplicationTrack.dTOApplicationDetails != null)
-                {
-                    ViewBag.IsData = 1;
+            //DTOApplicationTrack dTOApplicationTrack=new DTOApplicationTrack();
+            //try
+            //{
+            //     dTOApplicationTrack = await _basicDetailBL.ApplicationHistory(TrackingId);
+            //    if (dTOApplicationTrack.dTOApplicationDetails != null)
+            //    {
+            //        ViewBag.IsData = 1;
 
-                }
-                else
-                {
-                    ViewBag.IsData = 0;
+            //    }
+            //    else
+            //    {
+            //        ViewBag.IsData = 0;
 
-                }
-                
+            //    }
 
-            }
-            catch (Exception ex) { 
-                ViewBag.IsData = 0; 
-            }
 
-            return View(dTOApplicationTrack);
+            //}
+            //catch (Exception ex) { 
+            //    ViewBag.IsData = 0; 
+            //}
+
+            //return View(dTOApplicationTrack);
+            return View();
+        }
+        public async Task<IActionResult> GetRequestHistoryByTrackingId(string TrackingId)
+        {
+            return Json(await _basicDetailBL.ICardHistoryByTrackingId(TrackingId));
         }
     }
 }

@@ -1133,7 +1133,49 @@ namespace DataAccessLayer
             }
 
         }
+        public async Task<List<ICardHistoryResponse>> ICardHistoryByTrackingId(string TrackingId)
+        {
+            string query = "select usersfrom.UserName FromDomain,profrom.Name FromProfile,ranlfrom.RankAbbreviation FromRank, " +
+            " usersto.UserName ToDomain,proto.Name ToProfile,ranlto.RankAbbreviation ToRank ," +
+            " CASE fwd.FwdStatusId WHEN 1 THEN 'Pending' WHEN 2 THEN 'Approved' WHEN 3 THEN 'Reject' WHEN 4 THEN 'Internal Forward' END Status," +
+            " fwd.UpdatedOn,isnull(fwd.Remark,'Nill') Remark, " +
+            " fwd.IsComplete,(select STRING_AGG(Remarks,'#') from MRemarks where RemarksId in (select value from string_split(fwd.RemarksIds,','))) Remarks2, " +
+            " reason.Reason,postind.Authority,initres.UnitName " +
+            " from TrnFwds fwd " +
+            " inner join TrnICardRequest req on req.RequestId=fwd.RequestId " +
+            " inner join TrnStepCounter step" +
+            " on fwd.RequestId=step.RequestId" +
+            " inner join TrnDomainMapping mapfrom on mapfrom.AspNetUsersId=fwd.FromAspNetUsersId" +
+            " inner join AspNetUsers usersfrom on usersfrom.Id=mapfrom.AspNetUsersId" +
+            " inner join TrnDomainMapping mapto on mapto.AspNetUsersId=fwd.ToAspNetUsersId" +
+            " inner join AspNetUsers usersto on usersto.Id=mapto.AspNetUsersId" +
+            " left join UserProfile profrom" +
+            " on mapfrom.UserId=profrom.UserId" +
+            " inner join MRank ranlfrom on ranlfrom.RankId=profrom.RankId" +
+            " left join UserProfile proto" +
+            " on mapto.UserId=proto.UserId" +
+            " left join TrnPostingOut postind on postind.Id=fwd.PostingOutId" +
+            " left join MPostingReason reason on reason.Id=postind.ReasonId" +
+            " left join MapUnit Munitres on Munitres.UnitMapId=postind.ToUnitID" +
+            " left join MUnit initres on initres.UnitId=Munitres.UnitId" +
+            " inner join MRank ranlto on ranlto.RankId=proto.RankId where req.TrackingId=@TrackingId" +
+            " order by fwd.TrnFwdId asc";
+            try
+            {
+                using (var connection = _contextDP.CreateConnection())
+                {
+                    var BasicDetailList = await connection.QueryAsync<ICardHistoryResponse>(query, new { TrackingId });
 
+                    return BasicDetailList.ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "BasicDetailDB->ICardHistory");
+                return null;
+            }
+
+        }
         public async Task<DTOICardTaskCountResponse> GetTaskCountICardRequest(int UserId,int Type, int applyForId)
         {
             #region Old code write by Kapoor Sir

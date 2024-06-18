@@ -1579,6 +1579,7 @@ namespace Web.Controllers
         {
             return Json(await basicDetailBL.ICardHistory(RequestId));
         }
+        
         public async Task<IActionResult> GetRemarks(DTORemarksRequest Data)
         {
             return Json(await _IMasterBL.GetRemarksByTypeId(Data));
