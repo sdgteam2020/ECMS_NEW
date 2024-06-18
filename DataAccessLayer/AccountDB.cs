@@ -1400,6 +1400,7 @@ namespace DataAccessLayer
                                                Name = up.Name,
                                                IsToken=up.IsToken,
                                                MobileNo = up.MobileNo,
+                                               IsTokenWaiver=up.IsTokenWaiver,
                                                ReasonTokenWaiver =up.ReasonTokenWaiver,
                                                RankId =rk.RankId,
                                                RankName=rk.RankName,
@@ -1428,6 +1429,7 @@ namespace DataAccessLayer
                                                Name = up.Name,
                                                IsToken = up.IsToken,
                                                MobileNo = up.MobileNo,
+                                               IsTokenWaiver = up.IsTokenWaiver,
                                                ReasonTokenWaiver = up.ReasonTokenWaiver,
                                                RankId = rk.RankId,
                                                RankName = rk.RankName,
@@ -1456,6 +1458,7 @@ namespace DataAccessLayer
                                                Name = up.Name,
                                                IsToken = up.IsToken,
                                                MobileNo = up.MobileNo,
+                                               IsTokenWaiver = up.IsTokenWaiver,
                                                ReasonTokenWaiver = up.ReasonTokenWaiver,
                                                RankId = rk.RankId,
                                                RankName = rk.RankName,
@@ -1484,6 +1487,7 @@ namespace DataAccessLayer
                                                Name = up.Name,
                                                IsToken = up.IsToken,
                                                MobileNo = up.MobileNo,
+                                               IsTokenWaiver = up.IsTokenWaiver,
                                                ReasonTokenWaiver = up.ReasonTokenWaiver,
                                                RankId = rk.RankId,
                                                RankName = rk.RankName,
@@ -1875,7 +1879,7 @@ namespace DataAccessLayer
                                 uptUserProfile.Name = model.Name;
                                 uptUserProfile.MobileNo = model.MobileNo;
                                 uptUserProfile.ArmedId = model.ArmedId;
-                                uptUserProfile.IsToken = true;
+                                uptUserProfile.IsTokenWaiver = model.IsTokenWaiver;
                                 uptUserProfile.ReasonTokenWaiver = model.ReasonTokenWaiver;
                                 uptUserProfile.Updatedby = user.Id;
                                 uptUserProfile.UpdatedOn = model.UpdatedOn;
@@ -1899,6 +1903,7 @@ namespace DataAccessLayer
                                 MobileNo=model.MobileNo,
                                 ArmedId = model.ArmedId,
                                 IsToken = true,
+                                IsTokenWaiver= model.IsTokenWaiver,
                                 ReasonTokenWaiver = model.ReasonTokenWaiver,
                                 Updatedby = user.Id,
                                 UpdatedOn = model.UpdatedOn,
@@ -1974,7 +1979,7 @@ namespace DataAccessLayer
                                     uptUserProfile.Name = model.Name;
                                     uptUserProfile.MobileNo = model.MobileNo;
                                     uptUserProfile.ArmedId = model.ArmedId;
-                                    uptUserProfile.IsToken = true;
+                                    uptUserProfile.IsTokenWaiver = model.IsTokenWaiver;
                                     uptUserProfile.ReasonTokenWaiver = model.ReasonTokenWaiver;
                                     uptUserProfile.Updatedby = dTOTempSession.AspNetUsersId;
                                     uptUserProfile.UpdatedOn = model.UpdatedOn;
@@ -1995,6 +2000,7 @@ namespace DataAccessLayer
                                 mUserProfile.MobileNo = model.MobileNo;
                                 mUserProfile.ArmedId = model.ArmedId;
                                 mUserProfile.IsToken = true;
+                                mUserProfile.IsTokenWaiver = model.IsTokenWaiver;
                                 mUserProfile.ReasonTokenWaiver = model.ReasonTokenWaiver;
                                 mUserProfile.Updatedby = dTOTempSession.AspNetUsersId;
                                 mUserProfile.UpdatedOn = model.UpdatedOn;
@@ -2007,7 +2013,7 @@ namespace DataAccessLayer
 
                             await _context.TrnDomainMapping.AddAsync(trnDomainMapping);
                             await _context.SaveChangesAsync();
-                            if (model.IsToken == true)
+                            if (model.IsTokenWaiver == true)
                             {
                                 applicationUser.AdminFlag = false;
                                 applicationUser.AdminMsg = "Domian Id - " + applicationUser.DomainId + " & Profile Id- " + trnDomainMapping.UserId + ".Your token request was successfully placed with Admin for necy Approval. Pl note regn No - " + trnDomainMapping.UserId + " for future correspondence.";
@@ -2070,7 +2076,7 @@ namespace DataAccessLayer
                                         uptUserProfile.Name = model.Name;
                                         uptUserProfile.MobileNo = model.MobileNo;
                                         uptUserProfile.ArmedId = model.ArmedId;
-                                        uptUserProfile.IsToken = true;
+                                        uptUserProfile.IsToken = model.IsTokenWaiver;
                                         uptUserProfile.ReasonTokenWaiver = model.ReasonTokenWaiver;
                                         uptUserProfile.Updatedby = dTOTempSession.AspNetUsersId;
                                         uptUserProfile.UpdatedOn = model.UpdatedOn;
@@ -2092,6 +2098,7 @@ namespace DataAccessLayer
                                     mUserProfile.MobileNo = model.MobileNo;
                                     mUserProfile.ArmedId = model.ArmedId;
                                     mUserProfile.IsToken = true;
+                                    mUserProfile.IsTokenWaiver = model.IsTokenWaiver;
                                     mUserProfile.ReasonTokenWaiver = model.ReasonTokenWaiver;
                                     mUserProfile.Updatedby = dTOTempSession.AspNetUsersId;
                                     mUserProfile.UpdatedOn = model.UpdatedOn;
@@ -2104,7 +2111,7 @@ namespace DataAccessLayer
                                 _context.TrnDomainMapping.Update(trnDomainMapping);
                                 await _context.SaveChangesAsync();
 
-                                if (model.IsToken == true)
+                                if (model.IsTokenWaiver == true)
                                 {
                                     applicationUser.AdminFlag = false;
                                     applicationUser.AdminMsg = "Domian Id - " + applicationUser.DomainId + " & Profile Id- " + trnDomainMapping.UserId + ".Your token request was successfully placed with Admin for necy Approval. Pl note regn No - " + trnDomainMapping.UserId + " for future correspondence.";

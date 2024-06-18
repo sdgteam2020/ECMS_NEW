@@ -124,6 +124,11 @@ function BindData() {
                         listItem += "<td class='align-middle'><span id='username'>" + response[i].Name + "</span></td>";
                         listItem += "<td class='align-middle'><span id='ArmedName'>" + response[i].ArmedName + "</span></td>";
 
+                        if (response[i].IsTokenWaiver == true)
+                            listItem += "<td class='align-middle'><span><span class='badge badge-pill badge-success' id='isTokenWaiver'>Yes</span></span></td>";
+                        else
+                            listItem += "<td class='align-middle'><span><span class='badge badge-pill badge-danger' id='isTokenWaiver'>No</span></span></td>";
+
                         if (response[i].IsToken == true)
                             listItem += "<td class='align-middle'><span><span class='badge badge-pill badge-success' id='isToken'>Yes</span></span></td>";
                         else
@@ -184,6 +189,13 @@ function BindData() {
                         $("#ddlArmType").val($(this).closest("tr").find("#armedId").html());
 
                         //alert($(this).closest("tr").find("#domain_approval").html())
+
+                        if ($(this).closest("tr").find("#isTokenWaiver").html() == 'Yes') {
+                            $("#IsTokenWaiverYes").prop("checked", true);
+                        }
+                        else {
+                            $("#IsTokenWaiverNo").prop("checked", true);
+                        }
 
                         if ($(this).closest("tr").find("#isToken").html() == 'Yes') {
                             $("#isTokenyes").prop("checked", true);
@@ -254,6 +266,7 @@ function Save() {
             "MobileNo": $("#txtMobileNo").val(),
             "RankId": $("#ddlRank").val(),
             "ArmedId": $("#ddlArmType").val(),
+            "IsTokenWaiver": $('input:radio[name=IsTokenWaiver]:checked').val(),
             "ReasonTokenWaiver": $("#txtMessage").val().length > 0 ? $("#txtMessage").val() : null,
             "IsToken": $('input:radio[name=IsToken]:checked').val(),
 
@@ -315,6 +328,8 @@ function Reset() {
     $("#txtName").val("");
     $("#txtMobileNo").val("");
     $("#ddlArmType").val("");
+    $("#IsTokenWaiverYes").prop("checked", false);
+    $("#IsTokenWaiverNo").prop("checked", false);
     $("#txtMessage").val("");
     $("#isTokenyes").prop("checked", false);
     $("#isTokenno").prop("checked", false);
@@ -325,6 +340,7 @@ function ResetErrorMessage() {
     $("#txtArmyNo-error").html("");
     $("#txtMobileNo-error").html("");
     $("#ddlArmType-error").html("");
+    $("#IsTokenWaiver-error").html("");
     $("#txtMessage-error").html("");
     $("#IsToken-error").html("");
 

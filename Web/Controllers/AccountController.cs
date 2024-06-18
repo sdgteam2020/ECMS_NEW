@@ -1516,7 +1516,7 @@ namespace Web.Controllers
                             dTOProfileAndMappingRequest.MobileNo = mUserProfile.MobileNo;
                             dTOProfileAndMappingRequest.ArmedId = mUserProfile.ArmedId;
                             dTOProfileAndMappingRequest.ReasonTokenWaiver = mUserProfile.ReasonTokenWaiver;
-                            dTOProfileAndMappingRequest.IsToken = mUserProfile.IsToken;
+                            dTOProfileAndMappingRequest.IsTokenWaiver = mUserProfile.IsTokenWaiver;
 
                             return View(dTOProfileAndMappingRequest);
                         }
@@ -1548,6 +1548,13 @@ namespace Web.Controllers
             model.UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
             if (dTOTempSession != null)
             {
+                if(model.IsTokenWaiver==true)
+                {
+                    if(model.ReasonTokenWaiver == null)
+                    {
+                        ModelState.AddModelError("ReasonTokenWaiver", "Reason for IACA Token Waiver is required.");
+                    }
+                }
                 if (ModelState.IsValid)
                 {
                     DTOTempSession? resultfinal = await _iAccountBL.ProfileAndMappingSaving(model, dTOTempSession);
@@ -1585,7 +1592,7 @@ namespace Web.Controllers
                             dTOTempSession.IsToken = true;
 
                             SessionHeplers.SetObject(HttpContext.Session, "IMData", dTOTempSession);
-                            if(model.IsToken == true)
+                            if(model.IsTokenWaiver == true)
                             {
                                 TempData["success"] = "Your Profile Id - " + dTOTempSession.UserId + " has been successfully mapped to Domain Id - " + dTOTempSession.DomainId + ". > Your token request was successfully placed with Admin for necy Approval.";
                             }
@@ -1609,7 +1616,7 @@ namespace Web.Controllers
                             dTOTempSession.IsToken = true;
                             dTOTempSession.UserId = resultfinal.UserId;
                             SessionHeplers.SetObject(HttpContext.Session, "IMData", dTOTempSession);
-                            if (model.IsToken == true)
+                            if (model.IsTokenWaiver == true)
                             {
                                 TempData["success"] = "Your Profile Id - " + dTOTempSession.UserId + " has been successfully mapped to Domain Id - " + dTOTempSession.DomainId + ". > Your token request was successfully placed with Admin for necy Approval.";
                             }
