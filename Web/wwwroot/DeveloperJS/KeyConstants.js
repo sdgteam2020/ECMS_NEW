@@ -30,3 +30,5 @@ const SubDte = 13;
 const PostingReason = 14;
 const RecordOffice = 15;
 const IssuingAuthority = 16;
+const Regimental = 17;
+const BloodGroup = 18;

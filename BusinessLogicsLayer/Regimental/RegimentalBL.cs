@@ -25,6 +25,10 @@ namespace BusinessLogicsLayer.Master
         {
             return _RegimentalDB.GetAllData();
         }
+        public Task<List<DTORegimentalResponse>> GetByArmedId(byte ArmedId)
+        {
+            return _RegimentalDB.GetByArmedId(ArmedId);
+        }
 
         public Task<bool> GetByName(MRegimental Dto)
         {

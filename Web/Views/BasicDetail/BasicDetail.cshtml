@@ -43,6 +43,7 @@
     <form enctype="multipart/form-data" asp-controller="BasicDetail" asp-action="BasicDetail" id="SaveForm" method="post" class="">
         <div class="p-2">
             <input hidden asp-for="BasicDetailId" />
+            <input hidden asp-for="NameAsPerRecord" />
             <input hidden asp-for="ExistingPhotoImagePath" />
             <input hidden asp-for="ExistingSignatureImagePath" />
             @*  <input hidden asp-for="DOB" /> *@
@@ -65,8 +66,11 @@
 
 
 
-            <input hidden id="spnrankid" value="@ViewBag.OptionsRank" />
+            <input hidden id="spnrankid" value="@ViewBag.OptionsRankId" />
             <input hidden id="spnUnitIdid" value="@ViewBag.OptionsUnitId" />
+            <input hidden id="spnArmedId" value="@ViewBag.OptionsArmedId" />
+            <input hidden id="spnRegimentalId" value="@ViewBag.OptionsRegimentalId" />
+            <input hidden id="spnBloodGroupId" value="@ViewBag.OptionsBloodGroupId" />
             <input hidden id="spnIssuingAuthorityId" value=@(Model.IssuingAuthorityId > 0 ? Model.IssuingAuthorityId : 0) />
 
             <div class="row">
@@ -230,7 +234,6 @@
                                         <label asp-for="RankId" class="col-sm-3 col-form-label form-label labelprofile"></label>
                                         <div class="col-sm-8">
                                             <select asp-for="RankId" class="form-select" data-toggle="tooltip" title="Select Rank">
-                                                @*  asp-items="ViewBag.OptionsRank" *@
                                             </select>
                                             <span asp-validation-for="RankId" class="text-danger"></span>
                                         </div>
@@ -265,24 +268,20 @@
                                         <label class="col-sm-1 col-form-label text-center font-weight-bold">@(sno++).</label>
                                         <label asp-for="ArmedId" class="col-sm-3 col-form-label form-label labelprofile"></label>
                                         <div class="col-sm-8">
-                                            <select asp-for="ArmedId" class="form-select" data-toggle="tooltip" title="Select Armed" asp-items="ViewBag.OptionsArmedType" required>
-                                                @* onchange="GetRegimentalListByArmedId(this.value)" *@
+                                            <select asp-for="ArmedId" class="form-select" data-toggle="tooltip" title="Select Armed" required>
                                             </select>
                                             <span asp-validation-for="ArmedId" class="text-danger"></span>
                                         </div>
                                     </div>
-                                    @* @if (Model.Type == (int)RegistrationType.JCO)
-                                    { *@
                                     <div class="row mb-1 required OptionsRegimental">
                                         <label class="col-sm-1 col-form-label text-center font-weight-bold">@(sno++).</label>
                                         <label class="col-sm-3 col-form-label form-label labelprofile">Regimental Centre</label>
                                         <div class="col-sm-8">
-                                            <select asp-for="RegimentalId" class="form-select" required asp-items="ViewBag.OptionsRegimental" data-toggle="tooltip" title="Select Regimental Name">
+                                            <select asp-for="RegimentalId" class="form-select" required data-toggle="tooltip" title="Select Regimental Name">
                                             </select>
                                             <span id="lblRegimentalId" class="text-danger"></span>
                                         </div>
                                     </div>
-                                    @* } *@
                                     <div class="row mb-1 required">
                                         <label class="col-sm-1 col-form-label text-center font-weight-bold">@(sno++).</label>
                                         <label class="col-sm-3 col-form-label form-label labelprofile">Iden Mark</label>
@@ -322,7 +321,7 @@
                                         <label class="col-sm-2 col-form-label text-center font-weight-bold">@(sno++).</label>
                                         <label asp-for="BloodGroupId" class="col-sm-4 col-form-label form-label labelprofile"></label>
                                         <div class="col-sm-6">
-                                            <select asp-for="BloodGroupId" class="form-select" asp-items="ViewBag.OptionsBloodGroup" data-toggle="tooltip" title="Select Blood Group Name " required>
+                                            <select asp-for="BloodGroupId" class="form-select" data-toggle="tooltip" title="Select Blood Group Name " required>
                                             </select>
                                             <span asp-validation-for="BloodGroupId" class="text-danger"></span>
                                         </div>

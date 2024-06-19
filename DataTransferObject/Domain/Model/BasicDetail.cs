@@ -52,10 +52,10 @@ namespace DataTransferObject.Domain.Model
         [DataType(DataType.Date)]
         [Column(TypeName = "datetime")]
         public DateTime DateOfCommissioning { get; set; }
-        
+
         [ForeignKey("MRegimental")]
         public byte? RegimentalId { get; set; }
-        public MRegimental? Regimental { get; set; }
+        public MRegimental? MRegimental { get; set; }
 
         [ForeignKey("MApplyFor"), DatabaseGenerated(DatabaseGeneratedOption.None)]
         public byte ApplyForId { get; set; }
