@@ -10,7 +10,6 @@ namespace DataTransferObject.Response
 {
     public class DTORegimentalResponse
     {
-       
         public int RegId { get; set; }
         public string Name { get; set; } = string.Empty;
         public string Abbreviation { get; set; } = string.Empty;

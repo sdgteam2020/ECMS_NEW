@@ -33,10 +33,11 @@ namespace DataTransferObject.Domain.Master
         [MaxLength(50, ErrorMessage = "Maximum length of Location is fifty character.")]
         public string Location { get; set; } = string.Empty;
 
-        [ForeignKey("MArmedType"), DatabaseGenerated(DatabaseGeneratedOption.None)]
+   
         [RegularExpression(@"^[\d]+$", ErrorMessage = "ArmedId is number.")]
+        [ForeignKey("MArmedType"), DatabaseGenerated(DatabaseGeneratedOption.None)]
         public byte ArmedId { get; set; }
-        public MArmedType? MArmedType { get; set; }
+        public MArmedType? Armed { get; set; }
         
     }
 }

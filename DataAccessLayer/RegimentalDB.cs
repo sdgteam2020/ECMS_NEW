@@ -32,6 +32,20 @@ namespace DataAccessLayer
             return ret;
         }
 
+        public async Task<List<DTORegimentalResponse>> GetByArmedId(byte ArmedId)
+        {
+            var data = await (from a in _context.MArmedType.AsNoTracking()
+                               join r in _context.MRegimental.AsNoTracking()
+                               on a.ArmedId equals r.ArmedId
+                               where r.ArmedId == ArmedId
+                               select new DTORegimentalResponse
+                               {
+                                   RegId = r.RegId,
+                                   Name = r.Name,
+                               }).ToListAsync();
+            return data;
+        }
+
         public Task<List<DTORegimentalResponse>> GetAllData()
         {
             var Corps = (from c in _context.MRegimental
@@ -43,8 +57,8 @@ namespace DataAccessLayer
                              RegId=c.RegId,
                              Name=c.Name,
                              Abbreviation=c.Abbreviation,
-                             ArmedId=c.ArmedId,
-                             ArmedName=d.ArmedName,
+                             ArmedId=c.RegId, //c.ArmedId
+                             ArmedName =d.ArmedName,
                              Location=c.Location,
 
                          }).OrderByDescending(x=>x.RegId).ToList();

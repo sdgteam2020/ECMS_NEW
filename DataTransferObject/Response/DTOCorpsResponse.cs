@@ -11,7 +11,6 @@ namespace DataTransferObject.Response
     {
         [Required]
         public int CorpsId { get; set; }
-      
         public string CorpsName { get; set; }
         public string ComdName { get; set; }
         public int ComdId { get; set; }

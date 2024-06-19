@@ -26,6 +26,8 @@ namespace BusinessLogicsLayer.Helpers
             internal const string PostingReason = "14";
             internal const string RecordOffice = "15";
             internal const string IssuingAuthority = "16";
+            internal const string Regimental = "17";
+            internal const string BloodGroup = "18";
         }
     }
 }

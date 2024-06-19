@@ -24,11 +24,17 @@ namespace DataTransferObject.ViewModels
         [StringLength(20)]
         [Column(TypeName = "varchar(20)")]
         public string PaperIcardNo { get; set; } = string.Empty;
+        
         [Display(Name = "Name", ResourceType = typeof(Resource))]
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
         [MaxLength(36, ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "MaxLengthError")]
         [RegularExpression(@"^[\w ]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
         public string Name { get; set; } = string.Empty;
+
+        [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
+        [MaxLength(36, ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "MaxLengthError")]
+        [RegularExpression(@"^[\w ]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
+        public string NameAsPerRecord { get; set; } = string.Empty;
 
         [Display(Name = "Rank", ResourceType = typeof(Resource))]
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]

@@ -15,6 +15,13 @@
         $("#AadhaarNo").val("");
        
     });
+    $("#btngetdata").on("click", function () {
+        $("#ServiceNumber").prop('required', true);
+        Getdatafromapi();
+    });
+    $("#btnsubmit").on("click", function () {
+        Proceed('Registration');
+    });
    
 
     if (sessionStorage.getItem("ArmyNo") != null) {
@@ -27,6 +34,7 @@
 
         if (sessionStorage.getItem("RegistrationApplyFor") == '4' || sessionStorage.getItem("RegistrationApplyFor") == '9') {
             $('#Name').attr('readonly', false);
+            $('#NameAsPerRecord').attr('readonly', false);
             $('#DOB').attr('readonly', false);
             $('#ServiceNo').attr('readonly', false);
             $('#DateOfCommissioning').attr('readonly', false);
@@ -37,6 +45,7 @@
             $(".spnhideServiceNo").addClass('d-none');
         } else {
             $('#Name').attr('readonly', true);
+            $('#NameAsPerRecord').attr('readonly', true);
             $('#DOB').attr('readonly', true);
             $('#ServiceNo').attr('readonly', true);
             $('#DateOfCommissioning').attr('readonly', true);
@@ -87,7 +96,7 @@ function getApplyIcardDetails()
 
 
                
-                
+                mMsater(0, "ArmedId", ArmyType, "");
               
                 if ($("#ApplyForId").val() == 1) {
 
@@ -102,32 +111,6 @@ function getApplyIcardDetails()
             
         }
     }); 
-}
-
-function getData(id) {
-    //let formId = '#' + id;
-    //// Check if the form exists
-    //if ($(formId).length === 0) {
-    //    console.error("Form not found.");
-    //    return;
-    //}
-    /*$("#RegistrationId").prop('required', true);*/
-    $("#ServiceNumber").prop('required', true);
-    //$.validator.unobtrusive.parse($(formId));
-    //if ($(formId).valid()) {
-    //    var formData = $(formId).serialize();
-    //    console.log(formData);
-    //}
-    //else {
-    //    return false;
-    //}
-    ////let regId = $("#RegistrationId").find(":selected").val();
-
-    var param = { "ArmyNo": $("#ServiceNumber").val() };
-
-  
-    Getdatafromapi();
-
 }
 function Getdatafromapi() {
 
@@ -144,15 +127,6 @@ function Getdatafromapi() {
             else {
 
                 CallDataFromAPI();
-                //alert(JSON.stringify(response));
-                //$("#Name").val(response.Name);
-                //$("#ServiceNo").val(response.ServiceNo);
-                //$("#DOB").val(response.DOB);
-                //$("#DOB_").val(moment(response.DOB).format("DD-MMM-YYYY"));
-                //$("#DateOfCommissioning").val(response.DateOfCommissioning);
-                //$("#DOC").val(moment(response.DateOfCommissioning).format("DD-MMM-YYYY"));
-                //$("#PermanentAddress").val(response.PermanentAddress);
-                //$("#RegId").val(regId);
             }
         }
     });
@@ -185,6 +159,7 @@ function CallDataFromAPI() {
                     $('#Name').attr('readonly', true);
                 }
                 $("#Name").val(response.Pers_name);
+                $("#NameAsPerRecord").val(response.Pers_name);
                 $("#ServiceNo").val(response.Pers_Army_No);
                 $("#DOB").val(response.Pers_birth_dt);
                 /*$("#DOB_").val(moment(response.Pers_birth_dt).format("DD-MM-YYYY"));*/
@@ -236,6 +211,7 @@ function registrationEnableDisabledField(val) {
 
 }
 function Proceed(id) {
+
     let formId = '#' + id;
 
     
