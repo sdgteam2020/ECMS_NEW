@@ -1,8 +1,11 @@
 ﻿$(document).ready(function () {
+
+    $(".TrackingIdDetails").addClass("d-none");
     $("#btnTracking").on("click", function () {
         
         GetRequestHistoryByTrackingId($("#TrackingId").val());
-   });
+    });
+
 });
 function GetRequestHistoryByTrackingId(TrackingId) {
    
@@ -22,6 +25,9 @@ function GetRequestHistoryByTrackingId(TrackingId) {
         success: function (response) {
             if (response != "null" && response != null) {
                 if (response.length > 0) {
+                    GetDataFromBasicDetails(response[0].RequestId)
+                    $(".TrackingIdDetails").removeClass("d-none");
+                    $(".TrackingIdHistory").removeClass("d-none");
                     for (var i = 0; i < response.length; i++) {
                         if (i == 0) {
                             listItem += '<div class="timeline-item">';
@@ -98,6 +104,8 @@ function GetRequestHistoryByTrackingId(TrackingId) {
                     }
                 }
                 else {
+                    $(".TrackingIdHistory").removeClass("d-none");
+                    
                     listItem += '<div class="timeline-item">';
                     listItem += '<div class="timeline-item-marker">';
 
@@ -119,4 +127,39 @@ function GetRequestHistoryByTrackingId(TrackingId) {
         }
 
     });
+}
+function GetDataFromBasicDetails(Id) {
+    var userdata =
+    {
+        "Id": Id,
+
+
+    };
+    $.ajax({
+        url: '/ApplicationStatus/GetDataByBasicDetailsId',
+        contentType: 'application/x-www-form-urlencoded',
+        data: userdata,
+        type: 'POST',
+
+        success: function (response) {
+            if (response != "null" && response != null) {
+                $(".PhotoImagePath").attr('src', "/WriteReadData/photo/" + response.PhotoImagePath);
+                $(".SignaturePath").attr('src', "/WriteReadData/Signature/" + response.SignatureImagePath);
+                $(".Name").html(response.Name);
+                $(".RankName").html(response.RankName);
+                $(".ArmedName").html(response.ArmedName);
+                $(".ServiceNo").html(response.ServiceNo);
+                $(".IdenMark1").html(response.IdenMark1);
+                $(".DOB").html(DateFormateMMMM_dd_yyyy(response.DOB));
+                $(".Height").html(response.Height+' CM');
+                $(".AadhaarNo").html(response.AadhaarNo.replace(/\d(?=\d{4})/g, "X"));
+                $(".BloodGroup").html(response.BloodGroup);
+                $(".PlaceOfIssue").html(response.PlaceOfIssue);
+                $(".DateOfIssue").html(DateFormateMMMM_dd_yyyy(response.DateOfIssue));
+                $(".IssuingAuth").html(response.IssuingAuth);
+                $(".DateOfCommissioning").html(DateFormateMMMM_dd_yyyy(response.DateOfCommissioning));
+                //$("#lblfdaddress").html(response.Village + ',' + response.Tehsil + ',' + response.PO + ',' + response.PS + ',' + response.District + ',' + response.State + '' + response.PinCode);
+            }
+        }
+    })
 }

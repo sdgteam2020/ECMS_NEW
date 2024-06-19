@@ -25,87 +25,203 @@
     <script asp-src-include="~/fonts/feather/feather.min.js"></script>
     <script asp-src-include="~/fonts/allfont/webfont.min.js"></script>
     <link href="~/sweetalert2/sweetalert2.min.css" rel="stylesheet" />
-    <link href="~/css/feed.css" rel="stylesheet" />
 
-    <link href="~/css/normalize.min.css" rel="stylesheet" />
-    @*   <link href="~/css/swiper.min.css" rel="stylesheet" /> *@
-    <link href="~/css/feed.css" rel="stylesheet" />
-    <link href="~/css/main.css" rel="stylesheet" />
-    @*     <link href="~/css/sliders/style.css" rel="stylesheet" /> *@
     <link href="~/css/horizontaltimeline.css" rel="stylesheet" />
-    <style rel="stylesheet">
-        .swal2-confirm, .swal2-styled {
-            background: #D97924 !important;
-        }
+    <link href="~/css/appstatus.css" rel="stylesheet" />
 
-        .form-group .labellogin {
-            font-size: 16px;
-            font-weight: 700;
-        }
 
-        body {
-            /*   background-image: url('/images/logo-white.jpg'); */
-            background-size: cover;
-            background-color: lightskyblue;
-            background-repeat: no-repeat;
-            /* background: linear-gradient(90deg, rgba(0,211,255,1) 0%, rgba(12,141,242,1) 66%, rgba(22,125,207,1) 99%); */
-        }
-
-        .bg-white {
-            background: #fff !important;
-        }
-
-        .logoheader {
-            background: linear-gradient(90deg, rgba(0,211,255,1) 0%, rgba(12,141,242,1) 66%, rgba(22,125,207,1) 99%);
-        }
-
-    </style>
 </head>
 
 <body>
-    <div class="page">
-        <div class="container-fluid">
-            <div class="row logoheader">
+    <div class="print">
+       
+            <div class="row logoheader d-print-none no-print">
                 <div class="mb-1 logo-sec d-flex">
-                    @*                     <a class="navbar-brand" href="#"><img src="~/Images/dgis_ico.png" width="50%"></a>
-                    <div class="text-center mr-lg-15"><img class="mr-lg-15" src="~/Images/EISAC.png" width="50%"></div> *@
+                   
                     <div class="text-center"><img src="~/Images/EISAC.png" width="100%" ></div>
 
                 </div>
             </div>
+       
             <div class="row">
-                <div class="col-md-6 col-lg-6 col-xl-4 bg-white login-wrap align-items-center">
-                    <div class="login py-2 py-sm-4">
-                        <div class="row">
-                            <div class="col-md-12 col-lg-12 col-xl-11 mx-auto">
-                                <div class="card-sigin">
-                                    @* <form enctype="multipart/form-data" asp-controller="ApplicationStatus" asp-action="AppStatus" id="SaveForm" method="post" class=""> *@
-                                    <div class="main-signup-header login-form">
-                                        @* <h1 class="font-weight-bold text-center mb-0 mt-3 logo"><color style="color: #D97904">Login</color></h1>*@
-
-                                            <p class="font-weight-bold font-weight-700 text-center mb-4 mt-1"><h4>Enter Application TrackingId.</h4></p>
-                                            <input type="text" class="form-control" placeholder="Enter TrackingId" required maxlength="12" name="TrackingId" id="TrackingId" />
-                                            <span>TrackingId Exm.: DOB(12012024) and  Last 4 Digit of AadharNo (120120241235)</span>
-                                        <input type="button" id="btnTracking" class="btn btn-primary text-uppercase py-2 fs-5 w-100 mt-2" value="Track" />
-                                     
-                                    </div>
-                                   @*  </form> *@
-                                    <div class="card mt-2">
-                                        <div class="card-body">
-                                        <h5 class="text-center badge badge-success">TrackingId History</h5>
-                                        <div class="timeline timeline-xs" id="RequestHistoryTrackingId">
-                                            
-                                        </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                <div class="col-md-3 mt-4">
                 </div>
+                <div class="col-md-6 mt-4">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>
+                                    <div class="yes-print text-center">
+
+                                    <h1 class="text-center">AFSC</h1>
+                                    <h3 class="text-center">I-Card Tracking Details</h3>
+                                </div>
+                        </th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+
+
+                                <div class="card py-2 py-sm-4">
+                                        <div class="row card-body">
+                                            <div class="col-md-12">
+                                            <div class="card-sigin  no-print">
+                                                    @* <form enctype="multipart/form-data" asp-controller="ApplicationStatus" asp-action="AppStatus" id="SaveForm" method="post" class=""> *@
+                                                <div class="main-signup-header login-form">
+                                                        @* <h1 class="font-weight-bold text-center mb-0 mt-3 logo"><color style="color: #D97904">Login</color></h1>*@
+
+                                                        <p class="font-weight-bold font-weight-700 text-center mb-4 mt-1"><h4>Enter Application TrackingId.</h4></p>
+                                                        <input type="text" class="form-control" value="240719890329" placeholder="Enter TrackingId" required maxlength="12" name="TrackingId" id="TrackingId" />
+                                                        <span>TrackingId Exm.: DOB(12012024) and  Last 4 Digit of AadharNo (120120241235)</span>
+                                                        <input type="button" id="btnTracking" class="btn btn-primary text-uppercase py-2 fs-5 w-100 mt-2" value="Track" />
+
+                                                    </div>
+                                                    @*  </form> *@
+
+                                                   
+                                                </div>
+                                            <div class="">
+                                                <div class="row ">
+                                                    <div class="col-md-12 mb-4 mt-4 text-center d-print-none TrackingIdDetails d-none">
+                                                        <button class="btn btn-primary" onclick="window.print()">Print</button>
+                                                    </div>
+                                                    <div class="col-md-12 TrackingIdDetails d-none">
+                                                        <div class="card divicardbg minheight">
+                                                            @*   <img class="imgicardbg" src="~/images/asset/icardbg.jpg" /> *@
+                                                            <div class="row p-4">
+                                                                <div class="col-sm-12">
+                                                                    <div style="line-height:0 !important">
+                                                                        <p style="text-align:left;" class="f19 font-weight-600">
+                                                                            भारतीय सशस्त्र सेनाएँ पहचान कार्ड
+                                                                            <span style="float:right;">(IAFZ-2015)</span>
+                                                                        </p>
+
+                                                                    </div>
+
+                                                                </div>
+                                                                <div class="col-sm-12">
+                                                                    <div class="d-flex f19 font-weight-800"> INDIAN ARMED FORCES INDENTITY CARD</div>
+                                                                </div>
+
+                                                                <div class="col-sm-6 mt-4">
+                                                                    <img class="PhotoImagePath" onerror="this.src='/Images/user4.png'" height="200" width="200" />
+                                                                </div>
+                                                                <div class="col-sm-6 mt-4">
+
+                                                                    <div class="fw-bold text-uppercase Name"></div>
+                                                                    <div class="fw-bold text-uppercase RankName"></div>
+                                                                    <div class="fw-bold text-uppercase ArmedName"></div>
+                                                                    <div class="fw-bold text-uppercase ServiceNo"></div>
+                                                                    <div class="fw-bold" style="line-height:1">IDENTIFICATION MARK</div>
+                                                                    <div class="font-weight-500 text-uppercase IdenMark1"></div>
+                                                                </div>
+                                                                <div class="col-sm-12">
+                                                                    <p class="font-weight-500 f16">रक्षा मंत्रालय, भारत सरकार MINISTRY OF DEFENCE, GOVERNMENT OF INDIA</p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+
+                                                    <div class="col-sm-12 TrackingIdDetails d-none">
+                                                        <div class="card divicardbg minheight ">
+
+                                                            @*   <img class="imgicardbg" src="~/images/asset/icardbg1.jpg" /> *@
+                                                            <div class="row p-4">
+                                                                <div class="col-sm-2 justify-content-center">
+                                                                    <div class="mt-4 ml-3"><img src="~/writereaddata/images/indian-army-logo.jpg" height="60" width="50" /></div>
+                                                                    <div class="mt-4 ml-3"><img class="PhotoImagePath" onerror="this.src='/Images/Signature.png'" height="60" width="50" /></div>
+                                                                    <div class="mt-4 ml-3"><img src="~/images/asset/hologrambg.png" height="60" width="50" /></div>
+
+                                                                </div>
+                                                                <div class="col-sm-3">
+                                                                    <div class="">
+                                                                        <div class="f15 font-weight-700">DATE OF BIRTH</div>
+                                                                        <div class="DOB"></div>
+                                                                    </div>
+                                                                    <div>
+                                                                        <div class="f15 font-weight-700">HEIGHT </div>
+                                                                        <div class="Height"> </div>
+                                                                    </div>
+                                                                    <div>
+                                                                        <span class="f15 font-weight-700">AADHAAR No</span><br />
+                                                                        <span class="AadhaarNo">XXXXXXXX</span>
+                                                                    </div>
+                                                                    <div>
+                                                                        <span class="f15 font-weight-700 text-uppercase">BLOOD GROUP</span><br />
+                                                                        <span class="BloodGroup"></span>
+                                                                    </div>
+                                                                    <div>
+                                                                        <span class="f15 font-weight-700 text-uppercase">PLACE & DATE OF ISSUE</span>
+
+
+                                                                        <div class="text-uppercase PlaceOfIssue"></div>
+
+
+                                                                        <div class="DateOfIssue"></div>
+
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-sm-6">
+                                                                    <div class="f13 font-weight-400">
+                                                                        भारत सरकार की सम्पति। अहस्तान्तरणीय। गुम हो जाने पर निकटतम थाने और अपनी यूनिट को रिपोर्ट करें। सेवा की समाप्ति पर ओ.सी. यूनिट को लौटा दें।
+                                                                    </div>
+                                                                    <div class="f13 font-weight-400">
+                                                                        PROPERTY OF GOVERNMENT OF INDIA NOT TRANSFERABLE. REPORT LOSS IMMEDIATELY TO NEAREST POLICE STATION AND YOUR UNIT. RETURN TO OC UNIT ON CESSATION OF SERVICE.
+                                                                    </div>
+                                                                    <div class="f13 font-weight-400">
+                                                                        पाने वाला इसे सेना/नौसेना/वायु सेना मुख्यालय, नई दिल्ली 110011 को बिना टिकट लगाए, पत्र पेटी में डाल दे या पास के सैनिक यूनिट या थाने में जमा करा दे।
+                                                                    </div>
+                                                                    <div class="f13 font-weight-400">
+                                                                        FINDERS TO DROP THIS LETTER BOX POSTAGE FREE TO ARMY/NAVAL/AIR HEAD QUARTERS, NEW DELHI 110011 OR HANDOVER TO THE NEAREST MILITARY UNIT OR POLICE STATION.
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-sm-3 mt-2">
+                                                                    <span class="font-weight-800 border border-dark p-2">1545485</span>
+                                                                </div>
+
+                                                                <div class="col-sm-6  mt-2">
+                                                                    <span class="font-weight-800 border border-dark p-2">SIGNATURE</span>
+                                                                </div>
+                                                                <div class="col-sm-3 text-center mt-2 p-2 border border-dark" style="background-color:white">
+                                                                    <span class="p-2"><img class="SignaturePath" onerror="this.src='/Images/Signature.png'" height="30" width="80" /></span>
+
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+
+
+                                                </div>
+                                            </div>
+                                            <div class="card mt-2 TrackingIdHistory d-none page-break-before">
+                                                <div class="card-body">
+                                                    <h5 class="text-center badge badge-success">TrackingId History</h5>
+                                                    <div class="timeline timeline-xs" id="RequestHistoryTrackingId">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                
+
+                                
+                                </td>
+                            </tr>
+                        </tbody>
+                </table>
+
+                </div>
+                <div class="col-md-3 mt-4">
+                </div>
+               
+               
             </div>
-           
-        </div>
+  
     </div>
 
 

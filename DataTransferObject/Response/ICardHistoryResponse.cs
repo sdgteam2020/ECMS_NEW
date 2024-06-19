@@ -22,5 +22,6 @@ namespace DataTransferObject.Response
         public string? Reason { get; set; }
         public string? Authority { get; set; }
         public string? UnitName { get; set; }
+        public int RequestId { get; set; }
     }
 }

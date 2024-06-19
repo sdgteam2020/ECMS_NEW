@@ -1,0 +1,43 @@
+﻿
+.yes-print {
+    display: none;
+}
+
+body{
+    background-color:#fff;
+}
+.logoheader{
+    background-color:cornflowerblue;
+}
+@media print {
+    @page {
+       
+        size: A4;
+    }
+    .no-print {
+        display: none; /* Hide elements with the no-print class */
+    }
+    .yes-print {
+        display:block;
+    }
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+    }
+   
+    .header, .footer {
+        display: none;
+    }
+
+    @page {
+        margin: 1cm;
+    }
+    .page-break-after {
+        page-break-after: always !important;
+    }
+    .page-break-before {
+        page-break-before: always !important;
+    }
+
+}

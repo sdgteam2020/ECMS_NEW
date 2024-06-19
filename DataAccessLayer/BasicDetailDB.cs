@@ -1176,7 +1176,7 @@ namespace DataAccessLayer
             " CASE fwd.FwdStatusId WHEN 1 THEN 'Pending' WHEN 2 THEN 'Approved' WHEN 3 THEN 'Reject' WHEN 4 THEN 'Internal Forward' END Status," +
             " fwd.UpdatedOn,isnull(fwd.Remark,'Nill') Remark, " +
             " fwd.IsComplete,(select STRING_AGG(Remarks,'#') from MRemarks where RemarksId in (select value from string_split(fwd.RemarksIds,','))) Remarks2, " +
-            " reason.Reason,postind.Authority,initres.UnitName " +
+            " reason.Reason,postind.Authority,initres.UnitName,req.RequestId " +
             " from TrnFwds fwd " +
             " inner join TrnICardRequest req on req.RequestId=fwd.RequestId " +
             " inner join TrnStepCounter step" +

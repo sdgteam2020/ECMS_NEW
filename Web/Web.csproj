@@ -11,6 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <_ContentIncludedByDefault Remove="wwwroot\css\AppStatus.css" />
     <_ContentIncludedByDefault Remove="wwwroot\DeveloperJS\ReportAndReturn.js" />
   </ItemGroup>
 

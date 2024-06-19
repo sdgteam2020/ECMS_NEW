@@ -43,5 +43,9 @@ namespace Web.Controllers
         {
             return Json(await _basicDetailBL.ICardHistoryByTrackingId(TrackingId));
         }
+        public async Task<IActionResult> GetDataByBasicDetailsId(int Id)
+        {
+            return Json(await _basicDetailBL.GetByBasicDetailsId(Id));
+        }
     }
 }

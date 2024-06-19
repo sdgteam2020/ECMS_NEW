@@ -1,0 +1,240 @@
+﻿@media print {
+    @page {
+        margin: 10mm 10mm 10mm 10mm;
+        size: A4;
+    }
+
+    .container {
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    .page-break-after {
+        page-break-after: always !important;
+    }
+
+    .page-break-before {
+        page-break-before: always !important;
+    }
+
+    .break-inside-avoid {
+        page-break-inside: avoid !important;
+    }
+
+    .nav-header, .navbar-nav.sidebar, #layoutSidenav_nav, .topnav.navbar, nav {
+        display: none !important;
+    }
+
+    body, #content .container-fluid, .container, .card, .card-body, .card-body.py-5, .card-body.py-xl-4, .nav-fixed #layoutSidenav #layoutSidenav_content, .content-wrapper {
+        padding: 0 !important;
+        margin: 0 !important;
+        top: 0 !important;
+    }
+
+
+    .bg-gradient-default {
+        background: linear-gradient(87deg,#172b4d 0,#1a174d 100%) !important;
+        -webkit-print-color-adjust: exact;
+    }
+
+    .bg-gradient-defaultV {
+        background: linear-gradient(to top,#172b4d 0,#1a174d 100%) !important;
+        -webkit-print-color-adjust: exact;
+    }
+
+    .card-header {
+        /* padding: .75rem 1.25rem; */
+        margin-bottom: 0;
+        color: inherit;
+        padding: 1rem 1.35rem;
+        background-color: rgba(31, 45, 65, 0.03) !important;
+        -webkit-print-color-adjust: exact;
+        border-bottom: 1px solid rgba(31, 45, 65, 0.125) !important;
+    }
+
+    .card-body.print-padding {
+        padding: 1.35rem !important;
+    }
+
+    .text-purple {
+        color: #512da8 !important;
+    }
+
+    .badge-border {
+        border: 1px solid #343a40 !important;
+    }
+
+    .table, .container {
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+
+        .table.table-bordered {
+            border: 1px solid #484a4e !important;
+        }
+
+        .table th, .table td {
+            line-height: 1.462;
+            padding: 6px 10px;
+            vertical-align: top;
+            border: 0;
+            border-top: 1px solid #484a4e !important;
+        }
+
+            .table th.border-left, .table td.border-left {
+                border-left: 1px solid #484a4e !important;
+            }
+
+            .table th.bg, .table td.bg {
+                background-color: #ecf0fa !important;
+                -webkit-print-color-adjust: exact;
+            }
+
+            .table th.bg-warning-transparent, .table td.bg-warning-transparent {
+                background-color: rgb(253, 246, 222) !important;
+                -webkit-print-color-adjust: exact;
+            }
+
+        .table .table.table-borderless, .table.table-bordered .table.table-borderless {
+            border: 0 !important;
+        }
+
+        /*.table.table-borderless,*/
+        .table.table-borderless.border-0, .table.table-borderless thead th, .table-borderless tbody + tbody, .table-borderless td, .table-borderless th, .table-borderless thead th {
+            border: 0 !important;
+        }
+
+        .table.table-borderless .table.table-bordered {
+            border: 1px solid #484a4e !important;
+        }
+
+            .table.table-borderless .table.table-bordered thead th, .table-borderless .table.table-bordered tbody + tbody, .table-borderless .table.table-bordered td, .table-borderless .table.table-bordered th, .table-borderless .table.table-bordered thead th {
+                border: 1px solid #484a4e !important;
+            }
+
+        .table thead th {
+            background: #e4fcff !important;
+            -webkit-print-color-adjust: exact;
+        }
+
+        .table.table-striped tbody tr:nth-of-type(odd) {
+            background-color: rgb(30 32 39 / 3%) !important;
+            -webkit-print-color-adjust: exact;
+        }
+
+        .table.table-striped .no-striped tbody tr:nth-of-type(odd) {
+            background-color: transparent !important;
+            -webkit-print-color-adjust: exact;
+        }
+
+        .table.table-striped tbody tr:nth-of-type(odd) td, .table.table-striped tbody tr:nth-of-type(odd) th {
+            background-color: transparent !important;
+            -webkit-print-color-adjust: exact;
+        }
+
+    .table-responsive {
+        overflow-x: visible !important;
+        overflow-y: visible !important;
+    }
+
+    .bg-purple-light, .table.table-striped tbody tr td.bg-purple-light {
+        background: #7e3cff !important;
+        -webkit-print-color-adjust: exact;
+    }
+
+    .card.no-print-shadow {
+        box-shadow: none !important;
+    }
+
+    .card.no-print-border {
+        border: 0 !important;
+    }
+
+    .badge-number.red {
+        color: #d92550 !important;
+        background: #ffe6f0 !important;
+        -webkit-print-color-adjust: exact;
+    }
+
+    .badge-number.purple {
+        color: #3202a5 !important;
+        background: #ece4ff !important;
+        -webkit-print-color-adjust: exact;
+    }
+
+    .badge-number.info {
+        color: #008ee0 !important;
+        background: #e0f4ff !important;
+        -webkit-print-color-adjust: exact;
+    }
+
+    .badge-number.orange {
+        color: #ec6200 !important;
+        background: #fff9ca !important;
+        -webkit-print-color-adjust: exact;
+    }
+
+    .badge-number.green {
+        color: #19881d !important;
+        background: #dfffe1 !important;
+        -webkit-print-color-adjust: exact;
+    }
+
+    .card-body.page-break-after {
+        page-break-inside: avoid;
+    }
+
+    .bg-gray-100 {
+        background-color: #eff3f9 !important;
+        -webkit-print-color-adjust: exact;
+    }
+
+    .bg-alternate, th.bg-alternate, td.bg-alternate {
+        background-color: #794c8a !important;
+        -webkit-print-color-adjust: exact;
+    }
+
+    .page-break-after {
+        page-break-after: always !important;
+    }
+
+    .row {
+        display: flex;
+        flex-wrap: wrap;
+        margin-right: -0.75rem;
+        margin-left: -0.75rem;
+    }
+
+    .col-xxl, .col-xxl-auto, .col-xxl-12, .col-xxl-11, .col-xxl-10, .col-xxl-9, .col-xxl-8, .col-xxl-7, .col-xxl-6, .col-xxl-5, .col-xxl-4, .col-xxl-3, .col-xxl-2, .col-xxl-1, .col-xl, .col-xl-auto, .col-xl-12, .col-xl-11, .col-xl-10, .col-xl-9, .col-xl-8, .col-xl-7, .col-xl-6, .col-xl-5, .col-xl-4, .col-xl-3, .col-xl-2, .col-xl-1, .col-lg, .col-lg-auto, .col-lg-12, .col-lg-11, .col-lg-10, .col-lg-9, .col-lg-8, .col-lg-7, .col-lg-6, .col-lg-5, .col-lg-4, .col-lg-3, .col-lg-2, .col-lg-1, .col-md, .col-md-auto, .col-md-12, .col-md-11, .col-md-10, .col-md-9, .col-md-8, .col-md-7, .col-md-6, .col-md-5, .col-md-4, .col-md-3, .col-md-2, .col-md-1, .col-sm, .col-sm-auto, .col-sm-12, .col-sm-11, .col-sm-10, .col-sm-9, .col-sm-8, .col-sm-7, .col-sm-6, .col-sm-5, .col-sm-4, .col-sm-3, .col-sm-2, .col-sm-1, .col, .col-auto, .col-12, .col-11, .col-10, .col-9, .col-8, .col-7, .col-6, .col-5, .col-4, .col-3, .col-2, .col-1 {
+        position: relative;
+        width: 100%;
+        padding-right: 0.75rem;
+        padding-left: 0.75rem;
+    }
+
+    .col-xl-12 {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+
+    .col-xl-6 {
+        flex: 0 0 50%;
+        max-width: 50%;
+    }
+
+    .col-sm-4 {
+        flex: 0 0 33.3333333333%;
+        max-width: 33.3333333333%;
+    }
+
+    .col-sm-8 {
+        flex: 0 0 66.6666666667%;
+        max-width: 66.6666666667%;
+    }
+
+    .signaturebox {
+        width: 400px;
+    }
+}
