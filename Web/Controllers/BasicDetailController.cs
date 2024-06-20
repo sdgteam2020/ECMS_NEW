@@ -392,13 +392,38 @@ namespace Web.Controllers
             }
         }
         [HttpGet]
-        public async Task<ActionResult> InaccurateData()
+        public async Task<ActionResult> InaccurateData(string Id)
         {
             var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var allrecord = await Task.Run(() => basicDetailTempBL.GetALLBasicDetailTemp(Convert.ToInt32(userId)));
-            _logger.LogInformation(1001, "Index Page Of Basic Detail Temp View");
-            ViewBag.Title = "List of Inaccurate Data";
-            return View(allrecord);
+            int TypeId;
+            if (!string.IsNullOrEmpty(Id))
+            {
+                var base64EncodedBytes = System.Convert.FromBase64String(Id);
+                var ret = System.Text.Encoding.UTF8.GetString(base64EncodedBytes);
+                TypeId = Convert.ToInt32(ret);
+                if(TypeId == 1)
+                {
+                    var allrecord = await Task.Run(() => basicDetailTempBL.GetALLBasicDetailTemp(Convert.ToInt32(userId), TypeId));
+                    ViewBag.Title = "List of Inaccurate Data";
+                    return View(allrecord);
+                }
+                else if(TypeId == 2)
+                {
+                    var allrecord = await Task.Run(() => basicDetailTempBL.GetALLBasicDetailTemp(Convert.ToInt32(userId), TypeId));
+                    ViewBag.Title = "List of Observation Raised";
+                    return View(allrecord);
+                }
+                else
+                {
+                    TempData["error"] = "Invalid Input.";
+                    return RedirectToActionPermanent("Dashboard", "Home");
+                }
+            }
+            else
+            {
+                TempData["error"] = "Invalid Input.";
+                return RedirectToActionPermanent("Dashboard", "Home");
+            }
         }
         [HttpGet]
         public async Task<ActionResult> InaccurateDataView(string Id)
