@@ -19,9 +19,9 @@ namespace BusinessLogicsLayer.BasicDetTemp
         {
             _iBasicDetailTempDB = BasicDetailTemp;
         }
-        public Task<List<DTOBasicDetailTempRequest>> GetALLBasicDetailTemp(int UserId)
+        public async Task<List<DTOBasicDetailTempRequest>> GetALLBasicDetailTemp(int UserId, int TypeId)
         {
-            return _iBasicDetailTempDB.GetALLBasicDetailTemp(UserId);
+            return await _iBasicDetailTempDB.GetALLBasicDetailTemp(UserId,TypeId);
         }
 
         public Task<DTOBasicDetailTempRequest> GetALLBasicDetailTempByBasicDetailId(int UserId, int BasicDetailId)
