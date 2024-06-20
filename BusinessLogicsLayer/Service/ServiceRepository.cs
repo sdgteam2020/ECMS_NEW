@@ -318,7 +318,7 @@ namespace BusinessLogicsLayer.Service
             ArmedOptions.Insert(0, ddfirst);
             return new SelectList(ArmedOptions, "Value", "Text");
 
-
+ 
             //var roles = new List<SelectListItem>
             //{
             //    new SelectListItem{ Text="Please Select", Value = null },

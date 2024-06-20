@@ -1131,10 +1131,11 @@ function GetRequestHistory(spnRequestId) {
     });
 }
 function DataExport(Data) {
+    alert($("#Isspnjcoor").html())
     var userdata =
     {
         "Ids": Data,
-
+        "IsJco": $("#Isspnjcoor").html()
 
     };
     $.ajax({
@@ -1160,33 +1161,33 @@ function DataExport(Data) {
                     //link.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(blob);
                     //link.download = "export.json";
                     //link.click();
-
-                    var blob = new Blob([JSON.stringify(response, null, "\t")], { type: "application/json" });
+                    window.location = "/WriteReadData/ExportAFSACCell/"+response+'.zip'; 
+                   // var blob = new Blob([JSON.stringify(response, null, "\t")], { type: "application/json" });
                    
-                    // Create a temporary anchor element
-                    var link = document.createElement("a");
-                    link.href = window.URL.createObjectURL(blob);
+                   // // Create a temporary anchor element
+                   // var link = document.createElement("a");
+                   // link.href = window.URL.createObjectURL(blob);
 
                    
                    
                   
-                   // GetTokenSignXml(blob);
-                    // Set the file name
-                    link.download = "data.json";
+                   //// GetTokenSignXml(blob);
+                   // // Set the file name
+                   // link.download = "data.json";
 
-                    // Append the anchor to the body
-                    document.body.appendChild(link);
+                   // // Append the anchor to the body
+                   // document.body.appendChild(link);
 
-                    // Trigger the click event
-                    link.click();
+                   // // Trigger the click event
+                   // link.click();
 
-                    // Remove the anchor from the body
-                    document.body.removeChild(link);
+                   // // Remove the anchor from the body
+                   // document.body.removeChild(link);
 
 
-                    setTimeout(function () {
-                        location.reload();
-                    }, 1000);
+                   // setTimeout(function () {
+                   //     location.reload();
+                   // }, 1000);
                 }
 
 

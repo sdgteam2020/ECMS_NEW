@@ -9,5 +9,6 @@ namespace DataTransferObject.Requests
     public class DTODataExportRequest
     {
         public int[] Ids { get; set; }
+        public int IsJco { get; set; }
     }
 }

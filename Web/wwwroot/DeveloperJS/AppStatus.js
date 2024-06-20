@@ -104,6 +104,7 @@ function GetRequestHistoryByTrackingId(TrackingId) {
                     }
                 }
                 else {
+                    $(".TrackingIdDetails").addClass("d-none");
                     $(".TrackingIdHistory").removeClass("d-none");
                     
                     listItem += '<div class="timeline-item">';

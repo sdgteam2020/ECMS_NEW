@@ -1008,24 +1008,55 @@ namespace DataAccessLayer
         }
         public async Task<List<DTODataExportsResponse>> GetBesicdetailsByRequestId(DTODataExportRequest Data)
         {
-            
-            string query = "update TrnFwds set IsComplete=1 where RequestId in @Ids update TrnStepCounter set StepId=5 where RequestId in @Ids  update TrnICardRequest set Status=1 where  RequestId in @Ids select bas.*," +
-                            " trnadd.State,trnadd.District,trnadd.PS,trnadd.PO,trnadd.Tehsil,trnadd.Village,trnadd.PinCode," +
-                            " trnup.SignatureImagePath,trnup.PhotoImagePath,IdenMark1,IdenMark2,AadhaarNo,Height,bld.BloodGroup," +
-                            " regi.Abbreviation RegimentalName,Muni.UnitName,uni.UnitMapId UnitId,icardreq.TypeId,icardreq.RegistrationId," +
-                            " ran.RankId,ran.RankAbbreviation RankName,arm.Abbreviation ArmedName,trnadd.AddressId,trnup.UploadId,trninfo.InfoId,MICardType.Name ICardType from BasicDetails bas" +
-                            " inner join TrnAddress trnadd on trnadd.BasicDetailId=bas.BasicDetailId" +
-                            " inner join TrnUpload trnup on trnup.BasicDetailId=bas.BasicDetailId" +
-                            " inner join TrnIdentityInfo trninfo on trninfo.BasicDetailId=bas.BasicDetailId" +
-                            " inner join MBloodGroup bld on bld.BloodGroupId=trninfo.BloodGroupId"+
-                            " inner join MRank ran on ran.RankId=bas.RankId" +
-                            " inner join MArmedType arm on arm.ArmedId=bas.ArmedId" +
-                            " inner join MapUnit uni on uni.UnitMapId=bas.UnitId" +
-                            " inner join MUnit Muni on Muni.UnitId=uni.UnitId" +
-                            " inner join TrnICardRequest icardreq on icardreq.BasicDetailId=bas.BasicDetailId " + //and icardreq.Status=0 
-                            " inner join MICardType MICardType on MICardType.TypeId=icardreq.TypeId " +
-                            " left join MRegimental regi on regi.RegId=bas.RegimentalId" +
-                            " where icardreq.RequestId in @Ids";
+            string query = "";
+            if (Data.IsJco == 0)
+            {
+                query = /*"update TrnFwds set IsComplete=1 where RequestId in @Ids update TrnStepCounter set StepId=5 where RequestId in @Ids  update TrnICardRequest set Status=1 where  RequestId in @Ids "+*/
+                                " select bas.*," +
+                                " trnadd.State,trnadd.District,trnadd.PS,trnadd.PO,trnadd.Tehsil,trnadd.Village,trnadd.PinCode," +
+                                " trnup.SignatureImagePath,trnup.PhotoImagePath,IdenMark1,IdenMark2,AadhaarNo,Height,bld.BloodGroup," +
+                                " regi.Abbreviation RegimentalName,Muni.UnitName,uni.UnitMapId UnitId,icardreq.TypeId,icardreq.RegistrationId," +
+                                " ran.RankId,ran.RankAbbreviation RankName,arm.Abbreviation ArmedName,trnadd.AddressId,trnup.UploadId,trninfo.InfoId,MICardType.Name ICardType,reco.RecordOfficeId,reco.Name RecordOffice from BasicDetails bas" +
+                                " inner join TrnAddress trnadd on trnadd.BasicDetailId=bas.BasicDetailId" +
+                                " inner join TrnUpload trnup on trnup.BasicDetailId=bas.BasicDetailId" +
+                                " inner join TrnIdentityInfo trninfo on trninfo.BasicDetailId=bas.BasicDetailId" +
+                                " inner join MBloodGroup bld on bld.BloodGroupId=trninfo.BloodGroupId" +
+                                " inner join MRank ran on ran.RankId=bas.RankId" +
+                                " inner join MArmedType arm on arm.ArmedId=bas.ArmedId" +
+                                " inner join MapUnit uni on uni.UnitMapId=bas.UnitId" +
+                                " inner join MUnit Muni on Muni.UnitId=uni.UnitId" +
+                                " inner join TrnICardRequest icardreq on icardreq.BasicDetailId=bas.BasicDetailId " + //and icardreq.Status=0 
+                                " inner join MRecordOffice reco on bas.ArmedId=reco.ArmedId" +
+                                " inner join MICardType MICardType on MICardType.TypeId=icardreq.TypeId " +
+                                " left join MRegimental regi on regi.RegId=bas.RegimentalId" +
+                                " where icardreq.RequestId in @Ids";
+            }
+            else
+            {
+                query = " select bas.*, trnadd.State,trnadd.District,trnadd.PS,trnadd.PO,trnadd.Tehsil,trnadd.Village,trnadd.PinCode, " +
+                         " trnup.SignatureImagePath,trnup.PhotoImagePath,IdenMark1,IdenMark2,AadhaarNo,Height,bld.BloodGroup, " +
+                         " regi.Abbreviation RegimentalName,Muni.UnitName,uni.UnitMapId UnitId,icardreq.TypeId,icardreq.RegistrationId, " +
+                         " ran.RankId,ran.RankAbbreviation RankName,arm.Abbreviation ArmedName,trnadd.AddressId,trnup.UploadId,trninfo.InfoId," +
+                         " MICardType.Name ICardType," +
+                         " CASE WHEN ran.orderby<=4 THEN '126'ELSE reco.RecordOfficeId END RecordOfficeId," +
+                         " CASE WHEN ran.orderby<=4 THEN 'MP 6A' ELSE reco.Name END RecordOffice" +
+                         " from BasicDetails bas " +
+                         " inner join TrnAddress trnadd on trnadd.BasicDetailId=bas.BasicDetailId " +
+                         " inner join TrnUpload trnup on trnup.BasicDetailId=bas.BasicDetailId " +
+                         " inner join TrnIdentityInfo trninfo on trninfo.BasicDetailId=bas.BasicDetailId " +
+                         " inner join MBloodGroup bld on bld.BloodGroupId=trninfo.BloodGroupId " +
+                         " inner join MRank ran on ran.RankId=bas.RankId " +
+                         " inner join MArmedType arm on arm.ArmedId=bas.ArmedId " +
+                         " inner join MapUnit uni on uni.UnitMapId=bas.UnitId " +
+                         " inner join MUnit Muni on Muni.UnitId=uni.UnitId " +
+                         " inner join TrnICardRequest icardreq on icardreq.BasicDetailId=bas.BasicDetailId  " +
+                         " inner join MICardType MICardType on MICardType.TypeId=icardreq.TypeId  " +
+                         " inner join MRecordOffice reco on reco.ArmedId=56" +
+                         " inner join OROMapping OROMap on reco.RecordOfficeId=OROMap.RecordOfficeId" +
+                         " left join MRegimental regi on regi.RegId=bas.RegimentalId where icardreq.RequestId in @Ids" +
+                         " and bas.ArmedId in (select value from string_split(oromap.ArmedIdList,',')) " +
+                         " order by reco.RecordOfficeId";
+            }
             int[] Ids = Data.Ids;
             using (var connection = _contextDP.CreateConnection())
             {

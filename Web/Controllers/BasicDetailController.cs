@@ -37,6 +37,8 @@ using System.Diagnostics;
 using System.Drawing.Printing;
 using BusinessLogicsLayer.Unit;
 using DapperRepo.Core.Constants;
+using System.Text.Json.Nodes;
+using System.IO.Compression;
 
 namespace Web.Controllers
 {
@@ -1589,12 +1591,41 @@ namespace Web.Controllers
             try
             {
                 var retdata = await basicDetailBL.GetBesicdetailsByRequestId(Data);
-             
-                var jsonString = JsonConvert.SerializeObject(retdata);
-                var jsonde=JsonConvert.DeserializeObject(jsonString);
-                
-                
-                return Json(Encrypt.EncryptParameter(jsonde.ToString()));
+                string sourceFolderPhotoPhy = Convert.ToString(ForCreateFolderrandom(Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "ExportAFSACCell")));
+                int recoff = 0;
+                List<DTODataExportsResponse> lst=new List<DTODataExportsResponse>();
+                string recofffolder = "";
+                int count = 0;
+                foreach (var data in retdata)
+                {
+                    count++;
+                    if (recoff!=data.RecordOfficeId)
+                    {
+                        if(recoff!=0)
+                        {
+                            var jsonString = JsonConvert.SerializeObject(lst);
+                            var jsonde = JsonConvert.DeserializeObject(jsonString);
+                            System.IO.File.WriteAllText(recofffolder+"/Data.json", jsonString);
+                        }
+
+                         lst.Clear();
+                         recofffolder = Convert.ToString(CreateFolder(sourceFolderPhotoPhy+"/"+ data.RecordOffice));
+
+                    }
+                    lst.Add(data);
+                    recoff = data.RecordOfficeId;
+                    if(count== retdata.Count())
+                    {
+                        var jsonString = JsonConvert.SerializeObject(lst);
+                        var jsonde = JsonConvert.DeserializeObject(jsonString);
+                        System.IO.File.WriteAllText(recofffolder + "/Data.json", jsonString);
+                    }
+                }
+
+                CreateZipFromFolder(sourceFolderPhotoPhy, sourceFolderPhotoPhy+".zip");
+                //Encrypt.EncryptParameter(jsonde.ToString())
+                string lastFolderName = new DirectoryInfo(sourceFolderPhotoPhy).Name;
+                return Json(lastFolderName);
 
 
             }
@@ -1602,6 +1633,17 @@ namespace Web.Controllers
             {
                 _logger.LogError(1001, ex, "BasicDetails=>DataExport.");
                 return RedirectToAction("Error", "Error");
+            }
+        }
+        public void CreateZipFromFolder(string sourceFolder, string zipFilePath)
+        {
+            if (Directory.Exists(sourceFolder))
+            {
+                ZipFile.CreateFromDirectory(sourceFolder, zipFilePath, CompressionLevel.Fastest, true);
+            }
+            else
+            {
+                throw new DirectoryNotFoundException($"Source folder not found: {sourceFolder}");
             }
         }
         public async Task<IActionResult> DataDigitalXmlSign(DTODataExportRequest Data)

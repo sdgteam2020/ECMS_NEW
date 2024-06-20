@@ -54,6 +54,8 @@ namespace DataTransferObject.Response
         public string IdenMark2 { get; set; } = string.Empty;
 
         public string? ICardType { get; set; }
+        public int RecordOfficeId { get; set; }
+        public string? RecordOffice { get; set; }
 
 
 
