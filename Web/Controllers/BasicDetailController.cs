@@ -443,8 +443,28 @@ namespace Web.Controllers
             return View(allrecord);
         }
         [HttpGet]
-        public IActionResult Registration()
+        public IActionResult Registration(string Id)
         {
+            //var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            //string decryptedId = string.Empty;
+            //ViewBag.OptionsBloodGroup = service.GetBloodGroup();
+            //ViewBag.OptionsArmedType = service.GetArmedType();
+            //int decryptedIntId = 0;
+            //try
+            //{
+            //    Decrypt the  id using Unprotect method
+            //    decryptedId = protector.Unprotect(Id);
+            //    decryptedIntId = Convert.ToInt32(decryptedId);
+            //}
+            //catch (Exception ex)
+            //{
+            //    _logger.LogError(1001, ex, "This error occure because Id value change by user.");
+            //    return RedirectToAction("Error", "Error");
+            //}
+            //DTORegistrationRequest dTORegistrationRequest = new DTORegistrationRequest();
+            //dTORegistrationRequest.TypeId = (byte)decryptedIntId;
+            //ViewBag.OptionsRegistration = service.GetRegistration();
+            //return View(dTORegistrationRequest);
             return View();
         }
         [HttpPost]

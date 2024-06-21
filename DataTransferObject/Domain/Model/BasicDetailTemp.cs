@@ -21,7 +21,7 @@ namespace DataTransferObject.Domain.Model
 
         [StringLength(36)]
         [Column(TypeName = "varchar(36)")]
-        public string? NameAsPerRecord { get; set; } = string.Empty;
+        public string NameAsPerRecord { get; set; } = string.Empty;
 
         [StringLength(10)]
         [Column(TypeName = "varchar(10)")]

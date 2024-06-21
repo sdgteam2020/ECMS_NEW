@@ -22,7 +22,7 @@ namespace DataTransferObject.Domain.Model
 
         [StringLength(36)]
         [Column(TypeName = "varchar(36)")]
-        public string? NameAsPerRecord { get; set; } = string.Empty;
+        public string NameAsPerRecord { get; set; } = string.Empty;
 
         [ForeignKey("MArmedType")]
         public byte ArmedId { get; set; }
