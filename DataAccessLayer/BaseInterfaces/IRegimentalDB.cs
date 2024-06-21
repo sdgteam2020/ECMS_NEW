@@ -12,6 +12,7 @@ namespace DataAccessLayer.BaseInterfaces
     public interface IRegimentalDB : IGenericRepositoryDL<MRegimental>
     {
         public Task<bool> GetByName(MRegimental Dto);
+        public Task<List<DTORegimentalResponse>> GetByArmedId(byte ArmedId);
         public Task<List<DTORegimentalResponse>> GetAllData();
     }
 }

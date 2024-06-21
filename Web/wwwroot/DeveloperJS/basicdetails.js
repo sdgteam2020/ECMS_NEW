@@ -1,5 +1,24 @@
 ﻿$(document).ready(function () {
+    if ($("#spnBloodGroupId").val() > 0) {
+        mMsater($("#spnBloodGroupId").val(), "BloodGroupId", BloodGroup, "");
+    }
+    else {
+        mMsater("", "BloodGroupId", BloodGroup, "");
+    }
 
+    if ($("#spnArmedId").val() > 0) {
+        mMsater($("#spnArmedId").val(), "ArmedId", ArmyType, "");
+        if ($("#spnRegimentalId").val() == "null" && $("#spnRegimentalId").val() == null) {
+            mMsater("", "RegimentalId", Regimental, $("#spnArmedId").val());
+        }
+        else {
+            mMsater($("#spnRegimentalId").val(), "RegimentalId", Regimental, $("#spnArmedId").val());
+        }
+        
+    }
+    else {
+        mMsater("", "ArmedId", ArmyType, "");
+    }
     const [today] = new Date().toISOString().split('T');
     const maxDate = new Date();
     maxDate.setDate(maxDate.getDate() + 30);
@@ -10,7 +29,8 @@
     document.getElementById('DateOfIssue').value = today;
 
     $("#ArmedId").on("change", function () {
-        GetRegimentalListByArmedId(this.value,"");
+        //GetRegimentalListByArmedId(this.value, "");
+        mMsater("", "RegimentalId", Regimental, this.value);
         GetROListByArmedId(this.value,"");
     });
 

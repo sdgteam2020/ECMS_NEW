@@ -4,6 +4,7 @@ using BusinessLogicsLayer.BasicDet;
 using BusinessLogicsLayer.BasicDetTemp;
 using BusinessLogicsLayer.Bde;
 using BusinessLogicsLayer.BdeCat;
+using BusinessLogicsLayer.BloodGroup;
 using BusinessLogicsLayer.Corps;
 using BusinessLogicsLayer.Div;
 using BusinessLogicsLayer.Formation;
@@ -31,7 +32,7 @@ namespace BusinessLogicsLayer
     {
 
 
-        public UnitOfWork(IUserBL _user, IComd _comds, ICorpsBL _corpsBL, IBdeBL _bdeCat, IDivBL divBL, IUnitBL unit, IMapUnitBL MapUnitBL, IFormationBL FormationBL, IApptBL apptBL, IArmedBL armedBL, IRankBL rankBL, IRegimentalBL regimentalBL,IRecordOfficeBL recordOfficeBL,IArmedCatBL armedCatBL,IMasterBL masterBL,IOROMappingBL oroMappingBL,IIssuingAuthorityBL issuingAuthorityBL)
+        public UnitOfWork(IUserBL _user, IComd _comds, ICorpsBL _corpsBL, IBdeBL _bdeCat, IDivBL divBL, IUnitBL unit, IMapUnitBL MapUnitBL, IFormationBL FormationBL, IApptBL apptBL, IArmedBL armedBL, IRankBL rankBL, IRegimentalBL regimentalBL,IRecordOfficeBL recordOfficeBL,IArmedCatBL armedCatBL,IMasterBL masterBL,IOROMappingBL oroMappingBL,IIssuingAuthorityBL issuingAuthorityBL, IBloodGroupBL bloodGroupBL)
         {
             Users = _user;
             Comds = _comds;
@@ -50,6 +51,7 @@ namespace BusinessLogicsLayer
             MasterBL = masterBL;
             OROMapping= oroMappingBL;
             IssuingAuthorityBL = issuingAuthorityBL;
+            BloodGroupBL= bloodGroupBL;
         }
         public IUserBL Users { get; }
         public IComd Comds { get; }
@@ -68,6 +70,7 @@ namespace BusinessLogicsLayer
         public IMasterBL MasterBL { get; }
         public IOROMappingBL OROMapping { get; }
         public IIssuingAuthorityBL IssuingAuthorityBL { get; }
+        public IBloodGroupBL BloodGroupBL { get; }
          
         public async Task<List<DTOMasterResponse>> GetAllMMaster(DTOMasterRequest Data)
         {
@@ -306,6 +309,30 @@ namespace BusinessLogicsLayer
                     DTOMasterResponse db = new DTOMasterResponse();
                     db.Id = item.IssuingAuthorityId;
                     db.Name = item.IssuingAuthorityName;
+                    lst.Add(db);
+                }
+            }
+            else if (Data.id == Convert.ToInt16(Constants.MasterTbl.Regimental))
+            {
+                var result = await Regimental.GetByArmedId(Convert.ToByte(Data.ParentId));
+
+                foreach (var item in result)
+                {
+                    DTOMasterResponse db = new DTOMasterResponse();
+                    db.Id = item.RegId;
+                    db.Name = item.Name;
+                    lst.Add(db);
+                }
+            }
+            else if (Data.id == Convert.ToInt16(Constants.MasterTbl.BloodGroup))
+            {
+                var result = await BloodGroupBL.GetAll();
+
+                foreach (var item in result)
+                {
+                    DTOMasterResponse db = new DTOMasterResponse();
+                    db.Id = item.BloodGroupId;
+                    db.Name = item.BloodGroup !=null ? item.BloodGroup : "NA";
                     lst.Add(db);
                 }
             }

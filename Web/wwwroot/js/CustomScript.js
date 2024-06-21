@@ -1,27 +1,4 @@
 ﻿$(document).ready(function () {
-
-    $('#btnRetry').click(function () {
-        Swal.fire({
-            title: "Are you sure?",
-            text: "You want to Retry!",
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonColor: "#3085d6",
-            cancelButtonColor: "#d33",
-            confirmButtonText: "Yes, Retry it!"
-        }).then((result) => {
-            if (result.isConfirmed) {
-                sessionStorage.setItem("OffType", $("#OffType").html());
-                sessionStorage.setItem("RegistrationApplyFor", $("#RegistrationApplyFor").html());
-                sessionStorage.setItem("lCardType", $("#lCardType").html());
-                sessionStorage.setItem("ArmyNo", $("#ArmyNo").html());
-                window.location.href = "/BasicDetail/Registration";
-            }
-        });
-       
-    });
-
-
     $("#icardPrint").click(function () {
         window.print();
     });
@@ -40,6 +17,25 @@
     //});
     /* alert(sessionStorage.getItem("OffType"))*/
  
+});
+$("body").on("click", ".cls-btnRetry", function () {
+    Swal.fire({
+        title: "Are you sure?",
+        text: "You want to Retry!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, Retry it!"
+    }).then((result) => {
+        if (result.isConfirmed) {
+            sessionStorage.setItem("OffType", $(this).closest("td").find("#OffType").html());
+            sessionStorage.setItem("RegistrationApplyFor", $(this).closest("td").find("#RegistrationApplyFor").html());
+            sessionStorage.setItem("lCardType", $(this).closest("td").find("#lCardType").html());
+            sessionStorage.setItem("ArmyNo", $(this).closest("td").find("#ArmyNo").html());
+            window.location.href = "/BasicDetail/Registration";
+        }
+    });
 });
 
 function printTable(divId) {

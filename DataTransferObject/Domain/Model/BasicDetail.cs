@@ -22,7 +22,7 @@ namespace DataTransferObject.Domain.Model
 
         [StringLength(36)]
         [Column(TypeName = "varchar(36)")]
-        public string? NameAsPerRecord { get; set; } = string.Empty;
+        public string NameAsPerRecord { get; set; } = string.Empty;
 
         [ForeignKey("MArmedType")]
         public byte ArmedId { get; set; }
@@ -52,10 +52,10 @@ namespace DataTransferObject.Domain.Model
         [DataType(DataType.Date)]
         [Column(TypeName = "datetime")]
         public DateTime DateOfCommissioning { get; set; }
-        
+
         [ForeignKey("MRegimental")]
         public byte? RegimentalId { get; set; }
-        public MRegimental? Regimental { get; set; }
+        public MRegimental? MRegimental { get; set; }
 
         [ForeignKey("MApplyFor"), DatabaseGenerated(DatabaseGeneratedOption.None)]
         public byte ApplyForId { get; set; }

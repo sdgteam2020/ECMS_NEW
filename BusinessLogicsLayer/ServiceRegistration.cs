@@ -8,6 +8,7 @@ using BusinessLogicsLayer.BasicDetTemp;
 using BusinessLogicsLayer.Bde;
 using BusinessLogicsLayer.BdeCat;
 using BusinessLogicsLayer.BdeCate;
+using BusinessLogicsLayer.BloodGroup;
 using BusinessLogicsLayer.Corps;
 using BusinessLogicsLayer.Div;
 using BusinessLogicsLayer.EncryptBySql;
@@ -167,6 +168,8 @@ namespace BusinessLogicsLayer
 
             services.AddTransient<IIssuingAuthorityDB, IssuingAuthorityDB>();
             services.AddTransient<IIssuingAuthorityBL, IssuingAuthorityBL>();
+
+            services.AddTransient<IBloodGroupBL, BloodGroupBL>();
 
 
             //services.AddDbContext<ApplicationDbContext>(opt => opt.UseSqlServer("Server=SDG20\\SQLEXPRESS; Database=AFSAC;Integrated Security=True;MultipleActiveResultSets=True;TrustServerCertificate=True"));

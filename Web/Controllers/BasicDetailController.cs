@@ -398,13 +398,38 @@ namespace Web.Controllers
             }
         }
         [HttpGet]
-        public async Task<ActionResult> InaccurateData()
+        public async Task<ActionResult> InaccurateData(string Id)
         {
             var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var allrecord = await Task.Run(() => basicDetailTempBL.GetALLBasicDetailTemp(Convert.ToInt32(userId)));
-            _logger.LogInformation(1001, "Index Page Of Basic Detail Temp View");
-            ViewBag.Title = "List of Inaccurate Data";
-            return View(allrecord);
+            int TypeId;
+            if (!string.IsNullOrEmpty(Id))
+            {
+                var base64EncodedBytes = System.Convert.FromBase64String(Id);
+                var ret = System.Text.Encoding.UTF8.GetString(base64EncodedBytes);
+                TypeId = Convert.ToInt32(ret);
+                if(TypeId == 1)
+                {
+                    var allrecord = await Task.Run(() => basicDetailTempBL.GetALLBasicDetailTemp(Convert.ToInt32(userId), TypeId));
+                    ViewBag.Title = "List of Inaccurate Data";
+                    return View(allrecord);
+                }
+                else if(TypeId == 2)
+                {
+                    var allrecord = await Task.Run(() => basicDetailTempBL.GetALLBasicDetailTemp(Convert.ToInt32(userId), TypeId));
+                    ViewBag.Title = "List of Observation Raised";
+                    return View(allrecord);
+                }
+                else
+                {
+                    TempData["error"] = "Invalid Input.";
+                    return RedirectToActionPermanent("Dashboard", "Home");
+                }
+            }
+            else
+            {
+                TempData["error"] = "Invalid Input.";
+                return RedirectToActionPermanent("Dashboard", "Home");
+            }
         }
         [HttpGet]
         public async Task<ActionResult> InaccurateDataView(string Id)
@@ -424,28 +449,29 @@ namespace Web.Controllers
             return View(allrecord);
         }
         [HttpGet]
-        public async Task<IActionResult> Registration(string Id)
+        public IActionResult Registration(string Id)
         {
-            var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-            string decryptedId = string.Empty;
-            ViewBag.OptionsBloodGroup = service.GetBloodGroup();
-            ViewBag.OptionsArmedType = service.GetArmedType();
-            int decryptedIntId = 0;
-            try
-            {
-                // Decrypt the  id using Unprotect method
-                //decryptedId = protector.Unprotect(Id);
-                //decryptedIntId = Convert.ToInt32(decryptedId);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(1001, ex, "This error occure because Id value change by user.");
-                return RedirectToAction("Error", "Error");
-            }
-            DTORegistrationRequest dTORegistrationRequest = new DTORegistrationRequest();
-            //dTORegistrationRequest.TypeId =(byte) decryptedIntId;
-            ViewBag.OptionsRegistration = service.GetRegistration();
-            return View(dTORegistrationRequest);
+            //var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            //string decryptedId = string.Empty;
+            //ViewBag.OptionsBloodGroup = service.GetBloodGroup();
+            //ViewBag.OptionsArmedType = service.GetArmedType();
+            //int decryptedIntId = 0;
+            //try
+            //{
+            //    Decrypt the  id using Unprotect method
+            //    decryptedId = protector.Unprotect(Id);
+            //    decryptedIntId = Convert.ToInt32(decryptedId);
+            //}
+            //catch (Exception ex)
+            //{
+            //    _logger.LogError(1001, ex, "This error occure because Id value change by user.");
+            //    return RedirectToAction("Error", "Error");
+            //}
+            //DTORegistrationRequest dTORegistrationRequest = new DTORegistrationRequest();
+            //dTORegistrationRequest.TypeId = (byte)decryptedIntId;
+            //ViewBag.OptionsRegistration = service.GetRegistration();
+            //return View(dTORegistrationRequest);
+            return View();
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -453,10 +479,7 @@ namespace Web.Controllers
         {
             try
             {
-                //ViewBag.OptionsRegistration = service.GetRegistration();
                 var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-
                 model.Updatedby = Convert.ToInt32(userId);
                 if (ModelState.IsValid)
                 {
@@ -496,15 +519,9 @@ namespace Web.Controllers
                     }
                     else
                     {
-                        //if (model.Observations == null)
-                        //{
-                        //    ModelState.AddModelError("Observations", "Observations is required.");
-                        //    goto end;
-                        //}
-                        //else
-                        //{
                             BasicDetailTemp basicDetailTemp = new BasicDetailTemp();
                             basicDetailTemp.Name = model.Name;
+                            basicDetailTemp.NameAsPerRecord = model.NameAsPerRecord;
                             basicDetailTemp.ServiceNo = model.ServiceNo;
                             basicDetailTemp.DOB = model.DOB;
                             basicDetailTemp.DateOfCommissioning = model.DateOfCommissioning;
@@ -522,8 +539,10 @@ namespace Web.Controllers
                             basicDetailTemp.RegistrationId= model.RegistrationId;
                             basicDetailTemp.TypeId= model.TypeId;
                             basicDetailTemp.RankId= model.RankId;
+                            basicDetailTemp.ArmedId = model.ArmedId;
 
-                           
+
+
                             basicDetailTemp.UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
                             BasicDetailTemp temp = new BasicDetailTemp();
                             temp =await basicDetailTempBL.GetByArmyNo(model.ServiceNo);
@@ -540,7 +559,6 @@ namespace Web.Controllers
                         
                             TempData["success"] = "Request Submited Successfully.";
                             return RedirectToAction("Registration");
-                        //}
                     }
                 }
                 else
@@ -592,9 +610,6 @@ namespace Web.Controllers
         [HttpGet]
         public async Task<ActionResult> BasicDetail(string? Id)
         {
-            ViewBag.OptionsBloodGroup = service.GetBloodGroup();
-            ViewBag.OptionsArmedType = service.GetArmedType();
-
             var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
             string decryptedId = string.Empty;
             int decryptedIntId = 0;
@@ -608,28 +623,18 @@ namespace Web.Controllers
                     model = JsonConvert.DeserializeObject<DTORegistrationRequest>(TempData["Registration"].ToString());
                     if (model.SubmitType == 1)
                     {
-                        // MRegistration? mRegistration = await context.MRegistration.FindAsync(model.RegId);
-                        //if(mRegistration.ApplyForId == (int)RegistrationType.Officer)
-                        //{
-                        //    ViewBag.OptionsRank = service.GetRank(1);
-                        //}
-                        //else
-                        //{
-                        //    ViewBag.OptionsRank = service.GetRank(2);
-                        //}
-
-                       
                         ViewBag.OptionsUnitId = 0;
-                        ViewBag.OptionsArmedType = service.GetArmedType();
-                        ViewBag.OptionsBloodGroup = service.GetBloodGroup();
                         BasicDetailCrtAndUpdVM dTOBasicDetailCrtRequest = new BasicDetailCrtAndUpdVM();
                         dTOBasicDetailCrtRequest.Name = model.Name;
+                        dTOBasicDetailCrtRequest.NameAsPerRecord= model.NameAsPerRecord;
                         dTOBasicDetailCrtRequest.ServiceNo = model.ServiceNo;
                         dTOBasicDetailCrtRequest.DOB = model.DOB;
                         dTOBasicDetailCrtRequest.DateOfCommissioning = model.DateOfCommissioning;
                         dTOBasicDetailCrtRequest.IdenMark1 = model.IdenMark1;
                         dTOBasicDetailCrtRequest.IdenMark2 = model.IdenMark2;
-                        ViewBag.OptionsRank = model.RankId;
+                        ViewBag.OptionsRankId = model.RankId;
+                        ViewBag.OptionsArmedId = model.ArmedId;
+
                         //dTOBasicDetailCrtRequest.Height = model.Height;
 
                         // dTOBasicDetailCrtRequest.AadhaarNo = Convert.ToString(model.AadhaarNo);
@@ -686,26 +691,18 @@ namespace Web.Controllers
 
                 if (basicDetailUpdVM != null)
                 {
-                    //MRank? mRank = await rankBL.GetAll().FindAsync(basicDetailUpdVM.RankId);
-                    ViewBag.OptionsRank = basicDetailUpdVM.RankId; //service.GetRank(mRank.Type);
-                    ViewBag.OptionsUnitId = basicDetailUpdVM.UnitId; //service.GetRank(mRank.Type);
-                    // BasicDetailCrtAndUpdVM basicDetailUpdVM = _mapper.Map<BasicDetail, BasicDetailCrtAndUpdVM>(basicDetail);
-                    //if (basicDetailUpdVM.AadhaarNo != null && basicDetailUpdVM.AadhaarNo.Length == 12)
-                    //{
-                    //    string p1, p2, p3;
-                    //    p1 = basicDetailUpdVM.AadhaarNo.Substring(0, 4);
-                    //    p2 = basicDetailUpdVM.AadhaarNo.Substring(4, 4);
-                    //    p3 = basicDetailUpdVM.AadhaarNo.Substring(8, 4);
-                    //    basicDetailUpdVM.AadhaarNo = p1 + " " + p2 + " " + p3;
-                    //}
-                    //basicDetailUpdVM.RegistrationType = basicDetailUpdVM.RegistrationType;
-                    //basicDetailUpdVM.RegimentalId = basicDetailUpdVM.RegimentalId;
+                    ViewBag.OptionsRankId = basicDetailUpdVM.RankId; 
+                    ViewBag.OptionsUnitId = basicDetailUpdVM.UnitId; 
+                    ViewBag.OptionsArmedId = basicDetailUpdVM.ArmedId;
+                    ViewBag.OptionsRegimentalId = basicDetailUpdVM.RegimentalId;
+                    ViewBag.OptionsBloodGroupId = basicDetailUpdVM.BloodGroupId;
+
                     basicDetailUpdVM.BloodGroupId = basicDetailUpdVM.BloodGroupId;
                     basicDetailUpdVM.PermanentAddress = "Village - " + basicDetailUpdVM.Village + ", Post Office-" + basicDetailUpdVM.PO + ", Tehsil- " + basicDetailUpdVM.Tehsil + ", District- " + basicDetailUpdVM.District + ", State- " + basicDetailUpdVM.State + ", Pin Code- " + basicDetailUpdVM.PinCode;
                     basicDetailUpdVM.ExistingPhotoImagePath = basicDetailUpdVM.PhotoImagePath;
                     basicDetailUpdVM.ExistingSignatureImagePath = basicDetailUpdVM.SignatureImagePath;
                     basicDetailUpdVM.EncryptedId = Id;
-                    ViewBag.OptionsRegimental = service.GetRegimentalDDLIdSelected(basicDetailUpdVM.ArmedId);
+                    //ViewBag.OptionsRegimental = service.GetRegimentalDDLIdSelected(basicDetailUpdVM.ArmedId);
 
                     ///////////////////////for close appl
                     ///
@@ -719,7 +716,7 @@ namespace Web.Controllers
                         basicDetailUpdVM.DateOfCommissioning = modelex.DateOfCommissioning;
                         basicDetailUpdVM.IdenMark1 = modelex.IdenMark1;
                         basicDetailUpdVM.IdenMark2 = modelex.IdenMark2;
-                        ViewBag.OptionsRank = modelex.RankId;
+                        ViewBag.OptionsRankId = modelex.RankId;
                         //dTOBasicDetailCrtRequest.Height = model.Height;
 
                         // dTOBasicDetailCrtRequest.AadhaarNo = Convert.ToString(model.AadhaarNo);
@@ -763,7 +760,6 @@ namespace Web.Controllers
         {
             try
             {
-                ViewBag.OptionsBloodGroup = service.GetBloodGroup();
                 var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
                 if (model.BasicDetailId > 0)
                 {
@@ -953,17 +949,6 @@ namespace Web.Controllers
                 }
                 else
                 {
-                    //MRegistration? mRegistration = await context.MRegistration.FindAsync(model.RegistrationId);
-                    //if (mRegistration.ApplyForId == (int)RegistrationType.Officer)
-                    //{
-                    //    ViewBag.OptionsRank = service.GetRank(1);
-                    //}
-                    //else
-                    //{
-                    //    ViewBag.OptionsRank = service.GetRank(2);
-                    //}
-                    ViewBag.OptionsArmedType = service.GetArmedType();
-
                     model.Updatedby = Convert.ToInt32(userId);
                     model.StatusLevel = 0;
                     if (ModelState.IsValid)

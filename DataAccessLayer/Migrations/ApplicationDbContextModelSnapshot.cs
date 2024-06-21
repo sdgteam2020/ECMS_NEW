@@ -1231,6 +1231,7 @@ namespace DataAccessLayer.Migrations
                         .HasColumnType("varchar(36)");
 
                     b.Property<string>("NameAsPerRecord")
+                        .IsRequired()
                         .HasMaxLength(36)
                         .HasColumnType("varchar(36)");
 
@@ -1316,6 +1317,7 @@ namespace DataAccessLayer.Migrations
                         .HasColumnType("varchar(36)");
 
                     b.Property<string>("NameAsPerRecord")
+                        .IsRequired()
                         .HasMaxLength(36)
                         .HasColumnType("varchar(36)");
 
@@ -2579,7 +2581,7 @@ namespace DataAccessLayer.Migrations
 
             modelBuilder.Entity("DataTransferObject.Domain.Master.MRegimental", b =>
                 {
-                    b.HasOne("DataTransferObject.Domain.Master.MArmedType", "MArmedType")
+                    b.HasOne("DataTransferObject.Domain.Master.MArmedType", "Armed")
                         .WithMany()
                         .HasForeignKey("ArmedId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -2592,7 +2594,7 @@ namespace DataAccessLayer.Migrations
 
                     b.Navigation("ApplicationUserUpdate");
 
-                    b.Navigation("MArmedType");
+                    b.Navigation("Armed");
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Master.MRegistration", b =>
@@ -2761,7 +2763,7 @@ namespace DataAccessLayer.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("DataTransferObject.Domain.Master.MRegimental", "Regimental")
+                    b.HasOne("DataTransferObject.Domain.Master.MRegimental", "MRegimental")
                         .WithMany()
                         .HasForeignKey("RegimentalId")
                         .OnDelete(DeleteBehavior.Restrict);
@@ -2785,9 +2787,9 @@ namespace DataAccessLayer.Migrations
 
                     b.Navigation("MApplyFor");
 
-                    b.Navigation("Rank");
+                    b.Navigation("MRegimental");
 
-                    b.Navigation("Regimental");
+                    b.Navigation("Rank");
 
                     b.Navigation("Unit");
                 });
