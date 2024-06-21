@@ -57,7 +57,7 @@ namespace DataTransferObject.Response
         public int RecordOfficeId { get; set; }
         public string? RecordOffice { get; set; }
 
-
+        public int RequestId { get; set; }
 
     }
 }

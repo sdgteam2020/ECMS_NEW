@@ -39,6 +39,9 @@ using BusinessLogicsLayer.Unit;
 using DapperRepo.Core.Constants;
 using System.Text.Json.Nodes;
 using System.IO.Compression;
+using Microsoft.AspNetCore.Http.HttpResults;
+using Common.Logging;
+using BusinessLogicsLayer.TrnLoginLog;
 
 namespace Web.Controllers
 {
@@ -66,14 +69,14 @@ namespace Web.Controllers
         private readonly ILogger<BasicDetailController> _logger;
         private readonly INotificationBL _INotificationBL;
         private readonly IMasterBL _IMasterBL;
-
+        private readonly ITrnLoginLogBL _iTrnLoginLogBL;
         public DateTime dateTimenow;
         public BasicDetailController(IBasicDetailBL basicDetailBL, IMapUnitBL mapUnitBL, IBasicDetailTempBL basicDetailTempBL, IService service, IMapper mapper,
             UserManager<ApplicationUser> userManager, IWebHostEnvironment hostingEnvironment, IDataProtectionProvider dataProtectionProvider,
                               DataProtectionPurposeStrings dataProtectionPurposeStrings, ILogger<BasicDetailController> logger, IStepCounterBL iStepCounterBL, 
                               ITrnFwnBL iTrnFwnBL, ITrnICardRequestBL iTrnICardRequestBL, IDomainMapBL iDomainMapBL
             ,IBasicUploadBL basicUploadBL, IBasicAddressBL basicAddressBL, IBasicinfoBL basicinfoBL, IRankBL rankBL, INotificationBL notificationBL, IMasterBL masterBL
-            )
+           , ITrnLoginLogBL iTrnLoginLogBL)
         {
             this.basicDetailBL = basicDetailBL;
             this.basicDetailTempBL = basicDetailTempBL;
@@ -98,6 +101,7 @@ namespace Web.Controllers
             this.rankBL=rankBL;
             _INotificationBL = notificationBL;
             _IMasterBL = masterBL;
+            _iTrnLoginLogBL = iTrnLoginLogBL;
         }
         private string GetSessionValue()
         {
@@ -1523,56 +1527,7 @@ namespace Web.Controllers
             }
         }
        
-        //[HttpPost]
-        //public async Task<IActionResult> DummyData()
-        //{
-        //    Random rnd1 = new Random();
-        //    String[] first = new String[] {"Yogendra", "Ajay", "Dilshad", "Vijay", "Balbeer", "Hari", "Chandra", "Ram",
-        //                                    "Rahul", "Roy", "Nikhil", "Manoj", "Ankit", "Pradeep", "Vishkrma", "Ushman" };
-        //    String[] last = new String[] {"Kumar", "Gupta", "Garg", "Rajvanshi", "Gujjar", "Singh", "Pal", "Kaushik",
-        //                                      "Patel", "Modi", "Sharma", "Vasisth", "Khan", "Babra", "Hussain", "Tyagi" };
-
-        //    String[] BloodGroup = new string[] { "A+", "A-", "B+", "B-", "O+", "O-", "AB+", "AB-" };
-        //    String[] Rank = new string[] { "Lt", "Capt", "Maj", "Lt Col", "Col", "Brig", "Maj Gen" };
-        //    String[] ArmService = new string[] { "INF", "ARTY", "INT", "EME" };
-        //    String[] IdentityMark = new string[] { "Cut mark on thumb", "Cut mark on left leg", "Cut markon right leg" };
-        //    String[] PlaceOfIssue = new string[] { "New Mandi", "Ring Road", "Mal Road" };
-        //    String[] PermanentAddress = new string[] { "New Mandi", "Ring Road", "Masl Road" };
-        //    DateTime DOB = new DateTime(1980, 1, 1);
-        //    Random rnd = new Random();
-        //    int x = -1;
-        //    int y = -1;
-        //    int z = -1;
-        //    int r = -1;
-        //    int s = -1;
-        //    int i = -1;
-        //    int p = -1;
-        //    int a = -1;
-
-        //    x = rnd.Next(0, first.Length);
-        //    y = rnd.Next(0, last.Length);
-        //    r = rnd.Next(0, Rank.Length);
-        //    s = rnd.Next(0, ArmService.Length);
-        //    i = rnd.Next(0, IdentityMark.Length);
-        //    z = rnd.Next(0, BloodGroup.Length);
-        //    p = rnd.Next(0, PlaceOfIssue.Length);
-        //    a = rnd.Next(0, PermanentAddress.Length);
-
-
-        //    DTOBasicDetailRequest basicDetail = new DTOBasicDetailRequest();
-        //    basicDetail.Name = first[x] + " " + last[y];
-        //    basicDetail.ServiceNo = "IC" + Random.Shared.Next(50000, 99999) + "X";
-        //    basicDetail.IdentityMark = IdentityMark[i];
-        //    basicDetail.DOB = DOB.AddDays(Random.Shared.Next(1, 365));
-        //    basicDetail.Height = Random.Shared.Next(60, 84);
-        //    basicDetail.AadhaarNo = rnd1.Next(1000, 9999).ToString() + " " + rnd1.Next(1000, 9999).ToString() + " " + rnd1.Next(1000, 9999).ToString();
-        //    basicDetail.BloodGroup = BloodGroup[z];
-        //    basicDetail.PlaceOfIssue = PlaceOfIssue[p];
-        //    basicDetail.DateOfIssue = DateTime.Now;
-        //    basicDetail.DateOfCommissioning = DateTime.Now;
-        //    basicDetail.PermanentAddress = "House No.-" + Random.Shared.Next(50, 999) + ", " + PermanentAddress[a];
-        //    return Ok(basicDetail);
-        //}
+        
         public async Task<IActionResult> GetDataByBasicDetailsId(int Id)
         {
            return Json(await basicDetailBL.GetByBasicDetailsId(Id));
@@ -1593,38 +1548,65 @@ namespace Web.Controllers
                 var retdata = await basicDetailBL.GetBesicdetailsByRequestId(Data);
                 string sourceFolderPhotoPhy = Convert.ToString(ForCreateFolderrandom(Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "ExportAFSACCell")));
                 int recoff = 0;
-                List<DTODataExportsResponse> lst=new List<DTODataExportsResponse>();
+                List<DTODataExportsResponse> lst = new List<DTODataExportsResponse>();
                 string recofffolder = "";
+                string recoffphotos = "";
+                string recoffsing = "";
                 int count = 0;
+                string arryRequestId = "";
                 foreach (var data in retdata)
                 {
                     count++;
-                    if (recoff!=data.RecordOfficeId)
+                    if (recoff != data.RecordOfficeId)
                     {
-                        if(recoff!=0)
+                        if (recoff != 0)
                         {
                             var jsonString = JsonConvert.SerializeObject(lst);
                             var jsonde = JsonConvert.DeserializeObject(jsonString);
-                            System.IO.File.WriteAllText(recofffolder+"/Data.json", jsonString);
+                            System.IO.File.WriteAllText(recofffolder + "/Data.json", jsonString);
                         }
 
-                         lst.Clear();
-                         recofffolder = Convert.ToString(CreateFolder(sourceFolderPhotoPhy+"/"+ data.RecordOffice));
+                        lst.Clear();
+                        recofffolder = Convert.ToString(CreateFolder(sourceFolderPhotoPhy + "/" + data.RecordOffice));
+                        recoffphotos = Convert.ToString(CreateFolder(sourceFolderPhotoPhy + "/" + data.RecordOffice + "/Photos"));
+                        recoffsing = Convert.ToString(CreateFolder(sourceFolderPhotoPhy + "/" + data.RecordOffice + "/Signature"));
 
                     }
+
+                    System.IO.File.Copy(Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "Photo") + "/" + data.PhotoImagePath, recoffphotos + "/" + data.ServiceNo + ".png", true);
+                    System.IO.File.Copy(Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "Signature") + "/" + data.SignatureImagePath, recoffsing + "/" + data.ServiceNo + ".png", true);
                     lst.Add(data);
                     recoff = data.RecordOfficeId;
-                    if(count== retdata.Count())
+                    if (count == retdata.Count())
                     {
                         var jsonString = JsonConvert.SerializeObject(lst);
                         var jsonde = JsonConvert.DeserializeObject(jsonString);
                         System.IO.File.WriteAllText(recofffolder + "/Data.json", jsonString);
+
                     }
+                    if(count==1)
+                    arryRequestId = data.RequestId+"";
+                    else
+                     arryRequestId = arryRequestId + "," + data.RequestId;
+
                 }
 
-                CreateZipFromFolder(sourceFolderPhotoPhy, sourceFolderPhotoPhy+".zip");
+                CreateZipFromFolder(sourceFolderPhotoPhy, sourceFolderPhotoPhy + ".zip");
                 //Encrypt.EncryptParameter(jsonde.ToString())
                 string lastFolderName = new DirectoryInfo(sourceFolderPhotoPhy).Name;
+
+
+                DtoSession dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+                var userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                DTODataExported dTODataExported = new DTODataExported();
+                dTODataExported.AspNetUsersId = userId;
+                dTODataExported.UserId = Convert.ToInt32(dtoSession.UserId);
+                dTODataExported.IP = HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
+                dTODataExported.CreatedBy = dtoSession.RankName + " " + dtoSession.Name + " (" + dtoSession.ICNO+")";
+                dTODataExported.CreatedOn = DateTime.Now;
+                dTODataExported.RequestId = arryRequestId;
+                await _iTrnLoginLogBL.AddDataExport(dTODataExported);
+
                 return Json(lastFolderName);
 
 
@@ -1632,7 +1614,7 @@ namespace Web.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(1001, ex, "BasicDetails=>DataExport.");
-                return RedirectToAction("Error", "Error");
+                return Json(KeyConstants.InternalServerError);
             }
         }
         public void CreateZipFromFolder(string sourceFolder, string zipFilePath)

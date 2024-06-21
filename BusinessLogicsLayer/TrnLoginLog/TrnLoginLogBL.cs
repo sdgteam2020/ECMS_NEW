@@ -29,6 +29,11 @@ namespace BusinessLogicsLayer.TrnLoginLog
             return await _iTrnLoginLogDB.Add(Data);
         }
 
+        public async Task<bool> AddDataExport(DTODataExported Data)
+        {
+            return await _iTrnLoginLogDB.AddDataExport(Data);
+        }
+
         public Task<List<DTOLoginLogResponse>> GetAllUserByUnitId(int UnitId)
         {
             return _iTrnLoginLogDB.GetAllUserByUnitId(UnitId);

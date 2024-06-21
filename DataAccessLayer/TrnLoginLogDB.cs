@@ -40,6 +40,7 @@ namespace DataAccessLayer
                 return true;
             }
         }
+
         public async Task<bool> XmlFileDigitalSign(DTOXmlFilesFwdLogRequest Data)
         {
             string query = "";
@@ -103,6 +104,20 @@ namespace DataAccessLayer
             }
         }
 
-       
+        public async Task<bool> AddDataExport(DTODataExported Data)
+        {
+            string query = "";
+
+            using (var connection = _contextDP2.CreateConnection())
+            {
+                //data.MRank.RankAbbreviation
+                //data.MArmedType.Abbreviation
+                //var Ret = await connection.QueryAsync<DTOLoginLogResponse>(query, new { UnitId });
+                connection.Execute("INSERT INTO [dbo].[TrnExported]([AspNetUsersId],[UserId],[IP],[CreatedBy],[CreatedOn],[RequestId]) VALUES (@AspNetUsersId,@UserId,@IP,@CreatedBy,@CreatedOn,@RequestId)", new { Data.AspNetUsersId, Data.UserId, Data.IP, Data.CreatedBy, Data.CreatedOn,Data.RequestId });
+
+
+                return true;
+            }
+        }
     }
 }

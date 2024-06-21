@@ -1131,7 +1131,7 @@ function GetRequestHistory(spnRequestId) {
     });
 }
 function DataExport(Data) {
-    alert($("#Isspnjcoor").html())
+   
     var userdata =
     {
         "Ids": Data,
@@ -1148,7 +1148,7 @@ function DataExport(Data) {
             if (response != "null" && response != null) {
                 if (response == InternalServerError) {
                     Swal.fire({
-                        text: errormsg
+                        text: "Data Not Export Internal Server Error"
                     });
                 }
 

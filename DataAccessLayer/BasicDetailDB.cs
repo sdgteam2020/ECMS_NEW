@@ -1016,7 +1016,7 @@ namespace DataAccessLayer
                                 " trnadd.State,trnadd.District,trnadd.PS,trnadd.PO,trnadd.Tehsil,trnadd.Village,trnadd.PinCode," +
                                 " trnup.SignatureImagePath,trnup.PhotoImagePath,IdenMark1,IdenMark2,AadhaarNo,Height,bld.BloodGroup," +
                                 " regi.Abbreviation RegimentalName,Muni.UnitName,uni.UnitMapId UnitId,icardreq.TypeId,icardreq.RegistrationId," +
-                                " ran.RankId,ran.RankAbbreviation RankName,arm.Abbreviation ArmedName,trnadd.AddressId,trnup.UploadId,trninfo.InfoId,MICardType.Name ICardType,reco.RecordOfficeId,reco.Name RecordOffice from BasicDetails bas" +
+                                " ran.RankId,ran.RankAbbreviation RankName,arm.Abbreviation ArmedName,trnadd.AddressId,trnup.UploadId,trninfo.InfoId,MICardType.Name ICardType,reco.RecordOfficeId,reco.Name RecordOffice,icardreq.RequestId from BasicDetails bas" +
                                 " inner join TrnAddress trnadd on trnadd.BasicDetailId=bas.BasicDetailId" +
                                 " inner join TrnUpload trnup on trnup.BasicDetailId=bas.BasicDetailId" +
                                 " inner join TrnIdentityInfo trninfo on trninfo.BasicDetailId=bas.BasicDetailId" +
@@ -1039,7 +1039,7 @@ namespace DataAccessLayer
                          " ran.RankId,ran.RankAbbreviation RankName,arm.Abbreviation ArmedName,trnadd.AddressId,trnup.UploadId,trninfo.InfoId," +
                          " MICardType.Name ICardType," +
                          " CASE WHEN ran.orderby<=4 THEN '126'ELSE reco.RecordOfficeId END RecordOfficeId," +
-                         " CASE WHEN ran.orderby<=4 THEN 'MP 6A' ELSE reco.Name END RecordOffice" +
+                         " CASE WHEN ran.orderby<=4 THEN 'MP 6A' ELSE reco.Name END RecordOffice,icardreq.RequestId" +
                          " from BasicDetails bas " +
                          " inner join TrnAddress trnadd on trnadd.BasicDetailId=bas.BasicDetailId " +
                          " inner join TrnUpload trnup on trnup.BasicDetailId=bas.BasicDetailId " +
