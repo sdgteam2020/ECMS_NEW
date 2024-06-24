@@ -299,3 +299,4 @@ AppPackages/
 *.jpg
 /Web/Web.csproj.user
 /Web/Web.csproj.user
+/Web/wwwroot/WriteReadData/ExportAFSACCell
