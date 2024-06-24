@@ -1340,7 +1340,7 @@ namespace DataAccessLayer
 
                         " select @_2ndLevelApproved=COUNT(distinct fwd.RequestId) from TrnFwds fwd " +
                         " inner join TrnStepCounter cou on fwd.RequestId=cou.RequestId and cou.ApplyForId=@applyForId " +
-                        " where FromAspNetUsersId=@UserId and fwd.IsComplete=1 and fwd.FwdStatusId=2 and TypeId=3" +
+                        " where FromAspNetUsersId=@UserId and fwd.FwdStatusId=2 and TypeId=3" +
 
                         " select @_2ndLevelReject=COUNT(distinct fwd.RequestId) from TrnFwds fwd " +
                         " inner join TrnStepCounter cou on fwd.RequestId=cou.RequestId and cou.ApplyForId=@applyForId " +
@@ -1352,7 +1352,7 @@ namespace DataAccessLayer
 
                         " select @_3rdLevelApproved=COUNT(distinct fwd.RequestId) from TrnFwds fwd " +
                         " inner join TrnStepCounter cou on fwd.RequestId=cou.RequestId and cou.ApplyForId=@applyForId " +
-                        " where FromAspNetUsersId=@UserId and TypeId=4" +
+                        " where FromAspNetUsersId=@UserId and fwd.FwdStatusId=2 and TypeId=4" +
 
                         " select @_3rdLevelReject=COUNT(distinct fwd.RequestId)  from TrnFwds fwd " +
                         " inner join TrnStepCounter cou on fwd.RequestId=cou.RequestId and cou.ApplyForId=@applyForId " +
