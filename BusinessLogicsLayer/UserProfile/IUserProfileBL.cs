@@ -19,6 +19,7 @@ namespace BusinessLogicsLayer.Master
         public Task<bool?> FindByArmyNoWithUserId(string ArmyNo, int UserId);
         public Task<DTOProfileResponse?> GetProfileByUserId(int UserId);
         public Task<DTOUserProfileResponse> GetByArmyNo(string ArmyNo, int UserId);
+        public Task<MUserProfile> GetByIsWithoutTokenApply(int UserId);
         public Task<List<MUserProfile>> GetByMArmyNo(string ArmyNo, int UserId);
         public Task<DTOProfileResponse?> GetUserProfileByArmyNo(string ArmyNo);
         public Task<List<DTOUserProfileResponse>> GetAll(int DomainId, int UserId);

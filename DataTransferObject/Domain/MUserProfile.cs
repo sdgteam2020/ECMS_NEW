@@ -64,5 +64,6 @@ namespace DataTransferObject.Domain
         [RegularExpression(@"^[\w\&\.\-\; ]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
         public string? ReasonTokenWaiver { get; set; }
         public bool IsTokenWaiver { get; set; } = false;
+        public bool IsWithoutTokenApply { get; set; } = true;
     }
 }
