@@ -234,11 +234,11 @@ function GetTokenDetails(CRL_OCSPCheck, CRL_OCSPMsg, Remarks, Thumbprint, Status
                             $("#" + thumbprint).val(response.Thumbprint);
                         $("#txtspnIsToken").val("Ok");
                      
-                        let foo = prompt('Enter Army No');
-                        let bar = confirm('Confirm or deny');
-                        $("#" + txt).val(foo);
+                        //let foo = prompt('Enter Army No');
+                        //let bar = confirm('Confirm or deny');
+                        //$("#" + txt).val(foo);
 
-                        //$("#" + txt).val("IC-00002");
+                        $("#" + txt).val(response.ArmyNo.trim());
                     }
 
                    

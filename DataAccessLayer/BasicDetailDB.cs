@@ -1038,7 +1038,7 @@ namespace DataAccessLayer
                          " regi.Abbreviation RegimentalName,Muni.UnitName,uni.UnitMapId UnitId,icardreq.TypeId,icardreq.RegistrationId, " +
                          " ran.RankId,ran.RankAbbreviation RankName,arm.Abbreviation ArmedName,trnadd.AddressId,trnup.UploadId,trninfo.InfoId," +
                          " MICardType.Name ICardType," +
-                         " CASE WHEN ran.orderby<=4 THEN '126'ELSE reco.RecordOfficeId END RecordOfficeId," +
+                         " CASE WHEN ran.orderby<=4 THEN '126' ELSE reco.RecordOfficeId END RecordOfficeId," +
                          " CASE WHEN ran.orderby<=4 THEN 'MP 6A' ELSE reco.Name END RecordOffice,icardreq.RequestId" +
                          " from BasicDetails bas " +
                          " inner join TrnAddress trnadd on trnadd.BasicDetailId=bas.BasicDetailId " +
