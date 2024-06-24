@@ -92,7 +92,7 @@ namespace DataTransferObject.Domain.Model
         public MICardType? MICardType { get; set; }
 
         [ForeignKey("MArmedType")]
-        public byte? ArmedId { get; set; }
+        public byte ArmedId { get; set; }
         public MArmedType? Armed { get; set; }
     }
 }
