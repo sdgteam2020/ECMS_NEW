@@ -9,10 +9,33 @@
     visibility:hidden;
 }
 @media print {
-   
+    @page {
+        size: A4;
+        margin: 1cm;
+    }
+    .no-print {
+        display: none; /* Hide elements with the no-print class */
+    }
+
+    .yes-print {
+        display: block;
+    }
+    
     .section-to-print {
         visibility: visible;
-       
+    }
+
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+    }
+    .page-break-after {
+        page-break-after: always !important;
+    }
+
+    .page-break-before {
+        page-break-before: always !important;
     }
 }
 .text-hrms {
