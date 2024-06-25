@@ -397,6 +397,10 @@ namespace Web.Controllers
                 return View("BasicDetailNotFound", decryptedId.ToString());
             }
         }
+        public async Task<IActionResult> GetICardPrintPreviewByRequestId(int RequestId)
+        {
+            return Json(await basicDetailBL.GetByBasicDetailsId(RequestId));
+        }
         [HttpGet]
         public async Task<ActionResult> InaccurateData(string Id)
         {
