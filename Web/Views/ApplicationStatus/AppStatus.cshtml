@@ -73,19 +73,21 @@
                                                         @* <h1 class="font-weight-bold text-center mb-0 mt-3 logo"><color style="color: #D97904">Login</color></h1>*@
 
                                                         <p class="font-weight-bold font-weight-700 text-center mb-4 mt-1"><h4>Enter Application TrackingId.</h4></p>
-                                                        <input type="text" class="form-control" value="240719890329" placeholder="Enter TrackingId" required maxlength="12" name="TrackingId" id="TrackingId" />
+                                                    <input type="text" class="form-control" value="150619860899" placeholder="Enter TrackingId" required maxlength="12" name="TrackingId" id="TrackingId" />
                                                         <span>TrackingId Exm.: DOB(12012024) and  Last 4 Digit of AadharNo (120120241235)</span>
                                                         <input type="button" id="btnTracking" class="btn btn-primary text-uppercase py-2 fs-5 w-100 mt-2" value="Track" />
 
                                                     </div>
                                                     @*  </form> *@
 
-                                                   
+                                               
                                                 </div>
+                                            <div class="ipaddress d-none" >@ViewBag.IP</div>
+                                            <div class="watermark yes-print">@ViewBag.IP</div>
                                             <div class="">
                                                 <div class="row ">
                                                     <div class="col-md-12 mb-4 mt-4 text-center d-print-none TrackingIdDetails d-none">
-                                                        <button class="btn btn-primary" onclick="window.print()">Print</button>
+                                                        <button class="btn btn-primary" id="btn-printtracking">Print</button>
                                                     </div>
                                                     <div class="col-md-12 TrackingIdDetails d-none">
                                                         <div class="card divicardbg minheight">
