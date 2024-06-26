@@ -142,7 +142,7 @@ function GetDataFromBasicDetails(Id) {
 
     };
     $.ajax({
-        url: '/ApplicationStatus/GetDataByBasicDetailsId',
+        url: '/ApplicationStatus/GetBasicDetailByRequestId',
         contentType: 'application/x-www-form-urlencoded',
         data: userdata,
         type: 'POST',

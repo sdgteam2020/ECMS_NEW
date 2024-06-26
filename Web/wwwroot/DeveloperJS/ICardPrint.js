@@ -40,6 +40,39 @@ function GetICardPrintPreviewByRequestId(RequestId) {
         }
     })
 }
+function GetBasicDetailByRequestId(RequestId) {
+    var userdata = {
+        "RequestId": RequestId,
+    };
+    $.ajax({
+        url: '/BasicDetail/GetBasicDetailByRequestId',
+        contentType: 'application/x-www-form-urlencoded',
+        data: userdata,
+        type: 'POST',
+
+        success: function (response) {
+            if (response != "null" && response != null) {
+                $("#basicphotosVP").attr('src', "/WriteReadData/photo/" + response.PhotoImagePath);
+                $("#BasicsingVP").attr('src', "/WriteReadData/Signature/" + response.SignatureImagePath);
+                $("#lblvpName").html(response.Name);
+                $("#lblvpRank").html(response.RankName);
+                $("#lblvparm").html(response.ArmedName);
+                $("#lblvpArmyNo").html(response.ServiceNo);
+                $("#lblvpMarks").html(response.IdenMark1);
+                $("#lblvpdob").html(DateFormateMMMM_dd_yyyy(response.DOB));
+                $("#lblvpheight").html(response.Height);
+                $("#lblvpadhar").html(response.AadhaarNo);
+                $("#lblvpBloodGroup").html(response.BloodGroup);
+                $("#lblvppoi").html(response.PlaceOfIssue);
+                $("#lblvpdoi").html(DateFormateMMMM_dd_yyyy(response.DateOfIssue));
+                $("#lblvpissuA").html(response.IssuingAuthorityName);
+                $("#lblvpdateo").html(DateFormateMMMM_dd_yyyy(response.DateOfCommissioning));
+                $("#lblvpaddress").html(response.Village + ',' + response.Tehsil + ',' + response.PO + ',' + response.PS + ',' + response.District + ',' + response.State + '' + response.PinCode);
+                $("#BasicDetailViewPurpose").modal('show');
+            }
+        }
+    })
+}
 function printDiv() {
 
     var divToPrint = document.getElementById('ICardPrint');

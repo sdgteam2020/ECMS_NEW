@@ -925,7 +925,7 @@ namespace DataAccessLayer
 
         }
          
-        public async Task<BasicDetailCrtAndUpdVM> GetByBasicDetailsId(int RequestId)
+        public async Task<BasicDetailCrtAndUpdVM> GetBasicDetailByRequestId(int RequestId)
         {
             //DTOBasicDetailRequest dd = new DTOBasicDetailRequest();
             //dd.MRank.RankAbbreviation = "";
@@ -966,7 +966,41 @@ namespace DataAccessLayer
 
             catch (Exception ex)
             {
-                _logger.LogError(1001, ex, "BasicDetailDB->GetByBasicDetailsId");
+                _logger.LogError(1001, ex, "BasicDetailDB->GetBasicDetailByRequestId");
+                return null;
+            }
+        }
+        public async Task<BasicDetailCrtAndUpdVM> GetBasicDetailById(int BasicDetailId)
+        {
+            string query = "select bas.*," +
+                            " issaut.Name IssuingAuthorityName,trnadd.State,trnadd.District,trnadd.PS,trnadd.PO,trnadd.Tehsil,trnadd.Village,trnadd.PinCode," +
+                            " trnup.SignatureImagePath,trnup.PhotoImagePath,IdenMark1,IdenMark2,AadhaarNo,Height,bld.BloodGroup,bld.BloodGroupId," +
+                            " regi.Abbreviation RegimentalName,Muni.UnitName,uni.UnitMapId UnitId," +
+                            " ran.RankId,ran.RankAbbreviation RankName,arm.Abbreviation ArmedName,trnadd.AddressId,trnup.UploadId,trninfo.InfoId from BasicDetails bas" +
+                            " inner join MIssuingAuthority issaut on issaut.IssuingAuthorityId=bas.IssuingAuthorityId" +
+                            " inner join TrnAddress trnadd on trnadd.BasicDetailId=bas.BasicDetailId" +
+                            " inner join TrnUpload trnup on trnup.BasicDetailId=bas.BasicDetailId" +
+                            " inner join TrnIdentityInfo trninfo on trninfo.BasicDetailId=bas.BasicDetailId" +
+                            " inner join MBloodGroup bld on bld.BloodGroupId=trninfo.BloodGroupId" +
+                            " inner join MRank ran on ran.RankId=bas.RankId" +
+                            " inner join MArmedType arm on arm.ArmedId=bas.ArmedId" +
+                            " inner join MapUnit uni on uni.UnitMapId=bas.UnitId" +
+                            " inner join MUnit Muni on Muni.UnitId=uni.UnitId" +
+                            " left join MRegimental regi on regi.RegId=bas.RegimentalId" +
+                            " where bas.BasicDetailId=@BasicDetailId";
+            try
+            {
+                using (var connection = _contextDP.CreateConnection())
+                {
+                    var BasicDetailList = await connection.QueryAsync<BasicDetailCrtAndUpdVM>(query, new { BasicDetailId });
+
+                    return BasicDetailList.SingleOrDefault();
+                }
+            }
+
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "BasicDetailDB->GetBasicDetailByRequestId");
                 return null;
             }
         }
