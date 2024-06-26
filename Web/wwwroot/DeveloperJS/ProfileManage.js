@@ -133,6 +133,10 @@ function BindData() {
                             listItem += "<td class='align-middle'><span><span class='badge badge-pill badge-success' id='isToken'>Yes</span></span></td>";
                         else
                             listItem += "<td class='align-middle'><span><span class='badge badge-pill badge-danger' id='isToken'>No</span></span></td>";
+                        if (response[i].IsWithoutTokenApply == true)
+                            listItem += "<td class='align-middle'><span><span class='badge badge-pill badge-success' id='spnIsWithoutTokenApply'>Yes</span></span></td>";
+                        else
+                            listItem += "<td class='align-middle'><span><span class='badge badge-pill badge-danger' id='spnIsWithoutTokenApply'>No</span></span></td>";
 
                         listItem += "<td class='align-middle'><span id='btnedit'><button type='button' class='cls-btnedit btn btn-icon btn-round btn-warning mr-1'><i class='fas fa-edit'></i></button></span></td>";
 
@@ -209,6 +213,13 @@ function BindData() {
                         else {
                             $("#txtMessage").val("");
                         }
+                        if ($(this).closest("tr").find("#spnIsWithoutTokenApply").html() == 'Yes') {
+                            $("#IsWithoutTokenApplyyes").prop("checked", true);
+                        }
+                        else {
+                            $("#IsWithoutTokenApplyno").prop("checked", true);
+                        }
+
 
                         $("#btnProfileAdd").val("Update");
                         $("#AddNewProfile").modal('show');
@@ -269,6 +280,7 @@ function Save() {
             "IsTokenWaiver": $('input:radio[name=IsTokenWaiver]:checked').val(),
             "ReasonTokenWaiver": $("#txtMessage").val().length > 0 ? $("#txtMessage").val() : null,
             "IsToken": $('input:radio[name=IsToken]:checked').val(),
+            "IsWithoutTokenApply": $('input:radio[name=IsWithoutTokenApply]:checked').val(),
 
         }, //get the search string
         success: function (result) {

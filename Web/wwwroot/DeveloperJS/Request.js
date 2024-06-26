@@ -280,7 +280,7 @@ function GetByArmyNoIsToken(ArmyNo) {
 
     };
     $.ajax({
-        url: '/UserProfile/GetByArmyNoOrAspnetuserId',
+        url: '/UserProfile/GetByArmyNoIsWithoutTokenApply',
         contentType: 'application/x-www-form-urlencoded',
         data: userdata,
         type: 'POST',
@@ -298,8 +298,8 @@ function GetByArmyNoIsToken(ArmyNo) {
                 }
 
                 else {
-                    isToken = response.IsToken;
-                    if (response.IsToken == false) {
+                    isToken = response.IsWithoutTokenApply;
+                    if (response.IsWithoutTokenApply == false) {
                         $("#btntokenrefresh").addClass("d-none");
                         $("#txtApplyForArmyNo").removeClass("d-none");///for bypass for off
                     }

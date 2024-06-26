@@ -1,4 +1,12 @@
-﻿function GetICardPrintPreviewByRequestId(RequestId) {
+﻿$(document).ready(function () {
+
+$("#btn-i-card-print").click(function () {
+    var datef2 = new Date();
+    $(".watermark").html($("#IpaddresGloble").html() + ' ' + DateFormateddMMyyyyhhmmss(datef2))
+    window.print();
+});
+});
+function GetICardPrintPreviewByRequestId(RequestId) {
     var userdata =
     {
         "RequestId": RequestId,

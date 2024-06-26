@@ -1,11 +1,16 @@
 ﻿$(document).ready(function () {
 
     $(".TrackingIdDetails").addClass("d-none");
+   
     $("#btnTracking").on("click", function () {
         
         GetRequestHistoryByTrackingId($("#TrackingId").val());
     });
-
+    $("#btn-printtracking").click(function () {
+        var datef2 = new Date();
+        $(".watermark").html($(".ipaddress").html() + ' ' + DateFormateddMMyyyyhhmmss(datef2))
+        window.print();
+    });
 });
 function GetRequestHistoryByTrackingId(TrackingId) {
    

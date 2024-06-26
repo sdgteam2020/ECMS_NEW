@@ -277,6 +277,7 @@
         var RoleName = dtoSession != null ? dtoSession.RoleName : "User";
 
     }
+    <div class="watermark yes-print"></div>
     <div class="d-none1" id="IpaddresGloble"></div>
     <div class="d-none" id="postingouthtml"></div>
     <div class="d-none" id="content-container"></div>
@@ -1031,13 +1032,13 @@
 
 <div class="modal fade right" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
+        <div class="modal-content" >
             <div class="modal-header">
                 <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 <h4 class="modal-title" id="lblHistory">I-Card History</h4>
             </div>
 
-            <div class="modal-body">
+            <div class="modal-body" id="exampleModal1111">
                 <h5 class="text-center badge badge-success">Step Wise I Card Request History</h5>
                 <div class="timeline timeline-xs" id="RequestHistory">
                     <!-- Timeline Item 1-->
@@ -1072,6 +1073,7 @@
                     </div> *@
 
                 </div>
+              
             </div>
 
         </div><!-- modal-content -->
@@ -1106,15 +1108,14 @@
         </div>
     </div>
 </div>
-
-<div class="modal fade right" id="ICardPrint" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" style="width:1050px;margin:auto;">
-    <div class="modal-dialog modal-xl" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
+<div class="modal fade right " id="ICardPrint" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl " role="document">
+        <div class="modal-content ">
+            <div class="modal-header ">
                 <button type="button" class="close no-print" data-bs-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 <h4 class="modal-title no-print" id="lblICardPrint">I-Card Print Preview</h4>
             </div>
-            <div class="modal-body">
+            <div class="modal-body section-to-print-popup">
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-12">
@@ -1125,7 +1126,7 @@
                                         <div class="col-md-12">
                                             <div class="card">
                                                 <div class="row p-4">
-                                                    <div class="col-md-12">
+                                                    <div class="col-sm-12">
                                                         <div style="line-height:0 !important">
                                                             <p style="text-align:left;" class="f19 font-weight-600">
                                                                 भारतीय सशस्त्र सेनाएँ पहचान कार्ड
@@ -1133,13 +1134,14 @@
                                                             </p>
                                                         </div>
                                                     </div>
-                                                    <div class="col-md-12">
+                                                    <div class="col-sm-12">
                                                         <div class="d-flex f19 font-weight-800"> INDIAN ARMED FORCES INDENTITY CARD</div>
                                                     </div>
-                                                    <div class="col-md-6 mt-4">
+                                                    <div class="col-sm-6">
                                                         <img class="PhotoImagePath_ICardPrint" onerror="this.src='/Images/user4.png'" height="200" width="200" />
                                                     </div>
-                                                    <div class="col-md-6 mt-4">
+                                                    <div class="col-sm-4">
+                                                       
                                                         <span class="fw-bold text-uppercase" id="Name_ICardPrint"></span><br />
                                                         <span class="fw-bold text-uppercase" id="RankName_ICardPrint"></span><br />
                                                         <span class="fw-bold text-uppercase" id="ArmedName_ICardPrint"></span><br />
@@ -1147,21 +1149,21 @@
                                                         <span class="fw-bold" style="line-height:1">IDENTIFICATION MARK</span><br />
                                                         <span class="font-weight-500 text-uppercase" id="IdenMark1_ICardPrint"></span>
                                                     </div>
-                                                    <div class="col-md-12">
+                                                    <div class="col-sm-12">
                                                         <p class="font-weight-500 f16">रक्षा मंत्रालय, भारत सरकार MINISTRY OF DEFENCE, GOVERNMENT OF INDIA</p>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-md-12">
+                                        <div class="col-sm-12">
                                             <div class="card">
                                                 <div class="row p-4">
-                                                    <div class="col-md-2 justify-content-center">
+                                                    <div class="col-sm-2 justify-content-center">
                                                         <div class="mt-4 ml-3"><img src="~/writereaddata/images/indian-army-logo.jpg" height="60" width="50" /></div>
                                                         <div class="mt-4 ml-3"><img class="PhotoImagePath_ICardPrint" onerror="this.src='/Images/Signature.png'" height="60" width="50" /></div>
                                                         <div class="mt-4 ml-3"><img src="~/images/asset/hologrambg.png" height="60" width="50" /></div>
                                                     </div>
-                                                    <div class="col-md-3">
+                                                    <div class="col-sm-3">
                                                         <div class="">
                                                             <div class="f15 font-weight-700">DATE OF BIRTH</div>
                                                             <span id="DOB_ICardPrint"></span>
@@ -1184,7 +1186,7 @@
                                                             <span id="DateOfIssue_ICardPrint"></span>
                                                         </div>
                                                     </div>
-                                                    <div class="col-md-7">
+                                                    <div class="col-sm-7">
                                                         <div class="f13 font-weight-400">
                                                             भारत सरकार की सम्पति। अहस्तान्तरणीय। गुम हो जाने पर निकटतम थाने और अपनी यूनिट को रिपोर्ट करें। सेवा की समाप्ति पर ओ.सी. यूनिट को लौटा दें।
                                                         </div>
@@ -1198,26 +1200,27 @@
                                                             FINDERS TO DROP THIS LETTER BOX POSTAGE FREE TO ARMY/NAVAL/AIR HEAD QUARTERS, NEW DELHI 110011 OR HANDOVER TO THE NEAREST MILITARY UNIT OR POLICE STATION.
                                                         </div>
                                                     </div>
-                                                    <div class="col-md-3 mt-2">
+                                                    <div class="col-sm-3 mt-2">
                                                         <span class="font-weight-800 border border-dark p-2">1545485</span>
                                                     </div>
-                                                    <div class="col-md-3 mt-2">
+                                                    <div class="col-sm-3 mt-2">
                                                         <span class="font-weight-800 border border-dark p-2">SIGNATURE</span>
                                                     </div>
-                                                    <div class="col-md-6 text-center mt-2 p-2 border border-dark" style="background-color:white">
+                                                    <div class="col-sm-6 text-center mt-2 p-2 border border-dark" style="background-color:white">
                                                         <span class="p-2"><img class="SignaturePath_ICardPrint" onerror="this.src='/Images/Signature.png'" height="30" width="80" /></span>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-md-12 mb-4 text-center">
-                                            <button class="btn btn-primary d-print-none" onclick="printDiv();">Print</button>
+                                        <div class="col-sm-12 mb-4 text-center">
+                                            <button class="btn btn-primary d-print-none" id="btn-i-card-print">Print</button>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+                   
                 </div>
             </div>
 
