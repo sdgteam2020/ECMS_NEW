@@ -21,6 +21,7 @@ namespace DataTransferObject.Response
         public int Id { get; set; }
         public string? DomainId { get; set; }
         public bool IsTokenWaiver { get; set; }
+        public bool IsWithoutTokenApply { get; set; }
         public string? ReasonTokenWaiver { get; set; }
     }
 }

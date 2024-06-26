@@ -39,5 +39,15 @@ body{
     .page-break-before {
         page-break-before: always !important;
     }
-
+    .watermark {
+        position: fixed;
+        bottom:40%;
+        transform: rotate(310deg);
+        opacity: 0.2;
+        font-size: 60px;
+        color: #ff0000;
+        z-index: 9999;
+        pointer-events: none;
+        white-space: nowrap;
+    }
 }

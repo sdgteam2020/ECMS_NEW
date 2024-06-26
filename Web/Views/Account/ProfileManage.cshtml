@@ -78,6 +78,7 @@
                                 <th class="nowrap">Arms / Service</th>
                                 <th class="nowrap">Token Waiver</th>
                                 <th class="nowrap">Token Required </th>
+                                <th class="nowrap">Apply For I-Card Without Token </th>
                                 <th class="noExport nowrap">Action</th>
                             </tr>
                         </thead>
@@ -183,6 +184,25 @@
                                         </label>
                                     </div>
                                     <span class="text-danger field-validation-valid" id="IsToken-error" data-valmsg-for="IsToken" data-valmsg-replace="true"></span>
+                                </div>
+                            </div>
+
+                            <div class="form-group row mb-2">
+                                <label class="col-form-label col-sm-4 fw-bold">Apply For I-Card Without Token<i class="fas fa-asterisk mand1"></i></label>
+                                <div class="col-sm-8">
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="IsWithoutTokenApply" value="true" id="IsWithoutTokenApplyyes" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-regex-pattern="^[a-zA-Z]*$">
+                                        <label class="form-check-label" for="IsWithoutTokenApplyyes">
+                                            Yes
+                                        </label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="IsWithoutTokenApply" value="false" id="IsWithoutTokenApplyno" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-regex-pattern="^[a-zA-Z]*$">
+                                        <label class="form-check-label" for="IsWithoutTokenApplyno">
+                                            No
+                                        </label>
+                                    </div>
+                                    <span class="text-danger field-validation-valid" id="IsWithoutTokenApply-error" data-valmsg-for="IsWithoutTokenApply" data-valmsg-replace="true"></span>
                                 </div>
                             </div>
                             <div class="col-sm-12 text-right">

@@ -1399,6 +1399,7 @@ namespace DataAccessLayer
                                                ArmyNo = up.ArmyNo,
                                                Name = up.Name,
                                                IsToken=up.IsToken,
+                                               IsWithoutTokenApply = up.IsWithoutTokenApply,
                                                MobileNo = up.MobileNo,
                                                IsTokenWaiver=up.IsTokenWaiver,
                                                ReasonTokenWaiver =up.ReasonTokenWaiver,
@@ -1409,6 +1410,7 @@ namespace DataAccessLayer
                                                RankAbbreviation=rk.RankAbbreviation,
                                                Id = u.Id,
                                                DomainId = u.DomainId,
+
                                            }).Take(200).ToListAsync();
                     return allrecord;
                 }
@@ -1428,6 +1430,7 @@ namespace DataAccessLayer
                                                ArmyNo = up.ArmyNo,
                                                Name = up.Name,
                                                IsToken = up.IsToken,
+                                               IsWithoutTokenApply = up.IsWithoutTokenApply,
                                                MobileNo = up.MobileNo,
                                                IsTokenWaiver = up.IsTokenWaiver,
                                                ReasonTokenWaiver = up.ReasonTokenWaiver,
@@ -1457,6 +1460,7 @@ namespace DataAccessLayer
                                                ArmyNo = up.ArmyNo,
                                                Name = up.Name,
                                                IsToken = up.IsToken,
+                                               IsWithoutTokenApply = up.IsWithoutTokenApply,
                                                MobileNo = up.MobileNo,
                                                IsTokenWaiver = up.IsTokenWaiver,
                                                ReasonTokenWaiver = up.ReasonTokenWaiver,
@@ -1486,6 +1490,7 @@ namespace DataAccessLayer
                                                ArmyNo = up.ArmyNo,
                                                Name = up.Name,
                                                IsToken = up.IsToken,
+                                               IsWithoutTokenApply = up.IsWithoutTokenApply,
                                                MobileNo = up.MobileNo,
                                                IsTokenWaiver = up.IsTokenWaiver,
                                                ReasonTokenWaiver = up.ReasonTokenWaiver,

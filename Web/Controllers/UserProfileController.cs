@@ -274,7 +274,22 @@ namespace Web.Controllers
             }
 
         }
+        public async Task<IActionResult> GetByArmyNoIsWithoutTokenApply(string ArmyNo)
+        {
+            try
+            {
+                
+                 int userid = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                MUserProfile dTOUserProfileResponse = await _userProfileBL.GetByIsWithoutTokenApply(userid);
+                
+                return Json(dTOUserProfileResponse);
+            }
+            catch (Exception ex)
+            {
+                return Json(KeyConstants.InternalServerError);
+            }
 
+        }
         [Authorize]
         public async Task<IActionResult> GetProfileByUserId(int UserId)
         {

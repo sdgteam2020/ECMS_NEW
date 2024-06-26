@@ -37,6 +37,7 @@ namespace Web.Controllers
             //}
 
             //return View(dTOApplicationTrack);
+           ViewBag.IP=HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
             return View();
         }
         public async Task<IActionResult> GetRequestHistoryByTrackingId(string TrackingId)

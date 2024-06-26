@@ -1022,5 +1022,37 @@ namespace DataAccessLayer
                 return BasicDetailList.ToList();
             }
         }
+
+        public async Task<MUserProfile> GetByIsWithoutTokenApply(int UserId)
+        {
+            try { 
+            string query = "SELECT prof.IsWithoutTokenApply" +
+                                " from UserProfile prof " +
+                                " inner join MRank ran on prof.RankId = ran.RankId " +
+                                " inner join TrnDomainMapping trnd  on trnd.UserId = prof.UserId " +
+                                " inner join AspNetUserRoles maprole on maprole.UserId=trnd.AspNetUsersId" +
+                                " inner join AspNetRoles roles on roles.Id=maprole.RoleId" +
+                                " inner join MAppointment appt on appt.ApptId=trnd.ApptId" +
+                                " left join MapUnit mapu on mapu.UnitMapId = trnd.UnitId " +
+                                " left join MUnit munit on munit.UnitId = mapu.UnitId " +
+                                " left join AspNetUsers usermodify on usermodify.Id=trnd.MappedBy " +
+                                " left join AspNetUsers users on trnd.AspNetUsersId = users.Id" +
+                                " where trnd.AspNetUsersId=@UserId";
+            using (var connection = _contextDP.CreateConnection())
+            {
+                var BasicDetailList = await connection.QueryAsync<MUserProfile>(query, new { UserId });
+                int sno = 1;
+
+                return BasicDetailList.FirstOrDefault();
+
+            }
+
+        }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "UserProfileDB->GetByIsWithoutTokenApply");
+                return null; 
+            }
+}
     }
 }
