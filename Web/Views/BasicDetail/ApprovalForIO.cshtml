@@ -1,4 +1,18 @@
 ﻿@model List<BasicDetailVM>
+<link href="~/css/popupprintcss.css" rel="stylesheet" />
+<style>
+    .modal.left .modal-dialog, .modal.right .modal-dialog {
+        position: fixed;
+        margin: auto;
+        width: 700px;
+        height: 100%;
+        text-align: left;
+        -webkit-transform: translate3d(0%, 0, 0);
+        -ms-transform: translate3d(0%, 0, 0);
+        -o-transform: translate3d(0%, 0, 0);
+        transform: translate3d(0%, 0, 0);
+    }
+</style>
 <header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
     <div class="containerMain">
         <div class="page-header-content pt-4">
@@ -132,7 +146,7 @@
                                             </td>
                                         }
                                         <td>@item.Sno</td>
-                                        <td class="ServiceNo">@item.ServiceNo</td>
+                                        <td class="ServiceNo"><a href="#" onclick="GetBasicDetailByRequestId(@(@item.RequestId));event.preventDefault();">@item.ServiceNo</a></td>
                                         <td class="PersName">@item.RankName @item.Name</td>
                                         <td class="UnitName">@item.UnitName</td>
                                         
@@ -146,7 +160,8 @@
                                         <td class="noExport">
                                             <div class="d-flex p-2">
 
-                                                <a asp-controller="BasicDetail" asp-action="View" asp-route-Id="@item.EncryptedRequestId" class="btn btn-icon btn-round btn-primary mr-1"><i class="fa fa-print mt-2"></i></a>
+                                                @* <a asp-controller="BasicDetail" asp-action="View" asp-route-Id="@item.EncryptedRequestId" class="btn btn-icon btn-round btn-primary mr-1"><i class="fa fa-print mt-2"></i></a> *@
+                                                <button class="btn btn-icon btn-round btn-primary mr-2" onclick="GetICardPrintPreviewByRequestId(@(@item.RequestId))"><i class="fa fa-print mt-2"></i></button>
                                                 <spna class="spnBasicDetailId d-none">@item.BasicDetailId</spna>
                                                 <spna class="spnTrnFwdId d-none">@item.IsTrnFwdId</spna>
                                                 <spna class="spnRequestId d-none">@item.RequestId</spna>
@@ -177,6 +192,7 @@
 @section Scripts{
     <script asp-src-include="~/js/CustomScript.js"></script>
     <script asp-src-include="~/developerjs/fwdrecord.js"></script>
+    <script asp-src-include="~/developerjs/ICardPrint.js"></script>
     <script asp-src-include="~/developerjs/token.js"></script>
     <script asp-src-include="~/developerjs/mtables.js"></script>
 }@*

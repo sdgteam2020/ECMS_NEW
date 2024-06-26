@@ -374,7 +374,7 @@ namespace Web.Controllers
             
             
            // BasicDetail? basicDetail = await basicDetailBL.Get(decryptedIntId);
-            BasicDetailCrtAndUpdVM? basicDetailCrtAndUpdVM = await basicDetailBL.GetByBasicDetailsId(decryptedIntId);
+            BasicDetailCrtAndUpdVM? basicDetailCrtAndUpdVM = await basicDetailBL.GetBasicDetailByRequestId(decryptedIntId);
             if (basicDetailCrtAndUpdVM != null)
             {
                 //DTOBasicDetailRequest basicDetailVM = _mapper.Map<BasicDetailCrtAndUpdVM, DTOBasicDetailRequest>(basicDetailCrtAndUpdVM);
@@ -399,7 +399,7 @@ namespace Web.Controllers
         }
         public async Task<IActionResult> GetICardPrintPreviewByRequestId(int RequestId)
         {
-            return Json(await basicDetailBL.GetByBasicDetailsId(RequestId));
+            return Json(await basicDetailBL.GetBasicDetailByRequestId(RequestId));
         }
         [HttpGet]
         public async Task<ActionResult> InaccurateData(string Id)
@@ -691,7 +691,7 @@ namespace Web.Controllers
                     _logger.LogError(1001, ex, "This error occure because Id value change by user.");
                     return RedirectToAction("Error", "Error");
                 }
-                BasicDetailCrtAndUpdVM? basicDetailUpdVM = await basicDetailBL.GetByBasicDetailsId(decryptedIntId);
+                BasicDetailCrtAndUpdVM? basicDetailUpdVM = await basicDetailBL.GetBasicDetailById(decryptedIntId);
 
                 if (basicDetailUpdVM != null)
                 {
@@ -1517,9 +1517,9 @@ namespace Web.Controllers
         }
        
         
-        public async Task<IActionResult> GetDataByBasicDetailsId(int Id)
+        public async Task<IActionResult> GetBasicDetailByRequestId(int RequestId)
         {
-           return Json(await basicDetailBL.GetByBasicDetailsId(Id));
+           return Json(await basicDetailBL.GetBasicDetailByRequestId(RequestId));
         }
         public async Task<IActionResult> GetRequestHistory(int RequestId)
         {
