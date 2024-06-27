@@ -842,17 +842,15 @@ function PrintData(div) {
     printWindow.document.write('<link href="' + HostUrl +'/select2/css/select2.min.css" rel="stylesheet" />'); // Optional styling
     printWindow.document.write('<link href="' + HostUrl +'/css/cssStyle.css" rel="stylesheet" />'); // Optional styling
     printWindow.document.write('<link href="' + HostUrl +'/css/horizontaltimeline.css" rel="stylesheet" />'); // Optional styling
-    printWindow.document.write(''); // Optional styling
-    printWindow.document.write('<script href="' + HostUrl +'/fonts/feather/feather.min.js"></script>'); // Optional styling
-    printWindow.document.write('<script href="' + HostUrl +'/fonts/allfont/webfont.min.js"></script>'); // Optional styling
     printWindow.document.write('<link href="' + HostUrl +'/bootstrap/css/bootstrap.min.css" rel="stylesheet" />'); // Optional styling
     printWindow.document.write('<link href="' + HostUrl +'/lib/jqueryui/themes/base/jquery-ui.min.css" rel="stylesheet" />'); // Optional styling
-    printWindow.document.write(''); // Optional styling
     printWindow.document.write('<link href="' + HostUrl +'/toastr/toastr.min.css" rel="stylesheet" />'); // Optional styling
     printWindow.document.write('<link href="' + HostUrl +'/css/main.css" rel="stylesheet" />'); // Optional styling
     printWindow.document.write('<link href="' + HostUrl +'/css/DashBoard.css" rel="stylesheet" />'); // Optional styling
-    printWindow.document.write(''); // Optional styling
-    printWindow.document.write('</head><body >');
+    printWindow.document.write('<style>.watermark {position: fixed;bottom: 40%;transform: rotate(310deg);opacity: 0.4; font-size: 60px;color: #ff0000;z-index: 9999;pointer-events: none;white-space: nowrap;}</style>');
+    printWindow.document.write('</head><body>');
+    var datef2 = new Date();
+    printWindow.document.write('<div class="watermark">' + $("#IpaddresGloble").html() + ' ' + DateFormateddMMyyyyhhmmss(datef2) +'</div>');
     printWindow.document.write(divContent);
     printWindow.document.write('</body></html>');
 
