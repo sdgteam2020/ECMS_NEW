@@ -177,7 +177,6 @@ $(document).ready(function () {
         }
     });
     $(".btnPrint").click(function () {
-
         //var now = new Date();
         //var jsDate = now.getDate() + '/' + (now.getMonth() + 1) + '/' + now.getFullYear() + ' ' + now.getHours()+ ':' + now.getMinutes() + ':' + now.getSeconds();
 

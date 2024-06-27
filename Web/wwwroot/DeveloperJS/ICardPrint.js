@@ -1,6 +1,5 @@
 ﻿$(document).ready(function () {
-
-    $("#btn-i-card-print").click(function () {
+$("#btn-i-card-print").click(function () {
     //    window.scrollTo(0, 0);
     //var datef2 = new Date();
     //    $(".watermark").html($("#IpaddresGloble").html() + ' ' + DateFormateddMMyyyyhhmmss(datef2))
