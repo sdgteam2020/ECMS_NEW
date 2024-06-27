@@ -146,7 +146,7 @@
                                             </td>
                                         }
                                         <td>@item.Sno</td>
-                                        <td class="ServiceNo"><a href="#" onclick="GetBasicDetailByRequestId(@(@item.RequestId));event.preventDefault();">@item.ServiceNo</a></td>
+                                        <td><a href="#" onclick="GetBasicDetailByRequestId(@(@item.RequestId));event.preventDefault();"><span class="ServiceNo">@item.ServiceNo</span></a></td>
                                         <td class="PersName">@item.RankName @item.Name</td>
                                         <td class="UnitName">@item.UnitName</td>
                                         
@@ -159,8 +159,6 @@
                                         <td class="noExport"><button class="btn btn-icon btn-round btn-primary mr-1 historyRequest" data-toggle="tooltip" data-placement="left" title="@item.Remark"><i class="fa fa-history" aria-hidden="true"></i></button></td>
                                         <td class="noExport">
                                             <div class="d-flex p-2">
-
-                                                @* <a asp-controller="BasicDetail" asp-action="View" asp-route-Id="@item.EncryptedRequestId" class="btn btn-icon btn-round btn-primary mr-1"><i class="fa fa-print mt-2"></i></a> *@
                                                 <button class="btn btn-icon btn-round btn-primary mr-2" onclick="GetICardPrintPreviewByRequestId(@(@item.RequestId))"><i class="fa fa-print mt-2"></i></button>
                                                 <spna class="spnBasicDetailId d-none">@item.BasicDetailId</spna>
                                                 <spna class="spnTrnFwdId d-none">@item.IsTrnFwdId</spna>
