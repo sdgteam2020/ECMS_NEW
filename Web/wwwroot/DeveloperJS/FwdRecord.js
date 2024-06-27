@@ -196,7 +196,7 @@ $(function () {
             $("#btnRejected").addClass("d-none");
 
         }
-        GetDataFromBasicDetails($(this).closest("tr").find(".spnBasicDetailId").html());
+        GetBasicDetailByRequestId($(this).closest("tr").find(".spnRequestId").html());
 
         if (StepCounter == 1 || StepCounter == 7 || StepCounter == 8 || StepCounter == 9 || StepCounter == 10 || StepCounter == 11 || StepCounter == 12 || StepCounter == 13 || StepCounter == 15) {
 
@@ -622,14 +622,12 @@ function Reset() {
     $(".serchfwd").addClass("d-none");
 }
 
-function GetDataFromBasicDetails(Id) {
+function GetBasicDetailByRequestId(RequestId) {
     var userdata = {
-        "Id": Id,
-
-
+        "RequestId": RequestId,
     };
     $.ajax({
-        url: '/BasicDetail/GetDataByBasicDetailsId',
+        url: '/BasicDetail/GetBasicDetailByRequestId',
         contentType: 'application/x-www-form-urlencoded',
         data: userdata,
         type: 'POST',
@@ -649,7 +647,7 @@ function GetDataFromBasicDetails(Id) {
                 $("#lblfdBloodGroup").html(response.BloodGroup);
                 $("#lblfdpoi").html(response.PlaceOfIssue);
                 $("#lblfddoi").html(DateFormateMMMM_dd_yyyy(response.DateOfIssue));
-                $("#lblfdissuA").html(response.IssuingAuth);
+                $("#lblfdissuA").html(response.IssuingAuthorityName);
                 $("#lblfddateo").html(DateFormateMMMM_dd_yyyy(response.DateOfCommissioning));
                 $("#lblfdaddress").html(response.Village + ',' + response.Tehsil + ',' + response.PO + ',' + response.PS + ',' + response.District + ',' + response.State + '' + response.PinCode);
             }

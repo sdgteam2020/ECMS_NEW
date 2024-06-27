@@ -736,7 +736,7 @@
 </div>
 
 <!-- Basic Details   -->
-<div class="modal fade " id="BasicDetails" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+<div class="modal fade" id="BasicDetails" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
@@ -895,8 +895,143 @@
     </div>
 </div>
 
+<!-- Basic Details for View Purpose  -->
+<div class="modal fade" id="BasicDetailViewPurpose" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Basic Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="card">
+                    <div class="row ">
+                        <div class="col-md-12 mb-3">
+                            <div class="feature-box3 h-100 shadow-lg p-3 mb-3 bg-body rounded">
+                                <div class="top-block_ind d-flex">
+                                    <div class="text-block">
+                                        <h5 class="mb-1 text-font2 font-weight600">Individual Details</h5>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <div class="form-group row mb-0">
+                                            <label class="col-form-label col-5 text-left">Name</label>
+                                            <div class="col-7"><label class="form-control-plaintext b text-black text-uppercase" id="lblvpName"></label></div>
+                                        </div>
+                                        <div class="form-group row mb-0">
+                                            <label class="col-form-label col-5 text-left">Rank</label>
+                                            <div class="col-7">
+                                                <label class="form-control-plaintext text-uppercase" id="lblvpRank"></label>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row mb-0">
+                                            <label class="col-form-label col-5 text-left">Arm / Service</label>
+                                            <div class="col-7">
+                                                <label class="form-control-plaintext text-uppercase" id="lblvparm"></label>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row mb-0">
+                                            <label class="col-form-label col-5 text-left">Army No</label>
+                                            <div class="col-7">
+                                                <label class="form-control-plaintext text-uppercase" id="lblvpArmyNo"></label>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row mb-0">
+                                            <label class="col-form-label col-5 text-left">Date of Birth</label>
+                                            <div class="col-7">
+                                                <label class="form-control-plaintext text-uppercase" id="lblvpdob"></label>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row mb-0">
+                                            <label class="col-form-label col-5 text-left">Height (Cm)</label>
+                                            <div class="col-7">
+                                                <label class="form-control-plaintext text-uppercase" id="lblvpheight"></label>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row mb-0">
+                                            <label class="col-form-label col-5 text-left">AADHAAR No</label>
+                                            <div class="col-7">
+                                                <label class="form-control-plaintext text-uppercase" id="lblvpadhar"></label>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row mb-0">
+                                            <label class="col-form-label col-5 text-left">Blood Group</label>
+                                            <div class="col-7">
+                                                <label class="form-control-plaintext text-uppercase" id="lblvpBloodGroup"></label>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row mb-0">
+                                            <label class="col-form-label col-5 text-left">Place of Issue</label>
+                                            <div class="col-7">
+                                                <label class="form-control-plaintext text-uppercase" id="lblvppoi"></label>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row mb-0">
+                                            <label class="col-form-label col-5 text-left">Date of Issue</label>
+                                            <div class="col-7">
+                                                <label class="form-control-plaintext text-uppercase" id="lblvpdoi"></label>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row mb-0">
+                                            <label class="col-form-label col-5 text-left">Issuing Authority</label>
+                                            <div class="col-7">
+                                                <label class="form-control-plaintext text-uppercase" id="lblvpissuA"></label>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row mb-0">
+                                            <label class="col-form-label col-5 text-left">Date of Commissioning/ Enrollment</label>
+                                            <div class="col-7">
+                                                <label class="form-control-plaintext text-uppercase" id="lblvpdateo"></label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group row mb-0 ">
+                                            <div class="col-12 text-center">
+                                                <img src="#" width="200" id="basicphotosVP" class="border border-primary p-2" onerror="this.src='/images/user4.png';" />
+
+                                                <h6 class="mb-1 text-font2 font-weight500 text-center PersName"></h6>
+                                                @*  <div class="text-left"> <img src="~/images/rank/brigadier.svg" id="imgrank" height="100px" /></div> *@
+                                            </div>
+                                        </div>
+                                        <div class="form-group row mb-0 ">
+                                            <div class="col-12 text-center">
+                                                <img src="#" width="200" height="100" id="BasicsingVP" class="border border-primary p-2" onerror="this.src='/images/Signature.png';" />
+                                                @*<label class="col-form-label recectopt text-left ">Select Rejection Reasons for Signature</label>*@
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-12">
+                                        <div class="form-group row mb-0">
+                                            <label class="col-form-label col-4 text-left">Identification Mark</label>
+                                            <div class="col-8">
+                                                <label class="form-control-plaintext text-uppercase" id="lblvpMarks"></label>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row mb-0">
+                                            <label class="col-form-label col-4 text-left">Permt Address as per Service Records</label>
+                                            <div class="col-8">
+                                                <label class="form-control-plaintext text-uppercase" id="lblvpaddress"></label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="modal fade right" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-dialog modal-lg" role="document" style="width:auto!important;">
         <div class="modal-content" >
             <div class="modal-header">
                 <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -973,7 +1108,8 @@
         </div>
     </div>
 </div>
-<div class="modal fade right " id="ICardPrint" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+
+<div class="modal fade right" id="ICardPrint" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-xl " role="document">
         <div class="modal-content ">
             <div class="modal-header ">
@@ -983,12 +1119,12 @@
             <div class="modal-body section-to-print-popup" id="section-to-print-popup">
                 <div class="card-body">
                     <div class="row">
-                        <div class="col-md-12">
+                        <div class="col-sm-12">
                             <div class="card mb-1 mt-1">
                                 <h5 class="text-center badge badge-success">I-Card Print Preview</h5>
                                 <div class="mt-2 ml-2 mr-2">
                                     <div class="row">
-                                        <div class="col-md-12">
+                                        <div class="col-sm-12">
                                             <div class="card">
                                                 <div class="row p-4">
                                                     <div class="col-sm-12">
@@ -1005,7 +1141,7 @@
                                                     <div class="col-sm-6">
                                                         <img class="PhotoImagePath_ICardPrint" onerror="this.src='/Images/user4.png'" height="200" width="200" />
                                                     </div>
-                                                    <div class="col-sm-4">
+                                                    <div class="col-sm-6">
                                                        
                                                         <span class="fw-bold text-uppercase" id="Name_ICardPrint"></span><br />
                                                         <span class="fw-bold text-uppercase" id="RankName_ICardPrint"></span><br />
@@ -1021,7 +1157,7 @@
                                             </div>
                                         </div>
                                         <div class="col-sm-12">
-                                            <div class="card">
+                                            <div class="card mt-2 mb-2">
                                                 <div class="row p-4">
                                                     <div class="col-sm-2 justify-content-center">
                                                         <div class="mt-4 ml-3"><img src="~/writereaddata/images/indian-army-logo.jpg" height="60" width="50" /></div>

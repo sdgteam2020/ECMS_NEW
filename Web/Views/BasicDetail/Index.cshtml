@@ -217,40 +217,37 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @for(int i=0;i<=100;i++)
+                                @foreach (var item in Model)
                                 {
-                                   
-                                    @foreach (var item in Model)
-                                    {
-                                        <tr>
-                                            <td>@item.Sno</td>
-                                            <td class="ServiceNo">@item.ServiceNo</td>
-                                            <td class="PersName">@item.RankName @item.Name</td>
-                                            <td class="UnitName">@item.UnitName</td>
-                                            @*  <td>@item.DOB.ToString("dd/MMM/yyyy")</td> *@
-                                            @* <td>@item.DateOfCommissioning.ToString("dd/MMM/yyyy")</td> *@
-                                            @* <td>@item.PermanentAddress</td> *@
-                                            <td>@item.TrackingId</td>
-                                            <td>@item.ApplyFor </td>
-                                            <td>@item.ICardType</td>
-                                            <td>
-                                                @if (item.IsPosting > 0)
-                                                {
-                                                    <span class="badge badge-pill badge-danger">Yes</span>
-                                                }
-                                                else
-                                                {
-                                                    <span class="badge badge-pill badge-success">No</span>
-                                                }
-                                            </td>
-                                            <td class="noExport"><button class="btn btn-icon btn-round btn-primary mr-1 historyRequest" data-toggle="tooltip" data-placement="left" title="@item.Remark"><i class="fa fa-history" aria-hidden="true"></i></button></td>
+                                    <tr>
+                                        <td>@item.Sno</td>
+                                        <td class="ServiceNo"><a href="#" onclick="GetBasicDetailByRequestId(@(@item.RequestId));event.preventDefault();">@item.ServiceNo</a></td>
+                                        <td class="PersName">@item.RankName @item.Name</td>
+                                        <td class="UnitName">@item.UnitName</td>
+                                       @*  <td>@item.DOB.ToString("dd/MMM/yyyy")</td> *@
+                                        @* <td>@item.DateOfCommissioning.ToString("dd/MMM/yyyy")</td> *@
+                                        @* <td>@item.PermanentAddress</td> *@
+                                        <td>@item.TrackingId</td>
+                                        <td>@item.ApplyFor </td>
+                                        <td>@item.ICardType</td>
+                                        <td>
+                                            @if(item.IsPosting>0)
+                                            {
+                                                <span class="badge badge-pill badge-danger">Yes</span> 
+                                            }
+                                            else
+                                            {
+                                                <span class="badge badge-pill badge-success">No</span>
+                                            }
+                                        </td>
+                                        <td class="noExport"><button class="btn btn-icon btn-round btn-primary mr-1 historyRequest" data-toggle="tooltip" data-placement="left" title="@item.Remark"><i class="fa fa-history" aria-hidden="true"></i></button></td>
+                                       
+                                        <td class="noExport">
+                                            <div class="d-flex p-2">
 
-                                            <td class="noExport">
-                                                <div class="d-flex p-2">
-
-                                                    @*                                                 <a asp-controller="BasicDetail" asp-action="View" asp-route-Id="@item.EncryptedRequestId" class="btn btn-icon btn-round btn-primary mr-2"><i class="fa fa-print mt-2"></i></a> *@
-                                                    <button class="btn btn-icon btn-round btn-primary mr-2" onclick="GetICardPrintPreviewByRequestId(@(@item.RequestId))"><i class="fa fa-print mt-2"></i></button>
-
+@*                                                 <a asp-controller="BasicDetail" asp-action="View" asp-route-Id="@item.EncryptedRequestId" class="btn btn-icon btn-round btn-primary mr-2"><i class="fa fa-print mt-2"></i></a> *@
+                                                <button class="btn btn-icon btn-round btn-primary mr-2" onclick="GetICardPrintPreviewByRequestId(@(@item.RequestId))"><i class="fa fa-print mt-2"></i></button>
+                                                
                                                     <spna class="spnBasicDetailId d-none">@item.BasicDetailId</spna>
                                                     <spna class="spnTrnFwdId d-none">@item.IsTrnFwdId</spna>
                                                     <spna class="spnRequestId d-none">@item.RequestId</spna>
