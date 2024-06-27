@@ -906,7 +906,7 @@
             <div class="modal-body">
                 <div class="card">
                     <div class="row ">
-                        <div class="col-md-12 mb-3">
+                        <div class="col-sm-12 mb-3">
                             <div class="feature-box3 h-100 shadow-lg p-3 mb-3 bg-body rounded">
                                 <div class="top-block_ind d-flex">
                                     <div class="text-block">
@@ -914,7 +914,7 @@
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-md-8">
+                                    <div class="col-sm-8">
                                         <div class="form-group row mb-0">
                                             <label class="col-form-label col-5 text-left">Name</label>
                                             <div class="col-7"><label class="form-control-plaintext b text-black text-uppercase" id="lblvpName"></label></div>
@@ -986,7 +986,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-md-4">
+                                    <div class="col-sm-4">
                                         <div class="form-group row mb-0 ">
                                             <div class="col-12 text-center">
                                                 <img src="#" width="200" id="basicphotosVP" class="border border-primary p-2" onerror="this.src='/images/user4.png';" />
@@ -1003,7 +1003,7 @@
                                         </div>
                                     </div>
 
-                                    <div class="col-md-12">
+                                    <div class="col-sm-12">
                                         <div class="form-group row mb-0">
                                             <label class="col-form-label col-4 text-left">Identification Mark</label>
                                             <div class="col-8">
@@ -1024,7 +1024,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-secondary d-print-none" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
@@ -1117,113 +1117,116 @@
                 <h4 class="modal-title no-print" id="lblICardPrint">I-Card Print Preview</h4>
             </div>
             <div class="modal-body section-to-print-popup" id="section-to-print-popup">
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-sm-12">
-                            <div class="card mb-1 mt-1">
-                                <h5 class="text-center badge badge-success">I-Card Print Preview</h5>
-                                <div class="mt-2 ml-2 mr-2">
-                                    <div class="row">
-                                        <div class="col-sm-12">
-                                            <div class="card">
-                                                <div class="row p-4">
-                                                    <div class="col-sm-12">
-                                                        <div style="line-height:0 !important">
-                                                            <p style="text-align:left;" class="f19 font-weight-600">
-                                                                भारतीय सशस्त्र सेनाएँ पहचान कार्ड
-                                                                <span style="float:right;">(IAFZ-2015)</span>
-                                                            </p>
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="card mb-1 mt-1">
+                                    <h5 class="text-center badge badge-success">I-Card Print Preview</h5>
+                                    <div class="mt-2 ml-2 mr-2">
+                                        <div class="row">
+                                            <div class="col-sm-12">
+                                                <div class="card">
+                                                    <div class="row p-4">
+                                                        <div class="col-sm-12">
+                                                            <div style="line-height:0 !important">
+                                                                <p style="text-align:left;" class="f19 font-weight-600">
+                                                                    भारतीय सशस्त्र सेनाएँ पहचान कार्ड
+                                                                    <span style="float:right;">(IAFZ-2015)</span>
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-12">
+                                                            <div class="d-flex f19 font-weight-800"> INDIAN ARMED FORCES INDENTITY CARD</div>
+                                                        </div>
+                                                        <div class="col-sm-6">
+                                                            <img class="PhotoImagePath_ICardPrint" onerror="this.src='/Images/user4.png'" height="200" width="200" />
+                                                        </div>
+                                                        <div class="col-sm-6">
+
+                                                            <span class="fw-bold text-uppercase" id="Name_ICardPrint"></span><br />
+                                                            <span class="fw-bold text-uppercase" id="RankName_ICardPrint"></span><br />
+                                                            <span class="fw-bold text-uppercase" id="ArmedName_ICardPrint"></span><br />
+                                                            <span class="fw-bold text-uppercase" id="ServiceNo_ICardPrint"></span><br />
+                                                            <span class="fw-bold" style="line-height:1">IDENTIFICATION MARK</span><br />
+                                                            <span class="font-weight-500 text-uppercase" id="IdenMark1_ICardPrint"></span>
+                                                        </div>
+                                                        <div class="col-sm-12">
+                                                            <p class="font-weight-500 f16">रक्षा मंत्रालय, भारत सरकार MINISTRY OF DEFENCE, GOVERNMENT OF INDIA</p>
                                                         </div>
                                                     </div>
-                                                    <div class="col-sm-12">
-                                                        <div class="d-flex f19 font-weight-800"> INDIAN ARMED FORCES INDENTITY CARD</div>
-                                                    </div>
-                                                    <div class="col-sm-6">
-                                                        <img class="PhotoImagePath_ICardPrint" onerror="this.src='/Images/user4.png'" height="200" width="200" />
-                                                    </div>
-                                                    <div class="col-sm-6">
-                                                       
-                                                        <span class="fw-bold text-uppercase" id="Name_ICardPrint"></span><br />
-                                                        <span class="fw-bold text-uppercase" id="RankName_ICardPrint"></span><br />
-                                                        <span class="fw-bold text-uppercase" id="ArmedName_ICardPrint"></span><br />
-                                                        <span class="fw-bold text-uppercase" id="ServiceNo_ICardPrint"></span><br />
-                                                        <span class="fw-bold" style="line-height:1">IDENTIFICATION MARK</span><br />
-                                                        <span class="font-weight-500 text-uppercase" id="IdenMark1_ICardPrint"></span>
-                                                    </div>
-                                                    <div class="col-sm-12">
-                                                        <p class="font-weight-500 f16">रक्षा मंत्रालय, भारत सरकार MINISTRY OF DEFENCE, GOVERNMENT OF INDIA</p>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-12">
+                                                <div class="card mt-2 mb-2">
+                                                    <div class="row p-4">
+                                                        <div class="col-sm-2 justify-content-center">
+                                                            <div class="mt-4 ml-3"><img src="~/writereaddata/images/indian-army-logo.jpg" height="60" width="50" /></div>
+                                                            <div class="mt-4 ml-3"><img class="PhotoImagePath_ICardPrint" onerror="this.src='/Images/Signature.png'" height="60" width="50" /></div>
+                                                            <div class="mt-4 ml-3"><img src="~/images/asset/hologrambg.png" height="60" width="50" /></div>
+                                                        </div>
+                                                        <div class="col-sm-3">
+                                                            <div class="">
+                                                                <div class="f15 font-weight-700">DATE OF BIRTH</div>
+                                                                <span id="DOB_ICardPrint"></span>
+                                                            </div>
+                                                            <div>
+                                                                <div class="f15 font-weight-700">HEIGHT</div>
+                                                                <span id="Height_ICardPrint"></span>
+                                                            </div>
+                                                            <div>
+                                                                <span class="f15 font-weight-700">AADHAAR No</span><br />
+                                                                <span id="AadhaarNo_ICardPrint"></span>
+                                                            </div>
+                                                            <div>
+                                                                <span class="f15 font-weight-700 text-uppercase">BLOOD GROUP</span><br />
+                                                                <span id="BloodGroup_ICardPrint"></span>
+                                                            </div>
+                                                            <div>
+                                                                <span class="f15 font-weight-700 text-uppercase">PLACE & DATE OF ISSUE</span>
+                                                                <span id="PlaceOfIssue_ICardPrint"></span>
+                                                                <span id="DateOfIssue_ICardPrint"></span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-7">
+                                                            <div class="f13 font-weight-400">
+                                                                भारत सरकार की सम्पति। अहस्तान्तरणीय। गुम हो जाने पर निकटतम थाने और अपनी यूनिट को रिपोर्ट करें। सेवा की समाप्ति पर ओ.सी. यूनिट को लौटा दें।
+                                                            </div>
+                                                            <div class="f13 font-weight-400">
+                                                                PROPERTY OF GOVERNMENT OF INDIA NOT TRANSFERABLE. REPORT LOSS IMMEDIATELY TO NEAREST POLICE STATION AND YOUR UNIT. RETURN TO OC UNIT ON CESSATION OF SERVICE.
+                                                            </div>
+                                                            <div class="f13 font-weight-400">
+                                                                पाने वाला इसे सेना/नौसेना/वायु सेना मुख्यालय, नई दिल्ली 110011 को बिना टिकट लगाए, पत्र पेटी में डाल दे या पास के सैनिक यूनिट या थाने में जमा करा दे।
+                                                            </div>
+                                                            <div class="f13 font-weight-400">
+                                                                FINDERS TO DROP THIS LETTER BOX POSTAGE FREE TO ARMY/NAVAL/AIR HEAD QUARTERS, NEW DELHI 110011 OR HANDOVER TO THE NEAREST MILITARY UNIT OR POLICE STATION.
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-3 mt-2">
+                                                            <span class="font-weight-800 border border-dark p-2">1545485</span>
+                                                        </div>
+                                                        <div class="col-sm-3 mt-2">
+                                                            <span class="font-weight-800 border border-dark p-2">SIGNATURE</span>
+                                                        </div>
+                                                        <div class="col-sm-6 text-center mt-2 p-2 border border-dark" style="background-color:white">
+                                                            <span class="p-2"><img class="SignaturePath_ICardPrint" onerror="this.src='/Images/Signature.png'" height="30" width="80" /></span>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-sm-12">
-                                            <div class="card mt-2 mb-2">
-                                                <div class="row p-4">
-                                                    <div class="col-sm-2 justify-content-center">
-                                                        <div class="mt-4 ml-3"><img src="~/writereaddata/images/indian-army-logo.jpg" height="60" width="50" /></div>
-                                                        <div class="mt-4 ml-3"><img class="PhotoImagePath_ICardPrint" onerror="this.src='/Images/Signature.png'" height="60" width="50" /></div>
-                                                        <div class="mt-4 ml-3"><img src="~/images/asset/hologrambg.png" height="60" width="50" /></div>
-                                                    </div>
-                                                    <div class="col-sm-3">
-                                                        <div class="">
-                                                            <div class="f15 font-weight-700">DATE OF BIRTH</div>
-                                                            <span id="DOB_ICardPrint"></span>
-                                                        </div>
-                                                        <div>
-                                                            <div class="f15 font-weight-700">HEIGHT</div>
-                                                            <span id="Height_ICardPrint"></span>
-                                                        </div>
-                                                        <div>
-                                                            <span class="f15 font-weight-700">AADHAAR No</span><br />
-                                                            <span id="AadhaarNo_ICardPrint"></span>
-                                                        </div>
-                                                        <div>
-                                                            <span class="f15 font-weight-700 text-uppercase">BLOOD GROUP</span><br />
-                                                            <span id="BloodGroup_ICardPrint"></span>
-                                                        </div>
-                                                        <div>
-                                                            <span class="f15 font-weight-700 text-uppercase">PLACE & DATE OF ISSUE</span>
-                                                            <span id="PlaceOfIssue_ICardPrint"></span>
-                                                            <span id="DateOfIssue_ICardPrint"></span>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-sm-7">
-                                                        <div class="f13 font-weight-400">
-                                                            भारत सरकार की सम्पति। अहस्तान्तरणीय। गुम हो जाने पर निकटतम थाने और अपनी यूनिट को रिपोर्ट करें। सेवा की समाप्ति पर ओ.सी. यूनिट को लौटा दें।
-                                                        </div>
-                                                        <div class="f13 font-weight-400">
-                                                            PROPERTY OF GOVERNMENT OF INDIA NOT TRANSFERABLE. REPORT LOSS IMMEDIATELY TO NEAREST POLICE STATION AND YOUR UNIT. RETURN TO OC UNIT ON CESSATION OF SERVICE.
-                                                        </div>
-                                                        <div class="f13 font-weight-400">
-                                                            पाने वाला इसे सेना/नौसेना/वायु सेना मुख्यालय, नई दिल्ली 110011 को बिना टिकट लगाए, पत्र पेटी में डाल दे या पास के सैनिक यूनिट या थाने में जमा करा दे।
-                                                        </div>
-                                                        <div class="f13 font-weight-400">
-                                                            FINDERS TO DROP THIS LETTER BOX POSTAGE FREE TO ARMY/NAVAL/AIR HEAD QUARTERS, NEW DELHI 110011 OR HANDOVER TO THE NEAREST MILITARY UNIT OR POLICE STATION.
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-sm-3 mt-2">
-                                                        <span class="font-weight-800 border border-dark p-2">1545485</span>
-                                                    </div>
-                                                    <div class="col-sm-3 mt-2">
-                                                        <span class="font-weight-800 border border-dark p-2">SIGNATURE</span>
-                                                    </div>
-                                                    <div class="col-sm-6 text-center mt-2 p-2 border border-dark" style="background-color:white">
-                                                        <span class="p-2"><img class="SignaturePath_ICardPrint" onerror="this.src='/Images/Signature.png'" height="30" width="80" /></span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                   
+                    <div class="card-fotter text-center">
+                        <button class="btn btn-primary d-print-none" id="btn-i-card-print">Print</button>
+                    </div>
                 </div>
             </div>
-            <div class="col-sm-12 mb-4 text-center">
-                <button class="btn btn-primary d-print-none" id="btn-i-card-print">Print</button>
+            <div class="col-sm-12 mb-4 ">
+                
             </div>
         </div><!-- modal-content -->
     </div><!-- modal-dialog -->

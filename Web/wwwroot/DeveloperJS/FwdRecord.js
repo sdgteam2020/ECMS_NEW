@@ -196,7 +196,7 @@ $(function () {
             $("#btnRejected").addClass("d-none");
 
         }
-        GetBasicDetailByRequestId($(this).closest("tr").find(".spnRequestId").html());
+        GetBasicDetailByRequestIdForFwd($(this).closest("tr").find(".spnRequestId").html());
 
         if (StepCounter == 1 || StepCounter == 7 || StepCounter == 8 || StepCounter == 9 || StepCounter == 10 || StepCounter == 11 || StepCounter == 12 || StepCounter == 13 || StepCounter == 15) {
 
@@ -622,7 +622,7 @@ function Reset() {
     $(".serchfwd").addClass("d-none");
 }
 
-function GetBasicDetailByRequestId(RequestId) {
+function GetBasicDetailByRequestIdForFwd(RequestId) {
     var userdata = {
         "RequestId": RequestId,
     };
