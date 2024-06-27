@@ -823,34 +823,34 @@ function PrintData(div) {
 
     // Write the div content to the new window
     printWindow.document.write('<html><head><title>Print Content</title>');
-    printWindow.document.write('<link href="https://localhost:7023//fonts/css/all.min.css" rel="stylesheet" />'); // Optional styling
-    printWindow.document.write('<link href="https://localhost:7023//css/nunito.css" rel="stylesheet" />'); // Optional styling
-    printWindow.document.write('<link href="https://localhost:7023//css/roboto.css" rel="stylesheet" />'); // Optional styling
+    printWindow.document.write('<link href="' + HostUrl +'/fonts/css/all.min.css" rel="stylesheet" />'); // Optional styling
+    printWindow.document.write('<link href="' + HostUrl +'/css/nunito.css" rel="stylesheet" />'); // Optional styling
+    printWindow.document.write('<link href="' + HostUrl +'/css/roboto.css" rel="stylesheet" />'); // Optional styling
     printWindow.document.write(''); // Optional styling
-    printWindow.document.write('<link href="https://localhost:7023/sweetalert2/sweetalert2.min.css" rel="stylesheet" />'); // Optional styling
-    printWindow.document.write('<link href="https://localhost:7023//css/bootstrap-datetimepicker.min.css" rel="stylesheet" />'); // Optional styling
-    printWindow.document.write('<link href="https://localhost:7023//datatables/dataTables.bootstrap4.min.css" rel="stylesheet" />'); // Optional styling
-    printWindow.document.write('<link href="https://localhost:7023//datatables/responsive.bootstrap4.min.css" rel="stylesheet" />'); // Optional styling
-    printWindow.document.write('<link href="https://localhost:7023//datatables/responsive.dataTables.min.css" rel="stylesheet" />'); // Optional styling
-    printWindow.document.write('<link href="https://localhost:7023//datatables/buttons.bootstrap4.min.css" rel="stylesheet" />'); // Optional styling
-    printWindow.document.write('<link href="https://localhost:7023//datatables/fixedHeader.dataTables.min.css" rel="stylesheet" />'); // Optional styling
-    printWindow.document.write('<link href="https://localhost:7023//datatables/jquery.dataTables.min.css" rel="stylesheet" />'); // Optional styling
-    printWindow.document.write('<link href="https://localhost:7023//css/style.css" rel="stylesheet" />'); // Optional styling
-    printWindow.document.write('<link href="https://localhost:7023//css/extra.css" rel="stylesheet" />'); // Optional styling
-    printWindow.document.write('<link href="https://localhost:7023//css/background.css" rel="stylesheet" />'); // Optional styling
-    printWindow.document.write('<link href="https://localhost:7023//css/typography.css" rel="stylesheet" />'); // Optional styling
-    printWindow.document.write('<link href="https://localhost:7023//select2/css/select2.min.css" rel="stylesheet" />'); // Optional styling
-    printWindow.document.write('<link href="https://localhost:7023//css/cssStyle.css" rel="stylesheet" />'); // Optional styling
-    printWindow.document.write('<link href="~/css/horizontaltimeline.css" rel="stylesheet" />'); // Optional styling
+    printWindow.document.write('<link href="' + HostUrl +'/sweetalert2/sweetalert2.min.css" rel="stylesheet" />'); // Optional styling
+    printWindow.document.write('<link href="' + HostUrl +'/css/bootstrap-datetimepicker.min.css" rel="stylesheet" />'); // Optional styling
+    printWindow.document.write('<link href="' + HostUrl +'/datatables/dataTables.bootstrap4.min.css" rel="stylesheet" />'); // Optional styling
+    printWindow.document.write('<link href="' + HostUrl +'/datatables/responsive.bootstrap4.min.css" rel="stylesheet" />'); // Optional styling
+    printWindow.document.write('<link href="' + HostUrl +'/datatables/responsive.dataTables.min.css" rel="stylesheet" />'); // Optional styling
+    printWindow.document.write('<link href="' + HostUrl +'/datatables/buttons.bootstrap4.min.css" rel="stylesheet" />'); // Optional styling
+    printWindow.document.write('<link href="' + HostUrl +'/datatables/fixedHeader.dataTables.min.css" rel="stylesheet" />'); // Optional styling
+    printWindow.document.write('<link href="' + HostUrl +'/datatables/jquery.dataTables.min.css" rel="stylesheet" />'); // Optional styling
+    printWindow.document.write('<link href="' + HostUrl +'/css/style.css" rel="stylesheet" />'); // Optional styling
+    printWindow.document.write('<link href="' + HostUrl +'/css/extra.css" rel="stylesheet" />'); // Optional styling
+    printWindow.document.write('<link href="' + HostUrl +'/css/background.css" rel="stylesheet" />'); // Optional styling
+    printWindow.document.write('<link href="' + HostUrl +'/css/typography.css" rel="stylesheet" />'); // Optional styling
+    printWindow.document.write('<link href="' + HostUrl +'/select2/css/select2.min.css" rel="stylesheet" />'); // Optional styling
+    printWindow.document.write('<link href="' + HostUrl +'/css/cssStyle.css" rel="stylesheet" />'); // Optional styling
+    printWindow.document.write('<link href="' + HostUrl +'/css/horizontaltimeline.css" rel="stylesheet" />'); // Optional styling
     printWindow.document.write(''); // Optional styling
-    printWindow.document.write('<script asp-src-include="~/fonts/feather/feather.min.js"></script>'); // Optional styling
-    printWindow.document.write('<script asp-src-include="~/fonts/allfont/webfont.min.js"></script>'); // Optional styling
-    printWindow.document.write('<link href="~/bootstrap/css/bootstrap.min.css" rel="stylesheet" />'); // Optional styling
-    printWindow.document.write('<link href="~/lib/jqueryui/themes/base/jquery-ui.min.css" rel="stylesheet" />'); // Optional styling
+    printWindow.document.write('<script href="' + HostUrl +'/fonts/feather/feather.min.js"></script>'); // Optional styling
+    printWindow.document.write('<script href="' + HostUrl +'/fonts/allfont/webfont.min.js"></script>'); // Optional styling
+    printWindow.document.write('<link href="' + HostUrl +'/bootstrap/css/bootstrap.min.css" rel="stylesheet" />'); // Optional styling
+    printWindow.document.write('<link href="' + HostUrl +'/lib/jqueryui/themes/base/jquery-ui.min.css" rel="stylesheet" />'); // Optional styling
     printWindow.document.write(''); // Optional styling
-    printWindow.document.write('<link href="~/toastr/toastr.min.css" rel="stylesheet" />'); // Optional styling
-    printWindow.document.write('<link href="~/css/main.css" rel="stylesheet" />'); // Optional styling
-    printWindow.document.write('<link href="~/css/DashBoard.css" rel="stylesheet" />'); // Optional styling
+    printWindow.document.write('<link href="' + HostUrl +'/toastr/toastr.min.css" rel="stylesheet" />'); // Optional styling
+    printWindow.document.write('<link href="' + HostUrl +'/css/main.css" rel="stylesheet" />'); // Optional styling
+    printWindow.document.write('<link href="' + HostUrl +'/css/DashBoard.css" rel="stylesheet" />'); // Optional styling
     printWindow.document.write(''); // Optional styling
     printWindow.document.write('</head><body >');
     printWindow.document.write(divContent);
