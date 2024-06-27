@@ -980,7 +980,7 @@
                 <button type="button" class="close no-print" data-bs-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 <h4 class="modal-title no-print" id="lblICardPrint">I-Card Print Preview</h4>
             </div>
-            <div class="modal-body section-to-print-popup">
+            <div class="modal-body section-to-print-popup" id="section-to-print-popup">
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-12">
@@ -1077,9 +1077,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-sm-12 mb-4 text-center">
-                                            <button class="btn btn-primary d-print-none" id="btn-i-card-print">Print</button>
-                                        </div>
+                                        
                                     </div>
                                 </div>
                             </div>
@@ -1088,7 +1086,9 @@
                    
                 </div>
             </div>
-
+            <div class="col-sm-12 mb-4 text-center">
+                <button class="btn btn-primary d-print-none" id="btn-i-card-print">Print</button>
+            </div>
         </div><!-- modal-content -->
     </div><!-- modal-dialog -->
 </div>

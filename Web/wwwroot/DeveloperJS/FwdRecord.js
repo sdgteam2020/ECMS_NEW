@@ -1158,7 +1158,7 @@ function DataExport(Data) {
                     //link.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(blob);
                     //link.download = "export.json";
                     //link.click();
-                    window.location = "/WriteReadData/ExportAFSACCell/" + response + '.zip';
+                    window.location = "/WriteReadData/ExportAFSACCell/" + response + '_en.zip';
                     // var blob = new Blob([JSON.stringify(response, null, "\t")], { type: "application/json" });
 
                     // // Create a temporary anchor element

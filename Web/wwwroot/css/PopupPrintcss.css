@@ -1,10 +1,10 @@
 ﻿@media print {
     body {
         visibility: hidden;
-       
         margin: 0 !important;
         padding: 0 !important;
         overflow: hidden;
+        height: 100vh;
     }
    
     @page {
@@ -20,7 +20,9 @@
         left: 0;
         top: 0;
         min-width: 100%;
+        
     }
+
     .modal.right.fade.show .modal-dialog {
         left: 0;
         width: 100%;

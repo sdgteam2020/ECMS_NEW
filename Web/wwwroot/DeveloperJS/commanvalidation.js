@@ -815,3 +815,55 @@ function WaterMarkOnPdf(doc) {
     objLayout['paddingRight'] = function (i) { return 4; };
     doc.content[0].layout = objLayout;
 }
+function PrintData(div) {
+    var divContent = document.getElementById(div).innerHTML;
+
+    // Create a new window
+    var printWindow = window.open('', '', 'height=800,width=1200');
+
+    // Write the div content to the new window
+    printWindow.document.write('<html><head><title>Print Content</title>');
+    printWindow.document.write('<link href="https://localhost:7023//fonts/css/all.min.css" rel="stylesheet" />'); // Optional styling
+    printWindow.document.write('<link href="https://localhost:7023//css/nunito.css" rel="stylesheet" />'); // Optional styling
+    printWindow.document.write('<link href="https://localhost:7023//css/roboto.css" rel="stylesheet" />'); // Optional styling
+    printWindow.document.write(''); // Optional styling
+    printWindow.document.write('<link href="https://localhost:7023/sweetalert2/sweetalert2.min.css" rel="stylesheet" />'); // Optional styling
+    printWindow.document.write('<link href="https://localhost:7023//css/bootstrap-datetimepicker.min.css" rel="stylesheet" />'); // Optional styling
+    printWindow.document.write('<link href="https://localhost:7023//datatables/dataTables.bootstrap4.min.css" rel="stylesheet" />'); // Optional styling
+    printWindow.document.write('<link href="https://localhost:7023//datatables/responsive.bootstrap4.min.css" rel="stylesheet" />'); // Optional styling
+    printWindow.document.write('<link href="https://localhost:7023//datatables/responsive.dataTables.min.css" rel="stylesheet" />'); // Optional styling
+    printWindow.document.write('<link href="https://localhost:7023//datatables/buttons.bootstrap4.min.css" rel="stylesheet" />'); // Optional styling
+    printWindow.document.write('<link href="https://localhost:7023//datatables/fixedHeader.dataTables.min.css" rel="stylesheet" />'); // Optional styling
+    printWindow.document.write('<link href="https://localhost:7023//datatables/jquery.dataTables.min.css" rel="stylesheet" />'); // Optional styling
+    printWindow.document.write('<link href="https://localhost:7023//css/style.css" rel="stylesheet" />'); // Optional styling
+    printWindow.document.write('<link href="https://localhost:7023//css/extra.css" rel="stylesheet" />'); // Optional styling
+    printWindow.document.write('<link href="https://localhost:7023//css/background.css" rel="stylesheet" />'); // Optional styling
+    printWindow.document.write('<link href="https://localhost:7023//css/typography.css" rel="stylesheet" />'); // Optional styling
+    printWindow.document.write('<link href="https://localhost:7023//select2/css/select2.min.css" rel="stylesheet" />'); // Optional styling
+    printWindow.document.write('<link href="https://localhost:7023//css/cssStyle.css" rel="stylesheet" />'); // Optional styling
+    printWindow.document.write('<link href="~/css/horizontaltimeline.css" rel="stylesheet" />'); // Optional styling
+    printWindow.document.write(''); // Optional styling
+    printWindow.document.write('<script asp-src-include="~/fonts/feather/feather.min.js"></script>'); // Optional styling
+    printWindow.document.write('<script asp-src-include="~/fonts/allfont/webfont.min.js"></script>'); // Optional styling
+    printWindow.document.write('<link href="~/bootstrap/css/bootstrap.min.css" rel="stylesheet" />'); // Optional styling
+    printWindow.document.write('<link href="~/lib/jqueryui/themes/base/jquery-ui.min.css" rel="stylesheet" />'); // Optional styling
+    printWindow.document.write(''); // Optional styling
+    printWindow.document.write('<link href="~/toastr/toastr.min.css" rel="stylesheet" />'); // Optional styling
+    printWindow.document.write('<link href="~/css/main.css" rel="stylesheet" />'); // Optional styling
+    printWindow.document.write('<link href="~/css/DashBoard.css" rel="stylesheet" />'); // Optional styling
+    printWindow.document.write(''); // Optional styling
+    printWindow.document.write('</head><body >');
+    printWindow.document.write(divContent);
+    printWindow.document.write('</body></html>');
+
+    // Close the document to complete writing
+    printWindow.document.close();
+
+
+
+    // Wait for the content to be fully loaded, then trigger the print dialog
+    printWindow.onload = function () {
+        printWindow.print();
+        printWindow.close();
+    };
+}

@@ -217,37 +217,40 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach (var item in Model)
+                                @for(int i=0;i<=100;i++)
                                 {
-                                    <tr>
-                                        <td>@item.Sno</td>
-                                        <td class="ServiceNo">@item.ServiceNo</td>
-                                        <td class="PersName">@item.RankName @item.Name</td>
-                                        <td class="UnitName">@item.UnitName</td>
-                                       @*  <td>@item.DOB.ToString("dd/MMM/yyyy")</td> *@
-                                        @* <td>@item.DateOfCommissioning.ToString("dd/MMM/yyyy")</td> *@
-                                        @* <td>@item.PermanentAddress</td> *@
-                                        <td>@item.TrackingId</td>
-                                        <td>@item.ApplyFor </td>
-                                        <td>@item.ICardType</td>
-                                        <td>
-                                            @if(item.IsPosting>0)
-                                            {
-                                                <span class="badge badge-pill badge-danger">Yes</span> 
-                                            }
-                                            else
-                                            {
-                                                <span class="badge badge-pill badge-success">No</span>
-                                            }
-                                        </td>
-                                        <td class="noExport"><button class="btn btn-icon btn-round btn-primary mr-1 historyRequest" data-toggle="tooltip" data-placement="left" title="@item.Remark"><i class="fa fa-history" aria-hidden="true"></i></button></td>
-                                       
-                                        <td class="noExport">
-                                            <div class="d-flex p-2">
+                                   
+                                    @foreach (var item in Model)
+                                    {
+                                        <tr>
+                                            <td>@item.Sno</td>
+                                            <td class="ServiceNo">@item.ServiceNo</td>
+                                            <td class="PersName">@item.RankName @item.Name</td>
+                                            <td class="UnitName">@item.UnitName</td>
+                                            @*  <td>@item.DOB.ToString("dd/MMM/yyyy")</td> *@
+                                            @* <td>@item.DateOfCommissioning.ToString("dd/MMM/yyyy")</td> *@
+                                            @* <td>@item.PermanentAddress</td> *@
+                                            <td>@item.TrackingId</td>
+                                            <td>@item.ApplyFor </td>
+                                            <td>@item.ICardType</td>
+                                            <td>
+                                                @if (item.IsPosting > 0)
+                                                {
+                                                    <span class="badge badge-pill badge-danger">Yes</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge badge-pill badge-success">No</span>
+                                                }
+                                            </td>
+                                            <td class="noExport"><button class="btn btn-icon btn-round btn-primary mr-1 historyRequest" data-toggle="tooltip" data-placement="left" title="@item.Remark"><i class="fa fa-history" aria-hidden="true"></i></button></td>
 
-@*                                                 <a asp-controller="BasicDetail" asp-action="View" asp-route-Id="@item.EncryptedRequestId" class="btn btn-icon btn-round btn-primary mr-2"><i class="fa fa-print mt-2"></i></a> *@
-                                                <button class="btn btn-icon btn-round btn-primary mr-2" onclick="GetICardPrintPreviewByRequestId(@(@item.RequestId))"><i class="fa fa-print mt-2"></i></button>
-                                                
+                                            <td class="noExport">
+                                                <div class="d-flex p-2">
+
+                                                    @*                                                 <a asp-controller="BasicDetail" asp-action="View" asp-route-Id="@item.EncryptedRequestId" class="btn btn-icon btn-round btn-primary mr-2"><i class="fa fa-print mt-2"></i></a> *@
+                                                    <button class="btn btn-icon btn-round btn-primary mr-2" onclick="GetICardPrintPreviewByRequestId(@(@item.RequestId))"><i class="fa fa-print mt-2"></i></button>
+
                                                     <spna class="spnBasicDetailId d-none">@item.BasicDetailId</spna>
                                                     <spna class="spnTrnFwdId d-none">@item.IsTrnFwdId</spna>
                                                     <spna class="spnRequestId d-none">@item.RequestId</spna>
@@ -256,7 +259,7 @@
                                                     <spna class="spnApplyFor d-none">@item.ApplyForId</spna>
                                                     <spna class="spnarmyUnitId d-none">@item.UnitId</spna>
 
-                                                @if ((item.StepCounter == 1 || item.StepCounter == 7 || item.StepCounter == 8 || item.StepCounter == 9 || item.StepCounter == 10) && (ViewBag.Id == 0 || ViewBag.Id == 1 || ViewBag.Id == 11 || item.IsFwdStatusId == 3))
+                                                    @if ((item.StepCounter == 1 || item.StepCounter == 7 || item.StepCounter == 8 || item.StepCounter == 9 || item.StepCounter == 10) && (ViewBag.Id == 0 || ViewBag.Id == 1 || ViewBag.Id == 11 || item.IsFwdStatusId == 3))
                                                     {
                                                         <a asp-controller="BasicDetail" asp-action="BasicDetail" asp-route-Id="@item.EncryptedId" class="btn btn-icon btn-round btn-warning mr-2"><i class="fas fa-edit mt-2"></i></a>
 
@@ -266,40 +269,43 @@
                                                                 <button type="submit" class="btn btn-danger">Yes</button>
                                                                 <a href="#" class="btn btn-primary" onclick="confirmDelete('@item.BasicDetailId',false)">No</a>
                                                             </span>
-                                                           @*  <span id="deleteSpan_@item.BasicDetailId">
-                                                                <a href="#" class="btn btn-icon btn-round btn-danger mr-1" onclick="confirmDelete('@item.BasicDetailId',true)"><i class="fas fa-trash-alt m-2"></i></a>
-                                                            </span> *@
+                                                            @*  <span id="deleteSpan_@item.BasicDetailId">
+                                                <a href="#" class="btn btn-icon btn-round btn-danger mr-1" onclick="confirmDelete('@item.BasicDetailId',true)"><i class="fas fa-trash-alt m-2"></i></a>
+                                                </span> *@
                                                         </form>
                                                         <button class="btn btn-icon btn-round btn-primary mr-1 fwdrecord"><i class="fa fa-step-forward"></i></button>
-                                                   
+
                                                     }
 
 
-                                                @if (item.StepCounter >= 2 && item.StepCounter<=6)
+                                                    @if (item.StepCounter >= 2 && item.StepCounter <= 6)
                                                     {
                                                         <span class="badge rounded-pill bg-light text-primary mt-3">Processed</span>
 
-                                                        
+
 
                                                     }
                                                     else
                                                     {
-                                                    @if (item.IsFwdStatusId==3)
-                                                     {
+                                                        @if (item.IsFwdStatusId == 3)
+                                                        {
 
-                                                        <span class="badge rounded-pill bg-light text-danger mt-3" data-toggle="tooltip" data-placement="left" title="@item.Remark">Rejected</span>
-                                                         
-                                                     }
-                                                        
+                                                            <span class="badge rounded-pill bg-light text-danger mt-3" data-toggle="tooltip" data-placement="left" title="@item.Remark">Rejected</span>
+
+                                                        }
+
 
                                                     }
-                                                
-                                            </div>
-                                           
 
-                                        </td>
-                                    </tr>
+                                                </div>
+
+
+                                            </td>
+                                        </tr>
+                                    }
                                 }
+                               
+                           
                             </tbody>
                         </table>
                     </div>

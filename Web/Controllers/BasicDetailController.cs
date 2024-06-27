@@ -42,6 +42,8 @@ using System.IO.Compression;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Common.Logging;
 using BusinessLogicsLayer.TrnLoginLog;
+using NuGet.Packaging;
+using Web.Healpers;
 
 namespace Web.Controllers
 {
@@ -1582,6 +1584,9 @@ namespace Web.Controllers
 
                 CreateZipFromFolder(sourceFolderPhotoPhy, sourceFolderPhotoPhy + ".zip");
                 //Encrypt.EncryptParameter(jsonde.ToString())
+                ZipEncryptionService zipEncryptionService = new ZipEncryptionService();
+                zipEncryptionService.EncryptFile(sourceFolderPhotoPhy + ".zip", sourceFolderPhotoPhy);
+
                 string lastFolderName = new DirectoryInfo(sourceFolderPhotoPhy).Name;
 
 
