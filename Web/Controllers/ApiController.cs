@@ -2,11 +2,13 @@
 using BusinessLogicsLayer.Bde;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Globalization;
 
 namespace Web.Controllers
 {
+    [Authorize]
     public class ApiController : Controller
     {
         private readonly IAPIBL _aPIBL;

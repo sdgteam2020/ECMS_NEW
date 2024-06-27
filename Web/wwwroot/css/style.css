@@ -16754,8 +16754,8 @@ body {
 }
 
 .sidenav-toggled #layoutSidenav #layoutSidenav_content:before {
-   /* content: "";*/
-   /* display: block;*/
+    content: "";
+    display: block;
     position: absolute;
     top: 0;
     left: 0;

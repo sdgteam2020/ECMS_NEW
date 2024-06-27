@@ -1,9 +1,16 @@
 ﻿$(document).ready(function () {
-    $("#btn-i-card-print").click(function () {
-        var datef2 = new Date();
-        $(".watermark").html($("#IpaddresGloble").html() + ' ' + DateFormateddMMyyyyhhmmss(datef2))
-        window.print();
-    });
+$("#btn-i-card-print").click(function () {
+    //    window.scrollTo(0, 0);
+    //var datef2 = new Date();
+    //    $(".watermark").html($("#IpaddresGloble").html() + ' ' + DateFormateddMMyyyyhhmmss(datef2))
+    //    /*$(".section-to-print-popup").focus();*/
+
+    //    setTimeout(function () {
+    //        window.print();
+    //    }, 300); // 300 milliseconds delay
+
+        PrintData("section-to-print-popup");
+});
 });
 function GetICardPrintPreviewByRequestId(RequestId) {
     var userdata =
