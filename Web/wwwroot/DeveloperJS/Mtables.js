@@ -214,7 +214,7 @@ function GetAllOffsByUnitId(ddl, sectid, UnitId, ISIO, IsCO, IsRO, IsORO,BasicDe
 
                     }
 
-                    if (IsORO == 1 && response.length == 1) {
+                    if ((IsRO == 1 || IsORO == 1) && response.length == 1) {
 
                         $("#" + ddl + "").val(response[0].AspNetUsersId)
 
