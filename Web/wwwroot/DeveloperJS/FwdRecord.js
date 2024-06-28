@@ -399,7 +399,9 @@ $(function () {
 
 
             $("#msgforfwd").html('');
+            if (isToken == true)
             GetTokenvalidatepersid2fawiththumbprint($("#aspntokenarmyno").html(), "tokenmsgforfwd", "txtspnTokenArmyNo", "txtspnTokenthumbprint");
+
             if (parseInt(spnStepId) != 0) {
                 Swal.fire({
                     title: 'Are you sure?',

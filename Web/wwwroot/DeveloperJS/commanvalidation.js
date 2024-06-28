@@ -852,12 +852,8 @@ function PrintData(div) {
     printWindow.document.write('<div class="watermark">' + $("#IpaddresGloble").html() + ' ' + DateFormateddMMyyyyhhmmss(datef2) +'</div>');
     printWindow.document.write(divContent);
     printWindow.document.write('</body></html>');
-
     // Close the document to complete writing
     printWindow.document.close();
-
-
-
     // Wait for the content to be fully loaded, then trigger the print dialog
     printWindow.onload = function () {
         printWindow.print();
