@@ -3,6 +3,7 @@ var RegistrationApplyFor = 0;
 var lCardType = 0;
 var IsValid = 0;
 var Message = "";
+var isToken = false;
 $(document).ready(function () {
 
     $("#btnApplicantsPostingout").click(function () {
