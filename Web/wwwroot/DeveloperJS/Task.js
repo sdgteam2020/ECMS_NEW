@@ -3,10 +3,10 @@ $(function () {
 
     GetTaskIcardRequestCount($("#Id").html(), $("#applyForId").html())
    
-    GetNotification(1, 1);
-    GetNotification(1, 2);
-    GetNotificationRequestId(1, 1);
-    GetNotificationRequestId(1, 2);
+    //GetNotification(1, 1);
+    //GetNotification(1, 2);
+    //GetNotificationRequestId(1, 1);
+    //GetNotificationRequestId(1, 2);
 });
 function GetTaskIcardRequestCount(Id, applyForId) {
     var userdata =
