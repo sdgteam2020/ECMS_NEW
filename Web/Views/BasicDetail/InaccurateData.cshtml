@@ -55,7 +55,7 @@
                                         <tr>
                                             <td>@item.Sno</td>
                                             <td>@item.ServiceNo</td>
-                                            <td>@item.RankName @item.FName + (@item.LName == null ? "" : "" + @item.LName)</td>
+                                            <td>@item.RankName @item.FName @(item.LName == null ? "" : item.LName)</td>
                                             <td>@item.UpdatedOn.ToString().Replace("-","/").Replace("00:00:00","")</td>
                                            @*  <td>@item.DateOfCommissioning.ToString("dd/MMM/yyyy")</td> *@
                                            @*  <td>

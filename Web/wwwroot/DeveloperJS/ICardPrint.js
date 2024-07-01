@@ -27,7 +27,8 @@ function GetICardPrintPreviewByRequestId(RequestId) {
             if (response != "null" && response != null) {
                 $(".PhotoImagePath_ICardPrint").attr('src', "/WriteReadData/photo/" + response.PhotoImagePath);
                 $(".SignaturePath_ICardPrint").attr('src', "/WriteReadData/Signature/" + response.SignatureImagePath);
-                $("#Name_ICardPrint").html(response.Name);
+                $("#FName_ICardPrint").html(response.FName);
+                $("#LName_ICardPrint").html(response.LName);
                 $("#RankName_ICardPrint").html(response.RankName);
                 $("#ArmedName_ICardPrint").html(response.ArmedName);
                 $("#ServiceNo_ICardPrint").html(response.ServiceNo);
@@ -60,7 +61,9 @@ function GetBasicDetailByRequestId(RequestId) {
             if (response != "null" && response != null) {
                 $("#basicphotosVP").attr('src', "/WriteReadData/photo/" + response.PhotoImagePath);
                 $("#BasicsingVP").attr('src', "/WriteReadData/Signature/" + response.SignatureImagePath);
-                $("#lblvpName").html(response.Name);
+                $("#lblvpNameAsPerRecord").html(response.NameAsPerRecord);
+                $("#lblvpFName").html(response.FName);
+                $("#lblvpLName").html(response.LName);
                 $("#lblvpRank").html(response.RankName);
                 $("#lblvparm").html(response.ArmedName);
                 $("#lblvpArmyNo").html(response.ServiceNo);
