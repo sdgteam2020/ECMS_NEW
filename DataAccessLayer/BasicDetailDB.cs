@@ -121,7 +121,7 @@ namespace DataAccessLayer
         }
         public async Task<List<DTOSmartSearch>> SearchAllServiceNo(string ServiceNo,int AspNetUsersId)
         {
-            string query = "Select basi.BasicDetailId,Name,ServiceNo,PhotoImagePath Image "+
+            string query = "Select basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath Image "+
                            " from BasicDetails basi "+
                            " inner join TrnICardRequest req on req.BasicDetailId=basi.BasicDetailId and req.Status=0"+
                            " inner join TrnDomainMapping map on map.Id=req.TrnDomainMappingId and map.AspNetUsersId=@AspNetUsersId" +
