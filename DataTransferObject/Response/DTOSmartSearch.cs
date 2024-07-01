@@ -9,7 +9,8 @@ namespace DataTransferObject.Response
     public class DTOSmartSearch
     {
         public int BasicDetailId { get; set; }
-        public string Name { get; set; } = string.Empty;
+        public string FName { get; set; } = string.Empty;
+        public string? LName { get; set; }
         public string ServiceNo { get; set; } = string.Empty;
         public string Image { get; set; } = string.Empty;
 

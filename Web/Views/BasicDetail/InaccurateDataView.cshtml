@@ -116,9 +116,9 @@
                             </div>
                             <div class="col-sm-6 ">
                                 <div class="form-group row mb-2">
-                                    <label class="col-form-label col-sm-4 labelprofile">@Html.DisplayNameFor(model => model.Name)</label>
+                                    <label class="col-form-label col-sm-4 labelprofile">Name</label>
                                     <div class="col-sm-8">
-                                        <label id="" class="col-form-label">@Model.RankAbbreviation @Model.Name</label>
+                                        <label id="" class="col-form-label">@Model.RankAbbreviation @Model.FName + (@Model.LName == null ? "" : "" + @Model.LName)</label>
 
                                     </div>
 

@@ -159,10 +159,17 @@
                                                             </div>
                                                         </div>
                                                         <div class="form-group row mb-2">
-                                                            <label asp-for="Name" class="col-form-label col-sm-6 labelprofile">Name edited by user</label>
+                                                            <label asp-for="FName" class="col-form-label col-sm-6 labelprofile">First Name</label>
                                                             <div class="col-sm-6">
-                                                                <input asp-for="Name" class="form-control text-uppercase" placeholder="Max 50 Characters incl spaces" />
-                                                                <span asp-validation-for="Name" class="text-danger"></span>
+                                                                <input asp-for="FName" class="form-control text-uppercase" placeholder="Max 18 Characters incl spaces" />
+                                                                <span asp-validation-for="FName" class="text-danger"></span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group row mb-2">
+                                                            <label asp-for="LName" class="col-form-label col-sm-6 labelprofile">Last Name</label>
+                                                            <div class="col-sm-6">
+                                                                <input asp-for="LName" class="form-control text-uppercase" placeholder="Max 18 Characters incl spaces" />
+                                                                <span asp-validation-for="LName" class="text-danger"></span>
                                                             </div>
                                                         </div>
                                                         <div class="form-group row mb-2 required">

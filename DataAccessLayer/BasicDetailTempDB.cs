@@ -48,7 +48,8 @@ namespace DataAccessLayer
                                      {
                                          EncryptedId = protector.Protect(e.BasicDetailTempId.ToString()),
                                          Sno = sno++,
-                                         Name = e.Name,
+                                         FName = e.FName,
+                                         LName = e.LName,
                                          ServiceNo = e.ServiceNo,
                                          DOB = e.DOB,
                                          DateOfCommissioning = e.DateOfCommissioning,
@@ -108,7 +109,8 @@ namespace DataAccessLayer
                                          {
                                              EncryptedId = protector.Protect(e.BasicDetailTempId.ToString()),
                                              Sno = sno++,
-                                             Name = e.Name,
+                                             FName = e.FName,
+                                             LName=e.LName,
                                              ServiceNo = e.ServiceNo,
                                              DOB = e.DOB,
                                              DateOfCommissioning = e.DateOfCommissioning,
@@ -149,7 +151,8 @@ namespace DataAccessLayer
                                              {
                                                  EncryptedId = protector.Protect(e.BasicDetailTempId.ToString()),
                                                  Sno = sno++,
-                                                 Name = e.Name,
+                                                 FName = e.FName,
+                                                 LName = e.LName,
                                                  ServiceNo = e.ServiceNo,
                                                  DOB = e.DOB,
                                                  DateOfCommissioning = e.DateOfCommissioning,
@@ -188,7 +191,8 @@ namespace DataAccessLayer
                                              {
                                                  EncryptedId = protector.Protect(e.BasicDetailTempId.ToString()),
                                                  Sno = sno++,
-                                                 Name = e.Name,
+                                                 FName = e.FName,
+                                                 LName = e.LName,
                                                  ServiceNo = e.ServiceNo,
                                                  DOB = e.DOB,
                                                  DateOfCommissioning = e.DateOfCommissioning,
@@ -227,7 +231,8 @@ namespace DataAccessLayer
                                              {
                                                  EncryptedId = protector.Protect(e.BasicDetailTempId.ToString()),
                                                  Sno = sno++,
-                                                 Name = e.Name,
+                                                 FName = e.FName,
+                                                 LName = e.LName,
                                                  ServiceNo = e.ServiceNo,
                                                  DOB = e.DOB,
                                                  DateOfCommissioning = e.DateOfCommissioning,
@@ -283,7 +288,8 @@ namespace DataAccessLayer
                                  {
                                      EncryptedId = protector.Protect(e.BasicDetailTempId.ToString()),
                                      Sno = sno++,
-                                     Name = e.Name,
+                                     FName = e.FName,
+                                     LName=e.LName,
                                      ServiceNo = e.ServiceNo,
                                      DOB = e.DOB,
                                      DateOfCommissioning = e.DateOfCommissioning,

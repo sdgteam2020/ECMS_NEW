@@ -36,14 +36,13 @@
                                 <thead>
                                     <tr>
                                         <th>@Html.DisplayNameFor(model => model[0].Sno)</th>
-                                    <th>Army No</th>
-                                        <th>@Html.DisplayNameFor(model => model[0].Name)</th>
-                                       
+                                        <th>Army No</th>
+                                        <th>Name</th>
                                         <th>Created On</th>
                                    @*  <th class="wrap">Dt of Commissioning/Enrolment</th> *@
                                         @* <th>@Html.DisplayNameFor(model => model[0].PermanentAddress)</th> *@
-                                    <th>Observation</th>
-                                    <th class="noExport">Action</th>
+                                        <th>Observation</th>
+                                        <th class="noExport">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -56,9 +55,8 @@
                                         <tr>
                                             <td>@item.Sno</td>
                                             <td>@item.ServiceNo</td>
-                                            <td>@item.RankName @item.Name</td>
-
-                                        <td>@item.UpdatedOn.ToString().Replace("-","/").Replace("00:00:00","")</td>
+                                            <td>@item.RankName @item.FName + (@item.LName == null ? "" : "" + @item.LName)</td>
+                                            <td>@item.UpdatedOn.ToString().Replace("-","/").Replace("00:00:00","")</td>
                                            @*  <td>@item.DateOfCommissioning.ToString("dd/MMM/yyyy")</td> *@
                                            @*  <td>
                                             <span>@item.Village , @item.Tehsil</span>

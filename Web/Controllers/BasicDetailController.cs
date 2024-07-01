@@ -526,7 +526,8 @@ namespace Web.Controllers
                     else
                     {
                             BasicDetailTemp basicDetailTemp = new BasicDetailTemp();
-                            basicDetailTemp.Name = model.Name;
+                            basicDetailTemp.FName = model.FName;
+                            basicDetailTemp.LName = model.LName;
                             basicDetailTemp.NameAsPerRecord = model.NameAsPerRecord;
                             basicDetailTemp.ServiceNo = model.ServiceNo;
                             basicDetailTemp.DOB = model.DOB;
@@ -631,7 +632,8 @@ namespace Web.Controllers
                     {
                         ViewBag.OptionsUnitId = 0;
                         BasicDetailCrtAndUpdVM dTOBasicDetailCrtRequest = new BasicDetailCrtAndUpdVM();
-                        dTOBasicDetailCrtRequest.Name = model.Name;
+                        dTOBasicDetailCrtRequest.FName = model.FName;
+                        dTOBasicDetailCrtRequest.LName = model.LName;
                         dTOBasicDetailCrtRequest.NameAsPerRecord= model.NameAsPerRecord;
                         dTOBasicDetailCrtRequest.ServiceNo = model.ServiceNo;
                         dTOBasicDetailCrtRequest.DOB = model.DOB;
@@ -716,7 +718,8 @@ namespace Web.Controllers
                     {
                         var modelex = JsonConvert.DeserializeObject<DTORegistrationRequest>(TempData["Registration"].ToString());
 
-                        basicDetailUpdVM.Name = modelex.Name;
+                        basicDetailUpdVM.FName = modelex.FName;
+                        basicDetailUpdVM.LName = modelex.LName;
                         basicDetailUpdVM.ServiceNo = modelex.ServiceNo;
                         basicDetailUpdVM.DOB = modelex.DOB;
                         basicDetailUpdVM.DateOfCommissioning = modelex.DateOfCommissioning;

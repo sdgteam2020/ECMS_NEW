@@ -16,9 +16,13 @@ namespace DataTransferObject.Domain.Model
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int BasicDetailId { get; set; }
 
-        [StringLength(36)]
-        [Column(TypeName = "varchar(36)")]
-        public string Name { get; set; } = string.Empty;
+        [StringLength(18)]
+        [Column(TypeName = "varchar(18)")]
+        public string FName { get; set; } = string.Empty;
+
+        [StringLength(18)]
+        [Column(TypeName = "varchar(18)")]
+        public string? LName { get; set; }
 
         [StringLength(36)]
         [Column(TypeName = "varchar(36)")]
