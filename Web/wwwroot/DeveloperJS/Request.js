@@ -308,11 +308,14 @@ function GetByArmyNoIsToken(ArmyNo) {
                             $('#txtApplyForArmyNo').attr('readonly', true);
                             $('#btnNext').removeClass("disabled");
                         }
+                        else {
+                            $('#txtApplyForArmyNo').attr('readonly', false);
+                            
+                        }
                     }
                     else {
                         $("#btntokenrefresh").removeClass("d-none");
                         $("#txtApplyForArmyNo").addClass("d-none");///for bypass for off
-
                         $('#txtApplyForArmyNo').attr('readonly', false);
                     }
 
