@@ -222,7 +222,7 @@
                                     <tr>
                                         <td>@item.Sno</td>
                                         <td><a href="#" onclick="GetBasicDetailByRequestId(@(@item.RequestId));event.preventDefault();"><span class="ServiceNo">@item.ServiceNo</span></a></td>
-                                        <td class="PersName">@item.RankName @item.FName + (@item.LName == null ? "" : "" + @item.LName)</td>
+                                        <td class="PersName">@item.RankName @item.FName @(item.LName == null ? "" : item.LName)</td>
                                         <td class="UnitName">@item.UnitName</td>
                                        @*  <td>@item.DOB.ToString("dd/MMM/yyyy")</td> *@
                                         @* <td>@item.DateOfCommissioning.ToString("dd/MMM/yyyy")</td> *@

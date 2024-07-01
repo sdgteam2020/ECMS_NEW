@@ -152,13 +152,15 @@ function CallDataFromAPI() {
                 toastr.success('Data Fetched From Api');
                // $("#Name").val(response.Pers_name);
                 //alert(JSON.stringify(response));
-                if (response.Pers_name.length >18) {
-                    $('#Name').attr('readonly', false);
+                if (response.Pers_name.length > 18) {
+                    $('#FName').attr('readonly', false);
+                    $('#LName').attr('readonly', false);
                 }
                 else {
-                    $('#Name').attr('readonly', true);
+                    $("#FName").val(response.Pers_name);
+                    $('#FName').attr('readonly', true);
+                    $('#LName').attr('readonly', true);
                 }
-                $("#Name").val(response.Pers_name);
                 $("#NameAsPerRecord").val(response.Pers_name);
                 $("#ServiceNo").val(response.Pers_Army_No);
                 $("#DOB").val(response.Pers_birth_dt);

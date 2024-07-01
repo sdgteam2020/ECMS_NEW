@@ -229,7 +229,7 @@
                                             <img src="/WriteReadData/photo/@Model.PhotoImagePath" onerror="this.src='/Images/user4.png'" height="200" width="200" />
                                         </div>
                                         <div class="col-sm-6 mt-4">
-                                            <div class="fw-bold text-uppercase">@Model.FName + (@Model.LName == null ? "" : "" + @Model.LName)</div>
+                                            <div class="fw-bold text-uppercase">@Model.FName + @(Model.LName == null ? "" : Model.LName)</div>
                                             <div class="fw-bold text-uppercase">@(Model.RankName != null ? Model.RankName : "No Rank")</div>
                                             <div class="fw-bold text-uppercase">@(Model.ArmedName != null ? Model.ArmedName : "No Armed")</div>
                                             <div class="fw-bold text-uppercase">@Model.ServiceNo</div>
