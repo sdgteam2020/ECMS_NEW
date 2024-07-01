@@ -34,7 +34,7 @@ namespace DataAccessLayer
             if (TypeId == 1)
             {
                 //var BasicDetailTempList = _context.BasicDetailTemps.Where(x => x.Updatedby == UserId).ToList();
-                var query = "SELECT Temps.BasicDetailTempId,ranks1.RankAbbreviation RankName,Temps.Name,Temps.ServiceNo,Temps.DOB,Temps.DateOfCommissioning,Temps.District,Temps.PO,Temps.PS,Temps.PinCode,Temps.State,Temps.Tehsil,Temps.Village,Temps.Observations,Temps.RemarksIds " +
+                var query = "SELECT Temps.BasicDetailTempId,ranks1.RankAbbreviation RankName,Temps.FName,Temps.LName,Temps.ServiceNo,Temps.DOB,Temps.DateOfCommissioning,Temps.District,Temps.PO,Temps.PS,Temps.PinCode,Temps.State,Temps.Tehsil,Temps.Village,Temps.Observations,Temps.RemarksIds " +
                             " ,(select STRING_AGG(Remarks,'#') from MRemarks where RemarksId in (select value from string_split(Temps.RemarksIds,','))) Remarks2" +
                             " ,Temps.UpdatedOn,Temps.RegistrationId,Temps.TypeId,Temps.ApplyForId FROM BasicDetailTemps  Temps" +
                             " inner join MRank ranks1 on ranks1.RankId = Temps.RankId" +
@@ -94,7 +94,7 @@ namespace DataAccessLayer
                     }
                     else if (dTOBasicDetailTempObsRequest.ArmedId != 56)
                     {
-                        var QueryFinal = "SELECT Temps.BasicDetailTempId,ranks1.RankAbbreviation RankName,Temps.Name,Temps.ServiceNo,Temps.DOB,Temps.DateOfCommissioning,Temps.District,Temps.PO,Temps.PS,Temps.PinCode,Temps.State,Temps.Tehsil,Temps.Village,Temps.Observations,Temps.RemarksIds " +
+                        var QueryFinal = "SELECT Temps.BasicDetailTempId,ranks1.RankAbbreviation RankName,Temps.FName,Temps.LName,Temps.ServiceNo,Temps.DOB,Temps.DateOfCommissioning,Temps.District,Temps.PO,Temps.PS,Temps.PinCode,Temps.State,Temps.Tehsil,Temps.Village,Temps.Observations,Temps.RemarksIds " +
                                     " ,(select STRING_AGG(Remarks,'#') from MRemarks where RemarksId in (select value from string_split(Temps.RemarksIds,','))) Remarks2" +
                                     " ,Temps.UpdatedOn,Temps.RegistrationId,Temps.TypeId,Temps.ApplyForId FROM TrnDomainMapping tdm" +
                                     " inner join MRecordOffice mrec on mrec.TDMId = tdm.Id " +
@@ -138,7 +138,7 @@ namespace DataAccessLayer
                         int TDMId = dTOBasicDetailTempObsRequest.TDMId;
                         if (dTOBasicDetailTempObsRequest.Name == "MP 6A")
                         {
-                            var QueryFinal = "SELECT Temps.BasicDetailTempId,ranks1.RankAbbreviation RankName,Temps.Name,Temps.ServiceNo,Temps.DOB,Temps.DateOfCommissioning,Temps.District,Temps.PO,Temps.PS,Temps.PinCode,Temps.State,Temps.Tehsil,Temps.Village,Temps.Observations,Temps.RemarksIds " +
+                            var QueryFinal = "SELECT Temps.BasicDetailTempId,ranks1.RankAbbreviation RankName,Temps.FName,Temps.LName,Temps.ServiceNo,Temps.DOB,Temps.DateOfCommissioning,Temps.District,Temps.PO,Temps.PS,Temps.PinCode,Temps.State,Temps.Tehsil,Temps.Village,Temps.Observations,Temps.RemarksIds " +
                                             " ,(select STRING_AGG(Remarks,'#') from MRemarks where RemarksId in (select value from string_split(Temps.RemarksIds,','))) Remarks2" +
                                             " ,Temps.UpdatedOn,Temps.RegistrationId,Temps.TypeId,Temps.ApplyForId FROM BasicDetailTemps Temps" +
                                             " inner join MRank ranks1 on ranks1.RankId = Temps.RankId" +
@@ -177,7 +177,7 @@ namespace DataAccessLayer
                         }
                         else if (dTOBasicDetailTempObsRequest.Name == "MP 6F")
                         {
-                            var QueryFinal = "SELECT Temps.BasicDetailTempId,ranks1.RankAbbreviation RankName,Temps.Name,Temps.ServiceNo,Temps.DOB,Temps.DateOfCommissioning,Temps.District,Temps.PO,Temps.PS,Temps.PinCode,Temps.State,Temps.Tehsil,Temps.Village,Temps.Observations,Temps.RemarksIds " +
+                            var QueryFinal = "SELECT Temps.BasicDetailTempId,ranks1.RankAbbreviation RankName,Temps.FName,Temps.LName,Temps.ServiceNo,Temps.DOB,Temps.DateOfCommissioning,Temps.District,Temps.PO,Temps.PS,Temps.PinCode,Temps.State,Temps.Tehsil,Temps.Village,Temps.Observations,Temps.RemarksIds " +
                                             " ,(select STRING_AGG(Remarks,'#') from MRemarks where RemarksId in (select value from string_split(Temps.RemarksIds,','))) Remarks2" +
                                             " ,Temps.UpdatedOn,Temps.RegistrationId,Temps.TypeId,Temps.ApplyForId FROM BasicDetailTemps Temps" +
                                             " inner join MRank ranks1 on ranks1.RankId = Temps.RankId" +
@@ -217,7 +217,7 @@ namespace DataAccessLayer
                         }
                         else
                         {
-                            var QueryFinal = "SELECT Temps.BasicDetailTempId,ranks1.RankAbbreviation RankName,Temps.Name,Temps.ServiceNo,Temps.DOB,Temps.DateOfCommissioning,Temps.District,Temps.PO,Temps.PS,Temps.PinCode,Temps.State,Temps.Tehsil,Temps.Village,Temps.Observations,Temps.RemarksIds " +
+                            var QueryFinal = "SELECT Temps.BasicDetailTempId,ranks1.RankAbbreviation RankName,Temps.FName,Temps.LName,Temps.ServiceNo,Temps.DOB,Temps.DateOfCommissioning,Temps.District,Temps.PO,Temps.PS,Temps.PinCode,Temps.State,Temps.Tehsil,Temps.Village,Temps.Observations,Temps.RemarksIds " +
                                             " ,(select STRING_AGG(Remarks,'#') from MRemarks where RemarksId in (select value from string_split(Temps.RemarksIds,','))) Remarks2" +
                                             " ,Temps.UpdatedOn,Temps.RegistrationId,Temps.TypeId,Temps.ApplyForId FROM BasicDetailTemps Temps" +
                                             " inner join MRank ranks1 on ranks1.RankId = Temps.RankId" +
@@ -263,7 +263,7 @@ namespace DataAccessLayer
         public async Task<DTOBasicDetailTempRequest> GetALLBasicDetailTempByBasicDetailId(int UserId, int BasicDetailId)
         {
             //var BasicDetailTempList = _context.BasicDetailTemps.Where(x => x.Updatedby == UserId).ToList();
-            var query = "SELECT Temps.BasicDetailTempId,ranks1.RankAbbreviation RankName,Temps.Name,Temps.ServiceNo,Temps.DOB,Temps.DateOfCommissioning,Temps.District,Temps.PO,Temps.PS,Temps.PinCode,Temps.State,Temps.Tehsil,Temps.Village,Temps.Observations,Temps.RemarksIds " +
+            var query = "SELECT Temps.BasicDetailTempId,ranks1.RankAbbreviation RankName,Temps.NameAsPerRecord,Temps.FName,Temps.LName,Temps.ServiceNo,Temps.DOB,Temps.DateOfCommissioning,Temps.District,Temps.PO,Temps.PS,Temps.PinCode,Temps.State,Temps.Tehsil,Temps.Village,Temps.Observations,Temps.RemarksIds " +
                         " ,(select STRING_AGG(Remarks,'#') from MRemarks where RemarksId in (select value from string_split(Temps.RemarksIds,','))) Remarks2" +
                         " ,mappy.Name ApplyType,reg.Name RegistrationName,micard.Name CardType" +
                         " ,users.DomainId,unit.UnitName,unit.Suffix,unit.Sus_no,pro.Name OffName,ranks.RankAbbreviation,pro.ArmyNo,Temps.UpdatedOn " +
