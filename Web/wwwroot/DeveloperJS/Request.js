@@ -303,10 +303,17 @@ function GetByArmyNoIsToken(ArmyNo) {
                     if (response.IsWithoutTokenApply == false) {
                         $("#btntokenrefresh").addClass("d-none");
                         $("#txtApplyForArmyNo").removeClass("d-none");///for bypass for off
+                        if (RegistrationApplyFor == 1) {
+                            $("#txtApplyForArmyNo").val($("#aspntokenarmyno").html());
+                            $('#txtApplyForArmyNo').attr('readonly', true);
+                            $('#btnNext').removeClass("disabled");
+                        }
                     }
                     else {
                         $("#btntokenrefresh").removeClass("d-none");
                         $("#txtApplyForArmyNo").addClass("d-none");///for bypass for off
+
+                        $('#txtApplyForArmyNo').attr('readonly', false);
                     }
 
 
