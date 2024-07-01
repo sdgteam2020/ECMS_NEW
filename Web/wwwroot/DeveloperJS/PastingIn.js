@@ -205,7 +205,8 @@ function GetdataPostingData(ArmyNo) {
             if (response != null) {
                 $("#lblCategory").html(response.ApplyFor);
                 $("#lblAppt").html(response.Users_AppointmentName);
-                $("#lblName").html(response.Name);
+                $("#lblFName").html(response.FName);
+                $("#lblLName").html(response.LName == null ? "" : response.LName);
                 if (response.Status == 'False')
                     $("#lblStatusofInds").html('Under Process');
                 else

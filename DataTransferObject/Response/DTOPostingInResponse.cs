@@ -10,7 +10,8 @@ namespace DataTransferObject.Response
     {
         public int RequestId { get; set; }
         public int BasicDetailId { get; set; }
-        public string? Name { get; set; }
+        public string? FName { get; set; }
+        public string? LName { get; set; }
         public string? ServiceNo { get; set; }
         public string? RankName { get; set; }
         public string? ApplyFor { get; set; }
