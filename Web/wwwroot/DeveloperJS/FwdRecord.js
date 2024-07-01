@@ -638,7 +638,9 @@ function GetBasicDetailByRequestIdForFwd(RequestId) {
             if (response != "null" && response != null) {
                 $("#basicphotos").attr('src', "/WriteReadData/photo/" + response.PhotoImagePath);
                 $("#Basicsing").attr('src', "/WriteReadData/Signature/" + response.SignatureImagePath);
-                $("#lblfdName").html(response.Name);
+                $("#lblfdNameAsPerRecord").html(response.NameAsPerRecord);
+                $("#lblfdFName").html(response.FName);
+                $("#lblfdLName").html(response.LName);
                 $("#lblfdRank").html(response.RankName);
                 $("#lblLfdarm").html(response.ArmedName);
                 $("#lblfdArmyNo").html(response.ServiceNo);
