@@ -460,7 +460,8 @@ namespace DataAccessLayer
                                      BasicDetailId = e.BasicDetailId,
                                      
                                      Sno = sno++,
-                                     Name = e.Name,
+                                     FName = e.FName,
+                                     LName = e.LName,
                                      ServiceNo = e.ServiceNo,
                                      DOB = e.DOB,
                                      DateOfCommissioning = e.DateOfCommissioning,

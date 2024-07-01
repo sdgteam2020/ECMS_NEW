@@ -107,7 +107,7 @@ namespace Web.Controllers
 
                 // Add header cells to the table
                 table.AddCell("NAME");
-                table.AddCell(db.Name);
+                table.AddCell(db.FName + (db.LName == null ? "" : " "+db.LName));
                 table.AddCell("Rank");
                 table.AddCell(db.RankName);
 

@@ -17,8 +17,12 @@ namespace DataTransferObject.Requests
 
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
         [RegularExpression(@"^[\w ]*$", ErrorMessage = "Only Alphabets ,Numbers allowed.")]
-        [MaxLength(36, ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "MaxLengthError")]
-        public string Name { get; set; } = string.Empty;
+        [MaxLength(18, ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "MaxLengthError")]
+        public string FName { get; set; } = string.Empty;
+
+        [RegularExpression(@"^[\w ]*$", ErrorMessage = "Only Alphabets ,Numbers allowed.")]
+        [MaxLength(18, ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "MaxLengthError")]
+        public string? LName { get; set; }
 
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
         [RegularExpression(@"^[\w ]*$", ErrorMessage = "Only Alphabets ,Numbers allowed.")]
