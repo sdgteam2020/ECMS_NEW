@@ -951,7 +951,7 @@ namespace DataAccessLayer
                             " inner join MArmedType arm on arm.ArmedId=bas.ArmedId"+
                             " inner join MapUnit uni on uni.UnitMapId=bas.UnitId"+
                             " inner join MUnit Muni on Muni.UnitId=uni.UnitId"+
-                            " inner join TrnICardRequest icardreq on icardreq.BasicDetailId=bas.BasicDetailId and icardreq.Status in (0,1)" +
+                            " inner join TrnICardRequest icardreq on icardreq.BasicDetailId=bas.BasicDetailId and icardreq.Status in (0,1,2)" +
                             " left join MRegimental regi on regi.RegId=bas.RegimentalId" +
                             " where icardreq.RequestId=@RequestId";
             try

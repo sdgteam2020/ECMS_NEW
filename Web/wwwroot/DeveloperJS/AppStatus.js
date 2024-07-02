@@ -151,7 +151,8 @@ function GetDataFromBasicDetails(Id) {
             if (response != "null" && response != null) {
                 $(".PhotoImagePath").attr('src', "/WriteReadData/photo/" + response.PhotoImagePath);
                 $(".SignaturePath").attr('src', "/WriteReadData/Signature/" + response.SignatureImagePath);
-                $(".Name").html(response.Name);
+                $(".FName").html(response.FName);
+                $(".LName").html(response.LName == null ? "&nbsp;" : response.LName);
                 $(".RankName").html(response.RankName);
                 $(".ArmedName").html(response.ArmedName);
                 $(".ServiceNo").html(response.ServiceNo);
