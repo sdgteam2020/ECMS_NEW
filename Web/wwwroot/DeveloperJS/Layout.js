@@ -60,7 +60,7 @@ $(document).ready(function () {
                     response($.map(data, function (item) {
 
                         
-                        return { label: item.ServiceNo, value: item.BasicDetailId, Name: item.Name, Image: item.Image };
+                        return { label: item.ServiceNo, value: item.BasicDetailId, Name: (item.FName + (item.LName == null ? "" : item.LName)), Image: item.Image };
 
                     }))
                 },

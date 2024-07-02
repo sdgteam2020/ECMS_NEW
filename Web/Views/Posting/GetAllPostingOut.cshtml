@@ -75,8 +75,8 @@
                                         <br>
                                         @Html.DisplayFor(modelItem => item.Rank)
 
-                                      
-                                        @Html.DisplayFor(modelItem => item.Name)
+
+                                        @Html.DisplayFor(modelItem => item.FName) @Html.DisplayFor(modelItem => item.LName == null ? "" : item.LName )
 
                                         @* @Html.DisplayFor(modelItem => item.FromDomainId) *@
                                     </td>
