@@ -2,6 +2,13 @@
     ViewData["Title"] = "Initiate Request DashBoard";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+<style>
+    .clickable {
+        height: 190px;
+        width: 190px;
+        display: block;
+    }
+</style>
 
 <header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
     <div class="containerMain">
@@ -40,7 +47,7 @@
                     @if (ViewBag.Type == "Drafted")
                     {
                         <div id="DraftedOffrs" class="col-md-2 col-sm-6">
-                            <a href="/BasicDetail/Index/MQ==">
+                            <a href="/BasicDetail/Index/MQ==" class="clickable">
                                 <div class="counter blue">
                                     <div class="counter-icon">
                                         <i class="fa fa-water"></i>
@@ -54,7 +61,7 @@
                             </a>
                         </div>
                         <div id="DraftedJCO" class="col-md-2 col-sm-6">
-                            <a href="/BasicDetail/Index/?Id=MQ==&jcoor=SmNvL09ycw==">
+                            <a href="/BasicDetail/Index/?Id=MQ==&jcoor=SmNvL09ycw==" class="clickable">
                                 <div class="counter blue">
                                     <div class="counter-icon">
                                         <i class="fa fa-user"></i>
@@ -71,7 +78,7 @@
                     else if (ViewBag.Type == "Submitted")
                     {
                         <div id="SubmittedOffrs" class="col-md-2 col-sm-6">
-                            <a href="/BasicDetail/Index/ODg4">
+                            <a href="/BasicDetail/Index/ODg4" class="clickable">
                                 <div class="counter blue">
                                     <div class="counter-icon">
                                         <i class="fa fa-water"></i>
@@ -85,7 +92,7 @@
                             </a>
                         </div>
                         <div id="SubmittedJCO" class="col-md-2 col-sm-6">
-                            <a href="/BasicDetail/Index/?Id=ODg4&jcoor=SmNvL09ycw==">
+                            <a href="/BasicDetail/Index/?Id=ODg4&jcoor=SmNvL09ycw==" class="clickable">
                                 <div class="counter blue">
                                     <div class="counter-icon">
                                         <i class="fa fa-user"></i>
@@ -102,7 +109,7 @@
                     else if (ViewBag.Type == "Closed")
                     {
                         <div id="SubmittedOffrs" class="col-md-2 col-sm-6">
-                            <a href="/Posting/AppCloseList/MQ==">
+                            <a href="/Posting/AppCloseList/MQ==" class="clickable">
                                 <div class="counter blue">
                                     <div class="counter-icon">
                                         <i class="fa fa-water"></i>
@@ -115,7 +122,7 @@
                             </a>
                         </div>
                         <div id="SubmittedJCO" class="col-md-2 col-sm-6">
-                            <a href="/Posting/AppCloseList/?Id=MQ==&jcoor=SmNvL09ycw==">
+                            <a href="/Posting/AppCloseList/?Id=MQ==&jcoor=SmNvL09ycw==" class="clickable">
                                 <div class="counter blue">
                                     <div class="counter-icon">
                                         <i class="fa fa-user"></i>
@@ -131,7 +138,7 @@
                     else if (ViewBag.Type == "Completed")
                     {
                         <div id="SubmittedOffrs" class="col-md-2 col-sm-6">
-                            <a href="/BasicDetail/Index/Nzc3">
+                            <a href="/BasicDetail/Index/Nzc3" class="clickable">
                                 <div class="counter blue">
                                     <div class="counter-icon">
                                         <i class="fa fa-water"></i>
@@ -145,7 +152,7 @@
                             </a>
                         </div>
                         <div id="SubmittedJCO" class="col-md-2 col-sm-6">
-                            <a href="/BasicDetail/Index/?Id=Nzc3&jcoor=SmNvL09ycw==">
+                            <a href="/BasicDetail/Index/?Id=Nzc3&jcoor=SmNvL09ycw==" class="clickable">
                                 <div class="counter blue">
                                     <div class="counter-icon">
                                         <i class="fa fa-user"></i>
@@ -162,7 +169,7 @@
                     else if (ViewBag.Type == "Rejected")
                     {
                         <div id="RejectedOffrs" class="col-md-2 col-sm-6">
-                            <a href="/BasicDetail/Index/OTk5">
+                            <a href="/BasicDetail/Index/OTk5" class="clickable">
                                 <div class="counter blue">
                                     <div class="counter-icon">
                                         <i class="fa fa-water"></i>
@@ -176,7 +183,7 @@
                             </a>
                         </div>
                         <div id="RejectedJCO" class="col-md-2 col-sm-6">
-                            <a href="/BasicDetail/Index?Id=OTk5&jcoor=SmNvL09ycw==">
+                            <a href="/BasicDetail/Index?Id=OTk5&jcoor=SmNvL09ycw==" class="clickable">
                                 <div class="counter blue">
                                     <div class="counter-icon">
                                         <i class="fa fa-user"></i>
@@ -193,7 +200,7 @@
                     else if (ViewBag.Type == "Posting Out")
                     {
                         <div class="col-md-2 col-sm-6">
-                            <a href="/Posting/GetPostingOutWithType?Type=MQ==&PostingType=UG9zdGluZ091dA==">
+                            <a href="/Posting/GetPostingOutWithType?Type=MQ==&PostingType=UG9zdGluZ091dA==" class="clickable">
                                 <div class="counter blue">
                                     <div class="counter-icon">
                                         <i class="fa fa-users"></i>
@@ -207,7 +214,7 @@
                             </a>
                         </div>
                         <div class="col-md-2 col-sm-6">
-                            <a href="/Posting/GetPostingOutWithType?Type=Mg==&PostingType=UG9zdGluZ091dA==">
+                            <a href="/Posting/GetPostingOutWithType?Type=Mg==&PostingType=UG9zdGluZ091dA==" class="clickable">
                                 <div class="counter blue">
                                     <div class="counter-icon">
                                         <i class="fa fa-users"></i>
@@ -223,7 +230,7 @@
                     else if (ViewBag.Type == "Posting In")
                     {
                         <div class="col-md-2 col-sm-6">
-                            <a href="/Posting/GetPostingOutWithType?Type=MQ==&PostingType=UG9zdGluZ0lu">
+                            <a href="/Posting/GetPostingOutWithType?Type=MQ==&PostingType=UG9zdGluZ0lu" class="clickable">
                                 <div class="counter blue">
                                     <div class="counter-icon">
                                         <i class="fa fa-users"></i>
@@ -237,7 +244,7 @@
                             </a>
                         </div>
                         <div class="col-md-2 col-sm-6">
-                            <a href="/Posting/GetPostingOutWithType?Type=Mg==&PostingType=UG9zdGluZ0lu">
+                            <a href="/Posting/GetPostingOutWithType?Type=Mg==&PostingType=UG9zdGluZ0lu" class="clickable">
                                 <div class="counter blue">
                                     <div class="counter-icon">
                                         <i class="fa fa-users"></i>
