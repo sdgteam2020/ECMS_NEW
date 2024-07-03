@@ -1047,7 +1047,7 @@ namespace DataAccessLayer
             string query = "";
             if (Data.IsJco == 0)
             {
-                query = /*"update TrnFwds set IsComplete=1 where RequestId in @Ids update TrnStepCounter set StepId=5 where RequestId in @Ids  update TrnICardRequest set Status=1 where  RequestId in @Ids "+*/
+                query = "update TrnFwds set IsComplete=1 where RequestId in @Ids update TrnStepCounter set StepId=5 where RequestId in @Ids  update TrnICardRequest set Status=1 where  RequestId in @Ids " +
                                 " select bas.*," +
                                 " trnadd.State,trnadd.District,trnadd.PS,trnadd.PO,trnadd.Tehsil,trnadd.Village,trnadd.PinCode," +
                                 " trnup.SignatureImagePath,trnup.PhotoImagePath,IdenMark1,IdenMark2,AadhaarNo,Height,bld.BloodGroup," +
@@ -1069,7 +1069,8 @@ namespace DataAccessLayer
             }
             else
             {
-                query = " select bas.*, trnadd.State,trnadd.District,trnadd.PS,trnadd.PO,trnadd.Tehsil,trnadd.Village,trnadd.PinCode, " +
+                query = "update TrnFwds set IsComplete=1 where RequestId in @Ids update TrnStepCounter set StepId=5 where RequestId in @Ids  update TrnICardRequest set Status=1 where  RequestId in @Ids " +
+                    " select bas.*, trnadd.State,trnadd.District,trnadd.PS,trnadd.PO,trnadd.Tehsil,trnadd.Village,trnadd.PinCode, " +
                          " trnup.SignatureImagePath,trnup.PhotoImagePath,IdenMark1,IdenMark2,AadhaarNo,Height,bld.BloodGroup, " +
                          " regi.Abbreviation RegimentalName,Muni.UnitName,uni.UnitMapId UnitId,icardreq.TypeId,icardreq.RegistrationId, " +
                          " ran.RankId,ran.RankAbbreviation RankName,arm.Abbreviation ArmedName,trnadd.AddressId,trnup.UploadId,trninfo.InfoId," +
@@ -1196,30 +1197,30 @@ namespace DataAccessLayer
         }
         public async Task<List<ICardHistoryResponse>> ICardHistory(int RequestId)
         {
-            string query = "select usersfrom.UserName FromDomain,profrom.Name FromProfile,ranlfrom.RankAbbreviation FromRank, " +
-            " usersto.UserName ToDomain,proto.Name ToProfile,ranlto.RankAbbreviation ToRank ,"+
-            " CASE fwd.FwdStatusId WHEN 1 THEN 'Pending' WHEN 2 THEN 'Approved' WHEN 3 THEN 'Reject' WHEN 4 THEN 'Internal Forward' END Status," +
-            " fwd.UpdatedOn,isnull(fwd.Remark,'Nill') Remark, " +
-            " fwd.IsComplete,(select STRING_AGG(Remarks,'#') from MRemarks where RemarksId in (select value from string_split(fwd.RemarksIds,','))) Remarks2, " +
-            " reason.Reason,postind.Authority,initres.UnitName " +
-            " from TrnFwds fwd " +
-            " inner join TrnStepCounter step"+
-            " on fwd.RequestId=step.RequestId"+
-            " inner join TrnDomainMapping mapfrom on mapfrom.AspNetUsersId=fwd.FromAspNetUsersId"+
-            " inner join AspNetUsers usersfrom on usersfrom.Id=mapfrom.AspNetUsersId"+
-            " inner join TrnDomainMapping mapto on mapto.AspNetUsersId=fwd.ToAspNetUsersId"+
-            " inner join AspNetUsers usersto on usersto.Id=mapto.AspNetUsersId"+
-            " left join UserProfile profrom"+
-            " on mapfrom.UserId=profrom.UserId"+
-            " inner join MRank ranlfrom on ranlfrom.RankId=profrom.RankId"+
-            " left join UserProfile proto"+
-            " on mapto.UserId=proto.UserId"+
-            " left join TrnPostingOut postind on postind.Id=fwd.PostingOutId" +
-            " left join MPostingReason reason on reason.Id=postind.ReasonId" +
-            " left join MapUnit Munitres on Munitres.UnitMapId=postind.ToUnitID" +
-            " left join MUnit initres on initres.UnitId=Munitres.UnitId" +
-            " inner join MRank ranlto on ranlto.RankId=proto.RankId where fwd.RequestId=@RequestId" +
-            " order by fwd.TrnFwdId asc";
+            string query =  " select usersfrom.UserName FromDomain,profrom.Name FromProfile,ranlfrom.RankAbbreviation FromRank, " +
+                            " usersto.UserName ToDomain,proto.Name ToProfile,ranlto.RankAbbreviation ToRank ,"+
+                            " CASE fwd.FwdStatusId WHEN 1 THEN 'Pending' WHEN 2 THEN 'Approved' WHEN 3 THEN 'Reject' WHEN 4 THEN 'Internal Forward' END Status," +
+                            " fwd.UpdatedOn,isnull(fwd.Remark,'Nill') Remark, " +
+                            " fwd.IsComplete,(select STRING_AGG(Remarks,'#') from MRemarks where RemarksId in (select value from string_split(fwd.RemarksIds,','))) Remarks2, " +
+                            " reason.Reason,postind.Authority,initres.UnitName " +
+                            " from TrnFwds fwd " +
+                            " inner join TrnStepCounter step"+
+                            " on fwd.RequestId=step.RequestId"+
+                            " inner join TrnDomainMapping mapfrom on mapfrom.AspNetUsersId=fwd.FromAspNetUsersId"+
+                            " inner join AspNetUsers usersfrom on usersfrom.Id=mapfrom.AspNetUsersId"+
+                            " inner join TrnDomainMapping mapto on mapto.AspNetUsersId=fwd.ToAspNetUsersId"+
+                            " inner join AspNetUsers usersto on usersto.Id=mapto.AspNetUsersId"+
+                            " left join UserProfile profrom"+
+                            " on mapfrom.UserId=profrom.UserId"+
+                            " inner join MRank ranlfrom on ranlfrom.RankId=profrom.RankId"+
+                            " left join UserProfile proto"+
+                            " on mapto.UserId=proto.UserId"+
+                            " left join TrnPostingOut postind on postind.Id=fwd.PostingOutId" +
+                            " left join MPostingReason reason on reason.Id=postind.ReasonId" +
+                            " left join MapUnit Munitres on Munitres.UnitMapId=postind.ToUnitID" +
+                            " left join MUnit initres on initres.UnitId=Munitres.UnitId" +
+                            " inner join MRank ranlto on ranlto.RankId=proto.RankId where fwd.RequestId=@RequestId" +
+                            " order by fwd.TrnFwdId asc";
             try
             {
                 using (var connection = _contextDP.CreateConnection())

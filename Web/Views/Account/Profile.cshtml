@@ -96,21 +96,21 @@
         <div class="container-fluid">
             <div class="row logoheader">
                 <div class="mb-1 logo-sec d-flex">
-                    <a class="navbar-brand" href="#"><img src="~/Images/dgis_ico.png" width="50%"></a>
-                    <div class="text-center mr-lg-15"><img class="mr-lg-15" src="~/Images/EISAC.png" width="50%"></div>
+                    @* <a class="navbar-brand" href="#"><img src="~/Images/dgis_ico.png" width="50%"></a> *@
+                    <div class="text-center"><img src="~/Images/EISAC.png" width="100%"></div>
                 </div>
             </div>
             <div class="bg-white login-wrap align-items-center">
-                <div class="login py-2 py-sm-4">
+                <div class="login ">
                     <div class="row">
                         <div class="card-sigin">
                             <div class="main-signup-header login-form">
                                 <p class="font-weight-normal font-weight-700 text-center mb-4 mt-1">Fill your  Details to Register Profile in Appl</p>
                                 <div class="pb-3 mt-3">
-                                    <div class="col-md-12 col-sm-6 mt-4 " id="">
+                                    <div class="col-md-12 col-sm-6 " id="">
                                         <input class="form-control mb-2 d-none form-space" id="txtProfileForArmyNo" maxlength="9" value="1" placeholder="Enter Army No" />
                                     </div>
-                                    <div class="col-md-12 col-lg-12 col-xl-12 ml-2 mr-2">
+                                    <div class="col-md-12 col-lg-12 col-xl-12 p-4">
                                         <form asp-antiforgery="true" asp-controller="Account" asp-action="Profile" id="Profile" name="Profile" method="post" class="mt-3">
                                             <div class="card-body">
                                                 <div class="row">

@@ -1023,6 +1023,7 @@ namespace Web.Controllers
                         else
                         {
                             ModelState.AddModelError("Photo_", "Photo is required.");
+                            goto end;
                         }
 
                         //string sourceFolderSignatureDB = "/WriteReadData/" + "Signature";
@@ -1055,6 +1056,7 @@ namespace Web.Controllers
                         else
                         {
                             ModelState.AddModelError("Signature_", "Signature is required.");
+                            goto end;
                         }
                         //if (model.AadhaarNo != null)
                         //{
