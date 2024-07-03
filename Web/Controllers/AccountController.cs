@@ -1313,7 +1313,7 @@ namespace Web.Controllers
                     {
                         var usera = await userManager.FindByIdAsync(dTOTempSession.AspNetUsersId.ToString());
 
-                        //await userManager.UpdateSecurityStampAsync(usera);
+                        await userManager.UpdateSecurityStampAsync(usera);
 
                         if (usera != null)
                         {

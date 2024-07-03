@@ -272,7 +272,7 @@ namespace DataAccessLayer
             {
                 if (IsApproveId == 1)
                 {
-                    query = " select req.RequestId,Mstep.StepId,basi.Name,ServiceNo,DOB,ranks.RankAbbreviation RankName,TrackingId," +
+                    query = " select req.RequestId,Mstep.StepId,basi.FName +' '+ISNULL(basi.LName,'') Name,ServiceNo,DOB,ranks.RankAbbreviation RankName,TrackingId," +
                             " aspusersto.DomainId DomainIdTo,userto.ArmyNo ArmyNoTo ,userto.Name NameTo,ranksto.RankAbbreviation RankTo," +
                             " aspusersfrom.DomainId DomainIdFrom,userfrom.ArmyNo ArmyNoFrom ,userfrom.Name NameFrom,ranksfrom.RankAbbreviation RankFrom" +
                             " ,fwd.UpdatedOn,fwdsts.Name StatusName from MStepCounterStep Mstep  " +
@@ -306,7 +306,7 @@ namespace DataAccessLayer
                 {
                     if(StepId==1)
                     {
-                        query = " select req.RequestId,Mstep.StepId,basi.Name,ServiceNo,DOB,ranks.RankAbbreviation RankName,TrackingId," +
+                        query = " select req.RequestId,Mstep.StepId,basi.FName +' '+ISNULL(basi.LName,'') Name,ServiceNo,DOB,ranks.RankAbbreviation RankName,TrackingId," +
                       " aspusersto.DomainId DomainIdTo,userto.ArmyNo ArmyNoTo ,userto.Name NameTo,ranksto.RankAbbreviation RankTo," +
                       " aspusersfrom.DomainId DomainIdFrom,userfrom.ArmyNo ArmyNoFrom ,userfrom.Name NameFrom,ranksfrom.RankAbbreviation RankFrom" +
                       " ,fwd.UpdatedOn,fwdsts.Name StatusName from MStepCounterStep Mstep  " +
@@ -337,7 +337,7 @@ namespace DataAccessLayer
                     }
                     else
                     {
-                        query = " select req.RequestId,Mstep.StepId,basi.Name,ServiceNo,DOB,ranks.RankAbbreviation RankName,TrackingId," +
+                        query = " select req.RequestId,Mstep.StepId,basi.FName +' '+ISNULL(basi.LName,'') Name,ServiceNo,DOB,ranks.RankAbbreviation RankName,TrackingId," +
                       " aspusersto.DomainId DomainIdTo,userto.ArmyNo ArmyNoTo ,userto.Name NameTo,ranksto.RankAbbreviation RankTo," +
                       " aspusersfrom.DomainId DomainIdFrom,userfrom.ArmyNo ArmyNoFrom ,userfrom.Name NameFrom,ranksfrom.RankAbbreviation RankFrom" +
                       " ,fwd.UpdatedOn,fwdsts.Name StatusName from MStepCounterStep Mstep  " +
@@ -371,7 +371,7 @@ namespace DataAccessLayer
             }
             else
             {
-                query = " select req.RequestId,Mstep.StepId,basi.Name,ServiceNo,DOB,ranks.RankAbbreviation RankName,TrackingId, " +
+                query = " select req.RequestId,Mstep.StepId,basi.FName +' '+ISNULL(basi.LName,'') Name,ServiceNo,DOB,ranks.RankAbbreviation RankName,TrackingId, " +
                         " aspusersto.DomainId DomainIdTo,userto.ArmyNo ArmyNoTo ,userto.Name NameTo,ranksto.RankAbbreviation RankTo, " +
                         " aspusersfrom.DomainId DomainIdFrom,userfrom.ArmyNo ArmyNoFrom ,userfrom.Name NameFrom,ranksfrom.RankAbbreviation RankFrom,fwdsts.Name Status" +
                         " ,fwd.UpdatedOn,fwdsts.Name StatusName from MStepCounterStep Mstep   " +
