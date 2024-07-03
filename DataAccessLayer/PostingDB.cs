@@ -4,6 +4,7 @@ using DataAccessLayer.BaseInterfaces;
 using DataAccessLayer.Logger;
 using DataTransferObject.Domain.Model;
 using DataTransferObject.Response;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,10 +17,11 @@ namespace DataAccessLayer
     public class PostingDB : IPostingDB
     {
         protected readonly DapperContext _contextDP;
-        public PostingDB(DapperContext contextDP) 
+        private readonly ILogger<PostingDB> _logger;
+        public PostingDB(DapperContext contextDP, ILogger<PostingDB> logger) 
         {
-
             _contextDP = contextDP;
+            _logger = logger;
         }
 
         public async Task<List<DTOPostingOutDetilsResponse>> GetAllPostingHistory(int AspNetUsersId)
@@ -189,6 +191,46 @@ namespace DataAccessLayer
             }
             
 
+        }
+        public async Task<List<DTOAppClosedListResponse>> GetAppClosedList(int Updatedby, int apply)
+        {
+            try
+            {
+                string query = "";
+                query = " Select appcl.UpdatedOn,bd.ServiceNo,mr.RankAbbreviation as RankName,IIF (bd.LName IS NULL,bd.FName,CONCAT(bd.FName,' ',bd.LName)) as Name,mpr.Reason,mappl.Name as ApplyFor,appcl.Remarks,appcl.Authority from TrnApplClose appcl " +
+                          " inner join BasicDetails bd on bd.BasicDetailId=appcl.BasicDetailId " +
+                          " inner join MRank mr on mr.RankId = bd.RankId " +
+                          " inner join MApplyFor mappl on mappl.ApplyForId = bd.ApplyForId " +
+                          " inner join MPostingReason mpr on mpr.Id= appcl.ReasonId " +
+                          " where appcl.Updatedby=@Updatedby and mappl.ApplyForId=@apply ";
+
+                using (var connection = _contextDP.CreateConnection())
+                {
+                    var result = await connection.QueryAsync<DTOAppClosedListResponse>(query, new { Updatedby, apply });
+                    int sno = 1;
+                    var allrecord = (from e in result
+                                     select new DTOAppClosedListResponse()
+                                     {
+                                         Sno=sno++,
+                                         UpdatedOn=e.UpdatedOn,
+                                         ServiceNo=e.ServiceNo,
+                                         RankName=e.RankName,
+                                         Name=e.Name,
+                                         Reason=e.Reason,
+                                         ApplyFor=e.ApplyFor,
+                                         Remarks=e.Remarks,
+                                         Authority=e.Authority,
+                                     }).ToList();
+
+                    return await Task.FromResult(allrecord);
+
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "PostingDB->GetAppClosedList");
+                return null;
+            }
         }
     }
 }

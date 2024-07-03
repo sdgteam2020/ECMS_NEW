@@ -16,6 +16,7 @@ namespace BusinessLogicsLayer.Posting
         public Task<List<DTOPostingOutDetilsResponse>> GetAllPostingHistory(int AspNetUsersId);
         public Task<List<DTOPostingOutDetilsResponse>> GetPostingOutWithType(int AspNetUsersId,int Type,string PostingTy);
         public Task<bool> UpdateForPosting(TrnPostingOut Data);
+        public Task<List<DTOAppClosedListResponse>> GetAppClosedList(int Updatedby, int apply);
 
     }
 }

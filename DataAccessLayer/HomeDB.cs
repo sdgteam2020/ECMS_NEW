@@ -83,6 +83,15 @@ namespace DataAccessLayer
                             " inner join TrnStepCounter trnstepcout on trnstepcout.RequestId= req.RequestId where domain.AspNetUsersId=@UserId and trnstepcout.StepId>1 and trnstepcout.ApplyForId=2 " +
                             " select @ToSubmittedOffrs ToSubmittedOffrs,@ToSubmittedJCO ToSubmittedJCO";
                     break;
+                case "Closed":
+                    query = "declare @ToClosedOffrs int=0 declare @ToClosedJCO int=0" +
+                            " select @ToClosedOffrs=COUNT(appcl.Id) from TrnApplClose appcl" +
+                            " inner join TrnStepCounter trnstepcout on trnstepcout.RequestId= appcl.RequestId where appcl.Updatedby=@UserId and trnstepcout.ApplyForId=1 " +
+
+                            " select @ToClosedJCO=COUNT(appcl.Id) from TrnApplClose appcl" +
+                            " inner join TrnStepCounter trnstepcout on trnstepcout.RequestId= appcl.RequestId where appcl.Updatedby=@UserId and trnstepcout.ApplyForId=2 " +
+                            " select @ToClosedOffrs ToClosedOffrs,@ToClosedJCO ToClosedJCO";
+                    break;
                 case "Completed":
                     query = "declare @ToCompletedOffrs int=0 declare @ToCompletedJCO int=0" +
                             " select @ToCompletedOffrs=COUNT(distinct req.RequestId) from TrnDomainMapping domain" +
@@ -143,7 +152,7 @@ namespace DataAccessLayer
         } 
         public async Task<DTORequestSubDashboardCountResponse> GetSubDashboardCount(int UserId)
         {
-            string query = "declare @TotDrafted int=0 declare @TotSubmitted int=0 declare @TotRejected int=0 declare @TotCompleted int=0 " +
+            string query = "declare @TotDrafted int=0 declare @TotSubmitted int=0 declare @TotRejected int=0 declare @TotClosed int=0 declare @TotCompleted int=0 " +
                             " select @TotDrafted=COUNT(distinct req.RequestId) from TrnDomainMapping domain" +
                             " inner join TrnICardRequest req on req.TrnDomainMappingId=domain.Id " +
                             " inner join TrnStepCounter trnstepcout on trnstepcout.RequestId= req.RequestId where domain.AspNetUsersId=@UserId and trnstepcout.StepId=1 " +
@@ -151,6 +160,8 @@ namespace DataAccessLayer
                             " select @TotSubmitted=COUNT(distinct req.RequestId) from TrnDomainMapping domain" +
                             " inner join TrnICardRequest req on req.TrnDomainMappingId=domain.Id " +
                             " inner join TrnStepCounter trnstepcout on trnstepcout.RequestId= req.RequestId where domain.AspNetUsersId=@UserId and trnstepcout.StepId>1" +
+
+                            " select @TotClosed=COUNT(Id) from TrnApplClose where Updatedby=@UserId" +
 
                             " select @TotCompleted=COUNT(distinct req.RequestId) from TrnDomainMapping domain" +
                             " inner join TrnICardRequest req on req.TrnDomainMappingId=domain.Id where domain.AspNetUsersId=@UserId and req.Status=1 " +
@@ -160,7 +171,7 @@ namespace DataAccessLayer
                             " inner join TrnStepCounter trnstepcout on trnstepcout.RequestId= req.RequestId" +
                             " inner join TrnFwds fwd on fwd.RequestId= trnstepcout.RequestId where fwd.ToAspNetUsersId=@UserId and req.Status=0 and trnstepcout.StepId in(7,8,9,10)" +
 
-                            " select @TotDrafted TotDrafted,@TotSubmitted TotSubmitted,@TotCompleted TotCompleted,@TotRejected TotRejected ";
+                            " select @TotDrafted TotDrafted,@TotSubmitted TotSubmitted,@TotCompleted TotCompleted,@TotClosed TotClosed,@TotRejected TotRejected ";
             try
             {
                 using (var connection = _contextDP.CreateConnection())
