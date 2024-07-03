@@ -168,7 +168,7 @@ namespace DataAccessLayer
         {
             try
             {
-                string query = "Select count(distinct mapp.ApptId)as TotalTDM from MAppointment mapp" +
+                string query = "Select count(distinct tdm.ApptId)as TotalTDM from MAppointment mapp" +
                                 " left join TrnDomainMapping tdm on tdm.ApptId = mapp.ApptId " +
                                 " where mapp.ApptId =@ApptId";
 

@@ -136,6 +136,7 @@ function BindData() {
                     memberTable = $('#tbldata').DataTable({
                         retrieve: true,
                         lengthChange: false,
+                        stateSave: true,
                         "order": [[2, "asc"]],
                         buttons: [{
                             extend: 'copy',

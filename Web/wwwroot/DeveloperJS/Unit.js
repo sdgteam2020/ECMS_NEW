@@ -144,6 +144,7 @@ function BindData() {
                         retrieve: true,
                         lengthChange: false,
                         searching: false,
+                        stateSave: true,
                         "order": [[1, "asc"]],
                         buttons: [{
                             extend: 'copy',
