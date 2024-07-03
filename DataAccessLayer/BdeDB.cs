@@ -35,7 +35,7 @@ namespace DataAccessLayer
         {
             try
             {
-                List<MBde> mBdes = await _context.MBde.ToListAsync();
+                List<MBde> mBdes = await _context.MBde.AsNoTracking().ToListAsync();
                 
                 var ret = mBdes.Any(p => p.BdeName.ToUpper() == Data.BdeName.ToUpper() && p.BdeId != Data.BdeId);
                 return ret;
