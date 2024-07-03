@@ -30,6 +30,7 @@ function GetSubDashboardCount() {
 
                     $("#TotDrafted").html(response.TotDrafted);
                     $("#TotSubmitted").html(response.TotSubmitted);
+                    $("#TotClosed").html(response.TotClosed);
                     $("#TotCompleted").html(response.TotCompleted);
                     $("#TotRaisedObsn").html(response.TotRaisedObsn);
                     $("#TotRejected").html(response.TotRejected);

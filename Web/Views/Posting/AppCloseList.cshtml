@@ -1,0 +1,75 @@
+﻿@model List<DTOAppClosedListResponse>
+<header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
+    <div class="containerMain">
+        <div class="page-header-content pt-4">
+            <div class="row align-items-center justify-content-between">
+                <div class="col-auto">
+                    <h1 class="page-header-title">
+                        <div class="page-header-icon"> <i class="fa fa-bars"></i></div>
+                        <div>
+                            <a href="/Home/Index" class="mr-2">Home</a> >
+                            <a href="/Home/Dashboard" class="mr-2">Dashboard</a> >
+                            <a href="/Home/SubDashboard" class="mr - 2">I-Card Request</a> >
+                            <a href="/Home/RequestDashboard/Q2xvc2Vk" class="mr-2">Closed</a> >@ViewBag.Title
+                        </div>
+                    </h1>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</header>
+<div class="containerMain mt-n10">
+    <div class="card mb-3 ">
+        <div class="card-header">
+            <div class="row">
+                <div class="col-xl-12 text-left">
+                    <h3>
+                        @ViewBag.Title
+                        <small class="text-muted"></small>
+                    </h3>
+                </div>
+            </div>
+        </div>
+        <div class="card-body" style="min-height:150px;">
+            <div class="row">
+                <div class="col-xl-12">
+                    <div class="table-responsive">
+                        <table id="tbldatatabledata" class="table border border-purple table-striped no-footer dataTable table-hover" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th>SNo.</th>
+                                    <th>Updated Dt</th>
+                                    <th>Army No, Rank, Name</th>
+                                    <th>Type</th>
+                                    <th>Reason</th>
+                                    <th>Remark</th>
+                                    <th>Auth</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model)
+                                {
+                                    <tr>
+                                        <td>@item.Sno</td>
+                                        <td>@item.UpdatedOn</td>
+                                        <td>@item.ServiceNo <br/>@item.RankName @item.Name</td>
+                                        <td>@item.ApplyFor </td>
+                                        <td>@item.Reason</td>
+                                        <td>@item.Remarks</td>
+                                        <td>@item.Authority</td>
+                                    </tr>
+                                }
+
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div><!-- Row End -->
+    </div>
+</div>
+
+@section Scripts{
+}

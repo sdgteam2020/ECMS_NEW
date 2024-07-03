@@ -99,6 +99,35 @@
                             </a>
                         </div>
                     }
+                    else if (ViewBag.Type == "Closed")
+                    {
+                        <div id="SubmittedOffrs" class="col-md-2 col-sm-6">
+                            <a href="/Posting/AppCloseList/MQ==">
+                                <div class="counter blue">
+                                    <div class="counter-icon">
+                                        <i class="fa fa-water"></i>
+                                    </div>
+                                    <span class="counter-value" id="ToClosedOffrs">0</span>
+                                    <h3>
+                                        Appl Closed for Offr's
+                                    </h3>
+                                </div>
+                            </a>
+                        </div>
+                        <div id="SubmittedJCO" class="col-md-2 col-sm-6">
+                            <a href="/Posting/AppCloseList/?Id=MQ==&jcoor=SmNvL09ycw==">
+                                <div class="counter blue">
+                                    <div class="counter-icon">
+                                        <i class="fa fa-user"></i>
+                                    </div>
+                                    <span class="counter-value" id="ToClosedJCO">0</span>
+                                    <h3>
+                                        Appl Closed for JCO<span class="text-lowercase">s</span>/OR
+                                    </h3>
+                                </div>
+                            </a>
+                        </div>
+                    }
                     else if (ViewBag.Type == "Completed")
                     {
                         <div id="SubmittedOffrs" class="col-md-2 col-sm-6">

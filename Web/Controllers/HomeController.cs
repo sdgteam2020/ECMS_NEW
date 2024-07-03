@@ -168,7 +168,7 @@ namespace Web.Controllers
             ViewBag.Role = GetSessionValue();
             return View();
         }
-        public async Task<IActionResult> RequestDashboardAsync(string Id)
+        public async Task<IActionResult> RequestDashboard(string Id)
         {
             string role = GetSessionValue();
             var base64EncodedBytes = System.Convert.FromBase64String(Id);

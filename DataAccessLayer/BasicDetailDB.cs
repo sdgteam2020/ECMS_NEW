@@ -540,7 +540,7 @@ namespace DataAccessLayer
 
                 }
             }
-                catch(Exception ex)
+            catch(Exception ex)
             {
                 _logger.LogError(1001, ex, "BasicDetailDB->GetALLForIcardSttaus");
                 return null;
