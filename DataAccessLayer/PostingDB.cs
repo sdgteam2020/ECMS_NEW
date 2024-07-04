@@ -30,7 +30,7 @@ namespace DataAccessLayer
             {
 
                 string query = "select res.Reason,Authority,CONVERT (varchar(10),Cast(SOSDate as date), 103) SOSDate,CONVERT (varchar(10),Cast(pout.UpdatedOn as date), 103) UpdatedOn,user1.DomainId FromDomainId,user2.DomainId TODomainId," +
-                               " unit1.UnitName FromUnitName,unit2.UnitName ToUnitName,prof1.ArmyNo FromArmyNO,prof2.ArmyNo TOArmyNO,ranks.RankAbbreviation FromRankName,prof1.Name FromName,basic.ServiceNo,basic.FName,basic.LName,ranksmain.RankAbbreviation Rank from TrnPostingOut pout" +
+                               " unit1.UnitName FromUnitName,unit2.UnitName ToUnitName,prof1.ArmyNo FromArmyNO,prof2.ArmyNo TOArmyNO,ranks.RankAbbreviation FromRankName,prof1.Name FromName,basic.ServiceNo,basic.FName,isnull(basic.LName,'') LName ,ranksmain.RankAbbreviation Rank from TrnPostingOut pout" +
                                " inner join MPostingReason res on pout.ReasonId=res.Id"+
                                " inner join AspNetUsers user1 on user1.Id=pout.FromAspNetUsersId"+
                                " inner join AspNetUsers user2 on user2.Id=pout.ToAspNetUsersId"+

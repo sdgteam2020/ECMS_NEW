@@ -229,15 +229,15 @@ else
 //    await next();
     
 //});
-var options = new RewriteOptions()
-           // Redirect from non-www to www
-           .AddRedirectToWww()
-           // Redirect to HTTPS
-           .AddRedirectToHttps()
-           // Example of custom rewrite rule
-           .AddRewrite("^articles/(.*)", "blog/article?id=$1", skipRemainingRules: true);
+//var options = new RewriteOptions()
+//           // Redirect from non-www to www
+//           .AddRedirectToWww()
+//           // Redirect to HTTPS
+//           .AddRedirectToHttps()
+//           // Example of custom rewrite rule
+//           .AddRewrite("^articles/(.*)", "blog/article?id=$1", skipRemainingRules: true);
 
-app.UseRewriter(options);
+//app.UseRewriter(options);
 
 app.UseForwardedHeaders();
 app.UseHttpsRedirection();

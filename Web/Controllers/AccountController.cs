@@ -31,6 +31,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.SqlServer.Management.Smo;
 using Microsoft.SqlServer.Management.Smo.Agent;
 using Microsoft.SqlServer.Management.Smo.Wmi;
+using Microsoft.SqlServer.Management.XEvent;
 using Newtonsoft.Json;
 using System;
 using System.Data;
@@ -1280,6 +1281,7 @@ namespace Web.Controllers
         public IActionResult TokenValidate()
         {
             DTOTempSession? dTOTempSession = SessionHeplers.GetObject<DTOTempSession>(HttpContext.Session, "IMData");
+           
             if (dTOTempSession != null)
             {
                 if (dTOTempSession.Status == 1)
@@ -1302,7 +1304,6 @@ namespace Web.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> TokenValidate(DTOTokenRequest model)
         {
-            await signInManager.SignOutAsync();
             DTOTempSession? dTOTempSession = SessionHeplers.GetObject<DTOTempSession>(HttpContext.Session, "IMData");
             if (dTOTempSession != null)
             {
