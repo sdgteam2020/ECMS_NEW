@@ -1,21 +1,89 @@
 ﻿@{
-    Layout = "/Views/Shared/_Layout.cshtml";
+    // Layout = "/Views/Shared/_Layout.cshtml";
+    Layout = null;
+}
+@* @if (ViewBag.ErrorTitle == null)
+{ *@
+<link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+ <style>
 
-}
-@if (ViewBag.ErrorTitle == null)
-{
-    <h3>
-        An occured while processing your request.
-        The support team is notified and we are working on the fix.
-    </h3>
-    <h5>In case of technical issues, please contact Admin of IT Cell.</h5>
-}
+    /*======================
+        404 page
+    =======================*/
+
+
+    .page_404 {
+        padding: 40px 0;
+        background: #fff;
+        font-family: 'Arvo', serif;
+    }
+
+        .page_404 img {
+            width: 100%;
+        }
+
+    .four_zero_four_bg {
+        background: url(../Images/dribbble_1.gif) no-repeat;
+        height: 400px;
+        background-position: center;
+    }
+
+
+        .four_zero_four_bg h1 {
+            font-size: 80px;
+        }
+
+        .four_zero_four_bg h3 {
+            font-size: 80px;
+        }
+
+    .link_404 {
+        color: #fff !important;
+        padding: 10px 20px;
+        background: #39ac31;
+        margin: 20px 0;
+        display: inline-block;
+    }
+
+    .contant_box_404 {
+        margin-top: -50px;
+    }
+ </style>
+<section class="page_404">
+	<div class="container">
+		<div class="row">
+			<div class="col-sm-12 ">
+				<div class="col-sm-10 col-sm-offset-1  text-center">
+					<div class="four_zero_four_bg">
+						<h1 class="text-center ">404</h1>
+
+
+					</div>
+
+					<div class="contant_box_404">
+						<h3 class="h2">
+                            An occured while processing your request.
+                            The support team is notified and we are working on the fix.
+						</h3>
+
+                        <p>In case of technical issues, please contact Admin of IT Cell.</p>
+
+						<a href="Account/IMLogin" class="link_404">Go to Login</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+ 
+@* }
 else
 {
     <h1 class="text-danger">@ViewBag.ErrorTitle</h1> 
     <h6 class="text-danger">@ViewBag.ErrorMessage</h6>
 }
-
+ *@
 
 @*<hr />
 <h3>Exception Details:</h3>

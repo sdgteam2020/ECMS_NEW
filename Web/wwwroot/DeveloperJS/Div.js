@@ -131,6 +131,7 @@ function BindData() {
                         retrieve: true,
                         lengthChange: false,
                         "order": [[1, "asc"]],
+                        stateSave: true,
                         buttons: [{
                             extend: 'copy',
                             exportOptions: {

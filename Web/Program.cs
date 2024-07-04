@@ -232,10 +232,9 @@ app.UseRouting();
 app.UseCors("CorsPolicy");
 app.UseAuthentication();
 app.UseAuthorization();
-
 app.UseSession();
 //app.UseMyMiddleware();
-
+//app.UseMiddleware<BackRestrictionMiddleware>();
 //app.UseSessionMiddleware();
 //app.MapRazorPages();
 app.MapControllerRoute(

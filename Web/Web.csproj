@@ -13,6 +13,7 @@
   <ItemGroup>
     <_ContentIncludedByDefault Remove="wwwroot\css\AppStatus.css" />
     <_ContentIncludedByDefault Remove="wwwroot\DeveloperJS\ReportAndReturn.js" />
+    <_ContentIncludedByDefault Remove="wwwroot\Images\dribbble_1.gif" />
   </ItemGroup>
 
   <ItemGroup>
