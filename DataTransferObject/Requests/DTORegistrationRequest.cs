@@ -18,7 +18,7 @@ namespace DataTransferObject.Requests
 
         [Display(Name = "ServiceNo", ResourceType = typeof(Resource))]
         //[Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
-        [RegularExpression(@"^[\w \.\,\?\;\:\""\''\[\]\!\@\#\$\%\&\*\(\)\-\=\+\\\/]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
+        [RegularExpression(@"^[\w ]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
         public string ServiceNumber { get; set; } = string.Empty;
 
         [Display(Name = "SubmitType", ResourceType = typeof(Resource))]
