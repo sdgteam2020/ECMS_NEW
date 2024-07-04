@@ -1,4 +1,7 @@
 ﻿$(document).ready(function () {
+
+
+
     (function (window) {
         function preventBack() {
             window.history.forward();
@@ -14,4 +17,7 @@
             return null;
         };
     })(window);
+
+
+
 });

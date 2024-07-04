@@ -488,19 +488,19 @@
     <script src="~/js/scripts.js"></script>
     <script asp-src-include="~/select2/js/select2.min.js"></script>
 
-    <script asp-src-include="~/js/datatables/jquery.datatables.min.js"></script>
-    <script asp-src-include="~/js/datatables/dataTables.responsive.min.js"></script>
-    <script asp-src-include="~/js/datatables/responsive.dataTables.min.js"></script>
-    <script asp-src-include="~/js/datatables/dataTables.bootstrap4.min.js"></script>
-    <script asp-src-include="~/js/datatables/responsive.bootstrap4.min.js"></script>
-    <script asp-src-include="~/js/datatables/dataTables.buttons.min.js"></script>
-    <script asp-src-include="~/js/datatables/buttons.bootstrap4.min.js"></script>
-    <script asp-src-include="~/js/datatables/jszip.min.js"></script>
-    <script asp-src-include="~/js/datatables/pdfmake.min.js"></script>
-    <script asp-src-include="~/js/datatables/vfs_fonts.js"></script>
-    <script asp-src-include="~/js/datatables/buttons.html5.min.js"></script>
-    <script asp-src-include="~/js/datatables/buttons.print.min.js"></script>
-    <script asp-src-include="~/js/datatables/datatables-call.js"></script>
+    <script asp-src-include="~/datatables/jquery.datatables.min.js"></script>
+    <script asp-src-include="~/datatables/dataTables.responsive.min.js"></script>
+    <script asp-src-include="~/datatables/responsive.dataTables.min.js"></script>
+    <script asp-src-include="~/datatables/dataTables.bootstrap4.min.js"></script>
+    <script asp-src-include="~/datatables/responsive.bootstrap4.min.js"></script>
+    <script asp-src-include="~/datatables/dataTables.buttons.min.js"></script>
+    <script asp-src-include="~/datatables/buttons.bootstrap4.min.js"></script>
+    <script asp-src-include="~/datatables/jszip.min.js"></script>
+    <script asp-src-include="~/datatables/pdfmake.min.js"></script>
+    <script asp-src-include="~/datatables/vfs_fonts.js"></script>
+    <script asp-src-include="~/datatables/buttons.html5.min.js"></script>
+    <script asp-src-include="~/datatables/buttons.print.min.js"></script>
+    <script asp-src-include="~/datatables/datatables-call.js"></script>
     @*<script asp-src-include="~/fonts/feather/feather.min.js"></script>*@
     <script asp-src-include="~/sweetalert2/sweetalert2.min.js"></script>
     <script asp-src-include="~/toastr/toastr.min.js"></script>
@@ -1112,7 +1112,7 @@
                         <img id="armynosearchAllpic" class="armynosearchAllpic">
                     </div>
                     <div class="col-md-8">
-                        <input type="text" id="txtarmynosearchAll" placeholder="Enter Army No" class="form-control " />
+                        <input type="text" id="txtarmynosearchAll" maxlength="10" placeholder="Enter Army No" class="form-control inputField" />
                         <label class="form-label mt-4" id="armynosearchAllName"></label>
                     </div>
                 </div>
