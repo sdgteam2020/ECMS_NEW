@@ -1313,20 +1313,24 @@ namespace Web.Controllers
                     {
                         var usera = await userManager.FindByIdAsync(dTOTempSession.AspNetUsersId.ToString());
 
+                        HttpContext.Session.Remove("Token");
+                        await signInManager.SignOutAsync();
+
                         //await userManager.UpdateSecurityStampAsync(usera);
 
                         if (usera != null)
                         {
+
                             var result = await signInManager.PasswordSignInAsync(usera.UserName, "Admin123#", false, true);
-                           // var rolelist = await signInManager.UserManager.GetRolesAsync(usera);
+                            // var rolelist = await signInManager.UserManager.GetRolesAsync(usera);
                             //var user1 = await signInManager.UserManager.IsInRoleAsync(usera, "User");
                             if (result.Succeeded)
                             {
                                 //var army = await _userProfileBL.Get(Convert.ToInt32(dTOTempSession.UserId));
-                              
-                              //  await userManager.RemoveClaimAsync(usera, new Claim("Roles", dTOTempSession.RoleName));
-                              //  await userManager.AddClaimAsync(usera, new Claim("Roles", dTOTempSession.RoleName));
-                                
+
+                                //  await userManager.RemoveClaimAsync(usera, new Claim("Roles", dTOTempSession.RoleName));
+                                //  await userManager.AddClaimAsync(usera, new Claim("Roles", dTOTempSession.RoleName));
+
 
 
                                 DtoSession dtoSession = new DtoSession();
@@ -1388,6 +1392,7 @@ namespace Web.Controllers
                                 goto End;
                             }
                         }
+
                     }
                     else
                     {
@@ -1744,6 +1749,7 @@ namespace Web.Controllers
 
             //Solved ---- Lack of session validation and server expiration 
             //await userManager.UpdateSecurityStampAsync(user);
+            HttpContext.Session.Remove("Token");
             await signInManager.SignOutAsync();
             return View();
 
