@@ -565,7 +565,7 @@ namespace Web.Controllers
                         }
                         
                             TempData["success"] = "Request Submited Successfully.";
-                            return RedirectToAction("Registration");
+                            return RedirectToActionPermanent("InaccurateData", "BasicDetail", new {Id = "MQ=="});
                     }
                 }
                 else
