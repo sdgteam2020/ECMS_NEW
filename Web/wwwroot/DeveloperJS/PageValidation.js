@@ -1,23 +1,17 @@
 ﻿$(document).ready(function () {
 
 
+    document.addEventListener('DOMContentLoaded', function () {
+        // Push a new state to the browser history
+        history.pushState(null, null, location.href);
 
-    (function (window) {
-        function preventBack() {
-            window.history.forward();
-        }
-
-        preventBack();
-        window.onload = preventBack;
-        window.onpageshow = function (evt) {
-            if (evt.persisted) preventBack();
-        };
-
-        window.onunload = function () {
-            return null;
-        };
-    })(window);
-
+        // Listen for the popstate event
+        window.addEventListener('popstate', function (event) {
+            // Prevent the back button action by pushing the state again
+            history.pushState(null, null, location.href);
+            alert('Back navigation is disabled!');
+        });
+    });
 
 
 });

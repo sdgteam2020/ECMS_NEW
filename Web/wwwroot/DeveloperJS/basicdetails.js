@@ -1,4 +1,13 @@
 ﻿$(document).ready(function () {
+
+
+
+
+
+
+
+
+
     if ($("#spnBloodGroupId").val() > 0) {
         mMsater($("#spnBloodGroupId").val(), "BloodGroupId", BloodGroup, "");
     }
