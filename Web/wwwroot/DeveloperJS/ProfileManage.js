@@ -3,9 +3,22 @@
     mMsater(0, "ddlArmType", ArmyType, "");
     BindData()
 
+    $("#IsTokenWaiverYes").on("click", function () { 
+        $("#spnReasonTokenWaiver").removeClass("d-none");
+        $('#txtMessage').prop('required', true);
+        $("#txtMessage-error").html('Reason for IACA Token Waiver is required.');
+    });
+    $("#IsTokenWaiverNo").on("click", function () { 
+        $("#spnReasonTokenWaiver").addClass("d-none"); 
+        $('#txtMessage').prop('required', false);
+        $('#txtMessage').val('');
+        $("#txtMessage-error").html('');
+    });
+
     $("#btnProfileAdd").click(function () {
         Reset();
         ResetErrorMessage();
+        $("#spnReasonTokenWaiver").addClass("d-none"); 
         $("#AddNewProfile").modal('show');
     });
     $("#btnProfileAddReset").click(function () {
@@ -197,9 +210,11 @@ function BindData() {
 
                         if ($(this).closest("tr").find("#isTokenWaiver").html() == 'Yes') {
                             $("#IsTokenWaiverYes").prop("checked", true);
+                            $("#spnReasonTokenWaiver").removeClass("d-none");
                         }
                         else {
                             $("#IsTokenWaiverNo").prop("checked", true);
+                            $("#spnReasonTokenWaiver").addClass("d-none");
                         }
 
                         if ($(this).closest("tr").find("#isToken").html() == 'Yes') {
@@ -346,6 +361,8 @@ function Reset() {
     $("#txtMessage").val("");
     $("#isTokenyes").prop("checked", false);
     $("#isTokenno").prop("checked", false);
+    $("#IsWithoutTokenApplyyes").prop("checked", false);
+    $("#IsWithoutTokenApplyno").prop("checked", false);
 }
 function ResetErrorMessage() {
     $("#txtName-error").html("");
@@ -356,5 +373,6 @@ function ResetErrorMessage() {
     $("#IsTokenWaiver-error").html("");
     $("#txtMessage-error").html("");
     $("#IsToken-error").html("");
+    $("#IsWithoutTokenApply-error").html("");
 
 }

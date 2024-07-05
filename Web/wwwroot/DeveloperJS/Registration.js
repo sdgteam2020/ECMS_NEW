@@ -33,7 +33,8 @@
         $("#TypeId").val(sessionStorage.getItem("lCardType"));
 
         if (sessionStorage.getItem("RegistrationApplyFor") == '4' || sessionStorage.getItem("RegistrationApplyFor") == '9') {
-            $('#Name').attr('readonly', false);
+            $('#FName').attr('readonly', false);
+            $('#LName').attr('readonly', false);
             $('#NameAsPerRecord').attr('readonly', false);
             $('#DOB').attr('readonly', false);
             $('#ServiceNo').attr('readonly', false);
@@ -44,7 +45,8 @@
             $("#ServiceNo").val($("#ServiceNumber").val());
             $(".spnhideServiceNo").addClass('d-none');
         } else {
-            $('#Name').attr('readonly', true);
+            $('#FName').attr('readonly', true);
+            $('#LName').attr('readonly', true);
             $('#NameAsPerRecord').attr('readonly', true);
             $('#DOB').attr('readonly', true);
             $('#ServiceNo').attr('readonly', true);
