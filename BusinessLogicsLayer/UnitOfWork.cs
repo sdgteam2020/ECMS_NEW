@@ -78,7 +78,7 @@ namespace BusinessLogicsLayer
             int count = 0;
             if (Data.id == Convert.ToInt16(Constants.MasterTbl.Command))
             {
-                var Ret = await Comds.GetAll();
+                var Ret = await Comds.GetAllByorder();
                 foreach (var comd in Ret)
                 {
 

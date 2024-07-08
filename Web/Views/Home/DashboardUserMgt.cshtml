@@ -2,6 +2,13 @@
     ViewData["Title"] = "DashBoard";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+<style>
+    .clickable {
+        height: 190px;
+        width: 190px;
+        display: block;
+    }
+</style>
 
 <header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
     <div class="containerMain">
@@ -28,18 +35,18 @@
             <div class="card p-4">
                 <div class="row">
                     <div class="col-md-2 col-sm-6">
-                        <a href="/Home/RegisterUser">
+                        <a href="/Home/RegisterUser" class="clickable">
                             <div class="counter purple">
                                 <div class="counter-icon">
                                     <i class="fa fa-users"></i>
                                 </div>
                                 <span class="counter-value" id="TotRegisterUser">0</span>
-                                <h3>Register User</h3>
+                                <h3>Registered Users</h3>
                             </div>
                         </a>
                     </div>
                     <div class="col-md-2 col-sm-6">
-                        <a href="/Home/RequestDashboard/UG9zdGluZyBJbg==">
+                        <a href="/Home/RequestDashboard/UG9zdGluZyBJbg==" class="clickable">
                             <div class="counter red">
                                 <div class="counter-icon">
                                     <i class="fa fa-reply"></i>
@@ -50,7 +57,7 @@
                         </a>
                     </div>
                     <div class="col-md-2 col-sm-6">
-                        <a href="/Home/RequestDashboard/UG9zdGluZyBPdXQ=">
+                        <a href="/Home/RequestDashboard/UG9zdGluZyBPdXQ=" class="clickable">
                             <div class="counter red">
                                 <div class="counter-icon">
                                     <i class="fa fa-share"></i>
@@ -61,7 +68,7 @@
                         </a>
                     </div>
                     <div class="col-md-2 col-sm-6">
-                        <a href="/Log/LoginLog">
+                        <a href="/Log/LoginLog" class="clickable">
                             <div class="counter pink">
                                 <div class="counter-icon">
                                     <i class="fa fa-address-card"></i>
@@ -73,7 +80,7 @@
                         </a>
                     </div>
                     <div class="col-md-2 col-sm-6">
-                        <a href="/UserProfile/Profile">
+                        <a href="/UserProfile/Profile" class="clickable">
                             <div class="counter pink">
                                 <div class="counter-icon">
                                     <i class="fa fa-user"></i>
@@ -87,7 +94,7 @@
                     @if (ViewBag.ROFound == 1)
                     {
                         <div class="col-md-2 col-sm-6">
-                            <a href="/Master/UpdateRecordOffice">
+                            <a href="/Master/UpdateRecordOffice" class="clickable">
                                 <div class="counter pink">
                                     <div class="counter-icon">
                                         <i class="fa fa-user"></i>

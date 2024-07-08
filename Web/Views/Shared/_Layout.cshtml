@@ -243,6 +243,7 @@
             color: white;
         }
     </style>
+
 </head>
 <body class="nav-fixed sidenav-toggled">
   @*   <div id="loading" class="loader">
@@ -488,26 +489,24 @@
     <script src="~/js/scripts.js"></script>
     <script asp-src-include="~/select2/js/select2.min.js"></script>
 
-    <script asp-src-include="~/datatables/jquery.datatables.min.js"></script>
-    <script asp-src-include="~/datatables/dataTables.responsive.min.js"></script>
-    <script asp-src-include="~/datatables/responsive.dataTables.min.js"></script>
-    <script asp-src-include="~/datatables/dataTables.bootstrap4.min.js"></script>
-    <script asp-src-include="~/datatables/responsive.bootstrap4.min.js"></script>
-    <script asp-src-include="~/datatables/dataTables.buttons.min.js"></script>
-    <script asp-src-include="~/datatables/buttons.bootstrap4.min.js"></script>
-    <script asp-src-include="~/datatables/jszip.min.js"></script>
-    <script asp-src-include="~/datatables/pdfmake.min.js"></script>
-    <script asp-src-include="~/datatables/vfs_fonts.js"></script>
-    <script asp-src-include="~/datatables/buttons.html5.min.js"></script>
-    <script asp-src-include="~/datatables/buttons.print.min.js"></script>
-    <script asp-src-include="~/datatables/datatables-call.js"></script>
+    <script asp-src-include="~/js/datatables/jquery.datatables.min.js"></script>
+    <script asp-src-include="~/js/datatables/dataTables.responsive.min.js"></script>
+    <script asp-src-include="~/js/datatables/responsive.dataTables.min.js"></script>
+    <script asp-src-include="~/js/datatables/dataTables.bootstrap4.min.js"></script>
+    <script asp-src-include="~/js/datatables/responsive.bootstrap4.min.js"></script>
+    <script asp-src-include="~/js/datatables/dataTables.buttons.min.js"></script>
+    <script asp-src-include="~/js/datatables/buttons.bootstrap4.min.js"></script>
+    @*   <script asp-src-include="~/js/datatables/jszip.min.js"></script>*@
+    <script asp-src-include="~/js/datatables/pdfmake.min.js"></script> 
+    <script asp-src-include="~/js/datatables/vfs_fonts.js"></script>
+    <script asp-src-include="~/js/datatables/buttons.html5.min.js"></script>
+    <script asp-src-include="~/js/datatables/buttons.print.min.js"></script>
+    <script asp-src-include="~/js/datatables/datatables-call.js"></script>
     @*<script asp-src-include="~/fonts/feather/feather.min.js"></script>*@
     <script asp-src-include="~/sweetalert2/sweetalert2.min.js"></script>
     <script asp-src-include="~/toastr/toastr.min.js"></script>
     <script asp-src-include="~/js/moment.min.js"></script>
     <script asp-src-include="~/js/bootstrap-datetimepicker.min.js"></script>
-   
-    <script src="~/js/moment.min.js"></script>
     <script asp-src-include="~/developerjs/layout.js"></script>
     <script asp-src-include="~/developerjs/keyconstants.js"></script>
     <script asp-src-include="~/developerjs/commanvalidation.js"></script>
@@ -1048,7 +1047,7 @@
 </div>
 
 <div class="modal fade right" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document" style="width:auto!important;">
+    <div class="modal-dialog modal-lg" role="document" style="width:500px!important;">
         <div class="modal-content" >
             <div class="modal-header">
                 <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>

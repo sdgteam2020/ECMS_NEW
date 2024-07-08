@@ -128,7 +128,9 @@ $(document).ready(function () {
             return true; // Allow the keypress
         }
     });
+    
     $('.form-control').keypress(function (e) {
+       
         // Get the key code of the pressed key
         var keyCode = e.which;
        
@@ -237,7 +239,7 @@ $(document).ready(function () {
                         // Left side: Logo
                         // Middle: brandname
                         // Right side: A document title
-                        doc.watermark = { text: $("#IpaddresGloble").html() + ' ' + jsDate, color: 'blue', opacity: 0.2 };
+                        doc.watermark = { text: $("#IpaddresGloble").html() + ' ' + jsDate, color: 'red', opacity: 0.2,fontSize:5 };
                         doc['header'] = (function () {
                             return {
                                 columns: [
@@ -754,14 +756,16 @@ function WaterMarkOnPdf(doc) {
     // It's important to create enough space at the top for a header !!!
     doc.pageMargins = [20, 60, 20, 30];
     // Set the font size fot the entire document
-    doc.defaultStyle.fontSize = 12;
+    doc.defaultStyle.fontSize = 8;
     // Set the fontsize for the table header
-    doc.styles.tableHeader.fontSize = 12;
+    doc.styles.tableHeader.fontSize = 8;
+
+
     // Create a header object with 3 columns
     // Left side: Logo
     // Middle: brandname
     // Right side: A document title
-    doc.watermark = { text: $("#IpaddresGloble").html() + ' ' + jsDate, color: 'blue', opacity: 0.2 };
+    doc.watermark = { text: $("#IpaddresGloble").html() + ' ' + jsDate, color: 'red', opacity: 0.2 };
     doc['header'] = (function () {
         return {
             columns: [

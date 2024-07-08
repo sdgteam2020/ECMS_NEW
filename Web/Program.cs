@@ -208,36 +208,36 @@ else
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
-app.Use(async (ctx, next) =>
-{
-    //ctx.Response.Headers.Add("Content-Security-Policy", "default-src *; style-src 'self' ");
-    //ctx.Response.Headers.Add("Feature-Policy", "fullscreen 'none'");
-    //ctx.Response.Headers.Add("Referrer-Policy", "same-origin");
-    //ctx.Response.Headers.Add("X-Frame-Options", "DENY");
-    //ctx.Response.Headers.Add("X-XSS-Protection", "1; mode=block");
-    //ctx.Response.Headers.Add("X-Content-Type-Options", "nosniff");
-    //ctx.Response.Headers.Add("Strict-Transport-Security", "max-age=31536000; includeSubDomains; preload");
-    //ctx.Response.Headers.Remove("X-Powered-By");
-    //ctx.Response.Headers.Remove("x-aspnet-version");
-    //// Some headers won't remove
-    //ctx.Response.Headers.Remove("Server");
-    ctx.Response.Headers.Add("Content-Security-Policy", "default-src 'self'");
-    ctx.Response.Headers.Add("X-Content-Type-Options", "nosniff");
-    ctx.Response.Headers.Add("X-Frame-Options", "SAMEORIGIN");
-    ctx.Response.Headers.Add("X-XSS-Protection", "1; mode=block");
+//app.Use(async (ctx, next) =>
+//{
+//    //ctx.Response.Headers.Add("Content-Security-Policy", "default-src *; style-src 'self' ");
+//    //ctx.Response.Headers.Add("Feature-Policy", "fullscreen 'none'");
+//    //ctx.Response.Headers.Add("Referrer-Policy", "same-origin");
+//    //ctx.Response.Headers.Add("X-Frame-Options", "DENY");
+//    //ctx.Response.Headers.Add("X-XSS-Protection", "1; mode=block");
+//    //ctx.Response.Headers.Add("X-Content-Type-Options", "nosniff");
+//    //ctx.Response.Headers.Add("Strict-Transport-Security", "max-age=31536000; includeSubDomains; preload");
+//    //ctx.Response.Headers.Remove("X-Powered-By");
+//    //ctx.Response.Headers.Remove("x-aspnet-version");
+//    //// Some headers won't remove
+//    //ctx.Response.Headers.Remove("Server");
+//    ctx.Response.Headers.Add("Content-Security-Policy", "default-src 'self'");
+//    ctx.Response.Headers.Add("X-Content-Type-Options", "nosniff");
+//    ctx.Response.Headers.Add("X-Frame-Options", "SAMEORIGIN");
+//    ctx.Response.Headers.Add("X-XSS-Protection", "1; mode=block");
 
-    await next();
+//    await next();
     
-});
-var options = new RewriteOptions()
-           // Redirect from non-www to www
-           .AddRedirectToWww()
-           // Redirect to HTTPS
-           .AddRedirectToHttps()
-           // Example of custom rewrite rule
-           .AddRewrite("^articles/(.*)", "blog/article?id=$1", skipRemainingRules: true);
+//});
+//var options = new RewriteOptions()
+//           // Redirect from non-www to www
+//           .AddRedirectToWww()
+//           // Redirect to HTTPS
+//           .AddRedirectToHttps()
+//           // Example of custom rewrite rule
+//           .AddRewrite("^articles/(.*)", "blog/article?id=$1", skipRemainingRules: true);
 
-app.UseRewriter(options);
+//app.UseRewriter(options);
 
 app.UseForwardedHeaders();
 app.UseHttpsRedirection();

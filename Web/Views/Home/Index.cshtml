@@ -2,8 +2,14 @@
     ViewData["Title"] = "Home";
     Layout = "~/Views/Shared/_LayoutHome.cshtml";
 }
+<style>
+    .clickable {
+        height: 180px !important;
+        width: 200px !important;
+    }
+</style>
 <link href="~/css/homeindex.css" rel="stylesheet" />
-        
+
 <div class="wrap">
     <div id="dir-control-left" class="dir-control">
         <i class="fa fa-angle-left fa-5x" aria-hidden="true"></i>
@@ -11,17 +17,14 @@
     <div id="slider">
         <div class="slide slide1">
             <div class="slide-content">
-              
             </div>
         </div>
         <div class="slide slide2">
             <div class="slide-content">
-              
             </div>
         </div>
         <div class="slide slide3">
             <div class="slide-content">
-               
             </div>
         </div>
     </div>
@@ -31,65 +34,69 @@
 
     <div class="row">
         <div class="col-md-2 col-sm-6">
-            </div>
-         <div class="col-md-8 col-sm-6 text-center">
-            <a href="/Home/Dashboard">
+        </div>
+        <div class="col-md-8 col-sm-6 text-center">
             <div class="a-box mr-2">
-            <div class="img-container">
-                <div class="img-inner">
-                    <div class="inner-skew">
-                            <img src="~/images/asset/dashboard.png" />
-                        </div>
-                </div>
-            </div>
-            <div class="text-container">
-                <h3>Dashboard</h3>
-                <div>
-                    Dashboard Contains all pending requests for approval
-                </div>
-            </div>
-       </div>
-            </a><a href="/Home/Request">
-                <div class="a-box mr-2">
-                <div class="img-container">
-                    <div class="img-inner">
-                        <div class="inner-skew">
-                              <img src="~/images/asset/request.png" />
+                <a href="/Home/Dashboard" class="clickable">
+                    <div class="img-container">
+                        <div class="img-inner">
+                            <div class="inner-skew">
+                                <img src="~/images/asset/dashboard.png" />
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="text-container">
-                    <h3>Initiate Request</h3>
-                    <div>
-                        Guides to the link to Initiate I-Card Requests
+                    <div class="text-container">
+                        <h3>Dashboard</h3>
+                        <div>
+                            Dashboard Contains all pending requests for approval
+                        </div>
                     </div>
-                </div>
-                </div>
-            </a>
-            <a href="/Home/Task">
+                </a>
+            </div>
+
+
+            <div class="a-box mr-2">
+                <a href="/Home/Request" class="clickable">
+                    <div class="img-container">
+                        <div class="img-inner">
+                            <div class="inner-skew">
+                                <img src="~/images/asset/request.png" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-container">
+                        <h3>Initiate Request</h3>
+                        <div>
+                            Guides to the link to Initiate I-Card Requests
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+
             <div class="a-box">
-                <div class="img-container">
-                   
-                    <div class="img-inner">
-                        <div class="inner-skew">
-                              <img src="~/images/asset/task-100.png" />
+                <a href="/Home/Task" class="clickable">
+                    <div class="img-container">
+                        <div class="img-inner">
+                            <div class="inner-skew">
+                                <img src="~/images/asset/task-100.png" />
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="text-container">
-                    <h3>Task</h3>
-                    
-                    <div class="">
-                        Contains role base activity
-                        <br />.
+                    <div class="text-container">
+                        <h3>Task</h3>
+                        <div class="">
+                            Contains role base activity
+                            <br />.
+                        </div>
                     </div>
-                </div>
+                </a>
             </div>
-            </a>
-        </div> 
+
+        </div>
         <div class="col-md-2 col-sm-6">
         </div>
-</div>
+    </div>
 
 </div>
 
@@ -101,7 +108,7 @@
     $(document).ready(function () {
         setInterval(function () { $('#dir-control-left').trigger('click'); }, 3000);
 
-      
+
     });
 
     document.addEventListener('DOMContentLoaded', function () {

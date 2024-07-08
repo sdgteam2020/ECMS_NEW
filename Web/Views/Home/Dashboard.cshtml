@@ -2,7 +2,13 @@
     ViewData["Title"] = "DashBoard";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
+<style>
+    .clickable{
+        height: 154px;
+        width: 154px;
+        display: block;
+    }
+</style>
 <header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
     <div class="containerMain">
         <div class="page-header-content pt-4">
@@ -23,22 +29,21 @@
     @if (ViewBag.Role == "User" || ViewBag.Role == "Coordinator")
     {
         <div class="row">
-
             <div class="card p-4">
                 <div class="row">
                     <div class="col-md-2 col-sm-6">
-                        <a href="/Home/SubDashboard">
-                        <div class="counter pink">
-                            <div class="counter-icon">
-                                <i class="fa fa-address-card"></i>
+                        <a href="/Home/SubDashboard" class="clickable">
+                            <div class="counter pink d-sm-block d-md-block">
+                                <div class="counter-icon">
+                                    <i class="fa fa-address-card"></i>
+                                </div>
+                                <span class="counter-value" id="TotReq">0</span>
+                                <h3>I-Card Request</h3>
                             </div>
-                            <span class="counter-value" id="TotReq">0</span>
-                            <h3>I-Card Request</h3>
-                        </div>
                         </a>
                     </div>
                     <div class="col-md-2 col-sm-6">
-                        <a href="/BasicDetail/InaccurateData?Id=MQ==">
+                        <a href="/BasicDetail/InaccurateData?Id=MQ==" class="clickable">
                             <div class="counter pink">
                                 <div class="counter-icon">
                                     <i class="fa fa-address-card"></i>
@@ -50,7 +55,7 @@
                         </a>
                     </div>
                     <div class="col-md-2 col-sm-6">
-                        <a href="/BasicDetail/InaccurateData?Id=Mg==">
+                        <a href="/BasicDetail/InaccurateData?Id=Mg==" class="clickable">
                             <div class="counter pink">
                                 <div class="counter-icon">
                                     <i class="fa fa-address-card"></i>
@@ -62,7 +67,7 @@
                         </a>
                     </div>
                     <div class="col-md-2 col-sm-6">
-                        <a href="/Home/DashboardUserMgt">
+                        <a href="/Home/DashboardUserMgt" class="clickable">
                             <div class="counter pink">
                                 <div class="counter-icon">
                                     <i class="fa fa-address-card"></i>
@@ -74,13 +79,13 @@
                         </a>
                     </div>
                     <div class="col-md-2 col-sm-6">
-                        <a href="/Home/ReportAndReturn">
+                        <a href="/Home/ReportAndReturn" class="clickable">
                             <div class="counter pink">
                                 <div class="counter-icon">
                                     <i class="fa fa-address-card"></i>
                                 </div>
                                 <h3 style="margin-top:3.0rem!important;">
-                                    Report And Return
+                                    Reports &amp; Returns
                                 </h3>
                             </div>
                         </a>

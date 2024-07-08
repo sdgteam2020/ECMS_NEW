@@ -31,11 +31,12 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.SqlServer.Management.Smo;
 using Microsoft.SqlServer.Management.Smo.Agent;
 using Microsoft.SqlServer.Management.Smo.Wmi;
+using Microsoft.SqlServer.Management.XEvent;
 using Newtonsoft.Json;
 using System;
 using System.Data;
 using System.Data.Entity;
-using System.Data.Entity.Hierarchy;
+using System.Data.Entity.Hierarchy; 
 using System.Security.Claims;
 using System.Security.Policy;
 using Web.Data;
@@ -1123,6 +1124,32 @@ namespace Web.Controllers
         [AllowAnonymous]
         public IActionResult IMLogin()
         {
+            int userid = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+            DTOTempSession? dTOTempSession = SessionHeplers.GetObject<DTOTempSession>(HttpContext.Session, "Token");
+            if (dTOTempSession != null)
+            {
+                if (dTOTempSession.RoleName == "User")
+                {
+
+                    return RedirectToActionPermanent("Index", "Home");
+                }
+                else if (dTOTempSession.RoleName == "Coordinator")
+                {
+
+                    return RedirectToActionPermanent("Index", "Home");
+                }
+                else if (dTOTempSession.RoleName.ToUpper() == "ADMIN")
+                {
+
+                    return RedirectToActionPermanent("DashboardMaster", "Master");
+
+                }
+                else if (dTOTempSession.RoleName == "Super Admin")
+                {
+
+                    return RedirectToActionPermanent("Index", "Account");
+                }
+            }
             return View();
         }
         [HttpPost]
@@ -1279,22 +1306,54 @@ namespace Web.Controllers
         [AllowAnonymous]
         public IActionResult TokenValidate()
         {
-            DTOTempSession? dTOTempSession = SessionHeplers.GetObject<DTOTempSession>(HttpContext.Session, "IMData");
-            if (dTOTempSession != null)
+             int userid = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+             DTOTempSession? dTOTempSession = SessionHeplers.GetObject<DTOTempSession>(HttpContext.Session, "Token");
+            
+            if (userid==0)
             {
-                if (dTOTempSession.Status == 1)
+                DTOTempSession? dTOTempSession1 = SessionHeplers.GetObject<DTOTempSession>(HttpContext.Session, "IMData");
+
+                if (dTOTempSession1 != null)
                 {
-                    return View();
+                    if (dTOTempSession1.Status == 1)
+                    {
+                        return View();
+                    }
+                    else
+                    {
+                        return View();
+                    }
                 }
                 else
                 {
+                    TempData["error"] = "You are not authorized this page.";
                     return View();
                 }
             }
             else
             {
-                TempData["error"] = "You are not authorized this page.";
-                return View();
+                if (dTOTempSession.RoleName == "User")
+                {
+                   
+                    return RedirectToActionPermanent("Index", "Home");
+                }
+                else if (dTOTempSession.RoleName == "Coordinator")
+                {
+                   
+                    return RedirectToActionPermanent("Index", "Home");
+                }
+                else if (dTOTempSession.RoleName.ToUpper() == "ADMIN")
+                {
+                    
+                    return RedirectToActionPermanent("DashboardMaster", "Master");
+
+                }
+                else if (dTOTempSession.RoleName == "Super Admin")
+                {
+                  
+                    return RedirectToActionPermanent("Index", "Account");
+                }
+                return View();  
             }
 
         }
@@ -1302,7 +1361,6 @@ namespace Web.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> TokenValidate(DTOTokenRequest model)
         {
-            await signInManager.SignOutAsync();
             DTOTempSession? dTOTempSession = SessionHeplers.GetObject<DTOTempSession>(HttpContext.Session, "IMData");
             if (dTOTempSession != null)
             {
@@ -1313,20 +1371,24 @@ namespace Web.Controllers
                     {
                         var usera = await userManager.FindByIdAsync(dTOTempSession.AspNetUsersId.ToString());
 
-                        await userManager.UpdateSecurityStampAsync(usera);
+                        HttpContext.Session.Remove("Token");
+                        await signInManager.SignOutAsync();
+
+                        //await userManager.UpdateSecurityStampAsync(usera);
 
                         if (usera != null)
                         {
+
                             var result = await signInManager.PasswordSignInAsync(usera.UserName, "Admin123#", false, true);
-                           // var rolelist = await signInManager.UserManager.GetRolesAsync(usera);
+                            // var rolelist = await signInManager.UserManager.GetRolesAsync(usera);
                             //var user1 = await signInManager.UserManager.IsInRoleAsync(usera, "User");
                             if (result.Succeeded)
                             {
                                 //var army = await _userProfileBL.Get(Convert.ToInt32(dTOTempSession.UserId));
-                              
-                              //  await userManager.RemoveClaimAsync(usera, new Claim("Roles", dTOTempSession.RoleName));
-                              //  await userManager.AddClaimAsync(usera, new Claim("Roles", dTOTempSession.RoleName));
-                                
+
+                                //  await userManager.RemoveClaimAsync(usera, new Claim("Roles", dTOTempSession.RoleName));
+                                //  await userManager.AddClaimAsync(usera, new Claim("Roles", dTOTempSession.RoleName));
+
 
 
                                 DtoSession dtoSession = new DtoSession();
@@ -1388,6 +1450,7 @@ namespace Web.Controllers
                                 goto End;
                             }
                         }
+
                     }
                     else
                     {
@@ -1744,6 +1807,7 @@ namespace Web.Controllers
 
             //Solved ---- Lack of session validation and server expiration 
             //await userManager.UpdateSecurityStampAsync(user);
+            HttpContext.Session.Remove("Token");
             await signInManager.SignOutAsync();
             return View();
 

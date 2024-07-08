@@ -103,7 +103,7 @@ function beforeUploadPhotoSizeCheck(id) {
         var maxSizeKB = 200; //Size in KB.
         var maxSize = maxSizeKB * 1024; //File size is returned in Bytes.
         if (size > maxSize) {
-            $("#lblPhoto").html("Maximum file size " + maxSizeKB + "KB allowed.");
+            $("#lblPhoto").html("Maximum file size " + maxSizeKB + "KB allowed. </br>");
             $("#PhotoPath").attr({
                 'src': '/writereaddata/images/noimage.png',
                 'width': '200px',
@@ -113,12 +113,21 @@ function beforeUploadPhotoSizeCheck(id) {
             return false;
         }
         else {
-            photoChange(id);
+            var allowedTypes = ['image/jpeg', 'image/png', 'application/pdf'];
+            if (!allowedTypes.includes(file.type)) {
+                $("#lblPhoto").html("Invalid file type. Only JPG, PNG, and PDF files are allowed. </br>");
+                $("#Photo_").val(null);
+
+                return;
+            } else {
+                photoChange(id);
+            }
         }
 
     }
 }
 function beforeUploadPhotoSizeCheckInEdit(id) {
+  
     $("#lblPhoto").html("");
     const file = id.files[0];
     if (file) {
@@ -126,12 +135,20 @@ function beforeUploadPhotoSizeCheckInEdit(id) {
         var maxSizeKB = 200; //Size in KB.
         var maxSize = maxSizeKB * 1024; //File size is returned in Bytes.
         if (size > maxSize) {
-            $("#lblPhoto").html("Photo not change because maximum file size " + maxSizeKB + "KB allowed.");
+            $("#lblPhoto").html("Photo not change because maximum file size " + maxSizeKB + "KB allowed.</br>");
             $("#Photo_").val(null);
             return false;
         }
         else {
-            photoChange(id);
+            var allowedTypes = ['image/jpeg', 'image/png', 'application/pdf'];
+            if (!allowedTypes.includes(file.type)) {
+                $("#lblPhoto").html("Invalid file type. Only JPG, PNG, and PDF files are allowed. </br>");
+                $("#Photo_").val(null);
+                
+                return;
+            } else {
+                photoChange(id);
+            }
         }
 
     }

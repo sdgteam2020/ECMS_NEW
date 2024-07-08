@@ -4,7 +4,7 @@ $(document).ready(function () {
     $("body").on("click", ".cls-btnhistory", function () {
         
        
-        $(".loginlodetails").html($(this).closest("tr").find(".DomainID").html() + '(' + $(this).closest("tr").find(".ArmyNo").html() +') (' + $(this).closest("tr").find(".RankName").html() + '' + $(this).closest("tr").find(".Name").html() + ') ');
+        $(".loginlodetails").html($(this).closest("tr").find(".DomainID").html() + '(' + $(this).closest("tr").find(".ArmyNo").html() +' ' + $(this).closest("tr").find(".RankName").html() + '' + $(this).closest("tr").find(".Name").html() + ') ');
 
         var fmdate = new Date($("#FmDate").val());
         var todate = new Date($("#ToDate").val());

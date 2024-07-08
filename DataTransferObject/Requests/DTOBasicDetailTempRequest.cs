@@ -7,6 +7,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.ComponentModel;
 
 namespace DataTransferObject.Requests
 {
@@ -15,22 +16,27 @@ namespace DataTransferObject.Requests
         [RegularExpression(@"^[\d]+$", ErrorMessage = "BasicDetailTempId is number.")]
         public int BasicDetailTempId { get; set; }
 
+        [DisplayName("First Name")]
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
         [RegularExpression(@"^[\w ]*$", ErrorMessage = "Only Alphabets ,Numbers allowed.")]
-        [MaxLength(18, ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "MaxLengthError")]
+        [MaxLength(18, ErrorMessage = "Maximum length of First Name is eighteen character.")]
         public string FName { get; set; } = string.Empty;
 
+        [DisplayName("Last Name")]
         [RegularExpression(@"^[\w ]*$", ErrorMessage = "Only Alphabets ,Numbers allowed.")]
-        [MaxLength(18, ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "MaxLengthError")]
+        [MaxLength(18, ErrorMessage = "Maximum length of Last Name is eighteen character.")]
         public string? LName { get; set; }
 
+        [DisplayName("Name As Per Record")]
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
         [RegularExpression(@"^[\w ]*$", ErrorMessage = "Only Alphabets ,Numbers allowed.")]
-        [MaxLength(36, ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "MaxLengthError")]
+        [MaxLength(36, ErrorMessage = "Maximum length of Name As Per Record is thirty six character.")]
         public string NameAsPerRecord { get; set; } = string.Empty;
 
 
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
+        [MinLength(8, ErrorMessage = "Minimum length of Army No is eight character.")]
+        [MaxLength(10, ErrorMessage = "Maximum length of Army No is ten character.")]
         public string ServiceNo { get; set; } = string.Empty;
 
 
@@ -39,6 +45,7 @@ namespace DataTransferObject.Requests
         public DateTime DOB { get; set; }
 
 
+        [DisplayName("Dt of Commissioning/ Enrolment")]
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
         [DataType(DataType.Date)]
         public DateTime DateOfCommissioning { get; set; }
@@ -48,8 +55,9 @@ namespace DataTransferObject.Requests
         [RegularExpression(@"^[\w \.]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
         public string? Observations { get; set; }
 
+        [DisplayName("Arms, Service & Corps")]
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
-        [RegularExpression(@"^[\d]+$", ErrorMessage = "ArmedId is number.")]
+        [RegularExpression(@"^[\d]+$", ErrorMessage = "Arms, Service & Corps is number.")]
         public byte ArmedId { get; set; }
 
 
@@ -62,26 +70,32 @@ namespace DataTransferObject.Requests
         /// </summary>
         [RegularExpression(@"^[\w\-\.\/ ]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
         public string? PermanentAddress { get; set; }
-        
+
+        [DisplayName("State")]
         [RegularExpression(@"^[\w ]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
+        [MaxLength(50, ErrorMessage = "Maximum length of State is fifty character.")]
         public string? State { get; set; }
         
         [RegularExpression(@"^[\w ]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
+        [MaxLength(50, ErrorMessage = "Maximum length of District is fifty character.")]
         public string? District { get; set; }
 
         [RegularExpression(@"^[\w ]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
         public string? PS { get; set; }
 
         [RegularExpression(@"^[\w ]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
+        [MaxLength(50, ErrorMessage = "Maximum length of PO is fifty character.")]
         public string? PO { get; set; }
 
         [RegularExpression(@"^[\w ]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
+        [MaxLength(50, ErrorMessage = "Maximum length of Tehsil is fifty character.")]
         public string? Tehsil { get; set; }
 
         [RegularExpression(@"^[\w\-\.\/ ]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
+        [MaxLength(50, ErrorMessage = "Maximum length of Village is fifty character.")]
         public string? Village { get; set; }
         
-        [RegularExpression(@"^[\d]+$", ErrorMessage = "PinCode is number.")]
+        [Range(typeof(int), "100000", "9999999", ErrorMessage = "Value for {0} must be between {1} and {2}.")]
         public int? PinCode { get; set; }
         /// <summary>
         /// end address
