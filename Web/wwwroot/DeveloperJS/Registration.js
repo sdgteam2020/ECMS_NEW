@@ -22,6 +22,54 @@
     $("#btnsubmit").on("click", function () {
         Proceed('Registration');
     });
+    $("#State").keyup(function () {
+        if ($("#State").val().length == 0) {
+            $("#lblState").html('State is required.');
+        }
+        else {
+            $("#lblState").html('');
+        }
+    });
+    $("#PS").keyup(function () {
+        if ($("#PS").val().length == 0) {
+            $("#lblPS").html('Police Station is required.');
+        }
+        else {
+            $("#lblPS").html('');
+        }
+    });
+    $("#Village").keyup(function () {
+        if ($("#Village").val().length == 0) {
+            $("#lblVillage").html('Village is required.');
+        }
+        else {
+            $("#lblVillage").html('');
+        }
+    });
+    $("#District").keyup(function () {
+        if ($("#District").val().length == 0) {
+            $("#lblDistrict").html('District is required.');
+        }
+        else {
+            $("#lblDistrict").html('');
+        }
+    });
+    $("#PO").keyup(function () {
+        if ($("#PO").val().length == 0) {
+            $("#lblPO").html('Post Office is required.');
+        }
+        else {
+            $("#lblPO").html('');
+        }
+    });
+    $("#Tehsil").keyup(function () {
+        if ($("#Tehsil").val().length == 0) {
+            $("#lblTehsil").html('Tehsil is required.');
+        }
+        else {
+            $("#lblTehsil").html('');
+        }
+    });
    
 
     if (sessionStorage.getItem("ArmyNo") != null) {
@@ -44,6 +92,16 @@
 
             $("#ServiceNo").val($("#ServiceNumber").val());
             $(".spnhideServiceNo").addClass('d-none');
+
+            $("#State").prop('required', true);
+            $("#District").prop('required', true);
+            $("#PS").prop('required', true);
+            $("#PO").prop('required', true);
+            $("#Tehsil").prop('required', true);
+            $("#Village").prop('required', true);
+            $("#PinCode").prop('required', true);
+            $("#PermanentAddress").prop('required', false);
+
         } else {
             $('#FName').attr('readonly', true);
             $('#LName').attr('readonly', true);
@@ -53,6 +111,15 @@
             $('#DateOfCommissioning').attr('readonly', true);
             $('.persAddress').removeClass('d-none');
             $('.entryaddress').addClass('d-none');
+
+            $("#State").prop('required', false);
+            $("#District").prop('required', false);
+            $("#PS").prop('required', false);
+            $("#PO").prop('required', false);
+            $("#Tehsil").prop('required', false);
+            $("#Village").prop('required', false);
+            $("#PinCode").prop('required', false);
+            $("#PermanentAddress").prop('required', true);
         }
 
        /* Getdatafromapi();*/
@@ -241,6 +308,38 @@ function Proceed(id) {
     else {
         $("#lblDateOfCommissioning").text('')
     }
+
+    if (sessionStorage.getItem("RegistrationApplyFor") == '4' || sessionStorage.getItem("RegistrationApplyFor") == '9')
+    {
+        if ($("#State").val().length == 0) {
+            $("#lblState").html('State is required.');
+        }
+        if ($("#PS").val().length == 0) {
+            $("#lblPS").html('Police Station is required.');
+        }
+        if ($("#Village").val().length == 0) {
+            $("#lblVillage").html('Village is required.');
+        }
+        if ($("#District").val().length == 0) {
+            $("#lblDistrict").html('District is required.');
+        }
+        if ($("#PO").val().length == 0) {
+            $("#lblPO").html('Post Office is required.');
+        }
+        if ($("#Tehsil").val().length == 0) {
+            $("#lblTehsil").html('Tehsil is required.');
+        }
+    }
+    else {
+        $("#lblState").html('');
+        $("#lblPS").html('');
+        $("#lblVillage").html('');
+        $("#lblDistrict").html('');
+        $("#lblPO").html('');
+        $("#lblTehsil").html('');
+    }
+
+
     $.validator.unobtrusive.parse($(formId));
     if ($(formId).valid()) {
 
