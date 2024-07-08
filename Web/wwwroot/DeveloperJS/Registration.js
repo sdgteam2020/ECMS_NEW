@@ -10,6 +10,38 @@
     //const Commissioning = document.getElementById('Commissioning');
     //Commissioning.setAttribute('min', today);
     //Commissioning.setAttribute('max', maxDateFormatted);
+    $(function () {
+        var dtToday = new Date();
+
+        var month = dtToday.getMonth() + 1;
+        var day = dtToday.getDate();
+        var year = dtToday.getFullYear() - 18;
+
+        if (month < 10)
+            month = '0' + month.toString();
+        if (day < 10)
+            day = '0' + day.toString();
+
+        var maxDate = year + '-' + month + '-' + day;
+        $('#DOB').attr('max', maxDate);
+    });
+    $('#DOB').on('change', function () {
+        $("#DateOfCommissioning").val("");
+        var dtToday = new Date();
+
+        var month = dtToday.getMonth() + 1;
+        var day = dtToday.getDate();
+        var year = dtToday.getFullYear() - 18;
+
+        if (month < 10)
+            month = '0' + month.toString();
+        if (day < 10)
+            day = '0' + day.toString();
+
+        var maxDate = year + '-' + month + '-' + day;
+        $('#DateOfCommissioning').attr('min', maxDate);
+    });
+
     $('.paddress').on('change', function () {
         $("#PermanentAddress").val('Village - ' + $("#Village").val() + '\n Post Office-' + $("#PO").val() + ' \n Tehsil- ' + $("#Tehsil").val() + '\n District- ' + $("#District").val() + '\n State- ' + $("#State").val() + '\n Pin Code- ' + $("#PinCode").val());
         $("#AadhaarNo").val("");
