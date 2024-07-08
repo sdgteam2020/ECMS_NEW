@@ -45,6 +45,7 @@ namespace DataTransferObject.Requests
         public DateTime DOB { get; set; }
 
 
+        [DisplayName("Dt of Commissioning/ Enrolment")]
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
         [DataType(DataType.Date)]
         public DateTime DateOfCommissioning { get; set; }
@@ -54,8 +55,9 @@ namespace DataTransferObject.Requests
         [RegularExpression(@"^[\w \.]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
         public string? Observations { get; set; }
 
+        [DisplayName("Arms, Service & Corps")]
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
-        [RegularExpression(@"^[\d]+$", ErrorMessage = "ArmedId is number.")]
+        [RegularExpression(@"^[\d]+$", ErrorMessage = "Arms, Service & Corps is number.")]
         public byte ArmedId { get; set; }
 
 
@@ -68,7 +70,8 @@ namespace DataTransferObject.Requests
         /// </summary>
         [RegularExpression(@"^[\w\-\.\/ ]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
         public string? PermanentAddress { get; set; }
-        
+
+        [DisplayName("State")]
         [RegularExpression(@"^[\w ]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
         [MaxLength(50, ErrorMessage = "Maximum length of State is fifty character.")]
         public string? State { get; set; }
@@ -92,7 +95,7 @@ namespace DataTransferObject.Requests
         [MaxLength(50, ErrorMessage = "Maximum length of Village is fifty character.")]
         public string? Village { get; set; }
         
-        [RegularExpression(@"^[\d]+$", ErrorMessage = "PinCode is number.")]
+        [Range(typeof(int), "100000", "9999999", ErrorMessage = "Value for {0} must be between {1} and {2}.")]
         public int? PinCode { get; set; }
         /// <summary>
         /// end address
