@@ -33,7 +33,7 @@ namespace DataAccessLayer
 
         public async Task<bool> GetByName(MUnit Data)
         {
-            List<MUnit> mUnits = await _context.MUnit.ToListAsync();
+            List<MUnit> mUnits = await _context.MUnit.AsNoTracking().ToListAsync();
             var ret = mUnits.Any(p => p.UnitName.ToUpper() == Data.UnitName.ToUpper() && p.UnitId !=Data.UnitId);
             return ret;
         }
