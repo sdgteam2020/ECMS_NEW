@@ -129,7 +129,19 @@ $(document).ready(function () {
             return true; // Allow the keypress
         }
     });
-    
+    $('.form-control-Alphabets').keypress(function (e) {
+
+        // Get the key code of the pressed key
+        var keyCode = e.which;
+
+        // Allow only alphabets (A-Z, a-z) and numbers (0-9)
+        if ((keyCode >= 65 && keyCode <= 90) || (keyCode >= 97 && keyCode <= 122) || (keyCode == 32)) {
+            return true; // Allow the keypress
+        } else {
+            toastr.warning('Only Alphabets allowed');
+            return false; // Block the keypress
+        }
+    });
     $('.form-control').keypress(function (e) {
        
         // Get the key code of the pressed key
