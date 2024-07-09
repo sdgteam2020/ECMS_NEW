@@ -1,4 +1,8 @@
 ﻿$(document).ready(function () {
+    $("#txtSosDate").datepicker({
+        mindate: 0,
+        maxdate:"+10D"
+    });
    
     if (sessionStorage.getItem("ArmyNo") != null) {
         $("#iarmynopostingin").html(sessionStorage.getItem("ArmyNo"));
