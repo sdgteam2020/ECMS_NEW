@@ -6,8 +6,26 @@ var memberTable = "";
 var memberTable1 = "";
 $(document).ready(function () {
 
-  
+    $('.dateInput').datepicker({
+        dateFormat: 'dd/mm/yy', // Set date format to dd/mm/yyyy
+        changeMonth: true,
+        changeYear: true,
+        minDate: 0, // Disable past dates, allowing only today and future dates
+        yearRange: '1900:2100' // Example year range
+    });
+    $(".ValidateArmyNo").on("blur", function () {
+        let inputValue = $('#txtArmyNo').val();
 
+        // Validate the input: first two and last characters must be alphabets
+        let pattern = /^[A-Za-z]{2}.*[A-Za-z]$/;
+
+        if (!pattern.test(inputValue)) {
+            toastr.warning('Army No Not Correct Format');
+
+            $(this).val("");// Block the keypress
+           
+        }
+    });
     //$('.form-control').on('keypress', function () {
 
     //    if ($(this).val().match("^[a-zA-Z0-9 ]*$")) {

@@ -2,6 +2,7 @@
     mMsater(0, "ddlRank", Rank, "");
     mMsater(0, "ddlArmType", ArmyType, "");
     BindData()
+    
 
     $("#IsTokenWaiverYes").on("click", function () { 
         $("#spnReasonTokenWaiver").removeClass("d-none");
