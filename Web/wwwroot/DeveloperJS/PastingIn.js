@@ -1,7 +1,46 @@
 ﻿$(document).ready(function () {
-    $("#txtSosDate").datepicker({
-        mindate: 0,
-        maxdate:"+10D"
+    $(function () {
+        var dtToday = new Date();
+
+        var month = dtToday.getMonth() + 1;
+        var day = dtToday.getDate();
+        var year = dtToday.getFullYear() + 1;
+
+        if (month < 10)
+            month = '0' + month.toString();
+        if (day < 10)
+            day = '0' + day.toString();
+
+        var minDate = dtToday.getFullYear() + '-' + month + '-' + day;
+        var maxDate = year + '-' + month + '-' + day;
+
+        $('#txtSosDate').attr('min', minDate);
+        $('#txtSosDate').attr('max', maxDate);
+    });
+    $('#txtSosDate').on('change', function () {
+        var dtToday = new Date();
+
+        var month = dtToday.getMonth() + 1;
+        var day = dtToday.getDate();
+        var year = dtToday.getFullYear() + 1;
+
+        if (month < 10)
+            month = '0' + month.toString();
+        if (day < 10)
+            day = '0' + day.toString();
+        var minDate = dtToday.getFullYear() + '-' + month + '-' + day;
+        var maxDate = year + '-' + month + '-' + day;
+        $('#txtSosDate').attr('min', minDate);
+        $('#txtSosDate').attr('max', maxDate);
+        this.setAttribute(
+            "data-date",
+            moment(this.value, "YYYY-MM-DD")
+                .format(this.getAttribute("data-date-format"))
+        )
+    }).trigger("change");
+    $('#txtSosDate').on('keydown', (e) => {
+        e.preventDefault();
+        return false;
     });
    
     if (sessionStorage.getItem("ArmyNo") != null) {
