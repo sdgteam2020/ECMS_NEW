@@ -1,4 +1,5 @@
-﻿$(document).ready(function () {
+﻿var applyforId = 0;
+$(document).ready(function () {
    
     if (sessionStorage.getItem("ArmyNo") != null) {
         $("#iarmynopostingin").html(sessionStorage.getItem("ArmyNo"));
@@ -52,21 +53,24 @@ function Save() {
         }, //get the search string
         success: function (result) {
 
-
             if (result == DataSave) {
-
-
                 toastr.success('Data has been saved');
-
-              
-
+                alert(applyforId);
+                if (applyforId == 1) {
+                    window.location.href = "/Posting/AppCloseList/MQ==";
+                }
+                else {
+                    window.location.href = "/Posting/AppCloseList/?Id=MQ==&jcoor=SmNvL09ycw==";
+                }
             }
             else if (result == DataUpdate) {
-
-
                 toastr.success('Data has been Updated');
-               
-
+                if (applyforId == 1) {
+                    window.location.href = "/Posting/AppCloseList/MQ==";
+                }
+                else {
+                    window.location.href = "/Posting/AppCloseList/?Id=MQ==&jcoor=SmNvL09ycw==";
+                }
             }
             else if (result == DataExists) {
 
@@ -105,6 +109,7 @@ function GetdataPostingData(ArmyNo) {
         },
         success: function (response, status) {
             if (response != null) {
+                applyforId = response.ApplyForId;
                 $("#lblCategory").html(response.ApplyFor);
                 $("#lblAppt").html(response.Users_AppointmentName);
                 $("#lblFName").html(response.FName);

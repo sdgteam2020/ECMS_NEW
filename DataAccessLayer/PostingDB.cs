@@ -117,7 +117,7 @@ namespace DataAccessLayer
             try
             {
 
-                string query = "  SELECT basi.BasicDetailId,trnicardr.RequestId,basi.FName,basi.LName,basi.ServiceNo,ranks.RankAbbreviation RankName,appl.Name ApplyFor,trnicardr.TrackingId," +
+                string query = "  SELECT basi.BasicDetailId,trnicardr.RequestId,basi.FName,basi.LName,basi.ServiceNo,ranks.RankAbbreviation RankName,appl.ApplyForId,appl.Name ApplyFor,trnicardr.TrackingId," +
                                 " trnicardr.Status,uplod.PhotoImagePath"+
                                 " ,users.DomainId Users_DomainId,pro.ArmyNo Users_ArmyNo,pro.Name Users_Name,ranks1.RankAbbreviation Users_RankName,app.AppointmentName Users_AppointmentName"+
                                 " ,muni.UnitName,muni.Suffix,muni.Sus_no,mapunit.UnitMapId FromUnitID,users.Id FromAspNetUsersId,pro.userId FromUserID from BasicDetails basi" +
