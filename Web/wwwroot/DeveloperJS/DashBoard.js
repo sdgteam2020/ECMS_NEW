@@ -29,14 +29,8 @@ function GetDashboardCount() {
                 else {
                    
                     $("#TotReq").html(response.TotReq);
-                    $("#TotReject").html(response.TotReject);
-                    $("#TotSelfPen").html(response.TotSelfPen);
-                    $("#TotIOPen").html(response.TotIOPen);
-                    $("#TotGsoPen").html(response.TotGsoPen);
-                    $("#TotM11Pen").html(response.TotM11Pen);
-                    $("#TotGQ54Pen").html(response.TotGQ54Pen);
-                    $("#TotPrintPen").html(response.TotPrintPen);
-                       
+                    $("#TotInaccurateData").html(response.TotInaccurateData);
+                      
                    
                      $('.counter-value').each(function () {
                      $(this).prop('Counter', 0).animate({

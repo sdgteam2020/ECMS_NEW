@@ -29,31 +29,27 @@ namespace DataAccessLayer
         }
         public async Task<DTODashboardCountResponse> GetDashBoardCount(int UserId)
         {
-            string query = "declare @TotReq int=0 declare @TotReject int=0 declare @TotSelfPen int=0 declare @TotIOPen int=0 declare @TotGsoPen int=0 declare @TotM11Pen int=0 declare @TotGQ54Pen int=0 declare @TotPrintPen int=0" +
-                            " select @TotReq=COUNT(distinct req.RequestId) from TrnDomainMapping domain inner join TrnICardRequest req on req.TrnDomainMappingId=domain.Id where domain.AspNetUsersId=@UserId" +
-                            " select @TotReject=COUNT(distinct req.RequestId) from TrnDomainMapping domain inner join TrnICardRequest req on req.TrnDomainMappingId=domain.Id " +
-                            " inner join TrnFwds fwd on fwd.ToAspNetUsersId= domain.AspNetUsersId and fwd.IsComplete=0 and fwd.[FwdStatusId]=2 and fwd.RequestId=req.RequestId where domain.AspNetUsersId=@UserId" +
-                            " select @TotSelfPen=COUNT(distinct req.RequestId)   from TrnDomainMapping domain inner join TrnICardRequest req on req.TrnDomainMappingId=domain.Id " +
-                            " inner join TrnStepCounter step on step.RequestId=req.RequestId where domain.AspNetUsersId=@UserId and StepId=1" +
-                            " select @TotIOPen=COUNT(distinct req.RequestId)  from TrnDomainMapping domain inner join TrnICardRequest req on req.TrnDomainMappingId=domain.Id " +
-                            " inner join TrnStepCounter step on step.RequestId=req.RequestId where domain.AspNetUsersId=@UserId and StepId=2" +
-                            " select @TotGsoPen=COUNT(distinct req.RequestId)   from TrnDomainMapping domain inner join TrnICardRequest req on req.TrnDomainMappingId=domain.Id " +
-                            " inner join TrnStepCounter step on step.RequestId=req.RequestId where domain.AspNetUsersId=@UserId and StepId=3" +
-                            " select @TotM11Pen=COUNT(distinct req.RequestId)  from TrnDomainMapping domain inner join TrnICardRequest req on req.TrnDomainMappingId=domain.Id " +
-                            " inner join TrnStepCounter step on step.RequestId=req.RequestId where domain.AspNetUsersId=@UserId and StepId=4" +
-                            " select @TotGQ54Pen=COUNT(distinct req.RequestId)   from TrnDomainMapping domain inner join TrnICardRequest req on req.TrnDomainMappingId=domain.Id " +
-                            " inner join TrnStepCounter step on step.RequestId=req.RequestId where domain.AspNetUsersId=@UserId and StepId=5" +
-                            " select @TotPrintPen=COUNT(distinct req.RequestId)  from TrnDomainMapping domain inner join TrnICardRequest req on req.TrnDomainMappingId=domain.Id " +
-                            " inner join TrnStepCounter step on step.RequestId=req.RequestId where domain.AspNetUsersId=@UserId and StepId=6" +
-                            " select @TotReq TotReq,@TotReject TotReject,@TotSelfPen TotSelfPen,@TotIOPen TotIOPen,@TotGsoPen TotGsoPen,@TotM11Pen TotM11Pen,@TotGQ54Pen TotGQ54Pen,@TotPrintPen TotPrintPen";
+            string query = "declare @TotReq int=0 declare @TotInaccurateData int=0 " +
+                            " select @TotReq=COUNT(distinct req.RequestId) from TrnDomainMapping domain" +
+                            " inner join TrnICardRequest req on req.TrnDomainMappingId=domain.Id" +
+                            " where domain.AspNetUsersId=@UserId" +
+                            
+                            " select @TotInaccurateData=COUNT(BasicDetailTempId) from BasicDetailTemps" +
+                            " where Updatedby=@UserId "+
+                            " select @TotReq TotReq,@TotInaccurateData TotInaccurateData";
 
-
-            using (var connection = _contextDP.CreateConnection())
+            try
             {
-                //data.MRank.RankAbbreviation
-                //data.MArmedType.Abbreviation
-                var ret = await connection.QueryAsync<DTODashboardCountResponse>(query, new { UserId });
-                return ret.SingleOrDefault();
+                using (var connection = _contextDP.CreateConnection())
+                {
+                    var ret = await connection.QueryAsync<DTODashboardCountResponse>(query, new { UserId });
+                    return ret.SingleOrDefault();
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "HomeDB->GetDashBoardCount");
+                return null;
             }
         }
         public async Task<DTORequestDashboardCountResponse> GetRequestDashboardCount(int UserId,string Type)
