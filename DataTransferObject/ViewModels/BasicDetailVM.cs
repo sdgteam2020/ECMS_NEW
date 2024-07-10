@@ -174,7 +174,7 @@ namespace DataTransferObject.ViewModels
         public string? Village { get; set; } = string.Empty;
         
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
-        [Range(typeof(int), "100000", "9999999", ErrorMessage = "Value for {0} must be between {1} and {2}.")]
+        [Range(typeof(int), "100000", "999999", ErrorMessage = "Value for {0} must be between {1} and {2}.")]
         public int PinCode { get; set; }
         /// <summary>
         /// end address
