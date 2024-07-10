@@ -32,12 +32,7 @@
         var maxDate = year + '-' + month + '-' + day;
         $('#txtSosDate').attr('min', minDate);
         $('#txtSosDate').attr('max', maxDate);
-        this.setAttribute(
-            "data-date",
-            moment(this.value, "YYYY-MM-DD")
-                .format(this.getAttribute("data-date-format"))
-        )
-    }).trigger("change");
+    });
     $('#txtSosDate').on('keydown', (e) => {
         e.preventDefault();
         return false;

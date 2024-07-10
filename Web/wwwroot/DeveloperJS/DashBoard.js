@@ -30,6 +30,7 @@ function GetDashboardCount() {
                    
                     $("#TotReq").html(response.TotReq);
                     $("#TotInaccurateData").html(response.TotInaccurateData);
+                    $("#TotObservationRaised").html(response.TotObservationRaised);
                       
                    
                      $('.counter-value').each(function () {
