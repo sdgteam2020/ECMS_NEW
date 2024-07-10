@@ -14,6 +14,7 @@ namespace DataTransferObject.Response
         public string? LName { get; set; }
         public string? ServiceNo { get; set; }
         public string? RankName { get; set; }
+        public byte? ApplyForId { get; set; }
         public string? ApplyFor { get; set; }
         public string? TrackingId { get; set; }
         public string? Status { get; set; }

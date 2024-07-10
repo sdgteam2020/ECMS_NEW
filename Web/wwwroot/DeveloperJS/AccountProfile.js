@@ -3,6 +3,18 @@
         
         GetTokenvalidatepersid2fawiththumbprint($("#ArmyNo").val(), "tokenmsg", "txtProfileForArmyNo","Thumbprint");
     });
+    $('.form-control-Alphabets').keypress(function (e) {
+
+        // Get the key code of the pressed key
+        var keyCode = e.which;
+
+        // Allow only alphabets (A-Z, a-z) and numbers (0-9)
+        if ((keyCode >= 65 && keyCode <= 90) || (keyCode >= 97 && keyCode <= 122) || (keyCode == 32)) {
+            return true; // Allow the keypress
+        } else {
+           return false; // Block the keypress
+        }
+    });
     $("#IsTokenWaiverYes").on("click",function () {
         $("#spnReasonTokenWaiver").removeClass("d-none");
         $('#ReasonTokenWaiver').prop('required', true);

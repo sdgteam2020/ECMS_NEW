@@ -36,7 +36,49 @@ namespace DataAccessLayer
                             
                             " select @TotInaccurateData=COUNT(BasicDetailTempId) from BasicDetailTemps" +
                             " where Updatedby=@UserId "+
-                            " select @TotReq TotReq,@TotInaccurateData TotInaccurateData";
+
+                            " declare @AspNetUsersId int=0 declare @ArmedId int=0 declare @Name varchar(25) declare @TotObservationRaised int=0 declare @TDMId int=0  " +
+                            " SELECT CASE WHEN ISNULL(RECO.TDMId,0) >0 THEN RECO.TDMId ELSE ORO.TDMId END TDMId, " +
+                            " (select AspNetUsersId from TrnDomainMapping where id =(CASE WHEN ISNULL(RECO.TDMId,0) >0 THEN RECO.TDMId ELSE ORO.TDMId END )) as AspNetUsersId,RECO.Name,RECO.ArmedId  " +
+                            " into #temp " +
+                            " FROM MRecordOffice RECO " +
+                            " LEFT JOIN OROMapping ORO ON RECO.RecordOfficeId=ORO.RecordOfficeId " +
+                            " SELECT  @TDMId=TDMId, @AspNetUsersId=AspNetUsersId,@Name=Name,@ArmedId=ArmedId from #temp where AspNetUsersId=@UserId " +
+                            " drop table #temp " +
+                            " IF @AspNetUsersId=NULL " +
+                            " BEGIN " +
+                            " SET @TotObservationRaised=0 " +
+                            " END " +
+                            " ELSE IF @ArmedId != 56 " +
+                            " BEGIN " +
+                            " SELECT @TotObservationRaised=COUNT(tdm.Id) FROM TrnDomainMapping tdm " +
+                            " inner join MRecordOffice mrec on mrec.TDMId = tdm.Id " +
+                            " inner join BasicDetailTemps Temps on Temps.ArmedId = mrec.ArmedId " +
+                            " WHERE tdm.AspNetUsersId=@UserId AND Temps.ApplyForId = 2 AND Temps.IsActive = 1 " +
+                            " END " +
+                            " ELSE " +
+                            " BEGIN " +
+                            " IF @Name='MP 6A' " +
+                            " BEGIN " +
+                            " SELECT @TotObservationRaised=COUNT(Temps.BasicDetailTempId) FROM BasicDetailTemps Temps " +
+                            " inner join MRank ranks1 on ranks1.RankId = Temps.RankId " +
+                            " WHERE Temps.ApplyForId=1 AND ranks1.Orderby <=4 AND SUBSTRING(UPPER(Temps.ServiceNo),1,2) != 'SL'  AND Temps.IsActive=1 " +
+                            " END " +
+                            " ELSE IF @Name='MP 6F' " +
+                            " BEGIN " +
+                            " SELECT @TotObservationRaised=COUNT(Temps.BasicDetailTempId)  FROM BasicDetailTemps Temps " +
+                            " left join OROMapping oro on oro.TDMId = @TDMId " +
+                            " WHERE Temps.ApplyForId=1 AND SUBSTRING(UPPER(Temps.ServiceNo),1,2) = 'SL' OR Temps.ArmedId in (select value from string_split(oro.ArmedIdList,','))  AND Temps.IsActive=1 " +
+                            " END " +
+                            " ELSE " +
+                            " BEGIN " +
+                            " SELECT @TotObservationRaised=COUNT(Temps.BasicDetailTempId)  FROM BasicDetailTemps Temps " +
+                            " inner join MRank ranks1 on ranks1.RankId = Temps.RankId " +
+                            " left join OROMapping oro on oro.TDMId = @TDMId " +
+                            " WHERE Temps.ApplyForId=1 AND ranks1.Orderby > 4 AND SUBSTRING(UPPER(Temps.ServiceNo),1,2) != 'SL' AND Temps.ArmedId in (select value from string_split(oro.ArmedIdList,','))  AND Temps.IsActive=1 " +
+                            " END " +
+                            " END " +
+                            " select @TotReq TotReq,@TotInaccurateData TotInaccurateData,@TotObservationRaised TotObservationRaised";
 
             try
             {

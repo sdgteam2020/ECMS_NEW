@@ -19,44 +19,52 @@ namespace DataTransferObject.ViewModels
     public class BasicDetailVM : Common
     {
         [Display(Name = "BasicDetailId", ResourceType = typeof(Resource))]
+        [RegularExpression(@"^[\d]+$", ErrorMessage = "BasicDetailId is number.")]
         public int BasicDetailId { get; set; }
 
         [StringLength(20)]
         [Column(TypeName = "varchar(20)")]
+        [RegularExpression(@"^[\w ]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
         public string PaperIcardNo { get; set; } = string.Empty;
         
         [Display(Name = "Name", ResourceType = typeof(Resource))]
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
         [MaxLength(18, ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "MaxLengthError")]
-        [RegularExpression(@"^[\w ]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
+        [RegularExpression(@"^[a-zA-Z ]*$", ErrorMessage = "Only Alphabets allowed.")]
         public string FName { get; set; } = string.Empty;
 
         [Display(Name = "Name", ResourceType = typeof(Resource))]
         [MaxLength(18, ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "MaxLengthError")]
-        [RegularExpression(@"^[\w ]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
+        [RegularExpression(@"^[a-zA-Z ]*$", ErrorMessage = "Only Alphabets allowed.")]
         public string? LName { get; set; }
 
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
         [MaxLength(36, ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "MaxLengthError")]
-        [RegularExpression(@"^[\w ]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
+        [RegularExpression(@"^[a-zA-Z ]*$", ErrorMessage = "Only Alphabets allowed.")]
         public string NameAsPerRecord { get; set; } = string.Empty;
 
         [Display(Name = "Rank", ResourceType = typeof(Resource))]
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
-        [RegularExpression(@"^[\d]+$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "OnlyNumber")]
+        [RegularExpression(@"^[\d]+$", ErrorMessage = "RankId is number.")]
         public short RankId { get; set; }
+
+        [RegularExpression(@"^[\w ]*$", ErrorMessage = "Only Alphabets and Numbers allowed.")]
         public string? RankName { get; set; }
 
         [Display(Name = "ArmService", ResourceType = typeof(Resource))]
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
-        [RegularExpression(@"^[\d]+$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "OnlyNumber")]
+        [RegularExpression(@"^[\d]+$", ErrorMessage = "ArmedId is number.")]
         public byte ArmedId { get; set; }
+
+        [RegularExpression(@"^[\w ]*$", ErrorMessage = "Only Alphabets and Numbers allowed.")]
         public string? ArmedName { get; set; }
 
         //[Remote(action: "IsServiceNoInUse", controller: "BasicDetail", AdditionalFields = "initialServiceNo")]
         [Display(Name = "ServiceNo", ResourceType = typeof(Resource))]
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
         [RegularExpression(@"^[\w ]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
+        [MinLength(8, ErrorMessage = "Minimum length of Army No is eight character.")]
+        [MaxLength(9, ErrorMessage = "Maximum length of Army No is nine character.")]
         public string ServiceNo { get; set; } = string.Empty;
 
         //[Display(Name = "IdentityMark", ResourceType = typeof(Resource))]
@@ -71,20 +79,19 @@ namespace DataTransferObject.ViewModels
         public DateTime DOB { get; set; }
 
         [Display(Name = "Height", ResourceType = typeof(Resource))]
-        [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
+        [RegularExpression(@"^[\d]+$", ErrorMessage = "Height is number.")]
         [Range(typeof(int), "100", "250", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "HtError")]
-        
         public int Height { get; set; }
 
         [Display(Name = "AadhaarNo", ResourceType = typeof(Resource))]
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
-        //[RegularExpression(@"^[\d ]{14}$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "AadhaarNoDigit")]
+        [RegularExpression(@"^[\d]+$", ErrorMessage = "AadhaarNo is number.")]
         [MaxLength(12)]
         public string AadhaarNo { get; set; } = string.Empty;
 
         [Display(Name = "BloodGroup", ResourceType = typeof(Resource))]
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
-        [RegularExpression(@"^[\d]+$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "OnlyNumber")]
+        [RegularExpression(@"^[\d]+$", ErrorMessage = "BloodGroupId is number.")]
         public byte BloodGroupId { get; set; }
         public string? BloodGroup { get; set; }
         
@@ -97,6 +104,8 @@ namespace DataTransferObject.ViewModels
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
         [DataType(DataType.Date)]
         public DateTime DateOfIssue { get; set; }
+
+        [RegularExpression(@"^[\d]+$", ErrorMessage = "UploadId is number.")]
         public int UploadId { get; set; }
 
         [Display(Name = "SignatureImagePath", ResourceType = typeof(Resource))]
@@ -117,36 +126,55 @@ namespace DataTransferObject.ViewModels
         public byte StatusLevel { get; set; }
 
         [Display(Name = "RegimentalId", ResourceType = typeof(Resource))]
-        [RegularExpression(@"^[\d]+$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "OnlyNumber")]
+        [RegularExpression(@"^[\d]+$", ErrorMessage = "RegimentalId is number.")]
         public byte? RegimentalId { get; set; }
         public MRegimental? Regimental { get; set; }
 
         //[Display(Name = "ApplyForId", ResourceType = typeof(Resource))]
         [Required]
+        [RegularExpression(@"^[\d]+$", ErrorMessage = "ApplyForId is number.")]
         public byte ApplyForId { get; set; }
+        
         [Required]
+        [RegularExpression(@"^[\d]+$", ErrorMessage = "RegistrationId is number.")]
         public byte RegistrationId { get; set; }
+        
         [Required]
+        [RegularExpression(@"^[\d]+$", ErrorMessage = "TypeId is number.")]
         public byte TypeId { get; set; }
 
         [NotMapped]
-       
         public string ApplyFor { get; set; } = string.Empty;
+        
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
-
+        [RegularExpression(@"^[\d]+$", ErrorMessage = "AddressId is number.")]
         public int AddressId { get; set; }
+
+        [RegularExpression(@"^[\w ]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
         public string State { get; set; } = string.Empty;
+
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
+        [RegularExpression(@"^[\w ]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
         public string District { get; set; } = string.Empty;
+        
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
+        [RegularExpression(@"^[\w ]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
         public string PS { get; set; } = string.Empty;
-       
+
+        [RegularExpression(@"^[\w ]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
+        [MaxLength(50, ErrorMessage = "Maximum length of PO is fifty character.")]
         public string PO { get; set; } = string.Empty;
-       
+
+        [RegularExpression(@"^[\w ]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
+        [MaxLength(50, ErrorMessage = "Maximum length of Tehsil is fifty character.")]
         public string? Tehsil { get; set; } = string.Empty;
-       
+
+        [RegularExpression(@"^[\w\-\.\/ ]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
+        [MaxLength(50, ErrorMessage = "Maximum length of Village is fifty character.")]
         public string? Village { get; set; } = string.Empty;
+        
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
+        [Range(typeof(int), "100000", "9999999", ErrorMessage = "Value for {0} must be between {1} and {2}.")]
         public int PinCode { get; set; }
         /// <summary>
         /// end address
