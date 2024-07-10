@@ -570,7 +570,8 @@ namespace Web.Controllers
                 }
                 else
                 {
-                    TempData["error"] = "Operation failed.";
+                    var error= ModelState.Select(x => x.Value.Errors).Where(y => y.Count > 0).ToList();
+                    TempData["error"] = error[0][0].ErrorMessage;
                 }
             }
             catch (ReferenceConstraintException ex)
