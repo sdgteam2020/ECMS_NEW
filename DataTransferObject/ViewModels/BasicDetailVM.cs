@@ -172,8 +172,9 @@ namespace DataTransferObject.ViewModels
         [RegularExpression(@"^[\w\-\.\/ ]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
         [MaxLength(50, ErrorMessage = "Maximum length of Village is fifty character.")]
         public string? Village { get; set; } = string.Empty;
-        
-        [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
+
+        [ValidInteger("Pin Code")]
+        [Required(ErrorMessage = "Pin Code is required")]
         [Range(typeof(int), "100000", "999999", ErrorMessage = "Value for {0} must be between {1} and {2}.")]
         public int PinCode { get; set; }
         /// <summary>

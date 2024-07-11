@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel;
+using DataTransferObject.Validation;
 
 namespace DataTransferObject.Requests
 {
@@ -74,11 +75,13 @@ namespace DataTransferObject.Requests
         [DisplayName("State")]
         [RegularExpression(@"^[\w ]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
         [MaxLength(50, ErrorMessage = "Maximum length of State is fifty character.")]
-        public string? State { get; set; }
-        
+        [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
+        public string State { get; set; } = string.Empty;
+
+        [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
         [RegularExpression(@"^[\w ]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
         [MaxLength(50, ErrorMessage = "Maximum length of District is fifty character.")]
-        public string? District { get; set; }
+        public string District { get; set; } = string.Empty;
 
         [RegularExpression(@"^[\w ]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
         public string? PS { get; set; }
@@ -95,8 +98,9 @@ namespace DataTransferObject.Requests
         [MaxLength(50, ErrorMessage = "Maximum length of Village is fifty character.")]
         public string? Village { get; set; }
 
+        [ValidInteger("Pin Code")]
         [Range(typeof(int), "100000", "999999", ErrorMessage = "Value for {0} must be between {1} and {2}.")]
-        [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
+        [Required(ErrorMessage = "Pin Code is required")]
         public int PinCode { get; set; }
         /// <summary>
         /// end address
