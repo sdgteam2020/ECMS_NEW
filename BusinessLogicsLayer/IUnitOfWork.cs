@@ -1,4 +1,5 @@
-﻿using BusinessLogicsLayer.Appt;
+﻿using BusinessLogicsLayer.AfsacCellMapp;
+using BusinessLogicsLayer.Appt;
 using BusinessLogicsLayer.ArmedCat;
 using BusinessLogicsLayer.BasicDet;
 using BusinessLogicsLayer.BasicDetTemp;
@@ -40,6 +41,7 @@ namespace BusinessLogicsLayer
         IArmedCatBL ArmedCat { get; }
         IMasterBL MasterBL { get; }
         IOROMappingBL OROMapping { get; }
+        IAfsacCellMappingBL AfsacCellMapping { get; }
 
 
         public Task<List<DTOMasterResponse>> GetAllMMaster(DTOMasterRequest Data);

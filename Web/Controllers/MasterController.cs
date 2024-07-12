@@ -1905,6 +1905,82 @@ namespace Web.Controllers
 
         #endregion OROMapping
 
+        #region AfsacCellMapping
+
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> AfsacCellMapping()
+        {
+            return View();
+        }
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> GetAllAfsacCellMapping()
+        {
+            try
+            {
+                return Json(await unitOfWork.OROMapping.GetAllOROMapping());
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "Master->GetAllAfsacCellMapping");
+                return Json(KeyConstants.InternalServerError);
+            }
+
+        }
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> SaveAfsacCellMapping(OROMapping dTO)
+        {
+            try
+            {
+                if ((dTO.RankId == null || dTO.RankId == 0) && (dTO.ArmedIdList == null || dTO.ArmedIdList == ""))
+                {
+                    return Json("5");
+                }
+                else
+                {
+                    if (ModelState.IsValid)
+                    {
+                        if (dTO.OROMappingId > 0)
+                        {
+                            await unitOfWork.OROMapping.Update(dTO);
+                            return Json(KeyConstants.Update);
+                        }
+                        else
+                        {
+                            await unitOfWork.OROMapping.Add(dTO);
+                            return Json(KeyConstants.Save);
+                        }
+                    }
+                    else
+                    {
+                        return Json(ModelState.Select(x => x.Value.Errors).Where(y => y.Count > 0).ToList());
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "Master->SaveRegimental");
+                return Json(KeyConstants.InternalServerError);
+            }
+
+        }
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> DeleteAfsacCellMapping(OROMapping dTO)
+        {
+            try
+            {
+                await unitOfWork.OROMapping.Delete(dTO);
+                return Json(KeyConstants.Success);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "Master->DeleteOROMapping");
+                return Json(KeyConstants.InternalServerError);
+            }
+        }
+
+        #endregion OROMapping
+
         #region Master Table 
         [AllowAnonymous]
         public async Task<IActionResult> GetAllMMaster(DTOMasterRequest Data)

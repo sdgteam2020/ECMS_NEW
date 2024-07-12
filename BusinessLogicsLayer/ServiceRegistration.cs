@@ -1,4 +1,5 @@
 ﻿using BusinessLogicsLayer.Account;
+using BusinessLogicsLayer.AfsacCellMapp;
 using BusinessLogicsLayer.API;
 using BusinessLogicsLayer.APIData;
 using BusinessLogicsLayer.Appt;
@@ -170,6 +171,9 @@ namespace BusinessLogicsLayer
             services.AddTransient<IIssuingAuthorityBL, IssuingAuthorityBL>();
 
             services.AddTransient<IBloodGroupBL, BloodGroupBL>();
+
+            services.AddTransient<IAfsacCellMappingDB, AfsacCellMappingDB>();
+            services.AddTransient<IAfsacCellMappingBL, AfsacCellMappingBL>();
 
 
             //services.AddDbContext<ApplicationDbContext>(opt => opt.UseSqlServer("Server=SDG20\\SQLEXPRESS; Database=AFSAC;Integrated Security=True;MultipleActiveResultSets=True;TrustServerCertificate=True"));
