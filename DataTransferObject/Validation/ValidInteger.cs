@@ -18,15 +18,23 @@ namespace DataTransferObject.Validation
 
         protected override ValidationResult IsValid(object value, ValidationContext validationContext)
         {
-            if (value == null || string.IsNullOrWhiteSpace(value.ToString()))
-            {
+            //if (value == null || string.IsNullOrWhiteSpace(value.ToString()))
+            //{
+            //    return ValidationResult.Success;
+            //}
+            //if (!int.TryParse(value.ToString(), out _))
+            //{
+            //    return new ValidationResult(GetErrorMessage());
+            //}
+            //return ValidationResult.Success;
+            if (validationContext is null)
+                throw new ArgumentNullException(nameof(validationContext));
+
+            var i = value as int?;
+            if (i.HasValue && 0 < i)
                 return ValidationResult.Success;
-            }
-            if (!int.TryParse(value.ToString(), out _))
-            {
-                return new ValidationResult(GetErrorMessage());
-            }
-            return ValidationResult.Success;
+
+            return new ValidationResult(GetErrorMessage());
         }
 
         public string GetErrorMessage()
