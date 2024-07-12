@@ -1,4 +1,5 @@
-﻿using BusinessLogicsLayer.Appt;
+﻿using BusinessLogicsLayer.AfsacCellMapp;
+using BusinessLogicsLayer.Appt;
 using BusinessLogicsLayer.ArmedCat;
 using BusinessLogicsLayer.BasicDet;
 using BusinessLogicsLayer.BasicDetTemp;
@@ -30,9 +31,7 @@ namespace BusinessLogicsLayer
 {
     public class UnitOfWork : IUnitOfWork
     {
-
-
-        public UnitOfWork(IUserBL _user, IComd _comds, ICorpsBL _corpsBL, IBdeBL _bdeCat, IDivBL divBL, IUnitBL unit, IMapUnitBL MapUnitBL, IFormationBL FormationBL, IApptBL apptBL, IArmedBL armedBL, IRankBL rankBL, IRegimentalBL regimentalBL,IRecordOfficeBL recordOfficeBL,IArmedCatBL armedCatBL,IMasterBL masterBL,IOROMappingBL oroMappingBL,IIssuingAuthorityBL issuingAuthorityBL, IBloodGroupBL bloodGroupBL)
+        public UnitOfWork(IUserBL _user, IComd _comds, ICorpsBL _corpsBL, IBdeBL _bdeCat, IDivBL divBL, IUnitBL unit, IMapUnitBL MapUnitBL, IFormationBL FormationBL, IApptBL apptBL, IArmedBL armedBL, IRankBL rankBL, IRegimentalBL regimentalBL,IRecordOfficeBL recordOfficeBL,IArmedCatBL armedCatBL,IMasterBL masterBL,IOROMappingBL oroMappingBL,IIssuingAuthorityBL issuingAuthorityBL, IBloodGroupBL bloodGroupBL,IAfsacCellMappingBL afsacCellMappingBL)
         {
             Users = _user;
             Comds = _comds;
@@ -52,6 +51,7 @@ namespace BusinessLogicsLayer
             OROMapping= oroMappingBL;
             IssuingAuthorityBL = issuingAuthorityBL;
             BloodGroupBL= bloodGroupBL;
+            AfsacCellMappingBL= afsacCellMappingBL;
         }
         public IUserBL Users { get; }
         public IComd Comds { get; }
@@ -71,6 +71,7 @@ namespace BusinessLogicsLayer
         public IOROMappingBL OROMapping { get; }
         public IIssuingAuthorityBL IssuingAuthorityBL { get; }
         public IBloodGroupBL BloodGroupBL { get; }
+        public IAfsacCellMappingBL AfsacCellMappingBL { get; }
          
         public async Task<List<DTOMasterResponse>> GetAllMMaster(DTOMasterRequest Data)
         {
