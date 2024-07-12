@@ -277,7 +277,13 @@ function CallDataFromAPI() {
                 $("#PO").val(response.Pers_Post_office);
                 $("#Tehsil").val(response.Pers_Tehsil);
                 $("#Village").val(response.Pers_Village);
-                $("#PinCode").val(response.Pers_Pin_code);
+                if (response.Pers_Pin_code == null || response.Pers_Pin_code == '') {
+                    $("#PinCode").val("000000");
+                }
+                else {
+                    $("#PinCode").val(response.Pers_Pin_code);
+                }
+                
                 $("#IdenMark1").val(response.Pers_Iden_mark_1);
                 $("#IdenMark2").val(response.Pers_Iden_mark_2);
                 $("#AadhaarNo").val(response.Pers_UID);
