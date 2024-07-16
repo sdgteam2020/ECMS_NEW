@@ -1917,7 +1917,7 @@ namespace Web.Controllers
         {
             try
             {
-                return Json(await unitOfWork.OROMapping.GetAllOROMapping());
+                return Json(await unitOfWork.AfsacCellMapping.GetAllAfsacCellMapping());
             }
             catch (Exception ex)
             {
@@ -1927,59 +1927,52 @@ namespace Web.Controllers
 
         }
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> SaveAfsacCellMapping(OROMapping dTO)
+        public async Task<IActionResult> SaveAfsacCellMapping(AfsacCellMapping dTO)
         {
             try
             {
-                if ((dTO.RankId == null || dTO.RankId == 0) && (dTO.ArmedIdList == null || dTO.ArmedIdList == ""))
+                if (ModelState.IsValid)
                 {
-                    return Json("5");
-                }
-                else
-                {
-                    if (ModelState.IsValid)
+                    if (dTO.AfsacCellMappingId > 0)
                     {
-                        if (dTO.OROMappingId > 0)
-                        {
-                            await unitOfWork.OROMapping.Update(dTO);
-                            return Json(KeyConstants.Update);
-                        }
-                        else
-                        {
-                            await unitOfWork.OROMapping.Add(dTO);
-                            return Json(KeyConstants.Save);
-                        }
+                        await unitOfWork.AfsacCellMapping.Update(dTO);
+                        return Json(KeyConstants.Update);
                     }
                     else
                     {
-                        return Json(ModelState.Select(x => x.Value.Errors).Where(y => y.Count > 0).ToList());
+                        await unitOfWork.AfsacCellMapping.Add(dTO);
+                        return Json(KeyConstants.Save);
                     }
+                }
+                else
+                {
+                    return Json(ModelState.Select(x => x.Value.Errors).Where(y => y.Count > 0).ToList());
                 }
 
             }
             catch (Exception ex)
             {
-                _logger.LogError(1001, ex, "Master->SaveRegimental");
+                _logger.LogError(1001, ex, "Master->SaveAfsacCellMapping");
                 return Json(KeyConstants.InternalServerError);
             }
 
         }
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> DeleteAfsacCellMapping(OROMapping dTO)
+        public async Task<IActionResult> DeleteAfsacCellMapping(AfsacCellMapping dTO)
         {
             try
             {
-                await unitOfWork.OROMapping.Delete(dTO);
+                await unitOfWork.AfsacCellMapping.Delete(dTO);
                 return Json(KeyConstants.Success);
             }
             catch (Exception ex)
             {
-                _logger.LogError(1001, ex, "Master->DeleteOROMapping");
+                _logger.LogError(1001, ex, "Master->DeleteAfsacCellMapping");
                 return Json(KeyConstants.InternalServerError);
             }
         }
 
-        #endregion OROMapping
+        #endregion AfsacCellMapping
 
         #region Master Table 
         [AllowAnonymous]
