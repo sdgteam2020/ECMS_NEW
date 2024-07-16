@@ -31,7 +31,7 @@ namespace BusinessLogicsLayer
 {
     public class UnitOfWork : IUnitOfWork
     {
-        public UnitOfWork(IUserBL _user, IComd _comds, ICorpsBL _corpsBL, IBdeBL _bdeCat, IDivBL divBL, IUnitBL unit, IMapUnitBL MapUnitBL, IFormationBL FormationBL, IApptBL apptBL, IArmedBL armedBL, IRankBL rankBL, IRegimentalBL regimentalBL,IRecordOfficeBL recordOfficeBL,IArmedCatBL armedCatBL,IMasterBL masterBL,IOROMappingBL oroMappingBL,IIssuingAuthorityBL issuingAuthorityBL, IBloodGroupBL bloodGroupBL,IAfsacCellMappingBL afsacCellMappingBL)
+        public UnitOfWork(IUserBL _user, IComd _comds, ICorpsBL _corpsBL, IBdeBL _bdeCat, IDivBL divBL, IUnitBL unit, IMapUnitBL MapUnitBL, IFormationBL FormationBL, IApptBL apptBL, IArmedBL armedBL, IRankBL rankBL, IRegimentalBL regimentalBL,IRecordOfficeBL recordOfficeBL,IArmedCatBL armedCatBL,IMasterBL masterBL,IOROMappingBL oroMappingBL,IIssuingAuthorityBL issuingAuthorityBL, IBloodGroupBL bloodGroupBL, IAfsacCellMappingBL _afsacCellMappingBL) 
         {
             Users = _user;
             Comds = _comds;
@@ -51,7 +51,7 @@ namespace BusinessLogicsLayer
             OROMapping= oroMappingBL;
             IssuingAuthorityBL = issuingAuthorityBL;
             BloodGroupBL= bloodGroupBL;
-            AfsacCellMappingBL= afsacCellMappingBL;
+            AfsacCellMapping = _afsacCellMappingBL;
         }
         public IUserBL Users { get; }
         public IComd Comds { get; }
@@ -71,7 +71,7 @@ namespace BusinessLogicsLayer
         public IOROMappingBL OROMapping { get; }
         public IIssuingAuthorityBL IssuingAuthorityBL { get; }
         public IBloodGroupBL BloodGroupBL { get; }
-        public IAfsacCellMappingBL AfsacCellMappingBL { get; }
+        public IAfsacCellMappingBL AfsacCellMapping  { get; }
          
         public async Task<List<DTOMasterResponse>> GetAllMMaster(DTOMasterRequest Data)
         {
