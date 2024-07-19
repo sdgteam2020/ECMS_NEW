@@ -304,7 +304,7 @@ namespace Web.Controllers
             }
 
         }
-        public async Task<IActionResult> GetDataForFwd(string Name,int TypeId, int StepId,int UnitId, int IsIO, int IsCO, int ISRO,int IsORO)
+        public async Task<IActionResult> GetDataForFwd(string Name,int TypeId, int StepId,int UnitId, int ISRO,int IsORO)
         {
             try
             {
@@ -312,7 +312,7 @@ namespace Web.Controllers
                 //if(TypeId == 0 )
                 //UnitId=SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").UnitId;
 
-                return Json(await _userProfileBL.GetDataForFwd(StepId, UnitId, Name, TypeId, IsIO, IsCO, ISRO, IsORO, DomainMapId));
+                return Json(await _userProfileBL.GetDataForFwd(StepId, UnitId, Name, TypeId, ISRO, IsORO, DomainMapId));
             }
             catch (Exception ex)
             {
@@ -320,7 +320,7 @@ namespace Web.Controllers
             }
 
         }
-        public async Task<IActionResult> GetOffrsByUnitMapId(int id,int UnitId, int ISIO, int ISCO,int IsRO,int IsORO,int BasicDetailsId)
+        public async Task<IActionResult> GetOffrsByUnitMapId(int id,int UnitId, int IsRO,int IsORO,int IsAfsacCell, int BasicDetailsId)
         {
             try
             {
@@ -328,11 +328,11 @@ namespace Web.Controllers
                 if(UnitId==0)
                 {
                      UnitId = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").UnitId;
-                    return Json(await _userProfileBL.GetOffrsByUnitMapId(UnitId, ISIO, ISCO, IsRO, IsORO, BasicDetailsId, DomainMapId));
+                    return Json(await _userProfileBL.GetOffrsByUnitMapId(UnitId, IsRO, IsORO, IsAfsacCell, BasicDetailsId, DomainMapId));
                 }
                 else
                 {
-                    return Json(await _userProfileBL.GetOffrsByUnitMapId(UnitId, ISIO, ISCO, IsRO, IsORO,BasicDetailsId, DomainMapId));
+                    return Json(await _userProfileBL.GetOffrsByUnitMapId(UnitId, IsRO, IsORO, IsAfsacCell, BasicDetailsId, DomainMapId));
                 }
             }
             catch (Exception ex)

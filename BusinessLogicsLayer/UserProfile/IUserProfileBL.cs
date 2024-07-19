@@ -23,8 +23,8 @@ namespace BusinessLogicsLayer.Master
         public Task<List<MUserProfile>> GetByMArmyNo(string ArmyNo, int UserId);
         public Task<DTOProfileResponse?> GetUserProfileByArmyNo(string ArmyNo);
         public Task<List<DTOUserProfileResponse>> GetAll(int DomainId, int UserId);
-        public Task<List<DTOFwdICardResponse>> GetDataForFwd(int StepId,int UnitId,string Name,int TypeId, int IsIO, int IsCO, int IsRO, int IsORO, int DomainMapId);
-        public Task<List<DTOFwdICardResponse>> GetOffrsByUnitMapId(int UnitId, int ISIO, int ISCO,int IsRO,int IsORO,int BasicDetailsId,int DomainMapId);
+        public Task<List<DTOFwdICardResponse>> GetDataForFwd(int StepId,int UnitId,string Name,int TypeId, int IsRO, int IsORO, int DomainMapId);
+        public Task<List<DTOFwdICardResponse>> GetOffrsByUnitMapId(int UnitId, int IsRO,int IsORO, int IsAfsacCell, int BasicDetailsId,int DomainMapId);
         public Task<List<BasicDetailVM>> GetByRequestId(int RequestId);
         public Task<DTOProfileResponse> CheckArmyNoInUserProfile(string ArmyNo, int AspNetUsersId);
         public Task<DTOAllRelatedDataByArmyNoResponse?> GetAllRelatedDataByArmyNo(string ArmyNo);

@@ -159,15 +159,14 @@ function yeardata(sectid = '', ddl) {
     }
 }
 
-function GetAllOffsByUnitId(ddl, sectid, UnitId, ISIO, IsCO, IsRO, IsORO,BasicDetailsId) {
+function GetAllOffsByUnitId(ddl, sectid, UnitId, IsRO, IsORO, IsAfsacCell,BasicDetailsId) {
     var userdata =
     {
         "id": 0,
         "UnitId": UnitId,
-        "ISIO": ISIO,
-        "ISCO": IsCO,
         "IsRO": IsRO,
         "IsORO": IsORO,
+        "IsAfsacCell": IsAfsacCell,
         "BasicDetailsId": BasicDetailsId
     };
     $.ajax({
@@ -214,7 +213,7 @@ function GetAllOffsByUnitId(ddl, sectid, UnitId, ISIO, IsCO, IsRO, IsORO,BasicDe
 
                     }
 
-                    if ((IsRO == 1 || IsORO == 1) && response.length == 1) {
+                    if ((IsRO == 1 || IsORO == 1 || spnIntAfsacCell == 1) && response.length == 1) {
 
                         $("#" + ddl + "").val(response[0].AspNetUsersId)
 

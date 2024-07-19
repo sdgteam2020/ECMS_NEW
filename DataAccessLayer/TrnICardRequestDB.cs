@@ -34,7 +34,7 @@ namespace DataAccessLayer
         public async Task<bool> GetRequestPending(int BasicDetailId)
         {
             string query = "Select count(*) from BasicDetails bd " +
-                            "LEFT JOIN TrnICardRequest tr ON bd.BasicDetailId = tr.BasicDetailId WHERE bd.BasicDetailId = @BasicDetailId and tr.Status = 0 ";
+                            "LEFT JOIN TrnICardRequest tr ON bd.BasicDetailId = tr.BasicDetailId WHERE bd.BasicDetailId = @BasicDetailId and tr.StatusId = 1 ";
             using (var connection = _contextDP.CreateConnection())
             {
                 int PendingRequest = await connection.QueryFirstAsync<int>(query, new { BasicDetailId });
@@ -53,7 +53,7 @@ namespace DataAccessLayer
         {
            string query = "Select AspNetUsersId from TrnICardRequest icard"+
                         " inner join TrnDomainMapping map on icard.TrnDomainMappingId=map.Id"+
-                        " where RequestId=@RequestId and [Status]=0";
+                        " where RequestId=@RequestId and [StatusId]=1";
             using (var connection = _contextDP.CreateConnection())
             {
                 //data.MRank.RankAbbreviation
@@ -73,7 +73,7 @@ namespace DataAccessLayer
             string query = "";
             using (var connection = _contextDP.CreateConnection())
             {
-                connection.Execute("UPDATE TrnICardRequest set Status=2 where RequestId=@RequestId", new { RequestId });
+                connection.Execute("UPDATE TrnICardRequest set StatusId=3 where RequestId=@RequestId", new { RequestId });
 
                 return true;
 
