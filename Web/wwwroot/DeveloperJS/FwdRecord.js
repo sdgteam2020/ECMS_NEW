@@ -127,7 +127,7 @@ $(function () {
             applyfor = 1;
             spnStepId = 0;
             $("#multiplefed").addClass("d-none");
-            GetAllOffsByUnitId("ddlfwdoffrs", 0, spnHQ54UnitId, 0, 0, 0, 0, 0);
+            GetAllOffsByUnitId("ddlfwdoffrs", 0, spnHQ54UnitId, 0, 0, 0, 0);
 
 
             $(".Remarks").removeClass("d-none");
@@ -204,13 +204,13 @@ $(function () {
                 $(".gsoio").html("IO / Next Superior Offr");
                 $(".gsoiotitle").html("IO / Next Superior Offr");
                 $("#btnForward").html("Forward To IO / Superior");
-                GetAllOffsByUnitId("ddlfwdoffrs", 0, Unitidarmy, spnISIO, 0, 0, 0, 0);
+                GetAllOffsByUnitId("ddlfwdoffrs", 0, Unitidarmy, 0, 0, 0, 0);
             } else {
                 $(".gsoio").html("CO /OC / OC TPS or Offr Nominated by him/ her");
                 $(".gsoiotitle").html("CO / OC / OC TPS or Offr Nominated by him/ her");
                 $("#btnForward").html("Forward To CO / OC / OC TPS or Offr Nominated");
 
-                GetAllOffsByUnitId("ddlfwdoffrs", 0, Unitidarmy, 0, spnISCO, 0, 0, 0);
+                GetAllOffsByUnitId("ddlfwdoffrs", 0, Unitidarmy, 0, 0, 0, 0);
             }
             $(".Remarks").removeClass("d-none");
 
@@ -226,12 +226,12 @@ $(function () {
                 $(".gsoio").html("Record Office");
                 $(".gsoiotitle").html("Offr Record Office (ORO) Approval");
                 $("#btnForward").html("Forward To Record Office");
-                GetAllOffsByUnitId("ddlfwdoffrs", 0, Unitidarmy, 0, 0, 0, spnIntORO, $(this).closest("tr").find(".spnBasicDetailId").html());
+                GetAllOffsByUnitId("ddlfwdoffrs", 0, Unitidarmy, 0, spnIntORO, 0, $(this).closest("tr").find(".spnBasicDetailId").html());
             } else {
                 $(".gsoio").html("Record Office (RO)");
                 $(".gsoiotitle").html("Record Office (RO) Approval");
                 $("#btnForward").html("Forward To Record Office (RO)");
-                GetAllOffsByUnitId("ddlfwdoffrs", 0, Unitidarmy, 0, 0, spnIntRO, 0, $(this).closest("tr").find(".spnBasicDetailId").html());
+                GetAllOffsByUnitId("ddlfwdoffrs", 0, Unitidarmy, spnIntRO, 0, 0, $(this).closest("tr").find(".spnBasicDetailId").html());
             }
             $("#btntokenTofwd").removeClass("d-none");
             $(".Remarks").removeClass("d-none");
@@ -248,13 +248,13 @@ $(function () {
                 $(".gsoio").html("AFSAC Cell");
                 $(".gsoiotitle").html("AFSAC Cell");
                 $("#btnForward").html("Forward To AFSAC Cell");
-                GetAllOffsByUnitId("ddlfwdoffrs", 0, spnIntAfsaccellUnitId, 0, 0, 0, 0, 0);
+                GetAllOffsByUnitId("ddlfwdoffrs", 0, 0, 0, 0, spnIntAfsacCell, 0);
             } else {
                 $(".chkforserach").addClass("d-none");
                 $(".gsoiotitle").html("AFSAC Cell");
                 $(".gsoio").html("AFSAC Cell");
                 $("#btnForward").html("Forward To AFSAC Cell ");
-                GetAllOffsByUnitId("ddlfwdoffrs", 0, spnIntAfsaccellUnitId, 0, 0, 0, 0, 0);
+                GetAllOffsByUnitId("ddlfwdoffrs", 0, 0, 0, 0, spnIntAfsacCell, 0);
             }
 
 
@@ -303,16 +303,10 @@ $(function () {
             } else if ($("#intoffDomainId").prop("checked")) {
                 TypeId = 3;
             }
-            var IsIO = 0;
-            var IsCO = 0;
             var IsRO = 0;
             var IsORO = 0;
-            if (applyfor == 1 && StepCounter == 1)
-                IsIO = 1;
-            else if (applyfor == 1 && StepCounter == 2)
+            if (applyfor == 1 && StepCounter == 2)
                 IsORO = 1;
-            else if (applyfor == 2 && StepCounter == 1)
-                IsCO = 1;
             else if (applyfor == 2 && StepCounter == 2)
                 IsRO = 1;
             var param = {
@@ -320,8 +314,6 @@ $(function () {
                 "TypeId": TypeId,
                 "StepId": 1,
                 "UnitId": 0,
-                "IsIO": IsIO,
-                "IsCO": IsCO,
                 "IsRO": IsRO,
                 "IsORO": IsORO
             };
@@ -377,8 +369,8 @@ $(function () {
         appendTo: '#suggesstion-box'
     });
 
-    $('#txtFwdName').keyup(function (e) {
-        if (e.keyCode == 46) {
+    $('#txtFwdName').on("keyup",function (e) {
+        if (e.which == 46) {
             $(".spnFArmyNo").html("");
             $(".spnFtoname").html("");
             $(".spnFDomainName").html("");
@@ -508,7 +500,7 @@ $(function () {
     $("#btnInternalFwd").on("click", function () {
 
         if (memberTable.$('input[type="checkbox"]:checked').length > 0) {
-            GetAllOffsByUnitId("ddlfwdInternaloffrs", 0, 0, 0, 0, 0, 0, 0);
+            GetAllOffsByUnitId("ddlfwdInternaloffrs", 0, 0, 0, 0, 0, 0);
             $(".RemarksInternalFwd").removeClass("d-none");
             var someNumbers = [1];
             GetRemarks("ddlInternalRemarks", 0, someNumbers);

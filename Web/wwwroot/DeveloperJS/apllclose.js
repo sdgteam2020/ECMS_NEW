@@ -9,7 +9,7 @@ $(document).ready(function () {
     }
    
    
-    $("#btnApplicationClose").click(function () {
+    $("#btnApplicationClose").on("click",function () {
         if ($("#SaveForm")[0].checkValidity()) {
 
             Swal.fire({
@@ -55,7 +55,6 @@ function Save() {
 
             if (result == DataSave) {
                 toastr.success('Data has been saved');
-                alert(applyforId);
                 if (applyforId == 1) {
                     window.location.href = "/Posting/AppCloseList/MQ==";
                 }
@@ -114,10 +113,12 @@ function GetdataPostingData(ArmyNo) {
                 $("#lblAppt").html(response.Users_AppointmentName);
                 $("#lblFName").html(response.FName);
                 $("#lblLName").html(response.LName);
-                if (response.Status == 'False')
+                if (response.StatusId == 1)
                     $("#lblStatusofInds").html('Under Process');
-                else
+                else if (response.StatusId == 2)
                     $("#lblStatusofInds").html('Complete');
+                else if (response.StatusId == 3)
+                    $("#lblStatusofInds").html('Closed');
 
                 $("#lblTracking").html(response.TrackingId);
                 $("#pstimage").attr("src", "/WriteReadData/Photo/" + response.PhotoImagePath);

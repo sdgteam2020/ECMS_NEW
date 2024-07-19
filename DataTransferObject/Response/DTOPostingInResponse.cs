@@ -17,7 +17,7 @@ namespace DataTransferObject.Response
         public byte? ApplyForId { get; set; }
         public string? ApplyFor { get; set; }
         public string? TrackingId { get; set; }
-        public string? Status { get; set; }
+        public byte? StatusId { get; set; }
         public string? PhotoImagePath { get; set; }
         public string? UnitName { get; set; }
         public string? Suffix { get; set; }

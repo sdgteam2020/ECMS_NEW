@@ -36,9 +36,9 @@ namespace BusinessLogicsLayer.Master
             return _iUserProfileDB.GetAll(DomainId, UserId);
         }
 
-        public Task<List<DTOFwdICardResponse>> GetDataForFwd(int StepId, int UnitId, string Name, int TypeId, int IsIO, int IsCO, int RO,int ORO, int DomainMapId)
+        public Task<List<DTOFwdICardResponse>> GetDataForFwd(int StepId, int UnitId, string Name, int TypeId, int RO,int ORO, int DomainMapId)
         {
-            return _iUserProfileDB.GetDataForFwd(StepId, UnitId, Name,TypeId, IsIO, IsCO, RO, ORO, DomainMapId);
+            return _iUserProfileDB.GetDataForFwd(StepId, UnitId, Name,TypeId, RO, ORO, DomainMapId);
         }
         public async Task<DTOProfileResponse?> GetProfileByUserId(int UserId)
         {
@@ -73,9 +73,9 @@ namespace BusinessLogicsLayer.Master
             return _iUserProfileDB.CheckArmyNoInUserProfile(ArmyNo, AspNetUsersId);
         }
 
-        public Task<List<DTOFwdICardResponse>> GetOffrsByUnitMapId(int UnitId, int ISIO,int ISCO, int IsRO, int IsORO, int BasicDetailsId,int DomainMapId)
+        public Task<List<DTOFwdICardResponse>> GetOffrsByUnitMapId(int UnitId, int IsRO, int IsORO, int IsAfsacCell, int BasicDetailsId,int DomainMapId)
         {
-            return _iUserProfileDB.GetOffrsByUnitMapId(UnitId, ISIO, ISCO, IsRO, IsORO, BasicDetailsId, DomainMapId);
+            return _iUserProfileDB.GetOffrsByUnitMapId(UnitId, IsRO, IsORO, IsAfsacCell, BasicDetailsId, DomainMapId);
         }
         public async Task<DTOAllRelatedDataByArmyNoResponse?> GetAllRelatedDataByArmyNo(string ArmyNo)
         {

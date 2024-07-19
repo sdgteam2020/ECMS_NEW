@@ -118,7 +118,7 @@ namespace DataAccessLayer
             {
 
                 string query = "  SELECT basi.BasicDetailId,trnicardr.RequestId,basi.FName,basi.LName,basi.ServiceNo,ranks.RankAbbreviation RankName,appl.ApplyForId,appl.Name ApplyFor,trnicardr.TrackingId," +
-                                " trnicardr.Status,uplod.PhotoImagePath"+
+                                " trnicardr.StatusId,uplod.PhotoImagePath"+
                                 " ,users.DomainId Users_DomainId,pro.ArmyNo Users_ArmyNo,pro.Name Users_Name,ranks1.RankAbbreviation Users_RankName,app.AppointmentName Users_AppointmentName"+
                                 " ,muni.UnitName,muni.Suffix,muni.Sus_no,mapunit.UnitMapId FromUnitID,users.Id FromAspNetUsersId,pro.userId FromUserID from BasicDetails basi" +
                                 " inner join TrnICardRequest trnicardr on trnicardr.BasicDetailId=basi.BasicDetailId"+
@@ -132,7 +132,7 @@ namespace DataAccessLayer
                                 " inner join MAppointment app on app.ApptId=trndom.ApptId"+
                                 " inner join MapUnit mapunit on mapunit.UnitMapId=basi.UnitId"+
                                 " inner join MUnit muni on muni.UnitId=mapunit.UnitId"+
-                                " where basi.ServiceNo=@ArmyNo and trnicardr.Status=0";
+                                " where basi.ServiceNo=@ArmyNo and trnicardr.StatusId=1";
                 using (var connection = _contextDP.CreateConnection())
                 {
                     var ret = await connection.QueryAsync<DTOPostingInResponse>(query, new { ArmyNo });

@@ -1,13 +1,5 @@
 ﻿$(document).ready(function () {
 
-
-
-
-
-
-
-
-
     if ($("#spnBloodGroupId").val() > 0) {
         mMsater($("#spnBloodGroupId").val(), "BloodGroupId", BloodGroup, "");
     }
@@ -43,7 +35,7 @@
         GetROListByArmedId(this.value,"");
     });
 
-    $("#TermsConditions").click(function () {
+    $("#TermsConditions").on("click",function () {
 
         if ($("#TermsConditions").prop("checked") == true) {
             $("#btnsave").removeClass("disabled");
@@ -211,8 +203,6 @@ function GetRegimentalListByArmedId(ArmedId, sectid) {
     var userdata =
     {
         "ArmedId": ArmedId,
-
-
     };
     $.ajax({
         url: '/BasicDetail/GetRegimentalListByArmedId',
@@ -307,8 +297,6 @@ function GetUnit() {
                 }
                 else {
                     getunitbymapid(response.UnitId)
-                    
-                   
                 }
             }
         }
