@@ -6,11 +6,9 @@ using System.Threading.Tasks;
 
 namespace DataTransferObject.Response
 {
-    public class DTOFwdSubqueryResponse
+    public class DTOTopArmyNoFromICardRequestResponse
     {
+        public int RequestId { get; set; }
         public string ServiceNo { get; set; } = string.Empty;
-        public byte ArmedId { get; set; }
-        public string ArmedAbbreviation { get; set; } = string.Empty;
-        public short Orderby { get; set; }
     }
 }

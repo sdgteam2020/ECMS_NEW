@@ -202,6 +202,8 @@ namespace Web.Controllers
         }
         public IActionResult Request()
         {
+            string role = GetSessionValue();
+            ViewBag.Role = role;
             return View();
         }
 

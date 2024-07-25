@@ -23,6 +23,7 @@ using BusinessLogicsLayer.RecordOffice;
 using BusinessLogicsLayer.Registration;
 using BusinessLogicsLayer.ReportReturn;
 using BusinessLogicsLayer.Token;
+using BusinessLogicsLayer.TrnICardHold;
 using BusinessLogicsLayer.TrnLoginLog;
 using BusinessLogicsLayer.TrnMappingUnMappingLog;
 using BusinessLogicsLayer.Unit;
@@ -174,6 +175,11 @@ namespace BusinessLogicsLayer
 
             services.AddTransient<IAfsacCellMappingDB, AfsacCellMappingDB>();
             services.AddTransient<IAfsacCellMappingBL, AfsacCellMappingBL>();
+
+            services.AddTransient<IICardHoldDB, ICardHoldDB>();
+            services.AddTransient<IICardHoldBL, ICardHoldBL>();
+
+
 
 
             //services.AddDbContext<ApplicationDbContext>(opt => opt.UseSqlServer("Server=SDG20\\SQLEXPRESS; Database=AFSAC;Integrated Security=True;MultipleActiveResultSets=True;TrustServerCertificate=True"));

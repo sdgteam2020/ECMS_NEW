@@ -1,0 +1,149 @@
+﻿<link href="~/css/popupprintcss.css" rel="stylesheet" />
+<style>
+    .modal.left .modal-dialog, .modal.right .modal-dialog {
+        position: fixed;
+        margin: auto;
+        width: 700px;
+        height: 100%;
+        text-align: left;
+        -webkit-transform: translate3d(0%, 0, 0);
+        -ms-transform: translate3d(0%, 0, 0);
+        -o-transform: translate3d(0%, 0, 0);
+        transform: translate3d(0%, 0, 0);
+    }
+</style>
+
+<header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
+    <div class="containerMain">
+        <div class="page-header-content pt-4">
+            <div class="row align-items-center justify-content-between">
+                <div class="col-auto">
+                    <h1 class="page-header-title">
+                        <div class="page-header-icon"> <i class="fa fa-bars"></i></div>
+                        <div>
+                            <a href="/Home/Index" class="mr-2">Home</a> >
+                        </div>
+                    </h1>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</header>
+<div class="containerMain mt-n10">
+    <div class="card mb-3 ">
+        <div class="card-header">
+            <div class="row">
+                <div class="col-xl-12 text-left">
+                    <h3>
+                        <small class="text-muted"></small>
+                    </h3>
+                </div>
+            </div>
+        </div>
+        <div class="card-body" style="min-height:150px;">
+            <div class="row">
+                <div class="col-xl-12">
+                    <div class="mb-2 d-md-flex justify-content-md-between align-items-md-right">
+                        <div>
+                            <button type="button" id="btnRequestHoldAdd" class="btn btn-outline-success font-weight-600 btn-sm">Add More</button>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table id="tbldatatabledata" class="table border border-purple table-striped no-footer dataTable table-hover" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th>S No.</th>
+                                    <th>Army No</th>
+                                    <th>Rank , Name</th>
+                                    <th>Unit</th>
+                                    <th>Type</th>
+                                    <th>Held By</th>
+                                    <th>Reason for Held</th>
+                                    <th>Hold</th>
+                                    <th>Updated On</th>
+                                    <th class="noExport">History</th>
+                                    <th class="noExport">Print / Edit</th>
+                                </tr>
+                            </thead>
+                            <tbody id="DetailBody">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div><!-- Row End -->
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/developerjs/ICardRequestHold.js"></script>
+    <script src="~/developerjs/ICardPrint.js"></script>
+}
+<div class="modal fade" id="AddICardRequestHold" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">ICard Request Hold</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body model-body-background">
+                <div class="row">
+                    <form action="" id="SaveICardRequestHold" name="SaveICardRequestHold" method="post">
+                        <div class="row">
+                            <span class=" d-none" id="spnICardHoldId">0</span>
+                            <span class=" d-none" id="spnRequestId">0</span>
+                            <div class="form-group row mb-2">
+                                <label class="col-form-label col-sm-4 fw-bold">Army No</label>
+                                <div class="col-sm-8">
+                                    <input class="form-control" placeholder="Enter Army No" id="txtArmyNo" name="txtArmyNo" minlength="8" maxlength="9" data-val="true" data-val-regex="This special chars and space not allowed for security reasons." data-val-required="Army No is required." data-val-regex-pattern="^[\w]+$" />
+                                    <span class="text-danger field-validation-valid" data-valmsg-for="txtArmyNo" data-valmsg-replace="true"></span>
+                                </div>
+                            </div>
+                            <div class="form-group row mb-2">
+                                <label class="col-form-label col-sm-4 fw-bold">Rank</label>
+                                <div class="col-sm-8">
+                                    <label class="col-form-label unit-label-background" id="lblRank"></label>
+                                </div>
+                            </div>
+                            <div class="form-group row mb-2">
+                                <label class="col-form-label col-sm-4 fw-bold">Name</label>
+                                <div class="col-sm-8">
+                                    <label class="col-form-label unit-label-background" id="lblName"></label>
+                                </div>
+                            </div>
+                            <div class="form-group row mb-2">
+                                <label class="col-form-label col-sm-4 fw-bold">Unit Name</label>
+                                <div class="col-sm-8">
+                                    <label class="col-form-label unit-label-background" id="lblUnitName"></label>
+                                </div>
+                            </div>
+                            <div class="form-group row mb-2">
+                                <label class="col-form-label col-sm-4 fw-bold">Reason for Hold</label>
+                                <div class="col-sm-8">
+                                    <textarea class="form-control1" style="height:auto!important;" name="txtHoldReason" id="txtHoldReason" rows="3" maxlength="50" data-val-maxlength="Maximum length of Reason for Hold is 50 character." data-val-maxlength-max="50" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="Reason for Hold is required." data-val-regex-pattern="^[\w\&\.\-\; ]*$"></textarea>
+                                    <span class="text-danger field-validation-valid" data-valmsg-for="txtHoldReason" data-valmsg-replace="true"></span>
+                                </div>
+                            </div>
+                            <div class="form-group row mb-2 d-none" id="gpUnHoldReason">
+                                <label class="col-form-label col-sm-4 fw-bold">Reason for UnHold</label>
+                                <div class="col-sm-8">
+                                    <textarea class="form-control1" style="height:auto!important;" name="txtUnHoldReason" id="txtUnHoldReason" rows="3" maxlength="50" data-val-maxlength="Maximum length of Reason for Hold is 50 character." data-val-maxlength-max="50" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="Reason for UnHold is required." data-val-regex-pattern="^[\w\&\.\-\; ]*$"></textarea>
+                                    <span class="text-danger field-validation-valid" data-valmsg-for="txtUnHoldReason" data-valmsg-replace="true"></span>
+                                </div>
+                            </div>
+                            <div class="col-sm-12 text-right">
+                                <input type="button" class="btn btn-outline-primary" value="Save" id="btnAddICardRequestHold" />
+                            </div>
+                            <div class="col-sm-12" id="msg">
+                            </div>
+                        </div>
+                    </form>
+                    <div class="col-sm-12" id="msg">
+                    </div>
+                </div>
+            </div>
+
+        </div><!-- modal-content -->
+    </div><!-- modal-dialog -->
+</div>

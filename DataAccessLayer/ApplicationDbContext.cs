@@ -21,6 +21,7 @@ namespace DataAccessLayer
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         { }
+        public DbSet <MTrnICardHold> MTrnICardHold { get; set; } = null!;
         public DbSet <MTrnICardStatus> MTrnICardStatus { get; set; } = null!;
         public DbSet<AfsacCellMapping> AfsacCellMapping { get; set; } = null!;
         public DbSet<MTrnFwdStatus> MTrnFwdStatus { get; set; } = null!;

@@ -1128,25 +1128,16 @@ namespace Web.Controllers
             DTOTempSession? dTOTempSession = SessionHeplers.GetObject<DTOTempSession>(HttpContext.Session, "Token");
             if (dTOTempSession != null)
             {
-                if (dTOTempSession.RoleName == "User")
+                if (dTOTempSession.RoleName == "User" || dTOTempSession.RoleName == "Coordinator" || dTOTempSession.RoleName == "DteAdmin")
                 {
-
-                    return RedirectToActionPermanent("Index", "Home");
-                }
-                else if (dTOTempSession.RoleName == "Coordinator")
-                {
-
                     return RedirectToActionPermanent("Index", "Home");
                 }
                 else if (dTOTempSession.RoleName.ToUpper() == "ADMIN")
                 {
-
                     return RedirectToActionPermanent("DashboardMaster", "Master");
-
                 }
                 else if (dTOTempSession.RoleName == "Super Admin")
                 {
-
                     return RedirectToActionPermanent("Index", "Account");
                 }
             }
@@ -1332,25 +1323,16 @@ namespace Web.Controllers
             }
             else
             {
-                if (dTOTempSession.RoleName == "User")
+                if (dTOTempSession.RoleName == "User" || dTOTempSession.RoleName == "Coordinator")
                 {
-                   
-                    return RedirectToActionPermanent("Index", "Home");
-                }
-                else if (dTOTempSession.RoleName == "Coordinator")
-                {
-                   
                     return RedirectToActionPermanent("Index", "Home");
                 }
                 else if (dTOTempSession.RoleName.ToUpper() == "ADMIN")
                 {
-                    
                     return RedirectToActionPermanent("DashboardMaster", "Master");
-
                 }
                 else if (dTOTempSession.RoleName == "Super Admin")
                 {
-                  
                     return RedirectToActionPermanent("Index", "Account");
                 }
                 return View();  
@@ -1417,12 +1399,7 @@ namespace Web.Controllers
 
 
 
-                                if (dTOTempSession.RoleName == "User")
-                                {
-                                    HttpContext.Session.Remove("IMData");
-                                    return RedirectToActionPermanent("Index", "Home");
-                                }
-                                else if (dTOTempSession.RoleName == "Coordinator")
+                                if (dTOTempSession.RoleName == "User" || dTOTempSession.RoleName == "Coordinator" || dTOTempSession.RoleName == "DteAdmin")
                                 {
                                     HttpContext.Session.Remove("IMData");
                                     return RedirectToActionPermanent("Index", "Home");
@@ -1431,7 +1408,6 @@ namespace Web.Controllers
                                 {
                                     HttpContext.Session.Remove("IMData");
                                     return RedirectToActionPermanent("DashboardMaster", "Master");
-
                                 }
                                 else if (dTOTempSession.RoleName == "Super Admin")
                                 {

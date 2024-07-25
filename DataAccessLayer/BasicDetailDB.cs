@@ -39,6 +39,79 @@ namespace DataAccessLayer
             this.protector = dataProtectionProvider.CreateProtector(
                 dataProtectionPurposeStrings.AFSACIdRouteValue);
         }
+        public async Task<List<DTOTopArmyNoFromICardRequestResponse>?> GetTopArmyNoFromICardRequest(string ArmyNo)
+        {
+            try
+            {
+                var ret = await (from bd in _context.BasicDetails
+                                 join irequest in _context.TrnICardRequest on bd.BasicDetailId equals irequest.BasicDetailId
+                                 where bd.ServiceNo.Contains(ArmyNo)
+                                 select new DTOTopArmyNoFromICardRequestResponse
+                                 {
+                                     RequestId = irequest.RequestId,
+                                     ServiceNo = bd.ServiceNo,
+                                 }
+                                ).Take(5).ToListAsync();
+                return ret;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "BasicDetailDB->GetTopArmyNoFromICardRequest");
+                return null;
+            }
+
+        }
+        public async Task<DTOBDetailByRequestIdResponse?> GetBDetailByRequestId(int RequestId)
+        {
+            try
+            {
+                var ret = await (from irequest in _context.TrnICardRequest
+                                 join bd in _context.BasicDetails on irequest.BasicDetailId equals bd.BasicDetailId
+                                 join rk in _context.MRank on bd.RankId equals rk.RankId
+                                 join umap in _context.MapUnit on bd.UnitId equals umap.UnitMapId
+                                 join munit in _context.MUnit on umap.UnitId equals munit.UnitId
+                                 where irequest.RequestId == RequestId
+                                 select new DTOBDetailByRequestIdResponse
+                                 {
+                                     RankName= rk.RankAbbreviation,
+                                     Name= bd.LName == null ? bd.FName : bd.FName + ' '+ bd.LName,
+                                     UnitName= munit.UnitName,
+                                 }
+                                ).FirstOrDefaultAsync();
+                return ret;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "BasicDetailDB->GetBasicDetailByRequestId");
+                return null;
+            }
+        }
+        public async Task<List<DTOICardRequestHoldResponse>?> GetAllICardRequestHold()
+        {
+            string query = "";
+            query = " SELECT munit.UnitName,RTRIM(CONCAT(FName,' ',ISNULL(LName,''))) as Name,B.ServiceNo,trnicrd.RequestId,Afor.Name ApplyFor,ran.RankAbbreviation RankName,thold.ICardHoldId,thold.HoldReason,thold.UnHoldReason,thold.IsHold,u.DomainId,u.UpdatedOn " +
+                    " FROM MTrnICardHold thold " +
+                    " inner join AspNetUsers u on u.Id = thold.Updatedby " +
+                    " inner join TrnICardRequest trnicrd on trnicrd.RequestId = thold.RequestId " +
+                    " inner join BasicDetails B on B.BasicDetailId = trnicrd.BasicDetailId " +
+                    " inner join MRank ran on ran.RankId=B.RankId " +
+                    " inner join MapUnit mapunit on mapunit.UnitMapId=B.UnitId " +
+                    " inner join MUnit munit on munit.UnitId=mapunit.UnitId " +
+                    " inner join MApplyFor Afor on Afor.ApplyForId = B.ApplyForId ";
+            try
+            {
+                using (var connection = _contextDP.CreateConnection())
+                {
+                    var allrecord = await connection.QueryAsync<DTOICardRequestHoldResponse>(query);
+                    return await Task.FromResult(allrecord.ToList());
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "BasicDetailDB->GetAllICardRequestHold");
+                return null;
+            }
+        }
         public async Task<bool> SaveBasicDetailsWithAll(BasicDetail Data, MTrnAddress address, MTrnUpload trnUpload, MTrnIdentityInfo mTrnIdentityInfo, MTrnICardRequest mTrnICardRequest, MStepCounter mStepCounter)
         {
             using var transaction = _context.Database.BeginTransaction();
