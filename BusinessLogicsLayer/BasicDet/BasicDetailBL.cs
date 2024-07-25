@@ -24,6 +24,18 @@ namespace BusinessLogicsLayer.BasicDet
         {
                 _iBasicDetailDB = BasicDetail;
         }
+        public async Task<List<DTOTopArmyNoFromICardRequestResponse>?> GetTopArmyNoFromICardRequest(string ArmyNo)
+        {
+            return await _iBasicDetailDB.GetTopArmyNoFromICardRequest(ArmyNo);
+        }
+        public async Task<DTOBDetailByRequestIdResponse?> GetBDetailByRequestId(int RequestId)
+        {
+            return await _iBasicDetailDB.GetBDetailByRequestId(RequestId);
+        }
+        public async Task<List<DTOICardRequestHoldResponse>?> GetAllICardRequestHold()
+        {
+            return await _iBasicDetailDB.GetAllICardRequestHold();
+        }
         public Task<List<BasicDetailVM>> GetALLBasicDetail(int UserId, int step, int type, int applyForId)
         {
             return _iBasicDetailDB.GetALLBasicDetail(UserId ,step, type, applyForId);

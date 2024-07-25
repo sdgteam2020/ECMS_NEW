@@ -44,6 +44,7 @@ using Common.Logging;
 using BusinessLogicsLayer.TrnLoginLog;
 using NuGet.Packaging;
 using Web.Healpers;
+using BusinessLogicsLayer.TrnICardHold;
 
 namespace Web.Controllers
 {
@@ -72,13 +73,14 @@ namespace Web.Controllers
         private readonly INotificationBL _INotificationBL;
         private readonly IMasterBL _IMasterBL;
         private readonly ITrnLoginLogBL _iTrnLoginLogBL;
+        private readonly IICardHoldBL _iICardHoldBL;
         public DateTime dateTimenow;
         public BasicDetailController(IBasicDetailBL basicDetailBL, IMapUnitBL mapUnitBL, IBasicDetailTempBL basicDetailTempBL, IService service, IMapper mapper,
             UserManager<ApplicationUser> userManager, IWebHostEnvironment hostingEnvironment, IDataProtectionProvider dataProtectionProvider,
                               DataProtectionPurposeStrings dataProtectionPurposeStrings, ILogger<BasicDetailController> logger, IStepCounterBL iStepCounterBL, 
                               ITrnFwnBL iTrnFwnBL, ITrnICardRequestBL iTrnICardRequestBL, IDomainMapBL iDomainMapBL
             ,IBasicUploadBL basicUploadBL, IBasicAddressBL basicAddressBL, IBasicinfoBL basicinfoBL, IRankBL rankBL, INotificationBL notificationBL, IMasterBL masterBL
-           , ITrnLoginLogBL iTrnLoginLogBL)
+           , ITrnLoginLogBL iTrnLoginLogBL, IICardHoldBL iICardHoldBL)
         {
             this.basicDetailBL = basicDetailBL;
             this.basicDetailTempBL = basicDetailTempBL;
@@ -104,6 +106,7 @@ namespace Web.Controllers
             _INotificationBL = notificationBL;
             _IMasterBL = masterBL;
             _iTrnLoginLogBL = iTrnLoginLogBL;
+            _iICardHoldBL = iICardHoldBL;
         }
         private string GetSessionValue()
         {
@@ -116,7 +119,102 @@ namespace Web.Controllers
             string role = dtoSession != null ? dtoSession.RoleName : "";
             return role;
         }
+        [Authorize(Roles = "DteAdmin")]
+        public async Task<IActionResult> SaveICardRequestHold(MTrnICardHold dTO)
+        {
+            try
+            {
+                DtoSession? sessiondata = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+                if(sessiondata!=null)
+                {
+                    dTO.UserId = sessiondata.UserId;
+                }
 
+                dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                dTO.UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
+
+                if (ModelState.IsValid)
+                {
+                    if (!await _iICardHoldBL.GetByRequestId(dTO))
+                    {
+                        if (dTO.ICardHoldId > 0)
+                        {
+                            dTO.IsHold=false;
+                            await _iICardHoldBL.Update(dTO);
+                            return Json(KeyConstants.Save);
+                        }
+                        else
+                        {
+                            dTO.IsHold = true;
+                            await _iICardHoldBL.Add(dTO);
+                            return Json(KeyConstants.Update);
+                        }
+                    }
+                    else
+                    {
+                        return Json(KeyConstants.Exists);
+                    }
+                }
+                else
+                {
+                    return Json(ModelState.Select(x => x.Value.Errors).Where(y => y.Count > 0).ToList());
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "BasicDetail->SaveICardRequestHold");
+                return Json(KeyConstants.InternalServerError);
+            }
+
+        }
+        [Authorize(Roles = "DteAdmin")]
+        public async Task<IActionResult> GetTopArmyNoFromICardRequest(string ArmyNo)
+        {
+            try
+            {
+                return Json(await basicDetailBL.GetTopArmyNoFromICardRequest(ArmyNo));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "BasicDetail->GetTopArmyNoFromICardRequest");
+                return Json(KeyConstants.InternalServerError);
+            }
+        }
+        [Authorize(Roles = "DteAdmin")]
+        public async Task<IActionResult> GetBDetailByRequestId(int RequestId)
+        {
+            try
+            {
+                return Json(await basicDetailBL.GetBDetailByRequestId(RequestId));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "BasicDetail->GetBDetailByRequestId");
+                return Json(KeyConstants.InternalServerError);
+            }
+
+        }
+        [Authorize(Roles = "DteAdmin")]
+        [HttpGet]
+        public IActionResult ICardRequestHold()
+        {
+            return View();
+        }
+        [Authorize(Roles = "DteAdmin")]
+        [HttpPost]
+        public async Task<IActionResult> GetAllICardRequestHold()
+        {
+            try
+            {
+                return Json(await basicDetailBL.GetAllICardRequestHold());
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "BasicDetail->GetAllICardRequestHold");
+                return Json(KeyConstants.InternalServerError);
+            }
+
+        }
         public async Task<ActionResult> Index(string Id,string jcoor)
         {
             MTrnNotification noti = new MTrnNotification();
@@ -647,7 +745,7 @@ namespace Web.Controllers
                         //dTOBasicDetailCrtRequest.Height = model.Height;
 
                         // dTOBasicDetailCrtRequest.AadhaarNo = Convert.ToString(model.AadhaarNo);
-                        dTOBasicDetailCrtRequest.AadhaarNo = Convert.ToInt64(model.AadhaarNo).ToString("D12"); ;// Convert.ToInt32(model.AadhaarNo.Substring(model.AadhaarNo.Length - 3)).ToString("D4");
+                        dTOBasicDetailCrtRequest.AadhaarNo = Convert.ToInt64(model.AadhaarNo).ToString("D12");// Convert.ToInt32(model.AadhaarNo.Substring(model.AadhaarNo.Length - 3)).ToString("D4");
 
 
                         //dTOBasicDetailCrtRequest.BloodGroup = model.BloodGroup;

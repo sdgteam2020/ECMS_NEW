@@ -14,6 +14,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
+using System.Linq;
 
 namespace DataAccessLayer
 {
@@ -814,81 +815,6 @@ namespace DataAccessLayer
 
         public async Task<List<DTOFwdICardResponse>> GetOffrsByUnitMapId(int UnitId, int RO, int ORO, int IsAfsacCell, int BasicDetailsId, int DomainMapId)
         {
-            #region old code write by Kapoor Sir
-            //   string query = "";
-            //   if (ISIO == 1)
-            //   {
-            //       query = "Select trndomain.AspNetUsersId,ISNULL(usep.UserId,0) UserId,users.DomainId,usep.ArmyNo,usep.Name,ran.RankAbbreviation from TrnDomainMapping trndomain" +
-            //     " inner join AspNetUsers users on trndomain.AspNetUsersId=users.Id" +
-            //     " inner join MapUnit mapu on mapu.UnitMapId=trndomain.UnitId" +
-            //     " inner join UserProfile usep on usep.UserId=trndomain.UserId" +
-            //     " inner join MRank ran on ran.RankId=usep.RankId" +
-            //     " where trndomain.UnitId =@UnitId and trndomain.AspNetUsersId !=@DomainMapId order by ran.Orderby";
-            //       //trndomain.IsIO=@ISIO
-            //   }
-            //   else if (ISCO == 1)
-            //   {
-            //       query = "Select trndomain.AspNetUsersId,ISNULL(usep.UserId,0) UserId,users.DomainId,usep.ArmyNo,usep.Name,ran.RankAbbreviation from TrnDomainMapping trndomain" +
-            //    " inner join AspNetUsers users on trndomain.AspNetUsersId=users.Id" +
-            //    " inner join MapUnit mapu on mapu.UnitMapId=trndomain.UnitId" +
-            //    " inner join UserProfile usep on usep.UserId=trndomain.UserId" +
-            //    " inner join MRank ran on ran.RankId=usep.RankId" +
-            //    " where trndomain.UnitId =@UnitId and trndomain.AspNetUsersId !=@DomainMapId order by ran.Orderby";
-            //       //and trndomain.IsCO=@ISCO
-            //   }
-            //   else if (RO == 1)
-            //   {
-            //       //   query = "Select trndomain.AspNetUsersId,ISNULL(usep.UserId,0) UserId,users.DomainId,usep.ArmyNo,usep.Name,ran.RankAbbreviation from TrnDomainMapping trndomain" +
-            //       //" inner join AspNetUsers users on trndomain.AspNetUsersId=users.Id" +
-            //       //" inner join MapUnit mapu on mapu.UnitMapId=trndomain.UnitId" +
-            //       //" inner join UserProfile usep on usep.UserId=trndomain.UserId" +
-            //       //" inner join MRank ran on ran.RankId=usep.RankId" +
-            //       //" where usep.IsRO=1 and trndomain.UnitId in (Select UnitMapId from MapUnit where ComdId in (Select ComdId from MapUnit where UnitMapId=@UnitId))";
-            //       query = "Select trndomain.AspNetUsersId,ISNULL(usep.UserId,0) UserId,users.DomainId,usep.ArmyNo,usep.Name,ran.RankAbbreviation from TrnDomainMapping trndomain" +
-            //               " inner join AspNetUsers users on trndomain.AspNetUsersId=users.Id " +
-            //               " inner join MapUnit mapu on mapu.UnitMapId=trndomain.UnitId " +
-            //               " inner join UserProfile usep on usep.UserId=trndomain.UserId " +
-            //               " inner join MRank ran on ran.RankId=usep.RankId " +
-            //               " inner join MRecordOffice rec on trndomain.id=rec.TDMId " +
-            //               " inner join BasicDetails bas on bas.ArmedId=rec.ArmedId" +
-            //               " where  bas.BasicDetailId=@BasicDetailsId";///usep.IsRO=1 and
-            //   }
-            //   else if (ORO == 1)
-            //   {
-            //       query = "Select trndomain.AspNetUsersId,ISNULL(usep.UserId,0) UserId,users.DomainId,usep.ArmyNo,usep.Name,ran.RankAbbreviation from TrnDomainMapping trndomain" +
-            //               " inner join AspNetUsers users on trndomain.AspNetUsersId=users.Id " +
-            //               " inner join MapUnit mapu on mapu.UnitMapId=trndomain.UnitId " +
-            //               " inner join UserProfile usep on usep.UserId=trndomain.UserId " +
-            //               " inner join MRank ran on ran.RankId=usep.RankId " +
-            //               " inner join MRecordOffice rec on trndomain.id=rec.TDMId and rec.ArmedId=56";
-            //       //" inner join BasicDetails bas on bas.ArmedId=rec.ArmedId"+
-            //       //" where  bas.BasicDetailId=@BasicDetailsId";
-            //       //" where usep.IsORO=1";
-            //       //   query = "Select trndomain.AspNetUsersId,ISNULL(usep.UserId,0) UserId,users.DomainId,usep.ArmyNo,usep.Name,ran.RankAbbreviation from TrnDomainMapping trndomain" +
-            //       //" inner join AspNetUsers users on trndomain.AspNetUsersId=users.Id" +
-            //       //" inner join MapUnit mapu on mapu.UnitMapId=trndomain.UnitId" +
-            //       //" inner join UserProfile usep on usep.UserId=trndomain.UserId" +
-            //       //" inner join MRank ran on ran.RankId=usep.RankId" +
-            //       //" where usep.IsORO=1 and trndomain.UnitId in (Select UnitMapId from MapUnit where ComdId in (Select ComdId from MapUnit where UnitMapId=@UnitId))";
-            //   }
-            //   else
-            //   {
-            //       query = "Select trndomain.AspNetUsersId,ISNULL(usep.UserId,0) UserId,users.DomainId,usep.ArmyNo,usep.Name,ran.RankAbbreviation from TrnDomainMapping trndomain" +
-            //" inner join AspNetUsers users on trndomain.AspNetUsersId=users.Id" +
-            //" inner join MapUnit mapu on mapu.UnitMapId=trndomain.UnitId" +
-            //" inner join UserProfile usep on usep.UserId=trndomain.UserId" +
-            //" inner join MRank ran on ran.RankId=usep.RankId" +
-            //" where trndomain.UnitId =@UnitId";
-
-            //       // in (Select UnitMapId from MapUnit where ComdId in (Select ComdId from MapUnit where UnitMapId = @UnitId))
-            //   }
-            //   using (var connection = _contextDP.CreateConnection())
-            //   {
-            //       var BasicDetailList = await connection.QueryAsync<DTOFwdICardResponse>(query, new { UnitId, ISIO, ISCO, RO, BasicDetailsId, DomainMapId });
-
-            //       return BasicDetailList.ToList();
-            //   }
-            #endregion end old code write by Kapoor Sir
             string query = "";
             string subquery = "";
             string finalquery = "";
@@ -905,8 +831,9 @@ namespace DataAccessLayer
             }
             else if (ORO == 1)
             {
-                subquery = "Select bd.ServiceNo,bd.ArmedId,ran.Orderby from BasicDetails bd" +
+                subquery = "Select bd.ServiceNo,bd.ArmedId,ran.Orderby,at.Abbreviation as ArmedAbbreviation from BasicDetails bd" +
                             " inner join MRank ran on ran.RankId=bd.RankId " +
+                            " inner join MArmedType at on at.ArmedId=bd.ArmedId " +
                             " where bd.BasicDetailId =@BasicDetailsId";
                 using (var connection = _contextDP.CreateConnection())
                 {
@@ -916,7 +843,36 @@ namespace DataAccessLayer
                     {
                         string ini = subqueryResult.ServiceNo.Substring(0, 2).ToUpper();
                         string MP6F = "MP 6F";
-                        if (ini == "SL")
+                        string MPRSO = "MPRSO";
+                        var ArmedAbbreviation = new List<string> { "ADC", "AMC", "MNS" };
+                        if (ArmedAbbreviation.Contains(subqueryResult.ArmedAbbreviation,StringComparer.OrdinalIgnoreCase))
+                        {
+                            finalquery = "Select trndomain.AspNetUsersId,ISNULL(usep.UserId,0) UserId,users.DomainId,usep.ArmyNo,usep.Name,ran.RankAbbreviation from MRecordOffice mrec" +
+                                         " inner join OROMapping oromap on oromap.RecordOfficeId=mrec.RecordOfficeId " +
+                                         " inner join TrnDomainMapping trndomain on trndomain.Id=oromap.TDMId " +
+                                         " inner join AspNetUsers users on trndomain.AspNetUsersId=users.Id " +
+                                         " inner join UserProfile usep on usep.UserId=trndomain.UserId " +
+                                         " inner join MRank ran on ran.RankId=usep.RankId " +
+                                         " where mrec.Name = @MPRSO";
+                            var final = await connection.QueryAsync<DTOFwdICardResponse>(finalquery, new { MPRSO });
+
+                            if (final.Count() == 0)
+                            {
+                                List<DTOFwdICardResponse> dTOFwdICardResponse = new List<DTOFwdICardResponse>();
+                                DTOFwdICardResponse dTOFwdICardResponse1 = new DTOFwdICardResponse();
+
+                                dTOFwdICardResponse1.IsError = true;
+                                dTOFwdICardResponse1.ErrorMessage = "You can not fwd your request at this time because profile not mapped. Contact ORO (MP6)";
+
+                                dTOFwdICardResponse.Add(dTOFwdICardResponse1);
+                                return dTOFwdICardResponse;
+                            }
+                            else
+                            {
+                                return final.ToList();
+                            }
+                        }
+                        else if (ini == "SL")
                         {
                             finalquery = "Select trndomain.AspNetUsersId,ISNULL(usep.UserId,0) UserId,users.DomainId,usep.ArmyNo,usep.Name,ran.RankAbbreviation from MRecordOffice mrec" +
                                          " inner join OROMapping oromap on oromap.RecordOfficeId=mrec.RecordOfficeId " +

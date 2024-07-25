@@ -1,0 +1,25 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace DataTransferObject.Response
+{
+    public class DTOICardRequestHoldResponse
+    {
+        public int ICardHoldId { get; set; }
+        public int RequestId { get; set; }
+        public string ServiceNo { get; set; } = string.Empty;
+        public string RankName { get; set; } = string.Empty;
+        public string Name { get; set; } = string.Empty;
+        public string UnitName { get; set; } = string.Empty;
+        public string ApplyFor { get; set; } = string.Empty;
+        public string DomainId { get; set; } = string.Empty;
+        public string HoldReason { get; set; } = string.Empty;
+        public string? UnHoldReason { get; set; }
+        public bool IsHold { get; set; }
+        public DateTime UpdatedOn { get; set; }
+
+    }
+}
