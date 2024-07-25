@@ -162,7 +162,7 @@ function BindData() {
                         else
                             listItem += "<td class='align-middle'><span><span class='badge badge-pill badge-danger' id='isHold'>No</span></span></td>";
                         listItem += "<td class='align-middle'><span id='updatedOn'>" + DateFormateddMMyyyyhhmmss(response[i].UpdatedOn) + "</span></td>";
-                        listItem += "<td class='noExport'><button class='btn btn-icon btn-round btn-primary mr-1 historyRequest' data-toggle='tooltip' data-placement='left' title=''><i class='fa fa-history' aria-hidden='true'></i></button></td>";
+                        listItem += "<td class='noExport'><button class='historyRequestForHold btn btn-icon btn-round btn-primary mr-1' data-toggle='tooltip' data-placement='left' title=''><i class='fa fa-history' aria-hidden='true'></i></button></td>";
                         listItem += "<td class='align-middle'><span id='btnedit'><button type='button' class='cls-btnedit btn btn-icon btn-round btn-warning mr-1'><i class='fas fa-edit'></i></button></span></td>";
                         listItem += "</tr>";
 
@@ -218,10 +218,15 @@ function BindData() {
                         $("#lblName").html($(this).closest("tr").find("#name").html());
                         $("#lblUnitName").html($(this).closest("tr").find("#unitName").html());
                         $("#txtHoldReason").val($(this).closest("tr").find("#holdReason").html());
-                        $("#txtUnHoldReason").val($(this).closest("tr").find("#unHoldReason").html());
+                        $("#txtUnHoldReason").val($(this).closest("tr").find("#unHoldReason").html() != 'null' ? $(this).closest("tr").find("#unHoldReason").html() : "");
 
                         $("#btnAddICardRequestHold").val("Update");
                         $("#AddICardRequestHold").modal('show');
+                    });
+                    $("body").on("click", ".historyRequestForHold", function () {
+                        alert("Hello");
+                        $("#exampleModal").modal('show');
+                        GetRequestHistory($(this).closest("tr").find("#requestId").html());
                     });
                 }
             }
@@ -254,7 +259,7 @@ function Save() {
             "ICardHoldId": $("#spnICardHoldId").html(),
             "RequestId": $('#spnRequestId').html(),
             "HoldReason": $("#txtHoldReason").val(),
-            "UnHoldReason": $("#txtUnHoldReason").val().length > 0 ?("#txtUnHoldReason").val() : null,
+            "UnHoldReason": $("#txtUnHoldReason").val().length > 0 ?$("#txtUnHoldReason").val() : null,
         }, 
         success: function (result) {
             if (result == DataSave) {

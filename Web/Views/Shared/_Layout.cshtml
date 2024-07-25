@@ -423,7 +423,7 @@
         <div id="layoutSidenav_content">
             <main>
                 <div class="main-panel">
-                    @if (signInManager.IsSignedIn(User) && (RoleName == "User" || RoleName == "Coordinator" || ViewBag.Role == "DteAdmin")) // User.IsInRole("User")
+                    @if (signInManager.IsSignedIn(User) && (RoleName == "User" || RoleName == "Coordinator" || RoleName == "DteAdmin")) // User.IsInRole("User")
                     {
                         <nav class="nav nav-pills nav-justified" id="layouttask">
                             <a class="nav-link Dashboard" aria-current="page" href="/Home/Dashboard">DashBoard</a>

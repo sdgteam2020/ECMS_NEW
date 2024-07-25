@@ -1323,7 +1323,7 @@ namespace Web.Controllers
             }
             else
             {
-                if (dTOTempSession.RoleName == "User" || dTOTempSession.RoleName == "Coordinator")
+                if (dTOTempSession.RoleName == "User" || dTOTempSession.RoleName == "Coordinator" || dTOTempSession.RoleName == "DteAdmin")
                 {
                     return RedirectToActionPermanent("Index", "Home");
                 }
