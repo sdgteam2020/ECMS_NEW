@@ -23,6 +23,7 @@ namespace DataAccessLayer.BaseInterfaces
         public Task<BasicDetail?> FindServiceNo(string ServiceNo);
         public Task<List<DTOSmartSearch>> SearchAllServiceNo(string ServiceNo,int AspNetUsersId);
         public Task<List<ICardHistoryResponse>> ICardHistory(int RequestId);
+        public Task<DTOFwdLastRecForDigitalSign> ICardFwdLastRec(int RequestId);
         public Task<List<ICardHistoryResponse>> ICardHistoryByTrackingId(string TrackingId);
         public Task<bool> SaveBasicDetailsWithAll(BasicDetail Data, MTrnAddress address, MTrnUpload trnUpload, MTrnIdentityInfo mTrnIdentityInfo, MTrnICardRequest mTrnICardRequest, MStepCounter mStepCounter);
         public Task<DTOICardTaskCountResponse> GetTaskCountICardRequest(int UserId,int Type, int applyForId);

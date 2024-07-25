@@ -44,6 +44,10 @@ using Common.Logging;
 using BusinessLogicsLayer.TrnLoginLog;
 using NuGet.Packaging;
 using Web.Healpers;
+using System.Security.Cryptography.X509Certificates;
+using System.Xml;
+using System.Xml.Serialization;
+using System.Xml.Linq;
 
 namespace Web.Controllers
 {
@@ -119,6 +123,7 @@ namespace Web.Controllers
 
         public async Task<ActionResult> Index(string Id,string jcoor)
         {
+           
             MTrnNotification noti = new MTrnNotification();
             int retint = 0;int type = 1;
             var userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
@@ -1399,7 +1404,19 @@ namespace Web.Controllers
                     if (await iTrnFwnBL.UpdateAllBYRequestId(data.RequestId))
                     {
                         await iTrnFwnBL.Add(data);
-                        return Ok(data);
+
+
+                        int[] d;
+                        d = new int[1];
+                        d[0] = data.RequestId;
+                        var dataret = await _iTrnLoginLogBL.XmlFileDigitalSignFromData(d);
+                        if (dataret != null)
+                        {
+                            dataret.XmlFiles = "";
+                        }
+                    
+                   await _iTrnLoginLogBL.XmlFileDigitalSign(dataret);
+                    return Ok(data);
                     }
                     else
                     {
@@ -1634,17 +1651,65 @@ namespace Web.Controllers
                 throw new DirectoryNotFoundException($"Source folder not found: {sourceFolder}");
             }
         }
+     
         public async Task<IActionResult> DataDigitalXmlSign(DTODataExportRequest Data)
         {
             try
             {
-                var retdata = await basicDetailBL.GetDataDigitalXmlSign(Data);
+                string xml = "";
+                DTOXmlFilesFwdLogRequest ret=new DTOXmlFilesFwdLogRequest();
+                var xmldata= await _iTrnLoginLogBL.XmlFileDigitalSignFromData(Data.Ids);
+                var lastrec=await basicDetailBL.ICardFwdLastRec(Data.Ids[0]);
+                XmlSerializer serializer = new XmlSerializer(typeof(DTOFwdLastRecForDigitalSign));
+                using (StringWriter writer = new StringWriter())
+                {
+                    serializer.Serialize(writer, lastrec);
+                    xml = writer.ToString();
 
-                var jsonString = JsonConvert.SerializeObject(retdata);
-                var jsonde = JsonConvert.DeserializeObject(jsonString);
+                }
 
 
-                return Json(jsonde);
+                if (xmldata != null )
+                {
+                    if(xmldata.XmlFiles!="")
+                    {
+                        ret.Id = xmldata.Id;
+                        XDocument xDoc1 = XDocument.Parse(xmldata.XmlFiles);
+                        XDocument xDoc2 = XDocument.Parse(xml);
+                        var newDetails = new XElement("RecForDigitalSign");
+                      //  newDetails.Add(newDetails);
+                       
+                        foreach (XElement element in xDoc2.Root.Elements())
+                        {
+                            newDetails.Add(element);
+                           // xDoc1.Root.Add(element);
+                        }
+                        xDoc1.Root.Add(newDetails);
+                        ret.XmlFiles = xDoc1.ToString();// xmldata.XmlFiles;
+                        return Json(ret);
+                    }
+                    else
+                    {
+                        var retdata = await basicDetailBL.GetDataDigitalXmlSign(Data);
+                        var jsonString = JsonConvert.SerializeObject(retdata);
+                        var jsonde = JsonConvert.DeserializeObject(jsonString);
+                        DTOXmlFilesForUpdate dTOXmlFilesForUpdate = new DTOXmlFilesForUpdate();
+                        dTOXmlFilesForUpdate.Id=xmldata.Id;
+                        dTOXmlFilesForUpdate.jsonfile = jsonde;
+                        return Json(dTOXmlFilesForUpdate);
+                    }
+
+                }
+                else
+                {
+                    var retdata = await basicDetailBL.GetDataDigitalXmlSign(Data);
+
+                    var jsonString = JsonConvert.SerializeObject(retdata);
+                    var jsonde = JsonConvert.DeserializeObject(jsonString);
+
+                   
+                    return Json(jsonde);
+                }
 
 
             }

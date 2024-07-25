@@ -60,6 +60,11 @@ namespace BusinessLogicsLayer.BasicDet
             
             return _iBasicDetailDB.ICardHistory(RequestId);
         }
+        public Task<DTOFwdLastRecForDigitalSign> ICardFwdLastRec(int RequestId)
+        {
+            
+            return _iBasicDetailDB.ICardFwdLastRec(RequestId);
+        }
         public Task<List<ICardHistoryResponse>> ICardHistoryByTrackingId(string TrackingId)
         {
             

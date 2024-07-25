@@ -12,6 +12,7 @@ using System.Text;
 using System.Threading.Tasks;
 using DataTransferObject.ViewModels;
 using DataTransferObject.Requests;
+using Azure.Core;
 
 namespace DataAccessLayer
 {
@@ -50,9 +51,29 @@ namespace DataAccessLayer
                 //data.MRank.RankAbbreviation
                 //data.MArmedType.Abbreviation
                 //var Ret = await connection.QueryAsync<DTOLoginLogResponse>(query, new { UnitId });
-                connection.Execute("INSERT INTO [dbo].[XmlFilesFwdLog]([XmlFiles],[TrnFwdId],[Updatedby],[UpdatedOn],[IsActive]) VALUES (@XmlFiles,@TrnFwdId,@Updatedby,@UpdatedOn,@IsActive)", new { Data.XmlFiles, Data.TrnFwdId, Data.Updatedby, Data.UpdatedOn, Data.IsActive });
-               
+                if(Data.Id==0)
+                connection.Execute("INSERT INTO [dbo].[XmlFilesFwdLog]([XmlFiles],[RequestId],[Updatedby],[UpdatedOn],[IsActive]) VALUES (@XmlFiles,@RequestId,@Updatedby,@UpdatedOn,@IsActive)", new { Data.XmlFiles, Data.RequestId, Data.Updatedby, Data.UpdatedOn, Data.IsActive });
+                else
+                connection.Execute("UPDATE [dbo].[XmlFilesFwdLog] SET [XmlFiles] =@XmlFiles ,[RequestId] = @RequestId,[Updatedby] = @Updatedby,[UpdatedOn] = @UpdatedOn,[IsActive] =  @IsActive", new { Data.XmlFiles, Data.RequestId, Data.Updatedby, Data.UpdatedOn, Data.IsActive });
+
                 return true;
+            }
+        }
+      
+        public async Task<DTOXmlFilesFwdLogRequest> XmlFileDigitalSignFromData(int[] RequestId)
+        {
+          
+            string query = "select Id,[XmlFiles],[RequestId],[Updatedby],[UpdatedOn],[IsActive] from XmlFilesFwdLog where RequestId in @RequestId";
+
+            using (var connection = _contextDP2.CreateConnection())
+            {
+                //data.MRank.RankAbbreviation
+                //data.MArmedType.Abbreviation
+                var Ret = await connection.QueryAsync<DTOXmlFilesFwdLogRequest>(query, new { RequestId });
+
+
+
+                return Ret.FirstOrDefault();
             }
         }
         public async Task<List<DTOLoginLogResponse>> GetAllUserByUnitId(int UnitId)

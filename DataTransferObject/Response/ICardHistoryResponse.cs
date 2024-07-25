@@ -11,6 +11,8 @@ namespace DataTransferObject.Response
         public string? FromDomain { get; set; }
         public string? FromProfile { get; set; }
         public string? FromRank { get; set; }
+        public string? FromArmyNo { get; set; }
+        public DateTime? FromDate { get; set; }
         public string? ToDomain { get; set; }
         public string? ToProfile { get; set; }
         public string? ToRank { get; set; }
