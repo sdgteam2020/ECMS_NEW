@@ -116,6 +116,7 @@
 });
 function BindData() {
     var listItem = "";
+
     $.ajax({
         url: '/BasicDetail/GetAllICardRequestHold',
         contentType: 'application/x-www-form-urlencoded',
@@ -130,21 +131,13 @@ function BindData() {
                     });
 
                 }
-                else if (response.length == 0) {
-                    $("#tbldata").DataTable().destroy();
-
+                else if (response == 0) {
+                    listItem += "<tr><td class='text-center' colspan=12>No Record Found</td></tr>";
+                    $("#tblData").DataTable().destroy();
                     $("#DetailBody").html(listItem);
-                    memberTable = $('#tbldata').DataTable({
-                        "language": {
-                            "emptyTable": "No data available"
-                        }
-                    });
-
-
                 }
-
                 else {
-                    $("#tbldata").DataTable().destroy();
+                    $("#tblData").DataTable().destroy();
 
                     for (var i = 0; i < response.length; i++) {
 
@@ -152,7 +145,6 @@ function BindData() {
                         listItem += "<td class='d-none'><span id='iCardHoldId'>" + response[i].ICardHoldId + "</span><span id='requestId'>" + response[i].RequestId + "</span><span id='rankName'>" + response[i].RankName + "</span><span id='name'>" + response[i].Name + "</span><span id='unHoldReason'>" + response[i].UnHoldReason + "</span></td>";
                         listItem += "<td class='align-middle'>" + (i + 1) + "</td>";
                         listItem += "<td class='align-middle'><a href='#' class='BasicDetailView'><span id='serviceNo'>" + response[i].ServiceNo + "</span></a></td>";
-
                         listItem += "<td class='align-middle'><span id='nameWithRank'>" + response[i].RankName + ' ' + response[i].Name + "</span></td>";
                         listItem += "<td class='align-middle'><span id='unitName'>" + response[i].UnitName + "</span></td>";
                         listItem += "<td class='align-middle'><span id='applyFor'>" + response[i].ApplyFor + "</span></td>";
@@ -170,12 +162,10 @@ function BindData() {
                     }
 
                     $("#DetailBody").html(listItem);
-                    $("#lblTotal").html(response.length - 1);
 
-                    memberTable = $('#tbldata').DataTable({
+                    memberTable = $('#tblData').DataTable({
                         retrieve: true,
                         lengthChange: false,
-                        searching: false,
                         stateSave: true,
                         "order": [[1, "asc"]],
                         buttons: [{
@@ -192,7 +182,7 @@ function BindData() {
                             extend: 'pdfHtml5',
                             orientation: 'portrait',
                             pageSize: 'A4',
-                            title: 'E-IASC_Domain_Regn',
+                            title: 'E-IASC_ICardRequestHold',
                             exportOptions: {
                                 columns: "thead th:not(.noExport)"
                             },
@@ -202,9 +192,8 @@ function BindData() {
                         }]
                     });
 
-                    memberTable.buttons().container().appendTo('#tbldata_wrapper .col-md-6:eq(0)');
+                    memberTable.buttons().container().appendTo('#tblData_wrapper .col-md-6:eq(0)');
 
-                    var rows;
 
                     $("body").on("click", ".cls-btnedit", function () {
                         Reset();
@@ -241,10 +230,10 @@ function BindData() {
                 }
             }
             else {
-                $("#tbldata").DataTable().destroy();
+                $("#tblData").DataTable().destroy();
 
                 $("#DetailBody").html(listItem);
-                memberTable = $('#tbldata').DataTable({
+                memberTable = $('#tblData').DataTable({
                     "language": {
                         "emptyTable": "No data available"
                     }
