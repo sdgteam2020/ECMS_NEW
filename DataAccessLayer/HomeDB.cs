@@ -58,7 +58,14 @@ namespace DataAccessLayer
                             " END " +
                             " ELSE " +
                             " BEGIN " +
-                            " IF @Name='MP 6A' " +
+                            " IF @Name='MPRSO' " +
+                            " BEGIN " +
+                            " SELECT @TotObservationRaised=COUNT(Temps.BasicDetailTempId)  FROM BasicDetailTemps Temps " +
+                            " inner join MArmedType at on at.ArmedId = Temps.ArmedId " +
+                            " left join OROMapping oro on oro.TDMId = @TDMId " +
+                            " WHERE Temps.ApplyForId=1 AND Temps.IsActive=1 AND at.Abbreviation in('ADC','AMC','MNS') " +
+                            " END " +
+                            " ELSE IF @Name='MP 6A' " +
                             " BEGIN " +
                             " SELECT @TotObservationRaised=COUNT(Temps.BasicDetailTempId) FROM BasicDetailTemps Temps " +
                             " inner join MRank ranks1 on ranks1.RankId = Temps.RankId " +
