@@ -717,7 +717,7 @@ namespace DataAccessLayer
             }
         }
         public async Task<BasicDetailCrtAndUpdVM> GetByRequestIdBesicDetails(int RequestId)
-        {
+        { 
             string query = "select bas.*," +
                             " issaut.Name IssuingAuthorityName,trnadd.State,trnadd.District,trnadd.PS,trnadd.PO,trnadd.Tehsil,trnadd.Village,trnadd.PinCode," +
                             " trnup.SignatureImagePath,trnup.PhotoImagePath,IdenMark1,IdenMark2,AadhaarNo,Height,bld.BloodGroup,bld.BloodGroupId," +
@@ -829,7 +829,7 @@ namespace DataAccessLayer
                            " inner join MArmedType arm on arm.ArmedId=bas.ArmedId "+
                            " inner join MapUnit uni on uni.UnitMapId=bas.UnitId "+
                            " inner join MUnit Muni on Muni.UnitId=uni.UnitId "+
-                           " inner join TrnICardRequest icardreq on icardreq.BasicDetailId=bas.BasicDetailId and icardreq.Status=0  "+
+                           " inner join TrnICardRequest icardreq on icardreq.BasicDetailId=bas.BasicDetailId and icardreq.StatusId=1  " +
                            " inner join MICardType MICardType on MICardType.TypeId=icardreq.TypeId  "+
                            " inner join TrnDomainMapping trn on trn.Id=icardreq.TrnDomainMappingId"+
                            " inner join AspNetUsers users on users.Id = trn.AspNetUsersId "+
@@ -895,6 +895,10 @@ namespace DataAccessLayer
                     dTOXMLDigitalSignResponse.applicationDetails = applicationDetails;
                     dTOXMLDigitalSignResponse.profiledtls = profiledtls;
                 }
+                DTOFwdLastRecForDigitalSign dTOFwdLastRecForDigitalSign=new DTOFwdLastRecForDigitalSign();
+                dTOFwdLastRecForDigitalSign = await ICardFwdLastRec(Ids[0]);
+                dTOXMLDigitalSignResponse.RecForDigitalSign=dTOFwdLastRecForDigitalSign;
+
                 DTOXMLDigitalResponse dTOXMLDigitalResponse = new DTOXMLDigitalResponse();
                 dTOXMLDigitalResponse.Header = dTOXMLDigitalSignResponse;
                 return dTOXMLDigitalResponse;
@@ -933,6 +937,44 @@ namespace DataAccessLayer
                     var BasicDetailList = await connection.QueryAsync<ICardHistoryResponse>(query, new { RequestId });
 
                     return BasicDetailList.ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "BasicDetailDB->ICardHistory");
+                return null;
+            }
+
+        }
+        public async Task<DTOFwdLastRecForDigitalSign> ICardFwdLastRec(int RequestId)
+        {
+            string query = " if exists (select StepId from TrnStepCounter where RequestId=@RequestId and StepId=2)" +
+                           " begin" +
+                           " select ServiceNo FromArmyNo,'' FromDomain,basi.FName +' '+ ISNULL(basi.LName,'') FromProfile,ranlfrom.RankAbbreviation FromRank," +
+                           " Getdate() FromDate from BasicDetails basi" +
+                           "  inner join MRank ranlfrom on ranlfrom.RankId=basi.RankId " +
+                           "  inner join TrnICardRequest req on  req.BasicDetailId=basi.BasicDetailId and req.StatusId=1" +
+                           " inner join TrnStepCounter trnste on trnste.RequestId=req.RequestId" +
+                           " where trnste.RequestId=@RequestId" +
+                           " end" +
+                           " else" +
+                           " begin" +
+                           " select top 1 profrom.ArmyNo FromArmyNo,usersfrom.UserName FromDomain,profrom.Name FromProfile, " +
+                           " ranlfrom.RankAbbreviation FromRank,Getdate() FromDate from TrnFwds fwd  " +
+                           " inner join TrnStepCounter step on fwd.RequestId=step.RequestId " +
+                           " inner join TrnDomainMapping mapfrom on mapfrom.AspNetUsersId=fwd.FromAspNetUsersId " +
+                           " inner join AspNetUsers usersfrom on usersfrom.Id=mapfrom.AspNetUsersId " +
+                           " left join UserProfile profrom on mapfrom.UserId=profrom.UserId " +
+                           " inner join MRank ranlfrom on ranlfrom.RankId=profrom.RankId " +
+                           " where fwd.RequestId=@RequestId order by fwd.TrnFwdId desc" +
+                           " end";
+            try
+            {
+                using (var connection = _contextDP.CreateConnection())
+                {
+                    var BasicDetailList = await connection.QueryAsync<DTOFwdLastRecForDigitalSign>(query, new { RequestId });
+
+                    return BasicDetailList.SingleOrDefault();
                 }
             }
             catch (Exception ex)

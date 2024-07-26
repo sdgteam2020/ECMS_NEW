@@ -15,6 +15,9 @@ namespace DataTransferObject.Response
 
         public ApplicationDetails? applicationDetails { get; set; }
         public Profiledtls? profiledtls { get; set; }
+        public DTOFwdLastRecForDigitalSign? RecForDigitalSign { get; set; }
+
+
 
     }
     public class ApplicationDetails

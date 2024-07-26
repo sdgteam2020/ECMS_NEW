@@ -116,7 +116,7 @@
                                    @*  <th>@Html.DisplayNameFor(model => model[0].DOB)</th>
                                     <th>@Html.DisplayNameFor(model => model[0].DateOfCommissioning)</th>
                                     <th>@Html.DisplayNameFor(model => model[0].PermanentAddress)</th> *@
-                                    <th>Tracking Id </th>
+                                    <th>Appl Id </th>
                                     <th>Type </th>
                                     <th>Reason for Requisition</th>
                                     <th class="noExport">History</th>
@@ -171,6 +171,10 @@
                                                    
                                                     <button class="btn btn-primary mr-1 fwdrecord">Verify And Send</button>
                                                     @* <button class="btn btn-danger mr-1 Rejectdrecord">Rejected</button> *@
+                                                }
+                                                else
+                                                {
+                                                    <button class=" btndownloadpdf" id="btndownloadpdf" data-toggle="tooltip" data-placement="top" title="Download Details"><img src="/Images/digitalsign.png" width="40" /></button>
                                                 }
                                             </div>
 

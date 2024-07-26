@@ -18,5 +18,6 @@ namespace BusinessLogicsLayer.TrnLoginLog
         public Task<List<DTOLoginLogResponse>> GetAllUserByUnitId(int UnitId);
         public Task<List<DTOLoginLogResponse>> GetLoginLogByUserId(int AspnetUserId, DateTime? FmDate, DateTime? ToDate);
         public Task<bool> XmlFileDigitalSign(DTOXmlFilesFwdLogRequest Data);
+        public Task<DTOXmlFilesFwdLogRequest> XmlFileDigitalSignFromData(int[] RequestId);
     }
 }
