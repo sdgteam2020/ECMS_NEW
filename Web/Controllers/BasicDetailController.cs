@@ -139,13 +139,11 @@ namespace Web.Controllers
                     {
                         if (dTO.ICardHoldId > 0)
                         {
-                            dTO.IsHold=false;
                             await _iICardHoldBL.Update(dTO);
                             return Json(KeyConstants.Save);
                         }
                         else
                         {
-                            dTO.IsHold = true;
                             await _iICardHoldBL.Add(dTO);
                             return Json(KeyConstants.Update);
                         }
