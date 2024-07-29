@@ -1,6 +1,7 @@
 ﻿@{
     ViewData["Title"] = "DashBoard";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    List<string> RoleNameList = new List<string>() { "User", "Coordinator", "DteAdmin", "AFSACUser", "RecordUser", "OROUser" };
 }
 <style>
     .clickable {
@@ -29,7 +30,7 @@
 <div class="containerMain mt-n10">
     <span id="UnitId" class="d-none">@ViewBag.UnitId</span>
     <span id="TDMId" class="d-none">@ViewBag.TDMId</span>
-    @if (ViewBag.Role == "User" || ViewBag.Role == "Coordinator")
+    @if (RoleNameList.Contains(ViewBag.Role))
     {
         <div class="row">
             <div class="card p-4">

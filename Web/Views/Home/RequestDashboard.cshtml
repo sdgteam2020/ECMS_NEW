@@ -1,6 +1,7 @@
 ﻿@{
     ViewData["Title"] = "Initiate Request DashBoard";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    List<string> RoleNameList = new List<string>() { "User", "Coordinator", "DteAdmin", "AFSACUser", "RecordUser", "OROUser" };
 }
 <style>
     .clickable {
@@ -38,7 +39,7 @@
 </header>
 <div class="containerMain mt-n10">
 <span id="Type" name="Type" class="d-none">@ViewBag.Type</span>
-    @if (ViewBag.Role == "User" || ViewBag.Role == "Coordinator" || ViewBag.Role == "DteAdmin")
+    @if (RoleNameList.Contains(ViewBag.Role))
     {
         <div class="row">
 
