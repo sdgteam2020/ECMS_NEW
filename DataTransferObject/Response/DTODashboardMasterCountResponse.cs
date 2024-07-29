@@ -22,6 +22,7 @@ namespace DataTransferObject.Response
 
         public int TotRecordOffice { get; set; }
         public int TotOROMapping { get; set; }
+        public int TotAfsacCellMapping { get; set; }
         public int TotDomainRegn { get; set; }
         public int TotUserProfile { get; set; }
     }

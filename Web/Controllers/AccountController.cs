@@ -1126,9 +1126,10 @@ namespace Web.Controllers
         {
             int userid = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
             DTOTempSession? dTOTempSession = SessionHeplers.GetObject<DTOTempSession>(HttpContext.Session, "Token");
+            List<string> RoleNameList = new List<string>() { "User", "Coordinator" ,"DteAdmin", "AFSACUser", "RecordUser", "OROUser" };
             if (dTOTempSession != null)
             {
-                if (dTOTempSession.RoleName == "User" || dTOTempSession.RoleName == "Coordinator" || dTOTempSession.RoleName == "DteAdmin")
+                if (RoleNameList.Contains(dTOTempSession.RoleName))
                 {
                     return RedirectToActionPermanent("Index", "Home");
                 }
@@ -1297,9 +1298,10 @@ namespace Web.Controllers
         [AllowAnonymous]
         public IActionResult TokenValidate()
         {
-             int userid = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-             DTOTempSession? dTOTempSession = SessionHeplers.GetObject<DTOTempSession>(HttpContext.Session, "Token");
-            
+            int userid = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+            DTOTempSession? dTOTempSession = SessionHeplers.GetObject<DTOTempSession>(HttpContext.Session, "Token");
+            List<string> RoleNameList = new List<string>() { "User", "Coordinator", "DteAdmin", "AFSACUser", "RecordUser", "OROUser" };
+
             if (userid==0)
             {
                 DTOTempSession? dTOTempSession1 = SessionHeplers.GetObject<DTOTempSession>(HttpContext.Session, "IMData");
@@ -1323,7 +1325,7 @@ namespace Web.Controllers
             }
             else
             {
-                if (dTOTempSession.RoleName == "User" || dTOTempSession.RoleName == "Coordinator" || dTOTempSession.RoleName == "DteAdmin")
+                if (RoleNameList.Contains(dTOTempSession.RoleName))
                 {
                     return RedirectToActionPermanent("Index", "Home");
                 }
@@ -1344,6 +1346,7 @@ namespace Web.Controllers
         public async Task<IActionResult> TokenValidate(DTOTokenRequest model)
         {
             DTOTempSession? dTOTempSession = SessionHeplers.GetObject<DTOTempSession>(HttpContext.Session, "IMData");
+            List<string> RoleNameList = new List<string>() { "User", "Coordinator", "DteAdmin", "AFSACUser", "RecordUser", "OROUser" };
             if (dTOTempSession != null)
             {
                 model.ICNo = model.ICNo.Trim();
@@ -1399,7 +1402,7 @@ namespace Web.Controllers
 
 
 
-                                if (dTOTempSession.RoleName == "User" || dTOTempSession.RoleName == "Coordinator" || dTOTempSession.RoleName == "DteAdmin")
+                                if (RoleNameList.Contains(dTOTempSession.RoleName))
                                 {
                                     HttpContext.Session.Remove("IMData");
                                     return RedirectToActionPermanent("Index", "Home");
