@@ -136,7 +136,47 @@ namespace DataAccessLayer
                     else
                     {
                         int TDMId = dTOBasicDetailTempObsRequest.TDMId;
-                        if (dTOBasicDetailTempObsRequest.Name == "MP 6A")
+                        if (dTOBasicDetailTempObsRequest.Name == "MPRSO")
+                        {
+                            var QueryFinal = "SELECT Temps.BasicDetailTempId,ranks1.RankAbbreviation RankName,Temps.FName,Temps.LName,Temps.ServiceNo,Temps.DOB,Temps.DateOfCommissioning,Temps.District,Temps.PO,Temps.PS,Temps.PinCode,Temps.State,Temps.Tehsil,Temps.Village,Temps.Observations,Temps.RemarksIds " +
+                                            " ,(select STRING_AGG(Remarks,'#') from MRemarks where RemarksId in (select value from string_split(Temps.RemarksIds,','))) Remarks2" +
+                                            " ,Temps.UpdatedOn,Temps.RegistrationId,Temps.TypeId,Temps.ApplyForId FROM BasicDetailTemps Temps" +
+                                            " inner join MRank ranks1 on ranks1.RankId = Temps.RankId" +
+                                            " inner join MArmedType at on at.ArmedId = Temps.ArmedId" +
+                                            " WHERE Temps.ApplyForId=1 AND at.Abbreviation in('ADC','AMC','MNS') AND Temps.IsActive=1 ORDER BY Temps.UpdatedOn DESC";
+
+                            var BasicDetailTempList = await connection.QueryAsync<DTOBasicDetailTempRequest>(QueryFinal, new { UserId });
+                            int sno = 1;
+                            var allrecord = (from e in BasicDetailTempList
+                                             select new DTOBasicDetailTempRequest()
+                                             {
+                                                 EncryptedId = protector.Protect(e.BasicDetailTempId.ToString()),
+                                                 Sno = sno++,
+                                                 FName = e.FName,
+                                                 LName = e.LName,
+                                                 ServiceNo = e.ServiceNo,
+                                                 DOB = e.DOB,
+                                                 DateOfCommissioning = e.DateOfCommissioning,
+                                                 District = e.District,
+                                                 PO = e.PO,
+                                                 PS = e.PS,
+                                                 PinCode = e.PinCode,
+                                                 State = e.State,
+                                                 Tehsil = e.Tehsil,
+                                                 Village = e.Village,
+                                                 Observations = e.Observations,
+                                                 Remarks2 = e.Remarks2,
+                                                 RankName = e.RankName,
+                                                 UpdatedOn = e.UpdatedOn,
+                                                 RegistrationId = e.RegistrationId,
+                                                 TypeId = e.TypeId,
+                                                 ApplyForId = e.ApplyForId
+
+
+                                             }).ToList();
+                            return await Task.FromResult(allrecord);
+                        }
+                        else if (dTOBasicDetailTempObsRequest.Name == "MP 6A")
                         {
                             var QueryFinal = "SELECT Temps.BasicDetailTempId,ranks1.RankAbbreviation RankName,Temps.FName,Temps.LName,Temps.ServiceNo,Temps.DOB,Temps.DateOfCommissioning,Temps.District,Temps.PO,Temps.PS,Temps.PinCode,Temps.State,Temps.Tehsil,Temps.Village,Temps.Observations,Temps.RemarksIds " +
                                             " ,(select STRING_AGG(Remarks,'#') from MRemarks where RemarksId in (select value from string_split(Temps.RemarksIds,','))) Remarks2" +

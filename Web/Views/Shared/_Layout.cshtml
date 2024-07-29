@@ -292,7 +292,7 @@
         var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
         var user = await userManager.FindByIdAsync(userId);
         var RoleList = await userManager.GetRolesAsync(user);
-
+        List<string> RoleNameList = new List<string>() { "User", "Coordinator", "DteAdmin", "AFSACUser", "RecordUser", "OROUser" };
         DtoSession? dtoSession = new DtoSession();
         if (!string.IsNullOrEmpty(@HttpContextAccessor.HttpContext.Session.GetString("Token")))
         {
@@ -423,7 +423,7 @@
         <div id="layoutSidenav_content">
             <main>
                 <div class="main-panel">
-                    @if (signInManager.IsSignedIn(User) && (RoleName == "User" || RoleName == "Coordinator" || RoleName == "DteAdmin")) // User.IsInRole("User")
+                    @if (RoleNameList.Contains(RoleName))
                     {
                         <nav class="nav nav-pills nav-justified" id="layouttask">
                             <a class="nav-link Dashboard" aria-current="page" href="/Home/Dashboard">DashBoard</a>

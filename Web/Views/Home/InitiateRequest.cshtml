@@ -1,6 +1,7 @@
 ﻿@{
     ViewData["Title"] = "Initiate Request DashBoard";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    List<string> RoleNameList = new List<string>() { "User", "Coordinator", "DteAdmin", "AFSACUser", "RecordUser", "OROUser" };
 }
 <header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
     <div class="containerMain">
@@ -19,7 +20,7 @@
     </div>
 </header>
 <div class="containerMain mt-n10">
-    @if (ViewBag.Role == "User" || ViewBag.Role == "Coordinator" || ViewBag.Role == "DteAdmin")
+    @if (RoleNameList.Contains(ViewBag.Role))
     {
         <div class="row">
             <div class="card p-4">
