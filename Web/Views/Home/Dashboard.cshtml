@@ -1,9 +1,10 @@
 ﻿@{
     ViewData["Title"] = "DashBoard";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    List<string> RoleNameList = new List<string>() { "User", "Coordinator", "DteAdmin", "AFSACUser", "RecordUser", "OROUser" };
 }
 <style>
-    .clickable{
+    .clickable {
         height: 154px;
         width: 154px;
         display: block;
@@ -31,7 +32,7 @@
     </div>
 </header>
 <div class="containerMain mt-n10">
-    @if (ViewBag.Role == "User" || ViewBag.Role == "Coordinator" || ViewBag.Role == "DteAdmin")
+    @if (RoleNameList.Contains(ViewBag.Role))
     {
         <div class="row">
             <div class="card p-4">
@@ -58,17 +59,20 @@
                             </div>
                         </a>
                     </div>
-                    <div class="col-md-2 col-sm-6">
-                        <a href="/BasicDetail/InaccurateData?Id=Mg==" class="clickable">
-                            <div class="counter pink">
-                                <div class="counter-icon">
-                                    <i class="fa fa-address-card"></i>
+                    @if (ViewBag.Role == "Coordinator" || ViewBag.Role == "RecordUser" || ViewBag.Role == "OROUser" || ViewBag.Role == "DteAdmin")
+                    {
+                        <div class="col-md-2 col-sm-6">
+                            <a href="/BasicDetail/InaccurateData?Id=Mg==" class="clickable">
+                                <div class="counter pink">
+                                    <div class="counter-icon">
+                                        <i class="fa fa-address-card"></i>
+                                    </div>
+                                    <span class="counter-value" id="TotObservationRaised">0</span>
+                                    <h3>Observation Raised List</h3>
                                 </div>
-                                <span class="counter-value" id="TotObservationRaised">0</span>
-                                <h3>Observation Raised List</h3>
-                            </div>
-                        </a>
-                    </div>
+                            </a>
+                        </div>
+                    }
                     <div class="col-md-2 col-sm-6">
                         <a href="/Home/DashboardUserMgt" class="clickable">
                             <div class="counter pink">
