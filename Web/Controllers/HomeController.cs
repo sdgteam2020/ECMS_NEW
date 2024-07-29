@@ -73,7 +73,9 @@ namespace Web.Controllers
         }
         public IActionResult Index()
         {
-            string role = this.User.FindFirstValue(ClaimTypes.Role);
+            string role = GetSessionValue();
+            ViewBag.Role = role;
+            
             return View();
         }
         [Authorize]
@@ -190,6 +192,23 @@ namespace Web.Controllers
             string role = GetSessionValue();
             ViewBag.Role = role;
             return View();
+        }
+      
+        public async Task<IActionResult> ICardProcessReport()
+        {
+            string role = GetSessionValue();
+            ViewBag.Role = role;
+            return View();
+        }
+        public async Task<IActionResult> GetICardProcessReport(DTOMHierarchyRequest Data)
+        {
+            try
+            {
+                var ret = await _reportReturnBL.GetReportForm11(Data);
+                return Json(ret);
+            }
+            catch (Exception ex) { return Json(KeyConstants.InternalServerError); }
+
         }
         public IActionResult MyTask(string Id)
         {

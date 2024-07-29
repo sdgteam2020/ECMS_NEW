@@ -1,0 +1,145 @@
+﻿@{
+    ViewData["Title"] = "DashBoard";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .clickable {
+        height: 190px;
+        width: 190px;
+        display: block;
+    }
+</style>
+<style>
+    .modal.left .modal-dialog, .modal.right .modal-dialog {
+        position: fixed;
+        margin: auto;
+        width: 700px;
+        height: 100%;
+        text-align: left;
+        -webkit-transform: translate3d(0%, 0, 0);
+        -ms-transform: translate3d(0%, 0, 0);
+        -o-transform: translate3d(0%, 0, 0);
+        transform: translate3d(0%, 0, 0);
+    }
+</style>
+<header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
+    <div class="containerMain">
+        <div class="page-header-content pt-4">
+            <div class="row align-items-center justify-content-between">
+                <div class="col-auto">
+                    <h1 class="page-header-title">
+                        <div class="page-header-icon"> <i class="fa fa-bars"></i></div>
+                        <a href="/Home/Index" class="mr-2">Home</a> > <a href="/Home/Reports" class="mr-2">Reports</a> I_Card Process Report
+
+
+                    </h1>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</header>
+<div class="containerMain mt-n10">
+    <div class="row">
+        <div class="card p-4">
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-row SearchTab">
+                        <div class="form-group col-md-3 unittype">
+                            <label class="col-form-label fw-bold">Comd / PSO<i class="fas fa-asterisk mand1"></i></label>
+                            <select class="form-select" style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddlCommand" required id="ddlCommand">
+                                <option value="">All </option>
+                            </select>
+
+                        </div>
+                        <div class="form-group col-md-3 unittype">
+                            <label class="col-form-label  fw-bold">Corps / Dte / Area<i class="fas fa-asterisk mand1"></i></label>
+
+                            <select class="form-select" style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddlCorps" required id="ddlCorps">
+                                <option value="">All </option>
+                            </select>
+
+                        </div>
+                        <div class="form-group col-md-3 unittype">
+                            <label class="col-form-label fw-bold">Div/Sub Area<i class="fas fa-asterisk mand1"></i></label>
+
+                            <select class="form-select" style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddlDiv" required id="ddlDiv">
+                                <option value="">All </option>
+                            </select>
+
+                        </div>
+                        <div class="form-group col-md-3 unittype">
+                            <label class="col-form-label fw-bold">Bde<i class="fas fa-asterisk mand1"></i></label>
+
+                            <select class="form-select" style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddlBde" required id="ddlBde">
+                                <option value="">All </option>
+                            </select>
+
+                        </div>
+                        <div class="form-group col-md-3 FmnBranch  d-none">
+                            <label class="col-form-label fw-bold">Type of Fmn /Branch<i class="fas fa-asterisk mand1"></i></label>
+
+                            <select class="form-select" style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddlFmnBranch" required id="ddlFmnBranch">
+                                <option value="1">All </option>
+                            </select>
+
+                        </div>
+                        <div class="form-group col-md-3 DteBranch d-none">
+                            <label class="col-form-label fw-bold">PSO /Dte <i class="fas fa-asterisk mand1"></i></label>
+
+                            <select class="form-select" style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddlPSODte" required id="ddlPSODte">
+                                <option value="1">All </option>
+                            </select>
+
+                        </div>
+                        <div class="form-group col-md-3 DteBranch d-none">
+                            <label class="col-form-label fw-bold">DG / Sub Dte <i class="fas fa-asterisk mand1"></i></label>
+
+                            <select class="form-select" style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddlDgSubDte" required id="ddlDgSubDte">
+                                <option value="1">All</option>
+                            </select>
+
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label class="col-form-label fw-bold">Unit <i class="fas fa-asterisk mand1"></i></label>
+
+                            <select class="form-select" style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddlUnit" required id="ddlUnit">
+                                <option value="">All</option>
+                            </select>
+
+                        </div>
+                        <div class="form-group col-md-3">
+
+                            <input type="button" value="Search" id="btnSearch" class="btn btn-primary mt-5" />
+
+                        </div>
+                    </div>
+            </div>
+        </div>
+            <div class="row">
+                <table class="table border border-purple table-striped no-footer dataTable table-hover" style="width: 100%;" role="grid" id="tbldata">
+                    <thead>
+                        <tr>
+
+                            <th class="wd-40-f">S No</th>
+                            <th class="nowrap">Army No</th>
+                            <th class="nowrap">Rank,Name</th>
+                          
+                            <th class="nowrap">Appl Id</th>
+                            <th class="nowrap">Action</th>
+                           
+
+                        </tr>
+                    </thead>
+                    <tbody id="DetailBody">
+                    </tbody>
+                </table>
+
+            </div>
+      </div>
+</div>
+
+</div>
+<script src="~/developerjs/icardprocessreport.js"></script>
+<script asp-src-include="~/developerjs/ICardPrint.js"></script>

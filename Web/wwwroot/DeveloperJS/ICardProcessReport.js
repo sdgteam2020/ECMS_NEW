@@ -1,27 +1,11 @@
 ﻿var lst = '<option value="">All</option>';
-var comid = 0; var corId = 0; var divId = 0; var bdeId = 0; var FmnBranchId = 0; var PsoId = 0; var SubDteId = 0;
+
 $(document).ready(function () {
 
-    $("#btnprintreport").click(function () {
-        //    window.scrollTo(0, 0);
-        //var datef2 = new Date();
-        //    $(".watermark").html($("#IpaddresGloble").html() + ' ' + DateFormateddMMyyyyhhmmss(datef2))
-        //    /*$(".section-to-print-popup").focus();*/
-
-        //    setTimeout(function () {
-        //        window.print();
-        //    }, 300); // 300 milliseconds delay
-
-        PrintData("section_to_report_toPrint");
-    });
-
-
-    mMsater(0, "ddlCommand", 1, "");
-    var val = 1;
-    GetLoginUnitMappingDetails();
+    mMsater(false,0, "ddlCommand", 1, "");
     $('#ddlCommand').on('change', function () {
-        comid=$(this).val();
-        mMsater(false,0, "ddlCorps", 2, $('#ddlCommand').val());
+    
+        mMsater(false, 0, "ddlCorps", 2, $('#ddlCommand').val());
         $("#ddlDiv").html(lst);
         $("#ddlBde").html(lst);
         $("#ddlFmnBranch").html(lst);
@@ -30,16 +14,16 @@ $(document).ready(function () {
         $("#ddlUnit").html(lst);
     });
     $('#ddlCorps').on('change', function () {
-        corId = $(this).val();
+      
         mMsaterByParent(false,0, "ddlDiv", 3, $('#ddlCommand').val(), $('#ddlCorps').val(), 0, 0);///ComdId,CorpsId,DivId,BdeId
-            $("#ddlBde").html(lst);
-            $("#ddlFmnBranch").html(lst);
-            $("#ddlPSODte").html(lst);
-            $("#ddlDgSubDte").html(lst);
-            $("#ddlUnit").html(lst); 
+        $("#ddlBde").html(lst);
+        $("#ddlFmnBranch").html(lst);
+        $("#ddlPSODte").html(lst);
+        $("#ddlDgSubDte").html(lst);
+        $("#ddlUnit").html(lst);
     });
     $('#ddlDiv').on('change', function () {
-        divId = $(this).val();
+       
         mMsaterByParent(false,0, "ddlBde", 4, $('#ddlCommand').val(), $('#ddlCorps').val(), $('#ddlDiv').val(), 0);///ComdId,CorpsId,DivId,BdeId     
         $("#ddlFmnBranch").html(lst);
         $("#ddlPSODte").html(lst);
@@ -47,444 +31,17 @@ $(document).ready(function () {
         $("#ddlUnit").html(lst);
     });
     $('#ddlBde').on('change', function () {
-        bdeId = $(this).val();
+       
         mMsater(false, 0, "ddlFmnBranch", FmnBranches, "");
         GetUnitByHierarchy(false, "ddlUnit", 0, $('#ddlCommand').val(), $('#ddlCorps').val(), $('#ddlDiv').val(), $('#ddlBde').val(), 1, 1, 1);
 
     });
-    $('#ddlPSODte').on('change', function () {
-        SubDteId = $(this).val();
-        
-    });
-    $('#ddlDgSubDte').on('change', function () {
-        SubDteId = $(this).val();
-       
+    $('#btnSearch').on('click', function () {
+        GetReportReturnHistory();
     });
    
-    $('input[name="UnitTyperdi"]').click(function () {
-
-        val = $("input[type='radio'][name=UnitTyperdi]:checked").val();
-      
-    
-   
-    if (val == "1") {
-        $(".unittype").removeClass("d-none");
-        $(".FmnBranch").addClass("d-none");
-        $(".DteBranch").addClass("d-none");
-
-        $('#ddlCommand option').remove();
-        $('#ddlCorps option').remove();
-        $('#ddlBde option').remove();
-        $('#ddlDiv option').remove();
-
-        mMsater(0, "ddlCommand", 1, "");
-
-        $("#ddlFmnBranch").html(lst);
-        $("#ddlPSODte").html(lst);
-        $("#ddlDgSubDte").html(lst);
-        $('#ddlBde').on('change', function () {
-            $("#ddlUnit").html(lst);
-            GetUnitByHierarchy("ddlUnit", 0, $("#ddlCommand").val(), $("#ddlCorps").val(), $("#ddlDiv").val(), $("#ddlBde").val(), 1, 1, 1);
-
-        });
-    }
-    else if (val == "2") {
-
-        $('#ddlCommand option').remove();
-        $('#ddlCorps option').remove();
-        $('#ddlBde option').remove();
-        $('#ddlDiv option').remove();
-        $('#ddlFmnBranch option').remove();
-        $("#ddlUnit").html(lst);
-        mMsater(0, "ddlCommand", 1, "");
-        mMsater(0, "ddlFmnBranch", FmnBranches, "");
-
-        $("#ddlPSODte").html(lst);
-        $("#ddlDgSubDte").html(lst);
-        $('#ddlFmnBranch').on('change', function () {
-            $("#ddlUnit").html(lst);
-            GetUnitByHierarchy("ddlUnit", 0, $("#ddlCommand").val(), $("#ddlCorps").val(), 1, 1, $("#ddlFmnBranch").val(), 1, 1);
-
-        });
-        $(".unittype").removeClass("d-none");
-        $(".FmnBranch").removeClass("d-none");
-        $(".DteBranch").addClass("d-none");
-    }
-    else if (val == "3") {
-        $(".unittype").addClass("d-none");
-        $(".FmnBranch").addClass("d-none");
-        $(".DteBranch").removeClass("d-none");
-
-        $('#ddlPSODte option').remove();
-        $('#ddlDgSubDte option').remove();
-
-        $("#ddlCommand").html(lst);
-        $("#ddlCorps").html(lst);
-        $("#ddlBde").html(lst);
-        $("#ddlDiv").html(lst);
-        $("#ddlFmnBranch").html(lst);
-        $("#ddlUnit").html(lst);
-        mMsater(0, "ddlPSODte", PSO, "");
-        mMsater(0, "ddlDgSubDte", SubDte, "");
-        $('#ddlDgSubDte').on('change', function () {
-            $("#ddlUnit").html(lst);
-            GetUnitByHierarchy("ddlUnit", 0, 1, 1, 1, 1, 1, $("#ddlPSODte").val(), $("#ddlDgSubDte").val());
-
-        });
-    }
-    });
-
-
-    $("#btnSearch").click(function () {
-        if ($("#spnroleId").html() != "DteAdmin")
-            $(".SearchTab").addClass("d-none");
-
-        $("#btnprintreport").removeClass("d-none");
-
-
-        GetCount();
-    });
 });
-function GetCount() {
-    var Itemlist = "";
-    var ItemlistR = "";
-    var ItemlistA = "";
-    var userdata =
-    {
-        "ComdId": $('#ddlCommand').val(),
-        "CorpsId": $('#ddlCorps').val(),
-        "DivId": $('#ddlDiv').val(),
-        "BdeId": $('#ddlBde').val(),
-        "FmnBranchID": $('#ddlFmnBranch').val(),
-        "PsoId": $('#ddlPSODte').val(),
-        "SubDteId": $('#ddlDgSubDte').val(),
-        "UnitMapId": $('#ddlUnit').val(),
-
-    };
-    $.ajax({
-        url: '/Home/GetReportReturnCount',
-        contentType: 'application/x-www-form-urlencoded',
-        data: userdata,
-        type: 'POST',
-
-        success: function (response) {
-            if (response != "null" && response != null) {
-
-                if (response == InternalServerError) {
-                    Swal.fire({
-                        text: errormsg
-                    });
-                }
-                else  {
-                    var dTOReportReturnCountOffs = response.dTOReportReturnCountOffs;
-                    var GroupId = 0;
-                    var totalaproved = 0;
-                  
-                    Itemlist += '<div class="seven">';
-                    Itemlist += '<h1>Offrs</h1>';
-                    Itemlist += '</div>';
-                    for (var i = 0; i < dTOReportReturnCountOffs.length; i++) {
-
-                        if (dTOReportReturnCountOffs[i].TypeId != GroupId) {
-
-                            if (dTOReportReturnCountOffs[i].TypeId == 2) {
-
-                                Itemlist += '<div class="c-dashboardInfo col-lg-1 col-sm-6"><a href="#"><span class="d-none IsApproveId">1</span><span class="d-none applyTypeId">1</span><span class="d-none spnStepId" >' + dTOReportReturnCountOffs[i].StepId +'</span>';
-                                Itemlist += '<div class="wrap">';
-                                Itemlist += '<h4 class="heading heading5 hind-font medium-font-weight c-dashboardInfo__title">';
-                                Itemlist += 'Appls Approved & Fwd to Next Level (1st Level to 2nd Level)';
-                                Itemlist += '</h4>';
-                                Total1apro = dTOReportReturnCountOffs[i + 1].Total;
-                                Total1apro = Total1apro + dTOReportReturnCountOffs[i].Total;
-                                Itemlist += ' <span class="hind-font caption-12 c-dashboardInfo__count">' + Total1apro + '</span>';
-                                Itemlist += ' <span class="hind-font caption-12 c-dashboardInfo__subInfo"></span>';
-                                Itemlist += '</div>';
-                                Itemlist += '</a></div>';
-                            }
-                            if (dTOReportReturnCountOffs[i].TypeId == 3) {
-                                Itemlist += '<div class="c-dashboardInfo col-lg-1 col-sm-6"><a href="#"><span class="d-none IsApproveId">1</span><span class="d-none applyTypeId">1</span><span class="d-none spnStepId" >' + dTOReportReturnCountOffs[i].StepId + '</span>';
-                                Itemlist += '<div class="wrap">';
-                                Itemlist += '<h4 class="heading heading5 hind-font medium-font-weight c-dashboardInfo__title">';
-                                Itemlist += 'Appls Approved & Fwd to Next Level (2nd Level to 3rd Level)';
-                                Itemlist += '</h4>';
-
-                                Total1apro = dTOReportReturnCountOffs[i + 1].Total;
-                                Total1apro = Total1apro + dTOReportReturnCountOffs[i].Total;
-                                Itemlist += ' <span class="hind-font caption-12 c-dashboardInfo__count">' + Total1apro + '</span>';
-                                Itemlist += ' <span class="hind-font caption-12 c-dashboardInfo__subInfo"></span>';
-                                Itemlist += '</div>';
-                                Itemlist += '</a></div>';
-                            }
-                            if (dTOReportReturnCountOffs[i].TypeId == 4) {
-                               
-                                var RecordOff = response.RecordOff;
-                                var RecordoffCount = response.RecordoffCount;
-                          
-                                for (var j = 0; j < RecordOff.length; j++) {
-                                    Itemlist += '<div class="c-dashboardInfo col-lg-1 col-sm-6">';
-                                    Itemlist += '<a href="#"><span class="d-none applyTypeId">1</span><span class="d-none spnStepId" >99</span><span class="d-none spnRecordOfficeId" >' + RecordOff[j].RecordOfficeId + '</span>';
-                                    Itemlist += '<div class="wrap">';
-                                    Itemlist += '<h4 class="heading heading5 hind-font medium-font-weight c-dashboardInfo__title">';
-                                    Itemlist += 'Approved / Reject / Pending';
-                                    Itemlist += '</h4>';
-                                    Itemlist += '<h4 class="heading heading5 hind-font medium-font-weight c-dashboardInfo__title">';
-                                    Itemlist += '' + RecordOff[j].Name + '';
-                                    Itemlist += '</h4>';
-                                    var counttot = 0;
-                                    var Approved = 0;
-                                    var Rejected = 0;
-                                    var Pending = 0;
-                                    for (var x = 0; x < RecordoffCount.length; x++) {
-
-                                        if (RecordOff[j].RecordOfficeId == RecordoffCount[x].RecordOfficeId) {
-
-                                            //Itemlist += '<span class="hind-font caption-12 c-dashboardInfo__count">';
-                                            if (RecordoffCount[x].Name == "Approved")
-                                                Approved = RecordoffCount[x].Total;
-                                            else if (RecordoffCount[x].Name == "Rejected")
-                                                Rejected = RecordoffCount[x].Total;
-                                            else if (RecordoffCount[x].Name == "Pending")
-                                                Pending = RecordoffCount[x].Total;
-
-                                            //Itemlist += '</span>';
-                                            counttot = 1;
-                                        }
-                                    }
-                                    if (counttot == 0) {
-
-                                    }
-                                    Itemlist += ' <span class="hind-font caption-12 c-dashboardInfo__count">';
-                                    Itemlist += '' + Approved + '/' + Rejected + '/' + Pending + '';
-                                    Itemlist += '</span>';
-
-                                    Itemlist += ' <span class="hind-font caption-12 c-dashboardInfo__subInfo"></span>';
-                                    Itemlist += '</div>';
-                                    Itemlist += '</div>';
-
-                                }
-
-                                Itemlist += '<div class="c-dashboardInfo col-lg-1 col-sm-6"><a href="#"><span class="d-none IsApproveId">1</span><span class="d-none applyTypeId">1</span><span class="d-none spnStepId" >' + dTOReportReturnCountOffs[i].StepId + '</span>';
-
-                                Itemlist += '<div class="wrap">';
-                                Itemlist += '<h4 class="heading heading5 hind-font medium-font-weight c-dashboardInfo__title">';
-                                Itemlist += 'Appls Approved & Fwd to Next Level (3nd Level to 4th Level)';
-                                Itemlist += '</h4>';
-                               
-                                Total1apro = dTOReportReturnCountOffs[i + 1].Total;
-                                Total1apro = Total1apro + dTOReportReturnCountOffs[i].Total;
-                                Itemlist += ' <span class="hind-font caption-12 c-dashboardInfo__count">' + Total1apro + '</span>';
-                                Itemlist += ' <span class="hind-font caption-12 c-dashboardInfo__subInfo"></span>';
-                                Itemlist += '</div>';
-                                Itemlist += '</a></div>';
-                            }
-                            Itemlist += '</div>';
-                            Itemlist += '<hr>';
-                            Itemlist += '<div class="row align-items-stretch">';
-
-                            
-                        }
-
-                        if (dTOReportReturnCountOffs[i].IsApprove == 0) {
-                            Itemlist += '<div class="c-dashboardInfo col-lg-1 col-sm-6"><a href="#"><span class="d-none IsApproveId">0</span><span class="d-none applyTypeId">1</span><span class="d-none spnStepId" >' + dTOReportReturnCountOffs[i].StepId + '</span>';
-                            Itemlist += '<div class="wrap">';
-                            Itemlist += '<h4 class="heading heading5 hind-font medium-font-weight c-dashboardInfo__title">';
-                            Itemlist += '' + dTOReportReturnCountOffs[i].Name + '';
-                            Itemlist += '</h4>';
-
-                            Itemlist += ' <span class="hind-font caption-12 c-dashboardInfo__count">' + dTOReportReturnCountOffs[i].Total + '</span>';
-
-                            Itemlist += ' <span class="hind-font caption-12 c-dashboardInfo__subInfo"></span>';
-                            Itemlist += '</div>';
-                            Itemlist += '</a></div>';
-                        }
-                        
-                        GroupId = dTOReportReturnCountOffs[i].TypeId;
-                    }
-                   
-                    Itemlist += '<div class="seven">';
-                    Itemlist += '<h1>JCOs/OR</h1>';
-                    Itemlist += '</div>';
-                    dTOReportReturnCountJco = response.dTOReportReturnCountJco;
-                   
-                    for (var i = 0; i < dTOReportReturnCountJco.length; i++) {
-                        var Total1apro = 0
-                        if (dTOReportReturnCountJco[i].TypeId != GroupId) {
-
-                            if (dTOReportReturnCountJco[i].TypeId == 2) {
-                                Itemlist += '<div class="c-dashboardInfo col-lg-1 col-sm-6"><a href="#"><span class="d-none IsApproveId">1</span><span class="d-none applyTypeId">2</span><span class="d-none spnStepId" >' + dTOReportReturnCountJco[i].StepId + '</span>';
-                                Itemlist += '<div class="wrap">';
-                                Itemlist += '<h4 class="heading heading5 hind-font medium-font-weight c-dashboardInfo__title">';
-                                Itemlist += 'Appls Approved & Fwd to Next Level (1st Level to 2nd Level)';
-                                Itemlist += '</h4>';
-                                Total1apro = dTOReportReturnCountJco[i+1].Total;
-                                Total1apro = Total1apro + dTOReportReturnCountJco[i].Total;
-                                Itemlist += ' <span class="hind-font caption-12 c-dashboardInfo__count">' + Total1apro + '</span>';
-                                Itemlist += ' <span class="hind-font caption-12 c-dashboardInfo__subInfo"></span>';
-                                Itemlist += '</div>';
-                                Itemlist += '</a></div>';
-                            }
-                           else if (dTOReportReturnCountJco[i].TypeId == 3 ) {
-
-                                Itemlist += '<div class="c-dashboardInfo col-lg-1 col-sm-6"><a href="#"><span class="d-none IsApproveId">1</span><span class="d-none applyTypeId">2</span><span class="d-none spnStepId" >' + dTOReportReturnCountJco[i].StepId + '</span>';
-                                Itemlist += '<div class="wrap">';
-                                Itemlist += '<h4 class="heading heading5 hind-font medium-font-weight c-dashboardInfo__title">';
-                                Itemlist += 'Appls Approved & Fwd to Next Level (2nd Level to 3rd Level)';
-                                Itemlist += '</h4>';
-                                Total1apro = dTOReportReturnCountJco[i + 1].Total;
-                                Total1apro = Total1apro + dTOReportReturnCountJco[i].Total;
-                                Itemlist += ' <span class="hind-font caption-12 c-dashboardInfo__count">' + Total1apro + '</span>';
-                                Itemlist += ' <span class="hind-font caption-12 c-dashboardInfo__subInfo"></span>';
-                                Itemlist += '</div>';
-                                Itemlist += '</a></div>';
-                            }
-                            if (dTOReportReturnCountJco[i].TypeId == 4 ) {
-
-                                Itemlist += '<div class="c-dashboardInfo col-lg-1 col-sm-6"><a href="#"><span class="d-none IsApproveId">1</span><span class="d-none applyTypeId">2</span><span class="d-none spnStepId" >' + dTOReportReturnCountJco[i].StepId + '</span>';
-                                Itemlist += '<div class="wrap">';
-                                Itemlist += '<h4 class="heading heading5 hind-font medium-font-weight c-dashboardInfo__title">';
-                                Itemlist += 'Appls Approved & Fwd to Next Level (3nd Level to 4th Level)';
-                                Itemlist += '</h4>';
-                               
-                                Total1apro = dTOReportReturnCountJco[i + 1].Total;
-                                Total1apro = Total1apro + dTOReportReturnCountJco[i].Total;
-                                Itemlist += ' <span class="hind-font caption-12 c-dashboardInfo__count">' + Total1apro + '</span>';
-                                Itemlist += ' <span class="hind-font caption-12 c-dashboardInfo__subInfo"></span>';
-                                Itemlist += '</div>';
-                                Itemlist += '</a></div>';
-                            }
-                            Itemlist += '</div>';
-                            Itemlist += '<hr>';
-                            Itemlist += '<div class="row align-items-stretch">';
-
-
-                        }
-                        if (dTOReportReturnCountJco[i].IsApprove == 0) {
-                            Itemlist += '<div class="c-dashboardInfo col-lg-1 col-sm-6"><a href="#"><span class="d-none IsApproveId">0</span><span class="d-none applyTypeId">2</span><span class="d-none spnStepId" >' + dTOReportReturnCountJco[i].StepId + '</span>';
-                            Itemlist += '<div class="wrap">';
-                            Itemlist += '<h4 class="heading heading5 hind-font medium-font-weight c-dashboardInfo__title">';
-                            Itemlist += '' + dTOReportReturnCountJco[i].Name + '';
-                            Itemlist += '</h4>';
-
-                            Itemlist += ' <span class="hind-font caption-12 c-dashboardInfo__count">' + dTOReportReturnCountJco[i].Total + '</span>';
-
-                            Itemlist += ' <span class="hind-font caption-12 c-dashboardInfo__subInfo"></span>';
-                            Itemlist += '</div>';
-                            Itemlist += '</a></div>';
-                        }
-                        GroupId = dTOReportReturnCountJco[i].TypeId;
-                    }
-
-                    Itemlist += '</div>';
-
-
-                    ///////////////////////////Add////////////////////////
-                   
-                    ItemlistR += '<div class="seven">';
-                    ItemlistR += '<h1>Record Office Pending</h1>';
-                    ItemlistR += '</div>';
-                    ItemlistR += '<div class="row align-items-stretch">';
-                    var RecordJcoPending = response.RecordJcoPending;
-                    var RecordJco = response.RecordJco;
-                    var countpending = 0;
-                    for (var j = 0; j < RecordJco.length; j++) {
-                        countpending = 0;
-                        ItemlistR += '<div class="c-dashboardInfo col-lg-1 col-sm-6"><a href="#"><span class="d-none applyTypeId">2</span>';
-                        ItemlistR += '<div class="wrap">';
-                        ItemlistR += '<h4 class="heading heading5 hind-font medium-font-weight c-dashboardInfo__title">';
-                        ItemlistR += '' + RecordJco[j].Name + '';
-                        ItemlistR += '</h4>';
-                        for (var Z = 0; Z < RecordJcoPending.length; Z++) {
-                            if (RecordJcoPending[Z].RecordOfficeId == RecordJco[j].RecordOfficeId) {
-                                ItemlistR += ' <span class="d-none spnStepId" >' + RecordJcoPending[Z].StepId + '</span><span class="hind-font caption-12 c-dashboardInfo__count">' + RecordJcoPending[Z].Total + '</span>';
-                                countpending=1
-                            }
-                        }
-                        if (countpending == 0) {
-                            ItemlistR += ' <span class="d-none spnStepId" >0</span><span class="hind-font caption-12 c-dashboardInfo__count">0</span>';
-
-                        }
-                        ItemlistR += ' <span class="hind-font caption-12 c-dashboardInfo__subInfo"></span>';
-                        ItemlistR += '</div>';
-                        ItemlistR += '</a></div>';
-
-                    }
-                    ItemlistR += '</div>';
-                  
-                    
-
-                    //ItemlistA += '<div class="seven">';
-                    //ItemlistA += '<h1>Record Office Reject</h1>';
-                    //ItemlistA += '</div>';
-                    //ItemlistA += '<div class="row align-items-stretch">';
-                    //var RecordJcoCountApproved = response.RecordJcoCountApproved;
-                    //for (var j = 0; j < RecordJcoCountApproved.length; j++) {
-                    //    ItemlistA += '<div class="c-dashboardInfo col-lg-1 col-sm-6">';
-                    //    ItemlistA += '<div class="wrap">';
-                    //    ItemlistA += '<h4 class="heading heading5 hind-font medium-font-weight c-dashboardInfo__title">';
-                    //    ItemlistA += '' + RecordJcoCountApproved[j].Name + '';
-                    //    ItemlistA += '</h4>';
-                    //    ItemlistA += ' <span class="hind-font caption-12 c-dashboardInfo__count">' + RecordJcoCountApproved[j].Total + '</span>';
-                    //    ItemlistA += ' <span class="hind-font caption-12 c-dashboardInfo__subInfo"></span>';
-                    //    ItemlistA += '</div>';
-                    //    ItemlistA += '</div>';
-                       
-
-                    //}
-                    ItemlistA += '</div>';
-                   
-
-                    $("#countlistreport").html(Itemlist);
-                    $("#RecordOfficeCountPendding").html(ItemlistR);
-                    $("#RecordOfficeCountApprove").html(ItemlistA);
-
-                    $("body").on("click", ".c-dashboardInfo", function () {
-                        
-                       // alert($(this).closest("div").find(".spnStepId").html())
-                        if ($(this).closest("div").find(".IsApproveId").html() == "0" && $(this).closest("div").find(".spnStepId").html() == "3" && $(this).closest("div").find(".applyTypeId").html()=="2") {
-
-                            $("#RecordOfficeCountPendding").removeClass("d-none");
-                            $(".RecordCount").addClass("d-none");
-                        }
-                        //else if ($(this).closest("div").find(".spnStepId").html() == "8" && $(this).closest("div").find(".applyTypeId").html() == "2") {
-
-                        //    $("#RecordOfficeCountApprove").removeClass("d-none");
-                        //    $(".RecordCount").addClass("d-none");
-                        //}
-                        //else
-                       else if ($(this).closest("div").find(".spnStepId").html() == "99") {
-                          //  alert($(this).closest("div").find(".spnRecordOfficeId").html())
-                            $("#lblRepotReturnHistory").html($(this).closest("div").find(".c-dashboardInfo__title").html().replace("<br>", ""));
-
-                            $("#RepotReturnHistory").modal("show");
-                            GetReportReturnHistory($(this).closest("div").find(".spnStepId").html(), $(this).closest("div").find(".spnRecordOfficeId").html(), $(this).closest("div").find(".IsApproveId").html());
-
-                        }
-                        else {
-                          //  alert($(this).closest("div").find(".spnStepId").html()+'-' + $(this).closest("div").find(".IsApproveId").html());
-
-                          
-                            $("#lblRepotReturnHistory").html($(this).closest("div").find(".c-dashboardInfo__title").html().replace("<br>", ""));
-                            $("#RepotReturnHistory").modal("show");
-                            
-                            GetReportReturnHistory($(this).closest("div").find(".spnStepId").html(), $(this).closest("div").find(".applyTypeId").html(), $(this).closest("div").find(".IsApproveId").html());
-                        }
-                    });
-                }
-
-               
-            }
-            else {
-
-            }
-        },
-        error: function (result) {
-            Swal.fire({
-                text: errormsg002
-            });
-        }
-    });
-}
-function GetReportReturnHistory(spnStepId, applyTypeId, IsApproveId) {
+function GetReportReturnHistory() {
     var listItem = "";
     var userdata =
     {
@@ -496,13 +53,11 @@ function GetReportReturnHistory(spnStepId, applyTypeId, IsApproveId) {
         "FmnBranchID": $('#ddlFmnBranch').val(),
         "PsoId": $('#ddlPSODte').val(),
         "SubDteId": $('#ddlDgSubDte').val(),
-        "UnitMapId": $('#ddlUnit').val(),
-        "ApplyForId": applyTypeId,
-        "StepId": spnStepId,
-        "IsApproveId": IsApproveId
+        "UnitMapId": $('#ddlUnit').val()
+      
     };
     $.ajax({
-        url: '/Home/GetRecordHistory',
+        url: '/Home/GetICardProcessReport',
         contentType: 'application/x-www-form-urlencoded',
         data: userdata,
         type: 'POST',
@@ -517,62 +72,34 @@ function GetReportReturnHistory(spnStepId, applyTypeId, IsApproveId) {
                 }
                 else if (response == 0) {
                     listItem += "<tr><td class='text-center' colspan=8>No Record Found</td></tr>";
-                   
+
                     $("#DetailBody").html(listItem);
                     $("#lblTotal").html(0);
                 }
 
                 else {
 
-                    
+
                     //RequestId	StepId	Name	ServiceNo	DOB	RankName	TrackingId	
                     //ArmyNoTo	NameTo	RankTo	ArmyNoFrom	NameFrom	RankFrom
-                    
+
                     $('#tbldata').DataTable().destroy();
                     for (var i = 0; i < response.length; i++) {
 
                         listItem += "<tr>";
-                        
+
                         listItem += "<td class='align-middle'>" + (i + 1) + "</td>";
                         listItem += "<td class='align-middle nowrap'><span id='comdName'>" + response[i].ServiceNo + "</span></td>";
                         listItem += "<td class='align-middle nowrap'><span id='corpsName'>" + response[i].RankName + " " + response[i].Name + "</span></td>";
-                        if (response[i].RankFrom == null)
-                            listItem += "<td class='align-middle nowrap'><span id='divName'>-</td>";
-                        else
-                        listItem += "<td class='align-middle nowrap'><span id='divName'>" + response[i].RankFrom + " " + response[i].NameFrom + " (" + response[i].ArmyNoFrom + ") (" + response[i].DomainIdFrom + ")</span></td>";
-                        if (response[i].RankTo == null)
-                            listItem += "<td class='align-middle nowrap'><span id='divName'>-</td>";
-                        else
-                        listItem += "<td class='align-middle nowrap'><span id='divName'>" + response[i].RankTo + " " + response[i].NameTo + " (" + response[i].ArmyNoTo + ") (" + response[i].DomainIdTo + ")</span></td>";
-
+                       
                         listItem += "<td class='align-middle nowrap'><span id='comdName'>" + response[i].TrackingId + "</span></td>";
-                        listItem += "<td class='align-middle nowrap'><span id='comdName'>" + DateFormateddMMyyyyhhmmss(response[i].UpdatedOn) + "</span></td>";
-                        //if (spnStepId == "99")
-                        //{
-                        $("#spn99Status").removeClass("d-none");
-                        if (response[i].StatusName == null)
-                            listItem += "<td class='align-middle nowrap'><span id='comdName'><span class='badge badge-primary' >Action Pending</span></span></td>";
-
-                       else if (response[i].StatusName =="Pending")
-                            listItem += "<td class='align-middle nowrap'><span id='comdName'><span class='badge badge-warning' >" + response[i].StatusName + "</span></span></td>";
-                        else if (response[i].StatusName == "Rejected")
-                            listItem += "<td class='align-middle nowrap'><span id='comdName'><span class='badge badge-danger' >" + response[i].StatusName + "</span></span></td>";
-                        else 
-                            listItem += "<td class='align-middle nowrap'><span id='comdName'><span class='badge badge-success' >" + response[i].StatusName + "</span></span></td>";
-                            //}
-                        //else {
-                        //    listItem += "<td class='d-none'></td>";
-                        //    $("#spn99Status").addClass("d-none");
-                        //}
-                       // listItem += "<td class='align-middle'><span id='btnedit'><button type='button' class='cls-btnedit btn btn-icon btn-round btn-primary mr-1'><i class='fas fa-edit'></i></button></span><button type='button' class='cls-btnDelete btn-icon btn-round btn-danger mr-1'><i class='fas fa-trash-alt'></i></button></td>";
-
-
-                        /*    listItem += "<td class='nowrap'><button type='button' class='cls-btnSend btn btn-outline-success mr-1'>Send To Verification</button></td>";*/
+                        listItem += "<td class='noExport'><span class='spnRequestId d-none'>" + response[i].RequestId +"</span><button class='btn btn-icon btn-round btn-primary mr-1 cls-historyRequest'><i class='fa fa-history' aria-hidden='true'></i></button>";
+                        listItem += "<button class='btn btn-icon btn-round btn-primary mr-1 cls-print'><i class='fa fa-print mt-2' aria-hidden='true'></i></button></td>";
                         listItem += "</tr>";
                     }
 
                     $("#DetailBody").html(listItem);
-                   
+
 
                     memberTable = $('#tbldata').DataTable({
                         retrieve: true,
@@ -676,7 +203,7 @@ function GetReportReturnHistory(spnStepId, applyTypeId, IsApproveId) {
                                 }
                             }]
                     });
-                    memberTable.buttons().container().appendTo('#tbldata_wrapper .col-sm-6:eq(0)');
+                    memberTable.buttons().container().appendTo('#tbldata_wrapper .col-md-6:eq(0)');
                     $("#tbldata #chkAll").click(function () {
                         if ($(this).is(':checked')) {
                             rows = memberTable.rows({ 'search': 'applied' }).nodes();
@@ -688,18 +215,29 @@ function GetReportReturnHistory(spnStepId, applyTypeId, IsApproveId) {
                         }
                     });
 
-                   
 
+                    $("body").on("click", ".cls-historyRequest", function () {
+
+                        
+                         $("#exampleModal").modal('show');
+                          GetRequestHistory($(this).closest("tr").find(".spnRequestId").html());
+                    });
+                    $("body").on("click", ".cls-print", function () {
+
+                        
+                        
+                        GetICardPrintPreviewByRequestId($(this).closest("tr").find(".spnRequestId").html());
+                    });
 
                 }
             }
             else {
                 listItem += "<tr><td class='text-center' colspan=8>No Record Found</td></tr>";
-               
+
                 $("#DetailBody").html(listItem);
                 $("#lblTotal").html(0);
             }
-            
+
         },
         error: function (result) {
             Swal.fire({
@@ -708,149 +246,8 @@ function GetReportReturnHistory(spnStepId, applyTypeId, IsApproveId) {
         }
     });
 }
-function GetLoginUnitMappingDetails() {
-   
-    var listItem = "";
-    var userdata =
-    {
-        "UnitMapId": 0
-       
-    };
-    $.ajax({
-        url: '/Master/GetALLByUnitMapWonUnit',
-        contentType: 'application/x-www-form-urlencoded',
-        data: userdata,
-        type: 'POST',
 
-        success: function (response) {
-            
-            if (response != "null" && response != null) {
-              
-                if (response == InternalServerError) {
-                    Swal.fire({
-                        text: errormsg
-                    });
-                }
-                else if (response == 0) {
-                  
-                }
-
-                else {
-
-               
-                    val = response.UnitType;
-                    var lst = '<option value="1">Please Select</option>';
-
-                    comid = response.ComdId;
-                    corId = response.CorpsId;
-                    divId = response.DivId;
-                    bdeId = response.BdeId;
-                    FmnBranchId = response.FmnBranchID;
-                    PsoId = response.PsoId;
-                    SubDteId = response.SubDteId;
-                   
-
-                    
-
-                    if (parseInt(response.UnitType) == 1 && $("#spnroleId").html() != "DteAdmin") {
-                            $("#UnitType1").prop("checked", true);
-
-                        mMsater(true, response.ComdId, "ddlCommand", 1, "");
-                        mMsater(true, response.CorpsId, "ddlCorps", 2, response.ComdId);
-                        mMsaterByParent(true, response.DivId, "ddlDiv", 3, response.ComdId, response.CorpsId, 0, 0);///ComdId,CorpsId,DivId,BdeId
-                        mMsaterByParent(true, response.BdeId, "ddlBde", 4, response.ComdId, response.CorpsId, response.DivId, 0);///ComdId,CorpsId,DivId,BdeId
-
-                       
-                            GetUnitByHierarchy(true, "ddlUnit", response.UnitId, response.ComdId, response.CorpsId, response.DivId, response.BdeId, 1, 1, 1);
-
-                          
-                            $(".unittype").removeClass("d-none");
-                            $(".FmnBranch").addClass("d-none");
-                            $(".DteBranch").addClass("d-none");
-
-                            $("#ddlFmnBranch").html(lst);
-                            $("#ddlPSODte").html(lst);
-                            $("#ddlDgSubDte").html(lst);
-
-                        }
-                    else if (parseInt(response.UnitType) == 2 || $("#spnroleId").html() =="DteAdmin") {
-                        $("#UnitType2").prop("checked", true);
-
-                        if ($("#spnroleId").html() == "DteAdmin") {
-                            mMsater(false, '', "ddlCommand", 1, "");
-                        }
-                        else {
-                            if (response.ComdId == 1)
-                                mMsater(false, response.ComdId, "ddlCommand", 1, "");
-                            else
-                                mMsater(true, response.ComdId, "ddlCommand", 1, "");
-
-
-                            if (response.CorpsId == 1)
-                                mMsater(false, response.CorpsId, "ddlCorps", 2, response.ComdId);
-                            else
-                                mMsater(true, response.CorpsId, "ddlCorps", 2, response.ComdId);
-
-
-                            if (response.DivId == 1)
-                                mMsaterByParent(false, response.DivId, "ddlDiv", 3, response.ComdId, response.CorpsId, 0, 0);///ComdId,CorpsId,DivId,BdeId
-                            else
-                                mMsaterByParent(true, response.DivId, "ddlDiv", 3, response.ComdId, response.CorpsId, 0, 0);///ComdId,CorpsId,DivId,BdeId
-
-                            if (response.BdeId == 1)
-                                mMsaterByParent(false, response.BdeId, "ddlBde", 4, response.ComdId, response.CorpsId, response.DivId, 0);///ComdId,CorpsId,DivId,BdeId
-                            else
-                                mMsaterByParent(true, response.BdeId, "ddlBde", 4, response.ComdId, response.CorpsId, response.DivId, 0);///ComdId,CorpsId,DivId,BdeId
-
-
-                            mMsater(true, response.FmnBranchID, "ddlFmnBranch", FmnBranches, "");
-
-
-                            GetUnitByHierarchy(false, "ddlUnit", response.UnitId, response.ComdId, response.CorpsId, response.DivId, response.BdeId, response.FmnBranchID, 1, 1);
-
-                        }
-                            $("#ddlPSODte").html(lst);
-                            $("#ddlDgSubDte").html(lst);
-
-                            $(".unittype").removeClass("d-none");
-                            //$(".FmnBranch").removeClass("d-none");
-                            //$(".DteBranch").addClass("d-none");
-
-                        }
-                    else if (parseInt(response.UnitType) == 3) {
-                            $("#UnitType3").prop("checked", true);
-
-                        mMsater(response.PsoId, "ddlPSODte", PSO, "");
-                        mMsater(response.SubDteId, "ddlDgSubDte", SubDte, "");
-                        GetUnitByHierarchy("ddlUnit", response.UnitId, 1, 1, 1, 1, 1, response.PsoId, response.SubDteId);
-                            $(".unittype").addClass("d-none");
-                            $(".FmnBranch").addClass("d-none");
-                            $(".DteBranch").removeClass("d-none");
-
-                            $("#ddlFmnBranch").html(lst);
-                            $("#ddlCommand").html(lst);
-                            $("#ddlCorps").html(lst);
-                            $("#ddlCorps").html(lst);
-                            $("#ddlBde").html(lst);
-                            $("#ddlDiv").html(lst);
-                        }
-                    
-                }
-            }
-            else {
-               
-            }
-        },
-        error: function (result) {
-            Swal.fire({
-                text: errormsg002
-            });
-        }
-    });
-
-}
-
-function GetUnitByHierarchy(IsOnly,ddl, sectid, ComdId, CorpsId, DivId, BdeId, FmnBranchID, PsoId, SubDteId) {
+function GetUnitByHierarchy(IsOnly, ddl, sectid, ComdId, CorpsId, DivId, BdeId, FmnBranchID, PsoId, SubDteId) {
     var listItem = "";
     var userdata =
     {
@@ -880,13 +277,13 @@ function GetUnitByHierarchy(IsOnly,ddl, sectid, ComdId, CorpsId, DivId, BdeId, F
 
                 }
                 else if (response.length == 0) {
-                   
+
 
                 }
 
                 else {
 
-                  
+
 
                     listItem += '<option value="">All</option>';
                     for (var i = 0; i < response.length; i++) {
@@ -894,12 +291,11 @@ function GetUnitByHierarchy(IsOnly,ddl, sectid, ComdId, CorpsId, DivId, BdeId, F
 
                             listItem += '<option value="' + response[i].UnitId + '">' + response[i].UnitName + '</option>';
                         } else if
-                            (IsOnly == false)
-                        {
+                            (IsOnly == false) {
                             listItem += '<option value="' + response[i].UnitId + '">' + response[i].UnitName + '</option>';
                         }
-                      
-                        
+
+
                     }
                     $("#" + ddl + "").html(listItem);
                     if (sectid != '') {
@@ -909,7 +305,7 @@ function GetUnitByHierarchy(IsOnly,ddl, sectid, ComdId, CorpsId, DivId, BdeId, F
                 }
             }
             else {
-                
+
             }
         },
         error: function (result) {
@@ -921,7 +317,7 @@ function GetUnitByHierarchy(IsOnly,ddl, sectid, ComdId, CorpsId, DivId, BdeId, F
 
 }
 
-function mMsater(IsOnly,sectid = '', ddl, TableId, ParentId) {
+function mMsater(IsOnly, sectid = '', ddl, TableId, ParentId) {
 
 
     var userdata =
@@ -987,7 +383,7 @@ function mMsater(IsOnly,sectid = '', ddl, TableId, ParentId) {
     });
 }
 
-function mMsaterByParent(IsOnly,sectid = '', ddl, TableId, ComdId, CorpsId, DivId, BdeId) {
+function mMsaterByParent(IsOnly, sectid = '', ddl, TableId, ComdId, CorpsId, DivId, BdeId) {
 
 
     var userdata =
@@ -1016,8 +412,8 @@ function mMsaterByParent(IsOnly,sectid = '', ddl, TableId, ComdId, CorpsId, DivI
                 else {
 
                     var listItemddl = "";
-                     if (IsOnly == false) {
-                         listItemddl += '<option value="">All</option>';
+                    if (IsOnly == false) {
+                        listItemddl += '<option value="">All</option>';
                     }
 
                     for (var i = 0; i < response.length; i++) {
@@ -1063,5 +459,118 @@ function mMsaterByParent(IsOnly,sectid = '', ddl, TableId, ComdId, CorpsId, DivI
                 text: errormsg002
             });
         }
+    });
+}
+function GetRequestHistory(spnRequestId) {
+    var userdata = {
+
+        "RequestId": spnRequestId,
+
+
+    };
+    var listItem = "";
+    $.ajax({
+        url: '/BasicDetail/GetRequestHistory',
+        contentType: 'application/x-www-form-urlencoded',
+        data: userdata,
+        type: 'POST',
+        success: function (response) {
+            if (response != "null" && response != null) {
+                if (response.length > 0) {
+                    for (var i = 0; i < response.length; i++) {
+                        if (i == 0) {
+                            listItem += '<div class="timeline-item">';
+                            listItem += '<div class="timeline-item-marker">';
+                            listItem += '<div class="timeline-item-marker-text "><span class="badge bg-success">' + DateFormateddMMyyyyhhmmss(response[i].UpdatedOn) + '</span></div>';
+                            listItem += '<div class="timeline-item-marker-indicator bg-primary"></div>';
+                            listItem += '</div>';
+                            listItem += '<div class="timeline-item-content">';
+                            listItem += 'I-Card Submit By -' + response[i].FromDomain + '(' + response[i].FromRank + ' ' + response[i].FromProfile + ')';
+
+                            listItem += '</div>';
+                            listItem += '</div>';
+                        }
+                        listItem += '<div class="timeline-item">';
+                        listItem += '<div class="timeline-item-marker">';
+
+                        if (response[i].IsComplete == 0 && response[i].Status == "Pending")
+                            listItem += '<div class="timeline-item-marker-text"><span class="badge bg-success">' + DateFormateddMMyyyyhhmmss(response[i].UpdatedOn) + '</span></div>';
+                        else if (response[i].Status == "Approved")
+                            listItem += '<div class="timeline-item-marker-text"><span class="badge bg-success">' + DateFormateddMMyyyyhhmmss(response[i].UpdatedOn) + '</span></div>';
+                        else if (response[i].Status == "Reject")
+                            listItem += '<div class="timeline-item-marker-text"><span class="badge bg-danger">' + DateFormateddMMyyyyhhmmss(response[i].UpdatedOn) + '</span></div>';
+                        else if (response[i].Status == "Internal Forward")
+                            listItem += '<div class="timeline-item-marker-text"><span class="badge bg-success">' + DateFormateddMMyyyyhhmmss(response[i].UpdatedOn) + '</span></div>';
+
+
+                        listItem += '<div class="timeline-item-marker-indicator bg-primary"></div>';
+                        listItem += '</div>';
+                        listItem += '<div class="timeline-item-content">';
+
+
+                        listItem += '' + response[i].FromDomain + '(' + response[i].FromRank + ' ' + response[i].FromProfile + ')';
+
+                        if (response[i].IsComplete == 0 && response[i].Status == "Pending")
+                            listItem += '<br><span class="badge bg-success">' + 'Pending' + ' And Sent To</span>';
+                        else if (response[i].Status == "Approved")
+                            listItem += '<br><span class="badge bg-success">' + response[i].Status + ' And Sent To</span>';
+                        else if (response[i].Status == "Reject")
+                            listItem += '<br><span class="badge bg-danger">' + response[i].Status + ' And Sent To</span>';
+                        else if (response[i].Status == "Internal Forward")
+                            listItem += '<br><span class="badge bg-success">' + response[i].Status + ' And Sent To</span>';
+
+                        listItem += '<br> <strong class="text-center">Remark</strong> <br>' + response[i].Remark + '';
+
+                        if (response[i].Remarks2 != null) {
+                            var rem = response[i].Remarks2.split('#');
+                            if (rem.length > 0) {
+
+                                listItem += '<ul>';
+                                for (var j = 0; j < rem.length; j++) {
+                                    listItem += '<li>' + rem[j] + '</li>';
+                                }
+                                listItem += '</ul>';
+                            }
+                        }
+
+
+                        listItem += '<br><button type="button" class="btn btn-icon btn-round btn-light mr-1"><i class="fas fa-arrow-down"></i></button>'
+
+                        if (response[i].IsComplete == 0) {
+                            listItem += '<br><span class="badge bg-warning ">Pending from </span>';
+                        }
+                        listItem += '<br>' + response[i].ToDomain + '(' + response[i].ToRank + ' ' + response[i].ToProfile + ')';
+
+
+                        if (response[i].Reason != null) {
+                            listItem += '<br> <strong class="text-center text-danger">' + response[i].Reason + '</strong> <br> Unit Name :-' + response[i].UnitName + '';
+                        }
+
+
+
+                        listItem += '</div>';
+                        listItem += '</div>';
+                    }
+                } else {
+                    listItem += '<div class="timeline-item">';
+                    listItem += '<div class="timeline-item-marker">';
+
+
+                    listItem += '</div>';
+                    listItem += '<div class="timeline-item-content">';
+                    listItem += 'I-Card Submitted Succesfully';
+
+                    listItem += '</div>';
+                    listItem += '</div>';
+
+                    $("#RequestHistory").html(listItem);
+                }
+
+                $("#RequestHistory").html(listItem);
+            } else {
+
+            }
+        }
+
     });
 }
