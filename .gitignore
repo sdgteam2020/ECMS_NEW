@@ -305,3 +305,4 @@ AppPackages/
 /TestConsoleReso/obj/Release/net7.0/TestConsoleReso.assets.cache
 /TestConsoleReso/obj/Release/net7.0/TestConsoleReso.GeneratedMSBuildEditorConfig.editorconfig
 /Web/wwwroot/DigitallysignaturePdf
+/Web/Web.csproj.user
