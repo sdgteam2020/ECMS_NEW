@@ -28,7 +28,7 @@ namespace DataAccessLayer
         {
             string query = " SELECT fwd.StepId,fwd.IsComplete,fwd.TrnFwdId into tempTrnFwds  from TrnFwds fwd" +
                            "  inner join TrnStepCounter step on fwd.RequestId=step.RequestId AND fwd.StepId=fwd.StepId and step.ApplyForId=@ApplyForId " +
-                           "  left join TrnICardRequest req on step.RequestId=req.RequestId and req.Status=0  " +
+                           "  left join TrnICardRequest req on step.RequestId=req.RequestId and req.StatusId=1  " +
                            "  left join  BasicDetails basi on req.BasicDetailId=basi.BasicDetailId  " +
                            "  left join MapUnit unit on basi.UnitId=unit.UnitMapId " +
                            " where unit.ComdId=ISNULL(@ComdId,unit.ComdId) " +
@@ -54,7 +54,7 @@ namespace DataAccessLayer
                            " if exists(select * from tempstep where StepId=@StepId and @StepId=1)" +
                            " begin" +
                            " SELECT @Total=COUNT(*) from TrnStepCounter step" +
-                           "  left join TrnICardRequest req on step.RequestId=req.RequestId and req.Status=0  " +
+                           "  left join TrnICardRequest req on step.RequestId=req.RequestId and req.StatusId=1  " +
                            "  left join  BasicDetails basi on req.BasicDetailId=basi.BasicDetailId  " +
                            "  left join MapUnit unit on basi.UnitId=unit.UnitMapId " +
                            "  where unit.ComdId=ISNULL(@ComdId,unit.ComdId) " +
@@ -93,7 +93,7 @@ namespace DataAccessLayer
             //               " ISNULL(fwd.IsComplete,0) IsComplete,ISNULL(fwd.FwdStatusId,0) FwdStatusId from MStepCounterStep Mstep" +
             //               " left join TrnFwds fwd on Mstep.StepId=fwd.StepId" +
             //               " left join TrnStepCounter step on Mstep.StepId=step.StepId and step.ApplyForId=@ApplyForId" +
-            //               " left join TrnICardRequest req on step.RequestId=req.RequestId and req.Status=0 " +
+            //               " left join TrnICardRequest req on step.RequestId=req.RequestId and req.StatusId=1 " +
             //               " left join  BasicDetails basi on req.BasicDetailId=basi.BasicDetailId " +
             //               " left join MapUnit unit on basi.UnitId=unit.UnitMapId" +
             //               " and unit.ComdId=ISNULL(@ComdId,unit.ComdId) " +
@@ -121,7 +121,7 @@ namespace DataAccessLayer
             string query = " SELECT COUNT(*) Total,Mfsts.FwdStatusId StepId,fwd.TypeId FROM TrnFwds fwd" +
                            " inner join MTrnFwdStatus Mfsts  on Mfsts.FwdStatusId=fwd.FwdStatusId "+
                            " inner join MFwdType Mftype on Mftype.TypeId=fwd.TypeId"+
-                           " inner join TrnICardRequest req on fwd.RequestId=req.RequestId and req.Status=0"+
+                           " inner join TrnICardRequest req on fwd.RequestId=req.RequestId and req.StatusId=1"+
                            " inner join  BasicDetails basi on req.BasicDetailId=basi.BasicDetailId "+
                            " left join MapUnit unit on basi.UnitId=unit.UnitMapId " +
                            " and unit.ComdId=ISNULL(@ComdId,unit.ComdId) " +
@@ -144,7 +144,7 @@ namespace DataAccessLayer
             string query1 = " SELECT COUNT(*) Total,Mfsts.FwdStatusId StepId,fwd.TypeId FROM TrnFwds fwd" +
                           " inner join MTrnFwdStatus Mfsts  on Mfsts.FwdStatusId=fwd.FwdStatusId " +
                           " inner join MFwdType Mftype on Mftype.TypeId=fwd.TypeId" +
-                          " inner join TrnICardRequest req on fwd.RequestId=req.RequestId and req.Status=0" +
+                          " inner join TrnICardRequest req on fwd.RequestId=req.RequestId and req.StatusId=1" +
                           " inner join  BasicDetails basi on req.BasicDetailId=basi.BasicDetailId " +
                           " left join MapUnit unit on basi.UnitId=unit.UnitMapId " +
                           " and unit.ComdId=ISNULL(@ComdId,unit.ComdId) " +
@@ -189,7 +189,7 @@ namespace DataAccessLayer
             //string query = " select count(req.RequestId) Total ,recf.RecordOfficeId,recf.Name from MRecordOffice recf" +
             //               " left join TrnDomainMapping map on recf.TDMId=map.Id" +
             //               " left join TrnFwds fwd on map.AspNetUsersId=fwd.FromAspNetUsersId and fwd.FwdStatusId=1" +
-            //               " left join TrnICardRequest req on fwd.RequestId=req.RequestId and req.Status=0  " +
+            //               " left join TrnICardRequest req on fwd.RequestId=req.RequestId and req.StatusId=1  " +
             //               " left join MRecordOffice mrec on map.Id=mrec.TDMId and mrec.ArmedId=56 " +
             //               " left join BasicDetails basi on req.BasicDetailId=basi.BasicDetailId " +
             //               " left join MapUnit unit on basi.UnitId=unit.UnitMapId" +
@@ -205,7 +205,7 @@ namespace DataAccessLayer
 
             string query = " select COUNT(req.RequestId) Total, fwdsts.Name,fwdsts.FwdStatusId,mrec.RecordOfficeId, 3 GroupId from MTrnFwdStatus fwdsts" +
                            " inner join TrnFwds fwd on fwdsts.FwdStatusId=fwd.FwdStatusId  " +
-                           " inner join TrnICardRequest req on fwd.RequestId=req.RequestId and req.Status=0 " +
+                           " inner join TrnICardRequest req on fwd.RequestId=req.RequestId and req.StatusId=1 " +
                            " inner join TrnStepCounter step on step.ApplyForId=1 and req.RequestId=step.RequestId" +
                            " inner join TrnDomainMapping map on fwd.ToAspNetUsersId=map.AspNetUsersId  " +
                            " inner join OROMapping mrec on map.Id=mrec.TDMId " +
@@ -243,7 +243,7 @@ namespace DataAccessLayer
             string query = " select count(req.RequestId) Total ,recf.RecordOfficeId,recf.Name,step.StepId from MRecordOffice recf" +
                            " left join TrnDomainMapping map on recf.TDMId=map.Id" +
                            " left join TrnFwds fwd on map.AspNetUsersId=fwd.ToAspNetUsersId and fwd.IsComplete=@IsComplete and fwd.StepId=3" +
-                           " left join TrnICardRequest req on fwd.RequestId=req.RequestId and req.Status=0  " +
+                           " left join TrnICardRequest req on fwd.RequestId=req.RequestId and req.StatusId=1  " +
                            " left join TrnStepCounter step on req.RequestId=step.RequestId " +
                            " left join MRecordOffice mrec on map.Id=mrec.TDMId and mrec.ArmedId!=56 " +
                            " left join BasicDetails basi on req.BasicDetailId=basi.BasicDetailId " +
@@ -277,7 +277,7 @@ namespace DataAccessLayer
                             " aspusersfrom.DomainId DomainIdFrom,userfrom.ArmyNo ArmyNoFrom ,userfrom.Name NameFrom,ranksfrom.RankAbbreviation RankFrom" +
                             " ,fwd.UpdatedOn,fwdsts.Name StatusName from MStepCounterStep Mstep  " +
                             " left join TrnStepCounter step on Mstep.StepId=step.StepId " +
-                            " left join TrnICardRequest req on step.RequestId=req.RequestId and req.Status=0 " +
+                            " left join TrnICardRequest req on step.RequestId=req.RequestId and req.StatusId=1 " +
                             " left join TrnFwds fwd on req.RequestId=fwd.RequestId " +
                             " left join UserProfile userto on fwd.ToUserId=userto.UserId" +
                             " LEFT join TrnDomainMapping mapto on userto.UserId=mapto.UserId" +
@@ -311,7 +311,7 @@ namespace DataAccessLayer
                       " aspusersfrom.DomainId DomainIdFrom,userfrom.ArmyNo ArmyNoFrom ,userfrom.Name NameFrom,ranksfrom.RankAbbreviation RankFrom" +
                       " ,fwd.UpdatedOn,fwdsts.Name StatusName from MStepCounterStep Mstep  " +
                       " left join TrnStepCounter step on Mstep.StepId=step.StepId and Mstep.StepId=@StepId" +
-                      " left join TrnICardRequest req on step.RequestId=req.RequestId and req.Status=0 " +
+                      " left join TrnICardRequest req on step.RequestId=req.RequestId and req.StatusId=1 " +
                       " left join TrnFwds fwd on req.RequestId=fwd.RequestId and fwd.IsComplete=0 " +
                       " left join UserProfile userto on fwd.ToUserId=userto.UserId" +
                       "  LEFT join TrnDomainMapping mapto on userto.UserId=mapto.UserId" +
@@ -342,7 +342,7 @@ namespace DataAccessLayer
                       " aspusersfrom.DomainId DomainIdFrom,userfrom.ArmyNo ArmyNoFrom ,userfrom.Name NameFrom,ranksfrom.RankAbbreviation RankFrom" +
                       " ,fwd.UpdatedOn,fwdsts.Name StatusName from MStepCounterStep Mstep  " +
                       " left join TrnStepCounter step on Mstep.StepId=step.StepId " +
-                      " left join TrnICardRequest req on step.RequestId=req.RequestId and req.Status=0 " +
+                      " left join TrnICardRequest req on step.RequestId=req.RequestId and req.StatusId=1 " +
                       " left join TrnFwds fwd on req.RequestId=fwd.RequestId and fwd.IsComplete=0 " +
                       " left join UserProfile userto on fwd.ToUserId=userto.UserId" +
                       "  LEFT join TrnDomainMapping mapto on userto.UserId=mapto.UserId" +
@@ -376,7 +376,7 @@ namespace DataAccessLayer
                         " aspusersfrom.DomainId DomainIdFrom,userfrom.ArmyNo ArmyNoFrom ,userfrom.Name NameFrom,ranksfrom.RankAbbreviation RankFrom,fwdsts.Name Status" +
                         " ,fwd.UpdatedOn,fwdsts.Name StatusName from MStepCounterStep Mstep   " +
                         " inner join TrnStepCounter step on Mstep.StepId=step.StepId  " +
-                        " inner join TrnICardRequest req on step.RequestId=req.RequestId and req.Status=0  " +
+                        " inner join TrnICardRequest req on step.RequestId=req.RequestId and req.StatusId=1  " +
                         " inner join TrnFwds fwd on req.RequestId=fwd.RequestId " +
                         " inner join TrnDomainMapping map on fwd.ToAspNetUsersId=map.AspNetUsersId  " +
                         " inner join OROMapping mrec on map.Id=mrec.TDMId " +
@@ -410,7 +410,38 @@ namespace DataAccessLayer
             }
         }
 
-      
+        public async Task<List<DTOReportReturnListResponse>> GetReportForm11(DTOMHierarchyRequest Data)
+        {
+            string query = " select " +
+                           "   req.RequestId, " +
+                           "   basi.FName + ' ' + ISNULL(basi.LName, '') Name, " +
+                           "   ServiceNo, " +
+                           "   DOB, " +
+                           "   ranks.RankAbbreviation RankName, " +
+                           "   TrackingId" +
+                           " from " +
+                           "   MStepCounterStep Mstep " +
+                           "   inner join TrnStepCounter step on Mstep.StepId = step.StepId " +
+                           "   inner join TrnICardRequest req on step.RequestId = req.RequestId   and req.StatusId = 1 " +
+                           "   inner join BasicDetails basi on req.BasicDetailId = basi.BasicDetailId " +
+                           "   left join TrnFwds fwd on req.RequestId = fwd.RequestId " +
+                           "   left join MTrnFwdStatus fwdsts on fwd.FwdStatusId = fwdsts.FwdStatusId " +
+                           "   left join MRank ranks on ranks.RankId = basi.RankId " +
+                           "   left join MapUnit unit on basi.UnitId = unit.UnitMapId " +
+                           " where unit.ComdId=ISNULL(@ComdId,unit.ComdId) " +
+                           " and unit.CorpsId=ISNULL(@CorpsId,unit.CorpsId)" +
+                           " and unit.DivId=ISNULL(@DivId,unit.DivId)" +
+                           " and unit.BdeId=ISNULL(@BdeId,unit.BdeId)" +
+                           //" and unit.FmnBranchID=ISNULL(@FmnBranchID,unit.FmnBranchID)" +
+                           //" and unit.PsoId=ISNULL(@PsoId,unit.PsoId)" +
+                           //" and unit.SubDteId=ISNULL(@SubDteId,unit.SubDteId)" +
+                           " and unit.UnitMapId=ISNULL(@UnitMapId,unit.UnitMapId)";
+            using (var connection = _contextDP.CreateConnection())
+            {
+                var ret = await connection.QueryAsync<DTOReportReturnListResponse>(query, new { Data.ComdId, Data.CorpsId, Data.DivId, Data.BdeId, Data.FmnBranchID, Data.PsoId, Data.SubDteId, Data.UnitMapId });
+                return ret.ToList();
+            }
+        }
     }
 }
 

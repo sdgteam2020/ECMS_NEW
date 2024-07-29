@@ -43,5 +43,10 @@ namespace BusinessLogicsLayer.ReportReturn
         {
             return _IReportReturnDB.GetRecordHistory(Data, ApplyForId, StepId, IsApproveId);
         }
+
+        public Task<List<DTOReportReturnListResponse>> GetReportForm11(DTOMHierarchyRequest Data)
+        {
+            return _IReportReturnDB.GetReportForm11(Data);
+        }
     }
 }

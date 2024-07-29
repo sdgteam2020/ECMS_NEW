@@ -20,6 +20,7 @@ namespace DataAccessLayer.BaseInterfaces
         public Task<List<DTOReportReturnCount>> GetRecordJco();
         public Task<List<DTOReportReturnCount>> GetRecordJcoCount(DTOMHierarchyRequest Data,int IsComplete);
         public Task<List<DTOReportReturnListResponse>> GetRecordHistory(DTOMHierarchyRequest Data,int ApplyForId,int StepId, int IsApproveId);
+        public Task<List<DTOReportReturnListResponse>> GetReportForm11(DTOMHierarchyRequest Data);
 
     }
 }

@@ -12,6 +12,6 @@ namespace BusinessLogicsLayer.ReportReturn
     {
         public Task<DTOReportReturnCountlst> GetMstepCount(DTOMHierarchyRequest Data);
         public Task<List<DTOReportReturnListResponse>> GetRecordHistory(DTOMHierarchyRequest Data, int ApplyForId, int StepId,int IsApproveId);
-
+        public Task<List<DTOReportReturnListResponse>> GetReportForm11(DTOMHierarchyRequest Data); 
     }
 }
