@@ -143,7 +143,7 @@ namespace DataTransferObject.Requests
         public string ClaimType { get; set; } = string.Empty;
         public bool IsSelected { get; set; }
     }
-    public static class ClaimsStore
+    public static class ClaimsStored
     {
         public static List<Claim> AllClaims = new List<Claim>()
         {

@@ -69,6 +69,10 @@ namespace BusinessLogicsLayer.Account
         {
             return await _iAccountDB.GetAllRole();
         }
+        public async Task<List<DTOClaimsResponse>> GetAllClaims()
+        {
+            return await _iAccountDB.GetAllClaims();
+        }
         public async Task<DTOTempSession?> ProfileAndMappingSaving(DTOProfileAndMappingRequest model, DTOTempSession dTOTempSession)
         {
             return await _iAccountDB.ProfileAndMappingSaving(model, dTOTempSession);

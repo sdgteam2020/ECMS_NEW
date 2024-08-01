@@ -1,7 +1,8 @@
 ﻿@{
     ViewData["Title"] = "DashBoard";
     Layout = "~/Views/Shared/_Layout.cshtml";
-    List<string> RoleNameList = new List<string>() { "User", "Coordinator", "DteAdmin", "AFSACUser", "RecordUser", "OROUser" };
+    List<string> RoleNameList = new List<string>() { "User" };
+    List<Claim> claims = ViewBag.UserClaims;
 }
 <style>
     .clickable {
@@ -99,23 +100,19 @@
                     </div>
                     @if (ViewBag.Role == "DteAdmin")
                     {
-                       
-                                    <div class="col-md-2 col-sm-6">
-                                        <a href="/Home/ICardProcessReport" class="clickable">
-                                            @*  OffrsSubmitted *@
-                                            <div class="counter blue">
-                                                <div class="counter-icon">
-                                                    <i class="fa fa-user"></i>
-                                                </div>
-                                                <h3 style="margin-top:2.0rem!important;">
-                                                    I-Card Process Report
-                                                </h3>
-                                            </div>
-                                        </a>
+                        <div class="col-md-2 col-sm-6">
+                            <a href="/Home/ICardProcessReport" class="clickable">
+                                @*  OffrsSubmitted *@
+                                <div class="counter blue">
+                                    <div class="counter-icon">
+                                        <i class="fa fa-user"></i>
                                     </div>
-
-
-                              
+                                    <h3 style="margin-top:2.0rem!important;">
+                                        I-Card Process Report
+                                    </h3>
+                                </div>
+                            </a>
+                        </div>
                     }
                 </div>
             </div>

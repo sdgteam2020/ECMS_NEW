@@ -21,6 +21,7 @@ namespace DataAccessLayer
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         { }
+        public DbSet<ClaimsStore> ClaimsStore { get; set; } = null!;
         public DbSet <MTrnICardHold> MTrnICardHold { get; set; } = null!;
         public DbSet <MTrnICardStatus> MTrnICardStatus { get; set; } = null!;
         public DbSet<AfsacCellMapping> AfsacCellMapping { get; set; } = null!;
@@ -84,25 +85,19 @@ namespace DataAccessLayer
         public DbSet<MPostingReason> MPostingReason { get; set; } = null!;
         public DbSet<TrnPostingOut> TrnPostingOut { get; set; } = null!;
         public DbSet<TrnApplClose> TrnApplClose { get; set; } = null!;
-
-
-
-
-
         public DbSet<TrnUnregdUser> TrnUnregdUser { get; set; }
         public DbSet<MIssuingAuthority> MIssuingAuthority { get; set; } = null!;
         //public DbSet<TrnLogin_Log> TrnLogin_Log { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
-           
-
             base.OnModelCreating(builder);
             //builder.Seed();
-            
+
             //builder.Entity<MRecordOffice>()
             //        .HasIndex(x => new { x.ArmedId, x.TDMId })
             //        .IsUnique();
+            builder.Entity<BasicDetail>().HasIndex(x => x.ServiceNo).IsUnique();
             builder.Entity<IdentityUserRole<int>>(entity =>
             {
             });

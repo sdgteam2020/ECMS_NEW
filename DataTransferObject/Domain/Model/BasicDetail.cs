@@ -36,7 +36,7 @@ namespace DataTransferObject.Domain.Model
         public short RankId { get; set; }
         public MRank? Rank { get; set; }
 
-        [Index("IX_BasicDetails_ArmyNo", IsClustered = false, IsUnique = true, Order = 1)]
+        //[Index("IX_BasicDetails_ArmyNo", IsClustered = false, IsUnique = true, Order = 1)] // this line not work, 
         [StringLength(10)]
         [Column(TypeName = "varchar(10)")]
         public string ServiceNo { get; set; } = string.Empty;
