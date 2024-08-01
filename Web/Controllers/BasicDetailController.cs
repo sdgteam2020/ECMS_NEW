@@ -123,7 +123,8 @@ namespace Web.Controllers
             string role = dtoSession != null ? dtoSession.RoleName : "";
             return role;
         }
-        [Authorize(Roles = "DteAdmin")]
+        //[Authorize(Roles = "DteAdmin")]
+        [Authorize(Policy = "ApplFlaggedPolicy")]
         public async Task<IActionResult> SaveICardRequestHold(MTrnICardHold dTO)
         {
             try
@@ -169,7 +170,8 @@ namespace Web.Controllers
             }
 
         }
-        [Authorize(Roles = "DteAdmin")]
+        //[Authorize(Roles = "DteAdmin")]
+        [Authorize(Policy = "ApplFlaggedPolicy")]
         public async Task<IActionResult> GetTopArmyNoFromICardRequest(string ArmyNo)
         {
             try
@@ -182,7 +184,8 @@ namespace Web.Controllers
                 return Json(KeyConstants.InternalServerError);
             }
         }
-        [Authorize(Roles = "DteAdmin")]
+        //[Authorize(Roles = "DteAdmin")]
+        [Authorize(Policy = "ApplFlaggedPolicy")]
         public async Task<IActionResult> GetBDetailByRequestId(int RequestId)
         {
             try
@@ -196,13 +199,19 @@ namespace Web.Controllers
             }
 
         }
-        [Authorize(Roles = "DteAdmin")]
+        [Authorize(Policy = "ApplFlaggedViewPolicy")]
         [HttpGet]
-        public IActionResult ICardRequestHold()
+        public async Task<IActionResult> ICardRequestHold()
         {
+            var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var user = await userManager.FindByIdAsync(userId);
+
+            // UserManager service GetClaimsAsync method gets all the current claims of the user
+            var UserClaims = await userManager.GetClaimsAsync(user);
+            ViewBag.UserClaims = UserClaims;
             return View();
         }
-        [Authorize(Roles = "DteAdmin")]
+        [Authorize(Policy = "ApplFlaggedViewPolicy")]
         [HttpPost]
         public async Task<IActionResult> GetAllICardRequestHold()
         {
@@ -358,8 +367,14 @@ namespace Web.Controllers
         public async Task<ActionResult> ApprovalForIO(string Id, string jcoor)
         {
             string role = GetSessionValue();
-
             ViewBag.Role = role;
+
+            var UserId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var user = await userManager.FindByIdAsync(UserId);
+
+            // UserManager service GetClaimsAsync method gets all the current claims of the user
+            var UserClaims = await userManager.GetClaimsAsync(user);
+            ViewBag.UserClaims = UserClaims;
 
             MTrnNotification noti=new MTrnNotification();
             int type = 0; int retint = 0; int stepcounter = 0;
@@ -1399,8 +1414,9 @@ namespace Web.Controllers
             }
             return Ok(mStepCounter);
         }
-       
-        [Authorize(Roles = "Coordinator")]
+
+        //[Authorize(Roles = "Coordinator")]
+        [Authorize(Policy = "CoordinatorPolicy")]
         public async Task<IActionResult> SaveInternalFwd(DTOSaveInternalFwdRequest data)
         {
             try
@@ -1657,6 +1673,8 @@ namespace Web.Controllers
         {
             return Json(await _IMasterBL.GetRemarksByTypeId(Data));
         }
+        //[Authorize(Roles = "AFSACUser")]
+        [Authorize(Policy = "AFSACDataExporterPolicy")]
         public async Task<IActionResult> DataExport(DTODataExportRequest Data)
         {
             try

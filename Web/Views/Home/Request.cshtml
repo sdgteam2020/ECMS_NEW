@@ -1,6 +1,7 @@
 ﻿@{
     ViewData["Title"] = "Initiate Request";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    List<Claim> claims = ViewBag.UserClaims;
 }
 <style>
     .btn1 {
@@ -90,7 +91,7 @@
                                     </div>
                                 </a>
                             </div>
-                            @if (ViewBag.Role == "DteAdmin")
+                            @if (claims.Count > 0 && claims.Any(i => i.Value == "AFV"))//@if (ViewBag.Role == "DteAdmin" || ViewBag.Role == "AFSACUser")
                             {
                                 <div class="col-md-2 col-sm-6">
                                     <a href="/BasicDetail/ICardRequestHold">

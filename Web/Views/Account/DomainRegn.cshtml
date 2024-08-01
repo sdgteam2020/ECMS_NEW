@@ -110,13 +110,14 @@
                                 <th class="nowrap">Registered ID</th>
                                 <th class="nowrap">Domain ID</th>
                                 <th class="nowrap">Role</th>
-                                <th class="nowrap">Requested Generated On (Dt)</th>
+                                <th class="nowrap">Claims</th>
+                                <th class="text-wrap" style="width: 6rem;">Requested Generated On (Dt)</th>
                                 <th class="nowrap">Mapping</th>
-                                <th class="nowrap">Active Yes/No</th>
+                                <th class="nowrap">Active</th>
                                 <th class="nowrap">IO</th>
                                 <th class="nowrap">Approver</th>
-                                <th class="nowrap">Record Office (JCO)</th>
-                                <th class="nowrap">Record Office (Offier)</th>
+                                <th style="width: 6rem;">Record Office (JCO)</th>
+                                <th style="width: 6rem;">Record Office (Officer)</th>
                                 <th class="noExport nowrap">Action</th>
                             </tr>
                         </thead>
@@ -156,6 +157,14 @@
                                     <select class="form-control select2 select2-accessible" multiple="" placeholder="Select Role" style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddlRoles" id="ddlRoles" data-val="true" data-val-regex="This special chars and space not allowed for security reasons." data-val-required="Role is required.">
                                     </select>
                                     <span class="text-danger field-validation-valid" data-valmsg-for="ddlRoles" data-valmsg-replace="true"></span>
+                                </div>
+                            </div>
+                            <div class="form-group row mb-2">
+                                <label class="col-form-label col-sm-4 fw-bold">Assign Claims</label>
+                                <div class="col-sm-8">
+                                    <select class="form-control select2 select2-accessible" multiple="" placeholder="Select Claims" style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddClaims" id="ddClaims" data-val="true" data-val-regex="This special chars and space not allowed for security reasons.">
+                                    </select>
+                                    <span class="text-danger field-validation-valid" data-valmsg-for="ddClaims" data-valmsg-replace="true"></span>
                                 </div>
                             </div>
                             <div class="form-group row mb-2">

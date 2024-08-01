@@ -23,6 +23,8 @@ using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.Diagnostics.Eventing.Reader;
 using Newtonsoft.Json.Linq;
+using System.Security.Claims;
+
 
 namespace DataAccessLayer
 {
@@ -133,38 +135,50 @@ namespace DataAccessLayer
                 if (Choice == "DomainId")
                 {
                     Search = string.IsNullOrEmpty(Search) ? "" : Search.ToLower();
-                    var allrecord = await (from u in _context.Users.Where(P => Search == "" || P.DomainId.ToLower().Contains(Search)).OrderByDescending(x=>x.Id)
+                    var allrecord = await (from u in _context.Users.Where(P => Search == "" || P.DomainId.ToLower().Contains(Search)).OrderByDescending(x => x.Id)
                                            join tdm in _context.TrnDomainMapping on u.Id equals tdm.AspNetUsersId into utdm_jointable
                                            from xtdm in utdm_jointable.DefaultIfEmpty()
                                            join up in _context.UserProfile on xtdm.UserId equals up.UserId into xtdmup_jointable
                                            from xup in xtdmup_jointable.DefaultIfEmpty()
-                                           select new DTODomainRegnResponse()
+                                           select new
                                            {
-                                               Id = u.Id,
-                                               DomainId = u.DomainId,
-                                               AdminFlag = u.AdminFlag,
-                                               Active = u.Active,
-                                               UpdatedOn = u.UpdatedOn,
-                                               Mapped = xtdm.UserId != null ? true : false,
-                                               TrnDomainMappingId = xtdm != null ? xtdm.Id : 0,
-                                               TrnDomainMappingApptId = (short)(xtdm != null ? xtdm.ApptId : 0),
-                                               TrnDomainMappingUnitId = xtdm != null ? xtdm.UnitId : 0,
-                                               Extension = xtdm != null ? xtdm.Extension :"",
-                                               DialingCode=xtdm != null ? xtdm.DialingCode :"",
-                                               IsIO = xtdm!= null ? xtdm.IsIO : false,
-                                               IsCO= xtdm != null ? xtdm.IsCO :false,
-                                               IsRO= xtdm!= null ? xtdm.IsRO : false,
-                                               IsORO= xtdm != null ? xtdm.IsORO :false,
-                                               ArmyNo = xup != null ? xup.ArmyNo : null,
-                                               UserId = xup != null ? xup.UserId : 0,
-                                               RoleNames = (from ur in _context.UserRoles.Where(x => x.UserId == u.Id)
-                                                            join r in _context.Roles on ur.RoleId equals r.Id
-                                                            select r.Name).ToList(),
-                                               RoleIds = (from ur in _context.UserRoles
-                                                          where ur.UserId == u.Id
-                                                          select ur.RoleId).ToList(),
+                                               User = u,
+                                               TrnDomainMapping = xtdm,
+                                               UserProfile = xup,
+                                               Roles = (from ur in _context.UserRoles
+                                                        where ur.UserId == u.Id
+                                                        join r in _context.Roles on ur.RoleId equals r.Id
+                                                        select new { ur.RoleId, r.Name }).ToList(),
+                                               Claims = (from ct in _context.UserClaims
+                                                         where ct.UserId == u.Id
+                                                         select new { ct.ClaimType, ct.ClaimValue }).ToList()
                                            }).Take(200).ToListAsync();
-                    return allrecord;
+                                            
+                    var result = allrecord.Select(x => new DTODomainRegnResponse
+                                            {
+                                                Id = x.User.Id,
+                                                DomainId = x.User.DomainId,
+                                                AdminFlag = x.User.AdminFlag,
+                                                Active = x.User.Active,
+                                                UpdatedOn = x.User.UpdatedOn,
+                                                Mapped = x.TrnDomainMapping?.UserId != null,
+                                                TrnDomainMappingId = x.TrnDomainMapping?.Id ?? 0,
+                                                TrnDomainMappingApptId = (short)(x.TrnDomainMapping?.ApptId ?? 0),
+                                                TrnDomainMappingUnitId = x.TrnDomainMapping?.UnitId ?? 0,
+                                                Extension = x.TrnDomainMapping?.Extension ?? "",
+                                                DialingCode = x.TrnDomainMapping?.DialingCode ?? "",
+                                                IsIO = x.TrnDomainMapping?.IsIO ?? false,
+                                                IsCO = x.TrnDomainMapping?.IsCO ?? false,
+                                                IsRO = x.TrnDomainMapping?.IsRO ?? false,
+                                                IsORO = x.TrnDomainMapping?.IsORO ?? false,
+                                                ArmyNo = x.UserProfile?.ArmyNo,
+                                                UserId = x.UserProfile?.UserId ?? 0,
+                                                RoleNames = x.Roles.Select(r => r.Name).ToList(),
+                                                RoleIds = x.Roles.Select(r => r.RoleId).ToList(),
+                                                ClaimTypes = x.Claims.Select(c => c.ClaimType).ToList(),
+                                                ClaimValues = x.Claims.Select(c => c.ClaimValue).ToList(),
+                                            }).ToList();
+                    return result;
                 }
                 else if (Choice == "Id")
                 {
@@ -174,33 +188,44 @@ namespace DataAccessLayer
                                            from xtdm in utdm_jointable.DefaultIfEmpty()
                                            join up in _context.UserProfile on xtdm.UserId equals up.UserId into tdmup_jointable
                                            from xup in tdmup_jointable.DefaultIfEmpty()
-                                           select new DTODomainRegnResponse()
+                                           select new
                                            {
-                                               Id = u.Id,
-                                               DomainId = u.DomainId,
-                                               AdminFlag = u.AdminFlag,
-                                               Active = u.Active,
-                                               UpdatedOn = u.UpdatedOn,
-                                               Mapped = xtdm.UserId != null ? true : false,
-                                               TrnDomainMappingId = xtdm != null ? xtdm.Id : 0,
-                                               TrnDomainMappingApptId = (short)(xtdm != null ? xtdm.ApptId : 0),
-                                               TrnDomainMappingUnitId = xtdm != null ? xtdm.UnitId : 0,
-                                               Extension = xtdm != null ? xtdm.Extension : "",
-                                               DialingCode = xtdm != null ? xtdm.DialingCode : "",
-                                               IsIO = xtdm != null ? xtdm.IsIO : false,
-                                               IsCO = xtdm != null ? xtdm.IsCO : false,
-                                               IsRO = xtdm != null ? xtdm.IsRO : false,
-                                               IsORO = xtdm != null ? xtdm.IsORO : false,
-                                               ArmyNo = xup != null ? xup.ArmyNo : null,
-                                               UserId = xup != null ? xup.UserId : 0,
-                                               RoleNames = (from ur in _context.UserRoles.Where(x => x.UserId == u.Id)
-                                                            join r in _context.Roles on ur.RoleId equals r.Id
-                                                            select r.Name).ToList(),
-                                               RoleIds = (from ur in _context.UserRoles
-                                                          where ur.UserId == u.Id
-                                                          select ur.RoleId).ToList(),
-                                           }).ToListAsync();
-                    return allrecord;
+                                               User = u,
+                                               TrnDomainMapping = xtdm,
+                                               UserProfile = xup,
+                                               Roles = (from ur in _context.UserRoles
+                                                        where ur.UserId == u.Id
+                                                        join r in _context.Roles on ur.RoleId equals r.Id
+                                                        select new { ur.RoleId, r.Name }).ToList(),
+                                               Claims = (from ct in _context.UserClaims
+                                                         where ct.UserId == u.Id
+                                                         select new { ct.ClaimType, ct.ClaimValue }).ToList()
+                                           }).Take(200).ToListAsync();
+                    var result = allrecord.Select(x => new DTODomainRegnResponse
+                                        {
+                                            Id = x.User.Id,
+                                            DomainId = x.User.DomainId,
+                                            AdminFlag = x.User.AdminFlag,
+                                            Active = x.User.Active,
+                                            UpdatedOn = x.User.UpdatedOn,
+                                            Mapped = x.TrnDomainMapping?.UserId != null,
+                                            TrnDomainMappingId = x.TrnDomainMapping?.Id ?? 0,
+                                            TrnDomainMappingApptId = (short)(x.TrnDomainMapping?.ApptId ?? 0),
+                                            TrnDomainMappingUnitId = x.TrnDomainMapping?.UnitId ?? 0,
+                                            Extension = x.TrnDomainMapping?.Extension ?? "",
+                                            DialingCode = x.TrnDomainMapping?.DialingCode ?? "",
+                                            IsIO = x.TrnDomainMapping?.IsIO ?? false,
+                                            IsCO = x.TrnDomainMapping?.IsCO ?? false,
+                                            IsRO = x.TrnDomainMapping?.IsRO ?? false,
+                                            IsORO = x.TrnDomainMapping?.IsORO ?? false,
+                                            ArmyNo = x.UserProfile?.ArmyNo,
+                                            UserId = x.UserProfile?.UserId ?? 0,
+                                            RoleNames = x.Roles.Select(r => r.Name).ToList(),
+                                            RoleIds = x.Roles.Select(r => r.RoleId).ToList(),
+                                            ClaimTypes = x.Claims.Select(c => c.ClaimType).ToList(),
+                                            ClaimValues = x.Claims.Select(c => c.ClaimValue).ToList(),
+                                        }).ToList();
+                    return result;
 
                 }
                 else
@@ -210,33 +235,44 @@ namespace DataAccessLayer
                                            from xtdm in utdm_jointable.DefaultIfEmpty()
                                            join up in _context.UserProfile on xtdm.UserId equals up.UserId into xtdmup_jointable
                                            from xup in xtdmup_jointable.DefaultIfEmpty()
-                                           select new DTODomainRegnResponse()
+                                           select new
                                            {
-                                               Id = u.Id,
-                                               DomainId = u.DomainId,
-                                               AdminFlag = u.AdminFlag,
-                                               Active = u.Active,
-                                               UpdatedOn = u.UpdatedOn,
-                                               Mapped = xtdm.UserId != null ? true : false,
-                                               TrnDomainMappingId = xtdm != null ? xtdm.Id : 0,
-                                               TrnDomainMappingApptId = (short)(xtdm != null ? xtdm.ApptId : 0),
-                                               TrnDomainMappingUnitId = xtdm != null ? xtdm.UnitId : 0,
-                                               Extension = xtdm != null ? xtdm.Extension : "",
-                                               DialingCode = xtdm != null ? xtdm.DialingCode : "",
-                                               IsIO = xtdm != null ? xtdm.IsIO : false,
-                                               IsCO = xtdm != null ? xtdm.IsCO : false,
-                                               IsRO = xtdm != null ? xtdm.IsRO : false,
-                                               IsORO = xtdm != null ? xtdm.IsORO : false,
-                                               ArmyNo = xup != null ? xup.ArmyNo : null,
-                                               UserId = xup != null ? xup.UserId : 0,
-                                               RoleNames = (from ur in _context.UserRoles.Where(x=>x.UserId == u.Id)
-                                                           join r in _context.Roles on ur.RoleId equals r.Id
-                                                           select r.Name).ToList(),
-                                               RoleIds = (from ur in _context.UserRoles
-                                                            where ur.UserId == u.Id
-                                                            select ur.RoleId).ToList(),
-                                           }).ToListAsync();
-                    return allrecord;
+                                               User = u,
+                                               TrnDomainMapping = xtdm,
+                                               UserProfile = xup,
+                                               Roles = (from ur in _context.UserRoles
+                                                        where ur.UserId == u.Id
+                                                        join r in _context.Roles on ur.RoleId equals r.Id
+                                                        select new { ur.RoleId, r.Name }).ToList(),
+                                               Claims = (from ct in _context.UserClaims
+                                                         where ct.UserId == u.Id
+                                                         select new { ct.ClaimType, ct.ClaimValue }).ToList()
+                                           }).Take(200).ToListAsync();
+                    var result = allrecord.Select(x => new DTODomainRegnResponse
+                                            {
+                                                Id = x.User.Id,
+                                                DomainId = x.User.DomainId,
+                                                AdminFlag = x.User.AdminFlag,
+                                                Active = x.User.Active,
+                                                UpdatedOn = x.User.UpdatedOn,
+                                                Mapped = x.TrnDomainMapping?.UserId != null,
+                                                TrnDomainMappingId = x.TrnDomainMapping?.Id ?? 0,
+                                                TrnDomainMappingApptId = (short)(x.TrnDomainMapping?.ApptId ?? 0),
+                                                TrnDomainMappingUnitId = x.TrnDomainMapping?.UnitId ?? 0,
+                                                Extension = x.TrnDomainMapping?.Extension ?? "",
+                                                DialingCode = x.TrnDomainMapping?.DialingCode ?? "",
+                                                IsIO = x.TrnDomainMapping?.IsIO ?? false,
+                                                IsCO = x.TrnDomainMapping?.IsCO ?? false,
+                                                IsRO = x.TrnDomainMapping?.IsRO ?? false,
+                                                IsORO = x.TrnDomainMapping?.IsORO ?? false,
+                                                ArmyNo = x.UserProfile?.ArmyNo,
+                                                UserId = x.UserProfile?.UserId ?? 0,
+                                                RoleNames = x.Roles.Select(r => r.Name).ToList(),
+                                                RoleIds = x.Roles.Select(r => r.RoleId).ToList(),
+                                                ClaimTypes = x.Claims.Select(c => c.ClaimType).ToList(),
+                                                ClaimValues = x.Claims.Select(c => c.ClaimValue).ToList(),
+                                            }).ToList();
+                    return result;
                 }
 
             }
@@ -1671,6 +1707,34 @@ namespace DataAccessLayer
                                 await _context.SaveChangesAsync();
                             }
 
+                            // Get Current Claims Values
+                            List<int> CurrentClaimsIds = new List<int>();
+                            CurrentClaimsIds = (from c in _context.UserClaims
+                                              where c.UserId == userUpdate.Id
+                                              select c.Id).ToList();
+
+                            // Remove claims to the user
+                            foreach (var claimsId in CurrentClaimsIds)
+                            {
+                                _context.UserClaims.Remove(new IdentityUserClaim<int> { Id= claimsId });
+                                await _context.SaveChangesAsync();
+                            }
+
+
+                            // Assign new claims to the user
+                            if (dTO.ClaimValues != null)
+                            {
+                                foreach (var claimValues in dTO.ClaimValues)
+                                {
+                                    ClaimsStore? claimsStore = await _context.ClaimsStore.Where(x => x.ClaimValue == claimValues).FirstOrDefaultAsync();
+                                    if (claimsStore != null)
+                                    {
+                                        await _context.UserClaims.AddAsync(new IdentityUserClaim<int> { UserId = userUpdate.Id, ClaimValue = claimsStore.ClaimValue, ClaimType = claimsStore.ClaimType });
+                                        await _context.SaveChangesAsync();
+                                    }
+                                }
+                            }
+
                             TrnDomainMapping trnDomainMapping = new TrnDomainMapping();
                             if (dTO.TDMId > 0)
                             {
@@ -1738,6 +1802,20 @@ namespace DataAccessLayer
                         {
                             await _context.UserRoles.AddAsync(new IdentityUserRole<int> { RoleId = roleId, UserId = Id });
                             await _context.SaveChangesAsync();
+                        }
+
+                        // Assign new claims to the user
+                        if(dTO.ClaimValues != null)
+                        {
+                            foreach (var claimValues in dTO.ClaimValues)
+                            {
+                                ClaimsStore? claimsStore = await _context.ClaimsStore.Where(x => x.ClaimValue == claimValues).FirstOrDefaultAsync();
+                                if(claimsStore != null)
+                                {
+                                    await _context.UserClaims.AddAsync(new IdentityUserClaim<int> { UserId = Id, ClaimValue = claimsStore.ClaimValue, ClaimType = claimsStore.ClaimType });
+                                    await _context.SaveChangesAsync();
+                                }
+                            }
                         }
 
                         var trnmapAdd = new TrnDomainMapping
@@ -1825,6 +1903,21 @@ namespace DataAccessLayer
                 {
                     Id = r.Id,
                     Name = r.Name != null ? r.Name : "Role Name Blank",
+                };
+                lst.Add(db);
+            }
+            return lst;
+        }
+        public async Task<List<DTOClaimsResponse>> GetAllClaims()
+        {
+            List<DTOClaimsResponse> lst = new List<DTOClaimsResponse>();
+            var Ret = await _context.ClaimsStore.OrderBy(x => x.ClaimValue).ToListAsync();
+            foreach (var r in Ret)
+            {
+                DTOClaimsResponse db = new DTOClaimsResponse()
+                {
+                    ClaimValue = r.ClaimValue,
+                    ClaimType = r.ClaimType,
                 };
                 lst.Add(db);
             }

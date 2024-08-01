@@ -20,6 +20,7 @@ namespace DataTransferObject.Requests
         
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
         public required List<int> RoleIds { get; set; }
+        public List<string>? ClaimValues { get; set; }
 
         [StringLength(6)]
         [Column(TypeName = "varchar(6)")]

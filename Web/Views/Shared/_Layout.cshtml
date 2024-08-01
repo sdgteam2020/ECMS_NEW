@@ -292,7 +292,8 @@
         var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
         var user = await userManager.FindByIdAsync(userId);
         var RoleList = await userManager.GetRolesAsync(user);
-        List<string> RoleNameList = new List<string>() { "User", "Coordinator", "DteAdmin", "AFSACUser", "RecordUser", "OROUser" };
+        var ClaimsList = await userManager.GetClaimsAsync(user);
+        List<string> RoleNameList = new List<string>() { "User" };
         DtoSession? dtoSession = new DtoSession();
         if (!string.IsNullOrEmpty(@HttpContextAccessor.HttpContext.Session.GetString("Token")))
         {
@@ -395,6 +396,10 @@
                                         <button type="submit" class="dropdown-item"><i class="ti-settings text-primary"></i><span>@(user.UserName + " (" + item + ")")</span></button>
                                     </form>
                                 }
+                            }
+                            @foreach (var item in ClaimsList)
+                            {
+                                <div class="dropdown-item">@item.Type</div>
                             }
                     <div class="dropdown-divider"></div>
                    @*  <a class="dropdown-item" href="#" id="btnChangePassword">
