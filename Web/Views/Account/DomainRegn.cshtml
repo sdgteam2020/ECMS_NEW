@@ -3,16 +3,16 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <style>
-    .count-label{
+    .count-label {
         background-color: #044C92;
-        text-align:center;
+        text-align: center;
         padding: 0.5rem !important;
         margin-right: 0.25rem !important;
-        border:hidden;
+        border: hidden;
         font-weight: 700 !important;
         color: #fff !important;
-        width:120px;
-        height:60px;
+        width: 120px;
+        height: 60px;
     }
 
     .modal-xl {
@@ -412,4 +412,18 @@
             </div>
         </div><!-- modal-content -->
     </div><!-- modal-dialog -->
+</div>
+<div class="modal fade" id="ClaimsShow" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-sm modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title" id="exampleModalLabel">Claims Details of Domain Id (<span id="claimDomainId"></span>)</h6>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div id="ClaimsShowBody" class="modal-body">
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
 </div>
