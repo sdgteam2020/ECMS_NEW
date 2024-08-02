@@ -573,6 +573,7 @@ namespace Web.Controllers
         [HttpGet]
         public IActionResult Registration(string Id)
         {
+            #region Old Colde
             //var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
             //string decryptedId = string.Empty;
             //ViewBag.OptionsBloodGroup = service.GetBloodGroup();
@@ -593,6 +594,7 @@ namespace Web.Controllers
             //dTORegistrationRequest.TypeId = (byte)decryptedIntId;
             //ViewBag.OptionsRegistration = service.GetRegistration();
             //return View(dTORegistrationRequest);
+            #endregion End Old Colde
             return View();
         }
         [HttpPost]
@@ -636,8 +638,6 @@ namespace Web.Controllers
                             TempData["Registration"] = JsonConvert.SerializeObject(model);
                             return RedirectToActionPermanent("BasicDetail", "BasicDetail", new { Id= protector.Protect("0") });
                         }
-
-                        
                     }
                     else
                     {
@@ -663,9 +663,6 @@ namespace Web.Controllers
                             basicDetailTemp.TypeId= model.TypeId;
                             basicDetailTemp.RankId= model.RankId;
                             basicDetailTemp.ArmedId = model.ArmedId;
-
-
-
                             basicDetailTemp.UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
                             BasicDetailTemp temp = new BasicDetailTemp();
                             temp =await basicDetailTempBL.GetByArmyNo(model.ServiceNo);
@@ -679,9 +676,8 @@ namespace Web.Controllers
                         {
                             await basicDetailTempBL.Add(basicDetailTemp);
                         }
-                        
-                            TempData["success"] = "Request Submited Successfully.";
-                            return RedirectToActionPermanent("InaccurateData", "BasicDetail", new {Id = "MQ=="});
+                        TempData["success"] = "Request Submited Successfully.";
+                        return RedirectToActionPermanent("InaccurateData", "BasicDetail", new {Id = "MQ=="});
                     }
                 }
                 else
@@ -812,7 +808,7 @@ namespace Web.Controllers
                     _logger.LogError(1001, ex, "This error occure because Id value change by user.");
                     return RedirectToAction("Error", "Error");
                 }
-                BasicDetailCrtAndUpdVM? basicDetailUpdVM = await basicDetailBL.GetByRequestIdBesicDetails(decryptedIntId);
+                BasicDetailCrtAndUpdVM? basicDetailUpdVM = await basicDetailBL.GetBesicDetailForEditById(decryptedIntId);
 
                 if (basicDetailUpdVM != null)
                 {
