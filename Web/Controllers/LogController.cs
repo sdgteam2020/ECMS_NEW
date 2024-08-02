@@ -99,7 +99,7 @@ namespace Web.Controllers
        // public async Task<IActionResult> CreatePDF
         public async Task<IActionResult> DigitalpdfsignatureSave(int RequestId, string base64)
         {
-            BasicDetailCrtAndUpdVM? db = await BasicDetailBL.GetByRequestIdBesicDetails(RequestId);
+            BasicDetailCrtAndUpdVM? db = await BasicDetailBL.GetBasicDetailByRequestId(RequestId);
             var filePath1 = System.IO.Path.Combine(hostingEnvironment.ContentRootPath, "wwwroot\\DigitallysignaturePdf\\" + db.ServiceNo + "_" + RequestId + ".pdf");
 
             byte[] pdfBytes = Convert.FromBase64String(base64);
@@ -171,7 +171,7 @@ namespace Web.Controllers
 
 
 
-                BasicDetailCrtAndUpdVM? db = await BasicDetailBL.GetByRequestIdBesicDetails(RequestId);
+                BasicDetailCrtAndUpdVM? db = await BasicDetailBL.GetBasicDetailByRequestId(RequestId);
                 string pdfname = db.ServiceNo + "_" + RequestId + "_" + yearName + "" + monthName + "" + dayName + "" + hh + "" + mm + "" + ss + ".pdf";
                 var filePath1 = System.IO.Path.Combine(hostingEnvironment.ContentRootPath, "wwwroot\\DigitallysignaturePdf\\"+ pdfname);
                 //if (!System.IO.File.Exists(filePath1))

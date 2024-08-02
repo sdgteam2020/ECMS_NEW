@@ -24,7 +24,7 @@ namespace BusinessLogicsLayer.BasicDet
         public Task<List<DTOSmartSearch>> SearchAllServiceNo(string ServiceNo, int AspNetUsersId);
         public Task<BasicDetailCrtAndUpdVM> GetBasicDetailByRequestId(int RequestId);
         public Task<BasicDetailCrtAndUpdVM> GetBasicDetailById(int BasicDetailId);
-        public Task<BasicDetailCrtAndUpdVM> GetByRequestIdBesicDetails(int RequestId);
+        public Task<BasicDetailCrtAndUpdVM> GetBesicDetailForEditById(int BasicDetailId);
         public Task<List<ICardHistoryResponse>> ICardHistory(int RequestId);
         public Task<DTOFwdLastRecForDigitalSign> ICardFwdLastRec(int RequestId);
         public Task<List<ICardHistoryResponse>> ICardHistoryByTrackingId(string TrackingId);
