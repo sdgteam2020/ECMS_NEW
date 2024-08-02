@@ -45,7 +45,7 @@ namespace DataAccessLayer
             {
                 var ret = await (from bd in _context.BasicDetails
                                  join irequest in _context.TrnICardRequest on bd.BasicDetailId equals irequest.BasicDetailId
-                                 where bd.ServiceNo.Contains(ArmyNo) && irequest.RequestId ==1
+                                 where bd.ServiceNo.Contains(ArmyNo) && irequest.StatusId == 1
                                  select new DTOTopArmyNoFromICardRequestResponse
                                  {
                                      RequestId = irequest.RequestId,

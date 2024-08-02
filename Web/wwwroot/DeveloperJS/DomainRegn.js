@@ -1,32 +1,33 @@
-﻿$(document).ready(function () {
+﻿$(function () {
     BindData();
     AccountCount();
     BindRoles();
+    BindClaims();
     $('.select2').select2({
         dropdownParent: $('#AddNewDomain'),
         closeOnSelect: false
     });
 
-    $("#AddNewDomain input[name='txtapproval']").click(function () {
+    $("#AddNewDomain input[name='txtapproval']").on("click",function () {
         $("#txtapproval-error").html("");
     });
-    $("#AddNewDomain input[name='txtactive']").click(function () {
+    $("#AddNewDomain input[name='txtactive']").on("click", function () {
         $("#txtactive-error").html("");
     });
-    $("#AddNewDomain input[name='IntOffr']").click(function () {
+    $("#AddNewDomain input[name='IntOffr']").on("click", function () {
         $("#IntOffr-error").html("");
     });
 
-    $("#AddNewDomain input[name='InitatingOffr']").click(function () {
+    $("#AddNewDomain input[name='InitatingOffr']").on("click", function () {
         $("#InitatingOffr-error").html("");
     });
-    $("#AddNewDomain input[name='CommandingOffr']").click(function () {
+    $("#AddNewDomain input[name='CommandingOffr']").on("click", function () {
         $("#CommandingOffr-error").html("");
     });
-    $("#AddNewDomain input[name='IsRO']").click(function () {
+    $("#AddNewDomain input[name='IsRO']").on("click", function () {
         $("#IsRO-error").html("");
     });
-    $("#AddNewDomain input[name='IsORO']").click(function () {
+    $("#AddNewDomain input[name='IsORO']").on("click", function () {
         $("#IsORO-error").html("");
     });
 
@@ -178,8 +179,8 @@
         appendTo: '#suggesstion-box'
     });
 
-    $('#txtUnitName').keyup(function (e) {
-        if (e.keyCode == 46) {
+    $('#txtUnitName').on("keyup",function (e) {
+        if (e.which == 46) {
             $("#spnUnitMapId").html('0');
             $("#txtUnitName").val("");
             $("#spnTDMUnitType").html("");
@@ -194,18 +195,18 @@
             $("#lblFmn").html('');
         }
     });
-    $("#btnDomainAdd").click(function () {
+    $("#btnDomainAdd").on("click", function () {
         Reset();
         ResetErrorMessage();
         $("#AddNewDomain").modal('show');
     });
 
-    $("#btnDomainAddReset").click(function () {
+    $("#btnDomainAddReset").on("click", function () {
         Reset();
         ResetErrorMessage();
     });
 
-    $("#txtSearch").keyup(function () {
+    $("#txtSearch").on("keyup",function () {
         var eThis = $(this);
         if ($("input[type='radio'][name=choice]:checked").length > 0) {
             if ($("input[type='radio'][name=choice]:checked").val() == "Id") {
@@ -228,7 +229,7 @@
         }
     });
 
-    $("#btnUser").click(function () {
+    $("#btnUser").on("click", function () {
 
         if ($("#lblUser").html() > 0) {
             $("#tbldatadialog").DataTable().destroy();
@@ -237,7 +238,7 @@
             BindDialog("User");
         }
     });
-    $("#btnMappedUser").click(function () {
+    $("#btnMappedUser").on("click", function () {
 
         if ($("#lblMappedUser").html() > 0) {
             $("#tbldatadialog").DataTable().destroy();
@@ -246,7 +247,7 @@
             BindDialog("MappedUser");
         }
     });
-    $("#btnUnMappedUser").click(function () {
+    $("#btnUnMappedUser").on("click", function () {
         if ($("#lblUnMappedUser").html() > 0) {
             $("#tbldatadialog").DataTable().destroy();
             $("#lblModelTitle").html('Total UnMapped Users');
@@ -254,7 +255,7 @@
             BindDialog("UnMappedUser");
         }
     });
-    $("#btnActiveUser").click(function () {
+    $("#btnActiveUser").on("click", function () {
         if ($("#lblActiveUser").html() > 0) {
             $("#tbldatadialog").DataTable().destroy();
             $("#lblModelTitle").html('Total Active Users');
@@ -262,7 +263,7 @@
             BindDialog("ActiveUser");
         }
     });
-    $("#btnInActiveUser").click(function () {
+    $("#btnInActiveUser").on("click", function () {
         if ($("#lblInActiveUser").html() > 0) {
             $("#tbldatadialog").DataTable().destroy();
             $("#lblModelTitle").html('Total InActive Users');
@@ -270,7 +271,7 @@
             BindDialog("InActiveUser");
         }
     });
-    $("#btnVerified").click(function () {
+    $("#btnVerified").on("click", function () {
         if ($("#lblVerifiedUser").html() > 0) {
             $("#tbldatadialog").DataTable().destroy();
             $("#lblModelTitle").html('Total Verified Users');
@@ -278,7 +279,7 @@
             BindDialog("Verified");
         }
     });
-    $("#btnNotVerifiedUser").click(function () {
+    $("#btnNotVerifiedUser").on("click", function () {
         if ($("#lblNotVerifiedUser").html() > 0) {
             $("#tbldatadialog").DataTable().destroy();
             $("#lblModelTitle").html('Total Not Verified Users');
@@ -286,7 +287,7 @@
             BindDialog("NotVerifiedUser");
         }
     });
-    $("#btnIO").click(function () {
+    $("#btnIO").on("click", function () {
         if ($("#lblIO").html() > 0) {
             $("#tbldatadialog").DataTable().destroy();
             $("#lblModelTitle").html('Total Not Verified Users');
@@ -297,7 +298,7 @@
             BindData("IO");
         }
     });
-    $("#btnApprover").click(function () {
+    $("#btnApprover").on("click", function () {
         if ($("#lblApprover").html() > 0) {
             $("#tbldatadialog").DataTable().destroy();
             $("#lblModelTitle").html('Total Not Verified Users');
@@ -305,7 +306,7 @@
             BindDialog("CO");
         }
     });
-    $("#btnRO").click(function () {
+    $("#btnRO").on("click", function () {
         if ($("#lblRO").html() > 0) {
             $("#tbldatadialog").DataTable().destroy();
             $("#lblModelTitle").html('Total Not Verified Users');
@@ -313,7 +314,7 @@
             BindDialog("RO");
         }
     });
-    $("#btnORO").click(function () {
+    $("#btnORO").on("click", function () {
         if ($("#lblORO").html() > 0) {
             $("#tbldatadialog").DataTable().destroy();
             $("#lblModelTitle").html('Total Not Verified Users');
@@ -487,15 +488,25 @@ function BindData() {
 
                 else {
                     $("#tbldata").DataTable().destroy();
-
                     for (var i = 0; i < response.length; i++) {
 
                         listItem += "<tr>";
-                        listItem += "<td class='d-none'><span id='regId'>" + response[i].Id + "</span><span id='regTrnDomainMappingId'>" + response[i].TrnDomainMappingId + "</span><span id='regTrnDomainMappingApptId'>" + response[i].TrnDomainMappingApptId + "</span><span id='regTrnDomainMappingUnitId'>" + response[i].TrnDomainMappingUnitId + "</span><span id='regUserId'>" + response[i].UserId + "</span><span id='roleIds'>" + response[i].RoleIds + "</span><span id='domain_approval'>" + response[i].AdminFlag + "</span><span id='extension'>" + response[i].Extension + "</span><span id='dialingCode'>" + response[i].DialingCode + "</span></td>"; 
+                        listItem += "<td class='d-none'><span id='regId'>" + response[i].Id + "</span><span id='regTrnDomainMappingId'>" + response[i].TrnDomainMappingId + "</span><span id='regTrnDomainMappingApptId'>" + response[i].TrnDomainMappingApptId + "</span><span id='regTrnDomainMappingUnitId'>" + response[i].TrnDomainMappingUnitId + "</span><span id='regUserId'>" + response[i].UserId + "</span><span id='roleIds'>" + response[i].RoleIds + "</span><span id='claimValues'>" + response[i].ClaimValues + "</span><span id='domain_approval'>" + response[i].AdminFlag + "</span><span id='extension'>" + response[i].Extension + "</span><span id='dialingCode'>" + response[i].DialingCode + "</span></td>"; 
                         listItem += "<td class='align-middle'>" + (i + 1) + "</td>";
                         listItem += "<td class='align-middle'><span id='reg_no'>" + response[i].Id + "</span></td>";
                         listItem += "<td class='align-middle'><span id='domainId'>" + response[i].DomainId + "</span></td>";
                         listItem += "<td class='align-middle'><span id='roleName'>" + response[i].RoleNames + "</span></td>";
+                        if (response[i].ClaimTypes.length > 0) {
+                            var armsArray = response[i].ClaimTypes;
+                            listItem += "<td class='align-middle'><button type='button' class='cls-claimtypes btn btn-icon btn-round btn-warning mr-1'><i class='fa fa-eye'></i><span id='claimTypes' class='d-none'><ul>";
+                            for (var j = 0; j < armsArray.length; j++) {
+                                listItem += "<li>" + armsArray[j] + "</li>";
+                            }
+                            listItem += "</ul></span></button></td>";
+                        }
+                        else {
+                            listItem += "<td class='align-middle'></td>";
+                        }
                         listItem += "<td class='align-middle'><span id='updatedOn'>" + DateFormateddMMyyyyhhmmss(response[i].UpdatedOn) + "</span></td>";
                         if (response[i].Mapped == true)
                             listItem += "<td class='align-middle'><span id='domain_mapping'><span class='badge badge-pill badge-success'>Yes</span></span></td>";
@@ -570,8 +581,6 @@ function BindData() {
 
                     memberTable.buttons().container().appendTo('#tbldata_wrapper .col-md-6:eq(0)');
 
-                    var rows;
-
                     $("body").on("click", ".cls-btnedit", function () {
                         Reset();
                         ResetErrorMessage();
@@ -638,8 +647,17 @@ function BindData() {
                         $("#ddlRoles").val(arr2);
                         $("#ddlRoles").trigger("change");
 
+                        let arr3 = $(this).closest("tr").find("#claimValues").html().split(',');
+                        $("#ddClaims").val(arr3);
+                        $("#ddClaims").trigger("change");
+
                         $("#btnDomainAdd").val("Update");
                         $("#AddNewDomain").modal('show');
+                    });
+                    $("body").on("click", ".cls-claimtypes", function () {
+                        $("#claimDomainId").html($(this).closest("tr").find("#domainId").html())
+                        $("#ClaimsShowBody").html($(this).closest("tr").find("#claimTypes").html());
+                        $("#ClaimsShow").modal('show');
                     });
                 }
             }
@@ -672,6 +690,7 @@ function Save() {
             "Id": $("#spnDomainRegId").html(),
             "DomainId": $("#txtDomainId").val(),
             "RoleIds": $('#ddlRoles').val(),
+            "ClaimValues": $('#ddClaims').val(),
             "DialingCode": $("#txtDialingCode").val(),
             "Extension": $("#txtExtension").val(),
             "AdminFlag": $('input:radio[name=txtapproval]:checked').val(),
@@ -741,6 +760,7 @@ function Reset()     {
     $("#txtExtension").val("");
 
     $('#ddlRoles').val(null).trigger('change');
+    $('#ddClaims').val(null).trigger('change');
    
 
     $("#spnTrnDomainMappingId").html("0");
@@ -780,6 +800,7 @@ function Reset()     {
 function ResetErrorMessage() {
     $("#txtDomainId-error").html("");
     $("#ddlRoles-error").html("");
+    $("#ddClaims-error").html("");
     $("#txtDialingCode-error").html("");
     $("#txtExtension-error").html("");
     $("#txtapproval-error").html("");
@@ -868,6 +889,19 @@ function BindRoles() {
             $('#ddlRoles').html(list)
         }
         });
+}
+function BindClaims() {
+    $.ajax({
+        url: "/Account/GetAllClaims",
+        type: "POST",
+        success: function (response, status) {
+            var list = "";
+            for (var i = 0; i < response.length; i++) {
+                list += '<option value="' + response[i].ClaimValue + '">' + response[i].ClaimType + '</option>';
+            }
+            $('#ddClaims').html(list)
+        }
+    });
 }
 function AccountCount() {
     $.ajax({

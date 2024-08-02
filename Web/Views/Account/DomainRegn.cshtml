@@ -3,16 +3,16 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <style>
-    .count-label{
+    .count-label {
         background-color: #044C92;
-        text-align:center;
+        text-align: center;
         padding: 0.5rem !important;
         margin-right: 0.25rem !important;
-        border:hidden;
+        border: hidden;
         font-weight: 700 !important;
         color: #fff !important;
-        width:120px;
-        height:60px;
+        width: 120px;
+        height: 60px;
     }
 
     .modal-xl {
@@ -110,13 +110,14 @@
                                 <th class="nowrap">Registered ID</th>
                                 <th class="nowrap">Domain ID</th>
                                 <th class="nowrap">Role</th>
-                                <th class="nowrap">Requested Generated On (Dt)</th>
+                                <th class="nowrap">Claims</th>
+                                <th class="text-wrap" style="width: 6rem;">Requested Generated On (Dt)</th>
                                 <th class="nowrap">Mapping</th>
-                                <th class="nowrap">Active Yes/No</th>
+                                <th class="nowrap">Active</th>
                                 <th class="nowrap">IO</th>
                                 <th class="nowrap">Approver</th>
-                                <th class="nowrap">Record Office (JCO)</th>
-                                <th class="nowrap">Record Office (Offier)</th>
+                                <th style="width: 6rem;">Record Office (JCO)</th>
+                                <th style="width: 6rem;">Record Office (Officer)</th>
                                 <th class="noExport nowrap">Action</th>
                             </tr>
                         </thead>
@@ -156,6 +157,14 @@
                                     <select class="form-control select2 select2-accessible" multiple="" placeholder="Select Role" style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddlRoles" id="ddlRoles" data-val="true" data-val-regex="This special chars and space not allowed for security reasons." data-val-required="Role is required.">
                                     </select>
                                     <span class="text-danger field-validation-valid" data-valmsg-for="ddlRoles" data-valmsg-replace="true"></span>
+                                </div>
+                            </div>
+                            <div class="form-group row mb-2">
+                                <label class="col-form-label col-sm-4 fw-bold">Assign Claims</label>
+                                <div class="col-sm-8">
+                                    <select class="form-control select2 select2-accessible" multiple="" placeholder="Select Claims" style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddClaims" id="ddClaims" data-val="true" data-val-regex="This special chars and space not allowed for security reasons.">
+                                    </select>
+                                    <span class="text-danger field-validation-valid" data-valmsg-for="ddClaims" data-valmsg-replace="true"></span>
                                 </div>
                             </div>
                             <div class="form-group row mb-2">
@@ -403,4 +412,18 @@
             </div>
         </div><!-- modal-content -->
     </div><!-- modal-dialog -->
+</div>
+<div class="modal fade" id="ClaimsShow" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-sm modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title" id="exampleModalLabel">Claims Details of Domain Id (<span id="claimDomainId"></span>)</h6>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div id="ClaimsShowBody" class="modal-body">
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
 </div>

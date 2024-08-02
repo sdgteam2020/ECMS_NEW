@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -12,6 +13,8 @@ namespace DataTransferObject.Response
         public string DomainId { get; set; } = string.Empty;
         public List<int>? RoleIds { get; set; }
         public List<string>? RoleNames { get; set; }
+        public List<string>? ClaimValues { get; set; }
+        public List<string>? ClaimTypes { get; set; }
         public string? ArmyNo { get; set; }
         public string DialingCode { get; set; } = string.Empty;
         public string Extension { get; set; } = string.Empty;

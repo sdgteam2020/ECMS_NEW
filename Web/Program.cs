@@ -141,22 +141,12 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.LoginPath = "/Account/IMLogin";
     options.LogoutPath = "/Account/Logout";
     options.AccessDeniedPath = "/Account/AccessDenied";
-    options.SlidingExpiration = true; // IS OPTION KO BAAD ME UNCOMMENT.
+    options.SlidingExpiration = true; 
 
     //options.ReturnUrlParameter=""
 });
 
-builder.Services.AddAuthorization(options =>
-{
-    options.AddPolicy("DeleteRolePolicy",
-        policy => policy.RequireClaim("Delete Role"));
-
-    options.AddPolicy("EditRolePolicy",
-        policy => policy.AddRequirements(new ManageAdminRolesAndClaimsRequirement()));
-
-    options.AddPolicy("AdminRolePolicy",
-        policy => policy.RequireRole("Admin"));
-});
+builder.Services.AddAuthorizationPolicies();
 
 builder.Services.AddResponseCompression(options =>
 {

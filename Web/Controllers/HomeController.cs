@@ -1,30 +1,23 @@
-﻿using BusinessLogicsLayer;
-using BusinessLogicsLayer.BasicDet;
+﻿using BusinessLogicsLayer.BasicDet;
 using BusinessLogicsLayer.Bde;
-using BusinessLogicsLayer.BdeCate;
 using BusinessLogicsLayer.Home;
 using BusinessLogicsLayer.Master;
 using BusinessLogicsLayer.RecordOffice;
 using BusinessLogicsLayer.Registration;
 using BusinessLogicsLayer.ReportReturn;
-using BusinessLogicsLayer.User;
 using DapperRepo.Core.Constants;
-using DataAccessLayer.BaseInterfaces;
-using DataTransferObject.Domain;
 using DataTransferObject.Domain.Identitytable;
 using DataTransferObject.Domain.Master;
 using DataTransferObject.Domain.Model;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.SqlServer.Management.Smo;
 using System.Data;
 using System.Security.Claims;
 using Web.WebHelpers;
-using static iText.StyledXmlParser.Jsoup.Select.Evaluator;
+
 
 namespace Web.Controllers
 {
@@ -59,6 +52,7 @@ namespace Web.Controllers
             _recordOfficeBL = recordOfficeBL;
             _logger = logger;
             _reportReturnBL = reportReturnBL;
+            this.userManager = userManager;
         }
         private string GetSessionValue()
         {
@@ -95,7 +89,15 @@ namespace Web.Controllers
         {
             string role = GetSessionValue();
 
-            ViewBag.Role = role;    
+            ViewBag.Role = role;
+            
+            var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var user = await userManager.FindByIdAsync(userId);
+
+            // UserManager service GetClaimsAsync method gets all the current claims of the user
+            var UserClaims = await userManager.GetClaimsAsync(user);
+            ViewBag.UserClaims = UserClaims;
+
             return View();
         }
         #region Report Return
@@ -205,17 +207,32 @@ namespace Web.Controllers
             catch (Exception ex) { return Json(KeyConstants.InternalServerError); }
 
         }
-        public IActionResult MyTask(string Id)
+        public async Task<IActionResult> MyTask(string Id)
         {
             string role = GetSessionValue();
             var base64EncodedBytes = System.Convert.FromBase64String(Id);
             var ret = System.Text.Encoding.UTF8.GetString(base64EncodedBytes);
             ViewBag.Type = ret;
             ViewBag.Role = role;
+
+            var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var user = await userManager.FindByIdAsync(userId);
+
+            // UserManager service GetClaimsAsync method gets all the current claims of the user
+            var UserClaims = await userManager.GetClaimsAsync(user);
+            ViewBag.UserClaims = UserClaims;
+
             return View();
         }
-        public IActionResult Request()
+        public async Task<IActionResult> Request()
         {
+            var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var user = await userManager.FindByIdAsync(userId);
+
+            // UserManager service GetClaimsAsync method gets all the current claims of the user
+            var UserClaims = await userManager.GetClaimsAsync(user);
+            ViewBag.UserClaims = UserClaims;
+
             string role = GetSessionValue();
             ViewBag.Role = role;
             return View();
