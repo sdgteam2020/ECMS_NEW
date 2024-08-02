@@ -732,9 +732,9 @@ namespace DataAccessLayer
                             " inner join MArmedType arm on arm.ArmedId=bas.ArmedId" +
                             " inner join MapUnit uni on uni.UnitMapId=bas.UnitId" +
                             " inner join MUnit Muni on Muni.UnitId=uni.UnitId" +
-                            " inner join TrnICardRequest icardreq on icardreq.BasicDetailId=bas.BasicDetailId and icardreq.StatusId=1 " +
+                            " left join TrnICardRequest icardreq on icardreq.BasicDetailId=bas.BasicDetailId and icardreq.StatusId=1 " +
                             " left join MRegimental regi on regi.RegId=bas.RegimentalId" +
-                            " where icardreq.RequestId=@RequestId";
+                            " where bas.BasicDetailId=@RequestId";
             try
             {
                 using (var connection = _contextDP.CreateConnection())
