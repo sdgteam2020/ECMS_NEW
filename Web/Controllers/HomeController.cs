@@ -194,12 +194,7 @@ namespace Web.Controllers
             return View();
         }
       
-        public async Task<IActionResult> ICardProcessReport()
-        {
-            string role = GetSessionValue();
-            ViewBag.Role = role;
-            return View();
-        }
+      
         public async Task<IActionResult> GetICardProcessReport(DTOMHierarchyRequest Data)
         {
             try

@@ -3,7 +3,26 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <link href="~/css/reportandreturn.css" rel="stylesheet" />
-
+<style>
+    .clickable {
+        height: 190px;
+        width: 190px;
+        display: block;
+    }
+</style>
+<style>
+    .modal.left .modal-dialog, .modal.right .modal-dialog {
+        position: fixed;
+        margin: auto;
+        width: 700px;
+        height: 100%;
+        text-align: left;
+        -webkit-transform: translate3d(0%, 0, 0);
+        -ms-transform: translate3d(0%, 0, 0);
+        -o-transform: translate3d(0%, 0, 0);
+        transform: translate3d(0%, 0, 0);
+    }
+</style>
 <header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
     <div class="containerMain">
         <div class="page-header-content pt-4">
@@ -180,3 +199,4 @@
 </div>
 
 <script asp-src-include="~/developerjs/reportandreturn.js"></script>
+<script asp-src-include="~/developerjs/ICardPrint.js"></script>

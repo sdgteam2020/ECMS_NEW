@@ -550,15 +550,23 @@ function GetReportReturnHistory(spnStepId, applyTypeId, IsApproveId) {
                         //if (spnStepId == "99")
                         //{
                         $("#spn99Status").removeClass("d-none");
+                        listItem += "<td class='align-middle nowrap'>";
                         if (response[i].StatusName == null)
-                            listItem += "<td class='align-middle nowrap'><span id='comdName'><span class='badge badge-primary' >Action Pending</span></span></td>";
+                            listItem += "<span id='comdName'><span class='badge badge-primary mr-1' >Action Pending</span></span>";
 
                        else if (response[i].StatusName =="Pending")
-                            listItem += "<td class='align-middle nowrap'><span id='comdName'><span class='badge badge-warning' >" + response[i].StatusName + "</span></span></td>";
+                            listItem += "<span id='comdName'><span class='badge badge-warning mr-1' >" + response[i].StatusName + "</span></span>";
                         else if (response[i].StatusName == "Rejected")
-                            listItem += "<td class='align-middle nowrap'><span id='comdName'><span class='badge badge-danger' >" + response[i].StatusName + "</span></span></td>";
+                            listItem += "<span id='comdName'><span class='badge badge-danger mr-1' >" + response[i].StatusName + "</span></span>";
                         else 
-                            listItem += "<td class='align-middle nowrap'><span id='comdName'><span class='badge badge-success' >" + response[i].StatusName + "</span></span></td>";
+                            listItem += "<span id='comdName'><span class='badge badge-success mr-1' >" + response[i].StatusName + "</span></span>";
+                       
+                        listItem += "<span class='spnRequestId d-none'>" + response[i].RequestId + "</span>";
+                        listItem += "<button class='btn btn-icon btn-round btn-primary mr-1 cls-historyRequest'><i class='fa fa-history' aria-hidden='true'></i></button>";
+                        listItem += "<button class='btn btn-icon btn-round btn-primary mr-1 cls-print'><i class='fa fa-print mt-2' aria-hidden='true'></i></button>";
+
+
+                        listItem += "</td>";
                             //}
                         //else {
                         //    listItem += "<td class='d-none'></td>";
@@ -688,7 +696,18 @@ function GetReportReturnHistory(spnStepId, applyTypeId, IsApproveId) {
                         }
                     });
 
-                   
+                    $("body").on("click", ".cls-historyRequest", function () {
+
+
+                        $("#exampleModal").modal('show');
+                        GetRequestHistory($(this).closest("tr").find(".spnRequestId").html());
+                    });
+                    $("body").on("click", ".cls-print", function () {
+
+
+
+                        GetICardPrintPreviewByRequestId($(this).closest("tr").find(".spnRequestId").html());
+                    });
 
 
                 }
