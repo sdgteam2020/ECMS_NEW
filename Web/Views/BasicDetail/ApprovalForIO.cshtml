@@ -101,7 +101,7 @@
                         <table id="tbldatatabledata" class="table border border-purple table-striped no-footer dataTable table-hover" style="width:100%">
                             <thead>
                                 <tr>
-                                    @if ((ViewBag.dataexport == 5 || ViewBag.dataexport == 4) && claims.Count > 0 && claims.Any(i => i.Value == "Coordinator"))
+                                    @if ((ViewBag.dataexport == 5 || ViewBag.dataexport == 4) || (claims.Count > 0 && claims.Any(i => i.Value == "Coordinator")))
                                     {
                                        
                                         <th class="noExport wd-30-f">
@@ -139,7 +139,7 @@
                                            </div>
                                            </td>
                                         }
-                                        @if (ViewBag.Role == "Coordinator")
+                                        @if (claims.Count > 0 && claims.Any(i => i.Value == "Coordinator"))
                                         {
                                             <td>
                                                 <div class="custom-control custom-checkbox small">

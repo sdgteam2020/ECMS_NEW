@@ -498,11 +498,11 @@ function BindData() {
                         listItem += "<td class='align-middle'><span id='roleName'>" + response[i].RoleNames + "</span></td>";
                         if (response[i].ClaimTypes.length > 0) {
                             var armsArray = response[i].ClaimTypes;
-                            listItem += "<td class='align-middle'><ul>";
+                            listItem += "<td class='align-middle'><button type='button' class='cls-claimtypes btn btn-icon btn-round btn-warning mr-1'><i class='fa fa-eye'></i><span id='claimTypes' class='d-none'><ul>";
                             for (var j = 0; j < armsArray.length; j++) {
                                 listItem += "<li>" + armsArray[j] + "</li>";
                             }
-                            listItem += "</ul></td>";
+                            listItem += "</ul></span></button></td>";
                         }
                         else {
                             listItem += "<td class='align-middle'></td>";
@@ -581,8 +581,6 @@ function BindData() {
 
                     memberTable.buttons().container().appendTo('#tbldata_wrapper .col-md-6:eq(0)');
 
-                    var rows;
-
                     $("body").on("click", ".cls-btnedit", function () {
                         Reset();
                         ResetErrorMessage();
@@ -655,6 +653,11 @@ function BindData() {
 
                         $("#btnDomainAdd").val("Update");
                         $("#AddNewDomain").modal('show');
+                    });
+                    $("body").on("click", ".cls-claimtypes", function () {
+                        $("#claimDomainId").html($(this).closest("tr").find("#domainId").html())
+                        $("#ClaimsShowBody").html($(this).closest("tr").find("#claimTypes").html());
+                        $("#ClaimsShow").modal('show');
                     });
                 }
             }

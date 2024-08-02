@@ -1138,7 +1138,7 @@ namespace Web.Controllers
         {
             int userid = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
             DTOTempSession? dTOTempSession = SessionHeplers.GetObject<DTOTempSession>(HttpContext.Session, "Token");
-            List<string> RoleNameList = new List<string>() { "User", "Coordinator" ,"DteAdmin", "AFSACUser", "RecordUser", "OROUser" };
+            List<string> RoleNameList = new List<string>() { "User"};
             if (dTOTempSession != null)
             {
                 if (RoleNameList.Contains(dTOTempSession.RoleName))
@@ -1312,7 +1312,7 @@ namespace Web.Controllers
         {
             int userid = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
             DTOTempSession? dTOTempSession = SessionHeplers.GetObject<DTOTempSession>(HttpContext.Session, "Token");
-            List<string> RoleNameList = new List<string>() { "User", "Coordinator", "DteAdmin", "AFSACUser", "RecordUser", "OROUser" };
+            List<string> RoleNameList = new List<string>() { "User" };
 
             if (userid==0)
             {
@@ -1358,7 +1358,7 @@ namespace Web.Controllers
         public async Task<IActionResult> TokenValidate(DTOTokenRequest model)
         {
             DTOTempSession? dTOTempSession = SessionHeplers.GetObject<DTOTempSession>(HttpContext.Session, "IMData");
-            List<string> RoleNameList = new List<string>() { "User", "Coordinator", "DteAdmin", "AFSACUser", "RecordUser", "OROUser" };
+            List<string> RoleNameList = new List<string>() { "User" };
             if (dTOTempSession != null)
             {
                 model.ICNo = model.ICNo.Trim();

@@ -623,7 +623,7 @@ namespace Web.Controllers
                         //insertedBasicdetail.EncryptedId = protector.Protect(insertedBasicdetail.BasicDetailId.ToString());
                         //TempData["success"] = "Successfully created.";
                         //return RedirectToActionPermanent("Create", "BasicDetail", new { Id = insertedBasicdetail.EncryptedId });
-                        BasicDetail Data = new BasicDetail();
+                        BasicDetail? Data = new BasicDetail();
                         Data =await basicDetailBL.FindServiceNo(model.ServiceNo);
                         if (Data != null)
                         {

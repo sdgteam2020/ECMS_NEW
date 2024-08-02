@@ -60,7 +60,7 @@
                             </div>
                         </a>
                     </div>
-                    @if (ViewBag.Role == "Coordinator" || ViewBag.Role == "RecordUser" || ViewBag.Role == "OROUser" || ViewBag.Role == "DteAdmin")
+                    @if (claims.Count > 0 && claims.Any(i => i.Value == "RO_Observer"))//@if (ViewBag.Role == "Coordinator" || ViewBag.Role == "RecordUser" || ViewBag.Role == "OROUser" || ViewBag.Role == "DteAdmin")
                     {
                         <div class="col-md-2 col-sm-6">
                             <a href="/BasicDetail/InaccurateData?Id=Mg==" class="clickable">
