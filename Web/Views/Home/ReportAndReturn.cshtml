@@ -1,6 +1,7 @@
 ﻿@{
     ViewData["Title"] = "DashBoard";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    List<Claim> claims = ViewBag.UserClaims;
 }
 <link href="~/css/reportandreturn.css" rel="stylesheet" />
 <style>
@@ -41,11 +42,10 @@
 </header>
 <div class="containerMain mt-n10">
     <div class="row">
-
         <div class="card  section_to_report_toPrint" id="section_to_report_toPrint">
             <div class="row pt-1 SearchTab d-print-none">
                 <div class="form-group row mb-2">
-
+                    <span id="spnclaimId" class="d-none">@(claims.Count > 0 && claims.Any(i => i.Value == "DteAdmin") ? "DteAdmin" : "")</span>
                     <label class="col-form-label col-md-2 fw-bold">Select Unit Type <i class="fas fa-asterisk mand1"></i></label>
                     <div class="col-md-10">
                         <div class="form-check form-check-inline">

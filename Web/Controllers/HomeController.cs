@@ -103,6 +103,12 @@ namespace Web.Controllers
         #region Report Return
         public async Task<IActionResult> ReportAndReturn()
         {
+            var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var user = await userManager.FindByIdAsync(userId);
+
+            // UserManager service GetClaimsAsync method gets all the current claims of the user
+            var UserClaims = await userManager.GetClaimsAsync(user);
+            ViewBag.UserClaims = UserClaims;
             return View();
         }
 
