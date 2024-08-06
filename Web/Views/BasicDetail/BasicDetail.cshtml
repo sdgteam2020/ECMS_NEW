@@ -150,8 +150,7 @@
                                                         <div class="js--image-preview"> <img id="PhotoPath" src="/WriteReadData/photo/@Model.ExistingPhotoImagePath" height="158px" width="180px" /></div>
                                                         <div class="upload-options">
                                                             <label>
-
-                                                                <input asp-for="Photo_" class="form-control" onchange="beforeUploadPhotoSizeCheckInEdit(this)" accept="image/jpeg,image/jpg,image/png,image/gif" />
+                                                                <input asp-for="Photo_" class="form-control" accept="image/jpeg,image/jpg,image/png" />
                                                             </label>
                                                         </div>
                                                     </div>
@@ -162,8 +161,7 @@
                                                         <div class="js--image-preview"> <img id="PhotoPath" src="~/writereaddata/images/noimage.png" height="158px" width="180px" /></div>
                                                         <div class="upload-options">
                                                             <label>
-
-                                                                <input asp-for="Photo_" class="form-control" onchange="beforeUploadPhotoSizeCheck(this);" accept="image/jpeg,image/jpg,image/png,image/gif" />
+                                                                <input asp-for="Photo_" class="form-control" accept="image/jpeg,image/jpg,image/png" />
                                                             </label>
                                                         </div>
                                                     </div>
@@ -171,7 +169,7 @@
                                                 }
                                                 <span id="lblPhoto" style="color: red;"></span>
                                                 <span asp-validation-for="Photo_" class="text-danger"></span>
-                                                <span class="text-danger">Photo Upload Upto 200KB</span>
+                                                <span id="lblPhotoNotification" class="text-danger">Photo Upload Upto 200KB</span>
                                             </div>
                                         </div>
                                         @* </div>
@@ -187,8 +185,7 @@
                                                         <div class="js--image-preview_sig"> <img id="SignaturePath" src="/WriteReadData/Signature/@Model.ExistingSignatureImagePath" height="80px" width="180px" /></div>
                                                         <div class="upload-options_sign">
                                                             <label>
-
-                                                                <input asp-for="Signature_" class="form-control" onchange="beforeUploadSignatureSizeCheckInEdit(this)" accept="image/jpeg,image/jpg,image/png" />
+                                                                <input asp-for="Signature_" class="form-control" accept="image/jpeg,image/jpg,image/png" />
                                                             </label>
                                                         </div>
                                                     </div>
@@ -200,14 +197,14 @@
                                                         <div class="upload-options_sign">
                                                             <label>
 
-                                                                <input asp-for="Signature_" class="form-control" onchange="beforeUploadSignatureSizeCheck(this)" accept="image/jpeg,image/jpg,image/png" />
+                                                                <input asp-for="Signature_" class="form-control" accept="image/jpeg,image/jpg,image/png" />
                                                             </label>
                                                         </div>
                                                     </div>
                                                 }
                                                 <span id="lblSignature" style="color: red;"></span>
                                                 <span asp-validation-for="Signature_" class="text-danger"></span>
-                                                <span class="text-danger"> Signature Upload Upto 50KB</span>
+                                                <span id="lblSignatureNotification" class="text-danger"> Signature Upload Upto 50KB</span>
                                             </div>
                                         </div>
                                     </div>
@@ -397,7 +394,7 @@
                                     </div>
                                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                                     <div class="text-center mb-2">
-                                        <button type="submit" class="btn btn-primary disabled" id="btnsave" onclick="return CheckValidation();">Save & Next</button> @* // *@
+                                        <button type="submit" class="btn btn-primary disabled" id="btnsave">Save & Next</button> @* // *@
                                         @* <a asp-action="Index" asp-controller="BasicDetail" class="btn btn-primary">Back</a> *@
                                     </div>
                                 </div>
@@ -414,9 +411,6 @@
 </div>
 @* </div> *@
 @section Scripts{
-    <script src="~/developerjs/mtables.js"></script>
+    <script asp-src-include="~/developerjs/mtables.js"></script>
     <script asp-src-include="~/developerjs/basicdetails.js"></script>
-    <script asp-src-include="~/js/CustomScript.js"></script>
-
-
-    }
+}

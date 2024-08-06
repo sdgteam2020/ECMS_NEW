@@ -959,7 +959,7 @@ namespace Web.Controllers
 
                             if (!result || !imgcontentresult)
                             {
-                                ModelState.AddModelError("", "File format not correct");
+                                ModelState.AddModelError("Photo_", "File format not correct");
                                 if (System.IO.File.Exists(path))
                                 {
                                     System.IO.File.Delete(path);
@@ -992,7 +992,7 @@ namespace Web.Controllers
 
                             if (!result || !imgcontentresult)
                             {
-                                ModelState.AddModelError("", "File format not correct");
+                                ModelState.AddModelError("Signature_", "File format not correct");
                                 if (System.IO.File.Exists(path))
                                 {
                                     System.IO.File.Delete(path);
