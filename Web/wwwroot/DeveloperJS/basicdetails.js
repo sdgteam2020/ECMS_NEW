@@ -1,5 +1,13 @@
-﻿$(document).ready(function () {
-
+﻿$(function () {
+    $("#btnsave").on("click", function () {
+        CheckValidation();
+    });
+    $("#Signature_").on("change", function () {
+        beforeUploadSignatureCheck(this);
+    });
+    $("#Photo_").on("change", function () {
+        beforeUploadPhotoCheck(this);
+    });
     if ($("#spnBloodGroupId").val() > 0) {
         mMsater($("#spnBloodGroupId").val(), "BloodGroupId", BloodGroup, "");
     }
@@ -112,7 +120,6 @@
 
     }
 
-
     $("#txtUnit").autocomplete({
         source: function (request, response) {
             if (request.term.length > 2) {
@@ -150,7 +157,6 @@
         appendTo: '#suggesstion-box'
     });
 
-  
 });
 function GetROListByArmedId(ArmedId, sectid) {
     var userdata =
@@ -325,7 +331,6 @@ function getunitbymapid(value)
         }
     });
 }
-
 function getApplyIcardDetails() {
     $.ajax({
         url: "/Home/GetApplyCardDetails",
@@ -361,4 +366,130 @@ function getApplyIcardDetails() {
 
         }
     });
+}
+function beforeUploadSignatureCheck(id) {
+    $("#lblSignature").html("");
+    //$("#Signature_").prop('required', true);
+    const file = id.files[0];
+    if (file) {
+        var size = parseFloat(file.size);
+        var maxSizeKB = 50; //Size in KB.
+        var maxSize = maxSizeKB * 1024; //File size is returned in Bytes.
+        var allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+        if (!allowedTypes.includes(file.type)) {
+            $("#lblSignature").html("Invalid file type. Only JPG, JPEG, and PNG files are allowed. </br>");
+            $("#lblSignatureNotification").addClass("text-danger");
+            $("#lblSignatureNotification").removeClass("text-success");
+            //$("#SignaturePath").attr({
+            //    'src': '/writereaddata/images/noimage.png',
+            //    'width': '180px',
+            //    'height': '80px'
+            //});
+            $("#Signature_").val(null);
+            return false;
+        }
+        else {
+            if (size > maxSize) {
+                $("#lblSignature").html("Maximum file size " + maxSizeKB + "KB allowed.");
+                //$("#SignaturePath").attr({
+                //    'src': '/writereaddata/images/noimage.png',
+                //    'width': '180px',
+                //    'height': '80px'
+                //});
+                $("#Signature_").val(null);
+                $("#lblSignatureNotification").addClass("text-danger");
+                $("#lblSignatureNotification").removeClass("text-success");
+                return false;
+            }
+            else {
+                $("#lblSignatureNotification").addClass("text-success");
+                $("#lblSignatureNotification").removeClass("text-danger");
+                signatureChange(id);
+            }
+        }
+
+    }
+}
+function beforeUploadPhotoCheck(id) {
+    $("#lblPhoto").html("");
+    const file = id.files[0];
+    if (file) {
+        var size = parseFloat(file.size);
+        var maxSizeKB = 200; //Size in KB.
+        var maxSize = maxSizeKB * 1024; //File size is returned in Bytes.
+        var allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+
+        if (!allowedTypes.includes(file.type)) {
+            $("#lblPhoto").html("Invalid file type. Only JPG, JPEG, and PNG files are allowed. </br>");
+            $("#lblPhotoNotification").addClass("text-danger");
+            $("#lblPhotoNotification").removeClass("text-success");
+            //$("#PhotoPath").attr({
+            //    'src': '/writereaddata/images/noimage.png',
+            //    'width': '180px',
+            //    'height': '158px'
+            //});
+            $("#Photo_").val(null);
+            return false;
+        }
+        else {
+            if (size > maxSize) {
+                $("#lblPhoto").html("Maximum file size " + maxSizeKB + "KB allowed. </br>");
+                //$("#PhotoPath").attr({
+                //    'src': '/writereaddata/images/noimage.png',
+                //    'width': '180px',
+                //    'height': '158px'
+                //});
+                $("#Photo_").val(null);
+                $("#lblPhotoNotification").addClass("text-danger");
+                $("#lblPhotoNotification").removeClass("text-success");
+                return false;
+            } else {
+                $("#lblPhotoNotification").addClass("text-success");
+                $("#lblPhotoNotification").removeClass("text-danger");
+                photoChange(id);
+            }
+        }
+    }
+}
+function beforeSubmitValidateBasicDetail(id) {
+    let formId = '#' + id;
+    let rType = $("#Type").val();
+    if (rType == '2') {
+        $("#lblRegimentalId").text('');
+        let regId = $("#RegimentalId").val();
+        if (regId == '') {
+            $('#RegimentalId').prop('required', true);
+            $("#lblRegimentalId").text('Regimental is required.')
+        }
+    }
+    $.validator.unobtrusive.parse($(formId));
+
+    return false;
+    //if ($(formId).valid()) {
+    //}
+    //else {
+    //    return false;
+    //}
+}
+function signatureChange(id) {
+    const file = id.files[0];
+    if (file) {
+        let reader = new FileReader();
+        reader.onload = function (event) {
+            $("#SignaturePath")
+                .attr("src", event.target.result);
+        };
+        reader.readAsDataURL(file);
+    }
+}
+function photoChange(id) {
+    const file = id.files[0];
+    if (file) {
+        let reader = new FileReader();
+        reader.onload = function (event) {
+            $("#PhotoPath")
+                .attr("src", event.target.result);
+        };
+        reader.readAsDataURL(file);
+    }
 }

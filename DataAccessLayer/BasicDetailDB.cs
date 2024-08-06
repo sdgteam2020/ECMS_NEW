@@ -638,17 +638,8 @@ namespace DataAccessLayer
 
 
         }
-         
         public async Task<BasicDetailCrtAndUpdVM> GetBasicDetailByRequestId(int RequestId)
         {
-            //DTOBasicDetailRequest dd = new DTOBasicDetailRequest();
-            //dd.MRank.RankAbbreviation = "";
-            //dd.MArmedType.Abbreviation
-            //string query = "select bas.*,ran.RankAbbreviation RankName,arm.Abbreviation ArmedType from BasicDetails bas " +
-            //    " inner join MRank ran on ran.RankId=bas.RankId"+
-            //    " inner join MArmedType arm on arm.ArmedId=bas.ArmedId"+
-            //    " where bas.BasicDetailId=@BasicDetailId";
-
             string query = "select bas.*,"+
                             " issaut.Name IssuingAuthorityName,trnadd.State,trnadd.District,trnadd.PS,trnadd.PO,trnadd.Tehsil,trnadd.Village,trnadd.PinCode," +
                             " trnup.SignatureImagePath,trnup.PhotoImagePath,IdenMark1,IdenMark2,AadhaarNo,Height,bld.BloodGroup,bld.BloodGroupId," +
@@ -712,11 +703,11 @@ namespace DataAccessLayer
 
             catch (Exception ex)
             {
-                _logger.LogError(1001, ex, "BasicDetailDB->GetBasicDetailByRequestId");
+                _logger.LogError(1001, ex, "BasicDetailDB->GetBasicDetailById");
                 return null;
             }
         }
-        public async Task<BasicDetailCrtAndUpdVM> GetByRequestIdBesicDetails(int RequestId)
+        public async Task<BasicDetailCrtAndUpdVM> GetBesicDetailForEditById(int BasicDetailId)
         { 
             string query = "select bas.*," +
                             " issaut.Name IssuingAuthorityName,trnadd.State,trnadd.District,trnadd.PS,trnadd.PO,trnadd.Tehsil,trnadd.Village,trnadd.PinCode," +
@@ -734,19 +725,19 @@ namespace DataAccessLayer
                             " inner join MUnit Muni on Muni.UnitId=uni.UnitId" +
                             " left join TrnICardRequest icardreq on icardreq.BasicDetailId=bas.BasicDetailId and icardreq.StatusId=1 " +
                             " left join MRegimental regi on regi.RegId=bas.RegimentalId" +
-                            " where bas.BasicDetailId=@RequestId";
+                            " where bas.BasicDetailId=@BasicDetailId";
             try
             {
                 using (var connection = _contextDP.CreateConnection())
                 {
-                    var BasicDetailList = await connection.QueryAsync<BasicDetailCrtAndUpdVM>(query, new { RequestId });
+                    var BasicDetailList = await connection.QueryAsync<BasicDetailCrtAndUpdVM>(query, new { BasicDetailId });
 
                     return BasicDetailList.SingleOrDefault();
                 }
             }
             catch (Exception ex)
             {
-                _logger.LogError(1001, ex, "BasicDetailDB->GetByRequestIdBesicDetails");
+                _logger.LogError(1001, ex, "BasicDetailDB->GetBesicDetailForEditById");
                 return null;
             }
 
@@ -1137,7 +1128,6 @@ namespace DataAccessLayer
 
             }
         }
-
         public async Task<List<DTONotificationResponse>> GetNotification(int UserId, int Type, int applyForId)
         {
             string query = "select dis.DisplayId,Spanname,Message,ranks.RankAbbreviation,bas.Name,bas.ServiceNo,tre.TrackingId,uplod.PhotoImagePath,dis.Url  from TrnNotification noti" +
@@ -1219,7 +1209,6 @@ namespace DataAccessLayer
             }
 
         }
-
         public async Task<DTOApplicationTrack> ApplicationHistory(string TrackingId)
         {
             DTOApplicationTrack lst=new DTOApplicationTrack();

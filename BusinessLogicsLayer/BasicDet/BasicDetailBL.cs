@@ -61,10 +61,9 @@ namespace BusinessLogicsLayer.BasicDet
         {
             return await _iBasicDetailDB.GetBasicDetailById(BasicDetailId);
         }
-        public Task<BasicDetailCrtAndUpdVM> GetByRequestIdBesicDetails(int RequestId)
+        public Task<BasicDetailCrtAndUpdVM> GetBesicDetailForEditById(int BasicDetailId)
         {
-           
-            return _iBasicDetailDB.GetByRequestIdBesicDetails(RequestId);
+            return _iBasicDetailDB.GetBesicDetailForEditById(BasicDetailId);
         }
 
         public Task<List<ICardHistoryResponse>> ICardHistory(int RequestId)
