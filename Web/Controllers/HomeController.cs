@@ -103,7 +103,6 @@ namespace Web.Controllers
         #region Report Return
         public async Task<IActionResult> ReportAndReturn()
         {
-            
             return View();
         }
 

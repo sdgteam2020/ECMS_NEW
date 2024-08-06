@@ -169,9 +169,15 @@
                             </form>
                         }
                     }
-                    @foreach (var item in ClaimsList)
+                    @if (ClaimsList.Count > 0)
                     {
-                        <div class="dropdown-item">@item.Type</div>
+                        <div class="text-center fw-bold">Allowed feature</div>
+                        <ul>
+                            @foreach (var item in ClaimsList)
+                            {
+                                <li><div class="dropdown-item">@item.Type</div></li>
+                            }
+                        </ul>
                     }
                     <div class="dropdown-divider"></div>
                     @*  <a class="dropdown-item" href="#" id="btnChangePassword">
