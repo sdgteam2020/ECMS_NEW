@@ -31,6 +31,9 @@ namespace BusinessLogicsLayer
                 options.AddPolicy("RO_ObserverPolicy",
                     policy => policy.RequireClaim("RO_Observer"));
 
+                options.AddPolicy("DteAdminPolicy",
+                    policy => policy.RequireClaim("Dte Admin"));
+
             });
         }
     }

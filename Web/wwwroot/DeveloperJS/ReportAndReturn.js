@@ -1,6 +1,6 @@
 ﻿var lst = '<option value="">All</option>';
 var comid = 0; var corId = 0; var divId = 0; var bdeId = 0; var FmnBranchId = 0; var PsoId = 0; var SubDteId = 0;
-$(document).ready(function () {
+$(function () {
 
     $("#btnprintreport").click(function () {
         //    window.scrollTo(0, 0);
@@ -136,7 +136,7 @@ $(document).ready(function () {
 
 
     $("#btnSearch").click(function () {
-        if ($("#spnroleId").html() != "DteAdmin")
+        if ($("#spnclaimId").html() != "DteAdmin")
             $(".SearchTab").addClass("d-none");
 
         $("#btnprintreport").removeClass("d-none");
@@ -771,7 +771,7 @@ function GetLoginUnitMappingDetails() {
 
                     
 
-                    if (parseInt(response.UnitType) == 1 && $("#spnroleId").html() != "DteAdmin") {
+                    if (parseInt(response.UnitType) == 1 && $("#spnclaimId").html() != "DteAdmin") {
                             $("#UnitType1").prop("checked", true);
 
                         mMsater(true, response.ComdId, "ddlCommand", 1, "");
@@ -792,10 +792,10 @@ function GetLoginUnitMappingDetails() {
                             $("#ddlDgSubDte").html(lst);
 
                         }
-                    else if (parseInt(response.UnitType) == 2 || $("#spnroleId").html() =="DteAdmin") {
+                    else if (parseInt(response.UnitType) == 2 || $("#spnclaimId").html() =="DteAdmin") {
                         $("#UnitType2").prop("checked", true);
 
-                        if ($("#spnroleId").html() == "DteAdmin") {
+                        if ($("#spnclaimId").html() == "DteAdmin") {
                             mMsater(false, '', "ddlCommand", 1, "");
                         }
                         else {
