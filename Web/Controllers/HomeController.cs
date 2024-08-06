@@ -111,10 +111,13 @@ namespace Web.Controllers
             try
             {
                 int UserId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-            var ret =await _reportReturnBL.GetMstepCount(Data);
-            return Json(ret);
-        }
-            catch (Exception ex) { return Json(KeyConstants.InternalServerError);
+                var ret =await _reportReturnBL.GetMstepCount(Data);
+                return Json(ret);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "Home->GetReportReturnCount");
+                return Json(KeyConstants.InternalServerError);
             }
         }
         public async Task<IActionResult> GetRecordHistory(DTOMHierarchyRequest Data,int ApplyForId,int StepId,int IsApproveId)
@@ -124,7 +127,11 @@ namespace Web.Controllers
                 var ret = await _reportReturnBL.GetRecordHistory(Data, ApplyForId, StepId, IsApproveId);
                 return Json(ret);
             }
-            catch (Exception ex) { return Json(KeyConstants.InternalServerError); }
+            catch (Exception ex) 
+            {
+                _logger.LogError(1001, ex, "Home->GetRecordHistory");
+                return Json(KeyConstants.InternalServerError); 
+            }
             
         }
         #endregion
