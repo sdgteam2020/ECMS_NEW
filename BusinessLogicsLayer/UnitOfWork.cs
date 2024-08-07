@@ -329,7 +329,7 @@ namespace BusinessLogicsLayer
             {
                 var result = await BloodGroupBL.GetAll();
 
-                foreach (var item in result)
+                foreach (var item in result.OrderBy(x=>x.BloodGroup))
                 {
                     DTOMasterResponse db = new DTOMasterResponse();
                     db.Id = item.BloodGroupId;

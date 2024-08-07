@@ -234,7 +234,7 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
                             </div>
                         </div>
                     </div>
-                    @if (claims.Count > 0 && claims.Any(i => i.Value == "RO_Validator"))//@if (ViewBag.Role == "Coordinator" || ViewBag.Role == "RecordUser" || ViewBag.Role == "OROUser" || ViewBag.Role == "DteAdmin")
+                    @if (claims.Count > 0 && claims.Any(i => i.Value == "Appl Approver"))//@if (ViewBag.Role == "Coordinator" || ViewBag.Role == "RecordUser" || ViewBag.Role == "OROUser" || ViewBag.Role == "DteAdmin")
                     {
                         <div class="col-xl-12 col-sm-12 col-12">
                             <div class="card card-collapsable mb-3">
@@ -315,7 +315,7 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
                             </div>
                         </div>
                     }
-                    @if (claims.Count > 0 && claims.Any(i => i.Value == "ADE"))//@if (ViewBag.Role == "AFSACUser")
+                    @if (claims.Count > 0 && claims.Any(i => i.Value == "ICard Export Data"))//@if (ViewBag.Role == "AFSACUser")
                     {
                         <div class="col-xl-12 col-sm-12 col-12">
                             <div class="card card-collapsable mb-3">
@@ -580,7 +580,7 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
                             </div>
                         </div>
                     </div>
-                    @if (claims.Count > 0 && claims.Any(i => i.Value == "RO_Validator"))//@if (ViewBag.Role == "Coordinator" || ViewBag.Role == "RecordUser" || ViewBag.Role == "OROUser" || ViewBag.Role == "DteAdmin")
+                    @if (claims.Count > 0 && claims.Any(i => i.Value == "Appl Approver"))//@if (ViewBag.Role == "Coordinator" || ViewBag.Role == "RecordUser" || ViewBag.Role == "OROUser" || ViewBag.Role == "DteAdmin")
                     {
                         <div class="col-xl-12 col-sm-12 col-12 d-none1">
                             <div class="card card-collapsable mb-3">
@@ -595,7 +595,7 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
                                         <div class="feature-icon-box3 mb-3">
 
                                             <div class="row">
-                                                @if (claims.Count > 0 && claims.Any(i => i.Value == "Coordinator"))//@if (ViewBag.Role == "Coordinator")
+                                                @if (claims.Count > 0 && claims.Any(i => i.Value == "Internal Wk Distr"))//@if (ViewBag.Role == "Coordinator")
                                                 {
                                                     <div class="col-xl-3 col-sm-3 col-12 mt-2">
                                                         <div class="card box-shadow">
@@ -744,7 +744,7 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
                             </div>
                         </div>
                     }
-                    @if (claims.Count > 0 && claims.Any(i => i.Value == "ADE"))//@if (ViewBag.Role == "AFSACUser")
+                    @if (claims.Count > 0 && claims.Any(i => i.Value == "ICard Export Data"))//@if (ViewBag.Role == "AFSACUser")
                     {
                         <div class="col-xl-12 col-sm-12 col-12">
                             <div class="card card-collapsable mb-3">

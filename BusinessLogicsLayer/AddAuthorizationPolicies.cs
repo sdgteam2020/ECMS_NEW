@@ -13,26 +13,26 @@ namespace BusinessLogicsLayer
         {
             services.AddAuthorization(options =>
             {
-                options.AddPolicy("ApplFlaggedViewPolicy",
-                    policy => policy.RequireClaim("Appl Flagged View"));
+                options.AddPolicy("ViewFlaggedICardApplPolicy",
+                    policy => policy.RequireClaim("View Flagged ICard Appl: Disp Case"));
 
-                options.AddPolicy("ApplFlaggedPolicy",
-                    policy => policy.RequireClaim("Appl Flagged"));
+                options.AddPolicy("FlagICardApplPolicy",
+                    policy => policy.RequireClaim("Flag ICard Appl: Disp Case"));
                 
-                options.AddPolicy("AFSACDataExporterPolicy",
-                    policy => policy.RequireClaim("AFSAC Data Exporter"));
+                options.AddPolicy("ICardExportDataPolicy",
+                    policy => policy.RequireClaim("ICard Export Data: AFSAC Cell"));
 
-                options.AddPolicy("CoordinatorPolicy",
-                    policy => policy.RequireClaim("Coordinator"));
+                options.AddPolicy("InternalWkDistrPolicy",
+                    policy => policy.RequireClaim("Internal Wk Distr: RO"));
 
-                options.AddPolicy("RO_ValidatorPolicy",
-                    policy => policy.RequireClaim("RO_Validator"));
+                options.AddPolicy("ApplApproverPolicy",
+                    policy => policy.RequireClaim("Appl Approver: RO"));
 
-                options.AddPolicy("RO_ObserverPolicy",
-                    policy => policy.RequireClaim("RO_Observer"));
+                options.AddPolicy("ViewIndlIncorrectDataPolicy",
+                    policy => policy.RequireClaim("View Indl Incorrect Data: RO"));
 
-                options.AddPolicy("DteAdminPolicy",
-                    policy => policy.RequireClaim("Dte Admin"));
+                options.AddPolicy("ArmyLevelReportsPolicy",
+                    policy => policy.RequireClaim("Army Level Reports"));
 
             });
         }

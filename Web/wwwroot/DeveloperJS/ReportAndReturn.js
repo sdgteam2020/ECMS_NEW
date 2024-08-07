@@ -136,7 +136,7 @@ $(function () {
 
 
     $("#btnSearch").click(function () {
-        if ($("#spnclaimId").html() != "DteAdmin")
+        if ($("#spnclaimId").html() != "Army Level Reports")
             $(".SearchTab").addClass("d-none");
 
         $("#btnprintreport").removeClass("d-none");
@@ -771,7 +771,7 @@ function GetLoginUnitMappingDetails() {
 
                     
 
-                    if (parseInt(response.UnitType) == 1 && $("#spnclaimId").html() != "DteAdmin") {
+                    if (parseInt(response.UnitType) == 1 && $("#spnclaimId").html() != "Army Level Reports") {
                             $("#UnitType1").prop("checked", true);
 
                         mMsater(true, response.ComdId, "ddlCommand", 1, "");
@@ -792,10 +792,10 @@ function GetLoginUnitMappingDetails() {
                             $("#ddlDgSubDte").html(lst);
 
                         }
-                    else if (parseInt(response.UnitType) == 2 || $("#spnclaimId").html() =="DteAdmin") {
+                    else if (parseInt(response.UnitType) == 2 || $("#spnclaimId").html() =="Army Level Reports") {
                         $("#UnitType2").prop("checked", true);
 
-                        if ($("#spnclaimId").html() == "DteAdmin") {
+                        if ($("#spnclaimId").html() == "Army Level Reports") {
                             mMsater(false, '', "ddlCommand", 1, "");
                         }
                         else {

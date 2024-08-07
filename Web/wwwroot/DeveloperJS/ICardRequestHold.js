@@ -156,7 +156,10 @@ function BindData() {
                             listItem += "<td class='align-middle'><span class='badge badge-pill badge-danger' id='isHold'>No</span></td>";
                         listItem += "<td class='align-middle'><span id='updatedOn'>" + DateFormateddMMyyyyhhmmss(response[i].UpdatedOn) + "</span></td>";
                         listItem += "<td class='noExport'><button class='historyRequest btn btn-icon btn-round btn-primary mr-1' data-toggle='tooltip' data-placement='left' title=''><i class='fa fa-history' aria-hidden='true'></i></button></td>";
-                        listItem += "<td class='align-middle'><span id='btnedit'><button type='button' class='cls-btnedit btn btn-icon btn-round btn-warning mr-1'><i class='fas fa-edit'></i></button></span></td>";
+                        if ($("#spnFlagICardAppl").html() == 'Flag ICard Appl') {
+                            listItem += "<td class='align-middle'><span id='btnedit'><button type='button' class='cls-btnedit btn btn-icon btn-round btn-warning mr-1'><i class='fas fa-edit'></i></button></span></td>";
+                        }
+                        
                         listItem += "</tr>";
 
                     }

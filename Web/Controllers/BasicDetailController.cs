@@ -124,7 +124,7 @@ namespace Web.Controllers
             return role;
         }
         //[Authorize(Roles = "DteAdmin")]
-        [Authorize(Policy = "ApplFlaggedPolicy")]
+        [Authorize(Policy = "FlagICardApplPolicy")]
         public async Task<IActionResult> SaveICardRequestHold(MTrnICardHold dTO)
         {
             try
@@ -171,7 +171,7 @@ namespace Web.Controllers
 
         }
         //[Authorize(Roles = "DteAdmin")]
-        [Authorize(Policy = "ApplFlaggedPolicy")]
+        [Authorize(Policy = "FlagICardApplPolicy")]
         public async Task<IActionResult> GetTopArmyNoFromICardRequest(string ArmyNo)
         {
             try
@@ -185,7 +185,7 @@ namespace Web.Controllers
             }
         }
         //[Authorize(Roles = "DteAdmin")]
-        [Authorize(Policy = "ApplFlaggedPolicy")]
+        [Authorize(Policy = "FlagICardApplPolicy")]
         public async Task<IActionResult> GetBDetailByRequestId(int RequestId)
         {
             try
@@ -199,7 +199,7 @@ namespace Web.Controllers
             }
 
         }
-        [Authorize(Policy = "ApplFlaggedViewPolicy")]
+        [Authorize(Policy = "ViewFlaggedICardApplPolicy")]
         [HttpGet]
         public async Task<IActionResult> ICardRequestHold()
         {
@@ -211,7 +211,7 @@ namespace Web.Controllers
             ViewBag.UserClaims = UserClaims;
             return View();
         }
-        [Authorize(Policy = "ApplFlaggedViewPolicy")]
+        [Authorize(Policy = "ViewFlaggedICardApplPolicy")]
         [HttpPost]
         public async Task<IActionResult> GetAllICardRequestHold()
         {
@@ -1412,7 +1412,7 @@ namespace Web.Controllers
         }
 
         //[Authorize(Roles = "Coordinator")]
-        [Authorize(Policy = "CoordinatorPolicy")]
+        [Authorize(Policy = "InternalWkDistrPolicy")]
         public async Task<IActionResult> SaveInternalFwd(DTOSaveInternalFwdRequest data)
         {
             try
@@ -1670,7 +1670,7 @@ namespace Web.Controllers
             return Json(await _IMasterBL.GetRemarksByTypeId(Data));
         }
         //[Authorize(Roles = "AFSACUser")]
-        [Authorize(Policy = "AFSACDataExporterPolicy")]
+        [Authorize(Policy = "ICardExportDataPolicy")]
         public async Task<IActionResult> DataExport(DTODataExportRequest Data)
         {
             try

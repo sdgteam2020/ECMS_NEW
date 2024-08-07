@@ -77,7 +77,7 @@
                                 @*   Total Units <span id="lblTotal" class="ml-3 border border-light b px-2 py-1">0</span> *@
                             </h6>
                             <div class="d-flex">
-                                @if ((ViewBag.dataexport == 4 || ViewBag.dataexport == 5) && claims.Count > 0 && claims.Any(i => i.Value == "ADE"))
+                                @if ((ViewBag.dataexport == 4 || ViewBag.dataexport == 5) && claims.Count > 0 && claims.Any(i => i.Value == "ICard Export Data"))
                                 {
                                     <button type="button" id="btnDataExports" class="btn btn-warning font-weight-600 btn-sm">Data Exports</button>
                                 }
@@ -91,7 +91,7 @@
 
                         </div>
                     }
-                    @if (ViewBag.StepCounter == 3 && claims.Count > 0 && claims.Any(i => i.Value == "Coordinator"))
+                    @if (ViewBag.StepCounter == 3 && claims.Count > 0 && claims.Any(i => i.Value == "Internal Wk Distr"))
                     {
                         <div class="d-flex justify-content-end">
                             <button type="button" id="btnInternalFwd" class="btn btn-warning font-weight-600 btn-sm mb-2">Forward</button>
@@ -101,7 +101,7 @@
                         <table id="tbldatatabledata" class="table border border-purple table-striped no-footer dataTable table-hover" style="width:100%">
                             <thead>
                                 <tr>
-                                    @if ((ViewBag.dataexport == 5 || ViewBag.dataexport == 4) || (claims.Count > 0 && claims.Any(i => i.Value == "Coordinator")))
+                                    @if ((ViewBag.dataexport == 5 || ViewBag.dataexport == 4) || (claims.Count > 0 && claims.Any(i => i.Value == "Internal Wk Distr")))
                                     {
                                        
                                         <th class="noExport wd-30-f">
@@ -139,7 +139,7 @@
                                            </div>
                                            </td>
                                         }
-                                        @if (claims.Count > 0 && claims.Any(i => i.Value == "Coordinator"))
+                                        @if (claims.Count > 0 && claims.Any(i => i.Value == "Internal Wk Distr"))
                                         {
                                             <td>
                                                 <div class="custom-control custom-checkbox small">
