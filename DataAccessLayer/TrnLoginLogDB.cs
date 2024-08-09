@@ -54,7 +54,7 @@ namespace DataAccessLayer
                 if(Data.Id==0)
                 connection.Execute("INSERT INTO [dbo].[XmlFilesFwdLog]([XmlFiles],[RequestId],[Updatedby],[UpdatedOn],[IsActive]) VALUES (@XmlFiles,@RequestId,@Updatedby,@UpdatedOn,@IsActive)", new { Data.XmlFiles, Data.RequestId, Data.Updatedby, Data.UpdatedOn, Data.IsActive });
                 else
-                connection.Execute("UPDATE [dbo].[XmlFilesFwdLog] SET [XmlFiles] =@XmlFiles ,[RequestId] = @RequestId,[Updatedby] = @Updatedby,[UpdatedOn] = @UpdatedOn,[IsActive] =  @IsActive", new { Data.XmlFiles, Data.RequestId, Data.Updatedby, Data.UpdatedOn, Data.IsActive });
+                connection.Execute("UPDATE [dbo].[XmlFilesFwdLog] SET [XmlFiles] =@XmlFiles ,[RequestId] = @RequestId,[Updatedby] = @Updatedby,[UpdatedOn] = @UpdatedOn,[IsActive] =  @IsActive WHERE [Id]= @Id", new { Data.XmlFiles, Data.RequestId, Data.Updatedby, Data.UpdatedOn, Data.IsActive,Data.Id });
 
                 return true;
             }

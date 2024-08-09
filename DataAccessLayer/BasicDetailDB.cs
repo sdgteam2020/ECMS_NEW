@@ -805,14 +805,15 @@ namespace DataAccessLayer
         public async Task<DTOXMLDigitalResponse> GetDataDigitalXmlSign(DTODataExportRequest Data)
         {
             DTOXMLDigitalSignResponse dTOXMLDigitalSignResponse = new DTOXMLDigitalSignResponse();
-            string query = "select bas.*, trnadd.State,trnadd.District,trnadd.PS,trnadd.PO,trnadd.Tehsil,trnadd.Village,trnadd.PinCode, "+
+            string query = "select bas.*,issaut.Name IssuingAuth ,trnadd.State,trnadd.District,trnadd.PS,trnadd.PO,trnadd.Tehsil,trnadd.Village,trnadd.PinCode, " +
                            " trnup.SignatureImagePath,trnup.PhotoImagePath,IdenMark1,IdenMark2,AadhaarNo,Height,bld.BloodGroup,bld.BloodGroupId, " +
                            " regi.Abbreviation RegimentalName,Muni.UnitName,uni.UnitMapId UnitId,icardreq.TypeId,icardreq.RegistrationId,"+ 
                            " ran.RankId,ran.RankAbbreviation RankName,arm.Abbreviation ArmedName,trnadd.AddressId,trnup.UploadId,"+
                            " trninfo.InfoId,MICardType.Name ICardType ,GETDATE() XmlCreatedOn," +
                            " App.Name ProApplyFor,reg.Name ProRegistraion,(select Name from MICardType where TypeId=icardreq.TypeId) ProType,users.DomainId ProDomainId,unit.UnitName ProUnitName,unit.Suffix ProSuffix,unit.Sus_no ProSUSNO,pro.Name ProName,ranks.RankAbbreviation ProRankName,pro.ArmyNo ProArmyName"+
                            " from BasicDetails bas "+
-                           " inner join TrnAddress trnadd on trnadd.BasicDetailId=bas.BasicDetailId "+
+                           " inner join MIssuingAuthority issaut on issaut.IssuingAuthorityId=bas.IssuingAuthorityId" +
+                           " inner join TrnAddress trnadd on trnadd.BasicDetailId=bas.BasicDetailId " +
                            " inner join TrnUpload trnup on trnup.BasicDetailId=bas.BasicDetailId "+
                            " inner join TrnIdentityInfo trninfo on trninfo.BasicDetailId=bas.BasicDetailId "+
                            " inner join MBloodGroup bld on bld.BloodGroupId=trninfo.BloodGroupId "+
@@ -838,10 +839,10 @@ namespace DataAccessLayer
                 if(BasicDetailList!=null)
                 {
                     ApplicationDetails applicationDetails = new ApplicationDetails();
-                   
-                    applicationDetails.Name = BasicDetailList.Name;
-                   
-                   
+                    string FN = BasicDetailList.FName;
+                    string LN = BasicDetailList.LName != null ? BasicDetailList.LName : "";
+                    string FName = FN + LN;
+                    applicationDetails.Name = FName.Trim();
                     applicationDetails.ServiceNo = BasicDetailList.ServiceNo;
                     applicationDetails.DOB = BasicDetailList.DOB;
                     applicationDetails.PlaceOfIssue = BasicDetailList.PlaceOfIssue;

@@ -1825,7 +1825,7 @@ namespace Web.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(1001, ex, "BasicDetails=>DataExport.");
+                _logger.LogError(1001, ex, "BasicDetails=>DataDigitalXmlSign.");
                 return RedirectToAction("Error", "Error");
             }
         }
