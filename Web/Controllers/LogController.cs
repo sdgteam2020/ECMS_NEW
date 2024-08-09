@@ -108,7 +108,6 @@ namespace Web.Controllers
         }
         public async Task<IActionResult> CreatePdfAsync(int RequestId)
         {
-            
             try
             {
                 var now = DateTime.Now;
@@ -346,12 +345,5 @@ namespace Web.Controllers
            
         }
 
-
-
-
-
-
-
-    
     }
 }
