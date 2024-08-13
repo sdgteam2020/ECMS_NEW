@@ -1,6 +1,6 @@
-﻿$(document).ready(function () {
+﻿$(function () {
     $("#loadingToken").hide();
-    $("#btnfetchtoken").click(function () {
+    $("#btnfetchtoken").on("click",function () {
         GetTokenDetails1("FetchUniqueTokenDetails","txtArmyNo");
     });
 
@@ -13,6 +13,7 @@ function GetTokenvalidatepersid2fawiththumbprint(IcNo, msgid, txticno, thumbprin
     $.ajax({
         url: 'http://localhost/Temporary_Listen_Addresses/FetchUniqueTokenDetails',
         type: "GET",
+        cache: false,
         dataType: "json",
 
         success: function (response) {
@@ -134,6 +135,7 @@ function GetTokenDetails1(ApiId, txt, thumbprint, msgid) {
     $.ajax({
         url: 'http://localhost/Temporary_Listen_Addresses/' + ApiId,
         type: "GET",
+        cache: false,
         dataType: "json",
         
         success: function (response) {
