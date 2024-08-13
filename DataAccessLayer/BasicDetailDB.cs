@@ -841,8 +841,8 @@ namespace DataAccessLayer
                     ApplicationDetails applicationDetails = new ApplicationDetails();
                     string FN = BasicDetailList.FName;
                     string LN = BasicDetailList.LName != null ? BasicDetailList.LName : "";
-                    string FName = FN + LN;
-                    applicationDetails.Name = FName.Trim();
+
+                    applicationDetails.Name = (FN + " " + LN).Trim();
                     applicationDetails.ServiceNo = BasicDetailList.ServiceNo;
                     applicationDetails.DOB = BasicDetailList.DOB;
                     applicationDetails.PlaceOfIssue = BasicDetailList.PlaceOfIssue;
