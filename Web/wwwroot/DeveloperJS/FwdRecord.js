@@ -1097,8 +1097,7 @@ function DataExport(Data) {
 function DataSignDigitaly(Data, msgid, RequestId,stepId) {
     var userdata = {
         "Ids": Data,
-
-
+        "StepId": stepId
     };
     $.ajax({
         url: '/BasicDetail/DataDigitalXmlSign',
