@@ -4,7 +4,7 @@ var errormsg001 = "Error 001. Due to network issue, please try after some time."
 var errormsg002 = "Error 002. Due to network issue, please try after some time.";
 var memberTable = "";
 var memberTable1 = "";
-$(document).ready(function () {
+$(function () {
 
     $('.dateInput').datepicker({
         dateFormat: 'dd/mm/yy', // Set date format to dd/mm/yyyy
@@ -38,7 +38,7 @@ $(document).ready(function () {
 
     //});
     
-    $('.spnarmynoformula').keyup(function (e) {
+    $('.spnarmynoformula').on("keyup",function (e) {
     //    if ($(this).val().length == 7) {
     //        var orgarmyno = $(this).val().toUpperCase();
     //        var armyno = $(this).val().toUpperCase().replace("IC", "").replace("JC", "");
@@ -135,7 +135,7 @@ $(document).ready(function () {
     //    }
         
     });
-    $('.form-space').keypress(function (e) {
+    $('.form-space').on("keypress",function (e) {
         // Get the key code of the pressed key
         var keyCode = e.which;
        
@@ -147,7 +147,7 @@ $(document).ready(function () {
             return true; // Allow the keypress
         }
     });
-    $('.form-control-Alphabets').keypress(function (e) {
+    $('.form-control-Alphabets').on("keypress",function (e) {
 
         // Get the key code of the pressed key
         var keyCode = e.which;
@@ -160,7 +160,7 @@ $(document).ready(function () {
             return false; // Block the keypress
         }
     });
-    $('.form-control').keypress(function (e) {
+    $('.form-control').on("keypress",function (e) {
        
         // Get the key code of the pressed key
         var keyCode = e.which;
@@ -173,7 +173,7 @@ $(document).ready(function () {
             return false; // Block the keypress
         }
     });
-    $('.form-control-domainId').keypress(function (e) {
+    $('.form-control-domainId').on("keypress",function (e) {
         // Get the key code of the pressed key
         var keyCode = e.which;
 
@@ -196,7 +196,7 @@ $(document).ready(function () {
 
         }
     });
-    $('.isNumerictxt').keypress(function (e) {
+    $('.isNumerictxt').on("keypress",function (e) {
       
         if (isNumeric(e.key)) {
            
@@ -210,7 +210,7 @@ $(document).ready(function () {
 
         }
     });
-    $(".btnPrint").click(function () {
+    $(".btnPrint").on("click",function () {
         //var now = new Date();
         //var jsDate = now.getDate() + '/' + (now.getMonth() + 1) + '/' + now.getFullYear() + ' ' + now.getHours()+ ':' + now.getMinutes() + ':' + now.getSeconds();
 
@@ -329,7 +329,7 @@ $(document).ready(function () {
         memberTable.buttons().container().appendTo('#tbldatatabledata_wrapper .col-md-6:eq(0)');
 
     }, 1000);
-    $("#tbldatatabledata #chkAll").click(function () {
+    $("#tbldatatabledata #chkAll").on("click",function () {
         if ($(this).is(':checked')) {
             rows = memberTable.rows({ 'search': 'applied' }).nodes();
             $('input[type="checkbox"]', rows).prop('checked', this.checked);

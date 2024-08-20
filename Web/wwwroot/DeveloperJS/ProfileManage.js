@@ -1,9 +1,21 @@
-﻿$(document).ready(function () {
+﻿$(function () {
     mMsater(0, "ddlRank", Rank, "");
     mMsater(0, "ddlArmType", ArmyType, "");
     BindData()
-    
 
+    $('#TokenWaiverInfo').on({
+        mouseenter: function () {
+            $('#hoverModal').modal('show'); // Show the modal on hover
+        },
+        mouseleave: function () {
+            // Delay hiding the modal slightly to check if the mouse is over the modal
+            setTimeout(function () {
+                if (!$('#hoverModal').is(':hover')) {
+                    $('#hoverModal').modal('hide'); // Hide the modal if the mouse is not over it
+                }
+            }, 200); // Adjust the delay as needed
+        }
+    });
     $("#IsTokenWaiverYes").on("click", function () { 
         $("#spnReasonTokenWaiver").removeClass("d-none");
         $('#txtMessage').prop('required', true);
@@ -16,18 +28,18 @@
         $("#txtMessage-error").html('');
     });
 
-    $("#btnProfileAdd").click(function () {
+    $("#btnProfileAdd").on("click",function () {
         Reset();
         ResetErrorMessage();
         $("#spnReasonTokenWaiver").addClass("d-none"); 
         $("#AddNewProfile").modal('show');
     });
-    $("#btnProfileAddReset").click(function () {
+    $("#btnProfileAddReset").on("click",function () {
         Reset();
         ResetErrorMessage();
     });
     
-    $("#txtSearch").keyup(function () {
+    $("#txtSearch").on("keyup",function () {
         var eThis = $(this);
         if ($("input[type='radio'][name=choice]:checked").length > 0) {
             if ($("input[type='radio'][name=choice]:checked").val() == "UserId") {
