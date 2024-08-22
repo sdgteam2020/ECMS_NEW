@@ -11,5 +11,6 @@ namespace DataTransferObject.Requests
         public int[] Ids { get; set; }
         public int IsJco { get; set; }
         public int StepId { get; set; }
+        public bool isToken { get; set; }
     }
 }

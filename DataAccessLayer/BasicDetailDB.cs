@@ -887,11 +887,13 @@ namespace DataAccessLayer
                     dTOXMLDigitalSignResponse.applicationDetails = applicationDetails;
                     dTOXMLDigitalSignResponse.profiledtls = profiledtls;
                 }
-                DTOFwdLastRecForDigitalSign dTOFwdLastRecForDigitalSign=new DTOFwdLastRecForDigitalSign();
-                dTOFwdLastRecForDigitalSign = await ICardFwdLastRec(Ids[0]);
-                dTOFwdLastRecForDigitalSign.StepId= Data.StepId;
-                dTOXMLDigitalSignResponse.RecForDigitalSign=dTOFwdLastRecForDigitalSign;
-
+                if(Data.isToken == false)
+                {
+                    DTOFwdLastRecForDigitalSign dTOFwdLastRecForDigitalSign = new DTOFwdLastRecForDigitalSign();
+                    dTOFwdLastRecForDigitalSign = await ICardFwdLastRec(Ids[0]);
+                    dTOFwdLastRecForDigitalSign.StepId = Data.StepId;
+                    dTOXMLDigitalSignResponse.RecForDigitalSign = dTOFwdLastRecForDigitalSign;
+                }
 
                 DTOXMLDigitalResponse dTOXMLDigitalResponse = new DTOXMLDigitalResponse();
                 dTOXMLDigitalResponse.Header = dTOXMLDigitalSignResponse;
