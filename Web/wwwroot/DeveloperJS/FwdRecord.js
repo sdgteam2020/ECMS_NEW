@@ -1097,7 +1097,8 @@ function DataExport(Data) {
 function DataSignDigitaly(Data, msgid, RequestId,stepId) {
     var userdata = {
         "Ids": Data,
-        "StepId": stepId
+        "StepId": stepId,
+        "isToken": isToken
     };
     $.ajax({
         url: '/BasicDetail/DataDigitalXmlSign',
@@ -1130,7 +1131,7 @@ function DataSignDigitaly(Data, msgid, RequestId,stepId) {
                             if (response.jsonfile == undefined) {
                                 var xmlString1 = response.XmlFiles;
                                 //if (stepId == 2) {
-                                //    GetTokenSignXml(xmlString1, msgid, RequestId, 0)
+                                //    GetTokenSignXml(xmlString1, msgid, RequestId, 0,stepId)
                                 //} else
                                 GetTokenSignXml(xmlString1, msgid, RequestId, response.Id)
                             } else {
@@ -1178,7 +1179,6 @@ function DataSignDigitaly(Data, msgid, RequestId,stepId) {
 
 function GetTokenSignXml(xml, msgid, RequestId, Id) {
 
-
     /*    IcNo = "7f33df8ac6540b5cf7ccfd041d8c837641226444d9f1a4aa30a01924c0610996";*/
     $.ajax({
         url: 'http://localhost/Temporary_Listen_Addresses/SignXml',
@@ -1189,7 +1189,6 @@ function GetTokenSignXml(xml, msgid, RequestId, Id) {
             if (response) {
 
                 var xmlContent = new XMLSerializer().serializeToString(response);
-
 
                 // No Token Found
                 if (xmlContent.indexOf("<Root>No Token Found</Root>") == -1) {
