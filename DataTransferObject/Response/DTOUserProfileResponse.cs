@@ -33,6 +33,7 @@ namespace DataTransferObject.Response
         public bool IsORO { get; set; }
 
         public bool IsToken { get; set; }
+        public bool IsWithoutTokenApply { get; set; }
         public string SusNo { get; set; } = string.Empty;
         //public int RequestId { get; set; }
         public string UnitName { get; set; } = string.Empty;

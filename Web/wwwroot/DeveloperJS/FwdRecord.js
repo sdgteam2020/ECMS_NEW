@@ -6,6 +6,7 @@ var xmlsign = 0;
 var lstmultifwdarr = new Array();
 var lstInternalFwd = new Array();
 var isToken = false;
+var IsWithoutTokenApply = false;
 $(function () {
 
     $("#btntokenTofwd").on("click", function () {
@@ -1120,6 +1121,7 @@ function DataSignDigitaly(Data, msgid, RequestId,stepId) {
                     //link.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(blob);
                     //link.download = "export.json";
                     //link.click();
+                    alert(JSON.stringify(response));
                     if (isToken == true) {
                         if (response.Id == undefined) {
                             var xmlString = jsonToXml(response);
@@ -1516,6 +1518,7 @@ function GetByArmyNoIsToken(ArmyNo) {
 
                 } else {
                     isToken = response.IsToken;
+                    IsWithoutTokenApply = response.IsWithoutTokenApply
                     if (response.IsToken == false)
                         $("#btntokenTofwd").addClass("d-none");
                     else
