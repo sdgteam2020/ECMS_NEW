@@ -448,6 +448,7 @@ namespace Web.Controllers
                         // digital log value assigned in list
                         foreach (var item in lstproDetails)
                         {
+                            LevelMessage levelMessage = dictionarLevel[i];
                             DTODigitalSignPlusLog obj = new DTODigitalSignPlusLog();
                             obj.Sno = i;
                             obj.TypeLog = 2;
@@ -456,6 +457,7 @@ namespace Web.Controllers
                             obj.FromProfile = obj.FromProfile;
                             obj.FromArmyNo = obj.FromArmyNo;
                             obj.FromDate = obj.FromDate;
+                            obj.LevelMessage = levelMessage.Name;
                             DigitalSignPlusLogList.Add(obj);
                             i++;
                         }
@@ -467,6 +469,7 @@ namespace Web.Controllers
                             // digital sign value assigned in list
                             foreach (var digitaldata in certificates)
                             {
+                                LevelMessage levelMessage = dictionarLevel[i];
                                 DTODigitalSignPlusLog obj = new DTODigitalSignPlusLog();
                                 var subdata = digitaldata.Subject.Split(",");
                                 obj.Sno = i;
@@ -474,6 +477,7 @@ namespace Web.Controllers
                                 obj.FromProfile = subdata[0].Replace("CN=", "");
                                 obj.FromArmyNo = subdata[1].Replace("SERIALNUMBER=", "").Replace("7f33df8ac6540b5cf7ccfd041d8c837641226444d9f1a4aa30a01924c0610996", "IC3432432X");
                                 obj.FromDate = DateTime.Now;
+                                obj.LevelMessage = levelMessage.Name;
                                 DigitalSignPlusLogList.Add(obj);
                                 i++;
                             }
