@@ -1435,7 +1435,7 @@ namespace DataAccessLayer
                                                ArmyNo = up.ArmyNo,
                                                Name = up.Name,
                                                IsToken=up.IsToken,
-                                               IsWithoutTokenApply = up.IsWithoutTokenApply,
+                                               IsWithTokenApply = up.IsWithTokenApply,
                                                MobileNo = up.MobileNo,
                                                IsTokenWaiver=up.IsTokenWaiver,
                                                ReasonTokenWaiver =up.ReasonTokenWaiver,
@@ -1466,7 +1466,7 @@ namespace DataAccessLayer
                                                ArmyNo = up.ArmyNo,
                                                Name = up.Name,
                                                IsToken = up.IsToken,
-                                               IsWithoutTokenApply = up.IsWithoutTokenApply,
+                                               IsWithTokenApply = up.IsWithTokenApply,
                                                MobileNo = up.MobileNo,
                                                IsTokenWaiver = up.IsTokenWaiver,
                                                ReasonTokenWaiver = up.ReasonTokenWaiver,
@@ -1496,7 +1496,7 @@ namespace DataAccessLayer
                                                ArmyNo = up.ArmyNo,
                                                Name = up.Name,
                                                IsToken = up.IsToken,
-                                               IsWithoutTokenApply = up.IsWithoutTokenApply,
+                                               IsWithTokenApply = up.IsWithTokenApply,
                                                MobileNo = up.MobileNo,
                                                IsTokenWaiver = up.IsTokenWaiver,
                                                ReasonTokenWaiver = up.ReasonTokenWaiver,
@@ -1526,7 +1526,7 @@ namespace DataAccessLayer
                                                ArmyNo = up.ArmyNo,
                                                Name = up.Name,
                                                IsToken = up.IsToken,
-                                               IsWithoutTokenApply = up.IsWithoutTokenApply,
+                                               IsWithTokenApply = up.IsWithTokenApply,
                                                MobileNo = up.MobileNo,
                                                IsTokenWaiver = up.IsTokenWaiver,
                                                ReasonTokenWaiver = up.ReasonTokenWaiver,
@@ -2001,6 +2001,7 @@ namespace DataAccessLayer
                                 MobileNo=model.MobileNo,
                                 ArmedId = model.ArmedId,
                                 IsToken = true,
+                                IsWithTokenApply=true,
                                 IsTokenWaiver= model.IsTokenWaiver,
                                 ReasonTokenWaiver = model.ReasonTokenWaiver,
                                 Updatedby = user.Id,
@@ -2046,7 +2047,7 @@ namespace DataAccessLayer
                     }
 
                 }
-            }
+            }   
             else if (dTOTempSession.Status == 3)
             {
                 using (var transaction = _context.Database.BeginTransaction())
@@ -2098,6 +2099,7 @@ namespace DataAccessLayer
                                 mUserProfile.MobileNo = model.MobileNo;
                                 mUserProfile.ArmedId = model.ArmedId;
                                 mUserProfile.IsToken = true;
+                                mUserProfile.IsWithTokenApply = true;
                                 mUserProfile.IsTokenWaiver = model.IsTokenWaiver;
                                 mUserProfile.ReasonTokenWaiver = model.ReasonTokenWaiver;
                                 mUserProfile.Updatedby = dTOTempSession.AspNetUsersId;
@@ -2196,6 +2198,7 @@ namespace DataAccessLayer
                                     mUserProfile.MobileNo = model.MobileNo;
                                     mUserProfile.ArmedId = model.ArmedId;
                                     mUserProfile.IsToken = true;
+                                    mUserProfile.IsWithTokenApply = true;
                                     mUserProfile.IsTokenWaiver = model.IsTokenWaiver;
                                     mUserProfile.ReasonTokenWaiver = model.ReasonTokenWaiver;
                                     mUserProfile.Updatedby = dTOTempSession.AspNetUsersId;

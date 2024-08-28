@@ -241,7 +241,7 @@ namespace DataAccessLayer
                 //                ).Distinct().FirstOrDefaultAsync();
 
                
-                string query = "SELECT prof.ArmyNo,prof.UserId,prof.Name,prof.MobileNo,trnd.Id as TDMId,trnd.DialingCode,trnd.Extension,prof.Thumbprint,trnd.IsRO,trnd.IsIO,trnd.IsCO,trnd.IsORO,prof.IsToken,prof.IsWithoutTokenApply,ran.RankName Rank,ran.RankId,mapu.UnitMapId UnitId,munit.UnitName,users.DomainId," +
+                string query = "SELECT prof.ArmyNo,prof.UserId,prof.Name,prof.MobileNo,trnd.Id as TDMId,trnd.DialingCode,trnd.Extension,prof.Thumbprint,trnd.IsRO,trnd.IsIO,trnd.IsCO,trnd.IsORO,prof.IsToken,prof.IsWithTokenApply,ran.RankName Rank,ran.RankId,mapu.UnitMapId UnitId,munit.UnitName,users.DomainId," +
                                 " appt.AppointmentName,trnd.MappedDate,usermodify.DomainId MappedBy,roles.Name RoleName from UserProfile prof "+
                                 " inner join MRank ran on prof.RankId = ran.RankId "+
                                 " inner join TrnDomainMapping trnd  on trnd.UserId = prof.UserId "+
@@ -723,7 +723,7 @@ namespace DataAccessLayer
         public async Task<MUserProfile> GetByIsWithoutTokenApply(int UserId)
         {
             try { 
-            string query = "SELECT prof.IsWithoutTokenApply" +
+            string query = "SELECT prof.IsWithTokenApply" +
                                 " from UserProfile prof " +
                                 " inner join MRank ran on prof.RankId = ran.RankId " +
                                 " inner join TrnDomainMapping trnd  on trnd.UserId = prof.UserId " +

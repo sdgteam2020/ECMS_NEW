@@ -11,8 +11,9 @@ namespace DataTransferObject.Response
         public string? FromDomain { get; set; }
         public string? FromProfile { get; set; }
         public string? FromRank { get; set; }
-        public string? FromArmyNo { get; set; }
+        public string FromArmyNo { get; set; } = string.Empty;  
         public DateTime? FromDate { get; set; }
         public int? StepId { get; set; }
+        public bool isRead { get; set; }= false;
     }
 }

@@ -887,13 +887,11 @@ namespace DataAccessLayer
                     dTOXMLDigitalSignResponse.applicationDetails = applicationDetails;
                     dTOXMLDigitalSignResponse.profiledtls = profiledtls;
                 }
-                if(Data.isToken == false)
-                {
-                    DTOFwdLastRecForDigitalSign dTOFwdLastRecForDigitalSign = new DTOFwdLastRecForDigitalSign();
-                    dTOFwdLastRecForDigitalSign = await ICardFwdLastRec(Ids[0]);
-                    dTOFwdLastRecForDigitalSign.StepId = Data.StepId;
-                    dTOXMLDigitalSignResponse.RecForDigitalSign = dTOFwdLastRecForDigitalSign;
-                }
+                
+                DTOFwdLastRecForDigitalSign dTOFwdLastRecForDigitalSign = new DTOFwdLastRecForDigitalSign();
+                dTOFwdLastRecForDigitalSign = await ICardFwdLastRec(Ids[0]);
+                dTOFwdLastRecForDigitalSign.StepId = Data.StepId;
+                dTOXMLDigitalSignResponse.RecForDigitalSign = dTOFwdLastRecForDigitalSign;
 
                 DTOXMLDigitalResponse dTOXMLDigitalResponse = new DTOXMLDigitalResponse();
                 dTOXMLDigitalResponse.Header = dTOXMLDigitalSignResponse;
@@ -944,18 +942,57 @@ namespace DataAccessLayer
         }
         public async Task<DTOFwdLastRecForDigitalSign> ICardFwdLastRec(int RequestId)
         {
+            #region Old Code write by Kapoor Sir
+            //string query = " if exists (select StepId from TrnStepCounter where RequestId=@RequestId and StepId=2)" +
+            //   " begin" +
+            //   " select ServiceNo FromArmyNo,'' FromDomain,basi.FName +' '+ ISNULL(basi.LName,'') FromProfile,ranlfrom.RankAbbreviation FromRank," +
+            //   " Getdate() FromDate,trnste.StepId from BasicDetails basi" +
+            //   " inner join MRank ranlfrom on ranlfrom.RankId=basi.RankId " +
+            //   " inner join TrnICardRequest req on  req.BasicDetailId=basi.BasicDetailId and req.StatusId=1" +
+            //   " inner join TrnStepCounter trnste on trnste.RequestId=req.RequestId" +
+            //   " where trnste.RequestId=@RequestId" +
+            //   " end" +
+            //   " else" +
+            //   " begin" +
+            //   " select top 1 profrom.ArmyNo FromArmyNo,usersfrom.UserName FromDomain,profrom.Name FromProfile, " +
+            //   " ranlfrom.RankAbbreviation FromRank,Getdate() FromDate,step.StepId from TrnFwds fwd  " +
+            //   " inner join TrnStepCounter step on fwd.RequestId=step.RequestId " +
+            //   " inner join TrnDomainMapping mapfrom on mapfrom.AspNetUsersId=fwd.FromAspNetUsersId " +
+            //   " inner join AspNetUsers usersfrom on usersfrom.Id=mapfrom.AspNetUsersId " +
+            //   " left join UserProfile profrom on mapfrom.UserId=profrom.UserId " +
+            //   " inner join MRank ranlfrom on ranlfrom.RankId=profrom.RankId " +
+            //   " where fwd.RequestId=@RequestId order by fwd.TrnFwdId desc" +
+            //   " end";
+            //try
+            //{
+            //    using (var connection = _contextDP.CreateConnection())
+            //    {
+            //        var BasicDetailList = await connection.QueryAsync<DTOFwdLastRecForDigitalSign>(query, new { RequestId });
+
+            //        return BasicDetailList.SingleOrDefault();
+            //    }
+            //}
+            //catch (Exception ex)
+            //{
+            //    _logger.LogError(1001, ex, "BasicDetailDB->ICardHistory");
+            //    return null;
+            //}
+            #endregion
             string query = " if exists (select StepId from TrnStepCounter where RequestId=@RequestId and StepId=2)" +
                            " begin" +
-                           " select ServiceNo FromArmyNo,'' FromDomain,basi.FName +' '+ ISNULL(basi.LName,'') FromProfile,ranlfrom.RankAbbreviation FromRank," +
+                           " select profrom.ArmyNo FromArmyNo,usersfrom.DomainId FromDomain,profrom.Name FromProfile,ranlfrom.RankAbbreviation FromRank," +
                            " Getdate() FromDate,trnste.StepId from BasicDetails basi" +
-                           " inner join MRank ranlfrom on ranlfrom.RankId=basi.RankId " +
+                           " inner join TrnDomainMapping mapfrom on mapfrom.AspNetUsersId=basi.Updatedby " +
+                           " inner join AspNetUsers usersfrom on usersfrom.Id=mapfrom.AspNetUsersId " +
+                           " left join UserProfile profrom on profrom.UserId=mapfrom.UserId " +
+                           " inner join MRank ranlfrom on ranlfrom.RankId=profrom.RankId " +
                            " inner join TrnICardRequest req on  req.BasicDetailId=basi.BasicDetailId and req.StatusId=1" +
                            " inner join TrnStepCounter trnste on trnste.RequestId=req.RequestId" +
                            " where trnste.RequestId=@RequestId" +
                            " end" +
                            " else" +
                            " begin" +
-                           " select top 1 profrom.ArmyNo FromArmyNo,usersfrom.UserName FromDomain,profrom.Name FromProfile, " +
+                           " select top 1 profrom.ArmyNo FromArmyNo,usersfrom.DomainId FromDomain,profrom.Name FromProfile, " +
                            " ranlfrom.RankAbbreviation FromRank,Getdate() FromDate,step.StepId from TrnFwds fwd  " +
                            " inner join TrnStepCounter step on fwd.RequestId=step.RequestId " +
                            " inner join TrnDomainMapping mapfrom on mapfrom.AspNetUsersId=fwd.FromAspNetUsersId " +
