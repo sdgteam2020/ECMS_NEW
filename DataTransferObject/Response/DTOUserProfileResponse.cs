@@ -31,9 +31,8 @@ namespace DataTransferObject.Response
         public bool IsIO { get; set; }
         public bool IsCO { get; set; }
         public bool IsORO { get; set; }
-
         public bool IsToken { get; set; }
-        public bool IsWithoutTokenApply { get; set; }
+        public bool IsWithTokenApply { get; set; }
         public string SusNo { get; set; } = string.Empty;
         //public int RequestId { get; set; }
         public string UnitName { get; set; } = string.Empty;
