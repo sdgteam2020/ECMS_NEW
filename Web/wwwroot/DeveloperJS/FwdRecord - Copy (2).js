@@ -5,9 +5,8 @@ var applyfor = 0;
 var xmlsign = 0;
 var lstmultifwdarr = new Array();
 var lstInternalFwd = new Array();
-var RegistrationApplyFor = 0;
-var isToken = true;
-var IsWithTokenApply = true;
+var isToken = false;
+var IsWithTokenApply = false;
 $(function () {
 
     $("#btntokenTofwd").on("click", function () {

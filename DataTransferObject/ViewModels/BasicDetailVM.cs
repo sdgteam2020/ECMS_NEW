@@ -246,6 +246,9 @@ namespace DataTransferObject.ViewModels
         public string? TrackingId { get; set; }
         [NotMapped]
         public int IsPosting { get; set; }
+        
+        [NotMapped]
+        public int RegistrationApplyFor { get; set; }
     }
     public class BasicDetailCrtAndUpdVM : BasicDetailVM
     {
