@@ -723,7 +723,7 @@ namespace DataAccessLayer
         public async Task<MUserProfile> GetByIsWithoutTokenApply(int UserId)
         {
             try { 
-            string query = "SELECT prof.IsWithTokenApply" +
+            string query = "SELECT prof.IsWithTokenApply,prof.IsToken" +
                                 " from UserProfile prof " +
                                 " inner join MRank ran on prof.RankId = ran.RankId " +
                                 " inner join TrnDomainMapping trnd  on trnd.UserId = prof.UserId " +
