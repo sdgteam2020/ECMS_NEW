@@ -153,10 +153,9 @@ $(function () {
         $("#multiplefed").removeClass("d-none");
         $("#BasicDetails").modal('hide');
 
-        /*if (applyfor==1)*/
         $("#FwdRecord").modal('show');
 
-        GetByArmyNoIsToken();
+        GetByArmyNoIsToken("", applyfor, RegistrationApplyFor, StepCounter);
     });
 
     $("input[name='Intoffrs']").on("change", function () {
@@ -180,8 +179,10 @@ $(function () {
         $("#multiplefed").addClass("d-none");
         $("#btntokenTofwd").addClass("d-none");
         $("#ddlRemarks").val("");
+
         // $("#FwdRecord").modal('show');
         $("#BasicDetails").modal('show');
+
         $(".spnFname").html($(this).closest("tr").find(".PersName").html());
         $(".spnFarmyno").html($(this).closest("tr").find(".ServiceNo").html());
         $("#spnStepCounter").html($(this).closest("tr").find(".spnStepCounterId").html());
@@ -195,6 +196,10 @@ $(function () {
 
         StepCounter = $(this).closest("tr").find(".spnStepCounterId").html();
         applyfor = $(this).closest("tr").find(".spnApplyFor").html();
+        RegistrationApplyFor = $(this).closest("tr").find(".spnRegistrationApplyFor").html();
+        $("#spnCurrentRegistrationApplyFor").html(RegistrationApplyFor);
+        $("#spnCurrentApplyFor").html(applyfor);
+        $("#spnServiceNo").html($(this).closest("tr").find(".spnServiceNo").html());
 
         if (StepCounter == 1 || StepCounter == 7 || StepCounter == 8 || StepCounter == 9 || StepCounter == 10) {
             $(".recectopt").addClass("d-none");
@@ -271,30 +276,6 @@ $(function () {
             var Reject = [2];
             GetRemarks("ddlRRemarks", 0, Reject);
         }
-        //else if (StepCounter == 4) {
-
-
-        //    $(".chkforserach").addClass("d-none");
-        //    $(".gsoio").html("HQ 54");
-        //    $("#btnForward").html("Forward To HQ 54");
-        //    GetAllOffsByUnitId("ddlfwdoffrs", 0, spnHQ54UnitId,0,0,0,0);
-
-
-        //    $(".Remarks").removeClass("d-none");
-        //    var someNumbers = [1];
-        //    GetRemarks("ddlRemarks", 0, someNumbers);
-
-
-        //    var Reject = [2];
-        //    GetRemarks("ddlRRemarks", 0, Reject);
-        //    }
-        //if (StepCounter == 1) {
-        //    $("#btnRejected").addClass("d-none");
-
-
-        //}
-        // GetForwardHHierarchy($(this).closest("tr").find(".ServiceNo").html(), StepCounter , spnRequestId)
-
     });
 
     $("#txtFwdName").autocomplete({
@@ -388,6 +369,157 @@ $(function () {
     });
 
     $("#btnForward").on("click", function () {
+
+        if (parseInt(stepCounter) == 1 || parseInt(stepCounter) == 2 || parseInt(stepCounter) == 7) {
+            if (parseInt($("#spnCurrentApplyFor").html()) == 1) {
+                let CurrentRegistrationApplyFor = parseInt($("#spnCurrentRegistrationApplyFor").html());
+                if (CurrentRegistrationApplyFor == 2 || CurrentRegistrationApplyFor == 3 || CurrentRegistrationApplyFor == 4 || CurrentRegistrationApplyFor == 10) {
+                    if (IsWithTokenApply == true) {
+                        $("#btntokenTofwd").removeClass("d-none");
+                    }
+                    else {
+                        $("#btntokenTofwd").addClass("d-none");
+                    }
+                }
+                else {
+                    if (IsToken == true && CurrentRegistrationApplyFor == 1) {
+                        $("#msgforfwd").html('');
+                        GetTokenvalidatepersid2fawiththumbprint($("#spnFarmyno").html(), "tokenmsgforfwd", "txtspnTokenArmyNo", "txtspnTokenthumbprint");
+                        if (($("#spnFarmyno").html() == $("#txtspnTokenArmyNo").val()) && ($("#spnServiceNo").html() == $("#txtspnTokenArmyNo").val())) {
+
+                        }
+                        else {
+                            $("#msgforfwd").html('<div class="mt-4 alert alert-danger alert-dismissible fade show "><i class="fa fa-check " aria-hidden="true"></i><span class="m-lg-2">Please Correct Token insert and Click refresh Button </span></div>');
+                        }
+
+                    }
+                    else {
+                        $("#btntokenTofwd").addClass("d-none");
+                    }
+                }
+            }
+            else {
+                $("#msgforfwd").html('');
+                if (parseInt(spnStepId) != 0) {
+                    Swal.fire({
+                        title: 'Are you sure?',
+                        /*  text: "You want be Forward!",*/
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Yes, Forward it!'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            if (parseInt($("#spnFwdToAspNetUsersId").html()) != 0) {
+                                var spnRequestId = $("#spnCurrentspnRequestId").html();
+
+                                var Counter = parseInt($("#spnStepCounter").html());
+                                if (Counter == 1 || Counter == 7 || Counter == 8 || Counter == 9 || Counter == 10) {
+                                    Counter = 2;
+                                } else {
+                                    Counter = parseInt($("#spnStepCounter").html()) + 1;
+                                }
+                                UpdateStepCounter(spnStepId, spnRequestId, Counter, "A");
+                            }
+                        }
+                    })
+                } else {
+                    Swal.fire({
+                        title: 'Are you sure?',
+                        /* text: "You want be Multiple Forward!",*/
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Yes, Forward it!'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            if (parseInt($("#spnFwdToAspNetUsersId").html()) != 0) {
+
+                                for (var fw = 0; fw < lstmultifwdarr.length; fw++) {
+                                    UpdateStepCounter(0, lstmultifwdarr[fw], 5, "A");
+                                }
+
+                            } else {
+                                toastr.error("Please Select Officer ");
+                            }
+                        }
+                    })
+                }
+            }
+        } else {
+            // When executed stepCounter not 1-drafted,2-Pending,7-rejected request by CO
+            if (IsToken == true) {
+                $("#msgforfwd").html('');
+                GetTokenvalidatepersid2fawiththumbprint($("#spnFarmyno").html(), "tokenmsgforfwd", "txtspnTokenArmyNo", "txtspnTokenthumbprint");
+
+                setTimeout(function () {   //wait for txtspnTokenArmyNo
+                    if (($("#spnFarmyno").html() == $("#txtspnTokenArmyNo").val()) ) {
+
+                    }
+                    else {
+                        $("#msgforfwd").html('<div class="mt-4 alert alert-danger alert-dismissible fade show "><i class="fa fa-check " aria-hidden="true"></i><span class="m-lg-2">Please Correct Token insert and Click refresh Button </span></div>');
+                    }
+                }, 1000);
+
+
+            } else {
+                $("#msgforfwd").html('');
+                if (parseInt(spnStepId) != 0) {
+                    Swal.fire({
+                        title: 'Are you sure?',
+                        /*  text: "You want be Forward!",*/
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Yes, Forward it!'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            if (parseInt($("#spnFwdToAspNetUsersId").html()) != 0) {
+                                var spnRequestId = $("#spnCurrentspnRequestId").html();
+
+                                var Counter = parseInt($("#spnStepCounter").html());
+                                if (Counter == 1 || Counter == 7 || Counter == 8 || Counter == 9 || Counter == 10) {
+                                    Counter = 2;
+                                } else {
+                                    Counter = parseInt($("#spnStepCounter").html()) + 1;
+                                }
+                                UpdateStepCounter(spnStepId, spnRequestId, Counter, "A");
+                            }
+                        }
+                    })
+                } else {
+                    Swal.fire({
+                        title: 'Are you sure?',
+                        /* text: "You want be Multiple Forward!",*/
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Yes, Forward it!'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            if (parseInt($("#spnFwdToAspNetUsersId").html()) != 0) {
+
+                                for (var fw = 0; fw < lstmultifwdarr.length; fw++) {
+                                    UpdateStepCounter(0, lstmultifwdarr[fw], 5, "A");
+                                }
+
+                            } else {
+                                toastr.error("Please Select Officer ");
+                            }
+                        }
+                    })
+                }
+            }
+        }
+
+
+
+
+
 
         /*  alert($("#txtspnTokenArmyNo").val());*/
         if ((parseInt($("#spnStepCounter").html()) == 1 || parseInt($("#spnStepCounter").html()) == 7 || parseInt($("#spnStepCounter").html()) == 8 || parseInt($("#spnStepCounter").html()) == 9 || parseInt($("#spnStepCounter").html()) == 10) && applyfor == 1) {
@@ -1497,10 +1629,9 @@ function base64ToArrayBuffer(data) {
     return bytes;
 };
 
-function GetByArmyNoIsToken(ArmyNo) {
+function GetByArmyNoIsToken(ArmyNo, OffType, RegApplyFor, stepCounter) {
     var userdata = {
         "ArmyNo": ArmyNo,
-
     };
     $.ajax({
         url: '/UserProfile/GetByArmyNoOrAspnetuserId',
@@ -1520,15 +1651,54 @@ function GetByArmyNoIsToken(ArmyNo) {
                 } else {
                     isToken = response.IsToken;
                     IsWithTokenApply = response.IsWithTokenApply
-                    if (response.IsToken == false)
-                        $("#btntokenTofwd").addClass("d-none");
-                    else
-                        $("#btntokenTofwd").removeClass("d-none");
-                    // GetALLByUnitById(response.UnitId);
-                    //$("#AddNewProfile").modal('hide');
 
+                    if (parseInt(OffType) == 1) {
+                        if (parseInt(RegApplyFor) == 2 || parseInt(RegApplyFor) == 3 || parseInt(RegApplyFor) == 4 || parseInt(RegApplyFor) == 10) {
+                            //  Other Officer Application Request
+                            if (parseInt(stepCounter) == 1 || parseInt(stepCounter) == 2 || parseInt(stepCounter) == 7) {
+                                if (IsWithTokenApply == true) {
+                                    $("#btntokenTofwd").removeClass("d-none");
+                                }
+                                else {
+                                    $("#btntokenTofwd").addClass("d-none");
+                                }
+                            }
+                            else {
+                                if (IsToken == true) {
+                                    $("#btntokenTofwd").removeClass("d-none");
+                                } else {
+                                    $("#btntokenTofwd").addClass("d-none");
+                                }
+                            }
+                        }
+                        else {
+                            // Self Officer Application Request
+                            if (parseInt(stepCounter) == 1 || parseInt(stepCounter) == 2 || parseInt(stepCounter) == 7) {
+                                if (IsToken == true && parseInt(RegApplyFor) == 1) {
+                                    $("#btntokenTofwd").removeClass("d-none");
+                                }
+                                else {
+                                    $("#btntokenTofwd").addClass("d-none");
+                                }
+                            } else {
+                                if (IsToken == true) {
+                                    $("#btntokenTofwd").removeClass("d-none");
+                                } else {
+                                    $("#btntokenTofwd").addClass("d-none");
+                                }
+                            }
 
-
+                        }
+                    }
+                    else {
+                        // JCO/OR Application Request
+                        if (parseInt(stepCounter) == 1 || parseInt(stepCounter) == 2 || parseInt(stepCounter) == 7 ) {
+                            $("#btntokenTofwd").addClass("d-none");
+                        } else {
+                            $("#btntokenTofwd").removeClass("d-none");
+                        }
+                        
+                    }
                 }
             }
 
