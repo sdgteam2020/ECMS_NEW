@@ -14,6 +14,5 @@ namespace DataTransferObject.Response
         public string FromArmyNo { get; set; } = string.Empty;  
         public DateTime? FromDate { get; set; }
         public int? StepId { get; set; }
-        public bool isRead { get; set; }= false;
     }
 }
