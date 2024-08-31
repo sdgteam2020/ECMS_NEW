@@ -374,7 +374,7 @@ $(function () {
 
     $("#btnForward").on("click", function () {
 
-        if (parseInt(StepCounter) == 1 || parseInt(StepCounter) == 2 || parseInt(StepCounter) == 7) {
+        if (parseInt(StepCounter) == 1 || parseInt(StepCounter) == 7 || parseInt(StepCounter) == 8 || parseInt(StepCounter) == 9 || parseInt(StepCounter) == 10) {
             if (parseInt($("#spnCurrentApplyFor").html()) == 1) {
                 let CurrentRegistrationApplyFor = parseInt($("#spnCurrentRegistrationApplyFor").html());
                 if (CurrentRegistrationApplyFor == 2 || CurrentRegistrationApplyFor == 3 || CurrentRegistrationApplyFor == 4 || CurrentRegistrationApplyFor == 10) {
@@ -420,7 +420,7 @@ $(function () {
                                     Counter = parseInt($("#spnStepCounter").html()) + 1;
                                 }
 
-                                if (parseInt(StepCounter) == 1 || parseInt(StepCounter) == 2 || parseInt(StepCounter) == 7) {
+                                if (parseInt(StepCounter) == 1 || parseInt(StepCounter) == 7 || parseInt(StepCounter) == 8 || parseInt(StepCounter) == 9 || parseInt(StepCounter) == 10) {
                                     if (parseInt($("#spnCurrentApplyFor").html()) == 1) {
                                         let CurrentRegistrationApplyFor = parseInt($("#spnCurrentRegistrationApplyFor").html());
                                         if (CurrentRegistrationApplyFor == 2 || CurrentRegistrationApplyFor == 3 || CurrentRegistrationApplyFor == 4 || CurrentRegistrationApplyFor == 10) {
