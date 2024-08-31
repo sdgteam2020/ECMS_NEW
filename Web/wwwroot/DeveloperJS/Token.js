@@ -239,6 +239,7 @@ function GetTokenDetails(CRL_OCSPCheck, CRL_OCSPMsg, Remarks, Thumbprint, Status
                         let foo = prompt('Enter Army No');
                         let bar = confirm('Confirm or deny');
                         $("#" + txt).val(foo);
+                        //alert($("#txtspnTokenArmyNo").val());
 
                        /* $("#" + txt).val(response.ArmyNo.trim());*/
                     }
