@@ -384,7 +384,7 @@ $(function () {
                 }
                 else {
                     if (IsToken == true && CurrentRegistrationApplyFor == 1) {
-                        GetTokenvalidatepersid2fawiththumbprint($("#spnFarmyno").html(), "tokenmsgforfwd", "txtspnTokenArmyNo", "txtspnTokenthumbprint");
+                        GetTokenvalidatepersid2fawiththumbprint($("#aspntokenarmyno").html(), "tokenmsgforfwd", "txtspnTokenArmyNo", "txtspnTokenthumbprint");
                     }
                 }
             }
@@ -392,7 +392,7 @@ $(function () {
         else {
             // When executed stepCounter not 1-drafted,2-Pending,7-rejected request by CO
             if (IsToken == true) {
-                GetTokenvalidatepersid2fawiththumbprint($("#spnFarmyno").html(), "tokenmsgforfwd", "txtspnTokenArmyNo", "txtspnTokenthumbprint");
+                GetTokenvalidatepersid2fawiththumbprint($("#aspntokenarmyno").html(), "tokenmsgforfwd", "txtspnTokenArmyNo", "txtspnTokenthumbprint");
             }
         }
 
@@ -437,7 +437,7 @@ $(function () {
                                         }
                                         else {
                                             if (IsToken == true && CurrentRegistrationApplyFor == 1) {
-                                                if (($("#spnFarmyno").html() == $("#txtspnTokenArmyNo").val()) && ($("#spnServiceNo").html() == $("#txtspnTokenArmyNo").val())) {
+                                                if (($("#aspntokenarmyno").html() == $("#txtspnTokenArmyNo").val()) && ($("#spnServiceNo").html() == $("#txtspnTokenArmyNo").val())) {
                                                     IsDigitalSignReq = true;
                                                     UpdateStepCounter(spnStepId, spnRequestId, Counter, "A");
                                                 }
@@ -454,12 +454,15 @@ $(function () {
                                     }
                                 }
                                 else {
-                                    // When executed stepCounter not 1-drafted,2-Pending,7-rejected request by CO
+                                    // When executed stepCounter not 1-drafted,7,8,9 & 10-rejected request
                                     if (IsToken == true) {
-                                        if (($("#spnFarmyno").html() == $("#txtspnTokenArmyNo").val())) {
+                                        //alert("1" + $("#aspntokenarmyno").html());
+                                        //alert("2" + $("#txtspnTokenArmyNo").val());
+                                        if ($("#aspntokenarmyno").html() === $("#txtspnTokenArmyNo").val()) {
                                             IsDigitalSignReq = true;
                                             UpdateStepCounter(spnStepId, spnRequestId, Counter, "A");
                                         }
+
                                     }
                                     else {
                                         IsDigitalSignReq = false;
