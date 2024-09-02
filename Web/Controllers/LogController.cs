@@ -972,7 +972,7 @@ namespace Web.Controllers
         }
         public Cell CreateApprovedImage()
         {
-            String imFileFwd = System.IO.Path.Combine(hostingEnvironment.ContentRootPath, "wwwroot\\Images\\digital log stamp.png");
+            String imFileFwd = System.IO.Path.Combine(hostingEnvironment.ContentRootPath, "wwwroot\\Images\\digital log stamp.jpg");
             ImageData dataFwd = ImageDataFactory.Create(imFileFwd);
 
             iTextImage imageFwd = new iTextImage(dataFwd);
@@ -988,7 +988,7 @@ namespace Web.Controllers
         }
         public Cell CreateDigitalSignImage()
         {
-            String imFileFwd = System.IO.Path.Combine(hostingEnvironment.ContentRootPath, "wwwroot\\Images\\Digital Approved Stamp.png");
+            String imFileFwd = System.IO.Path.Combine(hostingEnvironment.ContentRootPath, "wwwroot\\Images\\Digital Approved Stamp.jpg");
             ImageData dataFwd = ImageDataFactory.Create(imFileFwd);
 
             iTextImage imageFwd = new iTextImage(dataFwd);
