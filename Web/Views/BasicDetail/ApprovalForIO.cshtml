@@ -179,7 +179,10 @@
                                                 }
                                                 else
                                                 {
-                                                    <button class=" btndownloadpdf" id="btndownloadpdf" data-toggle="tooltip" data-placement="top" title="Download Details"><img src="/Images/digitalsign.png" width="40" /></button>
+                                                    if (item.StepCounter != 1 && item.StepCounter != 7 && item.StepCounter != 8 && item.StepCounter != 9 && item.StepCounter != 10)
+                                                    {
+                                                        <button class=" btndownloadpdf" id="btndownloadpdf" data-toggle="tooltip" data-placement="top" title="Download Details"><img src="/Images/digitalsign.png" width="40" /></button>
+                                                    }
                                                 }
                                             </div>
 
