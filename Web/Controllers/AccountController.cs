@@ -38,6 +38,7 @@ using System.Data;
 using System.Data.Entity;
 using System.Data.Entity.Hierarchy; 
 using System.Security.Claims;
+using System.Security.Cryptography.X509Certificates;
 using System.Security.Policy;
 using Web.Data;
 using Web.WebHelpers;
@@ -1136,6 +1137,10 @@ namespace Web.Controllers
         [AllowAnonymous]
         public IActionResult IMLogin()
         {
+            //var store = new X509Store(StoreName.My, StoreLocation.CurrentUser);
+            //store.Open(OpenFlags.ReadOnly);
+            //var certs = store.Certificates.Find(X509FindType.FindByThumbprint, "70A45AD921D89E96A7D1D8E3E566DDBDE5452FD0", false);
+
             int userid = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
             DTOTempSession? dTOTempSession = SessionHeplers.GetObject<DTOTempSession>(HttpContext.Session, "Token");
             List<string> RoleNameList = new List<string>() { "User"};
