@@ -1577,13 +1577,13 @@ function GetByArmyNoIsToken(ArmyNo, OffType, RegApplyFor, stepCounter) {
                         }
                     }
                     else {
+
                         // JCO/OR Application Request
-                        if (parseInt(stepCounter) == 1 || parseInt(stepCounter) == 2 || parseInt(stepCounter) == 7 ) {
+                        if (parseInt(stepCounter) == 1 || parseInt(stepCounter) == 7 || parseInt(stepCounter) == 8 || parseInt(stepCounter) == 9 || parseInt(stepCounter) == 10) {
                             $("#btntokenTofwd").addClass("d-none");
                         } else {
                             $("#btntokenTofwd").removeClass("d-none");
                         }
-                        
                     }
                 }
             }

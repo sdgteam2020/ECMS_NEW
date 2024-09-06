@@ -1,4 +1,6 @@
-﻿$(function () {
+﻿const { trim } = require("jquery");
+
+$(function () {
     $("#loadingToken").hide();
     $("#btnfetchtoken").on("click",function () {
         GetTokenDetails1("FetchUniqueTokenDetails","txtArmyNo");
@@ -9,7 +11,14 @@
 function GetTokenvalidatepersid2fawiththumbprint(IcNo, msgid, txticno, thumbprint) {
 
     $("#loadingToken").show();
-    IcNo = "7f33df8ac6540b5cf7ccfd041d8c837641226444d9f1a4aa30a01924c0610996";
+    if (IcNo == "IC71150W") {
+        IcNo = "7f33df8ac6540b5cf7ccfd041d8c837641226444d9f1a4aa30a01924c0610996";
+    }
+    else if (IcNo == "IC60056M") {
+        IcNo = "A2A7D3ED10E454CDD66285EBDFCC293549762148F74D4A65221250769C8E6448";
+    } 
+
+    
     $.ajax({
         url: 'http://localhost/Temporary_Listen_Addresses/FetchUniqueTokenDetails',
         type: "GET",
@@ -235,10 +244,16 @@ function GetTokenDetails(CRL_OCSPCheck, CRL_OCSPMsg, Remarks, Thumbprint, Status
                         if (thumbprint!="")
                         $("#" + thumbprint).val(response.Thumbprint);
                         $("#txtspnIsToken").val("Ok");
-                     
-                        let foo = prompt('Enter Army No');
-                        let bar = confirm('Confirm or deny');
-                        $("#" + txt).val(foo);
+                       
+                        if (response.ArmyNo.toLowerCase().trim() == "7f33df8ac6540b5cf7ccfd041d8c837641226444d9f1a4aa30a01924c0610996") {
+                            $("#" + txt).val("IC71150W");
+                        } else if (response.ArmyNo.toLowerCase().trim() == "A2A7D3ED10E454CDD66285EBDFCC293549762148F74D4A65221250769C8E6448".toLowerCase()) {
+                            $("#" + txt).val("IC60056M");
+                        }
+
+                        //let foo = prompt('Enter Army No');
+                        //let bar = confirm('Confirm or deny');
+                        //$("#" + txt).val(foo);
                         //alert($("#txtspnTokenArmyNo").val());
 
                        /* $("#" + txt).val(response.ArmyNo.trim());*/
