@@ -1582,7 +1582,13 @@ function GetByArmyNoIsToken(ArmyNo, OffType, RegApplyFor, stepCounter) {
                         if (parseInt(stepCounter) == 1 || parseInt(stepCounter) == 7 || parseInt(stepCounter) == 8 || parseInt(stepCounter) == 9 || parseInt(stepCounter) == 10) {
                             $("#btntokenTofwd").addClass("d-none");
                         } else {
-                            $("#btntokenTofwd").removeClass("d-none");
+                            if (IsToken == true) {
+                                $("#btntokenTofwd").removeClass("d-none");
+                            }
+                            else {
+                                $("#btntokenTofwd").addClass("d-none");
+                            }
+                            
                         }
                     }
                 }
