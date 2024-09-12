@@ -2,28 +2,13 @@
 using DataTransferObject.Domain.Identitytable;
 using DataTransferObject.Domain.Master;
 using DataTransferObject.Response;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using DataTransferObject.Requests;
 using Microsoft.AspNetCore.DataProtection;
-using System.Runtime.Intrinsics.Arm;
 using Microsoft.Extensions.Logging;
 using DataTransferObject.Domain;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 using Microsoft.AspNetCore.Identity;
 using DataTransferObject.Domain.Model;
-using DataTransferObject.Domain.Error;
-using DataTransferObject.Response.User;
-using static Dapper.SqlMapper;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using System.Diagnostics.Eventing.Reader;
-using Newtonsoft.Json.Linq;
-using System.Security.Claims;
 
 
 namespace DataAccessLayer
@@ -93,7 +78,7 @@ namespace DataAccessLayer
         {
             try
             {
-                var ret = await _context.Roles.AnyAsync(x => x.Name.ToUpper() == Role.ToUpper());
+                var ret = await _context.Roles.AnyAsync(x => x.Name !=null ?x.Name.ToUpper() == Role.ToUpper():false);
                 return ret;
             }
             catch (Exception ex)
@@ -117,7 +102,7 @@ namespace DataAccessLayer
                                        {
                                            EncryptedId = protector.Protect(e.Id.ToString()),
                                            DomainId = e.DomainId,
-                                           RoleName = n.Name != null ? n.Name : "no role assign",
+                                           RoleName = n.Name ?? "no role assign",
                                        }).ToListAsync();
                 return allrecord;
             }

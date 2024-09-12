@@ -37,7 +37,7 @@ namespace BusinessLogicsLayer.Account
         {
             return await _iAccountDB.FindRoleByName(Role);
         }
-        public async Task<List<DTORegisterListRequest>> DomainApproveList()
+        public async Task<List<DTORegisterListRequest>?> DomainApproveList()
         {
             return await _iAccountDB.DomainApproveList();
         }

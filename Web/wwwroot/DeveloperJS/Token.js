@@ -1,6 +1,4 @@
-﻿const { trim } = require("jquery");
-
-$(function () {
+﻿$(function () {
     $("#loadingToken").hide();
     $("#btnfetchtoken").on("click",function () {
         GetTokenDetails1("FetchUniqueTokenDetails","txtArmyNo");
