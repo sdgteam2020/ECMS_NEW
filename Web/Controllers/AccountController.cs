@@ -952,7 +952,7 @@ namespace Web.Controllers
         {
             var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
             var usera = await userManager.FindByIdAsync(userId);
-            List<DTORegisterListRequest> dTORegisterListRequests = await _iAccountBL.DomainApproveList();
+            List<DTORegisterListRequest>? dTORegisterListRequests = await _iAccountBL.DomainApproveList();
             ViewBag.Title = "List of Register User";
             return View(dTORegisterListRequests);
         }

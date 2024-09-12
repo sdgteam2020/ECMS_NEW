@@ -16,14 +16,16 @@ namespace DataTransferObject.Response
     {
 
         public string PaperIcardNo { get; set; } = string.Empty;
-        public string Name { get; set; } = string.Empty;
+        public string FName { get; set; } = string.Empty;
+        public string? LName { get; set; }
+        public string NameAsPerRecord { get; set; } = string.Empty;
         public string? RankName { get; set; }
         public string? ArmedName { get; set; }
         public string ServiceNo { get; set; } = string.Empty;
         public DateTime DOB { get; set; }
         public int Height { get; set; }
         public string AadhaarNo { get; set; } = string.Empty;
-        public string BloodGroup { get; set; }
+        public string BloodGroup { get; set; } = string.Empty;
         public string PlaceOfIssue { get; set; } = string.Empty;
         public DateTime DateOfIssue { get; set; }
         public string IssuingAuth { get; set; } = string.Empty;

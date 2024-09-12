@@ -16,7 +16,7 @@ namespace DataAccessLayer.BaseInterfaces
         public bool GetByDomainId(string DomainId, int Id);
         public Task<DTOAccountResponse?> FindDomainId(string DomainId);
         public Task<bool?> FindRoleByName(string Role);
-        public Task<List<DTORegisterListRequest>> DomainApproveList();
+        public Task<List<DTORegisterListRequest>?> DomainApproveList();
         public Task<List<DTOProfileManageResponse>?> GetAllProfileManage(string Search, string Choice);
         public Task<List<DTOUserRegnResponse>?> GetAllUserRegn(string Search, string Choice);
         public Task<List<DTODomainRegnResponse>?> GetAllDomainRegn(string Search, string Choice);
