@@ -1376,7 +1376,7 @@ namespace Web.Controllers
                         HttpContext.Session.Remove("Token");
                         await signInManager.SignOutAsync();
 
-                        //await userManager.UpdateSecurityStampAsync(usera);
+                        await userManager.UpdateSecurityStampAsync(usera);
 
                         if (usera != null)
                         {

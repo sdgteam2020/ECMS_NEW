@@ -232,6 +232,7 @@ else
 app.UseForwardedHeaders();
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+
 app.UseRequestLocalization();
 app.UseResponseCompression();
 app.UseRouting();
