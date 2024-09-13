@@ -1722,9 +1722,13 @@ namespace Web.Controllers
                 }
 
                 CreateZipFromFolder(sourceFolderPhotoPhy, sourceFolderPhotoPhy + ".zip");
-                //Encrypt.EncryptParameter(jsonde.ToString())
-                ZipEncryptionService zipEncryptionService = new ZipEncryptionService();
-                zipEncryptionService.EncryptFile(sourceFolderPhotoPhy + ".zip", sourceFolderPhotoPhy);
+                if(Data.DataExportType == 1)
+                {
+                    //Encrypt.EncryptParameter(jsonde.ToString())
+                    ZipEncryptionService zipEncryptionService = new ZipEncryptionService();
+                    zipEncryptionService.EncryptFile(sourceFolderPhotoPhy + ".zip", sourceFolderPhotoPhy);
+                }
+
 
                 string lastFolderName = new DirectoryInfo(sourceFolderPhotoPhy).Name;
 
