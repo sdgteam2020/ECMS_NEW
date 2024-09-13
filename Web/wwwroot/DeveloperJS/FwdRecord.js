@@ -10,6 +10,7 @@ var IsToken = true;
 var IsWithTokenApply = true;
 var IsValid = 0;
 var IsDigitalSignReq = true;
+var DataExportType = 1;
 $(function () {
 
     $("#btntokenTofwd").on("click", function () {
@@ -42,7 +43,40 @@ $(function () {
                 confirmButtonText: 'Yes, Export it!'
             }).then((result) => {
                 if (result.value) {
+                    DataExportType = 0;
+                    DataExport(lst);
 
+                }
+            });
+        } else {
+            Swal.fire({
+                text: "Please select atleast 1 data to Export."
+            });
+        }
+    });
+    $('#btnDataExportsEncry').on("click", function () {
+        var lst = new Array();
+
+        if (memberTable.$('input[type="checkbox"]:checked').length > 0) {
+
+            memberTable.$('input[type="checkbox"]:checked').each(function () {
+
+
+                var id = $(this).attr("Id");
+                lst.push(id);
+            });
+
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You want to Export",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#072697',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, Export it!'
+            }).then((result) => {
+                if (result.value) {
+                    DataExportType = 1;
                     DataExport(lst);
 
                 }
@@ -173,6 +207,9 @@ $(function () {
     });
     $(".btndownloadpdf").on("click", function () {
         DownloadPdf($(this).closest("tr").find(".spnRequestId").html())
+    });
+    $(".btndownloadxml").on("click", function () {
+        DownloadXml($(this).closest("tr").find(".spnRequestId").html())
     });
     $(".fwdrecord").on("click", function () {
         Reset();
@@ -1042,7 +1079,8 @@ function DataExport(Data) {
 
     var userdata = {
         "Ids": Data,
-        "IsJco": $("#Isspnjcoor").html()
+        "IsJco": $("#Isspnjcoor").html(),
+        "DataExportType": DataExportType
 
     };
     $.ajax({
@@ -1065,7 +1103,19 @@ function DataExport(Data) {
                     //link.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(blob);
                     //link.download = "export.json";
                     //link.click();
-                    window.location = "/WriteReadData/ExportAFSACCell/" + response + '_en.zip';
+                    if (DataExportType == 1) {
+                        window.location = "/WriteReadData/ExportAFSACCell/" + response + '_en.zip';
+                        setTimeout(function () {
+                            location.reload();
+                        }, 1000);
+                    } else {
+                        window.location = "/WriteReadData/ExportAFSACCell/" + response + '.zip';
+                        setTimeout(function () {
+                            location.reload();
+                        }, 1000);
+                    }
+
+
                     // var blob = new Blob([JSON.stringify(response, null, "\t")], { type: "application/json" });
 
                     // // Create a temporary anchor element
@@ -1318,7 +1368,36 @@ function jsonToXml(json) {
 
     return xml;
 }
+function DownloadXml(RequestId) {
+    var userdata = {
+        "RequestId": RequestId,
+    };
+    $.ajax({
+        url: '/Log/CreateXml',
+        contentType: 'application/x-www-form-urlencoded',
+        data: userdata,
+        type: 'POST',
 
+        success: function (response) {
+            if (response != "null" && response != null) {
+                if (response == InternalServerError) {
+                    Swal.fire({
+                        text: errormsg
+                    });
+                } else {
+
+                    var url = "https://" + window.location.host + '/DigitallysignatureXml/' + response;
+                    window.open(url, '_blank');
+                }
+            }
+        },
+        error: function (result) {
+            Swal.fire({
+                text: errormsg002
+            });
+        }
+    });
+}
 function DownloadPdf(RequestId) {
     var userdata = {
         "RequestId": RequestId,

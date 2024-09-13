@@ -750,7 +750,7 @@ namespace DataAccessLayer
             if (Data.IsJco == 0)
             {
                 query = "update TrnFwds set IsComplete=1 where RequestId in @Ids update TrnStepCounter set StepId=5 where RequestId in @Ids  update TrnICardRequest set StatusId=2 where  RequestId in @Ids " +
-                                " select bas.*,issaut.Name IssuingAuth" +
+                                " select bas.*,issaut.Name IssuingAuth,mapl.Name ApplyFor" +
                                 " trnadd.State,trnadd.District,trnadd.PS,trnadd.PO,trnadd.Tehsil,trnadd.Village,trnadd.PinCode," +
                                 " trnup.SignatureImagePath,trnup.PhotoImagePath,IdenMark1,IdenMark2,AadhaarNo,Height,bld.BloodGroup,bld.BloodGroupId," +
                                 " regi.Abbreviation RegimentalName,Muni.UnitName,uni.UnitMapId UnitId,icardreq.TypeId,icardreq.RegistrationId," +
@@ -765,6 +765,8 @@ namespace DataAccessLayer
                                 " inner join MapUnit uni on uni.UnitMapId=bas.UnitId" +
                                 " inner join MUnit Muni on Muni.UnitId=uni.UnitId" +
                                 " inner join TrnICardRequest icardreq on icardreq.BasicDetailId=bas.BasicDetailId " + //and icardreq.Status=0 
+                                " inner join TrnStepCounter scounter on scounter.RequestId=icardreq.RequestId " +
+                                " inner join MApplyFor mapl on mapl.ApplyForId=scounter.ApplyForId " +
                                 " inner join MRecordOffice reco on bas.ArmedId=reco.ArmedId" +
                                 " inner join MICardType MICardType on MICardType.TypeId=icardreq.TypeId " +
                                 " left join MRegimental regi on regi.RegId=bas.RegimentalId" +
@@ -773,7 +775,7 @@ namespace DataAccessLayer
             else
             {
                 query = "update TrnFwds set IsComplete=1 where RequestId in @Ids update TrnStepCounter set StepId=5 where RequestId in @Ids  update TrnICardRequest set StatusId=2 where  RequestId in @Ids " +
-                    " select bas.*,issaut.Name IssuingAuth, trnadd.State,trnadd.District,trnadd.PS,trnadd.PO,trnadd.Tehsil,trnadd.Village,trnadd.PinCode, " +
+                    " select bas.*,issaut.Name IssuingAuth,mapl.Name ApplyFor, trnadd.State,trnadd.District,trnadd.PS,trnadd.PO,trnadd.Tehsil,trnadd.Village,trnadd.PinCode, " +
                          " trnup.SignatureImagePath,trnup.PhotoImagePath,IdenMark1,IdenMark2,AadhaarNo,Height,bld.BloodGroup,bld.BloodGroupId, " +
                          " regi.Abbreviation RegimentalName,Muni.UnitName,uni.UnitMapId UnitId,icardreq.TypeId,icardreq.RegistrationId, " +
                          " ran.RankId,ran.RankAbbreviation RankName,arm.Abbreviation ArmedName,trnadd.AddressId,trnup.UploadId,trninfo.InfoId," +
@@ -791,6 +793,8 @@ namespace DataAccessLayer
                          " inner join MapUnit uni on uni.UnitMapId=bas.UnitId " +
                          " inner join MUnit Muni on Muni.UnitId=uni.UnitId " +
                          " inner join TrnICardRequest icardreq on icardreq.BasicDetailId=bas.BasicDetailId  " +
+                         " inner join TrnStepCounter scounter on scounter.RequestId=icardreq.RequestId " +
+                         " inner join MApplyFor mapl on mapl.ApplyForId=scounter.ApplyForId " +
                          " inner join MICardType MICardType on MICardType.TypeId=icardreq.TypeId  " +
                          " inner join MRecordOffice reco on reco.ArmedId=56" +
                          " inner join OROMapping OROMap on reco.RecordOfficeId=OROMap.RecordOfficeId" +

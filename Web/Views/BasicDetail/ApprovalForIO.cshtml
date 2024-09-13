@@ -79,7 +79,8 @@
                             <div class="d-flex">
                                 @if ((ViewBag.dataexport == 4 || ViewBag.dataexport == 5) && claims.Count > 0 && claims.Any(i => i.Value == "ICard Export Data"))
                                 {
-                                    <button type="button" id="btnDataExports" class="btn btn-warning font-weight-600 btn-sm">Data Exports</button>
+                                    <button type="button" id="btnDataExportsEncry" class="btn btn-warning font-weight-600 btn-sm mr-2">Data Exports with Encry</button>
+                                    <button type="button" id="btnDataExports" class="btn btn-warning font-weight-600 btn-sm">Data Exports without Encry</button>
                                 }
 @* 
                                 @if (ViewBag.dataexport == 4)
@@ -181,7 +182,8 @@
                                                 {
                                                     if (item.StepCounter != 1 && item.StepCounter != 7 && item.StepCounter != 8 && item.StepCounter != 9 && item.StepCounter != 10)
                                                     {
-                                                        <button class=" btndownloadpdf" id="btndownloadpdf" data-toggle="tooltip" data-placement="top" title="Download Details"><img src="/Images/digitalsign.png" width="40" /></button>
+                                                        <button class="btndownloadpdf" id="btndownloadpdf" data-toggle="tooltip" data-placement="top" title="Download Details"><img src="/Images/digitalsign.png" width="40" /></button>
+                                                        <button class="btndownloadxml ml-2" id="btndownloadxml" data-toggle="tooltip" data-placement="top" title="Download Details">Xml</button>
                                                     }
                                                 }
                                             </div>

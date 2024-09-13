@@ -1,0 +1,73 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Header>
+  <applicationDetails>
+    <PaperIcardNo>13321</PaperIcardNo>
+    <Name>AJAY KUMAR</Name>
+    <RankName>Lt</RankName>
+    <ArmedName>SIGS</ArmedName>
+    <ServiceNo>IC70124N</ServiceNo>
+    <DOB>1960-03-16T00:00:00</DOB>
+    <Height>117</Height>
+    <AadhaarNo>882134523145</AadhaarNo>
+    <BloodGroup>B-</BloodGroup>
+    <RegimentalName></RegimentalName>
+    <UnitName>MI 11</UnitName>
+    <PlaceOfIssue>MI 11</PlaceOfIssue>
+    <DateOfIssue></DateOfIssue>
+    <IssuingAuth>Coord</IssuingAuth>
+    <UploadId>0</UploadId>
+    <SignatureImagePath>2024\September\12/IC70124N.png</SignatureImagePath>
+    <PhotoImagePath>2024\September\12/IC70124N.jpg</PhotoImagePath>
+    <DateOfCommissioning>1980-11-18T00:00:00</DateOfCommissioning>
+    <PermanentAddress></PermanentAddress>
+    <StatusLevel>0</StatusLevel>
+    <ApplyFor></ApplyFor>
+    <State>JAMMU AND KASHMIR</State>
+    <District>Sangrur</District>
+    <PS>SANGRUR</PS>
+    <PO>PUNJAB</PO>
+    <Tehsil>MALTAN</Tehsil>
+    <Village>PONTHALI</Village>
+    <PinCode>804401</PinCode>
+    <IdenMark1>A RAISED MOLE ON CHEST 2CM FROM RT NIPPLE AT 7 O CLOCK</IdenMark1>
+    <IdenMark2>A RAISED MOLE ON NECK 4.5 AM ABOVE INNER THIRD OF LT COLLER BONE</IdenMark2>
+    <ICardType>First time Smart card</ICardType>
+    <XmlCreatedOn>2024-09-12T16:00:27.697</XmlCreatedOn>
+  </applicationDetails>
+  <profiledtls>
+    <ProApplyFor>Offrs</ProApplyFor>
+    <ProRegistraion>Other Offr's of same unit </ProRegistraion>
+    <ProType>First time Smart card</ProType>
+    <ProDomainId>User501</ProDomainId>
+    <ProUnitName>MI 11</ProUnitName>
+    <ProSuffix>L</ProSuffix>
+    <ProSUSNO>1234569</ProSUSNO>
+    <ProName>JASJEET SINGH</ProName>
+    <ProRankName>Lt  Col</ProRankName>
+    <ProArmyName>IC71150W</ProArmyName>
+  </profiledtls>
+  <RecForDigitalSign>
+    <FromDomain>User501</FromDomain>
+    <FromProfile>JASJEET SINGH</FromProfile>
+    <FromRank>Lt  Col</FromRank>
+    <FromArmyNo>IC71150W</FromArmyNo>
+    <FromDate>2024-09-12T16:00:27.727</FromDate>
+    <StepId>2</StepId>
+  </RecForDigitalSign>
+  <RecForDigitalSign>
+    <FromDomain>User502</FromDomain>
+    <FromProfile>NIRAJ KALRA</FromProfile>
+    <FromRank>Col</FromRank>
+    <FromArmyNo>IC60056M</FromArmyNo>
+    <FromDate>2024-09-12T16:02:03.41</FromDate>
+    <StepId>3</StepId>
+  </RecForDigitalSign>
+  <RecForDigitalSign>
+    <FromDomain>mp6c</FromDomain>
+    <FromProfile>Gagan Kumar</FromProfile>
+    <FromRank>Maj</FromRank>
+    <FromArmyNo>IC22336C</FromArmyNo>
+    <FromDate>2024-09-12T16:12:53.28</FromDate>
+    <StepId>4</StepId>
+  </RecForDigitalSign>
+</Header>
