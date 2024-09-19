@@ -12,5 +12,7 @@ namespace DataTransferObject.Requests
         public int IsJco { get; set; }
         public int StepId { get; set; }
         public byte DataExportType { get; set; }
+        public string publicKey { get; set; } = string.Empty;
+        public string privateKey { get; set; } = string.Empty;
     }
 }
