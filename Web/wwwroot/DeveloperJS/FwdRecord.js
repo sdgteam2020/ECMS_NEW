@@ -1104,7 +1104,8 @@ function DataExport(Data) {
                     //link.download = "export.json";
                     //link.click();
                     if (DataExportType == 1) {
-                        window.location = "/WriteReadData/ExportAFSACCell/" + response + '_en.zip';
+                        //window.location = "/WriteReadData/ExportAFSACCell/" + response + '_en.zip';
+                        window.location = "/WriteReadData/ExportAFSACCell/" + response + '.zip';
                         setTimeout(function () {
                             location.reload();
                         }, 1000);

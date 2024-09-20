@@ -11,10 +11,9 @@ namespace Web.Healpers
     class ZipEncrypt
     {
         // Method to zip a folder
-        public static void ZipFolder(string sourceFolder, string zipFile)
+        public static void ZipFolder(string sourceFolder,string tempZipFilePath, string zipFile)
         {
-            sourceFolder = "I:\\ECMS\\sdgteam2020\\ECMS_NEW\\Web\\wwwroot\\WriteReadData\\ExportAFSACCell";
-            ZipFile.CreateFromDirectory(sourceFolder, zipFile, CompressionLevel.Fastest,true);
+            ZipFile.CreateFromDirectory(sourceFolder, tempZipFilePath +"\\"+ zipFile, CompressionLevel.Fastest,true);
         }
 
         // Method to encrypt AES key with RSA public key
@@ -68,11 +67,11 @@ namespace Web.Healpers
             }
         }
 
-        public static void EncryptAndZip(string sourceFolder, string outputEncryptedFile, string publicKey)
+        public static void EncryptAndZip(string sourceFolder, string outputEncryptedFile,string tempZipFilePath, string publicKey)
         {
             // Zip the folder
             string tempZipFile = "temp.zip";
-            ZipFolder(sourceFolder , tempZipFile);
+            ZipFolder(sourceFolder , tempZipFilePath, tempZipFile);
 
             // Generate AES key
             byte[] aesKey = new byte[16];
@@ -86,13 +85,13 @@ namespace Web.Healpers
 
             // Encrypt the zip file with AES key
             byte[] aesIv;
-            byte[] encryptedZipFile = EncryptZipFile(tempZipFile, aesKey, out aesIv);
+            byte[] encryptedZipFile = EncryptZipFile(tempZipFilePath+"\\"+tempZipFile, aesKey, out aesIv);
 
             // Save the encrypted AES key, IV, and encrypted zip file to a single output file
             SaveEncryptedFile(outputEncryptedFile, encryptedAesKey, aesIv, encryptedZipFile);
 
             // Delete the temporary zip file
-            File.Delete(tempZipFile);
+            File.Delete(tempZipFilePath + "\\" + tempZipFile);
         }
     }
 }
