@@ -63,7 +63,7 @@ namespace Web.Healpers
             File.Delete(decryptedZipFile); // Delete decrypted zip file after unzipping
         }
 
-        public static void DecryptAndUnzip(string encryptedFile, string outputFolder, string privateKey)
+        public static void DecryptAndUnzip(string encryptedFile, string outputFolder,string tempZipFilePath, string privateKey)
         {
             // Read encrypted file and extract AES key, IV, and encrypted zip file
             var (encryptedAesKey, aesIv, encryptedZipFile) = ReadEncryptedFile(encryptedFile);
@@ -75,7 +75,7 @@ namespace Web.Healpers
             byte[] zipData = DecryptZipFile(encryptedZipFile, aesKey, aesIv);
 
             // Save the decrypted zip file and unzip
-            SaveAndUnzip("decrypted.zip", zipData, outputFolder);
+            SaveAndUnzip(tempZipFilePath+"\\"+"decrypted.zip", zipData, outputFolder);
         }
     }
 }

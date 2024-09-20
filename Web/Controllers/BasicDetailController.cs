@@ -1809,8 +1809,10 @@ namespace Web.Controllers
                 
                 if (Data.DataExportType == 1)
                 {
-                    ZipEncrypt.EncryptAndZip(sourceFolderPhotoPhy, sourceFolderPhotoPhy+ ".zip", Data.publicKey); // Encrypt and zip folder
+                    string tempZipFilePath = Convert.ToString(Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "ExportAFSACCell","Temp"));
+                    ZipEncrypt.EncryptAndZip(sourceFolderPhotoPhy, sourceFolderPhotoPhy+ ".zip", tempZipFilePath, Data.publicKey); // Encrypt and zip folder
                     //ZipDecrypt.DecryptAndUnzip("encrypted.zip", "output_folder", Data.privateKey); // Decrypt and unzip folder
+                    ZipDecrypt.DecryptAndUnzip(sourceFolderPhotoPhy + ".zip", tempZipFilePath, tempZipFilePath, Data.privateKey); // Decrypt and unzip folder
                     //Encrypt.EncryptParameter(jsonde.ToString())
                     //ZipEncryptionService zipEncryptionService = new ZipEncryptionService();
                     //zipEncryptionService.EncryptFile(sourceFolderPhotoPhy + ".zip", sourceFolderPhotoPhy);
