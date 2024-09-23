@@ -1288,6 +1288,12 @@ namespace Web.Controllers
 
         }
 
+        [HttpGet]
+        public async Task<ActionResult> DecryptZipFile()
+        {
+            return View();
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(string Id)
