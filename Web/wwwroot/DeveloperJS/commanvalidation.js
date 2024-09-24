@@ -234,11 +234,28 @@ $(function () {
                     filename: 'dt_custom_pdf',
                     orientation: 'portrait', //portrait//landscape
                     pageSize: 'A4', //A3 , A5 , A6 , legal , letter
+                    action: function (e, dt, button, config) {
+                        // Check if any rows are selected
+                        var selectedRows = memberTable.rows(function (idx, data, node) {
+                            return $(node).find('.custom-control-input').is(':checked');
+                        }).count();
+
+                        if (selectedRows === 0) {
+                            alert('Please select at least one row to export!');
+                            return false; // Prevent the export
+                        } else {
+                            // Continue with the default PDF export if rows are selected
+                            $.fn.dataTable.ext.buttons.pdfHtml5.action.call(this, e, dt, button, config);
+                        }
+                    },
                     exportOptions: {
                         /* columns: ':visible',*/
                         search: 'applied',
                         order: 'applied',
-                        columns: "thead th:not(.noExport)"
+                        columns: "thead th:not(.noExport)",
+                        rows: function (idx, data, node) {
+                            return $(node).find('.custom-control-input').is(':checked');
+                        }
                     },
                     customize: function (doc) {
                         //Remove the title created by datatTables
@@ -324,7 +341,71 @@ $(function () {
                         objLayout['paddingRight'] = function (i) { return 4; };
                         doc.content[0].layout = objLayout;
                     }
-                }]
+                },
+                {
+                    extend: 'csvHtml5',
+                    text: 'Export CSV',
+                    //title: 'My Custom CSV Export',  // Custom file title
+                    filename: 'custom_filename_csv',  // Custom file name
+                    //messageTop: 'This is my custom message for CSV export.',
+                    action: function (e, dt, button, config) {
+                        // Check if any rows are selected
+                        var selectedRows = memberTable.rows(function (idx, data, node) {
+                            return $(node).find('.custom-control-input').is(':checked');
+                        }).count();
+
+                        if (selectedRows === 0) {
+                            alert('Please select at least one row to export!');
+                            return false; // Prevent the export
+                        } else {
+                            // Continue with the default PDF export if rows are selected
+                            $.fn.dataTable.ext.buttons.csvHtml5.action.call(this, e, dt, button, config);
+                        }
+                    },
+                    exportOptions: {
+                        search: 'applied',  // Only export filtered data
+                        order: 'applied',  // Export in the current order
+                        columns: 'thead th:not(.noExport)',  // Only export visible columns
+                        rows: function (idx, data, node) {
+                            return $(node).find('.custom-control-input').is(':checked');
+                        }
+                    }
+                },
+                {
+                    extend: 'excelHtml5',
+                    text: 'Export Excel',
+                    //title: 'My Custom Excel Export',  // Custom Excel title
+                    filename: 'custom_filename_excel',  // Custom file name
+                    //messageTop: 'This is my custom message for Excel export.',
+                    action: function (e, dt, button, config) {
+                        // Check if any rows are selected
+                        var selectedRows = memberTable.rows(function (idx, data, node) {
+                            return $(node).find('.custom-control-input').is(':checked');
+                        }).count();
+
+                        if (selectedRows === 0) {
+                            alert('Please select at least one row to export!');
+                            return false; // Prevent the export
+                        } else {
+                            // Continue with the default PDF export if rows are selected
+                            $.fn.dataTable.ext.buttons.excelHtml5.action.call(this, e, dt, button, config);
+                        }
+                    },
+                    exportOptions: {
+                        search: 'applied',
+                        order: 'applied',
+                        columns: 'thead th:not(.noExport)',  // Only export visible columns
+                        rows: function (idx, data, node) {
+                            return $(node).find('.custom-control-input').is(':checked');
+                        }
+                    },
+                    customize: function (xlsx) {
+                        var sheet = xlsx.xl.worksheets['sheet1.xml'];
+                        // Apply a custom style to the first row in Excel
+                        $('row c[r^="A1"]', sheet).attr('s', '42');
+                    }
+                },
+            ]
         });
         memberTable.buttons().container().appendTo('#tbldatatabledata_wrapper .col-md-6:eq(0)');
 
@@ -891,7 +972,7 @@ function PrintData(div) {
     printWindow.document.write('</body></html>');
     // Close the document to complete writing
     printWindow.document.close();
-    // Wait for the content to be fully loaded, then trigger the print dialog
+    // Wait for the content to be fully loaded, then trigger the print dialog   
     printWindow.onload = function () {
         printWindow.print();
         printWindow.close();
