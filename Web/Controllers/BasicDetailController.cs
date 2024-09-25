@@ -1295,6 +1295,51 @@ namespace Web.Controllers
         {
             return View();
         }
+        [HttpPost]
+        public async Task<ActionResult> DecryptZipFile(DTODecryptZipFileRequest model)
+        {
+            try
+            {
+                model.PrivateKey = _configuration["Key:PrivateKey"];
+                if (ModelState.IsValid)
+                {
+                    string sourceFolderPhotoPhy = Convert.ToString(Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "ExportAFSACCell", "Temp"));
+                    if (!Directory.Exists(sourceFolderPhotoPhy))
+                        Directory.CreateDirectory(sourceFolderPhotoPhy);
+                    string TempFileName = Guid.NewGuid().ToString();
+                    string FileName = service.ProcessUploadedFile(model.ZipFile, sourceFolderPhotoPhy, TempFileName);
+
+                    string path = Path.Combine(sourceFolderPhotoPhy, FileName);
+
+                    //bool result = service.IsValidZipHeader(path);
+
+                    //if (!result)
+                    //{
+                    //    ModelState.AddModelError("ZipFile", "File format not correct");
+                    //    if (System.IO.File.Exists(path))
+                    //    {
+                    //        System.IO.File.Delete(path); 
+                    //    }
+                    //    goto end;
+                    //}
+
+                    ZipDecrypt.DecryptAndUnzip(path, sourceFolderPhotoPhy, sourceFolderPhotoPhy, model.PrivateKey); // Decrypt and unzip folder
+
+                    return Json(TempFileName);
+                }
+                else
+                {
+                    return Json(ModelState.Select(x => x.Value.Errors).Where(y => y.Count > 0).ToList());
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "BasicDetail->DecryptZipFile");
+                return Json(KeyConstants.InternalServerError);
+            }
+        end:
+            return View(model);
+        }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -1821,8 +1866,7 @@ namespace Web.Controllers
                 {
                     string tempZipFilePath = Convert.ToString(Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "ExportAFSACCell","Temp"));
                     ZipEncrypt.EncryptAndZip(sourceFolderPhotoPhy, sourceFolderPhotoPhy+ ".zip", tempZipFilePath, Data.publicKey); // Encrypt and zip folder
-                    //ZipDecrypt.DecryptAndUnzip("encrypted.zip", "output_folder", Data.privateKey); // Decrypt and unzip folder
-                    ZipDecrypt.DecryptAndUnzip(sourceFolderPhotoPhy + ".zip", tempZipFilePath, tempZipFilePath, Data.privateKey); // Decrypt and unzip folder
+                    //ZipDecrypt.DecryptAndUnzip(sourceFolderPhotoPhy + ".zip", tempZipFilePath, tempZipFilePath, Data.privateKey); // Decrypt and unzip folder
                     //Encrypt.EncryptParameter(jsonde.ToString())
                     //ZipEncryptionService zipEncryptionService = new ZipEncryptionService();
                     //zipEncryptionService.EncryptFile(sourceFolderPhotoPhy + ".zip", sourceFolderPhotoPhy);
