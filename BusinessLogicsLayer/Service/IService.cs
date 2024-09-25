@@ -16,6 +16,7 @@ namespace BusinessLogicsLayer.Service
         public IEnumerable<SelectListItem> GetArmedType();
         public bool IsValidHeader(string path);
         public bool IsValidDocHeader(string path);
+        public bool IsValidZipHeader(string path);
         public string ProcessUploadedFile(IFormFile UploadDoc, string FileAddress,string FileName);
         public bool IsImage(IFormFile postedFile);
         public string GetContentType(string path);
