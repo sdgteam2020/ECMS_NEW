@@ -31,12 +31,10 @@
                                         <div class="col-xl-12">
                                             <span class="text-danger">Please upload only zip format</span>
                                             <div class="col-sm-12">
-                                                <div class="box">
-                                                    <div class="upload-options">
-                                                        <label>
-                                                            <input asp-for="ZipFile" class="form-control" accept="application/zip" />
-                                                        </label>
-                                                    </div>
+                                                <div>
+                                                    <label>
+                                                        <input asp-for="ZipFile" class="form-control" accept="application/zip" />
+                                                    </label>
                                                 </div>
                                                 <span id="lblZipFile" style="color: red;"></span>
                                                 <span asp-validation-for="ZipFile" class="text-danger"></span>
@@ -47,7 +45,7 @@
                                 </div>
                                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                                 <div class="text-center mb-2">
-                                    <button type="submit" class="btn btn-primary" id="btnsave">Submit</button>
+                                    <button type="button" class="btn btn-primary" id="btnsave">Submit</button>
                                 </div>
                             </div>
                         </div>

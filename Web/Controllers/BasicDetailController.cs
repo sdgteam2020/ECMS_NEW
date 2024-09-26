@@ -1296,7 +1296,7 @@ namespace Web.Controllers
             return View();
         }
         [HttpPost]
-        public async Task<ActionResult> DecryptZipFile(DTODecryptZipFileRequest model)
+        public async Task<IActionResult> DecryptZipFileData(DTODecryptZipFileRequest model)
         {
             try
             {
@@ -1308,7 +1308,7 @@ namespace Web.Controllers
                         Directory.CreateDirectory(sourceFolderPhotoPhy);
                     string TempFileName = Guid.NewGuid().ToString();
                     string FileName = service.ProcessUploadedFile(model.ZipFile, sourceFolderPhotoPhy, TempFileName);
-
+                    string destinationzipfilename = Path.GetFileName(model.ZipFile.FileName);
                     string path = Path.Combine(sourceFolderPhotoPhy, FileName);
 
                     //bool result = service.IsValidZipHeader(path);
@@ -1323,9 +1323,9 @@ namespace Web.Controllers
                     //    goto end;
                     //}
 
-                    ZipDecrypt.DecryptAndUnzip(path, sourceFolderPhotoPhy, sourceFolderPhotoPhy, model.PrivateKey); // Decrypt and unzip folder
+                    ZipDecrypt.DecryptAndUnzip(path, sourceFolderPhotoPhy, sourceFolderPhotoPhy, destinationzipfilename, model.PrivateKey); // Decrypt and unzip folder
 
-                    return Json(TempFileName);
+                    return Json(model.ZipFile.FileName);
                 }
                 else
                 {
@@ -1337,8 +1337,8 @@ namespace Web.Controllers
                 _logger.LogError(1001, ex, "BasicDetail->DecryptZipFile");
                 return Json(KeyConstants.InternalServerError);
             }
-        end:
-            return View(model);
+        //end:
+        //    return View(model);
         }
 
         [HttpPost]

@@ -18,7 +18,7 @@
                 confirmButtonText: 'Yes, Decrypt it!'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    Save();
+                    Save(formId);
                 }
             })
         }
@@ -65,12 +65,21 @@ function beforeUploadZipFileCheck(id) {
     }
 }
 function Save() {
+    var formId = '#DecryptZipFile'; 
+    var fileInput = $(formId).find('#ZipFile')[0];
+    var selectedFile = fileInput.files[0]; 
+    var privateKey = "1";
+
+    var formData = new FormData();
+    formData.append('ZipFile', selectedFile);  // Append the file
+    formData.append('PrivateKey', privateKey); // Append the private key
+
     $.ajax({
-        url: '/BasicDetail/DecryptZipFile',
+        url: '/BasicDetail/DecryptZipFileData',
         type: 'POST',
-        data: {
-            "ZipFile": $("#ZipFile").val(),
-        }, 
+        data: formData,
+        contentType: false,
+        processData: false,
         success: function (response) {
             if (response != "null" && response != null) {
                 if (response == InternalServerError) {
@@ -78,7 +87,9 @@ function Save() {
                         text: "Data Not Export Internal Server Error"
                     });
                 } else {
-                    window.location = "/WriteReadData/ExportAFSACCell/Temp/" + response + '.zip';
+                    //var url = "https://" + window.location.host + '/WriteReadData/ExportAFSACCell/Temp/' + response;
+                    //window.open(url, '_blank');
+                    window.location = "/WriteReadData/ExportAFSACCell/Temp/" + response;
                     setTimeout(function () {
                         location.reload();
                     }, 1000);
