@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NuGet.Packaging;
+using System;
 using System.Collections.Generic;
 using System.IO.Compression;
 using System.Linq;
@@ -56,14 +57,16 @@ namespace Web.Healpers
         }
 
         // Method to save decrypted zip file and unzip
-        public static void SaveAndUnzip(string decryptedZipFile, byte[] zipData, string outputFolder)
+        public static void SaveAndUnzip(string decryptedZipFile, string destinationzipfilename, byte[] zipData, string outputFolder)
         {
             File.WriteAllBytes(decryptedZipFile, zipData);
-            ZipFile.ExtractToDirectory(decryptedZipFile, outputFolder);
+            File.Copy(decryptedZipFile, outputFolder + "\\" + destinationzipfilename, true);
+
+            //ZipFile.ExtractToDirectory(decryptedZipFile, outputFolder);
             File.Delete(decryptedZipFile); // Delete decrypted zip file after unzipping
         }
 
-        public static void DecryptAndUnzip(string encryptedFile, string outputFolder,string tempZipFilePath, string privateKey)
+        public static void DecryptAndUnzip(string encryptedFile, string outputFolder,string tempZipFilePath,string destinationzipfilename, string privateKey)
         {
             // Read encrypted file and extract AES key, IV, and encrypted zip file
             var (encryptedAesKey, aesIv, encryptedZipFile) = ReadEncryptedFile(encryptedFile);
@@ -75,7 +78,8 @@ namespace Web.Healpers
             byte[] zipData = DecryptZipFile(encryptedZipFile, aesKey, aesIv);
 
             // Save the decrypted zip file and unzip
-            SaveAndUnzip(tempZipFilePath+"\\"+"decrypted.zip", zipData, outputFolder);
+            //SaveAndUnzip(tempZipFilePath+"\\"+"decrypted.zip", zipData, outputFolder);
+            SaveAndUnzip(tempZipFilePath + "\\" + "decrypted.zip", destinationzipfilename, zipData, outputFolder);
         }
     }
 }
