@@ -15,7 +15,7 @@ namespace DataTransferObject.Requests
         [AllowedExtensions(new string[] { ".zip" })]
         [AllowedContentType(new string[] { "application/x-zip-compressed" })]
         [MaxFileSize(5120, "ZipFile")]
-        public IFormFile ZipFile { get; set; }
+        public required IFormFile ZipFile { get; set; }
         public string PrivateKey { get; set; } = string.Empty;
     }
 }

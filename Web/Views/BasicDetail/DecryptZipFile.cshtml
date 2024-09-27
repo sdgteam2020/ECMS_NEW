@@ -4,22 +4,62 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <style>
-    .upload-options label::after {
-        content: 'Upload Photo';
-        font-family: 'Material Icons';
-        position: absolute;
-        font-size: 1.5rem;
-        color: rgba(230, 230, 230, 1);
-        top: calc(60% - 1.5rem);
-        left: calc(30% - 1.25rem);
-        z-index: 0;
+    .login-wrap {
+        margin-top: 15px;
+        margin-left: 33%;
+        margin-right: 33%;
+        /*margin-bottom: 100px;*/
+        /*    margin-left: -50px;*/
+        /*  border: 7px double #242c6d;*/
+        width: 33%;
     }
 </style>
+<header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
+    <div class="containerMain">
+        <div class="page-header-content pt-4">
+            <div class="row align-items-center justify-content-between">
+                <div class="col-auto">
+                    <h1 class="page-header-title">
+                        <div class="page-header-icon"> <i class="fa fa-bars"></i></div>
+
+                        <div>
+                            <span id="Isspnjcoor" class="d-none">@ViewBag.jcoor</span>
+                            @if (Convert.ToString(ViewBag.jcoor) == "1")
+                            {
+                                <span>
+                                    <a href="/Home/Index" class="mr-2">Home</a> >
+                                    <a href="/Home/Task" class="mr-2">Task</a> >
+                                    <a href="/Home/MyTask/SkNPc1BlbmRpbmc=" class="mr-2">I-Card Status</a>  >
+                                    @ViewBag.Title
+                                </span>
+
+                            }
+                            else
+                            {
+                                <span>
+                                    <a href="/Home/Index" class="mr-2">Home</a> >
+                                    <a href="/Home/Task" class="mr-2">Task</a> >
+                                    <a href="/Home/MyTask/T2ZmcnNQZW5kaW5n" class="mr-2">I-Card Status</a>  >
+                                    @ViewBag.Title
+                                </span>
+                            }
+
+
+                        </div>
+
+
+                    </h1>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</header>
 <div class="card">
     <form enctype="multipart/form-data" action="" id="DecryptZipFile" name="DecryptZipFile" method="post">
         <div class="p-2">
             <div class="row">
-                <div class="col-md-12 ">
+                <div class="col-md-6 col-lg-6 col-xl-4 login-wrap align-items-center">
                     <div class="card">
                         <div class="seven">
                             <h1>Upload Zip File</h1>
@@ -30,16 +70,14 @@
                                     <div class="row mb-1 required">
                                         <div class="col-xl-12">
                                             <span class="text-danger">Please upload only zip format</span>
-                                            <div class="col-sm-12">
-                                                <div>
-                                                    <label>
-                                                        <input asp-for="ZipFile" class="form-control" accept="application/zip" />
-                                                    </label>
-                                                </div>
-                                                <span id="lblZipFile" style="color: red;"></span>
-                                                <span asp-validation-for="ZipFile" class="text-danger"></span>
-                                                <span id="lblZipFileNotification" class="text-danger">File Upload Upto 5MB</span>
+                                            <div>
+                                                <label>
+                                                    <input asp-for="ZipFile" class="form-control" accept="application/zip" />
+                                                </label>
                                             </div>
+                                            <span id="lblZipFile" style="color: red;"></span>
+                                            <span asp-validation-for="ZipFile" class="text-danger"></span>
+                                            <span id="lblZipFileNotification" class="text-danger">File Upload Upto 5MB</span>
                                         </div>
                                     </div>
                                 </div>

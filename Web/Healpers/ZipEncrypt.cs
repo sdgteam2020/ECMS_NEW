@@ -11,9 +11,15 @@ namespace Web.Healpers
     class ZipEncrypt
     {
         // Method to zip a folder
-        public static void ZipFolder(string sourceFolder,string tempZipFilePath, string zipFile)
+        public static void ZipFolder(string sourceFolder,string tempZipFilePath, string tempZipFile)
         {
-            ZipFile.CreateFromDirectory(sourceFolder, tempZipFilePath +"\\"+ zipFile, CompressionLevel.Fastest,true);
+            // Delete the temporary zip file
+            if (System.IO.File.Exists(tempZipFilePath + "\\" + tempZipFile))
+            {
+                System.IO.File.Delete(tempZipFilePath + "\\" + tempZipFile);
+            }
+
+            ZipFile.CreateFromDirectory(sourceFolder, tempZipFilePath +"\\"+ tempZipFile, CompressionLevel.Fastest,true);
         }
 
         // Method to encrypt AES key with RSA public key
@@ -91,7 +97,10 @@ namespace Web.Healpers
             SaveEncryptedFile(outputEncryptedFile, encryptedAesKey, aesIv, encryptedZipFile);
 
             // Delete the temporary zip file
-            File.Delete(tempZipFilePath + "\\" + tempZipFile);
+            if (File.Exists(tempZipFilePath + "\\" + tempZipFile))
+            {
+                File.Delete(tempZipFilePath + "\\" + tempZipFile);
+            }
         }
     }
 }

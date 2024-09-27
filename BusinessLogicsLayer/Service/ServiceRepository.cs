@@ -274,10 +274,14 @@ namespace BusinessLogicsLayer.Service
 
                 switch (fUpload)
                 {
-                    case "50-4B-03-04":
+                    case "00-01-00-00":
                         output = "zip";
                         isGeniun = true;
                         break;
+                    //case "50-4B-03-04":
+                    //    output = "zip";
+                    //    isGeniun = true;
+                    //    break;
                     case null:
                         output = "notmatched";
                         isGeniun = false;

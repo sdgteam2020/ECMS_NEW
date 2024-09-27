@@ -63,7 +63,13 @@ namespace Web.Healpers
             File.Copy(decryptedZipFile, outputFolder + "\\" + destinationzipfilename, true);
 
             //ZipFile.ExtractToDirectory(decryptedZipFile, outputFolder);
-            File.Delete(decryptedZipFile); // Delete decrypted zip file after unzipping
+
+            // Delete decrypted zip file after unzipping
+            if (System.IO.File.Exists(decryptedZipFile))
+            {
+                File.Delete(decryptedZipFile);
+            }
+
         }
 
         public static void DecryptAndUnzip(string encryptedFile, string outputFolder,string tempZipFilePath,string destinationzipfilename, string privateKey)
