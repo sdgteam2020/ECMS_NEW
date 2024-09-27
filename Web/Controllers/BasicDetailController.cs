@@ -49,6 +49,7 @@ using System.Xml;
 using System.Xml.Serialization;
 using System.Xml.Linq;
 using BusinessLogicsLayer.TrnICardHold;
+using static iText.StyledXmlParser.Jsoup.Select.Evaluator;
 
 namespace Web.Controllers
 {
@@ -1291,8 +1292,14 @@ namespace Web.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult> DecryptZipFile()
+        public async Task<ActionResult> DecryptZipFile(string jcoor)
         {
+            if (!string.IsNullOrEmpty(jcoor))
+            {
+                var base64EncodedBytes = System.Convert.FromBase64String(jcoor);
+                var ret = System.Text.Encoding.UTF8.GetString(base64EncodedBytes);
+                ViewBag.jcoor = ret;
+            }
             return View();
         }
         [HttpPost]
@@ -1311,17 +1318,17 @@ namespace Web.Controllers
                     string destinationzipfilename = Path.GetFileName(model.ZipFile.FileName);
                     string path = Path.Combine(sourceFolderPhotoPhy, FileName);
 
-                    //bool result = service.IsValidZipHeader(path);
+                    bool result = service.IsValidZipHeader(path);
 
-                    //if (!result)
-                    //{
-                    //    ModelState.AddModelError("ZipFile", "File format not correct");
-                    //    if (System.IO.File.Exists(path))
-                    //    {
-                    //        System.IO.File.Delete(path); 
-                    //    }
-                    //    goto end;
-                    //}
+                    if (!result)
+                    {
+                        ModelState.AddModelError("ZipFile", "File format not correct");
+                        if (System.IO.File.Exists(path))
+                        {
+                            System.IO.File.Delete(path);
+                        }
+                        return Json(KeyConstants.InternalServerError);
+                    }
 
                     ZipDecrypt.DecryptAndUnzip(path, sourceFolderPhotoPhy, sourceFolderPhotoPhy, destinationzipfilename, model.PrivateKey); // Decrypt and unzip folder
 
