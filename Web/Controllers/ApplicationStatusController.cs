@@ -13,33 +13,33 @@ namespace Web.Controllers
         {
             _basicDetailBL= basicDetailBL;
         }
-        public async Task<IActionResult> AppStatus(string TrackingId)
-        {
-            //DTOApplicationTrack dTOApplicationTrack=new DTOApplicationTrack();
-            //try
-            //{
-            //     dTOApplicationTrack = await _basicDetailBL.ApplicationHistory(TrackingId);
-            //    if (dTOApplicationTrack.dTOApplicationDetails != null)
-            //    {
-            //        ViewBag.IsData = 1;
+        //public async Task<IActionResult> AppStatus(string TrackingId)
+        //{
+        //    //DTOApplicationTrack dTOApplicationTrack=new DTOApplicationTrack();
+        //    //try
+        //    //{
+        //    //     dTOApplicationTrack = await _basicDetailBL.ApplicationHistory(TrackingId);
+        //    //    if (dTOApplicationTrack.dTOApplicationDetails != null)
+        //    //    {
+        //    //        ViewBag.IsData = 1;
 
-            //    }
-            //    else
-            //    {
-            //        ViewBag.IsData = 0;
+        //    //    }
+        //    //    else
+        //    //    {
+        //    //        ViewBag.IsData = 0;
 
-            //    }
+        //    //    }
 
 
-            //}
-            //catch (Exception ex) { 
-            //    ViewBag.IsData = 0; 
-            //}
+        //    //}
+        //    //catch (Exception ex) { 
+        //    //    ViewBag.IsData = 0; 
+        //    //}
 
-            //return View(dTOApplicationTrack);
-           ViewBag.IP=HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
-            return View();
-        }
+        //    //return View(dTOApplicationTrack);
+        //   ViewBag.IP=HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
+        //    return View();
+        //}
         public async Task<IActionResult> GetRequestHistoryByTrackingId(string TrackingId)
         {
             return Json(await _basicDetailBL.ICardHistoryByTrackingId(TrackingId));

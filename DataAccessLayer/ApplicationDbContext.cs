@@ -21,6 +21,7 @@ namespace DataAccessLayer
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         { }
+        public DbSet<MApiLogin> MApiLogin { get; set; } = null!;
         public DbSet<ClaimsStore> ClaimsStore { get; set; } = null!;
         public DbSet <MTrnICardHold> MTrnICardHold { get; set; } = null!;
         public DbSet <MTrnICardStatus> MTrnICardStatus { get; set; } = null!;
