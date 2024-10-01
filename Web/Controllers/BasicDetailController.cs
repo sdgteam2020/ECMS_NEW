@@ -171,7 +171,7 @@ namespace Web.Controllers
                 _logger.LogError(1001, ex, "BasicDetail->SaveICardRequestHold");
                 return Json(KeyConstants.InternalServerError);
             }
-
+                
         }
         //[Authorize(Roles = "DteAdmin")]
         [Authorize(Policy = "FlagICardApplPolicy")]

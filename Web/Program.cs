@@ -114,7 +114,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
                options.Cookie.HttpOnly = true;
       
                options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
-               options.LoginPath = "/Account/Login";
+               options.LoginPath = "/Account/IMLogin";
                options.AccessDeniedPath = "/Account/AccessDenied";
                // Add other configuration options as needed
            });
@@ -124,6 +124,7 @@ builder.Services.AddSession(options =>
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
     options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+    options.Cookie.SameSite = SameSiteMode.Strict;
 });
 builder.Services.AddAntiforgery(o => o.SuppressXFrameOptionsHeader = true);
 builder.Services.AddAntiforgery(options =>
@@ -136,7 +137,6 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.Cookie.HttpOnly = true;
     //options.Cookie.Expiration 
     options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-
     options.ExpireTimeSpan = TimeSpan.FromMinutes(20);
     options.LoginPath = "/Account/IMLogin";
     options.LogoutPath = "/Account/Logout";
@@ -200,15 +200,15 @@ else
 }
 //app.Use(async (ctx, next) =>
 //{
-//    //ctx.Response.Headers.Add("Content-Security-Policy", "default-src *; style-src 'self' ");
-//    //ctx.Response.Headers.Add("Feature-Policy", "fullscreen 'none'");
-//    //ctx.Response.Headers.Add("Referrer-Policy", "same-origin");
-//    //ctx.Response.Headers.Add("X-Frame-Options", "DENY");
-//    //ctx.Response.Headers.Add("X-XSS-Protection", "1; mode=block");
-//    //ctx.Response.Headers.Add("X-Content-Type-Options", "nosniff");
-//    //ctx.Response.Headers.Add("Strict-Transport-Security", "max-age=31536000; includeSubDomains; preload");
-//    //ctx.Response.Headers.Remove("X-Powered-By");
-//    //ctx.Response.Headers.Remove("x-aspnet-version");
+//    ctx.Response.Headers.Add("Content-Security-Policy", "default-src *; style-src 'self' ");
+//    ctx.Response.Headers.Add("Feature-Policy", "fullscreen 'none'");
+//    ctx.Response.Headers.Add("Referrer-Policy", "same-origin");
+//    ctx.Response.Headers.Add("X-Frame-Options", "DENY");
+//    ctx.Response.Headers.Add("X-XSS-Protection", "1; mode=block");
+//    ctx.Response.Headers.Add("X-Content-Type-Options", "nosniff");
+//    ctx.Response.Headers.Add("Strict-Transport-Security", "max-age=31536000; includeSubDomains; preload");
+//    ctx.Response.Headers.Remove("X-Powered-By");
+//    ctx.Response.Headers.Remove("x-aspnet-version");
 //    //// Some headers won't remove
 //    //ctx.Response.Headers.Remove("Server");
 //    ctx.Response.Headers.Add("Content-Security-Policy", "default-src 'self'");
@@ -217,7 +217,7 @@ else
 //    ctx.Response.Headers.Add("X-XSS-Protection", "1; mode=block");
 
 //    await next();
-    
+
 //});
 //var options = new RewriteOptions()
 //           // Redirect from non-www to www
