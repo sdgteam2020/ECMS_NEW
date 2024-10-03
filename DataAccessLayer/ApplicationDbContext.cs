@@ -21,6 +21,7 @@ namespace DataAccessLayer
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         { }
+        public DbSet<MApiLogin> MApiLogin { get; set; } = null!;
         public DbSet<ClaimsStore> ClaimsStore { get; set; } = null!;
         public DbSet <MTrnICardHold> MTrnICardHold { get; set; } = null!;
         public DbSet <MTrnICardStatus> MTrnICardStatus { get; set; } = null!;
@@ -98,6 +99,8 @@ namespace DataAccessLayer
             //        .HasIndex(x => new { x.ArmedId, x.TDMId })
             //        .IsUnique();
             builder.Entity<BasicDetail>().HasIndex(x => x.ServiceNo).IsUnique();
+            builder.Entity<BasicDetail>().HasIndex(x => x.PaperIcardNo).IsUnique().HasDatabaseName("IX_PaperIcardNo"); 
+            builder.Entity<MTrnIdentityInfo>().HasIndex(x => x.AadhaarNo).IsUnique().HasDatabaseName("IX_AadhaarNo"); 
             builder.Entity<IdentityUserRole<int>>(entity =>
             {
             });

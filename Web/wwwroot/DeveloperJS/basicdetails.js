@@ -131,13 +131,20 @@
                     data: param,
                     type: 'POST',
                     success: function (data) {
-                        console.log(data);
-                        response($.map(data, function (item) {
+                        if (data.length != 0) {
+                            response($.map(data, function (item) {
+                                $("#loading").addClass("d-none");
+                                return { label: item.UnitName, value: item.UnitMapId };
 
-                            $("#loading").addClass("d-none");
-                            return { label: item.UnitName, value: item.UnitMapId };
+                            }))
+                        } else {
 
-                        }))
+                            $("#txtUnit").val("");
+                            $("#UnitId").val("0");
+                            alert("SUS No not found.")
+                        }
+
+
                     },
                     error: function (response) {
                         alert(response.responseText);

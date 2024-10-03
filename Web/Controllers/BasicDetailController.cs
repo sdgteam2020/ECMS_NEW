@@ -49,6 +49,7 @@ using System.Xml;
 using System.Xml.Serialization;
 using System.Xml.Linq;
 using BusinessLogicsLayer.TrnICardHold;
+using static iText.StyledXmlParser.Jsoup.Select.Evaluator;
 
 namespace Web.Controllers
 {
@@ -78,14 +79,16 @@ namespace Web.Controllers
         private readonly IMasterBL _IMasterBL;
         private readonly ITrnLoginLogBL _iTrnLoginLogBL;
         private readonly IICardHoldBL _iICardHoldBL;
+        private readonly IConfiguration _configuration;
         public DateTime dateTimenow;
-        public BasicDetailController(IBasicDetailBL basicDetailBL, IMapUnitBL mapUnitBL, IBasicDetailTempBL basicDetailTempBL, IService service, IMapper mapper,
+        public BasicDetailController(IConfiguration configuration,IBasicDetailBL basicDetailBL, IMapUnitBL mapUnitBL, IBasicDetailTempBL basicDetailTempBL, IService service, IMapper mapper,
             UserManager<ApplicationUser> userManager, IWebHostEnvironment hostingEnvironment, IDataProtectionProvider dataProtectionProvider,
                               DataProtectionPurposeStrings dataProtectionPurposeStrings, ILogger<BasicDetailController> logger, IStepCounterBL iStepCounterBL, 
                               ITrnFwnBL iTrnFwnBL, ITrnICardRequestBL iTrnICardRequestBL, IDomainMapBL iDomainMapBL
             ,IBasicUploadBL basicUploadBL, IBasicAddressBL basicAddressBL, IBasicinfoBL basicinfoBL, IRankBL rankBL, INotificationBL notificationBL, IMasterBL masterBL
            , ITrnLoginLogBL iTrnLoginLogBL, IICardHoldBL iICardHoldBL)
         {
+            _configuration = configuration;
             this.basicDetailBL = basicDetailBL;
             this.basicDetailTempBL = basicDetailTempBL;
             this.service = service;
@@ -168,7 +171,7 @@ namespace Web.Controllers
                 _logger.LogError(1001, ex, "BasicDetail->SaveICardRequestHold");
                 return Json(KeyConstants.InternalServerError);
             }
-
+                
         }
         //[Authorize(Roles = "DteAdmin")]
         [Authorize(Policy = "FlagICardApplPolicy")]
@@ -1012,9 +1015,9 @@ namespace Web.Controllers
                         //}
 
                         // await basicDetailBL.Update(basicDetail);
-                        var ret1 = await basicDetailBL.SaveBasicDetailsWithAll(newBasicDetail, mTrnAddress, mTrnUpload, mTrnIdentityInfo, null, null);
+                        DTOBasicDetailsSaveResponse ret1 = await basicDetailBL.SaveBasicDetailsWithAll(newBasicDetail, mTrnAddress, mTrnUpload, mTrnIdentityInfo, null, null);
                         BasicDetail basicDetail = await basicDetailBL.Get(model.BasicDetailId);
-                        if (ret1 == true)
+                        if (ret1.Result == true)
                         {
                             bool resultforisprocess = await iTrnICardRequestBL.GetRequestPending(basicDetail.BasicDetailId);
                             if (!resultforisprocess)
@@ -1207,9 +1210,9 @@ namespace Web.Controllers
 
                         BasicDetail ret = new BasicDetail();
 
-                       var ret1 = await basicDetailBL.SaveBasicDetailsWithAll(newBasicDetail, mTrnAddress, mTrnUpload,mTrnIdentityInfo, mTrnICardRequest, mStepCounter);
+                        DTOBasicDetailsSaveResponse ret1 = await basicDetailBL.SaveBasicDetailsWithAll(newBasicDetail, mTrnAddress, mTrnUpload,mTrnIdentityInfo, mTrnICardRequest, mStepCounter);
                        // ret = await basicDetailBL.AddWithReturn(newBasicDetail);
-                        if (ret1 == true)
+                        if (ret1.Result == true)
                         {
                             //mTrnUpload.BasicDetailId = ret.BasicDetailId;
                             //await basicuploadBL.Add(mTrnUpload);
@@ -1235,7 +1238,7 @@ namespace Web.Controllers
                         }
                         else
                         {
-                            TempData["error"] = "Data Not Inserted.";
+                            TempData["error"] = ret1.Message;
                         }
                        
                     }
@@ -1286,6 +1289,63 @@ namespace Web.Controllers
         end:
             return View(model);
 
+        }
+
+        [HttpGet]
+        public async Task<ActionResult> DecryptZipFile(string jcoor)
+        {
+            if (!string.IsNullOrEmpty(jcoor))
+            {
+                var base64EncodedBytes = System.Convert.FromBase64String(jcoor);
+                var ret = System.Text.Encoding.UTF8.GetString(base64EncodedBytes);
+                ViewBag.jcoor = ret;
+            }
+            return View();
+        }
+        [HttpPost]
+        public async Task<IActionResult> DecryptZipFileData(DTODecryptZipFileRequest model)
+        {
+            try
+            {
+                model.PrivateKey = _configuration["Key:PrivateKey"];
+                if (ModelState.IsValid)
+                {
+                    string sourceFolderPhotoPhy = Convert.ToString(Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "ExportAFSACCell", "Temp"));
+                    if (!Directory.Exists(sourceFolderPhotoPhy))
+                        Directory.CreateDirectory(sourceFolderPhotoPhy);
+                    string TempFileName = Guid.NewGuid().ToString();
+                    string FileName = service.ProcessUploadedFile(model.ZipFile, sourceFolderPhotoPhy, TempFileName);
+                    string destinationzipfilename = Path.GetFileName(model.ZipFile.FileName);
+                    string path = Path.Combine(sourceFolderPhotoPhy, FileName);
+
+                    bool result = service.IsValidZipHeader(path);
+
+                    if (!result)
+                    {
+                        ModelState.AddModelError("ZipFile", "File format not correct");
+                        if (System.IO.File.Exists(path))
+                        {
+                            System.IO.File.Delete(path);
+                        }
+                        return Json(KeyConstants.InternalServerError);
+                    }
+
+                    ZipDecrypt.DecryptAndUnzip(path, sourceFolderPhotoPhy, sourceFolderPhotoPhy, destinationzipfilename, model.PrivateKey); // Decrypt and unzip folder
+
+                    return Json(model.ZipFile.FileName);
+                }
+                else
+                {
+                    return Json(ModelState.Select(x => x.Value.Errors).Where(y => y.Count > 0).ToList());
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "BasicDetail->DecryptZipFile");
+                return Json(KeyConstants.InternalServerError);
+            }
+        //end:
+        //    return View(model);
         }
 
         [HttpPost]
@@ -1673,8 +1733,94 @@ namespace Web.Controllers
         [Authorize(Policy = "ICardExportDataPolicy")]
         public async Task<IActionResult> DataExport(DTODataExportRequest Data)
         {
+            #region Code write by Kapoor Sir
+            //try
+            //{
+            //    var retdata = await basicDetailBL.GetBesicdetailsByRequestId(Data);
+            //    string sourceFolderPhotoPhy = Convert.ToString(ForCreateFolderrandom(Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "ExportAFSACCell")));
+            //    int recoff = 0;
+            //    List<DTODataExportsResponse> lst = new List<DTODataExportsResponse>();
+            //    string recofffolder = "";
+            //    string recoffphotos = "";
+            //    string recoffsing = "";
+            //    int count = 0;
+            //    string arryRequestId = "";
+            //    foreach (var data in retdata)
+            //    {
+            //        count++;
+            //        if (recoff != data.RecordOfficeId)
+            //        {
+            //            if (recoff != 0)
+            //            {
+            //                var jsonString = JsonConvert.SerializeObject(lst);
+            //                var jsonde = JsonConvert.DeserializeObject(jsonString);
+            //                System.IO.File.WriteAllText(recofffolder + "/Data.json", jsonString);
+            //            }
+
+            //            lst.Clear();
+            //            recofffolder = Convert.ToString(CreateFolder(sourceFolderPhotoPhy + "/" + data.RecordOffice));
+            //            recoffphotos = Convert.ToString(CreateFolder(sourceFolderPhotoPhy + "/" + data.RecordOffice + "/Photos"));
+            //            recoffsing = Convert.ToString(CreateFolder(sourceFolderPhotoPhy + "/" + data.RecordOffice + "/Signature"));
+
+            //        }
+
+            //        System.IO.File.Copy(Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "Photo") + "/" + data.PhotoImagePath, recoffphotos + "/" + data.ServiceNo + ".png", true);
+            //        System.IO.File.Copy(Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "Signature") + "/" + data.SignatureImagePath, recoffsing + "/" + data.ServiceNo + ".png", true);
+            //        lst.Add(data);
+            //        recoff = data.RecordOfficeId;
+            //        if (count == retdata.Count())
+            //        {
+            //            var jsonString = JsonConvert.SerializeObject(lst);
+            //            var jsonde = JsonConvert.DeserializeObject(jsonString);
+            //            System.IO.File.WriteAllText(recofffolder + "/Data.json", jsonString);
+
+            //        }
+            //        if (count == 1)
+            //            arryRequestId = data.RequestId + "";
+            //        else
+            //            arryRequestId = arryRequestId + "," + data.RequestId;
+
+            //    }
+
+            //    CreateZipFromFolder(sourceFolderPhotoPhy, sourceFolderPhotoPhy + ".zip");
+            //    if (Data.DataExportType == 1)
+            //    {
+            //        //Encrypt.EncryptParameter(jsonde.ToString())
+            //        ZipEncryptionService zipEncryptionService = new ZipEncryptionService();
+            //        zipEncryptionService.EncryptFile(sourceFolderPhotoPhy + ".zip", sourceFolderPhotoPhy);
+            //    }
+
+
+            //    string lastFolderName = new DirectoryInfo(sourceFolderPhotoPhy).Name;
+
+
+            //    DtoSession dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+            //    var userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+            //    DTODataExported dTODataExported = new DTODataExported();
+            //    dTODataExported.AspNetUsersId = userId;
+            //    dTODataExported.UserId = Convert.ToInt32(dtoSession.UserId);
+            //    dTODataExported.IP = HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
+            //    dTODataExported.CreatedBy = dtoSession.RankName + " " + dtoSession.Name + " (" + dtoSession.ICNO + ")";
+            //    dTODataExported.CreatedOn = DateTime.Now;
+            //    dTODataExported.RequestId = arryRequestId;
+            //    await _iTrnLoginLogBL.AddDataExport(dTODataExported);
+
+            //    return Json(lastFolderName);
+
+
+            //}
+            //catch (Exception ex)
+            //{
+            //    _logger.LogError(1001, ex, "BasicDetails=>DataExport.");
+            //    return Json(KeyConstants.InternalServerError);
+            //}
+            #endregion
             try
             {
+                //Data.publicKey = "MIIBCgKCAQEArhSYCF6ie0rkkXe2HSqKXQ/Sa/NwwbXQ/q1sEEL2eWGnpCa0+49DtRWtybLfK6A51Cj1TX2HnOGuPROQ46DOPI6giwDXnIimHeHAMCd4GqFuDAlDytFNls4XHCMxt1Ql2nVWVxBc2DSTGB35H+eT06rgL+j6ra0iaorAnghUzgIsgH8uLoXX9WqQZXI3rZcH6483ymh0fs/6hS0L5D/pNSaAIuMse3Jg6vcv5z/M7ZzTfiKHO0XkZE/qkm6hIR8uHi4jJwoCdHJ4Fc0wZ+ekd3h/Z2nNXbim07jX6ZcoKL5udYf5u0iFqplg6ao+qssiHF4RMCeDh1vBU5vkSpyUEQIDAQAB";
+                //Data.privateKey = "MIIEpgIBAAKCAQEArhSYCF6ie0rkkXe2HSqKXQ/Sa/NwwbXQ/q1sEEL2eWGnpCa0+49DtRWtybLfK6A51Cj1TX2HnOGuPROQ46DOPI6giwDXnIimHeHAMCd4GqFuDAlDytFNls4XHCMxt1Ql2nVWVxBc2DSTGB35H+eT06rgL+j6ra0iaorAnghUzgIsgH8uLoXX9WqQZXI3rZcH6483ymh0fs/6hS0L5D/pNSaAIuMse3Jg6vcv5z/M7ZzTfiKHO0XkZE/qkm6hIR8uHi4jJwoCdHJ4Fc0wZ+ekd3h/Z2nNXbim07jX6ZcoKL5udYf5u0iFqplg6ao+qssiHF4RMCeDh1vBU5vkSpyUEQIDAQABAoIBAQCDDhgDPRPAFHsNlP1y6cLvGulEwiqiezoTcgZIG9GpQj7OUyGvvYSwwNhsYBCprF+8/PToWNgO4MynSKKs7DQ33Py6iXDJdQrytjFVT3GZQu0xfIwgFgD+xrsZQNm99kjlNa9BrpznXHVdE7upLFPbZ+qNxy1qMU0Wvs0SbJ1D1ZruXtbRqbOKzryZKa5NpboDBXIPw/o9RZS8eTFVl1SZC6asrokEepVWUsMwg/yORvKf/p/cCZBjbKQ+oclsT5ljht5j53YuYlixIYJNghmniMMEWwuyfeKZ5swL0HbGTJvkrz55mWKP7NtWGIIUzhMltPef6LNcjeMw/SOvTghNAoGBAMmSwbWRmJfXzAuq/UnnUoi8zpJuoWHh8fww0w0/bOuuVGkk/0Z+LXaWOeSRFjrwT1UU+uSW5Lj0bTRJHeGCxwaA8d2CJMUlPCBx6xukFDyaCZavtwxUMC5hOLp7DvCWyMZqQP5UAI5ukMYgljE9rvTfpXQBp04QH3xYCjXiUPffAoGBAN0VdxY+uvd7roiW1JamrzeyDCkIlWGriUd+WoO6KVKGM7Gi1E7oZcaSW9BC/qutRBuuuOFfu3btC3BlBbieXXAztAvEPD8e/JvE5FSpkcY8rELlC9Y0M3hxdJoMWH/tIwJIVKsxnGzCfRemMjvLiAGc1YSWnl5lslpQSrlJG7IPAoGBAMCXmL87ijliNRHc4L7w5vnAs/pS+5zDPerAV5ZryEzytrHzaHhY7GVGqa/KNBxCKPpY3lL0HTreR0zSo1spEbIUF4OV6j33EpjJX2J8hd1VK94uq017TsGxoHsEQsT6vIBfWxPk/NcZqveygO4xSm2rFbFeNxUt8HdkwvSy9LuvAoGBAL/W9HMVE9/ULurPFsFy+e/2S57/l8AcvQ6QkbJkQ58cXJbzmA6wkj/wmELrH1mRC9yJjFvkWiMkJhztTD2bDbFi7ASZzz1mggQYoZjlW10NIN0bK15ABbmpmWhi9hhriUldwjqa3gVx7mIrEMPaJLZhhNV8bQe0b0L3ESAeVC35AoGBAIFUQ9VziGZ2UMrDxMPU2AoMqfJe3X82CcUu/WS3KntAObSlSA3Od2Ow8gHs6KtVxMYLND9nHJ+WXMXASbv/ou1E/h8lRvg7OjFEnscgz8w5Kvf5egIoYFoMAg7TA8e/8mZ8NIli88T2/vvMZHhUSrRm43cssViI1kLFXfywzzOX";
+                Data.publicKey = _configuration["Key:PublicKey"];
+                Data.privateKey = _configuration["Key:PrivateKey"];
                 var retdata = await basicDetailBL.GetBesicdetailsByRequestId(Data);
                 string sourceFolderPhotoPhy = Convert.ToString(ForCreateFolderrandom(Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "ExportAFSACCell")));
                 int recoff = 0;
@@ -1721,10 +1867,22 @@ namespace Web.Controllers
 
                 }
 
-                CreateZipFromFolder(sourceFolderPhotoPhy, sourceFolderPhotoPhy + ".zip");
-                //Encrypt.EncryptParameter(jsonde.ToString())
-                ZipEncryptionService zipEncryptionService = new ZipEncryptionService();
-                zipEncryptionService.EncryptFile(sourceFolderPhotoPhy + ".zip", sourceFolderPhotoPhy);
+                //CreateZipFromFolder(sourceFolderPhotoPhy, sourceFolderPhotoPhy + ".zip");
+                
+                if (Data.DataExportType == 1)
+                {
+                    string tempZipFilePath = Convert.ToString(Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "ExportAFSACCell","Temp"));
+                    ZipEncrypt.EncryptAndZip(sourceFolderPhotoPhy, sourceFolderPhotoPhy+ ".zip", tempZipFilePath, Data.publicKey); // Encrypt and zip folder
+                    //ZipDecrypt.DecryptAndUnzip(sourceFolderPhotoPhy + ".zip", tempZipFilePath, tempZipFilePath, Data.privateKey); // Decrypt and unzip folder
+                    //Encrypt.EncryptParameter(jsonde.ToString())
+                    //ZipEncryptionService zipEncryptionService = new ZipEncryptionService();
+                    //zipEncryptionService.EncryptFile(sourceFolderPhotoPhy + ".zip", sourceFolderPhotoPhy);
+                }
+                else
+                {
+                    CreateZipFromFolder(sourceFolderPhotoPhy, sourceFolderPhotoPhy + ".zip");
+                }
+
 
                 string lastFolderName = new DirectoryInfo(sourceFolderPhotoPhy).Name;
 

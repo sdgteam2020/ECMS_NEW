@@ -71,8 +71,8 @@ namespace DataTransferObject.Domain.Model
         public byte IssuingAuthorityId { get; set; }
         public MIssuingAuthority? IssuingAuthority { get; set; }
 
-        [StringLength(50)]
-        [Column(TypeName = "varchar(50)")]
+        [StringLength(12)]
+        [Column(TypeName = "varchar(12)")]
         public string PaperIcardNo { get; set; } = string.Empty;
 
     }

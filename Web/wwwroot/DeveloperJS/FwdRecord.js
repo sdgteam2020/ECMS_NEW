@@ -10,6 +10,7 @@ var IsToken = true;
 var IsWithTokenApply = true;
 var IsValid = 0;
 var IsDigitalSignReq = true;
+var DataExportType = 1;
 $(function () {
 
     $("#btntokenTofwd").on("click", function () {
@@ -42,7 +43,40 @@ $(function () {
                 confirmButtonText: 'Yes, Export it!'
             }).then((result) => {
                 if (result.value) {
+                    DataExportType = 0;
+                    DataExport(lst);
 
+                }
+            });
+        } else {
+            Swal.fire({
+                text: "Please select atleast 1 data to Export."
+            });
+        }
+    });
+    $('#btnDataExportsEncry').on("click", function () {
+        var lst = new Array();
+
+        if (memberTable.$('input[type="checkbox"]:checked').length > 0) {
+
+            memberTable.$('input[type="checkbox"]:checked').each(function () {
+
+
+                var id = $(this).attr("Id");
+                lst.push(id);
+            });
+
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You want to Export",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#072697',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, Export it!'
+            }).then((result) => {
+                if (result.value) {
+                    DataExportType = 1;
                     DataExport(lst);
 
                 }
@@ -173,6 +207,9 @@ $(function () {
     });
     $(".btndownloadpdf").on("click", function () {
         DownloadPdf($(this).closest("tr").find(".spnRequestId").html())
+    });
+    $(".btndownloadxml").on("click", function () {
+        DownloadXml($(this).closest("tr").find(".spnRequestId").html())
     });
     $(".fwdrecord").on("click", function () {
         Reset();
@@ -481,115 +518,6 @@ $(function () {
                 $("#msgforfwd").html('<div class="mt-4 alert alert-danger alert-dismissible fade show "><i class="fa fa-check " aria-hidden="true"></i><span class="m-lg-2">Please Correct Token insert and Click refresh Button </span></div>');
             }
         }, 1000);
-
-
-
-
-
-        //if (parseInt(StepCounter) == 1 || parseInt(StepCounter) == 2 || parseInt(StepCounter) == 7) {
-        //    if (parseInt($("#spnCurrentApplyFor").html()) == 1) {
-        //        let CurrentRegistrationApplyFor = parseInt($("#spnCurrentRegistrationApplyFor").html());
-        //        if (CurrentRegistrationApplyFor == 2 || CurrentRegistrationApplyFor == 3 || CurrentRegistrationApplyFor == 4 || CurrentRegistrationApplyFor == 10) {
-        //            if (IsWithTokenApply == true) {
-        //                $("#msgforfwd").html('');
-        //                GetTokenvalidatepersid2fawiththumbprint($("#spnServiceNo").html(), "tokenmsgforfwd", "txtspnTokenArmyNo", "txtspnTokenthumbprint");
-
-        //                setTimeout(function () { //wait for txtspnTokenArmyNo
-        //                    if ($("#spnServiceNo").html() == $("#txtspnTokenArmyNo").val()) {
-        //                        IsValid == 1;
-        //                        IsDigitalSignReq = true;
-        //                    }
-        //                    else {
-        //                        IsValid == 0;
-        //                    }
-        //                }, 1000);
-        //            }
-        //            else {
-        //                IsValid == 1;
-        //                IsDigitalSignReq = false;
-        //            }
-        //        }
-        //        else {
-        //            if (IsToken == true && CurrentRegistrationApplyFor == 1) {
-        //                $("#msgforfwd").html('');
-        //                GetTokenvalidatepersid2fawiththumbprint($("#spnFarmyno").html(), "tokenmsgforfwd", "txtspnTokenArmyNo", "txtspnTokenthumbprint");
-
-        //                if (($("#spnFarmyno").html() == $("#txtspnTokenArmyNo").val()) && ($("#spnServiceNo").html() == $("#txtspnTokenArmyNo").val())) {
-        //                    IsValid == 1;
-        //                    IsDigitalSignReq = true;
-        //                }
-        //                else {
-        //                    IsValid == 0;
-        //                }
-        //            }
-        //            else {
-        //                IsValid == 1;
-        //                IsDigitalSignReq = false;
-        //            }
-        //        }
-        //    }
-        //    else {
-        //        IsValid == 1;
-        //        IsDigitalSignReq = false;
-        //    }
-        //}
-        //else {
-        //    // When executed stepCounter not 1-drafted,2-Pending,7-rejected request by CO
-        //    if (IsToken == true) {
-        //        $("#msgforfwd").html('');
-        //        GetTokenvalidatepersid2fawiththumbprint($("#spnFarmyno").html(), "tokenmsgforfwd", "txtspnTokenArmyNo", "txtspnTokenthumbprint");
-
-        //        setTimeout(function () {   //wait for txtspnTokenArmyNo
-        //            if (($("#spnFarmyno").html() == $("#txtspnTokenArmyNo").val()) ) {
-        //                IsValid == 1;
-        //                IsDigitalSignReq = true;
-        //            }
-        //            else {
-        //                IsValid == 0;
-        //            }
-        //        }, 1000);
-
-
-        //    }
-        //    else {
-        //        IsValid == 1
-        //        IsDigitalSignReq = false;
-        //    }
-        //}
-
-        //setTimeout(function () { //wait for txtspnTokenArmyNo
-        //    if (IsValid == 1) {
-        //        $("#msgforfwd").html('');
-        //        if (parseInt(spnStepId) != 0) {
-        //            Swal.fire({
-        //                title: 'Are you sure?',
-        //                /*  text: "You want be Forward!",*/
-        //                icon: 'warning',
-        //                showCancelButton: true,
-        //                confirmButtonColor: '#3085d6',
-        //                cancelButtonColor: '#d33',
-        //                confirmButtonText: 'Yes, Forward it!'
-        //            }).then((result) => {
-        //                if (result.isConfirmed) {
-        //                    if (parseInt($("#spnFwdToAspNetUsersId").html()) != 0) {
-        //                        var spnRequestId = $("#spnCurrentspnRequestId").html();
-
-        //                        var Counter = parseInt($("#spnStepCounter").html());
-        //                        if (Counter == 1 || Counter == 7 || Counter == 8 || Counter == 9 || Counter == 10) {
-        //                            Counter = 2;
-        //                        } else {
-        //                            Counter = parseInt($("#spnStepCounter").html()) + 1;
-        //                        }
-        //                        UpdateStepCounter(spnStepId, spnRequestId, Counter, "A");
-        //                    }
-        //                }
-        //            })
-        //        }
-        //    }
-        //    else {
-        //        $("#msgforfwd").html('<div class="mt-4 alert alert-danger alert-dismissible fade show "><i class="fa fa-check " aria-hidden="true"></i><span class="m-lg-2">Please Correct Token insert and Click refresh Button </span></div>');
-        //    }
-        //}, 1000);
     });
 
     $("#btnRejected").on("click", function () {
@@ -1151,7 +1079,8 @@ function DataExport(Data) {
 
     var userdata = {
         "Ids": Data,
-        "IsJco": $("#Isspnjcoor").html()
+        "IsJco": $("#Isspnjcoor").html(),
+        "DataExportType": DataExportType
 
     };
     $.ajax({
@@ -1174,7 +1103,20 @@ function DataExport(Data) {
                     //link.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(blob);
                     //link.download = "export.json";
                     //link.click();
-                    window.location = "/WriteReadData/ExportAFSACCell/" + response + '_en.zip';
+                    if (DataExportType == 1) {
+                        //window.location = "/WriteReadData/ExportAFSACCell/" + response + '_en.zip';
+                        window.location = "/WriteReadData/ExportAFSACCell/" + response + '.zip';
+                        setTimeout(function () {
+                            location.reload();
+                        }, 1000);
+                    } else {
+                        window.location = "/WriteReadData/ExportAFSACCell/" + response + '.zip';
+                        setTimeout(function () {
+                            location.reload();
+                        }, 1000);
+                    }
+
+
                     // var blob = new Blob([JSON.stringify(response, null, "\t")], { type: "application/json" });
 
                     // // Create a temporary anchor element
@@ -1427,7 +1369,36 @@ function jsonToXml(json) {
 
     return xml;
 }
+function DownloadXml(RequestId) {
+    var userdata = {
+        "RequestId": RequestId,
+    };
+    $.ajax({
+        url: '/Log/CreateXml',
+        contentType: 'application/x-www-form-urlencoded',
+        data: userdata,
+        type: 'POST',
 
+        success: function (response) {
+            if (response != "null" && response != null) {
+                if (response == InternalServerError) {
+                    Swal.fire({
+                        text: errormsg
+                    });
+                } else {
+
+                    var url = "https://" + window.location.host + '/DigitallysignatureXml/' + response;
+                    window.open(url, '_blank');
+                }
+            }
+        },
+        error: function (result) {
+            Swal.fire({
+                text: errormsg002
+            });
+        }
+    });
+}
 function DownloadPdf(RequestId) {
     var userdata = {
         "RequestId": RequestId,
@@ -1686,13 +1657,19 @@ function GetByArmyNoIsToken(ArmyNo, OffType, RegApplyFor, stepCounter) {
                         }
                     }
                     else {
+
                         // JCO/OR Application Request
-                        if (parseInt(stepCounter) == 1 || parseInt(stepCounter) == 2 || parseInt(stepCounter) == 7 ) {
+                        if (parseInt(stepCounter) == 1 || parseInt(stepCounter) == 7 || parseInt(stepCounter) == 8 || parseInt(stepCounter) == 9 || parseInt(stepCounter) == 10) {
                             $("#btntokenTofwd").addClass("d-none");
                         } else {
-                            $("#btntokenTofwd").removeClass("d-none");
+                            if (IsToken == true) {
+                                $("#btntokenTofwd").removeClass("d-none");
+                            }
+                            else {
+                                $("#btntokenTofwd").addClass("d-none");
+                            }
+                            
                         }
-                        
                     }
                 }
             }

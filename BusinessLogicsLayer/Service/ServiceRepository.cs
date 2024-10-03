@@ -254,6 +254,49 @@ namespace BusinessLogicsLayer.Service
             }
             return retMsg;
         }
+        public bool IsValidZipHeader(string path)
+        {
+            string msg = "";
+            bool retMsg = false;
+
+            if (path != null && path != "")
+            {
+                BinaryReader reader = new BinaryReader(new FileStream(Convert.ToString(path), FileMode.Open, FileAccess.Read, FileShare.None));
+                reader.BaseStream.Position = 0x0;     // The offset you are reading the data from
+                byte[] data = reader.ReadBytes(0x10); // Read 16 bytes into an array         
+                string data_as_hex = BitConverter.ToString(data);
+                reader.Close();
+
+                // substring to select first 20 characters from hexadecimal array
+                string fUpload = data_as_hex.Substring(0, 11);
+                string? output = null;
+                bool isGeniun = false;
+
+                switch (fUpload)
+                {
+                    case "00-01-00-00":
+                        output = "zip";
+                        isGeniun = true;
+                        break;
+                    //case "50-4B-03-04":
+                    //    output = "zip";
+                    //    isGeniun = true;
+                    //    break;
+                    case null:
+                        output = "notmatched";
+                        isGeniun = false;
+                        break;
+                }
+
+                msg = output;
+
+                if (!isGeniun)
+                    retMsg = isGeniun;
+                else
+                    retMsg = isGeniun;
+            }
+            return retMsg;
+        }
         public string GetContentType(string path)
         {
             var types = GetMimeTypes();

@@ -26,7 +26,7 @@
                      
                             <div>
                             <span id="Isspnjcoor" class="d-none">@ViewBag.jcoor</span>
-                            @if (Convert.ToString(ViewBag.jcoor) == "0")
+                            @if (Convert.ToString(ViewBag.jcoor) == "1")
                             {
                                 <span>
                                     <a href="/Home/Index" class="mr-2">Home</a> > 
@@ -79,7 +79,8 @@
                             <div class="d-flex">
                                 @if ((ViewBag.dataexport == 4 || ViewBag.dataexport == 5) && claims.Count > 0 && claims.Any(i => i.Value == "ICard Export Data"))
                                 {
-                                    <button type="button" id="btnDataExports" class="btn btn-warning font-weight-600 btn-sm">Data Exports</button>
+                                    <button type="button" id="btnDataExportsEncry" class="btn btn-warning font-weight-600 btn-sm mr-2">Data Exports with Encry</button>
+                                    <button type="button" id="btnDataExports" class="btn btn-warning font-weight-600 btn-sm">Data Exports without Encry</button>
                                 }
 @* 
                                 @if (ViewBag.dataexport == 4)
@@ -98,19 +99,19 @@
                         </div>
                     }
                     <div class="table-responsive">
-                        <table id="tbldatatabledata" class="table border border-purple table-striped no-footer dataTable table-hover" style="width:100%">
+                        <table id="tbldatatableForApprovalIO" class="table border border-purple table-striped no-footer dataTable table-hover" style="width:100%">
                             <thead>
                                 <tr>
                                     @if ((ViewBag.dataexport == 5 || ViewBag.dataexport == 4) || (claims.Count > 0 && claims.Any(i => i.Value == "Internal Wk Distr")))
                                     {
-                                       
-                                        <th class="noExport wd-30-f">
-                                            <div class="custom-control custom-checkbox small">
-                                                <input type="checkbox" class="custom-control-input" id="chkAll">
-                                                <label class="custom-control-label font-weight-bold" for="chkAll"></label>
-                                            </div>
-                                        </th>
+
                                     }
+                                    <th class="noExport wd-30-f">
+                                        <div class="custom-control custom-checkbox small">
+                                            <input type="checkbox" class="custom-control-input" id="chkAll">
+                                            <label class="custom-control-label font-weight-bold" for="chkAll"></label>
+                                        </div>
+                                    </th>
                                     <th>@Html.DisplayNameFor(model => model[0].Sno)</th>
                                     <th>@Html.DisplayNameFor(model => model[0].ServiceNo)</th>
                                     <th>Rank , Name</th>
@@ -130,15 +131,6 @@
                                 @foreach (var item in Model)
                                 {
                                     <tr>
-                                        @if (ViewBag.dataexport == 5 || ViewBag.dataexport == 4 )
-                                        {
-                                           <td>
-                                           <div class="custom-control custom-checkbox small">
-                                                    <input type="checkbox" class="custom-control-input" id="@item.RequestId">
-                                                    <label class="custom-control-label" for="@item.RequestId"></label>
-                                           </div>
-                                           </td>
-                                        }
                                         @if (claims.Count > 0 && claims.Any(i => i.Value == "Internal Wk Distr"))
                                         {
                                             <td>
@@ -148,6 +140,25 @@
                                                 </div>
                                             </td>
                                         }
+                                        else if (ViewBag.dataexport == 5 || ViewBag.dataexport == 4)
+                                        {
+                                            <td>
+                                                <div class="custom-control custom-checkbox small">
+                                                    <input type="checkbox" class="custom-control-input" id="@item.RequestId">
+                                                    <label class="custom-control-label" for="@item.RequestId"></label>
+                                                </div>
+                                            </td>
+                                        }
+                                        else
+                                        {
+                                            <td>
+                                                <div class="custom-control custom-checkbox small">
+                                                    <input type="checkbox" class="custom-control-input" id="@item.Sno">
+                                                    <label class="custom-control-label" for="@item.Sno"></label>
+                                                </div>
+                                            </td>
+                                        }
+
                                         <td>@item.Sno</td>
                                         <td><a href="#" onclick="GetBasicDetailByRequestId(@(@item.RequestId));event.preventDefault();"><span class="ServiceNo">@item.ServiceNo</span></a></td>
                                         <td class="PersName">@item.RankName @item.FName @(item.LName == null ? "" : item.LName)</td>
@@ -181,7 +192,8 @@
                                                 {
                                                     if (item.StepCounter != 1 && item.StepCounter != 7 && item.StepCounter != 8 && item.StepCounter != 9 && item.StepCounter != 10)
                                                     {
-                                                        <button class=" btndownloadpdf" id="btndownloadpdf" data-toggle="tooltip" data-placement="top" title="Download Details"><img src="/Images/digitalsign.png" width="40" /></button>
+                                                        <button class="btndownloadpdf" id="btndownloadpdf" data-toggle="tooltip" data-placement="top" title="Download Details"><img src="/Images/digitalsign.png" width="40" /></button>
+                                                        <button class="btndownloadxml ml-2" id="btndownloadxml" data-toggle="tooltip" data-placement="top" title="Download Details">Xml</button>
                                                     }
                                                 }
                                             </div>

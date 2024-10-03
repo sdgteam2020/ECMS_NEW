@@ -38,6 +38,7 @@ using System.Data;
 using System.Data.Entity;
 using System.Data.Entity.Hierarchy; 
 using System.Security.Claims;
+using System.Security.Cryptography.X509Certificates;
 using System.Security.Policy;
 using Web.Data;
 using Web.WebHelpers;
@@ -951,7 +952,7 @@ namespace Web.Controllers
         {
             var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
             var usera = await userManager.FindByIdAsync(userId);
-            List<DTORegisterListRequest> dTORegisterListRequests = await _iAccountBL.DomainApproveList();
+            List<DTORegisterListRequest>? dTORegisterListRequests = await _iAccountBL.DomainApproveList();
             ViewBag.Title = "List of Register User";
             return View(dTORegisterListRequests);
         }
@@ -1136,6 +1137,10 @@ namespace Web.Controllers
         [AllowAnonymous]
         public IActionResult IMLogin()
         {
+            //var store = new X509Store(StoreName.My, StoreLocation.CurrentUser);
+            //store.Open(OpenFlags.ReadOnly);
+            //var certs = store.Certificates.Find(X509FindType.FindByThumbprint, "70A45AD921D89E96A7D1D8E3E566DDBDE5452FD0", false);
+
             int userid = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
             DTOTempSession? dTOTempSession = SessionHeplers.GetObject<DTOTempSession>(HttpContext.Session, "Token");
             List<string> RoleNameList = new List<string>() { "User"};
@@ -1371,7 +1376,7 @@ namespace Web.Controllers
                         HttpContext.Session.Remove("Token");
                         await signInManager.SignOutAsync();
 
-                        //await userManager.UpdateSecurityStampAsync(usera);
+                        await userManager.UpdateSecurityStampAsync(usera);
 
                         if (usera != null)
                         {
@@ -1817,7 +1822,8 @@ namespace Web.Controllers
 
         }
 
-        [HttpPost, AllowAnonymous, ValidateAntiForgeryToken]
+        //[HttpPost, AllowAnonymous, ValidateAntiForgeryToken]
+        [HttpPost, AllowAnonymous]
         public async Task<IActionResult> Login(DTOLoginRequest model, string? returnUrl)
         {
             if (ModelState.IsValid)
@@ -1842,21 +1848,6 @@ namespace Web.Controllers
                     ModelState.AddModelError(string.Empty, "Invalid User Id or Password");
                     goto xyz;
                 }
-                //else if (selecteduser.IsLogged)
-                //{
-                //    user_name = selecteduser.FullName != null ? selecteduser.FullName : "no name";
-                //    await service.SaveUserActivity("Already loged", url, user_name, ipAddress);
-                //    ModelState.AddModelError("", "This user is already loged in.");
-                //    goto xyz;
-                //}
-
-                //else if (selecteduser.IsLocked)
-                //{
-                //    user_name = model.UserId;
-                //    await service.SaveUserActivity("Locked User", url, user_name, ipAddress);
-                //    ModelState.AddModelError("", "Your account is locked by admin");
-                //    goto xyz;
-                //}
                 else
                 {
                     //var result = await signInManager.PasswordSignInAsync(model.UserId, Password, model.RememberMe, true);
@@ -1876,71 +1867,6 @@ namespace Web.Controllers
 
                             var roles = await userManager.GetRolesAsync(user);
                             ViewBag.Message = "Sucessfully Logged In.";
-
-                        //user.IsLogged = true;
-                        //await userManager.UpdateAsync(user);
-
-                        //Start Concurrent Issue solve code.
-
-                        //if(user!=null)
-                        //{
-                        //    DateTime? LastLogInDate = user.LastLogInDate;
-                        //    DateTime? LastLogOutDate = user.LastLogOutDate;
-
-                        //    DateTime CurrentDateTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time")); ;
-                        //    if (LastLogInDate == null)
-                        //    {
-                        //        user.LastLogInDate = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
-                        //        await userManager.UpdateAsync(user);
-                        //        goto roll_check;
-                        //    }
-                        //    else if(LastLogInDate.Value.Date == CurrentDateTime.Date)
-                        //    {
-                        //        if(LastLogOutDate!=null)
-                        //        {
-                        //            TimeSpan span = LastLogOutDate.Value.Subtract(LastLogInDate.Value); //Perform to Find the Difference
-                        //            int Minutesdiff = span.Minutes;
-                        //            if (Minutesdiff >= 20)
-                        //            {
-                        //                ModelState.AddModelError("", "This user is already loged in.");
-                        //                goto xyz;
-                        //            }
-                        //            else
-                        //            {
-                        //                user.LastLogInDate = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
-                        //                user.LastLogOutDate = null;
-                        //                await userManager.UpdateAsync(user);
-                        //                goto roll_check;
-                        //            }
-                        //        }
-                        //        else
-                        //        {
-                        //            TimeSpan span = CurrentDateTime.Subtract(LastLogInDate.Value); //Perform to Find the Difference
-                        //            int Minutesdiff = span.Minutes;
-                        //            if (Minutesdiff <= 20)
-                        //            {
-                        //                ModelState.AddModelError("", "This user is already loged in.");
-                        //                goto xyz;
-                        //            }
-                        //            else
-                        //            {
-                        //                user.LastLogInDate = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
-                        //                await userManager.UpdateAsync(user);
-                        //                goto roll_check;
-                        //            }
-                        //        }
-                        //    }
-                        //    else if(CurrentDateTime.Date> LastLogInDate.Value.Date)
-                        //    {
-                        //        user.LastLogInDate = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
-                        //        await userManager.UpdateAsync(user);
-                        //        goto roll_check;
-                        //    }
-                        //}
-
-
-                        //End Concurrent Issue solve code.
-
                         roll_check:
                             if (roles[0] == "Admin")
                             {

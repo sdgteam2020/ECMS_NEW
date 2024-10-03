@@ -21,6 +21,7 @@ using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 using static Dapper.SqlMapper;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Logging;
+using EntityFramework.Exceptions.Common;
 
 namespace DataAccessLayer
 {
@@ -112,9 +113,10 @@ namespace DataAccessLayer
                 return null;
             }
         }
-        public async Task<bool> SaveBasicDetailsWithAll(BasicDetail Data, MTrnAddress address, MTrnUpload trnUpload, MTrnIdentityInfo mTrnIdentityInfo, MTrnICardRequest mTrnICardRequest, MStepCounter mStepCounter)
+        public async Task<DTOBasicDetailsSaveResponse> SaveBasicDetailsWithAll(BasicDetail Data, MTrnAddress address, MTrnUpload trnUpload, MTrnIdentityInfo mTrnIdentityInfo, MTrnICardRequest mTrnICardRequest, MStepCounter mStepCounter)
         {
             using var transaction = _context.Database.BeginTransaction();
+            DTOBasicDetailsSaveResponse dTOBasicDetailsSaveResponse= new DTOBasicDetailsSaveResponse();
             try
             {
                 if (Data.BasicDetailId == 0)
@@ -140,7 +142,9 @@ namespace DataAccessLayer
                     await _context.SaveChangesAsync();
 
                     transaction.Commit();
-                    return true;
+                    dTOBasicDetailsSaveResponse.Result = true;
+                    dTOBasicDetailsSaveResponse.Message = "Save";
+                    return dTOBasicDetailsSaveResponse;
                 }
                 else
                 {
@@ -161,19 +165,62 @@ namespace DataAccessLayer
                     await _context.SaveChangesAsync();
 
                     transaction.Commit();
-                    return true;
+                    dTOBasicDetailsSaveResponse.Result = true;
+                    dTOBasicDetailsSaveResponse.Message = "Updae";
+                    return dTOBasicDetailsSaveResponse;
                 }
                 //do other things, then commit or rollback
                
                
             }
-           catch (Exception ex) {
+            catch (ReferenceConstraintException ex)
+            {
                 transaction.Rollback();
-                return false; 
+                _logger.LogError(1001, ex, "ReferenceConstraintException");
+                dTOBasicDetailsSaveResponse.Result = false;
+                dTOBasicDetailsSaveResponse.Message = ex.Message;
+                return dTOBasicDetailsSaveResponse;
             }
-            
-
-            
+            catch (UniqueConstraintException ex)
+            {
+                transaction.Rollback();
+                _logger.LogError(1002, ex, "UniqueConstraintException");
+                dTOBasicDetailsSaveResponse.Result = false;
+                dTOBasicDetailsSaveResponse.Message = ex.Message;
+                return dTOBasicDetailsSaveResponse;
+            }
+            catch (MaxLengthExceededException ex)
+            {
+                transaction.Rollback();
+                _logger.LogError(1003, ex, "MaxLengthExceededException");
+                dTOBasicDetailsSaveResponse.Result = false;
+                dTOBasicDetailsSaveResponse.Message = ex.Message;
+                return dTOBasicDetailsSaveResponse;
+            }
+            catch (CannotInsertNullException ex)
+            {
+                transaction.Rollback();
+                _logger.LogError(1004, ex, "CannotInsertNullException");
+                dTOBasicDetailsSaveResponse.Result = false;
+                dTOBasicDetailsSaveResponse.Message = ex.Message;
+                return dTOBasicDetailsSaveResponse;
+            }
+            catch (NumericOverflowException ex)
+            {
+                transaction.Rollback();
+                _logger.LogError(1005, ex, "NumericOverflowException");
+                dTOBasicDetailsSaveResponse.Result = false;
+                dTOBasicDetailsSaveResponse.Message = ex.Message;
+                return dTOBasicDetailsSaveResponse;
+            }
+            catch (Exception ex)
+            {
+                transaction.Rollback();
+                _logger.LogError(1006, ex, "Exception");
+                dTOBasicDetailsSaveResponse.Result = false;
+                dTOBasicDetailsSaveResponse.Message = ex.Message;
+                return dTOBasicDetailsSaveResponse;
+            }
         }
         public async Task<BasicDetail?> FindServiceNo(string ServiceNo)
         {
@@ -750,11 +797,12 @@ namespace DataAccessLayer
             if (Data.IsJco == 0)
             {
                 query = "update TrnFwds set IsComplete=1 where RequestId in @Ids update TrnStepCounter set StepId=5 where RequestId in @Ids  update TrnICardRequest set StatusId=2 where  RequestId in @Ids " +
-                                " select bas.*," +
+                                " select bas.*,issaut.Name IssuingAuth,mapl.Name ApplyFor" +
                                 " trnadd.State,trnadd.District,trnadd.PS,trnadd.PO,trnadd.Tehsil,trnadd.Village,trnadd.PinCode," +
                                 " trnup.SignatureImagePath,trnup.PhotoImagePath,IdenMark1,IdenMark2,AadhaarNo,Height,bld.BloodGroup,bld.BloodGroupId," +
                                 " regi.Abbreviation RegimentalName,Muni.UnitName,uni.UnitMapId UnitId,icardreq.TypeId,icardreq.RegistrationId," +
                                 " ran.RankId,ran.RankAbbreviation RankName,arm.Abbreviation ArmedName,trnadd.AddressId,trnup.UploadId,trninfo.InfoId,MICardType.Name ICardType,reco.RecordOfficeId,reco.Name RecordOffice,icardreq.RequestId from BasicDetails bas" +
+                                " inner join MIssuingAuthority issaut on issaut.IssuingAuthorityId=bas.IssuingAuthorityId" +
                                 " inner join TrnAddress trnadd on trnadd.BasicDetailId=bas.BasicDetailId" +
                                 " inner join TrnUpload trnup on trnup.BasicDetailId=bas.BasicDetailId" +
                                 " inner join TrnIdentityInfo trninfo on trninfo.BasicDetailId=bas.BasicDetailId" +
@@ -764,6 +812,8 @@ namespace DataAccessLayer
                                 " inner join MapUnit uni on uni.UnitMapId=bas.UnitId" +
                                 " inner join MUnit Muni on Muni.UnitId=uni.UnitId" +
                                 " inner join TrnICardRequest icardreq on icardreq.BasicDetailId=bas.BasicDetailId " + //and icardreq.Status=0 
+                                " inner join TrnStepCounter scounter on scounter.RequestId=icardreq.RequestId " +
+                                " inner join MApplyFor mapl on mapl.ApplyForId=scounter.ApplyForId " +
                                 " inner join MRecordOffice reco on bas.ArmedId=reco.ArmedId" +
                                 " inner join MICardType MICardType on MICardType.TypeId=icardreq.TypeId " +
                                 " left join MRegimental regi on regi.RegId=bas.RegimentalId" +
@@ -772,7 +822,7 @@ namespace DataAccessLayer
             else
             {
                 query = "update TrnFwds set IsComplete=1 where RequestId in @Ids update TrnStepCounter set StepId=5 where RequestId in @Ids  update TrnICardRequest set StatusId=2 where  RequestId in @Ids " +
-                    " select bas.*, trnadd.State,trnadd.District,trnadd.PS,trnadd.PO,trnadd.Tehsil,trnadd.Village,trnadd.PinCode, " +
+                    " select bas.*,issaut.Name IssuingAuth,mapl.Name ApplyFor, trnadd.State,trnadd.District,trnadd.PS,trnadd.PO,trnadd.Tehsil,trnadd.Village,trnadd.PinCode, " +
                          " trnup.SignatureImagePath,trnup.PhotoImagePath,IdenMark1,IdenMark2,AadhaarNo,Height,bld.BloodGroup,bld.BloodGroupId, " +
                          " regi.Abbreviation RegimentalName,Muni.UnitName,uni.UnitMapId UnitId,icardreq.TypeId,icardreq.RegistrationId, " +
                          " ran.RankId,ran.RankAbbreviation RankName,arm.Abbreviation ArmedName,trnadd.AddressId,trnup.UploadId,trninfo.InfoId," +
@@ -780,6 +830,7 @@ namespace DataAccessLayer
                          " CASE WHEN ran.orderby<=4 THEN '126' ELSE reco.RecordOfficeId END RecordOfficeId," +
                          " CASE WHEN ran.orderby<=4 THEN 'MP 6A' ELSE reco.Name END RecordOffice,icardreq.RequestId" +
                          " from BasicDetails bas " +
+                         " inner join MIssuingAuthority issaut on issaut.IssuingAuthorityId=bas.IssuingAuthorityId" +
                          " inner join TrnAddress trnadd on trnadd.BasicDetailId=bas.BasicDetailId " +
                          " inner join TrnUpload trnup on trnup.BasicDetailId=bas.BasicDetailId " +
                          " inner join TrnIdentityInfo trninfo on trninfo.BasicDetailId=bas.BasicDetailId " +
@@ -789,6 +840,8 @@ namespace DataAccessLayer
                          " inner join MapUnit uni on uni.UnitMapId=bas.UnitId " +
                          " inner join MUnit Muni on Muni.UnitId=uni.UnitId " +
                          " inner join TrnICardRequest icardreq on icardreq.BasicDetailId=bas.BasicDetailId  " +
+                         " inner join TrnStepCounter scounter on scounter.RequestId=icardreq.RequestId " +
+                         " inner join MApplyFor mapl on mapl.ApplyForId=scounter.ApplyForId " +
                          " inner join MICardType MICardType on MICardType.TypeId=icardreq.TypeId  " +
                          " inner join MRecordOffice reco on reco.ArmedId=56" +
                          " inner join OROMapping OROMap on reco.RecordOfficeId=OROMap.RecordOfficeId" +

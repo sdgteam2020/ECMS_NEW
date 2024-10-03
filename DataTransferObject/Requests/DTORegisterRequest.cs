@@ -1,4 +1,5 @@
 ﻿using DataTransferObject.Domain.Identitytable;
+using DataTransferObject.Localize;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -50,19 +51,21 @@ namespace DataTransferObject.Requests
     }
     public class DTOLoginRequest
     {
-        [RegularExpression(@"^[a-zA-Z0-9-._@+]{5,30}$", ErrorMessage = "Invalid user format")]
-        [Required(ErrorMessage = "User Id is required.")]
-        [MinLength(5, ErrorMessage = "Minimum length of User Id is 5 characters.")]
-        [MaxLength(30, ErrorMessage = "Maximum length of User Id is 30 characters.")]
-        [Display(Name = "User Name")]
+        [RegularExpression(@"^[a-zA-Z0-9-._@+]{5,30}$", ErrorMessage = "Invalid Domain Name format")]
+        [Required(ErrorMessage = "Domain Name is required.")]
+        [MinLength(5, ErrorMessage = "Minimum length of Domain Name is 5 characters.")]
+        [MaxLength(30, ErrorMessage = "Maximum length of Domain Name is 30 characters.")]
+        [Display(Name = "Domain Name")]
         public string UserName { get; set; } = string.Empty;
+        
         [Required]
         [DataType(DataType.Password)]
-        [RegularExpression(@"^[\w \.\,\?\;\:\""\''\[\]\!\@\#\$\%\&\*\(\)\-\=\+\\\/]*$", ErrorMessage = "This < >^| special chars not allowed for security reasons.")]
+        [RegularExpression(@"^[\w \?\@\#\$\%\&\*\=\\\/]*$", ErrorMessage = "This < >^| special chars not allowed for security reasons.")]
         public string Password { get; set; } = string.Empty;
 
-        //[Display(Name = "Remember me")]
-        //public bool RememberMe { get; set; }
+        [RegularExpression(@"^[\w ]+$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
+        [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
+        public string Role { get; set; } = string.Empty;
         public string? hdns { get; set; }
 
 

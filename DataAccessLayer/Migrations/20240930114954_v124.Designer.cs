@@ -4,6 +4,7 @@ using DataAccessLayer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccessLayer.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240930114954_v124")]
+    partial class v124
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1267,8 +1270,8 @@ namespace DataAccessLayer.Migrations
 
                     b.Property<string>("PaperIcardNo")
                         .IsRequired()
-                        .HasMaxLength(12)
-                        .HasColumnType("varchar(12)");
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)");
 
                     b.Property<string>("PlaceOfIssue")
                         .HasMaxLength(50)
@@ -1302,10 +1305,6 @@ namespace DataAccessLayer.Migrations
                     b.HasIndex("ArmedId");
 
                     b.HasIndex("IssuingAuthorityId");
-
-                    b.HasIndex("PaperIcardNo")
-                        .IsUnique()
-                        .HasDatabaseName("IX_PaperIcardNo");
 
                     b.HasIndex("RankId");
 
@@ -1982,10 +1981,6 @@ namespace DataAccessLayer.Migrations
                         .HasColumnType("VARCHAR(100)");
 
                     b.HasKey("InfoId");
-
-                    b.HasIndex("AadhaarNo")
-                        .IsUnique()
-                        .HasDatabaseName("IX_AadhaarNo");
 
                     b.HasIndex("BasicDetailId");
 
