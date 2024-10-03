@@ -180,14 +180,42 @@ namespace DataAccessLayer
                 dTOBasicDetailsSaveResponse.Result = false;
                 dTOBasicDetailsSaveResponse.Message = ex.Message;
                 return dTOBasicDetailsSaveResponse;
+
             }
             catch (UniqueConstraintException ex)
             {
                 transaction.Rollback();
                 _logger.LogError(1002, ex, "UniqueConstraintException");
-                dTOBasicDetailsSaveResponse.Result = false;
-                dTOBasicDetailsSaveResponse.Message = ex.Message;
-                return dTOBasicDetailsSaveResponse;
+                if(ex.InnerException !=null)
+                {
+                    if (ex.InnerException.Message.Contains("IX_AadhaarNo"))
+                    {
+                        dTOBasicDetailsSaveResponse.Result = false;
+                        dTOBasicDetailsSaveResponse.Message = "The provided Aadhaar number already exists. Please check and try again.";
+                        return dTOBasicDetailsSaveResponse;
+                    }
+                    else if (ex.InnerException.Message.Contains("IX_PaperIcardNo"))
+                    {
+                        dTOBasicDetailsSaveResponse.Result = false;
+                        dTOBasicDetailsSaveResponse.Message = "The provided PaperIcardNo number already exists. Please check and try again.";
+                        return dTOBasicDetailsSaveResponse;
+                    }
+                    else
+                    {
+                        dTOBasicDetailsSaveResponse.Result = false;
+                        dTOBasicDetailsSaveResponse.Message = ex.Message;
+                        return dTOBasicDetailsSaveResponse;
+                    }
+                }
+                else
+                {
+                    dTOBasicDetailsSaveResponse.Result = false;
+                    dTOBasicDetailsSaveResponse.Message = ex.Message;
+                    return dTOBasicDetailsSaveResponse;
+
+                }
+
+
             }
             catch (MaxLengthExceededException ex)
             {

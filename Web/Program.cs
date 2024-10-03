@@ -22,12 +22,13 @@ using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Web.Healpers;
 using Microsoft.AspNetCore.CookiePolicy;
 using Microsoft.AspNetCore.Rewrite;
+using EntityFramework.Exceptions.SqlServer;
 
 var builder = WebApplication.CreateBuilder(args);
 var configration = builder.Configuration;
 
 
-builder.Services.AddDbContextPool<ApplicationDbContext>(options => options.UseSqlServer(configration.GetConnectionString("AFSACDBConnection")));
+builder.Services.AddDbContextPool<ApplicationDbContext>(options => options.UseSqlServer(configration.GetConnectionString("AFSACDBConnection")).UseExceptionProcessor());
 
 //builder.Services.Configure<ForwardedHeadersOptions>(options =>
 //{
