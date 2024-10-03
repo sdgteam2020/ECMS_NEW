@@ -98,6 +98,9 @@
                             <button type="button" id="btnInternalFwd" class="btn btn-warning font-weight-600 btn-sm mb-2">Forward</button>
                         </div>
                     }
+                    <div class="d-flex justify-content-end">
+                        <button type="button" id="btnCSVDownload" class="btn btn-warning font-weight-600 btn-sm mb-2">CSV Download</button>
+                    </div>
                     <div class="table-responsive">
                         <table id="tbldatatableForApprovalIO" class="table border border-purple table-striped no-footer dataTable table-hover" style="width:100%">
                             <thead>
@@ -114,7 +117,8 @@
                                     </th>
                                     <th>@Html.DisplayNameFor(model => model[0].Sno)</th>
                                     <th>@Html.DisplayNameFor(model => model[0].ServiceNo)</th>
-                                    <th>Rank , Name</th>
+                                    <th>Rank</th>
+                                    <th>Name</th>
                                     <th>Unit</th>
                                     
                                    @*  <th>@Html.DisplayNameFor(model => model[0].DOB)</th>
@@ -140,7 +144,7 @@
                                                 </div>
                                             </td>
                                         }
-                                        else if (ViewBag.dataexport == 5 || ViewBag.dataexport == 4)
+                                        else //if (ViewBag.dataexport == 5 || ViewBag.dataexport == 4)
                                         {
                                             <td>
                                                 <div class="custom-control custom-checkbox small">
@@ -149,19 +153,10 @@
                                                 </div>
                                             </td>
                                         }
-                                        else
-                                        {
-                                            <td>
-                                                <div class="custom-control custom-checkbox small">
-                                                    <input type="checkbox" class="custom-control-input" id="@item.Sno">
-                                                    <label class="custom-control-label" for="@item.Sno"></label>
-                                                </div>
-                                            </td>
-                                        }
-
                                         <td>@item.Sno</td>
                                         <td><a href="#" onclick="GetBasicDetailByRequestId(@(@item.RequestId));event.preventDefault();"><span class="ServiceNo">@item.ServiceNo</span></a></td>
-                                        <td class="PersName">@item.RankName @item.FName @(item.LName == null ? "" : item.LName)</td>
+                                        <td>@item.RankName</td>
+                                        <td>@item.FName @(item.LName == null ? "" : item.LName)</td>
                                         <td class="UnitName">@item.UnitName</td>
                                         
                                       @*   <td>@item.DOB.ToString("dd/MMM/yyyy")</td>
@@ -174,6 +169,7 @@
                                         <td class="noExport">
                                             <div class="d-flex p-2">
                                                 <button class="btn btn-icon btn-round btn-primary mr-2" onclick="GetICardPrintPreviewByRequestId(@(@item.RequestId))"><i class="fa fa-print mt-2"></i></button>
+                                                <spna class="PersName d-none">@item.RankName @item.FName @(item.LName == null ? "" : item.LName)</spna>
                                                 <spna class="spnBasicDetailId d-none">@item.BasicDetailId</spna>
                                                 <spna class="spnTrnFwdId d-none">@item.IsTrnFwdId</spna>
                                                 <spna class="spnRequestId d-none">@item.RequestId</spna>

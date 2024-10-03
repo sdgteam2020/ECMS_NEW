@@ -1063,11 +1063,12 @@ namespace Web.Controllers
                         }
                         else
                         {
-                            TempData["success"] = "Updated Not Successfully.";
-                            if (newBasicDetail.ApplyForId == 1)
-                                return RedirectToAction("Index", new { Id = "MQ==" });
-                            else
-                                return RedirectToAction("Index", new { Id = "MQ==", jcoor = "SmNvL09ycw ==" });
+                            //TempData["success"] = "Updated Not Successfully.";
+                            //if (newBasicDetail.ApplyForId == 1)
+                            //    return RedirectToAction("Index", new { Id = "MQ==" });
+                            //else
+                            //    return RedirectToAction("Index", new { Id = "MQ==", jcoor = "SmNvL09ycw ==" });
+                            TempData["error"] = ret1.Message;
                         }
 
                     }
@@ -1248,36 +1249,6 @@ namespace Web.Controllers
                         TempData["error"] = error[0][0].ErrorMessage;
                     }
                 }
-            }
-            catch (ReferenceConstraintException ex)
-            {
-                _logger.LogError(1001, ex, "ReferenceConstraintException");
-                ModelState.AddModelError("", ex.Message);
-                goto end;
-            }
-            catch (UniqueConstraintException ex)
-            {
-                _logger.LogError(1002, ex, "UniqueConstraintException");
-                ModelState.AddModelError("", ex.Message);
-                goto end;
-            }
-            catch (MaxLengthExceededException ex)
-            {
-                _logger.LogError(1003, ex, "MaxLengthExceededException");
-                ModelState.AddModelError("", ex.Message);
-                goto end;
-            }
-            catch (CannotInsertNullException ex)
-            {
-                _logger.LogError(1004, ex, "CannotInsertNullException");
-                ModelState.AddModelError("", ex.Message);
-                goto end;
-            }
-            catch (NumericOverflowException ex)
-            {
-                _logger.LogError(1005, ex, "NumericOverflowException");
-                ModelState.AddModelError("", ex.Message);
-                goto end;
             }
             catch (Exception ex)
             {

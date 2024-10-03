@@ -19,11 +19,11 @@ namespace DataTransferObject.Domain.Model
         public int BasicDetailId { get; set; }
         public BasicDetail? BasicDetail { get; set; }
 
-        [StringLength(100)]
-        [Column(TypeName = "VARCHAR(100)")]
+        [StringLength(200)]
+        [Column(TypeName = "VARCHAR(200)")]
         public string IdenMark1 { get; set; } = string.Empty;
-        [StringLength(100)]
-        [Column(TypeName = "VARCHAR(100)")]
+        [StringLength(200)]
+        [Column(TypeName = "VARCHAR(200)")]
         public string? IdenMark2 { get; set; } = string.Empty;
 
         [MaxLength(12)]

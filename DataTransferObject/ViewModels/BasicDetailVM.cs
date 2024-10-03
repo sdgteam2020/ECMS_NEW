@@ -22,8 +22,9 @@ namespace DataTransferObject.ViewModels
         [RegularExpression(@"^[\d]+$", ErrorMessage = "BasicDetailId is number.")]
         public int BasicDetailId { get; set; }
 
-        [StringLength(20)]
-        [Column(TypeName = "varchar(20)")]
+        [StringLength(12)]
+        [MaxLength(12)]
+        [Column(TypeName = "varchar(12)")]
         [RegularExpression(@"^[\w ]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
         public string PaperIcardNo { get; set; } = string.Empty;
         
@@ -183,8 +184,9 @@ namespace DataTransferObject.ViewModels
         /// 
         public int InfoId { get; set; }
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
-        [StringLength(100)]
-        [Column(TypeName = "VARCHAR(100)")]
+        [StringLength(200)]
+        [MaxLength(200)]
+        [Column(TypeName = "VARCHAR(200)")]
         public string IdenMark1 { get; set; } = string.Empty;
        
         public string? IdenMark2 { get; set; } = string.Empty;

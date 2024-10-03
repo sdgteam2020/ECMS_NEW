@@ -5,6 +5,7 @@ var applyfor = 0;
 var xmlsign = 0;
 var lstmultifwdarr = new Array();
 var lstInternalFwd = new Array();
+var lstCSVDownload = new Array();
 var RegistrationApplyFor = 0;
 var IsToken = true;
 var IsWithTokenApply = true;
@@ -573,6 +574,19 @@ $(function () {
         } else {
             Swal.fire({
                 text: "Please select atleast 1 request to Approval."
+            });
+        }
+    });
+    $("#btnCSVDownload").on("click", function () {
+
+        if (memberTable.$('input[type="checkbox"]:checked').length > 0) {
+            memberTable.$('input[type="checkbox"]:checked').each(function () {
+                var id = $(this).attr("Id");
+                lstCSVDownload.push(id);
+            });
+        } else {
+            Swal.fire({
+                text: "Please select atleast 1 request to download CSV File."
             });
         }
     });
