@@ -1015,9 +1015,9 @@ namespace Web.Controllers
                         //}
 
                         // await basicDetailBL.Update(basicDetail);
-                        var ret1 = await basicDetailBL.SaveBasicDetailsWithAll(newBasicDetail, mTrnAddress, mTrnUpload, mTrnIdentityInfo, null, null);
+                        DTOBasicDetailsSaveResponse ret1 = await basicDetailBL.SaveBasicDetailsWithAll(newBasicDetail, mTrnAddress, mTrnUpload, mTrnIdentityInfo, null, null);
                         BasicDetail basicDetail = await basicDetailBL.Get(model.BasicDetailId);
-                        if (ret1 == true)
+                        if (ret1.Result == true)
                         {
                             bool resultforisprocess = await iTrnICardRequestBL.GetRequestPending(basicDetail.BasicDetailId);
                             if (!resultforisprocess)
@@ -1210,9 +1210,9 @@ namespace Web.Controllers
 
                         BasicDetail ret = new BasicDetail();
 
-                       var ret1 = await basicDetailBL.SaveBasicDetailsWithAll(newBasicDetail, mTrnAddress, mTrnUpload,mTrnIdentityInfo, mTrnICardRequest, mStepCounter);
+                        DTOBasicDetailsSaveResponse ret1 = await basicDetailBL.SaveBasicDetailsWithAll(newBasicDetail, mTrnAddress, mTrnUpload,mTrnIdentityInfo, mTrnICardRequest, mStepCounter);
                        // ret = await basicDetailBL.AddWithReturn(newBasicDetail);
-                        if (ret1 == true)
+                        if (ret1.Result == true)
                         {
                             //mTrnUpload.BasicDetailId = ret.BasicDetailId;
                             //await basicuploadBL.Add(mTrnUpload);
@@ -1238,7 +1238,7 @@ namespace Web.Controllers
                         }
                         else
                         {
-                            TempData["error"] = "Data Not Inserted.";
+                            TempData["error"] = ret1.Message;
                         }
                        
                     }

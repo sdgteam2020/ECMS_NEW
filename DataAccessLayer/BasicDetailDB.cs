@@ -21,6 +21,7 @@ using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 using static Dapper.SqlMapper;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Logging;
+using EntityFramework.Exceptions.Common;
 
 namespace DataAccessLayer
 {
@@ -112,9 +113,10 @@ namespace DataAccessLayer
                 return null;
             }
         }
-        public async Task<bool> SaveBasicDetailsWithAll(BasicDetail Data, MTrnAddress address, MTrnUpload trnUpload, MTrnIdentityInfo mTrnIdentityInfo, MTrnICardRequest mTrnICardRequest, MStepCounter mStepCounter)
+        public async Task<DTOBasicDetailsSaveResponse> SaveBasicDetailsWithAll(BasicDetail Data, MTrnAddress address, MTrnUpload trnUpload, MTrnIdentityInfo mTrnIdentityInfo, MTrnICardRequest mTrnICardRequest, MStepCounter mStepCounter)
         {
             using var transaction = _context.Database.BeginTransaction();
+            DTOBasicDetailsSaveResponse dTOBasicDetailsSaveResponse= new DTOBasicDetailsSaveResponse();
             try
             {
                 if (Data.BasicDetailId == 0)
@@ -140,7 +142,9 @@ namespace DataAccessLayer
                     await _context.SaveChangesAsync();
 
                     transaction.Commit();
-                    return true;
+                    dTOBasicDetailsSaveResponse.Result = true;
+                    dTOBasicDetailsSaveResponse.Message = "Save";
+                    return dTOBasicDetailsSaveResponse;
                 }
                 else
                 {
@@ -161,19 +165,62 @@ namespace DataAccessLayer
                     await _context.SaveChangesAsync();
 
                     transaction.Commit();
-                    return true;
+                    dTOBasicDetailsSaveResponse.Result = true;
+                    dTOBasicDetailsSaveResponse.Message = "Updae";
+                    return dTOBasicDetailsSaveResponse;
                 }
                 //do other things, then commit or rollback
                
                
             }
-           catch (Exception ex) {
+            catch (ReferenceConstraintException ex)
+            {
                 transaction.Rollback();
-                return false; 
+                _logger.LogError(1001, ex, "ReferenceConstraintException");
+                dTOBasicDetailsSaveResponse.Result = false;
+                dTOBasicDetailsSaveResponse.Message = ex.Message;
+                return dTOBasicDetailsSaveResponse;
             }
-            
-
-            
+            catch (UniqueConstraintException ex)
+            {
+                transaction.Rollback();
+                _logger.LogError(1002, ex, "UniqueConstraintException");
+                dTOBasicDetailsSaveResponse.Result = false;
+                dTOBasicDetailsSaveResponse.Message = ex.Message;
+                return dTOBasicDetailsSaveResponse;
+            }
+            catch (MaxLengthExceededException ex)
+            {
+                transaction.Rollback();
+                _logger.LogError(1003, ex, "MaxLengthExceededException");
+                dTOBasicDetailsSaveResponse.Result = false;
+                dTOBasicDetailsSaveResponse.Message = ex.Message;
+                return dTOBasicDetailsSaveResponse;
+            }
+            catch (CannotInsertNullException ex)
+            {
+                transaction.Rollback();
+                _logger.LogError(1004, ex, "CannotInsertNullException");
+                dTOBasicDetailsSaveResponse.Result = false;
+                dTOBasicDetailsSaveResponse.Message = ex.Message;
+                return dTOBasicDetailsSaveResponse;
+            }
+            catch (NumericOverflowException ex)
+            {
+                transaction.Rollback();
+                _logger.LogError(1005, ex, "NumericOverflowException");
+                dTOBasicDetailsSaveResponse.Result = false;
+                dTOBasicDetailsSaveResponse.Message = ex.Message;
+                return dTOBasicDetailsSaveResponse;
+            }
+            catch (Exception ex)
+            {
+                transaction.Rollback();
+                _logger.LogError(1006, ex, "Exception");
+                dTOBasicDetailsSaveResponse.Result = false;
+                dTOBasicDetailsSaveResponse.Message = ex.Message;
+                return dTOBasicDetailsSaveResponse;
+            }
         }
         public async Task<BasicDetail?> FindServiceNo(string ServiceNo)
         {
