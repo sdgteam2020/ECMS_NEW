@@ -22,6 +22,9 @@ using static Dapper.SqlMapper;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Logging;
 using EntityFramework.Exceptions.Common;
+using System.Collections.Immutable;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+using DataAccessLayer.Healpers;
 
 namespace DataAccessLayer
 {
@@ -64,6 +67,7 @@ namespace DataAccessLayer
         }
         public async Task<DTOBDetailByRequestIdResponse?> GetBDetailByRequestId(int RequestId)
         {
+            string? LName = null;
             try
             {
                 var ret = await (from irequest in _context.TrnICardRequest
@@ -75,8 +79,9 @@ namespace DataAccessLayer
                                  select new DTOBDetailByRequestIdResponse
                                  {
                                      RankName= rk.RankAbbreviation,
-                                     Name= bd.LName == null ? bd.FName : bd.FName + ' '+ bd.LName,
-                                     UnitName= munit.UnitName,
+                                     FName =  bd.FName,
+                                     LName = bd.LName,
+                                     UnitName = munit.UnitName,
                                  }
                                 ).FirstOrDefaultAsync();
                 return ret;
@@ -90,7 +95,7 @@ namespace DataAccessLayer
         public async Task<List<DTOICardRequestHoldResponse>?> GetAllICardRequestHold()
         {
             string query = "";
-            query = " SELECT munit.UnitName,RTRIM(CONCAT(FName,' ',ISNULL(LName,''))) as Name,B.ServiceNo,trnicrd.RequestId,Afor.Name ApplyFor,ran.RankAbbreviation RankName,thold.ICardHoldId,thold.HoldReason,thold.UnHoldReason,thold.IsHold,u.DomainId,u.UpdatedOn " +
+            query = " SELECT munit.UnitName,B.FName,B.LName,B.ServiceNo,trnicrd.RequestId,Afor.Name ApplyFor,ran.RankAbbreviation RankName,thold.ICardHoldId,thold.HoldReason,thold.UnHoldReason,thold.IsHold,u.DomainId,u.UpdatedOn " +
                     " FROM MTrnICardHold thold " +
                     " inner join AspNetUsers u on u.Id = thold.Updatedby " +
                     " inner join TrnICardRequest trnicrd on trnicrd.RequestId = thold.RequestId " +
@@ -981,6 +986,82 @@ namespace DataAccessLayer
                 return dTOXMLDigitalResponse;
             }
         }
+        public async Task<string?> GetCSVString(DTOCSVExportRequest Data)
+        {
+            string query = string.Empty;
+            if (Data.IdsTypeRequestIdOrTrnFwdId == true)
+            {
+                //Ids is TrnFwdId.
+               query = " Select B.ServiceNo,B.NameAsPerRecord,B.DOB,B.DateOfCommissioning,ran.RankAbbreviation,B.FName,B.LName,munit.UnitName,trnicrd.TrackingId,Afor.Name ApplyFor,ty.name ICardType,trnadd.State,trnadd.District,trnadd.PS,trnadd.PO,trnadd.Tehsil,trnadd.Village,trnadd.PinCode from BasicDetails B " +
+                       " inner join TrnAddress trnadd on trnadd.BasicDetailId = B.BasicDetailId " +
+                       " inner join MApplyFor Afor on Afor.ApplyForId = B.ApplyForId " +
+                       " inner join MRank ran on ran.RankId=B.RankId " +
+                       " inner join MapUnit mapunit on mapunit.UnitMapId=B.UnitId " +
+                       " inner join MUnit munit on munit.UnitId=mapunit.UnitId " +
+                       " inner join TrnICardRequest trnicrd on trnicrd.BasicDetailId = B.BasicDetailId " +
+                       " inner join MICardType ty on ty.TypeId = trnicrd.TypeId " +
+                       " inner join TrnFwds fwd on fwd.RequestId = trnicrd.RequestId " +
+                       " where fwd.TrnFwdId in @Ids";
+            }
+            else
+            {
+                //Ids is RequestId.
+                query = " Select B.ServiceNo,B.NameAsPerRecord,B.DOB,B.DateOfCommissioning,ran.RankAbbreviation,B.FName,B.LName,munit.UnitName,trnicrd.TrackingId,Afor.Name ApplyFor,ty.name ICardType,trnadd.State,trnadd.District,trnadd.PS,trnadd.PO,trnadd.Tehsil,trnadd.Village,trnadd.PinCode from BasicDetails B " +
+                        " inner join TrnAddress trnadd on trnadd.BasicDetailId = B.BasicDetailId " +
+                        " inner join MApplyFor Afor on Afor.ApplyForId = B.ApplyForId " +
+                        " inner join MRank ran on ran.RankId=B.RankId " +
+                        " inner join MapUnit mapunit on mapunit.UnitMapId=B.UnitId " +
+                        " inner join MUnit munit on munit.UnitId=mapunit.UnitId " +
+                        " inner join TrnICardRequest trnicrd on trnicrd.BasicDetailId = B.BasicDetailId " +
+                        " inner join MICardType ty on ty.TypeId = trnicrd.TypeId " +
+                        " where trnicrd.RequestId in @Ids";
+            }
+
+            int[] Ids = Data.Ids;
+            try
+            {
+                using (var connection = _contextDP.CreateConnection())
+                {
+                    var BasicDetailList = await connection.QueryAsync<DTOCSVExportResponse>(query, new { Ids });
+                    int sno = 1;
+                    var allrecord = (from e in BasicDetailList
+                                     select new DTOCSVExportResponse()
+                                     {
+                                         Sno = sno++,
+                                         ServiceNo = e.ServiceNo,
+                                         NameAsPerRecord = e.NameAsPerRecord,
+                                         DOB = e.DOB,
+                                         DateOfCommissioning = e.DateOfCommissioning,
+                                         RankAbbreviation = e.RankAbbreviation,
+                                         FName = e.FName,
+                                         LName = e.LName,
+                                         UnitName = e.UnitName,
+                                         TrackingId = e.TrackingId,
+                                         ApplyFor = e.ApplyFor,
+                                         ICardType = e.ICardType,
+                                         State=e.State,
+                                         District=e.District,
+                                         PS=e.PS,
+                                         PO=e.PO,
+                                         Tehsil=e.Tehsil,
+                                         Village=e.Village,
+                                         PinCode = e.PinCode,
+                                         PermanentAddress = "Village - " + (e.Village ?? "")+ ", Post Office - " + (e.PO ?? "") + ", Tehsil - "+ (e.Tehsil ?? "") + ", District - "+ (e.District ?? "") + ", State - " + (e.State ?? "") + ", Pin Code - " + e.PinCode,
+                                     }).ToImmutableList();
+                    CsvService csvService = new CsvService();
+                    string csvData = csvService.GenerateCsv(allrecord);
+
+                    return csvData;
+
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "BasicDetailDB->GetCSVString");
+                return null;
+            }
+        }
+
         public async Task<List<ICardHistoryResponse>> ICardHistory(int RequestId)
         {
             string query =  " select usersfrom.UserName FromDomain,profrom.Name FromProfile,ranlfrom.RankAbbreviation FromRank, " +

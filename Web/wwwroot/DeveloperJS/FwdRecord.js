@@ -584,7 +584,35 @@ $(function () {
                 var id = $(this).attr("Id");
                 lstCSVDownload.push(id);
             });
-        } else {
+            var userdata = {
+                "Ids": lstCSVDownload,
+            };
+            $.ajax({
+                url: '/BasicDetail/CreateCSV',
+                contentType: 'application/x-www-form-urlencoded',
+                data: userdata,
+                type: 'POST',
+
+                success: function (response) {
+                    if (response != "null" && response != null) {
+                        if (response == InternalServerError) {
+                            Swal.fire({
+                                text: errormsg
+                            });
+                        } else {
+                            var url = "https://" + window.location.host + '/WriteReadData/CSVFile/' + response;
+                            window.open(url, '_blank');
+                        }
+                    }
+                },
+                error: function (result) {
+                    Swal.fire({
+                        text: errormsg002
+                    });
+                }
+            });
+        }
+        else {
             Swal.fire({
                 text: "Please select atleast 1 request to download CSV File."
             });

@@ -9,7 +9,8 @@ namespace DataTransferObject.Response
     public class DTOBDetailByRequestIdResponse
     {
         public string RankName { get; set; } = string.Empty;
-        public string Name { get; set; } = string.Empty;
+        public string FName { get; set; } = string.Empty;
+        public string? LName { get; set; }
         public string UnitName { get; set; } = string.Empty;
     }
 }

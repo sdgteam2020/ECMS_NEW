@@ -20,6 +20,10 @@ namespace BusinessLogicsLayer.BasicDet
     public class BasicDetailBL : GenericRepositoryDL<BasicDetail>, IBasicDetailBL
     {
         private readonly IBasicDetailDB _iBasicDetailDB;
+        public async Task<string?> GetCSVString(DTOCSVExportRequest Data) 
+        {
+            return await _iBasicDetailDB.GetCSVString(Data);
+        }
         public BasicDetailBL(ApplicationDbContext context,IBasicDetailDB BasicDetail) : base(context)
         {
                 _iBasicDetailDB = BasicDetail;
