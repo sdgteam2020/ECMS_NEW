@@ -12,7 +12,8 @@ namespace DataTransferObject.Response
         public int RequestId { get; set; }
         public string ServiceNo { get; set; } = string.Empty;
         public string RankName { get; set; } = string.Empty;
-        public string Name { get; set; } = string.Empty;
+        public string FName { get; set; } = string.Empty;
+        public string? LName { get; set; }
         public string UnitName { get; set; } = string.Empty;
         public string ApplyFor { get; set; } = string.Empty;
         public string DomainId { get; set; } = string.Empty;

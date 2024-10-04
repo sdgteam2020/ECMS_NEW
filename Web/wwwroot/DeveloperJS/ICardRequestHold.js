@@ -94,7 +94,7 @@
                 data: param1,
                 datatype: 'json',
                 success: function (data) {
-                    $("#lblName").html(data.Name);
+                    $("#lblName").html(data.LName == null ? data.FName : data.FName + ' ' + data.LName);
                     $("#lblRank").html(data.RankName);
                     $("#lblUnitName").html(data.UnitName);
                 }
@@ -142,10 +142,13 @@ function BindData() {
                     for (var i = 0; i < response.length; i++) {
 
                         listItem += "<tr>";
-                        listItem += "<td class='d-none'><span id='iCardHoldId'>" + response[i].ICardHoldId + "</span><span id='requestId'>" + response[i].RequestId + "</span><span id='rankName'>" + response[i].RankName + "</span><span id='name'>" + response[i].Name + "</span><span id='unHoldReason'>" + response[i].UnHoldReason + "</span></td>";
+                        listItem += "<td class='d-none'><span id='iCardHoldId'>" + response[i].ICardHoldId + "</span><span id='requestId'>" + response[i].RequestId + "</span><span id='rankName'>" + response[i].RankName + "</span><span id='name'>" + (response[i].LName == null ? response[i].FName : response[i].FName + ' ' + response[i].LName) + "</span><span id='unHoldReason'>" + response[i].UnHoldReason + "</span></td>";
                         listItem += "<td class='align-middle'>" + (i + 1) + "</td>";
                         listItem += "<td class='align-middle'><a href='#' class='BasicDetailView'><span id='serviceNo'>" + response[i].ServiceNo + "</span></a></td>";
-                        listItem += "<td class='align-middle'><span id='nameWithRank'>" + response[i].RankName + ' ' + response[i].Name + "</span></td>";
+                        if (response[i].LName == null)
+                            listItem += "<td class='align-middle'><span id='nameWithRank'>" + response[i].RankName + ' ' + response[i].FName + "</span></td>";
+                        else
+                            listItem += "<td class='align-middle'><span id='nameWithRank'>" + response[i].RankName + ' ' + response[i].FName + ' ' + response[i].LName + "</span></td>";
                         listItem += "<td class='align-middle'><span id='unitName'>" + response[i].UnitName + "</span></td>";
                         listItem += "<td class='align-middle'><span id='applyFor'>" + response[i].ApplyFor + "</span></td>";
                         listItem += "<td class='align-middle'><span id='domainId'>" + response[i].DomainId + "</span></td>";

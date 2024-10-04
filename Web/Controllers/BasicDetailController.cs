@@ -1879,6 +1879,45 @@ namespace Web.Controllers
                 return Json(KeyConstants.InternalServerError);
             }
         }
+        public async Task<IActionResult> CreateCSV(DTOCSVExportRequest model)
+        {
+            try
+            {
+                var UserId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var user = await userManager.FindByIdAsync(UserId);
+
+                // UserManager service GetClaimsAsync method gets all the current claims of the user
+                var UserClaims = await userManager.GetClaimsAsync(user);
+
+                if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "Internal Wk Distr"))
+                {
+                    //Ids is TrnFwdId.
+                    model.IdsTypeRequestIdOrTrnFwdId = true;
+                }
+                else
+                {
+                    //Ids is RequestId.
+                    model.IdsTypeRequestIdOrTrnFwdId = false;
+                }
+                
+                string? csvData = await basicDetailBL.GetCSVString(model);
+                if(csvData != null)
+                {
+                    string sourceFolderPhotoPhy = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "CSVFile");
+                    System.IO.File.WriteAllText(sourceFolderPhotoPhy+ "/"+ "temp.csv", csvData);
+                    return Json("temp.csv");
+                }
+                else 
+                {
+                    return Json(null);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "BasicDetails=>CreateCSV.");
+                return Json(null);
+            }
+        }
         public void CreateZipFromFolder(string sourceFolder, string zipFilePath)
         {
             if (Directory.Exists(sourceFolder))

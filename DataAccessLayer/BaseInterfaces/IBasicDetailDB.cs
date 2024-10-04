@@ -14,6 +14,7 @@ namespace DataAccessLayer.BaseInterfaces
 {
     public interface IBasicDetailDB:IGenericRepositoryDL<BasicDetail>
     {
+        public Task<string?> GetCSVString(DTOCSVExportRequest Data);
         public Task<List<DTOTopArmyNoFromICardRequestResponse>?> GetTopArmyNoFromICardRequest(string ArmyNo);
         public Task<DTOBDetailByRequestIdResponse?> GetBDetailByRequestId(int RequestId);
         public Task<List<DTOICardRequestHoldResponse>?> GetAllICardRequestHold();
