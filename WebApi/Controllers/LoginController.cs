@@ -1,4 +1,5 @@
-﻿using DataTransferObject.Requests;
+﻿using BusinessLogicsLayer.APIData;
+using DataTransferObject.Requests;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
@@ -13,42 +14,55 @@ namespace WebApi.Controllers
     public class LoginController : ControllerBase
     {
         private readonly IConfiguration _config;
-        public LoginController(IConfiguration config)
+        private readonly IAPIDataBL _aPIDataBL;
+
+        public LoginController(IConfiguration config, IAPIDataBL aPIDataBL)
         {
 
             _config = config;
+            _aPIDataBL = aPIDataBL;
         }
         [HttpPost]
-        public IActionResult Login(DTOAPILoginRequest login)
+        public async Task<IActionResult> Login(DTOAPILoginRequest login)
         {
-            bool isLoggedIn = false;
-            if (login.ClientName == "admin" && login.ClientPW == "123")
+            try
             {
-                isLoggedIn = true;
-            }
-            else
-                isLoggedIn = false;
-            if (isLoggedIn)
-            {
-                var authClaims = new List<Claim>
+                bool isLoggedIn = false;
+
+                //if (login.ClientName == "admin" && login.ClientPW == "123")
+                //{
+                //    isLoggedIn = true;
+                //}
+                //else
+                //    isLoggedIn = false;
+                isLoggedIn = await _aPIDataBL.apiLogin(login);
+
+                if (isLoggedIn)
+                {
+                    var authClaims = new List<Claim>
                 {
                     new Claim(ClaimTypes.Name, login.ClientName),
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 };
 
 
-            //    authClaims.Add(new Claim(ClaimTypes.Role, login.Role));
+                    //    authClaims.Add(new Claim(ClaimTypes.Role, login.Role));
 
 
-                var token = GetToken(authClaims);
+                    var token = GetToken(authClaims);
 
-                return Ok(new
+                    return Ok(new
+                    {
+                        token = new JwtSecurityTokenHandler().WriteToken(token),
+                        expiration = token.ValidTo
+                    });
+                }
+                else
                 {
-                    token = new JwtSecurityTokenHandler().WriteToken(token),
-                    expiration = token.ValidTo
-                });
+                    return BadRequest();
+                }
             }
-            else
+            catch (Exception ex)
             {
                 return BadRequest();
             }

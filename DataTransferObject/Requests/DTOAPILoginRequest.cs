@@ -15,6 +15,7 @@ namespace DataTransferObject.Requests
         public string? ClientPW { get; set; }
 
         public string ClientName { get; set; }
+        public string ApiUrl { get; set; }
         //public string? email { get; set; }
         //public string? password { get; set; }
     }

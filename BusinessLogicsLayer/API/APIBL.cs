@@ -26,8 +26,8 @@ namespace BusinessLogicsLayer.API
         //public const string ApiUrl = "https://localhost:7002/api/";
         //public const string ApiUrloffrs = "https://localhost:7002/api/";
 
-        public const string ApiUrl = "https://192.168.10.203:8443/api/";
-        public const string ApiUrloffrs = "https://192.168.10.203:8443/api/";
+        //public const string ApiUrl = "https://192.168.10.203:8443/api/";
+        //public const string ApiUrloffrs = "https://192.168.10.203:8443/api/";
 
         //public const string ApiUrl = "https://131.3.47.13:8443/api/";
         //public const string ApiUrloffrs = "https://131.3.47.13:8443/api/";
@@ -79,7 +79,7 @@ namespace BusinessLogicsLayer.API
                 DTOLoginAPIResponse dynamicResponseDTO = new DTOLoginAPIResponse();
 
                 HttpResponseMessage result = null;
-                await HRMSPostAPI("Login", Data, "").ContinueWith(task =>
+                await HRMSPostAPI(Data.ApiUrl,"Login", Data, "").ContinueWith(task =>
                 {
                     if (task.Status == TaskStatus.RanToCompletion)
 
@@ -166,7 +166,7 @@ namespace BusinessLogicsLayer.API
         //    }
         //}
         public async Task<DTOApiPersDataResponse> GetData(DTOPersDataRequest Data)
-        {
+        { 
             try
             {
                 DTOApiPersDataResponse dynamicResponseDTO = new DTOApiPersDataResponse();
@@ -175,7 +175,7 @@ namespace BusinessLogicsLayer.API
                 dataRequest.ApplyForId = Data.ApplyForId;
 
                 HttpResponseMessage result = null;
-                await HRMSPostAPI("Fetch/GetData", dataRequest, Data.jwt).ContinueWith(task =>
+                await HRMSPostAPI(Data.ApiUrl, "Fetch/GetData", dataRequest, Data.jwt).ContinueWith(task =>
                 {
                     if (task.Status == TaskStatus.RanToCompletion)
 
@@ -221,7 +221,7 @@ namespace BusinessLogicsLayer.API
                 dataRequest.ApplyForId = Data.ApplyForId;
 
                 HttpResponseMessage result = null;
-                await HRMSPostAPIOffrs("Fetch/GetDataoffrs", dataRequest, Data.jwt).ContinueWith(task =>
+                await HRMSPostAPIOffrs(Data.ApiUrl,"Fetch/GetDataoffrs", dataRequest, Data.jwt).ContinueWith(task =>
                 {
                     if (task.Status == TaskStatus.RanToCompletion)
 
@@ -257,7 +257,7 @@ namespace BusinessLogicsLayer.API
                 return null;
             }
         }
-        public async Task<HttpResponseMessage> HRMSPostAPIOffrs<T>(string url, T data, string jwtToken)
+        public async Task<HttpResponseMessage> HRMSPostAPIOffrs<T>(string ApiUrl, string url, T data, string jwtToken)
         {
             try
             {
@@ -276,7 +276,7 @@ namespace BusinessLogicsLayer.API
                         httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken);
                         if (data is null || data.ToString() == "")
                         {
-                            return await httpClient.GetAsync(ApiUrloffrs + url);
+                            return await httpClient.GetAsync(ApiUrl + url);
                         }
                         else
                         {
@@ -295,7 +295,7 @@ namespace BusinessLogicsLayer.API
 
             }
         }
-        public async Task<HttpResponseMessage> HRMSPostAPI<T>(string url, T data, string jwtToken)
+        public async Task<HttpResponseMessage> HRMSPostAPI<T>(string ApiUrl ,string url, T data, string jwtToken)
         {
             try
             {
