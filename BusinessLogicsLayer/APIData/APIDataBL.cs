@@ -1,5 +1,6 @@
 ﻿using BusinessLogicsLayer.APIData;
 using BusinessLogicsLayer.Bde;
+using BusinessLogicsLayer.Helpers;
 using DataAccessLayer;
 using DataAccessLayer.BaseInterfaces;
 using DataTransferObject.Domain.Master;
@@ -23,6 +24,12 @@ namespace BusinessLogicsLayer.APIData
         public APIDataBL(IAPIDataDB aPIDataDB) 
         {
             _aPIDataDB = aPIDataDB;
+        }
+
+        public Task<bool> apiLogin(DTOAPILoginRequest Data)
+        {
+            Data.ClientPW = Encrypt.EncryptParameter(Data.ClientPW);
+            return _aPIDataDB.apiLogin(Data);
         }
 
         public Task<MApiData> GetByIC(DTOAPIDataRequest Data)

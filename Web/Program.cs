@@ -117,8 +117,11 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
                options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
                options.LoginPath = "/Account/IMLogin";
                options.AccessDeniedPath = "/Account/AccessDenied";
+               options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
                // Add other configuration options as needed
            });
+
+
 builder.Services.AddSession(options =>
 {
     options.IdleTimeout = TimeSpan.FromMinutes(20);
@@ -184,7 +187,10 @@ builder.Services.AddHsts(options =>
 //});
 var app = builder.Build();
 
-
+app.UseCookiePolicy(new CookiePolicyOptions
+{
+    Secure = CookieSecurePolicy.Always // Set the Secure flag for all cookies
+});
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {

@@ -13,5 +13,6 @@ namespace DataTransferObject.Requests
         public DateTime timestamp { get; set; }
         public string ClientName { get; set; }
         public int ApplyForId { get; set; }
+        public string ApiUrl { get; set; }
     }
 }

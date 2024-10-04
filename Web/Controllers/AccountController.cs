@@ -1319,6 +1319,17 @@ namespace Web.Controllers
             DTOTempSession? dTOTempSession = SessionHeplers.GetObject<DTOTempSession>(HttpContext.Session, "Token");
             List<string> RoleNameList = new List<string>() { "User" };
 
+            ///////Cookie With Secure Flag////////////////////////
+            var cookieOptions = new CookieOptions
+            {
+                Secure = true, // Ensures the cookie is only transmitted over HTTPS
+                HttpOnly = true, // Makes the cookie inaccessible via client-side scripts
+                SameSite = SameSiteMode.Strict, // Limits cookie to same-site requests to prevent CSRF
+                Expires = DateTimeOffset.UtcNow.AddHours(1) // Cookie expiration
+            };
+
+            Response.Cookies.Append("MySecureCookie", "cookieValue", cookieOptions);
+            /////////////end Cookie With Secure Flag//////////////
             if (userid==0)
             {
                 DTOTempSession? dTOTempSession1 = SessionHeplers.GetObject<DTOTempSession>(HttpContext.Session, "IMData");
@@ -1362,6 +1373,18 @@ namespace Web.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> TokenValidate(DTOTokenRequest model)
         {
+            ///////Cookie With Secure Flag////////////////////////
+            var cookieOptions = new CookieOptions
+            {
+                Secure = true, // Ensures the cookie is only transmitted over HTTPS
+                HttpOnly = true, // Makes the cookie inaccessible via client-side scripts
+                SameSite = SameSiteMode.Strict, // Limits cookie to same-site requests to prevent CSRF
+                Expires = DateTimeOffset.UtcNow.AddHours(1) // Cookie expiration
+            };
+
+            Response.Cookies.Append("MySecureCookie", "cookieValue", cookieOptions);
+            /////////////end Cookie With Secure Flag//////////////
+            ///
             DTOTempSession? dTOTempSession = SessionHeplers.GetObject<DTOTempSession>(HttpContext.Session, "IMData");
             List<string> RoleNameList = new List<string>() { "User" };
             if (dTOTempSession != null)
@@ -1529,6 +1552,18 @@ namespace Web.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Profile()
         {
+            ///////Cookie With Secure Flag////////////////////////
+            var cookieOptions = new CookieOptions
+            {
+                Secure = true, // Ensures the cookie is only transmitted over HTTPS
+                HttpOnly = true, // Makes the cookie inaccessible via client-side scripts
+                SameSite = SameSiteMode.Strict, // Limits cookie to same-site requests to prevent CSRF
+                Expires = DateTimeOffset.UtcNow.AddHours(1) // Cookie expiration
+            };
+
+            Response.Cookies.Append("MySecureCookie", "cookieValue", cookieOptions);
+            /////////////end Cookie With Secure Flag//////////////
+
             DTOTempSession? dTOTempSession = SessionHeplers.GetObject<DTOTempSession>(HttpContext.Session, "IMData");
             if (dTOTempSession != null)
             {

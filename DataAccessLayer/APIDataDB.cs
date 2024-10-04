@@ -26,6 +26,29 @@ namespace DataAccessLayer
             _contextDP= dapperContext;
         }
 
+        public async Task<bool> apiLogin(DTOAPILoginRequest Data)
+        {
+            string query = "select [Id],[ClientName],ClientPW from MApiLogin where ClientName=@ClientName and ClientPW=@ClientPW";
+            using (var connection = _contextDP.CreateConnection())
+            {
+                
+                var ret = await connection.QueryAsync<MApiLogin>(query, new { Data.ClientName,Data.ClientPW });
+
+                if (ret != null && ret.Count()>0)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+
+                // return ret.SingleOrDefault();
+                
+
+            }
+        }
+
         public async Task<MApiData> GetByIC(DTOAPIDataRequest Data)
         {
 
