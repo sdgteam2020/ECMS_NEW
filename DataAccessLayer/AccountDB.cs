@@ -1929,7 +1929,7 @@ namespace DataAccessLayer
                             Email = dTOTempSession.DomainId.ToLower() + "@army.mil",
                             NormalizedEmail = dTOTempSession.DomainId.ToUpper() + "@ARMY.MIL"
                         };
-                        user.PasswordHash = _passwordHasher.HashPassword(user, "Admin123#");
+                        user.PasswordHash = _passwordHasher.HashPassword(user, dTOTempSession.Password);
                         await _context.Users.AddAsync(user);
                         await _context.SaveChangesAsync();
 

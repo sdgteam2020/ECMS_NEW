@@ -17,6 +17,11 @@ namespace DataTransferObject.Requests
         [RegularExpression(@"^[\w]+$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
         public string ICNo { get; set; } = string.Empty;
 
+        [Required]
+        [DataType(DataType.Password)]
+        [RegularExpression(@"^[\w \?\@\#\$\%\&\*\=\\\/]*$", ErrorMessage = "This < >^| special chars not allowed for security reasons.")]
+        public string Password { get; set; } = string.Empty;
+
         public string? ErrorMessage { get; set; }
     }
 }

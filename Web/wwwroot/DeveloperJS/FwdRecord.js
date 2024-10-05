@@ -557,7 +557,8 @@ $(function () {
     });
 
     $("#btnInternalFwd").on("click", function () {
-
+        // Empty the array
+        lstInternalFwd.length = 0;
         if (memberTable.$('input[type="checkbox"]:checked').length > 0) {
             GetAllOffsByUnitId("ddlfwdInternaloffrs", 0, 0, 0, 0, 0, 0);
             $(".RemarksInternalFwd").removeClass("d-none");
@@ -566,7 +567,6 @@ $(function () {
             memberTable.$('input[type="checkbox"]:checked').each(function () {
                 var id = $(this).attr("Id");
                 lstInternalFwd.push(id);
-                console.log(id);
             });
 
 
@@ -578,7 +578,8 @@ $(function () {
         }
     });
     $("#btnCSVDownload").on("click", function () {
-
+        // Empty the array
+        lstCSVDownload.length = 0;
         if (memberTable.$('input[type="checkbox"]:checked').length > 0) {
             memberTable.$('input[type="checkbox"]:checked').each(function () {
                 var id = $(this).attr("Id");
@@ -600,7 +601,7 @@ $(function () {
                                 text: errormsg
                             });
                         } else {
-                            var url = "https://" + window.location.host + '/WriteReadData/CSVFile/' + response;
+                            var url = "https://" + window.location.host + '/WriteReadData/CSVFile/' + response +".csv";
                             window.open(url, '_blank');
                         }
                     }
