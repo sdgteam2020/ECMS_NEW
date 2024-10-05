@@ -36,5 +36,6 @@ namespace DataTransferObject.Requests
         public bool IsToken { get; set; }
         public string DialingCode { get; set; } = string.Empty;
         public string Extension { get; set; } = string.Empty;
+        public string Password { get; set; } = string.Empty;
     }
 }

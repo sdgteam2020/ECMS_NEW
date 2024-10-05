@@ -1022,7 +1022,7 @@ namespace DataAccessLayer
             {
                 using (var connection = _contextDP.CreateConnection())
                 {
-                    var BasicDetailList = await connection.QueryAsync<DTOCSVExportResponse>(query, new { Ids });
+                    var BasicDetailList = await connection.QueryAsync<DTOCSVExportResponseForSqlQuery>(query, new { Ids });
                     int sno = 1;
                     var allrecord = (from e in BasicDetailList
                                      select new DTOCSVExportResponse()
@@ -1030,8 +1030,8 @@ namespace DataAccessLayer
                                          Sno = sno++,
                                          ServiceNo = e.ServiceNo,
                                          NameAsPerRecord = e.NameAsPerRecord,
-                                         DOB = e.DOB,
-                                         DateOfCommissioning = e.DateOfCommissioning,
+                                         DOB = DateOnly.FromDateTime(e.DOB),
+                                         DateOfCommissioning = DateOnly.FromDateTime(e.DateOfCommissioning),
                                          RankAbbreviation = e.RankAbbreviation,
                                          FName = e.FName,
                                          LName = e.LName,

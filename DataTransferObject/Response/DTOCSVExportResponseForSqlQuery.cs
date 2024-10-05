@@ -1,18 +1,17 @@
-﻿using DataTransferObject.Domain.Master;
-using DataTransferObject.Localize;
-using DataTransferObject.Validation;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
 namespace DataTransferObject.Response
 {
-
-    public class DTOCSVExportResponse
+    public class DTOCSVExportResponseForSqlQuery
     {
         public string ServiceNo { get; set; } = string.Empty;
         public string NameAsPerRecord { get; set; } = string.Empty;
-        public DateOnly DOB { get; set; }
-        public DateOnly DateOfCommissioning { get; set; }
+        public DateTime DOB { get; set; }
+        public DateTime DateOfCommissioning { get; set; }
         public string PermanentAddress { get; set; } = string.Empty;
         public string RankAbbreviation { get; set; } = string.Empty;
         public string FName { get; set; } = string.Empty;
@@ -28,6 +27,5 @@ namespace DataTransferObject.Response
         public string? Tehsil { get; set; }
         public string? Village { get; set; }
         public int PinCode { get; set; }
-        public int Sno { get; set; }
     }
 }

@@ -1903,19 +1903,27 @@ namespace Web.Controllers
                 string? csvData = await basicDetailBL.GetCSVString(model);
                 if(csvData != null)
                 {
-                    string sourceFolderPhotoPhy = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "CSVFile");
-                    System.IO.File.WriteAllText(sourceFolderPhotoPhy+ "/"+ "temp.csv", csvData);
-                    return Json("temp.csv");
+                    string TempFileName = Guid.NewGuid().ToString();
+                    string sourceFolder = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "CSVFile");
+                    // Check if directory exists
+                    if (!Directory.Exists(sourceFolder))
+                    {
+                        // If directory does not exist, create it
+                        Directory.CreateDirectory(sourceFolder);
+                    }
+
+                    System.IO.File.WriteAllText(sourceFolder + "/"+ TempFileName + ".csv", csvData);
+                    return Json(TempFileName);
                 }
                 else 
                 {
-                    return Json(null);
+                    return Json(KeyConstants.InternalServerError);
                 }
             }
             catch (Exception ex)
             {
                 _logger.LogError(1001, ex, "BasicDetails=>CreateCSV.");
-                return Json(null);
+                return Json(KeyConstants.InternalServerError);
             }
         }
         public void CreateZipFromFolder(string sourceFolder, string zipFilePath)

@@ -1137,28 +1137,25 @@ namespace Web.Controllers
         [AllowAnonymous]
         public IActionResult IMLogin()
         {
-            //var store = new X509Store(StoreName.My, StoreLocation.CurrentUser);
-            //store.Open(OpenFlags.ReadOnly);
-            //var certs = store.Certificates.Find(X509FindType.FindByThumbprint, "70A45AD921D89E96A7D1D8E3E566DDBDE5452FD0", false);
 
             int userid = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
             DTOTempSession? dTOTempSession = SessionHeplers.GetObject<DTOTempSession>(HttpContext.Session, "Token");
-            List<string> RoleNameList = new List<string>() { "User"};
-            if (dTOTempSession != null)
-            {
-                if (RoleNameList.Contains(dTOTempSession.RoleName))
-                {
-                    return RedirectToActionPermanent("Index", "Home");
-                }
-                else if (dTOTempSession.RoleName.ToUpper() == "ADMIN")
-                {
-                    return RedirectToActionPermanent("DashboardMaster", "Master");
-                }
-                else if (dTOTempSession.RoleName == "Super Admin")
-                {
-                    return RedirectToActionPermanent("Index", "Account");
-                }
-            }
+            //List<string> RoleNameList = new List<string>() { "User"};
+            //if (dTOTempSession != null)
+            //{
+            //    if (RoleNameList.Contains(dTOTempSession.RoleName))
+            //    {
+            //        return RedirectToActionPermanent("Index", "Home");
+            //    }
+            //    else if (dTOTempSession.RoleName.ToUpper() == "ADMIN")
+            //    {
+            //        return RedirectToActionPermanent("DashboardMaster", "Master");
+            //    }
+            //    else if (dTOTempSession.RoleName == "Super Admin")
+            //    {
+            //        return RedirectToActionPermanent("Index", "Account");
+            //    }
+            //}
             return View();
         }
         [HttpPost]
@@ -1353,19 +1350,27 @@ namespace Web.Controllers
             }
             else
             {
-                if (RoleNameList.Contains(dTOTempSession.RoleName))
+                if(dTOTempSession!=null)
                 {
-                    return RedirectToActionPermanent("Index", "Home");
+                    if (RoleNameList.Contains(dTOTempSession.RoleName))
+                    {
+                        return RedirectToActionPermanent("Index", "Home");
+                    }
+                    else if (dTOTempSession.RoleName.ToUpper() == "ADMIN")
+                    {
+                        return RedirectToActionPermanent("DashboardMaster", "Master");
+                    }
+                    else if (dTOTempSession.RoleName == "Super Admin")
+                    {
+                        return RedirectToActionPermanent("Index", "Account");
+                    }
+                    return View();
                 }
-                else if (dTOTempSession.RoleName.ToUpper() == "ADMIN")
+                else 
                 {
-                    return RedirectToActionPermanent("DashboardMaster", "Master");
+                    return View();
                 }
-                else if (dTOTempSession.RoleName == "Super Admin")
-                {
-                    return RedirectToActionPermanent("Index", "Account");
-                }
-                return View();  
+
             }
 
         }
@@ -1403,8 +1408,8 @@ namespace Web.Controllers
 
                         if (usera != null)
                         {
-
-                            var result = await signInManager.PasswordSignInAsync(usera.UserName, "Admin123#", false, true);
+                            //default Password - Admin123#
+                            var result = await signInManager.PasswordSignInAsync(usera.UserName, model.Password, false, true);
                             // var rolelist = await signInManager.UserManager.GetRolesAsync(usera);
                             //var user1 = await signInManager.UserManager.IsInRoleAsync(usera, "User");
                             if (result.Succeeded)
@@ -1468,6 +1473,11 @@ namespace Web.Controllers
                                 TempData["error"] = "Already Login " + usera.UserName + " Please Try Some Time";
                                 goto End;
                             }
+                            else
+                            {
+                                TempData["error"] = "Not Valid User / Password.";
+                                goto End;
+                            }
                         }
 
                     }
@@ -1502,6 +1512,7 @@ namespace Web.Controllers
                         else if ((dTOTempSession.Status == 2 || dTOTempSession.Status == 3 || dTOTempSession.Status == 4) && _dTOProfileResponse != null && _dTOProfileResponse.TrnDomainMappingId > 0)
                         {
                             dTOTempSession.ICNOInput = model.ICNo;
+                            dTOTempSession.Password = model.Password;
                             dTOTempSession.ICNoDomainId = _dTOProfileResponse.DomainId;
                             dTOTempSession.ICNoUserId = _dTOProfileResponse.UserId;
                             dTOTempSession.ICNoTDMUnitMapId = _dTOProfileResponse.UnitId;
@@ -1519,6 +1530,7 @@ namespace Web.Controllers
                         else if ((dTOTempSession.Status == 2 || dTOTempSession.Status == 3 || dTOTempSession.Status == 4) && _dTOProfileResponse != null && _dTOProfileResponse.TrnDomainMappingId == 0)
                         {
                             dTOTempSession.ICNOInput = model.ICNo;
+                            dTOTempSession.Password = model.Password;
                             dTOTempSession.ICNoUserId = _dTOProfileResponse.UserId;
                             dTOTempSession.ICNO = _dTOProfileResponse.ArmyNo;
                             dTOTempSession.UserId = _dTOProfileResponse.UserId;
@@ -1528,6 +1540,7 @@ namespace Web.Controllers
                         else if ((dTOTempSession.Status == 2 || dTOTempSession.Status == 3 || dTOTempSession.Status == 4) && _dTOProfileResponse == null)
                         {
                             dTOTempSession.ICNOInput = model.ICNo;
+                            dTOTempSession.Password = model.Password;
                             dTOTempSession.ICNO = model.ICNo;
                             SessionHeplers.SetObject(HttpContext.Session, "IMData", dTOTempSession);
                             return RedirectToActionPermanent("Profile", "Account");
@@ -1538,6 +1551,12 @@ namespace Web.Controllers
                             goto End;
                         }
                     }
+                }
+                else
+                {
+                    var error = ModelState.Select(x => x.Value.Errors).Where(y => y.Count > 0).ToList();
+                    TempData["error"] = error[0][0].ErrorMessage;
+                    goto End;
                 }
             }
             else
