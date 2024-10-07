@@ -1312,6 +1312,10 @@ namespace Web.Controllers
         [AllowAnonymous]
         public IActionResult TokenValidate()
         {
+            string dd = AESEncrytDecry.GetSalt();  // "8080808080808080"; //protector.Protect("1");
+            HttpContext.Session.SetString(SessionKeySalt, dd);
+            ViewBag.hdns = dd;
+
             int userid = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
             DTOTempSession? dTOTempSession = SessionHeplers.GetObject<DTOTempSession>(HttpContext.Session, "Token");
             List<string> RoleNameList = new List<string>() { "User" };
@@ -1378,6 +1382,10 @@ namespace Web.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> TokenValidate(DTOTokenRequest model)
         {
+            string dd = HttpContext.Session.GetString(SessionKeySalt);
+            csConst.cSalt = dd;
+            string Password = AESEncrytDecry.DecryptStringAES(model.Password);
+            model.Password = Password;
             ///////Cookie With Secure Flag////////////////////////
             var cookieOptions = new CookieOptions
             {
@@ -1403,13 +1411,11 @@ namespace Web.Controllers
 
                         HttpContext.Session.Remove("Token");
                         await signInManager.SignOutAsync();
-
                         await userManager.UpdateSecurityStampAsync(usera);
-
                         if (usera != null)
                         {
                             //default Password - Admin123#
-                            var result = await signInManager.PasswordSignInAsync(usera.UserName, model.Password, false, true);
+                            var result = await signInManager.PasswordSignInAsync(usera.UserName, model.Password, false, lockoutOnFailure: true);
                             // var rolelist = await signInManager.UserManager.GetRolesAsync(usera);
                             //var user1 = await signInManager.UserManager.IsInRoleAsync(usera, "User");
                             if (result.Succeeded)
@@ -1418,7 +1424,9 @@ namespace Web.Controllers
 
                                 //  await userManager.RemoveClaimAsync(usera, new Claim("Roles", dTOTempSession.RoleName));
                                 //  await userManager.AddClaimAsync(usera, new Claim("Roles", dTOTempSession.RoleName));
+                               
 
+                                
 
 
                                 DtoSession dtoSession = new DtoSession();
@@ -1475,7 +1483,8 @@ namespace Web.Controllers
                             }
                             else
                             {
-                                TempData["error"] = "Not Valid User / Password.";
+                               
+                                TempData["error"] = "Not Valid User / Password. Access Failed Count "+usera.AccessFailedCount+ " Max Access Attempts 3";
                                 goto End;
                             }
                         }

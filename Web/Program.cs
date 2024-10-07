@@ -97,8 +97,8 @@ builder.Services.Configure<IdentityOptions>(opts =>
     //opts.SignIn.RequireConfirmedAccount = true;
     //opts.SignIn.RequireConfirmedEmail = false;
     //opts.Lockout.AllowedForNewUsers = true;
-    //opts.Lockout.AllowedForNewUsers = true;
-    opts.Lockout.MaxFailedAccessAttempts = 1;
+    opts.Lockout.AllowedForNewUsers = true;
+    opts.Lockout.MaxFailedAccessAttempts = 3;
     opts.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
 });
 var mapperConfig = new MapperConfiguration(mc =>
