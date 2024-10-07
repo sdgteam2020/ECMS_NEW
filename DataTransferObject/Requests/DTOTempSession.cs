@@ -10,7 +10,7 @@ namespace DataTransferObject.Requests
 {
     public class DTOTempSession
     {
-
+        public bool NewUser { get; set; } = false;
         public int Status { get; set; }
         public string DomainId { get; set; } = string.Empty;
         public bool AdminFlag { get; set; } 

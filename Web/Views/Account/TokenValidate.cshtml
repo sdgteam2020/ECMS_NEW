@@ -125,7 +125,7 @@
                                                     }
                                                     else
                                                     {
-                                                        <input asp-for="ICNo" class="form-control" placeholder="Enter IC No" value="@dTOTempSession.ICNO" /> @* value="@dTOTempSession.ICNO" *@
+                                                        <input asp-for="ICNo" class="form-control" placeholder="Enter IC No"/> @* value="@dTOTempSession.ICNO" *@
                                                     }
 
                                                     <span asp-validation-for="ICNo" class="text-danger"></span>
@@ -133,16 +133,39 @@
                                                 </div>
                                                 <div class="form-group">
                                                     <label asp-for="Password" class="form-label fs-6"></label>
-                                                    <input asp-for="Password" class="form-control" placeholder="Password" value="Admin123#" />
+                                                    <input asp-for="Password" class="form-control" placeholder="Password" />
                                                     <span asp-validation-for="Password" class="text-danger"></span>
                                                 </div>
+                                                @if (dTOTempSession!=null){
+                                                    if (dTOTempSession.NewUser == true)
+                                                    {
+                                                        <div class="form-group">
+                                                            <label asp-for="ConfirmPassword"></label>
+                                                            <input asp-for="ConfirmPassword" class="form-control" required />
+                                                            <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                                                        </div>
+                                                    }
+                                                    else
+                                                    {
+                                                        <input hidden asp-for="ConfirmPassword" />
+                                                    }
+                                                }
                                                 <div class="text-center" >
-                                                    @if (dTOTempSession.IsToken == true)
+                                                    @if (dTOTempSession != null && dTOTempSession.IsToken == true)
                                                     {
                                                         <button type="button" class="btn btn-primary mt-2" onclick="GetTokenDetails1('FetchUniqueTokenDetails' ,'ICNo','','tokenmsg');">Refresh To Fetch Token Details</button>
                                                     }
-                                                    <button type="submit" class="btn btn-primary mt-2" onclick="return SubmitsEncry1()">Proceed</button>
-
+                                                    @if (dTOTempSession != null)
+                                                    {
+                                                        if (dTOTempSession.NewUser == true)
+                                                        {
+                                                            <button type="submit" class="btn btn-primary mt-2" onclick="return SubmitsEncry1(true)">Proceed</button>
+                                                        }
+                                                        else
+                                                        {
+                                                            <button type="submit" class="btn btn-primary mt-2" onclick="return SubmitsEncry1(false)">Proceed</button>
+                                                        }
+                                                    }
 @*                                                     <a class="btn btn-warning" href="/ApplicationStatus/AppStatus">Check Application Status</a> *@
                                                 </div>
                                                 
@@ -190,8 +213,8 @@
     <script asp-src-include="~/bootstrap/js/bootstrap.min.js"></script>
     @* <script src="~/fonts/feather/feather.min.js"></script> *@
     <script asp-src-include="~/sweetalert2/sweetalert2.min.js"></script>
-    <script src="~/js/aes.js"></script>
-    <script src="~/js/aesimpscript.js"></script>
+    <script asp-src-include="~/js/aes.js"></script>
+    <script asp-src-include="~/js/aesimpscript.js"></script>
     <script asp-src-include="~/developerjs/pagevalidation.js"></script>
 </body>
 </html>
