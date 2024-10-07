@@ -1659,6 +1659,7 @@ namespace DataAccessLayer
                             userUpdate.NormalizedUserName = dTO.DomainId.ToUpper();
                             userUpdate.Email = dTO.DomainId.ToLower() + "@army.mil";
                             userUpdate.NormalizedEmail = dTO.DomainId.ToUpper() + "@ARMY.MIL";
+                            userUpdate.LockoutEnabled = true;
                             if (dTO.AdminFlag == true)
                             {
                                 userUpdate.AdminFlag = dTO.AdminFlag;
@@ -1775,7 +1776,8 @@ namespace DataAccessLayer
                             UserName = dTO.DomainId.ToLower(),
                             NormalizedUserName = dTO.DomainId.ToUpper(),
                             Email = dTO.DomainId.ToLower() + "@army.mil",
-                            NormalizedEmail = dTO.DomainId.ToUpper() + "@ARMY.MIL"
+                            NormalizedEmail = dTO.DomainId.ToUpper() + "@ARMY.MIL",
+                            LockoutEnabled = true
                         };
 
                         userAdd.PasswordHash = _passwordHasher.HashPassword(userAdd, "Admin123#");
@@ -1927,6 +1929,7 @@ namespace DataAccessLayer
                             UserName = dTOTempSession.DomainId.ToLower(),
                             NormalizedUserName = dTOTempSession.DomainId.ToUpper(),
                             Email = dTOTempSession.DomainId.ToLower() + "@army.mil",
+                            LockoutEnabled = true, // Enable lockout for this user
                             NormalizedEmail = dTOTempSession.DomainId.ToUpper() + "@ARMY.MIL"
                         };
                         user.PasswordHash = _passwordHasher.HashPassword(user, dTOTempSession.Password);
