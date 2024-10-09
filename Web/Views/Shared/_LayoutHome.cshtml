@@ -54,6 +54,16 @@
     setTimeout("preventBack()", 0);
     window.onunload = function () { null };
     </script> *@
+    <style>
+        footer {
+            text-align: center;
+            padding: 5px;
+            /* background: linear-gradient(90deg, rgba(0,211,255,1) 0%, rgba(12,141,242,1) 66%, rgba(22,125,207,1) 99%); */
+            background: #003060 !important;
+            color: white;
+            margin-top: 20px;
+        }
+    </style>
 
 
 </head>
@@ -207,6 +217,19 @@
         <!-- partial -->
         <!-- main-panel ends -->
     </div>
+    <footer class="p-2 fixed-bottom">
+        <section class="page_copyright ls section_padding_25">
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-12 text-center darklinks">
+                        <h5 class="font-weight-600">
+                            Copyright © 2024. Developed by ASDC , DGIS : Sponsor Dte : ___________
+                        </h5>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </footer>
     <!-- page-body-wrapper ends -->
     @*  <script asp-src-include="~/select2/dist/js/select2.min.js"></script>*@
     @RenderSection("Scripts", false)

@@ -830,7 +830,7 @@ namespace DataAccessLayer
             if (Data.IsJco == 0)
             {
                 query = "update TrnFwds set IsComplete=1 where RequestId in @Ids update TrnStepCounter set StepId=5 where RequestId in @Ids  update TrnICardRequest set StatusId=2 where  RequestId in @Ids " +
-                                " select bas.*,issaut.Name IssuingAuth,mapl.Name ApplyFor" +
+                                " select bas.*,issaut.Name IssuingAuth,mapl.Name ApplyFor, " +
                                 " trnadd.State,trnadd.District,trnadd.PS,trnadd.PO,trnadd.Tehsil,trnadd.Village,trnadd.PinCode," +
                                 " trnup.SignatureImagePath,trnup.PhotoImagePath,IdenMark1,IdenMark2,AadhaarNo,Height,bld.BloodGroup,bld.BloodGroupId," +
                                 " regi.Abbreviation RegimentalName,Muni.UnitName,uni.UnitMapId UnitId,icardreq.TypeId,icardreq.RegistrationId," +
@@ -882,12 +882,20 @@ namespace DataAccessLayer
                          " and bas.ArmedId in (select value from string_split(oromap.ArmedIdList,',')) " +
                          " order by reco.RecordOfficeId";
             }
-            int[] Ids = Data.Ids;
-            using (var connection = _contextDP.CreateConnection())
+            try
             {
-                var BasicDetailList = await connection.QueryAsync<DTODataExportsResponse>(query, new { Ids });
+                int[] Ids = Data.Ids;
+                using (var connection = _contextDP.CreateConnection())
+                {
+                    var BasicDetailList = await connection.QueryAsync<DTODataExportsResponse>(query, new { Ids });
 
-                return BasicDetailList.ToList();
+                    return BasicDetailList.ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "BasicDetailDB->GetBesicdetailsByRequestId");
+                return null;
             }
         }
         public async Task<DTOXMLDigitalResponse> GetDataDigitalXmlSign(DTODataExportRequest Data)
