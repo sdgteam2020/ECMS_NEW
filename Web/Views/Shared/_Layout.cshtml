@@ -77,7 +77,8 @@
         footer {
             text-align: center;
             padding: 5px;
-            background: linear-gradient(90deg, rgba(0,211,255,1) 0%, rgba(12,141,242,1) 66%, rgba(22,125,207,1) 99%);
+            /* background: linear-gradient(90deg, rgba(0,211,255,1) 0%, rgba(12,141,242,1) 66%, rgba(22,125,207,1) 99%); */
+            background: #003060!important;
             color: white;
             margin-top: 20px;
         }
@@ -320,7 +321,7 @@
     <nav class="topnav navbar navbar-expand shadow navbar-light bg-white show" id="sidenavAccordion">
         @*         <a class="navbar-brand" href="/Home/index"><img src="~/Images/dgis_ico.png"></a>
         <div class="ml-4 text-center tagline"><img src="~/Images/EISAC.png" width="80%"></div> *@
-        <div class="text-center tagline"><img src="~/Images/EISAC.png" width="100%" height="100"></div>
+        <div class="text-center tagline"><img src="~/Images/EISAC.png" width="100%" height="110px"></div>
         @* <span class="tagline ml-4 text-center"> Enterprise - Independent Active Secure Access Card (E-IASAC)</span> *@
         @*  <a class="navbar-brand text-center" href="#"><img src="~/Images/EISAC.png"></a> *@
 
@@ -477,7 +478,7 @@
             @RenderSection("Modal", required: false)
         </div>
     }
-    <footer class="p-3 fixed-bottom">
+    <footer class="p-2 fixed-bottom">
         <section class="page_copyright ls section_padding_25">
             <div class="container">
                 <div class="row">
@@ -534,7 +535,7 @@
     <script asp-src-include="~/js/datatables/responsive.bootstrap4.min.js"></script>
     <script asp-src-include="~/js/datatables/dataTables.buttons.min.js"></script>
     <script asp-src-include="~/js/datatables/buttons.bootstrap4.min.js"></script>
-    <script asp-src-include="~/js/datatables/jszip.min.js"></script>
+@*     <script asp-src-include="~/js/datatables/jszip.min.js"></script> *@
     <script asp-src-include="~/js/datatables/pdfmake.min.js"></script>
     <script asp-src-include="~/js/datatables/vfs_fonts.js"></script>
     <script asp-src-include="~/js/datatables/buttons.html5.min.js"></script>
