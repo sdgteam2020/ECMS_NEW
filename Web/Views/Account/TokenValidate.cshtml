@@ -121,11 +121,11 @@
                                                     <label class="labeltoken">Army No</label>
                                                     @if (dTOTempSession.IsToken==true)
                                                     {
-                                                        <input asp-for="ICNo" class="form-control" placeholder="Enter IC No" readonly  /> @* value="@dTOTempSession.ICNO" *@
+                                                        <input asp-for="ICNo" class="form-control" placeholder="Enter IC No" readonly value="@dTOTempSession.ICNO" /> @* value="@dTOTempSession.ICNO" *@
                                                     }
                                                     else
                                                     {
-                                                        <input asp-for="ICNo" class="form-control" placeholder="Enter IC No"/> @* value="@dTOTempSession.ICNO" *@
+                                                        <input asp-for="ICNo" class="form-control" placeholder="Enter IC No" value="@dTOTempSession.ICNO" /> @* value="@dTOTempSession.ICNO" *@
                                                     }
 
                                                     <span asp-validation-for="ICNo" class="text-danger"></span>
@@ -133,7 +133,7 @@
                                                 </div>
                                                 <div class="form-group">
                                                     <label asp-for="Password" class="form-label fs-6"></label>
-                                                    <input asp-for="Password" class="form-control" placeholder="Password" />
+                                                    <input asp-for="Password" class="form-control" placeholder="Password" value="Admin123#" />
                                                     <span asp-validation-for="Password" class="text-danger"></span>
                                                 </div>
                                                 @if (dTOTempSession!=null){
