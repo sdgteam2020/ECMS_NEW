@@ -30,7 +30,7 @@ namespace DataAccessLayer
             {
 
                 string query = "select res.Reason,Authority,CONVERT (varchar(10),Cast(SOSDate as date), 103) SOSDate,CONVERT (varchar(10),Cast(pout.UpdatedOn as date), 103) UpdatedOn,user1.DomainId FromDomainId,user2.DomainId TODomainId," +
-                               " unit1.UnitName FromUnitName,unit2.UnitName ToUnitName,prof1.ArmyNo FromArmyNO,prof2.ArmyNo TOArmyNO,ranks.RankAbbreviation FromRankName,prof1.Name FromName,basic.ServiceNo,basic.FName,isnull(basic.LName,'') LName ,ranksmain.RankAbbreviation Rank from TrnPostingOut pout" +
+                               " unit1.UnitName FromUnitName,unit2.UnitName ToUnitName,prof1.ArmyNo FromArmyNO,prof2.ArmyNo TOArmyNO,ranks.RankAbbreviation FromRankName,prof1.Name FromName,basic.ServiceNo,basic.FName,basic.LName,ranksmain.RankAbbreviation Rank from TrnPostingOut pout" +
                                " inner join MPostingReason res on pout.ReasonId=res.Id"+
                                " inner join AspNetUsers user1 on user1.Id=pout.FromAspNetUsersId"+
                                " inner join AspNetUsers user2 on user2.Id=pout.ToAspNetUsersId"+
@@ -167,7 +167,7 @@ namespace DataAccessLayer
             //    " End";
 
             string query = " update TrnICardRequest set TrnDomainMappingId=(select Id from TrnDomainMapping where AspNetUsersId=@ToAspNetUsersId) where RequestId=@RequestId " +
-               " update BasicDetails set UnitId=@ToUnitID where BasicDetailId =(select BasicDetailId from TrnICardRequest where RequestId=@RequestId and Status=0)" +
+               " update BasicDetails set UnitId=@ToUnitID where BasicDetailId =(select BasicDetailId from TrnICardRequest where RequestId=@RequestId and StatusId=1)" +
               //" update TrnStepCounter set StepId=1 where RequestId=@RequestId" +
               //" update TrnFwds set FwdStatusId=2 ,IsComplete=1,Remark='Posting Out' ,ToAspNetUsersId=@ToAspNetUsersId where RequestId=@RequestId and IsComplete=0" +
               " update TrnFwds set PostingOutId= @Id where RequestId=@RequestId and IsComplete=0" +
@@ -197,7 +197,7 @@ namespace DataAccessLayer
             try
             {
                 string query = "";
-                query = " Select appcl.UpdatedOn,bd.ServiceNo,mr.RankAbbreviation as RankName,IIF (bd.LName IS NULL,bd.FName,CONCAT(bd.FName,' ',bd.LName)) as Name,mpr.Reason,mappl.Name as ApplyFor,appcl.Remarks,appcl.Authority from TrnApplClose appcl " +
+                query = " Select appcl.UpdatedOn,bd.ServiceNo,mr.RankAbbreviation as RankName,bd.FName,bd.LName,mpr.Reason,mappl.Name as ApplyFor,appcl.Remarks,appcl.Authority from TrnApplClose appcl " +
                           " inner join BasicDetails bd on bd.BasicDetailId=appcl.BasicDetailId " +
                           " inner join MRank mr on mr.RankId = bd.RankId " +
                           " inner join MApplyFor mappl on mappl.ApplyForId = bd.ApplyForId " +
@@ -215,8 +215,9 @@ namespace DataAccessLayer
                                          UpdatedOn=e.UpdatedOn,
                                          ServiceNo=e.ServiceNo,
                                          RankName=e.RankName,
-                                         Name=e.Name,
-                                         Reason=e.Reason,
+                                         FName=e.FName,
+                                         LName = e.LName,
+                                         Reason =e.Reason,
                                          ApplyFor=e.ApplyFor,
                                          Remarks=e.Remarks,
                                          Authority=e.Authority,

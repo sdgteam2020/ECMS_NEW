@@ -147,7 +147,7 @@
                                                 @if (Model.ArmedId > 0)
                                                 {
                                                     <div class="box">
-                                                        <div class="js--image-preview"> <img id="PhotoPath" src="/WriteReadData/photo/@Model.ExistingPhotoImagePath" height="158px" width="180px" /></div>
+                                                        <div class="js--image-preview"> <img id="PhotoPath" src="/WriteReadData/photo/@Model.ExistingPhotoImagePath" height="158px" width="180px" loading="lazy" /></div>
                                                         <div class="upload-options">
                                                             <label>
                                                                 <input asp-for="Photo_" class="form-control" accept="image/jpeg,image/jpg,image/png" />
@@ -158,7 +158,7 @@
                                                 else
                                                 {
                                                     <div class="box">
-                                                        <div class="js--image-preview"> <img id="PhotoPath" src="~/writereaddata/images/noimage.png" height="158px" width="180px" /></div>
+                                                        <div class="js--image-preview"> <img id="PhotoPath" src="~/writereaddata/images/noimage.png" height="158px" width="180px" loading="lazy" /></div>
                                                         <div class="upload-options">
                                                             <label>
                                                                 <input asp-for="Photo_" class="form-control" accept="image/jpeg,image/jpg,image/png" />
@@ -182,10 +182,10 @@
                                                 @if (Model.ArmedId > 0)
                                                 {
                                                     <div class="box_sig">
-                                                        <div class="js--image-preview_sig"> <img id="SignaturePath" src="/WriteReadData/Signature/@Model.ExistingSignatureImagePath" height="80px" width="180px" /></div>
+                                                        <div class="js--image-preview_sig"> <img id="SignaturePath" src="/WriteReadData/Signature/@Model.ExistingSignatureImagePath" height="80px" width="180px" loading="lazy" /></div>
                                                         <div class="upload-options_sign">
                                                             <label>
-                                                                <input asp-for="Signature_" class="form-control" accept="image/jpeg,image/jpg,image/png" />
+                                                                <input asp-for="Signature_" class="form-control" accept="image/jpeg,image/jpg,image/png" loading="lazy" />
                                                             </label>
                                                         </div>
                                                     </div>
@@ -193,7 +193,7 @@
                                                 else
                                                 {
                                                     <div class="box_sig">
-                                                        <div class="js--image-preview_sig">  <img id="SignaturePath" src="~/writereaddata/images/noimage.png" height="80px" width="180px" /></div>
+                                                        <div class="js--image-preview_sig">  <img id="SignaturePath" src="~/writereaddata/images/noimage.png" height="80px" width="180px" loading="lazy" /></div>
                                                         <div class="upload-options_sign">
                                                             <label>
 

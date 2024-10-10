@@ -141,6 +141,16 @@ function Getaspntokenarmyno() {
                     $("#aspndomainUnitID").html(response.UnitId)
                     $("#ProfileName").html(response.Name)
                     $("#ProfileRankName").html(response.RankName)
+
+                    $("#waterarmyno").html(response.ICNO)
+                    $("#waterrank").html(response.RankName)
+                    $("#waterProfileName").html(response.Name)
+                    $("#waterIpaddresGloble").html(response.IpAddress)
+
+                    $("#waterarmyno1").html(response.ICNO)
+                    $("#waterrank1").html(response.RankName)
+                    $("#waterProfileName1").html(response.Name)
+                    $("#waterIpaddresGloble1").html(response.IpAddress)
                 }
             }
         }

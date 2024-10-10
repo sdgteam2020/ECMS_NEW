@@ -10,43 +10,43 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <link rel="icon" type="image/x-icon" href="/images/AFSAC_icon.png">
+    <link rel="icon" type="image/x-icon" asp-href-include="/images/AFSAC_icon.png">
     <meta content='width=device-width, initial-scale=1.0, shrink-to-fit=no' name='viewport' />
     @* <meta http-equiv="content-security-policy"content="default-src 'none'; script-src 'self'; connect-src 'self'; img-src 'self'; style-src 'self' 'sha256-CwE3Bg0VYQOIdNAkbB/Btdkhul49qZuwgNCMPgNY5zw=';" /> *@
     <title> E-ISAC</title>
 
-    <link href="~/fonts/css/all.min.css" rel="stylesheet" />
-    <link href="~/css/nunito.css" rel="stylesheet" />
-    <link href="~/css/roboto.css" rel="stylesheet" />
+    <link asp-href-include="~/fonts/css/all.min.css" rel="stylesheet" />
+    <link asp-href-include="~/css/nunito.css" rel="stylesheet" />
+    <link asp-href-include="~/css/roboto.css" rel="stylesheet" />
 
-    <link href="~/sweetalert2/sweetalert2.min.css" rel="stylesheet" />
-    <link href="~/css/bootstrap-datetimepicker.min.css" rel="stylesheet" />
-    <link href="~/datatables/dataTables.bootstrap4.min.css" rel="stylesheet" />
-    <link href="~/datatables/responsive.bootstrap4.min.css" rel="stylesheet" />
-    <link href="~/datatables/responsive.dataTables.min.css" rel="stylesheet" />
-    <link href="~/datatables/buttons.bootstrap4.min.css" rel="stylesheet" />
-    <link href="~/datatables/fixedHeader.dataTables.min.css" rel="stylesheet" />
-    <link href="~/datatables/jquery.dataTables.min.css" rel="stylesheet" />
-    <link href="~/css/style.css" rel="stylesheet" />
-    <link href="~/css/extra.css" rel="stylesheet" />
-    <link href="~/css/background.css" rel="stylesheet" />
-    <link href="~/css/typography.css" rel="stylesheet" />
-    <link href="~/select2/css/select2.min.css" rel="stylesheet" />
-    <link href="~/css/cssStyle.css" rel="stylesheet" />
+    <link asp-href-include="~/sweetalert2/sweetalert2.min.css" rel="stylesheet" />
+    <link asp-href-include="~/css/bootstrap-datetimepicker.min.css" rel="stylesheet" />
+    <link asp-href-include="~/datatables/dataTables.bootstrap4.min.css" rel="stylesheet" />
+    <link asp-href-include="~/datatables/responsive.bootstrap4.min.css" rel="stylesheet" />
+    <link asp-href-include="~/datatables/responsive.dataTables.min.css" rel="stylesheet" />
+    <link asp-href-include="~/datatables/buttons.bootstrap4.min.css" rel="stylesheet" />
+    <link asp-href-include="~/datatables/fixedHeader.dataTables.min.css" rel="stylesheet" />
+    <link asp-href-include="~/datatables/jquery.dataTables.min.css" rel="stylesheet" />
+    <link asp-href-include="~/css/style.css" rel="stylesheet" />
+    <link asp-href-include="~/css/extra.css" rel="stylesheet" />
+    <link asp-href-include="~/css/background.css" rel="stylesheet" />
+    <link asp-href-include="~/css/typography.css" rel="stylesheet" />
+    <link asp-href-include="~/select2/css/select2.min.css" rel="stylesheet" />
+    <link asp-href-include="~/css/cssStyle.css" rel="stylesheet" />
     @*  <link href="~/css/cssStyle.css" rel="stylesheet" /> *@
 
 
 
-    <link href="~/css/horizontaltimeline.css" rel="stylesheet" />
+    <link asp-href-include="~/css/horizontaltimeline.css" rel="stylesheet" />
 
     <script asp-src-include="~/fonts/feather/feather.min.js"></script>
     <script asp-src-include="~/fonts/allfont/webfont.min.js"></script>
-    <link href="~/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
-    <link href="~/lib/jqueryui/themes/base/jquery-ui.min.css" rel="stylesheet" />
+    <link asp-href-include="~/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+    <link asp-href-include="~/lib/jqueryui/themes/base/jquery-ui.min.css" rel="stylesheet" />
 
-    <link href="~/toastr/toastr.min.css" rel="stylesheet" />
-    <link href="~/css/main.css" rel="stylesheet" />
-    <link href="~/css/DashBoard.css" rel="stylesheet" />
+    <link asp-href-include="~/toastr/toastr.min.css" rel="stylesheet" />
+    <link asp-href-include="~/css/main.css" rel="stylesheet" />
+    <link asp-href-include="~/css/DashBoard.css" rel="stylesheet" />
 
     <script asp-src-include="~/lib/jquery/jquery.js"></script>
     <script asp-src-include="~/lib/jquery-validate/jquery.validate.js" defer></script>
@@ -270,10 +270,82 @@
             text-decoration: none !important;
             color: white;
         }
+
+
+        .watermark {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            opacity: 0.2;
+            z-index: 1000;
+            pointer-events: none;
+            text-align: center;
+            margin-top: 6rem;
+        }
+
+        .watermark1 {
+            position: fixed;
+            top: 50%;
+            left: 12%;
+            transform: translate(-25%, -20%) rotate(-45deg);
+            opacity: 0.6;
+            z-index: 1000;
+            pointer-events: none;
+            text-align: left;
+            margin-top: 6rem;
+        }
+
+        .watermark2 {
+            position: fixed;
+            top: 50%;
+            right: 12%;
+            transform: translate(-25%, -20%) rotate(-45deg);
+            opacity: 0.6;
+            z-index: 1000;
+            pointer-events: none;
+            text-align: right;
+            margin-top: 6rem;
+        }
+
+        .watermark img {
+            width: 150px;
+        }
+
+        .watermark h4, .watermark span {
+            margin: 0;
+            font-size: 14px;
+            color: rgba(50, 50, 50, 0.8);
+        }
+
+        .watermark img {
+            width: 400px;
+            height: 400px;
+        }
+
     </style>
 
 </head>
 <body class="nav-fixed sidenav-toggled">
+    <div class="watermark">
+        <div>
+            <img src="/Images/dgislogo.png" alt="Watermark" loading="lazy">
+        </div>
+    </div>
+@*     <div class="watermark1">
+        <h4 id="waterIpaddresGloble" style="font-size:22px;"></h4>
+        <span id="waterarmyno" style="font-size:22px;"></span><br>
+        <span id="waterrank" style="font-size:22px;"></span>
+        <span id="waterProfileName" style="font-size:22px;"></span>
+    </div> *@
+
+@*     <div class="watermark2">
+        <h4 id="waterIpaddresGloble1" style="font-size:22px;"></h4>
+        <span id="waterarmyno1" style="font-size:22px;"></span><br>
+        <span id="waterrank1" style="font-size:22px;"></span>
+        <span id="waterProfileName1" style="font-size:22px;"></span>
+    </div> *@
+
     @*   <div id="loading" class="loader">
     <div class="loader-container">
     <img src="/Images/load.gif" width="100">
@@ -321,7 +393,8 @@
     <nav class="topnav navbar navbar-expand shadow navbar-light bg-white show" id="sidenavAccordion">
         @*         <a class="navbar-brand" href="/Home/index"><img src="~/Images/dgis_ico.png"></a>
         <div class="ml-4 text-center tagline"><img src="~/Images/EISAC.png" width="80%"></div> *@
-        <div class="text-center tagline"><img src="~/Images/EISAC.png" width="100%" height="110px"></div>
+        <div class="text-start"><img src="~/Images/ASDC_Log.png" height="115px"></div>
+        <div class="text-center tagline"><img src="~/Images/EISAC.png" width="75%" height="100px"></div>
         @* <span class="tagline ml-4 text-center"> Enterprise - Independent Active Secure Access Card (E-IASAC)</span> *@
         @*  <a class="navbar-brand text-center" href="#"><img src="~/Images/EISAC.png"></a> *@
 
@@ -522,10 +595,10 @@
     </script>
 
     <script asp-src-include="~/lib/jqueryui/jquery-ui.min.js"></script>
-    <script src="~/js/bootstrap.bundle.min.js"></script>
+    <script asp-src-include="~/js/bootstrap.bundle.min.js"></script>
     <script asp-src-include="~/bootstrap/js/bootstrap.bundle.min.js"></script>
 
-    <script src="~/js/scripts.js"></script>
+    <script asp-src-include="~/js/scripts.js"></script>
     <script asp-src-include="~/select2/js/select2.min.js"></script>
 
     <script asp-src-include="~/js/datatables/jquery.datatables.min.js"></script>
@@ -549,8 +622,8 @@
     <script asp-src-include="~/developerjs/layout.js"></script>
     <script asp-src-include="~/developerjs/keyconstants.js"></script>
     <script asp-src-include="~/developerjs/commanvalidation.js"></script>
-    <script src="~/developerjs/icardhistory.js"></script>
-    <script src="~/developerjs/pagevalidation.js"></script>
+    <script asp-src-include="~/developerjs/icardhistory.js"></script>
+    <script asp-src-include="~/developerjs/pagevalidation.js"></script>
     @RenderSection("Scripts", false)
 
 
