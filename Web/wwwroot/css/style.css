@@ -19711,7 +19711,7 @@ body {
 
     .page-header .page-header-content .page-header-title {
         line-height: normal;
-        font-size: 1.5rem;
+        font-size: 1.25rem;
         font-weight: 500;
         display: flex;
         align-items: center;
@@ -22774,6 +22774,20 @@ a.bg-alternate:hover, a.bg-alternate:focus, button.bg-alternate:hover, button.bg
 
 .width100px {
     width: 100px;
+}
+
+.nav-pills .nav-link {
+    border-radius: 1px !important;
+    margin-top: 8px;
+    color: #fff !important;
+}
+
+
+
+.nav-pills .nav-link:hover {
+    color: #fff !important;
+    border-radius: 3px; 
+    padding: 1.5px; 
 }
 
 /*.nav-pills .nav-link {
