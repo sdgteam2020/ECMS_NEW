@@ -1,32 +1,20 @@
 ﻿@model IEnumerable<DataTransferObject.Response.DTOPostingOutDetilsResponse>
 
 @{
-
     ViewData["Title"] = "GetAllPostingOut";
 }
-@* <script src="https://cdn.rawgit.com/eKoopmans/html2pdf/0.9.2/dist/html2pdf.bundle.js"></script> *@
-
 <div class="container1">
     <div class="card mb-3 ">
         <div class="card-header">
-
-
             <div class="row">
                 <div class="col-xl-12 text-left">
                     <h3>
                         Posting Out Details
                         <small class="text-muted"></small>
-
-
                     </h3>
                 </div>
-
-
             </div>
         </div>
-
-
-
         <div class="card-body">
             <div class="row">
                 <div class="col-xl-12">
@@ -74,11 +62,8 @@
                                         @Html.DisplayFor(modelItem => item.ServiceNo)
                                         <br>
                                         @Html.DisplayFor(modelItem => item.Rank)
-
-
                                         @Html.DisplayFor(modelItem => item.FName) 
                                         @Html.DisplayFor(modelItem => item.LName)
-
                                         @* @Html.DisplayFor(modelItem => item.FromDomainId) *@
                                     </td>
                                     <td>
@@ -111,6 +96,4 @@
             </div>
         </div>
     </div>
-
-</div>
 </div>

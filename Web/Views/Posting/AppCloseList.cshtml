@@ -53,7 +53,7 @@
                                     <tr>
                                         <td>@item.Sno</td>
                                         <td>@item.UpdatedOn</td>
-                                        <td>@item.ServiceNo <br/>@item.RankName @item.Name</td>
+                                        <td>@item.ServiceNo <br />@item.RankName @(item.LName == null ? item.FName : item.FName + " " + item.LName)</td>
                                         <td>@item.ApplyFor </td>
                                         <td>@item.Reason</td>
                                         <td>@item.Remarks</td>

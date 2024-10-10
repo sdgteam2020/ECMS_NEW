@@ -9,21 +9,21 @@ namespace DataTransferObject.Response
 {
     public class DTOPostingOutDetilsResponse
     {
-        public string ServiceNo { get; set; }
+        public string ServiceNo { get; set; } = string.Empty;
         public string FName { get; set; } = string.Empty;
         public string? LName { get; set; }
-        public string Rank { get; set; }
-        public string Reason { get; set; }
-        public string Authority { get; set; }
-        public string SOSDate { get; set; }
-        public string UpdatedOn { get; set; }
-        public string FromDomainId { get; set; }
-        public string FromUnitName { get; set; }
-        public string FromArmyNO { get; set; }
-        public string FromName { get; set; }
-        public string FromRankName { get; set; }
-        public string ToDomainId { get; set; }
-        public string ToUnitName { get; set; }
-        public string ToArmyNO { get; set; }
+        public string Rank { get; set; } = string.Empty;
+        public string Reason { get; set; } = string.Empty;
+        public string Authority { get; set; } = string.Empty;
+        public string SOSDate { get; set; } = string.Empty;
+        public string UpdatedOn { get; set; } = string.Empty;
+        public string FromDomainId { get; set; } = string.Empty;
+        public string FromUnitName { get; set; } = string.Empty;
+        public string FromArmyNO { get; set; } = string.Empty;
+        public string FromName { get; set; } = string.Empty;
+        public string FromRankName { get; set; } = string.Empty;
+        public string ToDomainId { get; set; } = string.Empty;
+        public string ToUnitName { get; set; } = string.Empty;
+        public string ToArmyNO { get; set; } = string.Empty;
     }
 }

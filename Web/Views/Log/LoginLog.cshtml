@@ -3,9 +3,9 @@
 @{
     ViewData["Title"] = "LoginLog";
 }
-<link href="~/css/offrstimeline.css" rel="stylesheet" />
-@* <link rel="stylesheet" href="https://maxcdn.icons8.com/fonts/line-awesome/1.1/css/line-awesome.min.css"> *@
-<link href="~/css/horizontaltimeline.css" rel="stylesheet" />
+<link asp-href-include="~/css/offrstimeline.css" rel="stylesheet" />
+@* <link rel="stylesheet" asp-href-include="https://maxcdn.icons8.com/fonts/line-awesome/1.1/css/line-awesome.min.css"> *@
+<link asp-href-include="~/css/horizontaltimeline.css" rel="stylesheet" />
 <header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
     <div class="containerMain">
         <div class="page-header-content pt-4">
@@ -122,7 +122,7 @@
 
     </div>
 </div>
-<script src="~/developerjs/loginlog.js"></script>
+<script asp-src-include="~/developerjs/loginlog.js"></script>
 
 <div class="modal fade" id="modalLoginLog" aria-hidden="true" aria-labelledby="exampleModalToggleLabel" tabindex="-1">
     <div class="modal-dialog modal-lg modal-dialog-scrollable">
