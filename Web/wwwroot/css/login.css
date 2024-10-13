@@ -48,6 +48,47 @@ h6 {
 h1 {
     font-size: 36px;
 }
+.watermark {
+    position: fixed;
+    top: 47%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0.1;
+    z-index: 1000;
+    pointer-events: none;
+    text-align: center;
+    margin-top: 6rem;
+}
+
+    .watermark img {
+        width: 150px;
+    }
+
+    .watermark h4, .watermark span {
+        margin: 0;
+        font-size: 14px;
+        color: rgba(50, 50, 50, 0.8);
+    }
+
+    .watermark img {
+        width: 700px;
+        height: 700px;
+    }
+
+footer {
+    font-weight: 700 !important;
+    text-align: center;
+    padding: 2px;
+    background: #003060 !important;
+    color: white;
+    margin-top: 20px;
+}
+footer-content {
+    font-weight: 400 !important;
+    font-family: 'Roboto', sans-serif !important;
+    margin: 0 0 0 0 !important;
+    color: white !important;
+}
 
 @media only screen and (max-width: 1199px) {
     h1 {
