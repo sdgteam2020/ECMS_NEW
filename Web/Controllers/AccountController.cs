@@ -1137,25 +1137,17 @@ namespace Web.Controllers
         [AllowAnonymous]
         public IActionResult IMLogin()
         {
-
-            int userid = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
             DTOTempSession? dTOTempSession = SessionHeplers.GetObject<DTOTempSession>(HttpContext.Session, "Token");
-            //List<string> RoleNameList = new List<string>() { "User"};
-            //if (dTOTempSession != null)
-            //{
-            //    if (RoleNameList.Contains(dTOTempSession.RoleName))
-            //    {
-            //        return RedirectToActionPermanent("Index", "Home");
-            //    }
-            //    else if (dTOTempSession.RoleName.ToUpper() == "ADMIN")
-            //    {
-            //        return RedirectToActionPermanent("DashboardMaster", "Master");
-            //    }
-            //    else if (dTOTempSession.RoleName == "Super Admin")
-            //    {
-            //        return RedirectToActionPermanent("Index", "Account");
-            //    }
-            //}
+            DTOTempSession? dTOTempSession1 = SessionHeplers.GetObject<DTOTempSession>(HttpContext.Session, "IMData");
+            if (dTOTempSession != null)
+            {
+                HttpContext.Session.Remove("Token");
+            }
+
+            if (dTOTempSession1 != null)
+            {
+                HttpContext.Session.Remove("IMData");
+            }
             return View();
         }
         [HttpPost]
