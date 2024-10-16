@@ -69,10 +69,12 @@ namespace Web.Controllers
         private readonly ILogger<AccountController> _logger;
         private readonly IMapper _mapper;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IConfiguration _configuration;
 
-        public AccountController(IUnitOfWork unitOfWork,IUnitBL unitBL, IAccountBL iAccountBL , IDomainMapBL iDomainMapBL, IUserProfileBL userProfileBL, IMapUnitBL mapUnitBL, RoleManager<ApplicationRole> roleManager, iGetTokenBL iGetTokenBL, UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, ApplicationDbContext context, ApplicationDbContext contextTransaction,
+        public AccountController(IConfiguration configuration,IUnitOfWork unitOfWork,IUnitBL unitBL, IAccountBL iAccountBL , IDomainMapBL iDomainMapBL, IUserProfileBL userProfileBL, IMapUnitBL mapUnitBL, RoleManager<ApplicationRole> roleManager, iGetTokenBL iGetTokenBL, UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, ApplicationDbContext context, ApplicationDbContext contextTransaction,
             IDataProtectionProvider dataProtectionProvider, IService service, IMapper mapper, DataProtectionPurposeStrings dataProtectionPurposeStrings, ILogger<AccountController> logger, ITrnLoginLogBL trnLoginLogBL, IHttpContextAccessor httpContextAccessor)
         {
+            _configuration = configuration;
             this.roleManager = roleManager;
             this.userManager = userManager;
             this.signInManager = signInManager;
@@ -1137,6 +1139,9 @@ namespace Web.Controllers
         [AllowAnonymous]
         public IActionResult IMLogin()
         {
+            string? Footer = _configuration["Footer:Test"];
+            ViewBag.Footer = Footer;
+
             DTOTempSession? dTOTempSession = SessionHeplers.GetObject<DTOTempSession>(HttpContext.Session, "Token");
             DTOTempSession? dTOTempSession1 = SessionHeplers.GetObject<DTOTempSession>(HttpContext.Session, "IMData");
             if (dTOTempSession != null)
@@ -1154,6 +1159,8 @@ namespace Web.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> IMLogin(DTOIMLoginRequest model)
         {
+            string? Footer = _configuration["Footer:Test"];
+            ViewBag.Footer = Footer;
             if (ModelState.IsValid)
             {
                 DTOTempSession dTOTempSession = new DTOTempSession();
@@ -1309,6 +1316,9 @@ namespace Web.Controllers
         [AllowAnonymous]
         public IActionResult TokenValidate()
         {
+            string? Footer = _configuration["Footer:Test"];
+            ViewBag.Footer = Footer;
+
             string dd = AESEncrytDecry.GetSalt();  // "8080808080808080"; //protector.Protect("1");
             HttpContext.Session.SetString(SessionKeySalt, dd);
             ViewBag.hdns = dd;
@@ -1379,6 +1389,9 @@ namespace Web.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> TokenValidate(DTOTokenRequest model)
         {
+            string? Footer = _configuration["Footer:Test"];
+            ViewBag.Footer = Footer;
+
             string? dd = HttpContext.Session.GetString(SessionKeySalt);
             if(dd!=null)
             {
@@ -1587,6 +1600,8 @@ namespace Web.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Profile()
         {
+            string? Footer = _configuration["Footer:Test"];
+            ViewBag.Footer = Footer;
             ///////Cookie With Secure Flag////////////////////////
             var cookieOptions = new CookieOptions
             {
@@ -1673,6 +1688,9 @@ namespace Web.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Profile(DTOProfileAndMappingRequest model)
         {
+            string? Footer = _configuration["Footer:Test"];
+            ViewBag.Footer = Footer;
+
             DTOTempSession? dTOTempSession = SessionHeplers.GetObject<DTOTempSession>(HttpContext.Session, "IMData");
             model.UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
             if (dTOTempSession != null)

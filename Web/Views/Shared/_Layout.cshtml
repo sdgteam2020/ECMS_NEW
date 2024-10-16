@@ -4,6 +4,7 @@
 @inject SignInManager<ApplicationUser> signInManager;
 @inject UserManager<ApplicationUser> userManager;
 @inject IHttpContextAccessor HttpContextAccessor
+@inject IConfiguration configuration;
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -377,6 +378,11 @@
 
         }
         var RoleName = dtoSession != null ? dtoSession.RoleName : "User";
+        if (!string.IsNullOrEmpty(@configuration["Footer:Test"]))
+        {
+            string? Footer = @configuration["Footer:Test"];
+            ViewBag.Footer = Footer;
+        }
 
     }
     <div class="watermark yes-print"></div>
@@ -557,7 +563,10 @@
                 <div class="row">
                     <div class="col-sm-12 text-center darklinks">
                         <h6 class="font-weight-500">
-                            Copyright © 2024. Developed by Army Software Development Centre, DGIS; Sponsor Dte : DGMI
+                            @if (ViewBag.Footer != null)
+                            {
+                                @ViewBag.Footer
+                            }
                         </h6>
                     </div>
                 </div>
