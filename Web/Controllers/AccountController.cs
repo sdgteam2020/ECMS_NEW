@@ -1379,10 +1379,15 @@ namespace Web.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> TokenValidate(DTOTokenRequest model)
         {
-            string dd = HttpContext.Session.GetString(SessionKeySalt);
-            csConst.cSalt = dd;
-            string Password = AESEncrytDecry.DecryptStringAES(model.Password);
-            model.Password = Password;
+            string? dd = HttpContext.Session.GetString(SessionKeySalt);
+            if(dd!=null)
+            {
+                csConst.cSalt = dd;
+                string Password = AESEncrytDecry.DecryptStringAES(model.Password);
+                model.Password = Password;
+            }
+
+
             ///////Cookie With Secure Flag////////////////////////
             var cookieOptions = new CookieOptions
             {
