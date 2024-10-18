@@ -1842,7 +1842,16 @@ namespace Web.Controllers
                 
                 if (Data.DataExportType == 1)
                 {
+                    string sourceFolder = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "ExportAFSACCell", "Temp");
+                    // Check if directory exists
+                    if (!Directory.Exists(sourceFolder))
+                    {
+                        // If directory does not exist, create it
+                        Directory.CreateDirectory(sourceFolder);
+                    }
+
                     string tempZipFilePath = Convert.ToString(Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "ExportAFSACCell","Temp"));
+
                     ZipEncrypt.EncryptAndZip(sourceFolderPhotoPhy, sourceFolderPhotoPhy+ ".zip", tempZipFilePath, Data.publicKey); // Encrypt and zip folder
                     //ZipDecrypt.DecryptAndUnzip(sourceFolderPhotoPhy + ".zip", tempZipFilePath, tempZipFilePath, Data.privateKey); // Decrypt and unzip folder
                     //Encrypt.EncryptParameter(jsonde.ToString())

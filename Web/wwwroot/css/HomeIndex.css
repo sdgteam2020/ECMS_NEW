@@ -34,6 +34,9 @@
 .slide3 {
     background-image: url('/images/slider/indian-army  3.jpg');
 }
+.slide4 {
+    background-image: url('/images/slider/indian-army4.jpg');
+}
 
 .slide-content {
     display: flex;
