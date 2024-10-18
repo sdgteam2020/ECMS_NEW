@@ -23,18 +23,10 @@
                 <div class="col-auto">
                     <h1 class="page-header-title">
                         <div class="page-header-icon"> <i class="fa fa-bars"></i></div>
-                     
-                            <div>
+
+                        <div>
                             <span id="Isspnjcoor" class="d-none">@ViewBag.jcoor</span>
                             @if (Convert.ToString(ViewBag.jcoor) == "1")
-                            {
-                                <span>
-                                    <a href="/Home/Index" class="mr-2">Home</a> > 
-                                    <a href="/Home/Task" class="mr-2">Task</a> >
-                                    <a href="/Home/MyTask/SkNPc1BlbmRpbmc=" class="mr-2">I-Card Status</a>  >
-                                    @ViewBag.Title</span>
-
-                            }else
                             {
                                 <span>
                                     <a href="/Home/Index" class="mr-2">Home</a> >
@@ -42,16 +34,21 @@
                                     <a href="/Home/MyTask/T2ZmcnNQZW5kaW5n" class="mr-2">I-Card Status</a>  >
                                     @ViewBag.Title
                                 </span>
+
                             }
-
-
+                            else
+                            {
+                                <span>
+                                    <a href="/Home/Index" class="mr-2">Home</a> >
+                                    <a href="/Home/Task" class="mr-2">Task</a> >
+                                    <a href="/Home/MyTask/SkNPc1BlbmRpbmc=" class="mr-2">I-Card Status</a>  >
+                                    @ViewBag.Title
+                                </span>
+                            }
                         </div>
-                       
-
                     </h1>
                 </div>
             </div>
-
         </div>
     </div>
 </header>
@@ -82,11 +79,11 @@
                                     <button type="button" id="btnDataExportsEncry" class="btn btn-warning font-weight-600 btn-sm mr-2">Data Exports with Encry</button>
                                     <button type="button" id="btnDataExports" class="btn btn-warning font-weight-600 btn-sm">Data Exports without Encry</button>
                                 }
-@* 
-                                @if (ViewBag.dataexport == 4)
-                                {
-                                    <button type="button" id="btnMultipleForward" class="btn btn-warning font-weight-600 btn-sm">Multiple Forward</button>
-                                } *@
+                                @*
+                            @if (ViewBag.dataexport == 4)
+                            {
+                            <button type="button" id="btnMultipleForward" class="btn btn-warning font-weight-600 btn-sm">Multiple Forward</button>
+                            } *@
 
                             </div>
 
@@ -96,14 +93,14 @@
                         <button type="button" id="btnCSVDownload" class="btn btn-warning font-weight-600 btn-sm mb-2">CSV Download</button>
                         @if (ViewBag.StepCounter == 3 && claims.Count > 0 && claims.Any(i => i.Value == "Internal Wk Distr"))
                         {
-                                <button type="button" id="btnInternalFwd" class="btn btn-warning font-weight-600 btn-sm mb-2 ml-2">Forward</button>
+                            <button type="button" id="btnInternalFwd" class="btn btn-warning font-weight-600 btn-sm mb-2 ml-2">Forward</button>
                         }
                     </div>
                     <div class="table-responsive">
                         <table id="tbldatatableForApprovalIO" class="table border border-purple table-striped no-footer dataTable table-hover" style="width:100%">
                             <thead>
                                 <tr>
-@*                                     @if ((ViewBag.dataexport == 5 || ViewBag.dataexport == 4) || (claims.Count > 0 && claims.Any(i => i.Value == "Internal Wk Distr")))
+                                    @*                                     @if ((ViewBag.dataexport == 5 || ViewBag.dataexport == 4) || (claims.Count > 0 && claims.Any(i => i.Value == "Internal Wk Distr")))
                                     {
 
                                     } *@
@@ -118,8 +115,8 @@
                                     <th>Rank</th>
                                     <th>Name</th>
                                     <th>Unit</th>
-                                    
-                                   @*  <th>@Html.DisplayNameFor(model => model[0].DOB)</th>
+
+                                    @*  <th>@Html.DisplayNameFor(model => model[0].DOB)</th>
                                     <th>@Html.DisplayNameFor(model => model[0].DateOfCommissioning)</th>
                                     <th>@Html.DisplayNameFor(model => model[0].PermanentAddress)</th> *@
                                     <th>Appl Id </th>
@@ -156,10 +153,10 @@
                                         <td>@item.RankName</td>
                                         <td>@item.FName @(item.LName == null ? "" : item.LName)</td>
                                         <td class="UnitName">@item.UnitName</td>
-                                        
-                                      @*   <td>@item.DOB.ToString("dd/MMM/yyyy")</td>
-                                        <td>@item.DateOfCommissioning.ToString("dd/MMM/yyyy")</td>
-                                        <td>@item.PermanentAddress</td> *@
+
+                                        @*   <td>@item.DOB.ToString("dd/MMM/yyyy")</td>
+                                    <td>@item.DateOfCommissioning.ToString("dd/MMM/yyyy")</td>
+                                    <td>@item.PermanentAddress</td> *@
                                         <td>@item.TrackingId</td>
                                         <td>@item.ApplyFor </td>
                                         <td>@item.ICardType</td>
@@ -176,9 +173,9 @@
                                                 <spna class="spnApplyFor d-none">@item.ApplyForId</spna>
                                                 <span class="spnRegistrationApplyFor d-none">@item.RegistrationApplyFor</span>
                                                 <span class="spnServiceNo d-none">@item.ServiceNo</span>
-                                                @if (ViewBag.Id == 1 && (item.StepCounter == 2 || item.StepCounter == 3 ))
+                                                @if (ViewBag.Id == 1 && (item.StepCounter == 2 || item.StepCounter == 3))
                                                 {
-                                                   
+
                                                     <button class="btn btn-primary mr-1 fwdrecord">Verify And Send</button>
                                                     @* <button class="btn btn-danger mr-1 Rejectdrecord">Rejected</button> *@
                                                 }
@@ -205,15 +202,10 @@
     </div>
 </div>
 
-@section Scripts{
+@section Scripts {
     <script asp-src-include="~/js/CustomScript.js"></script>
     <script asp-src-include="~/developerjs/fwdrecord.js"></script>
     <script asp-src-include="~/developerjs/ICardPrint.js"></script>
     <script asp-src-include="~/developerjs/token.js"></script>
     <script asp-src-include="~/developerjs/mtables.js"></script>
-}@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
 }
-
