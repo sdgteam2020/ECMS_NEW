@@ -1,4 +1,4 @@
-﻿$(document).ready(function () {
+﻿$(function () {
     $(function () {
         var dtToday = new Date();
 
@@ -85,10 +85,10 @@
         appendTo: '#suggesstion-box'
     });
 
-    $("#ddlaspnetiserpostout").change(function () {
+    $("#ddlaspnetiserpostout").on("change",function () {
         GetByArmyNo($("#ddlaspnetiserpostout").val());
     });
-    $("#btnPostingOut").click(function () {
+    $("#btnPostingOut").on("click",function () {
         if ($("#SaveForm")[0].checkValidity()) {
 
             Swal.fire({

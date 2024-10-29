@@ -301,7 +301,8 @@ namespace Web.Controllers
                 document.SetMargins(36, 36, 36, 36);
                 document.SetFontSize(12f);
                 PdfFont boldFont = PdfFontFactory.CreateFont(StandardFonts.HELVETICA_BOLD);
-                Paragraph header = new Paragraph("I-Card Processs Digital Signature").SetTextAlignment(TextAlignment.CENTER).SetFontSize(20);
+                Paragraph header = new Paragraph("I-Card Process" +
+                    " Digital Signature").SetTextAlignment(TextAlignment.CENTER).SetFontSize(20);
 
                 document.Add(header);
 
