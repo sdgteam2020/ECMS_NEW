@@ -1,0 +1,107 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<DigitalSignature2>
+  <DigitalSignature1>
+    <Header>
+      <applicationDetails>
+        <PaperIcardNo>e12345678901</PaperIcardNo>
+        <Name>JASJEET SINGH</Name>
+        <RankName>Lt  Col</RankName>
+        <ArmedName>SIGS</ArmedName>
+        <ServiceNo>IC71150W</ServiceNo>
+        <DOB>1982-11-18T00:00:00</DOB>
+        <Height>166</Height>
+        <AadhaarNo>226553604739</AadhaarNo>
+        <BloodGroup>AB+</BloodGroup>
+        <RegimentalName />
+        <UnitName>MI 11</UnitName>
+        <PlaceOfIssue>MI 11</PlaceOfIssue>
+        <DateOfIssue />
+        <IssuingAuth>Cdr</IssuingAuth>
+        <UploadId>0</UploadId>
+        <SignatureImagePath>2024\November\04/IC71150W.png</SignatureImagePath>
+        <PhotoImagePath>2024\November\04/IC71150W.png</PhotoImagePath>
+        <DateOfCommissioning>2000-11-18T00:00:00</DateOfCommissioning>
+        <PermanentAddress />
+        <StatusLevel>0</StatusLevel>
+        <ApplyFor />
+        <State>UP</State>
+        <District>Muzaffarnagar</District>
+        <PS>New Mandi</PS>
+        <PO>New Mandi</PO>
+        <Tehsil>Sadar</Tehsil>
+        <Village>Muzaffarnagar</Village>
+        <PinCode>251001</PinCode>
+        <IdenMark1>A RAISED MOLE ON CHEST 2CM FROM RT NIPPLE AT 7 O CLOCK</IdenMark1>
+        <IdenMark2>A RAISED MOLE ON NECK 4.5 AM ABOVE INNER THIRD OF LT COLLER BONE</IdenMark2>
+        <ICardType>First time Smart card</ICardType>
+        <XmlCreatedOn>2024-11-04T16:51:05.567</XmlCreatedOn>
+      </applicationDetails>
+      <profiledtls>
+        <ProApplyFor>Offrs</ProApplyFor>
+        <ProRegistraion>Self </ProRegistraion>
+        <ProType>First time Smart card</ProType>
+        <ProDomainId>User501</ProDomainId>
+        <ProUnitName>MI 11</ProUnitName>
+        <ProSuffix>L</ProSuffix>
+        <ProSUSNO>1234569</ProSUSNO>
+        <ProName>JASJEET SINGH</ProName>
+        <ProRankName>Lt  Col</ProRankName>
+        <ProArmyName>IC71150W</ProArmyName>
+      </profiledtls>
+      <RecForDigitalSign>
+        <FromDomain>User501</FromDomain>
+        <FromProfile>JASJEET SINGH</FromProfile>
+        <FromRank>Lt  Col</FromRank>
+        <FromArmyNo>IC71150W</FromArmyNo>
+        <FromDate>2024-11-04T16:51:05.59</FromDate>
+        <StepId>2</StepId>
+      </RecForDigitalSign>
+    </Header>
+    <Signature xmlns="http://www.w3.org/2000/09/xmldsig#">
+      <SignedInfo>
+        <CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315" />
+        <SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256" />
+        <Reference URI="">
+          <Transforms>
+            <Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature" />
+          </Transforms>
+          <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256" />
+          <DigestValue>BHJq2wm1WZ/cMQrUbPs+KQTGnGVlX4E6dPOwX0JEr1Y=</DigestValue>
+        </Reference>
+      </SignedInfo>
+      <SignatureValue>V0mKS+uSFvQUngFObfCbSjKmjkIuRQ0o2Q4//rEKcEkKD33j/H45O9oLx8meWEVYyD26Y9FwqDTJ8SJTYBuxvTVqFtdTkM/dOU623b/Kgoe987NNOGYEcfE5+wYqO9esHtI5+46p2cWTN17NK3dkSlal2kaOE+TiAH/kEhhM+4r+r5NmGgearW0YxS2XPihCJGJ09AswDlJUZUafYgaKqWKbmEsAXICU0xg5PukQocgt4ArvATtRWhIdIzcIRjEaKOi74+G8Iq8haJQ+fXpxgI5crQpVq+rQz/5cnRdoWtR+brv8tBvcxX+sCLk6JgQb/kI5g7BuZJJiwVO1hFlevA==</SignatureValue>
+      <KeyInfo>
+        <X509Data>
+          <X509Certificate>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</X509Certificate>
+        </X509Data>
+      </KeyInfo>
+    </Signature>
+    <RecForDigitalSign>
+      <FromDomain>User502</FromDomain>
+      <FromProfile>NIRAJ KALRA</FromProfile>
+      <FromRank>Col</FromRank>
+      <FromArmyNo>IC60056M</FromArmyNo>
+      <FromDate>2024-11-04T16:56:06.307</FromDate>
+      <StepId>3</StepId>
+    </RecForDigitalSign>
+  </DigitalSignature1>
+  <Signature xmlns="http://www.w3.org/2000/09/xmldsig#">
+    <SignedInfo>
+      <CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315" />
+      <SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256" />
+      <Reference URI="">
+        <Transforms>
+          <Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature" />
+        </Transforms>
+        <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256" />
+        <DigestValue>FPUG9/vpLrsNTgNcWLEnJOfJBRAgw3gaThHxcVDWFzI=</DigestValue>
+      </Reference>
+    </SignedInfo>
+    <SignatureValue>dDFxdN2dfSFIPX0CAwZXhfO2aMJ/pE7XUe0ZXgf1BXHjw/ON1Ao74+s/IZ5KrDwMZjjmmBjjPHMD7lH6gmfzKT4vqQF8GzxrNn8yiOG0d4gG7SrRAz2FxmhJdfxnn/aCgqb8KZNmM3hEC2aBSz+KB4IyAYHr7S3nf2SZyRXyXgZO0R68//hlaInT97nIL5exLR3caYgqe3gOuBwFcZN5pwc+a9adxjX/9z6A5nqnaZCkZdOZuOLmBYQgvv8MCTL0Ra5ghYMDan98e7JIpVc1gSpOj6r5+TAiDwly+yHygxa2mZhgepH1UHJLssh1SgbdXgOJCVsJRuSn+n9DlphrRw==</SignatureValue>
+    <KeyInfo>
+      <X509Data>
+        <X509Certificate>MIIFPTCCBCWgAwIBAgIGbEm3U9rAMA0GCSqGSIb3DQEBCwUAMHoxCzAJBgNVBAYTAklOMSIwIAYDVQQKExlTaWZ5IFRlY2hub2xvZ2llcyBMaW1pdGVkMQ8wDQYDVQQLEwZTdWItQ0ExNjA0BgNVBAMTLVNhZmVTY3J5cHQgc3ViLUNBIGZvciBDbGFzcyAzIEluZGl2aWR1YWwgMjAyMjAeFw0yMjA3MDcxMDQzNThaFw0yNDA3MDcxMDQzNThaMIGkMQswCQYDVQQGEwJJTjERMA8GA1UEChMIUGVyc29uYWwxDzANBgNVBBETBjEyMjAxODEQMA4GA1UECBMHSGFyeWFuYTFJMEcGA1UEBRNAQTJBN0QzRUQxMEU0NTRDREQ2NjI4NUVCREZDQzI5MzU0OTc2MjE0OEY3NEQ0QTY1MjIxMjUwNzY5QzhFNjQ0ODEUMBIGA1UEAxMLTklSQUogS0FMUkEwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQC5PdcINwfHBh92/+NhTWZQg3N5LpgldvXaKtilM6fSLaezzQD8ZYqXkivmepkARi6Iwn0dFe3Ym8f/MVyEv8irQEcnHGqybigSHj3Q8wErcfoVgPWz1fMsZzfivU7KQXBdv+HYkHboj9LsAkDDNTlzdp/xqy2WoeDxDLN2bkkEcfvBltPa3V/HpJwyjMLkD9ZxlG37+W7mw/LlR5Yiw9/PqUCls9urINg56oFlfn8eVlcmp+lHj7HJ7kpqayg21Dcip4M1sKHW+Cj/f4/MQVEgtQ/BzT2VoMYbtY6/68QmdO8qwIH9k7KpUMPbTpXSHORc4vm7qMwMxLpwHbYLzy6lAgMBAAGjggGcMIIBmDATBgNVHSMEDDAKgAhKhYxtdaayPDARBgNVHQ4ECgQISAzbY8a/jBgwgaUGCCsGAQUFBwEBBIGYMIGVMEwGCCsGAQUFBzAChkBodHRwczovL3d3dy5zYWZlc2NyeXB0bmV3LmNvbS9TYWZlU2NyeXB0Q2xhc3MzSW5kaXZpZHVhbDIwMjIuY2VyMEUGCCsGAQUFBzABhjlodHRwOi8vb2NzcC5zYWZlc2NyeXB0LmNvbS9TYWZlU2NyeXB0Q2xhc3MzSW5kaXZpZHVhbDIwMjIwTgYDVR0fBEcwRTBDoEGgP4Y9aHR0cDovL2NybDIuc2FmZXNjcnlwdC5jb20vU2FmZVNjcnlwdENsYXNzM0luZGl2aWR1YWwyMDIyLmNybDAdBgNVHSAEFjAUMAgGBmCCZGQCAzAIBgZggmRkAgIwDAYDVR0TAQH/BAIwADAYBgNVHSUBAf8EDjAMBgorBgEEAYI3CgMEMB8GA1UdEQQYMBaBFG5pcmFqa2FscmFAZ21haWwuY29tMA4GA1UdDwEB/wQEAwIFIDANBgkqhkiG9w0BAQsFAAOCAQEANwd2PSOR0f2JO6dSf36C8iVTf+RISJUImrSsP/Z2j71Kv1Lqpiqf4EoCvwN1ylxl5+7XX5R9nPnM4EeLZ0PoSJ4x7fDdZto3ixHmRfy2o5X+o/vvTPBgx5nd8rw0zjURZsa5glVjEHVYOgEbn/XqDq3NdguIxtI16j2e7cKjk9pu6DNGFNoEC01sAGMJktxgjU7bYXNDM09MTKU+yzuTNbuqhTVKmRHJNNXxm+qD+t39/jBQ/rBLJebGUYiEXgGeNUQrBli/tbdLkhGu4DhGz7busUAtYrfe8WMVsDTZ/J759VmsNdqxFy0BShgdBFdnQkbkjP5dX3w3T/7BUUethw==</X509Certificate>
+      </X509Data>
+    </KeyInfo>
+  </Signature>
+</DigitalSignature2>

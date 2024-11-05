@@ -65,6 +65,10 @@ namespace Web.Controllers
             string role = dtoSession != null ? dtoSession.RoleName : "";
             return role;
         }
+        public IActionResult ContactUs()
+        {
+            return View();
+        }
         public IActionResult Index()
         {
             string role = GetSessionValue();

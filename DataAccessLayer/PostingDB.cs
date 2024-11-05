@@ -149,7 +149,7 @@ namespace DataAccessLayer
 
         public async Task<bool> UpdateForPosting(TrnPostingOut Data)
         {
-
+            #region Old code write by Kapoor Sir
             //string query = " select StepId from TrnStepCounter where RequestId=@RequestId" +
             //   " if ((select StepId from TrnStepCounter where RequestId=2)<=2) begin" +
             //   " update TrnICardRequest set TrnDomainMappingId=(select Id from TrnDomainMapping where AspNetUsersId=@ToAspNetUsersId) where RequestId=@RequestId " +
@@ -166,31 +166,71 @@ namespace DataAccessLayer
             //    " update TrnFwds set PostingOutId= @Id where RequestId=@RequestId and IsComplete=0" +
             //    " End";
 
-            string query = " update TrnICardRequest set TrnDomainMappingId=(select Id from TrnDomainMapping where AspNetUsersId=@ToAspNetUsersId) where RequestId=@RequestId " +
-               " update BasicDetails set UnitId=@ToUnitID where BasicDetailId =(select BasicDetailId from TrnICardRequest where RequestId=@RequestId and StatusId=1)" +
-              //" update TrnStepCounter set StepId=1 where RequestId=@RequestId" +
-              //" update TrnFwds set FwdStatusId=2 ,IsComplete=1,Remark='Posting Out' ,ToAspNetUsersId=@ToAspNetUsersId where RequestId=@RequestId and IsComplete=0" +
-              " update TrnFwds set PostingOutId= @Id where RequestId=@RequestId and IsComplete=0" +
-              " if exists (select top 1 * from TrnFwds where FwdStatusId=3 and IsComplete=0 and RequestId=@RequestId)" +
-              " begin" +
-              " update TrnFwds set ToAspNetUsersId=@ToAspNetUsersId where FwdStatusId=3 and IsComplete=0 and RequestId=@RequestId " +
-              " end";
-             
+            //string query = " update TrnICardRequest set TrnDomainMappingId=(select Id from TrnDomainMapping where AspNetUsersId=@ToAspNetUsersId) where RequestId=@RequestId " +
+            //   " update BasicDetails set UnitId=@ToUnitID where BasicDetailId =(select BasicDetailId from TrnICardRequest where RequestId=@RequestId and StatusId=1)" +
+            //  //" update TrnStepCounter set StepId=1 where RequestId=@RequestId" +
+            //  //" update TrnFwds set FwdStatusId=2 ,IsComplete=1,Remark='Posting Out' ,ToAspNetUsersId=@ToAspNetUsersId where RequestId=@RequestId and IsComplete=0" +
+            //  " update TrnFwds set PostingOutId= @Id where RequestId=@RequestId and IsComplete=0" +
+            //  " if exists (select top 1 * from TrnFwds where FwdStatusId=3 and IsComplete=0 and RequestId=@RequestId)" +
+            //  " begin" +
+            //  " update TrnFwds set ToAspNetUsersId=@ToAspNetUsersId where FwdStatusId=3 and IsComplete=0 and RequestId=@RequestId " +
+            //  " end";
+
+
+            //int ToAspNetUsersId = Data.ToAspNetUsersId;
+            //int RequestId = Data.RequestId;
+            //int ToUnitID = Data.ToUnitID;
+            //int Id = Data.Id;
+
+            //using (var connection = _contextDP.CreateConnection())
+            //{
+            //    connection.Execute(query, new { ToAspNetUsersId, RequestId, ToUnitID, Id });//,ToUnitID
+
+            //    return true;
+
+            //}
+            #endregion
 
             int ToAspNetUsersId = Data.ToAspNetUsersId;
             int RequestId = Data.RequestId;
             int ToUnitID = Data.ToUnitID;
             int Id=Data.Id;
 
-            using (var connection = _contextDP.CreateConnection())
+            var (db, transaction) = _contextDP.CreateConnectionWithTransaction();
+
+            try
             {
-                 connection.Execute(query, new { ToAspNetUsersId, RequestId, ToUnitID, Id });//,ToUnitID
+                string query1 = " update TrnICardRequest set TrnDomainMappingId=(select Id from TrnDomainMapping where AspNetUsersId=@ToAspNetUsersId) where RequestId=@RequestId ";
+                await db.ExecuteAsync(query1, new { ToAspNetUsersId, RequestId },transaction:transaction);
 
+                string query2 = " update BasicDetails set UnitId=@ToUnitID where BasicDetailId =(select BasicDetailId from TrnICardRequest where RequestId=@RequestId and StatusId=1) ";
+                await db.ExecuteAsync(query2, new { RequestId, ToUnitID }, transaction: transaction);
+
+                string query3 = " update TrnFwds set PostingOutId= @Id where RequestId=@RequestId and IsComplete=0 ";
+                await db.ExecuteAsync(query3, new { RequestId, Id }, transaction: transaction);
+
+                string query4 = " if exists (select top 1 * from TrnFwds where FwdStatusId=3 and IsComplete=0 and RequestId=@RequestId)" +
+                                  " begin" +
+                                  " update TrnFwds set ToAspNetUsersId=@ToAspNetUsersId where FwdStatusId=3 and IsComplete=0 and RequestId=@RequestId " +
+                                  " end";
+                await db.ExecuteAsync(query4, new { ToAspNetUsersId, RequestId, ToUnitID }, transaction: transaction);
+                
+                // Commit the transaction if all operations succeed
+                transaction.Commit();
                 return true;
-
             }
-            
-
+            catch (Exception ex)
+            {
+                // Rollback the transaction if any operation fails
+                transaction.Rollback();
+                _logger.LogError(1001, ex, "PostingDB->UpdateForPosting");
+                return false;
+            }
+            finally
+            {
+                // Dispose of the connection
+                db.Dispose();
+            }
         }
         public async Task<List<DTOAppClosedListResponse>> GetAppClosedList(int Updatedby, int apply)
         {
