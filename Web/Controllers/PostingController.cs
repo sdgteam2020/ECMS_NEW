@@ -76,8 +76,8 @@ namespace Web.Controllers
                         else
                         {
 
-                           await _iPostingBL.Add(dTO);
-
+                           //await _iPostingBL.Add(dTO);
+                           //adding and update both done by UpdateForPosting
                            await _iPostingBL.UpdateForPosting(dTO);
 
                         return Json(KeyConstants.Save);
