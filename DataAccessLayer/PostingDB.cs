@@ -4,12 +4,15 @@ using DataAccessLayer.BaseInterfaces;
 using DataAccessLayer.Logger;
 using DataTransferObject.Domain.Model;
 using DataTransferObject.Response;
+using DataTransferObject.ViewModels;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace DataAccessLayer
@@ -194,12 +197,34 @@ namespace DataAccessLayer
             int ToAspNetUsersId = Data.ToAspNetUsersId;
             int RequestId = Data.RequestId;
             int ToUnitID = Data.ToUnitID;
-            int Id=Data.Id;
+            //int Id=Data.Id;
 
             var (db, transaction) = _contextDP.CreateConnectionWithTransaction();
 
             try
             {
+                var insertSql = " INSERT INTO TrnPostingOut (ReasonId, Authority, FromAspNetUsersId, FromUnitID, FromUserID, ToAspNetUsersId, ToUnitID, ToUserID, IsActive, UpdatedOn, Updatedby, SOSDate, BasicDetailId, RequestId)" +
+                                " OUTPUT INSERTED.Id "+
+                                " VALUES (@ReasonId, @Authority, @FromAspNetUsersId, @FromUnitID, @FromUserID, @ToAspNetUsersId, @ToUnitID, @ToUserID, @IsActive, @UpdatedOn, @Updatedby, @SOSDate, @BasicDetailId, @RequestId );";
+                var parameters = new DynamicParameters();
+                parameters.Add("@ReasonId", Data.ReasonId, DbType.Byte, ParameterDirection.Input);
+                parameters.Add("@Authority", Data.Authority, DbType.String, ParameterDirection.Input,50);
+                parameters.Add("@FromAspNetUsersId", Data.FromAspNetUsersId, DbType.Int32, ParameterDirection.Input);
+                parameters.Add("@FromUnitID", Data.FromUnitID, DbType.Int32, ParameterDirection.Input);
+                parameters.Add("@FromUserID", Data.FromUserID, DbType.Int32, ParameterDirection.Input);
+                parameters.Add("@ToAspNetUsersId", Data.ToAspNetUsersId, DbType.Int32, ParameterDirection.Input);
+                parameters.Add("@ToUnitID", Data.ToUnitID, DbType.Int32, ParameterDirection.Input);
+                parameters.Add("@ToUserID", Data.ToUserID, DbType.Int32, ParameterDirection.Input);
+                parameters.Add("@IsActive", Data.IsActive, DbType.Boolean, ParameterDirection.Input);
+                parameters.Add("@UpdatedOn", Data.UpdatedOn, DbType.DateTime, ParameterDirection.Input);
+                parameters.Add("@Updatedby", Data.Updatedby, DbType.Int32, ParameterDirection.Input);
+                parameters.Add("@SOSDate", Data.SOSDate, DbType.DateTime, ParameterDirection.Input);
+                parameters.Add("@BasicDetailId", Data.BasicDetailId, DbType.Int32, ParameterDirection.Input);
+                parameters.Add("@RequestId", Data.RequestId, DbType.Int32, ParameterDirection.Input);
+
+                //var parameters = new { ReasonId = Data.ReasonId, Authority = Data.Authority , FromAspNetUsersId = Data.FromAspNetUsersId, FromUnitID = Data.FromUnitID, FromUserID = Data.FromUserID, ToAspNetUsersId = Data.ToAspNetUsersId, ToUnitID = Data.ToUnitID, ToUserID = Data.ToUserID, IsActive= Data.IsActive, UpdatedOn = Data.UpdatedOn, Updatedby = Data.Updatedby, SOSDate = Data.SOSDate, BasicDetailId = Data.BasicDetailId, RequestId = Data.RequestId };
+                var Id = await db.QuerySingleAsync<int>(insertSql, parameters, transaction:transaction);
+
                 string query1 = " update TrnICardRequest set TrnDomainMappingId=(select Id from TrnDomainMapping where AspNetUsersId=@ToAspNetUsersId) where RequestId=@RequestId ";
                 await db.ExecuteAsync(query1, new { ToAspNetUsersId, RequestId },transaction:transaction);
 
