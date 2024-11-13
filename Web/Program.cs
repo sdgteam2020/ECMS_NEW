@@ -23,6 +23,7 @@ using Web.Healpers;
 using Microsoft.AspNetCore.CookiePolicy;
 using Microsoft.AspNetCore.Rewrite;
 using EntityFramework.Exceptions.SqlServer;
+using Microsoft.Extensions.FileProviders;
 
 var builder = WebApplication.CreateBuilder(args);
 var configration = builder.Configuration;
@@ -238,7 +239,11 @@ else
 
 app.UseForwardedHeaders();
 app.UseHttpsRedirection();
-app.UseStaticFiles();
+
+app.UseStaticFiles(new StaticFileOptions
+{
+    ServeUnknownFileTypes = false,
+});
 
 app.UseRequestLocalization();
 app.UseResponseCompression();
