@@ -300,7 +300,12 @@ namespace Web.Controllers
                 Document document = new Document(pdf);
                 document.SetMargins(36, 36, 36, 36);
                 document.SetFontSize(12f);
+                
+                // Add header and footer event
+                pdf.AddEventHandler(PdfDocumentEvent.END_PAGE, new HeaderFooterHandler());
+                
                 PdfFont boldFont = PdfFontFactory.CreateFont(StandardFonts.HELVETICA_BOLD);
+
                 Paragraph header = new Paragraph("I-Card Process" +
                     " Digital Signature").SetTextAlignment(TextAlignment.CENTER).SetFontSize(20);
 
@@ -460,7 +465,51 @@ namespace Web.Controllers
             {
                 return Json(0);
             }
+        }
+        // Custom event handler for header and footer
+        public class HeaderFooterHandler : IEventHandler
+        {
+            public void HandleEvent(Event @event)
+            {
+                PdfDocumentEvent docEvent = (PdfDocumentEvent)@event;
+                PdfDocument pdfDoc = docEvent.GetDocument();
 
+                // Get the current page
+                PdfPage page = docEvent.GetPage();
+                float width = page.GetPageSize().GetWidth();
+                float height = page.GetPageSize().GetHeight();
+
+                // Create the bold font
+                PdfFont boldFont = PdfFontFactory.CreateFont(StandardFonts.HELVETICA_BOLD);
+
+                // Header Text
+                string headerText = "Confidential";
+                // Footer Text
+                string footerText = "Confidential";
+
+                // Add header
+                PdfCanvas canvas = new PdfCanvas(page);
+
+                // Center header text
+                float headerTextWidth = boldFont.GetWidth(headerText, 12);
+                float headerTextPositionX = (width - headerTextWidth) / 2;
+
+                canvas.BeginText()
+                    .SetFontAndSize(boldFont, 12)
+                    .MoveText(headerTextPositionX, height - 30)  // Center the text horizontally
+                    .ShowText(headerText)
+                    .EndText();
+
+                // Center footer text
+                float footerTextWidth = boldFont.GetWidth(footerText, 10);
+                float footerTextPositionX = (width - footerTextWidth) / 2;
+
+                canvas.BeginText()
+                    .SetFontAndSize(boldFont, 10)
+                    .MoveText(footerTextPositionX, 30)  // Center the text horizontally
+                    .ShowText(footerText)
+                    .EndText();
+            }
         }
         public Cell CreateApprovedImage()
         {
