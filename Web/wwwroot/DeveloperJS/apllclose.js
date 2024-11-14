@@ -75,6 +75,15 @@ function Save() {
 
                 toastr.error('Appl Allready Closed!');
             }
+            else if (result == IncorrectData) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Something went wrong or Invalid Input!',
+
+                })
+
+            }
             else if (result == InternalServerError) {
                 Swal.fire({
                     icon: 'error',
