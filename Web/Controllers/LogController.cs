@@ -40,6 +40,7 @@ using System.Linq;
 using System.Xml.Linq;
 using Newtonsoft.Json;
 using System.Collections.Generic;
+using Org.BouncyCastle.Utilities.Net;
 
 namespace Web.Controllers
 {
@@ -49,11 +50,13 @@ namespace Web.Controllers
         private readonly ITrnLoginLogBL _iTrnLoginLogBL;
         private readonly IBasicDetailBL BasicDetailBL;
         private readonly IWebHostEnvironment hostingEnvironment;
-        public LogController(ITrnLoginLogBL iTrnLoginLogBL, IWebHostEnvironment hostingEnvironment, IBasicDetailBL BasicDetailBL)
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        public LogController(ITrnLoginLogBL iTrnLoginLogBL, IWebHostEnvironment hostingEnvironment, IBasicDetailBL BasicDetailBL, IHttpContextAccessor httpContextAccessor)
         {
             _iTrnLoginLogBL = iTrnLoginLogBL;
             this.hostingEnvironment = hostingEnvironment;
             this.BasicDetailBL = BasicDetailBL;
+            _httpContextAccessor = httpContextAccessor;
         }
         public async Task<IActionResult> LoginLog()
         {
@@ -151,6 +154,9 @@ namespace Web.Controllers
         {
             try
             {
+                // Retrieve client IP address
+                string ipAddress = _httpContextAccessor.HttpContext.Connection.RemoteIpAddress?.MapToIPv4().ToString() ?? "Unknown IP";
+
                 Dictionary<int, LevelMessage> dictionarLevel = new Dictionary<int, LevelMessage>();
                 LevelMessage levelMessage1 = new LevelMessage()
                 {
@@ -160,7 +166,7 @@ namespace Web.Controllers
                 LevelMessage levelMessage2 = new LevelMessage()
                 {
                     ID = 2,
-                    Name = "2nd Level"
+                    Name = "2nd Level"  
                 };
                 LevelMessage levelMessage3 = new LevelMessage()
                 {
@@ -303,7 +309,10 @@ namespace Web.Controllers
                 
                 // Add header and footer event
                 pdf.AddEventHandler(PdfDocumentEvent.END_PAGE, new HeaderFooterHandler());
-                
+
+                // Add watermark to each page
+                pdf.AddEventHandler(PdfDocumentEvent.END_PAGE, new BottomLeftDiagonalWatermarkHandler(ipAddress));
+
                 PdfFont boldFont = PdfFontFactory.CreateFont(StandardFonts.HELVETICA_BOLD);
 
                 Paragraph header = new Paragraph("I-Card Process" +
@@ -466,6 +475,7 @@ namespace Web.Controllers
                 return Json(0);
             }
         }
+
         // Custom event handler for header and footer
         public class HeaderFooterHandler : IEventHandler
         {
@@ -542,6 +552,61 @@ namespace Web.Controllers
             imageFwd.SetWidth(100);
             //imageFwd.SetHeight(150);
             return imageCellFwd;
+        }
+        // Custom event handler for diagonal watermark from bottom-left to top-right
+        public class BottomLeftDiagonalWatermarkHandler : IEventHandler
+        {
+            private string _ipAddress;
+            public BottomLeftDiagonalWatermarkHandler(string ipAddress)
+            {
+                _ipAddress = ipAddress;
+            }
+            public void HandleEvent(Event @event)
+            {
+                //_ipAddress = "192.168.100.10";
+                PdfDocumentEvent docEvent = (PdfDocumentEvent)@event;
+                PdfPage page = docEvent.GetPage();
+                float width = page.GetPageSize().GetWidth();
+                float height = page.GetPageSize().GetHeight();
+
+                string watermarkText = $"{_ipAddress}  {DateTime.Now:dd-MM-yyyy HH:mm:ss}";
+
+                // Create font for the watermark text
+                PdfFont font = PdfFontFactory.CreateFont(StandardFonts.HELVETICA_BOLD);
+
+                // PdfCanvas for drawing
+                PdfCanvas canvas = new PdfCanvas(page);
+
+                // Set red color and opacity for the watermark
+                canvas.SaveState();
+                canvas.SetFillColor(new DeviceRgb(255, 0, 0)); // Red color
+
+                PdfExtGState gState = new PdfExtGState().SetFillOpacity(0.2f); // 20% opacity
+                canvas.SetExtGState(gState); // Apply the opacity setting
+
+                // Set font and size (adjusted to ensure text stays within bounds)
+                float fontSize = 40; // Adjust based on page size if needed
+                canvas.SetFontAndSize(font, fontSize);
+
+                // Calculate the center of the page
+                float centerX = width / 2;
+                float centerY = height / 2;
+
+                // Rotation angle (45 degrees for a diagonal watermark)
+                float angle = 45;
+                float radians = (float)(angle * Math.PI / 180);
+
+                // Translate, rotate, and then draw text from center point
+                canvas.SaveState();
+                canvas.ConcatMatrix((float)Math.Cos(radians), (float)Math.Sin(radians),
+                                    (float)-Math.Sin(radians), (float)Math.Cos(radians),
+                                    centerX, centerY);
+                canvas.BeginText()
+                      .MoveText(-font.GetWidth(watermarkText, fontSize) / 2, -fontSize / 2) // Adjusts to keep text centered
+                      .ShowText(watermarkText)
+                      .EndText();
+                canvas.RestoreState();
+            }
         }
     }
 }

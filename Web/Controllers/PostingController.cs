@@ -67,25 +67,25 @@ namespace Web.Controllers
 
                 if (ModelState.IsValid)
                 {
-                    
-                        if (dTO.Id > 0)
+                    if (dTO.Id > 0)
+                    {
+                    await _iPostingBL.Update(dTO);
+                        return Json(KeyConstants.Update);
+                    }
+                    else
+                    {
+                        //await _iPostingBL.Add(dTO);
+                        //adding and update both done by UpdateForPosting
+                        bool result = await _iPostingBL.UpdateForPosting(dTO);
+                        if (result == true)
                         {
-                        await _iPostingBL.Update(dTO);
-                            return Json(KeyConstants.Update);
+                            return Json(KeyConstants.Save);
                         }
                         else
                         {
-
-                           //await _iPostingBL.Add(dTO);
-                           //adding and update both done by UpdateForPosting
-                           await _iPostingBL.UpdateForPosting(dTO);
-
-                        return Json(KeyConstants.Save);
-
-
+                            return Json(KeyConstants.IncorrectData);
                         }
-                   
-
+                    }
                 }
                 else
                 {
@@ -121,12 +121,17 @@ namespace Web.Controllers
                     //{
                     if(!await _iApplCloseBL.RequestIdExists(dTO))
                     {
-                        await _iApplCloseBL.Add(dTO);
-                        await _iTrnICardRequestBL.UpdateStatus(dTO.RequestId);
-
-
-
-                        return Json(KeyConstants.Save);
+                        //await _iApplCloseBL.Add(dTO);
+                        //await _iTrnICardRequestBL.UpdateStatus(dTO.RequestId);
+                        bool reuslt = await _iApplCloseBL.ApplCloseWithUpdateStatus(dTO);
+                        if (reuslt == true)
+                        {
+                            return Json(KeyConstants.Save);
+                        }
+                        else
+                        {
+                            return Json(KeyConstants.IncorrectData);
+                        }
                     }
                     else
                     {

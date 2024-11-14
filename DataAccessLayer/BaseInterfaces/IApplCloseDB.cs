@@ -11,5 +11,6 @@ namespace DataAccessLayer.BaseInterfaces
     {
 
         public Task<bool> RequestIdExists(TrnApplClose DTo);
+        public Task<bool> ApplCloseWithUpdateStatus(TrnApplClose Data);
     }
 }
