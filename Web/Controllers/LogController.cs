@@ -41,6 +41,7 @@ using System.Xml.Linq;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using Org.BouncyCastle.Utilities.Net;
+using System.Text.RegularExpressions;
 
 namespace Web.Controllers
 {
@@ -353,7 +354,7 @@ namespace Web.Controllers
                 table.AddCell(new Paragraph("Height (Cm)").SetFont(boldFont));
                 table.AddCell(Convert.ToString(db.Height));
                 table.AddCell(new Paragraph("AADHAAR No").SetFont(boldFont));
-                table.AddCell(db.AadhaarNo);
+                table.AddCell(Regex.Replace(db.AadhaarNo, @"\d(?=\d{4})", "X"));
                 table.AddCell(new Paragraph("BloodGroup").SetFont(boldFont));
                 table.AddCell(db.BloodGroup);
                 table.AddCell(new Paragraph("Place of Issue").SetFont(boldFont));

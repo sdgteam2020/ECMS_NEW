@@ -321,7 +321,11 @@ namespace BusinessLogicsLayer.Service
                 {".csv", "text/csv"}
             };
         }
+        public bool IsValidBase64(string base64)
+        {
+            Span<byte> buffer = new Span<byte>(new byte[base64.Length]);
+            return Convert.TryFromBase64String(base64, buffer, out _);
+        }
 
-       
     }
 }

@@ -39,7 +39,7 @@ function GetICardPrintPreviewByRequestId(RequestId) {
                 $("#BloodGroup_ICardPrint").html(response.BloodGroup);
                 $("#PlaceOfIssue_ICardPrint").html(response.PlaceOfIssue);
                 $("#DateOfIssue_ICardPrint").html(response.DateOfIssue == null ? 'DEPENDS ON UNIT OF SECOND LEVEL APPROVER.' :  DateFormateMMMM_dd_yyyy(response.DateOfIssue));
-                $(".IssuingAuth_ICardPrint").html(response.IssuingAuth);
+                $(".IssuingAuth_ICardPrint").html(response.IssuingAuthorityName);
                 $(".DateOfCommissioning_ICardPrint").html(DateFormateMMMM_dd_yyyy(response.DateOfCommissioning));
                 $("#ICardPrint").modal('show');
                 //$("#lblfdaddress").html(response.Village + ',' + response.Tehsil + ',' + response.PO + ',' + response.PS + ',' + response.District + ',' + response.State + '' + response.PinCode);
@@ -70,7 +70,7 @@ function GetBasicDetailByRequestId(RequestId) {
                 $("#lblvpMarks").html(response.IdenMark1);
                 $("#lblvpdob").html(DateFormateMMMM_dd_yyyy(response.DOB));
                 $("#lblvpheight").html(response.Height);
-                $("#lblvpadhar").html(response.AadhaarNo);
+                $("#lblvpadhar").html(response.AadhaarNo.replace(/\d(?=\d{4})/g, "X"));
                 $("#lblvpBloodGroup").html(response.BloodGroup);
                 $("#lblvppoi").html(response.PlaceOfIssue);
                 $("#lblvpdoi").html(DateFormateMMMM_dd_yyyy(response.DateOfIssue));

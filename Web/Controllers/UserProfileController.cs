@@ -167,9 +167,22 @@ namespace Web.Controllers
         {
             try
             {
+                dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                TrnDomainMapping? trnDomainMapping = await _iDomainMapBL.GetByAspnetUserIdBy(dTO.Updatedby);
+                if (trnDomainMapping != null)
+                {
+                    dTO.TDMId = trnDomainMapping.Id;
+                    dTO.UserId = (int)(trnDomainMapping.UserId != null ? trnDomainMapping.UserId : 0);
+                }
+                else
+                {
+                    dTO.TDMId = 0;
+                    dTO.UserId = 0;
+                }
+
                 if (dTO.UserId > 0 && dTO.TDMId>0)
                 {
-                    dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+
                     dTO.UpdatedOn = DateTime.Now;
                     if (ModelState.IsValid)
                     {
