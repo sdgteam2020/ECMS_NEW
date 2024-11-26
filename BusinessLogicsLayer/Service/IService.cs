@@ -21,5 +21,6 @@ namespace BusinessLogicsLayer.Service
         public bool IsImage(IFormFile postedFile);
         public string GetContentType(string path);
         public Dictionary<string, string> GetMimeTypes();
+        public bool IsValidBase64(string base64);
     }
 }

@@ -740,7 +740,7 @@ function GetBasicDetailByRequestIdForFwd(RequestId) {
                 $("#lblfdMarks").html(response.IdenMark1);
                 $("#lblfddob").html(DateFormateMMMM_dd_yyyy(response.DOB));
                 $("#lblfdheight").html(response.Height);
-                $("#lblfdadhar").html(response.AadhaarNo);
+                $("#lblfdadhar").html(response.AadhaarNo.replace(/\d(?=\d{4})/g, "X"));
                 $("#lblfdBloodGroup").html(response.BloodGroup);
                 $("#lblfdpoi").html(response.PlaceOfIssue);
                 $("#lblfddoi").html(DateFormateMMMM_dd_yyyy(response.DateOfIssue));
