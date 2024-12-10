@@ -370,14 +370,14 @@
         var user = await userManager.FindByIdAsync(userId);
         var RoleList = await userManager.GetRolesAsync(user);
         var ClaimsList = await userManager.GetClaimsAsync(user);
-        List<string> RoleNameList = new List<string>() { "User" };
+        List<string> RoleNameList = new List<string>() { "user" };
         DtoSession? dtoSession = new DtoSession();
         if (!string.IsNullOrEmpty(@HttpContextAccessor.HttpContext.Session.GetString("Token")))
         {
             dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContextAccessor.HttpContext.Session, "Token");
 
         }
-        var RoleName = dtoSession != null ? dtoSession.RoleName : "User";
+        var RoleName = dtoSession != null ? dtoSession.RoleName : "user";
         if (!string.IsNullOrEmpty(@configuration["Footer:Test"]))
         {
             string? Footer = @configuration["Footer:Test"];

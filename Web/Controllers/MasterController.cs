@@ -44,13 +44,13 @@ namespace Web.Controllers
         }
 
         #region Command Page
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> Command()
         {
             string role = this.User.FindFirstValue(ClaimTypes.Role);
             return View();
         }
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> SaveCommand(MComd dTO)
         {
             try
@@ -95,7 +95,7 @@ namespace Web.Controllers
             }
 
         }
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> GetAllCommand(int[] Id)
         {
             try
@@ -109,7 +109,7 @@ namespace Web.Controllers
             }
 
         }
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> DeleteCommand(MComd dTO)
         {
             try
@@ -134,7 +134,7 @@ namespace Web.Controllers
 
 
         }
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> OrderByChange(MComd dTO)
         {
             try
@@ -150,7 +150,7 @@ namespace Web.Controllers
 
 
         }
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> DeleteCommandMultiple(int[] ints)
         {
             try
@@ -170,7 +170,7 @@ namespace Web.Controllers
                 return Json(KeyConstants.InternalServerError);
             }
         }
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> GetBinaryTree(int Id)
         {
             try
@@ -188,13 +188,13 @@ namespace Web.Controllers
         #endregion Command
 
         #region Corps 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "admin")]
         public IActionResult Corps()
         {
 
             return View();
         }
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> SaveCorps(MCorps dTO)
         {
             try
@@ -246,7 +246,7 @@ namespace Web.Controllers
             }
 
         }
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> GetAllCorps(int Id)
         {
             try
@@ -260,7 +260,7 @@ namespace Web.Controllers
             }
 
         }
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> DeleteCorps(MCorps dTO)
         {
             try
@@ -283,7 +283,7 @@ namespace Web.Controllers
             }
 
         }
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> DeleteCorpsMultiple(int[] ints)
         {
             try
@@ -306,12 +306,12 @@ namespace Web.Controllers
         #endregion End Corps
 
         #region Div  
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "admin")]
         public IActionResult Div()
         {
             return View();
         }
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> SaveDiv(MDiv dTO)
         {
             try
@@ -361,7 +361,7 @@ namespace Web.Controllers
             }
 
         }
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> GetAllDiv(int Id)
         {
             try
@@ -375,7 +375,7 @@ namespace Web.Controllers
             }
 
         }
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> DeleteDiv(MDiv dTO)
         {
             try
@@ -398,7 +398,7 @@ namespace Web.Controllers
                 return Json(KeyConstants.InternalServerError);
             }
         }
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> DeleteDivMultiple(int[] ints)
         {
             try
@@ -421,13 +421,13 @@ namespace Web.Controllers
         #endregion End Bde
 
         #region Bde  
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "admin")]
         public IActionResult Bde()
         {
 
             return View();
         }
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> SaveBde(MBde dTO)
         {
             try
@@ -533,7 +533,7 @@ namespace Web.Controllers
             }
 
         }
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> GetAllBde(int Id)
         {
             try
@@ -547,7 +547,7 @@ namespace Web.Controllers
             }
 
         }
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> DeleteBde(MBde dTO)
         {
             try
@@ -571,7 +571,7 @@ namespace Web.Controllers
                 return Json(KeyConstants.InternalServerError);
             }
         }
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> DeleteBdeMultiple(int[] ints)
         {
             try
@@ -614,7 +614,7 @@ namespace Web.Controllers
             }
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> SaveUnitWithMapping(DTOSaveUnitWithMappingByAdminRequest dTO)
         {
             try
@@ -809,7 +809,7 @@ namespace Web.Controllers
             }
 
         }
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> DeleteMapUnit(int UnitMapId)
         {
             try
@@ -831,7 +831,7 @@ namespace Web.Controllers
                 return Json(KeyConstants.InternalServerError);
             }
         }
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> DeleteMapUnitMultiple(int[] ints)
         {
             try
@@ -1011,13 +1011,13 @@ namespace Web.Controllers
         #endregion End Unit
 
         #region Formation  
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "admin")]
         public IActionResult Formation()
         {
 
             return View();
         }
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> SaveFormation(MFormation dTO)
         {
             try
@@ -1061,7 +1061,7 @@ namespace Web.Controllers
             catch (Exception ex) { return Json(KeyConstants.InternalServerError); }
 
         }
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> GetAllFormation()
         {
             try
@@ -1074,7 +1074,7 @@ namespace Web.Controllers
             }
 
         }
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> DeleteFormation(MFormation dTO)
         {
             try
@@ -1087,7 +1087,7 @@ namespace Web.Controllers
                 return Json(KeyConstants.InternalServerError);
             }
         }
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> DeleteFormationMultiple(int[] ints)
         {
             try
@@ -1109,13 +1109,13 @@ namespace Web.Controllers
         #endregion End Formation
 
         #region Appt  
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "admin")]
         public IActionResult Appointment()
         {
 
             return View();
         }
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> SaveAppointment(MAppointment dTO)
         {
             try
@@ -1162,7 +1162,7 @@ namespace Web.Controllers
             }
 
         }
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> GetAllAppointment()
         {
             try
@@ -1188,7 +1188,7 @@ namespace Web.Controllers
             }
 
         }
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> DeleteAppointment(MAppointment dTO)
         {
             try
@@ -1210,7 +1210,7 @@ namespace Web.Controllers
                 return Json(KeyConstants.InternalServerError);
             }
         }
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> DeleteAppointmentMultiple(short[] ints)
         {
             try
@@ -1245,13 +1245,13 @@ namespace Web.Controllers
         #endregion End Appointment
 
         #region Rank Page
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> Rank()
         {
 
             return View();
         }
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> SaveRank(MRank dTO)
         {
             try
@@ -1298,7 +1298,7 @@ namespace Web.Controllers
             }
 
         }
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> GetAllRank(int[] Id)
         {
             try
@@ -1312,7 +1312,7 @@ namespace Web.Controllers
             }
 
         }
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> DeleteRank(MRank dTO)
         {
             try
@@ -1335,7 +1335,7 @@ namespace Web.Controllers
                 return Json(KeyConstants.InternalServerError);
             }
         }
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> RankOrderByChange(MRank dTO)
         {
             try
@@ -1351,7 +1351,7 @@ namespace Web.Controllers
 
 
         }
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> DeleteRankMultiple(int[] ints)
         {
             try
@@ -1375,13 +1375,13 @@ namespace Web.Controllers
         #endregion Command
 
         #region ArmedType Page
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> ArmedType()
         {
 
             return View();
         }
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> SaveArmed(MArmedType dTO)
         {
             try
@@ -1426,7 +1426,7 @@ namespace Web.Controllers
             }
 
         }
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> GetAllArmed()
         {
             try
@@ -1440,7 +1440,7 @@ namespace Web.Controllers
             }
 
         }
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> DeleteArmed(MArmedType dTO)
         {
             try
@@ -1462,7 +1462,7 @@ namespace Web.Controllers
                 return Json(KeyConstants.InternalServerError);
             }
         }
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> DeleteArmedMultiple(int[] ints)
         {
             try
@@ -1486,12 +1486,12 @@ namespace Web.Controllers
         #endregion ArmedType
 
         #region Regimental Page
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> Regimental()
         {
             return View();
         }
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> SaveRegimental(MRegimental dTO)
         {
             try
@@ -1548,7 +1548,7 @@ namespace Web.Controllers
             }
 
         }
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> DeleteRegimental(MRegimental dTO)
         {
             try
@@ -1562,7 +1562,7 @@ namespace Web.Controllers
                 return Json(KeyConstants.InternalServerError);
             }
         }
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> DeleteRegimentalMultiple(int[] ints)
         {
             try
@@ -1586,12 +1586,12 @@ namespace Web.Controllers
         #endregion ArmedType
 
         #region Record Office
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> RecordOffice()
         {
             return View();
         }
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> SaveRecordOffice(MRecordOffice dTO)
         {
             try
@@ -1674,7 +1674,7 @@ namespace Web.Controllers
             }
 
         }
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> DeleteRecordOffice(MRecordOffice dTO)
         {
             try
@@ -1701,7 +1701,7 @@ namespace Web.Controllers
             }
 
         }
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> GetDomainIdByTDMId(int TDMId)
         {
             try
@@ -1827,12 +1827,12 @@ namespace Web.Controllers
 
         #region OROMapping
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> OROMapping()
         {
             return View();
         }
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> GetAllOROMapping()
         {
             try
@@ -1846,7 +1846,7 @@ namespace Web.Controllers
             }
 
         }
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> SaveOROMapping(OROMapping dTO)
         {
             try
@@ -1888,7 +1888,7 @@ namespace Web.Controllers
         {
             return Json(await _IMasterBL.GetArmsList());
         }
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> DeleteOROMapping(OROMapping dTO)
         {
             try
@@ -1907,12 +1907,12 @@ namespace Web.Controllers
 
         #region AfsacCellMapping
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> AfsacCellMapping()
         {
             return View();
         }
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> GetAllAfsacCellMapping()
         {
             try
@@ -1926,7 +1926,7 @@ namespace Web.Controllers
             }
 
         }
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> SaveAfsacCellMapping(AfsacCellMapping dTO)
         {
             try
@@ -1957,7 +1957,7 @@ namespace Web.Controllers
             }
 
         }
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> DeleteAfsacCellMapping(AfsacCellMapping dTO)
         {
             try
@@ -2004,12 +2004,12 @@ namespace Web.Controllers
         #endregion End Master
 
         #region Dashboard
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> DashboardMaster()
         {
             return View();
         }
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> GetDashboardMasterCount()
         {
             return Json(await unitOfWork.MasterBL.GetDashboardMasterCount());

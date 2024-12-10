@@ -103,14 +103,14 @@ namespace Web.Controllers
         }
         #region Domain Regn.
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "admin")]
         [HttpGet]
         public IActionResult DomainRegn()
         {
             return View();
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "admin")]
         [HttpPost]
         public async Task<IActionResult> GetAllDomainRegn(string Search, string Choice)
         {
@@ -125,7 +125,7 @@ namespace Web.Controllers
             }
 
         }
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> SaveDomainRegn(DTODomainRegnRequest dTO)
         {
             try
@@ -208,7 +208,7 @@ namespace Web.Controllers
                 return Json(KeyConstants.InternalServerError);
             }
         }
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "admin")]
         [HttpPost]
         public async Task<IActionResult> AccountCount()
         {
@@ -227,13 +227,13 @@ namespace Web.Controllers
         #endregion End Domain Regn.
 
         #region ProfileManage
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "admin")]
         [HttpGet]
         public IActionResult ProfileManage()
         {
             return View();
         }
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> SaveProfileManage(MUserProfile dTO)
         {
             try
@@ -299,7 +299,7 @@ namespace Web.Controllers
             }
 
         }
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "admin")]
         [HttpPost]
         public async Task<IActionResult> GetAllProfileManage(string Search, string Choice)
         {
@@ -314,7 +314,7 @@ namespace Web.Controllers
             }
 
         }
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "admin")]
         [HttpPost]
         public async Task<IActionResult> TotalProfileCount()
         {
@@ -334,14 +334,14 @@ namespace Web.Controllers
 
         #region UserRegn
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "admin")]
         [HttpGet]
         public IActionResult UserRegn()
         {
             return View();
         }
         
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "admin")]
         [HttpPost]
         public async Task<IActionResult> GetAllUserRegn(string Search, string Choice)
         {
@@ -356,7 +356,7 @@ namespace Web.Controllers
             }
 
         }
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "admin")]
         [HttpPost]
         public async Task<IActionResult> GetDataForDataTable(DTODataTablesRequest dTO)
         {
@@ -388,7 +388,7 @@ namespace Web.Controllers
 
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> SaveMapping(DTOUserRegnMappingRequest dTO)
         {
             DTOUserRegnResultResponse dTOUserRegnResult = new DTOUserRegnResultResponse();
@@ -432,7 +432,7 @@ namespace Web.Controllers
 
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> UpdateDomainFlag(DTOUserRegnUpdateDomainFlagRequest dTO)
         {
             DTOUserRegnResultResponse dTOUserRegnResult = new DTOUserRegnResultResponse();
@@ -669,7 +669,7 @@ namespace Web.Controllers
 
             //Response.Cookies.Append("MySecureCookie", "cookieValue", cookieOptions);
             /////////////end Cookie With Secure Flag//////////////
-            ///
+
             string? Footer = _configuration["Footer:Test"];
             ViewBag.Footer = Footer;
 
@@ -733,212 +733,220 @@ namespace Web.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> TokenValidate(DTOTokenRequest model)
         {
-            string? Footer = _configuration["Footer:Test"];
-            ViewBag.Footer = Footer;
-
-            string? dd = HttpContext.Session.GetString(SessionKeySalt);
-            if(dd!=null)
+            try
             {
-                csConst.cSalt = dd;
-                string Password = AESEncrytDecry.DecryptStringAES(model.Password);
-                model.Password = Password;
-            }
+                string? Footer = _configuration["Footer:Test"];
+                ViewBag.Footer = Footer;
 
-
-            ///////Cookie With Secure Flag////////////////////////
-            var cookieOptions = new CookieOptions
-            {
-                Secure = true, // Ensures the cookie is only transmitted over HTTPS
-                HttpOnly = true, // Makes the cookie inaccessible via client-side scripts
-                SameSite = SameSiteMode.Strict, // Limits cookie to same-site requests to prevent CSRF
-                Expires = DateTimeOffset.UtcNow.AddHours(1) // Cookie expiration
-            };
-
-            Response.Cookies.Append("MySecureCookie", "cookieValue", cookieOptions);
-            /////////////end Cookie With Secure Flag//////////////
-            ///
-            DTOTempSession? dTOTempSession = SessionHeplers.GetObject<DTOTempSession>(HttpContext.Session, "IMData");
-            List<string> RoleNameList = new List<string>() { "User" };
-            if (dTOTempSession != null)
-            {
-                model.ICNo = model.ICNo.Trim();
-                if (ModelState.IsValid)
+                string? dd = HttpContext.Session.GetString(SessionKeySalt);
+                if (dd != null)
                 {
-                    if(dTOTempSession.Status == 5 && dTOTempSession.ICNO == model.ICNo)
+                    csConst.cSalt = dd;
+                    string Password = AESEncrytDecry.DecryptStringAES(model.Password);
+                    model.Password = Password;
+                }
+
+
+                ///////Cookie With Secure Flag at this time not use////////////////////////
+                //var cookieOptions = new CookieOptions
+                //{
+                //    Secure = true, // Ensures the cookie is only transmitted over HTTPS
+                //    HttpOnly = true, // Makes the cookie inaccessible via client-side scripts
+                //    SameSite = SameSiteMode.Strict, // Limits cookie to same-site requests to prevent CSRF
+                //    Expires = DateTimeOffset.UtcNow.AddHours(1) // Cookie expiration
+                //};
+
+                //Response.Cookies.Append("MySecureCookie", Guid.NewGuid().ToString(), cookieOptions);
+                /////////////end Cookie With Secure Flag//////////////
+
+                DTOTempSession? dTOTempSession = SessionHeplers.GetObject<DTOTempSession>(HttpContext.Session, "IMData");
+                List<string> RoleNameList = new List<string>() { "User" };
+                if (dTOTempSession != null)
+                {
+                    model.ICNo = model.ICNo.Trim();
+                    if (ModelState.IsValid)
                     {
-                        var usera = await userManager.FindByIdAsync(dTOTempSession.AspNetUsersId.ToString());
-
-                        HttpContext.Session.Remove("Token");
-                        await signInManager.SignOutAsync();
-                        await userManager.UpdateSecurityStampAsync(usera);
-                        if (usera != null)
+                        if (dTOTempSession.Status == 5 && dTOTempSession.ICNO == model.ICNo)
                         {
-                            //default Password - Admin123#
-                            var result = await signInManager.PasswordSignInAsync(usera.UserName, model.Password, false, lockoutOnFailure: true);
-                            // var rolelist = await signInManager.UserManager.GetRolesAsync(usera);
-                            //var user1 = await signInManager.UserManager.IsInRoleAsync(usera, "User");
-                            if (result.Succeeded)
+                            var usera = await userManager.FindByIdAsync(dTOTempSession.AspNetUsersId.ToString());
+
+                            HttpContext.Session.Remove("Token");
+                            await signInManager.SignOutAsync();
+                            await userManager.UpdateSecurityStampAsync(usera);
+                            if (usera != null)
                             {
-                                //var army = await _userProfileBL.Get(Convert.ToInt32(dTOTempSession.UserId));
-
-                                //  await userManager.RemoveClaimAsync(usera, new Claim("Roles", dTOTempSession.RoleName));
-                                //  await userManager.AddClaimAsync(usera, new Claim("Roles", dTOTempSession.RoleName));
-                               
-
-                                
-
-
-                                DtoSession dtoSession = new DtoSession();
-                                dtoSession.ICNO = dTOTempSession.ICNO;
-                                dtoSession.RoleName = dTOTempSession.RoleName.Trim();
-                                dtoSession.UserId = dTOTempSession.UserId;
-                                dtoSession.UnitId = dTOTempSession.TDMUnitMapId;
-                                dtoSession.Name = dTOTempSession.Name.ToUpper();
-                                dtoSession.RankName = dTOTempSession.RankAbbreviation.ToUpper();
-                                dtoSession.TrnDomainMappingId = dTOTempSession.TDMId;
-                                dtoSession.RoleName = dTOTempSession.RoleName;
-                                ///////////////login log//////////////////////
-                                TrnLogin_Log log = new TrnLogin_Log();
-                                log.AspNetUsersId = Convert.ToInt32(usera.Id);
-                                var Role = await roleManager.FindByNameAsync(dTOTempSession.RoleName);
-                                log.RoleId = Convert.ToInt32(Role.Id);
-                                log.UserId = Convert.ToInt32(dTOTempSession.UserId);
-                                log.IP = HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
-                                log.IsActive = true;
-                                log.Updatedby = Convert.ToInt32(usera.Id);
-                                log.UpdatedOn = DateTime.Now;
-                                await _TrnLoginLogBL.Add(log);
-                                ////////////////End Log////////////////////////
-
-                                SessionHeplers.SetObject(HttpContext.Session, "Token", dtoSession);
-
-
-
-                                if (RoleNameList.Contains(dTOTempSession.RoleName))
+                                //default Password - Admin123#
+                                var result = await signInManager.PasswordSignInAsync(usera.UserName, model.Password, false, lockoutOnFailure: true);
+                                // var rolelist = await signInManager.UserManager.GetRolesAsync(usera);
+                                //var user1 = await signInManager.UserManager.IsInRoleAsync(usera, "User");
+                                if (result.Succeeded)
                                 {
-                                    HttpContext.Session.Remove("IMData");
-                                    return RedirectToActionPermanent("Index", "Home");
+                                    //var army = await _userProfileBL.Get(Convert.ToInt32(dTOTempSession.UserId));
+
+                                    //  await userManager.RemoveClaimAsync(usera, new Claim("Roles", dTOTempSession.RoleName));
+                                    //  await userManager.AddClaimAsync(usera, new Claim("Roles", dTOTempSession.RoleName));
+
+
+
+
+
+                                    DtoSession dtoSession = new DtoSession();
+                                    dtoSession.ICNO = dTOTempSession.ICNO;
+                                    dtoSession.RoleName = dTOTempSession.RoleName.Trim();
+                                    dtoSession.UserId = dTOTempSession.UserId;
+                                    dtoSession.UnitId = dTOTempSession.TDMUnitMapId;
+                                    dtoSession.Name = dTOTempSession.Name.ToUpper();
+                                    dtoSession.RankName = dTOTempSession.RankAbbreviation.ToUpper();
+                                    dtoSession.TrnDomainMappingId = dTOTempSession.TDMId;
+                                    dtoSession.RoleName = dTOTempSession.RoleName;
+                                    ///////////////login log//////////////////////
+                                    TrnLogin_Log log = new TrnLogin_Log();
+                                    log.AspNetUsersId = Convert.ToInt32(usera.Id);
+                                    var Role = await roleManager.FindByNameAsync(dTOTempSession.RoleName);
+                                    log.RoleId = Convert.ToInt32(Role.Id);
+                                    log.UserId = Convert.ToInt32(dTOTempSession.UserId);
+                                    log.IP = HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
+                                    log.IsActive = true;
+                                    log.Updatedby = Convert.ToInt32(usera.Id);
+                                    log.UpdatedOn = DateTime.Now;
+                                    await _TrnLoginLogBL.Add(log);
+                                    ////////////////End Log////////////////////////
+
+                                    SessionHeplers.SetObject(HttpContext.Session, "Token", dtoSession);
+
+
+
+                                    if (RoleNameList.Contains(dTOTempSession.RoleName))
+                                    {
+                                        HttpContext.Session.Remove("IMData");
+                                        return RedirectToActionPermanent("Index", "Home");
+                                    }
+                                    else if (dTOTempSession.RoleName.ToUpper() == "ADMIN")
+                                    {
+                                        HttpContext.Session.Remove("IMData");
+                                        return RedirectToActionPermanent("DashboardMaster", "Master");
+                                    }
+                                    else if (dTOTempSession.RoleName == "Super Admin")
+                                    {
+                                        HttpContext.Session.Remove("IMData");
+                                        return RedirectToActionPermanent("Index", "Account");
+                                    }
                                 }
-                                else if (dTOTempSession.RoleName.ToUpper() == "ADMIN")
+                                else if (result.IsLockedOut)
                                 {
-                                    HttpContext.Session.Remove("IMData");
-                                    return RedirectToActionPermanent("DashboardMaster", "Master");
+                                    TempData["error"] = "Account Locked Out Please Try after 10 minutes.";
+                                    goto End;
                                 }
-                                else if (dTOTempSession.RoleName == "Super Admin")
+                                else if (result.IsNotAllowed)
                                 {
-                                    HttpContext.Session.Remove("IMData");
-                                    return RedirectToActionPermanent("Index", "Account");
+                                    TempData["error"] = "Already Login " + usera.UserName + " Please Try Some Time";
+                                    goto End;
+                                }
+                                else
+                                {
+
+                                    TempData["error"] = "Not Valid User / Password. Access Failed Count " + usera.AccessFailedCount + " Max Access Attempts 3";
+                                    goto End;
                                 }
                             }
-                            else if (result.IsLockedOut)
+
+                        }
+                        else
+                        {
+                            DTOAllRelatedDataByArmyNoResponse? _dTOProfileResponse = await _userProfileBL.GetAllRelatedDataByArmyNo(model.ICNo);
+                            if (dTOTempSession.Status == 1)
                             {
-                                TempData["error"] = "Account Locked Out Please Try after 10 minutes.";
+                                //TempData["error"] = "Domain Id - " + dTOTempSession.DomainId + " & Profile Id - " + dTOTempSession.UserId + ".<br/>Your regn request was successfully placed with Admin for necy Approval.. <br/>Pl note regn No - " + dTOTempSession.AspNetUsersId + " for future correspondence.<br/> Contact Admin.";
+                                if (_dTOProfileResponse != null && _dTOProfileResponse.AdminMsg != null)
+                                {
+                                    TempData["error"] = _dTOProfileResponse.AdminMsg;
+                                }
+                                return View();
+                            }
+                            else if (dTOTempSession.Status == 6)
+                            {
+                                TempData["error"] = "Role not authorized.";
+                                return View();
+                            }
+                            else if (dTOTempSession.Status == 5 && _dTOProfileResponse != null && _dTOProfileResponse.TrnDomainMappingId > 0 && model.ICNo != dTOTempSession.ICNO)
+                            {
+                                dTOTempSession.ICNOInput = model.ICNo;
+                                dTOTempSession.ICNoDomainId = _dTOProfileResponse.DomainId;
+                                dTOTempSession.ICNoUserId = _dTOProfileResponse.UserId;
+                                dTOTempSession.ICNoTDMUnitMapId = _dTOProfileResponse.UnitId;
+                                dTOTempSession.ICNoTDMId = _dTOProfileResponse.TrnDomainMappingId;
+                                dTOTempSession.ICNoTDMApptId = _dTOProfileResponse.ApptId;
+                                //TempData["error"] = "Not Authorized to access the current profile because Domain Id - " + dTOTempSession.DomainId + " is presently mapped to Profile Id - " + dTOTempSession.UserId + " ( IC No- " + dTOTempSession.ICNO + ") .<br/>Pl change Token and try again!";
+                                TempData["error"] = "Invalid Army No / Password.";
                                 goto End;
                             }
-                            else if (result.IsNotAllowed)
+                            else if ((dTOTempSession.Status == 2 || dTOTempSession.Status == 3 || dTOTempSession.Status == 4) && _dTOProfileResponse != null && _dTOProfileResponse.TrnDomainMappingId > 0)
                             {
-                                TempData["error"] = "Already Login " + usera.UserName + " Please Try Some Time";
+                                dTOTempSession.ICNOInput = model.ICNo;
+                                dTOTempSession.Password = model.Password;
+                                dTOTempSession.ICNoDomainId = _dTOProfileResponse.DomainId;
+                                dTOTempSession.ICNoUserId = _dTOProfileResponse.UserId;
+                                dTOTempSession.ICNoTDMUnitMapId = _dTOProfileResponse.UnitId;
+                                dTOTempSession.ICNoTDMId = _dTOProfileResponse.TrnDomainMappingId;
+                                dTOTempSession.ICNoTDMApptId = _dTOProfileResponse.ApptId;
+
+                                if (dTOTempSession.Status == 2)
+                                    //TempData["error"] = "Your Profile Id -" + _dTOProfileResponse.UserId + " is mapped to Domain Id - " + _dTOProfileResponse.DomainId + " in Sys.<br/>Pl get yourself relieved first    and try again.";
+                                    TempData["error"] = "Invalid Army No / Password.";
+                                else if (dTOTempSession.Status == 3)
+                                    //TempData["error"] = "Your Profile Id - " + _dTOProfileResponse.UserId + " is already mapped to Domain Id -" + _dTOProfileResponse.DomainId + ".<br/>Pl get yourself relieved first..Domain Id - " + dTOTempSession.DomainId + "(regd) is not mapped to any profile.";
+                                    TempData["error"] = "Invalid Army No / Password.";
+                                else if (dTOTempSession.Status == 4)
+                                    //TempData["error"] = "You are presently mapped to Domain Id -" + _dTOProfileResponse.DomainId + ".<br/>Pl relieve yourself and get your profile mapped to new domain ID - " + dTOTempSession.DomainId + ".";
+                                    TempData["error"] = "Invalid Army No / Password.";
                                 goto End;
                             }
-                            else
+                            else if ((dTOTempSession.Status == 2 || dTOTempSession.Status == 3 || dTOTempSession.Status == 4) && _dTOProfileResponse != null && _dTOProfileResponse.TrnDomainMappingId == 0)
                             {
-                               
-                                TempData["error"] = "Not Valid User / Password. Access Failed Count "+usera.AccessFailedCount+ " Max Access Attempts 3";
+                                dTOTempSession.ICNOInput = model.ICNo;
+                                dTOTempSession.Password = model.Password;
+                                dTOTempSession.ICNoUserId = _dTOProfileResponse.UserId;
+                                dTOTempSession.ICNO = _dTOProfileResponse.ArmyNo;
+                                dTOTempSession.UserId = _dTOProfileResponse.UserId;
+                                SessionHeplers.SetObject(HttpContext.Session, "IMData", dTOTempSession);
+                                return RedirectToActionPermanent("Profile", "Account");
+                            }
+                            else if ((dTOTempSession.Status == 2 || dTOTempSession.Status == 3 || dTOTempSession.Status == 4) && _dTOProfileResponse == null)
+                            {
+                                dTOTempSession.ICNOInput = model.ICNo;
+                                dTOTempSession.Password = model.Password;
+                                dTOTempSession.ICNO = model.ICNo;
+                                SessionHeplers.SetObject(HttpContext.Session, "IMData", dTOTempSession);
+                                return RedirectToActionPermanent("Profile", "Account");
+                            }
+                            else if (dTOTempSession.Status == 5 && dTOTempSession.ICNO != model.ICNo)
+                            {
+                                //TempData["error"] = "Not Authorized to access the current profile because Domain Id - " + dTOTempSession.DomainId + " is presently mapped to Profile Id - " + dTOTempSession.UserId + " ( IC No " + dTOTempSession.ICNO + ") .<br/>Pl change Token and try again!";
+                                TempData["error"] = "Invalid Army No / Password.";
                                 goto End;
                             }
                         }
-
                     }
                     else
                     {
-                        DTOAllRelatedDataByArmyNoResponse? _dTOProfileResponse = await _userProfileBL.GetAllRelatedDataByArmyNo(model.ICNo);
-                        if (dTOTempSession.Status == 1)
-                        {
-                            //TempData["error"] = "Domain Id - " + dTOTempSession.DomainId + " & Profile Id - " + dTOTempSession.UserId + ".<br/>Your regn request was successfully placed with Admin for necy Approval.. <br/>Pl note regn No - " + dTOTempSession.AspNetUsersId + " for future correspondence.<br/> Contact Admin.";
-                            if (_dTOProfileResponse != null && _dTOProfileResponse.AdminMsg != null)
-                            {
-                                TempData["error"] = _dTOProfileResponse.AdminMsg;
-                            }
-                            return View();
-                        }
-                        else if (dTOTempSession.Status == 6)
-                        {
-                            TempData["error"] = "Role not authorized.";
-                            return View();
-                        }
-                        else if (dTOTempSession.Status == 5 && _dTOProfileResponse != null && _dTOProfileResponse.TrnDomainMappingId > 0 && model.ICNo != dTOTempSession.ICNO)
-                        {
-                            dTOTempSession.ICNOInput = model.ICNo;
-                            dTOTempSession.ICNoDomainId = _dTOProfileResponse.DomainId;
-                            dTOTempSession.ICNoUserId = _dTOProfileResponse.UserId;
-                            dTOTempSession.ICNoTDMUnitMapId = _dTOProfileResponse.UnitId;
-                            dTOTempSession.ICNoTDMId = _dTOProfileResponse.TrnDomainMappingId;
-                            dTOTempSession.ICNoTDMApptId = _dTOProfileResponse.ApptId;
-                            //TempData["error"] = "Not Authorized to access the current profile because Domain Id - " + dTOTempSession.DomainId + " is presently mapped to Profile Id - " + dTOTempSession.UserId + " ( IC No- " + dTOTempSession.ICNO + ") .<br/>Pl change Token and try again!";
-                            TempData["error"] = "Invalid Army No / Password.";
-                            goto End;
-                        }
-                        else if ((dTOTempSession.Status == 2 || dTOTempSession.Status == 3 || dTOTempSession.Status == 4) && _dTOProfileResponse != null && _dTOProfileResponse.TrnDomainMappingId > 0)
-                        {
-                            dTOTempSession.ICNOInput = model.ICNo;
-                            dTOTempSession.Password = model.Password;
-                            dTOTempSession.ICNoDomainId = _dTOProfileResponse.DomainId;
-                            dTOTempSession.ICNoUserId = _dTOProfileResponse.UserId;
-                            dTOTempSession.ICNoTDMUnitMapId = _dTOProfileResponse.UnitId;
-                            dTOTempSession.ICNoTDMId = _dTOProfileResponse.TrnDomainMappingId;
-                            dTOTempSession.ICNoTDMApptId = _dTOProfileResponse.ApptId;
-
-                            if (dTOTempSession.Status == 2)
-                                //TempData["error"] = "Your Profile Id -" + _dTOProfileResponse.UserId + " is mapped to Domain Id - " + _dTOProfileResponse.DomainId + " in Sys.<br/>Pl get yourself relieved first    and try again.";
-                                TempData["error"] = "Invalid Army No / Password.";
-                            else if (dTOTempSession.Status == 3)
-                                //TempData["error"] = "Your Profile Id - " + _dTOProfileResponse.UserId + " is already mapped to Domain Id -" + _dTOProfileResponse.DomainId + ".<br/>Pl get yourself relieved first..Domain Id - " + dTOTempSession.DomainId + "(regd) is not mapped to any profile.";
-                                TempData["error"] = "Invalid Army No / Password.";
-                            else if (dTOTempSession.Status == 4)
-                                //TempData["error"] = "You are presently mapped to Domain Id -" + _dTOProfileResponse.DomainId + ".<br/>Pl relieve yourself and get your profile mapped to new domain ID - " + dTOTempSession.DomainId + ".";
-                                TempData["error"] = "Invalid Army No / Password.";
-                            goto End;
-                        }
-                        else if ((dTOTempSession.Status == 2 || dTOTempSession.Status == 3 || dTOTempSession.Status == 4) && _dTOProfileResponse != null && _dTOProfileResponse.TrnDomainMappingId == 0)
-                        {
-                            dTOTempSession.ICNOInput = model.ICNo;
-                            dTOTempSession.Password = model.Password;
-                            dTOTempSession.ICNoUserId = _dTOProfileResponse.UserId;
-                            dTOTempSession.ICNO = _dTOProfileResponse.ArmyNo;
-                            dTOTempSession.UserId = _dTOProfileResponse.UserId;
-                            SessionHeplers.SetObject(HttpContext.Session, "IMData", dTOTempSession);
-                            return RedirectToActionPermanent("Profile", "Account");
-                        }
-                        else if ((dTOTempSession.Status == 2 || dTOTempSession.Status == 3 || dTOTempSession.Status == 4) && _dTOProfileResponse == null)
-                        {
-                            dTOTempSession.ICNOInput = model.ICNo;
-                            dTOTempSession.Password = model.Password;
-                            dTOTempSession.ICNO = model.ICNo;
-                            SessionHeplers.SetObject(HttpContext.Session, "IMData", dTOTempSession);
-                            return RedirectToActionPermanent("Profile", "Account");
-                        }
-                        else if (dTOTempSession.Status == 5 && dTOTempSession.ICNO != model.ICNo)
-                        {
-                            //TempData["error"] = "Not Authorized to access the current profile because Domain Id - " + dTOTempSession.DomainId + " is presently mapped to Profile Id - " + dTOTempSession.UserId + " ( IC No " + dTOTempSession.ICNO + ") .<br/>Pl change Token and try again!";
-                            TempData["error"] = "Invalid Army No / Password.";
-                            goto End;
-                        }
+                        var error = ModelState.Select(x => x.Value.Errors).Where(y => y.Count > 0).ToList();
+                        TempData["error"] = error[0][0].ErrorMessage;
+                        goto End;
                     }
                 }
                 else
                 {
-                    var error = ModelState.Select(x => x.Value.Errors).Where(y => y.Count > 0).ToList();
-                    TempData["error"] = error[0][0].ErrorMessage;
+                    TempData["error"] = "You are not authorized this page.";
                     goto End;
                 }
+            End:
+                return View(model);
             }
-            else
+            catch (Exception ex)
             {
-                TempData["error"] = "You are not authorized this page.";
-                goto End;
+                _logger.LogError(1001, ex, "This error occure because Id value change by user.");
+                return RedirectToAction("Error", "Error");
             }
-        End:
-            return View(model);
         }
         [HttpGet]
         [AllowAnonymous]
@@ -946,16 +954,16 @@ namespace Web.Controllers
         {
             string? Footer = _configuration["Footer:Test"];
             ViewBag.Footer = Footer;
-            ///////Cookie With Secure Flag////////////////////////
-            var cookieOptions = new CookieOptions
-            {
-                Secure = true, // Ensures the cookie is only transmitted over HTTPS
-                HttpOnly = true, // Makes the cookie inaccessible via client-side scripts
-                SameSite = SameSiteMode.Strict, // Limits cookie to same-site requests to prevent CSRF
-                Expires = DateTimeOffset.UtcNow.AddHours(1) // Cookie expiration
-            };
+            ///////Cookie With Secure Flag at this time not use////////////////////////
+            //var cookieOptions = new CookieOptions
+            //{
+            //    Secure = true, // Ensures the cookie is only transmitted over HTTPS
+            //    HttpOnly = true, // Makes the cookie inaccessible via client-side scripts
+            //    SameSite = SameSiteMode.Strict, // Limits cookie to same-site requests to prevent CSRF
+            //    Expires = DateTimeOffset.UtcNow.AddHours(1) // Cookie expiration
+            //};
 
-            Response.Cookies.Append("MySecureCookie", "cookieValue", cookieOptions);
+            //Response.Cookies.Append("MySecureCookie", Guid.NewGuid().ToString(), cookieOptions);
             /////////////end Cookie With Secure Flag//////////////
 
             DTOTempSession? dTOTempSession = SessionHeplers.GetObject<DTOTempSession>(HttpContext.Session, "IMData");
@@ -1134,6 +1142,7 @@ namespace Web.Controllers
         }
 
         [AllowAnonymous]
+        [HttpPost]
         public async Task<IActionResult> SaveUnitWithMapping(DTOSaveUnitWithMappingRequest dTO)
         {
             try
@@ -1195,11 +1204,11 @@ namespace Web.Controllers
                 dtoSession.RoleName = Id;
                 SessionHeplers.SetObject(HttpContext.Session, "Token", dtoSession);
             }
-            if (Id == "Admin")
+            if (Id == "admin")
             {
                 return RedirectToActionPermanent("DashboardMaster", "Master");
             }
-            else if (Id == "Super Admin")
+            else if (Id == "super admin")
             {
                 return RedirectToActionPermanent("Index", "Account");
             }
@@ -1211,35 +1220,16 @@ namespace Web.Controllers
 
         #endregion End IMLogin
 
-        #region Login & Logout
-
+        #region Logout
         public async Task<ActionResult> Logout()
         {
-            var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var user = await userManager.FindByIdAsync(userId);
-
-            // for concurrent login
-            //if (userId != null)
-            //{
-            //    user.IsLogged = false;
-            //    await userManager.UpdateAsync(user);
-            //}
-            //await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-
-            // for concurrent login
-            if (userId != null)
-            {
-                //user.LastLogOutDate = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
-                //await userManager.UpdateAsync(user);
-            }
-
-            //Solved ---- Lack of session validation and server expiration 
-            //await userManager.UpdateSecurityStampAsync(user);
             HttpContext.Session.Remove("Token");
             await signInManager.SignOutAsync();
             return View();
-
         }
+        #endregion End Logout
+
+        #region Commented Code for for Login Purpose
 
         //[HttpGet]
         //[AllowAnonymous]
@@ -1326,169 +1316,169 @@ namespace Web.Controllers
         //    return View(model);
         //}
 
-        #endregion End Login & Logout
+        #endregion End Login
 
-        #region Policy
+        #region  Policy Commented Code for Super Admin Role For  Phase II
 
-        [HttpGet]
-        [Authorize(Policy = "EditRolePolicy")]
-        public async Task<IActionResult> ManageUserRoles(string userId)
-        {
-            string decryptedId = string.Empty;
-            int decryptedIntId = 0;
-            try
-            {
-                // Decrypt the  id using Unprotect method
-                decryptedId = protector.Unprotect(userId);
-                decryptedIntId = Convert.ToInt32(decryptedId);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(1001, ex, "This error occure because Id value change by user.");
-                return RedirectToAction("Error", "Error");
-            }
+        //[HttpGet]
+        //[Authorize(Policy = "EditRolePolicy")]
+        //public async Task<IActionResult> ManageUserRoles(string userId)
+        //{
+        //    string decryptedId = string.Empty;
+        //    int decryptedIntId = 0;
+        //    try
+        //    {
+        //        // Decrypt the  id using Unprotect method
+        //        decryptedId = protector.Unprotect(userId);
+        //        decryptedIntId = Convert.ToInt32(decryptedId);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.LogError(1001, ex, "This error occure because Id value change by user.");
+        //        return RedirectToAction("Error", "Error");
+        //    }
 
-            ViewBag.userId = userId;
+        //    ViewBag.userId = userId;
 
-            var user = await userManager.FindByIdAsync(decryptedId);
+        //    var user = await userManager.FindByIdAsync(decryptedId);
 
-            if (user == null)
-            {
-                ViewBag.ErrorMessage = $"User with Id = {decryptedId} cannot be found";
-                return View("NotFound");
-            }
+        //    if (user == null)
+        //    {
+        //        ViewBag.ErrorMessage = $"User with Id = {decryptedId} cannot be found";
+        //        return View("NotFound");
+        //    }
 
-            var model = new List<UserRolesViewModel>();
+        //    var model = new List<UserRolesViewModel>();
 
-            foreach (var role in roleManager.Roles)
-            {
-                var userRolesViewModel = new UserRolesViewModel
-                {
-                    RoleId = role.Id.ToString(),
-                    RoleName = role.Name
-                };
+        //    foreach (var role in roleManager.Roles)
+        //    {
+        //        var userRolesViewModel = new UserRolesViewModel
+        //        {
+        //            RoleId = role.Id.ToString(),
+        //            RoleName = role.Name
+        //        };
 
-                if (await userManager.IsInRoleAsync(user, role.Name))
-                {
-                    userRolesViewModel.IsSelected = true;
-                }
-                else
-                {
-                    userRolesViewModel.IsSelected = false;
-                }
+        //        if (await userManager.IsInRoleAsync(user, role.Name))
+        //        {
+        //            userRolesViewModel.IsSelected = true;
+        //        }
+        //        else
+        //        {
+        //            userRolesViewModel.IsSelected = false;
+        //        }
 
-                model.Add(userRolesViewModel);
-            }
+        //        model.Add(userRolesViewModel);
+        //    }
 
-            return View(model);
-        }
+        //    return View(model);
+        //}
 
-        [HttpPost]
-        [Authorize(Policy = "EditRolePolicy")]
-        public async Task<IActionResult> ManageUserRoles(List<UserRolesViewModel> model, string userId)
-        {
-            string decryptedId = string.Empty;
-            int decryptedIntId = 0;
-            try
-            {
-                // Decrypt the  id using Unprotect method
-                decryptedId = protector.Unprotect(userId);
-                decryptedIntId = Convert.ToInt32(decryptedId);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(1001, ex, "This error occure because Id value change by user.");
-                return RedirectToAction("Error", "Error");
-            }
-            var user = await userManager.FindByIdAsync(decryptedId);
+        //[HttpPost]
+        //[Authorize(Policy = "EditRolePolicy")]
+        //public async Task<IActionResult> ManageUserRoles(List<UserRolesViewModel> model, string userId)
+        //{
+        //    string decryptedId = string.Empty;
+        //    int decryptedIntId = 0;
+        //    try
+        //    {
+        //        // Decrypt the  id using Unprotect method
+        //        decryptedId = protector.Unprotect(userId);
+        //        decryptedIntId = Convert.ToInt32(decryptedId);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.LogError(1001, ex, "This error occure because Id value change by user.");
+        //        return RedirectToAction("Error", "Error");
+        //    }
+        //    var user = await userManager.FindByIdAsync(decryptedId);
 
-            if (user == null)
-            {
-                ViewBag.ErrorMessage = $"User with Id = {userId} cannot be found";
-                return View("NotFound");
-            }
+        //    if (user == null)
+        //    {
+        //        ViewBag.ErrorMessage = $"User with Id = {userId} cannot be found";
+        //        return View("NotFound");
+        //    }
 
-            var roles = await userManager.GetRolesAsync(user);
-            var result = await userManager.RemoveFromRolesAsync(user, roles);
+        //    var roles = await userManager.GetRolesAsync(user);
+        //    var result = await userManager.RemoveFromRolesAsync(user, roles);
 
-            if (!result.Succeeded)
-            {
-                ModelState.AddModelError("", "Cannot remove user existing roles");
-                return View(model);
-            }
+        //    if (!result.Succeeded)
+        //    {
+        //        ModelState.AddModelError("", "Cannot remove user existing roles");
+        //        return View(model);
+        //    }
 
-            result = await userManager.AddToRolesAsync(user, model.Where(x => x.IsSelected).Select(y => y.RoleName));
+        //    result = await userManager.AddToRolesAsync(user, model.Where(x => x.IsSelected).Select(y => y.RoleName));
 
-            if (!result.Succeeded)
-            {
-                ModelState.AddModelError("", "Cannot add selected roles to user");
-                return View(model);
-            }
-            TempData["success"] = "Updated Successfully.";
-            return RedirectToAction("EditUser", new { Id = userId });
-        }
+        //    if (!result.Succeeded)
+        //    {
+        //        ModelState.AddModelError("", "Cannot add selected roles to user");
+        //        return View(model);
+        //    }
+        //    TempData["success"] = "Updated Successfully.";
+        //    return RedirectToAction("EditUser", new { Id = userId });
+        //}
 
-        [HttpPost]
-        [Authorize(Policy = "DeleteRolePolicy")]
-        public async Task<IActionResult> DeleteRole(string Id)
-        {
-            string decryptedId = string.Empty;
-            int decryptedIntId = 0;
-            try
-            {
-                // Decrypt the  id using Unprotect method
-                decryptedId = protector.Unprotect(Id);
-                decryptedIntId = Convert.ToInt32(decryptedId);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(1001, ex, "This error occure because Id value change by user.");
-                return RedirectToAction("Error", "Error");
-            }
-            var role = await roleManager.FindByIdAsync(decryptedId);
+        //[HttpPost]
+        //[Authorize(Policy = "DeleteRolePolicy")]
+        //public async Task<IActionResult> DeleteRole(string Id)
+        //{
+        //    string decryptedId = string.Empty;
+        //    int decryptedIntId = 0;
+        //    try
+        //    {
+        //        // Decrypt the  id using Unprotect method
+        //        decryptedId = protector.Unprotect(Id);
+        //        decryptedIntId = Convert.ToInt32(decryptedId);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.LogError(1001, ex, "This error occure because Id value change by user.");
+        //        return RedirectToAction("Error", "Error");
+        //    }
+        //    var role = await roleManager.FindByIdAsync(decryptedId);
 
-            if (role == null)
-            {
-                ViewBag.ErrorMessage = $"Role with Id = {decryptedId} cannot be found";
-                return View("NotFound");
-            }
-            else
-            {
-                try
-                {
-                    //throw new Exception("Test Exception");
+        //    if (role == null)
+        //    {
+        //        ViewBag.ErrorMessage = $"Role with Id = {decryptedId} cannot be found";
+        //        return View("NotFound");
+        //    }
+        //    else
+        //    {
+        //        try
+        //        {
+        //            //throw new Exception("Test Exception");
 
-                    var result = await roleManager.DeleteAsync(role);
+        //            var result = await roleManager.DeleteAsync(role);
 
-                    if (result.Succeeded)
-                    {
-                        TempData["success"] = "Role Deleted Successfully.";
-                        return RedirectToAction("ListRoles");
-                    }
+        //            if (result.Succeeded)
+        //            {
+        //                TempData["success"] = "Role Deleted Successfully.";
+        //                return RedirectToAction("ListRoles");
+        //            }
 
-                    foreach (var error in result.Errors)
-                    {
-                        ModelState.AddModelError("", error.Description);
-                    }
+        //            foreach (var error in result.Errors)
+        //            {
+        //                ModelState.AddModelError("", error.Description);
+        //            }
 
-                    return View("ListRoles");
-                }
-                catch (DbUpdateException ex)
-                {
-                    _logger.LogError($"Error deleting role {ex}");
+        //            return View("ListRoles");
+        //        }
+        //        catch (DbUpdateException ex)
+        //        {
+        //            _logger.LogError($"Error deleting role {ex}");
 
-                    ViewBag.ErrorTitle = $"{role.Name} role is in use";
-                    ViewBag.ErrorMessage = $"{role.Name} role cannot be deleted as there are users " +
-                        $"in this role. If you want to delete this role, please remove the users from " +
-                        $"the role and then try to delete";
-                    return View("Error");
-                }
-            }
-        }
+        //            ViewBag.ErrorTitle = $"{role.Name} role is in use";
+        //            ViewBag.ErrorMessage = $"{role.Name} role cannot be deleted as there are users " +
+        //                $"in this role. If you want to delete this role, please remove the users from " +
+        //                $"the role and then try to delete";
+        //            return View("Error");
+        //        }
+        //    }
+        //}
 
         #endregion End Policy
 
-        #region Super Admin Section
+        #region Commented Code for Super Admin Role For  Phase II
         //[HttpGet]
         //[Authorize(Roles = "Super Admin")]
         //public IActionResult Create()
@@ -1934,7 +1924,7 @@ namespace Web.Controllers
 
         #endregion End Super Admin Section
 
-        #region Common Method
+        #region Commented Code for Super Admin Role For  Phase II
 
         //[HttpPost]
         //[Authorize(Roles = "Super Admin,Admin")]
