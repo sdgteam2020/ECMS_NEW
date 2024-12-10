@@ -9,37 +9,41 @@ namespace Web.Controllers
     public class ApplicationStatusController : Controller
     {
         private readonly IBasicDetailBL _basicDetailBL;
-        public ApplicationStatusController(IBasicDetailBL basicDetailBL)
+        private readonly IConfiguration _configuration;
+        public ApplicationStatusController(IBasicDetailBL basicDetailBL, IConfiguration configuration)
         {
-            _basicDetailBL= basicDetailBL;
+            _configuration = configuration;
+            _basicDetailBL = basicDetailBL;
         }
-        //public async Task<IActionResult> AppStatus(string TrackingId)
-        //{
-        //    //DTOApplicationTrack dTOApplicationTrack=new DTOApplicationTrack();
-        //    //try
-        //    //{
-        //    //     dTOApplicationTrack = await _basicDetailBL.ApplicationHistory(TrackingId);
-        //    //    if (dTOApplicationTrack.dTOApplicationDetails != null)
-        //    //    {
-        //    //        ViewBag.IsData = 1;
+        public async Task<IActionResult> AppStatus(string TrackingId)
+        {
+            //DTOApplicationTrack dTOApplicationTrack=new DTOApplicationTrack();
+            //try
+            //{
+            //     dTOApplicationTrack = await _basicDetailBL.ApplicationHistory(TrackingId);
+            //    if (dTOApplicationTrack.dTOApplicationDetails != null)
+            //    {
+            //        ViewBag.IsData = 1;
 
-        //    //    }
-        //    //    else
-        //    //    {
-        //    //        ViewBag.IsData = 0;
+            //    }
+            //    else
+            //    {
+            //        ViewBag.IsData = 0;
 
-        //    //    }
+            //    }
 
 
-        //    //}
-        //    //catch (Exception ex) { 
-        //    //    ViewBag.IsData = 0; 
-        //    //}
+            //}
+            //catch (Exception ex) { 
+            //    ViewBag.IsData = 0; 
+            //}
 
-        //    //return View(dTOApplicationTrack);
-        //   ViewBag.IP=HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
-        //    return View();
-        //}
+            //return View(dTOApplicationTrack);
+            string? Footer = _configuration["Footer:Test"];
+            ViewBag.Footer = Footer;
+            ViewBag.IP = HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
+            return View();
+        }
         public async Task<IActionResult> GetRequestHistoryByTrackingId(string TrackingId)
         {
             return Json(await _basicDetailBL.ICardHistoryByTrackingId(TrackingId));

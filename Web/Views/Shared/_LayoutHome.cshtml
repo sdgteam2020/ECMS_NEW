@@ -167,7 +167,7 @@
             dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContextAccessor.HttpContext.Session, "Token");
 
         }
-        var RoleName = dtoSession != null ? dtoSession.RoleName : "User";
+        var RoleName = dtoSession != null ? dtoSession.RoleName : "user";
         
         if (!string.IsNullOrEmpty(@configuration["Footer:Test"]))
         {

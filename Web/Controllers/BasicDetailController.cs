@@ -238,13 +238,32 @@ namespace Web.Controllers
             int stepcounter = 0;
             noti.ReciverAspNetUsersId = userId;
             noti.DisplayId = 0;
-            if (!string.IsNullOrEmpty(Id))
-            { 
-            var base64EncodedBytes = System.Convert.FromBase64String(Id);
-            var ret = System.Text.Encoding.UTF8.GetString(base64EncodedBytes);
-            retint = Convert.ToInt32(ret);
-            stepcounter = retint;
+
+            if (string.IsNullOrEmpty(Id) || !service.IsValidBase64(Id))
+            {
+                TempData["error"] = "Invalid Input.";
+                TempData.Keep("error");
+                return RedirectToActionPermanent("ContactUs", "Home");
             }
+
+            if (!string.IsNullOrEmpty(Id))
+            {
+                try
+                {
+                    var decodedBytes = Convert.FromBase64String(Id);
+                    var decodedString = Encoding.UTF8.GetString(decodedBytes);
+                    retint = Convert.ToInt32(decodedString);
+                    stepcounter = retint;
+                }
+                catch (FormatException ex)
+                {
+                    _logger.LogError(ex, "Invalid Base64 Id: {Id}", Id);
+                    TempData["error"] = "Invalid Input.";
+                    TempData.Keep("error");
+                    return RedirectToActionPermanent("ContactUs", "Home");
+                }
+            }
+            
             ViewBag.Id = retint;
             ViewBag.jcoor = jcoor;
 
@@ -379,17 +398,35 @@ namespace Web.Controllers
             var UserClaims = await userManager.GetClaimsAsync(user);
             ViewBag.UserClaims = UserClaims;
 
-            MTrnNotification noti=new MTrnNotification();
+            MTrnNotification noti = new MTrnNotification();
             int type = 0; int retint = 0; int stepcounter = 0;
             var userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier)); //SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").UserId;
             noti.ReciverAspNetUsersId = userId;
             noti.DisplayId = 0;
+
+            if (string.IsNullOrEmpty(Id) || !service.IsValidBase64(Id))
+            {
+                TempData["error"] = "Invalid Input.";
+                TempData.Keep("error");
+                return RedirectToAction("ContactUs", "Home");
+            }
+
             if (!string.IsNullOrEmpty(Id))
             {
-                var base64EncodedBytes = System.Convert.FromBase64String(Id);
-                var ret = System.Text.Encoding.UTF8.GetString(base64EncodedBytes);
-                retint = Convert.ToInt32(ret);
-                stepcounter = retint;
+                try
+                {
+                    var decodedBytes = Convert.FromBase64String(Id);
+                    var decodedString = Encoding.UTF8.GetString(decodedBytes);
+                    retint = Convert.ToInt32(decodedString);
+                    stepcounter = retint;
+                }
+                catch (FormatException ex)
+                {
+                    _logger.LogError(ex, "Invalid Base64 Id: {Id}", Id);
+                    TempData["error"] = "Invalid Input.";
+                    TempData.Keep("error");
+                    return RedirectToAction("ContactUs", "Home");
+                }
             }
 
 
@@ -470,9 +507,6 @@ namespace Web.Controllers
                 await _INotificationBL.UpdateRead(noti);
                 return View(allrecord);
             }
-                
-
-           
         }
 
         [HttpGet]
@@ -487,14 +521,21 @@ namespace Web.Controllers
                 decryptedId = protector.Unprotect(Id);
                 decryptedIntId = Convert.ToInt32(decryptedId);
             }
+            catch (System.Security.Cryptography.CryptographicException ex)
+            {
+                _logger.LogError(ex, "Cryptographic error occurred while processing the Id: {Id}.", Id);
+                TempData["error"] = "Invalid or tampered request.";
+                TempData.Keep("error");
+                return RedirectToAction("ContactUs", "Home");
+            }
             catch (Exception ex)
             {
-                _logger.LogError(1001, ex, "This error occure because Id value change by user.");
-                return RedirectToAction("Error", "Error");
+                _logger.LogError(1001, ex, message: "This error occure because Id : {Id} value change by user.", Id);
+                TempData["error"] = "Invalid or tampered request.";
+                TempData.Keep("error");
+                return RedirectToAction("ContactUs", "Home");
             }
-            
-            
-           // BasicDetail? basicDetail = await basicDetailBL.Get(decryptedIntId);
+
             BasicDetailCrtAndUpdVM? basicDetailCrtAndUpdVM = await basicDetailBL.GetBasicDetailByRequestId(decryptedIntId);
             if (basicDetailCrtAndUpdVM != null)
             {
@@ -526,46 +567,86 @@ namespace Web.Controllers
         public async Task<ActionResult> InaccurateData(string Id)
         {
             var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-            int TypeId;
-            if (!string.IsNullOrEmpty(Id))
+            if (string.IsNullOrEmpty(Id) || !service.IsValidBase64(Id))
             {
-                var base64EncodedBytes = System.Convert.FromBase64String(Id);
-                var ret = System.Text.Encoding.UTF8.GetString(base64EncodedBytes);
-                TypeId = Convert.ToInt32(ret);
-                if(TypeId == 1)
-                {
-                    var allrecord = await Task.Run(() => basicDetailTempBL.GetALLBasicDetailTemp(Convert.ToInt32(userId), TypeId));
-                    ViewBag.Title = "List of Inaccurate Data";
-                    return View(allrecord);
-                }
-                else if(TypeId == 2)
-                {
-                    var allrecord = await Task.Run(() => basicDetailTempBL.GetALLBasicDetailTemp(Convert.ToInt32(userId), TypeId));
-                    ViewBag.Title = "List of Observation Raised";
-                    return View(allrecord);
-                }
-                else
-                {
-                    TempData["error"] = "Invalid Input.";
-                    return RedirectToActionPermanent("Dashboard", "Home");
-                }
+                TempData["error"] = "Invalid or tampered request.";
+                TempData.Keep("error");
+                return RedirectToAction("ContactUs", "Home");
             }
-            else
+            try
             {
-                TempData["error"] = "Invalid Input.";
-                return RedirectToActionPermanent("Dashboard", "Home");
+                var base64EncodedBytes = Convert.FromBase64String(Id);
+                var decodedString = Encoding.UTF8.GetString(base64EncodedBytes);
+                int typeId = Convert.ToInt32(decodedString);
+                if (typeId == 1 || typeId == 2)
+                {
+                    var allrecord = await Task.Run(() => basicDetailTempBL.GetALLBasicDetailTemp(Convert.ToInt32(userId), typeId));
+                    ViewBag.Title = typeId == 1 ? "List of Inaccurate Data" : "List of Observation Raised";
+                    return View(allrecord);
+                }
+                TempData["error"] = "Invalid or tampered request.";
+                TempData.Keep("error");
+                return RedirectToAction("ContactUs", "Home");
+            }
+            catch (FormatException ex)
+            {
+                _logger.LogError(1001, ex, message: "Invalid Base64 string for Id: {Id}", Id);
+                TempData["error"] = "Invalid or tampered request.";
+                TempData.Keep("error");
+                return RedirectToAction("ContactUs", "Home");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "BasicDetailsController=>InaccurateData.");
+                TempData["error"] = "Invalid or tampered request.";
+                TempData.Keep("error");
+                return RedirectToAction("ContactUs", "Home");
             }
         }
         [HttpGet]
         public async Task<ActionResult> InaccurateDataView(string Id)
         {
+            if (string.IsNullOrEmpty(Id))
+            {
+                TempData["error"] = "Invalid or tampered request.";
+                TempData.Keep("error");
+                return RedirectToAction("ContactUs", "Home");
+            }
             var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-           string decryptedId = protector.Unprotect(Id);
-           int decryptedIntId = Convert.ToInt32(decryptedId);
-            var allrecord = await Task.Run(() => basicDetailTempBL.GetALLBasicDetailTempByBasicDetailId(Convert.ToInt32(userId), decryptedIntId));
-            _logger.LogInformation(1001, "Index Page Of Basic Detail Temp View");
-          
-            return View(allrecord);
+            int userIntId = Convert.ToInt32(userId); // Assuming userId is always a valid integer
+            string decryptedId = string.Empty;
+            int decryptedIntId = 0;
+            try
+            {
+                // Decrypt the  id using Unprotect method
+                decryptedId = protector.Unprotect(Id);
+
+                // Validate decrypted Id
+                if (!int.TryParse(decryptedId, out decryptedIntId))
+                {
+                    _logger.LogWarning("Decrypted Id is not a valid integer: {DecryptedId}, UserId: {UserId}", decryptedId, userId);
+                    TempData["error"] = "Invalid or tampered request.";
+                    TempData.Keep("error");
+                    return RedirectToAction("ContactUs", "Home");
+                }
+                // Retrieve records asynchronously
+                var allRecords = await basicDetailTempBL.GetALLBasicDetailTempByBasicDetailId(userIntId, decryptedIntId);
+                return View(allRecords);
+            }
+            catch (System.Security.Cryptography.CryptographicException ex)
+            {
+                _logger.LogError(ex, "Cryptographic error occurred while processing the Id: {Id}.", Id);
+                TempData["error"] = "Invalid or tampered request.";
+                TempData.Keep("error");
+                return RedirectToAction("ContactUs", "Home");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, message: "This error occure because Id : {Id} value change by user.", Id);
+                TempData["error"] = ex.Message;
+                TempData.Keep("error");
+                return RedirectToAction("ContactUs", "Home");
+            }
         }
         [HttpGet]
         public async Task<ActionResult> RequestType()
@@ -576,7 +657,7 @@ namespace Web.Controllers
         [HttpGet]
         public IActionResult Registration(string Id)
         {
-            #region Old Colde
+            #region Old Code
             //var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
             //string decryptedId = string.Empty;
             //ViewBag.OptionsBloodGroup = service.GetBloodGroup();
@@ -597,7 +678,7 @@ namespace Web.Controllers
             //dTORegistrationRequest.TypeId = (byte)decryptedIntId;
             //ViewBag.OptionsRegistration = service.GetRegistration();
             //return View(dTORegistrationRequest);
-            #endregion End Old Colde
+            #endregion End Old Code
             return View();
         }
         [HttpPost]
@@ -610,24 +691,8 @@ namespace Web.Controllers
                 model.Updatedby = Convert.ToInt32(userId);
                 if (ModelState.IsValid)
                 {
-                    //DTOApiDataResponse dTOApiDataResponse = new DTOApiDataResponse();
-                    //dTOApiDataResponse =await GetApiData(model.ServiceNo);
                     if (model.SubmitType == 1)
                     {
-                        //BasicDetail basicDetail = new BasicDetail();
-                        //basicDetail.Name = dTOApiDataResponse.Name;
-                        //basicDetail.ServiceNo = dTOApiDataResponse.ServiceNo;
-                        //basicDetail.DOB = dTOApiDataResponse.DOB;
-                        //basicDetail.DateOfCommissioning = dTOApiDataResponse.DateOfCommissioning;
-                        //basicDetail.PermanentAddress = dTOApiDataResponse.PermanentAddress;
-                        //basicDetail.Updatedby = model.Updatedby;
-                        //basicDetail.UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
-                        //basicDetail.Step = 1;
-                        //BasicDetail insertedBasicdetail = await unitOfWork.BasicDetail.AddWithReturn(basicDetail);
-                        //// Encrypt the ID value and store in EncryptedId property
-                        //insertedBasicdetail.EncryptedId = protector.Protect(insertedBasicdetail.BasicDetailId.ToString());
-                        //TempData["success"] = "Successfully created.";
-                        //return RedirectToActionPermanent("Create", "BasicDetail", new { Id = insertedBasicdetail.EncryptedId });
                         BasicDetail? Data = new BasicDetail();
                         Data =await basicDetailBL.FindServiceNo(model.ServiceNo);
                         if (Data != null)
@@ -737,7 +802,39 @@ namespace Web.Controllers
             string decryptedId = string.Empty;
             int decryptedIntId = 0;
 
-            if (Id == null || protector.Unprotect(Id)== "0")
+            if (Id != null)
+            {
+                try
+                {
+                    // Decrypt the  id using Unprotect method
+                    decryptedId = protector.Unprotect(Id);
+
+                    // Validate decrypted Id
+                    if (!int.TryParse(decryptedId, out decryptedIntId))
+                    {
+                        _logger.LogWarning("Decrypted Id is not a valid integer: {DecryptedId}, UserId: {UserId}", decryptedId, userId);
+                        TempData["error"] = "Invalid Request.";
+                        TempData.Keep("error");
+                        return RedirectToAction("ContactUs", "Home");
+                    }
+                }
+                catch (System.Security.Cryptography.CryptographicException ex)
+                {
+                    _logger.LogError(ex, "Cryptographic error occurred while processing the Id: {Id}.", Id);
+                    TempData["error"] = "Invalid or tampered request.";
+                    TempData.Keep("error");
+                    return RedirectToAction("ContactUs", "Home");
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(1001, ex, message: "This error occure because Id : {Id} value change by user.", Id);
+                    TempData["error"] = ex.Message;
+                    TempData.Keep("error");
+                    return RedirectToAction("ContactUs", "Home");
+                }
+            }
+
+            if (Id == null || decryptedId == "0")
             {
                 TempData.Keep("Registration");
                 DTORegistrationRequest? model = new DTORegistrationRequest();
@@ -759,13 +856,7 @@ namespace Web.Controllers
                         ViewBag.OptionsRankId = model.RankId;
                         ViewBag.OptionsArmedId = model.ArmedId;
 
-                        //dTOBasicDetailCrtRequest.Height = model.Height;
-
-                        // dTOBasicDetailCrtRequest.AadhaarNo = Convert.ToString(model.AadhaarNo);
-                        dTOBasicDetailCrtRequest.AadhaarNo = Convert.ToInt64(model.AadhaarNo).ToString("D12");// Convert.ToInt32(model.AadhaarNo.Substring(model.AadhaarNo.Length - 3)).ToString("D4");
-
-
-                        //dTOBasicDetailCrtRequest.BloodGroup = model.BloodGroup;
+                        dTOBasicDetailCrtRequest.AadhaarNo = Convert.ToInt64(model.AadhaarNo).ToString("D12");
 
                         dTOBasicDetailCrtRequest.ApplyForId = model.ApplyForId;
                         dTOBasicDetailCrtRequest.RegistrationId = model.RegistrationId;
@@ -780,11 +871,7 @@ namespace Web.Controllers
                         dTOBasicDetailCrtRequest.Village = model.Village;
                         dTOBasicDetailCrtRequest.PinCode = Convert.ToInt32(model.PinCode);
                         dTOBasicDetailCrtRequest.PermanentAddress = "Village - " + model.Village + ", Post Office-" + model.PO + ", Tehsil- " + model.Tehsil + ", District- " + model.District + ", State- " + model.State + ", Pin Code- " + model.PinCode;
-                        //dTOBasicDetailCrtRequest.PermanentAddress = model.PermanentAddress;
-                        // dTOBasicDetailCrtRequest.RegistrationId = model.RegId;
-                        // dTOBasicDetailCrtRequest.Type = mRegistration.ApplyForId;
 
-                        //dTOBasicDetailCrtRequest.DateOfIssue = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
                         return await Task.FromResult(View(dTOBasicDetailCrtRequest));
                     }
                     else

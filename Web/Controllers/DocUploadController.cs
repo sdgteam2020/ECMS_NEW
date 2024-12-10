@@ -41,7 +41,7 @@ namespace Web.Controllers
                 dataProtectionPurposeStrings.AFSACIdRouteValue);
         }
         [HttpGet]
-        [Authorize(Roles = "Admin,User")]
+        [Authorize(Roles = "admin,user")]
         public ActionResult UploadDocument()
         {
             var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -60,7 +60,7 @@ namespace Web.Controllers
             }
         }
         [HttpPost]
-        [Authorize(Roles = "Admin,User")]
+        [Authorize(Roles = "admin,user")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UploadDocument(DTODocUploadCrtRequest model)
         {
@@ -121,7 +121,7 @@ namespace Web.Controllers
             return View(model);
         }
         [HttpGet]
-        [Authorize(Roles = "Admin,User")]
+        [Authorize(Roles = "admin,user")]
         public ActionResult EditUploadDocument()
         {
             var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -141,7 +141,7 @@ namespace Web.Controllers
             }
         }
         [HttpPost]
-        [Authorize(Roles = "Admin,User")]
+        [Authorize(Roles = "admin,user")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditUploadDocument(DTODocUploadUpdRequest model)
         {
@@ -211,7 +211,7 @@ namespace Web.Controllers
             return View(model);
         }
         [HttpGet]
-        [Authorize(Roles = "Admin,User")]
+        [Authorize(Roles = "admin,user")]
         public Task<ViewResult> Message()
         {
             return Task.FromResult(View());

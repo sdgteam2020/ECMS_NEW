@@ -1267,7 +1267,7 @@ namespace DataAccessLayer
                         " select @_2ndLevelPending=COUNT(distinct fwd.RequestId) from TrnFwds fwd " +
                         " inner join TrnStepCounter cou on fwd.RequestId=cou.RequestId and cou.ApplyForId=@applyForId " +
                         " inner join TrnICardRequest trncard  on trncard.RequestId=cou.RequestId " +
-                        " where ToAspNetUsersId=@UserId and IsComplete=0 and TypeId=2 and  trncard.StatusId=1" +
+                        " where ToAspNetUsersId=@UserId and IsComplete=0 and fwd.TypeId=2 and  trncard.StatusId=1" +
 
                         " select @_2ndLevelApproved=COUNT(distinct fwd.RequestId) from TrnFwds fwd " +
                         " inner join TrnStepCounter cou on fwd.RequestId=cou.RequestId and cou.ApplyForId=@applyForId " +
@@ -1275,20 +1275,20 @@ namespace DataAccessLayer
 
                         " select @_2ndLevelReject=COUNT(distinct fwd.RequestId) from TrnFwds fwd " +
                         " inner join TrnStepCounter cou on fwd.RequestId=cou.RequestId and cou.ApplyForId=@applyForId " +
-                        " where FromAspNetUsersId=@UserId and fwd.StepId=7 and TypeId=1" +
+                        " where FromAspNetUsersId=@UserId and fwd.StepId=7 and fwd.TypeId=1" +
 
                         " select @_3rdLevelPending=COUNT(distinct fwd.RequestId) from TrnFwds fwd " +
                         " inner join TrnStepCounter cou on fwd.RequestId=cou.RequestId and cou.ApplyForId=@applyForId " +
                         " inner join TrnICardRequest trncard  on trncard.RequestId=cou.RequestId " +
-                        " where ToAspNetUsersId=@UserId and IsComplete=0 and TypeId=3 and  trncard.StatusId=1" +
+                        " where ToAspNetUsersId=@UserId and IsComplete=0 and fwd.TypeId=3 and  trncard.StatusId=1" +
 
                         " select @_3rdLevelApproved=COUNT(distinct fwd.RequestId) from TrnFwds fwd " +
                         " inner join TrnStepCounter cou on fwd.RequestId=cou.RequestId and cou.ApplyForId=@applyForId " +
-                        " where FromAspNetUsersId=@UserId and fwd.FwdStatusId=2 and TypeId=4" +
+                        " where FromAspNetUsersId=@UserId and fwd.FwdStatusId=2 and fwd.TypeId=4" +
 
                         " select @_3rdLevelReject=COUNT(distinct fwd.RequestId)  from TrnFwds fwd " +
                         " inner join TrnStepCounter cou on fwd.RequestId=cou.RequestId and cou.ApplyForId=@applyForId " +
-                        " where FromAspNetUsersId=@UserId and fwd.StepId=8 and TypeId=1" +
+                        " where FromAspNetUsersId=@UserId and fwd.StepId=8 and fwd.TypeId=1" +
 
                         " select @_4thLevelPending=COUNT(distinct fwd.RequestId)  from TrnFwds fwd " +
                         " inner join TrnStepCounter cou on fwd.RequestId=cou.RequestId and cou.ApplyForId=@applyForId " +
@@ -1302,7 +1302,7 @@ namespace DataAccessLayer
 
                         " select @_4thLevelReject=COUNT(distinct fwd.RequestId) from TrnFwds fwd " +
                         " inner join TrnStepCounter cou on fwd.RequestId=cou.RequestId and cou.ApplyForId=@applyForId " +
-                        " where FromAspNetUsersId=@UserId and fwd.StepId=9 and TypeId=1" +
+                        " where FromAspNetUsersId=@UserId and fwd.StepId=9 and fwd.TypeId=1" +
 
                         " select @ExportPending=COUNT(distinct fwd.RequestId) from TrnFwds fwd " +
                         " inner join TrnStepCounter cou on fwd.RequestId=cou.RequestId and cou.ApplyForId=@applyForId " +
@@ -1316,7 +1316,7 @@ namespace DataAccessLayer
 
                         " select @ExportReject=COUNT(distinct fwd.RequestId)  from TrnFwds fwd " +
                         " inner join TrnStepCounter cou on fwd.RequestId=cou.RequestId and cou.ApplyForId=@applyForId " +
-                        " where FromAspNetUsersId=@UserId and fwd.StepId=10 and TypeId=1" +
+                        " where FromAspNetUsersId=@UserId and fwd.StepId=10 and fwd.TypeId=1" +
 
                         " select @ToInternalForward=COUNT(distinct fwd.RequestId)  from TrnFwds fwd " +
                         " inner join TrnStepCounter cou on fwd.RequestId=cou.RequestId and cou.ApplyForId=@applyForId " +

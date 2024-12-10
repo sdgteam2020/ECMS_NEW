@@ -134,7 +134,7 @@
                                                     }
                                                     else
                                                     {
-                                                        <input asp-for="ICNo" class="form-control" placeholder="Enter IC No" /> @* value="@dTOTempSession.ICNO" *@
+                                                        <input asp-for="ICNo" class="form-control" placeholder="Enter IC No" oninput="this.value = this.value.toUpperCase();" /> @* value="@dTOTempSession.ICNO" *@
                                                     }
 
                                                     <span asp-validation-for="ICNo" class="text-danger"></span>
@@ -175,7 +175,7 @@
                                                             <button type="submit" class="btn btn-primary mt-2" onclick="return SubmitsEncry1(false)">Proceed</button>
                                                         }
                                                     }
-@*                                                     <a class="btn btn-warning" href="/ApplicationStatus/AppStatus">Check Application Status</a> *@
+                                                     <a class="btn btn-warning" href="/ApplicationStatus/AppStatus">Check Application Status</a>
                                                 </div>
                                                 
                                                 @if (TempData["success"] != null)
