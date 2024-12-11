@@ -88,6 +88,23 @@ $(document).ready(function () {
         appendTo: '#suggesstion-box'
     });
 
+    $.ajax({
+        url: '/Home/VisitorStats',
+        type: 'GET',
+        dataType: 'json',
+        success: function (data) {
+            // Populate the stats dynamically
+            $('#today').text("Vistors Today : "+ data.Today);
+            $('#week').text("Week : " +data.Week);
+            $('#month').text(data.MonthName +" : "+data.Month);
+            $('#total').text("Total : "+ data.Total);
+            $('#monthName').text(data.MonthName);
+        },
+        error: function (xhr, status, error) {
+            console.error('Error fetching visitor stats:', error);
+        }
+    });
+
 });
 
 function CheckProfileExist() {

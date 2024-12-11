@@ -679,7 +679,7 @@ namespace Web.Controllers
 
             int userid = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
             DTOTempSession? dTOTempSession = SessionHeplers.GetObject<DTOTempSession>(HttpContext.Session, "Token");
-            List<string> RoleNameList = new List<string>() { "User" };
+            List<string> RoleNameList = new List<string>() { "user" };
 
 
             if (userid==0)
@@ -711,11 +711,11 @@ namespace Web.Controllers
                     {
                         return RedirectToActionPermanent("Index", "Home");
                     }
-                    else if (dTOTempSession.RoleName.ToUpper() == "ADMIN")
+                    else if (dTOTempSession.RoleName.ToUpper() == "admin")
                     {
                         return RedirectToActionPermanent("DashboardMaster", "Master");
                     }
-                    else if (dTOTempSession.RoleName == "Super Admin")
+                    else if (dTOTempSession.RoleName == "super admin")
                     {
                         return RedirectToActionPermanent("Index", "Account");
                     }
@@ -760,7 +760,7 @@ namespace Web.Controllers
                 /////////////end Cookie With Secure Flag//////////////
 
                 DTOTempSession? dTOTempSession = SessionHeplers.GetObject<DTOTempSession>(HttpContext.Session, "IMData");
-                List<string> RoleNameList = new List<string>() { "User" };
+                List<string> RoleNameList = new List<string>() { "user" };
                 if (dTOTempSession != null)
                 {
                     model.ICNo = model.ICNo.Trim();

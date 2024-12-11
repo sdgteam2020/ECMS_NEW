@@ -107,12 +107,15 @@
             height: 588px;
         }
         footer {
-            text-align: center;
             padding: 5px;
             /* background: linear-gradient(90deg, rgba(0,211,255,1) 0%, rgba(12,141,242,1) 66%, rgba(22,125,207,1) 99%); */
             background: #003060 !important;
             color: white;
             margin-top: 20px;
+        }
+
+        footer .text-end span {
+            font-size: 0.9rem; /* Optional: Adjust the font size for span values */
         }
     </style>
 
@@ -295,20 +298,29 @@
         <!-- main-panel ends -->
     </div>
     <footer class="fixed-bottom">
-        <section class="page_copyright ls section_padding_25">
-            <div class="container">
-                <div class="row">
-                    <div class="col-sm-12 text-center darklinks">
-                        <h5 class="font-weight-500">
-                            @if (ViewBag.Footer != null)
-                            {
-                                @ViewBag.Footer
-                            }
-                        </h5>
+        <div class="row">
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center">
+                    <!-- Invisible placeholder for balancing the center -->
+                    <div style="width: 20%;"></div>
+
+                    <!-- Left Section: Centered Content -->
+                    <div class="flex-grow-1 text-center fw-bold">
+                        @if (ViewBag.Footer != null)
+                        {
+                            @(ViewBag.Footer)
+                        }
+                    </div>
+                    <!-- Right Section: Info Spans -->
+                    <div class="text-end">
+                        <span id="today" class="me-2"></span>
+                        <span id="week" class="me-2"></span>
+                        <span id="month" class="me-2"></span>
+                        <span id="total"></span>
                     </div>
                 </div>
             </div>
-        </section>
+        </div>
     </footer>
     <!-- page-body-wrapper ends -->
     @*  <script asp-src-include="~/select2/dist/js/select2.min.js"></script>*@
