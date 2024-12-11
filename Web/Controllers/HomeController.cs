@@ -14,6 +14,7 @@ using DataTransferObject.Response;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.SqlServer.Management.Smo;
 using System.Data;
 using System.Security.Claims;
 using Web.WebHelpers;
@@ -36,6 +37,9 @@ namespace Web.Controllers
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ILogger<HomeController> _logger;
         public readonly IReportReturnBL _reportReturnBL;
+        private const string CounterFilePath = "wwwroot/counter.txt";
+        private const string SessionKey = "SessionHit";
+        private readonly string[] IgnoredIPs = { "127.0.0.2", "127.0.0.3" }; // Add IPs to ignore
         public HomeController(IRegistrationBL registrationBL, IUserProfileBL userProfileBL,
             IBasicDetailBL basicDetailBL, INotificationBL notificationBL, ITrnICardRequestBL iTrnICardRequestBL,
             IHomeBL home, IRecordOfficeBL recordOfficeBL, SignInManager<ApplicationUser> signInManager, 
@@ -53,6 +57,7 @@ namespace Web.Controllers
             _logger = logger;
             _reportReturnBL = reportReturnBL;
             this.userManager = userManager;
+            _httpContextAccessor = httpContextAccessor;
         }
         private string GetSessionValue()
         {
@@ -360,6 +365,149 @@ namespace Web.Controllers
                 return Json(KeyConstants.InternalServerError);
             }
 
+        }
+        public JsonResult VisitorStats()
+        {
+            var model = new DTOVisitorCounterResponse();
+            var userIP = _httpContextAccessor.HttpContext.Connection.RemoteIpAddress?.ToString();
+            var userAgent = _httpContextAccessor.HttpContext.Request.Headers["User-Agent"].ToString();
+            var currentTime = DateTime.UtcNow;
+
+
+            // Check if the IP is in the ignored list
+            if (IgnoredIPs.Contains(userIP))
+            {
+                LoadStatsFromFile(model); // Load stats without updating
+                return Json(model);
+            }
+
+            // Check if the user has already visited this session
+            if (string.IsNullOrEmpty(_httpContextAccessor.HttpContext.Session.GetString(SessionKey)))
+            {
+                // Initialize session hit count
+                _httpContextAccessor.HttpContext.Session.SetString(SessionKey, "true");
+
+                if (!System.IO.File.Exists(CounterFilePath))
+                {
+                    InitializeCounterFile(currentTime, userIP);
+                }
+                else
+                {
+                    UpdateCounterFile(currentTime, userIP);
+                }
+            }
+
+            LoadStatsFromFile(model);
+            return Json(model);
+        }
+        private void InitializeCounterFile(DateTime currentTime, string userIP)
+        {
+            var data = $"{currentTime.DayOfYear}:1||0:0||{GetIso8601WeekOfYear(currentTime)}:1||{currentTime.Month}:1||{currentTime.Year}:1||1||1||{currentTime.Ticks}\n" +
+                       $"{userIP}||{currentTime.Ticks}\n";
+
+            System.IO.File.WriteAllText(CounterFilePath, data);
+        }
+
+        private void UpdateCounterFile(DateTime currentTime, string userIP)
+        {
+            var lines = System.IO.File.ReadAllLines(CounterFilePath);
+            var stats = lines[0].Split("||");
+
+            // Update stats with new visitor data
+            var updatedStats = UpdateStats(stats, currentTime);
+
+            // Replace the first line with updated stats
+            lines[0] = string.Join("||", updatedStats);
+
+            // Add the new IP and timestamp
+            lines = lines.Concat(new[] { $"{userIP}||{currentTime.Ticks}" }).ToArray();
+
+            // Write back to the file
+            System.IO.File.WriteAllLines(CounterFilePath, lines);
+        }
+
+        private string[] UpdateStats(string[] stats, DateTime currentTime)
+        {
+            var todayStats = stats[0].Split(':');
+            var weekStats = stats[2].Split(':');
+            var monthStats = stats[3].Split(':');
+            var allVisitors = int.Parse(stats[5]);
+
+            // Update "today" stats
+            var todayDayOfYear = int.Parse(todayStats[0]);
+            var todayCount = int.Parse(todayStats[1]);
+
+            if (todayDayOfYear == currentTime.DayOfYear)
+            {
+                todayCount++;
+            }
+            else
+            {
+                todayCount = 1; // Reset for a new day
+            }
+
+            // Update "week" stats
+            var currentWeek = GetIso8601WeekOfYear(currentTime);
+            var storedWeek = int.Parse(weekStats[0]);
+            var weekCount = int.Parse(weekStats[1]);
+
+            if (storedWeek == currentWeek)
+            {
+                weekCount++;
+            }
+            else
+            {
+                weekCount = 1; // Reset for a new week
+            }
+
+            // Update "month" stats
+            var storedMonth = int.Parse(monthStats[0]);
+            var monthCount = int.Parse(monthStats[1]);
+
+            if (storedMonth == currentTime.Month)
+            {
+                monthCount++;
+            }
+            else
+            {
+                monthCount = 1; // Reset for a new month
+            }
+
+            // Update total visitor count
+            allVisitors++;
+
+            // Reassemble updated stats
+            stats[0] = $"{currentTime.DayOfYear}:{todayCount}";
+            stats[2] = $"{currentWeek}:{weekCount}";
+            stats[3] = $"{currentTime.Month}:{monthCount}";
+            stats[5] = allVisitors.ToString();
+
+            return stats;
+        }
+
+        private void LoadStatsFromFile(DTOVisitorCounterResponse model)
+        {
+            var lines = System.IO.File.ReadAllLines(CounterFilePath);
+            var stats = lines[0].Split("||");
+
+            var todayStats = stats[0].Split(':');
+            var weekStats = stats[2].Split(':');
+            var monthStats = stats[3].Split(':');
+
+            model.Today = int.Parse(todayStats[1]);
+            model.Week = int.Parse(weekStats[1]);
+            model.Month = int.Parse(monthStats[1]);
+            model.MonthName = new DateTime(1, int.Parse(monthStats[0]), 1).ToString("MMMM");
+            model.Total = int.Parse(stats[5]);
+        }
+
+        private static int GetIso8601WeekOfYear(DateTime time)
+        {
+            var day = (int)time.DayOfWeek;
+            return System.Globalization.CultureInfo.InvariantCulture.Calendar.GetWeekOfYear(
+                time,
+                System.Globalization.CalendarWeekRule.FirstFourDayWeek,
+                DayOfWeek.Monday);
         }
 
     }
