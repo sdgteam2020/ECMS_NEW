@@ -5,6 +5,7 @@ using BusinessLogicsLayer.Master;
 using BusinessLogicsLayer.RecordOffice;
 using BusinessLogicsLayer.Registration;
 using BusinessLogicsLayer.ReportReturn;
+using BusinessLogicsLayer.Service;
 using DapperRepo.Core.Constants;
 using DataTransferObject.Domain.Identitytable;
 using DataTransferObject.Domain.Master;
@@ -14,9 +15,10 @@ using DataTransferObject.Response;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.SqlServer.Management.Smo;
+using Microsoft.SqlServer.Management.Smo.Wmi;
 using System.Data;
 using System.Security.Claims;
+using System.Text;
 using Web.WebHelpers;
 
 
@@ -36,6 +38,7 @@ namespace Web.Controllers
         private readonly UserManager<ApplicationUser> userManager;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ILogger<HomeController> _logger;
+        private readonly IService service;
         public readonly IReportReturnBL _reportReturnBL;
         private const string CounterFilePath = "wwwroot/counter.txt";
         private const string SessionKey = "SessionHit";
@@ -44,7 +47,7 @@ namespace Web.Controllers
             IBasicDetailBL basicDetailBL, INotificationBL notificationBL, ITrnICardRequestBL iTrnICardRequestBL,
             IHomeBL home, IRecordOfficeBL recordOfficeBL, SignInManager<ApplicationUser> signInManager, 
             UserManager<ApplicationUser> userManager, ILogger<HomeController> logger, IHttpContextAccessor httpContextAccessor,
-            IReportReturnBL reportReturnBL
+            IReportReturnBL reportReturnBL, IService service
             )
         {
             _userProfileBL = userProfileBL;
@@ -58,6 +61,7 @@ namespace Web.Controllers
             _reportReturnBL = reportReturnBL;
             this.userManager = userManager;
             _httpContextAccessor = httpContextAccessor;
+            this.service = service;
         }
         private string GetSessionValue()
         {
@@ -195,20 +199,43 @@ namespace Web.Controllers
         }
         public async Task<IActionResult> RequestDashboard(string Id)
         {
-            string role = GetSessionValue();
-            var base64EncodedBytes = System.Convert.FromBase64String(Id);
-            var ret = System.Text.Encoding.UTF8.GetString(base64EncodedBytes);
-            ViewBag.Type = ret;    
-            ViewBag.Role = role;
-            if(ret == "Posting Out" || ret == "Posting In")
+            if (string.IsNullOrEmpty(Id) || !service.IsValidBase64(Id))
             {
-                ViewBag.PreviousLink = "DashboardUserMgt";
+                TempData["error"] = "Invalid Input.";
+                TempData.Keep("error");
+                return RedirectToAction("ContactUs", "Home");
             }
-            else
+            try
             {
-                ViewBag.PreviousLink = "SubDashboard";
+                string role = GetSessionValue();
+                var base64EncodedBytes = Convert.FromBase64String(Id);
+                var decodedString = Encoding.UTF8.GetString(base64EncodedBytes);
+                ViewBag.Type = decodedString;
+                ViewBag.Role = role;
+                if (decodedString == "Posting Out" || decodedString == "Posting In")
+                {
+                    ViewBag.PreviousLink = "DashboardUserMgt";
+                }
+                else
+                {
+                    ViewBag.PreviousLink = "SubDashboard";
+                }
+                return View();
             }
-            return View();
+            catch (FormatException ex)
+            {
+                _logger.LogError(1001, ex, message: "Invalid Base64 string for Id: {Id}", Id);
+                TempData["error"] = "Invalid Input.";
+                TempData.Keep("error");
+                return RedirectToAction("ContactUs", "Home");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "BasicDetailsController=>InaccurateData.");
+                TempData["error"] = ex.Message;
+                TempData.Keep("error");
+                return RedirectToAction("ContactUs", "Home");
+            }
         }
         public async Task<IActionResult> Task()
         {
@@ -230,20 +257,43 @@ namespace Web.Controllers
         }
         public async Task<IActionResult> MyTask(string Id)
         {
-            string role = GetSessionValue();
-            var base64EncodedBytes = System.Convert.FromBase64String(Id);
-            var ret = System.Text.Encoding.UTF8.GetString(base64EncodedBytes);
-            ViewBag.Type = ret;
-            ViewBag.Role = role;
+            if (string.IsNullOrEmpty(Id) || !service.IsValidBase64(Id))
+            {
+                TempData["error"] = "Invalid Input.";
+                TempData.Keep("error");
+                return RedirectToActionPermanent("ContactUs", "Home");
+            }
+            try
+            {
+                string role = GetSessionValue();
+                var base64EncodedBytes = Convert.FromBase64String(Id);
+                var decodedString = Encoding.UTF8.GetString(base64EncodedBytes);
+                ViewBag.Type = decodedString;
+                ViewBag.Role = role;
 
-            var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var user = await userManager.FindByIdAsync(userId);
+                var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var user = await userManager.FindByIdAsync(userId);
 
-            // UserManager service GetClaimsAsync method gets all the current claims of the user
-            var UserClaims = await userManager.GetClaimsAsync(user);
-            ViewBag.UserClaims = UserClaims;
+                // UserManager service GetClaimsAsync method gets all the current claims of the user
+                var UserClaims = await userManager.GetClaimsAsync(user);
+                ViewBag.UserClaims = UserClaims;
 
-            return View();
+                return View();
+            }
+            catch (FormatException ex)
+            {
+                _logger.LogError(1001, ex, message: "Invalid Base64 string for Id: {Id}", Id);
+                TempData["error"] = "Invalid Input.";
+                TempData.Keep("error");
+                return RedirectToAction("ContactUs", "Home");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "BasicDetailsController=>InaccurateData.");
+                TempData["error"] = ex.Message;
+                TempData.Keep("error");
+                return RedirectToAction("ContactUs", "Home");
+            }
         }
         public async Task<IActionResult> Request()
         {

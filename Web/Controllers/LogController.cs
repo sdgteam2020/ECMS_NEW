@@ -5,42 +5,25 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using Web.WebHelpers;
-using iText.IO.Font;
 using iText.IO.Font.Constants;
 using iText.IO.Image;
 using iText.Kernel.Colors;
 using iText.Kernel.Events;
 using iText.Kernel.Font;
 using iText.Kernel.Geom;
-using iText.Kernel;
-using iText.Kernel.Pdf.Annot;
 using iText.Kernel.Pdf.Canvas;
 using iText.Kernel.Pdf.Extgstate;
 using iText.Layout;
 using iTextImage = iText.Layout.Element.Image;
 using iText.Layout.Element;
 using iText.Layout.Properties;
-using System.Net;
-using System.Net.Http.Headers;
 using iText.Kernel.Pdf;
 using BusinessLogicsLayer.BasicDet;
 using DataTransferObject.ViewModels;
-using BusinessLogicsLayer.Bde;
-using Microsoft.AspNetCore.Identity;
 using System.Security.Cryptography.X509Certificates;
 using System.Xml;
-using iText.Layout.Borders;
-using System.Xml.Serialization;
-using System;
-using iText.Layout.Font;
-using Microsoft.SqlServer.Management.Smo.Wmi;
-using static System.Net.Mime.MediaTypeNames;
 using Web.Healpers;
-using System.Linq;
 using System.Xml.Linq;
-using Newtonsoft.Json;
-using System.Collections.Generic;
-using Org.BouncyCastle.Utilities.Net;
 using System.Text.RegularExpressions;
 
 namespace Web.Controllers
@@ -241,12 +224,14 @@ namespace Web.Controllers
                 xmlDoc.LoadXml(Convert.ToString(sata.XmlFiles));
 
                 XmlNodeList fwddetails = xmlDoc.GetElementsByTagName("RecForDigitalSign");
+                var nodesList = fwddetails.Cast<XmlNode>().ToList();
+                var orderedNodes = nodesList.OrderBy(x => int.Parse(x.SelectSingleNode("StepId").InnerText)).ToList();
                 BasicDetailCrtAndUpdVM? db = await BasicDetailBL.GetBasicDetailByRequestId(RequestId);
 
                 int i = 1;
                 List<DTODigitalSignPlusLog> DigitalSignPlusLogList = new List<DTODigitalSignPlusLog>();
 
-                foreach (XmlNode node in fwddetails)
+                foreach (var node in orderedNodes)
                 {
                     string base64EncodedCertificate1 = node.InnerXml;
                     // byte[] certBytes = Convert.FromBase64String(base64EncodedCertificate);

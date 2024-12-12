@@ -2,6 +2,7 @@
 using BusinessLogicsLayer.BasicDet;
 using BusinessLogicsLayer.Bde;
 using BusinessLogicsLayer.Posting;
+using BusinessLogicsLayer.Service;
 using DapperRepo.Core.Constants;
 using DataTransferObject.Domain.Model;
 using Humanizer;
@@ -9,6 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.Security.Claims;
+using System.Text;
 using static iText.StyledXmlParser.Jsoup.Select.Evaluator;
 
 namespace Web.Controllers
@@ -20,11 +22,15 @@ namespace Web.Controllers
         private readonly IPostingBL _iPostingBL;
         private readonly IApplCloseBL _iApplCloseBL;
         private readonly ITrnICardRequestBL _iTrnICardRequestBL;
-        public PostingController(IPostingBL postingBL, IApplCloseBL iApplCloseBL, ITrnICardRequestBL trnICardRequestBL)
+        private readonly IService service;
+        private readonly ILogger<PostingController> _logger;
+        public PostingController(IPostingBL postingBL, IApplCloseBL iApplCloseBL, ITrnICardRequestBL trnICardRequestBL, IService service, ILogger<PostingController> logger)
         {
             _iPostingBL = postingBL;
             _iApplCloseBL = iApplCloseBL;
             _iTrnICardRequestBL = trnICardRequestBL;
+            this.service = service;
+            _logger = logger;
         }
         public IActionResult PostingIn()
         {
@@ -44,17 +50,40 @@ namespace Web.Controllers
         }
         public async Task<IActionResult> GetPostingOutWithType(string Type,string PostingType)
         {
-            var base64EncodedBytes = System.Convert.FromBase64String(Type);
-            var ret = System.Text.Encoding.UTF8.GetString(base64EncodedBytes);
-            var PostingTy = System.Text.Encoding.UTF8.GetString(System.Convert.FromBase64String(PostingType));
-            int t = Convert.ToInt32(ret);
-            ViewBag.Type = t;
-            ViewBag.PostingType = PostingTy;
+            if (string.IsNullOrEmpty(Type) || !service.IsValidBase64(Type) || string.IsNullOrEmpty(PostingType) || !service.IsValidBase64(PostingType))
+            {
+                TempData["error"] = "Invalid Input.";
+                TempData.Keep("error");
+                return RedirectToAction("ContactUs", "Home");
+            }
+            try
+            {
+                var base64EncodedBytes = Convert.FromBase64String(Type);
+                var decodedString = Encoding.UTF8.GetString(base64EncodedBytes);
+                var PostingTy = Encoding.UTF8.GetString(Convert.FromBase64String(PostingType));
+                int t = Convert.ToInt32(decodedString);
+                ViewBag.Type = t;
+                ViewBag.PostingType = PostingTy;
 
-            int userid = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-            var data = await _iPostingBL.GetPostingOutWithType(userid, t, PostingTy);
+                int userid = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                var data = await _iPostingBL.GetPostingOutWithType(userid, t, PostingTy);
 
-            return View(data);
+                return View(data);
+            }
+            catch (FormatException ex)
+            {
+                _logger.LogError(1001, ex, message: "Invalid Base64 string for Type: {Type} & PostingType: {PostingType} ", Type, PostingType);
+                TempData["error"] = "Invalid Input.";
+                TempData.Keep("error");
+                return RedirectToAction("ContactUs", "Home");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "PostingController=>GetPostingOutWithType.");
+                TempData["error"] = "Invalid Input.";
+                TempData.Keep("error");
+                return RedirectToAction("ContactUs", "Home");
+            }
         }
 
         public async Task<IActionResult> SavePoasingOut(TrnPostingOut dTO)
@@ -157,27 +186,51 @@ namespace Web.Controllers
         {
             int retint = 0;
             var userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-            if (!string.IsNullOrEmpty(Id))
-            {
-                var base64EncodedBytes = System.Convert.FromBase64String(Id);
-                var ret = System.Text.Encoding.UTF8.GetString(base64EncodedBytes);
-                retint = Convert.ToInt32(ret);
-            }
 
-            if (retint == 1)
+            if (string.IsNullOrEmpty(Id) || !service.IsValidBase64(Id) || string.IsNullOrEmpty(jcoor) || !service.IsValidBase64(jcoor))
             {
-                ViewBag.Title = "List of Closed Appl";
+                TempData["error"] = "Invalid Input.";
+                TempData.Keep("error");
+                return RedirectToAction("ContactUs", "Home");
             }
-            
-            if (string.IsNullOrEmpty(jcoor))
+            try
             {
-                var allrecord = await Task.Run(() => _iPostingBL.GetAppClosedList(Convert.ToInt32(userId), 1));
-                return View(allrecord);
+                if (!string.IsNullOrEmpty(Id))
+                {
+                    var base64EncodedBytes = Convert.FromBase64String(Id);
+                    var decodedString = Encoding.UTF8.GetString(base64EncodedBytes);
+                    retint = Convert.ToInt32(decodedString);
+                }
+
+                if (retint == 1)
+                {
+                    ViewBag.Title = "List of Closed Appl";
+                }
+
+                if (string.IsNullOrEmpty(jcoor))
+                {
+                    var allrecord = await Task.Run(() => _iPostingBL.GetAppClosedList(Convert.ToInt32(userId), 1));
+                    return View(allrecord);
+                }
+                else
+                {
+                    var allrecord = await Task.Run(() => _iPostingBL.GetAppClosedList(Convert.ToInt32(userId), 2));
+                    return View(allrecord);
+                }
             }
-            else
+            catch (FormatException ex)
             {
-                var allrecord = await Task.Run(() => _iPostingBL.GetAppClosedList(Convert.ToInt32(userId), 2));
-                return View(allrecord);
+                _logger.LogError(1001, ex, message: "Invalid Base64 string for Id: {Id} & jcoor: {jcoor} ", Id, jcoor);
+                TempData["error"] = "Invalid Input.";
+                TempData.Keep("error");
+                return RedirectToAction("ContactUs", "Home");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "BasicDetailsController=>InaccurateData.");
+                TempData["error"] = "Invalid Input.";
+                TempData.Keep("error");
+                return RedirectToAction("ContactUs", "Home");
             }
         }
     }
