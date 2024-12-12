@@ -31,7 +31,6 @@ namespace DataAccessLayer
         public DbSet<MRegistration> MRegistration { get; set; } = null!;
         public DbSet <MArmedCat> MArmedCats { get; set; } = null!;
         public DbSet<MTrnFwd> TrnFwds { get; set; } = null!;
-        public DbSet<DocUpload> DocUploads { get; set; } = null!;
         public DbSet<Error> Errors { get; set; } = null!;
         public DbSet<MComd> MComd { get; set; } = null!;
         public DbSet<MCorps> MCorps { get; set; } = null!;

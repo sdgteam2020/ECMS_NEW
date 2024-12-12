@@ -18,7 +18,7 @@ namespace DataTransferObject.Domain.Master
         [Required(ErrorMessage = "required!")]
         [RegularExpression("^[a-zA-Z0-9 ]*$", ErrorMessage = "Only Alphabets and Numbers allowed.")]
         [Column(TypeName = "varchar(10)")]
-        [MaxLength(10, ErrorMessage = "Maximum length of Corps Name is ten character.")]
+        [MaxLength(20, ErrorMessage = "Maximum length of Corps Name is ten character.")]
         public string CorpsName { get; set; } = string.Empty;
         [Required(ErrorMessage = "required!")]
 

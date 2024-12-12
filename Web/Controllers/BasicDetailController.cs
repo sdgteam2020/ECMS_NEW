@@ -1,55 +1,33 @@
 ﻿using AutoMapper;
-using BusinessLogicsLayer.Helpers;
-using DataTransferObject.Domain.Master;
 using DataTransferObject.Domain.Model;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.SqlServer.Management.Smo.Wmi;
 using Newtonsoft.Json;
 using System.Security.Claims;
 using System;
 using DataAccessLayer;
 using DataTransferObject.Domain.Identitytable;
 using DataTransferObject.Requests;
-using Microsoft.EntityFrameworkCore;
 using EntityFramework.Exceptions.Common;
 using DataTransferObject.Response;
 using BusinessLogicsLayer.Service;
-using BusinessLogicsLayer;
-using DataTransferObject.Constants;
 using BusinessLogicsLayer.Bde;
 using Web.WebHelpers;
 using DataTransferObject.ViewModels;
-using System.Data.Entity;
 using BusinessLogicsLayer.BasicDet;
 using BusinessLogicsLayer.BasicDetTemp;
-using BusinessLogicsLayer.BdeCate;
-using Microsoft.IdentityModel.Tokens;
-using Azure;
 using BusinessLogicsLayer.Master;
-using static System.Net.Mime.MediaTypeNames;
 using System.Text;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-using static NuGet.Packaging.PackagingConstants;
-using System.Diagnostics;
-using System.Drawing.Printing;
 using BusinessLogicsLayer.Unit;
 using DapperRepo.Core.Constants;
-using System.Text.Json.Nodes;
 using System.IO.Compression;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Common.Logging;
 using BusinessLogicsLayer.TrnLoginLog;
-using NuGet.Packaging;
 using Web.Healpers;
-using System.Security.Cryptography.X509Certificates;
-using System.Xml;
 using System.Xml.Serialization;
 using System.Xml.Linq;
 using BusinessLogicsLayer.TrnICardHold;
-using static iText.StyledXmlParser.Jsoup.Select.Evaluator;
 
 namespace Web.Controllers
 {
@@ -243,7 +221,7 @@ namespace Web.Controllers
             {
                 TempData["error"] = "Invalid Input.";
                 TempData.Keep("error");
-                return RedirectToActionPermanent("ContactUs", "Home");
+                return RedirectToAction("ContactUs", "Home");
             }
 
             if (!string.IsNullOrEmpty(Id))
@@ -260,7 +238,7 @@ namespace Web.Controllers
                     _logger.LogError(ex, "Invalid Base64 Id: {Id}", Id);
                     TempData["error"] = "Invalid Input.";
                     TempData.Keep("error");
-                    return RedirectToActionPermanent("ContactUs", "Home");
+                    return RedirectToAction("ContactUs", "Home");
                 }
             }
             
@@ -539,17 +517,6 @@ namespace Web.Controllers
             BasicDetailCrtAndUpdVM? basicDetailCrtAndUpdVM = await basicDetailBL.GetBasicDetailByRequestId(decryptedIntId);
             if (basicDetailCrtAndUpdVM != null)
             {
-                //DTOBasicDetailRequest basicDetailVM = _mapper.Map<BasicDetailCrtAndUpdVM, DTOBasicDetailRequest>(basicDetailCrtAndUpdVM);
-                //MRank? mRank = await context.MRank.FindAsync(basicDetail.RankId);
-                //if(mRank!=null)
-                //{
-                //    basicDetailVM.MRank = mRank;
-                //}
-                //MArmedType? mArmedType = await context.MArmedType.FindAsync(basicDetail.ArmedId);
-                //if(mArmedType!=null)
-                //{
-                //    basicDetailVM.MArmedType = mArmedType;
-                //}
                 basicDetailCrtAndUpdVM.AadhaarNo=basicDetailCrtAndUpdVM.AadhaarNo.Substring((basicDetailCrtAndUpdVM.AadhaarNo.Length-4),4);
                 return View(basicDetailCrtAndUpdVM);
             }
@@ -699,12 +666,12 @@ namespace Web.Controllers
                         {
                             TempData["Registration"] = JsonConvert.SerializeObject(model);
                             string id = protector.Protect(Data.BasicDetailId.ToString());
-                            return RedirectToActionPermanent("BasicDetail", "BasicDetail", new { Id  = protector.Protect(Convert.ToString(Data.BasicDetailId)) });
+                            return RedirectToAction("BasicDetail", "BasicDetail", new { Id  = protector.Protect(Convert.ToString(Data.BasicDetailId)) });
                         }
                         else
                         {
                             TempData["Registration"] = JsonConvert.SerializeObject(model);
-                            return RedirectToActionPermanent("BasicDetail", "BasicDetail", new { Id= protector.Protect("0") });
+                            return RedirectToAction("BasicDetail", "BasicDetail", new { Id= protector.Protect("0") });
                         }
                     }
                     else
@@ -745,7 +712,7 @@ namespace Web.Controllers
                             await basicDetailTempBL.Add(basicDetailTemp);
                         }
                         TempData["success"] = "Request Submited Successfully.";
-                        return RedirectToActionPermanent("InaccurateData", "BasicDetail", new {Id = "MQ=="});
+                        return RedirectToAction("InaccurateData", "BasicDetail", new {Id = "MQ=="});
                     }
                 }
                 else
@@ -886,18 +853,6 @@ namespace Web.Controllers
             }
             else
             {
-                try
-                {
-                    // Decrypt the  id using Unprotect method
-                    //string s = protector.Protect("0");
-                    decryptedId = protector.Unprotect(Id);
-                    decryptedIntId = Convert.ToInt32(decryptedId);
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(1001, ex, "This error occure because Id value change by user.");
-                    return RedirectToAction("Error", "Error");
-                }
                 BasicDetailCrtAndUpdVM? basicDetailUpdVM = await basicDetailBL.GetBesicDetailForEditById(decryptedIntId);
 
                 if (basicDetailUpdVM != null)
@@ -913,10 +868,7 @@ namespace Web.Controllers
                     basicDetailUpdVM.ExistingPhotoImagePath = basicDetailUpdVM.PhotoImagePath;
                     basicDetailUpdVM.ExistingSignatureImagePath = basicDetailUpdVM.SignatureImagePath;
                     basicDetailUpdVM.EncryptedId = Id;
-                    //ViewBag.OptionsRegimental = service.GetRegimentalDDLIdSelected(basicDetailUpdVM.ArmedId);
 
-                    ///////////////////////for close appl
-                    ///
                     if (TempData["Registration"] != null)
                     {
                         var modelex = JsonConvert.DeserializeObject<DTORegistrationRequest>(TempData["Registration"].ToString());
@@ -929,19 +881,10 @@ namespace Web.Controllers
                         basicDetailUpdVM.IdenMark1 = modelex.IdenMark1;
                         basicDetailUpdVM.IdenMark2 = modelex.IdenMark2;
                         ViewBag.OptionsRankId = modelex.RankId;
-                        //dTOBasicDetailCrtRequest.Height = model.Height;
-
-                        // dTOBasicDetailCrtRequest.AadhaarNo = Convert.ToString(model.AadhaarNo);
                         basicDetailUpdVM.AadhaarNo = Convert.ToInt64(modelex.AadhaarNo).ToString("D12"); ;// Convert.ToInt32(model.AadhaarNo.Substring(model.AadhaarNo.Length - 3)).ToString("D4");
-
-
-                        //dTOBasicDetailCrtRequest.BloodGroup = model.BloodGroup;
-
                         basicDetailUpdVM.ApplyForId = modelex.ApplyForId;
                         basicDetailUpdVM.RegistrationId = modelex.RegistrationId;
                         basicDetailUpdVM.TypeId = modelex.TypeId;
-
-
                         basicDetailUpdVM.State = modelex.State;
                         basicDetailUpdVM.District = modelex.District;
                         basicDetailUpdVM.PS = modelex.PS;
@@ -990,16 +933,6 @@ namespace Web.Controllers
                     {
                         BasicDetail newBasicDetail = _mapper.Map<BasicDetailCrtAndUpdVM, BasicDetail>(model);
                         newBasicDetail.DateOfIssue = null;
-                        //newBasicDetail.RankId = model.RankId;
-                        //newBasicDetail.ArmedId = model.ArmedId;
-                        //newBasicDetail.UnitId= model.UnitId;
-                        // basicDetail.IdentityMark = model.IdentityMark;
-                        //basicDetail.Height = model.Height;
-                        // basicDetail.BloodGroup = model.BloodGroup;
-                        //basicDetail.PlaceOfIssue = model.PlaceOfIssue;
-                        //newBasicDetail.DateOfIssue = model.DateOfIssue;
-                        //newBasicDetail.IssuingAuth = model.IssuingAuth;
-
                         newBasicDetail.Updatedby = Convert.ToInt32(userId);
                         newBasicDetail.UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
                         MTrnUpload mTrnUpload = new MTrnUpload();
@@ -1058,7 +991,6 @@ namespace Web.Controllers
                             }
 
                             mTrnUpload.PhotoImagePath = GetCreateMyFolder() + "/" + FileName;
-                            // ViewBag.PhotoImagePath = mTrnUpload.PhotoImagePath;
                         }
                         else
                         {
@@ -1096,12 +1028,6 @@ namespace Web.Controllers
                         {
                             mTrnUpload.SignatureImagePath = model.ExistingSignatureImagePath;
                         }
-                        //if (model.AadhaarNo != null)
-                        //{
-                        //    newBasicDetail.AadhaarNo = model.AadhaarNo.Replace(" ", "");
-                        //}
-
-                        // await basicDetailBL.Update(basicDetail);
                         DTOBasicDetailsSaveResponse ret1 = await basicDetailBL.SaveBasicDetailsWithAll(newBasicDetail, mTrnAddress, mTrnUpload, mTrnIdentityInfo, null, null);
                         BasicDetail basicDetail = await basicDetailBL.Get(model.BasicDetailId);
                         if (ret1.Result == true)
@@ -1116,9 +1042,6 @@ namespace Web.Controllers
                                 string tracid = model.DOB.Day.ToString("D2") + "" + model.DOB.Month.ToString("D2") + "" + model.DOB.Year + "" + Convert.ToInt32(model.AadhaarNo.Substring(model.AadhaarNo.Length - 3)).ToString("D4");
                                 mTrnICardRequest.TrackingId = Convert.ToInt64(tracid);
                                 mTrnICardRequest.RegistrationId = model.RegistrationId;
-                                //TrnDomainMapping trnDomainMapping = new TrnDomainMapping();
-                                // trnDomainMapping.AspNetUsersId= Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-                                //trnDomainMapping=await iDomainMapBL.GetByAspnetUserIdBy(trnDomainMapping);
                                 mTrnICardRequest.TrnDomainMappingId = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").TrnDomainMappingId;
                                 mTrnICardRequest.UpdatedOn = DateTime.Now;
                                 mTrnICardRequest.Updatedby = Convert.ToInt32(userId); //SessionHeplers.GetObject<string>(HttpContext.Session, "ArmyNo");
@@ -1150,11 +1073,6 @@ namespace Web.Controllers
                         }
                         else
                         {
-                            //TempData["success"] = "Updated Not Successfully.";
-                            //if (newBasicDetail.ApplyForId == 1)
-                            //    return RedirectToAction("Index", new { Id = "MQ==" });
-                            //else
-                            //    return RedirectToAction("Index", new { Id = "MQ==", jcoor = "SmNvL09ycw ==" });
                             TempData["error"] = ret1.Message;
                         }
 
@@ -1190,7 +1108,6 @@ namespace Web.Controllers
                         mTrnIdentityInfo.AadhaarNo = Convert.ToInt64(model.AadhaarNo);
                         mTrnIdentityInfo.BloodGroupId = model.BloodGroupId;
                         mTrnIdentityInfo.Height=model.Height;
-                        //MTrnIdentityInfo mTrnIdentityInfo = _mapper.Map<BasicDetailCrtAndUpdVM, MTrnIdentityInfo>(model);
                         if (model.UnitId==0)
                         {
                             ModelState.AddModelError("", "Please Enter Unit Name");
@@ -1227,7 +1144,6 @@ namespace Web.Controllers
                             }
 
                             mTrnUpload.PhotoImagePath = GetCreateMyFolder() + "/" + FileName;
-                            // ViewBag.PhotoImagePath = mTrnUpload.PhotoImagePath;
                         }
                         else
                         {
@@ -1267,11 +1183,6 @@ namespace Web.Controllers
                             ModelState.AddModelError("Signature_", "Signature is required.");
                             goto end;
                         }
-                        //if (model.AadhaarNo != null)
-                        //{
-                        //    newBasicDetail.AadhaarNo = model.AadhaarNo.Replace(" ", "");
-                        //}
-
                         MTrnICardRequest mTrnICardRequest = new MTrnICardRequest();
                         mTrnICardRequest.StatusId = 1;
                         mTrnICardRequest.IsActive = true;
@@ -1299,22 +1210,8 @@ namespace Web.Controllers
                         BasicDetail ret = new BasicDetail();
 
                         DTOBasicDetailsSaveResponse ret1 = await basicDetailBL.SaveBasicDetailsWithAll(newBasicDetail, mTrnAddress, mTrnUpload,mTrnIdentityInfo, mTrnICardRequest, mStepCounter);
-                       // ret = await basicDetailBL.AddWithReturn(newBasicDetail);
                         if (ret1.Result == true)
                         {
-                            //mTrnUpload.BasicDetailId = ret.BasicDetailId;
-                            //await basicuploadBL.Add(mTrnUpload);
-
-                            //mTrnAddress.BasicDetailId = ret.BasicDetailId;
-                            //await basicAddressBL.Add(mTrnAddress);
-
-                            //mTrnIdentityInfo.BasicDetailId = ret.BasicDetailId;
-                            //await basicinfoBL.Add(mTrnIdentityInfo);
-
-
-                            //TrnDomainMapping trnDomainMapping = new TrnDomainMapping();
-                            // trnDomainMapping.AspNetUsersId= Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-                            //trnDomainMapping=await iDomainMapBL.GetByAspnetUserIdBy(trnDomainMapping);
                             await basicDetailTempBL.UpdateByArmyNo(newBasicDetail.ServiceNo);
 
                             TempData["success"] = "Successfully created.";
@@ -1350,15 +1247,35 @@ namespace Web.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult> DecryptZipFile(string jcoor)
+        public Task<ActionResult> DecryptZipFile(string jcoor)
         {
-            if (!string.IsNullOrEmpty(jcoor))
+            if (string.IsNullOrEmpty(jcoor) || !service.IsValidBase64(jcoor))
             {
-                var base64EncodedBytes = System.Convert.FromBase64String(jcoor);
-                var ret = System.Text.Encoding.UTF8.GetString(base64EncodedBytes);
-                ViewBag.jcoor = ret;
+                TempData["error"] = "Invalid Input.";
+                TempData.Keep("error");
+                return Task.FromResult<ActionResult>(RedirectToAction("ContactUs", "Home"));
             }
-            return View();
+            try
+            {
+                var base64EncodedBytes = Convert.FromBase64String(jcoor);
+                var decodedString = Encoding.UTF8.GetString(base64EncodedBytes);
+                ViewBag.jcoor = decodedString;
+                return Task.FromResult<ActionResult>(View());
+            }
+            catch (FormatException ex)
+            {
+                _logger.LogError(1001, ex, message: "Invalid Base64 string for Id: {jcoor}", jcoor);
+                TempData["error"] = "Invalid Input.";
+                TempData.Keep("error");
+                return Task.FromResult<ActionResult>(RedirectToAction("ContactUs", "Home"));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "BasicDetailsController=>InaccurateData.");
+                TempData["error"] = "Invalid Input.";
+                TempData.Keep("error");
+                return Task.FromResult<ActionResult>(RedirectToAction("ContactUs", "Home"));
+            }
         }
         [HttpPost]
         public async Task<IActionResult> DecryptZipFileData(DTODecryptZipFileRequest model)
@@ -1407,57 +1324,6 @@ namespace Web.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Delete(string Id)
-        {
-            var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-            string decryptedId = string.Empty;
-            int decryptedIntId = 0;
-            try
-            {
-                // Decrypt the  id using Unprotect method
-                decryptedId = protector.Unprotect(Id);
-                decryptedIntId = Convert.ToInt32(decryptedId);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(1001, ex, "This error occure because Id value change by user.");
-                return RedirectToAction("Error", "Error");
-            }
-            BasicDetail basicDetail = await basicDetailBL.Get(decryptedIntId);
-            if (basicDetail == null)
-            {
-                Response.StatusCode = 404;
-                return View("BasicDetailNotFound", decryptedId.ToString());
-            }
-            else
-            {
-                BasicDetail deleteBasicDetail = await basicDetailBL.Delete(basicDetail.BasicDetailId);
-                //if (deleteBasicDetail != null)
-                //{
-                //    if (deleteBasicDetail.PhotoImagePath != null)
-                //    {
-                //        string sourcePhotoImagePathPhy = Path.Join(hostingEnvironment.WebRootPath, deleteBasicDetail.PhotoImagePath.Replace('/', '\\').ToString());
-                //        if (System.IO.File.Exists(sourcePhotoImagePathPhy))
-                //        {
-                //            System.IO.File.Delete(sourcePhotoImagePathPhy);
-                //        }
-                //    }
-                //    if (deleteBasicDetail.SignatureImagePath != null)
-                //    {
-                //        string sourceSignatureImagePath = Path.Join(hostingEnvironment.WebRootPath, deleteBasicDetail.SignatureImagePath.Replace('/', '\\').ToString());
-                //        if (System.IO.File.Exists(sourceSignatureImagePath))
-                //        {
-                //            System.IO.File.Delete(sourceSignatureImagePath);
-                //        }
-                //    }
-                //}
-
-                TempData["success"] = "Deleted Successfully.";
-                return RedirectToAction("index");
-            }
-        }
-        [HttpPost]
         public async Task<JsonResult> GetRegimentalListByArmedId(byte ArmedId)
         {
             var regimentals = await service.GetRegimentalListByArmedId(ArmedId);
@@ -1470,26 +1336,6 @@ namespace Web.Controllers
             return Ok(ro);
         }
 
-        [AcceptVerbs("Get", "Post")]
-        [AllowAnonymous]
-        public async Task<IActionResult> IsServiceNoInUse(string ServiceNo, string initialServiceNo)
-        {
-            //var user = await context.BasicDetails.FirstOrDefaultAsync(x => x.ServiceNo == ServiceNo);
-
-            //if (ServiceNo == initialServiceNo)
-            //{
-            //    return Json(true);
-            //}
-            //else if (user == null)
-            //{
-            //    return Json(true);
-            //}
-            //else
-            //{
-            //    return Json($"Service No {ServiceNo} is already in use.");
-            //}
-            return Json(true);
-        }
         [HttpPost]
         public async Task<IActionResult> GetUserData(string ICNumber)
         {
@@ -1704,38 +1550,6 @@ namespace Web.Controllers
                 dTOApiDataResponse.Message = "Service no required.";
                 return Ok(dTOApiDataResponse);
             }
-            //api:
-            //using (var client = new HttpClient())
-            //{
-            //    //client.BaseAddress = new Uri("https://api.postalpincode.in/");
-            //    client.BaseAddress = new Uri("https://localhost:7002/api/Fetch/GetData/");
-            //    //using (HttpResponseMessage response = await client.GetAsync("ICNumber/" + ICNumber))
-            //    using (HttpResponseMessage response = await client.GetAsync(ICNumber))
-            //    {
-            //        if (response.IsSuccessStatusCode)
-            //        {
-            //            var responseContent = response.Content.ReadAsStringAsync().Result;
-            //            response.EnsureSuccessStatusCode();
-            //            DTOApiDataResponse? responseData = JsonConvert.DeserializeObject<DTOApiDataResponse>(responseContent);
-            //            DateTime DOB, DOC;
-            //            TimeSpan timeSpan = new TimeSpan(0, 0, 0, 0, 0, 0);
-            //            DOB = responseData.DOB.Date + timeSpan;
-            //            DOC = responseData.DateOfCommissioning.Date + timeSpan;
-            //            responseData.DOB = DOB;
-            //            responseData.DateOfCommissioning = DOC;
-            //            responseData.Status = true;
-            //            return Ok(responseData);
-            //        }
-            //        else
-            //        {
-            //            DTOApiDataResponse dTOApiDataResponse = new DTOApiDataResponse();
-            //            dTOApiDataResponse.Status = false;
-            //            dTOApiDataResponse.Message = "Data Not Found.";
-            //            return Ok(dTOApiDataResponse);
-            //        }
-            //    }
-            //}
-
         }
 
         [HttpPost]
@@ -1791,88 +1605,6 @@ namespace Web.Controllers
         [Authorize(Policy = "ICardExportDataPolicy")]
         public async Task<IActionResult> DataExport(DTODataExportRequest Data)
         {
-            #region Code write by Kapoor Sir
-            //try
-            //{
-            //    var retdata = await basicDetailBL.GetBesicdetailsByRequestId(Data);
-            //    string sourceFolderPhotoPhy = Convert.ToString(ForCreateFolderrandom(Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "ExportAFSACCell")));
-            //    int recoff = 0;
-            //    List<DTODataExportsResponse> lst = new List<DTODataExportsResponse>();
-            //    string recofffolder = "";
-            //    string recoffphotos = "";
-            //    string recoffsing = "";
-            //    int count = 0;
-            //    string arryRequestId = "";
-            //    foreach (var data in retdata)
-            //    {
-            //        count++;
-            //        if (recoff != data.RecordOfficeId)
-            //        {
-            //            if (recoff != 0)
-            //            {
-            //                var jsonString = JsonConvert.SerializeObject(lst);
-            //                var jsonde = JsonConvert.DeserializeObject(jsonString);
-            //                System.IO.File.WriteAllText(recofffolder + "/Data.json", jsonString);
-            //            }
-
-            //            lst.Clear();
-            //            recofffolder = Convert.ToString(CreateFolder(sourceFolderPhotoPhy + "/" + data.RecordOffice));
-            //            recoffphotos = Convert.ToString(CreateFolder(sourceFolderPhotoPhy + "/" + data.RecordOffice + "/Photos"));
-            //            recoffsing = Convert.ToString(CreateFolder(sourceFolderPhotoPhy + "/" + data.RecordOffice + "/Signature"));
-
-            //        }
-
-            //        System.IO.File.Copy(Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "Photo") + "/" + data.PhotoImagePath, recoffphotos + "/" + data.ServiceNo + ".png", true);
-            //        System.IO.File.Copy(Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "Signature") + "/" + data.SignatureImagePath, recoffsing + "/" + data.ServiceNo + ".png", true);
-            //        lst.Add(data);
-            //        recoff = data.RecordOfficeId;
-            //        if (count == retdata.Count())
-            //        {
-            //            var jsonString = JsonConvert.SerializeObject(lst);
-            //            var jsonde = JsonConvert.DeserializeObject(jsonString);
-            //            System.IO.File.WriteAllText(recofffolder + "/Data.json", jsonString);
-
-            //        }
-            //        if (count == 1)
-            //            arryRequestId = data.RequestId + "";
-            //        else
-            //            arryRequestId = arryRequestId + "," + data.RequestId;
-
-            //    }
-
-            //    CreateZipFromFolder(sourceFolderPhotoPhy, sourceFolderPhotoPhy + ".zip");
-            //    if (Data.DataExportType == 1)
-            //    {
-            //        //Encrypt.EncryptParameter(jsonde.ToString())
-            //        ZipEncryptionService zipEncryptionService = new ZipEncryptionService();
-            //        zipEncryptionService.EncryptFile(sourceFolderPhotoPhy + ".zip", sourceFolderPhotoPhy);
-            //    }
-
-
-            //    string lastFolderName = new DirectoryInfo(sourceFolderPhotoPhy).Name;
-
-
-            //    DtoSession dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
-            //    var userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-            //    DTODataExported dTODataExported = new DTODataExported();
-            //    dTODataExported.AspNetUsersId = userId;
-            //    dTODataExported.UserId = Convert.ToInt32(dtoSession.UserId);
-            //    dTODataExported.IP = HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
-            //    dTODataExported.CreatedBy = dtoSession.RankName + " " + dtoSession.Name + " (" + dtoSession.ICNO + ")";
-            //    dTODataExported.CreatedOn = DateTime.Now;
-            //    dTODataExported.RequestId = arryRequestId;
-            //    await _iTrnLoginLogBL.AddDataExport(dTODataExported);
-
-            //    return Json(lastFolderName);
-
-
-            //}
-            //catch (Exception ex)
-            //{
-            //    _logger.LogError(1001, ex, "BasicDetails=>DataExport.");
-            //    return Json(KeyConstants.InternalServerError);
-            //}
-            #endregion
             try
             {
                 //Data.publicKey = "MIIBCgKCAQEArhSYCF6ie0rkkXe2HSqKXQ/Sa/NwwbXQ/q1sEEL2eWGnpCa0+49DtRWtybLfK6A51Cj1TX2HnOGuPROQ46DOPI6giwDXnIimHeHAMCd4GqFuDAlDytFNls4XHCMxt1Ql2nVWVxBc2DSTGB35H+eT06rgL+j6ra0iaorAnghUzgIsgH8uLoXX9WqQZXI3rZcH6483ymh0fs/6hS0L5D/pNSaAIuMse3Jg6vcv5z/M7ZzTfiKHO0XkZE/qkm6hIR8uHi4jJwoCdHJ4Fc0wZ+ekd3h/Z2nNXbim07jX6ZcoKL5udYf5u0iFqplg6ao+qssiHF4RMCeDh1vBU5vkSpyUEQIDAQAB";
@@ -1940,10 +1672,6 @@ namespace Web.Controllers
                     string tempZipFilePath = Convert.ToString(Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "ExportAFSACCell","Temp"));
 
                     ZipEncrypt.EncryptAndZip(sourceFolderPhotoPhy, sourceFolderPhotoPhy+ ".zip", tempZipFilePath, Data.publicKey); // Encrypt and zip folder
-                    //ZipDecrypt.DecryptAndUnzip(sourceFolderPhotoPhy + ".zip", tempZipFilePath, tempZipFilePath, Data.privateKey); // Decrypt and unzip folder
-                    //Encrypt.EncryptParameter(jsonde.ToString())
-                    //ZipEncryptionService zipEncryptionService = new ZipEncryptionService();
-                    //zipEncryptionService.EncryptFile(sourceFolderPhotoPhy + ".zip", sourceFolderPhotoPhy);
                 }
                 else
                 {

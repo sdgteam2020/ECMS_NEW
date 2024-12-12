@@ -438,52 +438,6 @@ namespace Web.Controllers
                 dTO.BdeName = dTO.BdeName.Trim();
                 if (ModelState.IsValid)
                 {
-                    #region old code
-                    //if (dTO.BdeId > 0)
-                    //{
-                    //    bool? result = await unitOfWork.Bde.FindByBdeWithId(dTO.BdeName,dTO.BdeId);
-                    //    if(result!=null)
-                    //    {
-                    //        if (result == true)
-                    //        {
-                    //            return Json(KeyConstants.Exists);
-                    //        }
-                    //        else
-                    //        {
-                    //            unitOfWork.Bde.Update(dTO);
-
-                    //            /////update Commd By CorpsId
-                    //            MapUnit dat = new MapUnit();
-                    //            dat.CorpsId = dTO.CorpsId;
-                    //            dat.ComdId = dTO.ComdId;
-                    //            dat.DivId = dTO.DivId;
-                    //            dat.BdeId = dTO.BdeId;
-                    //            changeHierarchyMaster.UpdateComdCorpsByDivs(dat);
-                    //            ////////End Code //////////////
-                    //            ///
-                    //            return Json(KeyConstants.Update);
-                    //        }
-                    //    }
-                    //    else
-                    //    {
-                    //        return Json(KeyConstants.InternalServerError);
-                    //    }
-
-                    //}
-                    //else
-                    //{
-                    //    if(!await unitOfWork.Bde.GetByName(dTO))
-                    //    {
-                    //        await unitOfWork.Bde.Add(dTO);
-                    //        return Json(KeyConstants.Save);
-                    //    }
-                    //    else
-                    //    {
-                    //        return Json(KeyConstants.Exists);
-                    //    }
-                    //}
-                    #endregion
-
                     bool? result = await unitOfWork.Bde.GetByName(dTO);
                     if (result != null)
                     {
