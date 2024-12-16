@@ -667,227 +667,6 @@ namespace Web.Controllers
             return View(model);
         }
 
-        [AllowAnonymous]
-        public async Task<IActionResult> IMLogin_ForIAM()
-        {
-            try
-            {
-                var EncryptedResponse = Request.Form["SAMLResponse"];
-
-                DTOIMLoginRequest model = new DTOIMLoginRequest();
-
-                DTOTempSession dTOTempSession = new DTOTempSession();
-
-
-                if (!string.IsNullOrEmpty(EncryptedResponse))
-                {
-
-                    string decryptedsamlresponse = DecryptSAmlResponseNew(EncryptedResponse, "C:\\Cert\\App Certificate\\eisac.army.mil.pfx", "Abc@2022");
-
-                    AccountSettings accountSettings = new AccountSettings();
-                    OneLogin.Saml.Response samlResponse = new OneLogin.Saml.Response(accountSettings);
-
-                    samlResponse.LoadXmlFromBase64(decryptedsamlresponse);
-                    //if (samlResponse.IsValid_sign())
-                    if (samlResponse.GetNameID() != null)
-                    {
-                        Log log = new Log();
-                        log.NameId = samlResponse.GetNameID();//"Admin";//samlResponse.GetNameID();
-                        log.SAMLRole = samlResponse.GetSAMLRole(); //"Admin";//samlResponse.GetSAMLRole();
-                        //log.NameId = "Admin";
-                        //log.SAMLRole = "Admin";
-                        log.AppName = samlResponse.GetSAMLAppName();
-
-
-
-                        if (log.NameId != null)
-                        {
-                            model.DomainId = log.NameId;
-                            model.Role = log.SAMLRole;
-                            dTOTempSession.AppName = log.AppName;
-                            HttpContext.Session.SetString("AppName", dTOTempSession.AppName);
-
-                            string? Footer = _configuration["Footer:Test"];
-                            ViewBag.Footer = Footer;
-                            //if (ModelState.IsValid)
-                            {
-
-                                TrnDomainMapping? _trnDomainMapping = await _iDomainMapBL.GetAllRelatedDataByDomainId(model.DomainId, model.Role);
-                                if (_trnDomainMapping != null && _trnDomainMapping.ApplicationUser.AdminFlag == true && _trnDomainMapping.Id > 0 && _trnDomainMapping.UserId != null)
-                                {
-                                    dTOTempSession.NewUser = false;
-                                    dTOTempSession.AdminFlag = _trnDomainMapping.ApplicationUser.AdminFlag;
-                                    dTOTempSession.DomainId = _trnDomainMapping.ApplicationUser.DomainId;
-                                    dTOTempSession.RoleName = model.Role;
-                                    dTOTempSession.ICNO = _trnDomainMapping.MUserProfile.ArmyNo;
-                                    dTOTempSession.Name = _trnDomainMapping.MUserProfile.Name;
-                                    dTOTempSession.RankAbbreviation = _trnDomainMapping.Rank.RankAbbreviation;
-                                    dTOTempSession.UserId = _trnDomainMapping.MUserProfile.UserId;
-                                    dTOTempSession.TDMId = _trnDomainMapping.Id;
-                                    dTOTempSession.TDMUnitMapId = _trnDomainMapping.UnitId;
-                                    dTOTempSession.TDMApptId = _trnDomainMapping.ApptId;
-                                    dTOTempSession.AspNetUsersId = _trnDomainMapping.ApplicationUser.Id;
-                                    dTOTempSession.IsIO = _trnDomainMapping.IsIO;
-                                    dTOTempSession.IsCO = _trnDomainMapping.IsCO;
-                                    dTOTempSession.IsRO = _trnDomainMapping.IsRO;
-                                    dTOTempSession.IsORO = _trnDomainMapping.IsORO;
-                                    dTOTempSession.DialingCode = _trnDomainMapping.DialingCode;
-                                    dTOTempSession.Extension = _trnDomainMapping.Extension;
-                                    dTOTempSession.IsToken = _trnDomainMapping.IsToken;
-
-
-                                    if (_trnDomainMapping.Role != null)
-                                    {
-                                        dTOTempSession.Status = 5;
-                                        SessionHeplers.SetObject(HttpContext.Session, "IMData", dTOTempSession);
-                                        return RedirectToActionPermanent("TokenValidate", "Account");
-                                    }
-                                    else
-                                    {
-                                        TempData["error"] = "Role not authorized.";
-                                        dTOTempSession.Status = 6;
-                                        SessionHeplers.SetObject(HttpContext.Session, "IMData", dTOTempSession);
-                                        return RedirectToActionPermanent("TokenValidate", "Account");
-                                    }
-
-
-                                }
-                                else if (_trnDomainMapping != null && _trnDomainMapping.Id > 0 && _trnDomainMapping.UserId == null)
-                                {
-                                    /*Get UserId from ProfileTable (Based on Input ArmyNo with token authorise.) and Update in TrnDomainMapping Table*/
-                                    dTOTempSession.NewUser = false;
-                                    dTOTempSession.AdminFlag = _trnDomainMapping.ApplicationUser.AdminFlag;
-                                    dTOTempSession.DomainId = _trnDomainMapping.ApplicationUser.DomainId;
-                                    dTOTempSession.RoleName = model.Role;
-                                    dTOTempSession.TDMId = _trnDomainMapping.Id;
-                                    dTOTempSession.TDMUnitMapId = _trnDomainMapping.UnitId;
-                                    dTOTempSession.TDMApptId = _trnDomainMapping.ApptId;
-                                    dTOTempSession.AspNetUsersId = _trnDomainMapping.ApplicationUser.Id;
-                                    dTOTempSession.IsIO = _trnDomainMapping.IsIO;
-                                    dTOTempSession.IsCO = _trnDomainMapping.IsCO;
-                                    dTOTempSession.IsRO = _trnDomainMapping.IsRO;
-                                    dTOTempSession.IsORO = _trnDomainMapping.IsORO;
-                                    dTOTempSession.DialingCode = _trnDomainMapping.DialingCode;
-                                    dTOTempSession.Extension = _trnDomainMapping.Extension;
-                                    dTOTempSession.IsToken = _trnDomainMapping.IsToken;
-                                    if (_trnDomainMapping.Role != null)
-                                    {
-                                        dTOTempSession.Status = 4;
-                                        SessionHeplers.SetObject(HttpContext.Session, "IMData", dTOTempSession);
-                                        return RedirectToActionPermanent("TokenValidate", "Account");
-                                    }
-                                    else
-                                    {
-                                        TempData["error"] = "Role not authorized.";
-                                        dTOTempSession.Status = 6;
-                                        SessionHeplers.SetObject(HttpContext.Session, "IMData", dTOTempSession);
-                                        return RedirectToActionPermanent("TokenValidate", "Account");
-                                    }
-
-                                }
-                                else if (_trnDomainMapping != null && _trnDomainMapping.Id == 0)
-                                {
-                                    /*Create TrnDomainMapping using AspnetUserId,UnitId,UserId from Profile Table.*/
-                                    dTOTempSession.NewUser = false;
-                                    dTOTempSession.DomainId = _trnDomainMapping.ApplicationUser.DomainId;
-                                    dTOTempSession.RoleName = model.Role;
-                                    dTOTempSession.AspNetUsersId = _trnDomainMapping.ApplicationUser.Id;
-
-                                    if (_trnDomainMapping.Role != null)
-                                    {
-                                        dTOTempSession.Status = 3;
-                                        SessionHeplers.SetObject(HttpContext.Session, "IMData", dTOTempSession);
-                                        return RedirectToActionPermanent("TokenValidate", "Account");
-                                    }
-                                    else
-                                    {
-                                        TempData["error"] = "Role not authorized.";
-                                        dTOTempSession.Status = 6;
-                                        SessionHeplers.SetObject(HttpContext.Session, "IMData", dTOTempSession);
-                                        return RedirectToActionPermanent("TokenValidate", "Account");
-                                    }
-
-                                }
-                                else if (_trnDomainMapping != null && _trnDomainMapping.ApplicationUser.AdminFlag == false && _trnDomainMapping.Id > 0 && _trnDomainMapping.UserId != null)
-                                {
-                                    dTOTempSession.NewUser = false;
-                                    dTOTempSession.DomainId = _trnDomainMapping.ApplicationUser.DomainId;
-                                    dTOTempSession.RoleName = model.Role;
-                                    dTOTempSession.ICNO = _trnDomainMapping.MUserProfile.ArmyNo;
-                                    dTOTempSession.Name = _trnDomainMapping.MUserProfile.Name;
-                                    dTOTempSession.UserId = _trnDomainMapping.MUserProfile.UserId;
-                                    dTOTempSession.TDMId = _trnDomainMapping.Id;
-                                    dTOTempSession.TDMUnitMapId = _trnDomainMapping.UnitId;
-                                    dTOTempSession.TDMApptId = _trnDomainMapping.ApptId;
-                                    dTOTempSession.AspNetUsersId = _trnDomainMapping.ApplicationUser.Id;
-                                    dTOTempSession.IsIO = _trnDomainMapping.IsIO;
-                                    dTOTempSession.IsCO = _trnDomainMapping.IsCO;
-                                    dTOTempSession.IsRO = _trnDomainMapping.IsRO;
-                                    dTOTempSession.IsORO = _trnDomainMapping.IsORO;
-                                    dTOTempSession.DialingCode = _trnDomainMapping.DialingCode;
-                                    dTOTempSession.Extension = _trnDomainMapping.Extension;
-                                    dTOTempSession.IsToken = _trnDomainMapping.IsToken;
-                                    if (_trnDomainMapping.Role != null)
-                                    {
-                                        dTOTempSession.Status = 1;
-                                        SessionHeplers.SetObject(HttpContext.Session, "IMData", dTOTempSession);
-                                        TempData["error"] = "Domain Id - " + dTOTempSession.DomainId + " & Profile Id - " + dTOTempSession.UserId + ".<br/>Your regn request was successfully placed with Admin for necy Approval..<br/>Pl note regn No - " + dTOTempSession.AspNetUsersId + " for future correspondence. <br/>Contact Admin.";
-                                        if (_trnDomainMapping.ApplicationUser.AdminMsg != null)
-                                        {
-                                            TempData["error"] = _trnDomainMapping.ApplicationUser.AdminMsg;
-                                        }
-                                        return RedirectToActionPermanent("TokenValidate", "Account");
-                                    }
-                                    else
-                                    {
-                                        TempData["error"] = "Role not authorized.";
-                                        dTOTempSession.Status = 6;
-                                        SessionHeplers.SetObject(HttpContext.Session, "IMData", dTOTempSession);
-                                        return RedirectToActionPermanent("TokenValidate", "Account");
-                                    }
-
-                                }
-                                else if (_trnDomainMapping == null)
-                                {
-                                    /*Create DomainId in AspNetUser Table , Assign Role.,Create Mapping with add profile id.*/
-                                    dTOTempSession.NewUser = true;
-                                    dTOTempSession.DomainId = model.DomainId;
-                                    dTOTempSession.RoleName = model.Role;
-                                    dTOTempSession.Status = 2;
-                                    SessionHeplers.SetObject(HttpContext.Session, "IMData", dTOTempSession);
-
-
-                                    return RedirectToAction("TokenValidate", "Account");
-                                    // return RedirectToAction("UnAuthUser", "Account");
-                                }
-
-                            }
-                        }
-
-                        else
-                        {
-
-                            Response.Redirect("https://iam2.army.mil/IAM/User", true);
-                        }
-                    }
-                    else
-                    {
-
-                        Response.Redirect("https://iam2.army.mil/IAM/User", true);
-                    }
-                }
-                else
-                {
-
-                    Response.Redirect("https://iam2.army.mil/IAM/User", true);
-                }
-            }
-            catch (Exception ex)
-            {
-                Response.Redirect("https://iam2.army.mil/IAM/User", true);
-            }
-            return RedirectToAction("IMLogin1", "Account");
-        }
         [HttpGet]
         [AllowAnonymous]
         public IActionResult TokenValidate()
@@ -2566,6 +2345,228 @@ namespace Web.Controllers
         #endregion End Common Method
 
         #region IAM Code
+
+        [AllowAnonymous]
+        public async Task<IActionResult> IMLogin_ForIAM()
+        {
+            try
+            {
+                var EncryptedResponse = Request.Form["SAMLResponse"];
+
+                DTOIMLoginRequest model = new DTOIMLoginRequest();
+
+                DTOTempSession dTOTempSession = new DTOTempSession();
+
+
+                if (!string.IsNullOrEmpty(EncryptedResponse))
+                {
+
+                    string decryptedsamlresponse = DecryptSAmlResponseNew(EncryptedResponse, "C:\\Cert\\App Certificate\\eisac.army.mil.pfx", "Abc@2022");
+
+                    AccountSettings accountSettings = new AccountSettings();
+                    OneLogin.Saml.Response samlResponse = new OneLogin.Saml.Response(accountSettings);
+
+                    samlResponse.LoadXmlFromBase64(decryptedsamlresponse);
+                    //if (samlResponse.IsValid_sign())
+                    if (samlResponse.GetNameID() != null)
+                    {
+                        Log log = new Log();
+                        log.NameId = samlResponse.GetNameID();//"Admin";//samlResponse.GetNameID();
+                        log.SAMLRole = samlResponse.GetSAMLRole(); //"Admin";//samlResponse.GetSAMLRole();
+                        //log.NameId = "Admin";
+                        //log.SAMLRole = "Admin";
+                        log.AppName = samlResponse.GetSAMLAppName();
+
+
+
+                        if (log.NameId != null)
+                        {
+                            model.DomainId = log.NameId;
+                            model.Role = log.SAMLRole;
+                            dTOTempSession.AppName = log.AppName;
+                            HttpContext.Session.SetString("AppName", dTOTempSession.AppName);
+
+                            string? Footer = _configuration["Footer:Test"];
+                            ViewBag.Footer = Footer;
+                            //if (ModelState.IsValid)
+                            {
+
+                                TrnDomainMapping? _trnDomainMapping = await _iDomainMapBL.GetAllRelatedDataByDomainId(model.DomainId, model.Role);
+                                if (_trnDomainMapping != null && _trnDomainMapping.ApplicationUser.AdminFlag == true && _trnDomainMapping.Id > 0 && _trnDomainMapping.UserId != null)
+                                {
+                                    dTOTempSession.NewUser = false;
+                                    dTOTempSession.AdminFlag = _trnDomainMapping.ApplicationUser.AdminFlag;
+                                    dTOTempSession.DomainId = _trnDomainMapping.ApplicationUser.DomainId;
+                                    dTOTempSession.RoleName = model.Role;
+                                    dTOTempSession.ICNO = _trnDomainMapping.MUserProfile.ArmyNo;
+                                    dTOTempSession.Name = _trnDomainMapping.MUserProfile.Name;
+                                    dTOTempSession.RankAbbreviation = _trnDomainMapping.Rank.RankAbbreviation;
+                                    dTOTempSession.UserId = _trnDomainMapping.MUserProfile.UserId;
+                                    dTOTempSession.TDMId = _trnDomainMapping.Id;
+                                    dTOTempSession.TDMUnitMapId = _trnDomainMapping.UnitId;
+                                    dTOTempSession.TDMApptId = _trnDomainMapping.ApptId;
+                                    dTOTempSession.AspNetUsersId = _trnDomainMapping.ApplicationUser.Id;
+                                    dTOTempSession.IsIO = _trnDomainMapping.IsIO;
+                                    dTOTempSession.IsCO = _trnDomainMapping.IsCO;
+                                    dTOTempSession.IsRO = _trnDomainMapping.IsRO;
+                                    dTOTempSession.IsORO = _trnDomainMapping.IsORO;
+                                    dTOTempSession.DialingCode = _trnDomainMapping.DialingCode;
+                                    dTOTempSession.Extension = _trnDomainMapping.Extension;
+                                    dTOTempSession.IsToken = _trnDomainMapping.IsToken;
+
+
+                                    if (_trnDomainMapping.Role != null)
+                                    {
+                                        dTOTempSession.Status = 5;
+                                        SessionHeplers.SetObject(HttpContext.Session, "IMData", dTOTempSession);
+                                        return RedirectToActionPermanent("TokenValidate", "Account");
+                                    }
+                                    else
+                                    {
+                                        TempData["error"] = "Role not authorized.";
+                                        dTOTempSession.Status = 6;
+                                        SessionHeplers.SetObject(HttpContext.Session, "IMData", dTOTempSession);
+                                        return RedirectToActionPermanent("TokenValidate", "Account");
+                                    }
+
+
+                                }
+                                else if (_trnDomainMapping != null && _trnDomainMapping.Id > 0 && _trnDomainMapping.UserId == null)
+                                {
+                                    /*Get UserId from ProfileTable (Based on Input ArmyNo with token authorise.) and Update in TrnDomainMapping Table*/
+                                    dTOTempSession.NewUser = false;
+                                    dTOTempSession.AdminFlag = _trnDomainMapping.ApplicationUser.AdminFlag;
+                                    dTOTempSession.DomainId = _trnDomainMapping.ApplicationUser.DomainId;
+                                    dTOTempSession.RoleName = model.Role;
+                                    dTOTempSession.TDMId = _trnDomainMapping.Id;
+                                    dTOTempSession.TDMUnitMapId = _trnDomainMapping.UnitId;
+                                    dTOTempSession.TDMApptId = _trnDomainMapping.ApptId;
+                                    dTOTempSession.AspNetUsersId = _trnDomainMapping.ApplicationUser.Id;
+                                    dTOTempSession.IsIO = _trnDomainMapping.IsIO;
+                                    dTOTempSession.IsCO = _trnDomainMapping.IsCO;
+                                    dTOTempSession.IsRO = _trnDomainMapping.IsRO;
+                                    dTOTempSession.IsORO = _trnDomainMapping.IsORO;
+                                    dTOTempSession.DialingCode = _trnDomainMapping.DialingCode;
+                                    dTOTempSession.Extension = _trnDomainMapping.Extension;
+                                    dTOTempSession.IsToken = _trnDomainMapping.IsToken;
+                                    if (_trnDomainMapping.Role != null)
+                                    {
+                                        dTOTempSession.Status = 4;
+                                        SessionHeplers.SetObject(HttpContext.Session, "IMData", dTOTempSession);
+                                        return RedirectToActionPermanent("TokenValidate", "Account");
+                                    }
+                                    else
+                                    {
+                                        TempData["error"] = "Role not authorized.";
+                                        dTOTempSession.Status = 6;
+                                        SessionHeplers.SetObject(HttpContext.Session, "IMData", dTOTempSession);
+                                        return RedirectToActionPermanent("TokenValidate", "Account");
+                                    }
+
+                                }
+                                else if (_trnDomainMapping != null && _trnDomainMapping.Id == 0)
+                                {
+                                    /*Create TrnDomainMapping using AspnetUserId,UnitId,UserId from Profile Table.*/
+                                    dTOTempSession.NewUser = false;
+                                    dTOTempSession.DomainId = _trnDomainMapping.ApplicationUser.DomainId;
+                                    dTOTempSession.RoleName = model.Role;
+                                    dTOTempSession.AspNetUsersId = _trnDomainMapping.ApplicationUser.Id;
+
+                                    if (_trnDomainMapping.Role != null)
+                                    {
+                                        dTOTempSession.Status = 3;
+                                        SessionHeplers.SetObject(HttpContext.Session, "IMData", dTOTempSession);
+                                        return RedirectToActionPermanent("TokenValidate", "Account");
+                                    }
+                                    else
+                                    {
+                                        TempData["error"] = "Role not authorized.";
+                                        dTOTempSession.Status = 6;
+                                        SessionHeplers.SetObject(HttpContext.Session, "IMData", dTOTempSession);
+                                        return RedirectToActionPermanent("TokenValidate", "Account");
+                                    }
+
+                                }
+                                else if (_trnDomainMapping != null && _trnDomainMapping.ApplicationUser.AdminFlag == false && _trnDomainMapping.Id > 0 && _trnDomainMapping.UserId != null)
+                                {
+                                    dTOTempSession.NewUser = false;
+                                    dTOTempSession.DomainId = _trnDomainMapping.ApplicationUser.DomainId;
+                                    dTOTempSession.RoleName = model.Role;
+                                    dTOTempSession.ICNO = _trnDomainMapping.MUserProfile.ArmyNo;
+                                    dTOTempSession.Name = _trnDomainMapping.MUserProfile.Name;
+                                    dTOTempSession.UserId = _trnDomainMapping.MUserProfile.UserId;
+                                    dTOTempSession.TDMId = _trnDomainMapping.Id;
+                                    dTOTempSession.TDMUnitMapId = _trnDomainMapping.UnitId;
+                                    dTOTempSession.TDMApptId = _trnDomainMapping.ApptId;
+                                    dTOTempSession.AspNetUsersId = _trnDomainMapping.ApplicationUser.Id;
+                                    dTOTempSession.IsIO = _trnDomainMapping.IsIO;
+                                    dTOTempSession.IsCO = _trnDomainMapping.IsCO;
+                                    dTOTempSession.IsRO = _trnDomainMapping.IsRO;
+                                    dTOTempSession.IsORO = _trnDomainMapping.IsORO;
+                                    dTOTempSession.DialingCode = _trnDomainMapping.DialingCode;
+                                    dTOTempSession.Extension = _trnDomainMapping.Extension;
+                                    dTOTempSession.IsToken = _trnDomainMapping.IsToken;
+                                    if (_trnDomainMapping.Role != null)
+                                    {
+                                        dTOTempSession.Status = 1;
+                                        SessionHeplers.SetObject(HttpContext.Session, "IMData", dTOTempSession);
+                                        TempData["error"] = "Domain Id - " + dTOTempSession.DomainId + " & Profile Id - " + dTOTempSession.UserId + ".<br/>Your regn request was successfully placed with Admin for necy Approval..<br/>Pl note regn No - " + dTOTempSession.AspNetUsersId + " for future correspondence. <br/>Contact Admin.";
+                                        if (_trnDomainMapping.ApplicationUser.AdminMsg != null)
+                                        {
+                                            TempData["error"] = _trnDomainMapping.ApplicationUser.AdminMsg;
+                                        }
+                                        return RedirectToActionPermanent("TokenValidate", "Account");
+                                    }
+                                    else
+                                    {
+                                        TempData["error"] = "Role not authorized.";
+                                        dTOTempSession.Status = 6;
+                                        SessionHeplers.SetObject(HttpContext.Session, "IMData", dTOTempSession);
+                                        return RedirectToActionPermanent("TokenValidate", "Account");
+                                    }
+
+                                }
+                                else if (_trnDomainMapping == null)
+                                {
+                                    /*Create DomainId in AspNetUser Table , Assign Role.,Create Mapping with add profile id.*/
+                                    dTOTempSession.NewUser = true;
+                                    dTOTempSession.DomainId = model.DomainId;
+                                    dTOTempSession.RoleName = model.Role;
+                                    dTOTempSession.Status = 2;
+                                    SessionHeplers.SetObject(HttpContext.Session, "IMData", dTOTempSession);
+
+
+                                    return RedirectToAction("TokenValidate", "Account");
+                                    // return RedirectToAction("UnAuthUser", "Account");
+                                }
+
+                            }
+                        }
+
+                        else
+                        {
+
+                            Response.Redirect("https://iam2.army.mil/IAM/User", true);
+                        }
+                    }
+                    else
+                    {
+
+                        Response.Redirect("https://iam2.army.mil/IAM/User", true);
+                    }
+                }
+                else
+                {
+
+                    Response.Redirect("https://iam2.army.mil/IAM/User", true);
+                }
+            }
+            catch (Exception ex)
+            {
+                Response.Redirect("https://iam2.army.mil/IAM/User", true);
+            }
+            return RedirectToAction("IMLogin1", "Account");
+        }
         public async Task<ActionResult> FinalLogout()
         {
             HttpContext.Session.Remove("Token");
