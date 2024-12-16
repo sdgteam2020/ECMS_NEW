@@ -38,10 +38,14 @@ using System.Data;
 using System.Data.Entity;
 using System.Data.Entity.Hierarchy; 
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Security.Policy;
+using System.Text;
+using System.Web;
 using Web.Data;
 using Web.WebHelpers;
+using OneLogin.Saml;
 using static iText.StyledXmlParser.Jsoup.Select.Evaluator;
 using static System.Net.Mime.MediaTypeNames;
 using static System.Runtime.InteropServices.JavaScript.JSType;
@@ -94,6 +98,13 @@ namespace Web.Controllers
             _logger = logger;
             _TrnLoginLogBL= trnLoginLogBL;
             _httpContextAccessor= httpContextAccessor;
+        }
+        public class Log
+        {
+            public string NameId { get; set; }=string.Empty;
+            public string SAMLRole { get; set; } = string.Empty;
+            public string AppName { get; set; } = string.Empty;
+
         }
         [HttpGet]
         [AllowAnonymous]
@@ -476,7 +487,8 @@ namespace Web.Controllers
         #endregion End UserRegn
 
         #region IMLogin
-        
+
+        // When the code is published on IAM, these IMLogin name change.
         [HttpGet]
         [AllowAnonymous]
         public IActionResult IMLogin()
@@ -654,6 +666,228 @@ namespace Web.Controllers
             }
             return View(model);
         }
+
+        [AllowAnonymous]
+        public async Task<IActionResult> IMLogin_ForIAM()
+        {
+            try
+            {
+                var EncryptedResponse = Request.Form["SAMLResponse"];
+
+                DTOIMLoginRequest model = new DTOIMLoginRequest();
+
+                DTOTempSession dTOTempSession = new DTOTempSession();
+
+
+                if (!string.IsNullOrEmpty(EncryptedResponse))
+                {
+
+                    string decryptedsamlresponse = DecryptSAmlResponseNew(EncryptedResponse, "C:\\Cert\\App Certificate\\eisac.army.mil.pfx", "Abc@2022");
+
+                    AccountSettings accountSettings = new AccountSettings();
+                    OneLogin.Saml.Response samlResponse = new OneLogin.Saml.Response(accountSettings);
+
+                    samlResponse.LoadXmlFromBase64(decryptedsamlresponse);
+                    //if (samlResponse.IsValid_sign())
+                    if (samlResponse.GetNameID() != null)
+                    {
+                        Log log = new Log();
+                        log.NameId = samlResponse.GetNameID();//"Admin";//samlResponse.GetNameID();
+                        log.SAMLRole = samlResponse.GetSAMLRole(); //"Admin";//samlResponse.GetSAMLRole();
+                        //log.NameId = "Admin";
+                        //log.SAMLRole = "Admin";
+                        log.AppName = samlResponse.GetSAMLAppName();
+
+
+
+                        if (log.NameId != null)
+                        {
+                            model.DomainId = log.NameId;
+                            model.Role = log.SAMLRole;
+                            dTOTempSession.AppName = log.AppName;
+                            HttpContext.Session.SetString("AppName", dTOTempSession.AppName);
+
+                            string? Footer = _configuration["Footer:Test"];
+                            ViewBag.Footer = Footer;
+                            //if (ModelState.IsValid)
+                            {
+
+                                TrnDomainMapping? _trnDomainMapping = await _iDomainMapBL.GetAllRelatedDataByDomainId(model.DomainId, model.Role);
+                                if (_trnDomainMapping != null && _trnDomainMapping.ApplicationUser.AdminFlag == true && _trnDomainMapping.Id > 0 && _trnDomainMapping.UserId != null)
+                                {
+                                    dTOTempSession.NewUser = false;
+                                    dTOTempSession.AdminFlag = _trnDomainMapping.ApplicationUser.AdminFlag;
+                                    dTOTempSession.DomainId = _trnDomainMapping.ApplicationUser.DomainId;
+                                    dTOTempSession.RoleName = model.Role;
+                                    dTOTempSession.ICNO = _trnDomainMapping.MUserProfile.ArmyNo;
+                                    dTOTempSession.Name = _trnDomainMapping.MUserProfile.Name;
+                                    dTOTempSession.RankAbbreviation = _trnDomainMapping.Rank.RankAbbreviation;
+                                    dTOTempSession.UserId = _trnDomainMapping.MUserProfile.UserId;
+                                    dTOTempSession.TDMId = _trnDomainMapping.Id;
+                                    dTOTempSession.TDMUnitMapId = _trnDomainMapping.UnitId;
+                                    dTOTempSession.TDMApptId = _trnDomainMapping.ApptId;
+                                    dTOTempSession.AspNetUsersId = _trnDomainMapping.ApplicationUser.Id;
+                                    dTOTempSession.IsIO = _trnDomainMapping.IsIO;
+                                    dTOTempSession.IsCO = _trnDomainMapping.IsCO;
+                                    dTOTempSession.IsRO = _trnDomainMapping.IsRO;
+                                    dTOTempSession.IsORO = _trnDomainMapping.IsORO;
+                                    dTOTempSession.DialingCode = _trnDomainMapping.DialingCode;
+                                    dTOTempSession.Extension = _trnDomainMapping.Extension;
+                                    dTOTempSession.IsToken = _trnDomainMapping.IsToken;
+
+
+                                    if (_trnDomainMapping.Role != null)
+                                    {
+                                        dTOTempSession.Status = 5;
+                                        SessionHeplers.SetObject(HttpContext.Session, "IMData", dTOTempSession);
+                                        return RedirectToActionPermanent("TokenValidate", "Account");
+                                    }
+                                    else
+                                    {
+                                        TempData["error"] = "Role not authorized.";
+                                        dTOTempSession.Status = 6;
+                                        SessionHeplers.SetObject(HttpContext.Session, "IMData", dTOTempSession);
+                                        return RedirectToActionPermanent("TokenValidate", "Account");
+                                    }
+
+
+                                }
+                                else if (_trnDomainMapping != null && _trnDomainMapping.Id > 0 && _trnDomainMapping.UserId == null)
+                                {
+                                    /*Get UserId from ProfileTable (Based on Input ArmyNo with token authorise.) and Update in TrnDomainMapping Table*/
+                                    dTOTempSession.NewUser = false;
+                                    dTOTempSession.AdminFlag = _trnDomainMapping.ApplicationUser.AdminFlag;
+                                    dTOTempSession.DomainId = _trnDomainMapping.ApplicationUser.DomainId;
+                                    dTOTempSession.RoleName = model.Role;
+                                    dTOTempSession.TDMId = _trnDomainMapping.Id;
+                                    dTOTempSession.TDMUnitMapId = _trnDomainMapping.UnitId;
+                                    dTOTempSession.TDMApptId = _trnDomainMapping.ApptId;
+                                    dTOTempSession.AspNetUsersId = _trnDomainMapping.ApplicationUser.Id;
+                                    dTOTempSession.IsIO = _trnDomainMapping.IsIO;
+                                    dTOTempSession.IsCO = _trnDomainMapping.IsCO;
+                                    dTOTempSession.IsRO = _trnDomainMapping.IsRO;
+                                    dTOTempSession.IsORO = _trnDomainMapping.IsORO;
+                                    dTOTempSession.DialingCode = _trnDomainMapping.DialingCode;
+                                    dTOTempSession.Extension = _trnDomainMapping.Extension;
+                                    dTOTempSession.IsToken = _trnDomainMapping.IsToken;
+                                    if (_trnDomainMapping.Role != null)
+                                    {
+                                        dTOTempSession.Status = 4;
+                                        SessionHeplers.SetObject(HttpContext.Session, "IMData", dTOTempSession);
+                                        return RedirectToActionPermanent("TokenValidate", "Account");
+                                    }
+                                    else
+                                    {
+                                        TempData["error"] = "Role not authorized.";
+                                        dTOTempSession.Status = 6;
+                                        SessionHeplers.SetObject(HttpContext.Session, "IMData", dTOTempSession);
+                                        return RedirectToActionPermanent("TokenValidate", "Account");
+                                    }
+
+                                }
+                                else if (_trnDomainMapping != null && _trnDomainMapping.Id == 0)
+                                {
+                                    /*Create TrnDomainMapping using AspnetUserId,UnitId,UserId from Profile Table.*/
+                                    dTOTempSession.NewUser = false;
+                                    dTOTempSession.DomainId = _trnDomainMapping.ApplicationUser.DomainId;
+                                    dTOTempSession.RoleName = model.Role;
+                                    dTOTempSession.AspNetUsersId = _trnDomainMapping.ApplicationUser.Id;
+
+                                    if (_trnDomainMapping.Role != null)
+                                    {
+                                        dTOTempSession.Status = 3;
+                                        SessionHeplers.SetObject(HttpContext.Session, "IMData", dTOTempSession);
+                                        return RedirectToActionPermanent("TokenValidate", "Account");
+                                    }
+                                    else
+                                    {
+                                        TempData["error"] = "Role not authorized.";
+                                        dTOTempSession.Status = 6;
+                                        SessionHeplers.SetObject(HttpContext.Session, "IMData", dTOTempSession);
+                                        return RedirectToActionPermanent("TokenValidate", "Account");
+                                    }
+
+                                }
+                                else if (_trnDomainMapping != null && _trnDomainMapping.ApplicationUser.AdminFlag == false && _trnDomainMapping.Id > 0 && _trnDomainMapping.UserId != null)
+                                {
+                                    dTOTempSession.NewUser = false;
+                                    dTOTempSession.DomainId = _trnDomainMapping.ApplicationUser.DomainId;
+                                    dTOTempSession.RoleName = model.Role;
+                                    dTOTempSession.ICNO = _trnDomainMapping.MUserProfile.ArmyNo;
+                                    dTOTempSession.Name = _trnDomainMapping.MUserProfile.Name;
+                                    dTOTempSession.UserId = _trnDomainMapping.MUserProfile.UserId;
+                                    dTOTempSession.TDMId = _trnDomainMapping.Id;
+                                    dTOTempSession.TDMUnitMapId = _trnDomainMapping.UnitId;
+                                    dTOTempSession.TDMApptId = _trnDomainMapping.ApptId;
+                                    dTOTempSession.AspNetUsersId = _trnDomainMapping.ApplicationUser.Id;
+                                    dTOTempSession.IsIO = _trnDomainMapping.IsIO;
+                                    dTOTempSession.IsCO = _trnDomainMapping.IsCO;
+                                    dTOTempSession.IsRO = _trnDomainMapping.IsRO;
+                                    dTOTempSession.IsORO = _trnDomainMapping.IsORO;
+                                    dTOTempSession.DialingCode = _trnDomainMapping.DialingCode;
+                                    dTOTempSession.Extension = _trnDomainMapping.Extension;
+                                    dTOTempSession.IsToken = _trnDomainMapping.IsToken;
+                                    if (_trnDomainMapping.Role != null)
+                                    {
+                                        dTOTempSession.Status = 1;
+                                        SessionHeplers.SetObject(HttpContext.Session, "IMData", dTOTempSession);
+                                        TempData["error"] = "Domain Id - " + dTOTempSession.DomainId + " & Profile Id - " + dTOTempSession.UserId + ".<br/>Your regn request was successfully placed with Admin for necy Approval..<br/>Pl note regn No - " + dTOTempSession.AspNetUsersId + " for future correspondence. <br/>Contact Admin.";
+                                        if (_trnDomainMapping.ApplicationUser.AdminMsg != null)
+                                        {
+                                            TempData["error"] = _trnDomainMapping.ApplicationUser.AdminMsg;
+                                        }
+                                        return RedirectToActionPermanent("TokenValidate", "Account");
+                                    }
+                                    else
+                                    {
+                                        TempData["error"] = "Role not authorized.";
+                                        dTOTempSession.Status = 6;
+                                        SessionHeplers.SetObject(HttpContext.Session, "IMData", dTOTempSession);
+                                        return RedirectToActionPermanent("TokenValidate", "Account");
+                                    }
+
+                                }
+                                else if (_trnDomainMapping == null)
+                                {
+                                    /*Create DomainId in AspNetUser Table , Assign Role.,Create Mapping with add profile id.*/
+                                    dTOTempSession.NewUser = true;
+                                    dTOTempSession.DomainId = model.DomainId;
+                                    dTOTempSession.RoleName = model.Role;
+                                    dTOTempSession.Status = 2;
+                                    SessionHeplers.SetObject(HttpContext.Session, "IMData", dTOTempSession);
+
+
+                                    return RedirectToAction("TokenValidate", "Account");
+                                    // return RedirectToAction("UnAuthUser", "Account");
+                                }
+
+                            }
+                        }
+
+                        else
+                        {
+
+                            Response.Redirect("https://iam2.army.mil/IAM/User", true);
+                        }
+                    }
+                    else
+                    {
+
+                        Response.Redirect("https://iam2.army.mil/IAM/User", true);
+                    }
+                }
+                else
+                {
+
+                    Response.Redirect("https://iam2.army.mil/IAM/User", true);
+                }
+            }
+            catch (Exception ex)
+            {
+                Response.Redirect("https://iam2.army.mil/IAM/User", true);
+            }
+            return RedirectToAction("IMLogin1", "Account");
+        }
         [HttpGet]
         [AllowAnonymous]
         public IActionResult TokenValidate()
@@ -673,9 +907,13 @@ namespace Web.Controllers
             string? Footer = _configuration["Footer:Test"];
             ViewBag.Footer = Footer;
 
-            string dd = AESEncrytDecry.GetSalt();  // "8080808080808080"; //protector.Protect("1");
-            HttpContext.Session.SetString(SessionKeySalt, dd);
-            ViewBag.hdns = dd;
+            // When the code is published on IAM, these lines are commented.
+                
+                string dd = AESEncrytDecry.GetSalt();  // "8080808080808080"; //protector.Protect("1");
+                HttpContext.Session.SetString(SessionKeySalt, dd);
+                ViewBag.hdns = dd;
+            
+            //------------------- End Instructions----------------------
 
             int userid = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
             DTOTempSession? dTOTempSession = SessionHeplers.GetObject<DTOTempSession>(HttpContext.Session, "Token");
@@ -686,6 +924,13 @@ namespace Web.Controllers
             {
                 DTOTempSession? dTOTempSession1 = SessionHeplers.GetObject<DTOTempSession>(HttpContext.Session, "IMData");
 
+                // When the code is published on IAM, these line are uncommented.
+                    
+                    //ViewBag.AppName = dTOTempSession1.AppName;
+                    //ViewBag.DomainId = dTOTempSession1.DomainId;
+                    //ViewBag.RoleName = dTOTempSession1.RoleName;
+
+                //------------------- End Instructions----------------------
                 if (dTOTempSession1 != null)
                 {
                     if (dTOTempSession1.Status == 1)
@@ -707,11 +952,19 @@ namespace Web.Controllers
             {
                 if(dTOTempSession!=null)
                 {
+                    // When the code is published on IAM, these line are uncommented.
+
+                        //ViewBag.AppName = dTOTempSession.AppName;
+                        //ViewBag.DomainId = dTOTempSession.DomainId;
+                        //ViewBag.RoleName = dTOTempSession.RoleName;
+
+                    //------------------- End Instructions----------------------
+
                     if (RoleNameList.Contains(dTOTempSession.RoleName))
                     {
                         return RedirectToActionPermanent("Index", "Home");
                     }
-                    else if (dTOTempSession.RoleName.ToUpper() == "admin")
+                    else if (dTOTempSession.RoleName == "admin")
                     {
                         return RedirectToActionPermanent("DashboardMaster", "Master");
                     }
@@ -737,7 +990,8 @@ namespace Web.Controllers
             {
                 string? Footer = _configuration["Footer:Test"];
                 ViewBag.Footer = Footer;
-
+                
+                // When the code is published on IAM, these lines are commented.
                 string? dd = HttpContext.Session.GetString(SessionKeySalt);
                 if (dd != null)
                 {
@@ -745,6 +999,7 @@ namespace Web.Controllers
                     string Password = AESEncrytDecry.DecryptStringAES(model.Password);
                     model.Password = Password;
                 }
+                //------------------- End Instructions----------------------
 
 
                 ///////Cookie With Secure Flag at this time not use////////////////////////
@@ -764,6 +1019,13 @@ namespace Web.Controllers
                 if (dTOTempSession != null)
                 {
                     model.ICNo = model.ICNo.Trim();
+
+                    // When the code is published on IAM, these line are uncommented.
+
+                        //model.Password = "Admin123#";
+                    
+                    //------------------- End Instructions----------------------
+
                     if (ModelState.IsValid)
                     {
                         if (dTOTempSession.Status == 5 && dTOTempSession.ICNO == model.ICNo)
@@ -799,6 +1061,7 @@ namespace Web.Controllers
                                     dtoSession.RankName = dTOTempSession.RankAbbreviation.ToUpper();
                                     dtoSession.TrnDomainMappingId = dTOTempSession.TDMId;
                                     dtoSession.RoleName = dTOTempSession.RoleName;
+                                    dtoSession.DoaminId = dTOTempSession.DomainId;
                                     ///////////////login log//////////////////////
                                     TrnLogin_Log log = new TrnLogin_Log();
                                     log.AspNetUsersId = Convert.ToInt32(usera.Id);
@@ -2301,6 +2564,247 @@ namespace Web.Controllers
         //}
 
         #endregion End Common Method
+
+        #region IAM Code
+        public async Task<ActionResult> FinalLogout()
+        {
+            HttpContext.Session.Remove("Token");
+            await signInManager.SignOutAsync();
+            return View();
+        }
+        [AllowAnonymous]
+        public async Task<ActionResult> IMLogout()
+        {
+            // if(HttpContext.Request.Query.Count()>0)
+            // {
+            string? SAMLRequest = HttpContext.Request.Query["SAMLRequest"];
+            string? SAMLResponse = HttpContext.Request.Query["SAMLResponse"];
+            // }
+
+            //string ss = Convert.ToString(HttpContext.Request.QueryString);
+
+            var dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+            if (SAMLResponse != null && !string.IsNullOrEmpty(Convert.ToString(SAMLResponse)))
+            {
+                // Response.Redirect("https://localhost:7023/Account/FinalLogout");
+                Response.Redirect("https://eisac.army.mil/Account/FinalLogout");
+            }
+            else if (SAMLRequest != null && !string.IsNullOrEmpty(Convert.ToString(SAMLRequest)))
+            {
+                string EncryptedResponse = Convert.ToString(SAMLRequest);
+                if (!string.IsNullOrEmpty(EncryptedResponse))
+                {
+                    AccountSettings accountSettings = new AccountSettings();
+                    OneLogin.Saml.Response samlResponse = new OneLogin.Saml.Response(accountSettings);
+
+                    string decryptedsamlresponse = DecryptSAmlResponseNew(EncryptedResponse, "C:\\Cert\\App Certificate\\eisac.army.mil.pfx", "Abc@2022");
+                    samlResponse.LoadXmlFromBase64(decryptedsamlresponse);
+
+
+
+                    string nameid = string.Empty;
+                    string issuer = string.Empty;
+                    samlResponse.GetLogoutParameter(out nameid, out issuer);
+                    HttpContext.Session.Remove("Token");
+                    await signInManager.SignOutAsync();
+                    try
+                    {
+                        //SendResponseToIAM("https://localhost:7023/Account/FinalLogout", accountSettings.entityId, nameid);
+                        SendResponseToIAM("https://eisac.army.mil/Account/FinalLogout", accountSettings.entityId, nameid);
+                    }
+                    catch (Exception exx)
+                    {
+
+                    }
+                }
+            }
+
+            else
+            {
+                AccountSettings acs = new AccountSettings();
+
+                string NameId = dtoSession.DoaminId;
+                string userRole = dtoSession.RoleName;
+
+                LogoutRequesttoIAM(userRole, acs.entityId, NameId);
+            }
+
+            if (SAMLRequest == null && SAMLResponse == null)
+            {
+                AccountSettings acs = new AccountSettings();
+                string NameId = dtoSession.DoaminId;
+                string userRole = dtoSession.RoleName; ;
+
+
+                //HttpContext.User = new GenericPrincipal(new GenericIdentity(string.Empty), null);
+
+
+
+                LogoutRequesttoIAM(userRole, acs.entityId, NameId);
+            }
+            return View();
+        }
+        public IActionResult UnAuthUser()
+        {
+            return View();
+        }
+        [AllowAnonymous]
+        public string DecryptSAmlResponseNew(string Encryptedtext, string certificatepath, string password)
+        {
+
+            string result = "True";
+            try
+            {
+                var plainTextBytes = System.Text.Encoding.UTF8.GetBytes("alpha");
+
+                string[] spearator = { Convert.ToBase64String(plainTextBytes) };
+
+                // using the method
+                string[] newstring = Encryptedtext.Split(spearator, StringSplitOptions.RemoveEmptyEntries);
+                //string[] newstring = encryptedvalue.Split();
+                string key = newstring[1].ToString();
+                string plain = newstring[0].ToString();
+                #region decryptkeyusingprivatekey
+                try
+                {
+                    byte[] byteData = Convert.FromBase64String(key);
+                    //   byte[] decryptedkey = new byte[16];
+                    byte[] decryptedkey = new byte[32];
+                    X509Certificate2 myCert2 = null;
+                    RSACryptoServiceProvider rsa = null;
+
+                    try
+                    {
+                        myCert2 = new X509Certificate2(@"C:\\Cert\\App Certificate\\eisac.army.mil.pfx", "Abc@2022");
+                        // rsa = (RSACryptoServiceProvider)myCert2.PrivateKey;
+                        #region test
+                        using (RSA rs = myCert2.GetRSAPrivateKey())
+                        {
+                            // rs.KeySize = 16;
+                            decryptedkey = rs.Decrypt(byteData, RSAEncryptionPadding.Pkcs1);
+
+                        }
+                        #endregion
+                    }
+                    catch (Exception e)
+                    {
+
+                    }
+                    // byte[] iv = new byte[16];
+                    byte[] iv = new byte[32];
+
+
+                    byte[] iv1 = new byte[16] { 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0 };
+
+
+                    // result = DecryptString0705222_Final(plain, rsa.Decrypt(byteData, RSAEncryptionPadding.Pkcs1), iv1);
+                    result = DecryptString0705222_Final(plain, decryptedkey, iv1);
+                }
+                catch (Exception exxx)
+                {
+                    result = exxx.Message;
+                }
+                #endregion
+
+            }
+            catch (Exception exx)
+            {
+                result = exx.Message;
+            }
+
+            return result;
+        }
+
+
+        [AllowAnonymous]
+        public void SendResponseToIAM(string issueurl, string entityid, string usernam)
+        {
+            AccountSettings accountSettings = new AccountSettings();
+
+            OneLogin.Saml.AuthRequest req = new AuthRequest(new AppSettings(), accountSettings);
+
+            //string ReuestXML = req.GetRequest(AuthRequest.AuthRequestFormat.Base64);
+            //string ReuestXML = req.GetLogOutRequest(AuthRequest.AuthRequestFormat.Base64, issueurl, "https://iam2.army.mil/IAM/logout");
+            string ReuestXML = req.GetLogOutRequest(AuthRequest.AuthRequestFormat.Base64, issueurl, "https://iam2.army.mil/IAM/logout");
+
+            //Response.Redirect("https://iam2.army.mil/IAM/logout?SAMLResponse=" + ReuestXML);
+            Response.Redirect("https://iam2.army.mil/IAM/logout?SAMLResponse=" + ReuestXML);
+
+        }
+        [AllowAnonymous]
+        public void LogoutRequesttoIAM(string role, string entityid, string usernam)
+        {
+            AccountSettings accountSettings = new AccountSettings();
+            OneLogin.Saml.AuthRequest req = new AuthRequest(new AppSettings(), accountSettings);
+
+            string ReuestXML = req.SingleLogoutRequest(AuthRequest.AuthRequestFormat.Base64, entityid, role, usernam);
+            //Response.Redirect("https://iam2.army.mil/IAM/singleAppLogout?SAMLRequest=" + HttpUtility.UrlEncode(ReuestXML), true);
+            Response.Redirect("https://iam2.army.mil/IAM/singleAppLogout?SAMLRequest=" + HttpUtility.UrlEncode(ReuestXML), true);
+        }
+
+        [AllowAnonymous]
+        private string DecryptString0705222_Final(string cipherText, byte[] key, byte[] iv)
+        {
+            // Instantiate a new Aes object to perform string symmetric encryption
+            Aes encryptor = Aes.Create();
+
+            encryptor.Mode = CipherMode.ECB;
+
+            // Set key and IV
+            //  byte[] aesKey = new byte[16];
+            byte[] aesKey = new byte[32];
+            //Array.Copy(key, 0, aesKey, 0, 16);
+            Array.Copy(key, 0, aesKey, 0, 32);
+            encryptor.Key = aesKey;
+            encryptor.IV = iv;
+            encryptor.Padding = PaddingMode.PKCS7;
+
+            // Instantiate a new MemoryStream object to contain the encrypted bytes
+            MemoryStream memoryStream = new MemoryStream();
+
+            // Instantiate a new encryptor from our Aes object
+            ICryptoTransform aesDecryptor = encryptor.CreateDecryptor();
+
+            // Instantiate a new CryptoStream object to process the data and write it to the 
+            // memory stream
+            CryptoStream cryptoStream = new CryptoStream(memoryStream, aesDecryptor, CryptoStreamMode.Write);
+
+            // Will contain decrypted plaintext
+            string plainText = string.Empty;
+
+            try
+            {
+                // Convert the ciphertext string into a byte array
+                byte[] cipherBytes = Convert.FromBase64String(cipherText);
+
+                // Decrypt the input ciphertext string
+                cryptoStream.Write(cipherBytes, 0, cipherBytes.Length);
+
+                // Complete the decryption process
+                cryptoStream.FlushFinalBlock();
+
+                // Convert the decrypted data from a MemoryStream to a byte array
+                byte[] plainBytes = memoryStream.ToArray();
+
+                // Convert the decrypted byte array to string
+                plainText = Encoding.ASCII.GetString(plainBytes, 0, plainBytes.Length);
+            }
+            catch (Exception exx)
+            {
+
+            }
+            finally
+            {
+                // Close both the MemoryStream and the CryptoStream
+                memoryStream.Close();
+                cryptoStream.Close();
+            }
+
+            // Return the decrypted data as a string
+            return plainText;
+
+        }
+        #endregion IAM Code
 
     }
 }
