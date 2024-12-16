@@ -103,4 +103,10 @@
     <Folder Include="wwwroot\WriteReadData\Signature\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Reference Include="SignatureVerification">
+      <HintPath>SignatureVerification.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>

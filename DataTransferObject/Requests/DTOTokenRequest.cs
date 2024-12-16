@@ -17,16 +17,25 @@ namespace DataTransferObject.Requests
         [RegularExpression(@"^[\w]+$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
         public string ICNo { get; set; } = string.Empty;
 
+        public string? ErrorMessage { get; set; }
+
+
+        // When the code is published on IAM, these lines are commented.
+
         [Required]
         [DataType(DataType.Password)]
+        
+        //------------------- End Instructions----------------------
         //[RegularExpression(@"^[\w \?\@\#\$\%\&\*\=\\\/]*$", ErrorMessage = "This < >^| special chars not allowed for security reasons.")]
         public string Password { get; set; } = string.Empty;
 
-        [DataType(DataType.Password)]
-        [Display(Name = "Confirm password")]
-        [Compare("Password", ErrorMessage = "Password and confirmation password do not match.")]
-        public string ConfirmPassword { get; set; } = string.Empty;
-
-        public string? ErrorMessage { get; set; }
+        // When the code is published on IAM, these lines are commented.
+            
+            [DataType(DataType.Password)]
+            [Display(Name = "Confirm password")]
+            [Compare("Password", ErrorMessage = "Password and confirmation password do not match.")]
+            public string ConfirmPassword { get; set; } = string.Empty;
+        
+        //------------------- End Instructions----------------------
     }
 }

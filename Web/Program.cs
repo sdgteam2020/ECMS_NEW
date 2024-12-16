@@ -128,8 +128,10 @@ builder.Services.AddSession(options =>
     options.IdleTimeout = TimeSpan.FromMinutes(20);
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
+    // When the code is published on IAM, these two lines are commented out.
     options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
     options.Cookie.SameSite = SameSiteMode.Strict;
+    //------------------- End Instructions----------------------
 });
 builder.Services.AddAntiforgery(o => o.SuppressXFrameOptionsHeader = true);
 builder.Services.AddAntiforgery(options =>
@@ -157,6 +159,16 @@ builder.Services.AddResponseCompression(options =>
 {
     options.EnableForHttps = true;
 });
+
+// When the code is published on IAM, these ConfigureKestrel code are uncommented.
+//builder.WebHost.ConfigureKestrel(i =>
+//{
+//    i.Limits.MaxRequestBodySize = 10 * 1024 * 1024;
+//    i.Limits.MaxRequestLineSize = 16384;
+//    i.Limits.MaxRequestHeadersTotalSize = 32768;
+
+//});
+//------------------- End Instructions----------------------
 
 builder.Services.AddSingleton<IAuthorizationHandler, CanEditOnlyOtherAdminRolesAndClaimsHandler>();
 builder.Services.AddSingleton<IAuthorizationHandler, SuperAdminHandler>();
@@ -237,8 +249,10 @@ else
 
 //app.UseRewriter(options);
 
+// When the code is published on IAM, these two lines are commented out.
 app.UseForwardedHeaders();
 app.UseHttpsRedirection();
+//------------------- End Instructions----------------------
 
 app.UseStaticFiles(new StaticFileOptions
 {
