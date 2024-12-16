@@ -37,5 +37,8 @@ namespace DataTransferObject.Requests
         public string DialingCode { get; set; } = string.Empty;
         public string Extension { get; set; } = string.Empty;
         public string Password { get; set; } = string.Empty;
+        
+        // AppName Stored in session for IAM
+        public string AppName { get; set; } = string.Empty;
     }
 }
