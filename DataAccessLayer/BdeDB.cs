@@ -29,7 +29,6 @@ namespace DataAccessLayer
             _contextDP = contextDP;
             _logger = logger;
         }
-        private readonly IConfiguration configuration;
 
         public async Task<bool?> GetByName(MBde Data)
         {

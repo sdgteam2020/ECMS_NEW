@@ -57,7 +57,8 @@ namespace DataAccessLayer
             }
             catch (Exception ex)
             {
-                return null;
+                _logger.LogError(1001, ex, "PostingDB->GetAllPostingHistory");
+                return new List<DTOPostingOutDetilsResponse>(); // Return an empty list instead of null
             }
         }
         public async Task<List<DTOPostingOutDetilsResponse>> GetPostingOutWithType(int AspNetUsersId,int Type, string PostingTy)
@@ -111,7 +112,8 @@ namespace DataAccessLayer
             }
             catch (Exception ex)
             {
-                return null;
+                _logger.LogError(1001, ex, "PostingDB->GetPostingOutWithType");
+                return new List<DTOPostingOutDetilsResponse>(); // Return an empty list instead of null
             }
         }
 
@@ -140,13 +142,14 @@ namespace DataAccessLayer
                 {
                     var ret = await connection.QueryAsync<DTOPostingInResponse>(query, new { ArmyNo });
 
-                    return ret.SingleOrDefault();
+                    return ret.FirstOrDefault() ?? new DTOPostingInResponse();
 
                 }
             }
             catch (Exception ex)
             {
-                return null;
+                _logger.LogError(1001, ex, "PostingDB->GetArmyDataForPostingOut");
+                return  new DTOPostingInResponse(); 
             }
         }
 
@@ -295,7 +298,7 @@ namespace DataAccessLayer
             catch (Exception ex)
             {
                 _logger.LogError(1001, ex, "PostingDB->GetAppClosedList");
-                return null;
+                return new List<DTOAppClosedListResponse>();
             }
         }
     }

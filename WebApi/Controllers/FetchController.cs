@@ -65,7 +65,7 @@ namespace WebApi.Controllers
                 // data = await _aPIDataBL.GetByIC(Data.ArmyNo);
                 if (Data.ArmyNo != null)
                 {
-                    MApiDataOffrs? apiData = (MApiDataOffrs?)await _aPIDataBL.GetByoffrsIC(Data);
+                    MApiDataOffrs? apiData = await _aPIDataBL.GetByoffrsIC(Data);
 
                     if (apiData != null)
                     {

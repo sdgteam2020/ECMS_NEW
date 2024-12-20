@@ -84,7 +84,7 @@ namespace Web.Controllers
                 }
                 else
                 {
-                    return Json(ModelState.Select(x => x.Value.Errors).Where(y => y.Count > 0).ToList());
+                    return Json(ModelState.Select(x => x.Value?.Errors).Where(y => y?.Count > 0).ToList());
                 }
 
             }
@@ -235,7 +235,7 @@ namespace Web.Controllers
                 }
                 else
                 {
-                    return Json(ModelState.Select(x => x.Value.Errors).Where(y => y.Count > 0).ToList());
+                    return Json(ModelState.Select(x => x.Value?.Errors).Where(y => y?.Count > 0).ToList());
                 }
 
             }
@@ -350,7 +350,7 @@ namespace Web.Controllers
                 }
                 else
                 {
-                    return Json(ModelState.Select(x => x.Value.Errors).Where(y => y.Count > 0).ToList());
+                    return Json(ModelState.Select(x => x.Value?.Errors).Where(y => y?.Count > 0).ToList());
                 }
 
             }
@@ -476,7 +476,7 @@ namespace Web.Controllers
                 }
                 else
                 {
-                    return Json(ModelState.Select(x => x.Value.Errors).Where(y => y.Count > 0).ToList());
+                    return Json(ModelState.Select(x => x.Value?.Errors).Where(y => y?.Count > 0).ToList());
                 }
 
             }
@@ -639,7 +639,7 @@ namespace Web.Controllers
                 else
                 {
 
-                    return Json(ModelState.Select(x => x.Value.Errors).Where(y => y.Count > 0).ToList());
+                    return Json(ModelState.Select(x => x.Value?.Errors).Where(y => y?.Count > 0).ToList());
                 }
             }
             catch (Exception ex)
@@ -679,7 +679,7 @@ namespace Web.Controllers
                 }
                 else
                 {
-                    return Json(ModelState.Select(x => x.Value.Errors).Where(y => y.Count > 0).ToList());
+                    return Json(ModelState.Select(x => x.Value?.Errors).Where(y => y?.Count > 0).ToList());
                 }
 
             }
@@ -861,7 +861,7 @@ namespace Web.Controllers
                 }
                 else
                 {
-                    return Json(ModelState.Select(x => x.Value.Errors).Where(y => y.Count > 0).ToList());
+                    return Json(ModelState.Select(x => x.Value?.Errors).Where(y => y?.Count > 0).ToList());
                 }
 
             }
@@ -1008,7 +1008,7 @@ namespace Web.Controllers
                 else
                 {
 
-                    return Json(ModelState.Select(x => x.Value.Errors).Where(y => y.Count > 0).ToList());
+                    return Json(ModelState.Select(x => x.Value?.Errors).Where(y => y?.Count > 0).ToList());
                 }
 
             }
@@ -1106,7 +1106,7 @@ namespace Web.Controllers
                 else
                 {
 
-                    return Json(ModelState.Select(x => x.Value.Errors).Where(y => y.Count > 0).ToList());
+                    return Json(ModelState.Select(x => x.Value?.Errors).Where(y => y?.Count > 0).ToList());
                 }
 
             }
@@ -1241,7 +1241,7 @@ namespace Web.Controllers
                 else
                 {
 
-                    return Json(ModelState.Select(x => x.Value.Errors).Where(y => y.Count > 0).ToList());
+                    return Json(ModelState.Select(x => x.Value?.Errors).Where(y => y?.Count > 0).ToList());
                 }
 
             }
@@ -1369,7 +1369,7 @@ namespace Web.Controllers
                 }
                 else
                 {
-                    return Json(ModelState.Select(x => x.Value.Errors).Where(y => y.Count > 0).ToList());
+                    return Json(ModelState.Select(x => x.Value?.Errors).Where(y => y?.Count > 0).ToList());
                 }
 
             }
@@ -1479,7 +1479,7 @@ namespace Web.Controllers
                 }
                 else
                 {
-                    return Json(ModelState.Select(x => x.Value.Errors).Where(y => y.Count > 0).ToList());
+                    return Json(ModelState.Select(x => x.Value?.Errors).Where(y => y?.Count > 0).ToList());
                 }
             }
             catch (Exception ex) 
@@ -1595,7 +1595,7 @@ namespace Web.Controllers
                 }
                 else
                 {
-                    return Json(ModelState.Select(x => x.Value.Errors).Where(y => y.Count > 0).ToList());
+                    return Json(ModelState.Select(x => x.Value?.Errors).Where(y => y?.Count > 0).ToList());
                 }
             }
             //catch (DbUpdateException ex) when (ex.InnerException?.InnerException is SqlException sqlEx && (sqlEx.Number == 2601 || sqlEx.Number == 2627))
@@ -1767,7 +1767,7 @@ namespace Web.Controllers
                 }
                 else
                 {
-                    return Json(ModelState.Select(x => x.Value.Errors).Where(y => y.Count > 0).ToList());
+                    return Json(ModelState.Select(x => x.Value?.Errors).Where(y => y?.Count > 0).ToList());
                 }
             }
             catch (Exception ex)
@@ -1826,7 +1826,7 @@ namespace Web.Controllers
                     }
                     else
                     {
-                        return Json(ModelState.Select(x => x.Value.Errors).Where(y => y.Count > 0).ToList());
+                        return Json(ModelState.Select(x => x.Value?.Errors).Where(y => y?.Count > 0).ToList());
                     }
                 }
 
@@ -1900,7 +1900,7 @@ namespace Web.Controllers
                 }
                 else
                 {
-                    return Json(ModelState.Select(x => x.Value.Errors).Where(y => y.Count > 0).ToList());
+                    return Json(ModelState.Select(x => x.Value?.Errors).Where(y => y?.Count > 0).ToList());
                 }
 
             }

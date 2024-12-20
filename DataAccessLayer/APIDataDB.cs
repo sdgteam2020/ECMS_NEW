@@ -18,7 +18,7 @@ namespace DataAccessLayer
 {
     public class APIDataDB : GenericRepositoryDL<MApiData>, IAPIDataDB
     {
-        protected readonly ApplicationDbContext _context;
+        protected new readonly ApplicationDbContext _context;
         private readonly DapperContext _contextDP;
         public APIDataDB(ApplicationDbContext context, DapperContext dapperContext) : base(context)
         {
@@ -49,7 +49,7 @@ namespace DataAccessLayer
             }
         }
 
-        public async Task<MApiData> GetByIC(DTOAPIDataRequest Data)
+        public async Task<MApiData?> GetByIC(DTOAPIDataRequest Data)
         {
 
             //string query = "SELECT [ApplyForId],[Pers_Army_No],[Pers_Blood_Gp],[Pers_District],[Pers_Father_Name],[Pers_Gender],[Pers_Height],[Pers_House_no],[Pers_Iden_mark_1],[Pers_Iden_mark_2],[Pers_Moh_st],[Pers_Pin_code],[Pers_Police_stn],[Pers_Post_office],[Pers_Rank],[Pers_Regt],[Pers_State],[Pers_Tehsil],[Pers_UID],[Pers_Village],[Pers_birth_dt],[Pers_enrol_dt],[Pers_name] FROM [dbo].[MApiData] where [Pers_Army_No]=@ArmyNo";
@@ -86,7 +86,7 @@ namespace DataAccessLayer
             }
         }
 
-        public async Task<MApiDataOffrs> GetByoffrsIC(DTOAPIDataRequest Data)
+        public async Task<MApiDataOffrs?> GetByoffrsIC(DTOAPIDataRequest Data)
         {
             // string query = "SELECT [ApplyForId],[Pers_Army_No],[Pers_Blood_Gp],[Pers_District],[Pers_Father_Name],[Pers_Gender],[Pers_Height],[Pers_House_no],[Pers_Iden_mark_1],[Pers_Iden_mark_2],[Pers_Moh_st],[Pers_Pin_code],[Pers_Police_stn],[Pers_Post_office],[Pers_Rank],[Pers_Regt],[Pers_State],[Pers_Tehsil],[Pers_UID],[Pers_Village],[Pers_birth_dt],[Pers_enrol_dt],[Pers_name] FROM [dbo].[MApiDataOffrs] where [Pers_Army_No]=@ArmyNo";
             string query = "SELECT     [ApplyForId],[Pers_Army_No],CONVERT(nvarchar(MAX),DEcryptByPassPhrase('ASDC@123',[Pers_name])) [Pers_name],[Pers_Rank],CONVERT(nvarchar(MAX),DEcryptByPassPhrase('ASDC@123',[Pers_Father_Name])) [Pers_Father_Name],CONVERT(nvarchar(MAX),DEcryptByPassPhrase('ASDC@123',[Pers_birth_dt])) [Pers_birth_dt] " +

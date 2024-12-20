@@ -30,7 +30,7 @@ namespace DataAccessLayer
 {
     public class BasicDetailDB : GenericRepositoryDL<BasicDetail>, IBasicDetailDB
     {
-        protected readonly ApplicationDbContext _context;
+        protected new readonly ApplicationDbContext _context;
         private readonly DapperContext _contextDP;
         private readonly IDataProtector protector;
         private readonly ILogger<BasicDetailDB> _logger;
@@ -67,7 +67,6 @@ namespace DataAccessLayer
         }
         public async Task<DTOBDetailByRequestIdResponse?> GetBDetailByRequestId(int RequestId)
         {
-            string? LName = null;
             try
             {
                 var ret = await (from irequest in _context.TrnICardRequest

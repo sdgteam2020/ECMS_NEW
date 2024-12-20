@@ -17,7 +17,7 @@ namespace DataAccessLayer
 {
     public class BasicDetailTempDB : GenericRepositoryDL<BasicDetailTemp>, IBasicDetailTempDB
     {
-        protected readonly ApplicationDbContext _context;
+        protected new readonly ApplicationDbContext _context;
         private readonly DapperContext _contextDP;
         private readonly IDataProtector protector;
         public BasicDetailTempDB(ApplicationDbContext context, DapperContext contextDP, IDataProtectionProvider dataProtectionProvider, DataProtectionPurposeStrings dataProtectionPurposeStrings) : base(context)
@@ -379,7 +379,7 @@ namespace DataAccessLayer
             
             using (var connection = _contextDP.CreateConnection())
             {
-                connection.Execute("UPDATE BasicDetailTemps SET IsActive=0 WHERE ServiceNo=@ArmyNo", new { ArmyNo });
+                await connection.ExecuteAsync("UPDATE BasicDetailTemps SET IsActive=0 WHERE ServiceNo=@ArmyNo", new { ArmyNo });
 
                 return true;
 

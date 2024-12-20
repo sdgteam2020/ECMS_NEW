@@ -18,7 +18,7 @@ namespace DataAccessLayer
 {
     public class ApptDB : GenericRepositoryDL<MAppointment>, IApptDB
     {
-        protected readonly ApplicationDbContext _context;
+        protected new readonly ApplicationDbContext _context;
         private readonly DapperContext _contextDP;
         private readonly ILogger<MAppointment> _logger;
         public ApptDB(ApplicationDbContext context, ILogger<MAppointment> logger, DapperContext contextDP) : base(context)
@@ -27,7 +27,6 @@ namespace DataAccessLayer
             _contextDP = contextDP;
             _logger = logger;
         }
-        private readonly IConfiguration configuration;
 
         public async Task<bool> GetByName(MAppointment Data)
         {
@@ -70,7 +69,7 @@ namespace DataAccessLayer
             catch(Exception ex)
             {
                 _logger.LogError(1001, ex, "ApptDB->GetALLByAppointmentName");
-                return null;
+                return new List<DTOAppointmentResponse>();
             }
 
         }
