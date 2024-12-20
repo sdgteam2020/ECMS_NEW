@@ -16,8 +16,6 @@ namespace BusinessLogicsLayer.Master
 { 
     public class UserProfileMappingBL : GenericRepositoryDL<MMappingProfile>, IUserProfileMappingBL
     {
-        private readonly IUserProfileDB _iUserProfileDB;
-
         public UserProfileMappingBL(ApplicationDbContext context) : base(context)
         {
         }

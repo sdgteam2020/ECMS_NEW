@@ -141,7 +141,7 @@ namespace Web.Controllers
                 }
                 else
                 {
-                    return Json(ModelState.Select(x => x.Value.Errors).Where(y => y.Count > 0).ToList());
+                    return Json(ModelState.Select(x => x.Value?.Errors).Where(y => y?.Count > 0).ToList());
                 }
             }
             catch (Exception ex)
@@ -928,7 +928,6 @@ namespace Web.Controllers
                         ModelState.AddModelError("RegimentalId", "Please Select Regimental ");
                         goto end;
                     }
-
                     if (ModelState.IsValid)
                     {
                         BasicDetail newBasicDetail = _mapper.Map<BasicDetailCrtAndUpdVM, BasicDetail>(model);
@@ -1079,14 +1078,24 @@ namespace Web.Controllers
                     }
                     else
                     {
-                        var error = ModelState.Select(x => x.Value.Errors).Where(y => y.Count > 0).ToList();
-                        TempData["error"] = error[0][0].ErrorMessage;
+                        //var error = ModelState.Select(x => x.Value.Errors).Where(y => y.Count > 0).ToList();
+                        //TempData["error"] = error[0][0].ErrorMessage;
+                        var errors = ModelState.Where(x => x.Value?.Errors?.Count > 0)
+                                            .SelectMany(x => x.Value!.Errors)
+                                            .Select(e => e.ErrorMessage)
+                                            .ToList();
+                        if (errors.Any())
+                        {
+                            TempData["errors"] = string.Join("; ", errors); // Concatenate all error messages
+                        }
+                        
                     }
                 }
                 else
                 {
                     model.Updatedby = Convert.ToInt32(userId);
                     model.StatusLevel = 0;
+
                     if (ModelState.IsValid)
                     {
                         BasicDetail newBasicDetail = _mapper.Map<BasicDetailCrtAndUpdVM, BasicDetail>(model);
@@ -1229,8 +1238,14 @@ namespace Web.Controllers
                     }
                     else
                     {
-                        var error = ModelState.Select(x => x.Value.Errors).Where(y => y.Count > 0).ToList();
-                        TempData["error"] = error[0][0].ErrorMessage;
+                        var error = ModelState.Where(x => x.Value?.Errors?.Count > 0)
+                                                .SelectMany(x => x.Value!.Errors)
+                                                .Select(e => e.ErrorMessage)
+                                                .ToList();
+                        if (error.Any())
+                        {
+                            TempData["error"] = string.Join("; ", error); // Concatenate all error messages
+                        }
                     }
                 }
             }
@@ -1311,7 +1326,7 @@ namespace Web.Controllers
                 }
                 else
                 {
-                    return Json(ModelState.Select(x => x.Value.Errors).Where(y => y.Count > 0).ToList());
+                    return Json(ModelState.Select(x => x.Value?.Errors).Where(y => y?.Count > 0).ToList());
                 }
             }
             catch (Exception ex)
@@ -1412,7 +1427,7 @@ namespace Web.Controllers
                 }
                 else
                 {
-                    return Json(ModelState.Select(x => x.Value.Errors).Where(y => y.Count > 0).ToList());
+                    return Json(ModelState.Select(x => x.Value?.Errors).Where(y => y?.Count > 0).ToList());
                 }
 
             }

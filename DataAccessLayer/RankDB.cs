@@ -18,7 +18,7 @@ namespace DataAccessLayer
 {
     public class RankDB : GenericRepositoryDL<MRank>, IRankDB
     {
-        protected readonly ApplicationDbContext _context;
+        protected new readonly ApplicationDbContext _context;
         private readonly DapperContext _contextDP;
         private readonly ILogger<RankDB> _logger;
         public RankDB(ApplicationDbContext context, ILogger<RankDB> logger, DapperContext contextDP) : base(context)
@@ -30,7 +30,6 @@ namespace DataAccessLayer
       
 
       
-        private readonly IConfiguration configuration;
         //public UserDB(IConfiguration configuration)
         //{
         //    this.configuration = configuration;
@@ -46,25 +45,24 @@ namespace DataAccessLayer
 
         public async Task<short> GetByMaxOrder()
         {
-            short ret = _context.MRank.Max(P => P.Orderby);
+            short ret = await _context.MRank.MaxAsync(P => P.Orderby);
             return (short)(ret + 1);
         }
 
         public async Task<short> GetRankIdbyOrderby(short OrderBy)
         {
-            var ret= _context.MRank.Where(P => P.Orderby == OrderBy).Select(c=>c.RankId).SingleOrDefault(); 
-           
+            var ret= await _context.MRank.Where(P => P.Orderby == OrderBy).Select(c=>c.RankId).SingleOrDefaultAsync(); 
             return ret;
         }
 
         public async Task<IEnumerable<MRank>> GetAllByorder()
         {
-            var ret=  _context.MRank.OrderBy(x => x.Orderby).ToList();   
+            var ret=  await _context.MRank.OrderBy(x => x.Orderby).ToListAsync();   
             return ret;
         }
         public async Task<IEnumerable<MRank>> GetAllByType(int Type)
         {
-            var ret=  _context.MRank.Where(x => x.ApplyForId==Type && x.IsActive==true).OrderBy(x=>x.Orderby).ToList();   
+            var ret=  await _context.MRank.Where(x => x.ApplyForId==Type && x.IsActive==true).OrderBy(x=>x.Orderby).ToListAsync();   
             return ret;
         }
         public async Task<DTORankIdCheckInFKTableResponse?> RankIdCheckInFKTable(short RankId)

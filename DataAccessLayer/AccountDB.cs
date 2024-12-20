@@ -307,7 +307,7 @@ namespace DataAccessLayer
                     // Apply filtering
                     if (!string.IsNullOrEmpty(request.searchValue))
                     {
-                        queryableData = queryableData.Where(x => x.DomainId.ToLower().Contains(request.searchValue) || x.ArmyNo.ToLower().Contains(request.searchValue));
+                        queryableData = queryableData.Where(x => x.DomainId.ToLower().Contains(request.searchValue) || (x.ArmyNo != null && x.ArmyNo.ToLower().Contains(request.searchValue)));
                     }
 
                     // Apply sorting
@@ -371,7 +371,7 @@ namespace DataAccessLayer
                     // Apply filtering
                     if (!string.IsNullOrEmpty(request.searchValue))
                     {
-                        queryableData = queryableData.Where(x => x.DomainId.ToLower().Contains(request.searchValue) || x.ArmyNo.ToLower().Contains(request.searchValue));
+                        queryableData = queryableData.Where(x => x.DomainId.ToLower().Contains(request.searchValue) || (x.ArmyNo != null && x.ArmyNo.ToLower().Contains(request.searchValue)));
                     }
 
                     // Apply sorting
@@ -435,7 +435,7 @@ namespace DataAccessLayer
                     // Apply filtering
                     if (!string.IsNullOrEmpty(request.searchValue))
                     {
-                        queryableData = queryableData.Where(x => x.DomainId.ToLower().Contains(request.searchValue) || x.ArmyNo.ToLower().Contains(request.searchValue));
+                        queryableData = queryableData.Where(x => x.DomainId.ToLower().Contains(request.searchValue) || (x.ArmyNo != null && x.ArmyNo.ToLower().Contains(request.searchValue)));
                     }
 
                     // Apply sorting
@@ -498,7 +498,7 @@ namespace DataAccessLayer
                     // Apply filtering
                     if (!string.IsNullOrEmpty(request.searchValue))
                     {
-                        queryableData = queryableData.Where(x => x.DomainId.ToLower().Contains(request.searchValue) || x.ArmyNo.ToLower().Contains(request.searchValue));
+                        queryableData = queryableData.Where(x => x.DomainId.ToLower().Contains(request.searchValue) || (x.ArmyNo != null && x.ArmyNo.ToLower().Contains(request.searchValue)));
                     }
 
                     // Apply sorting
@@ -561,7 +561,7 @@ namespace DataAccessLayer
                     // Apply filtering
                     if (!string.IsNullOrEmpty(request.searchValue))
                     {
-                        queryableData = queryableData.Where(x => x.DomainId.ToLower().Contains(request.searchValue) || x.ArmyNo.ToLower().Contains(request.searchValue));
+                        queryableData = queryableData.Where(x => x.DomainId.ToLower().Contains(request.searchValue) || (x.ArmyNo != null && x.ArmyNo.ToLower().Contains(request.searchValue)));
                     }
 
                     // Apply sorting
@@ -624,7 +624,7 @@ namespace DataAccessLayer
                     // Apply filtering
                     if (!string.IsNullOrEmpty(request.searchValue))
                     {
-                        queryableData = queryableData.Where(x => x.DomainId.ToLower().Contains(request.searchValue) || x.ArmyNo.ToLower().Contains(request.searchValue));
+                        queryableData = queryableData.Where(x => x.DomainId.ToLower().Contains(request.searchValue) || (x.ArmyNo != null && x.ArmyNo.ToLower().Contains(request.searchValue)));
                     }
 
                     // Apply sorting
@@ -687,7 +687,7 @@ namespace DataAccessLayer
                     // Apply filtering
                     if (!string.IsNullOrEmpty(request.searchValue))
                     {
-                        queryableData = queryableData.Where(x => x.DomainId.ToLower().Contains(request.searchValue) || x.ArmyNo.ToLower().Contains(request.searchValue));
+                        queryableData = queryableData.Where(x => x.DomainId.ToLower().Contains(request.searchValue) || (x.ArmyNo != null && x.ArmyNo.ToLower().Contains(request.searchValue)));
                     }
 
                     // Apply sorting
@@ -751,7 +751,7 @@ namespace DataAccessLayer
                     // Apply filtering
                     if (!string.IsNullOrEmpty(request.searchValue))
                     {
-                        queryableData = queryableData.Where(x => x.DomainId.ToLower().Contains(request.searchValue) || x.ArmyNo.ToLower().Contains(request.searchValue));
+                        queryableData = queryableData.Where(x => x.DomainId.ToLower().Contains(request.searchValue) || (x.ArmyNo != null && x.ArmyNo.ToLower().Contains(request.searchValue)));
                     }
 
                     // Apply sorting
@@ -815,7 +815,7 @@ namespace DataAccessLayer
                     // Apply filtering
                     if (!string.IsNullOrEmpty(request.searchValue))
                     {
-                        queryableData = queryableData.Where(x => x.DomainId.ToLower().Contains(request.searchValue) || x.ArmyNo.ToLower().Contains(request.searchValue));
+                        queryableData = queryableData.Where(x => x.DomainId.ToLower().Contains(request.searchValue) || (x.ArmyNo != null && x.ArmyNo.ToLower().Contains(request.searchValue)));
                     }
 
                     // Apply sorting
@@ -879,7 +879,7 @@ namespace DataAccessLayer
                     // Apply filtering
                     if (!string.IsNullOrEmpty(request.searchValue))
                     {
-                        queryableData = queryableData.Where(x => x.DomainId.ToLower().Contains(request.searchValue) || x.ArmyNo.ToLower().Contains(request.searchValue));
+                        queryableData = queryableData.Where(x => x.DomainId.ToLower().Contains(request.searchValue) || (x.ArmyNo != null && x.ArmyNo.ToLower().Contains(request.searchValue)));
                     }
 
                     // Apply sorting
@@ -943,7 +943,7 @@ namespace DataAccessLayer
                     // Apply filtering
                     if (!string.IsNullOrEmpty(request.searchValue))
                     {
-                        queryableData = queryableData.Where(x => x.DomainId.ToLower().Contains(request.searchValue) || x.ArmyNo.ToLower().Contains(request.searchValue));
+                        queryableData = queryableData.Where(x => x.DomainId.ToLower().Contains(request.searchValue) || (x.ArmyNo != null && x.ArmyNo.ToLower().Contains(request.searchValue)));
                     }
 
                     // Apply sorting
@@ -1007,7 +1007,7 @@ namespace DataAccessLayer
                     // Apply filtering
                     if (!string.IsNullOrEmpty(request.searchValue))
                     {
-                        queryableData = queryableData.Where(x => x.DomainId.ToLower().Contains(request.searchValue) || x.ArmyNo.ToLower().Contains(request.searchValue));
+                        queryableData = queryableData.Where(x => x.DomainId.ToLower().Contains(request.searchValue) || (x.ArmyNo != null && x.ArmyNo.ToLower().Contains(request.searchValue)));
                     }
 
                     // Apply sorting
@@ -1039,12 +1039,16 @@ namespace DataAccessLayer
             catch (Exception ex)
             {
                 _logger.LogError(1001, ex, "AccountDB->GetDataForDataTable");
-                return null;
+                List<DTOUserRegnResponse> dTOUserRegnResponses = new List<DTOUserRegnResponse>();
+                var responseData = new DTODataTablesResponse<DTOUserRegnResponse>
+                {
+                    draw = 0,
+                    recordsTotal = 0,
+                    recordsFiltered = 0,
+                    data = dTOUserRegnResponses
+                };
+                return responseData;
             }
-
-                
-           
-
         }
         public async Task<List<DTOUserRegnResponse>?> GetAllUserRegn(string Search,string Choice)
         {
@@ -2304,7 +2308,7 @@ namespace DataAccessLayer
             catch (Exception ex)
             {
                 _logger.LogError(1001, ex, "AccountDB->AccountCount");
-                return null;
+                return new DTOAccountCountResponse();
             }
 
         }

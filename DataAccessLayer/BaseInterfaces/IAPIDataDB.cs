@@ -11,8 +11,8 @@ namespace DataAccessLayer.BaseInterfaces
 {
     public interface IAPIDataDB : IGenericRepositoryDL<MApiData>
     {
-        public Task<MApiData> GetByIC(DTOAPIDataRequest Data);
-        public Task<MApiDataOffrs> GetByoffrsIC(DTOAPIDataRequest Data);
+        public Task<MApiData?> GetByIC(DTOAPIDataRequest Data);
+        public Task<MApiDataOffrs?> GetByoffrsIC(DTOAPIDataRequest Data);
         public Task<bool> apiLogin(DTOAPILoginRequest Data);
     }
 }

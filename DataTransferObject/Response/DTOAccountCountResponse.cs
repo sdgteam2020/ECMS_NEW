@@ -8,16 +8,16 @@ namespace DataTransferObject.Response
 {
     public class DTOAccountCountResponse
     {
-        public int User { get; set; }
-        public int ActiveUser { get; set; }
-        public int InActiveUser { get; set; }
-        public int MappedUser { get; set; }
-        public int UnMappedUser { get; set; }
-        public int VerifiedUser { get; set; }
-        public int NotVerifiedUser { get; set; }
-        public int IO { get; set; }
-        public int CO { get; set; }
-        public int RO { get; set; }
-        public int ORO { get; set; }
+        public int User { get; set; } = 0;
+        public int ActiveUser { get; set; } = 0;
+        public int InActiveUser { get; set; } = 0;
+        public int MappedUser { get; set; } = 0;
+        public int UnMappedUser { get; set; } = 0;
+        public int VerifiedUser { get; set; } = 0;
+        public int NotVerifiedUser { get; set; } = 0;
+        public int IO { get; set; } = 0;
+        public int CO { get; set; } = 0;
+        public int RO { get; set; } = 0;
+        public int ORO { get; set; } = 0;
     }
 }

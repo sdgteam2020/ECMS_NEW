@@ -32,12 +32,12 @@ namespace BusinessLogicsLayer.APIData
             return _aPIDataDB.apiLogin(Data);
         }
 
-        public Task<MApiData> GetByIC(DTOAPIDataRequest Data)
+        public Task<MApiData?> GetByIC(DTOAPIDataRequest Data)
         {
            return _aPIDataDB.GetByIC(Data);
         }
 
-        public Task<MApiDataOffrs> GetByoffrsIC(DTOAPIDataRequest Data)
+        public Task<MApiDataOffrs?> GetByoffrsIC(DTOAPIDataRequest Data)
         {
             return _aPIDataDB.GetByoffrsIC(Data);
         }

@@ -50,6 +50,7 @@ using static iText.StyledXmlParser.Jsoup.Select.Evaluator;
 using static System.Net.Mime.MediaTypeNames;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using ApplicationRole = DataTransferObject.Domain.Identitytable.ApplicationRole;
+using DataTransferObject.Domain.Error;
 
 namespace Web.Controllers
 {
@@ -184,7 +185,7 @@ namespace Web.Controllers
                 else
                 {
 
-                    return Json(ModelState.Select(x => x.Value.Errors).Where(y => y.Count > 0).ToList());
+                    return Json(ModelState.Select(x => x.Value?.Errors).Where(y => y?.Count > 0).ToList());
                 }
 
             }
@@ -298,8 +299,7 @@ namespace Web.Controllers
                 }
                 else
                 {
-
-                    return Json(ModelState.Select(x => x.Value.Errors).Where(y => y.Count > 0).ToList());
+                    return Json(ModelState.Select(x => x.Value?.Errors).Where(y => y?.Count > 0).ToList());
                 }
 
             }
@@ -388,7 +388,7 @@ namespace Web.Controllers
                         data = dTOUserRegnResponses
                     };
                     return Json(responseData);
-                    //return Json(ModelState.Select(x => x.Value.Errors).Where(y => y.Count > 0).ToList());
+                    //return Json(ModelState.Select(x => x.Value?.Errors).Where(y => y?.Count > 0).ToList());
                 }
             }
             catch (Exception ex)
@@ -425,11 +425,11 @@ namespace Web.Controllers
                 else
                 {
                     //working pending 
-                    string json = JsonConvert.SerializeObject(ModelState.Select(x => x.Value.Errors).Where(y => y.Count > 0).ToList());
+                    string json = JsonConvert.SerializeObject(ModelState.Select(x => x.Value?.Errors).Where(y => y?.Count > 0).ToList());
                     dTOUserRegnResult.Result = false;
                     dTOUserRegnResult.Message = json;
                     return Json(dTOUserRegnResult);
-                    //return Json(ModelState.Select(x => x.Value.Errors).Where(y => y.Count > 0).ToList());
+                    //return Json(ModelState.Select(x => x.Value?.Errors).Where(y => y?.Count > 0).ToList());
                 }
 
             }
@@ -472,7 +472,7 @@ namespace Web.Controllers
                 }
                 else
                 {
-                    return Json(ModelState.Select(x => x.Value.Errors).Where(y => y.Count > 0).ToList());
+                    return Json(ModelState.Select(x => x.Value?.Errors).Where(y => y?.Count > 0).ToList());
                 }
 
             }
@@ -1222,7 +1222,7 @@ namespace Web.Controllers
                 }
                 else
                 {
-                    return Json(ModelState.Select(x => x.Value.Errors).Where(y => y.Count > 0).ToList());
+                    return Json(ModelState.Select(x => x.Value?.Errors).Where(y => y?.Count > 0).ToList());
                 }
 
             }
@@ -2613,9 +2613,9 @@ namespace Web.Controllers
                         //SendResponseToIAM("https://localhost:7023/Account/FinalLogout", accountSettings.entityId, nameid);
                         SendResponseToIAM("https://eisac.army.mil/Account/FinalLogout", accountSettings.entityId, nameid);
                     }
-                    catch (Exception exx)
+                    catch (Exception ex)
                     {
-
+                        _logger.LogError(1001, ex, "Account->IMLogout");
                     }
                 }
             }

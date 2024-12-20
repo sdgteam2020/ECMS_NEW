@@ -18,7 +18,7 @@ namespace DataAccessLayer
 {
     public class ArmedDB : GenericRepositoryDL<MArmedType>, IArmedDB
     {
-        protected readonly ApplicationDbContext _context;
+        protected new readonly ApplicationDbContext _context;
         private readonly DapperContext _contextDP;
         private readonly ILogger<ArmedDB> _logger;
         public ArmedDB(ApplicationDbContext context, ILogger<ArmedDB> logger, DapperContext contextDP) : base(context)
@@ -30,7 +30,6 @@ namespace DataAccessLayer
       
 
       
-        private readonly IConfiguration configuration;
         //public UserDB(IConfiguration configuration)
         //{
         //    this.configuration = configuration;
