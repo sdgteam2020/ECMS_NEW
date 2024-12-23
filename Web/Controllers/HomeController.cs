@@ -16,6 +16,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.SqlServer.Management.Smo.Wmi;
+using System.Collections.Generic;
 using System.Data;
 using System.Security.Claims;
 using System.Text;
@@ -323,8 +324,15 @@ namespace Web.Controllers
         public async Task<IActionResult> GetTaskCountICardRequest(int Id,int applyForId)
         {
             int userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-            return Json(await _basicDetailBL.GetTaskCountICardRequest(userId, Id, applyForId));
-
+            DTOICardTaskCountResponse? dTOICardTaskCountResponse = await _basicDetailBL.GetTaskCountICardRequest(userId, Id, applyForId);
+            if (dTOICardTaskCountResponse != null)
+            {
+                return Json(dTOICardTaskCountResponse);
+            }
+            else
+            {
+                return Json(null);
+            }
         }
         public async Task<IActionResult> SaveNotification(MTrnNotification Data)
         {
@@ -354,14 +362,28 @@ namespace Web.Controllers
         public async Task<IActionResult> GetNotification(int TypeId, int applyForId)
         {
             int userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-            return Json(await _basicDetailBL.GetNotification(userId, TypeId, applyForId));
-
+            List<DTONotificationResponse>? dTONotificationResponses = await _basicDetailBL.GetNotification(userId, TypeId, applyForId);
+            if (dTONotificationResponses != null)
+            {
+                return Json(dTONotificationResponses);
+            }
+            else
+            {
+                return Json(null);
+            }
         }
         public async Task<IActionResult> GetNotificationRequestId(int TypeId,int applyForId)
         {
             int userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-            return Json(await _basicDetailBL.GetNotificationRequestId(userId, TypeId,applyForId));
-
+            List<DTONotificationResponse>? dTONotificationResponses = await _basicDetailBL.GetNotificationRequestId(userId, TypeId, applyForId);
+            if (dTONotificationResponses != null)
+            {
+                return Json(dTONotificationResponses);
+            }
+            else
+            {
+                return Json(null);
+            }
         } 
         public async Task<IActionResult> UpdateNotification(MTrnNotification Data)
         {

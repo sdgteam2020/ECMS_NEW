@@ -1,29 +1,18 @@
 ﻿using DataAccessLayer.BaseInterfaces;
 using DataTransferObject.Domain.Model;
 using DataTransferObject.Requests;
-using DataTransferObject.Response.User;
 using Microsoft.AspNetCore.DataProtection;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using DataAccessLayer.Logger;
 using Dapper;
-using Azure.Core;
-using DataTransferObject.Constants;
 using DataTransferObject.Domain.Master;
-using DataTransferObject.Domain;
 using DataTransferObject.ViewModels;
 using DataTransferObject.Response;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 using static Dapper.SqlMapper;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Logging;
 using EntityFramework.Exceptions.Common;
 using System.Collections.Immutable;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 using DataAccessLayer.Healpers;
 
 namespace DataAccessLayer
@@ -257,58 +246,82 @@ namespace DataAccessLayer
         public async Task<BasicDetail?> FindServiceNo(string ServiceNo)
         {
             string query = "Select * from BasicDetails where ServiceNo = @ServiceNo ";
-            using (var connection = _contextDP.CreateConnection())
+            try
             {
-                BasicDetail basicDetail = await connection.QuerySingleOrDefaultAsync<BasicDetail>(query, new { ServiceNo });
-                if(basicDetail!=null)
+                using (var connection = _contextDP.CreateConnection())
                 {
-                    return basicDetail;
+                    BasicDetail basicDetail = await connection.QuerySingleOrDefaultAsync<BasicDetail>(query, new { ServiceNo });
+                    if (basicDetail != null)
+                    {
+                        return basicDetail;
+                    }
+                    else
+                    {
+                        return null;
+                    }
                 }
-                else
-                {
-                    return null;
-                }   
+            }
+            catch (Exception ex) 
+            {
+                _logger.LogError(1001, ex, "BasicDetailDB->FindServiceNo");
+                return null;
             }
 
+
         }
-        public async Task<List<DTOSmartSearch>> SearchAllServiceNo(string ServiceNo,int AspNetUsersId)
+        public async Task<List<DTOSmartSearch>?> SearchAllServiceNo(string ServiceNo,int AspNetUsersId)
         {
             string query = "Select basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath Image "+
                            " from BasicDetails basi "+
                            " inner join TrnICardRequest req on req.BasicDetailId=basi.BasicDetailId and req.StatusId=1"+
                            " inner join TrnDomainMapping map on map.Id=req.TrnDomainMappingId and map.AspNetUsersId=@AspNetUsersId" +
                            " inner join TrnUpload trnu on basi.BasicDetailId=trnu.BasicDetailId where ServiceNo like @ServiceNo ";
-            
-            ServiceNo = "%" + ServiceNo.Replace("[", "[[]").Replace("%", "[%]") + "%";
-            using (var connection = _contextDP.CreateConnection())
+            try
             {
-                var basicDetail = await connection.QueryAsync<DTOSmartSearch>(query, new { AspNetUsersId,ServiceNo });
-                if (basicDetail != null)
+                ServiceNo = "%" + ServiceNo.Replace("[", "[[]").Replace("%", "[%]") + "%";
+                using (var connection = _contextDP.CreateConnection())
                 {
-                    return basicDetail.ToList();
-                }
-                else
-                {
-                    return null;
+                    var basicDetail = await connection.QueryAsync<DTOSmartSearch>(query, new { AspNetUsersId, ServiceNo });
+                    if (basicDetail != null)
+                    {
+                        return basicDetail.ToList();
+                    }
+                    else
+                    {
+                        return null;
+                    }
                 }
             }
-
+            catch(Exception ex)
+            {
+                _logger.LogError(1001, ex, "BasicDetailDB->SearchAllServiceNo");
+                return null;
+            }
         }
         public async Task<List<DTOICardTypeRequest>> GetAllICardType()
         {
             string query = "Select * from MICardType";
-            using (var connection = _contextDP.CreateConnection())
+            try
             {
-                var ICardTypeList = await connection.QueryAsync<DTOICardTypeRequest>(query);
-                var allrecord = (from e in ICardTypeList
-                                 select new DTOICardTypeRequest()
-                                 {
-                                     TypeId = e.TypeId,
-                                     EncryptedId = protector.Protect(e.TypeId.ToString()),
-                                     Name=e.Name,
-                                 }).ToList();
-                return await Task.FromResult(allrecord);
+                using (var connection = _contextDP.CreateConnection())
+                {
+                    var ICardTypeList = await connection.QueryAsync<DTOICardTypeRequest>(query);
+                    var allrecord = (from e in ICardTypeList
+                                     select new DTOICardTypeRequest()
+                                     {
+                                         TypeId = e.TypeId,
+                                         EncryptedId = protector.Protect(e.TypeId.ToString()),
+                                         Name = e.Name,
+                                     }).ToList();
+                    return await Task.FromResult(allrecord);
+                }
             }
+            catch(Exception ex)
+            {
+                _logger.LogError(1001, ex, "BasicDetailDB->GetAllICardType");
+                return new List<DTOICardTypeRequest>();
+            }
+
         }
 
         public async Task<List<BasicDetailVM>> GetALLForIcardSttaus(int UserId, int stepcount, int TypeId, int apply)
@@ -404,8 +417,7 @@ namespace DataAccessLayer
                         " inner join MTrnFwdStatus mtrnfwdstatus on mtrnfwdstatus.FwdStatusId = fwd.FwdStatusId " +
                         " where trnicrd.StatusId=2 ";
             }
-
-            else if (stepcount == 2 || stepcount == 3 || stepcount == 4 || stepcount == 5 || stepcount == 6)//IO
+            else if (stepcount == 2 || stepcount == 3 || stepcount == 4 || stepcount == 6)//IO
             {
                //if(TypeId==2)
                 {
@@ -514,7 +526,7 @@ namespace DataAccessLayer
             catch(Exception ex)
             {
                 _logger.LogError(1001, ex, "BasicDetailDB->GetALLForIcardSttaus");
-                return null;
+                return new List<BasicDetailVM>();
             }
         }
         public async Task<List<BasicDetailVM>> GetALLBasicDetail(int UserId,int stepcount, int TypeId, int applyForId)
@@ -713,13 +725,10 @@ namespace DataAccessLayer
             catch(Exception ex)
             {
                 _logger.LogError(1001, ex, "BasicDetailDB->GetALLBasicDetail");
-                return null;
+                return new List<BasicDetailVM>();
             }
-
-
-
         }
-        public async Task<BasicDetailCrtAndUpdVM> GetBasicDetailByRequestId(int RequestId)
+        public async Task<BasicDetailCrtAndUpdVM?> GetBasicDetailByRequestId(int RequestId)
         {
             string query = "select bas.*,"+
                             " issaut.Name IssuingAuthorityName,trnadd.State,trnadd.District,trnadd.PS,trnadd.PO,trnadd.Tehsil,trnadd.Village,trnadd.PinCode," +
@@ -744,7 +753,7 @@ namespace DataAccessLayer
                 {
                     var BasicDetailList = await connection.QueryAsync<BasicDetailCrtAndUpdVM>(query, new { RequestId });
 
-                    return BasicDetailList.SingleOrDefault();
+                    return BasicDetailList.FirstOrDefault();
                 }
             }
 
@@ -754,7 +763,7 @@ namespace DataAccessLayer
                 return null;
             }
         }
-        public async Task<BasicDetailCrtAndUpdVM> GetBasicDetailById(int BasicDetailId)
+        public async Task<BasicDetailCrtAndUpdVM?> GetBasicDetailById(int BasicDetailId)
         {
             string query = "select bas.*," +
                             " issaut.Name IssuingAuthorityName,trnadd.State,trnadd.District,trnadd.PS,trnadd.PO,trnadd.Tehsil,trnadd.Village,trnadd.PinCode," +
@@ -778,7 +787,7 @@ namespace DataAccessLayer
                 {
                     var BasicDetailList = await connection.QueryAsync<BasicDetailCrtAndUpdVM>(query, new { BasicDetailId });
 
-                    return BasicDetailList.SingleOrDefault();
+                    return BasicDetailList.FirstOrDefault();
                 }
             }
 
@@ -788,7 +797,7 @@ namespace DataAccessLayer
                 return null;
             }
         }
-        public async Task<BasicDetailCrtAndUpdVM> GetBesicDetailForEditById(int BasicDetailId)
+        public async Task<BasicDetailCrtAndUpdVM?> GetBesicDetailForEditById(int BasicDetailId)
         { 
             string query = "select bas.*," +
                             " issaut.Name IssuingAuthorityName,trnadd.State,trnadd.District,trnadd.PS,trnadd.PO,trnadd.Tehsil,trnadd.Village,trnadd.PinCode," +
@@ -813,7 +822,7 @@ namespace DataAccessLayer
                 {
                     var BasicDetailList = await connection.QueryAsync<BasicDetailCrtAndUpdVM>(query, new { BasicDetailId });
 
-                    return BasicDetailList.SingleOrDefault();
+                    return BasicDetailList.FirstOrDefault();
                 }
             }
             catch (Exception ex)
@@ -894,7 +903,7 @@ namespace DataAccessLayer
             catch (Exception ex)
             {
                 _logger.LogError(1001, ex, "BasicDetailDB->GetBesicdetailsByRequestId");
-                return null;
+                return new List<DTODataExportsResponse>();
             }
         }
         public async Task<DTOXMLDigitalResponse> GetDataDigitalXmlSign(DTODataExportRequest Data)
@@ -1069,7 +1078,7 @@ namespace DataAccessLayer
             }
         }
 
-        public async Task<List<ICardHistoryResponse>> ICardHistory(int RequestId)
+        public async Task<List<ICardHistoryResponse>?> ICardHistory(int RequestId)
         {
             string query =  " select usersfrom.UserName FromDomain,profrom.Name FromProfile,ranlfrom.RankAbbreviation FromRank, " +
                             " usersto.UserName ToDomain,proto.Name ToProfile,ranlto.RankAbbreviation ToRank ,"+
@@ -1113,42 +1122,6 @@ namespace DataAccessLayer
         }
         public async Task<DTOFwdLastRecForDigitalSign> ICardFwdLastRec(int RequestId)
         {
-            #region Old Code write by Kapoor Sir
-            //string query = " if exists (select StepId from TrnStepCounter where RequestId=@RequestId and StepId=2)" +
-            //   " begin" +
-            //   " select ServiceNo FromArmyNo,'' FromDomain,basi.FName +' '+ ISNULL(basi.LName,'') FromProfile,ranlfrom.RankAbbreviation FromRank," +
-            //   " Getdate() FromDate,trnste.StepId from BasicDetails basi" +
-            //   " inner join MRank ranlfrom on ranlfrom.RankId=basi.RankId " +
-            //   " inner join TrnICardRequest req on  req.BasicDetailId=basi.BasicDetailId and req.StatusId=1" +
-            //   " inner join TrnStepCounter trnste on trnste.RequestId=req.RequestId" +
-            //   " where trnste.RequestId=@RequestId" +
-            //   " end" +
-            //   " else" +
-            //   " begin" +
-            //   " select top 1 profrom.ArmyNo FromArmyNo,usersfrom.UserName FromDomain,profrom.Name FromProfile, " +
-            //   " ranlfrom.RankAbbreviation FromRank,Getdate() FromDate,step.StepId from TrnFwds fwd  " +
-            //   " inner join TrnStepCounter step on fwd.RequestId=step.RequestId " +
-            //   " inner join TrnDomainMapping mapfrom on mapfrom.AspNetUsersId=fwd.FromAspNetUsersId " +
-            //   " inner join AspNetUsers usersfrom on usersfrom.Id=mapfrom.AspNetUsersId " +
-            //   " left join UserProfile profrom on mapfrom.UserId=profrom.UserId " +
-            //   " inner join MRank ranlfrom on ranlfrom.RankId=profrom.RankId " +
-            //   " where fwd.RequestId=@RequestId order by fwd.TrnFwdId desc" +
-            //   " end";
-            //try
-            //{
-            //    using (var connection = _contextDP.CreateConnection())
-            //    {
-            //        var BasicDetailList = await connection.QueryAsync<DTOFwdLastRecForDigitalSign>(query, new { RequestId });
-
-            //        return BasicDetailList.SingleOrDefault();
-            //    }
-            //}
-            //catch (Exception ex)
-            //{
-            //    _logger.LogError(1001, ex, "BasicDetailDB->ICardHistory");
-            //    return null;
-            //}
-            #endregion
             string query = " if exists (select StepId from TrnStepCounter where RequestId=@RequestId and StepId=2)" +
                            " begin" +
                            " select profrom.ArmyNo FromArmyNo,usersfrom.DomainId FromDomain,profrom.Name FromProfile,ranlfrom.RankAbbreviation FromRank," +
@@ -1178,17 +1151,17 @@ namespace DataAccessLayer
                 {
                     var BasicDetailList = await connection.QueryAsync<DTOFwdLastRecForDigitalSign>(query, new { RequestId });
 
-                    return BasicDetailList.SingleOrDefault();
+                    return BasicDetailList.FirstOrDefault()?? new DTOFwdLastRecForDigitalSign();
                 }
             }
             catch (Exception ex)
             {
                 _logger.LogError(1001, ex, "BasicDetailDB->ICardHistory");
-                return null;
+                return new DTOFwdLastRecForDigitalSign();
             }
 
         }
-        public async Task<List<ICardHistoryResponse>> ICardHistoryByTrackingId(string TrackingId)
+        public async Task<List<ICardHistoryResponse>?> ICardHistoryByTrackingId(string TrackingId)
         {
             string query =  " select usersfrom.UserName FromDomain,profrom.Name FromProfile,ranlfrom.RankAbbreviation FromRank, " +
                             " usersto.UserName ToDomain,proto.Name ToProfile,ranlto.RankAbbreviation ToRank ," +
@@ -1231,7 +1204,7 @@ namespace DataAccessLayer
             }
 
         }
-        public async Task<DTOICardTaskCountResponse> GetTaskCountICardRequest(int UserId,int Type, int applyForId)
+        public async Task<DTOICardTaskCountResponse?> GetTaskCountICardRequest(int UserId,int Type, int applyForId)
         {
             string query = "";
             if (Type==1) // Submitted
@@ -1334,7 +1307,7 @@ namespace DataAccessLayer
                 try
                 {
                     var ret = await connection.QueryAsync<DTOICardTaskCountResponse>(query, new { UserId, applyForId });
-                    return ret.SingleOrDefault();
+                    return ret.FirstOrDefault();
                 }
                 catch(Exception ex)
                 {
@@ -1344,7 +1317,7 @@ namespace DataAccessLayer
 
             }
         }
-        public async Task<List<DTONotificationResponse>> GetNotification(int UserId, int Type, int applyForId)
+        public async Task<List<DTONotificationResponse>?> GetNotification(int UserId, int Type, int applyForId)
         {
             string query = "select dis.DisplayId,Spanname,Message,ranks.RankAbbreviation,bas.Name,bas.ServiceNo,tre.TrackingId,uplod.PhotoImagePath,dis.Url  from TrnNotification noti" +
                             " inner join TrnNotificationDisplay dis on noti.DisplayId=dis.DisplayId"+
@@ -1355,23 +1328,22 @@ namespace DataAccessLayer
                             " inner join MRank ranks on ranks.RankId=bas.RankId" +
                             " inner join TrnUpload uplod on uplod.BasicDetailId=bas.BasicDetailId" +
                             " where noti.ReciverAspNetUsersId=@UserId and NotificationTypeId=@Type and stepc.applyforId=@applyForId and [Read]=0 and ReciverAspNetUsersId!=SentAspNetUsersId";
-        
-            using (var connection = _contextDP.CreateConnection())
+            try 
             {
-                //data.MRank.RankAbbreviation
-                //data.MArmedType.Abbreviation
-                var ret = await connection.QueryAsync<DTONotificationResponse>(query, new { UserId, Type, applyForId });
-
-
-                // var allProducts = ret.Concat(ret1) .ToList();
-
-
-                return ret.ToList();
+                using (var connection = _contextDP.CreateConnection())
+                {
+                    var ret = await connection.QueryAsync<DTONotificationResponse>(query, new { UserId, Type, applyForId });
+                    return ret.ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "BasicDetailDB->GetNotification");
+                return null;
             }
         }
-        public async Task<List<DTONotificationResponse>> GetNotificationRequestId(int UserId, int Type, int applyForId)
+        public async Task<List<DTONotificationResponse>?> GetNotificationRequestId(int UserId, int Type, int applyForId)
         {
-
             string query = "select Distinct tre.RequestId, dis.DisplayId,Spanname + 'self' Spanname,Message,ranks.RankAbbreviation,bas.Name,bas.ServiceNo,tre.TrackingId,uplod.PhotoImagePath,CASE WHEN dis.DisplayId in (7,8,9,10,17,18,19,20) THEN dis.Url ELSE '' END AS Url  from TrnNotification noti " +
                             " inner join TrnNotificationDisplay dis on noti.DisplayId = dis.DisplayId" +
                             " inner join AspNetUsers users on users.Id = noti.SentAspNetUsersId" +
@@ -1382,107 +1354,85 @@ namespace DataAccessLayer
                             " inner join MRank ranks on ranks.RankId=bas.RankId"+
                              " inner join TrnUpload uplod on uplod.BasicDetailId=bas.BasicDetailId" +
                             " where NotificationTypeId = @Type and dmap.AspNetUsersId = @UserId and [Read]=0 and cou.applyforId=@applyForId and ReciverAspNetUsersId=SentAspNetUsersId";
-
-            using (var connection = _contextDP.CreateConnection())
-            {
-                //data.MRank.RankAbbreviation
-                //data.MArmedType.Abbreviation
-                var ret = await connection.QueryAsync<DTONotificationResponse>(query, new { UserId, Type, applyForId });
-               
-
-              
-                return ret.ToList();
-            }
-        }
-        public async Task<List<MRecordOffice>> GetROListByArmedId(byte ArmedId)
-        {
-            return await _context.MRecordOffice.Where(x => x.ArmedId == ArmedId).ToListAsync();
-        }
-        public async Task<IEnumerable<SelectListItem>> GetRODDLIdSelected(byte ArmedId)
-        {
             try
             {
-                var ROOptions = await _context.MRecordOffice.Where(x => x.ArmedId == ArmedId)
-                    .Select(a =>
-                      new SelectListItem
-                      {
-                          Value = a.RecordOfficeId.ToString(),
-                          Text = a.Name
-                      }).ToListAsync();
-
-                var ddfirst = new SelectListItem()
+                using (var connection = _contextDP.CreateConnection())
                 {
-                    Value = null,
-                    Text = "Please Select"
-                };
-                ROOptions.Insert(0, ddfirst);
-                return new SelectList(ROOptions, "Value", "Text");
+                    var ret = await connection.QueryAsync<DTONotificationResponse>(query, new { UserId, Type, applyForId });
+                    return ret.ToList();
+                }
             }
-            catch (Exception ex)
+            catch(Exception ex) 
             {
-                _logger.LogError(1001, ex, "BasicDetailDB->GetRODDLIdSelected");
+                _logger.LogError(1001, ex, "BasicDetailDB->GetNotificationRequestId");
                 return null;
             }
 
         }
-        public async Task<DTOApplicationTrack> ApplicationHistory(string TrackingId)
+        public async Task<List<MRecordOffice>?> GetROListByArmedId(byte ArmedId)
+        {
+            try
+            {
+                return await _context.MRecordOffice.Where(x => x.ArmedId == ArmedId).ToListAsync();
+            }
+            catch(Exception ex) 
+            {
+                _logger.LogError(1001, ex, "BasicDetailDB->GetROListByArmedId");
+                return null;
+            }
+        }
+        public async Task<DTOApplicationTrack?> ApplicationHistory(string TrackingId)
         {
             DTOApplicationTrack lst=new DTOApplicationTrack();
+            try
+            {
+                string query = " select ran.RankAbbreviation RankName,bas.Name,bas.ServiceNo ArmyNo,unit.UnitName,uplod.PhotoImagePath," +
+               " ranfrom.RankAbbreviation FromRank,pr.Name FromName,pr.ArmyNo FromArmyNo,users.DomainId" +
+               " from BasicDetails bas " +
+               " inner join TrnICardRequest req on bas.BasicDetailId=req.BasicDetailId" +
+               " inner join TrnUpload uplod on bas.BasicDetailId=uplod.BasicDetailId" +
+               " inner join MRank ran on bas.RankId=ran.RankId" +
+               " inner join MapUnit muni on bas.UnitId=muni.UnitMapId" +
+               " inner join MUnit unit on  muni.UnitId=unit.UnitId" +
+               " inner join TrnDomainMapping map on map.Id= req.TrnDomainMappingId" +
+               " inner join AspNetUsers users on map.AspNetUsersId=users.Id" +
+               " inner join UserProfile pr on pr.UserId = map.UserId" +
+               " inner join MRank ranfrom on pr.RankId=ranfrom.RankId" +
+               " where req.StatusId=1 and req.TrackingId=@TrackingId";
+
+                //" select fwd.FwdStatusId,fwd.stepId,fwd.UpdatedOn,step.Name,fwd.IsComplete" +
+                //" from TrnFwds fwd " +
+                //" inner join TrnICardRequest req on fwd.RequestId=req.RequestId" +
+                //" inner join MStepCounterStep step on fwd.StepId=step.StepId" +
+                //"  where fwd.RequestId=@RequestId" +
+                //" order by fwd.TrnFwdId asc";
+                using (var connection = _contextDP.CreateConnection())
+                {
+                    var ret = await connection.QueryAsync<DTOApplicationDetails>(query, new { TrackingId });
+                    lst.dTOApplicationDetails = ret.FirstOrDefault();
+                }
+                query = " select fwd.FwdStatusId,fwd.stepId,fwd.UpdatedOn,step.Name,fwd.IsComplete," +
+                        " isnull(fwd.Remark,'') Remark," +
+                        " (select STRING_AGG(Remarks,'#') from MRemarks where RemarksId in (select value from string_split(fwd.RemarksIds,','))) Remark2" +
+                        " from TrnFwds fwd " +
+                        " inner join TrnICardRequest req on fwd.RequestId=req.RequestId" +
+                        " inner join MStepCounterStep step on fwd.StepId=step.StepId" +
+                        " where req.StatusId=1 and req.TrackingId=@TrackingId" +
+                        " order by fwd.TrnFwdId asc";
+                using (var connection = _contextDP.CreateConnection())
+                {
+                    var ret1 = await connection.QueryAsync<DTOTrackHistory>(query, new { TrackingId });
+                    lst.dTOTrackHistory = ret1.ToList();
+                }
+                return lst;
+            }
+            catch (Exception ex) 
+            {
+                _logger.LogError(1001, ex, "BasicDetailDB->ApplicationHistory");
+                return null;
+            }
                     
-            string query = " select ran.RankAbbreviation RankName,bas.Name,bas.ServiceNo ArmyNo,unit.UnitName,uplod.PhotoImagePath," +
-                           " ranfrom.RankAbbreviation FromRank,pr.Name FromName,pr.ArmyNo FromArmyNo,users.DomainId" +
-                           " from BasicDetails bas " +
-                           " inner join TrnICardRequest req on bas.BasicDetailId=req.BasicDetailId" +
-                           " inner join TrnUpload uplod on bas.BasicDetailId=uplod.BasicDetailId" +
-                           " inner join MRank ran on bas.RankId=ran.RankId" +
-                           " inner join MapUnit muni on bas.UnitId=muni.UnitMapId" +
-                           " inner join MUnit unit on  muni.UnitId=unit.UnitId" +
-                           " inner join TrnDomainMapping map on map.Id= req.TrnDomainMappingId" +
-                           " inner join AspNetUsers users on map.AspNetUsersId=users.Id" +
-                           " inner join UserProfile pr on pr.UserId = map.UserId" +
-                           " inner join MRank ranfrom on pr.RankId=ranfrom.RankId" +
-                           " where req.StatusId=1 and req.TrackingId=@TrackingId";
 
-                           //" select fwd.FwdStatusId,fwd.stepId,fwd.UpdatedOn,step.Name,fwd.IsComplete" +
-                           //" from TrnFwds fwd " +
-                           //" inner join TrnICardRequest req on fwd.RequestId=req.RequestId" +
-                           //" inner join MStepCounterStep step on fwd.StepId=step.StepId" +
-                           //"  where fwd.RequestId=@RequestId" +
-                           //" order by fwd.TrnFwdId asc";
-            using (var connection = _contextDP.CreateConnection())
-            {
-                //data.MRank.RankAbbreviation
-                //data.MArmedType.Abbreviation
-                var ret = await connection.QueryAsync<DTOApplicationDetails>(query, new { TrackingId });
-
-
-                // var allProducts = ret.Concat(ret1) .ToList();
-
-
-                lst.dTOApplicationDetails = ret.FirstOrDefault();
-            }
-            query = " select fwd.FwdStatusId,fwd.stepId,fwd.UpdatedOn,step.Name,fwd.IsComplete," +
-                " isnull(fwd.Remark,'') Remark," +
-                " (select STRING_AGG(Remarks,'#') from MRemarks where RemarksId in (select value from string_split(fwd.RemarksIds,','))) Remark2" +
-            " from TrnFwds fwd " +
-            " inner join TrnICardRequest req on fwd.RequestId=req.RequestId" +
-            " inner join MStepCounterStep step on fwd.StepId=step.StepId" +
-            "  where req.StatusId=1 and req.TrackingId=@TrackingId" +
-            " order by fwd.TrnFwdId asc";
-            using (var connection = _contextDP.CreateConnection())
-            {
-                //data.MRank.RankAbbreviation
-                //data.MArmedType.Abbreviation
-                var ret1 = await connection.QueryAsync<DTOTrackHistory>(query, new { TrackingId });
-
-
-                // var allProducts = ret.Concat(ret1) .ToList();
-
-
-                lst.dTOTrackHistory = ret1.ToList();
-            }
-
-            return lst; 
         }
     }
 }

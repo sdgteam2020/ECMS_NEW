@@ -28,6 +28,7 @@ using Web.Healpers;
 using System.Xml.Serialization;
 using System.Xml.Linq;
 using BusinessLogicsLayer.TrnICardHold;
+using DataTransferObject.Domain.Master;
 
 namespace Web.Controllers
 {
@@ -528,7 +529,15 @@ namespace Web.Controllers
         }
         public async Task<IActionResult> GetICardPrintPreviewByRequestId(int RequestId)
         {
-            return Json(await basicDetailBL.GetBasicDetailByRequestId(RequestId));
+            BasicDetailCrtAndUpdVM? basicDetailCrtAndUpdVM = await basicDetailBL.GetBasicDetailByRequestId(RequestId);
+            if (basicDetailCrtAndUpdVM != null)
+            {
+                return Json(basicDetailCrtAndUpdVM);
+            }
+            else 
+            {
+                return Json(null);
+            }
         }
         [HttpGet]
         public async Task<ActionResult> InaccurateData(string Id)
@@ -1347,8 +1356,15 @@ namespace Web.Controllers
         [HttpPost]
         public async Task<IActionResult> GetROListByArmedId(byte ArmedId)
         {
-            var ro = await basicDetailBL.GetROListByArmedId(ArmedId);
-            return Ok(ro);
+            List<MRecordOffice>? mRecordOffices = await basicDetailBL.GetROListByArmedId(ArmedId);
+            if (mRecordOffices != null)
+            {
+                return Ok(mRecordOffices);
+            }
+            else 
+            {
+                return Ok(null);
+            }
         }
 
         [HttpPost]
@@ -1570,20 +1586,26 @@ namespace Web.Controllers
         [HttpPost]
         public async Task<IActionResult> SearchAllServiceNo(string ICNumber)
         {
-            DTOApiDataResponse dTOApiDataResponse = new DTOApiDataResponse();
-            if (ICNumber != null)
+            try
             {
-                int AspNetUsersId= Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-                var Ret = await basicDetailBL.SearchAllServiceNo(ICNumber, AspNetUsersId);
-                if (Ret != null)
+                DTOApiDataResponse dTOApiDataResponse = new DTOApiDataResponse();
+                if (ICNumber != null)
                 {
-                    return Ok(Ret);
-                }
-               
-            }
-            return BadRequest();
-           
+                    int AspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                    var Ret = await basicDetailBL.SearchAllServiceNo(ICNumber, AspNetUsersId);
+                    if (Ret != null)
+                    {
+                        return Ok(Ret);
+                    }
 
+                }
+                return BadRequest();
+            }
+            catch(Exception ex) 
+            {
+                _logger.LogError(1001, ex, "BasicDetailController=>SearchAllServiceNo.");
+                return BadRequest();
+            }
         }
         public async Task<DTOApiDataResponse> GetApiData(string ICNumber)
         {
@@ -1609,7 +1631,16 @@ namespace Web.Controllers
         }
         public async Task<IActionResult> GetRequestHistory(int RequestId)
         {
-            return Json(await basicDetailBL.ICardHistory(RequestId));
+            List<ICardHistoryResponse>? cardHistoryResponses = await basicDetailBL.ICardHistory(RequestId);
+            if (cardHistoryResponses !=null)
+            {
+                return Json(cardHistoryResponses);
+            }
+            else
+            {
+                return Json(null);
+            }
+            
         }
         
         public async Task<IActionResult> GetRemarks(DTORemarksRequest Data)
