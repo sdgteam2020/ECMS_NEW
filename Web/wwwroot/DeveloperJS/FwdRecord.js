@@ -258,8 +258,8 @@ $(function () {
                 $("#btnForward").html("Forward To IO / Superior");
                 GetAllOffsByUnitId("ddlfwdoffrs", 0, Unitidarmy, 0, 0, 0, 0);
             } else {
-                $(".gsoio").html("CO /OC / OC TPS or Offr Nominated by him/ her");
-                $(".gsoiotitle").html("CO / OC / OC TPS or Offr Nominated by him/ her");
+                $(".gsoio").html("CO /OC / OC TPS or Offr Nominated");
+                $(".gsoiotitle").html("CO / OC / OC TPS or Offr Nominated");
                 $("#btnForward").html("Forward To CO / OC / OC TPS or Offr Nominated");
 
                 GetAllOffsByUnitId("ddlfwdoffrs", 0, Unitidarmy, 0, 0, 0, 0);

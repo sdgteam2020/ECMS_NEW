@@ -52,25 +52,25 @@ namespace BusinessLogicsLayer.BasicDet
         {
             return await _iBasicDetailDB.FindServiceNo(ServiceNo);
         } 
-        public async Task<List<DTOSmartSearch>> SearchAllServiceNo(string ServiceNo, int AspNetUsersId)
+        public async Task<List<DTOSmartSearch>?> SearchAllServiceNo(string ServiceNo, int AspNetUsersId)
         {
             return await _iBasicDetailDB.SearchAllServiceNo(ServiceNo, AspNetUsersId);
         }
 
-        public async Task<BasicDetailCrtAndUpdVM> GetBasicDetailByRequestId(int RequestId)
+        public async Task<BasicDetailCrtAndUpdVM?> GetBasicDetailByRequestId(int RequestId)
         {
             return await _iBasicDetailDB.GetBasicDetailByRequestId(RequestId);
         }
-        public async Task<BasicDetailCrtAndUpdVM> GetBasicDetailById(int BasicDetailId)
+        public async Task<BasicDetailCrtAndUpdVM?> GetBasicDetailById(int BasicDetailId)
         {
             return await _iBasicDetailDB.GetBasicDetailById(BasicDetailId);
         }
-        public Task<BasicDetailCrtAndUpdVM> GetBesicDetailForEditById(int BasicDetailId)
+        public Task<BasicDetailCrtAndUpdVM?> GetBesicDetailForEditById(int BasicDetailId)
         {
             return _iBasicDetailDB.GetBesicDetailForEditById(BasicDetailId);
         }
 
-        public Task<List<ICardHistoryResponse>> ICardHistory(int RequestId)
+        public Task<List<ICardHistoryResponse>?> ICardHistory(int RequestId)
         {
             
             return _iBasicDetailDB.ICardHistory(RequestId);
@@ -80,7 +80,7 @@ namespace BusinessLogicsLayer.BasicDet
             
             return _iBasicDetailDB.ICardFwdLastRec(RequestId);
         }
-        public Task<List<ICardHistoryResponse>> ICardHistoryByTrackingId(string TrackingId)
+        public Task<List<ICardHistoryResponse>?> ICardHistoryByTrackingId(string TrackingId)
         {
             
             return _iBasicDetailDB.ICardHistoryByTrackingId(TrackingId);
@@ -96,17 +96,17 @@ namespace BusinessLogicsLayer.BasicDet
             return _iBasicDetailDB.SaveBasicDetailsWithAll(Data, address, trnUpload, mTrnIdentityInfo, mTrnICardRequest, mStepCounter);
         }
 
-        public Task<DTOICardTaskCountResponse> GetTaskCountICardRequest(int UserId, int Type, int applyForId)
+        public Task<DTOICardTaskCountResponse?> GetTaskCountICardRequest(int UserId, int Type, int applyForId)
         {
             return _iBasicDetailDB.GetTaskCountICardRequest(UserId, Type, applyForId);
         }
 
-        public Task<List<DTONotificationResponse>> GetNotification(int UserId, int Type, int applyForId)
+        public Task<List<DTONotificationResponse>?> GetNotification(int UserId, int Type, int applyForId)
         {
             return _iBasicDetailDB.GetNotification(UserId, Type, applyForId);
         }
 
-        public Task<List<DTONotificationResponse>> GetNotificationRequestId(int UserId, int Type, int applyForId)
+        public Task<List<DTONotificationResponse>?> GetNotificationRequestId(int UserId, int Type, int applyForId)
         {
             return _iBasicDetailDB.GetNotificationRequestId(UserId, Type, applyForId);
         }
@@ -123,18 +123,12 @@ namespace BusinessLogicsLayer.BasicDet
             var data = _iBasicDetailDB.GetDataDigitalXmlSign(Data);
             return data;
         }
-        public async Task<List<MRecordOffice>> GetROListByArmedId(byte ArmedId)
+        public async Task<List<MRecordOffice>?> GetROListByArmedId(byte ArmedId)
         {
             var data = await _iBasicDetailDB.GetROListByArmedId(ArmedId);
             return data;
         }
-        public async Task<IEnumerable<SelectListItem>> GetRODDLIdSelected(byte ArmedId)
-        {
-            var data = await _iBasicDetailDB.GetRODDLIdSelected(ArmedId);
-            return data;
-        }
-
-        public async Task<DTOApplicationTrack> ApplicationHistory(string TrackingId)
+        public async Task<DTOApplicationTrack?> ApplicationHistory(string TrackingId)
         {
             var data = await _iBasicDetailDB.ApplicationHistory(TrackingId);
             return data;

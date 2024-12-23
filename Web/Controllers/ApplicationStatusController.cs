@@ -3,6 +3,7 @@ using BusinessLogicsLayer.Posting;
 using DataTransferObject.Response;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using System.Collections.Generic;
 
 namespace Web.Controllers
 {
@@ -46,7 +47,16 @@ namespace Web.Controllers
         }
         public async Task<IActionResult> GetRequestHistoryByTrackingId(string TrackingId)
         {
-            return Json(await _basicDetailBL.ICardHistoryByTrackingId(TrackingId));
+            List<ICardHistoryResponse>? cardHistoryResponses = await _basicDetailBL.ICardHistoryByTrackingId(TrackingId);
+            if (cardHistoryResponses != null) 
+            {
+                return Json(await _basicDetailBL.ICardHistoryByTrackingId(TrackingId));
+            }
+            else
+            {
+                return Json(null);
+            }
+            
         }
         public async Task<IActionResult> GetBasicDetailByRequestId(int Id)
         {

@@ -20,23 +20,22 @@ namespace DataAccessLayer.BaseInterfaces
         public Task<List<DTOICardRequestHoldResponse>?> GetAllICardRequestHold();
         public Task<List<BasicDetailVM>> GetALLBasicDetail(int UserId,int step, int type, int applyForId); 
         public Task<List<BasicDetailVM>> GetALLForIcardSttaus(int UserId, int step, int type, int applyfor);
-        public Task<BasicDetailCrtAndUpdVM> GetBasicDetailByRequestId(int RequestId);
-        public Task<BasicDetailCrtAndUpdVM> GetBasicDetailById(int BasicDetailId);
-        public Task<BasicDetailCrtAndUpdVM> GetBesicDetailForEditById(int BasicDetailId);
+        public Task<BasicDetailCrtAndUpdVM?> GetBasicDetailByRequestId(int RequestId);
+        public Task<BasicDetailCrtAndUpdVM?> GetBasicDetailById(int BasicDetailId);
+        public Task<BasicDetailCrtAndUpdVM?> GetBesicDetailForEditById(int BasicDetailId);
         public Task<List<DTOICardTypeRequest>> GetAllICardType();
         public Task<BasicDetail?> FindServiceNo(string ServiceNo);
-        public Task<List<DTOSmartSearch>> SearchAllServiceNo(string ServiceNo,int AspNetUsersId);
-        public Task<List<ICardHistoryResponse>> ICardHistory(int RequestId);
+        public Task<List<DTOSmartSearch>?> SearchAllServiceNo(string ServiceNo,int AspNetUsersId);
+        public Task<List<ICardHistoryResponse>?> ICardHistory(int RequestId);
         public Task<DTOFwdLastRecForDigitalSign> ICardFwdLastRec(int RequestId);
-        public Task<List<ICardHistoryResponse>> ICardHistoryByTrackingId(string TrackingId);
+        public Task<List<ICardHistoryResponse>?> ICardHistoryByTrackingId(string TrackingId);
         public Task<DTOBasicDetailsSaveResponse> SaveBasicDetailsWithAll(BasicDetail Data, MTrnAddress address, MTrnUpload trnUpload, MTrnIdentityInfo mTrnIdentityInfo, MTrnICardRequest mTrnICardRequest, MStepCounter mStepCounter);
-        public Task<DTOICardTaskCountResponse> GetTaskCountICardRequest(int UserId,int Type, int applyForId);
-        public Task<List<DTONotificationResponse>> GetNotification(int UserId, int Type,int applyForId);
-        public Task<List<DTONotificationResponse>> GetNotificationRequestId(int UserId, int Type, int applyForId);
+        public Task<DTOICardTaskCountResponse?> GetTaskCountICardRequest(int UserId,int Type, int applyForId);
+        public Task<List<DTONotificationResponse>?> GetNotification(int UserId, int Type,int applyForId);
+        public Task<List<DTONotificationResponse>?> GetNotificationRequestId(int UserId, int Type, int applyForId);
         public Task<List<DTODataExportsResponse>> GetBesicdetailsByRequestId(DTODataExportRequest Data);
         public Task<DTOXMLDigitalResponse> GetDataDigitalXmlSign(DTODataExportRequest Data);
-        public Task<List<MRecordOffice>> GetROListByArmedId(byte ArmedId);
-        public Task<IEnumerable<SelectListItem>> GetRODDLIdSelected(byte ArmedId);
-        public Task<DTOApplicationTrack> ApplicationHistory(string TrackingId);
+        public Task<List<MRecordOffice>?> GetROListByArmedId(byte ArmedId);
+        public Task<DTOApplicationTrack?> ApplicationHistory(string TrackingId);
     }
 }
