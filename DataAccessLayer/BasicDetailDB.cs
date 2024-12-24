@@ -1409,7 +1409,7 @@ namespace DataAccessLayer
                 using (var connection = _contextDP.CreateConnection())
                 {
                     var ret = await connection.QueryAsync<DTOApplicationDetails>(query, new { TrackingId });
-                    lst.dTOApplicationDetails = ret.FirstOrDefault();
+                    lst.dTOApplicationDetails = ret.FirstOrDefault() ?? new DTOApplicationDetails();
                 }
                 query = " select fwd.FwdStatusId,fwd.stepId,fwd.UpdatedOn,step.Name,fwd.IsComplete," +
                         " isnull(fwd.Remark,'') Remark," +
