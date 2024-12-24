@@ -147,7 +147,8 @@
                                                 @if (Model.ArmedId > 0)
                                                 {
                                                     <div class="box">
-                                                        <div class="js--image-preview"> <img id="PhotoPath" src="/WriteReadData/photo/@Model.ExistingPhotoImagePath" height="158px" width="180px" loading="lazy" /></div>
+                                                        @* <div class="js--image-preview"> <img id="PhotoPath" src="/WriteReadData/photo/@Model.ExistingPhotoImagePath" height="158px" width="180px" loading="lazy" /></div> *@
+                                                        <div class="js--image-preview"> <img id="PhotoPath" src="~/writereaddata/images/noimage.png" height="158px" width="180px" loading="lazy" /></div>
                                                         <div class="upload-options">
                                                             <label>
                                                                 <input asp-for="Photo_" class="form-control" accept="image/jpeg,image/jpg,image/png" />
