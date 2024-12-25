@@ -532,6 +532,9 @@ namespace Web.Controllers
             BasicDetailCrtAndUpdVM? basicDetailCrtAndUpdVM = await basicDetailBL.GetBasicDetailByRequestId(RequestId);
             if (basicDetailCrtAndUpdVM != null)
             {
+                string sourceFolderPhotoPhy = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "Photo");
+                string sourcePath = Path.Combine(sourceFolderPhotoPhy, basicDetailCrtAndUpdVM.PhotoImagePath);
+                basicDetailCrtAndUpdVM.ExistingPhotoInBase64 = ImageEncryptAndDecrypt.DecryptImageToBase64(sourcePath);
                 return Json(basicDetailCrtAndUpdVM);
             }
             else 
@@ -875,24 +878,11 @@ namespace Web.Controllers
                     basicDetailUpdVM.BloodGroupId = basicDetailUpdVM.BloodGroupId;
                     basicDetailUpdVM.PermanentAddress = "Village - " + basicDetailUpdVM.Village + ", Post Office-" + basicDetailUpdVM.PO + ", Tehsil- " + basicDetailUpdVM.Tehsil + ", District- " + basicDetailUpdVM.District + ", State- " + basicDetailUpdVM.State + ", Pin Code- " + basicDetailUpdVM.PinCode;
 
-
-
                     string sourceFolderPhotoPhy = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "Photo");
                     string sourcePath = Path.Combine(sourceFolderPhotoPhy, basicDetailUpdVM.PhotoImagePath);
-                    string answer = basicDetailUpdVM.PhotoImagePath.Replace(".enc", string.Empty);
-                    string destinationPath = Path.Combine(sourceFolderPhotoPhy, answer);
+                    basicDetailUpdVM.ExistingPhotoInBase64 =ImageEncryptAndDecrypt.DecryptImageToBase64(sourcePath);
+                    basicDetailUpdVM.ExistingPhotoImagePath = basicDetailUpdVM.PhotoImagePath;
 
-                    //ImageEncryptAndDecrypt.DecryptImageFile(sourcePath, destinationPath);
-
-                    // Call the method to decrypt and return IFormFile
-                    IFormFile decryptedFile = ImageEncryptAndDecrypt.DecryptImageToIFormFile(sourcePath, basicDetailUpdVM.ServiceNo);
-                    basicDetailUpdVM.Photo_ = decryptedFile;
-                    
-                    //basicDetailUpdVM.ExistingPhotoImagePath = basicDetailUpdVM.PhotoImagePath;
-                    
-                    
-                    
-                    
                     basicDetailUpdVM.ExistingSignatureImagePath = basicDetailUpdVM.SignatureImagePath;
                     basicDetailUpdVM.EncryptedId = Id;
 
@@ -1015,8 +1005,20 @@ namespace Web.Controllers
                                 }
                                 goto end;
                             }
-
-                            mTrnUpload.PhotoImagePath = GetCreateMyFolder() + "/" + FileName;
+                            else
+                            {
+                                string uniqueFileName = FileName + ".enc";
+                                //string destinationPath = sourceFolderPhotoPhy + model.ServiceNo + ".txt";
+                                string destinationPath = Path.Combine(sourceFolderPhotoPhy, uniqueFileName);
+                                ImageEncryptAndDecrypt.EncryptImageFile(path, destinationPath);
+                                if (System.IO.File.Exists(path))
+                                {
+                                    System.IO.File.Delete(path);
+                                }
+                                //mTrnUpload.PhotoImagePath = GetCreateMyFolder() + "/" + FileName;
+                                //// ViewBag.PhotoImagePath = mTrnUpload.PhotoImagePath;
+                                mTrnUpload.PhotoImagePath = GetCreateMyFolder() + "/" + FileName + ".enc";
+                            }
                         }
                         else
                         {
@@ -1658,7 +1660,18 @@ namespace Web.Controllers
         
         public async Task<IActionResult> GetBasicDetailByRequestId(int RequestId)
         {
-           return Json(await basicDetailBL.GetBasicDetailByRequestId(RequestId));
+            BasicDetailCrtAndUpdVM? basicDetailCrtAndUpdVM = await basicDetailBL.GetBasicDetailByRequestId(RequestId);
+            if (basicDetailCrtAndUpdVM != null)
+            {
+                string sourceFolderPhotoPhy = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "Photo");
+                string sourcePath = Path.Combine(sourceFolderPhotoPhy, basicDetailCrtAndUpdVM.PhotoImagePath);
+                basicDetailCrtAndUpdVM.ExistingPhotoInBase64 = ImageEncryptAndDecrypt.DecryptImageToBase64(sourcePath);
+                return Json(basicDetailCrtAndUpdVM);
+            }
+            else
+            {
+                return Json(null);
+            }
         }
         public async Task<IActionResult> GetRequestHistory(int RequestId)
         {

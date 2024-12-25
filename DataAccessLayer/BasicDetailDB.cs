@@ -751,9 +751,8 @@ namespace DataAccessLayer
             {
                 using (var connection = _contextDP.CreateConnection())
                 {
-                    var BasicDetailList = await connection.QueryAsync<BasicDetailCrtAndUpdVM>(query, new { RequestId });
-
-                    return BasicDetailList.FirstOrDefault();
+                    BasicDetailCrtAndUpdVM? BasicDetailList = (await connection.QueryAsync<BasicDetailCrtAndUpdVM>(query, new { RequestId })).FirstOrDefault();
+                    return BasicDetailList;
                 }
             }
 

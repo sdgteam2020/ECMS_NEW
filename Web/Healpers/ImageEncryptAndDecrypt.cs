@@ -77,7 +77,6 @@ namespace Web.Healpers
                 }
             }
         }
-
         public static IFormFile DecryptImageToIFormFile(string encryptedFilePath, string fileName)
         {
             using (Aes aes = Aes.Create())
@@ -136,6 +135,24 @@ namespace Web.Healpers
                         cryptoStream?.Dispose();
                         throw;
                     }
+                }
+            }
+        }
+
+        public static string DecryptImageToBase64(string encryptedFilePath)
+        {
+            using (var inputStream = new FileStream(encryptedFilePath, FileMode.Open, FileAccess.Read))
+            using (var aes = Aes.Create())
+            {
+                aes.Key = FixedKey;
+                aes.IV = FixedIV;
+
+                using (var cryptoStream = new CryptoStream(inputStream, aes.CreateDecryptor(), CryptoStreamMode.Read))
+                using (var memoryStream = new MemoryStream())
+                {
+                    cryptoStream.CopyTo(memoryStream);
+                    byte[] decryptedBytes = memoryStream.ToArray();
+                    return Convert.ToBase64String(decryptedBytes);
                 }
             }
         }
