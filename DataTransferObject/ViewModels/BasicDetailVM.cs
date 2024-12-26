@@ -267,6 +267,7 @@ namespace DataTransferObject.ViewModels
         public IFormFile? Signature_ { get; set; }
 
         public string? ExistingSignatureImagePath { get; set; }
+        public string? ExistingSignatureInBase64 { get; set; }
         public string? ExistingPhotoImagePath { get; set; }
         public string? ExistingPhotoInBase64 { get; set; }
 

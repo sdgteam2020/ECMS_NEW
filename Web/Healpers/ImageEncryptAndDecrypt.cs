@@ -1,4 +1,5 @@
-﻿using System.Security.Cryptography;
+﻿using Microsoft.AspNetCore.StaticFiles;
+using System.Security.Cryptography;
 
 namespace Web.Healpers
 {
@@ -141,6 +142,18 @@ namespace Web.Healpers
 
         public static string DecryptImageToBase64(string encryptedFilePath)
         {
+            // Create a provider for mapping extensions to MIME types
+            var provider = new FileExtensionContentTypeProvider();
+
+            string temp = encryptedFilePath.Replace(".enc", string.Empty);
+
+            // Determine the MIME type based on the file extension
+            string contentType;
+            if (!provider.TryGetContentType(temp, out contentType))
+            {
+                contentType = "application/octet-stream"; // Default to binary if no mapping exists
+            }
+
             using (var inputStream = new FileStream(encryptedFilePath, FileMode.Open, FileAccess.Read))
             using (var aes = Aes.Create())
             {
@@ -152,7 +165,9 @@ namespace Web.Healpers
                 {
                     cryptoStream.CopyTo(memoryStream);
                     byte[] decryptedBytes = memoryStream.ToArray();
-                    return Convert.ToBase64String(decryptedBytes);
+                    
+                    // Add the content type as a prefix
+                    return $"data:{contentType};base64,{Convert.ToBase64String(decryptedBytes)}";
                 }
             }
         }

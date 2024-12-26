@@ -532,9 +532,14 @@ namespace Web.Controllers
             BasicDetailCrtAndUpdVM? basicDetailCrtAndUpdVM = await basicDetailBL.GetBasicDetailByRequestId(RequestId);
             if (basicDetailCrtAndUpdVM != null)
             {
-                string sourceFolderPhotoPhy = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "Photo");
-                string sourcePath = Path.Combine(sourceFolderPhotoPhy, basicDetailCrtAndUpdVM.PhotoImagePath);
-                basicDetailCrtAndUpdVM.ExistingPhotoInBase64 = ImageEncryptAndDecrypt.DecryptImageToBase64(sourcePath);
+                string sourceFolderPhy = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData");
+
+                string sourcePathPhoto = Path.Combine(sourceFolderPhy, "Photo", basicDetailCrtAndUpdVM.PhotoImagePath);
+                basicDetailCrtAndUpdVM.ExistingPhotoInBase64 = ImageEncryptAndDecrypt.DecryptImageToBase64(sourcePathPhoto);
+
+                string sourcePathSignature = Path.Combine(sourceFolderPhy, "Signature", basicDetailCrtAndUpdVM.SignatureImagePath);
+                basicDetailCrtAndUpdVM.ExistingSignatureInBase64 = ImageEncryptAndDecrypt.DecryptImageToBase64(sourcePathSignature);
+
                 return Json(basicDetailCrtAndUpdVM);
             }
             else 
@@ -878,12 +883,15 @@ namespace Web.Controllers
                     basicDetailUpdVM.BloodGroupId = basicDetailUpdVM.BloodGroupId;
                     basicDetailUpdVM.PermanentAddress = "Village - " + basicDetailUpdVM.Village + ", Post Office-" + basicDetailUpdVM.PO + ", Tehsil- " + basicDetailUpdVM.Tehsil + ", District- " + basicDetailUpdVM.District + ", State- " + basicDetailUpdVM.State + ", Pin Code- " + basicDetailUpdVM.PinCode;
 
-                    string sourceFolderPhotoPhy = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "Photo");
-                    string sourcePath = Path.Combine(sourceFolderPhotoPhy, basicDetailUpdVM.PhotoImagePath);
-                    basicDetailUpdVM.ExistingPhotoInBase64 =ImageEncryptAndDecrypt.DecryptImageToBase64(sourcePath);
+                    string sourceFolderPhotoPhy = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData");
+                    string sourcePathPhoto = Path.Combine(sourceFolderPhotoPhy,"Photo", basicDetailUpdVM.PhotoImagePath);
+                    basicDetailUpdVM.ExistingPhotoInBase64 =ImageEncryptAndDecrypt.DecryptImageToBase64(sourcePathPhoto);
                     basicDetailUpdVM.ExistingPhotoImagePath = basicDetailUpdVM.PhotoImagePath;
 
+                    string sourcePathSignature = Path.Combine(sourceFolderPhotoPhy, "Signature", basicDetailUpdVM.PhotoImagePath);
+                    basicDetailUpdVM.ExistingSignatureInBase64 = ImageEncryptAndDecrypt.DecryptImageToBase64(sourcePathSignature);
                     basicDetailUpdVM.ExistingSignatureImagePath = basicDetailUpdVM.SignatureImagePath;
+                    
                     basicDetailUpdVM.EncryptedId = Id;
 
                     if (TempData["Registration"] != null)
@@ -1049,8 +1057,19 @@ namespace Web.Controllers
                                 }
                                 goto end;
                             }
-
-                            mTrnUpload.SignatureImagePath = GetCreateMyFolder() + "/" + FileName;
+                            else
+                            {
+                                string uniqueFileName = FileName + ".enc";
+                                //string destinationPath = sourceFolderSignaturePhy + model.ServiceNo + ".txt";
+                                string destinationPath = Path.Combine(sourceFolderSignaturePhy, uniqueFileName);
+                                ImageEncryptAndDecrypt.EncryptImageFile(path, destinationPath);
+                                if (System.IO.File.Exists(path))
+                                {
+                                    System.IO.File.Delete(path);
+                                }
+                                // mTrnUpload.SignatureImagePath = GetCreateMyFolder() + "/" + FileName;
+                                mTrnUpload.SignatureImagePath = GetCreateMyFolder() + "/" + FileName + ".enc";
+                            }
                         }
                         else
                         {
@@ -1226,8 +1245,19 @@ namespace Web.Controllers
                                 }
                                 goto end;
                             }
-
-                            mTrnUpload.SignatureImagePath = GetCreateMyFolder() + "/" + FileName;
+                            else
+                            {
+                                string uniqueFileName = FileName + ".enc";
+                                //string destinationPath = sourceFolderSignaturePhy + model.ServiceNo + ".txt";
+                                string destinationPath = Path.Combine(sourceFolderSignaturePhy, uniqueFileName);
+                                ImageEncryptAndDecrypt.EncryptImageFile(path, destinationPath);
+                                if (System.IO.File.Exists(path))
+                                {
+                                    System.IO.File.Delete(path);
+                                }
+                                // mTrnUpload.SignatureImagePath = GetCreateMyFolder() + "/" + FileName;
+                                mTrnUpload.SignatureImagePath = GetCreateMyFolder() + "/" + FileName + ".enc";
+                            }
                         }
                         else
                         {
@@ -1663,9 +1693,13 @@ namespace Web.Controllers
             BasicDetailCrtAndUpdVM? basicDetailCrtAndUpdVM = await basicDetailBL.GetBasicDetailByRequestId(RequestId);
             if (basicDetailCrtAndUpdVM != null)
             {
-                string sourceFolderPhotoPhy = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "Photo");
-                string sourcePath = Path.Combine(sourceFolderPhotoPhy, basicDetailCrtAndUpdVM.PhotoImagePath);
-                basicDetailCrtAndUpdVM.ExistingPhotoInBase64 = ImageEncryptAndDecrypt.DecryptImageToBase64(sourcePath);
+                string sourceFolderPhy = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData");
+                
+                string sourcePathPhoto = Path.Combine(sourceFolderPhy, "Photo", basicDetailCrtAndUpdVM.PhotoImagePath);
+                basicDetailCrtAndUpdVM.ExistingPhotoInBase64 = ImageEncryptAndDecrypt.DecryptImageToBase64(sourcePathPhoto);
+
+                string sourcePathSignature = Path.Combine(sourceFolderPhy, "Signature", basicDetailCrtAndUpdVM.SignatureImagePath);
+                basicDetailCrtAndUpdVM.ExistingSignatureInBase64 = ImageEncryptAndDecrypt.DecryptImageToBase64(sourcePathSignature);
                 return Json(basicDetailCrtAndUpdVM);
             }
             else
@@ -1724,13 +1758,15 @@ namespace Web.Controllers
 
                         lst.Clear();
                         recofffolder = Convert.ToString(CreateFolder(sourceFolderPhotoPhy + "/" + data.RecordOffice));
-                        recoffphotos = Convert.ToString(CreateFolder(sourceFolderPhotoPhy + "/" + data.RecordOffice + "/Photos"));
+                        recoffphotos = Convert.ToString(CreateFolder(sourceFolderPhotoPhy + "/" + data.RecordOffice + "/Photos/"));
                         recoffsing = Convert.ToString(CreateFolder(sourceFolderPhotoPhy + "/" + data.RecordOffice + "/Signature"));
 
                     }
 
-                    System.IO.File.Copy(Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "Photo") + "/" + data.PhotoImagePath, recoffphotos + "/" + data.ServiceNo + ".png", true);
-                    System.IO.File.Copy(Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "Signature") + "/" + data.SignatureImagePath, recoffsing + "/" + data.ServiceNo + ".png", true);
+                    //System.IO.File.Copy(Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "Photo") + "/" + data.PhotoImagePath, recoffphotos + "/" + data.ServiceNo + ".png", true);
+                    //System.IO.File.Copy(Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "Signature") + "/" + data.SignatureImagePath, recoffsing + "/" + data.ServiceNo + ".png", true);
+                    ImageEncryptAndDecrypt.DecryptImageFile(Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "Photo", data.PhotoImagePath),recoffphotos + "/" + data.ServiceNo + ".png");
+                    ImageEncryptAndDecrypt.DecryptImageFile(Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "Signature", data.SignatureImagePath), recoffsing +"/" + data.ServiceNo + ".png");
                     lst.Add(data);
                     recoff = data.RecordOfficeId;
                     if (count == retdata.Count())

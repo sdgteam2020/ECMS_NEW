@@ -311,8 +311,15 @@ namespace Web.Controllers
 
                 Table table = new Table(4);
 
-                String imphotoFile = System.IO.Path.Combine(hostingEnvironment.ContentRootPath, "wwwroot\\WriteReadData\\Photo\\" + db.PhotoImagePath);
-                ImageData dataphoto = ImageDataFactory.Create(imphotoFile);
+                //String imphotoFile = System.IO.Path.Combine(hostingEnvironment.ContentRootPath, "wwwroot\\WriteReadData\\Photo\\" + db.PhotoImagePath);
+                //ImageData dataphoto = ImageDataFactory.Create(imphotoFile);
+
+                String sourcePathPhoto = System.IO.Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "Photo" , db.PhotoImagePath);
+                string base64Image = ImageEncryptAndDecrypt.DecryptImageToBase64(sourcePathPhoto);
+                // Decode Base64 string to byte array
+                string base64Data = base64Image.Split(',')[1]; // Remove data:image/jpeg;base64, prefix
+                byte[] imageBytes = Convert.FromBase64String(base64Data);
+                ImageData dataphoto = ImageDataFactory.Create(imageBytes);
 
                 iTextImage imagedataphoto = new iTextImage(dataphoto);
                 imagedataphoto.SetWidth(60);
@@ -355,13 +362,22 @@ namespace Web.Controllers
                 //table.AddCell(new Cell(1, 3).Add(new Paragraph("Amount")));
                 table.AddCell("Village - " + db.Village + ", Post Office-" + db.PO + ", Tehsil- " + db.Tehsil + ", District- " + db.District + ", State- " + db.State + ", Pin Code- " + db.PinCode);
                 table.AddCell(new Paragraph("Signature").SetFont(boldFont));
-                String sigFile = System.IO.Path.Combine(hostingEnvironment.ContentRootPath, "wwwroot\\WriteReadData\\Signature\\" + db.SignatureImagePath);
-                ImageData datasig = ImageDataFactory.Create(sigFile);
 
+                //String sigFile = System.IO.Path.Combine(hostingEnvironment.ContentRootPath, "wwwroot\\WriteReadData\\Signature\\" + db.SignatureImagePath);
+                //ImageData datasig = ImageDataFactory.Create(sigFile);
+                //iTextImage imagedatasig = new iTextImage(datasig);
+                //imagedatasig.SetWidth(60);
+
+                String sourcePathSignature = System.IO.Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "Signature", db.SignatureImagePath);
+                base64Image = ImageEncryptAndDecrypt.DecryptImageToBase64(sourcePathSignature);
+                // Decode Base64 string to byte array
+                base64Data = base64Image.Split(',')[1]; // Remove data:image/jpeg;base64, prefix
+                imageBytes = Convert.FromBase64String(base64Data);
+                ImageData datasig = ImageDataFactory.Create(imageBytes);
                 iTextImage imagedatasig = new iTextImage(datasig);
-                imagedatasig.SetWidth(60);
+                imagedatasig.SetWidth(80);
+
                 Cell imageCellsig = new Cell().Add(imagedatasig);
-                //imageCellsig.SetBorder(null);
                 table.AddCell(imageCellsig);
 
                 document.Add(table);

@@ -25,8 +25,8 @@ function GetICardPrintPreviewByRequestId(RequestId) {
 
         success: function (response) {
             if (response != "null" && response != null) {
-                $(".PhotoImagePath_ICardPrint").attr('src', "data:image/jpeg;base64," + response.ExistingPhotoInBase64);
-                $(".SignaturePath_ICardPrint").attr('src', "/WriteReadData/Signature/" + response.SignatureImagePath);
+                $(".PhotoImagePath_ICardPrint").attr('src', response.ExistingPhotoInBase64);
+                $(".SignaturePath_ICardPrint").attr('src', response.ExistingSignatureInBase64);
                 $("#FName_ICardPrint").html(response.FName);
                 $("#LName_ICardPrint").html(response.LName);
                 $("#RankName_ICardPrint").html(response.RankName);
@@ -59,8 +59,8 @@ function GetBasicDetailByRequestId(RequestId) {
 
         success: function (response) {
             if (response != "null" && response != null) {
-                $("#basicphotosVP").attr('src', "data:image/jpeg;base64," + response.ExistingPhotoInBase64);
-                $("#BasicsingVP").attr('src', "/WriteReadData/Signature/" + response.SignatureImagePath);
+                $("#basicphotosVP").attr('src', response.ExistingPhotoInBase64);
+                $("#BasicsingVP").attr('src', response.ExistingSignatureInBase64);
                 $("#lblvpNameAsPerRecord").html(response.NameAsPerRecord);
                 $("#lblvpFName").html(response.FName);
                 $("#lblvpLName").html(response.LName);
