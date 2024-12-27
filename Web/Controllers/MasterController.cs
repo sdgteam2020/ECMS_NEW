@@ -449,15 +449,17 @@ namespace Web.Controllers
                         {
                             if (dTO.BdeId > 0)
                             {
+                                //this Bde update using UpdateComdCorpsByDivs method
                                 await unitOfWork.Bde.Update(dTO);
 
                                 /////update Commd By CorpsId
                                 MapUnit dat = new MapUnit();
+                                dat.Bde = dTO;
                                 dat.CorpsId = dTO.CorpsId;
                                 dat.ComdId = dTO.ComdId;
                                 dat.DivId = dTO.DivId;
                                 dat.BdeId = dTO.BdeId;
-                                changeHierarchyMaster.UpdateComdCorpsByDivs(dat);
+                                await changeHierarchyMaster.UpdateComdCorpsByDivs(dat);
                                 ////////End Code //////////////
                                 ///
                                 return Json(KeyConstants.Update);

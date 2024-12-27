@@ -24,12 +24,12 @@ namespace BusinessLogicsLayer.BasicDetTemp
             return await _iBasicDetailTempDB.GetALLBasicDetailTemp(UserId,TypeId);
         }
 
-        public Task<DTOBasicDetailTempRequest> GetALLBasicDetailTempByBasicDetailId(int UserId, int BasicDetailId)
+        public Task<DTOBasicDetailTempRequest?> GetALLBasicDetailTempByBasicDetailId(int UserId, int BasicDetailId)
         {
             return _iBasicDetailTempDB.GetALLBasicDetailTempByBasicDetailId(UserId, BasicDetailId);
         }
 
-        public Task<BasicDetailTemp> GetByArmyNo(string ArmyNo)
+        public Task<BasicDetailTemp?> GetByArmyNo(string ArmyNo)
         {
             return _iBasicDetailTempDB.GetByArmyNo(ArmyNo);
         }

@@ -606,8 +606,18 @@ namespace Web.Controllers
                     return RedirectToAction("ContactUs", "Home");
                 }
                 // Retrieve records asynchronously
-                var allRecords = await basicDetailTempBL.GetALLBasicDetailTempByBasicDetailId(userIntId, decryptedIntId);
-                return View(allRecords);
+                DTOBasicDetailTempRequest? dTOBasicDetail = await basicDetailTempBL.GetALLBasicDetailTempByBasicDetailId(userIntId, decryptedIntId);
+                if (dTOBasicDetail != null) 
+                {
+                    return View(dTOBasicDetail);
+                }
+                else
+                {
+                    TempData["error"] = "Id not found.";
+                    TempData.Keep("error");
+                    return RedirectToAction("ContactUs", "Home");
+                }
+                
             }
             catch (System.Security.Cryptography.CryptographicException ex)
             {
@@ -708,8 +718,7 @@ namespace Web.Controllers
                             basicDetailTemp.RankId= model.RankId;
                             basicDetailTemp.ArmedId = model.ArmedId;
                             basicDetailTemp.UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
-                            BasicDetailTemp temp = new BasicDetailTemp();
-                            temp =await basicDetailTempBL.GetByArmyNo(model.ServiceNo);
+                            BasicDetailTemp? temp = await basicDetailTempBL.GetByArmyNo(model.ServiceNo);
 
                         if(temp != null && temp.BasicDetailTempId>0)
                         {

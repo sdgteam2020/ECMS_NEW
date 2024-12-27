@@ -2,14 +2,7 @@
 using DataTransferObject.Domain.Master;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
-using DataTransferObject.Response.User;
-using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using static Dapper.SqlMapper;
 using DataAccessLayer.Logger;
 using Microsoft.Extensions.Logging;
