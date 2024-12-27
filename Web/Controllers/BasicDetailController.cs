@@ -1765,8 +1765,17 @@ namespace Web.Controllers
 
                     //System.IO.File.Copy(Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "Photo") + "/" + data.PhotoImagePath, recoffphotos + "/" + data.ServiceNo + ".png", true);
                     //System.IO.File.Copy(Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "Signature") + "/" + data.SignatureImagePath, recoffsing + "/" + data.ServiceNo + ".png", true);
-                    ImageEncryptAndDecrypt.DecryptImageFile(Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "Photo", data.PhotoImagePath),recoffphotos + "/" + data.ServiceNo + ".png");
-                    ImageEncryptAndDecrypt.DecryptImageFile(Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "Signature", data.SignatureImagePath), recoffsing +"/" + data.ServiceNo + ".png");
+                    string temp= data.PhotoImagePath.Replace(".enc",string.Empty);
+                    string[] parts = temp.Split('.');
+                    string extenstionImage = parts[parts.Length - 1];
+
+                    temp = data.SignatureImagePath.Replace(".enc", string.Empty);
+                    parts = temp.Split('.');
+                    string extenstionSign= parts[parts.Length - 1];
+
+                    ImageEncryptAndDecrypt.DecryptImageFile(Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "Photo", data.PhotoImagePath),recoffphotos + "/" + data.ServiceNo + "."+ extenstionImage);
+                    ImageEncryptAndDecrypt.DecryptImageFile(Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "Signature", data.SignatureImagePath), recoffsing +"/" + data.ServiceNo + "."+ extenstionSign);
+                    
                     lst.Add(data);
                     recoff = data.RecordOfficeId;
                     if (count == retdata.Count())
