@@ -309,3 +309,4 @@ AppPackages/
 /TestConsoleReso/obj/Release/net7.0/TestConsoleReso.AssemblyInfoInputs.cache
 /TestConsoleReso/obj/Release/net7.0/TestConsoleReso.AssemblyInfo.cs
 /Web/Properties/PublishProfiles/FolderProfile.pubxml.user
+/Web/wwwroot/counter.txt
