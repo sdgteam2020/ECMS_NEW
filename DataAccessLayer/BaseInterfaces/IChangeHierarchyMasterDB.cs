@@ -10,9 +10,9 @@ namespace DataAccessLayer.BaseInterfaces
 {
     public interface IChangeHierarchyMasterDB
     {
-        public Task<int> UpdateChageComdByCorps(MapUnit Data);
+        public Task<bool> UpdateChageComdByCorps(MapUnit Data);
         public Task<bool> UpdateComdCorpsByDivs(MapUnit Data);
-        public Task<int> UpdateComdCorpsDivsBybdes(MapUnit Data);
+        public Task<bool> UpdateComdCorpsDivsBybdes(MapUnit Data);
       
     }
 }

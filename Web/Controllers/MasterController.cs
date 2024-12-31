@@ -191,58 +191,55 @@ namespace Web.Controllers
         [Authorize(Roles = "admin")]
         public IActionResult Corps()
         {
-
             return View();
         }
         [Authorize(Roles = "admin")]
         public async Task<IActionResult> SaveCorps(MCorps dTO)
         {
-            try
+            dTO.IsActive = true;
+            dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+            dTO.UpdatedOn = DateTime.Now;
+            dTO.CorpsName = dTO.CorpsName.Trim();
+
+            if (ModelState.IsValid)
             {
-                dTO.IsActive = true;
-                dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-                dTO.UpdatedOn = DateTime.Now;
-                dTO.CorpsName = dTO.CorpsName.Trim();
-
-                if (ModelState.IsValid)
+                if (!await unitOfWork.Corps.GetByName(dTO))
                 {
-                    if (!await unitOfWork.Corps.GetByName(dTO))
+                    if (dTO.CorpsId > 0)
                     {
-                        if (dTO.CorpsId > 0)
+                        //this Corps update using UpdateChageComdByCorps method
+                        //await unitOfWork.Corps.Update(dTO);
+
+                        /////update Commd By CorpsId
+                        MapUnit dat = new MapUnit();
+                        dat.Corps = dTO;
+                        dat.CorpsId = dTO.CorpsId;
+                        dat.ComdId = dTO.ComdId;
+                        bool result = await changeHierarchyMaster.UpdateChageComdByCorps(dat);
+                        if (result)
                         {
-                            await unitOfWork.Corps.Update(dTO);
-
-                            /////update Commd By CorpsId
-                            MapUnit dat = new MapUnit();
-                            dat.CorpsId = dTO.CorpsId;
-                            dat.ComdId = dTO.ComdId;
-                            changeHierarchyMaster.UpdateChageComdByCorps(dat);
-                            ////////End Code //////////////
-
                             return Json(KeyConstants.Update);
                         }
                         else
                         {
-                            await unitOfWork.Corps.Add(dTO);
-                            return Json(KeyConstants.Save);
+                            return Json(KeyConstants.InternalServerError);
                         }
+                        ////////End Code //////////////
                     }
                     else
                     {
-                        return Json(KeyConstants.Exists);
+                        await unitOfWork.Corps.Add(dTO);
+                        return Json(KeyConstants.Save);
                     }
-
                 }
                 else
                 {
-                    return Json(ModelState.Select(x => x.Value?.Errors).Where(y => y?.Count > 0).ToList());
+                    return Json(KeyConstants.Exists);
                 }
-
             }
-            catch (Exception ex) 
+            else
             {
-                _logger.LogError(1001, ex, "Master->SaveCorps");
-                return Json(KeyConstants.InternalServerError); 
+                return Json(ModelState.Select(x => x.Value?.Errors).Where(y => y?.Count > 0).ToList());
             }
 
         }
@@ -326,16 +323,25 @@ namespace Web.Controllers
                     {
                         if (dTO.DivId > 0)
                         {
-                            await unitOfWork.Div.Update(dTO);
+                            //this Div update using UpdateComdCorpsByDivs method
+                            //await unitOfWork.Div.Update(dTO);
 
                             /////update Commd By CorpsId
                             MapUnit dat = new MapUnit();
+                            dat.Div = dTO;
                             dat.CorpsId = dTO.CorpsId;
                             dat.ComdId = dTO.ComdId;
                             dat.DivId=dTO.DivId;
-                            changeHierarchyMaster.UpdateComdCorpsByDivs(dat);
+                            bool result = await changeHierarchyMaster.UpdateComdCorpsByDivs(dat);
+                            if (result) 
+                            {
+                                return Json(KeyConstants.Update);
+                            }
+                            else
+                            {
+                                return Json(KeyConstants.InternalServerError);
+                            }
                             ////////End Code //////////////
-                            return Json(KeyConstants.Update);
                         }
                         else
                         {
@@ -450,7 +456,7 @@ namespace Web.Controllers
                             if (dTO.BdeId > 0)
                             {
                                 //this Bde update using UpdateComdCorpsByDivs method
-                                await unitOfWork.Bde.Update(dTO);
+                                //await unitOfWork.Bde.Update(dTO);
 
                                 /////update Commd By CorpsId
                                 MapUnit dat = new MapUnit();
@@ -459,10 +465,17 @@ namespace Web.Controllers
                                 dat.ComdId = dTO.ComdId;
                                 dat.DivId = dTO.DivId;
                                 dat.BdeId = dTO.BdeId;
-                                await changeHierarchyMaster.UpdateComdCorpsByDivs(dat);
+                                bool result1 = await changeHierarchyMaster.UpdateComdCorpsDivsBybdes(dat);
+                                if (result1)
+                                {
+                                    return Json(KeyConstants.Update);
+                                }
+                                else
+                                {
+                                    return Json(KeyConstants.InternalServerError);
+                                }
                                 ////////End Code //////////////
                                 ///
-                                return Json(KeyConstants.Update);
                             }
                             else
                             {

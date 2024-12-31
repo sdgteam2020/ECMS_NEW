@@ -18,7 +18,7 @@ namespace BusinessLogicsLayer.Master
         }
       
 
-        public Task<int> UpdateChageComdByCorps(MapUnit Data)
+        public Task<bool> UpdateChageComdByCorps(MapUnit Data)
         {
           return  _changeHierarchyMasterDB.UpdateChageComdByCorps(Data);
         }
@@ -28,7 +28,7 @@ namespace BusinessLogicsLayer.Master
             return _changeHierarchyMasterDB.UpdateComdCorpsByDivs(Data);
         }
 
-        public Task<int> UpdateComdCorpsDivsBybdes(MapUnit Data)
+        public Task<bool> UpdateComdCorpsDivsBybdes(MapUnit Data)
         {
             return _changeHierarchyMasterDB.UpdateComdCorpsDivsBybdes(Data);
         }
