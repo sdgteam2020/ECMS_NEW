@@ -123,7 +123,7 @@
                                     <th>Type </th>
                                     <th>Reason for Requisition</th>
                                     <th class="noExport">History</th>
-                                    <th class="noExport">Print / Fwd</th>
+                                    <th class="noExport">Print | Fwd</th>
                                 </tr>
                             </thead>
                             <tbody id="DetailBodyData">
@@ -149,7 +149,7 @@
                                             </td>
                                         }
                                         <td>@item.Sno</td>
-                                        <td><a href="#" onclick="GetBasicDetailByRequestId(@(@item.RequestId));event.preventDefault();"><span class="ServiceNo">@item.ServiceNo</span></a></td>
+                                        <td><a href="#" onclick="GetBasicDetailByRequestId(@(@item.RequestId));event.preventDefault();"><span class="ServiceNo">@item.ModifiedServiceNo</span></a></td>
                                         <td>@item.RankName</td>
                                         <td>@item.FName @(item.LName == null ? "" : item.LName)</td>
                                         <td class="UnitName">@item.UnitName</td>

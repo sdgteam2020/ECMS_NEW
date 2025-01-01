@@ -244,7 +244,7 @@ function GetNotification(NotificationTypeId, ApplyForId) {
                         list += '</div>';
                         list += '</div>';
                         list += ' <div class="preview-item-content">';
-                        list += '<h6 class="preview-subject font-weight-normal"> Application No: ' + response[i].TrackingId + '<br> Applicant Name:-' + response[i].RankAbbreviation + ' ' + response[i].Name + ' (' + response[i].ServiceNo + ') <br>' + response[i].Message + '</h6>';
+                        list += '<h6 class="preview-subject font-weight-normal"> Appl No: ' + response[i].TrackingId + '<br> Applicant Name:-' + response[i].RankAbbreviation + ' ' + response[i].Name + ' (' + response[i].ServiceNo + ') <br>' + response[i].Message + '</h6>';
                         list += '<p class="font-weight-light small-text mb-0 text-muted">';
 
 
@@ -334,7 +334,7 @@ function GetNotificationRequestId(NotificationTypeId,ApplyForId) {
                         list += '</div>';
                         list += '</div>';
                         list += ' <div class="preview-item-content">';
-                        list += '<h6 class="preview-subject font-weight-normal"> Application No: ' + response[i].TrackingId + '<br> Applicant Name:-' + response[i].RankAbbreviation + ' ' + response[i].Name + ' (' + response[i].ServiceNo +') <br>' + response[i].Message+'</h6>';
+                        list += '<h6 class="preview-subject font-weight-normal"> Appl No: ' + response[i].TrackingId + '<br> Applicant Name:-' + response[i].RankAbbreviation + ' ' + response[i].Name + ' (' + response[i].ServiceNo +') <br>' + response[i].Message+'</h6>';
                         list += '<p class="font-weight-light small-text mb-0 text-muted">';
 
                         

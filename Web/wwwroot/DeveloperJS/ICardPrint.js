@@ -31,7 +31,7 @@ function GetICardPrintPreviewByRequestId(RequestId) {
                 $("#LName_ICardPrint").html(response.LName);
                 $("#RankName_ICardPrint").html(response.RankName);
                 $("#ArmedName_ICardPrint").html(response.ArmedName);
-                $("#ServiceNo_ICardPrint").html(response.ServiceNo);
+                $("#ServiceNo_ICardPrint").html(response.ModifiedServiceNo);
                 $("#IdenMark1_ICardPrint").html(response.IdenMark1);
                 $("#DOB_ICardPrint").html(DateFormateMMMM_dd_yyyy(response.DOB));
                 $("#Height_ICardPrint").html(response.Height + ' CM');
@@ -66,7 +66,7 @@ function GetBasicDetailByRequestId(RequestId) {
                 $("#lblvpLName").html(response.LName);
                 $("#lblvpRank").html(response.RankName);
                 $("#lblvparm").html(response.ArmedName);
-                $("#lblvpArmyNo").html(response.ServiceNo);
+                $("#lblvpArmyNo").html(response.ModifiedServiceNo);
                 $("#lblvpMarks").html(response.IdenMark1);
                 $("#lblvpdob").html(DateFormateMMMM_dd_yyyy(response.DOB));
                 $("#lblvpheight").html(response.Height);

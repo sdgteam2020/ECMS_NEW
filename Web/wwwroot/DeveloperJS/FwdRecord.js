@@ -736,7 +736,7 @@ function GetBasicDetailByRequestIdForFwd(RequestId) {
                 $("#lblfdLName").html(response.LName);
                 $("#lblfdRank").html(response.RankName);
                 $("#lblLfdarm").html(response.ArmedName);
-                $("#lblfdArmyNo").html(response.ServiceNo);
+                $("#lblfdArmyNo").html(response.ModifiedServiceNo);
                 $("#lblfdMarks").html(response.IdenMark1);
                 $("#lblfddob").html(DateFormateMMMM_dd_yyyy(response.DOB));
                 $("#lblfdheight").html(response.Height);
@@ -1328,7 +1328,7 @@ function GetTokenSignXml(xml, msgid, RequestId, Id) {
         },
         error: function (result) {
 
-            $("#" + msgid).html('<div class="mt-4 alert alert-danger alert-dismissible fade show "><i class="fa fa-times" aria-hidden="true"></i><span class="m-lg-2">DGIS Application Not Running</span>.</div>');
+            $("#" + msgid).html('<div class="mt-4 alert alert-danger alert-dismissible fade show "><i class="fa fa-times" aria-hidden="true"></i><span class="m-lg-2">DGIS Appl Not Running</span>.</div>');
 
 
         }
@@ -1544,7 +1544,7 @@ function digitalpdfsignature(Thumbprint, pdfpath, XCoordinate, YCoordinate, Requ
         },
         error: function (result) {
 
-            $("#" + msgid).html('<div class="mt-4 alert alert-danger alert-dismissible fade show "><i class="fa fa-times" aria-hidden="true"></i><span class="m-lg-2">DGIS Application Not Running</span>.</div>');
+            $("#" + msgid).html('<div class="mt-4 alert alert-danger alert-dismissible fade show "><i class="fa fa-times" aria-hidden="true"></i><span class="m-lg-2">DGIS Appl Not Running</span>.</div>');
 
 
         }
@@ -1663,7 +1663,7 @@ function GetByArmyNoIsToken(ArmyNo, OffType, RegApplyFor, stepCounter) {
 
                     if (parseInt(OffType) == 1) {
                         if (parseInt(RegApplyFor) == 2 || parseInt(RegApplyFor) == 3 || parseInt(RegApplyFor) == 4 || parseInt(RegApplyFor) == 10) {
-                            //  Other Officer Application Request
+                            //  Other Officer Appl Request
                             if (parseInt(stepCounter) == 1 || parseInt(stepCounter) == 2 || parseInt(stepCounter) == 7) {
                                 if (IsWithTokenApply == true) {
                                     $("#btntokenTofwd").removeClass("d-none");
@@ -1681,7 +1681,7 @@ function GetByArmyNoIsToken(ArmyNo, OffType, RegApplyFor, stepCounter) {
                             }
                         }
                         else {
-                            // Self Officer Application Request
+                            // Self Officer Appl Request
                             if (parseInt(stepCounter) == 1 || parseInt(stepCounter) == 2 || parseInt(stepCounter) == 7) {
                                 if (IsToken == true && parseInt(RegApplyFor) == 1) {
                                     $("#btntokenTofwd").removeClass("d-none");
@@ -1701,7 +1701,7 @@ function GetByArmyNoIsToken(ArmyNo, OffType, RegApplyFor, stepCounter) {
                     }
                     else {
 
-                        // JCO/OR Application Request
+                        // JCO/OR Appl Request
                         if (parseInt(stepCounter) == 1 || parseInt(stepCounter) == 7 || parseInt(stepCounter) == 8 || parseInt(stepCounter) == 9 || parseInt(stepCounter) == 10) {
                             $("#btntokenTofwd").addClass("d-none");
                         } else {
