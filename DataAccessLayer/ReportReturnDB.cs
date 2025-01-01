@@ -17,10 +17,9 @@ namespace DataAccessLayer
     public class ReportReturnDB : IReportReturnDB
     {
         private readonly DapperContext _contextDP;
-        private readonly ILogger<HomeDB> _logger;
-        public ReportReturnDB(DapperContext contextDP, ILogger<HomeDB> logger)
+        private readonly ILogger<ReportReturnDB> _logger;
+        public ReportReturnDB(DapperContext contextDP, ILogger<ReportReturnDB> logger)
         {
-
             _contextDP = contextDP;
             _logger = logger;
         }
@@ -87,8 +86,8 @@ namespace DataAccessLayer
                            " drop table tempstep" +
                            " drop table #Temp" +
                            " drop table tempTrnFwds";
-                        
-                           
+
+
             //string query = " select Count(fwd.RequestId) Total,Mstep.Name,Mstep.StepId,Mstep.TypeId," +
             //               " ISNULL(fwd.IsComplete,0) IsComplete,ISNULL(fwd.FwdStatusId,0) FwdStatusId from MStepCounterStep Mstep" +
             //               " left join TrnFwds fwd on Mstep.StepId=fwd.StepId" +
@@ -107,64 +106,80 @@ namespace DataAccessLayer
             //               " where Mstep.IsDashboard=1" +
             //               " group by Mstep.Name,Mstep.StepId,Mstep.TypeId,fwd.IsComplete,fwd.FwdStatusId" +
             //               " order by Mstep.TypeId,Mstep.StepId,fwd.IsComplete,fwd.FwdStatusId";
-
-            using (var connection = _contextDP.CreateConnection())
+            try 
             {
-                var ret = await connection.QueryAsync<DTOReportReturnCount>(query, new { ApplyForId, Data.ComdId, Data.CorpsId, Data.DivId, Data.BdeId, Data.FmnBranchID, Data.PsoId, Data.SubDteId, Data.UnitMapId });
-                return ret.ToList();
+                using (var connection = _contextDP.CreateConnection())
+                {
+                    var ret = await connection.QueryAsync<DTOReportReturnCount>(query, new { ApplyForId, Data.ComdId, Data.CorpsId, Data.DivId, Data.BdeId, Data.FmnBranchID, Data.PsoId, Data.SubDteId, Data.UnitMapId });
+                    return ret.ToList();
+                }
             }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "ReportReturnDB->GetMstepCount");
+                return new List<DTOReportReturnCount>();
+            }
+
         }
 
         public async Task<List<DTOReportReturnCount>> GetMstepCountApprovedReject(DTOMHierarchyRequest Data, int ApplyForId)
         {
-            List<DTOReportReturnCount> lst=new List<DTOReportReturnCount>();
-            string query = " SELECT COUNT(*) Total,Mfsts.FwdStatusId StepId,fwd.TypeId FROM TrnFwds fwd" +
-                           " inner join MTrnFwdStatus Mfsts  on Mfsts.FwdStatusId=fwd.FwdStatusId "+
-                           " inner join MFwdType Mftype on Mftype.TypeId=fwd.TypeId"+
-                           " inner join TrnICardRequest req on fwd.RequestId=req.RequestId and req.StatusId=1"+
-                           " inner join  BasicDetails basi on req.BasicDetailId=basi.BasicDetailId "+
-                           " left join MapUnit unit on basi.UnitId=unit.UnitMapId " +
-                           " and unit.ComdId=ISNULL(@ComdId,unit.ComdId) " +
-                           " and unit.CorpsId=ISNULL(@CorpsId,unit.CorpsId)" +
-                           " and unit.DivId=ISNULL(@DivId,unit.DivId)" +
-                           " and unit.BdeId=ISNULL(@BdeId,unit.BdeId)" +
-                           //" and unit.FmnBranchID=ISNULL(@FmnBranchID,unit.FmnBranchID)" +
-                           //" and unit.PsoId=ISNULL(@PsoId,unit.PsoId)" +
-                           //" and unit.SubDteId=ISNULL(@SubDteId,unit.SubDteId)" +
-                           " and unit.UnitMapId=ISNULL(@UnitMapId,unit.UnitMapId)" +
-                           " where basi.ApplyForId=@ApplyForId and  fwd.FwdStatusId in (3) " +
-                           " group by Mfsts.FwdStatusId,fwd.TypeId";
-                          
-
-            using (var connection = _contextDP.CreateConnection())
+            try
             {
-                var ret = await connection.QueryAsync<DTOReportReturnCount>(query, new { Data.ComdId, Data.CorpsId, Data.DivId, Data.BdeId, Data.FmnBranchID, Data.PsoId, Data.SubDteId, Data.UnitMapId, ApplyForId });
-                lst=ret.ToList();
+                List<DTOReportReturnCount> lst = new List<DTOReportReturnCount>();
+                string query = " SELECT COUNT(*) Total,Mfsts.FwdStatusId StepId,fwd.TypeId FROM TrnFwds fwd" +
+                               " inner join MTrnFwdStatus Mfsts  on Mfsts.FwdStatusId=fwd.FwdStatusId " +
+                               " inner join MFwdType Mftype on Mftype.TypeId=fwd.TypeId" +
+                               " inner join TrnICardRequest req on fwd.RequestId=req.RequestId and req.StatusId=1" +
+                               " inner join  BasicDetails basi on req.BasicDetailId=basi.BasicDetailId " +
+                               " left join MapUnit unit on basi.UnitId=unit.UnitMapId " +
+                               " and unit.ComdId=ISNULL(@ComdId,unit.ComdId) " +
+                               " and unit.CorpsId=ISNULL(@CorpsId,unit.CorpsId)" +
+                               " and unit.DivId=ISNULL(@DivId,unit.DivId)" +
+                               " and unit.BdeId=ISNULL(@BdeId,unit.BdeId)" +
+                               //" and unit.FmnBranchID=ISNULL(@FmnBranchID,unit.FmnBranchID)" +
+                               //" and unit.PsoId=ISNULL(@PsoId,unit.PsoId)" +
+                               //" and unit.SubDteId=ISNULL(@SubDteId,unit.SubDteId)" +
+                               " and unit.UnitMapId=ISNULL(@UnitMapId,unit.UnitMapId)" +
+                               " where basi.ApplyForId=@ApplyForId and  fwd.FwdStatusId in (3) " +
+                               " group by Mfsts.FwdStatusId,fwd.TypeId";
+
+
+                using (var connection = _contextDP.CreateConnection())
+                {
+                    var ret = await connection.QueryAsync<DTOReportReturnCount>(query, new { Data.ComdId, Data.CorpsId, Data.DivId, Data.BdeId, Data.FmnBranchID, Data.PsoId, Data.SubDteId, Data.UnitMapId, ApplyForId });
+                    lst = ret.ToList();
+                }
+                string query1 = " SELECT COUNT(*) Total,Mfsts.FwdStatusId StepId,fwd.TypeId FROM TrnFwds fwd" +
+                              " inner join MTrnFwdStatus Mfsts  on Mfsts.FwdStatusId=fwd.FwdStatusId " +
+                              " inner join MFwdType Mftype on Mftype.TypeId=fwd.TypeId" +
+                              " inner join TrnICardRequest req on fwd.RequestId=req.RequestId and req.StatusId=1" +
+                              " inner join  BasicDetails basi on req.BasicDetailId=basi.BasicDetailId " +
+                              " left join MapUnit unit on basi.UnitId=unit.UnitMapId " +
+                              " and unit.ComdId=ISNULL(@ComdId,unit.ComdId) " +
+                               " and unit.CorpsId=ISNULL(@CorpsId,unit.CorpsId)" +
+                               " and unit.DivId=ISNULL(@DivId,unit.DivId)" +
+                               " and unit.BdeId=ISNULL(@BdeId,unit.BdeId)" +
+                               //" and unit.FmnBranchID=ISNULL(@FmnBranchID,unit.FmnBranchID)" +
+                               //" and unit.PsoId=ISNULL(@PsoId,unit.PsoId)" +
+                               //" and unit.SubDteId=ISNULL(@SubDteId,unit.SubDteId)" +
+                               " and unit.UnitMapId=ISNULL(@UnitMapId,unit.UnitMapId)" +
+                              " where basi.ApplyForId=@ApplyForId and  fwd.FwdStatusId in (2)  and IsComplete=1 " +
+                              " group by Mfsts.FwdStatusId,fwd.TypeId";
+
+
+                using (var connection = _contextDP.CreateConnection())
+                {
+                    var ret = await connection.QueryAsync<DTOReportReturnCount>(query1, new { Data.ComdId, Data.CorpsId, Data.DivId, Data.BdeId, Data.FmnBranchID, Data.PsoId, Data.SubDteId, Data.UnitMapId, ApplyForId });
+                    lst.AddRange(ret.ToList());
+                }
+                return lst;
             }
-            string query1 = " SELECT COUNT(*) Total,Mfsts.FwdStatusId StepId,fwd.TypeId FROM TrnFwds fwd" +
-                          " inner join MTrnFwdStatus Mfsts  on Mfsts.FwdStatusId=fwd.FwdStatusId " +
-                          " inner join MFwdType Mftype on Mftype.TypeId=fwd.TypeId" +
-                          " inner join TrnICardRequest req on fwd.RequestId=req.RequestId and req.StatusId=1" +
-                          " inner join  BasicDetails basi on req.BasicDetailId=basi.BasicDetailId " +
-                          " left join MapUnit unit on basi.UnitId=unit.UnitMapId " +
-                          " and unit.ComdId=ISNULL(@ComdId,unit.ComdId) " +
-                           " and unit.CorpsId=ISNULL(@CorpsId,unit.CorpsId)" +
-                           " and unit.DivId=ISNULL(@DivId,unit.DivId)" +
-                           " and unit.BdeId=ISNULL(@BdeId,unit.BdeId)" +
-                           //" and unit.FmnBranchID=ISNULL(@FmnBranchID,unit.FmnBranchID)" +
-                           //" and unit.PsoId=ISNULL(@PsoId,unit.PsoId)" +
-                           //" and unit.SubDteId=ISNULL(@SubDteId,unit.SubDteId)" +
-                           " and unit.UnitMapId=ISNULL(@UnitMapId,unit.UnitMapId)" +
-                          " where basi.ApplyForId=@ApplyForId and  fwd.FwdStatusId in (2)  and IsComplete=1 " +
-                          " group by Mfsts.FwdStatusId,fwd.TypeId";
-
-
-            using (var connection = _contextDP.CreateConnection())
+            catch (Exception ex)
             {
-                var ret = await connection.QueryAsync<DTOReportReturnCount>(query1, new { Data.ComdId, Data.CorpsId, Data.DivId, Data.BdeId, Data.FmnBranchID, Data.PsoId, Data.SubDteId, Data.UnitMapId, ApplyForId });
-                lst.AddRange(ret.ToList());
+                _logger.LogError(1001, ex, "ReportReturnDB->GetRecordJco");
+                return new List<DTOReportReturnCount>();
             }
-            return lst;
         }
 
         public Task<List<DTOReportReturnCount>> GetMstepCountApprovedRejectJco(DTOMHierarchyRequest Data, int ApplyForId)
@@ -177,10 +192,18 @@ namespace DataAccessLayer
         public async Task<List<DTOReportReturnCount>> GetRecordOffOffers()
         {
             string query = "select RecordOfficeId,Name from MRecordOffice where ArmedId=56";
-            using (var connection = _contextDP.CreateConnection())
+            try 
             {
-                var ret = await connection.QueryAsync<DTOReportReturnCount>(query);
-                return ret.ToList();
+                using (var connection = _contextDP.CreateConnection())
+                {
+                    var ret = await connection.QueryAsync<DTOReportReturnCount>(query);
+                    return ret.ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "ReportReturnDB->GetRecordJco");
+                return new List<DTOReportReturnCount>();
             }
         }
 
@@ -221,20 +244,35 @@ namespace DataAccessLayer
                            " and unit.UnitMapId=ISNULL(@UnitMapId,unit.UnitMapId)" +
                            //" where fwd.IsComplete=0" +
                            " group by fwdsts.Name,fwdsts.FwdStatusId,mrec.RecordOfficeId";
-
-            using (var connection = _contextDP.CreateConnection())
+            try 
             {
-                var ret = await connection.QueryAsync<DTOReportReturnCount>(query, new { Data.ComdId, Data.CorpsId, Data.DivId, Data.BdeId, Data.FmnBranchID, Data.PsoId, Data.SubDteId, Data.UnitMapId });
-                return ret.ToList();
+                using (var connection = _contextDP.CreateConnection())
+                {
+                    var ret = await connection.QueryAsync<DTOReportReturnCount>(query, new { Data.ComdId, Data.CorpsId, Data.DivId, Data.BdeId, Data.FmnBranchID, Data.PsoId, Data.SubDteId, Data.UnitMapId });
+                    return ret.ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "ReportReturnDB->GetRecordJco");
+                return new List<DTOReportReturnCount>();
             }
         }
         public async Task<List<DTOReportReturnCount>> GetRecordJco()
         {
             string query = "select RecordOfficeId ,Name from MRecordOffice where ArmedId!=56";
-            using (var connection = _contextDP.CreateConnection())
+            try 
             {
-                var ret = await connection.QueryAsync<DTOReportReturnCount>(query);
-                return ret.ToList();
+                using (var connection = _contextDP.CreateConnection())
+                {
+                    var ret = await connection.QueryAsync<DTOReportReturnCount>(query);
+                    return ret.ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "ReportReturnDB->GetRecordJco");
+                return new List<DTOReportReturnCount>();
             }
         }
 
@@ -257,11 +295,18 @@ namespace DataAccessLayer
                            //" and unit.SubDteId=ISNULL(@SubDteId,unit.SubDteId)" +
                            " and unit.UnitMapId=ISNULL(@UnitMapId,unit.UnitMapId)" +
                            " and recf.ArmedId!=56   group by recf.RecordOfficeId,recf.Name,step.StepId";
-
-            using (var connection = _contextDP.CreateConnection())
+            try 
             {
-                var ret = await connection.QueryAsync<DTOReportReturnCount>(query, new { IsComplete, Data.ComdId, Data.CorpsId, Data.DivId, Data.BdeId, Data.FmnBranchID, Data.PsoId, Data.SubDteId, Data.UnitMapId });
-                return ret.ToList();
+                using (var connection = _contextDP.CreateConnection())
+                {
+                    var ret = await connection.QueryAsync<DTOReportReturnCount>(query, new { IsComplete, Data.ComdId, Data.CorpsId, Data.DivId, Data.BdeId, Data.FmnBranchID, Data.PsoId, Data.SubDteId, Data.UnitMapId });
+                    return ret.ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "ReportReturnDB->GetReportForm11");
+                return new List<DTOReportReturnCount>();
             }
         }
 
@@ -272,7 +317,7 @@ namespace DataAccessLayer
             {
                 if (IsApproveId == 1)
                 {
-                    query = " select req.RequestId,Mstep.StepId,basi.FName +' '+ISNULL(basi.LName,'') Name,ServiceNo,DOB,ranks.RankAbbreviation RankName,TrackingId," +
+                    query = " select req.RequestId,Mstep.StepId,basi.FName,basi.LName,ServiceNo,DOB,ranks.RankAbbreviation RankName,TrackingId," +
                             " aspusersto.DomainId DomainIdTo,userto.ArmyNo ArmyNoTo ,userto.Name NameTo,ranksto.RankAbbreviation RankTo," +
                             " aspusersfrom.DomainId DomainIdFrom,userfrom.ArmyNo ArmyNoFrom ,userfrom.Name NameFrom,ranksfrom.RankAbbreviation RankFrom" +
                             " ,fwd.UpdatedOn,fwdsts.Name StatusName from MStepCounterStep Mstep  " +
@@ -306,7 +351,7 @@ namespace DataAccessLayer
                 {
                     if(StepId==1)
                     {
-                        query = " select req.RequestId,Mstep.StepId,basi.FName +' '+ISNULL(basi.LName,'') Name,ServiceNo,DOB,ranks.RankAbbreviation RankName,TrackingId," +
+                        query = " select req.RequestId,Mstep.StepId,basi.FName,basi.LName,ServiceNo,DOB,ranks.RankAbbreviation RankName,TrackingId," +
                       " aspusersto.DomainId DomainIdTo,userto.ArmyNo ArmyNoTo ,userto.Name NameTo,ranksto.RankAbbreviation RankTo," +
                       " aspusersfrom.DomainId DomainIdFrom,userfrom.ArmyNo ArmyNoFrom ,userfrom.Name NameFrom,ranksfrom.RankAbbreviation RankFrom" +
                       " ,fwd.UpdatedOn,fwdsts.Name StatusName from MStepCounterStep Mstep  " +
@@ -337,7 +382,7 @@ namespace DataAccessLayer
                     }
                     else
                     {
-                        query = " select req.RequestId,Mstep.StepId,basi.FName +' '+ISNULL(basi.LName,'') Name,ServiceNo,DOB,ranks.RankAbbreviation RankName,TrackingId," +
+                        query = " select req.RequestId,Mstep.StepId,basi.FName,basi.LName,ServiceNo,DOB,ranks.RankAbbreviation RankName,TrackingId," +
                       " aspusersto.DomainId DomainIdTo,userto.ArmyNo ArmyNoTo ,userto.Name NameTo,ranksto.RankAbbreviation RankTo," +
                       " aspusersfrom.DomainId DomainIdFrom,userfrom.ArmyNo ArmyNoFrom ,userfrom.Name NameFrom,ranksfrom.RankAbbreviation RankFrom" +
                       " ,fwd.UpdatedOn,fwdsts.Name StatusName from MStepCounterStep Mstep  " +
@@ -371,7 +416,7 @@ namespace DataAccessLayer
             }
             else
             {
-                query = " select req.RequestId,Mstep.StepId,basi.FName +' '+ISNULL(basi.LName,'') Name,ServiceNo,DOB,ranks.RankAbbreviation RankName,TrackingId, " +
+                query = " select req.RequestId,Mstep.StepId,basi.FName,basi.LName,ServiceNo,DOB,ranks.RankAbbreviation RankName,TrackingId, " +
                         " aspusersto.DomainId DomainIdTo,userto.ArmyNo ArmyNoTo ,userto.Name NameTo,ranksto.RankAbbreviation RankTo, " +
                         " aspusersfrom.DomainId DomainIdFrom,userfrom.ArmyNo ArmyNoFrom ,userfrom.Name NameFrom,ranksfrom.RankAbbreviation RankFrom,fwdsts.Name Status" +
                         " ,fwd.UpdatedOn,fwdsts.Name StatusName from MStepCounterStep Mstep   " +
@@ -403,10 +448,18 @@ namespace DataAccessLayer
                         " and step.ApplyForId=1 and fwd.StepId=3 and mrec.RecordOfficeId=@ApplyForId ";
 
             }
-            using (var connection = _contextDP.CreateConnection())
+            try
             {
-                var ret = await connection.QueryAsync<DTOReportReturnListResponse>(query, new { Data.ComdId, Data.CorpsId, Data.DivId, Data.BdeId, Data.FmnBranchID, Data.PsoId, Data.SubDteId, Data.UnitMapId, ApplyForId, StepId });
-                return ret.ToList();
+                using (var connection = _contextDP.CreateConnection())
+                {
+                    var ret = await connection.QueryAsync<DTOReportReturnListResponse>(query, new { Data.ComdId, Data.CorpsId, Data.DivId, Data.BdeId, Data.FmnBranchID, Data.PsoId, Data.SubDteId, Data.UnitMapId, ApplyForId, StepId });
+                    return ret.ToList();
+                }
+            }
+            catch (Exception ex) 
+            {
+                _logger.LogError(1001, ex, "ReportReturnDB->GetRecordHistory");
+                return new List<DTOReportReturnListResponse>();
             }
         }
 
@@ -414,7 +467,7 @@ namespace DataAccessLayer
         {
             string query = " select " +
                            "   req.RequestId, " +
-                           "   basi.FName + ' ' + ISNULL(basi.LName, '') Name, " +
+                           "   basi.FName,basi.LName, " +
                            "   ServiceNo, " +
                            "   DOB, " +
                            "   ranks.RankAbbreviation RankName, " +
@@ -436,10 +489,18 @@ namespace DataAccessLayer
                            //" and unit.PsoId=ISNULL(@PsoId,unit.PsoId)" +
                            //" and unit.SubDteId=ISNULL(@SubDteId,unit.SubDteId)" +
                            " and unit.UnitMapId=ISNULL(@UnitMapId,unit.UnitMapId)";
-            using (var connection = _contextDP.CreateConnection())
+            try
             {
-                var ret = await connection.QueryAsync<DTOReportReturnListResponse>(query, new { Data.ComdId, Data.CorpsId, Data.DivId, Data.BdeId, Data.FmnBranchID, Data.PsoId, Data.SubDteId, Data.UnitMapId });
-                return ret.ToList();
+                using (var connection = _contextDP.CreateConnection())
+                {
+                    var ret = await connection.QueryAsync<DTOReportReturnListResponse>(query, new { Data.ComdId, Data.CorpsId, Data.DivId, Data.BdeId, Data.FmnBranchID, Data.PsoId, Data.SubDteId, Data.UnitMapId });
+                    return ret.ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "ReportReturnDB->GetReportForm11");
+                return new List<DTOReportReturnListResponse>();
             }
         }
     }

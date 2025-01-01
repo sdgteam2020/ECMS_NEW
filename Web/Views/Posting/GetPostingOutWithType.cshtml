@@ -13,19 +13,19 @@
                         <div class="page-header-icon"> <i class="fa fa-bars"></i></div>
                         @if (ViewBag.Type == 1 && ViewBag.PostingType == "PostingOut")
                         {
-                            <div><a href="/Home/Index" class="mr-2">Home</a> > <a href="/Home/Dashboard" class="mr-2">Dashboard</a>  > <a href="/Home/DashboardUserMgt" class="mr-2">User Management</a>  >  <a href="/Home/RequestDashboard/UG9zdGluZyBPdXQ=" class="mr-2">Posting Out</a> >Posting Out Offr's</div>
+                            <div><a href="/Home/Index" class="mr-2">Home</a> > <a href="/Home/Dashboard" class="mr-2">Dashboard</a>  > <a href="/Home/DashboardUserMgt" class="mr-2">User Management</a>  >  <a href="/Home/RequestDashboard/UG9zdGluZyBPdXQ=" class="mr-2">Posting Out</a> >Posting Out Offrs</div>
                         }
                         else if (ViewBag.Type == 2 && ViewBag.PostingType == "PostingOut")
                         {
-                            <div><a href="/Home/Index" class="mr-2">Home</a> > <a href="/Home/Dashboard" class="mr-2">Dashboard</a>  > <a href="/Home/DashboardUserMgt" class="mr-2">User Management</a>  >  <a href="/Home/RequestDashboard/UG9zdGluZyBPdXQ=" class="mr-2">Posting Out</a> >Posting Out JCO's/OR</div>
+                            <div><a href="/Home/Index" class="mr-2">Home</a> > <a href="/Home/Dashboard" class="mr-2">Dashboard</a>  > <a href="/Home/DashboardUserMgt" class="mr-2">User Management</a>  >  <a href="/Home/RequestDashboard/UG9zdGluZyBPdXQ=" class="mr-2">Posting Out</a> >Posting Out JCOs/OR</div>
                         }
                         else @if (ViewBag.Type == 1 && ViewBag.PostingType == "PostingIn")
                         {
-                            <div><a href="/Home/Index" class="mr-2">Home</a> > <a href="/Home/Dashboard" class="mr-2">Dashboard</a>  > <a href="/Home/DashboardUserMgt" class="mr-2">User Management</a>  >  <a href="/Home/RequestDashboard/UG9zdGluZyBJbg==" class="mr-2">Posting In</a> >Posting In Offr's</div>
+                            <div><a href="/Home/Index" class="mr-2">Home</a> > <a href="/Home/Dashboard" class="mr-2">Dashboard</a>  > <a href="/Home/DashboardUserMgt" class="mr-2">User Management</a>  >  <a href="/Home/RequestDashboard/UG9zdGluZyBJbg==" class="mr-2">Posting In</a> >Posting In Offrs</div>
                         }
                         else if (ViewBag.Type == 2 && ViewBag.PostingType == "PostingIn")
                         {
-                            <div><a href="/Home/Index" class="mr-2">Home</a> > <a href="/Home/Dashboard" class="mr-2">Dashboard</a>  > <a href="/Home/DashboardUserMgt" class="mr-2">User Management</a>  >  <a href="/Home/RequestDashboard/UG9zdGluZyBJbg==" class="mr-2">Posting In</a> >Posting IN JCO's/OR</div>
+                            <div><a href="/Home/Index" class="mr-2">Home</a> > <a href="/Home/Dashboard" class="mr-2">Dashboard</a>  > <a href="/Home/DashboardUserMgt" class="mr-2">User Management</a>  >  <a href="/Home/RequestDashboard/UG9zdGluZyBJbg==" class="mr-2">Posting In</a> >Posting IN JCOs/OR</div>
                         }
                     </h1>
                 </div>
@@ -47,19 +47,19 @@
                     }
                     else if (ViewBag.Type == 2 && ViewBag.PostingType == "PostingOut")
                     {
-                        <h3>Posting Out JCO's/OR Details</h3>
+                        <h3>Posting Out JCOs/OR Details</h3>
 
                         <small class="text-muted"></small>
                     }
                     else  @if (ViewBag.Type == 1 && ViewBag.PostingType == "PostingIn")
                     {
-                        <h3>Posting In Offrs Details</h3>
+                        <h3>Posting In (Offrs) Details</h3>
 
                         <small class="text-muted"></small>
                     }
                     else if (ViewBag.Type == 2 && ViewBag.PostingType == "PostingIn")
                     {
-                        <h3>Posting In JCO's/OR Details</h3>
+                        <h3>Posting In (JCOs/OR) Details</h3>
 
                         <small class="text-muted"></small>
                     }

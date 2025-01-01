@@ -310,12 +310,12 @@ namespace Web.Controllers
             else if (retint == 888) 
             {
                 // request from DashBoard
-                ViewBag.Title = "I-Card Submited"; type = 2; stepcounter = 888; 
+                ViewBag.Title = "Status of Appl Approved & Fwd"; type = 2; stepcounter = 888; 
             }
             else if (retint == 88)
             {
                 // request from Task Board
-                ViewBag.Title = "I-Card Submited"; type = 2; stepcounter = 888; 
+                ViewBag.Title = "Status of Appl Approved & Fwd"; type = 2; stepcounter = 888; 
             }
             else if (retint == 777)
             { 
@@ -328,12 +328,12 @@ namespace Web.Controllers
             else if (retint == 999)
             {
                 // request from DashBoard 
-                ViewBag.Title = "I-Card Rejectd From IO / Superior, RO / ORO and AFSAC Cell"; type = 2; stepcounter = 999; 
+                ViewBag.Title = "Appl rejected by Approver, Verifier"; type = 2; stepcounter = 999; 
             }
             else if (retint == 99)
             {
                 // request from Task Board
-                ViewBag.Title = "I-Card Rejectd From IO / Superior, RO / ORO and AFSAC Cell"; type = 2; stepcounter = 999;
+                ViewBag.Title = "Appl rejected by Approver, Verifier"; type = 2; stepcounter = 999;
             }
 
             if (stepcounter==0)
@@ -565,7 +565,7 @@ namespace Web.Controllers
                 if (typeId == 1 || typeId == 2)
                 {
                     var allrecord = await Task.Run(() => basicDetailTempBL.GetALLBasicDetailTemp(Convert.ToInt32(userId), typeId));
-                    ViewBag.Title = typeId == 1 ? "List of Inaccurate Data" : "List of Observation Raised";
+                    ViewBag.Title = typeId == 1 ? "Requests pending due to Incorrect Details/Data" : "List of Observation Raised";
                     return View(allrecord);
                 }
                 TempData["error"] = "Invalid or tampered request.";

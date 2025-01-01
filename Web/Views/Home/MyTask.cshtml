@@ -3,7 +3,13 @@
     ViewData["Title"] = "DashBoard";
     Layout = "~/Views/Shared/_Layout.cshtml";
     var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-    var user = await userManager.FindByIdAsync(userId);
+    string? DIDName = null;
+    if (userId !=null)
+    {
+        var user = await userManager.FindByIdAsync(userId);
+        DIDName = user?.UserName;
+    }
+
     List<Claim> claims = ViewBag.UserClaims;
 }
 @if (ViewBag.Type == "OffrsSubmitted" || ViewBag.Type == "OffrsPending")
@@ -44,7 +50,7 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
         {
             <div class="card p-4">
                 <div class="row">
-                    <h5 class="card-title">Status of Appl(Offrs) you have submitted</h5>
+                    <h5 class="card-title">Status of Appl (Offrs) submitted  @(DIDName ?? "using this " + DIDName)</h5>
                     <div class="col-xl-12 col-sm-12 col-12">
                         <div class="card card-collapsable mb-3">
                             <a class="card-header collapsed" href="#IO" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="collapseCardExample">
@@ -110,10 +116,10 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
                                                                 <div class="media d-flex">
                                                                     <div class="media-body text-left">
                                                                         <h3 class="success" id="ToRejected">0</h3>
-                                                                        <span class="badge badge-pill badge-success p-2">Rejected</span>
+                                                                        <span class="badge badge-pill badge-danger p-2">Rejected</span>
                                                                     </div>
                                                                     <div class="align-self-center">
-                                                                        <i class="text-success fa fa-check-circle fa-3x"></i>
+                                                                        <i class="text-danger fa fa-check-circle fa-3x"></i>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -130,10 +136,10 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
                                                                 <div class="media d-flex">
                                                                     <div class="media-body text-left">
                                                                         <h3 class="success" id="ToCompleted">0</h3>
-                                                                        <span class="badge badge-pill badge-danger p-2">Completed</span>
+                                                                        <span class="badge badge-pill badge-success p-2">Completed</span>
                                                                     </div>
                                                                     <div class="align-self-center">
-                                                                        <i class="text-danger fa fa-times-circle fa-3x" aria-hidden="true"></i>
+                                                                        <i class="text-success fa fa-times-circle fa-3x" aria-hidden="true"></i>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -155,7 +161,7 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
         {
             <div class="card p-4">
                 <div class="row">
-                    <h5 class="card-title">Approver Pending Actions(offr's) </h5>
+                    <h5 class="card-title">Approver Pending Actions(Offrs) </h5>
                     <div class="col-xl-12 col-sm-12 col-12">
                         <div class="card card-collapsable mb-3">
                             <a class="card-header collapsed" href="#IOA" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="collapseCardExample">
@@ -405,7 +411,7 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
             <div class="card p-4">
                 <div class="row">
                     <h5 class="card-title">
-                        Status of Appl(JCOs/Other Ranks) you have submitted
+                        Status of Appl(JCOs/Other Ranks) submitted @(DIDName ?? "using this " + DIDName)
                     </h5>
                     <div class="col-xl-12 col-sm-12 col-12">
                         <div class="card card-collapsable mb-3">

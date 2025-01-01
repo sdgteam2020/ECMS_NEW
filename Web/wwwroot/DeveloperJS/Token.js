@@ -45,7 +45,7 @@ function GetTokenvalidatepersid2fawiththumbprint(IcNo, msgid, txticno, thumbprin
         },
         error: function (result) {
 
-            $("#" + msgid).html('<div class="mt-4 alert alert-danger alert-dismissible fade show "><i class="fa fa-times" aria-hidden="true"></i><span class="m-lg-2">DGIS Application Not Running</span>.</div>');
+            $("#" + msgid).html('<div class="mt-4 alert alert-danger alert-dismissible fade show "><i class="fa fa-times" aria-hidden="true"></i><span class="m-lg-2">DGIS Appl Not Running</span>.</div>');
             $("#" + txticno).val("");
             $("#loadingToken").hide();
         }
@@ -86,7 +86,7 @@ function GetTokenvalidatepersid2fa(IcNo, msgid, txticno, thumbprint) {
         },
         error: function (result) {
 
-            $("#" + msgid).html('<div class="mt-4 alert alert-danger alert-dismissible fade show "><i class="fa fa-times" aria-hidden="true"></i><span class="m-lg-2">DGIS Application Not Running</span>.</div>');
+            $("#" + msgid).html('<div class="mt-4 alert alert-danger alert-dismissible fade show "><i class="fa fa-times" aria-hidden="true"></i><span class="m-lg-2">DGIS Appl Not Running</span>.</div>');
             $("#loadingToken").hide();
 
         }
@@ -125,7 +125,7 @@ function GetTokenValidate(ApiId, IcNo, msgid) {
         },
         error: function (result) {
 
-            $("#" + msgid).html('<div class="mt-4 alert alert-danger alert-dismissible fade show "><i class="fa fa-times" aria-hidden="true"></i><span class="m-lg-2">DGIS Application Not Running</span>.</div>');
+            $("#" + msgid).html('<div class="mt-4 alert alert-danger alert-dismissible fade show "><i class="fa fa-times" aria-hidden="true"></i><span class="m-lg-2">DGIS Appl Not Running</span>.</div>');
             $("#loadingToken").hide();
 
         }
@@ -175,7 +175,7 @@ function GetTokenDetails1(ApiId, txt, thumbprint, msgid) {
         },
         error: function (result) {
            
-            $("#" + msgid).html('<div class="mt-4 alert alert-danger alert-dismissible fade show "><i class="fa fa-times" aria-hidden="true"></i><span class="m-lg-2">DGIS Application Not Running</span>.</div>');
+            $("#" + msgid).html('<div class="mt-4 alert alert-danger alert-dismissible fade show "><i class="fa fa-times" aria-hidden="true"></i><span class="m-lg-2">DGIS Appl Not Running</span>.</div>');
             $("#" + txt).val("");
             $("#loadingToken").hide();
         }
@@ -216,7 +216,7 @@ function GetTokenDetails(CRL_OCSPCheck, CRL_OCSPMsg, Remarks, Thumbprint, Status
             $("#loadingToken").hide();
             if (response != "null" && response != null) {
                 if (response == '') {
-                    $("#" + msgid).html('<div class="mt-4 alert alert-danger alert-dismissible fade show "><i class="fa fa-times" aria-hidden="true"></i><span class="m-lg-2">DGIS Application Not Running</span>.</div>');
+                    $("#" + msgid).html('<div class="mt-4 alert alert-danger alert-dismissible fade show "><i class="fa fa-times" aria-hidden="true"></i><span class="m-lg-2">DGIS Appl Not Running</span>.</div>');
                     $("#" + txt).val("");
                     if (thumbprint == "")
                         $("#" + thumbprint).val("");

@@ -11,6 +11,8 @@ namespace DataTransferObject.Response
         public int RequestId { get; set; }
         public int StepId { get; set; }
         public string? Name { get; set; }
+        public string? FName { get; set; }
+        public string? LName { get; set; }
         public string? ServiceNo { get; set; }
         public DateTime DOB { get; set; }
         public string? RankName { get; set; }

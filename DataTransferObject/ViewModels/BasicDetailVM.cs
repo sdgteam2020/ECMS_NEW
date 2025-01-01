@@ -251,6 +251,9 @@ namespace DataTransferObject.ViewModels
         
         [NotMapped]
         public int RegistrationApplyFor { get; set; }
+        
+        [NotMapped]
+        public string? ModifiedServiceNo { get; set; }
     }
     public class BasicDetailCrtAndUpdVM : BasicDetailVM
     {

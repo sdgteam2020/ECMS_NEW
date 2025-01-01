@@ -169,7 +169,6 @@ function GetCount() {
 
         success: function (response) {
             if (response != "null" && response != null) {
-
                 if (response == InternalServerError) {
                     Swal.fire({
                         text: errormsg
@@ -192,7 +191,7 @@ function GetCount() {
                                 Itemlist += '<div class="c-dashboardInfo col-lg-1 col-sm-6"><a href="#"><span class="d-none IsApproveId">1</span><span class="d-none applyTypeId">1</span><span class="d-none spnStepId" >' + dTOReportReturnCountOffs[i].StepId +'</span>';
                                 Itemlist += '<div class="wrap">';
                                 Itemlist += '<h4 class="heading heading5 hind-font medium-font-weight c-dashboardInfo__title">';
-                                Itemlist += 'Appls Approved & Fwd to Next Level (1st Level to 2nd Level)';
+                                Itemlist += 'Appl fwd to Approver';
                                 Itemlist += '</h4>';
                                 Total1apro = dTOReportReturnCountOffs[i + 1].Total;
                                 Total1apro = Total1apro + dTOReportReturnCountOffs[i].Total;
@@ -205,7 +204,7 @@ function GetCount() {
                                 Itemlist += '<div class="c-dashboardInfo col-lg-1 col-sm-6"><a href="#"><span class="d-none IsApproveId">1</span><span class="d-none applyTypeId">1</span><span class="d-none spnStepId" >' + dTOReportReturnCountOffs[i].StepId + '</span>';
                                 Itemlist += '<div class="wrap">';
                                 Itemlist += '<h4 class="heading heading5 hind-font medium-font-weight c-dashboardInfo__title">';
-                                Itemlist += 'Appls Approved & Fwd to Next Level (2nd Level to 3rd Level)';
+                                Itemlist += 'Approved Appl (Approver Level)';
                                 Itemlist += '</h4>';
 
                                 Total1apro = dTOReportReturnCountOffs[i + 1].Total;
@@ -225,7 +224,7 @@ function GetCount() {
                                     Itemlist += '<a href="#"><span class="d-none applyTypeId">1</span><span class="d-none spnStepId" >99</span><span class="d-none spnRecordOfficeId" >' + RecordOff[j].RecordOfficeId + '</span>';
                                     Itemlist += '<div class="wrap">';
                                     Itemlist += '<h4 class="heading heading5 hind-font medium-font-weight c-dashboardInfo__title">';
-                                    Itemlist += 'Approved / Reject / Pending';
+                                    Itemlist += 'Approved / Rejected / Pending';
                                     Itemlist += '</h4>';
                                     Itemlist += '<h4 class="heading heading5 hind-font medium-font-weight c-dashboardInfo__title">';
                                     Itemlist += '' + RecordOff[j].Name + '';
@@ -267,7 +266,7 @@ function GetCount() {
 
                                 Itemlist += '<div class="wrap">';
                                 Itemlist += '<h4 class="heading heading5 hind-font medium-font-weight c-dashboardInfo__title">';
-                                Itemlist += 'Appls Approved & Fwd to Next Level (3nd Level to 4th Level)';
+                                Itemlist += 'Appl Verified & Fwd to ADC';
                                 Itemlist += '</h4>';
                                
                                 Total1apro = dTOReportReturnCountOffs[i + 1].Total;
@@ -314,7 +313,7 @@ function GetCount() {
                                 Itemlist += '<div class="c-dashboardInfo col-lg-1 col-sm-6"><a href="#"><span class="d-none IsApproveId">1</span><span class="d-none applyTypeId">2</span><span class="d-none spnStepId" >' + dTOReportReturnCountJco[i].StepId + '</span>';
                                 Itemlist += '<div class="wrap">';
                                 Itemlist += '<h4 class="heading heading5 hind-font medium-font-weight c-dashboardInfo__title">';
-                                Itemlist += 'Appls Approved & Fwd to Next Level (1st Level to 2nd Level)';
+                                Itemlist += 'Appl fwd to Approver';
                                 Itemlist += '</h4>';
                                 Total1apro = dTOReportReturnCountJco[i+1].Total;
                                 Total1apro = Total1apro + dTOReportReturnCountJco[i].Total;
@@ -328,7 +327,7 @@ function GetCount() {
                                 Itemlist += '<div class="c-dashboardInfo col-lg-1 col-sm-6"><a href="#"><span class="d-none IsApproveId">1</span><span class="d-none applyTypeId">2</span><span class="d-none spnStepId" >' + dTOReportReturnCountJco[i].StepId + '</span>';
                                 Itemlist += '<div class="wrap">';
                                 Itemlist += '<h4 class="heading heading5 hind-font medium-font-weight c-dashboardInfo__title">';
-                                Itemlist += 'Appls Approved & Fwd to Next Level (2nd Level to 3rd Level)';
+                                Itemlist += 'Approved Appl (Approver Level)';
                                 Itemlist += '</h4>';
                                 Total1apro = dTOReportReturnCountJco[i + 1].Total;
                                 Total1apro = Total1apro + dTOReportReturnCountJco[i].Total;
@@ -342,7 +341,7 @@ function GetCount() {
                                 Itemlist += '<div class="c-dashboardInfo col-lg-1 col-sm-6"><a href="#"><span class="d-none IsApproveId">1</span><span class="d-none applyTypeId">2</span><span class="d-none spnStepId" >' + dTOReportReturnCountJco[i].StepId + '</span>';
                                 Itemlist += '<div class="wrap">';
                                 Itemlist += '<h4 class="heading heading5 hind-font medium-font-weight c-dashboardInfo__title">';
-                                Itemlist += 'Appls Approved & Fwd to Next Level (3nd Level to 4th Level)';
+                                Itemlist += 'Appl Verified & Fwd to ADC';
                                 Itemlist += '</h4>';
                                
                                 Total1apro = dTOReportReturnCountJco[i + 1].Total;
@@ -535,7 +534,10 @@ function GetReportReturnHistory(spnStepId, applyTypeId, IsApproveId) {
                         
                         listItem += "<td class='align-middle'>" + (i + 1) + "</td>";
                         listItem += "<td class='align-middle nowrap'><span id='comdName'>" + response[i].ServiceNo + "</span></td>";
-                        listItem += "<td class='align-middle nowrap'><span id='corpsName'>" + response[i].RankName + " " + response[i].Name + "</span></td>";
+                        if (response[i].LName == null)
+                            listItem += "<td class='align-middle nowrap'><span id='corpsName'>" + response[i].RankName + " " + response[i].FName + "</span></td>";
+                        else
+                            listItem += "<td class='align-middle nowrap'><span id='corpsName'>" + response[i].RankName + " " + response[i].FName + " " + response[i].LName + "</span></td>";
                         if (response[i].RankFrom == null)
                             listItem += "<td class='align-middle nowrap'><span id='divName'>-</td>";
                         else
