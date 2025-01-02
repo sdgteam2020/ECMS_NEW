@@ -19,7 +19,12 @@ namespace DataTransferObject.Domain.Master
         [RegularExpression("^[a-zA-Z0-9 ]*$", ErrorMessage = "Only Alphabets and Numbers allowed.")]
         [MaxLength(50, ErrorMessage = "Maximum length of Appointment Name is fifty character.")]
         public string AppointmentName { get; set; } = string.Empty;
-       // [Required(ErrorMessage = "required!")]
+
+        [RegularExpression("^[a-zA-Z0-9 ]*$", ErrorMessage = "Only Alphabets and Numbers allowed.")]
+        [Column(TypeName = "varchar(20)")]
+        [MaxLength(20, ErrorMessage = "Maximum length of Appointment Abbreviation is twenty character.")]
+        public string? AppointmentAbbreviation { get; set; }
+        // [Required(ErrorMessage = "required!")]
 
         //[ForeignKey("mFormation"), DatabaseGenerated(DatabaseGeneratedOption.None)]
         //public byte FormationId { get; set; }

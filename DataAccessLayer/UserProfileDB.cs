@@ -20,7 +20,7 @@ namespace DataAccessLayer
 {
     public class UserProfileDB : GenericRepositoryDL<MUserProfile>, IUserProfileDB
     {
-        protected readonly ApplicationDbContext _context;
+        protected new readonly  ApplicationDbContext _context;
         private readonly DapperContext _contextDP;
         private readonly ILogger<UserProfileDB> _logger;
         public UserProfileDB(ApplicationDbContext context, ILogger<UserProfileDB> logger, DapperContext contextDP) : base(context)
@@ -29,7 +29,6 @@ namespace DataAccessLayer
             _contextDP = contextDP;
             _logger = logger;
         }
-        private readonly IConfiguration configuration;
         public async Task<bool?> FindByArmyNoWithUserId(string ArmyNo, int UserId)
         {
             try
@@ -73,8 +72,8 @@ namespace DataAccessLayer
                     }
                     else
                     {
-                        userUpdate.Extension = dTO.Extension;
-                        userUpdate.DialingCode = dTO.DialingCode;
+                        //userUpdate.Extension = dTO.Extension;
+                        //userUpdate.DialingCode = dTO.DialingCode;
                         userUpdate.IsIO = dTO.IsIO;
                         userUpdate.IsCO = dTO.IsCO;
                         userUpdate.IsRO = dTO.IsRO;
@@ -93,7 +92,7 @@ namespace DataAccessLayer
                             mUserProfile.UserId = dTO.UserId;
                             mUserProfile.Name = dTO.Name;
                             mUserProfile.RankId = dTO.RankId;
-                            mUserProfile.MobileNo = dTO.MobileNo;
+                            //mUserProfile.MobileNo = dTO.MobileNo;
                             mUserProfile.IsToken = dTO.IsToken;
                             mUserProfile.Thumbprint = dTO.Thumbprint;
 
@@ -115,7 +114,7 @@ namespace DataAccessLayer
         }
         public async Task<List<MUserProfile>> GetByMArmyNo(string ArmyNo, int UserId)
         {
-            var ret = _context.UserProfile.Where(P=>P.ArmyNo.ToUpper().Contains(ArmyNo.ToUpper())).ToList();
+            var ret = await _context.UserProfile.Where(P=>P.ArmyNo.ToUpper().Contains(ArmyNo.ToUpper())).ToListAsync();
             return ret;
         }
         public async Task<DTOProfileResponse?> GetUserProfileByArmyNo(string ArmyNo)
@@ -256,8 +255,6 @@ namespace DataAccessLayer
                 using (var connection = _contextDP.CreateConnection())
                 {
                     var BasicDetailList = await connection.QueryAsync<DTOUserProfileResponse>(query, new { ArmyNo, UserId });
-                    int sno = 1;
-
                     return BasicDetailList.FirstOrDefault();
 
                 }
@@ -313,7 +310,11 @@ namespace DataAccessLayer
                 return ret;
 
             }
-            catch (Exception ex) { return null; }
+            catch (Exception ex) 
+            {
+                _logger.LogError(1001, ex, "UserProfileDB->GetAllRelatedDataByArmyNo");
+                return null; 
+            }
 
         }
         public async Task<List<DTOAllRelatedDataByArmyNoResponse>?> GetTopByArmyNo(string ArmyNo)
@@ -369,13 +370,19 @@ namespace DataAccessLayer
                             " inner join MRank ran on ran.RankId = users.RankId "+
                             " left join MMappingProfile map on map.UserId = users.UserId "+
                             " where dmap.AspNetUsersId = @DomainId";
-            using (var connection = _contextDP.CreateConnection())
-            {
-                var BasicDetailList = await connection.QueryAsync<DTOUserProfileResponse>(query, new { DomainId });
-                int sno = 1;
-                
-                return BasicDetailList.ToList();
 
+            try 
+            {
+                using (var connection = _contextDP.CreateConnection())
+                {
+                    var BasicDetailList = await connection.QueryAsync<DTOUserProfileResponse>(query, new { DomainId });
+                    return BasicDetailList.ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "UserProfileDB->GetDataForFwd");
+                return new List<DTOUserProfileResponse>();
             }
             //var ret = (from user in _context.UserProfile
 
@@ -448,35 +455,40 @@ namespace DataAccessLayer
                 " inner join UserProfile pr on pr.UserId = trnicrd.Updatedby " +
                 " WHERE trnicrd.RequestId=@RequestId";
 
-     
-
-            using (var connection = _contextDP.CreateConnection())
+            try 
             {
-                var BasicDetailList = await connection.QueryAsync<BasicDetailVM>(query, new { RequestId });
-               
-                int sno = 1;
-                var allrecord = (from e in BasicDetailList
-                                 select new BasicDetailVM()
-                                 {
-                                     BasicDetailId = e.BasicDetailId,
-                                     
-                                     Sno = sno++,
-                                     FName = e.FName,
-                                     LName = e.LName,
-                                     ServiceNo = e.ServiceNo,
-                                     DOB = e.DOB,
-                                     DateOfCommissioning = e.DateOfCommissioning,
-                                     PermanentAddress = e.PermanentAddress,
-                                     StepCounter = e.StepCounter,
-                                     StepId = e.StepId,
-                                     ICardType = e.ICardType, 
-                                     //RegistrationId = e.RegistrationId,
-                                     RequestId = e.RequestId,
-                                 }).ToList();
-                return await Task.FromResult(allrecord);
+                using (var connection = _contextDP.CreateConnection())
+                {
+                    var BasicDetailList = await connection.QueryAsync<BasicDetailVM>(query, new { RequestId });
 
+                    int sno = 1;
+                    var allrecord = (from e in BasicDetailList
+                                     select new BasicDetailVM()
+                                     {
+                                         BasicDetailId = e.BasicDetailId,
+
+                                         Sno = sno++,
+                                         FName = e.FName,
+                                         LName = e.LName,
+                                         ServiceNo = e.ServiceNo,
+                                         DOB = e.DOB,
+                                         DateOfCommissioning = e.DateOfCommissioning,
+                                         PermanentAddress = e.PermanentAddress,
+                                         StepCounter = e.StepCounter,
+                                         StepId = e.StepId,
+                                         ICardType = e.ICardType,
+                                         //RegistrationId = e.RegistrationId,
+                                         RequestId = e.RequestId,
+                                     }).ToList();
+                    return await Task.FromResult(allrecord);
+
+                }
             }
-
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "UserProfileDB->GetDataForFwd");
+                return new List<BasicDetailVM>();
+            }
         }
         public async Task<List<DTOFwdICardResponse>> GetDataForFwd(int StepId, int UnitId, string Name, int TypeId,int RO,int ORO, int DomainMapId)
         {
@@ -539,9 +551,9 @@ namespace DataAccessLayer
             }
             catch (Exception ex)
             {
-
+                _logger.LogError(1001, ex, "UserProfileDB->GetDataForFwd");
+                return new List<DTOFwdICardResponse>();
             }
-            return null;
         }
 
         public async Task<List<DTOFwdICardResponse>> GetOffrsByUnitMapId(int UnitId, int RO, int ORO, int IsAfsacCell, int BasicDetailsId, int DomainMapId)
@@ -549,207 +561,211 @@ namespace DataAccessLayer
             string query = "";
             string subquery = "";
             string finalquery = "";
-            if (RO == 1)
+            try
             {
-                query = "Select trndomain.AspNetUsersId,ISNULL(usep.UserId,0) UserId,users.DomainId,usep.ArmyNo,usep.Name,ran.RankAbbreviation from TrnDomainMapping trndomain" +
-                        " inner join AspNetUsers users on trndomain.AspNetUsersId=users.Id " +
-                        " inner join MapUnit mapu on mapu.UnitMapId=trndomain.UnitId " +
-                        " inner join UserProfile usep on usep.UserId=trndomain.UserId " +
-                        " inner join MRank ran on ran.RankId=usep.RankId " +
-                        " inner join MRecordOffice rec on trndomain.id=rec.TDMId " +
-                        " inner join BasicDetails bas on bas.ArmedId=rec.ArmedId" +
-                        " where  bas.BasicDetailId=@BasicDetailsId";
-            }
-            else if (ORO == 1)
-            {
-                subquery = "Select bd.ServiceNo,bd.ArmedId,ran.Orderby,at.Abbreviation as ArmedAbbreviation from BasicDetails bd" +
-                            " inner join MRank ran on ran.RankId=bd.RankId " +
-                            " inner join MArmedType at on at.ArmedId=bd.ArmedId " +
-                            " where bd.BasicDetailId =@BasicDetailsId";
-                using (var connection = _contextDP.CreateConnection())
+                if (RO == 1)
                 {
-                    var subqueryResult = await connection.QuerySingleOrDefaultAsync<DTOFwdSubqueryResponse>(subquery, new { BasicDetailsId });
-
-                    if (subqueryResult != null)
+                    query = "Select trndomain.AspNetUsersId,ISNULL(usep.UserId,0) UserId,users.DomainId,usep.ArmyNo,usep.Name,ran.RankAbbreviation from TrnDomainMapping trndomain" +
+                            " inner join AspNetUsers users on trndomain.AspNetUsersId=users.Id " +
+                            " inner join MapUnit mapu on mapu.UnitMapId=trndomain.UnitId " +
+                            " inner join UserProfile usep on usep.UserId=trndomain.UserId " +
+                            " inner join MRank ran on ran.RankId=usep.RankId " +
+                            " inner join MRecordOffice rec on trndomain.id=rec.TDMId " +
+                            " inner join BasicDetails bas on bas.ArmedId=rec.ArmedId" +
+                            " where  bas.BasicDetailId=@BasicDetailsId";
+                }
+                else if (ORO == 1)
+                {
+                    subquery = "Select bd.ServiceNo,bd.ArmedId,ran.Orderby,at.Abbreviation as ArmedAbbreviation from BasicDetails bd" +
+                                " inner join MRank ran on ran.RankId=bd.RankId " +
+                                " inner join MArmedType at on at.ArmedId=bd.ArmedId " +
+                                " where bd.BasicDetailId =@BasicDetailsId";
+                    using (var connection = _contextDP.CreateConnection())
                     {
-                        string ini = subqueryResult.ServiceNo.Substring(0, 2).ToUpper();
-                        string MP6F = "MP 6F";
-                        string MPRSO = "MPRSO";
-                        var ArmedAbbreviation = new List<string> { "ADC", "AMC", "MNS" };
-                        if (ArmedAbbreviation.Contains(subqueryResult.ArmedAbbreviation,StringComparer.OrdinalIgnoreCase))
+                        var subqueryResult = await connection.QuerySingleOrDefaultAsync<DTOFwdSubqueryResponse>(subquery, new { BasicDetailsId });
+
+                        if (subqueryResult != null)
                         {
-                            finalquery = "Select trndomain.AspNetUsersId,ISNULL(usep.UserId,0) UserId,users.DomainId,usep.ArmyNo,usep.Name,ran.RankAbbreviation from MRecordOffice mrec" +
-                                         " inner join OROMapping oromap on oromap.RecordOfficeId=mrec.RecordOfficeId " +
-                                         " inner join TrnDomainMapping trndomain on trndomain.Id=oromap.TDMId " +
-                                         " inner join AspNetUsers users on trndomain.AspNetUsersId=users.Id " +
-                                         " inner join UserProfile usep on usep.UserId=trndomain.UserId " +
-                                         " inner join MRank ran on ran.RankId=usep.RankId " +
-                                         " where mrec.Name = @MPRSO";
-                            var final = await connection.QueryAsync<DTOFwdICardResponse>(finalquery, new { MPRSO });
-
-                            if (final.Count() == 0)
+                            string ini = subqueryResult.ServiceNo.Substring(0, 2).ToUpper();
+                            string MP6F = "MP 6F";
+                            string MPRSO = "MPRSO";
+                            var ArmedAbbreviation = new List<string> { "ADC", "AMC", "MNS" };
+                            if (ArmedAbbreviation.Contains(subqueryResult.ArmedAbbreviation, StringComparer.OrdinalIgnoreCase))
                             {
-                                List<DTOFwdICardResponse> dTOFwdICardResponse = new List<DTOFwdICardResponse>();
-                                DTOFwdICardResponse dTOFwdICardResponse1 = new DTOFwdICardResponse();
+                                finalquery = "Select trndomain.AspNetUsersId,ISNULL(usep.UserId,0) UserId,users.DomainId,usep.ArmyNo,usep.Name,ran.RankAbbreviation from MRecordOffice mrec" +
+                                             " inner join OROMapping oromap on oromap.RecordOfficeId=mrec.RecordOfficeId " +
+                                             " inner join TrnDomainMapping trndomain on trndomain.Id=oromap.TDMId " +
+                                             " inner join AspNetUsers users on trndomain.AspNetUsersId=users.Id " +
+                                             " inner join UserProfile usep on usep.UserId=trndomain.UserId " +
+                                             " inner join MRank ran on ran.RankId=usep.RankId " +
+                                             " where mrec.Name = @MPRSO";
+                                var final = await connection.QueryAsync<DTOFwdICardResponse>(finalquery, new { MPRSO });
 
-                                dTOFwdICardResponse1.IsError = true;
-                                dTOFwdICardResponse1.ErrorMessage = "You can not fwd your request at this time because profile not mapped. Contact ORO (MP6)";
+                                if (final.Count() == 0)
+                                {
+                                    List<DTOFwdICardResponse> dTOFwdICardResponse = new List<DTOFwdICardResponse>();
+                                    DTOFwdICardResponse dTOFwdICardResponse1 = new DTOFwdICardResponse();
 
-                                dTOFwdICardResponse.Add(dTOFwdICardResponse1);
-                                return dTOFwdICardResponse;
+                                    dTOFwdICardResponse1.IsError = true;
+                                    dTOFwdICardResponse1.ErrorMessage = "You can not fwd your request at this time because profile not mapped. Contact ORO (MP6)";
+
+                                    dTOFwdICardResponse.Add(dTOFwdICardResponse1);
+                                    return dTOFwdICardResponse;
+                                }
+                                else
+                                {
+                                    return final.ToList();
+                                }
+                            }
+                            else if (ini == "SL")
+                            {
+                                finalquery = "Select trndomain.AspNetUsersId,ISNULL(usep.UserId,0) UserId,users.DomainId,usep.ArmyNo,usep.Name,ran.RankAbbreviation from MRecordOffice mrec" +
+                                             " inner join OROMapping oromap on oromap.RecordOfficeId=mrec.RecordOfficeId " +
+                                             " inner join TrnDomainMapping trndomain on trndomain.Id=oromap.TDMId " +
+                                             " inner join AspNetUsers users on trndomain.AspNetUsersId=users.Id " +
+                                             " inner join UserProfile usep on usep.UserId=trndomain.UserId " +
+                                             " inner join MRank ran on ran.RankId=usep.RankId " +
+                                             " where mrec.Name = @MP6F";
+                                var final = await connection.QueryAsync<DTOFwdICardResponse>(finalquery, new { MP6F });
+
+                                if (final.Count() == 0)
+                                {
+                                    List<DTOFwdICardResponse> dTOFwdICardResponse = new List<DTOFwdICardResponse>();
+                                    DTOFwdICardResponse dTOFwdICardResponse1 = new DTOFwdICardResponse();
+
+                                    dTOFwdICardResponse1.IsError = true;
+                                    dTOFwdICardResponse1.ErrorMessage = "You can not fwd your request at this time because profile not mapped. Contact ORO (MP6)";
+
+                                    dTOFwdICardResponse.Add(dTOFwdICardResponse1);
+                                    return dTOFwdICardResponse;
+                                }
+                                else
+                                {
+                                    return final.ToList();
+                                }
+
+                            }
+                            else if (subqueryResult.Orderby <= 4)
+                            {
+                                finalquery = "Select trndomain.AspNetUsersId,ISNULL(usep.UserId,0) UserId,users.DomainId,usep.ArmyNo,usep.Name,ran.RankAbbreviation from OROMapping oromap" +
+                                             " inner join TrnDomainMapping trndomain on trndomain.Id=oromap.TDMId " +
+                                             " inner join AspNetUsers users on users.Id=trndomain.AspNetUsersId " +
+                                             " inner join UserProfile usep on usep.UserId=trndomain.UserId " +
+                                             " inner join MRank ran on ran.RankId=usep.RankId " +
+                                             " where oromap.RankId is not null";
+                                var final = await connection.QueryAsync<DTOFwdICardResponse>(finalquery);
+
+                                if (final.Count() == 0)
+                                {
+                                    List<DTOFwdICardResponse> dTOFwdICardResponse = new List<DTOFwdICardResponse>();
+                                    DTOFwdICardResponse dTOFwdICardResponse1 = new DTOFwdICardResponse();
+
+                                    dTOFwdICardResponse1.IsError = true;
+                                    dTOFwdICardResponse1.ErrorMessage = "You can not fwd your request at this time because profile not mapped. Contact ORO (MP6)";
+
+                                    dTOFwdICardResponse.Add(dTOFwdICardResponse1);
+                                    return dTOFwdICardResponse;
+                                }
+                                else
+                                {
+                                    return final.ToList();
+                                }
                             }
                             else
                             {
-                                return final.ToList();
-                            }
-                        }
-                        else if (ini == "SL")
-                        {
-                            finalquery = "Select trndomain.AspNetUsersId,ISNULL(usep.UserId,0) UserId,users.DomainId,usep.ArmyNo,usep.Name,ran.RankAbbreviation from MRecordOffice mrec" +
-                                         " inner join OROMapping oromap on oromap.RecordOfficeId=mrec.RecordOfficeId " +
-                                         " inner join TrnDomainMapping trndomain on trndomain.Id=oromap.TDMId " +
-                                         " inner join AspNetUsers users on trndomain.AspNetUsersId=users.Id " +
-                                         " inner join UserProfile usep on usep.UserId=trndomain.UserId " +
-                                         " inner join MRank ran on ran.RankId=usep.RankId " +
-                                         " where mrec.Name = @MP6F";
-                            var final = await connection.QueryAsync<DTOFwdICardResponse>(finalquery, new { MP6F });
+                                byte ArmedId;
+                                ArmedId = subqueryResult.ArmedId;
+                                finalquery = "Select trndomain.AspNetUsersId,ISNULL(usep.UserId,0) UserId,users.DomainId,usep.ArmyNo,usep.Name,ran.RankAbbreviation from OROMapping oromap" +
+                                             " inner join TrnDomainMapping trndomain on trndomain.Id=oromap.TDMId " +
+                                             " inner join AspNetUsers users on users.Id=trndomain.AspNetUsersId " +
+                                             " inner join UserProfile usep on usep.UserId=trndomain.UserId " +
+                                             " inner join MRank ran on ran.RankId=usep.RankId " +
+                                             " where @ArmedId in (select value from string_split(oromap.ArmedIdList,','))";
+                                var final = await connection.QueryAsync<DTOFwdICardResponse>(finalquery, new { ArmedId });
 
-                            if (final.Count() == 0)
-                            {
-                                List<DTOFwdICardResponse> dTOFwdICardResponse = new List<DTOFwdICardResponse>();
-                                DTOFwdICardResponse dTOFwdICardResponse1 = new DTOFwdICardResponse();
+                                if (final.Count() == 0)
+                                {
+                                    List<DTOFwdICardResponse> dTOFwdICardResponse = new List<DTOFwdICardResponse>();
+                                    DTOFwdICardResponse dTOFwdICardResponse1 = new DTOFwdICardResponse();
 
-                                dTOFwdICardResponse1.IsError = true;
-                                dTOFwdICardResponse1.ErrorMessage = "You can not fwd your request at this time because profile not mapped. Contact ORO (MP6)";
+                                    dTOFwdICardResponse1.IsError = true;
+                                    dTOFwdICardResponse1.ErrorMessage = "You can not fwd your request at this time because profile not mapped. Contact ORO (MP6)";
 
-                                dTOFwdICardResponse.Add(dTOFwdICardResponse1);
-                                return dTOFwdICardResponse;
-                            }
-                            else
-                            {
-                                return final.ToList();
-                            }
+                                    dTOFwdICardResponse.Add(dTOFwdICardResponse1);
+                                    return dTOFwdICardResponse;
+                                }
+                                else
+                                {
+                                    return final.ToList();
+                                }
 
-                        }
-                        else if (subqueryResult.Orderby <= 4)
-                        {
-                            finalquery = "Select trndomain.AspNetUsersId,ISNULL(usep.UserId,0) UserId,users.DomainId,usep.ArmyNo,usep.Name,ran.RankAbbreviation from OROMapping oromap" +
-                                         " inner join TrnDomainMapping trndomain on trndomain.Id=oromap.TDMId " +
-                                         " inner join AspNetUsers users on users.Id=trndomain.AspNetUsersId " +
-                                         " inner join UserProfile usep on usep.UserId=trndomain.UserId " +
-                                         " inner join MRank ran on ran.RankId=usep.RankId " +
-                                         " where oromap.RankId is not null";
-                            var final = await connection.QueryAsync<DTOFwdICardResponse>(finalquery);
-
-                            if (final.Count() == 0)
-                            {
-                                List<DTOFwdICardResponse> dTOFwdICardResponse = new List<DTOFwdICardResponse>();
-                                DTOFwdICardResponse dTOFwdICardResponse1 = new DTOFwdICardResponse();
-
-                                dTOFwdICardResponse1.IsError = true;
-                                dTOFwdICardResponse1.ErrorMessage = "You can not fwd your request at this time because profile not mapped. Contact ORO (MP6)";
-
-                                dTOFwdICardResponse.Add(dTOFwdICardResponse1);
-                                return dTOFwdICardResponse;
-                            }
-                            else
-                            {
-                                return final.ToList();
                             }
                         }
                         else
                         {
-                            byte ArmedId;
-                            ArmedId = subqueryResult.ArmedId;
-                            finalquery = "Select trndomain.AspNetUsersId,ISNULL(usep.UserId,0) UserId,users.DomainId,usep.ArmyNo,usep.Name,ran.RankAbbreviation from OROMapping oromap" +
-                                         " inner join TrnDomainMapping trndomain on trndomain.Id=oromap.TDMId " +
-                                         " inner join AspNetUsers users on users.Id=trndomain.AspNetUsersId " +
-                                         " inner join UserProfile usep on usep.UserId=trndomain.UserId " +
-                                         " inner join MRank ran on ran.RankId=usep.RankId " +
-                                         " where @ArmedId in (select value from string_split(oromap.ArmedIdList,','))";
-                            var final = await connection.QueryAsync<DTOFwdICardResponse>(finalquery, new { ArmedId });
-
-                            if (final.Count() == 0)
-                            {
-                                List<DTOFwdICardResponse> dTOFwdICardResponse = new List<DTOFwdICardResponse>();
-                                DTOFwdICardResponse dTOFwdICardResponse1 = new DTOFwdICardResponse();
-
-                                dTOFwdICardResponse1.IsError = true;
-                                dTOFwdICardResponse1.ErrorMessage = "You can not fwd your request at this time because profile not mapped. Contact ORO (MP6)";
-
-                                dTOFwdICardResponse.Add(dTOFwdICardResponse1);
-                                return dTOFwdICardResponse;
-                            }
-                            else
-                            {
-                                return final.ToList();
-                            }
 
                         }
-                    }
-                    else
-                    {
 
                     }
+                }
+                else if (IsAfsacCell == 1)
+                {
+                    query = " Select top 1 trndomain.AspNetUsersId,ISNULL(usep.UserId,0) UserId,users.DomainId,usep.ArmyNo,usep.Name,ran.RankAbbreviation from AfsacCellMapping acm " +
+                            " inner join TrnDomainMapping trndomain on trndomain.Id =acm.TDMId " +
+                            " inner join AspNetUsers users on trndomain.AspNetUsersId=users.Id " +
+                            " inner join MapUnit mapu on mapu.UnitMapId=trndomain.UnitId " +
+                            " inner join UserProfile usep on usep.UserId=trndomain.UserId " +
+                            " inner join MRank ran on ran.RankId=usep.RankId ";
+                }
+                else
+                {
+                    query = "Select trndomain.AspNetUsersId,ISNULL(usep.UserId,0) UserId,users.DomainId,usep.ArmyNo,usep.Name,ran.RankAbbreviation from TrnDomainMapping trndomain" +
+                             " inner join AspNetUsers users on trndomain.AspNetUsersId=users.Id" +
+                             " inner join MapUnit mapu on mapu.UnitMapId=trndomain.UnitId" +
+                             " inner join UserProfile usep on usep.UserId=trndomain.UserId" +
+                             " inner join MRank ran on ran.RankId=usep.RankId" +
+                             " where trndomain.UnitId =@UnitId and trndomain.AspNetUsersId !=@DomainMapId order by ran.Orderby";
+                }
+                using (var connection = _contextDP.CreateConnection())
+                {
+                    var BasicDetailList = await connection.QueryAsync<DTOFwdICardResponse>(query, new { UnitId, RO, BasicDetailsId, DomainMapId });
 
+                    return BasicDetailList.ToList();
                 }
             }
-            else if (IsAfsacCell == 1)
+            catch (Exception ex)
             {
-                query = " Select top 1 trndomain.AspNetUsersId,ISNULL(usep.UserId,0) UserId,users.DomainId,usep.ArmyNo,usep.Name,ran.RankAbbreviation from AfsacCellMapping acm " +
-                        " inner join TrnDomainMapping trndomain on trndomain.Id =acm.TDMId " +
-                        " inner join AspNetUsers users on trndomain.AspNetUsersId=users.Id " +
-                        " inner join MapUnit mapu on mapu.UnitMapId=trndomain.UnitId " +
-                        " inner join UserProfile usep on usep.UserId=trndomain.UserId " +
-                        " inner join MRank ran on ran.RankId=usep.RankId ";
-            }
-            else
-            {
-                query = "Select trndomain.AspNetUsersId,ISNULL(usep.UserId,0) UserId,users.DomainId,usep.ArmyNo,usep.Name,ran.RankAbbreviation from TrnDomainMapping trndomain" +
-                         " inner join AspNetUsers users on trndomain.AspNetUsersId=users.Id" +
-                         " inner join MapUnit mapu on mapu.UnitMapId=trndomain.UnitId" +
-                         " inner join UserProfile usep on usep.UserId=trndomain.UserId" +
-                         " inner join MRank ran on ran.RankId=usep.RankId" +
-                         " where trndomain.UnitId =@UnitId and trndomain.AspNetUsersId !=@DomainMapId order by ran.Orderby";
-            }
-            using (var connection = _contextDP.CreateConnection())
-            {
-                var BasicDetailList = await connection.QueryAsync<DTOFwdICardResponse>(query, new { UnitId, RO,BasicDetailsId, DomainMapId });
-
-                return BasicDetailList.ToList();
+                _logger.LogError(1001, ex, "UserProfileDB->GetOffrsByUnitMapId");
+                return new List<DTOFwdICardResponse>();
             }
         }
 
         public async Task<MUserProfile> GetByIsWithoutTokenApply(int UserId)
         {
             try { 
-            string query = "SELECT prof.IsWithTokenApply,prof.IsToken" +
-                                " from UserProfile prof " +
-                                " inner join MRank ran on prof.RankId = ran.RankId " +
-                                " inner join TrnDomainMapping trnd  on trnd.UserId = prof.UserId " +
-                                " inner join AspNetUserRoles maprole on maprole.UserId=trnd.AspNetUsersId" +
-                                " inner join AspNetRoles roles on roles.Id=maprole.RoleId" +
-                                " inner join MAppointment appt on appt.ApptId=trnd.ApptId" +
-                                " left join MapUnit mapu on mapu.UnitMapId = trnd.UnitId " +
-                                " left join MUnit munit on munit.UnitId = mapu.UnitId " +
-                                " left join AspNetUsers usermodify on usermodify.Id=trnd.MappedBy " +
-                                " left join AspNetUsers users on trnd.AspNetUsersId = users.Id" +
-                                " where trnd.AspNetUsersId=@UserId";
-            using (var connection = _contextDP.CreateConnection())
-            {
-                var BasicDetailList = await connection.QueryAsync<MUserProfile>(query, new { UserId });
-                int sno = 1;
-
-                return BasicDetailList.FirstOrDefault();
-
+                string query = "SELECT prof.IsWithTokenApply,prof.IsToken" +
+                                    " from UserProfile prof " +
+                                    " inner join MRank ran on prof.RankId = ran.RankId " +
+                                    " inner join TrnDomainMapping trnd  on trnd.UserId = prof.UserId " +
+                                    " inner join AspNetUserRoles maprole on maprole.UserId=trnd.AspNetUsersId" +
+                                    " inner join AspNetRoles roles on roles.Id=maprole.RoleId" +
+                                    " inner join MAppointment appt on appt.ApptId=trnd.ApptId" +
+                                    " left join MapUnit mapu on mapu.UnitMapId = trnd.UnitId " +
+                                    " left join MUnit munit on munit.UnitId = mapu.UnitId " +
+                                    " left join AspNetUsers usermodify on usermodify.Id=trnd.MappedBy " +
+                                    " left join AspNetUsers users on trnd.AspNetUsersId = users.Id" +
+                                    " where trnd.AspNetUsersId=@UserId";
+                using (var connection = _contextDP.CreateConnection())
+                {
+                    var BasicDetailList = await connection.QueryAsync<MUserProfile>(query, new { UserId });
+                    return BasicDetailList.FirstOrDefault()?? new MUserProfile();
+                }
             }
-
-        }
             catch (Exception ex)
             {
                 _logger.LogError(1001, ex, "UserProfileDB->GetByIsWithoutTokenApply");
-                return null; 
+                return new MUserProfile(); 
             }
-}
+        }
     }
 }

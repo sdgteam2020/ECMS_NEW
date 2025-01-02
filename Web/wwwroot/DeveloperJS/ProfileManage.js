@@ -136,7 +136,7 @@ function BindData() {
                     for (var i = 0; i < response.length; i++) {
 
                         listItem += "<tr>";
-                        listItem += "<td class='d-none'><span id='regId'>" + response[i].Id + "</span><span id='userId'>" + response[i].UserId + "</span><span id='rankId'>" + response[i].RankId + "</span><span id='armedId'>" + response[i].ArmedId + "</span><span id='reasonTokenWaiver'>" + response[i].ReasonTokenWaiver + "</span><span id='mobileNo'>" + response[i].MobileNo + "</span></td>";
+                        listItem += "<td class='d-none'><span id='regId'>" + response[i].Id + "</span><span id='userId'>" + response[i].UserId + "</span><span id='rankId'>" + response[i].RankId + "</span><span id='armedId'>" + response[i].ArmedId + "</span><span id='reasonTokenWaiver'>" + response[i].ReasonTokenWaiver + "</span></td>"; //<span id='mobileNo'>" + response[i].MobileNo + "</span>
                         listItem += "<td class='align-middle'>" + (i + 1) + "</td>";
                         listItem += "<td class='align-middle'><span id='userId'>" + response[i].UserId + "</span></td>";
                         
@@ -216,7 +216,7 @@ function BindData() {
                         $("#txtArmyNo").val($(this).closest("tr").find("#armyNo").html());
                         $("#txtName").val($(this).closest("tr").find("#username").html());
                         $("#ddlRank").val($(this).closest("tr").find("#rankId").html());
-                        $("#txtMobileNo").val($(this).closest("tr").find("#mobileNo").html());
+/*                        $("#txtMobileNo").val($(this).closest("tr").find("#mobileNo").html());*/
                         $("#ddlArmType").val($(this).closest("tr").find("#armedId").html());
 
                         //alert($(this).closest("tr").find("#domain_approval").html())
@@ -303,7 +303,7 @@ function Save() {
             "UserId": $("#spnUserProfileId").html(),
             "ArmyNo": $("#txtArmyNo").val(),
             "Name": $("#txtName").val(),
-            "MobileNo": $("#txtMobileNo").val(),
+/*            "MobileNo": $("#txtMobileNo").val(),*/
             "RankId": $("#ddlRank").val(),
             "ArmedId": $("#ddlArmType").val(),
             "IsTokenWaiver": $('input:radio[name=IsTokenWaiver]:checked').val(),
@@ -367,7 +367,7 @@ function Reset() {
     $("#txtArmyNo").val("");
     $("#ddlRank").val("");
     $("#txtName").val("");
-    $("#txtMobileNo").val("");
+/*    $("#txtMobileNo").val("");*/
     $("#ddlArmType").val("");
     $("#IsTokenWaiverYes").prop("checked", false);
     $("#IsTokenWaiverNo").prop("checked", false);
@@ -381,7 +381,7 @@ function ResetErrorMessage() {
     $("#txtName-error").html("");
     $("#ddlRank-error").html("");
     $("#txtArmyNo-error").html("");
-    $("#txtMobileNo-error").html("");
+/*    $("#txtMobileNo-error").html("");*/
     $("#ddlArmType-error").html("");
     $("#IsTokenWaiver-error").html("");
     $("#txtMessage-error").html("");

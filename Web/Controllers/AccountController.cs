@@ -1029,8 +1029,8 @@ namespace Web.Controllers
                         dTOProfileAndMappingRequest.TDMId = dTOTempSession.TDMId;
                         dTOProfileAndMappingRequest.ApptId = dTOTempSession.TDMApptId;
                         dTOProfileAndMappingRequest.UnitMapId = dTOTempSession.TDMUnitMapId;
-                        dTOProfileAndMappingRequest.DialingCode = dTOTempSession.DialingCode;
-                        dTOProfileAndMappingRequest.Extension = dTOTempSession.Extension;
+                        //dTOProfileAndMappingRequest.DialingCode = dTOTempSession.DialingCode;
+                        //dTOProfileAndMappingRequest.Extension = dTOTempSession.Extension;
                         dTOProfileAndMappingRequest.IsRO = dTOTempSession.IsRO;
                         dTOProfileAndMappingRequest.IsCO = dTOTempSession.IsCO;
                         dTOProfileAndMappingRequest.IsIO = dTOTempSession.IsIO;
@@ -1051,7 +1051,7 @@ namespace Web.Controllers
                             dTOProfileAndMappingRequest.ArmyNo = mUserProfile.ArmyNo;
                             dTOProfileAndMappingRequest.RankId = mUserProfile.RankId;
                             dTOProfileAndMappingRequest.Name = mUserProfile.Name;
-                            dTOProfileAndMappingRequest.MobileNo = mUserProfile.MobileNo;
+                            //dTOProfileAndMappingRequest.MobileNo = mUserProfile.MobileNo;
                             dTOProfileAndMappingRequest.ArmedId = mUserProfile.ArmedId;
                             dTOProfileAndMappingRequest.ReasonTokenWaiver = mUserProfile.ReasonTokenWaiver;
                             dTOProfileAndMappingRequest.IsTokenWaiver = mUserProfile.IsTokenWaiver;

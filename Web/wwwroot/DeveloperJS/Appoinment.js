@@ -1,17 +1,17 @@
-$(document).ready(function () {
+$(function () {
     BindData()
     //$("#btnAdd").click(function () {
     //    Reset();
     //    $("#AddNewM").modal('show');
 
     //});
-    $("#btnReset").click(function () {
+    $("#btnReset").on("click",function () {
         Reset();
     });
 
 
 
-        $("#btnsave").click(function () {
+    $("#btnsave").on("click",function () {
         if ($("#SaveForm")[0].checkValidity()) {
 
             Swal.fire({
@@ -39,7 +39,7 @@ $(document).ready(function () {
     });
   
 
-    $('#btnMultiDelete').click(function () {
+    $('#btnMultiDelete').on("click",function () {
         var lst = new Array();
 
         if (memberTable.$('input[type="checkbox"]:checked').length > 0) {
@@ -116,6 +116,10 @@ function BindData() {
                         listItem += "<td class='d-none'><span id='spnMapptId'>" + response[i].ApptId + "</span></td>";
                         listItem += "<td class='align-middle'>" + (i + 1) + "</td>";
                         listItem += "<td class='align-middle'><span id='appointmentName'>" + response[i].AppointmentName + "</span></td>";
+                        if (response[i].AppointmentAbbreviation != null)
+                            listItem += "<td class='align-middle'><span id='appointmentAbbreviation'>" + response[i].AppointmentAbbreviation + "</span></td>";
+                        else
+                            listItem += "<td class='align-middle'><span id='appointmentAbbreviation'></span></td>";
                         listItem += "<td class='align-middle'><span id='btnedit'><button type='button' class='cls-btnedit btn btn-icon btn-round btn-primary mr-1'><i class='fas fa-edit'></i></button></span><button type='button' class='cls-btnDelete btn-icon btn-round btn-danger mr-1'><i class='fas fa-trash-alt'></i></button></td>";
 
 
@@ -158,7 +162,7 @@ function BindData() {
                     memberTable.buttons().container().appendTo('#tbldata_wrapper .col-md-6:eq(0)');
 
                     var rows;
-                    $("#tbldata #chkAll").click(function () {
+                    $("#tbldata #chkAll").on("click",function () {
                         if ($(this).is(':checked')) {
                             rows = memberTable.rows({ 'search': 'applied' }).nodes();
                             $('input[type="checkbox"]', rows).prop('checked', this.checked);
@@ -180,8 +184,15 @@ function BindData() {
                     $("body").on("click", ".cls-btnedit", function () {
  
                         $("#spnapptId").html($(this).closest("tr").find("#spnMapptId").html());
-
                         $("#txtAppoinment").val($(this).closest("tr").find("#appointmentName").html());
+                        if ($(this).closest("tr").find("#appointmentAbbreviation").html() == "")
+                        {
+                            $("#txtAbbreviation").val("");
+                        }
+                        else
+                        {
+                            $("#txtAbbreviation").val($(this).closest("tr").find("#appointmentAbbreviation").html());
+                        }
                         $("#btnsave").val("Update");
                     });
 
@@ -234,7 +245,12 @@ function Save() {
     $.ajax({
         url: '/Master/SaveAppointment',
         type: 'POST',
-        data: { "AppointmentName": $("#txtAppoinment").val().trim(), "ApptId": $("#spnapptId").html() }, //get the search string
+        data:
+        {
+            "AppointmentName": $("#txtAppoinment").val().trim(),
+            "AppointmentAbbreviation": $("#txtAbbreviation").val().trim() == "" ? null : $("#txtAbbreviation").val().trim(),
+            "ApptId": $("#spnapptId").html()
+        }, //get the search string
         success: function (result) {
 
 
@@ -283,6 +299,7 @@ function Reset() {
     $("#spnapptId").html("0");
     $("#btnsave").val("Save");
     $("#txtAppoinment").val("");
+    $("#txtAbbreviation").val("");
 }
 
 function Delete(Id) {

@@ -501,9 +501,9 @@ function UnitSave() {
             "ServiceNo": $("#spnServiceNo").html(),
             "Name": $("#spnName").html(),
             "Rank": $("#spnRank").html(),
-            "MobileNo": $("#txtMobileNo").val(),
-            "DialingCode": $("#txtDialingCode").val(),
-            "Extension": $("#txtExtension").val(),
+            //"MobileNo": $("#txtMobileNo").val(),
+            //"DialingCode": $("#txtDialingCode").val(),
+            //"Extension": $("#txtExtension").val(),
             "DomainId": $("#spnDomainId").html(),
             "Sus_no": $("#txtSusno").val().substring(0, 7),
             "Suffix": $("#txtSusno").val().substring(8, 7),
@@ -571,9 +571,9 @@ function Reset() {
     $("#spnDomainRegId").html("0");
     $("#txtSusno").val(""); 
     $("#txtUnit").val("");
-    $("#txtMobileNo").val("");
-    $("#txtDialingCode").val("");
-    $("#txtExtension").val("");
+    //$("#txtMobileNo").val("");
+    //$("#txtDialingCode").val("");
+    //$("#txtExtension").val("");
     $("#ddlCommand").val("");
     $("#ddlCorps").val("");
     $("#ddlDiv").val("");
@@ -593,9 +593,9 @@ function Reset() {
 function ResetErrorMessage() {
     $("#txtSusno-error").html("");
     $("#txtUnit-error").html("");
-    $("#txtMobileNo-error").html("");
-    $("#txtDialingCode-error").html("");
-    $("#txtExtension-error").html("");
+    //$("#txtMobileNo-error").html("");
+    //$("#txtDialingCode-error").html("");
+    //$("#txtExtension-error").html("");
     $("#ddlCommand-error").html("");
     $("#ddlCorps-error").html("");
     $("#ddlDiv-error").html("");
