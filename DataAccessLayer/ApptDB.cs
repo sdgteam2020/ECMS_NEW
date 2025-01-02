@@ -30,13 +30,13 @@ namespace DataAccessLayer
 
         public async Task<bool> GetByName(MAppointment Data)
         {
-            var ret = await _context.MAppointment.AnyAsync(p => p.AppointmentName.ToUpper() == Data.AppointmentName.ToUpper() && p.ApptId != Data.ApptId);
+            var ret = await _context.MAppointment.AnyAsync(p => p.AppointmentName.ToUpper() == Data.AppointmentName.ToUpper()  && p.ApptId != Data.ApptId);
              return ret;
         }
 
-        public Task<List<DTOAppointmentResponse>> GetALLAppt()
+        public async Task<List<DTOAppointmentResponse>> GetALLAppt()
         {
-            var GetALL = (from A in _context.MAppointment
+            var GetALL = await (from A in _context.MAppointment
                          //join F in _context.MFormation
                          //on A.FormationId equals F.FormationId
                         
@@ -44,14 +44,13 @@ namespace DataAccessLayer
                          {
                              ApptId=A.ApptId,
                              AppointmentName=A.AppointmentName,
+                             AppointmentAbbreviation=A.AppointmentAbbreviation,
                              //FormationId=F.FormationId,
                              //FormationName=F.FormationName, 
+                         }).OrderByDescending(x=>x.ApptId).ToListAsync();
 
 
-                         }).OrderByDescending(x=>x.ApptId).ToList();
-
-
-            return Task.FromResult(GetALL);
+            return GetALL;
         }
         public async Task<List<DTOAppointmentResponse>> GetALLByAppointmentName(string AppointmentName)
         {

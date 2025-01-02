@@ -1951,8 +1951,8 @@ namespace DataAccessLayer
                         trnDomainMapping.AspNetUsersId = user.Id;
                         trnDomainMapping.UnitId = model.UnitMapId;
                         trnDomainMapping.ApptId = model.ApptId;
-                        trnDomainMapping.DialingCode = model.DialingCode;
-                        trnDomainMapping.Extension = model.Extension;
+                        //trnDomainMapping.DialingCode = model.DialingCode;
+                        //trnDomainMapping.Extension = model.Extension;
                         trnDomainMapping.IsRO = model.IsRO;
                         trnDomainMapping.IsIO = model.IsIO;
                         trnDomainMapping.IsCO = model.IsCO;
@@ -1967,7 +1967,7 @@ namespace DataAccessLayer
                             {
                                 uptUserProfile.RankId = model.RankId;
                                 uptUserProfile.Name = model.Name;
-                                uptUserProfile.MobileNo = model.MobileNo;
+                                //uptUserProfile.MobileNo = model.MobileNo;
                                 uptUserProfile.ArmedId = model.ArmedId;
                                 uptUserProfile.IsTokenWaiver = model.IsTokenWaiver;
                                 uptUserProfile.ReasonTokenWaiver = model.ReasonTokenWaiver;
@@ -1990,7 +1990,7 @@ namespace DataAccessLayer
                                 ArmyNo = dTOTempSession.ICNO,
                                 RankId = model.RankId,
                                 Name = model.Name,
-                                MobileNo=model.MobileNo,
+                                //MobileNo=model.MobileNo,
                                 ArmedId = model.ArmedId,
                                 IsToken = true,
                                 IsWithTokenApply=true,
@@ -2053,8 +2053,8 @@ namespace DataAccessLayer
                             trnDomainMapping.AspNetUsersId = dTOTempSession.AspNetUsersId;
                             trnDomainMapping.UnitId = model.UnitMapId;
                             trnDomainMapping.ApptId = model.ApptId;
-                            trnDomainMapping.DialingCode = model.DialingCode;
-                            trnDomainMapping.Extension = model.Extension;
+                            //trnDomainMapping.DialingCode = model.DialingCode;
+                            //trnDomainMapping.Extension = model.Extension;
                             trnDomainMapping.IsRO = model.IsRO;
                             trnDomainMapping.IsIO = model.IsIO;
                             trnDomainMapping.IsCO = model.IsCO;
@@ -2068,7 +2068,7 @@ namespace DataAccessLayer
                                 {
                                     uptUserProfile.RankId = model.RankId;
                                     uptUserProfile.Name = model.Name;
-                                    uptUserProfile.MobileNo = model.MobileNo;
+                                    //uptUserProfile.MobileNo = model.MobileNo;
                                     uptUserProfile.ArmedId = model.ArmedId;
                                     uptUserProfile.IsTokenWaiver = model.IsTokenWaiver;
                                     uptUserProfile.ReasonTokenWaiver = model.ReasonTokenWaiver;
@@ -2088,7 +2088,7 @@ namespace DataAccessLayer
                                 mUserProfile.ArmyNo = dTOTempSession.ICNO;
                                 mUserProfile.RankId = model.RankId;
                                 mUserProfile.Name = model.Name;
-                                mUserProfile.MobileNo = model.MobileNo;
+                                //mUserProfile.MobileNo = model.MobileNo;
                                 mUserProfile.ArmedId = model.ArmedId;
                                 mUserProfile.IsToken = true;
                                 mUserProfile.IsWithTokenApply = true;
@@ -2166,7 +2166,7 @@ namespace DataAccessLayer
                                     {
                                         uptUserProfile.RankId = model.RankId;
                                         uptUserProfile.Name = model.Name;
-                                        uptUserProfile.MobileNo = model.MobileNo;
+                                        //uptUserProfile.MobileNo = model.MobileNo;
                                         uptUserProfile.ArmedId = model.ArmedId;
                                         uptUserProfile.IsToken = model.IsTokenWaiver;
                                         uptUserProfile.ReasonTokenWaiver = model.ReasonTokenWaiver;
@@ -2187,7 +2187,7 @@ namespace DataAccessLayer
                                     mUserProfile.ArmyNo = dTOTempSession.ICNO;
                                     mUserProfile.RankId = model.RankId;
                                     mUserProfile.Name = model.Name;
-                                    mUserProfile.MobileNo = model.MobileNo;
+                                    //mUserProfile.MobileNo = model.MobileNo;
                                     mUserProfile.ArmedId = model.ArmedId;
                                     mUserProfile.IsToken = true;
                                     mUserProfile.IsWithTokenApply = true;
@@ -2323,9 +2323,9 @@ namespace DataAccessLayer
                         Name = dTO.Name,
                         ServiceNo = dTO.ServiceNo,
                         Rank = dTO.Rank,
-                        MobileNo= dTO.MobileNo,
-                        DialingCode = dTO.DialingCode,
-                        Extension= dTO.Extension,
+                        //MobileNo= dTO.MobileNo,
+                        //DialingCode = dTO.DialingCode,
+                        //Extension= dTO.Extension,
                         DomainId =dTO.DomainId,
                         IsActive=true,
                         UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time")),

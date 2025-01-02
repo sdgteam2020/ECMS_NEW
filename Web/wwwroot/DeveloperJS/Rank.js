@@ -1,11 +1,11 @@
-$(document).ready(function () {
+$(function () {
     Reset();
     BindData()
-    $("#btnReset").click(function () {
+    $("#btnReset").on("click", function () {
         Reset();
     });
    
-    $("#btnsave").click(function () {
+    $("#btnsave").on("click",function () {
         if ($("#SaveForm")[0].checkValidity()) {
 
             Swal.fire({
@@ -32,7 +32,7 @@ $(document).ready(function () {
 
     });
 
-    $('#btnMultiDelete').click(function () {
+    $('#btnMultiDelete').on("click", function () {
         var lst = new Array();
 
         if (memberTable.$('input[type="checkbox"]:checked').length > 0) {

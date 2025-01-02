@@ -46,8 +46,15 @@
                             </div>
                         </div>
                     </div>
+                    <div class="col-xl-5">
+                        <div class="form-group row mb-2">
+                            <label class="col-form-label col-sm-4 fw-bold">Abbreviation</label>
+                            <div class="col-sm-8">
+                                <input class="form-control Alphanumeric" placeholder="Enter Appointment" id="txtAbbreviation" maxlength="20" pattern="^[a-zA-Z0-9 ]*$" title="Only Alphabets and Numbers allowed" />
+                            </div>
+                        </div>
+                    </div>
                     <div class="col-xl-2">
-
                         <div class="col-sm-12 text-right">
                             <input type="button" class="btn btn-outline-primary " value="Save" id="btnsave" />
                             <button type="button" id="btnReset" class="btn btn-outline-danger">Reset</button>
@@ -76,6 +83,7 @@
                                 <th class="noExport d-none"></th>
                                 <th class="wd-40-f">S No</th>
                                 <th class="nowrap">Appointment</th>
+                                <th class="nowrap">Abbreviation</th>
                                 <th class="noExport nowrap">Action</th>
                             </tr>
                         </thead>

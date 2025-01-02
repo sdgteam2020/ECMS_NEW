@@ -491,7 +491,7 @@ function BindData() {
                     for (var i = 0; i < response.length; i++) {
 
                         listItem += "<tr>";
-                        listItem += "<td class='d-none'><span id='regId'>" + response[i].Id + "</span><span id='regTrnDomainMappingId'>" + response[i].TrnDomainMappingId + "</span><span id='regTrnDomainMappingApptId'>" + response[i].TrnDomainMappingApptId + "</span><span id='regTrnDomainMappingUnitId'>" + response[i].TrnDomainMappingUnitId + "</span><span id='regUserId'>" + response[i].UserId + "</span><span id='roleIds'>" + response[i].RoleIds + "</span><span id='claimValues'>" + response[i].ClaimValues + "</span><span id='domain_approval'>" + response[i].AdminFlag + "</span><span id='extension'>" + response[i].Extension + "</span><span id='dialingCode'>" + response[i].DialingCode + "</span></td>"; 
+                        listItem += "<td class='d-none'><span id='regId'>" + response[i].Id + "</span><span id='regTrnDomainMappingId'>" + response[i].TrnDomainMappingId + "</span><span id='regTrnDomainMappingApptId'>" + response[i].TrnDomainMappingApptId + "</span><span id='regTrnDomainMappingUnitId'>" + response[i].TrnDomainMappingUnitId + "</span><span id='regUserId'>" + response[i].UserId + "</span><span id='roleIds'>" + response[i].RoleIds + "</span><span id='claimValues'>" + response[i].ClaimValues + "</span><span id='domain_approval'>" + response[i].AdminFlag + "</span></td>";  //"</span><span id='extension'>" + response[i].Extension + "</span><span id='dialingCode'>" + response[i].DialingCode + 
                         listItem += "<td class='align-middle'>" + (i + 1) + "</td>";
                         listItem += "<td class='align-middle'><span id='reg_no'>" + response[i].Id + "</span></td>";
                         listItem += "<td class='align-middle'><span id='domainId'>" + response[i].DomainId + "</span></td>";
@@ -586,8 +586,8 @@ function BindData() {
                         ResetErrorMessage();
                         $("#txtDomainId").val($(this).closest("tr").find("#domainId").html());
                         $("#txtRole").val($(this).closest("tr").find("#roleName").html());
-                        $("#txtDialingCode").val($(this).closest("tr").find("#dialingCode").html());
-                        $("#txtExtension").val($(this).closest("tr").find("#extension").html());
+                        //$("#txtDialingCode").val($(this).closest("tr").find("#dialingCode").html());
+                        //$("#txtExtension").val($(this).closest("tr").find("#extension").html());
                         $("#spnDomainRegId").html($(this).closest("tr").find("#regId").html());
                         //alert($(this).closest("tr").find("#domain_approval").html())
                         if ($(this).closest("tr").find("#domain_approval").html() == 'true') {
@@ -691,8 +691,8 @@ function Save() {
             "DomainId": $("#txtDomainId").val(),
             "RoleIds": $('#ddlRoles').val(),
             "ClaimValues": $('#ddClaims').val(),
-            "DialingCode": $("#txtDialingCode").val(),
-            "Extension": $("#txtExtension").val(),
+            //"DialingCode": $("#txtDialingCode").val(),
+            //"Extension": $("#txtExtension").val(),
             "AdminFlag": $('input:radio[name=txtapproval]:checked').val(),
             "Active": $('input:radio[name=txtactive]:checked').val(),
             "IsIO": $('input:radio[name=InitatingOffr]:checked').val(),
@@ -756,8 +756,8 @@ function Reset()     {
     $("#spnDomainRegId").html("0");
     $("#txtDomainId").val("");
     //$("#ddlRoles").select2('data', null);
-    $("#txtDialingCode").val("");
-    $("#txtExtension").val("");
+    //$("#txtDialingCode").val("");
+    //$("#txtExtension").val("");
 
     $('#ddlRoles').val(null).trigger('change');
     $('#ddClaims').val(null).trigger('change');
@@ -801,8 +801,8 @@ function ResetErrorMessage() {
     $("#txtDomainId-error").html("");
     $("#ddlRoles-error").html("");
     $("#ddClaims-error").html("");
-    $("#txtDialingCode-error").html("");
-    $("#txtExtension-error").html("");
+    //$("#txtDialingCode-error").html("");
+    //$("#txtExtension-error").html("");
     $("#txtapproval-error").html("");
     $("#txtactive-error").html("");
     $("#IsRO-error").html("");

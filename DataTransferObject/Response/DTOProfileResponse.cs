@@ -17,7 +17,7 @@ namespace DataTransferObject.Response
         public int RankId { get; set; }
         public string RankName { get; set; } = string.Empty;
         public string Name { get; set; } = string.Empty;
-        public string MobileNo { get; set; } = string.Empty;
+        public string? MobileNo { get; set; } //= string.Empty;
         public string? DialingCode { get; set; } 
         public string? Extension { get; set; } 
         public bool Mapping { get; set; }

@@ -22,9 +22,9 @@ namespace BusinessLogicsLayer.Appt
             _apptDB = apptDB;
         }
 
-        public Task<List<DTOAppointmentResponse>> GetALLAppt()
+        public async Task<List<DTOAppointmentResponse>> GetALLAppt()
         {
-            return _apptDB.GetALLAppt();
+            return await _apptDB.GetALLAppt();
         }
         public Task<List<DTOAppointmentResponse>> GetByFormationId(int FormationId)
         {

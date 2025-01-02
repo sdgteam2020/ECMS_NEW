@@ -43,11 +43,11 @@ namespace DataTransferObject.Domain
 
         [StringLength(10)]
         [Column(TypeName = "varchar(10)")]
-        [Required(ErrorMessage = "Mobile No  is required.")]
+        //[Required(ErrorMessage = "Mobile No  is required.")]
         [MinLength(10, ErrorMessage = "Minimum length of Mobile No is ten digit.")]
         [MaxLength(10, ErrorMessage = "Maximum length of Mobile No is ten digit.")]
         [RegularExpression(@"^[\d]+$", ErrorMessage = "Mobile No. is invalid.")]
-        public string MobileNo { get; set; } = string.Empty;
+        public string? MobileNo { get; set; }
 
         [StringLength(50)]
         [Column(TypeName = "varchar(50)")]

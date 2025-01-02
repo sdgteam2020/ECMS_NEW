@@ -2,22 +2,12 @@
 using BusinessLogicsLayer.Master;
 using DapperRepo.Core.Constants;
 using DataAccessLayer.BaseInterfaces;
-using DataTransferObject.Domain;
 using DataTransferObject.Domain.Master;
 using DataTransferObject.Domain.Model;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
-using DataTransferObject.Response.User;
-using EntityFramework.Exceptions.Common;
-using Humanizer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.Data.SqlClient;
-using Microsoft.EntityFrameworkCore;
-using System.Collections;
-using System.Data.Common;
 using System.Security.Claims;
 using System.Text;
 using Web.WebHelpers;
@@ -1134,15 +1124,7 @@ namespace Web.Controllers
         [Authorize(Roles = "admin")]
         public async Task<IActionResult> GetAllAppointment()
         {
-            try
-            {
-                return Json(await unitOfWork.Appt.GetALLAppt());
-            }
-            catch (Exception ex)
-            {
-                return Json(KeyConstants.InternalServerError);
-            }
-
+            return Json(await unitOfWork.Appt.GetALLAppt());
         }
         [AllowAnonymous]
         public async Task<IActionResult> GetByApptId(short ApptId)

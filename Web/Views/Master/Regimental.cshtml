@@ -47,7 +47,7 @@
                                 <span class="d-none" id="spnRegId">0</span>
                                 <label class="col-form-label col-sm-5 fw-bold">Name of Regt Center<i class="fas fa-asterisk mand1"></i></label>
                                 <div class="col-sm-7">
-                                    <input class="form-control Alphanumeric" placeholder="Enter Regimental" id="txtName" maxlength="50" required pattern="^[a-zA-Z0-9 ]*$" title="Only Alphabets and Numbers allowed" />
+                                    <input class="form-control Alphanumeric" placeholder="Enter Regimental" id="txtName" oninput="this.value = this.value.toUpperCase();" maxlength="50" required pattern="^[a-zA-Z0-9 ]*$" title="Only Alphabets and Numbers allowed" />
                                 </div>
 
                             </div>

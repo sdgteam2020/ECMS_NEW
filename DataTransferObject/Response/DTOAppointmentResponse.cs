@@ -12,6 +12,7 @@ namespace DataTransferObject.Response
     {
         public int ApptId { get; set; }
         public string AppointmentName { get; set; }=string.Empty;
+        public string? AppointmentAbbreviation { get; set; }
         //public int FormationId { get; set; }
         //public string FormationName { get; set; }
     }

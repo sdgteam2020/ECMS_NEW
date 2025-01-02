@@ -170,12 +170,12 @@
                                                                 <span class="text-danger field-validation-valid" data-valmsg-for="txtAppointmentName" data-valmsg-replace="true"></span>
                                                             </div>
                                                         </div>
-                                                        <div class="row mb-2 required">
+@*                                                         <div class="row mb-2 required">
                                                             <label asp-for="MobileNo" class="col-sm-4 col-form-label form-label fw-bold">Mobile No<i class="fas fa-asterisk mand1"></i></label>
                                                             <div class="col-sm-8">
                                                                 @if (Model.UserId > 0)
                                                                 {
-                                                                    <input asp-for="MobileNo" class="form-control allow-number" placeholder="" /> @* readonly *@
+                                                                    <input asp-for="MobileNo" class="form-control allow-number" placeholder="" />
                                                                 }
                                                                 else
                                                                 {
@@ -183,13 +183,13 @@
                                                                 }
                                                                 <span asp-validation-for="MobileNo" class="text-danger"></span>
                                                             </div>
-                                                        </div>
-                                                        <div class="row mb-2 required">
+                                                        </div> *@
+@*                                                         <div class="row mb-2 required">
                                                             <label asp-for="DialingCode" class="col-sm-4 col-form-label form-label fw-bold">Army Contact No<i class="fas fa-asterisk mand1"></i></label>
                                                             <div class="col-sm-4">
                                                                 @if (Model.TDMId > 0)
                                                                 {
-                                                                    <input asp-for="DialingCode" class="form-control allow-number" placeholder="" /> @* readonly *@
+                                                                    <input asp-for="DialingCode" class="form-control allow-number" placeholder="" />
                                                                 }
                                                                 else
                                                                 {
@@ -200,7 +200,7 @@
                                                             <div class="col-sm-4">
                                                                 @if (Model.TDMId > 0)
                                                                 {
-                                                                    <input asp-for="Extension" class="form-control allow-number" placeholder="" />@* readonly *@
+                                                                    <input asp-for="Extension" class="form-control allow-number" placeholder="" />
                                                                 }
                                                                 else
                                                                 {
@@ -208,7 +208,7 @@
                                                                 }
                                                                 <span asp-validation-for="Extension" class="text-danger"></span>
                                                             </div>
-                                                        </div>
+                                                        </div> *@
 
                                                         <div class="row mb-2 required">
                                                             <label asp-for="IsIO" class="col-sm-9 col-form-label form-label fw-bold">Are you performing the Duties of OC / CO / OC Tps?<i class="fas fa-asterisk mand1"></i></label>

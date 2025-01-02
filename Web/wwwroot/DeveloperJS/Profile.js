@@ -21,9 +21,9 @@ $(document).ready(function () {
                 if (result.isConfirmed) {
                     var RankId = $("#ddlProRank").val();
                     var Name = $("#txtName").val();
-                    var MobileNo = $("#txtMobileNo").val();
-                    var DialingCode = $("#txtDialingCode").val();
-                    var Extension = $("#txtExtension").val();
+                    //var MobileNo = $("#txtMobileNo").val();
+                    //var DialingCode = $("#txtDialingCode").val();
+                    //var Extension = $("#txtExtension").val();
                     var Thumbprint = $("#Thumbprint").val();
                   
                     var TDMId = $("#spnTDMId").html();                   
@@ -35,7 +35,7 @@ $(document).ready(function () {
                     IsCO = $("#chkCO").prop("checked");
                     IsORO = $("#chkORO").prop("checked");
                     
-                    UpdateProfileWithMapping(RankId, Name, MobileNo, DialingCode, Extension, IsRO, IsIO, IsCO, IsORO, userid, TDMId, Thumbprint);
+                    UpdateProfileWithMapping(RankId, Name, IsRO, IsIO, IsCO, IsORO, userid, TDMId, Thumbprint); //MobileNo, DialingCode, Extension,
                         //SaveUserProfile(ArmyNo, Rank, Name, Appt, Unit, $("#intoffsyes").prop("checked"), 3, $("#spnUserIdIO").html(), $("#spnUserIdGSO").html(), userid)
                    
                     
@@ -130,24 +130,17 @@ function GetALLByUnitById(param1) {
                 $("#lblPrBde").html(data.BdeName);
                 $("#lblFmnBranch").html(data.BranchName);
             }
-            
             else if (data.UnitType == 3) {
                 $(".spnDteBranch").removeClass('d-none');
                 $("#lblunittype").html("Unit is Dte/Branch");
                 $("#lblpso").html(data.PSOName);
                 $("#lblDg").html(data.SubDteName);
             }
-            
-            
-
-           
-            
-
         }
     });
 }
 
-function UpdateProfileWithMapping(RankId, Name, MobileNo, DialingCode, Extension, IsRO, IsIO, IsCO, IsORO, UserId, TDMId,Thumbprint) {
+function UpdateProfileWithMapping(RankId, Name, IsRO, IsIO, IsCO, IsORO, UserId, TDMId, Thumbprint) { // MobileNo, DialingCode, Extension,
 
     /*  alert($('#bdaymonth').val());*/
     
@@ -155,7 +148,8 @@ function UpdateProfileWithMapping(RankId, Name, MobileNo, DialingCode, Extension
         url: '/UserProfile/UpdateProfileWithMapping',
         type: 'POST',
         data: {
-             "RankId": RankId, "Name": Name, "MobileNo": MobileNo, "DialingCode": DialingCode, "Extension": Extension, "UserId": UserId, "IsRO": IsRO, "IsIO": IsIO, "IsCO": IsCO, "IsORO": IsORO, "TDMId": TDMId,"Thumbprint": Thumbprint }, //get the search string
+            "RankId": RankId, "Name": Name, "UserId": UserId, "IsRO": IsRO, "IsIO": IsIO, "IsCO": IsCO, "IsORO": IsORO, "TDMId": TDMId, "Thumbprint": Thumbprint
+        }, //get the search string , "MobileNo": MobileNo, "DialingCode": DialingCode, "Extension": Extension
         success: function (result) {
 
 
@@ -210,9 +204,9 @@ function GetByArmyNo(ArmyNo) {
                         $("#spnUserId").html(response.UserId);
                         $("#spnTDMId").html(response.TDMId);
                         $("#txtProArmy").val(response.ArmyNo);
-                        $("#txtMobileNo").val(response.MobileNo);
-                        $("#txtDialingCode").val(response.DialingCode);
-                        $("#txtExtension").val(response.Extension);
+                        //$("#txtMobileNo").val(response.MobileNo);
+                        //$("#txtDialingCode").val(response.DialingCode);
+                        //$("#txtExtension").val(response.Extension);
                         $("#Thumbprint").val(response.Thumbprint);
                       /*  $("#lblThumbPrint").html(response.Thumbprint != null ? response.Thumbprint : "-");*/
                         $("#lblicno").html(response.ArmyNo);
