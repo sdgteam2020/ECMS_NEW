@@ -394,7 +394,13 @@ function Delete(UserId) {
                     });
                 }
                 else if (response == "5") {
-                    toastr.error('This profile currently in use and cannot be deleted.');
+
+                    //toastr.error('This profile currently in use and cannot be deleted.');
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Warning...',
+                        text: 'This profile currently in use and cannot be deleted.',
+                    })
                 }
                 else if (response == Success) {
                     toastr.success('Profile deleted successfully.');
