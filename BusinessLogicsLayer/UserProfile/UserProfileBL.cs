@@ -21,10 +21,17 @@ namespace BusinessLogicsLayer.Master
     public class UserProfileBL : GenericRepositoryDL<MUserProfile>, IUserProfileBL
     {
         private readonly IUserProfileDB _iUserProfileDB;
-
         public UserProfileBL(ApplicationDbContext context, IUserProfileDB userProfileDB) : base(context)
         {
             _iUserProfileDB = userProfileDB;   
+        }
+        public async Task<DTOProfileIdCheckInFKTableResponse> ProfileIdCheckInFKTable(int UserId)
+        {
+            return await _iUserProfileDB.ProfileIdCheckInFKTable(UserId);
+        }
+        public async Task<DTOProfileManageDeleteResponse> DeleteProfile(MUserProfile mUserProfile)
+        {
+            return await _iUserProfileDB.DeleteProfile(mUserProfile);
         }
         public async Task<bool?> UpdateProfileWithMapping(DTOUpdateProfileWithMappingRequest dTO)
         {

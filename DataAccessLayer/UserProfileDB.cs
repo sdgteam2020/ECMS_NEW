@@ -9,12 +9,14 @@ using DataTransferObject.Requests;
 using DataTransferObject.Response;
 using DataTransferObject.Response.User;
 using DataTransferObject.ViewModels;
+using EntityFramework.Exceptions.Common;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
 using System.Linq;
+using static Dapper.SqlMapper;
 
 namespace DataAccessLayer
 {
@@ -28,6 +30,69 @@ namespace DataAccessLayer
             _context = context; 
             _contextDP = contextDP;
             _logger = logger;
+        }
+        public async Task<DTOProfileIdCheckInFKTableResponse> ProfileIdCheckInFKTable(int UserId)
+        {
+            try
+            {
+                string query = "Select  count(distinct tdm.Id) as TotalTDM, count(distinct th.ICardHoldId) as TotalTH, count(distinct tpo_to.Id) as TotalTPO_To, count(distinct tpo_from.Id) as TotalTPO_From, count(distinct tf_from.TrnFwdId) as TotalTFFrom, count(distinct tf_to.TrnFwdId) as TotalTFTo from UserProfile up" +
+                                " left join TrnDomainMapping tdm on tdm.UserId = up.UserId " +
+                                " left join MTrnICardHold th on th.UserId = up.UserId " +
+                                " left join TrnPostingOut tpo_to on tpo_to.ToUserID = up.UserId " +
+                                " left join TrnPostingOut tpo_from on tpo_from.FromUserID = up.UserId " +
+                                " left join TrnFwds tf_from on tf_from.FromUserId = up.UserId " +
+                                " left join TrnFwds tf_to on tf_to.ToUserId = up.UserId " +
+                                " where up.UserId =@UserId";
+
+                using (var connection = _contextDP.CreateConnection())
+                {
+                    var ret = await connection.QueryAsync<DTOProfileIdCheckInFKTableResponse>(query, new { UserId });
+                    return ret.FirstOrDefault()?? new DTOProfileIdCheckInFKTableResponse();
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "UserProfileDB->ProfileIdCheckInFKTable");
+                return new DTOProfileIdCheckInFKTableResponse();
+            }
+        }
+        public async Task<DTOProfileManageDeleteResponse> DeleteProfile(MUserProfile mUserProfile)
+        {
+            DTOProfileManageDeleteResponse response = new DTOProfileManageDeleteResponse();
+            try
+            {
+                var entity = await _context.Set<MUserProfile>().FindAsync(mUserProfile.UserId);
+                if (entity == null)
+                {
+                    response.Result = false;
+                    response.Message = "Profile not found.";
+                    return response;
+                }
+
+                _context.Set<MUserProfile>().Remove(entity);
+                await _context.SaveChangesAsync();
+
+                response.Result = true;
+                response.Message = "Profile deleted successfully.";
+            }
+            catch (ReferenceConstraintException ex) when (ex.InnerException != null)
+            {
+                var innerMessage = ex.InnerException.Message.ToLower();
+                response.Result = false;
+                response.Message = innerMessage.Contains("reference constraint") ||
+                                   innerMessage.Contains("foreign key") ||
+                                   innerMessage.Contains("constraint violation")
+                                   ? "ProfileId is used in child table."
+                                   : ex.Message;
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "UserProfileDB->DeleteProfile");
+                response.Result = false;
+                response.Message = ex.Message;
+            }
+            return response;
         }
         public async Task<bool?> FindByArmyNoWithUserId(string ArmyNo, int UserId)
         {

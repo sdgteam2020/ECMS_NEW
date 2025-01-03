@@ -341,6 +341,21 @@ namespace Web.Controllers
 
         }
 
+        [Authorize(Roles = "admin")]
+        public async Task<IActionResult> DeleteProfile(MUserProfile dTO)
+        {
+            DTOProfileIdCheckInFKTableResponse? response = await _userProfileBL.ProfileIdCheckInFKTable(dTO.UserId);
+            if (response.TotalTDM > 0 || response.TotalTH > 0 || response.TotalTPO_To > 0 || response.TotalTPO_From > 0 || response.TotalTFFrom > 0 || response.TotalTFTo > 0)
+            {
+                return Json(5);
+            }
+            else
+            {
+                await _userProfileBL.Delete(dTO);
+                return Json(KeyConstants.Success);
+            }
+        }
+
         #endregion End ProfileManage
 
         #region UserRegn
