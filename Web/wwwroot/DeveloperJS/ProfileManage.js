@@ -164,7 +164,7 @@ function BindData() {
                         else
                             listItem += "<td class='align-middle'><span><span class='badge badge-pill badge-danger' id='spnIsWithTokenApply'>No</span></span></td>";
 
-                        listItem += "<td class='align-middle'><span id='btnedit'><button type='button' class='cls-btnedit btn btn-icon btn-round btn-warning mr-1'><i class='fas fa-edit'></i></button></span></td>";
+                        listItem += "<td class='align-middle'><span id='btnedit'><button type='button' class='cls-btnedit btn btn-icon btn-round btn-warning mr-1'><i class='fas fa-edit'></i></button></span><button type='button' class='cls-btnDelete btn-icon btn-round btn-danger mr-1'><i class='fas fa-trash-alt'></i></button></td>";
 
 
                         /*    listItem += "<td class='nowrap'><button type='button' class='cls-btnSend btn btn-outline-success mr-1'>Send To Verification</button></td>";*/
@@ -252,6 +252,22 @@ function BindData() {
 
                         $("#btnProfileAdd").val("Update");
                         $("#AddNewProfile").modal('show');
+                    });
+                    $("body").on("click", ".cls-btnDelete", function () {
+
+                        Swal.fire({
+                            title: 'Are you sure?',
+                            text: "You want to Delete ",
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonColor: '#072697',
+                            cancelButtonColor: '#d33',
+                            confirmButtonText: 'Yes, Delete It!'
+                        }).then((result) => {
+                            if (result.value) {
+                                Delete($(this).closest("tr").find("#userId").html());
+                            }
+                        });
                     });
                 }
             }
@@ -356,6 +372,45 @@ function Save() {
 
                         
             }
+        }
+    });
+}
+function Delete(UserId) {
+    var userdata =
+    {
+        "UserId": UserId,
+
+    };
+    $.ajax({
+        url: '/Account/DeleteProfile',
+        contentType: 'application/x-www-form-urlencoded',
+        data: userdata,
+        type: 'POST',
+        success: function (response) {
+            if (response != "null") {
+                if (response == InternalServerError) {
+                    Swal.fire({
+                        text: errormsg
+                    });
+                }
+                else if (response == "5") {
+                    toastr.error('This profile currently in use and cannot be deleted.');
+                }
+                else if (response == Success) {
+                    toastr.success('Profile deleted successfully.');
+                    BindData();
+                }
+            }
+            else {
+                Swal.fire({
+                    text: errormsg001
+                });
+            }
+        },
+        error: function (result) {
+            Swal.fire({
+                text: errormsg002
+            });
         }
     });
 }
