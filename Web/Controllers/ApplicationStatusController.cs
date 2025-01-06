@@ -1,9 +1,6 @@
 ﻿using BusinessLogicsLayer.BasicDet;
-using BusinessLogicsLayer.Posting;
 using DataTransferObject.Response;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using System.Collections.Generic;
 
 namespace Web.Controllers
 {

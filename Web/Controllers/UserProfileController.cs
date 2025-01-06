@@ -1,5 +1,4 @@
-﻿using BusinessLogicsLayer;
-using BusinessLogicsLayer.Bde;
+﻿using BusinessLogicsLayer.Bde;
 using BusinessLogicsLayer.Master;
 using BusinessLogicsLayer.TrnMappingUnMappingLog;
 using DapperRepo.Core.Constants;

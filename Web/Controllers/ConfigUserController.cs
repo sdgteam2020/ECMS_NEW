@@ -1,24 +1,16 @@
-﻿using BusinessLogicsLayer;
-using BusinessLogicsLayer.Bde;
+﻿using BusinessLogicsLayer.Bde;
 using BusinessLogicsLayer.Master;
 using BusinessLogicsLayer.Token;
 using BusinessLogicsLayer.Unit;
 using DapperRepo.Core.Constants;
-using DataTransferObject.Domain;
 using DataTransferObject.Domain.Identitytable;
 using DataTransferObject.Domain.Model;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
-using Humanizer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using System.Drawing;
-using System.Net;
 using System.Security.Claims;
 using Web.WebHelpers;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Web.Controllers
 {

@@ -1,12 +1,5 @@
-﻿using BusinessLogicsLayer.Corps;
-using DataAccessLayer.BaseInterfaces;
+﻿using DataAccessLayer.BaseInterfaces;
 using DataAccessLayer;
-using DataTransferObject.Domain.Master;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using DataTransferObject.Domain.Identitytable;
 using DataTransferObject.Response;
 using DataTransferObject.Requests;
