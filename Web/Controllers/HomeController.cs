@@ -15,8 +15,6 @@ using DataTransferObject.Response;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.SqlServer.Management.Smo.Wmi;
-using System.Collections.Generic;
 using System.Data;
 using System.Security.Claims;
 using System.Text;

@@ -1,17 +1,12 @@
-﻿using BusinessLogicsLayer;
-using BusinessLogicsLayer.BasicDet;
-using BusinessLogicsLayer.Bde;
+﻿using BusinessLogicsLayer.Bde;
 using BusinessLogicsLayer.Posting;
 using BusinessLogicsLayer.Service;
 using DapperRepo.Core.Constants;
 using DataTransferObject.Domain.Model;
-using Humanizer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.Security.Claims;
 using System.Text;
-using static iText.StyledXmlParser.Jsoup.Select.Evaluator;
 
 namespace Web.Controllers
 {

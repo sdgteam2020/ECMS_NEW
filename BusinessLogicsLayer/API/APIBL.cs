@@ -1,23 +1,8 @@
-﻿using BusinessLogicsLayer.Helpers;
-using DataTransferObject.Requests;
+﻿using DataTransferObject.Requests;
 using DataTransferObject.Response;
-using Microsoft.SqlServer.Management.Sdk.Sfc;
-using ModernHttpClient;
-using Newtonsoft.Json.Linq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
-using System.Net.Security;
-using System.Security.Cryptography.X509Certificates;
-using System.Security.Policy;
-using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace BusinessLogicsLayer.API
 {

@@ -1,12 +1,9 @@
 ﻿using BusinessLogicsLayer.API;
 using BusinessLogicsLayer.APIData;
-using BusinessLogicsLayer.Bde;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Org.BouncyCastle.Ocsp;
-using System.Globalization;
 
 namespace Web.Controllers
 {

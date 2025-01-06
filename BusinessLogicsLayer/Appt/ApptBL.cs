@@ -1,15 +1,8 @@
-﻿using BusinessLogicsLayer.Corps;
-using DataAccessLayer.BaseInterfaces;
+﻿using DataAccessLayer.BaseInterfaces;
 using DataAccessLayer;
 using DataTransferObject.Domain.Master;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using DataTransferObject.Response;
-using BusinessLogicsLayer.Formation;
-using static System.Runtime.InteropServices.JavaScript.JSType;
+
 
 namespace BusinessLogicsLayer.Appt
 {
