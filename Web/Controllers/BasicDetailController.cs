@@ -28,6 +28,9 @@ using System.Xml.Serialization;
 using System.Xml.Linq;
 using BusinessLogicsLayer.TrnICardHold;
 using DataTransferObject.Domain.Master;
+using DataAccessLayer.Healpers;
+using Microsoft.DotNet.Scaffolding.Shared.CodeModifier.CodeChange;
+using Microsoft.SqlServer.Management.Smo.Wmi;
 
 namespace Web.Controllers
 {
@@ -59,6 +62,7 @@ namespace Web.Controllers
         private readonly IICardHoldBL _iICardHoldBL;
         private readonly IConfiguration _configuration;
         public DateTime dateTimenow;
+        private readonly string[] _expectedColumns = { "RequestId", "RankName", "FName", "LName", "ServiceNo", "ChipNo", "CardSerialNo" };
         public BasicDetailController(IConfiguration configuration,IBasicDetailBL basicDetailBL, IMapUnitBL mapUnitBL, IBasicDetailTempBL basicDetailTempBL, IService service, IMapper mapper,
             UserManager<ApplicationUser> userManager, IWebHostEnvironment hostingEnvironment, IDataProtectionProvider dataProtectionProvider,
                               DataProtectionPurposeStrings dataProtectionPurposeStrings, ILogger<BasicDetailController> logger, IStepCounterBL iStepCounterBL, 
@@ -93,125 +97,14 @@ namespace Web.Controllers
             _iTrnLoginLogBL = iTrnLoginLogBL;
             _iICardHoldBL = iICardHoldBL;
         }
-        private string GetSessionValue()
-        {
-            DtoSession? dtoSession = new DtoSession();
-            if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
-            {
-                dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
 
-            }
-            string role = dtoSession != null ? dtoSession.RoleName : "";
-            return role;
-        }
-        //[Authorize(Roles = "DteAdmin")]
-        [Authorize(Policy = "FlagICardApplPolicy")]
-        public async Task<IActionResult> SaveICardRequestHold(MTrnICardHold dTO)
-        {
-            try
-            {
-                DtoSession? sessiondata = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
-                if(sessiondata!=null)
-                {
-                    dTO.UserId = sessiondata.UserId;
-                }
+        #region Index/ApprovalForIO/View/InaccurateData/InaccurateDataView/RequestType
 
-                dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-                dTO.UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
+        public async Task<ActionResult> Index(string Id, string jcoor)
+        {
 
-                if (ModelState.IsValid)
-                {
-                    if (!await _iICardHoldBL.GetByRequestId(dTO))
-                    {
-                        if (dTO.ICardHoldId > 0)
-                        {
-                            await _iICardHoldBL.Update(dTO);
-                            return Json(KeyConstants.Save);
-                        }
-                        else
-                        {
-                            await _iICardHoldBL.Add(dTO);
-                            return Json(KeyConstants.Update);
-                        }
-                    }
-                    else
-                    {
-                        return Json(KeyConstants.Exists);
-                    }
-                }
-                else
-                {
-                    return Json(ModelState.Select(x => x.Value?.Errors).Where(y => y?.Count > 0).ToList());
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(1001, ex, "BasicDetail->SaveICardRequestHold");
-                return Json(KeyConstants.InternalServerError);
-            }
-                
-        }
-        //[Authorize(Roles = "DteAdmin")]
-        [Authorize(Policy = "FlagICardApplPolicy")]
-        public async Task<IActionResult> GetTopArmyNoFromICardRequest(string ArmyNo)
-        {
-            try
-            {
-                return Json(await basicDetailBL.GetTopArmyNoFromICardRequest(ArmyNo));
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(1001, ex, "BasicDetail->GetTopArmyNoFromICardRequest");
-                return Json(KeyConstants.InternalServerError);
-            }
-        }
-        //[Authorize(Roles = "DteAdmin")]
-        [Authorize(Policy = "FlagICardApplPolicy")]
-        public async Task<IActionResult> GetBDetailByRequestId(int RequestId)
-        {
-            try
-            {
-                return Json(await basicDetailBL.GetBDetailByRequestId(RequestId));
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(1001, ex, "BasicDetail->GetBDetailByRequestId");
-                return Json(KeyConstants.InternalServerError);
-            }
-
-        }
-        [Authorize(Policy = "ViewFlaggedICardApplPolicy")]
-        [HttpGet]
-        public async Task<IActionResult> ICardRequestHold()
-        {
-            var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var user = await userManager.FindByIdAsync(userId);
-
-            // UserManager service GetClaimsAsync method gets all the current claims of the user
-            var UserClaims = await userManager.GetClaimsAsync(user);
-            ViewBag.UserClaims = UserClaims;
-            return View();
-        }
-        [Authorize(Policy = "ViewFlaggedICardApplPolicy")]
-        [HttpPost]
-        public async Task<IActionResult> GetAllICardRequestHold()
-        {
-            try
-            {
-                return Json(await basicDetailBL.GetAllICardRequestHold());
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(1001, ex, "BasicDetail->GetAllICardRequestHold");
-                return Json(KeyConstants.InternalServerError);
-            }
-
-        }
-        public async Task<ActionResult> Index(string Id,string jcoor)
-        {
-           
             MTrnNotification noti = new MTrnNotification();
-            int retint = 0;int type = 1;
+            int retint = 0; int type = 1;
             var userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
             int stepcounter = 0;
             noti.ReciverAspNetUsersId = userId;
@@ -241,7 +134,7 @@ namespace Web.Controllers
                     return RedirectToAction("ContactUs", "Home");
                 }
             }
-            
+
             ViewBag.Id = retint;
             ViewBag.jcoor = jcoor;
 
@@ -270,7 +163,7 @@ namespace Web.Controllers
             else if (retint == 22)
             {
                 // request from DashBoard
-                ViewBag.Title = "I-Card Rejectd From IO / Superior"; type = 1; stepcounter = 7; 
+                ViewBag.Title = "I-Card Rejectd From IO / Superior"; type = 1; stepcounter = 7;
             }
             else if (retint == 2222)
             {
@@ -306,19 +199,19 @@ namespace Web.Controllers
             { ViewBag.Title = "I-Card Rejectd From HQ 54"; type = 1; stepcounter = 10; }
             else if (retint == 555)
             { ViewBag.Title = "I-Card Approved From HQ 54"; type = 2; stepcounter = 5; }
-            else if (retint == 888) 
+            else if (retint == 888)
             {
                 // request from DashBoard
-                ViewBag.Title = "Status of Appl Approved & Fwd"; type = 2; stepcounter = 888; 
+                ViewBag.Title = "Status of Appl Approved & Fwd"; type = 2; stepcounter = 888;
             }
             else if (retint == 88)
             {
                 // request from Task Board
-                ViewBag.Title = "Status of Appl Approved & Fwd"; type = 2; stepcounter = 888; 
+                ViewBag.Title = "Status of Appl Approved & Fwd"; type = 2; stepcounter = 888;
             }
             else if (retint == 777)
-            { 
-                ViewBag.Title = "I-Card Completed"; type = 2; stepcounter = 777; 
+            {
+                ViewBag.Title = "I-Card Completed"; type = 2; stepcounter = 777;
             }
             else if (retint == 77)
             {
@@ -327,7 +220,7 @@ namespace Web.Controllers
             else if (retint == 999)
             {
                 // request from DashBoard 
-                ViewBag.Title = "Appl rejected by Approver, Verifier"; type = 2; stepcounter = 999; 
+                ViewBag.Title = "Appl rejected by Approver, Verifier"; type = 2; stepcounter = 999;
             }
             else if (retint == 99)
             {
@@ -335,7 +228,7 @@ namespace Web.Controllers
                 ViewBag.Title = "Appl rejected by Approver, Verifier"; type = 2; stepcounter = 999;
             }
 
-            if (stepcounter==0)
+            if (stepcounter == 0)
             {
                 var allrecord = await Task.Run(() => basicDetailBL.GetALLForIcardSttaus(Convert.ToInt32(userId), stepcounter, type, 0));
 
@@ -343,9 +236,9 @@ namespace Web.Controllers
 
                 return View(allrecord);
             }
-           else if (string.IsNullOrEmpty(jcoor))
+            else if (string.IsNullOrEmpty(jcoor))
             {
-                var allrecord = await Task.Run(() => basicDetailBL.GetALLForIcardSttaus(Convert.ToInt32(userId), stepcounter, type,1));
+                var allrecord = await Task.Run(() => basicDetailBL.GetALLForIcardSttaus(Convert.ToInt32(userId), stepcounter, type, 1));
 
                 _logger.LogInformation(1001, "Index Page Of Basic Detail View");
                 noti.DisplayId = stepcounter;
@@ -355,15 +248,16 @@ namespace Web.Controllers
             }
             else
             {
-                var allrecord = await Task.Run(() => basicDetailBL.GetALLForIcardSttaus(Convert.ToInt32(userId), stepcounter, type,2));
+                var allrecord = await Task.Run(() => basicDetailBL.GetALLForIcardSttaus(Convert.ToInt32(userId), stepcounter, type, 2));
 
                 _logger.LogInformation(1001, "Index Page Of Basic Detail View");
-                noti.DisplayId = stepcounter+10;
+                noti.DisplayId = stepcounter + 10;
                 await _INotificationBL.UpdateRead(noti);
 
                 return View(allrecord);
             }
         }
+
         public async Task<ActionResult> ApprovalForIO(string Id, string jcoor)
         {
             string role = GetSessionValue();
@@ -417,7 +311,7 @@ namespace Web.Controllers
                 ViewBag.Id = 1;
                 type = 2;
                 noti.DisplayId = 2;
-                
+
             }
             else if (retint == 22)
             {
@@ -470,7 +364,7 @@ namespace Web.Controllers
             {
                 noti.DisplayId = stepcounter;
                 ViewBag.jcoor = 1;
-                var allrecord = await Task.Run(() => basicDetailBL.GetALLBasicDetail(Convert.ToInt32(userId), stepcounter, type,1));
+                var allrecord = await Task.Run(() => basicDetailBL.GetALLBasicDetail(Convert.ToInt32(userId), stepcounter, type, 1));
                 _logger.LogInformation(1001, "Index Page Of Basic Detail View");
                 await _INotificationBL.UpdateRead(noti);
                 return View(allrecord);
@@ -479,8 +373,8 @@ namespace Web.Controllers
             else
             {
                 ViewBag.jcoor = 0;
-                noti.DisplayId = stepcounter+10;
-                var allrecord = await Task.Run(() => basicDetailBL.GetALLBasicDetail(Convert.ToInt32(userId), stepcounter, type,2));
+                noti.DisplayId = stepcounter + 10;
+                var allrecord = await Task.Run(() => basicDetailBL.GetALLBasicDetail(Convert.ToInt32(userId), stepcounter, type, 2));
                 _logger.LogInformation(1001, "Index Page Of Basic Detail View");
                 await _INotificationBL.UpdateRead(noti);
                 return View(allrecord);
@@ -517,7 +411,7 @@ namespace Web.Controllers
             BasicDetailCrtAndUpdVM? basicDetailCrtAndUpdVM = await basicDetailBL.GetBasicDetailByRequestId(decryptedIntId);
             if (basicDetailCrtAndUpdVM != null)
             {
-                basicDetailCrtAndUpdVM.AadhaarNo=basicDetailCrtAndUpdVM.AadhaarNo.Substring((basicDetailCrtAndUpdVM.AadhaarNo.Length-4),4);
+                basicDetailCrtAndUpdVM.AadhaarNo = basicDetailCrtAndUpdVM.AadhaarNo.Substring((basicDetailCrtAndUpdVM.AadhaarNo.Length - 4), 4);
                 return View(basicDetailCrtAndUpdVM);
             }
             else
@@ -526,26 +420,7 @@ namespace Web.Controllers
                 return View("BasicDetailNotFound", decryptedId.ToString());
             }
         }
-        public async Task<IActionResult> GetICardPrintPreviewByRequestId(int RequestId)
-        {
-            BasicDetailCrtAndUpdVM? basicDetailCrtAndUpdVM = await basicDetailBL.GetBasicDetailByRequestId(RequestId);
-            if (basicDetailCrtAndUpdVM != null)
-            {
-                string sourceFolderPhy = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData");
 
-                string sourcePathPhoto = Path.Combine(sourceFolderPhy, "Photo", basicDetailCrtAndUpdVM.PhotoImagePath);
-                basicDetailCrtAndUpdVM.ExistingPhotoInBase64 = ImageEncryptAndDecrypt.DecryptImageToBase64(sourcePathPhoto);
-
-                string sourcePathSignature = Path.Combine(sourceFolderPhy, "Signature", basicDetailCrtAndUpdVM.SignatureImagePath);
-                basicDetailCrtAndUpdVM.ExistingSignatureInBase64 = ImageEncryptAndDecrypt.DecryptImageToBase64(sourcePathSignature);
-
-                return Json(basicDetailCrtAndUpdVM);
-            }
-            else 
-            {
-                return Json(null);
-            }
-        }
         [HttpGet]
         public async Task<ActionResult> InaccurateData(string Id)
         {
@@ -586,6 +461,7 @@ namespace Web.Controllers
                 return RedirectToAction("ContactUs", "Home");
             }
         }
+
         [HttpGet]
         public async Task<ActionResult> InaccurateDataView(string Id)
         {
@@ -614,7 +490,7 @@ namespace Web.Controllers
                 }
                 // Retrieve records asynchronously
                 DTOBasicDetailTempRequest? dTOBasicDetail = await basicDetailTempBL.GetALLBasicDetailTempByBasicDetailId(userIntId, decryptedIntId);
-                if (dTOBasicDetail != null) 
+                if (dTOBasicDetail != null)
                 {
                     return View(dTOBasicDetail);
                 }
@@ -624,7 +500,7 @@ namespace Web.Controllers
                     TempData.Keep("error");
                     return RedirectToAction("ContactUs", "Home");
                 }
-                
+
             }
             catch (System.Security.Cryptography.CryptographicException ex)
             {
@@ -641,12 +517,18 @@ namespace Web.Controllers
                 return RedirectToAction("ContactUs", "Home");
             }
         }
+
         [HttpGet]
         public async Task<ActionResult> RequestType()
         {
             var allrecord = await Task.Run(() => basicDetailBL.GetAllICardType());
             return View(allrecord);
         }
+
+        #endregion
+
+        #region Registration/BasicDetail/GetApiData/GetUserData
+
         [HttpGet]
         public IActionResult Registration(string Id)
         {
@@ -674,6 +556,7 @@ namespace Web.Controllers
             #endregion End Old Code
             return View();
         }
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Registration(DTORegistrationRequest model)
@@ -687,49 +570,49 @@ namespace Web.Controllers
                     if (model.SubmitType == 1)
                     {
                         BasicDetail? Data = new BasicDetail();
-                        Data =await basicDetailBL.FindServiceNo(model.ServiceNo);
+                        Data = await basicDetailBL.FindServiceNo(model.ServiceNo);
                         if (Data != null)
                         {
                             TempData["Registration"] = JsonConvert.SerializeObject(model);
                             string id = protector.Protect(Data.BasicDetailId.ToString());
-                            return RedirectToAction("BasicDetail", "BasicDetail", new { Id  = protector.Protect(Convert.ToString(Data.BasicDetailId)) });
+                            return RedirectToAction("BasicDetail", "BasicDetail", new { Id = protector.Protect(Convert.ToString(Data.BasicDetailId)) });
                         }
                         else
                         {
                             TempData["Registration"] = JsonConvert.SerializeObject(model);
-                            return RedirectToAction("BasicDetail", "BasicDetail", new { Id= protector.Protect("0") });
+                            return RedirectToAction("BasicDetail", "BasicDetail", new { Id = protector.Protect("0") });
                         }
                     }
                     else
                     {
-                            BasicDetailTemp basicDetailTemp = new BasicDetailTemp();
-                            basicDetailTemp.FName = model.FName;
-                            basicDetailTemp.LName = model.LName;
-                            basicDetailTemp.NameAsPerRecord = model.NameAsPerRecord;
-                            basicDetailTemp.ServiceNo = model.ServiceNo;
-                            basicDetailTemp.DOB = model.DOB;
-                            basicDetailTemp.DateOfCommissioning = model.DateOfCommissioning;
-                            basicDetailTemp.State = model.State;
-                            basicDetailTemp.District = model.District;
-                            basicDetailTemp.PS = model.PS;
-                            basicDetailTemp.PO = model.PO;
-                            basicDetailTemp.Tehsil = model.Tehsil;
-                            basicDetailTemp.Village = model.Village;
-                            basicDetailTemp.PinCode = model.PinCode;
-                            basicDetailTemp.Observations = model.Observations;
-                            basicDetailTemp.Updatedby = model.Updatedby;
-                            basicDetailTemp.RemarksIds = model.RemarksIds;
-                            basicDetailTemp.ApplyForId= model.ApplyForId;
-                            basicDetailTemp.RegistrationId= model.RegistrationId;
-                            basicDetailTemp.TypeId= model.TypeId;
-                            basicDetailTemp.RankId= model.RankId;
-                            basicDetailTemp.ArmedId = model.ArmedId;
-                            basicDetailTemp.UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
-                            BasicDetailTemp? temp = await basicDetailTempBL.GetByArmyNo(model.ServiceNo);
+                        BasicDetailTemp basicDetailTemp = new BasicDetailTemp();
+                        basicDetailTemp.FName = model.FName;
+                        basicDetailTemp.LName = model.LName;
+                        basicDetailTemp.NameAsPerRecord = model.NameAsPerRecord;
+                        basicDetailTemp.ServiceNo = model.ServiceNo;
+                        basicDetailTemp.DOB = model.DOB;
+                        basicDetailTemp.DateOfCommissioning = model.DateOfCommissioning;
+                        basicDetailTemp.State = model.State;
+                        basicDetailTemp.District = model.District;
+                        basicDetailTemp.PS = model.PS;
+                        basicDetailTemp.PO = model.PO;
+                        basicDetailTemp.Tehsil = model.Tehsil;
+                        basicDetailTemp.Village = model.Village;
+                        basicDetailTemp.PinCode = model.PinCode;
+                        basicDetailTemp.Observations = model.Observations;
+                        basicDetailTemp.Updatedby = model.Updatedby;
+                        basicDetailTemp.RemarksIds = model.RemarksIds;
+                        basicDetailTemp.ApplyForId = model.ApplyForId;
+                        basicDetailTemp.RegistrationId = model.RegistrationId;
+                        basicDetailTemp.TypeId = model.TypeId;
+                        basicDetailTemp.RankId = model.RankId;
+                        basicDetailTemp.ArmedId = model.ArmedId;
+                        basicDetailTemp.UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
+                        BasicDetailTemp? temp = await basicDetailTempBL.GetByArmyNo(model.ServiceNo);
 
-                        if(temp != null && temp.BasicDetailTempId>0)
+                        if (temp != null && temp.BasicDetailTempId > 0)
                         {
-                            basicDetailTemp.BasicDetailTempId= temp.BasicDetailTempId;
+                            basicDetailTemp.BasicDetailTempId = temp.BasicDetailTempId;
                             await basicDetailTempBL.Update(basicDetailTemp);
                         }
                         else
@@ -737,12 +620,12 @@ namespace Web.Controllers
                             await basicDetailTempBL.Add(basicDetailTemp);
                         }
                         TempData["success"] = "Request Submited Successfully.";
-                        return RedirectToAction("InaccurateData", "BasicDetail", new {Id = "MQ=="});
+                        return RedirectToAction("InaccurateData", "BasicDetail", new { Id = "MQ==" });
                     }
                 }
                 else
                 {
-                    var error= ModelState.Select(x => x.Value.Errors).Where(y => y.Count > 0).ToList();
+                    var error = ModelState.Select(x => x.Value.Errors).Where(y => y.Count > 0).ToList();
                     TempData["error"] = error[0][0].ErrorMessage;
                 }
             }
@@ -786,7 +669,7 @@ namespace Web.Controllers
         end:
             return View(model);
         }
-        
+
         [HttpGet]
         public async Task<ActionResult> BasicDetail(string? Id)
         {
@@ -839,7 +722,7 @@ namespace Web.Controllers
                         BasicDetailCrtAndUpdVM dTOBasicDetailCrtRequest = new BasicDetailCrtAndUpdVM();
                         dTOBasicDetailCrtRequest.FName = model.FName;
                         dTOBasicDetailCrtRequest.LName = model.LName;
-                        dTOBasicDetailCrtRequest.NameAsPerRecord= model.NameAsPerRecord;
+                        dTOBasicDetailCrtRequest.NameAsPerRecord = model.NameAsPerRecord;
                         dTOBasicDetailCrtRequest.ServiceNo = model.ServiceNo;
                         dTOBasicDetailCrtRequest.DOB = model.DOB;
                         dTOBasicDetailCrtRequest.DateOfCommissioning = model.DateOfCommissioning;
@@ -882,8 +765,8 @@ namespace Web.Controllers
 
                 if (basicDetailUpdVM != null)
                 {
-                    ViewBag.OptionsRankId = basicDetailUpdVM.RankId; 
-                    ViewBag.OptionsUnitId = basicDetailUpdVM.UnitId; 
+                    ViewBag.OptionsRankId = basicDetailUpdVM.RankId;
+                    ViewBag.OptionsUnitId = basicDetailUpdVM.UnitId;
                     ViewBag.OptionsArmedId = basicDetailUpdVM.ArmedId;
                     ViewBag.OptionsRegimentalId = basicDetailUpdVM.RegimentalId;
                     ViewBag.OptionsBloodGroupId = basicDetailUpdVM.BloodGroupId;
@@ -892,14 +775,14 @@ namespace Web.Controllers
                     basicDetailUpdVM.PermanentAddress = "Village - " + basicDetailUpdVM.Village + ", Post Office-" + basicDetailUpdVM.PO + ", Tehsil- " + basicDetailUpdVM.Tehsil + ", District- " + basicDetailUpdVM.District + ", State- " + basicDetailUpdVM.State + ", Pin Code- " + basicDetailUpdVM.PinCode;
 
                     string sourceFolderPhotoPhy = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData");
-                    string sourcePathPhoto = Path.Combine(sourceFolderPhotoPhy,"Photo", basicDetailUpdVM.PhotoImagePath);
-                    basicDetailUpdVM.ExistingPhotoInBase64 =ImageEncryptAndDecrypt.DecryptImageToBase64(sourcePathPhoto);
+                    string sourcePathPhoto = Path.Combine(sourceFolderPhotoPhy, "Photo", basicDetailUpdVM.PhotoImagePath);
+                    basicDetailUpdVM.ExistingPhotoInBase64 = ImageEncryptAndDecrypt.DecryptImageToBase64(sourcePathPhoto);
                     basicDetailUpdVM.ExistingPhotoImagePath = basicDetailUpdVM.PhotoImagePath;
 
                     string sourcePathSignature = Path.Combine(sourceFolderPhotoPhy, "Signature", basicDetailUpdVM.PhotoImagePath);
                     basicDetailUpdVM.ExistingSignatureInBase64 = ImageEncryptAndDecrypt.DecryptImageToBase64(sourcePathSignature);
                     basicDetailUpdVM.ExistingSignatureImagePath = basicDetailUpdVM.SignatureImagePath;
-                    
+
                     basicDetailUpdVM.EncryptedId = Id;
 
                     if (TempData["Registration"] != null)
@@ -942,7 +825,7 @@ namespace Web.Controllers
                 }
             }
         }
-        
+
         [HttpPost]
         public async Task<IActionResult> BasicDetail(BasicDetailCrtAndUpdVM model)
         {
@@ -1144,7 +1027,7 @@ namespace Web.Controllers
                         {
                             TempData["errors"] = string.Join("; ", errors); // Concatenate all error messages
                         }
-                        
+
                     }
                 }
                 else
@@ -1168,20 +1051,20 @@ namespace Web.Controllers
                         mTrnAddress.PinCode = model.PinCode;
 
                         MTrnIdentityInfo mTrnIdentityInfo = new MTrnIdentityInfo();
-                        mTrnIdentityInfo.IdenMark1=model.IdenMark1;
-                        mTrnIdentityInfo.IdenMark2=model.IdenMark2;
+                        mTrnIdentityInfo.IdenMark1 = model.IdenMark1;
+                        mTrnIdentityInfo.IdenMark2 = model.IdenMark2;
                         mTrnIdentityInfo.AadhaarNo = Convert.ToInt64(model.AadhaarNo);
                         mTrnIdentityInfo.BloodGroupId = model.BloodGroupId;
-                        mTrnIdentityInfo.Height=model.Height;
-                        if (model.UnitId==0)
+                        mTrnIdentityInfo.Height = model.Height;
+                        if (model.UnitId == 0)
                         {
                             ModelState.AddModelError("", "Please Enter Unit Name");
                         }
-                        if(model.ApplyForId!=1 && model.RegimentalId==0)
+                        if (model.ApplyForId != 1 && model.RegimentalId == 0)
                         {
                             ModelState.AddModelError("", "Please Select Regimental ");
                         }
-                       
+
 
                         //string sourceFolderPhotoDB = "/WriteReadData/" + "Photo";
                         //string sourceFolderPhotoPhy = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "Photo");
@@ -1191,8 +1074,8 @@ namespace Web.Controllers
 
                         if (model.Photo_ != null)
                         {
-                            string FileName = service.ProcessUploadedFile(model.Photo_, sourceFolderPhotoPhy,model.ServiceNo);
-                           
+                            string FileName = service.ProcessUploadedFile(model.Photo_, sourceFolderPhotoPhy, model.ServiceNo);
+
                             string path = Path.Combine(sourceFolderPhotoPhy, FileName);
 
                             bool result = service.IsValidHeader(path);
@@ -1276,14 +1159,14 @@ namespace Web.Controllers
                         mTrnICardRequest.StatusId = 1;
                         mTrnICardRequest.IsActive = true;
                         mTrnICardRequest.TypeId = model.TypeId;
-                        string tracid = model.DOB.Day.ToString("D2") + "" + model.DOB.Month.ToString("D2") + "" + model.DOB.Year+""+ Convert.ToInt32(model.AadhaarNo.Substring(model.AadhaarNo.Length - 3)).ToString("D4");
+                        string tracid = model.DOB.Day.ToString("D2") + "" + model.DOB.Month.ToString("D2") + "" + model.DOB.Year + "" + Convert.ToInt32(model.AadhaarNo.Substring(model.AadhaarNo.Length - 3)).ToString("D4");
                         mTrnICardRequest.TrackingId = Convert.ToInt64(tracid);
                         mTrnICardRequest.RegistrationId = model.RegistrationId;
                         mTrnICardRequest.TrnDomainMappingId = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").TrnDomainMappingId;
                         mTrnICardRequest.UpdatedOn = DateTime.Now;
                         mTrnICardRequest.Updatedby = Convert.ToInt32(userId);
                         //SessionHeplers.GetObject<string>(HttpContext.Session, "ArmyNo");
-                                                                              // mTrnICardRequest = await iTrnICardRequestBL.AddWithReturn(mTrnICardRequest);
+                        // mTrnICardRequest = await iTrnICardRequestBL.AddWithReturn(mTrnICardRequest);
 
 
                         MStepCounter mStepCounter = new MStepCounter();
@@ -1298,7 +1181,7 @@ namespace Web.Controllers
 
                         BasicDetail ret = new BasicDetail();
 
-                        DTOBasicDetailsSaveResponse ret1 = await basicDetailBL.SaveBasicDetailsWithAll(newBasicDetail, mTrnAddress, mTrnUpload,mTrnIdentityInfo, mTrnICardRequest, mStepCounter);
+                        DTOBasicDetailsSaveResponse ret1 = await basicDetailBL.SaveBasicDetailsWithAll(newBasicDetail, mTrnAddress, mTrnUpload, mTrnIdentityInfo, mTrnICardRequest, mStepCounter);
                         if (ret1.Result == true)
                         {
                             await basicDetailTempBL.UpdateByArmyNo(newBasicDetail.ServiceNo);
@@ -1314,7 +1197,7 @@ namespace Web.Controllers
                         {
                             TempData["error"] = ret1.Message;
                         }
-                       
+
                     }
                     else
                     {
@@ -1340,6 +1223,45 @@ namespace Web.Controllers
             return View(model);
 
         }
+
+        public async Task<DTOApiDataResponse> GetApiData(string ICNumber)
+        {
+            using (var client = new HttpClient())
+            {
+                //client.BaseAddress = new Uri("https://api.postalpincode.in/");
+                client.BaseAddress = new Uri("https://localhost:7002/api/Fetch/GetData/");
+                //using (HttpResponseMessage response = await client.GetAsync("ICNumber/" + ICNumber))
+                using (HttpResponseMessage response = await client.GetAsync(ICNumber))
+                {
+                    var responseContent = response.Content.ReadAsStringAsync().Result;
+                    response.EnsureSuccessStatusCode();
+                    DTOApiDataResponse? responseData = JsonConvert.DeserializeObject<DTOApiDataResponse>(responseContent);
+                    return responseData;
+                }
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> GetUserData(string ICNumber)
+        {
+            using (var client = new HttpClient())
+            {
+                //client.BaseAddress = new Uri("https://api.postalpincode.in/");
+                client.BaseAddress = new Uri("https://localhost:7002/api/Fetch/Get/");
+                //using (HttpResponseMessage response = await client.GetAsync("ICNumber/" + ICNumber))
+                using (HttpResponseMessage response = await client.GetAsync(ICNumber))
+                {
+                    var responseContent = response.Content.ReadAsStringAsync().Result;
+                    response.EnsureSuccessStatusCode();
+                    var responseData = JsonConvert.DeserializeObject(responseContent);
+                    return Ok(responseData);
+                }
+            }
+        }
+
+        #endregion
+
+        #region DecryptZipFile
 
         [HttpGet]
         public Task<ActionResult> DecryptZipFile(string jcoor)
@@ -1372,6 +1294,7 @@ namespace Web.Controllers
                 return Task.FromResult<ActionResult>(RedirectToAction("ContactUs", "Home"));
             }
         }
+        
         [HttpPost]
         public async Task<IActionResult> DecryptZipFileData(DTODecryptZipFileRequest model)
         {
@@ -1414,68 +1337,180 @@ namespace Web.Controllers
                 _logger.LogError(1001, ex, "BasicDetail->DecryptZipFile");
                 return Json(KeyConstants.InternalServerError);
             }
-        //end:
-        //    return View(model);
+            //end:
+            //    return View(model);
         }
+        
+        #endregion
 
-        [HttpPost]
-        public async Task<JsonResult> GetRegimentalListByArmedId(byte ArmedId)
+        #region CSVFileUpload
+        [HttpGet]
+        public Task<ActionResult> CSVFileUpload(string jcoor)
         {
-            var regimentals = await service.GetRegimentalListByArmedId(ArmedId);
-            return Json(regimentals);
+            if (string.IsNullOrEmpty(jcoor) || !service.IsValidBase64(jcoor))
+            {
+                TempData["error"] = "Invalid Input.";
+                TempData.Keep("error");
+                return Task.FromResult<ActionResult>(RedirectToAction("ContactUs", "Home"));
+            }
+            try
+            {
+                var base64EncodedBytes = Convert.FromBase64String(jcoor);
+                var decodedString = Encoding.UTF8.GetString(base64EncodedBytes);
+                ViewBag.jcoor = decodedString;
+                return Task.FromResult<ActionResult>(View());
+            }
+            catch (FormatException ex)
+            {
+                _logger.LogError(1001, ex, message: "Invalid Base64 string for Id: {jcoor}", jcoor);
+                TempData["error"] = "Invalid Input.";
+                TempData.Keep("error");
+                return Task.FromResult<ActionResult>(RedirectToAction("ContactUs", "Home"));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "BasicDetailsController=>CSVFileUpload.");
+                TempData["error"] = "Invalid Input.";
+                TempData.Keep("error");
+                return Task.FromResult<ActionResult>(RedirectToAction("ContactUs", "Home"));
+            }
         }
         [HttpPost]
-        public async Task<IActionResult> GetROListByArmedId(byte ArmedId)
+        public IActionResult UploadCsv(DTOCSVFileRequest model)
         {
-            List<MRecordOffice>? mRecordOffices = await basicDetailBL.GetROListByArmedId(ArmedId);
-            if (mRecordOffices != null)
+            if (model.CSVFile == null || model.CSVFile.Length == 0)
             {
-                return Ok(mRecordOffices);
+                return BadRequest(new { message = "File is not uploaded or is empty." });
             }
-            else 
-            {
-                return Ok(null);
-            }
-        }
 
-        [HttpPost]
-        public async Task<IActionResult> GetUserData(string ICNumber)
-        {
-            using (var client = new HttpClient())
+            var records = new List<object>();
+
+            try
             {
-                //client.BaseAddress = new Uri("https://api.postalpincode.in/");
-                client.BaseAddress = new Uri("https://localhost:7002/api/Fetch/Get/");
-                //using (HttpResponseMessage response = await client.GetAsync("ICNumber/" + ICNumber))
-                using (HttpResponseMessage response = await client.GetAsync(ICNumber))
+                using (var stream = new StreamReader(model.CSVFile.OpenReadStream()))
                 {
-                    var responseContent = response.Content.ReadAsStringAsync().Result;
-                    response.EnsureSuccessStatusCode();
-                    var responseData = JsonConvert.DeserializeObject(responseContent);
-                    return Ok(responseData);
+                    string? headerLine = stream.ReadLine();
+                    if (headerLine == null)
+                    {
+                        return BadRequest(new { message = "File is empty or missing headers." });
+                    }
+
+                    var headers = headerLine.Split(',');
+                    var headerMap = GetHeaderMap(headers);
+
+                    if (headerMap == null)
+                    {
+                        return BadRequest(new
+                        {
+                            message = $"Invalid column names. Expected: {string.Join(", ", _expectedColumns)}"
+                        });
+                    }
+
+                    string? line;
+                    while ((line = stream.ReadLine()) != null)
+                    {
+                        var values = line.Split(',');
+
+                        var record = new
+                        {
+                            ServiceNo = values[headerMap["ServiceNo"]],
+                            RankName = values[headerMap["RankName"]],
+                            FName = values[headerMap["FName"]],
+                            LName = values[headerMap["LName"]],
+                            RequestId = int.TryParse(values[headerMap["RequestId"]], out var requestId) ? requestId : -1,
+                            ChipNo = values[headerMap["ChipNo"]],
+                            CardSerialNo = values[headerMap["CardSerialNo"]],
+                            IsValid = true
+                        };
+
+                        if (record.RequestId == -1 || record.ChipNo.Length != 12 || !long.TryParse(record.ChipNo, out _))
+                        {
+                            records.Add(new
+                            {
+                                record.RequestId,
+                                record.ServiceNo,
+                                record.RankName,
+                                record.FName,
+                                record.LName,
+                                record.ChipNo,
+                                record.CardSerialNo,
+                                IsValid = false
+                            });
+                        }
+                        else
+                        {
+                            records.Add(record);
+                        }
+                    }
                 }
             }
-        }    
-        public async Task<IActionResult> UpdateStepCounter(MStepCounter mStepCounter)
+            catch (Exception ex)
+            {
+                // Return a JSON response with status code 500 and detailed error message
+                return StatusCode(500, new { message = $"An error occurred while processing the file: {ex.Message}" });
+            }
+
+            return Ok(records);
+        }
+
+        private Dictionary<string, int>? GetHeaderMap(string[] headers)
+        {
+            var headerMap = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+            for (int i = 0; i < headers.Length; i++)
+            {
+                headerMap[headers[i]] = i;
+            }
+
+            if (!_expectedColumns.All(expected => headerMap.ContainsKey(expected)))
+            {
+                return null;
+            }
+
+            return headerMap;
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> UploadChipAndSerial([FromBody] List<DTOUploadChipAndSerialRequest> data)
         {
             try
             {
-                DtoSession sessiondata = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
-                DTOMapUnitResponse dTOMapUnitResponse = await mapUnitBL.GetALLByUnitMapId(sessiondata.UnitId);
+                if (ModelState.IsValid)
+                {
 
-                mStepCounter.UpdatedOn = DateTime.Now;
-                mStepCounter.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-                mStepCounter.UnitName = dTOMapUnitResponse.UnitName;
-                await iStepCounterBL.UpdateStepCounter(mStepCounter);
+                    bool? result = (bool) await iTrnFwnBL.SaveInternalFwd(data);
+                    if (result != null)
+                    {
+                        if (result == true)
+                        {
+                            return Json(true);
+                        }
+                        else
+                        {
+                            return Json(false);
+                        }
+                    }
+                    else
+                    {
+                        return Json(null);
+                    }
 
+                }
+                else
+                {
+                    return Json(ModelState.Select(x => x.Value?.Errors).Where(y => y?.Count > 0).ToList());
+                }
 
             }
             catch (Exception ex)
             {
-                _logger.LogError(1001, ex, "BasicDetails=>IcardFwd.");
+                _logger.LogError(1001, ex, "BasicDetails=>UploadChipAndSerial");
                 return BadRequest();
             }
-            return Ok(mStepCounter);
         }
+
+        #endregion
+
+        #region Fwd/Rejecte/InternalFwd/UpdateStepCounter/SaveICardRequestHold/DataExport/DataDigitalXmlSign
 
         //[Authorize(Roles = "Coordinator")]
         [Authorize(Policy = "InternalWkDistrPolicy")]
@@ -1524,18 +1559,19 @@ namespace Web.Controllers
                 return BadRequest();
             }
         }
+        
         public async Task<IActionResult> IcardFwd(MTrnFwd data)
         {
             try
             {
-                DtoSession sessiondata=SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
-                data.FromUserId= sessiondata.UserId;
-                data.UnitId= sessiondata.UnitId;
-                data.FromAspNetUsersId= Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                DtoSession sessiondata = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+                data.FromUserId = sessiondata.UserId;
+                data.UnitId = sessiondata.UnitId;
+                data.FromAspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                 data.UpdatedOn = DateTime.Now;
                 data.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                 data.IsActive = true;
-                data.TypeId= Convert.ToByte(data.TypeId);
+                data.TypeId = Convert.ToByte(data.TypeId);
                 //if (data.TrnFwdId > 0)
                 //{
                 //    await iTrnFwnBL.UpdateFieldBYTrnFwdId(data.TrnFwdId);
@@ -1557,6 +1593,7 @@ namespace Web.Controllers
                 return BadRequest();
             }
         }
+        
         public async Task<IActionResult> IcardRejecte(MTrnFwd data)
         {
             try
@@ -1568,10 +1605,11 @@ namespace Web.Controllers
                 data.UpdatedOn = DateTime.Now;
                 data.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                 data.IsActive = true;
-                data.TypeId =Convert.ToByte(1);
+                data.TypeId = Convert.ToByte(1);
                 TrnDomainMapping Domain = new TrnDomainMapping();
-                Domain =await iDomainMapBL.GetByRequestId(data.RequestId);
-                if (Domain != null) {
+                Domain = await iDomainMapBL.GetByRequestId(data.RequestId);
+                if (Domain != null)
+                {
                     data.ToAspNetUsersId = Domain.AspNetUsersId;
                     data.ToUserId = Convert.ToInt32(Domain.UserId);
 
@@ -1588,9 +1626,9 @@ namespace Web.Controllers
                         {
                             dataret.XmlFiles = "";
                         }
-                    
-                   await _iTrnLoginLogBL.XmlFileDigitalSign(dataret);
-                    return Ok(data);
+
+                        await _iTrnLoginLogBL.XmlFileDigitalSign(dataret);
+                        return Ok(data);
                     }
                     else
                     {
@@ -1614,125 +1652,77 @@ namespace Web.Controllers
 
 
         }
-        [HttpPost]
-        public async Task<IActionResult> GetData(string ICNumber)
+        
+        public async Task<IActionResult> UpdateStepCounter(MStepCounter mStepCounter)
         {
-            DTOApiDataResponse dTOApiDataResponse = new DTOApiDataResponse();
-            if (ICNumber!=null)
+            try
             {
-                BasicDetail? basicDetail = await basicDetailBL.FindServiceNo(ICNumber);
-                if(basicDetail!=null) 
+                DtoSession sessiondata = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+                DTOMapUnitResponse dTOMapUnitResponse = await mapUnitBL.GetALLByUnitMapId(sessiondata.UnitId);
+
+                mStepCounter.UpdatedOn = DateTime.Now;
+                mStepCounter.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                mStepCounter.UnitName = dTOMapUnitResponse.UnitName;
+                await iStepCounterBL.UpdateStepCounter(mStepCounter);
+
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "BasicDetails=>IcardFwd.");
+                return BadRequest();
+            }
+            return Ok(mStepCounter);
+        }
+        
+        //[Authorize(Roles = "DteAdmin")]
+        [Authorize(Policy = "FlagICardApplPolicy")]
+        public async Task<IActionResult> SaveICardRequestHold(MTrnICardHold dTO)
+        {
+            try
+            {
+                DtoSession? sessiondata = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+                if (sessiondata != null)
                 {
-                    bool result = await iTrnICardRequestBL.GetRequestPending(basicDetail.BasicDetailId);
-                    if (result)
+                    dTO.UserId = sessiondata.UserId;
+                }
+
+                dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                dTO.UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
+
+                if (ModelState.IsValid)
+                {
+                    if (!await _iICardHoldBL.GetByRequestId(dTO))
                     {
-                       
-                        dTOApiDataResponse.Status = false;
-                        dTOApiDataResponse.Message = "Your I-Card is under process. Please wait.";
-                        return Ok(dTOApiDataResponse);
+                        if (dTO.ICardHoldId > 0)
+                        {
+                            await _iICardHoldBL.Update(dTO);
+                            return Json(KeyConstants.Save);
+                        }
+                        else
+                        {
+                            await _iICardHoldBL.Add(dTO);
+                            return Json(KeyConstants.Update);
+                        }
                     }
                     else
                     {
-                        dTOApiDataResponse.Status = true;
-                       
-                        return Ok(dTOApiDataResponse);
+                        return Json(KeyConstants.Exists);
                     }
                 }
                 else
                 {
-                    dTOApiDataResponse.Status = true;
-
-                    return Ok(dTOApiDataResponse);
+                    return Json(ModelState.Select(x => x.Value?.Errors).Where(y => y?.Count > 0).ToList());
                 }
             }
-            else
+            catch (Exception ex)
             {
-                
-                dTOApiDataResponse.Status = false;
-                dTOApiDataResponse.Message = "Service no required.";
-                return Ok(dTOApiDataResponse);
+                _logger.LogError(1001, ex, "BasicDetail->SaveICardRequestHold");
+                return Json(KeyConstants.InternalServerError);
             }
+
         }
 
-        [HttpPost]
-        public async Task<IActionResult> SearchAllServiceNo(string ICNumber)
-        {
-            try
-            {
-                DTOApiDataResponse dTOApiDataResponse = new DTOApiDataResponse();
-                if (ICNumber != null)
-                {
-                    int AspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-                    var Ret = await basicDetailBL.SearchAllServiceNo(ICNumber, AspNetUsersId);
-                    if (Ret != null)
-                    {
-                        return Ok(Ret);
-                    }
-
-                }
-                return BadRequest();
-            }
-            catch(Exception ex) 
-            {
-                _logger.LogError(1001, ex, "BasicDetailController=>SearchAllServiceNo.");
-                return BadRequest();
-            }
-        }
-        public async Task<DTOApiDataResponse> GetApiData(string ICNumber)
-        {
-            using (var client = new HttpClient())
-            {
-                //client.BaseAddress = new Uri("https://api.postalpincode.in/");
-                client.BaseAddress = new Uri("https://localhost:7002/api/Fetch/GetData/");
-                //using (HttpResponseMessage response = await client.GetAsync("ICNumber/" + ICNumber))
-                using (HttpResponseMessage response = await client.GetAsync(ICNumber))
-                {
-                    var responseContent = response.Content.ReadAsStringAsync().Result;
-                    response.EnsureSuccessStatusCode();
-                    DTOApiDataResponse? responseData = JsonConvert.DeserializeObject<DTOApiDataResponse>(responseContent);
-                    return responseData;
-                }
-            }
-        }
-       
-        
-        public async Task<IActionResult> GetBasicDetailByRequestId(int RequestId)
-        {
-            BasicDetailCrtAndUpdVM? basicDetailCrtAndUpdVM = await basicDetailBL.GetBasicDetailByRequestId(RequestId);
-            if (basicDetailCrtAndUpdVM != null)
-            {
-                string sourceFolderPhy = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData");
-                
-                string sourcePathPhoto = Path.Combine(sourceFolderPhy, "Photo", basicDetailCrtAndUpdVM.PhotoImagePath);
-                basicDetailCrtAndUpdVM.ExistingPhotoInBase64 = ImageEncryptAndDecrypt.DecryptImageToBase64(sourcePathPhoto);
-
-                string sourcePathSignature = Path.Combine(sourceFolderPhy, "Signature", basicDetailCrtAndUpdVM.SignatureImagePath);
-                basicDetailCrtAndUpdVM.ExistingSignatureInBase64 = ImageEncryptAndDecrypt.DecryptImageToBase64(sourcePathSignature);
-                return Json(basicDetailCrtAndUpdVM);
-            }
-            else
-            {
-                return Json(null);
-            }
-        }
-        public async Task<IActionResult> GetRequestHistory(int RequestId)
-        {
-            List<ICardHistoryResponse>? cardHistoryResponses = await basicDetailBL.ICardHistory(RequestId);
-            if (cardHistoryResponses !=null)
-            {
-                return Json(cardHistoryResponses);
-            }
-            else
-            {
-                return Json(null);
-            }
-            
-        }
-        
-        public async Task<IActionResult> GetRemarks(DTORemarksRequest Data)
-        {
-            return Json(await _IMasterBL.GetRemarksByTypeId(Data));
-        }
         //[Authorize(Roles = "AFSACUser")]
         [Authorize(Policy = "ICardExportDataPolicy")]
         public async Task<IActionResult> DataExport(DTODataExportRequest Data)
@@ -1762,6 +1752,10 @@ namespace Web.Controllers
                             var jsonString = JsonConvert.SerializeObject(lst);
                             var jsonde = JsonConvert.DeserializeObject(jsonString);
                             System.IO.File.WriteAllText(recofffolder + "/Data.json", jsonString);
+
+                            CsvService csvService = new CsvService();
+                            string csvData = csvService.GenerateCsv(lst);
+                            System.IO.File.WriteAllText(recofffolder + "/Data.csv", csvData);
                         }
 
                         lst.Clear();
@@ -1773,17 +1767,17 @@ namespace Web.Controllers
 
                     //System.IO.File.Copy(Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "Photo") + "/" + data.PhotoImagePath, recoffphotos + "/" + data.ServiceNo + ".png", true);
                     //System.IO.File.Copy(Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "Signature") + "/" + data.SignatureImagePath, recoffsing + "/" + data.ServiceNo + ".png", true);
-                    string temp= data.PhotoImagePath.Replace(".enc",string.Empty);
+                    string temp = data.PhotoImagePath.Replace(".enc", string.Empty);
                     string[] parts = temp.Split('.');
                     string extenstionImage = parts[parts.Length - 1];
 
                     temp = data.SignatureImagePath.Replace(".enc", string.Empty);
                     parts = temp.Split('.');
-                    string extenstionSign= parts[parts.Length - 1];
+                    string extenstionSign = parts[parts.Length - 1];
 
-                    ImageEncryptAndDecrypt.DecryptImageFile(Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "Photo", data.PhotoImagePath),recoffphotos + "/" + data.ServiceNo + "."+ extenstionImage);
-                    ImageEncryptAndDecrypt.DecryptImageFile(Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "Signature", data.SignatureImagePath), recoffsing +"/" + data.ServiceNo + "."+ extenstionSign);
-                    
+                    ImageEncryptAndDecrypt.DecryptImageFile(Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "Photo", data.PhotoImagePath), recoffphotos + "/" + data.ServiceNo + "." + extenstionImage);
+                    ImageEncryptAndDecrypt.DecryptImageFile(Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "Signature", data.SignatureImagePath), recoffsing + "/" + data.ServiceNo + "." + extenstionSign);
+
                     lst.Add(data);
                     recoff = data.RecordOfficeId;
                     if (count == retdata.Count())
@@ -1792,16 +1786,20 @@ namespace Web.Controllers
                         var jsonde = JsonConvert.DeserializeObject(jsonString);
                         System.IO.File.WriteAllText(recofffolder + "/Data.json", jsonString);
 
+                        CsvService csvService = new CsvService();
+                        string csvData = csvService.GenerateCsv(lst);
+                        System.IO.File.WriteAllText(recofffolder + "/Data.csv", csvData);
+
                     }
-                    if(count==1)
-                    arryRequestId = data.RequestId+"";
+                    if (count == 1)
+                        arryRequestId = data.RequestId + "";
                     else
-                     arryRequestId = arryRequestId + "," + data.RequestId;
+                        arryRequestId = arryRequestId + "," + data.RequestId;
 
                 }
 
                 //CreateZipFromFolder(sourceFolderPhotoPhy, sourceFolderPhotoPhy + ".zip");
-                
+
                 if (Data.DataExportType == 1)
                 {
                     string sourceFolder = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "ExportAFSACCell", "Temp");
@@ -1812,9 +1810,9 @@ namespace Web.Controllers
                         Directory.CreateDirectory(sourceFolder);
                     }
 
-                    string tempZipFilePath = Convert.ToString(Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "ExportAFSACCell","Temp"));
+                    string tempZipFilePath = Convert.ToString(Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "ExportAFSACCell", "Temp"));
 
-                    ZipEncrypt.EncryptAndZip(sourceFolderPhotoPhy, sourceFolderPhotoPhy+ ".zip", tempZipFilePath, Data.publicKey); // Encrypt and zip folder
+                    ZipEncrypt.EncryptAndZip(sourceFolderPhotoPhy, sourceFolderPhotoPhy + ".zip", tempZipFilePath, Data.publicKey); // Encrypt and zip folder
                 }
                 else
                 {
@@ -1831,7 +1829,7 @@ namespace Web.Controllers
                 dTODataExported.AspNetUsersId = userId;
                 dTODataExported.UserId = Convert.ToInt32(dtoSession.UserId);
                 dTODataExported.IP = HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
-                dTODataExported.CreatedBy = dtoSession.RankName + " " + dtoSession.Name + " (" + dtoSession.ICNO+")";
+                dTODataExported.CreatedBy = dtoSession.RankName + " " + dtoSession.Name + " (" + dtoSession.ICNO + ")";
                 dTODataExported.CreatedOn = DateTime.Now;
                 dTODataExported.RequestId = arryRequestId;
                 await _iTrnLoginLogBL.AddDataExport(dTODataExported);
@@ -1846,6 +1844,216 @@ namespace Web.Controllers
                 return Json(KeyConstants.InternalServerError);
             }
         }
+
+        public async Task<IActionResult> DataDigitalXmlSign(DTODataExportRequest Data)
+        {
+            try
+            {
+                string xml = "";
+                DTOXmlFilesFwdLogRequest ret = new DTOXmlFilesFwdLogRequest();
+                var xmldata = await _iTrnLoginLogBL.XmlFileDigitalSignFromData(Data.Ids);
+                var lastrec = await basicDetailBL.ICardFwdLastRec(Data.Ids[0]);
+                XmlSerializer serializer = new XmlSerializer(typeof(DTOFwdLastRecForDigitalSign));
+                using (StringWriter writer = new StringWriter())
+                {
+                    serializer.Serialize(writer, lastrec);
+                    xml = writer.ToString();
+
+                }
+
+
+                if (xmldata != null)
+                {
+                    if (xmldata.XmlFiles != "")
+                    {
+                        ret.Id = xmldata.Id;
+                        XDocument xDoc1 = XDocument.Parse(xmldata.XmlFiles);
+                        XDocument xDoc2 = XDocument.Parse(xml);
+                        var newDetails = new XElement("RecForDigitalSign");
+                        //  newDetails.Add(newDetails);
+
+                        foreach (XElement element in xDoc2.Root.Elements())
+                        {
+                            newDetails.Add(element);
+                            // xDoc1.Root.Add(element);
+                        }
+                        xDoc1.Root.Add(newDetails);
+                        ret.XmlFiles = xDoc1.ToString();// xmldata.XmlFiles;
+                        return Json(ret);
+                    }
+                    else
+                    {
+                        var retdata = await basicDetailBL.GetDataDigitalXmlSign(Data);
+                        var jsonString = JsonConvert.SerializeObject(retdata);
+                        var jsonde = JsonConvert.DeserializeObject(jsonString);
+                        DTOXmlFilesForUpdate dTOXmlFilesForUpdate = new DTOXmlFilesForUpdate();
+                        dTOXmlFilesForUpdate.Id = xmldata.Id;
+                        dTOXmlFilesForUpdate.jsonfile = jsonde;
+                        return Json(dTOXmlFilesForUpdate);
+                    }
+
+                }
+                else
+                {
+                    var retdata = await basicDetailBL.GetDataDigitalXmlSign(Data);
+
+                    var jsonString = JsonConvert.SerializeObject(retdata);
+                    var jsonde = JsonConvert.DeserializeObject(jsonString);
+
+
+                    return Json(jsonde);
+                }
+
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "BasicDetails=>DataDigitalXmlSign.");
+                return RedirectToAction("Error", "Error");
+            }
+        }
+
+        #endregion
+
+        #region miscellaneous
+
+        private string GetSessionValue()
+        {
+            DtoSession? dtoSession = new DtoSession();
+            if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
+            {
+                dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+
+            }
+            string role = dtoSession != null ? dtoSession.RoleName : "";
+            return role;
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> GetData(string ICNumber)
+        {
+            DTOApiDataResponse dTOApiDataResponse = new DTOApiDataResponse();
+            if (ICNumber != null)
+            {
+                BasicDetail? basicDetail = await basicDetailBL.FindServiceNo(ICNumber);
+                if (basicDetail != null)
+                {
+                    bool result = await iTrnICardRequestBL.GetRequestPending(basicDetail.BasicDetailId);
+                    if (result)
+                    {
+
+                        dTOApiDataResponse.Status = false;
+                        dTOApiDataResponse.Message = "Your I-Card is under process. Please wait.";
+                        return Ok(dTOApiDataResponse);
+                    }
+                    else
+                    {
+                        dTOApiDataResponse.Status = true;
+
+                        return Ok(dTOApiDataResponse);
+                    }
+                }
+                else
+                {
+                    dTOApiDataResponse.Status = true;
+
+                    return Ok(dTOApiDataResponse);
+                }
+            }
+            else
+            {
+
+                dTOApiDataResponse.Status = false;
+                dTOApiDataResponse.Message = "Service no required.";
+                return Ok(dTOApiDataResponse);
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SearchAllServiceNo(string ICNumber)
+        {
+            try
+            {
+                DTOApiDataResponse dTOApiDataResponse = new DTOApiDataResponse();
+                if (ICNumber != null)
+                {
+                    int AspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                    var Ret = await basicDetailBL.SearchAllServiceNo(ICNumber, AspNetUsersId);
+                    if (Ret != null)
+                    {
+                        return Ok(Ret);
+                    }
+
+                }
+                return BadRequest();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "BasicDetailController=>SearchAllServiceNo.");
+                return BadRequest();
+            }
+        }
+
+        public async Task<IActionResult> GetBasicDetailByRequestId(int RequestId)
+        {
+            BasicDetailCrtAndUpdVM? basicDetailCrtAndUpdVM = await basicDetailBL.GetBasicDetailByRequestId(RequestId);
+            if (basicDetailCrtAndUpdVM != null)
+            {
+                string sourceFolderPhy = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData");
+
+                string sourcePathPhoto = Path.Combine(sourceFolderPhy, "Photo", basicDetailCrtAndUpdVM.PhotoImagePath);
+                basicDetailCrtAndUpdVM.ExistingPhotoInBase64 = ImageEncryptAndDecrypt.DecryptImageToBase64(sourcePathPhoto);
+
+                string sourcePathSignature = Path.Combine(sourceFolderPhy, "Signature", basicDetailCrtAndUpdVM.SignatureImagePath);
+                basicDetailCrtAndUpdVM.ExistingSignatureInBase64 = ImageEncryptAndDecrypt.DecryptImageToBase64(sourcePathSignature);
+                return Json(basicDetailCrtAndUpdVM);
+            }
+            else
+            {
+                return Json(null);
+            }
+        }
+        
+        public async Task<IActionResult> GetRequestHistory(int RequestId)
+        {
+            List<ICardHistoryResponse>? cardHistoryResponses = await basicDetailBL.ICardHistory(RequestId);
+            if (cardHistoryResponses != null)
+            {
+                return Json(cardHistoryResponses);
+            }
+            else
+            {
+                return Json(null);
+            }
+
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> GetRegimentalListByArmedId(byte ArmedId)
+        {
+            var regimentals = await service.GetRegimentalListByArmedId(ArmedId);
+            return Json(regimentals);
+        }
+        
+        [HttpPost]
+        public async Task<IActionResult> GetROListByArmedId(byte ArmedId)
+        {
+            List<MRecordOffice>? mRecordOffices = await basicDetailBL.GetROListByArmedId(ArmedId);
+            if (mRecordOffices != null)
+            {
+                return Ok(mRecordOffices);
+            }
+            else
+            {
+                return Ok(null);
+            }
+        }
+
+        public async Task<IActionResult> GetRemarks(DTORemarksRequest Data)
+        {
+            return Json(await _IMasterBL.GetRemarksByTypeId(Data));
+        }
+
         public async Task<IActionResult> CreateCSV(DTOCSVExportRequest model)
         {
             try
@@ -1866,9 +2074,9 @@ namespace Web.Controllers
                     //Ids is RequestId.
                     model.IdsTypeRequestIdOrTrnFwdId = false;
                 }
-                
+
                 string? csvData = await basicDetailBL.GetCSVString(model);
-                if(csvData != null)
+                if (csvData != null)
                 {
                     string TempFileName = Guid.NewGuid().ToString();
                     string sourceFolder = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "CSVFile");
@@ -1879,10 +2087,10 @@ namespace Web.Controllers
                         Directory.CreateDirectory(sourceFolder);
                     }
 
-                    System.IO.File.WriteAllText(sourceFolder + "/"+ TempFileName + ".csv", csvData);
+                    System.IO.File.WriteAllText(sourceFolder + "/" + TempFileName + ".csv", csvData);
                     return Json(TempFileName);
                 }
-                else 
+                else
                 {
                     return Json(KeyConstants.InternalServerError);
                 }
@@ -1893,85 +2101,91 @@ namespace Web.Controllers
                 return Json(KeyConstants.InternalServerError);
             }
         }
-        public void CreateZipFromFolder(string sourceFolder, string zipFilePath)
+
+        public async Task<IActionResult> GetICardPrintPreviewByRequestId(int RequestId)
         {
-            if (Directory.Exists(sourceFolder))
+            BasicDetailCrtAndUpdVM? basicDetailCrtAndUpdVM = await basicDetailBL.GetBasicDetailByRequestId(RequestId);
+            if (basicDetailCrtAndUpdVM != null)
             {
-                ZipFile.CreateFromDirectory(sourceFolder, zipFilePath, CompressionLevel.Fastest, true);
+                string sourceFolderPhy = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData");
+
+                string sourcePathPhoto = Path.Combine(sourceFolderPhy, "Photo", basicDetailCrtAndUpdVM.PhotoImagePath);
+                basicDetailCrtAndUpdVM.ExistingPhotoInBase64 = ImageEncryptAndDecrypt.DecryptImageToBase64(sourcePathPhoto);
+
+                string sourcePathSignature = Path.Combine(sourceFolderPhy, "Signature", basicDetailCrtAndUpdVM.SignatureImagePath);
+                basicDetailCrtAndUpdVM.ExistingSignatureInBase64 = ImageEncryptAndDecrypt.DecryptImageToBase64(sourcePathSignature);
+
+                return Json(basicDetailCrtAndUpdVM);
             }
             else
             {
-                throw new DirectoryNotFoundException($"Source folder not found: {sourceFolder}");
+                return Json(null);
             }
         }
-     
-        public async Task<IActionResult> DataDigitalXmlSign(DTODataExportRequest Data)
+
+        //[Authorize(Roles = "DteAdmin")]
+        [Authorize(Policy = "FlagICardApplPolicy")]
+        public async Task<IActionResult> GetBDetailByRequestId(int RequestId)
         {
             try
             {
-                string xml = "";
-                DTOXmlFilesFwdLogRequest ret=new DTOXmlFilesFwdLogRequest();
-                var xmldata= await _iTrnLoginLogBL.XmlFileDigitalSignFromData(Data.Ids);
-                var lastrec=await basicDetailBL.ICardFwdLastRec(Data.Ids[0]);
-                XmlSerializer serializer = new XmlSerializer(typeof(DTOFwdLastRecForDigitalSign));
-                using (StringWriter writer = new StringWriter())
-                {
-                    serializer.Serialize(writer, lastrec);
-                    xml = writer.ToString();
-
-                }
-
-
-                if (xmldata != null )
-                {
-                    if(xmldata.XmlFiles!="")
-                    {
-                        ret.Id = xmldata.Id;
-                        XDocument xDoc1 = XDocument.Parse(xmldata.XmlFiles);
-                        XDocument xDoc2 = XDocument.Parse(xml);
-                        var newDetails = new XElement("RecForDigitalSign");
-                      //  newDetails.Add(newDetails);
-                       
-                        foreach (XElement element in xDoc2.Root.Elements())
-                        {
-                            newDetails.Add(element);
-                           // xDoc1.Root.Add(element);
-                        }
-                        xDoc1.Root.Add(newDetails);
-                        ret.XmlFiles = xDoc1.ToString();// xmldata.XmlFiles;
-                        return Json(ret);
-                    }
-                    else
-                    {
-                        var retdata = await basicDetailBL.GetDataDigitalXmlSign(Data);
-                        var jsonString = JsonConvert.SerializeObject(retdata);
-                        var jsonde = JsonConvert.DeserializeObject(jsonString);
-                        DTOXmlFilesForUpdate dTOXmlFilesForUpdate = new DTOXmlFilesForUpdate();
-                        dTOXmlFilesForUpdate.Id=xmldata.Id;
-                        dTOXmlFilesForUpdate.jsonfile = jsonde;
-                        return Json(dTOXmlFilesForUpdate);
-                    }
-
-                }
-                else
-                {
-                    var retdata = await basicDetailBL.GetDataDigitalXmlSign(Data);
-
-                    var jsonString = JsonConvert.SerializeObject(retdata);
-                    var jsonde = JsonConvert.DeserializeObject(jsonString);
-
-                   
-                    return Json(jsonde);
-                }
-
-
+                return Json(await basicDetailBL.GetBDetailByRequestId(RequestId));
             }
             catch (Exception ex)
             {
-                _logger.LogError(1001, ex, "BasicDetails=>DataDigitalXmlSign.");
-                return RedirectToAction("Error", "Error");
+                _logger.LogError(1001, ex, "BasicDetail->GetBDetailByRequestId");
+                return Json(KeyConstants.InternalServerError);
+            }
+
+        }
+
+        //[Authorize(Roles = "DteAdmin")]
+        [Authorize(Policy = "FlagICardApplPolicy")]
+        public async Task<IActionResult> GetTopArmyNoFromICardRequest(string ArmyNo)
+        {
+            try
+            {
+                return Json(await basicDetailBL.GetTopArmyNoFromICardRequest(ArmyNo));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "BasicDetail->GetTopArmyNoFromICardRequest");
+                return Json(KeyConstants.InternalServerError);
             }
         }
+
+        [Authorize(Policy = "ViewFlaggedICardApplPolicy")]
+        [HttpGet]
+        public async Task<IActionResult> ICardRequestHold()
+        {
+            var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var user = await userManager.FindByIdAsync(userId);
+
+            // UserManager service GetClaimsAsync method gets all the current claims of the user
+            var UserClaims = await userManager.GetClaimsAsync(user);
+            ViewBag.UserClaims = UserClaims;
+            return View();
+        }
+
+        [Authorize(Policy = "ViewFlaggedICardApplPolicy")]
+        [HttpPost]
+        public async Task<IActionResult> GetAllICardRequestHold()
+        {
+            try
+            {
+                return Json(await basicDetailBL.GetAllICardRequestHold());
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "BasicDetail->GetAllICardRequestHold");
+                return Json(KeyConstants.InternalServerError);
+            }
+
+        }
+
+        #endregion
+
+        #region CreateFolder
         public static DirectoryInfo GetCreateMyFolder(string baseFolder)
         {
             var now = DateTime.Now;
@@ -1979,8 +2193,8 @@ namespace Web.Controllers
             var monthName = now.ToString("MMMM");
             var dayName = now.ToString("dd");
 
-            var folder = 
-                        Path.Combine(baseFolder, 
+            var folder =
+                        Path.Combine(baseFolder,
                            Path.Combine(yearName,
                              Path.Combine(monthName,
                                dayName)));
@@ -1995,7 +2209,7 @@ namespace Web.Controllers
             var dayName = now.ToString("dd");
 
             var folder =
-                        
+
                            Path.Combine(yearName,
                              Path.Combine(monthName,
                                dayName));
@@ -2013,7 +2227,7 @@ namespace Web.Controllers
             var ss = now.ToString("ss");
             var folder =
                         Path.Combine(baseFolder,
-                           Path.Combine(yearName + "" + monthName + "" + dayName+ ""+hh + "" + mm + "" + ss));
+                           Path.Combine(yearName + "" + monthName + "" + dayName + "" + hh + "" + mm + "" + ss));
 
             return Directory.CreateDirectory(folder);
         }
@@ -2021,6 +2235,17 @@ namespace Web.Controllers
         {
             return Directory.CreateDirectory(baseFolder);
         }
-        
+        public void CreateZipFromFolder(string sourceFolder, string zipFilePath)
+        {
+            if (Directory.Exists(sourceFolder))
+            {
+                ZipFile.CreateFromDirectory(sourceFolder, zipFilePath, CompressionLevel.Fastest, true);
+            }
+            else
+            {
+                throw new DirectoryNotFoundException($"Source folder not found: {sourceFolder}");
+            }
+        }
+        #endregion
     }
 }

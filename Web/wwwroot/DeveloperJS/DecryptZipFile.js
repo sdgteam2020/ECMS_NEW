@@ -45,8 +45,8 @@ function beforeUploadZipFileCheck(id) {
 
         if (!allowedTypes.includes(file.type)) {
             $("#lblZipFile").html("Invalid file type. Only Zip files are allowed. </br>");
-            $("#lblPhotoNotification").addClass("text-danger");
-            $("#lblPhotoNotification").removeClass("text-success");
+            $("#lblZipFileNotification").addClass("text-danger");
+            $("#lblZipFileNotification").removeClass("text-success");
             $("#ZipFile").val(null);
             return false;
         }

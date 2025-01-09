@@ -129,6 +129,10 @@ namespace Web.Controllers
 
                 return Json(xmlname);
             }
+            catch (System.IO.DirectoryNotFoundException ex)
+            {
+                return Json(0);
+            }
             catch (Exception ex) { 
                 return Json(0);
             }
