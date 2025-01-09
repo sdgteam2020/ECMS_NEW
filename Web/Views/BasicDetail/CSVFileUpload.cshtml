@@ -1,0 +1,134 @@
+﻿@model DTOCSVFileRequest
+@{
+    ViewData["Title"] = "CSV File Upload";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .login-wrap {
+        margin-top: 15px;
+        margin-left: 33%;
+        margin-right: 33%;
+        /*margin-bottom: 100px;*/
+        /*    margin-left: -50px;*/
+        /*  border: 7px double #242c6d;*/
+        width: 33%;
+    }
+</style>
+<header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
+    <div class="containerMain">
+        <div class="page-header-content pt-4">
+            <div class="row align-items-center justify-content-between">
+                <div class="col-auto">
+                    <h1 class="page-header-title">
+                        <div class="page-header-icon"> <i class="fa fa-bars"></i></div>
+
+                        <div>
+                            <span id="Isspnjcoor" class="d-none">@ViewBag.jcoor</span>
+                            @if (Convert.ToString(ViewBag.jcoor) == "1")
+                            {
+                                <span>
+                                    <a href="/Home/Index" class="mr-2">Home</a> >
+                                    <a href="/Home/Task" class="mr-2">Task</a> >
+                                    <a href="/Home/MyTask/SkNPc1BlbmRpbmc=" class="mr-2">I-Card Status</a>  >
+                                    @ViewBag.Title
+                                </span>
+
+                            }
+                            else
+                            {
+                                <span>
+                                    <a href="/Home/Index" class="mr-2">Home</a> >
+                                    <a href="/Home/Task" class="mr-2">Task</a> >
+                                    <a href="/Home/MyTask/T2ZmcnNQZW5kaW5n" class="mr-2">I-Card Status</a>  >
+                                    @ViewBag.Title
+                                </span>
+                            }
+
+
+                        </div>
+
+
+                    </h1>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</header>
+<div class="containerMain mt-n10">
+    <div class="card mb-3 ">
+        <div class="card-header">
+            <div class="row">
+                <div class="col-xl-12 text-left">
+                    <h3>
+                       CSV File Data
+                        <small class="text-muted"></small>
+                    </h3>
+                </div>
+            </div>
+        </div>
+        <div class="card-body" style="min-height:150px;">
+            <div class="row">
+                <form enctype="multipart/form-data" action="" id="csvUploadForm" name="csvUploadForm" method="post">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group row mb-0">
+                                <label class="col-form-label col-md-2 fw-bold">Please upload only csv format<i class="fas fa-asterisk mand1"></i><br />
+                                </label>
+                                <div class="col-md-8 d-flex justify-content-start">
+                                    <input asp-for="CSVFile" class="form-control col-md-2" accept="text/csv" />
+                                    <button type="button" class="btn btn-primary col-md-1 ml-1" id="btnsave">Submit</button>
+                                    <span id="lblCSVFile" style="color: red;" class="col-md-3"></span>
+                                    <span asp-validation-for="CSVFile" class="text-danger col-md-1"></span>
+                                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-group row mb-2">
+                                <label class="col-md-2">
+                                </label>
+                                <div class="col-md-8">
+                                    <span id="lblCSVFileNotification" class="text-danger col-md-1">File Upload Upto 5MB</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                <div class="col-xl-12">
+                    <div class="d-flex justify-content-end">
+                        <button type="button" id="btnUpdate" class="btn btn-warning font-weight-600 btn-sm mb-2 ml-2">Update Chiip No & Serial No</button>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table border border-purple table-striped no-footer dataTable table-hover" role="grid" id="tblData">
+                            <thead>
+                                <tr>
+                                    <th class="noExport wd-30-f">
+                                        <div class="custom-control custom-checkbox small">
+                                            <input type="checkbox" class="custom-control-input" id="chkAll">
+                                            <label class="custom-control-label font-weight-bold" for="chkAll"></label>
+                                        </div>
+                                    </th>
+                                    <th class="nowrap">S No</th>
+                                    <th class="nowrap">Request Id</th>
+                                    <th class="nowrap">Army No</th>
+                                    <th class="nowrap">Rank, Name</th>
+                                    <th class="nowrap">Chip No</th>
+                                    <th class="nowrap">Card Serial No</th>
+                                    <th class="nowrap">IsValid</th>
+                                    @* <th class="noExport nowrap">Action</th> *@
+                                </tr>
+                            </thead>
+                            <tbody id="DetailBody">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@* </div> *@
+@section Scripts {
+    <script asp-src-include="~/developerjs/CSVFileUpload.js"></script>
+}

@@ -1,0 +1,73 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Header>
+  <applicationDetails>
+    <PaperIcardNo>e12345678999</PaperIcardNo>
+    <Name>DHIRENDRA PATHAK</Name>
+    <RankName>CAPT</RankName>
+    <ArmedName>INT CORPS</ArmedName>
+    <ServiceNo>IC00201L</ServiceNo>
+    <DOB>1960-03-16T00:00:00</DOB>
+    <Height>166</Height>
+    <AadhaarNo>734534527434</AadhaarNo>
+    <BloodGroup>AB+</BloodGroup>
+    <RegimentalName></RegimentalName>
+    <UnitName>MI 11</UnitName>
+    <PlaceOfIssue>MI 11</PlaceOfIssue>
+    <DateOfIssue></DateOfIssue>
+    <IssuingAuth>Col GS (Int)</IssuingAuth>
+    <UploadId>0</UploadId>
+    <SignatureImagePath>2025\January\06/IC00201L.png.enc</SignatureImagePath>
+    <PhotoImagePath>2025\January\06/IC00201L.png.enc</PhotoImagePath>
+    <DateOfCommissioning>1980-11-18T00:00:00</DateOfCommissioning>
+    <PermanentAddress></PermanentAddress>
+    <StatusLevel>0</StatusLevel>
+    <ApplyFor></ApplyFor>
+    <State>Bihar</State>
+    <District>Arwal</District>
+    <PS>Prasadi English</PS>
+    <PO>Bihar</PO>
+    <Tehsil>PRASADI ENGLISH</Tehsil>
+    <Village>PRASADI ENGLISH</Village>
+    <PinCode>804401</PinCode>
+    <IdenMark1>A RAISED MOLE ON CHEST 2CM FROM RT NIPPLE AT 7 O CLOCK</IdenMark1>
+    <IdenMark2>A RAISED MOLE ON NECK 4.5 AM ABOVE INNER THIRD OF LT COLLER BONE</IdenMark2>
+    <ICardType>First time Smart card</ICardType>
+    <XmlCreatedOn>2025-01-06T15:20:54.837</XmlCreatedOn>
+  </applicationDetails>
+  <profiledtls>
+    <ProApplyFor>Offrs</ProApplyFor>
+    <ProRegistraion>Other Offrs of same unit </ProRegistraion>
+    <ProType>First time Smart card</ProType>
+    <ProDomainId>User501</ProDomainId>
+    <ProUnitName>MI 11</ProUnitName>
+    <ProSuffix>L</ProSuffix>
+    <ProSUSNO>1234569</ProSUSNO>
+    <ProName>JASJEET SINGH</ProName>
+    <ProRankName>LT  COL</ProRankName>
+    <ProArmyName>IC71150W</ProArmyName>
+  </profiledtls>
+  <RecForDigitalSign>
+    <FromDomain>User501</FromDomain>
+    <FromProfile>JASJEET SINGH</FromProfile>
+    <FromRank>LT  COL</FromRank>
+    <FromArmyNo>IC71150W</FromArmyNo>
+    <FromDate>2025-01-06T15:20:54.883</FromDate>
+    <StepId>2</StepId>
+  </RecForDigitalSign>
+  <RecForDigitalSign>
+    <FromDomain>User502</FromDomain>
+    <FromProfile>NIRAJ KALRA</FromProfile>
+    <FromRank>COL</FromRank>
+    <FromArmyNo>IC60056M</FromArmyNo>
+    <FromDate>2025-01-06T15:22:50.51</FromDate>
+    <StepId>3</StepId>
+  </RecForDigitalSign>
+  <RecForDigitalSign>
+    <FromDomain>mp6f</FromDomain>
+    <FromProfile>Deepak Kumar</FromProfile>
+    <FromRank>CAPT</FromRank>
+    <FromArmyNo>IC22336F</FromArmyNo>
+    <FromDate>2025-01-06T15:42:34.58</FromDate>
+    <StepId>4</StepId>
+  </RecForDigitalSign>
+</Header>

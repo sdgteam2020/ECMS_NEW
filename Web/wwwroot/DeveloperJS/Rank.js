@@ -160,7 +160,7 @@ function BindData() {
                     memberTable.buttons().container().appendTo('#tblData_wrapper .col-md-6:eq(0)');
 
                     var rows;
-                    $("#tblData #chkAll").click(function () {
+                    $("#tblData #chkAll").on("click",function () {
                         if ($(this).is(':checked')) {
                             rows = memberTable.rows({ 'search': 'applied' }).nodes();
                             $('input[type="checkbox"]', rows).prop('checked', this.checked);

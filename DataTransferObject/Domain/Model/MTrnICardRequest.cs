@@ -34,7 +34,14 @@ namespace DataTransferObject.Domain.Model
         [ForeignKey("TrnDomainMapping"), DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int TrnDomainMappingId { get; set; }
         public TrnDomainMapping? TrnDomainMapping { get; set; }
-
         public long TrackingId { get; set; }
+
+        [StringLength(30)]
+        [Column(TypeName = "varchar(30)")]
+        public string? CardSerialNo { get; set; } 
+
+        [StringLength(30)]
+        [Column(TypeName = "varchar(30)")]
+        public string? ChipNo { get; set; }
     }
 }
