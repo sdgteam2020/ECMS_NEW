@@ -13,6 +13,7 @@ using Microsoft.Extensions.Logging;
 using EntityFramework.Exceptions.Common;
 using System.Collections.Immutable;
 using DataAccessLayer.Healpers;
+using System.Data;
 
 namespace DataAccessLayer
 {
@@ -30,6 +31,48 @@ namespace DataAccessLayer
             // Pass the purpose string as a parameter
             this.protector = dataProtectionProvider.CreateProtector(
                 dataProtectionPurposeStrings.AFSACIdRouteValue);
+        }
+        public async Task<DTOUploadChipAndSerialResponse> UploadChipAndSerial(List<DTOUploadChipAndSerialRequest> Data)
+        {
+            int i = 0;
+            var (db, transaction) = _contextDP.CreateConnectionWithTransaction();
+            DTOUploadChipAndSerialResponse response = new DTOUploadChipAndSerialResponse();
+            try
+            {
+                foreach (var item in Data)
+                {
+                    if(item.IsValid == true)
+                    {
+                        string query = " UPDATE TrnICardRequest set CardSerialNo=@CardSerialNo, ChipNo=@ChipNo where RequestId=@RequestId ";
+
+                        var parameters = new DynamicParameters();
+                        parameters.Add("@RequestId", item.RequestId, DbType.Int32, ParameterDirection.Input);
+                        parameters.Add("@CardSerialNo", item.CardSerialNo, DbType.String, ParameterDirection.Input, 30);
+                        parameters.Add("@ChipNo", item.ChipNo, DbType.String, ParameterDirection.Input, 30);
+
+                        await db.ExecuteAsync(query, parameters, transaction: transaction);
+                    }
+                }
+                // Commit the transaction if all operations succeed
+                transaction.Commit();
+                response.Result = true;
+                response.Message = "Data processed successfully!";
+                return response;
+            }
+            catch (Exception ex)
+            {
+                // Rollback the transaction if any operation fails
+                transaction.Rollback();
+                _logger.LogError(1001, ex, "BasicDetailDB->UploadChipAndSerial");
+                response.Result = false;
+                response.Message = ex.Message;
+                return response;
+            }
+            finally
+            {
+                // Dispose of the connection
+                db.Dispose();
+            }
         }
         public async Task<List<DTOTopArmyNoFromICardRequestResponse>?> GetTopArmyNoFromICardRequest(string ArmyNo)
         {
