@@ -1472,39 +1472,32 @@ namespace Web.Controllers
         [HttpPost]
         public async Task<ActionResult> UploadChipAndSerial([FromBody] List<DTOUploadChipAndSerialRequest> data)
         {
-            try
+            // Validate that lstUpdate contains at least one record
+            if (data == null || data.Count == 0)
             {
-                if (ModelState.IsValid)
+                return BadRequest(new { message = "No records received. Please select at least one record to process." });
+            }
+            DTOUploadChipAndSerialResponse response = new DTOUploadChipAndSerialResponse();
+
+            if (ModelState.IsValid)
+            {
+
+                response = await basicDetailBL.UploadChipAndSerial(data);
+                if (response.Result == true)
                 {
-
-                    bool? result = (bool) await iTrnFwnBL.SaveInternalFwd(data);
-                    if (result != null)
-                    {
-                        if (result == true)
-                        {
-                            return Json(true);
-                        }
-                        else
-                        {
-                            return Json(false);
-                        }
-                    }
-                    else
-                    {
-                        return Json(null);
-                    }
-
+                    return Json(response);
                 }
                 else
                 {
-                    return Json(ModelState.Select(x => x.Value?.Errors).Where(y => y?.Count > 0).ToList());
+                    return Json(response);
                 }
-
             }
-            catch (Exception ex)
+            else
             {
-                _logger.LogError(1001, ex, "BasicDetails=>UploadChipAndSerial");
-                return BadRequest();
+                response.Result=false; 
+                response.Message = ModelState.Select(x => x.Value?.Errors).Where(y => y?.Count > 0).ToString();
+                //return Json(ModelState.Select(x => x.Value?.Errors).Where(y => y?.Count > 0).ToList());
+                return Json(response);
             }
         }
 

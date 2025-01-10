@@ -180,7 +180,25 @@ $("#btnUpdate").on("click", function () {
             contentType: 'application/json',
             data: JSON.stringify(lstUpdate),
             success: function (response) {
-                alert(response);
+                if (response.Result == true)
+                {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: response.Message,
+
+                    })
+                }
+                else
+                {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: response.Message,
+
+                    })
+                }
+                
             },
             error: function (xhr) {
                 // Display error message from server
