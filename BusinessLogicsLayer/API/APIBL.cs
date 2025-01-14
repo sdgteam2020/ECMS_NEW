@@ -1,8 +1,23 @@
-﻿using DataTransferObject.Requests;
+﻿using BusinessLogicsLayer.Helpers;
+using DataTransferObject.Requests;
 using DataTransferObject.Response;
+using Microsoft.SqlServer.Management.Sdk.Sfc;
+using ModernHttpClient;
+using Newtonsoft.Json.Linq;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
+using System.Net.Security;
+using System.Security.Cryptography.X509Certificates;
+using System.Security.Policy;
+using System.Text;
 using System.Text.Json;
+using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace BusinessLogicsLayer.API
 {
@@ -61,34 +76,21 @@ namespace BusinessLogicsLayer.API
         {
             try
             {
-                DTOLoginAPIResponse dynamicResponseDTO = new DTOLoginAPIResponse();
-
+                DTOLoginAPIResponse dynamicResponseDTO =new DTOLoginAPIResponse();
+               
                 HttpResponseMessage result = null;
-                await HRMSPostAPI(Data.ApiUrl,"Login", Data, "").ContinueWith(task =>
+                using (var client = new HttpClient()) 
                 {
-                    if (task.Status == TaskStatus.RanToCompletion)
-
+                    var requestBody = new StringContent($"accesskey={Data.accessKey}");
+                    requestBody.Headers.ContentType = new
+                   MediaTypeHeaderValue("application/x-www-form-urlencoded");
+                    var response = await client.PostAsync(Data.LoginUrl, requestBody);
+                    if (response.IsSuccessStatusCode)
                     {
-                        result = task.Result;
+                        dynamicResponseDTO.token = await response.Content.ReadAsStringAsync();
                     }
-                });
-
-
-
-                if (result != null)
-                {
-                    using (var contentStream = await result.Content.ReadAsStreamAsync())
-                    {
-                        dynamicResponseDTO = await JsonSerializer.DeserializeAsync<DTOLoginAPIResponse>(contentStream);
-                        //dynamicResponseDTO = await JsonSerializer.DeserializeAsync<IEnumerable<DTOLoginResponse>>(contentStream);
-                    }
-                    // dynamicResponseDTO = result.Content.ReadAsAsync<DTOLoginResponse>().Result;
-                    // dynamicResponseDTO = result.Content.ReadFromJsonAsync<DTOLoginResponse>().Result;
                 }
 
-
-                // dTOLoginResponse.armyNo = jwtSecurityToken.Actor;
-                // dTOLoginResponse
 
                 return dynamicResponseDTO;
 
@@ -101,85 +103,55 @@ namespace BusinessLogicsLayer.API
             }
 
         }
-        //public async Task<DTOApiPersDataResponse> GetData(DTOPersDataRequest Data)
-        //{
-        //    try
-        //    {
-
-        //        DTOApiPersDataResponse resdata = new DTOApiPersDataResponse();
-
-
-
-        //        HttpResponseMessage result = null;
-        //        //await ApiCall.PostAPI("persdata", Data).ContinueWith(task =>
-        //        //{
-        //        //    if (task.Status == TaskStatus.RanToCompletion)
-        //        //    {
-        //        //        result = task.Result;
-        //        //    }
-        //        //});
-        //        HttpClient httpClient = new HttpClient(new NativeMessageHandler());
-        //        var dt = DateTime.Parse(DateTime.Now.ToString());
-        //        var dtStr = dt.ToString("dd-MMM-yyyy HH:mm:ss");
-        //        var data1 = new[]
-        //        {
-        //            new KeyValuePair<string, string>("Pers_Army_No", Data.Pers_Army_No),
-        //            new KeyValuePair<string, string>("jwt", Data.jwt),
-        //            new KeyValuePair<string, string>("timestamp", dtStr),
-        //            new KeyValuePair<string, string>("ClientName", "miso"),
-        //        };
-        //        //HttpResponseMessage result = null;
-        //        result = await httpClient.PostAsync(ApiUrl + "persdata", new FormUrlEncodedContent(data1));
-
-
-
-        //        if (result != null)
-        //        {
-
-        //            // dynamicResponseDTO = result.Content.ReadAsAsync<DTOLoginResponse>().Result;
-
-        //            string responseBody = await result.Content.ReadAsStringAsync();
-        //            resdata = JsonSerializer.Deserialize<ApiPersDataResponseData>(responseBody).AFSAC;
-
-        //        }
-
-        //        return resdata;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return null;
-        //    }
-        //}
+    
         public async Task<DTOApiPersDataResponse> GetData(DTOPersDataRequest Data)
-        { 
+        {
             try
             {
                 DTOApiPersDataResponse dynamicResponseDTO = new DTOApiPersDataResponse();
                 DTOAPIDataRequest dataRequest = new DTOAPIDataRequest();
                 dataRequest.ArmyNo = Data.Pers_Army_No;
-                dataRequest.ApplyForId = Data.ApplyForId;
+                //dataRequest.ApplyForId = Data.ApplyForId;
 
-                HttpResponseMessage result = null;
-                await HRMSPostAPI(Data.ApiUrl, "Fetch/GetData", dataRequest, Data.jwt).ContinueWith(task =>
+                using (var client = new HttpClient())
                 {
-                    if (task.Status == TaskStatus.RanToCompletion)
-
+                    // Query parameters
+                    var queryParams = new
                     {
-                        result = task.Result;
-                    }
-                });
+                        token = Data.jwt
 
+                    };
+                    var query = new FormUrlEncodedContent(queryParams.GetType()
+         .GetProperties()
+         .ToDictionary(prop => prop.Name, prop => prop.GetValue(queryParams)?.ToString()));
 
-
-                if (result != null)
-                {
-                    using (var contentStream = await result.Content.ReadAsStreamAsync())
+                    
+                    // JSON body
+                    var body = new
                     {
-                        dynamicResponseDTO = await JsonSerializer.DeserializeAsync<DTOApiPersDataResponse>(contentStream);
-                        //dynamicResponseDTO = await JsonSerializer.DeserializeAsync<IEnumerable<DTOLoginResponse>>(contentStream);
+                        pers_Army_No = Data.Pers_Army_No,
+                       
+                    };
+                    var uri = $"{Data.ApiUrl}?{await query.ReadAsStringAsync()}";
+
+                  
+                    // Construct the query parameters
+                    var jsonBody = JsonSerializer.Serialize(body);
+                    var content = new StringContent(jsonBody, Encoding.UTF8, "application/json");
+
+                    // Make the POST request
+                    var response = await client.PostAsync(uri, content);
+
+                    // Ensure the response is successful
+                    response.EnsureSuccessStatusCode();
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        //var ret = await response.Content.ReadAsStringAsync();
+                        //var ss = JsonSerializer.Deserialize<ApiPersDataResponseData1>(ret);
+                        var jsonResult = await response.Content.ReadAsStringAsync();
+                        dynamicResponseDTO = JsonSerializer.Deserialize<ApiPersDataResponseData>(jsonResult).afsac;
                     }
-                    // dynamicResponseDTO = result.Content.ReadAsAsync<DTOLoginResponse>().Result;
-                    // dynamicResponseDTO = result.Content.ReadFromJsonAsync<DTOLoginResponse>().Result;
                 }
 
 
@@ -196,127 +168,6 @@ namespace BusinessLogicsLayer.API
                 return null;
             }
         }
-        public async Task<DTOApiPersDataResponse> GetDataOffrs(DTOPersDataRequest Data)
-        {
-            try
-            {
-                DTOApiPersDataResponse dynamicResponseDTO = new DTOApiPersDataResponse();
-                DTOAPIDataRequest dataRequest = new DTOAPIDataRequest();
-                dataRequest.ArmyNo = Data.Pers_Army_No;
-                dataRequest.ApplyForId = Data.ApplyForId;
-
-                HttpResponseMessage result = null;
-                await HRMSPostAPIOffrs(Data.ApiUrl,"Fetch/GetDataoffrs", dataRequest, Data.jwt).ContinueWith(task =>
-                {
-                    if (task.Status == TaskStatus.RanToCompletion)
-
-                    {
-                        result = task.Result;
-                    }
-                });
-
-
-
-                if (result != null)
-                {
-                    using (var contentStream = await result.Content.ReadAsStreamAsync())
-                    {
-                        dynamicResponseDTO = await JsonSerializer.DeserializeAsync<DTOApiPersDataResponse>(contentStream);
-                        //dynamicResponseDTO = await JsonSerializer.DeserializeAsync<IEnumerable<DTOLoginResponse>>(contentStream);
-                    }
-                    // dynamicResponseDTO = result.Content.ReadAsAsync<DTOLoginResponse>().Result;
-                    // dynamicResponseDTO = result.Content.ReadFromJsonAsync<DTOLoginResponse>().Result;
-                }
-
-
-                // dTOLoginResponse.armyNo = jwtSecurityToken.Actor;
-                // dTOLoginResponse
-
-                return dynamicResponseDTO;
-
-
-
-            }
-            catch (Exception ex)
-            {
-                return null;
-            }
-        }
-        public async Task<HttpResponseMessage> HRMSPostAPIOffrs<T>(string ApiUrl, string url, T data, string jwtToken)
-        {
-            try
-            {
-
-                // HttpClient httpClient = new HttpClient(new NativeMessageHandler());
-                // HttpResponseMessage s = await httpClient.PostAsJsonAsync(HRMSApiUrl + url, data);
-
-
-
-                using (var httpClientHandler = new HttpClientHandler())
-                {
-                    httpClientHandler.ServerCertificateCustomValidationCallback = (sender, certificate, chain, sslPolicyErrors) => true;
-
-                    using (var httpClient = new HttpClient(httpClientHandler))
-                    {
-                        httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken);
-                        if (data is null || data.ToString() == "")
-                        {
-                            return await httpClient.GetAsync(ApiUrl + url);
-                        }
-                        else
-                        {
-                            return await httpClient.PostAsJsonAsync(ApiUrl + url, data);
-                        }
-                    }
-                }
-
-
-            }
-            catch (Exception ex)
-            {
-                var innerExceptionMessage = ex.InnerException.Message;
-                _ = ex;
-                return null;
-
-            }
-        }
-        public async Task<HttpResponseMessage> HRMSPostAPI<T>(string ApiUrl ,string url, T data, string jwtToken)
-        {
-            try
-            {
-
-                // HttpClient httpClient = new HttpClient(new NativeMessageHandler());
-                // HttpResponseMessage s = await httpClient.PostAsJsonAsync(HRMSApiUrl + url, data);
-
-
-
-                using (var httpClientHandler = new HttpClientHandler())
-                {
-                    httpClientHandler.ServerCertificateCustomValidationCallback = (sender, certificate, chain, sslPolicyErrors) => true;
-
-                    using (var httpClient = new HttpClient(httpClientHandler))
-                    {
-                        httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken);
-                        if (data is null || data.ToString() == "")
-                        {
-                            return await httpClient.GetAsync(ApiUrl + url);
-                        }
-                        else
-                        {
-                            return await httpClient.PostAsJsonAsync(ApiUrl + url, data);
-                        }
-                    }
-                }
-
-
-            }
-            catch (Exception ex)
-            {
-                var innerExceptionMessage = ex.InnerException.Message;
-                _ = ex;
-                return null;
-
-            }
-        }
+      
     }
 }

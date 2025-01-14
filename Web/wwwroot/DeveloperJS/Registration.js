@@ -251,48 +251,48 @@ function CallDataFromAPI() {
                 $("#btngetdata").removeClass("btn-primary");
                 $("#btngetdata").addClass("btn-success");
                 toastr.success('Data Fetched From Api');
-               // $("#Name").val(response.Pers_name);
+                // $("#Name").val(response.Pers_name);
                 //alert(JSON.stringify(response));
-                if (response.Pers_name.length > 18) {
+                if (response.pers_name.length > 18) {
                     $('#FName').attr('readonly', false);
                     $('#LName').attr('readonly', false);
                 }
                 else {
-                    $("#FName").val(response.Pers_name);
+                    $("#FName").val(response.pers_name);
                     $('#FName').attr('readonly', true);
                     $('#LName').attr('readonly', true);
                 }
-                $("#NameAsPerRecord").val(response.Pers_name);
-                $("#ServiceNo").val(response.Pers_Army_No);
-                $("#DOB").val(response.Pers_birth_dt);
+                $("#NameAsPerRecord").val(response.pers_name);
+                $("#ServiceNo").val(response.pers_Army_No);
+                $("#DOB").val(response.pers_birth_dt);
                 /*$("#DOB_").val(moment(response.Pers_birth_dt).format("DD-MM-YYYY"));*/
-                $("#DateOfCommissioning").val(response.Pers_enrol_dt);
+                $("#DateOfCommissioning").val(response.pers_enrol_dt);
                 /*$("#DOC").val(moment(response.Pers_enrol_dt).format("DD-MM-YYYY"));*/
-                $("#PermanentAddress").val('Village - ' + response.Pers_Village + '\n Post Office-' + response.Pers_Post_office + ' \n Tehsil- ' + response.Pers_Tehsil + '\n District- ' + response.Pers_District + '\n State- ' + response.Pers_State + '\n Pin Code- ' + response.Pers_Pin_code);
+                $("#PermanentAddress").val('Village - ' + response.pers_Village + '\n Post Office-' + response.pers_Post_office + ' \n Tehsil- ' + response.pers_Tehsil + '\n District- ' + response.pers_District + '\n State- ' + response.pers_State + '\n Pin Code- ' + response.pers_Pin_code);
                 //$("#RegId").val(regId);
 
-                $("#State").val(response.Pers_State);
-                $("#District").val(response.Pers_District);
-                $("#PS").val(response.Pers_Police_stn);
-                $("#PO").val(response.Pers_Post_office);
-                $("#Tehsil").val(response.Pers_Tehsil);
-                $("#Village").val(response.Pers_Village);
-                if (response.Pers_Pin_code == null || response.Pers_Pin_code == '') {
+                $("#State").val(response.pers_State);
+                $("#District").val(response.pers_District);
+                $("#PS").val(response.pers_Police_stn);
+                $("#PO").val(response.pers_Post_office);
+                $("#Tehsil").val(response.pers_Tehsil);
+                $("#Village").val(response.pers_Village);
+                if (response.pers_Pin_code == null || response.pers_Pin_code == '') {
                     $("#PinCode").val("000000");
                 }
                 else {
-                    $("#PinCode").val(response.Pers_Pin_code);
+                    $("#PinCode").val(response.pers_Pin_code);
                 }
-                
-                $("#IdenMark1").val(response.Pers_Iden_mark_1);
-                $("#IdenMark2").val(response.Pers_Iden_mark_2);
-                $("#AadhaarNo").val(response.Pers_UID);
+
+                $("#IdenMark1").val(response.pers_Iden_mark_1);
+                $("#IdenMark2").val(response.pers_Iden_mark_2);
+                $("#AadhaarNo").val(response.pers_UID);
                 //if (response.Pers_Height!="")
                 //    $("#Height").val(response.Pers_Height);
                 //else
                 //    $("#Height").val(0);
 
-                $("#BloodGroup").val(response.Pers_Blood_Gp);
+                $("#BloodGroup").val(response.pers_Blood_Gp);
             }
         }
     });
