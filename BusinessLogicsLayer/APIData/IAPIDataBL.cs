@@ -8,6 +8,6 @@ namespace BusinessLogicsLayer.APIData
 
         public Task<MApiData?> GetByIC(DTOAPIDataRequest Data);
         public Task<MApiDataOffrs?> GetByoffrsIC(DTOAPIDataRequest Data);
-        public Task<bool> apiLogin(DTOAPILoginRequest Data);
+        public Task<bool> apiLogin(string accessKey);
     }
 }

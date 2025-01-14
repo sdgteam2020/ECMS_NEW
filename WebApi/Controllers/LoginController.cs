@@ -18,32 +18,26 @@ namespace WebApi.Controllers
 
         public LoginController(IConfiguration config, IAPIDataBL aPIDataBL)
         {
-
             _config = config;
             _aPIDataBL = aPIDataBL;
         }
         [HttpPost]
-        public async Task<IActionResult> Login(DTOAPILoginRequest login)
+
+        public async Task<IActionResult> Login([FromForm] string accessKey)
         {
             try
             {
                 bool isLoggedIn = false;
 
-                //if (login.ClientName == "admin" && login.ClientPW == "123")
-                //{
-                //    isLoggedIn = true;
-                //}
-                //else
-                //    isLoggedIn = false;
-                isLoggedIn = await _aPIDataBL.apiLogin(login);
+                isLoggedIn = await _aPIDataBL.apiLogin(accessKey);
 
                 if (isLoggedIn)
                 {
                     var authClaims = new List<Claim>
-                {
-                    new Claim(ClaimTypes.Name, login.ClientName),
-                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                };
+                    {
+                        //new Claim(ClaimTypes.Name, login.ClientName),
+                        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                    };
 
 
                     //    authClaims.Add(new Claim(ClaimTypes.Role, login.Role));
@@ -51,16 +45,14 @@ namespace WebApi.Controllers
 
                     var token = GetToken(authClaims);
 
-                    return Ok(new
-                    {
-                        token = new JwtSecurityTokenHandler().WriteToken(token),
-                        expiration = token.ValidTo
-                    });
+                    return Ok(new JwtSecurityTokenHandler().WriteToken(token));
                 }
                 else
                 {
-                    return BadRequest();
+                    return BadRequest(new { title = "Your are not authorized to access this API", status = "401" });
+                    // return BadRequest(new { title = "Please check and verify your credentials or provide avalid token", status = "401" });
                 }
+
             }
             catch (Exception ex)
             {
@@ -102,12 +94,12 @@ namespace WebApi.Controllers
 
         }
 
-        [HttpGet]
-        public ActionResult Get(string Id)
-        {
-           string ids= HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
-            return Ok(ids);
-        }
+        //[HttpGet]
+        //public ActionResult Get(string Id)
+        //{
+        //   string ids= HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
+        //    return Ok(ids);
+        //}
 
     }
 }

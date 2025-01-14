@@ -14,10 +14,10 @@ namespace BusinessLogicsLayer.APIData
             _aPIDataDB = aPIDataDB;
         }
 
-        public Task<bool> apiLogin(DTOAPILoginRequest Data)
+        public Task<bool> apiLogin(string accessKey)
         {
-            Data.ClientPW = Encrypt.EncryptParameter(Data.ClientPW);
-            return _aPIDataDB.apiLogin(Data);
+           
+            return _aPIDataDB.apiLogin(accessKey);
         }
 
         public Task<MApiData?> GetByIC(DTOAPIDataRequest Data)

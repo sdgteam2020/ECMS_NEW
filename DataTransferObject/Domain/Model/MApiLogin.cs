@@ -13,7 +13,9 @@ namespace DataTransferObject.Domain.Model
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
-        public string ClientPW { get; set; }=string.Empty;
+        public string ClientPW { get; set; } = string.Empty;
         public string ClientName { get; set; } = string.Empty;
+        public string accessKey { get; set; } = string.Empty;
+
     }
 }
