@@ -31,8 +31,17 @@ namespace DataAccessLayer
             _contextDP = contextDP;
             _context = context;
         }
-        private readonly IConfiguration configuration;
-
+        public async Task<DTOCheckUnitMappedInMapUnitResponse?> CheckUnitMappedInMapUnit(string SUSNo)
+        {
+            string query = "Select MUnit.UnitId,MUnit.IsVerify,MapUnit.UnitMapId from MUnit " +
+                            " LEFT JOIN MapUnit on MUnit.UnitId = MapUnit.UnitId " +
+                            " where CONCAT(Sus_no,UPPER(Suffix)) =@SUSNo ";
+            using (var connection = _contextDP.CreateConnection())
+            {
+                var ret = await connection.QueryAsync<DTOCheckUnitMappedInMapUnitResponse>(query, new { SUSNo });
+                return ret.FirstOrDefault();
+            }
+        }
         public async Task<bool> GetByName(MapUnit Data)
         {
             var ret = _context.MapUnit.Any(p => p.UnitId == Data.UnitId && p.UnitMapId!=Data.UnitMapId);

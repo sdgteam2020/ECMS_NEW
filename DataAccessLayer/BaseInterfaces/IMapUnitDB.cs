@@ -11,6 +11,7 @@ namespace DataAccessLayer.BaseInterfaces
 {
     public interface IMapUnitDB : IGenericRepositoryDL<MapUnit>
     {
+        public Task<DTOCheckUnitMappedInMapUnitResponse?> CheckUnitMappedInMapUnit(string SUSNo);
         public Task<bool> GetByName(MapUnit Data);
         public Task<List<DTOMapUnitResponse>> GetALLUnit(DTOMHierarchyRequest unit,string Unit1);
         public Task<List<DTOMapUnitResponse>> GetALLByUnitName(string Unitname);

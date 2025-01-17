@@ -54,8 +54,8 @@
         ProceedUnitSave();
     });
 
-    if ($("#spnUnitMapId").html() > 0) {
-        GetNameByApptId($("#spnUnitMapId").html());
+    if ($("#spnUnitAppointmentId").html() > 0) {
+        GetNameByApptId($("#spnUnitAppointmentId").html());
     }
 
     if ($("#spnUnitMapId").html() > 0) {
@@ -213,7 +213,81 @@
         appendTo: '#suggesstion-box'
     });
 
-    $("#btnAddUnit").click(function () {
+    $("#txtSusno").autocomplete({
+        source: function (request, response) {
+            $("#txtUnit").val("");
+            if (request.term.length > 2) {
+                $("#spnUnitId").html('');
+                var param = { "SUSNo": request.term };
+                $("#spnUnitId").html("0");
+                $.ajax({
+                    url: '/Master/GetTopBySUSNo',
+                    contentType: 'application/x-www-form-urlencoded',
+                    data: param,
+                    type: 'POST',
+                    success: function (data) {
+                        if (data.length != 0) {
+                            response($.map(data, function (item) {
+                                $("#loading").addClass("d-none");
+                                return { label: item.Sus_no, value: item.UnitId };
+                            }))
+                        }
+                        else {
+                            //$("#txtSusno").val("");
+                            //$("#txtUnit").val("");
+                            $("#spnUnitId").html("0");
+                            $("#txtUnit").prop('readOnly', false);
+/*                            alert("SUS No not found.")*/
+                        }
+                    },
+                    error: function (response) {
+                        alert(response.responseText);
+                    },
+                    failure: function (response) {
+                        alert(response.responseText);
+                    }
+                });
+            }
+        },
+        select: function (e, i) {
+            e.preventDefault();
+
+            $("#spnUnitId").html(i.item.value);
+            $("#txtSusno").val(i.item.label);
+            var param1 = { "UnitId": i.item.value };
+            $.ajax({
+                url: '/Master/GetUnitByUnitId',
+                method: 'POST',
+                contentType: 'application/x-www-form-urlencoded',
+                data: param1,
+                datatype: 'json',
+                success: function (data) {
+                    $("#txtUnit").prop('readOnly', true);
+                    $("#txtUnit").val(data.UnitName);
+                },
+                error: function (response) {
+                    $("#txtUnit").prop('readOnly', false);
+                    alert(response.responseText);
+                },
+                failure: function (response) {
+                    $("#txtUnit").prop('readOnly', false);
+                    alert(response.responseText);
+                }
+            });
+        },
+        appendTo: '#suggesstion-box'
+    });
+
+    $('#txtSusno').keyup(function (e) {
+        if (e.keyCode == 46 || e.keyCode == 8) {
+            $("#spnUnitId").html('0');
+            $("#txtUnit").prop('readOnly', false);
+            //$("#txtSusno").val('');
+            //$("#txtUnit").val('');
+        }
+    });
+
+    $("#btnAddUnit").on("click",function () {
         if ($("#Name").val().length > 0 && $("#RankId").val() > 0) {
             Reset();
             ResetErrorMessage();
@@ -505,6 +579,7 @@ function UnitSave() {
             //"DialingCode": $("#txtDialingCode").val(),
             //"Extension": $("#txtExtension").val(),
             "DomainId": $("#spnDomainId").html(),
+            "UnitId": $("#spnUnitId").html(),
             "Sus_no": $("#txtSusno").val().substring(0, 7),
             "Suffix": $("#txtSusno").val().substring(8, 7),
             "UnitName": $("#txtUnit").val(),
@@ -522,7 +597,7 @@ function UnitSave() {
                 Swal.fire({
                     icon: 'info',
                     title: 'Unit',
-                    html: 'Unit has been saved.<br/>Please wait Admin for necy Approval..',
+                    html: 'Unit has been saved.<br/>Please wait for the Admin Approval.',
                 })
                 $("#AddNewUnitmap").modal('hide');
                 Reset();
@@ -530,23 +605,20 @@ function UnitSave() {
             else if (result == DataExists) {
                 Swal.fire({
                     icon: 'error',
-                    title: 'Oops...',
-                    text: 'Unit Name Exits!',
+                    text: 'Unit already mapped!',
                 })
 
             }
             else if (result == 5) {
                 Swal.fire({
                     icon: 'error',
-                    title: 'Oops...',
-                    html: 'Unit Name Exits!.<br/>Please wait  Admin for necy Approval..',
+                    html: 'Unit not verified by Admin.',
                 })
 
             }
             else if (result == InternalServerError) {
                 Swal.fire({
                     icon: 'error',
-                    title: 'Oops...',
                     text: 'Something went wrong or Invalid Entry!',
 
                 })
@@ -569,6 +641,7 @@ function UnitSave() {
 }
 function Reset() {
     $("#spnDomainRegId").html("0");
+    $("#txtUnit").prop('readOnly', false);
     $("#txtSusno").val(""); 
     $("#txtUnit").val("");
     //$("#txtMobileNo").val("");

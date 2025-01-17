@@ -945,6 +945,7 @@ namespace Web.Controllers
             }
 
         }
+        [AllowAnonymous]
         public async Task<IActionResult> GetUnitByUnitId(int UnitId)
         {
             try

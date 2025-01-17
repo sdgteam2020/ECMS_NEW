@@ -63,6 +63,9 @@ namespace DataTransferObject.Requests
         [MaxLength(1, ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "MaxLengthError")]
         public string Suffix { get; set; } = string.Empty;
 
+        [RegularExpression(@"^[\d]+$", ErrorMessage = "UnitId is number.")]
+        public int UnitId { get; set; }
+
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
         [RegularExpression("^[a-zA-Z0-9 ]*$", ErrorMessage = "Only Alphabets and Numbers allowed.")]
         [MaxLength(100, ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "MaxLengthError")]
