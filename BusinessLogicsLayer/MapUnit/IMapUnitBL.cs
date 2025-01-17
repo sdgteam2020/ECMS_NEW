@@ -12,7 +12,7 @@ namespace BusinessLogicsLayer.Unit
 {
     public interface IMapUnitBL : IGenericRepository<MapUnit>
     {
-
+        public Task<DTOCheckUnitMappedInMapUnitResponse?> CheckUnitMappedInMapUnit(string SUSNo);
         public Task<bool> GetByName(MapUnit Data);
         public Task<List<DTOMapUnitResponse>> GetALLUnit(DTOMHierarchyRequest unit,string Unit);
         public Task<List<DTOMapUnitResponse>> GetALLByUnitName(string Unitname);

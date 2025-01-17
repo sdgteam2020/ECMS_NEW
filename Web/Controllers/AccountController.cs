@@ -30,6 +30,7 @@ using System.Web;
 using Web.WebHelpers;
 using OneLogin.Saml;
 using ApplicationRole = DataTransferObject.Domain.Identitytable.ApplicationRole;
+using System.Net;
 
 namespace Web.Controllers
 {
@@ -1188,17 +1189,31 @@ namespace Web.Controllers
 
                 if (ModelState.IsValid)
                 {
-                    string Sus_no = dTO.Sus_no + dTO.Suffix;
-                    MUnit? mUnit = await _iUnitBL.GetBySusNo(Sus_no);
-                    if(mUnit != null)
+                    string SUSNo = dTO.Sus_no + dTO.Suffix.ToUpper();
+                    DTOCheckUnitMappedInMapUnitResponse? response = await _IMapUnitBL.CheckUnitMappedInMapUnit(SUSNo);
+                    if(response != null)
                     {
-                        if(mUnit.IsVerify == true)
+                        if(response.UnitMapId != null)
                         {
+                            //Unit already mapped
                             return Json(KeyConstants.Exists);
+                        }
+                        else if (response.IsVerify == false)
+                        {
+                            //Unit not verify
+                            return Json(5);
                         }
                         else
                         {
-                            return Json(5);
+                            bool result = (bool)await _iAccountBL.SaveUnitWithMapping(dTO);
+                            if (result == true)
+                            {
+                                return Json(KeyConstants.Save);
+                            }
+                            else
+                            {
+                                return Json(KeyConstants.InternalServerError);
+                            }
                         }
                     }
                     else

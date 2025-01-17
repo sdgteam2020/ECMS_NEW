@@ -2168,7 +2168,7 @@ namespace DataAccessLayer
                                         uptUserProfile.Name = model.Name;
                                         //uptUserProfile.MobileNo = model.MobileNo;
                                         uptUserProfile.ArmedId = model.ArmedId;
-                                        uptUserProfile.IsToken = model.IsTokenWaiver;
+                                        uptUserProfile.IsTokenWaiver = model.IsTokenWaiver;
                                         uptUserProfile.ReasonTokenWaiver = model.ReasonTokenWaiver;
                                         uptUserProfile.Updatedby = dTOTempSession.AspNetUsersId;
                                         uptUserProfile.UpdatedOn = model.UpdatedOn;
@@ -2206,7 +2206,7 @@ namespace DataAccessLayer
 
                                 if (model.IsTokenWaiver == true)
                                 {
-                                    applicationUser.AdminFlag = false;
+                                    //applicationUser.AdminFlag = false;
                                     applicationUser.AdminMsg = "Domian Id - " + applicationUser.DomainId + " & Profile Id- " + trnDomainMapping.UserId + ".Your token request was successfully placed with Admin for necy Approval. Pl note regn No - " + trnDomainMapping.UserId + " for future correspondence.";
                                     await _context.SaveChangesAsync();
                                 }
@@ -2332,19 +2332,26 @@ namespace DataAccessLayer
                     };
                     await _context.TrnUnregdUser.AddAsync(trnRegUser);
                     await _context.SaveChangesAsync();
-                    var mUnit = new MUnit
+                    MUnit mUnit = new MUnit();
+                    if (dTO.UnitId == 0)
                     {
-                        Sus_no= dTO.Sus_no,
-                        Suffix=dTO.Suffix,
-                        UnitName=dTO.UnitName,
-                        IsVerify=false,
-                        IsActive=true,
-                        Updatedby = null,
-                        UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time")),
-                        UnregdUserId = trnRegUser.UnregdUserId,
-                    };
-                    await _context.MUnit.AddAsync(mUnit);
-                    await _context.SaveChangesAsync();
+                        mUnit.Sus_no = dTO.Sus_no;
+                        mUnit.Suffix = dTO.Suffix;
+                        mUnit.UnitName = dTO.UnitName;
+                        mUnit.IsVerify = false;
+                        mUnit.IsActive = true;
+                        mUnit.Updatedby = null;
+                        mUnit.UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
+                        mUnit.UnregdUserId = trnRegUser.UnregdUserId;
+
+                        await _context.MUnit.AddAsync(mUnit);
+                        await _context.SaveChangesAsync();
+                    }
+                    else 
+                    {
+                        mUnit.UnitId = dTO.UnitId;
+                    }
+
                     var mapUnit = new MapUnit
                     {
                         UnitId = mUnit.UnitId,
