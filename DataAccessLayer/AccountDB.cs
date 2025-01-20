@@ -843,134 +843,134 @@ namespace DataAccessLayer
                     };
                     return responseData;
                 }
-                else if (request.Choice == "RO")
-                {
-                    var queryableData = (from u in _context.Users.OrderByDescending(x => x.Id)
-                                         join tdm in _context.TrnDomainMapping on u.Id equals tdm.AspNetUsersId
-                                         join up in _context.UserProfile on tdm.UserId equals up.UserId into xtdmup_jointable
-                                         from xup in xtdmup_jointable.DefaultIfEmpty()
-                                         where tdm.IsRO == true
-                                         select new DTOUserRegnResponse()
-                                         {
-                                             Id = u.Id,
-                                             DomainId = u.DomainId,
-                                             AdminMsg = u.AdminMsg,
-                                             AdminFlag = u.AdminFlag,
-                                             Active = u.Active,
-                                             UpdatedOn = u.UpdatedOn,
-                                             Mapped = true,
-                                             TrnDomainMappingId = tdm.Id,
-                                             TrnDomainMappingApptId = tdm.ApptId,
-                                             TrnDomainMappingUnitId = tdm.UnitId,
-                                             IsIO = tdm.IsIO,
-                                             IsCO = tdm.IsCO,
-                                             IsRO = tdm.IsRO,
-                                             IsORO = tdm.IsORO,
-                                             ArmyNo = xup != null ? xup.ArmyNo : null,
-                                             UserId = xup != null ? xup.UserId : 0,
-                                             RoleNames = (from ur in _context.UserRoles.Where(x => x.UserId == u.Id)
-                                                          join r in _context.Roles on ur.RoleId equals r.Id
-                                                          select r.Name).ToList(),
-                                         }).AsQueryable();
-                    // Total records without filtering
-                    var totalRecords = queryableData.Count();
+                //else if (request.Choice == "RO")
+                //{
+                //    var queryableData = (from u in _context.Users.OrderByDescending(x => x.Id)
+                //                         join tdm in _context.TrnDomainMapping on u.Id equals tdm.AspNetUsersId
+                //                         join up in _context.UserProfile on tdm.UserId equals up.UserId into xtdmup_jointable
+                //                         from xup in xtdmup_jointable.DefaultIfEmpty()
+                //                         where tdm.IsRO == true
+                //                         select new DTOUserRegnResponse()
+                //                         {
+                //                             Id = u.Id,
+                //                             DomainId = u.DomainId,
+                //                             AdminMsg = u.AdminMsg,
+                //                             AdminFlag = u.AdminFlag,
+                //                             Active = u.Active,
+                //                             UpdatedOn = u.UpdatedOn,
+                //                             Mapped = true,
+                //                             TrnDomainMappingId = tdm.Id,
+                //                             TrnDomainMappingApptId = tdm.ApptId,
+                //                             TrnDomainMappingUnitId = tdm.UnitId,
+                //                             IsIO = tdm.IsIO,
+                //                             IsCO = tdm.IsCO,
+                //                             IsRO = tdm.IsRO,
+                //                             IsORO = tdm.IsORO,
+                //                             ArmyNo = xup != null ? xup.ArmyNo : null,
+                //                             UserId = xup != null ? xup.UserId : 0,
+                //                             RoleNames = (from ur in _context.UserRoles.Where(x => x.UserId == u.Id)
+                //                                          join r in _context.Roles on ur.RoleId equals r.Id
+                //                                          select r.Name).ToList(),
+                //                         }).AsQueryable();
+                //    // Total records without filtering
+                //    var totalRecords = queryableData.Count();
 
 
-                    // Apply filtering
-                    if (!string.IsNullOrEmpty(request.searchValue))
-                    {
-                        queryableData = queryableData.Where(x => x.DomainId.ToLower().Contains(request.searchValue) || (x.ArmyNo != null && x.ArmyNo.ToLower().Contains(request.searchValue)));
-                    }
+                //    // Apply filtering
+                //    if (!string.IsNullOrEmpty(request.searchValue))
+                //    {
+                //        queryableData = queryableData.Where(x => x.DomainId.ToLower().Contains(request.searchValue) || (x.ArmyNo != null && x.ArmyNo.ToLower().Contains(request.searchValue)));
+                //    }
 
-                    // Apply sorting
+                //    // Apply sorting
 
-                    if (!string.IsNullOrEmpty(request.sortColumn) && !string.IsNullOrEmpty(request.sortDirection))
-                    {
-                        //queryableData = queryableData.OrderBy(request.SortColumn + " " + request.SortColumnDirection);
-                        queryableData = request.sortDirection.ToLower() == "asc"
-                        ? queryableData.OrderBy(item => EF.Property<object>(item, request.sortColumn))
-                        : queryableData.OrderByDescending(item => EF.Property<object>(item, request.sortColumn));
-                    }
+                //    if (!string.IsNullOrEmpty(request.sortColumn) && !string.IsNullOrEmpty(request.sortDirection))
+                //    {
+                //        //queryableData = queryableData.OrderBy(request.SortColumn + " " + request.SortColumnDirection);
+                //        queryableData = request.sortDirection.ToLower() == "asc"
+                //        ? queryableData.OrderBy(item => EF.Property<object>(item, request.sortColumn))
+                //        : queryableData.OrderByDescending(item => EF.Property<object>(item, request.sortColumn));
+                //    }
 
-                    // Total records after filtering
-                    var filteredRecords = queryableData.Count();
+                //    // Total records after filtering
+                //    var filteredRecords = queryableData.Count();
 
-                    // Paginate the result
-                    var paginatedData = await queryableData.Skip(request.Start).Take(request.Length).ToListAsync();
+                //    // Paginate the result
+                //    var paginatedData = await queryableData.Skip(request.Start).Take(request.Length).ToListAsync();
 
-                    var responseData = new DTODataTablesResponse<DTOUserRegnResponse>
-                    {
-                        draw = request.Draw,
-                        recordsTotal = totalRecords, // Total records without filtering
-                        recordsFiltered = filteredRecords, // Total records after filtering
-                        data = paginatedData
-                    };
-                    return responseData;
-                }
-                else if (request.Choice == "ORO")
-                {
-                    var queryableData = (from u in _context.Users.OrderByDescending(x => x.Id)
-                                         join tdm in _context.TrnDomainMapping on u.Id equals tdm.AspNetUsersId
-                                         join up in _context.UserProfile on tdm.UserId equals up.UserId into xtdmup_jointable
-                                         from xup in xtdmup_jointable.DefaultIfEmpty()
-                                         where tdm.IsORO == true
-                                         select new DTOUserRegnResponse()
-                                         {
-                                             Id = u.Id,
-                                             DomainId = u.DomainId,
-                                             AdminMsg = u.AdminMsg,
-                                             AdminFlag = u.AdminFlag,
-                                             Active = u.Active,
-                                             UpdatedOn = u.UpdatedOn,
-                                             Mapped = true,
-                                             TrnDomainMappingId = tdm.Id,
-                                             TrnDomainMappingApptId = tdm.ApptId,
-                                             TrnDomainMappingUnitId = tdm.UnitId,
-                                             IsIO = tdm.IsIO,
-                                             IsCO = tdm.IsCO,
-                                             IsRO = tdm.IsRO,
-                                             IsORO = tdm.IsORO,
-                                             ArmyNo = xup != null ? xup.ArmyNo : null,
-                                             UserId = xup != null ? xup.UserId : 0,
-                                             RoleNames = (from ur in _context.UserRoles.Where(x => x.UserId == u.Id)
-                                                          join r in _context.Roles on ur.RoleId equals r.Id
-                                                          select r.Name).ToList(),
-                                         }).AsQueryable();
-                    // Total records without filtering
-                    var totalRecords = queryableData.Count();
+                //    var responseData = new DTODataTablesResponse<DTOUserRegnResponse>
+                //    {
+                //        draw = request.Draw,
+                //        recordsTotal = totalRecords, // Total records without filtering
+                //        recordsFiltered = filteredRecords, // Total records after filtering
+                //        data = paginatedData
+                //    };
+                //    return responseData;
+                //}
+                //else if (request.Choice == "ORO")
+                //{
+                //    var queryableData = (from u in _context.Users.OrderByDescending(x => x.Id)
+                //                         join tdm in _context.TrnDomainMapping on u.Id equals tdm.AspNetUsersId
+                //                         join up in _context.UserProfile on tdm.UserId equals up.UserId into xtdmup_jointable
+                //                         from xup in xtdmup_jointable.DefaultIfEmpty()
+                //                         where tdm.IsORO == true
+                //                         select new DTOUserRegnResponse()
+                //                         {
+                //                             Id = u.Id,
+                //                             DomainId = u.DomainId,
+                //                             AdminMsg = u.AdminMsg,
+                //                             AdminFlag = u.AdminFlag,
+                //                             Active = u.Active,
+                //                             UpdatedOn = u.UpdatedOn,
+                //                             Mapped = true,
+                //                             TrnDomainMappingId = tdm.Id,
+                //                             TrnDomainMappingApptId = tdm.ApptId,
+                //                             TrnDomainMappingUnitId = tdm.UnitId,
+                //                             IsIO = tdm.IsIO,
+                //                             IsCO = tdm.IsCO,
+                //                             IsRO = tdm.IsRO,
+                //                             IsORO = tdm.IsORO,
+                //                             ArmyNo = xup != null ? xup.ArmyNo : null,
+                //                             UserId = xup != null ? xup.UserId : 0,
+                //                             RoleNames = (from ur in _context.UserRoles.Where(x => x.UserId == u.Id)
+                //                                          join r in _context.Roles on ur.RoleId equals r.Id
+                //                                          select r.Name).ToList(),
+                //                         }).AsQueryable();
+                //    // Total records without filtering
+                //    var totalRecords = queryableData.Count();
 
 
-                    // Apply filtering
-                    if (!string.IsNullOrEmpty(request.searchValue))
-                    {
-                        queryableData = queryableData.Where(x => x.DomainId.ToLower().Contains(request.searchValue) || (x.ArmyNo != null && x.ArmyNo.ToLower().Contains(request.searchValue)));
-                    }
+                //    // Apply filtering
+                //    if (!string.IsNullOrEmpty(request.searchValue))
+                //    {
+                //        queryableData = queryableData.Where(x => x.DomainId.ToLower().Contains(request.searchValue) || (x.ArmyNo != null && x.ArmyNo.ToLower().Contains(request.searchValue)));
+                //    }
 
-                    // Apply sorting
+                //    // Apply sorting
 
-                    if (!string.IsNullOrEmpty(request.sortColumn) && !string.IsNullOrEmpty(request.sortDirection))
-                    {
-                        //queryableData = queryableData.OrderBy(request.SortColumn + " " + request.SortColumnDirection);
-                        queryableData = request.sortDirection.ToLower() == "asc"
-                        ? queryableData.OrderBy(item => EF.Property<object>(item, request.sortColumn))
-                        : queryableData.OrderByDescending(item => EF.Property<object>(item, request.sortColumn));
-                    }
+                //    if (!string.IsNullOrEmpty(request.sortColumn) && !string.IsNullOrEmpty(request.sortDirection))
+                //    {
+                //        //queryableData = queryableData.OrderBy(request.SortColumn + " " + request.SortColumnDirection);
+                //        queryableData = request.sortDirection.ToLower() == "asc"
+                //        ? queryableData.OrderBy(item => EF.Property<object>(item, request.sortColumn))
+                //        : queryableData.OrderByDescending(item => EF.Property<object>(item, request.sortColumn));
+                //    }
 
-                    // Total records after filtering
-                    var filteredRecords = queryableData.Count();
+                //    // Total records after filtering
+                //    var filteredRecords = queryableData.Count();
 
-                    // Paginate the result
-                    var paginatedData = await queryableData.Skip(request.Start).Take(request.Length).ToListAsync();
+                //    // Paginate the result
+                //    var paginatedData = await queryableData.Skip(request.Start).Take(request.Length).ToListAsync();
 
-                    var responseData = new DTODataTablesResponse<DTOUserRegnResponse>
-                    {
-                        draw = request.Draw,
-                        recordsTotal = totalRecords, // Total records without filtering
-                        recordsFiltered = filteredRecords, // Total records after filtering
-                        data = paginatedData
-                    };
-                    return responseData;
-                }
+                //    var responseData = new DTODataTablesResponse<DTOUserRegnResponse>
+                //    {
+                //        draw = request.Draw,
+                //        recordsTotal = totalRecords, // Total records without filtering
+                //        recordsFiltered = filteredRecords, // Total records after filtering
+                //        data = paginatedData
+                //    };
+                //    return responseData;
+                //}
                 else
                 {
                     var queryableData = (from u in _context.Users

@@ -124,6 +124,8 @@ namespace Web.Controllers
             {
                 dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                 dTO.UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
+                dTO.IsORO = false;
+                dTO.IsRO = false;
 
                 if (ModelState.IsValid)
                 {
@@ -1026,10 +1028,10 @@ namespace Web.Controllers
                         dTOProfileAndMappingRequest.UnitMapId = dTOTempSession.TDMUnitMapId;
                         //dTOProfileAndMappingRequest.DialingCode = dTOTempSession.DialingCode;
                         //dTOProfileAndMappingRequest.Extension = dTOTempSession.Extension;
-                        dTOProfileAndMappingRequest.IsRO = dTOTempSession.IsRO;
+                        //dTOProfileAndMappingRequest.IsRO = dTOTempSession.IsRO;
                         dTOProfileAndMappingRequest.IsCO = dTOTempSession.IsCO;
                         dTOProfileAndMappingRequest.IsIO = dTOTempSession.IsIO;
-                        dTOProfileAndMappingRequest.IsORO = dTOTempSession.IsORO;
+                        //dTOProfileAndMappingRequest.IsORO = dTOTempSession.IsORO;
                     }
                     ViewBag.OptionsRank = service.GetRank(1);
                     ViewBag.OptionsArmedType = service.GetArmedType();

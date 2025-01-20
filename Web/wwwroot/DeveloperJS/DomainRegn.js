@@ -24,12 +24,12 @@
     $("#AddNewDomain input[name='CommandingOffr']").on("click", function () {
         $("#CommandingOffr-error").html("");
     });
-    $("#AddNewDomain input[name='IsRO']").on("click", function () {
-        $("#IsRO-error").html("");
-    });
-    $("#AddNewDomain input[name='IsORO']").on("click", function () {
-        $("#IsORO-error").html("");
-    });
+    //$("#AddNewDomain input[name='IsRO']").on("click", function () {
+    //    $("#IsRO-error").html("");
+    //});
+    //$("#AddNewDomain input[name='IsORO']").on("click", function () {
+    //    $("#IsORO-error").html("");
+    //});
 
     $("#txtAppointmentName").autocomplete({
         source: function (request, response) {
@@ -306,22 +306,22 @@
             BindDialog("CO");
         }
     });
-    $("#btnRO").on("click", function () {
-        if ($("#lblRO").html() > 0) {
-            $("#tbldatadialog").DataTable().destroy();
-            $("#lblModelTitle").html('Total Not Verified Users');
-            $("#DataTableDialog").modal('show');
-            BindDialog("RO");
-        }
-    });
-    $("#btnORO").on("click", function () {
-        if ($("#lblORO").html() > 0) {
-            $("#tbldatadialog").DataTable().destroy();
-            $("#lblModelTitle").html('Total Not Verified Users');
-            $("#DataTableDialog").modal('show');
-            BindDialog("ORO");
-        }
-    });
+    //$("#btnRO").on("click", function () {
+    //    if ($("#lblRO").html() > 0) {
+    //        $("#tbldatadialog").DataTable().destroy();
+    //        $("#lblModelTitle").html('Total Not Verified Users');
+    //        $("#DataTableDialog").modal('show');
+    //        BindDialog("RO");
+    //    }
+    //});
+    //$("#btnORO").on("click", function () {
+    //    if ($("#lblORO").html() > 0) {
+    //        $("#tbldatadialog").DataTable().destroy();
+    //        $("#lblModelTitle").html('Total Not Verified Users');
+    //        $("#DataTableDialog").modal('show');
+    //        BindDialog("ORO");
+    //    }
+    //});
 });
 
 function BindDialog(Choice) {
@@ -354,8 +354,8 @@ function BindDialog(Choice) {
             { data: "AdminFlag", name: "AdminFlag" },
             { data: "IsIO", name: "IsIO" },
             { data: "IsCO", name: "IsCO" },
-            { data: "IsRO", name: "IsRO" },
-            { data: "IsORO", name: "IsORO" }
+            //{ data: "IsRO", name: "IsRO" },
+            //{ data: "IsORO", name: "IsORO" }
         ]
     });
 }
@@ -421,19 +421,19 @@ function ValidateInput() {
         $("#CommandingOffr-error").html("");
     }
 
-    if ($("input[type='radio'][name=IsRO]:checked").length == 0) {
-        $("#IsRO-error").html("Record Office is required.");
-    }
-    else {
-        $("#IsRO-error").html("");
-    }
+    //if ($("input[type='radio'][name=IsRO]:checked").length == 0) {
+    //    $("#IsRO-error").html("Record Office is required.");
+    //}
+    //else {
+    //    $("#IsRO-error").html("");
+    //}
 
-    if ($("input[type='radio'][name=IsORO]:checked").length == 0) {
-        $("#IsORO-error").html("Officer Record Office is required.");
-    }
-    else {
-        $("#IsORO-error").html("");
-    }
+    //if ($("input[type='radio'][name=IsORO]:checked").length == 0) {
+    //    $("#IsORO-error").html("Officer Record Office is required.");
+    //}
+    //else {
+    //    $("#IsORO-error").html("");
+    //}
 
     var AppointmentId = $("#spnUnitAppointmentId").html();
     
@@ -513,10 +513,17 @@ function BindData() {
                         else
                             listItem += "<td class='align-middle'><span id='domain_mapping'><span class='badge badge-pill badge-danger'>No</span></span></td>";
 
+                        if (response[i].AdminFlag == true)
+                            listItem += "<td class='align-middle'><span><span class='badge badge-pill badge-success'>Yes</span></td>";
+                        else
+                            listItem += "<td class='align-middle'><span><span class='badge badge-pill badge-danger'>No</span></td>";
+
                         if (response[i].Active == true)
                             listItem += "<td class='align-middle'><span><span class='badge badge-pill badge-success' id='domain_active'>Yes</span></span></td>";
                         else
                             listItem += "<td class='align-middle'><span><span class='badge badge-pill badge-danger' id='domain_active'>No</span></span></td>";
+
+
 
                         if (response[i].IsIO == true)
                             listItem += "<td class='align-middle'><span><span class='badge badge-pill badge-success' id='isIO'>Yes</span></span></td>";
@@ -528,15 +535,15 @@ function BindData() {
                         else
                             listItem += "<td class='align-middle'><span><span class='badge badge-pill badge-danger' id='isCO'>No</span></span></td>";
 
-                        if (response[i].IsRO == true)
-                            listItem += "<td class='align-middle'><span><span class='badge badge-pill badge-success' id='isRO'>Yes</span></span></td>";
-                        else
-                            listItem += "<td class='align-middle'><span><span class='badge badge-pill badge-danger' id='isRO'>No</span></span></td>";
+                        //if (response[i].IsRO == true)
+                        //    listItem += "<td class='align-middle'><span><span class='badge badge-pill badge-success' id='isRO'>Yes</span></span></td>";
+                        //else
+                        //    listItem += "<td class='align-middle'><span><span class='badge badge-pill badge-danger' id='isRO'>No</span></span></td>";
 
-                        if (response[i].IsORO == true)
-                            listItem += "<td class='align-middle'><span><span class='badge badge-pill badge-success' id='isORO'>Yes</span></span></td>";
-                        else
-                            listItem += "<td class='align-middle'><span><span class='badge badge-pill badge-danger' id='isORO'>No</span></span></td>";
+                        //if (response[i].IsORO == true)
+                        //    listItem += "<td class='align-middle'><span><span class='badge badge-pill badge-success' id='isORO'>Yes</span></span></td>";
+                        //else
+                        //    listItem += "<td class='align-middle'><span><span class='badge badge-pill badge-danger' id='isORO'>No</span></span></td>";
 
                         listItem += "<td class='align-middle'><span id='btnedit'><button type='button' class='cls-btnedit btn btn-icon btn-round btn-warning mr-1'><i class='fas fa-edit'></i></button></span></td>";
 
@@ -619,19 +626,19 @@ function BindData() {
                             $("#commandingOffrno").prop("checked", true);
                         }
 
-                        if ($(this).closest("tr").find("#isRO").html() == 'Yes') {
-                            $("#isroyes").prop("checked", true);
-                        }
-                        else {
-                            $("#isrono").prop("checked", true);
-                        }
+                        //if ($(this).closest("tr").find("#isRO").html() == 'Yes') {
+                        //    $("#isroyes").prop("checked", true);
+                        //}
+                        //else {
+                        //    $("#isrono").prop("checked", true);
+                        //}
 
-                        if ($(this).closest("tr").find("#isORO").html() == 'Yes') {
-                            $("#isoroyes").prop("checked", true);
-                        }
-                        else {
-                            $("#isorono").prop("checked", true);
-                        }
+                        //if ($(this).closest("tr").find("#isORO").html() == 'Yes') {
+                        //    $("#isoroyes").prop("checked", true);
+                        //}
+                        //else {
+                        //    $("#isorono").prop("checked", true);
+                        //}
 
                         if ($(this).closest("tr").find("#regTrnDomainMappingId").html() > 0) {
                             $("#spnTrnDomainMappingId").html($(this).closest("tr").find("#regTrnDomainMappingId").html()); 
@@ -696,9 +703,9 @@ function Save() {
             "AdminFlag": $('input:radio[name=txtapproval]:checked').val(),
             "Active": $('input:radio[name=txtactive]:checked').val(),
             "IsIO": $('input:radio[name=InitatingOffr]:checked').val(),
-            "IsRO": $('input:radio[name=IsRO]:checked').val(),
             "IsCO": $('input:radio[name=CommandingOffr]:checked').val(),
-            "IsORO": $('input:radio[name=IsORO]:checked').val(),
+            //"IsRO": $('input:radio[name=IsRO]:checked').val(),
+            //"IsORO": $('input:radio[name=IsORO]:checked').val(),
             "TDMId": $("#spnTrnDomainMappingId").html(),
             "ApptId": $("#spnUnitAppointmentId").html(),
             "UnitMappId": $("#spnUnitMapId").html(),
@@ -785,8 +792,8 @@ function Reset()     {
     $("#txtactiveyes").prop("checked", false);
     $("#txtactiveno").prop("checked", false);
 
-    $("#isroyes").prop("checked", false);
-    $("#isrono").prop("checked", false);
+    //$("#isroyes").prop("checked", false);
+    //$("#isrono").prop("checked", false);
 
     $("#initatingOffryes").prop("checked", false);
     $("#initatingOffrno").prop("checked", false);
@@ -794,8 +801,8 @@ function Reset()     {
     $("#commandingOffryes").prop("checked", false);
     $("#commandingOffrno").prop("checked", false);
 
-    $("#isoroyes").prop("checked", false);
-    $("#isorono").prop("checked", false);
+    //$("#isoroyes").prop("checked", false);
+    //$("#isorono").prop("checked", false);
 }
 function ResetErrorMessage() {
     $("#txtDomainId-error").html("");
@@ -805,10 +812,10 @@ function ResetErrorMessage() {
     //$("#txtExtension-error").html("");
     $("#txtapproval-error").html("");
     $("#txtactive-error").html("");
-    $("#IsRO-error").html("");
+    //$("#IsRO-error").html("");
     $("#InitatingOffr-error").html("");
     $("#CommandingOffr-error").html("");
-    $("#IsORO-error").html("");
+    //$("#IsORO-error").html("");
     $("#txtAppointmentName-error").html("");
     $("#txtUnitName-error").html("");
 }
@@ -917,8 +924,8 @@ function AccountCount() {
             $("#lblNotVerifiedUser").html(response.NotVerifiedUser);
             $("#lblIO").html(response.IO);
             $("#lblApprover").html(response.CO);
-            $("#lblRO").html(response.RO);
-            $("#lblORO").html(response.ORO);
+            //$("#lblRO").html(response.RO);
+            //$("#lblORO").html(response.ORO);
         }
     });
 }

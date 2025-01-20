@@ -97,8 +97,8 @@
                     <button class="count-label" id="btnNotVerifiedUser" name="btnNotVerifiedUser">Not Verified <br /><span id="lblNotVerifiedUser">0</span></button>
                     <button class="count-label" id="btnIO" name="btnIO">IO <br /><span id="lblIO">0</span></button>
                     <button class="count-label" id="btnApprover" name="btnApprover">Approver <br /><span id="lblApprover">0</span></button>
-                    <button class="count-label" id="btnRO" name="btnRO">RO <br /><span id="lblRO">0</span></button>
-                    <button class="count-label" id="btnORO" name="btnOROr">ORO <br /><span id="lblORO">0</span></button>
+@*                  <button class="count-label" id="btnRO" name="btnRO">RO <br /><span id="lblRO">0</span></button>
+                    <button class="count-label" id="btnORO" name="btnOROr">ORO <br /><span id="lblORO">0</span></button> *@
                 </div>
 
                 <div class="table-responsive">
@@ -113,11 +113,12 @@
                                 <th class="nowrap">Claims</th>
                                 <th class="text-wrap" style="width: 6rem;">Requested Generated On (Dt)</th>
                                 <th class="nowrap">Mapping</th>
+                                <th class="nowrap">Approval</th>
                                 <th class="nowrap">Active</th>
                                 <th class="nowrap">IO</th>
                                 <th class="nowrap">Approver</th>
-                                <th style="width: 6rem;">Record Office (JCO)</th>
-                                <th style="width: 6rem;">Record Office (Officer)</th>
+@*                              <th style="width: 6rem;">Record Office (JCO)</th>
+                                <th style="width: 6rem;">Record Office (Officer)</th> *@
                                 <th class="noExport nowrap">Action</th>
                             </tr>
                         </thead>
@@ -319,7 +320,7 @@
                                     <span class="text-danger field-validation-valid" id="CommandingOffr-error" data-valmsg-for="CommandingOffr" data-valmsg-replace="true"></span>
                                 </div>
                             </div>
-                            <div class="form-group row mb-2">
+@*                             <div class="form-group row mb-2">
                                 <label class="col-form-label col-sm-9 fw-bold">Are you performing the Duties of CO, Record Office/ Col Records?<i class="fas fa-asterisk mand1"></i></label>
                                 <div class="col-sm-3">
                                     <div class="form-check form-check-inline">
@@ -336,8 +337,8 @@
                                     </div>
                                     <span class="text-danger field-validation-valid" id="IsRO-error" data-valmsg-for="IsRO" data-valmsg-replace="true"></span>
                                 </div>
-                            </div>
-                            <div class="form-group row mb-2">
+                            </div> *@
+@*                             <div class="form-group row mb-2">
                                 <label class="col-form-label col-sm-9 fw-bold">Are you performing the Duties of Brig ORO?<i class="fas fa-asterisk mand1"></i></label>
                                 <div class="col-sm-3">
                                     <div class="form-check form-check-inline">
@@ -354,7 +355,7 @@
                                     </div>
                                     <span class="text-danger field-validation-valid" id="IsORO-error" data-valmsg-for="IsORO" data-valmsg-replace="true"></span>
                                 </div>
-                            </div>
+                            </div> *@
                             <div class="col-sm-12 text-right">
                                 <input type="button" class="btn btn-outline-primary" value="Save" id="btnDomainAdd" onclick="Proceed()" />
                                 <button type="button" id="btnDomainAddReset" class="btn btn-outline-danger">Reset</button>
@@ -396,8 +397,8 @@
                                     <th class="nowrap">IsActive</th>
                                     <th class="nowrap">IO</th>
                                     <th class="nowrap">Approver</th>
-                                    <th class="nowrap">RO</th>
-                                    <th class="nowrap">ORO</th>
+@*                                  <th class="nowrap">RO</th>
+                                    <th class="nowrap">ORO</th> *@
                                     <th class="nowrap">Status</th>
                                 </tr>
                             </thead>
