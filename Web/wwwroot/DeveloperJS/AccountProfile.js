@@ -36,12 +36,12 @@
     $("input[name='IsCO']").click(function () {
         $("#IsCO-error").html("");
     });
-    $("input[name='IsRO']").click(function () {
-        $("#IsRO-error").html("");
-    });
-    $("input[name='IsORO']").click(function () {
-        $("#IsORO-error").html("");
-    });
+    //$("input[name='IsRO']").click(function () {
+    //    $("#IsRO-error").html("");
+    //});
+    //$("input[name='IsORO']").click(function () {
+    //    $("#IsORO-error").html("");
+    //});
 
     $("#btnUnitMapReset").click(function () {
         Reset();    
@@ -410,7 +410,12 @@ function Proceed() {
             cancelButtonColor: '#d33',
             confirmButtonText: 'Yes, Save it!'
         }).then((result) => {
-            if (result.isConfirmed && $("input[type='radio'][name=IsIO]:checked").length > 0 && $("input[type='radio'][name=IsCO]:checked").length > 0 && $("input[type='radio'][name=IsRO]:checked").length > 0 && $("input[type='radio'][name=IsORO]:checked").length > 0 && $("input[type='radio'][name=IsTokenWaiver]:checked").length > 0) {
+            let isIO = $("input[type='radio'][name=IsIO]:checked").length;
+            let isCO = $("input[type='radio'][name=IsCO]:checked").length;
+            //let isRO = $("input[type='radio'][name=IsRO]:checked").length;
+            //let isORO = $("input[type='radio'][name=IsORO]:checked").length;
+            let isTokenWaiver = $("input[type='radio'][name=IsTokenWaiver]:checked").length;
+            if (result.isConfirmed && isTokenWaiver > 0 && isIO > 0 && isCO > 0) { // && isRO > 0 && isORO > 0
                 $(formId).submit();
             }
             else {
@@ -443,19 +448,19 @@ function ValidateRadioButton() {
         $("#IsCO-error").html("");
     }
 
-    if ($("input[type='radio'][name=IsRO]:checked").length == 0) {
-        $("#IsRO-error").html("Record Office is required.");
-    }
-    else {
-        $("#IsRO-error").html("");
-    }
+    //if ($("input[type='radio'][name=IsRO]:checked").length == 0) {
+    //    $("#IsRO-error").html("Record Office is required.");
+    //}
+    //else {
+    //    $("#IsRO-error").html("");
+    //}
 
-    if ($("input[type='radio'][name=IsORO]:checked").length == 0) {
-        $("#IsORO-error").html("Officer Record Office is required.");
-    }
-    else {
-        $("#IsORO-error").html("");
-    }
+    //if ($("input[type='radio'][name=IsORO]:checked").length == 0) {
+    //    $("#IsORO-error").html("Officer Record Office is required.");
+    //}
+    //else {
+    //    $("#IsORO-error").html("");
+    //}
 
     if ($("input[type='radio'][name=IsTokenWaiver]:checked").length == 0) {
         $("#IsTokenWaiver-error").html("Token Waiver to access Appl is required.");
@@ -465,8 +470,8 @@ function ValidateRadioButton() {
     }
 }
 function ResetErrorMessage() {
-    $("#IsRO-error").html("");
-    $("#IsORO-error").html("");
+    //$("#IsRO-error").html("");
+    //$("#IsORO-error").html("");
     $("#IsIO-error").html("");
     $("#IsCO-error").html("");
     $("#IsTokenWaiver-error").html("");

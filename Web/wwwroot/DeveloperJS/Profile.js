@@ -30,10 +30,10 @@ $(document).ready(function () {
                     var userid = $("#spnUserId").html();
                    
 
-                    IsRO = $("#chkRO").prop("checked");
+                    IsRO = false;//$("#chkRO").prop("checked");
                     IsIO = $("#chkIO").prop("checked");
                     IsCO = $("#chkCO").prop("checked");
-                    IsORO = $("#chkORO").prop("checked");
+                    IsORO = false;// $("#chkORO").prop("checked");
                     
                     UpdateProfileWithMapping(RankId, Name, IsRO, IsIO, IsCO, IsORO, userid, TDMId, Thumbprint); //MobileNo, DialingCode, Extension,
                         //SaveUserProfile(ArmyNo, Rank, Name, Appt, Unit, $("#intoffsyes").prop("checked"), 3, $("#spnUserIdIO").html(), $("#spnUserIdGSO").html(), userid)
@@ -215,15 +215,15 @@ function GetByArmyNo(ArmyNo) {
                         GetALLByUnitById(response.UnitId);
                         mMsater(response.RankId, "ddlProRank", Rank, "");
                        
-                        if (response.IsRO == false) {
+                        //if (response.IsRO == false) {
 
-                            $("#chkRO").prop("checked", false); 
-                        }
-                        else {
+                        //    $("#chkRO").prop("checked", false); 
+                        //}
+                        //else {
                             
-                            $("#chkRO").prop("checked", true); 
+                        //    $("#chkRO").prop("checked", true); 
                            
-                        }
+                        //}
                         if (response.IsIO == false) {
 
                             $("#chkIO").prop("checked", false);
@@ -242,15 +242,15 @@ function GetByArmyNo(ArmyNo) {
                             $("#chkCO").prop("checked", true);
 
                         }
-                        if (response.IsORO == false) {
+                        //if (response.IsORO == false) {
 
-                            $("#chkORO").prop("checked", false);
-                        }
-                        else {
+                        //    $("#chkORO").prop("checked", false);
+                        //}
+                        //else {
 
-                            $("#chkORO").prop("checked", true);
+                        //    $("#chkORO").prop("checked", true);
 
-                        }
+                        //}
                         $("#txtName").val(response.Name);
                         //GetALLByUnitById($("#aspndomainUnitID").html());
                         $("#lblDomainId").html(response.DomainId);

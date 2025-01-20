@@ -174,22 +174,22 @@
             BindDialog("CO");
         }
     });
-    $("#btnRO").click(function () {
-        if ($("#lblRO").html() > 0) {
-            $("#tbldatadialog").DataTable().destroy();
-            $("#lblModelTitle").html('Total Not Verified Users');
-            $("#DataTableDialog").modal('show');
-            BindDialog("RO");
-        }
-    });
-    $("#btnORO").click(function () {
-        if ($("#lblORO").html() > 0) {
-            $("#tbldatadialog").DataTable().destroy();
-            $("#lblModelTitle").html('Total Not Verified Users');
-            $("#DataTableDialog").modal('show');
-            BindDialog("ORO");
-        }
-    });
+    //$("#btnRO").click(function () {
+    //    if ($("#lblRO").html() > 0) {
+    //        $("#tbldatadialog").DataTable().destroy();
+    //        $("#lblModelTitle").html('Total Not Verified Users');
+    //        $("#DataTableDialog").modal('show');
+    //        BindDialog("RO");
+    //    }
+    //});
+    //$("#btnORO").click(function () {
+    //    if ($("#lblORO").html() > 0) {
+    //        $("#tbldatadialog").DataTable().destroy();
+    //        $("#lblModelTitle").html('Total Not Verified Users');
+    //        $("#DataTableDialog").modal('show');
+    //        BindDialog("ORO");
+    //    }
+    //});
 });
 function BindDialog(Choice) {
     $("#tbldatadialog").DataTable({
@@ -221,8 +221,8 @@ function BindDialog(Choice) {
             { data: "AdminFlag", name: "AdminFlag" },
             { data: "IsIO", name: "IsIO" },
             { data: "IsCO", name: "IsCO" },
-            { data: "IsRO", name: "IsRO" },
-            { data: "IsORO", name: "IsORO" }
+            //{ data: "IsRO", name: "IsRO" },
+            //{ data: "IsORO", name: "IsORO" }
         ]    
         });
 }
@@ -310,15 +310,15 @@ function BindData(Choice) {
                         else
                             listItem += "<td class='align-middle'><span><span class='badge badge-pill badge-danger' id='isCO'>No</span></span></td>";
 
-                        if (response[i].IsRO == true)
-                            listItem += "<td class='align-middle'><span><span class='badge badge-pill badge-success' id='isRO'>Yes</span></span></td>";
-                        else
-                            listItem += "<td class='align-middle'><span><span class='badge badge-pill badge-danger' id='isRO'>No</span></span></td>";
+                        //if (response[i].IsRO == true)
+                        //    listItem += "<td class='align-middle'><span><span class='badge badge-pill badge-success' id='isRO'>Yes</span></span></td>";
+                        //else
+                        //    listItem += "<td class='align-middle'><span><span class='badge badge-pill badge-danger' id='isRO'>No</span></span></td>";
 
-                        if (response[i].IsORO == true)
-                            listItem += "<td class='align-middle'><span><span class='badge badge-pill badge-success' id='isORO'>Yes</span></span></td>";
-                        else
-                            listItem += "<td class='align-middle'><span><span class='badge badge-pill badge-danger' id='isORO'>No</span></span></td>";
+                        //if (response[i].IsORO == true)
+                        //    listItem += "<td class='align-middle'><span><span class='badge badge-pill badge-success' id='isORO'>Yes</span></span></td>";
+                        //else
+                        //    listItem += "<td class='align-middle'><span><span class='badge badge-pill badge-danger' id='isORO'>No</span></span></td>";
 
                         if (response[i].Id != null && response[i].Id != "null")
                             listItem += "<td class='align-middle'><span id='btnedit'><button type='button' class='cls-btnedit btn btn-icon btn-round btn-warning mr-1'><i class='fas fa-edit'></i></button></span></td>";

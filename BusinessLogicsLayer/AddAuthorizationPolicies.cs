@@ -23,13 +23,13 @@ namespace BusinessLogicsLayer
                     policy => policy.RequireClaim("ICard Export Data: AFSAC Cell"));
 
                 options.AddPolicy("InternalWkDistrPolicy",
-                    policy => policy.RequireClaim("Internal Wk Distr: RO"));
+                    policy => policy.RequireClaim("Internal Wk Distr: Record Office"));
 
                 options.AddPolicy("ApplApproverPolicy",
-                    policy => policy.RequireClaim("Appl Approver: RO"));
+                    policy => policy.RequireClaim("Appl Approver"));
 
                 options.AddPolicy("ViewIndlIncorrectDataPolicy",
-                    policy => policy.RequireClaim("View Indl Incorrect Data: RO"));
+                    policy => policy.RequireClaim("View Indl Incorrect Data: Record Office"));
 
                 options.AddPolicy("ArmyLevelReportsPolicy",
                     policy => policy.RequireClaim("Army Level Reports"));
