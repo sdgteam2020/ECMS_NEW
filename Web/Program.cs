@@ -129,8 +129,8 @@ builder.Services.AddSession(options =>
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
     // When the code is published on IAM, these two lines are commented out.
-    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-    options.Cookie.SameSite = SameSiteMode.Strict;
+    //options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+    //options.Cookie.SameSite = SameSiteMode.Strict;
     //------------------- End Instructions----------------------
 });
 builder.Services.AddAntiforgery(o => o.SuppressXFrameOptionsHeader = true);
@@ -250,8 +250,8 @@ else
 //app.UseRewriter(options);
 
 // When the code is published on IAM, these two lines are commented out.
-app.UseForwardedHeaders();
-app.UseHttpsRedirection();
+//app.UseForwardedHeaders();
+//app.UseHttpsRedirection();
 //------------------- End Instructions----------------------
 
 app.UseStaticFiles(new StaticFileOptions

@@ -33,4 +33,4 @@ const RecordOffice = 15;
 const IssuingAuthority = 16;
 const Regimental = 17;
 const BloodGroup = 18;
-const HostUrl = 'https://localhost:7023';
+const HostUrl = 'https://dgisapp.army.mil:55102'; /*https://localhost:7023*/
