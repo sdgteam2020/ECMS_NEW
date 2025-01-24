@@ -1290,7 +1290,7 @@ function GetTokenSignXml(xml, msgid, RequestId, Id) {
 
     /*    IcNo = "7f33df8ac6540b5cf7ccfd041d8c837641226444d9f1a4aa30a01924c0610996";*/
     $.ajax({
-        url: 'http://localhost/Temporary_Listen_Addresses/SignXml',
+        url: HostUrl +'/Temporary_Listen_Addresses/SignXml',
         type: "POST",
         contentType: 'application/xml', // Set content type to XML
         data: xml, // Set the XML data
@@ -1511,7 +1511,7 @@ function DownloadPdf(RequestId) {
 function digitalpdfsignature(Thumbprint, pdfpath, XCoordinate, YCoordinate, RequestId) {
     $("#loadingToken").show();
     $.ajax({
-        url: 'http://localhost/Temporary_Listen_Addresses/ByteDigitalSignAsync',
+        url: HostUrl +'/Temporary_Listen_Addresses/ByteDigitalSignAsync',
         type: "Post",
         contentType: 'application/json; charset=utf-8',
         'data': JSON.stringify([{

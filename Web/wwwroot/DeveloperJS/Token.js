@@ -18,7 +18,7 @@ function GetTokenvalidatepersid2fawiththumbprint(IcNo, msgid, txticno, thumbprin
 
     
     $.ajax({
-        url: 'http://localhost/Temporary_Listen_Addresses/FetchUniqueTokenDetails',
+        url: HostUrl+'/Temporary_Listen_Addresses/FetchUniqueTokenDetails',
         type: "GET",
         cache: false,
         dataType: "json",
@@ -56,7 +56,7 @@ function GetTokenvalidatepersid2fawiththumbprint(IcNo, msgid, txticno, thumbprin
 function GetTokenvalidatepersid2fa(IcNo, msgid, txticno, thumbprint) {
     $("#loadingToken").show();
     $.ajax({
-        url: 'http://localhost/Temporary_Listen_Addresses/validatepersid2fa',
+        url: HostUrl +'/Temporary_Listen_Addresses/validatepersid2fa',
         type: "Post",
         contentType: 'application/json; charset=utf-8',
         'data': JSON.stringify({
@@ -97,7 +97,7 @@ function GetTokenValidate(ApiId, IcNo, msgid) {
    
 
     $.ajax({
-        url: 'http://localhost/Temporary_Listen_Addresses/' + ApiId,
+        url: HostUrl +'/Temporary_Listen_Addresses/' + ApiId,
         type: "Post",
         contentType: 'application/json; charset=utf-8',
         'data': JSON.stringify({
@@ -140,7 +140,7 @@ function GetTokenDetails1(ApiId, txt, thumbprint, msgid) {
     };
    
     $.ajax({
-        url: 'http://localhost/Temporary_Listen_Addresses/' + ApiId,
+        url: HostUrl +'/Temporary_Listen_Addresses/' + ApiId,
         type: "GET",
         cache: false,
         dataType: "json",
