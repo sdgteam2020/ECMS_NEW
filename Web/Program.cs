@@ -66,7 +66,7 @@ builder.Services.Configure<SecurityStampValidatorOptions>(opt =>
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("CorsPolicy",
-        builder => builder.WithOrigins("http://localhost", "https://localhost")
+        builder => builder.WithOrigins("http://localhost", "*")
         .AllowAnyMethod()
         .AllowAnyHeader());
 });

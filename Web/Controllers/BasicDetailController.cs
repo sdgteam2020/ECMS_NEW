@@ -31,6 +31,7 @@ using DataTransferObject.Domain.Master;
 using DataAccessLayer.Healpers;
 using Microsoft.DotNet.Scaffolding.Shared.CodeModifier.CodeChange;
 using Microsoft.SqlServer.Management.Smo.Wmi;
+using System.Xml;
 
 namespace Web.Controllers
 {
@@ -1842,68 +1843,85 @@ namespace Web.Controllers
         {
             try
             {
-                string xml = "";
                 DTOXmlFilesFwdLogRequest ret = new DTOXmlFilesFwdLogRequest();
+
+                // Fetch XML data for digital sign
                 var xmldata = await _iTrnLoginLogBL.XmlFileDigitalSignFromData(Data.Ids);
-                var lastrec = await basicDetailBL.ICardFwdLastRec(Data.Ids[0]);
-                XmlSerializer serializer = new XmlSerializer(typeof(DTOFwdLastRecForDigitalSign));
-                using (StringWriter writer = new StringWriter())
+                if (xmldata != null && !string.IsNullOrEmpty(xmldata.XmlFiles))
                 {
-                    serializer.Serialize(writer, lastrec);
-                    xml = writer.ToString();
+                    ret.Id = xmldata.Id;
 
-                }
+                    // Create XML structure
+                    string xml = await GenerateLastRecordXml(Data.Ids[0]);
+                    ret.XmlFiles = MergeXmlDocuments(xmldata.XmlFiles, xml);
 
-
-                if (xmldata != null)
-                {
-                    if (xmldata.XmlFiles != "")
-                    {
-                        ret.Id = xmldata.Id;
-                        XDocument xDoc1 = XDocument.Parse(xmldata.XmlFiles);
-                        XDocument xDoc2 = XDocument.Parse(xml);
-                        var newDetails = new XElement("RecForDigitalSign");
-                        //  newDetails.Add(newDetails);
-
-                        foreach (XElement element in xDoc2.Root.Elements())
-                        {
-                            newDetails.Add(element);
-                            // xDoc1.Root.Add(element);
-                        }
-                        xDoc1.Root.Add(newDetails);
-                        ret.XmlFiles = xDoc1.ToString();// xmldata.XmlFiles;
-                        return Json(ret);
-                    }
-                    else
-                    {
-                        var retdata = await basicDetailBL.GetDataDigitalXmlSign(Data);
-                        var jsonString = JsonConvert.SerializeObject(retdata);
-                        var jsonde = JsonConvert.DeserializeObject(jsonString);
-                        DTOXmlFilesForUpdate dTOXmlFilesForUpdate = new DTOXmlFilesForUpdate();
-                        dTOXmlFilesForUpdate.Id = xmldata.Id;
-                        dTOXmlFilesForUpdate.jsonfile = jsonde;
-                        return Json(dTOXmlFilesForUpdate);
-                    }
-
+                    return Json(ret);
                 }
                 else
                 {
-                    var retdata = await basicDetailBL.GetDataDigitalXmlSign(Data);
-
-                    var jsonString = JsonConvert.SerializeObject(retdata);
-                    var jsonde = JsonConvert.DeserializeObject(jsonString);
-
-
-                    return Json(jsonde);
+                    // If xmldata.XmlFiles is empty or null, prepare JSON response
+                    return await GenerateJsonResponse(xmldata, Data);
                 }
-
-
             }
             catch (Exception ex)
             {
                 _logger.LogError(1001, ex, "BasicDetails=>DataDigitalXmlSign.");
                 return RedirectToAction("Error", "Error");
             }
+        }
+        // Method to serialize last record to XML
+        private async Task<string> GenerateLastRecordXml(int id)
+        {
+            var lastRec = await basicDetailBL.ICardFwdLastRec(id);
+            XmlSerializer serializer = new XmlSerializer(typeof(DTOFwdLastRecForDigitalSign));
+            using (StringWriter writer = new StringWriter())
+            {
+                serializer.Serialize(writer, lastRec);
+                return writer.ToString();
+            }
+        }
+        // Method to merge two XML documents
+        private string MergeXmlDocuments(string xmlData, string lastRecordXml)
+        {
+            XmlDocument xmlDoc1 = new XmlDocument();
+            xmlDoc1.LoadXml(xmlData);
+
+            XmlDocument xmlDoc2 = new XmlDocument();
+            xmlDoc2.LoadXml(lastRecordXml);
+
+            XmlDocument xmlDoc3 = new XmlDocument();
+            XmlElement rootElement = xmlDoc3.CreateElement("RecForDigitalSign");
+            xmlDoc3.AppendChild(rootElement);
+
+            foreach (XmlNode node in xmlDoc2.DocumentElement.ChildNodes)
+            {
+                XmlNode importedNode = xmlDoc3.ImportNode(node, true);
+                rootElement.AppendChild(importedNode);
+            }
+
+            XmlNode importedRoot = xmlDoc3.ImportNode(xmlDoc1.DocumentElement, true);
+            rootElement.AppendChild(importedRoot);
+
+            return xmlDoc3.OuterXml;
+        }
+        // Method to generate JSON response when XML signing data is unavailable
+        private async Task<IActionResult> GenerateJsonResponse(DTOXmlFilesFwdLogRequest xmldata, DTODataExportRequest Data)
+        {
+            var retData = await basicDetailBL.GetDataDigitalXmlSign(Data);
+            var jsonString = JsonConvert.SerializeObject(retData);
+            var jsonResponse = JsonConvert.DeserializeObject(jsonString);
+
+            if (xmldata != null)
+            {
+                DTOXmlFilesForUpdate updateResponse = new DTOXmlFilesForUpdate
+                {
+                    Id = xmldata.Id,
+                    jsonfile = jsonResponse
+                };
+                return Json(updateResponse);
+            }
+
+            return Json(jsonResponse);
         }
 
         #endregion

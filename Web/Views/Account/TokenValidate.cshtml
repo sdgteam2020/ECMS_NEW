@@ -139,11 +139,11 @@
                                                     <label class="labeltoken">Army No</label>
                                                     @if (dTOTempSession.IsToken==true)
                                                     {
-                                                        <input asp-for="ICNo" class="form-control" placeholder="Enter IC No" readonly /> @* value="@dTOTempSession.ICNO" *@
+                                                        <input asp-for="ICNo" class="form-control" placeholder="Enter IC No Ex.IC/SS/SLXXXXXP" readonly /> @* value="@dTOTempSession.ICNO" *@
                                                     }
                                                     else
                                                     {
-                                                        <input asp-for="ICNo" class="form-control" placeholder="Enter IC No" oninput="this.value = this.value.toUpperCase();" value="@dTOTempSession.ICNO.ToUpper()" /> @* value="@dTOTempSession.ICNO" *@
+                                                        <input asp-for="ICNo" class="form-control" placeholder="Enter IC No Ex.IC/SS/SLXXXXXP" oninput="this.value = this.value.toUpperCase();" value="@dTOTempSession.ICNO.ToUpper()" /> @* value="@dTOTempSession.ICNO" *@
                                                     }
 
                                                     <span asp-validation-for="ICNo" class="text-danger"></span>
