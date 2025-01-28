@@ -77,9 +77,14 @@ namespace BusinessLogicsLayer.API
             try
             {
                 DTOLoginAPIResponse dynamicResponseDTO =new DTOLoginAPIResponse();
+                HttpClientHandler handler = new HttpClientHandler
+                {
+                    SslProtocols = System.Security.Authentication.SslProtocols.Tls
+                   
+                };
                
                 HttpResponseMessage result = null;
-                using (var client = new HttpClient()) 
+                using (var client = new HttpClient(handler)) 
                 {
                     var requestBody = new StringContent($"accesskey={Data.accessKey}");
                     requestBody.Headers.ContentType = new

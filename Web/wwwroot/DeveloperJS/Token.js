@@ -248,6 +248,9 @@ function GetTokenDetails(CRL_OCSPCheck, CRL_OCSPMsg, Remarks, Thumbprint, Status
                         } else if (response.ArmyNo.toLowerCase().trim() == "A2A7D3ED10E454CDD66285EBDFCC293549762148F74D4A65221250769C8E6448".toLowerCase()) {
                             $("#" + txt).val("IC60056M");
                         }
+                        else {
+                            $("#" + txt).val(response.ArmyNo.toUpperCase().trim());
+                        }
 
                         //let foo = prompt('Enter Army No');
                         //let bar = confirm('Confirm or deny');
