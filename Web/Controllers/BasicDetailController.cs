@@ -32,6 +32,7 @@ using DataAccessLayer.Healpers;
 using Microsoft.DotNet.Scaffolding.Shared.CodeModifier.CodeChange;
 using Microsoft.SqlServer.Management.Smo.Wmi;
 using System.Xml;
+using Microsoft.SqlServer.Management.Smo;
 
 namespace Web.Controllers
 {
@@ -777,12 +778,20 @@ namespace Web.Controllers
 
                     string sourceFolderPhotoPhy = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData");
                     string sourcePathPhoto = Path.Combine(sourceFolderPhotoPhy, "Photo", basicDetailUpdVM.PhotoImagePath);
-                    basicDetailUpdVM.ExistingPhotoInBase64 = ImageEncryptAndDecrypt.DecryptImageToBase64(sourcePathPhoto);
-                    basicDetailUpdVM.ExistingPhotoImagePath = basicDetailUpdVM.PhotoImagePath;
+                    string sourcePathSignature = Path.Combine(sourceFolderPhotoPhy, "Signature", basicDetailUpdVM.SignatureImagePath);
+                    
+                    if (System.IO.File.Exists(sourcePathPhoto))
+                    {
+                        basicDetailUpdVM.ExistingPhotoInBase64 = ImageEncryptAndDecrypt.DecryptImageToBase64(sourcePathPhoto);
+                        basicDetailUpdVM.ExistingPhotoImagePath = basicDetailUpdVM.PhotoImagePath;
+                    }
 
-                    string sourcePathSignature = Path.Combine(sourceFolderPhotoPhy, "Signature", basicDetailUpdVM.PhotoImagePath);
-                    basicDetailUpdVM.ExistingSignatureInBase64 = ImageEncryptAndDecrypt.DecryptImageToBase64(sourcePathSignature);
-                    basicDetailUpdVM.ExistingSignatureImagePath = basicDetailUpdVM.SignatureImagePath;
+                    if (System.IO.File.Exists(sourcePathSignature))
+                    {
+                        basicDetailUpdVM.ExistingSignatureInBase64 = ImageEncryptAndDecrypt.DecryptImageToBase64(sourcePathSignature);
+                        basicDetailUpdVM.ExistingSignatureImagePath = basicDetailUpdVM.SignatureImagePath;
+                    }
+
 
                     basicDetailUpdVM.EncryptedId = Id;
 
@@ -882,7 +891,7 @@ namespace Web.Controllers
 
 
                         //string sourceFolderPhotoDB = "/WriteReadData/" + "Photo";
-                        //string sourceFolderPhotoPhy = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "Photo");
+                        string sourceFolderPhotoPhy_Old = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData");
                         string sourceFolderPhotoPhy = Convert.ToString(GetCreateMyFolder(Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "Photo")));
                         if (!Directory.Exists(sourceFolderPhotoPhy))
                             Directory.CreateDirectory(sourceFolderPhotoPhy);
@@ -910,6 +919,17 @@ namespace Web.Controllers
                                 string uniqueFileName = FileName + ".enc";
                                 //string destinationPath = sourceFolderPhotoPhy + model.ServiceNo + ".txt";
                                 string destinationPath = Path.Combine(sourceFolderPhotoPhy, uniqueFileName);
+
+                                // Old image delete before new image created
+                                if(model.ExistingPhotoImagePath != null)
+                                {
+                                    string ExitImagePath = Path.Combine(sourceFolderPhotoPhy_Old,"Photo" ,model.ExistingPhotoImagePath);
+                                    if (System.IO.File.Exists(ExitImagePath))
+                                    {
+                                        System.IO.File.Delete(ExitImagePath);
+                                    }
+                                }
+
                                 ImageEncryptAndDecrypt.EncryptImageFile(path, destinationPath);
                                 if (System.IO.File.Exists(path))
                                 {
@@ -954,6 +974,17 @@ namespace Web.Controllers
                                 string uniqueFileName = FileName + ".enc";
                                 //string destinationPath = sourceFolderSignaturePhy + model.ServiceNo + ".txt";
                                 string destinationPath = Path.Combine(sourceFolderSignaturePhy, uniqueFileName);
+
+                                // Old signature image delete before new image created
+                                if (model.ExistingSignatureImagePath != null)
+                                {
+                                    string ExitImagePath = Path.Combine(sourceFolderPhotoPhy_Old, "Signature", model.ExistingSignatureImagePath);
+                                    if (System.IO.File.Exists(ExitImagePath))
+                                    {
+                                        System.IO.File.Delete(ExitImagePath);
+                                    }
+                                }
+
                                 ImageEncryptAndDecrypt.EncryptImageFile(path, destinationPath);
                                 if (System.IO.File.Exists(path))
                                 {
@@ -1262,7 +1293,7 @@ namespace Web.Controllers
 
         #endregion
 
-        #region DecryptZipFile
+        #region DecryptZipFile/DecryptZipFileData
 
         [HttpGet]
         public Task<ActionResult> DecryptZipFile(string jcoor)
@@ -1341,10 +1372,10 @@ namespace Web.Controllers
             //end:
             //    return View(model);
         }
-        
+
         #endregion
 
-        #region CSVFileUpload
+        #region CSVFileUpload/UploadCsv/GetHeaderMap/UploadChipAndSerial
         [HttpGet]
         public Task<ActionResult> CSVFileUpload(string jcoor)
         {
@@ -1504,7 +1535,7 @@ namespace Web.Controllers
 
         #endregion
 
-        #region Fwd/Rejecte/InternalFwd/UpdateStepCounter/SaveICardRequestHold/DataExport/DataDigitalXmlSign
+        #region SaveInternalFwd/IcardFwd/IcardRejecte/UpdateStepCounter/SaveICardRequestHold/DataExport/DataDigitalXmlSign/GenerateLastRecordXml/MergeXmlDocuments/GenerateJsonResponse
 
         //[Authorize(Roles = "Coordinator")]
         [Authorize(Policy = "InternalWkDistrPolicy")]
@@ -1869,6 +1900,7 @@ namespace Web.Controllers
                 return RedirectToAction("Error", "Error");
             }
         }
+        
         // Method to serialize last record to XML
         private async Task<string> GenerateLastRecordXml(int id)
         {
@@ -1880,6 +1912,7 @@ namespace Web.Controllers
                 return writer.ToString();
             }
         }
+       
         // Method to merge two XML documents
         private string MergeXmlDocuments(string xmlData, string lastRecordXml)
         {
@@ -1904,6 +1937,7 @@ namespace Web.Controllers
 
             return xmlDoc3.OuterXml;
         }
+       
         // Method to generate JSON response when XML signing data is unavailable
         private async Task<IActionResult> GenerateJsonResponse(DTOXmlFilesFwdLogRequest xmldata, DTODataExportRequest Data)
         {
@@ -1926,7 +1960,7 @@ namespace Web.Controllers
 
         #endregion
 
-        #region miscellaneous
+        #region GetSessionValue/GetData/SearchAllServiceNo/GetBasicDetailByRequestId/GetRequestHistory/GetRegimentalListByArmedId/GetROListByArmedId/GetRemarks/CreateCSV/GetICardPrintPreviewByRequestId/GetBDetailByRequestId/GetTopArmyNoFromICardRequest/ICardRequestHold/GetAllICardRequestHold
 
         private string GetSessionValue()
         {
@@ -2196,7 +2230,7 @@ namespace Web.Controllers
 
         #endregion
 
-        #region CreateFolder
+        #region CreateFolder:-GetCreateMyFolder/GetCreateMyFolder/ForCreateFolderrandom/CreateFolder/CreateZipFromFolder
         public static DirectoryInfo GetCreateMyFolder(string baseFolder)
         {
             var now = DateTime.Now;
