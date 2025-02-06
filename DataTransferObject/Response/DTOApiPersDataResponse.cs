@@ -40,7 +40,7 @@ namespace DataTransferObject.Response
     public class DTOApiPersDataResponse : DTOAPIBaseResponse
     {
         public string Pers_birth_dt { get; set; } = string.Empty;
-        public List<DTOApiPersAddressResponse>? Pers_Address { get; set; }
+        public DTOApiPersAddressResponse Pers_Address { get; set; } = new DTOApiPersAddressResponse(); // Ensures it's never null
         public string Pers_Army_No { get; set; } = string.Empty;
         public string Pers_enrol_dt { get; set; } = string.Empty;
         public string Pers_name { get; set; } = string.Empty;

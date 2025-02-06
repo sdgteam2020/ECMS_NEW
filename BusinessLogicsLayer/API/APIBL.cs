@@ -119,11 +119,11 @@ namespace BusinessLogicsLayer.API
 
         }
 
-        public async Task<DTOApiPersDataFinalResponse> GetData(DTOPersDataRequest Data)
+        public async Task<DTOApiPersDataResponse> GetData(DTOPersDataRequest Data)
         {
             try
             {
-                DTOApiPersDataFinalResponse dynamicResponseDTO = new DTOApiPersDataFinalResponse();
+                DTOApiPersDataResponse dynamicResponseDTO = new DTOApiPersDataResponse();
                 DTOAPIDataRequest dataRequest = new DTOAPIDataRequest();
                 dataRequest.ArmyNo = Data.Pers_Army_No;
                 //dataRequest.ApplyForId = Data.ApplyForId;
@@ -145,7 +145,7 @@ namespace BusinessLogicsLayer.API
                     var body = new
                     {
                         pers_Army_No = Data.Pers_Army_No,
-                        PubKey = Data.PubKey,
+                        pubKey = Data.PubKey,
 
                     };
                     var uri = $"{Data.ApiUrl}?{await query.ReadAsStringAsync()}";
@@ -168,34 +168,57 @@ namespace BusinessLogicsLayer.API
                         var jsonResult = await response.Content.ReadAsStringAsync();
                         //  jsonResult= "[{\"Pers_birth_dt\":\"cmuviBi0CrkNIPAGDL+fBg==\",\"Pers_Address\":[{\"Pers_District\":null,\"Pers_State\":null,\"Pers_Tehsil\":\"omzCgmY0IncQwSSAWMTL8Q==\",\"Pers_Moh_st\":\"VcwaWPH6ibCSNdGc5tnNyA==\",\"Pers_Village\":\"qNGtespRbAWSBR/DXbmUDw==\",\"Pers_Police_stn\":\"omzCgmY0IncQwSSAWMTL8Q==\",\"Pers_Post_office\":\"qNGtespRbAWSBR/DXbmUDw==\",\"Pers_Pin_code\":\"4WFRVciISZcpVd/okL+9eg==\",\"Pers_House_no\":\"VcwaWPH6ibCSNdGc5tnNyA==\"}],\"Pers_Army_No\":\"cWV1+T3G/7stKKZ2JI8UTw==\",\"Pers_enrol_dt\":\"qNY35EsOnh7eeVTN0YuFpg==\",\"Pers_name\":\"CSctdARrb30UJc8JqV5jLA==\"}]"
                         ///var ss = JsonSerializer.Serialize(jsonResult);
-                        List<DTOApiPersDataResponse>? people = JsonConvert.DeserializeObject<List<DTOApiPersDataResponse>>(jsonResult);
+                        DTOApiPersDataResponse? people = JsonConvert.DeserializeObject<DTOApiPersDataResponse>(jsonResult);
                         //var ss111 = JsonConvert.DeserializeObject<List<DTOApiPersDataResponse>>(jsonResult); 
-                        if (people != null && people.Count > 0)
+                        if (people != null) 
                         {
-                            foreach (var item in people)
+                            dynamicResponseDTO.Pers_Army_No = people.Pers_Army_No;
+                            dynamicResponseDTO.Pers_name = people.Pers_name;
+                            dynamicResponseDTO.Pers_birth_dt = people.Pers_birth_dt;
+                            dynamicResponseDTO.Pers_enrol_dt = people.Pers_enrol_dt;
+                            if (people.Pers_Address != null)
                             {
-                                dynamicResponseDTO.Pers_Army_No = item.Pers_Army_No;
-                                dynamicResponseDTO.Pers_name = item.Pers_name;
-                                dynamicResponseDTO.Pers_birth_dt = item.Pers_birth_dt;
-                                dynamicResponseDTO.Pers_enrol_dt = item.Pers_enrol_dt;
-                                if (item.Pers_Address != null && item.Pers_Address.Count > 0)
-                                {
-                                    foreach (var add in item.Pers_Address)
-                                    {
-                                        dynamicResponseDTO.Pers_House_no = add.Pers_House_no;
-                                        dynamicResponseDTO.Pers_Moh_st = add.Pers_Moh_st;
-                                        dynamicResponseDTO.Pers_Village = add.Pers_Village;
-                                        dynamicResponseDTO.Pers_Post_office = add.Pers_Post_office;
-                                        dynamicResponseDTO.Pers_Tehsil = add.Pers_Tehsil;
-                                        dynamicResponseDTO.Pers_Police_stn = add.Pers_Police_stn;
-                                        dynamicResponseDTO.Pers_District = add.Pers_District;
-                                        dynamicResponseDTO.Pers_State = add.Pers_State;
-                                        dynamicResponseDTO.Pers_Pin_code = add.Pers_Pin_code;
-
-                                    }
-                                }
+                                dynamicResponseDTO.Pers_Address.Pers_House_no = people.Pers_Address.Pers_House_no;
+                                dynamicResponseDTO.Pers_Address.Pers_Moh_st = people.Pers_Address.Pers_Moh_st;
+                                dynamicResponseDTO.Pers_Address.Pers_Village = people.Pers_Address.Pers_Village;
+                                dynamicResponseDTO.Pers_Address.Pers_Post_office = people.Pers_Address.Pers_Post_office;
+                                dynamicResponseDTO.Pers_Address.Pers_Tehsil = people.Pers_Address.Pers_Tehsil;
+                                dynamicResponseDTO.Pers_Address.Pers_Police_stn = people.Pers_Address.Pers_Police_stn;
+                                dynamicResponseDTO.Pers_Address.Pers_District = people.Pers_Address.Pers_District;
+                                dynamicResponseDTO.Pers_Address.Pers_State = people.Pers_Address.Pers_State;
+                                dynamicResponseDTO.Pers_Address.Pers_Pin_code = people.Pers_Address.Pers_Pin_code;
                             }
+
                         }
+
+
+
+                        //if (people != null && people.Count > 0)
+                        //{
+                        //    foreach (var item in people)
+                        //    {
+                        //        dynamicResponseDTO.Pers_Army_No = item.Pers_Army_No;
+                        //        dynamicResponseDTO.Pers_name = item.Pers_name;
+                        //        dynamicResponseDTO.Pers_birth_dt = item.Pers_birth_dt;
+                        //        dynamicResponseDTO.Pers_enrol_dt = item.Pers_enrol_dt;
+                        //        if (item.Pers_Address != null && item.Pers_Address.Count > 0)
+                        //        {
+                        //            foreach (var add in item.Pers_Address)
+                        //            {
+                        //                dynamicResponseDTO.Pers_House_no = add.Pers_House_no;
+                        //                dynamicResponseDTO.Pers_Moh_st = add.Pers_Moh_st;
+                        //                dynamicResponseDTO.Pers_Village = add.Pers_Village;
+                        //                dynamicResponseDTO.Pers_Post_office = add.Pers_Post_office;
+                        //                dynamicResponseDTO.Pers_Tehsil = add.Pers_Tehsil;
+                        //                dynamicResponseDTO.Pers_Police_stn = add.Pers_Police_stn;
+                        //                dynamicResponseDTO.Pers_District = add.Pers_District;
+                        //                dynamicResponseDTO.Pers_State = add.Pers_State;
+                        //                dynamicResponseDTO.Pers_Pin_code = add.Pers_Pin_code;
+
+                        //            }
+                        //        }
+                        //    }
+                        //}
 
                     }
                 }
