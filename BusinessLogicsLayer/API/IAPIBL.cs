@@ -11,7 +11,7 @@ namespace BusinessLogicsLayer.API
     public interface IAPIBL
     {
         public Task<DTOLoginAPIResponse> Getauthentication(DTOAPILoginRequest Data);
-        public Task<DTOApiPersDataFinalResponse> GetData(DTOPersDataRequest Data);
+        public Task<DTOApiPersDataResponse> GetData(DTOPersDataRequest Data);
 
     }
 }
