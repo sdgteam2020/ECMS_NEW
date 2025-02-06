@@ -14,5 +14,6 @@ namespace DataTransferObject.Requests
         public string ClientName { get; set; }
         public int ApplyForId { get; set; }
         public string ApiUrl { get; set; }
+        public string PubKey { get; set; }
     }
 }

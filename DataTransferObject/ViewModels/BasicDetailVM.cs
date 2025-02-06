@@ -122,7 +122,7 @@ namespace DataTransferObject.ViewModels
 
         [Display(Name = "PermanentAddress", ResourceType = typeof(Resource))]
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
-        [RegularExpression(@"^[\w \,\-]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
+        [RegularExpression(@"^[\w\-\.\,\&\/ ]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
         public string PermanentAddress { get; set; } = string.Empty;
         public byte StatusLevel { get; set; }
 
@@ -151,7 +151,7 @@ namespace DataTransferObject.ViewModels
         [RegularExpression(@"^[\d]+$", ErrorMessage = "AddressId is number.")]
         public int AddressId { get; set; }
 
-        [RegularExpression(@"^[\w ]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
+        [RegularExpression(@"^[\w\& ]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
         public string State { get; set; } = string.Empty;
 
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]

@@ -3,6 +3,7 @@ using DataTransferObject.Requests;
 using DataTransferObject.Response;
 using Microsoft.SqlServer.Management.Sdk.Sfc;
 using ModernHttpClient;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -12,6 +13,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Net.Security;
+using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
 using System.Security.Policy;
 using System.Text;
@@ -74,46 +76,54 @@ namespace BusinessLogicsLayer.API
         //}
         public async Task<DTOLoginAPIResponse> Getauthentication(DTOAPILoginRequest Data)
         {
-            try
+
+
+            DTOLoginAPIResponse dynamicResponseDTO = new DTOLoginAPIResponse();
+            //ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12 | SecurityProtocolType.Tls13;
+            //var handler = new HttpClientHandler
+            //{
+            //    SslProtocols =
+            //    System.Security.Authentication.SslProtocols.Tls |
+            //    System.Security.Authentication.SslProtocols.Tls11 |
+            //    System.Security.Authentication.SslProtocols.Tls12
+            //   | System.Security.Authentication.SslProtocols.Tls13
+            //   ,
+            //    ServerCertificateCustomValidationCallback =
+            //     (httpRequestMessage, cert, certChain, policyErrors) => true
+            //};
+            //var handler = new HttpClientHandler
+            //{
+            //    SslProtocols =  SslProtocols.Tls11
+            //};
+
+            HttpResponseMessage result = null;
+            using (var client = new HttpClient())
             {
-                DTOLoginAPIResponse dynamicResponseDTO =new DTOLoginAPIResponse();
-                HttpClientHandler handler = new HttpClientHandler
+                var requestBody = new StringContent($"accesskey={Data.accessKey}");
+                requestBody.Headers.ContentType = new
+               MediaTypeHeaderValue("application/x-www-form-urlencoded");
+                client.DefaultRequestHeaders.Accept.Clear();
+                //  var response = await client.PostAsync(Data.LoginUrl, requestBody);
+                var response = await client.PostAsync(Data.LoginUrl, requestBody);
+                if (response.IsSuccessStatusCode)
                 {
-                    SslProtocols = System.Security.Authentication.SslProtocols.Tls
-                   
-                };
-               
-                HttpResponseMessage result = null;
-                using (var client = new HttpClient(handler)) 
-                {
-                    var requestBody = new StringContent($"accesskey={Data.accessKey}");
-                    requestBody.Headers.ContentType = new
-                   MediaTypeHeaderValue("application/x-www-form-urlencoded");
-                    var response = await client.PostAsync(Data.LoginUrl, requestBody);
-                    if (response.IsSuccessStatusCode)
-                    {
-                        dynamicResponseDTO.token = await response.Content.ReadAsStringAsync();
-                    }
+                    dynamicResponseDTO.token = await response.Content.ReadAsStringAsync();
                 }
-
-
-                return dynamicResponseDTO;
-
-
-
             }
-            catch (Exception ex)
-            {
-                return null;
-            }
+
+
+            return dynamicResponseDTO;
+
+
+
 
         }
-    
-        public async Task<DTOApiPersDataResponse> GetData(DTOPersDataRequest Data)
+
+        public async Task<DTOApiPersDataFinalResponse> GetData(DTOPersDataRequest Data)
         {
             try
             {
-                DTOApiPersDataResponse dynamicResponseDTO = new DTOApiPersDataResponse();
+                DTOApiPersDataFinalResponse dynamicResponseDTO = new DTOApiPersDataFinalResponse();
                 DTOAPIDataRequest dataRequest = new DTOAPIDataRequest();
                 dataRequest.ArmyNo = Data.Pers_Army_No;
                 //dataRequest.ApplyForId = Data.ApplyForId;
@@ -130,18 +140,19 @@ namespace BusinessLogicsLayer.API
          .GetProperties()
          .ToDictionary(prop => prop.Name, prop => prop.GetValue(queryParams)?.ToString()));
 
-                    
+
                     // JSON body
                     var body = new
                     {
                         pers_Army_No = Data.Pers_Army_No,
-                       
+                        PubKey = Data.PubKey,
+
                     };
                     var uri = $"{Data.ApiUrl}?{await query.ReadAsStringAsync()}";
 
-                  
+
                     // Construct the query parameters
-                    var jsonBody = JsonSerializer.Serialize(body);
+                    var jsonBody = System.Text.Json.JsonSerializer.Serialize(body);
                     var content = new StringContent(jsonBody, Encoding.UTF8, "application/json");
 
                     // Make the POST request
@@ -155,7 +166,37 @@ namespace BusinessLogicsLayer.API
                         //var ret = await response.Content.ReadAsStringAsync();
                         //var ss = JsonSerializer.Deserialize<ApiPersDataResponseData1>(ret);
                         var jsonResult = await response.Content.ReadAsStringAsync();
-                        dynamicResponseDTO = JsonSerializer.Deserialize<ApiPersDataResponseData>(jsonResult).afsac;
+                        //  jsonResult= "[{\"Pers_birth_dt\":\"cmuviBi0CrkNIPAGDL+fBg==\",\"Pers_Address\":[{\"Pers_District\":null,\"Pers_State\":null,\"Pers_Tehsil\":\"omzCgmY0IncQwSSAWMTL8Q==\",\"Pers_Moh_st\":\"VcwaWPH6ibCSNdGc5tnNyA==\",\"Pers_Village\":\"qNGtespRbAWSBR/DXbmUDw==\",\"Pers_Police_stn\":\"omzCgmY0IncQwSSAWMTL8Q==\",\"Pers_Post_office\":\"qNGtespRbAWSBR/DXbmUDw==\",\"Pers_Pin_code\":\"4WFRVciISZcpVd/okL+9eg==\",\"Pers_House_no\":\"VcwaWPH6ibCSNdGc5tnNyA==\"}],\"Pers_Army_No\":\"cWV1+T3G/7stKKZ2JI8UTw==\",\"Pers_enrol_dt\":\"qNY35EsOnh7eeVTN0YuFpg==\",\"Pers_name\":\"CSctdARrb30UJc8JqV5jLA==\"}]"
+                        ///var ss = JsonSerializer.Serialize(jsonResult);
+                        List<DTOApiPersDataResponse>? people = JsonConvert.DeserializeObject<List<DTOApiPersDataResponse>>(jsonResult);
+                        //var ss111 = JsonConvert.DeserializeObject<List<DTOApiPersDataResponse>>(jsonResult); 
+                        if (people != null && people.Count > 0)
+                        {
+                            foreach (var item in people)
+                            {
+                                dynamicResponseDTO.Pers_Army_No = item.Pers_Army_No;
+                                dynamicResponseDTO.Pers_name = item.Pers_name;
+                                dynamicResponseDTO.Pers_birth_dt = item.Pers_birth_dt;
+                                dynamicResponseDTO.Pers_enrol_dt = item.Pers_enrol_dt;
+                                if (item.Pers_Address != null && item.Pers_Address.Count > 0)
+                                {
+                                    foreach (var add in item.Pers_Address)
+                                    {
+                                        dynamicResponseDTO.Pers_House_no = add.Pers_House_no;
+                                        dynamicResponseDTO.Pers_Moh_st = add.Pers_Moh_st;
+                                        dynamicResponseDTO.Pers_Village = add.Pers_Village;
+                                        dynamicResponseDTO.Pers_Post_office = add.Pers_Post_office;
+                                        dynamicResponseDTO.Pers_Tehsil = add.Pers_Tehsil;
+                                        dynamicResponseDTO.Pers_Police_stn = add.Pers_Police_stn;
+                                        dynamicResponseDTO.Pers_District = add.Pers_District;
+                                        dynamicResponseDTO.Pers_State = add.Pers_State;
+                                        dynamicResponseDTO.Pers_Pin_code = add.Pers_Pin_code;
+
+                                    }
+                                }
+                            }
+                        }
+
                     }
                 }
 
@@ -173,6 +214,6 @@ namespace BusinessLogicsLayer.API
                 return null;
             }
         }
-      
+
     }
 }

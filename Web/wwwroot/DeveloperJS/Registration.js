@@ -25,6 +25,7 @@
         var maxDate = year + '-' + month + '-' + day;
         $('#DOB').attr('max', maxDate);
     });
+
     $('#DOB').on('change', function () {
         $("#DateOfCommissioning").val("");
         var dtToday = new Date();
@@ -45,15 +46,18 @@
     $('.paddress').on('change', function () {
         $("#PermanentAddress").val('Village - ' + $("#Village").val() + '\n Post Office-' + $("#PO").val() + ' \n Tehsil- ' + $("#Tehsil").val() + '\n District- ' + $("#District").val() + '\n State- ' + $("#State").val() + '\n Pin Code- ' + $("#PinCode").val());
         $("#AadhaarNo").val("");
-       
+
     });
+
     $("#btngetdata").on("click", function () {
         $("#ServiceNumber").prop('required', true);
         Getdatafromapi();
     });
+
     $("#btnsubmit").on("click", function () {
         Proceed('Registration');
     });
+
     $("#State").keyup(function () {
         if ($("#State").val().length == 0) {
             $("#lblState").html('State is required.');
@@ -62,6 +66,7 @@
             $("#lblState").html('');
         }
     });
+
     $("#PS").keyup(function () {
         if ($("#PS").val().length == 0) {
             $("#lblPS").html('Police Station is required.');
@@ -70,6 +75,7 @@
             $("#lblPS").html('');
         }
     });
+
     $("#Village").keyup(function () {
         if ($("#Village").val().length == 0) {
             $("#lblVillage").html('Village is required.');
@@ -78,6 +84,7 @@
             $("#lblVillage").html('');
         }
     });
+
     $("#District").keyup(function () {
         if ($("#District").val().length == 0) {
             $("#lblDistrict").html('District is required.');
@@ -86,6 +93,7 @@
             $("#lblDistrict").html('');
         }
     });
+
     $("#PO").keyup(function () {
         if ($("#PO").val().length == 0) {
             $("#lblPO").html('Post Office is required.');
@@ -94,6 +102,7 @@
             $("#lblPO").html('');
         }
     });
+
     $("#Tehsil").keyup(function () {
         if ($("#Tehsil").val().length == 0) {
             $("#lblTehsil").html('Tehsil is required.');
@@ -102,7 +111,7 @@
             $("#lblTehsil").html('');
         }
     });
-   
+
 
     if (sessionStorage.getItem("ArmyNo") != null) {
         $("#ServiceNumber").val(sessionStorage.getItem("ArmyNo"));
@@ -154,12 +163,12 @@
             $("#PermanentAddress").prop('required', true);
         }
 
-       /* Getdatafromapi();*/
+        /* Getdatafromapi();*/
 
         getApplyIcardDetails();
     }
     $('.select2').select2({
-       
+
         closeOnSelect: false
     });
     var someNumbers = [4];
@@ -167,13 +176,12 @@
 
 
     $('#ddlRemarks').on('change', function () {
-        $("#RemarksIds").val($('#ddlRemarks').val()); 
+        $("#RemarksIds").val($('#ddlRemarks').val());
     });
 
 
 });
-function getApplyIcardDetails()
-{
+function getApplyIcardDetails() {
     $.ajax({
         url: "/Home/GetApplyCardDetails",
         type: "POST",
@@ -196,9 +204,9 @@ function getApplyIcardDetails()
                 }
 
 
-               
+
                 mMsater(0, "ArmedId", ArmyType, "");
-              
+
                 if ($("#ApplyForId").val() == 1) {
 
                     mMsater(0, "RankId", Rank, "");
@@ -207,11 +215,11 @@ function getApplyIcardDetails()
 
                 }
 
-               
+
             }
-            
+
         }
-    }); 
+    });
 }
 function Getdatafromapi() {
 
@@ -253,46 +261,68 @@ function CallDataFromAPI() {
                 toastr.success('Data Fetched From Api');
                 // $("#Name").val(response.Pers_name);
                 //alert(JSON.stringify(response));
-                if (response.pers_name.length > 18) {
+                if (response.Pers_name.length > 18) {
                     $('#FName').attr('readonly', false);
                     $('#LName').attr('readonly', false);
                 }
                 else {
-                    $("#FName").val(response.pers_name);
+                    $("#FName").val(response.Pers_name);
                     $('#FName').attr('readonly', true);
                     $('#LName').attr('readonly', true);
                 }
-                $("#NameAsPerRecord").val(response.pers_name);
-                $("#ServiceNo").val(response.pers_Army_No);
-                $("#DOB").val(response.pers_birth_dt);
+                $("#NameAsPerRecord").val(response.Pers_name);
+                $("#ServiceNo").val(response.Pers_Army_No);
+                $("#DOB").val(response.Pers_birth_dt);
+                $("#DateOfCommissioning").val(response.Pers_enrol_dt);
+
+                //const dateDOB = response.DOB.split("T")[0];
+                //const DOB = new Date(dateDOB);
+
+                //const dateDOE = response.DOE.split("T")[0];
+                //const DOE = new Date(dateDOE);
+
                 /*$("#DOB_").val(moment(response.Pers_birth_dt).format("DD-MM-YYYY"));*/
-                $("#DateOfCommissioning").val(response.pers_enrol_dt);
                 /*$("#DOC").val(moment(response.Pers_enrol_dt).format("DD-MM-YYYY"));*/
-                $("#PermanentAddress").val('Village - ' + response.pers_Village + '\n Post Office-' + response.pers_Post_office + ' \n Tehsil- ' + response.pers_Tehsil + '\n District- ' + response.pers_District + '\n State- ' + response.pers_State + '\n Pin Code- ' + response.pers_Pin_code);
+
+                //let address;
+                //if (response.Pers_House_no == null || response.Pers_House_no == '') {
+                //    address = response.Pers_House_no;
+                //}
+                //if (response.Pers_Moh_st == null || response.Pers_Moh_st == '') {
+                //    address = address + ' ' + response.Pers_Moh_st;
+                //}
+                //if (response.Pers_Village == null || response.Pers_Village == '') {
+                //    address = address + ' ' + response.Pers_Village;
+                //}
+                $("#PermanentAddress").val('Village - ' + response.Pers_Village + '\n Post Office-' + response.Pers_Post_office + ' \n Tehsil- ' + response.Pers_Tehsil + '\n District- ' + response.Pers_District + '\n State- ' + response.Pers_State + '\n Pin Code- ' + response.Pers_Pin_code);
                 //$("#RegId").val(regId);
 
-                $("#State").val(response.pers_State);
-                $("#District").val(response.pers_District);
-                $("#PS").val(response.pers_Police_stn);
-                $("#PO").val(response.pers_Post_office);
-                $("#Tehsil").val(response.pers_Tehsil);
-                $("#Village").val(response.pers_Village);
-                if (response.pers_Pin_code == null || response.pers_Pin_code == '') {
+                $("#State").val(response.Pers_State);
+                $("#District").val(response.Pers_District);
+                $("#PS").val(response.Pers_Police_stn);
+                $("#PO").val(response.Pers_Post_office);
+                $("#Tehsil").val(response.Pers_Tehsil);
+                $("#Village").val(response.Pers_Village);
+                if (response.Pers_Pin_code == null || response.Pers_Pin_code == '') {
                     $("#PinCode").val("000000");
                 }
                 else {
-                    $("#PinCode").val(response.pers_Pin_code);
+                    $("#PinCode").val(response.Pers_Pin_code);
                 }
+                $("#IdenMark1").val('');
+                $("#IdenMark2").val('');
+                $("#AadhaarNo").val('');
+                $("#BloodGroup").val('');
 
-                $("#IdenMark1").val(response.pers_Iden_mark_1);
-                $("#IdenMark2").val(response.pers_Iden_mark_2);
-                $("#AadhaarNo").val(response.pers_UID);
+                //$("#IdenMark1").val(response.pers_Iden_mark_1);
+                //$("#IdenMark2").val(response.pers_Iden_mark_2);
+                //$("#AadhaarNo").val(response.pers_UID);
                 //if (response.Pers_Height!="")
                 //    $("#Height").val(response.Pers_Height);
                 //else
                 //    $("#Height").val(0);
 
-                $("#BloodGroup").val(response.pers_Blood_Gp);
+                //$("#BloodGroup").val(response.pers_Blood_Gp);
             }
         }
     });
@@ -323,7 +353,7 @@ function Proceed(id) {
 
     let formId = '#' + id;
 
-    
+
     // Check if the form exists
     if ($(formId).length === 0) {
         console.error("Form not found.");
@@ -347,8 +377,7 @@ function Proceed(id) {
         $("#lblDateOfCommissioning").text('')
     }
 
-    if (sessionStorage.getItem("RegistrationApplyFor") == '4' || sessionStorage.getItem("RegistrationApplyFor") == '9')
-    {
+    if (sessionStorage.getItem("RegistrationApplyFor") == '4' || sessionStorage.getItem("RegistrationApplyFor") == '9') {
         if ($("#State").val().length == 0) {
             $("#lblState").html('State is required.');
         }
@@ -419,7 +448,7 @@ function Proceed(id) {
                 }
             });
         }
-       
+
     }
     else {
         return false;
