@@ -72,7 +72,7 @@
     }
     else {
         $('#txtUnit').attr('readonly', false);
-        getunitbymapid($("#spnUnitIdid").val())
+        //getunitbymapid($("#spnUnitIdid").val())
 
     }
     getApplyIcardDetails();
