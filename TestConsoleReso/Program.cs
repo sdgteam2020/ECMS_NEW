@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
@@ -103,10 +104,10 @@ class Program
     static void Main()
     {
 
-        string[] props = { "Parameter Name", "Parameter_Name@" };
+        //string[] props = { "Parameter Name", "Parameter_Name@" };
 
-        var validNames = props.Select(s => Sanitize(s)).ToList();
-        Console.WriteLine(String.Join(Environment.NewLine, validNames));
+        //var validNames = props.Select(s => Sanitize(s)).ToList();
+        //Console.WriteLine(String.Join(Environment.NewLine, validNames));
 
 
 
@@ -130,6 +131,21 @@ class Program
         //Console.WriteLine($"decrypted string = {decryptedString}");
 
         //Console.ReadKey();
+        string dateString = "1982-11-18";
+        string format = "yyyy-MM-dd";
+        DateTime date;
+
+        // Using DateTimeStyles.None (strict parsing)
+        bool success = DateTime.TryParseExact(dateString, format, CultureInfo.InvariantCulture, DateTimeStyles.None, out date);
+
+        if (success)
+        {
+            Console.WriteLine(date); // Output: 11/18/1982 12:00:00 AM
+        }
+        else
+        {
+            Console.WriteLine("Invalid date format.");
+        }
 
     }
 }
