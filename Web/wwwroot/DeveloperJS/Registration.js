@@ -294,20 +294,20 @@ function CallDataFromAPI() {
                 //if (response.Pers_Village == null || response.Pers_Village == '') {
                 //    address = address + ' ' + response.Pers_Village;
                 //}
-                $("#PermanentAddress").val('Village - ' + response.Pers_Village + '\n Post Office-' + response.Pers_Post_office + ' \n Tehsil- ' + response.Pers_Tehsil + '\n District- ' + response.Pers_District + '\n State- ' + response.Pers_State + '\n Pin Code- ' + response.Pers_Pin_code);
+                $("#PermanentAddress").val('Village - ' + response.Pers_Address.Pers_Village + '\n Post Office-' + response.Pers_Address.Pers_Post_office + ' \n Tehsil- ' + response.Pers_Address.Pers_Tehsil + '\n District- ' + response.Pers_Address.Pers_District + '\n State- ' + response.Pers_Address.Pers_State + '\n Pin Code- ' + response.Pers_Address.Pers_Pin_code);
                 //$("#RegId").val(regId);
 
-                $("#State").val(response.Pers_State);
-                $("#District").val(response.Pers_District);
-                $("#PS").val(response.Pers_Police_stn);
-                $("#PO").val(response.Pers_Post_office);
-                $("#Tehsil").val(response.Pers_Tehsil);
-                $("#Village").val(response.Pers_Village);
-                if (response.Pers_Pin_code == null || response.Pers_Pin_code == '') {
+                $("#State").val(response.Pers_Address.Pers_State);
+                $("#District").val(response.Pers_Address.Pers_District);
+                $("#PS").val(response.Pers_Address.Pers_Police_stn);
+                $("#PO").val(response.Pers_Address.Pers_Post_office);
+                $("#Tehsil").val(response.Pers_Address.Pers_Tehsil);
+                $("#Village").val(response.Pers_Address.Pers_Village);
+                if (response.Pers_Address.Pers_Pin_code == null || response.Pers_Address.Pers_Pin_code == '') {
                     $("#PinCode").val("000000");
                 }
                 else {
-                    $("#PinCode").val(response.Pers_Pin_code);
+                    $("#PinCode").val(response.Pers_Address.Pers_Pin_code);
                 }
                 $("#IdenMark1").val('');
                 $("#IdenMark2").val('');
