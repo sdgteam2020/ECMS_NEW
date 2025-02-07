@@ -1,6 +1,7 @@
 ﻿using DataAccessLayer.BaseInterfaces;
 using DataTransferObject.Domain.Model;
 using DataTransferObject.Requests;
+using DataTransferObject.Response;
 
 
 namespace BusinessLogicsLayer.APIData
@@ -20,12 +21,12 @@ namespace BusinessLogicsLayer.APIData
             return _aPIDataDB.apiLogin(accessKey);
         }
 
-        public Task<MApiData?> GetByIC(DTOAPIDataRequest Data)
+        public Task<DTOApiPersDataResponse> GetByIC(DTOAPIDataRequest Data)
         {
            return _aPIDataDB.GetByIC(Data);
         }
 
-        public Task<MApiDataOffrs?> GetByoffrsIC(DTOAPIDataRequest Data)
+        public Task<DTOApiPersDataResponse> GetByoffrsIC(DTOAPIDataRequest Data)
         {
             return _aPIDataDB.GetByoffrsIC(Data);
         }

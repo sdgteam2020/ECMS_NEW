@@ -76,54 +76,32 @@ namespace BusinessLogicsLayer.API
         //}
         public async Task<DTOLoginAPIResponse> Getauthentication(DTOAPILoginRequest Data)
         {
-
-
             DTOLoginAPIResponse dynamicResponseDTO = new DTOLoginAPIResponse();
-            //ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12 | SecurityProtocolType.Tls13;
-            //var handler = new HttpClientHandler
-            //{
-            //    SslProtocols =
-            //    System.Security.Authentication.SslProtocols.Tls |
-            //    System.Security.Authentication.SslProtocols.Tls11 |
-            //    System.Security.Authentication.SslProtocols.Tls12
-            //   | System.Security.Authentication.SslProtocols.Tls13
-            //   ,
-            //    ServerCertificateCustomValidationCallback =
-            //     (httpRequestMessage, cert, certChain, policyErrors) => true
-            //};
-            //var handler = new HttpClientHandler
-            //{
-            //    SslProtocols =  SslProtocols.Tls11
-            //};
-
-            HttpResponseMessage result = null;
             using (var client = new HttpClient())
             {
                 var requestBody = new StringContent($"accesskey={Data.accessKey}");
-                requestBody.Headers.ContentType = new
-               MediaTypeHeaderValue("application/x-www-form-urlencoded");
+                requestBody.Headers.ContentType = new MediaTypeHeaderValue("application/x-www-form-urlencoded");
                 client.DefaultRequestHeaders.Accept.Clear();
-                //  var response = await client.PostAsync(Data.LoginUrl, requestBody);
                 var response = await client.PostAsync(Data.LoginUrl, requestBody);
                 if (response.IsSuccessStatusCode)
                 {
                     dynamicResponseDTO.token = await response.Content.ReadAsStringAsync();
+                    dynamicResponseDTO.Status = true;
+                    dynamicResponseDTO.Message = "ok";
+                }
+                else 
+                {
+                    dynamicResponseDTO.Status = false;
+                    dynamicResponseDTO.Message = "IAAP Portal is not reachable! Please contact AHCC.";
                 }
             }
-
-
             return dynamicResponseDTO;
-
-
-
-
         }
-
         public async Task<DTOApiPersDataResponse> GetData(DTOPersDataRequest Data)
         {
+            DTOApiPersDataResponse dynamicResponseDTO = new DTOApiPersDataResponse();
             try
             {
-                DTOApiPersDataResponse dynamicResponseDTO = new DTOApiPersDataResponse();
                 DTOAPIDataRequest dataRequest = new DTOAPIDataRequest();
                 dataRequest.ArmyNo = Data.Pers_Army_No;
                 //dataRequest.ApplyForId = Data.ApplyForId;
@@ -136,9 +114,7 @@ namespace BusinessLogicsLayer.API
                         token = Data.jwt
 
                     };
-                    var query = new FormUrlEncodedContent(queryParams.GetType()
-         .GetProperties()
-         .ToDictionary(prop => prop.Name, prop => prop.GetValue(queryParams)?.ToString()));
+                    var query = new FormUrlEncodedContent(queryParams.GetType().GetProperties().ToDictionary(prop => prop.Name, prop => prop.GetValue(queryParams)?.ToString()));
 
 
                     // JSON body
@@ -159,17 +135,12 @@ namespace BusinessLogicsLayer.API
                     var response = await client.PostAsync(uri, content);
 
                     // Ensure the response is successful
-                    response.EnsureSuccessStatusCode();
+                    //response.EnsureSuccessStatusCode();
 
                     if (response.IsSuccessStatusCode)
                     {
-                        //var ret = await response.Content.ReadAsStringAsync();
-                        //var ss = JsonSerializer.Deserialize<ApiPersDataResponseData1>(ret);
                         var jsonResult = await response.Content.ReadAsStringAsync();
-                        //  jsonResult= "[{\"Pers_birth_dt\":\"cmuviBi0CrkNIPAGDL+fBg==\",\"Pers_Address\":[{\"Pers_District\":null,\"Pers_State\":null,\"Pers_Tehsil\":\"omzCgmY0IncQwSSAWMTL8Q==\",\"Pers_Moh_st\":\"VcwaWPH6ibCSNdGc5tnNyA==\",\"Pers_Village\":\"qNGtespRbAWSBR/DXbmUDw==\",\"Pers_Police_stn\":\"omzCgmY0IncQwSSAWMTL8Q==\",\"Pers_Post_office\":\"qNGtespRbAWSBR/DXbmUDw==\",\"Pers_Pin_code\":\"4WFRVciISZcpVd/okL+9eg==\",\"Pers_House_no\":\"VcwaWPH6ibCSNdGc5tnNyA==\"}],\"Pers_Army_No\":\"cWV1+T3G/7stKKZ2JI8UTw==\",\"Pers_enrol_dt\":\"qNY35EsOnh7eeVTN0YuFpg==\",\"Pers_name\":\"CSctdARrb30UJc8JqV5jLA==\"}]"
-                        ///var ss = JsonSerializer.Serialize(jsonResult);
                         DTOApiPersDataResponse? people = JsonConvert.DeserializeObject<DTOApiPersDataResponse>(jsonResult);
-                        //var ss111 = JsonConvert.DeserializeObject<List<DTOApiPersDataResponse>>(jsonResult); 
                         if (people != null) 
                         {
                             dynamicResponseDTO.Pers_Army_No = people.Pers_Army_No;
@@ -188,53 +159,33 @@ namespace BusinessLogicsLayer.API
                                 dynamicResponseDTO.Pers_Address.Pers_State = people.Pers_Address.Pers_State;
                                 dynamicResponseDTO.Pers_Address.Pers_Pin_code = people.Pers_Address.Pers_Pin_code;
                             }
-
+                            dynamicResponseDTO.Status = true;
+                            dynamicResponseDTO.Message = "Ok";
                         }
-
-
-
-                        //if (people != null && people.Count > 0)
-                        //{
-                        //    foreach (var item in people)
-                        //    {
-                        //        dynamicResponseDTO.Pers_Army_No = item.Pers_Army_No;
-                        //        dynamicResponseDTO.Pers_name = item.Pers_name;
-                        //        dynamicResponseDTO.Pers_birth_dt = item.Pers_birth_dt;
-                        //        dynamicResponseDTO.Pers_enrol_dt = item.Pers_enrol_dt;
-                        //        if (item.Pers_Address != null && item.Pers_Address.Count > 0)
-                        //        {
-                        //            foreach (var add in item.Pers_Address)
-                        //            {
-                        //                dynamicResponseDTO.Pers_House_no = add.Pers_House_no;
-                        //                dynamicResponseDTO.Pers_Moh_st = add.Pers_Moh_st;
-                        //                dynamicResponseDTO.Pers_Village = add.Pers_Village;
-                        //                dynamicResponseDTO.Pers_Post_office = add.Pers_Post_office;
-                        //                dynamicResponseDTO.Pers_Tehsil = add.Pers_Tehsil;
-                        //                dynamicResponseDTO.Pers_Police_stn = add.Pers_Police_stn;
-                        //                dynamicResponseDTO.Pers_District = add.Pers_District;
-                        //                dynamicResponseDTO.Pers_State = add.Pers_State;
-                        //                dynamicResponseDTO.Pers_Pin_code = add.Pers_Pin_code;
-
-                        //            }
-                        //        }
-                        //    }
-                        //}
-
+                    }
+                    else if (response.StatusCode == HttpStatusCode.BadRequest)
+                    {
+                        dynamicResponseDTO.Status =false;
+                        dynamicResponseDTO.Message = "Army No not found! Try with correct No (Error Code - 400).";
+                    }
+                    else if (response.StatusCode == HttpStatusCode.Unauthorized)
+                    {
+                        dynamicResponseDTO.Status = false;
+                        dynamicResponseDTO.Message = "API Authentication failed! Please contact Admin.";
+                    }
+                    else
+                    {
+                        dynamicResponseDTO.Status = false;
+                        dynamicResponseDTO.Message = "OASIS/INDRA Server not reachable! Please contact MP8/MP6.";
                     }
                 }
-
-
-                // dTOLoginResponse.armyNo = jwtSecurityToken.Actor;
-                // dTOLoginResponse
-
                 return dynamicResponseDTO;
-
-
-
             }
             catch (Exception ex)
             {
-                return null;
+                dynamicResponseDTO.Status = false;
+                dynamicResponseDTO.Message = ex.Message;
+                return dynamicResponseDTO;
             }
         }
 
