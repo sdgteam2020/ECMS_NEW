@@ -15,8 +15,10 @@ namespace DataTransferObject.Response
         //public int timestamp { get; set; }
         //public string jwt { get; set; }
 
-        public string token { get; set; }
-        public string expiration { get; set; }
+        public string token { get; set; } = string.Empty;
+        public string expiration { get; set; } = string.Empty;
+        public bool Status { get; set; } = false;
+        public string Message { get; set; } = string.Empty;
 
     }
     public class DTOLoginAPIResponseData

@@ -10,38 +10,46 @@
     //const Commissioning = document.getElementById('Commissioning');
     //Commissioning.setAttribute('min', today);
     //Commissioning.setAttribute('max', maxDateFormatted);
-    $(function () {
-        var dtToday = new Date();
 
-        var month = dtToday.getMonth() + 1;
-        var day = dtToday.getDate();
-        var year = dtToday.getFullYear() - 18;
-
-        if (month < 10)
-            month = '0' + month.toString();
-        if (day < 10)
-            day = '0' + day.toString();
-
-        var maxDate = year + '-' + month + '-' + day;
-        $('#DOB').attr('max', maxDate);
+    $('#DOB').datepicker({
+        dateFormat: "dd-mm-yy",
     });
+    $("#DOB").click(function (e) {
+        e.preventDefault();
+    })
 
-    $('#DOB').on('change', function () {
-        $("#DateOfCommissioning").val("");
-        var dtToday = new Date();
+    //$(function () {
+    //    var dtToday = new Date();
 
-        var month = dtToday.getMonth() + 1;
-        var day = dtToday.getDate();
-        var year = dtToday.getFullYear() - 18;
+    //    var month = dtToday.getMonth() + 1;
+    //    var day = dtToday.getDate();
+    //    var year = dtToday.getFullYear() - 18;
 
-        if (month < 10)
-            month = '0' + month.toString();
-        if (day < 10)
-            day = '0' + day.toString();
+    //    if (month < 10)
+    //        month = '0' + month.toString();
+    //    if (day < 10)
+    //        day = '0' + day.toString();
 
-        var maxDate = year + '-' + month + '-' + day;
-        $('#DateOfCommissioning').attr('min', maxDate);
-    });
+    //    var maxDate = year + '-' + month + '-' + day;
+    //    $('#DOB').attr('max', maxDate);
+    //});
+
+    //$('#DOB').on('change', function () {
+    //    $("#DateOfCommissioning").val("");
+    //    var dtToday = new Date();
+
+    //    var month = dtToday.getMonth() + 1;
+    //    var day = dtToday.getDate();
+    //    var year = dtToday.getFullYear() - 18;
+
+    //    if (month < 10)
+    //        month = '0' + month.toString();
+    //    if (day < 10)
+    //        day = '0' + day.toString();
+
+    //    var maxDate = year + '-' + month + '-' + day;
+    //    $('#DateOfCommissioning').attr('min', maxDate);
+    //});
 
     $('.paddress').on('change', function () {
         $("#PermanentAddress").val('Village - ' + $("#Village").val() + '\n Post Office-' + $("#PO").val() + ' \n Tehsil- ' + $("#Tehsil").val() + '\n District- ' + $("#District").val() + '\n State- ' + $("#State").val() + '\n Pin Code- ' + $("#PinCode").val());
@@ -274,15 +282,6 @@ function CallDataFromAPI() {
                 $("#ServiceNo").val(response.Pers_Army_No);
                 $("#DOB").val(response.Pers_birth_dt);
                 $("#DateOfCommissioning").val(response.Pers_enrol_dt);
-
-                //const dateDOB = response.DOB.split("T")[0];
-                //const DOB = new Date(dateDOB);
-
-                //const dateDOE = response.DOE.split("T")[0];
-                //const DOE = new Date(dateDOE);
-
-                /*$("#DOB_").val(moment(response.Pers_birth_dt).format("DD-MM-YYYY"));*/
-                /*$("#DOC").val(moment(response.Pers_enrol_dt).format("DD-MM-YYYY"));*/
 
                 //let address;
                 //if (response.Pers_House_no == null || response.Pers_House_no == '') {
