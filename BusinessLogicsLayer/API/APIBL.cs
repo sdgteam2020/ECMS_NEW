@@ -143,22 +143,7 @@ namespace BusinessLogicsLayer.API
                         DTOApiPersDataResponse? people = JsonConvert.DeserializeObject<DTOApiPersDataResponse>(jsonResult);
                         if (people != null) 
                         {
-                            dynamicResponseDTO.Pers_Army_No = people.Pers_Army_No;
-                            dynamicResponseDTO.Pers_name = people.Pers_name;
-                            dynamicResponseDTO.Pers_birth_dt = people.Pers_birth_dt;
-                            dynamicResponseDTO.Pers_enrol_dt = people.Pers_enrol_dt;
-                            if (people.Pers_Address != null)
-                            {
-                                dynamicResponseDTO.Pers_Address.Pers_House_no = people.Pers_Address.Pers_House_no;
-                                dynamicResponseDTO.Pers_Address.Pers_Moh_st = people.Pers_Address.Pers_Moh_st;
-                                dynamicResponseDTO.Pers_Address.Pers_Village = people.Pers_Address.Pers_Village;
-                                dynamicResponseDTO.Pers_Address.Pers_Post_office = people.Pers_Address.Pers_Post_office;
-                                dynamicResponseDTO.Pers_Address.Pers_Tehsil = people.Pers_Address.Pers_Tehsil;
-                                dynamicResponseDTO.Pers_Address.Pers_Police_stn = people.Pers_Address.Pers_Police_stn;
-                                dynamicResponseDTO.Pers_Address.Pers_District = people.Pers_Address.Pers_District;
-                                dynamicResponseDTO.Pers_Address.Pers_State = people.Pers_Address.Pers_State;
-                                dynamicResponseDTO.Pers_Address.Pers_Pin_code = people.Pers_Address.Pers_Pin_code;
-                            }
+                            dynamicResponseDTO = people;
                             dynamicResponseDTO.Status = true;
                             dynamicResponseDTO.Message = "Ok";
                         }
