@@ -78,7 +78,7 @@ namespace DataAccessLayer
 
             using (var connection = _contextDP.CreateConnection())
             {
-                MApiData? ret = (MApiData) await connection.QueryAsync<MApiData>(query, new { Data.ArmyNo });
+                MApiData? ret = (await connection.QueryAsync<MApiData>(query, new { Data.ArmyNo })).FirstOrDefault();
 
                 DTOApiPersDataResponse response = new DTOApiPersDataResponse();
 
@@ -129,7 +129,7 @@ namespace DataAccessLayer
 
             using (var connection = _contextDP.CreateConnection())
             {
-                MApiDataOffrs? ret = (MApiDataOffrs) await connection.QueryAsync<MApiDataOffrs>(query, new { Data.ArmyNo });
+                MApiDataOffrs? ret = (await connection.QueryAsync<MApiDataOffrs>(query, new { Data.ArmyNo })).FirstOrDefault();
                 DTOApiPersDataResponse response = new DTOApiPersDataResponse();
 
                 if (ret != null)

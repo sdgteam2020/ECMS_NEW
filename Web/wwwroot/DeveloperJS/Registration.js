@@ -11,12 +11,15 @@
     //Commissioning.setAttribute('min', today);
     //Commissioning.setAttribute('max', maxDateFormatted);
 
-    $('#DOB').datepicker({
-        dateFormat: "dd-mm-yy",
-    });
-    $("#DOB").click(function (e) {
-        e.preventDefault();
-    })
+    //$('#DOB').datepicker({
+    //    changeMonth: true,
+    //    changeYear: true,
+    //    dateFormat: "yy-mm-dd",
+        
+    //});
+    //$("#DOB").on("click",function (e) {
+    //    e.preventDefault();
+    //})
 
     //$(function () {
     //    var dtToday = new Date();
