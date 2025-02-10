@@ -97,6 +97,13 @@ namespace DataAccessLayer
                     response.Pers_Address.Pers_Pin_code = ret.Pers_Pin_code;
                     response.Pers_Address.Pers_District = ret.Pers_District;
                     response.Pers_Address.Pers_State = ret.Pers_State;
+                    response.Status = true;
+                    response.Message = "Ok";
+                }
+                else
+                {
+                    response.Status = false;
+                    response.Message = "Army No not found!";
                 }
                 return response;
             }
@@ -147,6 +154,13 @@ namespace DataAccessLayer
                     response.Pers_Address.Pers_Pin_code = ret.Pers_Pin_code;
                     response.Pers_Address.Pers_District = ret.Pers_District;
                     response.Pers_Address.Pers_State = ret.Pers_State;
+                    response.Status = true;
+                    response.Message = "Ok";
+                }
+                else 
+                {
+                    response.Status = false;
+                    response.Message = "Army No not found!";
                 }
                 return response;
             }
