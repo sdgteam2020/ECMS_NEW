@@ -165,56 +165,30 @@ namespace Web.Controllers
 
                     if (Type == 2)
                     {
-                        var res = await _aPIDataBL.GetByIC(retdat);
-                        if (res != null)
+                        DTOApiPersDataResponse res = await _aPIDataBL.GetByIC(retdat);
+                        if (res.Status == true)
                         {
-                            if (res.Pers_Army_No != null)
-                            {
-                                res.Status = true;
-                                res.Message = "OK";
-
-                                return Json(res);
-                            }
-                            else
-                            {
-                                res.Status = false;
-                                res.Message = "Data Could not be Fetched From Data Records";
-
-                                return Json(res);
-                            }
+                            return Json(res);
                         }
                         else
                         {
-                            res1.Status = false;
-                            res1.Message = "Data Could not be Fetched From Data Records ";
+                            res1.Status = res.Status;
+                            res1.Message = res.Message;
                             return Json(res1);
                         }
 
                     }
                     else
                     {
-                        var res = await _aPIDataBL.GetByoffrsIC(retdat);
-                        if (res != null)
+                        DTOApiPersDataResponse res = await _aPIDataBL.GetByoffrsIC(retdat);
+                        if (res.Status == true)
                         {
-                            if (res.Pers_Army_No != null)
-                            {
-                                res.Status = true;
-                                res.Message = "OK";
-
-                                return Json(res);
-                            }
-                            else
-                            {
-                                res.Status = false;
-                                res.Message = "Not Fetch Data From Api";
-
-                                return Json(res);
-                            }
+                            return Json(res);
                         }
                         else
                         {
-                            res1.Status = false;
-                            res1.Message = "Not Fetch Data From Api";
+                            res1.Status = res.Status;
+                            res1.Message = res.Message;
                             return Json(res1);
                         }
                     }

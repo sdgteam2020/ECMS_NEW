@@ -4,6 +4,7 @@ using BusinessLogicsLayer.Bde;
 using DataAccessLayer;
 using DataTransferObject.Domain.Model;
 using DataTransferObject.Requests;
+using DataTransferObject.Response;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
@@ -35,15 +36,15 @@ namespace WebApi.Controllers
                // data = await _aPIDataBL.GetByIC(Data.ArmyNo);
                 if (Data.ArmyNo != null)
                 {
-                    MApiData? apiData = (MApiData?)await _aPIDataBL.GetByIC(Data);
+                    DTOApiPersDataResponse apiData = await _aPIDataBL.GetByIC(Data);
 
-                    if (apiData != null)
+                    if (apiData.Status == true)
                     {
                         return Ok(apiData);
                     }
                     else
                     {
-                        return NotFound();
+                        return Ok(apiData);
                     }
                 }
                 else
@@ -65,15 +66,15 @@ namespace WebApi.Controllers
                 // data = await _aPIDataBL.GetByIC(Data.ArmyNo);
                 if (Data.ArmyNo != null)
                 {
-                    MApiDataOffrs? apiData = await _aPIDataBL.GetByoffrsIC(Data);
+                    DTOApiPersDataResponse apiData = await _aPIDataBL.GetByoffrsIC(Data);
 
-                    if (apiData != null)
+                    if (apiData.Status == true)
                     {
                         return Ok(apiData);
                     }
                     else
                     {
-                        return NotFound();
+                        return Ok(apiData);
                     }
                 }
                 else
