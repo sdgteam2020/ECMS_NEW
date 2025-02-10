@@ -104,12 +104,8 @@
                                     <div class="row">
                                         <form enctype="multipart/form-data" asp-controller="BasicDetail" asp-action="Registration" id="Registration" name="Registration" method="post" class="mt-3">
                                             <div class="card-body">
-                                                @*  <input hidden asp-for="DOB" />
-
-                                                <input hidden asp-for="DateOfCommissioning" />
-
-                                                <input hidden asp-for="TypeId"/>*@
-                                               @*  <input hidden asp-for="State" />
+                                                @* <input hidden asp-for="TypeId"/>*@
+                                                @* <input hidden asp-for="State" />
                                                 <input hidden asp-for="District" />
                                                 <input hidden asp-for="PS" />
                                                 <input hidden asp-for="PO" />
@@ -237,8 +233,8 @@
                                                         <div class="form-group row mb-2">
                                                             <label class="col-form-label col-sm-6 labelprofile">Dt of Birth (DD-MM-YYYY)</label>
                                                             <div class="col-sm-6">
-                                                                @* <input type="date" id="DOB" name="DOB" class="form-control" readonly /> *@
-                                                                <input asp-for="DOB" class="form-control" value="" readonly />
+                                                                <input type="text" id="DOB_" name="DOB_" class="form-control" readonly />
+                                                                <input asp-for="DOB" class="form-control d-none" value="" />
                                                                 <span asp-validation-for="DOB" class="text-danger"></span>
                                                                 @* <span id="lblDOB" class="text-danger"></span> *@
                                                             </div>
@@ -246,7 +242,8 @@
                                                         <div class="form-group row mb-2">
                                                             <label class="col-form-label col-sm-6 labelprofile">Dt of Commissioning/ Enrolment</label>
                                                             <div class="col-sm-6">
-                                                                <input asp-for="DateOfCommissioning" class="form-control" value="" readonly />
+                                                                <input type="text" id="DOC_" name="DOC_" class="form-control" readonly />
+                                                                <input asp-for="DateOfCommissioning" class="form-control d-none" value="" />
                                                                 <span asp-validation-for="DateOfCommissioning" class="text-danger"></span>
                                                             </div>
                                                         </div>

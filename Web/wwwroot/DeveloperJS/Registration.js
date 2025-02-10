@@ -11,49 +11,47 @@
     //Commissioning.setAttribute('min', today);
     //Commissioning.setAttribute('max', maxDateFormatted);
 
-    //$('#DOB').datepicker({
+
+    //$("#DOB").datepicker({
     //    changeMonth: true,
-    //    changeYear: true,
-    //    dateFormat: "yy-mm-dd",
-        
+    //    changeYear:true,
+    //    dateFormat: "dd-mm-yy" // Set the date format
     //});
-    //$("#DOB").on("click",function (e) {
-    //    e.preventDefault();
-    //})
-
-    //$(function () {
-    //    var dtToday = new Date();
-
-    //    var month = dtToday.getMonth() + 1;
-    //    var day = dtToday.getDate();
-    //    var year = dtToday.getFullYear() - 18;
-
-    //    if (month < 10)
-    //        month = '0' + month.toString();
-    //    if (day < 10)
-    //        day = '0' + day.toString();
-
-    //    var maxDate = year + '-' + month + '-' + day;
-    //    $('#DOB').attr('max', maxDate);
+    //$("#DOB_").datepicker({
+    //    dateFormat: "dd-mm-yy" // Set the date format
     //});
+    $(function () {
+        var dtToday = new Date();
 
-    //$('#DOB').on('change', function () {
-    //    $("#DateOfCommissioning").val("");
-    //    var dtToday = new Date();
+        var month = dtToday.getMonth() + 1;
+        var day = dtToday.getDate();
+        var year = dtToday.getFullYear() - 18;
 
-    //    var month = dtToday.getMonth() + 1;
-    //    var day = dtToday.getDate();
-    //    var year = dtToday.getFullYear() - 18;
+        if (month < 10)
+            month = '0' + month.toString();
+        if (day < 10)
+            day = '0' + day.toString();
 
-    //    if (month < 10)
-    //        month = '0' + month.toString();
-    //    if (day < 10)
-    //        day = '0' + day.toString();
+        var maxDate = day + '/' + month + '/' + year;
+        $('#DOB').attr('max', maxDate);
+    });
 
-    //    var maxDate = year + '-' + month + '-' + day;
-    //    $('#DateOfCommissioning').attr('min', maxDate);
-    //});
+    $('#DOB').on('change', function () {
+        $("#DateOfCommissioning").val("");
+        var dtToday = new Date();
 
+        var month = dtToday.getMonth() + 1;
+        var day = dtToday.getDate();
+        var year = dtToday.getFullYear() - 18;
+
+        if (month < 10)
+            month = '0' + month.toString();
+        if (day < 10)
+            day = '0' + day.toString();
+
+        var maxDate = day + '/' + month + '/' + year;
+        $('#DateOfCommissioning').attr('min', maxDate);
+    });
     $('.paddress').on('change', function () {
         $("#PermanentAddress").val('Village - ' + $("#Village").val() + '\n Post Office-' + $("#PO").val() + ' \n Tehsil- ' + $("#Tehsil").val() + '\n District- ' + $("#District").val() + '\n State- ' + $("#State").val() + '\n Pin Code- ' + $("#PinCode").val());
         $("#AadhaarNo").val("");
@@ -154,6 +152,12 @@
             $("#PinCode").prop('required', true);
             $("#PermanentAddress").prop('required', false);
 
+            $('#DOB').removeClass('d-none');
+            $("#DOB_").addClass('d-none');
+
+            $('#DateOfCommissioning').removeClass('d-none');
+            $("#DOC_").addClass('d-none');
+
         } else {
             $('#FName').attr('readonly', true);
             $('#LName').attr('readonly', true);
@@ -172,6 +176,12 @@
             $("#Village").prop('required', false);
             $("#PinCode").prop('required', false);
             $("#PermanentAddress").prop('required', true);
+
+            $('#DOB').addClass('d-none');
+            $("#DOB_").removeClass('d-none');
+
+            $('#DateOfCommissioning').addClass('d-none');
+            $("#DOC_").removeClass('d-none');
         }
 
         /* Getdatafromapi();*/
@@ -284,7 +294,9 @@ function CallDataFromAPI() {
                 $("#NameAsPerRecord").val(response.Pers_name);
                 $("#ServiceNo").val(response.Pers_Army_No);
                 $("#DOB").val(response.Pers_birth_dt);
+                $("#DOB_").val(DateFormatedd_mm_yyyy_no_time(response.Pers_birth_dt));
                 $("#DateOfCommissioning").val(response.Pers_enrol_dt);
+                $("#DOC_").val(DateFormatedd_mm_yyyy_no_time(response.Pers_enrol_dt));
 
                 //let address;
                 //if (response.Pers_House_no == null || response.Pers_House_no == '') {
