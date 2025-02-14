@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace DataTransferObject.Requests
 {
-    public class DTOTokenRequest
+    public class DTOTokenRequestForIAM
     {
         [Display(Name = "ArmyNumber", ResourceType = typeof(Resource))]
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
@@ -19,15 +19,7 @@ namespace DataTransferObject.Requests
 
         public string? ErrorMessage { get; set; }
 
-        [Required]
-        [DataType(DataType.Password)]
         //[RegularExpression(@"^[\w \?\@\#\$\%\&\*\=\\\/]*$", ErrorMessage = "This < >^| special chars not allowed for security reasons.")]
         public string Password { get; set; } = string.Empty;
-
-
-        [DataType(DataType.Password)]
-        [Display(Name = "Confirm password")]
-        [Compare("Password", ErrorMessage = "Password and confirmation password do not match.")]
-        public string ConfirmPassword { get; set; } = string.Empty;
     }
 }

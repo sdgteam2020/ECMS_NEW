@@ -301,7 +301,7 @@
                                         <label asp-for="DOB" class="col-sm-3 col-form-label form-label labelprofile"></label>
                                         <div class="col-sm-8">
                                             @* <input asp-for="DOB" class="form-control" readonly required data-toggle="tooltip" title="Enter DOB " /> *@
-                                            <input type="text" id="DOB_" name="DOB_" class="form-control" value="@Model.DOB.ToString("dd-MM-yyyy")" readonly />
+                                            <input type="text" id="DOB_" name="DOB_" class="form-control" value="@Model.DOB.ToString("dd-MMM-yyyy")" readonly />
                                         </div>
                                     </div>
                                     <div class="row mb-1 required">
@@ -363,7 +363,7 @@
                                         <label asp-for="DateOfCommissioning" class="col-sm-4 col-form-label form-label labelprofile"></label>
                                         <div class="col-sm-6">
                                             @* <input asp-for="DateOfCommissioning" class="form-control" readonly required /> *@
-                                            <input type="text" id="DOC" name="DOC" class="form-control" value="@Model.DateOfCommissioning.ToString("dd-MM-yyyy")" readonly />
+                                            <input type="text" id="DOC" name="DOC" class="form-control" value="@Model.DateOfCommissioning.ToString("dd-MMM-yyyy")" readonly />
                                         </div>
                                     </div>
                                     <div class="row mb-1 required">

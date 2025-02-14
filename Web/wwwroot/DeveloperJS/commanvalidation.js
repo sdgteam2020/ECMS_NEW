@@ -750,8 +750,8 @@ function DateFormateMM_dd_yyyy(date) {
     //`${datef2.getFullYear()}/` + monthsans + `/` + dayans ;
 }
 function DateFormateMMMM_dd_yyyy(date) {
-    const monthNames = ["January", "February", "March", "April", "May", "June",
-        "July", "August", "September", "October", "November", "December"
+    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
     ];
     var datef2 = new Date(date);
     var months = "" + `${(datef2.getMonth() + 1)}`;
