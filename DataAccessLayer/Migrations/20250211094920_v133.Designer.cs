@@ -4,6 +4,7 @@ using DataAccessLayer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccessLayer.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250211094920_v133")]
+    partial class v133
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1454,31 +1457,6 @@ namespace DataAccessLayer.Migrations
                     b.HasKey("ClaimsStoreId");
 
                     b.ToTable("ClaimsStore");
-                });
-
-            modelBuilder.Entity("DataTransferObject.Domain.Model.IAMSetting", b =>
-                {
-                    b.Property<byte>("IAMSettingId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("tinyint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<byte>("IAMSettingId"));
-
-                    b.Property<bool>("DebugWithIAM")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("HardSAMLResonoce")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<byte>("LocalHostActive")
-                        .HasColumnType("tinyint");
-
-                    b.Property<bool>("WithIAMLogin")
-                        .HasColumnType("bit");
-
-                    b.HasKey("IAMSettingId");
-
-                    b.ToTable("IAMSetting");
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Model.MApiData", b =>

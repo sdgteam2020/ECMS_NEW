@@ -294,9 +294,9 @@ function CallDataFromAPI() {
                 $("#NameAsPerRecord").val(response.Pers_name);
                 $("#ServiceNo").val(response.Pers_Army_No);
                 $("#DOB").val(response.Pers_birth_dt);
-                $("#DOB_").val(DateFormatedd_mm_yyyy_no_time(response.Pers_birth_dt));
+                $("#DOB_").val(DateFormateMMMM_dd_yyyy(response.Pers_birth_dt));
                 $("#DateOfCommissioning").val(response.Pers_enrol_dt);
-                $("#DOC_").val(DateFormatedd_mm_yyyy_no_time(response.Pers_enrol_dt));
+                $("#DOC_").val(DateFormateMMMM_dd_yyyy(response.Pers_enrol_dt));
 
                 //let address;
                 //if (response.Pers_House_no == null || response.Pers_House_no == '') {

@@ -116,7 +116,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
                options.Cookie.HttpOnly = true;
       
                options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
-               options.LoginPath = "/Account/IMLogin";
+               options.LoginPath = "/Account/IMLoginSelf";
                options.AccessDeniedPath = "/Account/AccessDenied";
                options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
                // Add other configuration options as needed
@@ -145,7 +145,7 @@ builder.Services.ConfigureApplicationCookie(options =>
     //options.Cookie.Expiration 
     options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
     options.ExpireTimeSpan = TimeSpan.FromMinutes(20);
-    options.LoginPath = "/Account/IMLogin";
+    options.LoginPath = "/Account/IMLoginSelf";
     options.LogoutPath = "/Account/Logout";
     options.AccessDeniedPath = "/Account/AccessDenied";
     options.SlidingExpiration = true; 
@@ -273,6 +273,6 @@ app.UseSession();
 //app.MapRazorPages();
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Account}/{action=IMLogin}/{id?}");
+    pattern: "{controller=Account}/{action=IMLoginSelf}/{id?}");
 
 app.Run();

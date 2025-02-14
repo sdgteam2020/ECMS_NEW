@@ -15,6 +15,7 @@ using BusinessLogicsLayer.Div;
 using BusinessLogicsLayer.EncryptBySql;
 using BusinessLogicsLayer.Formation;
 using BusinessLogicsLayer.Home;
+using BusinessLogicsLayer.IAMSetting;
 using BusinessLogicsLayer.IssuingAuthority;
 using BusinessLogicsLayer.Master;
 using BusinessLogicsLayer.OROMapp;
@@ -178,6 +179,8 @@ namespace BusinessLogicsLayer
 
             services.AddTransient<IICardHoldDB, ICardHoldDB>();
             services.AddTransient<IICardHoldBL, ICardHoldBL>();
+
+            services.AddTransient<IIAMSettingBL,IAMSettingBL>();
 
 
 
