@@ -601,8 +601,8 @@ $(function () {
                                 text: errormsg
                             });
                         } else {
-                            var url = "https://" + window.location.host + '/WriteReadData/CSVFile/' + response +".csv";
-                            window.open(url, '_blank');
+                            var url = "https://" + window.location.host + '/WriteReadData/CSVFile/' + response + ".csv";
+                            window.location.href = url; 
                         }
                     }
                 },
@@ -1413,6 +1413,7 @@ function jsonToXml(json) {
     return xml;
 }
 function DownloadXml(RequestId) {
+    alert(RequestId);
     var userdata = {
         "RequestId": RequestId,
     };

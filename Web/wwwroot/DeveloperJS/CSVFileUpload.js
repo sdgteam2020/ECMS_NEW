@@ -183,8 +183,8 @@ $("#btnUpdate").on("click", function () {
                 if (response.Result == true)
                 {
                     Swal.fire({
-                        icon: 'error',
-                        title: 'Oops...',
+                        icon: 'success',
+                        title: 'Updated',
                         text: response.Message,
 
                     })

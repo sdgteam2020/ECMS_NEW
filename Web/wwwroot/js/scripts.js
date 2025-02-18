@@ -54,7 +54,7 @@
     };
 
     // Activate Feather icons
-    feather.replace();
+    // feather.replace(); // this line comment because not work.
 
    
 
