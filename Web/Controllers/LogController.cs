@@ -25,6 +25,7 @@ using System.Xml;
 using Web.Healpers;
 using System.Xml.Linq;
 using System.Text.RegularExpressions;
+using Path = System.IO.Path;
 
 namespace Web.Controllers
 {
@@ -118,9 +119,18 @@ namespace Web.Controllers
                 d = new int[1];
                 d[0] = RequestId;
                 var sata = await _iTrnLoginLogBL.XmlFileDigitalSignFromData(d);
-                XDocument document = XDocument.Parse(Convert.ToString(sata.XmlFiles));
+                string XmlFilesRemoveAndChar = sata.XmlFiles.Replace("&", "&amp;");
+                XDocument document = XDocument.Parse(Convert.ToString(XmlFilesRemoveAndChar));
 
                 BasicDetailCrtAndUpdVM? db = await BasicDetailBL.GetBasicDetailByRequestId(RequestId);
+
+                string sourceFolder = Path.Combine(hostingEnvironment.WebRootPath, "DigitallysignatureXml");
+                // Check if directory exists
+                if (!Directory.Exists(sourceFolder))
+                {
+                    // If directory does not exist, create it
+                    Directory.CreateDirectory(sourceFolder);
+                }
 
                 string xmlname = db.ServiceNo + "_" + RequestId + "_" + yearName + "" + monthName + "" + dayName + "" + hh + "" + mm + "" + ss + ".xml";
                 var filePath1 = System.IO.Path.Combine(hostingEnvironment.ContentRootPath, "wwwroot\\DigitallysignatureXml\\"+ xmlname);
@@ -187,8 +197,10 @@ namespace Web.Controllers
                 ////////////certificate//////
                 List<X509Certificate2> certificates = new List<X509Certificate2>();
 
+                string XmlFilesRemoveAndChar = sata.XmlFiles.Replace("&", "&amp;");
+
                 XmlDocument xmlDoc = new XmlDocument();
-                xmlDoc.LoadXml(Convert.ToString(sata.XmlFiles));
+                xmlDoc.LoadXml(Convert.ToString(XmlFilesRemoveAndChar));
 
                 XmlNodeList certificateNodes = xmlDoc.GetElementsByTagName("X509Certificate");
                 List<DTOFwdLastRecForDigitalSign> DigitalSignList = new List<DTOFwdLastRecForDigitalSign>();
@@ -225,7 +237,8 @@ namespace Web.Controllers
                 List<DTOFwdLastRecForDigitalSign> lstproDetails = new List<DTOFwdLastRecForDigitalSign>();
 
                 XmlDocument xmlDoc1 = new XmlDocument();
-                xmlDoc.LoadXml(Convert.ToString(sata.XmlFiles));
+
+                xmlDoc.LoadXml(Convert.ToString(XmlFilesRemoveAndChar));
 
                 XmlNodeList fwddetails = xmlDoc.GetElementsByTagName("RecForDigitalSign");
                 var nodesList = fwddetails.Cast<XmlNode>().ToList();
@@ -285,7 +298,10 @@ namespace Web.Controllers
                     DigitalSignPlusLogList.Add(obj);
                     i++;
                 }
-
+                string sourceFolder = Convert.ToString(Path.Combine(hostingEnvironment.WebRootPath, "DigitallysignaturePdf"));
+                if (!Directory.Exists(sourceFolder))
+                    Directory.CreateDirectory(sourceFolder);
+                
                 string pdfname = db.ServiceNo + "_" + RequestId + "_" + yearName + "" + monthName + "" + dayName + "" + hh + "" + mm + "" + ss + ".pdf";
                 var filePath1 = System.IO.Path.Combine(hostingEnvironment.ContentRootPath, "wwwroot\\DigitallysignaturePdf\\" + pdfname);
                 //if (!System.IO.File.Exists(filePath1))
@@ -346,7 +362,7 @@ namespace Web.Controllers
                 table.AddCell(new Paragraph("IdenMark1").SetFont(boldFont));
                 table.AddCell(db.IdenMark1);
                 table.AddCell(new Paragraph("Date of Birth").SetFont(boldFont));
-                table.AddCell(Convert.ToString(db.DOB.ToShortDateString()).Replace("-", "/"));
+                table.AddCell(db.DOB.ToString("dd-MMM-yyyy"));
                 table.AddCell(new Paragraph("Height (Cm)").SetFont(boldFont));
                 table.AddCell(Convert.ToString(db.Height));
                 table.AddCell(new Paragraph("AADHAAR No").SetFont(boldFont));
@@ -356,11 +372,11 @@ namespace Web.Controllers
                 table.AddCell(new Paragraph("Place of Issue").SetFont(boldFont));
                 table.AddCell(db.PlaceOfIssue);
                 table.AddCell(new Paragraph("Date of Issue").SetFont(boldFont));
-                table.AddCell(Convert.ToString(db.DateOfIssue.ToShortDateString()).Replace("-", "/"));
+                table.AddCell(db.DateOfIssue == DateTime.MinValue ? "" : db.DateOfIssue.ToString("dd-MMM-yyyy"));
                 table.AddCell(new Paragraph("Issuing Authority").SetFont(boldFont));
                 table.AddCell(db.IssuingAuthorityName);
                 table.AddCell(new Paragraph("Date of Commissioning/ Enrollment").SetFont(boldFont));
-                table.AddCell(Convert.ToString(db.DateOfCommissioning.ToShortDateString()).Replace("-", "/"));
+                table.AddCell(db.DateOfCommissioning.ToString("dd-MMM-yyyy"));
 
                 table.AddCell(new Paragraph("Permt Address as per Service Records").SetFont(boldFont));
                 //table.AddCell(new Cell(1, 3).Add(new Paragraph("Amount")));
@@ -419,7 +435,7 @@ namespace Web.Controllers
                                 tableFwd.AddCell(cell_1);
                                 tableFwd.AddCell(new Paragraph(digitaldata.FromProfile + "\n" + digitaldata.FromArmyNo));
                                 tableFwd.AddCell(new Paragraph(digitaldata.LevelMessage + " (" + digitaldata.FromDomain + " )"));
-                                tableFwd.AddCell(new Paragraph(digitaldata.FromDate != null ? digitaldata.FromDate.Value.ToString("dd/MM/yyyy HH:mm:ss") : ""));
+                                tableFwd.AddCell(new Paragraph(digitaldata.FromDate != null ? digitaldata.FromDate.Value.ToString("dd-MMM-yyyy HH:mm:ss") : ""));
                                 tableFwd.AddCell(CreateApprovedImage());
                                 tableFwd.AddCell(CreateDigitalSignImage());
                             }
@@ -433,7 +449,7 @@ namespace Web.Controllers
                                 //tableFwd.AddCell(new Paragraph(digitaldata.Sno.ToString()).SetVerticalAlignment(VerticalAlignment.MIDDLE).SetHorizontalAlignment(HorizontalAlignment.CENTER));
                                 tableFwd.AddCell(new Paragraph("" + digitaldata.FromRank + " " + digitaldata.FromProfile + "\n" + digitaldata.FromArmyNo));
                                 tableFwd.AddCell(new Paragraph(digitaldata.LevelMessage + " (" + digitaldata.FromDomain + " )"));
-                                tableFwd.AddCell(new Paragraph(digitaldata.FromDate != null ? digitaldata.FromDate.Value.ToString("dd/MM/yyyy HH:mm:ss") : ""));
+                                tableFwd.AddCell(new Paragraph(digitaldata.FromDate != null ? digitaldata.FromDate.Value.ToString("dd-MMM-yyyy HH:mm:ss") : ""));
                                 tableFwd.AddCell(CreateApprovedImage());
                                 tableFwd.AddCell(new Paragraph("NA"));
 
@@ -447,7 +463,7 @@ namespace Web.Controllers
                                 //tableFwd.AddCell(new Paragraph(digitaldata.Sno.ToString()).SetVerticalAlignment(VerticalAlignment.MIDDLE).SetHorizontalAlignment(HorizontalAlignment.CENTER));
                                 tableFwd.AddCell(new Paragraph(digitaldata.DSProfile + "\n" + digitaldata.DSArmyNo));
                                 tableFwd.AddCell(new Paragraph(digitaldata.LevelMessage));
-                                tableFwd.AddCell(new Paragraph(digitaldata.FromDate != null ? digitaldata.FromDate.Value.ToString("dd/MM/yyyy HH:mm:ss") : ""));
+                                tableFwd.AddCell(new Paragraph(digitaldata.FromDate != null ? digitaldata.FromDate.Value.ToString("dd-MMM-yyyy HH:mm:ss") : ""));
                                 tableFwd.AddCell(new Paragraph("NA"));
                                 tableFwd.AddCell(CreateDigitalSignImage());
                             }
@@ -464,7 +480,7 @@ namespace Web.Controllers
                             //tableFwd.AddCell(new Paragraph(digitaldata.Sno.ToString()).SetVerticalAlignment(VerticalAlignment.MIDDLE).SetHorizontalAlignment(HorizontalAlignment.CENTER));
                             tableFwd.AddCell(new Paragraph("" + digitaldata.FromRank + " " + digitaldata.FromProfile + "\n" + digitaldata.FromArmyNo));
                             tableFwd.AddCell(new Paragraph(digitaldata.LevelMessage + " (" + digitaldata.FromDomain + " )"));
-                            tableFwd.AddCell(new Paragraph(digitaldata.FromDate != null ? digitaldata.FromDate.Value.ToString("dd/MM/yyyy HH:mm:ss") : ""));
+                            tableFwd.AddCell(new Paragraph(digitaldata.FromDate != null ? digitaldata.FromDate.Value.ToString("dd-MMM-yyyy HH:mm:ss") : ""));
                             tableFwd.AddCell(CreateApprovedImage());
                             tableFwd.AddCell(new Paragraph("NA"));
                         }

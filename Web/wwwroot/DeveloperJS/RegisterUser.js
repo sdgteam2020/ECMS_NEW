@@ -70,7 +70,7 @@ function BindData(unitId) {
                         retrieve: true,
                         lengthChange: false,
                         searching: false,
-                        "order": [[1, "asc"]],
+                        "order": [[0, "asc"]],
                         buttons: [{
                             extend: 'copy',
                             exportOptions: {

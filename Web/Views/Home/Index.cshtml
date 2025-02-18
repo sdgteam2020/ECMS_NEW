@@ -173,7 +173,9 @@
         //init slider
         function startSlide() {
             reset();
-            slideImages[0].classList.add('slide-is-active');
+            if(slideImages.length >0){
+                slideImages[0].classList.add('slide-is-active');
+            }
             setTimeout(function () {
                 for (var i = 0; i < slideImages.length; i++) {
                     slideImages[i].classList.add('slide-transition');
@@ -195,20 +197,24 @@
             slideImages[current + 1].classList.add('slide-is-active');
             current++;
         }
+        if(dirLeft){
+            dirLeft.addEventListener('click', function () {
+                if (current === 0) {
+                    current = slideImages.length;
+                }
+                slideLeft();
+            })
+        }
 
-        dirLeft.addEventListener('click', function () {
-            if (current === 0) {
-                current = slideImages.length;
-            }
-            slideLeft();
-        })
-
-        dirRight.addEventListener('click', function () {
+        if(dirRight){
+            dirRight.addEventListener('click', function () {
             if (current === slideImages.length - 1) {
                 current = -1;
             }
             slideRight();
         })
+        }
+        
         //apply styling
         jsActive();
         startSlide();
