@@ -794,14 +794,36 @@ namespace DataAccessLayer
                 using (var connection = _contextDP.CreateConnection())
                 {
                     var BasicDetailList = await connection.QueryAsync<DTOFwdICardResponse>(query, new { UnitId, RO, BasicDetailsId, DomainMapId });
+                    if(BasicDetailList.Count() == 0)
+                    {
+                        List<DTOFwdICardResponse> dTOFwdICardResponse = new List<DTOFwdICardResponse>();
+                        DTOFwdICardResponse dTOFwdICardResponse1 = new DTOFwdICardResponse();
 
-                    return BasicDetailList.ToList();
+                        dTOFwdICardResponse1.IsError = true;
+                        dTOFwdICardResponse1.ErrorMessage = "You can not fwd your request at this time because profile not mapped. Contact ORO (MP6)";
+
+                        dTOFwdICardResponse.Add(dTOFwdICardResponse1);
+                        return dTOFwdICardResponse;
+                    }
+                    else
+                    {
+                        return BasicDetailList.ToList();
+                    }
+
+                    
                 }
             }
             catch (Exception ex)
             {
                 _logger.LogError(1001, ex, "UserProfileDB->GetOffrsByUnitMapId");
-                return new List<DTOFwdICardResponse>();
+                List<DTOFwdICardResponse> dTOFwdICardResponse = new List<DTOFwdICardResponse>();
+                DTOFwdICardResponse dTOFwdICardResponse1 = new DTOFwdICardResponse();
+
+                dTOFwdICardResponse1.IsError = true;
+                dTOFwdICardResponse1.ErrorMessage = "Internal Error.";
+
+                dTOFwdICardResponse.Add(dTOFwdICardResponse1);
+                return dTOFwdICardResponse;
             }
         }
 

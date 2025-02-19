@@ -806,10 +806,10 @@ namespace Web.Controllers
                         basicDetailUpdVM.ServiceNo = modelex.ServiceNo;
                         basicDetailUpdVM.DOB = modelex.DOB;
                         basicDetailUpdVM.DateOfCommissioning = modelex.DateOfCommissioning;
-                        basicDetailUpdVM.IdenMark1 = modelex.IdenMark1;
-                        basicDetailUpdVM.IdenMark2 = modelex.IdenMark2;
+                        //basicDetailUpdVM.IdenMark1 = modelex.IdenMark1;
+                        //basicDetailUpdVM.IdenMark2 = modelex.IdenMark2;
                         ViewBag.OptionsRankId = modelex.RankId;
-                        basicDetailUpdVM.AadhaarNo = Convert.ToInt64(modelex.AadhaarNo).ToString("D12"); ;// Convert.ToInt32(model.AadhaarNo.Substring(model.AadhaarNo.Length - 3)).ToString("D4");
+                        //basicDetailUpdVM.AadhaarNo = Convert.ToInt64(modelex.AadhaarNo).ToString("D12"); ;// Convert.ToInt32(model.AadhaarNo.Substring(model.AadhaarNo.Length - 3)).ToString("D4");
                         basicDetailUpdVM.ApplyForId = modelex.ApplyForId;
                         basicDetailUpdVM.RegistrationId = modelex.RegistrationId;
                         basicDetailUpdVM.TypeId = modelex.TypeId;
@@ -1769,6 +1769,7 @@ namespace Web.Controllers
                 string recoffsing = "";
                 int count = 0;
                 string arryRequestId = "";
+                
                 foreach (var data in retdata)
                 {
                     count++;

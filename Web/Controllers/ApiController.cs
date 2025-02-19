@@ -58,7 +58,17 @@ namespace Web.Controllers
                             res.Pers_name = apiHelpers.EncDec(res.Pers_name, PubKeyForDesc, false);
                             res.Pers_birth_dt = apiHelpers.EncDec(res.Pers_birth_dt, PubKeyForDesc, false);
                             res.Pers_enrol_dt = apiHelpers.EncDec(res.Pers_enrol_dt, PubKeyForDesc, false);
-
+                            DateTime DOB, DOC;
+                            bool result = DateTime.TryParse(res.Pers_birth_dt, out DOB);
+                            if (result) 
+                            {
+                                res.Pers_birth_dt = DOB.ToString("yyyy-MM-dd");
+                            }
+                            result = DateTime.TryParse(res.Pers_enrol_dt, out DOC);
+                            if (result) 
+                            {
+                                res.Pers_enrol_dt = DOC.ToString("yyyy-MM-dd");
+                            }
 
                             res.Pers_Address.Pers_House_no = apiHelpers.EncDec(res.Pers_Address.Pers_House_no, PubKeyForDesc, false);
                             res.Pers_Address.Pers_Moh_st = apiHelpers.EncDec(res.Pers_Address.Pers_Moh_st, PubKeyForDesc, false);
