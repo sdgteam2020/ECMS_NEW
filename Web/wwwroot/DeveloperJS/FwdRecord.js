@@ -1413,7 +1413,6 @@ function jsonToXml(json) {
     return xml;
 }
 function DownloadXml(RequestId) {
-    alert(RequestId);
     var userdata = {
         "RequestId": RequestId,
     };

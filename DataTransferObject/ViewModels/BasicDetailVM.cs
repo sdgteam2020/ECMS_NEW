@@ -13,6 +13,7 @@ using System.Text;
 using System.Threading.Tasks;
 using DataTransferObject.Requests;
 using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel;
 
 namespace DataTransferObject.ViewModels
 {
@@ -162,6 +163,7 @@ namespace DataTransferObject.ViewModels
         [RegularExpression(@"^[\w ]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
         public string PS { get; set; } = string.Empty;
 
+        [DisplayName("Police Station")]
         [RegularExpression(@"^[\w ]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
         [MaxLength(50, ErrorMessage = "Maximum length of PO is fifty character.")]
         public string PO { get; set; } = string.Empty;

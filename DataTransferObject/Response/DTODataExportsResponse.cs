@@ -60,6 +60,7 @@ namespace DataTransferObject.Response
         public string? RecordOffice { get; set; }
 
         public int RequestId { get; set; }
+        public string RegimentalName { get; set; } = string.Empty;
 
     }
 }
