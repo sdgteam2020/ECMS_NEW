@@ -1760,22 +1760,61 @@ namespace Web.Controllers
                 //Data.privateKey = "MIIEpgIBAAKCAQEArhSYCF6ie0rkkXe2HSqKXQ/Sa/NwwbXQ/q1sEEL2eWGnpCa0+49DtRWtybLfK6A51Cj1TX2HnOGuPROQ46DOPI6giwDXnIimHeHAMCd4GqFuDAlDytFNls4XHCMxt1Ql2nVWVxBc2DSTGB35H+eT06rgL+j6ra0iaorAnghUzgIsgH8uLoXX9WqQZXI3rZcH6483ymh0fs/6hS0L5D/pNSaAIuMse3Jg6vcv5z/M7ZzTfiKHO0XkZE/qkm6hIR8uHi4jJwoCdHJ4Fc0wZ+ekd3h/Z2nNXbim07jX6ZcoKL5udYf5u0iFqplg6ao+qssiHF4RMCeDh1vBU5vkSpyUEQIDAQABAoIBAQCDDhgDPRPAFHsNlP1y6cLvGulEwiqiezoTcgZIG9GpQj7OUyGvvYSwwNhsYBCprF+8/PToWNgO4MynSKKs7DQ33Py6iXDJdQrytjFVT3GZQu0xfIwgFgD+xrsZQNm99kjlNa9BrpznXHVdE7upLFPbZ+qNxy1qMU0Wvs0SbJ1D1ZruXtbRqbOKzryZKa5NpboDBXIPw/o9RZS8eTFVl1SZC6asrokEepVWUsMwg/yORvKf/p/cCZBjbKQ+oclsT5ljht5j53YuYlixIYJNghmniMMEWwuyfeKZ5swL0HbGTJvkrz55mWKP7NtWGIIUzhMltPef6LNcjeMw/SOvTghNAoGBAMmSwbWRmJfXzAuq/UnnUoi8zpJuoWHh8fww0w0/bOuuVGkk/0Z+LXaWOeSRFjrwT1UU+uSW5Lj0bTRJHeGCxwaA8d2CJMUlPCBx6xukFDyaCZavtwxUMC5hOLp7DvCWyMZqQP5UAI5ukMYgljE9rvTfpXQBp04QH3xYCjXiUPffAoGBAN0VdxY+uvd7roiW1JamrzeyDCkIlWGriUd+WoO6KVKGM7Gi1E7oZcaSW9BC/qutRBuuuOFfu3btC3BlBbieXXAztAvEPD8e/JvE5FSpkcY8rELlC9Y0M3hxdJoMWH/tIwJIVKsxnGzCfRemMjvLiAGc1YSWnl5lslpQSrlJG7IPAoGBAMCXmL87ijliNRHc4L7w5vnAs/pS+5zDPerAV5ZryEzytrHzaHhY7GVGqa/KNBxCKPpY3lL0HTreR0zSo1spEbIUF4OV6j33EpjJX2J8hd1VK94uq017TsGxoHsEQsT6vIBfWxPk/NcZqveygO4xSm2rFbFeNxUt8HdkwvSy9LuvAoGBAL/W9HMVE9/ULurPFsFy+e/2S57/l8AcvQ6QkbJkQ58cXJbzmA6wkj/wmELrH1mRC9yJjFvkWiMkJhztTD2bDbFi7ASZzz1mggQYoZjlW10NIN0bK15ABbmpmWhi9hhriUldwjqa3gVx7mIrEMPaJLZhhNV8bQe0b0L3ESAeVC35AoGBAIFUQ9VziGZ2UMrDxMPU2AoMqfJe3X82CcUu/WS3KntAObSlSA3Od2Ow8gHs6KtVxMYLND9nHJ+WXMXASbv/ou1E/h8lRvg7OjFEnscgz8w5Kvf5egIoYFoMAg7TA8e/8mZ8NIli88T2/vvMZHhUSrRm43cssViI1kLFXfywzzOX";
                 Data.publicKey = _configuration["Key:PublicKey"];
                 Data.privateKey = _configuration["Key:PrivateKey"];
-                var retdata = await basicDetailBL.GetBesicdetailsByRequestId(Data);
-                string sourceFolderPhotoPhy = Convert.ToString(ForCreateFolderrandom(Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "ExportAFSACCell")));
-                int recoff = 0;
-                List<DTODataExportsResponse> lst = new List<DTODataExportsResponse>();
-                string recofffolder = "";
-                string recoffphotos = "";
-                string recoffsing = "";
-                int count = 0;
-                string arryRequestId = "";
-                
-                foreach (var data in retdata)
+                List<DTODataExportsResponse> retdata = await basicDetailBL.GetBesicdetailsByRequestId(Data);
+                if(retdata.Count() > 0)
                 {
-                    count++;
-                    if (recoff != data.RecordOfficeId)
+                    DtoSession dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+                    string sourceFolderPhotoPhy = Convert.ToString(ForCreateFolderrandom(Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "ExportAFSACCell"), dtoSession.DoaminId));
+                    string lastFolderName = new DirectoryInfo(sourceFolderPhotoPhy).Name;
+                    int recoff = 0;
+                    List<DTODataExportsResponse> lst = new List<DTODataExportsResponse>();
+                    List<DTODataExportsResponse> csvlst = new List<DTODataExportsResponse>();
+                    string recofffolder = "";
+                    string recoffphotos = "";
+                    string recoffsing = "";
+                    int count = 0;
+                    string arryRequestId = "";
+
+                    foreach (var data in retdata)
                     {
-                        if (recoff != 0)
+                        count++;
+                        if (recoff != data.RecordOfficeId)
+                        {
+                            if (recoff != 0)
+                            {
+                                var jsonString = JsonConvert.SerializeObject(lst);
+                                var jsonde = JsonConvert.DeserializeObject(jsonString);
+                                System.IO.File.WriteAllText(recofffolder + "/Data.json", jsonString);
+
+                                CsvService csvService = new CsvService();
+                                string csvData = csvService.GenerateCsv(lst);
+                                System.IO.File.WriteAllText(recofffolder + "/Data.csv", csvData);
+                            }
+
+                            lst.Clear();
+                            recofffolder = Convert.ToString(CreateFolder(sourceFolderPhotoPhy + "/" + data.RecordOffice));
+                            recoffphotos = Convert.ToString(CreateFolder(sourceFolderPhotoPhy + "/" + data.RecordOffice + "/Photos/"));
+                            recoffsing = Convert.ToString(CreateFolder(sourceFolderPhotoPhy + "/" + data.RecordOffice + "/Signature"));
+
+                        }
+
+                        //System.IO.File.Copy(Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "Photo") + "/" + data.PhotoImagePath, recoffphotos + "/" + data.ServiceNo + ".png", true);
+                        //System.IO.File.Copy(Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "Signature") + "/" + data.SignatureImagePath, recoffsing + "/" + data.ServiceNo + ".png", true);
+                        string temp = data.PhotoImagePath.Replace(".enc", string.Empty);
+                        string[] parts = temp.Split('.');
+                        string extenstionImage = parts[parts.Length - 1];
+
+                        temp = data.SignatureImagePath.Replace(".enc", string.Empty);
+                        parts = temp.Split('.');
+                        string extenstionSign = parts[parts.Length - 1];
+
+                        ImageEncryptAndDecrypt.DecryptImageFile(Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "Photo", data.PhotoImagePath), recoffphotos + "/" + data.ServiceNo + "." + extenstionImage);
+                        ImageEncryptAndDecrypt.DecryptImageFile(Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "Signature", data.SignatureImagePath), recoffsing + "/" + data.ServiceNo + "." + extenstionSign);
+
+                        lst.Add(data);
+                        csvlst.Add(data);
+                        recoff = data.RecordOfficeId;
+                        if (count == retdata.Count())
                         {
                             var jsonString = JsonConvert.SerializeObject(lst);
                             var jsonde = JsonConvert.DeserializeObject(jsonString);
@@ -1784,87 +1823,58 @@ namespace Web.Controllers
                             CsvService csvService = new CsvService();
                             string csvData = csvService.GenerateCsv(lst);
                             System.IO.File.WriteAllText(recofffolder + "/Data.csv", csvData);
+
+                        }
+                        if (count == 1)
+                            arryRequestId = data.RequestId + "";
+                        else
+                            arryRequestId = arryRequestId + "," + data.RequestId;
+
+                    }
+                    if (count != 0 && count == retdata.Count())
+                    {
+                        CsvService csvService = new CsvService();
+                        string csvData = csvService.GenerateCsv(csvlst);
+                        System.IO.File.WriteAllText(sourceFolderPhotoPhy + "/" + lastFolderName + ".csv", csvData);
+                    }
+
+                    //CreateZipFromFolder(sourceFolderPhotoPhy, sourceFolderPhotoPhy + ".zip");
+
+                    if (Data.DataExportType == 1)
+                    {
+                        string sourceFolder = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "ExportAFSACCell", "Temp");
+                        // Check if directory exists
+                        if (!Directory.Exists(sourceFolder))
+                        {
+                            // If directory does not exist, create it
+                            Directory.CreateDirectory(sourceFolder);
                         }
 
-                        lst.Clear();
-                        recofffolder = Convert.ToString(CreateFolder(sourceFolderPhotoPhy + "/" + data.RecordOffice));
-                        recoffphotos = Convert.ToString(CreateFolder(sourceFolderPhotoPhy + "/" + data.RecordOffice + "/Photos/"));
-                        recoffsing = Convert.ToString(CreateFolder(sourceFolderPhotoPhy + "/" + data.RecordOffice + "/Signature"));
+                        string tempZipFilePath = Convert.ToString(Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "ExportAFSACCell", "Temp"));
 
+                        ZipEncrypt.EncryptAndZip(sourceFolderPhotoPhy, sourceFolderPhotoPhy + ".zip", tempZipFilePath, Data.publicKey); // Encrypt and zip folder
                     }
-
-                    //System.IO.File.Copy(Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "Photo") + "/" + data.PhotoImagePath, recoffphotos + "/" + data.ServiceNo + ".png", true);
-                    //System.IO.File.Copy(Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "Signature") + "/" + data.SignatureImagePath, recoffsing + "/" + data.ServiceNo + ".png", true);
-                    string temp = data.PhotoImagePath.Replace(".enc", string.Empty);
-                    string[] parts = temp.Split('.');
-                    string extenstionImage = parts[parts.Length - 1];
-
-                    temp = data.SignatureImagePath.Replace(".enc", string.Empty);
-                    parts = temp.Split('.');
-                    string extenstionSign = parts[parts.Length - 1];
-
-                    ImageEncryptAndDecrypt.DecryptImageFile(Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "Photo", data.PhotoImagePath), recoffphotos + "/" + data.ServiceNo + "." + extenstionImage);
-                    ImageEncryptAndDecrypt.DecryptImageFile(Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "Signature", data.SignatureImagePath), recoffsing + "/" + data.ServiceNo + "." + extenstionSign);
-
-                    lst.Add(data);
-                    recoff = data.RecordOfficeId;
-                    if (count == retdata.Count())
-                    {
-                        var jsonString = JsonConvert.SerializeObject(lst);
-                        var jsonde = JsonConvert.DeserializeObject(jsonString);
-                        System.IO.File.WriteAllText(recofffolder + "/Data.json", jsonString);
-
-                        CsvService csvService = new CsvService();
-                        string csvData = csvService.GenerateCsv(lst);
-                        System.IO.File.WriteAllText(recofffolder + "/Data.csv", csvData);
-
-                    }
-                    if (count == 1)
-                        arryRequestId = data.RequestId + "";
                     else
-                        arryRequestId = arryRequestId + "," + data.RequestId;
-
-                }
-
-                //CreateZipFromFolder(sourceFolderPhotoPhy, sourceFolderPhotoPhy + ".zip");
-
-                if (Data.DataExportType == 1)
-                {
-                    string sourceFolder = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "ExportAFSACCell", "Temp");
-                    // Check if directory exists
-                    if (!Directory.Exists(sourceFolder))
                     {
-                        // If directory does not exist, create it
-                        Directory.CreateDirectory(sourceFolder);
+                        CreateZipFromFolder(sourceFolderPhotoPhy, sourceFolderPhotoPhy + ".zip");
                     }
 
-                    string tempZipFilePath = Convert.ToString(Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "ExportAFSACCell", "Temp"));
+                    var userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                    DTODataExported dTODataExported = new DTODataExported();
+                    dTODataExported.AspNetUsersId = userId;
+                    dTODataExported.UserId = Convert.ToInt32(dtoSession.UserId);
+                    dTODataExported.IP = HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
+                    dTODataExported.CreatedBy = dtoSession.RankName + " " + dtoSession.Name + " (" + dtoSession.ICNO + ")";
+                    dTODataExported.CreatedOn = DateTime.Now;
+                    dTODataExported.RequestId = arryRequestId;
+                    await _iTrnLoginLogBL.AddDataExport(dTODataExported);
 
-                    ZipEncrypt.EncryptAndZip(sourceFolderPhotoPhy, sourceFolderPhotoPhy + ".zip", tempZipFilePath, Data.publicKey); // Encrypt and zip folder
+                    return Json(lastFolderName);
                 }
                 else
                 {
-                    CreateZipFromFolder(sourceFolderPhotoPhy, sourceFolderPhotoPhy + ".zip");
+                    return Json(KeyConstants.InternalServerError);
                 }
-
-
-                string lastFolderName = new DirectoryInfo(sourceFolderPhotoPhy).Name;
-
-
-                DtoSession dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
-                var userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-                DTODataExported dTODataExported = new DTODataExported();
-                dTODataExported.AspNetUsersId = userId;
-                dTODataExported.UserId = Convert.ToInt32(dtoSession.UserId);
-                dTODataExported.IP = HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
-                dTODataExported.CreatedBy = dtoSession.RankName + " " + dtoSession.Name + " (" + dtoSession.ICNO + ")";
-                dTODataExported.CreatedOn = DateTime.Now;
-                dTODataExported.RequestId = arryRequestId;
-                await _iTrnLoginLogBL.AddDataExport(dTODataExported);
-
-                return Json(lastFolderName);
-
-
             }
             catch (Exception ex)
             {
@@ -2264,18 +2274,18 @@ namespace Web.Controllers
 
             return Directory.CreateDirectory(folder);
         }
-        public static DirectoryInfo ForCreateFolderrandom(string baseFolder)
+        public static DirectoryInfo ForCreateFolderrandom(string baseFolder,string DoaminId)
         {
             var now = DateTime.Now;
             var yearName = now.ToString("yyyy");
-            var monthName = now.ToString("MMMM");
+            var monthName = now.ToString("MM");
             var dayName = now.ToString("dd");
-            var hh = now.ToString("hh");
+            var hh = now.ToString("HH");
             var mm = now.ToString("mm");
             var ss = now.ToString("ss");
             var folder =
                         Path.Combine(baseFolder,
-                           Path.Combine(yearName + "" + monthName + "" + dayName + "" + hh + "" + mm + "" + ss));
+                           Path.Combine(dayName+ ""+ monthName + "" + yearName + "_" + hh + "" + mm + "" + ss + "_"+ DoaminId));
 
             return Directory.CreateDirectory(folder);
         }

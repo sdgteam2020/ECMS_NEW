@@ -61,6 +61,8 @@ namespace DataTransferObject.Response
 
         public int RequestId { get; set; }
         public string RegimentalName { get; set; } = string.Empty;
-
+        public string RegimentalLocation { get; set; } = string.Empty;
+        public string CardSerialNo { get; set; } = string.Empty;
+        public string ChipNo { get; set; } = string.Empty;
     }
 }

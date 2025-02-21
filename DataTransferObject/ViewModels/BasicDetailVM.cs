@@ -158,12 +158,13 @@ namespace DataTransferObject.ViewModels
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
         [RegularExpression(@"^[\w ]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
         public string District { get; set; } = string.Empty;
-        
+
+        [Display(Name = "Police Station")]
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
         [RegularExpression(@"^[\w ]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
         public string PS { get; set; } = string.Empty;
 
-        [DisplayName("Police Station")]
+        [DisplayName("Post Office")]
         [RegularExpression(@"^[\w ]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
         [MaxLength(50, ErrorMessage = "Maximum length of PO is fifty character.")]
         public string PO { get; set; } = string.Empty;
@@ -256,6 +257,8 @@ namespace DataTransferObject.ViewModels
         
         [NotMapped]
         public string? ModifiedServiceNo { get; set; }
+
+        public string? RegimentalName { get; set; }
     }
     public class BasicDetailCrtAndUpdVM : BasicDetailVM
     {
