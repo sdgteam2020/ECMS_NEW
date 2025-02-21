@@ -115,7 +115,10 @@
                                     <th>Rank</th>
                                     <th>Name</th>
                                     <th>Unit</th>
-
+                                    @if (ViewBag.jcoor == 0)
+                                    {
+                                        <th>Regtl Centre</th>
+                                    }
                                     @*  <th>@Html.DisplayNameFor(model => model[0].DOB)</th>
                                     <th>@Html.DisplayNameFor(model => model[0].DateOfCommissioning)</th>
                                     <th>@Html.DisplayNameFor(model => model[0].PermanentAddress)</th> *@
@@ -153,6 +156,11 @@
                                         <td>@item.RankName</td>
                                         <td>@item.FName @(item.LName == null ? "" : item.LName)</td>
                                         <td class="UnitName">@item.UnitName</td>
+                                        @if (ViewBag.jcoor == 0)
+                                        {
+                                            <td>@item.RegimentalName</td>
+                                        }
+
 
                                         @*   <td>@item.DOB.ToString("dd/MMM/yyyy")</td>
                                     <td>@item.DateOfCommissioning.ToString("dd/MMM/yyyy")</td>

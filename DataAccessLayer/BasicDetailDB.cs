@@ -14,6 +14,9 @@ using EntityFramework.Exceptions.Common;
 using System.Collections.Immutable;
 using DataAccessLayer.Healpers;
 using System.Data;
+using Azure.Core;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
+using System.Data.SqlClient;
 
 namespace DataAccessLayer
 {
@@ -150,31 +153,248 @@ namespace DataAccessLayer
         }
         public async Task<DTOBasicDetailsSaveResponse> SaveBasicDetailsWithAll(BasicDetail Data, MTrnAddress address, MTrnUpload trnUpload, MTrnIdentityInfo mTrnIdentityInfo, MTrnICardRequest mTrnICardRequest, MStepCounter mStepCounter)
         {
-            using var transaction = _context.Database.BeginTransaction();
-            DTOBasicDetailsSaveResponse dTOBasicDetailsSaveResponse= new DTOBasicDetailsSaveResponse();
+            #region Old code write by Kapoor Sir
+            //using var transaction = _context.Database.BeginTransaction();
+            //DTOBasicDetailsSaveResponse dTOBasicDetailsSaveResponse = new DTOBasicDetailsSaveResponse();
+            //try
+            //{
+            //    if (Data.BasicDetailId == 0)
+            //    {
+            //        _context.BasicDetails.Add(Data);
+            //        await _context.SaveChangesAsync();
+            //        int BasicDetailId = Data.BasicDetailId;
+            //        address.BasicDetailId = BasicDetailId;
+            //        _context.TrnAddress.Add(address);
+            //        await _context.SaveChangesAsync();
+            //        trnUpload.BasicDetailId = BasicDetailId;
+            //        _context.TrnUpload.Add(trnUpload);
+            //        await _context.SaveChangesAsync();
+            //        mTrnIdentityInfo.BasicDetailId = BasicDetailId;
+            //        _context.TrnIdentityInfo.Add(mTrnIdentityInfo);
+            //        await _context.SaveChangesAsync();
+            //        mTrnICardRequest.BasicDetailId = BasicDetailId;
+            //        _context.TrnICardRequest.Add(mTrnICardRequest);
+            //        await _context.SaveChangesAsync();
+            //        mStepCounter.RequestId = mTrnICardRequest.RequestId;
+            //        _context.TrnStepCounter.Add(mStepCounter);
+
+            //        await _context.SaveChangesAsync();
+
+            //        transaction.Commit();
+            //        dTOBasicDetailsSaveResponse.Result = true;
+            //        dTOBasicDetailsSaveResponse.Message = "Save";
+            //        return dTOBasicDetailsSaveResponse;
+            //    }
+            //    else
+            //    {
+
+            //        address.BasicDetailId = Data.BasicDetailId;
+            //        trnUpload.BasicDetailId = Data.BasicDetailId;
+            //        mTrnIdentityInfo.BasicDetailId = Data.BasicDetailId;
+
+            //        _context.Update(address);
+            //        await _context.SaveChangesAsync();
+            //        _context.Update(trnUpload);
+            //        await _context.SaveChangesAsync();
+            //        _context.Update(mTrnIdentityInfo);
+            //        await _context.SaveChangesAsync();
+
+            //        _context.Entry(Data).State = EntityState.Modified;
+            //        _context.Update(Data);
+            //        await _context.SaveChangesAsync();
+
+            //        transaction.Commit();
+            //        dTOBasicDetailsSaveResponse.Result = true;
+            //        dTOBasicDetailsSaveResponse.Message = "Updae";
+            //        return dTOBasicDetailsSaveResponse;
+            //    }
+            //    //do other things, then commit or rollback
+
+
+            //}
+            //catch (ReferenceConstraintException ex)
+            //{
+            //    transaction.Rollback();
+            //    _logger.LogError(1001, ex, "ReferenceConstraintException");
+            //    dTOBasicDetailsSaveResponse.Result = false;
+            //    dTOBasicDetailsSaveResponse.Message = ex.Message;
+            //    return dTOBasicDetailsSaveResponse;
+
+            //}
+            //catch (UniqueConstraintException ex)
+            //{
+            //    transaction.Rollback();
+            //    _logger.LogError(1002, ex, "UniqueConstraintException");
+            //    if (ex.InnerException != null)
+            //    {
+            //        if (ex.InnerException.Message.Contains("IX_AadhaarNo"))
+            //        {
+            //            dTOBasicDetailsSaveResponse.Result = false;
+            //            dTOBasicDetailsSaveResponse.Message = "The provided Aadhaar number already exists. Please check and try again.";
+            //            return dTOBasicDetailsSaveResponse;
+            //        }
+            //        else if (ex.InnerException.Message.Contains("IX_PaperIcardNo"))
+            //        {
+            //            dTOBasicDetailsSaveResponse.Result = false;
+            //            dTOBasicDetailsSaveResponse.Message = "The provided PaperIcardNo number already exists. Please check and try again.";
+            //            return dTOBasicDetailsSaveResponse;
+            //        }
+            //        else
+            //        {
+            //            dTOBasicDetailsSaveResponse.Result = false;
+            //            dTOBasicDetailsSaveResponse.Message = ex.Message;
+            //            return dTOBasicDetailsSaveResponse;
+            //        }
+            //    }
+            //    else
+            //    {
+            //        dTOBasicDetailsSaveResponse.Result = false;
+            //        dTOBasicDetailsSaveResponse.Message = ex.Message;
+            //        return dTOBasicDetailsSaveResponse;
+
+            //    }
+
+
+            //}
+            //catch (MaxLengthExceededException ex)
+            //{
+            //    transaction.Rollback();
+            //    _logger.LogError(1003, ex, "MaxLengthExceededException");
+            //    dTOBasicDetailsSaveResponse.Result = false;
+            //    dTOBasicDetailsSaveResponse.Message = ex.Message;
+            //    return dTOBasicDetailsSaveResponse;
+            //}
+            //catch (CannotInsertNullException ex)
+            //{
+            //    transaction.Rollback();
+            //    _logger.LogError(1004, ex, "CannotInsertNullException");
+            //    dTOBasicDetailsSaveResponse.Result = false;
+            //    dTOBasicDetailsSaveResponse.Message = ex.Message;
+            //    return dTOBasicDetailsSaveResponse;
+            //}
+            //catch (NumericOverflowException ex)
+            //{
+            //    transaction.Rollback();
+            //    _logger.LogError(1005, ex, "NumericOverflowException");
+            //    dTOBasicDetailsSaveResponse.Result = false;
+            //    dTOBasicDetailsSaveResponse.Message = ex.Message;
+            //    return dTOBasicDetailsSaveResponse;
+            //}
+            //catch (Exception ex)
+            //{
+            //    transaction.Rollback();
+            //    _logger.LogError(1006, ex, "Exception");
+            //    dTOBasicDetailsSaveResponse.Result = false;
+            //    dTOBasicDetailsSaveResponse.Message = ex.Message;
+            //    return dTOBasicDetailsSaveResponse;
+            //}
+            #endregion
+
+            var (db, transaction) = _contextDP.CreateConnectionWithTransaction();
+
+            DTOBasicDetailsSaveResponse dTOBasicDetailsSaveResponse = new DTOBasicDetailsSaveResponse();
             try
             {
                 if (Data.BasicDetailId == 0)
                 {
-                    _context.BasicDetails.Add(Data);
-                   await _context.SaveChangesAsync();
-                    int BasicDetailId = Data.BasicDetailId;
-                    address.BasicDetailId = BasicDetailId;
-                    _context.TrnAddress.Add(address);
-                    await _context.SaveChangesAsync();
-                    trnUpload.BasicDetailId = BasicDetailId;
-                    _context.TrnUpload.Add(trnUpload);
-                    await _context.SaveChangesAsync();
-                    mTrnIdentityInfo.BasicDetailId = BasicDetailId;
-                    _context.TrnIdentityInfo.Add(mTrnIdentityInfo);
-                    await _context.SaveChangesAsync();
-                    mTrnICardRequest.BasicDetailId = BasicDetailId;
-                    _context.TrnICardRequest.Add(mTrnICardRequest);
-                    await _context.SaveChangesAsync();
-                    mStepCounter.RequestId = mTrnICardRequest.RequestId;
-                    _context.TrnStepCounter.Add(mStepCounter);
+                    var insertBasicDetail = " INSERT INTO BasicDetails (BasicDetailId, ArmedId, RankId, ServiceNo, DOB, PlaceOfIssue, DateOfIssue, DateOfCommissioning, ApplyForId, UnitId, PaperIcardNo,IsActive, Updatedby, UpdatedOn, IssuingAuthorityId, NameAsPerRecord, RegimentalId, FName, LName)" +
+                                            " OUTPUT INSERTED.BasicDetailId " +
+                                            " VALUES (@BasicDetailId, @ArmedId, @RankId, @ServiceNo, @DOB, @PlaceOfIssue, @DateOfIssue, @DateOfCommissioning, @ApplyForId, @UnitId, @PaperIcardNo, @IsActive, @Updatedby, @UpdatedOn, @IssuingAuthorityId, @NameAsPerRecord, @RegimentalId, @FName, @LName );";
+                    var parametersBD = new DynamicParameters();
+                    parametersBD.Add("@BasicDetailId", Data.BasicDetailId, DbType.Int32, ParameterDirection.Input);
+                    parametersBD.Add("@ArmedId", Data.ArmedId, DbType.Byte, ParameterDirection.Input);
+                    parametersBD.Add("@RankId", Data.RankId, DbType.Int16, ParameterDirection.Input);
+                    parametersBD.Add("@ServiceNo", Data.ServiceNo, DbType.String, ParameterDirection.Input, 10);
+                    parametersBD.Add("@DOB", Data.DOB, DbType.DateTime, ParameterDirection.Input);
+                    parametersBD.Add("@PlaceOfIssue", Data.PlaceOfIssue, DbType.String, ParameterDirection.Input, 50);
+                    parametersBD.Add("@DateOfIssue", Data.DateOfIssue, DbType.DateTime, ParameterDirection.Input);
+                    parametersBD.Add("@DateOfCommissioning", Data.DateOfCommissioning, DbType.DateTime, ParameterDirection.Input);
+                    parametersBD.Add("@ApplyForId", Data.ApplyForId, DbType.Byte, ParameterDirection.Input);
+                    parametersBD.Add("@UnitId", Data.UnitId, DbType.Int32, ParameterDirection.Input);
+                    parametersBD.Add("@PaperIcardNo", Data.PaperIcardNo, DbType.String, ParameterDirection.Input, 12);
+                    parametersBD.Add("@IsActive", Data.IsActive, DbType.Boolean, ParameterDirection.Input);
+                    parametersBD.Add("@Updatedby", Data.Updatedby, DbType.Int32, ParameterDirection.Input);
+                    parametersBD.Add("@UpdatedOn", Data.UpdatedOn, DbType.DateTime, ParameterDirection.Input);
+                    parametersBD.Add("@IssuingAuthorityId", Data.IssuingAuthorityId, DbType.Byte, ParameterDirection.Input);
+                    parametersBD.Add("@NameAsPerRecord", Data.NameAsPerRecord, DbType.AnsiString, ParameterDirection.Input);
+                    parametersBD.Add("@RegimentalId", Data.RegimentalId, DbType.Byte, ParameterDirection.Input);
+                    parametersBD.Add("@FName", Data.FName, DbType.AnsiString, ParameterDirection.Input);
+                    parametersBD.Add("@LName", Data.LName, DbType.AnsiString, ParameterDirection.Input);
+                    int BasicDetailId = await db.QuerySingleAsync<int>(insertBasicDetail, parametersBD, transaction: transaction);
 
-                    await _context.SaveChangesAsync();
+                    address.BasicDetailId = BasicDetailId;
+
+                    var insertAddress = " INSERT INTO TrnAddress (AddressId,BasicDetailId, State, District, PS, PO, Tehsil, Village, PinCode)" +
+                                        " VALUES (@AddressId, @BasicDetailId, @State, @District, @PS, @PO, @Tehsil, @Village, @PinCode);";
+                    var parametersAddr = new DynamicParameters();
+                    parametersBD.Add("@AddressId", address.AddressId, DbType.Int32, ParameterDirection.Input);
+                    parametersBD.Add("@BasicDetailId", address.BasicDetailId, DbType.Int32, ParameterDirection.Input);
+                    parametersBD.Add("@State", address.State, DbType.String, ParameterDirection.Input, 50);
+                    parametersBD.Add("@District", address.District, DbType.String, ParameterDirection.Input, 50);
+                    parametersBD.Add("@PS", address.PS, DbType.String, ParameterDirection.Input, 50);
+                    parametersBD.Add("@PO", address.PO, DbType.String, ParameterDirection.Input, 50);
+                    parametersBD.Add("@Tehsil", address.Tehsil, DbType.String, ParameterDirection.Input, 50);
+                    parametersBD.Add("@Village", address.Village, DbType.String, ParameterDirection.Input, 50);
+                    parametersBD.Add("@PinCode", address.PinCode, DbType.Int32, ParameterDirection.Input);
+                    await db.QuerySingleAsync(insertAddress, parametersAddr, transaction: transaction);
+
+                    trnUpload.BasicDetailId = BasicDetailId;
+
+                    var insertTrnUpload = " INSERT INTO TrnUpload (UploadId,BasicDetailId, SignatureImagePath, PhotoImagePath)" +
+                                          " VALUES (@UploadId, @BasicDetailId, @SignatureImagePath, @PhotoImagePath);";
+                    var parametersUpload = new DynamicParameters();
+                    parametersBD.Add("@UploadId", address.AddressId, DbType.Int32, ParameterDirection.Input);
+                    parametersBD.Add("@BasicDetailId", address.BasicDetailId, DbType.Int32, ParameterDirection.Input);
+                    parametersBD.Add("@SignatureImagePath", trnUpload.SignatureImagePath, DbType.String, ParameterDirection.Input, 100);
+                    parametersBD.Add("@PhotoImagePath", trnUpload.PhotoImagePath, DbType.String, ParameterDirection.Input, 100);
+                    await db.QuerySingleAsync(insertTrnUpload, parametersUpload, transaction: transaction);
+
+                    mTrnIdentityInfo.BasicDetailId = BasicDetailId;
+
+                    var insertIdentityInfo = " INSERT INTO TrnIdentityInfo (InfoId,BasicDetailId, IdenMark1, IdenMark2, AadhaarNo, Height, BloodGroupId)" +
+                                             " VALUES (@InfoId, @BasicDetailId, @IdenMark1, @IdenMark2, @AadhaarNo, @Height, @BloodGroupId);";
+                    var parametersIdentityInfo = new DynamicParameters();
+                    parametersIdentityInfo.Add("@InfoId", mTrnIdentityInfo.InfoId, DbType.Int32, ParameterDirection.Input);
+                    parametersIdentityInfo.Add("@BasicDetailId", mTrnIdentityInfo.BasicDetailId, DbType.Int32, ParameterDirection.Input);
+                    parametersIdentityInfo.Add("@IdenMark1", mTrnIdentityInfo.IdenMark1, DbType.String, ParameterDirection.Input, 200);
+                    parametersIdentityInfo.Add("@IdenMark2", mTrnIdentityInfo.IdenMark2, DbType.String, ParameterDirection.Input, 200);
+                    parametersIdentityInfo.Add("@AadhaarNo", mTrnIdentityInfo.AadhaarNo, DbType.Int64, ParameterDirection.Input);
+                    parametersIdentityInfo.Add("@Height", mTrnIdentityInfo.Height, DbType.Single, ParameterDirection.Input);
+                    parametersIdentityInfo.Add("@BloodGroupId", mTrnIdentityInfo.BloodGroupId, DbType.Byte, ParameterDirection.Input);
+                    await db.QuerySingleAsync(insertIdentityInfo, parametersIdentityInfo, transaction: transaction);
+
+                    mTrnICardRequest.BasicDetailId = BasicDetailId;
+
+                    var insertTrnICardRequest = " INSERT INTO TrnICardRequest (RequestId,BasicDetailId, TypeId, RegistrationId, TrnDomainMappingId, TrackingId, IsActive, Updatedby, UpdatedOn, StatusId, CardSerialNo, ChipNo)" +
+                                                " VALUES (@RequestId, @BasicDetailId, @TypeId, @RegistrationId, @TrnDomainMappingId, @TrackingId, @IsActive, @Updatedby, @UpdatedOn, @StatusId, @CardSerialNo, @ChipNo);";
+                    var parametersTrnICardRequest = new DynamicParameters();
+                    parametersIdentityInfo.Add("@RequestId", mTrnICardRequest.RequestId, DbType.Int32, ParameterDirection.Input);
+                    parametersIdentityInfo.Add("@BasicDetailId", mTrnICardRequest.BasicDetailId, DbType.Int32, ParameterDirection.Input);
+                    parametersIdentityInfo.Add("@TypeId", mTrnICardRequest.TypeId, DbType.Byte, ParameterDirection.Input);
+                    parametersIdentityInfo.Add("@RegistrationId", mTrnICardRequest.RegistrationId, DbType.Byte, ParameterDirection.Input);
+                    parametersIdentityInfo.Add("@TrnDomainMappingId", mTrnICardRequest.TrnDomainMappingId, DbType.Int32, ParameterDirection.Input);
+                    parametersIdentityInfo.Add("@TrackingId", mTrnICardRequest.TrackingId, DbType.Int64, ParameterDirection.Input);
+                    parametersIdentityInfo.Add("@IsActive", mTrnICardRequest.IsActive, DbType.Boolean, ParameterDirection.Input);
+                    parametersIdentityInfo.Add("@Updatedby", mTrnICardRequest.Updatedby, DbType.Int32, ParameterDirection.Input);
+                    parametersIdentityInfo.Add("@UpdatedOn", mTrnICardRequest.UpdatedOn, DbType.DateTime, ParameterDirection.Input);
+                    parametersIdentityInfo.Add("@StatusId", mTrnICardRequest.StatusId, DbType.Byte, ParameterDirection.Input);
+                    parametersIdentityInfo.Add("@CardSerialNo", mTrnICardRequest.CardSerialNo, DbType.String, ParameterDirection.Input, 30);
+                    parametersIdentityInfo.Add("@ChipNo", mTrnICardRequest.ChipNo, DbType.String, ParameterDirection.Input, 30);
+                    await db.QuerySingleAsync(insertTrnICardRequest, parametersTrnICardRequest, transaction: transaction);
+
+                    mStepCounter.RequestId = mTrnICardRequest.RequestId;
+
+                    var insertTrnStepCounter = " INSERT INTO TrnStepCounter (Id, RequestId, StepId, IsActive, Updatedby, UpdatedOn, ApplyForId)" +
+                                               " VALUES (@Id, @RequestId, @StepId, @IsActive, @Updatedby, @UpdatedOn, @ApplyForId);";
+                    var parametersTrnStepCounter = new DynamicParameters();
+                    parametersTrnStepCounter.Add("@Id", mStepCounter.Id, DbType.Int32, ParameterDirection.Input);
+                    parametersTrnStepCounter.Add("@RequestId", mStepCounter.RequestId, DbType.Int32, ParameterDirection.Input);
+                    parametersTrnStepCounter.Add("@StepId", mStepCounter.StepId, DbType.Byte, ParameterDirection.Input);
+                    parametersTrnStepCounter.Add("@IsActive", mStepCounter.IsActive, DbType.Boolean, ParameterDirection.Input);
+                    parametersTrnStepCounter.Add("@Updatedby", mStepCounter.Updatedby, DbType.Int32, ParameterDirection.Input);
+                    parametersTrnStepCounter.Add("@UpdatedOn", mStepCounter.UpdatedOn, DbType.DateTime, ParameterDirection.Input);
+                    parametersTrnStepCounter.Add("@ApplyForId", mStepCounter.ApplyForId, DbType.Byte, ParameterDirection.Input);
+                    await db.QuerySingleAsync(insertTrnStepCounter, parametersTrnStepCounter, transaction: transaction);
 
                     transaction.Commit();
                     dTOBasicDetailsSaveResponse.Result = true;
@@ -183,95 +403,75 @@ namespace DataAccessLayer
                 }
                 else
                 {
-                   
                     address.BasicDetailId = Data.BasicDetailId;
                     trnUpload.BasicDetailId = Data.BasicDetailId;
                     mTrnIdentityInfo.BasicDetailId = Data.BasicDetailId;
 
-                    _context.Update(address);
-                    await _context.SaveChangesAsync();
-                    _context.Update(trnUpload);
-                    await _context.SaveChangesAsync();
-                    _context.Update(mTrnIdentityInfo);
-                    await _context.SaveChangesAsync();
+                    var updateBasicDetail = " UPDATE BasicDetails SET ArmedId=@ArmedId, RankId=@RankId, ServiceNo=@ServiceNo, DOB=@DOB, PlaceOfIssue=@PlaceOfIssue, DateOfIssue=@DateOfIssue, DateOfCommissioning=@DateOfCommissioning, ApplyForId=@ApplyForId, UnitId=@UnitId, PaperIcardNo=@PaperIcardNo,IsActive=@IsActive, Updatedby=@Updatedby, UpdatedOn=@UpdatedOn, IssuingAuthorityId=@IssuingAuthorityId, NameAsPerRecord=@NameAsPerRecord, RegimentalId=@RegimentalId, FName=@FName, LName=@LName WHERE BasicDetailId=@BasicDetailId ";
+                    var parametersBD = new DynamicParameters();
+                    parametersBD.Add("@BasicDetailId", Data.BasicDetailId, DbType.Int32, ParameterDirection.Input);
+                    parametersBD.Add("@ArmedId", Data.ArmedId, DbType.Byte, ParameterDirection.Input);
+                    parametersBD.Add("@RankId", Data.RankId, DbType.Int16, ParameterDirection.Input);
+                    parametersBD.Add("@ServiceNo", Data.ServiceNo, DbType.String, ParameterDirection.Input, 10);
+                    parametersBD.Add("@DOB", Data.DOB, DbType.DateTime, ParameterDirection.Input);
+                    parametersBD.Add("@PlaceOfIssue", Data.PlaceOfIssue, DbType.String, ParameterDirection.Input, 50);
+                    parametersBD.Add("@DateOfIssue", Data.DateOfIssue, DbType.DateTime, ParameterDirection.Input);
+                    parametersBD.Add("@DateOfCommissioning", Data.DateOfCommissioning, DbType.DateTime, ParameterDirection.Input);
+                    parametersBD.Add("@ApplyForId", Data.ApplyForId, DbType.Byte, ParameterDirection.Input);
+                    parametersBD.Add("@UnitId", Data.UnitId, DbType.Int32, ParameterDirection.Input);
+                    parametersBD.Add("@PaperIcardNo", Data.PaperIcardNo, DbType.String, ParameterDirection.Input, 12);
+                    parametersBD.Add("@IsActive", Data.IsActive, DbType.Boolean, ParameterDirection.Input);
+                    parametersBD.Add("@Updatedby", Data.Updatedby, DbType.Int32, ParameterDirection.Input);
+                    parametersBD.Add("@UpdatedOn", Data.UpdatedOn, DbType.DateTime, ParameterDirection.Input);
+                    parametersBD.Add("@IssuingAuthorityId", Data.IssuingAuthorityId, DbType.Byte, ParameterDirection.Input);
+                    parametersBD.Add("@NameAsPerRecord", Data.NameAsPerRecord, DbType.String, ParameterDirection.Input, 36);
+                    parametersBD.Add("@RegimentalId", Data.RegimentalId, DbType.Byte, ParameterDirection.Input);
+                    parametersBD.Add("@FName", Data.FName, DbType.String, ParameterDirection.Input, 18);
+                    parametersBD.Add("@LName", Data.LName, DbType.String, ParameterDirection.Input, 18);
+                    await db.QuerySingleAsync(updateBasicDetail, parametersBD, transaction: transaction);
 
-                    _context.Entry(Data).State = EntityState.Modified;
-                    _context.Update(Data);
-                    await _context.SaveChangesAsync();
+                    var updateAddress = " UPDATE TrnAddress SET BasicDetailId=@BasicDetailId, State=@State, District=@District, PS=@PS, PO=@PO, Tehsil=@Tehsil, Village=@Village, PinCode=@PinCode WHERE AddressId=@AddressId";
+                    var parametersAddr = new DynamicParameters();
+                    parametersBD.Add("@AddressId", address.AddressId, DbType.Int32, ParameterDirection.Input);
+                    parametersBD.Add("@BasicDetailId", address.BasicDetailId, DbType.Int32, ParameterDirection.Input);
+                    parametersBD.Add("@State", address.State, DbType.String, ParameterDirection.Input, 50);
+                    parametersBD.Add("@District", address.District, DbType.String, ParameterDirection.Input, 50);
+                    parametersBD.Add("@PS", address.PS, DbType.String, ParameterDirection.Input, 50);
+                    parametersBD.Add("@PO", address.PO, DbType.String, ParameterDirection.Input, 50);
+                    parametersBD.Add("@Tehsil", address.Tehsil, DbType.String, ParameterDirection.Input, 50);
+                    parametersBD.Add("@Village", address.Village, DbType.String, ParameterDirection.Input, 50);
+                    parametersBD.Add("@PinCode", address.PinCode, DbType.Int32, ParameterDirection.Input);
+                    await db.QuerySingleAsync(updateAddress, parametersAddr, transaction: transaction);
+
+                    var updateTrnUpload = " UPDATE TrnUpload SET BasicDetailId=@BasicDetailId, SignatureImagePath=@SignatureImagePath, PhotoImagePath=@PhotoImagePath WHERE UploadId=@UploadId";
+                    var parametersUpload = new DynamicParameters();
+                    parametersBD.Add("@UploadId", address.AddressId, DbType.Int32, ParameterDirection.Input);
+                    parametersBD.Add("@BasicDetailId", address.BasicDetailId, DbType.Int32, ParameterDirection.Input);
+                    parametersBD.Add("@SignatureImagePath", trnUpload.SignatureImagePath, DbType.String, ParameterDirection.Input, 100);
+                    parametersBD.Add("@PhotoImagePath", trnUpload.PhotoImagePath, DbType.String, ParameterDirection.Input, 100);
+                    await db.QuerySingleAsync(updateTrnUpload, parametersUpload, transaction: transaction);
+
+                    var updateIdentityInfo = " UPDATE TrnIdentityInfo SET BasicDetailId=@BasicDetailId, IdenMark1=@IdenMark1, IdenMark2=@IdenMark2, AadhaarNo=@AadhaarNo, Height=@Height, BloodGroupId=@BloodGroupId WHERE InfoId=@InfoId";
+                    var parametersIdentityInfo = new DynamicParameters();
+                    parametersIdentityInfo.Add("@InfoId", mTrnIdentityInfo.InfoId, DbType.Int32, ParameterDirection.Input);
+                    parametersIdentityInfo.Add("@BasicDetailId", mTrnIdentityInfo.BasicDetailId, DbType.Int32, ParameterDirection.Input);
+                    parametersIdentityInfo.Add("@IdenMark1", mTrnIdentityInfo.IdenMark1, DbType.String, ParameterDirection.Input, 200);
+                    parametersIdentityInfo.Add("@IdenMark2", mTrnIdentityInfo.IdenMark2, DbType.String, ParameterDirection.Input, 200);
+                    parametersIdentityInfo.Add("@AadhaarNo", mTrnIdentityInfo.AadhaarNo, DbType.Int64, ParameterDirection.Input);
+                    parametersIdentityInfo.Add("@Height", mTrnIdentityInfo.Height, DbType.Single, ParameterDirection.Input);
+                    parametersIdentityInfo.Add("@BloodGroupId", mTrnIdentityInfo.BloodGroupId, DbType.Byte, ParameterDirection.Input);
+                    await db.QuerySingleAsync(updateIdentityInfo, parametersIdentityInfo, transaction: transaction);
 
                     transaction.Commit();
                     dTOBasicDetailsSaveResponse.Result = true;
                     dTOBasicDetailsSaveResponse.Message = "Updae";
                     return dTOBasicDetailsSaveResponse;
                 }
-                //do other things, then commit or rollback
-               
-               
             }
-            catch (ReferenceConstraintException ex)
+            catch (SqlException ex) when (ex.Number == 2627) // Unique constraint violation error number
             {
-                transaction.Rollback();
-                _logger.LogError(1001, ex, "ReferenceConstraintException");
-                dTOBasicDetailsSaveResponse.Result = false;
-                dTOBasicDetailsSaveResponse.Message = ex.Message;
-                return dTOBasicDetailsSaveResponse;
-
-            }
-            catch (UniqueConstraintException ex)
-            {
-                transaction.Rollback();
-                _logger.LogError(1002, ex, "UniqueConstraintException");
-                if(ex.InnerException !=null)
-                {
-                    if (ex.InnerException.Message.Contains("IX_AadhaarNo"))
-                    {
-                        dTOBasicDetailsSaveResponse.Result = false;
-                        dTOBasicDetailsSaveResponse.Message = "The provided Aadhaar number already exists. Please check and try again.";
-                        return dTOBasicDetailsSaveResponse;
-                    }
-                    else if (ex.InnerException.Message.Contains("IX_PaperIcardNo"))
-                    {
-                        dTOBasicDetailsSaveResponse.Result = false;
-                        dTOBasicDetailsSaveResponse.Message = "The provided PaperIcardNo number already exists. Please check and try again.";
-                        return dTOBasicDetailsSaveResponse;
-                    }
-                    else
-                    {
-                        dTOBasicDetailsSaveResponse.Result = false;
-                        dTOBasicDetailsSaveResponse.Message = ex.Message;
-                        return dTOBasicDetailsSaveResponse;
-                    }
-                }
-                else
-                {
-                    dTOBasicDetailsSaveResponse.Result = false;
-                    dTOBasicDetailsSaveResponse.Message = ex.Message;
-                    return dTOBasicDetailsSaveResponse;
-
-                }
-
-
-            }
-            catch (MaxLengthExceededException ex)
-            {
-                transaction.Rollback();
-                _logger.LogError(1003, ex, "MaxLengthExceededException");
-                dTOBasicDetailsSaveResponse.Result = false;
-                dTOBasicDetailsSaveResponse.Message = ex.Message;
-                return dTOBasicDetailsSaveResponse;
-            }
-            catch (CannotInsertNullException ex)
-            {
-                transaction.Rollback();
-                _logger.LogError(1004, ex, "CannotInsertNullException");
-                dTOBasicDetailsSaveResponse.Result = false;
-                dTOBasicDetailsSaveResponse.Message = ex.Message;
-                return dTOBasicDetailsSaveResponse;
-            }
-            catch (NumericOverflowException ex)
-            {
-                transaction.Rollback();
-                _logger.LogError(1005, ex, "NumericOverflowException");
+                transaction.Rollback();  // Rollback the transaction
+                _logger.LogError(1006, ex, "Exception");
                 dTOBasicDetailsSaveResponse.Result = false;
                 dTOBasicDetailsSaveResponse.Message = ex.Message;
                 return dTOBasicDetailsSaveResponse;
@@ -283,6 +483,11 @@ namespace DataAccessLayer
                 dTOBasicDetailsSaveResponse.Result = false;
                 dTOBasicDetailsSaveResponse.Message = ex.Message;
                 return dTOBasicDetailsSaveResponse;
+            }
+            finally
+            {
+                // Dispose of the connection
+                db.Dispose();
             }
         }
         public async Task<BasicDetail?> FindServiceNo(string ServiceNo)
@@ -709,7 +914,7 @@ namespace DataAccessLayer
                             " ELSE " +
                             " B.ServiceNo " +
                             " END AS ModifiedServiceNo," +
-                            " trnicrd.RegistrationId RegistrationApplyFor,munit.UnitName,B.UnitId,B.BasicDetailId,B.FName,B.LName,B.ServiceNo,B.DOB,B.DateOfCommissioning,ISNULL(fwd.TrnFwdId,0) IsTrnFwdId,C.StepId StepCounter,C.Id StepId,ty.TypeId,ty.name ICardType,trnicrd.RequestId ,ISNULL(fwd.FwdStatusId,0) IsFwdStatusId ,Afor.Name ApplyFor,Afor.ApplyForId,trnicrd.TrackingId,ran.RankAbbreviation RankName" +
+                            " trnicrd.RegistrationId RegistrationApplyFor,munit.UnitName,B.UnitId,B.BasicDetailId,B.FName,B.LName,B.ServiceNo,B.DOB,B.DateOfCommissioning,ISNULL(fwd.TrnFwdId,0) IsTrnFwdId,C.StepId StepCounter,C.Id StepId,ty.TypeId,ty.name ICardType,trnicrd.RequestId ,ISNULL(fwd.FwdStatusId,0) IsFwdStatusId ,Afor.Name ApplyFor,Afor.ApplyForId,trnicrd.TrackingId,ran.RankAbbreviation RankName,mreg.Abbreviation RegimentalName" +
                             " FROM BasicDetails B" +
                             " inner join MRank ran on ran.RankId=B.RankId" +
                             " inner join MapUnit mapunit on mapunit.UnitMapId=B.UnitId " +
@@ -719,7 +924,8 @@ namespace DataAccessLayer
                             " inner join TrnStepCounter C on trnicrd.RequestId = C.RequestId" +
                             " inner join MICardType ty on ty.TypeId = trnicrd.TypeId" +
                             " inner join TrnFwds fwd on fwd.RequestId = trnicrd.RequestId and fwd.ToAspNetUsersId = @UserId and Afor.ApplyForId=IsNULL(@applyForId,Afor.ApplyForId) and fwd.TypeId=@stepcount and fwd.IsComplete = 0 and C.StepId = @stepcount and trnicrd.StatusId=1" +
-                            " inner join MTrnFwdStatus mtrnfwdstatus on mtrnfwdstatus.FwdStatusId = fwd.FwdStatusId ";
+                            " inner join MTrnFwdStatus mtrnfwdstatus on mtrnfwdstatus.FwdStatusId = fwd.FwdStatusId "+
+                            " left join MRegimental mreg on mreg.RegId = B.RegimentalId ";
                 }
                 else if (TypeId == 3 && stepcount == 3) 
                 {
@@ -730,7 +936,7 @@ namespace DataAccessLayer
                             " ELSE " +
                             " B.ServiceNo " +
                             " END AS ModifiedServiceNo," +
-                            " trnicrd.RegistrationId RegistrationApplyFor,munit.UnitName,B.UnitId,B.BasicDetailId,B.FName,B.LName,B.ServiceNo,B.DOB,B.DateOfCommissioning,C.StepId StepCounter,C.Id StepId,ty.TypeId,ty.name ICardType,trnicrd.RequestId ,ISNULL(fwd.FwdStatusId,0) IsFwdStatusId ,Afor.Name ApplyFor,Afor.ApplyForId,ran.RankAbbreviation RankName" +
+                            " trnicrd.RegistrationId RegistrationApplyFor,munit.UnitName,B.UnitId,B.BasicDetailId,B.FName,B.LName,B.ServiceNo,B.DOB,B.DateOfCommissioning,C.StepId StepCounter,C.Id StepId,ty.TypeId,ty.name ICardType,trnicrd.RequestId ,ISNULL(fwd.FwdStatusId,0) IsFwdStatusId ,Afor.Name ApplyFor,Afor.ApplyForId,ran.RankAbbreviation RankName,mreg.Abbreviation RegimentalName" +
                             " FROM BasicDetails B" +
                             " inner join MRank ran on ran.RankId=B.RankId" +
                             " inner join MapUnit mapunit on mapunit.UnitMapId=B.UnitId " +
@@ -740,7 +946,8 @@ namespace DataAccessLayer
                             " inner join TrnStepCounter C on trnicrd.RequestId = C.RequestId" +
                             " inner join MICardType ty on ty.TypeId = trnicrd.TypeId" +
                             " inner join TrnFwds fwd on fwd.RequestId = trnicrd.RequestId and fwd.FromAspNetUsersId = @UserId and Afor.ApplyForId=IsNULL(@applyForId,Afor.ApplyForId) and fwd.FwdStatusId=2 and fwd.TypeId=3 " +  //and fwd.TypeId=2 --and fwd.IsComplete=1
-                            " inner join MTrnFwdStatus mtrnfwdstatus on mtrnfwdstatus.FwdStatusId = fwd.FwdStatusId ";
+                            " inner join MTrnFwdStatus mtrnfwdstatus on mtrnfwdstatus.FwdStatusId = fwd.FwdStatusId "+
+                            " left join MRegimental mreg on mreg.RegId = B.RegimentalId ";
                 }
                 else if (TypeId == 3 && stepcount == 4)
                 {
@@ -772,7 +979,7 @@ namespace DataAccessLayer
                             " ELSE " +
                             " B.ServiceNo " +
                             " END AS ModifiedServiceNo," +
-                            " trnicrd.RegistrationId RegistrationApplyFor,munit.UnitName,B.UnitId,B.BasicDetailId,B.FName,B.LName,B.ServiceNo,B.DOB,B.DateOfCommissioning,ISNULL(fwd.TrnFwdId,0) IsTrnFwdId,C.StepId StepCounter,C.Id StepId,ty.TypeId,ty.name ICardType,trnicrd.RequestId ,ISNULL(fwd.FwdStatusId,0) IsFwdStatusId ,Afor.Name ApplyFor,Afor.ApplyForId,ran.RankAbbreviation RankName" +
+                            " trnicrd.RegistrationId RegistrationApplyFor,munit.UnitName,B.UnitId,B.BasicDetailId,B.FName,B.LName,B.ServiceNo,B.DOB,B.DateOfCommissioning,ISNULL(fwd.TrnFwdId,0) IsTrnFwdId,C.StepId StepCounter,C.Id StepId,ty.TypeId,ty.name ICardType,trnicrd.RequestId ,ISNULL(fwd.FwdStatusId,0) IsFwdStatusId ,Afor.Name ApplyFor,Afor.ApplyForId,ran.RankAbbreviation RankName,mreg.Abbreviation RegimentalName" +
                             " FROM BasicDetails B" +
                             " inner join MRank ran on ran.RankId=B.RankId" +
                             " inner join MapUnit mapunit on mapunit.UnitMapId=B.UnitId " +
@@ -782,7 +989,8 @@ namespace DataAccessLayer
                             " inner join TrnStepCounter C on trnicrd.RequestId = C.RequestId" +
                             " inner join MICardType ty on ty.TypeId = trnicrd.TypeId" +
                             " inner join TrnFwds fwd on fwd.RequestId = trnicrd.RequestId and fwd.ToAspNetUsersId = @UserId and Afor.ApplyForId=IsNULL(@applyForId,Afor.ApplyForId)  and trnicrd.StatusId=2" +
-                            " inner join MTrnFwdStatus mtrnfwdstatus on mtrnfwdstatus.FwdStatusId = fwd.FwdStatusId ";
+                            " inner join MTrnFwdStatus mtrnfwdstatus on mtrnfwdstatus.FwdStatusId = fwd.FwdStatusId"+
+                            " left join MRegimental mreg on mreg.RegId = B.RegimentalId ";
 
                 }
                 else //if (TypeId == 3) //// For For Show
@@ -821,7 +1029,7 @@ namespace DataAccessLayer
                         " ELSE " +
                         " B.ServiceNo " +
                         " END AS ModifiedServiceNo," +
-                        " trnicrd.RegistrationId RegistrationApplyFor,munit.UnitName,B.UnitId,B.BasicDetailId,B.FName,B.LName,B.ServiceNo,B.DOB,B.DateOfCommissioning,fwd.StepId StepCounter,C.Id StepId,ty.TypeId,ty.name ICardType,trnicrd.RequestId,ISNULL(fwd.FwdStatusId,0) IsFwdStatusId ,Afor.Name ApplyFor,Afor.ApplyForId,trnicrd.TrackingId,ran.RankAbbreviation RankName" +
+                        " trnicrd.RegistrationId RegistrationApplyFor,munit.UnitName,B.UnitId,B.BasicDetailId,B.FName,B.LName,B.ServiceNo,B.DOB,B.DateOfCommissioning,fwd.StepId StepCounter,C.Id StepId,ty.TypeId,ty.name ICardType,trnicrd.RequestId,ISNULL(fwd.FwdStatusId,0) IsFwdStatusId ,Afor.Name ApplyFor,Afor.ApplyForId,trnicrd.TrackingId,ran.RankAbbreviation RankName,mreg.Abbreviation RegimentalName" +
                         " FROM BasicDetails B" +
                         " inner join MRank ran on ran.RankId=B.RankId" +
                         " inner join MapUnit mapunit on mapunit.UnitMapId=B.UnitId " +
@@ -831,7 +1039,8 @@ namespace DataAccessLayer
                         " inner join TrnStepCounter C on trnicrd.RequestId = C.RequestId" +
                         " inner join MICardType ty on ty.TypeId = trnicrd.TypeId" +
                         " inner join TrnFwds fwd on fwd.RequestId = trnicrd.RequestId and fwd.FromAspNetUsersId = @UserId and Afor.ApplyForId=IsNULL(@applyForId,Afor.ApplyForId) and fwd.StepId=@stepcount " +
-                        " inner join MTrnFwdStatus mtrnfwdstatus on mtrnfwdstatus.FwdStatusId = fwd.FwdStatusId ";
+                        " inner join MTrnFwdStatus mtrnfwdstatus on mtrnfwdstatus.FwdStatusId = fwd.FwdStatusId"+
+                        " left join MRegimental mreg on mreg.RegId = B.RegimentalId ";
             }
             else if(stepcount == 11)
             {
@@ -887,6 +1096,8 @@ namespace DataAccessLayer
                                          RankName = e.RankName,
                                          UnitId = e.UnitId,
                                          UnitName= e.UnitName,
+                                         RegimentalName = e.RegimentalName,
+
                                      }).ToList();
                     return await Task.FromResult(allrecord);
 
@@ -1010,76 +1221,167 @@ namespace DataAccessLayer
         }
         public async Task<List<DTODataExportsResponse>> GetBesicdetailsByRequestId(DTODataExportRequest Data)
         {
+            #region Old Code write by Kapoor Sir
+            //string query = "";
+            //if (Data.IsJco == 0)
+            //{
+            //    query = "update TrnFwds set IsComplete=1 where RequestId in @Ids update TrnStepCounter set StepId=5 where RequestId in @Ids  update TrnICardRequest set StatusId=2 where  RequestId in @Ids " +
+            //                    " select bas.*,issaut.Name IssuingAuth,mapl.Name ApplyFor, " +
+            //                    " trnadd.State,trnadd.District,trnadd.PS,trnadd.PO,trnadd.Tehsil,trnadd.Village,trnadd.PinCode," +
+            //                    " trnup.SignatureImagePath,trnup.PhotoImagePath,IdenMark1,IdenMark2,AadhaarNo,Height,bld.BloodGroup,bld.BloodGroupId," +
+            //                    " regi.Abbreviation RegimentalName,regi.Location RegimentalLocation,Muni.UnitName,uni.UnitMapId UnitId,icardreq.TypeId,icardreq.RegistrationId," +
+            //                    " ran.RankId,ran.RankAbbreviation RankName,arm.Abbreviation ArmedName,trnadd.AddressId,trnup.UploadId,trninfo.InfoId,MICardType.Name ICardType,reco.RecordOfficeId,reco.Name RecordOffice,icardreq.RequestId from BasicDetails bas" +
+            //                    " inner join MIssuingAuthority issaut on issaut.IssuingAuthorityId=bas.IssuingAuthorityId" +
+            //                    " inner join TrnAddress trnadd on trnadd.BasicDetailId=bas.BasicDetailId" +
+            //                    " inner join TrnUpload trnup on trnup.BasicDetailId=bas.BasicDetailId" +
+            //                    " inner join TrnIdentityInfo trninfo on trninfo.BasicDetailId=bas.BasicDetailId" +
+            //                    " inner join MBloodGroup bld on bld.BloodGroupId=trninfo.BloodGroupId" +
+            //                    " inner join MRank ran on ran.RankId=bas.RankId" +
+            //                    " inner join MArmedType arm on arm.ArmedId=bas.ArmedId" +
+            //                    " inner join MapUnit uni on uni.UnitMapId=bas.UnitId" +
+            //                    " inner join MUnit Muni on Muni.UnitId=uni.UnitId" +
+            //                    " inner join TrnICardRequest icardreq on icardreq.BasicDetailId=bas.BasicDetailId " + //and icardreq.Status=0 
+            //                    " inner join TrnStepCounter scounter on scounter.RequestId=icardreq.RequestId " +
+            //                    " inner join MApplyFor mapl on mapl.ApplyForId=scounter.ApplyForId " +
+            //                    " inner join MRecordOffice reco on bas.ArmedId=reco.ArmedId" +
+            //                    " inner join MICardType MICardType on MICardType.TypeId=icardreq.TypeId " +
+            //                    " left join MRegimental regi on regi.RegId=bas.RegimentalId" +
+            //                    " where icardreq.RequestId in @Ids";
+            //}
+            //else
+            //{
+            //    query = "update TrnFwds set IsComplete=1 where RequestId in @Ids update TrnStepCounter set StepId=5 where RequestId in @Ids  update TrnICardRequest set StatusId=2 where  RequestId in @Ids " +
+            //        " select bas.*,issaut.Name IssuingAuth,mapl.Name ApplyFor, trnadd.State,trnadd.District,trnadd.PS,trnadd.PO,trnadd.Tehsil,trnadd.Village,trnadd.PinCode, " +
+            //             " trnup.SignatureImagePath,trnup.PhotoImagePath,IdenMark1,IdenMark2,AadhaarNo,Height,bld.BloodGroup,bld.BloodGroupId, " +
+            //             " regi.Abbreviation RegimentalName,Muni.UnitName,uni.UnitMapId UnitId,icardreq.TypeId,icardreq.RegistrationId, " +
+            //             " ran.RankId,ran.RankAbbreviation RankName,arm.Abbreviation ArmedName,trnadd.AddressId,trnup.UploadId,trninfo.InfoId," +
+            //             " MICardType.Name ICardType," +
+            //             " CASE WHEN ran.orderby<=4 THEN '126' ELSE reco.RecordOfficeId END RecordOfficeId," +
+            //             " CASE WHEN ran.orderby<=4 THEN 'MP 6A' ELSE reco.Name END RecordOffice,icardreq.RequestId" +
+            //             " from BasicDetails bas " +
+            //             " inner join MIssuingAuthority issaut on issaut.IssuingAuthorityId=bas.IssuingAuthorityId" +
+            //             " inner join TrnAddress trnadd on trnadd.BasicDetailId=bas.BasicDetailId " +
+            //             " inner join TrnUpload trnup on trnup.BasicDetailId=bas.BasicDetailId " +
+            //             " inner join TrnIdentityInfo trninfo on trninfo.BasicDetailId=bas.BasicDetailId " +
+            //             " inner join MBloodGroup bld on bld.BloodGroupId=trninfo.BloodGroupId " +
+            //             " inner join MRank ran on ran.RankId=bas.RankId " +
+            //             " inner join MArmedType arm on arm.ArmedId=bas.ArmedId " +
+            //             " inner join MapUnit uni on uni.UnitMapId=bas.UnitId " +
+            //             " inner join MUnit Muni on Muni.UnitId=uni.UnitId " +
+            //             " inner join TrnICardRequest icardreq on icardreq.BasicDetailId=bas.BasicDetailId  " +
+            //             " inner join TrnStepCounter scounter on scounter.RequestId=icardreq.RequestId " +
+            //             " inner join MApplyFor mapl on mapl.ApplyForId=scounter.ApplyForId " +
+            //             " inner join MICardType MICardType on MICardType.TypeId=icardreq.TypeId  " +
+            //             " inner join MRecordOffice reco on reco.ArmedId=56" +
+            //             " inner join OROMapping OROMap on reco.RecordOfficeId=OROMap.RecordOfficeId" +
+            //             " left join MRegimental regi on regi.RegId=bas.RegimentalId where icardreq.RequestId in @Ids" +
+            //             " and bas.ArmedId in (select value from string_split(oromap.ArmedIdList,',')) " +
+            //             " order by reco.RecordOfficeId";
+            //}
+            //try
+            //{
+            //    int[] Ids = Data.Ids;
+            //    using (var connection = _contextDP.CreateConnection())
+            //    {
+            //        var BasicDetailList = await connection.QueryAsync<DTODataExportsResponse>(query, new { Ids });
+
+            //        return BasicDetailList.ToList();
+            //    }
+            //}
+            //catch (Exception ex)
+            //{
+            //    _logger.LogError(1001, ex, "BasicDetailDB->GetBesicdetailsByRequestId");
+            //    return new List<DTODataExportsResponse>();
+            //}
+            #endregion Old Code write by Kapoor Sir
+
+            var (db, transaction) = _contextDP.CreateConnectionWithTransaction();
+            int[] Ids = Data.Ids;
             string query = "";
-            if (Data.IsJco == 0)
-            {
-                query = "update TrnFwds set IsComplete=1 where RequestId in @Ids update TrnStepCounter set StepId=5 where RequestId in @Ids  update TrnICardRequest set StatusId=2 where  RequestId in @Ids " +
-                                " select bas.*,issaut.Name IssuingAuth,mapl.Name ApplyFor, " +
-                                " trnadd.State,trnadd.District,trnadd.PS,trnadd.PO,trnadd.Tehsil,trnadd.Village,trnadd.PinCode," +
-                                " trnup.SignatureImagePath,trnup.PhotoImagePath,IdenMark1,IdenMark2,AadhaarNo,Height,bld.BloodGroup,bld.BloodGroupId," +
-                                " regi.Abbreviation RegimentalName,Muni.UnitName,uni.UnitMapId UnitId,icardreq.TypeId,icardreq.RegistrationId," +
-                                " ran.RankId,ran.RankAbbreviation RankName,arm.Abbreviation ArmedName,trnadd.AddressId,trnup.UploadId,trninfo.InfoId,MICardType.Name ICardType,reco.RecordOfficeId,reco.Name RecordOffice,icardreq.RequestId from BasicDetails bas" +
-                                " inner join MIssuingAuthority issaut on issaut.IssuingAuthorityId=bas.IssuingAuthorityId" +
-                                " inner join TrnAddress trnadd on trnadd.BasicDetailId=bas.BasicDetailId" +
-                                " inner join TrnUpload trnup on trnup.BasicDetailId=bas.BasicDetailId" +
-                                " inner join TrnIdentityInfo trninfo on trninfo.BasicDetailId=bas.BasicDetailId" +
-                                " inner join MBloodGroup bld on bld.BloodGroupId=trninfo.BloodGroupId" +
-                                " inner join MRank ran on ran.RankId=bas.RankId" +
-                                " inner join MArmedType arm on arm.ArmedId=bas.ArmedId" +
-                                " inner join MapUnit uni on uni.UnitMapId=bas.UnitId" +
-                                " inner join MUnit Muni on Muni.UnitId=uni.UnitId" +
-                                " inner join TrnICardRequest icardreq on icardreq.BasicDetailId=bas.BasicDetailId " + //and icardreq.Status=0 
-                                " inner join TrnStepCounter scounter on scounter.RequestId=icardreq.RequestId " +
-                                " inner join MApplyFor mapl on mapl.ApplyForId=scounter.ApplyForId " +
-                                " inner join MRecordOffice reco on bas.ArmedId=reco.ArmedId" +
-                                " inner join MICardType MICardType on MICardType.TypeId=icardreq.TypeId " +
-                                " left join MRegimental regi on regi.RegId=bas.RegimentalId" +
-                                " where icardreq.RequestId in @Ids";
-            }
-            else
-            {
-                query = "update TrnFwds set IsComplete=1 where RequestId in @Ids update TrnStepCounter set StepId=5 where RequestId in @Ids  update TrnICardRequest set StatusId=2 where  RequestId in @Ids " +
-                    " select bas.*,issaut.Name IssuingAuth,mapl.Name ApplyFor, trnadd.State,trnadd.District,trnadd.PS,trnadd.PO,trnadd.Tehsil,trnadd.Village,trnadd.PinCode, " +
-                         " trnup.SignatureImagePath,trnup.PhotoImagePath,IdenMark1,IdenMark2,AadhaarNo,Height,bld.BloodGroup,bld.BloodGroupId, " +
-                         " regi.Abbreviation RegimentalName,Muni.UnitName,uni.UnitMapId UnitId,icardreq.TypeId,icardreq.RegistrationId, " +
-                         " ran.RankId,ran.RankAbbreviation RankName,arm.Abbreviation ArmedName,trnadd.AddressId,trnup.UploadId,trninfo.InfoId," +
-                         " MICardType.Name ICardType," +
-                         " CASE WHEN ran.orderby<=4 THEN '126' ELSE reco.RecordOfficeId END RecordOfficeId," +
-                         " CASE WHEN ran.orderby<=4 THEN 'MP 6A' ELSE reco.Name END RecordOffice,icardreq.RequestId" +
-                         " from BasicDetails bas " +
-                         " inner join MIssuingAuthority issaut on issaut.IssuingAuthorityId=bas.IssuingAuthorityId" +
-                         " inner join TrnAddress trnadd on trnadd.BasicDetailId=bas.BasicDetailId " +
-                         " inner join TrnUpload trnup on trnup.BasicDetailId=bas.BasicDetailId " +
-                         " inner join TrnIdentityInfo trninfo on trninfo.BasicDetailId=bas.BasicDetailId " +
-                         " inner join MBloodGroup bld on bld.BloodGroupId=trninfo.BloodGroupId " +
-                         " inner join MRank ran on ran.RankId=bas.RankId " +
-                         " inner join MArmedType arm on arm.ArmedId=bas.ArmedId " +
-                         " inner join MapUnit uni on uni.UnitMapId=bas.UnitId " +
-                         " inner join MUnit Muni on Muni.UnitId=uni.UnitId " +
-                         " inner join TrnICardRequest icardreq on icardreq.BasicDetailId=bas.BasicDetailId  " +
-                         " inner join TrnStepCounter scounter on scounter.RequestId=icardreq.RequestId " +
-                         " inner join MApplyFor mapl on mapl.ApplyForId=scounter.ApplyForId " +
-                         " inner join MICardType MICardType on MICardType.TypeId=icardreq.TypeId  " +
-                         " inner join MRecordOffice reco on reco.ArmedId=56" +
-                         " inner join OROMapping OROMap on reco.RecordOfficeId=OROMap.RecordOfficeId" +
-                         " left join MRegimental regi on regi.RegId=bas.RegimentalId where icardreq.RequestId in @Ids" +
-                         " and bas.ArmedId in (select value from string_split(oromap.ArmedIdList,',')) " +
-                         " order by reco.RecordOfficeId";
-            }
             try
             {
-                int[] Ids = Data.Ids;
-                using (var connection = _contextDP.CreateConnection())
-                {
-                    var BasicDetailList = await connection.QueryAsync<DTODataExportsResponse>(query, new { Ids });
+                string query1 = " update TrnFwds set IsComplete=1 where RequestId in @Ids ";
+                await db.ExecuteAsync(query1, new { Ids }, transaction: transaction);
 
-                    return BasicDetailList.ToList();
+                string query2 = " update TrnStepCounter set StepId=5 where RequestId in @Ids ";
+                await db.ExecuteAsync(query2, new { Ids }, transaction: transaction);
+
+                string query3 = " update TrnICardRequest set StatusId=2 where  RequestId in @Ids ";
+                await db.ExecuteAsync(query3, new { Ids }, transaction: transaction);
+
+                // Commit the transaction if all operations succeed
+                transaction.Commit();
+
+                if (Data.IsJco == 0) 
+                {
+                    query = " select bas.*,issaut.Name IssuingAuth,mapl.Name ApplyFor, " +
+                            " trnadd.State,trnadd.District,trnadd.PS,trnadd.PO,trnadd.Tehsil,trnadd.Village,trnadd.PinCode," +
+                            " trnup.SignatureImagePath,trnup.PhotoImagePath,IdenMark1,IdenMark2,AadhaarNo,Height,bld.BloodGroup,bld.BloodGroupId," +
+                            " regi.Abbreviation RegimentalName,regi.Location RegimentalLocation,Muni.UnitName,uni.UnitMapId UnitId,icardreq.TypeId,icardreq.RegistrationId," +
+                            " ran.RankId,ran.RankAbbreviation RankName,arm.Abbreviation ArmedName,trnadd.AddressId,trnup.UploadId,trninfo.InfoId,MICardType.Name ICardType,reco.RecordOfficeId,reco.Name RecordOffice,icardreq.RequestId from BasicDetails bas" +
+                            " inner join MIssuingAuthority issaut on issaut.IssuingAuthorityId=bas.IssuingAuthorityId" +
+                            " inner join TrnAddress trnadd on trnadd.BasicDetailId=bas.BasicDetailId" +
+                            " inner join TrnUpload trnup on trnup.BasicDetailId=bas.BasicDetailId" +
+                            " inner join TrnIdentityInfo trninfo on trninfo.BasicDetailId=bas.BasicDetailId" +
+                            " inner join MBloodGroup bld on bld.BloodGroupId=trninfo.BloodGroupId" +
+                            " inner join MRank ran on ran.RankId=bas.RankId" +
+                            " inner join MArmedType arm on arm.ArmedId=bas.ArmedId" +
+                            " inner join MapUnit uni on uni.UnitMapId=bas.UnitId" +
+                            " inner join MUnit Muni on Muni.UnitId=uni.UnitId" +
+                            " inner join TrnICardRequest icardreq on icardreq.BasicDetailId=bas.BasicDetailId " + //and icardreq.Status=0 
+                            " inner join TrnStepCounter scounter on scounter.RequestId=icardreq.RequestId " +
+                            " inner join MApplyFor mapl on mapl.ApplyForId=scounter.ApplyForId " +
+                            " inner join MRecordOffice reco on bas.ArmedId=reco.ArmedId" +
+                            " inner join MICardType MICardType on MICardType.TypeId=icardreq.TypeId " +
+                            " left join MRegimental regi on regi.RegId=bas.RegimentalId" +
+                            " where icardreq.RequestId in @Ids";
                 }
+                else
+                {
+                    query =  " select bas.*,issaut.Name IssuingAuth,mapl.Name ApplyFor, trnadd.State,trnadd.District,trnadd.PS,trnadd.PO,trnadd.Tehsil,trnadd.Village,trnadd.PinCode, " +
+                             " trnup.SignatureImagePath,trnup.PhotoImagePath,IdenMark1,IdenMark2,AadhaarNo,Height,bld.BloodGroup,bld.BloodGroupId, " +
+                             " regi.Abbreviation RegimentalName,Muni.UnitName,uni.UnitMapId UnitId,icardreq.TypeId,icardreq.RegistrationId, " +
+                             " ran.RankId,ran.RankAbbreviation RankName,arm.Abbreviation ArmedName,trnadd.AddressId,trnup.UploadId,trninfo.InfoId," +
+                             " MICardType.Name ICardType," +
+                             " CASE WHEN ran.orderby<=4 THEN '126' ELSE reco.RecordOfficeId END RecordOfficeId," +
+                             " CASE WHEN ran.orderby<=4 THEN 'MP 6A' ELSE reco.Name END RecordOffice,icardreq.RequestId" +
+                             " from BasicDetails bas " +
+                             " inner join MIssuingAuthority issaut on issaut.IssuingAuthorityId=bas.IssuingAuthorityId" +
+                             " inner join TrnAddress trnadd on trnadd.BasicDetailId=bas.BasicDetailId " +
+                             " inner join TrnUpload trnup on trnup.BasicDetailId=bas.BasicDetailId " +
+                             " inner join TrnIdentityInfo trninfo on trninfo.BasicDetailId=bas.BasicDetailId " +
+                             " inner join MBloodGroup bld on bld.BloodGroupId=trninfo.BloodGroupId " +
+                             " inner join MRank ran on ran.RankId=bas.RankId " +
+                             " inner join MArmedType arm on arm.ArmedId=bas.ArmedId " +
+                             " inner join MapUnit uni on uni.UnitMapId=bas.UnitId " +
+                             " inner join MUnit Muni on Muni.UnitId=uni.UnitId " +
+                             " inner join TrnICardRequest icardreq on icardreq.BasicDetailId=bas.BasicDetailId  " +
+                             " inner join TrnStepCounter scounter on scounter.RequestId=icardreq.RequestId " +
+                             " inner join MApplyFor mapl on mapl.ApplyForId=scounter.ApplyForId " +
+                             " inner join MICardType MICardType on MICardType.TypeId=icardreq.TypeId  " +
+                             " inner join MRecordOffice reco on reco.ArmedId=56" +
+                             " inner join OROMapping OROMap on reco.RecordOfficeId=OROMap.RecordOfficeId" +
+                             " left join MRegimental regi on regi.RegId=bas.RegimentalId where icardreq.RequestId in @Ids" +
+                             " and bas.ArmedId in (select value from string_split(oromap.ArmedIdList,',')) " +
+                    " order by reco.RecordOfficeId";
+                }
+
+                var BasicDetailList = await db.QueryAsync<DTODataExportsResponse>(query, new { Ids });
+
+                return BasicDetailList.ToList();
+
             }
             catch (Exception ex)
             {
+                // Rollback the transaction if any operation fails
+                transaction.Rollback();
                 _logger.LogError(1001, ex, "BasicDetailDB->GetBesicdetailsByRequestId");
                 return new List<DTODataExportsResponse>();
+            }
+            finally
+            {
+                // Dispose of the connection
+                db.Dispose();
             }
         }
         public async Task<DTOXMLDigitalResponse> GetDataDigitalXmlSign(DTODataExportRequest Data)
