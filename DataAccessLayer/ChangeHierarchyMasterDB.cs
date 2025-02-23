@@ -105,7 +105,7 @@ namespace DataAccessLayer
             {
                 var parameters = new DynamicParameters();
                 parameters.Add("@BdeId", Data.Bde.BdeId, DbType.Byte, ParameterDirection.Input);
-                parameters.Add("@BdeName", Data.Bde.BdeName, DbType.String, ParameterDirection.Input, 20);
+                parameters.Add("@BdeName", Data.Bde.BdeName, DbType.AnsiString, ParameterDirection.Input, 20);
                 parameters.Add("@ComdId", Data.ComdId, DbType.Byte, ParameterDirection.Input);
                 parameters.Add("@CorpsId", Data.CorpsId, DbType.Byte, ParameterDirection.Input);
                 parameters.Add("@DivId", Data.DivId, DbType.Byte, ParameterDirection.Input);
@@ -114,7 +114,7 @@ namespace DataAccessLayer
                 parameters.Add("@UpdatedOn", Data.Bde.UpdatedOn, DbType.DateTime, ParameterDirection.Input);
 
                 await db.ExecuteAsync("update MBde set BdeName=@BdeName,ComdId=@ComdId,CorpsId=@CorpsId,DivId=@DivId,IsActive=@IsActive,Updatedby=@Updatedby,UpdatedOn=@UpdatedOn where BdeId=@BdeId", parameters, transaction: transaction);
-                await db.ExecuteAsync("update MapUnit set ComdId=@ComdId,CorpsId=@CorpsId,DivId=@DivId where BdeId=@BdeId", new { comdId = Data.ComdId, corpsId = Data.CorpsId, divId = Data.DivId, bdeId = Data.BdeId });
+                await db.ExecuteAsync("update MapUnit set ComdId=@ComdId,CorpsId=@CorpsId,DivId=@DivId where BdeId=@BdeId", new { comdId = Data.ComdId, corpsId = Data.CorpsId, divId = Data.DivId, bdeId = Data.BdeId }, transaction: transaction);
 
                 // Commit the transaction if all operations succeed
                 transaction.Commit();
