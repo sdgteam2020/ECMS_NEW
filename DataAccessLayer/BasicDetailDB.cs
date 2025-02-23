@@ -16,7 +16,8 @@ using DataAccessLayer.Healpers;
 using System.Data;
 using Azure.Core;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
+using System.Linq.Expressions;
 
 namespace DataAccessLayer
 {
@@ -153,341 +154,369 @@ namespace DataAccessLayer
         }
         public async Task<DTOBasicDetailsSaveResponse> SaveBasicDetailsWithAll(BasicDetail Data, MTrnAddress address, MTrnUpload trnUpload, MTrnIdentityInfo mTrnIdentityInfo, MTrnICardRequest mTrnICardRequest, MStepCounter mStepCounter)
         {
-            #region Old code write by Kapoor Sir
-            //using var transaction = _context.Database.BeginTransaction();
-            //DTOBasicDetailsSaveResponse dTOBasicDetailsSaveResponse = new DTOBasicDetailsSaveResponse();
-            //try
-            //{
-            //    if (Data.BasicDetailId == 0)
-            //    {
-            //        _context.BasicDetails.Add(Data);
-            //        await _context.SaveChangesAsync();
-            //        int BasicDetailId = Data.BasicDetailId;
-            //        address.BasicDetailId = BasicDetailId;
-            //        _context.TrnAddress.Add(address);
-            //        await _context.SaveChangesAsync();
-            //        trnUpload.BasicDetailId = BasicDetailId;
-            //        _context.TrnUpload.Add(trnUpload);
-            //        await _context.SaveChangesAsync();
-            //        mTrnIdentityInfo.BasicDetailId = BasicDetailId;
-            //        _context.TrnIdentityInfo.Add(mTrnIdentityInfo);
-            //        await _context.SaveChangesAsync();
-            //        mTrnICardRequest.BasicDetailId = BasicDetailId;
-            //        _context.TrnICardRequest.Add(mTrnICardRequest);
-            //        await _context.SaveChangesAsync();
-            //        mStepCounter.RequestId = mTrnICardRequest.RequestId;
-            //        _context.TrnStepCounter.Add(mStepCounter);
-
-            //        await _context.SaveChangesAsync();
-
-            //        transaction.Commit();
-            //        dTOBasicDetailsSaveResponse.Result = true;
-            //        dTOBasicDetailsSaveResponse.Message = "Save";
-            //        return dTOBasicDetailsSaveResponse;
-            //    }
-            //    else
-            //    {
-
-            //        address.BasicDetailId = Data.BasicDetailId;
-            //        trnUpload.BasicDetailId = Data.BasicDetailId;
-            //        mTrnIdentityInfo.BasicDetailId = Data.BasicDetailId;
-
-            //        _context.Update(address);
-            //        await _context.SaveChangesAsync();
-            //        _context.Update(trnUpload);
-            //        await _context.SaveChangesAsync();
-            //        _context.Update(mTrnIdentityInfo);
-            //        await _context.SaveChangesAsync();
-
-            //        _context.Entry(Data).State = EntityState.Modified;
-            //        _context.Update(Data);
-            //        await _context.SaveChangesAsync();
-
-            //        transaction.Commit();
-            //        dTOBasicDetailsSaveResponse.Result = true;
-            //        dTOBasicDetailsSaveResponse.Message = "Updae";
-            //        return dTOBasicDetailsSaveResponse;
-            //    }
-            //    //do other things, then commit or rollback
-
-
-            //}
-            //catch (ReferenceConstraintException ex)
-            //{
-            //    transaction.Rollback();
-            //    _logger.LogError(1001, ex, "ReferenceConstraintException");
-            //    dTOBasicDetailsSaveResponse.Result = false;
-            //    dTOBasicDetailsSaveResponse.Message = ex.Message;
-            //    return dTOBasicDetailsSaveResponse;
-
-            //}
-            //catch (UniqueConstraintException ex)
-            //{
-            //    transaction.Rollback();
-            //    _logger.LogError(1002, ex, "UniqueConstraintException");
-            //    if (ex.InnerException != null)
-            //    {
-            //        if (ex.InnerException.Message.Contains("IX_AadhaarNo"))
-            //        {
-            //            dTOBasicDetailsSaveResponse.Result = false;
-            //            dTOBasicDetailsSaveResponse.Message = "The provided Aadhaar number already exists. Please check and try again.";
-            //            return dTOBasicDetailsSaveResponse;
-            //        }
-            //        else if (ex.InnerException.Message.Contains("IX_PaperIcardNo"))
-            //        {
-            //            dTOBasicDetailsSaveResponse.Result = false;
-            //            dTOBasicDetailsSaveResponse.Message = "The provided PaperIcardNo number already exists. Please check and try again.";
-            //            return dTOBasicDetailsSaveResponse;
-            //        }
-            //        else
-            //        {
-            //            dTOBasicDetailsSaveResponse.Result = false;
-            //            dTOBasicDetailsSaveResponse.Message = ex.Message;
-            //            return dTOBasicDetailsSaveResponse;
-            //        }
-            //    }
-            //    else
-            //    {
-            //        dTOBasicDetailsSaveResponse.Result = false;
-            //        dTOBasicDetailsSaveResponse.Message = ex.Message;
-            //        return dTOBasicDetailsSaveResponse;
-
-            //    }
-
-
-            //}
-            //catch (MaxLengthExceededException ex)
-            //{
-            //    transaction.Rollback();
-            //    _logger.LogError(1003, ex, "MaxLengthExceededException");
-            //    dTOBasicDetailsSaveResponse.Result = false;
-            //    dTOBasicDetailsSaveResponse.Message = ex.Message;
-            //    return dTOBasicDetailsSaveResponse;
-            //}
-            //catch (CannotInsertNullException ex)
-            //{
-            //    transaction.Rollback();
-            //    _logger.LogError(1004, ex, "CannotInsertNullException");
-            //    dTOBasicDetailsSaveResponse.Result = false;
-            //    dTOBasicDetailsSaveResponse.Message = ex.Message;
-            //    return dTOBasicDetailsSaveResponse;
-            //}
-            //catch (NumericOverflowException ex)
-            //{
-            //    transaction.Rollback();
-            //    _logger.LogError(1005, ex, "NumericOverflowException");
-            //    dTOBasicDetailsSaveResponse.Result = false;
-            //    dTOBasicDetailsSaveResponse.Message = ex.Message;
-            //    return dTOBasicDetailsSaveResponse;
-            //}
-            //catch (Exception ex)
-            //{
-            //    transaction.Rollback();
-            //    _logger.LogError(1006, ex, "Exception");
-            //    dTOBasicDetailsSaveResponse.Result = false;
-            //    dTOBasicDetailsSaveResponse.Message = ex.Message;
-            //    return dTOBasicDetailsSaveResponse;
-            //}
-            #endregion
-
+            bool EFCoreOrDapper = true; // true mean EFCore
+            using var transaction_ = _context.Database.BeginTransaction();
             var (db, transaction) = _contextDP.CreateConnectionWithTransaction();
-
             DTOBasicDetailsSaveResponse dTOBasicDetailsSaveResponse = new DTOBasicDetailsSaveResponse();
-            try
+            if (EFCoreOrDapper)
             {
-                if (Data.BasicDetailId == 0)
+                try
                 {
-                    var insertBasicDetail = " INSERT INTO BasicDetails (BasicDetailId, ArmedId, RankId, ServiceNo, DOB, PlaceOfIssue, DateOfIssue, DateOfCommissioning, ApplyForId, UnitId, PaperIcardNo,IsActive, Updatedby, UpdatedOn, IssuingAuthorityId, NameAsPerRecord, RegimentalId, FName, LName)" +
-                                            " OUTPUT INSERTED.BasicDetailId " +
-                                            " VALUES (@BasicDetailId, @ArmedId, @RankId, @ServiceNo, @DOB, @PlaceOfIssue, @DateOfIssue, @DateOfCommissioning, @ApplyForId, @UnitId, @PaperIcardNo, @IsActive, @Updatedby, @UpdatedOn, @IssuingAuthorityId, @NameAsPerRecord, @RegimentalId, @FName, @LName );";
-                    var parametersBD = new DynamicParameters();
-                    parametersBD.Add("@BasicDetailId", Data.BasicDetailId, DbType.Int32, ParameterDirection.Input);
-                    parametersBD.Add("@ArmedId", Data.ArmedId, DbType.Byte, ParameterDirection.Input);
-                    parametersBD.Add("@RankId", Data.RankId, DbType.Int16, ParameterDirection.Input);
-                    parametersBD.Add("@ServiceNo", Data.ServiceNo, DbType.String, ParameterDirection.Input, 10);
-                    parametersBD.Add("@DOB", Data.DOB, DbType.DateTime, ParameterDirection.Input);
-                    parametersBD.Add("@PlaceOfIssue", Data.PlaceOfIssue, DbType.String, ParameterDirection.Input, 50);
-                    parametersBD.Add("@DateOfIssue", Data.DateOfIssue, DbType.DateTime, ParameterDirection.Input);
-                    parametersBD.Add("@DateOfCommissioning", Data.DateOfCommissioning, DbType.DateTime, ParameterDirection.Input);
-                    parametersBD.Add("@ApplyForId", Data.ApplyForId, DbType.Byte, ParameterDirection.Input);
-                    parametersBD.Add("@UnitId", Data.UnitId, DbType.Int32, ParameterDirection.Input);
-                    parametersBD.Add("@PaperIcardNo", Data.PaperIcardNo, DbType.String, ParameterDirection.Input, 12);
-                    parametersBD.Add("@IsActive", Data.IsActive, DbType.Boolean, ParameterDirection.Input);
-                    parametersBD.Add("@Updatedby", Data.Updatedby, DbType.Int32, ParameterDirection.Input);
-                    parametersBD.Add("@UpdatedOn", Data.UpdatedOn, DbType.DateTime, ParameterDirection.Input);
-                    parametersBD.Add("@IssuingAuthorityId", Data.IssuingAuthorityId, DbType.Byte, ParameterDirection.Input);
-                    parametersBD.Add("@NameAsPerRecord", Data.NameAsPerRecord, DbType.AnsiString, ParameterDirection.Input);
-                    parametersBD.Add("@RegimentalId", Data.RegimentalId, DbType.Byte, ParameterDirection.Input);
-                    parametersBD.Add("@FName", Data.FName, DbType.AnsiString, ParameterDirection.Input);
-                    parametersBD.Add("@LName", Data.LName, DbType.AnsiString, ParameterDirection.Input);
-                    int BasicDetailId = await db.QuerySingleAsync<int>(insertBasicDetail, parametersBD, transaction: transaction);
+                    if (Data.BasicDetailId == 0)
+                    {
+                        _context.BasicDetails.Add(Data);
+                        await _context.SaveChangesAsync();
+                        int BasicDetailId = Data.BasicDetailId;
+                        address.BasicDetailId = BasicDetailId;
+                        _context.TrnAddress.Add(address);
+                        await _context.SaveChangesAsync();
+                        trnUpload.BasicDetailId = BasicDetailId;
+                        _context.TrnUpload.Add(trnUpload);
+                        await _context.SaveChangesAsync();
+                        mTrnIdentityInfo.BasicDetailId = BasicDetailId;
+                        _context.TrnIdentityInfo.Add(mTrnIdentityInfo);
+                        await _context.SaveChangesAsync();
+                        mTrnICardRequest.BasicDetailId = BasicDetailId;
+                        _context.TrnICardRequest.Add(mTrnICardRequest);
+                        await _context.SaveChangesAsync();
+                        mStepCounter.RequestId = mTrnICardRequest.RequestId;
+                        _context.TrnStepCounter.Add(mStepCounter);
 
-                    address.BasicDetailId = BasicDetailId;
+                        await _context.SaveChangesAsync();
 
-                    var insertAddress = " INSERT INTO TrnAddress (AddressId,BasicDetailId, State, District, PS, PO, Tehsil, Village, PinCode)" +
-                                        " VALUES (@AddressId, @BasicDetailId, @State, @District, @PS, @PO, @Tehsil, @Village, @PinCode);";
-                    var parametersAddr = new DynamicParameters();
-                    parametersBD.Add("@AddressId", address.AddressId, DbType.Int32, ParameterDirection.Input);
-                    parametersBD.Add("@BasicDetailId", address.BasicDetailId, DbType.Int32, ParameterDirection.Input);
-                    parametersBD.Add("@State", address.State, DbType.String, ParameterDirection.Input, 50);
-                    parametersBD.Add("@District", address.District, DbType.String, ParameterDirection.Input, 50);
-                    parametersBD.Add("@PS", address.PS, DbType.String, ParameterDirection.Input, 50);
-                    parametersBD.Add("@PO", address.PO, DbType.String, ParameterDirection.Input, 50);
-                    parametersBD.Add("@Tehsil", address.Tehsil, DbType.String, ParameterDirection.Input, 50);
-                    parametersBD.Add("@Village", address.Village, DbType.String, ParameterDirection.Input, 50);
-                    parametersBD.Add("@PinCode", address.PinCode, DbType.Int32, ParameterDirection.Input);
-                    await db.QuerySingleAsync(insertAddress, parametersAddr, transaction: transaction);
+                        transaction_.Commit();
+                        dTOBasicDetailsSaveResponse.Result = true;
+                        dTOBasicDetailsSaveResponse.Message = "Save";
+                        return dTOBasicDetailsSaveResponse;
+                    }
+                    else
+                    {
 
-                    trnUpload.BasicDetailId = BasicDetailId;
+                        address.BasicDetailId = Data.BasicDetailId;
+                        trnUpload.BasicDetailId = Data.BasicDetailId;
+                        mTrnIdentityInfo.BasicDetailId = Data.BasicDetailId;
 
-                    var insertTrnUpload = " INSERT INTO TrnUpload (UploadId,BasicDetailId, SignatureImagePath, PhotoImagePath)" +
-                                          " VALUES (@UploadId, @BasicDetailId, @SignatureImagePath, @PhotoImagePath);";
-                    var parametersUpload = new DynamicParameters();
-                    parametersBD.Add("@UploadId", address.AddressId, DbType.Int32, ParameterDirection.Input);
-                    parametersBD.Add("@BasicDetailId", address.BasicDetailId, DbType.Int32, ParameterDirection.Input);
-                    parametersBD.Add("@SignatureImagePath", trnUpload.SignatureImagePath, DbType.String, ParameterDirection.Input, 100);
-                    parametersBD.Add("@PhotoImagePath", trnUpload.PhotoImagePath, DbType.String, ParameterDirection.Input, 100);
-                    await db.QuerySingleAsync(insertTrnUpload, parametersUpload, transaction: transaction);
+                        _context.Update(address);
+                        await _context.SaveChangesAsync();
+                        _context.Update(trnUpload);
+                        await _context.SaveChangesAsync();
+                        _context.Update(mTrnIdentityInfo);
+                        await _context.SaveChangesAsync();
 
-                    mTrnIdentityInfo.BasicDetailId = BasicDetailId;
+                        _context.Entry(Data).State = EntityState.Modified;
+                        _context.Update(Data);
+                        await _context.SaveChangesAsync();
 
-                    var insertIdentityInfo = " INSERT INTO TrnIdentityInfo (InfoId,BasicDetailId, IdenMark1, IdenMark2, AadhaarNo, Height, BloodGroupId)" +
-                                             " VALUES (@InfoId, @BasicDetailId, @IdenMark1, @IdenMark2, @AadhaarNo, @Height, @BloodGroupId);";
-                    var parametersIdentityInfo = new DynamicParameters();
-                    parametersIdentityInfo.Add("@InfoId", mTrnIdentityInfo.InfoId, DbType.Int32, ParameterDirection.Input);
-                    parametersIdentityInfo.Add("@BasicDetailId", mTrnIdentityInfo.BasicDetailId, DbType.Int32, ParameterDirection.Input);
-                    parametersIdentityInfo.Add("@IdenMark1", mTrnIdentityInfo.IdenMark1, DbType.String, ParameterDirection.Input, 200);
-                    parametersIdentityInfo.Add("@IdenMark2", mTrnIdentityInfo.IdenMark2, DbType.String, ParameterDirection.Input, 200);
-                    parametersIdentityInfo.Add("@AadhaarNo", mTrnIdentityInfo.AadhaarNo, DbType.Int64, ParameterDirection.Input);
-                    parametersIdentityInfo.Add("@Height", mTrnIdentityInfo.Height, DbType.Single, ParameterDirection.Input);
-                    parametersIdentityInfo.Add("@BloodGroupId", mTrnIdentityInfo.BloodGroupId, DbType.Byte, ParameterDirection.Input);
-                    await db.QuerySingleAsync(insertIdentityInfo, parametersIdentityInfo, transaction: transaction);
+                        transaction_.Commit();
+                        dTOBasicDetailsSaveResponse.Result = true;
+                        dTOBasicDetailsSaveResponse.Message = "Updae";
+                        return dTOBasicDetailsSaveResponse;
+                    }
+                    //do other things, then commit or rollback
 
-                    mTrnICardRequest.BasicDetailId = BasicDetailId;
 
-                    var insertTrnICardRequest = " INSERT INTO TrnICardRequest (RequestId,BasicDetailId, TypeId, RegistrationId, TrnDomainMappingId, TrackingId, IsActive, Updatedby, UpdatedOn, StatusId, CardSerialNo, ChipNo)" +
-                                                " VALUES (@RequestId, @BasicDetailId, @TypeId, @RegistrationId, @TrnDomainMappingId, @TrackingId, @IsActive, @Updatedby, @UpdatedOn, @StatusId, @CardSerialNo, @ChipNo);";
-                    var parametersTrnICardRequest = new DynamicParameters();
-                    parametersIdentityInfo.Add("@RequestId", mTrnICardRequest.RequestId, DbType.Int32, ParameterDirection.Input);
-                    parametersIdentityInfo.Add("@BasicDetailId", mTrnICardRequest.BasicDetailId, DbType.Int32, ParameterDirection.Input);
-                    parametersIdentityInfo.Add("@TypeId", mTrnICardRequest.TypeId, DbType.Byte, ParameterDirection.Input);
-                    parametersIdentityInfo.Add("@RegistrationId", mTrnICardRequest.RegistrationId, DbType.Byte, ParameterDirection.Input);
-                    parametersIdentityInfo.Add("@TrnDomainMappingId", mTrnICardRequest.TrnDomainMappingId, DbType.Int32, ParameterDirection.Input);
-                    parametersIdentityInfo.Add("@TrackingId", mTrnICardRequest.TrackingId, DbType.Int64, ParameterDirection.Input);
-                    parametersIdentityInfo.Add("@IsActive", mTrnICardRequest.IsActive, DbType.Boolean, ParameterDirection.Input);
-                    parametersIdentityInfo.Add("@Updatedby", mTrnICardRequest.Updatedby, DbType.Int32, ParameterDirection.Input);
-                    parametersIdentityInfo.Add("@UpdatedOn", mTrnICardRequest.UpdatedOn, DbType.DateTime, ParameterDirection.Input);
-                    parametersIdentityInfo.Add("@StatusId", mTrnICardRequest.StatusId, DbType.Byte, ParameterDirection.Input);
-                    parametersIdentityInfo.Add("@CardSerialNo", mTrnICardRequest.CardSerialNo, DbType.String, ParameterDirection.Input, 30);
-                    parametersIdentityInfo.Add("@ChipNo", mTrnICardRequest.ChipNo, DbType.String, ParameterDirection.Input, 30);
-                    await db.QuerySingleAsync(insertTrnICardRequest, parametersTrnICardRequest, transaction: transaction);
+                }
+                catch (ReferenceConstraintException ex)
+                {
+                    transaction_.Rollback();
+                    _logger.LogError(1001, ex, "ReferenceConstraintException");
+                    dTOBasicDetailsSaveResponse.Result = false;
+                    dTOBasicDetailsSaveResponse.Message = ex.Message;
+                    return dTOBasicDetailsSaveResponse;
 
-                    mStepCounter.RequestId = mTrnICardRequest.RequestId;
+                }
+                catch (UniqueConstraintException ex)
+                {
+                    transaction_.Rollback();
+                    _logger.LogError(1002, ex, "UniqueConstraintException");
+                    if (ex.InnerException != null)
+                    {
+                        if (ex.InnerException.Message.Contains("IX_AadhaarNo"))
+                        {
+                            dTOBasicDetailsSaveResponse.Result = false;
+                            dTOBasicDetailsSaveResponse.Message = "The provided Aadhaar number already exists. Please check and try again.";
+                            return dTOBasicDetailsSaveResponse;
+                        }
+                        else if (ex.InnerException.Message.Contains("IX_PaperIcardNo"))
+                        {
+                            dTOBasicDetailsSaveResponse.Result = false;
+                            dTOBasicDetailsSaveResponse.Message = "The provided PaperIcardNo number already exists. Please check and try again.";
+                            return dTOBasicDetailsSaveResponse;
+                        }
+                        else
+                        {
+                            dTOBasicDetailsSaveResponse.Result = false;
+                            dTOBasicDetailsSaveResponse.Message = ex.Message;
+                            return dTOBasicDetailsSaveResponse;
+                        }
+                    }
+                    else
+                    {
+                        dTOBasicDetailsSaveResponse.Result = false;
+                        dTOBasicDetailsSaveResponse.Message = ex.Message;
+                        return dTOBasicDetailsSaveResponse;
 
-                    var insertTrnStepCounter = " INSERT INTO TrnStepCounter (Id, RequestId, StepId, IsActive, Updatedby, UpdatedOn, ApplyForId)" +
-                                               " VALUES (@Id, @RequestId, @StepId, @IsActive, @Updatedby, @UpdatedOn, @ApplyForId);";
-                    var parametersTrnStepCounter = new DynamicParameters();
-                    parametersTrnStepCounter.Add("@Id", mStepCounter.Id, DbType.Int32, ParameterDirection.Input);
-                    parametersTrnStepCounter.Add("@RequestId", mStepCounter.RequestId, DbType.Int32, ParameterDirection.Input);
-                    parametersTrnStepCounter.Add("@StepId", mStepCounter.StepId, DbType.Byte, ParameterDirection.Input);
-                    parametersTrnStepCounter.Add("@IsActive", mStepCounter.IsActive, DbType.Boolean, ParameterDirection.Input);
-                    parametersTrnStepCounter.Add("@Updatedby", mStepCounter.Updatedby, DbType.Int32, ParameterDirection.Input);
-                    parametersTrnStepCounter.Add("@UpdatedOn", mStepCounter.UpdatedOn, DbType.DateTime, ParameterDirection.Input);
-                    parametersTrnStepCounter.Add("@ApplyForId", mStepCounter.ApplyForId, DbType.Byte, ParameterDirection.Input);
-                    await db.QuerySingleAsync(insertTrnStepCounter, parametersTrnStepCounter, transaction: transaction);
+                    }
 
-                    transaction.Commit();
-                    dTOBasicDetailsSaveResponse.Result = true;
-                    dTOBasicDetailsSaveResponse.Message = "Save";
+
+                }
+                catch (MaxLengthExceededException ex)
+                {
+                    transaction_.Rollback();
+                    _logger.LogError(1003, ex, "MaxLengthExceededException");
+                    dTOBasicDetailsSaveResponse.Result = false;
+                    dTOBasicDetailsSaveResponse.Message = ex.Message;
                     return dTOBasicDetailsSaveResponse;
                 }
-                else
+                catch (CannotInsertNullException ex)
                 {
-                    address.BasicDetailId = Data.BasicDetailId;
-                    trnUpload.BasicDetailId = Data.BasicDetailId;
-                    mTrnIdentityInfo.BasicDetailId = Data.BasicDetailId;
-
-                    var updateBasicDetail = " UPDATE BasicDetails SET ArmedId=@ArmedId, RankId=@RankId, ServiceNo=@ServiceNo, DOB=@DOB, PlaceOfIssue=@PlaceOfIssue, DateOfIssue=@DateOfIssue, DateOfCommissioning=@DateOfCommissioning, ApplyForId=@ApplyForId, UnitId=@UnitId, PaperIcardNo=@PaperIcardNo,IsActive=@IsActive, Updatedby=@Updatedby, UpdatedOn=@UpdatedOn, IssuingAuthorityId=@IssuingAuthorityId, NameAsPerRecord=@NameAsPerRecord, RegimentalId=@RegimentalId, FName=@FName, LName=@LName WHERE BasicDetailId=@BasicDetailId ";
-                    var parametersBD = new DynamicParameters();
-                    parametersBD.Add("@BasicDetailId", Data.BasicDetailId, DbType.Int32, ParameterDirection.Input);
-                    parametersBD.Add("@ArmedId", Data.ArmedId, DbType.Byte, ParameterDirection.Input);
-                    parametersBD.Add("@RankId", Data.RankId, DbType.Int16, ParameterDirection.Input);
-                    parametersBD.Add("@ServiceNo", Data.ServiceNo, DbType.String, ParameterDirection.Input, 10);
-                    parametersBD.Add("@DOB", Data.DOB, DbType.DateTime, ParameterDirection.Input);
-                    parametersBD.Add("@PlaceOfIssue", Data.PlaceOfIssue, DbType.String, ParameterDirection.Input, 50);
-                    parametersBD.Add("@DateOfIssue", Data.DateOfIssue, DbType.DateTime, ParameterDirection.Input);
-                    parametersBD.Add("@DateOfCommissioning", Data.DateOfCommissioning, DbType.DateTime, ParameterDirection.Input);
-                    parametersBD.Add("@ApplyForId", Data.ApplyForId, DbType.Byte, ParameterDirection.Input);
-                    parametersBD.Add("@UnitId", Data.UnitId, DbType.Int32, ParameterDirection.Input);
-                    parametersBD.Add("@PaperIcardNo", Data.PaperIcardNo, DbType.String, ParameterDirection.Input, 12);
-                    parametersBD.Add("@IsActive", Data.IsActive, DbType.Boolean, ParameterDirection.Input);
-                    parametersBD.Add("@Updatedby", Data.Updatedby, DbType.Int32, ParameterDirection.Input);
-                    parametersBD.Add("@UpdatedOn", Data.UpdatedOn, DbType.DateTime, ParameterDirection.Input);
-                    parametersBD.Add("@IssuingAuthorityId", Data.IssuingAuthorityId, DbType.Byte, ParameterDirection.Input);
-                    parametersBD.Add("@NameAsPerRecord", Data.NameAsPerRecord, DbType.String, ParameterDirection.Input, 36);
-                    parametersBD.Add("@RegimentalId", Data.RegimentalId, DbType.Byte, ParameterDirection.Input);
-                    parametersBD.Add("@FName", Data.FName, DbType.String, ParameterDirection.Input, 18);
-                    parametersBD.Add("@LName", Data.LName, DbType.String, ParameterDirection.Input, 18);
-                    await db.QuerySingleAsync(updateBasicDetail, parametersBD, transaction: transaction);
-
-                    var updateAddress = " UPDATE TrnAddress SET BasicDetailId=@BasicDetailId, State=@State, District=@District, PS=@PS, PO=@PO, Tehsil=@Tehsil, Village=@Village, PinCode=@PinCode WHERE AddressId=@AddressId";
-                    var parametersAddr = new DynamicParameters();
-                    parametersBD.Add("@AddressId", address.AddressId, DbType.Int32, ParameterDirection.Input);
-                    parametersBD.Add("@BasicDetailId", address.BasicDetailId, DbType.Int32, ParameterDirection.Input);
-                    parametersBD.Add("@State", address.State, DbType.String, ParameterDirection.Input, 50);
-                    parametersBD.Add("@District", address.District, DbType.String, ParameterDirection.Input, 50);
-                    parametersBD.Add("@PS", address.PS, DbType.String, ParameterDirection.Input, 50);
-                    parametersBD.Add("@PO", address.PO, DbType.String, ParameterDirection.Input, 50);
-                    parametersBD.Add("@Tehsil", address.Tehsil, DbType.String, ParameterDirection.Input, 50);
-                    parametersBD.Add("@Village", address.Village, DbType.String, ParameterDirection.Input, 50);
-                    parametersBD.Add("@PinCode", address.PinCode, DbType.Int32, ParameterDirection.Input);
-                    await db.QuerySingleAsync(updateAddress, parametersAddr, transaction: transaction);
-
-                    var updateTrnUpload = " UPDATE TrnUpload SET BasicDetailId=@BasicDetailId, SignatureImagePath=@SignatureImagePath, PhotoImagePath=@PhotoImagePath WHERE UploadId=@UploadId";
-                    var parametersUpload = new DynamicParameters();
-                    parametersBD.Add("@UploadId", address.AddressId, DbType.Int32, ParameterDirection.Input);
-                    parametersBD.Add("@BasicDetailId", address.BasicDetailId, DbType.Int32, ParameterDirection.Input);
-                    parametersBD.Add("@SignatureImagePath", trnUpload.SignatureImagePath, DbType.String, ParameterDirection.Input, 100);
-                    parametersBD.Add("@PhotoImagePath", trnUpload.PhotoImagePath, DbType.String, ParameterDirection.Input, 100);
-                    await db.QuerySingleAsync(updateTrnUpload, parametersUpload, transaction: transaction);
-
-                    var updateIdentityInfo = " UPDATE TrnIdentityInfo SET BasicDetailId=@BasicDetailId, IdenMark1=@IdenMark1, IdenMark2=@IdenMark2, AadhaarNo=@AadhaarNo, Height=@Height, BloodGroupId=@BloodGroupId WHERE InfoId=@InfoId";
-                    var parametersIdentityInfo = new DynamicParameters();
-                    parametersIdentityInfo.Add("@InfoId", mTrnIdentityInfo.InfoId, DbType.Int32, ParameterDirection.Input);
-                    parametersIdentityInfo.Add("@BasicDetailId", mTrnIdentityInfo.BasicDetailId, DbType.Int32, ParameterDirection.Input);
-                    parametersIdentityInfo.Add("@IdenMark1", mTrnIdentityInfo.IdenMark1, DbType.String, ParameterDirection.Input, 200);
-                    parametersIdentityInfo.Add("@IdenMark2", mTrnIdentityInfo.IdenMark2, DbType.String, ParameterDirection.Input, 200);
-                    parametersIdentityInfo.Add("@AadhaarNo", mTrnIdentityInfo.AadhaarNo, DbType.Int64, ParameterDirection.Input);
-                    parametersIdentityInfo.Add("@Height", mTrnIdentityInfo.Height, DbType.Single, ParameterDirection.Input);
-                    parametersIdentityInfo.Add("@BloodGroupId", mTrnIdentityInfo.BloodGroupId, DbType.Byte, ParameterDirection.Input);
-                    await db.QuerySingleAsync(updateIdentityInfo, parametersIdentityInfo, transaction: transaction);
-
-                    transaction.Commit();
-                    dTOBasicDetailsSaveResponse.Result = true;
-                    dTOBasicDetailsSaveResponse.Message = "Updae";
+                    transaction_.Rollback();
+                    _logger.LogError(1004, ex, "CannotInsertNullException");
+                    dTOBasicDetailsSaveResponse.Result = false;
+                    dTOBasicDetailsSaveResponse.Message = ex.Message;
+                    return dTOBasicDetailsSaveResponse;
+                }
+                catch (NumericOverflowException ex)
+                {
+                    transaction_.Rollback();
+                    _logger.LogError(1005, ex, "NumericOverflowException");
+                    dTOBasicDetailsSaveResponse.Result = false;
+                    dTOBasicDetailsSaveResponse.Message = ex.Message;
+                    return dTOBasicDetailsSaveResponse;
+                }
+                catch (Exception ex)
+                {
+                    transaction_.Rollback();
+                    _logger.LogError(1006, ex, "Exception");
+                    dTOBasicDetailsSaveResponse.Result = false;
+                    dTOBasicDetailsSaveResponse.Message = ex.Message;
                     return dTOBasicDetailsSaveResponse;
                 }
             }
-            catch (SqlException ex) when (ex.Number == 2627) // Unique constraint violation error number
+            else
             {
-                transaction.Rollback();  // Rollback the transaction
-                _logger.LogError(1006, ex, "Exception");
-                dTOBasicDetailsSaveResponse.Result = false;
-                dTOBasicDetailsSaveResponse.Message = ex.Message;
-                return dTOBasicDetailsSaveResponse;
-            }
-            catch (Exception ex)
-            {
-                transaction.Rollback();
-                _logger.LogError(1006, ex, "Exception");
-                dTOBasicDetailsSaveResponse.Result = false;
-                dTOBasicDetailsSaveResponse.Message = ex.Message;
-                return dTOBasicDetailsSaveResponse;
-            }
-            finally
-            {
-                // Dispose of the connection
-                db.Dispose();
+                try
+                {
+                    if (Data.BasicDetailId == 0)
+                    {
+                        var insertBasicDetail = " INSERT INTO BasicDetails (ArmedId, RankId, ServiceNo, DOB, PlaceOfIssue, DateOfIssue, DateOfCommissioning, ApplyForId, UnitId, PaperIcardNo,IsActive, Updatedby, UpdatedOn, IssuingAuthorityId, NameAsPerRecord, RegimentalId, FName, LName)" +
+                                                " OUTPUT INSERTED.BasicDetailId " +
+                                                " VALUES (@ArmedId, @RankId, @ServiceNo, @DOB, @PlaceOfIssue, @DateOfIssue, @DateOfCommissioning, @ApplyForId, @UnitId, @PaperIcardNo, @IsActive, @Updatedby, @UpdatedOn, @IssuingAuthorityId, @NameAsPerRecord, @RegimentalId, @FName, @LName );";
+                        var parametersBD = new DynamicParameters();
+                        //parametersBD.Add("@BasicDetailId", Data.BasicDetailId, DbType.Int32, ParameterDirection.Output);
+                        parametersBD.Add("@ArmedId", Data.ArmedId, DbType.Byte, ParameterDirection.Input);
+                        parametersBD.Add("@RankId", Data.RankId, DbType.Int16, ParameterDirection.Input);
+                        parametersBD.Add("@ServiceNo", Data.ServiceNo, DbType.String, ParameterDirection.Input, 10);
+                        parametersBD.Add("@DOB", Data.DOB, DbType.DateTime, ParameterDirection.Input);
+                        parametersBD.Add("@PlaceOfIssue", Data.PlaceOfIssue, DbType.String, ParameterDirection.Input, 50);
+                        parametersBD.Add("@DateOfIssue", Data.DateOfIssue, DbType.DateTime, ParameterDirection.Input);
+                        parametersBD.Add("@DateOfCommissioning", Data.DateOfCommissioning, DbType.DateTime, ParameterDirection.Input);
+                        parametersBD.Add("@ApplyForId", Data.ApplyForId, DbType.Byte, ParameterDirection.Input);
+                        parametersBD.Add("@UnitId", Data.UnitId, DbType.Int32, ParameterDirection.Input);
+                        parametersBD.Add("@PaperIcardNo", Data.PaperIcardNo, DbType.String, ParameterDirection.Input, 12);
+                        parametersBD.Add("@IsActive", Data.IsActive, DbType.Boolean, ParameterDirection.Input);
+                        parametersBD.Add("@Updatedby", Data.Updatedby, DbType.Int32, ParameterDirection.Input);
+                        parametersBD.Add("@UpdatedOn", Data.UpdatedOn, DbType.DateTime, ParameterDirection.Input);
+                        parametersBD.Add("@IssuingAuthorityId", Data.IssuingAuthorityId, DbType.Byte, ParameterDirection.Input);
+                        parametersBD.Add("@NameAsPerRecord", Data.NameAsPerRecord, DbType.AnsiString, ParameterDirection.Input, 36);
+                        parametersBD.Add("@RegimentalId", Data.RegimentalId, DbType.Byte, ParameterDirection.Input);
+                        parametersBD.Add("@FName", Data.FName, DbType.AnsiString, ParameterDirection.Input, 18);
+                        parametersBD.Add("@LName", Data.LName, DbType.AnsiString, ParameterDirection.Input, 18);
+                        int BasicDetailId = await db.QuerySingleAsync<int>(insertBasicDetail, parametersBD, transaction: transaction);
+
+                        address.BasicDetailId = BasicDetailId;
+
+                        var insertAddress = " INSERT INTO TrnAddress (BasicDetailId, State, District, PS, PO, Tehsil, Village, PinCode)" +
+                                            " VALUES (@BasicDetailId, @State, @District, @PS, @PO, @Tehsil, @Village, @PinCode);";
+                        var parametersAddr = new DynamicParameters();
+                        //parametersAddr.Add("@AddressId", address.AddressId, DbType.Int32, ParameterDirection.Input);
+                        parametersAddr.Add("@BasicDetailId", address.BasicDetailId, DbType.Int32, ParameterDirection.Input);
+                        parametersAddr.Add("@State", address.State, DbType.AnsiString, ParameterDirection.Input, 50);
+                        parametersAddr.Add("@District", address.District, DbType.AnsiString, ParameterDirection.Input, 50);
+                        parametersAddr.Add("@PS", address.PS, DbType.AnsiString, ParameterDirection.Input, 50);
+                        parametersAddr.Add("@PO", address.PO, DbType.AnsiString, ParameterDirection.Input, 50);
+                        parametersAddr.Add("@Tehsil", address.Tehsil, DbType.AnsiString, ParameterDirection.Input, 50);
+                        parametersAddr.Add("@Village", address.Village, DbType.AnsiString, ParameterDirection.Input, 50);
+                        parametersAddr.Add("@PinCode", address.PinCode, DbType.Int32, ParameterDirection.Input);
+                        await db.ExecuteAsync(insertAddress, parametersAddr, transaction: transaction);
+
+                        trnUpload.BasicDetailId = BasicDetailId;
+
+                        var insertTrnUpload = " INSERT INTO TrnUpload (BasicDetailId, SignatureImagePath, PhotoImagePath)" +
+                                              " VALUES (@BasicDetailId, @SignatureImagePath, @PhotoImagePath);";
+                        var parametersUpload = new DynamicParameters();
+                        //parametersUpload.Add("@UploadId", address.AddressId, DbType.Int32, ParameterDirection.Input);
+                        parametersUpload.Add("@BasicDetailId", address.BasicDetailId, DbType.Int32, ParameterDirection.Input);
+                        parametersUpload.Add("@SignatureImagePath", trnUpload.SignatureImagePath, DbType.String, ParameterDirection.Input, 100);
+                        parametersUpload.Add("@PhotoImagePath", trnUpload.PhotoImagePath, DbType.String, ParameterDirection.Input, 100);
+                        await db.ExecuteAsync(insertTrnUpload, parametersUpload, transaction: transaction);
+
+                        mTrnIdentityInfo.BasicDetailId = BasicDetailId;
+
+                        var insertIdentityInfo = " INSERT INTO TrnIdentityInfo (BasicDetailId, IdenMark1, IdenMark2, AadhaarNo, Height, BloodGroupId)" +
+                                                 " VALUES (@BasicDetailId, @IdenMark1, @IdenMark2, @AadhaarNo, @Height, @BloodGroupId);";
+                        var parametersIdentityInfo = new DynamicParameters();
+                        //parametersIdentityInfo.Add("@InfoId", mTrnIdentityInfo.InfoId, DbType.Int32, ParameterDirection.Input);
+                        parametersIdentityInfo.Add("@BasicDetailId", mTrnIdentityInfo.BasicDetailId, DbType.Int32, ParameterDirection.Input);
+                        parametersIdentityInfo.Add("@IdenMark1", mTrnIdentityInfo.IdenMark1, DbType.String, ParameterDirection.Input, 200);
+                        parametersIdentityInfo.Add("@IdenMark2", mTrnIdentityInfo.IdenMark2, DbType.String, ParameterDirection.Input, 200);
+                        parametersIdentityInfo.Add("@AadhaarNo", mTrnIdentityInfo.AadhaarNo, DbType.Int64, ParameterDirection.Input);
+                        parametersIdentityInfo.Add("@Height", mTrnIdentityInfo.Height, DbType.Single, ParameterDirection.Input);
+                        parametersIdentityInfo.Add("@BloodGroupId", mTrnIdentityInfo.BloodGroupId, DbType.Byte, ParameterDirection.Input);
+                        await db.ExecuteAsync(insertIdentityInfo, parametersIdentityInfo, transaction: transaction);
+
+                        mTrnICardRequest.BasicDetailId = BasicDetailId;
+
+                        var insertTrnICardRequest = " INSERT INTO TrnICardRequest (BasicDetailId, TypeId, RegistrationId, TrnDomainMappingId, TrackingId, IsActive, Updatedby, UpdatedOn, StatusId, CardSerialNo, ChipNo)" +
+                                                    " OUTPUT INSERTED.RequestId " +
+                                                    " VALUES (@BasicDetailId, @TypeId, @RegistrationId, @TrnDomainMappingId, @TrackingId, @IsActive, @Updatedby, @UpdatedOn, @StatusId, @CardSerialNo, @ChipNo);";
+                        var parametersTrnICardRequest = new DynamicParameters();
+                        //parametersTrnICardRequest.Add("@RequestId", mTrnICardRequest.RequestId, DbType.Int32, ParameterDirection.Output);
+                        parametersTrnICardRequest.Add("@BasicDetailId", mTrnICardRequest.BasicDetailId, DbType.Int32, ParameterDirection.Input);
+                        parametersTrnICardRequest.Add("@TypeId", mTrnICardRequest.TypeId, DbType.Byte, ParameterDirection.Input);
+                        parametersTrnICardRequest.Add("@RegistrationId", mTrnICardRequest.RegistrationId, DbType.Byte, ParameterDirection.Input);
+                        parametersTrnICardRequest.Add("@TrnDomainMappingId", mTrnICardRequest.TrnDomainMappingId, DbType.Int32, ParameterDirection.Input);
+                        parametersTrnICardRequest.Add("@TrackingId", mTrnICardRequest.TrackingId, DbType.Int64, ParameterDirection.Input);
+                        parametersTrnICardRequest.Add("@IsActive", mTrnICardRequest.IsActive, DbType.Boolean, ParameterDirection.Input);
+                        parametersTrnICardRequest.Add("@Updatedby", mTrnICardRequest.Updatedby, DbType.Int32, ParameterDirection.Input);
+                        parametersTrnICardRequest.Add("@UpdatedOn", mTrnICardRequest.UpdatedOn, DbType.DateTime, ParameterDirection.Input);
+                        parametersTrnICardRequest.Add("@StatusId", mTrnICardRequest.StatusId, DbType.Byte, ParameterDirection.Input);
+                        parametersTrnICardRequest.Add("@CardSerialNo", mTrnICardRequest.CardSerialNo, DbType.String, ParameterDirection.Input, 30);
+                        parametersTrnICardRequest.Add("@ChipNo", mTrnICardRequest.ChipNo, DbType.String, ParameterDirection.Input, 30);
+                        int RequestId = await db.QuerySingleAsync<int>(insertTrnICardRequest, parametersTrnICardRequest, transaction: transaction);
+                        mStepCounter.RequestId = RequestId;
+
+                        var insertTrnStepCounter = " INSERT INTO TrnStepCounter (RequestId, StepId, IsActive, Updatedby, UpdatedOn, ApplyForId)" +
+                                                   " VALUES (@RequestId, @StepId, @IsActive, @Updatedby, @UpdatedOn, @ApplyForId);";
+                        var parametersTrnStepCounter = new DynamicParameters();
+                        //parametersTrnStepCounter.Add("@Id", mStepCounter.Id, DbType.Int32, ParameterDirection.Input);
+                        parametersTrnStepCounter.Add("@RequestId", mStepCounter.RequestId, DbType.Int32, ParameterDirection.Input);
+                        parametersTrnStepCounter.Add("@StepId", mStepCounter.StepId, DbType.Byte, ParameterDirection.Input);
+                        parametersTrnStepCounter.Add("@IsActive", mStepCounter.IsActive, DbType.Boolean, ParameterDirection.Input);
+                        parametersTrnStepCounter.Add("@Updatedby", mStepCounter.Updatedby, DbType.Int32, ParameterDirection.Input);
+                        parametersTrnStepCounter.Add("@UpdatedOn", mStepCounter.UpdatedOn, DbType.DateTime, ParameterDirection.Input);
+                        parametersTrnStepCounter.Add("@ApplyForId", mStepCounter.ApplyForId, DbType.Byte, ParameterDirection.Input);
+                        await db.ExecuteAsync(insertTrnStepCounter, parametersTrnStepCounter, transaction: transaction);
+
+                        transaction.Commit();
+                        dTOBasicDetailsSaveResponse.Result = true;
+                        dTOBasicDetailsSaveResponse.Message = "Save";
+                        return dTOBasicDetailsSaveResponse;
+                    }
+                    else
+                    {
+                        address.BasicDetailId = Data.BasicDetailId;
+                        trnUpload.BasicDetailId = Data.BasicDetailId;
+                        mTrnIdentityInfo.BasicDetailId = Data.BasicDetailId;
+
+                        var updateBasicDetail = " UPDATE BasicDetails SET ArmedId=@ArmedId, RankId=@RankId, ServiceNo=@ServiceNo, DOB=@DOB, PlaceOfIssue=@PlaceOfIssue, DateOfIssue=@DateOfIssue, DateOfCommissioning=@DateOfCommissioning, ApplyForId=@ApplyForId, UnitId=@UnitId, PaperIcardNo=@PaperIcardNo,IsActive=@IsActive, Updatedby=@Updatedby, UpdatedOn=@UpdatedOn, IssuingAuthorityId=@IssuingAuthorityId, NameAsPerRecord=@NameAsPerRecord, RegimentalId=@RegimentalId, FName=@FName, LName=@LName WHERE BasicDetailId=@BasicDetailId ";
+                        var parametersBD = new DynamicParameters();
+                        parametersBD.Add("@BasicDetailId", Data.BasicDetailId, DbType.Int32, ParameterDirection.Input);
+                        parametersBD.Add("@ArmedId", Data.ArmedId, DbType.Byte, ParameterDirection.Input);
+                        parametersBD.Add("@RankId", Data.RankId, DbType.Int16, ParameterDirection.Input);
+                        parametersBD.Add("@ServiceNo", Data.ServiceNo, DbType.String, ParameterDirection.Input, 10);
+                        parametersBD.Add("@DOB", Data.DOB, DbType.DateTime, ParameterDirection.Input);
+                        parametersBD.Add("@PlaceOfIssue", Data.PlaceOfIssue, DbType.String, ParameterDirection.Input, 50);
+                        parametersBD.Add("@DateOfIssue", Data.DateOfIssue, DbType.DateTime, ParameterDirection.Input);
+                        parametersBD.Add("@DateOfCommissioning", Data.DateOfCommissioning, DbType.DateTime, ParameterDirection.Input);
+                        parametersBD.Add("@ApplyForId", Data.ApplyForId, DbType.Byte, ParameterDirection.Input);
+                        parametersBD.Add("@UnitId", Data.UnitId, DbType.Int32, ParameterDirection.Input);
+                        parametersBD.Add("@PaperIcardNo", Data.PaperIcardNo, DbType.String, ParameterDirection.Input, 12);
+                        parametersBD.Add("@IsActive", Data.IsActive, DbType.Boolean, ParameterDirection.Input);
+                        parametersBD.Add("@Updatedby", Data.Updatedby, DbType.Int32, ParameterDirection.Input);
+                        parametersBD.Add("@UpdatedOn", Data.UpdatedOn, DbType.DateTime, ParameterDirection.Input);
+                        parametersBD.Add("@IssuingAuthorityId", Data.IssuingAuthorityId, DbType.Byte, ParameterDirection.Input);
+                        parametersBD.Add("@NameAsPerRecord", Data.NameAsPerRecord, DbType.AnsiString, ParameterDirection.Input, 36);
+                        parametersBD.Add("@RegimentalId", Data.RegimentalId, DbType.Byte, ParameterDirection.Input);
+                        parametersBD.Add("@FName", Data.FName, DbType.AnsiString, ParameterDirection.Input, 18);
+                        parametersBD.Add("@LName", Data.LName, DbType.AnsiString, ParameterDirection.Input, 18);
+                        await db.ExecuteAsync(updateBasicDetail, parametersBD, transaction: transaction);
+
+                        var updateAddress = " UPDATE TrnAddress SET BasicDetailId=@BasicDetailId, State=@State, District=@District, PS=@PS, PO=@PO, Tehsil=@Tehsil, Village=@Village, PinCode=@PinCode WHERE AddressId=@AddressId";
+                        var parametersAddr = new DynamicParameters();
+                        parametersAddr.Add("@AddressId", address.AddressId, DbType.Int32, ParameterDirection.Input);
+                        parametersAddr.Add("@BasicDetailId", address.BasicDetailId, DbType.Int32, ParameterDirection.Input);
+                        parametersAddr.Add("@State", address.State, DbType.AnsiString, ParameterDirection.Input, 50);
+                        parametersAddr.Add("@District", address.District, DbType.AnsiString, ParameterDirection.Input, 50);
+                        parametersAddr.Add("@PS", address.PS, DbType.AnsiString, ParameterDirection.Input, 50);
+                        parametersAddr.Add("@PO", address.PO, DbType.AnsiString, ParameterDirection.Input, 50);
+                        parametersAddr.Add("@Tehsil", address.Tehsil, DbType.AnsiString, ParameterDirection.Input, 50);
+                        parametersAddr.Add("@Village", address.Village, DbType.AnsiString, ParameterDirection.Input, 50);
+                        parametersAddr.Add("@PinCode", address.PinCode, DbType.Int32, ParameterDirection.Input);
+                        await db.ExecuteAsync(updateAddress, parametersAddr, transaction: transaction);
+
+                        var updateTrnUpload = " UPDATE TrnUpload SET BasicDetailId=@BasicDetailId, SignatureImagePath=@SignatureImagePath, PhotoImagePath=@PhotoImagePath WHERE UploadId=@UploadId";
+                        var parametersUpload = new DynamicParameters();
+                        parametersUpload.Add("@UploadId", address.AddressId, DbType.Int32, ParameterDirection.Input);
+                        parametersUpload.Add("@BasicDetailId", address.BasicDetailId, DbType.Int32, ParameterDirection.Input);
+                        parametersUpload.Add("@SignatureImagePath", trnUpload.SignatureImagePath, DbType.String, ParameterDirection.Input, 100);
+                        parametersUpload.Add("@PhotoImagePath", trnUpload.PhotoImagePath, DbType.String, ParameterDirection.Input, 100);
+                        await db.ExecuteAsync(updateTrnUpload, parametersUpload, transaction: transaction);
+
+                        var updateIdentityInfo = " UPDATE TrnIdentityInfo SET BasicDetailId=@BasicDetailId, IdenMark1=@IdenMark1, IdenMark2=@IdenMark2, AadhaarNo=@AadhaarNo, Height=@Height, BloodGroupId=@BloodGroupId WHERE InfoId=@InfoId";
+                        var parametersIdentityInfo = new DynamicParameters();
+                        parametersIdentityInfo.Add("@InfoId", mTrnIdentityInfo.InfoId, DbType.Int32, ParameterDirection.Input);
+                        parametersIdentityInfo.Add("@BasicDetailId", mTrnIdentityInfo.BasicDetailId, DbType.Int32, ParameterDirection.Input);
+                        parametersIdentityInfo.Add("@IdenMark1", mTrnIdentityInfo.IdenMark1, DbType.String, ParameterDirection.Input, 200);
+                        parametersIdentityInfo.Add("@IdenMark2", mTrnIdentityInfo.IdenMark2, DbType.String, ParameterDirection.Input, 200);
+                        parametersIdentityInfo.Add("@AadhaarNo", mTrnIdentityInfo.AadhaarNo, DbType.Int64, ParameterDirection.Input);
+                        parametersIdentityInfo.Add("@Height", mTrnIdentityInfo.Height, DbType.Single, ParameterDirection.Input);
+                        parametersIdentityInfo.Add("@BloodGroupId", mTrnIdentityInfo.BloodGroupId, DbType.Byte, ParameterDirection.Input);
+                        await db.ExecuteAsync(updateIdentityInfo, parametersIdentityInfo, transaction: transaction);
+
+                        transaction.Commit();
+                        dTOBasicDetailsSaveResponse.Result = true;
+                        dTOBasicDetailsSaveResponse.Message = "Updae";
+                        return dTOBasicDetailsSaveResponse;
+                    }
+                }
+                catch (SqlException ex) // Unique constraint violation error number
+                {
+                    transaction.Rollback();  // Rollback the transaction
+                    _logger.LogError(1006, ex, "BasicDetailDB->SaveBasicDetailsWithAll");
+                    if (ex.Number == 2601 || ex.Number == 2627)
+                    {
+                        if (ex.Message.Contains("IX_AadhaarNo"))
+                        {
+                            dTOBasicDetailsSaveResponse.Result = false;
+                            dTOBasicDetailsSaveResponse.Message = "The provided Aadhaar number already exists. Please check and try again.";
+                            return dTOBasicDetailsSaveResponse;
+                        }
+                        else if (ex.Message.Contains("IX_PaperIcardNo"))
+                        {
+                            dTOBasicDetailsSaveResponse.Result = false;
+                            dTOBasicDetailsSaveResponse.Message = "The provided PaperIcardNo number already exists. Please check and try again.";
+                            return dTOBasicDetailsSaveResponse;
+                        }
+                        else
+                        {
+                            dTOBasicDetailsSaveResponse.Result = false;
+                            dTOBasicDetailsSaveResponse.Message = ex.Message;
+                            return dTOBasicDetailsSaveResponse;
+                        }
+                    }
+                    else
+                    {
+                        dTOBasicDetailsSaveResponse.Result = false;
+                        dTOBasicDetailsSaveResponse.Message = ex.Message;
+                        return dTOBasicDetailsSaveResponse;
+                    }
+
+
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    //_logger.LogError(1006, ex, "BasicDetailDB->SaveBasicDetailsWithAll");
+                    dTOBasicDetailsSaveResponse.Result = false;
+                    dTOBasicDetailsSaveResponse.Message = ex.Message;
+                    return dTOBasicDetailsSaveResponse;
+                }
+                finally
+                {
+                    // Dispose of the connection
+                    db.Dispose();
+                }
             }
         }
         public async Task<BasicDetail?> FindServiceNo(string ServiceNo)
