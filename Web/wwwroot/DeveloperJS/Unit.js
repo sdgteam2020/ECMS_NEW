@@ -1,3 +1,4 @@
+﻿var table; // Declare table variable outside the function to preserve the instance
 $(document).ready(function () {
     Reset();
     BindData()
@@ -24,14 +25,14 @@ $(document).ready(function () {
                     Save();
                 }
             })
-           
+
         } else {
             $("#SaveForm")[0].reportValidity();
         }
 
-       
-       
-       // 
+
+
+        // 
 
     });
 
@@ -42,13 +43,13 @@ $(document).ready(function () {
 
             memberTable.$('input[type="checkbox"]:checked').each(function () {
 
-                
+
                 var id = $(this).attr("Id");
                 lst.push(id);
                 console.log(id);
 
             });
-          
+
             Swal.fire({
                 title: 'Are you sure?',
                 text: "You want to Delete",
@@ -59,7 +60,7 @@ $(document).ready(function () {
                 confirmButtonText: 'Yes, Delete it!'
             }).then((result) => {
                 if (result.value) {
-                   
+
                     DeleteMultiple(lst);
 
                 }
@@ -74,179 +75,90 @@ $(document).ready(function () {
 });
 
 function BindData() {
-    var listItem = "";
-    var userdata =
-    {
-        "Unit": $("#txtSerachunit").val(),
-
-    };
-    $.ajax({
-        url: '/Master/GetAllUnit',
-        contentType: 'application/x-www-form-urlencoded',
-        data: userdata,
-        type: 'POST',
-
-        success: function (response) {
-            if (response != "null" && response != null) {
-               
-                if (response == InternalServerError) {
+    $("#tbldata").DataTable().destroy();    
+    table = $("#tbldata").DataTable({
+                processing: true,
+                serverSide: true,
+                filter: true,
+                ajax: {
+                    url: "/Master/GetAllUnit",
+                    contentType: 'application/x-www-form-urlencoded',
+                    type: "POST",
+                    data: function (d) {
+                        d.draw = d.draw;
+                        d.start = d.start;
+                        d.length = d.length;
+                        d.searchValue = d.search.value;
+                        d.sortColumn = d.columns[d.order[0].column].data;
+                        d.sortDirection = d.order[0].dir;
+                    },
+                },
+                    columns: [
+                    { data: "UnitId", name: "UnitId", visible: false },
+                    // Serial number column
+                    {
+                        data: null,
+                        name: "SerialNumber",
+                        orderable: false, // Disable sorting for this column
+                        render: function (data, type, row, meta) {
+                            // Calculate serial number based on row index
+                            return meta.row + meta.settings._iDisplayStart + 1;
+                        }
+                    },
+                    { data: "Sus_no", name: "Sus_no" },
+                    { data: "Suffix", name: "Suffix" },
+                    { data: "UnitName", name: "UnitName", orderable: false },
+                    { data: "Abbreviation", name: "Abbreviation", orderable: false },
+                    // Display user-friendly value for IsVerify
+                    {
+                        data: "IsVerify",
+                        name: "IsVerify",
+                        render: function (data, type, row) {
+                            // Convert boolean to "Yes" or "No"
+                            return data ? "<span class='badge badge-pill badge-success'>Verifed</span>" : "<span class='badge badge-pill badge-danger'>Not Verify</span>";
+                        }
+                    },
+                    // Additional column for Edit action
+                    {
+                        data: null,
+                        orderable: false,
+                        render: function (data, type, row) {
+                            return "<span id='btnedit'><button type='button' class='cls-btnedit btn btn-icon btn-round btn-warning mr-1'><i class='fas fa-edit'></i></button></span><button type='button' class='cls-btnDelete btn-icon btn-round btn-danger mr-1'><i class='fas fa-trash-alt'></i></button>";
+                        }
+                    }
+        ],
+        drawCallback: function (settings) {
+            // Re-bind the click event after each draw
+            $("#tbldata tbody").off("click", ".cls-btnedit").on("click", ".cls-btnedit", function () {
+                var rowData = table.row($(this).closest("tr")).data();
+                if (rowData != null) {
+                    $("#txtSusno").val(rowData.Sus_no);
+                    $("#txtSuffix").val(rowData.Suffix);
+                    $("#txtUnitDesc").val(rowData.UnitName);
+                    $("#txtAbbreviation").val(rowData.Abbreviation);
+                    $("#spnUnitId").html(rowData.UnitId);
+                }
+            });
+            $("#tbldata tbody").off("click", ".cls-btnDelete").on("click", ".cls-btnDelete", function () {
+                var rowData = table.row($(this).closest("tr")).data();
+                if (rowData != null) {
                     Swal.fire({
-                        text: errormsg
+                        title: 'Are you sure?',
+                        text: "You want to Delete ",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#072697',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Yes, Delete It!'
+                    }).then((result) => {
+                        if (result.value) {
+                            Delete(rowData.UnitId);
+                        }
                     });
-
                 }
-                else if (response.length == 0) {
-                    $("#tbldata").DataTable().destroy();
-                   
-                    $("#DetailBody").html(listItem);
-                    memberTable = $('#tbldata').DataTable({
-                        "language": {
-                            "emptyTable": "No data available"
-                        }
-                    });
-
-                  
-                }
-               
-                else {
-
-                    $("#tbldata").DataTable().destroy();    
-                  
-                   
-                    for (var i = 0; i < response.length; i++) {
-                     
-                            listItem += "<tr>";
-                            listItem += "<td class='d-none'><span id='SunitId'>" + response[i].UnitId + "</span></td>";
-                            listItem += "<td class='align-middle'>" + (i+1) + "</td>";
-                            listItem += "<td class='align-middle'><span id='sus_no'>" + response[i].Sus_no + "</span></td>";
-                            listItem += "<td class='align-middle'><span id='suffix'>" + response[i].Suffix + "</span></td>";
-                            listItem += "<td class='align-middle'><span id='unit_desc'>" + response[i].UnitName + "</span></td>";
-                            listItem += "<td class='align-middle'><span id='unit_abbreviation'>" + response[i].Abbreviation + "</span></td>";
-
-                        if (response[i].IsVerify == true)
-                            listItem += "<td class='align-middle'><span id='unit_desc'><span class='badge badge-pill badge-success'>Verifed</span></span></td>";
-                        else
-
-                            listItem += "<td class='align-middle'><span id='unit_desc'><span class='badge badge-pill badge-danger'>Not Verify</span></span></td>";
-
-                            listItem += "<td class='align-middle'><span id='btnedit'><button type='button' class='cls-btnedit btn btn-icon btn-round btn-warning mr-1'><i class='fas fa-edit'></i></button></span><button type='button' class='cls-btnDelete btn-icon btn-round btn-danger mr-1'><i class='fas fa-trash-alt'></i></button></td>";
-
-
-                            /*    listItem += "<td class='nowrap'><button type='button' class='cls-btnSend btn btn-outline-success mr-1'>Send To Verification</button></td>";*/
-                            listItem += "</tr>";
-                        
-                    }
-
-                    $("#DetailBody").html(listItem);
-                    $("#lblTotal").html(response.length-1);
-                  
-                    memberTable = $('#tbldata').DataTable({
-                        retrieve: true,
-                        lengthChange: false,
-                        searching: false,
-                        stateSave: true,
-                        "order": [[1, "asc"]],
-                        buttons: [{
-                            extend: 'copy',
-                            exportOptions: {
-                                columns: "thead th:not(.noExport)"
-                            }
-                        }, {
-                            extend: 'excel',
-                            exportOptions: {
-                                columns: "thead th:not(.noExport)"
-                            }
-                        }, {
-                            extend: 'pdfHtml5',
-                            orientation: 'portrait',
-                            pageSize: 'A4',
-                            title: 'E-IASC_Unit',
-                            exportOptions: {
-                                columns: "thead th:not(.noExport)"
-                            },
-                            customize: function (doc) {
-                                WaterMarkOnPdf(doc)
-                            }
-                        }]
-                    });
-
-                    memberTable.buttons().container().appendTo('#tbldata_wrapper .col-md-6:eq(0)');
-
-                    var rows;
-                    $("#tbldata #chkAll").click(function () {
-                        if ($(this).is(':checked')) {
-                            rows = memberTable.rows({ 'search': 'applied' }).nodes();
-                            $('input[type="checkbox"]', rows).prop('checked', this.checked);
-                        }
-                        else {
-                            rows = memberTable.rows({ 'search': 'applied' }).nodes();
-                            $('input[type="checkbox"]', rows).prop('checked', this.checked);
-                        }
-                    });
-                    $('#DetailBody').on('change', 'input[type="checkbox"]', function () {
-                        if (!this.checked) {
-                            var el = $('#chkAll').get(0);
-                            if (el && el.checked && ('indeterminate' in el)) {
-                                el.indeterminate = true;
-                            }
-                        }
-                    });
-
-                    $("body").on("click", ".cls-btnedit", function () {
-                      /*  $("#AddNewM").modal('show');*/
-                        $("#txtSusno").val($(this).closest("tr").find("#sus_no").html());
-                        $("#txtSuffix").val($(this).closest("tr").find("#suffix").html());
-                        $("#txtUnitDesc").val($(this).closest("tr").find("#unit_desc").html());
-                        $("#txtAbbreviation").val($(this).closest("tr").find("#unit_abbreviation").html());
-
-                       // alert($(this).closest("tr").find("#SunitId").html())
-                        $("#spnUnitId").html($(this).closest("tr").find("#SunitId").html());
-                        
-                    });
-
-
-                    $("body").on("click", ".cls-btnDelete", function () {
-
-                        Swal.fire({
-                            title: 'Are you sure?',
-                            text: "You want to Delete ",
-                            icon: 'warning',
-                            showCancelButton: true,
-                            confirmButtonColor: '#072697',
-                            cancelButtonColor: '#d33',
-                            confirmButtonText: 'Yes, Delete It!'
-                        }).then((result) => {
-                            if (result.value) {
-                                
-                                Delete($(this).closest("tr").find("#SunitId").html());
-
-                            }
-                        });
-                    });
-
-
-                }
-            }
-            else {
-                $("#tbldata").DataTable().destroy();
-
-                $("#DetailBody").html(listItem);
-                memberTable = $('#tbldata').DataTable({
-                    "language": {
-                        "emptyTable": "No data available"
-                    }
-                });
-
-
-            }
-        },
-        error: function (result) {
-            Swal.fire({
-                text: errormsg002
             });
         }
     });
-
 }
 function Save() {
 
@@ -255,7 +167,7 @@ function Save() {
     $.ajax({
         url: '/Master/SaveUnit',
         type: 'POST',
-        data: { "Sus_no": $("#txtSusno").val().trim(), "UnitId": $("#spnUnitId").html().trim(), "Suffix": $("#txtSuffix").val().trim(), "UnitName": $("#txtUnitDesc").val().trim(), "Abbreviation": $("#txtAbbreviation").val().trim(),"IsVerify": true }, //get the search string
+        data: { "Sus_no": $("#txtSusno").val().trim(), "UnitId": $("#spnUnitId").html().trim(), "Suffix": $("#txtSuffix").val().trim(), "UnitName": $("#txtUnitDesc").val().trim(), "Abbreviation": $("#txtAbbreviation").val().trim(), "IsVerify": true }, //get the search string
         success: function (result) {
 
 
@@ -263,6 +175,7 @@ function Save() {
                 toastr.success('Unit has been saved');
 
                 /*  $("#AddNewM").modal('hide');*/
+               /* $("#tbldata").DataTable().destroy();*/    
                 BindData();
                 Reset();
             }
@@ -270,6 +183,7 @@ function Save() {
                 toastr.success('Unit has been Updated');
 
                 /*  $("#AddNewM").modal('hide');*/
+                $("#tbldata").DataTable().destroy();    
                 BindData();
                 Reset();
             }
@@ -355,7 +269,7 @@ function Delete(Id) {
 }
 
 function DeleteMultiple(Id) {
-   
+
     var userdata =
     {
         "ints": Id,
@@ -376,13 +290,13 @@ function DeleteMultiple(Id) {
                 else if (response == Success) {
                     //lol++;
                     //if (lol == Tot) {
-                     toastr.error('Deleted Selected');
+                    toastr.error('Deleted Selected');
                     BindData();
                 }
 
                 //}
             }
-           
+
         },
         error: function (result) {
             Swal.fire({

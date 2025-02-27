@@ -152,35 +152,35 @@ namespace DataTransferObject.ViewModels
         [RegularExpression(@"^[\d]+$", ErrorMessage = "AddressId is number.")]
         public int AddressId { get; set; }
 
-        [RegularExpression(@"^[\w\& ]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
+        //[RegularExpression(@"^[\w\& ]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
         public string State { get; set; } = string.Empty;
 
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
-        [RegularExpression(@"^[\w ]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
+        //[RegularExpression(@"^[\w ]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
         public string District { get; set; } = string.Empty;
 
         [Display(Name = "Police Station")]
-        [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
-        [RegularExpression(@"^[\w ]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
-        public string PS { get; set; } = string.Empty;
+        //[Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
+        //[RegularExpression(@"^[\w ]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
+        public string? PS { get; set; }
 
         [DisplayName("Post Office")]
-        [RegularExpression(@"^[\w ]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
-        [MaxLength(50, ErrorMessage = "Maximum length of PO is fifty character.")]
-        public string PO { get; set; } = string.Empty;
+        //[RegularExpression(@"^[\w ]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
+        [MaxLength(50, ErrorMessage = "Maximum length of Post Office is fifty character.")]
+        public string? PO { get; set; }
 
-        [RegularExpression(@"^[\w ]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
+        //[RegularExpression(@"^[\w ]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
         [MaxLength(50, ErrorMessage = "Maximum length of Tehsil is fifty character.")]
-        public string? Tehsil { get; set; } = string.Empty;
+        public string? Tehsil { get; set; } 
 
         [RegularExpression(@"^[\w\-\.\/ ]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
         [MaxLength(50, ErrorMessage = "Maximum length of Village is fifty character.")]
-        public string? Village { get; set; } = string.Empty;
+        public string? Village { get; set; }
 
-        [ValidInteger("Pin Code")]
-        [Required(ErrorMessage = "Pin Code is required")]
-        [Range(typeof(int), "100000", "999999", ErrorMessage = "Value for {0} must be between {1} and {2}.")]
-        public int PinCode { get; set; }
+        //[ValidInteger("Pin Code")]
+        //[Required(ErrorMessage = "Pin Code is required")]
+        //[Range(typeof(int), "100000", "999999", ErrorMessage = "Value for {0} must be between {1} and {2}.")]
+        public int? PinCode { get; set; }
         /// <summary>
         /// end address
         /// </summary>

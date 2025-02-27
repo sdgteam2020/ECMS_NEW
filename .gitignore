@@ -245,10 +245,7 @@ AppPackages/
 /WebApi/obj/
 /DapperRepo.Core/obj/
 /TestConsoleReso/obj/
-
-
 /BusinessLogicsLayer/.cache
-
 /.vs/AFSAC/v17/.futdcache.v2
 /.vs/AFSAC/v17/fileList.bin
 /.vs/slnx.sqlite
@@ -270,6 +267,5 @@ AppPackages/
 /.vs/ProjectEvaluation/afsac.metadata.v7.bin
 /.vs/ProjectEvaluation/afsac.projects.v7.bin
 /Web/Properties/PublishProfiles/FolderProfile.pubxml.user
-
 /Web/Web.csproj.user
 /Web/Properties/PublishProfiles/FolderProfile.pubxml.user

@@ -26,17 +26,9 @@ namespace BusinessLogicsLayer.Unit
             
         }
        
-        public async Task<List<MUnit>> GetAllUnit(string Sus_no)
+        public async Task<DTODataTablesResponse<MUnit>> GetAllUnit(DTODataTablesRequest request) 
         {
-            //List<MUnit> List=await _UnitDB.GetAllUnit(Sus_no);
-            //List<MUnit> Ret=new List<MUnit>();
-            //foreach (MUnit item in List)
-            //{
-            //  //  item.UnitName=Encrypt.DecryptParameter(item.UnitName);
-            //   // item.Sus_no = Encrypt.DecryptParameter(item.Sus_no);
-            //    Ret.Add(item);
-            //}
-            return await _UnitDB.GetAllUnit(Sus_no);
+            return await _UnitDB.GetAllUnit(request);
         }
 
         public Task<bool> GetByName(MUnit Data)
