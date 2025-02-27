@@ -830,7 +830,6 @@ namespace Web.Controllers
 
         public IActionResult Unit()
         {
-
             return View();
         }
         public async Task<IActionResult> SaveUnit(MUnit dTO)
@@ -877,11 +876,29 @@ namespace Web.Controllers
             }
 
         }
-        public async Task<IActionResult> GetAllUnit(string Unit)
+        
+        [HttpPost]
+        public async Task<IActionResult> GetAllUnit(DTODataTablesRequest dTO)
         {
             try
             {
-                return Json(await unitOfWork.Unit.GetAllUnit(Unit));
+                if (ModelState.IsValid)
+                {
+                    return Json(await unitOfWork.Unit.GetAllUnit(dTO));
+                }
+                else
+                {
+                    List<MUnit> dTOUserRegnResponses = new List<MUnit>();
+                    var responseData = new DTODataTablesResponse<MUnit>
+                    {
+                        draw = 0,
+                        recordsTotal = 0,
+                        recordsFiltered = 0,
+                        data = dTOUserRegnResponses
+                    };
+                    return Json(responseData);
+                    //return Json(ModelState.Select(x => x.Value?.Errors).Where(y => y?.Count > 0).ToList());
+                }
             }
             catch (Exception ex)
             {
@@ -968,6 +985,7 @@ namespace Web.Controllers
             }
 
         }
+        
         #endregion End Unit
 
         #region Formation  

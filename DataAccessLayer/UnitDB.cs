@@ -15,6 +15,7 @@ using System.Text;
 using System.Threading.Tasks;
 using DataAccessLayer.Logger;
 using Dapper;
+using Azure.Core;
 
 namespace DataAccessLayer
 {
@@ -67,53 +68,76 @@ namespace DataAccessLayer
                 return null;
             }
         }
-
-        public async Task<List<MUnit>> GetAllUnit(string UnitName)
+        public async Task<DTODataTablesResponse<MUnit>> GetAllUnit(DTODataTablesRequest request)
         {
             try
             {
-                UnitName = string.IsNullOrEmpty(UnitName) ? "" : UnitName.ToLower();
-                //string query = "";
-                //if(UnitName!="")
-                // query = " declare @UnitName varchar(Max)='"+ UnitName.ToUpper() + "' "+
-                //                " SELECT  [UnitId] ,[Sus_no],[Suffix],CONVERT(varchar(Max),[UnitName]) UnitName,[Abbreviation],[IsVerify],[IsActive]"+
-                //                " ,[Updatedby],[UpdatedOn],[UnregdUserId] "+
-                //                " FROM   dbo.MUnit where CONVERT(varchar(Max),[UnitName])=@UnitName";
-                //else
-                //{
-                //    query = " SELECT  [UnitId] ,[Sus_no],[Suffix],CONVERT(varchar(Max),[UnitName]) UnitName,[Abbreviation],[IsVerify],[IsActive]" +
-                //               " ,[Updatedby],[UpdatedOn],[UnregdUserId] " +
-                //               " FROM   dbo.MUnit";
-                //}
+                var queryableData = (from u in _context.MUnit.OrderByDescending(x => x.UnitId)
+                                     select new MUnit()
+                                     {
+                                         UnitId = u.UnitId,
+                                         Sus_no = u.Sus_no,
+                                         Suffix = u.Suffix,
+                                         UnitName = u.UnitName,
+                                         Abbreviation = u.Abbreviation,
+                                         IsVerify = u.IsVerify,
+                                     }).AsQueryable();
+                // Total records without filtering
+                var totalRecords = queryableData.Count();
 
 
-                //using (var connection = _contextDP.CreateConnection())
-                //{
-                //    var basicDetail = await connection.QueryAsync<MUnit>(query, new { });
-                //    if (basicDetail != null)
-                //    {
-                //        return basicDetail.ToList();
-                //    }
-                //    else
-                //    {
-                //        return null;
-                //    }
-                //}
+                // Apply filtering
+                if (!string.IsNullOrEmpty(request.searchValue))
+                {
+                    string searchValue = request.searchValue.ToLower();
+                    queryableData = queryableData.Where(x => x.Sus_no.ToLower().Contains(searchValue));
+                }
 
-                //var ret = await _context.MUnit.Where(P => UnitName == "" || P.UnitName.ToLower().Contains(UnitName)).Take(200).ToListAsync();
+                // Apply sorting
 
-                //var ret = await _context.MUnit.Take(200).ToListAsync();
+                if (!string.IsNullOrEmpty(request.sortColumn) && !string.IsNullOrEmpty(request.sortDirection))
+                {
+                    if (request.sortColumn == "UnitName" || request.sortColumn == "Abbreviation")
+                    {
 
-                //var ret = await _context.MUnit.Where(x => UnitName == "" || x.Sus_no.ToLower().Contains(UnitName)).Take(200).OrderByDescending(x=>x.UnitId).ToListAsync();
-                var ret = await _context.MUnit.Where(x => UnitName == "" || x.Sus_no.ToLower().Contains(UnitName)).OrderByDescending(x => x.UnitId).ToListAsync();
+                    }
+                    else 
+                    {
+                        //queryableData = queryableData.OrderBy(request.SortColumn + " " + request.SortColumnDirection);
+                        queryableData = request.sortDirection.ToLower() == "asc"
+                        ? queryableData.OrderBy(item => EF.Property<object>(item, request.sortColumn))
+                        : queryableData.OrderByDescending(item => EF.Property<object>(item, request.sortColumn));
+                    }
 
+                }
 
-                return ret;
+                // Total records after filtering
+                var filteredRecords = queryableData.Count();
+
+                // Paginate the result
+                var paginatedData = await queryableData.Skip(request.Start).Take(request.Length).ToListAsync();
+
+                var responseData = new DTODataTablesResponse<MUnit>
+                {
+                    draw = request.Draw,
+                    recordsTotal = totalRecords, // Total records without filtering
+                    recordsFiltered = filteredRecords, // Total records after filtering
+                    data = paginatedData
+                };
+                return responseData;
             }
             catch (Exception ex)
             {
-                _logger.LogError(1001, ex, "UnitDB->GetAllUnit");
-                return null;
+                _logger.LogError(1001, ex, "UnitDB->GetAllUnit_");
+                List<MUnit> dTOUserRegnResponses = new List<MUnit>();
+                var responseData = new DTODataTablesResponse<MUnit>
+                {
+                    draw = 0,
+                    recordsTotal = 0,
+                    recordsFiltered = 0,
+                    data = dTOUserRegnResponses
+                };
+                return responseData;
             }
         }
         public async Task<List<DTOUnitResponse>?> GetTopBySUSNo(string SUSNo)

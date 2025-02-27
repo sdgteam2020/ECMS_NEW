@@ -285,8 +285,6 @@ AppPackages/
 /DataAccessLayer/Migrations/20231030041207_vv1.Designer.cs
 /.vs/ProjectEvaluation/afsac.metadata.v7.bin
 /.vs/ProjectEvaluation/afsac.projects.v7.bin
-/.gitignore
-/.gitignore
 /Web/Properties/PublishProfiles/FolderProfile.pubxml.user
 /DapperRepo.Core/obj/Debug/net7.0/EFRepo.Core.assets.cache
 /DapperRepo.Core/obj/Debug/net7.0/EFRepo.Core.GeneratedMSBuildEditorConfig.editorconfig
@@ -295,7 +293,6 @@ AppPackages/
 /Web/wwwroot/WriteReadData/Photo/2024/April/02/IC00201L.jpg
 /Web/wwwroot/WriteReadData/Signature/2024/April/02/IC00201L.jpg
 /Web/wwwroot/WriteReadData/Signature/2024/April/02/15690012A.jpg
-/.gitignore
 *.jpg
 /Web/Web.csproj.user
 /Web/Web.csproj.user
@@ -312,4 +309,3 @@ AppPackages/
 /Web/wwwroot/counter.txt
 /Web/wwwroot/DigitallysignatureXml/13763782H_1_2025February19093017.xml
 /Web/wwwroot/DigitallysignatureXml/13763782H_1_2025February19092949.xml
-/Web/appsettings.Development.json

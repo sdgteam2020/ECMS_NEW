@@ -749,7 +749,7 @@ namespace Web.Controllers
                         dTOBasicDetailCrtRequest.Tehsil = model.Tehsil;
                         dTOBasicDetailCrtRequest.Village = model.Village;
                         dTOBasicDetailCrtRequest.PinCode = Convert.ToInt32(model.PinCode);
-                        dTOBasicDetailCrtRequest.PermanentAddress = "Village - " + model.Village + ", Post Office-" + model.PO + ", Tehsil- " + model.Tehsil + ", District- " + model.District + ", State- " + model.State + ", Pin Code- " + model.PinCode;
+                        dTOBasicDetailCrtRequest.PermanentAddress = "Village - " + model.Village + ", Post Office-" + model.PO + ", Tehsil- " + model.Tehsil + ", District- " + model.District + ", State- " + model.State + ", Pin Code- " + (model.PinCode == 0 ?"" : model.PinCode);
 
                         return await Task.FromResult(View(dTOBasicDetailCrtRequest));
                     }
@@ -776,7 +776,7 @@ namespace Web.Controllers
                     ViewBag.OptionsBloodGroupId = basicDetailUpdVM.BloodGroupId;
 
                     basicDetailUpdVM.BloodGroupId = basicDetailUpdVM.BloodGroupId;
-                    basicDetailUpdVM.PermanentAddress = "Village - " + basicDetailUpdVM.Village + ", Post Office-" + basicDetailUpdVM.PO + ", Tehsil- " + basicDetailUpdVM.Tehsil + ", District- " + basicDetailUpdVM.District + ", State- " + basicDetailUpdVM.State + ", Pin Code- " + basicDetailUpdVM.PinCode;
+                    basicDetailUpdVM.PermanentAddress = "Village - " + basicDetailUpdVM.Village + ", Post Office-" + basicDetailUpdVM.PO + ", Tehsil- " + basicDetailUpdVM.Tehsil + ", District- " + basicDetailUpdVM.District + ", State- " + basicDetailUpdVM.State + ", Pin Code- " + (basicDetailUpdVM.PinCode == 0 ? "" : basicDetailUpdVM.PinCode);
 
                     string sourceFolderPhotoPhy = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData");
                     string sourcePathPhoto = Path.Combine(sourceFolderPhotoPhy, "Photo", basicDetailUpdVM.PhotoImagePath);
@@ -820,7 +820,7 @@ namespace Web.Controllers
                         basicDetailUpdVM.Tehsil = modelex.Tehsil;
                         basicDetailUpdVM.Village = modelex.Village;
                         basicDetailUpdVM.PinCode = Convert.ToInt32(modelex.PinCode);
-                        basicDetailUpdVM.PermanentAddress = "Village - " + modelex.Village + ", Post Office-" + modelex.PO + ", Tehsil- " + modelex.Tehsil + ", District- " + modelex.District + ", State- " + modelex.State + ", Pin Code- " + modelex.PinCode;
+                        basicDetailUpdVM.PermanentAddress = "Village - " + modelex.Village + ", Post Office-" + modelex.PO + ", Tehsil- " + modelex.Tehsil + ", District- " + modelex.District + ", State- " + modelex.State + ", Pin Code- " + (modelex.PinCode == 0 ? "" : modelex.PinCode);
 
                     }
                     // ViewBag.UnitName = await context.MUnit.FindAsync(basicDetailUpdVM.UnitId);
