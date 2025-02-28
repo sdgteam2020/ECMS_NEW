@@ -132,6 +132,48 @@ namespace DataAccessLayer
 
             return Task.FromResult(Div);
         }
+        //public Task<DTODataTablesResponse<DTOMapUnitResponse>> GetALLUnit_(DTOMHierarchyRequest unit, DTODataTablesRequest request)
+        //{
+        //    if (unit.ComdId == null) unit.ComdId = 0;
+        //    if (unit.CorpsId == null) unit.CorpsId = 0;
+        //    if (unit.DivId == null) unit.DivId = 0;
+        //    if (unit.BdeId == null) unit.BdeId = 0;
+
+        //    var Div = (from uni in _context.MapUnit.OrderByDescending(x => x.UnitMapId)
+        //               join MUni in _context.MUnit on uni.UnitId equals MUni.UnitId
+        //               join Com in _context.MComd on uni.ComdId equals Com.ComdId
+        //               join cor in _context.MCorps on uni.CorpsId equals cor.CorpsId
+        //               join div in _context.MDiv on uni.DivId equals div.DivId
+        //               join bde in _context.MBde on uni.BdeId equals bde.BdeId
+        //               join pso in _context.MPso on uni.PsoId equals pso.PsoId
+        //               join FmnBranch in _context.MFmnBranches on uni.FmnBranchID equals FmnBranch.FmnBranchID
+        //               join SubDte in _context.MSubDte on uni.SubDteId equals SubDte.SubDteId
+        //               select new DTOMapUnitResponse
+        //               {
+        //                   UnitMapId = uni.UnitMapId,
+        //                   UnitName = MUni.UnitName,
+        //                   IsVerify = MUni.IsVerify,
+        //                   UnitId = uni.UnitId,
+        //                   BdeId = bde.BdeId,
+        //                   BdeName = bde.BdeName,
+        //                   DivId = div.DivId,
+        //                   DivName = div.DivName,
+        //                   CorpsId = cor.CorpsId,
+        //                   CorpsName = cor.CorpsName,
+        //                   ComdName = Com.ComdName,
+        //                   ComdId = Com.ComdId,
+        //                   Suffix = MUni.Suffix,
+        //                   Sus_no = MUni.Sus_no,
+        //                   UnitType = uni.UnitType,
+        //                   PsoId = pso.PsoId,
+        //                   PSOName = pso.PSOName,
+        //                   FmnBranchID = FmnBranch.FmnBranchID,
+        //                   BranchName = FmnBranch.BranchName,
+        //                   SubDteId = SubDte.SubDteId,
+        //                   SubDteName = SubDte.SubDteName,
+        //               }
+        //             ).AsQueryable();
+        //}
 
         public Task<List<DTOMapUnitResponse>> GetALLByUnitName(string UnitName)
         {

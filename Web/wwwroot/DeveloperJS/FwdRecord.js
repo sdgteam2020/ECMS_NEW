@@ -1213,7 +1213,6 @@ function DataSignDigitaly(Data, msgid, RequestId,stepId) {
         contentType: 'application/x-www-form-urlencoded',
         data: userdata,
         type: 'POST',
-
         success: function (response) {
             if (response != "null" && response != null) {
                 if (response == InternalServerError) {
@@ -1221,34 +1220,20 @@ function DataSignDigitaly(Data, msgid, RequestId,stepId) {
                         text: errormsg
                     });
                 } else {
-                    //var blob = new Blob([response], {
-                    //    type: 'application/json'
-                    //});
-                    //var link = document.createElement('a');
-                    //link.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(blob);
-                    //link.download = "export.json";
-                    //link.click();
-                    //alert(JSON.stringify(response));
                     if (IsDigitalSignReq == true) { 
                         if (response.Id == undefined) {
                             var xmlString = jsonToXml(response);
-
                             GetTokenSignXml(xmlString, msgid, RequestId, 0)
                         }
                         else {
-
                             if (response.jsonfile == undefined) {
                                 var xmlString1 = response.XmlFiles;
-                                //if (stepId == 2) {
-                                //    GetTokenSignXml(xmlString1, msgid, RequestId, 0,stepId)
-                                //} else
                                 GetTokenSignXml(xmlString1, msgid, RequestId, response.Id)
                             } else {
                                 var xmlString2 = jsonToXml(response.jsonfile);
 
                                 GetTokenSignXml(xmlString2, msgid, RequestId, response.Id)
                             }
-
                         }
                     }
                     else {
@@ -1256,27 +1241,18 @@ function DataSignDigitaly(Data, msgid, RequestId,stepId) {
                             if (response.Id == undefined) {
                                 var xmlString = jsonToXml(response);
                                 SignXmlSendTOdatabase(xmlString, RequestId, 0);
-                               
                             } else {
                                 var xmlString2 = jsonToXml(response.jsonfile);
                                 SignXmlSendTOdatabase(xmlString2, RequestId, response.Id);
                             }
-                            
                         }
                         else {
                             var xmlString1 = response.XmlFiles;
                             SignXmlSendTOdatabase(xmlString1, RequestId, response.Id);
                         }
-                       
                     }
                 }
-
-
             }
-
-
-
-
         },
         error: function (result) {
             Swal.fire({
@@ -1287,8 +1263,6 @@ function DataSignDigitaly(Data, msgid, RequestId,stepId) {
 }
 
 function GetTokenSignXml(xml, msgid, RequestId, Id) {
-
-    /*    IcNo = "7f33df8ac6540b5cf7ccfd041d8c837641226444d9f1a4aa30a01924c0610996";*/
     $.ajax({
         url: HostUrl +'/Temporary_Listen_Addresses/SignXml',
         type: "POST",
@@ -1305,36 +1279,16 @@ function GetTokenSignXml(xml, msgid, RequestId, Id) {
                     $("#" + msgid).html('<div class="mt-4 alert alert-success alert-dismissible fade show "><i class="fa fa-check " aria-hidden="true"></i><span class="m-lg-2">Token Detected  </span></div>');
 
                     SignXmlSendTOdatabase(xmlContent, RequestId, Id);
-                    // Create a Blob from the XML string
-                    //var blob = new Blob([xmlContent], { type: 'application/xml' });
 
-                    //// Create a download link
-                    //var downloadLink = document.createElement('a');
-                    //downloadLink.href = window.URL.createObjectURL(blob);
-                    //downloadLink.download = 'document.xml';
-
-                    //// Trigger a click on the link to start the download
-                    //document.body.appendChild(downloadLink);
-                    //downloadLink.click();
-
-                    //// Clean up: remove the download link
-                    //document.body.removeChild(downloadLink);
                 } else {
                     $("#" + msgid).html('<div class="mt-4 alert alert-danger alert-dismissible fade show "><i class="fa fa-times" aria-hidden="true"></i><span class="m-lg-2"> No Token Found</span>.</div>');
-
                 }
             }
-
         },
         error: function (result) {
-
             $("#" + msgid).html('<div class="mt-4 alert alert-danger alert-dismissible fade show "><i class="fa fa-times" aria-hidden="true"></i><span class="m-lg-2">DGIS Appl Not Running</span>.</div>');
-
-
         }
     });
-
-
 }
 
 function SignXmlSendTOdatabase(XmlFile, RequestId, Id) {
@@ -1342,7 +1296,6 @@ function SignXmlSendTOdatabase(XmlFile, RequestId, Id) {
         "RequestId": RequestId,
         "XmlFiles": XmlFile,
         "Id": Id
-
     };
     $.ajax({
         url: '/Log/XmlFileDigitalSign',
@@ -1363,20 +1316,11 @@ function SignXmlSendTOdatabase(XmlFile, RequestId, Id) {
                     else {
                         toastr.success('Xml Digital Log Sucess');
                     }
-
-                    
                     setTimeout(function () {
                         location.reload();
                     }, 1000);
-
                 }
-
-
             }
-
-
-
-
         },
         error: function (result) {
             Swal.fire({
@@ -1388,13 +1332,9 @@ function SignXmlSendTOdatabase(XmlFile, RequestId, Id) {
 
 function jsonToXml(json) {
     var xml = '';
-
-
-
     for (var key in json) {
         i = 1;
         if (json.hasOwnProperty(key)) {
-
 
             xml += '<' + key + '>';
 
@@ -1404,12 +1344,9 @@ function jsonToXml(json) {
                 xml += json[key];
             }
 
-
             xml += '</' + key + '>';
         }
     }
-
-
     return xml;
 }
 function DownloadXml(RequestId) {

@@ -127,6 +127,36 @@ function BindData() {
                         }
                     }
         ],
+        language: {
+            search: "", // Remove the default "Search:" label
+            searchPlaceholder: "UNIT SUS No" // Add custom placeholder
+        },
+        dom: 'Bfrtip', // Add buttons to the DOM
+        buttons: [
+            {
+            extend: 'copy',
+            exportOptions: {
+                columns: "thead th:not(.noExport)"
+            }
+        },
+            {
+            extend: 'excel',
+            exportOptions: {
+                columns: "thead th:not(.noExport)"
+            }
+        }, 
+        {
+            extend: 'pdfHtml5',
+            orientation: 'landscape',
+            pageSize: 'LEGAL',
+            title: 'E-IASC_Unit',
+            exportOptions: {
+                columns: "thead th:not(.noExport)"
+            },
+            customize: function (doc) {
+                WaterMarkOnPdf(doc)
+            }
+        }],
         drawCallback: function (settings) {
             // Re-bind the click event after each draw
             $("#tbldata tbody").off("click", ".cls-btnedit").on("click", ".cls-btnedit", function () {
