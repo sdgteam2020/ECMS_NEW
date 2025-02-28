@@ -117,6 +117,8 @@ $(document).ready(function () {
                 if (parseInt(OffType) != 0 && parseInt(RegistrationApplyFor) != 0 && parseInt(lCardType) != 0) {
                     if (OffType == 1 && parseInt(RegistrationApplyFor) == 1) {
 
+                        alert($("#txtApplyForArmyNo").val());
+                        alert($("#aspntokenarmyno").html());
                         if ($("#txtApplyForArmyNo").val() == $("#aspntokenarmyno").html()) {
                             IsValid = 1;
                         } else {
