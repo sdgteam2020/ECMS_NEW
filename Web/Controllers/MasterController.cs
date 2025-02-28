@@ -556,7 +556,6 @@ namespace Web.Controllers
 
         public IActionResult MapUnit()
         {
-
             return View();
         }
         [AllowAnonymous]
@@ -768,6 +767,7 @@ namespace Web.Controllers
             }
 
         }
+        
         [Authorize(Roles = "admin")]
         public async Task<IActionResult> DeleteMapUnit(int UnitMapId)
         {
@@ -790,6 +790,7 @@ namespace Web.Controllers
                 return Json(KeyConstants.InternalServerError);
             }
         }
+        
         [Authorize(Roles = "admin")]
         public async Task<IActionResult> DeleteMapUnitMultiple(int[] ints)
         {
