@@ -1,15 +1,15 @@
 ﻿var table; // Declare table variable outside the function to preserve the instance
-$(document).ready(function () {
+$(function () {
     Reset();
     BindData()
-    $("#txtSerachunit").keyup(function () {
+    $("#txtSerachunit").on("keyup",function () {
         BindData()
 
     });
-    $("#btnReset").click(function () {
+    $("#btnReset").on("click",function () {
         Reset();
     });
-    $("#btnsave").click(function () {
+    $("#btnsave").on("click", function () {
         if ($("#SaveForm")[0].checkValidity()) {
 
             Swal.fire({
@@ -36,7 +36,7 @@ $(document).ready(function () {
 
     });
 
-    $('#btnMultiDelete').click(function () {
+    $('#btnMultiDelete').on("click", function () {
         var lst = new Array();
 
         if (memberTable.$('input[type="checkbox"]:checked').length > 0) {
@@ -80,58 +80,71 @@ function BindData() {
                 processing: true,
                 serverSide: true,
                 filter: true,
-                ajax: {
-                    url: "/Master/GetAllUnit",
-                    contentType: 'application/x-www-form-urlencoded',
-                    type: "POST",
-                    data: function (d) {
-                        d.draw = d.draw;
-                        d.start = d.start;
-                        d.length = d.length;
-                        d.searchValue = d.search.value;
-                        d.sortColumn = d.columns[d.order[0].column].data;
-                        d.sortDirection = d.order[0].dir;
-                    },
-                },
-                    columns: [
-                    { data: "UnitId", name: "UnitId", visible: false },
-                    // Serial number column
-                    {
-                        data: null,
-                        name: "SerialNumber",
-                        orderable: false, // Disable sorting for this column
-                        render: function (data, type, row, meta) {
-                            // Calculate serial number based on row index
-                            return meta.row + meta.settings._iDisplayStart + 1;
-                        }
-                    },
-                    { data: "Sus_no", name: "Sus_no" },
-                    { data: "Suffix", name: "Suffix" },
-                    { data: "UnitName", name: "UnitName", orderable: false },
-                    { data: "Abbreviation", name: "Abbreviation", orderable: false },
-                    // Display user-friendly value for IsVerify
-                    {
-                        data: "IsVerify",
-                        name: "IsVerify",
-                        render: function (data, type, row) {
-                            // Convert boolean to "Yes" or "No"
-                            return data ? "<span class='badge badge-pill badge-success'>Verifed</span>" : "<span class='badge badge-pill badge-danger'>Not Verify</span>";
-                        }
-                    },
-                    // Additional column for Edit action
-                    {
-                        data: null,
-                        orderable: false,
-                        render: function (data, type, row) {
-                            return "<span id='btnedit'><button type='button' class='cls-btnedit btn btn-icon btn-round btn-warning mr-1'><i class='fas fa-edit'></i></button></span><button type='button' class='cls-btnDelete btn-icon btn-round btn-danger mr-1'><i class='fas fa-trash-alt'></i></button>";
-                        }
+                order: [[0, 'desc']], // Default sorting on the first column
+                ajax: async function (data, callback, settings) {
+                    let requestData = {
+                        draw: data.draw,
+                        start: data.start,
+                        length: data.length,
+                        searchValue: data.search.value,
+                        sortColumn: data.order.length > 0 ? data.columns[data.order[0].column].data : '',  // Add a check for data.order
+                        sortDirection: data.order.length > 0 ? data.order[0].dir : '', // Add a check for data.order
+                    };
+                    try {
+                        let response = await fetch("/Master/GetAllUnit", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                            body: new URLSearchParams(requestData).toString()
+                        });
+
+                        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+
+                        let result = await response.json();
+                        callback(result); // Sends data to DataTables
+
+                    }catch (error) {
+                        console.error("Error fetching data:", error);
                     }
+                },
+        columns: [
+        { data: "UnitId", name: "UnitId", visible: false },
+        // Serial number column
+        {
+            data: null,
+            name: "SerialNumber",
+            orderable: false, // Disable sorting for this column
+            render: function (data, type, row, meta) {
+                // Calculate serial number based on row index
+                return meta.row + meta.settings._iDisplayStart + 1;
+            }
+        },
+        { data: "Sus_no", name: "Sus_no" },
+        { data: "Suffix", name: "Suffix" },
+        { data: "UnitName", name: "UnitName", orderable: false },
+        { data: "Abbreviation", name: "Abbreviation", orderable: false },
+        // Display user-friendly value for IsVerify
+        {
+            data: "IsVerify",
+            name: "IsVerify",
+            render: function (data, type, row) {
+                // Convert boolean to "Yes" or "No"
+                return data ? "<span class='badge badge-pill badge-success'>Verifed</span>" : "<span class='badge badge-pill badge-danger'>Not Verify</span>";
+            }
+        },
+        // Additional column for Edit action
+        {
+            data: null,
+            orderable: false,
+            render: function (data, type, row) {
+                return "<span id='btnedit'><button type='button' class='cls-btnedit btn btn-icon btn-round btn-warning mr-1'><i class='fas fa-edit'></i></button></span><button type='button' class='cls-btnDelete btn-icon btn-round btn-danger mr-1'><i class='fas fa-trash-alt'></i></button>";
+            }
+        }
         ],
         language: {
             search: "", // Remove the default "Search:" label
             searchPlaceholder: "UNIT SUS No" // Add custom placeholder
         },
-        dom: 'Bfrtip', // Add buttons to the DOM
+        dom: 'lBfrtip', // Add buttons to the DOM
         buttons: [
             {
             extend: 'copy',

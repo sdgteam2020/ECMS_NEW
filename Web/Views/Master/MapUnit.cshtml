@@ -49,45 +49,45 @@
 
         <div class="card-body">
             <div class="row">
-            <div class="col-xl-12">
-                <div class="mb-2 d-md-flex justify-content-md-between align-items-md-center">
-                    <h6 class="mb-3 mb-md-0">
-                      @*   Total Units <span id="lblTotal" class="ml-3 border border-light b px-2 py-1">0</span> *@
-                    </h6>
+                <div class="col-xl-12">
+                    <div class="mb-2 d-md-flex justify-content-md-between align-items-md-center">
+                        <h6 class="mb-3 mb-md-0">
+                            @*   Total Units <span id="lblTotal" class="ml-3 border border-light b px-2 py-1">0</span> *@
+                        </h6>
                         <div class="d-flex">
-                         <input class="" placeholder="Search SUS No" id="txtSerachunit" maxlength="10" pattern="^[a-zA-Z]*$" />
-                        <button type="button" id="btnMapUnitAdd" class="btn btn-outline-success font-weight-600 btn-sm">Add Unit</button>
+                            @* <input class="" placeholder="Search SUS No" id="txtSerachunit" maxlength="10" pattern="^[a-zA-Z]*$" /> *@
+                            <button type="button" id="btnMapUnitAdd" class="btn btn-outline-success font-weight-600 btn-sm">Add Unit</button>
+                        </div>
+
                     </div>
-                       
+                    <div class="table-responsive">
+                        <table class="table border border-purple table-striped no-footer dataTable table-hover" width="100%" role="grid" id="tbldata">
+                            <thead>
+                                <tr>
+                                    <th class="d-none">UnitMAP Id</th>
+                                    <th class="wd-40-f">S No</th>
+                                    <th class="nowrap">SUS No</th>
+                                    <th class="nowrap">Unit Name</th>
+                                    <th class="nowrap">Unit Type</th>
+                                    <th class="nowrap">Bde</th>
+                                    <th class="nowrap">Div / Sub Area</th>
+                                    <th class="nowrap">Corps / Area</th>
+                                    <th class="nowrap">Comd</th>
+                                    <th class="nowrap">Fmn /Branch </th>
+                                    <th class="nowrap">DG / Sub Dte</th>
+                                    <th class="nowrap">PSO /Dte</th>
+                                    <th class="nowrap">Status</th>
+                                    <th class="noExport nowrap">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="DetailBodyMapUnit">
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
-                <div class="table-responsive">
-                        <table class="table border border-purple table-striped no-footer dataTable table-hover" width="100%" role="grid" id="tblMapUnitdata">
-                        <thead>
-                            <tr>
-                                <th class="noExport d-none"></th>
-                                <th class="wd-40-f">S No</th>
-                                <th class="nowrap">SUS No</th>
-                                <th class="nowrap">Unit Name</th>
-                                <th class="nowrap">Unit Type</th>
-                                <th class="nowrap">Bde</th>
-                                <th class="nowrap">Div / Sub Area</th>
-                                <th class="nowrap">Corps / Area</th>
-                                <th class="nowrap">Comd</th>
-                                <th class="nowrap">Fmn /Branch </th>
-                                <th class="nowrap">DG / Sub Dte</th>
-                                <th class="nowrap">PSO /Dte</th>
-                                <th class="nowrap">Status</th>
-                                <th class="noExport nowrap">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody id="DetailBodyMapUnit">
-                        </tbody>
-                    </table>
-                </div>
+
+
             </div>
-
-
-        </div>
         </div>
 
 
@@ -98,7 +98,7 @@
 <script asp-src-include="~/developerjs/MapUnit.js"></script>
 
 <div class="modal fade" id="AddNewUnitmap" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-dialog modal-lg" role="dialog">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLabel">Enter Unit Details With Mapping</h5>

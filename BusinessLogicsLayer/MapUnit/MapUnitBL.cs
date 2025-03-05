@@ -41,11 +41,10 @@ namespace BusinessLogicsLayer.Unit
             return _UnitDB.GetALLByUnitName(Unitname);
         }
 
-        public Task<List<DTOMapUnitResponse>> GetALLUnit(DTOMHierarchyRequest unit,string Unit1)
+        public async Task<DTODataTablesResponse<DTOMapUnitResponse>> GetALLUnit(DTODataTablesRequestForMapUnit request)
         {
-           return _UnitDB.GetALLUnit(unit, Unit1);
+            return await _UnitDB.GetALLUnit(request);
         }
-
         public Task<bool> GetByName(MapUnit Data)
         {
             return _UnitDB.GetByName(Data); 

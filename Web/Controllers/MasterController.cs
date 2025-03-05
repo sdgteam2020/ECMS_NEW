@@ -694,11 +694,27 @@ namespace Web.Controllers
             }
 
         }
-        public async Task<IActionResult> GetAllMapUnit(DTOMHierarchyRequest Data,string Unit)
+        public async Task<IActionResult> GetAllMapUnit(DTODataTablesRequestForMapUnit dTO)
         {
             try
             {
-                return Json(await unitOfWork.MappUnit.GetALLUnit(Data, Unit));
+                if (ModelState.IsValid)
+                {
+                    return Json(await unitOfWork.MappUnit.GetALLUnit(dTO));
+                }
+                else
+                {
+                    List<DTOMapUnitResponse> dTOUserRegnResponses = new List<DTOMapUnitResponse>();
+                    var responseData = new DTODataTablesResponse<DTOMapUnitResponse>
+                    {
+                        draw = 0,
+                        recordsTotal = 0,
+                        recordsFiltered = 0,
+                        data = dTOUserRegnResponses
+                    };
+                    return Json(responseData);
+                    //return Json(ModelState.Select(x => x.Value?.Errors).Where(y => y?.Count > 0).ToList());
+                }
             }
             catch (Exception ex)
             {

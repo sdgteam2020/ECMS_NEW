@@ -7,21 +7,21 @@ var IsToken = true;
 var IsWithTokenApply = true;
 $(document).ready(function () {
 
-    $("#btnApplicantsPostingout").on("click", function () {
+    $("#btnApplicantsPostingout").on("click",function () {
         $("#armynosearchAllName").html("");
         $("#txtarmynosearchAll").val("");
         $("#armynosearchAllpic").attr("src", "");
         $("#unitoffrsModal").modal("show");
         $("#armynosearchTypeId").val(1);
     });
-    $("#btnApplicantsClose").on("click", function () {
+    $("#btnApplicantsClose").on("click",function () {
         $("#armynosearchAllName").html("");
         $("#txtarmynosearchAll").val("");
         $("#armynosearchAllpic").attr("src", "");
         $("#unitoffrsModal").modal("show");
         $("#armynosearchTypeId").val(2);
     });
-    $('#txtApplyForArmyNo').on("change", function (e) {
+    $('#txtApplyForArmyNo').on("change",function (e) {
         if ($('#txtApplyForArmyNo').val().length > 0) {
             $('#btnNext').removeClass("disabled");
         } else {
@@ -36,7 +36,7 @@ $(document).ready(function () {
         }
     });
 
-    $("#btnSercharmynoSmart").on("click", function () {
+    $("#btnSercharmynoSmart").on("click",function () {
         if ($("#armynosearchAllName").html() != "") {
 
             $("#unitoffrsModal").modal("hide");
@@ -52,7 +52,7 @@ $(document).ready(function () {
 
 
     });
-    $("#btnApplyCard").on("click", function () {
+    $("#btnApplyCard").on("click",function () {
 
         RegistrationApplyFor = 0;
 
@@ -63,7 +63,7 @@ $(document).ready(function () {
         //list += '';
         $("#btnarmytype").removeClass("d-none");
     });
-    $("#btnaddOffrs").on("click", function () {
+    $("#btnaddOffrs").on("click",function () {
         $("#btnaddOffrs").removeClass("btn-outline-primary");
         $("#btnaddOffrs").addClass("btn-primary");
 
@@ -77,7 +77,7 @@ $(document).ready(function () {
         GetAllRegistrationApplyFor(1);
 
     });
-    $("#btnJCOs").on("click", function () {
+    $("#btnJCOs").on("click",function () {
 
         $("#btnaddOffrs").removeClass("btn-primary");
         $("#btnaddOffrs").addClass("btn-outline-primary");
@@ -91,80 +91,86 @@ $(document).ready(function () {
 
         GetAllRegistrationApplyFor(2);
     });
-    $("#btntokenrefresh").on("click", async function () {
-        await GetTokenDetails("FetchUniqueTokenDetails", "txtApplyForArmyNo", "", "tokenmsg");
+    $("#btntokenrefresh").on("click",function () {
+        GetTokenDetails1("FetchUniqueTokenDetails", "txtApplyForArmyNo", "", "tokenmsg");
         $('#btnNext').removeClass("disabled");
     });
-    $("#btnNext").on("click", async function () {
+    $("#btnNext").on("click", function () {
         if ($("#txtApplyForArmyNo").val().length > 7 && $("#txtApplyForArmyNo").val().length < 10) {
             if (parseInt(OffType) == 1) {
                 if ((parseInt(RegistrationApplyFor) == 2 || parseInt(RegistrationApplyFor) == 3 || parseInt(RegistrationApplyFor) == 4 || parseInt(RegistrationApplyFor) == 10)) {
                     if (IsWithTokenApply == true) {
                         $("#txtApplyForArmyNo").val("");
-                        await GetTokenDetails("FetchUniqueTokenDetails", "txtApplyForArmyNo", "", "tokenmsg");
+                        GetTokenDetails1("FetchUniqueTokenDetails", "txtApplyForArmyNo", "", "tokenmsg");
                     }
                 }
                 else {
                     if (IsToken == true && parseInt(RegistrationApplyFor) == 1) {
                         $("#txtApplyForArmyNo").val("");
-                        await GetTokenDetails("FetchUniqueTokenDetails", "txtApplyForArmyNo", "", "tokenmsg");
+                        GetTokenDetails1("FetchUniqueTokenDetails", "txtApplyForArmyNo", "", "tokenmsg");
                     }
                 }
             }
-            if (parseInt(OffType) != 0 && parseInt(RegistrationApplyFor) != 0 && parseInt(lCardType) != 0) {
-                if (OffType == 1 && parseInt(RegistrationApplyFor) == 1) {
+            setTimeout(function () {   //calls click event after a certain time
 
-                    if ($("#txtApplyForArmyNo").val() === $("#aspntokenarmyno").html()) {
-                        IsValid = 1;
-                    } else {
 
-                        Message = "Please Inset Valid Token Token ArmyNo And Login ArmyNo Not Match";
-                        IsValid = 0;
+                if (parseInt(OffType) != 0 && parseInt(RegistrationApplyFor) != 0 && parseInt(lCardType) != 0) {
+                    if (OffType == 1 && parseInt(RegistrationApplyFor) == 1) {
+
+                        alert($("#txtApplyForArmyNo").val());
+                        alert($("#aspntokenarmyno").html());
+                        if ($("#txtApplyForArmyNo").val() == $("#aspntokenarmyno").html()) {
+                            IsValid = 1;
+                        } else {
+
+                            Message = "Please Inset Valid Token Token ArmyNo And Login ArmyNo Not Match";
+                            IsValid = 0;
+                        }
+
+
                     }
+                    if (OffType == 1 && parseInt(RegistrationApplyFor) == 2) {
 
 
-                }
-                if (OffType == 1 && parseInt(RegistrationApplyFor) == 2) {
+                        if ($("#txtApplyForArmyNo").val() != "") {
+                            IsValid = 1;
+                        }
+                        else {
 
+                            Message = "Please Inset Token";
+                            IsValid = 0;
+                        }
+                    }
+                    else if (OffType == 1 && parseInt(RegistrationApplyFor) != 1) {
+                        if ($("#txtApplyForArmyNo").val() != "") {
+                            IsValid = 1;
+                        }
+                        else {
+                            Message = "Please Enter Army No";
+                            IsValid = 0;
+                        }
+                    }
+                    else if (OffType == 2) {
+                        if ($("#txtApplyForArmyNo").val() == "") {
+                            IsValid = 0;
+                            Message = "Please Enter Army No";
+                        }
+                        else {
+                            IsValid = 1;
+                        }
+                    }
+                    if (IsValid == 1) {
 
-                    if ($("#txtApplyForArmyNo").val() != "") {
-                        IsValid = 1;
+                        CheckArmyNOExist();
                     }
                     else {
-
-                        Message = "Please Inset Token";
-                        IsValid = 0;
+                        toastr.error(Message);
                     }
-                }
-                else if (OffType == 1 && parseInt(RegistrationApplyFor) != 1) {
-                    if ($("#txtApplyForArmyNo").val() != "") {
-                        IsValid = 1;
-                    }
-                    else {
-                        Message = "Please Enter Army No";
-                        IsValid = 0;
-                    }
-                }
-                else if (OffType == 2) {
-                    if ($("#txtApplyForArmyNo").val() == "") {
-                        IsValid = 0;
-                        Message = "Please Enter Army No";
-                    }
-                    else {
-                        IsValid = 1;
-                    }
-                }
-                if (IsValid == 1) {
-
-                    CheckArmyNOExist();
                 }
                 else {
-                    toastr.error(Message);
+                    toastr.error("Invalid Selected");
                 }
-            }
-            else {
-                toastr.error("Invalid Selected");
-            }
+            }, 1000);
         }
         else {
             toastr.error("Army No minlength is eight character.");
@@ -255,7 +261,7 @@ function AddAllCardType() {
     $("#icardrequestfor").html(list);
 
     $('.applyforicard').click(function () {
-
+      
         $('.applyforicard').removeClass("btn-primary");
         $('.applyforicard').addClass("btn-outline-primary");
 
@@ -269,7 +275,7 @@ function AddAllCardType() {
 
         $("#txtApplyForArmyNo").addClass("d-none");
         $("#txtApplyForArmyNo").val("");
-        if (OffType == 1) {
+        if (OffType == 1 ) {
             GetByArmyNoIsToken($("#aspntokenarmyno").html());
         }
         else if (OffType == 2) {
