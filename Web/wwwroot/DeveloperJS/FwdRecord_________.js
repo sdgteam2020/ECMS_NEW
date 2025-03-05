@@ -14,10 +14,10 @@ var IsDigitalSignReq = true;
 var DataExportType = 1;
 $(function () {
 
-    $("#btntokenTofwd").on("click", async function () {
+    $("#btntokenTofwd").on("click", function () {
         $("#msgforfwd").html('');
 
-        await GetTokenvalidatepersid2fawiththumbprint($("#aspntokenarmyno").html(), "tokenmsgforfwd", "txtspnTokenArmyNo", "txtspnTokenthumbprint");
+        GetTokenvalidatepersid2fawiththumbprint($("#aspntokenarmyno").html(), "tokenmsgforfwd", "txtspnTokenArmyNo", "txtspnTokenthumbprint");
     });
     sessionStorage.removeItem('ArmyNo');
     $('#btnDataExports').on("click", function () {
@@ -55,7 +55,6 @@ $(function () {
             });
         }
     });
-
     $('#btnDataExportsEncry').on("click", function () {
         var lst = new Array();
 
@@ -398,7 +397,7 @@ $(function () {
         appendTo: '#suggesstion-box'
     });
 
-    $('#txtFwdName').on("keyup", function (e) {
+    $('#txtFwdName').on("keyup",function (e) {
         if (e.which == 46) {
             $(".spnFArmyNo").html("");
             $(".spnFtoname").html("");
@@ -411,19 +410,19 @@ $(function () {
         }
     });
 
-    $("#btnForward").on("click", async function () {
+    $("#btnForward").on("click", function () {
 
         if (parseInt(StepCounter) == 1 || parseInt(StepCounter) == 7 || parseInt(StepCounter) == 8 || parseInt(StepCounter) == 9 || parseInt(StepCounter) == 10) {
             if (parseInt($("#spnCurrentApplyFor").html()) == 1) {
                 let CurrentRegistrationApplyFor = parseInt($("#spnCurrentRegistrationApplyFor").html());
                 if (CurrentRegistrationApplyFor == 2 || CurrentRegistrationApplyFor == 3 || CurrentRegistrationApplyFor == 4 || CurrentRegistrationApplyFor == 10) {
                     if (IsWithTokenApply == true) {
-                        await GetTokenvalidatepersid2fawiththumbprint($("#spnServiceNo").html(), "tokenmsgforfwd", "txtspnTokenArmyNo", "txtspnTokenthumbprint");
+                        GetTokenvalidatepersid2fawiththumbprint($("#spnServiceNo").html(), "tokenmsgforfwd", "txtspnTokenArmyNo", "txtspnTokenthumbprint");
                     }
                 }
                 else {
                     if (IsToken == true && CurrentRegistrationApplyFor == 1) {
-                        await GetTokenvalidatepersid2fawiththumbprint($("#aspntokenarmyno").html(), "tokenmsgforfwd", "txtspnTokenArmyNo", "txtspnTokenthumbprint");
+                        GetTokenvalidatepersid2fawiththumbprint($("#aspntokenarmyno").html(), "tokenmsgforfwd", "txtspnTokenArmyNo", "txtspnTokenthumbprint");
                     }
                 }
             }
@@ -431,93 +430,95 @@ $(function () {
         else {
             // When executed stepCounter not 1-drafted,2-Pending,7-rejected request by CO
             if (IsToken == true) {
-                await GetTokenvalidatepersid2fawiththumbprint($("#aspntokenarmyno").html(), "tokenmsgforfwd", "txtspnTokenArmyNo", "txtspnTokenthumbprint");
+                GetTokenvalidatepersid2fawiththumbprint($("#aspntokenarmyno").html(), "tokenmsgforfwd", "txtspnTokenArmyNo", "txtspnTokenthumbprint");
             }
         }
 
-        if (parseInt(spnStepId) != 0) {
-            $("#msgforfwd").html('');
+        setTimeout(function () { //wait for txtspnTokenArmyNo
             if (parseInt(spnStepId) != 0) {
-                Swal.fire({
-                    title: 'Are you sure?',
-                    /*  text: "You want be Forward!",*/
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Yes, Forward it!'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        if (parseInt($("#spnFwdToAspNetUsersId").html()) != 0) {
-                            var spnRequestId = $("#spnCurrentspnRequestId").html();
+                $("#msgforfwd").html('');
+                if (parseInt(spnStepId) != 0) {
+                    Swal.fire({
+                        title: 'Are you sure?',
+                        /*  text: "You want be Forward!",*/
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Yes, Forward it!'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            if (parseInt($("#spnFwdToAspNetUsersId").html()) != 0) {
+                                var spnRequestId = $("#spnCurrentspnRequestId").html();
 
-                            var Counter = parseInt($("#spnStepCounter").html());
-                            if (Counter == 1 || Counter == 7 || Counter == 8 || Counter == 9 || Counter == 10) {
-                                Counter = 2;
-                            } else {
-                                Counter = parseInt($("#spnStepCounter").html()) + 1;
-                            }
+                                var Counter = parseInt($("#spnStepCounter").html());
+                                if (Counter == 1 || Counter == 7 || Counter == 8 || Counter == 9 || Counter == 10) {
+                                    Counter = 2;
+                                } else {
+                                    Counter = parseInt($("#spnStepCounter").html()) + 1;
+                                }
 
-                            if (parseInt(StepCounter) == 1 || parseInt(StepCounter) == 7 || parseInt(StepCounter) == 8 || parseInt(StepCounter) == 9 || parseInt(StepCounter) == 10) {
-                                if (parseInt($("#spnCurrentApplyFor").html()) == 1) {
-                                    let CurrentRegistrationApplyFor = parseInt($("#spnCurrentRegistrationApplyFor").html());
-                                    if (CurrentRegistrationApplyFor == 2 || CurrentRegistrationApplyFor == 3 || CurrentRegistrationApplyFor == 4 || CurrentRegistrationApplyFor == 10) {
-                                        if (IsWithTokenApply == true) {
-                                            if ($("#spnServiceNo").html() == $("#txtspnTokenArmyNo").val()) {
-                                                IsDigitalSignReq = true;
+                                if (parseInt(StepCounter) == 1 || parseInt(StepCounter) == 7 || parseInt(StepCounter) == 8 || parseInt(StepCounter) == 9 || parseInt(StepCounter) == 10) {
+                                    if (parseInt($("#spnCurrentApplyFor").html()) == 1) {
+                                        let CurrentRegistrationApplyFor = parseInt($("#spnCurrentRegistrationApplyFor").html());
+                                        if (CurrentRegistrationApplyFor == 2 || CurrentRegistrationApplyFor == 3 || CurrentRegistrationApplyFor == 4 || CurrentRegistrationApplyFor == 10) {
+                                            if (IsWithTokenApply == true) {
+                                                if ($("#spnServiceNo").html() == $("#txtspnTokenArmyNo").val()) {
+                                                    IsDigitalSignReq = true;
+                                                    UpdateStepCounter(spnStepId, spnRequestId, Counter, "A");
+                                                }
+                                            }
+                                            else {
+                                                IsDigitalSignReq = false;
                                                 UpdateStepCounter(spnStepId, spnRequestId, Counter, "A");
                                             }
                                         }
                                         else {
-                                            IsDigitalSignReq = false;
-                                            UpdateStepCounter(spnStepId, spnRequestId, Counter, "A");
+                                            if (IsToken == true && CurrentRegistrationApplyFor == 1) {
+                                                if (($("#aspntokenarmyno").html() == $("#txtspnTokenArmyNo").val()) && ($("#spnServiceNo").html() == $("#txtspnTokenArmyNo").val())) {
+                                                    IsDigitalSignReq = true;
+                                                    UpdateStepCounter(spnStepId, spnRequestId, Counter, "A");
+                                                }
+                                            }
+                                            else {
+                                                IsDigitalSignReq = false;
+                                                UpdateStepCounter(spnStepId, spnRequestId, Counter, "A");
+                                            }
                                         }
                                     }
                                     else {
-                                        if (IsToken == true && CurrentRegistrationApplyFor == 1) {
-                                            if (($("#aspntokenarmyno").html() == $("#txtspnTokenArmyNo").val()) && ($("#spnServiceNo").html() == $("#txtspnTokenArmyNo").val())) {
-                                                IsDigitalSignReq = true;
-                                                UpdateStepCounter(spnStepId, spnRequestId, Counter, "A");
-                                            }
-                                        }
-                                        else {
-                                            IsDigitalSignReq = false;
-                                            UpdateStepCounter(spnStepId, spnRequestId, Counter, "A");
-                                        }
+                                        IsDigitalSignReq = false;
+                                        UpdateStepCounter(spnStepId, spnRequestId, Counter, "A");
                                     }
                                 }
                                 else {
-                                    IsDigitalSignReq = false;
-                                    UpdateStepCounter(spnStepId, spnRequestId, Counter, "A");
+                                    // When executed stepCounter not 1-drafted,7,8,9 & 10-rejected request
+                                    if (IsToken == true) {
+                                        //alert("1" + $("#aspntokenarmyno").html());
+                                        //alert("2" + $("#txtspnTokenArmyNo").val());
+                                        if ($("#aspntokenarmyno").html() === $("#txtspnTokenArmyNo").val()) {
+                                            IsDigitalSignReq = true;
+                                            UpdateStepCounter(spnStepId, spnRequestId, Counter, "A");
+                                        }
+
+                                    }
+                                    else {
+                                        IsDigitalSignReq = false;
+                                        UpdateStepCounter(spnStepId, spnRequestId, Counter, "A");
+                                    }
                                 }
                             }
                             else {
-                                // When executed stepCounter not 1-drafted,7,8,9 & 10-rejected request
-                                if (IsToken == true) {
-                                    //alert("1" + $("#aspntokenarmyno").html());
-                                    //alert("2" + $("#txtspnTokenArmyNo").val());
-                                    if ($("#aspntokenarmyno").html() === $("#txtspnTokenArmyNo").val()) {
-                                        IsDigitalSignReq = true;
-                                        UpdateStepCounter(spnStepId, spnRequestId, Counter, "A");
-                                    }
-
-                                }
-                                else {
-                                    IsDigitalSignReq = false;
-                                    UpdateStepCounter(spnStepId, spnRequestId, Counter, "A");
-                                }
+                                toastr.error("Please Select Officer ");
                             }
                         }
-                        else {
-                            toastr.error("Please Select Officer ");
-                        }
-                    }
-                })
+                    })
+                }
             }
-        }
-        else {
-            $("#msgforfwd").html('<div class="mt-4 alert alert-danger alert-dismissible fade show "><i class="fa fa-check " aria-hidden="true"></i><span class="m-lg-2">Please Correct Token insert and Click refresh Button </span></div>');
-        }
+            else {
+                $("#msgforfwd").html('<div class="mt-4 alert alert-danger alert-dismissible fade show "><i class="fa fa-check " aria-hidden="true"></i><span class="m-lg-2">Please Correct Token insert and Click refresh Button </span></div>');
+            }
+        }, 1000);
     });
 
     $("#btnRejected").on("click", function () {
@@ -601,7 +602,7 @@ $(function () {
                             });
                         } else {
                             var url = "https://" + window.location.host + '/WriteReadData/CSVFile/' + response + ".csv";
-                            window.location.href = url;
+                            window.location.href = url; 
                         }
                     }
                 },
@@ -1010,26 +1011,26 @@ function ForwardTo(RequestId, HType) {
         success: function (response) {
             if (response != "null" && response != null) {
 
-                // if ($("#txtspnTokenArmyNo").val() != "") {
-                if (HType == 2 || HType == 3 || HType == 4 || HType == 5) {
-                    var lsts = new Array();
-                    var ids = $("#spnCurrentspnRequestId").html();
-                    lsts.push(ids);
-                    if (IsToken == true) {
+               // if ($("#txtspnTokenArmyNo").val() != "") {
+                    if (HType == 2 || HType == 3 || HType == 4 || HType == 5) {
+                        var lsts = new Array();
+                        var ids = $("#spnCurrentspnRequestId").html();
+                        lsts.push(ids);
+                        if (IsToken == true) {
+                           
+                            DataSignDigitaly(lsts, "tokenmsgforfwd", response.RequestId, HType);
+                           
 
-                        DataSignDigitaly(lsts, "tokenmsgforfwd", response.RequestId, HType);
+                         //   DownloadPdf(RequestId);
+                        } else {
+                            DataSignDigitaly(lsts, "tokenmsgforfwd", response.RequestId, HType);
+                            //setTimeout(function () {
+                            //    location.reload();
+                            //}, 2000);
+                        }
 
 
-                        //   DownloadPdf(RequestId);
-                    } else {
-                        DataSignDigitaly(lsts, "tokenmsgforfwd", response.RequestId, HType);
-                        //setTimeout(function () {
-                        //    location.reload();
-                        //}, 2000);
-                    }
-
-
-                    // }
+                   // }
                     //else {
                     //    setTimeout(function () {
                     //        location.reload();
@@ -1202,7 +1203,7 @@ function DataExport(Data) {
     });
 }
 
-function DataSignDigitaly(Data, msgid, RequestId, stepId) {
+function DataSignDigitaly(Data, msgid, RequestId,stepId) {
     var userdata = {
         "Ids": Data,
         "StepId": stepId
@@ -1219,7 +1220,7 @@ function DataSignDigitaly(Data, msgid, RequestId, stepId) {
                         text: errormsg
                     });
                 } else {
-                    if (IsDigitalSignReq == true) {
+                    if (IsDigitalSignReq == true) { 
                         if (response.Id == undefined) {
                             var xmlString = jsonToXml(response);
                             GetTokenSignXml(xmlString, msgid, RequestId, 0)
@@ -1263,7 +1264,7 @@ function DataSignDigitaly(Data, msgid, RequestId, stepId) {
 
 function GetTokenSignXml(xml, msgid, RequestId, Id) {
     $.ajax({
-        url: HostUrlDGISToken + '/Temporary_Listen_Addresses/SignXml',
+        url: HostUrl +'/Temporary_Listen_Addresses/SignXml',
         type: "POST",
         contentType: 'application/xml', // Set content type to XML
         data: xml, // Set the XML data
@@ -1400,10 +1401,10 @@ function DownloadPdf(RequestId) {
 
 
                     //  window.open('/DigitallysignaturePdf/' + response, '_blank');
-                    //  if ($("#aspntokenarmyno").html() == $("#txtspnTokenArmyNo").val()) {
+                  //  if ($("#aspntokenarmyno").html() == $("#txtspnTokenArmyNo").val()) {
                     var url = "https://" + window.location.host + '/DigitallysignaturePdf/' + response;
                     window.open(url, '_blank');
-                    // digitalpdfsignature($("#txtspnTokenthumbprint").val(), url, '40', '65', RequestId);
+                   // digitalpdfsignature($("#txtspnTokenthumbprint").val(), url, '40', '65', RequestId);
 
                     // }
                     //var blob = new Blob([JSON.stringify(response, null, "\t")], { type: "application/json" });
@@ -1447,7 +1448,7 @@ function DownloadPdf(RequestId) {
 function digitalpdfsignature(Thumbprint, pdfpath, XCoordinate, YCoordinate, RequestId) {
     $("#loadingToken").show();
     $.ajax({
-        url: HostUrlDGISToken + '/Temporary_Listen_Addresses/ByteDigitalSignAsync',
+        url: HostUrl +'/Temporary_Listen_Addresses/ByteDigitalSignAsync',
         type: "Post",
         contentType: 'application/json; charset=utf-8',
         'data': JSON.stringify([{
@@ -1465,7 +1466,7 @@ function digitalpdfsignature(Thumbprint, pdfpath, XCoordinate, YCoordinate, Requ
                 // No Token Found
                 if (response.Valid) {
 
-                    // base64toPDF(response.Message);
+                   // base64toPDF(response.Message);
                     digitalpdfsignatureSave(RequestId, response.Message);
                     toastr.success('Pdf Digital Sign Sucess');
                     setTimeout(function () {
@@ -1513,7 +1514,7 @@ function digitalpdfsignatureSave(RequestId, base64) {
                     //  if ($("#aspntokenarmyno").html() == $("#txtspnTokenArmyNo").val()) {
                     var url = "https://" + window.location.host + '/DigitallysignaturePdf/' + response;
                     window.open(url, '_blank');
-
+                  
                 }
 
 
@@ -1647,7 +1648,7 @@ function GetByArmyNoIsToken(ArmyNo, OffType, RegApplyFor, stepCounter) {
                             else {
                                 $("#btntokenTofwd").addClass("d-none");
                             }
-
+                            
                         }
                     }
                 }

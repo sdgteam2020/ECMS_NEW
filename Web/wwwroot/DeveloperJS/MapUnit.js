@@ -1,6 +1,7 @@
-$(document).ready(function () {
+﻿var table; // Declare table variable outside the function to preserve the instance
+$(function () {
     mMsater(0, "ddlCommand", 1, "");
-    BindDataMapUnit()
+    BindDataMapUnit();
 
     $("#txtSusno").autocomplete({
         source: function (request, response) {
@@ -57,15 +58,15 @@ $(document).ready(function () {
         appendTo: '#suggesstion-box'
     });
 
-    $('#txtSusno').keyup(function (e) {
-        if (e.keyCode == 46) {
-            $("#spnUnitId").html('0');
-            $("#txtSusno").val('');
-            $("#lblUnit").html('');
+    document.getElementById('txtSusno').addEventListener('keyup', function (e) {
+        if (e.key === 'Delete') { // Use `e.key` instead of `e.keyCode`
+            document.getElementById('spnUnitId').innerHTML = '0';
+            document.getElementById('txtSusno').value = '';
+            document.getElementById('lblUnit').innerHTML = '';
         }
     });
 
-    $('input[name="UnitTyperdi"]').click(function () {
+    $('input[name="UnitTyperdi"]').on("click",function () {
         var lst = '<option value="1">Please Select</option>';
         var val = $("input[type='radio'][name=UnitTyperdi]:checked").val();
         if (val == "1") {
@@ -122,105 +123,77 @@ $(document).ready(function () {
 
         }
     });
-    $("#btnMapUnitAdd").click(function () {
+    $("#btnMapUnitAdd").on("click",function () {
         ResetMapUnit();
         $("#AddNewUnitmap").modal('show');
     });
-    $("#txtSerachunit").keyup(function () {
-        BindDataMapUnit()
-    });
     $('#ddlCommand').on('change', function () {
         mMsater(0, "ddlCorps", 2, $('#ddlCommand').val());
-        BindDataMapUnit();
     });
 
     $('#ddlCorps').on('change', function () {
-
         mMsaterByParent(0, "ddlDiv", 3, $('#ddlCommand').val(), $('#ddlCorps').val(), 0, 0); ///ComdId,CorpsId,DivId,BdeId
-        BindDataMapUnit();
     });
     $('#ddlDiv').on('change', function () {
-
         mMsaterByParent(0, "ddlBde", 4, $('#ddlCommand').val(), $('#ddlCorps').val(), $('#ddlDiv').val(), 0); ///ComdId,CorpsId,DivId,BdeId
-        BindDataMapUnit();
-
     });
-    $('#ddlBde').on('change', function () {
-        BindDataMapUnit();
-    });
-    $("#btnUnitMapReset").click(function () {
+    //$('#ddlBde').on('change', function () {
+    //    //BindDataMapUnit();
+    //});
+    $("#btnUnitMapReset").on("click",function () {
         ResetMapUnit();
     });
 
 
 
-    $("#btnUnitMapsave").click(function () {
-      
-        if ($("#SaveFormMapUnit")[0].checkValidity()) {
+    $("#btnUnitMapsave").on("click", function () {
+        try {
+            if ($("#SaveFormMapUnit")[0].checkValidity()) {
 
-            Swal.fire({
-                title: 'Are you sure?',
-                text: "",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes, Save it!'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    if (isNumeric($("#txtSusno").val().substring(0, 7)) == true && isNumeric($("#txtSusno").val().substring(8, 7)) == false) {
-                        SaveUnitWithMapping();
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, Save it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        if (isNumeric($("#txtSusno").val().substring(0, 7)) == true && isNumeric($("#txtSusno").val().substring(8, 7)) == false) {
+                            SaveUnitWithMapping();
+
+                        }
+                        else {
+                            toastr.error('SUSNO Should be first 7 digit Numeric and last digit alphaBat!');
+                        }
                     }
-                    else {
-                        toastr.error('SUSNO Should be first 7 digit Numeric and last digit alphaBat!');
-                    }
+                });
 
-                  
-                    //if ($("#SpnUnitMapId").html() == 0) {
-
-                    //    //$("#txtSusno").val().substring(0, 7), "UnitId": 0, "Suffix": $("#txtSusno").val().substring(8, 7),
-                    //    //alert($("#txtSusno").val().substring(8, 7))
-                    //    //alert(isNumeric($("#txtSusno").val().substring(8, 7)))
-
-                    //    if (isNumeric($("#txtSusno").val().substring(0, 7)) == true && isNumeric($("#txtSusno").val().substring(8, 7)) == false) {
-                    //        UnitSave();
-                    //    }
-                    //    else {
-                    //        toastr.error('SUSNO Should be first 7 digit Numeric and last digit alphaBat!');
-                    //    }
-                    //    // 
-                       
-                    //} else {
-                    //    SaveUnitMap();
-                    //}
-                }
-            })
-
-        } else {
-            $("#SaveFormMapUnit")[0].reportValidity();
+            } else {
+                $("#SaveFormMapUnit")[0].reportValidity();
+            }
         }
-
-
-
-        // 
-
+        catch (error) {
+        console.error("Error updating row:", error);
+        }
     });
-  
 
-    $('#btnMapUnitMultiDelete').click(function () {
+
+    $('#btnMapUnitMultiDelete').on("click",function () {
         var lst = new Array();
 
         if (memberTable.$('input[type="checkbox"]:checked').length > 0) {
 
             memberTable.$('input[type="checkbox"]:checked').each(function () {
 
-                
+
                 var id = $(this).attr("Id");
                 lst.push(id);
                 console.log(id);
 
             });
-          
+
             Swal.fire({
                 title: 'Are you sure?',
                 text: "You want to Delete",
@@ -231,7 +204,7 @@ $(document).ready(function () {
                 confirmButtonText: 'Yes, Delete it!'
             }).then((result) => {
                 if (result.value) {
-                   
+
                     DeleteMapUnitMultiple(lst);
 
                 }
@@ -243,7 +216,7 @@ $(document).ready(function () {
             });
         }
     });
-   
+
 
     //$('#txtSusno').on('input', function () {
     //    $("#txtUnit").val("");
@@ -254,472 +227,460 @@ $(document).ready(function () {
     //}
     //});
 });
-function GetUnitDetails(val,flag) {
-    var userdata =
-    {
-        "Sus_no": val,
-      
+async function GetUnitDetails(val, flag) {
+    const userdata = {
+        Sus_no: val,
     };
-    $.ajax({
-        url: '/Master/GetBySusNO',
-        contentType: 'application/x-www-form-urlencoded',
-        data: userdata,
-        type: 'POST',
 
-        success: function (response) {
-            if (response != "null" && response != null) {
+    try {
+        const response = await fetch('/Master/GetBySusNO', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: new URLSearchParams(userdata).toString(), // Convert object to URL-encoded string
+        });
 
-                if (response == InternalServerError) {
-                    Swal.fire({
-                        text: errormsg
-                    });
-                }
-                else if (response == 0) {
-                    $("#txtUnit").val(""); $("#SpnUnitMapId").html(0); $('#txtUnit').attr('readonly', false); 
-                }
-
-                else {
-
-                    $("#txtUnit").val(response.UnitName);
-                    $('#txtUnit').attr('readonly', true);
-                    $("#SpnUnitMapId").html(response.UnitId);
-                    
-                    if (flag == 2) {
-                        SaveUnitMap();
-                    }
-
-                }
-            }
-            else {
-                $("#txtUnit").val("");
-                $("#SpnUnitMapId").html(0);
-                $('#txtUnit').attr('readonly', false);
-            }
-        },
-        error: function (result) {
-            Swal.fire({
-                text: errormsg002
-            });
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
         }
-    });
+
+        const data = await response.json(); // Parse JSON response
+
+        if (data != null && data !== "null") {
+            if (data === InternalServerError) {
+                Swal.fire({
+                    text: errormsg,
+                });
+            } else if (data === 0) {
+                document.getElementById('txtUnit').value = '';
+                document.getElementById('SpnUnitMapId').innerHTML = '0';
+                document.getElementById('txtUnit').readOnly = false;
+            } else {
+                document.getElementById('txtUnit').value = data.UnitName;
+                document.getElementById('txtUnit').readOnly = true;
+                document.getElementById('SpnUnitMapId').innerHTML = data.UnitId;
+
+                if (flag == 2) {
+                    await SaveUnitMap();
+                }
+            }
+        } else {
+            document.getElementById('txtUnit').value = '';
+            document.getElementById('SpnUnitMapId').innerHTML = '0';
+            document.getElementById('txtUnit').readOnly = false;
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        Swal.fire({
+            text: errormsg002,
+        });
+    }
 }
 function BindDataMapUnit() {
-    var listItem = "";
-    var userdata =
-    {
-        "ComdId": $('#ddlCommand').val(),
-        "CorpsId": $('#ddlCorps').val(),
-        "DivId": $('#ddlDiv').val(),
-        "BdeId": $('#ddlBde').val(),
-        "Unit": $('#txtSerachunit').val(),
-    };
-    $.ajax({
-        url: '/Master/GetAllMapUnit',
-        contentType: 'application/x-www-form-urlencoded',
-        data: userdata,
-        type: 'POST',
+    $("#tbldata").DataTable().destroy();
+    //if ($.fn.DataTable.isDataTable("#tbldata")) {
+    //    $("#tbldata").DataTable().destroy();
+    //}
 
-        success: function (response) {
-            if (response != "null" && response != null) {
-               
-                if (response == InternalServerError) {
-                    Swal.fire({
-                        text: errormsg
-                    });
-                }
-                else if (response == 0) {
-                    $("#tblMapUnitdata").DataTable().destroy();
-
-                    $("#DetailBodyMapUnit").html(listItem);
-                    memberTable = $('#tblMapUnitdata').DataTable({
-                        "language": {
-                            "emptyTable": "No data available"
-                        }
-                    });
-
-
-                }
-                
-                else {
-                  
-                    for (var i = 0; i < response.length; i++) {
-
-                        listItem += "<tr>";
-                        listItem += "<td class='d-none'><span id='spnMapUnitId'>" + response[i].UnitMapId + "</span><span id='spnMUnitId'>" + response[i].UnitId + "</span><span id='spnMbdeId'>" + response[i].BdeId + "</span><span id='spnMDivId'>" + response[i].DivId + "</span>";
-                        listItem += "<span id='spnMcorpsId'>" + response[i].CorpsId + "</span><span id='spncomdId'>" + response[i].ComdId + "</span><span id='spnUnitType'>" + response[i].UnitType + "</span><span id='spnPsoId'>" + response[i].PsoId + "</span><span id='spnFmnBranchID'>" + response[i].FmnBranchID + "</span><span id='spnSubDteId'>" + response[i].SubDteId + "</span><span id='spnIsVerify'>" + response[i].IsVerify + "</span></td>";
-                        listItem += "<td class='align-middle'>" + (i + 1) + "</td>";
-                        listItem += "<td class='align-middle'><span id='Sus_no'>" + response[i].Sus_no + response[i].Suffix + "</span></td>";
-                        listItem += "<td class='align-middle'><span id='unitName'>" + response[i].UnitName + "</span></td>";
-
-                        if (parseInt(response[i].UnitType) == 1) {
-                            listItem += "<td class='align-middle'><span class='badge bg-primary'>Unit</span></td>";
-                        }
-                        else if (parseInt(response[i].UnitType) == 2) {
-                            listItem += "<td class='align-middle'><span class='badge bg-primary'>Fmn HQ</span></td>";
-
-                        } else if (parseInt(response[i].UnitType) == 3) {
-                            listItem += "<td class='align-middle'><span class='badge bg-primary'>Dte/Br</span></td>";
-                        }
-                        listItem += "<td class='align-middle'><span id='bdeName'>" + response[i].BdeName + "</span></td>";
-                        listItem += "<td class='align-middle'><span id='divName'>" + response[i].DivName + "</span></td>";
-                        listItem += "<td class='align-middle'><span id='corpsName'>" + response[i].CorpsName + "</span></td>";
-                        listItem += "<td class='align-middle'><span id='comdName'>" + response[i].ComdName + "</span></td>";
-                        listItem += "<td class='align-middle'><span id='BranchName'>" + response[i].BranchName + "</span></td>";
-                        listItem += "<td class='align-middle'><span id='SubDteName'>" + response[i].SubDteName + "</span></td>";
-                        listItem += "<td class='align-middle'><span id='PSOName'>" + response[i].PSOName + "</span></td>";
-
-                        if (response[i].IsVerify == true)
-                            listItem += "<td class='align-middle'><span id='unit_desc'><span class='badge badge-pill badge-success'>Verifed</span></span></td>";
-                        else
-                            listItem += "<td class='align-middle'><span id='unit_desc'><span class='badge badge-pill badge-danger'>Not Verify</span></span></td>";
-
-                        listItem += "<td class='align-middle'><span id='btnedit'><button type='button' class='cls-btnedit btn btn-icon btn-round btn-primary mr-1'><i class='fas fa-edit'></i></button></span><button type='button' class='cls-btnDelete btn-icon btn-round btn-danger mr-1'><i class='fas fa-trash-alt'></i></button></td>";
-
-                       
-                         /*    listItem += "<td class='nowrap'><button type='button' class='cls-btnSend btn btn-outline-success mr-1'>Send To Verification</button></td>";*/
-                        listItem += "</tr>";
-                    }
-
-                    $("#DetailBodyMapUnit").html(listItem);
-                    $("#lblTotal").html(response.length);
-                  
-                    memberTable = $('#tblMapUnitdata').DataTable({
-                        retrieve: true,
-                        lengthChange: false,
-                        searching: false,
-                        stateSave: true,
-                        "order": [[1, "asc"]],
-                        buttons: [{
-                            extend: 'copy',
-                            exportOptions: {
-                                columns: "thead th:not(.noExport)"
-                            }
-                        }, {
-                            extend: 'excel',
-                            exportOptions: {
-                                columns: "thead th:not(.noExport)"
-                            }
-                        }, {
-                            extend: 'pdfHtml5',
-                            orientation: 'landscape',
-                            pageSize: 'LEGAL',
-                            title: 'E-IASC_Map Unit',
-                            exportOptions: {
-                                columns: "thead th:not(.noExport)"
-                            },
-                            customize: function (doc) {
-                                WaterMarkOnPdf(doc)
-                            }
-                        }]
-                    });
-
-                    memberTable.buttons().container().appendTo('#tblMapUnitdata_wrapper .col-md-6:eq(0)');
-
-                    var rows;
-                    $("#tblMapUnitdata #chkAll").click(function () {
-                        if ($(this).is(':checked')) {
-                            rows = memberTable.rows({ 'search': 'applied' }).nodes();
-                            $('input[type="checkbox"]', rows).prop('checked', this.checked);
-                        }
-                        else {
-                            rows = memberTable.rows({ 'search': 'applied' }).nodes();
-                            $('input[type="checkbox"]', rows).prop('checked', this.checked);
-                        }
-                    });
-                    $('#DetailBodyMapUnit').on('change', 'input[type="checkbox"]', function () {
-                        if (!this.checked) {
-                            var el = $('#chkAll').get(0);
-                            if (el && el.checked && ('indeterminate' in el)) {
-                                el.indeterminate = true;
-                            }
-                        }
-                    });
-
-                    $("body").on("click", ".cls-btnedit", function () {
-                    
-                        $("#spnUnitMapId").html($(this).closest("tr").find("#spnMapUnitId").html());
-
-                        $("#spnUnitId").html($(this).closest("tr").find("#spnMUnitId").html());
-
-                        $("#lblUnit").html($(this).closest("tr").find("#unitName").html());
-                        $("#txtSusno").val($(this).closest("tr").find("#Sus_no").html());
-                        var lst = '<option value="1">Please Select</option>';
-                        if (parseInt($(this).closest("tr").find("#spnUnitType").html()) == 1) {
-                            $("#UnitType1").prop("checked", true);
-
-                            mMsater($(this).closest("tr").find("#spncomdId").html(), "ddlCommand", 1, "");
-                            mMsater($(this).closest("tr").find("#spnMcorpsId").html(), "ddlCorps", 2, $(this).closest("tr").find("#spncomdId").html());
-                            mMsaterByParent($(this).closest("tr").find("#spnMDivId").html(), "ddlDiv", 3, $(this).closest("tr").find("#spncomdId").html(), $(this).closest("tr").find("#spnMcorpsId").html(), 0, 0);///ComdId,CorpsId,DivId,BdeId
-                            mMsaterByParent($(this).closest("tr").find("#spnMbdeId").html(), "ddlBde", 4, $(this).closest("tr").find("#spncomdId").html(), $(this).closest("tr").find("#spnMcorpsId").html(), $(this).closest("tr").find("#spnMDivId").html(), 0);///ComdId,CorpsId,DivId,BdeId
-
-                            $(".unittype").removeClass("d-none");
-                            $(".FmnBranch").addClass("d-none");
-                            $(".DteBranch").addClass("d-none");
-
-                            $("#ddlFmnBranch").html(lst);
-                            $("#ddlPSODte").html(lst);
-                            $("#ddlDgSubDte").html(lst);
-                        }
-                        else if (parseInt($(this).closest("tr").find("#spnUnitType").html()) == 2)
-                        {
-                            $("#UnitType2").prop("checked", true);
-
-                            mMsater($(this).closest("tr").find("#spncomdId").html(), "ddlCommand", 1, "");
-                            mMsater($(this).closest("tr").find("#spnMcorpsId").html(), "ddlCorps", 2, $(this).closest("tr").find("#spncomdId").html());
-                            mMsaterByParent($(this).closest("tr").find("#spnMDivId").html(), "ddlDiv", 3, $(this).closest("tr").find("#spncomdId").html(), $(this).closest("tr").find("#spnMcorpsId").html(), 0, 0);///ComdId,CorpsId,DivId,BdeId
-                            mMsaterByParent($(this).closest("tr").find("#spnMbdeId").html(), "ddlBde", 4, $(this).closest("tr").find("#spncomdId").html(), $(this).closest("tr").find("#spnMcorpsId").html(), $(this).closest("tr").find("#spnMDivId").html(), 0);///ComdId,CorpsId,DivId,BdeId
-                            mMsater($(this).closest("tr").find("#spnFmnBranchID").html(), "ddlFmnBranch", FmnBranches, "");
-
-                            $("#ddlPSODte").html(lst);
-                            $("#ddlDgSubDte").html(lst);
-
-                            $(".unittype").removeClass("d-none");
-                            $(".FmnBranch").removeClass("d-none");
-                            $(".DteBranch").addClass("d-none");
-
-                        }
-                        else if (parseInt($(this).closest("tr").find("#spnUnitType").html()) == 3)
-                        {
-                            $("#UnitType3").prop("checked", true);
-
-                            mMsater($(this).closest("tr").find("#spnPsoId").html(), "ddlPSODte", PSO, "");
-                            mMsater($(this).closest("tr").find("#spnSubDteId").html(), "ddlDgSubDte", SubDte,"" );
-
-                            $(".unittype").addClass("d-none");
-                            $(".FmnBranch").addClass("d-none");
-                            $(".DteBranch").removeClass("d-none");
-
-                            $("#ddlFmnBranch").html(lst);
-                            $("#ddlCommand").html(lst);
-                            $("#ddlCorps").html(lst);
-                            $("#ddlCorps").html(lst);
-                            $("#ddlBde").html(lst);
-                            $("#ddlDiv").html(lst);
-                        }
-                        if ($(this).closest("tr").find("#spnIsVerify").html() == 'true') {
-                            $("#isverifyyes").prop("checked", true);
-                        }
-                        else {
-                            $("#isverifyno").prop("checked", true);
-                        }
-                       
-                        $("#AddNewUnitmap").modal('show');
-                        $("#btnMapUnitsave").val("Update");
-                    });
-
-
-                    $("body").on("click", ".cls-btnDelete", function () {
-
-                        Swal.fire({
-                            title: 'Are you sure?',
-                            text: "You want to Delete ",
-                            icon: 'warning',
-                            showCancelButton: true,
-                            confirmButtonColor: '#072697',
-                            cancelButtonColor: '#d33',
-                            confirmButtonText: 'Yes, Delete It!'
-                        }).then((result) => {
-                            if (result.value) {
-                                //alert($(this).closest("tr").find("#spnMbdeId").html());
-                                DeleteMapUnit($(this).closest("tr").find("#spnMapUnitId").html());
-
-                            }
-                        });
-                    });
-
-
-                }
-            }
-            else {
-                $("#tblMapUnitdata").DataTable().destroy();
-
-                $("#DetailBodyMapUnit").html(listItem);
-                memberTable = $('#tblMapUnitdata').DataTable({
-                    "language": {
-                        "emptyTable": "No data available"
-                    }
+    table = $("#tbldata").DataTable({
+        processing: true,
+        serverSide: true,
+        filter: true,
+        order: [[0, 'desc']], // Default sorting on the first column
+        ajax: async function (data, callback, settings) {
+            let userdata = {
+                ComdId: $('#ddlCommand').val(),
+                CorpsId: $('#ddlCorps').val(),
+                DivId: $('#ddlDiv').val(),
+                BdeId: $('#ddlBde').val(),
+                Unit: $('#txtSerachunit').val()
+            };
+            let requestData = {
+                draw: data.draw,
+                start: data.start,
+                length: data.length,
+                searchValue: data.search.value,
+                sortColumn: data.order.length > 0 ? data.columns[data.order[0].column].data : '',  // Add a check for data.order
+                sortDirection: data.order.length > 0 ? data.order[0].dir : '', // Add a check for data.order
+                ...userdata
+            };
+            try {
+                let response = await fetch("/Master/GetAllMapUnit", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                    body: new URLSearchParams(requestData).toString()
                 });
 
+                if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+
+                let result = await response.json();
+                callback(result); // Sends data to DataTables
+            } catch (error) {
+                console.error("Error fetching data:", error);
             }
         },
-        error: function (result) {
-            Swal.fire({
-                text: errormsg002
+        columns: [
+            { data: "UnitMapId", name: "UnitMapId", visible: false },
+            // Serial number column
+            {
+                data: null,
+                name: "SerialNumber",
+                orderable: false, // Disable sorting for this column
+                render: function (data, type, row, meta) {
+                    // Calculate serial number based on row index
+                    return meta.row + (meta.settings?._iDisplayStart || 0) + 1;
+                }
+            },
+            { data: "Sus_no", name: "Sus_no" },
+            { data: "UnitName", name: "UnitName", orderable: false },
+            // Display user-friendly value for UnitType
+            {
+                data: "UnitType",
+                name: "UnitType",
+                render: function (data) {
+                    let types = { 1: "Unit", 2: "Fmn HQ", 3: "Dte/Br" };
+                    return `<span class='badge bg-primary'>${types[data] || ""}</span>`;
+                }
+            },
+            { data: "BdeName", name: "BdeName", orderable: false },
+            { data: "DivName", name: "DivName" },
+            { data: "CorpsName", name: "CorpsName" },
+            { data: "ComdName", name: "ComdName" },
+            { data: "BranchName", name: "BranchName" },
+            { data: "SubDteName", name: "SubDteName" },
+            { data: "PSOName", name: "PSOName" },
+            // Display user-friendly value for IsVerify
+            {
+                data: "IsVerify",
+                name: "IsVerify",
+                render: function (data) {
+                    // Convert boolean to "Yes" or "No"
+                    return data ? "<span class='badge badge-success'>Verifed</span>" : "<span class='badge badge-danger'>Not Verify</span>";
+                }
+            },
+            // Additional column for Edit action
+            {
+                data: null,
+                orderable: false,
+                render: function (data, type, row) {
+                    return "<span id='btnedit'><button type='button' class='cls-btnedit btn btn-icon btn-round btn-warning mr-1'><i class='fas fa-edit'></i></button></span><button type='button' class='cls-btnDelete btn-icon btn-round btn-danger mr-1'><i class='fas fa-trash-alt'></i></button>";
+                }
+            }
+        ],
+        language: {
+            search: "", // Remove the default "Search:" label
+            searchPlaceholder: "UNIT SUS No" // Add custom placeholder
+        },
+        dom: 'lBfrtip', // Add buttons to the DOM
+        buttons: [
+            {
+                extend: 'copy',
+                exportOptions: {
+                    columns: "thead th:not(.noExport)"
+                }
+            },
+            {
+                extend: 'excel',
+                exportOptions: {
+                    columns: "thead th:not(.noExport)"
+                }
+            },
+            {
+                extend: 'pdfHtml5',
+                orientation: 'landscape',
+                pageSize: 'LEGAL',
+                title: 'E-IASC_Unit',
+                exportOptions: {
+                    columns: "thead th:not(.noExport)"
+                },
+                customize: function (doc) {
+                    WaterMarkOnPdf(doc)
+                }
+            }],
+        drawCallback: function (settings) {
+            // Re-bind the click event after each draw
+            $("#tbldata tbody").off("click", ".cls-btnedit").on("click", ".cls-btnedit", function () {
+                var rowData = table.row($(this).closest("tr")).data();
+
+                if (rowData != null) {
+                    $("#spnUnitMapId").html(rowData.UnitMapId);
+                    $("#spnUnitId").html(rowData.UnitId);
+                    $("#lblUnit").html(rowData.UnitName);
+                    $("#txtSusno").val(rowData.Sus_no);
+
+                    var lst = '<option value="1">Please Select</option>';
+
+                    if (rowData.UnitType == 1) {
+                        $("#UnitType1").prop("checked", true);
+
+                        mMsater(rowData.ComdId, "ddlCommand", 1, "");
+                        mMsater(rowData.CorpsId, "ddlCorps", 2, rowData.ComdId);
+                        mMsaterByParent(rowData.DivId, "ddlDiv", 3, rowData.ComdId, rowData.CorpsId, 0, 0);///ComdId,CorpsId,DivId,BdeId
+                        mMsaterByParent(rowData.BdeId, "ddlBde", 4, rowData.ComdId, rowData.CorpsId, rowData.DivId, 0);///ComdId,CorpsId,DivId,BdeId
+
+                        $(".unittype").removeClass("d-none");
+                        $(".FmnBranch").addClass("d-none");
+                        $(".DteBranch").addClass("d-none");
+
+                        $("#ddlFmnBranch").html(lst);
+                        $("#ddlPSODte").html(lst);
+                        $("#ddlDgSubDte").html(lst);
+                    }
+                    else if (rowData.UnitType == 2) {
+                        $("#UnitType2").prop("checked", true);
+
+                        mMsater(rowData.ComdId, "ddlCommand", 1, "");
+                        mMsater(rowData.CorpsId, "ddlCorps", 2, rowData.ComdId);
+                        mMsaterByParent(rowData.DivId, "ddlDiv", 3, rowData.ComdId, rowData.CorpsId, 0, 0);///ComdId,CorpsId,DivId,BdeId
+                        mMsaterByParent(rowData.BdeId, "ddlBde", 4, rowData.ComdId, rowData.CorpsId, rowData.DivId, 0);///ComdId,CorpsId,DivId,BdeId
+                        mMsater(rowData.FmnBranchID, "ddlFmnBranch", FmnBranches, "");
+
+                        $("#ddlPSODte").html(lst);
+                        $("#ddlDgSubDte").html(lst);
+
+                        $(".unittype").removeClass("d-none");
+                        $(".FmnBranch").removeClass("d-none");
+                        $(".DteBranch").addClass("d-none");
+
+                    }
+                    else if (rowData.UnitType == 3) {
+                        $("#UnitType3").prop("checked", true);
+
+                        mMsater(rowData.PsoId, "ddlPSODte", PSO, "");
+                        mMsater(rowData.SubDteId, "ddlDgSubDte", SubDte, "");
+
+                        $(".unittype").addClass("d-none");
+                        $(".FmnBranch").addClass("d-none");
+                        $(".DteBranch").removeClass("d-none");
+
+                        $("#ddlFmnBranch").html(lst);
+                        $("#ddlCommand").html(lst);
+                        $("#ddlCorps").html(lst);
+                        $("#ddlCorps").html(lst);
+                        $("#ddlBde").html(lst);
+                        $("#ddlDiv").html(lst);
+                    }
+                    if (rowData.IsVerify === true) {
+                        $("#isverifyyes").prop("checked", true);
+                    }
+                    else {
+                        $("#isverifyno").prop("checked", true);
+                    }
+
+                    $("#AddNewUnitmap").modal('show');
+                    $("#btnMapUnitsave").val("Update");
+
+                }
+            });
+            $("#tbldata tbody").off("click", ".cls-btnDelete").on("click", ".cls-btnDelete", function () {
+                var rowData = table.row($(this).closest("tr")).data();
+                if (rowData != null) {
+                    Swal.fire({
+                        title: 'Are you sure?',
+                        text: "You want to Delete ",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#072697',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Yes, Delete It!'
+                    }).then((result) => {
+                        if (result.value) {
+                            DeleteMapUnit(rowData.UnitMapId);
+                        }
+                    });
+                }
             });
         }
     });
-
 }
-function SaveUnitWithMapping() {
-    $.ajax({
-        url: '/Master/SaveUnitWithMapping',
-        type: 'POST',
-        data: {
-            "UnitId": $("#spnUnitId").html(),
-            "UnitMapId": $("#spnUnitMapId").html(),
-            "Sus_no": $("#txtSusno").val().trim().substring(0, 7),
-            "Suffix": $("#txtSusno").val().trim().substring(8, 7),
-            "IsVerify": $("input[type='radio'][name=IsVerify]:checked").val(),
-            "UnitType": $("input[type='radio'][name=UnitTyperdi]:checked").val(),
-            "ComdId": $("#ddlCommand").val(),
-            "CorpsId": $("#ddlCorps").val(),
-            "DivId": $("#ddlDiv").val(),
-            "BdeId": $("#ddlBde").val(),
-            "PsoId": $("#ddlPSODte").val(),
-            "FmnBranchID": $("#ddlFmnBranch").val(),
-            "SubDteId": $("#ddlDgSubDte").val()
-        },
-        success: function (result) {
-            if (result == DataSave) {
+
+ function SaveUnitWithMapping() {
+    const data = {
+        UnitId: document.getElementById('spnUnitId').innerHTML,
+        UnitMapId: document.getElementById('spnUnitMapId').innerHTML,
+        Sus_no: document.getElementById('txtSusno').value.trim().substring(0, 7),
+        Suffix: document.getElementById('txtSusno').value.trim().substring(8, 7),
+        IsVerify: document.querySelector('input[type="radio"][name="IsVerify"]:checked')?.value,
+        UnitType: document.querySelector('input[type="radio"][name="UnitTyperdi"]:checked')?.value,
+        ComdId: document.getElementById('ddlCommand').value,
+        CorpsId: document.getElementById('ddlCorps').value,
+        DivId: document.getElementById('ddlDiv').value,
+        BdeId: document.getElementById('ddlBde').value,
+        PsoId: document.getElementById('ddlPSODte').value,
+        FmnBranchID: document.getElementById('ddlFmnBranch').value,
+        SubDteId: document.getElementById('ddlDgSubDte').value,
+    };
+
+    try {
+        fetch('/Master/SaveUnitWithMapping', {
+            method: 'POST',
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: new URLSearchParams(data).toString()
+        }).then(response => {
+            // Handle the response
+            return response.json();
+        }).then(result => {
+            if (result === DataSave) {
                 Swal.fire({
                     icon: 'info',
                     title: 'Unit',
                     html: 'Unit has been successfully mapped',
-                })
-                $("#AddNewUnitmap").modal('hide'); 
-                ResetMapUnit();
+                });
+                $('#AddNewUnitmap').modal('hide'); // Hide modal
                 BindDataMapUnit();
-            }
-            else if (result == DataUpdate) {
+                ResetMapUnit();
+            } else if (result === DataUpdate) {
                 Swal.fire({
                     icon: 'info',
                     title: 'Unit',
                     html: 'Unit has been successfully updated',
-                })
-                $("#AddNewUnitmap").modal('hide');
-                ResetMapUnit();
+                });
+                $('#AddNewUnitmap').modal('hide'); // Hide modal
                 BindDataMapUnit();
-            }
-            else if (result == DataExists) {
+                ResetMapUnit();
+            } else if (result === DataExists) {
                 Swal.fire({
                     icon: 'error',
                     title: 'Oops...',
                     text: 'Unit Already Exist!',
-                })
-
-            }
-            else if (result == InternalServerError) {
+                });
+            } else if (result === InternalServerError) {
                 Swal.fire({
                     icon: 'error',
                     title: 'Oops...',
                     text: 'Something went wrong or Invalid Entry!',
-
-                })
-
-            } else {
-                if (result.length > 0) {
-                    for (var i = 0; i < result.length; i++) {
-                        toastr.error(result[i][0].ErrorMessage)
-                    }
-                }
+                });
+            } else if (Array.isArray(result) && result.length > 0) {
+                result.forEach((error) => {
+                    toastr.error(error[0].ErrorMessage); // Display error messages
+                });
             }
-        }
-    });
+        });
+  
+    } catch (error) {
+        console.error('Error:', error);
+        Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'An error occurred while saving the unit.',
+        });
+    }
 }
 
-function UnitSave() {
+async function UnitSave() {
+    const data = {
+        Sus_no: document.getElementById('txtSusno').value.substring(0, 7),
+        UnitId: 0,
+        Suffix: document.getElementById('txtSusno').value.substring(8, 7),
+        UnitName: document.getElementById('txtUnit').value,
+        IsVerify: false,
+    };
 
-    /*  alert($('#bdaymonth').val());*/
+    try {
+        const response = await fetch('/Master/SaveUnit', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json', // Use JSON for modern APIs
+            },
+            body: JSON.stringify(data), // Convert data to JSON
+        });
 
-    $.ajax({
-        url: '/Master/SaveUnit',
-        type: 'POST',
-        data: { "Sus_no": $("#txtSusno").val().substring(0, 7), "UnitId": 0, "Suffix": $("#txtSusno").val().substring(8, 7), "UnitName": $("#txtUnit").val(), "IsVerify": false }, //get the search string
-        success: function (result) {
-
-
-            if (result == DataSave) {
-                toastr.success('Unit has been saved');
-                GetUnitDetails($("#txtSusno").val(),2);
-                /*  $("#AddNewM").modal('hide');*/
-               
-            }
-            else if (result == DataUpdate) {
-                toastr.success('Unit has been Updated');
-
-                /*  $("#AddNewM").modal('hide');*/
-              
-              
-            }
-            else if (result == DataExists) {
-
-                toastr.error('Unit Name Exits!');
-
-            }
-            else if (result == InternalServerError) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Oops...',
-                    text: 'Something went wrong or Invalid Entry!',
-
-                })
-
-            } else {
-                if (result.length > 0) {
-                    for (var i = 0; i < result.length; i++) {
-                        toastr.error(result[i][0].ErrorMessage)
-                    }
-
-
-                }
-
-
-            }
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
         }
-    });
+
+        const result = await response.json(); // Parse JSON response
+
+        if (result === DataSave) {
+            toastr.success('Unit has been saved');
+            await GetUnitDetails(document.getElementById('txtSusno').value, 2); // Call GetUnitDetails with await
+        } else if (result === DataUpdate) {
+            toastr.success('Unit has been Updated');
+        } else if (result === DataExists) {
+            toastr.error('Unit Name Exits!');
+        } else if (result === InternalServerError) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Something went wrong or Invalid Entry!',
+            });
+        } else if (Array.isArray(result) && result.length > 0) {
+            result.forEach((error) => {
+                toastr.error(error[0].ErrorMessage); // Display error messages
+            });
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'An error occurred while saving the unit.',
+        });
+    }
 }
-function SaveUnitMap() {
 
-    /*  alert($('#bdaymonth').val());*/
-   
-    $.ajax({
-        url: '/Master/SaveMapUnit',
-        type: 'POST',
-        data: { "UnitName": $("#txtUnit").val(), "ComdId": $("#ddlCommand").val(), "CorpsId": $("#ddlCorps").val(), "DivId": $("#ddlDiv").val(), "BdeId": $("#ddlBde").val(), "UnitMapId": $("#spnUnitMapUnitId").html(), "UnitId": $("#SpnUnitMapId").html(), "UnitType": $("input[type='radio']:checked").val(), "PsoId": $("#ddlPSODte").val(), "FmnBranchID": $("#ddlFmnBranch").val(), "SubDteId": $("#ddlDgSubDte").val() }, //get the search string
-        success: function (result) {
+async function SaveUnitMap() {
+    const data = {
+        UnitName: document.getElementById('txtUnit').value,
+        ComdId: document.getElementById('ddlCommand').value,
+        CorpsId: document.getElementById('ddlCorps').value,
+        DivId: document.getElementById('ddlDiv').value,
+        BdeId: document.getElementById('ddlBde').value,
+        UnitMapId: document.getElementById('spnUnitMapUnitId').innerHTML,
+        UnitId: document.getElementById('SpnUnitMapId').innerHTML,
+        UnitType: document.querySelector('input[type="radio"]:checked')?.value,
+        PsoId: document.getElementById('ddlPSODte').value,
+        FmnBranchID: document.getElementById('ddlFmnBranch').value,
+        SubDteId: document.getElementById('ddlDgSubDte').value,
+    };
 
+    try {
+        const response = await fetch('/Master/SaveMapUnit', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json', // Use JSON for modern APIs
+            },
+            body: JSON.stringify(data), // Convert data to JSON
+        });
 
-            if (result == DataSave) {
-
-
-                toastr.success('Unit has been saved');
-                ResetMapUnit();
-                BindDataMapUnit();
-                $("#AddNewUnitmap").modal('hide');
-            }
-            else if (result == DataUpdate) {
-
-
-                toastr.success('Unit has been Updated');
-                ResetMapUnit();
-                BindDataMapUnit();
-                $("#AddNewUnitmap").modal('hide');
-
-            }
-            else if (result == DataExists) {
-
-                toastr.error('Unit Name Exits!');
-            }
-            else if (result == InternalServerError) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Oops...',
-                    text: 'Something went wrong or Invalid Entry!',
-
-                })
-
-            } else {
-                if (result.length > 0) {
-                    for (var i = 0; i < result.length; i++) {
-                        toastr.error(result[i][0].ErrorMessage)
-                    }
-
-
-                }
-
-            }
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
         }
-    });
+
+        const result = await response.json(); // Parse JSON response
+
+        if (result === DataSave) {
+            toastr.success('Unit has been saved');
+            ResetMapUnit();
+            BindDataMapUnit();
+            $('#AddNewUnitmap').modal('hide'); // Hide modal
+        } else if (result === DataUpdate) {
+            toastr.success('Unit has been Updated');
+            ResetMapUnit();
+            BindDataMapUnit();
+            $('#AddNewUnitmap').modal('hide'); // Hide modal
+        } else if (result === DataExists) {
+            toastr.error('Unit Name Exits!');
+        } else if (result === InternalServerError) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Something went wrong or Invalid Entry!',
+            });
+        } else if (Array.isArray(result) && result.length > 0) {
+            result.forEach((error) => {
+                toastr.error(error[0].ErrorMessage); // Display error messages
+            });
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'An error occurred while saving the unit mapping.',
+        });
+    }
 }
 
 function ResetMapUnit() {
@@ -751,7 +712,7 @@ function DeleteMapUnit(Id) {
         contentType: 'application/x-www-form-urlencoded',
         data: userdata,
         type: 'POST',
-        success: function (response) {
+        success: async function (response) {
             if (response != "null") {
                 if (response == InternalServerError) {
                     Swal.fire({
@@ -793,7 +754,7 @@ function DeleteMapUnit(Id) {
 }
 
 function DeleteMapUnitMultiple(Id) {
-   
+
     var userdata =
     {
         "ints": Id,
@@ -804,7 +765,7 @@ function DeleteMapUnitMultiple(Id) {
         contentType: 'application/x-www-form-urlencoded',
         data: userdata,
         type: 'POST',
-        success: function (response) {
+        success: async function (response) {
             if (response != "null") {
                 if (response == InternalServerError) {
                     Swal.fire({

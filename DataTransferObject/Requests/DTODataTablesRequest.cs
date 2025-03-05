@@ -54,4 +54,19 @@ namespace DataTransferObject.Requests
         public bool Orderable { get; set; }
         public DataTablesSearch Search { get; set; }
     }
+    public class DTODataTablesRequestForMapUnit : DTODataTablesRequest
+    {
+        public int? TableId { get; set; }
+        public int? ComdId { get; set; }
+
+        public int? CorpsId { get; set; }
+
+        public int? DivId { get; set; }
+
+        public int? BdeId { get; set; }
+        public int? FmnBranchID { get; set; }
+        public int? PsoId { get; set; }
+        public int? SubDteId { get; set; }
+        public int? UnitMapId { get; set; }
+    }
 }
