@@ -387,14 +387,14 @@ function GetCount() {
                     var countpending = 0;
                     for (var j = 0; j < RecordJco.length; j++) {
                         countpending = 0;
-                        ItemlistR += '<div class="c-dashboardInfo col-lg-1 col-sm-6"><a href="#"><span class="d-none applyTypeId">2</span>';
+                        ItemlistR += '<div class="c-dashboardInfo col-lg-1 col-sm-6"><a href="#"><span class="d-none applyTypeId">' + RecordJco[j].RecordOfficeId +'</span>';
                         ItemlistR += '<div class="wrap">';
                         ItemlistR += '<h4 class="heading heading5 hind-font medium-font-weight c-dashboardInfo__title">';
                         ItemlistR += '' + RecordJco[j].Name + '';
                         ItemlistR += '</h4>';
                         for (var Z = 0; Z < RecordJcoPending.length; Z++) {
                             if (RecordJcoPending[Z].RecordOfficeId == RecordJco[j].RecordOfficeId) {
-                                ItemlistR += ' <span class="d-none spnStepId" >' + RecordJcoPending[Z].StepId + '</span><span class="hind-font caption-12 c-dashboardInfo__count">' + RecordJcoPending[Z].Total + '</span>';
+                                ItemlistR += ' <span class="d-none spnStepId">100</span><span class="hind-font caption-12 c-dashboardInfo__count">' + RecordJcoPending[Z].Total + '</span>';
                                 countpending=1
                             }
                         }

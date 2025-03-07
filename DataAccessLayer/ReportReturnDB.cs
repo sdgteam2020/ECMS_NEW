@@ -315,7 +315,41 @@ namespace DataAccessLayer
             string query = "";
             if (StepId != 99)
             {
-                if (IsApproveId == 1)
+                if(StepId ==100)
+                {
+                    query = " select req.RequestId,Mstep.StepId,basi.FName,basi.LName,ServiceNo,DOB,ranks.RankAbbreviation RankName,TrackingId, " +
+                            " aspusersto.DomainId DomainIdTo,userto.ArmyNo ArmyNoTo ,userto.Name NameTo,ranksto.RankAbbreviation RankTo, " +
+                            " aspusersfrom.DomainId DomainIdFrom,userfrom.ArmyNo ArmyNoFrom ,userfrom.Name NameFrom,ranksfrom.RankAbbreviation RankFrom,fwdsts.Name Status" +
+                            " ,fwd.UpdatedOn,fwdsts.Name StatusName from MStepCounterStep Mstep   " +
+                            " inner join TrnStepCounter step on Mstep.StepId=step.StepId  " +
+                            " inner join TrnICardRequest req on step.RequestId=req.RequestId and req.StatusId=1  " +
+                            " inner join  BasicDetails basi on req.BasicDetailId=basi.BasicDetailId  " +
+                            " inner join TrnFwds fwd on req.RequestId=fwd.RequestId " +
+                            " inner join MArmedType marmed on basi.ArmedId=marmed.ArmedId  " +
+                            " inner join MRecordOffice mrec on marmed.ArmedId=mrec.ArmedId " +
+                            " left join UserProfile userto on fwd.ToUserId=userto.UserId  " +
+                            " LEFT join TrnDomainMapping mapto on userto.UserId=mapto.UserId  " +
+                            " LEFT join AspNetUsers aspusersto on mapto.AspNetUsersId=aspusersto.Id " +
+                            " left join MRank ranksto on ranksto.RankId=userto.RankId " +
+                            " left join MTrnFwdStatus fwdsts on fwd.FwdStatusId=fwdsts.FwdStatusId " +
+                            " left join UserProfile userfrom on fwd.FromUserId=userfrom.UserId  " +
+                            " LEFT join TrnDomainMapping mapfrom on userfrom.UserId=mapfrom.UserId  " +
+                            " LEFT join AspNetUsers aspusersfrom on mapfrom.AspNetUsersId=aspusersfrom.Id " +
+                            " left join MRank ranksfrom on ranksfrom.RankId=userfrom.RankId " +
+
+                            " left join MRank ranks on ranks.RankId=basi.RankId " +
+                            " left join MapUnit unit on basi.UnitId=unit.UnitMapId  " +
+                           " where unit.ComdId=ISNULL(@ComdId,unit.ComdId) " +
+                               " and unit.CorpsId=ISNULL(@CorpsId,unit.CorpsId)" +
+                               " and unit.DivId=ISNULL(@DivId,unit.DivId)" +
+                               " and unit.BdeId=ISNULL(@BdeId,unit.BdeId)" +
+                               //" and unit.FmnBranchID=ISNULL(@FmnBranchID,unit.FmnBranchID)" +
+                               //" and unit.PsoId=ISNULL(@PsoId,unit.PsoId)" +
+                               //" and unit.SubDteId=ISNULL(@SubDteId,unit.SubDteId)" +
+                               " and unit.UnitMapId=ISNULL(@UnitMapId,unit.UnitMapId)" +
+                            " and step.ApplyForId=2 and fwd.IsComplete=0 and fwd.StepId=3 and mrec.RecordOfficeId=@ApplyForId ";
+                }
+                else if (IsApproveId == 1)
                 {
                     query = " select req.RequestId,Mstep.StepId,basi.FName,basi.LName,ServiceNo,DOB,ranks.RankAbbreviation RankName,TrackingId," +
                             " aspusersto.DomainId DomainIdTo,userto.ArmyNo ArmyNoTo ,userto.Name NameTo,ranksto.RankAbbreviation RankTo," +
