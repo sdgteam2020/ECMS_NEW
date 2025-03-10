@@ -1537,6 +1537,107 @@ namespace DataAccessLayer
                 return null;
             }
         }
+
+        public async Task<DTODataTablesResponse<DTOProfileManageResponse>> GetAllProfileManage_1(DTODataTablesRequest request)
+        {
+            try
+            {
+                var queryableData = (from u in _context.Users
+                                     join tdm in _context.TrnDomainMapping on u.Id equals tdm.AspNetUsersId into utdm_jointable
+                                     from xtdm in utdm_jointable.DefaultIfEmpty()
+                                     join up in _context.UserProfile on xtdm.UserId equals up.UserId
+                                     join rk in _context.MRank on up.RankId equals rk.RankId
+                                     join at in _context.MArmedType on up.ArmedId equals at.ArmedId
+                                     select new DTOProfileManageResponse()
+                                     {
+                                         UserId = up.UserId,
+                                         ArmyNo = up.ArmyNo,
+                                         Name = up.Name,
+                                         IsToken = up.IsToken,
+                                         IsWithTokenApply = up.IsWithTokenApply,
+                                         MobileNo = up.MobileNo,
+                                         IsTokenWaiver = up.IsTokenWaiver,
+                                         ReasonTokenWaiver = up.ReasonTokenWaiver,
+                                         RankId = rk.RankId,
+                                         RankName = rk.RankName,
+                                         ArmedId = at.ArmedId,
+                                         ArmedName = at.ArmedName,
+                                         RankAbbreviation = rk.RankAbbreviation,
+                                         Id = u.Id,
+                                         DomainId = u.DomainId
+                                     }).AsQueryable();
+
+                // Total records without filtering
+                var totalRecords = queryableData.Count();
+
+                // Apply filtering
+                if (!string.IsNullOrEmpty(request.searchValue))
+                {
+                    string searchValue = request.searchValue.ToLower();
+                    if (request.Choice == "DomainId")
+                    {
+                        queryableData = queryableData.Where(x => x.DomainId.ToLower().Contains(searchValue));
+                    }
+                    else if (request.Choice == "ICNo")
+                    {
+                        queryableData = queryableData.Where(x => x.ArmyNo.ToLower().Contains(searchValue));
+                    }
+                    else if (request.Choice == "UserId")
+                    {
+                        int userId = 0;
+                        bool isConvert = int.TryParse(searchValue, out userId);
+                        if (isConvert) {
+                            queryableData = queryableData.Where(x => x.UserId == userId);
+                        }
+                    }
+                }
+
+                //// Apply sorting
+                //if (!string.IsNullOrEmpty(request.sortColumn) && !string.IsNullOrEmpty(request.sortDirection))
+                //{
+                //    if (request.sortColumn == "UnitName" || request.sortColumn == "Abbreviation")
+                //    {
+
+                //    }
+                //    else
+                //    {
+                //        //queryableData = queryableData.OrderBy(request.SortColumn + " " + request.SortColumnDirection);
+                //        queryableData = request.sortDirection.ToLower() == "asc"
+                //        ? queryableData.OrderBy(item => EF.Property<object>(item, request.sortColumn))
+                //        : queryableData.OrderByDescending(item => EF.Property<object>(item, request.sortColumn));
+                //    }
+                //}
+
+                // Total records after filtering
+                var filteredRecords = queryableData.Count();
+
+                // Paginate the result
+                var paginatedData = await queryableData.Skip(request.Start).Take(request.Length).ToListAsync();
+
+                var responseData = new DTODataTablesResponse<DTOProfileManageResponse>
+                {
+                    draw = request.Draw,
+                    recordsTotal = totalRecords, // Total records without filtering
+                    recordsFiltered = filteredRecords, // Total records after filtering
+                    data = paginatedData
+                };
+
+                return responseData;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "AccountDB->ProfileManage_1");
+                List<DTOProfileManageResponse> dTOUserRegnResponses = new List<DTOProfileManageResponse>();
+                var responseData = new DTODataTablesResponse<DTOProfileManageResponse>
+                {
+                    draw = 0,
+                    recordsTotal = 0,
+                    recordsFiltered = 0,
+                    data = dTOUserRegnResponses
+                };
+                return responseData;
+            }
+        }
         public async Task<DTOUserRegnResultResponse?> SaveMapping(DTOUserRegnMappingRequest dTO)
         {
             DTOUserRegnResultResponse dTOUserRegnResultResponse = new DTOUserRegnResultResponse();

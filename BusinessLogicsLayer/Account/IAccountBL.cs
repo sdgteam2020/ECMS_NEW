@@ -1,4 +1,5 @@
 ﻿using DataTransferObject.Domain.Identitytable;
+using DataTransferObject.Domain.Master;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
 
@@ -12,6 +13,7 @@ namespace BusinessLogicsLayer.Account
         public Task<bool?> FindRoleByName(string Role);
         public Task<List<DTORegisterListRequest>?> DomainApproveList();
         public Task<List<DTOProfileManageResponse>?> GetAllProfileManage(string Search, string Choice);
+        public Task<DTODataTablesResponse<DTOProfileManageResponse>> GetAllProfileManage_1(DTODataTablesRequest request);
         public Task<List<DTOUserRegnResponse>?> GetAllUserRegn(string Search, string Choice);
         public Task<List<DTODomainRegnResponse>?> GetAllDomainRegn(string Search, string Choice);
         public Task<DTOUserRegnResultResponse?> SaveMapping(DTOUserRegnMappingRequest dTO);

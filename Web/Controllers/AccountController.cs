@@ -346,6 +346,133 @@ namespace Web.Controllers
 
         #endregion End ProfileManage
 
+        #region ProfileManage_1
+        [Authorize(Roles = "admin")]
+        [HttpGet]
+        public IActionResult ProfileManage_1()
+        {
+            return View();
+        }
+        [Authorize(Roles = "admin")]
+        public async Task<IActionResult> SaveProfileManage_1(MUserProfile dTO)
+        {
+            try
+            {
+                dTO.IsActive = true;
+                dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                dTO.UpdatedOn = DateTime.Now;
+
+                if (ModelState.IsValid)
+                {
+                    if (dTO.UserId > 0)
+                    {
+                        bool? result = await _userProfileBL.FindByArmyNoWithUserId(dTO.ArmyNo, dTO.UserId);
+                        if (result != null)
+                        {
+                            if (result == true)
+                            {
+                                return Json(KeyConstants.Exists);
+                            }
+                            else
+                            {
+                                await _userProfileBL.Update(dTO);
+                                return Json(KeyConstants.Update);
+                            }
+                        }
+                        else
+                        {
+                            return Json(KeyConstants.InternalServerError);
+                        }
+                    }
+                    else
+                    {
+                        bool? result = await _userProfileBL.FindByArmyNo(dTO.ArmyNo);
+                        if (result != null)
+                        {
+                            if (result == true)
+                            {
+                                return Json(KeyConstants.Exists);
+                            }
+                            else
+                            {
+                                await _userProfileBL.Add(dTO);
+                                return Json(KeyConstants.Save);
+                            }
+                        }
+                        else
+                        {
+                            return Json(KeyConstants.InternalServerError);
+                        }
+                    }
+                }
+                else
+                {
+                    return Json(ModelState.Select(x => x.Value?.Errors).Where(y => y?.Count > 0).ToList());
+                }
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "Account->SaveProfileManage");
+                return Json(KeyConstants.InternalServerError);
+            }
+
+        }
+        [Authorize(Roles = "admin")]
+        [HttpPost]
+        public async Task<IActionResult> GetAllProfileManage_1(DTODataTablesRequest dTO)
+        {
+            try
+            {
+                return Json(await _iAccountBL.GetAllProfileManage_1(dTO));
+            }
+            catch (Exception ex)
+            {
+                List<DTOProfileManageResponse> dTOUserRegnResponses = new List<DTOProfileManageResponse>();
+                var responseData = new DTODataTablesResponse<DTOProfileManageResponse>
+                {
+                    draw = 0,
+                    recordsTotal = 0,
+                    recordsFiltered = 0,
+                    data = dTOUserRegnResponses
+                };
+                _logger.LogError(1001, ex, "Account->ProfileManage_1");
+                return Json(responseData);
+            }
+        }
+        [Authorize(Roles = "admin")]
+        [HttpPost]
+        public async Task<IActionResult> TotalProfileCount_1()
+        {
+            try
+            {
+                return Json(await _iAccountBL.TotalProfileCount());
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "Account->TotalProfileCount");
+                return Json(KeyConstants.InternalServerError);
+            }
+
+        }
+
+        [Authorize(Roles = "admin")]
+        public async Task<IActionResult> DeleteProfile_1(MUserProfile dTO)
+        {
+            DTOProfileIdCheckInFKTableResponse? response = await _userProfileBL.ProfileIdCheckInFKTable(dTO.UserId);
+            if (response.TotalTDM > 0 || response.TotalTH > 0 || response.TotalTPO_To > 0 || response.TotalTPO_From > 0 || response.TotalTFFrom > 0 || response.TotalTFTo > 0)
+            {
+                return Json(5);
+            }
+            else
+            {
+                await _userProfileBL.Delete(dTO);
+                return Json(KeyConstants.Success);
+            }
+        }
+
+        #endregion End ProfileManage_1
+
         #region UserRegn
 
         [Authorize(Roles = "admin")]

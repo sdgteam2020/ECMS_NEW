@@ -38,6 +38,10 @@ namespace BusinessLogicsLayer.Account
         {
             return await _iAccountDB.GetAllProfileManage(Search, Choice);
         }
+        public async Task<DTODataTablesResponse<DTOProfileManageResponse>> GetAllProfileManage_1(DTODataTablesRequest request)
+        {
+            return await _iAccountDB.GetAllProfileManage_1(request);
+        }
         public async Task<List<DTOUserRegnResponse>?> GetAllUserRegn(string Search, string Choice)
         {
             return await _iAccountDB.GetAllUserRegn(Search, Choice);

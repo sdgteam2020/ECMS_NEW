@@ -922,7 +922,6 @@ namespace Web.Controllers
                 _logger.LogError(1001, ex, "Master->GetAllUnit");
                 return Json(KeyConstants.InternalServerError);
             }
-
         }
         public async Task<IActionResult> DeleteUnit(MUnit dTO)
         {
