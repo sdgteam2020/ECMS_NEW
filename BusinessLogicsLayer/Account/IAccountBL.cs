@@ -12,8 +12,7 @@ namespace BusinessLogicsLayer.Account
         public Task<DTOAccountResponse?> FindDomainId(string DomainId);
         public Task<bool?> FindRoleByName(string Role);
         public Task<List<DTORegisterListRequest>?> DomainApproveList();
-        public Task<List<DTOProfileManageResponse>?> GetAllProfileManage(string Search, string Choice);
-        public Task<DTODataTablesResponse<DTOProfileManageResponse>> GetAllProfileManage_1(DTODataTablesRequest request);
+        public Task<DTODataTablesResponse<DTOProfileManageResponse>> GetAllProfileManage(DTODataTablesRequest request);
         public Task<List<DTOUserRegnResponse>?> GetAllUserRegn(string Search, string Choice);
         public Task<List<DTODomainRegnResponse>?> GetAllDomainRegn(string Search, string Choice);
         public Task<DTOUserRegnResultResponse?> SaveMapping(DTOUserRegnMappingRequest dTO);
@@ -25,5 +24,6 @@ namespace BusinessLogicsLayer.Account
         public Task<DTOAccountCountResponse> AccountCount();
         public Task<bool?> SaveUnitWithMapping(DTOSaveUnitWithMappingRequest dTO);
         public Task<DTODataTablesResponse<DTOUserRegnResponse>> GetDataForDataTable(DTODataTablesRequest request);
+        Task<DTODataTablesResponse<DTOClaimsStoreResponse>?> GetAllClaims(DTODataTablesRequest request);
     }
 }

@@ -54,6 +54,8 @@ builder.Logging.AddDbLogger(options =>
     builder.Configuration.GetSection("Logging").GetSection("Database").GetSection("Options").Bind(options);
 });
 
+builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
+
 builder.Services.Configure<DataProtectionTokenProviderOptions>(opt =>
 {
     opt.TokenLifespan = TimeSpan.FromMinutes(20);
@@ -78,7 +80,9 @@ builder.Services.AddScoped<IService, ServiceRepository>();
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
 builder.Services.AddSingleton<DapperContext>();
 builder.Services.AddSingleton<DapperContextDb2>();
+
 builder.Services.AddControllersWithViews();
+
 builder.Services.AddSingleton<ITagHelperInitializer<ScriptTagHelper>, AppendVersionTagHelperInitializer>();
 builder.Services.AddSingleton<ITagHelperInitializer<LinkTagHelper>, AppendVersionTagHelperInitializer>();
 builder.Services.AddInfrastructure();

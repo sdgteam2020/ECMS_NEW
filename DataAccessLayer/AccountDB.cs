@@ -1405,149 +1405,153 @@ namespace DataAccessLayer
                 return null;
             }
         }
-        public async Task<List<DTOProfileManageResponse>?> GetAllProfileManage(string Search, string Choice)
+
+        #region Comment code GetAllProfileManage
+        //public async Task<List<DTOProfileManageResponse>?> GetAllProfileManage(string Search, string Choice)
+        //{
+        //    try
+        //    {
+        //        if (Choice == "DomainId")
+        //        {
+        //            Search = string.IsNullOrEmpty(Search) ? "" : Search.ToLower();
+        //            var allrecord = await (from u in _context.Users.Where(P => Search == "" || P.DomainId.ToLower().Contains(Search))
+        //                                   join tdm in _context.TrnDomainMapping on u.Id equals tdm.AspNetUsersId into utdm_jointable
+        //                                   from xtdm in utdm_jointable.DefaultIfEmpty()
+        //                                   join up in _context.UserProfile on xtdm.UserId equals up.UserId
+        //                                   join rk in _context.MRank on up.RankId equals rk.RankId
+        //                                   join at in _context.MArmedType on up.ArmedId equals at.ArmedId
+        //                                   select new DTOProfileManageResponse()
+        //                                   {
+        //                                       UserId = up.UserId,
+        //                                       ArmyNo = up.ArmyNo,
+        //                                       Name = up.Name,
+        //                                       IsToken=up.IsToken,
+        //                                       IsWithTokenApply = up.IsWithTokenApply,
+        //                                       MobileNo = up.MobileNo,
+        //                                       IsTokenWaiver=up.IsTokenWaiver,
+        //                                       ReasonTokenWaiver =up.ReasonTokenWaiver,
+        //                                       RankId =rk.RankId,
+        //                                       RankName=rk.RankName,
+        //                                       ArmedId=at.ArmedId,
+        //                                       ArmedName=at.ArmedName,
+        //                                       RankAbbreviation=rk.RankAbbreviation,
+        //                                       Id = u.Id,
+        //                                       DomainId = u.DomainId,
+
+        //                                   }).Take(200).ToListAsync();
+        //            return allrecord;
+        //        }
+        //        else if (Choice == "ICNo")
+        //        {
+        //            Search = string.IsNullOrEmpty(Search) ? "" : Search.ToLower();
+        //            var allrecord = await (from up in _context.UserProfile.Where(P => Search == "" || P.ArmyNo.ToLower().Contains(Search)).OrderByDescending(x => x.UserId)
+        //                                   join rk in _context.MRank on up.RankId equals rk.RankId
+        //                                   join at in _context.MArmedType on up.ArmedId equals at.ArmedId
+        //                                   join tdm in _context.TrnDomainMapping on up.UserId equals tdm.UserId into uptdm_jointable
+        //                                   from xtdm in uptdm_jointable.DefaultIfEmpty()
+        //                                   join u in _context.Users on xtdm.AspNetUsersId equals u.Id into xtdmu_jointable
+        //                                   from xu in xtdmu_jointable.DefaultIfEmpty()
+        //                                   select new DTOProfileManageResponse()
+        //                                   {
+        //                                       UserId = up.UserId,
+        //                                       ArmyNo = up.ArmyNo,
+        //                                       Name = up.Name,
+        //                                       IsToken = up.IsToken,
+        //                                       IsWithTokenApply = up.IsWithTokenApply,
+        //                                       MobileNo = up.MobileNo,
+        //                                       IsTokenWaiver = up.IsTokenWaiver,
+        //                                       ReasonTokenWaiver = up.ReasonTokenWaiver,
+        //                                       RankId = rk.RankId,
+        //                                       RankName = rk.RankName,
+        //                                       RankAbbreviation = rk.RankAbbreviation,
+        //                                       ArmedId = at.ArmedId,
+        //                                       ArmedName = at.ArmedName,
+        //                                       Id = xu != null ? xu.Id : 0,
+        //                                       DomainId = xu != null ? xu.DomainId : null,
+        //                                   }).Take(200).ToListAsync();
+        //            return allrecord;
+        //        }
+        //        else if (Choice == "UserId")
+        //        {
+        //            int UserId = string.IsNullOrEmpty(Search) ? 0 : Convert.ToInt32(Search);
+        //            var allrecord = await (from up in _context.UserProfile.Where(x=>x.UserId == UserId)
+        //                                   join rk in _context.MRank on up.RankId equals rk.RankId
+        //                                   join at in _context.MArmedType on up.ArmedId equals at.ArmedId
+        //                                   join tdm in _context.TrnDomainMapping on up.UserId equals tdm.UserId into uptdm_jointable
+        //                                   from xtdm in uptdm_jointable.DefaultIfEmpty()
+        //                                   join u in _context.Users on xtdm.AspNetUsersId equals u.Id into xtdmu_jointable
+        //                                   from xu in xtdmu_jointable.DefaultIfEmpty()
+        //                                   select new DTOProfileManageResponse()
+        //                                   {
+        //                                       UserId = up.UserId,
+        //                                       ArmyNo = up.ArmyNo,
+        //                                       Name = up.Name,
+        //                                       IsToken = up.IsToken,
+        //                                       IsWithTokenApply = up.IsWithTokenApply,
+        //                                       MobileNo = up.MobileNo,
+        //                                       IsTokenWaiver = up.IsTokenWaiver,
+        //                                       ReasonTokenWaiver = up.ReasonTokenWaiver,
+        //                                       RankId = rk.RankId,
+        //                                       RankName = rk.RankName,
+        //                                       RankAbbreviation = rk.RankAbbreviation,
+        //                                       ArmedId = at.ArmedId,
+        //                                       ArmedName = at.ArmedName,
+        //                                       Id = xu != null ? xu.Id : 0,
+        //                                       DomainId = xu != null ? xu.DomainId : null,
+        //                                   }).ToListAsync();
+        //            return allrecord;
+
+        //        }
+        //        else
+        //        {
+        //            var allrecord = await (from up in _context.UserProfile.OrderByDescending(x=>x.UserId).Take(200)
+        //                                   join rk in _context.MRank on up.RankId equals rk.RankId
+        //                                   join at in _context.MArmedType on up.ArmedId equals at.ArmedId
+        //                                   join tdm in _context.TrnDomainMapping on up.UserId equals tdm.UserId into uptdm_jointable
+        //                                   from xtdm in uptdm_jointable.DefaultIfEmpty()
+        //                                   join u in _context.Users on xtdm.AspNetUsersId equals u.Id into xtdmu_jointable
+        //                                   from xu in xtdmu_jointable.DefaultIfEmpty()
+        //                                   select new DTOProfileManageResponse()
+        //                                   {
+        //                                       UserId = up.UserId,
+        //                                       ArmyNo = up.ArmyNo,
+        //                                       Name = up.Name,
+        //                                       IsToken = up.IsToken,
+        //                                       IsWithTokenApply = up.IsWithTokenApply,
+        //                                       MobileNo = up.MobileNo,
+        //                                       IsTokenWaiver = up.IsTokenWaiver,
+        //                                       ReasonTokenWaiver = up.ReasonTokenWaiver,
+        //                                       RankId = rk.RankId,
+        //                                       RankName = rk.RankName,
+        //                                       RankAbbreviation = rk.RankAbbreviation,
+        //                                       ArmedId = at.ArmedId,
+        //                                       ArmedName = at.ArmedName,
+        //                                       Id = xu != null ?xu.Id : 0,
+        //                                       DomainId = xu != null ? xu.DomainId : null,
+        //                                   }).ToListAsync();
+        //            return allrecord;
+        //        }
+
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.LogError(1001, ex, "AccountDB->ProfileManage");
+        //        return null;
+        //    }
+        //}
+        #endregion Comment code GetAllProfileManage
+
+        public async Task<DTODataTablesResponse<DTOProfileManageResponse>> GetAllProfileManage(DTODataTablesRequest request)
         {
             try
             {
-                if (Choice == "DomainId")
-                {
-                    Search = string.IsNullOrEmpty(Search) ? "" : Search.ToLower();
-                    var allrecord = await (from u in _context.Users.Where(P => Search == "" || P.DomainId.ToLower().Contains(Search))
-                                           join tdm in _context.TrnDomainMapping on u.Id equals tdm.AspNetUsersId into utdm_jointable
-                                           from xtdm in utdm_jointable.DefaultIfEmpty()
-                                           join up in _context.UserProfile on xtdm.UserId equals up.UserId
-                                           join rk in _context.MRank on up.RankId equals rk.RankId
-                                           join at in _context.MArmedType on up.ArmedId equals at.ArmedId
-                                           select new DTOProfileManageResponse()
-                                           {
-                                               UserId = up.UserId,
-                                               ArmyNo = up.ArmyNo,
-                                               Name = up.Name,
-                                               IsToken=up.IsToken,
-                                               IsWithTokenApply = up.IsWithTokenApply,
-                                               MobileNo = up.MobileNo,
-                                               IsTokenWaiver=up.IsTokenWaiver,
-                                               ReasonTokenWaiver =up.ReasonTokenWaiver,
-                                               RankId =rk.RankId,
-                                               RankName=rk.RankName,
-                                               ArmedId=at.ArmedId,
-                                               ArmedName=at.ArmedName,
-                                               RankAbbreviation=rk.RankAbbreviation,
-                                               Id = u.Id,
-                                               DomainId = u.DomainId,
-
-                                           }).Take(200).ToListAsync();
-                    return allrecord;
-                }
-                else if (Choice == "ICNo")
-                {
-                    Search = string.IsNullOrEmpty(Search) ? "" : Search.ToLower();
-                    var allrecord = await (from up in _context.UserProfile.Where(P => Search == "" || P.ArmyNo.ToLower().Contains(Search)).OrderByDescending(x => x.UserId)
-                                           join rk in _context.MRank on up.RankId equals rk.RankId
-                                           join at in _context.MArmedType on up.ArmedId equals at.ArmedId
-                                           join tdm in _context.TrnDomainMapping on up.UserId equals tdm.UserId into uptdm_jointable
-                                           from xtdm in uptdm_jointable.DefaultIfEmpty()
-                                           join u in _context.Users on xtdm.AspNetUsersId equals u.Id into xtdmu_jointable
-                                           from xu in xtdmu_jointable.DefaultIfEmpty()
-                                           select new DTOProfileManageResponse()
-                                           {
-                                               UserId = up.UserId,
-                                               ArmyNo = up.ArmyNo,
-                                               Name = up.Name,
-                                               IsToken = up.IsToken,
-                                               IsWithTokenApply = up.IsWithTokenApply,
-                                               MobileNo = up.MobileNo,
-                                               IsTokenWaiver = up.IsTokenWaiver,
-                                               ReasonTokenWaiver = up.ReasonTokenWaiver,
-                                               RankId = rk.RankId,
-                                               RankName = rk.RankName,
-                                               RankAbbreviation = rk.RankAbbreviation,
-                                               ArmedId = at.ArmedId,
-                                               ArmedName = at.ArmedName,
-                                               Id = xu != null ? xu.Id : 0,
-                                               DomainId = xu != null ? xu.DomainId : null,
-                                           }).Take(200).ToListAsync();
-                    return allrecord;
-                }
-                else if (Choice == "UserId")
-                {
-                    int UserId = string.IsNullOrEmpty(Search) ? 0 : Convert.ToInt32(Search);
-                    var allrecord = await (from up in _context.UserProfile.Where(x=>x.UserId == UserId)
-                                           join rk in _context.MRank on up.RankId equals rk.RankId
-                                           join at in _context.MArmedType on up.ArmedId equals at.ArmedId
-                                           join tdm in _context.TrnDomainMapping on up.UserId equals tdm.UserId into uptdm_jointable
-                                           from xtdm in uptdm_jointable.DefaultIfEmpty()
-                                           join u in _context.Users on xtdm.AspNetUsersId equals u.Id into xtdmu_jointable
-                                           from xu in xtdmu_jointable.DefaultIfEmpty()
-                                           select new DTOProfileManageResponse()
-                                           {
-                                               UserId = up.UserId,
-                                               ArmyNo = up.ArmyNo,
-                                               Name = up.Name,
-                                               IsToken = up.IsToken,
-                                               IsWithTokenApply = up.IsWithTokenApply,
-                                               MobileNo = up.MobileNo,
-                                               IsTokenWaiver = up.IsTokenWaiver,
-                                               ReasonTokenWaiver = up.ReasonTokenWaiver,
-                                               RankId = rk.RankId,
-                                               RankName = rk.RankName,
-                                               RankAbbreviation = rk.RankAbbreviation,
-                                               ArmedId = at.ArmedId,
-                                               ArmedName = at.ArmedName,
-                                               Id = xu != null ? xu.Id : 0,
-                                               DomainId = xu != null ? xu.DomainId : null,
-                                           }).ToListAsync();
-                    return allrecord;
-
-                }
-                else
-                {
-                    var allrecord = await (from up in _context.UserProfile.OrderByDescending(x=>x.UserId).Take(200)
-                                           join rk in _context.MRank on up.RankId equals rk.RankId
-                                           join at in _context.MArmedType on up.ArmedId equals at.ArmedId
-                                           join tdm in _context.TrnDomainMapping on up.UserId equals tdm.UserId into uptdm_jointable
-                                           from xtdm in uptdm_jointable.DefaultIfEmpty()
-                                           join u in _context.Users on xtdm.AspNetUsersId equals u.Id into xtdmu_jointable
-                                           from xu in xtdmu_jointable.DefaultIfEmpty()
-                                           select new DTOProfileManageResponse()
-                                           {
-                                               UserId = up.UserId,
-                                               ArmyNo = up.ArmyNo,
-                                               Name = up.Name,
-                                               IsToken = up.IsToken,
-                                               IsWithTokenApply = up.IsWithTokenApply,
-                                               MobileNo = up.MobileNo,
-                                               IsTokenWaiver = up.IsTokenWaiver,
-                                               ReasonTokenWaiver = up.ReasonTokenWaiver,
-                                               RankId = rk.RankId,
-                                               RankName = rk.RankName,
-                                               RankAbbreviation = rk.RankAbbreviation,
-                                               ArmedId = at.ArmedId,
-                                               ArmedName = at.ArmedName,
-                                               Id = xu != null ?xu.Id : 0,
-                                               DomainId = xu != null ? xu.DomainId : null,
-                                           }).ToListAsync();
-                    return allrecord;
-                }
-
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(1001, ex, "AccountDB->ProfileManage");
-                return null;
-            }
-        }
-
-        public async Task<DTODataTablesResponse<DTOProfileManageResponse>> GetAllProfileManage_1(DTODataTablesRequest request)
-        {
-            try
-            {
-                var queryableData = (from u in _context.Users
-                                     join tdm in _context.TrnDomainMapping on u.Id equals tdm.AspNetUsersId into utdm_jointable
-                                     from xtdm in utdm_jointable.DefaultIfEmpty()
-                                     join up in _context.UserProfile on xtdm.UserId equals up.UserId
+                var queryableData = (from up in _context.UserProfile
                                      join rk in _context.MRank on up.RankId equals rk.RankId
                                      join at in _context.MArmedType on up.ArmedId equals at.ArmedId
+                                     join tdm in _context.TrnDomainMapping on up.UserId equals tdm.UserId into uptdm_jointable
+                                     from xtdm in uptdm_jointable.DefaultIfEmpty()
+                                     join u in _context.Users on xtdm.AspNetUsersId equals u.Id into xtdmu_jointable
+                                     from xu in xtdmu_jointable.DefaultIfEmpty()
                                      select new DTOProfileManageResponse()
                                      {
                                          UserId = up.UserId,
@@ -1560,53 +1564,36 @@ namespace DataAccessLayer
                                          ReasonTokenWaiver = up.ReasonTokenWaiver,
                                          RankId = rk.RankId,
                                          RankName = rk.RankName,
+                                         RankAbbreviation = rk.RankAbbreviation,
                                          ArmedId = at.ArmedId,
                                          ArmedName = at.ArmedName,
-                                         RankAbbreviation = rk.RankAbbreviation,
-                                         Id = u.Id,
-                                         DomainId = u.DomainId
+                                         Id = xu != null ? xu.Id : 0,
+                                         DomainId = xu != null ? xu.DomainId : null,
                                      }).AsQueryable();
 
                 // Total records without filtering
                 var totalRecords = queryableData.Count();
 
                 // Apply filtering
-                if (!string.IsNullOrEmpty(request.searchValue))
-                {
-                    string searchValue = request.searchValue.ToLower();
-                    if (request.Choice == "DomainId")
-                    {
-                        queryableData = queryableData.Where(x => x.DomainId.ToLower().Contains(searchValue));
-                    }
-                    else if (request.Choice == "ICNo")
-                    {
-                        queryableData = queryableData.Where(x => x.ArmyNo.ToLower().Contains(searchValue));
-                    }
-                    else if (request.Choice == "UserId")
-                    {
-                        int userId = 0;
-                        bool isConvert = int.TryParse(searchValue, out userId);
-                        if (isConvert) {
-                            queryableData = queryableData.Where(x => x.UserId == userId);
-                        }
-                    }
+               if (!string.IsNullOrEmpty(request.searchValue))
+               {
+                   string searchValue = request.searchValue.ToLower();
+
+                   //queryableData = queryableData.Where(x =>  x.UserId.ToString().ToLower().Contains(searchValue) ||
+                   //                          x.DomainId.ToLower().Contains(searchValue)||
+                   //                          x.ArmyNo.ToLower().Contains(searchValue));
+
+                   queryableData = queryableData.Where(x => x.ArmyNo.ToLower().Contains(searchValue));
                 }
 
-                //// Apply sorting
-                //if (!string.IsNullOrEmpty(request.sortColumn) && !string.IsNullOrEmpty(request.sortDirection))
-                //{
-                //    if (request.sortColumn == "UnitName" || request.sortColumn == "Abbreviation")
-                //    {
-
-                //    }
-                //    else
-                //    {
-                //        //queryableData = queryableData.OrderBy(request.SortColumn + " " + request.SortColumnDirection);
-                //        queryableData = request.sortDirection.ToLower() == "asc"
-                //        ? queryableData.OrderBy(item => EF.Property<object>(item, request.sortColumn))
-                //        : queryableData.OrderByDescending(item => EF.Property<object>(item, request.sortColumn));
-                //    }
-                //}
+                // Apply sorting
+                if (!string.IsNullOrEmpty(request.sortColumn) && !string.IsNullOrEmpty(request.sortDirection))
+                {
+                   //queryableData = queryableData.OrderBy(request.SortColumn + " " + request.SortColumnDirection);
+                   queryableData = request.sortDirection.ToLower() == "asc"
+                   ? queryableData.OrderBy(item => EF.Property<object>(item, request.sortColumn))
+                   : queryableData.OrderByDescending(item => EF.Property<object>(item, request.sortColumn));
+                }
 
                 // Total records after filtering
                 var filteredRecords = queryableData.Count();
@@ -1620,13 +1607,13 @@ namespace DataAccessLayer
                     recordsTotal = totalRecords, // Total records without filtering
                     recordsFiltered = filteredRecords, // Total records after filtering
                     data = paginatedData
-                };
+                };  
 
                 return responseData;
             }
             catch (Exception ex)
             {
-                _logger.LogError(1001, ex, "AccountDB->ProfileManage_1");
+                _logger.LogError(1001, ex, "AccountDB->ProfileManage");
                 List<DTOProfileManageResponse> dTOUserRegnResponses = new List<DTOProfileManageResponse>();
                 var responseData = new DTODataTablesResponse<DTOProfileManageResponse>
                 {
@@ -2480,6 +2467,73 @@ namespace DataAccessLayer
                     _logger.LogError(1001, ex, "AccountDB->SaveDomainRegn");
                     return null;
                 }
+            }
+        }
+
+        public async Task<DTODataTablesResponse<DTOClaimsStoreResponse>> GetAllClaims(DTODataTablesRequest request)
+        {
+            try
+            {
+                var queryableData = _context.UserClaims
+                                    .GroupBy(uc => uc.ClaimType)
+                                    .Select(uc => new DTOClaimsStoreResponse 
+                                    { 
+                                        ClaimType = uc.FirstOrDefault().ClaimType,
+                                        ClaimValue = uc.FirstOrDefault().ClaimValue,
+                                        TotalUsers = uc.Count()
+                                    })
+                                    .AsQueryable();
+
+                // Total records without filtering
+                var totalRecords = queryableData.Count();
+
+                // Apply filtering
+                if (!string.IsNullOrEmpty(request.searchValue))
+                {
+                    string searchValue = request.searchValue.ToLower();
+
+                    queryableData = queryableData.Where(x => x.ClaimType.ToLower().Contains(searchValue) ||
+                                                             x.ClaimValue.ToLower().Contains(searchValue));
+
+                }
+
+                // Apply sorting
+                if (!string.IsNullOrEmpty(request.sortColumn) && !string.IsNullOrEmpty(request.sortDirection))
+                {
+                    //queryableData = queryableData.OrderBy(request.SortColumn + " " + request.SortColumnDirection);
+                    queryableData = request.sortDirection.ToLower() == "asc"
+                    ? queryableData.OrderBy(item => EF.Property<object>(item, request.sortColumn))
+                    : queryableData.OrderByDescending(item => EF.Property<object>(item, request.sortColumn));
+                }
+
+                // Total records after filtering
+                var filteredRecords = queryableData.Count();
+
+                // Paginate the result
+                var paginatedData = await queryableData.Skip(request.Start).Take(request.Length).ToListAsync();
+
+                var responseData = new DTODataTablesResponse<DTOClaimsStoreResponse>
+                {
+                    draw = request.Draw,
+                    recordsTotal = totalRecords, // Total records without filtering
+                    recordsFiltered = filteredRecords, // Total records after filtering
+                    data = paginatedData
+                };
+
+                return responseData;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "AccountDB->Claims");
+                List<DTOClaimsStoreResponse> dTOUserRegnResponses = new List<DTOClaimsStoreResponse>();
+                var responseData = new DTODataTablesResponse<DTOClaimsStoreResponse>
+                {
+                    draw = 0,
+                    recordsTotal = 0,
+                    recordsFiltered = 0,
+                    data = dTOUserRegnResponses
+                };
+                return responseData;
             }
         }
     }

@@ -27,6 +27,7 @@ function GetDashboardMasterCount() {
                 }
 
                 else {
+                    console.log(response);
                     $("#TotComd").html(response.TotComd == 1 ? 0 : response.TotComd-1);
                     $("#TotCorps").html(response.TotCorps == 1 ? 0 : response.TotCorps - 1);
                     $("#TotDiv").html(response.TotDiv == 1 ? 0 : response.TotDiv - 1);
@@ -43,6 +44,7 @@ function GetDashboardMasterCount() {
                     $("#TotDomainRegn").html(response.TotDomainRegn);
                     $("#TotUserRegn").html(response.TotDomainRegn);
                     $("#TotUserProfile").html(response.TotUserProfile);
+                    $("#TotalClaims").html(response.TotAfsacClaims);
 
                     $('.counter-value').each(function () {
                         $(this).prop('Counter', 0).animate({

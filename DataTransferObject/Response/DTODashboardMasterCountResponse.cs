@@ -25,5 +25,6 @@ namespace DataTransferObject.Response
         public int TotAfsacCellMapping { get; set; }
         public int TotDomainRegn { get; set; }
         public int TotUserProfile { get; set; }
+        public int TotAfsacClaims { get; set; }
     }
 }
