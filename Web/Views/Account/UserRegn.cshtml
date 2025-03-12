@@ -14,17 +14,20 @@
         width: 120px;
         height: 60px;
     }
-    .modal-xl{
-        max-width: 1140px!important;
-        width: 100%!important;
+
+    .modal-xl {
+        max-width: 90% !important;
+        width: 100% !important;
     }
+
 /*     .modal-content {
-        max-height :600px!important;
-        height: 600px!important; /* = 100% of the .modal-dialog block */
-    }  */
-    .table{
-        min-width:100% !important;
+            max-height :600px!important;
+            height: 600px!important;
+    } */
+    .table {
+        min-width: 100% !important;
     }
+
     .modal .modal-body .table-responsive {
         max-height: 500px;
     }
@@ -72,7 +75,7 @@
                         </h6>
                         <div class="d-flex">
                             @* <button type="button" id="btnAdd" class="btn btn-outline-success font-weight-600 btn-sm">Add Command</button> *@
-                            <div class="form-check form-check-inline">
+                            @* <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" name="choice" id="Id" value="Id">
                                 <label for="choice" class="fw-bold">Regd. ID</label>
                             </div>
@@ -86,7 +89,7 @@
                             </div>
                             <div>
                                 <input class="btn-outline-light form-control-domainId mr-2" placeholder="Search ID / Domain /Army No" id="txtSearch" maxlength="30" pattern="^[a-zA-Z0-9 ]*$" />
-                            </div>
+                            </div> *@
                         </div>
                     </div>
                 </div>
@@ -100,33 +103,32 @@
                     <button class="count-label" id="btnNotVerifiedUser" name="btnNotVerifiedUser">Not Verified <br /><span id="lblNotVerifiedUser">0</span></button>
                     <button class="count-label" id="btnIO" name="btnIO">IO <br /><span id="lblIO">0</span></button>
                     <button class="count-label" id="btnApprover" name="btnApprover">Approver <br /><span id="lblApprover">0</span></button>
-@*                     <button class="count-label" id="btnRO" name="btnRO">RO <br /><span id="lblRO">0</span></button>
+                    @*<button class="count-label" id="btnRO" name="btnRO">RO <br /><span id="lblRO">0</span></button>
                     <button class="count-label" id="btnORO" name="btnOROr">ORO <br /><span id="lblORO">0</span></button> *@
                 </div>
                 <div class="table-responsive">
-                        <table class="table border border-purple table-striped no-footer table-hover" role="grid" id="tbldata">
-                            <thead>
-                                <tr>
-                                    <th class="noExport d-none"></th>
-                                    <th class="wd-40-f">S No</th>
-                                    <th class="nowrap">Registered ID</th>
-                                    <th class="nowrap">Domain ID</th>
-                                    <th class="nowrap">Army No</th>
-                                    <th class="nowrap">Role</th>
-                                    <th class="nowrap">Request Generated On (Dt)</th>
-                                    <th class="noExport nowrap">Mapping</th>
-                                    <th class="nowrap">Active Yes/No</th>
-                                    <th class="nowrap">Status</th>
-                                    <th class="nowrap">IO</th>
-                                    <th class="nowrap">Approver</th>
-@*                                     <th class="nowrap">Record Office (JCO)</th>
-                                    <th class="nowrap">Record Office (Offier)</th> *@
-                                    <th class="noExport nowrap">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody id="DetailBody">
-                            </tbody>
-                        </table>
+                    <table class="table border border-purple table-striped no-footer table-hover" role="grid" id="tbldata">
+                        <thead>
+                            <tr>
+                                <th class="wd-40-f">S No</th>
+                                <th class="nowrap">Registered ID</th>
+                                <th class="nowrap">Domain ID</th>
+                                <th class="nowrap">Army No</th>
+                                <th class="nowrap">Role</th>
+                                <th class="nowrap">Request Generated On (Dt)</th>
+                                <th class="noExport nowrap">Mapping</th>
+                                <th class="nowrap">Active Yes/No</th>
+                                <th class="nowrap">Status</th>
+                                <th class="nowrap">IO</th>
+                                <th class="nowrap">Approver</th>
+                                @*<th class="nowrap">Record Office (JCO)</th>
+                                <th class="nowrap">Record Office (Offier)</th> *@
+                                <th class="noExport nowrap">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="DetailBody">
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
@@ -141,7 +143,7 @@
                 <h5 class="modal-title" id="exampleModalLabel">Update Approval / Active of Domain</h5>
                 <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
             </div>
-            <div class="modal-body">    
+            <div class="modal-body">
                 <div class="row">
                     <form action="" id="UpdateDomainFlag" name="UpdateDomainFlag" method="post">
                         <div class="row">
@@ -443,30 +445,31 @@
             </div>
             <div class="modal-body">
                 <div class="row">
-                   
-                        <div class="table-responsive">
+
+                    <div class="table-responsive">
                         <table class="table border border-purple table-striped no-footer table-hover" role="grid" id="tbldatadialog">
-                                <thead>
-                                    <tr>
-                                        <th class="nowrap">Reg Id</th>
-                                        <th class="nowrap">Domain Id</th>
-                                        <th class="nowrap">IC No</th>
-                                        <th class="nowrap">Role</th>
-                                        <th class="nowrap">Requested Genr On (DT)</th>
-                                        <th class="nowrap">Mapping</th>
-                                        <th class="nowrap">IsActive</th>
-                                        <th class="nowrap">IO</th>
-                                        <th class="nowrap">Approver</th>
-@*                                         <th class="nowrap">RO</th>
-                                        <th class="nowrap">ORO</th> *@
-                                        <th class="nowrap">Status</th>
-                                    </tr>
-                                </thead>
-                            </table>
-                      
+                            <thead>
+                                <tr>
+                                    <th class="wd-40-f">S No</th>
+                                    <th class="nowrap">Reg Id</th>
+                                    <th class="nowrap">Domain Id</th>
+                                    <th class="nowrap">IC No</th>
+                                    <th class="nowrap">Role</th>
+                                    <th class="nowrap">Requested Genr On (DT)</th>
+                                    <th class="nowrap">Mapping</th>
+                                    <th class="nowrap">IsActive</th>
+                                    <th class="nowrap">IO</th>
+                                    <th class="nowrap">Approver</th>
+                                    @*<th class="nowrap">RO</th>
+                                      <th class="nowrap">ORO</th> *@
+                                    <th class="nowrap">Status</th>
+                                </tr>
+                            </thead>
+                        </table>
+
 
                     </div>
-                   
+
                 </div>
                 <div class="col-sm-12" id="msg">
                 </div>

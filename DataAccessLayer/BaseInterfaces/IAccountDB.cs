@@ -18,8 +18,8 @@ namespace DataAccessLayer.BaseInterfaces
         public Task<bool?> FindRoleByName(string Role);
         public Task<List<DTORegisterListRequest>?> DomainApproveList();
         public Task<List<DTOProfileManageResponse>?> GetAllProfileManage(string Search, string Choice);
-        public Task<List<DTOUserRegnResponse>?> GetAllUserRegn(string Search, string Choice);
-        public Task<List<DTODomainRegnResponse>?> GetAllDomainRegn(string Search, string Choice);
+        public Task<DTODataTablesResponse<DTOUserRegnResponse>> GetAllUserRegn(DTODataTablesRequest request);
+        public Task<DTODataTablesResponse<DTODomainRegnResponse>> GetAllDomainRegn(DTODataTablesRequest request);
         public Task<DTOUserRegnResultResponse?> SaveMapping(DTOUserRegnMappingRequest dTO);
         public Task<bool?> SaveDomainRegn(DTODomainRegnRequest dTO);
         public Task<bool?> UpdateDomainFlag(DTOUserRegnUpdateDomainFlagRequest dTO);
