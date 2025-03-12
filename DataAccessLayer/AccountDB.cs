@@ -2223,7 +2223,7 @@ namespace DataAccessLayer
                                      select new DTOUsersByClaim
                                      {
                                         DomainId = us.DomainId,
-                                        Rank = xr.RankName,
+                                        Rank = xr.RankAbbreviation,
                                         ArmyNo = xup != null ? xup.ArmyNo : null,
                                         AppointmentName = xapt.AppointmentName,
                                         Name = xup.Name,

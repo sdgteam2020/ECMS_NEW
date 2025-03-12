@@ -161,11 +161,11 @@ function BindDialog(claimValue) {
                 }
             },
             { data: "DomainId", name: "DomainId" },
-            { data: "Rank", name: "Rank" },
             { data: "ArmyNo", name: "ArmyNo" },
-            { data: "AppointmentName", name: "AppointmentName" },
+            { data: "Rank", name: "Rank" },
             { data: "Name", name: "Name" },
             { data: "Unit", name: "Unit" },
+            { data: "AppointmentName", name: "AppointmentName" },
             {
                 data: "RoleNames",
                 name: "RoleNames",

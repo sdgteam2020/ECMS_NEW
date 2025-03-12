@@ -254,6 +254,7 @@ function BindData() {
                         ResetErrorMessage();
                         $("#spnOROMappingId").html($(this).closest("tr").find("#spnMOROMappingId").html());
                         $("#ddlRO").val($(this).closest("tr").find("#spnRecordOfficeId").html());
+                        
 
                         if ($(this).closest("tr").find("#spnRankId").html() != null && $(this).closest("tr").find("#spnRankId").html() != "null") {
                             $("#ddlRank").val($(this).closest("tr").find("#spnRankId").html());
@@ -284,6 +285,10 @@ function BindData() {
 
                         $("#btnOROMappingAdd").val("Update");
                         $("#AddNewOROMapping").modal('show');
+
+                        //$("#ddlArmedIdList").prop('disabled', true);
+                        //$("#ddlRO").prop('disabled', true);
+                        //$("#ddlRank").prop('disabled', true);
                     });
 
 
@@ -390,6 +395,9 @@ function Reset() {
     $("#txtUnitName").val("");
     $("#ddlTDMId").val("0");
     $("#spnUnitMapId").html("0");
+    //$("#ddlArmedIdList").prop('disabled', false);
+    //$("#ddlRO").prop('disabled', false);
+    //$("#ddlRank").prop('disabled', false);
 }
 function ResetErrorMessage() {
     $("#ddlArmedIdList-error").html(""); 
