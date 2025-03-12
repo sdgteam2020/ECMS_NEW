@@ -10,9 +10,10 @@ namespace DataTransferObject.Response
     {
         public int Id { get; set; }
         public string DomainId { get; set; } = string.Empty;
-        public string? AdminMsg { get; set; }
         public List<string>? RoleNames { get; set; }
         public string? ArmyNo { get; set; }
+        public int UserId { get; set; }
+        public string? AdminMsg { get; set; }
         public DateTime UpdatedOn { get; set; }
         public bool AdminFlag { get; set; }
         public bool Active { get; set; }
@@ -24,6 +25,5 @@ namespace DataTransferObject.Response
         public int TrnDomainMappingId { get; set; }
         public int TrnDomainMappingUnitId { get; set; }
         public short TrnDomainMappingApptId { get; set; }
-        public int UserId { get; set; }
     }
 }

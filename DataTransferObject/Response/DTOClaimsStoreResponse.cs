@@ -8,8 +8,8 @@ namespace DataTransferObject.Response
 {
     public class DTOClaimsStoreResponse
     {
+        public int ClaimStoreId { get; set; }
         public string ClaimType { get; set; } = string.Empty;
-        public string ClaimValue { get; set; } = string.Empty;
         public int TotalUsers { get; set; }
     }
 }

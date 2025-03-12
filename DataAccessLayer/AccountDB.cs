@@ -2155,23 +2155,12 @@ namespace DataAccessLayer
                                     .Select(uc => new DTOClaimsStoreResponse 
                                     { 
                                         ClaimType = uc.FirstOrDefault().ClaimType,
-                                        ClaimValue = uc.FirstOrDefault().ClaimValue,
                                         TotalUsers = uc.Count()
                                     })
                                     .AsQueryable();
 
                 // Total records without filtering
                 var totalRecords = queryableData.Count();
-
-                // Apply filtering
-                if (!string.IsNullOrEmpty(request.searchValue))
-                {
-                    string searchValue = request.searchValue.ToLower();
-
-                    queryableData = queryableData.Where(x => x.ClaimType.ToLower().Contains(searchValue) ||
-                                                             x.ClaimValue.ToLower().Contains(searchValue));
-
-                }
 
                 // Apply sorting
                 if (!string.IsNullOrEmpty(request.sortColumn) && !string.IsNullOrEmpty(request.sortDirection))
@@ -2203,6 +2192,87 @@ namespace DataAccessLayer
                 _logger.LogError(1001, ex, "AccountDB->Claims");
                 List<DTOClaimsStoreResponse> dTOUserRegnResponses = new List<DTOClaimsStoreResponse>();
                 var responseData = new DTODataTablesResponse<DTOClaimsStoreResponse>
+                {
+                    draw = 0,
+                    recordsTotal = 0,
+                    recordsFiltered = 0,
+                    data = dTOUserRegnResponses
+                };
+                return responseData;
+            }
+        }
+
+        public async Task<DTODataTablesResponse<DTOUsersByClaim>> GetAllUsersByClaim(DTODataTablesRequest request)
+        {
+            try
+            {
+                var queryableData = (from cs in _context.ClaimsStore
+                                     join uc in _context.UserClaims on cs.ClaimValue equals uc.ClaimValue
+                                     join us in _context.Users on uc.UserId equals us.Id
+                                     join tdm in _context.TrnDomainMapping on us.Id equals tdm.AspNetUsersId into utdm_jointable
+                                     from xtdm in utdm_jointable.DefaultIfEmpty()
+                                     join up in _context.UserProfile on xtdm.UserId equals up.UserId into xtdmup_jointable
+                                     from xup in xtdmup_jointable.DefaultIfEmpty()
+                                     join r in _context.MRank on xup.RankId equals r.RankId into xtdmr_jointable
+                                     from xr in xtdmr_jointable.DefaultIfEmpty()
+                                     join apt in _context.MAppointment on xtdm.ApptId equals apt.ApptId into xtdapt_jointable
+                                     from xapt in xtdapt_jointable.DefaultIfEmpty()
+                                     join unit in _context.MUnit on xtdm.UnitId equals unit.UnitId into xtdunit_jointable
+                                     from xunit in xtdunit_jointable.DefaultIfEmpty()
+                                     where cs.ClaimType == request.Choice
+                                     select new DTOUsersByClaim
+                                     {
+                                        DomainId = us.DomainId,
+                                        Rank = xr.RankName,
+                                        ArmyNo = xup != null ? xup.ArmyNo : null,
+                                        AppointmentName = xapt.AppointmentName,
+                                        Name = xup.Name,
+                                        Unit = xunit.UnitName,
+                                        RoleNames = (from ur in _context.UserRoles.Where(x => x.UserId == us.Id)
+                                                    join r in _context.Roles on ur.RoleId equals r.Id
+                                                    select r.Name).ToList()
+                                     }).AsQueryable();
+
+                // Total records without filtering
+                var totalRecords = queryableData.Count();
+
+                // Apply filtering
+                if (!string.IsNullOrEmpty(request.searchValue))
+                {
+                    string searchValue = request.searchValue.ToLower();
+                    queryableData = queryableData.Where(x => x.DomainId.ToLower().Contains(searchValue));
+                }
+
+                //Apply sorting
+                //if (!string.IsNullOrEmpty(request.sortColumn) && !string.IsNullOrEmpty(request.sortDirection))
+                //{
+                //    //queryableData = queryableData.OrderBy(request.SortColumn + " " + request.SortColumnDirection);
+                //    queryableData = request.sortDirection.ToLower() == "asc"
+                //    ? queryableData.OrderBy(item => EF.Property<object>(item, request.sortColumn))
+                //    : queryableData.OrderByDescending(item => EF.Property<object>(item, request.sortColumn));
+                //}
+
+                // Total records after filtering
+                var filteredRecords = queryableData.Count();
+
+                // Paginate the result
+                var paginatedData = await queryableData.Skip(request.Start).Take(request.Length).ToListAsync();
+
+                var responseData = new DTODataTablesResponse<DTOUsersByClaim>
+                {
+                    draw = request.Draw,
+                    recordsTotal = totalRecords, // Total records without filtering
+                    recordsFiltered = filteredRecords, // Total records after filtering
+                    data = paginatedData
+                };
+
+                return responseData;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "AccountDB->UserByClaim");
+                List<DTOUsersByClaim> dTOUserRegnResponses = new List<DTOUsersByClaim>();
+                var responseData = new DTODataTablesResponse<DTOUsersByClaim>
                 {
                     draw = 0,
                     recordsTotal = 0,

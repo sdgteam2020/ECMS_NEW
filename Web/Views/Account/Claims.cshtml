@@ -6,6 +6,19 @@
     .swal2-html-container {
         color: red !important;
     }
+
+    .modal-xl {
+        max-width: 90% !important;
+        width: 90% !important;
+    }
+
+    .table {
+        min-width: 100% !important;
+    }
+
+    .modal .modal-body .table-responsive {
+        max-height: 500px;
+    }
 </style>
 <header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
     <div class="containerMain">
@@ -54,14 +67,13 @@
                             <tr>
                                 <th class="noExport d-none"></th>
                                 <th class="wd-40-f">S No</th>
-                                <th class="nowrap">Claim Type</th>
-                                <th class="nowrap">Claim Value</th>
-                                <th class="nowrap">Total Domains</th>
-                                <th class="noExport nowrap">Action</th>
+                                <th class="nowrap">Claim</th>
+                                <th class="nowrap">User Claim Count</th>
+                                <th class="noExport nowrap">View</th>
                             </tr>
                         </thead>
-                        <tbody id="DetailBody">
-                        </tbody>
+                        @* <tbody id="DetailBody">
+                        </tbody> *@
                     </table>
                 </div>
             </div>
@@ -71,3 +83,39 @@
 <script asp-src-include="~/developerjs/mtables.js"></script>
 <script asp-src-include="~/developerjs/claims.js"></script>
 <script asp-src-include="~/developerjs/commandvalidation.js"></script>
+<div class="modal fade" id="DataTableDialog" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel"><span id="lblModelTitle"></span></h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    
+                    <div class="table-responsive">
+                        <table class="table border border-purple table-striped no-footer table-hover" role="grid" id="tbldatadialog">
+                            <thead>
+                                <tr>
+                                    <th class="wd-40-f">S No</th>
+                                    <th class="nowrap">Domain ID</th>
+                                    <th class="nowrap">Rank</th>
+                                    <th class="nowrap">IC No</th>
+                                    <th class="nowrap">Appt</th>
+                                    <th class="nowrap">Name</th>
+                                    <th class="nowrap">Unit</th>
+                                    <th class="nowrap">Role of User</th>
+                                </tr>
+                            </thead>
+                        </table>
+
+
+                    </div>
+
+                </div>
+                <div class="col-sm-12" id="msg">
+                </div>
+            </div>
+        </div><!-- modal-content -->
+    </div><!-- modal-dialog -->
+</div>

@@ -87,5 +87,9 @@ namespace BusinessLogicsLayer.Account
         {
             return await _iAccountDB.GetAllClaims(request);
         }
+        public async Task<DTODataTablesResponse<DTOUsersByClaim>> GetAllUsersByClaim(DTODataTablesRequest request)
+        {
+            return await _iAccountDB.GetAllUsersByClaim(request);
+        }
     }
 }

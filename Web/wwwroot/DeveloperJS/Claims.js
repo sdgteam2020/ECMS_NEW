@@ -1,10 +1,11 @@
 ﻿//const { debug } = require("util");
 
 var table; // Declare table variable outside the function to preserve the instance
+var tableView; // Declare table variable outside the function to preserve the instance
 $(function () {
     //mMsater(0, "ddlRank", Rank, "");
     //mMsater(0, "ddlArmType", ArmyType, "");
-    BindData()
+    BindData();
 });
 
 function BindData() {
@@ -13,7 +14,8 @@ function BindData() {
         processing: true,
         serverSide: true,
         filter: true,
-        order: [[0, 'desc']], // Default sorting on the first column
+        order: [[0, 'desc']],// Default sorting on the first column
+        searching: false ,
         ajax: async function (data, callback, settings) {
             let requestData = {
                 draw: data.draw,
@@ -22,6 +24,7 @@ function BindData() {
                 searchValue: data.search.value,
                 sortColumn: data.order.length > 0 ? data.columns[data.order[0].column].data : '',  // Add a check for data.order
                 sortDirection: data.order.length > 0 ? data.order[0].dir : '', // Add a check for data.order
+               
             };
             try {
                 let response = await fetch("/Account/GetAllClaims", {
@@ -54,14 +57,13 @@ function BindData() {
                 }
             },
             { data: "ClaimType", name: "ClaimType" },
-            { data: "ClaimValue", name: "ClaimValue" },
             { data: "TotalUsers", name: "TotalUsers" }
             ,
             {
                 data: null,
                 orderable: false,
                 render: function (data, type, row) {
-                    return "<span id='btnedit'><button type='button' class='cls-btnedit btn btn-icon btn-round btn-warning mr-1'><i class='fa fa-eye'></i></button></span>";
+                    return "<span id='btneyetotalusers'><button type='button' class='cls-btneyetotalusers btn btn-icon btn-round btn-warning mr-1'><i class='fa fa-eye'></i></button></span>";
                 }
             }
         ],
@@ -97,10 +99,113 @@ function BindData() {
             }],
         drawCallback: function (settings) {
             // Re-bind the click event after each draw
-            $("#tbldata tbody").off("click", ".cls-btnedit").on("click", ".cls-btnedit", function () {
-               
+            $("#tbldata tbody").off("click", ".cls-btneyetotalusers").on("click", ".cls-btneyetotalusers", function () {
+                var rowData = table.row($(this).closest("tr")).data();
+                if (rowData != null)
+                {
+                    BindDialog(rowData.ClaimType);
+                }
             });
             
+        }
+    });
+}
+function BindDialog(claimValue) {
+    debugger;
+    $('#tbldatadialog').DataTable().destroy();
+    $("#DataTableDialog").modal('show');
+    tableView = $("#tbldatadialog").DataTable({
+        processing: true,
+        serverSide: true,
+        filter: true,
+        order: [[1, 'desc']], // Default sorting on the first column
+        ajax: async function (data, callback, settings) {
+
+            let requestData = {
+                draw: data.draw,
+                start: data.start,
+                length: data.length,
+                searchValue: data.search.value,
+                sortColumn: data.order.length > 0 ? data.columns[data.order[0].column].data : '',  // Add a check for data.order
+                sortDirection: data.order.length > 0 ? data.order[0].dir : '',
+                choice: claimValue,
+            };
+            try {
+                debugger;
+                let response = await fetch("/Account/GetAllUsersByClaim", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                    body: new URLSearchParams(requestData).toString()
+                });
+
+                if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+
+                let result = await response.json();
+                //$("#lblTotal").html(result.recordsTotal);
+                callback(result); // Sends data to DataTables
+
+
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            }
+        },
+        columns: [
+            //{ data: "DomainId", name: "DomainId", visible: false },
+            {
+                data: null,
+                name: "SerialNumber",
+                orderable: false, // Disable sorting for this column
+                render: function (data, type, row, meta) {
+                    // Calculate serial number based on row index
+                    return meta.row + (meta.settings?._iDisplayStart || 0) + 1;
+                }
+            },
+            { data: "DomainId", name: "DomainId" },
+            { data: "Rank", name: "Rank" },
+            { data: "ArmyNo", name: "ArmyNo" },
+            { data: "AppointmentName", name: "AppointmentName" },
+            { data: "Name", name: "Name" },
+            { data: "Unit", name: "Unit" },
+            {
+                data: "RoleNames",
+                name: "RoleNames",
+                orderable: false, // Disable sorting for this column
+                render: function (data, type, row) {
+                    return data ? data.join(', ') : '';  // Convert array to string
+                }
+            }
+        ],
+        language: {
+            search: "", // Remove the default "Search:" label
+            searchPlaceholder: "Search Type / Value" // Add custom placeholder
+        },
+        dom: 'lBfrtip', // Add buttons to the DOM
+        buttons: [
+            {
+                extend: 'copy',
+                exportOptions: {
+                    columns: "thead th:not(.noExport)"
+                }
+            },
+            {
+                extend: 'excel',
+                exportOptions: {
+                    columns: "thead th:not(.noExport)"
+                }
+            },
+            {
+                extend: 'pdfHtml5',
+                orientation: 'landscape',
+                pageSize: 'LEGAL',
+                title: 'E-IASC_UsersByClaim',
+                exportOptions: {
+                    columns: "thead th:not(.noExport)"
+                },
+                customize: function (doc) {
+                    WaterMarkOnPdf(doc)
+                }
+            }],
+        drawCallback: function (settings) {
         }
     });
 }

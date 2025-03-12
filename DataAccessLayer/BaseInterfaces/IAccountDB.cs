@@ -33,5 +33,6 @@ namespace DataAccessLayer.BaseInterfaces
         public Task<DTODataTablesResponse<DTOUserRegnResponse>> GetDataForDataTable(DTODataTablesRequest request);
 
         Task<DTODataTablesResponse<DTOClaimsStoreResponse>> GetAllClaims(DTODataTablesRequest request);
+        Task<DTODataTablesResponse<DTOUsersByClaim>> GetAllUsersByClaim(DTODataTablesRequest request);
     }
 }

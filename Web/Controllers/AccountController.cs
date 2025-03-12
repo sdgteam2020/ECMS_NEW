@@ -3549,6 +3549,29 @@ namespace Web.Controllers
                 return Json(responseData);
             }
         }
+
+        [Authorize(Roles = "admin")]
+        [HttpPost()]
+        public async Task<IActionResult> GetAllUsersByClaim(DTODataTablesRequest dTO)
+        {
+            try
+            {
+                return Json(await _iAccountBL.GetAllUsersByClaim(dTO));
+            }
+            catch (Exception ex)
+            {
+                List<DTOUsersByClaim> dTOClaimsStoreResponses = new List<DTOUsersByClaim>();
+                var responseData = new DTODataTablesResponse<DTOUsersByClaim>
+                {
+                    draw = 0,
+                    recordsTotal = 0,
+                    recordsFiltered = 0,
+                    data = dTOClaimsStoreResponses
+                };
+                _logger.LogError(1001, ex, "Account->UsersByClaim");
+                return Json(responseData);
+            }
+        }
         #endregion Claims
     }
 }
