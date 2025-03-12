@@ -2240,17 +2240,17 @@ namespace DataAccessLayer
                 if (!string.IsNullOrEmpty(request.searchValue))
                 {
                     string searchValue = request.searchValue.ToLower();
-                    queryableData = queryableData.Where(x => x.DomainId.ToLower().Contains(searchValue));
+                    queryableData = queryableData.Where(x => x.ArmyNo.ToLower().Contains(searchValue));
                 }
 
                 //Apply sorting
-                //if (!string.IsNullOrEmpty(request.sortColumn) && !string.IsNullOrEmpty(request.sortDirection))
-                //{
-                //    //queryableData = queryableData.OrderBy(request.SortColumn + " " + request.SortColumnDirection);
-                //    queryableData = request.sortDirection.ToLower() == "asc"
-                //    ? queryableData.OrderBy(item => EF.Property<object>(item, request.sortColumn))
-                //    : queryableData.OrderByDescending(item => EF.Property<object>(item, request.sortColumn));
-                //}
+                if (!string.IsNullOrEmpty(request.sortColumn) && !string.IsNullOrEmpty(request.sortDirection))
+                {
+                    //queryableData = queryableData.OrderBy(request.SortColumn + " " + request.SortColumnDirection);
+                    queryableData = request.sortDirection.ToLower() == "asc"
+                    ? queryableData.OrderBy(item => EF.Property<object>(item, request.sortColumn))
+                    : queryableData.OrderByDescending(item => EF.Property<object>(item, request.sortColumn));
+                }
 
                 // Total records after filtering
                 var filteredRecords = queryableData.Count();

@@ -177,7 +177,7 @@ function BindDialog(claimValue) {
         ],
         language: {
             search: "", // Remove the default "Search:" label
-            searchPlaceholder: "Search Type / Value" // Add custom placeholder
+            searchPlaceholder: "Search IC No" // Add custom placeholder
         },
         dom: 'lBfrtip', // Add buttons to the DOM
         buttons: [
