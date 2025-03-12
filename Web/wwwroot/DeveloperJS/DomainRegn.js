@@ -1,4 +1,5 @@
-﻿$(function () {
+﻿var table; // Declare table variable outside the function to preserve the instance
+$(function () {
     BindData();
     AccountCount();
     BindRoles();
@@ -8,7 +9,7 @@
         closeOnSelect: false
     });
 
-    $("#AddNewDomain input[name='txtapproval']").on("click",function () {
+    $("#AddNewDomain input[name='txtapproval']").on("click", function () {
         $("#txtapproval-error").html("");
     });
     $("#AddNewDomain input[name='txtactive']").on("click", function () {
@@ -52,7 +53,7 @@
                             }))
                         }
                         else {
-                            $("#txtAppointmentName").val(""); 
+                            $("#txtAppointmentName").val("");
                             $("#spnUnitAppointmentId").html("");
                             alert("Appointment not found.")
                         }
@@ -98,7 +99,7 @@
                         if (data.length != 0) {
                             response($.map(data, function (item) {
                                 $("#loading").addClass("d-none");
-                                return { label: item.Sus_no + item.Suffix +' '+ item.UnitName , value: item.UnitMapId };
+                                return { label: item.Sus_no + item.Suffix + ' ' + item.UnitName, value: item.UnitMapId };
 
                             }))
                         }
@@ -171,7 +172,7 @@
                         $("#lbl7").addClass("d-none");
                     }
 
-                    
+
 
                 }
             });
@@ -179,7 +180,7 @@
         appendTo: '#suggesstion-box'
     });
 
-    $('#txtUnitName').on("keyup",function (e) {
+    $('#txtUnitName').on("keyup", function (e) {
         if (e.which == 46) {
             $("#spnUnitMapId").html('0');
             $("#txtUnitName").val("");
@@ -206,7 +207,7 @@
         ResetErrorMessage();
     });
 
-    $("#txtSearch").on("keyup",function () {
+    $("#txtSearch").on("keyup", function () {
         var eThis = $(this);
         if ($("input[type='radio'][name=choice]:checked").length > 0) {
             if ($("input[type='radio'][name=choice]:checked").val() == "Id") {
@@ -329,6 +330,7 @@ function BindDialog(Choice) {
         processing: true,
         serverSide: true,
         filter: true,
+        order: [[1, 'desc']], // Default sorting on the first column
         ajax: {
             url: "/Account/GetDataForDataTable",
             contentType: 'application/x-www-form-urlencoded',
@@ -344,19 +346,112 @@ function BindDialog(Choice) {
             },
         },
         columns: [
+            // Serial number column
+            {
+                data: null,
+                name: "SerialNumber",
+                orderable: false, // Disable sorting for this column
+                render: function (data, type, row, meta) {
+                    // Calculate serial number based on row index
+                    return meta.row + (meta.settings?._iDisplayStart || 0) + 1;
+                }
+            },
             { data: "Id", name: "Id" },
             { data: "DomainId", name: "DomainId" },
             { data: "ArmyNo", name: "ArmyNo" },
-            { data: "RoleNames", name: "RoleNames" },
-            { data: "UpdatedOn", name: "UpdatedOn" },
-            { data: "Mapped", name: "Mapped" },
-            { data: "Active", name: "Active" },
-            { data: "AdminFlag", name: "AdminFlag" },
-            { data: "IsIO", name: "IsIO" },
-            { data: "IsCO", name: "IsCO" },
+            {
+                data: "RoleNames",
+                name: "RoleNames",
+                orderable: false, // Disable sorting for this column
+                render: function (data, type, row) {
+                    return data ? data.join(', ') : '';  // Convert array to string
+                }
+            },
+            {
+                data: "UpdatedOn",
+                name: "UpdatedOn",
+                render: function (data, type, row) {
+                    return DateFormateddMMyyyyhhmmss(data);
+                },
+            },
+            // Display user-friendly value for Mapped
+            {
+                data: "Mapped",
+                name: "Mapped",
+                render: function (data, type, row) {
+                    // Convert boolean to "Yes" or "No"
+                    return data ? "<span class='badge badge-pill badge-success'>Yes</span>" : "<span class='badge badge-pill badge-danger'>No</span>";
+                },
+            },
+            // Display user-friendly value for AdminFlag
+            {
+                data: "AdminFlag",
+                name: "AdminFlag",
+                render: function (data, type, row) {
+                    // Convert boolean to "Yes" or "No"
+                    return data ? "<span class='badge badge-pill badge-success'>Yes</span>" : "<span class='badge badge-pill badge-danger'>No</span>";
+                },
+            },
+            // Display user-friendly value for Active
+            {
+                data: "Active",
+                name: "Active",
+                render: function (data, type, row) {
+                    // Convert boolean to "Yes" or "No"
+                    return data ? "<span class='badge badge-pill badge-success'>Yes</span>" : "<span class='badge badge-pill badge-danger'>No</span>";
+                },
+            },
+            // Display user-friendly value for IsIO
+            {
+                data: "IsIO",
+                name: "IsIO",
+                render: function (data, type, row) {
+                    // Convert boolean to "Yes" or "No"
+                    return data ? "<span class='badge badge-pill badge-success'>Yes</span>" : "<span class='badge badge-pill badge-danger'>No</span>";
+                },
+            },
+            // Display user-friendly value for IsCO
+            {
+                data: "IsCO",
+                name: "IsCO",
+                render: function (data, type, row) {
+                    // Convert boolean to "Yes" or "No"
+                    return data ? "<span class='badge badge-pill badge-success'>Yes</span>" : "<span class='badge badge-pill badge-danger'>No</span>";
+                },
+            },
             //{ data: "IsRO", name: "IsRO" },
             //{ data: "IsORO", name: "IsORO" }
-        ]
+        ],
+        language: {
+            search: "", // Remove the default "Search:" label
+            searchPlaceholder: "Search Domain ID" // Add custom placeholder
+        },
+        dom: 'lBfrtip', // Add buttons to the DOM
+        buttons: [
+            {
+                extend: 'copy',
+                exportOptions: {
+                    columns: "thead th:not(.noExport)"
+                }
+            },
+            {
+                extend: 'excel',
+                exportOptions: {
+                    columns: "thead th:not(.noExport)"
+                }
+            },
+            {
+                extend: 'pdfHtml5',
+                orientation: 'landscape',
+                pageSize: 'LEGAL',
+                title: 'E-IASC_' + $("#lblModelTitle").html(),
+                exportOptions: {
+                    columns: "thead th:not(.noExport)"
+                },
+                customize: function (doc) {
+                    WaterMarkOnPdf(doc)
+                }
+            }]
     });
 }
 function Proceed() {
@@ -373,7 +468,7 @@ function Proceed() {
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',  
+            cancelButtonColor: '#d33',
             confirmButtonText: 'Yes, Save it!'
         }).then((result) => {
             if (result.isConfirmed) {
@@ -436,7 +531,7 @@ function ValidateInput() {
     //}
 
     var AppointmentId = $("#spnUnitAppointmentId").html();
-    
+
     if ((AppointmentId == 0 || AppointmentId == '') && $("#txtAppointmentName").val().length > 0) {
         $("#txtAppointmentName").val('');
         $("#txtAppointmentName-error").html("Appointment name is invalid.");
@@ -444,7 +539,7 @@ function ValidateInput() {
     }
 
     var UnitMapId = $("#spnUnitMapId").html();
-    if ((UnitMapId == 0 || UnitMapId == '') && $("#txtUnitName").val().length > 0 ) {
+    if ((UnitMapId == 0 || UnitMapId == '') && $("#txtUnitName").val().length > 0) {
         $("#txtUnitName").val('');
         $("#txtAppointmentName-error").html("Unit name is invalid.");
         toastr.error('Unit name is invalid.');
@@ -452,242 +547,250 @@ function ValidateInput() {
 }
 
 function BindData() {
-    var listItem = "";
-    var userdata =
-    {
-        "Search": $("#txtSearch").val(),
-        "Choice": $("input[type='radio'][name=choice]:checked").val()
-    };
-    $.ajax({
-        url: '/Account/GetAllDomainRegn',
-        contentType: 'application/x-www-form-urlencoded',
-        data: userdata,
-        type: 'POST',
+    $("#tbldata").DataTable().destroy();
+    //if ($.fn.DataTable.isDataTable("#tbldata")) {
+    //    $("#tbldata").DataTable().destroy();
+    //}
 
-        success: function (response) {
-            if (response != "null" && response != null) {
-
-                if (response == InternalServerError) {
-                    Swal.fire({
-                        text: errormsg
-                    });
-
-                }
-                else if (response.length == 0) {
-                    $("#tbldata").DataTable().destroy();
-
-                    $("#DetailBody").html(listItem);
-                    memberTable = $('#tbldata').DataTable({
-                        "language": {
-                            "emptyTable": "No data available"
-                        }
-                    });
-
-
-                }
-
-                else {
-                    $("#tbldata").DataTable().destroy();
-                    for (var i = 0; i < response.length; i++) {
-
-                        listItem += "<tr>";
-                        listItem += "<td class='d-none'><span id='regId'>" + response[i].Id + "</span><span id='regTrnDomainMappingId'>" + response[i].TrnDomainMappingId + "</span><span id='regTrnDomainMappingApptId'>" + response[i].TrnDomainMappingApptId + "</span><span id='regTrnDomainMappingUnitId'>" + response[i].TrnDomainMappingUnitId + "</span><span id='regUserId'>" + response[i].UserId + "</span><span id='roleIds'>" + response[i].RoleIds + "</span><span id='claimValues'>" + response[i].ClaimValues + "</span><span id='domain_approval'>" + response[i].AdminFlag + "</span></td>";  //"</span><span id='extension'>" + response[i].Extension + "</span><span id='dialingCode'>" + response[i].DialingCode + 
-                        listItem += "<td class='align-middle'>" + (i + 1) + "</td>";
-                        listItem += "<td class='align-middle'><span id='reg_no'>" + response[i].Id + "</span></td>";
-                        listItem += "<td class='align-middle'><span id='domainId'>" + response[i].DomainId + "</span></td>";
-                        listItem += "<td class='align-middle'><span id='roleName'>" + response[i].RoleNames + "</span></td>";
-                        if (response[i].ClaimTypes.length > 0) {
-                            var armsArray = response[i].ClaimTypes;
-                            listItem += "<td class='align-middle'><button type='button' class='cls-claimtypes btn btn-icon btn-round btn-warning mr-1'><i class='fa fa-eye'></i><span id='claimTypes' class='d-none'><ul>";
-                            for (var j = 0; j < armsArray.length; j++) {
-                                listItem += "<li>" + armsArray[j] + "</li>";
-                            }
-                            listItem += "</ul></span></button></td>";
-                        }
-                        else {
-                            listItem += "<td class='align-middle'></td>";
-                        }
-                        listItem += "<td class='align-middle'><span id='updatedOn'>" + DateFormateddMMyyyyhhmmss(response[i].UpdatedOn) + "</span></td>";
-                        if (response[i].Mapped == true)
-                            listItem += "<td class='align-middle'><span id='domain_mapping'><span class='badge badge-pill badge-success'>Yes</span></span></td>";
-                        else
-                            listItem += "<td class='align-middle'><span id='domain_mapping'><span class='badge badge-pill badge-danger'>No</span></span></td>";
-
-                        if (response[i].AdminFlag == true)
-                            listItem += "<td class='align-middle'><span><span class='badge badge-pill badge-success'>Yes</span></td>";
-                        else
-                            listItem += "<td class='align-middle'><span><span class='badge badge-pill badge-danger'>No</span></td>";
-
-                        if (response[i].Active == true)
-                            listItem += "<td class='align-middle'><span><span class='badge badge-pill badge-success' id='domain_active'>Yes</span></span></td>";
-                        else
-                            listItem += "<td class='align-middle'><span><span class='badge badge-pill badge-danger' id='domain_active'>No</span></span></td>";
-
-
-
-                        if (response[i].IsIO == true)
-                            listItem += "<td class='align-middle'><span><span class='badge badge-pill badge-success' id='isIO'>Yes</span></span></td>";
-                        else
-                            listItem += "<td class='align-middle'><span><span class='badge badge-pill badge-danger' id='isIO'>No</span></span></td>";
-
-                        if (response[i].IsCO == true)
-                            listItem += "<td class='align-middle'><span><span class='badge badge-pill badge-success' id='isCO'>Yes</span></span></td>";
-                        else
-                            listItem += "<td class='align-middle'><span><span class='badge badge-pill badge-danger' id='isCO'>No</span></span></td>";
-
-                        //if (response[i].IsRO == true)
-                        //    listItem += "<td class='align-middle'><span><span class='badge badge-pill badge-success' id='isRO'>Yes</span></span></td>";
-                        //else
-                        //    listItem += "<td class='align-middle'><span><span class='badge badge-pill badge-danger' id='isRO'>No</span></span></td>";
-
-                        //if (response[i].IsORO == true)
-                        //    listItem += "<td class='align-middle'><span><span class='badge badge-pill badge-success' id='isORO'>Yes</span></span></td>";
-                        //else
-                        //    listItem += "<td class='align-middle'><span><span class='badge badge-pill badge-danger' id='isORO'>No</span></span></td>";
-
-                        listItem += "<td class='align-middle'><span id='btnedit'><button type='button' class='cls-btnedit btn btn-icon btn-round btn-warning mr-1'><i class='fas fa-edit'></i></button></span></td>";
-
-
-                        /*    listItem += "<td class='nowrap'><button type='button' class='cls-btnSend btn btn-outline-success mr-1'>Send To Verification</button></td>";*/
-                        listItem += "</tr>";
-
-                    }
-
-                    $("#DetailBody").html(listItem);
-                    $("#lblTotal").html(response.length - 1);
-
-                    memberTable = $('#tbldata').DataTable({
-                        retrieve: true,
-                        lengthChange: false,
-                        searching: false,
-                        stateSave: true,
-                        "order": [[1, "asc"]],
-                        buttons: [{
-                            extend: 'copy',
-                            exportOptions: {
-                                columns: "thead th:not(.noExport)"
-                            }
-                        }, {
-                            extend: 'excel',
-                            exportOptions: {
-                                columns: "thead th:not(.noExport)"
-                            }
-                        }, {
-                            extend: 'pdfHtml5',
-                            orientation: 'portrait',
-                            pageSize: 'A4',
-                            title: 'E-IASC_Domain_Regn',
-                            exportOptions: {
-                                columns: "thead th:not(.noExport)"
-                            },
-                            customize: function (doc) {
-                                WaterMarkOnPdf(doc)
-                            }
-                        }]
-                    });
-
-                    memberTable.buttons().container().appendTo('#tbldata_wrapper .col-md-6:eq(0)');
-
-                    $("body").on("click", ".cls-btnedit", function () {
-                        Reset();
-                        ResetErrorMessage();
-                        $("#txtDomainId").val($(this).closest("tr").find("#domainId").html());
-                        $("#txtRole").val($(this).closest("tr").find("#roleName").html());
-                        //$("#txtDialingCode").val($(this).closest("tr").find("#dialingCode").html());
-                        //$("#txtExtension").val($(this).closest("tr").find("#extension").html());
-                        $("#spnDomainRegId").html($(this).closest("tr").find("#regId").html());
-                        //alert($(this).closest("tr").find("#domain_approval").html())
-                        if ($(this).closest("tr").find("#domain_approval").html() == 'true') {
-                            $("#txtapprovalyes").prop("checked", true);
-                        }
-                        else {
-                            $("#txtapprovalno").prop("checked", true);
-
-                        }
-
-                        if ($(this).closest("tr").find("#domain_active").html() == 'Yes') {
-                            $("#txtactiveyes").prop("checked", true);
-                        }
-                        else {
-                            $("#txtactiveno").prop("checked", true);
-                        }
-
-                        if ($(this).closest("tr").find("#isIO").html() == 'Yes') {
-                            $("#initatingOffryes").prop("checked", true);
-                        }
-                        else {
-                            $("#initatingOffrno").prop("checked", true);
-                        }
-
-                        if ($(this).closest("tr").find("#isCO").html() == 'Yes') {
-                            $("#commandingOffryes").prop("checked", true);
-                        }
-                        else {
-                            $("#commandingOffrno").prop("checked", true);
-                        }
-
-                        //if ($(this).closest("tr").find("#isRO").html() == 'Yes') {
-                        //    $("#isroyes").prop("checked", true);
-                        //}
-                        //else {
-                        //    $("#isrono").prop("checked", true);
-                        //}
-
-                        //if ($(this).closest("tr").find("#isORO").html() == 'Yes') {
-                        //    $("#isoroyes").prop("checked", true);
-                        //}
-                        //else {
-                        //    $("#isorono").prop("checked", true);
-                        //}
-
-                        if ($(this).closest("tr").find("#regTrnDomainMappingId").html() > 0) {
-                            $("#spnTrnDomainMappingId").html($(this).closest("tr").find("#regTrnDomainMappingId").html()); 
-                            GetALLByUnitById($(this).closest("tr").find("#regTrnDomainMappingUnitId").html());
-                        }
-
-                        if ($(this).closest("tr").find("#regTrnDomainMappingApptId").html() > 0) {
-                            GetNameByApptId($(this).closest("tr").find("#regTrnDomainMappingApptId").html());
-                        }
-                        //$("#ddlRoles").val([1, 2]);
-                        //$("#ddlRoles").trigger("change");
-                        let arr2 = $(this).closest("tr").find("#roleIds").html().split(',');
-                        $("#ddlRoles").val(arr2);
-                        $("#ddlRoles").trigger("change");
-
-                        let arr3 = $(this).closest("tr").find("#claimValues").html().split(',');
-                        $("#ddClaims").val(arr3);
-                        $("#ddClaims").trigger("change");
-
-                        $("#btnDomainAdd").val("Update");
-                        $("#AddNewDomain").modal('show');
-                    });
-                    $("body").on("click", ".cls-claimtypes", function () {
-                        $("#claimDomainId").html($(this).closest("tr").find("#domainId").html())
-                        $("#ClaimsShowBody").html($(this).closest("tr").find("#claimTypes").html());
-                        $("#ClaimsShow").modal('show');
-                    });
-                }
-            }
-            else {
-                $("#tbldata").DataTable().destroy();
-
-                $("#DetailBody").html(listItem);
-                memberTable = $('#tbldata').DataTable({
-                    "language": {
-                        "emptyTable": "No data available"
-                    }
+    table = $("#tbldata").DataTable({
+        processing: true,
+        serverSide: true,
+        filter: true,
+        order: [[1, 'desc']], // Default sorting on the first column
+        ajax: async function (data, callback, settings) {
+            let requestData = {
+                draw: data.draw,
+                start: data.start,
+                length: data.length,
+                searchValue: data.search.value,
+                sortColumn: data.order.length > 0 ? data.columns[data.order[0].column].data : '',  // Add a check for data.order
+                sortDirection: data.order.length > 0 ? data.order[0].dir : '', // Add a check for data.order
+            };
+            try {
+                let response = await fetch("/Account/GetAllDomainRegn", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                    body: new URLSearchParams(requestData).toString()
                 });
 
+                if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
 
+                let result = await response.json();
+                callback(result); // Sends data to DataTables
+            } catch (error) {
+                console.error("Error fetching data:", error);
             }
         },
-        error: function (result) {
-            Swal.fire({
-                text: errormsg002
+        columns: [
+            // Serial number column
+            {
+                data: null,
+                name: "SerialNumber",
+                orderable: false, // Disable sorting for this column
+                render: function (data, type, row, meta) {
+                    // Calculate serial number based on row index
+                    return meta.row + (meta.settings?._iDisplayStart || 0) + 1;
+                }
+            },
+            { data: "Id", name: "Id" },
+            { data: "DomainId", name: "DomainId" },
+            {
+                data: "RoleNames",
+                name: "RoleNames",
+                orderable: false, // Disable sorting for this column
+                render: function (data, type, row) {
+                    return data ? data.join(', ') : '';  // Convert array to string
+                }
+            },
+            // Display user-friendly value for ClaimTypes
+            {
+                data: "ClaimTypes",
+                name: "ClaimTypes",
+                orderable: false, // Disable sorting for this column
+                render: function (data, type, rowata) {
+                    if (Array.isArray(data) && data.length > 0) {
+                        return `<button type='button' class='cls-claimtypes btn btn-icon btn-round btn-warning mr-1'><i class='fa fa-eye'></i></button>`;
+                    }
+                    return ''; // Return empty if no claims
+                }
+            },
+            {
+                data: "UpdatedOn",
+                name: "UpdatedOn",
+                render: function (data, type, row) {
+                    return DateFormateddMMyyyyhhmmss(data);
+                },
+            },
+            // Display user-friendly value for Mapped
+            {
+                data: "Mapped",
+                name: "Mapped",
+                render: function (data, type, row) {
+                    // Convert boolean to "Yes" or "No"
+                    return data ? "<span class='badge badge-pill badge-success'>Yes</span>" : "<span class='badge badge-pill badge-danger'>No</span>";
+                },
+            },
+            // Display user-friendly value for AdminFlag
+            {
+                data: "AdminFlag",
+                name: "AdminFlag",
+                render: function (data, type, row) {
+                    // Convert boolean to "Yes" or "No"
+                    return data ? "<span class='badge badge-pill badge-success'>Yes</span>" : "<span class='badge badge-pill badge-danger'>No</span>";
+                },
+            },
+            // Display user-friendly value for Active
+            {
+                data: "Active",
+                name: "Active",
+                render: function (data, type, row) {
+                    // Convert boolean to "Yes" or "No"
+                    return data ? "<span class='badge badge-pill badge-success'>Yes</span>" : "<span class='badge badge-pill badge-danger'>No</span>";
+                },
+            },
+            // Display user-friendly value for IsIO
+            {
+                data: "IsIO",
+                name: "IsIO",
+                render: function (data, type, row) {
+                    // Convert boolean to "Yes" or "No"
+                    return data ? "<span class='badge badge-pill badge-success'>Yes</span>" : "<span class='badge badge-pill badge-danger'>No</span>";
+                },
+            },
+            // Display user-friendly value for IsCO
+            {
+                data: "IsCO",
+                name: "IsCO",
+                render: function (data, type, row) {
+                    // Convert boolean to "Yes" or "No"
+                    return data ? "<span class='badge badge-pill badge-success'>Yes</span>" : "<span class='badge badge-pill badge-danger'>No</span>";
+                },
+            },
+            // Additional column for Edit action
+            {
+                data: null,
+                orderable: false,
+                render: function (data, type, row) {
+                    return "<button type='button' class='cls-btnedit btn btn-icon btn-round btn-warning mr-1'><i class='fas fa-edit'></i></button>";
+                }
+            }
+        ],
+        language: {
+            search: "", // Remove the default "Search:" label
+            searchPlaceholder: "Search Domain ID" // Add custom placeholder
+        },
+        dom: 'lBfrtip', // Add buttons to the DOM
+        buttons: [
+            {
+                extend: 'copy',
+                exportOptions: {
+                    columns: "thead th:not(.noExport)"
+                }
+            },
+            {
+                extend: 'excel',
+                exportOptions: {
+                    columns: "thead th:not(.noExport)"
+                }
+            },
+            {
+                extend: 'pdfHtml5',
+                orientation: 'landscape',
+                pageSize: 'LEGAL',
+                title: 'E-IASC_DomainRegn',
+                exportOptions: {
+                    columns: "thead th:not(.noExport)"
+                },
+                customize: function (doc) {
+                    WaterMarkOnPdf(doc)
+                }
+            }],
+        drawCallback: function (settings) {
+            // Re-bind the click event after each draw
+            $("#tbldata tbody").off("click", ".cls-btnedit").on("click", ".cls-btnedit", function () {
+                var rowData = table.row($(this).closest("tr")).data();
+
+                if (rowData != null) {
+                    $("#spnUnitMapId").html(rowData.UnitMapId);
+                    $("#spnUnitId").html(rowData.UnitId);
+                    $("#lblUnit").html(rowData.UnitName);
+                    $("#txtSusno").val(rowData.Sus_no);
+
+                    $("#AddNewUnitmap").modal('show');
+                    $("#btnMapUnitsave").val("Update");
+
+                    Reset();
+                    ResetErrorMessage();
+                    $("#txtDomainId").val(rowData.DomainId);
+                    $("#txtRole").val($(this).closest("tr").find("#roleName").html());
+                    //$("#txtDialingCode").val(rowData.DialingCode);
+                    //$("#txtExtension").val(rowData.Extension);
+                    $("#spnDomainRegId").html(rowData.Id);
+                    if (rowData.AdminFlag == true) {
+                        $("#txtapprovalyes").prop("checked", true);
+                    }
+                    else {
+                        $("#txtapprovalno").prop("checked", true);
+
+                    }
+
+                    if (rowData.Active == true) {
+                        $("#txtactiveyes").prop("checked", true);
+                    }
+                    else {
+                        $("#txtactiveno").prop("checked", true);
+                    }
+
+                    if (rowData.IsIO == true) {
+                        $("#initatingOffryes").prop("checked", true);
+                    }
+                    else {
+                        $("#initatingOffrno").prop("checked", true);
+                    }
+
+                    if (rowData.IsCO == true) {
+                        $("#commandingOffryes").prop("checked", true);
+                    }
+                    else {
+                        $("#commandingOffrno").prop("checked", true);
+                    }
+
+
+                    if (rowData.TrnDomainMappingId > 0) {
+                        $("#spnTrnDomainMappingId").html(rowData.TrnDomainMappingId);
+                        GetALLByUnitById(rowData.TrnDomainMappingUnitId);
+                    }
+
+                    if (rowData.TrnDomainMappingApptId > 0) {
+                        GetNameByApptId(rowData.TrnDomainMappingApptId);
+                    }
+                    //$("#ddlRoles").val([1, 2]);
+                    //$("#ddlRoles").trigger("change");
+                    //let arr2 = $(this).closest("tr").find("#roleIds").html().split(',');
+                    $("#ddlRoles").val(rowData.RoleIds);
+                    $("#ddlRoles").trigger("change");
+
+                    //let arr3 = $(this).closest("tr").find("#claimValues").html().split(',');
+                    $("#ddClaims").val(rowData.ClaimValues);
+                    $("#ddClaims").trigger("change");
+
+                    $("#btnDomainAddDialog").val("Update");
+                    $("#AddNewDomain").modal('show');
+
+                }
+            });
+            $("#tbldata tbody").off("click", ".cls-claimtypes").on("click", ".cls-claimtypes", function () {
+                var rowData = table.row($(this).closest("tr")).data();
+
+                if (rowData != null) {
+                    $("#claimDomainId").html(rowData.DomainId);
+                    $("#ClaimsShowBody").html(`<ul>` + rowData.ClaimTypes.map(ct => `<li>${ct}</li>`).join('') + `</ul>`);
+                    $("#ClaimsShow").modal('show');
+
+                }
             });
         }
     });
-
 }
 function Save() {
     $.ajax({
@@ -757,7 +860,8 @@ function Save() {
     });
 }
 
-function Reset()     {
+function Reset() {
+    $("#btnDomainAddDialog").val("Save");
     $("#txtSearch").val("");
 
     $("#spnDomainRegId").html("0");
@@ -768,7 +872,7 @@ function Reset()     {
 
     $('#ddlRoles').val(null).trigger('change');
     $('#ddClaims').val(null).trigger('change');
-   
+
 
     $("#spnTrnDomainMappingId").html("0");
     $("#spnUnitMapId").html("0");
@@ -829,7 +933,7 @@ function GetALLByUnitById(param1) {
             $("#spnUnitMapId").html(data.UnitMapId);
             $("#lblSusno").html(data.Sus_no + '' + data.Suffix);
             /*$("#txtUnitName").val(data.UnitName);*/
-            $("#txtUnitName").val(data.UnitName + ' '+ data.Sus_no + data.Suffix);
+            $("#txtUnitName").val(data.UnitName + ' ' + data.Sus_no + data.Suffix);
 
             if (data.UnitType == 1) {
                 $("#lblComd").html(data.ComdName);
@@ -885,7 +989,7 @@ function GetNameByApptId(param1) {
     });
 }
 function BindRoles() {
-        $.ajax({
+    $.ajax({
         url: "/Account/GetAllRole",
         type: "POST",
         success: function (response, status) {
@@ -895,7 +999,7 @@ function BindRoles() {
             }
             $('#ddlRoles').html(list)
         }
-        });
+    });
 }
 function BindClaims() {
     $.ajax({

@@ -1,10 +1,11 @@
-﻿$(document).ready(function () {
+﻿var table; // Declare table variable outside the function to preserve the instance
+$(function () {
     BindData("");
     AccountCount();
-    $("#AddNewDomain input[name='txtapproval']").click(function () {
+    $("#AddNewDomain input[name='txtapproval']").on("click",function () {
         $("#txtapproval-error").html("");
     });
-    $("#AddNewDomain input[name='txtactive']").click(function () {
+    $("#AddNewDomain input[name='txtactive']").on("click",function () {
         $("#txtactive-error").html("");
     });
 
@@ -51,10 +52,10 @@
             var param1 = { "UserId": i.item.value };
             $.ajax({
                 url: '/UserProfile/GetProfileByUserId',
-                method:'POST',
+                method: 'POST',
                 contentType: 'application/x-www-form-urlencoded',
                 data: param1,
-                datatype:'json',
+                datatype: 'json',
                 success: function (data) {
                     $("#lblName").html(data.Name);
                     $("#lblRank").html(data.RankName);
@@ -64,8 +65,8 @@
         appendTo: '#suggesstion-box'
     });
 
-    $('#txtArmyNo').keyup(function (e) {
-        if (e.keyCode == 46) {
+    $('#txtArmyNo').on("keyup",function (e) {
+        if (e.which == 46) {
             $("#spnUserProfileId").html('0');
             $("#txtArmyNo").val('');
             $("#lblName").html('');
@@ -73,7 +74,7 @@
         }
     });
 
-    $("#txtSearch").keyup(function () {
+    $("#txtSearch").on("keyup",function () {
         var eThis = $(this);
         if ($("input[type='radio'][name=choice]:checked").length > 0) {
             var ChoiceValue = $("input[type='radio'][name=choice]:checked").val();
@@ -97,7 +98,7 @@
         }
     });
 
-    $("#btnUser").click(function () {
+    $("#btnUser").on("click",function () {
 
         if ($("#lblUser").html() > 0) {
             $("#tbldatadialog").DataTable().destroy();
@@ -106,7 +107,7 @@
             BindDialog("User");
         }
     });
-    $("#btnMappedUser").click(function () {
+    $("#btnMappedUser").on("click", function () {
 
         if ($("#lblMappedUser").html() > 0) {
             $("#tbldatadialog").DataTable().destroy();
@@ -115,7 +116,7 @@
             BindDialog("MappedUser");
         }
     });
-    $("#btnUnMappedUser").click(function () {
+    $("#btnUnMappedUser").on("click", function () {
         if ($("#lblUnMappedUser").html() > 0) {
             $("#tbldatadialog").DataTable().destroy();
             $("#lblModelTitle").html('Total UnMapped Users');
@@ -123,7 +124,7 @@
             BindDialog("UnMappedUser");
         }
     });
-    $("#btnActiveUser").click(function () {
+    $("#btnActiveUser").on("click", function () {
         if ($("#lblActiveUser").html() > 0) {
             $("#tbldatadialog").DataTable().destroy();
             $("#lblModelTitle").html('Total Active Users');
@@ -131,7 +132,7 @@
             BindDialog("ActiveUser");
         }
     });
-    $("#btnInActiveUser").click(function () {
+    $("#btnInActiveUser").on("click", function () {
         if ($("#lblInActiveUser").html() > 0) {
             $("#tbldatadialog").DataTable().destroy();
             $("#lblModelTitle").html('Total InActive Users');
@@ -139,7 +140,7 @@
             BindDialog("InActiveUser");
         }
     });
-    $("#btnVerified").click(function () {
+    $("#btnVerified").on("click", function () {
         if ($("#lblVerifiedUser").html() > 0) {
             $("#tbldatadialog").DataTable().destroy();
             $("#lblModelTitle").html('Total Verified Users');
@@ -147,7 +148,7 @@
             BindDialog("Verified");
         }
     });
-    $("#btnNotVerifiedUser").click(function () {
+    $("#btnNotVerifiedUser").on("click", function () {
         if ($("#lblNotVerifiedUser").html() > 0) {
             $("#tbldatadialog").DataTable().destroy();
             $("#lblModelTitle").html('Total Not Verified Users');
@@ -155,7 +156,7 @@
             BindDialog("NotVerifiedUser");
         }
     });
-    $("#btnIO").click(function () {
+    $("#btnIO").on("click", function () {
         if ($("#lblIO").html() > 0) {
             $("#tbldatadialog").DataTable().destroy();
             $("#lblModelTitle").html('Total Not Verified Users');
@@ -166,7 +167,7 @@
             BindData("IO");
         }
     });
-    $("#btnApprover").click(function () {
+    $("#btnApprover").on("click", function () {
         if ($("#lblApprover").html() > 0) {
             $("#tbldatadialog").DataTable().destroy();
             $("#lblModelTitle").html('Total Not Verified Users');
@@ -196,6 +197,7 @@ function BindDialog(Choice) {
         processing: true,
         serverSide: true,
         filter: true,
+        order: [[1, 'desc']], // Default sorting on the first column
         ajax: {
             url: "/Account/GetDataForDataTable",
             contentType: 'application/x-www-form-urlencoded',
@@ -209,255 +211,372 @@ function BindDialog(Choice) {
                 d.sortDirection = d.order[0].dir;
                 d.Choice = Choice;
             },
-        },  
+        },
         columns: [
+            // Serial number column
+            {
+                data: null,
+                name: "SerialNumber",
+                orderable: false, // Disable sorting for this column
+                render: function (data, type, row, meta) {
+                    // Calculate serial number based on row index
+                    return meta.row + (meta.settings?._iDisplayStart || 0) + 1;
+                }
+            },
             { data: "Id", name: "Id" },
             { data: "DomainId", name: "DomainId" },
-            { data: "ArmyNo", name: "ArmyNo" },
-            { data: "RoleNames", name: "RoleNames" },
-            { data: "UpdatedOn", name: "UpdatedOn" },
-            { data: "Mapped", name: "Mapped" },
-            { data: "Active", name: "Active" },
-            { data: "AdminFlag", name: "AdminFlag" },
-            { data: "IsIO", name: "IsIO" },
-            { data: "IsCO", name: "IsCO" },
+            {
+                data: "ArmyNo",
+                name: "ArmyNo",
+                render: function (data, type, row) {
+                    return data ? data : "<span class='badge badge-pill badge-danger'>IC No Not Mapped</span>";
+                }
+            },
+            {
+                data: "RoleNames",
+                name: "RoleNames",
+                orderable: false, // Disable sorting for this column
+                render: function (data, type, row) {
+                    return data ? data.join(', ') : '';  // Convert array to string
+                }
+            },
+            {
+                data: "UpdatedOn",
+                name: "UpdatedOn",
+                render: function (data, type, row) {
+                    return data ? DateFormateddMMyyyyhhmmss(data) : "NA";
+                },
+            },
+            // Display user-friendly value for Mapped
+            {
+                data: "Mapped",
+                name: "Mapped",
+                render: function (data, type, row) {
+                    // Convert boolean to "Yes" or "No"
+                    return data ? "<span class='badge badge-pill badge-success'>Yes</span>" : "<span class='badge badge-pill badge-danger'>No</span>";
+                },
+            },
+            // Display user-friendly value for Active
+            {
+                data: "Active",
+                name: "Active",
+                render: function (data, type, row) {
+                    // Convert boolean to "Yes" or "No"
+                    return data ? "<span class='badge badge-pill badge-success'>Yes</span>" : "<span class='badge badge-pill badge-danger'>No</span>";
+                },
+            },
+            // Display user-friendly value for AdminFlag
+            {
+                data: "AdminFlag",
+                name: "AdminFlag",
+                render: function (data, type, row) {
+                    // Convert boolean to "Yes" or "No"
+                    return data ? "<span class='badge badge-pill badge-success'>Yes</span>" : "<span class='badge badge-pill badge-danger'>No</span>";
+                },
+            },
+            // Display user-friendly value for IsIO
+            {
+                data: "IsIO",
+                name: "IsIO",
+                render: function (data, type, row) {
+                    // Convert boolean to "Yes" or "No"
+                    return data ? "<span class='badge badge-pill badge-success'>Yes</span>" : "<span class='badge badge-pill badge-danger'>No</span>";
+                },
+            },
+            // Display user-friendly value for IsCO
+            {
+                data: "IsCO",
+                name: "IsCO",
+                render: function (data, type, row) {
+                    // Convert boolean to "Yes" or "No"
+                    return data ? "<span class='badge badge-pill badge-success'>Yes</span>" : "<span class='badge badge-pill badge-danger'>No</span>";
+                },
+            },
             //{ data: "IsRO", name: "IsRO" },
             //{ data: "IsORO", name: "IsORO" }
-        ]    
-        });
+        ],
+        language: {
+            search: "", // Remove the default "Search:" label
+            searchPlaceholder: "Search Domain ID" // Add custom placeholder
+        },
+        dom: 'lBfrtip', // Add buttons to the DOM
+        buttons: [
+            {
+                extend: 'copy',
+                exportOptions: {
+                    columns: "thead th:not(.noExport)"
+                }
+            },
+            {
+                extend: 'excel',
+                exportOptions: {
+                    columns: "thead th:not(.noExport)"
+                }
+            },
+            {
+                extend: 'pdfHtml5',
+                orientation: 'landscape',
+                pageSize: 'LEGAL',
+                title: 'E-IASC_' + $("#lblModelTitle").html(),
+                exportOptions: {
+                    columns: "thead th:not(.noExport)"
+                },
+                customize: function (doc) {
+                    WaterMarkOnPdf(doc)
+                }
+            }]
+    });
 }
-function BindData(Choice) {
-    var listItem = "";
-    var userdata =
-    {
-        "Search": $("#txtSearch").val(),
-        "Choice": Choice
-    };
-    $.ajax({
-        url: '/Account/GetAllUserRegn',
-        contentType: 'application/x-www-form-urlencoded',
-        data: userdata,
-        type: 'POST',
+function BindData() {
+    $("#tbldata").DataTable().destroy();
+    //if ($.fn.DataTable.isDataTable("#tbldata")) {
+    //    $("#tbldata").DataTable().destroy();
+    //}
 
-        success: function (response) {
-            if (response != "null" && response != null) {
-
-                if (response == InternalServerError) {
-                    Swal.fire({
-                        text: errormsg
-                    });
-
-                }
-                else if (response.length == 0) {
-                    $("#tbldata").DataTable().destroy();
-
-                    $("#DetailBody").html(listItem);
-                    memberTable = $('#tbldata').DataTable({
-                        "language": {
-                            "emptyTable": "No data available"
-                        }
-                    });
-
-
-                }
-
-                else {  
-
-                    $("#tbldata").DataTable().destroy();
-
-                    for (var i = 0; i < response.length; i++) {
-
-                        listItem += "<tr>";
-                        listItem += "<td class='d-none'><span id='regId'>" + response[i].Id + "</span><span id='regTrnDomainMappingId'>" + response[i].TrnDomainMappingId + "</span><span id='regTrnDomainMappingApptId'>" + response[i].TrnDomainMappingApptId + "</span><span id='regTrnDomainMappingUnitId'>" + response[i].TrnDomainMappingUnitId + "</span><span id='regUserId'>" + response[i].UserId + "</span><span id='spnAdminMsg'>" + response[i].AdminMsg + "</span></td>";
-                        listItem += "<td class='align-middle'>" + (i + 1) + "</td>";
-                        listItem += "<td class='align-middle'><span id='reg_no'>" + response[i].Id + "</span></td>";
-                        listItem += "<td class='align-middle'><span id='domainId'>" + response[i].DomainId + "</span></td>";
-                        if (response[i].ArmyNo != null && response[i].ArmyNo != "null")
-                            listItem += "<td class='align-middle'><span id='armyNo'>" + response[i].ArmyNo + "</span></td>";
-                        else
-                            listItem += "<td class='align-middle'><span><span class='badge badge-pill badge-danger' id='domain_approval'>IC No Not Mapped</span></span></td>";
-
-                        listItem += "<td class='align-middle'><span id='roleName'>" + response[i].RoleNames + "</span></td>";
-
-
-
-                        if (response[i].Id != null && response[i].Id != "null")
-                            listItem += "<td class='align-middle'><span id='updatedOn'>" + DateFormateddMMyyyyhhmmss(response[i].UpdatedOn) + "</span></td>";
-                        else
-                            listItem += "<td class='align-middle'>NA</td>";
-                        if (response[i].Mapped == true)
-                            listItem += "<td class='align-middle'><span id='btneditMapping'><button type='button' class='cls-btneditMapping btn btn-icon btn-round btn-warning mr-1'><i class='fas fa-link'></i></button></span></td>";
-                        else
-                            listItem += "<td class='align-middle'><span id='btneditMapping'><button type='button' class='cls-btneditMapping btn btn-icon btn-round btn-warning mr-1'><i class='fas fa-unlink'></i></button></span></td>";
-
-                        if (response[i].Active == true)
-                            listItem += "<td class='align-middle'><span><span class='badge badge-pill badge-success' id='domain_active'>Yes</span></span></td>";
-                        else
-                            listItem += "<td class='align-middle'><span><span class='badge badge-pill badge-danger' id='domain_active'>No</span></span></td>";
-
-                        if (response[i].AdminFlag == true)
-                            listItem += "<td class='align-middle'><span><span class='badge badge-pill badge-success' id='domain_approval'>Verifed</span></span></td>";
-                        else
-                            listItem += "<td class='align-middle'><span><span class='badge badge-pill badge-danger' id='domain_approval'>Not Verify</span></span></td>";
-
-                        if (response[i].IsIO == true)
-                            listItem += "<td class='align-middle'><span><span class='badge badge-pill badge-success' id='isIO'>Yes</span></span></td>";
-                        else
-                            listItem += "<td class='align-middle'><span><span class='badge badge-pill badge-danger' id='isIO'>No</span></span></td>";
-
-                        if (response[i].IsCO == true)
-                            listItem += "<td class='align-middle'><span><span class='badge badge-pill badge-success' id='isCO'>Yes</span></span></td>";
-                        else
-                            listItem += "<td class='align-middle'><span><span class='badge badge-pill badge-danger' id='isCO'>No</span></span></td>";
-
-                        //if (response[i].IsRO == true)
-                        //    listItem += "<td class='align-middle'><span><span class='badge badge-pill badge-success' id='isRO'>Yes</span></span></td>";
-                        //else
-                        //    listItem += "<td class='align-middle'><span><span class='badge badge-pill badge-danger' id='isRO'>No</span></span></td>";
-
-                        //if (response[i].IsORO == true)
-                        //    listItem += "<td class='align-middle'><span><span class='badge badge-pill badge-success' id='isORO'>Yes</span></span></td>";
-                        //else
-                        //    listItem += "<td class='align-middle'><span><span class='badge badge-pill badge-danger' id='isORO'>No</span></span></td>";
-
-                        if (response[i].Id != null && response[i].Id != "null")
-                            listItem += "<td class='align-middle'><span id='btnedit'><button type='button' class='cls-btnedit btn btn-icon btn-round btn-warning mr-1'><i class='fas fa-edit'></i></button></span></td>";
-                        else
-                            listItem += "<td class='align-middle'>NA</td>";
-                        /*    listItem += "<td class='nowrap'><button type='button' class='cls-btnSend btn btn-outline-success mr-1'>Send To Verification</button></td>";*/
-                        listItem += "</tr>";
-
-                    }
-
-                    $("#DetailBody").html(listItem);
-                    $("#lblTotal").html(response.length - 1);
-
-                    memberTable = $('#tbldata').DataTable({
-                        retrieve: true,
-                        lengthChange: false,
-                        searching: false,
-                        stateSave: true,
-                        "order": [[1, "asc"]],
-                        buttons: [{
-                            extend: 'copy',
-                            exportOptions: {
-                                columns: "thead th:not(.noExport)"
-                            }
-                        }, {
-                            extend: 'excel',
-                            exportOptions: {
-                                columns: "thead th:not(.noExport)"
-                            }
-                        }, {
-                            extend: 'pdfHtml5',
-                            orientation: 'portrait',
-                            pageSize: 'A4',
-                            title: 'E-IASC_User_Regn',
-                            exportOptions: {
-                                columns: "thead th:not(.noExport)"
-                            },
-                            customize: function (doc) {
-                                WaterMarkOnPdf(doc)
-                            }
-                        }]
-                    });
-
-                    memberTable.buttons().container().appendTo('#tbldata_wrapper .col-md-6:eq(0)');
-
-                    var rows;
-                    $("body").on("click", ".cls-btneditMapping", function () {
-                        ResetForMapping();
-                        ResetErrorMessageForMapping();
-                        $("#lblDomainIdForMapping").html($(this).closest("tr").find("#domainId").html());
-                        $("#lblRoleForMapping").html($(this).closest("tr").find("#roleName").html());
-                        $("#spnDomainRegIdForMapping").html($(this).closest("tr").find("#regId").html());
-                        //alert($(this).closest("tr").find("#domain_approval").html())
-                        if ($(this).closest("tr").find("#domain_approval").html() == 'Verifed') {
-                            $("#txtapprovalyesForMapping").prop("checked", true);
-                        }
-                        else {
-                            $("#txtapprovalnoForMapping").prop("checked", true);
-                        }
-
-                        if ($(this).closest("tr").find("#domain_active").html() == 'Yes') {
-                            $("#txtactiveyesForMapping").prop("checked", true);
-                        }
-                        else {
-                            $("#txtactivenoForMapping").prop("checked", true);
-                        }
-                        if ($(this).closest("tr").find("#regUserId").html() > 0) {
-                            GetProfileByUserId($(this).closest("tr").find("#regUserId").html());
-                        }
-
-                        if ($(this).closest("tr").find("#regTrnDomainMappingId").html() > 0) {
-                            $("#spnTrnDomainMappingIdForMapping").html($(this).closest("tr").find("#regTrnDomainMappingId").html());
-                            GetALLByUnitByIdForMapping($(this).closest("tr").find("#regTrnDomainMappingUnitId").html());
-                        }
-
-                        if ($(this).closest("tr").find("#regTrnDomainMappingApptId").html() > 0) {
-                            GetNameByApptIdForMapping($(this).closest("tr").find("#regTrnDomainMappingApptId").html());
-                        }
-
-                        $("#btnAddMapping").val("Update");
-                        $("#AddMapping").modal('show');
-                    });
-                    $("body").on("click", ".cls-btnedit", function () {
-                        Reset();
-                        ResetErrorMessage();
-                        $("#lblDomainId").html($(this).closest("tr").find("#domainId").html());
-                        $("#lblRole").html($(this).closest("tr").find("#roleName").html());
-                        $("#spnDomainRegId").html($(this).closest("tr").find("#regId").html());
-                        if ($(this).closest("tr").find("#spnAdminMsg").html() != "null") {
-                            $("#txtadminmessage").val($(this).closest("tr").find("#spnAdminMsg").html());
-                        }
-                        else {
-                            $("#txtadminmessage").val("");
-                        }
-
-                        //alert($(this).closest("tr").find("#domain_approval").html())
-                        if ($(this).closest("tr").find("#domain_approval").html() == 'Verifed') {
-                            $("#txtapprovalyes").prop("checked", true);
-                        }
-                        else {
-                            $("#txtapprovalno").prop("checked", true);
-                        }
-
-                        if ($(this).closest("tr").find("#domain_active").html() == 'Yes') {
-                            $("#txtactiveyes").prop("checked", true);
-                        }
-                        else {
-                            $("#txtactiveno").prop("checked", true);
-                        }
-
-                        if ($(this).closest("tr").find("#regTrnDomainMappingId").html() > 0) {
-                            GetALLByUnitById($(this).closest("tr").find("#regTrnDomainMappingUnitId").html());
-                        }
-
-                        if ($(this).closest("tr").find("#regTrnDomainMappingApptId").html() > 0) {
-                            GetNameByApptId($(this).closest("tr").find("#regTrnDomainMappingApptId").html());
-                        }
-
-                        $("#btnDomainFlag").val("Update");
-                        $("#AddDomainFlag").modal('show');
-                    });
-                }
-            }
-            else {
-                $("#tbldata").DataTable().destroy();
-
-                $("#DetailBody").html(listItem);
-                memberTable = $('#tbldata').DataTable({
-                    "language": {
-                        "emptyTable": "No data available"
-                    }
+    table = $("#tbldata").DataTable({
+        processing: true,
+        serverSide: true,
+        filter: true,
+        order: [[1, 'desc']], // Default sorting on the first column
+        ajax: async function (data, callback, settings) {
+            let requestData = {
+                draw: data.draw,
+                start: data.start,
+                length: data.length,
+                searchValue: data.search.value,
+                sortColumn: data.order.length > 0 ? data.columns[data.order[0].column].data : '',  // Add a check for data.order
+                sortDirection: data.order.length > 0 ? data.order[0].dir : '', // Add a check for data.order
+            };
+            try {
+                let response = await fetch("/Account/GetAllUserRegn", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                    body: new URLSearchParams(requestData).toString()
                 });
 
+                if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
 
+                let result = await response.json();
+                callback(result); // Sends data to DataTables
+            } catch (error) {
+                console.error("Error fetching data:", error);
             }
         },
-        error: function (result) {
-            Swal.fire({
-                text: errormsg002
+        columns: [
+            // Serial number column
+            {
+                data: null,
+                name: "SerialNumber",
+                orderable: false, // Disable sorting for this column
+                render: function (data, type, row, meta) {
+                    // Calculate serial number based on row index
+                    return meta.row + (meta.settings?._iDisplayStart || 0) + 1;
+                }
+            },
+            { data: "Id", name: "Id" },
+            { data: "DomainId", name: "DomainId" },
+            {
+                data: "ArmyNo",
+                name: "ArmyNo",
+                render: function (data, type, row) {
+                    return data ? data : "<span class='badge badge-pill badge-danger'>IC No Not Mapped</span>";
+                }
+            },
+            {
+                data: "RoleNames",
+                name: "RoleNames",
+                orderable: false, // Disable sorting for this column
+                render: function (data, type, row) {
+                    return data ? data.join(', ') : '';  // Convert array to string
+                }
+            },
+            {
+                data: "UpdatedOn",
+                name: "UpdatedOn",
+                render: function (data, type, row) {
+                    return data ? DateFormateddMMyyyyhhmmss(data) : "NA";
+                },
+            },
+            // Display user-friendly value for Mapped
+            {
+                data: "Mapped",
+                name: "Mapped",
+                render: function (data, type, row) {
+                    // Convert boolean to "Yes" or "No"
+                    return data ? "<button type='button' class='cls-btneditMapping btn btn-icon btn-round btn-warning mr-1'><i class='fas fa-link'></i></button>" : "<button type='button' class='cls-btneditMapping btn btn-icon btn-round btn-warning mr-1'><i class='fas fa-unlink'></i></button>";
+                },
+            },
+            // Display user-friendly value for Active
+            {
+                data: "Active",
+                name: "Active",
+                render: function (data, type, row) {
+                    // Convert boolean to "Yes" or "No"
+                    return data ? "<span class='badge badge-pill badge-success'>Yes</span>" : "<span class='badge badge-pill badge-danger'>No</span>";
+                },
+            },
+            // Display user-friendly value for AdminFlag
+            {
+                data: "AdminFlag",
+                name: "AdminFlag",
+                render: function (data, type, row) {
+                    // Convert boolean to "Yes" or "No"
+                    return data ? "<span class='badge badge-pill badge-success'>Yes</span>" : "<span class='badge badge-pill badge-danger'>No</span>";
+                },
+            },
+
+            // Display user-friendly value for IsIO
+            {
+                data: "IsIO",
+                name: "IsIO",
+                render: function (data, type, row) {
+                    // Convert boolean to "Yes" or "No"
+                    return data ? "<span class='badge badge-pill badge-success'>Yes</span>" : "<span class='badge badge-pill badge-danger'>No</span>";
+                },
+            },
+            // Display user-friendly value for IsCO
+            {
+                data: "IsCO",
+                name: "IsCO",
+                render: function (data, type, row) {
+                    // Convert boolean to "Yes" or "No"
+                    return data ? "<span class='badge badge-pill badge-success'>Yes</span>" : "<span class='badge badge-pill badge-danger'>No</span>";
+                },
+            },
+            // Additional column for Edit action
+            {
+                data: "Id",
+                name: "Id",
+                orderable: false,
+                render: function (data, type, row) {
+                    return data ? "<button type='button' class='cls-btnedit btn btn-icon btn-round btn-warning mr-1'><i class='fas fa-edit'></i></button>" : "NA";
+                }
+            }
+        ],
+        language: {
+            search: "", // Remove the default "Search:" label
+            searchPlaceholder: "Search Domain ID" // Add custom placeholder
+        },
+        dom: 'lBfrtip', // Add buttons to the DOM
+        buttons: [
+            {
+                extend: 'copy',
+                exportOptions: {
+                    columns: "thead th:not(.noExport)"
+                }
+            },
+            {
+                extend: 'excel',
+                exportOptions: {
+                    columns: "thead th:not(.noExport)"
+                }
+            },
+            {
+                extend: 'pdfHtml5',
+                orientation: 'landscape',
+                pageSize: 'LEGAL',
+                title: 'E-IASC_UserRegn',
+                exportOptions: {
+                    columns: "thead th:not(.noExport)"
+                },
+                customize: function (doc) {
+                    WaterMarkOnPdf(doc)
+                }
+            }],
+        drawCallback: function (settings) {
+            // Re-bind the click event after each draw
+            $("#tbldata tbody").off("click", ".cls-btnedit").on("click", ".cls-btnedit", function () {
+                var rowData = table.row($(this).closest("tr")).data();
+
+                if (rowData != null) {
+                    Reset();
+                    ResetErrorMessage();
+                    $("#lblDomainId").html(rowData.DomainId);
+                    $("#lblRole").html(rowData.RoleNames.join(', ')); //data ? data.join(', ') : ''
+                    $("#spnDomainRegId").html(rowData.Id);
+                    if (rowData.AdminMsg != null) {
+                        $("#txtadminmessage").val(rowData.AdminMsg);
+                    }
+                    else {
+                        $("#txtadminmessage").val("");
+                    }
+
+                    if (rowData.AdminFlag == true) {
+                        $("#txtapprovalyes").prop("checked", true);
+                    }
+                    else {
+                        $("#txtapprovalno").prop("checked", true);
+                    }
+
+                    if (rowData.Active == true) {
+                        $("#txtactiveyes").prop("checked", true);
+                    }
+                    else {
+                        $("#txtactiveno").prop("checked", true);
+                    }
+
+                    if (rowData.TrnDomainMappingId > 0) {
+                        GetALLByUnitById(rowData.TrnDomainMappingUnitId);
+                    }
+
+                    if (rowData.TrnDomainMappingApptId > 0) {
+                        GetNameByApptId(rowData.TrnDomainMappingApptId);
+                    }
+
+                    $("#btnDomainFlag").val("Update");
+                    $("#AddDomainFlag").modal('show');
+
+
+
+                    $("#spnUnitMapId").html(rowData.UnitMapId);
+                    $("#spnUnitId").html(rowData.UnitId);
+                    $("#lblUnit").html(rowData.UnitName);
+                    $("#txtSusno").val(rowData.Sus_no);
+
+                    $("#AddNewUnitmap").modal('show');
+                    $("#btnMapUnitsave").val("Update");
+                }
+            });
+            $("#tbldata tbody").off("click", ".cls-btneditMapping").on("click", ".cls-btneditMapping", function () {
+                var rowData = table.row($(this).closest("tr")).data();
+
+                if (rowData != null) {
+                    ResetForMapping();
+                    ResetErrorMessageForMapping();
+                    $("#lblDomainIdForMapping").html(rowData.DomainId);
+                    $("#lblRoleForMapping").html(rowData.RoleNames);
+                    $("#spnDomainRegIdForMapping").html(rowData.Id);
+
+                    if (rowData.AdminFlag == true) {
+                        $("#txtapprovalyesForMapping").prop("checked", true);
+                    }
+                    else {
+                        $("#txtapprovalnoForMapping").prop("checked", true);
+                    }
+
+                    if (rowData.Active == true) {
+                        $("#txtactiveyesForMapping").prop("checked", true);
+                    }
+                    else {
+                        $("#txtactivenoForMapping").prop("checked", true);
+                    }
+                    if (rowData.UserId > 0) {
+                        GetProfileByUserId(rowData.UserId);
+                    }
+
+                    if (rowData.TrnDomainMappingId > 0) {
+                        $("#spnTrnDomainMappingIdForMapping").html(rowData.TrnDomainMappingId);
+                        GetALLByUnitByIdForMapping(rowData.TrnDomainMappingUnitId);
+                    }
+
+                    if (rowData.TrnDomainMappingApptId > 0) {
+                        GetNameByApptIdForMapping(rowData.TrnDomainMappingApptId);
+                    }
+
+                    $("#btnAddMapping").val("Update");
+                    $("#AddMapping").modal('show');
+
+                }
             });
         }
     });
@@ -509,8 +628,7 @@ function SaveMapping() {
         }, //get the search string
         success: function (response) {
             var obj = jQuery.parseJSON(response);
-            if (obj.Result == true)
-            {
+            if (obj.Result == true) {
                 toastr.success(obj.Message);
 
                 $("#AddMapping").modal('hide');
@@ -519,8 +637,7 @@ function SaveMapping() {
                 ResetForMapping();
                 ResetErrorMessageForMapping();
             }
-            else if (obj.Result == false)
-            {
+            else if (obj.Result == false) {
                 toastr.error(obj.Message);
                 Swal.fire({
                     icon: 'error',
@@ -529,11 +646,10 @@ function SaveMapping() {
 
                 })
             }
-            else if (obj.Result == false && obj.Message.length > 1)
-            {
+            else if (obj.Result == false && obj.Message.length > 1) {
                 for (var i = 0; i < obj.Message.length; i++) {
-                        toastr.error(result[i][0].Message)
-                    }
+                    toastr.error(result[i][0].Message)
+                }
             }
         }
     });
@@ -661,7 +777,7 @@ function ResetForMapping() {
 }
 function ResetErrorMessageForMapping() {
     $("#txtArmyNo-error").html("");
-    $("#txtadminmessage-error").html(""); 
+    $("#txtadminmessage-error").html("");
 }
 
 function Proceed() {
@@ -706,7 +822,7 @@ function UpdateDomainFlag() {
             "AdminFlag": $('input:radio[name=txtapproval]:checked').val(),
             "Active": $('input:radio[name=txtactive]:checked').val(),
             "AdminMsg": $('#txtadminmessage').val().length > 0 ? $('#txtadminmessage').val() : null,
-        }, 
+        },
         success: function (result) {
             if (result == DataUpdate) {
                 toastr.success('Domain Flag has been Updated');
@@ -832,7 +948,7 @@ function Reset() {
     $("#lblFmn").html("");
 
 
-    $("#lblAppointmentName").html(""); 
+    $("#lblAppointmentName").html("");
 
     $("#txtapprovalyes").prop("checked", false);
     $("#txtapprovalno").prop("checked", false);

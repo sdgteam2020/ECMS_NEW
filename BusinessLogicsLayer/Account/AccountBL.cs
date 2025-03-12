@@ -38,13 +38,13 @@ namespace BusinessLogicsLayer.Account
         {
             return await _iAccountDB.GetAllProfileManage(request);
         }
-        public async Task<List<DTOUserRegnResponse>?> GetAllUserRegn(string Search, string Choice)
+        public async Task<DTODataTablesResponse<DTOUserRegnResponse>> GetAllUserRegn(DTODataTablesRequest request) 
         {
-            return await _iAccountDB.GetAllUserRegn(Search, Choice);
+            return await _iAccountDB.GetAllUserRegn(request);
         }
-        public async Task<List<DTODomainRegnResponse>?> GetAllDomainRegn(string Search, string Choice)
+        public async Task<DTODataTablesResponse<DTODomainRegnResponse>> GetAllDomainRegn(DTODataTablesRequest request)
         {
-            return await _iAccountDB.GetAllDomainRegn(Search, Choice);
+            return await _iAccountDB.GetAllDomainRegn(request);
         }
         public async Task<DTOUserRegnResultResponse?> SaveMapping(DTOUserRegnMappingRequest dTO)
         {

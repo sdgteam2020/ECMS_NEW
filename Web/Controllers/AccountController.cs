@@ -33,6 +33,7 @@ using ApplicationRole = DataTransferObject.Domain.Identitytable.ApplicationRole;
 using System.Net;
 using BusinessLogicsLayer.IAMSetting;
 using System.Configuration;
+using Humanizer;
 
 namespace Web.Controllers
 {
@@ -107,18 +108,33 @@ namespace Web.Controllers
         {
             return View();
         }
-
         [Authorize(Roles = "admin")]
         [HttpPost]
-        public async Task<IActionResult> GetAllDomainRegn(string Search, string Choice)
+        public async Task<IActionResult> GetAllDomainRegn(DTODataTablesRequest dTO)
         {
             try
             {
-                return Json(await _iAccountBL.GetAllDomainRegn(Search, Choice));
+                if (ModelState.IsValid)
+                {
+                    return Json(await _iAccountBL.GetAllDomainRegn(dTO));
+                }
+                else
+                {
+                    List<DTODomainRegnResponse> dTODomains = new List<DTODomainRegnResponse>();
+                    var responseData = new DTODataTablesResponse<DTODomainRegnResponse>
+                    {
+                        draw = 0,
+                        recordsTotal = 0,
+                        recordsFiltered = 0,
+                        data = dTODomains
+                    };
+                    return Json(responseData);
+                    //return Json(ModelState.Select(x => x.Value?.Errors).Where(y => y?.Count > 0).ToList());
+                }
             }
             catch (Exception ex)
-            {   
-                _logger.LogError(1001, ex, "Account->DomainRegn");
+            {
+                _logger.LogError(1001, ex, "Account->GetAllDomainRegn");
                 return Json(KeyConstants.InternalServerError);
             }
 
@@ -361,18 +377,34 @@ namespace Web.Controllers
         {
             return View();
         }
-        
+
         [Authorize(Roles = "admin")]
         [HttpPost]
-        public async Task<IActionResult> GetAllUserRegn(string Search, string Choice)
+        public async Task<IActionResult> GetAllUserRegn(DTODataTablesRequest dTO)
         {
             try
             {
-                return Json(await _iAccountBL.GetAllUserRegn(Search, Choice));
+                if (ModelState.IsValid)
+                {
+                    return Json(await _iAccountBL.GetAllUserRegn(dTO));
+                }
+                else
+                {
+                    List<DTOUserRegnResponse> dTOUserRegns = new List<DTOUserRegnResponse>();
+                    var responseData = new DTODataTablesResponse<DTOUserRegnResponse>
+                    {
+                        draw = 0,
+                        recordsTotal = 0,
+                        recordsFiltered = 0,
+                        data = dTOUserRegns
+                    };
+                    return Json(responseData);
+                    //return Json(ModelState.Select(x => x.Value?.Errors).Where(y => y?.Count > 0).ToList());
+                }
             }
             catch (Exception ex)
             {
-                _logger.LogError(1001, ex, "Account->UserRegn");
+                _logger.LogError(1001, ex, "Account->GetAllDomainRegn");
                 return Json(KeyConstants.InternalServerError);
             }
 
