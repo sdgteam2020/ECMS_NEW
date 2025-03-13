@@ -23,7 +23,8 @@ namespace Web.Controllers
         private readonly ILogger<MasterController> _logger;
         private readonly IEncryptsqlDB _iEncryptsqlDB;
         private readonly IMasterBL _IMasterBL;
-        public MasterController(IUnitOfWork unitOfWork, IUserProfileBL userProfileBL, IChangeHierarchyMasterBL changeHierarchyMaster, ILogger<MasterController> logger, IEncryptsqlDB iEncryptsqlDB, IMasterBL masterBL)
+        private readonly IConfiguration _configuration;
+        public MasterController(IUnitOfWork unitOfWork, IUserProfileBL userProfileBL, IChangeHierarchyMasterBL changeHierarchyMaster, ILogger<MasterController> logger, IEncryptsqlDB iEncryptsqlDB, IMasterBL masterBL, IConfiguration configuration)
         {
             this.userProfileBL = userProfileBL;
             this.unitOfWork = unitOfWork;
@@ -31,6 +32,7 @@ namespace Web.Controllers
             _logger = logger; 
             _iEncryptsqlDB = iEncryptsqlDB;
             _IMasterBL = masterBL;
+            _configuration = configuration;
         }
 
         #region Command Page
@@ -1573,8 +1575,12 @@ namespace Web.Controllers
 
         #region Record Office
         [Authorize(Roles = "admin")]
-        public async Task<IActionResult> RecordOffice()
+        public IActionResult RecordOffice()
         {
+            short ArmedIdForORO = Convert.ToInt16(_configuration["HardCodeId:ArmedIdForORO"]) ;
+            if (ArmedIdForORO == 0) ArmedIdForORO = 56;
+            ViewBag.ArmedIdForORO = ArmedIdForORO;
+
             return View();
         }
         [Authorize(Roles = "admin")]
@@ -1814,7 +1820,7 @@ namespace Web.Controllers
         #region OROMapping
 
         [Authorize(Roles = "admin")]
-        public async Task<IActionResult> OROMapping()
+        public IActionResult OROMapping()
         {
             return View();
         }
