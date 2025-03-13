@@ -103,6 +103,8 @@
         },
         appendTo: '#suggesstion-box'
     });
+
+    $("#ddlRank").prop('disabled', true);
 });
 
 function Proceed() {
@@ -252,6 +254,8 @@ function BindData() {
                     $("body").on("click", ".cls-btnedit", function () {
                         Reset();
                         ResetErrorMessage();
+                        $("#ddlRank").prop('disabled', true);
+                        $("#ddlRO").prop('disabled', true);
                         $("#spnOROMappingId").html($(this).closest("tr").find("#spnMOROMappingId").html());
                         $("#ddlRO").val($(this).closest("tr").find("#spnRecordOfficeId").html());
                         
@@ -395,9 +399,7 @@ function Reset() {
     $("#txtUnitName").val("");
     $("#ddlTDMId").val("0");
     $("#spnUnitMapId").html("0");
-    //$("#ddlArmedIdList").prop('disabled', false);
-    //$("#ddlRO").prop('disabled', false);
-    //$("#ddlRank").prop('disabled', false);
+    $("#ddlRO").prop('disabled', false);
 }
 function ResetErrorMessage() {
     $("#ddlArmedIdList-error").html(""); 

@@ -22,14 +22,16 @@ namespace Web.Controllers
         private readonly IDomainMapBL _iDomainMapBL;
         private readonly ITrnMappingUnMappingLogBL _iTrnMappingUnMappingLogBL;
         private readonly ILogger<UserProfileController> _logger;
+        private readonly IConfiguration _configuration;
 
-        public UserProfileController(IUserProfileBL userProfileBL, ILogger<UserProfileController> logger, IUserProfileMappingBL userProfileMappingBL, IDomainMapBL domainMapBL,ITrnMappingUnMappingLogBL trnMappingUnMappingLogBL)
+        public UserProfileController(IUserProfileBL userProfileBL, ILogger<UserProfileController> logger, IUserProfileMappingBL userProfileMappingBL, IDomainMapBL domainMapBL,ITrnMappingUnMappingLogBL trnMappingUnMappingLogBL, IConfiguration configuration)
         {
             _userProfileBL=userProfileBL;
             _userProfileMappingBL = userProfileMappingBL;
             _iDomainMapBL = domainMapBL;
             _iTrnMappingUnMappingLogBL = trnMappingUnMappingLogBL;
             _logger = logger;
+            _configuration = configuration;
         }
         private string GetSessionValue()
         {
@@ -336,15 +338,25 @@ namespace Web.Controllers
         {
             try
             {
+                DTOApplFwdConditionRequest? dTOApplFwdCondition = _configuration.GetSection("ApplFwdCondition").Get<DTOApplFwdConditionRequest>() ?? new DTOApplFwdConditionRequest(); ;
+
+                if (string.IsNullOrWhiteSpace(dTOApplFwdCondition.MP6F)) dTOApplFwdCondition.MP6F = "MP 6F";
+                if (string.IsNullOrWhiteSpace(dTOApplFwdCondition.MPRSO)) dTOApplFwdCondition.MPRSO = "MPRSO";
+                if (dTOApplFwdCondition.ArmedAbbreviation == null || dTOApplFwdCondition.ArmedAbbreviation.Count == 0)
+                    dTOApplFwdCondition.ArmedAbbreviation = new List<string> { "ADC", "AMC", "MNS" };
+                if (string.IsNullOrWhiteSpace(dTOApplFwdCondition.ArmyNoPrefix)) dTOApplFwdCondition.ArmyNoPrefix = "SL";
+                if (dTOApplFwdCondition.RankOrderby == 0) dTOApplFwdCondition.RankOrderby = 4;
+
+
                 int DomainMapId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                 if(UnitId==0)
                 {
                      UnitId = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").UnitId;
-                    return Json(await _userProfileBL.GetOffrsByUnitMapId(UnitId, IsRO, IsORO, IsAfsacCell, BasicDetailsId, DomainMapId));
+                    return Json(await _userProfileBL.GetOffrsByUnitMapId(UnitId, IsRO, IsORO, IsAfsacCell, BasicDetailsId, DomainMapId, dTOApplFwdCondition));
                 }
                 else
                 {
-                    return Json(await _userProfileBL.GetOffrsByUnitMapId(UnitId, IsRO, IsORO, IsAfsacCell, BasicDetailsId, DomainMapId));
+                    return Json(await _userProfileBL.GetOffrsByUnitMapId(UnitId, IsRO, IsORO, IsAfsacCell, BasicDetailsId, DomainMapId, dTOApplFwdCondition));
                 }
             }
             catch (Exception ex)

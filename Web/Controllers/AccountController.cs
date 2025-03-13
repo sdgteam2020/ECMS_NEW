@@ -212,6 +212,7 @@ namespace Web.Controllers
                 return Json(KeyConstants.InternalServerError);
             }
         }
+        [HttpGet]
         public async Task<IActionResult> GetAllClaims()
         {
             try

@@ -287,6 +287,7 @@ function BindDataMapUnit() {
         processing: true,
         serverSide: true,
         filter: true,
+        stateSave: true,
         order: [[0, 'desc']], // Default sorting on the first column
         ajax: async function (data, callback, settings) {
             let userdata = {

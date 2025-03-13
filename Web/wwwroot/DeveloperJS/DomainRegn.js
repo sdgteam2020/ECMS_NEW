@@ -556,6 +556,7 @@ function BindData() {
         processing: true,
         serverSide: true,
         filter: true,
+        stateSave: true,
         order: [[1, 'desc']], // Default sorting on the first column
         ajax: async function (data, callback, settings) {
             let requestData = {
@@ -1004,7 +1005,7 @@ function BindRoles() {
 function BindClaims() {
     $.ajax({
         url: "/Account/GetAllClaims",
-        type: "POST",
+        type: "GET",
         success: function (response, status) {
             var list = "";
             for (var i = 0; i < response.length; i++) {
