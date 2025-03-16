@@ -1248,81 +1248,98 @@ namespace DataAccessLayer
             }
 
         }
-        public async Task<List<DTODataExportsResponse>> GetBesicdetailsByRequestId(DTODataExportRequest Data)
+        public async Task<List<DTODataExportsResponse>> GetBesicdetailsByRequestId(DTODataExportRequest Data, DTOApplFwdConditionRequest dTOApplFwdCondition)
         {
-            #region Old Code write by Kapoor Sir
+            #region Old Code 
+            //var (db, transaction) = _contextDP.CreateConnectionWithTransaction();
+            //int[] Ids = Data.Ids;
             //string query = "";
-            //if (Data.IsJco == 0)
-            //{
-            //    query = "update TrnFwds set IsComplete=1 where RequestId in @Ids update TrnStepCounter set StepId=5 where RequestId in @Ids  update TrnICardRequest set StatusId=2 where  RequestId in @Ids " +
-            //                    " select bas.*,issaut.Name IssuingAuth,mapl.Name ApplyFor, " +
-            //                    " trnadd.State,trnadd.District,trnadd.PS,trnadd.PO,trnadd.Tehsil,trnadd.Village,trnadd.PinCode," +
-            //                    " trnup.SignatureImagePath,trnup.PhotoImagePath,IdenMark1,IdenMark2,AadhaarNo,Height,bld.BloodGroup,bld.BloodGroupId," +
-            //                    " regi.Abbreviation RegimentalName,regi.Location RegimentalLocation,Muni.UnitName,uni.UnitMapId UnitId,icardreq.TypeId,icardreq.RegistrationId," +
-            //                    " ran.RankId,ran.RankAbbreviation RankName,arm.Abbreviation ArmedName,trnadd.AddressId,trnup.UploadId,trninfo.InfoId,MICardType.Name ICardType,reco.RecordOfficeId,reco.Name RecordOffice,icardreq.RequestId from BasicDetails bas" +
-            //                    " inner join MIssuingAuthority issaut on issaut.IssuingAuthorityId=bas.IssuingAuthorityId" +
-            //                    " inner join TrnAddress trnadd on trnadd.BasicDetailId=bas.BasicDetailId" +
-            //                    " inner join TrnUpload trnup on trnup.BasicDetailId=bas.BasicDetailId" +
-            //                    " inner join TrnIdentityInfo trninfo on trninfo.BasicDetailId=bas.BasicDetailId" +
-            //                    " inner join MBloodGroup bld on bld.BloodGroupId=trninfo.BloodGroupId" +
-            //                    " inner join MRank ran on ran.RankId=bas.RankId" +
-            //                    " inner join MArmedType arm on arm.ArmedId=bas.ArmedId" +
-            //                    " inner join MapUnit uni on uni.UnitMapId=bas.UnitId" +
-            //                    " inner join MUnit Muni on Muni.UnitId=uni.UnitId" +
-            //                    " inner join TrnICardRequest icardreq on icardreq.BasicDetailId=bas.BasicDetailId " + //and icardreq.Status=0 
-            //                    " inner join TrnStepCounter scounter on scounter.RequestId=icardreq.RequestId " +
-            //                    " inner join MApplyFor mapl on mapl.ApplyForId=scounter.ApplyForId " +
-            //                    " inner join MRecordOffice reco on bas.ArmedId=reco.ArmedId" +
-            //                    " inner join MICardType MICardType on MICardType.TypeId=icardreq.TypeId " +
-            //                    " left join MRegimental regi on regi.RegId=bas.RegimentalId" +
-            //                    " where icardreq.RequestId in @Ids";
-            //}
-            //else
-            //{
-            //    query = "update TrnFwds set IsComplete=1 where RequestId in @Ids update TrnStepCounter set StepId=5 where RequestId in @Ids  update TrnICardRequest set StatusId=2 where  RequestId in @Ids " +
-            //        " select bas.*,issaut.Name IssuingAuth,mapl.Name ApplyFor, trnadd.State,trnadd.District,trnadd.PS,trnadd.PO,trnadd.Tehsil,trnadd.Village,trnadd.PinCode, " +
-            //             " trnup.SignatureImagePath,trnup.PhotoImagePath,IdenMark1,IdenMark2,AadhaarNo,Height,bld.BloodGroup,bld.BloodGroupId, " +
-            //             " regi.Abbreviation RegimentalName,Muni.UnitName,uni.UnitMapId UnitId,icardreq.TypeId,icardreq.RegistrationId, " +
-            //             " ran.RankId,ran.RankAbbreviation RankName,arm.Abbreviation ArmedName,trnadd.AddressId,trnup.UploadId,trninfo.InfoId," +
-            //             " MICardType.Name ICardType," +
-            //             " CASE WHEN ran.orderby<=4 THEN '126' ELSE reco.RecordOfficeId END RecordOfficeId," +
-            //             " CASE WHEN ran.orderby<=4 THEN 'MP 6A' ELSE reco.Name END RecordOffice,icardreq.RequestId" +
-            //             " from BasicDetails bas " +
-            //             " inner join MIssuingAuthority issaut on issaut.IssuingAuthorityId=bas.IssuingAuthorityId" +
-            //             " inner join TrnAddress trnadd on trnadd.BasicDetailId=bas.BasicDetailId " +
-            //             " inner join TrnUpload trnup on trnup.BasicDetailId=bas.BasicDetailId " +
-            //             " inner join TrnIdentityInfo trninfo on trninfo.BasicDetailId=bas.BasicDetailId " +
-            //             " inner join MBloodGroup bld on bld.BloodGroupId=trninfo.BloodGroupId " +
-            //             " inner join MRank ran on ran.RankId=bas.RankId " +
-            //             " inner join MArmedType arm on arm.ArmedId=bas.ArmedId " +
-            //             " inner join MapUnit uni on uni.UnitMapId=bas.UnitId " +
-            //             " inner join MUnit Muni on Muni.UnitId=uni.UnitId " +
-            //             " inner join TrnICardRequest icardreq on icardreq.BasicDetailId=bas.BasicDetailId  " +
-            //             " inner join TrnStepCounter scounter on scounter.RequestId=icardreq.RequestId " +
-            //             " inner join MApplyFor mapl on mapl.ApplyForId=scounter.ApplyForId " +
-            //             " inner join MICardType MICardType on MICardType.TypeId=icardreq.TypeId  " +
-            //             " inner join MRecordOffice reco on reco.ArmedId=56" +
-            //             " inner join OROMapping OROMap on reco.RecordOfficeId=OROMap.RecordOfficeId" +
-            //             " left join MRegimental regi on regi.RegId=bas.RegimentalId where icardreq.RequestId in @Ids" +
-            //             " and bas.ArmedId in (select value from string_split(oromap.ArmedIdList,',')) " +
-            //             " order by reco.RecordOfficeId";
-            //}
             //try
             //{
-            //    int[] Ids = Data.Ids;
-            //    using (var connection = _contextDP.CreateConnection())
-            //    {
-            //        var BasicDetailList = await connection.QueryAsync<DTODataExportsResponse>(query, new { Ids });
+            //    string query1 = " update TrnFwds set IsComplete=1 where RequestId in @Ids ";
+            //    await db.ExecuteAsync(query1, new { Ids }, transaction: transaction);
 
-            //        return BasicDetailList.ToList();
+            //    string query2 = " update TrnStepCounter set StepId=5 where RequestId in @Ids ";
+            //    await db.ExecuteAsync(query2, new { Ids }, transaction: transaction);
+
+            //    string query3 = " update TrnICardRequest set StatusId=2 where  RequestId in @Ids ";
+            //    await db.ExecuteAsync(query3, new { Ids }, transaction: transaction);
+
+            //    // Commit the transaction if all operations succeed
+            //    transaction.Commit();
+
+            //    if (Data.IsJco == 0)
+            //    {
+            //        query = " select bas.*,issaut.Name IssuingAuth,mapl.Name ApplyFor, " +
+            //                " trnadd.State,trnadd.District,trnadd.PS,trnadd.PO,trnadd.Tehsil,trnadd.Village,trnadd.PinCode," +
+            //                " trnup.SignatureImagePath,trnup.PhotoImagePath,IdenMark1,IdenMark2,AadhaarNo,Height,bld.BloodGroup,bld.BloodGroupId," +
+            //                " regi.Abbreviation RegimentalName,regi.Location RegimentalLocation,Muni.UnitName,uni.UnitMapId UnitId,icardreq.TypeId,icardreq.RegistrationId," +
+            //                " ran.RankId,ran.RankAbbreviation RankName,arm.Abbreviation ArmedName,trnadd.AddressId,trnup.UploadId,trninfo.InfoId,MICardType.Name ICardType,reco.RecordOfficeId,reco.Name RecordOffice,icardreq.RequestId from BasicDetails bas" +
+            //                " inner join MIssuingAuthority issaut on issaut.IssuingAuthorityId=bas.IssuingAuthorityId" +
+            //                " inner join TrnAddress trnadd on trnadd.BasicDetailId=bas.BasicDetailId" +
+            //                " inner join TrnUpload trnup on trnup.BasicDetailId=bas.BasicDetailId" +
+            //                " inner join TrnIdentityInfo trninfo on trninfo.BasicDetailId=bas.BasicDetailId" +
+            //                " inner join MBloodGroup bld on bld.BloodGroupId=trninfo.BloodGroupId" +
+            //                " inner join MRank ran on ran.RankId=bas.RankId" +
+            //                " inner join MArmedType arm on arm.ArmedId=bas.ArmedId" +
+            //                " inner join MapUnit uni on uni.UnitMapId=bas.UnitId" +
+            //                " inner join MUnit Muni on Muni.UnitId=uni.UnitId" +
+            //                " inner join TrnICardRequest icardreq on icardreq.BasicDetailId=bas.BasicDetailId " + //and icardreq.Status=0 
+            //                " inner join TrnStepCounter scounter on scounter.RequestId=icardreq.RequestId " +
+            //                " inner join MApplyFor mapl on mapl.ApplyForId=scounter.ApplyForId " +
+            //                " inner join MRecordOffice reco on bas.ArmedId=reco.ArmedId" +
+            //                " inner join MICardType MICardType on MICardType.TypeId=icardreq.TypeId " +
+            //                " left join MRegimental regi on regi.RegId=bas.RegimentalId" +
+            //                " where icardreq.RequestId in @Ids";
             //    }
+            //    else
+            //    {
+            //        query = " select bas.*,issaut.Name IssuingAuth,mapl.Name ApplyFor, trnadd.State,trnadd.District,trnadd.PS,trnadd.PO,trnadd.Tehsil,trnadd.Village,trnadd.PinCode, " +
+            //                 " trnup.SignatureImagePath,trnup.PhotoImagePath,IdenMark1,IdenMark2,AadhaarNo,Height,bld.BloodGroup,bld.BloodGroupId, " +
+            //                 " regi.Abbreviation RegimentalName,Muni.UnitName,uni.UnitMapId UnitId,icardreq.TypeId,icardreq.RegistrationId, " +
+            //                 " ran.RankId,ran.RankAbbreviation RankName,arm.Abbreviation ArmedName,trnadd.AddressId,trnup.UploadId,trninfo.InfoId," +
+            //                 " MICardType.Name ICardType," +
+            //                 " CASE WHEN ran.orderby<=4 THEN '126' ELSE reco.RecordOfficeId END RecordOfficeId," +
+            //                 " CASE WHEN ran.orderby<=4 THEN 'MP 6A' ELSE reco.Name END RecordOffice,icardreq.RequestId" +
+            //                 " from BasicDetails bas " +
+            //                 " inner join MIssuingAuthority issaut on issaut.IssuingAuthorityId=bas.IssuingAuthorityId" +
+            //                 " inner join TrnAddress trnadd on trnadd.BasicDetailId=bas.BasicDetailId " +
+            //                 " inner join TrnUpload trnup on trnup.BasicDetailId=bas.BasicDetailId " +
+            //                 " inner join TrnIdentityInfo trninfo on trninfo.BasicDetailId=bas.BasicDetailId " +
+            //                 " inner join MBloodGroup bld on bld.BloodGroupId=trninfo.BloodGroupId " +
+            //                 " inner join MRank ran on ran.RankId=bas.RankId " +
+            //                 " inner join MArmedType arm on arm.ArmedId=bas.ArmedId " +
+            //                 " inner join MapUnit uni on uni.UnitMapId=bas.UnitId " +
+            //                 " inner join MUnit Muni on Muni.UnitId=uni.UnitId " +
+            //                 " inner join TrnICardRequest icardreq on icardreq.BasicDetailId=bas.BasicDetailId  " +
+            //                 " inner join TrnStepCounter scounter on scounter.RequestId=icardreq.RequestId " +
+            //                 " inner join MApplyFor mapl on mapl.ApplyForId=scounter.ApplyForId " +
+            //                 " inner join MICardType MICardType on MICardType.TypeId=icardreq.TypeId  " +
+            //                 " inner join MRecordOffice reco on reco.ArmedId=56" +
+            //                 " inner join OROMapping OROMap on reco.RecordOfficeId=OROMap.RecordOfficeId" +
+            //                 " left join MRegimental regi on regi.RegId=bas.RegimentalId where icardreq.RequestId in @Ids" +
+            //                 " and bas.ArmedId in (select value from string_split(oromap.ArmedIdList,',')) " +
+            //        " order by reco.RecordOfficeId";
+            //    }
+
+            //    var BasicDetailList = await db.QueryAsync<DTODataExportsResponse>(query, new { Ids });
+
+            //    return BasicDetailList.ToList();
+
             //}
             //catch (Exception ex)
             //{
+            //    // Rollback the transaction if any operation fails
+            //    transaction.Rollback();
             //    _logger.LogError(1001, ex, "BasicDetailDB->GetBesicdetailsByRequestId");
             //    return new List<DTODataExportsResponse>();
             //}
-            #endregion Old Code write by Kapoor Sir
+            //finally
+            //{
+            //    // Dispose of the connection
+            //    db.Dispose();
+            //}
+            #endregion Old Code 
 
             var (db, transaction) = _contextDP.CreateConnectionWithTransaction();
             int[] Ids = Data.Ids;
@@ -1367,35 +1384,59 @@ namespace DataAccessLayer
                 }
                 else
                 {
-                    query =  " select bas.*,issaut.Name IssuingAuth,mapl.Name ApplyFor, trnadd.State,trnadd.District,trnadd.PS,trnadd.PO,trnadd.Tehsil,trnadd.Village,trnadd.PinCode, " +
-                             " trnup.SignatureImagePath,trnup.PhotoImagePath,IdenMark1,IdenMark2,AadhaarNo,Height,bld.BloodGroup,bld.BloodGroupId, " +
-                             " regi.Abbreviation RegimentalName,Muni.UnitName,uni.UnitMapId UnitId,icardreq.TypeId,icardreq.RegistrationId, " +
-                             " ran.RankId,ran.RankAbbreviation RankName,arm.Abbreviation ArmedName,trnadd.AddressId,trnup.UploadId,trninfo.InfoId," +
-                             " MICardType.Name ICardType," +
-                             " CASE WHEN ran.orderby<=4 THEN '126' ELSE reco.RecordOfficeId END RecordOfficeId," +
-                             " CASE WHEN ran.orderby<=4 THEN 'MP 6A' ELSE reco.Name END RecordOffice,icardreq.RequestId" +
-                             " from BasicDetails bas " +
-                             " inner join MIssuingAuthority issaut on issaut.IssuingAuthorityId=bas.IssuingAuthorityId" +
-                             " inner join TrnAddress trnadd on trnadd.BasicDetailId=bas.BasicDetailId " +
-                             " inner join TrnUpload trnup on trnup.BasicDetailId=bas.BasicDetailId " +
-                             " inner join TrnIdentityInfo trninfo on trninfo.BasicDetailId=bas.BasicDetailId " +
-                             " inner join MBloodGroup bld on bld.BloodGroupId=trninfo.BloodGroupId " +
-                             " inner join MRank ran on ran.RankId=bas.RankId " +
-                             " inner join MArmedType arm on arm.ArmedId=bas.ArmedId " +
-                             " inner join MapUnit uni on uni.UnitMapId=bas.UnitId " +
-                             " inner join MUnit Muni on Muni.UnitId=uni.UnitId " +
-                             " inner join TrnICardRequest icardreq on icardreq.BasicDetailId=bas.BasicDetailId  " +
-                             " inner join TrnStepCounter scounter on scounter.RequestId=icardreq.RequestId " +
-                             " inner join MApplyFor mapl on mapl.ApplyForId=scounter.ApplyForId " +
-                             " inner join MICardType MICardType on MICardType.TypeId=icardreq.TypeId  " +
-                             " inner join MRecordOffice reco on reco.ArmedId=56" +
-                             " inner join OROMapping OROMap on reco.RecordOfficeId=OROMap.RecordOfficeId" +
-                             " left join MRegimental regi on regi.RegId=bas.RegimentalId where icardreq.RequestId in @Ids" +
-                             " and bas.ArmedId in (select value from string_split(oromap.ArmedIdList,',')) " +
-                    " order by reco.RecordOfficeId";
+                    query = @"select bas.*,issaut.Name IssuingAuth,mapl.Name ApplyFor, trnadd.State,trnadd.District,trnadd.PS,trnadd.PO,trnadd.Tehsil,trnadd.Village,trnadd.PinCode,
+                                trnup.SignatureImagePath,trnup.PhotoImagePath,IdenMark1,IdenMark2,AadhaarNo,Height,bld.BloodGroup,bld.BloodGroupId,
+                                regi.Abbreviation RegimentalName,Muni.UnitName,uni.UnitMapId UnitId,icardreq.TypeId,icardreq.RegistrationId,
+                                ran.RankId,ran.RankAbbreviation RankName,arm.Abbreviation ArmedName,trnadd.AddressId,trnup.UploadId,trninfo.InfoId,
+                                MICardType.Name ICardType,
+                                CASE
+	                                WHEN arm.Abbreviation in @MPRSO_ArmedAbbreviation THEN @MPRSO_RecordOfficeId
+	                                WHEN UPPER(LEFT(bas.ServiceNo,2)) = @MP6F_ArmyNoPrefix THEN @MP6F_RecordOfficeId
+	                                WHEN ran.Orderby<=@MP6A_RankOrderby THEN @MP6A_RecordOfficeId 
+	                                ELSE reco.RecordOfficeId 
+	                                END AS RecordOfficeId,
+                                CASE 
+	                                WHEN arm.Abbreviation in @MPRSO_ArmedAbbreviation THEN @MPRSO_Name
+	                                WHEN UPPER(LEFT(bas.ServiceNo,2)) = @MP6F_ArmyNoPrefix THEN @MP6F_Name
+	                                WHEN ran.Orderby<=@MP6A_RankOrderby THEN @MP6A_Name 
+	                                ELSE reco.Name 
+	                                END AS RecordOffice
+                                ,icardreq.RequestId from BasicDetails bas
+                                inner join MIssuingAuthority issaut on issaut.IssuingAuthorityId=bas.IssuingAuthorityId
+                                inner join TrnAddress trnadd on trnadd.BasicDetailId=bas.BasicDetailId
+                                inner join TrnUpload trnup on trnup.BasicDetailId=bas.BasicDetailId
+                                inner join TrnIdentityInfo trninfo on trninfo.BasicDetailId=bas.BasicDetailId
+                                inner join MBloodGroup bld on bld.BloodGroupId=trninfo.BloodGroupId
+                                inner join MRank ran on ran.RankId=bas.RankId
+                                inner join MArmedType arm on arm.ArmedId=bas.ArmedId
+                                inner join MapUnit uni on uni.UnitMapId=bas.UnitId
+                                inner join MUnit Muni on Muni.UnitId=uni.UnitId
+                                inner join TrnICardRequest icardreq on icardreq.BasicDetailId=bas.BasicDetailId
+                                inner join TrnStepCounter scounter on scounter.RequestId=icardreq.RequestId
+                                inner join MApplyFor mapl on mapl.ApplyForId=scounter.ApplyForId
+                                inner join MICardType MICardType on MICardType.TypeId=icardreq.TypeId
+                                inner join MRecordOffice reco on reco.ArmedId=56
+                                inner join OROMapping OROMap on reco.RecordOfficeId=OROMap.RecordOfficeId
+                                left join MRegimental regi on regi.RegId=bas.RegimentalId where icardreq.RequestId in @Ids
+                                and bas.ArmedId in (select value from string_split(oromap.ArmedIdList,','))
+                                order by RecordOfficeId
+                                ";
                 }
+                var parameters = new DynamicParameters();
+                parameters.Add("@Ids", Ids);
+                parameters.Add("@MPRSO_RecordOfficeId", dTOApplFwdCondition.MPRSO.RecordOfficeId);
+                parameters.Add("@MPRSO_ArmedAbbreviation", dTOApplFwdCondition.MPRSO.ArmedAbbreviation);
+                parameters.Add("@MPRSO_Name", dTOApplFwdCondition.MPRSO.Name);
 
-                var BasicDetailList = await db.QueryAsync<DTODataExportsResponse>(query, new { Ids });
+                parameters.Add("@MP6F_RecordOfficeId", dTOApplFwdCondition.MP6F.RecordOfficeId);
+                parameters.Add("@MP6F_ArmyNoPrefix", dTOApplFwdCondition.MP6F.ArmyNoPrefix);
+                parameters.Add("@MP6F_Name", dTOApplFwdCondition.MP6F.Name);
+
+                parameters.Add("@MP6A_RecordOfficeId", dTOApplFwdCondition.MP6A.RecordOfficeId);
+                parameters.Add("@MP6A_RankOrderby", dTOApplFwdCondition.MP6A.RankOrderby);
+                parameters.Add("@MP6A_Name", dTOApplFwdCondition.MP6A.Name);
+
+                var BasicDetailList = await db.QueryAsync<DTODataExportsResponse>(query, parameters);
 
                 return BasicDetailList.ToList();
 

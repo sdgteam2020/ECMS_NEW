@@ -34,7 +34,7 @@ namespace BusinessLogicsLayer.BasicDet
         public Task<DTOICardTaskCountResponse?> GetTaskCountICardRequest(int UserId, int Type,int applyForId);
         public Task<List<DTONotificationResponse>?> GetNotification(int UserId, int Type, int applyForId);
         public Task<List<DTONotificationResponse>?> GetNotificationRequestId(int UserId, int Type,int applyForId);
-        public Task<List<DTODataExportsResponse>> GetBesicdetailsByRequestId(DTODataExportRequest Data);
+        public Task<List<DTODataExportsResponse>> GetBesicdetailsByRequestId(DTODataExportRequest Data, DTOApplFwdConditionRequest dTOApplFwdCondition);
         public Task<DTOXMLDigitalResponse> GetDataDigitalXmlSign(DTODataExportRequest Data);
         public Task<List<MRecordOffice>?> GetROListByArmedId(byte ArmedId);
         public Task<DTOApplicationTrack?> ApplicationHistory(string RequestId);

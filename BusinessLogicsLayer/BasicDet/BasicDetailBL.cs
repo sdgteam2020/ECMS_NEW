@@ -115,10 +115,10 @@ namespace BusinessLogicsLayer.BasicDet
             return _iBasicDetailDB.GetNotificationRequestId(UserId, Type, applyForId);
         }
 
-        public Task<List<DTODataExportsResponse>> GetBesicdetailsByRequestId(DTODataExportRequest Data)
+        public Task<List<DTODataExportsResponse>> GetBesicdetailsByRequestId(DTODataExportRequest Data, DTOApplFwdConditionRequest dTOApplFwdCondition)
         {
             
-            var data = _iBasicDetailDB.GetBesicdetailsByRequestId(Data);
+            var data = _iBasicDetailDB.GetBesicdetailsByRequestId(Data, dTOApplFwdCondition);
 
             return data;
         }

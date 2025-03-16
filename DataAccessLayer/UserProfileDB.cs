@@ -857,9 +857,9 @@ namespace DataAccessLayer
                         if (subqueryResult != null)
                         {
                             string ini = subqueryResult.ServiceNo.Substring(0, 2).ToUpper();
-                            string MP6F = dTOApplFwdCondition.MP6F;
-                            string MPRSO = dTOApplFwdCondition.MPRSO;
-                            var ArmedAbbreviation = dTOApplFwdCondition.ArmedAbbreviation;
+                            string MP6F = dTOApplFwdCondition.MP6F.Name;
+                            string MPRSO = dTOApplFwdCondition.MPRSO.Name;
+                            var ArmedAbbreviation = dTOApplFwdCondition.MPRSO.ArmedAbbreviation;
                             if (ArmedAbbreviation.Contains(subqueryResult.ArmedAbbreviation, StringComparer.OrdinalIgnoreCase))
                             {
                                 finalquery = "Select trndomain.AspNetUsersId,ISNULL(usep.UserId,0) UserId,users.DomainId,usep.ArmyNo,usep.Name,ran.RankAbbreviation from MRecordOffice mrec" +
@@ -887,7 +887,7 @@ namespace DataAccessLayer
                                     return final.ToList();
                                 }
                             }
-                            else if (ini == dTOApplFwdCondition.ArmyNoPrefix)
+                            else if (ini == dTOApplFwdCondition.MP6F.ArmyNoPrefix)
                             {
                                 finalquery = "Select trndomain.AspNetUsersId,ISNULL(usep.UserId,0) UserId,users.DomainId,usep.ArmyNo,usep.Name,ran.RankAbbreviation from MRecordOffice mrec" +
                                              " inner join OROMapping oromap on oromap.RecordOfficeId=mrec.RecordOfficeId " +
@@ -915,7 +915,7 @@ namespace DataAccessLayer
                                 }
 
                             }
-                            else if (subqueryResult.Orderby <= dTOApplFwdCondition.RankOrderby)
+                            else if (subqueryResult.Orderby <= dTOApplFwdCondition.MP6A.RankOrderby)
                             {
                                 finalquery = "Select trndomain.AspNetUsersId,ISNULL(usep.UserId,0) UserId,users.DomainId,usep.ArmyNo,usep.Name,ran.RankAbbreviation from OROMapping oromap" +
                                              " inner join TrnDomainMapping trndomain on trndomain.Id=oromap.TDMId " +
