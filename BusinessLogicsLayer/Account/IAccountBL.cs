@@ -25,5 +25,6 @@ namespace BusinessLogicsLayer.Account
         public Task<bool?> SaveUnitWithMapping(DTOSaveUnitWithMappingRequest dTO);
         public Task<DTODataTablesResponse<DTOUserRegnResponse>> GetDataForDataTable(DTODataTablesRequest request);
         Task<DTODataTablesResponse<DTOClaimsStoreResponse>?> GetAllClaims(DTODataTablesRequest request);
+        Task<DTODataTablesResponse<DTOUsersByClaim>> GetAllUsersByClaim(DTODataTablesRequest request);
     }
 }
