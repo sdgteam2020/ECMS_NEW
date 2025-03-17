@@ -111,7 +111,6 @@ function BindData() {
     });
 }
 function BindDialog(claimValue) {
-    debugger;
     $('#tbldatadialog').DataTable().destroy();
     $("#DataTableDialog").modal('show');
     tableView = $("#tbldatadialog").DataTable({
@@ -130,8 +129,7 @@ function BindDialog(claimValue) {
                 sortDirection: data.order.length > 0 ? data.order[0].dir : '',
                 choice: claimValue,
             };
-            try {
-                debugger;
+            try {   
                 let response = await fetch("/Account/GetAllUsersByClaim", {
                     method: "POST",
                     headers: { "Content-Type": "application/x-www-form-urlencoded" },
