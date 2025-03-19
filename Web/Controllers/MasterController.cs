@@ -1578,7 +1578,7 @@ namespace Web.Controllers
         public IActionResult RecordOffice()
         {
             short ArmedIdForORO = Convert.ToInt16(_configuration["HardCodeId:ArmedIdForORO"]) ;
-            if (ArmedIdForORO == 0) ArmedIdForORO = 56;
+            //if (ArmedIdForORO == 0) ArmedIdForORO = 56;
             ViewBag.ArmedIdForORO = ArmedIdForORO;
 
             return View();

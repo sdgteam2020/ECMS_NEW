@@ -1,5 +1,6 @@
 ﻿using DataAccessLayer;
 using DataAccessLayer.BaseInterfaces;
+using DataTransferObject.Requests;
 using DataTransferObject.Response;
 using System;
 using System.Collections.Generic;
@@ -17,9 +18,9 @@ namespace BusinessLogicsLayer.Home
         {
             _iHomeDB = iHomeDB;
         }
-        public async Task<DTODashboardCountResponse> GetDashBoardCount(int UserId)
+        public async Task<DTODashboardCountResponse> GetDashBoardCount(int UserId, DTOApplFwdConditionRequest dTOApplFwdCondition, short ArmedIdForORO)
         {
-          return  await _iHomeDB.GetDashBoardCount(UserId);
+          return  await _iHomeDB.GetDashBoardCount(UserId, dTOApplFwdCondition, ArmedIdForORO);
         }
         public async Task<DTORequestDashboardCountResponse> GetRequestDashboardCount(int UserId, string Type)
         {

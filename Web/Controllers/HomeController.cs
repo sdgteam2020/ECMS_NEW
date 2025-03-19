@@ -42,11 +42,12 @@ namespace Web.Controllers
         private const string CounterFilePath = "wwwroot/counter.txt";
         private const string SessionKey = "SessionHit";
         private readonly string[] IgnoredIPs = { "127.0.0.2", "127.0.0.3" }; // Add IPs to ignore
+        private readonly IConfiguration _configuration;
         public HomeController(IRegistrationBL registrationBL, IUserProfileBL userProfileBL,
             IBasicDetailBL basicDetailBL, INotificationBL notificationBL, ITrnICardRequestBL iTrnICardRequestBL,
             IHomeBL home, IRecordOfficeBL recordOfficeBL, SignInManager<ApplicationUser> signInManager, 
             UserManager<ApplicationUser> userManager, ILogger<HomeController> logger, IHttpContextAccessor httpContextAccessor,
-            IReportReturnBL reportReturnBL, IService service
+            IReportReturnBL reportReturnBL, IService service, IConfiguration configuration
             )
         {
             _userProfileBL = userProfileBL;
@@ -61,6 +62,7 @@ namespace Web.Controllers
             this.userManager = userManager;
             _httpContextAccessor = httpContextAccessor;
             this.service = service;
+            _configuration = configuration;
         }
         private string GetSessionValue()
         {
@@ -129,7 +131,19 @@ namespace Web.Controllers
             try
             {
                 int UserId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-                var ret =await _reportReturnBL.GetMstepCount(Data);
+
+                short ArmedIdForORO = Convert.ToInt16(_configuration["HardCodeId:ArmedIdForORO"]);
+                //if (ArmedIdForORO == 0) ArmedIdForORO = 56;
+
+                if (ArmedIdForORO == 0)
+                {
+                    TempData["error"] = "Invalid Input.";
+                    TempData.Keep("error");
+                    return Json(KeyConstants.InternalServerError);
+                }
+
+
+                var ret =await _reportReturnBL.GetMstepCount(Data, ArmedIdForORO);
                 return Json(ret);
             }
             catch (Exception ex)
@@ -394,7 +408,27 @@ namespace Web.Controllers
         public async Task<IActionResult> GetDashboardCount()
         {
             int userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-            return Json(await _home.GetDashBoardCount(userId));
+
+            short ArmedIdForORO = Convert.ToInt16(_configuration["HardCodeId:ArmedIdForORO"]);
+            //if (ArmedIdForORO == 0) ArmedIdForORO = 56;
+
+            DTOApplFwdConditionRequest? dTOApplFwdCondition = _configuration.GetSection("ApplFwdCondition").Get<DTOApplFwdConditionRequest>() ?? new DTOApplFwdConditionRequest
+            {
+                MPRSO = new MPRSO(),
+                MP6F = new MP6F(),
+                MP6A = new MP6A()
+            };
+
+            if (string.IsNullOrWhiteSpace(dTOApplFwdCondition.MPRSO.Name) || dTOApplFwdCondition.MPRSO.ArmedAbbreviation.Count == 0 ||
+                string.IsNullOrWhiteSpace(dTOApplFwdCondition.MP6F.Name) || string.IsNullOrWhiteSpace(dTOApplFwdCondition.MP6F.ArmyNoPrefix) ||
+                string.IsNullOrWhiteSpace(dTOApplFwdCondition.MP6A.Name) || dTOApplFwdCondition.MP6A.RankOrderby == 0 || ArmedIdForORO == 0)
+            {
+                TempData["error"] = "Invalid Input.";
+                TempData.Keep("error");
+                return Json(KeyConstants.InternalServerError);
+            }
+
+            return Json(await _home.GetDashBoardCount(userId, dTOApplFwdCondition, ArmedIdForORO));
         }
         public async Task<IActionResult> GetRequestDashboardCount(string Id)
         {

@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using DataAccessLayer.BaseInterfaces;
 using DataAccessLayer.Logger;
+using DataTransferObject.Requests;
 using DataTransferObject.Response;
 using DataTransferObject.Response.User;
 using Microsoft.EntityFrameworkCore;
@@ -27,7 +28,7 @@ namespace DataAccessLayer
             _contextDP = contextDP;
             _logger = logger;
         }
-        public async Task<DTODashboardCountResponse> GetDashBoardCount(int UserId)
+        public async Task<DTODashboardCountResponse> GetDashBoardCount(int UserId, DTOApplFwdConditionRequest dTOApplFwdCondition, short ArmedIdForORO)
         {
             string query = "declare @TotReq int=0 declare @TotInaccurateData int=0 " +
                             " select @TotReq=COUNT(distinct req.RequestId) from TrnDomainMapping domain" +
@@ -49,7 +50,7 @@ namespace DataAccessLayer
                             " BEGIN " +
                             " SET @TotObservationRaised=0 " +
                             " END " +
-                            " ELSE IF @ArmedId != 56 " +
+                            " ELSE IF @ArmedId != @ArmedIdForORO " +
                             " BEGIN " +
                             " SELECT @TotObservationRaised=COUNT(tdm.Id) FROM TrnDomainMapping tdm " +
                             " inner join MRecordOffice mrec on mrec.TDMId = tdm.Id " +
@@ -58,31 +59,31 @@ namespace DataAccessLayer
                             " END " +
                             " ELSE " +
                             " BEGIN " +
-                            " IF @Name='MPRSO' " +
+                            " IF @Name=@MPRSO_Name " +
                             " BEGIN " +
                             " SELECT @TotObservationRaised=COUNT(Temps.BasicDetailTempId)  FROM BasicDetailTemps Temps " +
                             " inner join MArmedType at on at.ArmedId = Temps.ArmedId " +
                             " left join OROMapping oro on oro.TDMId = @TDMId " +
-                            " WHERE Temps.ApplyForId=1 AND Temps.IsActive=1 AND at.Abbreviation in('ADC','AMC','MNS') " +
+                            " WHERE Temps.ApplyForId=1 AND Temps.IsActive=1 AND at.Abbreviation in @MPRSO_ArmedAbbreviation " +
                             " END " +
-                            " ELSE IF @Name='MP 6A' " +
+                            " ELSE IF @Name=@MP6A_Name " +
                             " BEGIN " +
                             " SELECT @TotObservationRaised=COUNT(Temps.BasicDetailTempId) FROM BasicDetailTemps Temps " +
                             " inner join MRank ranks1 on ranks1.RankId = Temps.RankId " +
-                            " WHERE Temps.ApplyForId=1 AND ranks1.Orderby <=4 AND SUBSTRING(UPPER(Temps.ServiceNo),1,2) != 'SL'  AND Temps.IsActive=1 " +
+                            " WHERE Temps.ApplyForId=1 AND ranks1.Orderby <=@MP6A_RankOrderby AND SUBSTRING(UPPER(Temps.ServiceNo),1,2) != @MP6F_ArmyNoPrefix  AND Temps.IsActive=1 " +
                             " END " +
-                            " ELSE IF @Name='MP 6F' " +
+                            " ELSE IF @Name=@MP6F_Name " +
                             " BEGIN " +
                             " SELECT @TotObservationRaised=COUNT(Temps.BasicDetailTempId)  FROM BasicDetailTemps Temps " +
                             " left join OROMapping oro on oro.TDMId = @TDMId " +
-                            " WHERE Temps.ApplyForId=1 AND SUBSTRING(UPPER(Temps.ServiceNo),1,2) = 'SL' OR Temps.ArmedId in (select value from string_split(oro.ArmedIdList,','))  AND Temps.IsActive=1 " +
+                            " WHERE Temps.ApplyForId=1 AND SUBSTRING(UPPER(Temps.ServiceNo),1,2) = @MP6F_ArmyNoPrefix OR Temps.ArmedId in (select value from string_split(oro.ArmedIdList,','))  AND Temps.IsActive=1 " +
                             " END " +
                             " ELSE " +
                             " BEGIN " +
                             " SELECT @TotObservationRaised=COUNT(Temps.BasicDetailTempId)  FROM BasicDetailTemps Temps " +
                             " inner join MRank ranks1 on ranks1.RankId = Temps.RankId " +
                             " left join OROMapping oro on oro.TDMId = @TDMId " +
-                            " WHERE Temps.ApplyForId=1 AND ranks1.Orderby > 4 AND SUBSTRING(UPPER(Temps.ServiceNo),1,2) != 'SL' AND Temps.ArmedId in (select value from string_split(oro.ArmedIdList,','))  AND Temps.IsActive=1 " +
+                            " WHERE Temps.ApplyForId=1 AND ranks1.Orderby > @MP6A_RankOrderby AND SUBSTRING(UPPER(Temps.ServiceNo),1,2) != @MP6F_ArmyNoPrefix AND Temps.ArmedId in (select value from string_split(oro.ArmedIdList,','))  AND Temps.IsActive=1 " +
                             " END " +
                             " END " +
                             " select @TotReq TotReq,@TotInaccurateData TotInaccurateData,@TotObservationRaised TotObservationRaised";
@@ -91,7 +92,20 @@ namespace DataAccessLayer
             {
                 using (var connection = _contextDP.CreateConnection())
                 {
-                    var ret = await connection.QueryAsync<DTODashboardCountResponse>(query, new { UserId });
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@UserId", UserId);
+                    parameters.Add("@ArmedIdForORO", ArmedIdForORO);
+                    
+                    parameters.Add("@MPRSO_ArmedAbbreviation", dTOApplFwdCondition.MPRSO.ArmedAbbreviation);
+                    parameters.Add("@MPRSO_Name", dTOApplFwdCondition.MPRSO.Name);
+
+                    parameters.Add("@MP6F_ArmyNoPrefix", dTOApplFwdCondition.MP6F.ArmyNoPrefix);
+                    parameters.Add("@MP6F_Name", dTOApplFwdCondition.MP6F.Name);
+
+                    parameters.Add("@MP6A_RankOrderby", dTOApplFwdCondition.MP6A.RankOrderby);
+                    parameters.Add("@MP6A_Name", dTOApplFwdCondition.MP6A.Name);
+
+                    var ret = await connection.QueryAsync<DTODashboardCountResponse>(query, parameters);
                     return ret.SingleOrDefault();
                 }
             }

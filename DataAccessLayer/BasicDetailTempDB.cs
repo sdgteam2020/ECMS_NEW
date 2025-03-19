@@ -5,6 +5,8 @@ using DataTransferObject.Requests;
 using Microsoft.AspNetCore.DataProtection;
 using Dapper;
 using Microsoft.Extensions.Logging;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+using System.Data;
 
 
 namespace DataAccessLayer
@@ -24,7 +26,7 @@ namespace DataAccessLayer
             protector = dataProtectionProvider.CreateProtector(
                 dataProtectionPurposeStrings.AFSACIdRouteValue);
         }
-        public async Task<List<DTOBasicDetailTempRequest>> GetALLBasicDetailTemp(int UserId, int TypeId)
+        public async Task<List<DTOBasicDetailTempRequest>> GetALLBasicDetailTemp(int UserId, int TypeId, DTOApplFwdConditionRequest dTOApplFwdCondition, short ArmedIdForORO)
         {
             try
             {
@@ -89,7 +91,7 @@ namespace DataAccessLayer
                             List<DTOBasicDetailTempRequest> dTOBasicDetailTempRequests = new List<DTOBasicDetailTempRequest>();
                             return await Task.FromResult(dTOBasicDetailTempRequests);
                         }
-                        else if (dTOBasicDetailTempObsRequest.ArmedId != 56)
+                        else if (dTOBasicDetailTempObsRequest.ArmedId != ArmedIdForORO)
                         {
                             var QueryFinal = "SELECT Temps.BasicDetailTempId,ranks1.RankAbbreviation RankName,Temps.FName,Temps.LName,Temps.ServiceNo,Temps.DOB,Temps.DateOfCommissioning,Temps.District,Temps.PO,Temps.PS,Temps.PinCode,Temps.State,Temps.Tehsil,Temps.Village,Temps.Observations,Temps.RemarksIds " +
                                         " ,(select STRING_AGG(Remarks,'#') from MRemarks where RemarksId in (select value from string_split(Temps.RemarksIds,','))) Remarks2" +
@@ -133,16 +135,19 @@ namespace DataAccessLayer
                         else
                         {
                             int TDMId = dTOBasicDetailTempObsRequest.TDMId;
-                            if (dTOBasicDetailTempObsRequest.Name == "MPRSO")
+                            if (dTOBasicDetailTempObsRequest.Name == dTOApplFwdCondition.MPRSO.Name) //"MPRSO"
                             {
                                 var QueryFinal = "SELECT Temps.BasicDetailTempId,ranks1.RankAbbreviation RankName,Temps.FName,Temps.LName,Temps.ServiceNo,Temps.DOB,Temps.DateOfCommissioning,Temps.District,Temps.PO,Temps.PS,Temps.PinCode,Temps.State,Temps.Tehsil,Temps.Village,Temps.Observations,Temps.RemarksIds " +
                                                 " ,(select STRING_AGG(Remarks,'#') from MRemarks where RemarksId in (select value from string_split(Temps.RemarksIds,','))) Remarks2" +
                                                 " ,Temps.UpdatedOn,Temps.RegistrationId,Temps.TypeId,Temps.ApplyForId FROM BasicDetailTemps Temps" +
                                                 " inner join MRank ranks1 on ranks1.RankId = Temps.RankId" +
                                                 " inner join MArmedType at on at.ArmedId = Temps.ArmedId" +
-                                                " WHERE Temps.ApplyForId=1 AND at.Abbreviation in('ADC','AMC','MNS') AND Temps.IsActive=1 ORDER BY Temps.UpdatedOn DESC";
-
-                                var BasicDetailTempList = await connection.QueryAsync<DTOBasicDetailTempRequest>(QueryFinal, new { UserId });
+                                                " WHERE Temps.ApplyForId=1 AND at.Abbreviation in @MPRSO_ArmedAbbreviation AND Temps.IsActive=1 ORDER BY Temps.UpdatedOn DESC";
+                                
+                                var parameters = new DynamicParameters();
+                                parameters.Add("@MPRSO_ArmedAbbreviation", dTOApplFwdCondition.MPRSO.ArmedAbbreviation);
+                                
+                                var BasicDetailTempList = await connection.QueryAsync<DTOBasicDetailTempRequest>(QueryFinal, parameters);
                                 int sno = 1;
                                 var allrecord = (from e in BasicDetailTempList
                                                  select new DTOBasicDetailTempRequest()
@@ -173,15 +178,18 @@ namespace DataAccessLayer
                                                  }).ToList();
                                 return await Task.FromResult(allrecord);
                             }
-                            else if (dTOBasicDetailTempObsRequest.Name == "MP 6A")
+                            else if (dTOBasicDetailTempObsRequest.Name == dTOApplFwdCondition.MP6A.Name) //"MP 6A"
                             {
                                 var QueryFinal = "SELECT Temps.BasicDetailTempId,ranks1.RankAbbreviation RankName,Temps.FName,Temps.LName,Temps.ServiceNo,Temps.DOB,Temps.DateOfCommissioning,Temps.District,Temps.PO,Temps.PS,Temps.PinCode,Temps.State,Temps.Tehsil,Temps.Village,Temps.Observations,Temps.RemarksIds " +
                                                 " ,(select STRING_AGG(Remarks,'#') from MRemarks where RemarksId in (select value from string_split(Temps.RemarksIds,','))) Remarks2" +
                                                 " ,Temps.UpdatedOn,Temps.RegistrationId,Temps.TypeId,Temps.ApplyForId FROM BasicDetailTemps Temps" +
                                                 " inner join MRank ranks1 on ranks1.RankId = Temps.RankId" +
-                                                " WHERE Temps.ApplyForId=1 AND ranks1.Orderby <=4 AND SUBSTRING(UPPER(Temps.ServiceNo),1,2) != 'SL'  AND Temps.IsActive=1 ORDER BY Temps.UpdatedOn DESC";
+                                                " WHERE Temps.ApplyForId=1 AND ranks1.Orderby <= @MP6A_RankOrderby AND SUBSTRING(UPPER(Temps.ServiceNo),1,2) != @MP6F_ArmyNoPrefix  AND Temps.IsActive=1 ORDER BY Temps.UpdatedOn DESC";
 
-                                var BasicDetailTempList = await connection.QueryAsync<DTOBasicDetailTempRequest>(QueryFinal, new { UserId });
+                                var parameters = new DynamicParameters();
+                                parameters.Add("@MP6A_RankOrderby", dTOApplFwdCondition.MP6A.RankOrderby, DbType.Int16, ParameterDirection.Input);
+                                parameters.Add("@MP6F_ArmyNoPrefix", dTOApplFwdCondition.MP6F.ArmyNoPrefix, DbType.String, ParameterDirection.Input);
+                                var BasicDetailTempList = await connection.QueryAsync<DTOBasicDetailTempRequest>(QueryFinal, parameters);
                                 int sno = 1;
                                 var allrecord = (from e in BasicDetailTempList
                                                  select new DTOBasicDetailTempRequest()
@@ -212,16 +220,20 @@ namespace DataAccessLayer
                                                  }).ToList();
                                 return await Task.FromResult(allrecord);
                             }
-                            else if (dTOBasicDetailTempObsRequest.Name == "MP 6F")
+                            else if (dTOBasicDetailTempObsRequest.Name == dTOApplFwdCondition.MP6F.Name) //"MP 6F"
                             {
                                 var QueryFinal = "SELECT Temps.BasicDetailTempId,ranks1.RankAbbreviation RankName,Temps.FName,Temps.LName,Temps.ServiceNo,Temps.DOB,Temps.DateOfCommissioning,Temps.District,Temps.PO,Temps.PS,Temps.PinCode,Temps.State,Temps.Tehsil,Temps.Village,Temps.Observations,Temps.RemarksIds " +
                                                 " ,(select STRING_AGG(Remarks,'#') from MRemarks where RemarksId in (select value from string_split(Temps.RemarksIds,','))) Remarks2" +
                                                 " ,Temps.UpdatedOn,Temps.RegistrationId,Temps.TypeId,Temps.ApplyForId FROM BasicDetailTemps Temps" +
                                                 " inner join MRank ranks1 on ranks1.RankId = Temps.RankId" +
                                                 " left join OROMapping oro on oro.TDMId = @TDMId " +
-                                                " WHERE Temps.ApplyForId=1 AND SUBSTRING(UPPER(Temps.ServiceNo),1,2) = 'SL' OR Temps.ArmedId in (select value from string_split(oro.ArmedIdList,','))  AND Temps.IsActive=1 ORDER BY Temps.UpdatedOn DESC";
+                                                " WHERE Temps.ApplyForId=1 AND SUBSTRING(UPPER(Temps.ServiceNo),1,2) = @MP6F_ArmyNoPrefix OR Temps.ArmedId in (select value from string_split(oro.ArmedIdList,','))  AND Temps.IsActive=1 ORDER BY Temps.UpdatedOn DESC";
 
-                                var BasicDetailTempList = await connection.QueryAsync<DTOBasicDetailTempRequest>(QueryFinal, new { TDMId });
+                                var parameters = new DynamicParameters();
+                                parameters.Add("@TDMId", TDMId);
+                                parameters.Add("@MP6F_ArmyNoPrefix", dTOApplFwdCondition.MP6F.ArmyNoPrefix, DbType.String, ParameterDirection.Input);
+
+                                var BasicDetailTempList = await connection.QueryAsync<DTOBasicDetailTempRequest>(QueryFinal, parameters);
                                 int sno = 1;
                                 var allrecord = (from e in BasicDetailTempList
                                                  select new DTOBasicDetailTempRequest()
@@ -259,9 +271,14 @@ namespace DataAccessLayer
                                                 " ,Temps.UpdatedOn,Temps.RegistrationId,Temps.TypeId,Temps.ApplyForId FROM BasicDetailTemps Temps" +
                                                 " inner join MRank ranks1 on ranks1.RankId = Temps.RankId" +
                                                 " left join OROMapping oro on oro.TDMId = @TDMId " +
-                                                " WHERE Temps.ApplyForId=1 AND ranks1.Orderby > 4 AND SUBSTRING(UPPER(Temps.ServiceNo),1,2) != 'SL' AND Temps.ArmedId in (select value from string_split(oro.ArmedIdList,','))  AND Temps.IsActive=1 ORDER BY Temps.UpdatedOn DESC";
+                                                " WHERE Temps.ApplyForId=1 AND ranks1.Orderby > @MP6A_RankOrderby AND SUBSTRING(UPPER(Temps.ServiceNo),1,2) != @MP6F_ArmyNoPrefix AND Temps.ArmedId in (select value from string_split(oro.ArmedIdList,','))  AND Temps.IsActive=1 ORDER BY Temps.UpdatedOn DESC";
+                                
+                                var parameters = new DynamicParameters();
+                                parameters.Add("@TDMId", TDMId);
+                                parameters.Add("@MP6F_ArmyNoPrefix", dTOApplFwdCondition.MP6F.ArmyNoPrefix, DbType.String, ParameterDirection.Input);
+                                parameters.Add("@MP6A_RankOrderby", dTOApplFwdCondition.MP6A.RankOrderby, DbType.Int16, ParameterDirection.Input);
 
-                                var BasicDetailTempList = await connection.QueryAsync<DTOBasicDetailTempRequest>(QueryFinal, new { TDMId });
+                                var BasicDetailTempList = await connection.QueryAsync<DTOBasicDetailTempRequest>(QueryFinal, parameters);
                                 int sno = 1;
                                 var allrecord = (from e in BasicDetailTempList
                                                  select new DTOBasicDetailTempRequest()

@@ -19,7 +19,7 @@ namespace BusinessLogicsLayer.ReportReturn
             _IReportReturnDB = reportReturnDB;
             _IMapUnitDB = iMapUnitDB;   
         } 
-        public async Task<DTOReportReturnCountlst> GetMstepCount(DTOMHierarchyRequest Data)
+        public async Task<DTOReportReturnCountlst> GetMstepCount(DTOMHierarchyRequest Data,short ArmedIdForORO)
         {
             DTOReportReturnCountlst dTOReportReturnCountlst = new DTOReportReturnCountlst();
            // var listunit=await _IMapUnitDB.GetUnitByHierarchyForIcardRequest(Data);
@@ -30,11 +30,11 @@ namespace BusinessLogicsLayer.ReportReturn
             //dTOReportReturnCountlst.dToCountApprovedRejectJco = await _IReportReturnDB.GetMstepCountApprovedReject(Data, 2);
 
 
-            dTOReportReturnCountlst.RecordOff = await _IReportReturnDB.GetRecordOffOffers();
+            dTOReportReturnCountlst.RecordOff = await _IReportReturnDB.GetRecordOffOffers(ArmedIdForORO);
             dTOReportReturnCountlst.RecordoffCount = await _IReportReturnDB.GetRecordOffOffersCount(Data);
 
-            dTOReportReturnCountlst.RecordJco = await _IReportReturnDB.GetRecordJco();
-            dTOReportReturnCountlst.RecordJcoPending = await _IReportReturnDB.GetRecordJcoCount(Data,0);
+            dTOReportReturnCountlst.RecordJco = await _IReportReturnDB.GetRecordJco(ArmedIdForORO);
+            dTOReportReturnCountlst.RecordJcoPending = await _IReportReturnDB.GetRecordJcoCount(Data,0, ArmedIdForORO);
             //dTOReportReturnCountlst.RecordJcoCountApproved = await _IReportReturnDB.GetRecordJcoCount(Data,1);
             return dTOReportReturnCountlst;
         }

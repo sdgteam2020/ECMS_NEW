@@ -344,14 +344,14 @@ namespace DataAccessLayer
 
 
 
-        public async Task<List<DTOReportReturnCount>> GetRecordOffOffers()
+        public async Task<List<DTOReportReturnCount>> GetRecordOffOffers(short ArmedIdForORO)
         {
-            string query = "select RecordOfficeId,Name from MRecordOffice where ArmedId=56";
+            string query = "select RecordOfficeId,Name from MRecordOffice where ArmedId=@ArmedIdForORO";
             try 
             {
                 using (var connection = _contextDP.CreateConnection())
                 {
-                    var ret = await connection.QueryAsync<DTOReportReturnCount>(query);
+                    var ret = await connection.QueryAsync<DTOReportReturnCount>(query,new { ArmedIdForORO });
                     return ret.ToList();
                 }
             }
@@ -413,14 +413,14 @@ namespace DataAccessLayer
                 return new List<DTOReportReturnCount>();
             }
         }
-        public async Task<List<DTOReportReturnCount>> GetRecordJco()
+        public async Task<List<DTOReportReturnCount>> GetRecordJco(short ArmedIdForORO)
         {
-            string query = "select RecordOfficeId ,Name from MRecordOffice where ArmedId!=56";
+            string query = "select RecordOfficeId ,Name from MRecordOffice where ArmedId!=@ArmedIdForORO";
             try 
             {
                 using (var connection = _contextDP.CreateConnection())
                 {
-                    var ret = await connection.QueryAsync<DTOReportReturnCount>(query);
+                    var ret = await connection.QueryAsync<DTOReportReturnCount>(query,new { ArmedIdForORO });
                     return ret.ToList();
                 }
             }
@@ -431,14 +431,14 @@ namespace DataAccessLayer
             }
         }
 
-        public async Task<List<DTOReportReturnCount>> GetRecordJcoCount(DTOMHierarchyRequest Data, int IsComplete)
+        public async Task<List<DTOReportReturnCount>> GetRecordJcoCount(DTOMHierarchyRequest Data, int IsComplete, short ArmedIdForORO)
         {
             string query = " select count(req.RequestId) Total ,recf.RecordOfficeId,recf.Name,step.StepId from MRecordOffice recf" +
                            " left join TrnDomainMapping map on recf.TDMId=map.Id" +
                            " left join TrnFwds fwd on map.AspNetUsersId=fwd.ToAspNetUsersId and fwd.IsComplete=@IsComplete and fwd.StepId=3" +
                            " left join TrnICardRequest req on fwd.RequestId=req.RequestId and req.StatusId=1  " +
                            " left join TrnStepCounter step on req.RequestId=step.RequestId " +
-                           " left join MRecordOffice mrec on map.Id=mrec.TDMId and mrec.ArmedId!=56 " +
+                           " left join MRecordOffice mrec on map.Id=mrec.TDMId and mrec.ArmedId!=@ArmedIdForORO " +
                            " left join BasicDetails basi on req.BasicDetailId=basi.BasicDetailId " +
                            " left join MapUnit unit on basi.UnitId=unit.UnitMapId" +
                          " where unit.ComdId=ISNULL(@ComdId,unit.ComdId) " +
@@ -449,12 +449,12 @@ namespace DataAccessLayer
                            //" and unit.PsoId=ISNULL(@PsoId,unit.PsoId)" +
                            //" and unit.SubDteId=ISNULL(@SubDteId,unit.SubDteId)" +
                            " and unit.UnitMapId=ISNULL(@UnitMapId,unit.UnitMapId)" +
-                           " and recf.ArmedId!=56   group by recf.RecordOfficeId,recf.Name,step.StepId";
+                           " and recf.ArmedId!=@ArmedIdForORO   group by recf.RecordOfficeId,recf.Name,step.StepId";
             try 
             {
                 using (var connection = _contextDP.CreateConnection())
                 {
-                    var ret = await connection.QueryAsync<DTOReportReturnCount>(query, new { IsComplete, Data.ComdId, Data.CorpsId, Data.DivId, Data.BdeId, Data.FmnBranchID, Data.PsoId, Data.SubDteId, Data.UnitMapId });
+                    var ret = await connection.QueryAsync<DTOReportReturnCount>(query, new { IsComplete, Data.ComdId, Data.CorpsId, Data.DivId, Data.BdeId, Data.FmnBranchID, Data.PsoId, Data.SubDteId, Data.UnitMapId, ArmedIdForORO });
                     return ret.ToList();
                 }
             }

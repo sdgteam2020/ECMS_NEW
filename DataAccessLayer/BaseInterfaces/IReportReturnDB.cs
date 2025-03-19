@@ -14,11 +14,11 @@ namespace DataAccessLayer.BaseInterfaces
 
         public Task<List<DTOReportReturnCount>> GetMstepCountApprovedReject(DTOMHierarchyRequest Data, int ApplyForId);
        
-        public Task<List<DTOReportReturnCount>> GetRecordOffOffers();
+        public Task<List<DTOReportReturnCount>> GetRecordOffOffers(short ArmedIdForORO);
         public Task<List<DTOReportReturnCount>> GetRecordOffOffersCount(DTOMHierarchyRequest Data);
          
-        public Task<List<DTOReportReturnCount>> GetRecordJco();
-        public Task<List<DTOReportReturnCount>> GetRecordJcoCount(DTOMHierarchyRequest Data,int IsComplete);
+        public Task<List<DTOReportReturnCount>> GetRecordJco(short ArmedIdForORO);
+        public Task<List<DTOReportReturnCount>> GetRecordJcoCount(DTOMHierarchyRequest Data,int IsComplete, short ArmedIdForORO);
         public Task<List<DTOReportReturnListResponse>> GetRecordHistory(DTOMHierarchyRequest Data,int ApplyForId,int StepId, int IsApproveId);
         public Task<List<DTOReportReturnListResponse>> GetReportForm11(DTOMHierarchyRequest Data);
 
