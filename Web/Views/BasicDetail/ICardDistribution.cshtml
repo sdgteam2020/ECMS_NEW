@@ -1,0 +1,150 @@
+﻿@{
+    ViewData["Title"] = "Card Distribution";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .swal2-html-container {
+        color: red !important;
+    }
+</style>
+<header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
+    <div class="containerMain">
+        <div class="page-header-content pt-5">
+            <div class="row align-items-center justify-content-between">
+                <div class="col-auto">
+                    <h1 class="page-header-title">
+                        <div class="page-header-icon"> <i class="fa fa-bars"></i></div>
+                        <a href="/Home/Index" class="mr-2">Home</a> > <a href="/Home/InitiateRequest" class="mr-2">Request</a> ><a href="/Home/Request">Initiate Request</a> > Card Distribution
+                    </h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+<div class="containerMain mt-n10">
+    <div class="card mb-3 ">
+        <div class="card-header">
+
+            <span id="SpnTxnId" class="d-none">0</span>
+            @*<span id="PtoId" class="d-none">0</span>*@
+            <div class="row">
+                <div class="col-xl-12 text-left">
+                    <h3>
+                        Card Distribution
+                        <small class="text-muted"></small>
+                    </h3>
+                </div>
+            </div>
+        </div>
+        <div class="card-body" style="min-height:150px;">
+            <div class="row">
+                <div class="col-xl-6">
+                    <div class="col-form-label">
+                        Total Distribution :<label class="font-weight-bold" id="lblTotal">0</label>
+                    </div>
+                </div>
+                <div class="col-xl-6">
+                    <div class="d-flex d-md-flex justify-content-md-end align-items-md-end">
+                        @* <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="choice" id="UserId" value="UserId">
+                            <label for="choice" class="fw-bold">User ID</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="choice" id="DomainId" value="DomainId">
+                            <label for="choice" class="fw-bold">Domain ID</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="choice" id="ICNo" value="ICNo">
+                            <label for="choice" class="fw-bold">IC No</label>
+                        </div> *@
+                        @* <div>
+                            <input type="text" class="form-control-domainId mr-2" placeholder="Search ID / Domain / IC" id="txtSearch" maxlength="30" width="100" pattern="^[a-zA-Z0-9 ]*$" />
+                        </div> *@
+                        <div>
+                            <button type="button" id="btnDistributionAdd" class="btn btn-outline-success font-weight-600 btn-md ml-4"><i class="fa fa-plus mr-1 font-weight-700" aria-hidden="true"></i>Add Distribution Records</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="table border border-purple table-striped no-footer table-hover" role="grid" id="tbldata">
+                        <thead>
+                            <tr>
+                                <th class="noExport d-none"></th>
+                                <th class="wd-40-f">S No</th>
+                                <th class="nowrap">Request ID</th>
+                                <th class="nowrap">IC No</th>
+                                <th class="nowrap">Name</th>
+                                <th class="nowrap">Card Serial No</th>
+                                <th class="nowrap">Chip No</th>
+                            </tr>
+                        </thead>
+                        <tbody id="DetailBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script asp-src-include="~/developerjs/mtables.js"></script>
+@* <script asp-src-include="~/developerjs/profilemanage.js"></script> *@
+<script asp-src-include="~/developerjs/icarddistribution.js"></script>
+<script asp-src-include="~/developerjs/commandvalidation.js"></script>
+<div class="modal fade" id="AddDistributionRecords" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Add Distribution Records</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <form action="" id="UploadCardDistribution" name="UploadCardDistribution" method="post">
+                        <div class="row">
+                            <div class="form-group row mb-2">
+                                <span class=" d-none" id="spnUserProfileId">0</span>
+                                <label class="col-form-label col-sm-4 fw-bold">Upload CSV<i class="fas fa-asterisk mand1"></i></label>
+                                <div class="col-sm-8">
+                                    <input class="form-control1" id="csvFile" name="file" type="file" accept=".csv"/>
+                                    <span class="text-danger field-validation-valid" data-valmsg-for="txtArmyNo" data-valmsg-replace="true"></span>
+                                </div>
+                            </div>
+                            
+                            <div class="col-sm-12 text-right">
+                                <input type="button" class="btn btn-outline-primary" value="Upload" id="btnDistributionAddButton" onclick="validateCsvFile()"/>
+                                <button type="button" id="btnProfileAddReset" class="btn btn-outline-danger">Reset</button>
+                            </div>
+                            <div>
+                                <a href="@Url.Action("ICardDistibutionSampleCsv", "BasicDetail")" class="btn btn-primary">Download Sample CSV</a>
+                            </div>
+                            <div class="col-sm-12" id="msg"> 
+                            </div>
+                        </div>
+                    </form>
+
+                    <div class="col-sm-12" id="msg">
+                    </div>
+                </div>
+            </div>
+
+        </div><!-- modal-content -->
+    </div><!-- modal-dialog -->
+</div>
+<div class="modal fade" id="hoverModal" tabindex="-1" aria-labelledby="hoverModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="hoverModalLabel">Information</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Raise a request with Admin to get a Waiver of IACA Token. It will faciliatate the Domain User to Login into the E-ISAC appl without IACA Token and during the appl forwarding the Digital Signature will not be maintained. However Digital Log will be maintained for all transactions.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>

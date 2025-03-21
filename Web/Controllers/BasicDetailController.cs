@@ -35,6 +35,8 @@ using System.Xml;
 using Microsoft.SqlServer.Management.Smo;
 using System.Globalization;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using CsvHelper;
+using CsvHelper.Configuration;
 
 namespace Web.Controllers
 {
@@ -2367,5 +2369,96 @@ namespace Web.Controllers
             }
         }
         #endregion
+
+        #region Card Distribution
+
+        [Authorize(Policy = "ViewFlaggedICardApplPolicy")]
+        [HttpGet]
+        public async Task<IActionResult> ICardDistribution()
+        {
+            var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var user = await userManager.FindByIdAsync(userId);
+
+            // UserManager service GetClaimsAsync method gets all the current claims of the user
+            var UserClaims = await userManager.GetClaimsAsync(user);
+            ViewBag.UserClaims = UserClaims;
+            return View();
+        }
+
+        [Authorize(Policy = "ViewFlaggedICardApplPolicy")]
+        [HttpPost]
+        public async Task<IActionResult> GetAllICardDistribution()
+        {
+            try
+            {
+                return Json(await basicDetailBL.GetAllICardRequestHold());
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "BasicDetail->GetAllICardRequestHold");
+                return Json(KeyConstants.InternalServerError);
+            }
+
+        }
+
+        public IActionResult ICardDistibutionSampleCsv()
+        {
+            // Sample data with headers and a couple of rows
+            var sampleData = new List<DTOCardDistributionRequest>();
+
+            // Create a MemoryStream to hold the CSV data
+            var memoryStream = new MemoryStream();
+            var writer = new StreamWriter(memoryStream);
+            var csv = new CsvWriter(writer, CultureInfo.InvariantCulture);
+
+            // Write records to CSV
+            csv.WriteRecords(sampleData);
+            writer.Flush();
+            memoryStream.Position = 0; // Reset stream position to beginning
+
+            // Return the CSV file for download
+            return File(memoryStream, "text/csv", "CardDistribution.csv");
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> ICardDistibutionUploadCsv(IFormFile file)
+        {
+            if (file == null || file.Length == 0)
+            {
+                return Json(400);
+            }
+
+            try
+            {
+                var records = new List<DTOCardDistributionRequest>();
+                using (var reader = new StreamReader(file.OpenReadStream()))
+                using (var csv = new CsvReader(reader, new CsvConfiguration(CultureInfo.InvariantCulture)))
+                {
+                    // Read the records from the CSV file
+                    records = csv.GetRecords<DTOCardDistributionRequest>().ToList();
+                }
+
+                // Server-side validation
+                if (records.Any(x => string.IsNullOrWhiteSpace(x.ArmyNo) || string.IsNullOrWhiteSpace(x.ChipNo) || string.IsNullOrWhiteSpace(x.CardSerialNo) || string.IsNullOrWhiteSpace(x.RequestId.ToString())))
+                {
+                    return Json("CSV contains blank or null values in some columns.");
+                }
+
+                if (records.GroupBy(x => new { x.ArmyNo, x.CardSerialNo, x.RequestId,x.ChipNo }).Any(g => g.Count() > 1))
+                {
+                    return Json( "CSV contains duplicate rows.");
+                }
+
+                return Json(200);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "BasicDetail->GetAllICardRequestHold");
+                return Json(KeyConstants.InternalServerError);
+            }
+        }
+
+        #endregion Card Distribution
     }
 }
