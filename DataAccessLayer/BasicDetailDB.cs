@@ -579,6 +579,40 @@ namespace DataAccessLayer
                 return null;
             }
         }
+        public async Task<List<DTOSmartSearch>?> SearchRequestIdForFaulty(string ServiceNo, int AspNetUsersId)
+        {
+            string query = @"Select basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath Image 
+                            from BasicDetails basi
+                            inner join TrnUpload trnu on basi.BasicDetailId=trnu.BasicDetailId 
+                            inner join TrnICardRequest req on req.BasicDetailId=basi.BasicDetailId and req.StatusId=1
+                            inner join TrnStepCounter stepcount on req.RequestId=stepcount.RequestId and stepcount.StepId=6
+                            inner join TrnDomainMapping map on map.Id=req.TrnDomainMappingId and map.AspNetUsersId=@AspNetUsersId
+                            where ServiceNo like @ServiceNo";
+            try
+            {
+                using (var connection = _contextDP.CreateConnection())
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@AspNetUsersId", AspNetUsersId, DbType.Int32, ParameterDirection.Input);
+                    parameters.Add("@ServiceNo", $"%{ServiceNo}%", DbType.String, ParameterDirection.Input);
+
+                    var basicDetail = await connection.QueryAsync<DTOSmartSearch>(query, parameters);
+                    if (basicDetail != null)
+                    {
+                        return basicDetail.ToList();
+                    }
+                    else
+                    {
+                        return null;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "BasicDetailDB->SearchRequestIdForFaulty");
+                return null;
+            }
+        }
         public async Task<List<DTOICardTypeRequest>> GetAllICardType()
         {
             string query = "Select * from MICardType";

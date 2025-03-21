@@ -60,6 +60,10 @@ namespace BusinessLogicsLayer.BasicDet
         {
             return await _iBasicDetailDB.SearchAllServiceNo(ServiceNo, AspNetUsersId);
         }
+        public async Task<List<DTOSmartSearch>?> SearchRequestIdForFaulty(string ServiceNo, int AspNetUsersId)
+        {
+            return await _iBasicDetailDB.SearchRequestIdForFaulty(ServiceNo, AspNetUsersId);
+        }
 
         public async Task<BasicDetailCrtAndUpdVM?> GetBasicDetailByRequestId(int RequestId)
         {

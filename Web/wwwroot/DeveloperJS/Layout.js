@@ -88,52 +88,52 @@ $(document).ready(function () {
         },
         appendTo: '#suggesstion-box'
     });
-    //$("#txtArmyNoForFaulty").autocomplete({
-    //    source: function (request, response) {
-    //        var param = { "ICNumber": request.term };
+    $("#txtArmyNoForFaulty").autocomplete({
+        source: function (request, response) {
+            var param = { "ICNumber": request.term };
 
-    //        $("#loading").addClass("d-none");
-    //        $("#ArmyNoSearchForFaulty").html("");
-    //        $("#ArmyNoSearchForFaultyPic").attr("src", "");
+            $("#loading").addClass("d-none");
+            $("#ArmyNoSearchForFaulty").html("");
+            $("#ArmyNoSearchForFaultyPic").attr("src", "");
 
-    //        $.ajax({
-    //            url: '/BasicDetail/SearchRequestIdForFaulty',
-    //            contentType: 'application/x-www-form-urlencoded',
-    //            data: param,
-    //            type: 'POST',
-    //            success: function (data) {
+            $.ajax({
+                url: '/BasicDetail/SearchRequestIdForFaulty',
+                contentType: 'application/x-www-form-urlencoded',
+                data: param,
+                type: 'POST',
+                success: function (data) {
 
-    //                response($.map(data, function (item) {
+                    response($.map(data, function (item) {
 
 
-    //                    return { label: item.ServiceNo, value: item.BasicDetailId, Name: (item.FName + (item.LName == null ? "" : item.LName)), Image: item.Image };
+                        return { label: item.ServiceNo, value: item.BasicDetailId, Name: (item.FName + (item.LName == null ? "" : item.LName)), Image: item.Image };
 
-    //                }))
-    //            },
-    //            error: function (response) {
-    //                alert(response.responseText);
-    //            },
-    //            failure: function (response) {
-    //                alert(response.responseText);
-    //            }
-    //        });
-    //    },
-    //    select: function (e, i) {
-    //        e.preventDefault();
-    //        //alert(i.item.value)
+                    }))
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                }
+            });
+        },
+        select: function (e, i) {
+            e.preventDefault();
+            //alert(i.item.value)
 
-    //        $("#armynosearchAllName").html("Name : " + i.item.Name);
-    //        /* $("#armynosearchAllBasicId").val(i.item.value);*/
-    //        $("#txtarmynosearchAll").val(i.item.label);
-    //        $("#armynosearchAllpic").attr("src", i.item.Image);
-    //        //$("#armynosearchAllpic").attr("src", "/WriteReadData/Photo/" + i.item.Image);
-    //        //alert(i.item.value)
-    //        // var param1 = { "UnitMapId": i.item.value };
-    //        //$("#btnIOProfileSerch").addClass('d-none');
+            $("#armynosearchAllName").html("Name : " + i.item.Name);
+            /* $("#armynosearchAllBasicId").val(i.item.value);*/
+            $("#txtarmynosearchAll").val(i.item.label);
+            $("#armynosearchAllpic").attr("src", i.item.Image);
+            //$("#armynosearchAllpic").attr("src", "/WriteReadData/Photo/" + i.item.Image);
+            //alert(i.item.value)
+            // var param1 = { "UnitMapId": i.item.value };
+            //$("#btnIOProfileSerch").addClass('d-none');
 
-    //    },
-    //    appendTo: '#suggesstion-box'
-    //});
+        },
+        appendTo: '#suggesstion-box'
+    });
 
     $.ajax({
         url: '/Home/VisitorStats',
