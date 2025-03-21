@@ -130,7 +130,7 @@ function GetdataPostingData(ArmyNo) {
                     $("#lblStatusofInds").html('Closed');
 
                 $("#lblTracking").html(response.TrackingId);
-                $("#pstimage").attr("src", "/WriteReadData/Photo/" + response.PhotoImagePath);
+                $("#pstimage").attr("src", response.PhotoImagePath);
                 $("#lblUnitname").html(response.UnitName + ' (' + response.Sus_no + '' + response.Suffix+')');
 
                 $("#lblRegdUser").html(response.Users_ArmyNo);

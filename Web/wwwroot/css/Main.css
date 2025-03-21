@@ -241,7 +241,7 @@
 .tagline {
     width: 100%;
     text-align: center;
-    padding-left: 10px;
+    /*padding-left: 10px;*/
     color: royalblue;
     font-size: 40px;
     font-weight: bold;

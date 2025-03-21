@@ -18,6 +18,7 @@ using Azure.Core;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 using Microsoft.Data.SqlClient;
 using System.Linq.Expressions;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace DataAccessLayer
 {
@@ -554,10 +555,14 @@ namespace DataAccessLayer
                            " inner join TrnUpload trnu on basi.BasicDetailId=trnu.BasicDetailId where ServiceNo like @ServiceNo ";
             try
             {
-                ServiceNo = "%" + ServiceNo.Replace("[", "[[]").Replace("%", "[%]") + "%";
+                //ServiceNo = "%" + ServiceNo.Replace("[", "[[]").Replace("%", "[%]") + "%";
                 using (var connection = _contextDP.CreateConnection())
                 {
-                    var basicDetail = await connection.QueryAsync<DTOSmartSearch>(query, new { AspNetUsersId, ServiceNo });
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@AspNetUsersId", AspNetUsersId, DbType.Int32, ParameterDirection.Input);
+                    parameters.Add("@ServiceNo", $"%{ServiceNo}%", DbType.String, ParameterDirection.Input);
+
+                    var basicDetail = await connection.QueryAsync<DTOSmartSearch>(query, parameters);
                     if (basicDetail != null)
                     {
                         return basicDetail.ToList();
