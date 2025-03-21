@@ -3,10 +3,13 @@ using BusinessLogicsLayer.Posting;
 using BusinessLogicsLayer.Service;
 using DapperRepo.Core.Constants;
 using DataTransferObject.Domain.Model;
+using DataTransferObject.Response;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Hosting.Internal;
 using System.Security.Claims;
 using System.Text;
+using Web.Healpers;
 
 namespace Web.Controllers
 {
@@ -19,13 +22,15 @@ namespace Web.Controllers
         private readonly ITrnICardRequestBL _iTrnICardRequestBL;
         private readonly IService service;
         private readonly ILogger<PostingController> _logger;
-        public PostingController(IPostingBL postingBL, IApplCloseBL iApplCloseBL, ITrnICardRequestBL trnICardRequestBL, IService service, ILogger<PostingController> logger)
+        private readonly IWebHostEnvironment hostingEnvironment;
+        public PostingController(IPostingBL postingBL, IApplCloseBL iApplCloseBL, ITrnICardRequestBL trnICardRequestBL, IService service, ILogger<PostingController> logger, IWebHostEnvironment hostingEnvironment)
         {
             _iPostingBL = postingBL;
             _iApplCloseBL = iApplCloseBL;
             _iTrnICardRequestBL = trnICardRequestBL;
             this.service = service;
             _logger = logger;
+            this.hostingEnvironment = hostingEnvironment;
         }
         public IActionResult PostingIn()
         {
@@ -33,7 +38,14 @@ namespace Web.Controllers
         }
         public async Task<IActionResult> GetPostingIn(string ArmyNo)
         {
-            var data = await _iPostingBL.GetArmyDataForPostingOut(ArmyNo);
+            DTOPostingInResponse data = await _iPostingBL.GetArmyDataForPostingOut(ArmyNo);
+            string sourceFolderPhotoPhy = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData");
+            string sourcePathPhoto = Path.Combine(sourceFolderPhotoPhy, "Photo", data.PhotoImagePath);
+
+            if (System.IO.File.Exists(sourcePathPhoto))
+            {
+                data.PhotoImagePath = ImageEncryptAndDecrypt.DecryptImageToBase64(sourcePathPhoto);
+            }
             return Json(data);
         }
         public async Task<IActionResult> GetAllPostingOut()

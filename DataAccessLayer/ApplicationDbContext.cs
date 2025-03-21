@@ -88,6 +88,8 @@ namespace DataAccessLayer
         public DbSet<TrnUnregdUser> TrnUnregdUser { get; set; }
         public DbSet<MIssuingAuthority> MIssuingAuthority { get; set; } = null!;
         public DbSet<IAMSetting> IAMSetting { get; set; } = null!;
+        public DbSet<TrnFaultyCard> TrnFaultyCard { get; set; } = null!;
+        public DbSet<MFaultyStage> MFaultyStage { get; set; } = null!;
         //public DbSet<TrnLogin_Log> TrnLogin_Log { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)

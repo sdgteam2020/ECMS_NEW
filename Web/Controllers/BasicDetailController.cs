@@ -2103,6 +2103,17 @@ namespace Web.Controllers
                     var Ret = await basicDetailBL.SearchAllServiceNo(ICNumber, AspNetUsersId);
                     if (Ret != null)
                     {
+                        foreach (var item in Ret) 
+                        {
+                            string sourceFolderPhotoPhy = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData");
+                            string sourcePathPhoto = Path.Combine(sourceFolderPhotoPhy, "Photo", item.Image);
+
+                            if (System.IO.File.Exists(sourcePathPhoto))
+                            {
+                                item.Image = ImageEncryptAndDecrypt.DecryptImageToBase64(sourcePathPhoto);
+                            }
+                        }
+
                         return Ok(Ret);
                     }
 
@@ -2398,7 +2409,6 @@ namespace Web.Controllers
                 _logger.LogError(1001, ex, "BasicDetail->GetAllICardRequestHold");
                 return Json(KeyConstants.InternalServerError);
             }
-
         }
 
         public IActionResult ICardDistibutionSampleCsv()
