@@ -88,49 +88,60 @@ $(document).ready(function () {
         },
         appendTo: '#suggesstion-box'
     });
+
     $("#txtArmyNoForFaulty").autocomplete({
         source: function (request, response) {
-            var param = { "ICNumber": request.term };
+            if (request.term.length > 1)
+            {
+                let param = new URLSearchParams({ ICNumber: request.term });
 
-            $("#loading").addClass("d-none");
-            $("#ArmyNoSearchForFaulty").html("");
-            $("#ArmyNoSearchForFaultyPic").attr("src", "");
+                $("#loading").addClass("d-none");
+                $("#ArmyNoSearchForFaulty").html("");
+                $("#txtArmyNoForFaulty").val("");
+                $("#spnRequestIdForFaulty").html("");
+                $("#ArmyNoSearchForFaultyPic").attr("src", "");
 
-            $.ajax({
-                url: '/BasicDetail/SearchRequestIdForFaulty',
-                contentType: 'application/x-www-form-urlencoded',
-                data: param,
-                type: 'POST',
-                success: function (data) {
-
-                    response($.map(data, function (item) {
-
-
-                        return { label: item.ServiceNo, value: item.BasicDetailId, Name: (item.FName + (item.LName == null ? "" : item.LName)), Image: item.Image };
-
-                    }))
-                },
-                error: function (response) {
-                    alert(response.responseText);
-                },
-                failure: function (response) {
-                    alert(response.responseText);
-                }
-            });
+                fetch('/BasicDetail/SearchRequestIdForFaulty', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: param
+                })
+                    .then(res => {
+                        if (!res.ok) {
+                            throw new Error(`HTTP error! Status: ${res.status}`);
+                        }
+                        return res.json();
+                    })
+                    .then(data => {
+                        if (data.length !== 0) {
+                            response(data.map(item => ({
+                                label: item.ServiceNo,
+                                value: item.BasicDetailId,
+                                Name: item.FName + (item.LName ? item.LName : ""),
+                                Image: item.Image,
+                                RequestId: item.RequestId
+                            })));
+                        } else {
+                            $("#ArmyNoSearchForFaulty").html("");
+                            $("#txtArmyNoForFaulty").val("");
+                            $("#spnRequestIdForFaulty").html("");
+                            $("#ArmyNoSearchForFaultyPic").attr("src", "");
+                            alert("Army no not found.");
+                        }
+                    })
+                    .catch(error => {
+                        alert("Error: " + error.message);
+                    });
+            }
         },
         select: function (e, i) {
             e.preventDefault();
-            //alert(i.item.value)
-
-            $("#armynosearchAllName").html("Name : " + i.item.Name);
-            /* $("#armynosearchAllBasicId").val(i.item.value);*/
-            $("#txtarmynosearchAll").val(i.item.label);
-            $("#armynosearchAllpic").attr("src", i.item.Image);
-            //$("#armynosearchAllpic").attr("src", "/WriteReadData/Photo/" + i.item.Image);
-            //alert(i.item.value)
-            // var param1 = { "UnitMapId": i.item.value };
-            //$("#btnIOProfileSerch").addClass('d-none');
-
+            $("#ArmyNoSearchForFaulty").html("Name : " + i.item.Name);
+            $("#txtArmyNoForFaulty").val(i.item.label);
+            $("#spnRequestIdForFaulty").html(i.item.RequestId);
+            $("#ArmyNoSearchForFaultyPic").attr("src", i.item.Image);
         },
         appendTo: '#suggesstion-box'
     });

@@ -2035,6 +2035,62 @@ namespace Web.Controllers
 
         #endregion
 
+        #region FaultyCard
+
+        [HttpPost]
+        public async Task<IActionResult> SearchRequestIdForFaulty(string ICNumber)
+        {
+            try
+            {
+                if (ICNumber != null)
+                {
+                    int AspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                    var Ret = await basicDetailBL.SearchRequestIdForFaulty(ICNumber, AspNetUsersId);
+                    if (Ret != null)
+                    {
+                        foreach (var item in Ret)
+                        {
+                            string sourceFolderPhotoPhy = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData");
+                            string sourcePathPhoto = Path.Combine(sourceFolderPhotoPhy, "Photo", item.Image);
+
+                            if (System.IO.File.Exists(sourcePathPhoto))
+                            {
+                                item.Image = ImageEncryptAndDecrypt.DecryptImageToBase64(sourcePathPhoto);
+                            }
+                        }
+
+                        return Ok(Ret);
+                    }
+
+                }
+                return BadRequest();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "BasicDetailController=>SearchRequestIdForFaulty.");
+                return BadRequest();
+            }
+        }
+        public ViewResult FaultyCardRequest()
+        {
+            return View();
+        }
+        [HttpPost]
+        public async Task<IActionResult> GetFaultyCardDataByRequestId(int RequestId)
+        {
+            DTOFaultyCardRequestResponse data = await basicDetailBL.GetFaultyCardDataByRequestId(RequestId);
+            string sourceFolderPhotoPhy = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData");
+            string sourcePathPhoto = Path.Combine(sourceFolderPhotoPhy, "Photo", data.PhotoImagePath);
+
+            if (System.IO.File.Exists(sourcePathPhoto))
+            {
+                data.PhotoImagePath = ImageEncryptAndDecrypt.DecryptImageToBase64(sourcePathPhoto);
+            }
+            return Json(data);
+        }
+
+        #endregion
+
         #region GetSessionValue/GetData/SearchAllServiceNo/GetBasicDetailByRequestId/GetRequestHistory/GetRegimentalListByArmedId/GetROListByArmedId/GetRemarks/CreateCSV/GetICardPrintPreviewByRequestId/GetBDetailByRequestId/GetTopArmyNoFromICardRequest/ICardRequestHold/GetAllICardRequestHold
 
         private string GetSessionValue()
@@ -2124,41 +2180,6 @@ namespace Web.Controllers
                 return BadRequest();
             }
         }
-        [HttpPost]
-        public async Task<IActionResult> SearchRequestIdForFaulty(string ICNumber)
-        {
-            try
-            {
-                if (ICNumber != null)
-                {
-                    int AspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-                    var Ret = await basicDetailBL.SearchRequestIdForFaulty(ICNumber, AspNetUsersId);
-                    if (Ret != null)
-                    {
-                        foreach (var item in Ret)
-                        {
-                            string sourceFolderPhotoPhy = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData");
-                            string sourcePathPhoto = Path.Combine(sourceFolderPhotoPhy, "Photo", item.Image);
-
-                            if (System.IO.File.Exists(sourcePathPhoto))
-                            {
-                                item.Image = ImageEncryptAndDecrypt.DecryptImageToBase64(sourcePathPhoto);
-                            }
-                        }
-
-                        return Ok(Ret);
-                    }
-
-                }
-                return BadRequest();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(1001, ex, "BasicDetailController=>SearchAllServiceNo.");
-                return BadRequest();
-            }
-        }
-
         public async Task<IActionResult> GetBasicDetailByRequestId(int RequestId)
         {
             BasicDetailCrtAndUpdVM? basicDetailCrtAndUpdVM = await basicDetailBL.GetBasicDetailByRequestId(RequestId);

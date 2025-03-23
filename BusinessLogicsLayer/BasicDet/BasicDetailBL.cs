@@ -8,6 +8,7 @@ using DataTransferObject.Response;
 using DataTransferObject.ViewModels;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Hosting.Internal;
+using Microsoft.SqlServer.Management.Smo.Wmi;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -60,9 +61,13 @@ namespace BusinessLogicsLayer.BasicDet
         {
             return await _iBasicDetailDB.SearchAllServiceNo(ServiceNo, AspNetUsersId);
         }
-        public async Task<List<DTOSmartSearch>?> SearchRequestIdForFaulty(string ServiceNo, int AspNetUsersId)
+        public async Task<List<DTOSearchRequestForFaultyCard>?> SearchRequestIdForFaulty(string ServiceNo, int AspNetUsersId)
         {
             return await _iBasicDetailDB.SearchRequestIdForFaulty(ServiceNo, AspNetUsersId);
+        }
+        public async Task<DTOFaultyCardRequestResponse> GetFaultyCardDataByRequestId(int RequestId)
+        {
+            return await _iBasicDetailDB.GetFaultyCardDataByRequestId(RequestId);
         }
 
         public async Task<BasicDetailCrtAndUpdVM?> GetBasicDetailByRequestId(int RequestId)

@@ -24,7 +24,8 @@ namespace BusinessLogicsLayer.BasicDet
         public Task<List<DTOICardTypeRequest>> GetAllICardType();
         public Task<BasicDetail?> FindServiceNo(string ServiceNo);
         public Task<List<DTOSmartSearch>?> SearchAllServiceNo(string ServiceNo, int AspNetUsersId);
-        public Task<List<DTOSmartSearch>?> SearchRequestIdForFaulty(string ServiceNo, int AspNetUsersId);
+        public Task<List<DTOSearchRequestForFaultyCard>?> SearchRequestIdForFaulty(string ServiceNo, int AspNetUsersId);
+        public Task<DTOFaultyCardRequestResponse> GetFaultyCardDataByRequestId(int RequestId);
         public Task<BasicDetailCrtAndUpdVM?> GetBasicDetailByRequestId(int RequestId);
         public Task<BasicDetailCrtAndUpdVM?> GetBasicDetailById(int BasicDetailId);
         public Task<BasicDetailCrtAndUpdVM?> GetBesicDetailForEditById(int BasicDetailId);

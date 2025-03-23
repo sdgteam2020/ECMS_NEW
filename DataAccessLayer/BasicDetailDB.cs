@@ -579,9 +579,9 @@ namespace DataAccessLayer
                 return null;
             }
         }
-        public async Task<List<DTOSmartSearch>?> SearchRequestIdForFaulty(string ServiceNo, int AspNetUsersId)
+        public async Task<List<DTOSearchRequestForFaultyCard>?> SearchRequestIdForFaulty(string ServiceNo, int AspNetUsersId)
         {
-            string query = @"Select basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath Image 
+            string query = @"Select TOP 5 basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath Image,req.RequestId 
                             from BasicDetails basi
                             inner join TrnUpload trnu on basi.BasicDetailId=trnu.BasicDetailId 
                             inner join TrnICardRequest req on req.BasicDetailId=basi.BasicDetailId and req.StatusId=1
@@ -596,7 +596,7 @@ namespace DataAccessLayer
                     parameters.Add("@AspNetUsersId", AspNetUsersId, DbType.Int32, ParameterDirection.Input);
                     parameters.Add("@ServiceNo", $"%{ServiceNo}%", DbType.String, ParameterDirection.Input);
 
-                    var basicDetail = await connection.QueryAsync<DTOSmartSearch>(query, parameters);
+                    var basicDetail = await connection.QueryAsync<DTOSearchRequestForFaultyCard>(query, parameters);
                     if (basicDetail != null)
                     {
                         return basicDetail.ToList();
@@ -611,6 +611,33 @@ namespace DataAccessLayer
             {
                 _logger.LogError(1001, ex, "BasicDetailDB->SearchRequestIdForFaulty");
                 return null;
+            }
+        }
+        public async Task<DTOFaultyCardRequestResponse> GetFaultyCardDataByRequestId(int RequestId)
+        {
+            try
+            {
+
+                string query = @"SELECT trnicardr.RequestId,trnicardr.UpdatedOn RequestDate,basi.FName,basi.LName,basi.ServiceNo,ranks.RankAbbreviation RankName,appl.Name ApplyFor,uplod.PhotoImagePath
+                                from BasicDetails basi
+                                inner join MRank ranks on ranks.RankId=basi.RankId
+                                inner join MApplyFor appl on appl.ApplyForId=basi.ApplyForId
+                                inner join TrnUpload uplod on uplod.BasicDetailId=basi.BasicDetailId
+                                inner join TrnICardRequest trnicardr on trnicardr.BasicDetailId=basi.BasicDetailId and trnicardr.StatusId=1
+                                inner join TrnStepCounter stepcount on trnicardr.RequestId=stepcount.RequestId and stepcount.StepId=6
+                                where trnicardr.RequestId=@RequestId ";
+                using (var connection = _contextDP.CreateConnection())
+                {
+                    var ret = await connection.QueryAsync<DTOFaultyCardRequestResponse>(query, new { RequestId });
+
+                    return ret.FirstOrDefault() ?? new DTOFaultyCardRequestResponse();
+
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "BasicDetailDB->GetFaultyCardDataByRequestId");
+                return new DTOFaultyCardRequestResponse();
             }
         }
         public async Task<List<DTOICardTypeRequest>> GetAllICardType()

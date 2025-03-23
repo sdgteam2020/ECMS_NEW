@@ -63,6 +63,7 @@ $(document).ready(function () {
 
             $("#FaultyCardInput").modal("hide");
             sessionStorage.setItem("RequestIdForFaulty", $("#spnRequestIdForFaulty").html());
+            sessionStorage.setItem("ArmyNoForFaulty", $("#txtArmyNoForFaulty").val());
             window.location.href = "/BasicDetail/FaultyCardRequest";
         } else {
             toastr.error("Please Enter Army No");
