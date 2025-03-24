@@ -38,5 +38,6 @@ namespace BusinessLogicsLayer.BasicDet
         public Task<DTOXMLDigitalResponse> GetDataDigitalXmlSign(DTODataExportRequest Data);
         public Task<List<MRecordOffice>?> GetROListByArmedId(byte ArmedId);
         public Task<DTOApplicationTrack?> ApplicationHistory(string RequestId);
+        Task<DTOCardDistributionCheckRes?> ValidateCardDistribution(List<DTOCardDistributionRequest> request);
     }
 }

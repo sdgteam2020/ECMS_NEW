@@ -37,6 +37,9 @@ using System.Globalization;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using CsvHelper;
 using CsvHelper.Configuration;
+using Microsoft.SqlServer.Management.Dmf;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+using Microsoft.SqlServer.Management.XEvent;
 
 namespace Web.Controllers
 {
@@ -2420,7 +2423,7 @@ namespace Web.Controllers
             var memoryStream = new MemoryStream();
             var writer = new StreamWriter(memoryStream);
             var csv = new CsvWriter(writer, CultureInfo.InvariantCulture);
-
+            csv.Context.RegisterClassMap(new CsvClassMap<DTOCardDistributionRequest>(true));
             // Write records to CSV
             csv.WriteRecords(sampleData);
             writer.Flush();
@@ -2434,6 +2437,11 @@ namespace Web.Controllers
         [HttpPost]
         public async Task<IActionResult> ICardDistibutionUploadCsv(IFormFile file)
         {
+            var result = new DTOCardDistributionUploadResponse()
+            {
+                Result = DTOCardDistributionUploadEnum.Rejected
+            };
+
             if (file == null || file.Length == 0)
             {
                 return Json(400);
@@ -2445,29 +2453,71 @@ namespace Web.Controllers
                 using (var reader = new StreamReader(file.OpenReadStream()))
                 using (var csv = new CsvReader(reader, new CsvConfiguration(CultureInfo.InvariantCulture)))
                 {
-                    // Read the records from the CSV file
-                    records = csv.GetRecords<DTOCardDistributionRequest>().ToList();
+                    csv.Context.RegisterClassMap(new CsvClassMap<DTOCardDistributionRequest>(true));
+                    try
+                    {
+                        records = csv.GetRecords<DTOCardDistributionRequest>().ToList();
+                    }
+                    catch(Exception ee)
+                    {
+                        result.Result = DTOCardDistributionUploadEnum.InternalError;
+                        return Json(result);
+                    }
                 }
+                var validateResult = await basicDetailBL.ValidateCardDistribution(records);
 
-                // Server-side validation
-                if (records.Any(x => string.IsNullOrWhiteSpace(x.ArmyNo) || string.IsNullOrWhiteSpace(x.ChipNo) || string.IsNullOrWhiteSpace(x.CardSerialNo) || string.IsNullOrWhiteSpace(x.RequestId.ToString())))
+                SessionHeplers.SetObject(HttpContext.Session, "ValidRecordsCardUpload" , validateResult.ValidRecords);
+                SessionHeplers.SetObject(HttpContext.Session, "InValidRecordsCardUpload", validateResult.InValidRecords);
+                result.Result = validateResult.Result;
+                if (validateResult.InValidRecords?.Count() > 0)
                 {
-                    return Json("CSV contains blank or null values in some columns.");
+                    result.InValidRecordsCount = validateResult.InValidRecords.Count();
                 }
-
-                if (records.GroupBy(x => new { x.ArmyNo, x.CardSerialNo, x.RequestId,x.ChipNo }).Any(g => g.Count() > 1))
+                if (validateResult.ValidRecords?.Count() > 0)
                 {
-                    return Json( "CSV contains duplicate rows.");
+                    result.ValidRecordsCount = validateResult.ValidRecords.Count();
                 }
 
-                return Json(200);
+                return Json(result);
             }
             catch (Exception ex)
             {
-                _logger.LogError(1001, ex, "BasicDetail->GetAllICardRequestHold");
+                _logger.LogError(1001, ex, "BasicDetail->ICardDistibutionUploadCsv");
                 return Json(KeyConstants.InternalServerError);
             }
         }
+
+        //[HttpGet]
+        //public async Task<IActionResult> ICardDistibutionValidRecordsUpload()
+        //{
+        //    try
+        //    {
+
+        //    }
+        //    catch
+        //    { 
+            
+        //    }
+        //}
+
+        [HttpGet]
+        public async Task<IActionResult> ICardDistibutionInValidRecordsDownload()
+        {
+            var records = SessionHeplers.GetObject<List<DTOCardDistributionRequest>>(HttpContext.Session, "InValidRecordsCardUpload");
+            // Create a MemoryStream to hold the CSV data
+            var memoryStream = new MemoryStream();
+            var writer = new StreamWriter(memoryStream);
+            var csv = new CsvWriter(writer, CultureInfo.InvariantCulture);
+            csv.Context.RegisterClassMap(new CsvClassMap<DTOCardDistributionRequest>(false));
+            // Write records to CSV
+            csv.WriteRecords(records);
+            writer.Flush();
+            memoryStream.Position = 0; // Reset stream position to beginning
+
+            // Return the CSV file for download
+            return File(memoryStream, "text/csv", "CardDistribution_Invalid.csv");
+        }
+
 
         #endregion Card Distribution
     }

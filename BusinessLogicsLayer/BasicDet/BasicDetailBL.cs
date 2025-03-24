@@ -137,5 +137,90 @@ namespace BusinessLogicsLayer.BasicDet
             var data = await _iBasicDetailDB.ApplicationHistory(TrackingId);
             return data;
         }
+
+        public async Task<DTOCardDistributionCheckRes?> ValidateCardDistribution(List<DTOCardDistributionRequest> request)
+        {
+            var data = new DTOCardDistributionCheckRes();
+            try
+            {
+                data.Result = DTOCardDistributionUploadEnum.Rejected;
+                //Get properties to check (excluding Remarks)
+                var properties = typeof(DTOCardDistributionRequest).GetProperties()
+                                                  .Where(p => p.Name != "Remarks" && p.Name != "IsValid")
+                                                  .ToList();
+
+                // For each property, find duplicate values
+                var duplicateValuesDict = properties.ToDictionary(
+                    prop => prop.Name,
+                    prop => request
+                        .Where(r => !string.IsNullOrWhiteSpace(prop.GetValue(r)?.ToString()))
+                        .GroupBy(r => prop.GetValue(r)?.ToString().Trim())
+                        .Where(g => g.Count() > 1)
+                        .Select(g => g.Key)
+                        .ToHashSet()
+                );
+
+                //Mark records with remarks
+                request = request.Select(r =>
+                {
+                    var remarks = new List<string>();
+
+                    foreach (var prop in properties)
+                    {
+                        var value = prop.GetValue(r)?.ToString()?.Trim();
+
+                        if (prop.Name == "RequestId")
+                        {
+                            int integerValue = 0;
+                            var isInteger = int.TryParse(value,out integerValue);
+                            if (!isInteger) {
+                                remarks.Add($"{prop.Name} is not valid");
+                            }
+                        }
+
+                        // Null or Blank Check
+                        if (string.IsNullOrWhiteSpace(value))
+                        {
+                            remarks.Add($"{prop.Name} is blank");
+                        }
+                        // Duplicate Check
+                        else if (duplicateValuesDict[prop.Name].Contains(value))
+                        {
+                            remarks.Add($"{prop.Name} is duplicate");
+                        }
+                    }
+
+                    if (remarks.Any())
+                    {
+                        r.IsValid = false;
+                        r.Remarks = string.Join("; ", remarks);
+                    }
+                    return r;
+                }).ToList();
+
+                data.ValidRecords = request.Where(r => r.IsValid).ToList();
+                data.InValidRecords = request.Where(r => !r.IsValid).ToList();
+
+                if (data.ValidRecords?.Count() > 0 && data.InValidRecords?.Count() > 0)
+                {
+                    data.Result = DTOCardDistributionUploadEnum.PartiallyUpload;
+                }
+
+                if (data.InValidRecords?.Count() ==  0 && data.ValidRecords?.Count() > 0)
+                {
+                    data.Result = DTOCardDistributionUploadEnum.FullyUpload;
+                }
+
+                if (data.ValidRecords?.Count() == 0 && data.InValidRecords?.Count() > 0)
+                {
+                    data.Result = DTOCardDistributionUploadEnum.Rejected;
+                }
+            }
+            catch(Exception ee)
+            {
+                data.Result = DTOCardDistributionUploadEnum.InternalError;
+            }
+            return data;
+        }
     }
 }

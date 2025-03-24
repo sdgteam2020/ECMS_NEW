@@ -99,9 +99,61 @@ function validateCsvFile() {
             processData: false, // Do not process data
             contentType: false, // Do not set content-type header
             success: function (response) {
-                // Show success messaged
+                let swalOptions = {
+                    icon: 'info',
+                    showCancelButton: true,
+                    cancelButtonText: 'Cancel',
+                    title: 'Upload Summary',
+                };
+
+                let validStr = `<p style="color:green;"><strong>${response.ValidRecordsCount}</strong> records are ready to be upload.</p>`;
+                let inValidStr = `<p ><strong>${response.InValidRecordsCount}</strong> records are invalid records.</p>`;
+
                 debugger;
-                $('#successMessage').text(response.message).show();
+
+                // Case 1: All valid
+                if (response.ValidRecordsCount > 0 && response.InValidRecordsCount === 0) {
+                    swalOptions.html = validStr;
+                    swalOptions.confirmButtonText = 'Proceed';
+
+                    Swal.fire(swalOptions).then((result) => {
+                        if (result.isConfirmed) {
+                            
+                        }
+                    });
+                }
+
+                // Case 2: Some valid, some invalid
+                else if (response.ValidRecordsCount > 0 && response.InValidRecordsCount > 0) {
+                    swalOptions.html = `${validStr}
+                                        ${inValidStr}
+                                    <p style="color:black;" >You can upload valid records or download invalid records with remarks.</p>`;
+                    swalOptions.showDenyButton = true;
+                    swalOptions.confirmButtonText = 'Proceed Upload';
+                    swalOptions.denyButtonText = 'Download Invalid Records';
+
+                    Swal.fire(swalOptions).then((result) => {
+                        if (result.isConfirmed) {
+                            
+                        } else if (result.isDenied) {
+                            downloadInvalidRecords();
+                        }
+                    });
+                }
+
+                // Case 3: All invalid
+                else if (response.ValidRecordsCount === 0 && response.InValidRecordsCount > 0) {
+                    swalOptions.html = `${inValidStr}
+                                    <p style="color:black;">You can download invalid records with remarks.</p>`;
+                    swalOptions.confirmButtonText = 'Download';
+                    swalOptions.showCancelButton = true;
+
+                    Swal.fire(swalOptions).then((result) => {
+                        if (result.isConfirmed) {
+                            downloadInvalidRecords();
+                        }
+                    });
+                }
             },
             error: function (xhr, status, error) {
                 // Show error messages
@@ -113,6 +165,26 @@ function validateCsvFile() {
 
     // Trigger the reading of the CSV file
     reader.readAsText(file);
+}
+
+function downloadInvalidRecords() {
+    $.ajax({
+        url: '/BasicDetail/ICardDistibutionInValidRecordsDownload',
+        type: 'GET',
+        xhrFields: {
+            responseType: 'blob' // Important!
+        },
+        success: function (data, status, xhr) {
+            var blob = new Blob([data], { type: 'text/csv' });
+            var link = document.createElement('a');
+            link.href = window.URL.createObjectURL(blob);
+            link.download = "CardDistribution_Invalid.csv";
+            link.click();
+        },
+        error: function () {
+            alert('Error downloading file');
+        }
+    });
 }
 
 function showFileValidationError(message) {
