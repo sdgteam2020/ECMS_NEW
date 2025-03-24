@@ -618,14 +618,32 @@ namespace DataAccessLayer
             try
             {
 
-                string query = @"SELECT trnicardr.RequestId,trnicardr.UpdatedOn RequestDate,basi.FName,basi.LName,basi.ServiceNo,ranks.RankAbbreviation RankName,appl.Name ApplyFor,uplod.PhotoImagePath
-                                from BasicDetails basi
-                                inner join MRank ranks on ranks.RankId=basi.RankId
-                                inner join MApplyFor appl on appl.ApplyForId=basi.ApplyForId
-                                inner join TrnUpload uplod on uplod.BasicDetailId=basi.BasicDetailId
-                                inner join TrnICardRequest trnicardr on trnicardr.BasicDetailId=basi.BasicDetailId and trnicardr.StatusId=1
-                                inner join TrnStepCounter stepcount on trnicardr.RequestId=stepcount.RequestId and stepcount.StepId=6
-                                where trnicardr.RequestId=@RequestId ";
+                string query = @"SELECT bas.PaperIcardNo,bas.NameAsPerRecord,bas.FName,bas.LName,bas.ServiceNo,bas.DOB,bas.DateOfIssue,bas.DateOfCommissioning,bas.PlaceOfIssue,
+                                issaut.Name IssuingAuthorityName,trnadd.State,trnadd.District,trnadd.PS,trnadd.PO,trnadd.Tehsil,trnadd.Village,trnadd.PinCode,
+                                IdenMark1,AadhaarNo,Height,bld.BloodGroup,regi.Abbreviation RegimentalName,Muni.UnitName,
+                                ranks.RankAbbreviation RankName,arm.Abbreviation ArmedName,
+                                icardreq.RequestId,icardreq.UpdatedOn RequestDate,appl.Name ApplyFor,uplod.PhotoImagePath,
+                                CASE
+                                WHEN LEFT(bas.ServiceNo, 2) LIKE '[A-Za-z][A-Za-z]' THEN
+                                CONCAT(SUBSTRING(bas.ServiceNo, 1, 2), ' ', SUBSTRING(bas.ServiceNo, 3, LEN(bas.ServiceNo) - 2))
+                                ELSE
+                                bas.ServiceNo
+                                END AS ModifiedServiceNo
+                                from BasicDetails bas
+                                inner join MIssuingAuthority issaut on issaut.IssuingAuthorityId=bas.IssuingAuthorityId
+                                inner join TrnAddress trnadd on trnadd.BasicDetailId=bas.BasicDetailId
+                                inner join TrnUpload uplod on uplod.BasicDetailId=bas.BasicDetailId
+                                inner join TrnIdentityInfo trninfo on trninfo.BasicDetailId=bas.BasicDetailId
+                                inner join MBloodGroup bld on bld.BloodGroupId=trninfo.BloodGroupId
+                                inner join MRank ranks on ranks.RankId=bas.RankId
+                                inner join MArmedType arm on arm.ArmedId=bas.ArmedId
+                                inner join MapUnit uni on uni.UnitMapId=bas.UnitId
+                                inner join MUnit Muni on Muni.UnitId=uni.UnitId
+                                inner join MApplyFor appl on appl.ApplyForId=bas.ApplyForId
+                                left join MRegimental regi on regi.RegId=bas.RegimentalId
+                                inner join TrnICardRequest icardreq on icardreq.BasicDetailId=bas.BasicDetailId and icardreq.StatusId=1
+                                inner join TrnStepCounter stepcount on icardreq.RequestId=stepcount.RequestId and stepcount.StepId=6
+                                where icardreq.RequestId=@RequestId";
                 using (var connection = _contextDP.CreateConnection())
                 {
                     var ret = await connection.QueryAsync<DTOFaultyCardRequestResponse>(query, new { RequestId });

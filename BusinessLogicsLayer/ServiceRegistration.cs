@@ -13,6 +13,7 @@ using BusinessLogicsLayer.BloodGroup;
 using BusinessLogicsLayer.Corps;
 using BusinessLogicsLayer.Div;
 using BusinessLogicsLayer.EncryptBySql;
+using BusinessLogicsLayer.FaultyStage;
 using BusinessLogicsLayer.Formation;
 using BusinessLogicsLayer.Home;
 using BusinessLogicsLayer.IAMSetting;
@@ -181,6 +182,8 @@ namespace BusinessLogicsLayer
             services.AddTransient<IICardHoldBL, ICardHoldBL>();
 
             services.AddTransient<IIAMSettingBL,IAMSettingBL>();
+
+            services.AddTransient<IFaultyStageBL, FaultyStageBL>();
 
 
 

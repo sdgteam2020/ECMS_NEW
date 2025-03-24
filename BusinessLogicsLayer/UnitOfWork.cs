@@ -8,6 +8,7 @@ using BusinessLogicsLayer.BdeCat;
 using BusinessLogicsLayer.BloodGroup;
 using BusinessLogicsLayer.Corps;
 using BusinessLogicsLayer.Div;
+using BusinessLogicsLayer.FaultyStage;
 using BusinessLogicsLayer.Formation;
 using BusinessLogicsLayer.Helpers;
 using BusinessLogicsLayer.IssuingAuthority;
@@ -31,7 +32,7 @@ namespace BusinessLogicsLayer
 {
     public class UnitOfWork : IUnitOfWork
     {
-        public UnitOfWork(IUserBL _user, IComd _comds, ICorpsBL _corpsBL, IBdeBL _bdeCat, IDivBL divBL, IUnitBL unit, IMapUnitBL MapUnitBL, IFormationBL FormationBL, IApptBL apptBL, IArmedBL armedBL, IRankBL rankBL, IRegimentalBL regimentalBL,IRecordOfficeBL recordOfficeBL,IArmedCatBL armedCatBL,IMasterBL masterBL,IOROMappingBL oroMappingBL,IIssuingAuthorityBL issuingAuthorityBL, IBloodGroupBL bloodGroupBL, IAfsacCellMappingBL _afsacCellMappingBL) 
+        public UnitOfWork(IUserBL _user, IComd _comds, ICorpsBL _corpsBL, IBdeBL _bdeCat, IDivBL divBL, IUnitBL unit, IMapUnitBL MapUnitBL, IFormationBL FormationBL, IApptBL apptBL, IArmedBL armedBL, IRankBL rankBL, IRegimentalBL regimentalBL,IRecordOfficeBL recordOfficeBL,IArmedCatBL armedCatBL,IMasterBL masterBL,IOROMappingBL oroMappingBL,IIssuingAuthorityBL issuingAuthorityBL, IBloodGroupBL bloodGroupBL, IAfsacCellMappingBL _afsacCellMappingBL,IFaultyStageBL faultyStageBL) 
         {
             Users = _user;
             Comds = _comds;
@@ -52,6 +53,8 @@ namespace BusinessLogicsLayer
             IssuingAuthorityBL = issuingAuthorityBL;
             BloodGroupBL= bloodGroupBL;
             AfsacCellMapping = _afsacCellMappingBL;
+            FaultyStageBL = faultyStageBL;
+
         }
         public IUserBL Users { get; }
         public IComd Comds { get; }
@@ -72,6 +75,7 @@ namespace BusinessLogicsLayer
         public IIssuingAuthorityBL IssuingAuthorityBL { get; }
         public IBloodGroupBL BloodGroupBL { get; }
         public IAfsacCellMappingBL AfsacCellMapping  { get; }
+        public IFaultyStageBL FaultyStageBL { get; }
          
         public async Task<List<DTOMasterResponse>> GetAllMMaster(DTOMasterRequest Data)
         {
@@ -334,6 +338,18 @@ namespace BusinessLogicsLayer
                     DTOMasterResponse db = new DTOMasterResponse();
                     db.Id = item.BloodGroupId;
                     db.Name = item.BloodGroup !=null ? item.BloodGroup : "NA";
+                    lst.Add(db);
+                }
+            }
+            else if (Data.id == Convert.ToInt16(Constants.MasterTbl.FaultyStage))
+            {
+                var result = await FaultyStageBL.GetAll();
+
+                foreach (var item in result.OrderBy(x => x.Name))
+                {
+                    DTOMasterResponse db = new DTOMasterResponse();
+                    db.Id = item.FaultyStageId;
+                    db.Name = item.Name;
                     lst.Add(db);
                 }
             }

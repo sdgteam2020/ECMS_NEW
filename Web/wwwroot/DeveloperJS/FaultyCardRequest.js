@@ -2,10 +2,16 @@
         if (sessionStorage.getItem("ArmyNoForFaulty") != null && sessionStorage.getItem("RequestIdForFaulty") != null) {
             $("#spnArmyNo").html(sessionStorage.getItem("ArmyNoForFaulty"));
             GetFaultyCardDataByRequestId(sessionStorage.getItem("RequestIdForFaulty"));
-
-            //mMsater(0, "ddlpostingReason", PostingReason, "1");
+            var RemarkTypeID = [5];
+            GetRemarks("ddlFaultyRemark", 0, RemarkTypeID);
+            mMsater(0, "ddlStage", FaultyStage, "");
+            $('.select2').select2({
+                placeholder: "Please select a Reason",
+                allowClear: true,
+                closeOnSelect: false // Only needed for multi-select
+            });
         }
-        $("#btnPostingOut").on("click", function () {
+        $("#btnSubmit").on("click", function () {
             if ($("#SaveForm")[0].checkValidity()) {
 
                 Swal.fire({
@@ -29,24 +35,15 @@
     });
     function Save() {
 
-        /*  alert($('#bdaymonth').val());*/
-
         $.ajax({
-            url: '/Posting/SavePoasingOut',
+            url: '/BasicDetail/SaveFaultyCardRequest',
             type: 'POST',
             data: {
-                "Id": $("#spnPostingOutID").html(),
-                "BasicDetailId": $(".spnBasicDetailIdOutID").html(),
-                "ReasonId": $("#ddlpostingReason").val(),
-                "Authority": $("#txtAuthority").val(),
-                "SOSDate": $("#txtSosDate").val(),
-                "FromAspNetUsersId": $(".spnFromAspNetUsersId").html(),
-                "FromUnitID": $(".spnFromUnitID").html(),
-                "FromUserID": $(".spnFromUserID").html(),
-                "ToAspNetUsersId": $("#ddlaspnetiserpostout").val(),
-                "ToUnitID": $("#postingoutUnitId").html(),
-                "ToUserID": $(".spnToUserID").html(),
-                "RequestId": $(".spnRequestId").html(),
+                "TrnFaultyCardId": $("#spnTrnFaultyCardId").html(),
+                "RequestId": $("#spnRequestId").html(),
+                "RemarksIds": $("#ddlFaultyRemark").val(),
+                "OtherRemark": $("#txtOtherRemark").val(),
+                "FaultyStageId": $("#ddlStage").val(),
             }, //get the search string
             success: function (result) {
 
@@ -119,14 +116,30 @@
             }
             return res.json();
          })
-          .then(data => {
-            if (data != null) {
-                $("#lblCategory").html(data.ApplyFor);
-                $("#lblFName").html(data.FName);
-                $("#lblLName").html(data.LName == null ? "" : data.LName);
-                $("#PhotoImagePath").attr("src", data.PhotoImagePath);
-                $("#lblRequestId").html(data.RequestId);
-                $("#lblRequestDate").html(data.RequestDate);
+            .then(response => {
+                if (response != null) {
+                    $("#lblvpFaultyNameAsPerRecord").html(response.NameAsPerRecord);
+                    $("#lblvpFaultyFName").html(response.FName);
+                    $("#lblvpFaultyLName").html(response.LName == null ? "" : response.LName);
+                    $("#lblvpFaultyCategory").html(response.ApplyFor);
+                    $("#lblvpFaultyRank").html(response.RankName);
+                    $("#lblvpFaultyarm").html(response.ArmedName);
+                    $("#lblvpFaultyArmyNo").html(response.ModifiedServiceNo);
+                    $("#lblvpFaultyMarks").html(response.IdenMark1);
+                    $("#lblvpFaultydob").html(DateFormateMMMM_dd_yyyy(response.DOB));
+                    $("#lblvpFaultyheight").html(response.Height);
+                    $("#lblvpFaultyadhar").html(response.AadhaarNo.replace(/\d(?=\d{4})/g, "X"));
+                    $("#lblvpFaultyBloodGroup").html(response.BloodGroup);
+                    $("#lblvpFaultypoi").html(response.PlaceOfIssue);
+                    $("#lblvpFaultydoi").html(DateFormateMMMM_dd_yyyy(response.DateOfIssue));
+                    $("#lblvpFaultyissuA").html(response.IssuingAuthorityName);
+                    $("#lblvpFaultydateo").html(DateFormateMMMM_dd_yyyy(response.DateOfCommissioning));
+                    $("#lblvpFaultyaddress").html(response.Village + ',' + response.Tehsil + ',' + response.PO + ',' + response.PS + ',' + response.District + ',' + response.State + '' + response.PinCode);
+
+                    $("#vpFaultyPhotoImagePath").attr("src", response.PhotoImagePath);
+                    $("#lblvpFaultyRequestId").html(response.RequestId);
+                    $("#spnvpFaultyRequestId").html(response.RequestId);
+                    $("#lblvpFaultyRequestDate").html(response.RequestDate);
             }
             else {
                 alert("No data found.");

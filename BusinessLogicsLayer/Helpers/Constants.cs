@@ -28,6 +28,7 @@ namespace BusinessLogicsLayer.Helpers
             internal const string IssuingAuthority = "16";
             internal const string Regimental = "17";
             internal const string BloodGroup = "18";
+            internal const string FaultyStage = "19";
         }
     }
 }
