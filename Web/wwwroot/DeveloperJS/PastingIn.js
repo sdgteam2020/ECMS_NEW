@@ -1,5 +1,4 @@
 ﻿$(function () {
-    $(function () {
         var dtToday = new Date();
 
         var month = dtToday.getMonth() + 1;
@@ -16,23 +15,24 @@
 
         $('#txtSosDate').attr('min', minDate);
         $('#txtSosDate').attr('max', maxDate);
-    });
-    $('#txtSosDate').on('change', function () {
-        var dtToday = new Date();
 
-        var month = dtToday.getMonth() + 1;
-        var day = dtToday.getDate();
-        var year = dtToday.getFullYear() + 1;
+        $('#txtSosDate').on('change', function () {
+            var dtToday = new Date();
 
-        if (month < 10)
-            month = '0' + month.toString();
-        if (day < 10)
-            day = '0' + day.toString();
-        var minDate = dtToday.getFullYear() + '-' + month + '-' + day;
-        var maxDate = year + '-' + month + '-' + day;
-        $('#txtSosDate').attr('min', minDate);
-        $('#txtSosDate').attr('max', maxDate);
+            var month = dtToday.getMonth() + 1;
+            var day = dtToday.getDate();
+            var year = dtToday.getFullYear() + 1;
+
+            if (month < 10)
+                month = '0' + month.toString();
+            if (day < 10)
+                day = '0' + day.toString();
+            var minDate = dtToday.getFullYear() + '-' + month + '-' + day;
+            var maxDate = year + '-' + month + '-' + day;
+            $('#txtSosDate').attr('min', minDate);
+            $('#txtSosDate').attr('max', maxDate);
     });
+
     $('#txtSosDate').on('keydown', (e) => {
         e.preventDefault();
         return false;
@@ -88,6 +88,7 @@
     $("#ddlaspnetiserpostout").on("change",function () {
         GetByArmyNo($("#ddlaspnetiserpostout").val());
     });
+
     $("#btnPostingOut").on("click",function () {
         if ($("#SaveForm")[0].checkValidity()) {
 
@@ -117,7 +118,7 @@
 });
 function Save() {
 
-    /*  alert($('#bdaymonth').val());*/
+    alert($("#txtSosDate").val());
    
     $.ajax({
         url: '/Posting/SavePoasingOut',

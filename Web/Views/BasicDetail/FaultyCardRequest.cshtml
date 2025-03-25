@@ -45,7 +45,7 @@
         </div>
         <div class="card-body" style="min-height:150px;">
             <div class="row g-3 row-deck mb-3">
-                <form action="" id="SaveForm" method="post" name="SaveForm">
+                <form action="" id="SaveFaultyCardRequest" method="post" name="SaveFaultyCardRequest">
                     <div class="row">
                         <span class=" d-none" id="spnTrnFaultyCardId">0</span>
                         <span class=" d-none" id="spnvpFaultyRequestId">0</span>
@@ -54,14 +54,20 @@
                                 <div class="seven">
                                     <h1>Faulty Card Request</h1>
                                 </div>
-                                <div class="mt-2 ml-4">
+                                <div class="mt-2 ml-2">
                                     <div class="row">
-                                        <div class="col-sm-6">
+                                        <div class="col-sm-4">
                                             <div class="seven">
                                                 <h1>Personal Details</h1>
                                             </div>
                                             <div class="col-sm-12 text-center">
-                                                <img src="" id="PhotoImagePath" height="180" class=" border border-primary" />
+                                                <img src="" id="vpFaultyPhotoImagePath" height="180" class=" border border-primary" />
+                                            </div>
+                                            <div class="col-sm-12">
+                                                <div class="form-group row mb-0">
+                                                    <label class="col-form-label col-5 text-left">Paper I-Card No</label>
+                                                    <div class="col-7"><label class="form-control-plaintext b text-black text-uppercase" id="lblvpFaultyPaperIcardNo"></label></div>
+                                                </div>
                                             </div>
                                             <div class="col-sm-12">
                                                 <div class="form-group row mb-0">
@@ -105,149 +111,148 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="col-sm-12">
-                                                <div class="form-group row mb-0">
-                                                    <label class="col-form-label col-5 text-left">Date of Birth</label>
-                                                    <div class="col-7">
-                                                        <label class="form-control-plaintext text-uppercase" id="lblvpFaultydob"></label>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <div class="row">
+                                                <div class="col-sm-12">
+                                                    <div class="form-group row mb-0">
+                                                        <label class="col-form-label col-5 text-left">Date of Birth</label>
+                                                        <div class="col-7">
+                                                            <label class="form-control-plaintext text-uppercase" id="lblvpFaultydob"></label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-12">
+                                                    <div class="form-group row mb-0">
+                                                        <label class="col-form-label col-5 text-left">Height (Cm)</label>
+                                                        <div class="col-7">
+                                                            <label class="form-control-plaintext text-uppercase" id="lblvpFaultyheight"></label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-12">
+                                                    <div class="form-group row mb-0">
+                                                        <label class="col-form-label col-5 text-left">AADHAAR No</label>
+                                                        <div class="col-7">
+                                                            <label class="form-control-plaintext text-uppercase" id="lblvpFaultyadhar"></label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-12">
+                                                    <div class="form-group row mb-0">
+                                                        <label class="col-form-label col-5 text-left">Blood Group</label>
+                                                        <div class="col-7">
+                                                            <label class="form-control-plaintext text-uppercase" id="lblvpFaultyBloodGroup"></label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-12">
+                                                    <div class="form-group row mb-0">
+                                                        <label class="col-form-label col-5 text-left">Place of Issue</label>
+                                                        <div class="col-7">
+                                                            <label class="form-control-plaintext text-uppercase" id="lblvpFaultypoi"></label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-12">
+                                                    <div class="form-group row mb-0">
+                                                        <label class="col-form-label col-5 text-left">Date of Issue</label>
+                                                        <div class="col-7">
+                                                            <label class="form-control-plaintext text-uppercase" id="lblvpFaultydoi"></label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-12">
+                                                    <div class="form-group row mb-0">
+                                                        <label class="col-form-label col-5 text-left">Issuing Authority</label>
+                                                        <div class="col-7">
+                                                            <label class="form-control-plaintext text-uppercase" id="lblvpFaultyissuA"></label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-12">
+                                                    <div class="form-group row mb-0">
+                                                        <label class="col-form-label col-5 text-left">Date of Commissioning/ Enrollment</label>
+                                                        <div class="col-7">
+                                                            <label class="form-control-plaintext text-uppercase" id="lblvpFaultydateo"></label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-12">
+                                                    <div class="form-group row mb-0">
+                                                        <label class="col-form-label col-5 text-left">Identification Mark</label>
+                                                        <div class="col-7">
+                                                            <label class="form-control-plaintext text-uppercase" id="lblvpFaultyMarks"></label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-12">
+                                                    <div class="form-group row mb-0">
+                                                        <label class="col-form-label col-5 text-left">Permt Address as per Service Records</label>
+                                                        <div class="col-7">
+                                                            <label class="form-control-plaintext text-uppercase" id="lblvpFaultyaddress"></label><br />
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
+                                        </div>
+                                        <div class="col-sm-4">
                                             <div class="col-sm-12">
                                                 <div class="form-group row mb-0">
-                                                    <label class="col-form-label col-5 text-left">Height (Cm)</label>
-                                                    <div class="col-7">
-                                                        <label class="form-control-plaintext text-uppercase" id="lblvpFaultyheight"></label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-12">
-                                                <div class="form-group row mb-0">
-                                                    <label class="col-form-label col-5 text-left">AADHAAR No</label>
-                                                    <div class="col-7">
-                                                        <label class="form-control-plaintext text-uppercase" id="lblvpFaultyadhar"></label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-12">
-                                                <div class="form-group row mb-0">
-                                                    <label class="col-form-label col-5 text-left">Blood Group</label>
-                                                    <div class="col-7">
-                                                        <label class="form-control-plaintext text-uppercase" id="lblvpFaultyBloodGroup"></label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-12">
-                                                <div class="form-group row mb-0">
-                                                    <label class="col-form-label col-5 text-left">Place of Issue</label>
-                                                    <div class="col-7">
-                                                        <label class="form-control-plaintext text-uppercase" id="lblvpFaultypoi"></label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-12">
-                                                <div class="form-group row mb-0">
-                                                    <label class="col-form-label col-5 text-left">Date of Issue</label>
-                                                    <div class="col-7">
-                                                        <label class="form-control-plaintext text-uppercase" id="lblvpFaultydoi"></label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-12">
-                                                <div class="form-group row mb-0">
-                                                    <label class="col-form-label col-5 text-left">Issuing Authority</label>
-                                                    <div class="col-7">
-                                                        <label class="form-control-plaintext text-uppercase" id="lblvpFaultyissuA"></label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-12">
-                                                <div class="form-group row mb-0">
-                                                    <label class="col-form-label col-5 text-left">Date of Commissioning/ Enrollment</label>
-                                                    <div class="col-7">
-                                                        <label class="form-control-plaintext text-uppercase" id="lblvpFaultydateo"></label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-12">
-                                                <div class="form-group row mb-0">
-                                                    <label class="col-form-label col-3 text-left">Identification Mark</label>
-                                                    <div class="col-9">
-                                                        <label class="form-control-plaintext text-uppercase ml-3" id="lblvpFaultyMarks"></label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-12">
-                                                <div class="form-group row mb-0">
-                                                    <label class="col-form-label col-3 text-left">Permt Address as per Service Records</label>
-                                                    <div class="col-9">
-                                                        <label class="form-control-plaintext text-uppercase ml-3" id="lblvpFaultyaddress"></label><br />
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-12">
-                                                <div class="form-group row mb-2">
-                                                    <label class="col-form-label col-sm-4 labelprofile">Category</label>
-                                                    <div class="col-sm-8">
+                                                    <label class="col-form-label col-sm-5 labelprofile">Category</label>
+                                                    <div class="col-sm-7">
                                                         <label id="lblvpFaultyCategory" class="col-form-label"></label>
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="col-sm-12">
-                                                <div class="form-group row mb-2">
-                                                    <label class="col-form-label col-sm-4 labelprofile">Request Id</label>
-                                                    <div class="col-sm-8">
+                                                <div class="form-group row mb-0">
+                                                    <label class="col-form-label col-sm-5 labelprofile">Request Id</label>
+                                                    <div class="col-sm-7">
                                                         <label id="lblvpFaultyRequestId" class="col-form-label"></label>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="col-sm-6">
-                                            <div class="row">
-                                                <div class="col-sm-6">
-                                                    <div class="form-group row mb-2">
-                                                        <label class="col-form-label col-sm-4 labelprofile">Request Date</label>
-                                                        <div class="col-sm-8">
-                                                            <label id="lblvpFaultyRequestDate" class="col-form-label"></label>
-                                                        </div>
-
+                                            <div class="col-sm-12">
+                                                <div class="form-group row mb-0">
+                                                    <label class="col-form-label col-sm-5 labelprofile">Request Date</label>
+                                                    <div class="col-sm-7">
+                                                        <label id="lblvpFaultyRequestDate" class="col-form-label"></label>
                                                     </div>
                                                 </div>
-                                                <div class="col-sm-6">
-                                                    <div class="form-group row mb-2">
-                                                        <label class="col-form-label col-sm-4 labelprofile">Stage<i class="fas fa-asterisk mand1"></i></label>
-                                                        <div class="col-sm-8">
-                                                            <select class="form-select" style="width: 100%;" aria-hidden="true" id="ddlStage" name="ddlStage" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="Stage is required." data-val-regex-pattern="^[\d]+$">
-                                                                <option value="">Select One</option>
-                                                            </select>
-                                                            <span class="text-danger field-validation-valid" data-valmsg-for="ddlStage" data-valmsg-replace="true"></span>
-                                                        </div>
+                                            </div>
+                                            <div class="col-sm-12">
+                                                <div class="form-group row mb-0">
+                                                    <label class="col-form-label col-sm-5 labelprofile">Stage<i class="fas fa-asterisk mand1"></i></label>
+                                                    <div class="col-sm-7">
+                                                        <select class="form-select" style="width: 100%;" aria-hidden="true" id="ddlStage" name="ddlStage" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="Stage is required." data-val-regex-pattern="^[\d]+$">
+                                                            <option value="">Select One</option>
+                                                        </select>
+                                                        <span class="text-danger field-validation-valid" data-valmsg-for="ddlStage" data-valmsg-replace="true"></span>
                                                     </div>
                                                 </div>
-                                                <div class="col-sm-6">
-                                                    <div class="form-group row mb-2">
-                                                        <label class="col-form-label col-sm-4 labelprofile">Select Reason<i class="fas fa-asterisk mand1"></i></label>
-                                                        <div class="col-sm-8">
-@*                                                             <select class="form-control select2 select2-accessible text-uppercase" multiple="" placeholder="Select Reason" style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddlFaultyRemark" id="ddlFaultyRemark" data-val="true" data-val-regex="This special chars and space not allowed for security reasons." data-val-required="Reason is required.">
-                                                            </select> *@
-                                                            <select class="form-control select2 select2-accessible text-uppercase" multiple="" placeholder="Please select a Reason" style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddlFaultyRemark" required id="ddlFaultyRemark">
-                                                            </select>
-                                                            @* <span class="text-danger field-validation-valid" data-valmsg-for="ddlFaultyRemark" data-valmsg-replace="true"></span> *@
-                                                        </div>
+                                            </div>
+                                            <div class="col-sm-12">
+                                                <div class="form-group row mb-0">
+                                                    <label class="col-form-label col-sm-5 labelprofile">Select Reason<i class="fas fa-asterisk mand1"></i></label>
+                                                    <div class="col-sm-7">
+                                                        <select class="form-control select2 select2-accessible text-uppercase" multiple style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddlFaultyRemark" id="ddlFaultyRemark" data-val="true" data-val-regex="This special chars and space not allowed for security reasons." data-val-required="Reason is required." data-val-regex-pattern="^[\w\,; ]*$">
+                                                        </select>
+                                                        <span class="text-danger field-validation-valid" data-valmsg-for="ddlFaultyRemark" data-valmsg-replace="true"></span>
                                                     </div>
                                                 </div>
-                                                <div class="col-sm-6">
-                                                    <div class="form-group row mb-2">
-                                                        <label class="col-form-label col-sm-4 labelprofile">Other Remark</label>
-                                                        <div class="col-sm-8">
-                                                            <textarea class="form-control1" style="height:auto!important;" name="txtOtherRemark" id="txtOtherRemark" rows="3" maxlength="100" data-val-maxlength="Maximum length of Message is 100 character." data-val-maxlength-max="100" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-regex-pattern="^[\w\&\.\-\; ]*$"></textarea>
-                                                            <span class="text-danger field-validation-valid" data-valmsg-for="txtOtherRemark" data-valmsg-replace="true"></span>
-                                                        </div>
+                                            </div>
+                                            <div class="col-sm-12">
+                                                <div class="form-group row mb-0">
+                                                    <label class="col-form-label col-sm-5 labelprofile">Other Remark</label>
+                                                    <div class="col-sm-7">
+                                                        <textarea class="form-control1" style="height:auto!important;" name="txtOtherRemark" id="txtOtherRemark" rows="3" maxlength="100" data-val-maxlength="Maximum length of Message is 100 character." data-val-maxlength-max="100" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-regex-pattern="^[\w\&\.\-\; ]*$"></textarea>
+                                                        <span class="text-danger field-validation-valid" data-valmsg-for="txtOtherRemark" data-valmsg-replace="true"></span>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-md-12 text-center mb-4">
+                                        <div class="col-sm-12 text-center mb-4">
                                             <input type="button" class="btn btn-primary" id="btnSubmit" value="Submit" />
                                         </div>
                                     </div>

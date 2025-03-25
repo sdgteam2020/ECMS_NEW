@@ -34,6 +34,7 @@ namespace DataTransferObject.Domain.Model
         [DataType(DataType.Date)]
         [Column(TypeName = "datetime")]
         public DateTime SOSDate { get; set; }
+        
         [ForeignKey("ApplicationUser"), DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int FromAspNetUsersId { get; set; }
         public ApplicationUser? ApplicationUser { get; set; }

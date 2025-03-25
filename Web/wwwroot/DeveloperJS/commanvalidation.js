@@ -989,6 +989,14 @@ function Pad(d) {
         return $(this);
     }
 }(jQuery));
+function convertToISOWithTime(dateString, timeString = "00:00:00") {
+    const [day, month, year] = dateString.split("/");
+
+    // Combine into a proper format
+    const dateTimeString = `${year}-${month}-${day}T${timeString}Z`;
+
+    return new Date(dateTimeString).toISOString();
+}
 function WaterMarkOnPdf(doc) {
     //Remove the title created by datatTables
     doc.content.splice(0, 1);

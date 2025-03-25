@@ -35,6 +35,7 @@ using System.Xml;
 using Microsoft.SqlServer.Management.Smo;
 using System.Globalization;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using BusinessLogicsLayer.FaultyCard;
 
 namespace Web.Controllers
 {
@@ -64,6 +65,7 @@ namespace Web.Controllers
         private readonly IMasterBL _IMasterBL;
         private readonly ITrnLoginLogBL _iTrnLoginLogBL;
         private readonly IICardHoldBL _iICardHoldBL;
+        private readonly IFaultyCardBL faultyCardBL;
         private readonly IConfiguration _configuration;
         public DateTime dateTimenow;
         private readonly string[] _expectedColumns = { "RequestId", "RankName", "FName", "LName", "ServiceNo", "ChipNo", "CardSerialNo" };
@@ -72,7 +74,7 @@ namespace Web.Controllers
                               DataProtectionPurposeStrings dataProtectionPurposeStrings, ILogger<BasicDetailController> logger, IStepCounterBL iStepCounterBL, 
                               ITrnFwnBL iTrnFwnBL, ITrnICardRequestBL iTrnICardRequestBL, IDomainMapBL iDomainMapBL
             ,IBasicUploadBL basicUploadBL, IBasicAddressBL basicAddressBL, IBasicinfoBL basicinfoBL, IRankBL rankBL, INotificationBL notificationBL, IMasterBL masterBL
-           , ITrnLoginLogBL iTrnLoginLogBL, IICardHoldBL iICardHoldBL)
+           , ITrnLoginLogBL iTrnLoginLogBL, IICardHoldBL iICardHoldBL, IFaultyCardBL faultyCardBL)
         {
             _configuration = configuration;
             this.basicDetailBL = basicDetailBL;
@@ -100,6 +102,7 @@ namespace Web.Controllers
             _IMasterBL = masterBL;
             _iTrnLoginLogBL = iTrnLoginLogBL;
             _iICardHoldBL = iICardHoldBL;
+            this.faultyCardBL = faultyCardBL;
         }
 
         #region Index/ApprovalForIO/View/InaccurateData/InaccurateDataView/RequestType
@@ -2087,6 +2090,36 @@ namespace Web.Controllers
                 data.PhotoImagePath = ImageEncryptAndDecrypt.DecryptImageToBase64(sourcePathPhoto);
             }
             return Json(data);
+        }
+        public async Task<IActionResult> SaveFaultyCardRequest(TrnFaultyCard dTO)
+        {
+            try
+            {
+                dTO.IsActive = true;
+                dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier)); ;
+                dTO.UpdatedOn = DateTime.Now;
+
+                if (ModelState.IsValid)
+                {
+                    if (dTO.TrnFaultyCardId > 0)
+                    {
+                        await faultyCardBL.Update(dTO);
+                        return Json(KeyConstants.Update);
+                    }
+                    else
+                    {
+                        await faultyCardBL.Add(dTO);
+                        return Json(KeyConstants.Save);
+                    }
+                }
+                else
+                {
+
+                    return Json(ModelState.Select(x => x.Value?.Errors).Where(y => y?.Count > 0).ToList());
+                }
+
+            }
+            catch (Exception ex) { return Json(KeyConstants.InternalServerError); }
         }
 
         #endregion

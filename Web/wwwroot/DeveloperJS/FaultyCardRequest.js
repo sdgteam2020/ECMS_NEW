@@ -12,36 +12,54 @@
             });
         }
         $("#btnSubmit").on("click", function () {
-            if ($("#SaveForm")[0].checkValidity()) {
-
-                Swal.fire({
-                    title: 'Are you sure?',
-                    text: "",
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Yes, Save it!'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        Save();
-                    }
-                })
-
-            } else {
-                $("#SaveForm")[0].reportValidity();
-            }
+            Proceed();
         });
     });
-    function Save() {
+function Proceed() {
+    //ResetErrorMessage();
+    if ($("#ddlFaultyRemark").val().length == 0 ) {
+        toastr.error('Reason is required.');
+        return false;
+    }
 
+    let formId = '#SaveFaultyCardRequest';
+    $.validator.unobtrusive.parse($(formId));
+
+    if ($(formId).valid()) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, Save it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Save();
+            }
+        })
+    }
+    else {
+        Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'Please fill required field.',
+
+        })
+        toastr.error('Please fill required field.');
+        return false;
+    }
+}
+    function Save() {
+        var FaultyRemarkIds = "" + $("#ddlFaultyRemark").val() + "";
         $.ajax({
             url: '/BasicDetail/SaveFaultyCardRequest',
             type: 'POST',
             data: {
                 "TrnFaultyCardId": $("#spnTrnFaultyCardId").html(),
-                "RequestId": $("#spnRequestId").html(),
-                "RemarksIds": $("#ddlFaultyRemark").val(),
+                "RequestId": $("#spnvpFaultyRequestId").html(),
+                "RemarksIds": $("#ddlFaultyRemark").val().length > 0 ? FaultyRemarkIds : null,
                 "OtherRemark": $("#txtOtherRemark").val(),
                 "FaultyStageId": $("#ddlStage").val(),
             }, //get the search string
@@ -118,6 +136,7 @@
          })
             .then(response => {
                 if (response != null) {
+                    $("#lblvpFaultyPaperIcardNo").html(response.PaperIcardNo);
                     $("#lblvpFaultyNameAsPerRecord").html(response.NameAsPerRecord);
                     $("#lblvpFaultyFName").html(response.FName);
                     $("#lblvpFaultyLName").html(response.LName == null ? "" : response.LName);
@@ -139,7 +158,7 @@
                     $("#vpFaultyPhotoImagePath").attr("src", response.PhotoImagePath);
                     $("#lblvpFaultyRequestId").html(response.RequestId);
                     $("#spnvpFaultyRequestId").html(response.RequestId);
-                    $("#lblvpFaultyRequestDate").html(response.RequestDate);
+                    $("#lblvpFaultyRequestDate").html(DateFormateMMMM_dd_yyyy(response.RequestDate));
             }
             else {
                 alert("No data found.");
