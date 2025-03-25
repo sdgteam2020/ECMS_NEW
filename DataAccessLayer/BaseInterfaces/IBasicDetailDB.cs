@@ -38,5 +38,7 @@ namespace DataAccessLayer.BaseInterfaces
         public Task<DTOXMLDigitalResponse> GetDataDigitalXmlSign(DTODataExportRequest Data);
         public Task<List<MRecordOffice>?> GetROListByArmedId(byte ArmedId);
         public Task<DTOApplicationTrack?> ApplicationHistory(string TrackingId);
+        Task<DTOUploadChipAndSerialResponse> CardDistributionCSVUpload(List<DTOCardDistributionRequest> requests);
+        Task<List<DTOCardDistributionRequest>> CardDistributionCSVCheck(List<DTOCardDistributionRequest> requests);
     }
 }

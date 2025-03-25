@@ -19,7 +19,7 @@ $(function () {
 
     $("#txtSearch").on("keyup", function () {
         var eThis = $(this);
-        if ($("input[type='radio'][name=choice]:checked").length > 0) {
+        //if ($("input[type='radio'][name=choice]:checked").length > 0) {
             if ($("input[type='radio'][name=choice]:checked").val() == "UserId") {
                 var num_val = parseInt(eThis.val());
                 if (isNaN(num_val)) {
@@ -34,10 +34,10 @@ $(function () {
             else {
                 BindData()
             }
-        }
-        else {
-            alert("Select Choice");
-        }
+        //}
+        //else {
+        //    alert("Select Choice");
+        //}
     });
 });
 
@@ -66,7 +66,6 @@ function validateCsvFile() {
         var rows = content.split('\n');
         // Trim each row to remove any \r or trailing spaces
         rows = rows.map(row => row.trim());
-
         if (rows.length <= 2) {
             showFileValidationError('The CSV file must contain at least 1 data row.');
             return;
@@ -83,6 +82,7 @@ function validateCsvFile() {
             showFileValidationError('Missing columns: ' + missingColumns.join(', '));
             return;
         }
+
         if (duplicateColumns.length > 0) {
             showFileValidationError('Duplicate columns found: ' + duplicateColumns.join(', '));
             return;
@@ -99,6 +99,20 @@ function validateCsvFile() {
             processData: false, // Do not process data
             contentType: false, // Do not set content-type header
             success: function (response) {
+                if (response == InternalServerError) {
+                    Swal.fire({
+                        text: errormsg
+                    });
+                    return;
+                }
+
+                if (response == BadRequest) {
+                    Swal.fire({
+                        text: baderrormsg
+                    });
+                    return;
+                }
+
                 let swalOptions = {
                     icon: 'info',
                     showCancelButton: true,
@@ -109,7 +123,6 @@ function validateCsvFile() {
                 let validStr = `<p style="color:green;"><strong>${response.ValidRecordsCount}</strong> records are ready to be upload.</p>`;
                 let inValidStr = `<p ><strong>${response.InValidRecordsCount}</strong> records are invalid records.</p>`;
 
-                debugger;
 
                 // Case 1: All valid
                 if (response.ValidRecordsCount > 0 && response.InValidRecordsCount === 0) {
@@ -118,7 +131,7 @@ function validateCsvFile() {
 
                     Swal.fire(swalOptions).then((result) => {
                         if (result.isConfirmed) {
-                            
+                            proceedUpload();
                         }
                     });
                 }
@@ -134,7 +147,7 @@ function validateCsvFile() {
 
                     Swal.fire(swalOptions).then((result) => {
                         if (result.isConfirmed) {
-                            
+                            proceedUpload();
                         } else if (result.isDenied) {
                             downloadInvalidRecords();
                         }
@@ -187,13 +200,28 @@ function downloadInvalidRecords() {
     });
 }
 
-function showFileValidationError(message) {
-    //Swal.fire({
-    //    icon: 'error',
-    //    title: 'Invalid File',
-    //    text: message,
-    //})
+function proceedUpload() {
+    $.ajax({
+        url: '/BasicDetail/ICardDistibutionValidRecordsUpload',
+        type: 'GET',
+        dataType: "json",
+        success: function (response) {
+            if (response.Result === 1) {
+                toastr.success(response.Message);
+            }
+            else
+            {
+                toastr.error(response.Message);
+            }
+        },
+        error: function () {
+            alert('Error while uploading csv!');
+        }
+    });
+}
 
+function showFileValidationError(message)
+{
     toastr.error(message);
 }
 

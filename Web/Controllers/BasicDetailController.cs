@@ -2460,8 +2460,8 @@ namespace Web.Controllers
                     }
                     catch(Exception ee)
                     {
-                        result.Result = DTOCardDistributionUploadEnum.InternalError;
-                        return Json(result);
+                        _logger.LogError(1001, ee, "BasicDetail->ICardDistibutionUploadCsv");
+                        return Json(500);
                     }
                 }
                 var validateResult = await basicDetailBL.ValidateCardDistribution(records);
@@ -2487,18 +2487,21 @@ namespace Web.Controllers
             }
         }
 
-        //[HttpGet]
-        //public async Task<IActionResult> ICardDistibutionValidRecordsUpload()
-        //{
-        //    try
-        //    {
-
-        //    }
-        //    catch
-        //    { 
-            
-        //    }
-        //}
+        [HttpGet]
+        public async Task<IActionResult> ICardDistibutionValidRecordsUpload()
+        {
+            DTOUploadChipAndSerialResponse response = new DTOUploadChipAndSerialResponse();
+            try
+            {
+                var records = SessionHeplers.GetObject<List<DTOCardDistributionRequest>>(HttpContext.Session, "ValidRecordsCardUpload");
+                response = await basicDetailBL.CardDistributionCSVUpload(records);
+            }
+            catch(Exception ee)
+            {
+                response.Message = ee.Message;
+            }
+            return Json(response);
+        }
 
         [HttpGet]
         public async Task<IActionResult> ICardDistibutionInValidRecordsDownload()

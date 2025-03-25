@@ -1,4 +1,5 @@
 var errormsg = "Error.Due to network issue, please try after some time.";
+var baderrormsg = "Request is not valid!";
 var errormsg001 = "Error 001. Due to network issue, please try after some time.";
 var errormsg002 = "Error 002. Due to network issue, please try after some time.";
 

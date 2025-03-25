@@ -137,6 +137,11 @@ namespace BusinessLogicsLayer.BasicDet
             var data = await _iBasicDetailDB.ApplicationHistory(TrackingId);
             return data;
         }
+        public async Task<DTOUploadChipAndSerialResponse?> CardDistributionCSVUpload(List<DTOCardDistributionRequest> request)
+        {
+            var data = await _iBasicDetailDB.CardDistributionCSVUpload(request);
+            return data;
+        }
 
         public async Task<DTOCardDistributionCheckRes?> ValidateCardDistribution(List<DTOCardDistributionRequest> request)
         {
@@ -172,8 +177,9 @@ namespace BusinessLogicsLayer.BasicDet
                         if (prop.Name == "RequestId")
                         {
                             int integerValue = 0;
-                            var isInteger = int.TryParse(value,out integerValue);
-                            if (!isInteger) {
+                            var isInteger = int.TryParse(value, out integerValue);
+                            if (!isInteger)
+                            {
                                 remarks.Add($"{prop.Name} is not valid");
                             }
                         }
@@ -183,6 +189,7 @@ namespace BusinessLogicsLayer.BasicDet
                         {
                             remarks.Add($"{prop.Name} is blank");
                         }
+
                         // Duplicate Check
                         else if (duplicateValuesDict[prop.Name].Contains(value))
                         {
@@ -200,20 +207,14 @@ namespace BusinessLogicsLayer.BasicDet
 
                 data.ValidRecords = request.Where(r => r.IsValid).ToList();
                 data.InValidRecords = request.Where(r => !r.IsValid).ToList();
-
-                if (data.ValidRecords?.Count() > 0 && data.InValidRecords?.Count() > 0)
-                {
-                    data.Result = DTOCardDistributionUploadEnum.PartiallyUpload;
-                }
-
-                if (data.InValidRecords?.Count() ==  0 && data.ValidRecords?.Count() > 0)
-                {
-                    data.Result = DTOCardDistributionUploadEnum.FullyUpload;
-                }
-
-                if (data.ValidRecords?.Count() == 0 && data.InValidRecords?.Count() > 0)
-                {
-                    data.Result = DTOCardDistributionUploadEnum.Rejected;
+                if (data.ValidRecords?.Count() > 0) {
+                    var checkedRecords = await _iBasicDetailDB.CardDistributionCSVCheck(data.ValidRecords);
+                    data.ValidRecords = checkedRecords.Where(r => r.IsValid).ToList();
+                    var invalidDbRecord = checkedRecords.Where(r => !r.IsValid).ToList();
+                    if (invalidDbRecord?.Count > 0)
+                    {
+                        data.InValidRecords = data.InValidRecords.Concat(invalidDbRecord).ToList();
+                    }
                 }
             }
             catch(Exception ee)
