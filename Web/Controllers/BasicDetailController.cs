@@ -40,6 +40,7 @@ using CsvHelper.Configuration;
 using Microsoft.SqlServer.Management.Dmf;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using Microsoft.SqlServer.Management.XEvent;
+using System.IO;
 
 namespace Web.Controllers
 {
@@ -71,13 +72,14 @@ namespace Web.Controllers
         private readonly IICardHoldBL _iICardHoldBL;
         private readonly IConfiguration _configuration;
         public DateTime dateTimenow;
+        private readonly IWebHostEnvironment _environment;
         private readonly string[] _expectedColumns = { "RequestId", "RankName", "FName", "LName", "ServiceNo", "ChipNo", "CardSerialNo" };
         public BasicDetailController(IConfiguration configuration,IBasicDetailBL basicDetailBL, IMapUnitBL mapUnitBL, IBasicDetailTempBL basicDetailTempBL, IService service, IMapper mapper,
             UserManager<ApplicationUser> userManager, IWebHostEnvironment hostingEnvironment, IDataProtectionProvider dataProtectionProvider,
                               DataProtectionPurposeStrings dataProtectionPurposeStrings, ILogger<BasicDetailController> logger, IStepCounterBL iStepCounterBL, 
                               ITrnFwnBL iTrnFwnBL, ITrnICardRequestBL iTrnICardRequestBL, IDomainMapBL iDomainMapBL
             ,IBasicUploadBL basicUploadBL, IBasicAddressBL basicAddressBL, IBasicinfoBL basicinfoBL, IRankBL rankBL, INotificationBL notificationBL, IMasterBL masterBL
-           , ITrnLoginLogBL iTrnLoginLogBL, IICardHoldBL iICardHoldBL)
+           , ITrnLoginLogBL iTrnLoginLogBL, IICardHoldBL iICardHoldBL, IWebHostEnvironment environment)
         {
             _configuration = configuration;
             this.basicDetailBL = basicDetailBL;
@@ -105,6 +107,7 @@ namespace Web.Controllers
             _IMasterBL = masterBL;
             _iTrnLoginLogBL = iTrnLoginLogBL;
             _iICardHoldBL = iICardHoldBL;
+            _environment = environment;
         }
 
         #region Index/ApprovalForIO/View/InaccurateData/InaccurateDataView/RequestType
@@ -2435,22 +2438,17 @@ namespace Web.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> ICardDistibutionUploadCsv(IFormFile file)
+        public async Task<IActionResult> ICardPrintUploadCsv(DTOCSVFileRequest model )
         {
-            var result = new DTOCardDistributionUploadResponse()
+            if (model.CSVFile == null || model.CSVFile.Length == 0)
             {
-                Result = DTOCardDistributionUploadEnum.Rejected
-            };
-
-            if (file == null || file.Length == 0)
-            {
-                return Json(400);
+                return BadRequest(new { message = "File is not uploaded or is empty." });
             }
-
+            string fileName = $"{DateTime.Now.ToString("yyyyMMddHHmmss")}.csv";
             try
             {
                 var records = new List<DTOCardDistributionRequest>();
-                using (var reader = new StreamReader(file.OpenReadStream()))
+                using (var reader = new StreamReader(model.CSVFile.OpenReadStream()))
                 using (var csv = new CsvReader(reader, new CsvConfiguration(CultureInfo.InvariantCulture)))
                 {
                     csv.Context.RegisterClassMap(new CsvClassMap<DTOCardDistributionRequest>(true));
@@ -2458,27 +2456,63 @@ namespace Web.Controllers
                     {
                         records = csv.GetRecords<DTOCardDistributionRequest>().ToList();
                     }
-                    catch(Exception ee)
+                    catch (Exception ee)
                     {
-                        _logger.LogError(1001, ee, "BasicDetail->ICardDistibutionUploadCsv");
+                        _logger.LogError(1001, ee, "BasicDetail->ICardPrintUploadCsv");
                         return Json(500);
                     }
                 }
+
+                #region Upload File Without Remarks
+                var uploadsFolder = Path.Combine(_environment.WebRootPath, "CardPrinitngCSVs", "CSVWithoutRemarks");
+                if (!Directory.Exists(uploadsFolder))
+                {
+                    Directory.CreateDirectory(uploadsFolder);
+                }
+                var filePath = Path.Combine(uploadsFolder, fileName);
+
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await model.CSVFile.CopyToAsync(stream);
+                }
+                #endregion Upload User File
+
                 var validateResult = await basicDetailBL.ValidateCardDistribution(records);
 
-                SessionHeplers.SetObject(HttpContext.Session, "ValidRecordsCardUpload" , validateResult.ValidRecords);
-                SessionHeplers.SetObject(HttpContext.Session, "InValidRecordsCardUpload", validateResult.InValidRecords);
-                result.Result = validateResult.Result;
-                if (validateResult.InValidRecords?.Count() > 0)
+                #region Upload File With Remarks
+                var memoryStream = new MemoryStream();
+                using (var writer = new StreamWriter(memoryStream, Encoding.UTF8, leaveOpen: true))
+                using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
                 {
-                    result.InValidRecordsCount = validateResult.InValidRecords.Count();
-                }
-                if (validateResult.ValidRecords?.Count() > 0)
-                {
-                    result.ValidRecordsCount = validateResult.ValidRecords.Count();
-                }
+                    csv.Context.RegisterClassMap(new CsvClassMap<DTOCardDistributionRequest>(false));
+                    try
+                    {
+                        csv.WriteRecords(validateResult);
+                        await writer.FlushAsync();
+                    }
+                    catch (Exception ee)
+                    {
+                        _logger.LogError(1001, ee, "BasicDetail->ICardPrintUploadCsv");
+                        return Json(500);
+                    }
+                    uploadsFolder = Path.Combine(_environment.WebRootPath, "CardPrinitngCSVs", "CSVWithRemarks");
+                    if (!Directory.Exists(uploadsFolder))
+                    {
+                        Directory.CreateDirectory(uploadsFolder);
+                    }
+                    filePath = Path.Combine(uploadsFolder, fileName);
 
-                return Json(result);
+                    using (var stream = new FileStream(filePath, FileMode.Create, FileAccess.Write))
+                    {
+                        await memoryStream.CopyToAsync(stream);
+                    }
+                }
+                #endregion Upload User File
+
+                //SessionHeplers.SetObject(HttpContext.Session, "ValidRecordsCardUpload" , validateResult.ValidRecords);
+                //SessionHeplers.SetObject(HttpContext.Session, "InValidRecordsCardUpload", validateResult.InValidRecords);
+                memoryStream.Position = 0;
+                return File(memoryStream, "text/csv", model.CSVFile.FileName );
             }
             catch (Exception ex)
             {
@@ -2488,7 +2522,7 @@ namespace Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> ICardDistibutionValidRecordsUpload()
+        public async Task<IActionResult> ICardPrintValidRecordsUpload()
         {
             DTOUploadChipAndSerialResponse response = new DTOUploadChipAndSerialResponse();
             try
@@ -2504,23 +2538,10 @@ namespace Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> ICardDistibutionInValidRecordsDownload()
+        public async Task<IActionResult> ICardPrintDownloadCSV()
         {
-            var records = SessionHeplers.GetObject<List<DTOCardDistributionRequest>>(HttpContext.Session, "InValidRecordsCardUpload");
-            // Create a MemoryStream to hold the CSV data
-            var memoryStream = new MemoryStream();
-            var writer = new StreamWriter(memoryStream);
-            var csv = new CsvWriter(writer, CultureInfo.InvariantCulture);
-            csv.Context.RegisterClassMap(new CsvClassMap<DTOCardDistributionRequest>(false));
-            // Write records to CSV
-            csv.WriteRecords(records);
-            writer.Flush();
-            memoryStream.Position = 0; // Reset stream position to beginning
-
-            // Return the CSV file for download
-            return File(memoryStream, "text/csv", "CardDistribution_Invalid.csv");
+            return Json("");
         }
-
 
         #endregion Card Distribution
     }

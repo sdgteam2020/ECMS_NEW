@@ -15,6 +15,7 @@ namespace DataTransferObject.Requests
         public string ChipNo { get; set; }
         [Ignore]
         public bool IsValid { get; set; } = true;
+        public string Status { get; set; } = "Valid";
         public string Remarks { get; set; } = string.Empty;
     }
 }

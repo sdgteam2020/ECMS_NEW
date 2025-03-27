@@ -7,6 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="wwwroot\CardPrinitngCSVs\**" />
+    <Content Remove="wwwroot\CardPrinitngCSVs\**" />
+    <EmbeddedResource Remove="wwwroot\CardPrinitngCSVs\**" />
+    <None Remove="wwwroot\CardPrinitngCSVs\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Remove="wwwroot\DeveloperJS\ReportAndReturn.js" />
   </ItemGroup>
 

@@ -2000,6 +2000,7 @@ namespace DataAccessLayer
                             ChipNo = record.ChipNo,
                             CardSerialNo = record.CardSerialNo,
                             IsValid = matchRecord != null && cardNoExists == null && chipNoExists == null,
+                            Status = matchRecord != null && cardNoExists == null && chipNoExists == null ? "Valid" : "InValid",
                             Remarks = (matchRecord == null ? "RequestId not exists; " : "") +
                                           (cardNoExists != null ? "CardSerialNo already exists; " : "") +
                                           (chipNoExists != null ? "ChipNo already exists; " : "")

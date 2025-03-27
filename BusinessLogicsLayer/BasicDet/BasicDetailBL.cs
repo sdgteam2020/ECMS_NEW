@@ -143,7 +143,7 @@ namespace BusinessLogicsLayer.BasicDet
             return data;
         }
 
-        public async Task<DTOCardDistributionCheckRes?> ValidateCardDistribution(List<DTOCardDistributionRequest> request)
+        public async Task<List<DTOCardDistributionRequest>> ValidateCardDistribution(List<DTOCardDistributionRequest> request)
         {
             var data = new DTOCardDistributionCheckRes();
             try
@@ -151,7 +151,7 @@ namespace BusinessLogicsLayer.BasicDet
                 data.Result = DTOCardDistributionUploadEnum.Rejected;
                 //Get properties to check (excluding Remarks)
                 var properties = typeof(DTOCardDistributionRequest).GetProperties()
-                                                  .Where(p => p.Name != "Remarks" && p.Name != "IsValid")
+                                                  .Where(p => p.Name != "Remarks" && p.Name != "IsValid" && p.Name != "Status")
                                                   .ToList();
 
                 // For each property, find duplicate values
@@ -200,28 +200,31 @@ namespace BusinessLogicsLayer.BasicDet
                     if (remarks.Any())
                     {
                         r.IsValid = false;
+                        r.Status = "InValid";
                         r.Remarks = string.Join("; ", remarks);
                     }
                     return r;
                 }).ToList();
 
-                data.ValidRecords = request.Where(r => r.IsValid).ToList();
-                data.InValidRecords = request.Where(r => !r.IsValid).ToList();
-                if (data.ValidRecords?.Count() > 0) {
-                    var checkedRecords = await _iBasicDetailDB.CardDistributionCSVCheck(data.ValidRecords);
-                    data.ValidRecords = checkedRecords.Where(r => r.IsValid).ToList();
-                    var invalidDbRecord = checkedRecords.Where(r => !r.IsValid).ToList();
+                var validRecords = request.Where(r => r.IsValid).ToList();
+                var invalidRecords = request.Where(r => !r.IsValid).ToList();
+                if (validRecords?.Count() > 0) {
+                    var checkDbRecords = await _iBasicDetailDB.CardDistributionCSVCheck(validRecords);
+                    validRecords = checkDbRecords.Where(r => r.IsValid).ToList();
+                    var invalidDbRecord = checkDbRecords.Where(r => !r.IsValid).ToList();
                     if (invalidDbRecord?.Count > 0)
                     {
-                        data.InValidRecords = data.InValidRecords.Concat(invalidDbRecord).ToList();
+                        invalidRecords = data.InValidRecords.Concat(invalidDbRecord).ToList();
                     }
                 }
+
+                request = invalidRecords.Concat(validRecords).OrderBy(r => r.RequestId).ToList();
             }
             catch(Exception ee)
             {
                 data.Result = DTOCardDistributionUploadEnum.InternalError;
             }
-            return data;
+            return request;
         }
     }
 }

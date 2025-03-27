@@ -13,6 +13,7 @@ namespace Web.Healpers
             if (isSample)
             {
                 ignoreProperties.Add("Remarks");
+                ignoreProperties.Add("Status");
             }
             foreach (var prop in typeof(T).GetProperties())
             {
