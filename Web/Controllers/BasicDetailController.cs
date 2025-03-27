@@ -2089,7 +2089,7 @@ namespace Web.Controllers
             {
                 data.PhotoImagePath = ImageEncryptAndDecrypt.DecryptImageToBase64(sourcePathPhoto);
             }
-            return PartialView("_BasicDetial",data);
+            return PartialView("_BasicDetail_ParitalView", data);
         }
         public async Task<IActionResult> SaveFaultyCardRequest(TrnFaultyCard dTO)
         {

@@ -3,10 +3,6 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <style>
-    .form-group .labelprofile {
-        font-weight: 600;
-    }
-
     .containerMain {
         margin-left: 10%;
         margin-right: 10%;
@@ -31,9 +27,7 @@
 <div class="containerMain mt-n10">
     <div class="card mb-3 ">
         <div class="card-header">
-
             <span id="SpnTxnId" class="d-none">0</span>
-            @*<span id="PtoId" class="d-none">0</span>*@
             <div class="row">
                 <div class="col-xl-12 text-left">
                     <h3>
@@ -49,164 +43,12 @@
                     <div class="row">
                         <span class=" d-none" id="spnTrnFaultyCardId">0</span>
                         <span class=" d-none" id="spnvpFaultyRequestId">0</span>
-                        <div class="col-md-12 ">
+                        <div class="col-md-12">
+                            <div id="partialContainerBD" class="p-1">
+                            </div>
                             <div class="card cardbg minheight mb-2 mt-2">
-                                <div class="seven">
-                                    <h1>Faulty Card Request</h1>
-                                </div>
                                 <div class="mt-2 ml-2">
-                                    <div id="partialContainerBD" class="row">
-
-                                    </div>
                                     <div class="row">
-@*                                         <div class="col-sm-4">
-                                            <div class="seven">
-                                                <h1>Personal Details</h1>
-                                            </div>
-                                            <div class="col-sm-12 text-center">
-                                                <img src="" id="vpFaultyPhotoImagePath" height="180" class=" border border-primary" />
-                                            </div>
-                                            <div class="col-sm-12">
-                                                <div class="form-group row mb-0">
-                                                    <label class="col-form-label col-sm-5 labelprofile">Category</label>
-                                                    <div class="col-sm-7">
-                                                        <label id="lblvpFaultyCategory" class="col-form-label"></label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-12">
-                                                <div class="form-group row mb-0">
-                                                    <label class="col-form-label col-5 text-left">Paper I-Card No</label>
-                                                    <div class="col-7"><label class="form-control-plaintext b text-black text-uppercase" id="lblvpFaultyPaperIcardNo"></label></div>
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-12">
-                                                <div class="form-group row mb-0">
-                                                    <label class="col-form-label col-5 text-left">Name As Per Record</label>
-                                                    <div class="col-7"><label class="form-control-plaintext b text-black text-uppercase" id="lblvpFaultyNameAsPerRecord"></label></div>
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-12">
-                                                <div class="form-group row mb-0">
-                                                    <label class="col-form-label col-5 text-left">First Name</label>
-                                                    <div class="col-7"><label class="form-control-plaintext b text-black text-uppercase" id="lblvpFaultyFName"></label></div>
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-12">
-                                                <div class="form-group row mb-0">
-                                                    <label class="col-form-label col-5 text-left">Last Name</label>
-                                                    <div class="col-7"><label class="form-control-plaintext b text-black text-uppercase" id="lblvpFaultyLName"></label></div>
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-12">
-                                                <div class="form-group row mb-0">
-                                                    <label class="col-form-label col-5 text-left">Rank</label>
-                                                    <div class="col-7">
-                                                        <label class="form-control-plaintext text-uppercase" id="lblvpFaultyRank"></label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-12">
-                                                <div class="form-group row mb-0">
-                                                    <label class="col-form-label col-5 text-left">Arm / Service</label>
-                                                    <div class="col-7">
-                                                        <label class="form-control-plaintext text-uppercase" id="lblvpFaultyarm"></label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-12">
-                                                <div class="form-group row mb-0">
-                                                    <label class="col-form-label col-5 text-left">Army No</label>
-                                                    <div class="col-7">
-                                                        <label class="form-control-plaintext text-uppercase" id="lblvpFaultyArmyNo"></label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-4">
-                                            <div class="row">
-                                                <div class="col-sm-12">
-                                                    <div class="form-group row mb-0">
-                                                        <label class="col-form-label col-5 text-left">Date of Birth</label>
-                                                        <div class="col-7">
-                                                            <label class="form-control-plaintext text-uppercase" id="lblvpFaultydob"></label>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-sm-12">
-                                                    <div class="form-group row mb-0">
-                                                        <label class="col-form-label col-5 text-left">Height (Cm)</label>
-                                                        <div class="col-7">
-                                                            <label class="form-control-plaintext text-uppercase" id="lblvpFaultyheight"></label>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-sm-12">
-                                                    <div class="form-group row mb-0">
-                                                        <label class="col-form-label col-5 text-left">AADHAAR No</label>
-                                                        <div class="col-7">
-                                                            <label class="form-control-plaintext text-uppercase" id="lblvpFaultyadhar"></label>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-sm-12">
-                                                    <div class="form-group row mb-0">
-                                                        <label class="col-form-label col-5 text-left">Blood Group</label>
-                                                        <div class="col-7">
-                                                            <label class="form-control-plaintext text-uppercase" id="lblvpFaultyBloodGroup"></label>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-sm-12">
-                                                    <div class="form-group row mb-0">
-                                                        <label class="col-form-label col-5 text-left">Place of Issue</label>
-                                                        <div class="col-7">
-                                                            <label class="form-control-plaintext text-uppercase" id="lblvpFaultypoi"></label>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-sm-12">
-                                                    <div class="form-group row mb-0">
-                                                        <label class="col-form-label col-5 text-left">Date of Issue</label>
-                                                        <div class="col-7">
-                                                            <label class="form-control-plaintext text-uppercase" id="lblvpFaultydoi"></label>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-sm-12">
-                                                    <div class="form-group row mb-0">
-                                                        <label class="col-form-label col-5 text-left">Issuing Authority</label>
-                                                        <div class="col-7">
-                                                            <label class="form-control-plaintext text-uppercase" id="lblvpFaultyissuA"></label>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-sm-12">
-                                                    <div class="form-group row mb-0">
-                                                        <label class="col-form-label col-5 text-left">Date of Commissioning/ Enrollment</label>
-                                                        <div class="col-7">
-                                                            <label class="form-control-plaintext text-uppercase" id="lblvpFaultydateo"></label>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-sm-12">
-                                                    <div class="form-group row mb-0">
-                                                        <label class="col-form-label col-5 text-left">Identification Mark</label>
-                                                        <div class="col-7">
-                                                            <label class="form-control-plaintext text-uppercase" id="lblvpFaultyMarks"></label>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-sm-12">
-                                                    <div class="form-group row mb-0">
-                                                        <label class="col-form-label col-5 text-left">Permt Address as per Service Records</label>
-                                                        <div class="col-7">
-                                                            <label class="form-control-plaintext text-uppercase" id="lblvpFaultyaddress"></label><br />
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div> *@
                                         <div class="col-sm-12">
                                             <div class="col-sm-12">
                                                 <div class="form-group row mb-0">
