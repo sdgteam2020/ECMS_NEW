@@ -4,6 +4,7 @@ using DataAccessLayer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccessLayer.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250327103156_v136")]
+    partial class v136
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1914,9 +1917,6 @@ namespace DataAccessLayer.Migrations
                         .HasMaxLength(30)
                         .HasColumnType("varchar(30)");
 
-                    b.Property<bool>("FlagForFaulty")
-                        .HasColumnType("bit");
-
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
@@ -2285,6 +2285,9 @@ namespace DataAccessLayer.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
+                    b.Property<byte?>("MFaultyStageCategoryId")
+                        .HasColumnType("tinyint");
+
                     b.Property<string>("RemarksIds")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -2306,7 +2309,7 @@ namespace DataAccessLayer.Migrations
 
                     b.HasKey("TrnFaultyCardId");
 
-                    b.HasIndex("CategoryId");
+                    b.HasIndex("MFaultyStageCategoryId");
 
                     b.HasIndex("RequestId");
 
@@ -3434,11 +3437,10 @@ namespace DataAccessLayer.Migrations
 
             modelBuilder.Entity("DataTransferObject.Domain.Model.TrnFaultyCard", b =>
                 {
-                    b.HasOne("DataTransferObject.Domain.Master.MCategory", "MCategory")
+                    b.HasOne("DataTransferObject.Domain.Master.MCategory", "MFaultyStage")
                         .WithMany()
-                        .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .HasForeignKey("MFaultyStageCategoryId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("DataTransferObject.Domain.Model.MTrnICardRequest", "MTrnICardRequest")
                         .WithMany()
@@ -3453,7 +3455,7 @@ namespace DataAccessLayer.Migrations
 
                     b.Navigation("ApplicationUserUpdate");
 
-                    b.Navigation("MCategory");
+                    b.Navigation("MFaultyStage");
 
                     b.Navigation("MTrnICardRequest");
                 });

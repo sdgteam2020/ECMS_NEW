@@ -128,41 +128,33 @@ function Proceed() {
             },
             body: param
         })
-         .then(res => {
-            if (!res.ok) {
-                throw new Error(`HTTP error! Status: ${res.status}`);
-            }
-            return res.json();
-         })
-            .then(response => {
-                if (response != null) {
-                    $("#lblvpFaultyPaperIcardNo").html(response.PaperIcardNo);
-                    $("#lblvpFaultyNameAsPerRecord").html(response.NameAsPerRecord);
-                    $("#lblvpFaultyFName").html(response.FName);
-                    $("#lblvpFaultyLName").html(response.LName == null ? "" : response.LName);
-                    $("#lblvpFaultyCategory").html(response.ApplyFor);
-                    $("#lblvpFaultyRank").html(response.RankName);
-                    $("#lblvpFaultyarm").html(response.ArmedName);
-                    $("#lblvpFaultyArmyNo").html(response.ModifiedServiceNo);
-                    $("#lblvpFaultyMarks").html(response.IdenMark1);
-                    $("#lblvpFaultydob").html(DateFormateMMMM_dd_yyyy(response.DOB));
-                    $("#lblvpFaultyheight").html(response.Height);
-                    $("#lblvpFaultyadhar").html(response.AadhaarNo.replace(/\d(?=\d{4})/g, "X"));
-                    $("#lblvpFaultyBloodGroup").html(response.BloodGroup);
-                    $("#lblvpFaultypoi").html(response.PlaceOfIssue);
-                    $("#lblvpFaultydoi").html(DateFormateMMMM_dd_yyyy(response.DateOfIssue));
-                    $("#lblvpFaultyissuA").html(response.IssuingAuthorityName);
-                    $("#lblvpFaultydateo").html(DateFormateMMMM_dd_yyyy(response.DateOfCommissioning));
-                    $("#lblvpFaultyaddress").html(response.Village + ',' + response.Tehsil + ',' + response.PO + ',' + response.PS + ',' + response.District + ',' + response.State + '' + response.PinCode);
+            .then(response => response.text())
+            .then(html =>{
+                document.getElementById("partialContainerBD").innerHTML = html;
+                //$("#lblpvPaperIcardNo").html(response.PaperIcardNo);
+                //$("#lblpvNameAsPerRecord").html(response.NameAsPerRecord);
+                //$("#lblpvFName").html(response.FName);
+                //$("#lblpvLName").html(response.LName == null ? "" : response.LName);
+                //$("#lblpvCategory").html(response.ApplyFor);
+                //$("#lblpvRank").html(response.RankName);
+                //$("#lblpvarm").html(response.ArmedName);
+                //$("#lblpvArmyNo").html(response.ModifiedServiceNo);
+                //$("#lblpvMarks").html(response.IdenMark1);
+                //$("#lblpvdob").html(DateFormateMMMM_dd_yyyy(response.DOB));
+                //$("#lblpvheight").html(response.Height);
+                //$("#lblpvadhar").html(response.AadhaarNo.replace(/\d(?=\d{4})/g, "X"));
+                //$("#lblpvBloodGroup").html(response.BloodGroup);
+                //$("#lblpvpoi").html(response.PlaceOfIssue);
+                //$("#lblpvdoi").html(DateFormateMMMM_dd_yyyy(response.DateOfIssue));
+                //$("#lblpvissuA").html(response.IssuingAuthorityName);
+                //$("#lblpvdateo").html(DateFormateMMMM_dd_yyyy(response.DateOfCommissioning));
+                //$("#lblpvaddress").html(response.Village + ',' + response.Tehsil + ',' + response.PO + ',' + response.PS + ',' + response.District + ',' + response.State + '' + response.PinCode);
 
-                    $("#vpFaultyPhotoImagePath").attr("src", response.PhotoImagePath);
-                    $("#lblvpFaultyRequestId").html(response.RequestId);
-                    $("#spnvpFaultyRequestId").html(response.RequestId);
-                    $("#lblvpFaultyRequestDate").html(DateFormateMMMM_dd_yyyy(response.RequestDate));
-            }
-            else {
-                alert("No data found.");
-            }
+                //$("#pvPhotoImagePath").attr("src", response.PhotoImagePath);
+                //$("#lblvpFaultyRequestId").html(response.RequestId);
+                //$("#spnvpFaultyRequestId").html(response.RequestId);
+                //$("#lblvpFaultyRequestDate").html(DateFormateMMMM_dd_yyyy(response.RequestDate));
+
           })
           .catch(error => {
             alert("Error: " + error.message);

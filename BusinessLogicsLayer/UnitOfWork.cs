@@ -32,7 +32,7 @@ namespace BusinessLogicsLayer
 {
     public class UnitOfWork : IUnitOfWork
     {
-        public UnitOfWork(IUserBL _user, IComd _comds, ICorpsBL _corpsBL, IBdeBL _bdeCat, IDivBL divBL, IUnitBL unit, IMapUnitBL MapUnitBL, IFormationBL FormationBL, IApptBL apptBL, IArmedBL armedBL, IRankBL rankBL, IRegimentalBL regimentalBL,IRecordOfficeBL recordOfficeBL,IArmedCatBL armedCatBL,IMasterBL masterBL,IOROMappingBL oroMappingBL,IIssuingAuthorityBL issuingAuthorityBL, IBloodGroupBL bloodGroupBL, IAfsacCellMappingBL _afsacCellMappingBL,IFaultyStageBL faultyStageBL) 
+        public UnitOfWork(IUserBL _user, IComd _comds, ICorpsBL _corpsBL, IBdeBL _bdeCat, IDivBL divBL, IUnitBL unit, IMapUnitBL MapUnitBL, IFormationBL FormationBL, IApptBL apptBL, IArmedBL armedBL, IRankBL rankBL, IRegimentalBL regimentalBL,IRecordOfficeBL recordOfficeBL,IArmedCatBL armedCatBL,IMasterBL masterBL,IOROMappingBL oroMappingBL,IIssuingAuthorityBL issuingAuthorityBL, IBloodGroupBL bloodGroupBL, IAfsacCellMappingBL _afsacCellMappingBL,ICategoryBL categoryBL) 
         {
             Users = _user;
             Comds = _comds;
@@ -53,7 +53,7 @@ namespace BusinessLogicsLayer
             IssuingAuthorityBL = issuingAuthorityBL;
             BloodGroupBL= bloodGroupBL;
             AfsacCellMapping = _afsacCellMappingBL;
-            FaultyStageBL = faultyStageBL;
+            CategoryBL = categoryBL;
 
         }
         public IUserBL Users { get; }
@@ -75,7 +75,7 @@ namespace BusinessLogicsLayer
         public IIssuingAuthorityBL IssuingAuthorityBL { get; }
         public IBloodGroupBL BloodGroupBL { get; }
         public IAfsacCellMappingBL AfsacCellMapping  { get; }
-        public IFaultyStageBL FaultyStageBL { get; }
+        public ICategoryBL CategoryBL { get; }
          
         public async Task<List<DTOMasterResponse>> GetAllMMaster(DTOMasterRequest Data)
         {
@@ -343,12 +343,12 @@ namespace BusinessLogicsLayer
             }
             else if (Data.id == Convert.ToInt16(Constants.MasterTbl.FaultyStage))
             {
-                var result = await FaultyStageBL.GetAll();
+                var result = await CategoryBL.GetAll();
 
                 foreach (var item in result.OrderBy(x => x.Name))
                 {
                     DTOMasterResponse db = new DTOMasterResponse();
-                    db.Id = item.FaultyStageId;
+                    db.Id = item.CategoryId;
                     db.Name = item.Name;
                     lst.Add(db);
                 }

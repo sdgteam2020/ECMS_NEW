@@ -21,11 +21,15 @@ namespace DataTransferObject.Domain.Model
 
         [StringLength(100)]
         [Column(TypeName = "varchar(100)")]
-        public string? OtherRemark { get; set; }
-        
-        [ForeignKey("MFaultyStage"), DatabaseGenerated(DatabaseGeneratedOption.None)]
-        public byte FaultyStageId { get; set; }
-        public MFaultyStage? MFaultyStage { get; set; }
+        public string? FromRemark { get; set; }
+
+        [StringLength(100)]
+        [Column(TypeName = "varchar(100)")] 
+        public string? ToRemark { get; set; }
+
+        [ForeignKey("MCategory"), DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public byte CategoryId { get; set; }
+        public MCategory? MCategory { get; set; }
 
         [ForeignKey("MTrnICardRequest"), DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int RequestId { get; set; }

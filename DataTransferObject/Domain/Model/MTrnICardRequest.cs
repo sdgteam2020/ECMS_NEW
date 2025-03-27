@@ -43,5 +43,6 @@ namespace DataTransferObject.Domain.Model
         [StringLength(30)]
         [Column(TypeName = "varchar(30)")]
         public string? ChipNo { get; set; }
+        public bool FlagForFaulty { get; set; } = false;
     }
 }

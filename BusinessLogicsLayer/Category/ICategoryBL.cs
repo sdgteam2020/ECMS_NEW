@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace BusinessLogicsLayer.FaultyStage
 {
-    public interface IFaultyStageBL :  IGenericRepository<MFaultyStage>
+    public interface ICategoryBL :  IGenericRepository<MCategory>
     {
     }
 }

@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 
 namespace BusinessLogicsLayer.FaultyStage
 {
-    public class FaultyStageBL : GenericRepositoryDL<MFaultyStage>, IFaultyStageBL
+    public class CategoryBL : GenericRepositoryDL<MCategory>, ICategoryBL
     {
-        public FaultyStageBL(ApplicationDbContext context) : base(context)
+        public CategoryBL(ApplicationDbContext context) : base(context)
         {
                 
         }

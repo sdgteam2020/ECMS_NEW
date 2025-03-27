@@ -1,0 +1,156 @@
+﻿@model DTOFaultyCardRequestResponse
+Name : @Model.FName
+@* <img src=@Model.PhotoImagePath height="180" class=" border border-primary" /> *@
+@* <div class="row">
+    <div class="seven">
+        <h1>Personal Details</h1>
+    </div>
+    <div class="col-sm-4">
+        <div class="col-sm-12 text-center">
+            <img src="" id="pvPhotoImagePath" height="180" class=" border border-primary" />
+        </div>
+        <div class="col-sm-12">
+            <div class="form-group row mb-0">
+                <label class="col-form-label col-sm-5 labelprofile">Category</label>
+                <div class="col-sm-7">
+                    <label id="lblpvCategory" class="col-form-label"></label>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-12">
+            <div class="form-group row mb-0">
+                <label class="col-form-label col-5 text-left">Paper I-Card No</label>
+                <div class="col-7"><label class="form-control-plaintext b text-black text-uppercase" id="lblpvPaperIcardNo"></label></div>
+            </div>
+        </div>
+        <div class="col-sm-12">
+            <div class="form-group row mb-0">
+                <label class="col-form-label col-5 text-left">Name As Per Record</label>
+                <div class="col-7"><label class="form-control-plaintext b text-black text-uppercase" id="lblpvNameAsPerRecord"></label></div>
+            </div>
+        </div>
+        <div class="col-sm-12">
+            <div class="form-group row mb-0">
+                <label class="col-form-label col-5 text-left">First Name</label>
+                <div class="col-7"><label class="form-control-plaintext b text-black text-uppercase" id="lblpvFName"></label></div>
+            </div>
+        </div>
+        <div class="col-sm-12">
+            <div class="form-group row mb-0">
+                <label class="col-form-label col-5 text-left">Last Name</label>
+                <div class="col-7"><label class="form-control-plaintext b text-black text-uppercase" id="lblpvLName"></label></div>
+            </div>
+        </div>
+        <div class="col-sm-12">
+            <div class="form-group row mb-0">
+                <label class="col-form-label col-5 text-left">Rank</label>
+                <div class="col-7">
+                    <label class="form-control-plaintext text-uppercase" id="lblpvRank"></label>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group row mb-0">
+                    <label class="col-form-label col-5 text-left">Arm / Service</label>
+                    <div class="col-7">
+                        <label class="form-control-plaintext text-uppercase" id="lblpvarm"></label>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-12">
+                <div class="form-group row mb-0">
+                    <label class="col-form-label col-5 text-left">Army No</label>
+                    <div class="col-7">
+                        <label class="form-control-plaintext text-uppercase" id="lblpvArmyNo"></label>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-12">
+                <div class="form-group row mb-0">
+                    <label class="col-form-label col-5 text-left">Date of Birth</label>
+                    <div class="col-7">
+                        <label class="form-control-plaintext text-uppercase" id="lblpvdob"></label>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-12">
+                <div class="form-group row mb-0">
+                    <label class="col-form-label col-5 text-left">Height (Cm)</label>
+                    <div class="col-7">
+                        <label class="form-control-plaintext text-uppercase" id="lblpvheight"></label>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-12">
+                <div class="form-group row mb-0">
+                    <label class="col-form-label col-5 text-left">AADHAAR No</label>
+                    <div class="col-7">
+                        <label class="form-control-plaintext text-uppercase" id="lblpvadhar"></label>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-12">
+                <div class="form-group row mb-0">
+                    <label class="col-form-label col-5 text-left">Blood Group</label>
+                    <div class="col-7">
+                        <label class="form-control-plaintext text-uppercase" id="lblpvBloodGroup"></label>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div class="col-sm-12">
+            <div class="form-group row mb-0">
+                <label class="col-form-label col-5 text-left">Place of Issue</label>
+                <div class="col-7">
+                    <label class="form-control-plaintext text-uppercase" id="lblpvpoi"></label>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-12">
+            <div class="form-group row mb-0">
+                <label class="col-form-label col-5 text-left">Date of Issue</label>
+                <div class="col-7">
+                    <label class="form-control-plaintext text-uppercase" id="lblpvdoi"></label>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-12">
+            <div class="form-group row mb-0">
+                <label class="col-form-label col-5 text-left">Issuing Authority</label>
+                <div class="col-7">
+                    <label class="form-control-plaintext text-uppercase" id="lblpvissuA"></label>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-12">
+            <div class="form-group row mb-0">
+                <label class="col-form-label col-5 text-left">Date of Commissioning/ Enrollment</label>
+                <div class="col-7">
+                    <label class="form-control-plaintext text-uppercase" id="lblpvdateo"></label>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-12">
+            <div class="form-group row mb-0">
+                <label class="col-form-label col-5 text-left">Identification Mark</label>
+                <div class="col-7">
+                    <label class="form-control-plaintext text-uppercase" id="lblpvMarks"></label>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-12">
+            <div class="form-group row mb-0">
+                <label class="col-form-label col-5 text-left">Permt Address as per Service Records</label>
+                <div class="col-7">
+                    <label class="form-control-plaintext text-uppercase" id="lblpvaddress"></label><br />
+                </div>
+            </div>
+        </div>
+    </div>
+</div> *@

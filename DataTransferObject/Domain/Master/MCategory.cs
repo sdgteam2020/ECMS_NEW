@@ -8,11 +8,11 @@ using System.Threading.Tasks;
 
 namespace DataTransferObject.Domain.Master
 {
-    public class MFaultyStage
+    public class MCategory
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public byte FaultyStageId { get; set; }
+        public byte CategoryId { get; set; }
         
         [StringLength(30)]
         [Column(TypeName = "varchar(30)")]
