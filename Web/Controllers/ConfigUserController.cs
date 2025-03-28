@@ -2,7 +2,7 @@
 using BusinessLogicsLayer.Master;
 using BusinessLogicsLayer.Token;
 using BusinessLogicsLayer.Unit;
-using DapperRepo.Core.Constants;
+using DataTransferObject.Constants;
 using DataTransferObject.Domain.Identitytable;
 using DataTransferObject.Domain.Model;
 using DataTransferObject.Requests;

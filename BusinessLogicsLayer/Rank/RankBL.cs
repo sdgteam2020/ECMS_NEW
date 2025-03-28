@@ -1,7 +1,7 @@
 ﻿using BusinessLogicsLayer.Bde;
-using DapperRepo.Core.Constants;
 using DataAccessLayer;
 using DataAccessLayer.BaseInterfaces;
+using DataTransferObject.Constants;
 using DataTransferObject.Domain.Master;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;

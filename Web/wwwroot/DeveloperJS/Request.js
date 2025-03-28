@@ -12,20 +12,14 @@ $(document).ready(function () {
         $("#txtarmynosearchAll").val("");
         $("#armynosearchAllpic").attr("src", "");
         $("#unitoffrsModal").modal("show");
-        $("#armynosearchTypeId").val(1);
+        $("#armynosearchTypeId").val(ApplicantPostingOut);
     });
     $("#btnApplicantsClose").on("click", function () {
         $("#armynosearchAllName").html("");
         $("#txtarmynosearchAll").val("");
         $("#armynosearchAllpic").attr("src", "");
         $("#unitoffrsModal").modal("show");
-        $("#armynosearchTypeId").val(2);
-    });
-    $("#btnMisprintedCard").on("click", function () {
-        $("#ArmyNoSearchForFaulty").html("");
-        $("#txtArmyNoForFaulty").val("");
-        $("#ArmyNoSearchForFaultyPic").attr("src", "");
-        $("#FaultyCardInput").modal("show");
+        $("#armynosearchTypeId").val(ApplicantClose);
     });
     $('#txtApplyForArmyNo').on("change", function (e) {
         if ($('#txtApplyForArmyNo').val().length > 0) {
@@ -42,35 +36,6 @@ $(document).ready(function () {
         }
     });
 
-    $("#btnSercharmynoSmart").on("click", function () {
-        if ($("#armynosearchAllName").html() != "") {
-
-            $("#unitoffrsModal").modal("hide");
-            sessionStorage.setItem("ArmyNo", $("#txtarmynosearchAll").val());
-            if ($("#armynosearchTypeId").val() == 1)
-                window.location.href = "/Posting/PostingIn";
-            else if ($("#armynosearchTypeId").val() == 2)
-                window.location.href = "/Posting/ApplicationClose";
-
-        } else {
-            toastr.error("Please Enter Army No");
-        }
-
-
-    });
-    $("#btnSerchArmyNoForFaulty").on("click", function () {
-        if ($("#ArmyNoSearchForFaulty").html() != "" && $("#spnRequestIdForFaulty").html() != "") {
-
-            $("#FaultyCardInput").modal("hide");
-            sessionStorage.setItem("RequestIdForFaulty", $("#spnRequestIdForFaulty").html());
-            sessionStorage.setItem("ArmyNoForFaulty", $("#txtArmyNoForFaulty").val());
-            window.location.href = "/BasicDetail/FaultyCardRequest";
-        } else {
-            toastr.error("Please Enter Army No");
-        }
-
-
-    });
     $("#btnApplyCard").on("click", function () {
 
         RegistrationApplyFor = 0;

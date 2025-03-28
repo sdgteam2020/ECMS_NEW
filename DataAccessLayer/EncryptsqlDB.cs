@@ -1,5 +1,4 @@
 ﻿using Dapper;
-using DapperRepo.Core.Constants;
 using DataAccessLayer.BaseInterfaces;
 using DataAccessLayer.Logger;
 using DataTransferObject.Response;

@@ -26,9 +26,8 @@ namespace DataAccessLayer.BaseInterfaces
         public Task<BasicDetailCrtAndUpdVM?> GetBesicDetailForEditById(int BasicDetailId);
         public Task<List<DTOICardTypeRequest>> GetAllICardType();
         public Task<BasicDetail?> FindServiceNo(string ServiceNo);
-        public Task<List<DTOSmartSearch>?> SearchAllServiceNo(string ServiceNo,int AspNetUsersId);
-        public Task<List<DTOSearchRequestForFaultyCard>?> SearchRequestIdForFaulty(string ServiceNo, int AspNetUsersId);
-        public Task<DTOFaultyCardRequestResponse> GetFaultyCardDataByRequestId(int RequestId);
+        public Task<List<DTOSmartSearch>?> SearchAllServiceNo(DTOSearchArmyNoRequest dto);
+        public Task<DTOBasicDetailForParitalViewResponse> GetBasicDetailForParitalViewByRequestId(int RequestId);
         public Task<List<ICardHistoryResponse>?> ICardHistory(int RequestId);
         public Task<DTOFwdLastRecForDigitalSign> ICardFwdLastRec(int RequestId);
         public Task<List<ICardHistoryResponse>?> ICardHistoryByTrackingId(string TrackingId);

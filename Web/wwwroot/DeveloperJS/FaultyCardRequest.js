@@ -1,7 +1,8 @@
-﻿    $(function () {
-        if (sessionStorage.getItem("ArmyNoForFaulty") != null && sessionStorage.getItem("RequestIdForFaulty") != null) {
-            $("#spnArmyNo").html(sessionStorage.getItem("ArmyNoForFaulty"));
-            GetFaultyCardDataByRequestId(sessionStorage.getItem("RequestIdForFaulty"));
+﻿$(function () {
+
+        if (sessionStorage.getItem("ArmyNo") != null && sessionStorage.getItem("RequestIdForFaulty") != null) {
+            $("#spnArmyNo").html(sessionStorage.getItem("ArmyNo"));
+            GetBasicDetailForParitalViewByRequestId(sessionStorage.getItem("RequestIdForFaulty"));
             var RemarkTypeID = [5];
             GetRemarks("ddlFaultyRemark", 0, RemarkTypeID);
             mMsater(0, "ddlStage", FaultyStage, "");
@@ -118,10 +119,10 @@ function Proceed() {
             }
         });
     }
-    function GetFaultyCardDataByRequestId(RequestId) {
+    function GetBasicDetailForParitalViewByRequestId(RequestId) {
         let param = new URLSearchParams({ RequestId: RequestId });
 
-        fetch('/BasicDetail/GetFaultyCardDataByRequestId', {
+        fetch('/BasicDetail/GetBasicDetailForParitalViewByRequestId', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded'
@@ -131,30 +132,6 @@ function Proceed() {
             .then(response => response.text())
             .then(html =>{
                 document.getElementById("partialContainerBD").innerHTML = html;
-                //$("#lblpvPaperIcardNo").html(response.PaperIcardNo);
-                //$("#lblpvNameAsPerRecord").html(response.NameAsPerRecord);
-                //$("#lblpvFName").html(response.FName);
-                //$("#lblpvLName").html(response.LName == null ? "" : response.LName);
-                //$("#lblpvCategory").html(response.ApplyFor);
-                //$("#lblpvRank").html(response.RankName);
-                //$("#lblpvarm").html(response.ArmedName);
-                //$("#lblpvArmyNo").html(response.ModifiedServiceNo);
-                //$("#lblpvMarks").html(response.IdenMark1);
-                //$("#lblpvdob").html(DateFormateMMMM_dd_yyyy(response.DOB));
-                //$("#lblpvheight").html(response.Height);
-                //$("#lblpvadhar").html(response.AadhaarNo.replace(/\d(?=\d{4})/g, "X"));
-                //$("#lblpvBloodGroup").html(response.BloodGroup);
-                //$("#lblpvpoi").html(response.PlaceOfIssue);
-                //$("#lblpvdoi").html(DateFormateMMMM_dd_yyyy(response.DateOfIssue));
-                //$("#lblpvissuA").html(response.IssuingAuthorityName);
-                //$("#lblpvdateo").html(DateFormateMMMM_dd_yyyy(response.DateOfCommissioning));
-                //$("#lblpvaddress").html(response.Village + ',' + response.Tehsil + ',' + response.PO + ',' + response.PS + ',' + response.District + ',' + response.State + '' + response.PinCode);
-
-                //$("#pvPhotoImagePath").attr("src", response.PhotoImagePath);
-                //$("#lblvpFaultyRequestId").html(response.RequestId);
-                //$("#spnvpFaultyRequestId").html(response.RequestId);
-                //$("#lblvpFaultyRequestDate").html(DateFormateMMMM_dd_yyyy(response.RequestDate));
-
           })
           .catch(error => {
             alert("Error: " + error.message);

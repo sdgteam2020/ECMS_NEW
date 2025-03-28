@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DapperRepo.Core.Constants
+namespace DataTransferObject.Constants
 {
     public static class KeyConstants
     {
@@ -46,6 +46,14 @@ namespace DapperRepo.Core.Constants
         public const int IncorrectData = 4;
 
 
+        #endregion
+
+        #region Filter Request / Army No
+
+        public const byte ApplicantPostingOut = 50;
+        public const byte ApplicantClose = 51;
+        public const byte FaultyCardRequest = 52;
+        
         #endregion
     }
 }

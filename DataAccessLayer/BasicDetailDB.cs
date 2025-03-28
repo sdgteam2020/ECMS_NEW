@@ -19,6 +19,7 @@ using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 using Microsoft.Data.SqlClient;
 using System.Linq.Expressions;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using DataTransferObject.Constants;
 
 namespace DataAccessLayer
 {
@@ -546,21 +547,51 @@ namespace DataAccessLayer
 
 
         }
-        public async Task<List<DTOSmartSearch>?> SearchAllServiceNo(string ServiceNo,int AspNetUsersId)
+        public async Task<List<DTOSmartSearch>?> SearchAllServiceNo(DTOSearchArmyNoRequest dto)
         {
-            string query = "Select basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath Image "+
-                           " from BasicDetails basi "+
-                           " inner join TrnICardRequest req on req.BasicDetailId=basi.BasicDetailId and req.StatusId=1"+
-                           " inner join TrnDomainMapping map on map.Id=req.TrnDomainMappingId and map.AspNetUsersId=@AspNetUsersId" +
-                           " inner join TrnUpload trnu on basi.BasicDetailId=trnu.BasicDetailId where ServiceNo like @ServiceNo ";
+            string query;
+            if (dto.TypeId == KeyConstants.ApplicantPostingOut || dto.TypeId == KeyConstants.ApplicantClose)
+            {
+                query = @"Select TOP 5 basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath Image,req.RequestId
+                        from BasicDetails basi
+                        inner join TrnICardRequest req on req.BasicDetailId=basi.BasicDetailId and req.StatusId=1
+                        inner join TrnDomainMapping map on map.Id=req.TrnDomainMappingId and map.AspNetUsersId=@AspNetUsersId
+                        inner join TrnUpload trnu on basi.BasicDetailId=trnu.BasicDetailId 
+                        where ServiceNo like @ServiceNo ";
+            }
+            else
+            {
+                if (dto.Claim == true)
+                {
+                    query = @"Select TOP 5 basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath Image,req.RequestId 
+                            from BasicDetails basi
+                            inner join TrnUpload trnu on basi.BasicDetailId=trnu.BasicDetailId 
+                            inner join TrnICardRequest req on req.BasicDetailId=basi.BasicDetailId and req.StatusId=1
+                            inner join TrnStepCounter stepcount on req.RequestId=stepcount.RequestId and stepcount.StepId=6
+                            inner join TrnDomainMapping tdm on tdm.Id=req.TrnDomainMappingId
+                            where ServiceNo like @ServiceNo ";
+                }
+                else
+                {
+                    query = @"Select TOP 5 basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath Image,req.RequestId 
+                            from BasicDetails basi
+                            inner join TrnUpload trnu on basi.BasicDetailId=trnu.BasicDetailId 
+                            inner join TrnICardRequest req on req.BasicDetailId=basi.BasicDetailId and req.StatusId=1
+                            inner join TrnStepCounter stepcount on req.RequestId=stepcount.RequestId and stepcount.StepId=6
+                            inner join TrnDomainMapping tdm on tdm.Id=req.TrnDomainMappingId and tdm.UnitId=@MapUnitId
+                            where ServiceNo like @ServiceNo ";
+                }
+            }
+
             try
             {
                 //ServiceNo = "%" + ServiceNo.Replace("[", "[[]").Replace("%", "[%]") + "%";
                 using (var connection = _contextDP.CreateConnection())
                 {
                     var parameters = new DynamicParameters();
-                    parameters.Add("@AspNetUsersId", AspNetUsersId, DbType.Int32, ParameterDirection.Input);
-                    parameters.Add("@ServiceNo", $"%{ServiceNo}%", DbType.String, ParameterDirection.Input);
+                    parameters.Add("@AspNetUsersId", dto.AspNetUsersId, DbType.Int32, ParameterDirection.Input);
+                    parameters.Add("@MapUnitId", dto.MapUnitId, DbType.Int32, ParameterDirection.Input);
+                    parameters.Add("@ServiceNo", $"%{dto.ArmyNo}%", DbType.String, ParameterDirection.Input);
 
                     var basicDetail = await connection.QueryAsync<DTOSmartSearch>(query, parameters);
                     if (basicDetail != null)
@@ -579,41 +610,7 @@ namespace DataAccessLayer
                 return null;
             }
         }
-        public async Task<List<DTOSearchRequestForFaultyCard>?> SearchRequestIdForFaulty(string ServiceNo, int AspNetUsersId)
-        {
-            string query = @"Select TOP 5 basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath Image,req.RequestId 
-                            from BasicDetails basi
-                            inner join TrnUpload trnu on basi.BasicDetailId=trnu.BasicDetailId 
-                            inner join TrnICardRequest req on req.BasicDetailId=basi.BasicDetailId and req.StatusId=1
-                            inner join TrnStepCounter stepcount on req.RequestId=stepcount.RequestId and stepcount.StepId=6
-                            inner join TrnDomainMapping map on map.Id=req.TrnDomainMappingId and map.AspNetUsersId=@AspNetUsersId
-                            where ServiceNo like @ServiceNo";
-            try
-            {
-                using (var connection = _contextDP.CreateConnection())
-                {
-                    var parameters = new DynamicParameters();
-                    parameters.Add("@AspNetUsersId", AspNetUsersId, DbType.Int32, ParameterDirection.Input);
-                    parameters.Add("@ServiceNo", $"%{ServiceNo}%", DbType.String, ParameterDirection.Input);
-
-                    var basicDetail = await connection.QueryAsync<DTOSearchRequestForFaultyCard>(query, parameters);
-                    if (basicDetail != null)
-                    {
-                        return basicDetail.ToList();
-                    }
-                    else
-                    {
-                        return null;
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(1001, ex, "BasicDetailDB->SearchRequestIdForFaulty");
-                return null;
-            }
-        }
-        public async Task<DTOFaultyCardRequestResponse> GetFaultyCardDataByRequestId(int RequestId)
+        public async Task<DTOBasicDetailForParitalViewResponse> GetBasicDetailForParitalViewByRequestId(int RequestId)
         {
             try
             {
@@ -646,16 +643,16 @@ namespace DataAccessLayer
                                 where icardreq.RequestId=@RequestId";
                 using (var connection = _contextDP.CreateConnection())
                 {
-                    var ret = await connection.QueryAsync<DTOFaultyCardRequestResponse>(query, new { RequestId });
+                    var ret = await connection.QueryAsync<DTOBasicDetailForParitalViewResponse>(query, new { RequestId });
 
-                    return ret.FirstOrDefault() ?? new DTOFaultyCardRequestResponse();
+                    return ret.FirstOrDefault() ?? new DTOBasicDetailForParitalViewResponse();
 
                 }
             }
             catch (Exception ex)
             {
-                _logger.LogError(1001, ex, "BasicDetailDB->GetFaultyCardDataByRequestId");
-                return new DTOFaultyCardRequestResponse();
+                _logger.LogError(1001, ex, "BasicDetailDB->GetBasicDetailForParitalViewByRequestId");
+                return new DTOBasicDetailForParitalViewResponse();
             }
         }
         public async Task<List<DTOICardTypeRequest>> GetAllICardType()

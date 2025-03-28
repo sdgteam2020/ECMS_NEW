@@ -1,5 +1,4 @@
 ﻿using BusinessLogicsLayer.User;
-using DapperRepo.Core.Constants;
 using DataAccessLayer;
 using DataAccessLayer.BaseInterfaces;
 using DataTransferObject.Domain.Master;

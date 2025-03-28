@@ -57,17 +57,13 @@ namespace BusinessLogicsLayer.BasicDet
         {
             return await _iBasicDetailDB.FindServiceNo(ServiceNo);
         } 
-        public async Task<List<DTOSmartSearch>?> SearchAllServiceNo(string ServiceNo, int AspNetUsersId)
+        public async Task<List<DTOSmartSearch>?> SearchAllServiceNo(DTOSearchArmyNoRequest dto)
         {
-            return await _iBasicDetailDB.SearchAllServiceNo(ServiceNo, AspNetUsersId);
+            return await _iBasicDetailDB.SearchAllServiceNo(dto);
         }
-        public async Task<List<DTOSearchRequestForFaultyCard>?> SearchRequestIdForFaulty(string ServiceNo, int AspNetUsersId)
+        public async Task<DTOBasicDetailForParitalViewResponse> GetBasicDetailForParitalViewByRequestId(int RequestId)
         {
-            return await _iBasicDetailDB.SearchRequestIdForFaulty(ServiceNo, AspNetUsersId);
-        }
-        public async Task<DTOFaultyCardRequestResponse> GetFaultyCardDataByRequestId(int RequestId)
-        {
-            return await _iBasicDetailDB.GetFaultyCardDataByRequestId(RequestId);
+            return await _iBasicDetailDB.GetBasicDetailForParitalViewByRequestId(RequestId);
         }
 
         public async Task<BasicDetailCrtAndUpdVM?> GetBasicDetailByRequestId(int RequestId)

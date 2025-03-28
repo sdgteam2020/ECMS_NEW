@@ -1,6 +1,14 @@
-﻿$(document).ready(function () {
-
+﻿$(function () {
     GetDashboardCount();
+
+    $("#btnMisprintedCard").on("click", function () {
+        $("#armynosearchAllName").html("");
+        $("#txtarmynosearchAll").val("");
+        $("#armynosearchAllpic").attr("src", "");
+        $("#unitoffrsModal").modal("show");
+        $("#armynosearchTypeId").val(FaultyCardRequest);
+    });
+
 })
 function GetDashboardCount() {
     var userdata =

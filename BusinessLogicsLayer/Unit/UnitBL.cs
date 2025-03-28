@@ -11,7 +11,6 @@ using DataTransferObject.Response;
 using DataTransferObject.Requests;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using static Dapper.SqlMapper;
-using DapperRepo.Core.Constants;
 
 namespace BusinessLogicsLayer.Unit
 {

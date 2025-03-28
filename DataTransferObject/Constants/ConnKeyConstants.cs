@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DapperRepo.Core.Constants
+namespace DataTransferObject.Constants
 {
     public static class ConnKeyConstants
     {

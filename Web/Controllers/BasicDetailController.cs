@@ -20,7 +20,6 @@ using BusinessLogicsLayer.BasicDetTemp;
 using BusinessLogicsLayer.Master;
 using System.Text;
 using BusinessLogicsLayer.Unit;
-using DapperRepo.Core.Constants;
 using System.IO.Compression;
 using BusinessLogicsLayer.TrnLoginLog;
 using Web.Healpers;
@@ -36,6 +35,8 @@ using Microsoft.SqlServer.Management.Smo;
 using System.Globalization;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using BusinessLogicsLayer.FaultyCard;
+using DataTransferObject.Constants;
+using static iText.StyledXmlParser.Jsoup.Select.Evaluator;
 
 namespace Web.Controllers
 {
@@ -2040,48 +2041,14 @@ namespace Web.Controllers
 
         #region FaultyCard
 
-        [HttpPost]
-        public async Task<IActionResult> SearchRequestIdForFaulty(string ICNumber)
-        {
-            try
-            {
-                if (ICNumber != null)
-                {
-                    int AspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-                    var Ret = await basicDetailBL.SearchRequestIdForFaulty(ICNumber, AspNetUsersId);
-                    if (Ret != null)
-                    {
-                        foreach (var item in Ret)
-                        {
-                            string sourceFolderPhotoPhy = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData");
-                            string sourcePathPhoto = Path.Combine(sourceFolderPhotoPhy, "Photo", item.Image);
-
-                            if (System.IO.File.Exists(sourcePathPhoto))
-                            {
-                                item.Image = ImageEncryptAndDecrypt.DecryptImageToBase64(sourcePathPhoto);
-                            }
-                        }
-
-                        return Ok(Ret);
-                    }
-
-                }
-                return BadRequest();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(1001, ex, "BasicDetailController=>SearchRequestIdForFaulty.");
-                return BadRequest();
-            }
-        }
         public ViewResult FaultyCardRequest()
         {
             return View();
         }
         [HttpPost]
-        public async Task<IActionResult> GetFaultyCardDataByRequestId(int RequestId)
+        public async Task<IActionResult> GetBasicDetailForParitalViewByRequestId(int RequestId)
         {
-            DTOFaultyCardRequestResponse data = await basicDetailBL.GetFaultyCardDataByRequestId(RequestId);
+            DTOBasicDetailForParitalViewResponse data = await basicDetailBL.GetBasicDetailForParitalViewByRequestId(RequestId);
             string sourceFolderPhotoPhy = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData");
             string sourcePathPhoto = Path.Combine(sourceFolderPhotoPhy, "Photo", data.PhotoImagePath);
 
@@ -2179,18 +2146,41 @@ namespace Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> SearchAllServiceNo(string ICNumber)
+        public async Task<IActionResult> SearchAllServiceNo(DTOSearchArmyNoRequest dto)
         {
             try
             {
-                DTOApiDataResponse dTOApiDataResponse = new DTOApiDataResponse();
-                if (ICNumber != null)
+                dto.AspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                dto.MapUnitId = 0;
+
+                if (dto.TypeId == KeyConstants.FaultyCardRequest)
                 {
-                    int AspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-                    var Ret = await basicDetailBL.SearchAllServiceNo(ICNumber, AspNetUsersId);
+                    DtoSession? dtoSession = new DtoSession();
+                    if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
+                    {
+                        dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+
+                    }
+                    dto.MapUnitId = dtoSession != null ? dtoSession.UnitId : 0;
+
+                    var user = await userManager.FindByIdAsync(dto.AspNetUsersId.ToString());
+
+                    // UserManager service GetClaimsAsync method gets all the current claims of the user
+                    var UserClaims = await userManager.GetClaimsAsync(user);
+                    if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "ICard Export Data"))
+                    {
+                        dto.Claim = true;
+                    }
+                }
+
+
+                if (ModelState.IsValid)
+                {
+
+                    var Ret = await basicDetailBL.SearchAllServiceNo(dto);
                     if (Ret != null)
                     {
-                        foreach (var item in Ret) 
+                        foreach (var item in Ret)
                         {
                             string sourceFolderPhotoPhy = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData");
                             string sourcePathPhoto = Path.Combine(sourceFolderPhotoPhy, "Photo", item.Image);
@@ -2203,7 +2193,6 @@ namespace Web.Controllers
 
                         return Ok(Ret);
                     }
-
                 }
                 return BadRequest();
             }

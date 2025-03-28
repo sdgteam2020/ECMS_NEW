@@ -14,6 +14,10 @@ const spnIntAfsaccellUnitId = 85;
 const spnMI11UnitId = 85;
 const spnHQ54UnitId = 85;
 
+const ApplicantPostingOut = 50;
+const ApplicantClose = 51;
+const FaultyCardRequest = 52;
+
 
 const Command = 1;
 const Corps = 2;

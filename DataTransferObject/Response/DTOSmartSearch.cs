@@ -12,6 +12,7 @@ namespace DataTransferObject.Response
         public string FName { get; set; } = string.Empty;
         public string? LName { get; set; }
         public string ServiceNo { get; set; } = string.Empty;
+        public int RequestId { get; set; }
         public string Image { get; set; } = string.Empty;
 
     }

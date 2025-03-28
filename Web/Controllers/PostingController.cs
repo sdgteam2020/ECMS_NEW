@@ -1,7 +1,7 @@
 ﻿using BusinessLogicsLayer.Bde;
 using BusinessLogicsLayer.Posting;
 using BusinessLogicsLayer.Service;
-using DapperRepo.Core.Constants;
+using DataTransferObject.Constants;
 using DataTransferObject.Domain.Model;
 using DataTransferObject.Response;
 using Microsoft.AspNetCore.Authorization;

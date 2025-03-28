@@ -8,7 +8,6 @@ using BusinessLogicsLayer.Service;
 using BusinessLogicsLayer.Token;
 using BusinessLogicsLayer.TrnLoginLog;
 using BusinessLogicsLayer.Unit;
-using DapperRepo.Core.Constants;
 using DataAccessLayer;
 using DataTransferObject.Domain;
 using DataTransferObject.Domain.Identitytable;
@@ -34,6 +33,7 @@ using System.Net;
 using BusinessLogicsLayer.IAMSetting;
 using System.Configuration;
 using Humanizer;
+using DataTransferObject.Constants;
 
 namespace Web.Controllers
 {

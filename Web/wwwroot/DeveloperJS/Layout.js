@@ -36,72 +36,39 @@ $(document).ready(function () {
     Getaspntokenarmyno()
     if (window.location.pathname !="/UserProfile/Profile")
         CheckProfileExist();
-    
-   
-    $("#txtarmynosearchAll").autocomplete({
 
-        source: function (request, response) {
-            var TypeId = 1;
-            
-            var param = { "ICNumber": request.term };
-            $("#loading").addClass("d-none");
-            $("#armynosearchAllName").html("");
-            /*$("#txtarmynosearchAll").val("");*/
-            $("#armynosearchAllpic").attr("src", "");
+    $("#btnSercharmynoSmart").on("click", function () {
+        if ($("#armynosearchAllName").html() != "") {
 
-            $.ajax({
-                url: '/BasicDetail/SearchAllServiceNo',
-                contentType: 'application/x-www-form-urlencoded',
-                data: param,
-                type: 'POST',
-                success: function (data) {
-                    console.log(data);
+            $("#unitoffrsModal").modal("hide");
+            sessionStorage.setItem("ArmyNo", $("#txtarmynosearchAll").val());
+            sessionStorage.setItem("RequestIdForFaulty", $("#RequestId_unitoffrsModal").val());
 
-                    response($.map(data, function (item) {
-
-                        
-                        return { label: item.ServiceNo, value: item.BasicDetailId, Name: (item.FName + (item.LName == null ? "" : item.LName)), Image: item.Image };
-
-                    }))
-                },
-                error: function (response) {
-                    alert(response.responseText);
-                },
-                failure: function (response) {
-                    alert(response.responseText);
-                }
-            });
-        },
-        select: function (e, i) {
-            e.preventDefault();
-            //alert(i.item.value)
-            
-            $("#armynosearchAllName").html("Name : " + i.item.Name);
-           /* $("#armynosearchAllBasicId").val(i.item.value);*/
-            $("#txtarmynosearchAll").val(i.item.label);
-            $("#armynosearchAllpic").attr("src", i.item.Image);
-            //$("#armynosearchAllpic").attr("src", "/WriteReadData/Photo/" + i.item.Image);
-            //alert(i.item.value)
-            // var param1 = { "UnitMapId": i.item.value };
-            //$("#btnIOProfileSerch").addClass('d-none');
-           
-        },
-        appendTo: '#suggesstion-box'
+            if ($("#armynosearchTypeId").val() == ApplicantPostingOut)
+                window.location.href = "/Posting/PostingIn";
+            else if ($("#armynosearchTypeId").val() == ApplicantClose)
+                window.location.href = "/Posting/ApplicationClose";
+            else if ($("#armynosearchTypeId").val() == FaultyCardRequest) 
+                window.location.href = "/BasicDetail/FaultyCardRequest";
+        } else {
+            toastr.error("Please Enter Army No");
+        }
     });
-
-    $("#txtArmyNoForFaulty").autocomplete({
+    
+    $("#txtarmynosearchAll").autocomplete({
         source: function (request, response) {
-            if (request.term.length > 1)
-            {
-                let param = new URLSearchParams({ ICNumber: request.term });
+            if (request.term.length > 1) {
+                let param = new URLSearchParams(
+                    {
+                        ArmyNo: request.term,
+                        TypeId: $("#armynosearchTypeId").val()
+                    });
 
                 $("#loading").addClass("d-none");
-                $("#ArmyNoSearchForFaulty").html("");
-                $("#txtArmyNoForFaulty").val("");
-                $("#spnRequestIdForFaulty").html("");
-                $("#ArmyNoSearchForFaultyPic").attr("src", "");
+                $("#armynosearchAllName").html("");
+                $("#armynosearchAllpic").attr("src", "");
 
-                fetch('/BasicDetail/SearchRequestIdForFaulty', {
+                fetch('/BasicDetail/SearchAllServiceNo', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded'
@@ -124,10 +91,10 @@ $(document).ready(function () {
                                 RequestId: item.RequestId
                             })));
                         } else {
-                            $("#ArmyNoSearchForFaulty").html("");
-                            $("#txtArmyNoForFaulty").val("");
-                            $("#spnRequestIdForFaulty").html("");
-                            $("#ArmyNoSearchForFaultyPic").attr("src", "");
+                            $("#armynosearchAllName").html("");
+                            $("#txtarmynosearchAll").val("");
+                            $("#RequestId_unitoffrsModal").val("");
+                            $("#armynosearchAllpic").attr("src", "");
                             alert("Army no not found.");
                         }
                     })
@@ -138,10 +105,11 @@ $(document).ready(function () {
         },
         select: function (e, i) {
             e.preventDefault();
-            $("#ArmyNoSearchForFaulty").html("Name : " + i.item.Name);
-            $("#txtArmyNoForFaulty").val(i.item.label);
-            $("#spnRequestIdForFaulty").html(i.item.RequestId);
-            $("#ArmyNoSearchForFaultyPic").attr("src", i.item.Image);
+
+            $("#armynosearchAllName").html("Name : " + i.item.Name);
+            $("#txtarmynosearchAll").val(i.item.label);
+            $("#armynosearchAllpic").attr("src", i.item.Image);
+            $("#RequestId_unitoffrsModal").val(i.item.RequestId);
         },
         appendTo: '#suggesstion-box'
     });

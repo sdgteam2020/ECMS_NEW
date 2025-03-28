@@ -1,7 +1,7 @@
 ﻿using BusinessLogicsLayer.Bde;
 using BusinessLogicsLayer.Master;
 using BusinessLogicsLayer.TrnMappingUnMappingLog;
-using DapperRepo.Core.Constants;
+using DataTransferObject.Constants;
 using DataTransferObject.Domain;
 using DataTransferObject.Domain.Master;
 using DataTransferObject.Domain.Model;

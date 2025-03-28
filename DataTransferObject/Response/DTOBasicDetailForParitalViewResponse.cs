@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DataTransferObject.Response
 {
-    public class DTOFaultyCardRequestResponse
+    public class DTOBasicDetailForParitalViewResponse
     {
         public string PaperIcardNo { get; set; } = string.Empty;
         public string NameAsPerRecord { get; set; } = string.Empty;
