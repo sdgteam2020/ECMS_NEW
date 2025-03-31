@@ -9,157 +9,121 @@
         font-size: 1rem; /* Better than 90% for consistent sizing */
     }
 </style>
-<div class="card">
-    <div class="row">
-        <div class="seven">
-            <h1>Applicant's Details</h1>
+<div class="row">
+    <div class="col-sm-12 mb-3">
+        <div class="top-block_ind d-flex">
+            <div class="text-block">
+                <h5 class="mb-1 text-font2 font-weight600">Applicant’s Details</h5>
+            </div>
         </div>
-        <div class="col-sm-4">
-            <div class="col-sm-12 text-center">
-                <img src=@Model.PhotoImagePath id="pvPhotoImagePath" height="180" class=" border border-primary" />
-            </div>
-            <div class="col-sm-12">
-                <div class="form-group row">
-                    <label class="col-form-label col-sm-5 labelprofile">Category</label>
-                    <div class="col-sm-7">
-                        <label id="lblpvCategory" class="col-form-label">@Model.ApplyFor</label>
-                    </div>
-                </div>
-            </div>
-            <div class="col-sm-12">
-                <div class="form-group row">
-                    <label class="col-form-label col-5 labelprofile text-left">Paper I-Card No</label>
-                    <div class="col-7"><label class="form-control-plaintext text-uppercase" id="lblpvPaperIcardNo">@Model.PaperIcardNo</label></div>
-                </div>
-            </div>
-            <div class="col-sm-12">
-                <div class="form-group row">
+        <div class="row">
+            <div class="col-sm-8">
+                <div class="form-group row mb-0">
                     <label class="col-form-label col-5 labelprofile text-left">Name As Per Record</label>
                     <div class="col-7"><label class="form-control-plaintext text-uppercase" id="lblpvNameAsPerRecord">@Model.NameAsPerRecord</label></div>
                 </div>
-            </div>
-            <div class="col-sm-12">
-                <div class="form-group row">
+                <div class="form-group row mb-0">
                     <label class="col-form-label col-5 labelprofile text-left">First Name</label>
                     <div class="col-7"><label class="form-control-plaintext text-uppercase" id="lblpvFName">@Model.FName</label></div>
                 </div>
-            </div>
-            <div class="col-sm-12">
-                <div class="form-group row">
+                <div class="form-group row mb-0">
                     <label class="col-form-label col-5 labelprofile text-left">Last Name</label>
                     <div class="col-7"><label class="form-control-plaintext text-uppercase" id="lblpvLName"></label>@(Model.LName ?? "")</div>
                 </div>
-            </div>
-        </div>
-        <div class="col-sm-4">
-            <div class="row">
-                <div class="col-sm-12">
-                    <div class="form-group row">
-                        <label class="col-form-label labelprofile col-5 text-left">Rank</label>
-                        <div class="col-7">
-                            <label class="form-control-plaintext text-uppercase" id="lblpvRank">@Model.RankName</label>
-                        </div>
+                <div class="form-group row mb-0">
+                    <label class="col-form-label labelprofile col-5 text-left">Rank</label>
+                    <div class="col-7">
+                        <label class="form-control-plaintext text-uppercase" id="lblpvRank">@Model.RankName</label>
                     </div>
                 </div>
-                <div class="col-sm-12">
-                    <div class="form-group row">
-                        <label class="col-form-label labelprofile col-5 text-left">Arm / Service</label>
-                        <div class="col-7">
-                            <label class="form-control-plaintext text-uppercase" id="lblpvarm">@Model.ArmedName</label>
-                        </div>
+                <div class="form-group row mb-0">
+                    <label class="col-form-label labelprofile col-5 text-left">Arm / Service</label>
+                    <div class="col-7">
+                        <label class="form-control-plaintext text-uppercase" id="lblpvarm">@Model.ArmedName</label>
                     </div>
                 </div>
-                <div class="col-sm-12">
-                    <div class="form-group row">
-                        <label class="col-form-label labelprofile col-5 text-left">Army No</label>
-                        <div class="col-7">
-                            <label class="form-control-plaintext text-uppercase" id="lblpvArmyNo">@Model.ModifiedServiceNo</label>
-                        </div>
+                <div class="form-group row mb-0">
+                    <label class="col-form-label labelprofile col-5 text-left">Army No</label>
+                    <div class="col-7">
+                        <label class="form-control-plaintext text-uppercase" id="lblpvArmyNo">@Model.ModifiedServiceNo</label>
                     </div>
                 </div>
-                <div class="col-sm-12">
-                    <div class="form-group row">
-                        <label class="col-form-label labelprofile col-5 text-left">Date of Birth</label>
-                        <div class="col-7">
-                            <label class="form-control-plaintext text-uppercase" id="lblpvdob">@Model.DOB.ToString("dd-MMM-yyyy")</label>
-                        </div>
+                <div class="form-group row mb-0">
+                    <label class="col-form-label labelprofile col-5 text-left">Date of Birth</label>
+                    <div class="col-7">
+                        <label class="form-control-plaintext text-uppercase" id="lblpvdob">@Model.DOB.ToString("dd-MMM-yyyy")</label>
                     </div>
                 </div>
-                <div class="col-sm-12">
-                    <div class="form-group row">
-                        <label class="col-form-label labelprofile col-5 text-left">Height (Cm)</label>
-                        <div class="col-7">
-                            <label class="form-control-plaintext text-uppercase" id="lblpvheight">@Model.Height</label>
-                        </div>
+                <div class="form-group row mb-0">
+                    <label class="col-form-label labelprofile col-5 text-left">Height (Cm)</label>
+                    <div class="col-7">
+                        <label class="form-control-plaintext text-uppercase" id="lblpvheight">@Model.Height</label>
                     </div>
                 </div>
-                <div class="col-sm-12">
-                    <div class="form-group row">
-                        <label class="col-form-label labelprofile col-5 text-left">AADHAAR No</label>
-                        <div class="col-7">
-                            <label class="form-control-plaintext text-uppercase" id="lblpvadhar">@Model.AadhaarNo</label>
-                        </div>
+                <div class="form-group row mb-0">
+                    <label class="col-form-label labelprofile col-5 text-left">AADHAAR No</label>
+                    <div class="col-7">
+                        <label class="form-control-plaintext text-uppercase" id="lblpvadhar">@Model.AadhaarNo</label>
                     </div>
                 </div>
-                <div class="col-sm-12">
-                    <div class="form-group row">
-                        <label class="col-form-label labelprofile col-5 text-left">Blood Group</label>
-                        <div class="col-7">
-                            <label class="form-control-plaintext text-uppercase" id="lblpvBloodGroup">@Model.BloodGroup</label>
-                        </div>
+                <div class="form-group row mb-0">
+                    <label class="col-form-label labelprofile col-5 text-left">Blood Group</label>
+                    <div class="col-7">
+                        <label class="form-control-plaintext text-uppercase" id="lblpvBloodGroup">@Model.BloodGroup</label>
                     </div>
                 </div>
-                <div class="col-sm-12">
-                    <div class="form-group row">
-                        <label class="col-form-label labelprofile col-5 text-left">Place of Issue</label>
-                        <div class="col-7">
-                            <label class="form-control-plaintext text-uppercase" id="lblpvpoi">@Model.PlaceOfIssue</label>
-                        </div>
+                <div class="form-group row mb-0">
+                    <label class="col-form-label labelprofile col-5 text-left">Place of Issue</label>
+                    <div class="col-7">
+                        <label class="form-control-plaintext text-uppercase" id="lblpvpoi">@Model.PlaceOfIssue</label>
                     </div>
                 </div>
-            </div>
-        </div>
-        <div class="col-sm-4">
-            <div class="col-sm-12">
-                <div class="form-group row">
+                <div class="form-group row mb-0">
                     <label class="col-form-label labelprofile col-5 text-left">Date of Issue</label>
                     <div class="col-7">
                         <label class="form-control-plaintext text-uppercase" id="lblpvdoi">@Model.DateOfIssue.ToString("dd-MMM-yyyy")</label>
                     </div>
                 </div>
-            </div>
-            <div class="col-sm-12">
-                <div class="form-group row">
+                <div class="form-group row mb-0">
                     <label class="col-form-label labelprofile col-5 text-left">Issuing Authority</label>
                     <div class="col-7">
                         <label class="form-control-plaintext text-uppercase" id="lblpvissuA">@Model.IssuingAuthorityName</label>
                     </div>
                 </div>
-            </div>
-            <div class="col-sm-12">
-                <div class="form-group row">
+                <div class="form-group row mb-0">
                     <label class="col-form-label labelprofile col-5 text-left">Date of Commissioning/ Enrollment</label>
                     <div class="col-7">
                         <label class="form-control-plaintext text-uppercase" id="lblpvdateo">@Model.DateOfCommissioning.ToString("dd-MMM-yyyy")</label>
                     </div>
                 </div>
             </div>
-            <div class="col-sm-12">
-                <div class="form-group row">
-                    <label class="col-form-label labelprofile col-5 text-left">Identification Mark</label>
-                    <div class="col-7">
-                        <label class="form-control-plaintext text-uppercase" id="lblpvMarks">@Model.IdenMark1</label>
+            <div class="col-sm-4">
+                <div class="form-group row mb-0 ">
+                    <div class="col-12 text-center">
+                        <img src=@Model.PhotoImagePath width="200" id="basicphotosVP" class="border border-primary p-2" onerror="this.src='/images/user4.png';" />
+                        <h6 class="mb-1 text-font2 font-weight500 text-center PersName"></h6>
+                    </div>
+                </div>
+                <div class="form-group row mb-0 ">
+                    <div class="col-12 text-center">
+                        <img src=@Model.PhotoImagePath width="200" height="100" id="BasicsingVP" class="border border-primary p-2" onerror="this.src='/images/Signature.png';" />
                     </div>
                 </div>
             </div>
             <div class="col-sm-12">
-                <div class="form-group row">
-                    <label class="col-form-label labelprofile col-5 text-left">Permt Address as per Service Records</label>
-                    <div class="col-7">
-                        <label class="form-control-plaintext text-uppercase" id="lblpvaddress">@(Model.Village + "," + Model.Tehsil + "," + Model.PO + "," + Model.PS + "," + Model.District + "," + Model.State + "," + Model.PinCode)</label><br />
+                <div class="form-group row mb-0">
+                    <label class="col-form-label labelprofile col-3 text-left">Identification Mark</label>
+                    <div class="col-9">
+                        <label class="form-control-plaintext text-uppercase ml-3" id="lblpvMarks">@Model.IdenMark1</label>
+                    </div>
+                </div>
+                <div class="form-group row mb-0">
+                    <label class="col-form-label labelprofile col-3 text-left">Permt Address as per Service Records</label>
+                    <div class="col-9">
+                        <label class="form-control-plaintext text-uppercase ml-3" id="lblpvaddress">@(Model.Village + "," + Model.Tehsil + "," + Model.PO + "," + Model.PS + "," + Model.District + "," + Model.State + "," + Model.PinCode)</label><br />
                     </div>
                 </div>
             </div>
-        </div>
+    </div>
     </div>
 </div>
