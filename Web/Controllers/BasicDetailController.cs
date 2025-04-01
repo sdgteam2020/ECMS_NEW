@@ -37,6 +37,7 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 using BusinessLogicsLayer.FaultyCard;
 using DataTransferObject.Constants;
 using static iText.StyledXmlParser.Jsoup.Select.Evaluator;
+using NuGet.Protocol.Plugins;
 
 namespace Web.Controllers
 {
@@ -2049,16 +2050,21 @@ namespace Web.Controllers
         public async Task<IActionResult> GetBasicDetailForParitalViewByRequestId(int RequestId)
         {
             DTOBasicDetailForParitalViewResponse data = await basicDetailBL.GetBasicDetailForParitalViewByRequestId(RequestId);
-            string sourceFolderPhotoPhy = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData");
-            string sourcePathPhoto = Path.Combine(sourceFolderPhotoPhy, "Photo", data.PhotoImagePath);
+            string sourceFolderPathPhy = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData");
+            string sourcePathPhoto = Path.Combine(sourceFolderPathPhy, "Photo", data.PhotoImagePath);
+            string sourcePathSignature = Path.Combine(sourceFolderPathPhy, "Signature", data.SignatureImagePath);
 
             if (System.IO.File.Exists(sourcePathPhoto))
             {
                 data.PhotoImagePath = ImageEncryptAndDecrypt.DecryptImageToBase64(sourcePathPhoto);
             }
+            if (System.IO.File.Exists(sourcePathSignature))
+            {
+                data.SignatureImagePath = ImageEncryptAndDecrypt.DecryptImageToBase64(sourcePathSignature);
+            }
             return PartialView("_BasicDetail_ParitalView", data);
         }
-        public async Task<IActionResult> SaveFaultyCardRequest(TrnFaultyCard dTO)
+        public async Task<IActionResult> SaveFaultyCardRequest(DTOFaultyCardRequest dTO)
         {
             try
             {
@@ -2070,12 +2076,12 @@ namespace Web.Controllers
                 {
                     if (dTO.TrnFaultyCardId > 0)
                     {
-                        await faultyCardBL.Update(dTO);
+                        await faultyCardBL.SaveFaultyCard(dTO);
                         return Json(KeyConstants.Update);
                     }
                     else
                     {
-                        await faultyCardBL.Add(dTO);
+                        await faultyCardBL.SaveFaultyCard(dTO);
                         return Json(KeyConstants.Save);
                     }
                 }

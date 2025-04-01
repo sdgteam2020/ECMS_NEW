@@ -3,9 +3,11 @@
         if (sessionStorage.getItem("ArmyNo") != null && sessionStorage.getItem("RequestIdForFaulty") != null) {
             $("#spnArmyNo").html(sessionStorage.getItem("ArmyNo"));
             GetBasicDetailForParitalViewByRequestId(sessionStorage.getItem("RequestIdForFaulty"));
+            $("#spnFaultyCardRequestId").html(sessionStorage.getItem("RequestIdForFaulty"));
+            $("#lblFaultyRequestId").html(sessionStorage.getItem("RequestIdForFaulty"));
             var RemarkTypeID = [5];
             GetRemarks("ddlFaultyRemark", 0, RemarkTypeID);
-            mMsater(0, "ddlStage", FaultyStage, "");
+            mMsater(2, "ddlStage", FaultyStage, "");
             $('.select2').select2({
                 placeholder: "Please select a Reason",
                 allowClear: true,
@@ -59,9 +61,9 @@ function Proceed() {
             type: 'POST',
             data: {
                 "TrnFaultyCardId": $("#spnTrnFaultyCardId").html(),
-                "RequestId": $("#spnvpFaultyRequestId").html(),
+                "RequestId": $("#spnFaultyCardRequestId").html(),
                 "RemarksIds": $("#ddlFaultyRemark").val().length > 0 ? FaultyRemarkIds : null,
-                "OtherRemark": $("#txtOtherRemark").val(),
+                "FromRemark": $("#txtFromRemark").val(),
                 "FaultyStageId": $("#ddlStage").val(),
             }, //get the search string
             success: function (result) {

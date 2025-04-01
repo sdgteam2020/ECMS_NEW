@@ -1,5 +1,4 @@
-﻿using DataTransferObject.Domain.Master;
-using DataTransferObject.Domain.Model;
+﻿using DataTransferObject.Domain.Model;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
 using System;
@@ -8,9 +7,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BusinessLogicsLayer.FaultyCard
+namespace DataAccessLayer.BaseInterfaces
 {
-    public interface IFaultyCardBL : IGenericRepository<TrnFaultyCard>
+    public interface IFaultyCardDB : IGenericRepositoryDL<TrnFaultyCard>
     {
         public Task<DTOFaultyCardSaveResponse> SaveFaultyCard(DTOFaultyCardRequest dTO);
     }

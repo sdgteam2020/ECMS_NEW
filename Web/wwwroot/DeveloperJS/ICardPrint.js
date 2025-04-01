@@ -47,40 +47,59 @@ function GetICardPrintPreviewByRequestId(RequestId) {
         }
     })
 }
-function GetBasicDetailByRequestId(RequestId) {
-    var userdata = {
-        "RequestId": RequestId,
-    };
-    $.ajax({
-        url: '/BasicDetail/GetBasicDetailByRequestId',
-        contentType: 'application/x-www-form-urlencoded',
-        data: userdata,
-        type: 'POST',
+//function GetBasicDetailByRequestId(RequestId) {
+//    var userdata = {
+//        "RequestId": RequestId,
+//    };
+//    $.ajax({
+//        url: '/BasicDetail/GetBasicDetailByRequestId',
+//        contentType: 'application/x-www-form-urlencoded',
+//        data: userdata,
+//        type: 'POST',
 
-        success: function (response) {
-            if (response != "null" && response != null) {
-                $("#basicphotosVP").attr('src', response.ExistingPhotoInBase64);
-                $("#BasicsingVP").attr('src', response.ExistingSignatureInBase64);
-                $("#lblvpNameAsPerRecord").html(response.NameAsPerRecord);
-                $("#lblvpFName").html(response.FName);
-                $("#lblvpLName").html(response.LName);
-                $("#lblvpRank").html(response.RankName);
-                $("#lblvparm").html(response.ArmedName);
-                $("#lblvpArmyNo").html(response.ModifiedServiceNo);
-                $("#lblvpMarks").html(response.IdenMark1);
-                $("#lblvpdob").html(DateFormateMMMM_dd_yyyy(response.DOB));
-                $("#lblvpheight").html(response.Height);
-                $("#lblvpadhar").html(response.AadhaarNo.replace(/\d(?=\d{4})/g, "X"));
-                $("#lblvpBloodGroup").html(response.BloodGroup);
-                $("#lblvppoi").html(response.PlaceOfIssue);
-                $("#lblvpdoi").html(DateFormateMMMM_dd_yyyy(response.DateOfIssue));
-                $("#lblvpissuA").html(response.IssuingAuthorityName);
-                $("#lblvpdateo").html(DateFormateMMMM_dd_yyyy(response.DateOfCommissioning));
-                $("#lblvpaddress").html(response.Village + ',' + response.Tehsil + ',' + response.PO + ',' + response.PS + ',' + response.District + ',' + response.State + '' + response.PinCode);
-                $("#BasicDetailViewPurpose").modal('show');
-            }
-        }
+//        success: function (response) {
+//            if (response != "null" && response != null) {
+//                $("#basicphotosVP").attr('src', response.ExistingPhotoInBase64);
+//                $("#BasicsingVP").attr('src', response.ExistingSignatureInBase64);
+//                $("#lblvpNameAsPerRecord").html(response.NameAsPerRecord);
+//                $("#lblvpFName").html(response.FName);
+//                $("#lblvpLName").html(response.LName);
+//                $("#lblvpRank").html(response.RankName);
+//                $("#lblvparm").html(response.ArmedName);
+//                $("#lblvpArmyNo").html(response.ModifiedServiceNo);
+//                $("#lblvpMarks").html(response.IdenMark1);
+//                $("#lblvpdob").html(DateFormateMMMM_dd_yyyy(response.DOB));
+//                $("#lblvpheight").html(response.Height);
+//                $("#lblvpadhar").html(response.AadhaarNo.replace(/\d(?=\d{4})/g, "X"));
+//                $("#lblvpBloodGroup").html(response.BloodGroup);
+//                $("#lblvppoi").html(response.PlaceOfIssue);
+//                $("#lblvpdoi").html(DateFormateMMMM_dd_yyyy(response.DateOfIssue));
+//                $("#lblvpissuA").html(response.IssuingAuthorityName);
+//                $("#lblvpdateo").html(DateFormateMMMM_dd_yyyy(response.DateOfCommissioning));
+//                $("#lblvpaddress").html(response.Village + ',' + response.Tehsil + ',' + response.PO + ',' + response.PS + ',' + response.District + ',' + response.State + '' + response.PinCode);
+//                $("#BasicDetailViewPurpose").modal('show');
+//            }
+//        }
+//    })
+//}
+function GetBasicDetailByRequestId(RequestId) {
+    let param = new URLSearchParams({ RequestId: RequestId });
+
+    fetch('/BasicDetail/GetBasicDetailForParitalViewByRequestId', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: param
     })
+        .then(response => response.text())
+        .then(html => {
+            document.getElementById("BasicDetailViewPurpose_Data").innerHTML = html;
+            $("#BasicDetailViewPurpose").modal('show');
+        })
+        .catch(error => {
+            alert("Error: " + error.message);
+        });
 }
 function printDiv() {
 

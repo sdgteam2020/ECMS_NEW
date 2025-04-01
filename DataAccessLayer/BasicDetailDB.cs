@@ -619,7 +619,7 @@ namespace DataAccessLayer
                                 issaut.Name IssuingAuthorityName,trnadd.State,trnadd.District,trnadd.PS,trnadd.PO,trnadd.Tehsil,trnadd.Village,trnadd.PinCode,
                                 IdenMark1,AadhaarNo,Height,bld.BloodGroup,regi.Abbreviation RegimentalName,Muni.UnitName,
                                 ranks.RankAbbreviation RankName,arm.Abbreviation ArmedName,
-                                icardreq.RequestId,icardreq.UpdatedOn RequestDate,appl.Name ApplyFor,uplod.PhotoImagePath,
+                                icardreq.RequestId,icardreq.UpdatedOn RequestDate,appl.Name ApplyFor,uplod.PhotoImagePath,uplod.SignatureImagePath,
                                 CASE
                                 WHEN LEFT(bas.ServiceNo, 2) LIKE '[A-Za-z][A-Za-z]' THEN
                                 CONCAT(SUBSTRING(bas.ServiceNo, 1, 2), ' ', SUBSTRING(bas.ServiceNo, 3, LEN(bas.ServiceNo) - 2))

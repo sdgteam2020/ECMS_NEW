@@ -42,10 +42,10 @@
                 <form action="" id="SaveFaultyCardRequest" method="post" name="SaveFaultyCardRequest">
                     <div class="row">
                         <span class=" d-none" id="spnTrnFaultyCardId">0</span>
-                        <span class=" d-none" id="spnvpFaultyRequestId">0</span>
+                        <span class=" d-none" id="spnFaultyCardRequestId">0</span>
                         <div class="col-sm-7">
                             <div class="card p-1">
-                                <div id="partialContainerBD" class="p-1">
+                                <div id="partialContainerBD">
                                 </div>
                             </div>
                         </div>
@@ -54,16 +54,10 @@
                                 <div class="form-group row mb-0">
                                     <label class="col-form-label col-sm-5 labelprofile">Request Id</label>
                                     <div class="col-sm-7">
-                                        <label id="lblvpFaultyRequestId" class="col-form-label"></label>
+                                        <label id="lblFaultyRequestId" class="col-form-label"></label>
                                     </div>
                                 </div>
-                                <div class="form-group row mb-0">
-                                    <label class="col-form-label col-sm-5 labelprofile">Request Date</label>
-                                    <div class="col-sm-7">
-                                        <label id="lblvpFaultyRequestDate" class="col-form-label"></label>
-                                    </div>
-                                </div>
-                                <div class="form-group row mb-0">
+                                <div class="form-group row mb-2">
                                     <label class="col-form-label col-sm-5 labelprofile">Stage<i class="fas fa-asterisk mand1"></i></label>
                                     <div class="col-sm-7">
                                         <select class="form-select" style="width: 100%;" aria-hidden="true" id="ddlStage" name="ddlStage" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="Stage is required." data-val-regex-pattern="^[\d]+$">
@@ -72,19 +66,19 @@
                                         <span class="text-danger field-validation-valid" data-valmsg-for="ddlStage" data-valmsg-replace="true"></span>
                                     </div>
                                 </div>
-                                <div class="form-group row mb-0">
-                                    <label class="col-form-label col-sm-5 labelprofile">Select Reason<i class="fas fa-asterisk mand1"></i></label>
+                                <div class="form-group row mb-2">
+                                    <label class="col-form-label col-sm-5 labelprofile">Select Faulty Fd/ Reason<i class="fas fa-asterisk mand1"></i></label>
                                     <div class="col-sm-7">
-                                        <select class="form-control select2 select2-accessible text-uppercase" multiple style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddlFaultyRemark" id="ddlFaultyRemark" data-val="true" data-val-regex="This special chars and space not allowed for security reasons." data-val-required="Reason is required." data-val-regex-pattern="^[\w\,; ]*$">
+                                        <select class="form-control select2 select2-accessible text-uppercase" multiple style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddlFaultyRemark" id="ddlFaultyRemark" data-val="true" data-val-regex="This special chars and space not allowed for security reasons." data-val-required="Faulty Reason is required.">
                                         </select>
                                         <span class="text-danger field-validation-valid" data-valmsg-for="ddlFaultyRemark" data-valmsg-replace="true"></span>
                                     </div>
                                 </div>
-                                <div class="form-group row mb-0">
-                                    <label class="col-form-label col-sm-5 labelprofile">Other Remark</label>
+                                <div class="form-group row mb-2">
+                                    <label class="col-form-label col-sm-5 labelprofile">Explain Fault<i class="fas fa-asterisk mand1"></i></label>
                                     <div class="col-sm-7">
-                                        <textarea class="form-control1" style="height:auto!important;" name="txtOtherRemark" id="txtOtherRemark" rows="3" maxlength="100" data-val-maxlength="Maximum length of Message is 100 character." data-val-maxlength-max="100" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-regex-pattern="^[\w\&\.\-\; ]*$"></textarea>
-                                        <span class="text-danger field-validation-valid" data-valmsg-for="txtOtherRemark" data-valmsg-replace="true"></span>
+                                        <textarea class="form-control1" style="height:auto!important;" name="txtFromRemark" id="txtFromRemark" rows="3" maxlength="100" data-val-maxlength="Maximum length of Message is 100 character." data-val-maxlength-max="100" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-regex-pattern="^[\w\&\.\-\; ]*$"></textarea>
+                                        <span class="text-danger field-validation-valid" data-valmsg-for="txtFromRemark" data-valmsg-replace="true"></span>
                                     </div>
                                 </div>
                                 <div class="col-sm-12 text-center mb-4">
