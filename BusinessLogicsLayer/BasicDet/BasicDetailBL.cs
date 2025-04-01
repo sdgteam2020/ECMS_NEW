@@ -137,20 +137,20 @@ namespace BusinessLogicsLayer.BasicDet
             var data = await _iBasicDetailDB.ApplicationHistory(TrackingId);
             return data;
         }
-        public async Task<DTOUploadChipAndSerialResponse?> CardDistributionCSVUpload(List<DTOCardDistributionRequest> request)
+        public async Task<DTOUploadChipAndSerialResponse?> CardPrinitngCSVUpload(List<DTOCardPriningRequest> request)
         {
-            var data = await _iBasicDetailDB.CardDistributionCSVUpload(request);
+            var data = await _iBasicDetailDB.CardPrintingCSVUpload(request);
             return data;
         }
 
-        public async Task<List<DTOCardDistributionRequest>> ValidateCardDistribution(List<DTOCardDistributionRequest> request)
+        public async Task<List<DTOCardPriningRequest>> ValidateCardPrinitng(List<DTOCardPriningRequest> request)
         {
             var data = new DTOCardDistributionCheckRes();
             try
             {
                 data.Result = DTOCardDistributionUploadEnum.Rejected;
                 //Get properties to check (excluding Remarks)
-                var properties = typeof(DTOCardDistributionRequest).GetProperties()
+                var properties = typeof(DTOCardPriningRequest).GetProperties()
                                                   .Where(p => p.Name != "Remarks" && p.Name != "IsValid" && p.Name != "Status")
                                                   .ToList();
 
@@ -189,9 +189,15 @@ namespace BusinessLogicsLayer.BasicDet
                         {
                             remarks.Add($"{prop.Name} is blank");
                         }
-
-                        // Duplicate Check
-                        else if (duplicateValuesDict[prop.Name].Contains(value))
+                        else if (prop.Name == "ArmyNo" && value.Length > 10)
+                        {
+                            remarks.Add($"{prop.Name} is out of range");
+                        }
+                        else if ((prop.Name == "CardSerialNo" || prop.Name == "ChipNo") && value.Length > 30)
+                        {
+                            remarks.Add($"{prop.Name} is out of range");
+                        }
+                        else if(duplicateValuesDict[prop.Name].Contains(value))
                         {
                             remarks.Add($"{prop.Name} is duplicate");
                         }
@@ -209,16 +215,12 @@ namespace BusinessLogicsLayer.BasicDet
                 var validRecords = request.Where(r => r.IsValid).ToList();
                 var invalidRecords = request.Where(r => !r.IsValid).ToList();
                 if (validRecords?.Count() > 0) {
-                    var checkDbRecords = await _iBasicDetailDB.CardDistributionCSVCheck(validRecords);
+                    var checkDbRecords = await _iBasicDetailDB.CardPrintingCSVCheck(validRecords);
                     validRecords = checkDbRecords.Where(r => r.IsValid).ToList();
                     var invalidDbRecord = checkDbRecords.Where(r => !r.IsValid).ToList();
-                    if (invalidDbRecord?.Count > 0)
-                    {
-                        invalidRecords = data.InValidRecords.Concat(invalidDbRecord).ToList();
-                    }
+                    invalidRecords = invalidRecords.Concat(invalidDbRecord).ToList();
                 }
-
-                request = invalidRecords.Concat(validRecords).OrderBy(r => r.RequestId).ToList();
+                request = invalidRecords.Concat(validRecords).OrderBy(r => int.Parse(r.RequestId)).ToList();
             }
             catch(Exception ee)
             {

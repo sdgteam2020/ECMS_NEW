@@ -10,8 +10,8 @@ namespace DataTransferObject.Response
     public class DTOCardDistributionCheckRes
     {
         public DTOCardDistributionUploadEnum Result { get; set; }
-        public List<DTOCardDistributionRequest> ValidRecords { get; set; }
-        public List<DTOCardDistributionRequest> InValidRecords { get; set; }
+        public List<DTOCardPriningRequest> ValidRecords { get; set; }
+        public List<DTOCardPriningRequest> InValidRecords { get; set; }
     }
 
     public enum DTOCardDistributionUploadEnum

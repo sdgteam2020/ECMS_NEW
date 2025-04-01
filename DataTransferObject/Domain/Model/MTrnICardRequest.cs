@@ -43,5 +43,9 @@ namespace DataTransferObject.Domain.Model
         [StringLength(30)]
         [Column(TypeName = "varchar(30)")]
         public string? ChipNo { get; set; }
+
+        [DataType(DataType.Date)]
+        [Column(TypeName = "datetime")]
+        public DateTime? CardPrintedOn { get; set; } = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
     }
 }

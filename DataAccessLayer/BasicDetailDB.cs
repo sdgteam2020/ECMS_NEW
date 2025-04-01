@@ -1984,8 +1984,9 @@ namespace DataAccessLayer
             }
         }
 
-        public async Task<List<DTOCardDistributionRequest>> CardDistributionCSVCheck(List<DTOCardDistributionRequest> requests)
+        public async Task<List<DTOCardPriningRequest>> CardPrintingCSVCheck(List<DTOCardPriningRequest> requests)
         {
+            byte StepId = 5;
             requests = (from record in requests
                         join dbrecord in _context.TrnICardRequest on record.RequestId equals dbrecord.RequestId.ToString() into dbRecordJoin
                         from matchRecord in dbRecordJoin.DefaultIfEmpty()
@@ -1993,23 +1994,29 @@ namespace DataAccessLayer
                         from cardNoExists in cardNoJoin.DefaultIfEmpty()
                         join chipNoMatch in _context.TrnICardRequest on record.ChipNo equals chipNoMatch.ChipNo into chipNoJoin
                         from chipNoExists in chipNoJoin.DefaultIfEmpty()
-                        select new DTOCardDistributionRequest
+                        join stepStatus in _context.TrnStepCounter on new { RequestId = (matchRecord == null ? 0 : matchRecord.RequestId) , StepId } equals new { stepStatus.RequestId, stepStatus.StepId } into stepStatusJoin
+                        from stepStatus in stepStatusJoin.DefaultIfEmpty()
+                        join armyNoCheck in _context.BasicDetails on new { BasicDetailId = (matchRecord == null ? 0 : matchRecord.BasicDetailId),ServiceNo = record.ArmyNo } equals new { armyNoCheck.BasicDetailId, armyNoCheck.ServiceNo } into basicDetailJoin
+                        from armyNoCheck in basicDetailJoin.DefaultIfEmpty()
+                        select new DTOCardPriningRequest
                         {
                             RequestId = record.RequestId,
                             ArmyNo = record.ArmyNo,
                             ChipNo = record.ChipNo,
                             CardSerialNo = record.CardSerialNo,
-                            IsValid = matchRecord != null && cardNoExists == null && chipNoExists == null,
-                            Status = matchRecord != null && cardNoExists == null && chipNoExists == null ? "Valid" : "InValid",
+                            IsValid = matchRecord != null && cardNoExists == null && chipNoExists == null && stepStatus != null && armyNoCheck != null,
+                            Status = matchRecord != null && cardNoExists == null && chipNoExists == null && stepStatus != null ? "Valid" : "InValid",
                             Remarks = (matchRecord == null ? "RequestId not exists; " : "") +
                                           (cardNoExists != null ? "CardSerialNo already exists; " : "") +
-                                          (chipNoExists != null ? "ChipNo already exists; " : "")
+                                          (chipNoExists != null ? "ChipNo already exists; " : "") +
+                                          (matchRecord != null && stepStatus == null ? "RequestId is not available for printing; " : "") +
+                                          (matchRecord != null && armyNoCheck == null ? "Army no. is invalid for this card application; " : "") 
                         }
                        ).ToList();
             return requests;
         }
 
-        public async Task<DTOUploadChipAndSerialResponse> CardDistributionCSVUpload(List<DTOCardDistributionRequest> requests)
+        public async Task<DTOUploadChipAndSerialResponse> CardPrintingCSVUpload(List<DTOCardPriningRequest> requests)
         {
             DTOUploadChipAndSerialResponse response = new DTOUploadChipAndSerialResponse();
             try
@@ -2018,11 +2025,11 @@ namespace DataAccessLayer
                 {
                     foreach (var batchRecords in requests.Chunk(10000))
                     {
-                        DataTable cardDistribution = DataTableHelper.ToDataTable(batchRecords, "Remarks", "IsValid");
+                        DataTable cardDistribution = DataTableHelper.ToDataTable(batchRecords, "Remarks", "IsValid","Status");
                         var parameters = new DynamicParameters();
-                        parameters.Add("@data", cardDistribution.AsTableValuedParameter("UT_BulkInsert"));
+                        parameters.Add("@data", cardDistribution.AsTableValuedParameter("UT_CardPriningCSV"));
 
-                        response = (await connection.QueryAsync<DTOUploadChipAndSerialResponse>("Insert_BulkInsert",
+                        response = (await connection.QueryAsync<DTOUploadChipAndSerialResponse>("CardPriningCSVImport",
                                                                                                 parameters,
                                                                                                 commandType: CommandType.StoredProcedure
                                    )).FirstOrDefault();

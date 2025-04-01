@@ -11,6 +11,7 @@ using BusinessLogicsLayer.BdeCat;
 using BusinessLogicsLayer.BdeCate;
 using BusinessLogicsLayer.BloodGroup;
 using BusinessLogicsLayer.Corps;
+using BusinessLogicsLayer.CSVImports;
 using BusinessLogicsLayer.Div;
 using BusinessLogicsLayer.EncryptBySql;
 using BusinessLogicsLayer.Formation;
@@ -181,6 +182,7 @@ namespace BusinessLogicsLayer
             services.AddTransient<IICardHoldBL, ICardHoldBL>();
 
             services.AddTransient<IIAMSettingBL,IAMSettingBL>();
+            services.AddTransient<ICSVImportBL,CSVImportBL>();
 
 
 

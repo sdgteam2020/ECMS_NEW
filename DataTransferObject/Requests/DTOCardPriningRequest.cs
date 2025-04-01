@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace DataTransferObject.Requests
 {
-    public class DTOCardDistributionRequest
+    public class DTOCardPriningRequest
     {
         public string RequestId { get; set; }
         public string ArmyNo { get; set; }

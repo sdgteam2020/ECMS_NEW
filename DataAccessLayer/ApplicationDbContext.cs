@@ -49,6 +49,7 @@ namespace DataAccessLayer
         public DbSet<MFmnBranches> MFmnBranches { get; set; } = null!;
         public DbSet<MSubDte> MSubDte { get; set; } = null!;
         public DbSet<MBloodGroup> MBloodGroup { get; set; } = null!;
+        public DbSet<CSVImport> CSVImports { get; set; } = null!;
 
 
 

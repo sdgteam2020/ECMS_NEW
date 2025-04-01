@@ -116,15 +116,33 @@ function validateCsvFileOnChange() {
                             confirmButtonText: "Yes, Save"
                         }).then(async (proceed) => {
                             if (proceed.isConfirmed) {
-                                // Call backend to save valid records
-                                const saveResponse = await fetch('/Csv/SaveValidRecords', {
-                                    method: 'POST'
+                                $.ajax({
+                                    url: '/BasicDetail/ICardPrintValidRecordsUpload',
+                                    type: 'GET',
+                                    dataType: 'json',
+                                    success: function (data) {
+                                        debugger;
+                                        if (data.IsSuccess == "true") {
+                                            Swal.fire({
+                                                title: "Success!",
+                                                text: data.Message,
+                                                icon: "success",
+                                                confirmButtonText: "OK"
+                                            });
+                                        }
+                                        else {
+                                            Swal.fire({
+                                                title: "OOPs!",
+                                                text: data.Message,
+                                                icon: "error",
+                                                confirmButtonText: "Ok"
+                                            });
+                                        }
+                                    },
+                                    error: function (xhr, status, error) {
+                                        console.error('Error while uploading valid records:', error);
+                                    }
                                 });
-                                if (saveResponse.ok) {
-                                    Swal.fire("Success", "Valid records updated in database.", "success");
-                                } else {
-                                    Swal.fire("Error", "Failed to save records.", "error");
-                                }
                             }
                         });
                     }

@@ -41,6 +41,8 @@ using Microsoft.SqlServer.Management.Dmf;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using Microsoft.SqlServer.Management.XEvent;
 using System.IO;
+using BusinessLogicsLayer.CSVImports;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace Web.Controllers
 {
@@ -70,6 +72,7 @@ namespace Web.Controllers
         private readonly IMasterBL _IMasterBL;
         private readonly ITrnLoginLogBL _iTrnLoginLogBL;
         private readonly IICardHoldBL _iICardHoldBL;
+        private readonly ICSVImportBL _iCSVImportBL;
         private readonly IConfiguration _configuration;
         public DateTime dateTimenow;
         private readonly IWebHostEnvironment _environment;
@@ -79,7 +82,7 @@ namespace Web.Controllers
                               DataProtectionPurposeStrings dataProtectionPurposeStrings, ILogger<BasicDetailController> logger, IStepCounterBL iStepCounterBL, 
                               ITrnFwnBL iTrnFwnBL, ITrnICardRequestBL iTrnICardRequestBL, IDomainMapBL iDomainMapBL
             ,IBasicUploadBL basicUploadBL, IBasicAddressBL basicAddressBL, IBasicinfoBL basicinfoBL, IRankBL rankBL, INotificationBL notificationBL, IMasterBL masterBL
-           , ITrnLoginLogBL iTrnLoginLogBL, IICardHoldBL iICardHoldBL, IWebHostEnvironment environment)
+           , ITrnLoginLogBL iTrnLoginLogBL, IICardHoldBL iICardHoldBL, IWebHostEnvironment environment, ICSVImportBL iCSVImportBL)
         {
             _configuration = configuration;
             this.basicDetailBL = basicDetailBL;
@@ -108,6 +111,7 @@ namespace Web.Controllers
             _iTrnLoginLogBL = iTrnLoginLogBL;
             _iICardHoldBL = iICardHoldBL;
             _environment = environment;
+            _iCSVImportBL = iCSVImportBL;
         }
 
         #region Index/ApprovalForIO/View/InaccurateData/InaccurateDataView/RequestType
@@ -2420,13 +2424,13 @@ namespace Web.Controllers
         public IActionResult ICardDistibutionSampleCsv()
         {
             // Sample data with headers and a couple of rows
-            var sampleData = new List<DTOCardDistributionRequest>();
+            var sampleData = new List<DTOCardPriningRequest>();
 
             // Create a MemoryStream to hold the CSV data
             var memoryStream = new MemoryStream();
             var writer = new StreamWriter(memoryStream);
             var csv = new CsvWriter(writer, CultureInfo.InvariantCulture);
-            csv.Context.RegisterClassMap(new CsvClassMap<DTOCardDistributionRequest>(true));
+            csv.Context.RegisterClassMap(new CsvClassMap<DTOCardPriningRequest>(true));
             // Write records to CSV
             csv.WriteRecords(sampleData);
             writer.Flush();
@@ -2447,14 +2451,14 @@ namespace Web.Controllers
             string fileName = $"{DateTime.Now.ToString("yyyyMMddHHmmss")}.csv";
             try
             {
-                var records = new List<DTOCardDistributionRequest>();
+                var records = new List<DTOCardPriningRequest>();
                 using (var reader = new StreamReader(model.CSVFile.OpenReadStream()))
                 using (var csv = new CsvReader(reader, new CsvConfiguration(CultureInfo.InvariantCulture)))
                 {
-                    csv.Context.RegisterClassMap(new CsvClassMap<DTOCardDistributionRequest>(true));
+                    csv.Context.RegisterClassMap(new CsvClassMap<DTOCardPriningRequest>(true));
                     try
                     {
-                        records = csv.GetRecords<DTOCardDistributionRequest>().ToList();
+                        records = csv.GetRecords<DTOCardPriningRequest>().ToList();
                     }
                     catch (Exception ee)
                     {
@@ -2477,14 +2481,14 @@ namespace Web.Controllers
                 }
                 #endregion Upload User File
 
-                var validateResult = await basicDetailBL.ValidateCardDistribution(records);
+                var validateResult = await basicDetailBL.ValidateCardPrinitng(records);
 
                 #region Upload File With Remarks
                 var memoryStream = new MemoryStream();
                 using (var writer = new StreamWriter(memoryStream, Encoding.UTF8, leaveOpen: true))
                 using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
                 {
-                    csv.Context.RegisterClassMap(new CsvClassMap<DTOCardDistributionRequest>(false));
+                    csv.Context.RegisterClassMap(new CsvClassMap<DTOCardPriningRequest>(false));
                     try
                     {
                         csv.WriteRecords(validateResult);
@@ -2508,9 +2512,22 @@ namespace Web.Controllers
                     }
                 }
                 #endregion Upload User File
+                #region Insert record
+                var cSVImport = new CSVImport()
+                {
+                    FileName = fileName,
+                    TotalRecords = validateResult != null ? validateResult.Count() : 0,
+                    ValidRecords = validateResult != null ? validateResult.Where(v => v.IsValid).Count() : 0,
+                    DBUpdated = false,
+                    ImportedBy = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier)),
+                    ImportedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"))
+                };
 
-                //SessionHeplers.SetObject(HttpContext.Session, "ValidRecordsCardUpload" , validateResult.ValidRecords);
-                //SessionHeplers.SetObject(HttpContext.Session, "InValidRecordsCardUpload", validateResult.InValidRecords);
+                var csvImportInsert = await _iCSVImportBL.AddWithReturn(cSVImport);
+                SessionHeplers.SetObject(HttpContext.Session, "CsvImportId", csvImportInsert.Id);
+                #endregion Insert record
+
+                SessionHeplers.SetObject(HttpContext.Session, "ValidRecordsCardUpload", validateResult.Where(v => v.IsValid).ToList());
                 memoryStream.Position = 0;
                 return File(memoryStream, "text/csv", model.CSVFile.FileName );
             }
@@ -2527,12 +2544,24 @@ namespace Web.Controllers
             DTOUploadChipAndSerialResponse response = new DTOUploadChipAndSerialResponse();
             try
             {
-                var records = SessionHeplers.GetObject<List<DTOCardDistributionRequest>>(HttpContext.Session, "ValidRecordsCardUpload");
-                response = await basicDetailBL.CardDistributionCSVUpload(records);
+                var records = SessionHeplers.GetObject<List<DTOCardPriningRequest>>(HttpContext.Session, "ValidRecordsCardUpload");
+                if (records?.Count() > 0)
+                {
+                    response = await basicDetailBL.CardPrinitngCSVUpload(records);
+                }
+                else
+                {
+                    response.Message = "There are no valid records!";
+                }
+                var csvImportId = SessionHeplers.GetObject<int>(HttpContext.Session, "CsvImportId");
+                var getCsvDetById = await _iCSVImportBL.Get(csvImportId);
+                getCsvDetById.DBUpdated = true;
+                await _iCSVImportBL.Update(getCsvDetById);
             }
-            catch(Exception ee)
+            catch (Exception ee)
             {
-                response.Message = ee.Message;
+                _logger.LogError(1001, ee, "BasicDetail->ICardPrintValidRecordsUpload");
+                response.Message = "Internal Server Error!";
             }
             return Json(response);
         }
