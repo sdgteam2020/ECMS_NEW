@@ -2009,7 +2009,7 @@ namespace DataAccessLayer
                             Remarks = (matchRecord == null ? "RequestId not exists; " : "") +
                                           (cardNoExists != null ? "CardSerialNo already exists; " : "") +
                                           (chipNoExists != null ? "ChipNo already exists; " : "") +
-                                          (matchRecord != null && stepStatus == null ? "RequestId is not available for printing; " : "") +
+                                          (matchRecord != null && stepStatus == null ? "ard application is not available for printing; " : "") +
                                           (matchRecord != null && armyNoCheck == null ? "Army no. is invalid for this card application; " : "") 
                         }
                        ).ToList();

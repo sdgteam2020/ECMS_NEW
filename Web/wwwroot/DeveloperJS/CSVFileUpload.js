@@ -92,7 +92,7 @@ function validateCsvFileOnChange() {
 
                 Swal.fire({
                     title: "Validation Complete!",
-                    text: "Click below to download validated CSV.",
+                    text: "Please download validated CSV with remarks.",
                     icon: "success",
                     showCancelButton: true,
                     confirmButtonText: "Download"
@@ -109,11 +109,12 @@ function validateCsvFileOnChange() {
 
                         // Show next SweetAlert to proceed
                         Swal.fire({
-                            title: "Proceed to Save Valid Records?",
-                            text: "Only valid records will be stored in the database.",
+                            title: "Save Valid Records",
+                            text: "Do you wants to save valid records?",
                             icon: "question",
                             showCancelButton: true,
-                            confirmButtonText: "Yes, Save"
+                            cancelButtonText: "No",
+                            confirmButtonText: "Yes"
                         }).then(async (proceed) => {
                             if (proceed.isConfirmed) {
                                 $.ajax({
@@ -121,8 +122,7 @@ function validateCsvFileOnChange() {
                                     type: 'GET',
                                     dataType: 'json',
                                     success: function (data) {
-                                        debugger;
-                                        if (data.IsSuccess == "true") {
+                                        if (data.Result) {
                                             Swal.fire({
                                                 title: "Success!",
                                                 text: data.Message,
