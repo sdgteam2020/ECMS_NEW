@@ -2083,12 +2083,13 @@ namespace Web.Controllers
         }
         public async Task<IActionResult> SaveFaultyCardRequest(DTOFaultyCardRequest dTO)
         {
+            DTOFaultyCardSaveResponse dTOFaulty = new DTOFaultyCardSaveResponse();
             try
             {
                 dTO.IsActive = true;
                 dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier)); ;
                 dTO.UpdatedOn = DateTime.Now;
-                DTOFaultyCardSaveResponse dTOFaulty = new DTOFaultyCardSaveResponse();
+                
                 if (ModelState.IsValid)
                 {
                     if (dTO.TrnFaultyCardId > 0)
@@ -2105,12 +2106,26 @@ namespace Web.Controllers
                 }
                 else
                 {
-
-                    return Json(ModelState.Select(x => x.Value?.Errors).Where(y => y?.Count > 0).ToList());
+                    //return Json(ModelState.Select(x => x.Value?.Errors).Where(y => y?.Count > 0).ToList());
+                    var errors = ModelState.Where(x => x.Value?.Errors?.Count > 0)
+                    .SelectMany(x => x.Value!.Errors)
+                    .Select(e => e.ErrorMessage)
+                    .ToList();
+                    if (errors.Any())
+                    {
+                        dTOFaulty.Message = string.Join("; ", errors); // Concatenate all error messages
+                    }
+                    dTOFaulty.Result = false;
+                    return Json(dTOFaulty);
                 }
 
             }
-            catch (Exception ex) { return Json(KeyConstants.InternalServerError); }
+            catch (Exception ex) 
+            {
+                dTOFaulty.Result = false;
+                dTOFaulty.Message = ex.Message;
+                return Json(dTOFaulty); 
+            }
         }
 
         #endregion

@@ -45,8 +45,8 @@ namespace DataAccessLayer
                     }
                     else
                     {
-                        saveResponse.Result = true;
-                        saveResponse.Message = "Invalid Id";
+                        saveResponse.Result = false;
+                        saveResponse.Message = "Something went wrong or Invalid Input!";
                     }
                     return saveResponse;
                 }
@@ -75,7 +75,7 @@ namespace DataAccessLayer
 
                     transaction_.Commit();
                     saveResponse.Result = true;
-                    saveResponse.Message = "Data Add";
+                    saveResponse.Message = "Data has been saved";
                     return saveResponse;
                 }
             }

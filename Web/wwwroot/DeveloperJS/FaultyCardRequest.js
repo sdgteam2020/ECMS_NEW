@@ -86,55 +86,12 @@ function Proceed() {
             }, //get the search string
             success: function (result) {
 
-
-                if (result == DataSave) {
-
-
-                    toastr.success('Data has been saved');
-
-                    alert("Posting Out successfully");
-                    location.href = '/Posting/GetAllPostingOut';
-
+                if (result.Result == true) {
+                    toastr.success(result.Message);
+                    location.href = '/BasicDetail/FaultyCard';
                 }
-                else if (result == DataUpdate) {
-
-
-                    toastr.success('Data has been Updated');
-                    alert("Posting Out successfully");
-                    location.href = '/Posting/GetAllPostingOut';
-
-                }
-                else if (result == DataExists) {
-
-                    toastr.error(' Exits!');
-                }
-                else if (result == IncorrectData) {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Oops...',
-                        text: 'Something went wrong or Invalid Input!',
-
-                    })
-
-                }
-                else if (result == InternalServerError) {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Oops...',
-                        text: 'Something went wrong or Invalid Entry!',
-
-                    })
-
-                } else {
-                    if (result.length > 0) {
-                        for (var i = 0; i < result.length; i++) {
-                            toastr.error(result[i][0].ErrorMessage)
-                        }
-
-
-                    }
-
-
+                else {
+                    toastr.error(result.Message);
                 }
             }
         });
