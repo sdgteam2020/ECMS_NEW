@@ -2420,29 +2420,10 @@ namespace Web.Controllers
                 return Json(KeyConstants.InternalServerError);
             }
         }
-
-        public IActionResult ICardDistibutionSampleCsv()
-        {
-            // Sample data with headers and a couple of rows
-            var sampleData = new List<DTOCardPriningRequest>();
-
-            // Create a MemoryStream to hold the CSV data
-            var memoryStream = new MemoryStream();
-            var writer = new StreamWriter(memoryStream);
-            var csv = new CsvWriter(writer, CultureInfo.InvariantCulture);
-            csv.Context.RegisterClassMap(new CsvClassMap<DTOCardPriningRequest>(true));
-            // Write records to CSV
-            csv.WriteRecords(sampleData);
-            writer.Flush();
-            memoryStream.Position = 0; // Reset stream position to beginning
-
-            // Return the CSV file for download
-            return File(memoryStream, "text/csv", "CardDistribution.csv");
-        }
-
-
+        #endregion Card Distribution
+        #region ICard Printing
         [HttpPost]
-        public async Task<IActionResult> ICardPrintUploadCsv(DTOCSVFileRequest model )
+        public async Task<IActionResult> ICardPrintUploadCsv(DTOCSVFileRequest model)
         {
             if (model.CSVFile == null || model.CSVFile.Length == 0)
             {
@@ -2529,7 +2510,7 @@ namespace Web.Controllers
 
                 SessionHeplers.SetObject(HttpContext.Session, "ValidRecordsCardUpload", validateResult.Where(v => v.IsValid).ToList());
                 memoryStream.Position = 0;
-                return File(memoryStream, "text/csv", model.CSVFile.FileName );
+                return File(memoryStream, "text/csv", model.CSVFile.FileName);
             }
             catch (Exception ex)
             {
@@ -2566,12 +2547,6 @@ namespace Web.Controllers
             return Json(response);
         }
 
-        [HttpGet]
-        public async Task<IActionResult> ICardPrintDownloadCSV()
-        {
-            return Json("");
-        }
-
-        #endregion Card Distribution
+        #endregion ICard Printing
     }
 }

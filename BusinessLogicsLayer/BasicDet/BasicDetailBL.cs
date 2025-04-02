@@ -1,4 +1,5 @@
-﻿using BusinessLogicsLayer.Master;
+﻿using Azure;
+using BusinessLogicsLayer.Master;
 using DataAccessLayer;
 using DataAccessLayer.BaseInterfaces;
 using DataTransferObject.Domain.Master;
@@ -8,6 +9,7 @@ using DataTransferObject.Response;
 using DataTransferObject.ViewModels;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Hosting.Internal;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,6 +22,7 @@ namespace BusinessLogicsLayer.BasicDet
     public class BasicDetailBL : GenericRepositoryDL<BasicDetail>, IBasicDetailBL
     {
         private readonly IBasicDetailDB _iBasicDetailDB;
+        private readonly ILogger<BasicDetailBL> _logger;
         public async Task<DTOUploadChipAndSerialResponse> UploadChipAndSerial(List<DTOUploadChipAndSerialRequest> Data)
         {
             return await _iBasicDetailDB.UploadChipAndSerial(Data);
@@ -28,9 +31,10 @@ namespace BusinessLogicsLayer.BasicDet
         {
             return await _iBasicDetailDB.GetCSVString(Data);
         }
-        public BasicDetailBL(ApplicationDbContext context,IBasicDetailDB BasicDetail) : base(context)
+        public BasicDetailBL(ApplicationDbContext context,IBasicDetailDB BasicDetail, ILogger<BasicDetailBL> logger) : base(context)
         {
-                _iBasicDetailDB = BasicDetail;
+            _iBasicDetailDB = BasicDetail;
+            _logger = logger;
         }
         public async Task<List<DTOTopArmyNoFromICardRequestResponse>?> GetTopArmyNoFromICardRequest(string ArmyNo)
         {
@@ -145,10 +149,8 @@ namespace BusinessLogicsLayer.BasicDet
 
         public async Task<List<DTOCardPriningRequest>> ValidateCardPrinitng(List<DTOCardPriningRequest> request)
         {
-            var data = new DTOCardDistributionCheckRes();
             try
             {
-                data.Result = DTOCardDistributionUploadEnum.Rejected;
                 //Get properties to check (excluding Remarks)
                 var properties = typeof(DTOCardPriningRequest).GetProperties()
                                                   .Where(p => p.Name != "Remarks" && p.Name != "IsValid" && p.Name != "Status")
@@ -224,7 +226,7 @@ namespace BusinessLogicsLayer.BasicDet
             }
             catch(Exception ee)
             {
-                data.Result = DTOCardDistributionUploadEnum.InternalError;
+                _logger.LogError(1001, ee, "BasicDetailBL->ValidateCardPrinitng");
             }
             return request;
         }
