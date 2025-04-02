@@ -7,6 +7,29 @@
         margin-left: 10%;
         margin-right: 10%;
     }
+    .faulty {
+        background-color: #044C92;
+        text-align: center;
+        padding: 0.5rem !important;
+        margin-right: 0.25rem !important;
+        border: hidden;
+        font-weight: 400 !important;
+        color: #fff !important;
+        width: 170px;
+        height: 60px;
+    }
+
+    .modal.left .modal-dialog, .modal.right .modal-dialog {
+        position: fixed;
+        margin: auto;
+        width: 700px;
+        height: 100%;
+        text-align: left;
+        -webkit-transform: translate3d(0%, 0, 0);
+        -ms-transform: translate3d(0%, 0, 0);
+        -o-transform: translate3d(0%, 0, 0);
+        transform: translate3d(0%, 0, 0);
+    }
 </style>
 <header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
     <div class="containerMain">
@@ -28,6 +51,7 @@
     <div class="card mb-3">
         <div class="card-header">
             <span id="SpnTxnId" class="d-none">0</span>
+            <span id="spnUnitAbbreviation" class="d-none">@ViewBag.UnitAbbreviation</span>
             <div class="row">
                 <div class="col-xl-12 text-left">
                     <h3>
@@ -46,6 +70,12 @@
                         <div class="col-sm-7">
                             <div class="card p-1">
                                 <div id="partialContainerBD">
+                                </div>
+                                <div class="text-center">
+                                    <button class="faulty" id="btnCardPreview" name="btnCardPreview">I-Card Preview</button>
+                                    <button class="faulty" id="btnXMLDownload" name="btnXMLDownload">XML Download</button>
+                                    <button class="faulty" id="btnApplMoveHistory" name="btnApplMoveHistory">I-Card Move History</button>
+                                    <button class="faulty" id="btnFaultyCardsList" name="btnFaultyCardsList">View Faulty Cards</button>
                                 </div>
                             </div>
                         </div>
@@ -94,3 +124,4 @@
 </div>
 <script asp-src-include="~/developerjs/FaultyCardRequest.js"></script>
 <script asp-src-include="~/developerjs/mtables.js"></script>
+<script asp-src-include="~/developerjs/ICardPrint.js"></script>

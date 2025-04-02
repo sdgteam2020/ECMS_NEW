@@ -566,7 +566,7 @@ namespace DataAccessLayer
                     query = @"Select TOP 5 basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath Image,req.RequestId 
                             from BasicDetails basi
                             inner join TrnUpload trnu on basi.BasicDetailId=trnu.BasicDetailId 
-                            inner join TrnICardRequest req on req.BasicDetailId=basi.BasicDetailId and req.StatusId=1
+                            inner join TrnICardRequest req on req.BasicDetailId=basi.BasicDetailId and req.StatusId=1 and req.FlagForFaulty=0
                             inner join TrnStepCounter stepcount on req.RequestId=stepcount.RequestId and stepcount.StepId=6
                             inner join TrnDomainMapping tdm on tdm.Id=req.TrnDomainMappingId
                             where ServiceNo like @ServiceNo ";
@@ -576,7 +576,7 @@ namespace DataAccessLayer
                     query = @"Select TOP 5 basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath Image,req.RequestId 
                             from BasicDetails basi
                             inner join TrnUpload trnu on basi.BasicDetailId=trnu.BasicDetailId 
-                            inner join TrnICardRequest req on req.BasicDetailId=basi.BasicDetailId and req.StatusId=1
+                            inner join TrnICardRequest req on req.BasicDetailId=basi.BasicDetailId and req.StatusId=1 and req.FlagForFaulty=0
                             inner join TrnStepCounter stepcount on req.RequestId=stepcount.RequestId and stepcount.StepId=6
                             inner join TrnDomainMapping tdm on tdm.Id=req.TrnDomainMappingId and tdm.UnitId=@MapUnitId
                             where ServiceNo like @ServiceNo ";

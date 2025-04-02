@@ -82,8 +82,7 @@ function BindData() {
                 filter: true,
                 stateSave: true,
                 order: [[0, 'desc']], // Default sorting on the first column
-        ajax: async function (data, callback, settings) {
-                    debugger;   
+                ajax: async function (data, callback, settings) {
                     let requestData = {
                         draw: data.draw,
                         start: data.start,

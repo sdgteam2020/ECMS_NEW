@@ -1,7 +1,23 @@
 ﻿$(function () {
     GetDashboardCount();
 
-    $("#btnMisprintedCard").on("click", function () {
+    //$("#btnMisprintedCard").on("click", function () {
+    //    location.href = '/BasicDetail/FaultyCard';
+    //});
+    //$("#btnAdd").on("click", function () {
+    //    $("#armynosearchAllName").html("");
+    //    $("#txtarmynosearchAll").val("");
+    //    $("#armynosearchAllpic").attr("src", "");
+    //    $("#unitoffrsModal").modal("show");
+    //    $("#armynosearchTypeId").val(FaultyCardRequest);
+    //});
+    document.getElementById("btnMisprintedCard").addEventListener("click", function (event) {
+        event.preventDefault(); // Prevent anchor default behavior
+        location.href = '/BasicDetail/FaultyCard';
+    });
+
+    document.getElementById("btnAdd").addEventListener("click", function (event) {
+        event.stopPropagation(); // Prevent click from bubbling to the <a>
         $("#armynosearchAllName").html("");
         $("#txtarmynosearchAll").val("");
         $("#armynosearchAllpic").attr("src", "");

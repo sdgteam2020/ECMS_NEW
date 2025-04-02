@@ -2041,9 +2041,26 @@ namespace Web.Controllers
         #endregion
 
         #region FaultyCard
-
-        public ViewResult FaultyCardRequest()
+        public ViewResult FaultyCard()
         {
+            return View();
+        }
+        public async Task<ViewResult> FaultyCardRequestAsync()
+        {
+            DtoSession? dtoSession = new DtoSession();
+            if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
+            {
+                dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+
+            }
+            string UnitAbbreviation = "";
+            if(dtoSession != null)
+            {
+                DTOMapUnitResponse dTOMapUnitResponse = await mapUnitBL.GetALLByUnitMapId(dtoSession.UnitId);
+                UnitAbbreviation = dTOMapUnitResponse.UnitAbbreviation;
+            }
+            ViewBag.UnitAbbreviation = UnitAbbreviation;
+
             return View();
         }
         [HttpPost]
@@ -2071,18 +2088,19 @@ namespace Web.Controllers
                 dTO.IsActive = true;
                 dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier)); ;
                 dTO.UpdatedOn = DateTime.Now;
-
+                DTOFaultyCardSaveResponse dTOFaulty = new DTOFaultyCardSaveResponse();
                 if (ModelState.IsValid)
                 {
                     if (dTO.TrnFaultyCardId > 0)
                     {
-                        await faultyCardBL.SaveFaultyCard(dTO);
-                        return Json(KeyConstants.Update);
+                        dTOFaulty = await faultyCardBL.SaveFaultyCard(dTO);
+                        return Json(dTOFaulty);
                     }
                     else
                     {
-                        await faultyCardBL.SaveFaultyCard(dTO);
-                        return Json(KeyConstants.Save);
+                        dTOFaulty = await faultyCardBL.SaveFaultyCard(dTO);
+                        return Json(dTOFaulty);
+                       
                     }
                 }
                 else

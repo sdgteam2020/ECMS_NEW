@@ -17,6 +17,19 @@
         $("#btnSubmit").on("click", function () {
             Proceed();
         });
+        $("#btnCardPreview").on("click", function () {
+            GetICardPrintPreviewByRequestId(sessionStorage.getItem("RequestIdForFaulty"));
+        });
+        $("#btnXMLDownload").on("click", function () {
+            DownloadPdf(sessionStorage.getItem("RequestIdForFaulty"));
+        });
+        $("#btnApplMoveHistory").on("click", function () {
+            GetRequestHistory(sessionStorage.getItem("RequestIdForFaulty"));
+            $("#exampleModal").modal('show');
+        });
+        $("#btnFaultyCardsList").on("click", function () {
+            location.href = '/BasicDetail/FaultyCard';
+        });
     });
 function Proceed() {
     //ResetErrorMessage();
@@ -27,16 +40,21 @@ function Proceed() {
 
     let formId = '#SaveFaultyCardRequest';
     $.validator.unobtrusive.parse($(formId));
-
+    
     if ($(formId).valid()) {
+        let ApplicantName = $("#lblpvFName").html() + $("#lblpvLName").html();
+        let ApplicantNameWithRank = $("#lblpvRank").html() + " " + ApplicantName.trim();
+        let Remarks = $("#txtFromRemark").val();
+        let UserName = $(".dropdown-user-details-name").html();
+        let UnitAbbreviation = $("#spnUnitAbbreviation").html();
         Swal.fire({
-            title: 'Are you sure?',
-            text: "",
+            title: 'Pl confirm the fwg faulty card:-',
+            html: "Applicant Name - " + ApplicantNameWithRank + "<br/>Request Id - " + sessionStorage.getItem("RequestIdForFaulty") + "<br/>Remarks - " + Remarks + "<br/>User Details - " + UserName +"," +UnitAbbreviation +"" ,
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
             cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, Save it!'
+            confirmButtonText: 'Confirm'
         }).then((result) => {
             if (result.isConfirmed) {
                 Save();
@@ -64,7 +82,7 @@ function Proceed() {
                 "RequestId": $("#spnFaultyCardRequestId").html(),
                 "RemarksIds": $("#ddlFaultyRemark").val().length > 0 ? FaultyRemarkIds : null,
                 "FromRemark": $("#txtFromRemark").val(),
-                "FaultyStageId": $("#ddlStage").val(),
+                "CategoryId": $("#ddlStage").val(),
             }, //get the search string
             success: function (result) {
 
@@ -138,4 +156,35 @@ function Proceed() {
           .catch(error => {
             alert("Error: " + error.message);
         });
-    }
+}
+function DownloadPdf(RequestId) {
+    var userdata = {
+        "RequestId": RequestId,
+    };
+    $.ajax({
+        url: '/Log/CreatePdf',
+        contentType: 'application/x-www-form-urlencoded',
+        data: userdata,
+        type: 'POST',
+
+        success: function (response) {
+            if (response != "null" && response != null) {
+                if (response == InternalServerError) {
+                    Swal.fire({
+                        text: errormsg
+                    });
+                } else {
+
+                    var url = "https://" + window.location.host + '/DigitallysignaturePdf/' + response;
+                    window.open(url, '_blank');
+
+                }
+            }
+        },
+        error: function (result) {
+            Swal.fire({
+                text: errormsg002
+            });
+        }
+    });
+}

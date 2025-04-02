@@ -187,6 +187,7 @@ namespace BusinessLogicsLayer
             services.AddTransient<ICategoryBL, CategoryBL>();
 
             services.AddTransient<IFaultyCardBL, FaultyCardBL>();
+            services.AddTransient<IFaultyCardDB, FaultyCardDB>();
 
 
 

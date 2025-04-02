@@ -31,37 +31,60 @@ namespace DataAccessLayer
         public async Task<DTOFaultyCardSaveResponse> SaveFaultyCard(DTOFaultyCardRequest dTO)
         {
             DTOFaultyCardSaveResponse saveResponse = new DTOFaultyCardSaveResponse();
-            if (dTO.TrnFaultyCardId > 0)
+            using var transaction_ = _context.Database.BeginTransaction();
+            try
             {
-                TrnFaultyCard? trnFaultyCard = await _context.TrnFaultyCard.FindAsync(dTO.TrnFaultyCardId);
-                if (trnFaultyCard != null)
+                if (dTO.TrnFaultyCardId > 0)
                 {
-                    trnFaultyCard.ToRemark = dTO.ToRemark;
-                    saveResponse.Result = true;
-                    saveResponse.Message = "Data Saved";
+                    TrnFaultyCard? trnFaultyCard = await _context.TrnFaultyCard.FindAsync(dTO.TrnFaultyCardId);
+                    if (trnFaultyCard != null)
+                    {
+                        trnFaultyCard.ToRemark = dTO.ToRemark;
+                        saveResponse.Result = true;
+                        saveResponse.Message = "Data Updated";
+                    }
+                    else
+                    {
+                        saveResponse.Result = true;
+                        saveResponse.Message = "Invalid Id";
+                    }
+                    return saveResponse;
                 }
                 else
                 {
+                    MTrnICardRequest? mTrnICardRequest = await _context.TrnICardRequest.FindAsync(dTO.RequestId);
+                    if(mTrnICardRequest != null)
+                    {
+                        mTrnICardRequest.FlagForFaulty = true;
+                        _context.TrnICardRequest.Update(mTrnICardRequest);
+                        await _context.SaveChangesAsync();
+                    }
+
+                    TrnFaultyCard trnFaultyCard = new TrnFaultyCard();
+                    trnFaultyCard.TrnFaultyCardId = 0;
+                    trnFaultyCard.RemarksIds = dTO.RemarksIds;
+                    trnFaultyCard.FromRemark = dTO.FromRemark;
+                    trnFaultyCard.ToRemark = dTO.ToRemark ?? null;
+                    trnFaultyCard.CategoryId = dTO.CategoryId;
+                    trnFaultyCard.RequestId = dTO.RequestId;
+                    trnFaultyCard.IsActive = dTO.IsActive;
+                    trnFaultyCard.Updatedby = dTO.Updatedby;
+                    trnFaultyCard.UpdatedOn = dTO.UpdatedOn;
+                    await _context.TrnFaultyCard.AddAsync(trnFaultyCard);
+                    await _context.SaveChangesAsync();
+
+                    transaction_.Commit();
                     saveResponse.Result = true;
-                    saveResponse.Message = "Invalid Id";
+                    saveResponse.Message = "Data Add";
+                    return saveResponse;
                 }
-                return saveResponse;
             }
-            else
+            catch (Exception ex)
             {
-                TrnFaultyCard trnFaultyCard = new TrnFaultyCard();
-                trnFaultyCard.TrnFaultyCardId = 0;
-                trnFaultyCard.RemarksIds = dTO.RemarksIds;
-                trnFaultyCard.FromRemark =dTO.FromRemark;
-                trnFaultyCard.ToRemark = dTO.ToRemark ?? null;
-                trnFaultyCard.CategoryId = dTO.CategoryId;
-                trnFaultyCard.RequestId = dTO.RequestId;
-                trnFaultyCard.IsActive = dTO.IsActive;
-                trnFaultyCard.Updatedby = dTO.Updatedby;
-                trnFaultyCard.UpdatedOn = dTO.UpdatedOn;
-                await _context.TrnFaultyCard.AddAsync(trnFaultyCard);
-                saveResponse.Result = true;
-                saveResponse.Message = "Data Updated";
+                transaction_.Rollback();
+                _logger.LogError(1006, ex, "Exception");
+                saveResponse.Result = false;
+                saveResponse.Message = ex.Message;
                 return saveResponse;
             }
         }
