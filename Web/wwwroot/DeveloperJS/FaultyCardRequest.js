@@ -107,7 +107,7 @@ function Proceed() {
                     const myModal = new bootstrap.Modal(document.getElementById("ConfirmationDialog"));
                     const btnSearchNew = document.getElementById("btnSearchNew");
                     const btnBackDashboard = document.getElementById("btnBackDashboard");
-                    let Message = "Record successfully inserted in DB with ID - " + result.Id + " & TS - " + result.CurrentTime +".";
+                    let Message = "Record successfully inserted in DB with ID - " + result.Id + " & TS - " + DateFormateddMMyyyyhhmmss(result.CurrentTime) +".";
                     document.getElementById("ConfirmationDialog_Data").innerHTML= Message;
                     btnSearchNew.textContent = "Search New";
                     btnBackDashboard.textContent = "Back to Dashboard";

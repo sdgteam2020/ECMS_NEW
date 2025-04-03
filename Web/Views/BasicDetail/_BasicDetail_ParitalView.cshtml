@@ -54,7 +54,7 @@
                     <div class="form-group row mb-0">
                         <label class="col-form-label labelprofile col-5 text-left">AADHAAR No</label>
                         <div class="col-7">
-                            <label class="form-control-plaintext text-uppercase" id="lblpvadhar">@Model.AadhaarNo</label>
+                            <label class="form-control-plaintext text-uppercase" id="lblpvadhar">@(new string('X', 8) + Model.AadhaarNo.Substring(Model.AadhaarNo.Length - 4))</label>
                         </div>
                     </div>
                     <div class="form-group row mb-0">

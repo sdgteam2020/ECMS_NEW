@@ -50,26 +50,32 @@ function BindData() {
                         listItem += "<td class='align-middle'><span id='spnRequestId'>" + response[i].RequestId + "</span></td>";
                         listItem += "<td class='align-middle'><span id='spnModifiedServiceNo'>" + response[i].ModifiedServiceNo + "</span></td>";
                         let fullName = `${response[i].RankName || ""} ${response[i].FName || ""} ${response[i].LName || ""}`.trim();
-                        listItem += "<td class='align-middle'><span id='spnUnitAbbreviation'>" + fullName + "</span></td>";
+                        listItem += "<td class='align-middle'><span id='spnfullName'>" + fullName + "</span></td>";
                         listItem += "<td class='align-middle'><span id='spnUnitAbbreviation'>" + response[i].UnitAbbreviation + "</span></td>";
-                        listItem += "<td class='align-middle'><span id='spnUpdatedOn'>" + response[i].UpdatedOn + "</span></td>";
+                        listItem += "<td class='align-middle'><span id='spnUpdatedOn'>" + DateFormateddMMyyyyhhmmss(response[i].UpdatedOn) + "</span></td>";
+
                         if (response[i].RemarksIds != null) {
                             var remarksArray = response[i].RemarksNameList.split('#');
                             if (remarksArray != null) {
-                                listItem += "<td class='align-middle'><ul>";
+                                listItem += "<td class='align-middle'><button type='button' class='cls-remarks btn btn-icon btn-round btn-warning mr-1'><i class='fa fa-eye'></i><span id='spnRemarks' class='d-none'><ul>";
                                 for (var j = 0; j < remarksArray.length; j++) {
                                     listItem += "<li>" + remarksArray[j] + "</li>";
                                 }
-                                listItem += "</ul></td>";
+                                listItem += "</ul></span></button></td>";
                             }
                         }
                         else {
                             listItem += "<td class='align-middle'></td>";
                         }
-                        listItem += "<td class='align-middle'><span id='spnName'>" + response[i].FromRemark + "</span></td>";
-                        listItem += "<td class='align-middle'><span id='spnName'>" + response[i].ToRemark + "</span></td>";
+                        let sentence = response[i].FromRemark;
+                        let words = sentence.split(" ");
 
-                        listItem += "<td class='align-middle'><span id='btnedit'><button type='button' class='cls-btnedit btn btn-icon btn-round btn-primary mr-1'><i class='fas fa-edit'></i></button></span><button type='button' class='cls-btnDelete btn-icon btn-round btn-danger mr-1'><i class='fas fa-trash-alt'></i></button></td>";
+                        let truncatedSentence = words.length > 4 ? words.slice(0, 4).join(" ") + "..." : sentence;
+
+                        listItem += "<td class='align-middle'><span class='cls-FromRemark'>" + truncatedSentence + "<span id='spanFromRemark' class='d-none'>" + sentence + "</span></span></td>";
+                        listItem += `<td class='align-middle'><span id='spnName'> ${response[i].ToRemark ?? "NA"}</span></td>`;
+
+                        listItem += "<td class='align-middle'><span id='btnedit'><button type='button' class='cls-btnedit btn btn-icon btn-round btn-primary mr-1'><i class='fas fa-edit'></i></button></span></td>";
 
 
                         /*    listItem += "<td class='nowrap'><button type='button' class='cls-btnSend btn btn-outline-success mr-1'>Send To Verification</button></td>";*/
@@ -162,7 +168,18 @@ function BindData() {
                             }
                         });
                     });
-
+                    $("body").on("click", ".cls-remarks", function () {
+                        let Label = "Request Id :- " + $(this).closest("tr").find("#spnRequestId").html();
+                        $("#MessageDialogLabel").html(Label);
+                        $("#MessageDialogBody").html($(this).closest("tr").find("#spnRemarks").html());
+                        $("#MessageDialog").modal('show');
+                    });
+                    $("body").on("click", ".cls-FromRemark", function () {
+                        let Label = "Request Id :- " + $(this).closest("tr").find("#spnRequestId").html();
+                        $("#MessageDialogLabel").html(Label);
+                        $("#MessageDialogBody").html($(this).closest("tr").find("#spanFromRemark").html());
+                        $("#MessageDialog").modal('show');
+                    });
 
                 }
             }
@@ -185,3 +202,9 @@ function BindData() {
     });
 
 }
+//function showFullSentence(fullSentence) {
+//    //document.getElementById("fullSentence").textContent = fullSentence;
+//    //document.getElementById("wordModal").style.display = "block";
+//    $("#MessageDialogBody").html(fullSentence);
+//    $("#MessageDialog").modal('show');
+//}
