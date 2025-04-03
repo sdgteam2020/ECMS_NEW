@@ -87,8 +87,6 @@ namespace DataAccessLayer
                 _logger.LogError(1001, ex, "AccountDB->FindRoleByName");
                 return null;
             }
-
-
         }
         public async Task<List<DTORegisterListRequest>?> DomainApproveList()
         {

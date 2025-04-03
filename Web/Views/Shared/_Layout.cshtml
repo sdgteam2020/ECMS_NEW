@@ -1274,3 +1274,30 @@
         </div><!-- modal-content -->
     </div><!-- modal-dialog -->
 </div>
+
+<!-- Confirmation Dialog  -->
+<div class="modal fade" id="ConfirmationDialog" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-sm modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Confirmation</h5>
+                @* <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> *@
+            </div>
+            <div class="modal-body">
+                <div class="card">
+                    <div class="row">
+                        <div class="col-sm-12 mb-3">
+                            <div id="ConfirmationDialog_Data">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btnSearchNew" class="btn btn-secondary" data-bs-dismiss="modal"></button>
+                <button type="button" id="btnBackDashboard" class="btn btn-secondary" data-bs-dismiss="modal"></button>
+                <button type="button" id="btnClosed" class="btn btn-secondary d-none d-print-none" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -11,6 +11,8 @@ namespace DataAccessLayer.BaseInterfaces
 {
     public interface IFaultyCardDB : IGenericRepositoryDL<TrnFaultyCard>
     {
+        public Task<bool> FindRequestId(int RequestId);
+        public Task<List<DTOFaultyCardListResponse>?> GetAllFaulty(bool Claim, int MapUnitId);
         public Task<DTOFaultyCardSaveResponse> SaveFaultyCard(DTOFaultyCardRequest dTO);
     }
 }

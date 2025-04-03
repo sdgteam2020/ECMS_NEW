@@ -1,10 +1,12 @@
-﻿using BusinessLogicsLayer.FaultyStage;
+﻿using Azure.Core;
+using BusinessLogicsLayer.FaultyStage;
 using DataAccessLayer;
 using DataAccessLayer.BaseInterfaces;
 using DataTransferObject.Domain.Master;
 using DataTransferObject.Domain.Model;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
+using Microsoft.SqlServer.Management.Sdk.Sfc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,6 +21,14 @@ namespace BusinessLogicsLayer.FaultyCard
         public FaultyCardBL(ApplicationDbContext context, IFaultyCardDB iFaultyCardDB) : base(context)
         {
             _iFaultyCardDB=iFaultyCardDB;
+        }
+        public async Task<bool> FindRequestId(int RequestId)
+        {
+            return await _iFaultyCardDB.FindRequestId(RequestId);
+        }
+        public async Task<List<DTOFaultyCardListResponse>?> GetAllFaulty(bool Claim, int MapUnitId)
+        {
+            return await _iFaultyCardDB.GetAllFaulty(Claim, MapUnitId);
         }
         public async Task<DTOFaultyCardSaveResponse> SaveFaultyCard(DTOFaultyCardRequest dTO) 
         {

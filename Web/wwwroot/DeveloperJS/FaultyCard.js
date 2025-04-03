@@ -1,5 +1,5 @@
 ﻿$(function () {
-    //BindData()
+    BindData()
     $("#btnAdd").on("click",function () {
         $("#armynosearchAllName").html("");
         $("#txtarmynosearchAll").val("");
@@ -16,7 +16,7 @@ function BindData() {
 
     };
     $.ajax({
-        url: '/Master/GetAllAppointment',
+        url: '/BasicDetail/GetAllFaulty',
         contentType: 'application/x-www-form-urlencoded',
         data: userdata,
         type: 'POST',
@@ -45,13 +45,30 @@ function BindData() {
                     $("#tbldata").DataTable().destroy();
                     for (var i = 0; i < response.length; i++) {
                         listItem += "<tr>";
-                        listItem += "<td class='d-none'><span id='spnMapptId'>" + response[i].ApptId + "</span></td>";
+                        listItem += "<td class='d-none'><span id='spnTrnFaultyCardId'>" + response[i].TrnFaultyCardId + "</span></td>";
                         listItem += "<td class='align-middle'>" + (i + 1) + "</td>";
-                        listItem += "<td class='align-middle'><span id='appointmentName'>" + response[i].AppointmentName + "</span></td>";
-                        if (response[i].AppointmentAbbreviation != null)
-                            listItem += "<td class='align-middle'><span id='appointmentAbbreviation'>" + response[i].AppointmentAbbreviation + "</span></td>";
-                        else
-                            listItem += "<td class='align-middle'><span id='appointmentAbbreviation'></span></td>";
+                        listItem += "<td class='align-middle'><span id='spnRequestId'>" + response[i].RequestId + "</span></td>";
+                        listItem += "<td class='align-middle'><span id='spnModifiedServiceNo'>" + response[i].ModifiedServiceNo + "</span></td>";
+                        let fullName = `${response[i].RankName || ""} ${response[i].FName || ""} ${response[i].LName || ""}`.trim();
+                        listItem += "<td class='align-middle'><span id='spnUnitAbbreviation'>" + fullName + "</span></td>";
+                        listItem += "<td class='align-middle'><span id='spnUnitAbbreviation'>" + response[i].UnitAbbreviation + "</span></td>";
+                        listItem += "<td class='align-middle'><span id='spnUpdatedOn'>" + response[i].UpdatedOn + "</span></td>";
+                        if (response[i].RemarksIds != null) {
+                            var remarksArray = response[i].RemarksNameList.split('#');
+                            if (remarksArray != null) {
+                                listItem += "<td class='align-middle'><ul>";
+                                for (var j = 0; j < remarksArray.length; j++) {
+                                    listItem += "<li>" + remarksArray[j] + "</li>";
+                                }
+                                listItem += "</ul></td>";
+                            }
+                        }
+                        else {
+                            listItem += "<td class='align-middle'></td>";
+                        }
+                        listItem += "<td class='align-middle'><span id='spnName'>" + response[i].FromRemark + "</span></td>";
+                        listItem += "<td class='align-middle'><span id='spnName'>" + response[i].ToRemark + "</span></td>";
+
                         listItem += "<td class='align-middle'><span id='btnedit'><button type='button' class='cls-btnedit btn btn-icon btn-round btn-primary mr-1'><i class='fas fa-edit'></i></button></span><button type='button' class='cls-btnDelete btn-icon btn-round btn-danger mr-1'><i class='fas fa-trash-alt'></i></button></td>";
 
 

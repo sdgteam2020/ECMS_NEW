@@ -14,23 +14,40 @@
                 closeOnSelect: false // Only needed for multi-select
             });
         }
-        $("#btnSubmit").on("click", function () {
-            Proceed();
-        });
-        $("#btnCardPreview").on("click", function () {
-            GetICardPrintPreviewByRequestId(sessionStorage.getItem("RequestIdForFaulty"));
-        });
-        $("#btnXMLDownload").on("click", function () {
-            DownloadPdf(sessionStorage.getItem("RequestIdForFaulty"));
-        });
-        $("#btnApplMoveHistory").on("click", function () {
-            GetRequestHistory(sessionStorage.getItem("RequestIdForFaulty"));
-            $("#exampleModal").modal('show');
-        });
-        $("#btnFaultyCardsList").on("click", function () {
-            location.href = '/BasicDetail/FaultyCard';
-        });
+
+    $("#btnSubmit").on("click", function () {
+        Proceed();
     });
+
+    $("#btnCardPreview").on("click", function () {
+        GetICardPrintPreviewByRequestId(sessionStorage.getItem("RequestIdForFaulty"));
+    });
+
+    $("#btnXMLDownload").on("click", function () {
+        DownloadPdf(sessionStorage.getItem("RequestIdForFaulty"));
+    });
+
+    $("#btnApplMoveHistory").on("click", function () {
+        GetRequestHistory(sessionStorage.getItem("RequestIdForFaulty"));
+        $("#exampleModal").modal('show');
+    });
+
+    $("#btnFaultyCardsList").on("click", function () {
+        location.href = '/BasicDetail/FaultyCard';
+    });
+
+    $("#btnSearchNew").on("click", function () {
+        $("#armynosearchAllName").html("");
+        $("#txtarmynosearchAll").val("");
+        $("#armynosearchAllpic").attr("src", "");
+        $("#unitoffrsModal").modal("show");
+        $("#armynosearchTypeId").val(FaultyCardRequest);
+    });
+
+    $("#btnBackDashboard").on("click", function () {
+        location.href = '/BasicDetail/FaultyCard';
+    });
+});
 function Proceed() {
     //ResetErrorMessage();
     if ($("#ddlFaultyRemark").val().length == 0 ) {
@@ -87,8 +104,18 @@ function Proceed() {
             success: function (result) {
 
                 if (result.Result == true) {
-                    toastr.success(result.Message);
-                    location.href = '/BasicDetail/FaultyCard';
+                    const myModal = new bootstrap.Modal(document.getElementById("ConfirmationDialog"));
+                    const btnSearchNew = document.getElementById("btnSearchNew");
+                    const btnBackDashboard = document.getElementById("btnBackDashboard");
+                    let Message = "Record successfully inserted in DB with ID - " + result.Id + " & TS - " + result.CurrentTime +".";
+                    document.getElementById("ConfirmationDialog_Data").innerHTML= Message;
+                    btnSearchNew.textContent = "Search New";
+                    btnBackDashboard.textContent = "Back to Dashboard";
+                    Reset();
+                    myModal.show();
+                    //myModal.hide();
+                    //toastr.success(result.Message);
+                    //location.href = '/BasicDetail/FaultyCard';
                 }
                 else {
                     toastr.error(result.Message);
@@ -144,4 +171,15 @@ function DownloadPdf(RequestId) {
             });
         }
     });
+}
+function Reset() {
+    //$("#spnTrnFaultyCardId").html("0");
+    //$("#spnFaultyCardRequestId").html("0");
+    //$("#lblFaultyRequestId").html("");
+    //$('#ddlFaultyRemark').val(null).trigger('change');
+    //$("#txtFromRemark").val("");
+    //$("#ddlStage").val("");
+
+    //sessionStorage.setItem("ArmyNo", null);
+    //sessionStorage.setItem("RequestIdForFaulty", null);
 }

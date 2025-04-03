@@ -38,6 +38,8 @@ using BusinessLogicsLayer.FaultyCard;
 using DataTransferObject.Constants;
 using static iText.StyledXmlParser.Jsoup.Select.Evaluator;
 using NuGet.Protocol.Plugins;
+using BusinessLogicsLayer;
+using Humanizer;
 
 namespace Web.Controllers
 {
@@ -2045,6 +2047,31 @@ namespace Web.Controllers
         {
             return View();
         }
+        public async Task<IActionResult> GetAllFaulty()
+        {
+            int AspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+            int MapUnitId = 0;
+            DtoSession? dtoSession = new DtoSession();
+            if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
+            {
+                dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+
+            }
+            MapUnitId = dtoSession != null ? dtoSession.UnitId : 0;
+
+
+            var user = await userManager.FindByIdAsync(AspNetUsersId.ToString());
+            bool Claim = false;
+
+            // UserManager service GetClaimsAsync method gets all the current claims of the user
+            var UserClaims = await userManager.GetClaimsAsync(user);
+            if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "ICard Export Data"))
+            {
+                Claim = true;
+            }
+
+            return Json(await faultyCardBL.GetAllFaulty(Claim, MapUnitId));
+        }
         public async Task<ViewResult> FaultyCardRequestAsync()
         {
             DtoSession? dtoSession = new DtoSession();
@@ -2099,9 +2126,18 @@ namespace Web.Controllers
                     }
                     else
                     {
-                        dTOFaulty = await faultyCardBL.SaveFaultyCard(dTO);
-                        return Json(dTOFaulty);
-                       
+                        bool checkduplicate = await faultyCardBL.FindRequestId(dTO.RequestId);
+                        if (checkduplicate)
+                        {
+                            dTOFaulty.Result = false;
+                            dTOFaulty.Message = "The faulty request already exists!";
+                            return Json(dTOFaulty);
+                        }
+                        else
+                        {
+                            dTOFaulty = await faultyCardBL.SaveFaultyCard(dTO);
+                            return Json(dTOFaulty);
+                        }
                     }
                 }
                 else
