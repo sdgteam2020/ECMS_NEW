@@ -2043,8 +2043,19 @@ namespace Web.Controllers
         #endregion
 
         #region FaultyCard
-        public ViewResult FaultyCard()
+        public async Task<ViewResult> FaultyCardAsync()
         {
+            int AspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var user = await userManager.FindByIdAsync(AspNetUsersId.ToString());
+            bool Claim = false;
+
+            // UserManager service GetClaimsAsync method gets all the current claims of the user
+            var UserClaims = await userManager.GetClaimsAsync(user);
+            if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "ICard Export Data"))
+            {
+                Claim = true;
+            }
+            ViewBag.Claim = Claim;
             return View();
         }
         public async Task<IActionResult> GetAllFaulty()
@@ -2074,19 +2085,33 @@ namespace Web.Controllers
         }
         public async Task<ViewResult> FaultyCardRequestAsync()
         {
+            bool Claim = false;
+            string UnitAbbreviation = "";
+
+            int AspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var user = await userManager.FindByIdAsync(AspNetUsersId.ToString());
+
+            // UserManager service GetClaimsAsync method gets all the current claims of the user
+            var UserClaims = await userManager.GetClaimsAsync(user);
+            if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "ICard Export Data"))
+            {
+                Claim = true;
+            }
+
             DtoSession? dtoSession = new DtoSession();
             if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
             {
                 dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
 
             }
-            string UnitAbbreviation = "";
+
             if(dtoSession != null)
             {
                 DTOMapUnitResponse dTOMapUnitResponse = await mapUnitBL.GetALLByUnitMapId(dtoSession.UnitId);
                 UnitAbbreviation = dTOMapUnitResponse.UnitAbbreviation;
             }
             ViewBag.UnitAbbreviation = UnitAbbreviation;
+            ViewBag.Claim = Claim;
 
             return View();
         }
@@ -2108,6 +2133,62 @@ namespace Web.Controllers
             }
             return PartialView("_BasicDetail_ParitalView", data);
         }
+        [Authorize(Policy = "ICardExportDataPolicy")]
+        public async Task<IActionResult> SaveFaultyCard(DTOFaultyCardRequest dTO)
+        {
+            DTOFaultyCardSaveResponse dTOFaulty = new DTOFaultyCardSaveResponse();
+            try
+            {
+                dTO.IsActive = true;
+                dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier)); ;
+                dTO.UpdatedOn = DateTime.Now;
+
+                if (ModelState.IsValid)
+                {
+                    if (dTO.TrnFaultyCardId > 0)
+                    {
+                        dTOFaulty = await faultyCardBL.SaveFaultyCard(dTO);
+                        return Json(dTOFaulty);
+                    }
+                    else
+                    {
+                        bool checkduplicate = await faultyCardBL.FindRequestId(dTO.RequestId);
+                        if (checkduplicate)
+                        {
+                            dTOFaulty.Result = false;
+                            dTOFaulty.Message = "The faulty request already exists!";
+                            return Json(dTOFaulty);
+                        }
+                        else
+                        {
+                            dTOFaulty = await faultyCardBL.SaveFaultyCard(dTO);
+                            return Json(dTOFaulty);
+                        }
+                    }
+                }
+                else
+                {
+                    //return Json(ModelState.Select(x => x.Value?.Errors).Where(y => y?.Count > 0).ToList());
+                    var errors = ModelState.Where(x => x.Value?.Errors?.Count > 0)
+                    .SelectMany(x => x.Value!.Errors)
+                    .Select(e => e.ErrorMessage)
+                    .ToList();
+                    if (errors.Any())
+                    {
+                        dTOFaulty.Message = string.Join("; ", errors); // Concatenate all error messages
+                    }
+                    dTOFaulty.Result = false;
+                    return Json(dTOFaulty);
+                }
+
+            }
+            catch (Exception ex)
+            {
+                dTOFaulty.Result = false;
+                dTOFaulty.Message = ex.Message;
+                return Json(dTOFaulty);
+            }
+        }
         public async Task<IActionResult> SaveFaultyCardRequest(DTOFaultyCardRequest dTO)
         {
             DTOFaultyCardSaveResponse dTOFaulty = new DTOFaultyCardSaveResponse();
@@ -2121,7 +2202,8 @@ namespace Web.Controllers
                 {
                     if (dTO.TrnFaultyCardId > 0)
                     {
-                        dTOFaulty = await faultyCardBL.SaveFaultyCard(dTO);
+                        dTOFaulty.Result = false;
+                        dTOFaulty.Message = "This action is not allowed for you. Please check.";
                         return Json(dTOFaulty);
                     }
                     else

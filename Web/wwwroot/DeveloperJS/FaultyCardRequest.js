@@ -1,6 +1,6 @@
 ﻿$(function () {
 
-        if (sessionStorage.getItem("ArmyNo") != null && sessionStorage.getItem("RequestIdForFaulty") != null) {
+    if (sessionStorage.getItem("ArmyNo") != null && sessionStorage.getItem("RequestIdForFaulty") != null) {
             $("#spnArmyNo").html(sessionStorage.getItem("ArmyNo"));
             GetBasicDetailForParitalViewByRequestId(sessionStorage.getItem("RequestIdForFaulty"));
             $("#spnFaultyCardRequestId").html(sessionStorage.getItem("RequestIdForFaulty"));
@@ -13,9 +13,30 @@
                 allowClear: true,
                 closeOnSelect: false // Only needed for multi-select
             });
-        }
+    }
+
+    if ($("#spnClaimValue").html().toLowerCase() === "true") {
+        $("#btnSubmit").addClass("d-none");
+        $("#btnAccept").removeClass("d-none");
+        $("#btnReject").removeClass("d-none");
+
+        $(".Stage").removeClass("d-none");
+    } else {
+        $("#btnSubmit").removeClass("d-none");
+        $("#btnAccept").addClass("d-none");
+        $("#btnReject").addClass("d-none");
+
+        $(".Stage").addClass("d-none");
+    }
+
 
     $("#btnSubmit").on("click", function () {
+        Proceed();
+    });
+    $("#btnAccept").on("click", function () {
+        Proceed();
+    });
+    $("#btnReject").on("click", function () {
         Proceed();
     });
 

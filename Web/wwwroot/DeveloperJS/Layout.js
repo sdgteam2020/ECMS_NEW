@@ -17,7 +17,7 @@ toastr.options = {
     "hideMethod": "fadeOut"
 }
 
-$(document).ready(function () {
+$(function () {
    
     $("img").on('error', function () {
        

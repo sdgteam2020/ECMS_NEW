@@ -38,8 +38,7 @@
                 <div class="col-auto">
                     <h1 class="page-header-title">
                         <div class="page-header-icon"> <i class="fa fa-bars"></i></div>
-                        <a href="/Home/Index" class="mr-2">Home</a> > <a href="/Home/InitiateRequest" class="mr-2">Request</a> > <a href="/Home/Request" class="mr-2">Initiate Request</a> > Faulty Card Request
-
+                        <a href="/Home/Index" class="mr-2">Home</a> >  <a href="/Home/Dashboard" class="mr-2">Dashboard</a> > Faulty Card Request
                     </h1>
                 </div>
             </div>
@@ -67,6 +66,7 @@
                     <div class="row">
                         <span class=" d-none" id="spnTrnFaultyCardId">0</span>
                         <span class=" d-none" id="spnFaultyCardRequestId">0</span>
+                        <span class=" d-none" id="spnClaimValue">@ViewBag.Claim</span>
                         <div class="col-sm-7">
                             <div class="card p-1">
                                 <div id="partialContainerBD">
@@ -87,7 +87,7 @@
                                         <label id="lblFaultyRequestId" class="col-form-label"></label>
                                     </div>
                                 </div>
-                                <div class="form-group row mb-2">
+                                <div class="form-group row mb-2 Stage d-none">
                                     <label class="col-form-label col-sm-5 labelprofile">Stage<i class="fas fa-asterisk mand1"></i></label>
                                     <div class="col-sm-7">
                                         <select class="form-select" style="width: 100%;" aria-hidden="true" id="ddlStage" name="ddlStage" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="Stage is required." data-val-regex-pattern="^[\d]+$">
@@ -112,6 +112,8 @@
                                     </div>
                                 </div>
                                 <div class="col-sm-12 text-center mb-4">
+                                    <input type="button" class="btn btn-primary" id="btnReject" value="Reject" />
+                                    <input type="button" class="btn btn-primary" id="btnAccept" value="Accept and Fwd to Export" />
                                     <input type="button" class="btn btn-primary" id="btnSubmit" value="Submit" />
                                 </div>
                             </div>

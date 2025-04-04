@@ -74,11 +74,11 @@ function BindData() {
 
                         listItem += "<td class='align-middle'><span class='cls-FromRemark'>" + truncatedSentence + "<span id='spanFromRemark' class='d-none'>" + sentence + "</span></span></td>";
                         listItem += `<td class='align-middle'><span id='spnName'> ${response[i].ToRemark ?? "NA"}</span></td>`;
+                        if ($("#spnClaimValue").html().toLowerCase() === "true") {
+                            listItem += "<td class='align-middle'><span id='btnedit'><button type='button' class='cls-btnedit btn btn-icon btn-round btn-primary mr-1'><i class='fas fa-edit'></i></button></span></td>";
+                        }
+                        
 
-                        listItem += "<td class='align-middle'><span id='btnedit'><button type='button' class='cls-btnedit btn btn-icon btn-round btn-primary mr-1'><i class='fas fa-edit'></i></button></span></td>";
-
-
-                        /*    listItem += "<td class='nowrap'><button type='button' class='cls-btnSend btn btn-outline-success mr-1'>Send To Verification</button></td>";*/
                         listItem += "</tr>";
                     }
 
@@ -150,24 +150,6 @@ function BindData() {
                     });
 
 
-                    $("body").on("click", ".cls-btnDelete", function () {
-
-                        Swal.fire({
-                            title: 'Are you sure?',
-                            text: "You want to Delete ",
-                            icon: 'warning',
-                            showCancelButton: true,
-                            confirmButtonColor: '#072697',
-                            cancelButtonColor: '#d33',
-                            confirmButtonText: 'Yes, Delete It!'
-                        }).then((result) => {
-                            if (result.value) {
-
-                                Delete($(this).closest("tr").find("#spnMapptId").html());
-
-                            }
-                        });
-                    });
                     $("body").on("click", ".cls-remarks", function () {
                         let Label = "Request Id :- " + $(this).closest("tr").find("#spnRequestId").html();
                         $("#MessageDialogLabel").html(Label);
