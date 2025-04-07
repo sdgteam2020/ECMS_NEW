@@ -10,9 +10,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace DataAccessLayer
 {
@@ -110,67 +112,148 @@ namespace DataAccessLayer
         }
         public async Task<DTOFaultyCardSaveResponse> SaveFaultyCard(DTOFaultyCardRequest dTO)
         {
+            #region Old Code
+            //DTOFaultyCardSaveResponse saveResponse = new DTOFaultyCardSaveResponse();
+            //using var transaction_ = _context.Database.BeginTransaction();
+            //try
+            //{
+            //    if (dTO.TrnFaultyCardId > 0)
+            //    {
+            //        TrnFaultyCard? trnFaultyCard = await _context.TrnFaultyCard.FindAsync(dTO.TrnFaultyCardId);
+            //        if (trnFaultyCard != null)
+            //        {
+            //            trnFaultyCard.ToRemark = dTO.ToRemark;
+            //            saveResponse.Id = trnFaultyCard.TrnFaultyCardId.ToString();
+            //            saveResponse.CurrentTime = dTO.UpdatedOn ?? DateTime.Now;
+            //            saveResponse.Result = true;
+            //            saveResponse.Message = "Data Updated";
+            //        }
+            //        else
+            //        {
+            //            saveResponse.Result = false;
+            //            saveResponse.Message = "Something went wrong or Invalid Input!";
+            //        }
+            //        return saveResponse;
+            //    }
+            //    else
+            //    {
+            //        MTrnICardRequest? mTrnICardRequest = await _context.TrnICardRequest.FindAsync(dTO.RequestId);
+            //        if(mTrnICardRequest != null)
+            //        {
+            //            mTrnICardRequest.FlagForFaulty = true;
+            //            _context.TrnICardRequest.Update(mTrnICardRequest);
+            //            await _context.SaveChangesAsync();
+            //        }
+
+            //        TrnFaultyCard trnFaultyCard = new TrnFaultyCard();
+            //        trnFaultyCard.TrnFaultyCardId = 0;
+            //        trnFaultyCard.RemarksIds = dTO.RemarksIds;
+            //        trnFaultyCard.FromRemark = dTO.FromRemark;
+            //        trnFaultyCard.ToRemark = dTO.ToRemark ?? null;
+            //        trnFaultyCard.CategoryId = dTO.CategoryId;
+            //        trnFaultyCard.RequestId = dTO.RequestId;
+            //        trnFaultyCard.UserId = dTO.UserId;
+            //        trnFaultyCard.IsActive = dTO.IsActive;
+            //        trnFaultyCard.Updatedby = dTO.Updatedby;
+            //        trnFaultyCard.UpdatedOn = dTO.UpdatedOn;
+            //        trnFaultyCard.IsEditAction = false;
+            //        await _context.TrnFaultyCard.AddAsync(trnFaultyCard);
+            //        await _context.SaveChangesAsync();
+
+            //        transaction_.Commit();
+            //        saveResponse.Id= trnFaultyCard.TrnFaultyCardId.ToString();
+            //        saveResponse.CurrentTime = dTO.UpdatedOn ?? DateTime.Now;
+            //        saveResponse.Result = true;
+            //        saveResponse.Message = "Data has been saved";
+            //        return saveResponse;
+            //    }
+            //}
+            //catch (Exception ex)
+            //{
+            //    transaction_.Rollback();
+            //    _logger.LogError(1006, ex, "Exception");
+            //    saveResponse.Result = false;
+            //    saveResponse.Message = ex.Message;
+            //    return saveResponse;
+            //}
+            #endregion
             DTOFaultyCardSaveResponse saveResponse = new DTOFaultyCardSaveResponse();
-            using var transaction_ = _context.Database.BeginTransaction();
+            var (db, transaction) = _contextDP.CreateConnectionWithTransaction();
+            string insert_update_Sql = "";
+            string query2 = "";
+            string query3 = "";
+            var parameters = new DynamicParameters();
             try
             {
                 if (dTO.TrnFaultyCardId > 0)
                 {
-                    TrnFaultyCard? trnFaultyCard = await _context.TrnFaultyCard.FindAsync(dTO.TrnFaultyCardId);
-                    if (trnFaultyCard != null)
-                    {
-                        trnFaultyCard.ToRemark = dTO.ToRemark;
-                        saveResponse.Id = trnFaultyCard.TrnFaultyCardId.ToString();
-                        saveResponse.CurrentTime = dTO.UpdatedOn ?? DateTime.Now;
-                        saveResponse.Result = true;
-                        saveResponse.Message = "Data Updated";
-                    }
-                    else
-                    {
-                        saveResponse.Result = false;
-                        saveResponse.Message = "Something went wrong or Invalid Input!";
-                    }
-                    return saveResponse;
+                    insert_update_Sql = @"UPDATE TrnFaultyCard set ToRemark = @ToRemark,IsEditAction=1 WHERE TrnFaultyCardId=@TrnFaultyCardId";
+
+                    saveResponse.Message = "Data Updated";
                 }
                 else
                 {
-                    MTrnICardRequest? mTrnICardRequest = await _context.TrnICardRequest.FindAsync(dTO.RequestId);
-                    if(mTrnICardRequest != null)
-                    {
-                        mTrnICardRequest.FlagForFaulty = true;
-                        _context.TrnICardRequest.Update(mTrnICardRequest);
-                        await _context.SaveChangesAsync();
-                    }
-
-                    TrnFaultyCard trnFaultyCard = new TrnFaultyCard();
-                    trnFaultyCard.TrnFaultyCardId = 0;
-                    trnFaultyCard.RemarksIds = dTO.RemarksIds;
-                    trnFaultyCard.FromRemark = dTO.FromRemark;
-                    trnFaultyCard.ToRemark = dTO.ToRemark ?? null;
-                    trnFaultyCard.CategoryId = dTO.CategoryId;
-                    trnFaultyCard.RequestId = dTO.RequestId;
-                    trnFaultyCard.IsActive = dTO.IsActive;
-                    trnFaultyCard.Updatedby = dTO.Updatedby;
-                    trnFaultyCard.UpdatedOn = dTO.UpdatedOn;
-                    trnFaultyCard.IsEditAction = false;
-                    await _context.TrnFaultyCard.AddAsync(trnFaultyCard);
-                    await _context.SaveChangesAsync();
-
-                    transaction_.Commit();
-                    saveResponse.Id= trnFaultyCard.TrnFaultyCardId.ToString();
-                    saveResponse.CurrentTime = dTO.UpdatedOn ?? DateTime.Now;
-                    saveResponse.Result = true;
+                    insert_update_Sql = @"INSERT INTO TrnFaultyCard(RemarksIds,FromRemark,ToRemark,CategoryId,RequestId,IsActive,UserId,Updatedby,UpdatedOn,IsEditAction)
+                                            OUTPUT INSERTED.TrnFaultyCardId
+                                            VALUES(@RemarksIds,@FromRemark,@ToRemark,@CategoryId,@RequestId,@IsActive,@UserId,@Updatedby,@UpdatedOn,@IsEditAction)";
+                    
                     saveResponse.Message = "Data has been saved";
-                    return saveResponse;
+
                 }
+                //Accept
+                if (dTO.Choice == 2)
+                {
+                    query2 = @"UPDATE TrnStepCounter set StepId = 4 where RequestId=@RequestId ";
+                    await db.ExecuteAsync(query2, new { dTO.RequestId }, transaction: transaction);
+
+                }
+                //Reject
+                else if (dTO.Choice == 3)
+                {
+                    query3 = @"UPDATE AFSAC2.dbo.XmlFilesFwdLog SET XmlFiles='' WHERE RequestId=@RequestId";
+                    await db.ExecuteAsync(query3, new { dTO.RequestId }, transaction: transaction);
+
+                    query2 = @"UPDATE TrnStepCounter set StepId = 9 where RequestId=@RequestId ";
+                    await db.ExecuteAsync(query2, new { dTO.RequestId }, transaction: transaction);
+                }
+
+                parameters.Add("@TrnFaultyCardId", dTO.TrnFaultyCardId, DbType.Int32, ParameterDirection.Input);
+                parameters.Add("@RemarksIds", dTO.RemarksIds, DbType.String, ParameterDirection.Input, 100);
+                parameters.Add("@FromRemark", dTO.FromRemark, DbType.String, ParameterDirection.Input,100);
+                parameters.Add("@ToRemark", dTO.ToRemark, DbType.String, ParameterDirection.Input, 100);
+                parameters.Add("@CategoryId", dTO.CategoryId, DbType.Byte, ParameterDirection.Input);
+                parameters.Add("@RequestId", dTO.RequestId, DbType.Int32, ParameterDirection.Input);
+                parameters.Add("@IsActive", dTO.IsActive, DbType.Boolean, ParameterDirection.Input);
+                parameters.Add("@UserId", dTO.UserId, DbType.Int32, ParameterDirection.Input);
+                parameters.Add("@Updatedby", dTO.Updatedby, DbType.Int32, ParameterDirection.Input);
+                parameters.Add("@UpdatedOn", dTO.UpdatedOn, DbType.DateTime, ParameterDirection.Input);
+                parameters.Add("@IsEditAction", dTO.IsActive, DbType.Boolean, ParameterDirection.Input);
+
+                var Id = await db.QuerySingleAsync<int>(insert_update_Sql, parameters, transaction: transaction);
+
+                string query1 = @" UPDATE TrnICardRequest set FlagForFaulty = 1 where RequestId=@RequestId ";
+                await db.ExecuteAsync(query1, new { dTO.RequestId }, transaction: transaction);
+
+                // Commit the transaction if all operations succeed
+                transaction.Commit();
+                saveResponse.Id = Id.ToString();
+                saveResponse.CurrentTime = dTO.UpdatedOn ?? DateTime.Now;
+                saveResponse.Result = true;
+                return saveResponse;
             }
             catch (Exception ex)
             {
-                transaction_.Rollback();
-                _logger.LogError(1006, ex, "Exception");
+                // Rollback the transaction if any operation fails
+                transaction.Rollback();
+                _logger.LogError(1001, ex, "FaultyCardDB->SaveFaultyCard");
                 saveResponse.Result = false;
                 saveResponse.Message = ex.Message;
                 return saveResponse;
+            }
+            finally
+            {
+                // Dispose of the connection
+                db.Dispose();
             }
         }
     }

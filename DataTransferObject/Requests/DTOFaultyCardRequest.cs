@@ -38,5 +38,15 @@ namespace DataTransferObject.Requests
         [RegularExpression(@"^[\d]+$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "OnlyNumber")]
         public int RequestId { get; set; }
         public MTrnICardRequest? MTrnICardRequest { get; set; }
+
+        [RegularExpression(@"^[\d]+$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "OnlyNumber")]
+        public int UserId { get; set; }
+        public MUserProfile? MUserProfile { get; set; }
+
+        [RegularExpression(@"^[\d]+$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "OnlyNumber")]
+        public byte Choice { get; set; }
+
+        public bool IsEditAction { get; set; }
+
     }
 }

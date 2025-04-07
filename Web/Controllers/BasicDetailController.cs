@@ -40,6 +40,7 @@ using static iText.StyledXmlParser.Jsoup.Select.Evaluator;
 using NuGet.Protocol.Plugins;
 using BusinessLogicsLayer;
 using Humanizer;
+using iText.IO.Font.Cmap;
 
 namespace Web.Controllers
 {
@@ -2083,10 +2084,9 @@ namespace Web.Controllers
 
             return Json(await faultyCardBL.GetAllFaulty(Claim, MapUnitId));
         }
-        public async Task<ViewResult> FaultyCardRequestAsync()
+        public async Task<ViewResult> FaultyCardRequestAsync(int? TrnFaultyCardId)
         {
             bool Claim = false;
-            string UnitAbbreviation = "";
 
             int AspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
             var user = await userManager.FindByIdAsync(AspNetUsersId.ToString());
@@ -2098,19 +2098,6 @@ namespace Web.Controllers
                 Claim = true;
             }
 
-            DtoSession? dtoSession = new DtoSession();
-            if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
-            {
-                dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
-
-            }
-
-            if(dtoSession != null)
-            {
-                DTOMapUnitResponse dTOMapUnitResponse = await mapUnitBL.GetALLByUnitMapId(dtoSession.UnitId);
-                UnitAbbreviation = dTOMapUnitResponse.UnitAbbreviation;
-            }
-            ViewBag.UnitAbbreviation = UnitAbbreviation;
             ViewBag.Claim = Claim;
 
             return View();
@@ -2136,6 +2123,14 @@ namespace Web.Controllers
         [Authorize(Policy = "ICardExportDataPolicy")]
         public async Task<IActionResult> SaveFaultyCard(DTOFaultyCardRequest dTO)
         {
+            DtoSession? dtoSession = new DtoSession();
+            if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
+            {
+                dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+
+            }
+            dTO.UserId = dtoSession != null ? dtoSession.UserId : 0;
+
             DTOFaultyCardSaveResponse dTOFaulty = new DTOFaultyCardSaveResponse();
             try
             {
@@ -2147,8 +2142,18 @@ namespace Web.Controllers
                 {
                     if (dTO.TrnFaultyCardId > 0)
                     {
-                        dTOFaulty = await faultyCardBL.SaveFaultyCard(dTO);
-                        return Json(dTOFaulty);
+                        TrnFaultyCard? trnFaultyCard = await faultyCardBL.Get(dTO.TrnFaultyCardId);
+                        if (trnFaultyCard != null && trnFaultyCard.IsEditAction)
+                        {
+                            dTOFaulty.Result = false;
+                            dTOFaulty.Message = "This action has already been completed by you.";
+                            return Json(dTOFaulty);
+                        }
+                        else
+                        {
+                            dTOFaulty = await faultyCardBL.SaveFaultyCard(dTO);
+                            return Json(dTOFaulty);
+                        }
                     }
                     else
                     {
@@ -2191,13 +2196,21 @@ namespace Web.Controllers
         }
         public async Task<IActionResult> SaveFaultyCardRequest(DTOFaultyCardRequest dTO)
         {
+            DtoSession? dtoSession = new DtoSession();
+            if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
+            {
+                dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+
+            }
+            dTO.UserId = dtoSession != null ? dtoSession.UserId : 0;
+
             DTOFaultyCardSaveResponse dTOFaulty = new DTOFaultyCardSaveResponse();
             try
             {
                 dTO.IsActive = true;
                 dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier)); ;
                 dTO.UpdatedOn = DateTime.Now;
-                
+
                 if (ModelState.IsValid)
                 {
                     if (dTO.TrnFaultyCardId > 0)

@@ -34,6 +34,10 @@ namespace DataTransferObject.Domain.Model
         [ForeignKey("MTrnICardRequest"), DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int RequestId { get; set; }
         public MTrnICardRequest? MTrnICardRequest { get; set; }
+
+        [ForeignKey("MUserProfile"), DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public int UserId { get; set; }
+        public MUserProfile? MUserProfile { get; set; }
         public bool IsEditAction { get; set; } = false;
     }
 }

@@ -49,8 +49,6 @@
 <div class="containerMain mt-n10">
     <div class="card mb-3">
         <div class="card-header">
-            <span id="SpnTxnId" class="d-none">0</span>
-            <span id="spnUnitAbbreviation" class="d-none">@ViewBag.UnitAbbreviation</span>
             <div class="row">
                 <div class="col-xl-12 text-left">
                     <h3>
@@ -81,40 +79,42 @@
                         </div>
                         <div class="col-sm-5">
                             <div class="row">
-                                <div class="form-group row mb-0">
-                                    <label class="col-form-label col-sm-5 labelprofile">Request Id</label>
-                                    <div class="col-sm-7">
-                                        <label id="lblFaultyRequestId" class="col-form-label"></label>
+                                <div class="card p-1">
+                                    <div class="form-group row mb-0">
+                                        <label class="col-form-label col-sm-5 labelprofile">Request Id</label>
+                                        <div class="col-sm-7">
+                                            <label id="lblFaultyRequestId" class="col-form-label"></label>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="form-group row mb-2 Stage d-none">
-                                    <label class="col-form-label col-sm-5 labelprofile">Stage<i class="fas fa-asterisk mand1"></i></label>
-                                    <div class="col-sm-7">
-                                        <select class="form-select" style="width: 100%;" aria-hidden="true" id="ddlStage" name="ddlStage" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="Stage is required." data-val-regex-pattern="^[\d]+$">
-                                            <option value="">Select One</option>
-                                        </select>
-                                        <span class="text-danger field-validation-valid" data-valmsg-for="ddlStage" data-valmsg-replace="true"></span>
+                                    <div class="form-group row mb-2 Stage d-none">
+                                        <label class="col-form-label col-sm-5 labelprofile">Stage<i class="fas fa-asterisk mand1"></i></label>
+                                        <div class="col-sm-7">
+                                            <select class="form-select" style="width: 100%;" aria-hidden="true" id="ddlStage" name="ddlStage" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="Stage is required." data-val-regex-pattern="^[\d]+$">
+                                                <option value="">Select One</option>
+                                            </select>
+                                            <span class="text-danger field-validation-valid" data-valmsg-for="ddlStage" data-valmsg-replace="true"></span>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="form-group row mb-2">
-                                    <label class="col-form-label col-sm-5 labelprofile">Select Faulty Fd/ Reason<i class="fas fa-asterisk mand1"></i></label>
-                                    <div class="col-sm-7">
-                                        <select class="form-control select2 select2-accessible text-uppercase" multiple style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddlFaultyRemark" id="ddlFaultyRemark" data-val="true" data-val-regex="This special chars and space not allowed for security reasons." data-val-required="Faulty Reason is required.">
-                                        </select>
-                                        <span class="text-danger field-validation-valid" data-valmsg-for="ddlFaultyRemark" data-valmsg-replace="true"></span>
+                                    <div class="form-group row mb-2">
+                                        <label class="col-form-label col-sm-5 labelprofile">Select Faulty Fd/ Reason<i class="fas fa-asterisk mand1"></i></label>
+                                        <div class="col-sm-7">
+                                            <select class="form-control select2 select2-accessible text-uppercase" multiple style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddlFaultyRemark" id="ddlFaultyRemark" data-val="true" data-val-regex="This special chars and space not allowed for security reasons." data-val-required="Faulty Reason is required.">
+                                            </select>
+                                            <span class="text-danger field-validation-valid" data-valmsg-for="ddlFaultyRemark" data-valmsg-replace="true"></span>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="form-group row mb-2">
-                                    <label class="col-form-label col-sm-5 labelprofile">Explain Fault<i class="fas fa-asterisk mand1"></i></label>
-                                    <div class="col-sm-7">
-                                        <textarea class="form-control1" style="height:auto!important;" name="txtFromRemark" id="txtFromRemark" rows="3" maxlength="100" data-val-maxlength="Maximum length of Message is 100 character." data-val-maxlength-max="100" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-regex-pattern="^[\w\&\.\-\; ]*$"></textarea>
-                                        <span class="text-danger field-validation-valid" data-valmsg-for="txtFromRemark" data-valmsg-replace="true"></span>
+                                    <div class="form-group row mb-2">
+                                        <label class="col-form-label col-sm-5 labelprofile">Explain Fault<i class="fas fa-asterisk mand1"></i></label>
+                                        <div class="col-sm-7">
+                                            <textarea class="form-control1" style="height:auto!important;" name="txtFromRemark" id="txtFromRemark" rows="3" maxlength="100" data-val-maxlength="Maximum length of Message is 100 character." data-val-maxlength-max="100" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-regex-pattern="^[\w\&\.\-\; ]*$"></textarea>
+                                            <span class="text-danger field-validation-valid" data-valmsg-for="txtFromRemark" data-valmsg-replace="true"></span>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="col-sm-12 text-center mb-4">
-                                    <input type="button" class="btn btn-primary" id="btnReject" value="Reject" />
-                                    <input type="button" class="btn btn-primary" id="btnAccept" value="Accept and Fwd to Export" />
-                                    <input type="button" class="btn btn-primary" id="btnSubmit" value="Submit" />
+                                    <div class="col-sm-12 text-center mb-4">
+                                        <input type="button" class="btn btn-primary" id="btnReject" value="Reject" />
+                                        <input type="button" class="btn btn-primary" id="btnAccept" value="Accept and Fwd to Export" />
+                                        <input type="button" class="btn btn-primary" id="btnSubmit" value="Submit" />
+                                    </div>
                                 </div>
                             </div>
                         </div>

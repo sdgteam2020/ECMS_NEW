@@ -32,7 +32,32 @@ namespace BusinessLogicsLayer.FaultyCard
         }
         public async Task<DTOFaultyCardSaveResponse> SaveFaultyCard(DTOFaultyCardRequest dTO) 
         {
-            return await _iFaultyCardDB.SaveFaultyCard(dTO);
+            if (dTO.TrnFaultyCardId > 0)
+            {
+                dTO.IsEditAction = true;
+                return await _iFaultyCardDB.SaveFaultyCard(dTO);
+            }
+            else
+            {
+                //Accept
+                if (dTO.Choice == 2)
+                {
+                    dTO.IsEditAction = true;
+                    return await _iFaultyCardDB.SaveFaultyCard(dTO);
+                }
+                //Reject
+                else if (dTO.Choice == 3)
+                {
+                    dTO.IsEditAction = true;
+                    return await _iFaultyCardDB.SaveFaultyCard(dTO);
+                }
+                else
+                {
+                    dTO.IsEditAction = false;
+                    dTO.ToRemark = null;
+                    return await _iFaultyCardDB.SaveFaultyCard(dTO);
+                }
+            }
         }
     }
 }

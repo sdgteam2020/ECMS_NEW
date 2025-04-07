@@ -1,5 +1,5 @@
 ﻿$(function () {
-
+    var selectionButton;
     if (sessionStorage.getItem("ArmyNo") != null && sessionStorage.getItem("RequestIdForFaulty") != null) {
             $("#spnArmyNo").html(sessionStorage.getItem("ArmyNo"));
             GetBasicDetailForParitalViewByRequestId(sessionStorage.getItem("RequestIdForFaulty"));
@@ -31,13 +31,16 @@
 
 
     $("#btnSubmit").on("click", function () {
-        Proceed();
+        selectionButton = 1;
+        Proceed(selectionButton);
     });
     $("#btnAccept").on("click", function () {
-        Proceed();
+        selectionButton = 2;
+        Proceed(selectionButton);
     });
     $("#btnReject").on("click", function () {
-        Proceed();
+        selectionButton = 3;
+        Proceed(selectionButton);
     });
 
     $("#btnCardPreview").on("click", function () {
@@ -69,7 +72,7 @@
         location.href = '/BasicDetail/FaultyCard';
     });
 });
-function Proceed() {
+function Proceed(choice) {
     //ResetErrorMessage();
     if ($("#ddlFaultyRemark").val().length == 0 ) {
         toastr.error('Reason is required.');
@@ -84,18 +87,26 @@ function Proceed() {
         let ApplicantNameWithRank = $("#lblpvRank").html() + " " + ApplicantName.trim();
         let Remarks = $("#txtFromRemark").val();
         let UserName = $(".dropdown-user-details-name").html();
-        let UnitAbbreviation = $("#spnUnitAbbreviation").html();
         Swal.fire({
-            title: 'Pl confirm the fwg faulty card:-',
-            html: "Applicant Name - " + ApplicantNameWithRank + "<br/>Request Id - " + sessionStorage.getItem("RequestIdForFaulty") + "<br/>Remarks - " + Remarks + "<br/>User Details - " + UserName +"," +UnitAbbreviation +"" ,
+            title: 'Please confirm the following faulty card details:',
+            html: `
+                    <div style="text-align: left; font-size: 16px;">
+                        <p><strong>Applicant Name:</strong> ${ApplicantNameWithRank}</p>
+                        <p><strong>Request ID:</strong> ${sessionStorage.getItem("RequestIdForFaulty")}</p>
+                        <p><strong>Remarks:</strong> ${Remarks}</p>
+                        <p><strong>User Details:</strong> ${UserName}</p>
+                    </div>
+                  `,
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
             cancelButtonColor: '#d33',
-            confirmButtonText: 'Confirm'
+            confirmButtonText: 'Confirm',
+            cancelButtonText: 'Cancel',
+            width: '500px', // optional: customize popup width
         }).then((result) => {
             if (result.isConfirmed) {
-                Save();
+                Save(choice);
             }
         })
     }
@@ -110,10 +121,18 @@ function Proceed() {
         return false;
     }
 }
-    function Save() {
+    function Save(choice) {
         var FaultyRemarkIds = "" + $("#ddlFaultyRemark").val() + "";
+        let urladd;
+
+        if (choice === 1) {
+            urladd = '/BasicDetail/SaveFaultyCardRequest';
+        }
+        else {
+            urladd = '/BasicDetail/SaveFaultyCard';
+        }
         $.ajax({
-            url: '/BasicDetail/SaveFaultyCardRequest',
+            url: urladd ,
             type: 'POST',
             data: {
                 "TrnFaultyCardId": $("#spnTrnFaultyCardId").html(),
@@ -121,6 +140,7 @@ function Proceed() {
                 "RemarksIds": $("#ddlFaultyRemark").val().length > 0 ? FaultyRemarkIds : null,
                 "FromRemark": $("#txtFromRemark").val(),
                 "CategoryId": $("#ddlStage").val(),
+                "Choice": choice
             }, //get the search string
             success: function (result) {
 

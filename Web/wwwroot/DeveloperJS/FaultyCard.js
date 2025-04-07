@@ -138,15 +138,9 @@ function BindData() {
 
                     $("body").on("click", ".cls-btnedit", function () {
 
-                        $("#spnapptId").html($(this).closest("tr").find("#spnMapptId").html());
-                        $("#txtAppoinment").val($(this).closest("tr").find("#appointmentName").html());
-                        if ($(this).closest("tr").find("#appointmentAbbreviation").html() == "") {
+                        if ($(this).closest("tr").find("#spnTrnFaultyCardId").html() != "") {
                             $("#txtAbbreviation").val("");
                         }
-                        else {
-                            $("#txtAbbreviation").val($(this).closest("tr").find("#appointmentAbbreviation").html());
-                        }
-                        $("#btnsave").val("Update");
                     });
 
 
