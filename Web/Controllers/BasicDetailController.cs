@@ -2084,12 +2084,51 @@ namespace Web.Controllers
 
             return Json(await faultyCardBL.GetAllFaulty(Claim, MapUnitId));
         }
-        public async Task<ViewResult> FaultyCardRequestAsync(int? TrnFaultyCardId)
+        public async Task<IActionResult> GetTrnFaultyCardDetail(int TrnFaultyCardId)
+        {
+            return Json(await faultyCardBL.GetTrnFaultyCardDetail(TrnFaultyCardId));
+        }
+        public async Task<ActionResult> FaultyCardRequestAsync(string? Id)
         {
             bool Claim = false;
-
             int AspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
             var user = await userManager.FindByIdAsync(AspNetUsersId.ToString());
+
+            string decryptedId = string.Empty;
+            int decryptedIntId = 0;
+
+            if (Id != null)
+            {
+                try
+                {
+                    // Decrypt the  id using Unprotect method
+                    decryptedId = protector.Unprotect(Id);
+
+                    // Validate decrypted Id
+                    if (!int.TryParse(decryptedId, out decryptedIntId))
+                    {
+                        _logger.LogWarning("Decrypted Id is not a valid integer: {DecryptedId}, UserId: {UserId}", decryptedId, AspNetUsersId);
+                        TempData["error"] = "Invalid Request.";
+                        TempData.Keep("error");
+                        return RedirectToAction("ContactUs", "Home");
+                    }
+                }
+                catch (System.Security.Cryptography.CryptographicException ex)
+                {
+                    _logger.LogError(ex, "Cryptographic error occurred while processing the Id: {Id}.", Id);
+                    TempData["error"] = "Invalid or tampered request.";
+                    TempData.Keep("error");
+                    return RedirectToAction("ContactUs", "Home");
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(1001, ex, message: "This error occure because Id : {Id} value change by user.", Id);
+                    TempData["error"] = ex.Message;
+                    TempData.Keep("error");
+                    return RedirectToAction("ContactUs", "Home");
+                }
+            }
+
 
             // UserManager service GetClaimsAsync method gets all the current claims of the user
             var UserClaims = await userManager.GetClaimsAsync(user);
@@ -2099,7 +2138,7 @@ namespace Web.Controllers
             }
 
             ViewBag.Claim = Claim;
-
+            ViewBag.TrnFaultyCardId = decryptedIntId;
             return View();
         }
         [HttpPost]

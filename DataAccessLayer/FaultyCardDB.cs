@@ -54,7 +54,7 @@ namespace DataAccessLayer
                 string query = "";
                 if (Claim)
                 {
-                    query = @"SELECT appl.Name ApplyFor,mcat.Name FaultyStage,req.RequestId,faulty.TrnFaultyCardId,bas.ServiceNo,ranks.RankAbbreviation RankName,bas.FName,bas.LName,Muni.UnitName,Muni.Abbreviation UnitAbbreviation,
+                    query = @"SELECT appl.Name ApplyFor,mcat.Name FaultyStage,mcat.CategoryId,req.RequestId,faulty.TrnFaultyCardId,bas.ServiceNo,ranks.RankAbbreviation RankName,bas.FName,bas.LName,Muni.UnitName,Muni.Abbreviation UnitAbbreviation,
                             faulty.IsEditAction,faulty.UpdatedOn,faulty.RemarksIds,faulty.FromRemark,faulty.ToRemark,bas.NameAsPerRecord,regi.Abbreviation RegimentalName,
                             CASE
                             WHEN LEFT(bas.ServiceNo, 2) LIKE '[A-Za-z][A-Za-z]' THEN
@@ -76,7 +76,7 @@ namespace DataAccessLayer
                 }
                 else
                 {
-                    query = @"SELECT appl.Name ApplyFor,mcat.Name FaultyStage,req.RequestId,faulty.TrnFaultyCardId,bas.ServiceNo,ranks.RankAbbreviation RankName,bas.FName,bas.LName,Muni.UnitName,Muni.Abbreviation UnitAbbreviation,
+                    query = @"SELECT appl.Name ApplyFor,mcat.Name FaultyStage,mcat.CategoryId,req.RequestId,faulty.TrnFaultyCardId,bas.ServiceNo,ranks.RankAbbreviation RankName,bas.FName,bas.LName,Muni.UnitName,Muni.Abbreviation UnitAbbreviation,
                             faulty.IsEditAction,faulty.UpdatedOn,faulty.RemarksIds,faulty.FromRemark,faulty.ToRemark,bas.NameAsPerRecord,regi.Abbreviation RegimentalName,
                             CASE
                             WHEN LEFT(bas.ServiceNo, 2) LIKE '[A-Za-z][A-Za-z]' THEN
@@ -99,7 +99,32 @@ namespace DataAccessLayer
 
                 using (var connection = _contextDP.CreateConnection())
                 {
-                    var allrecord = await connection.QueryAsync<DTOFaultyCardListResponse>(query , new { MapUnitId });
+                    var allrecordList = await connection.QueryAsync<DTOFaultyCardListResponse>(query , new { MapUnitId });
+                    var allrecord = (from e in allrecordList
+                                         select new DTOFaultyCardListResponse()
+                                         {
+                                             EncryptedId = protector.Protect(e.TrnFaultyCardId.ToString()),
+                                             NameAsPerRecord = e.NameAsPerRecord,
+                                             FName=e.FName,
+                                             LName=e.LName,
+                                             ServiceNo=e.ServiceNo,
+                                             ModifiedServiceNo=e.ModifiedServiceNo,
+                                             UnitName=e.UnitName,
+                                             UnitAbbreviation=e.UnitAbbreviation,
+                                             RankName=e.RankName,
+                                             ArmedName=e.ArmedName,
+                                             RequestId=e.RequestId,
+                                             UpdatedOn=e.UpdatedOn,
+                                             ApplyFor=e.ApplyFor,
+                                             TrnFaultyCardId=e.TrnFaultyCardId,
+                                             RemarksIds=e.RemarksIds,
+                                             RemarksNameList=e.RemarksNameList,
+                                             FromRemark = e.FromRemark,
+                                             ToRemark = e.ToRemark, 
+                                             CategoryId=e.CategoryId,
+                                             FaultyStage= e.FaultyStage,
+                                             IsEditAction=e.IsEditAction,
+                                         }).ToList();
                     return allrecord.ToList();
                 }
             }
@@ -110,93 +135,84 @@ namespace DataAccessLayer
             }
 
         }
+        public async Task<DTOFaultyCardListResponse?> GetTrnFaultyCardDetail(int TrnFaultyCardId)
+        {
+            try
+            {
+                string query = @"SELECT appl.Name ApplyFor,mcat.Name FaultyStage,mcat.CategoryId,req.RequestId,faulty.TrnFaultyCardId,bas.ServiceNo,ranks.RankAbbreviation RankName,bas.FName,bas.LName,Muni.UnitName,Muni.Abbreviation UnitAbbreviation,
+                                faulty.IsEditAction,faulty.UpdatedOn,faulty.RemarksIds,faulty.FromRemark,faulty.ToRemark,bas.NameAsPerRecord,regi.Abbreviation RegimentalName,
+                                CASE
+                                WHEN LEFT(bas.ServiceNo, 2) LIKE '[A-Za-z][A-Za-z]' THEN
+                                CONCAT(SUBSTRING(bas.ServiceNo, 1, 2), ' ', SUBSTRING(bas.ServiceNo, 3, LEN(bas.ServiceNo) - 2))
+                                ELSE
+                                bas.ServiceNo
+                                END AS ModifiedServiceNo,
+                                (select STRING_AGG(Remarks,'#') from MRemarks where RemarksId in (select value from string_split(faulty.RemarksIds,','))) RemarksNameList
+                                from TrnFaultyCard faulty
+                                inner join MCategory mcat on mcat.CategoryId = faulty.CategoryId
+                                inner join TrnICardRequest req on req.RequestId = faulty.RequestId
+                                inner join TrnDomainMapping tdm on tdm.Id=req.TrnDomainMappingId
+                                inner join BasicDetails bas on bas.BasicDetailId=req.BasicDetailId
+                                inner join MRank ranks on ranks.RankId=bas.RankId
+                                inner join MapUnit uni on uni.UnitMapId=bas.UnitId
+                                inner join MUnit Muni on Muni.UnitId=uni.UnitId
+                                inner join MApplyFor appl on appl.ApplyForId=bas.ApplyForId
+                                left join MRegimental regi on regi.RegId=bas.RegimentalId
+                                WHERE faulty.TrnFaultyCardId = @TrnFaultyCardId";
+
+
+                using (var connection = _contextDP.CreateConnection())
+                {
+                    var allrecord = await connection.QueryAsync<DTOFaultyCardListResponse>(query, new { TrnFaultyCardId });
+                    return allrecord.FirstOrDefault();
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "FaultyCardDB->GetTrnFaultyCardDetail");
+                return null;
+            }
+
+        }
         public async Task<DTOFaultyCardSaveResponse> SaveFaultyCard(DTOFaultyCardRequest dTO)
         {
-            #region Old Code
-            //DTOFaultyCardSaveResponse saveResponse = new DTOFaultyCardSaveResponse();
-            //using var transaction_ = _context.Database.BeginTransaction();
-            //try
-            //{
-            //    if (dTO.TrnFaultyCardId > 0)
-            //    {
-            //        TrnFaultyCard? trnFaultyCard = await _context.TrnFaultyCard.FindAsync(dTO.TrnFaultyCardId);
-            //        if (trnFaultyCard != null)
-            //        {
-            //            trnFaultyCard.ToRemark = dTO.ToRemark;
-            //            saveResponse.Id = trnFaultyCard.TrnFaultyCardId.ToString();
-            //            saveResponse.CurrentTime = dTO.UpdatedOn ?? DateTime.Now;
-            //            saveResponse.Result = true;
-            //            saveResponse.Message = "Data Updated";
-            //        }
-            //        else
-            //        {
-            //            saveResponse.Result = false;
-            //            saveResponse.Message = "Something went wrong or Invalid Input!";
-            //        }
-            //        return saveResponse;
-            //    }
-            //    else
-            //    {
-            //        MTrnICardRequest? mTrnICardRequest = await _context.TrnICardRequest.FindAsync(dTO.RequestId);
-            //        if(mTrnICardRequest != null)
-            //        {
-            //            mTrnICardRequest.FlagForFaulty = true;
-            //            _context.TrnICardRequest.Update(mTrnICardRequest);
-            //            await _context.SaveChangesAsync();
-            //        }
-
-            //        TrnFaultyCard trnFaultyCard = new TrnFaultyCard();
-            //        trnFaultyCard.TrnFaultyCardId = 0;
-            //        trnFaultyCard.RemarksIds = dTO.RemarksIds;
-            //        trnFaultyCard.FromRemark = dTO.FromRemark;
-            //        trnFaultyCard.ToRemark = dTO.ToRemark ?? null;
-            //        trnFaultyCard.CategoryId = dTO.CategoryId;
-            //        trnFaultyCard.RequestId = dTO.RequestId;
-            //        trnFaultyCard.UserId = dTO.UserId;
-            //        trnFaultyCard.IsActive = dTO.IsActive;
-            //        trnFaultyCard.Updatedby = dTO.Updatedby;
-            //        trnFaultyCard.UpdatedOn = dTO.UpdatedOn;
-            //        trnFaultyCard.IsEditAction = false;
-            //        await _context.TrnFaultyCard.AddAsync(trnFaultyCard);
-            //        await _context.SaveChangesAsync();
-
-            //        transaction_.Commit();
-            //        saveResponse.Id= trnFaultyCard.TrnFaultyCardId.ToString();
-            //        saveResponse.CurrentTime = dTO.UpdatedOn ?? DateTime.Now;
-            //        saveResponse.Result = true;
-            //        saveResponse.Message = "Data has been saved";
-            //        return saveResponse;
-            //    }
-            //}
-            //catch (Exception ex)
-            //{
-            //    transaction_.Rollback();
-            //    _logger.LogError(1006, ex, "Exception");
-            //    saveResponse.Result = false;
-            //    saveResponse.Message = ex.Message;
-            //    return saveResponse;
-            //}
-            #endregion
             DTOFaultyCardSaveResponse saveResponse = new DTOFaultyCardSaveResponse();
             var (db, transaction) = _contextDP.CreateConnectionWithTransaction();
-            string insert_update_Sql = "";
+            string insert = "";
+            string update = "";
             string query2 = "";
             string query3 = "";
-            var parameters = new DynamicParameters();
+
             try
             {
                 if (dTO.TrnFaultyCardId > 0)
                 {
-                    insert_update_Sql = @"UPDATE TrnFaultyCard set ToRemark = @ToRemark,IsEditAction=1 WHERE TrnFaultyCardId=@TrnFaultyCardId";
-
+                    update = @"UPDATE TrnFaultyCard set ToRemark = @ToRemark,IsEditAction=1 WHERE TrnFaultyCardId=@TrnFaultyCardId";
+                    await db.ExecuteAsync(update, new { dTO.TrnFaultyCardId }, transaction: transaction);
+                    saveResponse.Id = dTO.TrnFaultyCardId.ToString();
                     saveResponse.Message = "Data Updated";
                 }
                 else
                 {
-                    insert_update_Sql = @"INSERT INTO TrnFaultyCard(RemarksIds,FromRemark,ToRemark,CategoryId,RequestId,IsActive,UserId,Updatedby,UpdatedOn,IsEditAction)
-                                            OUTPUT INSERTED.TrnFaultyCardId
-                                            VALUES(@RemarksIds,@FromRemark,@ToRemark,@CategoryId,@RequestId,@IsActive,@UserId,@Updatedby,@UpdatedOn,@IsEditAction)";
+                    insert = @"INSERT INTO TrnFaultyCard(RemarksIds,FromRemark,ToRemark,CategoryId,RequestId,IsActive,UserId,Updatedby,UpdatedOn,IsEditAction)
+                                OUTPUT INSERTED.TrnFaultyCardId
+                                VALUES(@RemarksIds,@FromRemark,@ToRemark,@CategoryId,@RequestId,@IsActive,@UserId,@Updatedby,@UpdatedOn,@IsEditAction)";
                     
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@TrnFaultyCardId", dTO.TrnFaultyCardId, DbType.Int32, ParameterDirection.Input);
+                    parameters.Add("@RemarksIds", dTO.RemarksIds, DbType.String, ParameterDirection.Input, 100);
+                    parameters.Add("@FromRemark", dTO.FromRemark, DbType.String, ParameterDirection.Input, 100);
+                    parameters.Add("@ToRemark", dTO.ToRemark, DbType.String, ParameterDirection.Input, 100);
+                    parameters.Add("@CategoryId", dTO.CategoryId, DbType.Byte, ParameterDirection.Input);
+                    parameters.Add("@RequestId", dTO.RequestId, DbType.Int32, ParameterDirection.Input);
+                    parameters.Add("@IsActive", dTO.IsActive, DbType.Boolean, ParameterDirection.Input);
+                    parameters.Add("@UserId", dTO.UserId, DbType.Int32, ParameterDirection.Input);
+                    parameters.Add("@Updatedby", dTO.Updatedby, DbType.Int32, ParameterDirection.Input);
+                    parameters.Add("@UpdatedOn", dTO.UpdatedOn, DbType.DateTime, ParameterDirection.Input);
+                    parameters.Add("@IsEditAction", dTO.IsEditAction, DbType.Boolean, ParameterDirection.Input);
+
+                    var Id = await db.QuerySingleAsync<int>(insert, parameters, transaction: transaction);
+                    saveResponse.Id = Id.ToString();
                     saveResponse.Message = "Data has been saved";
 
                 }
@@ -217,26 +233,11 @@ namespace DataAccessLayer
                     await db.ExecuteAsync(query2, new { dTO.RequestId }, transaction: transaction);
                 }
 
-                parameters.Add("@TrnFaultyCardId", dTO.TrnFaultyCardId, DbType.Int32, ParameterDirection.Input);
-                parameters.Add("@RemarksIds", dTO.RemarksIds, DbType.String, ParameterDirection.Input, 100);
-                parameters.Add("@FromRemark", dTO.FromRemark, DbType.String, ParameterDirection.Input,100);
-                parameters.Add("@ToRemark", dTO.ToRemark, DbType.String, ParameterDirection.Input, 100);
-                parameters.Add("@CategoryId", dTO.CategoryId, DbType.Byte, ParameterDirection.Input);
-                parameters.Add("@RequestId", dTO.RequestId, DbType.Int32, ParameterDirection.Input);
-                parameters.Add("@IsActive", dTO.IsActive, DbType.Boolean, ParameterDirection.Input);
-                parameters.Add("@UserId", dTO.UserId, DbType.Int32, ParameterDirection.Input);
-                parameters.Add("@Updatedby", dTO.Updatedby, DbType.Int32, ParameterDirection.Input);
-                parameters.Add("@UpdatedOn", dTO.UpdatedOn, DbType.DateTime, ParameterDirection.Input);
-                parameters.Add("@IsEditAction", dTO.IsActive, DbType.Boolean, ParameterDirection.Input);
-
-                var Id = await db.QuerySingleAsync<int>(insert_update_Sql, parameters, transaction: transaction);
-
                 string query1 = @" UPDATE TrnICardRequest set FlagForFaulty = 1 where RequestId=@RequestId ";
                 await db.ExecuteAsync(query1, new { dTO.RequestId }, transaction: transaction);
 
                 // Commit the transaction if all operations succeed
                 transaction.Commit();
-                saveResponse.Id = Id.ToString();
                 saveResponse.CurrentTime = dTO.UpdatedOn ?? DateTime.Now;
                 saveResponse.Result = true;
                 return saveResponse;

@@ -45,14 +45,14 @@ function BindData() {
                     $("#tbldata").DataTable().destroy();
                     for (var i = 0; i < response.length; i++) {
                         listItem += "<tr>";
-                        listItem += "<td class='d-none'><span id='spnTrnFaultyCardId'>" + response[i].TrnFaultyCardId + "</span></td>";
+                        listItem += "<td class='d-none'><span id='spnTrnFaultyCardId'>" + response[i].TrnFaultyCardId + "</span><span id='spnEncryptedId'>" + response[i].EncryptedId + "</span><span id='spnRequestId'>" + response[i].RequestId + "</span><span id='spnServiceNo'>" + response[i].ServiceNo + "</span></td>";
                         listItem += "<td class='align-middle'>" + (i + 1) + "</td>";
-                        listItem += "<td class='align-middle'><span id='spnRequestId'>" + response[i].RequestId + "</span></td>";
-                        listItem += "<td class='align-middle'><span id='spnModifiedServiceNo'>" + response[i].ModifiedServiceNo + "</span></td>";
+                        listItem += "<td class='align-middle'>" + response[i].RequestId + "</td>";
+                        listItem += "<td class='align-middle'>" + response[i].ModifiedServiceNo + "</td>";
                         let fullName = `${response[i].RankName || ""} ${response[i].FName || ""} ${response[i].LName || ""}`.trim();
-                        listItem += "<td class='align-middle'><span id='spnfullName'>" + fullName + "</span></td>";
-                        listItem += "<td class='align-middle'><span id='spnUnitAbbreviation'>" + response[i].UnitAbbreviation + "</span></td>";
-                        listItem += "<td class='align-middle'><span id='spnUpdatedOn'>" + DateFormateddMMyyyyhhmmss(response[i].UpdatedOn) + "</span></td>";
+                        listItem += "<td class='align-middle'>" + fullName + "</td>";
+                        listItem += "<td class='align-middle'>" + response[i].UnitAbbreviation + "</td>";
+                        listItem += "<td class='align-middle'>" + DateFormateddMMyyyyhhmmss(response[i].UpdatedOn) + "</td>";
 
                         if (response[i].RemarksIds != null) {
                             var remarksArray = response[i].RemarksNameList.split('#');
@@ -139,7 +139,9 @@ function BindData() {
                     $("body").on("click", ".cls-btnedit", function () {
 
                         if ($(this).closest("tr").find("#spnTrnFaultyCardId").html() != "") {
-                            $("#txtAbbreviation").val("");
+                            sessionStorage.setItem("ArmyNo", $(this).closest("tr").find("#spnServiceNo").html());
+                            sessionStorage.setItem("RequestIdForFaulty", $(this).closest("tr").find("#spnRequestId").html());
+                            window.location.href = '/BasicDetail/FaultyCardRequest?Id=' + encodeURIComponent($(this).closest("tr").find("#spnEncryptedId").html());
                         }
                     });
 

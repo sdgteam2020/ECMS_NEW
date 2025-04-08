@@ -1,19 +1,30 @@
-﻿$(function () {
+﻿$(async function () {
     var selectionButton;
-    if (sessionStorage.getItem("ArmyNo") != null && sessionStorage.getItem("RequestIdForFaulty") != null) {
+
+    var RemarkTypeID = [5];
+    GetRemarks("ddlFaultyRemark", 0, RemarkTypeID);
+
+    $('.select2').select2({
+        placeholder: "Please select a Reason",
+        allowClear: true,
+        closeOnSelect: false // Only needed for multi-select
+    });
+
+    if ($("#spnTrnFaultyCardId").html() > 0) {
+        await GetTrnFaultyCardDetail($("#spnTrnFaultyCardId").html());
+    }
+    else {
+        if (sessionStorage.getItem("ArmyNo") != null && sessionStorage.getItem("RequestIdForFaulty") != null) {
             $("#spnArmyNo").html(sessionStorage.getItem("ArmyNo"));
             GetBasicDetailForParitalViewByRequestId(sessionStorage.getItem("RequestIdForFaulty"));
             $("#spnFaultyCardRequestId").html(sessionStorage.getItem("RequestIdForFaulty"));
             $("#lblFaultyRequestId").html(sessionStorage.getItem("RequestIdForFaulty"));
-            var RemarkTypeID = [5];
-            GetRemarks("ddlFaultyRemark", 0, RemarkTypeID);
+
             mMsater(2, "ddlStage", FaultyStage, "");
-            $('.select2').select2({
-                placeholder: "Please select a Reason",
-                allowClear: true,
-                closeOnSelect: false // Only needed for multi-select
-            });
+
+        }
     }
+
 
     if ($("#spnClaimValue").html().toLowerCase() === "true") {
         $("#btnSubmit").addClass("d-none");
@@ -44,20 +55,23 @@
     });
 
     $("#btnCardPreview").on("click", function () {
-        GetICardPrintPreviewByRequestId(sessionStorage.getItem("RequestIdForFaulty"));
+        alert($("#spnFaultyCardRequestId").html());
+        GetICardPrintPreviewByRequestId($("#spnFaultyCardRequestId").html());
     });
 
     $("#btnXMLDownload").on("click", function () {
-        DownloadPdf(sessionStorage.getItem("RequestIdForFaulty"));
+        alert($("#spnFaultyCardRequestId").html());
+        DownloadPdf($("#spnFaultyCardRequestId").html());
     });
 
     $("#btnApplMoveHistory").on("click", function () {
-        GetRequestHistory(sessionStorage.getItem("RequestIdForFaulty"));
+        alert($("#spnFaultyCardRequestId").html());
+        GetRequestHistory($("#spnFaultyCardRequestId").html());
         $("#exampleModal").modal('show');
     });
 
     $("#btnFaultyCardsList").on("click", function () {
-        location.href = '/BasicDetail/FaultyCard';
+        window.location.href = '/BasicDetail/FaultyCard';
     });
 
     $("#btnSearchNew").on("click", function () {
@@ -69,7 +83,7 @@
     });
 
     $("#btnBackDashboard").on("click", function () {
-        location.href = '/BasicDetail/FaultyCard';
+        window.location.href = '/BasicDetail/FaultyCard';
     });
 });
 function Proceed(choice) {
@@ -179,6 +193,47 @@ function Proceed(choice) {
                 document.getElementById("partialContainerBD").innerHTML = html;
           })
           .catch(error => {
+            alert("Error: " + error.message);
+        });
+}
+function GetTrnFaultyCardDetail(TrnFaultyCardId) {
+    let param = new URLSearchParams({ TrnFaultyCardId: TrnFaultyCardId });
+
+    fetch('/BasicDetail/GetTrnFaultyCardDetail', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: param
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(result => {
+            if (result != null) {
+
+                $("#spnArmyNo").html(result.ServiceNo);
+                $("#spnFaultyCardRequestId").html(result.RequestId);
+                $("#lblFaultyRequestId").html(result.RequestId);
+                $("#txtFromRemark").text(result.FromRemark);
+                GetBasicDetailForParitalViewByRequestId(result.RequestId);
+                mMsater(result.CategoryId, "ddlStage", FaultyStage, "");
+
+                let RemarksIds = result.RemarksIds;
+                let arr2 = RemarksIds.split(',');
+                $("#ddlFaultyRemark").val(arr2);
+                $("#ddlFaultyRemark").trigger("change");
+                $("#ddlFaultyRemark").prop("disabled", true)
+            }
+            else {
+                toastr.error('Invalid Input.');
+                window.location.href = '/BasicDetail/FaultyCard';
+            }
+        })
+        .catch(error => {
             alert("Error: " + error.message);
         });
 }

@@ -27,7 +27,9 @@ namespace DataTransferObject.Response
         public string? FromRemark { get; set; }
         public string? ToRemark { get; set; }
         public string FaultyStage { get; set; } = string.Empty;
+        public byte CategoryId { get; set; }
         public bool IsEditAction { get; set; } = false;
+        public string? EncryptedId { get; set; }
 
     }
 }
