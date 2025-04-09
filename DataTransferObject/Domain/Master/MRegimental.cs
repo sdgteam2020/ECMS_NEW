@@ -38,6 +38,10 @@ namespace DataTransferObject.Domain.Master
         [ForeignKey("MArmedType"), DatabaseGenerated(DatabaseGeneratedOption.None)]
         public byte ArmedId { get; set; }
         public MArmedType? Armed { get; set; }
-        
+
+        [ForeignKey("MapUnit"), DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public int? UnitId { get; set; }
+        public MapUnit? MapUnit { get; set; }
+
     }
 }

@@ -10,21 +10,36 @@
         closeOnSelect: false // Only needed for multi-select
     });
 
-    if ($("#spnTrnFaultyCardId").html() > 0) {
-        await GetTrnFaultyCardDetail($("#spnTrnFaultyCardId").html());
+    let TrnFaultyCardId = parseInt($("#spnTrnFaultyCardId").html());
+
+    if (TrnFaultyCardId > 0) {
+
+        await GetTrnFaultyCardDetail(TrnFaultyCardId);
     }
     else {
         if (sessionStorage.getItem("ArmyNo") != null && sessionStorage.getItem("RequestIdForFaulty") != null) {
-            $("#spnArmyNo").html(sessionStorage.getItem("ArmyNo"));
-            GetBasicDetailForParitalViewByRequestId(sessionStorage.getItem("RequestIdForFaulty"));
-            $("#spnFaultyCardRequestId").html(sessionStorage.getItem("RequestIdForFaulty"));
-            $("#lblFaultyRequestId").html(sessionStorage.getItem("RequestIdForFaulty"));
+
+            var encryptedArmyNo = sessionStorage.getItem("ArmyNo");
+            var encryptedRequestId = sessionStorage.getItem("RequestIdForFaulty");
+
+            var secretKey = document.getElementById("spnUniqueSecretKey").innerText;
+
+            var bytes = CryptoJS.AES.decrypt(encryptedArmyNo, secretKey);
+            var decryptedArmyNo = bytes.toString(CryptoJS.enc.Utf8);
+
+            var bytes = CryptoJS.AES.decrypt(encryptedRequestId, secretKey);
+            var decryptedRequestId = bytes.toString(CryptoJS.enc.Utf8);
+
+
+            $("#spnArmyNo").html(decryptedArmyNo);
+            $("#spnFaultyCardRequestId").html(decryptedRequestId);
+            $("#lblFaultyRequestId").html(decryptedRequestId);
+
+            GetBasicDetailForParitalViewByRequestId(decryptedRequestId);
 
             mMsater(2, "ddlStage", FaultyStage, "");
-
         }
     }
-
 
     if ($("#spnClaimValue").html().toLowerCase() === "true") {
         $("#btnSubmit").addClass("d-none");
@@ -32,12 +47,14 @@
         $("#btnReject").removeClass("d-none");
 
         $(".Stage").removeClass("d-none");
+        $(".ToRemark").removeClass("d-none");
     } else {
         $("#btnSubmit").removeClass("d-none");
         $("#btnAccept").addClass("d-none");
         $("#btnReject").addClass("d-none");
 
         $(".Stage").addClass("d-none");
+        $(".ToRemark").addClass("d-none");
     }
 
 
@@ -55,17 +72,15 @@
     });
 
     $("#btnCardPreview").on("click", function () {
-        alert($("#spnFaultyCardRequestId").html());
         GetICardPrintPreviewByRequestId($("#spnFaultyCardRequestId").html());
     });
 
+
     $("#btnXMLDownload").on("click", function () {
-        alert($("#spnFaultyCardRequestId").html());
         DownloadPdf($("#spnFaultyCardRequestId").html());
     });
 
     $("#btnApplMoveHistory").on("click", function () {
-        alert($("#spnFaultyCardRequestId").html());
         GetRequestHistory($("#spnFaultyCardRequestId").html());
         $("#exampleModal").modal('show');
     });
@@ -90,6 +105,10 @@ function Proceed(choice) {
     //ResetErrorMessage();
     if ($("#ddlFaultyRemark").val().length == 0 ) {
         toastr.error('Reason is required.');
+        return false;
+    }
+    if ((choice == 2 || choice == 3) && $("#txtToRemark").val().length == 0) {
+        toastr.error('AFSAC Cell Remark is required.');
         return false;
     }
 
@@ -196,7 +215,7 @@ function Proceed(choice) {
             alert("Error: " + error.message);
         });
 }
-function GetTrnFaultyCardDetail(TrnFaultyCardId) {
+async function GetTrnFaultyCardDetail(TrnFaultyCardId) {
     let param = new URLSearchParams({ TrnFaultyCardId: TrnFaultyCardId });
 
     fetch('/BasicDetail/GetTrnFaultyCardDetail', {
@@ -219,7 +238,10 @@ function GetTrnFaultyCardDetail(TrnFaultyCardId) {
                 $("#spnFaultyCardRequestId").html(result.RequestId);
                 $("#lblFaultyRequestId").html(result.RequestId);
                 $("#txtFromRemark").text(result.FromRemark);
+                $("#txtFromRemark").prop("disabled", true);
+
                 GetBasicDetailForParitalViewByRequestId(result.RequestId);
+
                 mMsater(result.CategoryId, "ddlStage", FaultyStage, "");
 
                 let RemarksIds = result.RemarksIds;

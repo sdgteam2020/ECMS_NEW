@@ -16,7 +16,7 @@ function GetICardPrintPreviewByRequestId(RequestId) {
     var userdata =
     {
         "RequestId": RequestId,
-    };
+    }; 
     $.ajax({
         url: '/BasicDetail/GetICardPrintPreviewByRequestId',
         contentType: 'application/x-www-form-urlencoded',

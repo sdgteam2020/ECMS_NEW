@@ -41,8 +41,14 @@ $(function () {
         if ($("#armynosearchAllName").html() != "") {
 
             $("#unitoffrsModal").modal("hide");
-            sessionStorage.setItem("ArmyNo", $("#txtarmynosearchAll").val());
-            sessionStorage.setItem("RequestIdForFaulty", $("#RequestId_unitoffrsModal").val());
+
+            var secretKey = document.getElementById("spnUniqueSecretKey").innerText;
+
+            var encryptedArmyNo = CryptoJS.AES.encrypt($("#txtarmynosearchAll").val(), secretKey).toString();
+            var encryptedRequestId = CryptoJS.AES.encrypt($("#RequestId_unitoffrsModal").val(), secretKey).toString();
+
+            sessionStorage.setItem("ArmyNo", encryptedArmyNo);
+            sessionStorage.setItem("RequestIdForFaulty", encryptedRequestId);
 
             if ($("#armynosearchTypeId").val() == ApplicantPostingOut)
                 window.location.href = "/Posting/PostingIn";

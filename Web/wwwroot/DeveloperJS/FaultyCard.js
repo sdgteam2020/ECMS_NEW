@@ -75,7 +75,12 @@ function BindData() {
                         listItem += "<td class='align-middle'><span class='cls-FromRemark'>" + truncatedSentence + "<span id='spanFromRemark' class='d-none'>" + sentence + "</span></span></td>";
                         listItem += `<td class='align-middle'><span id='spnName'> ${response[i].ToRemark ?? "NA"}</span></td>`;
                         if ($("#spnClaimValue").html().toLowerCase() === "true") {
-                            listItem += "<td class='align-middle'><span id='btnedit'><button type='button' class='cls-btnedit btn btn-icon btn-round btn-primary mr-1'><i class='fas fa-edit'></i></button></span></td>";
+                            if (response[i].IsEditAction == false) {
+                                listItem += "<td class='align-middle'><span id='btnedit'><button type='button' class='cls-btnedit btn btn-icon btn-round btn-primary mr-1'><i class='fas fa-edit'></i></button></span></td>";
+                            }
+                            else {
+                                listItem += "<td class='align-middle'>NA</td>";
+                            }
                         }
                         
 
@@ -140,7 +145,10 @@ function BindData() {
 
                         if ($(this).closest("tr").find("#spnTrnFaultyCardId").html() != "") {
                             sessionStorage.setItem("ArmyNo", $(this).closest("tr").find("#spnServiceNo").html());
-                            sessionStorage.setItem("RequestIdForFaulty", $(this).closest("tr").find("#spnRequestId").html());
+                            //sessionStorage.setItem("RequestIdForFaulty", $(this).closest("tr").find("#spnRequestId").html());
+                            //sessionStorage.setItem("TrnFaultyCardId", $(this).closest("tr").find("#spnTrnFaultyCardId").html());
+                            //sessionStorage.setItem("EditFaultyCardRequest", true);
+                            //window.location.href = '/BasicDetail/FaultyCardRequest';
                             window.location.href = '/BasicDetail/FaultyCardRequest?Id=' + encodeURIComponent($(this).closest("tr").find("#spnEncryptedId").html());
                         }
                     });

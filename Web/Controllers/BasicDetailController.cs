@@ -2084,6 +2084,7 @@ namespace Web.Controllers
 
             return Json(await faultyCardBL.GetAllFaulty(Claim, MapUnitId));
         }
+        [HttpPost]
         public async Task<IActionResult> GetTrnFaultyCardDetail(int TrnFaultyCardId)
         {
             return Json(await faultyCardBL.GetTrnFaultyCardDetail(TrnFaultyCardId));
@@ -2141,6 +2142,7 @@ namespace Web.Controllers
             ViewBag.TrnFaultyCardId = decryptedIntId;
             return View();
         }
+
         [HttpPost]
         public async Task<IActionResult> GetBasicDetailForParitalViewByRequestId(int RequestId)
         {

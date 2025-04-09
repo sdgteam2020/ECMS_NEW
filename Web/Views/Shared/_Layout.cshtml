@@ -534,7 +534,7 @@
                         </nav>
                     }
                     <div class="content-wrapper">
-
+                        <span class="d-none" id="spnUniqueSecretKey">my-top-secret-key-123</span>
                         <partial name="_Notification" />
                         @RenderBody()
 
@@ -647,6 +647,7 @@
     <script asp-src-include="~/developerjs/commanvalidation.js"></script>
     <script asp-src-include="~/developerjs/icardhistory.js"></script>
     <script asp-src-include="~/developerjs/pagevalidation.js"></script>
+    <script asp-src-include="~/js/aes.js"></script>
     @RenderSection("Scripts", false)
 
 
