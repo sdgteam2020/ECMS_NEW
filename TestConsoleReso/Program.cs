@@ -131,21 +131,24 @@ class Program
         //Console.WriteLine($"decrypted string = {decryptedString}");
 
         //Console.ReadKey();
-        string dateString = "1982-11-18";
-        string format = "yyyy-MM-dd";
-        DateTime date;
+        //string dateString = "1982-11-18";
+        //string format = "yyyy-MM-dd";
+        //DateTime date;
 
-        // Using DateTimeStyles.None (strict parsing)
-        bool success = DateTime.TryParseExact(dateString, format, CultureInfo.InvariantCulture, DateTimeStyles.None, out date);
+        //// Using DateTimeStyles.None (strict parsing)
+        //bool success = DateTime.TryParseExact(dateString, format, CultureInfo.InvariantCulture, DateTimeStyles.None, out date);
 
-        if (success)
-        {
-            Console.WriteLine(date); // Output: 11/18/1982 12:00:00 AM
-        }
-        else
-        {
-            Console.WriteLine("Invalid date format.");
-        }
+        //if (success)
+        //{
+        //    Console.WriteLine(date); // Output: 11/18/1982 12:00:00 AM
+        //}
+        //else
+        //{
+        //    Console.WriteLine("Invalid date format.");
+        //}
+        DateTime myDate = DateTime.MinValue; // or any DateTime value
 
+        string displayDate = myDate == DateTime.MinValue ? "N/A" : myDate.ToString("yyyy-MM-dd");
+        Console.WriteLine(displayDate);
     }
 }

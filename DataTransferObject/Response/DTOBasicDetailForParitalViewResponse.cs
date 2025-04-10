@@ -14,7 +14,7 @@ namespace DataTransferObject.Response
         public string? LName { get; set; }
         public string ServiceNo { get; set; } = string.Empty;
         public DateTime DOB { get; set; }
-        public DateTime DateOfIssue { get; set; }
+        public DateTime? DateOfIssue { get; set; }
         public DateTime DateOfCommissioning { get; set; }
         public string? PlaceOfIssue { get; set; }
         public string IssuingAuthorityName { get; set; } = string.Empty;

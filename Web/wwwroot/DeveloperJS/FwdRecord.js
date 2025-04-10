@@ -213,7 +213,7 @@ $(function () {
     $(".btndownloadxml").on("click", function () {
         DownloadXml($(this).closest("tr").find(".spnRequestId").html())
     });
-    $(".fwdrecord").on("click", function () {
+    $(".fwdrecord").on("click", async function () {
         Reset();
         // ResetMapUnit();
         //alert($(this).closest("tr").find(".spnRequestId").html())
@@ -222,7 +222,7 @@ $(function () {
         $("#ddlRemarks").val("");
 
         // $("#FwdRecord").modal('show');
-        $("#BasicDetails").modal('show');
+        //$("#BasicDetails").modal('show');
 
         IsDigitalSignReq = true;
 
@@ -249,7 +249,7 @@ $(function () {
             $("#btnRejected").addClass("d-none");
 
         }
-        GetBasicDetailByRequestIdForFwd($(this).closest("tr").find(".spnRequestId").html());
+        await GetBasicDetailByRequestIdForFwd($(this).closest("tr").find(".spnRequestId").html());
 
         if (StepCounter == 1 || StepCounter == 7 || StepCounter == 8 || StepCounter == 9 || StepCounter == 10 || StepCounter == 11 || StepCounter == 12 || StepCounter == 13 || StepCounter == 15) {
 
@@ -715,42 +715,25 @@ function Reset() {
     $("#txtFwdName").val("");
     $(".serchfwd").addClass("d-none");
 }
+async function GetBasicDetailByRequestIdForFwd(RequestId) {
+    let param = new URLSearchParams({ RequestId: RequestId });
 
-function GetBasicDetailByRequestIdForFwd(RequestId) {
-    var userdata = {
-        "RequestId": RequestId,
-    };
-    $.ajax({
-        url: '/BasicDetail/GetBasicDetailByRequestId',
-        contentType: 'application/x-www-form-urlencoded',
-        data: userdata,
-        type: 'POST',
-
-        success: function (response) {
-            if (response != "null" && response != null) {
-                $("#basicphotos").attr('src', response.ExistingPhotoInBase64);
-                $("#Basicsing").attr('src', response.ExistingSignatureInBase64);
-                $("#lblfdNameAsPerRecord").html(response.NameAsPerRecord);
-                $("#lblfdFName").html(response.FName);
-                $("#lblfdLName").html(response.LName);
-                $("#lblfdRank").html(response.RankName);
-                $("#lblLfdarm").html(response.ArmedName);
-                $("#lblfdArmyNo").html(response.ModifiedServiceNo);
-                $("#lblfdMarks").html(response.IdenMark1);
-                $("#lblfddob").html(DateFormateMMMM_dd_yyyy(response.DOB));
-                $("#lblfdheight").html(response.Height);
-                $("#lblfdadhar").html(response.AadhaarNo.replace(/\d(?=\d{4})/g, "X"));
-                $("#lblfdBloodGroup").html(response.BloodGroup);
-                $("#lblfdpoi").html(response.PlaceOfIssue);
-                $("#lblfddoi").html(DateFormateMMMM_dd_yyyy(response.DateOfIssue));
-                $("#lblfdissuA").html(response.IssuingAuthorityName);
-                $("#lblfddateo").html(DateFormateMMMM_dd_yyyy(response.DateOfCommissioning));
-                $("#lblfdaddress").html(response.Village + ',' + response.Tehsil + ',' + response.PO + ',' + response.PS + ',' + response.District + ',' + response.State + '' + response.PinCode);
-            }
-        }
+    fetch('/BasicDetail/GetBasicDetailForParitalViewByRequestId', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: param
     })
+        .then(response => response.text())
+        .then(html => {
+            document.getElementById("BasicDetails_Data").innerHTML = html;
+            $("#BasicDetails").modal('show');
+        })
+        .catch(error => {
+            alert("Error: " + error.message);
+        });
 }
-
 function FwdData(AspNetUsersId) {
     var userdata = {
         "AspNetUsersId": AspNetUsersId,

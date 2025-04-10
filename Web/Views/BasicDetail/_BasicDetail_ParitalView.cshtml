@@ -1,13 +1,13 @@
 ﻿@model DTOBasicDetailForParitalViewResponse
 <div class="row">
-    <div class="col-sm-12 mb-3">
-        <div class="feature-box3 h-100 shadow-lg p-3 mb-3 bg-body rounded">
+    <div class="col-sm-12">
+        <div class="feature-box3 h-100 shadow-lg pr-3 pl-3 bg-body rounded">
             <div class="top-block_ind d-flex">
                 <div class="text-block">
                     <h5 class="mb-1 text-font2 font-weight600">Applicant’s Details</h5>
                 </div>
             </div>
-            <div class="row p-2">
+            <div class="row pr-2 pl-2">
                 <div class="col-sm-8">
                     <div class="form-group row mb-0">
                         <label class="col-form-label col-5 labelprofile text-left">Name As Per Record</label>
@@ -72,7 +72,8 @@
                     <div class="form-group row mb-0">
                         <label class="col-form-label labelprofile col-5 text-left">Date of Issue</label>
                         <div class="col-7">
-                            <label class="form-control-plaintext text-uppercase" id="lblpvdoi">@Model.DateOfIssue.ToString("dd-MMM-yyyy")</label>
+                            <label class="form-control-plaintext text-uppercase" id="lblpvdoi">@(Model.DateOfIssue.HasValue && Model.DateOfIssue.Value != DateTime.MinValue? Model.DateOfIssue.Value.ToString("dd-MMM-yyyy"): "N/A")
+                            </label>
                         </div>
                     </div>
                     <div class="form-group row mb-0">

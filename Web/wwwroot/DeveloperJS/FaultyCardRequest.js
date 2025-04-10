@@ -125,9 +125,9 @@ function Proceed(choice) {
             html: `
                     <div style="text-align: left; font-size: 16px;">
                         <p><strong>Applicant Name:</strong> ${ApplicantNameWithRank}</p>
-                        <p><strong>Request ID:</strong> ${sessionStorage.getItem("RequestIdForFaulty")}</p>
+                        <p><strong>Request ID:</strong> ${$("#spnFaultyCardRequestId").html() }</p>
                         <p><strong>Remarks:</strong> ${Remarks}</p>
-                        <p><strong>User Details:</strong> ${UserName}</p>
+                        <p><strong>Logged In Details:</strong> ${UserName}</p>
                     </div>
                   `,
             icon: 'warning',
@@ -181,7 +181,12 @@ function Proceed(choice) {
                     const myModal = new bootstrap.Modal(document.getElementById("ConfirmationDialog"));
                     const btnSearchNew = document.getElementById("btnSearchNew");
                     const btnBackDashboard = document.getElementById("btnBackDashboard");
-                    let Message = "Record successfully inserted in DB with ID - " + result.Id + " & TS - " + DateFormateddMMyyyyhhmmss(result.CurrentTime) +".";
+                    let Message;
+                    if (parseInt($("#spnTrnFaultyCardId").html()) > 0)
+                        Message = `Record successfully updated in DB with ID : <strong>${result.Id}</strong><br/> Timestamp : <strong>${DateFormateddMMyyyyhhmmss(result.CurrentTime)}</strong>.`;
+                    else
+                        Message = `Record successfully inserted in DB with ID : <strong>${result.Id}</strong><br/> Timestamp : <strong>${DateFormateddMMyyyyhhmmss(result.CurrentTime)}</strong>.`;
+
                     document.getElementById("ConfirmationDialog_Data").innerHTML= Message;
                     btnSearchNew.textContent = "Search New";
                     btnBackDashboard.textContent = "Back to Dashboard";

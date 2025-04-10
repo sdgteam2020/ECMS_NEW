@@ -188,7 +188,13 @@ namespace DataAccessLayer
                 if (dTO.TrnFaultyCardId > 0)
                 {
                     update = @"UPDATE TrnFaultyCard set ToRemark = @ToRemark,IsEditAction=1 WHERE TrnFaultyCardId=@TrnFaultyCardId";
-                    await db.ExecuteAsync(update, new { dTO.TrnFaultyCardId }, transaction: transaction);
+                    
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@TrnFaultyCardId", dTO.TrnFaultyCardId, DbType.Int32, ParameterDirection.Input);
+                    parameters.Add("@ToRemark", dTO.ToRemark, DbType.String, ParameterDirection.Input, 100);
+
+                    await db.ExecuteAsync(update, parameters, transaction: transaction);
+                    
                     saveResponse.Id = dTO.TrnFaultyCardId.ToString();
                     saveResponse.Message = "Data Updated";
                 }
