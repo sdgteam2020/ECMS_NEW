@@ -139,9 +139,10 @@ async function GetTokenDetails(ApiId, txt, thumbprint, msgid) {
                     keyValuePairs[k.trim()] = v ? v.trim() : "";
                 });
 
-
                 const datef2 = new Date();
-                if (data[0].ValidTo >= datef2) {
+                let [day, month, year, hours, minutes, seconds] = data[0].ValidTo.match(/\d+/g).map(Number);
+                let validTo = new Date(year, month - 1, day, hours, minutes, seconds);
+                if (validTo >= datef2) {
                     $("#" + msgid).html('<div class="mt-4 alert alert-danger alert-dismissible fade show "><i class="fa fa-times" aria-hidden="true"></i><span class="m-lg-2">Token Expired</span>.</div>');
                     $("#" + txt).val("");
                     if (thumbprint !== "") $("#" + thumbprint).val("");

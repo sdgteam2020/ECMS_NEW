@@ -20,7 +20,6 @@ namespace Web.Controllers
         [HttpPost]
         public async Task<IActionResult> GetTokenDetails()
         {
-
             DTOTokenResponse dTOTokenResponse = new DTOTokenResponse();
           //  dTOTokenResponse.IsToken = false;
             return Json(dTOTokenResponse);

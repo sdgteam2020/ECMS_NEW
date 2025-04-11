@@ -208,7 +208,7 @@ namespace BusinessLogicsLayer.BasicDet
                     if (remarks.Any())
                     {
                         r.IsValid = false;
-                        r.Status = "InValid";
+                        r.Status = "SheetInValid";
                         r.Remarks = string.Join("; ", remarks);
                     }
                     return r;
@@ -222,7 +222,7 @@ namespace BusinessLogicsLayer.BasicDet
                     var invalidDbRecord = checkDbRecords.Where(r => !r.IsValid).ToList();
                     invalidRecords = invalidRecords.Concat(invalidDbRecord).ToList();
                 }
-                request = invalidRecords.Concat(validRecords).OrderBy(r => int.Parse(r.RequestId)).ToList();
+                request = invalidRecords.Concat(validRecords).ToList();
             }
             catch(Exception ee)
             {

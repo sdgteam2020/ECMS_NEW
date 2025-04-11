@@ -2425,9 +2425,11 @@ namespace Web.Controllers
         [HttpPost]
         public async Task<IActionResult> ICardPrintUploadCsv(DTOCSVFileRequest model)
         {
+            var response = new DTOCsvUploadValResponse();
             if (model.CSVFile == null || model.CSVFile.Length == 0)
             {
-                return BadRequest(new { message = "File is not uploaded or is empty." });
+                response.Message = "File is not uploaded or is empty.";
+                goto Returnstm;
             }
             string fileName = $"{DateTime.Now.ToString("yyyyMMddHHmmss")}.csv";
             try
@@ -2444,7 +2446,9 @@ namespace Web.Controllers
                     catch (Exception ee)
                     {
                         _logger.LogError(1001, ee, "BasicDetail->ICardPrintUploadCsv");
-                        return Json(500);
+                        response.Result = false;
+                        response.Message = "Internal Server Error!";
+                        goto Returnstm;
                     }
                 }
 
@@ -2463,64 +2467,130 @@ namespace Web.Controllers
                 #endregion Upload User File
 
                 var validateResult = await basicDetailBL.ValidateCardPrinitng(records);
+                response.Result = true;
+                response.TotalRecords = validateResult.Count();
+                response.ValidRecords = validateResult.Where(x => x.IsValid).Count();
+                response.SheetInValidRecords = validateResult.Where(x => x.Status == "SheetInValid").Count();
+                response.DbInValidRecords = validateResult.Where(x => x.Status == "DbInvalid").Count();
 
                 #region Upload File With Remarks
-                var memoryStream = new MemoryStream();
-                using (var writer = new StreamWriter(memoryStream, Encoding.UTF8, leaveOpen: true))
+                uploadsFolder = Path.Combine(_environment.WebRootPath, "CardPrinitngCSVs", "CSVWithRemarks");
+                if (!Directory.Exists(uploadsFolder))
+                {
+                    Directory.CreateDirectory(uploadsFolder);
+                }
+                filePath = Path.Combine(uploadsFolder, fileName);
+
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await model.CSVFile.CopyToAsync(stream);
+                }
+                using (var writer = new StreamWriter(filePath, false, Encoding.UTF8))
                 using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
                 {
                     csv.Context.RegisterClassMap(new CsvClassMap<DTOCardPriningRequest>(false));
                     try
                     {
                         csv.WriteRecords(validateResult);
-                        await writer.FlushAsync();
                     }
                     catch (Exception ee)
                     {
                         _logger.LogError(1001, ee, "BasicDetail->ICardPrintUploadCsv");
-                        return Json(500);
-                    }
-                    uploadsFolder = Path.Combine(_environment.WebRootPath, "CardPrinitngCSVs", "CSVWithRemarks");
-                    if (!Directory.Exists(uploadsFolder))
-                    {
-                        Directory.CreateDirectory(uploadsFolder);
-                    }
-                    filePath = Path.Combine(uploadsFolder, fileName);
-
-                    using (var stream = new FileStream(filePath, FileMode.Create, FileAccess.Write))
-                    {
-                        await memoryStream.CopyToAsync(stream);
+                        response.Result = false;
+                        response.Message = "Internal Server Error!";
+                        goto Returnstm;
                     }
                 }
-                #endregion Upload User File
-                #region Insert record
-                var cSVImport = new CSVImport()
-                {
-                    FileName = fileName,
-                    TotalRecords = validateResult != null ? validateResult.Count() : 0,
-                    ValidRecords = validateResult != null ? validateResult.Where(v => v.IsValid).Count() : 0,
-                    DBUpdated = false,
-                    ImportedBy = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier)),
-                    ImportedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"))
-                };
+                    //var memoryStream = new MemoryStream();
+                    //using (var writer = new StreamWriter(memoryStream, Encoding.UTF8, leaveOpen: true))
+                    //using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
+                    //{
+                    //    csv.Context.RegisterClassMap(new CsvClassMap<DTOCardPriningRequest>(false));
+                    //    try
+                    //    {
+                    //        csv.WriteRecords(validateResult);
+                    //        await writer.FlushAsync();
+                    //    }
+                    //    catch (Exception ee)
+                    //    {
+                    //        _logger.LogError(1001, ee, "BasicDetail->ICardPrintUploadCsv");
+                    //        return Json(500);
+                    //    }
+                    //    uploadsFolder = Path.Combine(_environment.WebRootPath, "CardPrinitngCSVs", "CSVWithRemarks");
+                    //    if (!Directory.Exists(uploadsFolder))
+                    //    {
+                    //        Directory.CreateDirectory(uploadsFolder);
+                    //    }
+                    //    filePath = Path.Combine(uploadsFolder, fileName);
+
+                    //    using (var stream = new FileStream(filePath, FileMode.Create, FileAccess.Write))
+                    //    {
+                    //        await memoryStream.CopyToAsync(stream);
+                    //    }
+                    //}
+                    #endregion Upload User File
+                    #region Insert record
+                    var cSVImport = new CSVImport()
+                    {
+                        FileName = fileName,
+                        TotalRecords = validateResult != null ? validateResult.Count() : 0,
+                        ValidRecords = validateResult != null ? validateResult.Where(v => v.IsValid).Count() : 0,
+                        DBUpdated = false,
+                        ImportedBy = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier)),
+                        ImportedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"))
+                    };
 
                 var csvImportInsert = await _iCSVImportBL.AddWithReturn(cSVImport);
                 SessionHeplers.SetObject(HttpContext.Session, "CsvImportId", csvImportInsert.Id);
                 #endregion Insert record
 
                 SessionHeplers.SetObject(HttpContext.Session, "ValidRecordsCardUpload", validateResult.Where(v => v.IsValid).ToList());
-                memoryStream.Position = 0;
-                return File(memoryStream, "text/csv", model.CSVFile.FileName);
+                //var bytes = memoryStream.ToArray();
+                //var base64 = Convert.ToBase64String(bytes);
+                response.FileName = fileName;
+                //response.File = base64;
+                //memoryStream.Position = 0;
             }
             catch (Exception ex)
             {
                 _logger.LogError(1001, ex, "BasicDetail->ICardDistibutionUploadCsv");
-                return Json(KeyConstants.InternalServerError);
+                response.Message = "Internal Server Error!";
             }
+            Returnstm:
+            return Json(response);
         }
 
         [HttpGet]
         public async Task<IActionResult> ICardPrintValidRecordsUpload()
+        {
+            DTOUploadChipAndSerialResponse response = new DTOUploadChipAndSerialResponse();
+            try
+            {
+                var records = SessionHeplers.GetObject<List<DTOCardPriningRequest>>(HttpContext.Session, "ValidRecordsCardUpload");
+                if (records?.Count() > 0)
+                {
+                    response = await basicDetailBL.CardPrinitngCSVUpload(records);
+                }
+                else
+                {
+                    response.Message = "There are no valid records!";
+                }
+                var csvImportId = SessionHeplers.GetObject<int>(HttpContext.Session, "CsvImportId");
+                var getCsvDetById = await _iCSVImportBL.Get(csvImportId);
+                getCsvDetById.DBUpdated = true;
+                await _iCSVImportBL.Update(getCsvDetById);
+            }
+            catch (Exception ee)
+            {
+                _logger.LogError(1001, ee, "BasicDetail->ICardPrintValidRecordsUpload");
+                response.Message = "Internal Server Error!";
+            }
+            return Json(response);
+        }
+
+
+        [HttpGet]
+        public async Task<IActionResult> ICardPrintValidRecordsDownload()
         {
             DTOUploadChipAndSerialResponse response = new DTOUploadChipAndSerialResponse();
             try
