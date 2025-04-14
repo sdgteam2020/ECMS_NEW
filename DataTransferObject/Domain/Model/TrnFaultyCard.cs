@@ -38,6 +38,10 @@ namespace DataTransferObject.Domain.Model
         [ForeignKey("MUserProfile"), DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int UserId { get; set; }
         public MUserProfile? MUserProfile { get; set; }
+
+        [ForeignKey("MTrnFwd"), DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public int TrnFwdId { get; set; }
+        public MTrnFwd? MTrnFwd { get; set; }
         public bool IsEditAction { get; set; } = false;
     }
 }

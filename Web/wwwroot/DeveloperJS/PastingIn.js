@@ -126,9 +126,7 @@
     });
 });
 function Save() {
-
-    alert($("#txtSosDate").val());
-   
+    const trnFwdId = parseInt($(".spnTrnFwdId").html());
     $.ajax({
         url: '/Posting/SavePoasingOut',
         type: 'POST',
@@ -145,6 +143,7 @@ function Save() {
             "ToUnitID": $("#postingoutUnitId").html(),
             "ToUserID": $(".spnToUserID").html(),
             "RequestId": $(".spnRequestId").html(),
+            "TrnFwdId": trnFwdId > 0 ? trnFwdId : null,
         }, //get the search string
         success: function (result) {
 
@@ -281,6 +280,7 @@ function GetdataPostingData(ArmyNo) {
                 $(".spnFromUnitID").html(response.FromUnitID);
                 $(".spnFromUserID").html(response.FromUserID);
                 $(".spnRequestId").html(response.RequestId);
+                $(".spnTrnFwdId").html(response.MaxTrnFwdId ?? 0);
 
                 $(".spnBasicDetailIdOutID").html(response.BasicDetailId)
 

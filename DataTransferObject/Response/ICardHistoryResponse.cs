@@ -8,6 +8,7 @@ namespace DataTransferObject.Response
 { 
     public class ICardHistoryResponse
     {
+        public int? TrnFwdId { get; set; }
         public string? FromDomain { get; set; }
         public string? FromProfile { get; set; }
         public string? FromRank { get; set; }

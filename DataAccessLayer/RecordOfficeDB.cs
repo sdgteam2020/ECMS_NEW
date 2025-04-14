@@ -30,8 +30,6 @@ namespace DataAccessLayer
             _logger = logger;
         }
 
-        private readonly IConfiguration configuration;
-
         public async Task<int> GetByName(MRecordOffice Dto)
         {
             List<MRecordOffice> mRecordOffices = await _context.MRecordOffice.AsNoTracking().ToListAsync();

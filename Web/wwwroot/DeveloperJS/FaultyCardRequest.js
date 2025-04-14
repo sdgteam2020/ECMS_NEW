@@ -17,10 +17,11 @@
         await GetTrnFaultyCardDetail(TrnFaultyCardId);
     }
     else {
-        if (sessionStorage.getItem("ArmyNo") != null && sessionStorage.getItem("RequestIdForFaulty") != null) {
+        if (sessionStorage.getItem("ArmyNo") != null && sessionStorage.getItem("RequestIdForFaulty") != null && sessionStorage.getItem("MaxTrnFwdId") != null) {
 
             var encryptedArmyNo = sessionStorage.getItem("ArmyNo");
             var encryptedRequestId = sessionStorage.getItem("RequestIdForFaulty");
+            var encryptedMaxTrnFwdId = sessionStorage.getItem("MaxTrnFwdId");
 
             var secretKey = document.getElementById("spnUniqueSecretKey").innerText;
 
@@ -30,14 +31,18 @@
             var bytes = CryptoJS.AES.decrypt(encryptedRequestId, secretKey);
             var decryptedRequestId = bytes.toString(CryptoJS.enc.Utf8);
 
+            var bytes = CryptoJS.AES.decrypt(encryptedMaxTrnFwdId, secretKey);
+            var decryptedMaxTrnFwdId = bytes.toString(CryptoJS.enc.Utf8);
+
 
             $("#spnArmyNo").html(decryptedArmyNo);
             $("#spnFaultyCardRequestId").html(decryptedRequestId);
+            $("#spnMaxTrnFwdId").html(decryptedMaxTrnFwdId);
             $("#lblFaultyRequestId").html(decryptedRequestId);
 
             GetBasicDetailForParitalViewByRequestId(decryptedRequestId);
 
-            mMsater(2, "ddlStage", FaultyStage, "");
+            
         }
     }
 
@@ -46,8 +51,10 @@
         $("#btnAccept").removeClass("d-none");
         $("#btnReject").removeClass("d-none");
 
-        $(".Stage").removeClass("d-none");
+        (".Stage").addClass("d-none");
         $(".ToRemark").removeClass("d-none");
+
+        mMsater(1, "ddlStage", FaultyStage, "");
     } else {
         $("#btnSubmit").removeClass("d-none");
         $("#btnAccept").addClass("d-none");
@@ -55,6 +62,8 @@
 
         $(".Stage").addClass("d-none");
         $(".ToRemark").addClass("d-none");
+
+        mMsater(2, "ddlStage", FaultyStage, "");
     }
 
 
@@ -170,8 +179,10 @@ function Proceed(choice) {
             data: {
                 "TrnFaultyCardId": $("#spnTrnFaultyCardId").html(),
                 "RequestId": $("#spnFaultyCardRequestId").html(),
+                "TrnFwdId": $("#spnMaxTrnFwdId").html(),
                 "RemarksIds": $("#ddlFaultyRemark").val().length > 0 ? FaultyRemarkIds : null,
                 "FromRemark": $("#txtFromRemark").val(),
+                "ToRemark": $("#txtToRemark").val(),
                 "CategoryId": $("#ddlStage").val(),
                 "Choice": choice
             }, //get the search string

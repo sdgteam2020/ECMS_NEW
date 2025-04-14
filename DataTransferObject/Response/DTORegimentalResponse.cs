@@ -16,5 +16,10 @@ namespace DataTransferObject.Response
         public int ArmedId { get; set; }
         public string ArmedName { get; set; } = string.Empty;
         public string Location { get; set; } = string.Empty;
+        public int? UnitId { get; set; }
+        public string? Sus_no { get; set; }
+        public string? Suffix { get; set; }
+        public string? UnitName { get; set; }
+        public string? UnitAbbreviation { get; set; }
     }
 }

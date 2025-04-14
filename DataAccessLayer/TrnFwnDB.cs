@@ -153,7 +153,7 @@ namespace DataAccessLayer
                                 TypeId = dTO.TypeId,
                                 IsComplete = dTO.IsComplete,
                                 RemarksIds = dTO.RemarksIds,
-                                PostingOutId = null,
+                                //PostingOutId = null,
                                 IsActive = dTO.IsActive,
                                 Updatedby = dTO.FromAspNetUsersId,
                                 UpdatedOn = dTO.UpdatedOn,

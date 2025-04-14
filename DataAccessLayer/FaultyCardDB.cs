@@ -174,7 +174,7 @@ namespace DataAccessLayer
             }
 
         }
-        public async Task<DTOFaultyCardSaveResponse> SaveFaultyCard(DTOFaultyCardRequest dTO)
+        public async Task<DTOFaultyCardSaveResponse> SaveFaultyCard(DTOFaultyCardRequest dTO, MTrnFwd? mTrnFwd)
         {
             DTOFaultyCardSaveResponse saveResponse = new DTOFaultyCardSaveResponse();
             var (db, transaction) = _contextDP.CreateConnectionWithTransaction();
@@ -187,11 +187,12 @@ namespace DataAccessLayer
             {
                 if (dTO.TrnFaultyCardId > 0)
                 {
-                    update = @"UPDATE TrnFaultyCard set ToRemark = @ToRemark,IsEditAction=1 WHERE TrnFaultyCardId=@TrnFaultyCardId";
+                    update = @"UPDATE TrnFaultyCard set ToRemark = @ToRemark,IsEditAction = @IsEditAction WHERE TrnFaultyCardId=@TrnFaultyCardId";
                     
                     var parameters = new DynamicParameters();
                     parameters.Add("@TrnFaultyCardId", dTO.TrnFaultyCardId, DbType.Int32, ParameterDirection.Input);
                     parameters.Add("@ToRemark", dTO.ToRemark, DbType.String, ParameterDirection.Input, 100);
+                    parameters.Add("@IsEditAction", dTO.IsEditAction, DbType.Boolean, ParameterDirection.Input);
 
                     await db.ExecuteAsync(update, parameters, transaction: transaction);
                     
@@ -200,12 +201,12 @@ namespace DataAccessLayer
                 }
                 else
                 {
-                    insert = @"INSERT INTO TrnFaultyCard(RemarksIds,FromRemark,ToRemark,CategoryId,RequestId,IsActive,UserId,Updatedby,UpdatedOn,IsEditAction)
+                    insert = @"INSERT INTO TrnFaultyCard(RemarksIds,FromRemark,ToRemark,CategoryId,RequestId,IsActive,UserId,Updatedby,UpdatedOn,IsEditAction,TrnFwdId)
                                 OUTPUT INSERTED.TrnFaultyCardId
-                                VALUES(@RemarksIds,@FromRemark,@ToRemark,@CategoryId,@RequestId,@IsActive,@UserId,@Updatedby,@UpdatedOn,@IsEditAction)";
+                                VALUES(@RemarksIds,@FromRemark,@ToRemark,@CategoryId,@RequestId,@IsActive,@UserId,@Updatedby,@UpdatedOn,@IsEditAction,@TrnFwdId)";
                     
                     var parameters = new DynamicParameters();
-                    parameters.Add("@TrnFaultyCardId", dTO.TrnFaultyCardId, DbType.Int32, ParameterDirection.Input);
+                    parameters.Add("@TrnFaultyCardId", dTO.TrnFaultyCardId, DbType.Int32, ParameterDirection.Output);
                     parameters.Add("@RemarksIds", dTO.RemarksIds, DbType.String, ParameterDirection.Input, 100);
                     parameters.Add("@FromRemark", dTO.FromRemark, DbType.String, ParameterDirection.Input, 100);
                     parameters.Add("@ToRemark", dTO.ToRemark, DbType.String, ParameterDirection.Input, 100);
@@ -216,6 +217,7 @@ namespace DataAccessLayer
                     parameters.Add("@Updatedby", dTO.Updatedby, DbType.Int32, ParameterDirection.Input);
                     parameters.Add("@UpdatedOn", dTO.UpdatedOn, DbType.DateTime, ParameterDirection.Input);
                     parameters.Add("@IsEditAction", dTO.IsEditAction, DbType.Boolean, ParameterDirection.Input);
+                    parameters.Add("@TrnFwdId", dTO.TrnFwdId, DbType.Int32, ParameterDirection.Input);
 
                     var Id = await db.QuerySingleAsync<int>(insert, parameters, transaction: transaction);
                     saveResponse.Id = Id.ToString();
@@ -232,6 +234,31 @@ namespace DataAccessLayer
                 //Reject
                 else if (dTO.Choice == 3)
                 {
+                    if (mTrnFwd != null)
+                    {
+                        insert = @"INSERT INTO TrnFwds(RequestId,ToUserId,FromUserId,FromAspNetUsersId,ToAspNetUsersId,UnitId,Remark,TypeId,IsComplete,IsActive,Updatedby,UpdatedOn,RemarksIds,FwdStatusId,StepId)
+                                OUTPUT INSERTED.TrnFwdId
+                                VALUES(@RequestId,@ToUserId,@FromUserId,@FromAspNetUsersId,@ToAspNetUsersId,@UnitId,@Remark,@TypeId,@IsComplete,@IsActive,@Updatedby,@UpdatedOn,@RemarksIds,@FwdStatusId,@StepId)";
+                        var parameters = new DynamicParameters();
+                        parameters.Add("@TrnFwdId", mTrnFwd.TrnFwdId, DbType.Int32, ParameterDirection.Output);
+                        parameters.Add("@RequestId", mTrnFwd.RequestId, DbType.Int32, ParameterDirection.Input);
+                        parameters.Add("@ToUserId", mTrnFwd.ToUserId, DbType.Int32, ParameterDirection.Input);
+                        parameters.Add("@FromUserId", mTrnFwd.FromUserId, DbType.Int32, ParameterDirection.Input);
+                        parameters.Add("@FromAspNetUsersId", mTrnFwd.FromAspNetUsersId, DbType.Int32, ParameterDirection.Input);
+                        parameters.Add("@ToAspNetUsersId", mTrnFwd.ToAspNetUsersId, DbType.Int32, ParameterDirection.Input);
+                        parameters.Add("@UnitId", mTrnFwd.UnitId, DbType.Int32, ParameterDirection.Input);
+                        parameters.Add("@Remark", mTrnFwd.Remark, DbType.String, ParameterDirection.Input, 100);
+                        parameters.Add("@TypeId", mTrnFwd.TypeId, DbType.Byte, ParameterDirection.Input);
+                        parameters.Add("@IsComplete", mTrnFwd.IsComplete, DbType.Boolean, ParameterDirection.Input);
+                        parameters.Add("@IsActive", mTrnFwd.IsActive, DbType.Boolean, ParameterDirection.Input);
+                        parameters.Add("@Updatedby", mTrnFwd.Updatedby, DbType.Int32, ParameterDirection.Input);
+                        parameters.Add("@UpdatedOn", mTrnFwd.UpdatedOn, DbType.DateTime, ParameterDirection.Input);
+                        parameters.Add("@RemarksIds", mTrnFwd.RemarksIds, DbType.String, ParameterDirection.Input, 100);
+                        parameters.Add("@FwdStatusId", mTrnFwd.FwdStatusId, DbType.Byte, ParameterDirection.Input);
+                        parameters.Add("@StepId", mTrnFwd.StepId, DbType.Byte, ParameterDirection.Input);
+                        
+                        var Id = await db.QuerySingleAsync<int>(insert, parameters, transaction: transaction);
+                    }
                     query3 = @"UPDATE AFSAC2.dbo.XmlFilesFwdLog SET XmlFiles='' WHERE RequestId=@RequestId";
                     await db.ExecuteAsync(query3, new { dTO.RequestId }, transaction: transaction);
 

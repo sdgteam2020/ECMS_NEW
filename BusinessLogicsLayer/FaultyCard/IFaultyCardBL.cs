@@ -15,6 +15,6 @@ namespace BusinessLogicsLayer.FaultyCard
         public Task<bool> FindRequestId(int RequestId);
         public Task<DTOFaultyCardListResponse?> GetTrnFaultyCardDetail(int TrnFaultyCardId);
         public Task<List<DTOFaultyCardListResponse>?> GetAllFaulty(bool Claim,int MapUnitId);
-        public Task<DTOFaultyCardSaveResponse> SaveFaultyCard(DTOFaultyCardRequest dTO);
+        public Task<DTOFaultyCardSaveResponse> SaveFaultyCard(DTOFaultyCardRequest dTO, MTrnFwd? mTrnFwd);
     }
 }

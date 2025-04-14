@@ -118,26 +118,87 @@ namespace DataAccessLayer
         }
 
         public async Task<DTOPostingInResponse> GetArmyDataForPostingOut(string ArmyNo)
-        { 
+        {
+            #region Old code by Kapoor Sir
+            //try
+            //{
+
+            //    string query = "  SELECT basi.BasicDetailId,trnicardr.RequestId,basi.FName,basi.LName,basi.ServiceNo,ranks.RankAbbreviation RankName,appl.ApplyForId,appl.Name ApplyFor,trnicardr.TrackingId," +
+            //                    " trnicardr.StatusId,uplod.PhotoImagePath" +
+            //                    " ,users.DomainId Users_DomainId,pro.ArmyNo Users_ArmyNo,pro.Name Users_Name,ranks1.RankAbbreviation Users_RankName,app.AppointmentName Users_AppointmentName" +
+            //                    " ,muni.UnitName,muni.Suffix,muni.Sus_no,mapunit.UnitMapId FromUnitID,users.Id FromAspNetUsersId,pro.userId FromUserID from BasicDetails basi" +
+            //                    " inner join TrnICardRequest trnicardr on trnicardr.BasicDetailId=basi.BasicDetailId" +
+            //                    " inner join TrnDomainMapping trndom on trndom.id=trnicardr.TrnDomainMappingId" +
+            //                    " inner join MRank ranks on ranks.RankId=basi.RankId" +
+            //                    " inner join MApplyFor appl on appl.ApplyForId=basi.ApplyForId" +
+            //                    " inner join TrnUpload uplod on uplod.BasicDetailId=basi.BasicDetailId" +
+            //                    " inner join AspNetUsers users on users.Id=trndom.AspNetUsersId" +
+            //                    " inner join UserProfile pro on pro.UserId=trndom.UserId" +
+            //                    " inner join MRank ranks1 on ranks1.RankId=pro.RankId" +
+            //                    " inner join MAppointment app on app.ApptId=trndom.ApptId" +
+            //                    " inner join MapUnit mapunit on mapunit.UnitMapId=basi.UnitId" +
+            //                    " inner join MUnit muni on muni.UnitId=mapunit.UnitId" +
+            //                    " where basi.ServiceNo=@ArmyNo and trnicardr.StatusId=1";
+            //    using (var connection = _contextDP.CreateConnection())
+            //    {
+            //        var ret = await connection.QueryAsync<DTOPostingInResponse>(query, new { ArmyNo });
+
+            //        return ret.FirstOrDefault() ?? new DTOPostingInResponse();
+
+            //    }
+            //}
+            //catch (Exception ex)
+            //{
+            //    _logger.LogError(1001, ex, "PostingDB->GetArmyDataForPostingOut");
+            //    return new DTOPostingInResponse();
+            //}
+            #endregion
             try
             {
 
-                string query = "  SELECT basi.BasicDetailId,trnicardr.RequestId,basi.FName,basi.LName,basi.ServiceNo,ranks.RankAbbreviation RankName,appl.ApplyForId,appl.Name ApplyFor,trnicardr.TrackingId," +
-                                " trnicardr.StatusId,uplod.PhotoImagePath"+
-                                " ,users.DomainId Users_DomainId,pro.ArmyNo Users_ArmyNo,pro.Name Users_Name,ranks1.RankAbbreviation Users_RankName,app.AppointmentName Users_AppointmentName"+
-                                " ,muni.UnitName,muni.Suffix,muni.Sus_no,mapunit.UnitMapId FromUnitID,users.Id FromAspNetUsersId,pro.userId FromUserID from BasicDetails basi" +
-                                " inner join TrnICardRequest trnicardr on trnicardr.BasicDetailId=basi.BasicDetailId"+
-                                " inner join TrnDomainMapping trndom on trndom.id=trnicardr.TrnDomainMappingId" +
-                                " inner join MRank ranks on ranks.RankId=basi.RankId"+
-                                " inner join MApplyFor appl on appl.ApplyForId=basi.ApplyForId"+
-                                " inner join TrnUpload uplod on uplod.BasicDetailId=basi.BasicDetailId"+
-                                " inner join AspNetUsers users on users.Id=trndom.AspNetUsersId"+
-                                " inner join UserProfile pro on pro.UserId=trndom.UserId"+
-                                " inner join MRank ranks1 on ranks1.RankId=pro.RankId"+
-                                " inner join MAppointment app on app.ApptId=trndom.ApptId"+
-                                " inner join MapUnit mapunit on mapunit.UnitMapId=basi.UnitId"+
-                                " inner join MUnit muni on muni.UnitId=mapunit.UnitId"+
-                                " where basi.ServiceNo=@ArmyNo and trnicardr.StatusId=1";
+                string query = @"SELECT basi.BasicDetailId,trnicardr.RequestId,basi.FName,basi.LName,basi.ServiceNo,ranks.RankAbbreviation RankName,appl.ApplyForId,appl.Name ApplyFor,trnicardr.TrackingId,
+                                trnicardr.StatusId,uplod.PhotoImagePath
+                                ,users.DomainId Users_DomainId,pro.ArmyNo Users_ArmyNo,pro.Name Users_Name,ranks1.RankAbbreviation Users_RankName,app.AppointmentName Users_AppointmentName
+                                ,muni.UnitName,muni.Suffix,muni.Sus_no,mapunit.UnitMapId FromUnitID,users.Id FromAspNetUsersId,pro.userId FromUserID,
+                                COALESCE(MAX(fwd.TrnFwdId), NULL) AS MaxTrnFwdId
+                                from BasicDetails basi
+                                inner join TrnICardRequest trnicardr on trnicardr.BasicDetailId=basi.BasicDetailId
+                                inner join TrnDomainMapping trndom on trndom.id=trnicardr.TrnDomainMappingId
+                                inner join MRank ranks on ranks.RankId=basi.RankId
+                                inner join MApplyFor appl on appl.ApplyForId=basi.ApplyForId
+                                inner join TrnUpload uplod on uplod.BasicDetailId=basi.BasicDetailId
+                                inner join AspNetUsers users on users.Id=trndom.AspNetUsersId
+                                inner join UserProfile pro on pro.UserId=trndom.UserId
+                                inner join MRank ranks1 on ranks1.RankId=pro.RankId
+                                inner join MAppointment app on app.ApptId=trndom.ApptId
+                                inner join MapUnit mapunit on mapunit.UnitMapId=basi.UnitId
+                                inner join MUnit muni on muni.UnitId=mapunit.UnitId
+                                left join TrnFwds fwd on fwd.RequestId=trnicardr.RequestId
+                                where basi.ServiceNo=@ArmyNo and trnicardr.StatusId=1
+                                GROUP BY 
+                                    basi.BasicDetailId,
+                                    trnicardr.RequestId,
+                                    basi.FName,
+                                    basi.LName,
+                                    basi.ServiceNo,
+                                    ranks.RankAbbreviation,
+                                    appl.ApplyForId,
+                                    appl.Name,
+                                    trnicardr.TrackingId,
+                                    trnicardr.StatusId,
+                                    uplod.PhotoImagePath,
+                                    users.DomainId,
+                                    pro.ArmyNo,
+                                    pro.Name,
+                                    ranks1.RankAbbreviation,
+                                    app.AppointmentName,
+                                    muni.UnitName,
+                                    muni.Suffix,
+                                    muni.Sus_no,
+                                    mapunit.UnitMapId,
+                                    users.Id,
+                                    pro.userId;
+                                ";
                 using (var connection = _contextDP.CreateConnection())
                 {
                     var ret = await connection.QueryAsync<DTOPostingInResponse>(query, new { ArmyNo });
@@ -206,9 +267,9 @@ namespace DataAccessLayer
 
             try
             {
-                var insertSql = " INSERT INTO TrnPostingOut (ReasonId, Authority, FromAspNetUsersId, FromUnitID, FromUserID, ToAspNetUsersId, ToUnitID, ToUserID, IsActive, UpdatedOn, Updatedby, SOSDate, BasicDetailId, RequestId)" +
+                var insertSql = " INSERT INTO TrnPostingOut (ReasonId, Authority, FromAspNetUsersId, FromUnitID, FromUserID, ToAspNetUsersId, ToUnitID, ToUserID, IsActive, UpdatedOn, Updatedby, SOSDate, BasicDetailId, RequestId, TrnFwdId)" +
                                 " OUTPUT INSERTED.Id "+
-                                " VALUES (@ReasonId, @Authority, @FromAspNetUsersId, @FromUnitID, @FromUserID, @ToAspNetUsersId, @ToUnitID, @ToUserID, @IsActive, @UpdatedOn, @Updatedby, @SOSDate, @BasicDetailId, @RequestId );";
+                                " VALUES (@ReasonId, @Authority, @FromAspNetUsersId, @FromUnitID, @FromUserID, @ToAspNetUsersId, @ToUnitID, @ToUserID, @IsActive, @UpdatedOn, @Updatedby, @SOSDate, @BasicDetailId, @RequestId, @TrnFwdId );";
                 var parameters = new DynamicParameters();
                 parameters.Add("@ReasonId", Data.ReasonId, DbType.Byte, ParameterDirection.Input);
                 parameters.Add("@Authority", Data.Authority, DbType.String, ParameterDirection.Input,50);
@@ -224,6 +285,7 @@ namespace DataAccessLayer
                 parameters.Add("@SOSDate", Data.SOSDate, DbType.DateTime, ParameterDirection.Input);
                 parameters.Add("@BasicDetailId", Data.BasicDetailId, DbType.Int32, ParameterDirection.Input);
                 parameters.Add("@RequestId", Data.RequestId, DbType.Int32, ParameterDirection.Input);
+                parameters.Add("@TrnFwdId", Data.TrnFwdId, DbType.Int32, ParameterDirection.Input);
 
                 //var parameters = new { ReasonId = Data.ReasonId, Authority = Data.Authority , FromAspNetUsersId = Data.FromAspNetUsersId, FromUnitID = Data.FromUnitID, FromUserID = Data.FromUserID, ToAspNetUsersId = Data.ToAspNetUsersId, ToUnitID = Data.ToUnitID, ToUserID = Data.ToUserID, IsActive= Data.IsActive, UpdatedOn = Data.UpdatedOn, Updatedby = Data.Updatedby, SOSDate = Data.SOSDate, BasicDetailId = Data.BasicDetailId, RequestId = Data.RequestId };
                 var Id = await db.QuerySingleAsync<int>(insertSql, parameters, transaction:transaction);
@@ -234,14 +296,19 @@ namespace DataAccessLayer
                 string query2 = " update BasicDetails set UnitId=@ToUnitID where BasicDetailId =(select BasicDetailId from TrnICardRequest where RequestId=@RequestId and StatusId=1) ";
                 await db.ExecuteAsync(query2, new { RequestId, ToUnitID }, transaction: transaction);
 
-                string query3 = " update TrnFwds set PostingOutId= @Id where RequestId=@RequestId and IsComplete=0 ";
-                await db.ExecuteAsync(query3, new { RequestId, Id }, transaction: transaction);
+                if (Data.TrnFwdId != null)
+                {
+                    //string query3 = " update TrnFwds set PostingOutId= @Id where RequestId=@RequestId and IsComplete=0 ";
+                    //await db.ExecuteAsync(query3, new { RequestId, Id }, transaction: transaction);
 
-                string query4 = " if exists (select top 1 * from TrnFwds where FwdStatusId=3 and IsComplete=0 and RequestId=@RequestId)" +
-                                  " begin" +
-                                  " update TrnFwds set ToAspNetUsersId=@ToAspNetUsersId where FwdStatusId=3 and IsComplete=0 and RequestId=@RequestId " +
-                                  " end";
-                await db.ExecuteAsync(query4, new { ToAspNetUsersId, RequestId, ToUnitID }, transaction: transaction);
+                    string query4 = " if exists (select top 1 * from TrnFwds where FwdStatusId=3 and IsComplete=0 and RequestId=@RequestId)" +
+                                      " begin" +
+                                      " update TrnFwds set ToAspNetUsersId=@ToAspNetUsersId where FwdStatusId=3 and IsComplete=0 and RequestId=@RequestId " +
+                                      " end";
+                    await db.ExecuteAsync(query4, new { ToAspNetUsersId, RequestId, ToUnitID }, transaction: transaction);
+                }
+
+
                 
                 // Commit the transaction if all operations succeed
                 transaction.Commit();

@@ -326,35 +326,6 @@
     @*  <script asp-src-include="~/select2/dist/js/select2.min.js"></script>*@
     @RenderSection("Scripts", false)
     @RenderSection("body_scripts", false)
-@*     <script>
-        $(document).ready(function () {
-
-            $('[data-toggle="tooltip"]').tooltip();
-
-
-            $("#loading").hide();
-            $(document).ajaxStart(function () {
-                $("#loading").show();
-            }).ajaxStop(function () {
-                $("#loading").hide();
-            });
-            $('.datepicker').datetimepicker({
-                format: "L"
-            });
-            $('.timepicker').datetimepicker({
-                format: "LT"
-            });
-            $('.datetimepicker').datetimepicker({
-                sideBySide: true
-            });
-
-            $('.PersInfo').on("click", function () {
-                sessionStorage.persid = null
-            })
-        });
-
-    </script> *@
-
 
     <script asp-src-include="~/lib/jqueryui/jquery-ui.min.js"></script>
     <script asp-src-include="~/js/bootstrap.bundle.min.js"></script>

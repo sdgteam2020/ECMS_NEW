@@ -1480,8 +1480,9 @@ namespace Web.Controllers
             return View();
         }
         [Authorize(Roles = "admin")]
-        public async Task<IActionResult> SaveRegimental(MRegimental dTO)
+        public async Task<IActionResult> SaveRegimental([FromBody] MRegimental dTO)
         {
+            // FormBody used when send null in Unit then not support action method (treat as string, not null)
             try
             {
                 dTO.IsActive = true;

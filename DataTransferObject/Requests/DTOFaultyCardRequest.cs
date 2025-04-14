@@ -45,6 +45,7 @@ namespace DataTransferObject.Requests
 
         [RegularExpression(@"^[\d]+$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "OnlyNumber")]
         public byte Choice { get; set; }
+        public int TrnFwdId { get; set; }
 
         public bool IsEditAction { get; set; }
 

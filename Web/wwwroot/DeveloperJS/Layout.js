@@ -46,9 +46,11 @@ $(function () {
 
             var encryptedArmyNo = CryptoJS.AES.encrypt($("#txtarmynosearchAll").val(), secretKey).toString();
             var encryptedRequestId = CryptoJS.AES.encrypt($("#RequestId_unitoffrsModal").val(), secretKey).toString();
+            var encryptedMaxTrnFwdId = CryptoJS.AES.encrypt($("#MaxTrnFwdId_unitoffrsModal").val(), secretKey).toString();
 
             sessionStorage.setItem("ArmyNo", encryptedArmyNo);
             sessionStorage.setItem("RequestIdForFaulty", encryptedRequestId);
+            sessionStorage.setItem("MaxTrnFwdId", encryptedMaxTrnFwdId);
 
             if ($("#armynosearchTypeId").val() == ApplicantPostingOut)
                 window.location.href = "/Posting/PostingIn";
@@ -94,12 +96,14 @@ $(function () {
                                 value: item.BasicDetailId,
                                 Name: item.FName + (item.LName ? item.LName : ""),
                                 Image: item.Image,
-                                RequestId: item.RequestId
+                                RequestId: item.RequestId,
+                                MaxTrnFwdId: item.MaxTrnFwdId ?? 0
                             })));
                         } else {
                             $("#armynosearchAllName").html("");
                             $("#txtarmynosearchAll").val("");
                             $("#RequestId_unitoffrsModal").val("");
+                            $("#MaxTrnFwdId_unitoffrsModal").val("");
                             $("#armynosearchAllpic").attr("src", "");
                             alert("Army no not found.");
                         }
@@ -116,26 +120,32 @@ $(function () {
             $("#txtarmynosearchAll").val(i.item.label);
             $("#armynosearchAllpic").attr("src", i.item.Image);
             $("#RequestId_unitoffrsModal").val(i.item.RequestId);
+            $("#MaxTrnFwdId_unitoffrsModal").val(i.item.MaxTrnFwdId);
         },
         appendTo: '#suggesstion-box'
     });
 
-    $.ajax({
-        url: '/Home/VisitorStats',
-        type: 'GET',
-        dataType: 'json',
-        success: function (data) {
-            // Populate the stats dynamically
-            $('#today').text("Vistors Today : "+ data.Today);
-            $('#week').text("Week : " +data.Week);
-            $('#month').text(data.MonthName +" : "+data.Month);
-            $('#total').text("Total : "+ data.Total);
-            $('#monthName').text(data.MonthName);
-        },
-        error: function (xhr, status, error) {
+    fetch('/Home/VisitorStats?_=' + new Date().getTime()) // cache busting
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json(); // parse JSON
+        })
+        .then(data => {
+            if (data) {
+                $('#today').text("Visitors Today : " + (data.Today ?? 0));
+                $('#week').text("Week : " + (data.Week ?? 0));
+                $('#month').text((data.MonthName ?? "Month") + " : " + (data.Month ?? 0));
+                $('#total').text("Total : " + (data.Total ?? 0));
+                $('#monthName').text(data.MonthName ?? "");
+            } else {
+                console.warn('No visitor stats data received.');
+            }
+        })
+        .catch(error => {
             console.error('Error fetching visitor stats:', error);
-        }
-    });
+        });
 
 });
 

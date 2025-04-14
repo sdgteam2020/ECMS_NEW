@@ -1,9 +1,12 @@
-﻿using DataAccessLayer.BaseInterfaces;
+﻿using Dapper;
+using DataAccessLayer.BaseInterfaces;
+using DataAccessLayer.Logger;
 using DataTransferObject.Domain.Master;
 using DataTransferObject.Response;
 using DataTransferObject.Response.User;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,16 +18,16 @@ namespace DataAccessLayer
 {
     public class RegimentalDB : GenericRepositoryDL<MRegimental>, IRegimentalDB
     {
-        protected readonly ApplicationDbContext _context;
-        public RegimentalDB(ApplicationDbContext context) : base(context)
+        protected new readonly ApplicationDbContext _context;
+        private readonly DapperContext _contextDP;
+        private readonly ILogger<RegimentalDB> _logger;
+        public RegimentalDB(ApplicationDbContext context, DapperContext contextDP, ILogger<RegimentalDB> logger) : base(context)
         {
             _context = context;
+            _contextDP = contextDP;
+            _logger = logger;
         }
       
-
-      
-        private readonly IConfiguration configuration;
-       
         public async Task<bool> GetByName(MRegimental Dto)
         {
             List<MRegimental> mRegimentals = await _context.MRegimental.AsNoTracking().ToListAsync();
@@ -46,26 +49,27 @@ namespace DataAccessLayer
             return data;
         }
 
-        public Task<List<DTORegimentalResponse>> GetAllData()
+        public async Task<List<DTORegimentalResponse>> GetAllData()
         {
-            var Corps = (from c in _context.MRegimental
-                         join d in _context.MArmedType
-                         on c.ArmedId equals d.ArmedId
-                        
-                         select new DTORegimentalResponse
-                         {
-                             RegId=c.RegId,
-                             Name=c.Name,
-                             Abbreviation=c.Abbreviation,
-                             ArmedId=c.RegId, //c.ArmedId
-                             ArmedName =d.ArmedName,
-                             Location=c.Location,
-
-                         }).OrderByDescending(x=>x.RegId).ToList();
-
-
-
-            return Task.FromResult(Corps);
+            try
+            {
+                string query = "";
+                query = @"Select mreg.RegId,mreg.Name,mreg.Location,mreg.Abbreviation,mreg.UnitId,marmed.ArmedId,marmed.ArmedName, munit.Sus_no,munit.Suffix,munit.Abbreviation AS UnitAbbreviation,munit.UnitName
+                        from MRegimental mreg
+                        inner join MArmedType marmed on marmed.ArmedId=mreg.ArmedId
+                        left join MapUnit mapunit on mapunit.UnitMapId = mreg.UnitId
+                        left join MUnit munit on munit.UnitId =mapunit.UnitId order by mreg.RegId desc";
+                using (var connection = _contextDP.CreateConnection())
+                {
+                    var allrecord = await connection.QueryAsync<DTORegimentalResponse>(query);
+                    return allrecord.ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "RegimentalDB->GetAllData");
+                return new List<DTORegimentalResponse>() ;
+            }
         }
     }
 }

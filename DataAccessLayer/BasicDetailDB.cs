@@ -563,23 +563,41 @@ namespace DataAccessLayer
             {
                 if (dto.Claim == true)
                 {
-                    query = @"Select TOP 5 basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath Image,req.RequestId 
+                    query = @"Select TOP 5 basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath Image,req.RequestId,COALESCE(MAX(fwd.TrnFwdId), NULL) AS MaxTrnFwdId  
                             from BasicDetails basi
                             inner join TrnUpload trnu on basi.BasicDetailId=trnu.BasicDetailId 
                             inner join TrnICardRequest req on req.BasicDetailId=basi.BasicDetailId and req.StatusId=1 and req.FlagForFaulty=0
                             inner join TrnStepCounter stepcount on req.RequestId=stepcount.RequestId and stepcount.StepId=6
                             inner join TrnDomainMapping tdm on tdm.Id=req.TrnDomainMappingId
-                            where ServiceNo like @ServiceNo ";
+                            LEFT JOIN TrnFwds fwd ON fwd.RequestId = req.RequestId
+                            where ServiceNo like @ServiceNo
+                            GROUP BY
+								basi.BasicDetailId,
+								FName,
+								LName,
+								ServiceNo,
+								PhotoImagePath,
+								req.RequestId
+                            ";
                 }
                 else
                 {
-                    query = @"Select TOP 5 basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath Image,req.RequestId 
+                    query = @"Select TOP 5 basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath Image,req.RequestId,COALESCE(MAX(fwd.TrnFwdId), NULL) AS MaxTrnFwdId  
                             from BasicDetails basi
                             inner join TrnUpload trnu on basi.BasicDetailId=trnu.BasicDetailId 
                             inner join TrnICardRequest req on req.BasicDetailId=basi.BasicDetailId and req.StatusId=1 and req.FlagForFaulty=0
                             inner join TrnStepCounter stepcount on req.RequestId=stepcount.RequestId and stepcount.StepId=6
                             inner join TrnDomainMapping tdm on tdm.Id=req.TrnDomainMappingId and tdm.UnitId=@MapUnitId
-                            where ServiceNo like @ServiceNo ";
+                            LEFT JOIN TrnFwds fwd ON fwd.RequestId = req.RequestId
+                            where ServiceNo like @ServiceNo
+                            GROUP BY
+								basi.BasicDetailId,
+								FName,
+								LName,
+								ServiceNo,
+								PhotoImagePath,
+								req.RequestId
+                            ";
                 }
             }
 
@@ -1709,7 +1727,44 @@ namespace DataAccessLayer
 
         public async Task<List<ICardHistoryResponse>?> ICardHistory(int RequestId)
         {
-            string query = @"select usersfrom.UserName FromDomain,profrom.Name FromProfile,ranlfrom.RankAbbreviation FromRank,
+            #region Old Code
+            //string query = @"select usersfrom.UserName FromDomain,profrom.Name FromProfile,ranlfrom.RankAbbreviation FromRank,
+            //                usersto.UserName ToDomain,proto.Name ToProfile,ranlto.RankAbbreviation ToRank ,
+            //                CASE fwd.FwdStatusId WHEN 1 THEN 'Pending' WHEN 2 THEN 'Approved' WHEN 3 THEN 'Reject' WHEN 4 THEN 'Internal Forward' END Status,
+            //                fwd.UpdatedOn,isnull(fwd.Remark,'Nill') Remark,
+            //                fwd.IsComplete,(select STRING_AGG(Remarks,'#') from MRemarks where RemarksId in (select value from string_split(fwd.RemarksIds,','))) Remarks2,
+            //                reason.Reason,postind.Authority,initres.UnitName
+            //                from TrnFwds fwd
+            //                inner join TrnStepCounter step on fwd.RequestId=step.RequestId
+            //                inner join TrnDomainMapping mapfrom on mapfrom.AspNetUsersId=fwd.FromAspNetUsersId
+            //                inner join AspNetUsers usersfrom on usersfrom.Id=mapfrom.AspNetUsersId
+            //                inner join TrnDomainMapping mapto on mapto.AspNetUsersId=fwd.ToAspNetUsersId
+            //                inner join AspNetUsers usersto on usersto.Id=mapto.AspNetUsersId
+            //                left join UserProfile profrom on mapfrom.UserId=profrom.UserId
+            //                inner join MRank ranlfrom on ranlfrom.RankId=profrom.RankId
+            //                left join UserProfile proto on mapto.UserId=proto.UserId
+            //                left join TrnPostingOut postind on postind.Id=fwd.PostingOutId
+            //                left join MPostingReason reason on reason.Id=postind.ReasonId
+            //                left join MapUnit Munitres on Munitres.UnitMapId=postind.ToUnitID
+            //                left join MUnit initres on initres.UnitId=Munitres.UnitId
+            //                inner join MRank ranlto on ranlto.RankId=proto.RankId where fwd.RequestId=@RequestId
+            //                order by fwd.TrnFwdId asc";
+            //try
+            //{
+            //    using (var connection = _contextDP.CreateConnection())
+            //    {
+            //        var BasicDetailList = await connection.QueryAsync<ICardHistoryResponse>(query, new { RequestId });
+
+            //        return BasicDetailList.ToList();
+            //    }
+            //}
+            //catch (Exception ex)
+            //{
+            //    _logger.LogError(1001, ex, "BasicDetailDB->ICardHistory");
+            //    return null;
+            //}
+            #endregion
+            string query = @"select fwd.TrnFwdId,usersfrom.UserName FromDomain,profrom.Name FromProfile,ranlfrom.RankAbbreviation FromRank,
                             usersto.UserName ToDomain,proto.Name ToProfile,ranlto.RankAbbreviation ToRank ,
                             CASE fwd.FwdStatusId WHEN 1 THEN 'Pending' WHEN 2 THEN 'Approved' WHEN 3 THEN 'Reject' WHEN 4 THEN 'Internal Forward' END Status,
                             fwd.UpdatedOn,isnull(fwd.Remark,'Nill') Remark,
@@ -1717,18 +1772,17 @@ namespace DataAccessLayer
                             reason.Reason,postind.Authority,initres.UnitName
                             from TrnFwds fwd
                             inner join TrnStepCounter step on fwd.RequestId=step.RequestId
-                            inner join TrnDomainMapping mapfrom on mapfrom.AspNetUsersId=fwd.FromAspNetUsersId
-                            inner join AspNetUsers usersfrom on usersfrom.Id=mapfrom.AspNetUsersId
-                            inner join TrnDomainMapping mapto on mapto.AspNetUsersId=fwd.ToAspNetUsersId
-                            inner join AspNetUsers usersto on usersto.Id=mapto.AspNetUsersId
-                            left join UserProfile profrom on mapfrom.UserId=profrom.UserId
+                            inner join AspNetUsers usersfrom on usersfrom.Id=fwd.FromAspNetUsersId
+                            inner join AspNetUsers usersto on usersto.Id=fwd.ToAspNetUsersId
+                            inner join UserProfile profrom on fwd.FromUserId=profrom.UserId
                             inner join MRank ranlfrom on ranlfrom.RankId=profrom.RankId
-                            left join UserProfile proto on mapto.UserId=proto.UserId
-                            left join TrnPostingOut postind on postind.Id=fwd.PostingOutId
+                            inner join UserProfile proto on fwd.ToUserId=proto.UserId
+                            inner join MRank ranlto on ranlto.RankId=proto.RankId
+                            left join TrnPostingOut postind on postind.TrnFwdId=fwd.TrnFwdId
                             left join MPostingReason reason on reason.Id=postind.ReasonId
                             left join MapUnit Munitres on Munitres.UnitMapId=postind.ToUnitID
                             left join MUnit initres on initres.UnitId=Munitres.UnitId
-                            inner join MRank ranlto on ranlto.RankId=proto.RankId where fwd.RequestId=@RequestId
+                            where fwd.RequestId=@RequestId
                             order by fwd.TrnFwdId asc";
             try
             {

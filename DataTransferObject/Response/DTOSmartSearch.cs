@@ -14,6 +14,7 @@ namespace DataTransferObject.Response
         public string ServiceNo { get; set; } = string.Empty;
         public int RequestId { get; set; }
         public string Image { get; set; } = string.Empty;
+        public int? MaxTrnFwdId { get; set; }
 
     }
 }

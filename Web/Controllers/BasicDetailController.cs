@@ -41,6 +41,7 @@ using NuGet.Protocol.Plugins;
 using BusinessLogicsLayer;
 using Humanizer;
 using iText.IO.Font.Cmap;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Web.Controllers
 {
@@ -2164,6 +2165,7 @@ namespace Web.Controllers
         [Authorize(Policy = "ICardExportDataPolicy")]
         public async Task<IActionResult> SaveFaultyCard(DTOFaultyCardRequest dTO)
         {
+            MTrnFwd? mTrnFwd = new MTrnFwd();
             DtoSession? dtoSession = new DtoSession();
             if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
             {
@@ -2171,6 +2173,32 @@ namespace Web.Controllers
 
             }
             dTO.UserId = dtoSession != null ? dtoSession.UserId : 0;
+            //Reject Case
+            if (dTO.Choice  == 3)
+            {
+                mTrnFwd.RequestId = dTO.RequestId;
+                mTrnFwd.FromUserId = dtoSession != null ? dtoSession.UserId : 0;
+                mTrnFwd.UnitId = dtoSession != null ? dtoSession.UnitId : 0;
+                mTrnFwd.Remark = dTO.ToRemark;
+                mTrnFwd.FwdStatusId = Convert.ToByte(3); //Reject
+                mTrnFwd.TypeId = Convert.ToByte(1);
+                mTrnFwd.StepId = Convert.ToByte(9);
+                mTrnFwd.IsComplete = false;
+                mTrnFwd.RemarksIds = dTO.RemarksIds;
+                mTrnFwd.FromAspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                mTrnFwd.UpdatedOn = DateTime.Now;
+                mTrnFwd.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                mTrnFwd.IsActive = true;
+
+                TrnDomainMapping Domain = new TrnDomainMapping();
+                Domain = await iDomainMapBL.GetByRequestId(dTO.RequestId);
+                if (Domain != null)
+                {
+                    mTrnFwd.ToAspNetUsersId = Domain.AspNetUsersId;
+                    mTrnFwd.ToUserId = Convert.ToInt32(Domain.UserId);
+                }
+            }
+
 
             DTOFaultyCardSaveResponse dTOFaulty = new DTOFaultyCardSaveResponse();
             try
@@ -2178,6 +2206,8 @@ namespace Web.Controllers
                 dTO.IsActive = true;
                 dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier)); ;
                 dTO.UpdatedOn = DateTime.Now;
+
+                
 
                 if (ModelState.IsValid)
                 {
@@ -2192,7 +2222,7 @@ namespace Web.Controllers
                         }
                         else
                         {
-                            dTOFaulty = await faultyCardBL.SaveFaultyCard(dTO);
+                            dTOFaulty = await faultyCardBL.SaveFaultyCard(dTO, mTrnFwd);
                             return Json(dTOFaulty);
                         }
                     }
@@ -2207,7 +2237,7 @@ namespace Web.Controllers
                         }
                         else
                         {
-                            dTOFaulty = await faultyCardBL.SaveFaultyCard(dTO);
+                            dTOFaulty = await faultyCardBL.SaveFaultyCard(dTO, mTrnFwd);
                             return Json(dTOFaulty);
                         }
                     }
@@ -2237,6 +2267,7 @@ namespace Web.Controllers
         }
         public async Task<IActionResult> SaveFaultyCardRequest(DTOFaultyCardRequest dTO)
         {
+            MTrnFwd? mTrnFwd = new MTrnFwd();
             DtoSession? dtoSession = new DtoSession();
             if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
             {
@@ -2271,7 +2302,7 @@ namespace Web.Controllers
                         }
                         else
                         {
-                            dTOFaulty = await faultyCardBL.SaveFaultyCard(dTO);
+                            dTOFaulty = await faultyCardBL.SaveFaultyCard(dTO, mTrnFwd);
                             return Json(dTOFaulty);
                         }
                     }

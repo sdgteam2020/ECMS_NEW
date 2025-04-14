@@ -30,5 +30,6 @@ namespace DataTransferObject.Response
         public int FromAspNetUsersId { get; set; }
         public int FromUnitID { get; set; }
         public int FromUserID { get; set; }
+        public int? MaxTrnFwdId { get; set; }
     }
 }

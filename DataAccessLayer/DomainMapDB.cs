@@ -52,8 +52,8 @@ namespace DataAccessLayer
                       where trnicardreq.RequestId == RequestId
                       select new TrnDomainMapping
                       {
-                         AspNetUsersId=trndomap.AspNetUsersId,
-                          UserId= trndomap.UserId,
+                        AspNetUsersId=trndomap.AspNetUsersId,
+                        UserId= trndomap.UserId,
                       }).FirstOrDefaultAsync();
             return  ret;
         }

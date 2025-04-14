@@ -59,5 +59,9 @@ namespace DataTransferObject.Domain.Model
         [ForeignKey("MTrnICardRequest"), DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int RequestId { get; set; }
         public MTrnICardRequest? MTrnICardRequest { get; set; }
+
+        [ForeignKey("MTrnFwd"), DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public int? TrnFwdId { get; set; }
+        public MTrnFwd? MTrnFwd { get; set; }
     }
 }

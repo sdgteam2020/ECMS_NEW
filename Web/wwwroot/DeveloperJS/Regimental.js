@@ -1,79 +1,111 @@
-$(document).ready(function () {
-
-    
-
-    
-    Reset();
+$(function () {
     mMsater(0, "ddlArmType", 9, "");
     BindData()
-    $("#btnReset").click(function () {
+    $("#btnAddRegimental").on("click",function () {
         Reset();
+        ResetErrorMessage();
+        $("#AddNewRegimental").modal('show');
+    });
+
+    $("#btnResetRegimental").on("click",function () {
+        Reset();
+        ResetErrorMessage();
+    });
+
+    $("#txtUnitName").autocomplete({
+        source: function (request, response) {
+            if (request.term.length > 2) {
+                $("#spnUnitMapId").html('');
+                const param = new URLSearchParams({ UnitName: request.term });
+
+                $("#spnUnitMapId").html(0);
+
+                fetch('/Master/GetALLByUnitName', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: param
+                })
+                    .then(res => {
+                        if (!res.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return res.json();
+                    })
+                    .then(data => {
+                        if (data.length !== 0) {
+                            response(data.map(item => {
+                                $("#loading").addClass("d-none");
+                                return {
+                                    label: item.Sus_no + item.Suffix + ' ' + item.UnitName,
+                                    value: item.UnitMapId
+                                };
+                            }));
+                        } else {
+                            $("#txtUnitName").val("");
+                            $("#spnUnitMapId").html("");
+                            alert("Unit not found.");
+                        }
+                    })
+                    .catch(error => {
+                        alert(error.message);
+                    });
+            }
+        },
+        select: function (e, i) {
+            e.preventDefault();
+            $("#txtUnitName").val(i.item.label);
+            $("#spnUnitMapId").html(i.item.value);
+        },
+        appendTo: '#suggesstion-box'
+    });
+
+    $('#txtUnitName').on('keyup',function (e) {
+        if (e.key === 'Delete') {
+            $("#txtUnitName").val("");
+            $("#spnUnitMapId").html("");
+            $("#ddlTDMId").find("option").not(":first").remove();
+            $("#ddlTDMId").val("0");
+        }
     });
    
-    $("#btnsave").click(function () {
-        if ($("#SaveForm")[0].checkValidity()) {
-
-            Swal.fire({
-                title: 'Are you sure?',
-                text: "",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes, Save it!'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    Save();
-                }
-            })
-           
-        } else {
-            $("#SaveForm")[0].reportValidity();
-        }
-
-       
-       
-       // 
-
-    });
-
-    $('#btnMultiDelete').click(function () {
-        var lst = new Array();
-
-        if (memberTable.$('input[type="checkbox"]:checked').length > 0) {
-
-            memberTable.$('input[type="checkbox"]:checked').each(function () {
-
-                
-                var id = $(this).attr("Id");
-                lst.push(id);
-                console.log(id);
-
-            });
-          
-            Swal.fire({
-                title: 'Are you sure?',
-                text: "You want to Delete",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#072697',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes, Delete it!'
-            }).then((result) => {
-                if (result.value) {
-                   
-                    DeleteMultiple(lst);
-
-                }
-            });
-        }
-        else {
-            Swal.fire({
-                text: "Please select atleast 1 data to Delete."
-            });
-        }
+    $("#btnSaveRegimental").on("click",function () {
+        Proceed();
     });
 });
+function Proceed() {
+    ResetErrorMessage();
+
+    let formId = '#SaveRegimental';
+    $.validator.unobtrusive.parse($(formId));
+
+    if ($(formId).valid()) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, Save it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Save();
+            }
+        })
+    }
+    else {
+        Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'Please fill required field.',
+
+        })
+        toastr.error('Please fill required field.');
+        return false;
+    }
+}
 
 function BindData() {
     var listItem = "";
@@ -110,13 +142,16 @@ function BindData() {
                     for (var i = 0; i < response.length; i++) {
                         
                             listItem += "<tr>";
-                            listItem += "<td class='d-none'><span id='spnMRegId'>" + response[i].RegId + "</span><span id='spnArmedId'>" + response[i].ArmedId + "</span></td>";
+                            listItem += "<td class='d-none'><span id='spnMRegId'>" + response[i].RegId + "</span><span id='spnArmedId'>" + response[i].ArmedId + "</span><span id='spnUnitId'>" + response[i].UnitId + "</span><span id='spnSus_no'>" + response[i].Sus_no + "</span><span id='spnSuffix'>" + response[i].Suffix + "</span><span id='spnUnitName'>" + response[i].UnitName + "</span></td>";
                             listItem += "<td class='align-middle'>" + (i+1) + "</td>";
                             listItem += "<td class='align-middle'><span id='Name'>" + response[i].Name + "</span></td>";
                             listItem += "<td class='align-middle'><span id='abbreviation'>" + response[i].Abbreviation + "</span></td>";
                             listItem += "<td class='align-middle'><span id='Location'>" + response[i].Location + "</span></td>";
                             listItem += "<td class='align-middle'><span id='ArmedName'>" + response[i].ArmedName + "</span></td>";
-
+                            if (response[i].UnitId !=null)
+                                listItem += "<td class='align-middle'><span id='ArmedName'>" + response[i].UnitAbbreviation + "</span></td>";
+                            else
+                                listItem += "<td class='align-middle'></td>";
                             listItem += "<td class='align-middle'><span id='btnedit'><button type='button' class='cls-btnedit btn btn-icon btn-round btn-warning mr-1'><i class='fas fa-edit'></i></button></span><button type='button' class='cls-btnDelete btn-icon btn-round btn-danger mr-1'><i class='fas fa-trash-alt'></i></button></td>";
 
 
@@ -181,7 +216,8 @@ function BindData() {
 
 
                     $("body").on("click", ".cls-btnedit", function () {
-                      /*  $("#AddNewM").modal('show');*/
+                        Reset();
+                        ResetErrorMessage();
                         $("#txtName").val($(this).closest("tr").find("#Name").html());
                         $("#txtAbbreviation").val($(this).closest("tr").find("#abbreviation").html().toUpperCase());
                         $("#txtLocation").val($(this).closest("tr").find("#Location").html());
@@ -189,6 +225,17 @@ function BindData() {
                         $("#spnRegId").html($(this).closest("tr").find("#spnMRegId").html());
 
                         $("#ddlArmType").val($(this).closest("tr").find("#spnArmedId").html());
+
+                        if ($(this).closest("tr").find("#spnUnitId").html() != null && $(this).closest("tr").find("#spnUnitId").html() != "null") {
+                            $("#spnUnitMapId").html($(this).closest("tr").find("#spnUnitId").html());
+                            $("#txtUnitName").val($(this).closest("tr").find("#spnSus_no").html() + $(this).closest("tr").find("#spnSuffix").html() + " " + $(this).closest("tr").find("#spnUnitName").html());
+                        }
+                        else {
+                            $("#spnUnitMapId").html("0");
+                            $("#txtUnitName").val("");
+                        }
+                        $("#btnSaveRegimental").val("Update");
+                        $("#AddNewRegimental").modal('show');
                         
                     });
 
@@ -231,105 +278,118 @@ function BindData() {
 
 }
 function Save() {
-
-    $.ajax({
-        url: '/Master/SaveRegimental',
-        type: 'POST',
-        data: { "Name": $("#txtName").val().trim(), "RegId": $("#spnRegId").html(), "Abbreviation": $("#txtAbbreviation").val().trim(), "ArmedId": $("#ddlArmType").val(), "Location": $("#txtLocation").val().trim(), }, //get the search string
-        success: function (result) {
-
-
-            if (result == DataSave) {
+    const payload = {
+        Name: $("#txtName").val().trim(),
+        RegId: $("#spnRegId").html(),
+        Abbreviation: $("#txtAbbreviation").val().trim(),
+        ArmedId: $("#ddlArmType").val(),
+        Location: $("#txtLocation").val().trim(),
+        UnitId: (() => {
+            let val = $("#spnUnitMapId").html().trim();
+            return val === "0" || val === "" ? null : parseInt(val, 10);
+        })()
+    };
+    fetch('/Master/SaveRegimental', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json' // change to JSON
+        },
+        body: JSON.stringify(payload) // send proper JSON
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json(); // or use response.text() depending on server response type
+        })
+        .then(result => {
+            if (result === DataSave) {
                 toastr.success('Regimental has been saved');
-
-                /*  $("#AddNewM").modal('hide');*/
+                $("#AddNewRegimental").modal('hide');
                 BindData();
                 Reset();
-            }
-            else if (result == DataUpdate) {
-                toastr.success('Regimental has been Updated');
-
-                /*  $("#AddNewM").modal('hide');*/
+            } else if (result === DataUpdate) {
+                toastr.success('Regimental has been updated');
+                $("#AddNewRegimental").modal('hide');
                 BindData();
                 Reset();
-            }
-            else if (result == DataExists) {
-
-                toastr.error('Regimental / Abbreviation Name Exits!');
-
-            }
-            else if (result == InternalServerError) {
+            } else if (result === DataExists) {
+                toastr.error('Regimental / Abbreviation Name exists!');
+            } else if (result === InternalServerError) {
                 Swal.fire({
                     icon: 'error',
                     title: 'Oops...',
-                    text: 'Something went wrong or Invalid Entry!',
-
-                })
-
+                    text: 'Something went wrong or invalid entry!',
+                });
             } else {
-                if (result.length > 0) {
-                    for (var i = 0; i < result.length; i++) {
-                        toastr.error(result[i][0].ErrorMessage)
+                if (Array.isArray(result) && result.length > 0) {
+                    for (let i = 0; i < result.length; i++) {
+                        toastr.error(result[i][0].ErrorMessage);
                     }
-
-
                 }
-
-
             }
-        }
-    });
+        })
+        .catch(error => {
+            console.error('Fetch error:', error);
+            toastr.error('Failed to save data. Please try again.');
+        });
 }
 
 function Reset() {
     $("#txtName").val("");
     $("#txtAbbreviation").val("");
     $("#txtLocation").val("");
-    $("#spnRegId").html("0");
+    $("#txtUnitName").val("");
     $("#ddlArmType").val("0");
+
+    $("#spnUnitMapId").html("0");
+    $("#spnRegId").html("0");
 }
-
+function ResetErrorMessage() {
+    $("#txtName-error").html("");
+    $("#txtAbbreviation-error").html("");
+    $("#txtLocation-error").html("");
+    $("#txtUnitName-error").html("");
+    $("#ddlArmType-error").html("");
+}
 function Delete(Id) {
-    var userdata =
-    {
-        "RegId": Id,
+    const userdata = new URLSearchParams({ RegId: Id });
 
-    };
-    $.ajax({
-        url: '/Master/DeleteRegimental',
-        contentType: 'application/x-www-form-urlencoded',
-        data: userdata,
-        type: 'POST',
-        success: function (response) {
-            if (response != "null") {
-                if (response == InternalServerError) {
+    fetch('/Master/DeleteRegimental', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: userdata
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json(); // Important: parse JSON instead of text
+        })
+        .then(response => {
+            if (response !== null) {
+                if (response === InternalServerError) {
                     Swal.fire({
                         text: errormsg
                     });
-                }
-
-                else if (response == Success) {
-                    //lol++;
-                    //if (lol == Tot) {
-
+                } else if (response === Success) {
                     toastr.success('Deleted Selected');
                     BindData();
                 }
-
-                //}
-            }
-            else {
+            } else {
                 Swal.fire({
                     text: errormsg001
                 });
             }
-        },
-        error: function (result) {
+        })
+        .catch(error => {
+            console.error('Fetch error:', error);
             Swal.fire({
                 text: errormsg002
             });
-        }
-    });
+        });
 }
 
 function DeleteMultiple(ids) {
