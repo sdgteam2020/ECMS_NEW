@@ -34,6 +34,11 @@ using System.Xml;
 using Microsoft.SqlServer.Management.Smo;
 using System.Globalization;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using DataTransferObject.Constants;
+using CsvHelper;
+using CsvHelper.Configuration;
+using BusinessLogicsLayer.CSVImports;
+using BusinessLogicsLayer.FaultyCard;
 
 namespace Web.Controllers
 {
@@ -67,12 +72,15 @@ namespace Web.Controllers
         public DateTime dateTimenow;
         private readonly IWebHostEnvironment _environment;
         private readonly string[] _expectedColumns = { "RequestId", "RankName", "FName", "LName", "ServiceNo", "ChipNo", "CardSerialNo" };
+        private readonly  ICSVImportBL _iCSVImportBL;
+        private readonly IFaultyCardBL faultyCardBL;
+
         public BasicDetailController(IConfiguration configuration,IBasicDetailBL basicDetailBL, IMapUnitBL mapUnitBL, IBasicDetailTempBL basicDetailTempBL, IService service, IMapper mapper,
             UserManager<ApplicationUser> userManager, IWebHostEnvironment hostingEnvironment, IDataProtectionProvider dataProtectionProvider,
                               DataProtectionPurposeStrings dataProtectionPurposeStrings, ILogger<BasicDetailController> logger, IStepCounterBL iStepCounterBL, 
                               ITrnFwnBL iTrnFwnBL, ITrnICardRequestBL iTrnICardRequestBL, IDomainMapBL iDomainMapBL
             ,IBasicUploadBL basicUploadBL, IBasicAddressBL basicAddressBL, IBasicinfoBL basicinfoBL, IRankBL rankBL, INotificationBL notificationBL, IMasterBL masterBL
-           , ITrnLoginLogBL iTrnLoginLogBL, IICardHoldBL iICardHoldBL)
+           , ITrnLoginLogBL iTrnLoginLogBL, IICardHoldBL iICardHoldBL, ICSVImportBL iCSVImportBL, IFaultyCardBL _faultyCardBL)
         {
             _configuration = configuration;
             this.basicDetailBL = basicDetailBL;
@@ -100,6 +108,8 @@ namespace Web.Controllers
             _IMasterBL = masterBL;
             _iTrnLoginLogBL = iTrnLoginLogBL;
             _iICardHoldBL = iICardHoldBL;
+            _iCSVImportBL = iCSVImportBL;
+            faultyCardBL = _faultyCardBL;
         }
 
         #region Index/ApprovalForIO/View/InaccurateData/InaccurateDataView/RequestType
