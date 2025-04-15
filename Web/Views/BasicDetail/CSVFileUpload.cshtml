@@ -61,7 +61,7 @@
             <div class="row">
                 <div class="col-xl-12 text-left">
                     <h3>
-                       CSV File Data
+                       CSV File Import
                         <small class="text-muted"></small>
                     </h3>
                 </div>
@@ -96,30 +96,124 @@
                     </div>
                 </form>
                 <div class="col-xl-12">
-                    <div class="d-flex justify-content-end">
+                    @* <div class="d-flex justify-content-end">
                         <button type="button" id="btnUpdate" class="btn btn-warning font-weight-600 btn-sm mb-2 ml-2">Update Chiip No & Serial No</button>
-                    </div>
+                    </div> *@
                     <div class="table-responsive">
                         <table class="table border border-purple table-striped no-footer dataTable table-hover" role="grid" id="tblData">
                             <thead>
                                 <tr>
-                                    <th class="noExport wd-30-f">
-                                        <div class="custom-control custom-checkbox small">
-                                            <input type="checkbox" class="custom-control-input" id="chkAll">
-                                            <label class="custom-control-label font-weight-bold" for="chkAll"></label>
-                                        </div>
-                                    </th>
                                     <th class="nowrap">S No</th>
-                                    <th class="nowrap">Request Id</th>
-                                    <th class="nowrap">Army No</th>
-                                    <th class="nowrap">Rank, Name</th>
-                                    <th class="nowrap">Chip No</th>
-                                    <th class="nowrap">Card Serial No</th>
-                                    <th class="nowrap">IsValid</th>
-                                    @* <th class="noExport nowrap">Action</th> *@
+                                    <th class="nowrap">Total Records</th>
+                                    <th class="nowrap">Valid Records</th>
+                                    <th class="nowrap">DB Invalid</th>
+                                    <th class="nowrap">Sheet Invalid</th>
+                                    <th class="nowrap">Uploaded On</th>
+                                    <th class="nowrap">Uploaded CSV</th>
+                                    <th class="nowrap">Validated CSV</th>
                                 </tr>
                             </thead>
                             <tbody id="DetailBody">
+                                <tr role="row" class="odd">
+                                    <td>1</td>
+                                    <td>100</td>
+                                    <td>80</td>
+                                    <td>10</td>
+                                    <td>10</td>
+                                    <td>11/03/2025 16:56:48</td>
+                                    <td><span id="btneyetotalusers"><button type="button" class="cls-btneyetotalusers btn btn-icon btn-round btn-warning mr-1"><i class="fa fa-eye"></i></button></span></td>
+                                    <td><span id="btneyetotalusers"><button type="button" class="cls-btneyetotalusers btn btn-icon btn-round btn-warning mr-1"><i class="fa fa-eye"></i></button></span></td>
+                                </tr>
+                                <tr role="row" class="even">
+                                    <td>2</td>
+                                    <td>100</td>
+                                    <td>80</td>
+                                    <td>10</td>
+                                    <td>10</td>
+                                    <td>11/03/2025 16:56:48</td>
+                                    <td><span id="btneyetotalusers"><button type="button" class="cls-btneyetotalusers btn btn-icon btn-round btn-warning mr-1"><i class="fa fa-eye"></i></button></span></td>
+                                    <td><span id="btneyetotalusers"><button type="button" class="cls-btneyetotalusers btn btn-icon btn-round btn-warning mr-1"><i class="fa fa-eye"></i></button></span></td>
+                                </tr>
+                                <tr role="row" class="odd">
+                                    <td>3</td>
+                                    <td>100</td>
+                                    <td>80</td>
+                                    <td>10</td>
+                                    <td>10</td>
+                                    <td>11/03/2025 16:56:48</td>
+                                    <td><span id="btneyetotalusers"><button type="button" class="cls-btneyetotalusers btn btn-icon btn-round btn-warning mr-1"><i class="fa fa-eye"></i></button></span></td>
+                                    <td><span id="btneyetotalusers"><button type="button" class="cls-btneyetotalusers btn btn-icon btn-round btn-warning mr-1"><i class="fa fa-eye"></i></button></span></td>
+                                </tr>
+                                <tr role="row" class="even">
+                                    <td>4</td>
+                                    <td>100</td>
+                                    <td>80</td>
+                                    <td>10</td>
+                                    <td>10</td>
+                                    <td>11/03/2025 16:56:48</td>
+                                    <td><span id="btneyetotalusers"><button type="button" class="cls-btneyetotalusers btn btn-icon btn-round btn-warning mr-1"><i class="fa fa-eye"></i></button></span></td>
+                                    <td><span id="btneyetotalusers"><button type="button" class="cls-btneyetotalusers btn btn-icon btn-round btn-warning mr-1"><i class="fa fa-eye"></i></button></span></td>
+                                </tr>
+                                <tr role="row" class="odd">
+                                    <td>5</td>
+                                    <td>100</td>
+                                    <td>80</td>
+                                    <td>10</td>
+                                    <td>10</td>
+                                    <td>11/03/2025 16:56:48</td>
+                                    <td><span id="btneyetotalusers"><button type="button" class="cls-btneyetotalusers btn btn-icon btn-round btn-warning mr-1"><i class="fa fa-eye"></i></button></span></td>
+                                    <td><span id="btneyetotalusers"><button type="button" class="cls-btneyetotalusers btn btn-icon btn-round btn-warning mr-1"><i class="fa fa-eye"></i></button></span></td>
+                                </tr>
+                                <tr role="row" class="even">
+                                    <td>6</td>
+                                    <td>100</td>
+                                    <td>80</td>
+                                    <td>10</td>
+                                    <td>10</td>
+                                    <td>11/03/2025 16:56:48</td>
+                                    <td><span id="btneyetotalusers"><button type="button" class="cls-btneyetotalusers btn btn-icon btn-round btn-warning mr-1"><i class="fa fa-eye"></i></button></span></td>
+                                    <td><span id="btneyetotalusers"><button type="button" class="cls-btneyetotalusers btn btn-icon btn-round btn-warning mr-1"><i class="fa fa-eye"></i></button></span></td>
+                                </tr>
+                                <tr role="row" class="odd">
+                                    <td>7</td>
+                                    <td>100</td>
+                                    <td>80</td>
+                                    <td>10</td>
+                                    <td>10</td>
+                                    <td>11/03/2025 16:56:48</td>
+                                    <td><span id="btneyetotalusers"><button type="button" class="cls-btneyetotalusers btn btn-icon btn-round btn-warning mr-1"><i class="fa fa-eye"></i></button></span></td>
+                                    <td><span id="btneyetotalusers"><button type="button" class="cls-btneyetotalusers btn btn-icon btn-round btn-warning mr-1"><i class="fa fa-eye"></i></button></span></td>
+                                </tr>
+                                <tr role="row" class="even">
+                                    <td>8</td>
+                                    <td>100</td>
+                                    <td>80</td>
+                                    <td>10</td>
+                                    <td>10</td>
+                                    <td>11/03/2025 16:56:48</td>
+                                    <td><span id="btneyetotalusers"><button type="button" class="cls-btneyetotalusers btn btn-icon btn-round btn-warning mr-1"><i class="fa fa-eye"></i></button></span></td>
+                                    <td><span id="btneyetotalusers"><button type="button" class="cls-btneyetotalusers btn btn-icon btn-round btn-warning mr-1"><i class="fa fa-eye"></i></button></span></td>
+                                </tr>
+                                <tr role="row" class="odd">
+                                    <td>9</td>
+                                    <td>100</td>
+                                    <td>80</td>
+                                    <td>10</td>
+                                    <td>10</td>
+                                    <td>11/03/2025 16:56:48</td>
+                                    <td><span id="btneyetotalusers"><button type="button" class="cls-btneyetotalusers btn btn-icon btn-round btn-warning mr-1"><i class="fa fa-eye"></i></button></span></td>
+                                    <td><span id="btneyetotalusers"><button type="button" class="cls-btneyetotalusers btn btn-icon btn-round btn-warning mr-1"><i class="fa fa-eye"></i></button></span></td>
+                                </tr>
+                                <tr role="row" class="even">
+                                    <td>10</td>
+                                    <td>100</td>
+                                    <td>80</td>
+                                    <td>10</td>
+                                    <td>10</td>
+                                    <td>11/03/2025 16:56:48</td>
+                                    <td><span id="btneyetotalusers"><button type="button" class="cls-btneyetotalusers btn btn-icon btn-round btn-warning mr-1"><i class="fa fa-eye"></i></button></span></td>
+                                    <td><span id="btneyetotalusers"><button type="button" class="cls-btneyetotalusers btn btn-icon btn-round btn-warning mr-1"><i class="fa fa-eye"></i></button></span></td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
@@ -128,6 +222,10 @@
         </div>
     </div>
 </div>
+
+
+@* <button id="showTable">Show Table in Modal</button> *@
+
 @* </div> *@
 @section Scripts {
     <script asp-src-include="~/developerjs/CSVFileUpload.js"></script>

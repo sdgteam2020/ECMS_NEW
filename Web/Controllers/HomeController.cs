@@ -152,11 +152,12 @@ namespace Web.Controllers
                 return Json(KeyConstants.InternalServerError);
             }
         }
-        public async Task<IActionResult> GetRecordHistory(DTOMHierarchyRequest Data,int ApplyForId,int StepId,int IsApproveId)
+        [HttpPost]
+        public async Task<IActionResult> GetRecordHistory([FromBody] DTORecordHistory dTORecord)
         {
             try
             {
-                var ret = await _reportReturnBL.GetRecordHistory(Data, ApplyForId, StepId, IsApproveId);
+                var ret = await _reportReturnBL.GetRecordHistory(dTORecord.Data, dTORecord.ApplyForId, dTORecord.StepId, dTORecord.IsApproveId);
                 return Json(ret);
             }
             catch (Exception ex) 

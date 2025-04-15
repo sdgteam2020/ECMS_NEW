@@ -1,25 +1,25 @@
-﻿using DataAccessLayer.BaseInterfaces;
+﻿using Azure;
+using Dapper;
+using DataAccessLayer.BaseInterfaces;
+using DataAccessLayer.Healpers;
+using DataAccessLayer.Logger;
+using DataTransferObject.Domain.Master;
 using DataTransferObject.Domain.Model;
 using DataTransferObject.Requests;
-using Microsoft.AspNetCore.DataProtection;
-using Microsoft.EntityFrameworkCore;
-using DataAccessLayer.Logger;
-using Dapper;
-using DataTransferObject.Domain.Master;
-using DataTransferObject.ViewModels;
 using DataTransferObject.Response;
-using static Dapper.SqlMapper;
-using Microsoft.Extensions.Logging;
+using DataTransferObject.ViewModels;
 using EntityFramework.Exceptions.Common;
+using Microsoft.AspNetCore.DataProtection;
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System.Collections.Immutable;
-using DataAccessLayer.Healpers;
 using System.Data;
 using Azure.Core;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 using Microsoft.Data.SqlClient;
 using System.Linq.Expressions;
 using static System.Runtime.InteropServices.JavaScript.JSType;
-using DataTransferObject.Constants;
 
 namespace DataAccessLayer
 {
@@ -2111,8 +2111,76 @@ namespace DataAccessLayer
                 _logger.LogError(1001, ex, "BasicDetailDB->ApplicationHistory");
                 return null;
             }
-                    
-
         }
+
+        public async Task<List<DTOCardPriningRequest>> CardPrintingCSVCheck(List<DTOCardPriningRequest> requests)
+        {
+            byte StepId = 5;
+            var response = new List<DTOCardPriningRequest>();
+            foreach (var batchRecords in requests.Chunk(5000))
+            {
+                using (var connection = _contextDP.CreateConnection())
+                {
+                   var resultInChunks = (from record in batchRecords
+                                join dbrecord in _context.TrnICardRequest on record.RequestId equals dbrecord.RequestId.ToString() into dbRecordJoin
+                                from matchRecord in dbRecordJoin.DefaultIfEmpty()
+                                join cardNoMatch in _context.TrnICardRequest on record.CardSerialNo equals cardNoMatch.CardSerialNo into cardNoJoin
+                                from cardNoExists in cardNoJoin.DefaultIfEmpty()
+                                join chipNoMatch in _context.TrnICardRequest on record.ChipNo equals chipNoMatch.ChipNo into chipNoJoin
+                                from chipNoExists in chipNoJoin.DefaultIfEmpty()
+                                join stepStatus in _context.TrnStepCounter on new { RequestId = (matchRecord == null ? 0 : matchRecord.RequestId), StepId } equals new { stepStatus.RequestId, stepStatus.StepId } into stepStatusJoin
+                                from stepStatus in stepStatusJoin.DefaultIfEmpty()
+                                join armyNoCheck in _context.BasicDetails on new { BasicDetailId = (matchRecord == null ? 0 : matchRecord.BasicDetailId), ServiceNo = record.ArmyNo } equals new { armyNoCheck.BasicDetailId, armyNoCheck.ServiceNo } into basicDetailJoin
+                                from armyNoCheck in basicDetailJoin.DefaultIfEmpty()
+                                select new DTOCardPriningRequest
+                                {
+                                    RequestId = record.RequestId,
+                                    ArmyNo = record.ArmyNo,
+                                    ChipNo = record.ChipNo,
+                                    CardSerialNo = record.CardSerialNo,
+                                    IsValid = matchRecord != null && cardNoExists == null && chipNoExists == null && stepStatus != null && armyNoCheck != null,
+                                    Status = matchRecord != null && cardNoExists == null && chipNoExists == null && stepStatus != null ? "Valid" : "DbInvalid",
+                                    Remarks = (matchRecord == null ? "RequestId not exists; " : "") +
+                                                  (cardNoExists != null ? "CardSerialNo already exists; " : "") +
+                                                  (chipNoExists != null ? "ChipNo already exists; " : "") +
+                                                  (matchRecord != null && stepStatus == null ? "Card application is not available for printing; " : "") +
+                                                  (matchRecord != null && armyNoCheck == null ? "Army no. is invalid for this card application; " : "")
+                                }
+                       ).ToList();
+
+                    response.AddRange(resultInChunks);
+                }
+            }
+
+            return response;
+        }
+
+        public async Task<DTOUploadChipAndSerialResponse> CardPrintingCSVUpload(List<DTOCardPriningRequest> requests)
+        {
+            DTOUploadChipAndSerialResponse response = new DTOUploadChipAndSerialResponse();
+            try
+            {
+               foreach (var batchRecords in requests.Chunk(5000))
+               {
+                   using (var connection = _contextDP.CreateConnection())
+                   {
+                           DataTable cardDistribution = DataTableHelper.ToDataTable(batchRecords, "Remarks", "IsValid","Status");
+                           var parameters = new DynamicParameters();
+                           parameters.Add("@data", cardDistribution.AsTableValuedParameter("UT_CardPriningCSV"));
+
+                           response = (await connection.QueryAsync<DTOUploadChipAndSerialResponse>("CardPriningCSVImport",
+                                                                                                   parameters,
+                                                                                                   commandType: CommandType.StoredProcedure
+                                      )).FirstOrDefault();
+                   }
+               }
+            }
+            catch(Exception ee)
+            {
+                response.Message = ee.Message;
+            }
+            return response;
+        }
+
     }
 }

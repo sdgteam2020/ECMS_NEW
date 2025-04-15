@@ -4,6 +4,7 @@ using DataAccessLayer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccessLayer.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250401114651_v140")]
+    partial class v140
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -423,24 +426,6 @@ namespace DataAccessLayer.Migrations
                     b.ToTable("MBloodGroup");
                 });
 
-            modelBuilder.Entity("DataTransferObject.Domain.Master.MCategory", b =>
-                {
-                    b.Property<byte>("CategoryId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("tinyint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<byte>("CategoryId"));
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(30)
-                        .HasColumnType("varchar(30)");
-
-                    b.HasKey("CategoryId");
-
-                    b.ToTable("MCategory");
-                });
-
             modelBuilder.Entity("DataTransferObject.Domain.Master.MComd", b =>
                 {
                     b.Property<byte>("ComdId")
@@ -552,6 +537,24 @@ namespace DataAccessLayer.Migrations
                     b.HasIndex("Updatedby");
 
                     b.ToTable("MDiv");
+                });
+
+            modelBuilder.Entity("DataTransferObject.Domain.Master.MFaultyStage", b =>
+                {
+                    b.Property<byte>("FaultyStageId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("tinyint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<byte>("FaultyStageId"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("varchar(30)");
+
+                    b.HasKey("FaultyStageId");
+
+                    b.ToTable("MFaultyStage");
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Master.MFmnBranches", b =>
@@ -884,9 +887,6 @@ namespace DataAccessLayer.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("varchar(50)");
 
-                    b.Property<int?>("UnitId")
-                        .HasColumnType("int");
-
                     b.Property<DateTime?>("UpdatedOn")
                         .IsRequired()
                         .HasColumnType("datetime");
@@ -897,8 +897,6 @@ namespace DataAccessLayer.Migrations
                     b.HasKey("RegId");
 
                     b.HasIndex("ArmedId");
-
-                    b.HasIndex("UnitId");
 
                     b.HasIndex("Updatedby");
 
@@ -1831,6 +1829,9 @@ namespace DataAccessLayer.Migrations
                     b.Property<bool>("IsComplete")
                         .HasColumnType("bit");
 
+                    b.Property<int?>("PostingOutId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Remark")
                         .HasMaxLength(100)
                         .HasColumnType("varchar(100)");
@@ -1954,9 +1955,6 @@ namespace DataAccessLayer.Migrations
                     b.Property<string>("ChipNo")
                         .HasMaxLength(30)
                         .HasColumnType("varchar(30)");
-
-                    b.Property<bool>("FlagForFaulty")
-                        .HasColumnType("bit");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -2316,18 +2314,15 @@ namespace DataAccessLayer.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TrnFaultyCardId"));
 
-                    b.Property<byte>("CategoryId")
+                    b.Property<byte>("FaultyStageId")
                         .HasColumnType("tinyint");
-
-                    b.Property<string>("FromRemark")
-                        .HasMaxLength(100)
-                        .HasColumnType("varchar(100)");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
-                    b.Property<bool>("IsEditAction")
-                        .HasColumnType("bit");
+                    b.Property<string>("OtherRemark")
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("RemarksIds")
                         .IsRequired()
@@ -2337,13 +2332,6 @@ namespace DataAccessLayer.Migrations
                     b.Property<int>("RequestId")
                         .HasColumnType("int");
 
-                    b.Property<string>("ToRemark")
-                        .HasMaxLength(100)
-                        .HasColumnType("varchar(100)");
-
-                    b.Property<int>("TrnFwdId")
-                        .HasColumnType("int");
-
                     b.Property<DateTime?>("UpdatedOn")
                         .IsRequired()
                         .HasColumnType("datetime");
@@ -2351,20 +2339,13 @@ namespace DataAccessLayer.Migrations
                     b.Property<int?>("Updatedby")
                         .HasColumnType("int");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
                     b.HasKey("TrnFaultyCardId");
 
-                    b.HasIndex("CategoryId");
+                    b.HasIndex("FaultyStageId");
 
                     b.HasIndex("RequestId");
 
-                    b.HasIndex("TrnFwdId");
-
                     b.HasIndex("Updatedby");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("TrnFaultyCard");
                 });
@@ -2415,9 +2396,6 @@ namespace DataAccessLayer.Migrations
                     b.Property<int>("ToUserID")
                         .HasColumnType("int");
 
-                    b.Property<int?>("TrnFwdId")
-                        .HasColumnType("int");
-
                     b.Property<DateTime?>("UpdatedOn")
                         .IsRequired()
                         .HasColumnType("datetime");
@@ -2444,8 +2422,6 @@ namespace DataAccessLayer.Migrations
                     b.HasIndex("ToUnitID");
 
                     b.HasIndex("ToUserID");
-
-                    b.HasIndex("TrnFwdId");
 
                     b.HasIndex("Updatedby");
 
@@ -2868,11 +2844,6 @@ namespace DataAccessLayer.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("DataTransferObject.Domain.Master.MapUnit", "MapUnit")
-                        .WithMany()
-                        .HasForeignKey("UnitId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.HasOne("DataTransferObject.Domain.Identitytable.ApplicationUser", "ApplicationUserUpdate")
                         .WithMany()
                         .HasForeignKey("Updatedby")
@@ -2881,8 +2852,6 @@ namespace DataAccessLayer.Migrations
                     b.Navigation("ApplicationUserUpdate");
 
                     b.Navigation("Armed");
-
-                    b.Navigation("MapUnit");
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Master.MRegistration", b =>
@@ -3510,9 +3479,9 @@ namespace DataAccessLayer.Migrations
 
             modelBuilder.Entity("DataTransferObject.Domain.Model.TrnFaultyCard", b =>
                 {
-                    b.HasOne("DataTransferObject.Domain.Master.MCategory", "MCategory")
+                    b.HasOne("DataTransferObject.Domain.Master.MFaultyStage", "MFaultyStage")
                         .WithMany()
-                        .HasForeignKey("CategoryId")
+                        .HasForeignKey("FaultyStageId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -3522,32 +3491,16 @@ namespace DataAccessLayer.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("DataTransferObject.Domain.Model.MTrnFwd", "MTrnFwd")
-                        .WithMany()
-                        .HasForeignKey("TrnFwdId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("DataTransferObject.Domain.Identitytable.ApplicationUser", "ApplicationUserUpdate")
                         .WithMany()
                         .HasForeignKey("Updatedby")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("DataTransferObject.Domain.MUserProfile", "MUserProfile")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.Navigation("ApplicationUserUpdate");
 
-                    b.Navigation("MCategory");
-
-                    b.Navigation("MTrnFwd");
+                    b.Navigation("MFaultyStage");
 
                     b.Navigation("MTrnICardRequest");
-
-                    b.Navigation("MUserProfile");
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Model.TrnPostingOut", b =>
@@ -3606,11 +3559,6 @@ namespace DataAccessLayer.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("DataTransferObject.Domain.Model.MTrnFwd", "MTrnFwd")
-                        .WithMany()
-                        .HasForeignKey("TrnFwdId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.HasOne("DataTransferObject.Domain.Identitytable.ApplicationUser", "ApplicationUserUpdate")
                         .WithMany()
                         .HasForeignKey("Updatedby")
@@ -3623,8 +3571,6 @@ namespace DataAccessLayer.Migrations
                     b.Navigation("BasicDetail");
 
                     b.Navigation("MPostingReason");
-
-                    b.Navigation("MTrnFwd");
 
                     b.Navigation("MTrnICardRequest");
 

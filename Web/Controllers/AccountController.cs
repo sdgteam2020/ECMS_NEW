@@ -1297,6 +1297,13 @@ namespace Web.Controllers
                                 dTOTempSession.ICNoTDMId = _dTOProfileResponse.TrnDomainMappingId;
                                 dTOTempSession.ICNoTDMApptId = _dTOProfileResponse.ApptId;
                                 //TempData["error"] = "Not Authorized to access the current profile because Domain Id - " + dTOTempSession.DomainId + " is presently mapped to Profile Id - " + dTOTempSession.UserId + " ( IC No- " + dTOTempSession.ICNO + ") .<br/>Pl change Token and try again!";
+                                
+                                
+                                
+                                
+                                
+                                
+                                
                                 TempData["error"] = "Invalid Army No / Password.";
                                 goto End;
                             }

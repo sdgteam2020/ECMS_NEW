@@ -172,28 +172,31 @@
             </div>
 
             <div class="modal-body">
-                <table class="table border border-purple table-striped no-footer dataTable table-hover" style="width: 100%;" role="grid" id="tbldata">
-                    <thead>
-                        <tr>
-                            
-                            <th class="wd-40-f">S No</th>
-                            <th class="nowrap">Army No</th>
-                            <th class="nowrap">Rank,Name</th>
-                            <th class="nowrap">From </th>
-                            <th class="nowrap">Sent To</th>
-                            <th class="nowrap">Appl Id</th>
-                            <th class="nowrap">Action On</th>
-                            <th class="nowrap" id="spn99Status">Status</th>
-                          
+                <div class="row">
+
+                    <div class="table-responsive">
+                        <table class="table border border-purple table-striped no-footer table-hover" role="grid" id="tbldatadialog">
+                            <thead>
+                                <tr>
+                                    <th class="wd-40-f">S No</th>
+                                    <th class="nowrap">Army No</th>
+                                    <th class="nowrap">Rank,Name</th>
+                                    <th class="nowrap">From </th>
+                                    <th class="nowrap">Sent To</th>
+                                    <th class="nowrap">Appl Id</th>
+                                    <th class="nowrap">Action On</th>
+                                    <th class="nowrap" id="spn99Status">Status</th>
+                                </tr>
+                            </thead>
+                        </table>
 
 
-                        </tr>
-                    </thead>
-                    <tbody id="DetailBody">
-                    </tbody>
-                </table>
+                    </div>
+
+                </div>
+                <div class="col-sm-12" id="msg">
+                </div>
             </div>
-
         </div><!-- modal-content -->
     </div><!-- modal-dialog -->
 </div>

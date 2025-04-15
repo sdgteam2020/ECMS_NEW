@@ -119,7 +119,7 @@ function BindDialog(claimValue) {
         filter: true,
         order: [[1, 'desc']], // Default sorting on the first column
         ajax: async function (data, callback, settings) {
-
+            debugger;
             let requestData = {
                 draw: data.draw,
                 start: data.start,

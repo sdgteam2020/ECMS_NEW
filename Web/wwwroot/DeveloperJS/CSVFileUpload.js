@@ -1,159 +1,233 @@
-﻿var lstUpdate = new Array();
+﻿//const { swal } = require("../sweetalert2/sweetalert2");
+
+var lstUpdate = new Array();
 $(function () {
-    $("#CSVFile").on("change", function () {
-        beforeUploadCSVFileCheck(this);
-    });
-
     $("#btnsave").on("click", function () {
-        ResetErrorMessage();
-        let formId = '#csvUploadForm';
-        $.validator.unobtrusive.parse($(formId));
-
-        if ($(formId).valid()) {
-            Swal.fire({
-                title: 'Are you sure?',
-                text: "",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes, Submit it!'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    Save(formId);
-                }
-            })
-        }
-        else {
-            Swal.fire({
-                icon: 'error',
-                title: 'Oops...',
-                text: 'Please fill required field.',
-
-            })
-            toastr.error('Please fill required field.');
-            return false;
-        }
+        validateCsvFileOnChange();
     });
 });
-function Save() {
-    var listItem = "";
-    var formId = '#csvUploadForm';
-    var fileInput = $(formId).find('#CSVFile')[0];
-    var selectedFile = fileInput.files[0];
 
-    var formData = new FormData();
-    formData.append('CSVFile', selectedFile);  // Append the file
+function validateCsvFileOnChange() {
+    // Get the file input element and the file selected by the user
+    var fileInput = $('#CSVFile')[0];
+    var file = fileInput.files[0];
 
-    $.ajax({
-        url: '/BasicDetail/UploadCsv',
-        type: 'POST',
-        data: formData,
-        contentType: false,
-        processData: false,
-        success: function (response) {
-            $("#tblData").DataTable().destroy();
-
-            for (var i = 0; i < response.length; i++) {
-                listItem += "<tr>";
-                listItem += "<td class='align-middle'><div class='custom-control custom-checkbox small'><input type='checkbox' class='custom-control-input' id=" + response[i].RequestId + " data-chipNo=" + response[i].ChipNo + " data-cardSerialNo=" + response[i].CardSerialNo + " data-isValid=" + response[i].IsValid + "><label class='custom-control-label' for=" + response[i].RequestId +"></label></div></td>";
-                listItem += "<td class='align-middle'>" + (i + 1) + "</td>";
-                listItem += "<td class='align-middle'>" + response[i].RequestId + "</td>";
-                listItem += "<td class='align-middle'>" + response[i].ServiceNo + "</td>";
-                if (response[i].LName == "")
-                    listItem += "<td class='align-middle'>" + response[i].RankName + " " + response[i].FName + "</td>";
-                else
-                    listItem += "<td class='align-middle'>" + response[i].RankName + " " + response[i].FName + " " + response[i].LName + "</td>";
-                listItem += "<td class='align-middle'><span id='chipNo'>" + response[i].ChipNo + "</span></td>";
-                listItem += "<td class='align-middle'><span id='cardSerialNo'>" + response[i].CardSerialNo + "</span></td>";
-                listItem += "<td class='align-middle'><span id='isValid'>" + response[i].IsValid + "</span></td>";
-                listItem += "</tr>";
-            }
-            $("#DetailBody").html(listItem);
-
-            memberTable = $('#tblData').DataTable({
-                retrieve: true,
-                lengthChange: false,
-                stateSave: true,
-                "order": [[1, "asc"]],
-                buttons: [{
-                    extend: 'copy',
-                    exportOptions: {
-                        columns: "thead th:not(.noExport)"
-                    }
-                }, {
-                    extend: 'excel',
-                    exportOptions: {
-                        columns: "thead th:not(.noExport)"
-                    }
-                }, {
-                    extend: 'pdfHtml5',
-                    orientation: 'portrait',
-                    pageSize: 'A4',
-                    title: 'E-IASC_Rank',
-                    exportOptions: {
-                        columns: "thead th:not(.noExport)"
-                    },
-                    customize: function (doc) {
-                        WaterMarkOnPdf(doc)
-                    }
-                }]
-            });
-
-            var rows;
-            $("#tblData #chkAll").on("click", function () {
-                if ($(this).is(':checked')) {
-                    rows = memberTable.rows({ 'search': 'applied' }).nodes();
-                    $('input[type="checkbox"]', rows).prop('checked', this.checked);
-                }
-                else {
-                    rows = memberTable.rows({ 'search': 'applied' }).nodes();
-                    $('input[type="checkbox"]', rows).prop('checked', this.checked);
-                }
-            });
-        },
-        error: function (xhr) {
-            listItem += "<tr><td class='text-center' colspan=8>No Record Found</td></tr>";
-            $("#tblData").DataTable().destroy();
-            $("#DetailBody").html(listItem);
-
-            // Display error message from server
-            var errorMessage = xhr.responseJSON?.message || "An unexpected error occurred.";
-            alert('Error: ' + errorMessage);
-        }
-    });
-}
-
-function beforeUploadCSVFileCheck(id) {
-    $("#lblCSVFile").html("");
-    const file = id.files[0];
-    if (file) {
-        var size = parseFloat(file.size);
-        var maxSizeKB = 5120; //Size in KB.
-        var maxSize = maxSizeKB * 1024; //File size is returned in Bytes.
-        var allowedTypes = ['text/csv'];
-
-        if (!allowedTypes.includes(file.type)) {
-            $("#lblCSVFile").html("Invalid file type. Only CSV files are allowed. </br>");
-            $("#lblCSVFileNotification").addClass("text-danger");
-            $("#lblCSVFileNotification").removeClass("text-success");
-            $("#CSVFile").val(null);
-            return false;
-        }
-        else {
-            if (size > maxSize) {
-                $("#lblCSVFile").html("Maximum file size " + maxSizeKB + "KB allowed. </br>");
-                $("#CSVFile").val(null);
-                $("#lblCSVFileNotification").addClass("text-danger");
-                $("#lblCSVFileNotification").removeClass("text-success");
-                return false;
-            } else {
-                $("#lblCSVFileNotification").addClass("text-success");
-                $("#lblCSVFileNotification").removeClass("text-danger");
-            }
-        }
+    if (!file) {
+        toastr.error('Please select a CSV file.');
+        return;
     }
+
+    // 2. Check if the file is a CSV
+    var fileType = file.name.split('.').pop().toLowerCase();
+    if (fileType !== 'csv') {
+        toastr.error('Only CSV files are allowed.');
+        return;
+    }
+
+    // 3. Read the file using FileReader to validate columns and data
+    var reader = new FileReader();
+    reader.onload = function (event) {
+        var content = event.target.result;
+        const lines = content.split(/\r\n|\n/).filter(line => line.trim() !== "");
+        if (lines.length === 0) {
+            toastr.error('The selected file is empty.');
+            return;
+        }
+
+        if (lines.length <= 2) {
+            toastr.error('The CSV file must contain at least 1 data row.');
+            return;
+        }
+
+        // Split the first row (headers) and trim each column
+        var headers = lines[0].split(",");
+
+        // 4. Validate columns (missing or duplicate columns)
+        var expectedColumns = ['RequestId', 'ArmyNo', 'CardSerialNo', 'ChipNo']; // Modify this based on your required columns
+        var missingColumns = expectedColumns.filter(col => !headers.includes(col));
+        var duplicateColumns = headers.filter((value, index, self) => self.indexOf(value) !== index);
+
+        if (missingColumns.length > 0) {
+            toastr.error('Missing columns: ' + missingColumns.join(', '));
+            return;
+        }
+
+        if (duplicateColumns.length > 0) {
+            toastr.error('Duplicate columns found: ' + duplicateColumns.join(', '));
+            return;
+        }
+
+        const previewData = lines.slice(1, 11);
+        let tableHeader = ``;
+        headers.forEach(h => tableHeader += `<th class="nowrap" >${h.trim()}</th>`);
+
+        let tablelines = ``;
+        previewData.forEach(line => {
+            const cells = line.split(",");
+            tablelines += '<tr>';
+            cells.forEach(cell => tablelines += `<td>${cell.trim()}</td>`);
+            tablelines += '</tr>';
+        });
+
+        Swal.fire({
+            title: 'Preview of Uploaded Data!',
+            html: `<p style="margin-bottom: 10px; font-size: 14px; color: #333;">
+                  These are the top records from the uploaded CSV file. Please ensure that the correct file has been uploaded.
+                </p>
+                <div style="overflow-x:auto; class ="table-responsive">
+                     <table id="myTable" class="table border border-purple table-striped no-footer dataTable table-hover" role="grid">
+                       <thead>
+                         <tr>
+                           ${tableHeader}
+                         </tr>
+                       </thead>
+                       <tbody>
+                            ${tablelines}
+                       </tbody>
+                   </div>`,
+            width: '60%',
+            showCancelButton: true,
+            confirmButtonText: 'Proceed',
+            cancelButtonText: 'Cancel',
+            didOpen: () => {
+                $('#myTable').DataTable({
+                    paging: false,       // disables pagination
+                    searching: false,    // disables search box
+                    info: false,         // disables "Showing X of Y entries"
+                    lengthChange: false  // disables the "Show entries" dropdown
+                });
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                var formData = new FormData();
+                formData.append("CSVFile", file);
+                // 3. Send the form data using AJAX
+                $.ajax({
+                    url: '/BasicDetail/ICardPrintUploadCsv', // Controller action URL
+                    method: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function (data, status, xhr) {
+                        if (data.Result) {
+                            debugger;
+                            let responseHtml = `
+                                    <p><strong>Total Records:</strong> ${data.TotalRecords}</p>
+                                    <p><strong>Valid Records:</strong> ${data.ValidRecords}</p>
+                                    <p><strong>SheetInvalid Records:</strong> ${data.SheetInValidRecords}</p>
+                                    <p><strong>DbInvalid Records:</strong> ${data.DbInValidRecords}</p>
+                            `
+
+                            // Convert base64 to Blob
+                            const byteCharacters = atob(data.File);
+                            const byteNumbers = new Array(byteCharacters.length);
+                            for (let i = 0; i < byteCharacters.length; i++) {
+                                byteNumbers[i] = byteCharacters.charCodeAt(i);
+                            }
+                            const byteArray = new Uint8Array(byteNumbers);
+                            const blob = new Blob([byteArray], { type: 'text/csv' });
+
+                            Swal.fire({
+                                title: "Validation Complete!",
+                                text: "Please download validated CSV with remarks.",
+                                html: responseHtml,
+                                icon: "success",
+                                showConfirmButton: false, // We'll create custom buttons
+                                showCancelButton: false,
+                                allowOutsideClick: false,
+                                didOpen: () => {
+                                    const swal = Swal.getPopup();
+
+                                    const btnGroup = document.createElement('div');
+                                    btnGroup.style.display = 'flex';
+                                    btnGroup.style.justifyContent = 'center';
+                                    btnGroup.style.gap = '10px';
+
+                                    const downloadBtn = document.createElement('button');
+                                    downloadBtn.textContent = 'Download';
+                                    downloadBtn.className = 'swal2-confirm swal2-styled';
+                                    downloadBtn.style.backgroundColor = '#28a745'; // green
+                                    downloadBtn.onclick = function () {
+                                        window.open(`/CardPrinitngCSVs/CSVWithRemarks/${data.FileName}` , '_blank');
+                                    };
+
+                                    const proceedBtn = document.createElement('button');
+                                    proceedBtn.textContent = 'Proceed';
+                                    proceedBtn.className = 'swal2-confirm swal2-styled';
+                                    proceedBtn.style.backgroundColor = '#007bff'; // blue
+                                    proceedBtn.onclick = function () {
+                                        Swal.close();
+                                        $.ajax({
+                                            url: '/BasicDetail/ICardPrintValidRecordsUpload',
+                                            type: 'GET',
+                                            dataType: 'json',
+                                            success: function (data) {
+                                                if (data.Result) {
+                                                    Swal.fire({
+                                                        title: "Success!",
+                                                        text: data.Message,
+                                                        icon: "success",
+                                                        confirmButtonText: "OK"
+                                                    });
+                                                }
+                                                else {
+                                                    Swal.fire({
+                                                        title: "OOPs!",
+                                                        text: data.Message,
+                                                        icon: "error",
+                                                        confirmButtonText: "Ok"
+                                                    });
+                                                }
+                                            },
+                                            error: function (xhr, status, error) {
+                                                console.error('Error while uploading valid records:', error);
+                                            }
+                                        });
+                                    };
+
+                                    const cancelBtn = document.createElement('button');
+                                    cancelBtn.textContent = 'Cancel';
+                                    cancelBtn.className = 'swal2-cancel swal2-styled';
+                                    cancelBtn.style.backgroundColor = '#dc3545'; // red
+                                    cancelBtn.onclick = function () {
+                                        Swal.close();
+                                    };
+
+                                    btnGroup.appendChild(downloadBtn);
+                                    btnGroup.appendChild(proceedBtn);
+                                    btnGroup.appendChild(cancelBtn);
+
+                                    swal.appendChild(btnGroup);
+                                }
+                            });
+                        }
+                        else
+                        {
+                            Swal.fire({
+                                title: "OOPs!",
+                                text: data.Message,
+                                icon: "error",
+                                confirmButtonText: "Ok"
+                            });
+                        }
+                    },
+                    error: function (xhr) {
+                        // Show error messages
+                        console.log(xhr);
+                    }
+                });
+            }
+        });
+    };
+
+    // Trigger the reading of the CSV file
+    reader.readAsText(file);
 }
+
+function Save() {
+    
+}
+
 function ResetErrorMessage() {
     $("#lblCSVFile").html("");
     $("#CSVFile-error").html("");
@@ -161,55 +235,3 @@ function ResetErrorMessage() {
 function Reset() {
     $("#CSVFile").val("");
 }
-$("#btnUpdate").on("click", function () {
-    // Empty the array
-    lstUpdate.length = 0;
-    if (memberTable.$('input[type="checkbox"]:checked').length > 0) {
-        memberTable.$('input[type="checkbox"]:checked').each(function () {
-            let obj = {
-                RequestId: $(this).attr("Id"),
-                ChipNo: $(this).attr("data-chipNo"),
-                CardSerialNo: $(this).attr("data-cardSerialNo"),
-                IsValid: $(this).attr("data-isValid")
-            };
-            lstUpdate.push(obj);
-        });
-        $.ajax({
-            url: '/BasicDetail/UploadChipAndSerial',
-            type: 'POST',
-            contentType: 'application/json',
-            data: JSON.stringify(lstUpdate),
-            success: function (response) {
-                if (response.Result == true)
-                {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Updated',
-                        text: response.Message,
-
-                    })
-                }
-                else
-                {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Oops...',
-                        text: response.Message,
-
-                    })
-                }
-                
-            },
-            error: function (xhr) {
-                // Display error message from server
-                var errorMessage = xhr.responseJSON?.message || "An unexpected error occurred.";
-                alert('Error: ' + errorMessage);
-            }
-        });
-
-    } else {
-        Swal.fire({
-            text: "Please select atleast 1 request to Update."
-        });
-    }
-});
