@@ -1,10 +1,11 @@
-﻿//const { swal } = require("../sweetalert2/sweetalert2");
+﻿var table; // Declare table variable outside the function to preserve the instance
 
 var lstUpdate = new Array();
 $(function () {
     $("#btnsave").on("click", function () {
         validateCsvFileOnChange();
     });
+    BindData();
 });
 
 function validateCsvFileOnChange() {
@@ -110,7 +111,7 @@ function validateCsvFileOnChange() {
                     contentType: false,
                     success: function (data, status, xhr) {
                         if (data.Result) {
-                            debugger;
+                            
                             let responseHtml = `
                                     <p><strong>Total Records:</strong> ${data.TotalRecords}</p>
                                     <p><strong>Valid Records:</strong> ${data.ValidRecords}</p>
@@ -200,6 +201,8 @@ function validateCsvFileOnChange() {
                                     swal.appendChild(btnGroup);
                                 }
                             });
+                            $("#CSVFile").val('');
+                            BindData();
                         }
                         else
                         {
@@ -224,8 +227,146 @@ function validateCsvFileOnChange() {
     reader.readAsText(file);
 }
 
+function BindData() {
+    $("#tblData").DataTable().destroy();
+    table = $("#tblData").DataTable({
+        processing: true,
+        serverSide: true,
+        filter: true,
+        order: [[7, 'desc']],// Default sorting on the first column
+        searching: false,
+        ajax: async function (data, callback, settings) {
+            let requestData = {
+                draw: data.draw,
+                start: data.start,
+                length: data.length,
+                searchValue: data.search.value,
+                sortColumn: data.order.length > 0 ? data.columns[data.order[0].column].data : '',  // Add a check for data.order
+                sortDirection: data.order.length > 0 ? data.order[0].dir : '', // Add a check for data.order
+
+            };
+            try {
+                let response = await fetch("/BasicDetail/GetCSVFileUploadsHistory", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                    body: new URLSearchParams(requestData).toString()
+                });
+
+                if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+
+                let result = await response.json();
+/*                $("#lblTotal").html(result.recordsTotal);*/
+                callback(result); // Sends data to DataTables
+
+
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            }
+        },
+        columns: [
+            { data: "FileName", name: "FileName", visible: false },
+            // Serial number column
+            {
+                data: null,
+                name: "SerialNumber",
+                orderable: false, // Disable sorting for this column
+                render: function (data, type, row, meta) {
+                    // Calculate serial number based on row index
+                    return meta.row + meta.settings._iDisplayStart + 1;
+                }
+            },
+            { data: "TotalRecords", name: "TotalRecords" },
+            { data: "ValidRecords", name: "ValidRecords" },
+            { data: "DbInvalidRecords", name: "DbInvalidRecords" },
+            { data: "SheetInvalidRecords", name: "SheetInvalidRecords" },
+            {
+                data: "DBUpdated",
+                name: "DBUpdated",
+                render: function (data, type, row) {
+                    // Convert boolean to "Yes" or "No"
+                    return data ? "<span class='badge badge-pill badge-success'>YES</span>" : "<span class='badge badge-pill badge-danger'>No</span>";
+                }
+            },
+            {
+                data: "ImportedOn",
+                name: "ImportedOn",
+                render: function (data, type, row) {
+                    return data ? DateFormateddMMyyyyhhmmss(data) : "NA";
+                },
+            },
+            {
+                data: null,
+                orderable: false,
+                render: function (data, type, row, meta) {
+                    return `
+                    <button class="cls-uploadedCsv btn btn-sm btn-success download-btn" title="Download">
+                        <i class="fa fa-download"></i>
+                    </button>`;
+                }
+            },
+            {
+                data: null,
+                orderable: false,
+                render: function (data, type, row, meta) {
+                    return `
+                    <button class="cls-validatedCsv btn btn-sm btn-success download-btn" title="Download">
+                        <i class="fa fa-download"></i>
+                    </button>`;
+                }
+            }
+        ],
+        language: {
+            search: "", // Remove the default "Search:" label
+            searchPlaceholder: "Search Type / Value" // Add custom placeholder
+        },
+        dom: 'lBfrtip', // Add buttons to the DOM
+        buttons: [
+            {
+                extend: 'copy',
+                exportOptions: {
+                    columns: "thead th:not(.noExport)"
+                }
+            },
+            {
+                extend: 'excel',
+                exportOptions: {
+                    columns: "thead th:not(.noExport)"
+                }
+            },
+            {
+                extend: 'pdfHtml5',
+                orientation: 'landscape',
+                pageSize: 'LEGAL',
+                title: 'E-IASC_Claim',
+                exportOptions: {
+                    columns: "thead th:not(.noExport)"
+                },
+                customize: function (doc) {
+                    WaterMarkOnPdf(doc)
+                }
+            }],
+        drawCallback: function (settings) {
+            $("#tblData tbody").off("click", ".cls-uploadedCsv").on("click", ".cls-uploadedCsv", function () {
+                var rowData = table.row($(this).closest("tr")).data();
+                DownloadCSV("CSVWithoutRemarks", rowData.FileName);
+            });
+
+            $("#tblData tbody").off("click", ".cls-validatedCsv").on("click", ".cls-validatedCsv", function () {
+                var rowData = table.row($(this).closest("tr")).data();
+                DownloadCSV("CSVWithRemarks", rowData.FileName);
+            });
+        }
+    });
+}
+
 function Save() {
     
+}
+
+function DownloadCSV(fileLoc, FileName) {
+    const baseUrl = window.location.origin;
+    const downloadUrl = `${baseUrl}/CardPrinitngCSVs/${fileLoc}/${encodeURIComponent(FileName)}`;
+    window.location.href = downloadUrl;
 }
 
 function ResetErrorMessage() {

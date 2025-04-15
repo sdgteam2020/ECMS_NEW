@@ -39,6 +39,7 @@ using CsvHelper;
 using CsvHelper.Configuration;
 using BusinessLogicsLayer.CSVImports;
 using BusinessLogicsLayer.FaultyCard;
+using Humanizer;
 
 namespace Web.Controllers
 {
@@ -70,7 +71,6 @@ namespace Web.Controllers
         private readonly IICardHoldBL _iICardHoldBL;
         private readonly IConfiguration _configuration;
         public DateTime dateTimenow;
-        private readonly IWebHostEnvironment _environment;
         private readonly string[] _expectedColumns = { "RequestId", "RankName", "FName", "LName", "ServiceNo", "ChipNo", "CardSerialNo" };
         private readonly  ICSVImportBL _iCSVImportBL;
         private readonly IFaultyCardBL faultyCardBL;
@@ -1579,6 +1579,29 @@ namespace Web.Controllers
             }
         }
 
+
+        [HttpPost]
+        public async Task<ActionResult> GetCSVFileUploadsHistory([FromForm] DTODataTablesRequest dTO)
+        {
+            try
+            {
+                return Json(await _iCSVImportBL.GetDataTableResponse(dTO));
+            }
+            catch (Exception ex)
+            {
+                List<CSVImport> dTOClaimsStoreResponses = new List<CSVImport>();
+                var responseData = new DTODataTablesResponse<CSVImport>
+                {
+                    draw = 0,
+                    recordsTotal = 0,
+                    recordsFiltered = 0,
+                    data = dTOClaimsStoreResponses
+                };
+                _logger.LogError(1001, ex, "BasicDetail->GetCSVFileUploadsHistory");
+                return Json(responseData);
+            }
+        }
+
         #endregion
 
         #region SaveInternalFwd/IcardFwd/IcardRejecte/UpdateStepCounter/SaveICardRequestHold/DataExport/DataDigitalXmlSign/GenerateLastRecordXml/MergeXmlDocuments/GenerateJsonResponse
@@ -2729,6 +2752,7 @@ namespace Web.Controllers
             }
         }
         #endregion Card Distribution
+
         #region ICard Printing
         [HttpPost]
         public async Task<IActionResult> ICardPrintUploadCsv(DTOCSVFileRequest model)
@@ -2761,7 +2785,7 @@ namespace Web.Controllers
                 }
 
                 #region Upload File Without Remarks
-                var uploadsFolder = Path.Combine(_environment.WebRootPath, "CardPrinitngCSVs", "CSVWithoutRemarks");
+                var uploadsFolder = Path.Combine(hostingEnvironment.WebRootPath, "CardPrinitngCSVs", "CSVWithoutRemarks");
                 if (!Directory.Exists(uploadsFolder))
                 {
                     Directory.CreateDirectory(uploadsFolder);
@@ -2782,7 +2806,7 @@ namespace Web.Controllers
                 response.DbInValidRecords = validateResult.Where(x => x.Status == "DbInvalid").Count();
 
                 #region Upload File With Remarks
-                uploadsFolder = Path.Combine(_environment.WebRootPath, "CardPrinitngCSVs", "CSVWithRemarks");
+                uploadsFolder = Path.Combine(hostingEnvironment.WebRootPath, "CardPrinitngCSVs", "CSVWithRemarks");
                 if (!Directory.Exists(uploadsFolder))
                 {
                     Directory.CreateDirectory(uploadsFolder);
@@ -2809,44 +2833,19 @@ namespace Web.Controllers
                         goto Returnstm;
                     }
                 }
-                    //var memoryStream = new MemoryStream();
-                    //using (var writer = new StreamWriter(memoryStream, Encoding.UTF8, leaveOpen: true))
-                    //using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
-                    //{
-                    //    csv.Context.RegisterClassMap(new CsvClassMap<DTOCardPriningRequest>(false));
-                    //    try
-                    //    {
-                    //        csv.WriteRecords(validateResult);
-                    //        await writer.FlushAsync();
-                    //    }
-                    //    catch (Exception ee)
-                    //    {
-                    //        _logger.LogError(1001, ee, "BasicDetail->ICardPrintUploadCsv");
-                    //        return Json(500);
-                    //    }
-                    //    uploadsFolder = Path.Combine(_environment.WebRootPath, "CardPrinitngCSVs", "CSVWithRemarks");
-                    //    if (!Directory.Exists(uploadsFolder))
-                    //    {
-                    //        Directory.CreateDirectory(uploadsFolder);
-                    //    }
-                    //    filePath = Path.Combine(uploadsFolder, fileName);
-
-                    //    using (var stream = new FileStream(filePath, FileMode.Create, FileAccess.Write))
-                    //    {
-                    //        await memoryStream.CopyToAsync(stream);
-                    //    }
-                    //}
-                    #endregion Upload User File
-                    #region Insert record
-                    var cSVImport = new CSVImport()
-                    {
-                        FileName = fileName,
-                        TotalRecords = validateResult != null ? validateResult.Count() : 0,
-                        ValidRecords = validateResult != null ? validateResult.Where(v => v.IsValid).Count() : 0,
-                        DBUpdated = false,
-                        ImportedBy = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier)),
-                        ImportedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"))
-                    };
+                #endregion Upload User File
+                #region Insert record
+                var cSVImport = new CSVImport()
+                {
+                    FileName = fileName,
+                    TotalRecords = response.TotalRecords,
+                    ValidRecords = response.ValidRecords,
+                    DbInvalidRecords = response.DbInValidRecords,
+                    SheetInvalidRecords = response.SheetInValidRecords,
+                    DBUpdated = false,
+                    ImportedBy = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier)),
+                    ImportedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"))
+                };
 
                 var csvImportInsert = await _iCSVImportBL.AddWithReturn(cSVImport);
                 SessionHeplers.SetObject(HttpContext.Session, "CsvImportId", csvImportInsert.Id);
@@ -2895,36 +2894,6 @@ namespace Web.Controllers
             }
             return Json(response);
         }
-
-
-        [HttpGet]
-        public async Task<IActionResult> ICardPrintValidRecordsDownload()
-        {
-            DTOUploadChipAndSerialResponse response = new DTOUploadChipAndSerialResponse();
-            try
-            {
-                var records = SessionHeplers.GetObject<List<DTOCardPriningRequest>>(HttpContext.Session, "ValidRecordsCardUpload");
-                if (records?.Count() > 0)
-                {
-                    response = await basicDetailBL.CardPrinitngCSVUpload(records);
-                }
-                else
-                {
-                    response.Message = "There are no valid records!";
-                }
-                var csvImportId = SessionHeplers.GetObject<int>(HttpContext.Session, "CsvImportId");
-                var getCsvDetById = await _iCSVImportBL.Get(csvImportId);
-                getCsvDetById.DBUpdated = true;
-                await _iCSVImportBL.Update(getCsvDetById);
-            }
-            catch (Exception ee)
-            {
-                _logger.LogError(1001, ee, "BasicDetail->ICardPrintValidRecordsUpload");
-                response.Message = "Internal Server Error!";
-            }
-            return Json(response);
-        }
-
         #endregion ICard Printing
     }
 }
