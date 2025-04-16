@@ -234,7 +234,7 @@ function BindData() {
         serverSide: true,
         filter: true,
         order: [[7, 'desc']],// Default sorting on the first column
-        searching: false,
+        searching: true,
         ajax: async function (data, callback, settings) {
             let requestData = {
                 draw: data.draw,
