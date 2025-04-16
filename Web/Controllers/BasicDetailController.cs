@@ -2467,7 +2467,7 @@ namespace Web.Controllers
         
         public async Task<IActionResult> GetRequestHistory(int RequestId)
         {
-            List<ICardHistoryResponse>? cardHistoryResponses = await basicDetailBL.ICardHistory(RequestId);
+            ICardHistoryResponseAll? cardHistoryResponses = await basicDetailBL.ICardHistory(RequestId);
             if (cardHistoryResponses != null)
             {
                 return Json(cardHistoryResponses);

@@ -27,4 +27,33 @@ namespace DataTransferObject.Response
         public string? UnitName { get; set; }
         public int RequestId { get; set; }
     }
+    public class ICardHistoryPostingOutResponse
+    {
+        public int? TrnFwdId { get; set; }
+        public string? Reason { get; set; }
+        public string? Authority { get; set; }
+        public string? UnitName { get; set; }
+        public string? FromUnit { get; set; }
+    }
+    public class ICardHistoryFaultyCardResponse
+    {
+        public int? TrnFwdId { get; set; }
+        public string? FaultyStage { get; set; }
+        public int CategoryId { get; set; }
+        public string? RemarksNameList { get; set; }
+    }
+    public class ICardApplCloseCardResponse
+    {
+        public int? RequestId { get; set; }
+        public string? Authority { get; set; }
+        public int Remarks { get; set; }
+        public string? Reasons { get; set; }
+    }
+    public class ICardHistoryResponseAll
+    {
+        public List<ICardHistoryResponse> ICardHistory { get; set; }
+        public List<ICardHistoryPostingOutResponse> PostingOut { get; set; }
+        public List<ICardHistoryFaultyCardResponse> FaultyCard { get; set; }
+        public ICardApplCloseCardResponse CloseCard { get; set; }
+    }
 }

@@ -28,7 +28,7 @@ namespace BusinessLogicsLayer.BasicDet
         public Task<BasicDetailCrtAndUpdVM?> GetBasicDetailByRequestId(int RequestId);
         public Task<BasicDetailCrtAndUpdVM?> GetBasicDetailById(int BasicDetailId);
         public Task<BasicDetailCrtAndUpdVM?> GetBesicDetailForEditById(int BasicDetailId);
-        public Task<List<ICardHistoryResponse>?> ICardHistory(int RequestId);
+        public Task<ICardHistoryResponseAll?> ICardHistory(int RequestId);
         public Task<DTOFwdLastRecForDigitalSign> ICardFwdLastRec(int RequestId);
         public Task<List<ICardHistoryResponse>?> ICardHistoryByTrackingId(string TrackingId);
         public Task<DTOBasicDetailsSaveResponse> SaveBasicDetailsWithAll(BasicDetail Data, MTrnAddress address,MTrnUpload trnUpload, MTrnIdentityInfo mTrnIdentityInfo, MTrnICardRequest mTrnICardRequest, MStepCounter mStepCounter);

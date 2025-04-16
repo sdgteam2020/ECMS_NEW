@@ -28,7 +28,7 @@ namespace DataAccessLayer.BaseInterfaces
         public Task<BasicDetail?> FindServiceNo(string ServiceNo);
         public Task<List<DTOSmartSearch>?> SearchAllServiceNo(DTOSearchArmyNoRequest dto);
         public Task<DTOBasicDetailForParitalViewResponse> GetBasicDetailForParitalViewByRequestId(int RequestId);
-        public Task<List<ICardHistoryResponse>?> ICardHistory(int RequestId);
+        public Task<ICardHistoryResponseAll?> ICardHistory(int RequestId);
         public Task<DTOFwdLastRecForDigitalSign> ICardFwdLastRec(int RequestId);
         public Task<List<ICardHistoryResponse>?> ICardHistoryByTrackingId(string TrackingId);
         public Task<DTOBasicDetailsSaveResponse> SaveBasicDetailsWithAll(BasicDetail Data, MTrnAddress address, MTrnUpload trnUpload, MTrnIdentityInfo mTrnIdentityInfo, MTrnICardRequest mTrnICardRequest, MStepCounter mStepCounter);

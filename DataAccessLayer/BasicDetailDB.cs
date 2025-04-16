@@ -1726,8 +1726,8 @@ namespace DataAccessLayer
             }
         }
 
-        public async Task<List<ICardHistoryResponse>?> ICardHistory(int RequestId)
-        {
+        public async Task<ICardHistoryResponseAll> ICardHistory(int RequestId)
+        { 
             #region Old Code
             //string query = @"select usersfrom.UserName FromDomain,profrom.Name FromProfile,ranlfrom.RankAbbreviation FromRank,
             //                usersto.UserName ToDomain,proto.Name ToProfile,ranlto.RankAbbreviation ToRank ,
@@ -1769,8 +1769,7 @@ namespace DataAccessLayer
                             usersto.UserName ToDomain,proto.Name ToProfile,ranlto.RankAbbreviation ToRank ,
                             CASE fwd.FwdStatusId WHEN 1 THEN 'Pending' WHEN 2 THEN 'Approved' WHEN 3 THEN 'Reject' WHEN 4 THEN 'Internal Forward' END Status,
                             fwd.UpdatedOn,isnull(fwd.Remark,'Nill') Remark,
-                            fwd.IsComplete,(select STRING_AGG(Remarks,'#') from MRemarks where RemarksId in (select value from string_split(fwd.RemarksIds,','))) Remarks2,
-                            reason.Reason,postind.Authority,initres.UnitName
+                            fwd.IsComplete,(select STRING_AGG(Remarks,'#') from MRemarks where RemarksId in (select value from string_split(fwd.RemarksIds,','))) Remarks2
                             from TrnFwds fwd
                             inner join TrnStepCounter step on fwd.RequestId=step.RequestId
                             inner join AspNetUsers usersfrom on usersfrom.Id=fwd.FromAspNetUsersId
@@ -1779,19 +1778,52 @@ namespace DataAccessLayer
                             inner join MRank ranlfrom on ranlfrom.RankId=profrom.RankId
                             inner join UserProfile proto on fwd.ToUserId=proto.UserId
                             inner join MRank ranlto on ranlto.RankId=proto.RankId
-                            left join TrnPostingOut postind on postind.TrnFwdId=fwd.TrnFwdId
+                            where fwd.RequestId=@RequestId
+                            order by fwd.TrnFwdId asc
+
+	                        select reason.Reason,postind.Authority,initres.UnitName,initresfrom.UnitName FromUnit,ISNULL(postind.TrnFwdId,0) TrnFwdId from  
+                            TrnPostingOut postind 
                             left join MPostingReason reason on reason.Id=postind.ReasonId
                             left join MapUnit Munitres on Munitres.UnitMapId=postind.ToUnitID
                             left join MUnit initres on initres.UnitId=Munitres.UnitId
-                            where fwd.RequestId=@RequestId
-                            order by fwd.TrnFwdId asc";
+                              left join MapUnit Munitresfrom on Munitresfrom.UnitMapId=postind.FromUnitID
+                              left join MUnit initresfrom on initresfrom.UnitId=Munitresfrom.UnitId
+							where postind.RequestId=@RequestId
+
+                            select mcat.Name FaultyStage,mcat.CategoryId,ISNULL(faulty.TrnFwdId,0) 
+                            TrnFwdId,(select STRING_AGG(Remarks,'#') from MRemarks where RemarksId in (select value from string_split(faulty.RemarksIds,','))) RemarksNameList
+							from TrnFaultyCard faulty
+							inner join MCategory mcat on mcat.CategoryId = faulty.CategoryId where faulty.RequestId=@RequestId
+
+
+                            select trnclose.Authority,trnclose.Remarks,res.Reasons from TrnApplClose trnclose
+                            inner join MReasons res on trnclose.ReasonId=res.ReasonId where trnclose.RequestId=@RequestId
+
+";
             try
             {
+                ICardHistoryResponseAll cardHistoryResponseAll=new ICardHistoryResponseAll();   
                 using (var connection = _contextDP.CreateConnection())
                 {
-                    var BasicDetailList = await connection.QueryAsync<ICardHistoryResponse>(query, new { RequestId });
+                    using (var multi = await connection.QueryMultipleAsync(query, new { RequestId }))
+                    {
+                        // var ICardHistory = await multi.ReadFirstOrDefaultAsync<ICardHistoryResponse>();
+                        var ICardHistory = (await multi.ReadAsync<ICardHistoryResponse>()).ToList();
+                        var PostingOut = (await multi.ReadAsync<ICardHistoryPostingOutResponse>()).ToList();
+                        var FaultyCard = (await multi.ReadAsync<ICardHistoryFaultyCardResponse>()).ToList();
+                        var CloseCard = await multi.ReadFirstOrDefaultAsync<ICardApplCloseCardResponse>();
 
-                    return BasicDetailList.ToList();
+                        cardHistoryResponseAll.ICardHistory = ICardHistory;
+                        cardHistoryResponseAll.PostingOut = PostingOut;
+                        cardHistoryResponseAll.FaultyCard = FaultyCard;
+                        cardHistoryResponseAll.CloseCard = CloseCard;
+                       
+                    }
+
+                   // var BasicDetailList = await connection.QueryAsync<ICardHistoryResponseAll>(query, new { RequestId });
+
+                    // return BasicDetailList.ToList();
+                    return cardHistoryResponseAll;
                 }
             }
             catch (Exception ex)
