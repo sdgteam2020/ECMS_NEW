@@ -44,5 +44,6 @@ namespace DataTransferObject.Domain.Model
         [Column(TypeName = "varchar(30)")]
         public string? ChipNo { get; set; }
         public bool FlagForFaulty { get; set; } = false;
+        public DateTime? CardPrintedOn { get; set; }
     }
 }

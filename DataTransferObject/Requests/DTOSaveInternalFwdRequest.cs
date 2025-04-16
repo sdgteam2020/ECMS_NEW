@@ -22,10 +22,10 @@ namespace DataTransferObject.Requests
         public int FromUserId { get; set; }
 
         [RegularExpression(@"^[\d]+$", ErrorMessage = "FromAspNetUsersId is number.")]
-        public int? FromAspNetUsersId { get; set; }
+        public int FromAspNetUsersId { get; set; }
 
         [RegularExpression(@"^[\d]+$", ErrorMessage = "ToAspNetUsersId is number.")]
-        public int? ToAspNetUsersId { get; set; }
+        public int ToAspNetUsersId { get; set; }
 
         [RegularExpression(@"^[\d]+$", ErrorMessage = "UnitId is number.")]
         public int UnitId { get; set; }
