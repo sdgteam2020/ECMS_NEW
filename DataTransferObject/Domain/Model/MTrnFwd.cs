@@ -29,11 +29,11 @@ namespace DataTransferObject.Domain.Model
         public MUserProfile? MUserProfileFrom { get; set; }
 
         [ForeignKey("ApplicationUser")]
-        public int? FromAspNetUsersId { get; set; }
+        public int FromAspNetUsersId { get; set; }
         public ApplicationUser? ApplicationUser { get; set; }
 
         [ForeignKey("ApplicationUser1")]
-        public int? ToAspNetUsersId { get; set; }
+        public int ToAspNetUsersId { get; set; }
         public ApplicationUser? ApplicationUser1 { get; set; }
 
         [ForeignKey("MapUnit"), DatabaseGenerated(DatabaseGeneratedOption.None)]

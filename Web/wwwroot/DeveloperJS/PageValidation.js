@@ -16,7 +16,6 @@
 
 });
 function SubmitsEncry1(result) {
-    debugger;
     if (result) {
         // Get the password value
         let txtpassword = $("#Password").val();

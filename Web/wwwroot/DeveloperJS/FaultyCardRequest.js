@@ -51,7 +51,7 @@
         $("#btnAccept").removeClass("d-none");
         $("#btnReject").removeClass("d-none");
 
-        (".Stage").addClass("d-none");
+        $(".Stage").addClass("d-none");
         $(".ToRemark").removeClass("d-none");
 
         mMsater(1, "ddlStage", FaultyStage, "");
