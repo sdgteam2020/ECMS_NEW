@@ -26,6 +26,12 @@ namespace DataTransferObject.Domain.Model
         public int ValidRecords { get; set; }
 
         [Required]
+        public int DbInvalidRecords { get; set; }
+
+        [Required]
+        public int SheetInvalidRecords { get; set; }
+
+        [Required]
         public bool DBUpdated { get; set; } = true;
 
         [ForeignKey("ApplicationUserUpdate"), DatabaseGenerated(DatabaseGeneratedOption.None)]

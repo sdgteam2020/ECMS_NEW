@@ -751,8 +751,9 @@ function GetReportReturnHistory(spnStepId, applyTypeId, IsApproveId) {
         processing: true,
         serverSide: true,
         filter: true,
-        order: [[0, 'desc']],// Default sorting on the first column
-        searching: false,
+        order: [[1, 'desc']], // Default sorting on the first column
+        responsive: true,
+        autoWidth: false,
         ajax: async function (data, callback, settings) {
             debugger;
             let requestData = {
@@ -788,15 +789,15 @@ function GetReportReturnHistory(spnStepId, applyTypeId, IsApproveId) {
                 let result = await response.json();
                 $("#lblTotal").html(result.recordsTotal);
                 callback(result); // Sends data to DataTables
-
+                debugger;
 
             } catch (error) {
                 console.error("Error fetching data:", error);
             }
         },
         columns: [
-            { data: "TotalUsers", name: "TotalUsers", visible: false },
             // Serial number column
+            //{ data: "RequestId", name: "RequestId", visible: false },
             {
                 data: null,
                 name: "SerialNumber",
@@ -806,20 +807,66 @@ function GetReportReturnHistory(spnStepId, applyTypeId, IsApproveId) {
                     return meta.row + meta.settings._iDisplayStart + 1;
                 }
             },
-            { data: "ClaimType", name: "ClaimType" },
-            { data: "TotalUsers", name: "TotalUsers" }
-            ,
+            { data: "ServiceNo", name: "ServiceNo" },
             {
                 data: null,
+                name: null,
                 orderable: false,
                 render: function (data, type, row) {
-                    return "<span id='btneyetotalusers'><button type='button' class='cls-btneyetotalusers btn btn-icon btn-round btn-warning mr-1'><i class='fa fa-eye'></i></button></span>";
+                    return `${row.RankName} ${row.FName} ${row.LName != null ? row.LName : ""}`;
+                }
+            },
+            {
+                data: null,
+                name: null,
+                orderable: false,
+                render: function (data, type, row) {
+                    return row.RankFrom != null ? `<span id='divName'>${row.RankFrom} ${row.NameFrom} (${row.ArmyNoFrom}) (${row.DomainIdFrom})</span>` : "<span id='divName'></span>";
+                }
+            },
+            {
+                data: null,
+                name: null,
+                orderable: false,
+                render: function (data, type, row) {
+                    return row.RankTo != null ? `<span id='divName'>${row.RankTo} ${row.NameTo} (${row.ArmyNoTo}) (${row.DomainIdTo})</span>` : "<span id='divName'></span>";
+                }
+            },
+            {
+                data: 'TrackingId',
+                name: 'TrackingId',
+                render: function (data, type, row) {
+                    return data ? `<span id='comdName'>${data}</span>` : '';
+                }
+            },
+            {
+                data: "UpdatedOn",
+                name: "UpdatedOn",
+                render: function (data, type, row) {
+                    return `<span id='comdName'>${DateFormateddMMyyyyhhmmss(data)}</span>`;
+                }
+            },
+            {
+                data: "StatusName",
+                name: "StatusName",
+                render: function (data, type, row) {
+                    let color = 'primary';
+                    if (data == "Pending") {
+                        color = 'warning';
+                    }
+                    else if (data == "Rejected") {
+                        color = 'dangers';
+                    }
+                    else {
+                        color = 'success'
+                    }
+                    return data ? `<span id='comdName'><span class='badge badge-${color} mr-1' >${row.StatusName}</span></span>` : `<span id='comdName'><span class='badge badge-primary mr-1' >Action Pending</span></span>`;
                 }
             }
         ],
         language: {
             search: "", // Remove the default "Search:" label
-            searchPlaceholder: "Search Type / Value" // Add custom placeholder
+            searchPlaceholder: "Search Army No" // Add custom placeholder
         },
         dom: 'lBfrtip', // Add buttons to the DOM
         buttons: [
@@ -848,14 +895,6 @@ function GetReportReturnHistory(spnStepId, applyTypeId, IsApproveId) {
                 }
             }],
         drawCallback: function (settings) {
-            // Re-bind the click event after each draw
-            $("#tbldata tbody").off("click", ".cls-btneyetotalusers").on("click", ".cls-btneyetotalusers", function () {
-                var rowData = table.row($(this).closest("tr")).data();
-                if (rowData != null) {
-                    BindDialog(rowData.ClaimType);
-                }
-            });
-
         }
     });
 

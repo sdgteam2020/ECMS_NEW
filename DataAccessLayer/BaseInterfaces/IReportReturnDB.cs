@@ -19,7 +19,7 @@ namespace DataAccessLayer.BaseInterfaces
          
         public Task<List<DTOReportReturnCount>> GetRecordJco(short ArmedIdForORO);
         public Task<List<DTOReportReturnCount>> GetRecordJcoCount(DTOMHierarchyRequest Data,int IsComplete, short ArmedIdForORO);
-        public Task<List<DTOReportReturnListResponse>> GetRecordHistory(DTOMHierarchyRequest Data,int ApplyForId,int StepId, int IsApproveId);
+        public Task<DTODataTablesResponse<DTOReportReturnListResponse>> GetRecordHistory(DTORecordHistory dTORecord);
         public Task<List<DTOReportReturnListResponse>> GetReportForm11(DTOMHierarchyRequest Data);
 
     }
