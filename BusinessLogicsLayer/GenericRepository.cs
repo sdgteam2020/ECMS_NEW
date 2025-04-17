@@ -1,5 +1,7 @@
 ﻿using DataAccessLayer;
 using DataAccessLayer.BaseInterfaces;
+using DataTransferObject.Requests;
+using DataTransferObject.Response;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -57,6 +59,11 @@ namespace BusinessLogicsLayer
         public Task<T> UpdateWithReturn(T entity)
         {
             return UpdateWithReturn(entity);
+        }
+
+        public Task<DTODataTablesResponse<T>> GetDataTableResponse(DTODataTablesRequest request)
+        {
+            return GetDataTableResponse(request);
         }
     }
 }

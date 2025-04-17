@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using DataTransferObject.Requests;
+using DataTransferObject.Response;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
 using System.Text;
@@ -81,5 +83,60 @@ namespace DataAccessLayer
 
             return entity;
         }
+
+        public async Task<DTODataTablesResponse<T>> GetDataTableResponse(DTODataTablesRequest request)
+        {
+            var responseData = new DTODataTablesResponse<T>
+            {
+                draw = request.Draw,
+                recordsTotal = 0, // Total records without filtering
+                recordsFiltered = 0, // Total records after filtering
+                data = new List<T> { },
+            };
+            try
+            {
+                var queryableData = _context.Set<T>().AsQueryable();
+
+                // Total records without filtering
+                var totalRecords = queryableData.Count();
+
+                // Apply filtering
+                if (!string.IsNullOrEmpty(request.searchValue))
+                {
+                    string searchValue = request.searchValue.ToLower();
+                    queryableData = queryableData.Where(item => EF.Property<string>(item, request.Choice).ToLower().Contains(searchValue));
+                }
+
+                //Apply sorting
+                if (!string.IsNullOrEmpty(request.sortColumn) && !string.IsNullOrEmpty(request.sortDirection))
+                {
+                    //queryableData = queryableData.OrderBy(request.SortColumn + " " + request.SortColumnDirection);
+                    queryableData = request.sortDirection.ToLower() == "asc"
+                    ? queryableData.OrderBy(item => EF.Property<object>(item, request.sortColumn))
+                    : queryableData.OrderByDescending(item => EF.Property<object>(item, request.sortColumn));
+                }
+
+                // Total records after filtering
+                var filteredRecords = queryableData.Count();
+
+                // Paginate the result
+                var paginatedData = await queryableData.Skip(request.Start).Take(request.Length).ToListAsync();
+
+                responseData = new DTODataTablesResponse<T>
+                {
+                    draw = request.Draw,
+                    recordsTotal = totalRecords, // Total records without filtering
+                    recordsFiltered = filteredRecords, // Total records after filtering
+                    data = paginatedData
+                };
+
+            }
+            catch (Exception ee)
+            { 
+                
+            }
+            return responseData;
+        }
+
     }
 }

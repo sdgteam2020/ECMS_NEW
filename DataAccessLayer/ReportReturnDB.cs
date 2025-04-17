@@ -1,6 +1,8 @@
-﻿using Dapper;
+﻿using Azure.Core;
+using Dapper;
 using DataAccessLayer.BaseInterfaces;
 using DataAccessLayer.Logger;
+using DataTransferObject.Domain.Master;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
 using DataTransferObject.Response.User;
@@ -465,14 +467,32 @@ namespace DataAccessLayer
             }
         }
 
-        public async Task<List<DTOReportReturnListResponse>> GetRecordHistory(DTOMHierarchyRequest Data, int ApplyForId, int StepId, int IsApproveId)
+        public async Task<DTODataTablesResponse<DTOReportReturnListResponse>> GetRecordHistory(DTORecordHistory dTORecord)
         {
-            string query = "";
-            if (StepId != 99)
+            var offset = dTORecord.Start;
+            var limit = dTORecord.Length;
+
+            // Map allowed sort columns to DB fields
+            var allowedSortColumns = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
             {
-                if(StepId ==100)
+                ["ServiceNo"] = "ServiceNo",
+                ["TrackingId"] = "TrackingId",
+                ["UpdatedOn"] = "fwd.UpdatedOn",
+                ["StatusName"] = "fwdsts.Name",
+            };
+
+            var sortColumn = allowedSortColumns.ContainsKey(dTORecord.sortColumn ?? "")
+                ? allowedSortColumns[dTORecord.sortColumn!]
+                : "ServiceNo";
+
+            var sortOrder = dTORecord.sortDirection;
+
+            string query = "";
+            if (dTORecord.StepId != 99)
+            {
+                if(dTORecord.StepId ==100)
                 {
-                    query = " select req.RequestId,Mstep.StepId,basi.FName,basi.LName,ServiceNo,DOB,ranks.RankAbbreviation RankName,TrackingId, " +
+                    query = " req.RequestId,Mstep.StepId,basi.FName,basi.LName,ServiceNo,DOB,ranks.RankAbbreviation RankName,TrackingId, " +
                             " aspusersto.DomainId DomainIdTo,userto.ArmyNo ArmyNoTo ,userto.Name NameTo,ranksto.RankAbbreviation RankTo, " +
                             " aspusersfrom.DomainId DomainIdFrom,userfrom.ArmyNo ArmyNoFrom ,userfrom.Name NameFrom,ranksfrom.RankAbbreviation RankFrom,fwdsts.Name Status" +
                             " ,fwd.UpdatedOn,fwdsts.Name StatusName from MStepCounterStep Mstep   " +
@@ -502,11 +522,11 @@ namespace DataAccessLayer
                                //" and unit.PsoId=ISNULL(@PsoId,unit.PsoId)" +
                                //" and unit.SubDteId=ISNULL(@SubDteId,unit.SubDteId)" +
                                " and unit.UnitMapId=ISNULL(@UnitMapId,unit.UnitMapId)" +
-                            " and step.ApplyForId=2 and fwd.IsComplete=0 and fwd.StepId=3 and mrec.RecordOfficeId=@ApplyForId ";
+                            " and step.ApplyForId=2 and fwd.IsComplete=0 and fwd.StepId=3 and mrec.RecordOfficeId=@ApplyForId and ServiceNo like '%' + @SearchTerm + '%' ";
                 }
-                else if (IsApproveId == 1)
+                else if (dTORecord.IsApproveId == 1)
                 {
-                    query = " select req.RequestId,Mstep.StepId,basi.FName,basi.LName,ServiceNo,DOB,ranks.RankAbbreviation RankName,TrackingId," +
+                    query = " req.RequestId,Mstep.StepId,basi.FName,basi.LName,ServiceNo,DOB,ranks.RankAbbreviation RankName,TrackingId," +
                             " aspusersto.DomainId DomainIdTo,userto.ArmyNo ArmyNoTo ,userto.Name NameTo,ranksto.RankAbbreviation RankTo," +
                             " aspusersfrom.DomainId DomainIdFrom,userfrom.ArmyNo ArmyNoFrom ,userfrom.Name NameFrom,ranksfrom.RankAbbreviation RankFrom" +
                             " ,fwd.UpdatedOn,fwdsts.Name StatusName from MStepCounterStep Mstep  " +
@@ -533,14 +553,14 @@ namespace DataAccessLayer
                            //" and unit.PsoId=ISNULL(@PsoId,unit.PsoId)" +
                            //" and unit.SubDteId=ISNULL(@SubDteId,unit.SubDteId)" +
                            " and unit.UnitMapId=ISNULL(@UnitMapId,unit.UnitMapId)" +
-                            " and step.ApplyForId=@ApplyForId and fwd.StepId=@StepId";
+                            " and step.ApplyForId=@ApplyForId and fwd.StepId=@StepId and ServiceNo like '%' + @SearchTerm + '%' ";
                         
                      }
                 else
                 {
-                    if(StepId==1)
+                    if(dTORecord.StepId ==1)
                     {
-                        query = " select req.RequestId,Mstep.StepId,basi.FName,basi.LName,ServiceNo,DOB,ranks.RankAbbreviation RankName,TrackingId," +
+                        query = " req.RequestId,Mstep.StepId,basi.FName,basi.LName,ServiceNo,DOB,ranks.RankAbbreviation RankName,TrackingId," +
                       " aspusersto.DomainId DomainIdTo,userto.ArmyNo ArmyNoTo ,userto.Name NameTo,ranksto.RankAbbreviation RankTo," +
                       " aspusersfrom.DomainId DomainIdFrom,userfrom.ArmyNo ArmyNoFrom ,userfrom.Name NameFrom,ranksfrom.RankAbbreviation RankFrom" +
                       " ,fwd.UpdatedOn,fwdsts.Name StatusName from MStepCounterStep Mstep  " +
@@ -567,11 +587,12 @@ namespace DataAccessLayer
                            //" and unit.PsoId=ISNULL(@PsoId,unit.PsoId)" +
                            //" and unit.SubDteId=ISNULL(@SubDteId,unit.SubDteId)" +
                            " and unit.UnitMapId=ISNULL(@UnitMapId,unit.UnitMapId)" +
-                      " and step.ApplyForId=@ApplyForId ";
+                      " and step.ApplyForId=@ApplyForId and ServiceNo like '%' + @SearchTerm + '%' ";
                     }
                     else
                     {
-                        query = " select req.RequestId,Mstep.StepId,basi.FName,basi.LName,ServiceNo,DOB,ranks.RankAbbreviation RankName,TrackingId," +
+                        //Appl Status at ADC
+                        query = " req.RequestId,Mstep.StepId,basi.FName,basi.LName,ServiceNo,DOB,ranks.RankAbbreviation RankName,TrackingId," +
                       " aspusersto.DomainId DomainIdTo,userto.ArmyNo ArmyNoTo ,userto.Name NameTo,ranksto.RankAbbreviation RankTo," +
                       " aspusersfrom.DomainId DomainIdFrom,userfrom.ArmyNo ArmyNoFrom ,userfrom.Name NameFrom,ranksfrom.RankAbbreviation RankFrom" +
                       " ,fwd.UpdatedOn,fwdsts.Name StatusName from MStepCounterStep Mstep  " +
@@ -598,14 +619,14 @@ namespace DataAccessLayer
                            //" and unit.PsoId=ISNULL(@PsoId,unit.PsoId)" +
                            //" and unit.SubDteId=ISNULL(@SubDteId,unit.SubDteId)" +
                            " and unit.UnitMapId=ISNULL(@UnitMapId,unit.UnitMapId)" +
-                      " and step.ApplyForId=@ApplyForId and fwd.StepId=@StepId";
+                      " and step.ApplyForId=@ApplyForId and fwd.StepId=@StepId and ServiceNo like '%' + @SearchTerm + '%' ";
                     }
                       
                 }
             }
             else
             {
-                query = " select req.RequestId,Mstep.StepId,basi.FName,basi.LName,ServiceNo,DOB,ranks.RankAbbreviation RankName,TrackingId, " +
+                query = " req.RequestId,Mstep.StepId,basi.FName,basi.LName,ServiceNo,DOB,ranks.RankAbbreviation RankName,TrackingId, " +
                         " aspusersto.DomainId DomainIdTo,userto.ArmyNo ArmyNoTo ,userto.Name NameTo,ranksto.RankAbbreviation RankTo, " +
                         " aspusersfrom.DomainId DomainIdFrom,userfrom.ArmyNo ArmyNoFrom ,userfrom.Name NameFrom,ranksfrom.RankAbbreviation RankFrom,fwdsts.Name Status" +
                         " ,fwd.UpdatedOn,fwdsts.Name StatusName from MStepCounterStep Mstep   " +
@@ -634,21 +655,45 @@ namespace DataAccessLayer
                            //" and unit.PsoId=ISNULL(@PsoId,unit.PsoId)" +
                            //" and unit.SubDteId=ISNULL(@SubDteId,unit.SubDteId)" +
                            " and unit.UnitMapId=ISNULL(@UnitMapId,unit.UnitMapId)" +
-                        " and step.ApplyForId=1 and fwd.StepId=3 and mrec.RecordOfficeId=@ApplyForId ";
+                        " and step.ApplyForId=1 and fwd.StepId=3 and mrec.RecordOfficeId=@ApplyForId and ServiceNo like '%' + @SearchTerm + '%' ";
 
             }
             try
             {
+                var multiQuery = query = $@"
+                            WITH RecordCTE AS (
+                                select ROW_NUMBER() OVER (ORDER BY {sortColumn} {sortOrder}) AS RowNum, {query}
+                            )
+                            SELECT * FROM RecordCTE
+                            WHERE RowNum BETWEEN @Offset AND @Limit;
+                        ";
+
                 using (var connection = _contextDP.CreateConnection())
                 {
-                    var ret = await connection.QueryAsync<DTOReportReturnListResponse>(query, new { Data.ComdId, Data.CorpsId, Data.DivId, Data.BdeId, Data.FmnBranchID, Data.PsoId, Data.SubDteId, Data.UnitMapId, ApplyForId, StepId });
-                    return ret.ToList();
+                    var ret = await connection.QueryMultipleAsync(query, new { dTORecord.Data.ComdId, dTORecord.Data.CorpsId, dTORecord.Data.DivId, dTORecord.Data.BdeId, dTORecord.Data.FmnBranchID, dTORecord.Data.PsoId, dTORecord.Data.SubDteId, dTORecord.Data.UnitMapId, dTORecord.ApplyForId, dTORecord.StepId, Offset = offset, Limit = limit, SearchTerm = string.IsNullOrWhiteSpace(dTORecord.searchValue) ? "" : dTORecord.searchValue });
+                    var records = (await ret.ReadAsync<DTOReportReturnListResponse>()).ToList();
+                    var responseData = new DTODataTablesResponse<DTOReportReturnListResponse>
+                    {
+                        draw = dTORecord.Draw,
+                        recordsTotal = 0, // Total records without filtering
+                        recordsFiltered = records.Count(), // Total records after filtering
+                        data = records
+                    };
+                    return responseData;
                 }
             }
             catch (Exception ex) 
             {
                 _logger.LogError(1001, ex, "ReportReturnDB->GetRecordHistory");
-                return new List<DTOReportReturnListResponse>();
+                List<DTOReportReturnListResponse> dTOUserRegnResponses = new List<DTOReportReturnListResponse>();
+                var responseData = new DTODataTablesResponse<DTOReportReturnListResponse>
+                {
+                    draw = 0,
+                    recordsTotal = 0,
+                    recordsFiltered = 0,
+                    data = dTOUserRegnResponses
+                };
+                return responseData;
             }
         }
 

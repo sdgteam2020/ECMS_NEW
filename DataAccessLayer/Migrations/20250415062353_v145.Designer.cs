@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccessLayer.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250416110634_v145")]
+    [Migration("20250415062353_v145")]
     partial class v145
     {
         /// <inheritdoc />
@@ -1472,6 +1472,9 @@ namespace DataAccessLayer.Migrations
                     b.Property<bool>("DBUpdated")
                         .HasColumnType("bit");
 
+                    b.Property<int>("DbInvalidRecords")
+                        .HasColumnType("int");
+
                     b.Property<string>("FileName")
                         .IsRequired()
                         .HasMaxLength(20)
@@ -1483,6 +1486,9 @@ namespace DataAccessLayer.Migrations
                     b.Property<DateTime?>("ImportedOn")
                         .IsRequired()
                         .HasColumnType("datetime");
+
+                    b.Property<int>("SheetInvalidRecords")
+                        .HasColumnType("int");
 
                     b.Property<int>("TotalRecords")
                         .HasColumnType("int");
@@ -1819,7 +1825,7 @@ namespace DataAccessLayer.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TrnFwdId"));
 
-                    b.Property<int>("FromAspNetUsersId")
+                    b.Property<int?>("FromAspNetUsersId")
                         .HasColumnType("int");
 
                     b.Property<int>("FromUserId")
@@ -1847,7 +1853,7 @@ namespace DataAccessLayer.Migrations
                     b.Property<byte>("StepId")
                         .HasColumnType("tinyint");
 
-                    b.Property<int>("ToAspNetUsersId")
+                    b.Property<int?>("ToAspNetUsersId")
                         .HasColumnType("int");
 
                     b.Property<int>("ToUserId")
@@ -1946,9 +1952,6 @@ namespace DataAccessLayer.Migrations
 
                     b.Property<int>("BasicDetailId")
                         .HasColumnType("int");
-
-                    b.Property<DateTime?>("CardPrintedOn")
-                        .HasColumnType("datetime2");
 
                     b.Property<string>("CardSerialNo")
                         .HasMaxLength(30)
@@ -3212,8 +3215,7 @@ namespace DataAccessLayer.Migrations
                     b.HasOne("DataTransferObject.Domain.Identitytable.ApplicationUser", "ApplicationUser")
                         .WithMany()
                         .HasForeignKey("FromAspNetUsersId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("DataTransferObject.Domain.MUserProfile", "MUserProfileFrom")
                         .WithMany()
@@ -3242,8 +3244,7 @@ namespace DataAccessLayer.Migrations
                     b.HasOne("DataTransferObject.Domain.Identitytable.ApplicationUser", "ApplicationUser1")
                         .WithMany()
                         .HasForeignKey("ToAspNetUsersId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("DataTransferObject.Domain.MUserProfile", "MUserProfile")
                         .WithMany()

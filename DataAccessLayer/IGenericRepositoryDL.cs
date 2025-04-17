@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DataTransferObject.Requests;
+using DataTransferObject.Response;
 
 namespace DataAccessLayer
 {
@@ -18,5 +20,6 @@ namespace DataAccessLayer
         Task<T> Delete(int id);
         Task Update(T entity);
         Task<T> UpdateWithReturn(T entity);
+        Task<DTODataTablesResponse<T>> GetDataTableResponse(DTODataTablesRequest request);
     }
 }

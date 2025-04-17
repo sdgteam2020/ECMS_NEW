@@ -157,7 +157,7 @@ namespace Web.Controllers
         {
             try
             {
-                var ret = await _reportReturnBL.GetRecordHistory(dTORecord.Data, dTORecord.ApplyForId, dTORecord.StepId, dTORecord.IsApproveId);
+                var ret = await _reportReturnBL.GetRecordHistory(dTORecord);
                 return Json(ret);
             }
             catch (Exception ex) 
