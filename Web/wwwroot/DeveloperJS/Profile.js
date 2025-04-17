@@ -1,11 +1,10 @@
-﻿
-$(document).ready(function () {
-    GetByArmyNo("")
-    $("#btntokenrefresh").click(function () {
+﻿$(async function () {
+    await GetByArmyNo(null);
+    $("#btntokenrefresh").on("click",async function () {
        
-        GetTokenvalidatepersid2fawiththumbprint($("#txtProArmy").val(), "tokenmsg", "txtspnTokenArmyNo", "Thumbprint");
+        await GetTokenvalidatepersid2fawiththumbprint($("#txtProArmy").val(), "tokenmsg", "txtspnTokenArmyNo", "Thumbprint");
     });
-    $("#btnProfilesave").click(function () {
+    $("#btnProfilesave").on("click",function () {
 
        /* alert($("#intoffsyes").prop("checked") )*/
         if ($("#SaveFormProfile")[0].checkValidity()) {
@@ -50,13 +49,14 @@ $(document).ready(function () {
     mMsater(0, "ddlProRank", Rank, "");
 
     $(".allow-number").on("keypress", function (event) {
-        // Allow only backspace , delete, numbers               
-        if (event.keyCode == 46 || event.keyCode == 8 || event.keyCode == 39 || event.keyCode == 37
-            || (event.keyCode >= 48 && event.keyCode <= 57)) {
-            // let it happen, don't do anything
-        }
-        else {
-            // Ensure that it is a number and stop the key press
+        const key = event.which;
+
+        // Allow: backspace (8), delete (46), left (37), right (39), 0-9 (48-57)
+        if (key === 8 || key === 46 || key === 37 || key === 39 || (key >= 48 && key <= 57)) {
+            // Allowed key, do nothing
+            return;
+        } else {
+            // Block everything else
             event.preventDefault();
         }
     });
@@ -64,6 +64,7 @@ $(document).ready(function () {
     $("#btnderegprofile").on("click", function () {
         $("#DeRegisterConfirmModal").modal('show');
     });
+
     $("#btnDeRegisterConfirmModalSubmit").on("click", function () {
         $("#DeRegisterConfirmModal").modal('hide');
         $.ajax({
@@ -175,106 +176,67 @@ function UpdateProfileWithMapping(RankId, Name, IsRO, IsIO, IsCO, IsORO, UserId,
         }
     });
 }
-function GetByArmyNo(ArmyNo) {
-   
-    var userdata =
-    {
-        "ArmyNo": ArmyNo,
+async function GetByArmyNo(ArmyNo) {
+    const userdata = new URLSearchParams();
+    userdata.append("ArmyNo", ArmyNo);
 
-    };
-    $.ajax({
-        url: '/UserProfile/GetByArmyNoOrAspnetuserId',
-        contentType: 'application/x-www-form-urlencoded',
-        data: userdata,
-        type: 'POST',
-
-        success: function (response) {
-            if (response != "null" && response != null) {
-
-                if (response == InternalServerError) {
+    fetch('/UserProfile/GetByArmyNoOrAspnetuserId', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: userdata
+    })
+        .then(response => response.json())
+        .then(response => {
+            if (response !== "null" && response !== null) {
+                if (response === InternalServerError) {
                     Swal.fire({
                         text: errormsg
                     });
-                }
-                else if (response == 0) {
-                   
-                }
+                } else if (response === 0) {
+                    // Do nothing
+                } else {
+                    $("#spnUserId").html(response.UserId);
+                    $("#spnTDMId").html(response.TDMId);
+                    $("#txtProArmy").val(response.ArmyNo);
+                    //$("#txtMobileNo").val(response.MobileNo);
+                    //$("#txtDialingCode").val(response.DialingCode);
+                    //$("#txtExtension").val(response.Extension);
+                    $("#Thumbprint").val(response.Thumbprint);
+                    /*  $("#lblThumbPrint").html(response.Thumbprint != null ? response.Thumbprint : "-");*/
+                    $("#lblicno").html(response.ArmyNo);
+                    $(".lblAppt").html(response.AppointmentName);
+                    $("#lblrole").html(response.RoleName);
+                    GetALLByUnitById(response.UnitId);
+                    mMsater(response.RankId, "ddlProRank", Rank, "");
 
-                else {
-                        $("#spnUserId").html(response.UserId);
-                        $("#spnTDMId").html(response.TDMId);
-                        $("#txtProArmy").val(response.ArmyNo);
-                        //$("#txtMobileNo").val(response.MobileNo);
-                        //$("#txtDialingCode").val(response.DialingCode);
-                        //$("#txtExtension").val(response.Extension);
-                        $("#Thumbprint").val(response.Thumbprint);
-                      /*  $("#lblThumbPrint").html(response.Thumbprint != null ? response.Thumbprint : "-");*/
-                        $("#lblicno").html(response.ArmyNo);
-                        $(".lblAppt").html(response.AppointmentName);
-                        $("#lblrole").html(response.RoleName);
-                        GetALLByUnitById(response.UnitId);
-                        mMsater(response.RankId, "ddlProRank", Rank, "");
-                       
-                        //if (response.IsRO == false) {
+                    //$("#chkRO").prop("checked", response.IsRO == true);
 
-                        //    $("#chkRO").prop("checked", false); 
-                        //}
-                        //else {
-                            
-                        //    $("#chkRO").prop("checked", true); 
-                           
-                        //}
-                        if (response.IsIO == false) {
-
-                            $("#chkIO").prop("checked", false);
-                        }
-                        else {
-
-                            $("#chkIO").prop("checked", true);
-
-                        }
-                        if (response.IsCO == false) {
-
-                            $("#chkCO").prop("checked", false);
-                        }
-                        else {
-
-                            $("#chkCO").prop("checked", true);
-
-                        }
-                        //if (response.IsORO == false) {
-
-                        //    $("#chkORO").prop("checked", false);
-                        //}
-                        //else {
-
-                        //    $("#chkORO").prop("checked", true);
-
-                        //}
-                        $("#txtName").val(response.Name);
-                        //GetALLByUnitById($("#aspndomainUnitID").html());
-                        $("#lblDomainId").html(response.DomainId);
-                        $("#lblMappedDate").html(DateFormateMMMM_dd_yyyy(response.MappedDate));
-                        $("#lblMappedBy").html(response.MappedBy);
+                    $("#chkIO").prop("checked", response.IsIO === true);
+                    $("#chkCO").prop("checked", response.IsCO === true);
+                    $("#chkORO").prop("checked", response.IsORO === true);
 
 
-                    if (response.IsToken == false)
+                    $("#txtName").val(response.Name);
+                    //GetALLByUnitById($("#aspndomainUnitID").html());
+                    $("#lblDomainId").html(response.DomainId);
+                    $("#lblMappedDate").html(DateFormateMMMM_dd_yyyy(response.MappedDate));
+                    $("#lblMappedBy").html(response.MappedBy);
+
+                    if (response.IsToken === false)
                         $("#btntokenrefresh").addClass("d-none");
                     else
                         $("#btntokenrefresh").removeClass("d-none");
-                       // GetALLByUnitById(response.UnitId);
-                        //$("#AddNewProfile").modal('hide');
 
-                    
-
+                    // GetALLByUnitById(response.UnitId);
+                    //$("#AddNewProfile").modal('hide');
                 }
             }
-           
-        },
-        error: function (result) {
+        })
+        .catch(() => {
             Swal.fire({
                 text: errormsg002
             });
-        }
-    });
+        });
 }

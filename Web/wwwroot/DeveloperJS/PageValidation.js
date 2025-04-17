@@ -69,7 +69,7 @@ function SubmitsEncry1(result) {
                 { keySize: 128 / 8, iv: iv, mode: CryptoJS.mode.CBC, padding: CryptoJS.pad.Pkcs7 });
 
             $('#Password').val(encryptedpassword);
-            $('#ConfirmPassword').val(encryptedpassword);
+            //$('#ConfirmPassword').val(encryptedpassword);
             return true;
         }
     }
