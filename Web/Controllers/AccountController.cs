@@ -1181,6 +1181,13 @@ namespace Web.Controllers
                 List<string> RoleNameList = new List<string>() { "user" };
                 if (dTOTempSession != null)
                 {
+                    if (dTOTempSession.NewUser == false)
+                    {
+                        //model.ConfirmPassword= model.Password;
+                        // Remove ConfirmPassword validation
+                        ModelState.Remove("ConfirmPassword");
+                    }
+
                     model.ICNo = model.ICNo.Trim();
 
                     if (ModelState.IsValid)
