@@ -40,6 +40,7 @@ using CsvHelper.Configuration;
 using BusinessLogicsLayer.CSVImports;
 using BusinessLogicsLayer.FaultyCard;
 using Humanizer;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Web.Controllers
 {
@@ -1692,6 +1693,8 @@ namespace Web.Controllers
         {
             try
             {
+                DTOBasicDetailsSaveResponse response = new DTOBasicDetailsSaveResponse();
+
                 DtoSession sessiondata = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
                 data.FromUserId = sessiondata.UserId;
                 data.UnitId = sessiondata.UnitId;
@@ -1705,7 +1708,7 @@ namespace Web.Controllers
                 if (Domain != null)
                 {
                     data.ToAspNetUsersId = Domain.AspNetUsersId;
-                    data.ToUserId = Convert.ToInt32(Domain.UserId);
+                    data.ToUserId = Domain.UserId.GetValueOrDefault();
 
                     if (await iTrnFwnBL.UpdateAllBYRequestId(data.RequestId))
                     {
@@ -1723,6 +1726,7 @@ namespace Web.Controllers
 
                         await _iTrnLoginLogBL.XmlFileDigitalSign(dataret);
                         return Ok(data);
+                            
                     }
                     else
                     {
@@ -1749,24 +1753,34 @@ namespace Web.Controllers
         
         public async Task<IActionResult> UpdateStepCounter(MStepCounter mStepCounter)
         {
+            DTOBasicDetailsSaveResponse response = new DTOBasicDetailsSaveResponse();
             try
             {
-                DtoSession sessiondata = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
-                DTOMapUnitResponse dTOMapUnitResponse = await mapUnitBL.GetALLByUnitMapId(sessiondata.UnitId);
+                TrnDomainMapping Domain = new TrnDomainMapping();
+                Domain = await iDomainMapBL.GetByRequestId(mStepCounter.RequestId);
 
-                mStepCounter.UpdatedOn = DateTime.Now;
-                mStepCounter.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-                mStepCounter.UnitName = dTOMapUnitResponse.UnitName;
-                await iStepCounterBL.UpdateStepCounter(mStepCounter);
+                if (Domain.UserId.GetValueOrDefault() == 0)
+                {
+                    response.Message = "Profile is not mapped with domain Id!";
+                }
+                else
+                {
+                    DtoSession sessiondata = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+                    DTOMapUnitResponse dTOMapUnitResponse = await mapUnitBL.GetALLByUnitMapId(sessiondata.UnitId);
 
-
+                    mStepCounter.UpdatedOn = DateTime.Now;
+                    mStepCounter.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                    mStepCounter.UnitName = dTOMapUnitResponse.UnitName;
+                    await iStepCounterBL.UpdateStepCounter(mStepCounter);
+                    response.Result = true;
+                }
             }
             catch (Exception ex)
             {
                 _logger.LogError(1001, ex, "BasicDetails=>IcardFwd.");
-                return BadRequest();
+                response.Message = "Internal Server Error!";
             }
-            return Ok(mStepCounter);
+            return Ok(response);
         }
         
         //[Authorize(Roles = "DteAdmin")]

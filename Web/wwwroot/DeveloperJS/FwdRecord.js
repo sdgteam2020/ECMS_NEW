@@ -1076,22 +1076,31 @@ function UpdateStepCounter(stepId, spnRequestId, Counter, Flag) {
         type: 'POST',
         success: function (response) {
             if (response != "null" && response != null) {
-                $("#FwdRecord").modal('hide');
-                var HType = 0;
-                if (Counter == 3) {
-                    HType = 1;
-                } else if (Counter == 4) {
-                    HType = 2;
+                if (response.Result == true) {
+                    $("#FwdRecord").modal('hide');
+                    var HType = 0;
+                    if (Counter == 3) {
+                        HType = 1;
+                    } else if (Counter == 4) {
+                        HType = 2;
+                    }
+                    if (Flag == "R") {
+                        RejecteTo(spnRequestId, Counter);
+                    } else {
+                        ForwardTo(spnRequestId, Counter);
+                    }
+                    if (applyfor == 1) {
+                        SaveNotification(1, Counter, $("#spnFwdToAspNetUsersId").html(), spnRequestId)
+                    } else {
+                        SaveNotification(1, (parseInt(Counter) + 10), $("#spnFwdToAspNetUsersId").html(), spnRequestId)
+                    }
                 }
-                if (Flag == "R") {
-                    RejecteTo(spnRequestId, Counter);
-                } else {
-                    ForwardTo(spnRequestId, Counter);
-                }
-                if (applyfor == 1) {
-                    SaveNotification(1, Counter, $("#spnFwdToAspNetUsersId").html(), spnRequestId)
-                } else {
-                    SaveNotification(1, (parseInt(Counter) + 10), $("#spnFwdToAspNetUsersId").html(), spnRequestId)
+                else {
+                    Swal.fire({
+                        icon: "error",
+                        title: "Oops...",
+                        text: response.Message
+                    });
                 }
             }
         }
