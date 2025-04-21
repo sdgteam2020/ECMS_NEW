@@ -99,24 +99,36 @@
     }
 
     if (sessionStorage.getItem("ArmyNo") != null) {
-        $("#ServiceNumber").val(sessionStorage.getItem("ArmyNo"));
-        $("#icarddetails").html('I-Card Appl Request For  ('+sessionStorage.getItem("ArmyNo")+')');
-        if (sessionStorage.getItem("OffType") == 1) {
+        const encryptedArmyNo = sessionStorage.getItem("ArmyNo");
+        const encryptedOffType = sessionStorage.getItem("OffType");
+        const encryptedlCardType = sessionStorage.getItem("lCardType");
+
+        const secretKey = document.getElementById("spnUniqueSecretKey").innerText;
+
+        const decryptedArmyNo = CryptoJS.AES.decrypt(encryptedArmyNo, secretKey).toString(CryptoJS.enc.Utf8);
+        const decryptedOffType = CryptoJS.AES.decrypt(encryptedOffType, secretKey).toString(CryptoJS.enc.Utf8);
+        const decryptedlCardType = CryptoJS.AES.decrypt(encryptedlCardType, secretKey).toString(CryptoJS.enc.Utf8);
+
+
+
+        $("#ServiceNumber").val(decryptedArmyNo);
+        $("#icarddetails").html('I-Card Appl Request For  (' + decryptedArmyNo +')');
+        if (decryptedOffType === "1") {
             $(".OptionsRegimental").addClass("d-none");
             mMsater($("#spnrankid").val(), "RankId", Rank, "");
         }
-        else if (sessionStorage.getItem("OffType") == 2) {
-            {
-                mMsater($("#spnrankid").val(), "RankId", RankJCo, "");
-                $(".OptionsRegimental").removeClass("d-none");
-            }
+        else if (decryptedOffType === "2") {
+            mMsater($("#spnrankid").val(), "RankId", RankJCo, "");
+            $(".OptionsRegimental").removeClass("d-none");
         }
-        if (sessionStorage.getItem("OffType") != "")
-            $("#ApplyForId").val(sessionStorage.getItem("OffType"));
-        $("#Type").val(sessionStorage.getItem("OffType"));
 
-        if (sessionStorage.getItem("lCardType") != "")
-            $("#TypeId").val(sessionStorage.getItem("lCardType"));
+        if (decryptedOffType !== "")
+            $("#ApplyForId").val(decryptedOffType);
+
+        $("#Type").val(decryptedOffType);
+
+        if (decryptedlCardType !== "")
+            $("#TypeId").val(decryptedlCardType);
 
     }
 

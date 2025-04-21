@@ -41,6 +41,7 @@ using BusinessLogicsLayer.CSVImports;
 using BusinessLogicsLayer.FaultyCard;
 using Humanizer;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Web.Controllers
 {
@@ -891,6 +892,12 @@ namespace Web.Controllers
                 var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
                 if (model.BasicDetailId > 0)
                 {
+                    ViewBag.OptionsRankId = model.RankId;
+                    ViewBag.OptionsUnitId = model.UnitId;
+                    ViewBag.OptionsArmedId = model.ArmedId;
+                    ViewBag.OptionsRegimentalId = model.RegimentalId;
+                    ViewBag.OptionsBloodGroupId = model.BloodGroupId;
+
                     if (model.UnitId == 0)
                     {
                         ModelState.AddModelError("UnitId", "Please Enter Unit Name");
@@ -899,6 +906,11 @@ namespace Web.Controllers
                     if (model.ApplyForId != 1 && model.RegimentalId == 0)
                     {
                         ModelState.AddModelError("RegimentalId", "Please Select Regimental ");
+                        goto end;
+                    }
+                    if (string.IsNullOrEmpty(model.AadhaarNo) || model.AadhaarNo.Length != 12 || !model.AadhaarNo.All(char.IsDigit) || model.AadhaarNo == "000000000000")
+                    {
+                        ModelState.AddModelError("AadhaarNo", "Aadhaar number must be exactly 12 digits.");
                         goto end;
                     }
                     if (ModelState.IsValid)
@@ -1142,6 +1154,11 @@ namespace Web.Controllers
                         if (model.ApplyForId != 1 && model.RegimentalId == 0)
                         {
                             ModelState.AddModelError("", "Please Select Regimental ");
+                        }
+                        if (string.IsNullOrEmpty(model.AadhaarNo) || model.AadhaarNo.Length != 12 || !model.AadhaarNo.All(char.IsDigit) || model.AadhaarNo == "000000000000")
+                        {
+                            ModelState.AddModelError("AadhaarNo", "Aadhaar number must be exactly 12 digits.");
+                            goto end;
                         }
 
 

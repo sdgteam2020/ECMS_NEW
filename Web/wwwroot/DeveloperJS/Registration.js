@@ -1,5 +1,4 @@
 ﻿$(document).ready(function () {
-
     //const [today] = new Date().toISOString().split('T');
     //const maxDate = new Date();
     //maxDate.setDate(maxDate.getDate() + 30);
@@ -123,14 +122,27 @@
 
 
     if (sessionStorage.getItem("ArmyNo") != null) {
-        $("#ServiceNumber").val(sessionStorage.getItem("ArmyNo"));
+        const encryptedArmyNo = sessionStorage.getItem("ArmyNo");
+        const encryptedOffType = sessionStorage.getItem("OffType");
+        const encryptedRegistrationApplyFor = sessionStorage.getItem("RegistrationApplyFor");
+        const encryptedlCardType = sessionStorage.getItem("lCardType");
 
-        $("#icarddetails").html(sessionStorage.getItem("ArmyNo"));
-        $("#ApplyForId").val(sessionStorage.getItem("OffType"));
-        $("#RegistrationId").val(sessionStorage.getItem("RegistrationApplyFor"));
-        $("#TypeId").val(sessionStorage.getItem("lCardType"));
+        const secretKey = document.getElementById("spnUniqueSecretKey").innerText;
 
-        if (sessionStorage.getItem("RegistrationApplyFor") == '4' || sessionStorage.getItem("RegistrationApplyFor") == '9') {
+        const decryptedArmyNo = CryptoJS.AES.decrypt(encryptedArmyNo, secretKey).toString(CryptoJS.enc.Utf8);
+        const decryptedOffType = CryptoJS.AES.decrypt(encryptedOffType, secretKey).toString(CryptoJS.enc.Utf8);
+        const decryptedRegistrationApplyFor = CryptoJS.AES.decrypt(encryptedRegistrationApplyFor, secretKey).toString(CryptoJS.enc.Utf8);
+        const decryptedlCardType = CryptoJS.AES.decrypt(encryptedlCardType, secretKey).toString(CryptoJS.enc.Utf8);
+
+
+        $("#ServiceNumber").val(decryptedArmyNo);
+
+        $("#icarddetails").html(decryptedArmyNo);
+        $("#ApplyForId").val(decryptedOffType);
+        $("#RegistrationId").val(decryptedRegistrationApplyFor);
+        $("#TypeId").val(decryptedlCardType);
+
+        if (decryptedRegistrationApplyFor === "4" || decryptedRegistrationApplyFor === "9") {
             $('#FName').attr('readonly', false);
             $('#LName').attr('readonly', false);
             $('#NameAsPerRecord').attr('readonly', false);
@@ -391,7 +403,12 @@ function Proceed(id) {
         $("#lblDateOfCommissioning").text('')
     }
 
-    if (sessionStorage.getItem("RegistrationApplyFor") == '4' || sessionStorage.getItem("RegistrationApplyFor") == '9') {
+    const encryptedRegistrationApplyFor = sessionStorage.getItem("RegistrationApplyFor");
+    const secretKey = document.getElementById("spnUniqueSecretKey").innerText;
+    const decryptedRegistrationApplyFor = CryptoJS.AES.decrypt(encryptedRegistrationApplyFor, secretKey).toString(CryptoJS.enc.Utf8);
+
+
+    if (decryptedRegistrationApplyFor === "4" || decryptedRegistrationApplyFor === "9") {
         if ($("#State").val().length == 0) {
             $("#lblState").html('State is required.');
         }
