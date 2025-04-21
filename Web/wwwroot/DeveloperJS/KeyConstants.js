@@ -17,6 +17,8 @@ const spnHQ54UnitId = 85;
 const ApplicantPostingOut = 50;
 const ApplicantClose = 51;
 const FaultyCardRequest = 52;
+const HoltlistCardRequest = 53;
+const LostCardRequest = 54;
 
 
 const Command = 1;

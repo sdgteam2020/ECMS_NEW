@@ -53,6 +53,8 @@ namespace DataTransferObject.Constants
         public const byte ApplicantPostingOut = 50;
         public const byte ApplicantClose = 51;
         public const byte FaultyCardRequest = 52;
+        public const byte HoltlistCardRequest = 53;
+        public const byte LostCardRequest = 54;
         
         #endregion
     }

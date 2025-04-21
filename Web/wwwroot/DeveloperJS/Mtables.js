@@ -250,6 +250,7 @@ function GetAllOffsByUnitId(ddl, sectid, UnitId, IsRO, IsORO, IsAfsacCell,BasicD
 
 
 function GetRemarks(ddl, sectid, RemarkTypeId) {
+    debugger;
     var userdata =
     {
         "RemarkTypeId": RemarkTypeId,

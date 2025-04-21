@@ -38,10 +38,10 @@ $(function () {
         CheckProfileExist();
 
     $("#btnSercharmynoSmart").on("click", function () {
+        debugger;
         if ($("#armynosearchAllName").html() != "") {
 
             $("#unitoffrsModal").modal("hide");
-
             var secretKey = document.getElementById("spnUniqueSecretKey").innerText;
 
             var encryptedArmyNo = CryptoJS.AES.encrypt($("#txtarmynosearchAll").val(), secretKey).toString();
@@ -58,6 +58,8 @@ $(function () {
                 window.location.href = "/Posting/ApplicationClose";
             else if ($("#armynosearchTypeId").val() == FaultyCardRequest) 
                 window.location.href = "/BasicDetail/FaultyCardRequest";
+            else if ($("#armynosearchTypeId").val() == HoltlistCardRequest)
+                window.location.href = "/BasicDetail/HotListCardRequest";
         } else {
             toastr.error("Please Enter Army No");
         }
