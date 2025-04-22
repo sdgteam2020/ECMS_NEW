@@ -52,7 +52,7 @@
             <div class="row">
                 <div class="col-xl-12 text-left">
                     <h3>
-                        Faulty Card Request Indl Army No
+                        Hotlist Card Request Indl Army No
                         <small class="text-muted"><span id="spnArmyNo"></span></small>
                     </h3>
                 </div>
@@ -60,12 +60,12 @@
         </div>
         <div class="card-body" style="min-height:150px;">
             <div class="row g-3 row-deck mb-3">
-                <form action="" id="SaveFaultyCardRequest" method="post" name="SaveFaultyCardRequest">
+                <form action="" id="SaveHotlistCardRequest" method="post" name="SaveHotlistCardRequest">
                     <div class="row">
-                        <span class=" d-none" id="spnTrnFaultyCardId">@ViewBag.TrnFaultyCardId</span>
-                        <span class=" d-none" id="spnFaultyCardRequestId">0</span>
+                        @* <span class=" d-none" id="spnTrnHotlistCardId">@ViewBag.TrnFaultyCardId</span> *@
+                        <span class=" d-none" id="spnHotlistCardRequestId">0</span>
                         <span class=" d-none" id="spnMaxTrnFwdId">0</span>
-                        <span class=" d-none" id="spnClaimValue">@ViewBag.Claim</span>
+                        @* <span class=" d-none" id="spnClaimValue">@ViewBag.Claim</span> *@
                         <div class="col-sm-7">
                             <div class="card p-1">
                                 <div id="partialContainerBD">
@@ -74,7 +74,7 @@
                                     <button type="button" class="faulty" id="btnCardPreview" name="btnCardPreview">I-Card Preview</button>
                                     <button type="button" class="faulty" id="btnXMLDownload" name="btnXMLDownload">XML Download</button>
                                     <button type="button" class="faulty" id="btnApplMoveHistory" name="btnApplMoveHistory">I-Card Move History</button>
-                                    <button type="button" class="faulty" id="btnFaultyCardsList" name="btnFaultyCardsList">View Faulty Cards</button>
+                                    <button type="button" class="faulty" id="btnFaultyCardsList" name="btnFaultyCardsList">View Holtlist Cards</button>
                                 </div>
                             </div>
                         </div>
@@ -84,14 +84,8 @@
                                     <div class="feature-box3">
                                         <div class="top-block_ind d-flex">
                                             <div class="text-block">
-                                                <h5 class="mb-1 text-font2 font-weight600">Report Faulty Card</h5>
+                                                <h5 class="mb-1 text-font2 font-weight600">Report Holtlist Card</h5>
                                             </div>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row mb-0">
-                                        <label class="col-form-label col-sm-5 labelprofile">Request Id</label>
-                                        <div class="col-sm-7">
-                                            <label id="lblFaultyRequestId" class="col-form-label"></label>
                                         </div>
                                     </div>
                                     <div class="form-group row mb-2 Stage d-none">
@@ -104,31 +98,22 @@
                                         </div>
                                     </div>
                                     <div class="form-group row mb-2">
-                                        <label class="col-form-label col-sm-5 labelprofile">Select Faulty Fd/ Reason<i class="fas fa-asterisk mand1"></i></label>
+                                        <label class="col-form-label col-sm-5 labelprofile">Select Reason<i class="fas fa-asterisk mand1"></i></label>
                                         <div class="col-sm-7">
-                                            <select class="form-control select2 select2-accessible text-uppercase" multiple style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddlFaultyRemark" id="ddlFaultyRemark" data-val="true" data-val-regex="This special chars and space not allowed for security reasons." data-val-required="Faulty Reason is required.">
+                                            <select class="form-control select2 select2-accessible text-uppercase" multiple style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddlHotlistRemark" id="ddlHotlistRemark" data-val="true" data-val-regex="This special chars and space not allowed for security reasons." data-val-required="Hotlist Reason is required.">
                                             </select>
-                                            <span class="text-danger field-validation-valid" data-valmsg-for="ddlFaultyRemark" data-valmsg-replace="true"></span>
+                                            <span class="text-danger field-validation-valid" data-valmsg-for="ddlHotlistRemark" data-valmsg-replace="true"></span>
                                         </div>
                                     </div>
                                     <div class="form-group row mb-2">
-                                        <label class="col-form-label col-sm-5 labelprofile">Explain Fault<i class="fas fa-asterisk mand1"></i></label>
+                                        <label class="col-form-label col-sm-5 labelprofile">Remarks<i class="fas fa-asterisk mand1"></i></label>
                                         <div class="col-sm-7">
-                                            <textarea class="form-control1" style="height:auto!important;" name="txtFromRemark" id="txtFromRemark" rows="3" maxlength="100" data-val-maxlength="Maximum length of Message is 100 character." data-val-maxlength-max="100" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="Remark is required." data-val-regex-pattern="^[\w\&\.\-\; ]*$"></textarea>
-                                            <span class="text-danger field-validation-valid" data-valmsg-for="txtFromRemark" data-valmsg-replace="true"></span>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row mb-2 ToRemark d-none">
-                                        <label class="col-form-label col-sm-5 labelprofile">AFSAC Cell Remark<i class="fas fa-asterisk mand1"></i></label>
-                                        <div class="col-sm-7">
-                                            <textarea class="form-control1" style="height:auto!important;" name="txtToRemark" id="txtToRemark" rows="3" maxlength="100" data-val-maxlength="Maximum length of Message is 100 character." data-val-maxlength-max="100" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-regex-pattern="^[\w\&\.\-\; ]*$"></textarea>
-                                            <span class="text-danger field-validation-valid" data-valmsg-for="txtToRemark" data-valmsg-replace="true"></span>
+                                            <textarea class="form-control1" style="height:auto!important;" name="txtHotlistRemark" id="txtHotlistRemark" rows="3" maxlength="100" data-val-maxlength="Maximum length of Message is 100 character." data-val-maxlength-max="100" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="Remark is required." data-val-regex-pattern="^[\w\&\.\-\; ]*$"></textarea>
+                                            <span class="text-danger field-validation-valid" data-valmsg-for="txtHotlistRemark" data-valmsg-replace="true"></span>
                                         </div>
                                     </div>
                                     <div class="col-sm-12 text-center mb-4">
-                                        <input type="button" class="btn btn-primary" id="btnReject" value="Reject" />
-                                        <input type="button" class="btn btn-primary" id="btnAccept" value="Accept and Fwd to Export" />
-                                        <input type="button" class="btn btn-primary" id="btnSubmit" value="Submit" />
+                                        <input type="button" class="btn btn-primary" id="btnAccept" value="Submit" />
                                     </div>
                                 </div>
                             </div>

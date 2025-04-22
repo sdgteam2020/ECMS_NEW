@@ -18,7 +18,7 @@
     }
     else {
         if (sessionStorage.getItem("ArmyNo") != null && sessionStorage.getItem("RequestIdForFaulty") != null && sessionStorage.getItem("MaxTrnFwdId") != null) {
-
+            debugger;
             var encryptedArmyNo = sessionStorage.getItem("ArmyNo");
             var encryptedRequestId = sessionStorage.getItem("RequestIdForFaulty");
             var encryptedMaxTrnFwdId = sessionStorage.getItem("MaxTrnFwdId");

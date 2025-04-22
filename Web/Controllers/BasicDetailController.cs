@@ -42,6 +42,7 @@ using BusinessLogicsLayer.FaultyCard;
 using Humanizer;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using Microsoft.IdentityModel.Tokens;
+using BusinessLogicsLayer.HotlistCard;
 
 namespace Web.Controllers
 {
@@ -76,13 +77,14 @@ namespace Web.Controllers
         private readonly string[] _expectedColumns = { "RequestId", "RankName", "FName", "LName", "ServiceNo", "ChipNo", "CardSerialNo" };
         private readonly  ICSVImportBL _iCSVImportBL;
         private readonly IFaultyCardBL faultyCardBL;
+        private readonly IHotlistCardBL _hotlistCardBL;
 
         public BasicDetailController(IConfiguration configuration,IBasicDetailBL basicDetailBL, IMapUnitBL mapUnitBL, IBasicDetailTempBL basicDetailTempBL, IService service, IMapper mapper,
             UserManager<ApplicationUser> userManager, IWebHostEnvironment hostingEnvironment, IDataProtectionProvider dataProtectionProvider,
                               DataProtectionPurposeStrings dataProtectionPurposeStrings, ILogger<BasicDetailController> logger, IStepCounterBL iStepCounterBL, 
                               ITrnFwnBL iTrnFwnBL, ITrnICardRequestBL iTrnICardRequestBL, IDomainMapBL iDomainMapBL
             ,IBasicUploadBL basicUploadBL, IBasicAddressBL basicAddressBL, IBasicinfoBL basicinfoBL, IRankBL rankBL, INotificationBL notificationBL, IMasterBL masterBL
-           , ITrnLoginLogBL iTrnLoginLogBL, IICardHoldBL iICardHoldBL, ICSVImportBL iCSVImportBL, IFaultyCardBL _faultyCardBL)
+           , ITrnLoginLogBL iTrnLoginLogBL, IICardHoldBL iICardHoldBL, ICSVImportBL iCSVImportBL, IFaultyCardBL _faultyCardBL,IHotlistCardBL hotlistCardBL)
         {
             _configuration = configuration;
             this.basicDetailBL = basicDetailBL;
@@ -112,6 +114,7 @@ namespace Web.Controllers
             _iICardHoldBL = iICardHoldBL;
             _iCSVImportBL = iCSVImportBL;
             faultyCardBL = _faultyCardBL;
+            _hotlistCardBL = hotlistCardBL;
         }
 
         #region Index/ApprovalForIO/View/InaccurateData/InaccurateDataView/RequestType
@@ -2199,60 +2202,6 @@ namespace Web.Controllers
             return View();
         }
 
-        public async Task<ActionResult> HotListCardRequestAsync(string? Id)
-        {
-            bool Claim = false;
-            int AspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-            var user = await userManager.FindByIdAsync(AspNetUsersId.ToString());
-
-            string decryptedId = string.Empty;
-            int decryptedIntId = 0;
-
-            if (Id != null)
-            {
-                try
-                {
-                    // Decrypt the  id using Unprotect method
-                    decryptedId = protector.Unprotect(Id);
-
-                    // Validate decrypted Id
-                    if (!int.TryParse(decryptedId, out decryptedIntId))
-                    {
-                        _logger.LogWarning("Decrypted Id is not a valid integer: {DecryptedId}, UserId: {UserId}", decryptedId, AspNetUsersId);
-                        TempData["error"] = "Invalid Request.";
-                        TempData.Keep("error");
-                        return RedirectToAction("ContactUs", "Home");
-                    }
-                }
-                catch (System.Security.Cryptography.CryptographicException ex)
-                {
-                    _logger.LogError(ex, "Cryptographic error occurred while processing the Id: {Id}.", Id);
-                    TempData["error"] = "Invalid or tampered request.";
-                    TempData.Keep("error");
-                    return RedirectToAction("ContactUs", "Home");
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(1001, ex, message: "This error occure because Id : {Id} value change by user.", Id);
-                    TempData["error"] = ex.Message;
-                    TempData.Keep("error");
-                    return RedirectToAction("ContactUs", "Home");
-                }
-            }
-
-
-            // UserManager service GetClaimsAsync method gets all the current claims of the user
-            var UserClaims = await userManager.GetClaimsAsync(user);
-            if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "ICard Export Data"))
-            {
-                Claim = true;
-            }
-
-            ViewBag.Claim = Claim;
-            ViewBag.TrnFaultyCardId = decryptedIntId;
-            return View();
-        }
-
         [HttpPost]
         public async Task<IActionResult> GetBasicDetailForParitalViewByRequestId(int RequestId)
         {
@@ -2442,6 +2391,63 @@ namespace Web.Controllers
 
         #endregion
 
+        #region HotlistCard
+        public async Task<ActionResult> HotListCardRequestAsync()
+        {
+            return View();
+        }
+
+        public async Task<IActionResult> SaveHotlistCardRequest(TrnHotlistCard model)
+        {
+            DTOFaultyCardSaveResponse dTOFaulty = new DTOFaultyCardSaveResponse();
+            try
+            {
+                model.IsActive = true;
+                model.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier)); ;
+                model.UpdatedOn = DateTime.Now;
+
+                if (ModelState.IsValid)
+                {
+                   bool checkduplicate = await _hotlistCardBL.FindRequestId(model.RequestId);
+                   if (checkduplicate)
+                   {
+                       dTOFaulty.Result = false;
+                       dTOFaulty.Message = "The hotlist request already exists!";
+                   }
+                   else
+                   {
+                       var result = await _hotlistCardBL.AddWithReturn(model);
+                       dTOFaulty.Result = true;
+                       dTOFaulty.Message = "Record created!";
+                       dTOFaulty.CurrentTime = result.UpdatedOn.GetValueOrDefault();
+                       dTOFaulty.Id = result.HotlistCardId.ToString();
+                   }
+                }
+                else
+                {
+                    var errors = ModelState.Where(x => x.Value?.Errors?.Count > 0)
+                    .SelectMany(x => x.Value!.Errors)
+                    .Select(e => e.ErrorMessage)
+                    .ToList();
+                    if (errors.Any())
+                    {
+                        dTOFaulty.Message = string.Join("; ", errors); // Concatenate all error messages
+                    }
+                    dTOFaulty.Result = false;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "BasicDetail->SaveHotlistCardRequest");
+                dTOFaulty.Result = false;
+                dTOFaulty.Message = "Internal Server Error!";
+            }
+
+            return Json(dTOFaulty);
+        }
+        #endregion HotlistCard
+
         #region GetSessionValue/GetData/SearchAllServiceNo/GetBasicDetailByRequestId/GetRequestHistory/GetRegimentalListByArmedId/GetROListByArmedId/GetRemarks/CreateCSV/GetICardPrintPreviewByRequestId/GetBDetailByRequestId/GetTopArmyNoFromICardRequest/ICardRequestHold/GetAllICardRequestHold
 
         private string GetSessionValue()
@@ -2497,7 +2503,7 @@ namespace Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> SearchAllServiceNo(DTOSearchArmyNoRequest dto)
+        public async Task<IActionResult> SearchAllServiceNo([FromForm] DTOSearchArmyNoRequest dto)
         {
             try
             {

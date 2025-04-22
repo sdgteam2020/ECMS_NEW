@@ -2,7 +2,7 @@
     var selectionButton;
 
     var RemarkTypeID = [6];
-    GetRemarks("ddlFaultyRemark", 0, RemarkTypeID);
+    GetRemarks("ddlHotlistRemark", 0, RemarkTypeID);
       
     $('.select2').select2({
         placeholder: "Please select a Reason",
@@ -10,60 +10,32 @@
         closeOnSelect: false // Only needed for multi-select
     });
 
-    let TrnFaultyCardId = parseInt($("#spnTrnFaultyCardId").html());
+    
+    if (sessionStorage.getItem("ArmyNo") != null && sessionStorage.getItem("RequestIdForFaulty") != null && sessionStorage.getItem("MaxTrnFwdId") != null) {
 
-    if (TrnFaultyCardId > 0) {
+        var encryptedArmyNo = sessionStorage.getItem("ArmyNo");
+        var encryptedRequestId = sessionStorage.getItem("RequestIdForFaulty");
+        var encryptedMaxTrnFwdId = sessionStorage.getItem("MaxTrnFwdId");
 
-        await GetTrnFaultyCardDetail(TrnFaultyCardId);
-    }
-    else {
-        if (sessionStorage.getItem("ArmyNo") != null && sessionStorage.getItem("RequestIdForFaulty") != null && sessionStorage.getItem("MaxTrnFwdId") != null) {
+        var secretKey = document.getElementById("spnUniqueSecretKey").innerText;
 
-            var encryptedArmyNo = sessionStorage.getItem("ArmyNo");
-            var encryptedRequestId = sessionStorage.getItem("RequestIdForFaulty");
-            var encryptedMaxTrnFwdId = sessionStorage.getItem("MaxTrnFwdId");
+        var bytes = CryptoJS.AES.decrypt(encryptedArmyNo, secretKey);
+        var decryptedArmyNo = bytes.toString(CryptoJS.enc.Utf8);
 
-            var secretKey = document.getElementById("spnUniqueSecretKey").innerText;
+        var bytes = CryptoJS.AES.decrypt(encryptedRequestId, secretKey);
+        var decryptedRequestId = bytes.toString(CryptoJS.enc.Utf8);
 
-            var bytes = CryptoJS.AES.decrypt(encryptedArmyNo, secretKey);
-            var decryptedArmyNo = bytes.toString(CryptoJS.enc.Utf8);
-
-            var bytes = CryptoJS.AES.decrypt(encryptedRequestId, secretKey);
-            var decryptedRequestId = bytes.toString(CryptoJS.enc.Utf8);
-
-            var bytes = CryptoJS.AES.decrypt(encryptedMaxTrnFwdId, secretKey);
-            var decryptedMaxTrnFwdId = bytes.toString(CryptoJS.enc.Utf8);
+        var bytes = CryptoJS.AES.decrypt(encryptedMaxTrnFwdId, secretKey);
+        var decryptedMaxTrnFwdId = bytes.toString(CryptoJS.enc.Utf8);
 
 
-            $("#spnArmyNo").html(decryptedArmyNo);
-            $("#spnFaultyCardRequestId").html(decryptedRequestId);
-            $("#spnMaxTrnFwdId").html(decryptedMaxTrnFwdId);
-            $("#lblFaultyRequestId").html(decryptedRequestId);
+        $("#spnArmyNo").html(decryptedArmyNo);
+        $("#spnHotlistCardRequestId").html(decryptedRequestId);
+        $("#spnMaxTrnFwdId").html(decryptedMaxTrnFwdId);
+        $("#lblFaultyRequestId").html(decryptedRequestId);
 
-            GetBasicDetailForParitalViewByRequestId(decryptedRequestId);
+        GetBasicDetailForParitalViewByRequestId(decryptedRequestId);
 
-            
-        }
-    }
-
-    if ($("#spnClaimValue").html().toLowerCase() === "true") {
-        $("#btnSubmit").addClass("d-none");
-        $("#btnAccept").removeClass("d-none");
-        $("#btnReject").removeClass("d-none");
-
-        $(".Stage").addClass("d-none");
-        $(".ToRemark").removeClass("d-none");
-
-        mMsater(1, "ddlStage", FaultyStage, "");
-    } else {
-        $("#btnSubmit").removeClass("d-none");
-        $("#btnAccept").addClass("d-none");
-        $("#btnReject").addClass("d-none");
-
-        $(".Stage").addClass("d-none");
-        $(".ToRemark").addClass("d-none");
-
-        mMsater(2, "ddlStage", FaultyStage, "");
     }
 
 
@@ -81,16 +53,16 @@
     });
 
     $("#btnCardPreview").on("click", function () {
-        GetICardPrintPreviewByRequestId($("#spnFaultyCardRequestId").html());
+        GetICardPrintPreviewByRequestId($("#spnHotlistCardRequestId").html());
     });
 
 
     $("#btnXMLDownload").on("click", function () {
-        DownloadPdf($("#spnFaultyCardRequestId").html());
+        DownloadPdf($("#spnHotlistCardRequestId").html());
     });
 
     $("#btnApplMoveHistory").on("click", function () {
-        GetRequestHistory($("#spnFaultyCardRequestId").html());
+        GetRequestHistory($("#spnHotlistCardRequestId").html());
         $("#exampleModal").modal('show');
     });
 
@@ -103,38 +75,37 @@
         $("#txtarmynosearchAll").val("");
         $("#armynosearchAllpic").attr("src", "");
         $("#unitoffrsModal").modal("show");
-        $("#armynosearchTypeId").val(FaultyCardRequest);
+        $("#armynosearchTypeId").val(HoltlistCardRequest);
     });
 
     $("#btnBackDashboard").on("click", function () {
         window.location.href = '/BasicDetail/FaultyCard';
     });
 });
-function Proceed(choice) {
+function Proceed() {
     //ResetErrorMessage();
-    if ($("#ddlFaultyRemark").val().length == 0 ) {
+    if ($("#ddlHotlistRemark").val().length == 0 ) {
         toastr.error('Reason is required.');
         return false;
     }
-    if ((choice == 2 || choice == 3) && $("#txtToRemark").val().length == 0) {
-        toastr.error('AFSAC Cell Remark is required.');
+    if ($("#txtHotlistRemark").val().length == 0) {
+        toastr.error('Remark is required.');
         return false;
     }
 
-    let formId = '#SaveFaultyCardRequest';
+    let formId = '#SaveHotlistCardRequest';
     $.validator.unobtrusive.parse($(formId));
     
     if ($(formId).valid()) {
         let ApplicantName = $("#lblpvFName").html() + $("#lblpvLName").html();
         let ApplicantNameWithRank = $("#lblpvRank").html() + " " + ApplicantName.trim();
-        let Remarks = $("#txtFromRemark").val();
+        let Remarks = $("#txtHotlistRemark").val();
         let UserName = $(".dropdown-user-details-name").html();
         Swal.fire({
-            title: 'Please confirm the following faulty card details:',
+            title: 'Please confirm the following hotlist card details:',
             html: `
                     <div style="text-align: left; font-size: 16px;">
                         <p><strong>Applicant Name:</strong> ${ApplicantNameWithRank}</p>
-                        <p><strong>Request ID:</strong> ${$("#spnFaultyCardRequestId").html() }</p>
                         <p><strong>Remarks:</strong> ${Remarks}</p>
                         <p><strong>Logged In Details:</strong> ${UserName}</p>
                     </div>
@@ -148,7 +119,7 @@ function Proceed(choice) {
             width: '500px', // optional: customize popup width
         }).then((result) => {
             if (result.isConfirmed) {
-                Save(choice);
+                Save();
             }
         })
     }
@@ -163,28 +134,17 @@ function Proceed(choice) {
         return false;
     }
 }
-    function Save(choice) {
-        var FaultyRemarkIds = "" + $("#ddlFaultyRemark").val() + "";
-        let urladd;
-
-        if (choice === 1) {
-            urladd = '/BasicDetail/SaveFaultyCardRequest';
-        }
-        else {
-            urladd = '/BasicDetail/SaveFaultyCard';
-        }
+    function Save() {
+        var HotlistRemarkIds = "" + $("#ddlHotlistRemark").val() + "";
         $.ajax({
-            url: urladd ,
+            url: '/BasicDetail/SaveHotlistCardRequest' ,
             type: 'POST',
             data: {
-                "TrnFaultyCardId": $("#spnTrnFaultyCardId").html(),
-                "RequestId": $("#spnFaultyCardRequestId").html(),
+                "HotlistCardId": 0,
+                "RequestId": $("#spnHotlistCardRequestId").html(),
                 "TrnFwdId": $("#spnMaxTrnFwdId").html(),
-                "RemarksIds": $("#ddlFaultyRemark").val().length > 0 ? FaultyRemarkIds : null,
-                "FromRemark": $("#txtFromRemark").val(),
-                "ToRemark": $("#txtToRemark").val(),
-                "CategoryId": $("#ddlStage").val(),
-                "Choice": choice
+                "RemarksIds": $("#ddlHotlistRemark").val().length > 0 ? HotlistRemarkIds : null,
+                "Remark": $("#txtHotlistRemark").val()
             }, //get the search string
             success: function (result) {
 
@@ -228,50 +188,6 @@ function Proceed(choice) {
                 document.getElementById("partialContainerBD").innerHTML = html;
           })
           .catch(error => {
-            alert("Error: " + error.message);
-        });
-}
-async function GetTrnFaultyCardDetail(TrnFaultyCardId) {
-    let param = new URLSearchParams({ TrnFaultyCardId: TrnFaultyCardId });
-
-    fetch('/BasicDetail/GetTrnFaultyCardDetail', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        body: param
-    })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        })
-        .then(result => {
-            if (result != null) {
-
-                $("#spnArmyNo").html(result.ServiceNo);
-                $("#spnFaultyCardRequestId").html(result.RequestId);
-                $("#lblFaultyRequestId").html(result.RequestId);
-                $("#txtFromRemark").text(result.FromRemark);
-                $("#txtFromRemark").prop("disabled", true);
-
-                GetBasicDetailForParitalViewByRequestId(result.RequestId);
-
-                mMsater(result.CategoryId, "ddlStage", FaultyStage, "");
-
-                let RemarksIds = result.RemarksIds;
-                let arr2 = RemarksIds.split(',');
-                $("#ddlFaultyRemark").val(arr2);
-                $("#ddlFaultyRemark").trigger("change");
-                $("#ddlFaultyRemark").prop("disabled", true)
-            }
-            else {
-                toastr.error('Invalid Input.');
-                window.location.href = '/BasicDetail/FaultyCard';
-            }
-        })
-        .catch(error => {
             alert("Error: " + error.message);
         });
 }

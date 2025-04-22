@@ -755,7 +755,6 @@ function GetReportReturnHistory(spnStepId, applyTypeId, IsApproveId) {
         responsive: true,
         autoWidth: false,
         ajax: async function (data, callback, settings) {
-            debugger;
             let requestData = {
                 draw: data.draw,
                 start: data.start,
@@ -789,7 +788,6 @@ function GetReportReturnHistory(spnStepId, applyTypeId, IsApproveId) {
                 let result = await response.json();
                 $("#lblTotal").html(result.recordsTotal);
                 callback(result); // Sends data to DataTables
-                debugger;
 
             } catch (error) {
                 console.error("Error fetching data:", error);

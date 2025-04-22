@@ -18,6 +18,7 @@ using BusinessLogicsLayer.FaultyCard;
 using BusinessLogicsLayer.FaultyStage;
 using BusinessLogicsLayer.Formation;
 using BusinessLogicsLayer.Home;
+using BusinessLogicsLayer.HotlistCard;
 using BusinessLogicsLayer.IAMSetting;
 using BusinessLogicsLayer.IssuingAuthority;
 using BusinessLogicsLayer.Master;
@@ -190,6 +191,9 @@ namespace BusinessLogicsLayer
 
             services.AddTransient<IFaultyCardBL, FaultyCardBL>();
             services.AddTransient<IFaultyCardDB, FaultyCardDB>();
+
+            services.AddTransient<IHotlistCardBL, HotlistCardBL>();
+            services.AddTransient<IHotlistCardDB, HotlistCardDB>();
 
 
 

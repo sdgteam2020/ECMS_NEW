@@ -38,7 +38,6 @@ $(function () {
         CheckProfileExist();
 
     $("#btnSercharmynoSmart").on("click", function () {
-        debugger;
         if ($("#armynosearchAllName").html() != "") {
 
             $("#unitoffrsModal").modal("hide");
@@ -73,7 +72,7 @@ $(function () {
                         ArmyNo: request.term,
                         TypeId: $("#armynosearchTypeId").val()
                     });
-
+                console.log("Param values:-", param.toString());
                 $("#loading").addClass("d-none");
                 $("#armynosearchAllName").html("");
                 $("#armynosearchAllpic").attr("src", "");
@@ -92,6 +91,7 @@ $(function () {
                         return res.json();
                     })
                     .then(data => {
+                        
                         if (data.length !== 0) {
                             response(data.map(item => ({
                                 label: item.ServiceNo,
@@ -111,6 +111,7 @@ $(function () {
                         }
                     })
                     .catch(error => {
+                        console.error('Request failed', error);
                         alert("Error: " + error.message);
                     });
             }

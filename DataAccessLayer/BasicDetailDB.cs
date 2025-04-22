@@ -550,8 +550,8 @@ namespace DataAccessLayer
         }
         public async Task<List<DTOSmartSearch>?> SearchAllServiceNo(DTOSearchArmyNoRequest dto)
         {
-            string query;
-            
+            string query = "";
+
             if (dto.TypeId == KeyConstants.ApplicantPostingOut || dto.TypeId == KeyConstants.ApplicantClose)
             {
                 query = @"Select TOP 5 basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath Image,req.RequestId
@@ -561,18 +561,38 @@ namespace DataAccessLayer
                         inner join TrnUpload trnu on basi.BasicDetailId=trnu.BasicDetailId 
                         where ServiceNo like @ServiceNo ";
             }
-            else
+            else if (dto.TypeId == KeyConstants.FaultyCardRequest)
             {
                 string unitQuery = dto.Claim ? "" : "and tdm.UnitId=@MapUnitId";
-                string flag = dto.TypeId == KeyConstants.HoltlistCardRequest ? "FlagForHotlist" : dto.TypeId == KeyConstants.FaultyCardRequest ? "FlagForFaulty" : dto.TypeId == KeyConstants.LostCardRequest ? "FlagForLost" : "FlagForFaulty";
                 query = @$"Select TOP 5 basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath Image,req.RequestId,COALESCE(MAX(fwd.TrnFwdId), NULL) AS MaxTrnFwdId  
                             from BasicDetails basi
                             inner join TrnUpload trnu on basi.BasicDetailId=trnu.BasicDetailId 
-                            inner join TrnICardRequest req on req.BasicDetailId=basi.BasicDetailId and req.StatusId=1 and req.{flag}=0
+                            inner join TrnICardRequest req on req.BasicDetailId=basi.BasicDetailId and req.StatusId=1 and req.FlagForFaulty=0
                             inner join TrnStepCounter stepcount on req.RequestId=stepcount.RequestId and stepcount.StepId=6
                             inner join TrnDomainMapping tdm on tdm.Id=req.TrnDomainMappingId {unitQuery}
                             LEFT JOIN TrnFwds fwd ON fwd.RequestId = req.RequestId
                             where ServiceNo like @ServiceNo
+                            GROUP BY
+								basi.BasicDetailId,
+								FName,
+								LName,
+								ServiceNo,
+								PhotoImagePath,
+								req.RequestId
+                            ";
+            }
+            else if (dto.TypeId == KeyConstants.HoltlistCardRequest)
+            {
+                string unitQuery = dto.Claim ? "" : "and tdm.UnitId=@MapUnitId";
+                query = @$"Select TOP 5 basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath Image,req.RequestId,COALESCE(MAX(fwd.TrnFwdId), NULL) AS MaxTrnFwdId  
+                            from BasicDetails basi
+                            inner join TrnUpload trnu on basi.BasicDetailId=trnu.BasicDetailId 
+                            inner join TrnICardRequest req on req.BasicDetailId=basi.BasicDetailId and req.StatusId=1
+                            inner join TrnStepCounter stepcount on req.RequestId=stepcount.RequestId
+                            inner join TrnDomainMapping tdm on tdm.Id=req.TrnDomainMappingId {unitQuery}
+                            LEFT JOIN TrnFwds fwd ON fwd.RequestId = req.RequestId
+                            Left join TrnHotlistCards thc on req.RequestId = thc.RequestId
+                            where thc.RequestId is null and ServiceNo like @ServiceNo
                             GROUP BY
 								basi.BasicDetailId,
 								FName,
