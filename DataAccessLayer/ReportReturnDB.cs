@@ -469,9 +469,6 @@ namespace DataAccessLayer
 
         public async Task<DTODataTablesResponse<DTOReportReturnListResponse>> GetRecordHistory(DTORecordHistory dTORecord)
         {
-            var offset = dTORecord.Start;
-            var limit = dTORecord.Length;
-
             // Map allowed sort columns to DB fields
             var allowedSortColumns = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
             {
@@ -670,7 +667,7 @@ namespace DataAccessLayer
 
                 using (var connection = _contextDP.CreateConnection())
                 {
-                    var ret = await connection.QueryMultipleAsync(query, new { dTORecord.Data.ComdId, dTORecord.Data.CorpsId, dTORecord.Data.DivId, dTORecord.Data.BdeId, dTORecord.Data.FmnBranchID, dTORecord.Data.PsoId, dTORecord.Data.SubDteId, dTORecord.Data.UnitMapId, dTORecord.ApplyForId, dTORecord.StepId, Offset = offset, Limit = limit, SearchTerm = string.IsNullOrWhiteSpace(dTORecord.searchValue) ? "" : dTORecord.searchValue });
+                    var ret = await connection.QueryMultipleAsync(query, new { dTORecord.Data.ComdId, dTORecord.Data.CorpsId, dTORecord.Data.DivId, dTORecord.Data.BdeId, dTORecord.Data.FmnBranchID, dTORecord.Data.PsoId, dTORecord.Data.SubDteId, dTORecord.Data.UnitMapId, dTORecord.ApplyForId, dTORecord.StepId, Offset = dTORecord.Start, Limit = dTORecord.Length, SearchTerm = string.IsNullOrWhiteSpace(dTORecord.searchValue) ? "" : dTORecord.searchValue });
                     var records = (await ret.ReadAsync<DTOReportReturnListResponse>()).ToList();
                     var responseData = new DTODataTablesResponse<DTOReportReturnListResponse>
                     {

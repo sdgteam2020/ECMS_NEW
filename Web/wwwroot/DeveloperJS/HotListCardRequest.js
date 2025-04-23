@@ -1,6 +1,4 @@
 ﻿$(async function () {
-    var selectionButton;
-
     var RemarkTypeID = [6];
     GetRemarks("ddlHotlistRemark", 0, RemarkTypeID);
       
@@ -38,18 +36,8 @@
 
     }
 
-
-    $("#btnSubmit").on("click", function () {
-        selectionButton = 1;
-        Proceed(selectionButton);
-    });
     $("#btnAccept").on("click", function () {
-        selectionButton = 2;
-        Proceed(selectionButton);
-    });
-    $("#btnReject").on("click", function () {
-        selectionButton = 3;
-        Proceed(selectionButton);
+        Proceed();
     });
 
     $("#btnCardPreview").on("click", function () {
@@ -66,8 +54,8 @@
         $("#exampleModal").modal('show');
     });
 
-    $("#btnFaultyCardsList").on("click", function () {
-        window.location.href = '/BasicDetail/FaultyCard';
+    $("#btnHotlistCardsList").on("click", function () {
+        window.location.href = '/BasicDetail/HotlistCard';
     });
 
     $("#btnSearchNew").on("click", function () {
@@ -79,7 +67,7 @@
     });
 
     $("#btnBackDashboard").on("click", function () {
-        window.location.href = '/BasicDetail/FaultyCard';
+        window.location.href = '/BasicDetail/HotlistCard';
     });
 });
 function Proceed() {
@@ -134,62 +122,54 @@ function Proceed() {
         return false;
     }
 }
-    function Save() {
-        var HotlistRemarkIds = "" + $("#ddlHotlistRemark").val() + "";
-        $.ajax({
-            url: '/BasicDetail/SaveHotlistCardRequest' ,
-            type: 'POST',
-            data: {
-                "HotlistCardId": 0,
-                "RequestId": $("#spnHotlistCardRequestId").html(),
-                "TrnFwdId": $("#spnMaxTrnFwdId").html(),
-                "RemarksIds": $("#ddlHotlistRemark").val().length > 0 ? HotlistRemarkIds : null,
-                "Remark": $("#txtHotlistRemark").val()
-            }, //get the search string
-            success: function (result) {
+function Save() {
+    var HotlistRemarkIds = "" + $("#ddlHotlistRemark").val() + "";
+    $.ajax({
+        url: '/BasicDetail/SaveHotlistCardRequest' ,
+        type: 'POST',
+        data: {
+            "HotlistCardId": 0,
+            "RequestId": $("#spnHotlistCardRequestId").html(),
+            "TrnFwdId": $("#spnMaxTrnFwdId").html(),
+            "RemarksIds": $("#ddlHotlistRemark").val().length > 0 ? HotlistRemarkIds : null,
+            "Remark": $("#txtHotlistRemark").val()
+        },
+        success: function (result) {
 
-                if (result.Result == true) {
-                    const myModal = new bootstrap.Modal(document.getElementById("ConfirmationDialog"));
-                    const btnSearchNew = document.getElementById("btnSearchNew");
-                    const btnBackDashboard = document.getElementById("btnBackDashboard");
-                    let Message;
-                    if (parseInt($("#spnTrnFaultyCardId").html()) > 0)
-                        Message = `Record successfully updated in DB with ID : <strong>${result.Id}</strong><br/> Timestamp : <strong>${DateFormateddMMyyyyhhmmss(result.CurrentTime)}</strong>.`;
-                    else
-                        Message = `Record successfully inserted in DB with ID : <strong>${result.Id}</strong><br/> Timestamp : <strong>${DateFormateddMMyyyyhhmmss(result.CurrentTime)}</strong>.`;
+            if (result.Result == true) {
+                const myModal = new bootstrap.Modal(document.getElementById("ConfirmationDialog"));
+                const btnSearchNew = document.getElementById("btnSearchNew");
+                const btnBackDashboard = document.getElementById("btnBackDashboard");
+                let Message = `Record successfully inserted in DB with ID : <strong>${result.Id}</strong><br/> Timestamp : <strong>${DateFormateddMMyyyyhhmmss(result.CurrentTime)}</strong>.`;
 
-                    document.getElementById("ConfirmationDialog_Data").innerHTML= Message;
-                    btnSearchNew.textContent = "Search New";
-                    btnBackDashboard.textContent = "Back to Dashboard";
-                    Reset();
-                    myModal.show();
-                    //myModal.hide();
-                    //toastr.success(result.Message);
-                    //location.href = '/BasicDetail/FaultyCard';
-                }
-                else {
-                    toastr.error(result.Message);
-                }
+                document.getElementById("ConfirmationDialog_Data").innerHTML= Message;
+                btnSearchNew.textContent = "Search New";
+                btnBackDashboard.textContent = "Back to Dashboard";
+                myModal.show();
             }
-        });
-    }
-    function GetBasicDetailForParitalViewByRequestId(RequestId) {
-        let param = new URLSearchParams({ RequestId: RequestId });
+            else {
+                toastr.error(result.Message);
+            }
+        }
+    });
+}
+function GetBasicDetailForParitalViewByRequestId(RequestId) {
+    let param = new URLSearchParams({ RequestId: RequestId });
 
-        fetch('/BasicDetail/GetBasicDetailForParitalViewByRequestId', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
-            },
-            body: param
-        })
-            .then(response => response.text())
-            .then(html =>{
-                document.getElementById("partialContainerBD").innerHTML = html;
-          })
-          .catch(error => {
-            alert("Error: " + error.message);
-        });
+    fetch('/BasicDetail/GetBasicDetailForParitalViewByRequestId', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: param
+    })
+    .then(response => response.text())
+    .then(html =>{
+            document.getElementById("partialContainerBD").innerHTML = html;
+    })
+    .catch(error => {
+       alert("Error: " + error.message);
+    });
 }
 function DownloadPdf(RequestId) {
     var userdata = {
@@ -221,15 +201,4 @@ function DownloadPdf(RequestId) {
             });
         }
     });
-}
-function Reset() {
-    //$("#spnTrnFaultyCardId").html("0");
-    //$("#spnFaultyCardRequestId").html("0");
-    //$("#lblFaultyRequestId").html("");
-    //$('#ddlFaultyRemark').val(null).trigger('change');
-    //$("#txtFromRemark").val("");
-    //$("#ddlStage").val("");
-
-    //sessionStorage.setItem("ArmyNo", null);
-    //sessionStorage.setItem("RequestIdForFaulty", null);
 }

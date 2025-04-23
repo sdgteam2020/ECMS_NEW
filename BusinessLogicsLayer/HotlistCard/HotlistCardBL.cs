@@ -7,6 +7,7 @@ using BusinessLogicsLayer.FaultyCard;
 using DataAccessLayer;
 using DataAccessLayer.BaseInterfaces;
 using DataTransferObject.Domain.Model;
+using DataTransferObject.Requests;
 using DataTransferObject.Response;
 
 namespace BusinessLogicsLayer.HotlistCard
@@ -22,9 +23,13 @@ namespace BusinessLogicsLayer.HotlistCard
         {
             return await _iHotlistCardDB.FindAnyRequestId(RequestId);
         }
-        public async Task<List<DTOHotlistCardGetResponse>?> GetAllFaulty()
+        public async Task<DTODataTablesResponse<DTOHotlistCardGetResponse>> GetAllHotlist(DTODataTablesRequest dTO)
         {
-            return await _iHotlistCardDB.GetAllHotlist();
+            return await _iHotlistCardDB.GetAllHotlist(dTO);
+        }
+        public async Task<List<DTOHotlistCardExportResponse>> GetDetailsByRequestIds(DTOHotlistCardsExportRequest Data)
+        {
+            return await _iHotlistCardDB.GetDetailsByRequestIds(Data);
         }
     }
 }

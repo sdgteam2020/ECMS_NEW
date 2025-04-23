@@ -2392,6 +2392,38 @@ namespace Web.Controllers
         #endregion
 
         #region HotlistCard
+        public async Task<ViewResult> HotlistCardAsync()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> GetAllHotlist(DTODataTablesRequest dTO)
+        {
+            return Json(await _hotlistCardBL.GetAllHotlist(dTO));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> HotlistDataExport(DTOHotlistCardsExportRequest req)
+        {
+            var records = await _hotlistCardBL.GetDetailsByRequestIds(req);
+            using (var writer = new StreamWriter("", false, Encoding.UTF8))
+            using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
+            {
+                csv.Context.RegisterClassMap(new CsvClassMap<DTOHotlistCardExportResponse>(true,CsvClassMapTypeEnum.HotlistExport));
+                try
+                {
+                    csv.WriteRecords(records);
+                }
+                catch (Exception ee)
+                {
+                    _logger.LogError(1001, ee, "BasicDetail->HotlistDataExport");
+                }
+            }
+            return Json("");
+        }
+
+
         public async Task<ActionResult> HotListCardRequestAsync()
         {
             return View();
