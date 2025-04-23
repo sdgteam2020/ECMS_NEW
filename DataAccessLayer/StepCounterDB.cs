@@ -36,7 +36,7 @@ namespace DataAccessLayer
            
 
             int StepId=Data.StepId;
-            int Updatedby=(int)Data.Updatedby;
+            int Updatedby=Data.Updatedby ?? 0;
             int id=Data.RequestId;
             string UnitName = Data.UnitName;
             using (var connection = _contextDP.CreateConnection())

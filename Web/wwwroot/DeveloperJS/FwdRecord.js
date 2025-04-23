@@ -546,7 +546,6 @@ $(function () {
 
 
                 if ($("#txtFrejectedRemarks").val() != "" || $("#ddlRRemarks").val() != "")
-
                     UpdateStepCounter(spnStepId, spnRequestId, Counter, "R");
                 else
                     toastr.error('Please Enter Remarks To Reject');
@@ -1066,8 +1065,8 @@ function UpdateStepCounter(stepId, spnRequestId, Counter, Flag) {
     var userdata = {
         "Id": stepId,
         "RequestId": spnRequestId,
-        "StepId": Counter
-
+        "StepId": Counter,
+        "Flag": Flag
     };
     $.ajax({
         url: '/BasicDetail/UpdateStepCounter',

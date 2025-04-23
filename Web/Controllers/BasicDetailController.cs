@@ -1773,24 +1773,26 @@ namespace Web.Controllers
             DTOBasicDetailsSaveResponse response = new DTOBasicDetailsSaveResponse();
             try
             {
-                TrnDomainMapping Domain = new TrnDomainMapping();
-                Domain = await iDomainMapBL.GetByRequestId(mStepCounter.RequestId);
-
-                if (Domain.UserId.GetValueOrDefault() == 0)
+                if (mStepCounter.Flag == "R")
                 {
-                    response.Message = "Profile is not mapped with domain Id!";
-                }
-                else
-                {
-                    DtoSession sessiondata = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
-                    DTOMapUnitResponse dTOMapUnitResponse = await mapUnitBL.GetALLByUnitMapId(sessiondata.UnitId);
+                    TrnDomainMapping Domain = new TrnDomainMapping();
+                    Domain = await iDomainMapBL.GetByRequestId(mStepCounter.RequestId);
 
-                    mStepCounter.UpdatedOn = DateTime.Now;
-                    mStepCounter.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-                    mStepCounter.UnitName = dTOMapUnitResponse.UnitName;
-                    await iStepCounterBL.UpdateStepCounter(mStepCounter);
-                    response.Result = true;
+                    if (Domain?.UserId.GetValueOrDefault() == 0)
+                    {
+                        response.Message = "Profile is not mapped with domain Id!";
+                        response.Result = false;
+                        return Ok(response);
+                    }
                 }
+                DtoSession sessiondata = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+                DTOMapUnitResponse dTOMapUnitResponse = await mapUnitBL.GetALLByUnitMapId(sessiondata.UnitId);
+
+                mStepCounter.UpdatedOn = DateTime.Now;
+                mStepCounter.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                mStepCounter.UnitName = dTOMapUnitResponse.UnitName;
+                await iStepCounterBL.UpdateStepCounter(mStepCounter);
+                response.Result = true;
             }
             catch (Exception ex)
             {
@@ -2222,6 +2224,8 @@ namespace Web.Controllers
         {
             MTrnFwd? mTrnFwd = new MTrnFwd();
             DtoSession? dtoSession = new DtoSession();
+            DTOFaultyCardSaveResponse dTOFaulty = new DTOFaultyCardSaveResponse();
+
             if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
             {
                 dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
@@ -2249,13 +2253,20 @@ namespace Web.Controllers
                 Domain = await iDomainMapBL.GetByRequestId(dTO.RequestId);
                 if (Domain != null)
                 {
-                    mTrnFwd.ToAspNetUsersId = Domain.AspNetUsersId;
-                    mTrnFwd.ToUserId = Convert.ToInt32(Domain.UserId);
+                    if (Domain.UserId.GetValueOrDefault() == 0)
+                    {
+                        dTOFaulty.Message = "Profile is not mapped with domain Id!";
+                        dTOFaulty.Result = false;
+                        return Ok(dTOFaulty);
+                    }
+                    else
+                    {
+                        mTrnFwd.ToAspNetUsersId = Domain.AspNetUsersId;
+                        mTrnFwd.ToUserId = Convert.ToInt32(Domain.UserId);
+                    }
                 }
             }
 
-
-            DTOFaultyCardSaveResponse dTOFaulty = new DTOFaultyCardSaveResponse();
             try
             {
                 dTO.IsActive = true;
@@ -2335,6 +2346,7 @@ namespace Web.Controllers
             try
             {
                 dTO.IsActive = true;
+                dTO.IsComplete = false;
                 dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier)); ;
                 dTO.UpdatedOn = DateTime.Now;
 

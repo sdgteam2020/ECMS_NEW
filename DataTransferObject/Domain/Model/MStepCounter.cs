@@ -27,5 +27,8 @@ namespace DataTransferObject.Domain.Model
         
         [NotMapped]
         public string UnitName { get; set; } = string.Empty;
+        
+        [NotMapped]
+        public string Flag { get; set; } = string.Empty;
     }
 }
