@@ -253,78 +253,107 @@ function DataExport() {
         "Ids": checkedDataIds,
         "DataExportType": dataExportType
     };
-    $.ajax({
-        url: '/BasicDetail/HotlistDataExport',
-        contentType: 'application/x-www-form-urlencoded',
-        data: userdata,
-        type: 'POST',
 
-        success: function (response) {
-            if (response != "null" && response != null) {
-                if (response == InternalServerError) {
-                    Swal.fire({
-                        text: "Data Not Export Internal Server Error"
-                    });
-                } else {
-                    //var blob = new Blob([response], {
-                    //    type: 'application/json'
-                    //});
-                    //var link = document.createElement('a');
-                    //link.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(blob);
-                    //link.download = "export.json";
-                    //link.click();
-                    if (DataExportType == 1) {
-                        window.location = "/WriteReadData/ExportAFSACCell/" + response + '.zip';
-                        setTimeout(function () {
-                            location.reload();
-                        }, 1000);
-                    } else {
-                        window.location = "/WriteReadData/ExportAFSACCell/" + response + '.zip';
-                        setTimeout(function () {
-                            location.reload();
-                        }, 1000);
-                    }
-
-
-                    // var blob = new Blob([JSON.stringify(response, null, "\t")], { type: "application/json" });
-
-                    // // Create a temporary anchor element
-                    // var link = document.createElement("a");
-                    // link.href = window.URL.createObjectURL(blob);
-
-
-
-
-                    //// GetTokenSignXml(blob);
-                    // // Set the file name
-                    // link.download = "data.json";
-
-                    // // Append the anchor to the body
-                    // document.body.appendChild(link);
-
-                    // // Trigger the click event
-                    // link.click();
-
-                    // // Remove the anchor from the body
-                    // document.body.removeChild(link);
-
-
-                    // setTimeout(function () {
-                    //     location.reload();
-                    // }, 1000);
-                }
-
-
-            }
-
-
-
-
+    fetch('/BasicDetail/HotlistDataExport', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
         },
-        error: function (result) {
-            Swal.fire({
-                text: errormsg002
-            });
-        }
+        body: JSON.stringify(userdata)
+    })
+    .then(response => response.json())
+        .then(data => {
+            if (data.Result) {
+                const baseUrl = window.location.origin;
+                const downloadUrl = `${baseUrl}/BasicDetail/DownloadCsv?fileName=${data.Message}`;
+                const link = document.createElement("a");
+                link.href = downloadUrl;
+                link.download = data.file;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }
+            else {
+                Swal.fire({
+                    icon: "error",
+                    title: "Oops...",
+                    text: data.Message
+                });
+            }
     });
+
+    //$.ajax({
+    //    url: '/BasicDetail/HotlistDataExport',
+    //    contentType: 'application/x-www-form-urlencoded',
+    //    data: userdata,
+    //    type: 'POST',
+
+    //    success: function (response) {
+    //        if (response != "null" && response != null) {
+    //            if (response == InternalServerError) {
+    //                Swal.fire({
+    //                    text: "Data Not Export Internal Server Error"
+    //                });
+    //            } else {
+    //                //var blob = new Blob([response], {
+    //                //    type: 'application/json'
+    //                //});
+    //                //var link = document.createElement('a');
+    //                //link.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(blob);
+    //                //link.download = "export.json";
+    //                //link.click();
+    //                if (DataExportType == 1) {
+    //                    window.location = "/WriteReadData/ExportAFSACCell/" + response + '.zip';
+    //                    setTimeout(function () {
+    //                        location.reload();
+    //                    }, 1000);
+    //                } else {
+    //                    window.location = "/WriteReadData/ExportAFSACCell/" + response + '.zip';
+    //                    setTimeout(function () {
+    //                        location.reload();
+    //                    }, 1000);
+    //                }
+
+
+    //                // var blob = new Blob([JSON.stringify(response, null, "\t")], { type: "application/json" });
+
+    //                // // Create a temporary anchor element
+    //                // var link = document.createElement("a");
+    //                // link.href = window.URL.createObjectURL(blob);
+
+
+
+
+    //                //// GetTokenSignXml(blob);
+    //                // // Set the file name
+    //                // link.download = "data.json";
+
+    //                // // Append the anchor to the body
+    //                // document.body.appendChild(link);
+
+    //                // // Trigger the click event
+    //                // link.click();
+
+    //                // // Remove the anchor from the body
+    //                // document.body.removeChild(link);
+
+
+    //                // setTimeout(function () {
+    //                //     location.reload();
+    //                // }, 1000);
+    //            }
+
+
+    //        }
+
+
+
+
+    //    },
+    //    error: function (result) {
+    //        Swal.fire({
+    //            text: errormsg002
+    //        });
+    //    }
+    //});
 }
