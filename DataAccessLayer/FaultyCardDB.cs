@@ -70,7 +70,8 @@ namespace DataAccessLayer
                             inner join MapUnit uni on uni.UnitMapId=bas.UnitId
                             inner join MUnit Muni on Muni.UnitId=uni.UnitId
                             inner join MApplyFor appl on appl.ApplyForId=bas.ApplyForId
-                            left join MRegimental regi on regi.RegId=bas.RegimentalId";
+                            left join MRegimental regi on regi.RegId=bas.RegimentalId
+                            order by faulty.TrnFaultyCardId desc";
                 }
                 else
                 {
@@ -92,7 +93,8 @@ namespace DataAccessLayer
                             inner join MapUnit uni on uni.UnitMapId=bas.UnitId
                             inner join MUnit Muni on Muni.UnitId=uni.UnitId
                             inner join MApplyFor appl on appl.ApplyForId=bas.ApplyForId
-                            left join MRegimental regi on regi.RegId=bas.RegimentalId";
+                            left join MRegimental regi on regi.RegId=bas.RegimentalId
+                            order by faulty.TrnFaultyCardId desc";
                 }
 
                 using (var connection = _contextDP.CreateConnection())
