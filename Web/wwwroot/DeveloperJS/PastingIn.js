@@ -135,7 +135,7 @@ function Save() {
             "BasicDetailId": $(".spnBasicDetailIdOutID").html(),
             "ReasonId": $("#ddlpostingReason").val(),
             "Authority": $("#txtAuthority").val(),
-            "SOSDate": $("#txtSosDate").val(),
+            "SOSDate": convertToISOWithTime($("#txtSosDate").val()),
             "FromAspNetUsersId": $(".spnFromAspNetUsersId").html(),
             "FromUnitID": $(".spnFromUnitID").html(),
             "FromUserID": $(".spnFromUserID").html(),

@@ -186,6 +186,10 @@ function Proceed(choice) {
                 "Choice": choice
             }, //get the search string
             success: function (result) {
+                if ($("#spnClaimValue").html().toLowerCase() === "true" && result.Result == true)
+                {
+                    $("#spnTrnFaultyCardId").html(result.Id);
+                }
 
                 if (result.Result == true) {
                     const myModal = new bootstrap.Modal(document.getElementById("ConfirmationDialog"));

@@ -43,5 +43,6 @@ namespace DataTransferObject.Domain.Model
         public int TrnFwdId { get; set; }
         public MTrnFwd? MTrnFwd { get; set; }
         public bool IsEditAction { get; set; } = false;
+        public bool IsComplete { get; set; } = false;
     }
 }
