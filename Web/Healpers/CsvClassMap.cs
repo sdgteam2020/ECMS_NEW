@@ -5,15 +5,25 @@ namespace Web.Healpers
 {
     public class CsvClassMap<T> : ClassMap<T>
     {
-        public CsvClassMap(bool isSample) {
+        public CsvClassMap(bool isSample, CsvClassMapTypeEnum csvClassMapTypeEnum = CsvClassMapTypeEnum.CardPrint) {
             AutoMap(System.Globalization.CultureInfo.InvariantCulture);
 
             List<string> ignoreProperties = new List<string>();
-            ignoreProperties.Add("IsValid");
-            if (isSample)
+            if (csvClassMapTypeEnum == CsvClassMapTypeEnum.CardPrint)
             {
-                ignoreProperties.Add("Remarks");
-                ignoreProperties.Add("Status");
+                ignoreProperties.Add("IsValid");
+                if (isSample)
+                {
+                    ignoreProperties.Add("Remarks");
+                    ignoreProperties.Add("Status");
+                }
+            }
+            else if (csvClassMapTypeEnum == CsvClassMapTypeEnum.HotlistExport)
+            {
+                ignoreProperties.Add("RankAbbreviation");
+                ignoreProperties.Add("FName");
+                ignoreProperties.Add("LName");
+                ignoreProperties.Add("IsActiveBool");
             }
             foreach (var prop in typeof(T).GetProperties())
             {

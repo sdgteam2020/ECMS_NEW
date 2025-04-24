@@ -38,11 +38,14 @@ namespace BusinessLogicsLayer.FaultyCard
         {
             if (dTO.TrnFaultyCardId > 0)
             {
+                dTO.IsComplete = true;
                 dTO.IsEditAction = true;
                 return await _iFaultyCardDB.SaveFaultyCard(dTO, mTrnFwd);
             }
             else
             {
+                dTO.IsComplete = true;
+
                 //Accept
                 if (dTO.Choice == 2)
                 {

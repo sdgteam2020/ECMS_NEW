@@ -4,6 +4,7 @@ using DataAccessLayer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccessLayer.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250421091419_v147")]
+    partial class v147
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1961,6 +1964,15 @@ namespace DataAccessLayer.Migrations
                         .HasMaxLength(30)
                         .HasColumnType("varchar(30)");
 
+                    b.Property<bool>("FlagForFaulty")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("FlagForHotlist")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("FlagForLost")
+                        .HasColumnType("bit");
+
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
@@ -2329,9 +2341,6 @@ namespace DataAccessLayer.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
-                    b.Property<bool>("IsComplete")
-                        .HasColumnType("bit");
-
                     b.Property<bool>("IsEditAction")
                         .HasColumnType("bit");
 
@@ -2372,7 +2381,7 @@ namespace DataAccessLayer.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("TrnFaultyCard", (string)null);
+                    b.ToTable("TrnFaultyCard");
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Model.TrnPostingOut", b =>
@@ -3556,24 +3565,6 @@ namespace DataAccessLayer.Migrations
                     b.Navigation("MTrnICardRequest");
 
                     b.Navigation("MUserProfile");
-                });
-
-            modelBuilder.Entity("DataTransferObject.Domain.Model.TrnHotlistCard", b =>
-                {
-                    b.HasOne("DataTransferObject.Domain.Model.MTrnICardRequest", "MTrnICardRequest")
-                        .WithMany()
-                        .HasForeignKey("RequestId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("DataTransferObject.Domain.Identitytable.ApplicationUser", "ApplicationUserUpdate")
-                        .WithMany()
-                        .HasForeignKey("Updatedby")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("ApplicationUserUpdate");
-
-                    b.Navigation("MTrnICardRequest");
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Model.TrnPostingOut", b =>

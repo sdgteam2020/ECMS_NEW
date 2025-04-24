@@ -4,6 +4,7 @@ using DataAccessLayer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccessLayer.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250422090622_v148")]
+    partial class v148
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1961,6 +1964,9 @@ namespace DataAccessLayer.Migrations
                         .HasMaxLength(30)
                         .HasColumnType("varchar(30)");
 
+                    b.Property<bool>("FlagForFaulty")
+                        .HasColumnType("bit");
+
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
@@ -2329,9 +2335,6 @@ namespace DataAccessLayer.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
-                    b.Property<bool>("IsComplete")
-                        .HasColumnType("bit");
-
                     b.Property<bool>("IsEditAction")
                         .HasColumnType("bit");
 
@@ -2372,7 +2375,46 @@ namespace DataAccessLayer.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("TrnFaultyCard", (string)null);
+                    b.ToTable("TrnFaultyCard");
+                });
+
+            modelBuilder.Entity("DataTransferObject.Domain.Model.TrnHotlistCard", b =>
+                {
+                    b.Property<int>("TrnFaultyCardId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TrnFaultyCardId"));
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Remark")
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<string>("RemarksIds")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<int>("RequestId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedOn")
+                        .IsRequired()
+                        .HasColumnType("datetime");
+
+                    b.Property<int?>("Updatedby")
+                        .HasColumnType("int");
+
+                    b.HasKey("TrnFaultyCardId");
+
+                    b.HasIndex("RequestId");
+
+                    b.HasIndex("Updatedby");
+
+                    b.ToTable("TrnHotlistCards");
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Model.TrnPostingOut", b =>

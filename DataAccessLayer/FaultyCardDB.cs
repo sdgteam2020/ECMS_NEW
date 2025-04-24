@@ -37,9 +37,7 @@ namespace DataAccessLayer
         {
             try
             {
-                return await _context.TrnFaultyCard
-                                .AnyAsync(f => f.RequestId == RequestId &&
-                                                _context.TrnICardRequest.Any(req => req.RequestId == RequestId && req.FlagForFaulty));
+                return await _context.TrnFaultyCard.AnyAsync(f => f.RequestId == RequestId && f.IsComplete == false);
             }
             catch (Exception ex)
             {
@@ -72,7 +70,8 @@ namespace DataAccessLayer
                             inner join MapUnit uni on uni.UnitMapId=bas.UnitId
                             inner join MUnit Muni on Muni.UnitId=uni.UnitId
                             inner join MApplyFor appl on appl.ApplyForId=bas.ApplyForId
-                            left join MRegimental regi on regi.RegId=bas.RegimentalId";
+                            left join MRegimental regi on regi.RegId=bas.RegimentalId
+                            order by faulty.TrnFaultyCardId desc";
                 }
                 else
                 {
@@ -94,7 +93,8 @@ namespace DataAccessLayer
                             inner join MapUnit uni on uni.UnitMapId=bas.UnitId
                             inner join MUnit Muni on Muni.UnitId=uni.UnitId
                             inner join MApplyFor appl on appl.ApplyForId=bas.ApplyForId
-                            left join MRegimental regi on regi.RegId=bas.RegimentalId";
+                            left join MRegimental regi on regi.RegId=bas.RegimentalId
+                            order by faulty.TrnFaultyCardId desc";
                 }
 
                 using (var connection = _contextDP.CreateConnection())
@@ -187,12 +187,13 @@ namespace DataAccessLayer
             {
                 if (dTO.TrnFaultyCardId > 0)
                 {
-                    update = @"UPDATE TrnFaultyCard set ToRemark = @ToRemark,IsEditAction = @IsEditAction WHERE TrnFaultyCardId=@TrnFaultyCardId";
+                    update = @"UPDATE TrnFaultyCard set ToRemark = @ToRemark,IsEditAction = @IsEditAction,IsComplete = @IsComplete WHERE TrnFaultyCardId=@TrnFaultyCardId";
                     
                     var parameters = new DynamicParameters();
                     parameters.Add("@TrnFaultyCardId", dTO.TrnFaultyCardId, DbType.Int32, ParameterDirection.Input);
                     parameters.Add("@ToRemark", dTO.ToRemark, DbType.String, ParameterDirection.Input, 100);
                     parameters.Add("@IsEditAction", dTO.IsEditAction, DbType.Boolean, ParameterDirection.Input);
+                    parameters.Add("@IsComplete", dTO.IsComplete, DbType.Boolean, ParameterDirection.Input);
 
                     await db.ExecuteAsync(update, parameters, transaction: transaction);
                     
@@ -201,9 +202,9 @@ namespace DataAccessLayer
                 }
                 else
                 {
-                    insert = @"INSERT INTO TrnFaultyCard(RemarksIds,FromRemark,ToRemark,CategoryId,RequestId,IsActive,UserId,Updatedby,UpdatedOn,IsEditAction,TrnFwdId)
+                    insert = @"INSERT INTO TrnFaultyCard(RemarksIds,FromRemark,ToRemark,CategoryId,RequestId,IsActive,UserId,Updatedby,UpdatedOn,IsEditAction,TrnFwdId,IsComplete)
                                 OUTPUT INSERTED.TrnFaultyCardId
-                                VALUES(@RemarksIds,@FromRemark,@ToRemark,@CategoryId,@RequestId,@IsActive,@UserId,@Updatedby,@UpdatedOn,@IsEditAction,@TrnFwdId)";
+                                VALUES(@RemarksIds,@FromRemark,@ToRemark,@CategoryId,@RequestId,@IsActive,@UserId,@Updatedby,@UpdatedOn,@IsEditAction,@TrnFwdId,@IsComplete)";
                     
                     var parameters = new DynamicParameters();
                     parameters.Add("@TrnFaultyCardId", dTO.TrnFaultyCardId, DbType.Int32, ParameterDirection.Output);
@@ -218,6 +219,7 @@ namespace DataAccessLayer
                     parameters.Add("@UpdatedOn", dTO.UpdatedOn, DbType.DateTime, ParameterDirection.Input);
                     parameters.Add("@IsEditAction", dTO.IsEditAction, DbType.Boolean, ParameterDirection.Input);
                     parameters.Add("@TrnFwdId", dTO.TrnFwdId, DbType.Int32, ParameterDirection.Input);
+                    parameters.Add("@IsComplete", dTO.IsComplete, DbType.Boolean, ParameterDirection.Input);
 
                     var Id = await db.QuerySingleAsync<int>(insert, parameters, transaction: transaction);
                     saveResponse.Id = Id.ToString();
@@ -266,8 +268,6 @@ namespace DataAccessLayer
                     await db.ExecuteAsync(query2, new { dTO.RequestId }, transaction: transaction);
                 }
 
-                string query1 = @" UPDATE TrnICardRequest set FlagForFaulty = 1 where RequestId=@RequestId ";
-                await db.ExecuteAsync(query1, new { dTO.RequestId }, transaction: transaction);
 
                 // Commit the transaction if all operations succeed
                 transaction.Commit();

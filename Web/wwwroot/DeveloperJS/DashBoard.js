@@ -16,13 +16,24 @@
         location.href = '/BasicDetail/FaultyCard';
     });
 
-    document.getElementById("btnAdd").addEventListener("click", function (event) {
-        event.stopPropagation(); // Prevent click from bubbling to the <a>
+    document.getElementById("btnHotlistCard").addEventListener("click", function (event) {
+        event.preventDefault(); // Prevent anchor default behavior
+        location.href = '/BasicDetail/HotlistCard';
+    });
+
+    //document.getElementsByClassName("btnAdd").addEventListener("click", function (event) {
+    //    event.stopPropagation(); // Prevent click from bubbling to the <a>
+        
+    //});
+
+    $('.btnAdd').on('click', function (event) {
+        const type = $(this).data('type');
+        event.stopPropagation();
         $("#armynosearchAllName").html("");
         $("#txtarmynosearchAll").val("");
         $("#armynosearchAllpic").attr("src", "");
         $("#unitoffrsModal").modal("show");
-        $("#armynosearchTypeId").val(FaultyCardRequest);
+        $("#armynosearchTypeId").val(type);
     });
 
 })

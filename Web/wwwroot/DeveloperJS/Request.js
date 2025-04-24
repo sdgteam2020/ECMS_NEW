@@ -365,10 +365,17 @@ function CheckArmyNOExist() {
                     confirmButtonText: "Yes, submit it!"
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        sessionStorage.setItem("OffType", OffType);
-                        sessionStorage.setItem("RegistrationApplyFor", RegistrationApplyFor);
-                        sessionStorage.setItem("lCardType", lCardType);
-                        sessionStorage.setItem("ArmyNo", $("#txtApplyForArmyNo").val());
+                        var secretKey = document.getElementById("spnUniqueSecretKey").innerText;
+
+                        var encryptedArmyNo = CryptoJS.AES.encrypt($("#txtApplyForArmyNo").val(), secretKey).toString();
+                        var encryptedOffType = CryptoJS.AES.encrypt(OffType.toString(), secretKey).toString();
+                        var encryptedRegistrationApplyFor = CryptoJS.AES.encrypt(RegistrationApplyFor.toString(), secretKey).toString();
+                        var encryptedlCardType = CryptoJS.AES.encrypt(lCardType.toString(), secretKey).toString();
+
+                        sessionStorage.setItem("OffType", encryptedOffType);
+                        sessionStorage.setItem("RegistrationApplyFor", encryptedRegistrationApplyFor);
+                        sessionStorage.setItem("lCardType", encryptedlCardType);
+                        sessionStorage.setItem("ArmyNo", encryptedArmyNo);
                         window.location.href = "/BasicDetail/Registration";
                     }
                 });

@@ -41,7 +41,6 @@ $(function () {
         if ($("#armynosearchAllName").html() != "") {
 
             $("#unitoffrsModal").modal("hide");
-
             var secretKey = document.getElementById("spnUniqueSecretKey").innerText;
 
             var encryptedArmyNo = CryptoJS.AES.encrypt($("#txtarmynosearchAll").val(), secretKey).toString();
@@ -58,6 +57,8 @@ $(function () {
                 window.location.href = "/Posting/ApplicationClose";
             else if ($("#armynosearchTypeId").val() == FaultyCardRequest) 
                 window.location.href = "/BasicDetail/FaultyCardRequest";
+            else if ($("#armynosearchTypeId").val() == HoltlistCardRequest)
+                window.location.href = "/BasicDetail/HotListCardRequest";
         } else {
             toastr.error("Please Enter Army No");
         }
@@ -71,7 +72,7 @@ $(function () {
                         ArmyNo: request.term,
                         TypeId: $("#armynosearchTypeId").val()
                     });
-
+                console.log("Param values:-", param.toString());
                 $("#loading").addClass("d-none");
                 $("#armynosearchAllName").html("");
                 $("#armynosearchAllpic").attr("src", "");
@@ -90,6 +91,7 @@ $(function () {
                         return res.json();
                     })
                     .then(data => {
+                        
                         if (data.length !== 0) {
                             response(data.map(item => ({
                                 label: item.ServiceNo,
@@ -109,6 +111,7 @@ $(function () {
                         }
                     })
                     .catch(error => {
+                        console.error('Request failed', error);
                         alert("Error: " + error.message);
                     });
             }

@@ -48,6 +48,7 @@ namespace DataTransferObject.Requests
         public int TrnFwdId { get; set; }
 
         public bool IsEditAction { get; set; }
+        public bool IsComplete { get; set; } = false;
 
     }
 }

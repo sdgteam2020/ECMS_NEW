@@ -18,7 +18,6 @@
     }
     else {
         if (sessionStorage.getItem("ArmyNo") != null && sessionStorage.getItem("RequestIdForFaulty") != null && sessionStorage.getItem("MaxTrnFwdId") != null) {
-
             var encryptedArmyNo = sessionStorage.getItem("ArmyNo");
             var encryptedRequestId = sessionStorage.getItem("RequestIdForFaulty");
             var encryptedMaxTrnFwdId = sessionStorage.getItem("MaxTrnFwdId");
@@ -187,6 +186,10 @@ function Proceed(choice) {
                 "Choice": choice
             }, //get the search string
             success: function (result) {
+                if ($("#spnClaimValue").html().toLowerCase() === "true" && result.Result == true)
+                {
+                    $("#spnTrnFaultyCardId").html(result.Id);
+                }
 
                 if (result.Result == true) {
                     const myModal = new bootstrap.Modal(document.getElementById("ConfirmationDialog"));

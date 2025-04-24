@@ -1,0 +1,76 @@
+﻿@{
+    ViewData["Title"] = "List of Hotlist Card Request";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
+    <div class="containerMain">
+        <div class="page-header-content pt-4">
+            <div class="row align-items-center justify-content-between">
+                <div class="col-auto">
+                    <h1 class="page-header-title">
+                        <div class="page-header-icon"> <i class="fa fa-bars"></i></div>
+                        <a href="/Home/Index" class="mr-2">Home</a> >  <a href="/Home/Dashboard" class="mr-2">Dashboard</a> > HOTLIST CARD
+                    </h1>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</header>
+<div class="containerMain mt-n10">
+    <div class="card mb-3 ">
+        <div class="card-header">
+
+            <span id="SpnTxnId" class="d-none">0</span>
+            @*<span id="PtoId" class="d-none">0</span>*@
+            <div class="row">
+                <div class="col-xl-12 text-left">
+                    <h3>
+                        Hotlist Details
+                        <small class="text-muted"></small>
+                    </h3>
+                </div>
+            </div>
+        </div>
+        <div class="card-body" style="min-height:150px;">
+            <div class="col-xl-12">
+                <div class="mb-2 d-md-flex justify-content-md-between align-items-md-center">
+                    <h6 class="mb-3 mb-md-0">
+                        Total Hotlist :<label class="font-weight-bold" id="lblTotal">0</label>
+                    </h6>
+                    <div class="d-flex">
+                        @* <button type="button" id="btnDataExportsEncry" class="btn btn-warning font-weight-600 btn-sm mr-2">Data Exports with Encry</button> *@
+                        <button type="button" id="btnDataExports" class="btn btn-warning font-weight-600 btn-sm mr-2">Export Data</button>
+                        <button type="button" id="btnAdd" class="btn btn-outline-success font-weight-600 btn-sm mr-2"><i class="fa fa-plus mr-1 font-weight-700" aria-hidden="true"></i>Add</button>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="table border border-purple table-striped no-footer dataTable table-hover" role="grid" id="tbldata">
+                        <thead>
+                            <tr>
+                                <th class="noExport wd-30-f">
+                                    <div class="custom-control custom-checkbox small">
+                                        <input type="checkbox" class="custom-control-input" id="chkAll">
+                                        <label class="custom-control-label font-weight-bold" for="chkAll"></label>
+                                    </div>
+                                </th>
+                                <th class="noExport d-none"></th>
+                                <th class="wd-40-f">S No</th>
+                                <th class="nowrap">Request Id</th>
+                                <th class="nowrap">Army No</th>
+                                <th class="nowrap">Rk & Name</th>
+                                <th class="nowrap">Unit</th>
+                                <th class="nowrap">Date & Time</th>
+                                <th class="nowrap">Reason</th>
+                                <th class="nowrap">Remark</th>
+                            </tr>
+                        </thead>
+                        <tbody id="DetailBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script asp-src-include="~/developerjs/HotlistCard.js"></script>

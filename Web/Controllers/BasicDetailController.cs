@@ -40,6 +40,10 @@ using CsvHelper.Configuration;
 using BusinessLogicsLayer.CSVImports;
 using BusinessLogicsLayer.FaultyCard;
 using Humanizer;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+using Microsoft.IdentityModel.Tokens;
+using BusinessLogicsLayer.HotlistCard;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace Web.Controllers
 {
@@ -74,13 +78,14 @@ namespace Web.Controllers
         private readonly string[] _expectedColumns = { "RequestId", "RankName", "FName", "LName", "ServiceNo", "ChipNo", "CardSerialNo" };
         private readonly  ICSVImportBL _iCSVImportBL;
         private readonly IFaultyCardBL faultyCardBL;
+        private readonly IHotlistCardBL _hotlistCardBL;
 
         public BasicDetailController(IConfiguration configuration,IBasicDetailBL basicDetailBL, IMapUnitBL mapUnitBL, IBasicDetailTempBL basicDetailTempBL, IService service, IMapper mapper,
             UserManager<ApplicationUser> userManager, IWebHostEnvironment hostingEnvironment, IDataProtectionProvider dataProtectionProvider,
                               DataProtectionPurposeStrings dataProtectionPurposeStrings, ILogger<BasicDetailController> logger, IStepCounterBL iStepCounterBL, 
                               ITrnFwnBL iTrnFwnBL, ITrnICardRequestBL iTrnICardRequestBL, IDomainMapBL iDomainMapBL
             ,IBasicUploadBL basicUploadBL, IBasicAddressBL basicAddressBL, IBasicinfoBL basicinfoBL, IRankBL rankBL, INotificationBL notificationBL, IMasterBL masterBL
-           , ITrnLoginLogBL iTrnLoginLogBL, IICardHoldBL iICardHoldBL, ICSVImportBL iCSVImportBL, IFaultyCardBL _faultyCardBL)
+           , ITrnLoginLogBL iTrnLoginLogBL, IICardHoldBL iICardHoldBL, ICSVImportBL iCSVImportBL, IFaultyCardBL _faultyCardBL,IHotlistCardBL hotlistCardBL)
         {
             _configuration = configuration;
             this.basicDetailBL = basicDetailBL;
@@ -110,6 +115,7 @@ namespace Web.Controllers
             _iICardHoldBL = iICardHoldBL;
             _iCSVImportBL = iCSVImportBL;
             faultyCardBL = _faultyCardBL;
+            _hotlistCardBL = hotlistCardBL;
         }
 
         #region Index/ApprovalForIO/View/InaccurateData/InaccurateDataView/RequestType
@@ -890,6 +896,12 @@ namespace Web.Controllers
                 var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
                 if (model.BasicDetailId > 0)
                 {
+                    ViewBag.OptionsRankId = model.RankId;
+                    ViewBag.OptionsUnitId = model.UnitId;
+                    ViewBag.OptionsArmedId = model.ArmedId;
+                    ViewBag.OptionsRegimentalId = model.RegimentalId;
+                    ViewBag.OptionsBloodGroupId = model.BloodGroupId;
+
                     if (model.UnitId == 0)
                     {
                         ModelState.AddModelError("UnitId", "Please Enter Unit Name");
@@ -898,6 +910,11 @@ namespace Web.Controllers
                     if (model.ApplyForId != 1 && model.RegimentalId == 0)
                     {
                         ModelState.AddModelError("RegimentalId", "Please Select Regimental ");
+                        goto end;
+                    }
+                    if (string.IsNullOrEmpty(model.AadhaarNo) || model.AadhaarNo.Length != 12 || !model.AadhaarNo.All(char.IsDigit) || model.AadhaarNo == "000000000000")
+                    {
+                        ModelState.AddModelError("AadhaarNo", "Aadhaar number must be exactly 12 digits.");
                         goto end;
                     }
                     if (ModelState.IsValid)
@@ -1141,6 +1158,11 @@ namespace Web.Controllers
                         if (model.ApplyForId != 1 && model.RegimentalId == 0)
                         {
                             ModelState.AddModelError("", "Please Select Regimental ");
+                        }
+                        if (string.IsNullOrEmpty(model.AadhaarNo) || model.AadhaarNo.Length != 12 || !model.AadhaarNo.All(char.IsDigit) || model.AadhaarNo == "000000000000")
+                        {
+                            ModelState.AddModelError("AadhaarNo", "Aadhaar number must be exactly 12 digits.");
+                            goto end;
                         }
 
 
@@ -1692,6 +1714,8 @@ namespace Web.Controllers
         {
             try
             {
+                DTOBasicDetailsSaveResponse response = new DTOBasicDetailsSaveResponse();
+
                 DtoSession sessiondata = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
                 data.FromUserId = sessiondata.UserId;
                 data.UnitId = sessiondata.UnitId;
@@ -1705,7 +1729,7 @@ namespace Web.Controllers
                 if (Domain != null)
                 {
                     data.ToAspNetUsersId = Domain.AspNetUsersId;
-                    data.ToUserId = Convert.ToInt32(Domain.UserId);
+                    data.ToUserId = Domain.UserId.GetValueOrDefault();
 
                     if (await iTrnFwnBL.UpdateAllBYRequestId(data.RequestId))
                     {
@@ -1723,6 +1747,7 @@ namespace Web.Controllers
 
                         await _iTrnLoginLogBL.XmlFileDigitalSign(dataret);
                         return Ok(data);
+                            
                     }
                     else
                     {
@@ -1749,8 +1774,21 @@ namespace Web.Controllers
         
         public async Task<IActionResult> UpdateStepCounter(MStepCounter mStepCounter)
         {
+            DTOBasicDetailsSaveResponse response = new DTOBasicDetailsSaveResponse();
             try
             {
+                if (mStepCounter.Flag == "R")
+                {
+                    TrnDomainMapping Domain = new TrnDomainMapping();
+                    Domain = await iDomainMapBL.GetByRequestId(mStepCounter.RequestId);
+
+                    if (Domain?.UserId.GetValueOrDefault() == 0)
+                    {
+                        response.Message = "Profile is not mapped with domain Id!";
+                        response.Result = false;
+                        return Ok(response);
+                    }
+                }
                 DtoSession sessiondata = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
                 DTOMapUnitResponse dTOMapUnitResponse = await mapUnitBL.GetALLByUnitMapId(sessiondata.UnitId);
 
@@ -1758,15 +1796,14 @@ namespace Web.Controllers
                 mStepCounter.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                 mStepCounter.UnitName = dTOMapUnitResponse.UnitName;
                 await iStepCounterBL.UpdateStepCounter(mStepCounter);
-
-
+                response.Result = true;
             }
             catch (Exception ex)
             {
                 _logger.LogError(1001, ex, "BasicDetails=>IcardFwd.");
-                return BadRequest();
+                response.Message = "Internal Server Error!";
             }
-            return Ok(mStepCounter);
+            return Ok(response);
         }
         
         //[Authorize(Roles = "DteAdmin")]
@@ -2191,6 +2228,8 @@ namespace Web.Controllers
         {
             MTrnFwd? mTrnFwd = new MTrnFwd();
             DtoSession? dtoSession = new DtoSession();
+            DTOFaultyCardSaveResponse dTOFaulty = new DTOFaultyCardSaveResponse();
+
             if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
             {
                 dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
@@ -2218,13 +2257,20 @@ namespace Web.Controllers
                 Domain = await iDomainMapBL.GetByRequestId(dTO.RequestId);
                 if (Domain != null)
                 {
-                    mTrnFwd.ToAspNetUsersId = Domain.AspNetUsersId;
-                    mTrnFwd.ToUserId = Convert.ToInt32(Domain.UserId);
+                    if (Domain.UserId.GetValueOrDefault() == 0)
+                    {
+                        dTOFaulty.Message = "Profile is not mapped with domain Id!";
+                        dTOFaulty.Result = false;
+                        return Ok(dTOFaulty);
+                    }
+                    else
+                    {
+                        mTrnFwd.ToAspNetUsersId = Domain.AspNetUsersId;
+                        mTrnFwd.ToUserId = Convert.ToInt32(Domain.UserId);
+                    }
                 }
             }
 
-
-            DTOFaultyCardSaveResponse dTOFaulty = new DTOFaultyCardSaveResponse();
             try
             {
                 dTO.IsActive = true;
@@ -2304,6 +2350,7 @@ namespace Web.Controllers
             try
             {
                 dTO.IsActive = true;
+                dTO.IsComplete = false;
                 dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier)); ;
                 dTO.UpdatedOn = DateTime.Now;
 
@@ -2356,6 +2403,131 @@ namespace Web.Controllers
         }
 
         #endregion
+
+        #region HotlistCard
+        public async Task<ViewResult> HotlistCardAsync()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> GetAllHotlist(DTODataTablesRequest dTO)
+        {
+            return Json(await _hotlistCardBL.GetAllHotlist(dTO));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> HotlistDataExport([FromBody] DTOHotlistCardsExportRequest req)
+        {
+            DTOFaultyCardSaveResponse dTOFaulty = new DTOFaultyCardSaveResponse();
+            try
+            {
+                var tempFileName = Path.GetTempFileName().Replace(".tmp", ".csv");
+                var records = await _hotlistCardBL.GetDetailsByRequestIds(req);
+                using (var writer = new StreamWriter(tempFileName, false, Encoding.UTF8))
+                using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
+                {
+                    csv.Context.RegisterClassMap(new CsvClassMap<DTOHotlistCardExportResponse>(true, CsvClassMapTypeEnum.HotlistExport));
+                    try
+                    {
+                        await csv.WriteRecordsAsync(records);
+                    }
+                    catch (Exception ee)
+                    {
+                        _logger.LogError(1001, ee, "BasicDetail->HotlistDataExport");
+                        dTOFaulty.Result = false;
+                        dTOFaulty.Message = "Internal Server Error!";
+                        goto ReturnSt;
+                    }
+                }
+                dTOFaulty.Result = true;
+                dTOFaulty.Message = Path.GetFileName(tempFileName);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "BasicDetail->HotlistDataExport");
+                dTOFaulty.Result = false;
+                dTOFaulty.Message = "Internal Server Error!";
+            }
+            ReturnSt:
+            return Json(dTOFaulty);
+        }
+
+        [HttpGet]
+        public IActionResult DownloadCsv(string fileName)
+        {
+            try
+            {
+                var filePath = Path.Combine(Path.GetTempPath(), fileName);
+                if (!System.IO.File.Exists(filePath))
+                    return NotFound();
+
+                var mimeType = "text/csv";
+                return PhysicalFile(filePath, mimeType, "E-ISAC_HotlistExportData.csv");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "BasicDetail->DownloadCsv");
+                return BadRequest();
+            }
+        }
+
+
+        public async Task<ActionResult> HotListCardRequestAsync()
+        {
+            return View();
+        }
+
+        public async Task<IActionResult> SaveHotlistCardRequest(TrnHotlistCard model)
+        {
+            DTOFaultyCardSaveResponse dTOFaulty = new DTOFaultyCardSaveResponse();
+            try
+            {
+                model.IsActive = true;
+                model.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier)); ;
+                model.UpdatedOn = DateTime.Now;
+
+                if (ModelState.IsValid)
+                {
+                   bool checkduplicate = await _hotlistCardBL.FindRequestId(model.RequestId);
+                   if (checkduplicate)
+                   {
+                       dTOFaulty.Result = false;
+                       dTOFaulty.Message = "The hotlist request already exists!";
+                   }
+                   else
+                   {
+                       var result = await _hotlistCardBL.AddWithReturn(model);
+                       dTOFaulty.Result = true;
+                       dTOFaulty.Message = "Record created!";
+                       dTOFaulty.CurrentTime = result.UpdatedOn.GetValueOrDefault();
+                       dTOFaulty.Id = result.HotlistCardId.ToString();
+                   }
+                }
+                else
+                {
+                    var errors = ModelState.Where(x => x.Value?.Errors?.Count > 0)
+                    .SelectMany(x => x.Value!.Errors)
+                    .Select(e => e.ErrorMessage)
+                    .ToList();
+                    if (errors.Any())
+                    {
+                        dTOFaulty.Message = string.Join("; ", errors); // Concatenate all error messages
+                    }
+                    dTOFaulty.Result = false;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "BasicDetail->SaveHotlistCardRequest");
+                dTOFaulty.Result = false;
+                dTOFaulty.Message = "Internal Server Error!";
+            }
+
+            return Json(dTOFaulty);
+        }
+        #endregion HotlistCard
 
         #region GetSessionValue/GetData/SearchAllServiceNo/GetBasicDetailByRequestId/GetRequestHistory/GetRegimentalListByArmedId/GetROListByArmedId/GetRemarks/CreateCSV/GetICardPrintPreviewByRequestId/GetBDetailByRequestId/GetTopArmyNoFromICardRequest/ICardRequestHold/GetAllICardRequestHold
 
@@ -2412,7 +2584,7 @@ namespace Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> SearchAllServiceNo(DTOSearchArmyNoRequest dto)
+        public async Task<IActionResult> SearchAllServiceNo([FromForm] DTOSearchArmyNoRequest dto)
         {
             try
             {
@@ -2437,6 +2609,14 @@ namespace Web.Controllers
                     {
                         dto.Claim = true;
                     }
+                    else
+                    {
+                        dto.Claim = false;
+                    }
+                }
+                else
+                {
+                    dto.Claim = true;
                 }
 
 
