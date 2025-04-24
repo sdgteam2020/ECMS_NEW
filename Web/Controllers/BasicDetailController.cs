@@ -44,6 +44,7 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 using Microsoft.IdentityModel.Tokens;
 using BusinessLogicsLayer.HotlistCard;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using BusinessLogicsLayer.LostCard;
 
 namespace Web.Controllers
 {
@@ -79,13 +80,14 @@ namespace Web.Controllers
         private readonly  ICSVImportBL _iCSVImportBL;
         private readonly IFaultyCardBL faultyCardBL;
         private readonly IHotlistCardBL _hotlistCardBL;
+        private readonly ILostCardBL _lostCardBL;
 
         public BasicDetailController(IConfiguration configuration,IBasicDetailBL basicDetailBL, IMapUnitBL mapUnitBL, IBasicDetailTempBL basicDetailTempBL, IService service, IMapper mapper,
             UserManager<ApplicationUser> userManager, IWebHostEnvironment hostingEnvironment, IDataProtectionProvider dataProtectionProvider,
                               DataProtectionPurposeStrings dataProtectionPurposeStrings, ILogger<BasicDetailController> logger, IStepCounterBL iStepCounterBL, 
                               ITrnFwnBL iTrnFwnBL, ITrnICardRequestBL iTrnICardRequestBL, IDomainMapBL iDomainMapBL
             ,IBasicUploadBL basicUploadBL, IBasicAddressBL basicAddressBL, IBasicinfoBL basicinfoBL, IRankBL rankBL, INotificationBL notificationBL, IMasterBL masterBL
-           , ITrnLoginLogBL iTrnLoginLogBL, IICardHoldBL iICardHoldBL, ICSVImportBL iCSVImportBL, IFaultyCardBL _faultyCardBL,IHotlistCardBL hotlistCardBL)
+           , ITrnLoginLogBL iTrnLoginLogBL, IICardHoldBL iICardHoldBL, ICSVImportBL iCSVImportBL, IFaultyCardBL _faultyCardBL,IHotlistCardBL hotlistCardBL, ILostCardBL lostCardBL)
         {
             _configuration = configuration;
             this.basicDetailBL = basicDetailBL;
@@ -116,6 +118,7 @@ namespace Web.Controllers
             _iCSVImportBL = iCSVImportBL;
             faultyCardBL = _faultyCardBL;
             _hotlistCardBL = hotlistCardBL;
+            _lostCardBL = lostCardBL;
         }
 
         #region Index/ApprovalForIO/View/InaccurateData/InaccurateDataView/RequestType
@@ -2454,7 +2457,7 @@ namespace Web.Controllers
         }
 
         [HttpGet]
-        public IActionResult DownloadCsv(string fileName)
+        public IActionResult DownloadCsv(string fileName,string fileStoreName)
         {
             try
             {
@@ -2463,7 +2466,7 @@ namespace Web.Controllers
                     return NotFound();
 
                 var mimeType = "text/csv";
-                return PhysicalFile(filePath, mimeType, "E-ISAC_HotlistExportData.csv");
+                return PhysicalFile(filePath, mimeType, $"E-ISAC_{fileStoreName}ExportData.csv");
             }
             catch (Exception ex)
             {
@@ -2471,7 +2474,6 @@ namespace Web.Controllers
                 return BadRequest();
             }
         }
-
 
         public async Task<ActionResult> HotListCardRequestAsync()
         {
@@ -2503,6 +2505,111 @@ namespace Web.Controllers
                        dTOFaulty.CurrentTime = result.UpdatedOn.GetValueOrDefault();
                        dTOFaulty.Id = result.HotlistCardId.ToString();
                    }
+                }
+                else
+                {
+                    var errors = ModelState.Where(x => x.Value?.Errors?.Count > 0)
+                    .SelectMany(x => x.Value!.Errors)
+                    .Select(e => e.ErrorMessage)
+                    .ToList();
+                    if (errors.Any())
+                    {
+                        dTOFaulty.Message = string.Join("; ", errors); // Concatenate all error messages
+                    }
+                    dTOFaulty.Result = false;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "BasicDetail->SaveHotlistCardRequest");
+                dTOFaulty.Result = false;
+                dTOFaulty.Message = "Internal Server Error!";
+            }
+
+            return Json(dTOFaulty);
+        }
+        #endregion HotlistCard
+
+        #region LostCard
+        public async Task<ViewResult> LostCardAsync()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> GetAllLost(DTODataTablesRequest dTO)
+        {
+            return Json(await _lostCardBL.GetAllLost(dTO));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> LostDataExport([FromBody] DTOHotlistCardsExportRequest req)
+        {
+            DTOFaultyCardSaveResponse dTOFaulty = new DTOFaultyCardSaveResponse();
+            try
+            {
+                var tempFileName = Path.GetTempFileName().Replace(".tmp", ".csv");
+                var records = await _lostCardBL.GetDetailsByRequestIds(req);
+                using (var writer = new StreamWriter(tempFileName, false, Encoding.UTF8))
+                using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
+                {
+                    csv.Context.RegisterClassMap(new CsvClassMap<DTOLostCardExportResponse>(true, CsvClassMapTypeEnum.HotlistExport));
+                    try
+                    {
+                        await csv.WriteRecordsAsync(records);
+                    }
+                    catch (Exception ee)
+                    {
+                        _logger.LogError(1001, ee, "BasicDetail->LostDataExport");
+                        dTOFaulty.Result = false;
+                        dTOFaulty.Message = "Internal Server Error!";
+                        goto ReturnSt;
+                    }
+                }
+                dTOFaulty.Result = true;
+                dTOFaulty.Message = Path.GetFileName(tempFileName);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "BasicDetail->HotlistDataExport");
+                dTOFaulty.Result = false;
+                dTOFaulty.Message = "Internal Server Error!";
+            }
+        ReturnSt:
+            return Json(dTOFaulty);
+        }
+
+        public async Task<ActionResult> LostCardRequestAsync()
+        {
+            return View();
+        }
+
+        public async Task<IActionResult> SaveLostCardRequest(TrnLostCard model)
+        {
+            DTOFaultyCardSaveResponse dTOFaulty = new DTOFaultyCardSaveResponse();
+            try
+            {
+                model.IsActive = true;
+                model.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier)); ;
+                model.UpdatedOn = DateTime.Now;
+
+                if (ModelState.IsValid)
+                {
+                    bool checkduplicate = await _lostCardBL.FindAnyRequestId(model.RequestId);
+                    if (checkduplicate)
+                    {
+                        dTOFaulty.Result = false;
+                        dTOFaulty.Message = "The lost request already exists!";
+                    }
+                    else
+                    {
+                        var result = await _lostCardBL.AddWithReturn(model);
+                        dTOFaulty.Result = true;
+                        dTOFaulty.Message = "Record created!";
+                        dTOFaulty.CurrentTime = result.UpdatedOn.GetValueOrDefault();
+                        dTOFaulty.Id = result.LostCardId.ToString();
+                    }
                 }
                 else
                 {

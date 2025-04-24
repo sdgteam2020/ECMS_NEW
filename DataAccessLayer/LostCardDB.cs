@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.Entity;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,14 +14,14 @@ using Microsoft.Extensions.Logging;
 
 namespace DataAccessLayer
 {
-    public class HotlistCardDB : GenericRepositoryDL<TrnHotlistCard>, IHotlistCardDB
+    public class LostCardDB : GenericRepositoryDL<TrnLostCard> , ILostCardDB
     {
         protected new readonly ApplicationDbContext _context;
         private readonly DapperContext _contextDP;
         private readonly IDataProtector protector;
-        private readonly ILogger<HotlistCardDB> _logger;
+        private readonly ILogger<LostCardDB> _logger;
 
-        public HotlistCardDB(ApplicationDbContext context, DapperContext contextDP, IDataProtectionProvider dataProtectionProvider, ILogger<HotlistCardDB> logger, DataProtectionPurposeStrings dataProtectionPurposeStrings) : base(context)
+        public LostCardDB(ApplicationDbContext context, DapperContext contextDP, IDataProtectionProvider dataProtectionProvider, ILogger<LostCardDB> logger, DataProtectionPurposeStrings dataProtectionPurposeStrings) : base(context)
         {
             _context = context;
             _contextDP = contextDP;
@@ -36,25 +35,25 @@ namespace DataAccessLayer
         {
             try
             {
-                return _context.TrnHotlistCards
+                return _context.TrnLostCards
                                 .Any(f => f.RequestId == RequestId);
             }
             catch (Exception ex)
             {
-                _logger.LogError(1001, ex, "HotlistCardDB->FindAnyRequestId");
+                _logger.LogError(1001, ex, "LostCardDB->FindAnyRequestId");
                 return false;
             }
         }
 
-        public async Task<DTODataTablesResponse<DTOHotlistCardGetResponse>> GetAllHotlist(DTODataTablesRequest dTO)
+        public async Task<DTODataTablesResponse<DTOLostCardGetResponse>> GetAllLost(DTODataTablesRequest dTO)
         {
-            List<DTOHotlistCardGetResponse> dTOHotlistCardGetResponses = new List<DTOHotlistCardGetResponse>();
-            var responseData = new DTODataTablesResponse<DTOHotlistCardGetResponse>
+            List<DTOLostCardGetResponse> dTOLostCardGetResponses = new List<DTOLostCardGetResponse>();
+            var responseData = new DTODataTablesResponse<DTOLostCardGetResponse>
             {
                 draw = 0,
                 recordsTotal = 0,
                 recordsFiltered = 0,
-                data = dTOHotlistCardGetResponses
+                data = dTOLostCardGetResponses
             };
             try
             {
@@ -62,43 +61,42 @@ namespace DataAccessLayer
                 var allowedSortColumns = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
                 {
                     ["ModifiedServiceNo"] = "bas.ServiceNo",
-                    ["UpdatedOn"] = "hotlist.UpdatedOn",
-                    ["RequestId"] = "req.RequestId",
-                    ["Remark"] = "hotlist.Remark"
+                    ["UpdatedOn"] = "lost.UpdatedOn",
+                    ["LostOn"] = "lost.LostOn",
+                    ["Remark"] = "lost.Remark"
                 };
 
                 var sortColumn = allowedSortColumns.ContainsKey(dTO.sortColumn ?? "")
                     ? allowedSortColumns[dTO.sortColumn!]
-                    : "hotlist.UpdatedOn";
+                    : "lost.UpdatedOn";
 
                 var sortOrder = dTO.sortDirection;
 
                 string query = "";
-                    query = @"appl.Name ApplyFor,
-                                req.RequestId,hotlist.HotlistCardId,
-                                bas.ServiceNo,ranks.RankAbbreviation RankName,
-                                bas.FName,bas.LName,
-                                Muni.UnitName,Muni.Abbreviation UnitAbbreviation,
-                                hotlist.UpdatedOn,hotlist.RemarksIds,hotlist.Remark,hotlist.IsActive,
-                                bas.NameAsPerRecord,
-                                regi.Abbreviation RegimentalName,
-                                CASE
-                                WHEN LEFT(bas.ServiceNo, 2) LIKE '[A-Za-z][A-Za-z]' THEN
-                                CONCAT(SUBSTRING(bas.ServiceNo, 1, 2), ' ', SUBSTRING(bas.ServiceNo, 3, LEN(bas.ServiceNo) - 2))
-                                ELSE
-                                bas.ServiceNo
-                                END AS ModifiedServiceNo,
-                                (select STRING_AGG(Remarks,'#') from MRemarks where RemarksId in (select value from string_split(hotlist.RemarksIds,','))) RemarksNameList
-                                from TrnHotlistCards hotlist
-                                inner join TrnICardRequest req on req.RequestId = hotlist.RequestId
-                                inner join TrnDomainMapping tdm on tdm.Id=req.TrnDomainMappingId
-                                inner join BasicDetails bas on bas.BasicDetailId=req.BasicDetailId
-                                inner join MRank ranks on ranks.RankId=bas.RankId
-                                inner join MapUnit uni on uni.UnitMapId=bas.UnitId
-                                inner join MUnit Muni on Muni.UnitId=uni.UnitId
-                                inner join MApplyFor appl on appl.ApplyForId=bas.ApplyForId
-                                left join MRegimental regi on regi.RegId=bas.RegimentalId
-                                Where bas.ServiceNo like '%' + @SearchTerm + '%' ";
+                query = @"appl.Name ApplyFor,
+                            req.RequestId,lost.LostCardId,
+                            bas.ServiceNo,ranks.RankAbbreviation RankName,
+                            bas.FName,bas.LName,
+                            Muni.UnitName,Muni.Abbreviation UnitAbbreviation,
+                            lost.UpdatedOn,lost.Remark,lost.IsActive,
+                            bas.NameAsPerRecord,lost.LostOn,
+                            regi.Abbreviation RegimentalName,
+                            CASE
+                            WHEN LEFT(bas.ServiceNo, 2) LIKE '[A-Za-z][A-Za-z]' THEN
+                            CONCAT(SUBSTRING(bas.ServiceNo, 1, 2), ' ', SUBSTRING(bas.ServiceNo, 3, LEN(bas.ServiceNo) - 2))
+                            ELSE
+                            bas.ServiceNo
+                            END AS ModifiedServiceNo
+                            from TrnLostCards lost
+                            inner join TrnICardRequest req on req.RequestId = lost.RequestId
+                            inner join TrnDomainMapping tdm on tdm.Id=req.TrnDomainMappingId
+                            inner join BasicDetails bas on bas.BasicDetailId=req.BasicDetailId
+                            inner join MRank ranks on ranks.RankId=bas.RankId
+                            inner join MapUnit uni on uni.UnitMapId=bas.UnitId
+                            inner join MUnit Muni on Muni.UnitId=uni.UnitId
+                            inner join MApplyFor appl on appl.ApplyForId=bas.ApplyForId
+                            left join MRegimental regi on regi.RegId=bas.RegimentalId
+                            Where bas.ServiceNo like '%' + @SearchTerm + '%'";
 
                 var multiQuery = query = $@"
                             WITH RecordCTE AS (
@@ -106,23 +104,23 @@ namespace DataAccessLayer
                             )
                             SELECT * FROM RecordCTE
                             WHERE RowNum BETWEEN @Offset AND @Limit;
-                            Select Count(*) from TrnHotlistCards;
+                            Select Count(*) from TrnLostCards;
                         ";
 
                 using (var connection = _contextDP.CreateConnection())
                 {
                     var ret = await connection.QueryMultipleAsync(query, new { Offset = dTO.Start, Limit = dTO.Length, SearchTerm = string.IsNullOrWhiteSpace(dTO.searchValue) ? "" : dTO.searchValue });
-                    var records = (await ret.ReadAsync<DTOHotlistCardGetResponse>()).ToList();
+                    var records = (await ret.ReadAsync<DTOLostCardGetResponse>()).ToList();
                     var totalRecords = (await ret.ReadAsync<int>()).Single();
-                    responseData = new DTODataTablesResponse<DTOHotlistCardGetResponse>
+                    responseData = new DTODataTablesResponse<DTOLostCardGetResponse>
                     {
                         draw = dTO.Draw,
                         recordsTotal = totalRecords, // Total records without filtering
                         recordsFiltered = records.Count(), // Total records after filtering
                         data = (from e in records
-                                select new DTOHotlistCardGetResponse()
+                                select new DTOLostCardGetResponse()
                                 {
-                                    EncryptedId = protector.Protect(e.HotlistCardId.ToString()),
+                                    EncryptedId = protector.Protect(e.LostCardId.ToString()),
                                     NameAsPerRecord = e.NameAsPerRecord,
                                     FName = e.FName,
                                     LName = e.LName,
@@ -135,9 +133,8 @@ namespace DataAccessLayer
                                     RequestId = e.RequestId,
                                     UpdatedOn = e.UpdatedOn,
                                     ApplyFor = e.ApplyFor,
-                                    HotlistCardId = e.HotlistCardId,
-                                    RemarksIds = e.RemarksIds,
-                                    RemarksNameList = e.RemarksNameList,
+                                    LostCardId = e.LostCardId,
+                                    LostOn = e.LostOn,
                                     Remark = e.Remark,
                                     IsActive = e.IsActive,
                                 }).ToList()
@@ -146,23 +143,22 @@ namespace DataAccessLayer
             }
             catch (Exception ex)
             {
-                _logger.LogError(1001, ex, "HotlistCardDB->GetAllHotlist");
+                _logger.LogError(1001, ex, "LostCardDB->GetAllLost");
             }
             return responseData;
         }
 
-        public async Task<List<DTOHotlistCardExportResponse>> GetDetailsByRequestIds(DTOHotlistCardsExportRequest Data)
+        public async Task<List<DTOLostCardExportResponse>> GetDetailsByRequestIds(DTOHotlistCardsExportRequest Data)
         {
-            var records = new List<DTOHotlistCardExportResponse>();
+            var records = new List<DTOLostCardExportResponse>();
             try
             {
-                string query = @"select req.RequestId,hotlist.HotlistCardId,bas.ServiceNo as ArmyNo,
+                string query = @"select req.RequestId,lost.LostCardId,bas.ServiceNo as ArmyNo,
 	                                ranks.RankAbbreviation,bas.FName,bas.LName,Muni.Abbreviation Unit,
-	                                hotlist.UpdatedOn as DateAndTime,hotlist.Remark,hotlist.IsActive as IsActiveBool,
-	                                (select STRING_AGG(Remarks,' | ') from MRemarks where RemarksId in (select value from string_split(hotlist.RemarksIds,','))) Reasons,
-	                                req.CardSerialNo,req.ChipNo
-	                                from TrnHotlistCards hotlist
-	                                inner join TrnICardRequest req on req.RequestId = hotlist.RequestId
+	                                lost.UpdatedOn as DateAndTime,lost.Remark,lost.IsActive as IsActiveBool,
+	                                req.CardSerialNo,req.ChipNo,lost.LostOn
+	                                from TrnLostCards lost
+	                                inner join TrnICardRequest req on req.RequestId = lost.RequestId
 	                                inner join BasicDetails bas on bas.BasicDetailId=req.BasicDetailId
 	                                inner join MRank ranks on ranks.RankId=bas.RankId
 	                                inner join MapUnit uni on uni.UnitMapId=bas.UnitId
@@ -172,13 +168,13 @@ namespace DataAccessLayer
                 parameters.Add("@Ids", Data.Ids);
                 using (var connection = _contextDP.CreateConnection())
                 {
-                    var ret = await connection.QueryAsync<DTOHotlistCardExportResponse>(query, parameters);
+                    var ret = await connection.QueryAsync<DTOLostCardExportResponse>(query, parameters);
                     records = ret.ToList();
                 }
             }
             catch (Exception ex)
             {
-                _logger.LogError(1001, ex, "HotlistCardDB->GetBesicdetailsByRequestId");
+                _logger.LogError(1001, ex, "LostCardDB->GetBesicdetailsByRequestId");
             }
             return records;
         }

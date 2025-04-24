@@ -21,6 +21,11 @@
         location.href = '/BasicDetail/HotlistCard';
     });
 
+    document.getElementById("btnLostCard").addEventListener("click", function (event) {
+        event.preventDefault(); // Prevent anchor default behavior
+        location.href = '/BasicDetail/LostCard';
+    });
+
     //document.getElementsByClassName("btnAdd").addEventListener("click", function (event) {
     //    event.stopPropagation(); // Prevent click from bubbling to the <a>
         

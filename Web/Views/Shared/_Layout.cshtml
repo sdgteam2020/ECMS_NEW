@@ -610,6 +610,11 @@
                 sideBySide: true
             });
 
+            $('.datetimepickerpast').datetimepicker({
+                sideBySide: true,
+                maxDate: new Date()
+            });
+
             $('.PersInfo').on("click", function () {
                 sessionStorage.persid = null
             })

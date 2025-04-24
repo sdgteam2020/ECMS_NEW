@@ -18,7 +18,7 @@ namespace Web.Healpers
                     ignoreProperties.Add("Status");
                 }
             }
-            else if (csvClassMapTypeEnum == CsvClassMapTypeEnum.HotlistExport)
+            else if (csvClassMapTypeEnum == CsvClassMapTypeEnum.HotlistExport || csvClassMapTypeEnum == CsvClassMapTypeEnum.LostCard)
             {
                 ignoreProperties.Add("RankAbbreviation");
                 ignoreProperties.Add("FName");
