@@ -34,8 +34,8 @@ function validateCsvFileOnChange() {
             toastr.error('The selected file is empty.');
             return;
         }
-
-        if (lines.length <= 2) {
+       
+        if (lines.length < 2) {
             toastr.error('The CSV file must contain at least 1 data row.');
             return;
         }
