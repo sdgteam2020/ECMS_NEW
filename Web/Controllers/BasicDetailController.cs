@@ -43,6 +43,7 @@ using Humanizer;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using Microsoft.IdentityModel.Tokens;
 using BusinessLogicsLayer.HotlistCard;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace Web.Controllers
 {
@@ -2416,23 +2417,59 @@ namespace Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> HotlistDataExport(DTOHotlistCardsExportRequest req)
+        public async Task<IActionResult> HotlistDataExport([FromBody] DTOHotlistCardsExportRequest req)
         {
-            var records = await _hotlistCardBL.GetDetailsByRequestIds(req);
-            using (var writer = new StreamWriter("", false, Encoding.UTF8))
-            using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
+            DTOFaultyCardSaveResponse dTOFaulty = new DTOFaultyCardSaveResponse();
+            try
             {
-                csv.Context.RegisterClassMap(new CsvClassMap<DTOHotlistCardExportResponse>(true,CsvClassMapTypeEnum.HotlistExport));
-                try
+                var tempFileName = Path.GetTempFileName().Replace(".tmp", ".csv");
+                var records = await _hotlistCardBL.GetDetailsByRequestIds(req);
+                using (var writer = new StreamWriter(tempFileName, false, Encoding.UTF8))
+                using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
                 {
-                    csv.WriteRecords(records);
+                    csv.Context.RegisterClassMap(new CsvClassMap<DTOHotlistCardExportResponse>(true, CsvClassMapTypeEnum.HotlistExport));
+                    try
+                    {
+                        await csv.WriteRecordsAsync(records);
+                    }
+                    catch (Exception ee)
+                    {
+                        _logger.LogError(1001, ee, "BasicDetail->HotlistDataExport");
+                        dTOFaulty.Result = false;
+                        dTOFaulty.Message = "Internal Server Error!";
+                        goto ReturnSt;
+                    }
                 }
-                catch (Exception ee)
-                {
-                    _logger.LogError(1001, ee, "BasicDetail->HotlistDataExport");
-                }
+                dTOFaulty.Result = true;
+                dTOFaulty.Message = Path.GetFileName(tempFileName);
             }
-            return Json("");
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "BasicDetail->HotlistDataExport");
+                dTOFaulty.Result = false;
+                dTOFaulty.Message = "Internal Server Error!";
+            }
+            ReturnSt:
+            return Json(dTOFaulty);
+        }
+
+        [HttpGet]
+        public IActionResult DownloadCsv(string fileName)
+        {
+            try
+            {
+                var filePath = Path.Combine(Path.GetTempPath(), fileName);
+                if (!System.IO.File.Exists(filePath))
+                    return NotFound();
+
+                var mimeType = "text/csv";
+                return PhysicalFile(filePath, mimeType, "E-ISAC_HotlistExportData.csv");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "BasicDetail->DownloadCsv");
+                return BadRequest();
+            }
         }
 
 

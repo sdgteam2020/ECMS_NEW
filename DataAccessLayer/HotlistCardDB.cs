@@ -158,7 +158,7 @@ namespace DataAccessLayer
             {
                 string query = @"select req.RequestId,hotlist.HotlistCardId,bas.ServiceNo as ArmyNo,
 	                                ranks.RankAbbreviation,bas.FName,bas.LName,Muni.Abbreviation Unit,
-	                                hotlist.UpdatedOn,hotlist.Remark,hotlist.IsActive as IsActiveBool,
+	                                hotlist.UpdatedOn as DateAndTime,hotlist.Remark,hotlist.IsActive as IsActiveBool,
 	                                (select STRING_AGG(Remarks,' | ') from MRemarks where RemarksId in (select value from string_split(hotlist.RemarksIds,','))) Reasons,
 	                                req.CardSerialNo,req.ChipNo
 	                                from TrnHotlistCards hotlist
