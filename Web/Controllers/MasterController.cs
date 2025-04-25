@@ -1,4 +1,5 @@
 ﻿using BusinessLogicsLayer;
+using BusinessLogicsLayer.MapUnitChange;
 using BusinessLogicsLayer.Master;
 using DataAccessLayer.BaseInterfaces;
 using DataTransferObject.Constants;
@@ -24,7 +25,8 @@ namespace Web.Controllers
         private readonly IEncryptsqlDB _iEncryptsqlDB;
         private readonly IMasterBL _IMasterBL;
         private readonly IConfiguration _configuration;
-        public MasterController(IUnitOfWork unitOfWork, IUserProfileBL userProfileBL, IChangeHierarchyMasterBL changeHierarchyMaster, ILogger<MasterController> logger, IEncryptsqlDB iEncryptsqlDB, IMasterBL masterBL, IConfiguration configuration)
+        private readonly IMapUnitChangeBL _mapUnitChangeBL;
+        public MasterController(IUnitOfWork unitOfWork, IUserProfileBL userProfileBL, IChangeHierarchyMasterBL changeHierarchyMaster, ILogger<MasterController> logger, IEncryptsqlDB iEncryptsqlDB, IMasterBL masterBL, IConfiguration configuration, IMapUnitChangeBL mapUnitChangeBL)
         {
             this.userProfileBL = userProfileBL;
             this.unitOfWork = unitOfWork;
@@ -33,6 +35,7 @@ namespace Web.Controllers
             _iEncryptsqlDB = iEncryptsqlDB;
             _IMasterBL = masterBL;
             _configuration = configuration;
+            _mapUnitChangeBL= mapUnitChangeBL;
         }
 
         #region Command Page
@@ -844,6 +847,47 @@ namespace Web.Controllers
 
         }
         #endregion End Unit
+
+        #region Map Unit Change Request
+
+        public async Task<IActionResult> MapUnitChange()
+        {
+            int MapUnitId = 0;
+            string RoleName = string.Empty;
+            DtoSession? dtoSession = new DtoSession();
+            if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
+            {
+                dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+
+            }
+            MapUnitId = dtoSession != null ? dtoSession.UnitId : 0;
+            if(MapUnitId > 0)
+            {
+                bool result = await _mapUnitChangeBL.FindUnitIdMapped(MapUnitId);
+                if(result)
+                {
+                    TempData["error"] = "Unit Mapping Change Request already place.";
+                    TempData.Keep("error");
+                    return RedirectToAction("Dashboard", "Home");
+                }
+                else
+                {
+                    RoleName = dtoSession != null ? dtoSession.RankName : string.Empty;
+                    ViewBag.MapUnitId = MapUnitId;
+                    ViewBag.RoleName = RoleName;
+                    return View();
+                }
+            }
+            else
+            {
+                TempData["error"] = "Session expired.";
+                TempData.Keep("error");
+                return RedirectToAction("Dashboard", "Home");
+            }
+
+        }
+
+        #endregion End Map Unit Change Request
 
         #region Unit  
 

@@ -4,6 +4,7 @@ using DataAccessLayer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccessLayer.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250424110008_v152")]
+    partial class v152
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -2425,7 +2428,7 @@ namespace DataAccessLayer.Migrations
                     b.Property<string>("AdminRemark")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("ExistingCh")
+                    b.Property<string>("FromUnit")
                         .IsRequired()
                         .HasColumnType("varchar(500)");
 
@@ -2445,7 +2448,7 @@ namespace DataAccessLayer.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("RequestCh")
+                    b.Property<string>("ToUnit")
                         .IsRequired()
                         .HasColumnType("varchar(100)");
 
@@ -2455,7 +2458,10 @@ namespace DataAccessLayer.Migrations
                     b.Property<int?>("ToUpdatedby")
                         .HasColumnType("int");
 
-                    b.Property<int?>("ToUserId")
+                    b.Property<int>("ToUserId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UnitId")
                         .HasColumnType("int");
 
                     b.Property<int>("UnitMapId")
@@ -2475,6 +2481,8 @@ namespace DataAccessLayer.Migrations
                     b.HasIndex("ToUpdatedby");
 
                     b.HasIndex("ToUserId");
+
+                    b.HasIndex("UnitId");
 
                     b.HasIndex("UnitMapId");
 
@@ -3700,7 +3708,14 @@ namespace DataAccessLayer.Migrations
                     b.HasOne("DataTransferObject.Domain.MUserProfile", "ToMUserProfile")
                         .WithMany()
                         .HasForeignKey("ToUserId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("DataTransferObject.Domain.Master.MUnit", "MUnit")
+                        .WithMany()
+                        .HasForeignKey("UnitId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.HasOne("DataTransferObject.Domain.Master.MapUnit", "MapUnit")
                         .WithMany()
@@ -3716,6 +3731,8 @@ namespace DataAccessLayer.Migrations
                     b.Navigation("ApplicationUser");
 
                     b.Navigation("ApplicationUserUpdate");
+
+                    b.Navigation("MUnit");
 
                     b.Navigation("MUserProfile");
 

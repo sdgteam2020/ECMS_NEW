@@ -92,6 +92,7 @@ namespace DataAccessLayer
         public DbSet<TrnFaultyCard> TrnFaultyCard { get; set; } = null!;
         public DbSet<MCategory> MCategory { get; set; } = null!;
         public DbSet<TrnHotlistCard> TrnHotlistCards { get; set; } = null!;
+        public DbSet<TrnMapUnitChangeRequest> TrnMapUnitChangeRequest { get; set; } = null!;
         //public DbSet<TrnLogin_Log> TrnLogin_Log { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)

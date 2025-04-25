@@ -912,7 +912,7 @@ namespace Web.Controllers
                         ModelState.AddModelError("RegimentalId", "Please Select Regimental ");
                         goto end;
                     }
-                    if (string.IsNullOrEmpty(model.AadhaarNo) || model.AadhaarNo.Length != 12 || !model.AadhaarNo.All(char.IsDigit) || model.AadhaarNo == "000000000000")
+                    if (string.IsNullOrEmpty(model.AadhaarNo) || model.AadhaarNo.Length != 12 || !model.AadhaarNo.All(char.IsDigit) || model.AadhaarNo == "000000000000" || model.AadhaarNo[0] == '0')
                     {
                         ModelState.AddModelError("AadhaarNo", "Aadhaar number must be exactly 12 digits.");
                         goto end;
@@ -1159,7 +1159,7 @@ namespace Web.Controllers
                         {
                             ModelState.AddModelError("", "Please Select Regimental ");
                         }
-                        if (string.IsNullOrEmpty(model.AadhaarNo) || model.AadhaarNo.Length != 12 || !model.AadhaarNo.All(char.IsDigit) || model.AadhaarNo == "000000000000")
+                        if (string.IsNullOrEmpty(model.AadhaarNo) || model.AadhaarNo.Length != 12 || !model.AadhaarNo.All(char.IsDigit) || model.AadhaarNo == "000000000000" || model.AadhaarNo[0] == '0')
                         {
                             ModelState.AddModelError("AadhaarNo", "Aadhaar number must be exactly 12 digits.");
                             goto end;

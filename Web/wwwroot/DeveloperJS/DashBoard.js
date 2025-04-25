@@ -21,6 +21,14 @@
         location.href = '/BasicDetail/HotlistCard';
     });
 
+    document.getElementById("btnUnitChangeRequest").addEventListener("click", function (event) {
+        event.preventDefault(); // Prevent anchor default behavior
+        location.href = '/Master/MapUnitChange';
+    });
+    document.getElementById("btnAddUnitChangeRequest").addEventListener("click", function () {
+        location.href = '/Master/MapUnitChange';
+    });
+
     //document.getElementsByClassName("btnAdd").addEventListener("click", function (event) {
     //    event.stopPropagation(); // Prevent click from bubbling to the <a>
         
