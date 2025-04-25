@@ -71,6 +71,8 @@ function GetDashboardCount() {
                     $("#TotReq").html(response.TotReq);
                     $("#TotInaccurateData").html(response.TotInaccurateData);
                     $("#TotObservationRaised").html(response.TotObservationRaised);
+                    $("#TotLostCards").html(response.TotLostCards);
+                    $("#TotHotlistCards").html(response.TotHotlistCards);
                       
                    
                      $('.counter-value').each(function () {

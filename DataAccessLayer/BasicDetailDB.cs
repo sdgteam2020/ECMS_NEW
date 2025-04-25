@@ -587,7 +587,7 @@ namespace DataAccessLayer
                             from BasicDetails basi
                             inner join TrnUpload trnu on basi.BasicDetailId=trnu.BasicDetailId 
                             inner join TrnICardRequest req on req.BasicDetailId=basi.BasicDetailId and req.StatusId=1
-                            inner join TrnStepCounter stepcount on req.RequestId=stepcount.RequestId
+                            inner join TrnStepCounter stepcount on req.RequestId=stepcount.RequestId and stepcount.StepId=6
                             inner join TrnDomainMapping tdm on tdm.Id=req.TrnDomainMappingId
                             LEFT JOIN TrnFwds fwd ON fwd.RequestId = req.RequestId
                             Left join TrnHotlistCards thc on req.RequestId = thc.RequestId
@@ -607,7 +607,7 @@ namespace DataAccessLayer
                             from BasicDetails basi
                             inner join TrnUpload trnu on basi.BasicDetailId=trnu.BasicDetailId 
                             inner join TrnICardRequest req on req.BasicDetailId=basi.BasicDetailId and req.StatusId=1
-                            inner join TrnStepCounter stepcount on req.RequestId=stepcount.RequestId
+                            inner join TrnStepCounter stepcount on req.RequestId=stepcount.RequestId and stepcount.StepId=6
                             inner join TrnDomainMapping tdm on tdm.Id=req.TrnDomainMappingId
                             LEFT JOIN TrnFwds fwd ON fwd.RequestId = req.RequestId
                             Left join TrnLostCards tlc on req.RequestId = tlc.RequestId

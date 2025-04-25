@@ -24,6 +24,9 @@ namespace Web.Healpers
                 ignoreProperties.Add("FName");
                 ignoreProperties.Add("LName");
                 ignoreProperties.Add("IsActiveBool");
+                ignoreProperties.Add("ArmyNo");
+                ignoreProperties.Add("RankAndName");
+                ignoreProperties.Add("Unit");
             }
             foreach (var prop in typeof(T).GetProperties())
             {

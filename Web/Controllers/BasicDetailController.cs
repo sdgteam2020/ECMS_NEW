@@ -2605,6 +2605,7 @@ namespace Web.Controllers
                     else
                     {
                         var result = await _lostCardBL.AddWithReturn(model);
+                        await HotlistLostCard(model);
                         dTOFaulty.Result = true;
                         dTOFaulty.Message = "Record created!";
                         dTOFaulty.CurrentTime = result.UpdatedOn.GetValueOrDefault();
@@ -2633,6 +2634,30 @@ namespace Web.Controllers
             }
 
             return Json(dTOFaulty);
+        }
+
+        private async Task HotlistLostCard(TrnLostCard lostCard) {
+            try
+            {
+                var isHotlistExists = await _hotlistCardBL.FindRequestId(lostCard.RequestId);
+                if (!isHotlistExists)
+                {
+                    TrnHotlistCard trnHotlistCard = new TrnHotlistCard() {
+                        RequestId = lostCard.RequestId,
+                        RemarksIds = "65",
+                        Remark = lostCard.Remark,
+                        IsActive = lostCard.IsActive,
+                        Updatedby = lostCard.Updatedby,
+                        UpdatedOn = lostCard.UpdatedOn
+                    };
+
+                    await _hotlistCardBL.Add(trnHotlistCard);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "BasicDetail->HotlistLostCard");
+            }
         }
         #endregion HotlistCard
 

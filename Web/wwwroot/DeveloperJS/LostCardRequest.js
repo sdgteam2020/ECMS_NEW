@@ -103,6 +103,7 @@ function Proceed() {
             html: `
                     <div style="text-align: left; font-size: 16px;">
                         <p><strong>Applicant Name:</strong> ${ApplicantNameWithRank}</p>
+                        <p><strong>Lost Date & Time:</strong> ${DateFormateddMMyyyyhhmmss(parsedDate)}</p>
                         <p><strong>Remarks:</strong> ${Remarks}</p>
                         <p><strong>Logged In Details:</strong> ${UserName}</p>
                     </div>
