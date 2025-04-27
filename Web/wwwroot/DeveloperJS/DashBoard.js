@@ -25,8 +25,9 @@
         event.preventDefault(); // Prevent anchor default behavior
         location.href = '/Master/MapUnitChange';
     });
-    document.getElementById("btnAddUnitChangeRequest").addEventListener("click", function () {
-        location.href = '/Master/MapUnitChange';
+    document.getElementById("btnAddUnitChangeRequest").addEventListener("click", function (event) {
+        event.stopPropagation();
+        location.href = '/Master/MapUnitChangeRequest';
     });
 
     //document.getElementsByClassName("btnAdd").addEventListener("click", function (event) {

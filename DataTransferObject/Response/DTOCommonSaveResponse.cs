@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DataTransferObject.Response
 {
-    public class DTOFaultyCardSaveResponse
+    public class DTOCommonSaveResponse
     {
         public bool Result { get; set; } = false;
         public string Message { get; set; } = string.Empty;

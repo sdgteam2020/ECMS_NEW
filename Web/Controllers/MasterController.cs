@@ -849,8 +849,53 @@ namespace Web.Controllers
         #endregion End Unit
 
         #region Map Unit Change Request
+        public IActionResult MapUnitChange() 
+        {
+            string RoleName = string.Empty;
+            DtoSession? dtoSession = new DtoSession();
+            if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
+            {
+                dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
 
-        public async Task<IActionResult> MapUnitChange()
+            }
+            RoleName = dtoSession != null ? dtoSession.RoleName : string.Empty;
+            ViewBag.RoleName = RoleName;
+            return View();
+        }
+        [HttpPost]
+        public async Task<IActionResult> GetAllMapUnitChange(DTODataTablesRequestForMapUnitChange dTO)
+        {
+            int MapUnitId = 0;
+            string RoleName = string.Empty;
+            DtoSession? dtoSession = new DtoSession();
+            if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
+            {
+                dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+
+            }
+            RoleName = dtoSession != null ? dtoSession.RoleName : string.Empty;
+            try
+            {
+                dTO.RoleName = RoleName;
+                dTO.UnitMapId = dtoSession != null ? dtoSession.UnitId : 0;
+                return Json(await _mapUnitChangeBL.GetAllMapUnitChange(dTO));
+            }
+            catch (Exception ex)
+            {
+                List<DTOProfileManageResponse> dTOUserRegnResponses = new List<DTOProfileManageResponse>();
+                var responseData = new DTODataTablesResponse<DTOProfileManageResponse>
+                {
+                    draw = 0,
+                    recordsTotal = 0,
+                    recordsFiltered = 0,
+                    data = dTOUserRegnResponses
+                };
+                _logger.LogError(1001, ex, "Master->GetAllMapUnitChange");
+                return Json(responseData);
+            }
+        }
+
+        public async Task<IActionResult> MapUnitChangeRequest()
         {
             int MapUnitId = 0;
             string RoleName = string.Empty;
@@ -872,7 +917,7 @@ namespace Web.Controllers
                 }
                 else
                 {
-                    RoleName = dtoSession != null ? dtoSession.RankName : string.Empty;
+                    RoleName = dtoSession != null ? dtoSession.RoleName : string.Empty;
                     ViewBag.MapUnitId = MapUnitId;
                     ViewBag.RoleName = RoleName;
                     return View();
@@ -885,6 +930,121 @@ namespace Web.Controllers
                 return RedirectToAction("Dashboard", "Home");
             }
 
+        }
+
+        public async Task<IActionResult> SaveMapUnitChangeRequest(DTOSaveMapUnitChangeRequest dTO)
+        {
+            DTOCommonSaveResponse dTOCommon = new DTOCommonSaveResponse();
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    if (dTO.ChangeMapUnitId > 0 || dTO.ChangeMapUnitId < 0)
+                    {
+                        dTOCommon.Result = false;
+                        dTOCommon.Message = "This action is not allowed for you. Please check.";
+                        return Json(dTOCommon);
+                    }
+                    else
+                    {
+                        int MapUnitId = 0;
+                        DtoSession? dtoSession = new DtoSession();
+                        if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
+                        {
+                            dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+
+                        }
+                        MapUnitId = dtoSession != null ? dtoSession.UnitId : 0;
+                        if (MapUnitId > 0)
+                        {
+                            bool result = await _mapUnitChangeBL.FindUnitIdMapped(MapUnitId);
+                            if (result)
+                            {
+                                TempData["error"] = "Unit Mapping Change Request already place.";
+                                TempData.Keep("error");
+                                return RedirectToAction("Dashboard", "Home");
+                            }
+                            else
+                            {
+                                DTOMapUnitResponse dTOMap =await unitOfWork.MappUnit.GetALLByUnitMapId(MapUnitId);
+                                
+
+                                string ExistingCh = string.Join("#", new[]
+                                {
+                                    dTOMap.UnitName,
+                                    $"{dTOMap.Sus_no}{dTOMap.Suffix}",
+                                    dTOMap.UnitType.ToString(),
+                                    dTOMap.ComdName,
+                                    dTOMap.CorpsName,
+                                    dTOMap.DivName,
+                                    dTOMap.BdeName,
+                                    dTOMap.BranchName,
+                                    dTOMap.PSOName,
+                                    dTOMap.SubDteName
+                                });
+                                string RequestCh = string.Join("#", new[]
+                                {
+                                    dTO.UnitType.ToString(),
+                                    dTO.ComdId.ToString(),
+                                    dTO.CorpsId.ToString(),
+                                    dTO.DivId.ToString(),
+                                    dTO.BdeId.ToString(),
+                                    dTO.FmnBranchID.ToString(),
+                                    dTO.PsoId.ToString(),
+                                    dTO.SubDteId.ToString(),
+                                });
+                                TrnMapUnitChangeRequest unitChangeRequest = new TrnMapUnitChangeRequest
+                                {
+                                    ChangeMapUnitId = dTO.ChangeMapUnitId,
+                                    UnitMapId = MapUnitId,
+                                    ExistingCh = ExistingCh,
+                                    RequestCh = RequestCh,
+                                    Remark = dTO.Remark,
+                                    AdminRemark = null,
+                                    IsActive = true,
+                                    IsComplete = false,
+                                    FromUserId = dtoSession != null ? dtoSession.UserId : 0,
+                                    Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier)),
+                                    UpdatedOn = DateTime.Now,
+                                    ToUserId = null,
+                                    ToUpdatedby = null,
+                                    ToUpdatedOn = null,
+                                };
+                                TrnMapUnitChangeRequest response = await _mapUnitChangeBL.AddWithReturn(unitChangeRequest);
+                                dTOCommon.Result = true;
+                                dTOCommon.Id = response.ChangeMapUnitId.ToString();
+                                dTOCommon.CurrentTime= response.UpdatedOn ?? DateTime.Now;
+                                dTOCommon.Message = "Unit Mapping Change request place successfully ";
+                                return Json(dTOCommon);
+                            }
+                        }
+                        else
+                        {
+                            TempData["error"] = "Session expired.";
+                            TempData.Keep("error");
+                            return RedirectToAction("Dashboard", "Home");
+                        }
+                    }
+                }
+                else
+                {
+                    var errors = ModelState.Where(x => x.Value?.Errors?.Count > 0)
+                                .SelectMany(x => x.Value!.Errors)
+                                .Select(e => e.ErrorMessage)
+                                .ToList();
+                    if (errors.Any())
+                    {
+                        dTOCommon.Message = string.Join("; ", errors); // Concatenate all error messages
+                    }
+                    dTOCommon.Result = false;
+                    return Json(dTOCommon);
+                }
+            }
+            catch (Exception ex) {
+                dTOCommon.Result = false;
+                dTOCommon.Message = ex.Message;
+                return Json(dTOCommon);
+            }
         }
 
         #endregion End Map Unit Change Request

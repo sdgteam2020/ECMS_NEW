@@ -1,4 +1,6 @@
 ﻿using DataTransferObject.Domain.Model;
+using DataTransferObject.Requests;
+using DataTransferObject.Response;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,5 +12,6 @@ namespace BusinessLogicsLayer.MapUnitChange
     public interface IMapUnitChangeBL : IGenericRepository<TrnMapUnitChangeRequest>
     {
         public Task<bool> FindUnitIdMapped(int UnitMapId);
+        public Task<DTODataTablesResponse<DTOMapUnitChangeResponse>> GetAllMapUnitChange(DTODataTablesRequestForMapUnitChange request);
     }
 }

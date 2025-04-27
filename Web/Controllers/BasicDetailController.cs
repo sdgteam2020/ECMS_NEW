@@ -2228,7 +2228,7 @@ namespace Web.Controllers
         {
             MTrnFwd? mTrnFwd = new MTrnFwd();
             DtoSession? dtoSession = new DtoSession();
-            DTOFaultyCardSaveResponse dTOFaulty = new DTOFaultyCardSaveResponse();
+            DTOCommonSaveResponse dTOFaulty = new DTOCommonSaveResponse();
 
             if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
             {
@@ -2346,7 +2346,7 @@ namespace Web.Controllers
             }
             dTO.UserId = dtoSession != null ? dtoSession.UserId : 0;
 
-            DTOFaultyCardSaveResponse dTOFaulty = new DTOFaultyCardSaveResponse();
+            DTOCommonSaveResponse dTOFaulty = new DTOCommonSaveResponse();
             try
             {
                 dTO.IsActive = true;
@@ -2419,7 +2419,7 @@ namespace Web.Controllers
         [HttpPost]
         public async Task<IActionResult> HotlistDataExport([FromBody] DTOHotlistCardsExportRequest req)
         {
-            DTOFaultyCardSaveResponse dTOFaulty = new DTOFaultyCardSaveResponse();
+            DTOCommonSaveResponse dTOFaulty = new DTOCommonSaveResponse();
             try
             {
                 var tempFileName = Path.GetTempFileName().Replace(".tmp", ".csv");
@@ -2480,7 +2480,7 @@ namespace Web.Controllers
 
         public async Task<IActionResult> SaveHotlistCardRequest(TrnHotlistCard model)
         {
-            DTOFaultyCardSaveResponse dTOFaulty = new DTOFaultyCardSaveResponse();
+            DTOCommonSaveResponse dTOFaulty = new DTOCommonSaveResponse();
             try
             {
                 model.IsActive = true;

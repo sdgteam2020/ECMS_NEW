@@ -26,7 +26,13 @@ namespace DataTransferObject.Domain.Model
 
         [Column(TypeName = "varchar(100)")]
         public string RequestCh { get; set; } = string.Empty;
+
+        [StringLength(100)]
+        [Column(TypeName = "varchar(100)")]
         public string Remark { get; set; } = string.Empty;
+
+        [StringLength(100)]
+        [Column(TypeName = "varchar(100)")]
         public string? AdminRemark { get; set; }
         public bool IsComplete { get; set; } = false;
         

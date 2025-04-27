@@ -1,6 +1,8 @@
 ﻿using DataAccessLayer;
 using DataAccessLayer.BaseInterfaces;
 using DataTransferObject.Domain.Model;
+using DataTransferObject.Requests;
+using DataTransferObject.Response;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,6 +21,10 @@ namespace BusinessLogicsLayer.MapUnitChange
         public async Task<bool> FindUnitIdMapped(int UnitMapId) 
         {
             return await _UnitChangeDB.FindUnitIdMapped(UnitMapId);
+        }
+        public async Task<DTODataTablesResponse<DTOMapUnitChangeResponse>> GetAllMapUnitChange(DTODataTablesRequestForMapUnitChange request)
+        {
+            return await _UnitChangeDB.GetAllMapUnitChange(request);
         }
     }
 }

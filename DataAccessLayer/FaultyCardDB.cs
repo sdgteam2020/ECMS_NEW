@@ -174,9 +174,9 @@ namespace DataAccessLayer
             }
 
         }
-        public async Task<DTOFaultyCardSaveResponse> SaveFaultyCard(DTOFaultyCardRequest dTO, MTrnFwd? mTrnFwd)
+        public async Task<DTOCommonSaveResponse> SaveFaultyCard(DTOFaultyCardRequest dTO, MTrnFwd? mTrnFwd)
         {
-            DTOFaultyCardSaveResponse saveResponse = new DTOFaultyCardSaveResponse();
+            DTOCommonSaveResponse saveResponse = new DTOCommonSaveResponse();
             var (db, transaction) = _contextDP.CreateConnectionWithTransaction();
             string insert = "";
             string update = "";
