@@ -22,6 +22,7 @@ using BusinessLogicsLayer.HotlistCard;
 using BusinessLogicsLayer.IAMSetting;
 using BusinessLogicsLayer.IssuingAuthority;
 using BusinessLogicsLayer.MapUnitChange;
+using BusinessLogicsLayer.LostCard;
 using BusinessLogicsLayer.Master;
 using BusinessLogicsLayer.OROMapp;
 using BusinessLogicsLayer.Posting;
@@ -198,6 +199,9 @@ namespace BusinessLogicsLayer
 
             services.AddTransient<IMapUnitChangeBL, MapUnitChangeBL>();
             services.AddTransient<IMapUnitChangeDB, MapUnitChangeDB>();
+
+            services.AddTransient<ILostCardDB, LostCardDB>();
+            services.AddTransient<ILostCardBL, LostCardBL>();
 
 
 

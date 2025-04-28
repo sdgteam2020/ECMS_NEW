@@ -59,6 +59,8 @@ $(function () {
                 window.location.href = "/BasicDetail/FaultyCardRequest";
             else if ($("#armynosearchTypeId").val() == HoltlistCardRequest)
                 window.location.href = "/BasicDetail/HotListCardRequest";
+            else if ($("#armynosearchTypeId").val() == LostCardRequest)
+                window.location.href = "/BasicDetail/LostCardRequest";
         } else {
             toastr.error("Please Enter Army No");
         }
@@ -72,7 +74,6 @@ $(function () {
                         ArmyNo: request.term,
                         TypeId: $("#armynosearchTypeId").val()
                     });
-                console.log("Param values:-", param.toString());
                 $("#loading").addClass("d-none");
                 $("#armynosearchAllName").html("");
                 $("#armynosearchAllpic").attr("src", "");
@@ -448,4 +449,15 @@ function UpdateNotification(DisplayId) {
             }
         }
     });
+}
+
+function isValidDate(d) {
+    return d instanceof Date && !isNaN(d);
+}
+function formatDateToSqlString(inputDate) {
+    let date = new Date(inputDate);
+    const pad = (num, size = 2) => String(num).padStart(size, '0');
+    return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ` +
+        `${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}.` +
+        `${pad(date.getMilliseconds(), 3)}`;
 }

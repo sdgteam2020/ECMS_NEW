@@ -21,6 +21,11 @@
         location.href = '/BasicDetail/HotlistCard';
     });
 
+    document.getElementById("btnLostCard").addEventListener("click", function (event) {
+        event.preventDefault(); // Prevent anchor default behavior
+        location.href = '/BasicDetail/LostCard';
+    });
+
     document.getElementById("btnUnitChangeRequest").addEventListener("click", function (event) {
         event.preventDefault(); // Prevent anchor default behavior
         location.href = '/Master/MapUnitChange';
@@ -75,6 +80,8 @@ function GetDashboardCount() {
                     $("#TotReq").html(response.TotReq);
                     $("#TotInaccurateData").html(response.TotInaccurateData);
                     $("#TotObservationRaised").html(response.TotObservationRaised);
+                    $("#TotLostCards").html(response.TotLostCards);
+                    $("#TotHotlistCards").html(response.TotHotlistCards);
                       
                    
                      $('.counter-value').each(function () {

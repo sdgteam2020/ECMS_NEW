@@ -8,7 +8,7 @@
     .clickable {
         height: 154px;
         width: 154px;
-        display: block;
+        display: inline;
     }
 
     .p-4 {
@@ -98,8 +98,24 @@
                             </div>
                         </a>
                     </div>
+                    @if (ViewBag.Role == "DteAdmin")
+                    {
+                        <div class="col-md-2 col-sm-6">
+                            <a href="/Home/ICardProcessReport" class="clickable">
+                                @*  OffrsSubmitted *@
+                                <div class="counter blue">
+                                    <div class="counter-icon">
+                                        <i class="fa fa-user"></i>
+                                    </div>
+                                    <h3 style="margin-top:2.0rem!important;">
+                                        I-Card Process Report
+                                    </h3>
+                                </div>
+                            </a>
+                        </div>
+                    }
                     <div class="col-md-2 col-sm-6">
-                        <a href="#">
+                        <a href="#" class="clickable">
                             <div class="counter purple armyNoallserchPopup" id="btnMisprintedCard">
                                 <div class="counter-icon">
                                     <button class="btn btn-outline-success font-weight-600 btn-sm btnAdd" id="btnAddMisprintedCard" data-type="52"><i class="fa fa-plus mr-1 font-weight-700" aria-hidden="true"></i>Add</button>
@@ -111,14 +127,13 @@
                         </a>
                     </div>
                     <div class="col-md-2 col-sm-6">
-                        <a href="#">
+                        <a href="#" class="clickable">
                             <div class="counter purple armyNoallserchPopup" id="btnHotlistCard">
                                 <div class="counter-icon">
                                     <button class="btn btn-outline-success font-weight-600 btn-sm btnAdd" id="btnAddHotlistCard" data-type="53"><i class="fa fa-plus mr-1 font-weight-700" aria-hidden="true"></i>Add</button>
                                 </div>
-                                <h3 style="margin-top:3.5rem!important;">
-                                    Hotlist Card
-                                </h3>
+                                <span class="counter-value" id="TotHotlistCards"></span>
+                                <h3>Card Hotlisting</h3>
                             </div>
                         </a>
                     </div>
@@ -131,6 +146,17 @@
                                 <h3 style="margin-top:3.5rem!important;">
                                     Unit Mapping Change Request
                                 </h3>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-md-2 col-sm-6">
+                        <a href="#" class="clickable">
+                            <div class="counter pink armyNoallserchPopup" id="btnLostCard">
+                                <div class="counter-icon">
+                                    <button class="btn btn-outline-success font-weight-600 btn-sm btnAdd" id="btnAddLostCard" data-type="54"><i class="fa fa-plus mr-1 font-weight-700" aria-hidden="true"></i>Add</button>
+                                </div>
+                                <span class="counter-value" id="TotLostCards"></span>
+                                <h3>Lost Card</h3>
                             </div>
                         </a>
                     </div>
