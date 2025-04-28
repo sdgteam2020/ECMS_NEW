@@ -6,20 +6,20 @@ using System.Threading.Tasks;
 
 namespace DataTransferObject.Response
 {
-    public class DTOHotlistCardExportResponse
+    public class DTOLostCardExportResponse
     {
         //public int RequestId { get; set; }
-        public int HotlistCardId { get; set; }
+        public int LostCardId { get; set; }
         public string ArmyNo { get; set; }
         public string RankAbbreviation { get; set; }
         public string FName { get; set; }
         public string LName { get; set; }
         public string RankAndName => $"{RankAbbreviation} {FName} {(string.IsNullOrEmpty(LName) ? string.Empty : LName)}";
         public string Unit { get; set; }
+        public DateTime LostOn { get; set; }
         public DateTime DateAndTime { get; set; }
         public bool IsActiveBool { get; set; }
         public string IsActive => IsActiveBool ? "Yes" : "No";
-        public string Reasons { get; set; }
         public string Remark { get; set; }
         public string CardSerialNo { get; set; }
         public string ChipNo { get; set; }

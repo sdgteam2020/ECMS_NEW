@@ -1,0 +1,119 @@
+﻿@{
+    ViewData["Title"] = "Lost Card Request";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .containerMain {
+        margin-left: 10%;
+        margin-right: 10%;
+    }
+    .faulty {
+        background-color: #044C92;
+        text-align: center;
+        padding: 0.5rem !important;
+        margin-right: 0.25rem !important;
+        border: hidden;
+        font-weight: 400 !important;
+        color: #fff !important;
+        width: 170px;
+        height: 60px;
+    }
+
+    .modal.left .modal-dialog, .modal.right .modal-dialog {
+        position: fixed;
+        margin: auto;
+        width: 700px;
+        height: 100%;
+        text-align: left;
+        -webkit-transform: translate3d(0%, 0, 0);
+        -ms-transform: translate3d(0%, 0, 0);
+        -o-transform: translate3d(0%, 0, 0);
+        transform: translate3d(0%, 0, 0);
+    }
+</style>
+<header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
+    <div class="containerMain">
+        <div class="page-header-content pt-4">
+            <div class="row align-items-center justify-content-between">
+                <div class="col-auto">
+                    <h1 class="page-header-title">
+                        <div class="page-header-icon"> <i class="fa fa-bars"></i></div>
+                        <a href="/Home/Index" class="mr-2">Home</a> >  <a href="/Home/Dashboard" class="mr-2">Dashboard</a> > Lost Card
+                    </h1>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</header>
+<div class="containerMain mt-n10">
+    <div class="card mb-3">
+        <div class="card-header">
+            <div class="row">
+                <div class="col-xl-12 text-left">
+                    <h3>
+                        Lost Card Request Indl Army No
+                        <small class="text-muted"><span id="spnArmyNo"></span></small>
+                    </h3>
+                </div>
+            </div>
+        </div>
+        <div class="card-body" style="min-height:150px;">
+            <div class="row g-3 row-deck mb-3">
+                <form action="" id="SaveLostCardRequest" method="post" name="SaveLostCardRequest">
+                    <div class="row">
+                        @* <span class=" d-none" id="spnTrnLostCardId">@ViewBag.TrnFaultyCardId</span> *@
+                        <span class=" d-none" id="spnLostCardRequestId">0</span>
+                        <span class=" d-none" id="spnMaxTrnFwdId">0</span>
+                        @* <span class=" d-none" id="spnClaimValue">@ViewBag.Claim</span> *@
+                        <div class="col-sm-7">
+                            <div class="card p-1">
+                                <div id="partialContainerBD">
+                                </div>
+                                <div class="text-center">
+                                    <button type="button" class="faulty" id="btnCardPreview" name="btnCardPreview">I-Card Preview</button>
+                                    <button type="button" class="faulty" id="btnXMLDownload" name="btnXMLDownload">XML Download</button>
+                                    <button type="button" class="faulty" id="btnApplMoveHistory" name="btnApplMoveHistory">I-Card Move History</button>
+                                    <button type="button" class="faulty" id="btnLostCardsList" name="btnLostCardsList">View Lost Cards</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-5">
+                            <div class="row">
+                                <div class="card p-2">
+                                    <div class="feature-box3">
+                                        <div class="top-block_ind d-flex">
+                                            <div class="text-block">
+                                                <h5 class="mb-1 text-font2 font-weight600">Report Lost Card</h5>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row mb-2">
+                                        <label class="col-form-label col-sm-5 labelprofile">Lost On<i class="fas fa-asterisk mand1"></i></label>
+                                        <div class="col-sm-7">
+                                            <input type="text" id="txtlostoninp" class="form-control datetimepickerpast" name="txtlostoninp" autocomplete="off">
+                                            <span class="text-danger field-validation-valid" data-valmsg-for="txtlostoninp" data-valmsg-replace="true"></span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row mb-2">
+                                        <label class="col-form-label col-sm-5 labelprofile">Remarks<i class="fas fa-asterisk mand1"></i></label>
+                                        <div class="col-sm-7">
+                                            <textarea class="form-control1" style="height:auto!important;" name="txtLostRemark" id="txtLostRemark" rows="3" maxlength="100" data-val-maxlength="Maximum length of Message is 100 character." data-val-maxlength-max="100" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="Remark is required." data-val-regex-pattern="^[\w\&\.\-\; ]*$"></textarea>
+                                            <span class="text-danger field-validation-valid" data-valmsg-for="txtLostRemark" data-valmsg-replace="true"></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-12 text-center mb-4">
+                                        <input type="button" class="btn btn-primary" id="btnAccept" value="Submit" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script asp-src-include="~/developerjs/LostCardRequest.js"></script>
+<script asp-src-include="~/developerjs/mtables.js"></script>
+<script asp-src-include="~/developerjs/ICardPrint.js"></script>

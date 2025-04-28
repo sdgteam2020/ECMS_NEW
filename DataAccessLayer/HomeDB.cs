@@ -30,13 +30,16 @@ namespace DataAccessLayer
         }
         public async Task<DTODashboardCountResponse> GetDashBoardCount(int UserId, DTOApplFwdConditionRequest dTOApplFwdCondition, short ArmedIdForORO)
         {
-            string query = "declare @TotReq int=0 declare @TotInaccurateData int=0 " +
+            string query = "declare @TotReq int=0 declare @TotInaccurateData int=0 declare @TotLostCards int=0 declare @TotHotlistCards int=0" +
                             " select @TotReq=COUNT(distinct req.RequestId) from TrnDomainMapping domain" +
                             " inner join TrnICardRequest req on req.TrnDomainMappingId=domain.Id" +
                             " where domain.AspNetUsersId=@UserId" +
                             
                             " select @TotInaccurateData=COUNT(BasicDetailTempId) from BasicDetailTemps" +
                             " where Updatedby=@UserId AND IsActive=1 " +
+
+                            " select @TotLostCards=COUNT(LostCardId) from TrnLostCards" +
+                            " select @TotHotlistCards=COUNT(HotlistCardId) from TrnHotlistCards" +
 
                             " declare @AspNetUsersId int=0 declare @ArmedId int=0 declare @Name varchar(25) declare @TotObservationRaised int=0 declare @TDMId int=0  " +
                             " SELECT CASE WHEN ISNULL(RECO.TDMId,0) >0 THEN RECO.TDMId ELSE ORO.TDMId END TDMId, " +
@@ -86,7 +89,7 @@ namespace DataAccessLayer
                             " WHERE Temps.ApplyForId=1 AND ranks1.Orderby > @MP6A_RankOrderby AND SUBSTRING(UPPER(Temps.ServiceNo),1,2) != @MP6F_ArmyNoPrefix AND Temps.ArmedId in (select value from string_split(oro.ArmedIdList,','))  AND Temps.IsActive=1 " +
                             " END " +
                             " END " +
-                            " select @TotReq TotReq,@TotInaccurateData TotInaccurateData,@TotObservationRaised TotObservationRaised";
+                            " select @TotReq TotReq,@TotInaccurateData TotInaccurateData,@TotObservationRaised TotObservationRaised,@TotLostCards TotLostCards,@TotHotlistCards TotHotlistCards";
 
             try
             {

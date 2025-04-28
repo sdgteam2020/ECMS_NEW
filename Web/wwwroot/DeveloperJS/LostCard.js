@@ -8,7 +8,7 @@ $(function () {
         $("#txtarmynosearchAll").val("");
         $("#armynosearchAllpic").attr("src", "");
         $("#unitoffrsModal").modal("show");
-        $("#armynosearchTypeId").val(HoltlistCardRequest);
+        $("#armynosearchTypeId").val(LostCardRequest);
     });
 
 
@@ -80,7 +80,7 @@ function BindData() {
                 sortDirection: data.order.length > 0 ? data.order[0].dir : '', // Add a check for data.order
             };
             try {
-                let response = await fetch("/BasicDetail/GetAllHotlist", {
+                let response = await fetch("/BasicDetail/GetAllLost", {
                     method: "POST",
                     headers: { "Content-Type": "application/x-www-form-urlencoded" },
                     body: new URLSearchParams(requestData).toString()
@@ -113,7 +113,7 @@ function BindData() {
                 name: null,
                 visible: false,
                 render: function (data, type, row) {
-                    return `<span id='spnTrnFaultyCardId'> ${row.HotlistCardId}</span><span id='spnEncryptedId'>${row.EncryptedId}</span><span id='spnRequestId'>${row.RequestId}</span><span id='spnServiceNo'>${row.ServiceNo}</span>`;
+                    return `<span id='spnTrnFaultyCardId'> ${row.LostCardId}</span><span id='spnEncryptedId'>${row.EncryptedId}</span><span id='spnRequestId'>${row.RequestId}</span><span id='spnServiceNo'>${row.ServiceNo}</span>`;
                 }
             },
             {
@@ -137,18 +137,17 @@ function BindData() {
             },
             { data: "UnitAbbreviation", name: "UnitAbbreviation", orderable: false },
             {
-                data: "UpdatedOn",
-                name: "UpdatedOn",
+                data: "LostOn",
+                name: "LostOn",
                 render: function (data, type, row) {
                     return DateFormateddMMyyyyhhmmss(data);
                 }
             },
             {
-                data: 'RemarksNameList',
-                name: 'RemarksNameList',
-                orderable: false,
+                data: "UpdatedOn",
+                name: "UpdatedOn",
                 render: function (data, type, row) {
-                    return "<button type='button' class='cls-remarks btn btn-icon btn-round btn-warning mr-1'><i class='fa fa-eye'></i><span id='spnRemarks' class='d-none'></span></button>";
+                    return DateFormateddMMyyyyhhmmss(data);
                 }
             },
             {
@@ -183,7 +182,7 @@ function BindData() {
                 extend: 'pdfHtml5',
                 orientation: 'landscape',
                 pageSize: 'LEGAL',
-                title: 'E-IASC_HotlistCard',
+                title: 'E-IASC_LostCard',
                 exportOptions: {
                     columns: "thead th:not(.noExport)"
                 },
@@ -195,23 +194,6 @@ function BindData() {
             // Add 'align-middle' class to all td elements in the body
             $('#tbldata tbody tr').each(function () {
                 $(this).find('td').addClass('align-middle');
-            });
-
-            $("body").on("click", ".cls-remarks", function () {
-                var rowData = table.row($(this).closest("tr")).data();
-                let Label = `Request Id :- ${rowData.RequestId}`;
-                var remarksArray = rowData.RemarksNameList.split('#');
-                let listItem = "";
-                if (remarksArray != null) {
-                    listItem += "<ul>";
-                    for (var j = 0; j < remarksArray.length; j++) {
-                        listItem += "<li>" + remarksArray[j] + "</li>";
-                    }
-                    listItem += "</ul>";
-                }
-                $("#MessageDialogLabel").html(Label);
-                $("#MessageDialogBody").html(listItem);
-                $("#MessageDialog").modal('show');
             });
 
             $("body").on("click", ".cls-FromRemark", function () {
@@ -254,7 +236,7 @@ function DataExport() {
         "DataExportType": dataExportType
     };
 
-    fetch('/BasicDetail/HotlistDataExport', {
+    fetch('/BasicDetail/LostDataExport', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -265,7 +247,7 @@ function DataExport() {
         .then(data => {
             if (data.Result) {
                 const baseUrl = window.location.origin;
-                const downloadUrl = `${baseUrl}/BasicDetail/DownloadCsv?fileName=${data.Message}&fileStoreName=HotlistCard`;
+                const downloadUrl = `${baseUrl}/BasicDetail/DownloadCsv?fileName=${data.Message}&fileStoreName=LostCard`;
                 const link = document.createElement("a");
                 link.href = downloadUrl;
                 link.download = data.file;
