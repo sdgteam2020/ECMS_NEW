@@ -2546,7 +2546,7 @@ namespace Web.Controllers
         [HttpPost]
         public async Task<IActionResult> LostDataExport([FromBody] DTOHotlistCardsExportRequest req)
         {
-            DTOFaultyCardSaveResponse dTOFaulty = new DTOFaultyCardSaveResponse();
+            DTOCommonSaveResponse dTOFaulty = new DTOCommonSaveResponse();
             try
             {
                 var tempFileName = Path.GetTempFileName().Replace(".tmp", ".csv");
@@ -2587,7 +2587,7 @@ namespace Web.Controllers
 
         public async Task<IActionResult> SaveLostCardRequest(TrnLostCard model)
         {
-            DTOFaultyCardSaveResponse dTOFaulty = new DTOFaultyCardSaveResponse();
+            DTOCommonSaveResponse dTOFaulty = new DTOCommonSaveResponse();
             try
             {
                 model.IsActive = true;
