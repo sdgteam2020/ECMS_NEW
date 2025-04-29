@@ -25,6 +25,7 @@ namespace DataTransferObject.Response
         public int ExportPending { get; set; }
         public int ExportApproved { get; set; }
         public int ExportReject { get; set; }
+        public int CsvUploadCount { get; set; }
 
     }
 }

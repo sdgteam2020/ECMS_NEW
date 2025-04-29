@@ -2734,7 +2734,7 @@ namespace Web.Controllers
                     dto.MapUnitId = dtoSession != null ? dtoSession.UnitId : 0;
 
                     var user = await userManager.FindByIdAsync(dto.AspNetUsersId.ToString());
-
+                     
                     // UserManager service GetClaimsAsync method gets all the current claims of the user
                     var UserClaims = await userManager.GetClaimsAsync(user);
                     if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "ICard Export Data"))
