@@ -109,6 +109,45 @@ namespace DataAccessLayer
                 db.Dispose();
             }
         }
+        public async Task<DTOMapUnitDetailsResponse> GetUnitMoveHistory(DTOMapUnitDetailsResponse dTO)
+        {
+            string query = "";
+            query = @"Select mrak.RankAbbreviation,up.Name as RequestBy,up.ArmyNo,UnitChReq.Remark,UnitChReq.AdminRemark,UnitChReq.IsComplete,UnitChReq.IsEditAction,UnitChReq.RequestStatus,
+                        mcom.ComdName AS RequestComdName,mcor.CorpsName  As RequestCorpsName,mdiv.DivName as RequestDivName,mbde.BdeName as RequestBdeName,mfmnb.BranchName as RequestBranchName,mpso.PSOName as RequestPSOName,msubd.SubDteName as RequestSubDteName
+                        from TrnMapUnitChangeRequest UnitChReq
+                        inner join UserProfile up on up.UserId = UnitChReq.FromUserId
+                        inner join MRank mrak on mrak.RankId = up.RankId
+                        inner join MComd mcom on mcom.ComdId = @ComdId
+                        inner join MCorps mcor on mcor.CorpsId = @CorpsId
+                        inner join MDiv mdiv on mdiv.DivId = @DivId
+                        inner join MBde mbde on mbde.BdeId = @BdeId
+                        inner join MFmnBranches mfmnb on mfmnb.FmnBranchID = @FmnBranchID
+                        inner join MPso mpso on mpso.PsoId = @PsoId
+                        inner join MSubDte msubd on msubd.SubDteId = @SubDteId
+                        where UnitChReq.MapUnitChangeRequestId=@MapUnitChangeRequestId";
+            try
+            {
+                using (var connection = _contextDP.CreateConnection())
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@MapUnitChangeRequestId", dTO.MapUnitChangeRequestId, DbType.Int32, ParameterDirection.Input);
+                    parameters.Add("@ComdId", dTO.ComdId, DbType.Byte, ParameterDirection.Input);
+                    parameters.Add("@CorpsId", dTO.CorpsId, DbType.Byte, ParameterDirection.Input);
+                    parameters.Add("@DivId", dTO.DivId, DbType.Byte, ParameterDirection.Input);
+                    parameters.Add("@BdeId", dTO.BdeId, DbType.Byte, ParameterDirection.Input);
+                    parameters.Add("@FmnBranchID", dTO.FmnBranchID, DbType.Byte, ParameterDirection.Input);
+                    parameters.Add("@PsoId", dTO.PsoId, DbType.Byte, ParameterDirection.Input);
+                    parameters.Add("@SubDteId", dTO.SubDteId, DbType.Byte, ParameterDirection.Input);
+
+                    return await connection.QuerySingleAsync<DTOMapUnitDetailsResponse>(query, parameters);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "MapUnitChangeDB->GetUnitMoveHistory");
+                return new DTOMapUnitDetailsResponse();
+            }
+        }
         public async Task<DTODataTablesResponse<DTOMapUnitChangeResponse>> GetAllMapUnitChange(DTODataTablesRequestForMapUnitChange request)
         {
             try

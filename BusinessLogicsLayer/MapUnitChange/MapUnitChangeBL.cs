@@ -38,5 +38,9 @@ namespace BusinessLogicsLayer.MapUnitChange
             }
             return await _UnitChangeDB.UpdateMapUnitChangeRequest(dTO, trnMapUnit);
         }
+        public async Task<DTOMapUnitDetailsResponse> GetUnitMoveHistory(DTOMapUnitDetailsResponse dTO)
+        {
+            return await _UnitChangeDB.GetUnitMoveHistory(dTO);
+        }
     }
 }

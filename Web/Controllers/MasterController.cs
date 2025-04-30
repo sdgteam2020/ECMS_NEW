@@ -870,6 +870,68 @@ namespace Web.Controllers
             ViewBag.RoleName = RoleName;
             return View();
         }
+        public async Task<IActionResult> GetUnitMoveHistory(int MapUnitChangeRequestId)
+        {
+            try
+            {
+                TrnMapUnitChangeRequest? mapUnitChangeRequest = await _mapUnitChangeBL.Get(MapUnitChangeRequestId);
+
+                if (mapUnitChangeRequest != null)
+                {
+                    DTOMapUnitDetailsResponse dTOMapUnitDetails = new DTOMapUnitDetailsResponse();
+
+                    string[] ExistingCh = mapUnitChangeRequest.ExistingCh.Split('#');
+                    string[] RequestCh = mapUnitChangeRequest.RequestCh.Split('#');
+
+
+                    dTOMapUnitDetails.MapUnitChangeRequestId = MapUnitChangeRequestId;
+                    dTOMapUnitDetails.ComdId = Convert.ToByte(RequestCh[1]);
+                    dTOMapUnitDetails.CorpsId = Convert.ToByte(RequestCh[2]);
+                    dTOMapUnitDetails.DivId = Convert.ToByte(RequestCh[3]);
+                    dTOMapUnitDetails.BdeId = Convert.ToByte(RequestCh[4]);
+                    dTOMapUnitDetails.FmnBranchID = Convert.ToByte(RequestCh[5]);
+                    dTOMapUnitDetails.PsoId = Convert.ToByte(RequestCh[6]);
+                    dTOMapUnitDetails.SubDteId = Convert.ToByte(RequestCh[7]);
+
+                    dTOMapUnitDetails = await _mapUnitChangeBL.GetUnitMoveHistory(dTOMapUnitDetails);
+                    
+                    dTOMapUnitDetails.MapUnitChangeRequestId = MapUnitChangeRequestId;
+                    dTOMapUnitDetails.UnitAbbreviation = ExistingCh[0];
+                    dTOMapUnitDetails.Sus_no = ExistingCh[1];
+                    dTOMapUnitDetails.ExistingUnitType = Convert.ToInt32(ExistingCh[2]);
+                    dTOMapUnitDetails.ExistingComdName = ExistingCh[3];
+                    dTOMapUnitDetails.ExistingCorpsName = ExistingCh[4];
+                    dTOMapUnitDetails.ExistingDivName = ExistingCh[5];
+                    dTOMapUnitDetails.ExistingBdeName = ExistingCh[6];
+                    dTOMapUnitDetails.ExistingBranchName = ExistingCh[7];
+                    dTOMapUnitDetails.ExistingPSOName = ExistingCh[8];
+                    dTOMapUnitDetails.ExistingSubDteName = ExistingCh[9];
+
+                    dTOMapUnitDetails.RequestUnitType = Convert.ToInt32(RequestCh[0]);
+                    dTOMapUnitDetails.ComdId = Convert.ToByte(RequestCh[1]);
+                    dTOMapUnitDetails.CorpsId = Convert.ToByte(RequestCh[2]);
+                    dTOMapUnitDetails.DivId = Convert.ToByte(RequestCh[3]);
+                    dTOMapUnitDetails.BdeId = Convert.ToByte(RequestCh[4]);
+                    dTOMapUnitDetails.FmnBranchID = Convert.ToByte(RequestCh[5]);
+                    dTOMapUnitDetails.PsoId = Convert.ToByte(RequestCh[6]);
+                    dTOMapUnitDetails.SubDteId = Convert.ToByte(RequestCh[7]);
+
+                    dTOMapUnitDetails.UnitMapId = mapUnitChangeRequest.UnitMapId;
+                    return Json(dTOMapUnitDetails);
+                }
+                else
+                {
+                    return Json(KeyConstants.InternalServerError);
+                }
+
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "Master->GetChangeMapUnitDetails");
+                return Json(KeyConstants.InternalServerError);
+            }
+        }
         public async Task<IActionResult> GetChangeMapUnitDetails(int MapUnitChangeRequestId)
         {
             try
