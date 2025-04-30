@@ -29,7 +29,7 @@ namespace DataTransferObject.Domain.Model
 
         [StringLength(10)]
         [Column(TypeName = "varchar(10)")]
-        [Index("IX_BasicDetails_ServiceNo", IsClustered = false, IsUnique = true, Order = 1)]
+        //[Index("IX_BasicDetails_ServiceNo", IsClustered = false, IsUnique = true, Order = 1)]
         public string ServiceNo { get; set; } = string.Empty;
 
         public DateTime DOB { get; set; }

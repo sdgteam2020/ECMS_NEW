@@ -1,13 +1,17 @@
 ﻿using BusinessLogicsLayer;
 using BusinessLogicsLayer.MapUnitChange;
 using BusinessLogicsLayer.Master;
+using DataAccessLayer;
 using DataAccessLayer.BaseInterfaces;
 using DataTransferObject.Constants;
+using DataTransferObject.Domain;
 using DataTransferObject.Domain.Master;
 using DataTransferObject.Domain.Model;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
+using Humanizer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using System.Text;
@@ -26,7 +30,8 @@ namespace Web.Controllers
         private readonly IMasterBL _IMasterBL;
         private readonly IConfiguration _configuration;
         private readonly IMapUnitChangeBL _mapUnitChangeBL;
-        public MasterController(IUnitOfWork unitOfWork, IUserProfileBL userProfileBL, IChangeHierarchyMasterBL changeHierarchyMaster, ILogger<MasterController> logger, IEncryptsqlDB iEncryptsqlDB, IMasterBL masterBL, IConfiguration configuration, IMapUnitChangeBL mapUnitChangeBL)
+        private readonly IDataProtector protector;
+        public MasterController(IUnitOfWork unitOfWork, IUserProfileBL userProfileBL, IChangeHierarchyMasterBL changeHierarchyMaster, ILogger<MasterController> logger, IEncryptsqlDB iEncryptsqlDB, IMasterBL masterBL, IConfiguration configuration, IMapUnitChangeBL mapUnitChangeBL, DataProtectionPurposeStrings dataProtectionPurposeStrings, IDataProtectionProvider dataProtectionProvider)
         {
             this.userProfileBL = userProfileBL;
             this.unitOfWork = unitOfWork;
@@ -36,6 +41,9 @@ namespace Web.Controllers
             _IMasterBL = masterBL;
             _configuration = configuration;
             _mapUnitChangeBL= mapUnitChangeBL;
+            // Pass the purpose string as a parameter
+            this.protector = dataProtectionProvider.CreateProtector(
+                dataProtectionPurposeStrings.AFSACIdRouteValue);
         }
 
         #region Command Page
@@ -862,6 +870,64 @@ namespace Web.Controllers
             ViewBag.RoleName = RoleName;
             return View();
         }
+        public async Task<IActionResult> GetChangeMapUnitDetails(int MapUnitChangeRequestId)
+        {
+            try
+            {
+                TrnMapUnitChangeRequest? mapUnitChangeRequest = await _mapUnitChangeBL.Get(MapUnitChangeRequestId);
+                
+                if (mapUnitChangeRequest != null)
+                {
+                    DTOProfileResponse? dTOProfile = await userProfileBL.GetProfileByUserId(mapUnitChangeRequest.FromUserId);
+
+                    string[] ExistingCh = mapUnitChangeRequest.ExistingCh.Split('#');
+                    string[] RequestCh = mapUnitChangeRequest.RequestCh.Split('#');
+                    DTOChangeMapUnitDetailsResponse dTOChangeMapUnit = new DTOChangeMapUnitDetailsResponse();
+                    dTOChangeMapUnit.UnitName = ExistingCh[0];
+                    dTOChangeMapUnit.Sus_no= ExistingCh[1];
+                    dTOChangeMapUnit.ExistingCh_UnitType = Convert.ToInt32(ExistingCh[2]);
+                    dTOChangeMapUnit.ComdName = ExistingCh[3];
+                    dTOChangeMapUnit.CorpsName = ExistingCh[4];
+                    dTOChangeMapUnit.DivName = ExistingCh[5];
+                    dTOChangeMapUnit.BdeName = ExistingCh[6];
+                    dTOChangeMapUnit.BranchName = ExistingCh[7];
+                    dTOChangeMapUnit.PSOName = ExistingCh[8];
+                    dTOChangeMapUnit.SubDteName = ExistingCh[9];
+                    
+                    dTOChangeMapUnit.RequestCh_UnitType = Convert.ToInt32(RequestCh[0]);
+                    dTOChangeMapUnit.ComdId = Convert.ToByte(RequestCh[1]);
+                    dTOChangeMapUnit.CorpsId = Convert.ToByte(RequestCh[2]);
+                    dTOChangeMapUnit.DivId = Convert.ToByte(RequestCh[3]);
+                    dTOChangeMapUnit.BdeId = Convert.ToByte(RequestCh[4]);
+                    dTOChangeMapUnit.FmnBranchID = Convert.ToByte(RequestCh[5]);
+                    dTOChangeMapUnit.PsoId = Convert.ToByte(RequestCh[6]);
+                    dTOChangeMapUnit.SubDteId = Convert.ToByte(RequestCh[7]);
+
+                    dTOChangeMapUnit.UnitMapId = mapUnitChangeRequest.UnitMapId;
+                    dTOChangeMapUnit.Remark = mapUnitChangeRequest.Remark;
+
+                    if (dTOProfile != null)
+                    {
+                        dTOChangeMapUnit.RequestBy = dTOProfile.RankAbbreviation + " "+ dTOProfile.Name+" ("+ dTOProfile.ArmyNo + ")";
+                    }
+
+                    return Json(dTOChangeMapUnit);
+                    //return Json(await unitOfWork.MappUnit.GetALLByUnitMapId(UnitMapId));
+                }
+                else
+                {
+                    return Json(KeyConstants.InternalServerError);
+                }
+
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "Master->GetChangeMapUnitDetails");
+                return Json(KeyConstants.InternalServerError);
+            }
+
+        }
         [HttpPost]
         public async Task<IActionResult> GetAllMapUnitChange(DTODataTablesRequestForMapUnitChange dTO)
         {
@@ -894,11 +960,14 @@ namespace Web.Controllers
                 return Json(responseData);
             }
         }
-
-        public async Task<IActionResult> MapUnitChangeRequest()
+        public async Task<IActionResult> MapUnitChangeRequest(string? Id)
         {
             int MapUnitId = 0;
             string RoleName = string.Empty;
+            string decryptedId = string.Empty;
+            int decryptedIntId = 0;
+            int AspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+
             DtoSession? dtoSession = new DtoSession();
             if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
             {
@@ -906,7 +975,68 @@ namespace Web.Controllers
 
             }
             MapUnitId = dtoSession != null ? dtoSession.UnitId : 0;
-            if(MapUnitId > 0)
+            RoleName = dtoSession != null ? dtoSession.RoleName : string.Empty;
+            if (Id != null)
+            {
+                try
+                {
+                    // Decrypt the  id using Unprotect method
+                    decryptedId = protector.Unprotect(Id);
+
+                    // Validate decrypted Id
+                    if (!int.TryParse(decryptedId, out decryptedIntId))
+                    {
+                        _logger.LogWarning("Decrypted Id is not a valid integer: {DecryptedId}, UserId: {UserId}", decryptedId, AspNetUsersId);
+                        TempData["error"] = "Invalid Request.";
+                        TempData.Keep("error");
+                        return RedirectToAction("ContactUs", "Home");
+                    }
+                    else
+                    {
+                        if (RoleName == "admin")
+                        {
+                            TrnMapUnitChangeRequest mapUnitChangeRequest = await _mapUnitChangeBL.Get(decryptedIntId);
+                            if(mapUnitChangeRequest.IsEditAction == true)
+                            {
+                                TempData["error"] = "This action has already been completed by you.";
+                                TempData.Keep("error");
+                                return RedirectToAction("ContactUs", "Home");
+                            }
+                            else 
+                            {
+                                ViewBag.MapUnitId = MapUnitId;
+                                ViewBag.RoleName = RoleName;
+                                ViewBag.MapUnitChangeRequestId = mapUnitChangeRequest.MapUnitChangeRequestId;
+                                return View();
+                            }
+                        }
+                        else
+                        {
+                            TempData["error"] = "You are not authorized to edit this action.";
+                            TempData.Keep("error");
+                            return RedirectToAction("Dashboard", "Home");
+                        }
+                    }
+                }
+                catch (System.Security.Cryptography.CryptographicException ex)
+                {
+                    _logger.LogError(ex, "Cryptographic error occurred while processing the Id: {Id}.", Id);
+                    TempData["error"] = "Invalid or tampered request.";
+                    TempData.Keep("error");
+                    return RedirectToAction("ContactUs", "Home");
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(1001, ex, message: "This error occure because Id : {Id} value change by user.", Id);
+                    TempData["error"] = ex.Message;
+                    TempData.Keep("error");
+                    return RedirectToAction("ContactUs", "Home");
+                }
+            }
+
+
+
+            if (MapUnitId > 0)
             {
                 bool result = await _mapUnitChangeBL.FindUnitIdMapped(MapUnitId);
                 if(result)
@@ -917,7 +1047,6 @@ namespace Web.Controllers
                 }
                 else
                 {
-                    RoleName = dtoSession != null ? dtoSession.RoleName : string.Empty;
                     ViewBag.MapUnitId = MapUnitId;
                     ViewBag.RoleName = RoleName;
                     return View();
@@ -939,7 +1068,7 @@ namespace Web.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    if (dTO.ChangeMapUnitId > 0 || dTO.ChangeMapUnitId < 0)
+                    if (dTO.MapUnitChangeRequestId > 0 || dTO.MapUnitChangeRequestId < 0)
                     {
                         dTOCommon.Result = false;
                         dTOCommon.Message = "This action is not allowed for you. Please check.";
@@ -995,7 +1124,7 @@ namespace Web.Controllers
                                 });
                                 TrnMapUnitChangeRequest unitChangeRequest = new TrnMapUnitChangeRequest
                                 {
-                                    ChangeMapUnitId = dTO.ChangeMapUnitId,
+                                    MapUnitChangeRequestId = dTO.MapUnitChangeRequestId,
                                     UnitMapId = MapUnitId,
                                     ExistingCh = ExistingCh,
                                     RequestCh = RequestCh,
@@ -1003,16 +1132,17 @@ namespace Web.Controllers
                                     AdminRemark = null,
                                     IsActive = true,
                                     IsComplete = false,
+                                    RequestStatus = false,
                                     FromUserId = dtoSession != null ? dtoSession.UserId : 0,
                                     Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier)),
                                     UpdatedOn = DateTime.Now,
-                                    ToUserId = null,
-                                    ToUpdatedby = null,
-                                    ToUpdatedOn = null,
+                                    ApproverUserId = null,
+                                    ApproverUpdatedby = null,
+                                    ApproverUpdatedOn = null,
                                 };
                                 TrnMapUnitChangeRequest response = await _mapUnitChangeBL.AddWithReturn(unitChangeRequest);
                                 dTOCommon.Result = true;
-                                dTOCommon.Id = response.ChangeMapUnitId.ToString();
+                                dTOCommon.Id = response.MapUnitChangeRequestId.ToString();
                                 dTOCommon.CurrentTime= response.UpdatedOn ?? DateTime.Now;
                                 dTOCommon.Message = "Unit Mapping Change request place successfully ";
                                 return Json(dTOCommon);
@@ -1041,6 +1171,65 @@ namespace Web.Controllers
                 }
             }
             catch (Exception ex) {
+                dTOCommon.Result = false;
+                dTOCommon.Message = ex.Message;
+                return Json(dTOCommon);
+            }
+        }
+        [Authorize(Roles = "admin")]
+        public async Task<IActionResult> UpdateMapUnitChangeRequest(DTOSaveMapUnitChangeRequest dTO)
+        {
+            DTOCommonSaveResponse dTOCommon = new DTOCommonSaveResponse();
+            try
+            {
+                if (ModelState.IsValid)
+                {
+
+                    TrnMapUnitChangeRequest? mapUnitChangeRequest = await _mapUnitChangeBL.Get(dTO.MapUnitChangeRequestId);
+                    if (mapUnitChangeRequest!= null && mapUnitChangeRequest.IsEditAction == true)
+                    {
+                        dTOCommon.Result = false;
+                        dTOCommon.Message = "This action has already been completed by you.";
+                        return Json(dTOCommon);
+                    }
+                    else if (mapUnitChangeRequest != null && mapUnitChangeRequest.IsEditAction == false)
+                    {
+                        DtoSession? dtoSession = new DtoSession();
+                        if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
+                        {
+                            dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+
+                        }
+                        mapUnitChangeRequest.IsEditAction = true;
+                        mapUnitChangeRequest.IsComplete = true;
+                        mapUnitChangeRequest.ApproverUpdatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                        mapUnitChangeRequest.ApproverUserId = dtoSession != null ? dtoSession.UserId : 0;
+                        mapUnitChangeRequest.ApproverUpdatedOn = DateTime.Now;
+                        return Json(await _mapUnitChangeBL.UpdateMapUnitChangeRequest(dTO, mapUnitChangeRequest));
+                    }
+                    else
+                    {
+                        dTOCommon.Result = false;
+                        dTOCommon.Message = "Invalid input.";
+                        return Json(dTOCommon);
+                    }
+                }
+                else
+                {
+                    var errors = ModelState.Where(x => x.Value?.Errors?.Count > 0)
+                                .SelectMany(x => x.Value!.Errors)
+                                .Select(e => e.ErrorMessage)
+                                .ToList();
+                    if (errors.Any())
+                    {
+                        dTOCommon.Message = string.Join("; ", errors); // Concatenate all error messages
+                    }
+                    dTOCommon.Result = false;
+                    return Json(dTOCommon);
+                }
+            }
+            catch (Exception ex)
+            {
                 dTOCommon.Result = false;
                 dTOCommon.Message = ex.Message;
                 return Json(dTOCommon);

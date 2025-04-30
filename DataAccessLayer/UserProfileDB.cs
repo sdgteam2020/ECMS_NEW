@@ -258,6 +258,7 @@ namespace DataAccessLayer
                                      IsRO = xmap != null ? xmap.IsRO:null,
                                      RankId = rank.RankId,
                                      RankName = rank.RankName,
+                                     RankAbbreviation= rank.RankAbbreviation,
                                      Mapping = xmap!=null? true : false,
                                      DomainId = xu != null ? xu.DomainId : null,
                                      AspNetUsersId = xu != null ? xu.Id : 0

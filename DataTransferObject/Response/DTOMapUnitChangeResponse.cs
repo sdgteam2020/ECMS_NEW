@@ -11,7 +11,8 @@ namespace DataTransferObject.Response
 {
     public class DTOMapUnitChangeResponse
     {
-        public int ChangeMapUnitId { get; set; }
+        public int MapUnitChangeRequestId { get; set; }
+        public string? EncryptedId { get; set; }
         public int UnitMapId { get; set; }
         public string UnitName { get; set; } = string.Empty;
         public string FromArmyNo { get; set; } = string.Empty;
@@ -26,9 +27,9 @@ namespace DataTransferObject.Response
         public int FromUpdatedby { get; set; }
         public DateTime FromUpdatedOn { get; set; }
         public int FromUserId { get; set; }
-        public int? ToUpdatedby { get; set; }
-        public DateTime? ToUpdatedOn { get; set; }
-        public int? ToUserId { get; set; }
+        public int? ApproverUpdatedby { get; set; }
+        public DateTime? ApproverUpdatedOn { get; set; }
+        public int? ApproverUserId { get; set; }
         public bool IsComplete { get; set; } = false;
         public bool IsEditAction { get; set; }
         public bool IsActive { get; set; } = true;

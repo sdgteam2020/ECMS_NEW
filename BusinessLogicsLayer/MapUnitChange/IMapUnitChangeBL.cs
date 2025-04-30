@@ -13,5 +13,6 @@ namespace BusinessLogicsLayer.MapUnitChange
     {
         public Task<bool> FindUnitIdMapped(int UnitMapId);
         public Task<DTODataTablesResponse<DTOMapUnitChangeResponse>> GetAllMapUnitChange(DTODataTablesRequestForMapUnitChange request);
+        public Task<DTOCommonSaveResponse> UpdateMapUnitChangeRequest(DTOSaveMapUnitChangeRequest dTO, TrnMapUnitChangeRequest trnMapUnit);
     }
 }
