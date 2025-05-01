@@ -1,4 +1,5 @@
 ﻿using DataTransferObject.Domain.Model;
+using DataTransferObject.Requests;
 using DataTransferObject.Response;
 using System;
 using System.Collections.Generic;
@@ -12,7 +13,7 @@ namespace DataAccessLayer.BaseInterfaces
     {
         public Task<DTOPostingInResponse> GetArmyDataForPostingOut(string ArmyNo);
         public Task<List<DTOPostingOutDetilsResponse>> GetAllPostingHistory(int AspNetUsersId);
-        public Task<List<DTOPostingOutDetilsResponse>> GetPostingOutWithType(int AspNetUsersId, int Type, string PostingTy);
+        public Task<DTODataTablesResponse<DTOPostingOutDetilsResponse>> GetPostingOutWithType(DTODataTablesRequest dTO,int AspNetUsersId, int Type, string PostingTy);
         public Task<bool> UpdateForPosting(TrnPostingOut Data);
         public Task<List<DTOAppClosedListResponse>> GetAppClosedList(int Updatedby, int apply);
     }

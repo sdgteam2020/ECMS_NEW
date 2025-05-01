@@ -455,6 +455,9 @@ function isValidDate(d) {
     return d instanceof Date && !isNaN(d);
 }
 function formatDateToSqlString(inputDate) {
+    if (inputDate == '') {
+        return null;
+    }
     let date = new Date(inputDate);
     const pad = (num, size = 2) => String(num).padStart(size, '0');
     return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ` +

@@ -2,7 +2,7 @@
 let checkedDataIds = [];
 let dataExportType = 1;
 $(function () {
-    BindData()
+    BindData();
     $("#btnAdd").on("click",function () {
         $("#armynosearchAllName").html("");
         $("#txtarmynosearchAll").val("");

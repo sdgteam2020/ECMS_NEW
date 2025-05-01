@@ -3,6 +3,7 @@ using DataAccessLayer;
 using DataAccessLayer.BaseInterfaces;
 using DataTransferObject.Domain.Master;
 using DataTransferObject.Domain.Model;
+using DataTransferObject.Requests;
 using DataTransferObject.Response;
 using System;
 using System.Collections.Generic;
@@ -28,9 +29,9 @@ namespace BusinessLogicsLayer.Posting
         {
             return await postingDB.GetAllPostingHistory(AspNetUsersId);
         }
-        public async Task<List<DTOPostingOutDetilsResponse>> GetPostingOutWithType(int AspNetUsersId, int Type, string PostingTy)
+        public async Task<DTODataTablesResponse<DTOPostingOutDetilsResponse>> GetPostingOutWithType(DTODataTablesRequest dTO,int AspNetUsersId, int Type, string PostingTy)
         {
-            return await postingDB.GetPostingOutWithType(AspNetUsersId,Type, PostingTy);
+            return await postingDB.GetPostingOutWithType(dTO,AspNetUsersId,Type, PostingTy);
         }
 
         public async Task<DTOPostingInResponse> GetArmyDataForPostingOut(string ArmyNo)
