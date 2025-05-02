@@ -1,4 +1,7 @@
-﻿<style>
+﻿@using DataTransferObject.Response
+@model DTOPostingOutDetailByIdResponse
+
+<style>
     .form-group .labelprofile {
         font-weight:600;
     }
@@ -301,7 +304,6 @@
                                                         <h1>Dispatch Details</h1>
                                                     </div>
                                                     <div class="row">
-
                                                         <div class="col-sm-6">
                                                             <div class="form-group row mb-2">
                                                                 <label class="col-form-label col-sm-4 labelprofile">Dispatch Date</label>
@@ -315,7 +317,7 @@
                                                             <div class="form-group row mb-2">   
                                                                 <label class="col-form-label col-sm-4 labelprofile">Ref No Regd SDS</label>
                                                                 <div class="col-sm-8">
-                                                                    <input type="text" id="txtRefNo" class="form-control form-space" placeholder="Enter Ref No Regd SDS" maxlength="50"/>
+                                                                    <input type="text" id="txtRefNo" placeholder="Enter Dispatch Date" class="form-control form-space" placeholder="Enter Ref No Regd SDS" maxlength="20" />
                                                                 </div>
                                                             </div>
                                                         </div>

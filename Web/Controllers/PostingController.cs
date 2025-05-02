@@ -7,10 +7,12 @@ using DataTransferObject.Domain.Model;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting.Internal;
 using System.Security.Claims;
 using System.Text;
+using System.Threading.Tasks;
 using Web.Healpers;
 using Web.WebHelpers;
 
@@ -26,7 +28,8 @@ namespace Web.Controllers
         private readonly IService service;
         private readonly ILogger<PostingController> _logger;
         private readonly IWebHostEnvironment hostingEnvironment;
-        public PostingController(IPostingBL postingBL, IApplCloseBL iApplCloseBL, ITrnICardRequestBL trnICardRequestBL, IService service, ILogger<PostingController> logger, IWebHostEnvironment hostingEnvironment)
+        private readonly IDataProtector _protector;
+        public PostingController(IPostingBL postingBL, IApplCloseBL iApplCloseBL, ITrnICardRequestBL trnICardRequestBL, IService service, ILogger<PostingController> logger, IWebHostEnvironment hostingEnvironment, IDataProtectionProvider dataProtectionProvider, DataProtectionPurposeStrings dataProtectionPurposeStrings)
         {
             _iPostingBL = postingBL;
             _iApplCloseBL = iApplCloseBL;
@@ -34,9 +37,22 @@ namespace Web.Controllers
             this.service = service;
             _logger = logger;
             this.hostingEnvironment = hostingEnvironment;
+            _protector = dataProtectionProvider.CreateProtector(
+                dataProtectionPurposeStrings.AFSACIdRouteValue);
         }
-        public IActionResult PostingIn()
+        public async Task<IActionResult> PostingIn(string? EncId)
         {
+            //var postingOutDetails = new DTOPostingOutDetailByIdResponse();
+            //if (!string.IsNullOrEmpty(EncId))
+            //{
+            //    ViewBag.isEdit = true;
+            //    string Id = _protector.Unprotect(EncId);
+            //    postingOutDetails = await _iPostingBL.GetPostingDetailById(Id);
+            //}
+            //else
+            //{
+            //    ViewBag.isEdit = false;
+            //}
             return View();
         }
         public async Task<IActionResult> GetPostingIn(string ArmyNo)
@@ -164,6 +180,10 @@ namespace Web.Controllers
             }
             catch (Exception ex) { return Json(KeyConstants.InternalServerError); }
         }
+
+        //public async Task<IActionResult> UpdateDispatchDetails() { 
+        
+        //}
 
         public async Task<IActionResult> ApplicationClose()
         {

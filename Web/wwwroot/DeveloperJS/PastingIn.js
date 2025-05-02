@@ -165,7 +165,7 @@ function Save() {
                 toastr.success('Data has been saved');
 
                 alert("Posting Out successfully");
-                location.href = '/Posting/GetAllPostingOut';
+                location.href = '/Home/RequestDashboard/UG9zdGluZyBPdXQ=';
 
             }
             else if (result == DataUpdate) {
@@ -173,7 +173,7 @@ function Save() {
 
                 toastr.success('Data has been Updated');
                 alert("Posting Out successfully");
-                location.href = '/Posting/GetAllPostingOut';
+                location.href = '/Home/RequestDashboard/UG9zdGluZyBPdXQ=';
 
             }
             else if (result == DataExists) {

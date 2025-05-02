@@ -106,10 +106,10 @@ function BindData() {
                     if (isNaN(dateObj.getTime()) || row.DispatchedOn === '0001-01-01T00:00:00') {
                         if (row.CanAddDispatchDetail) {
                             returnStr = `<span id="btnedit">
-                                        <button type="button" class="cls-btneyetotalusers btn btn-icon btn-round btn-warning mr-1">
-                                            <i class="fas fa-edit"></i>
-                                        </button>
-                                    </span>`;
+                                                <button type="button" class="cls-btnAddDispatchDetails btn btn-icon btn-round btn-warning mr-1">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                        </span>`;
                         }
                     }
                     else
@@ -147,7 +147,7 @@ function BindData() {
                 extend: 'pdfHtml5',
                 orientation: 'landscape',
                 pageSize: 'LEGAL',
-                title: 'E-IASC_HotlistCard',
+                title: 'E-IASC_PostingOut',
                 exportOptions: {
                     columns: "thead th:not(.noExport)"
                 },
@@ -167,6 +167,17 @@ function BindData() {
                 $("#MessageDialogBody").html(htmlBody);
                 $("#MessageDialog").modal('show');
             });
+
+            $("body").on("click", ".cls-btnAddDispatchDetails", function () {
+                var rowData = table.row($(this).closest("tr")).data();
+                if (rowData != null) {
+                    Reset();
+                    //ResetErrorMessage();
+
+                    $("#spnPostingOutId").html(rowData.Id);
+                    $("#AddDispatchDetails").modal('show');
+                }
+            });
         }
     });
 
@@ -179,4 +190,10 @@ function GetHtmlLabel(label,value) {
                   <div class="form-control-plaintext border p-2 rounded bg-light">${value}</div>
                 </div>
             </div>`;
+}
+
+function Reset() {
+    $("#spnPostingOutId").html("0");
+    $("#txtDispatchDate").val("");
+    $("#txtRefNo").val("");
 }

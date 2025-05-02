@@ -47,5 +47,8 @@ namespace BusinessLogicsLayer.Posting
         {
             return await postingDB.GetAppClosedList(Updatedby, apply);
         }
+        public async Task<DTOPostingOutDetailByIdResponse> GetPostingDetailById(string Id) { 
+            return await postingDB.GetPostingDetailById(Id);
+        }
     }
 }

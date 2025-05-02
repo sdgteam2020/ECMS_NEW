@@ -16,5 +16,6 @@ namespace DataAccessLayer.BaseInterfaces
         public Task<DTODataTablesResponse<DTOPostingOutDetilsResponse>> GetPostingOutWithType(DTODataTablesRequest dTO,int AspNetUsersId, int Type, string PostingTy);
         public Task<bool> UpdateForPosting(TrnPostingOut Data);
         public Task<List<DTOAppClosedListResponse>> GetAppClosedList(int Updatedby, int apply);
+        Task<DTOPostingOutDetailByIdResponse> GetPostingDetailById(string Id);
     }
 }

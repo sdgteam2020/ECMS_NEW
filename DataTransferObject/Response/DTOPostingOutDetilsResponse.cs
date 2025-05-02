@@ -9,6 +9,7 @@ namespace DataTransferObject.Response
 {
     public class DTOPostingOutDetilsResponse
     {
+        public string Id { get; set; } = string.Empty;
         public string ServiceNo { get; set; } = string.Empty;
         public string FName { get; set; } = string.Empty;
         public string? LName { get; set; }
