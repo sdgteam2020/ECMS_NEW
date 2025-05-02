@@ -106,7 +106,7 @@ namespace DataAccessLayer
         }
         public async Task<DTODashboardMasterCountResponse> GetDashboardMasterCount()
         {
-            string query = " declare @TotComd int=0 declare @TotCorps int=0 declare @TotDiv int=0 declare @TotBde int=0  declare @TotMapUnit int=0 declare @TotRecordOffice int=0 " +
+            string query = " declare @TotComd int=0 declare @TotCorps int=0 declare @TotDiv int=0 declare @TotBde int=0  declare @TotMapUnit int=0 declare @TotMapUnitChangeRequest int=0 declare @TotRecordOffice int=0 " +
                             " declare @TotUnit int=0 declare @TotRank int=0 declare @TotAppointment int=0 declare @TotArms int=0  declare @TotRegtCentre int=0 declare @TotOROMapping int=0 declare @TotAfsacCellMapping int=0 declare @TotAfsacClaims int=0" +
                             " declare @TotDomainRegn int=0 declare @TotUserProfile int=0 " +
                             " select @TotComd=COUNT(ComdId) from MComd " +
@@ -114,6 +114,7 @@ namespace DataAccessLayer
                             " select @TotDiv=COUNT(DivId) from MDiv " +
                             " select @TotBde=COUNT(BdeId) from MBde " +
                             " select @TotMapUnit=COUNT(UnitMapId) from MapUnit " +
+                            " select @TotMapUnitChangeRequest=COUNT(MapUnitChangeRequestId) from TrnMapUnitChangeRequest " +
                             " select @TotUnit=COUNT(UnitId) from MUnit " +
                             " select @TotRank=COUNT(RankId) from MRank " +
                             " select @TotAppointment=COUNT(ApptId) from MAppointment " +
@@ -128,7 +129,7 @@ namespace DataAccessLayer
                             " select @TotUserProfile=COUNT(UserId) from UserProfile " +
                             " select @TotAfsacClaims=COUNT(ClaimType) from ClaimsStore " +
 
-                            " select @TotComd TotComd,@TotCorps TotCorps,@TotDiv TotDiv,@TotBde TotBde,@TotMapUnit TotMapUnit,@TotUnit TotUnit,@TotRank TotRank,@TotAppointment TotAppointment,@TotArms TotArms,@TotRegtCentre TotRegtCentre,@TotRecordOffice TotRecordOffice,@TotOROMapping TotOROMapping,@TotAfsacCellMapping TotAfsacCellMapping,@TotDomainRegn TotDomainRegn,@TotUserProfile TotUserProfile, @TotAfsacClaims  TotAfsacClaims";
+                            " select @TotComd TotComd,@TotCorps TotCorps,@TotDiv TotDiv,@TotBde TotBde,@TotMapUnit TotMapUnit,@TotMapUnitChangeRequest TotMapUnitChangeRequest,@TotUnit TotUnit,@TotRank TotRank,@TotAppointment TotAppointment,@TotArms TotArms,@TotRegtCentre TotRegtCentre,@TotRecordOffice TotRecordOffice,@TotOROMapping TotOROMapping,@TotAfsacCellMapping TotAfsacCellMapping,@TotDomainRegn TotDomainRegn,@TotUserProfile TotUserProfile, @TotAfsacClaims  TotAfsacClaims";
 
             using (var connection = _contextDP.CreateConnection())
             {

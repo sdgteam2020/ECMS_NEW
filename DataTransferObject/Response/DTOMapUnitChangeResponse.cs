@@ -33,5 +33,6 @@ namespace DataTransferObject.Response
         public bool IsComplete { get; set; } = false;
         public bool IsEditAction { get; set; }
         public bool IsActive { get; set; } = true;
+        public bool RequestStatus { get; set; } = false;
     }
 }

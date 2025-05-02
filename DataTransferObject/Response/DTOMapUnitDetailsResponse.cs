@@ -15,11 +15,15 @@ namespace DataTransferObject.Response
         public string RankAbbreviation { get; set; } = string.Empty;
         public string RequestBy { get; set; } = string.Empty;
         public string ArmyNo { get; set; } = string.Empty;
+        public string? AprovedBy { get; set; } 
+        public string? AproverArmyNo { get; set; } 
+        public string? AproverRankAbbreviation { get; set; } 
         public string Remark { get; set; } = string.Empty;
         public string? AdminRemark { get; set; }
         public bool IsComplete { get; set; } = false;
         public bool IsEditAction { get; set; }
         public bool RequestStatus { get; set; } = false;
+        public DateTime? ApproverUpdatedOn { get; set; }
         public int ExistingUnitType { get; set; }
         public string ExistingComdName { get; set; } = string.Empty;
         public string ExistingCorpsName { get; set; } = string.Empty;

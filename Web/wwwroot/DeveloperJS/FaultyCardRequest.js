@@ -126,7 +126,8 @@ function Proceed(choice) {
     if ($(formId).valid()) {
         let ApplicantName = $("#lblpvFName").html() + $("#lblpvLName").html();
         let ApplicantNameWithRank = $("#lblpvRank").html() + " " + ApplicantName.trim();
-        let Remarks = $("#txtFromRemark").val();
+        let FromRemark = $("#txtFromRemark").val();
+        let ToRemark = $("#txtToRemark").val();
         let UserName = $(".dropdown-user-details-name").html();
         Swal.fire({
             title: 'Please confirm the following faulty card details:',
@@ -134,7 +135,7 @@ function Proceed(choice) {
                     <div style="text-align: left; font-size: 16px;">
                         <p><strong>Applicant Name:</strong> ${ApplicantNameWithRank}</p>
                         <p><strong>Request ID:</strong> ${$("#spnFaultyCardRequestId").html() }</p>
-                        <p><strong>Remarks:</strong> ${Remarks}</p>
+                        <p><strong>${choice === 1 ? "Explain Fault Remarks" : "AFSAC Cell Remark"}:</strong> ${choice === 1 ? FromRemark : ToRemark}</p>
                         <p><strong>Logged In Details:</strong> ${UserName}</p>
                     </div>
                   `,
@@ -197,9 +198,16 @@ function Proceed(choice) {
                     const btnBackDashboard = document.getElementById("btnBackDashboard");
                     let Message;
                     if (parseInt($("#spnTrnFaultyCardId").html()) > 0)
-                        Message = `Record successfully updated in DB with ID : <strong>${result.Id}</strong><br/> Timestamp : <strong>${DateFormateddMMyyyyhhmmss(result.CurrentTime)}</strong>.`;
+                    {
+                        if (choice === 3) {
+                            Message = `Faulty Card Request Rejected successfully.<br/>Record successfully updated in DB with ID : <strong>${result.Id}</strong><br/> Timestamp : <strong>${DateFormateddMMyyyyhhmmss(result.CurrentTime)}</strong>.`;
+                        }
+                        else {
+                            Message = `Faulty Card Request Accept successfully.<br/>Record successfully updated in DB with ID : <strong>${result.Id}</strong><br/> Timestamp : <strong>${DateFormateddMMyyyyhhmmss(result.CurrentTime)}</strong>.`;
+                        }
+                    }
                     else
-                        Message = `Record successfully inserted in DB with ID : <strong>${result.Id}</strong><br/> Timestamp : <strong>${DateFormateddMMyyyyhhmmss(result.CurrentTime)}</strong>.`;
+                        Message = `Your Faulty Card Request placed successfully.<br/>Record successfully inserted in DB with ID : <strong>${result.Id}</strong><br/> Timestamp : <strong>${DateFormateddMMyyyyhhmmss(result.CurrentTime)}</strong>.`;
 
                     document.getElementById("ConfirmationDialog_Data").innerHTML= Message;
                     btnSearchNew.textContent = "Search New";

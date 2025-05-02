@@ -13,5 +13,7 @@ namespace DataTransferObject.Response
         public int TotObservationRaised { get; set; }
         public int TotLostCards { get; set; }
         public int TotHotlistCards { get; set; }
+        public int TotMisprintedCard { get; set; }
+        public int TotUnitChangeRequest { get; set; }
     }
 }

@@ -107,7 +107,6 @@ $(function () {
 
 
     $(".historyRequest").on("click", function () {
-        $("#exampleModal").modal('show');
         GetRequestHistory($(this).closest("tr").find(".spnRequestId").html());
     });
 

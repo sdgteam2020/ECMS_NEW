@@ -112,11 +112,14 @@ namespace DataAccessLayer
         public async Task<DTOMapUnitDetailsResponse> GetUnitMoveHistory(DTOMapUnitDetailsResponse dTO)
         {
             string query = "";
-            query = @"Select mrak.RankAbbreviation,up.Name as RequestBy,up.ArmyNo,UnitChReq.Remark,UnitChReq.AdminRemark,UnitChReq.IsComplete,UnitChReq.IsEditAction,UnitChReq.RequestStatus,
+            query = @"Select mrak.RankAbbreviation,up.Name as RequestBy,up.ArmyNo,UnitChReq.Remark,UnitChReq.AdminRemark,UnitChReq.IsComplete,UnitChReq.IsEditAction,UnitChReq.RequestStatus,UnitChReq.ApproverUpdatedOn,
+                        up_apro.Name as AprovedBy,up_apro.ArmyNo as AproverArmyNo,mrak_apro.RankAbbreviation as AproverRankAbbreviation,
                         mcom.ComdName AS RequestComdName,mcor.CorpsName  As RequestCorpsName,mdiv.DivName as RequestDivName,mbde.BdeName as RequestBdeName,mfmnb.BranchName as RequestBranchName,mpso.PSOName as RequestPSOName,msubd.SubDteName as RequestSubDteName
                         from TrnMapUnitChangeRequest UnitChReq
                         inner join UserProfile up on up.UserId = UnitChReq.FromUserId
                         inner join MRank mrak on mrak.RankId = up.RankId
+                        left join UserProfile up_apro on up_apro.UserId = UnitChReq.ApproverUserId
+                        left join MRank mrak_apro on mrak_apro.RankId = up_apro.RankId
                         inner join MComd mcom on mcom.ComdId = @ComdId
                         inner join MCorps mcor on mcor.CorpsId = @CorpsId
                         inner join MDiv mdiv on mdiv.DivId = @DivId
@@ -170,6 +173,7 @@ namespace DataAccessLayer
                                          IsComplete = unitch.IsComplete,
                                          IsActive = unitch.IsActive,
                                          IsEditAction = unitch.IsEditAction,
+                                         RequestStatus= unitch.RequestStatus,
                                          FromUpdatedby = unitch.Updatedby ?? 0,
                                          FromUpdatedOn = unitch.UpdatedOn ?? DateTime.Now,
                                          FromUserId = unitch.FromUserId,

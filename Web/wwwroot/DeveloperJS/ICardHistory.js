@@ -157,8 +157,15 @@
 
                     $("#RequestHistory").html(listItem);
                 }
+                const myModal = new bootstrap.Modal(document.getElementById("HistoryModal"));
+                let HistoryModal_Header = document.getElementById("HistoryModal_Header");
+                let HistoryModal_Title_Content = document.getElementById("HistoryModal_Title_Content");
+                let HistoryModal_Body = document.getElementById("HistoryModal_Body");
 
-                $("#RequestHistory").html(listItem);
+                HistoryModal_Header.innerHTML = "I-Card History";
+                HistoryModal_Title_Content.innerHTML = "Step Wise I Card Request History";
+                HistoryModal_Body.innerHTML = listItem;
+                myModal.show();
             } else {
 
             }

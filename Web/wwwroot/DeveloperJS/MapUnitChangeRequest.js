@@ -131,14 +131,15 @@ function Proceed(choice) {
         let UnitName = $("#lblUnit").text();
         let SUSNo = $("#lblSUSNo").text();
         let Remarks = $("#txtRemark").val();
+        let AdminRemark = $("#txtAdminRemark").val();
         let UserName = $(".dropdown-user-details-name").html();
         Swal.fire({
-            title: 'Please confirm the following Unit Mapping Change Request details:',
+            title: 'Please confirm the following Unit Relocation Request details:',
             html: `
                     <div style="text-align: left; font-size: 16px;">
                         <p><strong>Unit Name:</strong> ${UnitName.trim()}</p>
                         <p><strong>SUS NO.:</strong> ${SUSNo.trim()}</p>
-                        <p><strong>Remarks:</strong> ${Remarks}</p>
+                        <p><strong>${choice === 1 ? "Remarks" : "Admin Remark"}:</strong> ${choice === 1 ? Remarks : AdminRemark}</p>
                         <p><strong>Logged In Details:</strong> ${UserName}</p>
                     </div>
                   `,
@@ -241,10 +242,10 @@ function Save(choice) {
                     const ConfirmationDialog_Data = document.getElementById("ConfirmationDialog_Data");
                     let Message;
                     //choice = 2 Accept, choice =3 Reject
-                    if (parseInt($("#spnChangeMapUnitId").html()) > 0 && choice === 2) {
+                    if (parseInt($("#spnMapUnitChangeRequestId").html()) > 0 && choice === 2) {
                         Message = `Unit Move Request Accept & update in Mapping Unit successfully.<br/>Record successfully updated in DB with ID : <strong>${result.Id}</strong><br/> Timestamp : <strong>${DateFormateddMMyyyyhhmmss(result.CurrentTime)}</strong>.`;
                     }
-                    else if (parseInt($("#spnChangeMapUnitId").html()) > 0 && choice === 3) {
+                    else if (parseInt($("#spnMapUnitChangeRequestId").html()) > 0 && choice === 3) {
                         Message = `Unit Move Request Rejected successfully.<br/>Record successfully updated in DB with ID : <strong>${result.Id}</strong><br/> Timestamp : <strong>${DateFormateddMMyyyyhhmmss(result.CurrentTime)}</strong>.`;
                     }
 

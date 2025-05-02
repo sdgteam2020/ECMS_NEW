@@ -993,7 +993,6 @@ namespace Web.Controllers
         [HttpPost]
         public async Task<IActionResult> GetAllMapUnitChange(DTODataTablesRequestForMapUnitChange dTO)
         {
-            int MapUnitId = 0;
             string RoleName = string.Empty;
             DtoSession? dtoSession = new DtoSession();
             if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
