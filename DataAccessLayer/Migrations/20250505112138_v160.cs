@@ -10,16 +10,6 @@ namespace DataAccessLayer.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AlterColumn<int>(
-                name: "ApproverUserId",
-                table: "TrnMapUnitChangeRequest",
-                type: "int",
-                nullable: true,
-                oldClrType: typeof(string),
-                oldType: "varchar(100)",
-                oldMaxLength: 100,
-                oldNullable: true);
-
             migrationBuilder.AlterColumn<string>(
                 name: "Remark",
                 table: "TrnLostCards",
@@ -35,16 +25,6 @@ namespace DataAccessLayer.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AlterColumn<string>(
-                name: "ApproverUserId",
-                table: "TrnMapUnitChangeRequest",
-                type: "varchar(100)",
-                maxLength: 100,
-                nullable: true,
-                oldClrType: typeof(int),
-                oldType: "int",
-                oldNullable: true);
-
             migrationBuilder.AlterColumn<string>(
                 name: "Remark",
                 table: "TrnLostCards",
