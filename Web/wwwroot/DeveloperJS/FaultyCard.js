@@ -67,13 +67,27 @@ function BindData() {
                         else {
                             listItem += "<td class='align-middle'></td>";
                         }
-                        let sentence = response[i].FromRemark;
-                        let words = sentence.split(" ");
+                        let sentence_FromRemark = response[i].FromRemark;
+                        let words_FromRemark = sentence_FromRemark.split(" ");
 
-                        let truncatedSentence = words.length > 4 ? words.slice(0, 4).join(" ") + "..." : sentence;
+                        let truncatedSentence_FromRemark = words_FromRemark.length > 4 ? words_FromRemark.slice(0, 4).join(" ") + "..." : sentence_FromRemark;
 
-                        listItem += "<td class='align-middle'><span class='cls-FromRemark'>" + truncatedSentence + "<span id='spanFromRemark' class='d-none'>" + sentence + "</span></span></td>";
-                        listItem += `<td class='align-middle'><span id='spnName'> ${response[i].ToRemark ?? "NA"}</span></td>`;
+                        listItem += "<td class='align-middle'><span class='cls-FromRemark'>" + truncatedSentence_FromRemark + "<span id='spanFromRemark' class='d-none'>" + sentence_FromRemark + "</span></span></td>";
+
+                        if (response[i].ToRemark != null) {
+                            let sentence_ToRemark = response[i].ToRemark;
+                            let words_ToRemark = sentence_ToRemark.split(" ");
+
+                            let truncatedSentence_ToRemark = words_ToRemark.length > 4 ? words_ToRemark.slice(0, 4).join(" ") + "..." : sentence_ToRemark;
+
+                            listItem += "<td class='align-middle'><span class='cls-ToRemark'>" + truncatedSentence_ToRemark + "<span id='spanToRemark' class='d-none'>" + sentence_ToRemark + "</span></span></td>";
+                        }
+                        else {
+                            listItem += "<td class='align-middle'>NA</td>";
+                        }
+
+
+
                         if ($("#spnClaimValue").html().toLowerCase() === "true") {
                             if (response[i].IsEditAction == false) {
                                 listItem += "<td class='align-middle'><span id='btnedit'><button type='button' class='cls-btnedit btn btn-icon btn-round btn-primary mr-1'><i class='fas fa-edit'></i></button></span></td>";
@@ -164,6 +178,12 @@ function BindData() {
                         let Label = "Request Id :- " + $(this).closest("tr").find("#spnRequestId").html();
                         $("#MessageDialogLabel").html(Label);
                         $("#MessageDialogBody").html($(this).closest("tr").find("#spanFromRemark").html());
+                        $("#MessageDialog").modal('show');
+                    });
+                    $("body").on("click", ".cls-ToRemark", function () {
+                        let Label = "Request Id :- " + $(this).closest("tr").find("#spnRequestId").html();
+                        $("#MessageDialogLabel").html(Label);
+                        $("#MessageDialogBody").html($(this).closest("tr").find("#spanToRemark").html());
                         $("#MessageDialog").modal('show');
                     });
 

@@ -2723,16 +2723,16 @@ namespace Web.Controllers
                 dto.AspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                 dto.MapUnitId = 0;
 
+                DtoSession? dtoSession = new DtoSession();
+                if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
+                {
+                    dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+
+                }
+                dto.MapUnitId = dtoSession != null ? dtoSession.UnitId : 0;
+
                 if (dto.TypeId == KeyConstants.FaultyCardRequest)
                 {
-                    DtoSession? dtoSession = new DtoSession();
-                    if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
-                    {
-                        dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
-
-                    }
-                    dto.MapUnitId = dtoSession != null ? dtoSession.UnitId : 0;
-
                     var user = await userManager.FindByIdAsync(dto.AspNetUsersId.ToString());
                      
                     // UserManager service GetClaimsAsync method gets all the current claims of the user

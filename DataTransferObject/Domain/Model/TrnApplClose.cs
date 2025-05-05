@@ -27,17 +27,19 @@ namespace DataTransferObject.Domain.Model
         [Required]
         [StringLength(50)]
         [Column(TypeName = "varchar(50)")]
-        public string Authority { get; set; }
+        public string Authority { get; set; }=string.Empty;
 
         [Required]
         [Column(TypeName = "varchar(50)")]
-        public string Remarks { get; set; }
-       
+        public string Remarks { get; set; } = string.Empty;
+
 
         [ForeignKey("MTrnICardRequest"), DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int RequestId { get; set; }
         public MTrnICardRequest? MTrnICardRequest { get; set; }
 
-       
+        [ForeignKey("MUserProfile"), DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public int UserId { get; set; }
+        public MUserProfile? MUserProfile { get; set; }
     }
 }
