@@ -10,7 +10,7 @@ namespace DataTransferObject.Requests
     public class DTOCardPriningRequest
     {
         public string RequestId { get; set; }
-        public string ArmyNo { get; set; }
+        public string ServiceNo { get; set; }
         public string CardSerialNo { get; set; }
         public string ChipNo { get; set; }
         [Ignore]

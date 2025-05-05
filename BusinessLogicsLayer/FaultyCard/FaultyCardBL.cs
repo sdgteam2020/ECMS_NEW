@@ -34,7 +34,7 @@ namespace BusinessLogicsLayer.FaultyCard
         {
             return await _iFaultyCardDB.GetAllFaulty(Claim, MapUnitId);
         }
-        public async Task<DTOFaultyCardSaveResponse> SaveFaultyCard(DTOFaultyCardRequest dTO, MTrnFwd? mTrnFwd) 
+        public async Task<DTOCommonSaveResponse> SaveFaultyCard(DTOFaultyCardRequest dTO, MTrnFwd? mTrnFwd) 
         {
             if (dTO.TrnFaultyCardId > 0)
             {

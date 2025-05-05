@@ -583,16 +583,35 @@ namespace DataAccessLayer
             }
             else if (dto.TypeId == KeyConstants.HoltlistCardRequest)
             {
-                string unitQuery = dto.Claim ? "" : "and tdm.UnitId=@MapUnitId";
                 query = @$"Select TOP 5 basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath Image,req.RequestId,COALESCE(MAX(fwd.TrnFwdId), NULL) AS MaxTrnFwdId  
                             from BasicDetails basi
                             inner join TrnUpload trnu on basi.BasicDetailId=trnu.BasicDetailId 
-                            inner join TrnICardRequest req on req.BasicDetailId=basi.BasicDetailId and req.StatusId=1 and req.FlagForFaulty=0
+                            inner join TrnICardRequest req on req.BasicDetailId=basi.BasicDetailId and req.StatusId=1
                             inner join TrnStepCounter stepcount on req.RequestId=stepcount.RequestId and stepcount.StepId=6
-                            inner join TrnDomainMapping tdm on tdm.Id=req.TrnDomainMappingId and tdm.UnitId=@MapUnitId
+                            inner join TrnDomainMapping tdm on tdm.Id=req.TrnDomainMappingId
                             LEFT JOIN TrnFwds fwd ON fwd.RequestId = req.RequestId
                             Left join TrnHotlistCards thc on req.RequestId = thc.RequestId
                             where thc.RequestId is null and ServiceNo like @ServiceNo
+                            GROUP BY
+								basi.BasicDetailId,
+								FName,
+								LName,
+								ServiceNo,
+								PhotoImagePath,
+								req.RequestId
+                            ";
+            }
+            else if (dto.TypeId == KeyConstants.LostCardRequest)
+            {
+                query = @$"Select TOP 5 basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath Image,req.RequestId,COALESCE(MAX(fwd.TrnFwdId), NULL) AS MaxTrnFwdId  
+                            from BasicDetails basi
+                            inner join TrnUpload trnu on basi.BasicDetailId=trnu.BasicDetailId 
+                            inner join TrnICardRequest req on req.BasicDetailId=basi.BasicDetailId and req.StatusId=1
+                            inner join TrnStepCounter stepcount on req.RequestId=stepcount.RequestId and stepcount.StepId=6
+                            inner join TrnDomainMapping tdm on tdm.Id=req.TrnDomainMappingId
+                            LEFT JOIN TrnFwds fwd ON fwd.RequestId = req.RequestId
+                            Left join TrnLostCards tlc on req.RequestId = tlc.RequestId
+                            where tlc.RequestId is null and ServiceNo like @ServiceNo
                             GROUP BY
 								basi.BasicDetailId,
 								FName,
@@ -1948,8 +1967,9 @@ namespace DataAccessLayer
                 query = " declare @_2ndLevelPending int declare @_2ndLevelApproved int declare @_2ndLevelReject int" +
                         " declare @_3rdLevelPending int declare @_3rdLevelApproved int declare @_3rdLevelReject int" +
                         " declare @_4thLevelPending int declare @_4thLevelApproved int declare @_4thLevelReject int" +
-                        " declare @ExportPending int declare @ExportApproved int declare @ExportReject int declare @ToInternalForward int" +
-                        
+                        " declare @ExportPending int declare @ExportApproved int declare @ExportReject int declare @ToInternalForward int declare @CsvUploadCount int" +
+
+
                         " select @_2ndLevelPending=COUNT(distinct fwd.RequestId) from TrnFwds fwd " +
                         " inner join TrnStepCounter cou on fwd.RequestId=cou.RequestId and cou.ApplyForId=@applyForId " +
                         " inner join TrnICardRequest trncard  on trncard.RequestId=cou.RequestId " +
@@ -2009,10 +2029,12 @@ namespace DataAccessLayer
                         " inner join TrnICardRequest trncard  on trncard.RequestId=cou.RequestId " +
                         " where FromAspNetUsersId=@UserId and FwdStatusId=4 and trncard.StatusId=1" +
 
+                        " select @CsvUploadCount=COUNT(Id) from CSVImports" +
+
                         " select @_2ndLevelPending _2ndLevelPending,@_2ndLevelApproved _2ndLevelApproved,@_2ndLevelReject _2ndLevelReject, " +
                         " @_3rdLevelPending _3rdLevelPending,@_3rdLevelApproved _3rdLevelApproved,@_3rdLevelReject _3rdLevelReject, " +
                         " @_4thLevelPending _4thLevelPending,@_4thLevelApproved _4thLevelApproved,@_4thLevelReject _4thLevelReject, " +
-                        " @ExportPending ExportPending,@ExportApproved ExportApproved,@ExportReject ExportReject,@ToInternalForward ToInternalForward";
+                        " @ExportPending ExportPending,@ExportApproved ExportApproved,@ExportReject ExportReject,@ToInternalForward ToInternalForward,@CsvUploadCount CsvUploadCount";
 
             } 
           
@@ -2164,12 +2186,12 @@ namespace DataAccessLayer
                                 from chipNoExists in chipNoJoin.DefaultIfEmpty()
                                 join stepStatus in _context.TrnStepCounter on new { RequestId = (matchRecord == null ? 0 : matchRecord.RequestId), StepId } equals new { stepStatus.RequestId, stepStatus.StepId } into stepStatusJoin
                                 from stepStatus in stepStatusJoin.DefaultIfEmpty()
-                                join armyNoCheck in _context.BasicDetails on new { BasicDetailId = (matchRecord == null ? 0 : matchRecord.BasicDetailId), ServiceNo = record.ArmyNo } equals new { armyNoCheck.BasicDetailId, armyNoCheck.ServiceNo } into basicDetailJoin
+                                join armyNoCheck in _context.BasicDetails on new { BasicDetailId = (matchRecord == null ? 0 : matchRecord.BasicDetailId), ServiceNo = record.ServiceNo } equals new { armyNoCheck.BasicDetailId, armyNoCheck.ServiceNo } into basicDetailJoin
                                 from armyNoCheck in basicDetailJoin.DefaultIfEmpty()
                                 select new DTOCardPriningRequest
                                 {
                                     RequestId = record.RequestId,
-                                    ArmyNo = record.ArmyNo,
+                                    ServiceNo = record.ServiceNo,
                                     ChipNo = record.ChipNo,
                                     CardSerialNo = record.CardSerialNo,
                                     IsValid = matchRecord != null && cardNoExists == null && chipNoExists == null && stepStatus != null && armyNoCheck != null,
@@ -2178,7 +2200,7 @@ namespace DataAccessLayer
                                                   (cardNoExists != null ? "CardSerialNo already exists; " : "") +
                                                   (chipNoExists != null ? "ChipNo already exists; " : "") +
                                                   (matchRecord != null && stepStatus == null ? "Card application is not available for printing; " : "") +
-                                                  (matchRecord != null && armyNoCheck == null ? "Army no. is invalid for this card application; " : "")
+                                                  (matchRecord != null && armyNoCheck == null ? "Service no. is invalid for this card application; " : "")
                                 }
                        ).ToList();
 

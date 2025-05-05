@@ -18,12 +18,15 @@ namespace Web.Healpers
                     ignoreProperties.Add("Status");
                 }
             }
-            else if (csvClassMapTypeEnum == CsvClassMapTypeEnum.HotlistExport)
+            else if (csvClassMapTypeEnum == CsvClassMapTypeEnum.HotlistExport || csvClassMapTypeEnum == CsvClassMapTypeEnum.LostCard)
             {
                 ignoreProperties.Add("RankAbbreviation");
                 ignoreProperties.Add("FName");
                 ignoreProperties.Add("LName");
                 ignoreProperties.Add("IsActiveBool");
+                ignoreProperties.Add("ArmyNo");
+                ignoreProperties.Add("RankAndName");
+                ignoreProperties.Add("Unit");
             }
             foreach (var prop in typeof(T).GetProperties())
             {

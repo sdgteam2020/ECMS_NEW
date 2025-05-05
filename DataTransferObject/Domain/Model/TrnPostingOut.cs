@@ -63,5 +63,19 @@ namespace DataTransferObject.Domain.Model
         [ForeignKey("MTrnFwd"), DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int? TrnFwdId { get; set; }
         public MTrnFwd? MTrnFwd { get; set; }
+        [DataType(DataType.Date)]
+        [Column(TypeName = "datetime")]
+        public DateTime? DispatchedOn { get; set; }
+        [StringLength(20)]
+        [Column(TypeName = "varchar(20)")]
+        public string? RefNo { get; set; }
+
+        [DataType(DataType.Date)]
+        [Column(TypeName = "datetime")]
+        public DateTime? DispatchUpdatedOn { get; set; }
+
+        [ForeignKey("DispatchUserUpdate"), DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public int? DispatchUpdatedBy { get; set; }
+        public ApplicationUser? DispatchUserUpdate { get; set; }
     }
 }

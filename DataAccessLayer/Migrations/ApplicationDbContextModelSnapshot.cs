@@ -2372,7 +2372,160 @@ namespace DataAccessLayer.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("TrnFaultyCard", (string)null);
+                    b.ToTable("TrnFaultyCard");
+                });
+
+            modelBuilder.Entity("DataTransferObject.Domain.Model.TrnHotlistCard", b =>
+                {
+                    b.Property<int>("HotlistCardId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("HotlistCardId"));
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Remark")
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<string>("RemarksIds")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<int>("RequestId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedOn")
+                        .IsRequired()
+                        .HasColumnType("datetime");
+
+                    b.Property<int?>("Updatedby")
+                        .HasColumnType("int");
+
+                    b.HasKey("HotlistCardId");
+
+                    b.HasIndex("RequestId");
+
+                    b.HasIndex("Updatedby");
+
+                    b.ToTable("TrnHotlistCards");
+                });
+
+            modelBuilder.Entity("DataTransferObject.Domain.Model.TrnLostCard", b =>
+                {
+                    b.Property<int>("LostCardId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("LostCardId"));
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("LostOn")
+                        .IsRequired()
+                        .HasColumnType("datetime");
+
+                    b.Property<string>("Remark")
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<int>("RequestId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedOn")
+                        .IsRequired()
+                        .HasColumnType("datetime");
+
+                    b.Property<int?>("Updatedby")
+                        .HasColumnType("int");
+
+                    b.HasKey("LostCardId");
+
+                    b.HasIndex("RequestId");
+
+                    b.HasIndex("Updatedby");
+
+                    b.ToTable("TrnLostCards");
+                });
+
+            modelBuilder.Entity("DataTransferObject.Domain.Model.TrnMapUnitChangeRequest", b =>
+                {
+                    b.Property<int>("MapUnitChangeRequestId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("MapUnitChangeRequestId"));
+
+                    b.Property<string>("AdminRemark")
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<DateTime?>("ApproverUpdatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("ApproverUpdatedby")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ApproverUserId")
+                        .HasColumnType("int")
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<string>("ExistingCh")
+                        .IsRequired()
+                        .HasColumnType("varchar(500)");
+
+                    b.Property<int>("FromUserId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsComplete")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsEditAction")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Remark")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<string>("RequestCh")
+                        .IsRequired()
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<bool>("RequestStatus")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("UnitMapId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedOn")
+                        .IsRequired()
+                        .HasColumnType("datetime");
+
+                    b.Property<int?>("Updatedby")
+                        .HasColumnType("int");
+
+                    b.HasKey("MapUnitChangeRequestId");
+
+                    b.HasIndex("ApproverUpdatedby");
+
+                    b.HasIndex("ApproverUserId");
+
+                    b.HasIndex("FromUserId");
+
+                    b.HasIndex("UnitMapId");
+
+                    b.HasIndex("Updatedby");
+
+                    b.ToTable("TrnMapUnitChangeRequest");
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Model.TrnPostingOut", b =>
@@ -2391,6 +2544,15 @@ namespace DataAccessLayer.Migrations
                     b.Property<int>("BasicDetailId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("DispatchUpdatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("DispatchUpdatedOn")
+                        .HasColumnType("datetime");
+
+                    b.Property<DateTime?>("DispatchedOn")
+                        .HasColumnType("datetime");
+
                     b.Property<int>("FromAspNetUsersId")
                         .HasColumnType("int");
 
@@ -2405,6 +2567,10 @@ namespace DataAccessLayer.Migrations
 
                     b.Property<byte>("ReasonId")
                         .HasColumnType("tinyint");
+
+                    b.Property<string>("RefNo")
+                        .HasMaxLength(20)
+                        .HasColumnType("varchar(20)");
 
                     b.Property<int>("RequestId")
                         .HasColumnType("int");
@@ -2434,6 +2600,8 @@ namespace DataAccessLayer.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("BasicDetailId");
+
+                    b.HasIndex("DispatchUpdatedBy");
 
                     b.HasIndex("FromAspNetUsersId");
 
@@ -3576,6 +3744,64 @@ namespace DataAccessLayer.Migrations
                     b.Navigation("MTrnICardRequest");
                 });
 
+            modelBuilder.Entity("DataTransferObject.Domain.Model.TrnLostCard", b =>
+                {
+                    b.HasOne("DataTransferObject.Domain.Model.MTrnICardRequest", "MTrnICardRequest")
+                        .WithMany()
+                        .HasForeignKey("RequestId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("DataTransferObject.Domain.Identitytable.ApplicationUser", "ApplicationUserUpdate")
+                        .WithMany()
+                        .HasForeignKey("Updatedby")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("ApplicationUserUpdate");
+
+                    b.Navigation("MTrnICardRequest");
+                });
+
+            modelBuilder.Entity("DataTransferObject.Domain.Model.TrnMapUnitChangeRequest", b =>
+                {
+                    b.HasOne("DataTransferObject.Domain.Identitytable.ApplicationUser", "ApplicationUser")
+                        .WithMany()
+                        .HasForeignKey("ApproverUpdatedby")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("DataTransferObject.Domain.MUserProfile", "ApproverMUserProfile")
+                        .WithMany()
+                        .HasForeignKey("ApproverUserId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("DataTransferObject.Domain.MUserProfile", "MUserProfile")
+                        .WithMany()
+                        .HasForeignKey("FromUserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("DataTransferObject.Domain.Master.MapUnit", "MapUnit")
+                        .WithMany()
+                        .HasForeignKey("UnitMapId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("DataTransferObject.Domain.Identitytable.ApplicationUser", "ApplicationUserUpdate")
+                        .WithMany()
+                        .HasForeignKey("Updatedby")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("ApplicationUser");
+
+                    b.Navigation("ApplicationUserUpdate");
+
+                    b.Navigation("ApproverMUserProfile");
+
+                    b.Navigation("MUserProfile");
+
+                    b.Navigation("MapUnit");
+                });
+
             modelBuilder.Entity("DataTransferObject.Domain.Model.TrnPostingOut", b =>
                 {
                     b.HasOne("DataTransferObject.Domain.Model.BasicDetail", "BasicDetail")
@@ -3583,6 +3809,11 @@ namespace DataAccessLayer.Migrations
                         .HasForeignKey("BasicDetailId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.HasOne("DataTransferObject.Domain.Identitytable.ApplicationUser", "DispatchUserUpdate")
+                        .WithMany()
+                        .HasForeignKey("DispatchUpdatedBy")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("DataTransferObject.Domain.Identitytable.ApplicationUser", "ApplicationUser")
                         .WithMany()
@@ -3647,6 +3878,8 @@ namespace DataAccessLayer.Migrations
                     b.Navigation("ApplicationUserUpdate");
 
                     b.Navigation("BasicDetail");
+
+                    b.Navigation("DispatchUserUpdate");
 
                     b.Navigation("MPostingReason");
 

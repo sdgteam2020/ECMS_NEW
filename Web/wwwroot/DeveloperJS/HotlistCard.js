@@ -2,7 +2,7 @@
 let checkedDataIds = [];
 let dataExportType = 1;
 $(function () {
-    BindData()
+    BindData();
     $("#btnAdd").on("click",function () {
         $("#armynosearchAllName").html("");
         $("#txtarmynosearchAll").val("");
@@ -125,7 +125,7 @@ function BindData() {
                     return meta.row + meta.settings._iDisplayStart + 1;
                 }
             },
-            { data: "RequestId", name: "RequestId" },
+            //{ data: "RequestId", name: "RequestId" },
             { data: "ModifiedServiceNo", name: "ModifiedServiceNo" },
             {
                 data: null,
@@ -265,7 +265,7 @@ function DataExport() {
         .then(data => {
             if (data.Result) {
                 const baseUrl = window.location.origin;
-                const downloadUrl = `${baseUrl}/BasicDetail/DownloadCsv?fileName=${data.Message}`;
+                const downloadUrl = `${baseUrl}/BasicDetail/DownloadCsv?fileName=${data.Message}&fileStoreName=HotlistCard`;
                 const link = document.createElement("a");
                 link.href = downloadUrl;
                 link.download = data.file;
@@ -281,79 +281,4 @@ function DataExport() {
                 });
             }
     });
-
-    //$.ajax({
-    //    url: '/BasicDetail/HotlistDataExport',
-    //    contentType: 'application/x-www-form-urlencoded',
-    //    data: userdata,
-    //    type: 'POST',
-
-    //    success: function (response) {
-    //        if (response != "null" && response != null) {
-    //            if (response == InternalServerError) {
-    //                Swal.fire({
-    //                    text: "Data Not Export Internal Server Error"
-    //                });
-    //            } else {
-    //                //var blob = new Blob([response], {
-    //                //    type: 'application/json'
-    //                //});
-    //                //var link = document.createElement('a');
-    //                //link.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(blob);
-    //                //link.download = "export.json";
-    //                //link.click();
-    //                if (DataExportType == 1) {
-    //                    window.location = "/WriteReadData/ExportAFSACCell/" + response + '.zip';
-    //                    setTimeout(function () {
-    //                        location.reload();
-    //                    }, 1000);
-    //                } else {
-    //                    window.location = "/WriteReadData/ExportAFSACCell/" + response + '.zip';
-    //                    setTimeout(function () {
-    //                        location.reload();
-    //                    }, 1000);
-    //                }
-
-
-    //                // var blob = new Blob([JSON.stringify(response, null, "\t")], { type: "application/json" });
-
-    //                // // Create a temporary anchor element
-    //                // var link = document.createElement("a");
-    //                // link.href = window.URL.createObjectURL(blob);
-
-
-
-
-    //                //// GetTokenSignXml(blob);
-    //                // // Set the file name
-    //                // link.download = "data.json";
-
-    //                // // Append the anchor to the body
-    //                // document.body.appendChild(link);
-
-    //                // // Trigger the click event
-    //                // link.click();
-
-    //                // // Remove the anchor from the body
-    //                // document.body.removeChild(link);
-
-
-    //                // setTimeout(function () {
-    //                //     location.reload();
-    //                // }, 1000);
-    //            }
-
-
-    //        }
-
-
-
-
-    //    },
-    //    error: function (result) {
-    //        Swal.fire({
-    //            text: errormsg002
-    //        });
-    //    }
-    //});
 }

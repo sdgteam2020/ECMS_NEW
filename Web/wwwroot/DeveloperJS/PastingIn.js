@@ -98,7 +98,15 @@
         GetByArmyNo($("#ddlaspnetiserpostout").val());
     });
 
-    $("#btnPostingOut").on("click",function () {
+    $("#btnPostingOut").on("click", function () {
+        if ($("#txtDispatchDate").val() != ''){
+            if ($("#txtRefNo").val() == '') {
+                toastr.error('Please enter reference number!');
+                return;
+            }
+        }
+
+
         if ($("#SaveForm")[0].checkValidity()) {
 
             Swal.fire({
@@ -127,6 +135,7 @@
 });
 function Save() {
     const trnFwdId = parseInt($(".spnTrnFwdId").html());
+    const dispatchedOn = parseInt($(".spnTrnFwdId").html());
     $.ajax({
         url: '/Posting/SavePoasingOut',
         type: 'POST',
@@ -144,6 +153,8 @@ function Save() {
             "ToUserID": $(".spnToUserID").html(),
             "RequestId": $(".spnRequestId").html(),
             "TrnFwdId": trnFwdId > 0 ? trnFwdId : null,
+            "DispatchedOn": formatDateToSqlString($("#txtDispatchDate").val()),
+            "RefNo": $("#txtRefNo").val(),
         }, //get the search string
         success: function (result) {
 
@@ -154,7 +165,7 @@ function Save() {
                 toastr.success('Data has been saved');
 
                 alert("Posting Out successfully");
-                location.href = '/Posting/GetAllPostingOut';
+                location.href = '/Home/RequestDashboard/UG9zdGluZyBPdXQ=';
 
             }
             else if (result == DataUpdate) {
@@ -162,7 +173,7 @@ function Save() {
 
                 toastr.success('Data has been Updated');
                 alert("Posting Out successfully");
-                location.href = '/Posting/GetAllPostingOut';
+                location.href = '/Home/RequestDashboard/UG9zdGluZyBPdXQ=';
 
             }
             else if (result == DataExists) {

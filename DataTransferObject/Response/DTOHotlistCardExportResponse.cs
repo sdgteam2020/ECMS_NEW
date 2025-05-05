@@ -8,7 +8,7 @@ namespace DataTransferObject.Response
 {
     public class DTOHotlistCardExportResponse
     {
-        public int RequestId { get; set; }
+        //public int RequestId { get; set; }
         public int HotlistCardId { get; set; }
         public string ArmyNo { get; set; }
         public string RankAbbreviation { get; set; }

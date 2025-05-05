@@ -69,4 +69,9 @@ namespace DataTransferObject.Requests
         public int? SubDteId { get; set; }
         public int? UnitMapId { get; set; }
     }
+    public class DTODataTablesRequestForMapUnitChange : DTODataTablesRequest
+    {
+        public int UnitMapId { get; set; }
+        public string RoleName { get; set; } = string.Empty;
+    }
 }

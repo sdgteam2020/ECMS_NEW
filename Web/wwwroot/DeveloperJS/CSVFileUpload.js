@@ -44,7 +44,7 @@ function validateCsvFileOnChange() {
         var headers = lines[0].split(",");
 
         // 4. Validate columns (missing or duplicate columns)
-        var expectedColumns = ['RequestId', 'ArmyNo', 'CardSerialNo', 'ChipNo']; // Modify this based on your required columns
+        var expectedColumns = ['RequestId', 'ServiceNo', 'CardSerialNo', 'ChipNo']; // Modify this based on your required columns
         var missingColumns = expectedColumns.filter(col => !headers.includes(col));
         var duplicateColumns = headers.filter((value, index, self) => self.indexOf(value) !== index);
 
@@ -179,6 +179,7 @@ function validateCsvFileOnChange() {
                                                         confirmButtonText: "Ok"
                                                     });
                                                 }
+                                                BindData();
                                             },
                                             error: function (xhr, status, error) {
                                                 console.error('Error while uploading valid records:', error);
@@ -234,7 +235,7 @@ function BindData() {
         serverSide: true,
         filter: true,
         order: [[7, 'desc']],// Default sorting on the first column
-        searching: true,
+        searching: false,
         ajax: async function (data, callback, settings) {
             let requestData = {
                 draw: data.draw,

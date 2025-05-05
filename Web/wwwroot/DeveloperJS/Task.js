@@ -53,6 +53,7 @@ function GetTaskIcardRequestCount(Id, applyForId) {
                             $("#ExportPending").html(response.ExportPending);
                             $("#ExportApproved").html(response.ExportApproved);
                             $("#ExportReject").html(response.ExportReject);
+                            $(".csvUploadCount").html(response.CsvUploadCount);
                         }
                     } else {
                         if (Id == 1) { // Submitted
@@ -71,6 +72,7 @@ function GetTaskIcardRequestCount(Id, applyForId) {
                             $("#_4thLevelPending").html(response._4thLevelPending);
                             $("#_4thLevelApproved").html(response._4thLevelApproved);
                             $("#ToInternalForward").html(response.ToInternalForward);
+                            $(".csvUploadCount").html(response.CsvUploadCount);
                         }
                     }
                 }

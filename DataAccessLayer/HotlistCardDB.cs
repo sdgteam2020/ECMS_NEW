@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.Entity;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -20,9 +19,9 @@ namespace DataAccessLayer
         protected new readonly ApplicationDbContext _context;
         private readonly DapperContext _contextDP;
         private readonly IDataProtector protector;
-        private readonly ILogger<FaultyCardDB> _logger;
+        private readonly ILogger<HotlistCardDB> _logger;
 
-        public HotlistCardDB(ApplicationDbContext context, DapperContext contextDP, IDataProtectionProvider dataProtectionProvider, ILogger<FaultyCardDB> logger, DataProtectionPurposeStrings dataProtectionPurposeStrings) : base(context)
+        public HotlistCardDB(ApplicationDbContext context, DapperContext contextDP, IDataProtectionProvider dataProtectionProvider, ILogger<HotlistCardDB> logger, DataProtectionPurposeStrings dataProtectionPurposeStrings) : base(context)
         {
             _context = context;
             _contextDP = contextDP;
@@ -41,7 +40,7 @@ namespace DataAccessLayer
             }
             catch (Exception ex)
             {
-                _logger.LogError(1001, ex, "HotlistCardDB->FindRequestId");
+                _logger.LogError(1001, ex, "HotlistCardDB->FindAnyRequestId");
                 return false;
             }
         }

@@ -1,15 +1,20 @@
 ﻿using BusinessLogicsLayer.Bde;
 using BusinessLogicsLayer.Posting;
 using BusinessLogicsLayer.Service;
+using DataAccessLayer;
 using DataTransferObject.Constants;
 using DataTransferObject.Domain.Model;
+using DataTransferObject.Requests;
 using DataTransferObject.Response;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting.Internal;
 using System.Security.Claims;
 using System.Text;
+using System.Threading.Tasks;
 using Web.Healpers;
+using Web.WebHelpers;
 
 namespace Web.Controllers
 {
@@ -23,7 +28,8 @@ namespace Web.Controllers
         private readonly IService service;
         private readonly ILogger<PostingController> _logger;
         private readonly IWebHostEnvironment hostingEnvironment;
-        public PostingController(IPostingBL postingBL, IApplCloseBL iApplCloseBL, ITrnICardRequestBL trnICardRequestBL, IService service, ILogger<PostingController> logger, IWebHostEnvironment hostingEnvironment)
+        private readonly IDataProtector _protector;
+        public PostingController(IPostingBL postingBL, IApplCloseBL iApplCloseBL, ITrnICardRequestBL trnICardRequestBL, IService service, ILogger<PostingController> logger, IWebHostEnvironment hostingEnvironment, IDataProtectionProvider dataProtectionProvider, DataProtectionPurposeStrings dataProtectionPurposeStrings)
         {
             _iPostingBL = postingBL;
             _iApplCloseBL = iApplCloseBL;
@@ -31,9 +37,22 @@ namespace Web.Controllers
             this.service = service;
             _logger = logger;
             this.hostingEnvironment = hostingEnvironment;
+            _protector = dataProtectionProvider.CreateProtector(
+                dataProtectionPurposeStrings.AFSACIdRouteValue);
         }
-        public IActionResult PostingIn()
+        public async Task<IActionResult> PostingIn(string? EncId)
         {
+            //var postingOutDetails = new DTOPostingOutDetailByIdResponse();
+            //if (!string.IsNullOrEmpty(EncId))
+            //{
+            //    ViewBag.isEdit = true;
+            //    string Id = _protector.Unprotect(EncId);
+            //    postingOutDetails = await _iPostingBL.GetPostingDetailById(Id);
+            //}
+            //else
+            //{
+            //    ViewBag.isEdit = false;
+            //}
             return View();
         }
         public async Task<IActionResult> GetPostingIn(string ArmyNo)
@@ -55,6 +74,17 @@ namespace Web.Controllers
            
             return View(data);
         }
+
+        public async Task<IActionResult> GetPostingOutDetails()
+        {
+            int userid = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var data = await _iPostingBL.GetAllPostingHistory(userid);
+
+            return View(data);
+        }
+
+
+
         public async Task<IActionResult> GetPostingOutWithType(string Type,string PostingType)
         {
             if (string.IsNullOrEmpty(Type) || !service.IsValidBase64(Type) || string.IsNullOrEmpty(PostingType) || !service.IsValidBase64(PostingType))
@@ -69,20 +99,11 @@ namespace Web.Controllers
                 var decodedString = Encoding.UTF8.GetString(base64EncodedBytes);
                 var PostingTy = Encoding.UTF8.GetString(Convert.FromBase64String(PostingType));
                 int t = Convert.ToInt32(decodedString);
+                SessionHeplers.SetObject(HttpContext.Session, "PostingType", PostingTy);
+                SessionHeplers.SetObject(HttpContext.Session, "Type", t);
                 ViewBag.Type = t;
                 ViewBag.PostingType = PostingTy;
-
-                int userid = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-                var data = await _iPostingBL.GetPostingOutWithType(userid, t, PostingTy);
-
-                return View(data);
-            }
-            catch (FormatException ex)
-            {
-                _logger.LogError(1001, ex, message: "Invalid Base64 string for Type: {Type} & PostingType: {PostingType} ", Type, PostingType);
-                TempData["error"] = "Invalid Input.";
-                TempData.Keep("error");
-                return RedirectToAction("ContactUs", "Home");
+                return View();
             }
             catch (Exception ex)
             {
@@ -93,20 +114,47 @@ namespace Web.Controllers
             }
         }
 
+        [HttpPost]
+        public async Task<IActionResult> GetAllPostingOutWithType(DTODataTablesRequest dTO)
+        {
+            List<DTOPostingOutDetilsResponse> dTOPostingOutDetilsResponses = new List<DTOPostingOutDetilsResponse>();
+            var responseData = new DTODataTablesResponse<DTOPostingOutDetilsResponse>
+            {
+                draw = 0,
+                recordsTotal = 0,
+                recordsFiltered = 0,
+                data = dTOPostingOutDetilsResponses
+            };
+            try
+            {
+                string PostingType = SessionHeplers.GetObject<string>(HttpContext.Session, "PostingType");
+                int Type = SessionHeplers.GetObject<int>(HttpContext.Session, "Type");
+                int userid = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                responseData = await _iPostingBL.GetPostingOutWithType(dTO, userid, Type, PostingType);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "Posting->GetAllPostingOutWithType");
+            }
+
+            return Json(responseData);
+        }
+
+
         public async Task<IActionResult> SavePoasingOut(TrnPostingOut dTO)
         {
             try
             {
                 dTO.IsActive = true;
-                dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier)); ;
+                dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                 dTO.UpdatedOn = DateTime.Now;
 
                 if (ModelState.IsValid)
                 {
                     if (dTO.Id > 0)
                     {
-                    await _iPostingBL.Update(dTO);
-                        return Json(KeyConstants.Update);
+                        await _iPostingBL.Update(dTO);
+                            return Json(KeyConstants.Update);
                     }
                     else
                     {
@@ -132,6 +180,10 @@ namespace Web.Controllers
             }
             catch (Exception ex) { return Json(KeyConstants.InternalServerError); }
         }
+
+        //public async Task<IActionResult> UpdateDispatchDetails() { 
+        
+        //}
 
         public async Task<IActionResult> ApplicationClose()
         {

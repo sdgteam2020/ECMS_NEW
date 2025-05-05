@@ -3,9 +3,12 @@ using Dapper;
 using DataAccessLayer.BaseInterfaces;
 using DataAccessLayer.Logger;
 using DataTransferObject.Domain.Model;
+using DataTransferObject.Requests;
 using DataTransferObject.Response;
 using DataTransferObject.ViewModels;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -21,10 +24,13 @@ namespace DataAccessLayer
     {
         protected readonly DapperContext _contextDP;
         private readonly ILogger<PostingDB> _logger;
-        public PostingDB(DapperContext contextDP, ILogger<PostingDB> logger) 
+        private readonly IDataProtector _protector;
+        public PostingDB(DapperContext contextDP, ILogger<PostingDB> logger, IDataProtectionProvider dataProtectionProvider, DataProtectionPurposeStrings dataProtectionPurposeStrings) 
         {
             _contextDP = contextDP;
             _logger = logger;
+            _protector = dataProtectionProvider.CreateProtector(
+                dataProtectionPurposeStrings.AFSACIdRouteValue);
         }
 
         public async Task<List<DTOPostingOutDetilsResponse>> GetAllPostingHistory(int AspNetUsersId)
@@ -32,21 +38,25 @@ namespace DataAccessLayer
             try
             {
 
-                string query = "select res.Reason,Authority,CONVERT (varchar(10),Cast(SOSDate as date), 103) SOSDate,CONVERT (varchar(10),Cast(pout.UpdatedOn as date), 103) UpdatedOn,user1.DomainId FromDomainId,user2.DomainId TODomainId," +
-                               " unit1.UnitName FromUnitName,unit2.UnitName ToUnitName,prof1.ArmyNo FromArmyNO,prof2.ArmyNo TOArmyNO,ranks.RankAbbreviation FromRankName,prof1.Name FromName,basic.ServiceNo,basic.FName,basic.LName,ranksmain.RankAbbreviation Rank from TrnPostingOut pout" +
-                               " inner join MPostingReason res on pout.ReasonId=res.Id"+
-                               " inner join AspNetUsers user1 on user1.Id=pout.FromAspNetUsersId"+
-                               " inner join AspNetUsers user2 on user2.Id=pout.ToAspNetUsersId"+
-                               " inner join MapUnit mapunit1 on mapunit1.UnitMapId=pout.FromUnitID"+
-                               " inner join MUnit unit1 on unit1.UnitId=mapunit1.UnitId"+
-                               " inner join MapUnit mapunit2 on mapunit2.UnitMapId=pout.ToUnitID"+
-                               " inner join MUnit unit2 on unit2.UnitId=mapunit2.UnitId"+
-                               " inner join UserProfile prof1 on prof1.UserId=pout.FromUserID"+
-                               " inner join MRank ranks on ranks.RankId=prof1.RankId" +
-                               " inner join UserProfile prof2 on prof2.UserId=pout.ToUserID"+
-                               " inner join BasicDetails basic on basic.BasicDetailId=pout.BasicDetailId" +
-                                " inner join MRank ranksmain on ranksmain.RankId=basic.RankId" +
-                               " where pout.FromAspNetUsersId= @AspNetUsersId";
+                string query = @"select res.Reason,Authority,CONVERT (varchar(10),Cast(SOSDate as date), 103) SOSDate,CONVERT (varchar(10),Cast(pout.UpdatedOn as date), 103) UpdatedOn,user1.DomainId FromDomainId,user2.DomainId TODomainId,
+                                    unit1.UnitName FromUnitName,unit2.UnitName ToUnitName,prof1.ArmyNo FromArmyNO,prof2.ArmyNo TOArmyNO,ranks.RankAbbreviation FromRankName,prof1.Name FromName,basic.ServiceNo,basic.FName,basic.LName,ranksmain.RankAbbreviation Rank
+                                    ,user3.DomainId DispatchUpdatedBy,pout.DispatchedOn,pout.DispatchUpdatedOn,pout.RefNo
+                                    from TrnPostingOut pout
+                                    inner join MPostingReason res on pout.ReasonId=res.Id
+                                    inner join AspNetUsers user1 on user1.Id=pout.FromAspNetUsersId
+                                    inner join AspNetUsers user2 on user2.Id=pout.ToAspNetUsersId
+                                    left join AspNetUsers user3 on user3.Id=pout.DispatchUpdatedBy
+                                    inner join MapUnit mapunit1 on mapunit1.UnitMapId=pout.FromUnitID
+                                    inner join MUnit unit1 on unit1.UnitId=mapunit1.UnitId
+                                    inner join MapUnit mapunit2 on mapunit2.UnitMapId=pout.ToUnitID
+                                    inner join MUnit unit2 on unit2.UnitId=mapunit2.UnitId
+                                    inner join UserProfile prof1 on prof1.UserId=pout.FromUserID
+                                    inner join MRank ranks on ranks.RankId=prof1.RankId
+                                    inner join UserProfile prof2 on prof2.UserId=pout.ToUserID
+                                    inner join BasicDetails basic on basic.BasicDetailId=pout.BasicDetailId
+                                    inner join MRank ranksmain on ranksmain.RankId=basic.RankId
+                                    where pout.FromAspNetUsersId= @AspNetUsersId
+                                    order by pout.Id desc";
                 using (var connection = _contextDP.CreateConnection())
                 {
                     var ret = await connection.QueryAsync<DTOPostingOutDetilsResponse>(query, new { AspNetUsersId });
@@ -61,60 +71,134 @@ namespace DataAccessLayer
                 return new List<DTOPostingOutDetilsResponse>(); // Return an empty list instead of null
             }
         }
-        public async Task<List<DTOPostingOutDetilsResponse>> GetPostingOutWithType(int AspNetUsersId,int Type, string PostingTy)
+
+        public async Task<DTOPostingOutDetailByIdResponse> GetPostingDetailById(string Id)
         {
+            var response = new DTOPostingOutDetailByIdResponse();
             try
             {
-                string query = "";
-                if (PostingTy == "PostingOut")
-                { 
-                query = "select res.Reason,Authority,CONVERT (varchar(10),Cast(SOSDate as date), 103) SOSDate,CONVERT (varchar(10),Cast(pout.UpdatedOn as date), 103) UpdatedOn,user1.DomainId FromDomainId,user2.DomainId TODomainId," +
-                               " unit1.UnitName FromUnitName,unit2.UnitName ToUnitName,prof1.ArmyNo FromArmyNO,prof2.ArmyNo TOArmyNO,ranks.RankAbbreviation FromRankName,prof1.Name FromName,basic.ServiceNo,basic.FName,basic.LName,ranksmain.RankAbbreviation Rank from TrnPostingOut pout" +
-                               " inner join MPostingReason res on pout.ReasonId=res.Id" +
-                               " inner join AspNetUsers user1 on user1.Id=pout.FromAspNetUsersId" +
-                               " inner join AspNetUsers user2 on user2.Id=pout.ToAspNetUsersId" +
-                               " inner join MapUnit mapunit1 on mapunit1.UnitMapId=pout.FromUnitID" +
-                               " inner join MUnit unit1 on unit1.UnitId=mapunit1.UnitId" +
-                               " inner join MapUnit mapunit2 on mapunit2.UnitMapId=pout.ToUnitID" +
-                               " inner join MUnit unit2 on unit2.UnitId=mapunit2.UnitId" +
-                               " inner join UserProfile prof1 on prof1.UserId=pout.FromUserID" +
-                               " inner join MRank ranks on ranks.RankId=prof1.RankId" +
-                               " inner join UserProfile prof2 on prof2.UserId=pout.ToUserID" +
-                               " inner join BasicDetails basic on basic.BasicDetailId=pout.BasicDetailId" +
-                               " inner join MRank ranksmain on ranksmain.RankId=basic.RankId" +
-                               " where pout.FromAspNetUsersId= @AspNetUsersId and basic.ApplyForId = @Type ";
-               }
-                else if (PostingTy == "PostingIn")
-                {
-                    query = "select res.Reason,Authority,CONVERT (varchar(10),Cast(SOSDate as date), 103) SOSDate,CONVERT (varchar(10),Cast(pout.UpdatedOn as date), 103) UpdatedOn,user1.DomainId FromDomainId,user2.DomainId TODomainId," +
-                              " unit1.UnitName FromUnitName,unit2.UnitName ToUnitName,prof1.ArmyNo FromArmyNO,prof2.ArmyNo TOArmyNO,ranks.RankAbbreviation FromRankName,prof1.Name FromName,basic.ServiceNo,basic.FName,basic.LName,ranksmain.RankAbbreviation Rank from TrnPostingOut pout" +
-                              " inner join MPostingReason res on pout.ReasonId=res.Id" +
-                              " inner join AspNetUsers user1 on user1.Id=pout.FromAspNetUsersId" +
-                              " inner join AspNetUsers user2 on user2.Id=pout.ToAspNetUsersId" +
-                              " inner join MapUnit mapunit1 on mapunit1.UnitMapId=pout.FromUnitID" +
-                              " inner join MUnit unit1 on unit1.UnitId=mapunit1.UnitId" +
-                              " inner join MapUnit mapunit2 on mapunit2.UnitMapId=pout.ToUnitID" +
-                              " inner join MUnit unit2 on unit2.UnitId=mapunit2.UnitId" +
-                              " inner join UserProfile prof1 on prof1.UserId=pout.FromUserID" +
-                              " inner join MRank ranks on ranks.RankId=prof1.RankId" +
-                              " inner join UserProfile prof2 on prof2.UserId=pout.ToUserID" +
-                              " inner join BasicDetails basic on basic.BasicDetailId=pout.BasicDetailId" +
-                              " inner join MRank ranksmain on ranksmain.RankId=basic.RankId" +
-                              " where pout.ToAspNetUsersId= @AspNetUsersId and basic.ApplyForId = @Type ";
-                }
+                string query = @"select res.Reason,SOSDate,Authority,unit.UnitName ToUnitName,prof.ArmyNo TOArmyNO
+	                                ,ranks.RankAbbreviation ToRankName,prof.Name FromName,us.DomainId TODomainId,appt.AppointmentName as ToApptName
+                                 from TrnPostingOut pout
+                                 inner join MPostingReason res on pout.ReasonId=res.Id
+                                 inner join UserProfile prof on prof.UserId=pout.ToUserID
+                                 inner join MRank ranks on ranks.RankId=prof.RankId 
+                                 inner join MapUnit mapunit on mapunit.UnitMapId=pout.ToUnitID 
+                                 inner join MUnit unit on unit.UnitId=mapunit.UnitId 
+                                 inner join AspNetUsers us on us.Id=pout.ToAspNetUsersId 
+                                 inner join TrnDomainMapping trnd  on trnd.UserId = pout.ToUserID
+                                 inner join MAppointment appt on appt.ApptId=trnd.ApptId 
+                                 where pout.Id = @Id";
                 using (var connection = _contextDP.CreateConnection())
                 {
-                    var ret = await connection.QueryAsync<DTOPostingOutDetilsResponse>(query, new { AspNetUsersId,Type });
+                    response = await connection.QuerySingleAsync<DTOPostingOutDetailByIdResponse>(query, new { Id });
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "PostingDB->GetPostingDetailById");
+            }
+            return response;
+        }
 
-                    return ret.ToList();
+        public async Task<DTODataTablesResponse<DTOPostingOutDetilsResponse>> GetPostingOutWithType(DTODataTablesRequest dTO, int AspNetUsersId,int Type, string PostingTy)
+        {
+            List<DTOPostingOutDetilsResponse> dTOPostingOutDetilsResponses = new List<DTOPostingOutDetilsResponse>();
+            var responseData = new DTODataTablesResponse<DTOPostingOutDetilsResponse>
+            {
+                draw = 0,
+                recordsTotal = 0,
+                recordsFiltered = 0,
+                data = dTOPostingOutDetilsResponses
+            };
+            try
+            {
+                var allowedSortColumns = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+                {
+                    ["Authority"] = "Authority",
+                    ["UpdatedOn"] = "pout.UpdatedOn",
+                    ["SOSDate"] = "pout.SOSDate"
+                };
 
+                var sortColumn = allowedSortColumns.ContainsKey(dTO.sortColumn ?? "")
+                    ? allowedSortColumns[dTO.sortColumn!]
+                    : "pout.UpdatedOn";
+
+                var sortOrder = dTO.sortDirection;
+
+                string CanAddDispatchDetailQr = @$"{(PostingTy == "PostingIn" ? "0" : "isnull((Select 1 from TrnPostingOut where Id = (Select MAX(Id) from TrnPostingOut where RequestId = pout.RequestId) and Id = pout.Id and DispatchedOn is null),0)")}";
+
+                string query = @$"pout.Id,res.Reason,Authority,SOSDate,pout.UpdatedOn,user1.DomainId FromDomainId,user2.DomainId TODomainId,
+                                unit1.UnitName FromUnitName,unit2.UnitName ToUnitName,prof1.ArmyNo FromArmyNO,prof2.ArmyNo TOArmyNO,ranks.RankAbbreviation FromRankName,prof1.Name FromName,basic.ServiceNo,basic.FName,basic.LName,ranksmain.RankAbbreviation Rank 
+                                ,user3.DomainId DispatchUpdatedBy,pout.DispatchedOn,pout.DispatchUpdatedOn,pout.RefNo,{CanAddDispatchDetailQr} CanAddDispatchDetail
+							    from TrnPostingOut pout
+                                inner join MPostingReason res on pout.ReasonId=res.Id 
+                                inner join AspNetUsers user1 on user1.Id=pout.FromAspNetUsersId 
+                                inner join AspNetUsers user2 on user2.Id=pout.ToAspNetUsersId 
+                                LEFT join AspNetUsers user3 on user3.Id=pout.DispatchUpdatedBy
+                                inner join MapUnit mapunit1 on mapunit1.UnitMapId=pout.FromUnitID 
+                                inner join MUnit unit1 on unit1.UnitId=mapunit1.UnitId 
+                                inner join MapUnit mapunit2 on mapunit2.UnitMapId=pout.ToUnitID 
+                                inner join MUnit unit2 on unit2.UnitId=mapunit2.UnitId 
+                                inner join UserProfile prof1 on prof1.UserId=pout.FromUserID 
+                                inner join MRank ranks on ranks.RankId=prof1.RankId 
+                                inner join UserProfile prof2 on prof2.UserId=pout.ToUserID 
+                                inner join BasicDetails basic on basic.BasicDetailId=pout.BasicDetailId 
+                                inner join MRank ranksmain on ranksmain.RankId=basic.RankId 
+                                where pout.{(PostingTy == "PostingIn" ? "ToAspNetUsersId" : "FromAspNetUsersId")} = @AspNetUsersId and basic.ApplyForId = @Type and basic.ServiceNo like '%' + @SearchTerm + '%'";
+
+                query = $@"
+                            WITH RecordCTE AS (
+                                select ROW_NUMBER() OVER (ORDER BY {sortColumn} {sortOrder}) AS RowNum, {query}
+                            )
+                            SELECT * FROM RecordCTE
+                            WHERE RowNum BETWEEN @Offset AND @Limit;
+
+                            select count(1) from TrnPostingOut pout
+                            inner join BasicDetails basic on basic.BasicDetailId=pout.BasicDetailId
+                            where pout.{(PostingTy == "PostingIn" ? "ToAspNetUsersId" : "FromAspNetUsersId")} = @AspNetUsersId and basic.ApplyForId = @Type;
+                        ";
+                using (var connection = _contextDP.CreateConnection())
+                {
+                    var ret = await connection.QueryMultipleAsync(query, new { Offset = dTO.Start, Limit = dTO.Length, SearchTerm = string.IsNullOrWhiteSpace(dTO.searchValue) ? "" : dTO.searchValue, AspNetUsersId = AspNetUsersId, Type = Type });
+                    var records = (await ret.ReadAsync<DTOPostingOutDetilsResponse>()).Select(
+                        record => new DTOPostingOutDetilsResponse(){ 
+                            Id = _protector.Protect(record.Id.ToString()),
+                            ServiceNo = record.ServiceNo,
+                            FName = record.FName,
+                            LName = record.LName,
+                            Rank = record.Rank,
+                            Reason = record.Reason,
+                            Authority = record.Authority,
+                            SOSDate = record.SOSDate,
+                            UpdatedOn = record.UpdatedOn,
+                            FromDomainId = record.FromDomainId,
+                            FromUnitName = record.FromUnitName,
+                            FromArmyNO = record.FromArmyNO,
+                            FromName = record.FromName,
+                            FromRankName = record.FromRankName,
+                            ToDomainId = record.ToDomainId,
+                            ToUnitName = record.ToUnitName,
+                            ToArmyNO = record.ToArmyNO,
+                            DispatchedOn = record.DispatchedOn,
+                            RefNo = record.RefNo,
+                            DispatchUpdatedOn = record.DispatchUpdatedOn,
+                            DispatchUpdatedBy = record.DispatchUpdatedBy,
+                            CanAddDispatchDetail = record.CanAddDispatchDetail
+                        }
+                        ).ToList();
+                    var totalRecords = (await ret.ReadAsync<int>()).Single();
+                    responseData.data = records;
+                    responseData.draw = dTO.Draw;
+                    responseData.recordsTotal = totalRecords;
+                    responseData.recordsFiltered = records.Count();
                 }
             }
             catch (Exception ex)
             {
                 _logger.LogError(1001, ex, "PostingDB->GetPostingOutWithType");
-                return new List<DTOPostingOutDetilsResponse>(); // Return an empty list instead of null
             }
+            return responseData;
         }
 
         public async Task<DTOPostingInResponse> GetArmyDataForPostingOut(string ArmyNo)
@@ -267,9 +351,9 @@ namespace DataAccessLayer
 
             try
             {
-                var insertSql = " INSERT INTO TrnPostingOut (ReasonId, Authority, FromAspNetUsersId, FromUnitID, FromUserID, ToAspNetUsersId, ToUnitID, ToUserID, IsActive, UpdatedOn, Updatedby, SOSDate, BasicDetailId, RequestId, TrnFwdId)" +
-                                " OUTPUT INSERTED.Id "+
-                                " VALUES (@ReasonId, @Authority, @FromAspNetUsersId, @FromUnitID, @FromUserID, @ToAspNetUsersId, @ToUnitID, @ToUserID, @IsActive, @UpdatedOn, @Updatedby, @SOSDate, @BasicDetailId, @RequestId, @TrnFwdId );";
+                var insertSql = @$" INSERT INTO TrnPostingOut (ReasonId, Authority, FromAspNetUsersId, FromUnitID, FromUserID, ToAspNetUsersId, ToUnitID, ToUserID, IsActive, UpdatedOn, Updatedby, SOSDate, BasicDetailId, RequestId, TrnFwdId,DispatchUpdatedBy,DispatchUpdatedOn,DispatchedOn,RefNo)
+                                OUTPUT INSERTED.Id 
+                                VALUES (@ReasonId, @Authority, @FromAspNetUsersId, @FromUnitID, @FromUserID, @ToAspNetUsersId, @ToUnitID, @ToUserID, @IsActive, @UpdatedOn, @Updatedby, @SOSDate, @BasicDetailId, @RequestId, @TrnFwdId,{(Data.DispatchedOn.HasValue ? "@Updatedby"  : "null")},{(Data.DispatchedOn.HasValue ? "@UpdatedOn" : "null")},@DispatchedOn,@RefNo );";
                 var parameters = new DynamicParameters();
                 parameters.Add("@ReasonId", Data.ReasonId, DbType.Byte, ParameterDirection.Input);
                 parameters.Add("@Authority", Data.Authority, DbType.String, ParameterDirection.Input,50);
@@ -286,6 +370,9 @@ namespace DataAccessLayer
                 parameters.Add("@BasicDetailId", Data.BasicDetailId, DbType.Int32, ParameterDirection.Input);
                 parameters.Add("@RequestId", Data.RequestId, DbType.Int32, ParameterDirection.Input);
                 parameters.Add("@TrnFwdId", Data.TrnFwdId, DbType.Int32, ParameterDirection.Input);
+                parameters.Add("@TrnFwdId", Data.TrnFwdId, DbType.Int32, ParameterDirection.Input);
+                parameters.Add("@DispatchedOn", Data.DispatchedOn, DbType.DateTime, ParameterDirection.Input);
+                parameters.Add("@RefNo", Data.RefNo, DbType.String, ParameterDirection.Input);
 
                 //var parameters = new { ReasonId = Data.ReasonId, Authority = Data.Authority , FromAspNetUsersId = Data.FromAspNetUsersId, FromUnitID = Data.FromUnitID, FromUserID = Data.FromUserID, ToAspNetUsersId = Data.ToAspNetUsersId, ToUnitID = Data.ToUnitID, ToUserID = Data.ToUserID, IsActive= Data.IsActive, UpdatedOn = Data.UpdatedOn, Updatedby = Data.Updatedby, SOSDate = Data.SOSDate, BasicDetailId = Data.BasicDetailId, RequestId = Data.RequestId };
                 var Id = await db.QuerySingleAsync<int>(insertSql, parameters, transaction:transaction);

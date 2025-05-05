@@ -33,6 +33,7 @@ function GetDashboardMasterCount() {
                     $("#TotDiv").html(response.TotDiv == 1 ? 0 : response.TotDiv - 1);
                     $("#TotBde").html(response.TotBde == 1 ? 0 : response.TotBde - 1);
                     $("#TotMapUnit").html(response.TotMapUnit);
+                    $("#TotMapUnitChangeRequest").html(response.TotMapUnitChangeRequest);
                     $("#TotUnit").html(response.TotUnit);
                     $("#TotRank").html(response.TotRank);
                     $("#TotAppointment").html(response.TotAppointment);

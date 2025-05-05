@@ -29,7 +29,7 @@ function BindData() {
                     });
                 }
                 else if (response == 0) {
-                    listItem += "<tr><td class='text-center' colspan=4>No Record Found</td></tr>";
+                    listItem += "<tr><td class='text-center' colspan=10>No Record Found</td></tr>";
                     $("#tbldata").DataTable().destroy();
                     $("#DetailBody").html(listItem);
                     $("#lblTotal").html(0);
