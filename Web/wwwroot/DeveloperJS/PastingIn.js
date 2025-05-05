@@ -135,7 +135,6 @@
 });
 function Save() {
     const trnFwdId = parseInt($(".spnTrnFwdId").html());
-    const dispatchedOn = parseInt($(".spnTrnFwdId").html());
     $.ajax({
         url: '/Posting/SavePoasingOut',
         type: 'POST',

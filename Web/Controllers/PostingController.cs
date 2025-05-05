@@ -42,17 +42,6 @@ namespace Web.Controllers
         }
         public async Task<IActionResult> PostingIn(string? EncId)
         {
-            //var postingOutDetails = new DTOPostingOutDetailByIdResponse();
-            //if (!string.IsNullOrEmpty(EncId))
-            //{
-            //    ViewBag.isEdit = true;
-            //    string Id = _protector.Unprotect(EncId);
-            //    postingOutDetails = await _iPostingBL.GetPostingDetailById(Id);
-            //}
-            //else
-            //{
-            //    ViewBag.isEdit = false;
-            //}
             return View();
         }
         public async Task<IActionResult> GetPostingIn(string ArmyNo)
@@ -181,9 +170,52 @@ namespace Web.Controllers
             catch (Exception ex) { return Json(KeyConstants.InternalServerError); }
         }
 
-        //public async Task<IActionResult> UpdateDispatchDetails() { 
-        
-        //}
+
+        public async Task<IActionResult> SavePostingOutDispatchDetails(DTODispatchDetailsSaveRequest dTO)
+        {
+            DTOCommonSaveResponse dTOResponse = new DTOCommonSaveResponse();
+            try
+            {
+                var encId = _protector.Unprotect(dTO.encId);
+                if (int.TryParse(encId, out int Id))
+                {
+                    if (ModelState.IsValid)
+                    {
+                        var postingOutDetails = await _iPostingBL.Get(Id);
+                        postingOutDetails.DispatchedOn = dTO.DispatchedOn;
+                        postingOutDetails.RefNo = dTO.RefNo;
+                        postingOutDetails.DispatchUpdatedBy = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                        postingOutDetails.DispatchUpdatedOn = DateTime.Now;
+                        await _iPostingBL.Update(postingOutDetails);
+                        dTOResponse.Result = true;
+                        dTOResponse.Message = "Record Saved!";
+                    }
+                    else
+                    {
+                        var errors = ModelState.Where(x => x.Value?.Errors?.Count > 0)
+                        .SelectMany(x => x.Value!.Errors)
+                        .Select(e => e.ErrorMessage)
+                        .ToList();
+                        if (errors.Any())
+                        {
+                            dTOResponse.Message = string.Join("; ", errors); // Concatenate all error messages
+                        }
+                    }
+                }
+                else
+                {
+                    _logger.LogError(1001, $"Invalid Id -: {dTO.encId}", "Posting->SavePostingOutDispatchDetails");
+                    dTOResponse.Message = "Technical Error!";
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "Posting->SavePostingOutDispatchDetails");
+                dTOResponse.Message = "Internal Server Error!";
+            }
+
+            return Json(dTOResponse);
+        }
 
         public async Task<IActionResult> ApplicationClose()
         {

@@ -18,7 +18,7 @@ namespace DataTransferObject.Domain.Model
         public int RequestId { get; set; }
         public MTrnICardRequest? MTrnICardRequest { get; set; }
 
-        [StringLength(100)]
+        [StringLength(250)]
         [Column(TypeName = "varchar(100)")]
         public string? Remark { get; set; }
 

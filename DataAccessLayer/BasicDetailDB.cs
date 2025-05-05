@@ -21,6 +21,7 @@ using Microsoft.Data.SqlClient;
 using System.Linq.Expressions;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using DataTransferObject.Constants;
+using System.Diagnostics;
 
 namespace DataAccessLayer
 {
@@ -550,77 +551,122 @@ namespace DataAccessLayer
         }
         public async Task<List<DTOSmartSearch>?> SearchAllServiceNo(DTOSearchArmyNoRequest dto)
         {
-            string query = "";
+            string unitQuery = dto.Claim ? "" : "and tdm.UnitId=@MapUnitId";
+            string joins = "";
+            string forwardId = "0";
 
             if (dto.TypeId == KeyConstants.ApplicantPostingOut || dto.TypeId == KeyConstants.ApplicantClose)
             {
-                query = @"Select TOP 5 basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath Image,req.RequestId
+                joins = " map.AspNetUsersId=@AspNetUsersId";
+            }
+            else if (dto.TypeId == KeyConstants.HoltlistCardRequest || dto.TypeId == KeyConstants.LostCardRequest)
+            { 
+            
+            }
+
+
+                switch (dto.TypeId)
+                {
+                    case KeyConstants.ApplicantPostingOut:
+                        {
+                            break;
+                        }
+                    case KeyConstants.FaultyCardRequest:
+                        {
+                            joins = @$"inner join TrnDomainMapping tdm on tdm.Id=req.TrnDomainMappingId {unitQuery}
+                                   inner join TrnStepCounter stepcount on req.RequestId=stepcount.RequestId and stepcount.StepId=6
+                                   LEFT JOIN TrnFwds fwd ON fwd.RequestId = req.RequestId";
+                            break;
+                        }
+                    case byte type when (type == KeyConstants.HoltlistCardRequest || type == KeyConstants.LostCardRequest):
+                        {
+                            joins = @$"inner join TrnDomainMapping tdm on tdm.Id=req.TrnDomainMappingId {unitQuery}
+                               inner join TrnStepCounter stepcount on req.RequestId=stepcount.RequestId and stepcount.StepId=6
+                               LEFT JOIN TrnFwds fwd ON fwd.RequestId = req.RequestId
+                               Left join {(type == KeyConstants.HoltlistCardRequest ? "TrnHotlistCards" : "TrnLostCards")} thc on req.RequestId = thc.RequestId";
+                            break;
+                        }
+                }
+
+            string query = @$"Select Distinct TOP 5 basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath Image,req.RequestId
                         from BasicDetails basi
                         inner join TrnICardRequest req on req.BasicDetailId=basi.BasicDetailId and req.StatusId=1
-                        inner join TrnDomainMapping map on map.Id=req.TrnDomainMappingId and map.AspNetUsersId=@AspNetUsersId
-                        inner join TrnUpload trnu on basi.BasicDetailId=trnu.BasicDetailId 
-                        where ServiceNo like @ServiceNo ";
-            }
-            else if (dto.TypeId == KeyConstants.FaultyCardRequest)
-            {
-                string unitQuery = dto.Claim ? "" : "and tdm.UnitId=@MapUnitId";
-                query = @$"Select TOP 5 basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath Image,req.RequestId,COALESCE(MAX(fwd.TrnFwdId), NULL) AS MaxTrnFwdId  
-                            from BasicDetails basi
-                            inner join TrnUpload trnu on basi.BasicDetailId=trnu.BasicDetailId 
-                            inner join TrnICardRequest req on req.BasicDetailId=basi.BasicDetailId and req.StatusId=1
-                            inner join TrnStepCounter stepcount on req.RequestId=stepcount.RequestId and stepcount.StepId=6
-                            inner join TrnDomainMapping tdm on tdm.Id=req.TrnDomainMappingId {unitQuery}
-                            LEFT JOIN TrnFwds fwd ON fwd.RequestId = req.RequestId
-                            where ServiceNo like @ServiceNo
-                            GROUP BY
-								basi.BasicDetailId,
-								FName,
-								LName,
-								ServiceNo,
-								PhotoImagePath,
-								req.RequestId
-                            ";
-            }
-            else if (dto.TypeId == KeyConstants.HoltlistCardRequest)
-            {
-                query = @$"Select TOP 5 basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath Image,req.RequestId,COALESCE(MAX(fwd.TrnFwdId), NULL) AS MaxTrnFwdId  
-                            from BasicDetails basi
-                            inner join TrnUpload trnu on basi.BasicDetailId=trnu.BasicDetailId 
-                            inner join TrnICardRequest req on req.BasicDetailId=basi.BasicDetailId and req.StatusId=1
-                            inner join TrnStepCounter stepcount on req.RequestId=stepcount.RequestId and stepcount.StepId=6
-                            inner join TrnDomainMapping tdm on tdm.Id=req.TrnDomainMappingId
-                            LEFT JOIN TrnFwds fwd ON fwd.RequestId = req.RequestId
-                            Left join TrnHotlistCards thc on req.RequestId = thc.RequestId
-                            where thc.RequestId is null and ServiceNo like @ServiceNo
-                            GROUP BY
-								basi.BasicDetailId,
-								FName,
-								LName,
-								ServiceNo,
-								PhotoImagePath,
-								req.RequestId
-                            ";
-            }
-            else if (dto.TypeId == KeyConstants.LostCardRequest)
-            {
-                query = @$"Select TOP 5 basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath Image,req.RequestId,COALESCE(MAX(fwd.TrnFwdId), NULL) AS MaxTrnFwdId  
-                            from BasicDetails basi
-                            inner join TrnUpload trnu on basi.BasicDetailId=trnu.BasicDetailId 
-                            inner join TrnICardRequest req on req.BasicDetailId=basi.BasicDetailId and req.StatusId=1
-                            inner join TrnStepCounter stepcount on req.RequestId=stepcount.RequestId and stepcount.StepId=6
-                            inner join TrnDomainMapping tdm on tdm.Id=req.TrnDomainMappingId
-                            LEFT JOIN TrnFwds fwd ON fwd.RequestId = req.RequestId
-                            Left join TrnLostCards tlc on req.RequestId = tlc.RequestId
-                            where tlc.RequestId is null and ServiceNo like @ServiceNo
-                            GROUP BY
-								basi.BasicDetailId,
-								FName,
-								LName,
-								ServiceNo,
-								PhotoImagePath,
-								req.RequestId
-                            ";
-            }
+                        inner join TrnUpload trnu on basi.BasicDetailId=trnu.BasicDetailId
+                        inner join TrnDomainMapping map on map.Id=req.TrnDomainMappingId and
+                        {joins}
+                        where {(dto.TypeId == KeyConstants.HoltlistCardRequest || dto.TypeId == KeyConstants.LostCardRequest ? "thc.RequestId is null and" : "")}  ServiceNo like @ServiceNo";
+
+            #region Comment Code
+            //    if (dto.TypeId == KeyConstants.ApplicantPostingOut || dto.TypeId == KeyConstants.ApplicantClose)
+            //    {
+            //        query = @"Select TOP 5 basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath Image,req.RequestId
+            //                from BasicDetails basi
+            //                inner join TrnICardRequest req on req.BasicDetailId=basi.BasicDetailId and req.StatusId=1
+            //                inner join TrnDomainMapping map on map.Id=req.TrnDomainMappingId and map.AspNetUsersId=@AspNetUsersId
+            //                inner join TrnUpload trnu on basi.BasicDetailId=trnu.BasicDetailId 
+            //                where ServiceNo like @ServiceNo ";
+            //    }
+            //    else if (dto.TypeId == KeyConstants.FaultyCardRequest)
+            //    {
+            //        query = @$"Select TOP 5 basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath Image,req.RequestId,COALESCE(MAX(fwd.TrnFwdId), NULL) AS MaxTrnFwdId  
+            //                    from BasicDetails basi
+            //                    inner join TrnUpload trnu on basi.BasicDetailId=trnu.BasicDetailId 
+            //                    inner join TrnICardRequest req on req.BasicDetailId=basi.BasicDetailId and req.StatusId=1
+            //                    inner join TrnStepCounter stepcount on req.RequestId=stepcount.RequestId and stepcount.StepId=6
+            //                    inner join TrnDomainMapping tdm on tdm.Id=req.TrnDomainMappingId {unitQuery}
+            //                    LEFT JOIN TrnFwds fwd ON fwd.RequestId = req.RequestId
+            //                    where ServiceNo like @ServiceNo
+            //                    GROUP BY
+            //basi.BasicDetailId,
+            //FName,
+            //LName,
+            //ServiceNo,
+            //PhotoImagePath,
+            //req.RequestId
+            //                    ";
+            //    }
+            //    else if (dto.TypeId == KeyConstants.HoltlistCardRequest)
+            //    {
+            //        query = @$"Select TOP 5 basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath Image,req.RequestId,COALESCE(MAX(fwd.TrnFwdId), NULL) AS MaxTrnFwdId  
+            //                    from BasicDetails basi
+            //                    inner join TrnUpload trnu on basi.BasicDetailId=trnu.BasicDetailId 
+            //                    inner join TrnICardRequest req on req.BasicDetailId=basi.BasicDetailId and req.StatusId=1
+            //                    inner join TrnStepCounter stepcount on req.RequestId=stepcount.RequestId and stepcount.StepId=6
+            //                    inner join TrnDomainMapping tdm on tdm.Id=req.TrnDomainMappingId {unitQuery}
+            //                    LEFT JOIN TrnFwds fwd ON fwd.RequestId = req.RequestId
+            //                    Left join TrnHotlistCards thc on req.RequestId = thc.RequestId
+            //                    where thc.RequestId is null and ServiceNo like @ServiceNo
+            //                    GROUP BY
+            //basi.BasicDetailId,
+            //FName,
+            //LName,
+            //ServiceNo,
+            //PhotoImagePath,
+            //req.RequestId
+            //                    ";
+            //    }
+            //    else if (dto.TypeId == KeyConstants.LostCardRequest)
+            //    {
+            //        query = @$"Select TOP 5 basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath Image,req.RequestId,COALESCE(MAX(fwd.TrnFwdId), NULL) AS MaxTrnFwdId  
+            //                    from BasicDetails basi
+            //                    inner join TrnUpload trnu on basi.BasicDetailId=trnu.BasicDetailId 
+            //                    inner join TrnICardRequest req on req.BasicDetailId=basi.BasicDetailId and req.StatusId=1
+            //                    inner join TrnStepCounter stepcount on req.RequestId=stepcount.RequestId and stepcount.StepId=6
+            //                    inner join TrnDomainMapping tdm on tdm.Id=req.TrnDomainMappingId
+            //                    LEFT JOIN TrnFwds fwd ON fwd.RequestId = req.RequestId
+            //                    Left join TrnLostCards tlc on req.RequestId = tlc.RequestId
+            //                    where tlc.RequestId is null and ServiceNo like @ServiceNo
+            //                    GROUP BY
+            //basi.BasicDetailId,
+            //FName,
+            //LName,
+            //ServiceNo,
+            //PhotoImagePath,
+            //req.RequestId
+            //                    ";
+            //    }
+
+            #endregion Comment Code
 
             try
             {

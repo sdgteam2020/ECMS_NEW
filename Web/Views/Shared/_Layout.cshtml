@@ -611,8 +611,15 @@
             });
 
             $('.datetimepickerpast').datetimepicker({
-                sideBySide: true,
-                maxDate: new Date()
+              sideBySide: true,
+              format: 'YYYY-MM-DD HH:mm',
+              maxDate: new Date()
+            }).on('dp.change', function (e) {
+              // Set the formatted value (optional: adjust format)
+              $(this).val(e.date.format('YYYY-MM-DD HH:mm'));
+
+              // Trigger input for floating label (if CSS relies on :placeholder-shown)
+              $(this).trigger('input');
             });
 
             $('.PersInfo').on("click", function () {
