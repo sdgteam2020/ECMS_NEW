@@ -26,5 +26,21 @@ namespace BusinessLogicsLayer.MapUnitChange
         {
             return await _UnitChangeDB.GetAllMapUnitChange(request);
         }
+        public async Task<DTOCommonSaveResponse> UpdateMapUnitChangeRequest(DTOSaveMapUnitChangeRequest dTO, TrnMapUnitChangeRequest trnMapUnit)
+        {
+            if (dTO.Choice == 1 || dTO.Choice == 3)
+            {
+                trnMapUnit.RequestStatus = false;
+            }
+            else
+            {
+                trnMapUnit.RequestStatus = true;
+            }
+            return await _UnitChangeDB.UpdateMapUnitChangeRequest(dTO, trnMapUnit);
+        }
+        public async Task<DTOMapUnitDetailsResponse> GetUnitMoveHistory(DTOMapUnitDetailsResponse dTO)
+        {
+            return await _UnitChangeDB.GetUnitMoveHistory(dTO);
+        }
     }
 }

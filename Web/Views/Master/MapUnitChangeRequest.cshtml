@@ -31,15 +31,25 @@
         -o-transform: translate3d(0%, 0, 0);
         transform: translate3d(0%, 0, 0);
     }
+    .labelUnit{
+        font-weight: 700 !important;
+    }
 </style>
 <header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
     <div class="containerMain">
-        <div class="page-header-content pt-4">
+        <div class="page-header-content pt-5">
             <div class="row align-items-center justify-content-between">
                 <div class="col-auto">
                     <h1 class="page-header-title">
                         <div class="page-header-icon"> <i class="fa fa-bars"></i></div>
-                        <a href="/Home/Index" class="mr-2">Home</a> >  <a href="/Home/Dashboard" class="mr-2">Dashboard</a> > Unit Mapping Change Request
+                        @if (ViewBag.RoleName == "admin")
+                        {
+                            <div><a href="/Master/DashboardMaster" class="mr-2">Dashboard</a> >  Unit Relocation  Request</div>
+                        }
+                        else
+                        {
+                            <div><a href="/Home/Index" class="mr-2">Home</a> >  <a href="/Home/Dashboard" class="mr-2">Dashboard</a> > Unit Relocation  Request</div>
+                        }
                     </h1>
                 </div>
             </div>
@@ -51,11 +61,14 @@
     <div class="card mb-3">
         <div class="card-header">
             <div class="row">
-                <div class="col-xl-12 text-left">
-                    <h3>
-                        Unit - <label id="lblUnit" class="col-form-label"></label>
-                        SUS NO - <label id="lblSUSNo" class="col-form-label"></label>
-                    </h3>
+                <div class="col-xl-12 text-center">
+                    <div class="feature-box3">
+                        <div class="top-block_ind d-flex">
+                            <div class="text-block">
+                                <h5 class="mb-1 text-font2 font-weight600">Unit Relocation  Request</h5>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -63,62 +76,74 @@
             <div class="row g-3 row-deck mb-3">
                 <form action="" id="SaveMapUnitChange" method="post" name="SaveMapUnitChange">
                     <div class="row">
-                        <span class=" d-none" id="spnChangeMapUnitId">@(ViewBag.ChangeMapUnitId ?? 0)</span>
+                        <span class=" d-none" id="spnMapUnitChangeRequestId">@(ViewBag.MapUnitChangeRequestId ?? 0)</span>
                         <span class=" d-none" id="spnUnitMapId">@ViewBag.MapUnitId</span>
                         <span class=" d-none" id="spnRoleName">@ViewBag.RoleName</span>
+                        <div class="col-sm-12">
+                            <div class="card p-1">
+                                <div class="mb-1 d-flex justify-content-between align-items-center">
+                                    <div class="text-start ml-2 labelUnit">
+                                        Unit Name - <label id="lblUnit" class="col-form-label"></label> (<label id="lblSUSNo" class="col-form-label"></label>)
+                                    </div>
+                                    <div class="text-end mr-2 labelUnit">
+                                        Request By - <label id="lblRequestBy" class="col-form-label"></label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         <div class="col-sm-6">
                             <div class="card p-1">
                                 <div class="feature-box3">
                                     <div class="top-block_ind d-flex">
                                         <div class="text-block">
-                                            <h5 class="mb-1 text-font2 font-weight600">Existing Chanel</h5>
+                                            <h5 class="mb-1 text-font2 font-weight600">Current Hierarchy</h5>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="form-group row mb-0">
-                                    <label class="col-form-label col-sm-5 labelprofile">Unit Type</label>
+                                    <label class="col-form-label col-sm-5 labelUnit">Unit Type</label>
                                     <div class="col-sm-7">
                                         <label id="lblUnitType" class="col-form-label"></label>
                                     </div>
                                 </div>
                                 <div class="form-group row mb-0 ExistingCh-UnitType">
-                                    <label class="col-form-label col-sm-5 labelprofile">Comd / PSO</label>
+                                    <label class="col-form-label col-sm-5 labelUnit">Comd / PSO</label>
                                     <div class="col-sm-7">
                                         <label id="lblComd" class="col-form-label"></label>
                                     </div>
                                 </div>
                                 <div class="form-group row mb-0 ExistingCh-UnitType">
-                                    <label class="col-form-label col-sm-5 labelprofile">Corps / Dte / Area</label>
+                                    <label class="col-form-label col-sm-5 labelUnit">Corps / Dte / Area</label>
                                     <div class="col-sm-7">
                                         <label id="lblCorps" class="col-form-label"></label>
                                     </div>
                                 </div>
                                 <div class="form-group row mb-0 ExistingCh-UnitType">
-                                    <label class="col-form-label col-sm-5 labelprofile">Div / Sub Area</label>
+                                    <label class="col-form-label col-sm-5 labelUnit">Div / Sub Area</label>
                                     <div class="col-sm-7">
                                         <label id="lblDiv" class="col-form-label"></label>
                                     </div>
                                 </div>
                                 <div class="form-group row mb-0 ExistingCh-UnitType">
-                                    <label class="col-form-label col-sm-5 labelprofile">Bde</label>
+                                    <label class="col-form-label col-sm-5 labelUnit">Bde</label>
                                     <div class="col-sm-7">
                                         <label id="lblBde" class="col-form-label"></label>
                                     </div>
                                 </div>
                                 <div class="form-group row mb-0 ExistingCh-FmnBranch">
-                                    <label class="col-form-label col-sm-5 labelprofile">Fmn / Branch</label>
+                                    <label class="col-form-label col-sm-5 labelUnit">Fmn / Branch</label>
                                     <div class="col-sm-7">
                                         <label id="lblFmnBranch" class="col-form-label"></label>
                                     </div>
                                 </div>
                                 <div class="form-group row mb-0 ExistingCh-DteBranch">
-                                    <label class="col-form-label col-sm-5 labelprofile">PSO / Dte </label>
+                                    <label class="col-form-label col-sm-5 labelUnit">PSO / Dte </label>
                                     <div class="col-sm-7">
                                         <label id="lblPSODte" class="col-form-label"></label>
                                     </div>
                                 </div>
                                 <div class="form-group row mb-0 ExistingCh-DteBranch">
-                                    <label class="col-form-label col-sm-5 labelprofile">DG / Sub Dte</label>
+                                    <label class="col-form-label col-sm-5 labelUnit">DG / Sub Dte</label>
                                     <div class="col-sm-7">
                                         <label id="lblDgSubDte" class="col-form-label"></label>
                                     </div>
@@ -131,12 +156,12 @@
                                     <div class="feature-box3">
                                         <div class="top-block_ind d-flex">
                                             <div class="text-block">
-                                                <h5 class="mb-1 text-font2 font-weight600">Requested Chanel</h5>
+                                                <h5 class="mb-1 text-font2 font-weight600">Unit Hierarchy Recalibration</h5>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="form-group row mb-2">
-                                        <label class="col-form-label col-sm-4 fw-bold">Select Unit Type <i class="fas fa-asterisk mand1"></i></label>
+                                        <label class="col-form-label col-sm-4 labelUnit">Select Unit Type <i class="fas fa-asterisk mand1"></i></label>
                                         <div class="col-sm-8">
                                             <div class="form-check form-check-inline">
                                                 <input class="form-check-input" type="radio" name="UnitTyperdi" id="UnitType1" value="1" checked>
@@ -155,7 +180,7 @@
                                         </div>
                                     </div>
                                     <div class="form-group row mb-2 unittype">
-                                        <label class="col-form-label col-sm-4 fw-bold">Comd / PSO<i class="fas fa-asterisk mand1"></i></label>
+                                        <label class="col-form-label col-sm-4 labelUnit">Comd / PSO<i class="fas fa-asterisk mand1"></i></label>
                                         <div class="col-sm-8">
                                             <select class="form-select" style="width: 100%;" aria-hidden="true" name="ddlCommand" required id="ddlCommand">
                                                 <option value="0">Select Comd / PSO </option>
@@ -163,7 +188,7 @@
                                         </div>
                                     </div>
                                     <div class="form-group row mb-4 unittype">
-                                        <label class="col-form-label col-sm-4 fw-bold">Corps / Dte / Area<i class="fas fa-asterisk mand1"></i></label>
+                                        <label class="col-form-label col-sm-4 labelUnit">Corps / Dte / Area<i class="fas fa-asterisk mand1"></i></label>
                                         <div class="col-sm-8">
                                             <select class="form-select" style="width: 100%;" aria-hidden="true" name="ddlCorps" required id="ddlCorps">
                                                 <option value="0">Select Corps / Dte / Area </option>
@@ -171,7 +196,7 @@
                                         </div>
                                     </div>
                                     <div class="form-group row mb-2 unittype">
-                                        <label class="col-form-label col-sm-4 fw-bold">Div/Sub Area<i class="fas fa-asterisk mand1"></i></label>
+                                        <label class="col-form-label col-sm-4 labelUnit">Div/Sub Area<i class="fas fa-asterisk mand1"></i></label>
                                         <div class="col-sm-8">
                                             <select class="form-select" style="width: 100%;" aria-hidden="true" name="ddlDiv" required id="ddlDiv">
                                                 <option value="0">Select One </option>
@@ -179,7 +204,7 @@
                                         </div>
                                     </div>
                                     <div class="form-group row mb-2 unittype">
-                                        <label class="col-form-label col-sm-4 fw-bold">Bde<i class="fas fa-asterisk mand1"></i></label>
+                                        <label class="col-form-label col-sm-4 labelUnit">Bde<i class="fas fa-asterisk mand1"></i></label>
                                         <div class="col-sm-8">
                                             <select class="form-select" style="width: 100%;" aria-hidden="true" name="ddlBde" required id="ddlBde">
                                                 <option value="0">Select Bde </option>
@@ -187,7 +212,7 @@
                                         </div>
                                     </div>
                                     <div class="form-group row mb-2 FmnBranch  d-none">
-                                        <label class="col-form-label col-sm-4 fw-bold">Type of Fmn /Branch<i class="fas fa-asterisk mand1"></i></label>
+                                        <label class="col-form-label col-sm-4 labelUnit">Type of Fmn /Branch<i class="fas fa-asterisk mand1"></i></label>
                                         <div class="col-sm-8">
                                             <select class="form-select" style="width: 100%;" aria-hidden="true" name="ddlFmnBranch" required id="ddlFmnBranch">
                                                 <option value="1">Select Fmn/Branch </option>
@@ -195,7 +220,7 @@
                                         </div>
                                     </div>
                                     <div class="form-group row mb-2 DteBranch d-none">
-                                        <label class="col-form-label col-sm-4 fw-bold">PSO /Dte <i class="fas fa-asterisk mand1"></i></label>
+                                        <label class="col-form-label col-sm-4 labelUnit">PSO /Dte <i class="fas fa-asterisk mand1"></i></label>
                                         <div class="col-sm-8">
                                             <select class="form-select" style="width: 100%;" aria-hidden="true" name="ddlPSODte" required id="ddlPSODte">
                                                 <option value="1">Select DG / Sub Dte </option>
@@ -203,7 +228,7 @@
                                         </div>
                                     </div>
                                     <div class="form-group row mb-2 DteBranch d-none">
-                                        <label class="col-form-label col-sm-4 fw-bold">DG / Sub Dte <i class="fas fa-asterisk mand1"></i></label>
+                                        <label class="col-form-label col-sm-4 labelUnit">DG / Sub Dte <i class="fas fa-asterisk mand1"></i></label>
                                         <div class="col-sm-8">
                                             <select class="form-select" style="width: 100%;" aria-hidden="true" name="ddlDgSubDte" required id="ddlDgSubDte">
                                                 <option value="1">Select DG / Sub Dte</option>
@@ -211,28 +236,29 @@
                                         </div>
                                     </div>
                                     <div class="form-group row mb-2">
-                                        <label class="col-form-label col-sm-4 fw-bold">Remark<i class="fas fa-asterisk mand1"></i></label>
+                                        <label class="col-form-label col-sm-4 labelUnit">Remark<i class="fas fa-asterisk mand1"></i></label>
                                         <div class="col-sm-8">
                                             <textarea class="form-control1" style="height:auto!important;" name="txtRemark" id="txtRemark" rows="3" maxlength="100" data-val-maxlength="Maximum length of Message is 100 character." data-val-maxlength-max="100" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="Remark is required." data-val-regex-pattern="^[\w\&\.\-\; ]*$"></textarea>
                                             <span class="text-danger field-validation-valid" data-valmsg-for="txtRemark" data-valmsg-replace="true"></span>
                                         </div>
                                     </div>
                                     <div class="form-group row mb-2 AdminRemark d-none">
-                                        <label class="col-form-label col-sm-4 fw-bold">Admin Remark<i class="fas fa-asterisk mand1"></i></label>
+                                        <label class="col-form-label col-sm-4 labelUnit">Admin Remark<i class="fas fa-asterisk mand1"></i></label>
                                         <div class="col-sm-8">
                                             <textarea class="form-control1" style="height:auto!important;" name="txtAdminRemark" id="txtAdminRemark" rows="3" maxlength="100" data-val-maxlength="Maximum length of Message is 100 character." data-val-maxlength-max="100" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-regex-pattern="^[\w\&\.\-\; ]*$"></textarea>
                                             <span class="text-danger field-validation-valid" data-valmsg-for="txtAdminRemark" data-valmsg-replace="true"></span>
                                         </div>
                                     </div>
-                                </div>
                                     <div class="col-sm-12 text-center mb-4 mt-4">
                                         <input type="button" class="btn btn-primary" id="btnReject" value="Reject" />
                                         <input type="button" class="btn btn-primary" id="btnAccept" value="Accept and Update Mapping" />
                                         <input type="button" class="btn btn-primary" id="btnSubmit" value="Submit" />
                                     </div>
                                 </div>
+
                             </div>
                         </div>
+                    </div>
                 </form>
             </div>
         </div>

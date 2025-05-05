@@ -15,7 +15,7 @@ namespace DataTransferObject.Domain.Model
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int ChangeMapUnitId { get; set; }
+        public int MapUnitChangeRequestId { get; set; }
 
         [ForeignKey("MapUnit"), DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int UnitMapId { get; set; }
@@ -41,14 +41,15 @@ namespace DataTransferObject.Domain.Model
         public MUserProfile? MUserProfile { get; set; }
         
         [ForeignKey("ApplicationUser"), DatabaseGenerated(DatabaseGeneratedOption.None)]
-        public int? ToUpdatedby { get; set; }
+        public int? ApproverUpdatedby { get; set; }
         public ApplicationUser? ApplicationUser { get; set; }
-        public DateTime? ToUpdatedOn { get; set; }
+        public DateTime? ApproverUpdatedOn { get; set; }
         
-        [ForeignKey("ToMUserProfile"), DatabaseGenerated(DatabaseGeneratedOption.None)]
-        public int? ToUserId { get; set; }
-        public MUserProfile? ToMUserProfile { get; set; }
+        [ForeignKey("ApproverMUserProfile"), DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public int? ApproverUserId { get; set; }
+        public MUserProfile? ApproverMUserProfile { get; set; }
         public bool IsEditAction { get; set; }
+        public bool RequestStatus { get; set; } = false;
 
     }
 }

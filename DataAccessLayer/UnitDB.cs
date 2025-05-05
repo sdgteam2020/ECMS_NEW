@@ -9,7 +9,6 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
-using System.Data.Entity.Core.Mapping;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;

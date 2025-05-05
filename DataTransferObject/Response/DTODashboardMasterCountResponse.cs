@@ -13,6 +13,7 @@ namespace DataTransferObject.Response
         public int TotDiv { get; set; }
         public int TotBde { get; set; }
         public int TotMapUnit { get; set; }
+        public int TotMapUnitChangeRequest { get; set; }
 
         public int TotUnit { get; set; }
         public int TotRank { get; set; }

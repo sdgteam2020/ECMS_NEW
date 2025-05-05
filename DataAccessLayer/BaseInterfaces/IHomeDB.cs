@@ -10,7 +10,7 @@ namespace DataAccessLayer.BaseInterfaces
 {
     public interface IHomeDB
     {
-        public Task<DTODashboardCountResponse> GetDashBoardCount(int UserId, DTOApplFwdConditionRequest dTOApplFwdCondition, short ArmedIdForORO);
+        public Task<DTODashboardCountResponse> GetDashBoardCount(int UserId, DTOApplFwdConditionRequest dTOApplFwdCondition, short ArmedIdForORO, int MapUnitId, bool Claim);
         public Task<DTORequestDashboardCountResponse> GetRequestDashboardCount(int UserId, string Type);
         public Task<DTORequestSubDashboardCountResponse> GetSubDashboardCount(int UserId);
         public Task<List<DTORegisterUserResponse>> GetAllRegisterUser(int UnitId);

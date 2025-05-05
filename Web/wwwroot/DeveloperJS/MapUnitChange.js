@@ -2,7 +2,10 @@
 
 var table; // Declare table variable outside the function to preserve the instance
 $(function () {
-    BindData()
+    BindData();
+    $("#btnAdd").on("click", function (){
+        location.href = '/Master/MapUnitChangeRequest';
+    });
 });
 
 function BindData() {
@@ -32,7 +35,6 @@ function BindData() {
                 if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
 
                 let result = await response.json();
-                $("#lblTotal").html(result.recordsTotal);
                 callback(result); // Sends data to DataTables
 
 
@@ -51,14 +53,23 @@ function BindData() {
                     return meta.row + meta.settings._iDisplayStart + 1;
                 }
             },
-            { data: "ChangeMapUnitId", name: "ChangeMapUnitId" },
-            { data: "UnitName", name: "UnitName" },
+            {
+                data: "MapUnitChangeRequestId",
+                name: "MapUnitChangeRequestId",
+                visible: false,
+            },
+            {
+                data: "UnitName",
+                name: "UnitName",
+                orderable: false,
+            },
             { data: "FromArmyNo", name: "FromArmyNo" },
             {
-                data: null,
-                name: "FromNameWithRank",
-                 render: function (data, type, row) {
-                     return (row.FromRankAbbreviation || '') + " " + (row.FromName || '');
+                data: "FromName",
+                name: "FromName",
+                orderable: false,
+                render: function (data, type, row) {
+                    return (row.FromRankAbbreviation || '') + " " + (data || '');
                 }
             },
             { data: "FromDID", name: "FromDID" },
@@ -68,19 +79,67 @@ function BindData() {
                 name: "FromUpdatedOn",
                 render: function (data, type, row) {
                     return DateFormateddMMyyyyhhmmss(data);
-                },
+                }
             },
-            { data: "Remark", name: "Remark" },
-            { data: "AdminRemark", name: "AdminRemark" },
+            {
+                data: "Remark",
+                name: "Remark",
+                render: function (data, type, row) {
+                    if (data != null) {
+                        let sentence = data;
+                        let words = sentence.split(" ");
+
+                        let truncatedSentence = words.length > 4 ? words.slice(0, 4).join(" ") + "..." : sentence;
+                        return `<span class='cls-Remark'>${truncatedSentence}</span>`;
+                    } else {
+                        return `NA`;
+                    }
+
+                }
+            },
+            {
+                data: "AdminRemark",
+                name: "AdminRemark",
+                render: function (data, type, row) {
+                    if (data != null) {
+                        let sentence = data;
+                        let words = sentence.split(" ");
+
+                        let truncatedSentence = words.length > 4 ? words.slice(0, 4).join(" ") + "..." : sentence;
+                        return `<span class='cls-AdminRemark'>${truncatedSentence}</span>`;
+                    } else {
+                        return `NA`;
+                    }
+
+                }
+            },
+            {
+                data: "IsEditAction",
+                name: "Status",
+                render: function (data, type, row) {
+                    return data == false ? "<span class='badge bg-warning'>Pendding</span>" : row.RequestStatus == true ? "<span class='badge bg-success'>Accepted</span>" : "<span class='badge badge-pill badge-danger'>Rejected</span>";
+                }
+            },
 
             // Additional column for Edit action
-            //{
-            //    data: null,
-            //    orderable: false,
-            //    render: function (data, type, row) {
-            //        return "<span id='btnedit'><button type='button' class='cls-btnedit btn btn-icon btn-round btn-warning mr-1'><i class='fas fa-edit'></i></button></span>";
-            //    }
-            //},
+            {
+                data: "IsEditAction",
+                name: "Action",
+                orderable: false,
+                render: function (data, type, row) {
+                    let role = $("#spnRoleName").html(); // Get current role
+                    if (data === false && role === "admin") {
+                        return `<span id='btnedit'><button type='button' class='cls-btnedit btn btn-icon btn-round btn-warning mr-1'><i class='fas fa-edit'></i></button></span><span id='btnview'><button type='button' class='cls-btnview btn btn-icon btn-round btn-warning mr-1'><i class="fa fa-eye" aria-hidden="true"></i></button></span>`;
+                    }
+                    else if (data === true && role === "admin")
+                    {
+                        return `<span class='badge badge-pill badge-danger mr-1'>NA</span><span id='btnview'><button type='button' class='cls-btnview btn btn-icon btn-round btn-warning mr-1'><i class="fa fa-eye" aria-hidden="true"></i></button></span>`;
+                    }
+                    else {
+                        return `<span id='btnview'><button type='button' class='cls-btnview btn btn-icon btn-round btn-warning mr-1'><i class="fa fa-eye" aria-hidden="true"></i></button></span>`;
+                    }
+                }
+            }
         ],
         language: {
             search: "", // Remove the default "Search:" label
@@ -117,41 +176,39 @@ function BindData() {
             $("#tbldata tbody").off("click", ".cls-btnedit").on("click", ".cls-btnedit", function () {
                 var rowData = table.row($(this).closest("tr")).data();
                 if (rowData != null) {
-
+                    window.location.href = '/Master/MapUnitChangeRequest?Id=' + encodeURIComponent(rowData.EncryptedId);
+                }
+            });
+            $("#tbldata tbody").off("click", ".cls-btnview").on("click", ".cls-btnview", function () {
+                var rowData = table.row($(this).closest("tr")).data();
+                if (rowData != null) {
+                    GetUnitMoveHistory(rowData.MapUnitChangeRequestId);
+                }
+            });
+            $("#tbldata tbody").off("click", ".cls-Remark").on("click", ".cls-Remark", function () {
+                var rowData = table.row($(this).closest("tr")).data();
+                if (rowData != null) {
+                    let Label = "Id :- " + rowData.MapUnitChangeRequestId;
+                    $("#MessageDialogLabel").html(Label);
+                    $("#MessageDialogBody").html(rowData.Remark);
+                    $("#MessageDialog").modal('show');
+                }
+            });
+            $("#tbldata tbody").off("click", ".cls-AdminRemark").on("click", ".cls-AdminRemark", function () {
+                var rowData = table.row($(this).closest("tr")).data();
+                if (rowData != null) {
+                    let Label = "Id :- " + rowData.MapUnitChangeRequestId;
+                    $("#MessageDialogLabel").html(Label);
+                    $("#MessageDialogBody").html(rowData.AdminRemark);
+                    $("#MessageDialog").modal('show');
                 }
             });
         }
     });
-}
-
-function Reset() {
-    $("#txtSearch").val("");
-
-    $("#spnUserProfileId").html("0");
-    $("#txtArmyNo").val("");
-    $("#ddlRank").val("");
-    $("#txtName").val("");
-    /*    $("#txtMobileNo").val("");*/
-    $("#ddlArmType").val("");
-    $("#IsTokenWaiverYes").prop("checked", false);
-    $("#IsTokenWaiverNo").prop("checked", false);
-    $("#txtMessage").val("");
-    $("#isTokenyes").prop("checked", false);
-    $("#isTokenno").prop("checked", false);
-    $("#IsWithTokenApplyyes").prop("checked", false);
-    $("#IsWithTokenApplyno").prop("checked", false);
-    $("#btnProfileAddButton").val("Save");
-    $("#exampleModalLabel").html("Enter Profile Details");
-}
-function ResetErrorMessage() {
-    $("#txtName-error").html("");
-    $("#ddlRank-error").html("");
-    $("#txtArmyNo-error").html("");
-    /*    $("#txtMobileNo-error").html("");*/
-    $("#ddlArmType-error").html("");
-    $("#IsTokenWaiver-error").html("");
-    $("#txtMessage-error").html("");
-    $("#IsToken-error").html("");
-    $("#IsWithTokenApply-error").html("");
-
+    //if ($("#spnRoleName").html() === "admin") {
+    //    table.column(9).visible(true);
+    //}
+    //else {
+    //    table.column(9).visible(false);
+    //}
 }

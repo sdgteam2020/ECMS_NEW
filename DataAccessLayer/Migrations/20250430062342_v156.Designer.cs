@@ -4,6 +4,7 @@ using DataAccessLayer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccessLayer.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250430062342_v156")]
+    partial class v156
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -2471,9 +2474,7 @@ namespace DataAccessLayer.Migrations
                         .HasColumnType("int");
 
                     b.Property<int?>("ApproverUserId")
-                        .HasColumnType("int")
-                        .HasMaxLength(100)
-                        .HasColumnType("varchar(100)");
+                        .HasColumnType("int");
 
                     b.Property<string>("ExistingCh")
                         .IsRequired()
@@ -2544,15 +2545,6 @@ namespace DataAccessLayer.Migrations
                     b.Property<int>("BasicDetailId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("DispatchUpdatedBy")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("DispatchUpdatedOn")
-                        .HasColumnType("datetime");
-
-                    b.Property<DateTime?>("DispatchedOn")
-                        .HasColumnType("datetime");
-
                     b.Property<int>("FromAspNetUsersId")
                         .HasColumnType("int");
 
@@ -2567,10 +2559,6 @@ namespace DataAccessLayer.Migrations
 
                     b.Property<byte>("ReasonId")
                         .HasColumnType("tinyint");
-
-                    b.Property<string>("RefNo")
-                        .HasMaxLength(20)
-                        .HasColumnType("varchar(20)");
 
                     b.Property<int>("RequestId")
                         .HasColumnType("int");
@@ -2600,8 +2588,6 @@ namespace DataAccessLayer.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("BasicDetailId");
-
-                    b.HasIndex("DispatchUpdatedBy");
 
                     b.HasIndex("FromAspNetUsersId");
 
@@ -3810,11 +3796,6 @@ namespace DataAccessLayer.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("DataTransferObject.Domain.Identitytable.ApplicationUser", "DispatchUserUpdate")
-                        .WithMany()
-                        .HasForeignKey("DispatchUpdatedBy")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.HasOne("DataTransferObject.Domain.Identitytable.ApplicationUser", "ApplicationUser")
                         .WithMany()
                         .HasForeignKey("FromAspNetUsersId")
@@ -3878,8 +3859,6 @@ namespace DataAccessLayer.Migrations
                     b.Navigation("ApplicationUserUpdate");
 
                     b.Navigation("BasicDetail");
-
-                    b.Navigation("DispatchUserUpdate");
 
                     b.Navigation("MPostingReason");
 

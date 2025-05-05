@@ -949,47 +949,16 @@
     </div>
 </div>
 
-<div class="modal fade right" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade right" id="HistoryModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document" style="width:500px!important;">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title" id="lblHistory">I-Card History</h4>
+                <h4 class="modal-title"><span id="HistoryModal_Header">I-Card History</span></h4>
             </div>
-
             <div class="modal-body" id="exampleModal1111">
-                <h5 class="text-center badge badge-success">Step Wise I Card Request History</h5>
-                <div class="timeline timeline-xs" id="RequestHistory">
-                    <!-- Timeline Item 1-->
-                    @* <div class="timeline-item">
-                    <div class="timeline-item-marker">
-                    <div class="timeline-item-marker-text">27 min</div>
-                    <div class="timeline-item-marker-indicator bg-primary"></div>
-                    </div>
-                    <div class="timeline-item-content">
-                    FWD to  IO
-
-                    </div>
-                    </div>
-                    <div class="timeline-item">
-                    <div class="timeline-item-marker">
-                    <div class="timeline-item-marker-text">27 min</div>
-                    <div class="timeline-item-marker-indicator bg-warning"></div>
-                    </div>
-                    <div class="timeline-item-content">
-                    Approved FROM IO
-
-                    </div>
-                    </div>
-                    <div class="timeline-item">
-                    <div class="timeline-item-marker">
-                    <div class="timeline-item-marker-text">27 min</div>
-                    <div class="timeline-item-marker-indicator bg-danger"></div>
-                    </div>
-                    <div class="timeline-item-content">
-                    Reject From GSO
-                    </div>
-                    </div> *@
+                <div id="HistoryModal_Title"><h5 class="text-center badge badge-success"><span id="HistoryModal_Title_Content">Step Wise I Card Request History</span></h5></div>
+                <div class="timeline timeline-xs" id="HistoryModal_Body">
 
                 </div>
 

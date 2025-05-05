@@ -14,7 +14,7 @@ namespace DataTransferObject.Requests
     public class DTOSaveMapUnitChangeRequest
     {
         [RegularExpression(@"^[\d]+$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "OnlyNumber")]
-        public int ChangeMapUnitId { get; set; }
+        public int MapUnitChangeRequestId { get; set; }
 
         [RegularExpression(@"^[\d]+$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "OnlyNumber")]
         public byte Choice { get; set; }
