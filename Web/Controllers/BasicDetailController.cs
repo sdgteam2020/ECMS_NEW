@@ -2284,6 +2284,15 @@ namespace Web.Controllers
 
                 if (ModelState.IsValid)
                 {
+                    bool Claim = false;
+                    int AspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                    var user = await userManager.FindByIdAsync(AspNetUsersId.ToString());
+                    // UserManager service GetClaimsAsync method gets all the current claims of the user
+                    var UserClaims = await userManager.GetClaimsAsync(user);
+                    if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "ICard Export Data"))
+                    {
+                        Claim = true;
+                    }
                     if (dTO.TrnFaultyCardId > 0)
                     {
                         TrnFaultyCard? trnFaultyCard = await faultyCardBL.Get(dTO.TrnFaultyCardId);
@@ -2295,7 +2304,7 @@ namespace Web.Controllers
                         }
                         else
                         {
-                            dTOFaulty = await faultyCardBL.SaveFaultyCard(dTO, mTrnFwd);
+                            dTOFaulty = await faultyCardBL.SaveFaultyCard(dTO, mTrnFwd, Claim);
                             return Json(dTOFaulty);
                         }
                     }
@@ -2310,7 +2319,7 @@ namespace Web.Controllers
                         }
                         else
                         {
-                            dTOFaulty = await faultyCardBL.SaveFaultyCard(dTO, mTrnFwd);
+                            dTOFaulty = await faultyCardBL.SaveFaultyCard(dTO, mTrnFwd, Claim);
                             return Json(dTOFaulty);
                         }
                     }
@@ -2352,8 +2361,17 @@ namespace Web.Controllers
             DTOCommonSaveResponse dTOFaulty = new DTOCommonSaveResponse();
             try
             {
+                bool Claim = false;
+                int AspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                var user = await userManager.FindByIdAsync(AspNetUsersId.ToString());
+                // UserManager service GetClaimsAsync method gets all the current claims of the user
+                var UserClaims = await userManager.GetClaimsAsync(user);
+                if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "ICard Export Data"))
+                {
+                    Claim = true;
+                }
+
                 dTO.IsActive = true;
-                dTO.IsComplete = false;
                 dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier)); ;
                 dTO.UpdatedOn = DateTime.Now;
 
@@ -2376,7 +2394,7 @@ namespace Web.Controllers
                         }
                         else
                         {
-                            dTOFaulty = await faultyCardBL.SaveFaultyCard(dTO, mTrnFwd);
+                            dTOFaulty = await faultyCardBL.SaveFaultyCard(dTO, mTrnFwd, Claim);
                             return Json(dTOFaulty);
                         }
                     }

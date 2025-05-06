@@ -47,8 +47,8 @@ namespace DataAccessLayer
 
             try
             {
-                var insertSql = " INSERT INTO TrnApplClose (BasicDetailId, ReasonId, Authority, Remarks, RequestId, IsActive, UpdatedOn, Updatedby)" +
-                                " VALUES (@BasicDetailId, @ReasonId, @Authority, @Remarks, @RequestId, @IsActive, @UpdatedOn, @Updatedby);";
+                var insertSql = " INSERT INTO TrnApplClose (BasicDetailId, ReasonId, Authority, Remarks, RequestId, IsActive, UpdatedOn, Updatedby,UserId)" +
+                                " VALUES (@BasicDetailId, @ReasonId, @Authority, @Remarks, @RequestId, @IsActive, @UpdatedOn, @Updatedby,@UserId);";
                 var parameters = new DynamicParameters();
                 parameters.Add("@BasicDetailId", Data.BasicDetailId, DbType.Int32, ParameterDirection.Input);
                 parameters.Add("@ReasonId", Data.ReasonId, DbType.Byte, ParameterDirection.Input);
@@ -58,6 +58,7 @@ namespace DataAccessLayer
                 parameters.Add("@IsActive", Data.IsActive, DbType.Boolean, ParameterDirection.Input);
                 parameters.Add("@UpdatedOn", Data.UpdatedOn, DbType.DateTime, ParameterDirection.Input);
                 parameters.Add("@Updatedby", Data.Updatedby, DbType.Int32, ParameterDirection.Input);
+                parameters.Add("@UserId", Data.UserId, DbType.Int32, ParameterDirection.Input);
 
                 await db.ExecuteAsync(insertSql, parameters, transaction: transaction);
 
