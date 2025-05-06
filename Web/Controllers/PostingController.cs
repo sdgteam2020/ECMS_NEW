@@ -225,6 +225,13 @@ namespace Web.Controllers
         {
             try
             {
+                DtoSession? dtoSession = new DtoSession();
+                if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
+                {
+                    dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+
+                }
+                dTO.UserId = dtoSession != null ? dtoSession.UserId : 0;
                 dTO.IsActive = true;
                 dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier)); ;
                 dTO.UpdatedOn = DateTime.Now;
