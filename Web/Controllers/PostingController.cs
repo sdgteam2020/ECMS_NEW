@@ -6,6 +6,7 @@ using DataTransferObject.Constants;
 using DataTransferObject.Domain.Model;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
+using Humanizer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Mvc;
@@ -116,10 +117,17 @@ namespace Web.Controllers
             };
             try
             {
+                DtoSession? dtoSession = new DtoSession();
+                if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
+                {
+                    dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+
+                }
+                int MapUnitId = dtoSession != null ? dtoSession.UnitId : 0;
                 string PostingType = SessionHeplers.GetObject<string>(HttpContext.Session, "PostingType");
                 int Type = SessionHeplers.GetObject<int>(HttpContext.Session, "Type");
                 int userid = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-                responseData = await _iPostingBL.GetPostingOutWithType(dTO, userid, Type, PostingType);
+                responseData = await _iPostingBL.GetPostingOutWithType(dTO, userid, MapUnitId, Type, PostingType);
             }
             catch (Exception ex)
             {
@@ -182,13 +190,21 @@ namespace Web.Controllers
                     if (ModelState.IsValid)
                     {
                         var postingOutDetails = await _iPostingBL.Get(Id);
-                        postingOutDetails.DispatchedOn = dTO.DispatchedOn;
-                        postingOutDetails.RefNo = dTO.RefNo;
-                        postingOutDetails.DispatchUpdatedBy = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-                        postingOutDetails.DispatchUpdatedOn = DateTime.Now;
-                        await _iPostingBL.Update(postingOutDetails);
-                        dTOResponse.Result = true;
-                        dTOResponse.Message = "Record Saved!";
+
+                        if (postingOutDetails.DispatchedOn.HasValue)
+                        {
+                            dTOResponse.Message = "Dispatch details already exists!";
+                        }
+                        else
+                        {
+                            postingOutDetails.DispatchedOn = dTO.DispatchedOn;
+                            postingOutDetails.RefNo = dTO.RefNo;
+                            postingOutDetails.DispatchUpdatedBy = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                            postingOutDetails.DispatchUpdatedOn = DateTime.Now;
+                            await _iPostingBL.Update(postingOutDetails);
+                            dTOResponse.Result = true;
+                            dTOResponse.Message = "Record Saved!";
+                        }
                     }
                     else
                     {

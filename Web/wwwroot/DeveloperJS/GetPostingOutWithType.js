@@ -243,7 +243,6 @@ function Save() {
                    icon: "success",
                    confirmButtonText: "OK"
                });
-               BindData();
            }
            else {
                Swal.fire({
@@ -253,7 +252,7 @@ function Save() {
                    confirmButtonText: "Ok"
                });
            }
-          
+           BindData();
         }
     });
 }

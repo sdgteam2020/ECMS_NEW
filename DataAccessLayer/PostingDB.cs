@@ -101,7 +101,7 @@ namespace DataAccessLayer
             return response;
         }
 
-        public async Task<DTODataTablesResponse<DTOPostingOutDetilsResponse>> GetPostingOutWithType(DTODataTablesRequest dTO, int AspNetUsersId,int Type, string PostingTy)
+        public async Task<DTODataTablesResponse<DTOPostingOutDetilsResponse>> GetPostingOutWithType(DTODataTablesRequest dTO, int AspNetUsersId,int UnitMapId,int Type, string PostingTy)
         {
             List<DTOPostingOutDetilsResponse> dTOPostingOutDetilsResponses = new List<DTOPostingOutDetilsResponse>();
             var responseData = new DTODataTablesResponse<DTOPostingOutDetilsResponse>
@@ -126,7 +126,7 @@ namespace DataAccessLayer
 
                 var sortOrder = dTO.sortDirection;
 
-                string CanAddDispatchDetailQr = @$"{(PostingTy == "PostingIn" ? "0" : "isnull((Select 1 from TrnPostingOut where Id = (Select MAX(Id) from TrnPostingOut where RequestId = pout.RequestId) and Id = pout.Id and DispatchedOn is null),0)")}";
+                string CanAddDispatchDetailQr = @$"{(PostingTy == "PostingIn" ? "0" : "isnull((Select 1 from TrnPostingOut where Id = (Select MAX(Id) from TrnPostingOut where RequestId = pout.RequestId and FromUnitID = pout.FromUnitID) and Id = pout.Id and DispatchedOn is null),0)")}";
 
                 string query = @$"pout.Id,res.Reason,Authority,SOSDate,pout.UpdatedOn,user1.DomainId FromDomainId,user2.DomainId TODomainId,
                                 unit1.UnitName FromUnitName,unit2.UnitName ToUnitName,prof1.ArmyNo FromArmyNO,prof2.ArmyNo TOArmyNO,ranks.RankAbbreviation FromRankName,prof1.Name FromName,basic.ServiceNo,basic.FName,basic.LName,ranksmain.RankAbbreviation Rank 
@@ -145,7 +145,7 @@ namespace DataAccessLayer
                                 inner join UserProfile prof2 on prof2.UserId=pout.ToUserID 
                                 inner join BasicDetails basic on basic.BasicDetailId=pout.BasicDetailId 
                                 inner join MRank ranksmain on ranksmain.RankId=basic.RankId 
-                                where pout.{(PostingTy == "PostingIn" ? "ToAspNetUsersId" : "FromAspNetUsersId")} = @AspNetUsersId and basic.ApplyForId = @Type and basic.ServiceNo like '%' + @SearchTerm + '%'";
+                                where pout.{(PostingTy == "PostingIn" ? "ToUnitID" : "FromUnitID")} = @MapUnitId and basic.ApplyForId = @Type and basic.ServiceNo like '%' + @SearchTerm + '%'";
 
                 query = $@"
                             WITH RecordCTE AS (
@@ -156,11 +156,11 @@ namespace DataAccessLayer
 
                             select count(1) from TrnPostingOut pout
                             inner join BasicDetails basic on basic.BasicDetailId=pout.BasicDetailId
-                            where pout.{(PostingTy == "PostingIn" ? "ToAspNetUsersId" : "FromAspNetUsersId")} = @AspNetUsersId and basic.ApplyForId = @Type;
+                            where pout.{(PostingTy == "PostingIn" ? "ToUnitID" : "FromUnitID")} = @MapUnitId and basic.ApplyForId = @Type;
                         ";
                 using (var connection = _contextDP.CreateConnection())
                 {
-                    var ret = await connection.QueryMultipleAsync(query, new { Offset = dTO.Start, Limit = dTO.Length, SearchTerm = string.IsNullOrWhiteSpace(dTO.searchValue) ? "" : dTO.searchValue, AspNetUsersId = AspNetUsersId, Type = Type });
+                    var ret = await connection.QueryMultipleAsync(query, new { Offset = dTO.Start, Limit = dTO.Length, SearchTerm = string.IsNullOrWhiteSpace(dTO.searchValue) ? "" : dTO.searchValue, MapUnitId = UnitMapId, Type = Type });
                     var records = (await ret.ReadAsync<DTOPostingOutDetilsResponse>()).Select(
                         record => new DTOPostingOutDetilsResponse(){ 
                             Id = _protector.Protect(record.Id.ToString()),

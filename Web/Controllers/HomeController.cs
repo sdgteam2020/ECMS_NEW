@@ -455,8 +455,15 @@ namespace Web.Controllers
         }
         public async Task<IActionResult> GetRequestDashboardCount(string Id)
         {
+            DtoSession? dtoSession = new DtoSession();
+            if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
+            {
+                dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+
+            }
+            int MapUnitId = dtoSession != null ? dtoSession.UnitId : 0;
             int userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-            return Json(await _home.GetRequestDashboardCount(userId, Id));
+            return Json(await _home.GetRequestDashboardCount(userId, MapUnitId, Id));
         }
         public async Task<IActionResult> GetSubDashboardCount()
         {
