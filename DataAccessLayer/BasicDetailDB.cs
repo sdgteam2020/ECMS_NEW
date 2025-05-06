@@ -556,35 +556,27 @@ namespace DataAccessLayer
             string query = "";
             if (dto.TypeId == KeyConstants.ApplicantPostingOut || dto.TypeId == KeyConstants.ApplicantClose)
             {
-                query = @"Select TOP 5 basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath Image,req.RequestId
+                query = @"Select Distinct TOP 5 basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath Image,req.RequestId
                             from BasicDetails basi
                             inner join TrnICardRequest req on req.BasicDetailId=basi.BasicDetailId and req.StatusId=1
-                            inner join TrnDomainMapping map on map.Id=req.TrnDomainMappingId and map.AspNetUsersId=@AspNetUsersId
+                            inner join TrnDomainMapping map on map.UnitId=@MapUnitId
                             inner join TrnUpload trnu on basi.BasicDetailId=trnu.BasicDetailId 
                             where ServiceNo like @ServiceNo ";
             }
             else if (dto.TypeId == KeyConstants.FaultyCardRequest)
             {
-                query = @$"Select TOP 5 basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath Image,req.RequestId,COALESCE(MAX(fwd.TrnFwdId), NULL) AS MaxTrnFwdId  
+                query = @$"Select Distinct TOP 5 basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath Image,req.RequestId,COALESCE(MAX(fwd.TrnFwdId), NULL) AS MaxTrnFwdId  
                                 from BasicDetails basi
                                 inner join TrnUpload trnu on basi.BasicDetailId=trnu.BasicDetailId 
                                 inner join TrnICardRequest req on req.BasicDetailId=basi.BasicDetailId and req.StatusId=1
                                 inner join TrnStepCounter stepcount on req.RequestId=stepcount.RequestId and stepcount.StepId=6
                                 inner join TrnDomainMapping tdm on tdm.Id=req.TrnDomainMappingId {unitQuery}
                                 LEFT JOIN TrnFwds fwd ON fwd.RequestId = req.RequestId
-                                where ServiceNo like @ServiceNo
-                                GROUP BY
-                                    basi.BasicDetailId,
-                                    FName,
-                                    LName,
-                                    ServiceNo,
-                                    PhotoImagePath,
-                                    req.RequestId
-                                ";
+                                where ServiceNo like @ServiceNo";
             }
             else if (dto.TypeId == KeyConstants.HoltlistCardRequest)
             {
-                query = @$"Select TOP 5 basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath Image,req.RequestId,COALESCE(MAX(fwd.TrnFwdId), NULL) AS MaxTrnFwdId  
+                query = @$"Select Distinct TOP 5 basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath Image,req.RequestId,COALESCE(MAX(fwd.TrnFwdId), NULL) AS MaxTrnFwdId  
                                 from BasicDetails basi
                                 inner join TrnUpload trnu on basi.BasicDetailId=trnu.BasicDetailId 
                                 inner join TrnICardRequest req on req.BasicDetailId=basi.BasicDetailId and req.StatusId=1
@@ -592,19 +584,11 @@ namespace DataAccessLayer
                                 inner join TrnDomainMapping tdm on tdm.Id=req.TrnDomainMappingId {unitQuery}
                                 LEFT JOIN TrnFwds fwd ON fwd.RequestId = req.RequestId
                                 Left join TrnHotlistCards thc on req.RequestId = thc.RequestId
-                                where thc.RequestId is null and ServiceNo like @ServiceNo
-                                GROUP BY
-                                    basi.BasicDetailId,
-                                    FName,
-                                    LName,
-                                    ServiceNo,
-                                    PhotoImagePath,
-                                    req.RequestId
-                                ";
+                                where thc.RequestId is null and ServiceNo like @ServiceNo";
             }
             else if (dto.TypeId == KeyConstants.LostCardRequest)
             {
-                query = @$"Select TOP 5 basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath Image,req.RequestId,COALESCE(MAX(fwd.TrnFwdId), NULL) AS MaxTrnFwdId  
+                query = @$"Select Distinct TOP 5 basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath Image,req.RequestId,COALESCE(MAX(fwd.TrnFwdId), NULL) AS MaxTrnFwdId  
                                 from BasicDetails basi
                                 inner join TrnUpload trnu on basi.BasicDetailId=trnu.BasicDetailId 
                                 inner join TrnICardRequest req on req.BasicDetailId=basi.BasicDetailId and req.StatusId=1
@@ -612,15 +596,7 @@ namespace DataAccessLayer
                                 inner join TrnDomainMapping tdm on tdm.Id=req.TrnDomainMappingId
                                 LEFT JOIN TrnFwds fwd ON fwd.RequestId = req.RequestId
                                 Left join TrnLostCards tlc on req.RequestId = tlc.RequestId
-                                where tlc.RequestId is null and ServiceNo like @ServiceNo
-                                GROUP BY
-                                    basi.BasicDetailId,
-                                    FName,
-                                    LName,
-                                    ServiceNo,
-                                    PhotoImagePath,
-                                    req.RequestId
-                                ";
+                                where tlc.RequestId is null and ServiceNo like @ServiceNo";
             }
 
             try
