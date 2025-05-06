@@ -553,53 +553,7 @@ namespace DataAccessLayer
         public async Task<List<DTOSmartSearch>?> SearchAllServiceNo(DTOSearchArmyNoRequest dto)
         {
             string unitQuery = dto.Claim ? "" : "and tdm.UnitId=@MapUnitId";
-            string joins = "";
-            string forwardId = "0";
             string query = "";
-
-            //if (dto.TypeId == KeyConstants.ApplicantPostingOut || dto.TypeId == KeyConstants.ApplicantClose)
-            //{
-
-            //    joins = " map.AspNetUsersId=@AspNetUsersId";
-            //}
-            //else if (dto.TypeId == KeyConstants.HoltlistCardRequest || dto.TypeId == KeyConstants.LostCardRequest)
-            //{ 
-
-            //}
-
-
-            //    switch (dto.TypeId)
-            //    {
-            //        case KeyConstants.ApplicantPostingOut:
-            //            {
-            //                break;
-            //            }
-            //        case KeyConstants.FaultyCardRequest:
-            //            {
-            //                joins = @$"inner join TrnDomainMapping tdm on tdm.Id=req.TrnDomainMappingId {unitQuery}
-            //                       inner join TrnStepCounter stepcount on req.RequestId=stepcount.RequestId and stepcount.StepId=6
-            //                       LEFT JOIN TrnFwds fwd ON fwd.RequestId = req.RequestId";
-            //                break;
-            //            }
-            //        case byte type when (type == KeyConstants.HoltlistCardRequest || type == KeyConstants.LostCardRequest):
-            //            {
-            //                joins = @$"inner join TrnDomainMapping tdm on tdm.Id=req.TrnDomainMappingId {unitQuery}
-            //                   inner join TrnStepCounter stepcount on req.RequestId=stepcount.RequestId and stepcount.StepId=6
-            //                   LEFT JOIN TrnFwds fwd ON fwd.RequestId = req.RequestId
-            //                   Left join {(type == KeyConstants.HoltlistCardRequest ? "TrnHotlistCards" : "TrnLostCards")} thc on req.RequestId = thc.RequestId";
-            //                break;
-            //            }
-            //    }
-
-            //query = @$"Select Distinct TOP 5 basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath Image,req.RequestId
-            //            from BasicDetails basi
-            //            inner join TrnICardRequest req on req.BasicDetailId=basi.BasicDetailId and req.StatusId=1
-            //            inner join TrnUpload trnu on basi.BasicDetailId=trnu.BasicDetailId
-            //            inner join TrnDomainMapping map on map.Id=req.TrnDomainMappingId and
-            //            {joins}
-            //            where {(dto.TypeId == KeyConstants.HoltlistCardRequest || dto.TypeId == KeyConstants.LostCardRequest ? "thc.RequestId is null and" : "")}  ServiceNo like @ServiceNo";
-
-            #region Comment Code
             if (dto.TypeId == KeyConstants.ApplicantPostingOut || dto.TypeId == KeyConstants.ApplicantClose)
             {
                 query = @"Select TOP 5 basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath Image,req.RequestId
@@ -620,12 +574,12 @@ namespace DataAccessLayer
                                 LEFT JOIN TrnFwds fwd ON fwd.RequestId = req.RequestId
                                 where ServiceNo like @ServiceNo
                                 GROUP BY
-            basi.BasicDetailId,
-            FName,
-            LName,
-            ServiceNo,
-            PhotoImagePath,
-            req.RequestId
+                                    basi.BasicDetailId,
+                                    FName,
+                                    LName,
+                                    ServiceNo,
+                                    PhotoImagePath,
+                                    req.RequestId
                                 ";
             }
             else if (dto.TypeId == KeyConstants.HoltlistCardRequest)
@@ -640,12 +594,12 @@ namespace DataAccessLayer
                                 Left join TrnHotlistCards thc on req.RequestId = thc.RequestId
                                 where thc.RequestId is null and ServiceNo like @ServiceNo
                                 GROUP BY
-            basi.BasicDetailId,
-            FName,
-            LName,
-            ServiceNo,
-            PhotoImagePath,
-            req.RequestId
+                                    basi.BasicDetailId,
+                                    FName,
+                                    LName,
+                                    ServiceNo,
+                                    PhotoImagePath,
+                                    req.RequestId
                                 ";
             }
             else if (dto.TypeId == KeyConstants.LostCardRequest)
@@ -660,16 +614,14 @@ namespace DataAccessLayer
                                 Left join TrnLostCards tlc on req.RequestId = tlc.RequestId
                                 where tlc.RequestId is null and ServiceNo like @ServiceNo
                                 GROUP BY
-            basi.BasicDetailId,
-            FName,
-            LName,
-            ServiceNo,
-            PhotoImagePath,
-            req.RequestId
+                                    basi.BasicDetailId,
+                                    FName,
+                                    LName,
+                                    ServiceNo,
+                                    PhotoImagePath,
+                                    req.RequestId
                                 ";
             }
-
-            #endregion Comment Code
 
             try
             {
