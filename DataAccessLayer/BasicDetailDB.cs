@@ -559,7 +559,7 @@ namespace DataAccessLayer
                 query = @"Select Distinct TOP 5 basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath Image,req.RequestId
                             from BasicDetails basi
                             inner join TrnICardRequest req on req.BasicDetailId=basi.BasicDetailId and req.StatusId=1
-                            inner join TrnDomainMapping map on map.UnitId=@MapUnitId
+                            inner join TrnDomainMapping map on map.Id = req.TrnDomainMappingId and map.UnitId=@MapUnitId
                             inner join TrnUpload trnu on basi.BasicDetailId=trnu.BasicDetailId 
                             where ServiceNo like @ServiceNo ";
             }
