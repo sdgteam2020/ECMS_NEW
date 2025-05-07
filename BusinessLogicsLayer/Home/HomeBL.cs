@@ -23,13 +23,13 @@ namespace BusinessLogicsLayer.Home
         {
           return  await _iHomeDB.GetDashBoardCount(UserId, dTOApplFwdCondition, ArmedIdForORO, MapUnitId, Claim);
         }
-        public async Task<DTORequestDashboardCountResponse> GetRequestDashboardCount(int UserId, int UnitId, string Type)
+        public async Task<DTORequestDashboardCountResponse> GetRequestDashboardCount(int UserId, string Type,int UnitMapId)
         {
-            return await _iHomeDB.GetRequestDashboardCount(UserId, UnitId, Type);
+            return await _iHomeDB.GetRequestDashboardCount(UserId,Type, UnitMapId);
         }
-        public async Task<DTORequestSubDashboardCountResponse> GetSubDashboardCount(int UserId)
+        public async Task<DTORequestSubDashboardCountResponse> GetSubDashboardCount(int UserId, int UnitMapId)
         {
-            return await _iHomeDB.GetSubDashboardCount(UserId);
+            return await _iHomeDB.GetSubDashboardCount(UserId, UnitMapId);
         }
         public async Task<List<DTORegisterUserResponse>> GetAllRegisterUser(int UnitId)
         {
