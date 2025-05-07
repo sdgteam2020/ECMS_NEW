@@ -572,7 +572,8 @@ namespace DataAccessLayer
                                 inner join TrnStepCounter stepcount on req.RequestId=stepcount.RequestId and stepcount.StepId=6
                                 inner join TrnDomainMapping tdm on tdm.Id=req.TrnDomainMappingId {unitQuery}
                                 LEFT JOIN TrnFwds fwd ON fwd.RequestId = req.RequestId
-                                where ServiceNo like @ServiceNo";
+                                where ServiceNo like @ServiceNo
+                                Group by basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath,req.RequestId";
             }
             else if (dto.TypeId == KeyConstants.HoltlistCardRequest)
             {
@@ -584,7 +585,8 @@ namespace DataAccessLayer
                                 inner join TrnDomainMapping tdm on tdm.Id=req.TrnDomainMappingId and tdm.UnitId=@MapUnitId
                                 LEFT JOIN TrnFwds fwd ON fwd.RequestId = req.RequestId
                                 Left join TrnHotlistCards thc on req.RequestId = thc.RequestId
-                                where thc.RequestId is null and ServiceNo like @ServiceNo";
+                                where thc.RequestId is null and ServiceNo like @ServiceNo
+                                Group by basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath,req.RequestId";
             }
             else if (dto.TypeId == KeyConstants.LostCardRequest)
             {
@@ -596,7 +598,8 @@ namespace DataAccessLayer
                                 inner join TrnDomainMapping tdm on tdm.Id=req.TrnDomainMappingId
                                 LEFT JOIN TrnFwds fwd ON fwd.RequestId = req.RequestId
                                 Left join TrnLostCards tlc on req.RequestId = tlc.RequestId
-                                where tlc.RequestId is null and ServiceNo like @ServiceNo";
+                                where tlc.RequestId is null and ServiceNo like @ServiceNo
+                                Group by basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath,req.RequestId";
             }
 
             try

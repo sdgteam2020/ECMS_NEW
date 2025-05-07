@@ -3087,12 +3087,33 @@ namespace Web.Controllers
         [HttpPost]
         public async Task<IActionResult> ICardPrintUploadCsv(DTOCSVFileRequest model)
         {
+
+            //string FileName = service.ProcessUploadedFile(model.Photo_, sourceFolderPhotoPhy, model.ServiceNo);
+
+            //string path = Path.Combine(sourceFolderPhotoPhy, FileName);
+
+            //bool result = service.IsValidHeader(path);
+            //bool imgcontentresult = service.IsImage(model.CSVFile);
+
             var response = new DTOCsvUploadValResponse();
-            if (model.CSVFile == null || model.CSVFile.Length == 0)
+            //if (model.CSVFile == null || model.CSVFile.Length == 0)
+            //{
+            //    response.Message = "File is not uploaded or is empty.";
+            //}
+
+            if (!ModelState.IsValid)
             {
-                response.Message = "File is not uploaded or is empty.";
+                var errors = ModelState.Where(x => x.Value?.Errors?.Count > 0)
+                            .SelectMany(x => x.Value!.Errors)
+                            .Select(e => e.ErrorMessage)
+                            .ToList();
+                if (errors.Any())
+                {
+                    response.Message = string.Join("; ", errors); // Concatenate all error messages
+                }
                 goto Returnstm;
             }
+
             string fileName = $"{DateTime.Now.ToString("yyyyMMddHHmmss")}.csv";
             try
             {
