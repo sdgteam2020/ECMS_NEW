@@ -285,14 +285,32 @@ namespace Web.Controllers
             int retint = 0;
             var userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
 
-            if (string.IsNullOrEmpty(Id) || !service.IsValidBase64(Id) || string.IsNullOrEmpty(jcoor) || !service.IsValidBase64(jcoor))
+            if (string.IsNullOrEmpty(Id) || !service.IsValidBase64(Id))
             {
                 TempData["error"] = "Invalid Input.";
                 TempData.Keep("error");
                 return RedirectToAction("ContactUs", "Home");
             }
+            if (jcoor != null)
+            {
+                if (!service.IsValidBase64(jcoor))
+                {
+                    TempData["error"] = "Invalid Input.";
+                    TempData.Keep("error");
+                    return RedirectToAction("ContactUs", "Home");
+                }
+            }
+
             try
             {
+                DtoSession? dtoSession = new DtoSession();
+                if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
+                {
+                    dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+
+                }
+                int UnitMapId = dtoSession != null ? dtoSession.UnitId : 0;
+
                 if (!string.IsNullOrEmpty(Id))
                 {
                     var base64EncodedBytes = Convert.FromBase64String(Id);
@@ -307,12 +325,12 @@ namespace Web.Controllers
 
                 if (string.IsNullOrEmpty(jcoor))
                 {
-                    var allrecord = await Task.Run(() => _iPostingBL.GetAppClosedList(Convert.ToInt32(userId), 1));
+                    var allrecord = await Task.Run(() => _iPostingBL.GetAppClosedList(UnitMapId, 1));
                     return View(allrecord);
                 }
                 else
                 {
-                    var allrecord = await Task.Run(() => _iPostingBL.GetAppClosedList(Convert.ToInt32(userId), 2));
+                    var allrecord = await Task.Run(() => _iPostingBL.GetAppClosedList(UnitMapId, 2));
                     return View(allrecord);
                 }
             }

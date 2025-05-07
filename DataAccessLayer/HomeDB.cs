@@ -129,7 +129,7 @@ namespace DataAccessLayer
                 return null;
             }
         }
-        public async Task<DTORequestDashboardCountResponse> GetRequestDashboardCount(int UserId,string Type)
+        public async Task<DTORequestDashboardCountResponse> GetRequestDashboardCount(int UserId,string Type,int UnitMapId)
         {
             string query="";
             switch (Type)
@@ -159,10 +159,12 @@ namespace DataAccessLayer
                 case "Closed":
                     query = "declare @ToClosedOffrs int=0 declare @ToClosedJCO int=0" +
                             " select @ToClosedOffrs=COUNT(appcl.Id) from TrnApplClose appcl" +
-                            " inner join TrnStepCounter trnstepcout on trnstepcout.RequestId= appcl.RequestId where appcl.Updatedby=@UserId and trnstepcout.ApplyForId=1 " +
+                            " inner join BasicDetails bs on bs.BasicDetailId=appcl.BasicDetailId and bs.UnitId =@UnitMapId " +
+                            " inner join TrnStepCounter trnstepcout on trnstepcout.RequestId= appcl.RequestId and trnstepcout.ApplyForId=1" +
 
                             " select @ToClosedJCO=COUNT(appcl.Id) from TrnApplClose appcl" +
-                            " inner join TrnStepCounter trnstepcout on trnstepcout.RequestId= appcl.RequestId where appcl.Updatedby=@UserId and trnstepcout.ApplyForId=2 " +
+                            " inner join BasicDetails bs on bs.BasicDetailId=appcl.BasicDetailId and bs.UnitId =@UnitMapId " +
+                            " inner join TrnStepCounter trnstepcout on trnstepcout.RequestId= appcl.RequestId and trnstepcout.ApplyForId=2 " +
                             " select @ToClosedOffrs ToClosedOffrs,@ToClosedJCO ToClosedJCO";
                     break;
                 case "Completed":
@@ -213,7 +215,7 @@ namespace DataAccessLayer
             {
                 using (var connection = _contextDP.CreateConnection())
                 {
-                    var ret = await connection.QueryAsync<DTORequestDashboardCountResponse>(query, new { UserId });
+                    var ret = await connection.QueryAsync<DTORequestDashboardCountResponse>(query, new { UserId, UnitMapId });
                     return ret.SingleOrDefault();
                 }
             }
@@ -223,7 +225,7 @@ namespace DataAccessLayer
                 return null;
             }
         } 
-        public async Task<DTORequestSubDashboardCountResponse> GetSubDashboardCount(int UserId)
+        public async Task<DTORequestSubDashboardCountResponse> GetSubDashboardCount(int UserId,int UnitMapId)
         {
             string query = "declare @TotDrafted int=0 declare @TotSubmitted int=0 declare @TotRejected int=0 declare @TotClosed int=0 declare @TotCompleted int=0 " +
                             " select @TotDrafted=COUNT(distinct req.RequestId) from TrnDomainMapping domain" +
@@ -234,7 +236,8 @@ namespace DataAccessLayer
                             " inner join TrnICardRequest req on req.TrnDomainMappingId=domain.Id " +
                             " inner join TrnStepCounter trnstepcout on trnstepcout.RequestId= req.RequestId where domain.AspNetUsersId=@UserId and trnstepcout.StepId>1" +
 
-                            " select @TotClosed=COUNT(Id) from TrnApplClose where Updatedby=@UserId" +
+                            " select @TotClosed=COUNT(appclo.Id) from TrnApplClose appclo" +
+                            " inner join BasicDetails bs on bs.BasicDetailId=appclo.BasicDetailId and bs.UnitId =@UnitMapId" +
 
                             " select @TotCompleted=COUNT(distinct req.RequestId) from TrnDomainMapping domain" +
                             " inner join TrnICardRequest req on req.TrnDomainMappingId=domain.Id where domain.AspNetUsersId=@UserId and req.StatusId=2 " +
@@ -249,7 +252,7 @@ namespace DataAccessLayer
             {
                 using (var connection = _contextDP.CreateConnection())
                 {
-                    var ret = await connection.QueryAsync<DTORequestSubDashboardCountResponse>(query, new { UserId });
+                    var ret = await connection.QueryAsync<DTORequestSubDashboardCountResponse>(query, new { UserId, UnitMapId });
                     return ret.SingleOrDefault();
                 }
             }

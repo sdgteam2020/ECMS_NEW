@@ -414,21 +414,21 @@ namespace DataAccessLayer
                 db.Dispose();
             }
         }
-        public async Task<List<DTOAppClosedListResponse>> GetAppClosedList(int Updatedby, int apply)
+        public async Task<List<DTOAppClosedListResponse>> GetAppClosedList(int UnitMapId, int apply)
         {
             try
             {
                 string query = "";
-                query = " Select appcl.UpdatedOn,bd.ServiceNo,mr.RankAbbreviation as RankName,bd.FName,bd.LName,mpr.Reason,mappl.Name as ApplyFor,appcl.Remarks,appcl.Authority from TrnApplClose appcl " +
-                          " inner join BasicDetails bd on bd.BasicDetailId=appcl.BasicDetailId " +
-                          " inner join MRank mr on mr.RankId = bd.RankId " +
-                          " inner join MApplyFor mappl on mappl.ApplyForId = bd.ApplyForId " +
-                          " inner join MPostingReason mpr on mpr.Id= appcl.ReasonId " +
-                          " where appcl.Updatedby=@Updatedby and mappl.ApplyForId=@apply ";
+                query = @"Select appcl.UpdatedOn,bd.ServiceNo,mr.RankAbbreviation as RankName,bd.FName,bd.LName,mpr.Reason,mappl.Name as ApplyFor,appcl.Remarks,appcl.Authority from TrnApplClose appcl
+                            inner join BasicDetails bd on bd.BasicDetailId=appcl.BasicDetailId and bd.UnitId =@UnitMapId
+                            inner join MRank mr on mr.RankId = bd.RankId
+                            inner join MApplyFor mappl on mappl.ApplyForId = bd.ApplyForId
+                            inner join MPostingReason mpr on mpr.Id= appcl.ReasonId
+                            where mappl.ApplyForId=@apply";
 
                 using (var connection = _contextDP.CreateConnection())
                 {
-                    var result = await connection.QueryAsync<DTOAppClosedListResponse>(query, new { Updatedby, apply });
+                    var result = await connection.QueryAsync<DTOAppClosedListResponse>(query, new { UnitMapId, apply });
                     int sno = 1;
                     var allrecord = (from e in result
                                      select new DTOAppClosedListResponse()
