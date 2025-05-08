@@ -167,6 +167,11 @@ async function GetTokenDetails(ApiId, txt, thumbprint, msgid) {
                 $("#" + txt).val("");
                 $("#txtspnIsToken").val("");
             }
+            else if (data[0].Status === '500') {
+                $("#" + msgid).html(`<div class="mt-4 alert alert-danger alert-dismissible fade show"><i class="fa fa-check" aria-hidden="true"></i><span class="m-lg-2">Technical Error While Fetching Token</span></div>`);
+                $("#" + txt).val("");
+                $("#txtspnIsToken").val("");
+            }
         }
         else {
             $("#" + msgid).html(errormsg001);
