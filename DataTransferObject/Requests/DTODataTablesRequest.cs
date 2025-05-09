@@ -74,4 +74,9 @@ namespace DataTransferObject.Requests
         public int UnitMapId { get; set; }
         public string RoleName { get; set; } = string.Empty;
     }
+    public class DTODataTablesRequestForFaultyCard : DTODataTablesRequest
+    {
+        public int UnitMapId { get; set; }
+        public bool Claim { get; set; }
+    }
 }

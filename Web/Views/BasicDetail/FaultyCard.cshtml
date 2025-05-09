@@ -10,7 +10,7 @@
                 <div class="col-auto">
                     <h1 class="page-header-title">
                         <div class="page-header-icon"> <i class="fa fa-bars"></i></div>
-                        <a href="/Home/Index" class="mr-2">Home</a> >  <a href="/Home/Dashboard" class="mr-2">Dashboard</a> > Faulty Card
+                        <a href="/Home/Index" class="mr-2">Home</a> >  <a href="/Home/Dashboard" class="mr-2">Dashboard</a> > Misprinted / Faulty Card
                     </h1>
                 </div>
             </div>
@@ -25,7 +25,7 @@
             <div class="row">
                 <div class="col-xl-12 text-left">
                     <h3>
-                        Faulty Details
+                        Misprinted / Faulty Card details
                         <small class="text-muted"></small>
                     </h3>
                 </div>
@@ -35,7 +35,7 @@
             <div class="col-xl-12">
                 <div class="mb-2 d-md-flex justify-content-md-between align-items-md-center">
                     <h6 class="mb-3 mb-md-0">
-                        Total Faulty <span id="lblTotal" class="ml-3 border border-light b px-2 py-1">0</span>
+@*                         Total Faulty <span id="lblTotal" class="ml-3 border border-light b px-2 py-1">0</span> *@
                     </h6>
                     <div>
                         <button type="button" id="btnAdd" class="btn btn-outline-success font-weight-600 btn-sm"><i class="fa fa-plus mr-1 font-weight-700" aria-hidden="true"></i>Add</button>
@@ -45,9 +45,7 @@
                     <table class="table border border-purple table-striped no-footer dataTable table-hover" role="grid" id="tbldata">
                         <thead>
                             <tr>
-                                <th class="noExport d-none"></th>
                                 <th class="wd-40-f">S No</th>
-                                <th class="nowrap">Request Id</th>
                                 <th class="nowrap">Army No</th>
                                 <th class="nowrap">Rk & Name</th>
                                 <th class="nowrap">Unit</th>
@@ -55,10 +53,7 @@
                                 <th class="nowrap">Reason</th>
                                 <th class="nowrap">Remark</th>
                                 <th class="nowrap">AFSAC Remark</th>
-                                @if (ViewBag.Claim == true)
-                                {
-                                    <th class="noExport nowrap">Action</th>
-                                }
+                                <th class="noExport nowrap">Action</th>
                             </tr>
                         </thead>
                         <tbody id="DetailBody">
