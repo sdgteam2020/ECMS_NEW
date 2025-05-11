@@ -45,7 +45,6 @@ $(document).ready(function () {
                 
                 var id = $(this).attr("Id");
                 lst.push(id);
-                console.log(id);
 
             });
           
