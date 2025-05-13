@@ -565,7 +565,7 @@ namespace DataAccessLayer
             }
             else if (dto.TypeId == KeyConstants.FaultyCardRequest)
             {
-                query = @$"Select Distinct TOP 5 basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath Image,req.RequestId,COALESCE(MAX(fwd.TrnFwdId), NULL) AS MaxTrnFwdId  
+                query = @$"Select TOP 5 basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath Image,req.RequestId,COALESCE(MAX(fwd.TrnFwdId), NULL) AS MaxTrnFwdId  
                                 from BasicDetails basi
                                 inner join TrnUpload trnu on basi.BasicDetailId=trnu.BasicDetailId 
                                 inner join TrnICardRequest req on req.BasicDetailId=basi.BasicDetailId and req.StatusId=1
@@ -577,7 +577,7 @@ namespace DataAccessLayer
             }
             else if (dto.TypeId == KeyConstants.HoltlistCardRequest)
             {
-                query = @$"Select Distinct TOP 5 basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath Image,req.RequestId,COALESCE(MAX(fwd.TrnFwdId), NULL) AS MaxTrnFwdId  
+                query = @$"Select TOP 5 basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath Image,req.RequestId,COALESCE(MAX(fwd.TrnFwdId), NULL) AS MaxTrnFwdId  
                                 from BasicDetails basi
                                 inner join TrnUpload trnu on basi.BasicDetailId=trnu.BasicDetailId 
                                 inner join TrnICardRequest req on req.BasicDetailId=basi.BasicDetailId and req.StatusId=1
@@ -590,7 +590,7 @@ namespace DataAccessLayer
             }
             else if (dto.TypeId == KeyConstants.LostCardRequest)
             {
-                query = @$"Select Distinct TOP 5 basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath Image,req.RequestId,COALESCE(MAX(fwd.TrnFwdId), NULL) AS MaxTrnFwdId  
+                query = @$"Select TOP 5 basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath Image,req.RequestId,COALESCE(MAX(fwd.TrnFwdId), NULL) AS MaxTrnFwdId  
                                 from BasicDetails basi
                                 inner join TrnUpload trnu on basi.BasicDetailId=trnu.BasicDetailId 
                                 inner join TrnICardRequest req on req.BasicDetailId=basi.BasicDetailId and req.StatusId=1

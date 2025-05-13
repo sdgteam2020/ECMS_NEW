@@ -1,5 +1,6 @@
 ﻿using Azure.Core;
 using BusinessLogicsLayer.FaultyStage;
+using BusinessLogicsLayer.Unit;
 using DataAccessLayer;
 using DataAccessLayer.BaseInterfaces;
 using DataTransferObject.Domain.Master;
@@ -10,6 +11,7 @@ using Microsoft.SqlServer.Management.Sdk.Sfc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -22,6 +24,10 @@ namespace BusinessLogicsLayer.FaultyCard
         {
             _iFaultyCardDB=iFaultyCardDB;
         }
+        public async Task<string> GetRemarksData(int[] RemarksIds) 
+        {
+            return await _iFaultyCardDB.GetRemarksData(RemarksIds);
+        }
         public async Task<bool> FindRequestId(int RequestId)
         {
             return await _iFaultyCardDB.FindRequestId(RequestId);
@@ -33,6 +39,10 @@ namespace BusinessLogicsLayer.FaultyCard
         public async Task<List<DTOFaultyCardListResponse>?> GetAllFaulty(bool Claim, int MapUnitId)
         {
             return await _iFaultyCardDB.GetAllFaulty(Claim, MapUnitId);
+        }
+        public async Task<DTODataTablesResponse<DTOFaultyCardListResponse>> GetAllFaulty(DTODataTablesRequestForFaultyCard request)
+        {
+            return await _iFaultyCardDB.GetAllFaulty(request);
         }
         public async Task<DTOCommonSaveResponse> SaveFaultyCard(DTOFaultyCardRequest dTO, MTrnFwd? mTrnFwd,bool Claim) 
         {

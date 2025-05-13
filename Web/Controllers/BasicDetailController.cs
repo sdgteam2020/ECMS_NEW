@@ -45,6 +45,7 @@ using Microsoft.IdentityModel.Tokens;
 using BusinessLogicsLayer.HotlistCard;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using BusinessLogicsLayer.LostCard;
+using iText.IO.Font.Cmap;
 
 namespace Web.Controllers
 {
@@ -2109,6 +2110,17 @@ namespace Web.Controllers
         #endregion
 
         #region FaultyCard
+
+        public async Task<IActionResult> GetRemarksData(string RemarksIds)
+        {
+            // Split into string array
+            string[] strArray = RemarksIds.Split(',');
+
+            // Convert to int array
+            int[] intArray = Array.ConvertAll(strArray, int.Parse);
+            
+            return Json(await faultyCardBL.GetRemarksData(intArray));
+        }
         public async Task<ViewResult> FaultyCardAsync()
         {
             int AspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
@@ -2124,7 +2136,8 @@ namespace Web.Controllers
             ViewBag.Claim = Claim;
             return View();
         }
-        public async Task<IActionResult> GetAllFaulty()
+        [HttpPost]
+        public async Task<IActionResult> GetAllFaulty(DTODataTablesRequestForFaultyCard dTO)
         {
             int AspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
             int MapUnitId = 0;
@@ -2146,8 +2159,25 @@ namespace Web.Controllers
             {
                 Claim = true;
             }
-
-            return Json(await faultyCardBL.GetAllFaulty(Claim, MapUnitId));
+            try
+            {
+                dTO.Claim = Claim;
+                dTO.UnitMapId = dtoSession != null ? dtoSession.UnitId : 0;
+                return Json(await faultyCardBL.GetAllFaulty(dTO));
+            }
+            catch (Exception ex)
+            {
+                List<DTOFaultyCardListResponse> dTOUserRegnResponses = new List<DTOFaultyCardListResponse>();
+                var responseData = new DTODataTablesResponse<DTOFaultyCardListResponse>
+                {
+                    draw = 0,
+                    recordsTotal = 0,
+                    recordsFiltered = 0,
+                    data = dTOUserRegnResponses
+                };
+                _logger.LogError(1001, ex, "Master->GetAllFaulty");
+                return Json(responseData);
+            }
         }
         [HttpPost]
         public async Task<IActionResult> GetTrnFaultyCardDetail(int TrnFaultyCardId)

@@ -217,7 +217,6 @@ function validateCsvFileOnChange() {
                     },
                     error: function (xhr) {
                         // Show error messages
-                        console.log(xhr);
                     }
                 });
             }

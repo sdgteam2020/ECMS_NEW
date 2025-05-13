@@ -14,6 +14,7 @@ namespace DataTransferObject.Response
         public string ServiceNo { get; set; } = string.Empty;
         public string? ModifiedServiceNo { get; set; }
         public string? RegimentalName { get; set; }
+        public int UnitMapId { get; set; }
         public string UnitName { get; set; } = string.Empty;
         public string UnitAbbreviation { get; set; } = string.Empty;
         public string RankName { get; set; } = string.Empty;

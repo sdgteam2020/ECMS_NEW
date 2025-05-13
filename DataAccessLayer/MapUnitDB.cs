@@ -77,11 +77,6 @@ namespace DataAccessLayer
         {
             try
             {
-                if (request.ComdId == null) request.ComdId = 0;
-                if (request.CorpsId == null) request.CorpsId = 0;
-                if (request.DivId == null) request.DivId = 0;
-                if (request.BdeId == null) request.BdeId = 0;
-
                 var queryableData = (from uni in _context.MapUnit.OrderByDescending(x => x.UnitMapId)
                                        join MUni in _context.MUnit on uni.UnitId equals MUni.UnitId
                                        join Com in _context.MComd on uni.ComdId equals Com.ComdId
