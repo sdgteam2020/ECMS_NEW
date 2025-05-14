@@ -107,13 +107,13 @@ function ChkSfx() {
     }
     //var txtcalsfx = document.getElementById('ICNo');
     //txtcalsfx.value = Sfx;
-    if (txt.toUpperCase() == Sfx) {
+    //if (txt.toUpperCase() == Sfx) {
         return true;
-    }
-    else {
-        alert("Suffix Mismatch.Expected suffix is " + Sfx);
-        return false;
-    }
+    //}
+    //else {
+    //    alert("Suffix Mismatch.Expected suffix is " + Sfx);
+    //    return false;
+    //}
 }
 function SubmitsEncry1(result) {
    

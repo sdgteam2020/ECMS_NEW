@@ -31,6 +31,7 @@
         transform: translate3d(0%, 0, 0);
     }
 </style>
+<link asp-href-include="~/select2/css/select2.min.css" rel="stylesheet" />
 <header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
     <div class="containerMain">
         <div class="page-header-content pt-4">
@@ -89,10 +90,40 @@
                                         </div>
                                     </div>
                                     <div class="form-group row mb-2">
-                                        <label class="col-form-label col-sm-5 labelprofile">Lost On<i class="fas fa-asterisk mand1"></i></label>
+                                        <label class="col-form-label col-sm-5 labelprofile">Reason of Loss<i class="fas fa-asterisk mand1"></i></label>
                                         <div class="col-sm-7">
-                                            <input type="text" id="txtlostoninp" class="form-control datetimepickerpast" name="txtlostoninp" autocomplete="off">
+                                            <select class="form-control select2 select2-accessible text-uppercase" multiple style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddlLostRemark" id="ddlLostRemark" data-val="true" data-val-regex="This special chars and space not allowed for security reasons." data-val-required="Reason of Loss is required.">
+                                            </select>
+                                            <span class="text-danger field-validation-valid" data-valmsg-for="ddlLostRemark" data-valmsg-replace="true"></span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row mb-2">
+                                        <label class="col-form-label col-sm-5 labelprofile">Date Of Loss<i class="fas fa-asterisk mand1"></i></label>
+                                        <div class="col-sm-7">
+                                            <input type="text" id="txtlostoninp" class="form-control datetimepicker" name="txtlostoninp" autocomplete="off" data-val="true" data-val-required="Date Of Loss is required.">
                                             <span class="text-danger field-validation-valid" data-valmsg-for="txtlostoninp" data-valmsg-replace="true"></span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row mb-2">
+                                        <label class="col-form-label col-sm-5 labelprofile">Have Indl Lodged FIR in Police Stn?<i class="fas fa-asterisk mand1"></i></label>
+                                        <div class="col-sm-7">
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="radio" name="isFIRLogged" id="isFIRLogged" value= true data-val="true" data-val-required="This field is required.">
+                                                <label class="form-check-label" for="radioYes">Yes</label>
+                                            </div>
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="radio" name="isFIRLogged" id="isFIRLogged" value= false data-val="true" data-val-required="This field is required.">
+                                                <label class="form-check-label" for="radioNo">No</label>
+                                            </div>
+                                            <br />
+                                            <span class="text-danger field-validation-valid" data-valmsg-for="isFIRLogged" data-valmsg-replace="true"></span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row mb-2">
+                                        <label class="col-form-label col-sm-5 labelprofile">Upload FIR Report/ Court of Inquiry Document(PDF)</label>
+                                        <div class="col-sm-7">
+                                            <input class="form-control" accept="image/jpeg,image/jpg,image/png" type="file" data-val="true" id="supportingDoc" name="supportingDoc">
+                                            @* <span class="text-danger field-validation-valid" data-valmsg-for="supportingDoc" data-valmsg-replace="true"></span> *@
                                         </div>
                                     </div>
                                     <div class="form-group row mb-2">
@@ -114,6 +145,7 @@
         </div>
     </div>
 </div>
+<script asp-src-include="~/select2/js/select2.min.js"></script> 
 <script asp-src-include="~/developerjs/LostCardRequest.js"></script>
 <script asp-src-include="~/developerjs/mtables.js"></script>
 <script asp-src-include="~/developerjs/ICardPrint.js"></script>

@@ -23,6 +23,16 @@ namespace DataTransferObject.Domain.Model
         public string? Remark { get; set; }
 
         [Required]
+        public bool IsFIRLogged { get; set; } = true;
+
+        [StringLength(100)]
+        [Column(TypeName = "VARCHAR(100)")]
+        public string SupportDocPath { get; set; } = string.Empty;
+
+        [Column(TypeName = "NVARCHAR(MAX)")]
+        public string SignedXML { get; set; } = string.Empty;
+
+        [Required]
         [DataType(DataType.Date)]
         [Column(TypeName = "datetime")]
         public DateTime? LostOn { get; set; } = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));

@@ -1,5 +1,5 @@
 ﻿$(async function () {
-    var RemarkTypeID = [6];
+    var RemarkTypeID = [7];
     GetRemarks("ddlLostRemark", 0, RemarkTypeID);
       
     $('.select2').select2({
@@ -10,7 +10,6 @@
 
     
     if (sessionStorage.getItem("ArmyNo") != null && sessionStorage.getItem("RequestIdForFaulty") != null && sessionStorage.getItem("MaxTrnFwdId") != null) {
-
         var encryptedArmyNo = sessionStorage.getItem("ArmyNo");
         var encryptedRequestId = sessionStorage.getItem("RequestIdForFaulty");
         var encryptedMaxTrnFwdId = sessionStorage.getItem("MaxTrnFwdId");
@@ -33,7 +32,6 @@
         $("#lblFaultyRequestId").html(decryptedRequestId);
 
         GetBasicDetailForParitalViewByRequestId(decryptedRequestId);
-
     }
 
     $("#btnAccept").on("click", function () {
@@ -72,28 +70,23 @@
 });
 
 function Proceed() {
-    //ResetErrorMessage();
-    let inputVal = $("#txtlostoninp").val();
-    if (inputVal.length == 0) {
-        toastr.error('Lost On is required.');
-        return false;
-    }
 
-    const parsedDate = new Date(inputVal);
-    if (!isValidDate(parsedDate)) {
-        toastr.error('Lost On value is invalid.');
-        return false;
-    } 
+    console.log($('input[name="isFIRLogged"]:checked').val());
 
-    if ($("#txtLostRemark").val().length == 0) {
-        toastr.error('Remark is required.');
-        return false;
-    }
-
-    let formId = '#SaveLostCardRequest';
+    ResetErrorMessage();
+    let formId = '#SaveLostCardRequest';    
     $.validator.unobtrusive.parse($(formId));
     
     if ($(formId).valid()) {
+        let inputVal = $("#txtlostoninp").val();
+        const parsedDate = new Date(inputVal);
+        if (!isValidDate(parsedDate)) {
+            $(formId).validate().showErrors({
+                "txtlostoninp": "Invalid Date Of Loss"
+            });
+            return false;
+        } 
+
         let ApplicantName = $("#lblpvFName").html() + $("#lblpvLName").html();
         let ApplicantNameWithRank = $("#lblpvRank").html() + " " + ApplicantName.trim();
         let Remarks = $("#txtLostRemark").val();
@@ -103,7 +96,7 @@ function Proceed() {
             html: `
                     <div style="text-align: left; font-size: 16px;">
                         <p><strong>Applicant Name:</strong> ${ApplicantNameWithRank}</p>
-                        <p><strong>Lost Date & Time:</strong> ${DateFormateddMMyyyyhhmmss(parsedDate)}</p>
+                        <p><strong>Date Of Loss:</strong> ${DateFormateddMMyyyyhhmmss(parsedDate)}</p>
                         <p><strong>Remarks:</strong> ${Remarks}</p>
                         <p><strong>Logged In Details:</strong> ${UserName}</p>
                     </div>
@@ -122,13 +115,6 @@ function Proceed() {
         })
     }
     else {
-        Swal.fire({
-            icon: 'error',
-            title: 'Oops...',
-            text: 'Please fill required field.',
-
-        })
-        toastr.error('Please fill required field.');
         return false;
     }
 }
@@ -211,4 +197,10 @@ function DownloadPdf(RequestId) {
             });
         }
     });
+}
+function ResetErrorMessage() {
+    $("#ddlLostRemark-error").html("");
+    $("#txtlostoninp-error").html("");
+    $("#supportingDoc-error").html("");
+    $("#txtLostRemark-error").html("");
 }
