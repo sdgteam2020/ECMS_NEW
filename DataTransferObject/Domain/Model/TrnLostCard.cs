@@ -27,7 +27,7 @@ namespace DataTransferObject.Domain.Model
 
         [StringLength(100)]
         [Column(TypeName = "VARCHAR(100)")]
-        public string SupportDocPath { get; set; } = string.Empty;
+        public string SupportDocName { get; set; } = string.Empty;
 
         [Column(TypeName = "NVARCHAR(MAX)")]
         public string SignedXML { get; set; } = string.Empty;

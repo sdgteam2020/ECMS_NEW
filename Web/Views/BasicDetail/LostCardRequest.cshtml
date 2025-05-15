@@ -62,6 +62,7 @@
         <div class="card-body" style="min-height:150px;">
             <div class="row g-3 row-deck mb-3">
                 <form action="" id="SaveLostCardRequest" method="post" name="SaveLostCardRequest">
+                    @Html.AntiForgeryToken()
                     <div class="row">
                         @* <span class=" d-none" id="spnTrnLostCardId">@ViewBag.TrnFaultyCardId</span> *@
                         <span class=" d-none" id="spnLostCardRequestId">0</span>
@@ -100,7 +101,7 @@
                                     <div class="form-group row mb-2">
                                         <label class="col-form-label col-sm-5 labelprofile">Date Of Loss<i class="fas fa-asterisk mand1"></i></label>
                                         <div class="col-sm-7">
-                                            <input type="text" id="txtlostoninp" class="form-control datetimepicker" name="txtlostoninp" autocomplete="off" data-val="true" data-val-required="Date Of Loss is required.">
+                                            <input type="text" id="txtlostoninp" class="form-control datepickerpast" name="txtlostoninp" autocomplete="off" data-val="true" data-val-required="Date Of Loss is required.">
                                             <span class="text-danger field-validation-valid" data-valmsg-for="txtlostoninp" data-valmsg-replace="true"></span>
                                         </div>
                                     </div>
@@ -122,7 +123,8 @@
                                     <div class="form-group row mb-2">
                                         <label class="col-form-label col-sm-5 labelprofile">Upload FIR Report/ Court of Inquiry Document(PDF)</label>
                                         <div class="col-sm-7">
-                                            <input class="form-control" accept="image/jpeg,image/jpg,image/png" type="file" data-val="true" id="supportingDoc" name="supportingDoc">
+                                            <input class="form-control" accept="application/pdf" type="file" data-val="true" id="supportingDoc" name="supportingDoc">
+                                            <span id="lblCSVFileNotification" class="text-danger col-md-1">File Upload Upto 5MB</span>  
                                             @* <span class="text-danger field-validation-valid" data-valmsg-for="supportingDoc" data-valmsg-replace="true"></span> *@
                                         </div>
                                     </div>
@@ -133,8 +135,9 @@
                                             <span class="text-danger field-validation-valid" data-valmsg-for="txtLostRemark" data-valmsg-replace="true"></span>
                                         </div>
                                     </div>
-                                    <div class="col-sm-12 text-center mb-4">
-                                        <input type="button" class="btn btn-primary" id="btnAccept" value="Submit" />
+                                    <div class="col-sm-12 d-flex justify-content-center gap-3 mb-4">
+                                        <input type="button" class="btn btn-primary" id="btnSubmit" value="Submit"/>
+                                        <input type="button" class="btn btn-warning" id="btnReset" value="Reset"/>
                                     </div>
                                 </div>
                             </div>

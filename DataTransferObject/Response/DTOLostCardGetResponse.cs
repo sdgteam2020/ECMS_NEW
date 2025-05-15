@@ -26,5 +26,7 @@ namespace DataTransferObject.Response
         public string? Remark { get; set; }
         public bool IsActive { get; set; } = false;
         public string? EncryptedId { get; set; }
+        public string? SupportDocName { get; set; }
+        public bool IsFIRLogged { get; set; }
     }
 }

@@ -2633,31 +2633,58 @@ namespace Web.Controllers
             return View();
         }
 
-        public async Task<IActionResult> SaveLostCardRequest(TrnLostCard model)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SaveLostCardRequest([FromForm] DTOLostCardAddRequest model)
         {
-            DTOCommonSaveResponse dTOFaulty = new DTOCommonSaveResponse();
+            DTOCommonSaveResponse dTOResponse = new DTOCommonSaveResponse();
             try
             {
-                model.IsActive = true;
-                model.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier)); ;
-                model.UpdatedOn = DateTime.Now;
-
+                var trnLostCard = new TrnLostCard();
                 if (ModelState.IsValid)
                 {
+                    #region Upload Supporting Document
+                    string fileName = string.Empty;
+                    if (model.File != null)
+                    {
+                        fileName = $"{DateTime.Now.ToString("yyyyMMddHHmmss")}.pdf";
+                        var uploadsFolder = Path.Combine(hostingEnvironment.WebRootPath, "LostCardSupportingDoc");
+                        if (!Directory.Exists(uploadsFolder))
+                        {
+                            Directory.CreateDirectory(uploadsFolder);
+                        }
+                        var filePath = Path.Combine(uploadsFolder, fileName);
+
+                        using (var stream = new FileStream(filePath, FileMode.Create))
+                        {
+                            await model.File.CopyToAsync(stream);
+                        }
+                    }
+                    #endregion Upload Supporting Document
+
+                    trnLostCard.RequestId = model.RequestId;
+                    trnLostCard.Remark = model.Remark;
+                    trnLostCard.LostOn = model.LostOn;
+                    trnLostCard.IsFIRLogged = model.IsFIRLogged;
+                    trnLostCard.SignedXML = model.SignedXML ?? string.Empty;
+                    trnLostCard.SupportDocName = string.IsNullOrEmpty(fileName) ? "" : fileName;
+                    trnLostCard.IsActive = true;
+                    trnLostCard.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                    trnLostCard.UpdatedOn = DateTime.Now;
                     bool checkduplicate = await _lostCardBL.FindAnyRequestId(model.RequestId);
                     if (checkduplicate)
                     {
-                        dTOFaulty.Result = false;
-                        dTOFaulty.Message = "The lost request already exists!";
+                        dTOResponse.Result = false;
+                        dTOResponse.Message = "The lost request already exists!";
                     }
                     else
                     {
-                        var result = await _lostCardBL.AddWithReturn(model);
-                        await HotlistLostCard(model);
-                        dTOFaulty.Result = true;
-                        dTOFaulty.Message = "Record created!";
-                        dTOFaulty.CurrentTime = result.UpdatedOn.GetValueOrDefault();
-                        dTOFaulty.Id = result.LostCardId.ToString();
+                        var result = await _lostCardBL.AddWithReturn(trnLostCard);
+                        await HotlistLostCard(trnLostCard);
+                        dTOResponse.Result = true;
+                        dTOResponse.Message = "Record created!";
+                        dTOResponse.CurrentTime = result.UpdatedOn.GetValueOrDefault();
+                        dTOResponse.Id = result.LostCardId.ToString();
                     }
                 }
                 else
@@ -2668,20 +2695,20 @@ namespace Web.Controllers
                     .ToList();
                     if (errors.Any())
                     {
-                        dTOFaulty.Message = string.Join("; ", errors); // Concatenate all error messages
+                        dTOResponse.Message = string.Join("; ", errors); // Concatenate all error messages
                     }
-                    dTOFaulty.Result = false;
+                    dTOResponse.Result = false;
                 }
 
             }
             catch (Exception ex)
             {
                 _logger.LogError(1001, ex, "BasicDetail->SaveHotlistCardRequest");
-                dTOFaulty.Result = false;
-                dTOFaulty.Message = "Internal Server Error!";
+                dTOResponse.Result = false;
+                dTOResponse.Message = "Internal Server Error!";
             }
 
-            return Json(dTOFaulty);
+            return Json(dTOResponse);
         }
 
         private async Task HotlistLostCard(TrnLostCard lostCard) {

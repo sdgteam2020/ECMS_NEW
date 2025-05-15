@@ -144,6 +144,25 @@ function BindData() {
                 }
             },
             {
+                data: "IsFIRLogged",
+                name: "IsFIRLogged",
+                render: function (data, type, row) {
+                    // Convert boolean to "Yes" or "No"
+                    return data ? "<span class='badge badge-pill badge-success'>YES</span>" : "<span class='badge badge-pill badge-danger'>No</span>";
+                }
+            },
+            {
+                data: "SupportDocName",
+                orderable: false,
+                name: "SupportDocName",
+                render: function (data, type, row, meta) {
+                    return data ? `
+                    <button class="cls-uploadedDoc btn btn-sm btn-success download-btn" title="Download">
+                        <i class="fa fa-download"></i>
+                    </button>` : "";
+                }
+            },
+            {
                 data: "UpdatedOn",
                 name: "UpdatedOn",
                 render: function (data, type, row) {
@@ -199,8 +218,8 @@ function BindData() {
             $("body").on("click", ".cls-FromRemark", function () {
                 var rowData = table.row($(this).closest("tr")).data();
                 let Label = `Request Id :- ${rowData.RequestId}`;
-                $("#MessageDialogLabel").html(Label);
-                $("#MessageDialogBody").html(rowData.Remark);
+                $("#MessageDialogLabel").text(Label);
+                $("#MessageDialogBody").text(rowData.Remark);
                 $("#MessageDialog").modal('show');
             });
 
@@ -217,7 +236,7 @@ function BindData() {
                 });
             });
 
-            $('#DetailBody .customcheckbox').on('change', function () {
+            $('#tbldata .customcheckbox').on('change', function () {
                 const id = $(this).attr('id');
                 const isChecked = this.checked;
                 if (isChecked) {
@@ -225,6 +244,19 @@ function BindData() {
                 } else {
                     checkedDataIds = checkedDataIds.filter(x => x !== id);
                 }
+            });
+
+            $(".cls-uploadedDoc").on("click", function () {
+                var rowData = table.row($(this).closest("tr")).data();
+                const baseUrl = window.location.origin;
+                const downloadUrl = `${baseUrl}/LostCardSupportingDoc/${encodeURIComponent(rowData.SupportDocName)}`;
+                const link = document.createElement('a');
+                link.href = downloadUrl;
+                link.download = "LostCard_SupportiveDocument.pdf";
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                //window.location.href = downloadUrl;
             });
         }
     });

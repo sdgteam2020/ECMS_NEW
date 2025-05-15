@@ -86,7 +86,7 @@ namespace DataAccessLayer
                             CONCAT(SUBSTRING(bas.ServiceNo, 1, 2), ' ', SUBSTRING(bas.ServiceNo, 3, LEN(bas.ServiceNo) - 2))
                             ELSE
                             bas.ServiceNo
-                            END AS ModifiedServiceNo
+                            END AS ModifiedServiceNo,lost.IsFIRLogged,lost.SupportDocName
                             from TrnLostCards lost
                             inner join TrnICardRequest req on req.RequestId = lost.RequestId
                             inner join TrnDomainMapping tdm on tdm.Id=req.TrnDomainMappingId
@@ -137,6 +137,8 @@ namespace DataAccessLayer
                                     LostOn = e.LostOn,
                                     Remark = e.Remark,
                                     IsActive = e.IsActive,
+                                    SupportDocName = e.SupportDocName,
+                                    IsFIRLogged = e.IsFIRLogged
                                 }).ToList()
                     };
                 }
