@@ -137,7 +137,7 @@ async function Save() {
         //"TrnFwdId": $("#spnMaxTrnFwdId").html(),
     }
 
-    if (!await CheckTokenRequired()) {
+    if (await CheckTokenRequired()) {
         var xml = jsonToXml(data);
         if (!await GetTokenSignXml(xml)) {
             return false;
