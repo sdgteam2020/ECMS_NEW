@@ -15,6 +15,7 @@ namespace DataTransferObject.Response
         public string? EncryptedId { get; set; }
         public int UnitMapId { get; set; }
         public string UnitName { get; set; } = string.Empty;
+        public string Sus_no { get; set; } = string.Empty;
         public string FromArmyNo { get; set; } = string.Empty;
         public string FromRankAbbreviation { get; set; } = string.Empty;
         public string FromName { get; set; } = string.Empty;
@@ -27,9 +28,9 @@ namespace DataTransferObject.Response
         public int FromUpdatedby { get; set; }
         public DateTime FromUpdatedOn { get; set; }
         public int FromUserId { get; set; }
-        public int? ApproverUpdatedby { get; set; }
-        public DateTime? ApproverUpdatedOn { get; set; }
-        public int? ApproverUserId { get; set; }
+        public int? AdminUpdatedby { get; set; }
+        public DateTime? AdminUpdatedOn { get; set; }
+        public int? AdminUserId { get; set; }
         public bool IsComplete { get; set; } = false;
         public bool IsEditAction { get; set; }
         public bool IsActive { get; set; } = true;

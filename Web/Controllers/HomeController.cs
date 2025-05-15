@@ -117,6 +117,20 @@ namespace Web.Controllers
             return View();
         }
         #region Report Return
+        public async Task<IActionResult> Report()
+        {
+            string role = GetSessionValue();
+
+            ViewBag.Role = role;
+
+            var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var user = await userManager.FindByIdAsync(userId);
+
+            // UserManager service GetClaimsAsync method gets all the current claims of the user
+            var UserClaims = await userManager.GetClaimsAsync(user);
+            ViewBag.UserClaims = UserClaims;
+            return View();
+        }
         public async Task<IActionResult> ReportAndReturn()
         {
             var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -168,6 +182,21 @@ namespace Web.Controllers
                 return Json(KeyConstants.InternalServerError); 
             }
             
+        }
+        [HttpPost]
+        public async Task<IActionResult> GetReportData([FromBody] DTODataTablesRequestForReport dTORecord)
+        {
+            try
+            {
+                //var ret = await _reportReturnBL.GetRecordHistory(dTORecord);
+                return Json("ret");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "Home->GetRecordHistory");
+                return Json(KeyConstants.InternalServerError);
+            }
+
         }
         #endregion
         public async Task<IActionResult> SubDashboard()

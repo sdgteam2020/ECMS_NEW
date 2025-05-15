@@ -135,7 +135,7 @@ function Proceed(choice) {
                     <div style="text-align: left; font-size: 16px;">
                         <p><strong>Applicant Name:</strong> ${ApplicantNameWithRank}</p>
                         <p><strong>Request ID:</strong> ${$("#spnFaultyCardRequestId").html() }</p>
-                        <p><strong>${choice === 1 ? "Explain Fault Remarks" : "AFSAC Cell Remark"}:</strong> ${choice === 1 ? FromRemark : ToRemark}</p>
+                        <p><strong>${choice === 1 ? "Issues Related to Card Misprint/Faulty" : "AFSAC Cell Remark"}:</strong> ${choice === 1 ? FromRemark : ToRemark}</p>
                         <p><strong>Logged In Details:</strong> ${UserName}</p>
                     </div>
                   `,
@@ -165,6 +165,17 @@ function Proceed(choice) {
 }
     function Save(choice) {
         var FaultyRemarkIds = "" + $("#ddlFaultyRemark").val() + "";
+        var token = $('input[name="__RequestVerificationToken"]').val();
+        let data = {
+            "TrnFaultyCardId": $("#spnTrnFaultyCardId").html(),
+            "RequestId": $("#spnFaultyCardRequestId").html(),
+            "TrnFwdId": $("#spnMaxTrnFwdId").html(),
+            "RemarksIds": $("#ddlFaultyRemark").val().length > 0 ? FaultyRemarkIds : null,
+            "FromRemark": $("#txtFromRemark").val(),
+            "ToRemark": $("#txtToRemark").val(),
+            "CategoryId": $("#ddlStage").val(),
+            "Choice": choice
+        };
         let urladd;
 
         if (choice === 1) {
@@ -176,16 +187,11 @@ function Proceed(choice) {
         $.ajax({
             url: urladd ,
             type: 'POST',
-            data: {
-                "TrnFaultyCardId": $("#spnTrnFaultyCardId").html(),
-                "RequestId": $("#spnFaultyCardRequestId").html(),
-                "TrnFwdId": $("#spnMaxTrnFwdId").html(),
-                "RemarksIds": $("#ddlFaultyRemark").val().length > 0 ? FaultyRemarkIds : null,
-                "FromRemark": $("#txtFromRemark").val(),
-                "ToRemark": $("#txtToRemark").val(),
-                "CategoryId": $("#ddlStage").val(),
-                "Choice": choice
-            }, //get the search string
+            data: JSON.stringify(data),
+            contentType: "application/json",
+            headers: {
+                "RequestVerificationToken": token
+            },
             success: function (result) {
                 if ($("#spnClaimValue").html().toLowerCase() === "true" && result.Result == true)
                 {
@@ -263,7 +269,7 @@ async function GetTrnFaultyCardDetail(TrnFaultyCardId) {
 
         if (result != null) {
 
-            $("#spnArmyNo").html(result.ServiceNo);
+            $("#spnArmyNo").text(result.ServiceNo);
             $("#spnFaultyCardRequestId").html(result.RequestId);
             $("#lblFaultyRequestId").html(result.RequestId);
             $("#txtFromRemark").text(result.FromRemark);

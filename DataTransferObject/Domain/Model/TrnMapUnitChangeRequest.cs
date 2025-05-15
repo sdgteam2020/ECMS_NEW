@@ -41,12 +41,12 @@ namespace DataTransferObject.Domain.Model
         public MUserProfile? MUserProfile { get; set; }
         
         [ForeignKey("ApplicationUser"), DatabaseGenerated(DatabaseGeneratedOption.None)]
-        public int? ApproverUpdatedby { get; set; }
+        public int? AdminUpdatedby { get; set; }
         public ApplicationUser? ApplicationUser { get; set; }
-        public DateTime? ApproverUpdatedOn { get; set; }
+        public DateTime? AdminUpdatedOn { get; set; }
         
         [ForeignKey("ApproverMUserProfile"), DatabaseGenerated(DatabaseGeneratedOption.None)]
-        public int? ApproverUserId { get; set; }
+        public int? AdminUserId { get; set; }
         public MUserProfile? ApproverMUserProfile { get; set; }
         public bool IsEditAction { get; set; }
         public bool RequestStatus { get; set; } = false;
