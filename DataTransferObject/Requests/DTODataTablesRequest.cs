@@ -78,6 +78,7 @@ namespace DataTransferObject.Requests
         public byte? FmnBranchID { get; set; }
         public byte? PsoId { get; set; }
         public byte? SubDteId { get; set; }
+        public int? UnitType { get; set; }
         public int? UnitMapId { get; set; }
     }
 }

@@ -693,7 +693,83 @@ namespace DataAccessLayer
                 return responseData;
             }
         }
+        public async Task<DTODataTablesResponse<DTOReportReturnListResponse>> GetReportData(DTODataTablesRequestForReport dTO)
+        {
+            string query = "";
+            // Map allowed sort columns to DB fields
+            var allowedSortColumns = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+            {
+                ["ServiceNo"] = "ServiceNo",
+                ["TrackingId"] = "TrackingId",
+                ["UpdatedOn"] = "fwd.UpdatedOn",
+                ["StatusName"] = "fwdsts.Name",
+            };
 
+            var sortColumn = allowedSortColumns.ContainsKey(dTO.sortColumn ?? "")
+                ? allowedSortColumns[dTO.sortColumn!]
+                : "ServiceNo";
+
+            var sortOrder = dTO.sortDirection;
+            //if (dTO.Choice == "Requisition")
+            //{
+
+            //}
+            //else if ()
+            //{
+
+            //}
+            try
+            {
+                var multiQuery = query = $@"
+                            WITH RecordCTE AS (
+                                select ROW_NUMBER() OVER (ORDER BY {sortColumn} {sortOrder}) AS RowNum, {query}
+                            )
+                            SELECT * FROM RecordCTE
+                            WHERE RowNum BETWEEN @Offset AND @Limit;
+                        ";
+
+                using (var connection = _contextDP.CreateConnection())
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@UnitMapId", dTO.UnitMapId, DbType.Int32, ParameterDirection.Input);
+                    parameters.Add("@UnitType", dTO.UnitType, DbType.Int32, ParameterDirection.Input);
+                    parameters.Add("@ComdId", dTO.ComdId, DbType.Byte, ParameterDirection.Input);
+                    parameters.Add("@CorpsId", dTO.CorpsId, DbType.Byte, ParameterDirection.Input);
+                    parameters.Add("@DivId", dTO.DivId, DbType.Byte, ParameterDirection.Input);
+                    parameters.Add("@BdeId", dTO.BdeId, DbType.Byte, ParameterDirection.Input);
+                    parameters.Add("@FmnBranchID", dTO.FmnBranchID, DbType.Byte, ParameterDirection.Input);
+                    parameters.Add("@PsoId", dTO.PsoId, DbType.Byte, ParameterDirection.Input);
+                    parameters.Add("@SubDteId", dTO.SubDteId, DbType.Byte, ParameterDirection.Input);
+                    parameters.Add("@Offset", dTO.Start, DbType.Int32, ParameterDirection.Input);
+                    parameters.Add("@Limit", dTO.Length, DbType.Int32, ParameterDirection.Input);
+                    parameters.Add("@SearchTerm", dTO.searchValue, DbType.String, ParameterDirection.Input);
+
+                    var ret = await connection.QueryMultipleAsync(query, parameters);
+                    var records = (await ret.ReadAsync<DTOReportReturnListResponse>()).ToList();
+                    var responseData = new DTODataTablesResponse<DTOReportReturnListResponse>
+                    {
+                        draw = dTO.Draw,
+                        recordsTotal = 0, // Total records without filtering
+                        recordsFiltered = records.Count(), // Total records after filtering
+                        data = records
+                    };
+                    return responseData;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "ReportReturnDB->GetReportData");
+                List<DTOReportReturnListResponse> dTOUserRegnResponses = new List<DTOReportReturnListResponse>();
+                var responseData = new DTODataTablesResponse<DTOReportReturnListResponse>
+                {
+                    draw = 0,
+                    recordsTotal = 0,
+                    recordsFiltered = 0,
+                    data = dTOUserRegnResponses
+                };
+                return responseData;
+            }
+        }
         public async Task<List<DTOReportReturnListResponse>> GetReportForm11(DTOMHierarchyRequest Data)
         {
             string query = " select " +

@@ -4,7 +4,7 @@
     }
     $("#btnRequisition").on("click", function (event) {
         event.preventDefault(); // Prevent anchor default behavior
-        GetReportReturnHistory('New Requisition');
+        GetReportReturnHistory('Requisition');
     })
 });
 function GetReportReturnHistory(Choice) {
