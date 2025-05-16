@@ -22,36 +22,35 @@
 
     <link asp-href-include="~/sweetalert2/sweetalert2.min.css" rel="stylesheet" />
     <link asp-href-include="~/css/bootstrap-datetimepicker.min.css" rel="stylesheet" />
-    <link asp-href-include="~/datatables/dataTables.bootstrap4.min.css" rel="stylesheet" />
-    <link asp-href-include="~/datatables/responsive.bootstrap4.min.css" rel="stylesheet" />
-    <link asp-href-include="~/datatables/responsive.dataTables.min.css" rel="stylesheet" />
-    <link asp-href-include="~/datatables/buttons.bootstrap4.min.css" rel="stylesheet" />
-    <link asp-href-include="~/datatables/fixedHeader.dataTables.min.css" rel="stylesheet" />
-    <link asp-href-include="~/datatables/jquery.dataTables.min.css" rel="stylesheet" />
     <link asp-href-include="~/css/style.css" rel="stylesheet" />
     <link asp-href-include="~/css/extra.css" rel="stylesheet" />
     <link asp-href-include="~/css/background.css" rel="stylesheet" />
     <link asp-href-include="~/css/typography.css" rel="stylesheet" />
-    <link asp-href-include="~/select2/css/select2.min.css" rel="stylesheet" />
+
     <link asp-href-include="~/css/cssStyle.css" rel="stylesheet" />
-    @*  <link href="~/css/cssStyle.css" rel="stylesheet" /> *@
-
-
-
+    
     <link asp-href-include="~/css/horizontaltimeline.css" rel="stylesheet" />
-
     <script asp-src-include="~/fonts/feather/feather.min.js"></script>
     <script asp-src-include="~/fonts/allfont/webfont.min.js"></script>
     <link asp-href-include="~/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
     <link asp-href-include="~/lib/jqueryui/themes/base/jquery-ui.min.css" rel="stylesheet" />
-
     <link asp-href-include="~/toastr/toastr.min.css" rel="stylesheet" />
     <link asp-href-include="~/css/main.css" rel="stylesheet" />
     <link asp-href-include="~/css/DashBoard.css" rel="stylesheet" />
 
-    <script asp-src-include="~/lib/jquery/jquery.js"></script>
-    <script asp-src-include="~/lib/jquery-validate/jquery.validate.js" defer></script>
-    <script asp-src-include="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js" defer></script>
+    <!-- Development: Load normal JS -->
+    <environment include="Development">
+        <script asp-src-include="~/lib/jquery/jquery.js"></script>
+        <script asp-src-include="~/lib/jquery-validate/jquery.validate.js" defer></script>
+        <script asp-src-include="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js" defer></script>
+    </environment>
+
+    <!-- Production: Load minified JS -->
+    <environment exclude="Development">
+        <script asp-src-include="~/lib/jquery/jquery.min.js"></script>
+        <script asp-src-include="~/lib/jquery-validate/jquery.validate.min.js" defer></script>
+        <script asp-src-include="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js" defer></script>
+    </environment>
 
     @*   <script>
     WebFont.load({
@@ -610,9 +609,22 @@
                 sideBySide: true
             });
 
-            $('.datetimepickerpast').datetimepicker({
-                sideBySide: true,
+            $('.datepickerpast').datetimepicker({
+                format: "L",
                 maxDate: new Date()
+            });
+
+
+            $('.datetimepickerpast').datetimepicker({
+              sideBySide: true,
+              format: 'YYYY-MM-DD HH:mm',
+              maxDate: new Date()
+            }).on('dp.change', function (e) {
+              // Set the formatted value (optional: adjust format)
+              $(this).val(e.date.format('YYYY-MM-DD HH:mm'));
+
+              // Trigger input for floating label (if CSS relies on :placeholder-shown)
+              $(this).trigger('input');
             });
 
             $('.PersInfo').on("click", function () {
@@ -627,31 +639,17 @@
     <script asp-src-include="~/bootstrap/js/bootstrap.bundle.min.js"></script>
 
     <script asp-src-include="~/js/scripts.js"></script>
-    <script asp-src-include="~/select2/js/select2.min.js"></script>
 
-    <script asp-src-include="~/js/datatables/jquery.datatables.min.js"></script>
-    <script asp-src-include="~/js/datatables/dataTables.responsive.min.js"></script>
-    <script asp-src-include="~/js/datatables/responsive.dataTables.min.js"></script>
-    <script asp-src-include="~/js/datatables/dataTables.bootstrap4.min.js"></script>
-    <script asp-src-include="~/js/datatables/responsive.bootstrap4.min.js"></script>
-    <script asp-src-include="~/js/datatables/dataTables.buttons.min.js"></script>
-    <script asp-src-include="~/js/datatables/buttons.bootstrap4.min.js"></script>
-    <script asp-src-include="~/js/datatables/jszip.min.js"></script>
-    <script asp-src-include="~/js/datatables/pdfmake.min.js"></script>
-    <script asp-src-include="~/js/datatables/vfs_fonts.js"></script>
-    <script asp-src-include="~/js/datatables/buttons.html5.min.js"></script>
-    <script asp-src-include="~/js/datatables/buttons.print.min.js"></script>
-    <script asp-src-include="~/js/datatables/datatables-call.js"></script>
+
     @*<script asp-src-include="~/fonts/feather/feather.min.js"></script>*@
     <script asp-src-include="~/sweetalert2/sweetalert2.min.js"></script>
     <script asp-src-include="~/toastr/toastr.min.js"></script>
-    <script asp-src-include="~/js/moment.min.js"></script>
+    <script asp-src-include="~/js/moment.min.js"></script> 
     <script asp-src-include="~/js/bootstrap-datetimepicker.min.js"></script>
     <script asp-src-include="~/developerjs/layout.js"></script>
     <script asp-src-include="~/developerjs/keyconstants.js"></script>
     <script asp-src-include="~/developerjs/commanvalidation.js"></script>
     <script asp-src-include="~/developerjs/icardhistory.js"></script>
-    <script asp-src-include="~/developerjs/pagevalidation.js"></script>
     <script asp-src-include="~/js/aes.js"></script>
     @RenderSection("Scripts", false)
 

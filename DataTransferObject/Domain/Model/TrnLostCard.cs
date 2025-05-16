@@ -18,9 +18,19 @@ namespace DataTransferObject.Domain.Model
         public int RequestId { get; set; }
         public MTrnICardRequest? MTrnICardRequest { get; set; }
 
-        [StringLength(100)]
+        [StringLength(250)]
         [Column(TypeName = "varchar(100)")]
         public string? Remark { get; set; }
+
+        [Required]
+        public bool IsFIRLogged { get; set; } = true;
+
+        [StringLength(100)]
+        [Column(TypeName = "VARCHAR(100)")]
+        public string SupportDocName { get; set; } = string.Empty;
+
+        [Column(TypeName = "NVARCHAR(MAX)")]
+        public string SignedXML { get; set; } = string.Empty;
 
         [Required]
         [DataType(DataType.Date)]

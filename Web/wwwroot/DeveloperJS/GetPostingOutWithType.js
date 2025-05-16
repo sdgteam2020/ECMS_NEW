@@ -160,9 +160,10 @@ function BindData() {
                 var rowData = table.row($(this).closest("tr")).data();
                 let htmlBody = `${GetHtmlLabel('Dispatched Dt', DateFormateddMMyyyyhhmmss(rowData.DispatchedOn))}
                                 ${GetHtmlLabel('Ref No Regd SDS', rowData.RefNo) }
-                                ${GetHtmlLabel('Dispatch Reported Dt', DateFormateddMMyyyyhhmmss(rowData.DispatchUpdatedOn)) }
-                                ${GetHtmlLabel('Dispacted By', rowData.DispatchUpdatedBy) }
+                                ${GetHtmlLabel('Updated On', DateFormateddMMyyyyhhmmss(rowData.DispatchUpdatedOn)) }
+                                ${GetHtmlLabel('Updated By', rowData.DispatchUpdatedBy) }
                             `;
+                $('#MessageDialog .modal-dialog').removeClass('modal-sm');
                 $("#MessageDialogLabel").html('Dispatch Details');
                 $("#MessageDialogBody").html(htmlBody);
                 $("#MessageDialog").modal('show');
@@ -183,11 +184,37 @@ function BindData() {
 
 }
 
+function Proceed() {
+    if ($("#txtDispatchDate").val() == '') {
+        toastr.error('Please Select Dispatch Date & Time');
+        return;
+    }
+
+    if ($("#txtRefNo").val() == '') {
+        toastr.error('Please Enter Ref No Regd.');
+        return;
+    }
+
+    Swal.fire({
+        title: 'Are you sure?',
+        text: "",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, Save it!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            Save();
+        }
+    })
+}
+
 function GetHtmlLabel(label,value) {
-    return `<div class="row mb-3">
-                <div class="col-12">
-                  <label class="form-label fw-semibold text-muted">${label}</label>
-                  <div class="form-control-plaintext border p-2 rounded bg-light">${value}</div>
+    return `<div class="row mb-2 align-items-center">
+                <div class="col-md-4 fw-semibold text-muted">${label}</div>
+                <div class="col-md-8">
+                    <div class="form-control-plaintext border p-2 rounded bg-light">${value}</div>
                 </div>
             </div>`;
 }
@@ -196,4 +223,36 @@ function Reset() {
     $("#spnPostingOutId").html("0");
     $("#txtDispatchDate").val("");
     $("#txtRefNo").val("");
+}
+
+function Save() {
+    $.ajax({
+        url: '/Posting/SavePostingOutDispatchDetails',
+        type: 'POST',
+        data: {
+            "encId": $("#spnPostingOutId").html(),
+            "DispatchedOn": formatDateToSqlString($("#txtDispatchDate").val()),
+            "RefNo": $("#txtRefNo").val(),
+        },
+        success: function (data) {
+            if (data.Result) {
+               $("#AddDispatchDetails").modal('hide');
+               Swal.fire({
+                   title: "Success!",
+                   text: data.Message,
+                   icon: "success",
+                   confirmButtonText: "OK"
+               });
+           }
+           else {
+               Swal.fire({
+                   title: "OOPs!",
+                   text: data.Message,
+                   icon: "error",
+                   confirmButtonText: "Ok"
+               });
+           }
+           BindData();
+        }
+    });
 }

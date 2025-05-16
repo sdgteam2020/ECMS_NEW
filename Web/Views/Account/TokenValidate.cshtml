@@ -169,11 +169,11 @@
                                                     {
                                                         if (dTOTempSession.NewUser == true)
                                                         {
-                                                            <button type="submit" class="btn btn-primary mt-2" onclick="return SubmitsEncry1(true)">Proceed</button>
+                                                            <button type="submit" class="btn btn-primary mt-2" onclick="return SubmitsEncry1(true);">Proceed</button>
                                                         }
                                                         else
                                                         {
-                                                            <button type="submit" class="btn btn-primary mt-2" onclick="return SubmitsEncry1(false)">Proceed</button>
+                                                            <button type="submit" class="btn btn-primary mt-2" onclick="return SubmitsEncry1(false);">Proceed</button>
                                                         }
                                                     }
                                                     @*  <a class="btn btn-warning" href="/ApplicationStatus/AppStatus">Check Appl Status</a> *@
@@ -213,6 +213,15 @@
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+    <div id="loadingToken" class="loader">
+        <div class="loader-container">
+            <img src="/Images/load.gif" width="100">
+            <div>
+                <h4 style="margin-top: -20px;" id="tokenmess"></h4>
+                <span>Please wait. Read Token....... This may take few seconds.</span>
             </div>
         </div>
     </div>

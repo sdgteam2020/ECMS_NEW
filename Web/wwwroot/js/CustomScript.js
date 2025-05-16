@@ -84,7 +84,6 @@ function getData1(id) {
     $.validator.unobtrusive.parse($(formId));
     if ($(formId).valid()) {
         var formData = $(formId).serialize();
-        console.log(formData);
     }
      else {
         return false;

@@ -6,6 +6,7 @@ using DataTransferObject.Constants;
 using DataTransferObject.Domain.Model;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
+using Humanizer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Mvc;
@@ -42,17 +43,6 @@ namespace Web.Controllers
         }
         public async Task<IActionResult> PostingIn(string? EncId)
         {
-            //var postingOutDetails = new DTOPostingOutDetailByIdResponse();
-            //if (!string.IsNullOrEmpty(EncId))
-            //{
-            //    ViewBag.isEdit = true;
-            //    string Id = _protector.Unprotect(EncId);
-            //    postingOutDetails = await _iPostingBL.GetPostingDetailById(Id);
-            //}
-            //else
-            //{
-            //    ViewBag.isEdit = false;
-            //}
             return View();
         }
         public async Task<IActionResult> GetPostingIn(string ArmyNo)
@@ -127,10 +117,17 @@ namespace Web.Controllers
             };
             try
             {
+                DtoSession? dtoSession = new DtoSession();
+                if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
+                {
+                    dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+
+                }
+                int MapUnitId = dtoSession != null ? dtoSession.UnitId : 0;
                 string PostingType = SessionHeplers.GetObject<string>(HttpContext.Session, "PostingType");
                 int Type = SessionHeplers.GetObject<int>(HttpContext.Session, "Type");
                 int userid = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-                responseData = await _iPostingBL.GetPostingOutWithType(dTO, userid, Type, PostingType);
+                responseData = await _iPostingBL.GetPostingOutWithType(dTO, userid, MapUnitId, Type, PostingType);
             }
             catch (Exception ex)
             {
@@ -181,9 +178,60 @@ namespace Web.Controllers
             catch (Exception ex) { return Json(KeyConstants.InternalServerError); }
         }
 
-        //public async Task<IActionResult> UpdateDispatchDetails() { 
-        
-        //}
+
+        public async Task<IActionResult> SavePostingOutDispatchDetails(DTODispatchDetailsSaveRequest dTO)
+        {
+            DTOCommonSaveResponse dTOResponse = new DTOCommonSaveResponse();
+            try
+            {
+                var encId = _protector.Unprotect(dTO.encId);
+                if (int.TryParse(encId, out int Id))
+                {
+                    if (ModelState.IsValid)
+                    {
+                        var postingOutDetails = await _iPostingBL.Get(Id);
+
+                        if (postingOutDetails.DispatchedOn.HasValue)
+                        {
+                            dTOResponse.Message = "Dispatch details already exists!";
+                        }
+                        else
+                        {
+                            postingOutDetails.DispatchedOn = dTO.DispatchedOn;
+                            postingOutDetails.RefNo = dTO.RefNo;
+                            postingOutDetails.DispatchUpdatedBy = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                            postingOutDetails.DispatchUpdatedOn = DateTime.Now;
+                            await _iPostingBL.Update(postingOutDetails);
+                            dTOResponse.Result = true;
+                            dTOResponse.Message = "Record Saved!";
+                        }
+                    }
+                    else
+                    {
+                        var errors = ModelState.Where(x => x.Value?.Errors?.Count > 0)
+                        .SelectMany(x => x.Value!.Errors)
+                        .Select(e => e.ErrorMessage)
+                        .ToList();
+                        if (errors.Any())
+                        {
+                            dTOResponse.Message = string.Join("; ", errors); // Concatenate all error messages
+                        }
+                    }
+                }
+                else
+                {
+                    _logger.LogError(1001, $"Invalid Id -: {dTO.encId}", "Posting->SavePostingOutDispatchDetails");
+                    dTOResponse.Message = "Technical Error!";
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "Posting->SavePostingOutDispatchDetails");
+                dTOResponse.Message = "Internal Server Error!";
+            }
+
+            return Json(dTOResponse);
+        }
 
         public async Task<IActionResult> ApplicationClose()
         {
@@ -193,6 +241,13 @@ namespace Web.Controllers
         {
             try
             {
+                DtoSession? dtoSession = new DtoSession();
+                if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
+                {
+                    dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+
+                }
+                dTO.UserId = dtoSession != null ? dtoSession.UserId : 0;
                 dTO.IsActive = true;
                 dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier)); ;
                 dTO.UpdatedOn = DateTime.Now;
@@ -246,14 +301,32 @@ namespace Web.Controllers
             int retint = 0;
             var userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
 
-            if (string.IsNullOrEmpty(Id) || !service.IsValidBase64(Id) || string.IsNullOrEmpty(jcoor) || !service.IsValidBase64(jcoor))
+            if (string.IsNullOrEmpty(Id) || !service.IsValidBase64(Id))
             {
                 TempData["error"] = "Invalid Input.";
                 TempData.Keep("error");
                 return RedirectToAction("ContactUs", "Home");
             }
+            if (jcoor != null)
+            {
+                if (!service.IsValidBase64(jcoor))
+                {
+                    TempData["error"] = "Invalid Input.";
+                    TempData.Keep("error");
+                    return RedirectToAction("ContactUs", "Home");
+                }
+            }
+
             try
             {
+                DtoSession? dtoSession = new DtoSession();
+                if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
+                {
+                    dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+
+                }
+                int UnitMapId = dtoSession != null ? dtoSession.UnitId : 0;
+
                 if (!string.IsNullOrEmpty(Id))
                 {
                     var base64EncodedBytes = Convert.FromBase64String(Id);
@@ -268,12 +341,12 @@ namespace Web.Controllers
 
                 if (string.IsNullOrEmpty(jcoor))
                 {
-                    var allrecord = await Task.Run(() => _iPostingBL.GetAppClosedList(Convert.ToInt32(userId), 1));
+                    var allrecord = await Task.Run(() => _iPostingBL.GetAppClosedList(UnitMapId, 1));
                     return View(allrecord);
                 }
                 else
                 {
-                    var allrecord = await Task.Run(() => _iPostingBL.GetAppClosedList(Convert.ToInt32(userId), 2));
+                    var allrecord = await Task.Run(() => _iPostingBL.GetAppClosedList(UnitMapId, 2));
                     return View(allrecord);
                 }
             }

@@ -456,12 +456,27 @@ namespace Web.Controllers
         public async Task<IActionResult> GetRequestDashboardCount(string Id)
         {
             int userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-            return Json(await _home.GetRequestDashboardCount(userId, Id));
+            DtoSession? dtoSession = new DtoSession();
+            if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
+            {
+                dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+
+            }
+            int UnitMapId = dtoSession != null ? dtoSession.UnitId : 0;
+            return Json(await _home.GetRequestDashboardCount(userId, Id, UnitMapId));
         }
         public async Task<IActionResult> GetSubDashboardCount()
         {
             int userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-            return Json(await _home.GetSubDashboardCount(userId));
+            DtoSession? dtoSession = new DtoSession();
+            if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
+            {
+                dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+
+            }
+            int UnitId = dtoSession != null ? dtoSession.UnitId : 0;
+
+            return Json(await _home.GetSubDashboardCount(userId, UnitId));
         }
 
         [HttpPost]

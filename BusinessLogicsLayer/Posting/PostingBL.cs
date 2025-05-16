@@ -29,9 +29,9 @@ namespace BusinessLogicsLayer.Posting
         {
             return await postingDB.GetAllPostingHistory(AspNetUsersId);
         }
-        public async Task<DTODataTablesResponse<DTOPostingOutDetilsResponse>> GetPostingOutWithType(DTODataTablesRequest dTO,int AspNetUsersId, int Type, string PostingTy)
+        public async Task<DTODataTablesResponse<DTOPostingOutDetilsResponse>> GetPostingOutWithType(DTODataTablesRequest dTO,int AspNetUsersId, int UnitMapId, int Type, string PostingTy)
         {
-            return await postingDB.GetPostingOutWithType(dTO,AspNetUsersId,Type, PostingTy);
+            return await postingDB.GetPostingOutWithType(dTO, AspNetUsersId, UnitMapId, Type, PostingTy);
         }
 
         public async Task<DTOPostingInResponse> GetArmyDataForPostingOut(string ArmyNo)
@@ -43,9 +43,9 @@ namespace BusinessLogicsLayer.Posting
         {
             return await postingDB.UpdateForPosting(Date);
         }
-        public async Task<List<DTOAppClosedListResponse>> GetAppClosedList(int Updatedby, int apply)
+        public async Task<List<DTOAppClosedListResponse>> GetAppClosedList(int UnitMapId, int apply)
         {
-            return await postingDB.GetAppClosedList(Updatedby, apply);
+            return await postingDB.GetAppClosedList(UnitMapId, apply);
         }
         public async Task<DTOPostingOutDetailByIdResponse> GetPostingDetailById(string Id) { 
             return await postingDB.GetPostingDetailById(Id);

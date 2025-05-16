@@ -108,7 +108,13 @@ $(function () {
                             $("#RequestId_unitoffrsModal").val("");
                             $("#MaxTrnFwdId_unitoffrsModal").val("");
                             $("#armynosearchAllpic").attr("src", "");
-                            alert("Army no not found.");
+                            //toastr.error("");
+                            Swal.fire({
+                                title: "OOPs!",
+                                text: "Army no. not found.",
+                                icon: "error",
+                                confirmButtonText: "Ok"
+                            });
                         }
                     })
                     .catch(error => {

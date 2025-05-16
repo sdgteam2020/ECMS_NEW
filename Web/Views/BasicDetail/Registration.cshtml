@@ -3,6 +3,7 @@
 @{
     ViewBag.Title = "New Registration";
 }
+<link asp-href-include="~/select2/css/select2.min.css" rel="stylesheet" />
 <style>
     .form-group.row.mb-2.required .form-label::after {
         content: "*";
@@ -343,6 +344,8 @@
     <script asp-src-include="~/developerjs/token.js"></script>
     <script asp-src-include="~/developerjs/mtables.js"></script>
     <script asp-src-include="~/developerjs/commanvalidation.js"></script>
+    <script asp-src-include="~/select2/js/select2.min.js"></script>
+
     }
 <script>
     $(document).ready(function () {

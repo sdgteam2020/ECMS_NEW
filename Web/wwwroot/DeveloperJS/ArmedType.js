@@ -44,7 +44,6 @@ $(document).ready(function () {
                 
                 var id = $(this).attr("Id");
                 lst.push(id);
-                console.log(id);
 
             });
           
@@ -122,9 +121,10 @@ function BindData() {
                   
                     memberTable = $('#tblData').DataTable({
                         retrieve: true,
-                        lengthChange: false,
+                        lengthChange: true,
                         stateSave: true,
                         "order": [[1, "asc"]],
+                        dom: 'lBfrtip', // Add buttons to the DOM
                         buttons: [{
                             extend: 'copy',
                             exportOptions: {

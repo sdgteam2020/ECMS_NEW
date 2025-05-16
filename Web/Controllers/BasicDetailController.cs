@@ -45,6 +45,7 @@ using Microsoft.IdentityModel.Tokens;
 using BusinessLogicsLayer.HotlistCard;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using BusinessLogicsLayer.LostCard;
+using iText.IO.Font.Cmap;
 
 namespace Web.Controllers
 {
@@ -2109,6 +2110,17 @@ namespace Web.Controllers
         #endregion
 
         #region FaultyCard
+
+        public async Task<IActionResult> GetRemarksData(string RemarksIds)
+        {
+            // Split into string array
+            string[] strArray = RemarksIds.Split(',');
+
+            // Convert to int array
+            int[] intArray = Array.ConvertAll(strArray, int.Parse);
+            
+            return Json(await faultyCardBL.GetRemarksData(intArray));
+        }
         public async Task<ViewResult> FaultyCardAsync()
         {
             int AspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
@@ -2124,7 +2136,8 @@ namespace Web.Controllers
             ViewBag.Claim = Claim;
             return View();
         }
-        public async Task<IActionResult> GetAllFaulty()
+        [HttpPost]
+        public async Task<IActionResult> GetAllFaulty(DTODataTablesRequestForFaultyCard dTO)
         {
             int AspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
             int MapUnitId = 0;
@@ -2146,8 +2159,25 @@ namespace Web.Controllers
             {
                 Claim = true;
             }
-
-            return Json(await faultyCardBL.GetAllFaulty(Claim, MapUnitId));
+            try
+            {
+                dTO.Claim = Claim;
+                dTO.UnitMapId = dtoSession != null ? dtoSession.UnitId : 0;
+                return Json(await faultyCardBL.GetAllFaulty(dTO));
+            }
+            catch (Exception ex)
+            {
+                List<DTOFaultyCardListResponse> dTOUserRegnResponses = new List<DTOFaultyCardListResponse>();
+                var responseData = new DTODataTablesResponse<DTOFaultyCardListResponse>
+                {
+                    draw = 0,
+                    recordsTotal = 0,
+                    recordsFiltered = 0,
+                    data = dTOUserRegnResponses
+                };
+                _logger.LogError(1001, ex, "Master->GetAllFaulty");
+                return Json(responseData);
+            }
         }
         [HttpPost]
         public async Task<IActionResult> GetTrnFaultyCardDetail(int TrnFaultyCardId)
@@ -2284,6 +2314,15 @@ namespace Web.Controllers
 
                 if (ModelState.IsValid)
                 {
+                    bool Claim = false;
+                    int AspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                    var user = await userManager.FindByIdAsync(AspNetUsersId.ToString());
+                    // UserManager service GetClaimsAsync method gets all the current claims of the user
+                    var UserClaims = await userManager.GetClaimsAsync(user);
+                    if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "ICard Export Data"))
+                    {
+                        Claim = true;
+                    }
                     if (dTO.TrnFaultyCardId > 0)
                     {
                         TrnFaultyCard? trnFaultyCard = await faultyCardBL.Get(dTO.TrnFaultyCardId);
@@ -2295,7 +2334,7 @@ namespace Web.Controllers
                         }
                         else
                         {
-                            dTOFaulty = await faultyCardBL.SaveFaultyCard(dTO, mTrnFwd);
+                            dTOFaulty = await faultyCardBL.SaveFaultyCard(dTO, mTrnFwd, Claim);
                             return Json(dTOFaulty);
                         }
                     }
@@ -2310,7 +2349,7 @@ namespace Web.Controllers
                         }
                         else
                         {
-                            dTOFaulty = await faultyCardBL.SaveFaultyCard(dTO, mTrnFwd);
+                            dTOFaulty = await faultyCardBL.SaveFaultyCard(dTO, mTrnFwd, Claim);
                             return Json(dTOFaulty);
                         }
                     }
@@ -2352,8 +2391,17 @@ namespace Web.Controllers
             DTOCommonSaveResponse dTOFaulty = new DTOCommonSaveResponse();
             try
             {
+                bool Claim = false;
+                int AspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                var user = await userManager.FindByIdAsync(AspNetUsersId.ToString());
+                // UserManager service GetClaimsAsync method gets all the current claims of the user
+                var UserClaims = await userManager.GetClaimsAsync(user);
+                if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "ICard Export Data"))
+                {
+                    Claim = true;
+                }
+
                 dTO.IsActive = true;
-                dTO.IsComplete = false;
                 dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier)); ;
                 dTO.UpdatedOn = DateTime.Now;
 
@@ -2376,7 +2424,7 @@ namespace Web.Controllers
                         }
                         else
                         {
-                            dTOFaulty = await faultyCardBL.SaveFaultyCard(dTO, mTrnFwd);
+                            dTOFaulty = await faultyCardBL.SaveFaultyCard(dTO, mTrnFwd, Claim);
                             return Json(dTOFaulty);
                         }
                     }
@@ -2585,31 +2633,58 @@ namespace Web.Controllers
             return View();
         }
 
-        public async Task<IActionResult> SaveLostCardRequest(TrnLostCard model)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SaveLostCardRequest([FromForm] DTOLostCardAddRequest model)
         {
-            DTOCommonSaveResponse dTOFaulty = new DTOCommonSaveResponse();
+            DTOCommonSaveResponse dTOResponse = new DTOCommonSaveResponse();
             try
             {
-                model.IsActive = true;
-                model.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier)); ;
-                model.UpdatedOn = DateTime.Now;
-
+                var trnLostCard = new TrnLostCard();
                 if (ModelState.IsValid)
                 {
+                    #region Upload Supporting Document
+                    string fileName = string.Empty;
+                    if (model.File != null)
+                    {
+                        fileName = $"{DateTime.Now.ToString("yyyyMMddHHmmss")}.pdf";
+                        var uploadsFolder = Path.Combine(hostingEnvironment.WebRootPath, "LostCardSupportingDoc");
+                        if (!Directory.Exists(uploadsFolder))
+                        {
+                            Directory.CreateDirectory(uploadsFolder);
+                        }
+                        var filePath = Path.Combine(uploadsFolder, fileName);
+
+                        using (var stream = new FileStream(filePath, FileMode.Create))
+                        {
+                            await model.File.CopyToAsync(stream);
+                        }
+                    }
+                    #endregion Upload Supporting Document
+
+                    trnLostCard.RequestId = model.RequestId;
+                    trnLostCard.Remark = model.Remark;
+                    trnLostCard.LostOn = model.LostOn;
+                    trnLostCard.IsFIRLogged = model.IsFIRLogged;
+                    trnLostCard.SignedXML = model.SignedXML ?? string.Empty;
+                    trnLostCard.SupportDocName = string.IsNullOrEmpty(fileName) ? "" : fileName;
+                    trnLostCard.IsActive = true;
+                    trnLostCard.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                    trnLostCard.UpdatedOn = DateTime.Now;
                     bool checkduplicate = await _lostCardBL.FindAnyRequestId(model.RequestId);
                     if (checkduplicate)
                     {
-                        dTOFaulty.Result = false;
-                        dTOFaulty.Message = "The lost request already exists!";
+                        dTOResponse.Result = false;
+                        dTOResponse.Message = "The lost request already exists!";
                     }
                     else
                     {
-                        var result = await _lostCardBL.AddWithReturn(model);
-                        await HotlistLostCard(model);
-                        dTOFaulty.Result = true;
-                        dTOFaulty.Message = "Record created!";
-                        dTOFaulty.CurrentTime = result.UpdatedOn.GetValueOrDefault();
-                        dTOFaulty.Id = result.LostCardId.ToString();
+                        var result = await _lostCardBL.AddWithReturn(trnLostCard);
+                        await HotlistLostCard(trnLostCard);
+                        dTOResponse.Result = true;
+                        dTOResponse.Message = "Record created!";
+                        dTOResponse.CurrentTime = result.UpdatedOn.GetValueOrDefault();
+                        dTOResponse.Id = result.LostCardId.ToString();
                     }
                 }
                 else
@@ -2620,20 +2695,20 @@ namespace Web.Controllers
                     .ToList();
                     if (errors.Any())
                     {
-                        dTOFaulty.Message = string.Join("; ", errors); // Concatenate all error messages
+                        dTOResponse.Message = string.Join("; ", errors); // Concatenate all error messages
                     }
-                    dTOFaulty.Result = false;
+                    dTOResponse.Result = false;
                 }
 
             }
             catch (Exception ex)
             {
                 _logger.LogError(1001, ex, "BasicDetail->SaveHotlistCardRequest");
-                dTOFaulty.Result = false;
-                dTOFaulty.Message = "Internal Server Error!";
+                dTOResponse.Result = false;
+                dTOResponse.Message = "Internal Server Error!";
             }
 
-            return Json(dTOFaulty);
+            return Json(dTOResponse);
         }
 
         private async Task HotlistLostCard(TrnLostCard lostCard) {
@@ -2723,16 +2798,16 @@ namespace Web.Controllers
                 dto.AspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                 dto.MapUnitId = 0;
 
+                DtoSession? dtoSession = new DtoSession();
+                if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
+                {
+                    dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+
+                }
+                dto.MapUnitId = dtoSession != null ? dtoSession.UnitId : 0;
+
                 if (dto.TypeId == KeyConstants.FaultyCardRequest)
                 {
-                    DtoSession? dtoSession = new DtoSession();
-                    if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
-                    {
-                        dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
-
-                    }
-                    dto.MapUnitId = dtoSession != null ? dtoSession.UnitId : 0;
-
                     var user = await userManager.FindByIdAsync(dto.AspNetUsersId.ToString());
                      
                     // UserManager service GetClaimsAsync method gets all the current claims of the user
@@ -3069,12 +3144,33 @@ namespace Web.Controllers
         [HttpPost]
         public async Task<IActionResult> ICardPrintUploadCsv(DTOCSVFileRequest model)
         {
+
+            //string FileName = service.ProcessUploadedFile(model.Photo_, sourceFolderPhotoPhy, model.ServiceNo);
+
+            //string path = Path.Combine(sourceFolderPhotoPhy, FileName);
+
+            //bool result = service.IsValidHeader(path);
+            //bool imgcontentresult = service.IsImage(model.CSVFile);
+
             var response = new DTOCsvUploadValResponse();
-            if (model.CSVFile == null || model.CSVFile.Length == 0)
+            //if (model.CSVFile == null || model.CSVFile.Length == 0)
+            //{
+            //    response.Message = "File is not uploaded or is empty.";
+            //}
+
+            if (!ModelState.IsValid)
             {
-                response.Message = "File is not uploaded or is empty.";
+                var errors = ModelState.Where(x => x.Value?.Errors?.Count > 0)
+                            .SelectMany(x => x.Value!.Errors)
+                            .Select(e => e.ErrorMessage)
+                            .ToList();
+                if (errors.Any())
+                {
+                    response.Message = string.Join("; ", errors); // Concatenate all error messages
+                }
                 goto Returnstm;
             }
+
             string fileName = $"{DateTime.Now.ToString("yyyyMMddHHmmss")}.csv";
             try
             {

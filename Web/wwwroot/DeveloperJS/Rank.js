@@ -25,11 +25,6 @@ $(function () {
         } else {
             $("#SaveForm")[0].reportValidity();
         }
-
-       
-       
-       // 
-
     });
 
     $('#btnMultiDelete').on("click", function () {
@@ -38,12 +33,8 @@ $(function () {
         if (memberTable.$('input[type="checkbox"]:checked').length > 0) {
 
             memberTable.$('input[type="checkbox"]:checked').each(function () {
-
-                
                 var id = $(this).attr("Id");
                 lst.push(id);
-                console.log(id);
-
             });
           
             Swal.fire({
@@ -56,9 +47,7 @@ $(function () {
                 confirmButtonText: 'Yes, Delete it!'
             }).then((result) => {
                 if (result.value) {
-                   
                     DeleteMultiple(lst);
-
                 }
             });
         }
@@ -75,7 +64,6 @@ function BindData() {
     var userdata =
     {
         "Id": 0,
-
     };
     $.ajax({
         url: '/Master/GetAllRank',
@@ -130,9 +118,10 @@ function BindData() {
                   
                     memberTable = $('#tblData').DataTable({
                         retrieve: true,
-                        lengthChange: false,
+                        lengthChange: true,
                         stateSave: true,
                         "order": [[1, "asc"]],
+                        dom: 'lBfrtip', // Add buttons to the DOM
                         buttons: [{
                             extend: 'copy',
                             exportOptions: {

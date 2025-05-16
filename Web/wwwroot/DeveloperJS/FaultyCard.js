@@ -1,5 +1,6 @@
-﻿$(function () {
-    BindData()
+﻿var table; // Declare table variable outside the function to preserve the instance
+$(function () {
+    BindData();
     $("#btnAdd").on("click",function () {
         $("#armynosearchAllName").html("");
         $("#txtarmynosearchAll").val("");
@@ -9,188 +10,258 @@
     });
 });
 function BindData() {
-    var listItem = "";
-    var userdata =
-    {
-        "Id": 0,
+    $("#tbldata").DataTable().destroy();
+    table = $("#tbldata").DataTable({
+        processing: true,
+        serverSide: true,
+        filter: true,
+        stateSave: true,
+        order: [[1, 'desc']], // Default sorting on the first column
+        ajax: async function (data, callback, settings) {
+            let requestData = {
+                draw: data.draw,
+                start: data.start,
+                length: data.length,
+                searchValue: data.search.value,
+                sortColumn: data.order.length > 0 ? data.columns[data.order[0].column].data : '',  // Add a check for data.order
+                sortDirection: data.order.length > 0 ? data.order[0].dir : '', // Add a check for data.order
+            };
+            try {
+                let response = await fetch("/BasicDetail/GetAllFaulty", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                    body: new URLSearchParams(requestData).toString()
+                });
 
-    };
-    $.ajax({
-        url: '/BasicDetail/GetAllFaulty',
-        contentType: 'application/x-www-form-urlencoded',
-        data: userdata,
-        type: 'POST',
+                if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
 
-        success: function (response) {
-            if (response != "null" && response != null) {
-                if (response == -1) {
-                    Swal.fire({
-                        text: errormsg
-                    });
+                let result = await response.json();
+                callback(result); // Sends data to DataTables
+
+
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            }
+        },
+        columns: [
+            // Serial number column
+            {
+                data: null,
+                name: "SerialNumber",
+                orderable: false, // Disable sorting for this column
+                render: function (data, type, row, meta) {
+                    // Calculate serial number based on row index
+                    return meta.row + meta.settings._iDisplayStart + 1;
                 }
-                else if (response == 0) {
-                    listItem += "<tr><td class='text-center' colspan=10>No Record Found</td></tr>";
-                    $("#tbldata").DataTable().destroy();
-                    $("#DetailBody").html(listItem);
-                    $("#lblTotal").html(0);
+            },
+            {
+                data: "ServiceNo",
+                name: "ServiceNo",
+                render: function (data, type, row) {
+                    // Check if first two characters are alphabets
+                    if (/^[A-Za-z]{2}/.test(data)) {
+                        // Insert space after first two characters
+                        return data.slice(0, 2) + ' ' + data.slice(2);
+                    } else {
+                        // No space needed
+                        return data;
+                    }
                 }
-                else if (response == InternalServerError) {
-                    listItem += "<tr><td class='text-center' colspan=4>No Record Found</td></tr>";
-                    $("#tbldata").DataTable().destroy();
-                    $("#DetailBody").html(listItem);
-                    $("#lblTotal").html(0);
+            },
+            {
+                data: null,
+                name: "FromName",
+                orderable: false,
+                render: function (data, type, row) {
+                    let fullName = `${row.RankName || ""} ${row.FName || ""} ${row.LName || ""}`.trim();
+                    return (fullName);
                 }
-
-                else {
-                    $("#tbldata").DataTable().destroy();
-                    for (var i = 0; i < response.length; i++) {
-                        listItem += "<tr>";
-                        listItem += "<td class='d-none'><span id='spnTrnFaultyCardId'>" + response[i].TrnFaultyCardId + "</span><span id='spnEncryptedId'>" + response[i].EncryptedId + "</span><span id='spnRequestId'>" + response[i].RequestId + "</span><span id='spnServiceNo'>" + response[i].ServiceNo + "</span></td>";
-                        listItem += "<td class='align-middle'>" + (i + 1) + "</td>";
-                        listItem += "<td class='align-middle'>" + response[i].RequestId + "</td>";
-                        listItem += "<td class='align-middle'>" + response[i].ModifiedServiceNo + "</td>";
-                        let fullName = `${response[i].RankName || ""} ${response[i].FName || ""} ${response[i].LName || ""}`.trim();
-                        listItem += "<td class='align-middle'>" + fullName + "</td>";
-                        listItem += "<td class='align-middle'>" + response[i].UnitAbbreviation + "</td>";
-                        listItem += "<td class='align-middle'>" + DateFormateddMMyyyyhhmmss(response[i].UpdatedOn) + "</td>";
-
-                        if (response[i].RemarksIds != null) {
-                            var remarksArray = response[i].RemarksNameList.split('#');
-                            if (remarksArray != null) {
-                                listItem += "<td class='align-middle'><button type='button' class='cls-remarks btn btn-icon btn-round btn-warning mr-1'><i class='fa fa-eye'></i><span id='spnRemarks' class='d-none'><ul>";
-                                for (var j = 0; j < remarksArray.length; j++) {
-                                    listItem += "<li>" + remarksArray[j] + "</li>";
-                                }
-                                listItem += "</ul></span></button></td>";
-                            }
-                        }
-                        else {
-                            listItem += "<td class='align-middle'></td>";
-                        }
-                        let sentence = response[i].FromRemark;
+            },
+            {
+                data: "UnitAbbreviation",
+                name: "UnitAbbreviation",
+                orderable: false,
+            },
+            {
+                data: "UpdatedOn",
+                name: "UpdatedOn",
+                render: function (data, type, row) {
+                    return DateFormateddMMyyyyhhmmss(data);
+                }
+            },
+            {
+                data: "RemarksIds",
+                name: "RemarksIds",
+                orderable: false,
+                render: function (data, type, row) {
+                    if (data != null) {
+                        return `<button type='button' class='cls-remarks btn btn-icon btn-round btn-warning mr-1'><i class='fa fa-eye'></i></button>`;
+                    }
+                    else {
+                        return `NA`;
+                    }
+                    return data;
+                }
+            },
+            {
+                data: "FromRemark",
+                name: "FromRemark",
+                render: function (data, type, row) {
+                    if (data != null) {
+                        let sentence = data;
                         let words = sentence.split(" ");
 
                         let truncatedSentence = words.length > 4 ? words.slice(0, 4).join(" ") + "..." : sentence;
-
-                        listItem += "<td class='align-middle'><span class='cls-FromRemark'>" + truncatedSentence + "<span id='spanFromRemark' class='d-none'>" + sentence + "</span></span></td>";
-                        listItem += `<td class='align-middle'><span id='spnName'> ${response[i].ToRemark ?? "NA"}</span></td>`;
-                        if ($("#spnClaimValue").html().toLowerCase() === "true") {
-                            if (response[i].IsEditAction == false) {
-                                listItem += "<td class='align-middle'><span id='btnedit'><button type='button' class='cls-btnedit btn btn-icon btn-round btn-primary mr-1'><i class='fas fa-edit'></i></button></span></td>";
-                            }
-                            else {
-                                listItem += "<td class='align-middle'>NA</td>";
-                            }
-                        }
-                        
-
-                        listItem += "</tr>";
+                        return `<span class='cls-FromRemark'>${truncatedSentence}</span>`;
+                    } else {
+                        return `NA`;
                     }
-
-                    $("#DetailBody").html(listItem);
-                    $("#lblTotal").html(response.length);
-
-                    memberTable = $('#tbldata').DataTable({
-                        retrieve: true,
-                        lengthChange: false,
-                        stateSave: true,
-                        "order": [[1, "asc"]],
-                        buttons: [{
-                            extend: 'copy',
-                            exportOptions: {
-                                columns: "thead th:not(.noExport)"
-                            }
-                        }, {
-                            extend: 'excel',
-                            exportOptions: {
-                                columns: "thead th:not(.noExport)"
-                            }
-                        }, {
-                            extend: 'pdfHtml5',
-                            orientation: 'portrait',
-                            pageSize: 'A4',
-                            title: 'E-IASC_Appoinment',
-                            exportOptions: {
-                                columns: "thead th:not(.noExport)"
-                            },
-                            customize: function (doc) {
-                                WaterMarkOnPdf(doc)
-                            }
-                        }]
-                    });
-
-                    memberTable.buttons().container().appendTo('#tbldata_wrapper .col-md-6:eq(0)');
-
-                    var rows;
-                    $("#tbldata #chkAll").on("click", function () {
-                        if ($(this).is(':checked')) {
-                            rows = memberTable.rows({ 'search': 'applied' }).nodes();
-                            $('input[type="checkbox"]', rows).prop('checked', this.checked);
-                        }
-                        else {
-                            rows = memberTable.rows({ 'search': 'applied' }).nodes();
-                            $('input[type="checkbox"]', rows).prop('checked', this.checked);
-                        }
-                    });
-                    $('#DetailBody').on('change', 'input[type="checkbox"]', function () {
-                        if (!this.checked) {
-                            var el = $('#chkAll').get(0);
-                            if (el && el.checked && ('indeterminate' in el)) {
-                                el.indeterminate = true;
-                            }
-                        }
-                    });
-
-                    $("body").on("click", ".cls-btnedit", function () {
-
-                        if ($(this).closest("tr").find("#spnTrnFaultyCardId").html() != "") {
-                            sessionStorage.setItem("ArmyNo", $(this).closest("tr").find("#spnServiceNo").html());
-                            //sessionStorage.setItem("RequestIdForFaulty", $(this).closest("tr").find("#spnRequestId").html());
-                            //sessionStorage.setItem("TrnFaultyCardId", $(this).closest("tr").find("#spnTrnFaultyCardId").html());
-                            //sessionStorage.setItem("EditFaultyCardRequest", true);
-                            //window.location.href = '/BasicDetail/FaultyCardRequest';
-                            window.location.href = '/BasicDetail/FaultyCardRequest?Id=' + encodeURIComponent($(this).closest("tr").find("#spnEncryptedId").html());
-                        }
-                    });
-
-
-                    $("body").on("click", ".cls-remarks", function () {
-                        let Label = "Request Id :- " + $(this).closest("tr").find("#spnRequestId").html();
-                        $("#MessageDialogLabel").html(Label);
-                        $("#MessageDialogBody").html($(this).closest("tr").find("#spnRemarks").html());
-                        $("#MessageDialog").modal('show');
-                    });
-                    $("body").on("click", ".cls-FromRemark", function () {
-                        let Label = "Request Id :- " + $(this).closest("tr").find("#spnRequestId").html();
-                        $("#MessageDialogLabel").html(Label);
-                        $("#MessageDialogBody").html($(this).closest("tr").find("#spanFromRemark").html());
-                        $("#MessageDialog").modal('show');
-                    });
 
                 }
-            }
-            else {
-                $("#tbldata").DataTable().destroy();
-                $("#DetailBody").html(listItem);
-                $("#lblTotal").html(0);
-                memberTable = $('#tbldata').DataTable({
-                    "language": {
-                        "emptyTable": "No data available"
+            },
+            {
+                data: "ToRemark",
+                name: "ToRemark",
+                render: function (data, type, row) {
+                    if (data != null) {
+                        let sentence = data;
+                        let words = sentence.split(" ");
+
+                        let truncatedSentence = words.length > 4 ? words.slice(0, 4).join(" ") + "..." : sentence;
+                        return `<span class='cls-ToRemark'>${truncatedSentence}</span>`;
+                    } else {
+                        return `NA`;
                     }
-                });
+
+                }
+            },
+            // Additional column for Edit action
+            {
+                data: "IsEditAction",
+                name: "Action",
+                orderable: false,
+                render: function (data, type, row) {
+                    if (data == false) {
+                        return `<button type='button' class='cls-btnedit btn btn-icon btn-round btn-primary mr-1'><i class='fas fa-edit'></i></button>`;
+                    } else {
+                        return `NA`;
+                    }
+                }
             }
+        ],
+        language: {
+            search: "", // Remove the default "Search:" label
+            searchPlaceholder: "Search IC No" // Add custom placeholder
         },
-        error: function (result) {
-            Swal.fire({
-                text: errormsg002
+        dom: 'lBfrtip', // Add buttons to the DOM
+        buttons: [
+            {
+                extend: 'copy',
+                exportOptions: {
+                    columns: "thead th:not(.noExport)"
+                }
+            },
+            {
+                extend: 'excel',
+                exportOptions: {
+                    columns: "thead th:not(.noExport)"
+                }
+            },
+            {
+                extend: 'pdfHtml5',
+                orientation: 'landscape',
+                pageSize: 'LEGAL',
+                title: 'E-IASC_MapUnitChange',
+                exportOptions: {
+                    columns: "thead th:not(.noExport)"
+                },
+                customize: function (doc) {
+                    WaterMarkOnPdf(doc)
+                }
+            }],
+        drawCallback: function (settings) {
+
+            $("#tbldata tbody").off("click", ".cls-btnedit").on("click", ".cls-btnedit", function () {
+                var rowData = table.row($(this).closest("tr")).data();
+                if (rowData.EncryptedId != null) {
+                    sessionStorage.setItem("ArmyNo", rowData.ServiceNo);
+                    window.location.href = '/BasicDetail/FaultyCardRequest?Id=' + encodeURIComponent(rowData.EncryptedId);
+                }
             });
+
+            $("#tbldata tbody").off("click", ".cls-remarks").on("click", ".cls-remarks", function () {
+                var rowData = table.row($(this).closest("tr")).data();
+                if (rowData.RemarksIds != null) {
+                    GetRemarksData(rowData.RemarksIds);
+                }
+            });
+
+
+            $("#tbldata tbody").off("click", ".cls-FromRemark").on("click", ".cls-FromRemark", function () {
+                var rowData = table.row($(this).closest("tr")).data();
+                if (rowData != null) {
+                    $("#MessageDialogLabel").html('Remark');
+                    $("#MessageDialogBody").html(rowData.FromRemark);
+                    $("#MessageDialog").modal('show');
+                }
+            });
+
+            $("#tbldata tbody").off("click", ".cls-ToRemark").on("click", ".cls-ToRemark", function () {
+                var rowData = table.row($(this).closest("tr")).data();
+                if (rowData != null) {
+                    $("#MessageDialogLabel").html('AFSAC Remark');
+                    $("#MessageDialogBody").html(rowData.ToRemark);
+                    $("#MessageDialog").modal('show');
+                }
+            });
+
         }
     });
-
+    if ($("#spnClaimValue").html() === "true") {
+        table.column(8).visible(true);
+    }
+    else {
+        table.column(8).visible(false);
+    }
 }
-//function showFullSentence(fullSentence) {
-//    //document.getElementById("fullSentence").textContent = fullSentence;
-//    //document.getElementById("wordModal").style.display = "block";
-//    $("#MessageDialogBody").html(fullSentence);
-//    $("#MessageDialog").modal('show');
-//}
+async function GetRemarksData(remarksRemarksIds) {
+
+    let param = new URLSearchParams({ RemarksIds: remarksRemarksIds });
+
+    try {
+        const response = await fetch('/BasicDetail/GetRemarksData', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: param
+        });
+
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+
+        const result = await response.json();
+
+        if (result != null) {
+            var remarksArray = result.split('#');
+            if (remarksArray != null) {
+                var listItem="";
+                listItem += "<ul>";
+                for (var j = 0; j < remarksArray.length; j++) {
+                    listItem += "<li>" + remarksArray[j] + "</li>";
+                }
+                listItem += "</ul>";
+                $("#MessageDialogLabel").html('Reason');
+                $("#MessageDialogBody").html(listItem);
+                $("#MessageDialog").modal('show');
+            }
+
+        } else {
+            toastr.error('Invalid Input.');
+        }
+
+    } catch (error) {
+        alert("Error: " + error.message);
+    }
+}

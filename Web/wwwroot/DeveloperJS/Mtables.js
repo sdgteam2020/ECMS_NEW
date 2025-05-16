@@ -1,75 +1,59 @@
-﻿function mMsater(sectid = '', ddl, TableId, ParentId) {
-    
+﻿async function mMsater(sectid = '', ddl, TableId, ParentId) {
 
-    var userdata =
-    {
-        "id": TableId,
-        "ParentId": ParentId,
-
-    };
-    $.ajax({
-        url: '/Master/GetAllMMaster',
-        contentType: 'application/x-www-form-urlencoded',
-        data: userdata,
-        type: 'POST',
-
-        success: function (response) {
-            if (response != "null" && response != null) {
-                if (response == InternalServerError) {
-                    Swal.fire({
-                        text: errormsg
-                    });
-                }
-               
-                else {
-
-                    var listItemddl = "";
-                    if (parseInt(TableId) == 7) {
-                        listItemddl += '<option value="">Select Rank</option>';
-                    } else
-                    {
-                        listItemddl += '<option value="">Please Select</option>';
-                    }
-                   
-                    for (var i = 0; i < response.length; i++) {
-                        listItemddl += '<option value="' + response[i].Id + '">' + response[i].Name + '</option>';
-                    }
-                    $("#" + ddl +"").html(listItemddl);
-                    //if (TableId == 5 || TableId == 7 || TableId == 8) {
-                       
-                    //    if (sectid != '') {
-                    //        $("#" + ddl + " option").filter(function () {
-                    //            return this.text == sectid;
-                    //        }).attr('selected', true);
-
-                    //    }
-                    //}
-                    //else
-                    //{
-                        if (sectid != '') {
-                            $("#" + ddl + "").val(sectid);
-
-                        }
-
-                    //}
-
-
-                }
-            }
-            else {
-                //Swal.fire({
-                //    text: "No data found Offrs"
-                //});
-            }
-        },
-        error: function (result) {
-            Swal.fire({
-                text: errormsg002
-            });
-        }
+    const userdata = new URLSearchParams({
+        id: TableId,
+        ParentId: ParentId
     });
-}
 
+    try {
+        const response = await fetch('/Master/GetAllMMaster', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: userdata
+        });
+
+        const data = await response.json();
+
+        if (data != "null" && data != null) {
+            if (data === InternalServerError) {
+                Swal.fire({
+                    text: errormsg
+                });
+            } else {
+
+                let listItemddl = "";
+
+                if (parseInt(TableId) === 7) {
+                    listItemddl += '<option value="">Select Rank</option>';
+                } else {
+                    listItemddl += '<option value="">Please Select</option>';
+                }
+
+                for (let i = 0; i < data.length; i++) {
+                    listItemddl += `<option value="${data[i].Id}">${data[i].Name}</option>`;
+                }
+
+                document.getElementById(ddl).innerHTML = listItemddl;
+
+                if (sectid !== '') {
+                    document.getElementById(ddl).value = sectid;
+                }
+            }
+        } else {
+            // No data found case (optional alert as in original)
+            // Swal.fire({
+            //     text: "No data found Offrs"
+            // });
+        }
+
+    } catch (error) {
+        Swal.fire({
+            text: errormsg002
+        });
+    }
+}
 function mMsaterByParent(sectid = '', ddl, TableId, ComdId,CorpsId,DivId,BdeId) {
 
 
@@ -248,76 +232,55 @@ function GetAllOffsByUnitId(ddl, sectid, UnitId, IsRO, IsORO, IsAfsacCell,BasicD
     });
 }
 
-
-function GetRemarks(ddl, sectid, RemarkTypeId) {
-    var userdata =
-    {
-        "RemarkTypeId": RemarkTypeId,
-        
-
-    };
-    $.ajax({
-        url: '/BasicDetail/GetRemarks',
-        contentType: 'application/x-www-form-urlencoded',
-        data: userdata,
-        type: 'POST',
-
-        success: function (response) {
-            if (response != "null" && response != null) {
-                if (response == InternalServerError) {
-                    Swal.fire({
-                        text: errormsg
-                    });
-                }
-
-                else {
-
-                    var listItemddl = "";
-
-                    /* listItemddl += '<option value="">Please Offers</option>';*/
-                    var RemarkTypeId = 0;
-                    var count = 1;
-                    for (var i = 0; i < response.length; i++) {
-
-                        if (response[i].RemarkTypeId != RemarkTypeId) {
-                            if (RemarkTypeId != 0)
-                                listItemddl += '</optgroup>';
-                            count = 1;
-                            listItemddl += '<optgroup label="' + response[i].RemarksType +'">';
-                        }
-
-                        listItemddl += '<option value="' + response[i].RemarksId + '">' +count+'. ' + response[i].Remarks + '</option>';
-
-
-                        RemarkTypeId = response[i].RemarkTypeId;
-
-
-                        count++;
-                    }
-                    listItemddl += '</optgroup>';
-                    $("#" + ddl + "").html(listItemddl);
-
-
-                    if (sectid != '') {
-                        $("#" + ddl + "").val(sectid);
-
-                    }
-
-                    //}
-
-
-                }
-            }
-            else {
-                //Swal.fire({
-                //    text: "No data found Offrs"
-                //});
-            }
-        },
-        error: function (result) {
-            Swal.fire({
-                text: errormsg002
-            });
-        }
+async function GetRemarks(ddl, sectid, RemarkTypeId) {
+    const userdata = new URLSearchParams({
+        RemarkTypeId: RemarkTypeId
     });
+
+    try {
+        const response = await fetch('/BasicDetail/GetRemarks', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: userdata
+        });
+
+        const data = await response.json();
+
+        if (data != "null" && data != null) {
+
+            if (data === InternalServerError) {
+                Swal.fire({ text: errormsg });
+            } else {
+
+                let listItemddl = "";
+                let currentRemarkTypeId = 0;
+                let count = 1;
+
+                for (let i = 0; i < data.length; i++) {
+
+                    if (data[i].RemarkTypeId != currentRemarkTypeId) {
+                        if (currentRemarkTypeId != 0) listItemddl += '</optgroup>';
+                        count = 1;
+                        listItemddl += `<optgroup label="${data[i].RemarksType}">`;
+                    }
+
+                    listItemddl += `<option value="${data[i].RemarksId}">${count}. ${data[i].Remarks}</option>`;
+                    currentRemarkTypeId = data[i].RemarkTypeId;
+                    count++;
+                }
+
+                listItemddl += '</optgroup>';
+                $("#" + ddl).html(listItemddl);
+
+                if (sectid !== '') {
+                    $("#" + ddl).val(sectid);
+                }
+            }
+
+        }
+    } catch (error) {
+        Swal.fire({ text: errormsg002 });
+    }
 }

@@ -2,6 +2,13 @@
     ViewData["Title"] = "Bde";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+<link asp-href-include="~/datatables/dataTables.bootstrap4.min.css" rel="stylesheet" />
+<link asp-href-include="~/datatables/responsive.bootstrap4.min.css" rel="stylesheet" />
+<link asp-href-include="~/datatables/responsive.dataTables.min.css" rel="stylesheet" />
+<link asp-href-include="~/datatables/buttons.bootstrap4.min.css" rel="stylesheet" />
+<link asp-href-include="~/datatables/fixedHeader.dataTables.min.css" rel="stylesheet" />
+<link asp-href-include="~/datatables/jquery.dataTables.min.css" rel="stylesheet" />
+<link asp-href-include="~/css/stylesheetfordatatable.css" rel="stylesheet" />
 
 <header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
     <div class="containerMain">
@@ -22,7 +29,6 @@
 <div class="containerMain mt-n10">
     <div class="card mb-3 ">
         <div class="card-header">
-
             <span id="SpnTxnId" class="d-none">0</span>
             @*<span id="PtoId" class="d-none">0</span>*@
             <div class="row">
@@ -84,7 +90,6 @@
                         <div class="col-sm-12" id="msg">
                         </div>
                     </div>
-
                 </div>
             </form>
             <div class="col-xl-12">
@@ -108,8 +113,6 @@
                                 <th class="nowrap">Div  /Branch / SubArea</th>
                                 <th class="nowrap">Bde</th>
                                 <th class="noExport nowrap">Action</th>
-
-
                             </tr>
                         </thead>
                         <tbody id="DetailBody">
@@ -117,17 +120,22 @@
                     </table>
                 </div>
             </div>
-
-
         </div>
-
-
-
     </div>
 </div>
-
-
-
-
 <script asp-src-include="~/developerjs/mtables.js"></script>
 <script asp-src-include="~/developerjs/bdecat.js"></script>
+
+<script asp-src-include="~/js/datatables/jquery.datatables.min.js"></script>
+<script asp-src-include="~/js/datatables/dataTables.responsive.min.js"></script>
+<script asp-src-include="~/js/datatables/responsive.dataTables.min.js"></script>
+<script asp-src-include="~/js/datatables/dataTables.bootstrap4.min.js"></script>
+<script asp-src-include="~/js/datatables/responsive.bootstrap4.min.js"></script> <!-- DataTables Responsive extension and specifically integrates Responsive behavior with Bootstrap 4 styling. -->
+<script asp-src-include="~/js/datatables/dataTables.buttons.min.js"></script> <!-- It adds the foundational functionality needed to add custom buttons (like Export, Print, or custom actions) to a DataTable.-->
+<script asp-src-include="~/js/datatables/buttons.bootstrap4.min.js"></script> <!-- Export buttons (like Copy, CSV, Excel, PDF, Print) to match Bootstrap 4 design and layout. -->
+<script asp-src-include="~/js/datatables/jszip.min.js"></script> <!-- for Excel export -->
+<script asp-src-include="~/js/datatables/pdfmake.min.js"></script> <!-- for PDF export -->
+<script asp-src-include="~/js/datatables/vfs_fonts.js"></script> <!-- required by pdfmake -->
+<script asp-src-include="~/js/datatables/buttons.html5.min.js"></script> <!-- All HTML5 export buttons -->
+@* <script asp-src-include="~/js/datatables/buttons.print.min.js"></script> *@ <!-- Adds a "Print" button to DataTables toolbar for print preview and printing -->
+<script asp-src-include="~/js/datatables/datatables-call.js"></script> <!-- your custom JS that calls and configures the DataTables plugin -->

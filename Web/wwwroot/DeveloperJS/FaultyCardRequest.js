@@ -2,7 +2,7 @@
     var selectionButton;
 
     var RemarkTypeID = [5];
-    GetRemarks("ddlFaultyRemark", 0, RemarkTypeID);
+    await GetRemarks("ddlFaultyRemark", 0, RemarkTypeID);
 
     $('.select2').select2({
         placeholder: "Please select a Reason",
@@ -243,48 +243,50 @@ function Proceed(choice) {
         });
 }
 async function GetTrnFaultyCardDetail(TrnFaultyCardId) {
+
     let param = new URLSearchParams({ TrnFaultyCardId: TrnFaultyCardId });
 
-    fetch('/BasicDetail/GetTrnFaultyCardDetail', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        body: param
-    })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        })
-        .then(result => {
-            if (result != null) {
-
-                $("#spnArmyNo").html(result.ServiceNo);
-                $("#spnFaultyCardRequestId").html(result.RequestId);
-                $("#lblFaultyRequestId").html(result.RequestId);
-                $("#txtFromRemark").text(result.FromRemark);
-                $("#txtFromRemark").prop("disabled", true);
-
-                GetBasicDetailForParitalViewByRequestId(result.RequestId);
-
-                mMsater(result.CategoryId, "ddlStage", FaultyStage, "");
-
-                let RemarksIds = result.RemarksIds;
-                let arr2 = RemarksIds.split(',');
-                $("#ddlFaultyRemark").val(arr2);
-                $("#ddlFaultyRemark").trigger("change");
-                $("#ddlFaultyRemark").prop("disabled", true)
-            }
-            else {
-                toastr.error('Invalid Input.');
-                window.location.href = '/BasicDetail/FaultyCard';
-            }
-        })
-        .catch(error => {
-            alert("Error: " + error.message);
+    try {
+        const response = await fetch('/BasicDetail/GetTrnFaultyCardDetail', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: param
         });
+
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+
+        const result = await response.json();
+
+        if (result != null) {
+
+            $("#spnArmyNo").html(result.ServiceNo);
+            $("#spnFaultyCardRequestId").html(result.RequestId);
+            $("#lblFaultyRequestId").html(result.RequestId);
+            $("#txtFromRemark").text(result.FromRemark);
+            $("#txtFromRemark").prop("disabled", true);
+
+            GetBasicDetailForParitalViewByRequestId(result.RequestId);
+
+            await mMsater(result.CategoryId, "ddlStage", FaultyStage, "");
+
+            let RemarksIds = result.RemarksIds;
+            let arr2 = RemarksIds.split(',');
+            $("#ddlFaultyRemark").val(arr2);
+            $("#ddlFaultyRemark").trigger("change");
+            $("#ddlFaultyRemark").prop("disabled", true)
+
+        } else {
+            toastr.error('Invalid Input.');
+            window.location.href = '/BasicDetail/FaultyCard';
+        }
+
+    } catch (error) {
+        alert("Error: " + error.message);
+    }
 }
 function DownloadPdf(RequestId) {
     var userdata = {

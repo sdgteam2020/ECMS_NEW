@@ -144,8 +144,6 @@ $(function () {
         ResetMapUnit();
     });
 
-
-
     $("#btnUnitMapsave").on("click", function () {
         try {
             if ($("#SaveFormMapUnit")[0].checkValidity()) {
@@ -290,13 +288,6 @@ function BindDataMapUnit() {
         stateSave: true,
         order: [[0, 'desc']], // Default sorting on the first column
         ajax: async function (data, callback, settings) {
-            let userdata = {
-                ComdId: $('#ddlCommand').val(),
-                CorpsId: $('#ddlCorps').val(),
-                DivId: $('#ddlDiv').val(),
-                BdeId: $('#ddlBde').val(),
-                Unit: $('#txtSerachunit').val()
-            };
             let requestData = {
                 draw: data.draw,
                 start: data.start,
@@ -304,7 +295,6 @@ function BindDataMapUnit() {
                 searchValue: data.search.value,
                 sortColumn: data.order.length > 0 ? data.columns[data.order[0].column].data : '',  // Add a check for data.order
                 sortDirection: data.order.length > 0 ? data.order[0].dir : '', // Add a check for data.order
-                ...userdata
             };
             try {
                 let response = await fetch("/Master/GetAllMapUnit", {

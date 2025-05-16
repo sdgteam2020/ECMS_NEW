@@ -217,7 +217,6 @@ function validateCsvFileOnChange() {
                     },
                     error: function (xhr) {
                         // Show error messages
-                        console.log(xhr);
                     }
                 });
             }
@@ -351,6 +350,7 @@ function BindData() {
                 var rowData = table.row($(this).closest("tr")).data();
                 DownloadCSV("CSVWithoutRemarks", rowData.FileName);
             });
+            
 
             $("#tblData tbody").off("click", ".cls-validatedCsv").on("click", ".cls-validatedCsv", function () {
                 var rowData = table.row($(this).closest("tr")).data();

@@ -15,6 +15,106 @@
 
 
 });
+function ChkSfx() {
+    let ArmyNo = document.getElementById('ICNo').value;
+    const isFirstTwoAlpha = /^[A-Za-z]{2}/.test(ArmyNo);
+
+    if (ArmyNo.length < 7 || isFirstTwoAlpha == false) {
+        alert('Invalid Army No.');
+        return false;
+    }
+    var armyno = ArmyNo.replace(/[A-Za-z]/g, '');
+
+    var txt = ArmyNo.slice(-1);
+    // Get last character
+    const lastChar = ArmyNo.slice(-1);
+
+    // Check if it is an alphabet
+    const isAlpha = /^[A-Za-z]$/.test(lastChar);
+    if (txt == "" || isAlpha == false) {
+        alert('Invalid Army No.');
+        return false;
+    }
+    var vlength = armyno.length;
+    var NumMulti = parseInt(vlength) + 1;
+    var vMulti = 0;
+    var vSum = 0;
+    var Sfx;
+    for (var i = 0; i < vlength; i++) {
+        vMulti = parseInt(armyno.charAt(i)) * parseInt(NumMulti);
+        vSum = parseInt(vSum) + parseInt(vMulti);
+        NumMulti = parseInt(NumMulti) - 1;
+
+    }
+
+    var Reminder = parseInt(vSum) % 11;
+    switch (Reminder) {
+        case (0):
+            {
+                Sfx = "A"
+                break;
+            }
+        case (1):
+            {
+                Sfx = "F"
+                break;
+            }
+        case (2):
+            {
+                Sfx = "H"
+                break;
+            }
+        case (3):
+            {
+                Sfx = "K"
+                break;
+            }
+        case (4):
+            {
+                Sfx = "L"
+                break;
+            }
+        case (5):
+            {
+                Sfx = "M"
+                break;
+            }
+        case (6):
+            {
+                Sfx = "N"
+                break;
+            }
+        case (7):
+            {
+                Sfx = "P"
+                break;
+            }
+        case (8):
+            {
+                Sfx = "W"
+                break;
+            }
+        case (9):
+            {
+                Sfx = "X"
+                break;
+            }
+        case (10):
+            {
+                Sfx = "Y"
+                break;
+            }
+    }
+    //var txtcalsfx = document.getElementById('ICNo');
+    //txtcalsfx.value = Sfx;
+    //if (txt.toUpperCase() == Sfx) {
+        return true;
+    //}
+    //else {
+    //    alert("Suffix Mismatch.Expected suffix is " + Sfx);
+    //    return false;
+    //}
+}
 function SubmitsEncry1(result) {
    
     if (result) {
@@ -25,6 +125,9 @@ function SubmitsEncry1(result) {
         if (txtpassword == "" || $('#ConfirmPassword').val() == "" || $('#ICNo').val() == "") {
             alert('Please enter Army No / Password / ConfirmPassword.');
             return false;
+        }
+        if (!ChkSfx()) {
+            return false; // Stop submission if suffix check fails
         }
         if ($('#Password').val() == $('#ConfirmPassword').val()) {
 
@@ -62,6 +165,9 @@ function SubmitsEncry1(result) {
             return false;
         }
         else {
+            if (!ChkSfx()) {
+                return false; // Stop submission if suffix check fails
+            }
             var key = CryptoJS.enc.Utf8.parse(skey);
             var iv = CryptoJS.enc.Utf8.parse(skey);
             var encryptedpassword = CryptoJS.AES.encrypt(CryptoJS.enc.Utf8.parse(txtpassword), key,

@@ -868,8 +868,8 @@ namespace Web.Controllers
                             var usera = await userManager.FindByIdAsync(dTOTempSession.AspNetUsersId.ToString());
 
                             HttpContext.Session.Remove("Token");
-                            await signInManager.SignOutAsync();
-                            await userManager.UpdateSecurityStampAsync(usera);
+                            //await signInManager.SignOutAsync();
+                            //await userManager.UpdateSecurityStampAsync(usera);
                             if (usera != null)
                             {
                                 //default Password - Admin123#

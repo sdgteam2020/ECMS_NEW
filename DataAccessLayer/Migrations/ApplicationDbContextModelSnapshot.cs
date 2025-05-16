@@ -2227,6 +2227,9 @@ namespace DataAccessLayer.Migrations
                     b.Property<int?>("Updatedby")
                         .HasColumnType("int");
 
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("BasicDetailId");
@@ -2237,7 +2240,9 @@ namespace DataAccessLayer.Migrations
 
                     b.HasIndex("Updatedby");
 
-                    b.ToTable("TrnApplClose", (string)null);
+                    b.HasIndex("UserId");
+
+                    b.ToTable("TrnApplClose");
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Model.TrnDomainMapping", b =>
@@ -2425,16 +2430,28 @@ namespace DataAccessLayer.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
+                    b.Property<bool>("IsFIRLogged")
+                        .HasColumnType("bit");
+
                     b.Property<DateTime?>("LostOn")
                         .IsRequired()
                         .HasColumnType("datetime");
 
                     b.Property<string>("Remark")
-                        .HasMaxLength(100)
+                        .HasMaxLength(250)
                         .HasColumnType("varchar(100)");
 
                     b.Property<int>("RequestId")
                         .HasColumnType("int");
+
+                    b.Property<string>("SignedXML")
+                        .IsRequired()
+                        .HasColumnType("NVARCHAR(MAX)");
+
+                    b.Property<string>("SupportDocName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("VARCHAR(100)");
 
                     b.Property<DateTime?>("UpdatedOn")
                         .IsRequired()
@@ -2461,6 +2478,17 @@ namespace DataAccessLayer.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ChangeMapUnitId"));
 
                     b.Property<string>("AdminRemark")
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<DateTime?>("ApproverUpdatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("ApproverUpdatedby")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ApproverUserId")
+                        .HasColumnType("int")
                         .HasMaxLength(100)
                         .HasColumnType("varchar(100)");
 
@@ -3629,6 +3657,12 @@ namespace DataAccessLayer.Migrations
                         .HasForeignKey("Updatedby")
                         .OnDelete(DeleteBehavior.Restrict);
 
+                    b.HasOne("DataTransferObject.Domain.MUserProfile", "MUserProfile")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.Navigation("ApplicationUserUpdate");
 
                     b.Navigation("BasicDetail");
@@ -3636,6 +3670,8 @@ namespace DataAccessLayer.Migrations
                     b.Navigation("MPostingReason");
 
                     b.Navigation("MTrnICardRequest");
+
+                    b.Navigation("MUserProfile");
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Model.TrnDomainMapping", b =>

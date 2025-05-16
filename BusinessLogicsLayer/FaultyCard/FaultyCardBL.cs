@@ -1,5 +1,6 @@
 ﻿using Azure.Core;
 using BusinessLogicsLayer.FaultyStage;
+using BusinessLogicsLayer.Unit;
 using DataAccessLayer;
 using DataAccessLayer.BaseInterfaces;
 using DataTransferObject.Domain.Master;
@@ -10,6 +11,7 @@ using Microsoft.SqlServer.Management.Sdk.Sfc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -21,6 +23,10 @@ namespace BusinessLogicsLayer.FaultyCard
         public FaultyCardBL(ApplicationDbContext context, IFaultyCardDB iFaultyCardDB) : base(context)
         {
             _iFaultyCardDB=iFaultyCardDB;
+        }
+        public async Task<string> GetRemarksData(int[] RemarksIds) 
+        {
+            return await _iFaultyCardDB.GetRemarksData(RemarksIds);
         }
         public async Task<bool> FindRequestId(int RequestId)
         {
@@ -34,7 +40,11 @@ namespace BusinessLogicsLayer.FaultyCard
         {
             return await _iFaultyCardDB.GetAllFaulty(Claim, MapUnitId);
         }
-        public async Task<DTOCommonSaveResponse> SaveFaultyCard(DTOFaultyCardRequest dTO, MTrnFwd? mTrnFwd) 
+        public async Task<DTODataTablesResponse<DTOFaultyCardListResponse>> GetAllFaulty(DTODataTablesRequestForFaultyCard request)
+        {
+            return await _iFaultyCardDB.GetAllFaulty(request);
+        }
+        public async Task<DTOCommonSaveResponse> SaveFaultyCard(DTOFaultyCardRequest dTO, MTrnFwd? mTrnFwd,bool Claim) 
         {
             if (dTO.TrnFaultyCardId > 0)
             {
@@ -44,7 +54,14 @@ namespace BusinessLogicsLayer.FaultyCard
             }
             else
             {
-                dTO.IsComplete = true;
+                if (Claim)
+                {
+                    dTO.IsComplete = true;
+                }
+                else
+                {
+                    dTO.IsComplete = false;
+                }
 
                 //Accept
                 if (dTO.Choice == 2)

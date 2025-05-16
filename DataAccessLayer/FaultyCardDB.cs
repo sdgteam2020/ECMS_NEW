@@ -2,6 +2,7 @@
 using Dapper;
 using DataAccessLayer.BaseInterfaces;
 using DataAccessLayer.Logger;
+using DataTransferObject.Domain.Master;
 using DataTransferObject.Domain.Model;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
@@ -11,6 +12,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -43,6 +45,15 @@ namespace DataAccessLayer
             {
                 _logger.LogError(1001, ex, "FaultyCardDB->FindRequestId");
                 return false;
+            }
+        }
+        public async Task<string> GetRemarksData(int[] RemarksIds)
+        {
+            string query = @"select STRING_AGG(Remarks,'#') AS RemarksNameList from MRemarks where RemarksId in @RemarksIds";
+            using (var connection = _contextDP.CreateConnection())
+            {
+                var result = await connection.QueryFirstOrDefaultAsync<string>(query, new { RemarksIds });
+                return result;
             }
         }
         public async Task<List<DTOFaultyCardListResponse>?> GetAllFaulty(bool Claim,int MapUnitId)
@@ -134,6 +145,103 @@ namespace DataAccessLayer
                 return null;
             }
 
+        }
+        public async Task<DTODataTablesResponse<DTOFaultyCardListResponse>> GetAllFaulty(DTODataTablesRequestForFaultyCard request)
+        {
+            try
+            {
+                var queryableData = (from faulty in _context.TrnFaultyCard.OrderByDescending(x => x.TrnFaultyCardId)
+                                     join mcat in _context.MCategory on faulty.CategoryId equals mcat.CategoryId
+                                     join req in _context.TrnICardRequest on faulty.RequestId equals req.RequestId
+                                     join tdm in _context.TrnDomainMapping on req.TrnDomainMappingId equals tdm.Id
+                                     join bas in _context.BasicDetails on req.BasicDetailId equals bas.BasicDetailId
+                                     join ranks in _context.MRank on bas.RankId equals ranks.RankId
+                                     join mapunit in _context.MapUnit on bas.UnitId equals mapunit.UnitMapId
+                                     join munit in _context.MUnit on mapunit.UnitId equals munit.UnitId
+                                     join appl in _context.MApplyFor on bas.ApplyForId equals appl.ApplyForId
+                                     join regi in _context.MRegimental on bas.RegimentalId equals regi.RegId into regi_jointable
+                                     from xregi in regi_jointable.DefaultIfEmpty()
+                                     select new DTOFaultyCardListResponse()
+                                     {
+                                         EncryptedId = protector.Protect(faulty.TrnFaultyCardId.ToString()),
+                                         NameAsPerRecord = bas.NameAsPerRecord,
+                                         FName = bas.FName,
+                                         LName = bas.LName,
+                                         ServiceNo = bas.ServiceNo,
+                                         ModifiedServiceNo = bas.ServiceNo,
+                                         UnitMapId = mapunit.UnitMapId,
+                                         UnitName = munit.UnitName,
+                                         UnitAbbreviation = munit.Abbreviation,
+                                         RankName = ranks.RankAbbreviation,
+                                         RequestId = req.RequestId,
+                                         UpdatedOn = faulty.UpdatedOn ?? DateTime.Now,
+                                         ApplyFor = appl.Name,
+                                         TrnFaultyCardId = faulty.TrnFaultyCardId,
+                                         RemarksIds = faulty.RemarksIds,
+                                         FromRemark = faulty.FromRemark,
+                                         ToRemark = faulty.ToRemark,
+                                         CategoryId = faulty.CategoryId,
+                                         FaultyStage = mcat.Name,
+                                         IsEditAction = faulty.IsEditAction,
+                                     }).AsQueryable();
+                if (request.Claim == false)
+                {
+                    queryableData = queryableData.Where(x => x.UnitMapId == request.UnitMapId);
+                }
+
+                // Total records without filtering
+                var totalRecords = queryableData.Count();
+
+                // Apply filtering
+                if (!string.IsNullOrEmpty(request.searchValue))
+                {
+                    string searchValue = request.searchValue.ToLower();
+
+                    //queryableData = queryableData.Where(x =>  x.UserId.ToString().ToLower().Contains(searchValue) ||
+                    //                          x.DomainId.ToLower().Contains(searchValue)||
+                    //                          x.ArmyNo.ToLower().Contains(searchValue));
+
+                    queryableData = queryableData.Where(x => x.ServiceNo.ToLower().Contains(searchValue));
+                }
+
+                // Apply sorting
+                if (!string.IsNullOrEmpty(request.sortColumn) && !string.IsNullOrEmpty(request.sortDirection))
+                {
+                    //queryableData = queryableData.OrderBy(request.SortColumn + " " + request.SortColumnDirection);
+                    queryableData = request.sortDirection.ToLower() == "asc"
+                    ? queryableData.OrderBy(item => EF.Property<object>(item, request.sortColumn))
+                    : queryableData.OrderByDescending(item => EF.Property<object>(item, request.sortColumn));
+                }
+
+                // Total records after filtering
+                var filteredRecords = queryableData.Count();
+
+                // Paginate the result
+                var paginatedData = await queryableData.Skip(request.Start).Take(request.Length).ToListAsync();
+
+                var responseData = new DTODataTablesResponse<DTOFaultyCardListResponse>
+                {
+                    draw = request.Draw,
+                    recordsTotal = totalRecords, // Total records without filtering
+                    recordsFiltered = filteredRecords, // Total records after filtering
+                    data = paginatedData
+                };
+
+                return responseData;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "FaultyCardDB->GetAllFaulty");
+                List<DTOFaultyCardListResponse> dTOUserRegnResponses = new List<DTOFaultyCardListResponse>();
+                var responseData = new DTODataTablesResponse<DTOFaultyCardListResponse>
+                {
+                    draw = 0,
+                    recordsTotal = 0,
+                    recordsFiltered = 0,
+                    data = dTOUserRegnResponses
+                };
+                return responseData;
+            }
         }
         public async Task<DTOFaultyCardListResponse?> GetTrnFaultyCardDetail(int TrnFaultyCardId)
         {

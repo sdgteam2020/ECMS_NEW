@@ -27,7 +27,6 @@ function GetDashboardMasterCount() {
                 }
 
                 else {
-                    console.log(response);
                     $("#TotComd").html(response.TotComd == 1 ? 0 : response.TotComd-1);
                     $("#TotCorps").html(response.TotCorps == 1 ? 0 : response.TotCorps - 1);
                     $("#TotDiv").html(response.TotDiv == 1 ? 0 : response.TotDiv - 1);

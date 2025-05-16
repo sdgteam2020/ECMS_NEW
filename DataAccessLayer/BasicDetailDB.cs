@@ -21,6 +21,8 @@ using Microsoft.Data.SqlClient;
 using System.Linq.Expressions;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using DataTransferObject.Constants;
+using System.Diagnostics;
+using System.Text.RegularExpressions;
 
 namespace DataAccessLayer
 {
@@ -550,76 +552,54 @@ namespace DataAccessLayer
         }
         public async Task<List<DTOSmartSearch>?> SearchAllServiceNo(DTOSearchArmyNoRequest dto)
         {
+            string unitQuery = dto.Claim ? "" : "and tdm.UnitId=@MapUnitId";
             string query = "";
-
             if (dto.TypeId == KeyConstants.ApplicantPostingOut || dto.TypeId == KeyConstants.ApplicantClose)
             {
-                query = @"Select TOP 5 basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath Image,req.RequestId
-                        from BasicDetails basi
-                        inner join TrnICardRequest req on req.BasicDetailId=basi.BasicDetailId and req.StatusId=1
-                        inner join TrnDomainMapping map on map.Id=req.TrnDomainMappingId and map.AspNetUsersId=@AspNetUsersId
-                        inner join TrnUpload trnu on basi.BasicDetailId=trnu.BasicDetailId 
-                        where ServiceNo like @ServiceNo ";
+                query = @"Select Distinct TOP 5 basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath Image,req.RequestId
+                            from BasicDetails basi
+                            inner join TrnICardRequest req on req.BasicDetailId=basi.BasicDetailId and req.StatusId=1
+                            inner join TrnDomainMapping map on map.Id = req.TrnDomainMappingId and map.UnitId=@MapUnitId
+                            inner join TrnUpload trnu on basi.BasicDetailId=trnu.BasicDetailId 
+                            where ServiceNo like @ServiceNo ";
             }
             else if (dto.TypeId == KeyConstants.FaultyCardRequest)
             {
-                string unitQuery = dto.Claim ? "" : "and tdm.UnitId=@MapUnitId";
                 query = @$"Select TOP 5 basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath Image,req.RequestId,COALESCE(MAX(fwd.TrnFwdId), NULL) AS MaxTrnFwdId  
-                            from BasicDetails basi
-                            inner join TrnUpload trnu on basi.BasicDetailId=trnu.BasicDetailId 
-                            inner join TrnICardRequest req on req.BasicDetailId=basi.BasicDetailId and req.StatusId=1
-                            inner join TrnStepCounter stepcount on req.RequestId=stepcount.RequestId and stepcount.StepId=6
-                            inner join TrnDomainMapping tdm on tdm.Id=req.TrnDomainMappingId {unitQuery}
-                            LEFT JOIN TrnFwds fwd ON fwd.RequestId = req.RequestId
-                            where ServiceNo like @ServiceNo
-                            GROUP BY
-								basi.BasicDetailId,
-								FName,
-								LName,
-								ServiceNo,
-								PhotoImagePath,
-								req.RequestId
-                            ";
+                                from BasicDetails basi
+                                inner join TrnUpload trnu on basi.BasicDetailId=trnu.BasicDetailId 
+                                inner join TrnICardRequest req on req.BasicDetailId=basi.BasicDetailId and req.StatusId=1
+                                inner join TrnStepCounter stepcount on req.RequestId=stepcount.RequestId and stepcount.StepId=6
+                                inner join TrnDomainMapping tdm on tdm.Id=req.TrnDomainMappingId {unitQuery}
+                                LEFT JOIN TrnFwds fwd ON fwd.RequestId = req.RequestId
+                                where ServiceNo like @ServiceNo
+                                Group by basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath,req.RequestId";
             }
             else if (dto.TypeId == KeyConstants.HoltlistCardRequest)
             {
                 query = @$"Select TOP 5 basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath Image,req.RequestId,COALESCE(MAX(fwd.TrnFwdId), NULL) AS MaxTrnFwdId  
-                            from BasicDetails basi
-                            inner join TrnUpload trnu on basi.BasicDetailId=trnu.BasicDetailId 
-                            inner join TrnICardRequest req on req.BasicDetailId=basi.BasicDetailId and req.StatusId=1
-                            inner join TrnStepCounter stepcount on req.RequestId=stepcount.RequestId and stepcount.StepId=6
-                            inner join TrnDomainMapping tdm on tdm.Id=req.TrnDomainMappingId
-                            LEFT JOIN TrnFwds fwd ON fwd.RequestId = req.RequestId
-                            Left join TrnHotlistCards thc on req.RequestId = thc.RequestId
-                            where thc.RequestId is null and ServiceNo like @ServiceNo
-                            GROUP BY
-								basi.BasicDetailId,
-								FName,
-								LName,
-								ServiceNo,
-								PhotoImagePath,
-								req.RequestId
-                            ";
+                                from BasicDetails basi
+                                inner join TrnUpload trnu on basi.BasicDetailId=trnu.BasicDetailId 
+                                inner join TrnICardRequest req on req.BasicDetailId=basi.BasicDetailId and req.StatusId=1
+                                inner join TrnStepCounter stepcount on req.RequestId=stepcount.RequestId and stepcount.StepId=6
+                                inner join TrnDomainMapping tdm on tdm.Id=req.TrnDomainMappingId and tdm.UnitId=@MapUnitId
+                                LEFT JOIN TrnFwds fwd ON fwd.RequestId = req.RequestId
+                                Left join TrnHotlistCards thc on req.RequestId = thc.RequestId
+                                where thc.RequestId is null and ServiceNo like @ServiceNo
+                                Group by basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath,req.RequestId";
             }
             else if (dto.TypeId == KeyConstants.LostCardRequest)
             {
                 query = @$"Select TOP 5 basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath Image,req.RequestId,COALESCE(MAX(fwd.TrnFwdId), NULL) AS MaxTrnFwdId  
-                            from BasicDetails basi
-                            inner join TrnUpload trnu on basi.BasicDetailId=trnu.BasicDetailId 
-                            inner join TrnICardRequest req on req.BasicDetailId=basi.BasicDetailId and req.StatusId=1
-                            inner join TrnStepCounter stepcount on req.RequestId=stepcount.RequestId and stepcount.StepId=6
-                            inner join TrnDomainMapping tdm on tdm.Id=req.TrnDomainMappingId
-                            LEFT JOIN TrnFwds fwd ON fwd.RequestId = req.RequestId
-                            Left join TrnLostCards tlc on req.RequestId = tlc.RequestId
-                            where tlc.RequestId is null and ServiceNo like @ServiceNo
-                            GROUP BY
-								basi.BasicDetailId,
-								FName,
-								LName,
-								ServiceNo,
-								PhotoImagePath,
-								req.RequestId
-                            ";
+                                from BasicDetails basi
+                                inner join TrnUpload trnu on basi.BasicDetailId=trnu.BasicDetailId 
+                                inner join TrnICardRequest req on req.BasicDetailId=basi.BasicDetailId and req.StatusId=1
+                                inner join TrnStepCounter stepcount on req.RequestId=stepcount.RequestId and stepcount.StepId=6
+                                inner join TrnDomainMapping tdm on tdm.Id=req.TrnDomainMappingId
+                                LEFT JOIN TrnFwds fwd ON fwd.RequestId = req.RequestId
+                                Left join TrnLostCards tlc on req.RequestId = tlc.RequestId
+                                where tlc.RequestId is null and ServiceNo like @ServiceNo
+                                Group by basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath,req.RequestId";
             }
 
             try
@@ -1137,7 +1117,7 @@ namespace DataAccessLayer
                             " inner join MApplyFor Afor on Afor.ApplyForId = B.ApplyForId " +
                             " inner join TrnStepCounter C on trnicrd.RequestId = C.RequestId" +
                             " inner join MICardType ty on ty.TypeId = trnicrd.TypeId" +
-                            " inner join TrnFwds fwd on fwd.RequestId = trnicrd.RequestId and fwd.ToAspNetUsersId = @UserId and Afor.ApplyForId=IsNULL(@applyForId,Afor.ApplyForId)  and trnicrd.StatusId=2" +
+                            " inner join TrnFwds fwd on fwd.RequestId = trnicrd.RequestId and fwd.ToAspNetUsersId = @UserId and Afor.ApplyForId=IsNULL(@applyForId,Afor.ApplyForId)  and trnicrd.StatusId=1" +
                             " inner join MTrnFwdStatus mtrnfwdstatus on mtrnfwdstatus.FwdStatusId = fwd.FwdStatusId"+
                             " left join MRegimental mreg on mreg.RegId = B.RegimentalId ";
 
@@ -2004,7 +1984,7 @@ namespace DataAccessLayer
                         " select @_4thLevelApproved=COUNT(distinct fwd.RequestId)  from TrnFwds fwd " +
                         " inner join TrnStepCounter cou on fwd.RequestId=cou.RequestId and cou.ApplyForId=@applyForId " +
                         " inner join TrnICardRequest trncard  on trncard.RequestId=cou.RequestId " +
-                        " where ToAspNetUsersId=@UserId and  trncard.StatusId=2" +
+                        " where ToAspNetUsersId=@UserId and  trncard.StatusId=1" +
 
                         " select @_4thLevelReject=COUNT(distinct fwd.RequestId) from TrnFwds fwd " +
                         " inner join TrnStepCounter cou on fwd.RequestId=cou.RequestId and cou.ApplyForId=@applyForId " +
@@ -2018,7 +1998,7 @@ namespace DataAccessLayer
                         " select @ExportApproved=COUNT(distinct fwd.RequestId) from TrnFwds fwd " +
                         " inner join TrnStepCounter cou on fwd.RequestId=cou.RequestId and cou.ApplyForId=@applyForId " +
                         " inner join TrnICardRequest trncard  on trncard.RequestId=cou.RequestId " +
-                        " where ToAspNetUsersId=@UserId and  trncard.StatusId=2" +
+                        " where ToAspNetUsersId=@UserId and  trncard.StatusId=1" +
 
                         " select @ExportReject=COUNT(distinct fwd.RequestId)  from TrnFwds fwd " +
                         " inner join TrnStepCounter cou on fwd.RequestId=cou.RequestId and cou.ApplyForId=@applyForId " +
