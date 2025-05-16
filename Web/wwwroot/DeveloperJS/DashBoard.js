@@ -26,6 +26,11 @@
         location.href = '/BasicDetail/LostCard';
     });
 
+    document.getElementById("btnDistCard").addEventListener("click", function (event) {
+        event.preventDefault(); // Prevent anchor default behavior
+        location.href = '/BasicDetail/DistributeCard';
+    });
+
     document.getElementById("btnUnitChangeRequest").addEventListener("click", function (event) {
         event.preventDefault(); // Prevent anchor default behavior
         location.href = '/Master/MapUnitChange';

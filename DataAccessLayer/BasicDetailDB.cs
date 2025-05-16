@@ -601,6 +601,19 @@ namespace DataAccessLayer
                                 where tlc.RequestId is null and ServiceNo like @ServiceNo
                                 Group by basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath,req.RequestId";
             }
+            else if (dto.TypeId == KeyConstants.DistributeCardRequest)
+            {
+                query = @$"Select TOP 5 basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath Image,req.RequestId,COALESCE(MAX(fwd.TrnFwdId), NULL) AS MaxTrnFwdId  
+                                from BasicDetails basi
+                                inner join TrnUpload trnu on basi.BasicDetailId=trnu.BasicDetailId 
+                                inner join TrnICardRequest req on req.BasicDetailId=basi.BasicDetailId and req.StatusId=1
+                                inner join TrnStepCounter stepcount on req.RequestId=stepcount.RequestId and stepcount.StepId=6
+                                inner join TrnDomainMapping tdm on tdm.Id=req.TrnDomainMappingId
+                                LEFT JOIN TrnFwds fwd ON fwd.RequestId = req.RequestId
+                                Left join TrnLostCards tlc on req.RequestId = tlc.RequestId
+                                where tlc.RequestId is null and ServiceNo like @ServiceNo
+                                Group by basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath,req.RequestId";
+            }
 
             try
             {

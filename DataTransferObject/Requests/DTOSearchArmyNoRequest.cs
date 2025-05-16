@@ -15,7 +15,7 @@ namespace DataTransferObject.Requests
         public string ArmyNo { get; set; } = string.Empty;
 
         [RegularExpression(@"^[\d]+$", ErrorMessage = "TypeId is number.")]
-        [Range(typeof(byte), "50", "54", ErrorMessage = "Invalid TypeId Input.")]
+        [Range(typeof(byte), "50", "55", ErrorMessage = "Invalid TypeId Input.")]
         public byte TypeId { get; set; }
         public int AspNetUsersId { get; set; }
         public bool Claim { get; set; } = false;

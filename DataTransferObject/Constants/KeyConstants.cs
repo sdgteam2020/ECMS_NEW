@@ -55,6 +55,7 @@ namespace DataTransferObject.Constants
         public const byte FaultyCardRequest = 52;
         public const byte HoltlistCardRequest = 53;
         public const byte LostCardRequest = 54;
+        public const byte DistributeCardRequest = 55;
         
         #endregion
     }
