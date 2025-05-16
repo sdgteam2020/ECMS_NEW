@@ -7,7 +7,7 @@
         margin-left: 10%;
         margin-right: 10%;
     }
-    .faulty {
+/*     .faulty {
         background-color: #044C92;
         text-align: center;
         padding: 0.5rem !important;
@@ -18,7 +18,7 @@
         width: 170px;
         height: 60px;
     }
-
+ */
     .modal.left .modal-dialog, .modal.right .modal-dialog {
         position: fixed;
         margin: auto;
@@ -72,12 +72,14 @@
                             <div class="card p-1">
                                 <div id="partialContainerBD" class="mb-2">
                                 </div>
-                                <div class="text-center">
-                                    <button type="button" class="faulty" id="btnCardPreview" name="btnCardPreview">I-Card Preview</button>
-                                    <button type="button" class="faulty" id="btnXMLDownload" name="btnXMLDownload">XML Download</button>
-                                    <button type="button" class="faulty" id="btnApplMoveHistory" name="btnApplMoveHistory">I-Card Move History</button>
-                                    <button type="button" class="faulty" id="btnLostCardsList" name="btnLostCardsList">View Lost Cards</button>
-                                </div>
+                               <div class="card p-2">
+                                    <div class="text-center">
+                                        <button type="button" class="btn btn-success" id="btnXMLDownload" name="btnXMLDownload">XML Download</button>
+                                        <button type="button" class="btn btn-info" id="btnApplMoveHistory" name="btnApplMoveHistory">I-Card Move History</button>
+                                        <button type="button" class="btn btn-primary" id="btnCardPreview" name="btnCardPreview">I-Card Preview</button>
+                                        <button type="button" class="btn btn-warning" id="btnLostCardsList" name="btnLostCardsList">View Lost Cards</button>
+                                    </div>
+                               </div>
                             </div>
                         </div>
                         <div class="col-sm-5">
