@@ -1,4 +1,5 @@
-﻿using BusinessLogicsLayer.BasicDet;
+﻿using BusinessLogicsLayer;
+using BusinessLogicsLayer.BasicDet;
 using BusinessLogicsLayer.Bde;
 using BusinessLogicsLayer.Home;
 using BusinessLogicsLayer.Master;
@@ -6,6 +7,7 @@ using BusinessLogicsLayer.RecordOffice;
 using BusinessLogicsLayer.Registration;
 using BusinessLogicsLayer.ReportReturn;
 using BusinessLogicsLayer.Service;
+using BusinessLogicsLayer.Unit;
 using DataTransferObject.Constants;
 using DataTransferObject.Domain.Identitytable;
 using DataTransferObject.Domain.Master;
@@ -41,6 +43,7 @@ namespace Web.Controllers
         private readonly ILogger<HomeController> _logger;
         private readonly IService service;
         public readonly IReportReturnBL _reportReturnBL;
+        private readonly IMapUnitBL _mapUnitBL;
         private const string CounterFilePath = "wwwroot/counter.txt";
         private const string SessionKey = "SessionHit";
         private readonly string[] IgnoredIPs = { "127.0.0.2", "127.0.0.3" }; // Add IPs to ignore
@@ -49,7 +52,7 @@ namespace Web.Controllers
             IBasicDetailBL basicDetailBL, INotificationBL notificationBL, ITrnICardRequestBL iTrnICardRequestBL,
             IHomeBL home, IRecordOfficeBL recordOfficeBL, SignInManager<ApplicationUser> signInManager, 
             UserManager<ApplicationUser> userManager, ILogger<HomeController> logger, IHttpContextAccessor httpContextAccessor,
-            IReportReturnBL reportReturnBL, IService service, IConfiguration configuration
+            IReportReturnBL reportReturnBL, IService service, IConfiguration configuration, IMapUnitBL mapUnitBL
             )
         {
             _userProfileBL = userProfileBL;
@@ -65,6 +68,7 @@ namespace Web.Controllers
             _httpContextAccessor = httpContextAccessor;
             this.service = service;
             _configuration = configuration;
+            _mapUnitBL = mapUnitBL;
         }
         private string GetSessionValue()
         {
@@ -186,10 +190,34 @@ namespace Web.Controllers
         [HttpPost]
         public async Task<IActionResult> GetReportData([FromBody] DTODataTablesRequestForReport dTORecord)
         {
+            DtoSession? dtoSession = new DtoSession();
+            if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
+            {
+                dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+
+            }
+            int? MapUnitId = dtoSession != null ? dtoSession.UnitId : null;
+            if (MapUnitId != null)
+            {
+                DTOMapUnitResponse dTOMap = await _mapUnitBL.GetALLByUnitMapId((int)MapUnitId);
+                dTORecord.UnitType = dTOMap.UnitType;
+                dTORecord.UnitMapId = (int)MapUnitId;
+                dTORecord.ComdId = (byte?)dTOMap.ComdId;
+                dTORecord.CorpsId = (byte?)dTOMap.CorpsId;
+                dTORecord.DivId = (byte?)dTOMap.DivId;
+                dTORecord.BdeId = (byte?)dTOMap.BdeId;
+                dTORecord.FmnBranchID = (byte?)dTOMap.FmnBranchID;
+                dTORecord.PsoId = (byte?)dTOMap.PsoId;  
+                dTORecord.SubDteId = (byte?)dTOMap.SubDteId;
+            }
+            else
+            {
+                return Json(KeyConstants.InternalServerError);
+            }
             try
             {
-                //var ret = await _reportReturnBL.GetRecordHistory(dTORecord);
-                return Json("ret");
+                var ret = await _reportReturnBL.GetReportData(dTORecord);
+                return Json(ret);
             }
             catch (Exception ex)
             {

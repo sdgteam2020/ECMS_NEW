@@ -10,6 +10,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -693,40 +694,101 @@ namespace DataAccessLayer
                 return responseData;
             }
         }
-        public async Task<DTODataTablesResponse<DTOReportReturnListResponse>> GetReportData(DTODataTablesRequestForReport dTO)
+        public async Task<DTODataTablesResponse<DTOReportResponse>> GetReportData(DTODataTablesRequestForReport dTO)
         {
             string query = "";
             // Map allowed sort columns to DB fields
-            var allowedSortColumns = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
-            {
-                ["ServiceNo"] = "ServiceNo",
-                ["TrackingId"] = "TrackingId",
-                ["UpdatedOn"] = "fwd.UpdatedOn",
-                ["StatusName"] = "fwdsts.Name",
-            };
-
-            var sortColumn = allowedSortColumns.ContainsKey(dTO.sortColumn ?? "")
-                ? allowedSortColumns[dTO.sortColumn!]
-                : "ServiceNo";
+            Dictionary<string, string> allowedSortColumns = new Dictionary<string, string>();
 
             var sortOrder = dTO.sortDirection;
-            //if (dTO.Choice == "Requisition")
-            //{
+            if (dTO.Choice == "Requisition")
+            {
+                allowedSortColumns = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+                {
+                    ["ServiceNo"] = "ServiceNo",
+                    ["TrackingId"] = "TrackingId",
+                    ["StepId"] = "Mstep.StepId",
+                    ["ArmedAbbreviation"] = "marmed.Abbreviation",
+                    ["ApplyFor"] = "mappl.Name"
+                };
+                query = @"req.RequestId,Mstep.StepId,basi.FName,basi.LName,ServiceNo,ranks.RankAbbreviation RankName,TrackingId,marmed.Abbreviation as ArmedAbbreviation,mappl.Name as ApplyFor,
+                            CASE
+                            WHEN Mstep.StepId=1 THEN
+                            'Drafted/Saved </br> Appl'
+                            WHEN Mstep.StepId=2 THEN
+                            'Pending Appl </br> (Approver Level)'
+                            WHEN Mstep.StepId=3 THEN
+                            'Pending Appl </br> (Verifier Level)'
+                            WHEN Mstep.StepId=4 THEN
+                            'Appl  Status </br> at ADC'
+                            WHEN Mstep.StepId=5 THEN
+                            'Exported'
+                            WHEN Mstep.StepId=6 THEN
+                            'I-CARD PRINT'
+                            WHEN Mstep.StepId=7 THEN
+                            'Appl Rejected  </br> (Approver Level)'
+                            WHEN Mstep.StepId=8 THEN
+                            'Appl Rejected </br>  (Verifier Level)'
+                            WHEN Mstep.StepId=9 THEN
+                            'Appl Rejected </br> (4th LEVEL)'
+                            END AS Status
+                            from TrnStepCounter step
+                            INNER JOIN MApplyFor mappl on mappl.ApplyForId=step.ApplyForId
+                            INNER JOIN MStepCounterStep Mstep on Mstep.StepId=step.StepId
+                            INNER JOIN TrnICardRequest req on step.RequestId=req.RequestId and req.StatusId=1
+                            INNER JOIN  BasicDetails basi on req.BasicDetailId=basi.BasicDetailId
+                            INNER JOIN MArmedType marmed on basi.ArmedId=marmed.ArmedId
+                            INNER JOIN MRank ranks on ranks.RankId=basi.RankId
+                            INNER JOIN MapUnit unit on basi.UnitId=unit.UnitMapId
 
-            //}
-            //else if ()
-            //{
-
-            //}
+                            WHERE
+                            (
+                                (@UnitType = 1 AND
+                                    unit.ComdId = ISNULL(@ComdId, unit.ComdId)
+                                    AND unit.CorpsId = ISNULL(@CorpsId, unit.CorpsId)
+                                    AND unit.DivId = ISNULL(@DivId, unit.DivId)
+                                    AND unit.BdeId = ISNULL(@BdeId, unit.BdeId)
+                                )
+                                OR
+                                (@UnitType = 2 AND
+                                    unit.ComdId = ISNULL(@ComdId, unit.ComdId)
+                                    AND unit.CorpsId = ISNULL(@CorpsId, unit.CorpsId)
+                                    AND unit.DivId = ISNULL(@DivId, unit.DivId)
+                                    AND unit.BdeId = ISNULL(@BdeId, unit.BdeId)
+                                    AND unit.FmnBranchID = ISNULL(@FmnBranchID, unit.FmnBranchID)
+                                )
+                                OR
+                                (@UnitType = 3 AND
+                                    unit.PsoId = ISNULL(@PsoId, unit.PsoId)
+                                    AND unit.SubDteId = ISNULL(@SubDteId, unit.SubDteId)
+                                )
+                            )
+                            AND unit.UnitMapId = ISNULL(@UnitMapId, unit.UnitMapId)
+                            AND ServiceNo LIKE '%' + @SearchTerm + '%'";
+            }
+            else if (dTO.Choice == "NonFunctional")
+            {
+                allowedSortColumns = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+                {
+                    ["ServiceNo"] = "ServiceNo",
+                    ["TrackingId"] = "TrackingId",
+                    ["StepId"] = "Mstep.StepId",
+                    ["ArmedAbbreviation"] = "marmed.Abbreviation",
+                    ["ApplyFor"] = "mappl.Name"
+                };
+            }
             try
             {
+                var sortColumn = allowedSortColumns.ContainsKey(dTO.sortColumn ?? "")
+                ? allowedSortColumns[dTO.sortColumn!]
+                : "ServiceNo";
                 var multiQuery = query = $@"
-                            WITH RecordCTE AS (
-                                select ROW_NUMBER() OVER (ORDER BY {sortColumn} {sortOrder}) AS RowNum, {query}
-                            )
-                            SELECT * FROM RecordCTE
-                            WHERE RowNum BETWEEN @Offset AND @Limit;
-                        ";
+                        WITH RecordCTE AS (
+                            select ROW_NUMBER() OVER (ORDER BY {sortColumn} {sortOrder}) AS RowNum, {query}
+                        )
+                        SELECT * FROM RecordCTE
+                        WHERE RowNum BETWEEN @Offset AND @Limit;
+                    ";
 
                 using (var connection = _contextDP.CreateConnection())
                 {
@@ -745,13 +807,13 @@ namespace DataAccessLayer
                     parameters.Add("@SearchTerm", dTO.searchValue, DbType.String, ParameterDirection.Input);
 
                     var ret = await connection.QueryMultipleAsync(query, parameters);
-                    var records = (await ret.ReadAsync<DTOReportReturnListResponse>()).ToList();
-                    var responseData = new DTODataTablesResponse<DTOReportReturnListResponse>
+                    var records = (await ret.ReadAsync<DTOReportResponse>()).ToList();
+                    var responseData = new DTODataTablesResponse<DTOReportResponse>
                     {
                         draw = dTO.Draw,
                         recordsTotal = 0, // Total records without filtering
                         recordsFiltered = records.Count(), // Total records after filtering
-                        data = records
+                        data = records,
                     };
                     return responseData;
                 }
@@ -759,8 +821,8 @@ namespace DataAccessLayer
             catch (Exception ex)
             {
                 _logger.LogError(1001, ex, "ReportReturnDB->GetReportData");
-                List<DTOReportReturnListResponse> dTOUserRegnResponses = new List<DTOReportReturnListResponse>();
-                var responseData = new DTODataTablesResponse<DTOReportReturnListResponse>
+                List<DTOReportResponse> dTOUserRegnResponses = new List<DTOReportResponse>();
+                var responseData = new DTODataTablesResponse<DTOReportResponse>
                 {
                     draw = 0,
                     recordsTotal = 0,

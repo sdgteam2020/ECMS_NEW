@@ -1,15 +1,34 @@
-﻿$(function () {
+﻿var table; // Declare table variable outside the function to preserve the instance
+$(function () {
     if ($('#ddlCommand').length > 0) {
         mMsater(0, "ddlCommand", 1, "");
     }
+    //$("#btnRequisition").on("click", function (event) {
+    //    event.preventDefault(); // Prevent anchor default behavior
+    //    GetReportReturnHistory('Requisition');
+    //})
     $("#btnRequisition").on("click", function (event) {
         event.preventDefault(); // Prevent anchor default behavior
-        GetReportReturnHistory('Requisition');
-    })
+        $("#CardReport_lblModelTitle").html('New Requisition');
+        $("#CardReport").modal("show");
+        $('#CardReport').one('shown.bs.modal', function () {
+            GetReportReturnHistory('Requisition');
+        });
+    });
+    $("#btnNonFunctionalCard").on("click", function (event) {
+        event.preventDefault(); // Prevent anchor default behavior
+        $("#CardReport_lblModelTitle").html('Non Functional Card');
+        $("#CardReport").modal("show");
+        $('#CardReport').one('shown.bs.modal', function () {
+            GetReportReturnHistory('NonFunctional');
+        });
+    });
 });
 function GetReportReturnHistory(Choice) {
-    $("#CardReport_tbldatadialog").DataTable().destroy();
-
+    if ($.fn.DataTable.isDataTable("#CardReport_tbldatadialog")) {
+        $("#CardReport_tbldatadialog").DataTable().destroy();
+        $("#CardReport_tbldatadialog").empty(); // Clear old thead/tbody
+    }
     var userdata =
     {
         "TableId": 0,
@@ -23,7 +42,9 @@ function GetReportReturnHistory(Choice) {
         "UnitMapId": $('#ddlUnit').length > 0 ? $('#ddlUnit').val() : 0,
         "Choice": Choice,
     };
-    tableView = $("#CardReport_tbldatadialog").DataTable({
+    const columns = getColumnsByChoice(Choice);
+
+    table = $("#CardReport_tbldatadialog").DataTable({
         processing: true,
         serverSide: true,
         filter: true,
@@ -49,82 +70,14 @@ function GetReportReturnHistory(Choice) {
                 if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
 
                 let result = await response.json();
-                $("#lblTotal").html(result.recordsTotal);
+                //$("#lblTotal").html(result.recordsTotal);
                 callback(result); // Sends data to DataTables
 
             } catch (error) {
                 console.error("Error fetching data:", error);
             }
         },
-        columns: [
-            // Serial number column
-            //{ data: "RequestId", name: "RequestId", visible: false },
-            {
-                data: null,
-                name: "SerialNumber",
-                orderable: false, // Disable sorting for this column
-                render: function (data, type, row, meta) {
-                    // Calculate serial number based on row index
-                    return meta.row + meta.settings._iDisplayStart + 1;
-                }
-            },
-            { data: "ServiceNo", name: "ServiceNo" },
-            {
-                data: null,
-                name: null,
-                orderable: false,
-                render: function (data, type, row) {
-                    return `${row.RankName} ${row.FName} ${row.LName != null ? row.LName : ""}`;
-                }
-            },
-            {
-                data: null,
-                name: null,
-                orderable: false,
-                render: function (data, type, row) {
-                    return row.RankFrom != null ? `<span id='divName'>${row.RankFrom} ${row.NameFrom} (${row.ArmyNoFrom}) (${row.DomainIdFrom})</span>` : "<span id='divName'></span>";
-                }
-            },
-            {
-                data: null,
-                name: null,
-                orderable: false,
-                render: function (data, type, row) {
-                    return row.RankTo != null ? `<span id='divName'>${row.RankTo} ${row.NameTo} (${row.ArmyNoTo}) (${row.DomainIdTo})</span>` : "<span id='divName'></span>";
-                }
-            },
-            {
-                data: 'TrackingId',
-                name: 'TrackingId',
-                render: function (data, type, row) {
-                    return data ? `<span id='comdName'>${data}</span>` : '';
-                }
-            },
-            {
-                data: "UpdatedOn",
-                name: "UpdatedOn",
-                render: function (data, type, row) {
-                    return `<span id='comdName'>${DateFormateddMMyyyyhhmmss(data)}</span>`;
-                }
-            },
-            {
-                data: "StatusName",
-                name: "StatusName",
-                render: function (data, type, row) {
-                    let color = 'primary';
-                    if (data == "Pending") {
-                        color = 'warning';
-                    }
-                    else if (data == "Rejected") {
-                        color = 'dangers';
-                    }
-                    else {
-                        color = 'success'
-                    }
-                    return data ? `<span id='comdName'><span class='badge badge-${color} mr-1' >${row.StatusName}</span></span>` : `<span id='comdName'><span class='badge badge-primary mr-1' >Action Pending</span></span>`;
-                }
-            }
-        ],
+        columns: columns,
         language: {
             search: "", // Remove the default "Search:" label
             searchPlaceholder: "Search Army No" // Add custom placeholder
@@ -147,7 +100,7 @@ function GetReportReturnHistory(Choice) {
                 extend: 'pdfHtml5',
                 orientation: 'landscape',
                 pageSize: 'LEGAL',
-                title: 'E-IASC_Claim',
+                title: 'E-IASC_Report',
                 exportOptions: {
                     columns: "thead th:not(.noExport)"
                 },
@@ -158,4 +111,103 @@ function GetReportReturnHistory(Choice) {
         drawCallback: function (settings) {
         }
     });
+}
+function getColumnsByChoice(choice) {
+    let columns = [];
+
+    switch (choice) {
+        case 'Requisition':
+            columns = [
+                {
+                    title: "S No",
+                    data: null,
+                    name: "SerialNumber",
+                    orderable: false, // Disable sorting for this column
+                    render: function (data, type, row, meta) {
+                        // Calculate serial number based on row index
+                        return meta.row + meta.settings._iDisplayStart + 1;
+                    }
+                },
+                {
+                    title: "Request ID",
+                    data: 'RequestId',
+                    name: 'RequestId',
+                },
+                {
+                    title: "Tracking Id",
+                    data: 'TrackingId',
+                    name: 'TrackingId',
+                },
+                {
+                    title: "Army No",
+                    data: "ServiceNo",
+                    name: "ServiceNo"
+                },
+                {
+                    title: "Rank,Name",
+                    data: null,
+                    name: null,
+                    orderable: false,
+                    render: function (data, type, row) {
+                        return `${row.RankName} ${row.FName} ${row.LName != null ? row.LName : ""}`;
+                    }
+                },
+                {
+                    title: "Arm / Service",
+                    data: "ArmedAbbreviation",
+                    name: "ArmedAbbreviation"
+                },
+                {
+                    title: "Type",
+                    data: "ApplyFor",
+                    name: "ApplyFor"
+                },
+                {
+                    title: "Status",
+                    data: "StepId",
+                    name: "StepId",
+                    render: function (data, type, row) {
+                        let color;
+                        if (data == 1 || data == 2 || data == 3 || data == 4 || data == 5 || data == 6) {
+                            color = 'warning';
+                        }
+                        else {
+                            color = 'dangers';
+                        }
+                        return `<span class='badge badge-${color} mr-1' >${row.Status}</span></span>`;
+                    }
+                }
+            ];
+            break;
+
+        case 'NonFunctional':
+            columns = [
+                { title: "S No", data: null, orderable: false, render: (data, type, row, meta) => meta.row + meta.settings._iDisplayStart + 1 },
+                { title: "Issue ID", data: 'IssueId' },
+                { title: "Item Name", data: 'ItemName' },
+                { title: "Issued To", data: 'IssuedTo' },
+                { title: "Date", data: 'IssueDate' }
+            ];
+            break;
+
+        case 'Returned':
+            columns = [
+                { title: "S No", data: null, orderable: false, render: (data, type, row, meta) => meta.row + meta.settings._iDisplayStart + 1 },
+                { title: "Return ID", data: 'ReturnId' },
+                { title: "Returned Item", data: 'ItemName' },
+                { title: "Returned By", data: 'ReturnedBy' },
+                { title: "Return Date", data: 'ReturnDate' },
+                { title: "Condition", data: 'ConditionStatus' }
+            ];
+            break;
+
+        default:
+            columns = [
+                { title: "S No", data: null, orderable: false, render: (data, type, row, meta) => meta.row + meta.settings._iDisplayStart + 1 },
+                { title: "ID", data: 'Id' },
+                { title: "Description", data: 'Description' }
+            ];
+    }
+
+    return columns;
 }
