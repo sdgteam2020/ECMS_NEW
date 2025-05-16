@@ -34,6 +34,10 @@
     .labelUnit{
         font-weight: 700 !important;
     }
+
+    .h-90 {
+        height: 90% !important;
+    }
 </style>
 <header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
     <div class="containerMain">
@@ -58,108 +62,137 @@
     </div>
 </header>
 <div class="containerMain mt-n10">
-    <div class="card mb-3">
+    <div class="card ">
         <div class="card-header">
             <div class="row">
-                <div class="col-xl-12 text-center">
-                    <div class="feature-box3">
-                        <div class="top-block_ind d-flex">
-                            <div class="text-block">
-                                <h5 class="mb-1 text-font2 font-weight600">Unit Relocation  Request</h5>
-                            </div>
-                        </div>
-                    </div>
+                <div class="col-xl-12 text-left">
+                    <h3>
+                        Profile Mapping Details
+                        <small class="text-muted"> </small>
+
+
+                    </h3>
                 </div>
+
+
             </div>
         </div>
-        <div class="card-body" style="min-height:150px;">
+        <div class="card-body" >
             <div class="row g-3 row-deck mb-3">
                 <form action="" id="SaveMapUnitChange" method="post" name="SaveMapUnitChange">
                     <div class="row">
                         <span class=" d-none" id="spnMapUnitChangeRequestId">@(ViewBag.MapUnitChangeRequestId ?? 0)</span>
                         <span class=" d-none" id="spnUnitMapId">@ViewBag.MapUnitId</span>
                         <span class=" d-none" id="spnRoleName">@ViewBag.RoleName</span>
-                        <div class="col-sm-12">
-                            <div class="card p-1">
-                                <div class="mb-1 d-flex justify-content-between align-items-center">
+                       
+                        
+                        <div class="col-sm-6">
+
+                            <div class="card p-1 mb-2 alert alert-primary">
+                                    <div class="mb-1 d-flex justify-content-between align-items-center">
+                                        <div class="text-start ml-2 labelUnit">
+                                            Unit Name - <label id="lblUnit" class="col-form-label"></label> (<label id="lblSUSNo" class="col-form-label"></label>)
+                                        </div>
+
+                                    </div>
+                                </div>
+                            
+                            <div class="card h-90">
+                                <div class="card-header">
+                                    <div class="row">
+                                        <div class="col-xl-12 text-left">
+                                            <h3>
+                                                Current Hierarchy
+                                                <small class="text-muted"> </small>
+
+
+                                            </h3>
+                                        </div>
+
+
+                                    </div>
+                                </div>
+                               
+                                <div class="p-4">
+                                    <div class="form-group row mb-0">
+                                        <label class="col-form-label col-sm-5 labelUnit">Unit Type</label>
+                                        <div class="col-sm-7">
+                                            <label id="lblUnitType" class="col-form-label"></label>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row mb-0 ExistingCh-UnitType">
+                                        <label class="col-form-label col-sm-5 labelUnit">Comd / PSO</label>
+                                        <div class="col-sm-7">
+                                            <label id="lblComd" class="col-form-label"></label>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row mb-0 ExistingCh-UnitType">
+                                        <label class="col-form-label col-sm-5 labelUnit">Corps / Dte / Area</label>
+                                        <div class="col-sm-7">
+                                            <label id="lblCorps" class="col-form-label"></label>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row mb-0 ExistingCh-UnitType">
+                                        <label class="col-form-label col-sm-5 labelUnit">Div / Sub Area</label>
+                                        <div class="col-sm-7">
+                                            <label id="lblDiv" class="col-form-label"></label>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row mb-0 ExistingCh-UnitType">
+                                        <label class="col-form-label col-sm-5 labelUnit">Bde</label>
+                                        <div class="col-sm-7">
+                                            <label id="lblBde" class="col-form-label"></label>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row mb-0 ExistingCh-FmnBranch">
+                                        <label class="col-form-label col-sm-5 labelUnit">Fmn / Branch</label>
+                                        <div class="col-sm-7">
+                                            <label id="lblFmnBranch" class="col-form-label"></label>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row mb-0 ExistingCh-DteBranch">
+                                        <label class="col-form-label col-sm-5 labelUnit">PSO / Dte </label>
+                                        <div class="col-sm-7">
+                                            <label id="lblPSODte" class="col-form-label"></label>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row mb-0 ExistingCh-DteBranch">
+                                        <label class="col-form-label col-sm-5 labelUnit">DG / Sub Dte</label>
+                                        <div class="col-sm-7">
+                                            <label id="lblDgSubDte" class="col-form-label"></label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+
+                            <div class="card p-1 mb-2 alert alert-info">
+                                    <div class="mb-1 d-flex justify-content-between align-items-center">
+
                                     <div class="text-start ml-2 labelUnit">
-                                        Unit Name - <label id="lblUnit" class="col-form-label"></label> (<label id="lblSUSNo" class="col-form-label"></label>)
-                                    </div>
-                                    <div class="text-end mr-2 labelUnit">
-                                        Request By - <label id="lblRequestBy" class="col-form-label"></label>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-sm-6">
-                            <div class="card p-1">
-                                <div class="feature-box3">
-                                    <div class="top-block_ind d-flex">
-                                        <div class="text-block">
-                                            <h5 class="mb-1 text-font2 font-weight600">Current Hierarchy</h5>
+                                            Request By - <label id="lblRequestBy" class="col-form-label"></label>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="form-group row mb-0">
-                                    <label class="col-form-label col-sm-5 labelUnit">Unit Type</label>
-                                    <div class="col-sm-7">
-                                        <label id="lblUnitType" class="col-form-label"></label>
-                                    </div>
-                                </div>
-                                <div class="form-group row mb-0 ExistingCh-UnitType">
-                                    <label class="col-form-label col-sm-5 labelUnit">Comd / PSO</label>
-                                    <div class="col-sm-7">
-                                        <label id="lblComd" class="col-form-label"></label>
-                                    </div>
-                                </div>
-                                <div class="form-group row mb-0 ExistingCh-UnitType">
-                                    <label class="col-form-label col-sm-5 labelUnit">Corps / Dte / Area</label>
-                                    <div class="col-sm-7">
-                                        <label id="lblCorps" class="col-form-label"></label>
-                                    </div>
-                                </div>
-                                <div class="form-group row mb-0 ExistingCh-UnitType">
-                                    <label class="col-form-label col-sm-5 labelUnit">Div / Sub Area</label>
-                                    <div class="col-sm-7">
-                                        <label id="lblDiv" class="col-form-label"></label>
-                                    </div>
-                                </div>
-                                <div class="form-group row mb-0 ExistingCh-UnitType">
-                                    <label class="col-form-label col-sm-5 labelUnit">Bde</label>
-                                    <div class="col-sm-7">
-                                        <label id="lblBde" class="col-form-label"></label>
-                                    </div>
-                                </div>
-                                <div class="form-group row mb-0 ExistingCh-FmnBranch">
-                                    <label class="col-form-label col-sm-5 labelUnit">Fmn / Branch</label>
-                                    <div class="col-sm-7">
-                                        <label id="lblFmnBranch" class="col-form-label"></label>
-                                    </div>
-                                </div>
-                                <div class="form-group row mb-0 ExistingCh-DteBranch">
-                                    <label class="col-form-label col-sm-5 labelUnit">PSO / Dte </label>
-                                    <div class="col-sm-7">
-                                        <label id="lblPSODte" class="col-form-label"></label>
-                                    </div>
-                                </div>
-                                <div class="form-group row mb-0 ExistingCh-DteBranch">
-                                    <label class="col-form-label col-sm-5 labelUnit">DG / Sub Dte</label>
-                                    <div class="col-sm-7">
-                                        <label id="lblDgSubDte" class="col-form-label"></label>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-sm-6">
-                            <div class="row">
-                                <div class="card p-2">
-                                    <div class="feature-box3">
-                                        <div class="top-block_ind d-flex">
-                                            <div class="text-block">
-                                                <h5 class="mb-1 text-font2 font-weight600">Unit Hierarchy Recalibration</h5>
-                                            </div>
+
+                            <div class="card h-90">
+                                   
+                                <div class="card-header">
+                                    <div class="row">
+                                        <div class="col-xl-12 text-left">
+                                            <h3>
+                                                Unit Hierarchy Recalibration
+                                                <small class="text-muted"> </small>
+
+
+                                            </h3>
                                         </div>
+
+
                                     </div>
+                                </div>
+                                <div class="p-4">
                                     <div class="form-group row mb-2">
                                         <label class="col-form-label col-sm-4 labelUnit">Select Unit Type <i class="fas fa-asterisk mand1"></i></label>
                                         <div class="col-sm-8">
@@ -255,8 +288,9 @@
                                         <input type="button" class="btn btn-primary" id="btnSubmit" value="Submit" />
                                     </div>
                                 </div>
+                                </div>
 
-                            </div>
+                            
                         </div>
                     </div>
                 </form>
