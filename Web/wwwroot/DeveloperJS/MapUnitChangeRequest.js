@@ -134,13 +134,13 @@ function Proceed(choice) {
         let AdminRemark = $("#txtAdminRemark").val();
         let UserName = $(".dropdown-user-details-name").html();
         Swal.fire({
-            title: 'Please confirm the following Unit Relocation Request details:',
+            title: 'Please Confirm the following Unit Move Request details',
             html: `
                     <div style="text-align: left; font-size: 16px;">
-                        <p><strong>Unit Name:</strong> ${UnitName.trim()}</p>
-                        <p><strong>SUS NO.:</strong> ${SUSNo.trim()}</p>
+                        <p><strong>Unit Name : </strong> ${UnitName.trim()}</p>
+                        <p><strong>SUS NO : </strong> ${SUSNo.trim()}</p>
                         <p><strong>${choice === 1 ? "Remarks" : "Admin Remark"}:</strong> ${choice === 1 ? Remarks : AdminRemark}</p>
-                        <p><strong>Logged In Details:</strong> ${UserName}</p>
+                        <p><strong>Logged In Details : </strong> ${UserName}</p>
                     </div>
                   `,
             icon: 'warning',

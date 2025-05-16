@@ -23,7 +23,7 @@ namespace DataTransferObject.Response
         public bool IsComplete { get; set; } = false;
         public bool IsEditAction { get; set; }
         public bool RequestStatus { get; set; } = false;
-        public DateTime? ApproverUpdatedOn { get; set; }
+        public DateTime? AdminUpdatedOn { get; set; }
         public int ExistingUnitType { get; set; }
         public string ExistingComdName { get; set; } = string.Empty;
         public string ExistingCorpsName { get; set; } = string.Empty;

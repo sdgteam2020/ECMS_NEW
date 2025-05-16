@@ -72,16 +72,16 @@ namespace DataAccessLayer
                     await db.ExecuteAsync(update1, parameters, transaction: transaction);
                 }
 
-                update2 = @"UPDATE TrnMapUnitChangeRequest set AdminRemark = @AdminRemark, IsComplete = @IsComplete, IsEditAction = @IsEditAction, RequestStatus =@RequestStatus, ApproverUpdatedby = @ApproverUpdatedby, ApproverUpdatedOn = @ApproverUpdatedOn, ApproverUserId = @ApproverUserId  WHERE MapUnitChangeRequestId = @MapUnitChangeRequestId";
+                update2 = @"UPDATE TrnMapUnitChangeRequest set AdminRemark = @AdminRemark, IsComplete = @IsComplete, IsEditAction = @IsEditAction, RequestStatus =@RequestStatus, AdminUpdatedby = @AdminUpdatedby, AdminUpdatedOn = @AdminUpdatedOn, AdminUserId = @AdminUserId  WHERE MapUnitChangeRequestId = @MapUnitChangeRequestId";
                 var parameters2 = new DynamicParameters();
                 parameters2.Add("@MapUnitChangeRequestId", dTO.MapUnitChangeRequestId, DbType.Int32, ParameterDirection.Input);
                 parameters2.Add("@AdminRemark", dTO.AdminRemark, DbType.String, ParameterDirection.Input, 100);
                 parameters2.Add("@IsComplete", trnMapUnit.IsComplete, DbType.Boolean, ParameterDirection.Input);
                 parameters2.Add("@IsEditAction", trnMapUnit.IsEditAction, DbType.Boolean, ParameterDirection.Input);
                 parameters2.Add("@RequestStatus", trnMapUnit.RequestStatus, DbType.Boolean, ParameterDirection.Input);
-                parameters2.Add("@ApproverUpdatedby", trnMapUnit.ApproverUpdatedby, DbType.Int32, ParameterDirection.Input);
-                parameters2.Add("@ApproverUpdatedOn", trnMapUnit.ApproverUpdatedOn, DbType.DateTime, ParameterDirection.Input);
-                parameters2.Add("@ApproverUserId", trnMapUnit.ApproverUserId, DbType.Int32, ParameterDirection.Input);
+                parameters2.Add("@AdminUpdatedby", trnMapUnit.AdminUpdatedby, DbType.Int32, ParameterDirection.Input);
+                parameters2.Add("@AdminUpdatedOn", trnMapUnit.AdminUpdatedOn, DbType.DateTime, ParameterDirection.Input);
+                parameters2.Add("@AdminUserId", trnMapUnit.AdminUserId, DbType.Int32, ParameterDirection.Input);
 
                 await db.ExecuteAsync(update2, parameters2, transaction: transaction);
 
@@ -90,7 +90,7 @@ namespace DataAccessLayer
 
                 // Commit the transaction if all operations succeed
                 transaction.Commit();
-                saveResponse.CurrentTime = trnMapUnit.ApproverUpdatedOn ?? DateTime.Now;
+                saveResponse.CurrentTime = trnMapUnit.AdminUpdatedOn ?? DateTime.Now;
                 saveResponse.Result = true;
                 return saveResponse;
             }
@@ -112,13 +112,13 @@ namespace DataAccessLayer
         public async Task<DTOMapUnitDetailsResponse> GetUnitMoveHistory(DTOMapUnitDetailsResponse dTO)
         {
             string query = "";
-            query = @"Select mrak.RankAbbreviation,up.Name as RequestBy,up.ArmyNo,UnitChReq.Remark,UnitChReq.AdminRemark,UnitChReq.IsComplete,UnitChReq.IsEditAction,UnitChReq.RequestStatus,UnitChReq.ApproverUpdatedOn,
+            query = @"Select mrak.RankAbbreviation,up.Name as RequestBy,up.ArmyNo,UnitChReq.Remark,UnitChReq.AdminRemark,UnitChReq.IsComplete,UnitChReq.IsEditAction,UnitChReq.RequestStatus,UnitChReq.AdminUpdatedOn,
                         up_apro.Name as AprovedBy,up_apro.ArmyNo as AproverArmyNo,mrak_apro.RankAbbreviation as AproverRankAbbreviation,
                         mcom.ComdName AS RequestComdName,mcor.CorpsName  As RequestCorpsName,mdiv.DivName as RequestDivName,mbde.BdeName as RequestBdeName,mfmnb.BranchName as RequestBranchName,mpso.PSOName as RequestPSOName,msubd.SubDteName as RequestSubDteName
                         from TrnMapUnitChangeRequest UnitChReq
                         inner join UserProfile up on up.UserId = UnitChReq.FromUserId
                         inner join MRank mrak on mrak.RankId = up.RankId
-                        left join UserProfile up_apro on up_apro.UserId = UnitChReq.ApproverUserId
+                        left join UserProfile up_apro on up_apro.UserId = UnitChReq.AdminUserId
                         left join MRank mrak_apro on mrak_apro.RankId = up_apro.RankId
                         inner join MComd mcom on mcom.ComdId = @ComdId
                         inner join MCorps mcor on mcor.CorpsId = @CorpsId
@@ -177,10 +177,11 @@ namespace DataAccessLayer
                                          FromUpdatedby = unitch.Updatedby ?? 0,
                                          FromUpdatedOn = unitch.UpdatedOn ?? DateTime.Now,
                                          FromUserId = unitch.FromUserId,
-                                         ApproverUpdatedby = unitch.Updatedby,
-                                         ApproverUpdatedOn = unitch.UpdatedOn,
-                                         ApproverUserId = unitch.ApproverUserId,
+                                         AdminUpdatedby = unitch.Updatedby,
+                                         AdminUpdatedOn = unitch.UpdatedOn,
+                                         AdminUserId = unitch.AdminUserId,
                                          UnitName = munit.UnitName,
+                                         Sus_no = munit.Sus_no + munit.Suffix,
                                          FromDID = ufrom.DomainId,
                                          FromRankAbbreviation= rkfrom.RankAbbreviation,
                                          FromArmyNo = upfrom.ArmyNo,
@@ -203,7 +204,7 @@ namespace DataAccessLayer
                     //                          x.DomainId.ToLower().Contains(searchValue)||
                     //                          x.ArmyNo.ToLower().Contains(searchValue));
 
-                    queryableData = queryableData.Where(x => x.FromArmyNo.ToLower().Contains(searchValue));
+                    queryableData = queryableData.Where(x => x.Sus_no.ToLower().Contains(searchValue));
                 }
 
                 // Apply sorting
