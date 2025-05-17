@@ -72,6 +72,37 @@
 });
 function Proceed() {
     //ResetErrorMessage();
+
+    let formId = '#SaveRecordOffice';
+    $.validator.unobtrusive.parse($(formId));
+
+    if ($(formId).valid()) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, Save it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Save();
+            }
+        })
+    }
+    else {
+        Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'Please fill required field.',
+
+        })
+        toastr.error('Please fill required field.');
+        return false;
+    }
+
+
     if ($("#ddlHotlistRemark").val().length == 0 ) {
         toastr.error('Reason is required.');
         return false;
@@ -81,7 +112,7 @@ function Proceed() {
         return false;
     }
 
-    let formId = '#SaveHotlistCardRequest';
+    let formId = '#SaveLostCardRequest';
     $.validator.unobtrusive.parse($(formId));
     
     if ($(formId).valid()) {

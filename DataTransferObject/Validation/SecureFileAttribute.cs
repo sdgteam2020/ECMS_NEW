@@ -27,7 +27,7 @@ namespace DataTransferObject.Validation
         private static readonly string[] DangerousPatterns = new[]
         {
         "<script", "javascript:", "onerror=", "onload=", "eval(", "alert(", "<?php", "<iframe"
-    };
+        };
 
         public SecureFileAttribute(string[] allowedExtensions, string[] allowedMimeTypes, string[] expectedHeaders, long maxFileSize)
         {
@@ -40,67 +40,69 @@ namespace DataTransferObject.Validation
         protected override ValidationResult IsValid(object value, ValidationContext validationContext)
         {
             var file = value as IFormFile;
-            if (file == null)
-                return new ValidationResult("File is required.");
+            //if (file == null)
+            //    return new ValidationResult("File is required.");
 
-            if (file.Length == 0)
-                return new ValidationResult("File is empty.");
-
-            if (file.Length > _maxFileSize)
-                return new ValidationResult("File exceeds the maximum allowed size.");
-
-            var extension = Path.GetExtension(file.FileName).ToLowerInvariant();
-            if (!_allowedExtensions.Contains(extension))
-                return new ValidationResult("File extension is not allowed.");
-
-            if (!_allowedMimeTypes.Contains(file.ContentType))
-                return new ValidationResult($"Invalid content type: {file.ContentType}");
-
-            if (_allowedExtensions.Contains(".csv"))
+            if (file != null)
             {
-                using var headerReader = new StreamReader(file.OpenReadStream(), Encoding.UTF8);
-                var headerLine = headerReader.ReadLine();
-                if (string.IsNullOrWhiteSpace(headerLine))
-                    return new ValidationResult("CSV file has no header.");
+                if (file.Length == 0)
+                    return new ValidationResult("File is empty.");
 
+                if (file.Length > _maxFileSize)
+                    return new ValidationResult("File exceeds the maximum allowed size.");
 
-                var actualHeaders = headerLine.Split(',').Select(h => h.Trim().ToLowerInvariant()).ToArray();
-                var requiredLower = _expectedHeaders.Select(h => h.Trim().ToLowerInvariant());
+                var extension = Path.GetExtension(file.FileName).ToLowerInvariant();
+                if (!_allowedExtensions.Contains(extension))
+                    return new ValidationResult("File extension is not allowed.");
 
-                var missingHeaders = requiredLower.Where(h => !actualHeaders.Contains(h)).ToList();
+                if (!_allowedMimeTypes.Contains(file.ContentType))
+                    return new ValidationResult($"Invalid content type: {file.ContentType}");
 
-                if (missingHeaders.Any())
+                if (_allowedExtensions.Contains(".csv"))
                 {
-                    string missing = string.Join(", ", missingHeaders);
-                    return new ValidationResult($"Missing required headers: {missing}");
+                    using var headerReader = new StreamReader(file.OpenReadStream(), Encoding.UTF8);
+                    var headerLine = headerReader.ReadLine();
+                    if (string.IsNullOrWhiteSpace(headerLine))
+                        return new ValidationResult("CSV file has no header.");
+
+
+                    var actualHeaders = headerLine.Split(',').Select(h => h.Trim().ToLowerInvariant()).ToArray();
+                    var requiredLower = _expectedHeaders.Select(h => h.Trim().ToLowerInvariant());
+
+                    var missingHeaders = requiredLower.Where(h => !actualHeaders.Contains(h)).ToList();
+
+                    if (missingHeaders.Any())
+                    {
+                        string missing = string.Join(", ", missingHeaders);
+                        return new ValidationResult($"Missing required headers: {missing}");
+                    }
+
+                    // if (actualHeaders.Length != _requiredHeaders.Length ||
+                    //     !_requiredHeaders.Select(h => h.Trim().ToLowerInvariant()).SequenceEqual(actualHeaders))
+                    // {
+                    //     return new ValidationResult("CSV headers do not match expected format or order.");
+                    // }
                 }
 
-                // if (actualHeaders.Length != _requiredHeaders.Length ||
-                //     !_requiredHeaders.Select(h => h.Trim().ToLowerInvariant()).SequenceEqual(actualHeaders))
-                // {
-                //     return new ValidationResult("CSV headers do not match expected format or order.");
-                // }
+                byte[] header = new byte[4];
+                using (var stream = file.OpenReadStream())
+                {
+                    stream.Read(header, 0, header.Length);
+                }
+
+                if (!IsKnownTextSignature(header))
+                    return new ValidationResult("Invalid file signature.");
+
+                // Read full content and scan for harmful patterns
+                using var reader = new StreamReader(file.OpenReadStream(), Encoding.UTF8);
+                var content = reader.ReadToEnd();
+
+                foreach (var pattern in DangerousPatterns)
+                {
+                    if (content.IndexOf(pattern, StringComparison.OrdinalIgnoreCase) >= 0)
+                        return new ValidationResult($"File contains potentially harmful content: '{pattern}'");
+                }
             }
-
-            byte[] header = new byte[4];
-            using (var stream = file.OpenReadStream())
-            {
-                stream.Read(header, 0, header.Length);
-            }
-
-            if (!IsKnownTextSignature(header))
-                return new ValidationResult("Invalid file signature.");
-
-            // Read full content and scan for harmful patterns
-            using var reader = new StreamReader(file.OpenReadStream(), Encoding.UTF8);
-            var content = reader.ReadToEnd();
-
-            foreach (var pattern in DangerousPatterns)
-            {
-                if (content.IndexOf(pattern, StringComparison.OrdinalIgnoreCase) >= 0)
-                    return new ValidationResult($"File contains potentially harmful content: '{pattern}'");
-            }
-
             return ValidationResult.Success;
         }
 

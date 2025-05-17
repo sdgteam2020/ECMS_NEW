@@ -1,5 +1,10 @@
-﻿$(async function () {
-    var RemarkTypeID = [6];
+﻿var signedXML = "";
+var data = {};
+var token;
+
+$(async function () {
+    token = $('input[name="__RequestVerificationToken"]').val();
+    var RemarkTypeID = [7];
     GetRemarks("ddlLostRemark", 0, RemarkTypeID);
       
     $('.select2').select2({
@@ -10,7 +15,6 @@
 
     
     if (sessionStorage.getItem("ArmyNo") != null && sessionStorage.getItem("RequestIdForFaulty") != null && sessionStorage.getItem("MaxTrnFwdId") != null) {
-
         var encryptedArmyNo = sessionStorage.getItem("ArmyNo");
         var encryptedRequestId = sessionStorage.getItem("RequestIdForFaulty");
         var encryptedMaxTrnFwdId = sessionStorage.getItem("MaxTrnFwdId");
@@ -27,17 +31,19 @@
         var decryptedMaxTrnFwdId = bytes.toString(CryptoJS.enc.Utf8);
 
 
-        $("#spnArmyNo").html(decryptedArmyNo);
-        $("#spnLostCardRequestId").html(decryptedRequestId);
-        $("#spnMaxTrnFwdId").html(decryptedMaxTrnFwdId);
-        $("#lblFaultyRequestId").html(decryptedRequestId);
+        $("#spnArmyNo").text(decryptedArmyNo);
+        $("#spnLostCardRequestId").text(decryptedRequestId);
+        $("#spnMaxTrnFwdId").text(decryptedMaxTrnFwdId);
+        $("#lblFaultyRequestId").text(decryptedRequestId);
 
         GetBasicDetailForParitalViewByRequestId(decryptedRequestId);
-
     }
 
-    $("#btnAccept").on("click", function () {
+    $("#btnSubmit").on("click", function () {
         Proceed();
+    });
+    $("#btnReset").on("click", function () {
+        Reset();
     });
 
     $("#btnCardPreview").on("click", function () {
@@ -59,7 +65,7 @@
     });
 
     $("#btnSearchNew").on("click", function () {
-        $("#armynosearchAllName").html("");
+        $("#armynosearchAllName").text("");
         $("#txtarmynosearchAll").val("");
         $("#armynosearchAllpic").attr("src", "");
         $("#unitoffrsModal").modal("show");
@@ -72,28 +78,20 @@
 });
 
 function Proceed() {
-    //ResetErrorMessage();
-    let inputVal = $("#txtlostoninp").val();
-    if (inputVal.length == 0) {
-        toastr.error('Lost On is required.');
-        return false;
-    }
-
-    const parsedDate = new Date(inputVal);
-    if (!isValidDate(parsedDate)) {
-        toastr.error('Lost On value is invalid.');
-        return false;
-    } 
-
-    if ($("#txtLostRemark").val().length == 0) {
-        toastr.error('Remark is required.');
-        return false;
-    }
-
-    let formId = '#SaveLostCardRequest';
+    ResetErrorMessage();
+    let formId = '#SaveLostCardRequest';    
     $.validator.unobtrusive.parse($(formId));
-    
+
     if ($(formId).valid()) {
+        let inputVal = $("#txtlostoninp").val();
+        const parsedDate = new Date(inputVal);
+        if (!isValidDate(parsedDate)) {
+            $(formId).validate().showErrors({
+                "txtlostoninp": "Invalid Date Of Loss"
+            });
+            return false;
+        } 
+
         let ApplicantName = $("#lblpvFName").html() + $("#lblpvLName").html();
         let ApplicantNameWithRank = $("#lblpvRank").html() + " " + ApplicantName.trim();
         let Remarks = $("#txtLostRemark").val();
@@ -102,8 +100,8 @@ function Proceed() {
             title: 'Please confirm the following Lost card details:',
             html: `
                     <div style="text-align: left; font-size: 16px;">
-                        <p><strong>Applicant Name:</strong> ${ApplicantNameWithRank}</p>
-                        <p><strong>Lost Date & Time:</strong> ${DateFormateddMMyyyyhhmmss(parsedDate)}</p>
+                        <p><strong>Card Holder Name:</strong> ${ApplicantNameWithRank}</p>
+                        <p><strong>Date Of Loss:</strong> ${DateFormateddMMyyyyhhmmss(parsedDate)}</p>
                         <p><strong>Remarks:</strong> ${Remarks}</p>
                         <p><strong>Logged In Details:</strong> ${UserName}</p>
                     </div>
@@ -122,27 +120,42 @@ function Proceed() {
         })
     }
     else {
-        Swal.fire({
-            icon: 'error',
-            title: 'Oops...',
-            text: 'Please fill required field.',
-
-        })
-        toastr.error('Please fill required field.');
         return false;
     }
 }
-function Save() {
+
+async function Save() {
     let inputDate = $("#txtlostoninp").val();
+    var lostlistRemarkIds = "" + $("#ddlLostRemark").val() + "";
+    data = {
+        "RequestId": $("#spnLostCardRequestId").html(),
+        "RemarksIds": $("#ddlLostRemark").val().length > 0 ? lostlistRemarkIds : null,
+        "LostOn": formatDateToSqlString(inputDate),
+        "IsFIRLogged": $('input[name="isFIRLogged"]:checked').val(),
+        "Remark": $("#txtLostRemark").val(),
+        //"LostCardId": 0,
+        //"TrnFwdId": $("#spnMaxTrnFwdId").html(),
+    }
+
+    if (await CheckTokenRequired()) {
+        var xml = jsonToXml(data);
+        if (!await GetTokenSignXml(xml)) {
+            return false;
+        }
+    }
+    data.SignedXML = signedXML;
+
+    var formData = jsonToFormData(data);
+    formData.append("File", $('#supportingDoc')[0].files[0]);
+
     $.ajax({
         url: '/BasicDetail/SaveLostCardRequest' ,
         type: 'POST',
-        data: {
-            "LostCardId": 0,
-            "RequestId": $("#spnLostCardRequestId").html(),
-            "TrnFwdId": $("#spnMaxTrnFwdId").html(),
-            "Remark": $("#txtLostRemark").val(),
-            "LostOn": formatDateToSqlString(inputDate)
+        data: formData,
+        processData: false, 
+        contentType: false, 
+        headers: {
+            'RequestVerificationToken': token
         },
         success: function (result) {
 
@@ -155,6 +168,8 @@ function Save() {
                 document.getElementById("ConfirmationDialog_Data").innerHTML= Message;
                 btnSearchNew.textContent = "Search New";
                 btnBackDashboard.textContent = "Back to Dashboard";
+
+                
                 myModal.show();
             }
             else {
@@ -190,7 +205,9 @@ function DownloadPdf(RequestId) {
         contentType: 'application/x-www-form-urlencoded',
         data: userdata,
         type: 'POST',
-
+        headers: {
+            'RequestVerificationToken': token 
+        },
         success: function (response) {
             if (response != "null" && response != null) {
                 if (response == InternalServerError) {
@@ -198,10 +215,8 @@ function DownloadPdf(RequestId) {
                         text: errormsg
                     });
                 } else {
-
                     var url = "https://" + window.location.host + '/DigitallysignaturePdf/' + response;
                     window.open(url, '_blank');
-
                 }
             }
         },
@@ -211,4 +226,139 @@ function DownloadPdf(RequestId) {
             });
         }
     });
+}
+function ResetErrorMessage() {
+    $("#ddlLostRemark-error").text("");
+    $("#txtlostoninp-error").text("");
+    $("#supportingDoc-error").text("");
+    $("#txtLostRemark-error").text("");
+    $("#isFIRLogged-error").text("");
+}
+
+function jsonToXml(json) {
+    var xml = '';
+    for (var key in json) {
+        i = 1;
+        if (key != "RequestId") {
+            if (json.hasOwnProperty(key)) {
+
+                xml += '<' + key + '>';
+
+                if (typeof json[key] === 'object') {
+                    xml += jsonToXml(json[key]);
+                } else {
+                    xml += json[key];
+                }
+
+                xml += '</' + key + '>';
+            }
+        }
+    }
+
+    xml = `<?xml version="1.0" encoding="UTF-8"?>
+            <Root>
+                <Header>
+                    <RequestId>${json.RequestId}</RequestId>
+                    <Timestamp>${formatDateToSqlString(new Date())}</Timestamp>
+                </Header>
+                <Body>
+                    ${xml}
+                </Body>
+            </Root>`
+
+    return xml;
+}
+function jsonToFormData(jsonObj) {
+    const formData = new FormData();
+    for (const key in jsonObj) {
+        if (jsonObj.hasOwnProperty(key)) {
+            formData.append(key, jsonObj[key]);
+        }
+    }
+    return formData;
+}
+
+async function GetTokenSignXml(xml) {
+    let res = false;
+    let signXml = "";
+    return new Promise((resolve) => {
+        $.ajax({
+            url: HostUrlDGISToken + '/Temporary_Listen_Addresses/SignXml',
+            type: "POST",
+            contentType: 'application/xml', // Set content type to XML
+            data: xml,
+            success: function (response) {
+                if (response) {
+                    var xmlContent = new XMLSerializer().serializeToString(response);
+                    // No Token Found
+                    if (xmlContent.indexOf("<Root>No Token Found</Root>") == -1) {
+                        //toastr.success("XML Signed Successfully!");
+                        signedXML = xmlContent;
+                        resolve(true);
+                    } else {
+                        toastr.error("Please Insert Token!");
+                        resolve(false);
+                    }
+                }
+            },
+            error: function (result) {
+                toastr.error("DGIS Appl Not Running!");
+                resolve(false);
+            }
+        });
+    });
+}
+
+async function CheckTokenRequired(ArmyNo) {
+    var userdata =
+    {
+        "ArmyNo": ArmyNo,
+
+    };
+
+    return new Promise((resolve) => {
+        let res = false;
+        $.ajax({
+            url: '/UserProfile/GetByArmyNoIsWithoutTokenApply',
+            contentType: 'application/x-www-form-urlencoded',
+            data: userdata,
+            type: 'POST',
+            headers: {
+                'RequestVerificationToken': token
+            },
+            success: function (response) {
+                if (response != "null" && response != null) {
+
+                    if (response == InternalServerError) {
+                        Swal.fire({
+                            text: errormsg
+                        });
+                    }
+                    else if (response == 0) {
+
+                    }
+                    else {
+                        res = response.IsToken;
+                    }
+                }
+                resolve(res);
+            },
+            error: function (result) {
+                Swal.fire({
+                    text: errormsg002
+                });
+                resolve(res);
+            }
+        });
+    });
+}
+function Reset() {
+    ResetErrorMessage();
+    //$('.select2-selection__clear').trigger('click');
+    $('.select2').val(null).trigger('change');
+    $('#SaveLostCardRequest').find(':input')
+        .not(':button, :submit, :reset, :hidden') 
+        .val('')                                   
+        .prop('checked', false)                    
+        .prop('selected', false);
 }

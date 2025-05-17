@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,6 +14,7 @@ namespace DataTransferObject.Requests
         //[AllowedExtensions(new string[] { ".csv" })]
         //[AllowedContentType(new string[] { "text/csv" })]
         //[MaxFileSize(5120, "CSVFile")]
+        [Required(ErrorMessage = "File is required!")]
         [SecureFile(allowedExtensions: new[] { ".csv" },
         allowedMimeTypes: new[] { "text/csv", "application/vnd.ms-excel" },
         expectedHeaders : new[] { "RequestId", "ServiceNo", "CardSerialNo", "ChipNo" },

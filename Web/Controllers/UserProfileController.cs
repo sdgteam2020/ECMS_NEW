@@ -293,7 +293,7 @@ namespace Web.Controllers
             try
             {
                 
-                 int userid = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                int userid = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                 MUserProfile dTOUserProfileResponse = await _userProfileBL.GetByIsWithoutTokenApply(userid);
                 
                 return Json(dTOUserProfileResponse);
