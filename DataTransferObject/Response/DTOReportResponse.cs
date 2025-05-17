@@ -19,5 +19,12 @@ namespace DataTransferObject.Response
         public string? Status { get; set; }
         public string? ArmedAbbreviation { get; set; }
         public string? ApplyFor { get; set; }
+        
+        
+        public string? UnitAbbreviation { get; set; }
+        public DateTime? UpdatedOn { get; set; }
+        public string RemarksIds { get; set; } = string.Empty;
+        public string? FromRemark { get; set; }
+        public string? ToRemark { get; set; }
     }
 }

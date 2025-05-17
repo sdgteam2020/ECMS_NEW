@@ -141,7 +141,17 @@ function getColumnsByChoice(choice) {
                 {
                     title: "Army No",
                     data: "ServiceNo",
-                    name: "ServiceNo"
+                    name: "ServiceNo",
+                    render: function (data, type, row) {
+                        // Check if first two characters are alphabets
+                        if (/^[A-Za-z]{2}/.test(data)) {
+                            // Insert space after first two characters
+                            return data.slice(0, 2) + ' ' + data.slice(2);
+                        } else {
+                            // No space needed
+                            return data;
+                        }
+                    }
                 },
                 {
                     title: "Rank,Name",
@@ -149,7 +159,8 @@ function getColumnsByChoice(choice) {
                     name: null,
                     orderable: false,
                     render: function (data, type, row) {
-                        return `${row.RankName} ${row.FName} ${row.LName != null ? row.LName : ""}`;
+                        let fullName = `${row.RankName || ""} ${row.FName || ""} ${row.LName || ""}`.trim();
+                        return (fullName);
                     }
                 },
                 {
