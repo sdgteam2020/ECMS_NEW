@@ -20,6 +20,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.SqlServer.Management.Smo;
 using System.Data;
+using System.Globalization;
 using System.Security.Claims;
 using System.Text;
 using Web.WebHelpers;
@@ -187,6 +188,48 @@ namespace Web.Controllers
             }
             
         }
+        public async Task<IActionResult> GetReportDashboardCount()
+        {
+            DTODataTablesRequestForReport dTORecord = new DTODataTablesRequestForReport();
+            int userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var user = await userManager.FindByIdAsync(userId.ToString());
+            
+            DtoSession? dtoSession = new DtoSession();
+            if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
+            {
+                dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+
+            }
+            int? MapUnitId = dtoSession != null ? dtoSession.UnitId : null;
+            if (MapUnitId != null)
+            {
+                DTOMapUnitResponse dTOMap = await _mapUnitBL.GetALLByUnitMapId((int)MapUnitId);
+                dTORecord.UnitType = dTOMap.UnitType;
+                dTORecord.UnitMapId = (int)MapUnitId;
+                dTORecord.ComdId = (byte?)dTOMap.ComdId;
+                dTORecord.CorpsId = (byte?)dTOMap.CorpsId;
+                dTORecord.DivId = (byte?)dTOMap.DivId;
+                dTORecord.BdeId = (byte?)dTOMap.BdeId;
+                dTORecord.FmnBranchID = (byte?)dTOMap.FmnBranchID;
+                dTORecord.PsoId = (byte?)dTOMap.PsoId;
+                dTORecord.SubDteId = (byte?)dTOMap.SubDteId;
+            }
+            else
+            {
+                return Json(KeyConstants.InternalServerError);
+            }
+
+            bool Claim = false;
+
+            // UserManager service GetClaimsAsync method gets all the current claims of the user
+            var UserClaims = await userManager.GetClaimsAsync(user);
+            if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "Army Level Reports"))
+            {
+                Claim = true;
+            }
+
+            return Json(await _reportReturnBL.GetReportDashboardCount(dTORecord, Claim));
+        }
         [HttpPost]
         public async Task<IActionResult> GetReportData([FromBody] DTODataTablesRequestForReport dTORecord)
         {
@@ -214,6 +257,30 @@ namespace Web.Controllers
             {
                 return Json(KeyConstants.InternalServerError);
             }
+            
+            if (dTORecord.Choice == "MonthlyProcessed")
+            {
+                if (!String.IsNullOrEmpty( dTORecord.MonthYear))
+                {
+                    bool isValid = IsValidMonthYear(dTORecord.MonthYear);
+
+                    if (isValid)
+                    {
+                        var ret = await _reportReturnBL.GetReportData(dTORecord);
+                        return Json(ret);
+                    }
+                    else
+                    {
+                        return BadRequest(new { message = "Invalid input: Month and Year are required." });
+
+                    }
+                }
+                else
+                {
+                    return BadRequest(new { message = "Month and Year are required." });
+                }
+
+            }
             try
             {
                 var ret = await _reportReturnBL.GetReportData(dTORecord);
@@ -222,9 +289,28 @@ namespace Web.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(1001, ex, "Home->GetRecordHistory");
-                return Json(KeyConstants.InternalServerError);
+                return BadRequest(new { message = "Internal Server Error" });
             }
 
+        }
+        public static bool IsValidMonthYear(string input)
+        {
+            // Try parse as MM/yyyy
+            if (!DateTime.TryParseExact("01/" + input, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime selectedDate))
+            {
+                return false; // Invalid format
+            }
+
+            DateTime today = DateTime.Today;
+
+            // Calculate min date as 2 years ago (Jan of that year)
+            DateTime minDate = new DateTime(today.Year - 2, 1, 1);
+            DateTime maxDate = new DateTime(today.Year, today.Month, 1); // Current month only
+
+            // Truncate selected date to month/year
+            DateTime selectedMonthStart = new DateTime(selectedDate.Year, selectedDate.Month, 1);
+
+            return selectedMonthStart >= minDate && selectedMonthStart <= maxDate;
         }
         #endregion
         public async Task<IActionResult> SubDashboard()

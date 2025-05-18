@@ -23,6 +23,10 @@
         padding: 1.5rem !important;
         padding-bottom: 4.5rem !important;
     }
+
+    .ui-datepicker-calendar {
+        display: none !important;
+    }
 </style>
 <header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
     <div class="containerMain">
@@ -48,7 +52,7 @@
                     <div class="row">
                         <div class="col-md-2 col-sm-6" id="btnRequisition">
                             <a href="#" class="clickable">
-                                <div class="counter pink d-sm-block d-md-block">
+                                <div class="counter pink">
                                     <div class="counter-icon">
                                         <i class="fa fa-address-card"></i>
                                     </div>
@@ -74,9 +78,8 @@
                                     <div class="counter-icon">
                                         <i class="fa fa-address-card"></i>
                                     </div>
-                                    <h3 style="margin-top:3.0rem!important;">
-                                        Monthly Processed Appl
-                                    </h3>
+                                <span class="counter-value" id="TotMonthlyProcessed">0</span>
+                                    <h3>Monthly Processed Appl</h3>
                                 </div>
                             </a>
                         </div>
@@ -86,9 +89,8 @@
                                     <div class="counter-icon">
                                         <i class="fa fa-address-card"></i>
                                     </div>
-                                    <h3 style="margin-top:3.0rem!important;">
-                                        Non Functional Card
-                                    </h3>
+                                    <span class="counter-value" id="TotNonFunctionalCard">0</span>
+                                    <h3>Non Functional Card</h3>
                                 </div>
                             </a>
                         </div>
@@ -143,6 +145,31 @@
             </div>
         </div><!-- modal-content -->
     </div><!-- modal-dialog -->
+</div>
+<!-- Message Dialog  -->
+<div class="modal fade" id="MonthlyProcessedDialog" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-sm modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title" id="MonthlyProcessedDialogLabel">Choose Reporting Month</h6>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div id="MonthlyProcessedDialogBody" class="modal-body">
+                <div class="col-sm-12">
+                    <div class="form-group row mb-2">
+                        <label class="col-form-label col-sm-4">Select Month</label>
+                        <div class="col-sm-8">
+                            <input type="text" id="txtMonthYear" class="form-control readonly dateInputMonthYear" placeholder="MM/YYYY" required />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="btnMonthlyProcessedDialogOk">Ok</button>
+            </div>
+        </div>
+    </div>
 </div>
 <script asp-src-include="~/developerjs/Report.js"></script>
 

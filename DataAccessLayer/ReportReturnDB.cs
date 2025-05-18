@@ -706,12 +706,13 @@ namespace DataAccessLayer
                 allowedSortColumns = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
                 {
                     ["ServiceNo"] = "ServiceNo",
+                    ["RequestId"] = "req.RequestId",
                     ["TrackingId"] = "TrackingId",
                     ["StepId"] = "Mstep.StepId",
                     ["ArmedAbbreviation"] = "marmed.Abbreviation",
                     ["ApplyFor"] = "mappl.Name"
                 };
-                query = @"req.RequestId,Mstep.StepId,basi.FName,basi.LName,ServiceNo,ranks.RankAbbreviation RankName,TrackingId,marmed.Abbreviation as ArmedAbbreviation,mappl.Name as ApplyFor,
+                query = @"req.RequestId,Mstep.StepId,basi.FName,basi.LName,basi.NameAsPerRecord,ServiceNo,ranks.RankAbbreviation RankName,TrackingId,marmed.Abbreviation as ArmedAbbreviation,regi.Abbreviation RegimentalName,mappl.Name as ApplyFor,
                             CASE
                             WHEN Mstep.StepId=1 THEN
                             'Drafted/Saved </br> Appl'
@@ -740,7 +741,7 @@ namespace DataAccessLayer
                             INNER JOIN MArmedType marmed on basi.ArmedId=marmed.ArmedId
                             INNER JOIN MRank ranks on ranks.RankId=basi.RankId
                             INNER JOIN MapUnit unit on basi.UnitId=unit.UnitMapId
-
+                            left join MRegimental regi on regi.RegId=basi.RegimentalId
                             WHERE
                             (
                                 (@UnitType = 1 AND
@@ -771,11 +772,165 @@ namespace DataAccessLayer
                 allowedSortColumns = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
                 {
                     ["ServiceNo"] = "ServiceNo",
+                    ["RequestId"] = "req.RequestId",
+                    ["ArmedAbbreviation"] = "marmed.Abbreviation",
+                    ["ApplyFor"] = "appl.Name"
+                };
+                query = @"appl.Name ApplyFor,marmed.Abbreviation as ArmedAbbreviation,regi.Abbreviation RegimentalName,mcat.Name FaultyStage,req.RequestId,bas.ServiceNo,ranks.RankAbbreviation RankName,bas.FName,bas.LName,bas.NameAsPerRecord,Muni.Abbreviation UnitAbbreviation,
+                            faulty.UpdatedOn,faulty.FromRemark,faulty.ToRemark,
+                            (select STRING_AGG(Remarks,'#') from MRemarks where RemarksId in (select value from string_split(faulty.RemarksIds,','))) RemarksNameList
+                            from TrnFaultyCard faulty
+                            inner join MCategory mcat on mcat.CategoryId = faulty.CategoryId
+                            inner join TrnICardRequest req on req.RequestId = faulty.RequestId
+                            inner join TrnDomainMapping tdm on tdm.Id=req.TrnDomainMappingId
+                            inner join BasicDetails bas on bas.BasicDetailId=req.BasicDetailId
+							INNER JOIN MArmedType marmed on bas.ArmedId=marmed.ArmedId
+                            inner join MRank ranks on ranks.RankId=bas.RankId
+                            inner join MapUnit unit on unit.UnitMapId=bas.UnitId
+                            inner join MUnit Muni on Muni.UnitId=unit.UnitId
+                            inner join MApplyFor appl on appl.ApplyForId=bas.ApplyForId
+                            left join MRegimental regi on regi.RegId=bas.RegimentalId
+                            WHERE
+                            (
+                                (@UnitType = 1 AND
+                                    unit.ComdId = ISNULL(@ComdId, unit.ComdId)
+                                    AND unit.CorpsId = ISNULL(@CorpsId, unit.CorpsId)
+                                    AND unit.DivId = ISNULL(@DivId, unit.DivId)
+                                    AND unit.BdeId = ISNULL(@BdeId, unit.BdeId)
+                                )
+                                OR
+                                (@UnitType = 2 AND
+                                    unit.ComdId = ISNULL(@ComdId, unit.ComdId)
+                                    AND unit.CorpsId = ISNULL(@CorpsId, unit.CorpsId)
+                                    AND unit.DivId = ISNULL(@DivId, unit.DivId)
+                                    AND unit.BdeId = ISNULL(@BdeId, unit.BdeId)
+                                    AND unit.FmnBranchID = ISNULL(@FmnBranchID, unit.FmnBranchID)
+                                )
+                                OR
+                                (@UnitType = 3 AND
+                                    unit.PsoId = ISNULL(@PsoId, unit.PsoId)
+                                    AND unit.SubDteId = ISNULL(@SubDteId, unit.SubDteId)
+                                )
+                            )
+                            AND unit.UnitMapId = ISNULL(@UnitMapId, unit.UnitMapId)
+                            AND ServiceNo LIKE '%' + @SearchTerm + '%'";
+            }
+            else if (dTO.Choice == "LostCase")
+            {
+                allowedSortColumns = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+                {
+                    ["ServiceNo"] = "bas.ServiceNo",
+                    ["RequestId"] = "req.RequestId",
+                    ["ArmedAbbreviation"] = "marmed.Abbreviation",
+                    ["ApplyFor"] = "appl.Name",
+                    ["IsFIRLogged"] = "lost.IsFIRLogged",
+                    ["LostOn"] = "lost.LostOn",
+                    ["UpdatedOn"] = "lost.UpdatedOn"
+                };
+                query = @"appl.Name ApplyFor,marmed.Abbreviation as ArmedAbbreviation,req.RequestId,bas.ServiceNo,ranks.RankAbbreviation RankName,bas.FName,bas.LName,bas.NameAsPerRecord,Muni.Abbreviation UnitAbbreviation,
+		                    lost.UpdatedOn,lost.Remark as FromRemark,lost.LostOn,regi.Abbreviation RegimentalName,lost.IsFIRLogged,lost.SupportDocName
+                            from TrnLostCards lost
+                            inner join TrnICardRequest req on req.RequestId = lost.RequestId
+                            inner join TrnDomainMapping tdm on tdm.Id=req.TrnDomainMappingId
+                            inner join BasicDetails bas on bas.BasicDetailId=req.BasicDetailId
+		                    INNER JOIN MArmedType marmed on bas.ArmedId=marmed.ArmedId
+                            inner join MRank ranks on ranks.RankId=bas.RankId
+                            inner join MapUnit unit on unit.UnitMapId=bas.UnitId
+                            inner join MUnit Muni on Muni.UnitId=unit.UnitId
+                            inner join MApplyFor appl on appl.ApplyForId=bas.ApplyForId
+                            left join MRegimental regi on regi.RegId=bas.RegimentalId
+                            WHERE
+                            (
+                                (@UnitType = 1 AND
+                                    unit.ComdId = ISNULL(@ComdId, unit.ComdId)
+                                    AND unit.CorpsId = ISNULL(@CorpsId, unit.CorpsId)
+                                    AND unit.DivId = ISNULL(@DivId, unit.DivId)
+                                    AND unit.BdeId = ISNULL(@BdeId, unit.BdeId)
+                                )
+                                OR
+                                (@UnitType = 2 AND
+                                    unit.ComdId = ISNULL(@ComdId, unit.ComdId)
+                                    AND unit.CorpsId = ISNULL(@CorpsId, unit.CorpsId)
+                                    AND unit.DivId = ISNULL(@DivId, unit.DivId)
+                                    AND unit.BdeId = ISNULL(@BdeId, unit.BdeId)
+                                    AND unit.FmnBranchID = ISNULL(@FmnBranchID, unit.FmnBranchID)
+                                )
+                                OR
+                                (@UnitType = 3 AND
+                                    unit.PsoId = ISNULL(@PsoId, unit.PsoId)
+                                    AND unit.SubDteId = ISNULL(@SubDteId, unit.SubDteId)
+                                )
+                            )
+                            AND unit.UnitMapId = ISNULL(@UnitMapId, unit.UnitMapId)
+                            AND ServiceNo LIKE '%' + @SearchTerm + '%'";
+            }
+            else if (dTO.Choice == "MonthlyProcessed")
+            {
+                allowedSortColumns = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+                {
+                    ["ServiceNo"] = "ServiceNo",
+                    ["RequestId"] = "req.RequestId",
                     ["TrackingId"] = "TrackingId",
                     ["StepId"] = "Mstep.StepId",
                     ["ArmedAbbreviation"] = "marmed.Abbreviation",
                     ["ApplyFor"] = "mappl.Name"
                 };
+                query = @"req.RequestId,Mstep.StepId,basi.FName,basi.LName,basi.NameAsPerRecord,ServiceNo,ranks.RankAbbreviation RankName,TrackingId,marmed.Abbreviation as ArmedAbbreviation,regi.Abbreviation RegimentalName,mappl.Name as ApplyFor,basi.UpdatedOn,
+                            CASE
+                            WHEN Mstep.StepId=1 THEN
+                            'Drafted/Saved </br> Appl'
+                            WHEN Mstep.StepId=2 THEN
+                            'Pending Appl </br> (Approver Level)'
+                            WHEN Mstep.StepId=3 THEN
+                            'Pending Appl </br> (Verifier Level)'
+                            WHEN Mstep.StepId=4 THEN
+                            'Appl  Status </br> at ADC'
+                            WHEN Mstep.StepId=5 THEN
+                            'Exported'
+                            WHEN Mstep.StepId=6 THEN
+                            'I-CARD PRINT'
+                            WHEN Mstep.StepId=7 THEN
+                            'Appl Rejected  </br> (Approver Level)'
+                            WHEN Mstep.StepId=8 THEN
+                            'Appl Rejected </br>  (Verifier Level)'
+                            WHEN Mstep.StepId=9 THEN
+                            'Appl Rejected </br> (4th LEVEL)'
+                            END AS Status
+                            from TrnStepCounter step
+                            INNER JOIN MApplyFor mappl on mappl.ApplyForId=step.ApplyForId
+                            INNER JOIN MStepCounterStep Mstep on Mstep.StepId=step.StepId
+                            INNER JOIN TrnICardRequest req on step.RequestId=req.RequestId and req.StatusId=1
+                            INNER JOIN  BasicDetails basi on req.BasicDetailId=basi.BasicDetailId
+                            INNER JOIN MArmedType marmed on basi.ArmedId=marmed.ArmedId
+                            INNER JOIN MRank ranks on ranks.RankId=basi.RankId
+                            INNER JOIN MapUnit unit on basi.UnitId=unit.UnitMapId
+                            left join MRegimental regi on regi.RegId=basi.RegimentalId
+                            WHERE
+                            (
+                                (@UnitType = 1 AND
+                                    unit.ComdId = ISNULL(@ComdId, unit.ComdId)
+                                    AND unit.CorpsId = ISNULL(@CorpsId, unit.CorpsId)
+                                    AND unit.DivId = ISNULL(@DivId, unit.DivId)
+                                    AND unit.BdeId = ISNULL(@BdeId, unit.BdeId)
+                                )
+                                OR
+                                (@UnitType = 2 AND
+                                    unit.ComdId = ISNULL(@ComdId, unit.ComdId)
+                                    AND unit.CorpsId = ISNULL(@CorpsId, unit.CorpsId)
+                                    AND unit.DivId = ISNULL(@DivId, unit.DivId)
+                                    AND unit.BdeId = ISNULL(@BdeId, unit.BdeId)
+                                    AND unit.FmnBranchID = ISNULL(@FmnBranchID, unit.FmnBranchID)
+                                )
+                                OR
+                                (@UnitType = 3 AND
+                                    unit.PsoId = ISNULL(@PsoId, unit.PsoId)
+                                    AND unit.SubDteId = ISNULL(@SubDteId, unit.SubDteId)
+                                )
+                            )
+                            AND unit.UnitMapId = ISNULL(@UnitMapId, unit.UnitMapId)
+                            AND ServiceNo LIKE '%' + @SearchTerm + '%'
+                            AND YEAR(basi.UpdatedOn) = RIGHT(@MonthYear, 4)
+							AND MONTH(basi.UpdatedOn) = LEFT(@MonthYear, 2)";
             }
             try
             {
@@ -802,6 +957,7 @@ namespace DataAccessLayer
                     parameters.Add("@FmnBranchID", dTO.FmnBranchID, DbType.Byte, ParameterDirection.Input);
                     parameters.Add("@PsoId", dTO.PsoId, DbType.Byte, ParameterDirection.Input);
                     parameters.Add("@SubDteId", dTO.SubDteId, DbType.Byte, ParameterDirection.Input);
+                    parameters.Add("@MonthYear", dTO.MonthYear, DbType.String, ParameterDirection.Input);
                     parameters.Add("@Offset", dTO.Start, DbType.Int32, ParameterDirection.Input);
                     parameters.Add("@Limit", dTO.Length, DbType.Int32, ParameterDirection.Input);
                     parameters.Add("@SearchTerm", dTO.searchValue, DbType.String, ParameterDirection.Input);
@@ -830,6 +986,167 @@ namespace DataAccessLayer
                     data = dTOUserRegnResponses
                 };
                 return responseData;
+            }
+        }
+        public async Task<DTOReportDashboardCountResponse> GetReportDashboardCount(DTODataTablesRequestForReport dTO, bool Claim)
+        {
+            string query = @"declare @TotRequisition int=0
+                            declare @TotLostCases int=0
+                            declare @TotMonthlyProcessed int=0
+                            declare @TotNonFunctionalCard int=0
+
+                            Select @TotRequisition=COUNT(distinct req.RequestId) from TrnICardRequest req
+                            INNER JOIN  BasicDetails basi on req.BasicDetailId=basi.BasicDetailId
+                            INNER JOIN MapUnit unit on basi.UnitId=unit.UnitMapId
+                            WHERE
+                            (
+                                (@UnitType = 1 AND
+                                    unit.ComdId = ISNULL(@ComdId, unit.ComdId)
+                                    AND unit.CorpsId = ISNULL(@CorpsId, unit.CorpsId)
+                                    AND unit.DivId = ISNULL(@DivId, unit.DivId)
+                                    AND unit.BdeId = ISNULL(@BdeId, unit.BdeId)
+                                )
+                                OR
+                                (@UnitType = 2 AND
+                                    unit.ComdId = ISNULL(@ComdId, unit.ComdId)
+                                    AND unit.CorpsId = ISNULL(@CorpsId, unit.CorpsId)
+                                    AND unit.DivId = ISNULL(@DivId, unit.DivId)
+                                    AND unit.BdeId = ISNULL(@BdeId, unit.BdeId)
+                                    AND unit.FmnBranchID = ISNULL(@FmnBranchID, unit.FmnBranchID)
+                                )
+                                OR
+                                (@UnitType = 3 AND
+                                    unit.PsoId = ISNULL(@PsoId, unit.PsoId)
+                                    AND unit.SubDteId = ISNULL(@SubDteId, unit.SubDteId)
+                                )
+                            )
+                            AND (
+	                            @Claim = 1
+	                            OR (@Claim = 0 AND unit.UnitMapId = ISNULL(@UnitMapId, unit.UnitMapId))
+                            )
+                            AND req.StatusId=1
+
+                            SELECT @TotLostCases=COUNT(distinct req.RequestId) from TrnLostCards lost
+                            inner join TrnICardRequest req on req.RequestId = lost.RequestId
+                            inner join BasicDetails bas on bas.BasicDetailId=req.BasicDetailId
+                            inner join MapUnit unit on unit.UnitMapId=bas.UnitId
+                            WHERE
+                            (
+	                            (@UnitType = 1 AND
+		                            unit.ComdId = ISNULL(@ComdId, unit.ComdId)
+		                            AND unit.CorpsId = ISNULL(@CorpsId, unit.CorpsId)
+		                            AND unit.DivId = ISNULL(@DivId, unit.DivId)
+		                            AND unit.BdeId = ISNULL(@BdeId, unit.BdeId)
+	                            )
+	                            OR
+	                            (@UnitType = 2 AND
+		                            unit.ComdId = ISNULL(@ComdId, unit.ComdId)
+		                            AND unit.CorpsId = ISNULL(@CorpsId, unit.CorpsId)
+		                            AND unit.DivId = ISNULL(@DivId, unit.DivId)
+		                            AND unit.BdeId = ISNULL(@BdeId, unit.BdeId)
+		                            AND unit.FmnBranchID = ISNULL(@FmnBranchID, unit.FmnBranchID)
+	                            )
+	                            OR
+	                            (@UnitType = 3 AND
+		                            unit.PsoId = ISNULL(@PsoId, unit.PsoId)
+		                            AND unit.SubDteId = ISNULL(@SubDteId, unit.SubDteId)
+	                            )
+                            )
+                            AND (
+	                            @Claim = 1
+	                            OR (@Claim = 0 AND unit.UnitMapId = ISNULL(@UnitMapId, unit.UnitMapId))
+                            )
+
+                            Select @TotMonthlyProcessed=COUNT(distinct req.RequestId) from TrnICardRequest req
+                                    INNER JOIN  BasicDetails basi on req.BasicDetailId=basi.BasicDetailId
+                                    INNER JOIN MapUnit unit on basi.UnitId=unit.UnitMapId
+                            WHERE
+                            (
+                                (@UnitType = 1 AND
+                                    unit.ComdId = ISNULL(@ComdId, unit.ComdId)
+                                    AND unit.CorpsId = ISNULL(@CorpsId, unit.CorpsId)
+                                    AND unit.DivId = ISNULL(@DivId, unit.DivId)
+                                    AND unit.BdeId = ISNULL(@BdeId, unit.BdeId)
+                                )
+                                OR
+                                (@UnitType = 2 AND
+                                    unit.ComdId = ISNULL(@ComdId, unit.ComdId)
+                                    AND unit.CorpsId = ISNULL(@CorpsId, unit.CorpsId)
+                                    AND unit.DivId = ISNULL(@DivId, unit.DivId)
+                                    AND unit.BdeId = ISNULL(@BdeId, unit.BdeId)
+                                    AND unit.FmnBranchID = ISNULL(@FmnBranchID, unit.FmnBranchID)
+                                )
+                                OR
+                                (@UnitType = 3 AND
+                                    unit.PsoId = ISNULL(@PsoId, unit.PsoId)
+                                    AND unit.SubDteId = ISNULL(@SubDteId, unit.SubDteId)
+                                )
+                            )
+                            AND (
+	                            @Claim = 1
+	                            OR (@Claim = 0 AND unit.UnitMapId = ISNULL(@UnitMapId, unit.UnitMapId))
+                            )
+                            AND req.StatusId=1
+                            AND YEAR(basi.UpdatedOn) = YEAR(GETDATE())
+                            AND MONTH(basi.UpdatedOn) = MONTH(GETDATE())
+
+                            SELECT @TotNonFunctionalCard=COUNT(distinct faulty.TrnFaultyCardId) from TrnFaultyCard faulty
+                            inner join TrnICardRequest req on req.RequestId = faulty.RequestId
+                            inner join BasicDetails bas on bas.BasicDetailId=req.BasicDetailId
+                            inner join MapUnit unit on unit.UnitMapId=bas.UnitId
+                            WHERE
+                            (
+                                (@UnitType = 1 AND
+                                    unit.ComdId = ISNULL(@ComdId, unit.ComdId)
+                                    AND unit.CorpsId = ISNULL(@CorpsId, unit.CorpsId)
+                                    AND unit.DivId = ISNULL(@DivId, unit.DivId)
+                                    AND unit.BdeId = ISNULL(@BdeId, unit.BdeId)
+                                )
+                                OR
+                                (@UnitType = 2 AND
+                                    unit.ComdId = ISNULL(@ComdId, unit.ComdId)
+                                    AND unit.CorpsId = ISNULL(@CorpsId, unit.CorpsId)
+                                    AND unit.DivId = ISNULL(@DivId, unit.DivId)
+                                    AND unit.BdeId = ISNULL(@BdeId, unit.BdeId)
+                                    AND unit.FmnBranchID = ISNULL(@FmnBranchID, unit.FmnBranchID)
+                                )
+                                OR
+                                (@UnitType = 3 AND
+                                    unit.PsoId = ISNULL(@PsoId, unit.PsoId)
+                                    AND unit.SubDteId = ISNULL(@SubDteId, unit.SubDteId)
+                                )
+                            )
+                            AND (
+	                            @Claim = 1
+	                            OR (@Claim = 0 AND unit.UnitMapId = ISNULL(@UnitMapId, unit.UnitMapId))
+                            )
+
+                            select @TotRequisition TotRequisition,@TotLostCases TotLostCases,@TotMonthlyProcessed TotMonthlyProcessed,@TotNonFunctionalCard TotNonFunctionalCard";
+
+            try
+            {
+                using (var connection = _contextDP.CreateConnection())
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@UnitMapId", dTO.UnitMapId, DbType.Int32, ParameterDirection.Input);
+                    parameters.Add("@UnitType", dTO.UnitType, DbType.Int32, ParameterDirection.Input);
+                    parameters.Add("@ComdId", dTO.ComdId, DbType.Byte, ParameterDirection.Input);
+                    parameters.Add("@CorpsId", dTO.CorpsId, DbType.Byte, ParameterDirection.Input);
+                    parameters.Add("@DivId", dTO.DivId, DbType.Byte, ParameterDirection.Input);
+                    parameters.Add("@BdeId", dTO.BdeId, DbType.Byte, ParameterDirection.Input);
+                    parameters.Add("@FmnBranchID", dTO.FmnBranchID, DbType.Byte, ParameterDirection.Input);
+                    parameters.Add("@PsoId", dTO.PsoId, DbType.Byte, ParameterDirection.Input);
+                    parameters.Add("@SubDteId", dTO.SubDteId, DbType.Byte, ParameterDirection.Input);
+                    parameters.Add("@Claim", Claim, DbType.Boolean, ParameterDirection.Input);
+
+                    var ret = await connection.QueryAsync<DTOReportDashboardCountResponse>(query, parameters);
+                    return ret.FirstOrDefault();
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "ReportReturnDB->GetReportDashboardCount");
+                return null;
             }
         }
         public async Task<List<DTOReportReturnListResponse>> GetReportForm11(DTOMHierarchyRequest Data)
