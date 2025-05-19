@@ -1,14 +1,4 @@
 ﻿$(async function () {
-    var RemarkTypeID = [6];
-    GetRemarks("ddlHotlistRemark", 0, RemarkTypeID);
-      
-    $('.select2').select2({
-        placeholder: "Please select a Reason",
-        allowClear: true,
-        closeOnSelect: false // Only needed for multi-select
-    });
-
-    
     if (sessionStorage.getItem("ArmyNo") != null && sessionStorage.getItem("RequestIdForFaulty") != null && sessionStorage.getItem("MaxTrnFwdId") != null) {
 
         var encryptedArmyNo = sessionStorage.getItem("ArmyNo");
@@ -28,7 +18,7 @@
 
 
         $("#spnArmyNo").html(decryptedArmyNo);
-        $("#spnHotlistCardRequestId").html(decryptedRequestId);
+        $("#spnDistributeCardRequestId").html(decryptedRequestId);
         $("#spnMaxTrnFwdId").html(decryptedMaxTrnFwdId);
         $("#lblFaultyRequestId").html(decryptedRequestId);
 
@@ -36,26 +26,32 @@
 
     }
 
-    $("#btnAccept").on("click", function () {
+    $("#btnSubmit").on("click", function () {
         Proceed();
     });
 
-    $("#btnCardPreview").on("click", function () {
-        GetICardPrintPreviewByRequestId($("#spnHotlistCardRequestId").html());
+    $("#btnReset").on("click", function () {
+        Reset();
     });
 
+    $("#btnCardPreview").on("click", function () {
+        GetICardPrintPreviewByRequestId($("#spnDistributeCardRequestId").html());
+    });
 
+    $("#btnDistributeCardsList").on("click", function () {
+        window.location.href = '/BasicDetail/DistributeCard';
+    });
     $("#btnXMLDownload").on("click", function () {
-        DownloadPdf($("#spnHotlistCardRequestId").html());
+        DownloadPdf($("#spnDistributeCardRequestId").html());
     });
 
     $("#btnApplMoveHistory").on("click", function () {
-        GetRequestHistory($("#spnHotlistCardRequestId").html());
+        GetRequestHistory($("#spnDistributeCardRequestId").html());
         $("#exampleModal").modal('show');
     });
 
-    $("#btnHotlistCardsList").on("click", function () {
-        window.location.href = '/BasicDetail/HotlistCard';
+    $("#btnBackDashboard").on("click", function () {
+        window.location.href = '/BasicDetail/DistributeCard';
     });
 
     $("#btnSearchNew").on("click", function () {
@@ -66,65 +62,38 @@
         $("#armynosearchTypeId").val(HoltlistCardRequest);
     });
 
-    $("#btnBackDashboard").on("click", function () {
-        window.location.href = '/BasicDetail/HotlistCard';
+    
+
+    $('#declarationCheckbox').on('change', function () {
+        $('#btnSubmit').prop('disabled', !this.checked);
     });
 });
 function Proceed() {
-    //ResetErrorMessage();
+    ResetErrorMessage();
 
-    //let formId = '#SaveRecordOffice';
-    //$.validator.unobtrusive.parse($(formId));
-
-    //if ($(formId).valid()) {
-    //    Swal.fire({
-    //        title: 'Are you sure?',
-    //        text: "",
-    //        icon: 'warning',
-    //        showCancelButton: true,
-    //        confirmButtonColor: '#3085d6',
-    //        cancelButtonColor: '#d33',
-    //        confirmButtonText: 'Yes, Save it!'
-    //    }).then((result) => {
-    //        if (result.isConfirmed) {
-    //            Save();
-    //        }
-    //    })
-    //}
-    //else {
-    //    Swal.fire({
-    //        icon: 'error',
-    //        title: 'Oops...',
-    //        text: 'Please fill required field.',
-
-    //    })
-    //    toastr.error('Please fill required field.');
-    //    return false;
-    //}
-
-
-    if ($("#ddlHotlistRemark").val().length == 0 ) {
-        toastr.error('Reason is required.');
-        return false;
-    }
-    if ($("#txtHotlistRemark").val().length == 0) {
-        toastr.error('Remark is required.');
-        return false;
-    }
-
-    let formId = '#SaveLostCardRequest';
+    let formId = '#SaveDistributeCardRequest';
     $.validator.unobtrusive.parse($(formId));
-    
+
     if ($(formId).valid()) {
+        let inputVal = $("#txtDistributeoninp").val();
+        const parsedDate = new Date(inputVal);
+        if (!isValidDate(parsedDate)) {
+            $(formId).validate().showErrors({
+                "txtDistributeoninp": "Invalid Date Of Distribution"
+            });
+            return false;
+        }
+
         let ApplicantName = $("#lblpvFName").html() + $("#lblpvLName").html();
         let ApplicantNameWithRank = $("#lblpvRank").html() + " " + ApplicantName.trim();
-        let Remarks = $("#txtHotlistRemark").val();
+        let Remarks = $("#txtDistributeRemark").val();
         let UserName = $(".dropdown-user-details-name").html();
         Swal.fire({
-            title: 'Please confirm the following hotlist card details:',
+            title: 'Please confirm the following card distribution details:',
             html: `
                     <div style="text-align: left; font-size: 16px;">
-                        <p><strong>Applicant Name:</strong> ${ApplicantNameWithRank}</p>
+                        <p><strong>Card Holder Name:</strong> ${ApplicantNameWithRank}</p>
+                        <p><strong>Date Of Distribution:</strong> ${DateFormateddMMyyyyhhmmss(parsedDate)}</p>
                         <p><strong>Remarks:</strong> ${Remarks}</p>
                         <p><strong>Logged In Details:</strong> ${UserName}</p>
                     </div>
@@ -143,27 +112,18 @@ function Proceed() {
         })
     }
     else {
-        Swal.fire({
-            icon: 'error',
-            title: 'Oops...',
-            text: 'Please fill required field.',
-
-        })
-        toastr.error('Please fill required field.');
         return false;
     }
 }
 function Save() {
-    var HotlistRemarkIds = "" + $("#ddlHotlistRemark").val() + "";
+    let inputDate = $("#txtDistributeoninp").val();
     $.ajax({
-        url: '/BasicDetail/SaveHotlistCardRequest' ,
+        url: '/BasicDetail/SaveDistributeCardRequest' ,
         type: 'POST',
         data: {
-            "HotlistCardId": 0,
-            "RequestId": $("#spnHotlistCardRequestId").html(),
-            "TrnFwdId": $("#spnMaxTrnFwdId").html(),
-            "RemarksIds": $("#ddlHotlistRemark").val().length > 0 ? HotlistRemarkIds : null,
-            "Remark": $("#txtHotlistRemark").val()
+            "RequestId": $("#spnDistributeCardRequestId").html(),
+            "DistributedOn": formatDateToSqlString(inputDate),
+            "Remark": $("#txtDistributeRemark").val()
         },
         success: function (result) {
 
@@ -196,12 +156,18 @@ function GetBasicDetailForParitalViewByRequestId(RequestId) {
     })
     .then(response => response.text())
     .then(html =>{
-            document.getElementById("partialContainerBD").innerHTML = html;
+        //let $html = $('<div>').html(html);
+        //$html.find('#basicDetailsButtons').append('');
+        //let updatedHtmlString = $html.html();
+        document.getElementById("partialContainerBD").innerHTML = html;
+        //BindParitalViewEvents();
     })
     .catch(error => {
        alert("Error: " + error.message);
     });
 }
+
+
 function DownloadPdf(RequestId) {
     var userdata = {
         "RequestId": RequestId,
@@ -232,4 +198,21 @@ function DownloadPdf(RequestId) {
             });
         }
     });
+}
+
+function ResetErrorMessage() {
+    $("#txtDistributeoninp-error").text("");
+    $("#txtDistributeRemark-error").text("");
+}
+
+
+function Reset() {
+    ResetErrorMessage();
+    //$('.select2-selection__clear').trigger('click');
+    $('.select2').val(null).trigger('change');
+    $('#SaveDistributeCardRequest').find(':input')
+        .not(':button, :submit, :reset, :hidden')
+        .val('')
+        .prop('checked', false);
+    $('#btnSubmit').prop('disabled', true);
 }

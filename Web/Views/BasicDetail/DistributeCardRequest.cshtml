@@ -1,5 +1,5 @@
 ﻿@{
-    ViewData["Title"] = "HotList Card Request";
+    ViewData["Title"] = "Distribute Card Request";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <style>
@@ -30,6 +30,23 @@
         -o-transform: translate3d(0%, 0, 0);
         transform: translate3d(0%, 0, 0);
     }
+
+    .interactive-buttons .btn {
+        min-width: 180px;
+        font-weight: 500;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+        .interactive-buttons .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .interactive-buttons .btn:focus {
+            outline: none;
+            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.5);
+        }
 </style>
 <link asp-href-include="~/select2/css/select2.min.css" rel="stylesheet" />
 <header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
@@ -39,7 +56,7 @@
                 <div class="col-auto">
                     <h1 class="page-header-title">
                         <div class="page-header-icon"> <i class="fa fa-bars"></i></div>
-                        <a href="/Home/Index" class="mr-2">Home</a> >  <a href="/Home/Dashboard" class="mr-2">Dashboard</a> > HOT LISTING
+                        <a href="/Home/Index" class="mr-2">Home</a> >  <a href="/Home/Dashboard" class="mr-2">Dashboard</a> > CARD DISTRIBUTION
                     </h1>
                 </div>
             </div>
@@ -53,7 +70,7 @@
             <div class="row">
                 <div class="col-xl-12 text-left">
                     <h3>
-                        Hotlist Card Request Indl Army No
+                        Card Distribution Request Indl Army No
                         <small class="text-muted"><span id="spnArmyNo"></span></small>
                     </h3>
                 </div>
@@ -61,21 +78,19 @@
         </div>
         <div class="card-body" style="min-height:150px;">
             <div class="row g-3 row-deck mb-3">
-                <form action="" id="SaveHotlistCardRequest" method="post" name="SaveHotlistCardRequest">
+                <form action="" id="SaveDistributeCardRequest" method="post" name="SaveDistributeCardRequest">
                     <div class="row">
-                        @* <span class=" d-none" id="spnTrnHotlistCardId">@ViewBag.TrnFaultyCardId</span> *@
-                        <span class=" d-none" id="spnHotlistCardRequestId">0</span>
-                        <span class=" d-none" id="spnMaxTrnFwdId">0</span>
-                        @* <span class=" d-none" id="spnClaimValue">@ViewBag.Claim</span> *@
+                        <span class=" d-none" id="spnDistributeCardRequestId">0</span>
                         <div class="col-sm-7">
                             <div class="card p-1">
                                 <div id="partialContainerBD">
+
                                 </div>
-                                <div class="text-center">
-                                    <button type="button" class="faulty" id="btnCardPreview" name="btnCardPreview">I-Card Preview</button>
-                                    <button type="button" class="faulty" id="btnXMLDownload" name="btnXMLDownload">XML Download</button>
-                                    <button type="button" class="faulty" id="btnApplMoveHistory" name="btnApplMoveHistory">I-Card Move History</button>
-                                    <button type="button" class="faulty" id="btnHotlistCardsList" name="btnHotlistCardsList">View Holtlist Cards</button>
+                                <div class="mt-4 mb-4 d-flex justify-content-center gap-3 interactive-buttons flex-wrap" id="basicDetailsButtons">
+                                    <button type="button" class="btn btn-outline-secondary btn-lg" id="btnCardPreview" name="btnCardPreview">I-Card Preview</button>
+                                    <button type="button" class="btn btn-outline-warning btn-lg" id="btnXMLDownload" name="btnXMLDownload">XML Download</button>
+                                    <button type="button" class="btn btn-outline-info btn-lg" id="btnApplMoveHistory" name="btnApplMoveHistory">I-Card Move History</button>
+                                    <button type="button" class="btn btn-outline-primary btn-lg" id="btnDistributeCardsList" name="btnDistributeCardsList">View Distributed Cards</button>
                                 </div>
                             </div>
                         </div>
@@ -85,36 +100,33 @@
                                     <div class="feature-box3">
                                         <div class="top-block_ind d-flex">
                                             <div class="text-block">
-                                                <h5 class="mb-1 text-font2 font-weight600">Report Holtlist Card</h5>
+                                                <h5 class="mb-1 text-font2 font-weight600">Report Card Distribution</h5>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="form-group row mb-2 Stage d-none">
-                                        <label class="col-form-label col-sm-5 labelprofile">Stage<i class="fas fa-asterisk mand1"></i></label>
-                                        <div class="col-sm-7">
-                                            <select class="form-select" style="width: 100%;" aria-hidden="true" id="ddlStage" name="ddlStage" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="Stage is required." data-val-regex-pattern="^[\d]+$">
-                                                <option value="">Select One</option>
-                                            </select>
-                                            <span class="text-danger field-validation-valid" data-valmsg-for="ddlStage" data-valmsg-replace="true"></span>
-                                        </div>
-                                    </div>
                                     <div class="form-group row mb-2">
-                                        <label class="col-form-label col-sm-5 labelprofile">Select Reason<i class="fas fa-asterisk mand1"></i></label>
+                                        <label class="col-form-label col-sm-5 labelprofile">Date Of Distribution<i class="fas fa-asterisk mand1"></i></label>
                                         <div class="col-sm-7">
-                                            <select class="form-control select2 select2-accessible text-uppercase" multiple style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddlHotlistRemark" id="ddlHotlistRemark" data-val="true" data-val-regex="This special chars and space not allowed for security reasons." data-val-required="Hotlist Reason is required.">
-                                            </select>
-                                            <span class="text-danger field-validation-valid" data-valmsg-for="ddlHotlistRemark" data-valmsg-replace="true"></span>
+                                            <input type="text" id="txtDistributeoninp" class="form-control datepickerpast" name="txtDistributeoninp" autocomplete="off" data-val="true" data-val-required="Date Of Distribution is required.">
+                                            <span class="text-danger field-validation-valid" data-valmsg-for="txtDistributeoninp" data-valmsg-replace="true"></span>
                                         </div>
                                     </div>
                                     <div class="form-group row mb-2">
                                         <label class="col-form-label col-sm-5 labelprofile">Remarks<i class="fas fa-asterisk mand1"></i></label>
                                         <div class="col-sm-7">
-                                            <textarea class="form-control1" style="height:auto!important;" name="txtHotlistRemark" id="txtHotlistRemark" rows="3" maxlength="100" data-val-maxlength="Maximum length of Message is 100 character." data-val-maxlength-max="100" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="Remark is required." data-val-regex-pattern="^[\w\&\.\-\; ]*$"></textarea>
-                                            <span class="text-danger field-validation-valid" data-valmsg-for="txtHotlistRemark" data-valmsg-replace="true"></span>
+                                            <textarea class="form-control1" style="height:auto!important;" name="txtDistributeRemark" id="txtDistributeRemark" rows="3" maxlength="100" data-val-maxlength="Maximum length of Message is 100 character." data-val-maxlength-max="100" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="Remark is required." data-val-regex-pattern="^[\w\&\.\-\; ]*$"></textarea>
+                                            <span class="text-danger field-validation-valid" data-valmsg-for="txtDistributeRemark" data-valmsg-replace="true"></span>
                                         </div>
                                     </div>
-                                    <div class="col-sm-12 text-center mb-4">
-                                        <input type="button" class="btn btn-primary" id="btnAccept" value="Submit" />
+                                    <div class="form-check mt-4">
+                                        <input class="form-check-input" type="checkbox" id="declarationCheckbox">
+                                        <label class="form-check-label labelprofile" for="declarationCheckbox">
+                                            I hereby declare that the details furnished above are true to the best of my knowledge. I am fully aware of this declaration and hereby consent that the Smart I-Card has been handed over to the individual.
+                                        </label>
+                                    </div>
+                                    <div class="col-sm-12 d-flex justify-content-center gap-3 mb-4">
+                                        <input type="button" class="btn btn-primary" id="btnSubmit" value="Submit" disabled/>
+                                        <input type="button" class="btn btn-warning" id="btnReset" value="Reset" />
                                     </div>
                                 </div>
                             </div>
@@ -126,6 +138,6 @@
     </div>
 </div>
 <script asp-src-include="~/select2/js/select2.min.js"></script>
-<script asp-src-include="~/developerjs/HotListCardRequest.js"></script>
+<script asp-src-include="~/developerjs/DistributeCardRequest.js"></script>
 <script asp-src-include="~/developerjs/mtables.js"></script>
 <script asp-src-include="~/developerjs/ICardPrint.js"></script>

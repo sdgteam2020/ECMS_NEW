@@ -14,5 +14,6 @@ namespace BusinessLogicsLayer.DistributeCard
         Task<bool> FindRequestId(int RequestId);
         Task<DTODataTablesResponse<DTODistributeCardGetResponse>> GetAllDistribute(DTODataTablesRequest dTO);
         Task<List<DTODistributeCardExportResponse>> GetDetailsByRequestIds(DTOHotlistCardsExportRequest Data);
+        Task<DTOCommonSaveResponse> SaveDistributeCard(TrnDistributeCard model);
     }
 }

@@ -42,6 +42,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.SqlServer.Management.Smo;
+using BusinessLogicsLayer.DistributeCard;
 
 namespace BusinessLogicsLayer
 {
@@ -202,6 +203,10 @@ namespace BusinessLogicsLayer
 
             services.AddTransient<ILostCardDB, LostCardDB>();
             services.AddTransient<ILostCardBL, LostCardBL>();
+
+            services.AddTransient<IDistributeCardDB, DistributeCardDB>();
+            services.AddTransient<IDistributeCardBL, DistributeCardBL>();
+
 
 
 

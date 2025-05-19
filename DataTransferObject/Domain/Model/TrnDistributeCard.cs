@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DataTransferObject.Domain.Identitytable;
 
 namespace DataTransferObject.Domain.Model
 {
@@ -26,5 +27,9 @@ namespace DataTransferObject.Domain.Model
         [StringLength(100)]
         [Column(TypeName = "varchar(100)")]
         public string? Remark { get; set; }
+
+        [ForeignKey("UserProfileUserUpdate"), DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public int? UpdatedbyUserId { get; set; }
+        public MUserProfile? UserProfileUserUpdate { get; set; }
     }
 }

@@ -31,5 +31,10 @@ namespace BusinessLogicsLayer.DistributeCard
         {
             return await _iDistributeCardDB.GetDetailsByRequestIds(Data);
         }
+        
+        public async Task<DTOCommonSaveResponse> SaveDistributeCard(TrnDistributeCard model)
+        {
+            return await _iDistributeCardDB.SaveDistributeCard(model);
+        }
     }
 }

@@ -20,10 +20,9 @@ namespace DataTransferObject.Response
         public string? ArmedName { get; set; }
         public int RequestId { get; set; }
         public DateTime UpdatedOn { get; set; }
+        public DateTime DistributedOn { get; set; }
         public string ApplyFor { get; set; } = string.Empty;
-        public int HotlistCardId { get; set; }
-        public string RemarksIds { get; set; } = string.Empty;
-        public string RemarksNameList { get; set; } = string.Empty;
+        public int DistributeCardId { get; set; }
         public string? Remark { get; set; }
         public bool IsActive { get; set; } = false;
         public string? EncryptedId { get; set; }

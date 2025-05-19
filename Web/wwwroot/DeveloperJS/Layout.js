@@ -62,7 +62,7 @@ $(function () {
             else if ($("#armynosearchTypeId").val() == LostCardRequest)
                 window.location.href = "/BasicDetail/LostCardRequest";
             else if ($("#armynosearchTypeId").val() == DistributeCardRequest)
-                window.location.href = "/BasicDetail/LostCardRequest";
+                window.location.href = "/BasicDetail/DistributeCardRequest";
         } else {
             toastr.error("Please Enter Army No");
         }

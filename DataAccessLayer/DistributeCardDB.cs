@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,7 +11,13 @@ using DataTransferObject.Domain.Model;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
 using Microsoft.AspNetCore.DataProtection;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query.Internal;
+using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Logging;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace DataAccessLayer
 {
@@ -61,24 +68,24 @@ namespace DataAccessLayer
                 var allowedSortColumns = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
                 {
                     ["ModifiedServiceNo"] = "bas.ServiceNo",
-                    ["UpdatedOn"] = "hotlist.UpdatedOn",
+                    ["UpdatedOn"] = "tdc.UpdatedOn",
                     ["RequestId"] = "req.RequestId",
-                    ["Remark"] = "hotlist.Remark"
+                    ["Remark"] = "tdc.Remark"
                 };
 
                 var sortColumn = allowedSortColumns.ContainsKey(dTO.sortColumn ?? "")
                     ? allowedSortColumns[dTO.sortColumn!]
-                    : "hotlist.UpdatedOn";
+                    : "tdc.UpdatedOn";
 
                 var sortOrder = dTO.sortDirection;
 
                 string query = "";
                     query = @"appl.Name ApplyFor,
-                                req.RequestId,hotlist.HotlistCardId,
+                                req.RequestId,tdc.DistributeCardId,
                                 bas.ServiceNo,ranks.RankAbbreviation RankName,
                                 bas.FName,bas.LName,
                                 Muni.UnitName,Muni.Abbreviation UnitAbbreviation,
-                                hotlist.UpdatedOn,hotlist.RemarksIds,hotlist.Remark,hotlist.IsActive,
+                                tdc.UpdatedOn,tdc.Remark,tdc.IsActive,
                                 bas.NameAsPerRecord,
                                 regi.Abbreviation RegimentalName,
                                 CASE
@@ -86,10 +93,9 @@ namespace DataAccessLayer
                                 CONCAT(SUBSTRING(bas.ServiceNo, 1, 2), ' ', SUBSTRING(bas.ServiceNo, 3, LEN(bas.ServiceNo) - 2))
                                 ELSE
                                 bas.ServiceNo
-                                END AS ModifiedServiceNo,
-                                (select STRING_AGG(Remarks,'#') from MRemarks where RemarksId in (select value from string_split(hotlist.RemarksIds,','))) RemarksNameList
-                                from TrnHotlistCards hotlist
-                                inner join TrnICardRequest req on req.RequestId = hotlist.RequestId
+                                END AS ModifiedServiceNo,tdc.DistributedOn
+                                from TrnDistributeCards tdc
+                                inner join TrnICardRequest req on req.RequestId = tdc.RequestId
                                 inner join TrnDomainMapping tdm on tdm.Id=req.TrnDomainMappingId
                                 inner join BasicDetails bas on bas.BasicDetailId=req.BasicDetailId
                                 inner join MRank ranks on ranks.RankId=bas.RankId
@@ -105,7 +111,8 @@ namespace DataAccessLayer
                             )
                             SELECT * FROM RecordCTE
                             WHERE RowNum BETWEEN @Offset AND @Limit;
-                            Select Count(*) from TrnHotlistCards;
+
+                            Select Count(*) from TrnDistributeCards;
                         ";
 
                 using (var connection = _contextDP.CreateConnection())
@@ -121,7 +128,7 @@ namespace DataAccessLayer
                         data = (from e in records
                                 select new DTODistributeCardGetResponse()
                                 {
-                                    EncryptedId = protector.Protect(e.HotlistCardId.ToString()),
+                                    EncryptedId = protector.Protect(e.DistributeCardId.ToString()),
                                     NameAsPerRecord = e.NameAsPerRecord,
                                     FName = e.FName,
                                     LName = e.LName,
@@ -134,11 +141,10 @@ namespace DataAccessLayer
                                     RequestId = e.RequestId,
                                     UpdatedOn = e.UpdatedOn,
                                     ApplyFor = e.ApplyFor,
-                                    HotlistCardId = e.HotlistCardId,
-                                    RemarksIds = e.RemarksIds,
-                                    RemarksNameList = e.RemarksNameList,
+                                    DistributeCardId = e.DistributeCardId,
                                     Remark = e.Remark,
                                     IsActive = e.IsActive,
+                                    DistributedOn = e.DistributedOn
                                 }).ToList()
                     };
                 }
@@ -155,13 +161,12 @@ namespace DataAccessLayer
             var records = new List<DTODistributeCardExportResponse>();
             try
             {
-                string query = @"select req.RequestId,hotlist.HotlistCardId,bas.ServiceNo as ArmyNo,
+                string query = @"select req.RequestId,tdc.DistributeCardId,bas.ServiceNo as ArmyNo,
 	                                ranks.RankAbbreviation,bas.FName,bas.LName,Muni.Abbreviation Unit,
-	                                hotlist.UpdatedOn as DateAndTime,hotlist.Remark,hotlist.IsActive as IsActiveBool,
-	                                (select STRING_AGG(Remarks,' | ') from MRemarks where RemarksId in (select value from string_split(hotlist.RemarksIds,','))) Reasons,
-	                                req.CardSerialNo,req.ChipNo
-	                                from TrnHotlistCards hotlist
-	                                inner join TrnICardRequest req on req.RequestId = hotlist.RequestId
+	                                tdc.UpdatedOn as DateAndTime,tdc.Remark,tdc.IsActive as IsActiveBool,
+	                                req.CardSerialNo,req.ChipNo,tdc.DistributedOn
+	                                from TrnDistributeCards tdc
+	                                inner join TrnICardRequest req on req.RequestId = tdc.RequestId
 	                                inner join BasicDetails bas on bas.BasicDetailId=req.BasicDetailId
 	                                inner join MRank ranks on ranks.RankId=bas.RankId
 	                                inner join MapUnit uni on uni.UnitMapId=bas.UnitId
@@ -180,6 +185,50 @@ namespace DataAccessLayer
                 _logger.LogError(1001, ex, "DistributeCardDB->GetDetailsByRequestIds");
             }
             return records;
+        }
+
+        public async Task<DTOCommonSaveResponse> SaveDistributeCard(TrnDistributeCard model)
+        {
+            var (db, transaction) = _contextDP.CreateConnectionWithTransaction();
+            DTOCommonSaveResponse dtoResponse = new DTOCommonSaveResponse();
+            try
+            {
+                var insertQuery = @"Insert into TrnDistributeCards(RequestId,DistributedOn,Remark,UpdatedbyUserId,IsActive,Updatedby,UpdatedOn) 
+                                                             Values(@RequestId,@DistributedOn,@Remark,@UpdatedbyUserId,@IsActive,@Updatedby,@UpdatedOn);
+                                    SELECT CAST(SCOPE_IDENTITY() as int);
+                                    
+                                    update TrnICardRequest set StatusId = 3,UpdatedOn = @UpdatedOn,Updatedby = @Updatedby where RequestId = @RequestId
+                                    update TrnStepCounter set StepId = 18,UpdatedOn = @UpdatedOn,Updatedby = @Updatedby where RequestId = @RequestId";
+                var parameters = new DynamicParameters();
+                parameters.Add("@RequestId", model.RequestId, DbType.Int32, ParameterDirection.Input);
+                parameters.Add("@DistributedOn", model.DistributedOn, DbType.DateTime, ParameterDirection.Input);
+                parameters.Add("@Remark", model.Remark, DbType.String, ParameterDirection.Input);
+                parameters.Add("@UpdatedbyUserId", model.UpdatedbyUserId, DbType.String, ParameterDirection.Input);
+                parameters.Add("@IsActive", model.IsActive, DbType.Boolean, ParameterDirection.Input);
+                parameters.Add("@Updatedby", model.Updatedby, DbType.Int32, ParameterDirection.Input);
+                parameters.Add("@UpdatedOn", model.UpdatedOn, DbType.DateTime, ParameterDirection.Input);
+
+                model.DistributeCardId = await db.ExecuteScalarAsync<int>(insertQuery, parameters, transaction: transaction);
+
+                //var updateQuery = @""
+                //;
+                //await db.ExecuteAsync(updateQuery, parameters, transaction: transaction);
+
+                transaction.Commit();
+                dtoResponse.Result = true;
+                dtoResponse.Message = "Record Created!";
+                dtoResponse.Id = model.DistributeCardId.ToString();
+                dtoResponse.CurrentTime = model.UpdatedOn.GetValueOrDefault();
+            }
+            catch (Exception ex)
+            {
+                transaction.Rollback();
+                _logger.LogError(1001, ex, "DistributeCardDB->SaveDistributeCard");
+                dtoResponse.Result = false;
+                dtoResponse.Message = "Internal Server Error!";
+            }
+
+            return dtoResponse;
         }
     }
 }

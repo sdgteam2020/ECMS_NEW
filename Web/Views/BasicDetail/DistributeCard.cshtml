@@ -1,5 +1,5 @@
 ﻿@{
-    ViewData["Title"] = "List of Hotlist Card Request";
+    ViewData["Title"] = "List of Distributed Card Request";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <link asp-href-include="~/datatables/dataTables.bootstrap4.min.css" rel="stylesheet" />
@@ -16,7 +16,7 @@
                 <div class="col-auto">
                     <h1 class="page-header-title">
                         <div class="page-header-icon"> <i class="fa fa-bars"></i></div>
-                        <a href="/Home/Index" class="mr-2">Home</a> >  <a href="/Home/Dashboard" class="mr-2">Dashboard</a> > HOT LISTING
+                        <a href="/Home/Index" class="mr-2">Home</a> >  <a href="/Home/Dashboard" class="mr-2">Dashboard</a> > I-CARD DISTRIBUTION
                     </h1>
                 </div>
             </div>
@@ -33,7 +33,7 @@
             <div class="row">
                 <div class="col-xl-12 text-left">
                     <h3>
-                        Hotlist Details
+                        I-Card Distribution Details
                         <small class="text-muted"></small>
                     </h3>
                 </div>
@@ -43,7 +43,7 @@
             <div class="col-xl-12">
                 <div class="mb-2 d-md-flex justify-content-md-between align-items-md-center">
                     <h6 class="mb-3 mb-md-0">
-                        Total Hotlist :<label class="font-weight-bold" id="lblTotal">0</label>
+                        Total Distribution :<label class="font-weight-bold" id="lblTotal">0</label>
                     </h6>
                     <div class="d-flex">
                         @* <button type="button" id="btnDataExportsEncry" class="btn btn-warning font-weight-600 btn-sm mr-2">Data Exports with Encry</button> *@
@@ -63,12 +63,11 @@
                                 </th>
                                 <th class="noExport d-none"></th>
                                 <th class="wd-40-f">S No</th>
-                                @* <th class="nowrap">Request Id</th> *@
                                 <th class="nowrap">Army No</th>
                                 <th class="nowrap">Rk & Name</th>
                                 <th class="nowrap">Unit</th>
                                 <th class="nowrap">Date & Time</th>
-                                <th class="nowrap">Reason</th>
+                                <th class="nowrap">Distributed On</th>
                                 <th class="nowrap">Remark</th>
                             </tr>
                         </thead>
@@ -80,7 +79,7 @@
         </div>
     </div>
 </div>
-<script asp-src-include="~/developerjs/HotlistCard.js"></script>
+<script asp-src-include="~/developerjs/DistributeCard.js"></script>
 
 <script asp-src-include="~/js/datatables/jquery.datatables.min.js"></script>
 <script asp-src-include="~/js/datatables/dataTables.responsive.min.js"></script>
