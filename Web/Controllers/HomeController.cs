@@ -233,12 +233,29 @@ namespace Web.Controllers
         [HttpPost]
         public async Task<IActionResult> GetReportData([FromBody] DTODataTablesRequestForReport dTORecord)
         {
+            int userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var user = await userManager.FindByIdAsync(userId.ToString());
+
             DtoSession? dtoSession = new DtoSession();
             if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
             {
                 dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
 
             }
+
+            // UserManager service GetClaimsAsync method gets all the current claims of the user
+            var UserClaims = await userManager.GetClaimsAsync(user);
+            if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "Army Level Reports"))
+            {
+
+            }
+
+
+
+
+
+
+
             int? MapUnitId = dtoSession != null ? dtoSession.UnitId : null;
             if (MapUnitId != null)
             {
@@ -257,6 +274,7 @@ namespace Web.Controllers
             {
                 return Json(KeyConstants.InternalServerError);
             }
+
             
             if (dTORecord.Choice == "MonthlyProcessed")
             {

@@ -1,6 +1,197 @@
-﻿var table; // Declare table variable outside the function to preserve the instance
+﻿var lst = '<option value="null">All</option>';
+var comid = 0; var corId = 0; var divId = 0; var bdeId = 0; var FmnBranchId = 0; var PsoId = 0; var SubDteId = 0;
+var UnitType = 1;
+var table; // Declare table variable outside the function to preserve the instance
 $(function () {
     GetReportDashboardCount();
+
+    if ($('#ddlCommand').length > 0) {
+        $('#ddlCommand').on('change', function () {
+            comid = $(this).val();
+            mMsater(false, 0, "ddlCorps", 2, $('#ddlCommand').val());
+            $("#ddlDiv").html(lst);
+            $("#ddlBde").html(lst);
+            $("#ddlFmnBranch").html(lst);
+            $("#ddlPSODte").html(lst);
+            $("#ddlDgSubDte").html(lst);
+            $("#ddlUnit").html(lst);
+        });
+    }
+    if ($('#ddlCorps').length > 0) {
+        $('#ddlCorps').on('change', function () {
+            corId = $(this).val();
+            mMsaterByParent(false, 0, "ddlDiv", 3, $('#ddlCommand').val(), $('#ddlCorps').val(), 0, 0);///ComdId,CorpsId,DivId,BdeId
+            $("#ddlBde").html(lst);
+            $("#ddlFmnBranch").html(lst);
+            $("#ddlPSODte").html(lst);
+            $("#ddlDgSubDte").html(lst);
+            $("#ddlUnit").html(lst);
+        });
+    }
+    if ($('#ddlDiv').length > 0) {
+        $('#ddlDiv').on('change', function () {
+            divId = $(this).val();
+            mMsaterByParent(false, 0, "ddlBde", 4, $('#ddlCommand').val(), $('#ddlCorps').val(), $('#ddlDiv').val(), 0);///ComdId,CorpsId,DivId,BdeId     
+            $("#ddlFmnBranch").html(lst);
+            $("#ddlPSODte").html(lst);
+            $("#ddlDgSubDte").html(lst);
+            $("#ddlUnit").html(lst);
+        });
+    }
+    if ($('#ddlBde').length > 0) {
+        $('#ddlBde').on('change', function () {
+            bdeId = $(this).val();
+            mMsater(false, 0, "ddlFmnBranch", FmnBranches, "");
+            $("#ddlUnit").html(lst);
+            GetUnitByHierarchy(false, "ddlUnit", 0, $('#ddlCommand').val(), $('#ddlCorps').val(), $('#ddlDiv').val(), $('#ddlBde').val(), 1, 1, 1);
+
+        });
+    }
+    if ($('#ddlFmnBranch').length > 0) {
+        $('#ddlFmnBranch').on('change', function () {
+            FmnBranchId = $(this).val();
+            $("#ddlUnit").html(lst);
+            GetUnitByHierarchy(false,"ddlUnit", 0, $("#ddlCommand").val(), $("#ddlCorps").val(), 1, 1, $("#ddlFmnBranch").val(), 1, 1);
+
+        });
+    }
+    if ($('#ddlDgSubDte').length > 0) {
+        $('#ddlDgSubDte').on('change', function () {
+            SubDteId = $(this).val();
+            GetUnitByHierarchy(false,"ddlUnit", 0, 1, 1, 1, 1, 1, PsoId, $("#ddlDgSubDte").val());
+        });
+    }
+    if ($('#ddlPSODte').length > 0) {
+        $('#ddlPSODte').on('change', function () {
+            PsoId = $(this).val();
+            GetUnitByHierarchy(false,"ddlUnit", 0, 1, 1, 1, 1, 1, $("#ddlPSODte").val(), SubDteId);
+        });
+    }
+    $('input[name="UnitTyperdi"]').on("click",function () {
+
+        UnitType = $("input[type='radio'][name=UnitTyperdi]:checked").val();
+
+        if (UnitType == "1") {
+            $(".unittype").removeClass("d-none");
+            $(".FmnBranch").addClass("d-none");
+            $(".DteBranch").addClass("d-none");
+
+            $('#ddlCommand option').remove();
+            $('#ddlCorps option').remove();
+            $('#ddlBde option').remove();
+            $('#ddlDiv option').remove();
+
+
+            if ($("#spnclaimId").html() == "Army Level Reports") {
+                mMsater(false, '', "ddlCommand", 1, "");
+
+                $("#ddlCorps").html(lst);
+                $("#ddlBde").html(lst);
+                $("#ddlDiv").html(lst);
+            }
+            else if ($("#spnclaimId").html() == "2nd Level") {
+                if (comid == 1)
+                    mMsater(false, '', "ddlCommand", 1, "");
+                else
+                    mMsater(true, '', "ddlCommand", 1, "");
+            }
+            else {
+                mMsater(true, '', "ddlCommand", 1, "");
+
+            }
+
+            $("#ddlFmnBranch").html(lst);
+            $("#ddlPSODte").html(lst);
+            $("#ddlDgSubDte").html(lst);
+        }
+        else if (UnitType == "2") {
+
+            $('#ddlCommand option').remove();
+            $('#ddlCorps option').remove();
+            $('#ddlBde option').remove();
+            $('#ddlDiv option').remove();
+            $('#ddlFmnBranch option').remove();
+            $("#ddlUnit").html(lst);
+
+            if ($("#spnclaimId").html() == "Army Level Reports") {
+                mMsater(false, '', "ddlCommand", 1, "");
+                mMsater(false, '', "ddlFmnBranch", FmnBranches, "");
+
+                $("#ddlCorps").html(lst);
+                $("#ddlBde").html(lst);
+                $("#ddlDiv").html(lst);
+            }
+            else if ($("#spnclaimId").html() == "2nd Level") {
+                if (comid == 1) {
+                    mMsater(false, '', "ddlCommand", 1, "");
+                    mMsater(false, '', "ddlFmnBranch", FmnBranches, "");
+                }
+
+                else {
+                    mMsater(true, '', "ddlCommand", 1, "");
+                    mMsater(true, '', "ddlFmnBranch", FmnBranches, "");
+                }
+            }
+            else {
+                mMsater(true, '', "ddlCommand", 1, "");
+                mMsater(true, '', "ddlFmnBranch", FmnBranches, "");
+
+            }
+
+            $("#ddlPSODte").html(lst);
+            $("#ddlDgSubDte").html(lst);
+
+            $(".unittype").removeClass("d-none");
+            $(".FmnBranch").removeClass("d-none");
+            $(".DteBranch").addClass("d-none");
+        }
+        else if (UnitType == "3") {
+            $(".unittype").addClass("d-none");
+            $(".FmnBranch").addClass("d-none");
+            $(".DteBranch").removeClass("d-none");
+
+            $('#ddlPSODte option').remove();
+            $('#ddlDgSubDte option').remove();
+
+            $("#ddlCommand").html(lst);
+            $("#ddlCorps").html(lst);
+            $("#ddlBde").html(lst);
+            $("#ddlDiv").html(lst);
+            $("#ddlFmnBranch").html(lst);
+            $("#ddlUnit").html(lst);
+
+            if ($("#spnclaimId").html() == "Army Level Reports") {
+                mMsater(false, '', "ddlPSODte", PSO, "");
+                mMsater(false, '', "ddlDgSubDte", SubDte, "");
+            }
+            else if ($("#spnclaimId").html() == "2nd Level") {
+                if (comid == 1) {
+                    mMsater(false, '', "ddlPSODte", PSO, "");
+                    mMsater(false, '', "ddlDgSubDte", SubDte, "");
+                }
+
+                else {
+                    mMsater(true, '', "ddlPSODte", PSO, "");
+                    mMsater(true, '', "ddlDgSubDte", SubDte, "");
+                }
+                    
+            }
+            else {
+                mMsater(true, '', "ddlCommand", 1, "");
+
+            }
+        }
+    });
+
+    if ($('#spnclaimId').length > 0) {
+        if ($('#spnclaimId').html() === 'Army Level Reports') {
+            mMsater(0, "ddlCommand", 1, "");
+            UnitType = 1;
+            GetLoginUnitMappingDetails();
+        }
+    }
+
+
     $('#txtMonthYear').datepicker({
         dateFormat: 'mm/yy',
         changeMonth: true,
@@ -77,13 +268,7 @@ $(function () {
         e.preventDefault();
     });
 
-    if ($('#ddlCommand').length > 0) {
-        mMsater(0, "ddlCommand", 1, "");
-    }
-    //$("#btnRequisition").on("click", function (event) {
-    //    event.preventDefault(); // Prevent anchor default behavior
-    //    GetReportReturnHistory('Requisition');
-    //})
+
     $("#btnRequisition").on("click", function (event) {
         event.preventDefault(); // Prevent anchor default behavior
         $("#CardReport_lblModelTitle").html('New Requisition');
@@ -176,14 +361,14 @@ function GetReportReturnHistory(Choice) {
     var userdata =
     {
         "TableId": 0,
-        "ComdId": $('#ddlCommand').length > 0 ? $('#ddlCommand').val() : 0,
-        "CorpsId": $('#ddlCorps').length > 0 ? $('#ddlCorps').val() : 0,
-        "DivId": $('#ddlDiv').length > 0 ? $('#ddlDiv').val() : 0,
-        "BdeId": $('#ddlBde').length > 0 ? $('#ddlBde').val() : 0,
-        "FmnBranchID": $('#ddlFmnBranch').length > 0 ? $('#ddlFmnBranch').val() : 0,
-        "PsoId": $('#ddlPSODte').length > 0 ? $('#ddlPSODte').val() : 0,
-        "SubDteId": $('#ddlDgSubDte').length > 0 ? $('#ddlDgSubDte').val() : 0,
-        "UnitMapId": $('#ddlUnit').length > 0 ? $('#ddlUnit').val() : 0,
+        "ComdId": $('#ddlCommand').length > 0 ? $('#ddlCommand').val() : null,
+        "CorpsId": $('#ddlCorps').length > 0 ? $('#ddlCorps').val() : null,
+        "DivId": $('#ddlDiv').length > 0 ? $('#ddlDiv').val() : null,
+        "BdeId": $('#ddlBde').length > 0 ? $('#ddlBde').val() : null,
+        "FmnBranchID": $('#ddlFmnBranch').length > 0 ? $('#ddlFmnBranch').val() : null,
+        "PsoId": $('#ddlPSODte').length > 0 ? $('#ddlPSODte').val() : null,
+        "SubDteId": $('#ddlDgSubDte').length > 0 ? $('#ddlDgSubDte').val() : null,
+        "UnitMapId": $('#ddlUnit').length > 0 ? $('#ddlUnit').val() : null,
         "MonthYear": $('#txtMonthYear').length > 0 ? $('#txtMonthYear').val() : null,
         "Choice": Choice,
     };
@@ -765,6 +950,422 @@ function GetReportDashboardCount() {
             }
             else {
 
+            }
+        },
+        error: function (result) {
+            Swal.fire({
+                text: errormsg002
+            });
+        }
+    });
+}
+function GetLoginUnitMappingDetails() {
+
+    var listItem = "";
+    var userdata =
+    {
+        "UnitMapId": 0
+
+    };
+    $.ajax({
+        url: '/Master/GetALLByUnitMapWonUnit',
+        contentType: 'application/x-www-form-urlencoded',
+        data: userdata,
+        type: 'POST',
+
+        success: function (response) {
+
+            if (response != "null" && response != null) {
+
+                if (response == InternalServerError) {
+                    Swal.fire({
+                        text: errormsg
+                    });
+                }
+                else if (response == 0) {
+
+                }
+
+                else {
+
+
+                    UnitType = response.UnitType;
+                    var lst = '<option value="1">Please Select</option>';
+
+                    comid = response.ComdId;
+                    corId = response.CorpsId;
+                    divId = response.DivId;
+                    bdeId = response.BdeId;
+                    FmnBranchId = response.FmnBranchID;
+                    PsoId = response.PsoId;
+                    SubDteId = response.SubDteId;
+
+
+
+
+                    if (parseInt(response.UnitType) == 1) {
+                        $("#UnitType1").prop("checked", true);
+
+                        if ($("#spnclaimId").html() == "Army Level Reports") {
+                            mMsater(false, '', "ddlCommand", 1, "");
+                        }
+                        else if ($("#spnclaimId").html() == "2nd Level") {
+                            if (response.ComdId == 1)
+                                mMsater(false, response.ComdId, "ddlCommand", 1, "");
+                            else
+                                mMsater(true, response.ComdId, "ddlCommand", 1, "");
+
+
+                            if (response.CorpsId == 1)
+                                mMsater(false, response.CorpsId, "ddlCorps", 2, response.ComdId);
+                            else
+                                mMsater(true, response.CorpsId, "ddlCorps", 2, response.ComdId);
+
+
+                            if (response.DivId == 1)
+                                mMsaterByParent(false, response.DivId, "ddlDiv", 3, response.ComdId, response.CorpsId, 0, 0);///ComdId,CorpsId,DivId,BdeId
+                            else
+                                mMsaterByParent(true, response.DivId, "ddlDiv", 3, response.ComdId, response.CorpsId, 0, 0);///ComdId,CorpsId,DivId,BdeId
+
+                            if (response.BdeId == 1)
+                                mMsaterByParent(false, response.BdeId, "ddlBde", 4, response.ComdId, response.CorpsId, response.DivId, 0);///ComdId,CorpsId,DivId,BdeId
+                            else
+                                mMsaterByParent(true, response.BdeId, "ddlBde", 4, response.ComdId, response.CorpsId, response.DivId, 0);///ComdId,CorpsId,DivId,BdeId
+
+                            GetUnitByHierarchy(false, "ddlUnit", response.UnitId, response.ComdId, response.CorpsId, response.DivId, response.BdeId, response.FmnBranchID, 1, 1);
+                        }
+                        else {
+                            mMsater(true, response.ComdId, "ddlCommand", 1, "");
+                            mMsater(true, response.CorpsId, "ddlCorps", 2, response.ComdId);
+                            mMsaterByParent(true, response.DivId, "ddlDiv", 3, response.ComdId, response.CorpsId, 0, 0);///ComdId,CorpsId,DivId,BdeId
+                            mMsaterByParent(true, response.BdeId, "ddlBde", 4, response.ComdId, response.CorpsId, response.DivId, 0);///ComdId,CorpsId,DivId,BdeId
+
+                            GetUnitByHierarchy(true, "ddlUnit", response.UnitId, response.ComdId, response.CorpsId, response.DivId, response.BdeId, 1, 1, 1);
+                        }
+
+                        $(".unittype").removeClass("d-none");
+                        $(".FmnBranch").addClass("d-none");
+                        $(".DteBranch").addClass("d-none");
+
+                        $("#ddlFmnBranch").html(lst);
+                        $("#ddlPSODte").html(lst);
+                        $("#ddlDgSubDte").html(lst);
+
+                    }
+                    else if (parseInt(response.UnitType) == 2) {
+                        $("#UnitType2").prop("checked", true);
+
+                        if ($("#spnclaimId").html() == "Army Level Reports") {
+                            mMsater(false, '', "ddlCommand", 1, "");
+                        }
+                        else if ($("#spnclaimId").html() == "2nd Level") {
+                            if (response.ComdId == 1)
+                                mMsater(false, response.ComdId, "ddlCommand", 1, "");
+                            else
+                                mMsater(true, response.ComdId, "ddlCommand", 1, "");
+
+
+                            if (response.CorpsId == 1)
+                                mMsater(false, response.CorpsId, "ddlCorps", 2, response.ComdId);
+                            else
+                                mMsater(true, response.CorpsId, "ddlCorps", 2, response.ComdId);
+
+
+                            if (response.DivId == 1)
+                                mMsaterByParent(false, response.DivId, "ddlDiv", 3, response.ComdId, response.CorpsId, 0, 0);///ComdId,CorpsId,DivId,BdeId
+                            else
+                                mMsaterByParent(true, response.DivId, "ddlDiv", 3, response.ComdId, response.CorpsId, 0, 0);///ComdId,CorpsId,DivId,BdeId
+
+                            if (response.BdeId == 1)
+                                mMsaterByParent(false, response.BdeId, "ddlBde", 4, response.ComdId, response.CorpsId, response.DivId, 0);///ComdId,CorpsId,DivId,BdeId
+                            else
+                                mMsaterByParent(true, response.BdeId, "ddlBde", 4, response.ComdId, response.CorpsId, response.DivId, 0);///ComdId,CorpsId,DivId,BdeId
+
+                            if (response.FmnBranchID == 1)
+                                mMsater(false, response.FmnBranchID, "ddlFmnBranch", FmnBranches, "");
+                            else
+                                mMsater(true, response.FmnBranchID, "ddlFmnBranch", FmnBranches, "");
+
+                            GetUnitByHierarchy(false, "ddlUnit", response.UnitId, response.ComdId, response.CorpsId, response.DivId, response.BdeId, response.FmnBranchID, 1, 1);
+
+                        }
+                        else {
+                            mMsater(true, response.ComdId, "ddlCommand", 1, "");
+                            mMsater(true, response.CorpsId, "ddlCorps", 2, response.ComdId);
+                            mMsaterByParent(true, response.DivId, "ddlDiv", 3, response.ComdId, response.CorpsId, 0, 0);///ComdId,CorpsId,DivId,BdeId
+                            mMsaterByParent(true, response.BdeId, "ddlBde", 4, response.ComdId, response.CorpsId, response.DivId, 0);///ComdId,CorpsId,DivId,BdeId
+                            mMsater(true, response.FmnBranchID, "ddlFmnBranch", FmnBranches, "");
+
+                            GetUnitByHierarchy(true, "ddlUnit", response.UnitId, response.ComdId, response.CorpsId, response.DivId, response.BdeId, response.FmnBranchID, 1, 1);
+                        }
+                        $("#ddlPSODte").html(lst);
+                        $("#ddlDgSubDte").html(lst);
+
+                        $(".unittype").removeClass("d-none");
+                        //$(".FmnBranch").removeClass("d-none");
+                        //$(".DteBranch").addClass("d-none");
+
+                    }
+                    else if (parseInt(response.UnitType) == 3) {
+                        $("#UnitType3").prop("checked", true);
+
+                        if ($("#spnclaimId").html() == "Army Level Reports") {
+                            mMsater(false, '', "ddlPSODte", PSO, "");
+                            mMsater(false, '', "ddlDgSubDte", SubDte, "");
+                        }
+                        else if ($("#spnclaimId").html() == "2nd Level") {
+                            if (response.PsoId == 1)
+                                mMsater(false, response.PsoId, "ddlPSODte", PSO, "");
+                            else
+                                mMsater(true, response.PsoId, "ddlPSODte", PSO, "");
+
+
+                            if (response.SubDteId == 1)
+                                mMsater(false, response.SubDteId, "ddlDgSubDte", SubDte, response.PsoId);
+                            else
+                                mMsater(true, response.SubDteId, "ddlDgSubDte", SubDte, response.PsoId);
+
+                            GetUnitByHierarchy(false,"ddlUnit", response.UnitId, 1, 1, 1, 1, 1, response.PsoId, response.SubDteId);
+                        }
+                        else {
+                            mMsater(true,response.PsoId, "ddlPSODte", PSO, "");
+                            mMsater(true,response.SubDteId, "ddlDgSubDte", SubDte, "");
+                            GetUnitByHierarchy(true,"ddlUnit", response.UnitId, 1, 1, 1, 1, 1, response.PsoId, response.SubDteId);
+                        }
+
+                        $(".unittype").addClass("d-none");
+                        $(".FmnBranch").addClass("d-none");
+                        $(".DteBranch").removeClass("d-none");
+
+                        $("#ddlFmnBranch").html(lst);
+                        $("#ddlCommand").html(lst);
+                        $("#ddlCorps").html(lst);
+                        $("#ddlCorps").html(lst);
+                        $("#ddlBde").html(lst);
+                        $("#ddlDiv").html(lst);
+                    }
+
+                }
+            }
+            else {
+
+            }
+        },
+        error: function (result) {
+            Swal.fire({
+                text: errormsg002
+            });
+        }
+    });
+
+}
+
+function GetUnitByHierarchy(IsOnly, ddl, sectid, ComdId, CorpsId, DivId, BdeId, FmnBranchID, PsoId, SubDteId) {
+    var listItem = "";
+    var userdata =
+    {
+        "TableId": 0,
+        "UnitType":UnitType,
+        "ComdId": ComdId,
+        "CorpsId": CorpsId,
+        "DivId": DivId,
+        "BdeId": BdeId,
+        "FmnBranchID": FmnBranchID,
+        "PsoId": PsoId,
+        "SubDteId": SubDteId,
+
+    };
+    $.ajax({
+        url: '/Master/GetUnitByHierarchy',
+        contentType: 'application/x-www-form-urlencoded',
+        data: userdata,
+        type: 'POST',
+
+        success: function (response) {
+            if (response != "null" && response != null) {
+
+                if (response == InternalServerError) {
+                    Swal.fire({
+                        text: errormsg
+                    });
+
+                }
+                else if (response.length == 0) {
+
+
+                }
+
+                else {
+
+
+
+                    listItem += '<option value="null">All</option>';
+                    for (var i = 0; i < response.length; i++) {
+                        if (IsOnly == true && response[i].UnitId == sectid) {
+
+                            listItem += '<option value="' + response[i].UnitId + '">' + response[i].UnitName + '</option>';
+                        } else if
+                            (IsOnly == false) {
+                            listItem += '<option value="' + response[i].UnitId + '">' + response[i].UnitName + '</option>';
+                        }
+
+
+                    }
+                    $("#" + ddl + "").html(listItem);
+                    if (sectid != '') {
+                        $("#" + ddl + "").val(sectid);
+
+                    }
+                }
+            }
+            else {
+
+            }
+        },
+        error: function (result) {
+            Swal.fire({
+                text: errormsg002
+            });
+        }
+    });
+
+}
+
+function mMsater(IsOnly, sectid = '', ddl, TableId, ParentId) {
+
+
+    var userdata =
+    {
+        "id": TableId,
+        "ParentId": ParentId,
+
+    };
+    $.ajax({
+        url: '/Master/GetAllMMaster',
+        contentType: 'application/x-www-form-urlencoded',
+        data: userdata,
+        type: 'POST',
+
+        success: function (response) {
+            if (response != "null" && response != null) {
+                if (response == InternalServerError) {
+                    Swal.fire({
+                        text: errormsg
+                    });
+                }
+
+                else {
+
+                    var listItemddl = "";
+                    if (IsOnly == false) {
+                        listItemddl += '<option value="null">All</option>';
+                    }
+
+
+                    for (var i = 0; i < response.length; i++) {
+                        if (IsOnly == true && response[i].Id == sectid) {
+                            listItemddl += '<option value="' + response[i].Id + '">' + response[i].Name + '</option>';
+                        }
+                        else if (IsOnly == false) {
+                            listItemddl += '<option value="' + response[i].Id + '">' + response[i].Name + '</option>';
+
+                        }
+                    }
+                    $("#" + ddl + "").html(listItemddl);
+
+                    if (sectid != '') {
+                        $("#" + ddl + "").val(sectid);
+
+                    }
+
+                    //}
+
+
+                }
+            }
+            else {
+                //Swal.fire({
+                //    text: "No data found Offrs"
+                //});
+            }
+        },
+        error: function (result) {
+            Swal.fire({
+                text: errormsg002
+            });
+        }
+    });
+}
+
+function mMsaterByParent(IsOnly, sectid = '', ddl, TableId, ComdId, CorpsId, DivId, BdeId) {
+
+
+    var userdata =
+    {
+        "TableId": TableId,
+        "ComdId": ComdId,
+        "CorpsId": CorpsId,
+        "DivId": DivId,
+        "BdeId": BdeId,
+
+    };
+    $.ajax({
+        url: '/Master/GetAllMMasterByParent',
+        contentType: 'application/x-www-form-urlencoded',
+        data: userdata,
+        type: 'POST',
+
+        success: function (response) {
+            if (response != "null" && response != null) {
+                if (response == InternalServerError) {
+                    Swal.fire({
+                        text: errormsg
+                    });
+                }
+
+                else {
+
+                    var listItemddl = "";
+                    if (IsOnly == false) {
+                        listItemddl += '<option value="null">All</option>';
+                    }
+
+                    for (var i = 0; i < response.length; i++) {
+                        if (IsOnly == true && response[i].Id == sectid) {
+                            listItemddl += '<option value="' + response[i].Id + '">' + response[i].Name + '</option>';
+                        }
+                        else if (IsOnly == false) {
+                            listItemddl += '<option value="' + response[i].Id + '">' + response[i].Name + '</option>';
+
+                        }
+                    }
+                    $("#" + ddl + "").html(listItemddl);
+
+                    //if (TableId == 5 || TableId == 7 || TableId == 8) {
+
+                    //    if (sectid != '') {
+                    //        $("#" + ddl + " option").filter(function () {
+                    //            return this.text == sectid;
+                    //        }).attr('selected', true);
+
+                    //    }
+                    //}
+                    //else
+                    //{
+                    if (sectid != '') {
+                        $("#" + ddl + "").val(sectid);
+
+                    }
+
+                    //}
+
+
+                }
+            }
+            else {
+                //Swal.fire({
+                //    text: "No data found Offrs"
+                //});
             }
         },
         error: function (result) {

@@ -13,19 +13,19 @@
 <link asp-href-include="~/css/stylesheetfordatatable.css" rel="stylesheet" />
 <style>
     .clickable {
-        height: 190px;
-        width: 190px;
-        display: block;
-        margin-bottom: 25px;
+    height: 190px;
+    width: 190px;
+    display: block;
+    margin-bottom: 25px;
     }
 
     .p-4 {
-        padding: 1.5rem !important;
-        padding-bottom: 4.5rem !important;
+    padding: 1.5rem !important;
+    padding-bottom: 4.5rem !important;
     }
 
     .ui-datepicker-calendar {
-        display: none !important;
+    display: none !important;
     }
 </style>
 <header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
@@ -45,6 +45,102 @@
     </div>
 </header>
 <div class="containerMain mt-n10">
+    @if (claims.Count > 0 && claims.Any(i => i.Value == "Army Level Reports"))
+    {
+        <div class="containerMain mt-n10">
+            <div class="row">
+                <div class="card  section_to_report_toPrint" id="section_to_report_toPrint">
+                    <div class="row pt-1 SearchTab d-print-none">
+                        <div class="form-group row mb-2">
+                            <span id="spnclaimId" class="d-none">Army Level Reports</span>
+                            <label class="col-form-label col-md-2 fw-bold">Select Unit Type <i class="fas fa-asterisk mand1"></i></label>
+                            <div class="col-md-10">
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="UnitTyperdi" id="UnitType1" value="1">
+                                    <label class="form-check-label" for="UnitType1">Unit</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="UnitTyperdi" id="UnitType2" value="2">
+                                    <label class="form-check-label" for="UnitType2">
+                                        Unit(Fmn HQ)
+                                    </label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="UnitTyperdi" id="UnitType3" value="3">
+                                    <label class="form-check-label" for="UnitType3">Unit(Dte/Branch)</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row SearchTab">
+                        <div class="col-sm-3 unittype">
+                            <label class="col-form-label fw-bold">Comd / PSO<i class="fas fa-asterisk mand1"></i></label>
+                            <select class="form-select" aria-hidden="true" name="ddlCommand" required id="ddlCommand">
+                                <option value="">All</option>
+                            </select>
+
+                        </div>
+                        <div class="col-sm-3 unittype">
+                            <label class="col-form-label fw-bold">Corps / Dte / Area<i class="fas fa-asterisk mand1"></i></label>
+
+                            <select class="form-select" aria-hidden="true" name="ddlCorps" required id="ddlCorps">
+                                <option value="">All</option>
+                            </select>
+
+                        </div>
+                        <div class="col-sm-3 unittype">
+                            <label class="col-form-label fw-bold">Div/Sub Area<i class="fas fa-asterisk mand1"></i></label>
+
+                            <select class="form-select" aria-hidden="true" name="ddlDiv" required id="ddlDiv">
+                                <option value="">All</option>
+                            </select>
+
+                        </div>
+                        <div class="col-sm-3 unittype">
+                            <label class="col-form-label fw-bold">Bde<i class="fas fa-asterisk mand1"></i></label>
+
+                            <select class="form-select" aria-hidden="true" name="ddlBde" required id="ddlBde">
+                                <option value="">All</option>
+                            </select>
+
+                        </div>
+                        <div class="col-sm-3 FmnBranch  d-none">
+                            <label class="col-form-label fw-bold">Type of Fmn /Branch<i class="fas fa-asterisk mand1"></i></label>
+
+                            <select class="form-select" aria-hidden="true" name="ddlFmnBranch" required id="ddlFmnBranch">
+                                <option value="">All</option>
+                            </select>
+
+                        </div>
+                        <div class="col-sm-3 DteBranch d-none">
+                            <label class="col-form-label fw-bold">PSO /Dte <i class="fas fa-asterisk mand1"></i></label>
+
+                            <select class="form-select" aria-hidden="true" name="ddlPSODte" required id="ddlPSODte">
+                                <option value="">All</option>
+                            </select>
+
+                        </div>
+                        <div class="col-sm-3 DteBranch d-none">
+                            <label class="col-form-label fw-bold">DG / Sub Dte <i class="fas fa-asterisk mand1"></i></label>
+
+                            <select class="form-select" aria-hidden="true" name="ddlDgSubDte" required id="ddlDgSubDte">
+                                <option value="">All</option>
+                            </select>
+
+                        </div>
+                        <div class="col-sm-3">
+                            <label class="col-form-label fw-bold">Unit<i class="fas fa-asterisk mand1"></i></label>
+
+                            <select class="form-select" aria-hidden="true" name="ddlUnit" required id="ddlUnit">
+                                <option value="">All</option>
+                            </select>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
     @if (RoleNameList.Contains(ViewBag.Role))
     {
             <div class="row">
