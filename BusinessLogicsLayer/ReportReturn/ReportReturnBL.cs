@@ -53,9 +53,9 @@ namespace BusinessLogicsLayer.ReportReturn
         {
             return await _IReportReturnDB.GetReportData(dTO);
         }
-        public async Task<DTOReportDashboardCountResponse> GetReportDashboardCount(DTODataTablesRequestForReport dTO, bool Claim) 
+        public async Task<DTOReportDashboardCountResponse> GetReportDashboardCount(DTODataTablesRequestForReport dTO) 
         {
-            return await _IReportReturnDB.GetReportDashboardCount(dTO, Claim);
+            return await _IReportReturnDB.GetReportDashboardCount(dTO);
         }
     }
 }

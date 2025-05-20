@@ -764,6 +764,7 @@ namespace DataAccessLayer
                                     AND unit.SubDteId = ISNULL(@SubDteId, unit.SubDteId)
                                 )
                             )
+							AND unit.UnitType =@UnitType
                             AND unit.UnitMapId = ISNULL(@UnitMapId, unit.UnitMapId)
                             AND ServiceNo LIKE '%' + @SearchTerm + '%'";
             }
@@ -812,6 +813,7 @@ namespace DataAccessLayer
                                     AND unit.SubDteId = ISNULL(@SubDteId, unit.SubDteId)
                                 )
                             )
+							AND unit.UnitType =@UnitType
                             AND unit.UnitMapId = ISNULL(@UnitMapId, unit.UnitMapId)
                             AND ServiceNo LIKE '%' + @SearchTerm + '%'";
             }
@@ -861,6 +863,7 @@ namespace DataAccessLayer
                                     AND unit.SubDteId = ISNULL(@SubDteId, unit.SubDteId)
                                 )
                             )
+							AND unit.UnitType =@UnitType
                             AND unit.UnitMapId = ISNULL(@UnitMapId, unit.UnitMapId)
                             AND ServiceNo LIKE '%' + @SearchTerm + '%'";
             }
@@ -927,6 +930,7 @@ namespace DataAccessLayer
                                     AND unit.SubDteId = ISNULL(@SubDteId, unit.SubDteId)
                                 )
                             )
+							AND unit.UnitType =@UnitType
                             AND unit.UnitMapId = ISNULL(@UnitMapId, unit.UnitMapId)
                             AND ServiceNo LIKE '%' + @SearchTerm + '%'
                             AND YEAR(basi.UpdatedOn) = RIGHT(@MonthYear, 4)
@@ -988,7 +992,7 @@ namespace DataAccessLayer
                 return responseData;
             }
         }
-        public async Task<DTOReportDashboardCountResponse> GetReportDashboardCount(DTODataTablesRequestForReport dTO, bool Claim)
+        public async Task<DTOReportDashboardCountResponse> GetReportDashboardCount(DTODataTablesRequestForReport dTO)
         {
             string query = @"declare @TotRequisition int=0
                             declare @TotLostCases int=0
@@ -1020,10 +1024,8 @@ namespace DataAccessLayer
                                     AND unit.SubDteId = ISNULL(@SubDteId, unit.SubDteId)
                                 )
                             )
-                            AND (
-	                            @Claim = 1
-	                            OR (@Claim = 0 AND unit.UnitMapId = ISNULL(@UnitMapId, unit.UnitMapId))
-                            )
+                            AND unit.UnitMapId = ISNULL(@UnitMapId, unit.UnitMapId)
+                            AND unit.UnitType =@UnitType
                             AND req.StatusId=1
 
                             SELECT @TotLostCases=COUNT(distinct req.RequestId) from TrnLostCards lost
@@ -1052,10 +1054,8 @@ namespace DataAccessLayer
 		                            AND unit.SubDteId = ISNULL(@SubDteId, unit.SubDteId)
 	                            )
                             )
-                            AND (
-	                            @Claim = 1
-	                            OR (@Claim = 0 AND unit.UnitMapId = ISNULL(@UnitMapId, unit.UnitMapId))
-                            )
+                            AND unit.UnitType =@UnitType
+                            AND unit.UnitMapId = ISNULL(@UnitMapId, unit.UnitMapId)
 
                             Select @TotMonthlyProcessed=COUNT(distinct req.RequestId) from TrnICardRequest req
                                     INNER JOIN  BasicDetails basi on req.BasicDetailId=basi.BasicDetailId
@@ -1082,11 +1082,9 @@ namespace DataAccessLayer
                                     AND unit.SubDteId = ISNULL(@SubDteId, unit.SubDteId)
                                 )
                             )
-                            AND (
-	                            @Claim = 1
-	                            OR (@Claim = 0 AND unit.UnitMapId = ISNULL(@UnitMapId, unit.UnitMapId))
-                            )
                             AND req.StatusId=1
+                            AND unit.UnitMapId = ISNULL(@UnitMapId, unit.UnitMapId)
+                            AND unit.UnitType =@UnitType
                             AND YEAR(basi.UpdatedOn) = YEAR(GETDATE())
                             AND MONTH(basi.UpdatedOn) = MONTH(GETDATE())
 
@@ -1116,10 +1114,8 @@ namespace DataAccessLayer
                                     AND unit.SubDteId = ISNULL(@SubDteId, unit.SubDteId)
                                 )
                             )
-                            AND (
-	                            @Claim = 1
-	                            OR (@Claim = 0 AND unit.UnitMapId = ISNULL(@UnitMapId, unit.UnitMapId))
-                            )
+                            AND unit.UnitType =@UnitType
+                            AND unit.UnitMapId = ISNULL(@UnitMapId, unit.UnitMapId)
 
                             select @TotRequisition TotRequisition,@TotLostCases TotLostCases,@TotMonthlyProcessed TotMonthlyProcessed,@TotNonFunctionalCard TotNonFunctionalCard";
 
@@ -1137,7 +1133,6 @@ namespace DataAccessLayer
                     parameters.Add("@FmnBranchID", dTO.FmnBranchID, DbType.Byte, ParameterDirection.Input);
                     parameters.Add("@PsoId", dTO.PsoId, DbType.Byte, ParameterDirection.Input);
                     parameters.Add("@SubDteId", dTO.SubDteId, DbType.Byte, ParameterDirection.Input);
-                    parameters.Add("@Claim", Claim, DbType.Boolean, ParameterDirection.Input);
 
                     var ret = await connection.QueryAsync<DTOReportDashboardCountResponse>(query, parameters);
                     return ret.FirstOrDefault();

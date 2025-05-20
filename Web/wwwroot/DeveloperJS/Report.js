@@ -361,6 +361,7 @@ function GetReportReturnHistory(Choice) {
     var userdata =
     {
         "TableId": 0,
+        "UnitType": $("input[type='radio'][name=UnitTyperdi]").length >0 ? $("input[type='radio'][name=UnitTyperdi]:checked").val() : null,
         "ComdId": $('#ddlCommand').length > 0 ? $('#ddlCommand').val() : null,
         "CorpsId": $('#ddlCorps').length > 0 ? $('#ddlCorps').val() : null,
         "DivId": $('#ddlDiv').length > 0 ? $('#ddlDiv').val() : null,

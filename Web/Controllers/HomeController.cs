@@ -193,7 +193,16 @@ namespace Web.Controllers
             DTODataTablesRequestForReport dTORecord = new DTODataTablesRequestForReport();
             int userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
             var user = await userManager.FindByIdAsync(userId.ToString());
-            
+
+            bool Claim = false;
+
+            // UserManager service GetClaimsAsync method gets all the current claims of the user
+            var UserClaims = await userManager.GetClaimsAsync(user);
+            if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "Army Level Reports"))
+            {
+                Claim = true;
+            }
+
             DtoSession? dtoSession = new DtoSession();
             if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
             {
@@ -205,7 +214,7 @@ namespace Web.Controllers
             {
                 DTOMapUnitResponse dTOMap = await _mapUnitBL.GetALLByUnitMapId((int)MapUnitId);
                 dTORecord.UnitType = dTOMap.UnitType;
-                dTORecord.UnitMapId = (int)MapUnitId;
+                dTORecord.UnitMapId = Claim == true ? null :(int)MapUnitId;
                 dTORecord.ComdId = (byte?)dTOMap.ComdId;
                 dTORecord.CorpsId = (byte?)dTOMap.CorpsId;
                 dTORecord.DivId = (byte?)dTOMap.DivId;
@@ -219,16 +228,7 @@ namespace Web.Controllers
                 return Json(KeyConstants.InternalServerError);
             }
 
-            bool Claim = false;
-
-            // UserManager service GetClaimsAsync method gets all the current claims of the user
-            var UserClaims = await userManager.GetClaimsAsync(user);
-            if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "Army Level Reports"))
-            {
-                Claim = true;
-            }
-
-            return Json(await _reportReturnBL.GetReportDashboardCount(dTORecord, Claim));
+            return Json(await _reportReturnBL.GetReportDashboardCount(dTORecord));
         }
         [HttpPost]
         public async Task<IActionResult> GetReportData([FromBody] DTODataTablesRequestForReport dTORecord)
@@ -242,6 +242,12 @@ namespace Web.Controllers
                 dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
 
             }
+            int? MapUnitId = dtoSession != null ? dtoSession.UnitId : null;
+            if (MapUnitId == null)
+            {
+                return BadRequest(new { message = "Session expired." });
+            }
+            DTOMapUnitResponse dTOMap = await _mapUnitBL.GetALLByUnitMapId((int)MapUnitId);
 
             // UserManager service GetClaimsAsync method gets all the current claims of the user
             var UserClaims = await userManager.GetClaimsAsync(user);
@@ -249,33 +255,112 @@ namespace Web.Controllers
             {
 
             }
-
-
-
-
-
-
-
-            int? MapUnitId = dtoSession != null ? dtoSession.UnitId : null;
-            if (MapUnitId != null)
+            else if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "2nd Level"))
             {
-                DTOMapUnitResponse dTOMap = await _mapUnitBL.GetALLByUnitMapId((int)MapUnitId);
-                dTORecord.UnitType = dTOMap.UnitType;
-                dTORecord.UnitMapId = (int)MapUnitId;
-                dTORecord.ComdId = (byte?)dTOMap.ComdId;
-                dTORecord.CorpsId = (byte?)dTOMap.CorpsId;
-                dTORecord.DivId = (byte?)dTOMap.DivId;
-                dTORecord.BdeId = (byte?)dTOMap.BdeId;
-                dTORecord.FmnBranchID = (byte?)dTOMap.FmnBranchID;
-                dTORecord.PsoId = (byte?)dTOMap.PsoId;  
-                dTORecord.SubDteId = (byte?)dTOMap.SubDteId;
+                
+                if (dTOMap.UnitType == 1)
+                {
+                    dTORecord.ComdId = (byte?)dTOMap.ComdId;
+                    if (dTOMap.CorpsId == 1)
+                    {
+                        dTORecord.CorpsId = null;
+                    }
+                    else
+                    {
+                        dTORecord.CorpsId = (byte?)dTOMap.CorpsId;
+                    }
+                    
+                    if (dTOMap.DivId == 1)
+                    {
+                        dTORecord.DivId = null;
+                    }
+                    else
+                    {
+                        dTORecord.DivId = (byte?)dTOMap.DivId;
+                    }
+                    if (dTOMap.BdeId == 1)
+                    {
+                        dTORecord.BdeId = null;
+                    }
+                    else
+                    {
+                        dTORecord.BdeId = (byte?)dTOMap.BdeId;
+                    }
+                }
+                else if (dTOMap.UnitType == 2)
+                {
+                    dTORecord.ComdId = (byte?)dTOMap.ComdId;
+                    if (dTOMap.CorpsId == 1)
+                    {
+                        dTORecord.CorpsId = null;
+                    }
+                    else
+                    {
+                        dTORecord.CorpsId = (byte?)dTOMap.CorpsId;
+                    }
+
+                    if (dTOMap.DivId == 1)
+                    {
+                        dTORecord.DivId = null;
+                    }
+                    else
+                    {
+                        dTORecord.DivId = (byte?)dTOMap.DivId;
+                    }
+                    if (dTOMap.BdeId == 1)
+                    {
+                        dTORecord.BdeId = null;
+                    }
+                    else
+                    {
+                        dTORecord.BdeId = (byte?)dTOMap.BdeId;
+                    }
+                    if (dTOMap.FmnBranchID == 1)
+                    {
+                        dTORecord.FmnBranchID = null;
+                    }
+                    else
+                    {
+                        dTORecord.FmnBranchID = (byte?)dTOMap.FmnBranchID;
+                    }
+                }
+                else if(dTOMap.UnitType == 3)
+                {
+                    if (dTOMap.PsoId == 1)
+                    {
+                        dTORecord.PsoId = null;
+                    }
+                    else
+                    {
+                        dTORecord.PsoId = (byte?)dTOMap.PsoId;
+                    }
+                    if (dTOMap.SubDteId == 1)
+                    {
+                        dTORecord.SubDteId = null;
+                    }
+                    else
+                    {
+                        dTORecord.SubDteId = (byte?)dTOMap.SubDteId;
+                    }
+                }
             }
             else
             {
-                return Json(KeyConstants.InternalServerError);
+                if (MapUnitId != null)
+                {
+                    dTORecord.UnitType = dTOMap.UnitType;
+                    dTORecord.UnitMapId = (int)MapUnitId;
+                    dTORecord.ComdId = (byte?)dTOMap.ComdId;
+                    dTORecord.CorpsId = (byte?)dTOMap.CorpsId;
+                    dTORecord.DivId = (byte?)dTOMap.DivId;
+                    dTORecord.BdeId = (byte?)dTOMap.BdeId;
+                    dTORecord.FmnBranchID = (byte?)dTOMap.FmnBranchID;
+                    dTORecord.PsoId = (byte?)dTOMap.PsoId;
+                    dTORecord.SubDteId = (byte?)dTOMap.SubDteId;
+                }
             }
 
-            
+        
             if (dTORecord.Choice == "MonthlyProcessed")
             {
                 if (!String.IsNullOrEmpty( dTORecord.MonthYear))
