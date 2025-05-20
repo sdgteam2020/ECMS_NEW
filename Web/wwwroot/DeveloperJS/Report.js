@@ -358,23 +358,29 @@ function GetReportReturnHistory(Choice) {
         $("#CardReport_tbldatadialog").DataTable().destroy();
         $("#CardReport_tbldatadialog").empty(); // Clear old thead/tbody
     }
+    function parseVal(val) {
+        if (val === "null" || val === undefined || val === "") {
+            return null;
+        }
+        return val;
+    }
     var userdata =
     {
-        "TableId": 0,
-        "UnitType": $("input[type='radio'][name=UnitTyperdi]").length >0 ? $("input[type='radio'][name=UnitTyperdi]:checked").val() : null,
-        "ComdId": $('#ddlCommand').length > 0 ? $('#ddlCommand').val() : null,
-        "CorpsId": $('#ddlCorps').length > 0 ? $('#ddlCorps').val() : null,
-        "DivId": $('#ddlDiv').length > 0 ? $('#ddlDiv').val() : null,
-        "BdeId": $('#ddlBde').length > 0 ? $('#ddlBde').val() : null,
-        "FmnBranchID": $('#ddlFmnBranch').length > 0 ? $('#ddlFmnBranch').val() : null,
-        "PsoId": $('#ddlPSODte').length > 0 ? $('#ddlPSODte').val() : null,
-        "SubDteId": $('#ddlDgSubDte').length > 0 ? $('#ddlDgSubDte').val() : null,
-        "UnitMapId": $('#ddlUnit').length > 0 ? $('#ddlUnit').val() : null,
-        "MonthYear": $('#txtMonthYear').length > 0 ? $('#txtMonthYear').val() : null,
         "Choice": Choice,
+        "TableId": 0,
+        "UnitType": $("input[type='radio'][name=UnitTyperdi]").length > 0 ? parseVal($("input[type='radio'][name=UnitTyperdi]:checked").val()) : null,
+        "ComdId": $('#ddlCommand').length > 0 ? parseVal($('#ddlCommand').val()) : null,
+        "CorpsId": $('#ddlCorps').length > 0 ? parseVal($('#ddlCorps').val()) : null,
+        "DivId": $('#ddlDiv').length > 0 ? parseVal($('#ddlDiv').val()) : null,
+        "BdeId": $('#ddlBde').length > 0 ? parseVal($('#ddlBde').val()) : null,
+        "FmnBranchID": $('#ddlFmnBranch').length > 0 ? parseVal($('#ddlFmnBranch').val()) : null,
+        "PsoId": $('#ddlPSODte').length > 0 ? parseVal($('#ddlPSODte').val()) : null,
+        "SubDteId": $('#ddlDgSubDte').length > 0 ? parseVal($('#ddlDgSubDte').val()) : null,
+        "UnitMapId": $('#ddlUnit').length > 0 ? parseVal($('#ddlUnit').val()) : null,
+        "MonthYear": $('#txtMonthYear').length > 0 ? $('#txtMonthYear').val() : null,
+        
     };
     const columns = getColumnsByChoice(Choice);
-
     table = $("#CardReport_tbldatadialog").DataTable({
         processing: true,
         serverSide: true,
@@ -383,15 +389,17 @@ function GetReportReturnHistory(Choice) {
         responsive: true,
         autoWidth: false,
         ajax: async function (data, callback, settings) {
+            
             let requestData = {
-                draw: data.draw,
-                start: data.start,
-                length: data.length,
-                searchValue: data.search.value,
-                sortColumn: data.order.length > 0 ? data.columns[data.order[0].column].data : '',  // Add a check for data.order
-                sortDirection: data.order.length > 0 ? data.order[0].dir : '', // Add a check for data.order
+                Draw: data.draw,
+                Start: data.start,
+                Length: data.length,
+                SearchValue: data.search.value,
+                SortColumn: data.order.length > 0 ? data.columns[data.order[0].column].data : '',  // Add a check for data.order
+                SortDirection: data.order.length > 0 ? data.order[0].dir : '', // Add a check for data.order
                 ...userdata
             };
+            console.log(JSON.stringify(requestData));
             try {
                 let response = await fetch("/Home/GetReportData", {
                     method: "POST",
