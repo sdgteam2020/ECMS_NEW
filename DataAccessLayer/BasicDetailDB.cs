@@ -657,7 +657,7 @@ namespace DataAccessLayer
                                 CONCAT(SUBSTRING(bas.ServiceNo, 1, 2), ' ', SUBSTRING(bas.ServiceNo, 3, LEN(bas.ServiceNo) - 2))
                                 ELSE
                                 bas.ServiceNo
-                                END AS ModifiedServiceNo
+                                END AS ModifiedServiceNo,icardreq.CardSerialNo,icardreq.ChipNo
                                 from BasicDetails bas
                                 inner join MIssuingAuthority issaut on issaut.IssuingAuthorityId=bas.IssuingAuthorityId
                                 inner join TrnAddress trnadd on trnadd.BasicDetailId=bas.BasicDetailId

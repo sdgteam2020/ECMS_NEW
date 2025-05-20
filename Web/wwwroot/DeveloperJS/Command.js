@@ -136,7 +136,8 @@ function BindData() {
                         stateSave: true,
                         "order": [[1, "asc"]],
                         dom: 'lBfrtip', // Add buttons to the DOM
-                        buttons: [{
+                        buttons: [
+                        {
                             extend: 'copy',
                             exportOptions: {
                                 columns: "thead th:not(.noExport)",
@@ -157,7 +158,8 @@ function BindData() {
                             customize: function (doc) {
                                 WaterMarkOnPdf(doc)
                             }
-                        }]
+                            }
+                        ]
                     });
 
                     memberTable.buttons().container().appendTo('#tblcommnd_wrapper .col-md-6:eq(0)');
