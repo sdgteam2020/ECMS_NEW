@@ -169,6 +169,8 @@ async function Save() {
                 document.getElementById("ConfirmationDialog_Data").innerHTML= Message;
                 btnSearchNew.textContent = "Search New";
                 btnBackDashboard.textContent = "Back to Dashboard";
+
+                
                 myModal.show();
             }
             else {

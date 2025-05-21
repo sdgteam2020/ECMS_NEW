@@ -151,7 +151,7 @@ function BindData() {
         ],
         language: {
             search: "", // Remove the default "Search:" label
-            searchPlaceholder: "Search IC No" // Add custom placeholder
+            searchPlaceholder: "Search Army No" // Add custom placeholder
         },
         dom: 'lBfrtip', // Add buttons to the DOM
         buttons: [
@@ -217,7 +217,7 @@ function BindData() {
 
         }
     });
-    if ($("#spnClaimValue").html() === "true") {
+    if ($("#spnClaimValue").html().toLowerCase() === "true") {
         table.column(8).visible(true);
     }
     else {

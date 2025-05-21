@@ -1102,7 +1102,7 @@ namespace Web.Controllers
                 bool result = await _mapUnitChangeBL.FindUnitIdMapped(MapUnitId);
                 if(result)
                 {
-                    TempData["error"] = "Unit Mapping Change Request already place.";
+                    TempData["error"] = "Unit move change request has already been submitted.";
                     TempData.Keep("error");
                     return RedirectToAction("Dashboard", "Home");
                 }
@@ -1197,9 +1197,9 @@ namespace Web.Controllers
                                     FromUserId = dtoSession != null ? dtoSession.UserId : 0,
                                     Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier)),
                                     UpdatedOn = DateTime.Now,
-                                    ApproverUserId = null,
-                                    ApproverUpdatedby = null,
-                                    ApproverUpdatedOn = null,
+                                    AdminUserId = null,
+                                    AdminUpdatedby = null,
+                                    AdminUpdatedOn = null,
                                 };
                                 TrnMapUnitChangeRequest response = await _mapUnitChangeBL.AddWithReturn(unitChangeRequest);
                                 dTOCommon.Result = true;
@@ -1263,9 +1263,9 @@ namespace Web.Controllers
                         }
                         mapUnitChangeRequest.IsEditAction = true;
                         mapUnitChangeRequest.IsComplete = true;
-                        mapUnitChangeRequest.ApproverUpdatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-                        mapUnitChangeRequest.ApproverUserId = dtoSession != null ? dtoSession.UserId : 0;
-                        mapUnitChangeRequest.ApproverUpdatedOn = DateTime.Now;
+                        mapUnitChangeRequest.AdminUpdatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                        mapUnitChangeRequest.AdminUserId = dtoSession != null ? dtoSession.UserId : 0;
+                        mapUnitChangeRequest.AdminUpdatedOn = DateTime.Now;
                         return Json(await _mapUnitChangeBL.UpdateMapUnitChangeRequest(dTO, mapUnitChangeRequest));
                     }
                     else

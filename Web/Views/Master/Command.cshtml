@@ -3,14 +3,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <link asp-href-include="~/css/hierarchy.css" rel="stylesheet" />
-
-<link asp-href-include="~/datatables/dataTables.bootstrap4.min.css" rel="stylesheet" />
-<link asp-href-include="~/datatables/responsive.bootstrap4.min.css" rel="stylesheet" />
-<link asp-href-include="~/datatables/responsive.dataTables.min.css" rel="stylesheet" />
-<link asp-href-include="~/datatables/buttons.bootstrap4.min.css" rel="stylesheet" />
-<link asp-href-include="~/datatables/fixedHeader.dataTables.min.css" rel="stylesheet" />
-<link asp-href-include="~/datatables/jquery.dataTables.min.css" rel="stylesheet" />
-<link asp-href-include="~/css/stylesheetfordatatable.css" rel="stylesheet" />
+<partial name="~/Views/Shared/_DataTableCSS.cshtml" />
 
 <header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
     <div class="containerMain">
@@ -148,3 +141,4 @@
 <script asp-src-include="~/js/datatables/buttons.html5.min.js"></script> <!-- All HTML5 export buttons -->
 <script asp-src-include="~/js/datatables/buttons.print.min.js"></script> <!-- Adds a "Print" button to DataTables toolbar for print preview and printing -->
 <script asp-src-include="~/js/datatables/datatables-call.js"></script> <!-- your custom JS that calls and configures the DataTables plugin -->
+<partial name="~/Views/Shared/_DataTableJS.cshtml" />

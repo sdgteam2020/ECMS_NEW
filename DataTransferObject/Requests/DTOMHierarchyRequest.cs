@@ -10,6 +10,7 @@ namespace DataTransferObject.Requests
     public class DTOMHierarchyRequest
     {
         public int? TableId { get; set; }
+        public int? UnitType { get; set; }
         public byte? ComdId { get; set; }
 
         public byte? CorpsId { get; set; }

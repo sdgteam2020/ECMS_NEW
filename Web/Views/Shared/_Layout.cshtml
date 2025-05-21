@@ -16,40 +16,68 @@
     @* <meta http-equiv="content-security-policy"content="default-src 'none'; script-src 'self'; connect-src 'self'; img-src 'self'; style-src 'self' 'sha256-CwE3Bg0VYQOIdNAkbB/Btdkhul49qZuwgNCMPgNY5zw=';" /> *@
     <title> E-ISAC</title>
 
-    <link asp-href-include="~/fonts/css/all.min.css" rel="stylesheet" />
-    <link asp-href-include="~/css/nunito.css" rel="stylesheet" />
-    <link asp-href-include="~/css/roboto.css" rel="stylesheet" />
-
-    <link asp-href-include="~/sweetalert2/sweetalert2.min.css" rel="stylesheet" />
-    <link asp-href-include="~/css/bootstrap-datetimepicker.min.css" rel="stylesheet" />
-    <link asp-href-include="~/css/style.css" rel="stylesheet" />
-    <link asp-href-include="~/css/extra.css" rel="stylesheet" />
-    <link asp-href-include="~/css/background.css" rel="stylesheet" />
-    <link asp-href-include="~/css/typography.css" rel="stylesheet" />
-
-    <link asp-href-include="~/css/cssStyle.css" rel="stylesheet" />
-    
-    <link asp-href-include="~/css/horizontaltimeline.css" rel="stylesheet" />
-    <script asp-src-include="~/fonts/feather/feather.min.js"></script>
-    <script asp-src-include="~/fonts/allfont/webfont.min.js"></script>
-    <link asp-href-include="~/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
-    <link asp-href-include="~/lib/jqueryui/themes/base/jquery-ui.min.css" rel="stylesheet" />
-    <link asp-href-include="~/toastr/toastr.min.css" rel="stylesheet" />
-    <link asp-href-include="~/css/main.css" rel="stylesheet" />
-    <link asp-href-include="~/css/DashBoard.css" rel="stylesheet" />
-
     <!-- Development: Load normal JS -->
     <environment include="Development">
+        <link asp-href-include="~/fonts/css/all.min.css" rel="stylesheet" />
+        <link asp-href-include="~/css/nunito.css" rel="stylesheet" />
+        <link asp-href-include="~/css/roboto.css" rel="stylesheet" />
+
+        <link asp-href-include="~/sweetalert2/sweetalert2.min.css" rel="stylesheet" />
+        <link asp-href-include="~/css/bootstrap-datetimepicker.min.css" rel="stylesheet" />
+        <link asp-href-include="~/css/style.css" rel="stylesheet" />
+        <link asp-href-include="~/css/extra.css" rel="stylesheet" />
+        <link asp-href-include="~/css/background.css" rel="stylesheet" />
+        <link asp-href-include="~/css/typography.css" rel="stylesheet" />
+
+        <link asp-href-include="~/css/cssStyle.css" rel="stylesheet" />
+
+        <link asp-href-include="~/css/horizontaltimeline.css" rel="stylesheet" />
+        <script asp-src-include="~/fonts/feather/feather.min.js"></script>
+        <script asp-src-include="~/fonts/allfont/webfont.min.js"></script>
+        <link asp-href-include="~/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+        <link asp-href-include="~/lib/jqueryui/themes/base/jquery-ui.min.css" rel="stylesheet" />
+        <link asp-href-include="~/toastr/toastr.min.css" rel="stylesheet" />
+        <link asp-href-include="~/css/main.css" rel="stylesheet" />
+        @*     <link asp-href-include="~/css/DashBoard.css" rel="stylesheet" /> *@
+
         <script asp-src-include="~/lib/jquery/jquery.js"></script>
         <script asp-src-include="~/lib/jquery-validate/jquery.validate.js" defer></script>
         <script asp-src-include="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js" defer></script>
+        
+
+
     </environment>
 
     <!-- Production: Load minified JS -->
     <environment exclude="Development">
+        <link asp-href-include="~/fonts/css/all.min.css" rel="stylesheet" />
+        <link asp-href-include="~/css/nunito.css" rel="stylesheet" />
+        <link asp-href-include="~/css/roboto.css" rel="stylesheet" />
+
+        <link asp-href-include="~/sweetalert2/sweetalert2.min.css" rel="stylesheet" />
+        <link asp-href-include="~/css/bootstrap-datetimepicker.min.css" rel="stylesheet" />
+        <link asp-href-include="~/css/style.min.css" rel="stylesheet" />
+        <link asp-href-include="~/css/extra.css" rel="stylesheet" />
+        <link asp-href-include="~/css/background.css" rel="stylesheet" />
+        <link asp-href-include="~/css/typography.css" rel="stylesheet" />
+
+        <link asp-href-include="~/css/cssstyle.min.css" rel="stylesheet" />
+
+        <link asp-href-include="~/css/horizontaltimeline.css" rel="stylesheet" />
+        <script asp-src-include="~/fonts/feather/feather.min.js"></script>
+        <script asp-src-include="~/fonts/allfont/webfont.min.js"></script>
+        <link asp-href-include="~/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+        <link asp-href-include="~/lib/jqueryui/themes/base/jquery-ui.min.css" rel="stylesheet" />
+        <link asp-href-include="~/toastr/toastr.min.css" rel="stylesheet" />
+        <link asp-href-include="~/css/main.css" rel="stylesheet" />
+        @*     <link asp-href-include="~/css/DashBoard.css" rel="stylesheet" /> *@
+
         <script asp-src-include="~/lib/jquery/jquery.min.js"></script>
         <script asp-src-include="~/lib/jquery-validate/jquery.validate.min.js" defer></script>
         <script asp-src-include="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js" defer></script>
+
+
+
     </environment>
 
     @*   <script>
@@ -892,16 +920,16 @@
                         <div id="BasicDetails_Data">
 
                         </div>
-                        <div class="col-md-12 mb-3">
-                            <div class="form-group row mb-2 recectopt">
+                        <div class="col-md-12 ">
+                            <div class="form-group row recectopt  mb-3">
                                 <label class="col-form-label col-12 text-center">Select Remarks</label>
                                 <div class="col-sm-12">
                                     <select class="form-control select2 select2-accessible text-uppercase" multiple="" placeholder="Please select a Remarks" style="width: 100%;" tabindex="-1" aria-hidden="true" name="Remarks" required id="ddlRRemarks">
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-md-12 mb-3">
-                                <div class="form-group row mb-0 recectopt">
+                            <div class="col-md-12 ">
+                                <div class="form-group row recectopt mb-3">
                                     <label class="col-form-label col-12 text-center">Remarks</label>
                                     <div class="col-12">
                                         <textarea class="form-control text-uppercase" id="txtFrejectedRemarks" rows="2" maxlength="100"></textarea>
