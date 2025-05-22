@@ -20,13 +20,13 @@
                 listItem += `<div class="fw-bold">Request By - ${result.RankAbbreviation} ${result.RequestBy} (${result.ArmyNo})</div>`;
                 listItem += `<div class="fw-bold">Approve By - ${result.IsEditAction == true ? result.AproverRankAbbreviation + " " + result.AprovedBy + " (" + result.AproverArmyNo + ")" : ""} </div>`;
                 listItem += `<div class="fw-bold">Status - ${result.IsEditAction === false ? "<span class='badge bg-warning'>Pendding</span>" : result.RequestStatus === true ? "<span class='badge bg-success'>Accepted</span>" : "<span class='badge badge-pill badge-danger'>Rejected</span>"}</div>`;
-                listItem += `<div class="fw-bold">Approve Dt & Time - ${result.IsEditAction == true ? DateFormateddMMyyyyhhmmss(result.ApproverUpdatedOn) : ""} </div>`;
+                listItem += `<div class="fw-bold">Status Dt & Time - ${result.IsEditAction == true ? DateFormateddMMyyyyhhmmss(result.AdminUpdatedOn) : ""} </div>`;
                 listItem += `<div class="col-sm-12 mt-2">
                                     <div class="card p-1">
                                         <div class="feature-box3">
                                             <div class="top-block_ind d-flex">
                                                 <div class="text-block">
-                                                    <h5 class="mb-1 text-font2 font-weight600">Current Hierarchy</h5>
+                                                    <h5 class="mb-1 text-font2 font-weight600">Unit Current Hierarchy</h5>
                                                 </div>
                                             </div>
                                         </div>
@@ -86,7 +86,7 @@
                                         <div class="feature-box3">
                                             <div class="top-block_ind d-flex">
                                                 <div class="text-block">
-                                                    <h5 class="mb-1 text-font2 font-weight600">Unit Hierarchy Recalibration</h5>
+                                                    <h5 class="mb-1 text-font2 font-weight600">Unit Requested Hierarchy</h5>
                                                 </div>
                                             </div>
                                         </div>
@@ -146,7 +146,7 @@
                 let HistoryModal_Title = document.getElementById("HistoryModal_Title");
                 let HistoryModal_Body = document.getElementById("HistoryModal_Body");
 
-                HistoryModal_Header.innerHTML = "Unit Relocation  Request";
+                HistoryModal_Header.innerHTML = "Unit Move Request";
                 HistoryModal_Title.classList.add("d-none");
                 HistoryModal_Body.innerHTML = listItem;
                 myModal.show();

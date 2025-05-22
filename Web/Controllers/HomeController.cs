@@ -1,4 +1,5 @@
-﻿using BusinessLogicsLayer.BasicDet;
+﻿using BusinessLogicsLayer;
+using BusinessLogicsLayer.BasicDet;
 using BusinessLogicsLayer.Bde;
 using BusinessLogicsLayer.Home;
 using BusinessLogicsLayer.Master;
@@ -6,6 +7,7 @@ using BusinessLogicsLayer.RecordOffice;
 using BusinessLogicsLayer.Registration;
 using BusinessLogicsLayer.ReportReturn;
 using BusinessLogicsLayer.Service;
+using BusinessLogicsLayer.Unit;
 using DataTransferObject.Constants;
 using DataTransferObject.Domain.Identitytable;
 using DataTransferObject.Domain.Master;
@@ -18,6 +20,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.SqlServer.Management.Smo;
 using System.Data;
+using System.Globalization;
 using System.Security.Claims;
 using System.Text;
 using Web.WebHelpers;
@@ -41,6 +44,7 @@ namespace Web.Controllers
         private readonly ILogger<HomeController> _logger;
         private readonly IService service;
         public readonly IReportReturnBL _reportReturnBL;
+        private readonly IMapUnitBL _mapUnitBL;
         private const string CounterFilePath = "wwwroot/counter.txt";
         private const string SessionKey = "SessionHit";
         private readonly string[] IgnoredIPs = { "127.0.0.2", "127.0.0.3" }; // Add IPs to ignore
@@ -49,7 +53,7 @@ namespace Web.Controllers
             IBasicDetailBL basicDetailBL, INotificationBL notificationBL, ITrnICardRequestBL iTrnICardRequestBL,
             IHomeBL home, IRecordOfficeBL recordOfficeBL, SignInManager<ApplicationUser> signInManager, 
             UserManager<ApplicationUser> userManager, ILogger<HomeController> logger, IHttpContextAccessor httpContextAccessor,
-            IReportReturnBL reportReturnBL, IService service, IConfiguration configuration
+            IReportReturnBL reportReturnBL, IService service, IConfiguration configuration, IMapUnitBL mapUnitBL
             )
         {
             _userProfileBL = userProfileBL;
@@ -65,6 +69,7 @@ namespace Web.Controllers
             _httpContextAccessor = httpContextAccessor;
             this.service = service;
             _configuration = configuration;
+            _mapUnitBL = mapUnitBL;
         }
         private string GetSessionValue()
         {
@@ -117,6 +122,20 @@ namespace Web.Controllers
             return View();
         }
         #region Report Return
+        public async Task<IActionResult> Report()
+        {
+            string role = GetSessionValue();
+
+            ViewBag.Role = role;
+
+            var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var user = await userManager.FindByIdAsync(userId);
+
+            // UserManager service GetClaimsAsync method gets all the current claims of the user
+            var UserClaims = await userManager.GetClaimsAsync(user);
+            ViewBag.UserClaims = UserClaims;
+            return View();
+        }
         public async Task<IActionResult> ReportAndReturn()
         {
             var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -168,6 +187,233 @@ namespace Web.Controllers
                 return Json(KeyConstants.InternalServerError); 
             }
             
+        }
+        public async Task<IActionResult> GetReportDashboardCount()
+        {
+            DTODataTablesRequestForReport dTORecord = new DTODataTablesRequestForReport();
+            int userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var user = await userManager.FindByIdAsync(userId.ToString());
+
+            bool Claim = false;
+
+            // UserManager service GetClaimsAsync method gets all the current claims of the user
+            var UserClaims = await userManager.GetClaimsAsync(user);
+            if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "Army Level Reports"))
+            {
+                Claim = true;
+            }
+
+            DtoSession? dtoSession = new DtoSession();
+            if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
+            {
+                dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+
+            }
+            int? MapUnitId = dtoSession != null ? dtoSession.UnitId : null;
+            if (MapUnitId != null)
+            {
+                DTOMapUnitResponse dTOMap = await _mapUnitBL.GetALLByUnitMapId((int)MapUnitId);
+                dTORecord.UnitType = dTOMap.UnitType;
+                dTORecord.UnitMapId = Claim == true ? null :(int)MapUnitId;
+                dTORecord.ComdId = (byte?)dTOMap.ComdId;
+                dTORecord.CorpsId = (byte?)dTOMap.CorpsId;
+                dTORecord.DivId = (byte?)dTOMap.DivId;
+                dTORecord.BdeId = (byte?)dTOMap.BdeId;
+                dTORecord.FmnBranchID = (byte?)dTOMap.FmnBranchID;
+                dTORecord.PsoId = (byte?)dTOMap.PsoId;
+                dTORecord.SubDteId = (byte?)dTOMap.SubDteId;
+            }
+            else
+            {
+                return Json(KeyConstants.InternalServerError);
+            }
+
+            return Json(await _reportReturnBL.GetReportDashboardCount(dTORecord));
+        }
+        [HttpPost]
+        public async Task<IActionResult> GetReportData([FromBody] DTODataTablesRequestForReport dTORecord)
+        {
+            int userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var user = await userManager.FindByIdAsync(userId.ToString());
+
+            DtoSession? dtoSession = new DtoSession();
+            if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
+            {
+                dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+
+            }
+            int? MapUnitId = dtoSession != null ? dtoSession.UnitId : null;
+            if (MapUnitId == null)
+            {
+                return BadRequest(new { message = "Session expired." });
+            }
+            DTOMapUnitResponse dTOMap = await _mapUnitBL.GetALLByUnitMapId((int)MapUnitId);
+
+            // UserManager service GetClaimsAsync method gets all the current claims of the user
+            var UserClaims = await userManager.GetClaimsAsync(user);
+            if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "Army Level Reports"))
+            {
+
+            }
+            else if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "2nd Level"))
+            {
+                
+                if (dTOMap.UnitType == 1)
+                {
+                    dTORecord.ComdId = (byte?)dTOMap.ComdId;
+                    if (dTOMap.CorpsId == 1)
+                    {
+                        dTORecord.CorpsId = null;
+                    }
+                    else
+                    {
+                        dTORecord.CorpsId = (byte?)dTOMap.CorpsId;
+                    }
+                    
+                    if (dTOMap.DivId == 1)
+                    {
+                        dTORecord.DivId = null;
+                    }
+                    else
+                    {
+                        dTORecord.DivId = (byte?)dTOMap.DivId;
+                    }
+                    if (dTOMap.BdeId == 1)
+                    {
+                        dTORecord.BdeId = null;
+                    }
+                    else
+                    {
+                        dTORecord.BdeId = (byte?)dTOMap.BdeId;
+                    }
+                }
+                else if (dTOMap.UnitType == 2)
+                {
+                    dTORecord.ComdId = (byte?)dTOMap.ComdId;
+                    if (dTOMap.CorpsId == 1)
+                    {
+                        dTORecord.CorpsId = null;
+                    }
+                    else
+                    {
+                        dTORecord.CorpsId = (byte?)dTOMap.CorpsId;
+                    }
+
+                    if (dTOMap.DivId == 1)
+                    {
+                        dTORecord.DivId = null;
+                    }
+                    else
+                    {
+                        dTORecord.DivId = (byte?)dTOMap.DivId;
+                    }
+                    if (dTOMap.BdeId == 1)
+                    {
+                        dTORecord.BdeId = null;
+                    }
+                    else
+                    {
+                        dTORecord.BdeId = (byte?)dTOMap.BdeId;
+                    }
+                    if (dTOMap.FmnBranchID == 1)
+                    {
+                        dTORecord.FmnBranchID = null;
+                    }
+                    else
+                    {
+                        dTORecord.FmnBranchID = (byte?)dTOMap.FmnBranchID;
+                    }
+                }
+                else if(dTOMap.UnitType == 3)
+                {
+                    if (dTOMap.PsoId == 1)
+                    {
+                        dTORecord.PsoId = null;
+                    }
+                    else
+                    {
+                        dTORecord.PsoId = (byte?)dTOMap.PsoId;
+                    }
+                    if (dTOMap.SubDteId == 1)
+                    {
+                        dTORecord.SubDteId = null;
+                    }
+                    else
+                    {
+                        dTORecord.SubDteId = (byte?)dTOMap.SubDteId;
+                    }
+                }
+            }
+            else
+            {
+                if (MapUnitId != null)
+                {
+                    dTORecord.UnitType = dTOMap.UnitType;
+                    dTORecord.UnitMapId = (int)MapUnitId;
+                    dTORecord.ComdId = (byte?)dTOMap.ComdId;
+                    dTORecord.CorpsId = (byte?)dTOMap.CorpsId;
+                    dTORecord.DivId = (byte?)dTOMap.DivId;
+                    dTORecord.BdeId = (byte?)dTOMap.BdeId;
+                    dTORecord.FmnBranchID = (byte?)dTOMap.FmnBranchID;
+                    dTORecord.PsoId = (byte?)dTOMap.PsoId;
+                    dTORecord.SubDteId = (byte?)dTOMap.SubDteId;
+                }
+            }
+
+        
+            if (dTORecord.Choice == "MonthlyProcessed")
+            {
+                if (!String.IsNullOrEmpty( dTORecord.MonthYear))
+                {
+                    bool isValid = IsValidMonthYear(dTORecord.MonthYear);
+
+                    if (isValid)
+                    {
+                        var ret = await _reportReturnBL.GetReportData(dTORecord);
+                        return Json(ret);
+                    }
+                    else
+                    {
+                        return BadRequest(new { message = "Invalid input: Month and Year are required." });
+
+                    }
+                }
+                else
+                {
+                    return BadRequest(new { message = "Month and Year are required." });
+                }
+
+            }
+            try
+            {
+                var ret = await _reportReturnBL.GetReportData(dTORecord);
+                return Json(ret);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "Home->GetRecordHistory");
+                return BadRequest(new { message = "Internal Server Error" });
+            }
+
+        }
+        public static bool IsValidMonthYear(string input)
+        {
+            // Try parse as MM/yyyy
+            if (!DateTime.TryParseExact("01/" + input, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime selectedDate))
+            {
+                return false; // Invalid format
+            }
+
+            DateTime today = DateTime.Today;
+
+            // Calculate min date as 2 years ago (Jan of that year)
+            DateTime minDate = new DateTime(today.Year - 2, 1, 1);
+            DateTime maxDate = new DateTime(today.Year, today.Month, 1); // Current month only
+
+            // Truncate selected date to month/year
+            DateTime selectedMonthStart = new DateTime(selectedDate.Year, selectedDate.Month, 1);
+
+            return selectedMonthStart >= minDate && selectedMonthStart <= maxDate;
         }
         #endregion
         public async Task<IActionResult> SubDashboard()

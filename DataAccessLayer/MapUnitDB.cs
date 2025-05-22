@@ -1,4 +1,5 @@
-﻿using DataAccessLayer.BaseInterfaces;
+﻿using Dapper;
+using DataAccessLayer.BaseInterfaces;
 using DataAccessLayer.Logger;
 using DataTransferObject.Domain.Master;
 using DataTransferObject.Domain.Model;
@@ -11,6 +12,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -409,31 +411,85 @@ namespace DataAccessLayer
             }
         }
 
-        public async Task<List<DTOUnitResponse>> GetUnitByHierarchy(DTOMHierarchyRequest Data)
+        public async Task<List<DTOUnitResponse>> GetUnitByHierarchy(DTOMHierarchyRequest dTO)
         {
+            #region Old code write by Kapoor Sir
+            //try
+            //{
+            //    string query = "SELECT Map.UnitMapId UnitId,unt.UnitName,unt.Suffix,unt.Sus_no FROM MapUnit Map " +
+            //                    " Inner join MUnit unt on Map.UnitId = unt.UnitId" +
+            //                    " where Map.ComdId = ISNULL(@ComdId,Map.ComdId)" +
+            //                    " AND Map.CorpsId = ISNULL(@CorpsId,Map.CorpsId)" +
+            //                    " AND Map.DivId = ISNULL(@DivId,Map.DivId)" +
+            //                    " AND Map.BdeId = ISNULL(@BdeId,Map.BdeId)";
+            //    //" AND Map.FmnBranchID = ISNULL(@FmnBranchID,Map.FmnBranchID)" +
+            //    //" AND Map.PsoId = ISNULL(@PsoId,Map.PsoId)" +
+            //    //" AND Map.SubDteId = ISNULL(@SubDteId,Map.SubDteId)";
+
+            //    using (var connection = _contextDP.CreateConnection())
+            //    {
+            //        var ret = await connection.QueryAsync<DTOUnitResponse>(query, new
+            //        {
+            //            Data.ComdId,
+            //            Data.CorpsId,
+            //            Data.DivId,
+            //            Data.BdeId,
+            //            Data.FmnBranchID,
+            //            Data.PsoId,
+            //            Data.SubDteId
+            //        });
+            //        return ret.ToList();
+            //    }
+            //}
+            //catch (Exception ex)
+            //{
+            //    _logger.LogError(1001, ex, "MapUnitDB->GetUnitByHierarchy");
+            //    return null;
+            //}
+            #endregion
             try
             {
-                string query = "SELECT Map.UnitMapId UnitId,unt.UnitName,unt.Suffix,unt.Sus_no FROM MapUnit Map " +
-                                " Inner join MUnit unt on Map.UnitId = unt.UnitId" +
-                                " where Map.ComdId = ISNULL(@ComdId,Map.ComdId)" +
-                                " AND Map.CorpsId = ISNULL(@CorpsId,Map.CorpsId)" +
-                                " AND Map.DivId = ISNULL(@DivId,Map.DivId)" +
-                                " AND Map.BdeId = ISNULL(@BdeId,Map.BdeId)";
-                                //" AND Map.FmnBranchID = ISNULL(@FmnBranchID,Map.FmnBranchID)" +
-                                //" AND Map.PsoId = ISNULL(@PsoId,Map.PsoId)" +
-                                //" AND Map.SubDteId = ISNULL(@SubDteId,Map.SubDteId)";
+                string query = @"SELECT unit.UnitMapId as UnitId,unt.UnitName,unt.Suffix,unt.Sus_no FROM MapUnit unit
+                                Inner join MUnit unt on unt.UnitId = unit.UnitId
+                                WHERE
+	                                unit.UnitType =@UnitType
+	                                AND unit.UnitMapId = ISNULL(@UnitMapId, unit.UnitMapId)
+                                AND(
+                                    (@UnitType = 1 AND
+                                        unit.ComdId = ISNULL(@ComdId, unit.ComdId)
+                                        AND unit.CorpsId = ISNULL(@CorpsId, unit.CorpsId)
+                                        AND unit.DivId = ISNULL(@DivId, unit.DivId)
+                                        AND unit.BdeId = ISNULL(@BdeId, unit.BdeId)
+                                    )
+                                    OR
+                                    (@UnitType = 2 AND
+                                        unit.ComdId = ISNULL(@ComdId, unit.ComdId)
+                                        AND unit.CorpsId = ISNULL(@CorpsId, unit.CorpsId)
+                                        AND unit.DivId = ISNULL(@DivId, unit.DivId)
+                                        AND unit.BdeId = ISNULL(@BdeId, unit.BdeId)
+                                        AND unit.FmnBranchID = ISNULL(@FmnBranchID, unit.FmnBranchID)
+                                    )
+                                    OR
+                                    (@UnitType = 3 AND
+                                        unit.PsoId = ISNULL(@PsoId, unit.PsoId)
+                                        AND unit.SubDteId = ISNULL(@SubDteId, unit.SubDteId)
+                                    )
+                                )";
 
                 using (var connection = _contextDP.CreateConnection())
                 {
-                    var ret = await connection.QueryAsync<DTOUnitResponse>(query, new { 
-                        Data.ComdId, 
-                        Data.CorpsId ,
-                        Data.DivId,
-                        Data.BdeId,
-                        Data.FmnBranchID,
-                        Data.PsoId,
-                        Data.SubDteId
-                    });
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@UnitMapId", dTO.UnitMapId, DbType.Int32, ParameterDirection.Input);
+                    parameters.Add("@UnitType", dTO.UnitType, DbType.Int32, ParameterDirection.Input);
+                    parameters.Add("@ComdId", dTO.ComdId, DbType.Byte, ParameterDirection.Input);
+                    parameters.Add("@CorpsId", dTO.CorpsId, DbType.Byte, ParameterDirection.Input);
+                    parameters.Add("@DivId", dTO.DivId, DbType.Byte, ParameterDirection.Input);
+                    parameters.Add("@BdeId", dTO.BdeId, DbType.Byte, ParameterDirection.Input);
+                    parameters.Add("@FmnBranchID", dTO.FmnBranchID, DbType.Byte, ParameterDirection.Input);
+                    parameters.Add("@PsoId", dTO.PsoId, DbType.Byte, ParameterDirection.Input);
+                    parameters.Add("@SubDteId", dTO.SubDteId, DbType.Byte, ParameterDirection.Input);
+
+                    var ret = await connection.QueryAsync<DTOUnitResponse>(query, parameters);
                     return ret.ToList();
                 }
             }

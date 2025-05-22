@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace BusinessLogicsLayer.ReportReturn
 {
@@ -47,6 +48,14 @@ namespace BusinessLogicsLayer.ReportReturn
         public Task<List<DTOReportReturnListResponse>> GetReportForm11(DTOMHierarchyRequest Data)
         {
             return _IReportReturnDB.GetReportForm11(Data);
+        }
+        public async Task<DTODataTablesResponse<DTOReportResponse>> GetReportData(DTODataTablesRequestForReport dTO)
+        {
+            return await _IReportReturnDB.GetReportData(dTO);
+        }
+        public async Task<DTOReportDashboardCountResponse> GetReportDashboardCount(DTODataTablesRequestForReport dTO) 
+        {
+            return await _IReportReturnDB.GetReportDashboardCount(dTO);
         }
     }
 }

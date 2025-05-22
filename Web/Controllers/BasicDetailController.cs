@@ -2256,8 +2256,10 @@ namespace Web.Controllers
             }
             return PartialView("_BasicDetail_ParitalView", data);
         }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         [Authorize(Policy = "ICardExportDataPolicy")]
-        public async Task<IActionResult> SaveFaultyCard(DTOFaultyCardRequest dTO)
+        public async Task<IActionResult> SaveFaultyCard([FromBody] DTOFaultyCardRequest dTO)
         {
             MTrnFwd? mTrnFwd = new MTrnFwd();
             DtoSession? dtoSession = new DtoSession();
@@ -2377,7 +2379,9 @@ namespace Web.Controllers
                 return Json(dTOFaulty);
             }
         }
-        public async Task<IActionResult> SaveFaultyCardRequest(DTOFaultyCardRequest dTO)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SaveFaultyCardRequest([FromBody] DTOFaultyCardRequest dTO)
         {
             MTrnFwd? mTrnFwd = new MTrnFwd();
             DtoSession? dtoSession = new DtoSession();

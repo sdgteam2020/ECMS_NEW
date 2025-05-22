@@ -63,6 +63,10 @@ function BindData() {
                 name: "UnitName",
                 orderable: false,
             },
+            {
+                data: "Sus_no",
+                name: "Sus_no",
+            },
             { data: "FromArmyNo", name: "FromArmyNo" },
             {
                 data: "FromName",
@@ -143,7 +147,7 @@ function BindData() {
         ],
         language: {
             search: "", // Remove the default "Search:" label
-            searchPlaceholder: "Search IC No" // Add custom placeholder
+            searchPlaceholder: "Search SUS No" // Add custom placeholder
         },
         dom: 'lBfrtip', // Add buttons to the DOM
         buttons: [
@@ -188,8 +192,7 @@ function BindData() {
             $("#tbldata tbody").off("click", ".cls-Remark").on("click", ".cls-Remark", function () {
                 var rowData = table.row($(this).closest("tr")).data();
                 if (rowData != null) {
-                    let Label = "Id :- " + rowData.MapUnitChangeRequestId;
-                    $("#MessageDialogLabel").html(Label);
+                    $("#MessageDialogLabel").html(`User Remark`);
                     $("#MessageDialogBody").html(rowData.Remark);
                     $("#MessageDialog").modal('show');
                 }
@@ -197,8 +200,7 @@ function BindData() {
             $("#tbldata tbody").off("click", ".cls-AdminRemark").on("click", ".cls-AdminRemark", function () {
                 var rowData = table.row($(this).closest("tr")).data();
                 if (rowData != null) {
-                    let Label = "Id :- " + rowData.MapUnitChangeRequestId;
-                    $("#MessageDialogLabel").html(Label);
+                    $("#MessageDialogLabel").html(`Admin  Remark`);
                     $("#MessageDialogBody").html(rowData.AdminRemark);
                     $("#MessageDialog").modal('show');
                 }
