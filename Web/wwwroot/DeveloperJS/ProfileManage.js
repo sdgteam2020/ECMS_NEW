@@ -148,8 +148,8 @@ function BindData() {
             { data: "UserId", name: "UserId" },
             { data: "DomainId", name: "DomainId" },
             { data: "ArmyNo", name: "ArmyNo" },
-            { data: "RankId", name: "RankId" },
-            { data: "RankName", name: "RankName" },
+            { data: "RankAbbreviation", name: "RankAbbreviation" },
+            { data: "Name", name: "Name" },
             { data: "ArmedName", name: "ArmedName" },
             // Display user-friendly value for IsVerify
             {

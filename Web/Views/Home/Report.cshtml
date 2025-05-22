@@ -39,28 +39,28 @@
     </div>
 </header>
 <div class="containerMain mt-n10">
-    @if (claims.Count > 0 && claims.Any(i => i.Value == "Army Level Reports"))
+    @if (claims.Count > 0 && claims.Any(i => i.Value == "Army Level Reports" || i.Value == "Fmn Level Reports"))
     {
         <div class="containerMain mt-n10">
             <div class="row">
                 <div class="card  section_to_report_toPrint" id="section_to_report_toPrint">
                     <div class="row pt-1 SearchTab d-print-none">
                         <div class="form-group row mb-2">
-                            <span id="spnclaimId" class="d-none">Army Level Reports</span>
+                            <span id="spnclaimId" class="d-none">@(claims.Any(i => i.Value == "Army Level Reports") ? "Army Level Reports" : "Fmn Level Reports")</span>
                             <label class="col-form-label col-md-2 fw-bold">Select Unit Type <i class="fas fa-asterisk mand1"></i></label>
                             <div class="col-md-10">
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="UnitTyperdi" id="UnitType1" value="1">
+                                    <input class="form-check-input" type="radio" name="UnitTyperdi" id="UnitType1" value="1">@* @(claims.Any(i => i.Value == "Army Level Reports") ? "" : "disabled") *@
                                     <label class="form-check-label" for="UnitType1">Unit</label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="UnitTyperdi" id="UnitType2" value="2">
+                                    <input class="form-check-input" type="radio" name="UnitTyperdi" id="UnitType2" value="2"> @* @(claims.Any(i => i.Value == "Army Level Reports") ? "" : "disabled") *@
                                     <label class="form-check-label" for="UnitType2">
                                         Unit(Fmn HQ)
                                     </label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="UnitTyperdi" id="UnitType3" value="3">
+                                    <input class="form-check-input" type="radio" name="UnitTyperdi" id="UnitType3" value="3"> @* @(claims.Any(i => i.Value == "Army Level Reports") ? "" : "disabled") *@
                                     <label class="form-check-label" for="UnitType3">Unit(Dte/Branch)</label>
                                 </div>
                             </div>

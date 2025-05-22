@@ -764,7 +764,7 @@ namespace Web.Controllers
             }
 
         }
-        public async Task<IActionResult> GetALLByUnitMapWonUnit(int Id)
+        public async Task<IActionResult> GetALLByUnitMapWonUnit(int UnitMapId)
         {
             try
             {

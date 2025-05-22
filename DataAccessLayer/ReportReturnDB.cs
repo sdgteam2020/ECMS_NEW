@@ -992,7 +992,7 @@ namespace DataAccessLayer
                 return responseData;
             }
         }
-        public async Task<DTOReportDashboardCountResponse> GetReportDashboardCount(DTODataTablesRequestForReport dTO)
+        public async Task<DTOReportDashboardCountResponse> GetReportDashboardCount(DTOMHierarchyRequest dTO)
         {
             string query = @"declare @TotRequisition int=0
                             declare @TotLostCases int=0
