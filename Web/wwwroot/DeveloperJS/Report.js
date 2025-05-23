@@ -3,28 +3,14 @@ var comid = 0; var corId = 0; var divId = 0; var bdeId = 0; var FmnBranchId = 0;
 var UnitType = 1;
 var table; // Declare table variable outside the function to preserve the instance
 $(async function () {
+
     if ($('#spnclaimId').length > 0) {
         if ($('#spnclaimId').html() === 'Army Level Reports' || $('#spnclaimId').html() === 'Fmn Level Reports') {
             await GetLoginUnitMappingDetails();
         }
     }
-
     await GetReportDashboardCount();
 
-    //if ($('#ddlUnit').length > 0) {
-    //    // Handle normal change event (multiple options)
-    //    $('#ddlUnit').on('change', async function () {
-    //        await GetReportDashboardCount();
-    //    });
-
-    //    // Handle click event when only one option present
-    //    $('#ddlUnit').on('click', async function () {
-    //        if ($('#ddlUnit option').length === 1) {
-    //            // Optionally check if the value is not empty
-    //            await GetReportDashboardCount();
-    //        }
-    //    });
-    //}
     if ($('#ddlUnit').length > 0) {
         let previousValue = $('#ddlUnit').val();
         let calledForSingleOption = false;
@@ -47,26 +33,37 @@ $(async function () {
     }
 
     if ($('#ddlCommand').length > 0) {
+        let lastVal = $('#ddlCommand').val();
+
         $('#ddlCommand').on('change', async function () {
-            comid = $(this).val();
-            if ($('#ddlCommand').val() == null || $('#ddlCommand').val() == "null") {
-                $("#ddlCorps").html(lst);
+            const newVal = $(this).val();
+            if (newVal !== lastVal || $('#ddlCommand option').length === 1) {
+                lastVal = newVal;
+
+                if (newVal == null || newVal === "null") {
+                    $("#ddlCorps").html(lst);
+                } else {
+                    await mMsater(false, 0, "ddlCorps", 2, newVal);
+                }
+
+                ResetCount();
+                $("#ddlDiv").html(lst);
+                $("#ddlBde").html(lst);
+                $("#ddlFmnBranch").html(lst);
+                $("#ddlPSODte").html(lst);
+                $("#ddlDgSubDte").html(lst);
+                $("#ddlUnit").html(lst);
             }
-            else {
-                await mMsater(false, 0, "ddlCorps", 2, $('#ddlCommand').val());
-            }
-            
-            $("#ddlDiv").html(lst);
-            $("#ddlBde").html(lst);
-            $("#ddlFmnBranch").html(lst);
-            $("#ddlPSODte").html(lst);
-            $("#ddlDgSubDte").html(lst);
-            $("#ddlUnit").html(lst);
         });
-        // Manually trigger change if only one option exists
-        if ($('#ddlCommand option').length === 1) {
-            $('#ddlCommand').trigger('change');
-        }
+
+        $('#ddlCommand').on('click', async function () {
+            const val = $(this).val();
+
+            // If only one option and user clicks it (again), manually trigger
+            if ($('#ddlCommand option').length === 1) {
+                $('#ddlCommand').trigger('change');
+            }
+        });
     }
     if ($('#ddlCorps').length > 0) {
         $('#ddlCorps').on('change', async function () {
@@ -77,7 +74,7 @@ $(async function () {
             else {
                 await mMsaterByParent(false, 0, "ddlDiv", 3, $('#ddlCommand').val(), $('#ddlCorps').val(), 0, 0);///ComdId,CorpsId,DivId,BdeId
             }
-            
+            ResetCount();
             $("#ddlBde").html(lst);
             $("#ddlFmnBranch").html(lst);
             $("#ddlPSODte").html(lst);
@@ -94,7 +91,7 @@ $(async function () {
             else {
                 await mMsaterByParent(false, 0, "ddlBde", 4, $('#ddlCommand').val(), $('#ddlCorps').val(), $('#ddlDiv').val(), 0);///ComdId,CorpsId,DivId,BdeId   
             }
-  
+            ResetCount();
             $("#ddlFmnBranch").html(lst);
             $("#ddlPSODte").html(lst);
             $("#ddlDgSubDte").html(lst);
@@ -113,7 +110,7 @@ $(async function () {
                     await mMsater(true, FmnBranchId, "ddlFmnBranch", FmnBranches, "");
                 }
             }
-
+            ResetCount();
 
             await GetUnitByHierarchy(false, "ddlUnit", 0, $('#ddlCommand').val(), $('#ddlCorps').val(), $('#ddlDiv').val(), $('#ddlBde').val(), 1, 1, 1);
 
@@ -122,6 +119,7 @@ $(async function () {
     if ($('#ddlFmnBranch').length > 0) {
         $('#ddlFmnBranch').on('change', async function () {
             FmnBranchId = $(this).val();
+            ResetCount();
             await GetUnitByHierarchy(false,"ddlUnit", 0, $("#ddlCommand").val(), $("#ddlCorps").val(), 1, 1, $("#ddlFmnBranch").val(), 1, 1);
 
         });
@@ -135,13 +133,14 @@ $(async function () {
     if ($('#ddlPSODte').length > 0) {
         $('#ddlPSODte').on('change', async function () {
             PsoId = $(this).val();
+            ResetCount();
             await GetUnitByHierarchy(false,"ddlUnit", 0, 1, 1, 1, 1, 1, $("#ddlPSODte").val(), SubDteId);
         });
     }
     $('input[name="UnitTyperdi"]').on("click",async function () {
 
         UnitType = $("input[type='radio'][name=UnitTyperdi]:checked").val();
-
+        ResetCount();
         if (UnitType == "1") {
             $(".unittype").removeClass("d-none");
             $(".FmnBranch").addClass("d-none");
@@ -329,25 +328,25 @@ $(async function () {
     $("#btnRequisition").on("click", function (event) {
         event.preventDefault(); // Prevent anchor default behavior
         $("#CardReport_lblModelTitle").html('New Requisition');
-        $("#CardReport").modal("show");
-        $('#CardReport').one('shown.bs.modal', function () {
-            GetReportReturnHistory('Requisition');
+
+        GetReportReturnHistory('Requisition', function () {
+            $("#CardReport").modal("show"); // shown only after data is fully ready
         });
     });
     $("#btnNonFunctionalCard").on("click", function (event) {
         event.preventDefault(); // Prevent anchor default behavior
         $("#CardReport_lblModelTitle").html('Non Functional Card');
-        $("#CardReport").modal("show");
-        $('#CardReport').one('shown.bs.modal', function () {
-            GetReportReturnHistory('NonFunctional');
+
+        GetReportReturnHistory('NonFunctional', function () {
+            $("#CardReport").modal("show"); // shown only after data is fully ready
         });
     });
     $("#btnLostCase").on("click", function (event) {
         event.preventDefault(); // Prevent anchor default behavior
         $("#CardReport_lblModelTitle").html('Lost Case');
-        $("#CardReport").modal("show");
-        $('#CardReport').one('shown.bs.modal', function () {
-            GetReportReturnHistory('LostCase');
+
+        GetReportReturnHistory('LostCase', function () {
+            $("#CardReport").modal("show"); // shown only after data is fully ready
         });
     });
     $("#btnMonthlyProcessed").on("click", function (event) {
@@ -403,14 +402,18 @@ $(async function () {
         // ✅ All good: Proceed
         $("#MonthlyProcessedDialog").modal("hide");
         $("#CardReport_lblModelTitle").html(`Monthly Processed :- ${monthName}  ${inputYear}`);
-        $("#CardReport").modal("show");
+        //$("#CardReport").modal("show");
 
-        $('#CardReport').one('shown.bs.modal', function () {
-            GetReportReturnHistory('MonthlyProcessed');
+        //$('#CardReport').one('shown.bs.modal', function () {
+        //    GetReportReturnHistory('MonthlyProcessed');
+        //});
+
+        GetReportReturnHistory('MonthlyProcessed', function () {
+            $("#CardReport").modal("show"); // shown only after data is fully ready
         });
     });
 });
-function GetReportReturnHistory(Choice) {
+function GetReportReturnHistory(Choice, callback) {
     if ($.fn.DataTable.isDataTable("#CardReport_tbldatadialog")) {
         $("#CardReport_tbldatadialog").DataTable().destroy();
         $("#CardReport_tbldatadialog").empty(); // Clear old thead/tbody
@@ -437,14 +440,16 @@ function GetReportReturnHistory(Choice) {
         "MonthYear": $('#txtMonthYear').length > 0 ? $('#txtMonthYear').val() : null,
         
     };
+    let modalShown = false; // <== use a flag to show modal only once
     const columns = getColumnsByChoice(Choice);
     table = $("#CardReport_tbldatadialog").DataTable({
+        autoWidth: false, // Let us handle width via CSS
+        responsive: false, // Responsive breaks layout for width control
         processing: true,
         serverSide: true,
         filter: true,
         order: [[1, 'desc']], // Default sorting on the first column
-        responsive: true,
-        autoWidth: false,
+
         ajax: async function (data, callback, settings) {
             
             let requestData = {
@@ -456,7 +461,6 @@ function GetReportReturnHistory(Choice) {
                 SortDirection: data.order.length > 0 ? data.order[0].dir : '', // Add a check for data.order
                 ...userdata
             };
-            console.log(JSON.stringify(requestData));
             try {
                 let response = await fetch("/Home/GetReportData", {
                     method: "POST",
@@ -510,7 +514,15 @@ function GetReportReturnHistory(Choice) {
                     WaterMarkOnPdf(doc)
                 }
             }],
+        // 👇 Show modal only after table (header + data) is fully rendered
+        initComplete: function () {
+            if (typeof callback === "function") {
+                callback(); // show modal now
+            }
+        },
         drawCallback: function (settings) {
+
+
             $("#CardReport_tbldatadialog tbody").off("click", ".cls-remarks").on("click", ".cls-remarks", function () {
                 var rowData = table.row($(this).closest("tr")).data();
                 if (rowData.RemarksNameList != null) {
@@ -594,9 +606,14 @@ function getColumnsByChoice(choice) {
                     name: 'RequestId',
                 },
                 {
-                    title: "Tracking Id",
-                    data: 'TrackingId',
-                    name: 'TrackingId',
+                    title: "Type",
+                    data: "ApplyFor",
+                    name: "ApplyFor"
+                },
+                {
+                    title: "Arm / Service",
+                    data: "ArmedAbbreviation",
+                    name: "ArmedAbbreviation"
                 },
                 {
                     title: "Army No",
@@ -614,7 +631,7 @@ function getColumnsByChoice(choice) {
                     }
                 },
                 {
-                    title: "Rank,Name",
+                    title: "Rank & Name",
                     data: null,
                     name: null,
                     orderable: false,
@@ -622,16 +639,6 @@ function getColumnsByChoice(choice) {
                         let fullName = `${row.RankName || ""} ${row.FName || ""} ${row.LName || ""}`.trim();
                         return (fullName);
                     }
-                },
-                {
-                    title: "Arm / Service",
-                    data: "ArmedAbbreviation",
-                    name: "ArmedAbbreviation"
-                },
-                {
-                    title: "Type",
-                    data: "ApplyFor",
-                    name: "ApplyFor"
                 },
                 {
                     title: "Status",
@@ -669,6 +676,16 @@ function getColumnsByChoice(choice) {
                     name: 'RequestId',
                 },
                 {
+                    title: "Type",
+                    data: "ApplyFor",
+                    name: "ApplyFor"
+                },
+                {
+                    title: "Arm / Service",
+                    data: "ArmedAbbreviation",
+                    name: "ArmedAbbreviation"
+                },
+                {
                     title: "Army No",
                     data: "ServiceNo",
                     name: "ServiceNo",
@@ -684,7 +701,7 @@ function getColumnsByChoice(choice) {
                     }
                 },
                 {
-                    title: "Rank,Name",
+                    title: "Rank & Name",
                     data: null,
                     name: null,
                     orderable: false,
@@ -692,16 +709,6 @@ function getColumnsByChoice(choice) {
                         let fullName = `${row.RankName || ""} ${row.FName || ""} ${row.LName || ""}`.trim();
                         return (fullName);
                     }
-                },
-                {
-                    title: "Type",
-                    data: "ApplyFor",
-                    name: "ApplyFor"
-                },
-                {
-                    title: "Arm / Service",
-                    data: "ArmedAbbreviation",
-                    name: "ArmedAbbreviation"
                 },
                 {
                     title: "Unit",
@@ -787,6 +794,16 @@ function getColumnsByChoice(choice) {
                     name: 'RequestId',
                 },
                 {
+                    title: "Type",
+                    data: "ApplyFor",
+                    name: "ApplyFor"
+                },
+                {
+                    title: "Arm / Service",
+                    data: "ArmedAbbreviation",
+                    name: "ArmedAbbreviation"
+                },
+                {
                     title: "Army No",
                     data: "ServiceNo",
                     name: "ServiceNo",
@@ -802,7 +819,7 @@ function getColumnsByChoice(choice) {
                     }
                 },
                 {
-                    title: "Rank,Name",
+                    title: "Rank & Name",
                     data: null,
                     name: null,
                     orderable: false,
@@ -810,16 +827,6 @@ function getColumnsByChoice(choice) {
                         let fullName = `${row.RankName || ""} ${row.FName || ""} ${row.LName || ""}`.trim();
                         return (fullName);
                     }
-                },
-                {
-                    title: "Type",
-                    data: "ApplyFor",
-                    name: "ApplyFor"
-                },
-                {
-                    title: "Arm / Service",
-                    data: "ArmedAbbreviation",
-                    name: "ArmedAbbreviation"
                 },
                 {
                     title: "Unit",
@@ -895,17 +902,22 @@ function getColumnsByChoice(choice) {
                     name: 'RequestId',
                 },
                 {
-                    title: "Tracking Id",
-                    data: 'TrackingId',
-                    name: 'TrackingId',
-                },
-                {
                     title: "Draft Dt. & Time",
                     data: "UpdatedOn",
                     name: "UpdatedOn",
                     render: function (data, type, row) {
                         return DateFormateddMMyyyyhhmmss(data);
                     }
+                },
+                {
+                    title: "Type",
+                    data: "ApplyFor",
+                    name: "ApplyFor"
+                },
+                {
+                    title: "Arm / Service",
+                    data: "ArmedAbbreviation",
+                    name: "ArmedAbbreviation"
                 },
                 {
                     title: "Army No",
@@ -923,7 +935,7 @@ function getColumnsByChoice(choice) {
                     }
                 },
                 {
-                    title: "Rank,Name",
+                    title: "Rank & Name",
                     data: null,
                     name: null,
                     orderable: false,
@@ -931,16 +943,6 @@ function getColumnsByChoice(choice) {
                         let fullName = `${row.RankName || ""} ${row.FName || ""} ${row.LName || ""}`.trim();
                         return (fullName);
                     }
-                },
-                {
-                    title: "Arm / Service",
-                    data: "ArmedAbbreviation",
-                    name: "ArmedAbbreviation"
-                },
-                {
-                    title: "Type",
-                    data: "ApplyFor",
-                    name: "ApplyFor"
                 },
                 {
                     title: "Status",
@@ -1271,4 +1273,11 @@ async function mMsaterByParent(IsOnly, sectid = '', ddl, TableId, ComdId, CorpsI
         Swal.fire({ text: errormsg002 });
         console.error("mMsaterByParent error:", error);
     }
+}
+function ResetCount() {
+    $("#TotRequisition").html('0');
+    $("#TotLostCases").html('0');
+    $("#TotMonthlyProcessed").html('0');
+    $("#TotNonFunctionalCard").html('0');
+
 }
