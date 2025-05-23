@@ -44,16 +44,23 @@ namespace Web.Controllers
         }
         public async Task<IActionResult> GetRequestHistoryByTrackingId(string TrackingId)
         {
-            List<ICardHistoryResponse>? cardHistoryResponses = await _basicDetailBL.ICardHistoryByTrackingId(TrackingId);
-            if (cardHistoryResponses != null) 
+            try
             {
-                return Json(await _basicDetailBL.ICardHistoryByTrackingId(TrackingId));
+                List<ICardHistoryResponse>? cardHistoryResponses = await _basicDetailBL.ICardHistoryByTrackingId(TrackingId);
+                if (cardHistoryResponses != null)
+                {
+                    return Json(await _basicDetailBL.ICardHistoryByTrackingId(TrackingId));
+                }
+                else
+                {
+                    return Json(null);
+                }
             }
-            else
+            catch (Exception ex)
             {
                 return Json(null);
             }
-            
+
         }
         public async Task<IActionResult> GetBasicDetailByRequestId(int Id)
         {
