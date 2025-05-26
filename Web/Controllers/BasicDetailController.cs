@@ -2822,7 +2822,8 @@ namespace Web.Controllers
                     }
                     else
                     {
-                        dTOResponse = await _distributeCardBL.SaveDistributeCard(model);
+                        ICardHistoryResponseAll? cardHistoryResponses = await basicDetailBL.ICardHistory(model.RequestId);
+                        dTOResponse = await _distributeCardBL.SaveDistributeCard(model, cardHistoryResponses);
                     }
                 }
                 else
@@ -2991,17 +2992,27 @@ namespace Web.Controllers
         
         public async Task<IActionResult> GetRequestHistory(int RequestId)
         {
-            ICardHistoryResponseAll? cardHistoryResponses = await basicDetailBL.ICardHistory(RequestId);
-            var json = JsonConvert.SerializeObject(cardHistoryResponses);
-            if (cardHistoryResponses != null)
+            ICardHistoryResponseAll? cardHistoryResponses = new ICardHistoryResponseAll();
+            var cardStatus = await basicDetailBL.CheckCardStatus(RequestId);
+            if (cardStatus.GetValueOrDefault() == 1)
             {
-                return Json(cardHistoryResponses);
+                cardHistoryResponses = await basicDetailBL.ICardHistory(RequestId);
+                //var json = JsonConvert.SerializeObject(cardHistoryResponses);
             }
-            else
+            else if (cardStatus.GetValueOrDefault() == 3)
             {
-                return Json(null);
+                cardHistoryResponses = await basicDetailBL.ICardHistoryCompleted(RequestId);
             }
+            return Json(cardHistoryResponses);
 
+            //if (cardHistoryResponses != null)
+            //{
+
+            //}
+            //else
+            //{
+            //    return Json(null);
+            //}
         }
 
         [HttpPost]

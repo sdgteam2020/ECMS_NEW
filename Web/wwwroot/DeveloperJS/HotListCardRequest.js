@@ -112,7 +112,7 @@ function Proceed() {
         return false;
     }
 
-    let formId = '#SaveLostCardRequest';
+    let formId = '#SaveHotlistCardRequest';
     $.validator.unobtrusive.parse($(formId));
     
     if ($(formId).valid()) {

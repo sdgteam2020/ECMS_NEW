@@ -41,5 +41,7 @@ namespace DataAccessLayer.BaseInterfaces
         public Task<DTOApplicationTrack?> ApplicationHistory(string TrackingId);
         Task<DTOUploadChipAndSerialResponse> CardPrintingCSVUpload(List<DTOCardPriningRequest> requests);
         Task<List<DTOCardPriningRequest>> CardPrintingCSVCheck(List<DTOCardPriningRequest> requests);
+        Task<byte?> CheckCardStatus(int RequestId);
+        Task<ICardHistoryResponseAll> ICardHistoryCompleted(int RequestId);
     }
 }

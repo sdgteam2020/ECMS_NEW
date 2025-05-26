@@ -41,5 +41,7 @@ namespace BusinessLogicsLayer.BasicDet
         public Task<DTOApplicationTrack?> ApplicationHistory(string RequestId);
         Task<List<DTOCardPriningRequest>> ValidateCardPrinitng(List<DTOCardPriningRequest> request);
         Task<DTOUploadChipAndSerialResponse?> CardPrinitngCSVUpload(List<DTOCardPriningRequest> request);
+        Task<byte?> CheckCardStatus(int RequestId);
+        Task<ICardHistoryResponseAll> ICardHistoryCompleted(int RequestId);
     }
 }

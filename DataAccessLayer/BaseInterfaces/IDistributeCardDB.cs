@@ -14,7 +14,7 @@ namespace DataAccessLayer.BaseInterfaces
         Task<bool> FindAnyRequestId(int RequestId);
         Task<DTODataTablesResponse<DTODistributeCardGetResponse>> GetAllDistribute(DTODataTablesRequest dTO);
         Task<List<DTODistributeCardExportResponse>> GetDetailsByRequestIds(DTOHotlistCardsExportRequest Data);
-        Task<DTOCommonSaveResponse> SaveDistributeCard(TrnDistributeCard model);
+        Task<DTOCommonSaveResponse> SaveDistributeCard(TrnDistributeCard model, ICardHistoryResponseAll cardRequestHistory);
 
     }
 }

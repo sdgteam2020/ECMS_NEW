@@ -151,6 +151,17 @@ namespace BusinessLogicsLayer.BasicDet
             return data;
         }
 
+        public async Task<byte?> CheckCardStatus(int RequestId)
+        {
+            var data = await _iBasicDetailDB.CheckCardStatus(RequestId);
+            return data;
+        }
+        public async Task<ICardHistoryResponseAll> ICardHistoryCompleted(int RequestId)
+        {
+            var data = await _iBasicDetailDB.ICardHistoryCompleted(RequestId);
+            return data;
+        }
+
         public async Task<List<DTOCardPriningRequest>> ValidateCardPrinitng(List<DTOCardPriningRequest> request)
         {
             try

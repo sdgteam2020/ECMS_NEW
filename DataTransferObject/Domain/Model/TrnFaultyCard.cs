@@ -40,7 +40,7 @@ namespace DataTransferObject.Domain.Model
         public MUserProfile? MUserProfile { get; set; }
 
         [ForeignKey("MTrnFwd"), DatabaseGenerated(DatabaseGeneratedOption.None)]
-        public int TrnFwdId { get; set; }
+        public int? TrnFwdId { get; set; }
         public MTrnFwd? MTrnFwd { get; set; }
         public bool IsEditAction { get; set; } = false;
         public bool IsComplete { get; set; } = false;

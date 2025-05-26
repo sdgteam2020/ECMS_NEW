@@ -15,6 +15,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query.Internal;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
@@ -187,18 +188,30 @@ namespace DataAccessLayer
             return records;
         }
 
-        public async Task<DTOCommonSaveResponse> SaveDistributeCard(TrnDistributeCard model)
+        public async Task<DTOCommonSaveResponse> SaveDistributeCard(TrnDistributeCard model, ICardHistoryResponseAll cardRequestHistory)
         {
             var (db, transaction) = _contextDP.CreateConnectionWithTransaction();
             DTOCommonSaveResponse dtoResponse = new DTOCommonSaveResponse();
             try
             {
-                var insertQuery = @"Insert into TrnDistributeCards(RequestId,DistributedOn,Remark,UpdatedbyUserId,IsActive,Updatedby,UpdatedOn) 
+                var cardRequestHistoryJson = JsonConvert.SerializeObject(cardRequestHistory);
+                var insertQuery = @$"Insert into TrnDistributeCards(RequestId,DistributedOn,Remark,UpdatedbyUserId,IsActive,Updatedby,UpdatedOn) 
                                                              Values(@RequestId,@DistributedOn,@Remark,@UpdatedbyUserId,@IsActive,@Updatedby,@UpdatedOn);
-                                    SELECT CAST(SCOPE_IDENTITY() as int);
-                                    
-                                    update TrnICardRequest set StatusId = 3,UpdatedOn = @UpdatedOn,Updatedby = @Updatedby where RequestId = @RequestId
-                                    update TrnStepCounter set StepId = 18,UpdatedOn = @UpdatedOn,Updatedby = @Updatedby where RequestId = @RequestId";
+
+                                     DECLARE @DistributeCardId INT = SCOPE_IDENTITY();
+                                     
+                                     update TrnICardRequest set StatusId = 3,UpdatedOn = @UpdatedOn,Updatedby = @Updatedby where RequestId = @RequestId;
+                                     
+                                     update TrnStepCounter set StepId = 18,UpdatedOn = @UpdatedOn,Updatedby = @Updatedby where RequestId = @RequestId;
+                                     {(cardRequestHistory?.FaultyCard?.Count > 0 ? "update TrnFaultyCard set TrnFwdId = null where RequestId = @RequestId;" : "")}
+                                     {(cardRequestHistory?.PostingOut?.Count > 0 ? "update TrnPostingOut set TrnFwdId = null where RequestId = @RequestId;" : "")}
+                                     
+                                     Delete from TrnFwds where RequestId = @RequestId;
+                                     Insert into CompletedICardRequests(RequestId,CardRequestHistoryJson,UpdatedbyUserId,IsActive,Updatedby,UpdatedOn)
+                                     values(@RequestId,@CardRequestHistoryJson,@UpdatedbyUserId,@IsActive,@Updatedby,@UpdatedOn);
+                                     
+                                     Select @DistributeCardId;
+                                    ";
                 var parameters = new DynamicParameters();
                 parameters.Add("@RequestId", model.RequestId, DbType.Int32, ParameterDirection.Input);
                 parameters.Add("@DistributedOn", model.DistributedOn, DbType.DateTime, ParameterDirection.Input);
@@ -207,13 +220,9 @@ namespace DataAccessLayer
                 parameters.Add("@IsActive", model.IsActive, DbType.Boolean, ParameterDirection.Input);
                 parameters.Add("@Updatedby", model.Updatedby, DbType.Int32, ParameterDirection.Input);
                 parameters.Add("@UpdatedOn", model.UpdatedOn, DbType.DateTime, ParameterDirection.Input);
+                parameters.Add("@CardRequestHistoryJson", cardRequestHistoryJson, DbType.String, ParameterDirection.Input);
 
                 model.DistributeCardId = await db.ExecuteScalarAsync<int>(insertQuery, parameters, transaction: transaction);
-
-                //var updateQuery = @""
-                //;
-                //await db.ExecuteAsync(updateQuery, parameters, transaction: transaction);
-
                 transaction.Commit();
                 dtoResponse.Result = true;
                 dtoResponse.Message = "Record Created!";
