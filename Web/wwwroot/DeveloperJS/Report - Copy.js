@@ -1,80 +1,30 @@
-﻿let lst = `<option value=${null}>All</option>`;
+﻿var lst = '<option value="null">All</option>';
 var comid = 0; var corId = 0; var divId = 0; var bdeId = 0; var FmnBranchId = 0; var PsoId = 0; var SubDteId = 0;
 var UnitType = 1;
 var table; // Declare table variable outside the function to preserve the instance
-$(async function () {
-
-    if ($('#spnclaimId').length > 0) {
-        if ($('#spnclaimId').html() === 'Army Level Reports' || $('#spnclaimId').html() === 'Fmn Level Reports') {
-            await GetLoginUnitMappingDetails();
-        }
-    }
-    await GetReportDashboardCount();
-
-    if ($('#ddlUnit').length > 0) {
-        let previousValue = $('#ddlUnit').val();
-        let calledForSingleOption = false;
-
-        $('#ddlUnit').on('focus', function () {
-            previousValue = $(this).val();
-            calledForSingleOption = false;
-        });
-
-        $('#ddlUnit').on('blur', async function () {
-            const currentValue = $(this).val();
-
-            if (currentValue !== previousValue) {
-                await GetReportDashboardCount();
-            } else if ($('#ddlUnit option').length === 1 && !calledForSingleOption) {
-                await GetReportDashboardCount();
-                calledForSingleOption = true;
-            }
-        });
-    }
+$(function () {
+    GetReportDashboardCount();
 
     if ($('#ddlCommand').length > 0) {
-        let lastVal = $('#ddlCommand').val();
-
-        $('#ddlCommand').on('change', async function () {
-            const newVal = $(this).val();
-            if (newVal !== lastVal || $('#ddlCommand option').length === 1) {
-                lastVal = newVal;
-
-                if (newVal == null || newVal === "null") {
-                    $("#ddlCorps").html(lst);
-                } else {
-                    await mMsater(false, 0, "ddlCorps", 2, newVal);
-                }
-
-                ResetCount();
-                $("#ddlDiv").html(lst);
-                $("#ddlBde").html(lst);
-                $("#ddlFmnBranch").html(lst);
-                $("#ddlPSODte").html(lst);
-                $("#ddlDgSubDte").html(lst);
-                $("#ddlUnit").html(lst);
-            }
+        $('#ddlCommand').on('change', function () {
+            comid = $(this).val();
+            mMsater(false, 0, "ddlCorps", 2, $('#ddlCommand').val());
+            $("#ddlDiv").html(lst);
+            $("#ddlBde").html(lst);
+            $("#ddlFmnBranch").html(lst);
+            $("#ddlPSODte").html(lst);
+            $("#ddlDgSubDte").html(lst);
+            $("#ddlUnit").html(lst);
         });
-
-        $('#ddlCommand').on('click', async function () {
-            const val = $(this).val();
-
-            // If only one option and user clicks it (again), manually trigger
-            if ($('#ddlCommand option').length === 1) {
-                $('#ddlCommand').trigger('change');
-            }
-        });
+        // Manually trigger change if only one option exists
+        if ($('#ddlCommand option').length === 1) {
+            $('#ddlCommand').trigger('change');
+        }
     }
     if ($('#ddlCorps').length > 0) {
-        $('#ddlCorps').on('change', async function () {
+        $('#ddlCorps').on('change', function () {
             corId = $(this).val();
-            if ($('#ddlCorps').val() == null || $('#ddlCorps').val() == "null") {
-                $("#ddlDiv").html(lst);
-            }
-            else {
-                await mMsaterByParent(false, 0, "ddlDiv", 3, $('#ddlCommand').val(), $('#ddlCorps').val(), 0, 0);///ComdId,CorpsId,DivId,BdeId
-            }
-            ResetCount();
+            mMsaterByParent(false, 0, "ddlDiv", 3, $('#ddlCommand').val(), $('#ddlCorps').val(), 0, 0);///ComdId,CorpsId,DivId,BdeId
             $("#ddlBde").html(lst);
             $("#ddlFmnBranch").html(lst);
             $("#ddlPSODte").html(lst);
@@ -83,15 +33,9 @@ $(async function () {
         });
     }
     if ($('#ddlDiv').length > 0) {
-        $('#ddlDiv').on('change', async function () {
+        $('#ddlDiv').on('change', function () {
             divId = $(this).val();
-            if ($('#ddlDiv').val() == null || $('#ddlDiv').val() == "null") {
-                $("#ddlBde").html(lst);
-            }
-            else {
-                await mMsaterByParent(false, 0, "ddlBde", 4, $('#ddlCommand').val(), $('#ddlCorps').val(), $('#ddlDiv').val(), 0);///ComdId,CorpsId,DivId,BdeId   
-            }
-            ResetCount();
+            mMsaterByParent(false, 0, "ddlBde", 4, $('#ddlCommand').val(), $('#ddlCorps').val(), $('#ddlDiv').val(), 0);///ComdId,CorpsId,DivId,BdeId     
             $("#ddlFmnBranch").html(lst);
             $("#ddlPSODte").html(lst);
             $("#ddlDgSubDte").html(lst);
@@ -99,48 +43,38 @@ $(async function () {
         });
     }
     if ($('#ddlBde').length > 0) {
-        $('#ddlBde').on('change', async function () {
+        $('#ddlBde').on('change', function () {
             bdeId = $(this).val();
-            if (UnitType == "2") {
-                if ($("#spnclaimId").html() == "Army Level Reports") {
-                    await mMsater(false, 0, "ddlFmnBranch", FmnBranches, "");
-
-                }
-                else {
-                    await mMsater(true, FmnBranchId, "ddlFmnBranch", FmnBranches, "");
-                }
-            }
-            ResetCount();
-
-            await GetUnitByHierarchy(false, "ddlUnit", 0, $('#ddlCommand').val(), $('#ddlCorps').val(), $('#ddlDiv').val(), $('#ddlBde').val(), 1, 1, 1);
+            mMsater(false, 0, "ddlFmnBranch", FmnBranches, "");
+            $("#ddlUnit").html(lst);
+            GetUnitByHierarchy(false, "ddlUnit", 0, $('#ddlCommand').val(), $('#ddlCorps').val(), $('#ddlDiv').val(), $('#ddlBde').val(), 1, 1, 1);
 
         });
     }
     if ($('#ddlFmnBranch').length > 0) {
-        $('#ddlFmnBranch').on('change', async function () {
+        $('#ddlFmnBranch').on('change', function () {
             FmnBranchId = $(this).val();
-            ResetCount();
-            await GetUnitByHierarchy(false,"ddlUnit", 0, $("#ddlCommand").val(), $("#ddlCorps").val(), 1, 1, $("#ddlFmnBranch").val(), 1, 1);
+            $("#ddlUnit").html(lst);
+            GetUnitByHierarchy(false,"ddlUnit", 0, $("#ddlCommand").val(), $("#ddlCorps").val(), 1, 1, $("#ddlFmnBranch").val(), 1, 1);
 
         });
     }
     if ($('#ddlDgSubDte').length > 0) {
-        $('#ddlDgSubDte').on('change', async function () {
+        $('#ddlDgSubDte').on('change', function () {
             SubDteId = $(this).val();
-            await GetUnitByHierarchy(false,"ddlUnit", 0, 1, 1, 1, 1, 1, PsoId, $("#ddlDgSubDte").val());
+            GetUnitByHierarchy(false,"ddlUnit", 0, 1, 1, 1, 1, 1, PsoId, $("#ddlDgSubDte").val());
         });
     }
     if ($('#ddlPSODte').length > 0) {
-        $('#ddlPSODte').on('change', async function () {
+        $('#ddlPSODte').on('change', function () {
             PsoId = $(this).val();
-            ResetCount();
-            await GetUnitByHierarchy(false,"ddlUnit", 0, 1, 1, 1, 1, 1, $("#ddlPSODte").val(), SubDteId);
+            GetUnitByHierarchy(false,"ddlUnit", 0, 1, 1, 1, 1, 1, $("#ddlPSODte").val(), SubDteId);
         });
     }
-    $('input[name="UnitTyperdi"]').on("click",async function () {
+    $('input[name="UnitTyperdi"]').on("click",function () {
 
         UnitType = $("input[type='radio'][name=UnitTyperdi]:checked").val();
-        ResetCount();
+
         if (UnitType == "1") {
             $(".unittype").removeClass("d-none");
             $(".FmnBranch").addClass("d-none");
@@ -153,21 +87,18 @@ $(async function () {
 
 
             if ($("#spnclaimId").html() == "Army Level Reports") {
-                await mMsater(false, '', "ddlCommand", 1, "");
+                mMsater(false, '', "ddlCommand", 1, "");
 
                 $("#ddlCorps").html(lst);
                 $("#ddlDiv").html(lst);
                 $("#ddlBde").html(lst);
             }
             else if ($("#spnclaimId").html() == "Fmn Level Reports") {
-                await mMsater(true, comid, "ddlCommand", 1, "");
+                mMsater(true, comid, "ddlCommand", 1, "");
             }
             else {
-                await mMsater(true, comid, "ddlCommand", 1, "");
+                mMsater(true, comid, "ddlCommand", 1, "");
 
-            }
-            if ($('#ddlCommand option').length === 1) {
-                $('#ddlCommand').trigger('change');
             }
 
             $("#ddlFmnBranch").html(lst);
@@ -184,36 +115,28 @@ $(async function () {
             $("#ddlUnit").html(lst);
 
             if ($("#spnclaimId").html() == "Army Level Reports") {
-                $(".FmnBranch").removeClass("d-none");
-
-                await mMsater(false, '', "ddlCommand", 1, "");
-                await mMsater(false, '', "ddlFmnBranch", FmnBranches, "");
+                mMsater(false, '', "ddlCommand", 1, "");
+                mMsater(false, '', "ddlFmnBranch", FmnBranches, "");
 
                 $("#ddlCorps").html(lst);
                 $("#ddlDiv").html(lst);
                 $("#ddlBde").html(lst);
             }
             else if ($("#spnclaimId").html() == "Fmn Level Reports") {
-                $(".FmnBranch").addClass("d-none");
-
-                await mMsater(true, comid, "ddlCommand", 1, "");
-                await mMsater(true, FmnBranchId, "ddlFmnBranch", FmnBranches, "");
+                mMsater(true, comid, "ddlCommand", 1, "");
+                mMsater(true, FmnBranchId, "ddlFmnBranch", FmnBranches, "");
             }
             else {
-                $(".FmnBranch").addClass("d-none");
+                mMsater(true, comid, "ddlCommand", 1, "");
+                mMsater(true, FmnBranchId, "ddlFmnBranch", FmnBranches, "");
 
-                await mMsater(true, comid, "ddlCommand", 1, "");
-                await mMsater(true, FmnBranchId, "ddlFmnBranch", FmnBranches, "");
-
-            }
-            if ($('#ddlCommand option').length === 1) {
-                $('#ddlCommand').trigger('change');
             }
 
             $("#ddlPSODte").html(lst);
             $("#ddlDgSubDte").html(lst);
 
             $(".unittype").removeClass("d-none");
+            $(".FmnBranch").removeClass("d-none");
             $(".DteBranch").addClass("d-none");
         }
         else if (UnitType == "3") {
@@ -232,20 +155,26 @@ $(async function () {
             $("#ddlUnit").html(lst);
 
             if ($("#spnclaimId").html() == "Army Level Reports") {
-                await mMsater(false, '', "ddlPSODte", PSO, "");
-                await mMsater(false, '', "ddlDgSubDte", SubDte, "");
+                mMsater(false, '', "ddlPSODte", PSO, "");
+                mMsater(false, '', "ddlDgSubDte", SubDte, "");
             }
             else if ($("#spnclaimId").html() == "Fmn Level Reports") {
-                await mMsater(true, PsoId, "ddlPSODte", PSO, "");
-                await mMsater(true, SubDteId, "ddlDgSubDte", SubDte, "");
+                mMsater(true, PsoId, "ddlPSODte", PSO, "");
+                mMsater(true, SubDteId, "ddlDgSubDte", SubDte, "");
             }
             else {
-                await mMsater(true, PsoId, "ddlPSODte", PSO, "");
-                await mMsater(true, SubDteId, "ddlDgSubDte", SubDte, "");
+                mMsater(true, PsoId, "ddlPSODte", PSO, "");
+                mMsater(true, SubDteId, "ddlDgSubDte", SubDte, "");
 
             }
         }
     });
+
+    if ($('#spnclaimId').length > 0) {
+        if ($('#spnclaimId').html() === 'Army Level Reports' || $('#spnclaimId').html() === 'Fmn Level Reports') {
+            GetLoginUnitMappingDetails();
+        }
+    }
 
 
     $('#txtMonthYear').datepicker({
@@ -328,25 +257,25 @@ $(async function () {
     $("#btnRequisition").on("click", function (event) {
         event.preventDefault(); // Prevent anchor default behavior
         $("#CardReport_lblModelTitle").html('New Requisition');
-
-        GetReportReturnHistory('Requisition', function () {
-            $("#CardReport").modal("show"); // shown only after data is fully ready
+        $("#CardReport").modal("show");
+        $('#CardReport').one('shown.bs.modal', function () {
+            GetReportReturnHistory('Requisition');
         });
     });
     $("#btnNonFunctionalCard").on("click", function (event) {
         event.preventDefault(); // Prevent anchor default behavior
         $("#CardReport_lblModelTitle").html('Non Functional Card');
-
-        GetReportReturnHistory('NonFunctional', function () {
-            $("#CardReport").modal("show"); // shown only after data is fully ready
+        $("#CardReport").modal("show");
+        $('#CardReport').one('shown.bs.modal', function () {
+            GetReportReturnHistory('NonFunctional');
         });
     });
     $("#btnLostCase").on("click", function (event) {
         event.preventDefault(); // Prevent anchor default behavior
         $("#CardReport_lblModelTitle").html('Lost Case');
-
-        GetReportReturnHistory('LostCase', function () {
-            $("#CardReport").modal("show"); // shown only after data is fully ready
+        $("#CardReport").modal("show");
+        $('#CardReport').one('shown.bs.modal', function () {
+            GetReportReturnHistory('LostCase');
         });
     });
     $("#btnMonthlyProcessed").on("click", function (event) {
@@ -402,18 +331,14 @@ $(async function () {
         // ✅ All good: Proceed
         $("#MonthlyProcessedDialog").modal("hide");
         $("#CardReport_lblModelTitle").html(`Monthly Processed :- ${monthName}  ${inputYear}`);
-        //$("#CardReport").modal("show");
+        $("#CardReport").modal("show");
 
-        //$('#CardReport').one('shown.bs.modal', function () {
-        //    GetReportReturnHistory('MonthlyProcessed');
-        //});
-
-        GetReportReturnHistory('MonthlyProcessed', function () {
-            $("#CardReport").modal("show"); // shown only after data is fully ready
+        $('#CardReport').one('shown.bs.modal', function () {
+            GetReportReturnHistory('MonthlyProcessed');
         });
     });
 });
-function GetReportReturnHistory(Choice, callback) {
+function GetReportReturnHistory(Choice) {
     if ($.fn.DataTable.isDataTable("#CardReport_tbldatadialog")) {
         $("#CardReport_tbldatadialog").DataTable().destroy();
         $("#CardReport_tbldatadialog").empty(); // Clear old thead/tbody
@@ -440,16 +365,14 @@ function GetReportReturnHistory(Choice, callback) {
         "MonthYear": $('#txtMonthYear').length > 0 ? $('#txtMonthYear').val() : null,
         
     };
-    let modalShown = false; // <== use a flag to show modal only once
     const columns = getColumnsByChoice(Choice);
     table = $("#CardReport_tbldatadialog").DataTable({
-        autoWidth: false, // Let us handle width via CSS
-        responsive: false, // Responsive breaks layout for width control
         processing: true,
         serverSide: true,
         filter: true,
         order: [[1, 'desc']], // Default sorting on the first column
-
+        responsive: true,
+        autoWidth: false,
         ajax: async function (data, callback, settings) {
             
             let requestData = {
@@ -461,6 +384,7 @@ function GetReportReturnHistory(Choice, callback) {
                 SortDirection: data.order.length > 0 ? data.order[0].dir : '', // Add a check for data.order
                 ...userdata
             };
+            console.log(JSON.stringify(requestData));
             try {
                 let response = await fetch("/Home/GetReportData", {
                     method: "POST",
@@ -514,15 +438,7 @@ function GetReportReturnHistory(Choice, callback) {
                     WaterMarkOnPdf(doc)
                 }
             }],
-        // 👇 Show modal only after table (header + data) is fully rendered
-        initComplete: function () {
-            if (typeof callback === "function") {
-                callback(); // show modal now
-            }
-        },
         drawCallback: function (settings) {
-
-
             $("#CardReport_tbldatadialog tbody").off("click", ".cls-remarks").on("click", ".cls-remarks", function () {
                 var rowData = table.row($(this).closest("tr")).data();
                 if (rowData.RemarksNameList != null) {
@@ -606,14 +522,9 @@ function getColumnsByChoice(choice) {
                     name: 'RequestId',
                 },
                 {
-                    title: "Type",
-                    data: "ApplyFor",
-                    name: "ApplyFor"
-                },
-                {
-                    title: "Arm / Service",
-                    data: "ArmedAbbreviation",
-                    name: "ArmedAbbreviation"
+                    title: "Tracking Id",
+                    data: 'TrackingId',
+                    name: 'TrackingId',
                 },
                 {
                     title: "Army No",
@@ -631,7 +542,7 @@ function getColumnsByChoice(choice) {
                     }
                 },
                 {
-                    title: "Rank & Name",
+                    title: "Rank,Name",
                     data: null,
                     name: null,
                     orderable: false,
@@ -639,6 +550,16 @@ function getColumnsByChoice(choice) {
                         let fullName = `${row.RankName || ""} ${row.FName || ""} ${row.LName || ""}`.trim();
                         return (fullName);
                     }
+                },
+                {
+                    title: "Arm / Service",
+                    data: "ArmedAbbreviation",
+                    name: "ArmedAbbreviation"
+                },
+                {
+                    title: "Type",
+                    data: "ApplyFor",
+                    name: "ApplyFor"
                 },
                 {
                     title: "Status",
@@ -676,16 +597,6 @@ function getColumnsByChoice(choice) {
                     name: 'RequestId',
                 },
                 {
-                    title: "Type",
-                    data: "ApplyFor",
-                    name: "ApplyFor"
-                },
-                {
-                    title: "Arm / Service",
-                    data: "ArmedAbbreviation",
-                    name: "ArmedAbbreviation"
-                },
-                {
                     title: "Army No",
                     data: "ServiceNo",
                     name: "ServiceNo",
@@ -701,7 +612,7 @@ function getColumnsByChoice(choice) {
                     }
                 },
                 {
-                    title: "Rank & Name",
+                    title: "Rank,Name",
                     data: null,
                     name: null,
                     orderable: false,
@@ -709,6 +620,16 @@ function getColumnsByChoice(choice) {
                         let fullName = `${row.RankName || ""} ${row.FName || ""} ${row.LName || ""}`.trim();
                         return (fullName);
                     }
+                },
+                {
+                    title: "Type",
+                    data: "ApplyFor",
+                    name: "ApplyFor"
+                },
+                {
+                    title: "Arm / Service",
+                    data: "ArmedAbbreviation",
+                    name: "ArmedAbbreviation"
                 },
                 {
                     title: "Unit",
@@ -794,16 +715,6 @@ function getColumnsByChoice(choice) {
                     name: 'RequestId',
                 },
                 {
-                    title: "Type",
-                    data: "ApplyFor",
-                    name: "ApplyFor"
-                },
-                {
-                    title: "Arm / Service",
-                    data: "ArmedAbbreviation",
-                    name: "ArmedAbbreviation"
-                },
-                {
                     title: "Army No",
                     data: "ServiceNo",
                     name: "ServiceNo",
@@ -819,7 +730,7 @@ function getColumnsByChoice(choice) {
                     }
                 },
                 {
-                    title: "Rank & Name",
+                    title: "Rank,Name",
                     data: null,
                     name: null,
                     orderable: false,
@@ -827,6 +738,16 @@ function getColumnsByChoice(choice) {
                         let fullName = `${row.RankName || ""} ${row.FName || ""} ${row.LName || ""}`.trim();
                         return (fullName);
                     }
+                },
+                {
+                    title: "Type",
+                    data: "ApplyFor",
+                    name: "ApplyFor"
+                },
+                {
+                    title: "Arm / Service",
+                    data: "ArmedAbbreviation",
+                    name: "ArmedAbbreviation"
                 },
                 {
                     title: "Unit",
@@ -902,22 +823,17 @@ function getColumnsByChoice(choice) {
                     name: 'RequestId',
                 },
                 {
+                    title: "Tracking Id",
+                    data: 'TrackingId',
+                    name: 'TrackingId',
+                },
+                {
                     title: "Draft Dt. & Time",
                     data: "UpdatedOn",
                     name: "UpdatedOn",
                     render: function (data, type, row) {
                         return DateFormateddMMyyyyhhmmss(data);
                     }
-                },
-                {
-                    title: "Type",
-                    data: "ApplyFor",
-                    name: "ApplyFor"
-                },
-                {
-                    title: "Arm / Service",
-                    data: "ArmedAbbreviation",
-                    name: "ArmedAbbreviation"
                 },
                 {
                     title: "Army No",
@@ -935,7 +851,7 @@ function getColumnsByChoice(choice) {
                     }
                 },
                 {
-                    title: "Rank & Name",
+                    title: "Rank,Name",
                     data: null,
                     name: null,
                     orderable: false,
@@ -943,6 +859,16 @@ function getColumnsByChoice(choice) {
                         let fullName = `${row.RankName || ""} ${row.FName || ""} ${row.LName || ""}`.trim();
                         return (fullName);
                     }
+                },
+                {
+                    title: "Arm / Service",
+                    data: "ArmedAbbreviation",
+                    name: "ArmedAbbreviation"
+                },
+                {
+                    title: "Type",
+                    data: "ApplyFor",
+                    name: "ApplyFor"
                 },
                 {
                     title: "Status",
@@ -972,312 +898,456 @@ function getColumnsByChoice(choice) {
 
     return columns;
 }
-async function GetReportDashboardCount() {
-    try {
-        function parseVal(val) {
-            if (val === "null" || val === undefined || val === "") {
-                return null;
-            }
-            return val;
-        }
-        var requestData =
-        {
-            "TableId": 0,
-            "UnitType": $("input[type='radio'][name=UnitTyperdi]").length > 0 ? parseVal($("input[type='radio'][name=UnitTyperdi]:checked").val()) : null,
-            "ComdId": $('#ddlCommand').length > 0 ? parseVal($('#ddlCommand').val()) : null,
-            "CorpsId": $('#ddlCorps').length > 0 ? parseVal($('#ddlCorps').val()) : null,
-            "DivId": $('#ddlDiv').length > 0 ? parseVal($('#ddlDiv').val()) : null,
-            "BdeId": $('#ddlBde').length > 0 ? parseVal($('#ddlBde').val()) : null,
-            "FmnBranchID": $('#ddlFmnBranch').length > 0 ? parseVal($('#ddlFmnBranch').val()) : null,
-            "PsoId": $('#ddlPSODte').length > 0 ? parseVal($('#ddlPSODte').val()) : null,
-            "SubDteId": $('#ddlDgSubDte').length > 0 ? parseVal($('#ddlDgSubDte').val()) : null,
-            "UnitMapId": $('#ddlUnit').length > 0 ? parseVal($('#ddlUnit').val()) : null
+function GetReportDashboardCount() {
+    var userdata =
+    {
+        "Id": 0,
 
-        };
-        const response = await fetch('/Home/GetReportDashboardCount', {
-            method: 'POST',
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(requestData)
-        });
+    };
+    $.ajax({
+        url: '/Home/GetReportDashboardCount',
+        contentType: 'application/x-www-form-urlencoded',
+        data: userdata,
+        type: 'POST',
 
-        const data = await response.json();
+        success: function (response) {
+            if (response != "null" && response != null) {
 
-        if (!data || data === "null") return;
-
-        if (data === InternalServerError) {
-            Swal.fire({ text: errormsg });
-            return;
-        }
-
-        if (data === 0) {
-            // Optionally handle zero count case
-            return;
-        }
-
-        $("#TotRequisition").html(data.TotRequisition);
-        $("#TotLostCases").html(data.TotLostCases);
-        $("#TotMonthlyProcessed").html(data.TotMonthlyProcessed);
-        $("#TotNonFunctionalCard").html(data.TotNonFunctionalCard);
-
-        $('.counter-value').each(function () {
-            $(this).prop('Counter', 0).animate({
-                Counter: $(this).text()
-            }, {
-                duration: 200,
-                easing: 'swing',
-                step: function (now) {
-                    $(this).text(Math.ceil(now));
+                if (response == InternalServerError) {
+                    Swal.fire({
+                        text: errormsg
+                    });
                 }
+                else if (response == 0) {
+
+                }
+
+                else {
+
+                    $("#TotRequisition").html(response.TotRequisition);
+                    $("#TotLostCases").html(response.TotLostCases);
+                    $("#TotMonthlyProcessed").html(response.TotMonthlyProcessed);
+                    $("#TotNonFunctionalCard").html(response.TotNonFunctionalCard);
+
+                    $('.counter-value').each(function () {
+                        $(this).prop('Counter', 0).animate({
+                            Counter: $(this).text()
+                        }, {
+                            duration: 200,
+                            easing: 'swing',
+                            step: function (now) {
+                                $(this).text(Math.ceil(now));
+                            }
+                        });
+                    });
+                }
+            }
+            else {
+
+            }
+        },
+        error: function (result) {
+            Swal.fire({
+                text: errormsg002
             });
-        });
-    } catch (error) {
-        Swal.fire({ text: errormsg002 });
-        console.error("GetReportDashboardCount error:", error);
-    }
+        }
+    });
 }
-async function GetLoginUnitMappingDetails() {
-    try {
-        const response = await fetch('/Master/GetALLByUnitMapWonUnit', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: new URLSearchParams({ UnitMapId: 0 })
-        });
+function GetLoginUnitMappingDetails() {
 
-        const result = await response.json();
+    var listItem = "";
+    var userdata =
+    {
+        "UnitMapId": 0
 
-        if (!result || result === "null") return;
-        if (result === InternalServerError) {
-            Swal.fire({ text: errormsg });
-            return;
+    };
+    $.ajax({
+        url: '/Master/GetALLByUnitMapWonUnit',
+        contentType: 'application/x-www-form-urlencoded',
+        data: userdata,
+        type: 'POST',
+
+        success: function (response) {
+
+            if (response != "null" && response != null) {
+
+                if (response == InternalServerError) {
+                    Swal.fire({
+                        text: errormsg
+                    });
+                }
+                else if (response == 0) {
+
+                }
+
+                else {
+
+
+                    UnitType = response.UnitType;
+                    var lst = '<option value="1">Please Select</option>';
+
+                    comid = response.ComdId;
+                    corId = response.CorpsId;
+                    divId = response.DivId;
+                    bdeId = response.BdeId;
+                    FmnBranchId = response.FmnBranchID;
+                    PsoId = response.PsoId;
+                    SubDteId = response.SubDteId;
+
+
+
+
+                    if (parseInt(response.UnitType) == 1) {
+                        $("#UnitType1").prop("checked", true);
+
+                        if ($("#spnclaimId").html() == "Army Level Reports") {
+                            mMsater(false, '', "ddlCommand", 1, "");
+                        }
+                        else if ($("#spnclaimId").html() == "Fmn Level Reports") {
+                            mMsater(true, response.ComdId, "ddlCommand", 1, "");
+
+                            if (response.CorpsId == 1)
+                                mMsater(false, response.CorpsId, "ddlCorps", 2, response.ComdId);
+                            else
+                                mMsater(true, response.CorpsId, "ddlCorps", 2, response.ComdId);
+
+
+                            if (response.DivId == 1)
+                                mMsaterByParent(false, response.DivId, "ddlDiv", 3, response.ComdId, response.CorpsId, 0, 0);///ComdId,CorpsId,DivId,BdeId
+                            else
+                                mMsaterByParent(true, response.DivId, "ddlDiv", 3, response.ComdId, response.CorpsId, 0, 0);///ComdId,CorpsId,DivId,BdeId
+
+                            if (response.BdeId == 1)
+                                mMsaterByParent(false, response.BdeId, "ddlBde", 4, response.ComdId, response.CorpsId, response.DivId, 0);///ComdId,CorpsId,DivId,BdeId
+                            else
+                                mMsaterByParent(true, response.BdeId, "ddlBde", 4, response.ComdId, response.CorpsId, response.DivId, 0);///ComdId,CorpsId,DivId,BdeId
+
+                            GetUnitByHierarchy(false, "ddlUnit", response.UnitId, response.ComdId, response.CorpsId, response.DivId, response.BdeId,1, 1, 1);
+                        }
+                        else {
+                            mMsater(true, response.ComdId, "ddlCommand", 1, "");
+                            mMsater(true, response.CorpsId, "ddlCorps", 2, response.ComdId);
+                            mMsaterByParent(true, response.DivId, "ddlDiv", 3, response.ComdId, response.CorpsId, 0, 0);///ComdId,CorpsId,DivId,BdeId
+                            mMsaterByParent(true, response.BdeId, "ddlBde", 4, response.ComdId, response.CorpsId, response.DivId, 0);///ComdId,CorpsId,DivId,BdeId
+
+                            GetUnitByHierarchy(true, "ddlUnit", response.UnitId, response.ComdId, response.CorpsId, response.DivId, response.BdeId, 1, 1, 1);
+                        }
+
+                        $(".unittype").removeClass("d-none");
+                        $(".FmnBranch").addClass("d-none");
+                        $(".DteBranch").addClass("d-none");
+
+                        $("#ddlFmnBranch").html(lst);
+                        $("#ddlPSODte").html(lst);
+                        $("#ddlDgSubDte").html(lst);
+
+                    }
+                    else if (parseInt(response.UnitType) == 2) {
+                        $("#UnitType2").prop("checked", true);
+
+                        if ($("#spnclaimId").html() == "Army Level Reports") {
+                            mMsater(false, '', "ddlCommand", 1, "");
+                            mMsater(true, response.FmnBranchID, "ddlFmnBranch", FmnBranches, "");
+                        }
+                        else if ($("#spnclaimId").html() == "Fmn Level Reports") {
+
+                            mMsater(true, response.ComdId, "ddlCommand", 1, "");
+
+                            if (response.CorpsId == 1)
+                                mMsater(false, response.CorpsId, "ddlCorps", 2, response.ComdId);
+                            else
+                                mMsater(true, response.CorpsId, "ddlCorps", 2, response.ComdId);
+
+                            if (response.DivId == 1)
+                                mMsaterByParent(false, response.DivId, "ddlDiv", 3, response.ComdId, response.CorpsId, 0, 0);///ComdId,CorpsId,DivId,BdeId
+                            else
+                                mMsaterByParent(true, response.DivId, "ddlDiv", 3, response.ComdId, response.CorpsId, 0, 0);///ComdId,CorpsId,DivId,BdeId
+
+                            if (response.BdeId == 1)
+                                mMsaterByParent(false, response.BdeId, "ddlBde", 4, response.ComdId, response.CorpsId, response.DivId, 0);///ComdId,CorpsId,DivId,BdeId
+                            else
+                                mMsaterByParent(true, response.BdeId, "ddlBde", 4, response.ComdId, response.CorpsId, response.DivId, 0);///ComdId,CorpsId,DivId,BdeId
+
+                            mMsater(true, response.FmnBranchID, "ddlFmnBranch", FmnBranches, "");
+
+                            GetUnitByHierarchy(false, "ddlUnit", response.UnitId, response.ComdId, response.CorpsId, response.DivId, response.BdeId, response.FmnBranchID, 1, 1);
+
+                        }
+                        else {
+                            mMsater(true, response.ComdId, "ddlCommand", 1, "");
+                            mMsater(true, response.CorpsId, "ddlCorps", 2, response.ComdId);
+                            mMsaterByParent(true, response.DivId, "ddlDiv", 3, response.ComdId, response.CorpsId, 0, 0);///ComdId,CorpsId,DivId,BdeId
+                            mMsaterByParent(true, response.BdeId, "ddlBde", 4, response.ComdId, response.CorpsId, response.DivId, 0);///ComdId,CorpsId,DivId,BdeId
+                            mMsater(true, response.FmnBranchID, "ddlFmnBranch", FmnBranches, "");
+
+                            GetUnitByHierarchy(true, "ddlUnit", response.UnitId, response.ComdId, response.CorpsId, response.DivId, response.BdeId, response.FmnBranchID, 1, 1);
+                        }
+                        $("#ddlPSODte").html(lst);
+                        $("#ddlDgSubDte").html(lst);
+
+                        $(".unittype").removeClass("d-none");
+                        $(".FmnBranch").removeClass("d-none");
+                        $(".DteBranch").addClass("d-none");
+
+                    }
+                    else if (parseInt(response.UnitType) == 3) {
+                        $("#UnitType3").prop("checked", true);
+
+                        if ($("#spnclaimId").html() == "Army Level Reports") {
+                            mMsater(false, '', "ddlPSODte", PSO, "");
+                            mMsater(false, '', "ddlDgSubDte", SubDte, "");
+                        }
+                        else if ($("#spnclaimId").html() == "Fmn Level Reports") {
+                            mMsater(true, response.PsoId, "ddlPSODte", PSO, "");
+                            mMsater(true, response.SubDteId, "ddlDgSubDte", SubDte, response.PsoId);
+
+                            GetUnitByHierarchy(false,"ddlUnit", response.UnitId, 1, 1, 1, 1, 1, response.PsoId, response.SubDteId);
+                        }
+                        else {
+                            mMsater(true,response.PsoId, "ddlPSODte", PSO, "");
+                            mMsater(true,response.SubDteId, "ddlDgSubDte", SubDte, "");
+                            GetUnitByHierarchy(true,"ddlUnit", response.UnitId, 1, 1, 1, 1, 1, response.PsoId, response.SubDteId);
+                        }
+
+                        $(".unittype").addClass("d-none");
+                        $(".FmnBranch").addClass("d-none");
+                        $(".DteBranch").removeClass("d-none");
+
+                        $("#ddlFmnBranch").html(lst);
+                        $("#ddlCommand").html(lst);
+                        $("#ddlCorps").html(lst);
+                        $("#ddlCorps").html(lst);
+                        $("#ddlBde").html(lst);
+                        $("#ddlDiv").html(lst);
+                    }
+
+                }
+            }
+            else {
+
+            }
+        },
+        error: function (result) {
+            Swal.fire({
+                text: errormsg002
+            });
         }
+    });
 
-        const lst = `<option value=${1}>Please Select</option>`;
-        UnitType = result.UnitType;
-        comid = result.ComdId;
-        corId = result.CorpsId;
-        divId = result.DivId;
-        bdeId = result.BdeId;
-        FmnBranchId = result.FmnBranchID;
-        PsoId = result.PsoId;
-        SubDteId = result.SubDteId;
-
-        if (parseInt(result.UnitType) === 1) {
-            $("#UnitType1").prop("checked", true);
-
-            if ($("#spnclaimId").html() === "Army Level Reports") {
-                await mMsater(false, '', "ddlCommand", 1, '');
-            } else if ($("#spnclaimId").html() === "Fmn Level Reports") {
-                await mMsater(true, result.ComdId, "ddlCommand", 1, '');
-                await mMsater(result.CorpsId == 1 ? false : true, result.CorpsId, "ddlCorps", 2, result.ComdId);
-                await mMsaterByParent(result.DivId == 1 ? false : true, result.DivId, "ddlDiv", 3, result.ComdId, result.CorpsId, 0, 0);
-                await mMsaterByParent(result.BdeId == 1 ? false : true, result.BdeId, "ddlBde", 4, result.ComdId, result.CorpsId, result.DivId, 0);
-                await GetUnitByHierarchy(false, "ddlUnit", result.UnitId, result.ComdId, result.CorpsId, result.DivId, result.BdeId, 1, 1, 1);
-            } else {
-                await mMsater(true, result.ComdId, "ddlCommand", 1, '');
-                await mMsater(true, result.CorpsId, "ddlCorps", 2, result.ComdId);
-                await mMsaterByParent(true, result.DivId, "ddlDiv", 3, result.ComdId, result.CorpsId, 0, 0);
-                await mMsaterByParent(true, result.BdeId, "ddlBde", 4, result.ComdId, result.CorpsId, result.DivId, 0);
-                await GetUnitByHierarchy(true, "ddlUnit", result.UnitId, result.ComdId, result.CorpsId, result.DivId, result.BdeId, 1, 1, 1);
-            }
-
-            $(".unittype").removeClass("d-none");
-            $(".FmnBranch").addClass("d-none");
-            $(".DteBranch").addClass("d-none");
-            $("#ddlFmnBranch, #ddlPSODte, #ddlDgSubDte").html(lst);
-
-        } else if (parseInt(result.UnitType) === 2) {
-            $("#UnitType2").prop("checked", true);
-
-            if ($("#spnclaimId").html() === "Army Level Reports") {
-                await mMsater(false, '', "ddlCommand", 1, '');
-                await mMsater(true, result.FmnBranchID, "ddlFmnBranch", FmnBranches, '');
-            } else if ($("#spnclaimId").html() === "Fmn Level Reports") {
-                await mMsater(true, result.ComdId, "ddlCommand", 1, '');
-                await mMsater(result.CorpsId == 1 ? false : true, result.CorpsId, "ddlCorps", 2, result.ComdId);
-                await mMsaterByParent(result.DivId == 1 ? false : true, result.DivId, "ddlDiv", 3, result.ComdId, result.CorpsId, 0, 0);
-                await mMsaterByParent(result.BdeId == 1 ? false : true, result.BdeId, "ddlBde", 4, result.ComdId, result.CorpsId, result.DivId, 0);
-                await mMsater(true, result.FmnBranchID, "ddlFmnBranch", FmnBranches, '');
-                await GetUnitByHierarchy(false, "ddlUnit", result.UnitId, result.ComdId, result.CorpsId, result.DivId, result.BdeId, result.FmnBranchID, 1, 1);
-            } else {
-                await mMsater(true, result.ComdId, "ddlCommand", 1, '');
-                await mMsater(true, result.CorpsId, "ddlCorps", 2, result.ComdId);
-                await mMsaterByParent(true, result.DivId, "ddlDiv", 3, result.ComdId, result.CorpsId, 0, 0);
-                await mMsaterByParent(true, result.BdeId, "ddlBde", 4, result.ComdId, result.CorpsId, result.DivId, 0);
-                await mMsater(true, result.FmnBranchID, "ddlFmnBranch", FmnBranches, '');
-                await GetUnitByHierarchy(true, "ddlUnit", result.UnitId, result.ComdId, result.CorpsId, result.DivId, result.BdeId, result.FmnBranchID, 1, 1);
-            }
-
-            $("#ddlPSODte, #ddlDgSubDte").html(lst);
-            $(".unittype").removeClass("d-none");
-            $(".FmnBranch").removeClass("d-none");
-            $(".DteBranch").addClass("d-none");
-
-        } else if (parseInt(result.UnitType) === 3) {
-            $("#UnitType3").prop("checked", true);
-
-            if ($("#spnclaimId").html() === "Army Level Reports") {
-                await mMsater(false, '', "ddlPSODte", PSO, '');
-                await mMsater(false, '', "ddlDgSubDte", SubDte, '');
-            } else if ($("#spnclaimId").html() === "Fmn Level Reports") {
-                await mMsater(true, result.PsoId, "ddlPSODte", PSO, '');
-                await mMsater(true, result.SubDteId, "ddlDgSubDte", SubDte, result.PsoId);
-                await GetUnitByHierarchy(false, "ddlUnit", result.UnitId, 1, 1, 1, 1, 1, result.PsoId, result.SubDteId);
-            } else {
-                await mMsater(true, result.PsoId, "ddlPSODte", PSO, '');
-                await mMsater(true, result.SubDteId, "ddlDgSubDte", SubDte, '');
-                await GetUnitByHierarchy(true, "ddlUnit", result.UnitId, 1, 1, 1, 1, 1, result.PsoId, result.SubDteId);
-            }
-
-            $(".unittype").addClass("d-none");
-            $(".FmnBranch").addClass("d-none");
-            $(".DteBranch").removeClass("d-none");
-
-            $("#ddlFmnBranch, #ddlCommand, #ddlCorps, #ddlBde, #ddlDiv").html(lst);
-        }
-    } catch (error) {
-        Swal.fire({ text: errormsg002 });
-        console.error("GetLoginUnitMappingDetails error:", error);
-    }
 }
 
-async function GetUnitByHierarchy(IsOnly, ddl, sectid, ComdId, CorpsId, DivId, BdeId, FmnBranchID, PsoId, SubDteId) {
-    try {
-        const normalize = (val) => (val === "null" || val === "" || val === undefined ? null : val);
+function GetUnitByHierarchy(IsOnly, ddl, sectid, ComdId, CorpsId, DivId, BdeId, FmnBranchID, PsoId, SubDteId) {
+    var listItem = "";
+    var userdata =
+    {
+        "TableId": 0,
+        "UnitType":UnitType,
+        "ComdId": ComdId,
+        "CorpsId": CorpsId,
+        "DivId": DivId,
+        "BdeId": BdeId,
+        "FmnBranchID": FmnBranchID,
+        "PsoId": PsoId,
+        "SubDteId": SubDteId,
 
-        const userdata = new URLSearchParams({
-            TableId: 0,
-            UnitType: UnitType,
-            ComdId: normalize(ComdId),
-            CorpsId: normalize(CorpsId),
-            DivId: normalize(DivId),
-            BdeId: normalize(BdeId),
-            FmnBranchID: normalize(FmnBranchID),
-            PsoId: normalize(PsoId),
-            SubDteId: normalize(SubDteId)
-        });
+    };
+    $.ajax({
+        url: '/Master/GetUnitByHierarchy',
+        contentType: 'application/x-www-form-urlencoded',
+        data: userdata,
+        type: 'POST',
 
-        const response = await fetch('/Master/GetUnitByHierarchy', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: userdata
-        });
+        success: function (response) {
+            if (response != "null" && response != null) {
 
-        const result = await response.json();
+                if (response == InternalServerError) {
+                    Swal.fire({
+                        text: errormsg
+                    });
 
-        if (!result || result === "null") return;
+                }
+                else if (response.length == 0) {
 
-        if (result === InternalServerError) {
-            Swal.fire({ text: errormsg });
-            return;
-        }
 
-        let listItem = `<option value=${null}>All</option>`;
+                }
 
-        for (const item of result) {
-            if (IsOnly && item.UnitId == sectid) {
-                listItem += `<option value="${item.UnitId}">${item.UnitName}</option>`;
-            } else if (!IsOnly) {
-                listItem += `<option value="${item.UnitId}">${item.UnitName}</option>`;
+                else {
+
+
+
+                    listItem += '<option value="null">All</option>';
+                    for (var i = 0; i < response.length; i++) {
+                        if (IsOnly == true && response[i].UnitId == sectid) {
+
+                            listItem += '<option value="' + response[i].UnitId + '">' + response[i].UnitName + '</option>';
+                        } else if
+                            (IsOnly == false) {
+                            listItem += '<option value="' + response[i].UnitId + '">' + response[i].UnitName + '</option>';
+                        }
+
+
+                    }
+                    $("#" + ddl + "").html(listItem);
+                    if (sectid != '') {
+                        $("#" + ddl + "").val(sectid);
+
+                    }
+                }
             }
-        }
+            else {
 
-        $("#" + ddl).html(listItem);
-        if (sectid !== '') {
-            $("#" + ddl).val(sectid);
+            }
+        },
+        error: function (result) {
+            Swal.fire({
+                text: errormsg002
+            });
         }
-    } catch (error) {
-        Swal.fire({ text: errormsg002 });
-        console.error("GetUnitByHierarchy error:", error);
-    }
+    });
+
 }
 
-async function mMsater(IsOnly, sectid = '', ddl, TableId, ParentId) {
-    try {
-        const response = await fetch('/Master/GetAllMMaster', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
-            },
-            body: new URLSearchParams({
-                id: TableId,
-                ParentId: ParentId
-            })
-        });
+function mMsater(IsOnly, sectid = '', ddl, TableId, ParentId) {
 
-        const data = await response.json();
 
-        if (!data || data === "null") return;
-        if (data === InternalServerError) {
-            Swal.fire({ text: errormsg });
-            return;
-        }
+    var userdata =
+    {
+        "id": TableId,
+        "ParentId": ParentId,
 
-        let listItemddl = IsOnly ? '' : `<option value=${null}>All</option>`;
+    };
+    $.ajax({
+        url: '/Master/GetAllMMaster',
+        contentType: 'application/x-www-form-urlencoded',
+        data: userdata,
+        type: 'POST',
 
-        for (let item of data) {
-            if (IsOnly && item.Id == sectid) {
-                listItemddl += `<option value="${item.Id}">${item.Name}</option>`;
-            } else if (!IsOnly) {
-                listItemddl += `<option value="${item.Id}">${item.Name}</option>`;
+        success: function (response) {
+            if (response != "null" && response != null) {
+                if (response == InternalServerError) {
+                    Swal.fire({
+                        text: errormsg
+                    });
+                }
+
+                else {
+
+                    var listItemddl = "";
+                    if (IsOnly == false) {
+                        listItemddl += '<option value="null">All</option>';
+                    }
+
+
+                    for (var i = 0; i < response.length; i++) {
+                        if (IsOnly == true && response[i].Id == sectid) {
+                            listItemddl += '<option value="' + response[i].Id + '">' + response[i].Name + '</option>';
+                        }
+                        else if (IsOnly == false) {
+                            listItemddl += '<option value="' + response[i].Id + '">' + response[i].Name + '</option>';
+
+                        }
+                    }
+                    $("#" + ddl + "").html(listItemddl);
+
+                    if (sectid != '') {
+                        $("#" + ddl + "").val(sectid);
+
+                    }
+
+                    //}
+
+
+                }
             }
-        }
-
-        $("#" + ddl).html(listItemddl);
-        if (sectid !== '') {
-            $("#" + ddl).val(sectid);
-        }
-    } catch (error) {
-        Swal.fire({ text: errormsg002 });
-        console.error("mMsater error:", error);
-    }
-}
-async function mMsaterByParent(IsOnly, sectid = '', ddl, TableId, ComdId, CorpsId, DivId, BdeId) {
-    try {
-        const response = await fetch('/Master/GetAllMMasterByParent', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
-            },
-            body: new URLSearchParams({
-                TableId,
-                ComdId,
-                CorpsId,
-                DivId,
-                BdeId
-            })
-        });
-
-        const data = await response.json();
-
-        if (!data || data === "null") return;
-        if (data === InternalServerError) {
-            Swal.fire({ text: errormsg });
-            return;
-        }
-
-        let listItemddl = IsOnly ? '' : `<option value=${null}>All</option>`;
-
-        for (let item of data) {
-            if (IsOnly && item.Id == sectid) {
-                listItemddl += `<option value="${item.Id}">${item.Name}</option>`;
-            } else if (!IsOnly) {
-                listItemddl += `<option value="${item.Id}">${item.Name}</option>`;
+            else {
+                //Swal.fire({
+                //    text: "No data found Offrs"
+                //});
             }
+        },
+        error: function (result) {
+            Swal.fire({
+                text: errormsg002
+            });
         }
-
-        $("#" + ddl).html(listItemddl);
-        if (sectid !== '') {
-            $("#" + ddl).val(sectid);
-        }
-    } catch (error) {
-        Swal.fire({ text: errormsg002 });
-        console.error("mMsaterByParent error:", error);
-    }
+    });
 }
-function ResetCount() {
-    $("#TotRequisition").html('0');
-    $("#TotLostCases").html('0');
-    $("#TotMonthlyProcessed").html('0');
-    $("#TotNonFunctionalCard").html('0');
 
+function mMsaterByParent(IsOnly, sectid = '', ddl, TableId, ComdId, CorpsId, DivId, BdeId) {
+
+
+    var userdata =
+    {
+        "TableId": TableId,
+        "ComdId": ComdId,
+        "CorpsId": CorpsId,
+        "DivId": DivId,
+        "BdeId": BdeId,
+
+    };
+    $.ajax({
+        url: '/Master/GetAllMMasterByParent',
+        contentType: 'application/x-www-form-urlencoded',
+        data: userdata,
+        type: 'POST',
+
+        success: function (response) {
+            if (response != "null" && response != null) {
+                if (response == InternalServerError) {
+                    Swal.fire({
+                        text: errormsg
+                    });
+                }
+
+                else {
+
+                    var listItemddl = "";
+                    if (IsOnly == false) {
+                        listItemddl += '<option value="null">All</option>';
+                    }
+
+                    for (var i = 0; i < response.length; i++) {
+                        if (IsOnly == true && response[i].Id == sectid) {
+                            listItemddl += '<option value="' + response[i].Id + '">' + response[i].Name + '</option>';
+                        }
+                        else if (IsOnly == false) {
+                            listItemddl += '<option value="' + response[i].Id + '">' + response[i].Name + '</option>';
+
+                        }
+                    }
+                    $("#" + ddl + "").html(listItemddl);
+
+                    //if (TableId == 5 || TableId == 7 || TableId == 8) {
+
+                    //    if (sectid != '') {
+                    //        $("#" + ddl + " option").filter(function () {
+                    //            return this.text == sectid;
+                    //        }).attr('selected', true);
+
+                    //    }
+                    //}
+                    //else
+                    //{
+                    if (sectid != '') {
+                        $("#" + ddl + "").val(sectid);
+
+                    }
+
+                    //}
+
+
+                }
+            }
+            else {
+                //Swal.fire({
+                //    text: "No data found Offrs"
+                //});
+            }
+        },
+        error: function (result) {
+            Swal.fire({
+                text: errormsg002
+            });
+        }
+    });
 }

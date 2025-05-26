@@ -53,7 +53,7 @@ namespace BusinessLogicsLayer.ReportReturn
         {
             return await _IReportReturnDB.GetReportData(dTO);
         }
-        public async Task<DTOReportDashboardCountResponse> GetReportDashboardCount(DTODataTablesRequestForReport dTO) 
+        public async Task<DTOReportDashboardCountResponse> GetReportDashboardCount(DTOMHierarchyRequest dTO) 
         {
             return await _IReportReturnDB.GetReportDashboardCount(dTO);
         }

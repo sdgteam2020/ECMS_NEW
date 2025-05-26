@@ -1908,7 +1908,7 @@ namespace DataAccessLayer
                             " inner join MRank ranlfrom on ranlfrom.RankId=profrom.RankId" +
                             " left join UserProfile proto" +
                             " on mapto.UserId=proto.UserId" +
-                            " left join TrnPostingOut postind on postind.Id=fwd.PostingOutId" +
+                            " left join TrnPostingOut postind on postind.TrnFwdId=fwd.TrnFwdId" +
                             " left join MPostingReason reason on reason.Id=postind.ReasonId" +
                             " left join MapUnit Munitres on Munitres.UnitMapId=postind.ToUnitID" +
                             " left join MUnit initres on initres.UnitId=Munitres.UnitId" +

@@ -715,23 +715,23 @@ namespace DataAccessLayer
                 query = @"req.RequestId,Mstep.StepId,basi.FName,basi.LName,basi.NameAsPerRecord,ServiceNo,ranks.RankAbbreviation RankName,TrackingId,marmed.Abbreviation as ArmedAbbreviation,regi.Abbreviation RegimentalName,mappl.Name as ApplyFor,
                             CASE
                             WHEN Mstep.StepId=1 THEN
-                            'Drafted/Saved </br> Appl'
+                            'Drafted/Saved Appl'
                             WHEN Mstep.StepId=2 THEN
-                            'Pending Appl </br> (Approver Level)'
+                            'Pending Appl (Approver Level)'
                             WHEN Mstep.StepId=3 THEN
-                            'Pending Appl </br> (Verifier Level)'
+                            'Pending Appl (Verifier Level)'
                             WHEN Mstep.StepId=4 THEN
-                            'Appl  Status </br> at ADC'
+                            'Appl Status at ADC'
                             WHEN Mstep.StepId=5 THEN
                             'Exported'
                             WHEN Mstep.StepId=6 THEN
                             'I-CARD PRINT'
                             WHEN Mstep.StepId=7 THEN
-                            'Appl Rejected  </br> (Approver Level)'
+                            'Appl Rejected (Approver Level)'
                             WHEN Mstep.StepId=8 THEN
-                            'Appl Rejected </br>  (Verifier Level)'
+                            'Appl Rejected (Verifier Level)'
                             WHEN Mstep.StepId=9 THEN
-                            'Appl Rejected </br> (4th LEVEL)'
+                            'Appl Rejected (AFSAC LEVEL)'
                             END AS Status
                             from TrnStepCounter step
                             INNER JOIN MApplyFor mappl on mappl.ApplyForId=step.ApplyForId
@@ -881,23 +881,23 @@ namespace DataAccessLayer
                 query = @"req.RequestId,Mstep.StepId,basi.FName,basi.LName,basi.NameAsPerRecord,ServiceNo,ranks.RankAbbreviation RankName,TrackingId,marmed.Abbreviation as ArmedAbbreviation,regi.Abbreviation RegimentalName,mappl.Name as ApplyFor,basi.UpdatedOn,
                             CASE
                             WHEN Mstep.StepId=1 THEN
-                            'Drafted/Saved </br> Appl'
+                            'Drafted/Saved Appl'
                             WHEN Mstep.StepId=2 THEN
-                            'Pending Appl </br> (Approver Level)'
+                            'Pending Appl (Approver Level)'
                             WHEN Mstep.StepId=3 THEN
-                            'Pending Appl </br> (Verifier Level)'
+                            'Pending Appl (Verifier Level)'
                             WHEN Mstep.StepId=4 THEN
-                            'Appl  Status </br> at ADC'
+                            'Appl Status at ADC'
                             WHEN Mstep.StepId=5 THEN
                             'Exported'
                             WHEN Mstep.StepId=6 THEN
                             'I-CARD PRINT'
                             WHEN Mstep.StepId=7 THEN
-                            'Appl Rejected  </br> (Approver Level)'
+                            'Appl Rejected (Approver Level)'
                             WHEN Mstep.StepId=8 THEN
-                            'Appl Rejected </br>  (Verifier Level)'
+                            'Appl Rejected (Verifier Level)'
                             WHEN Mstep.StepId=9 THEN
-                            'Appl Rejected </br> (4th LEVEL)'
+                            'Appl Rejected (AFSAC LEVEL)'
                             END AS Status
                             from TrnStepCounter step
                             INNER JOIN MApplyFor mappl on mappl.ApplyForId=step.ApplyForId
@@ -992,7 +992,7 @@ namespace DataAccessLayer
                 return responseData;
             }
         }
-        public async Task<DTOReportDashboardCountResponse> GetReportDashboardCount(DTODataTablesRequestForReport dTO)
+        public async Task<DTOReportDashboardCountResponse> GetReportDashboardCount(DTOMHierarchyRequest dTO)
         {
             string query = @"declare @TotRequisition int=0
                             declare @TotLostCases int=0

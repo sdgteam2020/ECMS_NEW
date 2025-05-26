@@ -22,7 +22,7 @@ namespace DataAccessLayer.BaseInterfaces
         public Task<DTODataTablesResponse<DTOReportReturnListResponse>> GetRecordHistory(DTORecordHistory dTORecord);
         public Task<List<DTOReportReturnListResponse>> GetReportForm11(DTOMHierarchyRequest Data);
         public Task<DTODataTablesResponse<DTOReportResponse>> GetReportData(DTODataTablesRequestForReport dTO);
-        public Task<DTOReportDashboardCountResponse> GetReportDashboardCount(DTODataTablesRequestForReport dTO);
+        public Task<DTOReportDashboardCountResponse> GetReportDashboardCount(DTOMHierarchyRequest dTO);
 
     }
 }

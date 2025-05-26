@@ -33,6 +33,9 @@ namespace BusinessLogicsLayer
 
                 options.AddPolicy("ArmyLevelReportsPolicy",
                     policy => policy.RequireClaim("Army Level Reports"));
+                
+                options.AddPolicy("FmnLevelReportsPolicy",
+                    policy => policy.RequireClaim("Fmn Level Reports"));
 
             });
         }
