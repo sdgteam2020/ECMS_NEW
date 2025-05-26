@@ -324,10 +324,16 @@ $(async function () {
         e.preventDefault();
     });
 
+    const $dialog = $("#CardReport .modal-dialog");
 
     $("#btnRequisition").on("click", function (event) {
         event.preventDefault(); // Prevent anchor default behavior
         $("#CardReport_lblModelTitle").html('New Requisition');
+
+        // If modal-xl class is present, override its width
+        if ($dialog.hasClass("modal-xl")) {
+            $dialog.css("width", "75%");
+        }
 
         GetReportReturnHistory('Requisition', function () {
             $("#CardReport").modal("show"); // shown only after data is fully ready
@@ -337,6 +343,11 @@ $(async function () {
         event.preventDefault(); // Prevent anchor default behavior
         $("#CardReport_lblModelTitle").html('Non Functional Card');
 
+         // If modal-xl class is present, override its width
+        if ($dialog.hasClass("modal-xl")) {
+            $dialog.css("width", "100%");
+        }
+
         GetReportReturnHistory('NonFunctional', function () {
             $("#CardReport").modal("show"); // shown only after data is fully ready
         });
@@ -344,6 +355,11 @@ $(async function () {
     $("#btnLostCase").on("click", function (event) {
         event.preventDefault(); // Prevent anchor default behavior
         $("#CardReport_lblModelTitle").html('Lost Case');
+
+        // If modal-xl class is present, override its width
+        if ($dialog.hasClass("modal-xl")) {
+            $dialog.css("width", "100%");
+        }
 
         GetReportReturnHistory('LostCase', function () {
             $("#CardReport").modal("show"); // shown only after data is fully ready
@@ -408,10 +424,16 @@ $(async function () {
         //    GetReportReturnHistory('MonthlyProcessed');
         //});
 
+        // If modal-xl class is present, override its width
+        if ($dialog.hasClass("modal-xl")) {
+            $dialog.css("width", "100%");
+        }
+
         GetReportReturnHistory('MonthlyProcessed', function () {
             $("#CardReport").modal("show"); // shown only after data is fully ready
         });
     });
+
 });
 function GetReportReturnHistory(Choice, callback) {
     if ($.fn.DataTable.isDataTable("#CardReport_tbldatadialog")) {
@@ -440,11 +462,11 @@ function GetReportReturnHistory(Choice, callback) {
         "MonthYear": $('#txtMonthYear').length > 0 ? $('#txtMonthYear').val() : null,
         
     };
-    let modalShown = false; // <== use a flag to show modal only once
+
     const columns = getColumnsByChoice(Choice);
     table = $("#CardReport_tbldatadialog").DataTable({
         autoWidth: false, // Let us handle width via CSS
-        responsive: false, // Responsive breaks layout for width control
+        responsive: true, // Responsive breaks layout for width control
         processing: true,
         serverSide: true,
         filter: true,
@@ -1279,5 +1301,4 @@ function ResetCount() {
     $("#TotLostCases").html('0');
     $("#TotMonthlyProcessed").html('0');
     $("#TotNonFunctionalCard").html('0');
-
 }
