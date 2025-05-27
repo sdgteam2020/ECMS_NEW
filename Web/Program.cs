@@ -207,7 +207,11 @@ builder.WebHost.ConfigureKestrel(options =>
 
 //    // Additional configurations as needed
 //});
+builder.Services.AddResponseCompression();
+
 var app = builder.Build();
+
+app.UseResponseCompression();
 
 app.UseCookiePolicy(new CookiePolicyOptions
 {
