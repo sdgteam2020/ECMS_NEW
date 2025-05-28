@@ -21,6 +21,7 @@ namespace DataAccessLayer.BaseInterfaces
         public Task<List<DTOICardRequestHoldResponse>?> GetAllICardRequestHold();
         public Task<List<BasicDetailVM>> GetALLBasicDetail(int UserId,int step, int type, int applyForId); 
         public Task<List<BasicDetailVM>> GetALLForIcardSttaus(int UserId, int step, int type, int applyfor);
+        public Task<DTODataTablesResponse<BasicDetailVM>> GetALLForIcardSttaus_(DTODataTablesRequestFor_BasicDetails_Index dTO);
         public Task<BasicDetailCrtAndUpdVM?> GetBasicDetailByRequestId(int RequestId);
         public Task<BasicDetailCrtAndUpdVM?> GetBasicDetailById(int BasicDetailId);
         public Task<BasicDetailCrtAndUpdVM?> GetBesicDetailForEditById(int BasicDetailId);

@@ -284,6 +284,166 @@ namespace Web.Controllers
                 return View(allrecord);
             }
         }
+        public async Task<ActionResult> Index_(string Id, string jcoor)
+        {
+
+            MTrnNotification noti = new MTrnNotification();
+            int retint = 0; int type = 1;
+            var userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+            int stepcounter = 0;
+            noti.ReciverAspNetUsersId = userId;
+            noti.DisplayId = 0;
+
+            if (string.IsNullOrEmpty(Id) || !service.IsValidBase64(Id))
+            {
+                TempData["error"] = "Invalid Input.";
+                TempData.Keep("error");
+                return RedirectToAction("ContactUs", "Home");
+            }
+
+            if (!string.IsNullOrEmpty(Id))
+            {
+                try
+                {
+                    var decodedBytes = Convert.FromBase64String(Id);
+                    var decodedString = Encoding.UTF8.GetString(decodedBytes);
+                    retint = Convert.ToInt32(decodedString);
+                    stepcounter = retint;
+                }
+                catch (FormatException ex)
+                {
+                    _logger.LogError(ex, "Invalid Base64 Id: {Id}", Id);
+                    TempData["error"] = "Invalid Input.";
+                    TempData.Keep("error");
+                    return RedirectToAction("ContactUs", "Home");
+                }
+            }
+
+            ViewBag.Id = retint;
+            ViewBag.jcoor = jcoor;
+
+            if (retint == 0)
+            {
+                ViewBag.Title = "List of Drafted Appl";
+            }
+            else if (retint == 1)
+            {
+                // request from DashBoard
+                ViewBag.Title = "List of Drafted Appl";
+            }
+            else if (retint == 11)
+            {
+                retint = 1;
+                stepcounter = 1;
+                // request from Task Board
+                ViewBag.Title = "List of Drafted Appl";
+            }
+
+            else if (retint == 2)
+            { 
+                ViewBag.Title = "I-Card Pending From IO / Superior"; type = 2; stepcounter = 2;
+            }
+            else if (retint == 22)
+            {
+                // request from DashBoard
+                ViewBag.Title = "I-Card Rejectd From IO / Superior"; type = 1; stepcounter = 7;
+            }
+            else if (retint == 2222)
+            {
+                // request from Task Board
+                ViewBag.Title = "I-Card Rejectd From IO / Superior"; type = 1; stepcounter = 7;
+            }
+            else if (retint == 222)
+            { 
+                ViewBag.Title = "I-Card Approved From IO / Superior"; type = 3; stepcounter = 2; 
+            }
+            else if (retint == 3)
+            {
+                ViewBag.Title = "I-Card Pending From RO / ORO";
+                type = 2; stepcounter = 3;
+            }
+            else if (retint == 33)
+            {
+                ViewBag.Title = "I-Card Rejectd From RO / ORO";
+                type = 1; stepcounter = 8;
+            }
+            else if (retint == 333)
+            {
+                ViewBag.Title = "I-Card Approved From RO / ORO";
+                type = 3; stepcounter = 4;
+            }
+            else if (retint == 4)
+            { ViewBag.Title = "I-Card Pending From AFSAC Cell"; type = 2; stepcounter = 4; }
+            else if (retint == 44)
+            { ViewBag.Title = "I-Card Rejectd From AFSAC Cell"; type = 1; stepcounter = 9; }
+            else if (retint == 444)
+            { ViewBag.Title = "I-Card Approved From AFSAC Cell"; type = 3; stepcounter = 5; }
+            else if (retint == 5)
+            { ViewBag.Title = "I-Card Pending From HQ 54"; type = 2; stepcounter = 5; }
+            else if (retint == 55)
+            { ViewBag.Title = "I-Card Rejectd From HQ 54"; type = 1; stepcounter = 10; }
+            else if (retint == 555)
+            { ViewBag.Title = "I-Card Approved From HQ 54"; type = 2; stepcounter = 5; }
+            else if (retint == 888)
+            {
+                // request from DashBoard
+                ViewBag.Title = "Status of Appl Approved & Fwd"; type = 2; stepcounter = 888;
+            }
+            else if (retint == 88)
+            {
+                // request from Task Board
+                ViewBag.Title = "Status of Appl Approved & Fwd"; type = 2; stepcounter = 888;
+            }
+            else if (retint == 777)
+            {
+                ViewBag.Title = "I-Card Completed"; type = 2; stepcounter = 777;
+            }
+            else if (retint == 77)
+            {
+                ViewBag.Title = "I-Card Completed"; type = 2; stepcounter = 777;
+            }
+            else if (retint == 999)
+            {
+                // request from DashBoard 
+                ViewBag.Title = "Appl rejected by Approver, Verifier"; type = 2; stepcounter = 999;
+            }
+            else if (retint == 99)
+            {
+                // request from Task Board
+                ViewBag.Title = "Appl rejected by Approver, Verifier"; type = 2; stepcounter = 999;
+            }
+            ViewBag.Type = type;
+            ViewBag.StepCounter = stepcounter;
+
+            if (stepcounter == 0)
+            {
+                var allrecord = await Task.Run(() => basicDetailBL.GetALLForIcardSttaus(Convert.ToInt32(userId), stepcounter, type, 0));
+
+                _logger.LogInformation(1001, "Index Page Of Basic Detail View");
+
+                return View(allrecord);
+            }
+            else if (string.IsNullOrEmpty(jcoor))
+            {
+                var allrecord = await Task.Run(() => basicDetailBL.GetALLForIcardSttaus(Convert.ToInt32(userId), stepcounter, type, 1));
+
+                _logger.LogInformation(1001, "Index Page Of Basic Detail View");
+                noti.DisplayId = stepcounter;
+                await _INotificationBL.UpdateRead(noti);
+
+                return View(allrecord);
+            }
+            else
+            {
+                var allrecord = await Task.Run(() => basicDetailBL.GetALLForIcardSttaus(Convert.ToInt32(userId), stepcounter, type, 2));
+
+                _logger.LogInformation(1001, "Index Page Of Basic Detail View");
+                noti.DisplayId = stepcounter + 10;
+                await _INotificationBL.UpdateRead(noti);
+
+                return View(allrecord);
+            }
+        }
 
         public async Task<ActionResult> ApprovalForIO(string Id, string jcoor)
         {

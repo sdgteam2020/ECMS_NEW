@@ -102,6 +102,10 @@ namespace BusinessLogicsLayer.BasicDet
         {
             return _iBasicDetailDB.GetALLForIcardSttaus(UserId, step, type,applyfor);
         }
+        public async Task<DTODataTablesResponse<BasicDetailVM>> GetALLForIcardSttaus_(DTODataTablesRequestFor_BasicDetails_Index dTO)
+        {
+            return await _iBasicDetailDB.GetALLForIcardSttaus_(dTO);
+        }
 
         public Task<DTOBasicDetailsSaveResponse> SaveBasicDetailsWithAll(BasicDetail Data, MTrnAddress address, MTrnUpload trnUpload, MTrnIdentityInfo mTrnIdentityInfo, MTrnICardRequest mTrnICardRequest, MStepCounter mStepCounter)
         {
