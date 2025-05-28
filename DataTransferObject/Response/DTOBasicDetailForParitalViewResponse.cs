@@ -39,5 +39,7 @@ namespace DataTransferObject.Response
         public string PhotoImagePath { get; set; } = string.Empty;
         public string SignatureImagePath { get; set; } = string.Empty;
         public string? ModifiedServiceNo { get; set; }
+        public string CardSerialNo { get; set; } = string.Empty;
+        public string ChipNo { get; set; } = string.Empty;
     }
 }

@@ -64,6 +64,7 @@ $(async function () {
         window.location.href = '/BasicDetail/LostCard';
     });
 
+
     $("#btnSearchNew").on("click", function () {
         $("#armynosearchAllName").text("");
         $("#txtarmynosearchAll").val("");

@@ -93,6 +93,7 @@ namespace DataAccessLayer
         public DbSet<MCategory> MCategory { get; set; } = null!;
         public DbSet<TrnHotlistCard> TrnHotlistCards { get; set; } = null!;
         public DbSet<TrnLostCard> TrnLostCards { get; set; } = null!;
+        public DbSet<TrnDistributeCard> TrnDistributeCards { get; set; } = null!;
         public DbSet<TrnMapUnitChangeRequest> TrnMapUnitChangeRequest { get; set; } = null!;
         //public DbSet<TrnLogin_Log> TrnLogin_Log { get; set; }
 

@@ -1,0 +1,96 @@
+﻿@{
+    ViewData["Title"] = "List of Distributed Card Request";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link asp-href-include="~/datatables/dataTables.bootstrap4.min.css" rel="stylesheet" />
+<link asp-href-include="~/datatables/responsive.bootstrap4.min.css" rel="stylesheet" />
+<link asp-href-include="~/datatables/responsive.dataTables.min.css" rel="stylesheet" />
+<link asp-href-include="~/datatables/buttons.bootstrap4.min.css" rel="stylesheet" />
+<link asp-href-include="~/datatables/fixedHeader.dataTables.min.css" rel="stylesheet" />
+<link asp-href-include="~/datatables/jquery.dataTables.min.css" rel="stylesheet" />
+<link asp-href-include="~/css/stylesheetfordatatable.css" rel="stylesheet" />
+<header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
+    <div class="containerMain">
+        <div class="page-header-content pt-4">
+            <div class="row align-items-center justify-content-between">
+                <div class="col-auto">
+                    <h1 class="page-header-title">
+                        <div class="page-header-icon"> <i class="fa fa-bars"></i></div>
+                        <a href="/Home/Index" class="mr-2">Home</a> >  <a href="/Home/Dashboard" class="mr-2">Dashboard</a> > I-CARD DISTRIBUTION
+                    </h1>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</header>
+<div class="containerMain mt-n10">
+    <div class="card mb-3 ">
+        <div class="card-header">
+
+            <span id="SpnTxnId" class="d-none">0</span>
+            @*<span id="PtoId" class="d-none">0</span>*@
+            <div class="row">
+                <div class="col-xl-12 text-left">
+                    <h3>
+                        I-Card Distribution Details
+                        <small class="text-muted"></small>
+                    </h3>
+                </div>
+            </div>
+        </div>
+        <div class="card-body" style="min-height:150px;">
+            <div class="col-xl-12">
+                <div class="mb-2 d-md-flex justify-content-md-between align-items-md-center">
+                    <h6 class="mb-3 mb-md-0">
+                        Total Distribution :<label class="font-weight-bold" id="lblTotal">0</label>
+                    </h6>
+                    <div class="d-flex">
+                        @* <button type="button" id="btnDataExportsEncry" class="btn btn-warning font-weight-600 btn-sm mr-2">Data Exports with Encry</button> *@
+                        <button type="button" id="btnDataExports" class="btn btn-warning font-weight-600 btn-sm mr-2">Export Data</button>
+                        <button type="button" id="btnAdd" class="btn btn-outline-success font-weight-600 btn-sm mr-2"><i class="fa fa-plus mr-1 font-weight-700" aria-hidden="true"></i>Add</button>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="table border border-purple table-striped no-footer dataTable table-hover" role="grid" id="tbldata">
+                        <thead>
+                            <tr>
+                                <th class="noExport wd-30-f">
+                                    <div class="custom-control custom-checkbox small">
+                                        <input type="checkbox" class="custom-control-input" id="chkAll">
+                                        <label class="custom-control-label font-weight-bold" for="chkAll"></label>
+                                    </div>
+                                </th>
+                                <th class="noExport d-none"></th>
+                                <th class="wd-40-f">S No</th>
+                                <th class="nowrap">Army No</th>
+                                <th class="nowrap">Rk & Name</th>
+                                <th class="nowrap">Unit</th>
+                                <th class="nowrap">Date & Time</th>
+                                <th class="nowrap">Distributed On</th>
+                                <th class="nowrap">Remark</th>
+                            </tr>
+                        </thead>
+                        <tbody id="DetailBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script asp-src-include="~/developerjs/DistributeCard.js"></script>
+
+<script asp-src-include="~/js/datatables/jquery.datatables.min.js"></script>
+<script asp-src-include="~/js/datatables/dataTables.responsive.min.js"></script>
+<script asp-src-include="~/js/datatables/responsive.dataTables.min.js"></script>
+<script asp-src-include="~/js/datatables/dataTables.bootstrap4.min.js"></script>
+<script asp-src-include="~/js/datatables/responsive.bootstrap4.min.js"></script> <!-- DataTables Responsive extension and specifically integrates Responsive behavior with Bootstrap 4 styling. -->
+<script asp-src-include="~/js/datatables/dataTables.buttons.min.js"></script> <!-- It adds the foundational functionality needed to add custom buttons (like Export, Print, or custom actions) to a DataTable.-->
+<script asp-src-include="~/js/datatables/buttons.bootstrap4.min.js"></script> <!-- Export buttons (like Copy, CSV, Excel, PDF, Print) to match Bootstrap 4 design and layout. -->
+<script asp-src-include="~/js/datatables/jszip.min.js"></script> <!-- for Excel export -->
+<script asp-src-include="~/js/datatables/pdfmake.min.js"></script> <!-- for PDF export -->
+<script asp-src-include="~/js/datatables/vfs_fonts.js"></script> <!-- required by pdfmake -->
+<script asp-src-include="~/js/datatables/buttons.html5.min.js"></script> <!-- All HTML5 export buttons -->
+@* <script asp-src-include="~/js/datatables/buttons.print.min.js"></script> *@ <!-- Adds a "Print" button to DataTables toolbar for print preview and printing -->
+<script asp-src-include="~/js/datatables/datatables-call.js"></script> <!-- your custom JS that calls and configures the DataTables plugin -->

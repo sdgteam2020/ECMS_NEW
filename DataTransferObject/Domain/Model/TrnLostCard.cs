@@ -18,7 +18,7 @@ namespace DataTransferObject.Domain.Model
         public int RequestId { get; set; }
         public MTrnICardRequest? MTrnICardRequest { get; set; }
 
-        [StringLength(250)]
+        [StringLength(100)]
         [Column(TypeName = "varchar(100)")]
         public string? Remark { get; set; }
 
@@ -35,6 +35,6 @@ namespace DataTransferObject.Domain.Model
         [Required]
         [DataType(DataType.Date)]
         [Column(TypeName = "datetime")]
-        public DateTime? LostOn { get; set; } = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
+        public DateTime? LostOn { get; set; }
     }
 }

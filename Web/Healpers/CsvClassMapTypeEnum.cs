@@ -4,6 +4,7 @@
     {
         CardPrint,
         HotlistExport,
-        LostCard
+        LostCard,
+        DistributeCard
     }
 }
