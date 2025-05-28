@@ -172,11 +172,11 @@ namespace DataAccessLayer
                     query = "declare @ToCompletedOffrs int=0 declare @ToCompletedJCO int=0" +
                             " select @ToCompletedOffrs=COUNT(distinct req.RequestId) from TrnDomainMapping domain" +
                             " inner join TrnICardRequest req on req.TrnDomainMappingId=domain.Id " +
-                            " inner join TrnStepCounter trnstepcout on trnstepcout.RequestId= req.RequestId where domain.AspNetUsersId=@UserId and req.StatusId=2 and trnstepcout.ApplyForId=1 " +
+                            " inner join TrnStepCounter trnstepcout on trnstepcout.RequestId= req.RequestId where domain.AspNetUsersId=@UserId and req.StatusId=3 and trnstepcout.ApplyForId=1 " +
                             
                             " select @ToCompletedJCO=COUNT(distinct req.RequestId) from TrnDomainMapping domain" +
                             " inner join TrnICardRequest req on req.TrnDomainMappingId=domain.Id " +
-                            " inner join TrnStepCounter trnstepcout on trnstepcout.RequestId= req.RequestId where domain.AspNetUsersId=@UserId and req.StatusId=2 and trnstepcout.ApplyForId=2 " +
+                            " inner join TrnStepCounter trnstepcout on trnstepcout.RequestId= req.RequestId where domain.AspNetUsersId=@UserId and req.StatusId=3 and trnstepcout.ApplyForId=2 " +
                             " select @ToCompletedOffrs ToCompletedOffrs,@ToCompletedJCO ToCompletedJCO";
                     break;
                 case "Rejected":
@@ -241,7 +241,7 @@ namespace DataAccessLayer
                             " inner join BasicDetails bs on bs.BasicDetailId=appclo.BasicDetailId and bs.UnitId =@UnitMapId" +
 
                             " select @TotCompleted=COUNT(distinct req.RequestId) from TrnDomainMapping domain" +
-                            " inner join TrnICardRequest req on req.TrnDomainMappingId=domain.Id where domain.AspNetUsersId=@UserId and req.StatusId=2 " +
+                            " inner join TrnICardRequest req on req.TrnDomainMappingId=domain.Id where domain.AspNetUsersId=@UserId and req.StatusId=3 " +
 
                             " select @TotRejected=COUNT(distinct fwd.RequestId) from TrnDomainMapping domain" +
                             " inner join TrnICardRequest req on req.TrnDomainMappingId=domain.Id " +

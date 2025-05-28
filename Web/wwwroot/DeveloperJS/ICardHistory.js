@@ -18,7 +18,7 @@
                 PostingOut = response.PostingOut;
                 FaultyCard = response.FaultyCard;
                 CloseCard = response.CloseCard;
-                if (ICardHistory.length > 0) {
+                if (ICardHistory?.length > 0) {
                    
                     for (var i = 0; i < ICardHistory.length; i++) {
                         if (i == 0) {
@@ -144,10 +144,10 @@
                     listItem += 'I-Card Submitted Succesfully';
 
 
-                    let PostingOut1 = PostingOut.filter(p => p.TrnFwdId == 0);
+                    let PostingOut1 = PostingOut?.filter(p => p.TrnFwdId == 0);
 
                     // var PostingOut = PostingOut.filter(i => i.TrnFwdId == ICardHistory[i].TrnFwdId)
-                    if (PostingOut1.length > 0) {
+                    if (PostingOut1?.length > 0) {
                         listItem += '<br><button type="button" class="btn btn-icon btn-round btn-light mr-1"><i class="fas fa-arrow-down"></i></button>'
                         listItem += '<br> <strong class="text-center text-danger">' + PostingOut1[0].Reason + '</strong> <br> <span class="text-info">From Unit </span>  <br>' + PostingOut1[0].FromUnit + ' <br> <span class="text-info">To Unit </span>  <br>' + PostingOut1[0].UnitName + '';
                     }

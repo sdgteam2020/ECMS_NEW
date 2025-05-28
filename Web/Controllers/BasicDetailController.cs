@@ -2811,6 +2811,7 @@ namespace Web.Controllers
                 model.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                 model.UpdatedbyUserId = dtoSession != null ? dtoSession.UserId : 0;
                 model.UpdatedOn = DateTime.Now;
+                model.DistributedOn = DateTime.Now;
 
                 if (ModelState.IsValid)
                 {
@@ -2997,22 +2998,12 @@ namespace Web.Controllers
             if (cardStatus.GetValueOrDefault() == 1)
             {
                 cardHistoryResponses = await basicDetailBL.ICardHistory(RequestId);
-                //var json = JsonConvert.SerializeObject(cardHistoryResponses);
             }
             else if (cardStatus.GetValueOrDefault() == 3)
             {
                 cardHistoryResponses = await basicDetailBL.ICardHistoryCompleted(RequestId);
             }
             return Json(cardHistoryResponses);
-
-            //if (cardHistoryResponses != null)
-            //{
-
-            //}
-            //else
-            //{
-            //    return Json(null);
-            //}
         }
 
         [HttpPost]

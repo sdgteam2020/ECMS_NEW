@@ -790,10 +790,10 @@ namespace DataAccessLayer
                         " inner join MICardType ty on ty.TypeId = trnicrd.TypeId " +
                         " inner join TrnDomainMapping map on map.Id= trnicrd.TrnDomainMappingId " +
                         " inner join UserProfile pr on pr.UserId = map.UserId " +
-                        " inner join TrnFwds fwd on fwd.FromAspNetUsersId= map.AspNetUsersId and fwd.IsComplete=1 and fwd.RequestId=trnicrd.RequestId " +
-                        " inner join MTrnFwdStatus mtrnfwdstatus on mtrnfwdstatus.FwdStatusId = fwd.FwdStatusId " +
+                        " left join TrnFwds fwd on fwd.FromAspNetUsersId= map.AspNetUsersId and fwd.IsComplete=1 and fwd.RequestId=trnicrd.RequestId " +
+                        " left join MTrnFwdStatus mtrnfwdstatus on mtrnfwdstatus.FwdStatusId = fwd.FwdStatusId " +
                         " left join TrnPostingOut Postout on Postout.RequestId=trnicrd.RequestId and trnicrd.StatusId=1 " +
-                        " WHERE map.AspNetUsersId = @UserId and Afor.ApplyForId=ISNULL(@applyfor,Afor.ApplyForId) and trnicrd.StatusId = 2 ";
+                        " WHERE map.AspNetUsersId = @UserId and Afor.ApplyForId=ISNULL(@applyfor,Afor.ApplyForId) and trnicrd.StatusId = 3 ";
 
             }
             else if (stepcount == 888)//////For Submitted
@@ -1761,7 +1761,8 @@ namespace DataAccessLayer
             try
             {
                 var card = await _context.CompletedICardRequests.FirstOrDefaultAsync(req => req.RequestId == RequestId);
-                cardStatus = JsonConvert.DeserializeObject<ICardHistoryResponseAll>(card.CardRequestHistoryJson);
+                if(!string.IsNullOrEmpty(card?.CardRequestHistoryJson))
+                    cardStatus = JsonConvert.DeserializeObject<ICardHistoryResponseAll>(card.CardRequestHistoryJson);
             }
             catch (Exception ex)
             {

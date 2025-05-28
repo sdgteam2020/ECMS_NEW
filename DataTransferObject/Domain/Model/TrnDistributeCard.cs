@@ -19,10 +19,9 @@ namespace DataTransferObject.Domain.Model
         public int RequestId { get; set; }
         public MTrnICardRequest? MTrnICardRequest { get; set; }
 
-        [Required]
         [DataType(DataType.Date)]
         [Column(TypeName = "datetime")]
-        public DateTime? DistributedOn { get; set; }
+        public DateTime? DistributedOn { get; set; } = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
 
         [StringLength(100)]
         [Column(TypeName = "varchar(100)")]

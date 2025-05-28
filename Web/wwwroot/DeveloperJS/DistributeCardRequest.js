@@ -67,6 +67,9 @@
     $('#declarationCheckbox').on('change', function () {
         $('#btnSubmit').prop('disabled', !this.checked);
     });
+
+    updateDateTime();
+    setInterval(updateDateTime, 1000);
 });
 function Proceed() {
     ResetErrorMessage();
@@ -75,14 +78,14 @@ function Proceed() {
     $.validator.unobtrusive.parse($(formId));
 
     if ($(formId).valid()) {
-        let inputVal = $("#txtDistributeoninp").val();
-        const parsedDate = new Date(inputVal);
-        if (!isValidDate(parsedDate)) {
-            $(formId).validate().showErrors({
-                "txtDistributeoninp": "Invalid Date Of Distribution"
-            });
-            return false;
-        }
+        //let inputVal = $("#txtDistributeoninp").val();
+        //const parsedDate = new Date(inputVal);
+        //if (!isValidDate(parsedDate)) {
+        //    $(formId).validate().showErrors({
+        //        "txtDistributeoninp": "Invalid Date Of Distribution"
+        //    });
+        //    return false;
+        //}
 
         let ApplicantName = $("#lblpvFName").html() + $("#lblpvLName").html();
         let ApplicantNameWithRank = $("#lblpvRank").html() + " " + ApplicantName.trim();
@@ -93,7 +96,6 @@ function Proceed() {
             html: `
                     <div style="text-align: left; font-size: 16px;">
                         <p><strong>Card Holder Name:</strong> ${ApplicantNameWithRank}</p>
-                        <p><strong>Date Of Distribution:</strong> ${DateFormateddMMyyyyhhmmss(parsedDate)}</p>
                         <p><strong>Remarks:</strong> ${Remarks}</p>
                         <p><strong>Logged In Details:</strong> ${UserName}</p>
                     </div>
@@ -215,4 +217,15 @@ function Reset() {
         .val('')
         .prop('checked', false);
     $('#btnSubmit').prop('disabled', true);
+}
+function updateDateTime() {
+    const now = new Date();
+    const formatted = now.getFullYear() + '-' +
+        ('0' + (now.getMonth() + 1)).slice(-2) + '-' +
+        ('0' + now.getDate()).slice(-2) + ' ' +
+        ('0' + now.getHours()).slice(-2) + ':' +
+        ('0' + now.getMinutes()).slice(-2) + ':' +
+        ('0' + now.getSeconds()).slice(-2);
+
+    $('#txtDistributeoninp').text(formatted);
 }
