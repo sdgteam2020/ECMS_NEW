@@ -162,8 +162,90 @@
                 let HistoryModal_Title_Content = document.getElementById("HistoryModal_Title_Content");
                 let HistoryModal_Body = document.getElementById("HistoryModal_Body");
 
+                HistoryModal_Header.innerHTML = "I-Card Application History";
+                HistoryModal_Title_Content.innerHTML = "Step Wise I Card Application History";
+                HistoryModal_Body.innerHTML = listItem;
+                myModal.show();
+            } else {
+
+            }
+        }
+
+    });
+}
+
+function GetMovementHistory(spnRequestId) {
+    var userdata = {
+        "RequestId": spnRequestId,
+    };
+    var listItem = "";
+    $.ajax({
+        url: '/BasicDetail/GetCardMovementHistory',
+        contentType: 'application/x-www-form-urlencoded',
+        data: userdata,
+        type: 'POST',
+        success: function (response) {
+            if (response != "null" && response != null) {
+
+                if (response?.length > 0) {
+
+                    for (var i = 0; i < response.length; i++) {
+
+                        listItem += '<div class="timeline-item">';
+                        listItem += '<div class="timeline-item-marker">'; 
+                        if (response[i].StepName == "I-Card Lost")
+                            listItem += '<div class="timeline-item-marker-text"><span class="badge bg-danger">' + DateFormateddMMyyyyhhmmss(response[i].ReportedOn) + '</span></div>';
+                        else
+                            listItem += '<div class="timeline-item-marker-text"><span class="badge bg-success">' + DateFormateddMMyyyyhhmmss(response[i].ReportedOn) + '</span></div>';
+                        listItem += '<div class="timeline-item-marker-indicator bg-primary"></div>';
+                        listItem += '</div>';
+                        listItem += '<div class="timeline-item-content">';
+
+                        listItem += '' + response[i].ReportedBy;
+
+                        if (response[i].StepName == "I-Card Lost")
+                            listItem += '<br><span class="badge bg-danger">' + response[i].StepName + '</span>';
+                        else 
+                            listItem += '<br><span class="badge bg-success">' + response[i].StepName + '</span>';
+
+                        listItem += '<br> <strong class="text-center">Remark</strong> <br>' + response[i].Remark + '';
+
+                        if (response.length != i+1) {
+                            listItem += '<br><button type="button" class="btn btn-icon btn-round btn-light mr-1"><i class="fas fa-arrow-down"></i></button>';
+                        }
+                        listItem += '</div>';
+                        listItem += '</div>';
+                    }
+                } else {
+                    //listItem += '<div class="timeline-item">';
+                    //listItem += '<div class="timeline-item-marker">';
+
+
+                    //listItem += '</div>';
+                    //listItem += '<div class="timeline-item-content">';
+                    //listItem += 'I-Card Submitted Succesfully';
+
+
+                    //let PostingOut1 = PostingOut?.filter(p => p.TrnFwdId == 0);
+
+                    //// var PostingOut = PostingOut.filter(i => i.TrnFwdId == ICardHistory[i].TrnFwdId)
+                    //if (PostingOut1?.length > 0) {
+                    //    listItem += '<br><button type="button" class="btn btn-icon btn-round btn-light mr-1"><i class="fas fa-arrow-down"></i></button>'
+                    //    listItem += '<br> <strong class="text-center text-danger">' + PostingOut1[0].Reason + '</strong> <br> <span class="text-info">From Unit </span>  <br>' + PostingOut1[0].FromUnit + ' <br> <span class="text-info">To Unit </span>  <br>' + PostingOut1[0].UnitName + '';
+                    //}
+
+                    //listItem += '</div>';
+                    //listItem += '</div>';
+
+                    //$("#RequestHistory").html(listItem);
+                }
+                const myModal = new bootstrap.Modal(document.getElementById("HistoryModal"));
+                let HistoryModal_Header = document.getElementById("HistoryModal_Header");
+                let HistoryModal_Title_Content = document.getElementById("HistoryModal_Title_Content");
+                let HistoryModal_Body = document.getElementById("HistoryModal_Body");
+
                 HistoryModal_Header.innerHTML = "I-Card History";
-                HistoryModal_Title_Content.innerHTML = "Step Wise I Card Request History";
+                HistoryModal_Title_Content.innerHTML = "Step Wise I Card History";
                 HistoryModal_Body.innerHTML = listItem;
                 myModal.show();
             } else {

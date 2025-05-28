@@ -24,6 +24,7 @@ using DataTransferObject.Constants;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json;
+using Microsoft.AspNetCore.Http;
 
 namespace DataAccessLayer
 {
@@ -581,8 +582,8 @@ namespace DataAccessLayer
                 query = @$"Select TOP 5 basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath Image,req.RequestId,COALESCE(MAX(fwd.TrnFwdId), NULL) AS MaxTrnFwdId  
                                 from BasicDetails basi
                                 inner join TrnUpload trnu on basi.BasicDetailId=trnu.BasicDetailId 
-                                inner join TrnICardRequest req on req.BasicDetailId=basi.BasicDetailId and req.StatusId in (1,3)
-                                inner join TrnStepCounter stepcount on req.RequestId=stepcount.RequestId and stepcount.StepId in (6,18)
+                                inner join TrnICardRequest req on req.BasicDetailId=basi.BasicDetailId and req.StatusId = 3
+                                inner join TrnStepCounter stepcount on req.RequestId=stepcount.RequestId and stepcount.StepId = 18
                                 inner join TrnDomainMapping tdm on tdm.Id=req.TrnDomainMappingId and tdm.UnitId=@MapUnitId
                                 LEFT JOIN TrnFwds fwd ON fwd.RequestId = req.RequestId
                                 Left join TrnHotlistCards thc on req.RequestId = thc.RequestId
@@ -2261,6 +2262,80 @@ namespace DataAccessLayer
                 response.Message = ee.Message;
             }
             return response;
+        }
+
+        public async Task<List<DTOCardMovementHistoryResponse>> GetCardMovementHistory(int requestId)
+        {
+            var responseList = new List<DTOCardMovementHistoryResponse>();
+            try
+            {
+                var cardStep = await _context.TrnStepCounter.Where(step => step.RequestId == requestId).FirstOrDefaultAsync().Result.StepId;
+
+                var cardExported = await (from request in _context.TrnICardRequest.AsNoTracking()
+                                         where request.RequestId == requestId && request.CardExportedOn.HasValue
+                                         select new DTOCardMovementHistoryResponse
+                                         {
+                                             StepName = "I-Card Exported",
+                                             ReportedBy = "afsac_cell",
+                                             ReportedOn = request.CardPrintedOn.Value,
+                                             Remark = "Card Exported"
+                                         }).ToListAsync();
+
+                var cardPrinted = await (from request in _context.TrnICardRequest.AsNoTracking()
+                                                   where request.RequestId == requestId && request.CardPrintedOn.HasValue
+                                                   select new DTOCardMovementHistoryResponse
+                                                   {
+                                                       StepName = "I-Card Printed",
+                                                       ReportedBy = "afsac_cell",
+                                                       ReportedOn = request.CardPrintedOn.Value,
+                                                       Remark = "Card Printed"
+                                                   }).ToListAsync();
+
+                var lostBeforeDistributed = await (from lost in _context.TrnLostCards.AsNoTracking()
+                                            join dist in _context.TrnDistributeCards.AsNoTracking()
+                                                on lost.RequestId equals dist.RequestId into distGroup
+                                            from dist in distGroup.DefaultIfEmpty()
+                                            join user in _context.Users.AsNoTracking()
+                                                on lost.Updatedby equals user.Id
+                                            where lost.UpdatedOn != null && (dist == null || lost.UpdatedOn < dist.UpdatedOn) && lost.RequestId == requestId
+                                            select new DTOCardMovementHistoryResponse
+                                            {
+                                                StepName = "I-Card Lost",
+                                                ReportedBy = user.DomainId,
+                                                ReportedOn = lost.UpdatedOn.Value,
+                                                Remark = lost.Remark
+                                            }).ToListAsync();
+
+
+                var cardDistributed = await (from dist in _context.TrnDistributeCards.AsNoTracking()
+                                             join user in _context.Users.AsNoTracking()
+                                                on dist.Updatedby equals user.Id
+                                             where dist.RequestId == requestId
+                                             select new DTOCardMovementHistoryResponse
+                                             {
+                                                 StepName = "I-Card Distributed",
+                                                 ReportedBy = user.DomainId,
+                                                 ReportedOn = dist.UpdatedOn.Value,
+                                                 Remark = dist.Remark
+                                             }).ToListAsync();
+
+                // Execute in parallel
+                //await Task.WhenAll(cardPrinted, lostBeforeDistributed, cardDistributed);
+
+                // Merge and sort in-memory
+                responseList = cardExported
+                    .Concat(cardPrinted)
+                    .Concat(lostBeforeDistributed)
+                    .Concat(cardDistributed)
+                    .OrderBy(x => x.ReportedOn)
+                    .ToList();
+            }
+            catch (Exception ee) 
+            {
+                _logger.LogError(1001, ee, "BasicDetailDB->GetCardMovementHistory");
+            }
+
+            return responseList;
         }
 
     }

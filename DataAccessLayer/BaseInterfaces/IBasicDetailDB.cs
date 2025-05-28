@@ -43,5 +43,6 @@ namespace DataAccessLayer.BaseInterfaces
         Task<List<DTOCardPriningRequest>> CardPrintingCSVCheck(List<DTOCardPriningRequest> requests);
         Task<byte?> CheckCardStatus(int RequestId);
         Task<ICardHistoryResponseAll> ICardHistoryCompleted(int RequestId);
+        Task<List<DTOCardMovementHistoryResponse>> GetCardMovementHistory(int requestId);
     }
 }

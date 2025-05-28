@@ -43,5 +43,6 @@ namespace BusinessLogicsLayer.BasicDet
         Task<DTOUploadChipAndSerialResponse?> CardPrinitngCSVUpload(List<DTOCardPriningRequest> request);
         Task<byte?> CheckCardStatus(int RequestId);
         Task<ICardHistoryResponseAll> ICardHistoryCompleted(int RequestId);
+        Task<List<DTOCardMovementHistoryResponse>> GetCardMovementHistory(int requestId);
     }
 }

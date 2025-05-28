@@ -3006,6 +3006,11 @@ namespace Web.Controllers
             return Json(cardHistoryResponses);
         }
 
+        public async Task<IActionResult> GetCardMovementHistory(int RequestId)
+        {
+            return Json(await basicDetailBL.GetCardMovementHistory(RequestId));
+        }
+
         [HttpPost]
         public async Task<JsonResult> GetRegimentalListByArmedId(byte ArmedId)
         {

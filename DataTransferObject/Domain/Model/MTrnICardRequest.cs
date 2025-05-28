@@ -44,5 +44,6 @@ namespace DataTransferObject.Domain.Model
         [Column(TypeName = "varchar(30)")]
         public string? ChipNo { get; set; }
         public DateTime? CardPrintedOn { get; set; }
+        public DateTime? CardExportedOn { get; set; }
     }
 }

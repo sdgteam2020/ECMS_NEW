@@ -110,6 +110,10 @@ $(function () {
         GetRequestHistory($(this).closest("tr").find(".spnRequestId").html());
     });
 
+    $(".historyMovement").on("click", function () {
+        GetMovementHistory($(this).closest("tr").find(".spnRequestId").html());
+    });
+
     $('#ddlfwdoffrs').on('change', function () {
         $("#spnFwdToAspNetUsersId").html(0);
         $("#spnFwdToUsersId").html(0);

@@ -245,5 +245,10 @@ namespace BusinessLogicsLayer.BasicDet
             }
             return request;
         }
+
+        public Task<List<DTOCardMovementHistoryResponse>> GetCardMovementHistory(int requestId)
+        {
+            return _iBasicDetailDB.GetCardMovementHistory(requestId); 
+        }
     }
 }
