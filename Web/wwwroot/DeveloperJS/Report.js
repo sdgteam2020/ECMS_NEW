@@ -248,86 +248,104 @@ $(async function () {
     });
 
 
-    $('#txtMonthYear').datepicker({
-        dateFormat: 'mm/yy',
-        changeMonth: true,
-        changeYear: true,
-        showButtonPanel: true,
-        yearRange: function () {
-            const today = new Date();
-            return (today.getFullYear() - 2) + ":" + today.getFullYear();
-        }(),
-
-        beforeShow: function (input, inst) {
-            setTimeout(function () {
+        $('#txtMonthYear').datepicker({
+            dateFormat: 'mm/yy',
+            changeMonth: true,
+            changeYear: true,
+            showButtonPanel: true,
+            yearRange: function () {
                 const today = new Date();
-                const currentYear = today.getFullYear();
-                const currentMonth = today.getMonth();
+                return 2025 + ":" + today.getFullYear();
+            }(),
 
-                function restrictUI() {
-                    $(".ui-datepicker-calendar").hide();
+            beforeShow: function (input, inst) {
+                setTimeout(function () {
+                    const today = new Date();
+                    const currentYear = today.getFullYear();
+                    const currentMonth = today.getMonth();
 
-                    const selectedYear = parseInt($(".ui-datepicker-year").val(), 10);
-                    const selectedMonth = parseInt($(".ui-datepicker-month").val(), 10);
+                    const minYear = 2025;
+                    const minMonth = 2; // March (0-based)
 
-                    // Disable future months
-                    $(".ui-datepicker-month option").each(function (index) {
-                        if (selectedYear === currentYear && index > currentMonth) {
-                            $(this).attr("disabled", "disabled");
+                    function restrictUI() {
+                        $(".ui-datepicker-calendar").hide();
+
+                        const selectedYear = parseInt($(".ui-datepicker-year").val(), 10);
+                        const selectedMonth = parseInt($(".ui-datepicker-month").val(), 10);
+
+                        // Disable future months & past months
+                        $(".ui-datepicker-month option").each(function (index) {
+                            if ((selectedYear === minYear && index < minMonth) || (selectedYear === currentYear && index > currentMonth)) {
+                                $(this).attr("disabled", "disabled");
+                            } else {
+                                $(this).removeAttr("disabled");
+                            }
+                        });
+
+                        // Disable "Next" button if at max month/year
+                        const isMaxMonth = selectedYear === currentYear && selectedMonth >= currentMonth;
+                        if (isMaxMonth) {
+                            $(".ui-datepicker-next").addClass("ui-state-disabled").hide(); // disable + hide
                         } else {
-                            $(this).removeAttr("disabled");
+                            $(".ui-datepicker-next").removeClass("ui-state-disabled").show(); // enable + show
                         }
-                    });
 
-                    // Disable "Next" button if at max month/year
-                    const isMaxMonth = selectedYear === currentYear && selectedMonth >= currentMonth;
-                    if (isMaxMonth) {
-                        $(".ui-datepicker-next").addClass("ui-state-disabled").hide(); // disable + hide
-                    } else {
-                        $(".ui-datepicker-next").removeClass("ui-state-disabled").show(); // enable + show
+                        // Disable "Prev" if at minimum allowed month/year
+                        const isMinMonth = (selectedYear === minYear && selectedMonth <= minMonth) || (selectedYear < minYear);
+
+                        if (isMinMonth) {
+                            $(".ui-datepicker-prev").addClass("ui-state-disabled").hide();
+                        } else {
+                            $(".ui-datepicker-prev").removeClass("ui-state-disabled").show();
+                        }
                     }
 
-                    // Disable "Prev" if at minimum allowed month/year
-                    const isMinMonth = selectedYear === (currentYear - 2) && selectedMonth === 0;
-
-                    if (isMinMonth) {
-                        $(".ui-datepicker-prev").addClass("ui-state-disabled").hide();
-                    } else {
-                        $(".ui-datepicker-prev").removeClass("ui-state-disabled").show();
+                    function observeCalendarChanges() {
+                        const observer = new MutationObserver(restrictUI);
+                        const dpDiv = document.querySelector("#ui-datepicker-div");
+                        if (dpDiv) {
+                            observer.observe(dpDiv, { childList: true, subtree: true });
+                        }
                     }
+
+                    restrictUI();
+                    observeCalendarChanges();
+                }, 0);
+            },
+
+            onClose: function (dateText, inst) {
+                const month = parseInt($("#ui-datepicker-div .ui-datepicker-month :selected").val(), 10);
+                const year = parseInt($("#ui-datepicker-div .ui-datepicker-year :selected").val(), 10);
+
+                const minYear = 2025;
+                const minMonth = 2; // July (because March is 2, so March is 3)
+
+                if (year < minYear || (year === minYear && month < minMonth)) {
+                    alert("Please select March 2025 or later.");  // or show error message your way
+                    $(this).val('');  // clear the input
+                    return;
                 }
 
-                function observeCalendarChanges() {
-                    const observer = new MutationObserver(restrictUI);
-                    const dpDiv = document.querySelector("#ui-datepicker-div");
-                    if (dpDiv) {
-                        observer.observe(dpDiv, { childList: true, subtree: true });
-                    }
-                }
-
-                restrictUI();
-                observeCalendarChanges();
-            }, 0);
-        },
-
-        onClose: function (dateText, inst) {
-            const month = $("#ui-datepicker-div .ui-datepicker-month :selected").val();
-            const year = $("#ui-datepicker-div .ui-datepicker-year :selected").val();
-            if (month !== null && year !== null) {
-                const formattedMonth = ("0" + (parseInt(month) + 1)).slice(-2);
+                // valid selection
+                const formattedMonth = ("0" + (month + 1)).slice(-2);
                 $(this).val(formattedMonth + "/" + year); // enforce MM/YYYY format
             }
-        }
-    });
+        });
 
     $("#txtMonthYear").attr("readonly", true).on("keydown paste input", function (e) {
         e.preventDefault();
     });
 
+    const $dialog = $("#CardReport .modal-dialog");
 
     $("#btnRequisition").on("click", function (event) {
         event.preventDefault(); // Prevent anchor default behavior
         $("#CardReport_lblModelTitle").html('New Requisition');
+
+        // If modal-xl class is present, override its width
+        if ($dialog.hasClass("modal-xl")) {
+            $dialog.css("width", "75%");
+        }
 
         GetReportReturnHistory('Requisition', function () {
             $("#CardReport").modal("show"); // shown only after data is fully ready
@@ -337,6 +355,11 @@ $(async function () {
         event.preventDefault(); // Prevent anchor default behavior
         $("#CardReport_lblModelTitle").html('Non Functional Card');
 
+         // If modal-xl class is present, override its width
+        if ($dialog.hasClass("modal-xl")) {
+            $dialog.css("width", "100%");
+        }
+
         GetReportReturnHistory('NonFunctional', function () {
             $("#CardReport").modal("show"); // shown only after data is fully ready
         });
@@ -344,6 +367,11 @@ $(async function () {
     $("#btnLostCase").on("click", function (event) {
         event.preventDefault(); // Prevent anchor default behavior
         $("#CardReport_lblModelTitle").html('Lost Case');
+
+        // If modal-xl class is present, override its width
+        if ($dialog.hasClass("modal-xl")) {
+            $dialog.css("width", "100%");
+        }
 
         GetReportReturnHistory('LostCase', function () {
             $("#CardReport").modal("show"); // shown only after data is fully ready
@@ -408,10 +436,16 @@ $(async function () {
         //    GetReportReturnHistory('MonthlyProcessed');
         //});
 
+        // If modal-xl class is present, override its width
+        if ($dialog.hasClass("modal-xl")) {
+            $dialog.css("width", "100%");
+        }
+
         GetReportReturnHistory('MonthlyProcessed', function () {
             $("#CardReport").modal("show"); // shown only after data is fully ready
         });
     });
+
 });
 function GetReportReturnHistory(Choice, callback) {
     if ($.fn.DataTable.isDataTable("#CardReport_tbldatadialog")) {
@@ -440,11 +474,11 @@ function GetReportReturnHistory(Choice, callback) {
         "MonthYear": $('#txtMonthYear').length > 0 ? $('#txtMonthYear').val() : null,
         
     };
-    let modalShown = false; // <== use a flag to show modal only once
+
     const columns = getColumnsByChoice(Choice);
     table = $("#CardReport_tbldatadialog").DataTable({
         autoWidth: false, // Let us handle width via CSS
-        responsive: false, // Responsive breaks layout for width control
+        responsive: true, // Responsive breaks layout for width control
         processing: true,
         serverSide: true,
         filter: true,
@@ -1279,5 +1313,4 @@ function ResetCount() {
     $("#TotLostCases").html('0');
     $("#TotMonthlyProcessed").html('0');
     $("#TotNonFunctionalCard").html('0');
-
 }

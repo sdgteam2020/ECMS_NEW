@@ -664,6 +664,7 @@ namespace DataAccessLayer
                             )
                             SELECT * FROM RecordCTE
                             WHERE RowNum BETWEEN @Offset AND @Limit;
+                            
                         ";
 
                 using (var connection = _contextDP.CreateConnection())
@@ -697,6 +698,8 @@ namespace DataAccessLayer
         public async Task<DTODataTablesResponse<DTOReportResponse>> GetReportData(DTODataTablesRequestForReport dTO)
         {
             string query = "";
+            string queryCount = "";
+            string wherequery = "";
             // Map allowed sort columns to DB fields
             Dictionary<string, string> allowedSortColumns = new Dictionary<string, string>();
 
@@ -713,36 +716,17 @@ namespace DataAccessLayer
                     ["ApplyFor"] = "mappl.Name"
                 };
                 query = @"req.RequestId,Mstep.StepId,basi.FName,basi.LName,basi.NameAsPerRecord,ServiceNo,ranks.RankAbbreviation RankName,TrackingId,marmed.Abbreviation as ArmedAbbreviation,regi.Abbreviation RegimentalName,mappl.Name as ApplyFor,
-                            CASE
-                            WHEN Mstep.StepId=1 THEN
-                            'Drafted/Saved Appl'
-                            WHEN Mstep.StepId=2 THEN
-                            'Pending Appl (Approver Level)'
-                            WHEN Mstep.StepId=3 THEN
-                            'Pending Appl (Verifier Level)'
-                            WHEN Mstep.StepId=4 THEN
-                            'Appl Status at ADC'
-                            WHEN Mstep.StepId=5 THEN
-                            'Exported'
-                            WHEN Mstep.StepId=6 THEN
-                            'I-CARD PRINT'
-                            WHEN Mstep.StepId=7 THEN
-                            'Appl Rejected (Approver Level)'
-                            WHEN Mstep.StepId=8 THEN
-                            'Appl Rejected (Verifier Level)'
-                            WHEN Mstep.StepId=9 THEN
-                            'Appl Rejected (AFSAC LEVEL)'
-                            END AS Status
+                            REPLACE(Mstep.Name, '</br>', '') as Status
                             from TrnStepCounter step
                             INNER JOIN MApplyFor mappl on mappl.ApplyForId=step.ApplyForId
                             INNER JOIN MStepCounterStep Mstep on Mstep.StepId=step.StepId
                             INNER JOIN TrnICardRequest req on step.RequestId=req.RequestId and req.StatusId=1
-                            INNER JOIN  BasicDetails basi on req.BasicDetailId=basi.BasicDetailId
+                            INNER JOIN BasicDetails basi on req.BasicDetailId=basi.BasicDetailId
                             INNER JOIN MArmedType marmed on basi.ArmedId=marmed.ArmedId
                             INNER JOIN MRank ranks on ranks.RankId=basi.RankId
                             INNER JOIN MapUnit unit on basi.UnitId=unit.UnitMapId
-                            left join MRegimental regi on regi.RegId=basi.RegimentalId
-                            WHERE
+                            left join MRegimental regi on regi.RegId=basi.RegimentalId ";
+                wherequery = @"WHERE
                             (
                                 (@UnitType = 1 AND
                                     unit.ComdId = ISNULL(@ComdId, unit.ComdId)
@@ -767,6 +751,10 @@ namespace DataAccessLayer
 							AND unit.UnitType =@UnitType
                             AND unit.UnitMapId = ISNULL(@UnitMapId, unit.UnitMapId)
                             AND ServiceNo LIKE '%' + @SearchTerm + '%'";
+                queryCount = @"Select count(*) from TrnStepCounter step
+                                INNER JOIN TrnICardRequest req on step.RequestId=req.RequestId and req.StatusId=1
+                                INNER JOIN  BasicDetails basi on req.BasicDetailId=basi.BasicDetailId
+                                INNER JOIN MapUnit unit on basi.UnitId=unit.UnitMapId";
             }
             else if (dTO.Choice == "NonFunctional")
             {
@@ -790,8 +778,8 @@ namespace DataAccessLayer
                             inner join MapUnit unit on unit.UnitMapId=bas.UnitId
                             inner join MUnit Muni on Muni.UnitId=unit.UnitId
                             inner join MApplyFor appl on appl.ApplyForId=bas.ApplyForId
-                            left join MRegimental regi on regi.RegId=bas.RegimentalId
-                            WHERE
+                            left join MRegimental regi on regi.RegId=bas.RegimentalId ";
+                wherequery = @"WHERE
                             (
                                 (@UnitType = 1 AND
                                     unit.ComdId = ISNULL(@ComdId, unit.ComdId)
@@ -816,6 +804,10 @@ namespace DataAccessLayer
 							AND unit.UnitType =@UnitType
                             AND unit.UnitMapId = ISNULL(@UnitMapId, unit.UnitMapId)
                             AND ServiceNo LIKE '%' + @SearchTerm + '%'";
+                queryCount = @"SELECT count(*) from TrnFaultyCard faulty
+                                inner join TrnICardRequest req on req.RequestId = faulty.RequestId
+                                inner join BasicDetails bas on bas.BasicDetailId=req.BasicDetailId
+                                inner join MapUnit unit on unit.UnitMapId=bas.UnitId";
             }
             else if (dTO.Choice == "LostCase")
             {
@@ -840,8 +832,8 @@ namespace DataAccessLayer
                             inner join MapUnit unit on unit.UnitMapId=bas.UnitId
                             inner join MUnit Muni on Muni.UnitId=unit.UnitId
                             inner join MApplyFor appl on appl.ApplyForId=bas.ApplyForId
-                            left join MRegimental regi on regi.RegId=bas.RegimentalId
-                            WHERE
+                            left join MRegimental regi on regi.RegId=bas.RegimentalId ";
+                wherequery = @"WHERE
                             (
                                 (@UnitType = 1 AND
                                     unit.ComdId = ISNULL(@ComdId, unit.ComdId)
@@ -866,6 +858,10 @@ namespace DataAccessLayer
 							AND unit.UnitType =@UnitType
                             AND unit.UnitMapId = ISNULL(@UnitMapId, unit.UnitMapId)
                             AND ServiceNo LIKE '%' + @SearchTerm + '%'";
+                queryCount = @"SELECT count(*) from TrnLostCards lost
+                                inner join TrnICardRequest req on req.RequestId = lost.RequestId
+                                inner join BasicDetails bas on bas.BasicDetailId=req.BasicDetailId
+                                inner join MapUnit unit on unit.UnitMapId=bas.UnitId";
             }
             else if (dTO.Choice == "MonthlyProcessed")
             {
@@ -879,26 +875,7 @@ namespace DataAccessLayer
                     ["ApplyFor"] = "mappl.Name"
                 };
                 query = @"req.RequestId,Mstep.StepId,basi.FName,basi.LName,basi.NameAsPerRecord,ServiceNo,ranks.RankAbbreviation RankName,TrackingId,marmed.Abbreviation as ArmedAbbreviation,regi.Abbreviation RegimentalName,mappl.Name as ApplyFor,basi.UpdatedOn,
-                            CASE
-                            WHEN Mstep.StepId=1 THEN
-                            'Drafted/Saved Appl'
-                            WHEN Mstep.StepId=2 THEN
-                            'Pending Appl (Approver Level)'
-                            WHEN Mstep.StepId=3 THEN
-                            'Pending Appl (Verifier Level)'
-                            WHEN Mstep.StepId=4 THEN
-                            'Appl Status at ADC'
-                            WHEN Mstep.StepId=5 THEN
-                            'Exported'
-                            WHEN Mstep.StepId=6 THEN
-                            'I-CARD PRINT'
-                            WHEN Mstep.StepId=7 THEN
-                            'Appl Rejected (Approver Level)'
-                            WHEN Mstep.StepId=8 THEN
-                            'Appl Rejected (Verifier Level)'
-                            WHEN Mstep.StepId=9 THEN
-                            'Appl Rejected (AFSAC LEVEL)'
-                            END AS Status
+                            REPLACE(Mstep.Name, '</br>', '') as Status
                             from TrnStepCounter step
                             INNER JOIN MApplyFor mappl on mappl.ApplyForId=step.ApplyForId
                             INNER JOIN MStepCounterStep Mstep on Mstep.StepId=step.StepId
@@ -907,8 +884,8 @@ namespace DataAccessLayer
                             INNER JOIN MArmedType marmed on basi.ArmedId=marmed.ArmedId
                             INNER JOIN MRank ranks on ranks.RankId=basi.RankId
                             INNER JOIN MapUnit unit on basi.UnitId=unit.UnitMapId
-                            left join MRegimental regi on regi.RegId=basi.RegimentalId
-                            WHERE
+                            left join MRegimental regi on regi.RegId=basi.RegimentalId ";
+                wherequery = @"WHERE
                             (
                                 (@UnitType = 1 AND
                                     unit.ComdId = ISNULL(@ComdId, unit.ComdId)
@@ -935,6 +912,11 @@ namespace DataAccessLayer
                             AND ServiceNo LIKE '%' + @SearchTerm + '%'
                             AND YEAR(basi.UpdatedOn) = RIGHT(@MonthYear, 4)
 							AND MONTH(basi.UpdatedOn) = LEFT(@MonthYear, 2)";
+                queryCount = @"Select count(*)
+                                from TrnStepCounter step
+                                INNER JOIN TrnICardRequest req on step.RequestId=req.RequestId and req.StatusId=1
+                                INNER JOIN  BasicDetails basi on req.BasicDetailId=basi.BasicDetailId
+                                INNER JOIN MapUnit unit on basi.UnitId=unit.UnitMapId";
             }
             try
             {
@@ -943,10 +925,10 @@ namespace DataAccessLayer
                 : "ServiceNo";
                 var multiQuery = query = $@"
                         WITH RecordCTE AS (
-                            select ROW_NUMBER() OVER (ORDER BY {sortColumn} {sortOrder}) AS RowNum, {query}
+                            select ROW_NUMBER() OVER (ORDER BY {sortColumn} {sortOrder}) AS RowNum, {query} {wherequery}
                         )
-                        SELECT * FROM RecordCTE
-                        WHERE RowNum BETWEEN @Offset AND @Limit;
+                        SELECT * FROM RecordCTE WHERE RowNum BETWEEN @Offset AND @Limit;
+                        {queryCount} {wherequery}
                     ";
 
                 using (var connection = _contextDP.CreateConnection())
@@ -962,17 +944,18 @@ namespace DataAccessLayer
                     parameters.Add("@PsoId", dTO.PsoId, DbType.Byte, ParameterDirection.Input);
                     parameters.Add("@SubDteId", dTO.SubDteId, DbType.Byte, ParameterDirection.Input);
                     parameters.Add("@MonthYear", dTO.MonthYear, DbType.String, ParameterDirection.Input);
-                    parameters.Add("@Offset", dTO.Start, DbType.Int32, ParameterDirection.Input);
-                    parameters.Add("@Limit", dTO.Length, DbType.Int32, ParameterDirection.Input);
+                    parameters.Add("@Offset", dTO.Start + 1, DbType.Int32, ParameterDirection.Input);
+                    parameters.Add("@Limit", (dTO.Start + dTO.Length) , DbType.Int32, ParameterDirection.Input);
                     parameters.Add("@SearchTerm", dTO.searchValue, DbType.String, ParameterDirection.Input);
 
                     var ret = await connection.QueryMultipleAsync(query, parameters);
                     var records = (await ret.ReadAsync<DTOReportResponse>()).ToList();
+                    int TotalRecords = (await ret.ReadAsync<int>()).FirstOrDefault();
                     var responseData = new DTODataTablesResponse<DTOReportResponse>
                     {
                         draw = dTO.Draw,
-                        recordsTotal = 0, // Total records without filtering
-                        recordsFiltered = records.Count(), // Total records after filtering
+                        recordsTotal = TotalRecords, // Total records without filtering
+                        recordsFiltered = TotalRecords,//records.Count(), // Total records after filtering
                         data = records,
                     };
                     return responseData;
@@ -1186,8 +1169,3 @@ namespace DataAccessLayer
         }
     }
 }
-
-
-
-
-
