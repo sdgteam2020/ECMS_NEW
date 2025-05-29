@@ -201,12 +201,12 @@ function GetMovementHistory(spnRequestId) {
                         listItem += '</div>';
                         listItem += '<div class="timeline-item-content">';
 
-                        listItem += '' + response[i].ReportedBy;
-
                         if (response[i].StepName == "I-Card Lost")
-                            listItem += '<br><span class="badge bg-danger">' + response[i].StepName + '</span>';
-                        else 
-                            listItem += '<br><span class="badge bg-success">' + response[i].StepName + '</span>';
+                            listItem += '<span class="badge bg-danger">' + response[i].StepName + '</span><br>';
+                        else
+                            listItem += '<span class="badge bg-success">' + response[i].StepName + '</span><br>';
+
+                        listItem += 'by ' + response[i].ReportedBy;
 
                         listItem += '<br> <strong class="text-center">Remark</strong> <br>' + response[i].Remark + '';
 

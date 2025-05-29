@@ -2269,66 +2269,80 @@ namespace DataAccessLayer
             var responseList = new List<DTOCardMovementHistoryResponse>();
             try
             {
-                var cardStep = await _context.TrnStepCounter.Where(step => step.RequestId == requestId).FirstOrDefaultAsync().Result.StepId;
+                var cardStep = _context.TrnStepCounter.Where(step => step.RequestId == requestId).FirstOrDefaultAsync().Result.StepId;
 
-                var cardExported = await (from request in _context.TrnICardRequest.AsNoTracking()
-                                         where request.RequestId == requestId && request.CardExportedOn.HasValue
-                                         select new DTOCardMovementHistoryResponse
-                                         {
-                                             StepName = "I-Card Exported",
-                                             ReportedBy = "afsac_cell",
-                                             ReportedOn = request.CardPrintedOn.Value,
-                                             Remark = "Card Exported"
-                                         }).ToListAsync();
+                if (cardStep == (byte)CardStepEnum.Exported || cardStep == (byte)CardStepEnum.Printed || cardStep == (byte)CardStepEnum.CardDistributed)
+                {
+                    var cardExported = await (from request in _context.TrnICardRequest.AsNoTracking()
+                                              where request.RequestId == requestId && request.CardExportedOn.HasValue
+                                              select new DTOCardMovementHistoryResponse
+                                              {
+                                                  StepName = "I-Card Exported",
+                                                  ReportedBy = "afsac_cell",
+                                                  ReportedOn = request.CardPrintedOn.Value,
+                                                  Remark = "Card Exported"
+                                              }).ToListAsync();
+                    var cardPrinted = new List<DTOCardMovementHistoryResponse>();
+                    var lostBeforeDistributed = new List<DTOCardMovementHistoryResponse>();
+                    var cardDistributed = new List<DTOCardMovementHistoryResponse>();
 
-                var cardPrinted = await (from request in _context.TrnICardRequest.AsNoTracking()
-                                                   where request.RequestId == requestId && request.CardPrintedOn.HasValue
-                                                   select new DTOCardMovementHistoryResponse
-                                                   {
-                                                       StepName = "I-Card Printed",
-                                                       ReportedBy = "afsac_cell",
-                                                       ReportedOn = request.CardPrintedOn.Value,
-                                                       Remark = "Card Printed"
-                                                   }).ToListAsync();
+                    if (cardStep > (byte)CardStepEnum.Exported)
+                    {
+                        cardPrinted = await (from request in _context.TrnICardRequest.AsNoTracking()
+                                                 where request.RequestId == requestId && request.CardPrintedOn.HasValue
+                                                 select new DTOCardMovementHistoryResponse
+                                                 {
+                                                     StepName = "I-Card Printed",
+                                                     ReportedBy = "afsac_cell",
+                                                     ReportedOn = request.CardPrintedOn.Value,
+                                                     Remark = "Card Printed"
+                                                 }).ToListAsync();
+                        lostBeforeDistributed = await (from lost in _context.TrnLostCards.AsNoTracking()
+                                                           join dist in _context.TrnDistributeCards.AsNoTracking()
+                                                               on lost.RequestId equals dist.RequestId into distGroup
+                                                           from dist in distGroup.DefaultIfEmpty()
+                                                           join user in _context.Users.AsNoTracking()
+                                                               on lost.Updatedby equals user.Id
+                                                           join profile in _context.UserProfile.AsNoTracking()
+                                                               on lost.UpdatedbyUserId equals profile.UserId
+                                                           join rank in _context.MRank.AsNoTracking()
+                                                              on profile.RankId equals rank.RankId
+                                                           where lost.UpdatedOn != null && (dist == null || lost.UpdatedOn < dist.UpdatedOn) && lost.RequestId == requestId
+                                                           select new DTOCardMovementHistoryResponse
+                                                           {
+                                                               StepName = "I-Card Lost",
+                                                               ReportedBy = $"({user.DomainId}) {rank.RankAbbreviation} {profile.Name}",
+                                                               ReportedOn = lost.UpdatedOn.Value,
+                                                               Remark = lost.Remark
+                                                           }).ToListAsync();
+                    }
 
-                var lostBeforeDistributed = await (from lost in _context.TrnLostCards.AsNoTracking()
-                                            join dist in _context.TrnDistributeCards.AsNoTracking()
-                                                on lost.RequestId equals dist.RequestId into distGroup
-                                            from dist in distGroup.DefaultIfEmpty()
-                                            join user in _context.Users.AsNoTracking()
-                                                on lost.Updatedby equals user.Id
-                                            where lost.UpdatedOn != null && (dist == null || lost.UpdatedOn < dist.UpdatedOn) && lost.RequestId == requestId
-                                            select new DTOCardMovementHistoryResponse
-                                            {
-                                                StepName = "I-Card Lost",
-                                                ReportedBy = user.DomainId,
-                                                ReportedOn = lost.UpdatedOn.Value,
-                                                Remark = lost.Remark
-                                            }).ToListAsync();
+                    if (cardStep == (byte)CardStepEnum.CardDistributed) {
+                        cardDistributed = await (from dist in _context.TrnDistributeCards.AsNoTracking()
+                                                 join user in _context.Users.AsNoTracking()
+                                                    on dist.Updatedby equals user.Id
+                                                 join profile in _context.UserProfile.AsNoTracking()
+                                                    on dist.UpdatedbyUserId equals profile.UserId
+                                                 join rank in _context.MRank.AsNoTracking()
+                                                    on profile.RankId equals rank.RankId
+                                                 where dist.RequestId == requestId
+                                                 select new DTOCardMovementHistoryResponse
+                                                 {
+                                                     StepName = "I-Card Distributed",
+                                                     ReportedBy = $"({user.DomainId}) {rank.RankAbbreviation} {profile.Name}",
+                                                     ReportedOn = dist.UpdatedOn.Value,
+                                                     Remark = dist.Remark
+                                                 }).ToListAsync();
+                        
+                    }
 
-
-                var cardDistributed = await (from dist in _context.TrnDistributeCards.AsNoTracking()
-                                             join user in _context.Users.AsNoTracking()
-                                                on dist.Updatedby equals user.Id
-                                             where dist.RequestId == requestId
-                                             select new DTOCardMovementHistoryResponse
-                                             {
-                                                 StepName = "I-Card Distributed",
-                                                 ReportedBy = user.DomainId,
-                                                 ReportedOn = dist.UpdatedOn.Value,
-                                                 Remark = dist.Remark
-                                             }).ToListAsync();
-
-                // Execute in parallel
-                //await Task.WhenAll(cardPrinted, lostBeforeDistributed, cardDistributed);
-
-                // Merge and sort in-memory
-                responseList = cardExported
-                    .Concat(cardPrinted)
-                    .Concat(lostBeforeDistributed)
-                    .Concat(cardDistributed)
-                    .OrderBy(x => x.ReportedOn)
-                    .ToList();
+                    responseList = cardExported
+                            .Concat(cardPrinted)
+                            .Concat(lostBeforeDistributed)
+                            .Concat(cardDistributed)
+                            .OrderBy(x => x.ReportedOn)
+                            .ToList();
+                }
             }
             catch (Exception ee) 
             {

@@ -2540,8 +2540,14 @@ namespace Web.Controllers
             DTOCommonSaveResponse dTOFaulty = new DTOCommonSaveResponse();
             try
             {
+                DtoSession? dtoSession = new DtoSession();
+                if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
+                {
+                    dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+                }
                 model.IsActive = true;
-                model.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier)); ;
+                model.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                model.UpdatedbyUserId = dtoSession != null ? dtoSession.UserId : 0;
                 model.UpdatedOn = DateTime.Now;
 
                 if (ModelState.IsValid)
@@ -2669,6 +2675,12 @@ namespace Web.Controllers
                     }
                     #endregion Upload Supporting Document
 
+                    DtoSession? dtoSession = new DtoSession();
+                    if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
+                    {
+                        dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+                    }
+                    trnLostCard.UpdatedbyUserId = dtoSession != null ? dtoSession.UserId : 0;
                     trnLostCard.RequestId = model.RequestId;
                     trnLostCard.Remark = model.Remark;
                     trnLostCard.LostOn = model.LostOn;
@@ -2730,6 +2742,7 @@ namespace Web.Controllers
                         Remark = lostCard.Remark,
                         IsActive = lostCard.IsActive,
                         Updatedby = lostCard.Updatedby,
+                        UpdatedbyUserId = lostCard.UpdatedbyUserId,
                         UpdatedOn = lostCard.UpdatedOn
                     };
 
