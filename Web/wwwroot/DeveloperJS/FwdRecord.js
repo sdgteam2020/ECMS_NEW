@@ -214,14 +214,11 @@ $(function () {
     });
     $(".fwdrecord").on("click", async function () {
         Reset();
-        // ResetMapUnit();
-        //alert($(this).closest("tr").find(".spnRequestId").html())
+
         $("#multiplefed").addClass("d-none");
         $("#btntokenTofwd").addClass("d-none");
         $("#ddlRemarks").val("");
 
-        // $("#FwdRecord").modal('show');
-        //$("#BasicDetails").modal('show');
 
         IsDigitalSignReq = true;
 
@@ -234,7 +231,6 @@ $(function () {
         $("#spnCurrentspnRequestId").html(spnRequestId);
         spnStepId = $(this).closest("tr").find(".spnStepId").html();
         const Unitidarmy = $(this).closest("tr").find(".spnarmyUnitId").html();
-        //alert(Unitidarmy)
 
         StepCounter = $(this).closest("tr").find(".spnStepCounterId").html();
         applyfor = $(this).closest("tr").find(".spnApplyFor").html();
@@ -266,7 +262,6 @@ $(function () {
             }
             $(".Remarks").removeClass("d-none");
 
-            //$(".chkforserach").addClass("d-none");
             $("#btntokenTofwd").removeClass("d-none");
 
             var someNumbers = [1];
@@ -319,7 +314,115 @@ $(function () {
             GetRemarks("ddlRRemarks", 0, Reject);
         }
     });
+    $("#tbldata tbody").off("click", ".cls-fwdrecord").on("click", ".cls-fwdrecord", async function () {
+        var rowData = table.row($(this).closest("tr")).data();
+        if (rowData != null) {
+            Reset();
 
+            $("#multiplefed").addClass("d-none");
+            $("#btntokenTofwd").addClass("d-none");
+            $("#ddlRemarks").val("");
+
+            IsDigitalSignReq = true;
+
+            $(".spnFname").html(`${rowData.RankName || ""} ${rowData.FName || ""} ${rowData.LName || ""}`.trim());
+            $(".spnFarmyno").html(/^[A-Za-z]{2}/.test(rowData.ServiceNo) ? rowData.ServiceNo.slice(0, 2) + ' ' + rowData.ServiceNo.slice(2) : rowData.ServiceNo);
+            $("#spnStepCounter").html(rowData.StepCounter);
+            var spnTrnFwdId = rowData.IsTrnFwdId;
+            $("#spnCurrentspnTrnFwdId").html(spnTrnFwdId);
+            var spnRequestId = rowData.RequestId;
+            $("#spnCurrentspnRequestId").html(spnRequestId);
+            spnStepId = rowData.StepId;
+            const Unitidarmy = rowData.UnitId;
+
+            StepCounter = rowData.StepCounter;
+            applyfor = rowData.ApplyForId;
+            RegistrationApplyFor = rowData.RegistrationApplyFor;
+            $("#spnCurrentRegistrationApplyFor").html(RegistrationApplyFor);
+            $("#spnCurrentApplyFor").html(applyfor);
+            $("#spnServiceNo").html(rowData.ServiceNo);
+
+            if (StepCounter == 1 || StepCounter == 7 || StepCounter == 8 || StepCounter == 9 || StepCounter == 10) {
+                $(".recectopt").addClass("d-none");
+                $("#btnRejected").addClass("d-none");
+
+            }
+            await GetBasicDetailByRequestIdForFwd(rowData.RequestId);
+
+            if (StepCounter == 1 || StepCounter == 7 || StepCounter == 8 || StepCounter == 9 || StepCounter == 10 || StepCounter == 11 || StepCounter == 12 || StepCounter == 13 || StepCounter == 15) {
+
+                if (applyfor == 1) {
+                    $(".gsoio").html("IO / Next Superior Offr");
+                    $(".gsoiotitle").html("IO / Next Superior Offr");
+                    $("#btnForward").html("Forward To IO / Superior");
+                    GetAllOffsByUnitId("ddlfwdoffrs", 0, Unitidarmy, 0, 0, 0, 0);
+                } else {
+                    $(".gsoio").html("CO /OC / OC TPS or Offr Nominated");
+                    $(".gsoiotitle").html("CO / OC / OC TPS or Offr Nominated");
+                    $("#btnForward").html("Forward To CO / OC / OC TPS or Offr Nominated");
+
+                    GetAllOffsByUnitId("ddlfwdoffrs", 0, Unitidarmy, 0, 0, 0, 0);
+                }
+                $(".Remarks").removeClass("d-none");
+
+                //$(".chkforserach").addClass("d-none");
+                $("#btntokenTofwd").removeClass("d-none");
+
+                var someNumbers = [1];
+                GetRemarks("ddlRemarks", 0, someNumbers);
+            } else if (StepCounter == 2) {
+                $(".chkforserach").addClass("d-none");
+                $(".serchfwd").addClass("d-none");
+                if (applyfor == 1) {
+                    $(".gsoio").html("Record Office");
+                    $(".gsoiotitle").html("Offr Record Office (ORO) Approval");
+                    $("#btnForward").html("Forward To Record Office");
+                    GetAllOffsByUnitId("ddlfwdoffrs", 0, Unitidarmy, 0, spnIntORO, 0, $(this).closest("tr").find(".spnBasicDetailId").html());
+                } else {
+                    $(".gsoio").html("Record Office (RO)");
+                    $(".gsoiotitle").html("Record Office (RO) Approval");
+                    $("#btnForward").html("Forward To Record Office (RO)");
+                    GetAllOffsByUnitId("ddlfwdoffrs", 0, Unitidarmy, spnIntRO, 0, 0, $(this).closest("tr").find(".spnBasicDetailId").html());
+                }
+                $("#btntokenTofwd").removeClass("d-none");
+                $(".Remarks").removeClass("d-none");
+                var someNumbers = [1];
+                GetRemarks("ddlRemarks", 0, someNumbers);
+
+                var Reject = [2];
+                GetRemarks("ddlRRemarks", 0, Reject);
+
+            } else if (StepCounter == 3) {
+                if (applyfor == 1) {
+                    $(".chkforserach").addClass("d-none");
+
+                    $(".gsoio").html("AFSAC Cell");
+                    $(".gsoiotitle").html("AFSAC Cell");
+                    $("#btnForward").html("Forward To AFSAC Cell");
+                    GetAllOffsByUnitId("ddlfwdoffrs", 0, 0, 0, 0, spnIntAfsacCell, 0);
+                } else {
+                    $(".chkforserach").addClass("d-none");
+                    $(".gsoiotitle").html("AFSAC Cell");
+                    $(".gsoio").html("AFSAC Cell");
+                    $("#btnForward").html("Forward To AFSAC Cell ");
+                    GetAllOffsByUnitId("ddlfwdoffrs", 0, 0, 0, 0, spnIntAfsacCell, 0);
+                }
+
+
+
+                $(".Remarks").removeClass("d-none");
+                var someNumbers = [1];
+                GetRemarks("ddlRemarks", 0, someNumbers);
+
+                var Reject = [2];
+                GetRemarks("ddlRRemarks", 0, Reject);
+            }
+
+
+
+
+        }
+    });
     $("#txtFwdName").autocomplete({
 
         source: function (request, response) {

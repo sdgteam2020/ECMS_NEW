@@ -47,6 +47,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using BusinessLogicsLayer.LostCard;
 using iText.IO.Font.Cmap;
 using BusinessLogicsLayer.DistributeCard;
+using BusinessLogicsLayer.BdeCate;
 
 namespace Web.Controllers
 {
@@ -127,7 +128,7 @@ namespace Web.Controllers
 
         #region Index/ApprovalForIO/View/InaccurateData/InaccurateDataView/RequestType
 
-        public async Task<ActionResult> Index(string Id, string jcoor)
+        public async Task<ActionResult> Index_Old(string Id, string jcoor)
         {
 
             MTrnNotification noti = new MTrnNotification();
@@ -284,7 +285,7 @@ namespace Web.Controllers
                 return View(allrecord);
             }
         }
-        public async Task<ActionResult> Index_(string Id, string jcoor)
+        public async Task<ActionResult> Index(string Id, string jcoor)
         {
 
             MTrnNotification noti = new MTrnNotification();
@@ -418,16 +419,11 @@ namespace Web.Controllers
             if (stepcounter == 0)
             {
                 var allrecord = await Task.Run(() => basicDetailBL.GetALLForIcardSttaus(Convert.ToInt32(userId), stepcounter, type, 0));
-
-                _logger.LogInformation(1001, "Index Page Of Basic Detail View");
-
                 return View(allrecord);
             }
             else if (string.IsNullOrEmpty(jcoor))
             {
                 var allrecord = await Task.Run(() => basicDetailBL.GetALLForIcardSttaus(Convert.ToInt32(userId), stepcounter, type, 1));
-
-                _logger.LogInformation(1001, "Index Page Of Basic Detail View");
                 noti.DisplayId = stepcounter;
                 await _INotificationBL.UpdateRead(noti);
 
@@ -436,13 +432,46 @@ namespace Web.Controllers
             else
             {
                 var allrecord = await Task.Run(() => basicDetailBL.GetALLForIcardSttaus(Convert.ToInt32(userId), stepcounter, type, 2));
-
-                _logger.LogInformation(1001, "Index Page Of Basic Detail View");
                 noti.DisplayId = stepcounter + 10;
                 await _INotificationBL.UpdateRead(noti);
 
                 return View(allrecord);
             }
+        }
+        [HttpPost]
+        public async Task<IActionResult> GetAllIndexData([FromBody] DTODataTablesRequestFor_BasicDetails_Index dTORecord)
+        {
+            int userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+            dTORecord.UserId= userId;
+            try
+            {
+                if (dTORecord.stepcount == 0)
+                {
+                    dTORecord.applyForId = 0;
+                    var allrecord = await basicDetailBL.GetALLForIcardSttaus_(dTORecord);
+
+                    return Json(allrecord);
+                }
+                else if (string.IsNullOrEmpty(dTORecord.JCOOR))
+                {
+                    dTORecord.applyForId = 1;
+                    var allrecord = await basicDetailBL.GetALLForIcardSttaus_(dTORecord);
+
+                    return Json(allrecord);
+                }
+                else
+                {
+                    dTORecord.applyForId = 2;
+                    var allrecord = await basicDetailBL.GetALLForIcardSttaus_(dTORecord);
+                    return Json(allrecord);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "Home->GetAllIndexData");
+                return BadRequest(new { message = "Internal Server Error" });
+            }
+
         }
 
         public async Task<ActionResult> ApprovalForIO(string Id, string jcoor)

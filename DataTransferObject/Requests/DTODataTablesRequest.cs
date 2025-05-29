@@ -87,6 +87,7 @@ namespace DataTransferObject.Requests
         public int UserId { get; set; }
         public int stepcount { get; set; }
         public int TypeId { get; set; }
-        public int apply { get; set; }
+        public int applyForId { get; set; }
+        public string JCOOR { get; set; } = string.Empty;
     }
 }

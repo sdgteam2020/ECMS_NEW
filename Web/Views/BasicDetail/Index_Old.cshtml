@@ -1,0 +1,314 @@
+﻿@model List<BasicDetailVM>
+<link asp-href-include="~/css/popupprintcss.css" rel="stylesheet" />
+<style>
+    .modal.left .modal-dialog, .modal.right .modal-dialog {
+        position: fixed;
+        margin: auto;
+        width: 700px;
+        height: 100%;
+        text-align: left;
+        -webkit-transform: translate3d(0%, 0, 0);
+        -ms-transform: translate3d(0%, 0, 0);
+        -o-transform: translate3d(0%, 0, 0);
+        transform: translate3d(0%, 0, 0);
+    }
+</style>
+<link asp-href-include="~/select2/css/select2.min.css" rel="stylesheet" />
+
+<partial name="~/Views/Shared/_DataTableCSS.cshtml" />
+<header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
+    <div class="containerMain">
+        <div class="page-header-content pt-4">
+            <div class="row align-items-center justify-content-between">
+                <div class="col-auto">
+                    <h1 class="page-header-title">
+                        <div class="page-header-icon"> <i class="fa fa-bars"></i></div>
+                        @if (Convert.ToString(ViewBag.Id) == "0")
+                        {
+                            <div>
+                                <a href="/Home/Index" class="mr-2">Home</a> > <a href="/Home/Dashboard" class="mr-2">Dashboard</a>  >
+                                @if (string.IsNullOrEmpty(Convert.ToString(ViewBag.jcoor)))
+                                {
+                                    <span>Appl All I-Card</span>
+                                }
+                                else
+                                {
+                                    <span>Appl All I-Card</span>
+                                }
+
+                            </div>
+                        }
+                        
+                        else if (Convert.ToString(ViewBag.Id) == "1")
+                        {
+                            <div>
+                                <a href="/Home/Index" class="mr-2">Home</a> > <a href="/Home/Dashboard" class="mr-2">Dashboard</a>  > <a href="/Home/SubDashboard" class="mr-2">I-Card Request</a>  > <a href="/Home/RequestDashboard/RHJhZnRlZA==" class="mr-2">Drafted Appl</a> >
+                                @if (string.IsNullOrEmpty(Convert.ToString(ViewBag.jcoor)))
+                                {
+                                    <span>Appl Drafted for Offrs</span>
+                                }
+                                else
+                                {
+                                    <span>Appl Drafted for JCOs/OR</span>
+                                }
+                               
+                            </div>
+                        }
+                        else if (Convert.ToString(ViewBag.Id) == "11")
+                        {
+                            <div>
+                                <a href="/Home/Index" class="mr-2">Home</a> > <a href="/Home/Task" class="mr-2">Task</a> >
+                                @if (string.IsNullOrEmpty(Convert.ToString(ViewBag.jcoor)))
+                                {
+                                    <span><a href="/Home/MyTask/T2ZmcnNTdWJtaXR0ZWQ=">I-Card Status</a> >Appl Drafted for Offrs</span>
+                                }
+                                else
+                                {
+                                    <span><a href="/Home/MyTask/SkNPc1N1Ym1pdHRlZA==">I-Card Status</a> >Appl Drafted for JCOs/OR</span>
+                                }
+                            </div>
+                        }
+                       else if (Convert.ToString(ViewBag.Id) == "888")
+                        {
+                            <div>
+                                <a href="/Home/Index" class="mr-2">Home</a> > <a href="/Home/Dashboard" class="mr-2">Dashboard</a>  > <a href="/Home/SubDashboard" class="mr-2">I-Card Request</a>  > <a href="/Home/RequestDashboard/U3VibWl0dGVk" class="mr-2">Submitted</a> >
+                                @if (string.IsNullOrEmpty(Convert.ToString(ViewBag.jcoor)))
+                                {
+                                    <span>Appl Submitted for Offrs</span>
+                                }
+                                else
+                                {
+                                    <span>Appl Submitted for JCOs/OR</span>
+                                }
+
+                            </div>
+                        }
+                        else if (Convert.ToString(ViewBag.Id) == "88")
+                        {
+                            <div>
+                                <a href="/Home/Index" class="mr-2">Home</a> > <a href="/Home/Task" class="mr-2">Task</a> >
+                                @if (string.IsNullOrEmpty(Convert.ToString(ViewBag.jcoor)))
+                                {
+                                    <span><a href="/Home/MyTask/T2ZmcnNTdWJtaXR0ZWQ=">I-Card Status</a> >Appl Submitted for Offrs</span>
+                                }
+                                else
+                                {
+                                    <span><a href="/Home/MyTask/SkNPc1N1Ym1pdHRlZA==">I-Card Status</a> >Appl Submitted for JCOs/OR</span>
+                                }
+                            </div>
+                        }
+                       else if (Convert.ToString(ViewBag.Id) == "999")
+                        {
+                            <div>
+                                <a href="/Home/Index" class="mr-2">Home</a> > <a href="/Home/Dashboard" class="mr-2">Dashboard</a>  > <a href="/Home/SubDashboard" class="mr-2">I-Card Request</a>  > <a href="/Home/RequestDashboard/UmVqZWN0ZWQ=" class="mr-2">Rejected</a> >
+                                @if (string.IsNullOrEmpty(Convert.ToString(ViewBag.jcoor)))
+                                {
+                                    <span>Appl Rejected for Offrs</span>
+                                }
+                                else
+                                {
+                                    <span>Appl Rejected for JCOs/OR</span>
+                                }
+
+                            </div>
+                        }
+                        else if (Convert.ToString(ViewBag.Id) == "99")
+                        {
+                            <div>
+                                <a href="/Home/Index" class="mr-2">Home</a> > <a href="/Home/Task" class="mr-2">Task</a> >
+                                @if (string.IsNullOrEmpty(Convert.ToString(ViewBag.jcoor)))
+                                {
+                                    <span><a href="/Home/MyTask/T2ZmcnNTdWJtaXR0ZWQ=">I-Card Status</a> >Appl Rejected for Offrs</span>
+                                }
+                                else
+                                {
+                                    <span><a href="/Home/MyTask/SkNPc1N1Ym1pdHRlZA==">I-Card Status</a> >Appl Rejected for JCOs/OR</span>
+                                }
+                            </div>
+                        }
+                        else if (Convert.ToString(ViewBag.Id) == "777")
+                        {
+                            <div>
+                                <a href="/Home/Index" class="mr-2">Home</a> > <a href="/Home/Dashboard" class="mr-2">Dashboard</a>  > <a href="/Home/SubDashboard" class="mr-2">I-Card Request</a>  > <a href="/Home/RequestDashboard/Q29tcGxldGVk" class="mr-2">Completed</a> >
+                                @if (string.IsNullOrEmpty(Convert.ToString(ViewBag.jcoor)))
+                                {
+                                    <span>Appl Completed for Offrs</span>
+                                }
+                                else
+                                {
+                                    <span>Appl Completed for JCOs/OR</span>
+                                }
+
+                            </div>
+                        }
+                        else if (Convert.ToString(ViewBag.Id) == "77")
+                        {
+                            <div>
+                                <a href="/Home/Index" class="mr-2">Home</a> > <a href="/Home/Task" class="mr-2">Task</a> >
+                                @if (string.IsNullOrEmpty(Convert.ToString(ViewBag.jcoor)))
+                                {
+                                    <span><a href="/Home/MyTask/T2ZmcnNTdWJtaXR0ZWQ=">I-Card Status</a> >Appl Completed for Offrs</span>
+                                }
+                                else
+                                {
+                                    <span><a href="/Home/MyTask/SkNPc1N1Ym1pdHRlZA==">I-Card Status</a> >Appl Completed for JCOs/OR</span>
+                                }
+                            </div>
+                        }
+                        else
+                        {
+                            if (Convert.ToString(ViewBag.jcoor) == "SmNvL09ycw==")
+                            {
+                                <div>
+                                    <a href="/Home/Index" class="mr-2">Home</a> >
+                                    <a href="/Home/Task" class="mr-2">Task</a> >
+                                    <a href="/Home/MyTask/SkNPc1N1Ym1pdHRlZA==" class="mr-2">I-Card Status</a> > @ViewBag.Title
+                                </div>
+                            }
+                            else
+                            {
+                                <div>
+                                    <a href="/Home/Index" class="mr-2">Home</a> > 
+                                    <a href="/Home/Task" class="mr-2">Task</a> >
+                                    <a href="/Home/MyTask/T2ZmcnNTdWJtaXR0ZWQ=" class="mr-2">I-Card Status</a> > @ViewBag.Title
+                                </div>
+                            }
+
+                        }
+                       
+                    </h1>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</header>
+<div class="containerMain mt-n10">
+    <div class="card mb-3 ">
+        <div class="card-header">
+            <div class="row">
+                <div class="col-xl-12 text-left">
+                    <h3>
+                        @ViewBag.Title
+                        <small class="text-muted"></small>
+                    </h3>
+                </div>
+            </div>
+        </div>
+        <div class="card-body" style="min-height:150px;">
+            <div class="row">
+                <div class="col-xl-12">
+                    <div class="table-responsive">
+                        <table id="tbldatatabledata" class="table border border-purple table-striped no-footer dataTable table-hover" style="width:100%">
+                            <thead> 
+                                <tr>
+                                    <th>@Html.DisplayNameFor(model => model[0].Sno)</th>
+                                    <th>@Html.DisplayNameFor(model => model[0].ServiceNo)</th>
+                                    <th>Rank , Name</th>
+                                    <th>Unit</th>
+                                   
+                                  @*   <th>@Html.DisplayNameFor(model => model[0].DOB)</th> *@
+                               @*      <th>@Html.DisplayNameFor(model => model[0].DateOfCommissioning)</th> *@
+                                    @* <th>Address</th> *@
+                                    <th>Appl ID</th>
+                                    <th>Type</th>
+                                    <th>Reason for Requisition</th>     
+                                    <th class="noExport">Posting</th>
+                                    <th class="noExport">History</th>
+                                    <th class="noExport">Print | Edit | Fwd</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model)
+                                {
+                                    <tr>
+                                        <td>@item.Sno</td>
+                                        <td><a href="#" onclick="GetBasicDetailByRequestId(@(@item.RequestId));event.preventDefault();"><span class="ServiceNo">@item.ModifiedServiceNo</span></a></td>
+                                        <td class="PersName">@item.RankName @item.FName @(item.LName == null ? "" : item.LName)</td>
+                                        <td class="UnitName">@item.UnitName</td>
+                                       @*  <td>@item.DOB.ToString("dd/MMM/yyyy")</td> *@
+                                        @* <td>@item.DateOfCommissioning.ToString("dd/MMM/yyyy")</td> *@
+                                        @* <td>@item.PermanentAddress</td> *@
+                                        <td>@item.TrackingId</td>
+                                        <td>@item.ApplyFor </td>
+                                        <td>@item.ICardType</td>
+                                        <td>
+                                            @if(item.IsPosting>0)
+                                            {
+                                                <span class="badge badge-pill badge-danger">Yes</span> 
+                                            }
+                                            else
+                                            {
+                                                <span class="badge badge-pill badge-success">No</span>
+                                            }
+                                        </td>
+                                        <td class="noExport"><button class="btn btn-icon btn-round btn-primary mr-1 historyRequest" data-toggle="tooltip" data-placement="left" title="@item.Remark"><i class="fa fa-history" aria-hidden="true"></i></button></td>
+                                       
+                                        <td class="noExport">
+                                            <div class="d-flex p-2">
+                                                <button class="btn btn-icon btn-round btn-primary mr-2" onclick="GetICardPrintPreviewByRequestId(@(@item.RequestId))"><i class="fa fa-print mt-2"></i></button>
+                                                    <span class="spnBasicDetailId d-none">@item.BasicDetailId</span>
+                                                    <span class="spnTrnFwdId d-none">@item.IsTrnFwdId</span>
+                                                    <span class="spnRequestId d-none">@item.RequestId</span>
+                                                    <span class="spnStepCounterId d-none">@item.StepCounter</span>
+                                                    <span class="spnStepId d-none">@item.StepId</span>
+                                                    <span class="spnApplyFor d-none">@item.ApplyForId</span>
+                                                    <span class="spnarmyUnitId d-none">@item.UnitId</span>
+                                                    <span class="spnRegistrationApplyFor d-none">@item.RegistrationApplyFor</span>
+                                                    <span class="spnServiceNo d-none">@item.ServiceNo</span>
+
+                                                    @if ((item.StepCounter == 1 || item.StepCounter == 7 || item.StepCounter == 8 || item.StepCounter == 9 || item.StepCounter == 10) && (ViewBag.Id == 0 || ViewBag.Id == 1 || ViewBag.Id == 11 || item.IsFwdStatusId == 3))
+                                                    {
+                                                        <a asp-controller="BasicDetail" asp-action="BasicDetail" asp-route-Id="@item.EncryptedId" class="btn btn-icon btn-round btn-warning mr-2"><i class="fas fa-edit mt-2"></i></a>
+                                                        <button class="btn btn-icon btn-round btn-primary mr-1 fwdrecord"><i class="fa fa-step-forward"></i></button>
+                                                    }
+
+
+                                                    @if (item.StepCounter >= 2 && item.StepCounter <= 6)
+                                                    {
+                                                        <span class="badge rounded-pill bg-light text-primary mt-3">Processed</span>
+
+
+                                                    <button class=" btndownloadpdf" id="btndownloadpdf" data-toggle="tooltip" data-placement="top" title="Download Details"><img src="/Images/digitalsign.png" width="40" /></button>
+
+                                                    @* Downlaod<br> Digital<br> Signature *@
+                                                    }
+                                                    else
+                                                    {
+                                                        @if (item.IsFwdStatusId == 3)
+                                                        {
+
+                                                            <span class="badge rounded-pill bg-light text-danger mt-3" data-toggle="tooltip" data-placement="left" title="@item.Remark">Rejected</span>
+
+                                                        }
+
+
+                                                    }
+
+                                                </div>
+
+
+                                            </td>
+                                        </tr>
+                                }
+                               
+                           
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div><!-- Row End -->
+    </div>
+</div>
+
+@section Scripts{
+    <script asp-src-include="~/js/CustomScript.js"></script>
+    <script asp-src-include="~/developerjs/Fwdrecord.js"></script>
+    <script asp-src-include="~/developerjs/ICardPrint.js"></script>
+    <script asp-src-include="~/developerjs/Token.js"></script>
+    <script asp-src-include="~/developerjs/mtables.js"></script>
+    <script asp-src-include="~/select2/js/select2.min.js"></script>
+
+    <partial name="~/Views/Shared/_DataTableJS.cshtml" />
+}

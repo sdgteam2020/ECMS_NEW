@@ -770,7 +770,6 @@ function getColumnsByChoice(choice) {
                         else {
                             return `NA`;
                         }
-                        return data;
                     }
                 },
                 {
