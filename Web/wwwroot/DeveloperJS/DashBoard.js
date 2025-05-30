@@ -31,6 +31,11 @@
         location.href = '/BasicDetail/DistributeCard';
     });
 
+    document.getElementById("btnDestCard").addEventListener("click", function (event) {
+        event.preventDefault(); // Prevent anchor default behavior
+        location.href = '/BasicDetail/DestructionCard';
+    });
+
     document.getElementById("btnUnitChangeRequest").addEventListener("click", function (event) {
         event.preventDefault(); // Prevent anchor default behavior
         location.href = '/Master/MapUnitChange';
@@ -87,6 +92,7 @@ function GetDashboardCount() {
                     $("#TotObservationRaised").html(response.TotObservationRaised);
                     $("#TotLostCards").html(response.TotLostCards);
                     $("#TotDistCards").html(response.TotDistCards);
+                    $("#TotDestCards").html(response.TotDestCards);
                     $("#TotHotlistCards").html(response.TotHotlistCards);
                     $("#TotUnitChangeRequest").html(response.TotUnitChangeRequest);
                     $("#TotMisprintedCard").html(response.TotMisprintedCard);

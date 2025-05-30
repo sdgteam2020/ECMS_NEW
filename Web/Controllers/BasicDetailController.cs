@@ -46,7 +46,7 @@ using BusinessLogicsLayer.HotlistCard;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using BusinessLogicsLayer.LostCard;
 using iText.IO.Font.Cmap;
-using BusinessLogicsLayer.DistributeCard;
+using BusinessLogicsLayer.DestructionCard;
 
 namespace Web.Controllers
 {
@@ -84,13 +84,14 @@ namespace Web.Controllers
         private readonly IHotlistCardBL _hotlistCardBL;
         private readonly ILostCardBL _lostCardBL;
         private readonly IDistributeCardBL _distributeCardBL;
+        private readonly IDestructionCardBL _destructionCardBL;
 
         public BasicDetailController(IConfiguration configuration,IBasicDetailBL basicDetailBL, IMapUnitBL mapUnitBL, IBasicDetailTempBL basicDetailTempBL, IService service, IMapper mapper,
             UserManager<ApplicationUser> userManager, IWebHostEnvironment hostingEnvironment, IDataProtectionProvider dataProtectionProvider,
                               DataProtectionPurposeStrings dataProtectionPurposeStrings, ILogger<BasicDetailController> logger, IStepCounterBL iStepCounterBL, 
                               ITrnFwnBL iTrnFwnBL, ITrnICardRequestBL iTrnICardRequestBL, IDomainMapBL iDomainMapBL
             ,IBasicUploadBL basicUploadBL, IBasicAddressBL basicAddressBL, IBasicinfoBL basicinfoBL, IRankBL rankBL, INotificationBL notificationBL, IMasterBL masterBL
-           , ITrnLoginLogBL iTrnLoginLogBL, IICardHoldBL iICardHoldBL, ICSVImportBL iCSVImportBL, IFaultyCardBL _faultyCardBL,IHotlistCardBL hotlistCardBL, ILostCardBL lostCardBL, IDistributeCardBL distributeCardBL)
+           , ITrnLoginLogBL iTrnLoginLogBL, IICardHoldBL iICardHoldBL, ICSVImportBL iCSVImportBL, IFaultyCardBL _faultyCardBL,IHotlistCardBL hotlistCardBL, ILostCardBL lostCardBL, IDistributeCardBL distributeCardBL,IDestructionCardBL destructionCardBL)
         {
             _configuration = configuration;
             this.basicDetailBL = basicDetailBL;
@@ -123,6 +124,7 @@ namespace Web.Controllers
             _hotlistCardBL = hotlistCardBL;
             _lostCardBL = lostCardBL;
             _distributeCardBL = distributeCardBL;
+            _destructionCardBL = destructionCardBL;
         }
 
         #region Index/ApprovalForIO/View/InaccurateData/InaccurateDataView/RequestType
@@ -3438,5 +3440,115 @@ namespace Web.Controllers
             return Json(response);
         }
         #endregion ICard Printing
+
+        #region DestructionCard
+        public async Task<ViewResult> DestructionCardAsync()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> GetAllDestruction(DTODataTablesRequest dTO)
+        {
+            return Json(await _destructionCardBL.GetAllDestruction(dTO));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DestructionDataExport([FromBody] DTOHotlistCardsExportRequest req)
+        {
+            DTOCommonSaveResponse dTOFaulty = new DTOCommonSaveResponse();
+            try
+            {
+                var tempFileName = Path.GetTempFileName().Replace(".tmp", ".csv");
+                var records = await _destructionCardBL.GetDetailsByRequestIds(req);
+                using (var writer = new StreamWriter(tempFileName, false, Encoding.UTF8))
+                using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
+                {
+                    csv.Context.RegisterClassMap(new CsvClassMap<DTODestructionCardExportResponse>(true, CsvClassMapTypeEnum.HotlistExport));
+                    try
+                    {
+                        await csv.WriteRecordsAsync(records);
+                    }
+                    catch (Exception ee)
+                    {
+                        _logger.LogError(1001, ee, "BasicDetail->DestructionDataExport");
+                        dTOFaulty.Result = false;
+                        dTOFaulty.Message = "Internal Server Error!";
+                        goto ReturnSt;
+                    }
+                }
+                dTOFaulty.Result = true;
+                dTOFaulty.Message = Path.GetFileName(tempFileName);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "BasicDetail->DestructionDataExport");
+                dTOFaulty.Result = false;
+                dTOFaulty.Message = "Internal Server Error!";
+            }
+        ReturnSt:
+            return Json(dTOFaulty);
+        }
+        public async Task<ActionResult> DestructionCardRequestAsync()
+        {
+            return View();
+        }
+
+        public async Task<IActionResult> SaveDestructionCardRequest(TrnDestructionCard model)
+        {
+            DTOCommonSaveResponse dTOFaulty = new DTOCommonSaveResponse();
+            try
+            {
+                DtoSession? dtoSession = new DtoSession();
+                if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
+                {
+                    dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+                }
+                model.IsActive = true;
+                model.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                model.UpdatedbyUserId = dtoSession != null ? dtoSession.UserId : 0;
+                model.UpdatedOn = DateTime.Now;
+
+                if (ModelState.IsValid)
+                {
+                    bool checkduplicate = await _destructionCardBL.FindAnyRequestId(model.RequestId);
+                    if (checkduplicate)
+                    {
+                        dTOFaulty.Result = false;
+                        dTOFaulty.Message = "The destruction request already exists!";
+                    }
+                    else
+                    {
+                        var result = await _destructionCardBL.AddWithReturn(model);
+                        dTOFaulty.Result = true;
+                        dTOFaulty.Message = "Record created!";
+                        dTOFaulty.CurrentTime = result.UpdatedOn.GetValueOrDefault();
+                        dTOFaulty.Id = result.DestructedCardId.ToString();
+                    }
+                }
+                else
+                {
+                    var errors = ModelState.Where(x => x.Value?.Errors?.Count > 0)
+                    .SelectMany(x => x.Value!.Errors)
+                    .Select(e => e.ErrorMessage)
+                    .ToList();
+                    if (errors.Any())
+                    {
+                        dTOFaulty.Message = string.Join("; ", errors); // Concatenate all error messages
+                    }
+                    dTOFaulty.Result = false;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "BasicDetail->SaveDestructionCardRequest");
+                dTOFaulty.Result = false;
+                dTOFaulty.Message = "Internal Server Error!";
+            }
+
+            return Json(dTOFaulty);
+        }
+        #endregion DestructionCard
     }
 }

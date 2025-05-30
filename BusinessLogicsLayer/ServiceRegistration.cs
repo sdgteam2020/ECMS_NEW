@@ -43,6 +43,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.SqlServer.Management.Smo;
 using BusinessLogicsLayer.DistributeCard;
+using BusinessLogicsLayer.DestructionCard;
 
 namespace BusinessLogicsLayer
 {
@@ -206,6 +207,9 @@ namespace BusinessLogicsLayer
 
             services.AddTransient<IDistributeCardDB, DistributeCardDB>();
             services.AddTransient<IDistributeCardBL, DistributeCardBL>();
+
+            services.AddTransient<IDestructionCardBL, DestructionCardBL>();
+            services.AddTransient<IDestructionCardDB, DestructionCardDB>();
 
 
 

@@ -7,7 +7,7 @@ using DataTransferObject.Domain.Model;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
 
-namespace BusinessLogicsLayer.DistributeCard
+namespace BusinessLogicsLayer.DestructionCard
 {
     public interface IDistributeCardBL : IGenericRepository<TrnDistributeCard>
     {

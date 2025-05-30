@@ -20,6 +20,7 @@ const FaultyCardRequest = 52;
 const HoltlistCardRequest = 53;
 const LostCardRequest = 54;
 const DistributeCardRequest = 55;
+const DestructionCardRequest = 56;
 
 
 const Command = 1;

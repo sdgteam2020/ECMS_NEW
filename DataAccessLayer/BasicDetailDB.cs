@@ -616,6 +616,19 @@ namespace DataAccessLayer
                                 where tdc.RequestId is null and thc.RequestId is null and ServiceNo like @ServiceNo
                                 Group by basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath,req.RequestId";
             }
+            else if (dto.TypeId == KeyConstants.DestructionCardRequest)
+            {
+                query = @$"Select TOP 5 basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath Image,req.RequestId,COALESCE(MAX(fwd.TrnFwdId), NULL) AS MaxTrnFwdId  
+                                from BasicDetails basi
+                                inner join TrnUpload trnu on basi.BasicDetailId=trnu.BasicDetailId 
+                                inner join TrnICardRequest req on req.BasicDetailId=basi.BasicDetailId and req.StatusId in (1,3)
+                                inner join TrnStepCounter stepcount on req.RequestId=stepcount.RequestId and stepcount.StepId in (6,18)
+                                inner join TrnDomainMapping tdm on tdm.Id=req.TrnDomainMappingId and tdm.UnitId=@MapUnitId
+                                LEFT JOIN TrnFwds fwd ON fwd.RequestId = req.RequestId
+                                Left join TrnDestructionCards tlc on req.RequestId = tlc.RequestId
+                                where tlc.RequestId is null and ServiceNo like @ServiceNo
+                                Group by basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath,req.RequestId";
+            }
 
             try
             {
@@ -2342,6 +2355,7 @@ namespace DataAccessLayer
                             .Concat(cardDistributed)
                             .OrderBy(x => x.ReportedOn)
                             .ToList();
+
                 }
             }
             catch (Exception ee) 

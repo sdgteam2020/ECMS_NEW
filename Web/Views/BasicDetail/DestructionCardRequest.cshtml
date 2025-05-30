@@ -1,0 +1,152 @@
+﻿@{
+    ViewData["Title"] = "Destruction Card Request";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .containerMain {
+        margin-left: 10%;
+        margin-right: 10%;
+    }
+    .faulty {
+        background-color: #044C92;
+        text-align: center;
+        padding: 0.5rem !important;
+        margin-right: 0.25rem !important;
+        border: hidden;
+        font-weight: 400 !important;
+        color: #fff !important;
+        width: 170px;
+        height: 60px;
+    }
+
+    .modal.left .modal-dialog, .modal.right .modal-dialog {
+        position: fixed;
+        margin: auto;
+        width: 700px;
+        height: 100%;
+        text-align: left;
+        -webkit-transform: translate3d(0%, 0, 0);
+        -ms-transform: translate3d(0%, 0, 0);
+        -o-transform: translate3d(0%, 0, 0);
+        transform: translate3d(0%, 0, 0);
+    }
+
+    .interactive-buttons .btn {
+        min-width: 180px;
+        font-weight: 500;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+        .interactive-buttons .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .interactive-buttons .btn:focus {
+            outline: none;
+            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.5);
+        }
+</style>
+<link asp-href-include="~/select2/css/select2.min.css" rel="stylesheet" />
+<header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
+    <div class="containerMain">
+        <div class="page-header-content pt-4">
+            <div class="row align-items-center justify-content-between">
+                <div class="col-auto">
+                    <h1 class="page-header-title">
+                        <div class="page-header-icon"> <i class="fa fa-bars"></i></div>
+                        <a href="/Home/Index" class="mr-2">Home</a> >  <a href="/Home/Dashboard" class="mr-2">Dashboard</a> > CARD DESTRUCTION
+                    </h1>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</header>
+<div class="containerMain mt-n10">
+    <div class="card mb-3">
+        <div class="card-header">
+            <div class="row">
+                <div class="col-xl-12 text-left">
+                    <h3>
+                        Card Destruction Request Indl Army No
+                        <small class="text-muted"><span id="spnArmyNo"></span></small>
+                    </h3>
+                </div>
+            </div>
+        </div>
+        <div class="card-body" style="min-height:150px;">
+            <div class="row g-3 row-deck mb-3">
+                <form action="" id="SaveDestructionCardRequest" method="post" name="SaveDestructionCardRequest">
+                    <div class="row">
+                        <span class=" d-none" id="spnDestructionCardRequestId">0</span>
+                        <div class="col-sm-7">
+                            <div class="card p-1">
+                                <div id="partialContainerBD">
+
+                                </div>
+                                <div class="mt-4 mb-4 d-flex justify-content-center gap-3 interactive-buttons flex-wrap" id="basicDetailsButtons">
+                                    <button type="button" class="btn btn-outline-secondary btn-sm" id="btnCardPreview" name="btnCardPreview">I-Card Preview</button>
+                                    <button type="button" class="btn btn-outline-warning btn-sm" id="btnXMLDownload" name="btnXMLDownload">XML Download</button>
+                                    <button type="button" class="btn btn-outline-info btn-sm" id="btnApplMoveHistory" name="btnApplMoveHistory">I-Card Move History</button>
+                                    <button type="button" class="btn btn-outline-info btn-sm" id="btnCardHistory" name="btnApplMoveHistory">I-Card History</button>
+                                    <button type="button" class="btn btn-outline-primary btn-sm" id="btnDestructionCardsList" name="btnDestructionCardsList">View Destructed Cards</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-5">
+                            <div class="row">
+                                <div class="card p-2">
+                                    <div class="feature-box3">
+                                        <div class="top-block_ind d-flex">
+                                            <div class="text-block">
+                                                <h5 class="mb-1 text-font2 font-weight600">Report Card Destruction</h5>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row mb-2">
+                                        <label class="col-form-label col-sm-5 labelprofile">Select Reason<i class="fas fa-asterisk mand1"></i></label>
+                                        <div class="col-sm-7">
+                                            <select class="form-control select2 select2-accessible text-uppercase" multiple style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddlDestructionRemark" id="ddlDestructionRemark" data-val="true" data-val-regex="This special chars and space not allowed for security reasons." data-val-required="Destruction Reason is required.">
+                                            </select>
+                                            <span class="text-danger field-validation-valid" data-valmsg-for="ddlDestructionRemark" data-valmsg-replace="true"></span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row mb-2">
+                                        <label class="col-form-label col-sm-5 labelprofile">Date Of Destruction<i class="fas fa-asterisk mand1"></i></label>
+                                        <div class="col-sm-7">
+                                            <input type="text" id="txtDestructiononinp" class="form-control datepickerpast" name="txtDestructiononinp" autocomplete="off" data-val="true" data-val-required="Date Of Destruction is required.">
+                                            <span class="text-danger field-validation-valid" data-valmsg-for="txtDestructiononinp" data-valmsg-replace="true"></span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row mb-2">
+                                        <label class="col-form-label col-sm-5 labelprofile">Remarks<i class="fas fa-asterisk mand1"></i></label>
+                                        <div class="col-sm-7">
+                                            <textarea class="form-control1" style="height:auto!important;" name="txtDestructionRemark" id="txtDestructionRemark" rows="3" maxlength="100" data-val-maxlength="Maximum length of Message is 100 character." data-val-maxlength-max="100" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="Remark is required." data-val-regex-pattern="^[\w\&\.\-\; ]*$"></textarea>
+                                            <span class="text-danger field-validation-valid" data-valmsg-for="txtDestructionRemark" data-valmsg-replace="true"></span>
+                                        </div>
+                                    </div>
+                                    <div class="form-check mt-4">
+                                        <input class="form-check-input" type="checkbox" id="declarationCheckbox">
+                                        <label class="form-check-label labelprofile" for="declarationCheckbox">
+                                            I hereby declare that the details furnished above are true to the best of my knowledge. I am fully aware of this declaration and hereby consent that the Smart I-Card has been destroyed.
+                                        </label>
+                                    </div>
+                                    <div class="col-sm-12 d-flex justify-content-center gap-3 mb-4">
+                                        <input type="button" class="btn btn-primary" id="btnSubmit" value="Submit" disabled/>
+                                        <input type="button" class="btn btn-warning" id="btnReset" value="Reset" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script asp-src-include="~/select2/js/select2.min.js"></script>
+<script asp-src-include="~/developerjs/DestructionCardRequest.js"></script>
+<script asp-src-include="~/developerjs/mtables.js"></script>
+<script asp-src-include="~/developerjs/ICardPrint.js"></script>
