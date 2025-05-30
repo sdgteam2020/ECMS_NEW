@@ -4,13 +4,12 @@ $(function () {
     let StepCounter = parseInt($("#spnStepCounter").html());
     let JCOOR = $("#spnJCOOR").html();
     let VBId = $("#spnVBId").html();
-    BindData(Type, StepCounter, JCOOR, VBId);
+    BindData(Type, StepCounter, JCOOR);
 });
 function BindData(Type, StepCounter, JCOOR, VBId) {
     if ($.fn.DataTable.isDataTable("#tbldata")) {
         $("#tbldata").DataTable().destroy();
     }
- 
     table = $("#tbldata").DataTable({
         processing: true,
         serverSide: true,
@@ -32,7 +31,7 @@ function BindData(Type, StepCounter, JCOOR, VBId) {
                 JCOOR: JCOOR
             };
             try {
-                let response = await fetch("/BasicDetail/GetAllIndexData", {
+                let response = await fetch("/BasicDetail/GetAllApprovalForIOData", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(requestData)
@@ -49,6 +48,26 @@ function BindData(Type, StepCounter, JCOOR, VBId) {
             }
         },
         columns: [
+            {
+                data: null,
+                name: "Id",
+                orderable: false, // Disable sorting for this column
+                render: function (data, type, row, meta) {
+                    if ($("#spnClaim").html() === "Internal Wk Distr") {
+                        return `<div class="custom-control custom-checkbox small">
+                                    <input type="checkbox" class="custom-control-input" id="${row.IsTrnFwdId}">
+                                    <label class="custom-control-label" for="${row.IsTrnFwdId}"></label>
+                                </div>`;
+                    }
+                    else {
+                        return `<div class="custom-control custom-checkbox small">
+                                    <input type="checkbox" class="custom-control-input" id="${row.RequestId}">
+                                    <label class="custom-control-label" for="${row.RequestId}"></label>
+                                </div>`;
+                    }
+
+                }
+            },
             // Serial number column
             {
                 data: null,
@@ -67,7 +86,7 @@ function BindData(Type, StepCounter, JCOOR, VBId) {
                     if (/^[A-Za-z]{2}/.test(data)) {
                         // Insert space after first two characters
                         return `<a href="#" onclick="GetBasicDetailByRequestId(${row.RequestId});event.preventDefault();">${data.slice(0, 2) + ' ' + data.slice(2)}</a>`;
-                        
+
                     } else {
                         // No space needed
                         return `<a href="#" onclick="GetBasicDetailByRequestId(${row.RequestId});event.preventDefault();">${data}</a>`;;
@@ -90,6 +109,15 @@ function BindData(Type, StepCounter, JCOOR, VBId) {
                 orderable: false,
             },
             {
+                title: "Regtl Centre",
+                data: "RegimentalName",
+                name: "RegimentalName",
+                orderable: false,
+                render: function (data, type, row) {
+                    return data != null ? data : "";
+                }
+            },
+            {
                 title: "Appl ID",
                 data: "TrackingId",
                 name: "TrackingId",
@@ -102,18 +130,6 @@ function BindData(Type, StepCounter, JCOOR, VBId) {
             {
                 data: "ICardType",
                 name: "ICardType",
-            },
-            {
-                data: "IsPosting",
-                name: "IsPosting",
-                render: function (data, type, row) {
-                    if (data > 0) {
-                        return ` <span class="badge badge-pill badge-danger">Yes</span> `;
-                    }
-                    else {
-                        return `<span class="badge badge-pill badge-success">No</span>`;
-                    }
-                }
             },
             {
                 data: null,
@@ -131,26 +147,14 @@ function BindData(Type, StepCounter, JCOOR, VBId) {
                     // Always include the Print Preview button
                     let html = `<button class="btn btn-icon btn-round btn-primary mr-2" onclick="GetICardPrintPreviewByRequestId(${row.RequestId})"><i class="fa fa-print mt-2"></i></button>`;
 
-                    // Case 1: Editable + Forward
-                    if ((row.StepCounter == 1 || row.StepCounter == 7 || row.StepCounter == 8 || row.StepCounter == 9 || row.StepCounter == 10) && (VBId == 0 || VBId == 1 || VBId == 11 || row.IsFwdStatusId == 3))
-                    {
-                        html += `<a href="/BasicDetail/BasicDetail?Id=${row.EncryptedId}" class="btn btn-icon btn-round btn-warning mr-2"><i class="fas fa-edit mt-2"></i></a>
-                                <button class="btn btn-icon btn-round btn-primary mr-1 cls-fwdrecord"><i class="fa fa-step-forward"></i></button>`;
+                    if (VBId == 1 && (row.StepCounter == 2 || row.StepCounter == 3 )) {
+                        html += `<button class="btn btn-primary mr-1 cls-fwdrecord">Verify And Send</button>`;
                     }
                     // Case 2: Processed + Download
-                    else if (row.StepCounter >= 2 && row.StepCounter <= 6)
-                    {
-                        html += `<span class="badge rounded-pill bg-light text-primary mt-3">Processed</span>
-                                <button class=" btndownloadpdf" id="btndownloadpdf" data-toggle="tooltip" data-placement="top" title="Download Details">
-                                <img src="/Images/digitalsign.png" width="40" />
-                                </button>`;
-                    }
-                    else
-                    {
-                        // Case 3: Rejected only
-                        if (row.IsFwdStatusId == 3) {
-                            html += `<span class="badge rounded-pill bg-light text-danger mt-3" data-toggle="tooltip" data-placement="left" title="${row.Remark}">Rejected</span>`;
-                        }
+                    else if (row.StepCounter != 1 && row.StepCounter != 7 && row.StepCounter != 8 && row.StepCounter != 9 && row.StepCounter != 10) {
+                        html += `<button class="cls-btndownloadpdf" id="btndownloadpdf" data-toggle="tooltip" data-placement="top" title="Download Details"><img src="/Images/digitalsign.png" width="40" /></button>
+                                <button class="cls-btndownloadxml ml-2" id="btndownloadxml" data-toggle="tooltip" data-placement="top" title="Download Details">Xml</button>
+                                `;
                     }
                     return html; // Return the full HTML string
                 }
@@ -193,6 +197,24 @@ function BindData(Type, StepCounter, JCOOR, VBId) {
                     GetRequestHistory(rowData.RequestId);
                 }
             });
+            $("#tbldata tbody").off("click", ".cls-btndownloadpdf").on("click", ".cls-btndownloadpdf", function () {
+                var rowData = table.row($(this).closest("tr")).data();
+                if (rowData != null) {
+                    DownloadPdf(rowData.RequestId);
+                }
+            });
+            $("#tbldata tbody").off("click", ".cls-btndownloadxml").on("click", ".cls-btndownloadxml", function () {
+                var rowData = table.row($(this).closest("tr")).data();
+                if (rowData != null) {
+                    DownloadXml(rowData.RequestId);
+                }
+            });
         }
     });
+    if ($("#spnJCOOR").html() === "0") {
+        table.column(5).visible(true);
+    }
+    else {
+        table.column(5).visible(false);
+    }
 }

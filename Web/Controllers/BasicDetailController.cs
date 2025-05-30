@@ -415,28 +415,7 @@ namespace Web.Controllers
             }
             ViewBag.Type = type;
             ViewBag.StepCounter = stepcounter;
-
-            if (stepcounter == 0)
-            {
-                var allrecord = await Task.Run(() => basicDetailBL.GetALLForIcardSttaus(Convert.ToInt32(userId), stepcounter, type, 0));
-                return View(allrecord);
-            }
-            else if (string.IsNullOrEmpty(jcoor))
-            {
-                var allrecord = await Task.Run(() => basicDetailBL.GetALLForIcardSttaus(Convert.ToInt32(userId), stepcounter, type, 1));
-                noti.DisplayId = stepcounter;
-                await _INotificationBL.UpdateRead(noti);
-
-                return View(allrecord);
-            }
-            else
-            {
-                var allrecord = await Task.Run(() => basicDetailBL.GetALLForIcardSttaus(Convert.ToInt32(userId), stepcounter, type, 2));
-                noti.DisplayId = stepcounter + 10;
-                await _INotificationBL.UpdateRead(noti);
-
-                return View(allrecord);
-            }
+            return View();
         }
         [HttpPost]
         public async Task<IActionResult> GetAllIndexData([FromBody] DTODataTablesRequestFor_BasicDetails_Index dTORecord)
@@ -473,8 +452,149 @@ namespace Web.Controllers
             }
 
         }
-
         public async Task<ActionResult> ApprovalForIO(string Id, string jcoor)
+        {
+            string role = GetSessionValue();
+            ViewBag.Role = role;
+
+            var UserId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var user = await userManager.FindByIdAsync(UserId);
+
+            // UserManager service GetClaimsAsync method gets all the current claims of the user
+            var UserClaims = await userManager.GetClaimsAsync(user);
+            ViewBag.UserClaims = UserClaims;
+
+            MTrnNotification noti = new MTrnNotification();
+            int type = 0; int retint = 0; int stepcounter = 0;
+            var userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier)); //SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").UserId;
+            noti.ReciverAspNetUsersId = userId;
+            noti.DisplayId = 0;
+
+            if (string.IsNullOrEmpty(Id) || !service.IsValidBase64(Id))
+            {
+                TempData["error"] = "Invalid Input.";
+                TempData.Keep("error");
+                return RedirectToAction("ContactUs", "Home");
+            }
+
+            if (!string.IsNullOrEmpty(Id))
+            {
+                try
+                {
+                    var decodedBytes = Convert.FromBase64String(Id);
+                    var decodedString = Encoding.UTF8.GetString(decodedBytes);
+                    retint = Convert.ToInt32(decodedString);
+                    stepcounter = retint;
+                }
+                catch (FormatException ex)
+                {
+                    _logger.LogError(ex, "Invalid Base64 Id: {Id}", Id);
+                    TempData["error"] = "Invalid Input.";
+                    TempData.Keep("error");
+                    return RedirectToAction("ContactUs", "Home");
+                }
+            }
+
+
+
+            if (retint == 1)
+                ViewBag.Title = "List of Register I-Card";
+            else if (retint == 2)
+            {
+                ViewBag.Title = "I-Card For Approval";
+                ViewBag.Id = 1;
+                type = 2;
+                noti.DisplayId = 2;
+
+            }
+            else if (retint == 22)
+            {
+                ViewBag.Title = "Rejectd I-Card ";
+                type = 1;
+                stepcounter = 7;
+            }
+            else if (retint == 222)
+            {
+                ViewBag.Title = "Approved I-Card ";
+                type = 3; stepcounter = 3;
+            }
+
+            else if (retint == 3)
+            {
+                ViewBag.Title = "I-Card For Approval";
+                type = 2;
+                ViewBag.Id = 1;
+                ViewBag.StepCounter = retint;
+            }
+            else if (retint == 33)
+            {
+                ViewBag.Title = "Rejectd I-Card ";
+                type = 1; stepcounter = 8;
+            }
+            else if (retint == 333)
+            {
+                ViewBag.Title = "Approved I-Card "; type = 3; stepcounter = 4;
+            }
+            else if (retint == 11)
+            {
+                ViewBag.Title = "Internal Forward I-Card "; type = 3; stepcounter = 11;
+            }
+            else if (retint == 4)
+            { ViewBag.Title = "I-Card For Export Data"; type = 2; ViewBag.Id = 1; ViewBag.dataexport = 4; }
+            else if (retint == 44)
+            { ViewBag.Title = "Rejectd I-Card "; type = 1; stepcounter = 9; }
+            else if (retint == 444)
+            { ViewBag.Title = "Exported I-Card "; type = 3; stepcounter = 5; }
+            else if (retint == 5)
+            { ViewBag.Title = "Export Data"; type = 2; ViewBag.Id = 1; ViewBag.dataexport = 5; }
+            else if (retint == 55)
+            { ViewBag.Title = "Rejectd I-Card "; type = 1; stepcounter = 10; }
+            else if (retint == 555)
+            { ViewBag.Title = "Approved I-Card "; type = 3; stepcounter = 6; }
+            else if (retint == 6)
+            { ViewBag.Title = "Exported Data"; type = 6; ViewBag.Id = 1; ViewBag.dataexport = 6; }
+
+            ViewBag.Type = type;
+            ViewBag.StepCounter = stepcounter;
+            if (string.IsNullOrEmpty(jcoor))
+            {
+                ViewBag.jcoor = 1;
+            }
+            else
+            {
+                ViewBag.jcoor = 0;
+            }
+            return View();
+        }
+        [HttpPost]
+        public async Task<IActionResult> GetAllApprovalForIOData([FromBody] DTODataTablesRequestFor_BasicDetails_Index dTORecord)
+        {
+            int userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+            dTORecord.UserId = userId;
+            try
+            {
+                if (dTORecord.JCOOR == "1")
+                {
+                    dTORecord.applyForId = 1;
+                    var allrecord = await basicDetailBL.GetALLBasicDetail_(dTORecord); //Convert.ToInt32(userId), stepcounter, type, 1)
+                    return Json(allrecord);
+
+                }
+                else
+                {
+                    dTORecord.applyForId = 2;
+                    var allrecord = await basicDetailBL.GetALLBasicDetail_(dTORecord); //Convert.ToInt32(userId), stepcounter, type, 2)
+                    return Json(allrecord);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "Home->GetAllApprovalForIOData");
+                return BadRequest(new { message = "Internal Server Error" });
+            }
+
+        }
+        public async Task<ActionResult> ApprovalForIO_Old(string Id, string jcoor)
         {
             string role = GetSessionValue();
             ViewBag.Role = role;

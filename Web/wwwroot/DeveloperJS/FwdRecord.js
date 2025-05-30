@@ -377,12 +377,12 @@ $(function () {
                     $(".gsoio").html("Record Office");
                     $(".gsoiotitle").html("Offr Record Office (ORO) Approval");
                     $("#btnForward").html("Forward To Record Office");
-                    GetAllOffsByUnitId("ddlfwdoffrs", 0, Unitidarmy, 0, spnIntORO, 0, $(this).closest("tr").find(".spnBasicDetailId").html());
+                    GetAllOffsByUnitId("ddlfwdoffrs", 0, Unitidarmy, 0, spnIntORO, 0, rowData.BasicDetailId);
                 } else {
                     $(".gsoio").html("Record Office (RO)");
                     $(".gsoiotitle").html("Record Office (RO) Approval");
                     $("#btnForward").html("Forward To Record Office (RO)");
-                    GetAllOffsByUnitId("ddlfwdoffrs", 0, Unitidarmy, spnIntRO, 0, 0, $(this).closest("tr").find(".spnBasicDetailId").html());
+                    GetAllOffsByUnitId("ddlfwdoffrs", 0, Unitidarmy, spnIntRO, 0, 0, rowData.BasicDetailId);
                 }
                 $("#btntokenTofwd").removeClass("d-none");
                 $(".Remarks").removeClass("d-none");

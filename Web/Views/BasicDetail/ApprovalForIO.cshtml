@@ -1,5 +1,4 @@
-﻿@model List<BasicDetailVM>
-@{
+﻿@{
     List<Claim> claims = ViewBag.UserClaims;
 }
 <link asp-href-include="~/select2/css/select2.min.css" rel="stylesheet" />
@@ -58,6 +57,11 @@
 <div class="containerMain mt-n10">
     <div class="card mb-3 ">
         <div class="card-header">
+            <span class="d-none" id="spnType">@ViewBag.Type</span>
+            <span class="d-none" id="spnStepCounter">@ViewBag.StepCounter</span>
+            <span class="d-none" id="spnJCOOR">@ViewBag.jcoor</span>
+            <span class="d-none" id="spnVBId">@(ViewBag.Id ?? 0)</span>
+            <span class="d-none" id="spnClaim">@((claims.Count > 0 && claims.Any(i => i.Value == "Internal Wk Distr")) ? "Internal Wk Distr" : "")</span>
             <div class="row">
                 <div class="col-xl-12 text-left">
                     <h3>
@@ -100,31 +104,20 @@
                         }
                     </div>
                     <div class="table-responsive">
-                        <table id="tbldatatableForApprovalIO" class="table border border-purple table-striped no-footer dataTable table-hover" style="width:100%">
+                        <table class="table border border-purple table-striped no-footer dataTable table-hover" role="grid" id="tbldata">
                             <thead>
                                 <tr>
-                                    @*                                     @if ((ViewBag.dataexport == 5 || ViewBag.dataexport == 4) || (claims.Count > 0 && claims.Any(i => i.Value == "Internal Wk Distr")))
-                                    {
-
-                                    } *@
                                     <th class="noExport wd-30-f">
                                         <div class="custom-control custom-checkbox small">
                                             <input type="checkbox" class="custom-control-input" id="chkAll">
                                             <label class="custom-control-label font-weight-bold" for="chkAll"></label>
                                         </div>
                                     </th>
-                                    <th>@Html.DisplayNameFor(model => model[0].Sno)</th>
-                                    <th>@Html.DisplayNameFor(model => model[0].ServiceNo)</th>
-                                    <th>Rank</th>
-                                    <th>Name</th>
+                                    <th>Sno</th>
+                                    <th>ServiceNo</th>
+                                    <th>Rank & Name</th>
                                     <th>Unit</th>
-                                    @if (ViewBag.jcoor == 0)
-                                    {
-                                        <th>Regtl Centre</th>
-                                    }
-                                    @*  <th>@Html.DisplayNameFor(model => model[0].DOB)</th>
-                                    <th>@Html.DisplayNameFor(model => model[0].DateOfCommissioning)</th>
-                                    <th>@Html.DisplayNameFor(model => model[0].PermanentAddress)</th> *@
+                                    <th>Regtl Centre</th>
                                     <th>Appl Id </th>
                                     <th>Type </th>
                                     <th>Reason for Requisition</th>
@@ -132,78 +125,7 @@
                                     <th class="noExport">Print | Fwd</th>
                                 </tr>
                             </thead>
-                            <tbody id="DetailBodyData">
-                                @foreach (var item in Model)
-                                {
-                                    <tr>
-                                        @if (claims.Count > 0 && claims.Any(i => i.Value == "Internal Wk Distr"))
-                                        {
-                                            <td>
-                                                <div class="custom-control custom-checkbox small">
-                                                    <input type="checkbox" class="custom-control-input" id="@item.IsTrnFwdId">
-                                                    <label class="custom-control-label" for="@item.IsTrnFwdId"></label>
-                                                </div>
-                                            </td>
-                                        }
-                                        else //if (ViewBag.dataexport == 5 || ViewBag.dataexport == 4)
-                                        {
-                                            <td>
-                                                <div class="custom-control custom-checkbox small">
-                                                    <input type="checkbox" class="custom-control-input" id="@item.RequestId">
-                                                    <label class="custom-control-label" for="@item.RequestId"></label>
-                                                </div>
-                                            </td>
-                                        }
-                                        <td>@item.Sno</td>
-                                        <td><a href="#" onclick="GetBasicDetailByRequestId(@(@item.RequestId));event.preventDefault();"><span class="ServiceNo">@item.ModifiedServiceNo</span></a></td>
-                                        <td>@item.RankName</td>
-                                        <td>@item.FName @(item.LName == null ? "" : item.LName)</td>
-                                        <td class="UnitName">@item.UnitName</td>
-                                        @if (ViewBag.jcoor == 0)
-                                        {
-                                            <td>@item.RegimentalName</td>
-                                        }
-
-
-                                        @*   <td>@item.DOB.ToString("dd/MMM/yyyy")</td>
-                                    <td>@item.DateOfCommissioning.ToString("dd/MMM/yyyy")</td>
-                                    <td>@item.PermanentAddress</td> *@
-                                        <td>@item.TrackingId</td>
-                                        <td>@item.ApplyFor </td>
-                                        <td>@item.ICardType</td>
-                                        <td class="noExport"><button class="btn btn-icon btn-round btn-primary mr-1 historyRequest" data-toggle="tooltip" data-placement="left" title="@item.Remark"><i class="fa fa-history" aria-hidden="true"></i></button></td>
-                                        <td class="noExport">
-                                            <div class="d-flex p-2">
-                                                <button class="btn btn-icon btn-round btn-primary mr-2" onclick="GetICardPrintPreviewByRequestId(@(@item.RequestId))"><i class="fa fa-print mt-2"></i></button>
-                                                <spna class="PersName d-none">@item.RankName @item.FName @(item.LName == null ? "" : item.LName)</spna>
-                                                <spna class="spnBasicDetailId d-none">@item.BasicDetailId</spna>
-                                                <spna class="spnTrnFwdId d-none">@item.IsTrnFwdId</spna>
-                                                <spna class="spnRequestId d-none">@item.RequestId</spna>
-                                                <spna class="spnStepCounterId d-none">@item.StepCounter</spna>
-                                                <spna class="spnStepId d-none">@item.StepId</spna>
-                                                <spna class="spnApplyFor d-none">@item.ApplyForId</spna>
-                                                <span class="spnRegistrationApplyFor d-none">@item.RegistrationApplyFor</span>
-                                                <span class="spnServiceNo d-none">@item.ServiceNo</span>
-                                                @if (ViewBag.Id == 1 && (item.StepCounter == 2 || item.StepCounter == 3))
-                                                {
-
-                                                    <button class="btn btn-primary mr-1 fwdrecord">Verify And Send</button>
-                                                    @* <button class="btn btn-danger mr-1 Rejectdrecord">Rejected</button> *@
-                                                }
-                                                else
-                                                {
-                                                    if (item.StepCounter != 1 && item.StepCounter != 7 && item.StepCounter != 8 && item.StepCounter != 9 && item.StepCounter != 10)
-                                                    {
-                                                        <button class="btndownloadpdf" id="btndownloadpdf" data-toggle="tooltip" data-placement="top" title="Download Details"><img src="/Images/digitalsign.png" width="40" /></button>
-                                                        <button class="btndownloadxml ml-2" id="btndownloadxml" data-toggle="tooltip" data-placement="top" title="Download Details">Xml</button>
-                                                    }
-                                                }
-                                            </div>
-
-
-                                        </td>
-                                    </tr>
-                                }
+                            <tbody id="DetailBody">
                             </tbody>
                         </table>
                     </div>
@@ -214,6 +136,7 @@
 </div>
 
 @section Scripts {
+    <script asp-src-include="~/developerjs/ApprovalForIO_BasicDetails.js"></script>
     <script asp-src-include="~/js/CustomScript.js"></script>
     <script asp-src-include="~/developerjs/fwdrecord.js"></script>
     <script asp-src-include="~/developerjs/ICardPrint.js"></script>

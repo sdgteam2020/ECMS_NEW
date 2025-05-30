@@ -52,6 +52,10 @@ namespace BusinessLogicsLayer.BasicDet
         {
             return _iBasicDetailDB.GetALLBasicDetail(UserId ,step, type, applyForId);
         }
+        public async Task<DTODataTablesResponse<DTOBasicDetailIndexResponse>> GetALLBasicDetail_(DTODataTablesRequestFor_BasicDetails_Index dTO)
+        {
+            return await _iBasicDetailDB.GetALLBasicDetail_(dTO);
+        }
         public async Task<List<DTOICardTypeRequest>> GetAllICardType()
         {
             return await _iBasicDetailDB.GetAllICardType();
@@ -102,7 +106,7 @@ namespace BusinessLogicsLayer.BasicDet
         {
             return _iBasicDetailDB.GetALLForIcardSttaus(UserId, step, type,applyfor);
         }
-        public async Task<DTODataTablesResponse<BasicDetailVM>> GetALLForIcardSttaus_(DTODataTablesRequestFor_BasicDetails_Index dTO)
+        public async Task<DTODataTablesResponse<DTOBasicDetailIndexResponse>> GetALLForIcardSttaus_(DTODataTablesRequestFor_BasicDetails_Index dTO)
         {
             return await _iBasicDetailDB.GetALLForIcardSttaus_(dTO);
         }
