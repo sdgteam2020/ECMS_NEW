@@ -7,11 +7,11 @@ $(function () {
     BindData(Type, StepCounter, JCOOR, VBId);
 });
 function BindData(Type, StepCounter, JCOOR, VBId) {
-    if ($.fn.DataTable.isDataTable("#tbldata")) {
-        $("#tbldata").DataTable().destroy();
+    if ($.fn.DataTable.isDataTable("#tbldatatabledata")) {
+        $("#tbldatatabledata").DataTable().destroy();
     }
  
-    table = $("#tbldata").DataTable({
+    table = $("#tbldatatabledata").DataTable({
         processing: true,
         serverSide: true,
         filter: true,
@@ -187,7 +187,7 @@ function BindData(Type, StepCounter, JCOOR, VBId) {
                 }
             }],
         drawCallback: function (settings) {
-            $("#tbldata tbody").off("click", ".cls-historyRequest").on("click", ".cls-historyRequest", function () {
+            $("#tbldatatabledata tbody").off("click", ".cls-historyRequest").on("click", ".cls-historyRequest", function () {
                 var rowData = table.row($(this).closest("tr")).data();
                 if (rowData != null) {
                     GetRequestHistory(rowData.RequestId);

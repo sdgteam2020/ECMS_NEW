@@ -287,13 +287,11 @@ namespace Web.Controllers
         }
         public async Task<ActionResult> Index(string Id, string jcoor)
         {
-
-            MTrnNotification noti = new MTrnNotification();
-            int retint = 0; int type = 1;
-            var userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-            int stepcounter = 0;
-            noti.ReciverAspNetUsersId = userId;
-            noti.DisplayId = 0;
+            MTrnNotification noti = new MTrnNotification
+            {
+                ReciverAspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier)),
+                DisplayId = 0
+            };
 
             if (string.IsNullOrEmpty(Id) || !service.IsValidBase64(Id))
             {
@@ -302,119 +300,121 @@ namespace Web.Controllers
                 return RedirectToAction("ContactUs", "Home");
             }
 
-            if (!string.IsNullOrEmpty(Id))
+            int retint;
+            int type = 1;
+            int stepcounter = 0;
+            string title = "List of Drafted Appl"; // default
+
+            try
             {
-                try
-                {
-                    var decodedBytes = Convert.FromBase64String(Id);
-                    var decodedString = Encoding.UTF8.GetString(decodedBytes);
-                    retint = Convert.ToInt32(decodedString);
-                    stepcounter = retint;
-                }
-                catch (FormatException ex)
-                {
-                    _logger.LogError(ex, "Invalid Base64 Id: {Id}", Id);
-                    TempData["error"] = "Invalid Input.";
-                    TempData.Keep("error");
-                    return RedirectToAction("ContactUs", "Home");
-                }
+                var decodedString = Encoding.UTF8.GetString(Convert.FromBase64String(Id));
+                retint = Convert.ToInt32(decodedString);
+                stepcounter = retint;
+            }
+            catch (FormatException ex)
+            {
+                _logger.LogError(ex, "Invalid Base64 Id: {Id}", Id);
+                TempData["error"] = "Invalid Input.";
+                TempData.Keep("error");
+                return RedirectToAction("ContactUs", "Home");
+            }
+
+
+
+            switch (retint)
+            {
+                case 0:
+                case 1:  // request from DashBoard
+                case 11: // request from Task Board
+                    stepcounter = retint == 11 ? 1 : 0;
+                    break;
+
+                case 2:
+                    title = "I-Card Pending From IO / Superior";
+                    type = 2; stepcounter = 2;
+                    break;
+
+                case 22: // request from DashBoard
+                case 2222: // request from Task Board
+                    title = "I-Card Rejectd From IO / Superior";
+                    type = 1; stepcounter = 7;
+                    break;
+
+                case 222:
+                    title = "I-Card Approved From IO / Superior";
+                    type = 3; stepcounter = 2;
+                    break;
+
+                case 3:
+                    title = "I-Card Pending From RO / ORO";
+                    type = 2; stepcounter = 3;
+                    break;
+
+                case 33:
+                    title = "I-Card Rejectd From RO / ORO";
+                    type = 1; stepcounter = 8;
+                    break;
+
+                case 333:
+                    title = "I-Card Approved From RO / ORO";
+                    type = 3; stepcounter = 4;
+                    break;
+
+                case 4:
+                    title = "I-Card Pending From AFSAC Cell";
+                    type = 2; stepcounter = 4;
+                    break;
+
+                case 44:
+                    title = "I-Card Rejectd From AFSAC Cell";
+                    type = 1; stepcounter = 9;
+                    break;
+
+                case 444:
+                    title = "I-Card Approved From AFSAC Cell";
+                    type = 3; stepcounter = 5;
+                    break;
+
+                case 5:
+                    title = "I-Card Pending From HQ 54";
+                    type = 2; stepcounter = 5;
+                    break;
+
+                case 55:
+                    title = "I-Card Rejectd From HQ 54";
+                    type = 1; stepcounter = 10;
+                    break;
+
+                case 555:
+                    title = "I-Card Approved From HQ 54";
+                    type = 2; stepcounter = 5;
+                    break;
+
+                case 88:  // request from Task Board
+                case 888:  // request from DashBoard
+                    title = "Status of Appl Approved & Fwd";
+                    type = 2; stepcounter = 888;
+                    break;
+
+                case 77:
+                case 777:
+                    title = "I-Card Completed";
+                    type = 2; stepcounter = 777;
+                    break;
+
+                case 99:  // request from Task Board
+                case 999:  // request from DashBoard 
+                    title = "Appl rejected by Approver, Verifier";
+                    type = 2; stepcounter = 999;
+                    break;
             }
 
             ViewBag.Id = retint;
-            ViewBag.jcoor = jcoor;
-
-            if (retint == 0)
-            {
-                ViewBag.Title = "List of Drafted Appl";
-            }
-            else if (retint == 1)
-            {
-                // request from DashBoard
-                ViewBag.Title = "List of Drafted Appl";
-            }
-            else if (retint == 11)
-            {
-                retint = 1;
-                stepcounter = 1;
-                // request from Task Board
-                ViewBag.Title = "List of Drafted Appl";
-            }
-
-            else if (retint == 2)
-            { 
-                ViewBag.Title = "I-Card Pending From IO / Superior"; type = 2; stepcounter = 2;
-            }
-            else if (retint == 22)
-            {
-                // request from DashBoard
-                ViewBag.Title = "I-Card Rejectd From IO / Superior"; type = 1; stepcounter = 7;
-            }
-            else if (retint == 2222)
-            {
-                // request from Task Board
-                ViewBag.Title = "I-Card Rejectd From IO / Superior"; type = 1; stepcounter = 7;
-            }
-            else if (retint == 222)
-            { 
-                ViewBag.Title = "I-Card Approved From IO / Superior"; type = 3; stepcounter = 2; 
-            }
-            else if (retint == 3)
-            {
-                ViewBag.Title = "I-Card Pending From RO / ORO";
-                type = 2; stepcounter = 3;
-            }
-            else if (retint == 33)
-            {
-                ViewBag.Title = "I-Card Rejectd From RO / ORO";
-                type = 1; stepcounter = 8;
-            }
-            else if (retint == 333)
-            {
-                ViewBag.Title = "I-Card Approved From RO / ORO";
-                type = 3; stepcounter = 4;
-            }
-            else if (retint == 4)
-            { ViewBag.Title = "I-Card Pending From AFSAC Cell"; type = 2; stepcounter = 4; }
-            else if (retint == 44)
-            { ViewBag.Title = "I-Card Rejectd From AFSAC Cell"; type = 1; stepcounter = 9; }
-            else if (retint == 444)
-            { ViewBag.Title = "I-Card Approved From AFSAC Cell"; type = 3; stepcounter = 5; }
-            else if (retint == 5)
-            { ViewBag.Title = "I-Card Pending From HQ 54"; type = 2; stepcounter = 5; }
-            else if (retint == 55)
-            { ViewBag.Title = "I-Card Rejectd From HQ 54"; type = 1; stepcounter = 10; }
-            else if (retint == 555)
-            { ViewBag.Title = "I-Card Approved From HQ 54"; type = 2; stepcounter = 5; }
-            else if (retint == 888)
-            {
-                // request from DashBoard
-                ViewBag.Title = "Status of Appl Approved & Fwd"; type = 2; stepcounter = 888;
-            }
-            else if (retint == 88)
-            {
-                // request from Task Board
-                ViewBag.Title = "Status of Appl Approved & Fwd"; type = 2; stepcounter = 888;
-            }
-            else if (retint == 777)
-            {
-                ViewBag.Title = "I-Card Completed"; type = 2; stepcounter = 777;
-            }
-            else if (retint == 77)
-            {
-                ViewBag.Title = "I-Card Completed"; type = 2; stepcounter = 777;
-            }
-            else if (retint == 999)
-            {
-                // request from DashBoard 
-                ViewBag.Title = "Appl rejected by Approver, Verifier"; type = 2; stepcounter = 999;
-            }
-            else if (retint == 99)
-            {
-                // request from Task Board
-                ViewBag.Title = "Appl rejected by Approver, Verifier"; type = 2; stepcounter = 999;
-            }
+            ViewBag.Title = title;
             ViewBag.Type = type;
             ViewBag.StepCounter = stepcounter;
+            ViewBag.jcoor = jcoor;
+
             return View();
         }
         [HttpPost]
@@ -454,21 +454,27 @@ namespace Web.Controllers
         }
         public async Task<ActionResult> ApprovalForIO(string Id, string jcoor)
         {
+            // Fetch role and user info
             string role = GetSessionValue();
             ViewBag.Role = role;
 
-            var UserId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var user = await userManager.FindByIdAsync(UserId);
+            var userIdStr = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (!int.TryParse(userIdStr, out int userId))
+            {
+                TempData["error"] = "Invalid User.";
+                TempData.Keep("error");
+                return RedirectToAction("ContactUs", "Home");
+            }
 
-            // UserManager service GetClaimsAsync method gets all the current claims of the user
-            var UserClaims = await userManager.GetClaimsAsync(user);
-            ViewBag.UserClaims = UserClaims;
+            var user = await userManager.FindByIdAsync(userIdStr);
+            var userClaims = await userManager.GetClaimsAsync(user);
+            ViewBag.UserClaims = userClaims;
 
-            MTrnNotification noti = new MTrnNotification();
-            int type = 0; int retint = 0; int stepcounter = 0;
-            var userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier)); //SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").UserId;
-            noti.ReciverAspNetUsersId = userId;
-            noti.DisplayId = 0;
+            var noti = new MTrnNotification
+            {
+                ReciverAspNetUsersId = userId,
+                DisplayId = 0
+            };
 
             if (string.IsNullOrEmpty(Id) || !service.IsValidBase64(Id))
             {
@@ -477,93 +483,129 @@ namespace Web.Controllers
                 return RedirectToAction("ContactUs", "Home");
             }
 
-            if (!string.IsNullOrEmpty(Id))
+            int retint;
+            int type = 0;
+            int stepCounter = 0;
+            try
             {
-                try
-                {
-                    var decodedBytes = Convert.FromBase64String(Id);
-                    var decodedString = Encoding.UTF8.GetString(decodedBytes);
-                    retint = Convert.ToInt32(decodedString);
-                    stepcounter = retint;
-                }
-                catch (FormatException ex)
-                {
-                    _logger.LogError(ex, "Invalid Base64 Id: {Id}", Id);
-                    TempData["error"] = "Invalid Input.";
-                    TempData.Keep("error");
-                    return RedirectToAction("ContactUs", "Home");
-                }
+                var decodedString = Encoding.UTF8.GetString(Convert.FromBase64String(Id));
+                retint = Convert.ToInt32(decodedString);
+                stepCounter = retint;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Invalid Base64 Id: {Id}", Id);
+                TempData["error"] = "Invalid Input.";
+                TempData.Keep("error");
+                return RedirectToAction("ContactUs", "Home");
             }
 
 
 
-            if (retint == 1)
-                ViewBag.Title = "List of Register I-Card";
-            else if (retint == 2)
+            switch (retint)
             {
-                ViewBag.Title = "I-Card For Approval";
-                ViewBag.Id = 1;
-                type = 2;
-                noti.DisplayId = 2;
+                case 1:
+                    ViewBag.Title = "List of Register I-Card";
+                    break;
 
-            }
-            else if (retint == 22)
-            {
-                ViewBag.Title = "Rejectd I-Card ";
-                type = 1;
-                stepcounter = 7;
-            }
-            else if (retint == 222)
-            {
-                ViewBag.Title = "Approved I-Card ";
-                type = 3; stepcounter = 3;
-            }
+                case 2:
+                    ViewBag.Title = "I-Card For Approval";
+                    ViewBag.Id = 1;
+                    type = 2;
+                    noti.DisplayId = 2;
+                    break;
 
-            else if (retint == 3)
-            {
-                ViewBag.Title = "I-Card For Approval";
-                type = 2;
-                ViewBag.Id = 1;
-                ViewBag.StepCounter = retint;
+                case 22:
+                    ViewBag.Title = "Rejectd I-Card";
+                    type = 1;
+                    stepCounter = 7;
+                    break;
+
+                case 222:
+                    ViewBag.Title = "Approved I-Card";
+                    type = 3;
+                    stepCounter = 3;
+                    break;
+
+                case 3:
+                    ViewBag.Title = "I-Card For Approval";
+                    type = 2;
+                    ViewBag.Id = 1;
+                    stepCounter = 3;
+                    break;
+
+                case 33:
+                    ViewBag.Title = "Rejectd I-Card";
+                    type = 1;
+                    stepCounter = 8;
+                    break;
+
+                case 333:
+                    ViewBag.Title = "Approved I-Card";
+                    type = 3;
+                    stepCounter = 4;
+                    break;
+
+                case 11:
+                    ViewBag.Title = "Internal Forward I-Card";
+                    type = 3;
+                    stepCounter = 11;
+                    break;
+
+                case 4:
+                    ViewBag.Title = "I-Card For Export Data";
+                    type = 2;
+                    ViewBag.Id = 1;
+                    ViewBag.dataexport = 4;
+                    break;
+
+                case 44:
+                    ViewBag.Title = "Rejectd I-Card";
+                    type = 1;
+                    stepCounter = 9;
+                    break;
+
+                case 444:
+                    ViewBag.Title = "Exported I-Card";
+                    type = 3;
+                    stepCounter = 5;
+                    break;
+
+                case 5:
+                    ViewBag.Title = "Export Data";
+                    type = 2;
+                    ViewBag.Id = 1;
+                    ViewBag.dataexport = 5;
+                    break;
+
+                case 55:
+                    ViewBag.Title = "Rejectd I-Card";
+                    type = 1;
+                    stepCounter = 10;
+                    break;
+
+                case 555:
+                    ViewBag.Title = "Approved I-Card";
+                    type = 3;
+                    stepCounter = 6;
+                    break;
+
+                case 6:
+                    ViewBag.Title = "Exported Data";
+                    type = 6;
+                    ViewBag.Id = 1;
+                    ViewBag.dataexport = 6;
+                    break;
+
+                default:
+                    ViewBag.Title = "I-Card View";
+                    break;
             }
-            else if (retint == 33)
-            {
-                ViewBag.Title = "Rejectd I-Card ";
-                type = 1; stepcounter = 8;
-            }
-            else if (retint == 333)
-            {
-                ViewBag.Title = "Approved I-Card "; type = 3; stepcounter = 4;
-            }
-            else if (retint == 11)
-            {
-                ViewBag.Title = "Internal Forward I-Card "; type = 3; stepcounter = 11;
-            }
-            else if (retint == 4)
-            { ViewBag.Title = "I-Card For Export Data"; type = 2; ViewBag.Id = 1; ViewBag.dataexport = 4; }
-            else if (retint == 44)
-            { ViewBag.Title = "Rejectd I-Card "; type = 1; stepcounter = 9; }
-            else if (retint == 444)
-            { ViewBag.Title = "Exported I-Card "; type = 3; stepcounter = 5; }
-            else if (retint == 5)
-            { ViewBag.Title = "Export Data"; type = 2; ViewBag.Id = 1; ViewBag.dataexport = 5; }
-            else if (retint == 55)
-            { ViewBag.Title = "Rejectd I-Card "; type = 1; stepcounter = 10; }
-            else if (retint == 555)
-            { ViewBag.Title = "Approved I-Card "; type = 3; stepcounter = 6; }
-            else if (retint == 6)
-            { ViewBag.Title = "Exported Data"; type = 6; ViewBag.Id = 1; ViewBag.dataexport = 6; }
 
             ViewBag.Type = type;
-            ViewBag.StepCounter = stepcounter;
-            if (string.IsNullOrEmpty(jcoor))
-            {
-                ViewBag.jcoor = 1;
-            }
-            else
-            {
-                ViewBag.jcoor = 0;
-            }
+            ViewBag.StepCounter = stepCounter;
+            ViewBag.jcoor = string.IsNullOrEmpty(jcoor) ? 1 : 0;
+
             return View();
         }
         [HttpPost]

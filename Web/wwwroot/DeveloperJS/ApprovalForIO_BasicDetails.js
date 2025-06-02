@@ -7,10 +7,10 @@ $(function () {
     BindData(Type, StepCounter, JCOOR);
 });
 function BindData(Type, StepCounter, JCOOR, VBId) {
-    if ($.fn.DataTable.isDataTable("#tbldata")) {
-        $("#tbldata").DataTable().destroy();
+    if ($.fn.DataTable.isDataTable("#tbldatatabledata")) {
+        $("#tbldatatabledata").DataTable().destroy();
     }
-    table = $("#tbldata").DataTable({
+    table = $("#tbldatatabledata").DataTable({
         processing: true,
         serverSide: true,
         filter: true,
@@ -147,7 +147,7 @@ function BindData(Type, StepCounter, JCOOR, VBId) {
                     // Always include the Print Preview button
                     let html = `<button class="btn btn-icon btn-round btn-primary mr-2" onclick="GetICardPrintPreviewByRequestId(${row.RequestId})"><i class="fa fa-print mt-2"></i></button>`;
 
-                    if (VBId == 1 && (row.StepCounter == 2 || row.StepCounter == 3 )) {
+                    if (row.StepCounter == 2 || row.StepCounter == 3 ) {
                         html += `<button class="btn btn-primary mr-1 cls-fwdrecord">Verify And Send</button>`;
                     }
                     // Case 2: Processed + Download
@@ -191,19 +191,19 @@ function BindData(Type, StepCounter, JCOOR, VBId) {
                 }
             }],
         drawCallback: function (settings) {
-            $("#tbldata tbody").off("click", ".cls-historyRequest").on("click", ".cls-historyRequest", function () {
+            $("#tbldatatabledata tbody").off("click", ".cls-historyRequest").on("click", ".cls-historyRequest", function () {
                 var rowData = table.row($(this).closest("tr")).data();
                 if (rowData != null) {
                     GetRequestHistory(rowData.RequestId);
                 }
             });
-            $("#tbldata tbody").off("click", ".cls-btndownloadpdf").on("click", ".cls-btndownloadpdf", function () {
+            $("#tbldatatabledata tbody").off("click", ".cls-btndownloadpdf").on("click", ".cls-btndownloadpdf", function () {
                 var rowData = table.row($(this).closest("tr")).data();
                 if (rowData != null) {
                     DownloadPdf(rowData.RequestId);
                 }
             });
-            $("#tbldata tbody").off("click", ".cls-btndownloadxml").on("click", ".cls-btndownloadxml", function () {
+            $("#tbldatatabledata tbody").off("click", ".cls-btndownloadxml").on("click", ".cls-btndownloadxml", function () {
                 var rowData = table.row($(this).closest("tr")).data();
                 if (rowData != null) {
                     DownloadXml(rowData.RequestId);

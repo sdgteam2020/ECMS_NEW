@@ -125,13 +125,34 @@ $(function () {
         FwdData($('#ddlfwdoffrs').val());
     });
     $('#ddlfwdInternaloffrs').on('change', function () {
+        const selectedValue = $(this).val();
+
+        // Reset UI values
         $("#spnFwdToInternalUsersId").html(0);
         $(".spnInternalFArmyNo").html("");
         $(".spnInternalFtoname").html("");
         $(".spnInternalFDomainName").html("");
         $(".spnInternalFAppName").html("");
 
-        GetProfiledetailsByAspNetuseridForInternalFwd($('#ddlfwdInternaloffrs').val());
+        // Check if an officer is selected
+        if (!selectedValue || selectedValue.length === 0) {
+            Swal.fire({
+                text: "Please select Offr."
+            });
+            return; // Exit early
+        }
+
+        // Call profile detail function
+        GetProfiledetailsByAspNetuseridForInternalFwd(selectedValue);
+
+    });
+    $('#ddlfwdInternaloffrs').on('click', function () {
+        const val = $(this).val();
+
+        // If only one option and user clicks it (again), manually trigger
+        if ($('#ddlfwdInternaloffrs option').length === 1) {
+            $('#ddlfwdInternaloffrs').trigger('change');
+        }
     });
 
     //$('#ddlPhotos').on('change', function () {
@@ -314,7 +335,7 @@ $(function () {
             GetRemarks("ddlRRemarks", 0, Reject);
         }
     });
-    $("#tbldata tbody").off("click", ".cls-fwdrecord").on("click", ".cls-fwdrecord", async function () {
+    $("#tbldatatabledata tbody").off("click", ".cls-fwdrecord").on("click", ".cls-fwdrecord", async function () {
         var rowData = table.row($(this).closest("tr")).data();
         if (rowData != null) {
             Reset();
