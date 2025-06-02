@@ -44,5 +44,7 @@ namespace BusinessLogicsLayer.BasicDet
         Task<byte?> CheckCardStatus(int RequestId);
         Task<ICardHistoryResponseAll> ICardHistoryCompleted(int RequestId);
         Task<List<DTOCardMovementHistoryResponse>> GetCardMovementHistory(int requestId);
+        Task UpdateCardStatus(int requestId, byte status);
+        Task<DTOUploadChipAndSerialResponse> CheckBeforeDistribution(int requestId);
     }
 }

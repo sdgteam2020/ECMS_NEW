@@ -193,15 +193,16 @@ function GetMovementHistory(spnRequestId) {
 
                         listItem += '<div class="timeline-item">';
                         listItem += '<div class="timeline-item-marker">'; 
-                        if (response[i].StepName == "I-Card Lost")
+                        if (response[i].StepName == "I-Card Lost" || response[i].StepName == "I-Card Holtist")
                             listItem += '<div class="timeline-item-marker-text"><span class="badge bg-danger">' + DateFormateddMMyyyyhhmmss(response[i].ReportedOn) + '</span></div>';
                         else
                             listItem += '<div class="timeline-item-marker-text"><span class="badge bg-success">' + DateFormateddMMyyyyhhmmss(response[i].ReportedOn) + '</span></div>';
+
                         listItem += '<div class="timeline-item-marker-indicator bg-primary"></div>';
                         listItem += '</div>';
                         listItem += '<div class="timeline-item-content">';
 
-                        if (response[i].StepName == "I-Card Lost")
+                        if (response[i].StepName == "I-Card Lost" || response[i].StepName == "I-Card Holtist")
                             listItem += '<span class="badge bg-danger">' + response[i].StepName + '</span><br>';
                         else
                             listItem += '<span class="badge bg-success">' + response[i].StepName + '</span><br>';

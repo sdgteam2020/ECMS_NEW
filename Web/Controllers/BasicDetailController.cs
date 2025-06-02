@@ -47,6 +47,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using BusinessLogicsLayer.LostCard;
 using iText.IO.Font.Cmap;
 using BusinessLogicsLayer.DestructionCard;
+using iText.Layout.Renderer;
 
 namespace Web.Controllers
 {
@@ -2735,20 +2736,29 @@ namespace Web.Controllers
         private async Task HotlistLostCard(TrnLostCard lostCard) {
             try
             {
-                var isHotlistExists = await _hotlistCardBL.FindRequestId(lostCard.RequestId);
-                if (!isHotlistExists)
+                var cardStatus = await basicDetailBL.CheckCardStatus(lostCard.RequestId);
+                if (cardStatus == 1)
                 {
-                    TrnHotlistCard trnHotlistCard = new TrnHotlistCard() {
-                        RequestId = lostCard.RequestId,
-                        RemarksIds = "65",
-                        Remark = lostCard.Remark,
-                        IsActive = lostCard.IsActive,
-                        Updatedby = lostCard.Updatedby,
-                        UpdatedbyUserId = lostCard.UpdatedbyUserId,
-                        UpdatedOn = lostCard.UpdatedOn
-                    };
+                    await basicDetailBL.UpdateCardStatus(lostCard.RequestId,3);
+                }
+                else
+                {
+                    var isHotlistExists = await _hotlistCardBL.FindRequestId(lostCard.RequestId);
+                    if (!isHotlistExists)
+                    {
+                        TrnHotlistCard trnHotlistCard = new TrnHotlistCard()
+                        {
+                            RequestId = lostCard.RequestId,
+                            RemarksIds = "65",
+                            Remark = lostCard.Remark,
+                            IsActive = lostCard.IsActive,
+                            Updatedby = lostCard.Updatedby,
+                            UpdatedbyUserId = lostCard.UpdatedbyUserId,
+                            UpdatedOn = lostCard.UpdatedOn
+                        };
 
-                    await _hotlistCardBL.Add(trnHotlistCard);
+                        await _hotlistCardBL.Add(trnHotlistCard);
+                    }
                 }
             }
             catch (Exception ex)
@@ -2830,16 +2840,24 @@ namespace Web.Controllers
 
                 if (ModelState.IsValid)
                 {
-                    bool checkduplicate = await _distributeCardBL.FindRequestId(model.RequestId);
-                    if (checkduplicate)
+                    var checkCardBeforeDist = await basicDetailBL.CheckBeforeDistribution(model.RequestId);
+                    if (checkCardBeforeDist.Result)
                     {
-                        dTOResponse.Result = false;
-                        dTOResponse.Message = "The distribute request already exists!";
+                        bool checkduplicate = await _distributeCardBL.FindRequestId(model.RequestId);
+                        if (checkduplicate)
+                        {
+                            dTOResponse.Result = false;
+                            dTOResponse.Message = "The distribute request already exists!";
+                        }
+                        else
+                        {
+                            ICardHistoryResponseAll? cardHistoryResponses = await basicDetailBL.ICardHistory(model.RequestId);
+                            dTOResponse = await _distributeCardBL.SaveDistributeCard(model, cardHistoryResponses);
+                        }
                     }
                     else
                     {
-                        ICardHistoryResponseAll? cardHistoryResponses = await basicDetailBL.ICardHistory(model.RequestId);
-                        dTOResponse = await _distributeCardBL.SaveDistributeCard(model, cardHistoryResponses);
+                        dTOResponse.Message = $"Please create a {checkCardBeforeDist.Message} entry for previous card!" ;
                     }
                 }
                 else

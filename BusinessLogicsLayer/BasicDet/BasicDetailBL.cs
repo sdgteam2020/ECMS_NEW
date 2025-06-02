@@ -250,5 +250,15 @@ namespace BusinessLogicsLayer.BasicDet
         {
             return _iBasicDetailDB.GetCardMovementHistory(requestId); 
         }
+
+        public async Task UpdateCardStatus(int requestId, byte status)
+        { 
+             await _iBasicDetailDB.UpdateCardStatus(requestId, status);
+        }
+
+        public async Task<DTOUploadChipAndSerialResponse> CheckBeforeDistribution(int requestId)
+        {
+            return await _iBasicDetailDB.CheckBeforeDistribution(requestId);
+        }
     }
 }
