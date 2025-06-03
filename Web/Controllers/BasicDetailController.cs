@@ -48,6 +48,8 @@ using BusinessLogicsLayer.LostCard;
 using iText.IO.Font.Cmap;
 using BusinessLogicsLayer.DestructionCard;
 using iText.Layout.Renderer;
+using BusinessLogicsLayer.DistributeCard;
+using BusinessLogicsLayer.BdeCate;
 
 namespace Web.Controllers
 {
@@ -130,7 +132,7 @@ namespace Web.Controllers
 
         #region Index/ApprovalForIO/View/InaccurateData/InaccurateDataView/RequestType
 
-        public async Task<ActionResult> Index(string Id, string jcoor)
+        public async Task<ActionResult> Index_Old(string Id, string jcoor)
         {
 
             MTrnNotification noti = new MTrnNotification();
@@ -287,8 +289,358 @@ namespace Web.Controllers
                 return View(allrecord);
             }
         }
+        public async Task<ActionResult> Index(string Id, string jcoor)
+        {
+            MTrnNotification noti = new MTrnNotification
+            {
+                ReciverAspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier)),
+                DisplayId = 0
+            };
 
+            if (string.IsNullOrEmpty(Id) || !service.IsValidBase64(Id))
+            {
+                TempData["error"] = "Invalid Input.";
+                TempData.Keep("error");
+                return RedirectToAction("ContactUs", "Home");
+            }
+
+            int retint;
+            int type = 1;
+            int stepcounter = 0;
+            string title = "List of Drafted Appl"; // default
+
+            try
+            {
+                var decodedString = Encoding.UTF8.GetString(Convert.FromBase64String(Id));
+                retint = Convert.ToInt32(decodedString);
+                stepcounter = retint;
+            }
+            catch (FormatException ex)
+            {
+                _logger.LogError(ex, "Invalid Base64 Id: {Id}", Id);
+                TempData["error"] = "Invalid Input.";
+                TempData.Keep("error");
+                return RedirectToAction("ContactUs", "Home");
+            }
+
+
+
+            switch (retint)
+            {
+                case 0:
+                case 1:  // request from DashBoard
+                case 11: // request from Task Board
+                    stepcounter = retint == 11 ? 1 : 0;
+                    break;
+
+                case 2:
+                    title = "I-Card Pending From IO / Superior";
+                    type = 2; stepcounter = 2;
+                    break;
+
+                case 22: // request from DashBoard
+                case 2222: // request from Task Board
+                    title = "I-Card Rejectd From IO / Superior";
+                    type = 1; stepcounter = 7;
+                    break;
+
+                case 222:
+                    title = "I-Card Approved From IO / Superior";
+                    type = 3; stepcounter = 2;
+                    break;
+
+                case 3:
+                    title = "I-Card Pending From RO / ORO";
+                    type = 2; stepcounter = 3;
+                    break;
+
+                case 33:
+                    title = "I-Card Rejectd From RO / ORO";
+                    type = 1; stepcounter = 8;
+                    break;
+
+                case 333:
+                    title = "I-Card Approved From RO / ORO";
+                    type = 3; stepcounter = 4;
+                    break;
+
+                case 4:
+                    title = "I-Card Pending From AFSAC Cell";
+                    type = 2; stepcounter = 4;
+                    break;
+
+                case 44:
+                    title = "I-Card Rejectd From AFSAC Cell";
+                    type = 1; stepcounter = 9;
+                    break;
+
+                case 444:
+                    title = "I-Card Approved From AFSAC Cell";
+                    type = 3; stepcounter = 5;
+                    break;
+
+                case 5:
+                    title = "I-Card Pending From HQ 54";
+                    type = 2; stepcounter = 5;
+                    break;
+
+                case 55:
+                    title = "I-Card Rejectd From HQ 54";
+                    type = 1; stepcounter = 10;
+                    break;
+
+                case 555:
+                    title = "I-Card Approved From HQ 54";
+                    type = 2; stepcounter = 5;
+                    break;
+
+                case 88:  // request from Task Board
+                case 888:  // request from DashBoard
+                    title = "Status of Appl Approved & Fwd";
+                    type = 2; stepcounter = 888;
+                    break;
+
+                case 77:
+                case 777:
+                    title = "I-Card Completed";
+                    type = 2; stepcounter = 777;
+                    break;
+
+                case 99:  // request from Task Board
+                case 999:  // request from DashBoard 
+                    title = "Appl rejected by Approver, Verifier";
+                    type = 2; stepcounter = 999;
+                    break;
+            }
+
+            ViewBag.Id = retint;
+            ViewBag.Title = title;
+            ViewBag.Type = type;
+            ViewBag.StepCounter = stepcounter;
+            ViewBag.jcoor = jcoor;
+
+            return View();
+        }
+        [HttpPost]
+        public async Task<IActionResult> GetAllIndexData([FromBody] DTODataTablesRequestFor_BasicDetails_Index dTORecord)
+        {
+            int userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+            dTORecord.UserId= userId;
+            try
+            {
+                if (dTORecord.stepcount == 0)
+                {
+                    dTORecord.applyForId = 0;
+                    var allrecord = await basicDetailBL.GetALLForIcardSttaus_(dTORecord);
+
+                    return Json(allrecord);
+                }
+                else if (string.IsNullOrEmpty(dTORecord.JCOOR))
+                {
+                    dTORecord.applyForId = 1;
+                    var allrecord = await basicDetailBL.GetALLForIcardSttaus_(dTORecord);
+
+                    return Json(allrecord);
+                }
+                else
+                {
+                    dTORecord.applyForId = 2;
+                    var allrecord = await basicDetailBL.GetALLForIcardSttaus_(dTORecord);
+                    return Json(allrecord);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "Home->GetAllIndexData");
+                return BadRequest(new { message = "Internal Server Error" });
+            }
+
+        }
         public async Task<ActionResult> ApprovalForIO(string Id, string jcoor)
+        {
+            // Fetch role and user info
+            string role = GetSessionValue();
+            ViewBag.Role = role;
+
+            var userIdStr = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (!int.TryParse(userIdStr, out int userId))
+            {
+                TempData["error"] = "Invalid User.";
+                TempData.Keep("error");
+                return RedirectToAction("ContactUs", "Home");
+            }
+
+            var user = await userManager.FindByIdAsync(userIdStr);
+            var userClaims = await userManager.GetClaimsAsync(user);
+            ViewBag.UserClaims = userClaims;
+
+            var noti = new MTrnNotification
+            {
+                ReciverAspNetUsersId = userId,
+                DisplayId = 0
+            };
+
+            if (string.IsNullOrEmpty(Id) || !service.IsValidBase64(Id))
+            {
+                TempData["error"] = "Invalid Input.";
+                TempData.Keep("error");
+                return RedirectToAction("ContactUs", "Home");
+            }
+
+            int retint;
+            int type = 0;
+            int stepCounter = 0;
+            try
+            {
+                var decodedString = Encoding.UTF8.GetString(Convert.FromBase64String(Id));
+                retint = Convert.ToInt32(decodedString);
+                stepCounter = retint;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Invalid Base64 Id: {Id}", Id);
+                TempData["error"] = "Invalid Input.";
+                TempData.Keep("error");
+                return RedirectToAction("ContactUs", "Home");
+            }
+
+
+
+            switch (retint)
+            {
+                case 1:
+                    ViewBag.Title = "List of Register I-Card";
+                    break;
+
+                case 2:
+                    ViewBag.Title = "I-Card For Approval";
+                    ViewBag.Id = 1;
+                    type = 2;
+                    noti.DisplayId = 2;
+                    break;
+
+                case 22:
+                    ViewBag.Title = "Rejectd I-Card";
+                    type = 1;
+                    stepCounter = 7;
+                    break;
+
+                case 222:
+                    ViewBag.Title = "Approved I-Card";
+                    type = 3;
+                    stepCounter = 3;
+                    break;
+
+                case 3:
+                    ViewBag.Title = "I-Card For Approval";
+                    type = 2;
+                    ViewBag.Id = 1;
+                    stepCounter = 3;
+                    break;
+
+                case 33:
+                    ViewBag.Title = "Rejectd I-Card";
+                    type = 1;
+                    stepCounter = 8;
+                    break;
+
+                case 333:
+                    ViewBag.Title = "Approved I-Card";
+                    type = 3;
+                    stepCounter = 4;
+                    break;
+
+                case 11:
+                    ViewBag.Title = "Internal Forward I-Card";
+                    type = 3;
+                    stepCounter = 11;
+                    break;
+
+                case 4:
+                    ViewBag.Title = "I-Card For Export Data";
+                    type = 2;
+                    ViewBag.Id = 1;
+                    ViewBag.dataexport = 4;
+                    break;
+
+                case 44:
+                    ViewBag.Title = "Rejectd I-Card";
+                    type = 1;
+                    stepCounter = 9;
+                    break;
+
+                case 444:
+                    ViewBag.Title = "Exported I-Card";
+                    type = 3;
+                    stepCounter = 5;
+                    break;
+
+                case 5:
+                    ViewBag.Title = "Export Data";
+                    type = 2;
+                    ViewBag.Id = 1;
+                    ViewBag.dataexport = 5;
+                    break;
+
+                case 55:
+                    ViewBag.Title = "Rejectd I-Card";
+                    type = 1;
+                    stepCounter = 10;
+                    break;
+
+                case 555:
+                    ViewBag.Title = "Approved I-Card";
+                    type = 3;
+                    stepCounter = 6;
+                    break;
+
+                case 6:
+                    ViewBag.Title = "Exported Data";
+                    type = 6;
+                    ViewBag.Id = 1;
+                    ViewBag.dataexport = 6;
+                    break;
+
+                default:
+                    ViewBag.Title = "I-Card View";
+                    break;
+            }
+
+            ViewBag.Type = type;
+            ViewBag.StepCounter = stepCounter;
+            ViewBag.jcoor = string.IsNullOrEmpty(jcoor) ? 1 : 0;
+
+            return View();
+        }
+        [HttpPost]
+        public async Task<IActionResult> GetAllApprovalForIOData([FromBody] DTODataTablesRequestFor_BasicDetails_Index dTORecord)
+        {
+            int userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+            dTORecord.UserId = userId;
+            try
+            {
+                if (dTORecord.JCOOR == "1")
+                {
+                    dTORecord.applyForId = 1;
+                    var allrecord = await basicDetailBL.GetALLBasicDetail_(dTORecord); //Convert.ToInt32(userId), stepcounter, type, 1)
+                    return Json(allrecord);
+
+                }
+                else
+                {
+                    dTORecord.applyForId = 2;
+                    var allrecord = await basicDetailBL.GetALLBasicDetail_(dTORecord); //Convert.ToInt32(userId), stepcounter, type, 2)
+                    return Json(allrecord);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "Home->GetAllApprovalForIOData");
+                return BadRequest(new { message = "Internal Server Error" });
+            }
+
+        }
+        public async Task<ActionResult> ApprovalForIO_Old(string Id, string jcoor)
         {
             string role = GetSessionValue();
             ViewBag.Role = role;

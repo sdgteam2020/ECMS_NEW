@@ -82,4 +82,12 @@ namespace DataTransferObject.Requests
         public int? UnitMapId { get; set; }
         public string? MonthYear { get; set; }
     }
+    public class DTODataTablesRequestFor_BasicDetails_Index : DTODataTablesRequest 
+    {
+        public int UserId { get; set; }
+        public int stepcount { get; set; }
+        public int TypeId { get; set; }
+        public int applyForId { get; set; }
+        public string JCOOR { get; set; } = string.Empty;
+    }
 }
