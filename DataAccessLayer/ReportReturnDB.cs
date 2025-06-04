@@ -662,20 +662,51 @@ namespace DataAccessLayer
                             WITH RecordCTE AS (
                                 select ROW_NUMBER() OVER (ORDER BY {sortColumn} {sortOrder}) AS RowNum, {query}
                             )
+
                             SELECT * FROM RecordCTE
                             WHERE RowNum BETWEEN @Offset AND @Limit;
-                            
+
+                            SELECT COUNT(*) 
+                            FROM TrnStepCounter step
+                            LEFT JOIN TrnICardRequest req ON step.RequestId = req.RequestId AND req.StatusId = 1  
+                            LEFT JOIN BasicDetails basi ON req.BasicDetailId = basi.BasicDetailId  
+                            LEFT JOIN MapUnit unit ON basi.UnitId = unit.UnitMapId 
+                            WHERE 
+                                unit.ComdId = ISNULL(@ComdId, unit.ComdId)
+                                AND unit.CorpsId = ISNULL(@CorpsId, unit.CorpsId)
+                                AND unit.DivId = ISNULL(@DivId, unit.DivId)
+                                AND unit.BdeId = ISNULL(@BdeId, unit.BdeId)
+                                AND unit.UnitMapId = ISNULL(@UnitMapId, unit.UnitMapId)
+                                AND step.ApplyForId = @ApplyForId 
+                                AND step.StepId = @StepId
+                                AND basi.ServiceNo like '%' + @SearchTerm + '%'
+
+                        SELECT COUNT(*) 
+                            FROM TrnStepCounter step
+                            LEFT JOIN TrnICardRequest req ON step.RequestId = req.RequestId AND req.StatusId = 1  
+                            LEFT JOIN BasicDetails basi ON req.BasicDetailId = basi.BasicDetailId  
+                            LEFT JOIN MapUnit unit ON basi.UnitId = unit.UnitMapId 
+                            WHERE 
+                                unit.ComdId = ISNULL(@ComdId, unit.ComdId)
+                                AND unit.CorpsId = ISNULL(@CorpsId, unit.CorpsId)
+                                AND unit.DivId = ISNULL(@DivId, unit.DivId)
+                                AND unit.BdeId = ISNULL(@BdeId, unit.BdeId)
+                                AND unit.UnitMapId = ISNULL(@UnitMapId, unit.UnitMapId)
+                                AND step.ApplyForId = @ApplyForId 
+                                AND step.StepId = @StepId;
                         ";
 
                 using (var connection = _contextDP.CreateConnection())
                 {
-                    var ret = await connection.QueryMultipleAsync(query, new { dTORecord.Data.ComdId, dTORecord.Data.CorpsId, dTORecord.Data.DivId, dTORecord.Data.BdeId, dTORecord.Data.FmnBranchID, dTORecord.Data.PsoId, dTORecord.Data.SubDteId, dTORecord.Data.UnitMapId, dTORecord.ApplyForId, dTORecord.StepId, Offset = dTORecord.Start, Limit = dTORecord.Length, SearchTerm = string.IsNullOrWhiteSpace(dTORecord.searchValue) ? "" : dTORecord.searchValue });
+                    var ret = await connection.QueryMultipleAsync(query, new { dTORecord.Data.ComdId, dTORecord.Data.CorpsId, dTORecord.Data.DivId, dTORecord.Data.BdeId, dTORecord.Data.FmnBranchID, dTORecord.Data.PsoId, dTORecord.Data.SubDteId, dTORecord.Data.UnitMapId, dTORecord.ApplyForId, dTORecord.StepId, Offset = dTORecord.Start+1, Limit = dTORecord.Length + dTORecord.Start, SearchTerm = string.IsNullOrWhiteSpace(dTORecord.searchValue) ? "" : dTORecord.searchValue });
                     var records = (await ret.ReadAsync<DTOReportReturnListResponse>()).ToList();
+                    var filteredTotal = (await ret.ReadAsync<int>()).FirstOrDefault();
+                    var recordTotal = (await ret.ReadAsync<int>()).FirstOrDefault();
                     var responseData = new DTODataTablesResponse<DTOReportReturnListResponse>
                     {
                         draw = dTORecord.Draw,
-                        recordsTotal = 0, // Total records without filtering
-                        recordsFiltered = records.Count(), // Total records after filtering
+                        recordsTotal = recordTotal, // Total records without filtering
+                        recordsFiltered = filteredTotal, // Total records after filtering
                         data = records
                     };
                     return responseData;
