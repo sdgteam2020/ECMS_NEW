@@ -48,13 +48,9 @@ namespace BusinessLogicsLayer.BasicDet
         {
             return await _iBasicDetailDB.GetAllICardRequestHold();
         }
-        public Task<List<BasicDetailVM>> GetALLBasicDetail(int UserId, int step, int type, int applyForId)
+        public async Task<DTODataTablesResponse<DTOBasicDetailIndexResponse>> GetALLBasicDetail(DTODataTablesRequestFor_BasicDetails_Index dTO)
         {
-            return _iBasicDetailDB.GetALLBasicDetail(UserId ,step, type, applyForId);
-        }
-        public async Task<DTODataTablesResponse<DTOBasicDetailIndexResponse>> GetALLBasicDetail_(DTODataTablesRequestFor_BasicDetails_Index dTO)
-        {
-            return await _iBasicDetailDB.GetALLBasicDetail_(dTO);
+            return await _iBasicDetailDB.GetALLBasicDetail(dTO);
         }
         public async Task<List<DTOICardTypeRequest>> GetAllICardType()
         {
@@ -102,13 +98,9 @@ namespace BusinessLogicsLayer.BasicDet
             return _iBasicDetailDB.ICardHistoryByTrackingId(TrackingId);
         }
 
-        public Task<List<BasicDetailVM>> GetALLForIcardSttaus(int UserId, int step, int type, int applyfor)
+        public async Task<DTODataTablesResponse<DTOBasicDetailIndexResponse>> GetALLForIcardSttaus(DTODataTablesRequestFor_BasicDetails_Index dTO)
         {
-            return _iBasicDetailDB.GetALLForIcardSttaus(UserId, step, type,applyfor);
-        }
-        public async Task<DTODataTablesResponse<DTOBasicDetailIndexResponse>> GetALLForIcardSttaus_(DTODataTablesRequestFor_BasicDetails_Index dTO)
-        {
-            return await _iBasicDetailDB.GetALLForIcardSttaus_(dTO);
+            return await _iBasicDetailDB.GetALLForIcardSttaus(dTO);
         }
 
         public Task<DTOBasicDetailsSaveResponse> SaveBasicDetailsWithAll(BasicDetail Data, MTrnAddress address, MTrnUpload trnUpload, MTrnIdentityInfo mTrnIdentityInfo, MTrnICardRequest mTrnICardRequest, MStepCounter mStepCounter)

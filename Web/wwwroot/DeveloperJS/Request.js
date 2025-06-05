@@ -57,6 +57,9 @@ $(document).ready(function () {
         $("#txtApplyForArmyNo").addClass("d-none");
         $("#txtApplyForArmyNo").val("");
 
+        $("#txtApplyForNewArmyNo").addClass("d-none");
+        $("#txtApplyForNewArmyNo").val("");
+
 
         GetAllRegistrationApplyFor(1);
 
@@ -72,6 +75,9 @@ $(document).ready(function () {
 
         $("#txtApplyForArmyNo").addClass("d-none");
         $("#txtApplyForArmyNo").val("");
+
+        $("#txtApplyForNewArmyNo").addClass("d-none");
+        $("#txtApplyForNewArmyNo").val("");
 
         GetAllRegistrationApplyFor(2);
     });
@@ -172,6 +178,8 @@ function GetAllRegistrationApplyFor(Id) {
         type: 'POST',
 
         success: function (response) {
+            let inputField = document.getElementById("txtApplyForArmyNo");
+
             if (response != "null" && response != null) {
 
                 if (response == InternalServerError) {
@@ -198,7 +206,13 @@ function GetAllRegistrationApplyFor(Id) {
                     $("#btnIcardFor").html(listItem);
                     $("#icardrequestfor").html("");
 
-                    $('.applyforoffs').click(function () {
+                    $('.applyforoffs').on("click", function () {
+
+                        $("#txtApplyForNewArmyNo").addClass("d-none");
+                        $("#txtApplyForNewArmyNo").val("");
+
+                        inputField.placeholder = "Enter Army No With pfx & sfx Ex.ICXXXXXP,JC391516M,15698645A";
+
                         $('.applyforoffs').removeClass("btn-primary");
                         $('.applyforoffs').addClass("btn-outline-primary");
 
@@ -227,6 +241,7 @@ function GetAllRegistrationApplyFor(Id) {
 
 }
 function AddAllCardType() {
+    let inputField = document.getElementById("txtApplyForArmyNo");
     lCardType = 0;
     var list = '';
     list += '<div class="seven mt-4" ><h1>Reason For Applying</h1>';
@@ -238,7 +253,7 @@ function AddAllCardType() {
 
     $("#icardrequestfor").html(list);
 
-    $('.applyforicard').click(function () {
+    $('.applyforicard').on("click",function () {
 
         $('.applyforicard').removeClass("btn-primary");
         $('.applyforicard').addClass("btn-outline-primary");
@@ -249,7 +264,20 @@ function AddAllCardType() {
         $("#spnNext").removeClass("d-none");
 
 
-        lCardType = $(this).closest("button").find(".spnApplyForcard").html();
+        lCardType = parseInt($(this).closest("button").find(".spnApplyForcard").html());
+
+        if (lCardType == 4) {
+            inputField.placeholder = "Enter Old Army No With pfx & sfx Ex.ICXXXXXP,JC391516M,15698645A";
+
+            $("#txtApplyForNewArmyNo").val("");
+            $("#txtApplyForNewArmyNo").removeClass("d-none");
+            
+        }
+        else {
+            inputField.placeholder = "Enter Army No With pfx & sfx Ex.ICXXXXXP,JC391516M,15698645A";
+            $("#txtApplyForNewArmyNo").addClass("d-none");
+            $("#txtApplyForNewArmyNo").val("");
+        }
 
         $("#txtApplyForArmyNo").addClass("d-none");
         $("#txtApplyForArmyNo").val("");
@@ -347,7 +375,8 @@ function CheckArmyNOExist() {
         url: "/BasicDetail/GetData",
         type: "POST",
         data: {
-            "ICNumber": $("#txtApplyForArmyNo").val()
+            "ICNumber": $("#txtApplyForArmyNo").val(),
+            "lCardType": lCardType
         },
         success: function (response, status) {
             if (response.Status == false) {
