@@ -729,7 +729,6 @@ namespace DataAccessLayer
         public async Task<DTODataTablesResponse<DTOReportResponse>> GetReportData(DTODataTablesRequestForReport dTO)
         {
             string query = "";
-            string queryCount = "";
             string wherequery = "";
             // Map allowed sort columns to DB fields
             Dictionary<string, string> allowedSortColumns = new Dictionary<string, string>();
@@ -782,10 +781,6 @@ namespace DataAccessLayer
 							AND unit.UnitType =@UnitType
                             AND unit.UnitMapId = ISNULL(@UnitMapId, unit.UnitMapId)
                             AND ServiceNo LIKE '%' + @SearchTerm + '%'";
-                queryCount = @"Select count(*) from TrnStepCounter step
-                                INNER JOIN TrnICardRequest req on step.RequestId=req.RequestId and req.StatusId=1
-                                INNER JOIN  BasicDetails basi on req.BasicDetailId=basi.BasicDetailId
-                                INNER JOIN MapUnit unit on basi.UnitId=unit.UnitMapId";
             }
             else if (dTO.Choice == "NonFunctional")
             {
@@ -835,10 +830,6 @@ namespace DataAccessLayer
 							AND unit.UnitType =@UnitType
                             AND unit.UnitMapId = ISNULL(@UnitMapId, unit.UnitMapId)
                             AND ServiceNo LIKE '%' + @SearchTerm + '%'";
-                queryCount = @"SELECT count(*) from TrnFaultyCard faulty
-                                inner join TrnICardRequest req on req.RequestId = faulty.RequestId
-                                inner join BasicDetails bas on bas.BasicDetailId=req.BasicDetailId
-                                inner join MapUnit unit on unit.UnitMapId=bas.UnitId";
             }
             else if (dTO.Choice == "LostCase")
             {
@@ -889,10 +880,6 @@ namespace DataAccessLayer
 							AND unit.UnitType =@UnitType
                             AND unit.UnitMapId = ISNULL(@UnitMapId, unit.UnitMapId)
                             AND ServiceNo LIKE '%' + @SearchTerm + '%'";
-                queryCount = @"SELECT count(*) from TrnLostCards lost
-                                inner join TrnICardRequest req on req.RequestId = lost.RequestId
-                                inner join BasicDetails bas on bas.BasicDetailId=req.BasicDetailId
-                                inner join MapUnit unit on unit.UnitMapId=bas.UnitId";
             }
             else if (dTO.Choice == "MonthlyProcessed")
             {
@@ -943,11 +930,6 @@ namespace DataAccessLayer
                             AND ServiceNo LIKE '%' + @SearchTerm + '%'
                             AND YEAR(basi.UpdatedOn) = RIGHT(@MonthYear, 4)
 							AND MONTH(basi.UpdatedOn) = LEFT(@MonthYear, 2)";
-                queryCount = @"Select count(*)
-                                from TrnStepCounter step
-                                INNER JOIN TrnICardRequest req on step.RequestId=req.RequestId and req.StatusId=1
-                                INNER JOIN  BasicDetails basi on req.BasicDetailId=basi.BasicDetailId
-                                INNER JOIN MapUnit unit on basi.UnitId=unit.UnitMapId";
             }
             try
             {
@@ -956,11 +938,9 @@ namespace DataAccessLayer
                 : "ServiceNo";
                 var multiQuery = query = $@"
                         WITH RecordCTE AS (
-                            select ROW_NUMBER() OVER (ORDER BY {sortColumn} {sortOrder}) AS RowNum, {query} {wherequery}
+                            select  Count(*) OVER () as TotalFilteredRecords,ROW_NUMBER() OVER (ORDER BY {sortColumn} {sortOrder}) AS RowNum, {query} {wherequery}
                         )
-                        SELECT * FROM RecordCTE WHERE RowNum BETWEEN @Offset AND @Limit;
-                        {queryCount} {wherequery}
-                    ";
+                        SELECT * FROM RecordCTE WHERE RowNum BETWEEN @Offset AND @Limit;";
 
                 using (var connection = _contextDP.CreateConnection())
                 {
@@ -981,12 +961,13 @@ namespace DataAccessLayer
 
                     var ret = await connection.QueryMultipleAsync(query, parameters);
                     var records = (await ret.ReadAsync<DTOReportResponse>()).ToList();
-                    int TotalRecords = (await ret.ReadAsync<int>()).FirstOrDefault();
+                    var totalFilteredRecords = records?.FirstOrDefault()?.TotalFilteredRecords;
+
                     var responseData = new DTODataTablesResponse<DTOReportResponse>
                     {
                         draw = dTO.Draw,
-                        recordsTotal = TotalRecords, // Total records without filtering
-                        recordsFiltered = TotalRecords,//records.Count(), // Total records after filtering
+                        recordsTotal = totalFilteredRecords.GetValueOrDefault(), 
+                        recordsFiltered = totalFilteredRecords.GetValueOrDefault(),
                         data = records,
                     };
                     return responseData;

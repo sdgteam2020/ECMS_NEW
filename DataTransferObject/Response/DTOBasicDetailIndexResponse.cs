@@ -8,6 +8,7 @@ namespace DataTransferObject.Response
 {
     public class DTOBasicDetailIndexResponse
     {
+        public int TotalFilteredRecords { get; set; }
         public int BasicDetailId { get; set; }
         public int RegistrationApplyFor { get; set; }
         public string? EncryptedId { get; set; }
