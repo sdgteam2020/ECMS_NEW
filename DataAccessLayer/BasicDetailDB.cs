@@ -955,6 +955,8 @@ namespace DataAccessLayer
                     ";
                 using (var connection = _contextDP.CreateConnection())
                 {
+                    var searchTerm = string.IsNullOrEmpty(dTO.searchValue) ? null : $"%{dTO.searchValue}%";
+
                     var parameters = new DynamicParameters();
                     parameters.Add("@UserId", dTO.UserId, DbType.Int32, ParameterDirection.Input);
                     parameters.Add("@stepcount", dTO.stepcount, DbType.Int32, ParameterDirection.Input);
@@ -962,7 +964,7 @@ namespace DataAccessLayer
                     parameters.Add("@applyfor", applyfor, DbType.Int32, ParameterDirection.Input);
                     parameters.Add("@Offset", dTO.Start + 1, DbType.Int32, ParameterDirection.Input);
                     parameters.Add("@Limit", (dTO.Start + dTO.Length), DbType.Int32, ParameterDirection.Input);
-                    parameters.Add("@SearchTerm", $"%{dTO.searchValue}%", DbType.String, ParameterDirection.Input);
+                    parameters.Add("@SearchTerm", searchTerm, DbType.String, ParameterDirection.Input);
 
                     var ret = await connection.QueryMultipleAsync(query, parameters);
                     var records = (await ret.ReadAsync<DTOBasicDetailIndexResponse>()).ToList();
@@ -1141,7 +1143,7 @@ namespace DataAccessLayer
                             inner join MApplyFor Afor on Afor.ApplyForId = B.ApplyForId 
                             inner join TrnStepCounter C on trnicrd.RequestId = C.RequestId
                             inner join MICardType ty on ty.TypeId = trnicrd.TypeId
-                            inner join TrnFwds fwd on fwd.RequestId = trnicrd.RequestId and fwd.ToAspNetUsersId = @UserId
+                            inner join TrnFwds fwd on fwd.RequestId = trnicrd.RequestId and fwd.ToAspNetUsersId = @UserId and fwd.TypeId=4
                             inner join MTrnFwdStatus mtrnfwdstatus on mtrnfwdstatus.FwdStatusId = fwd.FwdStatusId
                             left join MRegimental mreg on mreg.RegId = B.RegimentalId";
 
@@ -1209,6 +1211,8 @@ namespace DataAccessLayer
                     ";
                 using (var connection = _contextDP.CreateConnection())
                 {
+                    var searchTerm = string.IsNullOrEmpty(dTO.searchValue) ? null : $"%{dTO.searchValue}%";
+
                     var parameters = new DynamicParameters();
                     parameters.Add("@UserId", dTO.UserId, DbType.Int32, ParameterDirection.Input);
                     parameters.Add("@stepcount", dTO.stepcount, DbType.Int32, ParameterDirection.Input);
@@ -1216,7 +1220,7 @@ namespace DataAccessLayer
                     parameters.Add("@applyForId", dTO.applyForId, DbType.Int32, ParameterDirection.Input);
                     parameters.Add("@Offset", dTO.Start + 1, DbType.Int32, ParameterDirection.Input);
                     parameters.Add("@Limit", (dTO.Start + dTO.Length), DbType.Int32, ParameterDirection.Input);
-                    parameters.Add("@SearchTerm", $"%{dTO.searchValue}%", DbType.String, ParameterDirection.Input);
+                    parameters.Add("@SearchTerm", searchTerm, DbType.String, ParameterDirection.Input);
 
                     var ret = await connection.QueryMultipleAsync(query, parameters);
                     var records = (await ret.ReadAsync<DTOBasicDetailIndexResponse>()).ToList();
