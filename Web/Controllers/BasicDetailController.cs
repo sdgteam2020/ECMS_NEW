@@ -172,8 +172,10 @@ namespace Web.Controllers
             {
                 case 0:
                 case 1:  // request from DashBoard
+                    stepcounter = retint;
+                    break;
                 case 11: // request from Task Board
-                    stepcounter = retint == 11 ? 1 : 0;
+                    stepcounter = retint = 1;
                     break;
 
                 case 2:
@@ -353,6 +355,7 @@ namespace Web.Controllers
             {
                 case 1:
                     ViewBag.Title = "List of Register I-Card";
+                    ViewBag.Id = 0;
                     break;
 
                 case 2:
@@ -364,12 +367,14 @@ namespace Web.Controllers
 
                 case 22:
                     ViewBag.Title = "Rejectd I-Card";
+                    ViewBag.Id = 0;
                     type = 1;
                     stepCounter = 7;
                     break;
 
                 case 222:
                     ViewBag.Title = "Approved I-Card";
+                    ViewBag.Id = 0;
                     type = 3;
                     stepCounter = 3;
                     break;
@@ -383,18 +388,21 @@ namespace Web.Controllers
 
                 case 33:
                     ViewBag.Title = "Rejectd I-Card";
+                    ViewBag.Id = 0;
                     type = 1;
                     stepCounter = 8;
                     break;
 
                 case 333:
                     ViewBag.Title = "Approved I-Card";
+                    ViewBag.Id = 0;
                     type = 3;
                     stepCounter = 4;
                     break;
 
                 case 11:
                     ViewBag.Title = "Internal Forward I-Card";
+                    ViewBag.Id = 0;
                     type = 3;
                     stepCounter = 11;
                     break;
@@ -408,12 +416,14 @@ namespace Web.Controllers
 
                 case 44:
                     ViewBag.Title = "Rejectd I-Card";
+                    ViewBag.Id = 0;
                     type = 1;
                     stepCounter = 9;
                     break;
 
                 case 444:
                     ViewBag.Title = "Exported I-Card";
+                    ViewBag.Id = 0;
                     type = 3;
                     stepCounter = 5;
                     break;
@@ -427,12 +437,14 @@ namespace Web.Controllers
 
                 case 55:
                     ViewBag.Title = "Rejectd I-Card";
+                    ViewBag.Id = 0;
                     type = 1;
                     stepCounter = 10;
                     break;
 
                 case 555:
                     ViewBag.Title = "Approved I-Card";
+                    ViewBag.Id = 0;
                     type = 3;
                     stepCounter = 6;
                     break;
@@ -446,6 +458,7 @@ namespace Web.Controllers
 
                 default:
                     ViewBag.Title = "I-Card View";
+                    ViewBag.Id = 0;
                     break;
             }
 
@@ -2415,6 +2428,11 @@ namespace Web.Controllers
                         }
                         else
                         {
+                            if (trnFaultyCard != null)
+                            {
+                                dTO.TrnFwdId = trnFaultyCard.TrnFwdId ?? 0;
+                            }
+
                             dTOFaulty = await faultyCardBL.SaveFaultyCard(dTO, mTrnFwd, Claim);
                             return Json(dTOFaulty);
                         }

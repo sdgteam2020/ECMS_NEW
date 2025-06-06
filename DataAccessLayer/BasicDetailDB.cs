@@ -741,17 +741,18 @@ namespace DataAccessLayer
             // Map allowed sort columns to DB fields
             Dictionary<string, string> allowedSortColumns = new Dictionary<string, string>();
 
+            allowedSortColumns = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+            {
+                ["ServiceNo"] = "ServiceNo",
+                ["RequestId"] = "RequestId", 
+                ["TrackingId"] = "TrackingId",
+                ["ApplyFor"] = "ApplyFor"
+            };
+
             var sortOrder = dTO.sortDirection;
 
             if (dTO.stepcount == 0)//////For all record
             {
-                allowedSortColumns = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
-                {
-                    ["ServiceNo"] = "B.ServiceNo",
-                    ["RequestId"] = "trnicrd.RequestId",
-                    ["TrackingId"] = "trnicrd.TrackingId",
-                    ["ApplyFor"] = "Afor.Name"
-                };
                 query = @"trnicrd.RegistrationId AS RegistrationApplyFor,munit.UnitName,B.UnitId,B.BasicDetailId,B.FName,B.LName,B.ServiceNo,B.DOB,B.DateOfCommissioning,C.StepId AS StepCounter,C.Id AS StepId,ty.Name AS ICardType,trnicrd.RequestId,ISNULL(fwd.TrnFwdId,0) AS IsTrnFwdId,fwd.Remark,ISNULL(fwd.FwdStatusId,0) AS IsFwdStatusId,Afor.Name AS ApplyFor,Afor.ApplyForId ,trnicrd.TrackingId,ran.RankAbbreviation AS RankName,ISNULL(Postout.Id,0) AS IsPosting FROM TrnICardRequest trnicrd
                         INNER JOIN BasicDetails B ON B.BasicDetailId = trnicrd.BasicDetailId
                         inner join MRank ran on ran.RankId=B.RankId
@@ -771,13 +772,6 @@ namespace DataAccessLayer
             }
             else if (dTO.stepcount == 1)//////For Draft
             {
-                allowedSortColumns = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
-                {
-                    ["ServiceNo"] = "B.ServiceNo",
-                    ["RequestId"] = "trnicrd.RequestId",
-                    ["TrackingId"] = "trnicrd.TrackingId",
-                    ["ApplyFor"] = "Afor.Name"
-                };
                 query = @"trnicrd.RegistrationId AS RegistrationApplyFor,munit.UnitName,B.UnitId,B.BasicDetailId,B.FName,B.LName,B.ServiceNo,B.DOB,B.DateOfCommissioning,C.StepId AS StepCounter,C.Id AS StepId,ty.Name AS ICardType,trnicrd.RequestId,ISNULL(fwd.TrnFwdId,0) AS IsTrnFwdId,fwd.Remark,ISNULL(fwd.FwdStatusId,0) AS IsFwdStatusId,Afor.Name AS ApplyFor,Afor.ApplyForId ,trnicrd.TrackingId,ran.RankAbbreviation AS RankName,ISNULL(Postout.Id,0) AS IsPosting FROM TrnICardRequest trnicrd
                         INNER JOIN BasicDetails B ON trnicrd.BasicDetailId = B.BasicDetailId AND trnicrd.StatusId = 1
                         inner join MRank ran on ran.RankId=B.RankId
@@ -798,13 +792,6 @@ namespace DataAccessLayer
 
             else if (dTO.stepcount == 777)//////For Completed   
             {
-                allowedSortColumns = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
-                {
-                    ["ServiceNo"] = "B.ServiceNo",
-                    ["RequestId"] = "trnicrd.RequestId",
-                    ["TrackingId"] = "TrackingId",
-                    ["ApplyFor"] = "Afor.Name"
-                };
                 query = @"trnicrd.RegistrationId AS RegistrationApplyFor,munit.UnitName,B.UnitId,B.BasicDetailId,B.FName,B.LName,B.ServiceNo,B.DOB,B.DateOfCommissioning,C.StepId AS StepCounter,C.Id AS StepId,ty.Name AS ICardType,trnicrd.RequestId,fwd.Remark,ISNULL(fwd.FwdStatusId,0) AS IsFwdStatusId,Afor.Name AS ApplyFor,Afor.ApplyForId ,trnicrd.TrackingId,ran.RankAbbreviation AS RankName,ISNULL(Postout.Id,0) AS IsPosting FROM TrnICardRequest trnicrd 
                         INNER JOIN BasicDetails B ON trnicrd.BasicDetailId = B.BasicDetailId AND trnicrd.StatusId = 2
                         inner join MRank ran on ran.RankId=B.RankId 
@@ -824,13 +811,6 @@ namespace DataAccessLayer
             }
             else if (dTO.stepcount == 888)//////For Submitted
             {
-                allowedSortColumns = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
-                {
-                    ["ServiceNo"] = "B.ServiceNo",
-                    ["RequestId"] = "trnicrd.RequestId",
-                    ["TrackingId"] = "trnicrd.TrackingId",
-                    ["ApplyFor"] = "Afor.Name"
-                };
                 query = @"trnicrd.RegistrationId AS RegistrationApplyFor,munit.UnitName,B.UnitId,B.BasicDetailId,B.FName,B.LName,B.ServiceNo,B.DOB,B.DateOfCommissioning,C.StepId AS StepCounter,C.Id AS StepId,ty.Name AS ICardType,trnicrd.RequestId,Afor.Name AS ApplyFor,Afor.ApplyForId ,trnicrd.TrackingId,ran.RankAbbreviation AS RankName,ISNULL(Postout.Id,0) AS IsPosting FROM TrnICardRequest trnicrd
                         INNER JOIN BasicDetails B ON trnicrd.BasicDetailId = B.BasicDetailId
                         inner join MRank ran on ran.RankId=B.RankId 
@@ -848,13 +828,6 @@ namespace DataAccessLayer
             }
             else if (dTO.stepcount == 5)
             {
-                allowedSortColumns = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
-                {
-                    ["ServiceNo"] = "B.ServiceNo",
-                    ["RequestId"] = "trnicrd.RequestId",
-                    ["TrackingId"] = "trnicrd.TrackingId",
-                    ["ApplyFor"] = "Afor.Name"
-                };
                 query = @"trnicrd.RegistrationId AS RegistrationApplyFor,munit.UnitName,B.UnitId,B.BasicDetailId,B.FName,B.LName,B.ServiceNo,B.DOB,B.DateOfCommissioning,C.StepId AS StepCounter,C.Id AS StepId,ty.TypeId,ty.name AS ICardType,trnicrd.RequestId,ISNULL(fwd.TrnFwdId,0) AS IsTrnFwdId, ISNULL(fwd.FwdStatusId,0) AS IsFwdStatusId, Afor.Name AS ApplyFor,Afor.ApplyForId ,trnicrd.TrackingId,ran.RankAbbreviation AS RankName,ISNULL(Postout.Id,0) AS IsPosting FROM TrnICardRequest trnicrd
                         INNER JOIN BasicDetails B ON trnicrd.BasicDetailId = B.BasicDetailId AND trnicrd.StatusId = 2
                         inner join MRank ran on ran.RankId=B.RankId
@@ -872,13 +845,6 @@ namespace DataAccessLayer
             }
             else if (dTO.stepcount == 2 || dTO.stepcount == 3 || dTO.stepcount == 4 || dTO.stepcount == 6)//IO
             {
-                allowedSortColumns = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
-                {
-                    ["ServiceNo"] = "B.ServiceNo",
-                    ["RequestId"] = "trnicrd.RequestId",
-                    ["TrackingId"] = "TrackingId",
-                    ["ApplyFor"] = "Afor.Name"
-                };
                 query = @"trnicrd.RegistrationId AS RegistrationApplyFor,munit.UnitName,B.UnitId,B.BasicDetailId,B.FName,B.LName,B.ServiceNo,B.DOB,B.DateOfCommissioning,C.StepId AS StepCounter,C.Id AS StepId,ty.TypeId,ty.name AS ICardType,trnicrd.RequestId,ISNULL(fwd.TrnFwdId,0) AS IsTrnFwdId, ISNULL(fwd.FwdStatusId,0) AS IsFwdStatusId ,Afor.Name AS ApplyFor,Afor.ApplyForId ,trnicrd.TrackingId,ran.RankAbbreviation AS RankName,ISNULL(Postout.Id,0) AS IsPosting FROM TrnICardRequest trnicrd
                         INNER JOIN BasicDetails B ON trnicrd.BasicDetailId = B.BasicDetailId AND trnicrd.StatusId = 1
                         inner join MRank ran on ran.RankId=B.RankId
@@ -896,13 +862,6 @@ namespace DataAccessLayer
             }
             else if (dTO.stepcount == 7 || dTO.stepcount == 8 || dTO.stepcount == 9 || dTO.stepcount == 10)//Reject From IO
             {
-                allowedSortColumns = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
-                {
-                    ["ServiceNo"] = "B.ServiceNo",
-                    ["RequestId"] = "trnicrd.RequestId",
-                    ["TrackingId"] = "trnicrd.TrackingId",
-                    ["ApplyFor"] = "Afor.Name"
-                };
                 query = @"trnicrd.RegistrationId AS RegistrationApplyFor,munit.UnitName,B.UnitId,B.BasicDetailId,B.FName,B.LName,B.ServiceNo,B.DOB,B.DateOfCommissioning,C.StepId AS StepCounter,C.Id AS StepId,ty.TypeId,ty.name AS ICardType,trnicrd.RequestId, ISNULL(fwd.TrnFwdId,0) AS IsTrnFwdId,ISNULL(fwd.FwdStatusId,0) AS IsFwdStatusId, Afor.Name AS ApplyFor,Afor.ApplyForId,trnicrd.TrackingId,ran.RankAbbreviation AS RankName,ISNULL(Postout.Id,0) AS IsPosting FROM TrnICardRequest trnicrd
                         INNER JOIN BasicDetails B ON trnicrd.BasicDetailId = B.BasicDetailId AND trnicrd.StatusId = 1                        
                         inner join MRank ran on ran.RankId=B.RankId
@@ -921,14 +880,6 @@ namespace DataAccessLayer
             }
             else if (dTO.stepcount == 999)//Reject From IO,MI11 and HQ 54
             {
-                allowedSortColumns = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
-                {
-                    ["ServiceNo"] = "B.ServiceNo",
-                    ["RequestId"] = "trnicrd.RequestId",
-                    ["TrackingId"] = "trnicrd.TrackingId",
-                    ["ApplyFor"] = "Afor.Name",
-                    ["ICardType"] = "ty.name"
-                };
                 query = @"trnicrd.RegistrationId AS RegistrationApplyFor,munit.UnitName,B.UnitId,B.BasicDetailId,B.FName,B.LName,B.ServiceNo,B.DOB,B.DateOfCommissioning,C.StepId AS StepCounter,C.Id AS StepId,ty.TypeId,ty.name AS ICardType,trnicrd.RequestId, ISNULL(fwd.FwdStatusId,0) AS IsFwdStatusId ,Afor.Name AS ApplyFor,Afor.ApplyForId,trnicrd.TrackingId,ran.RankAbbreviation AS RankName,ISNULL(Postout.Id,0) AS IsPosting FROM TrnICardRequest trnicrd
                         INNER JOIN BasicDetails B ON trnicrd.BasicDetailId = B.BasicDetailId AND trnicrd.StatusId = 1
                         inner join MRank ran on ran.RankId=B.RankId
@@ -949,10 +900,18 @@ namespace DataAccessLayer
                 var sortColumn = allowedSortColumns.ContainsKey(dTO.sortColumn ?? "") ? allowedSortColumns[dTO.sortColumn!] : "ServiceNo";
                 var multiQuery = query = $@"
                         WITH RecordCTE AS (
-                            select DISTINCT Count(*) over () as TotalFilteredRecords,ROW_NUMBER() OVER (ORDER BY {sortColumn} {sortOrder}) AS RowNum, {query} {wherequery}
+                            SELECT DISTINCT Count(*) over () as TotalFilteredRecords, {query} {wherequery} 
                         )
-                        SELECT * FROM RecordCTE WHERE RowNum BETWEEN @Offset AND @Limit;
+                        SELECT *
+                        FROM (
+                            SELECT 
+                                ROW_NUMBER() OVER (ORDER BY {sortColumn} {sortOrder}) AS RowNum,
+                                *
+                            FROM RecordCTE
+                        ) AS Numbered
+                        WHERE RowNum BETWEEN @Offset AND @Limit;
                     ";
+                //select Count(*) over () as TotalFilteredRecords,ROW_NUMBER() OVER (ORDER BY {sortColumn} {sortOrder}) AS RowNum, {query} {wherequery} 
                 using (var connection = _contextDP.CreateConnection())
                 {
                     var searchTerm = string.IsNullOrEmpty(dTO.searchValue) ? null : $"%{dTO.searchValue}%";
@@ -1143,7 +1102,7 @@ namespace DataAccessLayer
                             inner join MApplyFor Afor on Afor.ApplyForId = B.ApplyForId 
                             inner join TrnStepCounter C on trnicrd.RequestId = C.RequestId
                             inner join MICardType ty on ty.TypeId = trnicrd.TypeId
-                            inner join TrnFwds fwd on fwd.RequestId = trnicrd.RequestId and fwd.ToAspNetUsersId = @UserId and fwd.TypeId=4
+                            inner join TrnFwds fwd on fwd.RequestId = trnicrd.RequestId and fwd.ToAspNetUsersId = @UserId and fwd.TypeId=4 and fwd.IsComplete=1
                             inner join MTrnFwdStatus mtrnfwdstatus on mtrnfwdstatus.FwdStatusId = fwd.FwdStatusId
                             left join MRegimental mreg on mreg.RegId = B.RegimentalId";
 
@@ -1205,9 +1164,16 @@ namespace DataAccessLayer
                 var sortColumn = allowedSortColumns.ContainsKey(dTO.sortColumn ?? "") ? allowedSortColumns[dTO.sortColumn!] : "ServiceNo";
                 var multiQuery = query = $@"
                         WITH RecordCTE AS (
-                            select DISTINCT Count(*) over () as TotalFilteredRecords, ROW_NUMBER() OVER (ORDER BY {sortColumn} {sortOrder}) AS RowNum, {query} {wherequery}
+                            SELECT DISTINCT Count(*) over () as TotalFilteredRecords, {query} {wherequery} 
                         )
-                        SELECT * FROM RecordCTE WHERE RowNum BETWEEN @Offset AND @Limit;
+                        SELECT *
+                        FROM (
+                            SELECT 
+                                ROW_NUMBER() OVER (ORDER BY {sortColumn} {sortOrder}) AS RowNum,
+                                *
+                            FROM RecordCTE
+                        ) AS Numbered
+                        WHERE RowNum BETWEEN @Offset AND @Limit;
                     ";
                 using (var connection = _contextDP.CreateConnection())
                 {
@@ -2057,7 +2023,7 @@ namespace DataAccessLayer
                         select @_4thLevelApproved=COUNT(distinct fwd.RequestId)  from TrnFwds fwd 
                         inner join TrnStepCounter cou on fwd.RequestId=cou.RequestId and cou.ApplyForId=@applyForId 
                         inner join TrnICardRequest trncard  on trncard.RequestId=cou.RequestId 
-                        where ToAspNetUsersId=@UserId and fwd.TypeId=4 and  trncard.StatusId=1
+                        where ToAspNetUsersId=@UserId and IsComplete=1 and fwd.TypeId=4 and  trncard.StatusId=1
 
                         select @_4thLevelReject=COUNT(distinct fwd.RequestId) from TrnFwds fwd 
                         inner join TrnStepCounter cou on fwd.RequestId=cou.RequestId and cou.ApplyForId=@applyForId 

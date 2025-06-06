@@ -260,7 +260,8 @@ function Getdatafromapi() {
         url: "/BasicDetail/GetData",
         type: "POST",
         data: {
-            "ICNumber": $("#ServiceNumber").val()
+            "ICNumber": $("#ServiceNumber").val(),
+            "lCardType": $("#TypeId").val()
         },
         success: function (response, status) {
             if (response.Status == false) {

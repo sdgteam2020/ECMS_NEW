@@ -147,7 +147,7 @@ function BindData(Type, StepCounter, JCOOR, VBId) {
                     // Always include the Print Preview button
                     let html = `<button class="btn btn-icon btn-round btn-primary mr-2" onclick="GetICardPrintPreviewByRequestId(${row.RequestId})"><i class="fa fa-print mt-2"></i></button>`;
 
-                    if (row.StepCounter == 2 || row.StepCounter == 3 ) {
+                    if (parseInt($("#spnVBId").html()) == 1  && (row.StepCounter == 2 || row.StepCounter == 3) ) {
                         html += `<button class="btn btn-primary mr-1 cls-fwdrecord">Verify And Send</button>`;
                     }
                     // Case 2: Processed + Download

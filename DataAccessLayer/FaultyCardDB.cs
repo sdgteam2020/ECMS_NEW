@@ -340,6 +340,9 @@ namespace DataAccessLayer
                     query2 = @"UPDATE TrnStepCounter set StepId = 4 where RequestId=@RequestId ";
                     await db.ExecuteAsync(query2, new { dTO.RequestId }, transaction: transaction);
 
+                    query3 = @"UPDATE TrnFwds set IsComplete = 0 where TrnFwdId=@TrnFwdId ";
+                    await db.ExecuteAsync(query3, new { dTO.TrnFwdId }, transaction: transaction);
+
                 }
                 //Reject
                 else if (dTO.Choice == 3)
