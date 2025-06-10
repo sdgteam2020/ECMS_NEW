@@ -290,6 +290,7 @@ namespace DataAccessLayer
             string update = "";
             string query2 = "";
             string query3 = "";
+            string query4 = "";
 
             try
             {
@@ -343,6 +344,9 @@ namespace DataAccessLayer
                     query3 = @"UPDATE TrnFwds set IsComplete = 0 where TrnFwdId=@TrnFwdId ";
                     await db.ExecuteAsync(query3, new { dTO.TrnFwdId }, transaction: transaction);
 
+                    query4 = @"UPDATE TrnICardRequest set CardSerialNo=null ,ChipNo=null ,CardExportedOn=null where RequestId=@RequestId ";
+                    await db.ExecuteAsync(query4, new { dTO.RequestId }, transaction: transaction);
+
                 }
                 //Reject
                 else if (dTO.Choice == 3)
@@ -377,6 +381,9 @@ namespace DataAccessLayer
 
                     query2 = @"UPDATE TrnStepCounter set StepId = 9 where RequestId=@RequestId ";
                     await db.ExecuteAsync(query2, new { dTO.RequestId }, transaction: transaction);
+
+                    query4 = @"UPDATE TrnICardRequest set CardSerialNo=null ,ChipNo=null ,CardExportedOn=null where RequestId=@RequestId ";
+                    await db.ExecuteAsync(query4, new { dTO.RequestId }, transaction: transaction);
                 }
 
 

@@ -3405,14 +3405,6 @@ namespace Web.Controllers
         [HttpPost]
         public async Task<IActionResult> ICardPrintUploadCsv(DTOCSVFileRequest model)
         {
-
-            //string FileName = service.ProcessUploadedFile(model.Photo_, sourceFolderPhotoPhy, model.ServiceNo);
-
-            //string path = Path.Combine(sourceFolderPhotoPhy, FileName);
-
-            //bool result = service.IsValidHeader(path);
-            //bool imgcontentresult = service.IsImage(model.CSVFile);
-
             var response = new DTOCsvUploadValResponse();
             //if (model.CSVFile == null || model.CSVFile.Length == 0)
             //{

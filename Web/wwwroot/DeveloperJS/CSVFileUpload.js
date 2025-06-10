@@ -196,7 +196,10 @@ function validateCsvFileOnChange() {
                                     };
 
                                     btnGroup.appendChild(downloadBtn);
-                                    btnGroup.appendChild(proceedBtn);
+                                    if (data.ValidRecords > 0) {
+                                        btnGroup.appendChild(proceedBtn);
+                                    }
+                                    
                                     btnGroup.appendChild(cancelBtn);
 
                                     swal.appendChild(btnGroup);
