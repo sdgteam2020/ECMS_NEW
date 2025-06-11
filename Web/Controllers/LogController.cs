@@ -219,13 +219,13 @@ namespace Web.Controllers
                     t = subdata[1].Replace("SERIALNUMBER=", "");
                     if (t.ToLower().Trim() == "7f33df8ac6540b5cf7ccfd041d8c837641226444d9f1a4aa30a01924c0610996".ToLower())
                     {
-                        obj.FromArmyNo = subdata[1].Replace("SERIALNUMBER=", "").Replace("7f33df8ac6540b5cf7ccfd041d8c837641226444d9f1a4aa30a01924c0610996", "IC71150W");
+                        obj.FromArmyNo = subdata[1].Replace("SERIALNUMBER=", "").Replace("7f33df8ac6540b5cf7ccfd041d8c837641226444d9f1a4aa30a01924c0610996", "IC71150A");
                         temp = obj.FromArmyNo.Trim();
                         obj.FromArmyNo = temp;
                     }
                     else if (t.ToLower().Trim() == "A2A7D3ED10E454CDD66285EBDFCC293549762148F74D4A65221250769C8E6448".ToLower())
                     {
-                        obj.FromArmyNo = subdata[1].Replace("SERIALNUMBER=", "").Replace("A2A7D3ED10E454CDD66285EBDFCC293549762148F74D4A65221250769C8E6448", "IC60056M");
+                        obj.FromArmyNo = subdata[1].Replace("SERIALNUMBER=", "").Replace("A2A7D3ED10E454CDD66285EBDFCC293549762148F74D4A65221250769C8E6448", "IC60056W");
                         temp = obj.FromArmyNo.Trim();
                         obj.FromArmyNo = temp;
                     }

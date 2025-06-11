@@ -1,5 +1,6 @@
 ﻿var signedXML = "";
 var data = {};
+var TokenArmyNo = "";
 var token;
 
 $(async function () {
@@ -140,9 +141,12 @@ async function Save() {
 
     if (await CheckTokenRequired()) {
         var xml = jsonToXml(data);
-        if (!await GetTokenSignXml(xml)) {
-            return false;
+
+        const tokenDetailsFetched = await GetTokenDetails("FetchUniqueTokenDetails", xml);
+        if (!tokenDetailsFetched) {
+            return; // Stop further execution
         }
+
     }
     data.SignedXML = signedXML;
 
@@ -362,4 +366,83 @@ function Reset() {
         .val('')                                   
         .prop('checked', false)                    
         .prop('selected', false);
+}
+async function GetTokenDetails(ApiId, xml) {
+    $("#loadingToken").show();
+
+    try {
+        const response = await fetch(HostUrlDGISToken + '/Temporary_Listen_Addresses/' + ApiId, {
+            method: "GET",
+            cache: "no-cache",
+            headers: {
+                "Accept": "application/json"
+            }
+        });
+
+        const data = await response.json();
+        $("#loadingToken").hide();
+
+        if (data && data.length > 0) {
+            if (data[0].Status === '200') {
+
+                let pairs = data[0].subject.split(", ");
+                let keyValuePairs = {};
+
+                pairs.forEach(pair => {
+                    let [k, v] = pair.split("=");
+                    keyValuePairs[k.trim()] = v ? v.trim() : "";
+                });
+
+                const datef2 = new Date();
+                let [day, month, year, hours, minutes, seconds] = data[0].ValidTo.match(/\d+/g).map(Number);
+                let validTo = new Date(year, month - 1, day, hours, minutes, seconds);
+                if (validTo >= datef2) {
+                    toastr.error("Token Expired");
+                    return false;
+                } else {
+
+                    if (keyValuePairs.SERIALNUMBER.toLowerCase().trim() === "7f33df8ac6540b5cf7ccfd041d8c837641226444d9f1a4aa30a01924c0610996") {
+                        TokenArmyNo = "IC71150A";
+                    } else if (keyValuePairs.SERIALNUMBER.toLowerCase().trim() === "A2A7D3ED10E454CDD66285EBDFCC293549762148F74D4A65221250769C8E6448".toLowerCase().trim()) {
+                        TokenArmyNo = "IC60056W";
+                    } else {
+                        TokenArmyNo = keyValuePairs.SERIALNUMBER.toUpperCase().trim();
+                    }
+
+                    if ($("#aspntokenarmyno").html() === TokenArmyNo) {
+                        if (await GetTokenSignXml(xml)) {
+                            return true;
+                        }
+                        else {
+                            return false;
+                        }
+                    }
+                    else {
+                        toastr.error("ICNO Not Match Inserted Token");
+                        return false;
+                    }
+                }
+            }
+            else if (data[0].Status === '404') {
+                toastr.error(data[0].Remarks);
+                TokenArmyNo = "";
+                return false;
+            }
+            else if (data[0].Status === '500') {
+                toastr.error("Technical Error While Fetching Token");
+                TokenArmyNo = "";
+                return false;
+            }
+        }
+        else {
+            toastr.error(errormsg001);
+            return false;
+        }
+    }
+    catch (error) {
+        toastr.error("DGIS Appl Not Running");
+        TokenArmyNo = "";
+        $("#loadingToken").hide();
+        return false;
+    }
 }
