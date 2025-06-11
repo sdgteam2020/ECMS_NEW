@@ -146,7 +146,7 @@ namespace DataTransferObject.Validation
         {
             return new Dictionary<string, string>
             {
-                { ".zip", "00-01-00-00"},
+                { ".zip", "00-01-00-00"}, // zip with encryption
                 { ".pdf", "25-50-44-46"},             // %PDF
                 { ".docx", "50-4B-03-04"},             // ZIP based
                 { ".xlsx", "50-4B-03-04"},             // ZIP based
