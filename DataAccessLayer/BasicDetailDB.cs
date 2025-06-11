@@ -8,7 +8,7 @@ using DataTransferObject.Domain.Model;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
 using DataTransferObject.ViewModels;
-using EntityFramework.Exceptions.Common;
+using EntityFramework.Exceptions.Common;  
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
@@ -585,9 +585,9 @@ namespace DataAccessLayer
                 query = @$"Select TOP 5 basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath Image,req.RequestId,COALESCE(MAX(fwd.TrnFwdId), NULL) AS MaxTrnFwdId  
                                 from BasicDetails basi
                                 inner join TrnUpload trnu on basi.BasicDetailId=trnu.BasicDetailId 
-                                inner join TrnICardRequest req on req.BasicDetailId=basi.BasicDetailId and req.StatusId = 3
+                                inner join TrnICardRequest req on req.BasicDetailId=basi.BasicDetailId and req.StatusId = 2
                                 inner join TrnStepCounter stepcount on req.RequestId=stepcount.RequestId and stepcount.StepId = 18
-                                inner join TrnDomainMapping tdm on tdm.Id=req.TrnDomainMappingId and tdm.UnitId=@MapUnitId
+                                inner join TrnDomainMapping tdm on tdm.Id=req.TrnDomainMappingId
                                 LEFT JOIN TrnFwds fwd ON fwd.RequestId = req.RequestId
                                 Left join TrnHotlistCards thc on req.RequestId = thc.RequestId
                                 where thc.RequestId is null and ServiceNo like @ServiceNo
@@ -598,7 +598,7 @@ namespace DataAccessLayer
                 query = @$"Select TOP 5 basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath Image,req.RequestId,COALESCE(MAX(fwd.TrnFwdId), NULL) AS MaxTrnFwdId  
                                 from BasicDetails basi
                                 inner join TrnUpload trnu on basi.BasicDetailId=trnu.BasicDetailId 
-                                inner join TrnICardRequest req on req.BasicDetailId=basi.BasicDetailId and req.StatusId in (1,3)
+                                inner join TrnICardRequest req on req.BasicDetailId=basi.BasicDetailId and req.StatusId in (1,2)
                                 inner join TrnStepCounter stepcount on req.RequestId=stepcount.RequestId and stepcount.StepId in (6,18)
                                 inner join TrnDomainMapping tdm on tdm.Id=req.TrnDomainMappingId and tdm.UnitId=@MapUnitId
                                 LEFT JOIN TrnFwds fwd ON fwd.RequestId = req.RequestId
@@ -624,7 +624,7 @@ namespace DataAccessLayer
                 query = @$"Select TOP 5 basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath Image,req.RequestId,COALESCE(MAX(fwd.TrnFwdId), NULL) AS MaxTrnFwdId  
                                 from BasicDetails basi
                                 inner join TrnUpload trnu on basi.BasicDetailId=trnu.BasicDetailId 
-                                inner join TrnICardRequest req on req.BasicDetailId=basi.BasicDetailId and req.StatusId in (1,3)
+                                inner join TrnICardRequest req on req.BasicDetailId=basi.BasicDetailId and req.StatusId = 3
                                 inner join TrnStepCounter stepcount on req.RequestId=stepcount.RequestId and stepcount.StepId in (6,18)
                                 inner join TrnDomainMapping tdm on tdm.Id=req.TrnDomainMappingId and tdm.UnitId=@MapUnitId
                                 LEFT JOIN TrnFwds fwd ON fwd.RequestId = req.RequestId

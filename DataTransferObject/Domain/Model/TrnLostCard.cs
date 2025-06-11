@@ -38,5 +38,6 @@ namespace DataTransferObject.Domain.Model
         public DateTime? LostOn { get; set; }
         [ForeignKey("UserProfileUserUpdate"), DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int? UpdatedbyUserId { get; set; }
+        public MUserProfile? UserProfileUserUpdate { get; set; }
     }
 }

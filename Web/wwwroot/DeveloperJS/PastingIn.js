@@ -108,6 +108,13 @@
 
 
         if ($("#SaveForm")[0].checkValidity()) {
+            
+
+            if ($("#postingoutUnitId").html() == $(".spnFromUnitID").html())
+            {
+                toastr.error("From Unit And To Unit Cannot Be Same!");
+                return;
+            }
 
             Swal.fire({
                 title: 'Are you sure?',
