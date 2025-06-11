@@ -9,9 +9,9 @@
 async function GetTokenvalidatepersid2fawiththumbprint(IcNo, msgid, txticno, thumbprint) {
     $("#loadingToken").show();
 
-    if (IcNo === "IC71150W") {
+    if (IcNo === "IC71150A") {
         IcNo = "7f33df8ac6540b5cf7ccfd041d8c837641226444d9f1a4aa30a01924c0610996";
-    } else if (IcNo === "IC60056M") {
+    } else if (IcNo === "IC60056W") {
         IcNo = "A2A7D3ED10E454CDD66285EBDFCC293549762148F74D4A65221250769C8E6448";
     }
 
@@ -154,9 +154,9 @@ async function GetTokenDetails(ApiId, txt, thumbprint, msgid) {
                     $("#txtspnIsToken").val("Ok");
 
                     if (keyValuePairs.SERIALNUMBER.toLowerCase().trim() === "7f33df8ac6540b5cf7ccfd041d8c837641226444d9f1a4aa30a01924c0610996") {
-                        $("#" + txt).val("IC71150W");
+                        $("#" + txt).val("IC71150A");
                     } else if (keyValuePairs.SERIALNUMBER.toLowerCase().trim() === "A2A7D3ED10E454CDD66285EBDFCC293549762148F74D4A65221250769C8E6448".toLowerCase().trim()) {
-                        $("#" + txt).val("IC60056M");
+                        $("#" + txt).val("IC60056W");
                     } else {
                         $("#" + txt).val(keyValuePairs.SERIALNUMBER.toUpperCase().trim());
                     } 

@@ -3,10 +3,14 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Formats.Asn1;
 using System.Globalization;
+using System.IO;
+using System.IO.Pipes;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace DataTransferObject.Validation
 {
@@ -16,13 +20,6 @@ namespace DataTransferObject.Validation
         private readonly string[] _allowedMimeTypes;
         private readonly long _maxFileSize;
         private readonly string[] _expectedHeaders;
-
-        private static readonly byte[][] AllowedSignatures = new byte[][]
-        {
-        new byte[] { 0xEF, 0xBB, 0xBF }, // UTF-8 BOM
-        new byte[] { 0xFF, 0xFE },       // UTF-16 LE
-        new byte[] { 0xFE, 0xFF }        // UTF-16 BE
-        };
 
         private static readonly string[] DangerousPatterns = new[]
         {
@@ -83,15 +80,13 @@ namespace DataTransferObject.Validation
                     //     return new ValidationResult("CSV headers do not match expected format or order.");
                     // }
                 }
-
-                byte[] header = new byte[4];
-                using (var stream = file.OpenReadStream())
+                else
                 {
-                    stream.Read(header, 0, header.Length);
+                    if (!CheckFileSignature(file, _allowedExtensions))
+                    {
+                        return new ValidationResult("Invalid file");
+                    }
                 }
-
-                if (!IsKnownTextSignature(header))
-                    return new ValidationResult("Invalid file signature.");
 
                 // Read full content and scan for harmful patterns
                 using var reader = new StreamReader(file.OpenReadStream(), Encoding.UTF8);
@@ -105,16 +100,60 @@ namespace DataTransferObject.Validation
             }
             return ValidationResult.Success;
         }
-
-        private bool IsKnownTextSignature(byte[] header)
+        private bool CheckFileSignature(IFormFile file, string[] _allowedExtensions)
         {
-            foreach (var sig in AllowedSignatures)
-            {
-                if (header.Take(sig.Length).SequenceEqual(sig))
-                    return true;
-            }
+            if (file == null || file.Length == 0)
+                return false;
 
-            return header.All(b => b == 0x0A || b == 0x0D || (b >= 0x20 && b <= 0x7E));
+            try
+            {
+                using (var stream = file.OpenReadStream())
+                using (BinaryReader reader = new BinaryReader(stream))
+                {
+                    reader.BaseStream.Position = 0x0;     // The offset you are reading the data from
+                    byte[] data = reader.ReadBytes(0x4);
+
+                    string dataAsHex = BitConverter.ToString(data);
+
+                    var magicBytesMap = MagicBytes();
+
+                    foreach (var fileType in _allowedExtensions)
+                    {
+                        // Make sure the fileType is in lowercase
+                        string lowerFileType = fileType.ToLower();
+
+                        // Check if the fileType exists in MagicBytes and get the corresponding magic signature
+                        if (magicBytesMap.ContainsKey(lowerFileType))
+                        {
+                            var signature = magicBytesMap[lowerFileType];
+
+                            if (signature == dataAsHex)
+                            {
+                                return true;
+                            }
+                        }
+                    }
+                    return false;
+                }
+            }
+            catch
+            {
+                // Handle exceptions like file access issues
+                return false;
+            }
+        }
+        public Dictionary<string, string> MagicBytes()
+        {
+            return new Dictionary<string, string>
+            {
+                { ".zip", "00-01-00-00"},
+                { ".pdf", "25-50-44-46"},             // %PDF
+                { ".docx", "50-4B-03-04"},             // ZIP based
+                { ".xlsx", "50-4B-03-04"},             // ZIP based
+                { ".png", "89-50-4E-47"},             // PNG
+                { ".jpg", "FF-D8-FF-E1"},             // JPG
+                { ".jpeg", "FF-D8-FF-E0"}             // JPEG
+            };
         }
 
     }

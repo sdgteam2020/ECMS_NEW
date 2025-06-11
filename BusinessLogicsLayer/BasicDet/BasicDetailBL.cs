@@ -168,15 +168,17 @@ namespace BusinessLogicsLayer.BasicDet
             {
                 //Get properties to check (excluding Remarks)
                 var properties = typeof(DTOCardPriningRequest).GetProperties()
-                                                  .Where(p => p.Name != "Remarks" && p.Name != "IsValid" && p.Name != "Status")
-                                                  .ToList();
+                                                            .Where(p => p.Name != nameof(DTOCardPriningRequest.Remarks)
+                                                                     && p.Name != nameof(DTOCardPriningRequest.IsValid)
+                                                                     && p.Name != nameof(DTOCardPriningRequest.Status))
+                                                            .ToList();
 
                 // For each property, find duplicate values
                 var duplicateValuesDict = properties.ToDictionary(
                     prop => prop.Name,
                     prop => request
                         .Where(r => !string.IsNullOrWhiteSpace(prop.GetValue(r)?.ToString()))
-                        .GroupBy(r => prop.GetValue(r)?.ToString().Trim())
+                        .GroupBy(r => prop.GetValue(r)?.ToString()?.Trim())
                         .Where(g => g.Count() > 1)
                         .Select(g => g.Key)
                         .ToHashSet()
@@ -189,7 +191,8 @@ namespace BusinessLogicsLayer.BasicDet
 
                     foreach (var prop in properties)
                     {
-                        var value = prop.GetValue(r)?.ToString()?.Trim();
+                        var rawValue = prop.GetValue(r);
+                        var value = rawValue?.ToString()?.Trim();
 
                         if (prop.Name == "RequestId")
                         {
@@ -206,7 +209,7 @@ namespace BusinessLogicsLayer.BasicDet
                         {
                             remarks.Add($"{prop.Name} is blank");
                         }
-                        else if (prop.Name == "ArmyNo" && value.Length > 10)
+                        else if (prop.Name == nameof(DTOCardPriningRequest.ServiceNo) && value.Length > 10)
                         {
                             remarks.Add($"{prop.Name} is out of range");
                         }
