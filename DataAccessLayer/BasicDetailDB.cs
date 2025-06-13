@@ -603,7 +603,8 @@ namespace DataAccessLayer
                                 inner join TrnDomainMapping tdm on tdm.Id=req.TrnDomainMappingId and tdm.UnitId=@MapUnitId
                                 LEFT JOIN TrnFwds fwd ON fwd.RequestId = req.RequestId
                                 Left join TrnLostCards tlc on req.RequestId = tlc.RequestId
-                                where tlc.RequestId is null and ServiceNo like @ServiceNo
+                                Left join TrnDestructionCards tld on req.RequestId = tld.RequestId
+                                where tlc.RequestId is null and tld.RequestId is null and ServiceNo like @ServiceNo
                                 Group by basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath,req.RequestId";
             }
             else if (dto.TypeId == KeyConstants.DistributeCardRequest)
