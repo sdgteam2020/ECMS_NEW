@@ -57,8 +57,8 @@ $(document).ready(function () {
         $("#txtApplyForArmyNo").addClass("d-none");
         $("#txtApplyForArmyNo").val("");
 
-        $("#txtApplyForNewArmyNo").addClass("d-none");
-        $("#txtApplyForNewArmyNo").val("");
+        $("#txtApplyForOldArmyNo").addClass("d-none");
+        $("#txtApplyForOldArmyNo").val("");
 
 
         GetAllRegistrationApplyFor(1);
@@ -76,8 +76,8 @@ $(document).ready(function () {
         $("#txtApplyForArmyNo").addClass("d-none");
         $("#txtApplyForArmyNo").val("");
 
-        $("#txtApplyForNewArmyNo").addClass("d-none");
-        $("#txtApplyForNewArmyNo").val("");
+        $("#txtApplyForOldArmyNo").addClass("d-none");
+        $("#txtApplyForOldArmyNo").val("");
 
         GetAllRegistrationApplyFor(2);
     });
@@ -86,7 +86,11 @@ $(document).ready(function () {
         $('#btnNext').removeClass("disabled");
     });
     $("#btnNext").on("click", async function () {
+
         if ($("#txtApplyForArmyNo").val().length > 7 && $("#txtApplyForArmyNo").val().length < 10) {
+            if (lCardType == 4) {
+
+            }
             if (parseInt(OffType) == 1) {
                 if ((parseInt(RegistrationApplyFor) == 2 || parseInt(RegistrationApplyFor) == 3 || parseInt(RegistrationApplyFor) == 4 || parseInt(RegistrationApplyFor) == 10)) {
                     if (IsWithTokenApply == true) {
@@ -208,8 +212,8 @@ function GetAllRegistrationApplyFor(Id) {
 
                     $('.applyforoffs').on("click", function () {
 
-                        $("#txtApplyForNewArmyNo").addClass("d-none");
-                        $("#txtApplyForNewArmyNo").val("");
+                        $("#txtApplyForOldArmyNo").addClass("d-none");
+                        $("#txtApplyForOldArmyNo").val("");
 
                         inputField.placeholder = "Enter Army No With pfx & sfx Ex.ICXXXXXP,JC391516M,15698645A";
 
@@ -267,16 +271,16 @@ function AddAllCardType() {
         lCardType = parseInt($(this).closest("button").find(".spnApplyForcard").html());
 
         if (lCardType == 4) {
-            inputField.placeholder = "Enter Old Army No With pfx & sfx Ex.ICXXXXXP,JC391516M,15698645A";
+            inputField.placeholder = "Enter New Army No With pfx & sfx Ex.ICXXXXXP,JC391516M,15698645A";
 
-            $("#txtApplyForNewArmyNo").val("");
-            $("#txtApplyForNewArmyNo").removeClass("d-none");
+            $("#txtApplyForOldArmyNo").val("");
+            $("#txtApplyForOldArmyNo").removeClass("d-none");
             
         }
         else {
             inputField.placeholder = "Enter Army No With pfx & sfx Ex.ICXXXXXP,JC391516M,15698645A";
-            $("#txtApplyForNewArmyNo").addClass("d-none");
-            $("#txtApplyForNewArmyNo").val("");
+            $("#txtApplyForOldArmyNo").addClass("d-none");
+            $("#txtApplyForOldArmyNo").val("");
         }
 
         $("#txtApplyForArmyNo").addClass("d-none");
@@ -285,9 +289,25 @@ function AddAllCardType() {
             GetByArmyNoIsToken($("#aspntokenarmyno").html());
         }
         else if (OffType == 2) {
-            $("#txtApplyForArmyNo").removeClass("d-none");
-            $("#btntokenrefresh").addClass("d-none");
-            $('#txtApplyForArmyNo').attr('readonly', false);
+
+            if (lCardType != 4) {
+                $("#txtApplyForArmyNo").removeClass("d-none");
+                $("#btntokenrefresh").addClass("d-none");
+                $('#txtApplyForArmyNo').attr('readonly', false);
+
+                $("#txtApplyForOldArmyNo").addClass("d-none");
+                if ($("#txtApplyForOldArmyNo").attr('data-val-required')) {
+                    $("#txtApplyForOldArmyNo").removeAttr('data-val-required');
+                }
+            }
+            else {
+                $("#txtApplyForArmyNo").removeClass("d-none");
+                $("#btntokenrefresh").addClass("d-none");
+                $('#txtApplyForArmyNo').attr('readonly', false);
+
+                $("#txtApplyForOldArmyNo").removeClass("d-none");
+                $("#txtApplyForOldArmyNo").attr('data-val-required', 'Old Army No is required.');
+            }
         }
     });
 }
@@ -321,10 +341,24 @@ function GetByArmyNoIsToken(ArmyNo) {
 
                     if (parseInt(OffType) == 1) {
                         if ((parseInt(RegistrationApplyFor) == 2 || parseInt(RegistrationApplyFor) == 3 || parseInt(RegistrationApplyFor) == 4 || parseInt(RegistrationApplyFor) == 10)) {
-                            if (IsWithTokenApply == true) {
+                            if (IsWithTokenApply == true && lCardType != 4) {
                                 $("#btntokenrefresh").removeClass("d-none");
                                 $("#txtApplyForArmyNo").addClass("d-none");///for bypass for off
                                 $('#btnNext').addClass("disabled");
+
+                                $("#txtApplyForOldArmyNo").addClass("d-none");
+                                if ($("#txtApplyForOldArmyNo").attr('data-val-required')) {
+                                    $("#txtApplyForOldArmyNo").removeAttr('data-val-required');
+                                }
+                            }
+                            else if (IsWithTokenApply == true && lCardType == 4) {
+                                $("#btntokenrefresh").removeClass("d-none");
+                                $("#txtApplyForArmyNo").addClass("d-none");///for bypass for off
+
+                                $('#btnNext').addClass("disabled");
+
+                                $("#txtApplyForOldArmyNo").removeClass("d-none");
+                                $("#txtApplyForOldArmyNo").attr('data-val-required', 'Old Army No is required.');
                             }
                             else {
                                 $("#btntokenrefresh").addClass("d-none");
@@ -333,14 +367,40 @@ function GetByArmyNoIsToken(ArmyNo) {
                                 $("#txtApplyForArmyNo").val("");
                                 $('#txtApplyForArmyNo').attr('readonly', false);
 
+
                                 $('#btnNext').removeClass("disabled");
+
+
+                                if (lCardType != 4) {
+                                    $("#txtApplyForOldArmyNo").addClass("d-none");
+                                    if ($("#txtApplyForOldArmyNo").attr('data-val-required')) {
+                                        $("#txtApplyForOldArmyNo").removeAttr('data-val-required');
+                                    }
+                                }
+                                else {
+                                    $("#txtApplyForOldArmyNo").removeAttr("d-none");
+                                    $("#txtApplyForOldArmyNo").attr('data-val-required', 'Old Army No is required.');
+                                }
                             }
                         }
                         else {
-                            if (IsToken == true && parseInt(RegistrationApplyFor) == 1) {
+                            if (IsToken == true && parseInt(RegistrationApplyFor) == 1 && lCardType != 4) {
                                 $("#btntokenrefresh").removeClass("d-none");
                                 $("#txtApplyForArmyNo").addClass("d-none");///for bypass for off
                                 $('#btnNext').addClass("disabled");
+
+                                $("#txtApplyForOldArmyNo").addClass("d-none");
+                                if ($("#txtApplyForOldArmyNo").attr('data-val-required')) {
+                                    $("#txtApplyForOldArmyNo").removeAttr('data-val-required');
+                                }
+                            }
+                            else if (IsToken == true && parseInt(RegistrationApplyFor) == 1 && lCardType == 4) {
+                                $("#btntokenrefresh").removeClass("d-none");
+                                $("#txtApplyForArmyNo").addClass("d-none");///for bypass for off
+                                $('#btnNext').addClass("disabled");
+
+                                $("#txtApplyForOldArmyNo").removeClass("d-none");
+                                $("#txtApplyForOldArmyNo").attr('data-val-required', 'Old Army No is required.');
                             }
                             else {
                                 $("#btntokenrefresh").addClass("d-none");
@@ -349,14 +409,41 @@ function GetByArmyNoIsToken(ArmyNo) {
                                 $("#txtApplyForArmyNo").val($("#aspntokenarmyno").html());
                                 $('#txtApplyForArmyNo').attr('readonly', true);
 
+                                if (lCardType != 4) {
+                                    $("#txtApplyForOldArmyNo").addClass("d-none");
+                                    if ($("#txtApplyForOldArmyNo").attr('data-val-required')) {
+                                        $("#txtApplyForOldArmyNo").removeAttr('data-val-required');
+                                    }
+                                }
+                                else {
+                                    $("#txtApplyForOldArmyNo").removeAttr("d-none");
+                                    $("#txtApplyForOldArmyNo").attr('data-val-required', 'Old Army No is required.');
+                                }
+
                                 $('#btnNext').removeClass("disabled");
-                            }
+                            }   
                         }
                     }
                     else {
-                        $("#txtApplyForArmyNo").removeClass("d-none");
-                        $("#btntokenrefresh").addClass("d-none");
-                        $('#txtApplyForArmyNo').attr('readonly', false);
+                        if (lCardType != 4) {
+                            $("#txtApplyForArmyNo").removeClass("d-none");
+                            $("#btntokenrefresh").addClass("d-none");
+                            $('#txtApplyForArmyNo').attr('readonly', false);
+
+                            $("#txtApplyForOldArmyNo").addClass("d-none");
+                            if ($("#txtApplyForOldArmyNo").attr('data-val-required')) {
+                                $("#txtApplyForOldArmyNo").removeAttr('data-val-required');
+                            }
+                            
+                        }
+                        else {
+                            $("#txtApplyForArmyNo").removeClass("d-none");
+                            $("#btntokenrefresh").addClass("d-none");
+                            $('#txtApplyForArmyNo').attr('readonly', false);
+
+                            $("#txtApplyForOldArmyNo").removeClass("d-none");
+                            $("#txtApplyForOldArmyNo").attr('data-val-required', 'Old Army No is required.');
+                        }
                     }
                 }
             }

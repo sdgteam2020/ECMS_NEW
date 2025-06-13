@@ -57,8 +57,8 @@ $(document).ready(function () {
         $("#txtApplyForArmyNo").addClass("d-none");
         $("#txtApplyForArmyNo").val("");
 
-        $("#txtApplyForNewArmyNo").addClass("d-none");
-        $("#txtApplyForNewArmyNo").val("");
+        $("#txtApplyForOldArmyNo").addClass("d-none");
+        $("#txtApplyForOldArmyNo").val("");
 
 
         GetAllRegistrationApplyFor(1);
@@ -76,8 +76,8 @@ $(document).ready(function () {
         $("#txtApplyForArmyNo").addClass("d-none");
         $("#txtApplyForArmyNo").val("");
 
-        $("#txtApplyForNewArmyNo").addClass("d-none");
-        $("#txtApplyForNewArmyNo").val("");
+        $("#txtApplyForOldArmyNo").addClass("d-none");
+        $("#txtApplyForOldArmyNo").val("");
 
         GetAllRegistrationApplyFor(2);
     });
@@ -208,8 +208,8 @@ function GetAllRegistrationApplyFor(Id) {
 
                     $('.applyforoffs').on("click", function () {
 
-                        $("#txtApplyForNewArmyNo").addClass("d-none");
-                        $("#txtApplyForNewArmyNo").val("");
+                        $("#txtApplyForOldArmyNo").addClass("d-none");
+                        $("#txtApplyForOldArmyNo").val("");
 
                         inputField.placeholder = "Enter Army No With pfx & sfx Ex.ICXXXXXP,JC391516M,15698645A";
 
@@ -267,16 +267,16 @@ function AddAllCardType() {
         lCardType = parseInt($(this).closest("button").find(".spnApplyForcard").html());
 
         if (lCardType == 4) {
-            inputField.placeholder = "Enter Old Army No With pfx & sfx Ex.ICXXXXXP,JC391516M,15698645A";
+            inputField.placeholder = "Enter New Army No With pfx & sfx Ex.ICXXXXXP,JC391516M,15698645A";
 
-            $("#txtApplyForNewArmyNo").val("");
-            $("#txtApplyForNewArmyNo").removeClass("d-none");
+            $("#txtApplyForOldArmyNo").val("");
+            $("#txtApplyForOldArmyNo").removeClass("d-none");
             
         }
         else {
             inputField.placeholder = "Enter Army No With pfx & sfx Ex.ICXXXXXP,JC391516M,15698645A";
-            $("#txtApplyForNewArmyNo").addClass("d-none");
-            $("#txtApplyForNewArmyNo").val("");
+            $("#txtApplyForOldArmyNo").addClass("d-none");
+            $("#txtApplyForOldArmyNo").val("");
         }
 
         $("#txtApplyForArmyNo").addClass("d-none");
@@ -321,12 +321,7 @@ function GetByArmyNoIsToken(ArmyNo) {
 
                     if (parseInt(OffType) == 1) {
                         if ((parseInt(RegistrationApplyFor) == 2 || parseInt(RegistrationApplyFor) == 3 || parseInt(RegistrationApplyFor) == 4 || parseInt(RegistrationApplyFor) == 10)) {
-                            if (IsWithTokenApply == true && lCardType != 4) {
-                                $("#btntokenrefresh").removeClass("d-none");
-                                $("#txtApplyForArmyNo").addClass("d-none");///for bypass for off
-                                $('#btnNext').addClass("disabled");
-                            }
-                            else if (IsWithTokenApply == true && lCardType ==4) {
+                            if (IsWithTokenApply == true) {
                                 $("#btntokenrefresh").removeClass("d-none");
                                 $("#txtApplyForArmyNo").addClass("d-none");///for bypass for off
                                 $('#btnNext').addClass("disabled");
