@@ -3138,7 +3138,7 @@ namespace Web.Controllers
             {
                 cardHistoryResponses = await basicDetailBL.ICardHistory(RequestId);
             }
-            else if (cardStatus.GetValueOrDefault() == 3)
+            else if (cardStatus.GetValueOrDefault() == 2)
             {
                 cardHistoryResponses = await basicDetailBL.ICardHistoryCompleted(RequestId);
             }

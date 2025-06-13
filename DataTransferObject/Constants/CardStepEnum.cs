@@ -10,6 +10,6 @@ namespace DataTransferObject.Constants
     {
         Exported = 5,
         Printed = 6,
-        CardDistributed = 18
+        CardDistributed = 11
     }
 }

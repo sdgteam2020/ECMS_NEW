@@ -43,8 +43,8 @@ namespace DataAccessLayer
         {
             try
             {
-                return _context.TrnDestructionCards
-                                .Any(f => f.RequestId == RequestId);
+                return await _context.TrnDestructionCards
+                                .AnyAsync(f => f.RequestId == RequestId);
             }
             catch (Exception ex)
             {

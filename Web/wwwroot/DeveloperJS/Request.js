@@ -246,10 +246,10 @@ function AddAllCardType() {
     var list = '';
     list += '<div class="seven mt-4" ><h1>Reason For Applying</h1>';
     list += '<button type="button" class="btn btn-outline-primary mt-4 ml-2 applyforicard btn1">First time Smart card <span class="spnApplyForcard d-none">1</span></button>';
-    list += '<button type="button" class="btn btn-outline-primary mt-4 ml-2 applyforicard btn1">Fair wear and tear <span class="spnApplyForcard d-none">2</span></button>';
+    list += '<button type="button" class="btn btn-outline-primary mt-4 ml-2 applyforicard btn1">Fair wear and tear / Damaged<span class="spnApplyForcard d-none">2</span></button>';
     list += '<button type="button" class="btn btn-outline-primary mt-4 ml-2 applyforicard btn1">Change of Rank <span class="spnApplyForcard d-none">3</span></button>';
     list += '<button type="button" class="btn btn-outline-primary mt-4 ml-2 applyforicard btn1">Change of Army No <span class="spnApplyForcard d-none">4</span></button>';
-    list += '<button type="button" class="btn btn-outline-primary mt-4 ml-2 applyforicard btn1">Loss/ Damaged <span class="spnApplyForcard d-none">5</span></button>';
+    list += '<button type="button" class="btn btn-outline-primary mt-4 ml-2 applyforicard btn1">Lost Card<span class="spnApplyForcard d-none">5</span></button>';
 
     $("#icardrequestfor").html(list);
 
@@ -354,8 +354,8 @@ function GetByArmyNoIsToken(ArmyNo) {
                         }
                     }
                     else {
-                        $("#btntokenrefresh").removeClass("d-none");
-                        $("#txtApplyForArmyNo").addClass("d-none");///for bypass for off
+                        $("#txtApplyForArmyNo").removeClass("d-none");
+                        $("#btntokenrefresh").addClass("d-none");
                         $('#txtApplyForArmyNo').attr('readonly', false);
                     }
                 }
