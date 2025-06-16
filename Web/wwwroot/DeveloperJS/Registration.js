@@ -123,6 +123,7 @@
 
     if (sessionStorage.getItem("ArmyNo") != null) {
         const encryptedArmyNo = sessionStorage.getItem("ArmyNo");
+        const encryptedOldArmyNo = sessionStorage.getItem("OldArmyNo");
         const encryptedOffType = sessionStorage.getItem("OffType");
         const encryptedRegistrationApplyFor = sessionStorage.getItem("RegistrationApplyFor");
         const encryptedlCardType = sessionStorage.getItem("lCardType");
@@ -130,12 +131,22 @@
         const secretKey = document.getElementById("spnUniqueSecretKey").innerText;
 
         const decryptedArmyNo = CryptoJS.AES.decrypt(encryptedArmyNo, secretKey).toString(CryptoJS.enc.Utf8);
+        const decryptedOldArmyNo = CryptoJS.AES.decrypt(encryptedOldArmyNo, secretKey).toString(CryptoJS.enc.Utf8);
         const decryptedOffType = CryptoJS.AES.decrypt(encryptedOffType, secretKey).toString(CryptoJS.enc.Utf8);
         const decryptedRegistrationApplyFor = CryptoJS.AES.decrypt(encryptedRegistrationApplyFor, secretKey).toString(CryptoJS.enc.Utf8);
         const decryptedlCardType = CryptoJS.AES.decrypt(encryptedlCardType, secretKey).toString(CryptoJS.enc.Utf8);
 
-
         $("#ServiceNumber").val(decryptedArmyNo);
+        $("#OldServiceNo").val(decryptedOldArmyNo);
+
+        if (decryptedlCardType == 4) {
+            $('.OldServiceNo').removeClass("d-none");
+        } else {
+            $('.OldServiceNo').addClass("d-none");
+        }
+
+
+
 
         $("#icarddetails").html(decryptedArmyNo);
         $("#ApplyForId").val(decryptedOffType);

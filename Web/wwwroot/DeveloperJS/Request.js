@@ -88,19 +88,6 @@ $(document).ready(function () {
     $("#btnNext").on("click", async function () {
 
         if ($("#txtApplyForArmyNo").val().length > 7 && $("#txtApplyForArmyNo").val().length < 10) {
-            if (lCardType == 4) {
-                if ($("#txtApplyForOldArmyNo").val().length > 7 && $("#txtApplyForOldArmyNo").val().length < 10) {
-                    if ($("#txtApplyForOldArmyNo").val().toUpperCase() == $("#txtApplyForArmyNo").val().toUpperCase()) {
-                        toastr.error("Old Army No and New Army No not same.");
-                    }
-                    else{
-
-                    }
-                }
-                else {
-                    toastr.error("Old Army No minlength is eight character.");
-                }
-            }
             if (parseInt(OffType) == 1) {
                 if ((parseInt(RegistrationApplyFor) == 2 || parseInt(RegistrationApplyFor) == 3 || parseInt(RegistrationApplyFor) == 4 || parseInt(RegistrationApplyFor) == 10)) {
                     if (IsWithTokenApply == true) {
@@ -115,60 +102,83 @@ $(document).ready(function () {
                     }
                 }
             }
-            if (parseInt(OffType) != 0 && parseInt(RegistrationApplyFor) != 0 && parseInt(lCardType) != 0) {
-                if (OffType == 1 && parseInt(RegistrationApplyFor) == 1) {
 
-                    if ($("#txtApplyForArmyNo").val() === $("#aspntokenarmyno").html()) {
-                        IsValid = 1;
-                    } else {
-
-                        Message = "Please Inset Valid Token Token ArmyNo And Login ArmyNo Not Match";
-                        IsValid = 0;
-                    }
-
-
-                }
-                if (OffType == 1 && parseInt(RegistrationApplyFor) == 2) {
-
-
-                    if ($("#txtApplyForArmyNo").val() != "") {
-                        IsValid = 1;
+            if (lCardType == 4) {
+                if ($("#txtApplyForOldArmyNo").val().length > 7 && $("#txtApplyForOldArmyNo").val().length < 10) {
+                    if ($("#txtApplyForOldArmyNo").val().toUpperCase() == $("#txtApplyForArmyNo").val().toUpperCase()) {
+                        toastr.error("Old Army No and New Army No not same.");
                     }
                     else {
 
-                        Message = "Please Inset Token";
-                        IsValid = 0;
-                    }
-                }
-                else if (OffType == 1 && parseInt(RegistrationApplyFor) != 1) {
-                    if ($("#txtApplyForArmyNo").val() != "") {
-                        IsValid = 1;
-                    }
-                    else {
-                        Message = "Please Enter Army No";
-                        IsValid = 0;
-                    }
-                }
-                else if (OffType == 2) {
-                    if ($("#txtApplyForArmyNo").val() == "") {
-                        IsValid = 0;
-                        Message = "Please Enter Army No";
-                    }
-                    else {
-                        IsValid = 1;
-                    }
-                }
-                if (IsValid == 1) {
+                        let OldArmyNo = await CheckArmyNo($("#txtApplyForOldArmyNo").val());
+                        let NewArmyNo = await CheckArmyNo($("#txtApplyForArmyNo").val());
 
-                    CheckArmyNOExist();
+                        if (OldArmyNo == false) {
+                            toastr.error("Old Army No not found.");
+                        }
+                        else if (NewArmyNo == true) {
+                            toastr.error("New Army No is alredy used.");
+                        }
+                        else {
+                            CheckArmyNOExist();
+                        }
+                    }
                 }
                 else {
-                    toastr.error(Message);
+                    toastr.error("Old Army No minlength is eight character.");
                 }
             }
             else {
-                toastr.error("Invalid Selected");
+                if (parseInt(OffType) != 0 && parseInt(RegistrationApplyFor) != 0 && parseInt(lCardType) != 0) {
+                    if (OffType == 1 && parseInt(RegistrationApplyFor) == 1) {
+                        if ($("#txtApplyForArmyNo").val() === $("#aspntokenarmyno").html()) {
+                            IsValid = 1;
+                        } else {
+                            Message = "Please Inset Valid Token Token ArmyNo And Login ArmyNo Not Match";
+                            IsValid = 0;
+                        }
+                    }
+                    if (OffType == 1 && parseInt(RegistrationApplyFor) == 2) {
+                        if ($("#txtApplyForArmyNo").val() != "") {
+                            IsValid = 1;
+                        }
+                        else {
+                            Message = "Please Inset Token";
+                            IsValid = 0;
+                        }
+                    }
+                    else if (OffType == 1 && parseInt(RegistrationApplyFor) != 1) {
+                        if ($("#txtApplyForArmyNo").val() != "") {
+                            IsValid = 1;
+                        }
+                        else {
+                            Message = "Please Enter Army No";
+                            IsValid = 0;
+                        }
+                    }
+                    else if (OffType == 2) {
+                        if ($("#txtApplyForArmyNo").val() == "") {
+                            IsValid = 0;
+                            Message = "Please Enter Army No";
+                        }
+                        else {
+                            IsValid = 1;
+                        }
+                    }
+
+                    if (IsValid == 1) {
+
+                        CheckArmyNOExist();
+                    }
+                    else {
+                        toastr.error(Message);
+                    }
+                }
+                else {
+                    toastr.error("Invalid Selected");
+                }
             }
+
         }
         else {
             toastr.error("Army No minlength is eight character.");
@@ -472,7 +482,7 @@ function CheckArmyNOExist() {
         url: "/BasicDetail/GetData",
         type: "POST",
         data: {
-            "ICNumber": $("#txtApplyForArmyNo").val(),
+            "ICNumber": lCardType == 4 ? $("#txtApplyForOldArmyNo").val() : $("#txtApplyForArmyNo").val(),
             "lCardType": lCardType
         },
         success: function (response, status) {
@@ -494,6 +504,7 @@ function CheckArmyNOExist() {
                         var secretKey = document.getElementById("spnUniqueSecretKey").innerText;
 
                         var encryptedArmyNo = CryptoJS.AES.encrypt($("#txtApplyForArmyNo").val(), secretKey).toString();
+                        var encryptedOldArmyNo = CryptoJS.AES.encrypt($("#txtApplyForOldArmyNo").val(), secretKey).toString();
                         var encryptedOffType = CryptoJS.AES.encrypt(OffType.toString(), secretKey).toString();
                         var encryptedRegistrationApplyFor = CryptoJS.AES.encrypt(RegistrationApplyFor.toString(), secretKey).toString();
                         var encryptedlCardType = CryptoJS.AES.encrypt(lCardType.toString(), secretKey).toString();
@@ -502,6 +513,7 @@ function CheckArmyNOExist() {
                         sessionStorage.setItem("RegistrationApplyFor", encryptedRegistrationApplyFor);
                         sessionStorage.setItem("lCardType", encryptedlCardType);
                         sessionStorage.setItem("ArmyNo", encryptedArmyNo);
+                        sessionStorage.setItem("OldArmyNo", encryptedOldArmyNo);
                         window.location.href = "/BasicDetail/Registration";
                     }
                 });
@@ -511,3 +523,34 @@ function CheckArmyNOExist() {
 
 }
 
+async function CheckArmyNo(ArmyNo) {
+
+    let param = new URLSearchParams({ ArmyNo: ArmyNo });
+
+    try {
+        const response = await fetch('/BasicDetail/CheckArmyNO', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: param
+        });
+
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+
+        const result = await response.json();
+
+        if (result != null) {
+            return result;
+
+        } else {
+            toastr.error('Invalid Input.');
+            window.location.href = '/BasicDetail/Request';
+        }
+
+    } catch (error) {
+        alert("Error: " + error.message);
+    }
+}

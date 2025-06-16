@@ -21,6 +21,10 @@ namespace DataTransferObject.Requests
         [RegularExpression(@"^[\w ]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
         public string ServiceNumber { get; set; } = string.Empty;
 
+        [MinLength(8, ErrorMessage = "Minimum length of Army No is eight character.")]
+        [MaxLength(9, ErrorMessage = "Maximum length of Army No is nine character.")]
+        public string? OldServiceNo { get; set; } = string.Empty;
+
         [Display(Name = "SubmitType", ResourceType = typeof(Resource))]
         [RegularExpression(@"^[\d]+$", ErrorMessage = "SubmitType is number.")]
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]

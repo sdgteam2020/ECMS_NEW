@@ -147,6 +147,13 @@
                                                 </form>
                                                 <div class="row">
                                                     <div class="col-xl-6">
+                                                        <div class="form-group row mb-2 OldServiceNo">
+                                                            <label class="col-sm-6 col-form-label form-label labelprofile">Old Service No</label>
+                                                            <div class="col-sm-6">
+                                                                <input asp-for="OldServiceNo" readonly class="form-control text-uppercase" />
+                                                                <span asp-validation-for="OldServiceNo" class="text-danger"></span>
+                                                            </div>
+                                                        </div>
                                                         <div class="form-group row mb-2 required">
                                                             <label asp-for="RankId" class="col-sm-6 col-form-label form-label labelprofile"></label>
                                                             <div class="col-sm-6">

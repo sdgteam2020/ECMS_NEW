@@ -46,6 +46,10 @@ namespace DataAccessLayer
             this.protector = dataProtectionProvider.CreateProtector(
                 dataProtectionPurposeStrings.AFSACIdRouteValue);
         }
+        public async Task<bool> CheckArmyNO(string ArmyNo)
+        {
+            return await _context.BasicDetails.AnyAsync(x => x.ServiceNo == ArmyNo);
+        }
         public async Task<DTOUploadChipAndSerialResponse> UploadChipAndSerial(List<DTOUploadChipAndSerialRequest> Data)
         {
             int i = 0;

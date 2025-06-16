@@ -14,6 +14,7 @@ namespace BusinessLogicsLayer.BasicDet
 {
     public interface IBasicDetailBL:IGenericRepository<BasicDetail>
     {
+        public Task<bool> CheckArmyNO(string ArmyNo);
         public Task<DTOUploadChipAndSerialResponse> UploadChipAndSerial(List<DTOUploadChipAndSerialRequest> Data);
         public Task<string?> GetCSVString(DTOCSVExportRequest Data);
         public Task<List<DTOTopArmyNoFromICardRequestResponse>?> GetTopArmyNoFromICardRequest(string ArmyNo);

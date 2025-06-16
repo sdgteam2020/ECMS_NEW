@@ -23,6 +23,10 @@ namespace BusinessLogicsLayer.BasicDet
     {
         private readonly IBasicDetailDB _iBasicDetailDB;
         private readonly ILogger<BasicDetailBL> _logger;
+        public async Task<bool> CheckArmyNO(string ArmyNo)
+        {
+            return await _iBasicDetailDB.CheckArmyNO(ArmyNo);
+        }
         public async Task<DTOUploadChipAndSerialResponse> UploadChipAndSerial(List<DTOUploadChipAndSerialRequest> Data)
         {
             return await _iBasicDetailDB.UploadChipAndSerial(Data);

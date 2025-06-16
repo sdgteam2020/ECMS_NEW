@@ -719,6 +719,47 @@ namespace Web.Controllers
                 {
                     if (model.SubmitType == 1)
                     {
+                        if(model.TypeId == 4)
+                        {
+                            if (model.OldServiceNo != null && model.ServiceNo != null)
+                            {
+                                bool OldArmyNoFound = await basicDetailBL.CheckArmyNO(model.OldServiceNo);
+                                bool NewArmyNoFound = await basicDetailBL.CheckArmyNO(model.ServiceNo);
+                                if (model.ServiceNo == model.OldServiceNo)
+                                {
+                                    TempData["error"] = "Old Army No and New Army No not same.";
+                                    goto end;
+                                }
+                                else if (OldArmyNoFound == false)
+                                {
+                                    TempData["error"] = "Old Army No not found.";
+                                    goto end;
+                                }
+                                else if (NewArmyNoFound == true)
+                                {
+                                    TempData["error"] = "New Army No is alredy used.";
+                                    goto end;
+                                }
+                                else
+                                {
+
+                                }
+                            }
+                            else
+                            {
+                                if (model.OldServiceNo == null)
+                                {
+                                    ModelState.AddModelError("OldServiceNo", "Old Service No required.");
+                                    goto end;
+                                }
+                                if (model.ServiceNo == null)
+                                {
+                                    ModelState.AddModelError("ServiceNo", "New Service No required.");
+                                    goto end;
+                                }
+                            }
+                        }
+
                         BasicDetail? Data = new BasicDetail();
                         Data = await basicDetailBL.FindServiceNo(model.ServiceNo);
                         if (Data != null)
@@ -2978,6 +3019,26 @@ namespace Web.Controllers
 
         #region GetSessionValue/GetData/SearchAllServiceNo/GetBasicDetailByRequestId/GetRequestHistory/GetRegimentalListByArmedId/GetROListByArmedId/GetRemarks/CreateCSV/GetICardPrintPreviewByRequestId/GetBDetailByRequestId/GetTopArmyNoFromICardRequest/ICardRequestHold/GetAllICardRequestHold
 
+        public async Task<IActionResult> CheckArmyNO(string ArmyNo)
+        {
+            try
+            {
+                if (!ArmyNo.IsNullOrEmpty())
+                {
+                    return Json(await basicDetailBL.CheckArmyNO(ArmyNo));
+                }
+                else
+                {
+                    return Json(false);
+                }
+                    
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "BasicDetail->CheckArmyNO");
+                return Json(false);
+            }
+        }
         private string GetSessionValue()
         {
             DtoSession? dtoSession = new DtoSession();
@@ -3038,7 +3099,6 @@ namespace Web.Controllers
             }
             else
             {
-
                 dTOApiDataResponse.Status = false;
                 dTOApiDataResponse.Message = "Service no required.";
                 return Ok(dTOApiDataResponse);
