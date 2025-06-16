@@ -89,7 +89,17 @@ $(document).ready(function () {
 
         if ($("#txtApplyForArmyNo").val().length > 7 && $("#txtApplyForArmyNo").val().length < 10) {
             if (lCardType == 4) {
+                if ($("#txtApplyForOldArmyNo").val().length > 7 && $("#txtApplyForOldArmyNo").val().length < 10) {
+                    if ($("#txtApplyForOldArmyNo").val().toUpperCase() == $("#txtApplyForArmyNo").val().toUpperCase()) {
+                        toastr.error("Old Army No and New Army No not same.");
+                    }
+                    else{
 
+                    }
+                }
+                else {
+                    toastr.error("Old Army No minlength is eight character.");
+                }
             }
             if (parseInt(OffType) == 1) {
                 if ((parseInt(RegistrationApplyFor) == 2 || parseInt(RegistrationApplyFor) == 3 || parseInt(RegistrationApplyFor) == 4 || parseInt(RegistrationApplyFor) == 10)) {
