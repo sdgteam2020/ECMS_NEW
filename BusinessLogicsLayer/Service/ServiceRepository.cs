@@ -326,6 +326,17 @@ namespace BusinessLogicsLayer.Service
             Span<byte> buffer = new Span<byte>(new byte[base64.Length]);
             return Convert.TryFromBase64String(base64, buffer, out _);
         }
+        public string CheckFirstTwoChars(string input)
+        {
+            if (input.Length >= 2 && Char.IsLetter(input[0]) && Char.IsLetter(input[1]))
+            {
+                return input.Substring(0, 2).ToUpper();
+            }
+            else
+            {
+                return string.Empty; // Return empty if not alphabetic or less than 2 characters
+            }
+        }
 
     }
 }

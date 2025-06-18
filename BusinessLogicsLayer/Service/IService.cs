@@ -22,5 +22,6 @@ namespace BusinessLogicsLayer.Service
         public string GetContentType(string path);
         public Dictionary<string, string> GetMimeTypes();
         public bool IsValidBase64(string base64);
+        public string CheckFirstTwoChars(string input);
     }
 }

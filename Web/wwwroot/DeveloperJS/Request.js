@@ -109,18 +109,66 @@ $(document).ready(function () {
                         toastr.error("Old Army No and New Army No not same.");
                     }
                     else {
+                        let OldServiceNo = $("#txtApplyForOldArmyNo").val();
+                        let NewServiceNo = $("#txtApplyForArmyNo").val();
 
-                        let OldArmyNo = await CheckArmyNo($("#txtApplyForOldArmyNo").val());
-                        let NewArmyNo = await CheckArmyNo($("#txtApplyForArmyNo").val());
+                        let OldArmyNoFound = await CheckArmyNo(OldServiceNo);
+                        let NewArmyNoFound = await CheckArmyNo(NewServiceNo);
 
-                        if (OldArmyNo == false) {
+                        let OldFirstTwo = await checkFirstTwoChars(OldServiceNo);
+                        let NewFirstTwo = await checkFirstTwoChars(NewServiceNo);
+
+                        let OldArmyNoSfx = await ChkSfx(OldServiceNo);
+                        let NewArmyNoSfx = await ChkSfx(NewServiceNo);
+
+                        if (OldArmyNoSfx == false) {
+                            toastr.error("Invalid Old Army No.");
+                        }
+                        else if (NewArmyNoSfx == false) {
+                            toastr.error("Invalid New Army No.");
+                        }
+                        else if (OldArmyNoFound == false) {
                             toastr.error("Old Army No not found.");
                         }
-                        else if (NewArmyNo == true) {
+                        else if (NewArmyNoFound == true) {
                             toastr.error("New Army No is alredy used.");
                         }
-                        else {
-                            CheckArmyNOExist();
+                        else if (OldFirstTwo === '') {
+                            if (NewFirstTwo === '') {
+                                toastr.error("Both Old and New Army No is OR rank.");
+                            }
+                            else if (OffType == 2 && (NewFirstTwo === 'IC' || NewFirstTwo === 'SL' || NewFirstTwo === 'WC' || NewFirstTwo === 'SS' || NewFirstTwo === 'TA')) {
+                                toastr.error("Please Select Offrs tab.");
+                            }
+                            else if (OffType == 1 && NewFirstTwo === 'JC') {
+                                toastr.error("Please Select JCOs/OR tab.");
+                            }
+                            else {
+                                CheckArmyNOExist();
+                            }
+                        }
+                        else if (OldFirstTwo !== '') {
+                            if (OldFirstTwo === 'IC' && NewFirstTwo === '') {
+                                toastr.error("Permanent Commissioned Officers are not downgraded.");
+                            }
+                            else if (OldFirstTwo === 'IC' && NewFirstTwo === 'IC') {
+                                toastr.error("Both Old and New Army No is permanent commissioned officers.");
+                            }
+                            else if (OldFirstTwo === 'IC' && (NewFirstTwo === 'SS' || NewFirstTwo === 'SL' || NewFirstTwo === 'WC' || NewFirstTwo === 'TA' || NewFirstTwo === 'JC')) {
+                                toastr.error("Permanent Commissioned Officers are not downgraded.");
+                            }
+                            else if ((OldFirstTwo === 'SL' || OldFirstTwo === 'TA') && (NewFirstTwo === 'IC' || NewFirstTwo === 'SS' || NewFirstTwo === 'SL' || NewFirstTwo === 'WC' || NewFirstTwo === 'TA' || NewFirstTwo === 'JC')) {
+                                toastr.error("SL / TA are not changed Army No.");
+                            }
+                            else if ((OldFirstTwo === 'SS' || OldFirstTwo === 'WC') && OffType == 2 && NewFirstTwo !== '' && NewFirstTwo === 'IC') {
+                                toastr.error("Please Select Offrs tab.");
+                            }
+                            else if (OldFirstTwo === 'JC' && OffType == 2 && NewFirstTwo !== '' && (NewFirstTwo === 'SS' || NewFirstTwo === 'SL' || NewFirstTwo === 'WC' || NewFirstTwo === 'TA')) {
+                                toastr.error("Please Select  Offrs tab.");
+                            }
+                            else {
+                                CheckArmyNOExist();
+                            }
                         }
                     }
                 }
@@ -553,4 +601,109 @@ async function CheckArmyNo(ArmyNo) {
     } catch (error) {
         alert("Error: " + error.message);
     }
+}
+async function checkFirstTwoChars(input) {
+    // Simulating an asynchronous check (no external fetch needed)
+    await new Promise(resolve => resolve()); // The 'await' here is just for structure
+
+    if (input.length >= 2 && /^[a-zA-Z]{2}/.test(input)) {
+        return input.substring(0, 2).toUpperCase();
+    } else {
+        return ''; // Return empty if not alphabetic or less than 2 characters
+    }
+}
+async function ChkSfx(ServiceNo) {
+    // Simulating an asynchronous check (no external fetch needed)
+    await new Promise(resolve => resolve()); // The 'await' here is just for structure
+
+    let ArmyNo = ServiceNo;
+
+    var armyno = ArmyNo.replace(/[A-Za-z]/g, '');
+
+    var txt = ArmyNo.slice(-1);
+    // Get last character
+    const lastChar = ArmyNo.slice(-1);
+
+    // Check if it is an alphabet
+    const isAlpha = /^[A-Za-z]$/.test(lastChar);
+    if (txt == "" || isAlpha == false) {
+        return false;
+    }
+    var vlength = armyno.length;
+    var NumMulti = parseInt(vlength) + 1;
+    var vMulti = 0;
+    var vSum = 0;
+    var Sfx;
+    for (var i = 0; i < vlength; i++) {
+        vMulti = parseInt(armyno.charAt(i)) * parseInt(NumMulti);
+        vSum = parseInt(vSum) + parseInt(vMulti);
+        NumMulti = parseInt(NumMulti) - 1;
+
+    }
+
+    var Reminder = parseInt(vSum) % 11;
+    switch (Reminder) {
+        case (0):
+            {
+                Sfx = "A"
+                break;
+            }
+        case (1):
+            {
+                Sfx = "F"
+                break;
+            }
+        case (2):
+            {
+                Sfx = "H"
+                break;
+            }
+        case (3):
+            {
+                Sfx = "K"
+                break;
+            }
+        case (4):
+            {
+                Sfx = "L"
+                break;
+            }
+        case (5):
+            {
+                Sfx = "M"
+                break;
+            }
+        case (6):
+            {
+                Sfx = "N"
+                break;
+            }
+        case (7):
+            {
+                Sfx = "P"
+                break;
+            }
+        case (8):
+            {
+                Sfx = "W"
+                break;
+            }
+        case (9):
+            {
+                Sfx = "X"
+                break;
+            }
+        case (10):
+            {
+                Sfx = "Y"
+                break;
+            }
+    }
+    if (Sfx === lastChar) {
+        return true;
+    }
+    else {
+        return false;
+    }
+    
 }

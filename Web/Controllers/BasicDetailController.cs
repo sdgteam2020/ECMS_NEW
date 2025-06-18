@@ -50,6 +50,8 @@ using BusinessLogicsLayer.DestructionCard;
 using iText.Layout.Renderer;
 using BusinessLogicsLayer.DistributeCard;
 using BusinessLogicsLayer.BdeCate;
+using System;
+using System.Linq;
 
 namespace Web.Controllers
 {
@@ -721,40 +723,113 @@ namespace Web.Controllers
                     {
                         if(model.TypeId == 4)
                         {
-                            if (model.OldServiceNo != null && model.ServiceNo != null)
+                            string? OldServiceNo = model.OldServiceNo;
+                            string? NewServiceNo = model.ServiceNo;
+
+                            if ((OldServiceNo != null && (OldServiceNo.Length > 7 && OldServiceNo.Length < 10)) && (NewServiceNo != null && (NewServiceNo.Length > 7 && NewServiceNo.Length < 10)))
                             {
-                                bool OldArmyNoFound = await basicDetailBL.CheckArmyNO(model.OldServiceNo);
-                                bool NewArmyNoFound = await basicDetailBL.CheckArmyNO(model.ServiceNo);
-                                if (model.ServiceNo == model.OldServiceNo)
+                                if (NewServiceNo == OldServiceNo)
                                 {
                                     TempData["error"] = "Old Army No and New Army No not same.";
                                     goto end;
                                 }
-                                else if (OldArmyNoFound == false)
-                                {
-                                    TempData["error"] = "Old Army No not found.";
-                                    goto end;
-                                }
-                                else if (NewArmyNoFound == true)
-                                {
-                                    TempData["error"] = "New Army No is alredy used.";
-                                    goto end;
-                                }
                                 else
                                 {
+                                    bool OldArmyNoFound = await basicDetailBL.CheckArmyNO(OldServiceNo);
+                                    bool NewArmyNoFound = await basicDetailBL.CheckArmyNO(NewServiceNo);
 
+                                    string OldFirstTwo = service.CheckFirstTwoChars(OldServiceNo);
+                                    string NewFirstTwo = service.CheckFirstTwoChars(NewServiceNo);
+
+                                    //string[] Prefix = { "IC", "SL", "SS", "WC", "TA" };
+
+                                    //string[] NotAllowedPrefix = { "SL", "SS", "WC", "TA", "JC" };
+
+                                    if (OldArmyNoFound == false)
+                                    {
+                                        TempData["error"] = "Old Army No not found.";
+                                        goto end;
+                                    }
+                                    else if (NewArmyNoFound == true)
+                                    {
+                                        TempData["error"] = "New Army No is alredy used.";
+                                        goto end;
+                                    }
+                                    else if (OldFirstTwo.IsNullOrEmpty())
+                                    {
+                                        if (NewFirstTwo.IsNullOrEmpty())
+                                        {
+                                            TempData["error"] = "Both Old and New Army No is OR rank.";
+                                            goto end;
+                                        }
+                                        else if (model.ApplyForId == 2 && (NewFirstTwo == "IC" || NewFirstTwo == "SL" || NewFirstTwo == "WC" || NewFirstTwo == "SS" || NewFirstTwo == "TA"))
+                                        {
+                                            TempData["error"] = "Please Select Offrs tab.";
+                                            goto end;
+                                        }
+                                        else if (model.ApplyForId == 1 && NewFirstTwo == "JC")
+                                        {
+                                            TempData["error"] = "Please Select JCOs/OR tab.";
+                                            goto end;
+                                        }
+
+                                    }
+                                    else if (!OldFirstTwo.IsNullOrEmpty())
+                                    {
+                                        if (OldFirstTwo == "IC" && NewFirstTwo.IsNullOrEmpty())
+                                        {
+                                            TempData["error"] = "Permanent Commissioned Officers are not downgraded.";
+                                            goto end;
+                                        }
+                                        else if (OldFirstTwo == "IC" && NewFirstTwo == "IC")
+                                        {
+                                            TempData["error"] = "Both Old and New Army No is permanent commissioned officers.";
+                                            goto end;
+                                        }
+                                        else if (OldFirstTwo == "IC" && (NewFirstTwo == "SS" || NewFirstTwo == "SL" || NewFirstTwo == "WC" || NewFirstTwo == "TA" || NewFirstTwo == "JC"))
+                                        {
+                                            TempData["error"] = "Permanent Commissioned Officers are not downgraded.";
+                                            goto end;
+                                        }
+                                        else if ((OldFirstTwo == "SL" || OldFirstTwo == "TA") && (NewFirstTwo == "IC" || NewFirstTwo == "SS" || NewFirstTwo == "SL" || NewFirstTwo == "WC" || NewFirstTwo == "TA" || NewFirstTwo == "JC"))
+                                        {
+                                            TempData["error"] = "SL / TA are not changed Army No.";
+                                            goto end;
+                                        }
+                                        else if ((OldFirstTwo == "SS" || OldFirstTwo == "WC") && model.ApplyForId == 2 && !NewFirstTwo.IsNullOrEmpty() && NewFirstTwo == "IC")
+                                        {
+                                            TempData["error"] = "Please Select Offrs tab.";
+                                            goto end;
+                                        }
+                                        else if (OldFirstTwo == "JC" && model.ApplyForId == 2 && !NewFirstTwo.IsNullOrEmpty() && (NewFirstTwo == "SS" || NewFirstTwo == "SL" || NewFirstTwo == "WC" || NewFirstTwo == "TA"))
+                                        {
+                                            TempData["error"] = "Please Select  Offrs tab.";
+                                            goto end;
+                                        }
+                                    }
                                 }
+
                             }
                             else
                             {
-                                if (model.OldServiceNo == null)
+                                if (OldServiceNo == null)
                                 {
                                     ModelState.AddModelError("OldServiceNo", "Old Service No required.");
                                     goto end;
                                 }
-                                if (model.ServiceNo == null)
+                                if (OldServiceNo.Length < 8 || OldServiceNo.Length > 9)
+                                {
+                                    ModelState.AddModelError("OldServiceNo", "Minimum eight and Maximum nine length of Army No.");
+                                    goto end;
+                                }
+                                if (NewServiceNo == null)
                                 {
                                     ModelState.AddModelError("ServiceNo", "New Service No required.");
+                                    goto end;
+                                }
+                                if (NewServiceNo.Length < 8 || NewServiceNo.Length > 9)
+                                {
+                                    ModelState.AddModelError("ServiceNo", "Minimum eight and Maximum nine length of Army No.");
                                     goto end;
                                 }
                             }
@@ -3085,14 +3160,14 @@ namespace Web.Controllers
                 }
                 else
                 {
-                    if (lCardType != 1)
+                    if (lCardType == 1 || lCardType == 4)
                     {
-                        dTOApiDataResponse.Message = "Please Select First time Smart card";
-                        dTOApiDataResponse.Status = false;
+                        dTOApiDataResponse.Status = true;
                     }
                     else
                     {
-                        dTOApiDataResponse.Status = true;
+                        dTOApiDataResponse.Message = "Please Select First time Smart card";
+                        dTOApiDataResponse.Status = false;
                     }
                     return Ok(dTOApiDataResponse);
                 }
