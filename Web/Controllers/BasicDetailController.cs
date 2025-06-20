@@ -836,7 +836,15 @@ namespace Web.Controllers
                         }
 
                         BasicDetail? Data = new BasicDetail();
-                        Data = await basicDetailBL.FindServiceNo(model.ServiceNo);
+                        if (model.TypeId == 4 && model.OldServiceNo != null)
+                        {
+                            Data = await basicDetailBL.FindServiceNo(model.OldServiceNo);
+                        }
+                        else
+                        {
+                            Data = await basicDetailBL.FindServiceNo(model.ServiceNo);
+                        }
+                            
                         if (Data != null)
                         {
                             TempData["Registration"] = JsonConvert.SerializeObject(model);
@@ -990,6 +998,7 @@ namespace Web.Controllers
                         dTOBasicDetailCrtRequest.LName = model.LName;
                         dTOBasicDetailCrtRequest.NameAsPerRecord = model.NameAsPerRecord;
                         dTOBasicDetailCrtRequest.ServiceNo = model.ServiceNo;
+                        dTOBasicDetailCrtRequest.OldServiceNo = model.OldServiceNo;
                         dTOBasicDetailCrtRequest.DOB = model.DOB;
                         dTOBasicDetailCrtRequest.DateOfCommissioning = model.DateOfCommissioning;
                         dTOBasicDetailCrtRequest.IdenMark1 = model.IdenMark1;
@@ -1037,6 +1046,9 @@ namespace Web.Controllers
                     ViewBag.OptionsRegimentalId = basicDetailUpdVM.RegimentalId;
                     ViewBag.OptionsBloodGroupId = basicDetailUpdVM.BloodGroupId;
 
+                    basicDetailUpdVM.ExistingOldServiceNo = basicDetailUpdVM.OldServiceNo;
+
+
                     basicDetailUpdVM.BloodGroupId = basicDetailUpdVM.BloodGroupId;
                     basicDetailUpdVM.PermanentAddress = "Village - " + basicDetailUpdVM.Village + ", Post Office-" + basicDetailUpdVM.PO + ", Tehsil- " + basicDetailUpdVM.Tehsil + ", District- " + basicDetailUpdVM.District + ", State- " + basicDetailUpdVM.State + ", Pin Code- " + (basicDetailUpdVM.PinCode == 0 ? "" : basicDetailUpdVM.PinCode);
 
@@ -1066,6 +1078,7 @@ namespace Web.Controllers
                         basicDetailUpdVM.FName = modelex.FName;
                         basicDetailUpdVM.LName = modelex.LName;
                         basicDetailUpdVM.ServiceNo = modelex.ServiceNo;
+                        basicDetailUpdVM.OldServiceNo = modelex.OldServiceNo;
                         basicDetailUpdVM.DOB = modelex.DOB;
                         basicDetailUpdVM.DateOfCommissioning = modelex.DateOfCommissioning;
                         //basicDetailUpdVM.IdenMark1 = modelex.IdenMark1;
@@ -1135,8 +1148,32 @@ namespace Web.Controllers
                         newBasicDetail.DateOfIssue = null;
                         newBasicDetail.Updatedby = Convert.ToInt32(userId);
                         newBasicDetail.UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
+
+                        #region When change Army number request by user.
+
+                        if (model.ApplyForId == 1 && model.TypeId == 4)
+                        {
+                            newBasicDetail.RegimentalId = null;
+                        }
+
+                        if (model.TypeId == 4)
+                        {
+                            if (model.ExistingOldServiceNo.IsNullOrEmpty())
+                            {
+                                newBasicDetail.OldServiceNo = model.OldServiceNo + "#";
+                            }
+                            else
+                            {
+                                newBasicDetail.OldServiceNo = model.ExistingOldServiceNo + model.OldServiceNo + "#";
+                            }
+                        }
+
+                        #endregion
+
+
                         MTrnUpload mTrnUpload = new MTrnUpload();
                         mTrnUpload.UploadId = model.UploadId;
+                        
                         MTrnAddress mTrnAddress = new MTrnAddress();
                         mTrnAddress.State = model.State;
                         mTrnAddress.District = model.District;
@@ -1346,6 +1383,7 @@ namespace Web.Controllers
                     {
                         BasicDetail newBasicDetail = _mapper.Map<BasicDetailCrtAndUpdVM, BasicDetail>(model);
                         newBasicDetail.DateOfIssue = null;
+                        newBasicDetail.OldServiceNo = null;
                         MTrnUpload mTrnUpload = new MTrnUpload();
 
                         MTrnAddress mTrnAddress = new MTrnAddress();

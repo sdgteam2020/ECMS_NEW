@@ -173,7 +173,7 @@ $(document).ready(function () {
                     }
                 }
                 else {
-                    toastr.error("Old Army No minlength is eight character.");
+                    toastr.error("Minimum eight and Maximum nine length of Old Army No.");
                 }
             }
             else {
@@ -229,7 +229,7 @@ $(document).ready(function () {
 
         }
         else {
-            toastr.error("Army No minlength is eight character.");
+            toastr.error("Minimum eight and Maximum nine length of Army No.");
         }
     });
 });

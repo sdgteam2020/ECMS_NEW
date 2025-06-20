@@ -41,6 +41,10 @@ namespace DataTransferObject.Domain.Model
         [Column(TypeName = "varchar(10)")]
         public string ServiceNo { get; set; } = string.Empty;
 
+        [StringLength(50)]
+        [Column(TypeName = "varchar(50)")]
+        public string? OldServiceNo { get; set; }
+
         [DataType(DataType.Date)]
         [Column(TypeName = "datetime")]
         public DateTime DOB { get; set; }

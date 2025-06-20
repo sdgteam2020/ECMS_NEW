@@ -69,6 +69,8 @@ namespace DataTransferObject.ViewModels
         [MaxLength(9, ErrorMessage = "Maximum length of Army No is nine character.")]
         public string ServiceNo { get; set; } = string.Empty;
 
+        public string? OldServiceNo { get; set; } = string.Empty;
+
         //[Display(Name = "IdentityMark", ResourceType = typeof(Resource))]
         //[Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
         //[MaxLength(20, ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "MaxLengthError")]
@@ -278,6 +280,8 @@ namespace DataTransferObject.ViewModels
         public string? ExistingSignatureInBase64 { get; set; }
         public string? ExistingPhotoImagePath { get; set; }
         public string? ExistingPhotoInBase64 { get; set; }
+
+        public string? ExistingOldServiceNo { get; set; }
 
         [Display(Name = "TermsConditions", ResourceType = typeof(Resource))]
         //[Range(typeof(bool), "true", "true", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "TermsConditionsError")]
