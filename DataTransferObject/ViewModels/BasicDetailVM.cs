@@ -281,8 +281,6 @@ namespace DataTransferObject.ViewModels
         public string? ExistingPhotoImagePath { get; set; }
         public string? ExistingPhotoInBase64 { get; set; }
 
-        public string? ExistingOldServiceNo { get; set; }
-
         [Display(Name = "TermsConditions", ResourceType = typeof(Resource))]
         //[Range(typeof(bool), "true", "true", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "TermsConditionsError")]
         //[CheckBoxRequired(ErrorMessage = "Please accept the terms and condition.")]

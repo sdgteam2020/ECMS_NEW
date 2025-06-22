@@ -48,6 +48,22 @@ namespace DataAccessLayer
                 }
             }
         }
+        public async Task<bool> GetRequestPendingUsingBasicDetailIds(int[] BasicDetailId)
+        {
+            string query = @"Select count(*) from TrnICardRequest tr where tr.BasicDetailId in @BasicDetailId and tr.StatusId =1";
+            using (var connection = _contextDP.CreateConnection())
+            {
+                int PendingRequest = await connection.ExecuteScalarAsync<int>(query, new { BasicDetailId });
+                if (PendingRequest > 0)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
 
         public async Task<int> GetUserIdByRequestId(int RequestId)
         {

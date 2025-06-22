@@ -15,6 +15,8 @@ namespace DataTransferObject.Response
         public int RequestId { get; set; }
         public string Image { get; set; } = string.Empty;
         public int? MaxTrnFwdId { get; set; }
+        public string? ChipNo { get; set; }
+        public string? CardSerialNo { get; set; }
 
     }
 }

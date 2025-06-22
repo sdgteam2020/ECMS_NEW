@@ -107,9 +107,9 @@ namespace DataAccessLayer
             //builder.Entity<MRecordOffice>()
             //        .HasIndex(x => new { x.ArmedId, x.TDMId })
             //        .IsUnique();
-            builder.Entity<BasicDetail>().HasIndex(x => x.ServiceNo).IsUnique();
-            builder.Entity<BasicDetail>().HasIndex(x => x.PaperIcardNo).IsUnique().HasDatabaseName("IX_PaperIcardNo"); 
-            builder.Entity<MTrnIdentityInfo>().HasIndex(x => x.AadhaarNo).IsUnique().HasDatabaseName("IX_AadhaarNo"); 
+            //builder.Entity<BasicDetail>().HasIndex(x => x.ServiceNo).IsUnique();
+            //builder.Entity<BasicDetail>().HasIndex(x => x.PaperIcardNo).IsUnique().HasDatabaseName("IX_PaperIcardNo"); 
+            //builder.Entity<MTrnIdentityInfo>().HasIndex(x => x.AadhaarNo).IsUnique().HasDatabaseName("IX_AadhaarNo"); 
             builder.Entity<IdentityUserRole<int>>(entity =>
             {
             });

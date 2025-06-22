@@ -33,7 +33,10 @@ namespace BusinessLogicsLayer.BdeCate
         {
             return await _iTrnICardRequestDB.GetRequestPending(BasicDetailId);
         }
-
+        public async Task<bool> GetRequestPendingUsingBasicDetailIds(int[] BasicDetailId)
+        {
+            return await _iTrnICardRequestDB.GetRequestPendingUsingBasicDetailIds(BasicDetailId);
+        }
         public async Task<int> GetUserIdByRequestId(int RequestId)
         {
             return await _iTrnICardRequestDB.GetUserIdByRequestId(RequestId);

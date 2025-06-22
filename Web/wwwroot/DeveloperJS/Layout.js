@@ -99,8 +99,9 @@ $(function () {
                         
                         if (data.length !== 0) {
                             response(data.map(item => ({
-                                label: item.ServiceNo,
+                                label: `Service No - ${item.ServiceNo} Card Serial No - ${item.CardSerialNo != null ? item.CardSerialNo : ""} Chip No - ${item.ChipNo != null ? item.ChipNo : ""} `,
                                 value: item.BasicDetailId,
+                                ServiceNo: item.ServiceNo,
                                 Name: item.FName + (item.LName ? item.LName : ""),
                                 Image: item.Image,
                                 RequestId: item.RequestId,
@@ -131,7 +132,7 @@ $(function () {
             e.preventDefault();
 
             $("#armynosearchAllName").html("Name : " + i.item.Name);
-            $("#txtarmynosearchAll").val(i.item.label);
+            $("#txtarmynosearchAll").val(i.item.ServiceNo);
             $("#armynosearchAllpic").attr("src", i.item.Image);
             $("#RequestId_unitoffrsModal").val(i.item.RequestId);
             $("#MaxTrnFwdId_unitoffrsModal").val(i.item.MaxTrnFwdId);

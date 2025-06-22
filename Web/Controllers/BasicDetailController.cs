@@ -835,27 +835,30 @@ namespace Web.Controllers
                             }
                         }
 
-                        BasicDetail? Data = new BasicDetail();
-                        if (model.TypeId == 4 && model.OldServiceNo != null)
-                        {
-                            Data = await basicDetailBL.FindServiceNo(model.OldServiceNo);
-                        }
-                        else
-                        {
-                            Data = await basicDetailBL.FindServiceNo(model.ServiceNo);
-                        }
+                        //BasicDetail? Data = new BasicDetail();
+                        //if (model.TypeId == 4 && model.OldServiceNo != null)
+                        //{
+                        //    Data = await basicDetailBL.FindServiceNo(model.OldServiceNo);
+                        //}
+                        //else
+                        //{
+                        //    Data = await basicDetailBL.FindServiceNo(model.ServiceNo);
+                        //}
                             
-                        if (Data != null)
-                        {
-                            TempData["Registration"] = JsonConvert.SerializeObject(model);
-                            string id = protector.Protect(Data.BasicDetailId.ToString());
-                            return RedirectToAction("BasicDetail", "BasicDetail", new { Id = protector.Protect(Convert.ToString(Data.BasicDetailId)) });
-                        }
-                        else
-                        {
-                            TempData["Registration"] = JsonConvert.SerializeObject(model);
-                            return RedirectToAction("BasicDetail", "BasicDetail", new { Id = protector.Protect("0") });
-                        }
+                        //if (Data != null)
+                        //{
+                        //    TempData["Registration"] = JsonConvert.SerializeObject(model);
+                        //    string id = protector.Protect(Data.BasicDetailId.ToString());
+                        //    return RedirectToAction("BasicDetail", "BasicDetail", new { Id = protector.Protect(Convert.ToString(Data.BasicDetailId)) });
+                        //}
+                        //else
+                        //{
+                        //    TempData["Registration"] = JsonConvert.SerializeObject(model);
+                        //    return RedirectToAction("BasicDetail", "BasicDetail", new { Id = protector.Protect("0") });
+                        //}
+
+                        TempData["Registration"] = JsonConvert.SerializeObject(model);
+                        return RedirectToAction("BasicDetail", "BasicDetail", new { Id = protector.Protect("0") });
                     }
                     else
                     {
@@ -1046,7 +1049,6 @@ namespace Web.Controllers
                     ViewBag.OptionsRegimentalId = basicDetailUpdVM.RegimentalId;
                     ViewBag.OptionsBloodGroupId = basicDetailUpdVM.BloodGroupId;
 
-                    basicDetailUpdVM.ExistingOldServiceNo = basicDetailUpdVM.OldServiceNo;
 
 
                     basicDetailUpdVM.BloodGroupId = basicDetailUpdVM.BloodGroupId;
@@ -1148,28 +1150,6 @@ namespace Web.Controllers
                         newBasicDetail.DateOfIssue = null;
                         newBasicDetail.Updatedby = Convert.ToInt32(userId);
                         newBasicDetail.UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
-
-                        #region When change Army number request by user.
-
-                        if (model.ApplyForId == 1 && model.TypeId == 4)
-                        {
-                            newBasicDetail.RegimentalId = null;
-                        }
-
-                        if (model.TypeId == 4)
-                        {
-                            if (model.ExistingOldServiceNo.IsNullOrEmpty())
-                            {
-                                newBasicDetail.OldServiceNo = model.OldServiceNo + "#";
-                            }
-                            else
-                            {
-                                newBasicDetail.OldServiceNo = model.ExistingOldServiceNo + model.OldServiceNo + "#";
-                            }
-                        }
-
-                        #endregion
-
 
                         MTrnUpload mTrnUpload = new MTrnUpload();
                         mTrnUpload.UploadId = model.UploadId;
@@ -1383,7 +1363,6 @@ namespace Web.Controllers
                     {
                         BasicDetail newBasicDetail = _mapper.Map<BasicDetailCrtAndUpdVM, BasicDetail>(model);
                         newBasicDetail.DateOfIssue = null;
-                        newBasicDetail.OldServiceNo = null;
                         MTrnUpload mTrnUpload = new MTrnUpload();
 
                         MTrnAddress mTrnAddress = new MTrnAddress();
@@ -3167,16 +3146,66 @@ namespace Web.Controllers
         [HttpPost]
         public async Task<IActionResult> GetData(string ICNumber, byte lCardType)
         {
+            #region Old Code
+            //DTOApiDataResponse dTOApiDataResponse = new DTOApiDataResponse();
+            //if (ICNumber != null)
+            //{
+            //    BasicDetail? basicDetail = await basicDetailBL.FindServiceNo(ICNumber);
+            //    if (basicDetail != null)
+            //    {
+            //        bool result = await iTrnICardRequestBL.GetRequestPending(basicDetail.BasicDetailId);
+            //        if (result)
+            //        {
+
+            //            dTOApiDataResponse.Status = false;
+            //            dTOApiDataResponse.Message = "Your I-Card is under process. Please wait.";
+            //            return Ok(dTOApiDataResponse);
+            //        }
+            //        else
+            //        {
+            //            if (lCardType == 1)
+            //            {
+            //                dTOApiDataResponse.Message = "You didn't Select First time Smart card";
+            //                dTOApiDataResponse.Status = false;
+            //            }
+            //            else
+            //            {
+            //                dTOApiDataResponse.Status = true;
+            //            }
+
+            //            return Ok(dTOApiDataResponse);
+            //        }
+            //    }
+            //    else
+            //    {
+            //        if (lCardType == 1 || lCardType == 4)
+            //        {
+            //            dTOApiDataResponse.Status = true;
+            //        }
+            //        else
+            //        {
+            //            dTOApiDataResponse.Message = "Please Select First time Smart card";
+            //            dTOApiDataResponse.Status = false;
+            //        }
+            //        return Ok(dTOApiDataResponse);
+            //    }
+            //}
+            //else
+            //{
+            //    dTOApiDataResponse.Status = false;
+            //    dTOApiDataResponse.Message = "Service no required.";
+            //    return Ok(dTOApiDataResponse);
+            //}
+            #endregion
             DTOApiDataResponse dTOApiDataResponse = new DTOApiDataResponse();
             if (ICNumber != null)
             {
-                BasicDetail? basicDetail = await basicDetailBL.FindServiceNo(ICNumber);
-                if (basicDetail != null)
+                int[]? BasicDetailIds = await basicDetailBL.BasicDetailIds(ICNumber);
+                if (BasicDetailIds != null)
                 {
-                    bool result = await iTrnICardRequestBL.GetRequestPending(basicDetail.BasicDetailId);
+                    bool result = await iTrnICardRequestBL.GetRequestPendingUsingBasicDetailIds(BasicDetailIds);
                     if (result)
                     {
-
                         dTOApiDataResponse.Status = false;
                         dTOApiDataResponse.Message = "Your I-Card is under process. Please wait.";
                         return Ok(dTOApiDataResponse);

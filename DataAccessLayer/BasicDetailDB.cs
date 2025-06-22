@@ -313,9 +313,9 @@ namespace DataAccessLayer
                 {
                     if (Data.BasicDetailId == 0)
                     {
-                        var insertBasicDetail = " INSERT INTO BasicDetails (ArmedId, RankId, ServiceNo, DOB, PlaceOfIssue, DateOfIssue, DateOfCommissioning, ApplyForId, UnitId, PaperIcardNo,IsActive, Updatedby, UpdatedOn, IssuingAuthorityId, NameAsPerRecord, RegimentalId, FName, LName, OldServiceNo)" +
+                        var insertBasicDetail = " INSERT INTO BasicDetails (ArmedId, RankId, ServiceNo, DOB, PlaceOfIssue, DateOfIssue, DateOfCommissioning, ApplyForId, UnitId, PaperIcardNo,IsActive, Updatedby, UpdatedOn, IssuingAuthorityId, NameAsPerRecord, RegimentalId, FName, LName)" +
                                                 " OUTPUT INSERTED.BasicDetailId " +
-                                                " VALUES (@ArmedId, @RankId, @ServiceNo, @DOB, @PlaceOfIssue, @DateOfIssue, @DateOfCommissioning, @ApplyForId, @UnitId, @PaperIcardNo, @IsActive, @Updatedby, @UpdatedOn, @IssuingAuthorityId, @NameAsPerRecord, @RegimentalId, @FName, @LName, @OldServiceNo);";
+                                                " VALUES (@ArmedId, @RankId, @ServiceNo, @DOB, @PlaceOfIssue, @DateOfIssue, @DateOfCommissioning, @ApplyForId, @UnitId, @PaperIcardNo, @IsActive, @Updatedby, @UpdatedOn, @IssuingAuthorityId, @NameAsPerRecord, @RegimentalId, @FName, @LName);";
                         var parametersBD = new DynamicParameters();
                         //parametersBD.Add("@BasicDetailId", Data.BasicDetailId, DbType.Int32, ParameterDirection.Output);
                         parametersBD.Add("@ArmedId", Data.ArmedId, DbType.Byte, ParameterDirection.Input);
@@ -336,7 +336,6 @@ namespace DataAccessLayer
                         parametersBD.Add("@RegimentalId", Data.RegimentalId, DbType.Byte, ParameterDirection.Input);
                         parametersBD.Add("@FName", Data.FName, DbType.AnsiString, ParameterDirection.Input, 18);
                         parametersBD.Add("@LName", Data.LName, DbType.AnsiString, ParameterDirection.Input, 18);
-                        parametersBD.Add("@OldServiceNo", Data.OldServiceNo, DbType.AnsiString, ParameterDirection.Input, 50);
                         int BasicDetailId = await db.QuerySingleAsync<int>(insertBasicDetail, parametersBD, transaction: transaction);
 
                         address.BasicDetailId = BasicDetailId;
@@ -424,7 +423,7 @@ namespace DataAccessLayer
                         trnUpload.BasicDetailId = Data.BasicDetailId;
                         mTrnIdentityInfo.BasicDetailId = Data.BasicDetailId;
 
-                        var updateBasicDetail = " UPDATE BasicDetails SET ArmedId=@ArmedId, RankId=@RankId, ServiceNo=@ServiceNo, DOB=@DOB, PlaceOfIssue=@PlaceOfIssue, DateOfIssue=@DateOfIssue, DateOfCommissioning=@DateOfCommissioning, ApplyForId=@ApplyForId, UnitId=@UnitId, PaperIcardNo=@PaperIcardNo,IsActive=@IsActive, Updatedby=@Updatedby, UpdatedOn=@UpdatedOn, IssuingAuthorityId=@IssuingAuthorityId, NameAsPerRecord=@NameAsPerRecord, RegimentalId=@RegimentalId, FName=@FName, LName=@LName, OldServiceNo=@OldServiceNo WHERE BasicDetailId=@BasicDetailId ";
+                        var updateBasicDetail = " UPDATE BasicDetails SET ArmedId=@ArmedId, RankId=@RankId, ServiceNo=@ServiceNo, DOB=@DOB, PlaceOfIssue=@PlaceOfIssue, DateOfIssue=@DateOfIssue, DateOfCommissioning=@DateOfCommissioning, ApplyForId=@ApplyForId, UnitId=@UnitId, PaperIcardNo=@PaperIcardNo,IsActive=@IsActive, Updatedby=@Updatedby, UpdatedOn=@UpdatedOn, IssuingAuthorityId=@IssuingAuthorityId, NameAsPerRecord=@NameAsPerRecord, RegimentalId=@RegimentalId, FName=@FName, LName=@LName WHERE BasicDetailId=@BasicDetailId ";
                         var parametersBD = new DynamicParameters();
                         parametersBD.Add("@BasicDetailId", Data.BasicDetailId, DbType.Int32, ParameterDirection.Input);
                         parametersBD.Add("@ArmedId", Data.ArmedId, DbType.Byte, ParameterDirection.Input);
@@ -445,7 +444,6 @@ namespace DataAccessLayer
                         parametersBD.Add("@RegimentalId", Data.RegimentalId, DbType.Byte, ParameterDirection.Input);
                         parametersBD.Add("@FName", Data.FName, DbType.AnsiString, ParameterDirection.Input, 18);
                         parametersBD.Add("@LName", Data.LName, DbType.AnsiString, ParameterDirection.Input, 18);
-                        parametersBD.Add("@OldServiceNo", Data.OldServiceNo, DbType.AnsiString, ParameterDirection.Input, 50);
                         await db.ExecuteAsync(updateBasicDetail, parametersBD, transaction: transaction);
 
                         var updateAddress = " UPDATE TrnAddress SET BasicDetailId=@BasicDetailId, State=@State, District=@District, PS=@PS, PO=@PO, Tehsil=@Tehsil, Village=@Village, PinCode=@PinCode WHERE AddressId=@AddressId";
@@ -561,13 +559,33 @@ namespace DataAccessLayer
 
 
         }
+        public async Task<int[]?> BasicDetailIds(string ServiceNo)
+        {
+            const string query = @"SELECT BasicDetailId FROM BasicDetails WHERE ServiceNo = @ServiceNo";
+
+            try
+            {
+                using var connection = _contextDP.CreateConnection();
+
+                var result = await connection.QueryAsync<int>(query, new { ServiceNo = ServiceNo });
+
+                // Return null if no result
+                return result.Any() ? result.ToArray() : null;
+            }
+            catch (Exception ex)
+            {
+                // Log and return null if exception occurs
+                _logger.LogError(1001, ex, "BasicDetailDB->BasicDetailIdsAsync");
+                return null;
+            }
+        }
         public async Task<List<DTOSmartSearch>?> SearchAllServiceNo(DTOSearchArmyNoRequest dto)
         {
             string unitQuery = dto.Claim ? "" : "and tdm.UnitId=@MapUnitId";
             string query = "";
             if (dto.TypeId == KeyConstants.ApplicantPostingOut || dto.TypeId == KeyConstants.ApplicantClose)
             {
-                query = @"Select Distinct TOP 5 basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath Image,req.RequestId
+                query = @"Select Distinct TOP 5 basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath Image,req.RequestId,req.CardSerialNo,req.ChipNo
                             from BasicDetails basi
                             inner join TrnICardRequest req on req.BasicDetailId=basi.BasicDetailId and req.StatusId=1
                             inner join TrnDomainMapping map on map.Id = req.TrnDomainMappingId and map.UnitId=@MapUnitId
@@ -576,7 +594,7 @@ namespace DataAccessLayer
             }
             else if (dto.TypeId == KeyConstants.FaultyCardRequest)
             {
-                query = @$"Select TOP 5 basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath Image,req.RequestId,COALESCE(MAX(fwd.TrnFwdId), NULL) AS MaxTrnFwdId  
+                query = @$"Select TOP 5 basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath Image,req.RequestId,COALESCE(MAX(fwd.TrnFwdId), NULL) AS MaxTrnFwdId,req.CardSerialNo,req.ChipNo
                                 from BasicDetails basi
                                 inner join TrnUpload trnu on basi.BasicDetailId=trnu.BasicDetailId 
                                 inner join TrnICardRequest req on req.BasicDetailId=basi.BasicDetailId and req.StatusId=1
@@ -584,11 +602,11 @@ namespace DataAccessLayer
                                 inner join TrnDomainMapping tdm on tdm.Id=req.TrnDomainMappingId {unitQuery}
                                 LEFT JOIN TrnFwds fwd ON fwd.RequestId = req.RequestId
                                 where ServiceNo like @ServiceNo
-                                Group by basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath,req.RequestId";
+                                Group by basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath,req.RequestId,req.CardSerialNo,req.ChipNo";
             }
             else if (dto.TypeId == KeyConstants.HoltlistCardRequest)
             {
-                query = @$"Select TOP 5 basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath Image,req.RequestId,COALESCE(MAX(fwd.TrnFwdId), NULL) AS MaxTrnFwdId  
+                query = @$"Select TOP 5 basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath Image,req.RequestId,COALESCE(MAX(fwd.TrnFwdId), NULL) AS MaxTrnFwdId,req.CardSerialNo,req.ChipNo
                                 from BasicDetails basi
                                 inner join TrnUpload trnu on basi.BasicDetailId=trnu.BasicDetailId 
                                 inner join TrnICardRequest req on req.BasicDetailId=basi.BasicDetailId and req.StatusId = 2
@@ -597,11 +615,11 @@ namespace DataAccessLayer
                                 LEFT JOIN TrnFwds fwd ON fwd.RequestId = req.RequestId
                                 Left join TrnHotlistCards thc on req.RequestId = thc.RequestId
                                 where thc.RequestId is null and ServiceNo like @ServiceNo
-                                Group by basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath,req.RequestId";
+                                Group by basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath,req.RequestId,req.CardSerialNo,req.ChipNo";
             }
             else if (dto.TypeId == KeyConstants.LostCardRequest)
             {
-                query = @$"Select TOP 5 basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath Image,req.RequestId,COALESCE(MAX(fwd.TrnFwdId), NULL) AS MaxTrnFwdId  
+                query = @$"Select TOP 5 basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath Image,req.RequestId,COALESCE(MAX(fwd.TrnFwdId), NULL) AS MaxTrnFwdId,req.CardSerialNo,req.ChipNo
                                 from BasicDetails basi
                                 inner join TrnUpload trnu on basi.BasicDetailId=trnu.BasicDetailId 
                                 inner join TrnICardRequest req on req.BasicDetailId=basi.BasicDetailId and req.StatusId in (1,2)
@@ -611,11 +629,11 @@ namespace DataAccessLayer
                                 Left join TrnLostCards tlc on req.RequestId = tlc.RequestId
                                 Left join TrnDestructionCards tld on req.RequestId = tld.RequestId
                                 where tlc.RequestId is null and tld.RequestId is null and ServiceNo like @ServiceNo
-                                Group by basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath,req.RequestId";
+                                Group by basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath,req.RequestId,req.CardSerialNo,req.ChipNo";
             }
             else if (dto.TypeId == KeyConstants.DistributeCardRequest)
             {
-                query = @$"Select TOP 5 basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath Image,req.RequestId,0 AS MaxTrnFwdId  
+                query = @$"Select TOP 5 basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath Image,req.RequestId,0 AS MaxTrnFwdId,req.CardSerialNo,req.ChipNo
                                 from BasicDetails basi
                                 inner join TrnUpload trnu on basi.BasicDetailId=trnu.BasicDetailId 
                                 inner join TrnICardRequest req on req.BasicDetailId=basi.BasicDetailId and req.StatusId=1
@@ -624,11 +642,11 @@ namespace DataAccessLayer
                                 Left join TrnDistributeCards tdc on req.RequestId = tdc.RequestId
                                 Left join TrnHotlistCards thc on req.RequestId = thc.RequestId
                                 where tdc.RequestId is null and thc.RequestId is null and ServiceNo like @ServiceNo
-                                Group by basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath,req.RequestId";
+                                Group by basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath,req.RequestId,req.CardSerialNo,req.ChipNo";
             }
             else if (dto.TypeId == KeyConstants.DestructionCardRequest)
             {
-                query = @$"Select TOP 5 basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath Image,req.RequestId,COALESCE(MAX(fwd.TrnFwdId), NULL) AS MaxTrnFwdId  
+                query = @$"Select TOP 5 basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath Image,req.RequestId,COALESCE(MAX(fwd.TrnFwdId), NULL) AS MaxTrnFwdId,req.CardSerialNo,req.ChipNo
                                 from BasicDetails basi
                                 inner join TrnUpload trnu on basi.BasicDetailId=trnu.BasicDetailId 
                                 inner join TrnICardRequest req on req.BasicDetailId=basi.BasicDetailId and req.StatusId = 2
@@ -637,7 +655,7 @@ namespace DataAccessLayer
                                 LEFT JOIN TrnFwds fwd ON fwd.RequestId = req.RequestId
                                 Left join TrnDestructionCards tlc on req.RequestId = tlc.RequestId
                                 where tlc.RequestId is null and ServiceNo like @ServiceNo
-                                Group by basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath,req.RequestId";
+                                Group by basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath,req.RequestId,req.CardSerialNo,req.ChipNo";
             }
 
             try
