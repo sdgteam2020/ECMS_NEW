@@ -75,5 +75,7 @@ namespace DataTransferObject.Domain.Model
         [Column(TypeName = "varchar(12)")]
         public string PaperIcardNo { get; set; } = string.Empty;
 
+        public int? PreviousBasicDetailId { get; set; }
+
     }
 }
