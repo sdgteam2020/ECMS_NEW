@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 
 namespace BusinessLogicsLayer.CSVImports
 {
-    public class CSVImportBL : GenericRepositoryDL<CSVImport> , ICSVImportBL
+    public class CsvImportBl : GenericRepositoryDL<CSVImport> , IcsvImportBl
     {
-        public CSVImportBL(ApplicationDbContext context) : base(context)
+        public CsvImportBl(ApplicationDbContext context) : base(context)
         {
         }
     }

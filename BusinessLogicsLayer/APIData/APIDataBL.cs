@@ -6,11 +6,11 @@ using DataTransferObject.Response;
 
 namespace BusinessLogicsLayer.APIData
 {
-    public class APIDataBL : GenericRepository<MApiData>, IAPIDataBL
+    public class ApiDataBl : GenericRepository<MApiData>, IapiDataBl
     {
         private readonly IAPIDataDB _aPIDataDB;
 
-        public APIDataBL(IAPIDataDB aPIDataDB) 
+        public ApiDataBl(IAPIDataDB aPIDataDB) 
         {
             _aPIDataDB = aPIDataDB;
         }

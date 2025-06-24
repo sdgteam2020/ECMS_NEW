@@ -148,9 +148,9 @@ namespace BusinessLogicsLayer.BasicDet
             var data = await _iBasicDetailDB.GetROListByArmedId(ArmedId);
             return data;
         }
-        public async Task<DTOApplicationTrack?> ApplicationHistory(string TrackingId)
+        public async Task<DTOApplicationTrack?> ApplicationHistory(string RequestId)
         {
-            var data = await _iBasicDetailDB.ApplicationHistory(TrackingId);
+            var data = await _iBasicDetailDB.ApplicationHistory(RequestId);
             return data;
         }
         public async Task<DTOUploadChipAndSerialResponse?> CardPrinitngCSVUpload(List<DTOCardPriningRequest> request)
@@ -248,6 +248,7 @@ namespace BusinessLogicsLayer.BasicDet
                     var invalidDbRecord = checkDbRecords.Where(r => !r.IsValid).ToList();
                     invalidRecords = invalidRecords.Concat(invalidDbRecord).ToList();
                 }
+                if(validRecords!=null)
                 request = invalidRecords.Concat(validRecords).ToList();
             }
             catch(Exception ee)

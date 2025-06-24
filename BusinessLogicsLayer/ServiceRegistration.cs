@@ -139,7 +139,7 @@ namespace BusinessLogicsLayer
             services.AddTransient<ITrnMappingUnMappingLogBL, TrnMappingUnMappingLogBL>();
             services.AddTransient<ITrnMappingUnMappingLogDB, TrnMappingUnMappingLogDB>();
 
-            services.AddTransient<IAPIDataBL, APIDataBL>();
+            services.AddTransient<IapiDataBl, ApiDataBl>();
             services.AddTransient<IAPIDataDB, APIDataDB>();
 
             services.AddTransient<IDomainMapBL, DomainMapBL>();
@@ -154,7 +154,7 @@ namespace BusinessLogicsLayer
             services.AddTransient<IArmedCatBL, ArmedCatBL>();
 
             //////Api Calll/////////////
-            services.AddTransient<IAPIBL, APIBL>();
+            services.AddTransient<IaPiBl, Apibl>();
 
             services.AddTransient<INotificationBL, NotificationBL>();
             services.AddTransient<INotificationDB, NotificationDB>();
@@ -189,7 +189,7 @@ namespace BusinessLogicsLayer
             services.AddTransient<IICardHoldBL, ICardHoldBL>();
 
             services.AddTransient<IIAMSettingBL,IAMSettingBL>();
-            services.AddTransient<ICSVImportBL,CSVImportBL>();
+            services.AddTransient<IcsvImportBl, CsvImportBl>();
 
             services.AddTransient<ICategoryBL, CategoryBL>();
 

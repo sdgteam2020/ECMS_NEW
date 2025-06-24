@@ -34,7 +34,7 @@ namespace BusinessLogicsLayer.Account
         {
             return await _iAccountDB.DomainApproveList();
         }
-        public async Task<DTODataTablesResponse<DTOProfileManageResponse>?> GetAllProfileManage(DTODataTablesRequest request)
+        public async Task<DTODataTablesResponse<DTOProfileManageResponse>> GetAllProfileManage(DTODataTablesRequest request)
         {
             return await _iAccountDB.GetAllProfileManage(request);
         }

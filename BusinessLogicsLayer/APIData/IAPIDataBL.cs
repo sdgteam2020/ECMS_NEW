@@ -4,7 +4,7 @@ using DataTransferObject.Response;
 
 namespace BusinessLogicsLayer.APIData
 {
-    public interface IAPIDataBL : IGenericRepository<MApiData>
+    public interface IapiDataBl : IGenericRepository<MApiData>
     {
 
         public Task<DTOApiPersDataResponse> GetByIC(DTOAPIDataRequest Data);
