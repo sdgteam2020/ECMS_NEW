@@ -14,10 +14,10 @@
         success: function (response) {
             if (response != "null" && response != null) {
               
-                ICardHistory = response.ICardHistory;
-                PostingOut = response.PostingOut;
-                FaultyCard = response.FaultyCard;
-                CloseCard = response.CloseCard;
+                let  ICardHistory = response.ICardHistory;
+                let  PostingOut = response.PostingOut;
+                let  FaultyCard = response.FaultyCard;
+                let CloseCard = response.CloseCard;
                 if (ICardHistory?.length > 0) {
                    
                     for (var i = 0; i < ICardHistory.length; i++) {

@@ -185,7 +185,7 @@ function BindData() {
                     $("#DetailBody").html(listItem);
                     $("#lblTotal").html(response.length);
 
-                    memberTable = $('#tblData').DataTable({
+                    let memberTable = $('#tblData').DataTable({
                         retrieve: true,
                         lengthChange: false,
                         stateSave: true,

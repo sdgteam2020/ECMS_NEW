@@ -47,12 +47,19 @@ namespace BusinessLogicsLayer
 
         public Task<T> Delete(int id)
         {
-          
+          if(id == 0)
+            {
+                throw new ArgumentNullException(nameof(id));
+            }
             return Delete(id);
         }
 
         public Task<T> Get(int id)
         {
+            if (id == 0)
+            {
+                throw new ArgumentNullException(nameof(id));
+            }
             return Get(id);
         }
         public Task<T> GetByGen<T2>(T2 val1)
@@ -66,6 +73,10 @@ namespace BusinessLogicsLayer
         }
         public Task<T> GetByByte(byte id)
         {
+            if (id == 0)
+            {
+                throw new ArgumentNullException(nameof(id));
+            }
             return GetByByte(id);
         }
 
@@ -81,6 +92,11 @@ namespace BusinessLogicsLayer
 
         public Task<T> UpdateWithReturn(T entity)
         {
+            // Validate the entity (optional)
+            if (entity == null)
+            {
+                throw new ArgumentNullException(nameof(entity));
+            }
             return UpdateWithReturn(entity);
         }
 

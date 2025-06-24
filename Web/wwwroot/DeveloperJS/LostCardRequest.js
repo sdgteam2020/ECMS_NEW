@@ -243,7 +243,7 @@ function ResetErrorMessage() {
 function jsonToXml(json) {
     var xml = '';
     for (var key in json) {
-        i = 1;
+        let i = 1;
         if (key != "RequestId") {
             if (json.hasOwnProperty(key)) {
 

@@ -129,7 +129,7 @@ function BindData() {
                     $("#DetailBody").html(listItem);
                     $("#lblTotal").html(response.length);
                   
-                    memberTable = $('#tbldata').DataTable({
+                   var memberTable = $('#tbldata').DataTable({
                         retrieve: true,
                         lengthChange: true,
                         stateSave: true,
@@ -223,7 +223,7 @@ function BindData() {
                 $("#tbldata").DataTable().destroy();
                 $("#DetailBody").html(listItem);
                 $("#lblTotal").html(0);
-                memberTable = $('#tbldata').DataTable({
+              var  memberTable = $('#tbldata').DataTable({
                     "language": {
                         "emptyTable": "No data available"
                     }
