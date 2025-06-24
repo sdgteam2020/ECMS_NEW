@@ -12,6 +12,7 @@ namespace BusinessLogicsLayer.LostCard
     public interface ILostCardBL : IGenericRepository<TrnLostCard>
     {
         Task<bool> FindAnyRequestId(int RequestId);
+        public Task<bool> CheckServiceNoRequestInLost(string ServiceNo);
         Task<DTODataTablesResponse<DTOLostCardGetResponse>> GetAllLost(DTODataTablesRequest dTO);
         Task<List<DTOLostCardExportResponse>> GetDetailsByRequestIds(DTOHotlistCardsExportRequest Data);
     }

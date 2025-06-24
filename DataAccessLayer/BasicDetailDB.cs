@@ -313,9 +313,9 @@ namespace DataAccessLayer
                 {
                     if (Data.BasicDetailId == 0)
                     {
-                        var insertBasicDetail = " INSERT INTO BasicDetails (ArmedId, RankId, ServiceNo, DOB, PlaceOfIssue, DateOfIssue, DateOfCommissioning, ApplyForId, UnitId, PaperIcardNo,IsActive, Updatedby, UpdatedOn, IssuingAuthorityId, NameAsPerRecord, RegimentalId, FName, LName)" +
+                        var insertBasicDetail = " INSERT INTO BasicDetails (ArmedId, RankId, ServiceNo, DOB, PlaceOfIssue, DateOfIssue, DateOfCommissioning, ApplyForId, UnitId, PaperIcardNo,IsActive, Updatedby, UpdatedOn, IssuingAuthorityId, NameAsPerRecord, RegimentalId, FName, LName, PreviousBasicDetailId)" +
                                                 " OUTPUT INSERTED.BasicDetailId " +
-                                                " VALUES (@ArmedId, @RankId, @ServiceNo, @DOB, @PlaceOfIssue, @DateOfIssue, @DateOfCommissioning, @ApplyForId, @UnitId, @PaperIcardNo, @IsActive, @Updatedby, @UpdatedOn, @IssuingAuthorityId, @NameAsPerRecord, @RegimentalId, @FName, @LName);";
+                                                " VALUES (@ArmedId, @RankId, @ServiceNo, @DOB, @PlaceOfIssue, @DateOfIssue, @DateOfCommissioning, @ApplyForId, @UnitId, @PaperIcardNo, @IsActive, @Updatedby, @UpdatedOn, @IssuingAuthorityId, @NameAsPerRecord, @RegimentalId, @FName, @LName, @PreviousBasicDetailId);";
                         var parametersBD = new DynamicParameters();
                         //parametersBD.Add("@BasicDetailId", Data.BasicDetailId, DbType.Int32, ParameterDirection.Output);
                         parametersBD.Add("@ArmedId", Data.ArmedId, DbType.Byte, ParameterDirection.Input);
@@ -336,6 +336,7 @@ namespace DataAccessLayer
                         parametersBD.Add("@RegimentalId", Data.RegimentalId, DbType.Byte, ParameterDirection.Input);
                         parametersBD.Add("@FName", Data.FName, DbType.AnsiString, ParameterDirection.Input, 18);
                         parametersBD.Add("@LName", Data.LName, DbType.AnsiString, ParameterDirection.Input, 18);
+                        parametersBD.Add("@PreviousBasicDetailId", Data.PreviousBasicDetailId, DbType.Int32, ParameterDirection.Input);
                         int BasicDetailId = await db.QuerySingleAsync<int>(insertBasicDetail, parametersBD, transaction: transaction);
 
                         address.BasicDetailId = BasicDetailId;
@@ -423,7 +424,7 @@ namespace DataAccessLayer
                         trnUpload.BasicDetailId = Data.BasicDetailId;
                         mTrnIdentityInfo.BasicDetailId = Data.BasicDetailId;
 
-                        var updateBasicDetail = " UPDATE BasicDetails SET ArmedId=@ArmedId, RankId=@RankId, ServiceNo=@ServiceNo, DOB=@DOB, PlaceOfIssue=@PlaceOfIssue, DateOfIssue=@DateOfIssue, DateOfCommissioning=@DateOfCommissioning, ApplyForId=@ApplyForId, UnitId=@UnitId, PaperIcardNo=@PaperIcardNo,IsActive=@IsActive, Updatedby=@Updatedby, UpdatedOn=@UpdatedOn, IssuingAuthorityId=@IssuingAuthorityId, NameAsPerRecord=@NameAsPerRecord, RegimentalId=@RegimentalId, FName=@FName, LName=@LName WHERE BasicDetailId=@BasicDetailId ";
+                        var updateBasicDetail = " UPDATE BasicDetails SET ArmedId=@ArmedId, RankId=@RankId, ServiceNo=@ServiceNo, DOB=@DOB, PlaceOfIssue=@PlaceOfIssue, DateOfIssue=@DateOfIssue, DateOfCommissioning=@DateOfCommissioning, ApplyForId=@ApplyForId, UnitId=@UnitId, PaperIcardNo=@PaperIcardNo,IsActive=@IsActive, Updatedby=@Updatedby, UpdatedOn=@UpdatedOn, IssuingAuthorityId=@IssuingAuthorityId, NameAsPerRecord=@NameAsPerRecord, RegimentalId=@RegimentalId, FName=@FName, LName=@LName, PreviousBasicDetailId=@PreviousBasicDetailId WHERE BasicDetailId=@BasicDetailId ";
                         var parametersBD = new DynamicParameters();
                         parametersBD.Add("@BasicDetailId", Data.BasicDetailId, DbType.Int32, ParameterDirection.Input);
                         parametersBD.Add("@ArmedId", Data.ArmedId, DbType.Byte, ParameterDirection.Input);
@@ -444,6 +445,7 @@ namespace DataAccessLayer
                         parametersBD.Add("@RegimentalId", Data.RegimentalId, DbType.Byte, ParameterDirection.Input);
                         parametersBD.Add("@FName", Data.FName, DbType.AnsiString, ParameterDirection.Input, 18);
                         parametersBD.Add("@LName", Data.LName, DbType.AnsiString, ParameterDirection.Input, 18);
+                        parametersBD.Add("@PreviousBasicDetailId", Data.PreviousBasicDetailId, DbType.Int32, ParameterDirection.Input);
                         await db.ExecuteAsync(updateBasicDetail, parametersBD, transaction: transaction);
 
                         var updateAddress = " UPDATE TrnAddress SET BasicDetailId=@BasicDetailId, State=@State, District=@District, PS=@PS, PO=@PO, Tehsil=@Tehsil, Village=@Village, PinCode=@PinCode WHERE AddressId=@AddressId";
@@ -559,23 +561,22 @@ namespace DataAccessLayer
 
 
         }
-        public async Task<int[]?> BasicDetailIds(string ServiceNo)
+        public async Task<int?> MaxBasicDetailId(string ServiceNo)
         {
-            const string query = @"SELECT BasicDetailId FROM BasicDetails WHERE ServiceNo = @ServiceNo";
+            const string query = @"SELECT MAX(BasicDetailId) AS MaxBasicDetailId FROM BasicDetails  WHERE ServiceNo = @ServiceNo";
 
             try
             {
                 using var connection = _contextDP.CreateConnection();
 
-                var result = await connection.QueryAsync<int>(query, new { ServiceNo = ServiceNo });
+                int? result = await connection.QueryFirstOrDefaultAsync<int?>(query, new { ServiceNo = ServiceNo });
 
-                // Return null if no result
-                return result.Any() ? result.ToArray() : null;
+                return result;
             }
             catch (Exception ex)
             {
                 // Log and return null if exception occurs
-                _logger.LogError(1001, ex, "BasicDetailDB->BasicDetailIdsAsync");
+                _logger.LogError(1001, ex, "BasicDetailDB->MaxBasicDetailId");
                 return null;
             }
         }
@@ -2426,40 +2427,92 @@ namespace DataAccessLayer
 
         public async Task<DTOUploadChipAndSerialResponse> CheckBeforeDistribution(int requestId)
         {
+            #region Old Code
+            //DTOUploadChipAndSerialResponse response = new DTOUploadChipAndSerialResponse();
+            //try
+            //{
+            //    string query = @$"SELECT CASE
+            //                WHEN currentReq.TypeId = 1 THEN 1
+
+            //                WHEN currentReq.TypeId = 5 AND EXISTS (
+            //                    SELECT 1 FROM TrnLostCards lc
+            //                    WHERE lc.RequestId = (
+            //                        SELECT TOP 1 prevReq.RequestId
+            //                        FROM TrnICardRequest prevReq
+            //                        WHERE prevReq.BasicDetailId = currentReq.BasicDetailId
+            //                          AND prevReq.RequestId < currentReq.RequestId
+            //                          AND prevReq.StatusId != 1
+            //                        ORDER BY prevReq.RequestId DESC
+            //                    ) AND lc.IsActive = 1
+            //                ) THEN 1
+
+            //                WHEN currentReq.TypeId IN (2, 3, 4) AND EXISTS (
+            //                    SELECT 1 FROM TrnDestructionCards dc
+            //                    WHERE dc.RequestId = (
+            //                        SELECT TOP 1 prevReq.RequestId
+            //                        FROM TrnICardRequest prevReq
+            //                        WHERE prevReq.BasicDetailId = currentReq.BasicDetailId
+            //                          AND prevReq.RequestId < currentReq.RequestId
+            //                          AND prevReq.StatusId != 1
+            //                        ORDER BY prevReq.RequestId DESC
+            //                    ) AND dc.IsActive = 1
+            //                ) THEN 1
+
+            //                ELSE 0
+            //            END AS Result,case currentReq.TypeId when 1 then '' when 5 then 'Lost' else 'Destruction' end as Message
+            //            FROM TrnICardRequest currentReq
+            //            WHERE currentReq.RequestId = @RequestId";
+
+            //    using (var connection = _contextDP.CreateConnection())
+            //    {
+            //        var list = await connection.QueryAsync<DTOUploadChipAndSerialResponse>(query, new { RequestId = requestId });
+            //        response = list.FirstOrDefault();
+            //    }
+            //}
+            //catch (Exception ee)
+            //{
+            //    _logger.LogError(1001, ee, "BasicDetailDB->UpdateCardStatus");
+            //}
+            //return response;
+            #endregion
             DTOUploadChipAndSerialResponse response = new DTOUploadChipAndSerialResponse();
             try
             {
-                string query = @$"SELECT CASE
-                            WHEN currentReq.TypeId = 1 THEN 1
+                string query = @"SELECT CASE
+                                WHEN currentReq.TypeId = 1 THEN 1
 
-                            WHEN currentReq.TypeId = 5 AND EXISTS (
-                                SELECT 1 FROM TrnLostCards lc
-                                WHERE lc.RequestId = (
-                                    SELECT TOP 1 prevReq.RequestId
-                                    FROM TrnICardRequest prevReq
-                                    WHERE prevReq.BasicDetailId = currentReq.BasicDetailId
-                                      AND prevReq.RequestId < currentReq.RequestId
-                                      AND prevReq.StatusId != 1
-                                    ORDER BY prevReq.RequestId DESC
-                                ) AND lc.IsActive = 1
-                            ) THEN 1
+                                WHEN currentReq.TypeId = 5 AND EXISTS (
+                                    SELECT 1 FROM TrnLostCards lc
+                                    WHERE lc.RequestId = (
+                                        SELECT TIR1.RequestId
+									    FROM TrnICardRequest TIR1
+									    JOIN BasicDetails BD ON TIR1.BasicDetailId = BD.PreviousBasicDetailId
+									    JOIN TrnICardRequest TIR2 ON BD.BasicDetailId = TIR2.BasicDetailId
+									    WHERE TIR2.RequestId = currentReq.RequestId
+                                    ) AND lc.IsActive = 1
+                                ) THEN 1
 
-                            WHEN currentReq.TypeId IN (2, 3, 4) AND EXISTS (
-                                SELECT 1 FROM TrnDestructionCards dc
-                                WHERE dc.RequestId = (
-                                    SELECT TOP 1 prevReq.RequestId
-                                    FROM TrnICardRequest prevReq
-                                    WHERE prevReq.BasicDetailId = currentReq.BasicDetailId
-                                      AND prevReq.RequestId < currentReq.RequestId
-                                      AND prevReq.StatusId != 1
-                                    ORDER BY prevReq.RequestId DESC
-                                ) AND dc.IsActive = 1
-                            ) THEN 1
+                                WHEN currentReq.TypeId IN (2, 3, 4) AND EXISTS (
+                                    SELECT 1 FROM TrnDestructionCards dc
+                                    WHERE dc.RequestId = (
+                                        SELECT TIR1.RequestId
+									    FROM TrnICardRequest TIR1
+									    JOIN BasicDetails BD ON TIR1.BasicDetailId = BD.PreviousBasicDetailId
+									    JOIN TrnICardRequest TIR2 ON BD.BasicDetailId = TIR2.BasicDetailId
+									    WHERE TIR2.RequestId = currentReq.RequestId
+                                    ) AND dc.IsActive = 1
+                                ) THEN 1
 
-                            ELSE 0
-                        END AS Result,case currentReq.TypeId when 1 then '' when 5 then 'Lost' else 'Destruction' end as Message
-                        FROM TrnICardRequest currentReq
-                        WHERE currentReq.RequestId = @RequestId";
+                                ELSE 0
+                            END AS Result,
+						    case 
+						    WHEN currentReq.TypeId = 1 then '' 
+						    WHEN currentReq.TypeId IN (2, 3, 4) THEN 'Destruction' 
+						    WHEN currentReq.TypeId = 5 THEN 'Lost'
+						    ELSE ''
+						    END as Message
+                            FROM TrnICardRequest currentReq
+                            WHERE currentReq.RequestId = @RequestId;";
 
                 using (var connection = _contextDP.CreateConnection())
                 {
@@ -2471,7 +2524,6 @@ namespace DataAccessLayer
             {
                 _logger.LogError(1001, ee, "BasicDetailDB->UpdateCardStatus");
             }
-
             return response;
         }
     }

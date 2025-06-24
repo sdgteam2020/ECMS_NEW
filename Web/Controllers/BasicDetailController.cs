@@ -997,6 +997,7 @@ namespace Web.Controllers
                     {
                         ViewBag.OptionsUnitId = 0;
                         BasicDetailCrtAndUpdVM dTOBasicDetailCrtRequest = new BasicDetailCrtAndUpdVM();
+                        dTOBasicDetailCrtRequest.PreviousBasicDetailId = null;
                         dTOBasicDetailCrtRequest.FName = model.FName;
                         dTOBasicDetailCrtRequest.LName = model.LName;
                         dTOBasicDetailCrtRequest.NameAsPerRecord = model.NameAsPerRecord;
@@ -1050,7 +1051,6 @@ namespace Web.Controllers
                     ViewBag.OptionsBloodGroupId = basicDetailUpdVM.BloodGroupId;
 
 
-
                     basicDetailUpdVM.BloodGroupId = basicDetailUpdVM.BloodGroupId;
                     basicDetailUpdVM.PermanentAddress = "Village - " + basicDetailUpdVM.Village + ", Post Office-" + basicDetailUpdVM.PO + ", Tehsil- " + basicDetailUpdVM.Tehsil + ", District- " + basicDetailUpdVM.District + ", State- " + basicDetailUpdVM.State + ", Pin Code- " + (basicDetailUpdVM.PinCode == 0 ? "" : basicDetailUpdVM.PinCode);
 
@@ -1076,7 +1076,6 @@ namespace Web.Controllers
                     if (TempData["Registration"] != null)
                     {
                         var modelex = JsonConvert.DeserializeObject<DTORegistrationRequest>(TempData["Registration"].ToString());
-
                         basicDetailUpdVM.FName = modelex.FName;
                         basicDetailUpdVM.LName = modelex.LName;
                         basicDetailUpdVM.ServiceNo = modelex.ServiceNo;
@@ -1363,6 +1362,41 @@ namespace Web.Controllers
                     {
                         BasicDetail newBasicDetail = _mapper.Map<BasicDetailCrtAndUpdVM, BasicDetail>(model);
                         newBasicDetail.DateOfIssue = null;
+
+                        if (model.TypeId == 4 )
+                        {
+                            if (model.OldServiceNo != null)
+                            {
+                                int? BasicDetailId = await basicDetailBL.MaxBasicDetailId(model.OldServiceNo);
+                                if (BasicDetailId != null)
+                                {
+                                    BasicDetail basicDetail = await basicDetailBL.Get((int)BasicDetailId);
+                                    newBasicDetail.PreviousBasicDetailId = basicDetail.BasicDetailId;
+                                }
+                                else
+                                {
+                                    ModelState.AddModelError("", "Invalid Old Service No.");
+                                }
+                            }
+                            else
+                            {
+                                ModelState.AddModelError("", "Old Service No required.");
+                                goto end;
+                            }
+                        }
+                        else
+                        {
+                            int? BasicDetailId = await basicDetailBL.MaxBasicDetailId(model.ServiceNo);
+                            if (BasicDetailId != null)
+                            {
+                                newBasicDetail.PreviousBasicDetailId = BasicDetailId;
+                            }
+                            else
+                            {
+                                newBasicDetail.PreviousBasicDetailId = 0;
+                            }
+                        }
+
                         MTrnUpload mTrnUpload = new MTrnUpload();
 
                         MTrnAddress mTrnAddress = new MTrnAddress();
@@ -3200,10 +3234,10 @@ namespace Web.Controllers
             DTOApiDataResponse dTOApiDataResponse = new DTOApiDataResponse();
             if (ICNumber != null)
             {
-                int[]? BasicDetailIds = await basicDetailBL.BasicDetailIds(ICNumber);
-                if (BasicDetailIds != null)
+                int? BasicDetailId = await basicDetailBL.MaxBasicDetailId(ICNumber);
+                if (BasicDetailId != null)
                 {
-                    bool result = await iTrnICardRequestBL.GetRequestPendingUsingBasicDetailIds(BasicDetailIds);
+                    bool result = await iTrnICardRequestBL.GetRequestPending((int)BasicDetailId);
                     if (result)
                     {
                         dTOApiDataResponse.Status = false;
@@ -3216,6 +3250,19 @@ namespace Web.Controllers
                         {
                             dTOApiDataResponse.Message = "You didn't Select First time Smart card";
                             dTOApiDataResponse.Status = false;
+                        }
+                        else if (lCardType == 5)
+                        {
+                            bool check = await _lostCardBL.CheckServiceNoRequestInLost(ICNumber);
+                            if (check)
+                            {
+                                dTOApiDataResponse.Status = true;
+                            }
+                            else
+                            {
+                                dTOApiDataResponse.Message = "First, report the loss and then place an I-Card request.";
+                                dTOApiDataResponse.Status = false;
+                            }
                         }
                         else
                         {

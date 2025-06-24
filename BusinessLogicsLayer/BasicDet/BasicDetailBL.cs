@@ -64,9 +64,9 @@ namespace BusinessLogicsLayer.BasicDet
         {
             return await _iBasicDetailDB.FindServiceNo(ServiceNo);
         }
-        public async Task<int[]?> BasicDetailIds(string ServiceNo)
+        public async Task<int?> MaxBasicDetailId(string ServiceNo)
         {
-            return await _iBasicDetailDB.BasicDetailIds(ServiceNo);
+            return await _iBasicDetailDB.MaxBasicDetailId(ServiceNo);
         }
         public async Task<List<DTOSmartSearch>?> SearchAllServiceNo(DTOSearchArmyNoRequest dto)
         {

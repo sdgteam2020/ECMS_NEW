@@ -12,6 +12,7 @@ namespace DataAccessLayer.BaseInterfaces
     public interface ILostCardDB : IGenericRepositoryDL<TrnLostCard>
     {
         Task<bool> FindAnyRequestId(int RequestId);
+        public Task<bool> CheckServiceNoRequestInLost(string ServiceNo);
         Task<DTODataTablesResponse<DTOLostCardGetResponse>> GetAllLost(DTODataTablesRequest dTO);
         Task<List<DTOLostCardExportResponse>> GetDetailsByRequestIds(DTOHotlistCardsExportRequest Data);
     }

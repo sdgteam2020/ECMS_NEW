@@ -22,6 +22,7 @@ namespace DataTransferObject.ViewModels
         [Display(Name = "BasicDetailId", ResourceType = typeof(Resource))]
         [RegularExpression(@"^[\d]+$", ErrorMessage = "BasicDetailId is number.")]
         public int BasicDetailId { get; set; }
+        public int? PreviousBasicDetailId { get; set; }
 
         [StringLength(12)]
         [MaxLength(12)]

@@ -24,7 +24,7 @@ namespace BusinessLogicsLayer.BasicDet
         public Task<DTODataTablesResponse<DTOBasicDetailIndexResponse>> GetALLForIcardSttaus(DTODataTablesRequestFor_BasicDetails_Index dTO);
         public Task<List<DTOICardTypeRequest>> GetAllICardType();
         public Task<BasicDetail?> FindServiceNo(string ServiceNo);
-        public Task<int[]?> BasicDetailIds(string ServiceNo);
+        public Task<int?> MaxBasicDetailId(string ServiceNo);
         public Task<List<DTOSmartSearch>?> SearchAllServiceNo(DTOSearchArmyNoRequest dto);
         public Task<DTOBasicDetailForParitalViewResponse> GetBasicDetailForParitalViewByRequestId(int RequestId);
         public Task<BasicDetailCrtAndUpdVM?> GetBasicDetailByRequestId(int RequestId);
