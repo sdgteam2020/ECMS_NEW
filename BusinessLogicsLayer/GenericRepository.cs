@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static Dapper.SqlMapper;
 
 namespace BusinessLogicsLayer
 {
@@ -15,21 +16,38 @@ namespace BusinessLogicsLayer
        
         public Task Add(T entity)
         {
+            // Validate the entity (optional)
+            if (entity == null)
+            {
+                throw new ArgumentNullException(nameof(entity));
+            }
+
             return Add(entity);
         }
 
         public Task<T> AddWithReturn(T entity)
         {
+            // Validate the entity (optional)
+            if (entity == null)
+            {
+                throw new ArgumentNullException(nameof(entity));
+            }
             return AddWithReturn(entity);
         }
 
         public Task Delete(T entity)
         {
+            // Validate the entity (optional)
+            if (entity == null)
+            {
+                throw new ArgumentNullException(nameof(entity));
+            }
             return Delete(entity);
         }
 
         public Task<T> Delete(int id)
         {
+          
             return Delete(id);
         }
 
@@ -39,6 +57,11 @@ namespace BusinessLogicsLayer
         }
         public Task<T> GetByGen<T2>(T2 val1)
         {
+            // Validate the entity (optional)
+            if (val1 == null)
+            {
+                throw new ArgumentNullException(nameof(val1));
+            }
             return GetByGen(val1);
         }
         public Task<T> GetByByte(byte id)
