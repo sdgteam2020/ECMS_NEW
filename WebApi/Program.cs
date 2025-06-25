@@ -84,7 +84,7 @@ builder.Services.AddAuthentication(options =>
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWT:Secret"]))
     };
 });
-builder.Services.AddTransient<IAPIDataBL, APIDataBL>();
+builder.Services.AddTransient<IapiDataBl, ApiDataBl>();
 builder.Services.AddTransient<IAPIDataDB, APIDataDB>();
 
 var app = builder.Build();
