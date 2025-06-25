@@ -29,10 +29,10 @@
                     var userid = $("#spnUserId").html();
                    
 
-                    IsRO = false;//$("#chkRO").prop("checked");
-                    IsIO = $("#chkIO").prop("checked");
-                    IsCO = $("#chkCO").prop("checked");
-                    IsORO = false;// $("#chkORO").prop("checked");
+                    let  IsRO = false;//$("#chkRO").prop("checked");
+                    let  IsIO = $("#chkIO").prop("checked");
+                    let IsCO = $("#chkCO").prop("checked");
+                    let IsORO = false;// $("#chkORO").prop("checked");
                     
                     UpdateProfileWithMapping(RankId, Name, IsRO, IsIO, IsCO, IsORO, userid, TDMId, Thumbprint); //MobileNo, DialingCode, Extension,
                         //SaveUserProfile(ArmyNo, Rank, Name, Appt, Unit, $("#intoffsyes").prop("checked"), 3, $("#spnUserIdIO").html(), $("#spnUserIdGSO").html(), userid)

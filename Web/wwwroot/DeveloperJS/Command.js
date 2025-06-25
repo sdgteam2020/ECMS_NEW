@@ -130,7 +130,7 @@ function BindData() {
                     $("#DetailBody").html(listItem);
                     $("#lblTotal").html(response.length-1);
                   
-                    memberTable = $('#tblcommnd').DataTable({
+                   var memberTable = $('#tblcommnd').DataTable({
                         retrieve: true,
                         lengthChange: true,
                         stateSave: true,
@@ -167,11 +167,11 @@ function BindData() {
                     var rows;
                     $("#tblcommnd #chkAll").click(function () {
                         if ($(this).is(':checked')) {
-                            rows = memberTable.rows({ 'search': 'applied' }).nodes();
+                           let rows = memberTable.rows({ 'search': 'applied' }).nodes();
                             $('input[type="checkbox"]', rows).prop('checked', this.checked);
                         }
                         else {
-                            rows = memberTable.rows({ 'search': 'applied' }).nodes();
+                           let rows = memberTable.rows({ 'search': 'applied' }).nodes();
                             $('input[type="checkbox"]', rows).prop('checked', this.checked);
                         }
                     });

@@ -295,7 +295,7 @@ function GetCount() {
                     Itemlist += '<div class="seven">';
                     Itemlist += '<h1>JCOs/OR</h1>';
                     Itemlist += '</div>';
-                    dTOReportReturnCountJco = response.dTOReportReturnCountJco;
+                   var  dTOReportReturnCountJco = response.dTOReportReturnCountJco;
                     for (var i = 0; i < dTOReportReturnCountJco.length; i++) {
 
                         if (dTOReportReturnCountJco[i].TypeId != GroupId) {
@@ -539,7 +539,7 @@ function GetReportReturnHistory(spnStepId, applyTypeId) {
                     $("#DetailBody").html(listItem);
                     $("#lblTotal").html(response.length);
 
-                    memberTable = $('#tbldata').DataTable({
+                   var memberTable = $('#tbldata').DataTable({
                         retrieve: true,
                         lengthChange: false,
                         "buttons": [
@@ -644,11 +644,11 @@ function GetReportReturnHistory(spnStepId, applyTypeId) {
                     memberTable.buttons().container().appendTo('#tbldata_wrapper .col-md-6:eq(0)');
                     $("#tbldata #chkAll").click(function () {
                         if ($(this).is(':checked')) {
-                            rows = memberTable.rows({ 'search': 'applied' }).nodes();
+                           let rows = memberTable.rows({ 'search': 'applied' }).nodes();
                             $('input[type="checkbox"]', rows).prop('checked', this.checked);
                         }
                         else {
-                            rows = memberTable.rows({ 'search': 'applied' }).nodes();
+                           let rows = memberTable.rows({ 'search': 'applied' }).nodes();
                             $('input[type="checkbox"]', rows).prop('checked', this.checked);
                         }
                     });

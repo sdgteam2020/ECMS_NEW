@@ -130,7 +130,7 @@ function BindData() {
                     $("#DetailBody").html(listItem);
                     $("#lblTotal").html(response.length-1);
                   
-                    memberTable = $('#tblcommnd').DataTable({
+                    var memberTable = $('#tblcommnd').DataTable({
                         retrieve: true,
                         lengthChange: false,
                         "order": [[1, "asc"]],

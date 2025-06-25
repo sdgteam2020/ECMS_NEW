@@ -82,11 +82,17 @@ namespace BusinessLogicsLayer
 
         public Task<IEnumerable<T>> GetAll()
         {
-            return GetAll();
+            var ret= GetAll();
+            return ret;
         }
 
         public Task Update(T entity)
-        {
+        {  
+            // Validate the entity (optional)
+            if (entity == null)
+            {
+                throw new ArgumentNullException(nameof(entity));
+            }
             return Update(entity);  
         }
 

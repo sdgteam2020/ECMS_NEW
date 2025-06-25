@@ -177,9 +177,9 @@ $(document).ready(function () {
                   ///  alert($("#spnUserIdIO").html());
                     // alert($("#spnUserIdGSO").html());
 
-                    IntOffr = $("#Intoffrs").prop("checked");
-                    IsIO = $("#chkIO").prop("checked");
-                    IsCo = $("#chkCO").prop("checked")
+                    let IntOffr = $("#Intoffrs").prop("checked");
+                    let IsIO = $("#chkIO").prop("checked");
+                    let IsCo = $("#chkCO").prop("checked")
 
                     if (parseInt(Unit) == 0) {
                         toastr.error('Please Enter Unit');
@@ -870,11 +870,11 @@ function DataBindAll() {
                     var rows;
                     $("#tbldataProfile #chkAll").click(function () {
                         if ($(this).is(':checked')) {
-                            rows = memberTable.rows({ 'search': 'applied' }).nodes();
+                           let rows = memberTable.rows({ 'search': 'applied' }).nodes();
                             $('input[type="checkbox"]', rows).prop('checked', this.checked);
                         }
                         else {
-                            rows = memberTable.rows({ 'search': 'applied' }).nodes();
+                           let rows = memberTable.rows({ 'search': 'applied' }).nodes();
                             $('input[type="checkbox"]', rows).prop('checked', this.checked);
                         }
                     });
