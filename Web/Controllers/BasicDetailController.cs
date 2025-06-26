@@ -84,7 +84,7 @@ namespace Web.Controllers
         private readonly IConfiguration _configuration;
         public DateTime dateTimenow;
         private readonly string[] _expectedColumns = { "RequestId", "RankName", "FName", "LName", "ServiceNo", "ChipNo", "CardSerialNo" };
-        private readonly  ICSVImportBL _iCSVImportBL;
+        private readonly IcsvImportBl _iCSVImportBL;
         private readonly IFaultyCardBL faultyCardBL;
         private readonly IHotlistCardBL _hotlistCardBL;
         private readonly ILostCardBL _lostCardBL;
@@ -96,7 +96,7 @@ namespace Web.Controllers
                               DataProtectionPurposeStrings dataProtectionPurposeStrings, ILogger<BasicDetailController> logger, IStepCounterBL iStepCounterBL, 
                               ITrnFwnBL iTrnFwnBL, ITrnICardRequestBL iTrnICardRequestBL, IDomainMapBL iDomainMapBL
             ,IBasicUploadBL basicUploadBL, IBasicAddressBL basicAddressBL, IBasicinfoBL basicinfoBL, IRankBL rankBL, INotificationBL notificationBL, IMasterBL masterBL
-           , ITrnLoginLogBL iTrnLoginLogBL, IICardHoldBL iICardHoldBL, ICSVImportBL iCSVImportBL, IFaultyCardBL _faultyCardBL,IHotlistCardBL hotlistCardBL, ILostCardBL lostCardBL, IDistributeCardBL distributeCardBL,IDestructionCardBL destructionCardBL)
+           , ITrnLoginLogBL iTrnLoginLogBL, IICardHoldBL iICardHoldBL, IcsvImportBl iCSVImportBL, IFaultyCardBL _faultyCardBL,IHotlistCardBL hotlistCardBL, ILostCardBL lostCardBL, IDistributeCardBL distributeCardBL,IDestructionCardBL destructionCardBL)
         {
             _configuration = configuration;
             this.basicDetailBL = basicDetailBL;

@@ -1279,7 +1279,7 @@ function jsonToXml(json) {
 
 
     for (var key in json) {
-        i = 1;
+      let  i = 1;
         if (json.hasOwnProperty(key)) {
 
 

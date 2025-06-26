@@ -2297,7 +2297,7 @@ namespace DataAccessLayer
                 return null;
             }
         }
-        public async Task<DTOApplicationTrack?> ApplicationHistory(string TrackingId)
+        public async Task<DTOApplicationTrack?> ApplicationHistory(string ApplicationHistory)
         {
             DTOApplicationTrack lst = new DTOApplicationTrack();
             try
@@ -2324,7 +2324,7 @@ namespace DataAccessLayer
                 //" order by fwd.TrnFwdId asc";
                 using (var connection = _contextDP.CreateConnection())
                 {
-                    var ret = await connection.QueryAsync<DTOApplicationDetails>(query, new { TrackingId });
+                    var ret = await connection.QueryAsync<DTOApplicationDetails>(query, new { ApplicationHistory });
                     lst.dTOApplicationDetails = ret.FirstOrDefault() ?? new DTOApplicationDetails();
                 }
                 query = " select fwd.FwdStatusId,fwd.stepId,fwd.UpdatedOn,step.Name,fwd.IsComplete," +
@@ -2337,7 +2337,7 @@ namespace DataAccessLayer
                         " order by fwd.TrnFwdId asc";
                 using (var connection = _contextDP.CreateConnection())
                 {
-                    var ret1 = await connection.QueryAsync<DTOTrackHistory>(query, new { TrackingId });
+                    var ret1 = await connection.QueryAsync<DTOTrackHistory>(query, new { ApplicationHistory });
                     lst.dTOTrackHistory = ret1.ToList();
                 }
                 return lst;

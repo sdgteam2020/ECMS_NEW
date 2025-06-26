@@ -26,7 +26,7 @@ function BindData(unitId) {
                     $("#tbldata").DataTable().destroy();
 
                     $("#DetailBody").html(listItem);
-                    memberTable = $('#tbldata').DataTable({
+                   var memberTable = $('#tbldata').DataTable({
                         "language": {
                             "emptyTable": "No data available"
                         }
@@ -66,7 +66,7 @@ function BindData(unitId) {
                     $("#DetailBody").html(listItem);
                     $("#lblTotal").html(response.length - 1);
 
-                    memberTable = $('#tbldata').DataTable({
+                   var memberTable = $('#tbldata').DataTable({
                         retrieve: true,
                         lengthChange: false,
                         searching: false,
@@ -102,7 +102,7 @@ function BindData(unitId) {
                 $("#tbldata").DataTable().destroy();
 
                 $("#DetailBody").html(listItem);
-                memberTable = $('#tbldata').DataTable({
+               var memberTable = $('#tbldata').DataTable({
                     "language": {
                         "emptyTable": "No data available"
                     }

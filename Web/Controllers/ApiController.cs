@@ -11,10 +11,10 @@ namespace Web.Controllers
     [Authorize]
     public class ApiController : Controller
     {
-        private readonly IAPIBL _aPIBL;
+        private readonly IaPiBl _aPIBL;
         private readonly IConfiguration _configuration;
-        private readonly IAPIDataBL _aPIDataBL;
-        public ApiController(IAPIBL aPIBL, IConfiguration configuration, IAPIDataBL aPIDataBL)
+        private readonly IapiDataBl _aPIDataBL;
+        public ApiController(IaPiBl aPIBL, IConfiguration configuration, IapiDataBl aPIDataBL)
         {
             _aPIBL = aPIBL;
             _configuration = configuration;

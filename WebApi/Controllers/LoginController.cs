@@ -14,9 +14,9 @@ namespace WebApi.Controllers
     public class LoginController : ControllerBase
     {
         private readonly IConfiguration _config;
-        private readonly IAPIDataBL _aPIDataBL;
+        private readonly IapiDataBl _aPIDataBL;
 
-        public LoginController(IConfiguration config, IAPIDataBL aPIDataBL)
+        public LoginController(IConfiguration config, IapiDataBl aPIDataBL)
         {
             _config = config;
             _aPIDataBL = aPIDataBL;
