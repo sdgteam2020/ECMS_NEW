@@ -34,6 +34,10 @@ namespace DataTransferObject.Domain.Model
         [ForeignKey("TrnDomainMapping"), DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int TrnDomainMappingId { get; set; }
         public TrnDomainMapping? TrnDomainMapping { get; set; }
+
+        [ForeignKey("MRecordOffice"), DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public byte RecordOfficeId { get; set; }
+        public MRecordOffice? MRecordOffice { get; set; }
         public long TrackingId { get; set; }
 
         [StringLength(30)]

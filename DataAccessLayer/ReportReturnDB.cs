@@ -524,136 +524,124 @@ namespace DataAccessLayer
                 }
                 else if (dTORecord.IsApproveId == 1)
                 {
-                    query = " req.RequestId,Mstep.StepId,basi.FName,basi.LName,ServiceNo,DOB,ranks.RankAbbreviation RankName,TrackingId," +
-                            " aspusersto.DomainId DomainIdTo,userto.ArmyNo ArmyNoTo ,userto.Name NameTo,ranksto.RankAbbreviation RankTo," +
-                            " aspusersfrom.DomainId DomainIdFrom,userfrom.ArmyNo ArmyNoFrom ,userfrom.Name NameFrom,ranksfrom.RankAbbreviation RankFrom" +
-                            " ,fwd.UpdatedOn,fwdsts.Name StatusName from MStepCounterStep Mstep  " +
-                            " left join TrnStepCounter step on Mstep.StepId=step.StepId " +
-                            " left join TrnICardRequest req on step.RequestId=req.RequestId and req.StatusId=1 " +
-                            " left join TrnFwds fwd on req.RequestId=fwd.RequestId " +
-                            " left join UserProfile userto on fwd.ToUserId=userto.UserId" +
-                            " LEFT join TrnDomainMapping mapto on userto.UserId=mapto.UserId" +
-                            " LEFT join AspNetUsers aspusersto on mapto.AspNetUsersId=aspusersto.Id" +
-                            " left join MRank ranksto on ranksto.RankId=userto.RankId" +
-                            " left join MTrnFwdStatus fwdsts on fwd.FwdStatusId=fwdsts.FwdStatusId" +
-                            " left join UserProfile userfrom on fwd.FromUserId=userfrom.UserId" +
-                            " LEFT join TrnDomainMapping mapfrom on userfrom.UserId=mapfrom.UserId" +
-                            " LEFT join AspNetUsers aspusersfrom on mapfrom.AspNetUsersId=aspusersfrom.Id" +
-                            " left join MRank ranksfrom on ranksfrom.RankId=userfrom.RankId" +
-                            " left join  BasicDetails basi on req.BasicDetailId=basi.BasicDetailId " +
-                            " left join MRank ranks on ranks.RankId=basi.RankId" +
-                            " left join MapUnit unit on basi.UnitId=unit.UnitMapId " +
-                            " where unit.ComdId=ISNULL(@ComdId,unit.ComdId) " +
-                           " and unit.CorpsId=ISNULL(@CorpsId,unit.CorpsId)" +
-                           " and unit.DivId=ISNULL(@DivId,unit.DivId)" +
-                           " and unit.BdeId=ISNULL(@BdeId,unit.BdeId)" +
-                           //" and unit.FmnBranchID=ISNULL(@FmnBranchID,unit.FmnBranchID)" +
-                           //" and unit.PsoId=ISNULL(@PsoId,unit.PsoId)" +
-                           //" and unit.SubDteId=ISNULL(@SubDteId,unit.SubDteId)" +
-                           " and unit.UnitMapId=ISNULL(@UnitMapId,unit.UnitMapId)" +
-                            " and step.ApplyForId=@ApplyForId and fwd.StepId=@StepId and ServiceNo like '%' + @SearchTerm + '%' ";
+                    query = @"req.RequestId,Mstep.StepId,basi.FName,basi.LName,ServiceNo,DOB,ranks.RankAbbreviation RankName,TrackingId,
+                            aspusersto.DomainId DomainIdTo,userto.ArmyNo ArmyNoTo ,userto.Name NameTo,ranksto.RankAbbreviation RankTo,
+                            aspusersfrom.DomainId DomainIdFrom,userfrom.ArmyNo ArmyNoFrom ,userfrom.Name NameFrom,ranksfrom.RankAbbreviation RankFrom
+                            ,fwd.UpdatedOn,fwdsts.Name StatusName from MStepCounterStep Mstep  
+                            left join TrnStepCounter step on Mstep.StepId=step.StepId 
+                            left join TrnICardRequest req on step.RequestId=req.RequestId and req.StatusId=1 
+                            left join TrnFwds fwd on req.RequestId=fwd.RequestId 
+                            left join UserProfile userto on fwd.ToUserId=userto.UserId
+                            LEFT join TrnDomainMapping mapto on userto.UserId=mapto.UserId
+                            LEFT join AspNetUsers aspusersto on mapto.AspNetUsersId=aspusersto.Id
+                            left join MRank ranksto on ranksto.RankId=userto.RankId
+                            left join MTrnFwdStatus fwdsts on fwd.FwdStatusId=fwdsts.FwdStatusId
+                            left join UserProfile userfrom on fwd.FromUserId=userfrom.UserId
+                            LEFT join TrnDomainMapping mapfrom on userfrom.UserId=mapfrom.UserId
+                            LEFT join AspNetUsers aspusersfrom on mapfrom.AspNetUsersId=aspusersfrom.Id
+                            left join MRank ranksfrom on ranksfrom.RankId=userfrom.RankId
+                            left join BasicDetails basi on req.BasicDetailId=basi.BasicDetailId 
+                            left join MRank ranks on ranks.RankId=basi.RankId
+                            left join MapUnit unit on basi.UnitId=unit.UnitMapId 
+                            where unit.ComdId=ISNULL(@ComdId,unit.ComdId) 
+                            and unit.CorpsId=ISNULL(@CorpsId,unit.CorpsId)
+                            and unit.DivId=ISNULL(@DivId,unit.DivId)
+                            and unit.BdeId=ISNULL(@BdeId,unit.BdeId)
+                            and unit.UnitMapId=ISNULL(@UnitMapId,unit.UnitMapId)
+                            and step.ApplyForId=@ApplyForId and step.StepId=@StepId and fwd.StepId=@StepId and ServiceNo like '%' + @SearchTerm + '%'";
                         
                      }
                 else
                 {
                     if(dTORecord.StepId ==1)
                     {
-                        query = " req.RequestId,Mstep.StepId,basi.FName,basi.LName,ServiceNo,DOB,ranks.RankAbbreviation RankName,TrackingId," +
-                      " aspusersto.DomainId DomainIdTo,userto.ArmyNo ArmyNoTo ,userto.Name NameTo,ranksto.RankAbbreviation RankTo," +
-                      " aspusersfrom.DomainId DomainIdFrom,userfrom.ArmyNo ArmyNoFrom ,userfrom.Name NameFrom,ranksfrom.RankAbbreviation RankFrom" +
-                      " ,fwd.UpdatedOn,fwdsts.Name StatusName from MStepCounterStep Mstep  " +
-                      " left join TrnStepCounter step on Mstep.StepId=step.StepId and Mstep.StepId=@StepId" +
-                      " left join TrnICardRequest req on step.RequestId=req.RequestId and req.StatusId=1 " +
-                      " left join TrnFwds fwd on req.RequestId=fwd.RequestId and fwd.IsComplete=0 " +
-                      " left join UserProfile userto on fwd.ToUserId=userto.UserId" +
-                      "  LEFT join TrnDomainMapping mapto on userto.UserId=mapto.UserId" +
-                      "  LEFT join AspNetUsers aspusersto on mapto.AspNetUsersId=aspusersto.Id" +
-                      " left join MRank ranksto on ranksto.RankId=userto.RankId" +
-                      " left join MTrnFwdStatus fwdsts on fwd.FwdStatusId=fwdsts.FwdStatusId" +
-                      " left join UserProfile userfrom on fwd.FromUserId=userfrom.UserId" +
-                      "  LEFT join TrnDomainMapping mapfrom on userfrom.UserId=mapfrom.UserId" +
-                      "  LEFT join AspNetUsers aspusersfrom on mapfrom.AspNetUsersId=aspusersfrom.Id" +
-                      " left join MRank ranksfrom on ranksfrom.RankId=userfrom.RankId" +
-                      " left join  BasicDetails basi on req.BasicDetailId=basi.BasicDetailId " +
-                      " left join MRank ranks on ranks.RankId=basi.RankId" +
-                      " left join MapUnit unit on basi.UnitId=unit.UnitMapId " +
-                      " where unit.ComdId=ISNULL(@ComdId,unit.ComdId) " +
-                           " and unit.CorpsId=ISNULL(@CorpsId,unit.CorpsId)" +
-                           " and unit.DivId=ISNULL(@DivId,unit.DivId)" +
-                           " and unit.BdeId=ISNULL(@BdeId,unit.BdeId)" +
-                           //" and unit.FmnBranchID=ISNULL(@FmnBranchID,unit.FmnBranchID)" +
-                           //" and unit.PsoId=ISNULL(@PsoId,unit.PsoId)" +
-                           //" and unit.SubDteId=ISNULL(@SubDteId,unit.SubDteId)" +
-                           " and unit.UnitMapId=ISNULL(@UnitMapId,unit.UnitMapId)" +
-                      " and step.ApplyForId=@ApplyForId and ServiceNo like '%' + @SearchTerm + '%' ";
+                        query = @"req.RequestId,Mstep.StepId,basi.FName,basi.LName,ServiceNo,DOB,ranks.RankAbbreviation RankName,TrackingId,
+                                aspusersto.DomainId DomainIdTo,userto.ArmyNo ArmyNoTo ,userto.Name NameTo,ranksto.RankAbbreviation RankTo,
+                                aspusersfrom.DomainId DomainIdFrom,userfrom.ArmyNo ArmyNoFrom ,userfrom.Name NameFrom,ranksfrom.RankAbbreviation RankFrom
+                                ,fwd.UpdatedOn,fwdsts.Name StatusName from MStepCounterStep Mstep  
+                                LEFT join TrnStepCounter step on Mstep.StepId=step.StepId and Mstep.StepId=@StepId
+                                LEFT join TrnICardRequest req on step.RequestId=req.RequestId and req.StatusId=1 
+                                LEFT join TrnFwds fwd on req.RequestId=fwd.RequestId and fwd.IsComplete=0 
+                                LEFT join UserProfile userto on fwd.ToUserId=userto.UserId
+                                LEFT join TrnDomainMapping mapto on userto.UserId=mapto.UserId
+                                LEFT join AspNetUsers aspusersto on mapto.AspNetUsersId=aspusersto.Id
+                                LEFT join MRank ranksto on ranksto.RankId=userto.RankId
+                                LEFT join MTrnFwdStatus fwdsts on fwd.FwdStatusId=fwdsts.FwdStatusId
+                                LEFT join UserProfile userfrom on fwd.FromUserId=userfrom.UserId
+                                LEFT join TrnDomainMapping mapfrom on userfrom.UserId=mapfrom.UserId
+                                LEFT join AspNetUsers aspusersfrom on mapfrom.AspNetUsersId=aspusersfrom.Id
+                                LEFT join MRank ranksfrom on ranksfrom.RankId=userfrom.RankId
+                                LEFT join BasicDetails basi on req.BasicDetailId=basi.BasicDetailId 
+                                LEFT join MRank ranks on ranks.RankId=basi.RankId
+                                LEFT join MapUnit unit on basi.UnitId=unit.UnitMapId 
+                                where unit.ComdId=ISNULL(@ComdId,unit.ComdId) 
+                                and unit.CorpsId=ISNULL(@CorpsId,unit.CorpsId)
+                                and unit.DivId=ISNULL(@DivId,unit.DivId)
+                                and unit.BdeId=ISNULL(@BdeId,unit.BdeId)
+                                and unit.UnitMapId=ISNULL(@UnitMapId,unit.UnitMapId)
+                                and step.ApplyForId=@ApplyForId and ServiceNo like '%' + @SearchTerm + '%'";
                     }
                     else
                     {
                         //Appl Status at ADC
-                        query = " req.RequestId,Mstep.StepId,basi.FName,basi.LName,ServiceNo,DOB,ranks.RankAbbreviation RankName,TrackingId," +
-                      " aspusersto.DomainId DomainIdTo,userto.ArmyNo ArmyNoTo ,userto.Name NameTo,ranksto.RankAbbreviation RankTo," +
-                      " aspusersfrom.DomainId DomainIdFrom,userfrom.ArmyNo ArmyNoFrom ,userfrom.Name NameFrom,ranksfrom.RankAbbreviation RankFrom" +
-                      " ,fwd.UpdatedOn,fwdsts.Name StatusName from MStepCounterStep Mstep  " +
-                      " left join TrnStepCounter step on Mstep.StepId=step.StepId " +
-                      " left join TrnICardRequest req on step.RequestId=req.RequestId and req.StatusId=1 " +
-                      " left join TrnFwds fwd on req.RequestId=fwd.RequestId and fwd.IsComplete=0 " +
-                      " left join UserProfile userto on fwd.ToUserId=userto.UserId" +
-                      "  LEFT join TrnDomainMapping mapto on userto.UserId=mapto.UserId" +
-                      "  LEFT join AspNetUsers aspusersto on mapto.AspNetUsersId=aspusersto.Id" +
-                      " left join MRank ranksto on ranksto.RankId=userto.RankId" +
-                      " left join MTrnFwdStatus fwdsts on fwd.FwdStatusId=fwdsts.FwdStatusId" +
-                      " left join UserProfile userfrom on fwd.FromUserId=userfrom.UserId" +
-                      "  LEFT join TrnDomainMapping mapfrom on userfrom.UserId=mapfrom.UserId" +
-                      "  LEFT join AspNetUsers aspusersfrom on mapfrom.AspNetUsersId=aspusersfrom.Id" +
-                      " left join MRank ranksfrom on ranksfrom.RankId=userfrom.RankId" +
-                      " left join  BasicDetails basi on req.BasicDetailId=basi.BasicDetailId " +
-                      " left join MRank ranks on ranks.RankId=basi.RankId" +
-                      " left join MapUnit unit on basi.UnitId=unit.UnitMapId " +
-                      " where unit.ComdId=ISNULL(@ComdId,unit.ComdId) " +
-                           " and unit.CorpsId=ISNULL(@CorpsId,unit.CorpsId)" +
-                           " and unit.DivId=ISNULL(@DivId,unit.DivId)" +
-                           " and unit.BdeId=ISNULL(@BdeId,unit.BdeId)" +
-                           //" and unit.FmnBranchID=ISNULL(@FmnBranchID,unit.FmnBranchID)" +
-                           //" and unit.PsoId=ISNULL(@PsoId,unit.PsoId)" +
-                           //" and unit.SubDteId=ISNULL(@SubDteId,unit.SubDteId)" +
-                           " and unit.UnitMapId=ISNULL(@UnitMapId,unit.UnitMapId)" +
-                      " and step.ApplyForId=@ApplyForId and fwd.StepId=@StepId and ServiceNo like '%' + @SearchTerm + '%' ";
+                        query = @"req.RequestId,Mstep.StepId,basi.FName,basi.LName,ServiceNo,DOB,ranks.RankAbbreviation RankName,TrackingId,
+                                aspusersto.DomainId DomainIdTo,userto.ArmyNo ArmyNoTo ,userto.Name NameTo,ranksto.RankAbbreviation RankTo,
+                                aspusersfrom.DomainId DomainIdFrom,userfrom.ArmyNo ArmyNoFrom ,userfrom.Name NameFrom,ranksfrom.RankAbbreviation RankFrom
+                                ,fwd.UpdatedOn,fwdsts.Name StatusName from MStepCounterStep Mstep  
+                                LEFT JOIN TrnStepCounter step on Mstep.StepId=step.StepId 
+                                LEFT JOIN TrnICardRequest req on step.RequestId=req.RequestId and req.StatusId=1 
+                                LEFT JOIN TrnFwds fwd on req.RequestId=fwd.RequestId and fwd.IsComplete=0 
+                                LEFT JOIN UserProfile userto on fwd.ToUserId=userto.UserId
+                                LEFT JOIN TrnDomainMapping mapto on userto.UserId=mapto.UserId
+                                LEFT JOIN AspNetUsers aspusersto on mapto.AspNetUsersId=aspusersto.Id
+                                LEFT JOIN MRank ranksto on ranksto.RankId=userto.RankId
+                                LEFT JOIN MTrnFwdStatus fwdsts on fwd.FwdStatusId=fwdsts.FwdStatusId
+                                LEFT JOIN UserProfile userfrom on fwd.FromUserId=userfrom.UserId
+                                LEFT JOIN TrnDomainMapping mapfrom on userfrom.UserId=mapfrom.UserId
+                                LEFT JOIN AspNetUsers aspusersfrom on mapfrom.AspNetUsersId=aspusersfrom.Id
+                                LEFT JOIN MRank ranksfrom on ranksfrom.RankId=userfrom.RankId
+                                LEFT JOIN BasicDetails basi on req.BasicDetailId=basi.BasicDetailId 
+                                LEFT JOIN MRank ranks on ranks.RankId=basi.RankId
+                                LEFT JOIN MapUnit unit on basi.UnitId=unit.UnitMapId 
+                                where unit.ComdId=ISNULL(@ComdId,unit.ComdId) 
+                                and unit.CorpsId=ISNULL(@CorpsId,unit.CorpsId)
+                                and unit.DivId=ISNULL(@DivId,unit.DivId)
+                                and unit.BdeId=ISNULL(@BdeId,unit.BdeId)
+                                and unit.UnitMapId=ISNULL(@UnitMapId,unit.UnitMapId)
+                                and step.ApplyForId=@ApplyForId and fwd.StepId=@StepId and ServiceNo like '%' + @SearchTerm + '%'";
                     }
                       
                 }
             }
             else
             {
-                query = " req.RequestId,Mstep.StepId,basi.FName,basi.LName,ServiceNo,DOB,ranks.RankAbbreviation RankName,TrackingId, " +
-                        " aspusersto.DomainId DomainIdTo,userto.ArmyNo ArmyNoTo ,userto.Name NameTo,ranksto.RankAbbreviation RankTo, " +
-                        " aspusersfrom.DomainId DomainIdFrom,userfrom.ArmyNo ArmyNoFrom ,userfrom.Name NameFrom,ranksfrom.RankAbbreviation RankFrom,fwdsts.Name Status" +
-                        " ,fwd.UpdatedOn,fwdsts.Name StatusName from MStepCounterStep Mstep   " +
-                        " inner join TrnStepCounter step on Mstep.StepId=step.StepId  " +
-                        " inner join TrnICardRequest req on step.RequestId=req.RequestId and req.StatusId=1  " +
-                        " inner join TrnFwds fwd on req.RequestId=fwd.RequestId " +
-                        " inner join TrnDomainMapping map on fwd.ToAspNetUsersId=map.AspNetUsersId  " +
-                        " inner join OROMapping mrec on map.Id=mrec.TDMId " +
-                        " left join UserProfile userto on fwd.ToUserId=userto.UserId  " +
-                        " LEFT join TrnDomainMapping mapto on userto.UserId=mapto.UserId  " +
-                        " LEFT join AspNetUsers aspusersto on mapto.AspNetUsersId=aspusersto.Id " +
-                        " left join MRank ranksto on ranksto.RankId=userto.RankId " +
-                        " left join MTrnFwdStatus fwdsts on fwd.FwdStatusId=fwdsts.FwdStatusId " +
-                        " left join UserProfile userfrom on fwd.FromUserId=userfrom.UserId  " +
-                        " LEFT join TrnDomainMapping mapfrom on userfrom.UserId=mapfrom.UserId  " +
-                        " LEFT join AspNetUsers aspusersfrom on mapfrom.AspNetUsersId=aspusersfrom.Id " +
-                        " left join MRank ranksfrom on ranksfrom.RankId=userfrom.RankId " +
-                        " left join  BasicDetails basi on req.BasicDetailId=basi.BasicDetailId  " +
-                        " left join MRank ranks on ranks.RankId=basi.RankId " +
-                        " left join MapUnit unit on basi.UnitId=unit.UnitMapId  " +
-                       " where unit.ComdId=ISNULL(@ComdId,unit.ComdId) " +
-                           " and unit.CorpsId=ISNULL(@CorpsId,unit.CorpsId)" +
-                           " and unit.DivId=ISNULL(@DivId,unit.DivId)" +
-                           " and unit.BdeId=ISNULL(@BdeId,unit.BdeId)" +
-                           //" and unit.FmnBranchID=ISNULL(@FmnBranchID,unit.FmnBranchID)" +
-                           //" and unit.PsoId=ISNULL(@PsoId,unit.PsoId)" +
-                           //" and unit.SubDteId=ISNULL(@SubDteId,unit.SubDteId)" +
-                           " and unit.UnitMapId=ISNULL(@UnitMapId,unit.UnitMapId)" +
-                        " and step.ApplyForId=1 and fwd.StepId=3 and mrec.RecordOfficeId=@ApplyForId and ServiceNo like '%' + @SearchTerm + '%' ";
+                    query = @"req.RequestId,Mstep.StepId,basi.FName,basi.LName,ServiceNo,DOB,ranks.RankAbbreviation RankName,TrackingId, 
+                            aspusersto.DomainId DomainIdTo,userto.ArmyNo ArmyNoTo ,userto.Name NameTo,ranksto.RankAbbreviation RankTo, 
+                            aspusersfrom.DomainId DomainIdFrom,userfrom.ArmyNo ArmyNoFrom ,userfrom.Name NameFrom,ranksfrom.RankAbbreviation RankFrom,fwdsts.Name Status
+                            ,fwd.UpdatedOn,fwdsts.Name StatusName from MStepCounterStep Mstep   
+                            inner join TrnStepCounter step on Mstep.StepId=step.StepId  
+                            inner join TrnICardRequest req on step.RequestId=req.RequestId and req.StatusId=1  
+                            inner join TrnFwds fwd on req.RequestId=fwd.RequestId 
+                            inner join TrnDomainMapping map on fwd.ToAspNetUsersId=map.AspNetUsersId  
+                            inner join OROMapping mrec on req.RecordOfficeId=mrec.RecordOfficeId 
+                            left join UserProfile userto on fwd.ToUserId=userto.UserId  
+                            LEFT join TrnDomainMapping mapto on userto.UserId=mapto.UserId  
+                            LEFT join AspNetUsers aspusersto on mapto.AspNetUsersId=aspusersto.Id 
+                            left join MRank ranksto on ranksto.RankId=userto.RankId 
+                            left join MTrnFwdStatus fwdsts on fwd.FwdStatusId=fwdsts.FwdStatusId 
+                            left join UserProfile userfrom on fwd.FromUserId=userfrom.UserId  
+                            LEFT join TrnDomainMapping mapfrom on userfrom.UserId=mapfrom.UserId  
+                            LEFT join AspNetUsers aspusersfrom on mapfrom.AspNetUsersId=aspusersfrom.Id 
+                            left join MRank ranksfrom on ranksfrom.RankId=userfrom.RankId 
+                            left join  BasicDetails basi on req.BasicDetailId=basi.BasicDetailId  
+                            left join MRank ranks on ranks.RankId=basi.RankId 
+                            left join MapUnit unit on basi.UnitId=unit.UnitMapId  
+                            where unit.ComdId=ISNULL(@ComdId,unit.ComdId) 
+                            and unit.CorpsId=ISNULL(@CorpsId,unit.CorpsId)
+                            and unit.DivId=ISNULL(@DivId,unit.DivId)
+                            and unit.BdeId=ISNULL(@BdeId,unit.BdeId)
+                            and unit.UnitMapId=ISNULL(@UnitMapId,unit.UnitMapId)
+                            and step.ApplyForId=1 and fwd.StepId=3 and mrec.RecordOfficeId=@ApplyForId and ServiceNo like '%' + @SearchTerm + '%'";
 
             }
             try
@@ -681,7 +669,7 @@ namespace DataAccessLayer
                                 AND step.StepId = @StepId
                                 AND basi.ServiceNo like '%' + @SearchTerm + '%'
 
-                        SELECT COUNT(*) 
+                            SELECT COUNT(*) 
                             FROM TrnStepCounter step
                             LEFT JOIN TrnICardRequest req ON step.RequestId = req.RequestId AND req.StatusId = 1  
                             LEFT JOIN BasicDetails basi ON req.BasicDetailId = basi.BasicDetailId  

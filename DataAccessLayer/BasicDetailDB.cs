@@ -46,6 +46,122 @@ namespace DataAccessLayer
             this.protector = dataProtectionProvider.CreateProtector(
                 dataProtectionPurposeStrings.AFSACIdRouteValue);
         }
+        public async Task<byte?> GetRecordOfficeId(byte ApplyForId,string ServiceNo,byte ArmedId,short RankId, DTOApplFwdConditionRequest dTOApplFwdCondition)
+        {
+            try
+            {
+                string subquery = "";
+                string finalquery = "";
+                byte? RecordOfficeId;
+                using (var connection = _contextDP.CreateConnection())
+                {
+                    if (ApplyForId == 1)
+                    {
+                        string ini = ServiceNo.Substring(0, 2).ToUpper();
+                        string MP6F = dTOApplFwdCondition.MP6F.Name;
+                        string MPRSO = dTOApplFwdCondition.MPRSO.Name;
+                        var ArmedAbbreviation = dTOApplFwdCondition.MPRSO.ArmedAbbreviation;
+
+                        subquery = @"declare @Orderby tinyint=0
+                                    declare @ArmedAbbreviation varchar(10)=''
+
+                                    Select @Orderby=Orderby from MRank where RankId=@RankId
+                                    Select @ArmedAbbreviation=Abbreviation from MArmedType where ArmedId=@ArmedId
+
+                                    Select @Orderby Orderby,@ArmedAbbreviation ArmedAbbreviation";
+
+                        var subqueryResult = await connection.QuerySingleOrDefaultAsync<DTOFwdSubqueryResponse>(subquery, new { RankId, ArmedId });
+
+                        if (subqueryResult != null)
+                        {
+                            if (ArmedAbbreviation.Contains(subqueryResult.ArmedAbbreviation, StringComparer.OrdinalIgnoreCase))
+                            {
+                                finalquery = @"Select RecordOfficeId from MRecordOffice where Name=@MPRSO";
+                                RecordOfficeId = await connection.QueryFirstAsync<byte>(finalquery, new { MPRSO });
+
+                                if (RecordOfficeId != null)
+                                {
+                                    return RecordOfficeId;
+                                }
+                                else
+                                {
+                                    return null;
+                                }
+                            }
+                            else if (ini == dTOApplFwdCondition.MP6F.ArmyNoPrefix)
+                            {
+                                finalquery = @"Select RecordOfficeId from MRecordOffice where Name=@MP6F";
+                                RecordOfficeId = await connection.QueryFirstAsync<byte>(finalquery, new { MP6F });
+
+                                if (RecordOfficeId != null)
+                                {
+                                    return RecordOfficeId;
+                                }
+                                else
+                                {
+                                    return null;
+                                }
+
+                            }
+                            else if (subqueryResult.Orderby <= dTOApplFwdCondition.MP6A.RankOrderby)
+                            {
+                                finalquery = @"Select RecordOfficeId from OROMapping where RankId is not null";
+                                RecordOfficeId = await connection.QueryFirstAsync<byte>(finalquery);
+
+                                if (RecordOfficeId != null)
+                                {
+                                    return RecordOfficeId;
+                                }
+                                else
+                                {
+                                    return null;
+                                }
+                            }
+                            else
+                            {
+                                finalquery = @"Select RecordOfficeId from OROMapping where @ArmedId in (select value from string_split(ArmedIdList,','))";
+                                RecordOfficeId = await connection.QueryFirstAsync<byte>(finalquery, new { ArmedId });
+
+                                if (RecordOfficeId != null)
+                                {
+                                    return RecordOfficeId;
+                                }
+                                else
+                                {
+                                    return null;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            return null;
+                        }
+
+                    }
+                    else
+                    {
+                        finalquery = @"Select RecordOfficeId from MRecordOffice where ArmedId=@ArmedId";
+                        RecordOfficeId = await connection.QueryFirstAsync<byte>(finalquery, new { ArmedId });
+
+                        if (RecordOfficeId != null)
+                        {
+                            return RecordOfficeId;
+                        }
+                        else
+                        {
+                            return null;
+                        }
+                    }
+
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "BasicDetailDB->GetRecordOfficeId");
+                return null;
+            }
+
+        }
         public async Task<bool> CheckArmyNO(string ArmyNo)
         {
             return await _context.BasicDetails.AnyAsync(x => x.ServiceNo == ArmyNo);
@@ -216,6 +332,8 @@ namespace DataAccessLayer
                         await _context.SaveChangesAsync();
                         _context.Update(mTrnIdentityInfo);
                         await _context.SaveChangesAsync();
+                        _context.Update(mTrnICardRequest);
+                        await _context.SaveChangesAsync();
 
                         _context.Entry(Data).State = EntityState.Modified;
                         _context.Update(Data);
@@ -223,7 +341,7 @@ namespace DataAccessLayer
 
                         transaction_.Commit();
                         dTOBasicDetailsSaveResponse.Result = true;
-                        dTOBasicDetailsSaveResponse.Message = "Updae";
+                        dTOBasicDetailsSaveResponse.Message = "Update";
                         return dTOBasicDetailsSaveResponse;
                     }
                     //do other things, then commit or rollback
@@ -479,6 +597,23 @@ namespace DataAccessLayer
                         parametersIdentityInfo.Add("@Height", mTrnIdentityInfo.Height, DbType.Single, ParameterDirection.Input);
                         parametersIdentityInfo.Add("@BloodGroupId", mTrnIdentityInfo.BloodGroupId, DbType.Byte, ParameterDirection.Input);
                         await db.ExecuteAsync(updateIdentityInfo, parametersIdentityInfo, transaction: transaction);
+
+                        var updateTrnICardRequest = " UPDATE TrnICardRequest SET BasicDetailId=@BasicDetailId, TypeId=@TypeId, RegistrationId=@RegistrationId, TrnDomainMappingId=@TrnDomainMappingId, TrackingId=@TrackingId, IsActive=@IsActive, Updatedby=@Updatedby, UpdatedOn=@UpdatedOn, StatusId=@StatusId, CardSerialNo=@CardSerialNo, ChipNo=@ChipNo,RecordOfficeId=@RecordOfficeId WHERE RequestId=@RequestId";
+                        var parametersTrnICardRequest = new DynamicParameters();
+                        parametersTrnICardRequest.Add("@RequestId", mTrnICardRequest.RequestId, DbType.Int32, ParameterDirection.Input);
+                        parametersTrnICardRequest.Add("@BasicDetailId", mTrnICardRequest.BasicDetailId, DbType.Int32, ParameterDirection.Input);
+                        parametersTrnICardRequest.Add("@TypeId", mTrnICardRequest.TypeId, DbType.Byte, ParameterDirection.Input);
+                        parametersTrnICardRequest.Add("@RegistrationId", mTrnICardRequest.RegistrationId, DbType.Byte, ParameterDirection.Input);
+                        parametersTrnICardRequest.Add("@TrnDomainMappingId", mTrnICardRequest.TrnDomainMappingId, DbType.Int32, ParameterDirection.Input);
+                        parametersTrnICardRequest.Add("@TrackingId", mTrnICardRequest.TrackingId, DbType.Int64, ParameterDirection.Input);
+                        parametersTrnICardRequest.Add("@IsActive", mTrnICardRequest.IsActive, DbType.Boolean, ParameterDirection.Input);
+                        parametersTrnICardRequest.Add("@Updatedby", mTrnICardRequest.Updatedby, DbType.Int32, ParameterDirection.Input);
+                        parametersTrnICardRequest.Add("@UpdatedOn", mTrnICardRequest.UpdatedOn, DbType.DateTime, ParameterDirection.Input);
+                        parametersTrnICardRequest.Add("@StatusId", mTrnICardRequest.StatusId, DbType.Byte, ParameterDirection.Input);
+                        parametersTrnICardRequest.Add("@CardSerialNo", mTrnICardRequest.CardSerialNo, DbType.String, ParameterDirection.Input, 30);
+                        parametersTrnICardRequest.Add("@ChipNo", mTrnICardRequest.ChipNo, DbType.String, ParameterDirection.Input, 30);
+                        parametersTrnICardRequest.Add("@RecordOfficeId", mTrnICardRequest.RecordOfficeId, DbType.Byte, ParameterDirection.Input);
+                        await db.ExecuteAsync(updateTrnICardRequest, parametersTrnICardRequest, transaction: transaction);
 
                         transaction.Commit();
                         dTOBasicDetailsSaveResponse.Result = true;

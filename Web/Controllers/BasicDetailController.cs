@@ -1120,6 +1120,20 @@ namespace Web.Controllers
             try
             {
                 var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+                DTOApplFwdConditionRequest? dTOApplFwdCondition = _configuration.GetSection("ApplFwdCondition").Get<DTOApplFwdConditionRequest>() ?? new DTOApplFwdConditionRequest
+                {
+                    MPRSO = new MPRSO(),
+                    MP6F = new MP6F(),
+                    MP6A = new MP6A()
+                };
+                if (string.IsNullOrWhiteSpace(dTOApplFwdCondition.MPRSO.Name) || dTOApplFwdCondition.MPRSO.ArmedAbbreviation.Count == 0 ||
+                            string.IsNullOrWhiteSpace(dTOApplFwdCondition.MP6F.Name) || string.IsNullOrWhiteSpace(dTOApplFwdCondition.MP6F.ArmyNoPrefix) ||
+                            dTOApplFwdCondition.MP6A.RankOrderby == 0)
+                {
+                    return Json(KeyConstants.InternalServerError);
+                }
+
                 if (model.BasicDetailId > 0)
                 {
                     ViewBag.OptionsRankId = model.RankId;
@@ -1289,39 +1303,60 @@ namespace Web.Controllers
                         {
                             mTrnUpload.SignatureImagePath = model.ExistingSignatureImagePath;
                         }
-                        DTOBasicDetailsSaveResponse ret1 = await basicDetailBL.SaveBasicDetailsWithAll(newBasicDetail, mTrnAddress, mTrnUpload, mTrnIdentityInfo, null, null);
+
+                        MTrnICardRequest? mTrnICardRequest = await iTrnICardRequestBL.GetRequestByBasicDetailId(model.BasicDetailId);
+                        if (mTrnICardRequest != null) 
+                        {
+                            byte? RecordOfficeId = await basicDetailBL.GetRecordOfficeId(model.ApplyForId, model.ServiceNo, model.ArmedId, model.RankId, dTOApplFwdCondition);
+
+                            if (RecordOfficeId != null)
+                            {
+                                mTrnICardRequest.RecordOfficeId = (byte)RecordOfficeId;
+                            }
+                            else
+                            {
+                                ModelState.AddModelError("", "Armed not mapped in Record Office / ORO .");
+                                goto end;
+                            }
+                        }
+                        else
+                        {
+                            ModelState.AddModelError("", "Invalid Request Id.");
+                            goto end;
+                        }
+
+                        DTOBasicDetailsSaveResponse ret1 = await basicDetailBL.SaveBasicDetailsWithAll(newBasicDetail, mTrnAddress, mTrnUpload, mTrnIdentityInfo, mTrnICardRequest, null);
                         BasicDetail basicDetail = await basicDetailBL.Get(model.BasicDetailId);
                         if (ret1.Result == true)
                         {
-                            bool resultforisprocess = await iTrnICardRequestBL.GetRequestPending(basicDetail.BasicDetailId);
-                            if (!resultforisprocess)
-                            {
-                                MTrnICardRequest mTrnICardRequest = new MTrnICardRequest();
-                                mTrnICardRequest.BasicDetailId = basicDetail.BasicDetailId;
-                                mTrnICardRequest.StatusId = 1;
-                                mTrnICardRequest.TypeId = model.TypeId;
-                                string tracid = model.DOB.Day.ToString("D2") + "" + model.DOB.Month.ToString("D2") + "" + model.DOB.Year + "" + Convert.ToInt32(model.AadhaarNo.Substring(model.AadhaarNo.Length - 3)).ToString("D4");
-                                mTrnICardRequest.TrackingId = Convert.ToInt64(tracid);
-                                mTrnICardRequest.RegistrationId = model.RegistrationId;
-                                mTrnICardRequest.TrnDomainMappingId = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").TrnDomainMappingId;
-                                mTrnICardRequest.UpdatedOn = DateTime.Now;
-                                mTrnICardRequest.Updatedby = Convert.ToInt32(userId); //SessionHeplers.GetObject<string>(HttpContext.Session, "ArmyNo");
-                                mTrnICardRequest = await iTrnICardRequestBL.AddWithReturn(mTrnICardRequest);
-                                if (mTrnICardRequest.RequestId > 0)
-                                {
-                                    MStepCounter mStepCounter = new MStepCounter();
-                                    mStepCounter.StepId = Convert.ToByte(1);
-                                    mStepCounter.RequestId = mTrnICardRequest.RequestId;
-                                    mStepCounter.UpdatedOn = DateTime.Now;
-                                    mStepCounter.Updatedby = Convert.ToInt32(userId);
-                                    mStepCounter.ApplyForId = newBasicDetail.ApplyForId;
-                                    await iStepCounterBL.Add(mStepCounter);
-                                }
-                                //DTOApiDataResponse dTOApiDataResponse = new DTOApiDataResponse();
-                                //dTOApiDataResponse.Status = false;
-                                //dTOApiDataResponse.Message = "Your I-Card is under process. Please wait.";
-                                //return Ok(dTOApiDataResponse);
-                            }
+                            #region This code commented by Yogendra
+                            //bool resultforisprocess = await iTrnICardRequestBL.GetRequestPending(basicDetail.BasicDetailId);
+                            //if (!resultforisprocess)
+                            //{
+                            //    MTrnICardRequest mTrnICardRequest = new MTrnICardRequest();
+                            //    mTrnICardRequest.BasicDetailId = basicDetail.BasicDetailId;
+                            //    mTrnICardRequest.StatusId = 1;
+                            //    mTrnICardRequest.TypeId = model.TypeId;
+                            //    string tracid = model.DOB.Day.ToString("D2") + "" + model.DOB.Month.ToString("D2") + "" + model.DOB.Year + "" + Convert.ToInt32(model.AadhaarNo.Substring(model.AadhaarNo.Length - 3)).ToString("D4");
+                            //    mTrnICardRequest.TrackingId = Convert.ToInt64(tracid);
+                            //    mTrnICardRequest.RegistrationId = model.RegistrationId;
+                            //    mTrnICardRequest.TrnDomainMappingId = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").TrnDomainMappingId;
+                            //    mTrnICardRequest.UpdatedOn = DateTime.Now;
+                            //    mTrnICardRequest.Updatedby = Convert.ToInt32(userId); //SessionHeplers.GetObject<string>(HttpContext.Session, "ArmyNo");
+                            //    mTrnICardRequest = await iTrnICardRequestBL.AddWithReturn(mTrnICardRequest);
+                            //    if (mTrnICardRequest.RequestId > 0)
+                            //    {
+                            //        MStepCounter mStepCounter = new MStepCounter();
+                            //        mStepCounter.StepId = Convert.ToByte(1);
+                            //        mStepCounter.RequestId = mTrnICardRequest.RequestId;
+                            //        mStepCounter.UpdatedOn = DateTime.Now;
+                            //        mStepCounter.Updatedby = Convert.ToInt32(userId);
+                            //        mStepCounter.ApplyForId = newBasicDetail.ApplyForId;
+                            //        await iStepCounterBL.Add(mStepCounter);
+                            //    }
+                            //}
+                            #endregion
+
 
 
                             TempData["success"] = "Updated Successfully.";
@@ -1518,6 +1553,7 @@ namespace Web.Controllers
                             ModelState.AddModelError("Signature_", "Signature is required.");
                             goto end;
                         }
+
                         MTrnICardRequest mTrnICardRequest = new MTrnICardRequest();
                         mTrnICardRequest.StatusId = 1;
                         mTrnICardRequest.IsActive = true;
@@ -1531,6 +1567,19 @@ namespace Web.Controllers
                         //SessionHeplers.GetObject<string>(HttpContext.Session, "ArmyNo");
                         // mTrnICardRequest = await iTrnICardRequestBL.AddWithReturn(mTrnICardRequest);
 
+
+
+                        byte? RecordOfficeId = await basicDetailBL.GetRecordOfficeId(model.ApplyForId, model.ServiceNo, model.ArmedId,model.RankId, dTOApplFwdCondition);
+
+                        if (RecordOfficeId != null)
+                        {
+                            mTrnICardRequest.RecordOfficeId = (byte)RecordOfficeId;
+                        }
+                        else
+                        {
+                            ModelState.AddModelError("", "Armed not mapped in Record Office / ORO .");
+                            goto end;
+                        }
 
                         MStepCounter mStepCounter = new MStepCounter();
                         mStepCounter.StepId = Convert.ToByte(1);

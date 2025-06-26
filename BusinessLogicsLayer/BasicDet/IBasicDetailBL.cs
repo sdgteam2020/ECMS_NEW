@@ -14,6 +14,7 @@ namespace BusinessLogicsLayer.BasicDet
 {
     public interface IBasicDetailBL:IGenericRepository<BasicDetail>
     {
+        public Task<byte?> GetRecordOfficeId(byte ApplyForId, string ServiceNo, byte ArmedId, short RankId, DTOApplFwdConditionRequest dTOApplFwdCondition);
         public Task<bool> CheckArmyNO(string ArmyNo);
         public Task<DTOUploadChipAndSerialResponse> UploadChipAndSerial(List<DTOUploadChipAndSerialRequest> Data);
         public Task<string?> GetCSVString(DTOCSVExportRequest Data);

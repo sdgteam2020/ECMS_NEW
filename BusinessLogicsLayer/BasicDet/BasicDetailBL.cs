@@ -23,6 +23,10 @@ namespace BusinessLogicsLayer.BasicDet
     {
         private readonly IBasicDetailDB _iBasicDetailDB;
         private readonly ILogger<BasicDetailBL> _logger;
+        public async Task<byte?> GetRecordOfficeId(byte ApplyForId, string ServiceNo, byte ArmedId, short RankId, DTOApplFwdConditionRequest dTOApplFwdCondition)
+        {
+            return await _iBasicDetailDB.GetRecordOfficeId(ApplyForId, ServiceNo, ArmedId, RankId, dTOApplFwdCondition);
+        }
         public async Task<bool> CheckArmyNO(string ArmyNo)
         {
             return await _iBasicDetailDB.CheckArmyNO(ArmyNo);

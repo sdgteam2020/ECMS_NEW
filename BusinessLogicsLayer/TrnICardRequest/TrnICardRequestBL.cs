@@ -19,12 +19,15 @@ namespace BusinessLogicsLayer.BdeCate
     {
         private readonly ITrnICardRequestDB _iTrnICardRequestDB;
 
-
         public TrnICardRequestBL(ApplicationDbContext context, ITrnICardRequestDB iTrnICardRequestDB) : base(context)
         {
             _iTrnICardRequestDB = iTrnICardRequestDB;
         }
 
+        public async Task<MTrnICardRequest?> GetRequestByBasicDetailId(int BasicDetailId)
+        {
+            return await _iTrnICardRequestDB.GetRequestByBasicDetailId(BasicDetailId);
+        }
         public async Task<MTrnICardRequest> GetByAspNetUserBy(int AspnetuserId)
         {
            return await _iTrnICardRequestDB.GetByAspNetUserBy(AspnetuserId);

@@ -4,6 +4,7 @@ using DataAccessLayer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccessLayer.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250624101041_v173")]
+    partial class v173
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -2025,9 +2028,6 @@ namespace DataAccessLayer.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
-                    b.Property<byte>("RecordOfficeId")
-                        .HasColumnType("tinyint");
-
                     b.Property<byte>("RegistrationId")
                         .HasColumnType("tinyint");
 
@@ -2053,8 +2053,6 @@ namespace DataAccessLayer.Migrations
                     b.HasKey("RequestId");
 
                     b.HasIndex("BasicDetailId");
-
-                    b.HasIndex("RecordOfficeId");
 
                     b.HasIndex("RegistrationId");
 
@@ -3695,12 +3693,6 @@ namespace DataAccessLayer.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("DataTransferObject.Domain.Master.MRecordOffice", "MRecordOffice")
-                        .WithMany()
-                        .HasForeignKey("RecordOfficeId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("DataTransferObject.Domain.Master.MRegistration", "Registration")
                         .WithMany()
                         .HasForeignKey("RegistrationId")
@@ -3735,8 +3727,6 @@ namespace DataAccessLayer.Migrations
                     b.Navigation("BasicDetail");
 
                     b.Navigation("MICardType");
-
-                    b.Navigation("MRecordOffice");
 
                     b.Navigation("MTrnICardStatus");
 
