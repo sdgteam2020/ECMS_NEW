@@ -305,7 +305,7 @@ function GetCount() {
                     Itemlist += '<div class="seven">';
                     Itemlist += '<h1>JCOs/OR</h1>';
                     Itemlist += '</div>';
-                    dTOReportReturnCountJco = response.dTOReportReturnCountJco;
+                   let dTOReportReturnCountJco = response.dTOReportReturnCountJco;
                    
                     for (var i = 0; i < dTOReportReturnCountJco.length; i++) {
                         var Total1apro = 0
@@ -682,7 +682,7 @@ function GetLoginUnitMappingDetails() {
                 else {
 
                
-                    val = response.UnitType;
+                   var val = response.UnitType;
                     var lst = '<option value="1">Please Select</option>';
 
                     comid = response.ComdId;

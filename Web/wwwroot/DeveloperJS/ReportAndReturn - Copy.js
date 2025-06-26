@@ -703,7 +703,7 @@ function GetLoginUnitMappingDetails() {
                 else {
 
                
-                    val = response.UnitType;
+                   var val = response.UnitType;
                     var lst = '<option value="1">Please Select</option>';
 
                     comid = response.ComdId;
