@@ -487,8 +487,9 @@ function GetCount() {
 }
 
 function GetReportReturnHistory(spnStepId, applyTypeId, IsApproveId) {
-    $("#tbldatadialog").DataTable().destroy();
-    var listItem = "";
+    if ($.fn.DataTable.isDataTable("#tbldatadialog")) {
+        $("#tbldatadialog").DataTable().destroy();
+    }
     var userdata =
     {
         "TableId": 0,
@@ -520,15 +521,16 @@ function GetReportReturnHistory(spnStepId, applyTypeId, IsApproveId) {
                 stepId: spnStepId,
                 isApproveId: IsApproveId,
                 data: {
-                    tableId: 0,
-                    comdId: $('#ddlCommand').val(),
-                    corpsId: $('#ddlCorps').val(),
-                    divId: $('#ddlDiv').val(),
-                    bdeId: $('#ddlBde').val(),
-                    fmnBranchID: $('#ddlFmnBranch').val(),
-                    psoId: $('#ddlPSODte').val(),
-                    subDteId: $('#ddlDgSubDte').val(),
-                    unitMapId: $('#ddlUnit').val()
+                    //tableId: 0,
+                    //comdId: $('#ddlCommand').val(),
+                    //corpsId: $('#ddlCorps').val(),
+                    //divId: $('#ddlDiv').val(),
+                    //bdeId: $('#ddlBde').val(),
+                    //fmnBranchID: $('#ddlFmnBranch').val(),
+                    //psoId: $('#ddlPSODte').val(),
+                    //subDteId: $('#ddlDgSubDte').val(),
+                    //unitMapId: $('#ddlUnit').val()
+                    userdata
                 }
             };
             try {
@@ -607,7 +609,7 @@ function GetReportReturnHistory(spnStepId, applyTypeId, IsApproveId) {
                         color = 'warning';
                     }
                     else if (data == "Rejected") {
-                        color = 'dangers';
+                        color = 'danger';
                     }
                     else {
                         color = 'success'

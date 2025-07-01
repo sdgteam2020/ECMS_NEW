@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using BusinessLogicsLayer.DestructionCard;
 using BusinessLogicsLayer.FaultyCard;
 using DataAccessLayer;
 using DataAccessLayer.BaseInterfaces;

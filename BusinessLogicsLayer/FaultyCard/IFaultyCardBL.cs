@@ -1,4 +1,5 @@
-﻿using DataTransferObject.Domain.Master;
+﻿using DataAccessLayer;
+using DataTransferObject.Domain.Master;
 using DataTransferObject.Domain.Model;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
@@ -10,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace BusinessLogicsLayer.FaultyCard
 {
-    public interface IFaultyCardBL : IGenericRepository<TrnFaultyCard>
+    public interface IFaultyCardBL : IGenericRepositoryDL<TrnFaultyCard>
     {
         public Task<string> GetRemarksData(int[] RemarksIds);
         public Task<bool> FindRequestId(int RequestId);

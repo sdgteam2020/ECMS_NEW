@@ -55,13 +55,14 @@ namespace DataAccessLayer
 
         public async Task<IEnumerable<T>> GetAll()
         {
-            var Data = await _context.Set<T>().ToListAsync();
-            if (Data == null)
+            var result = await _context.Set<T>().ToListAsync();
+            
+            // Handle the case where result is null or empty
+            if (result == null)
             {
-                return Enumerable.Empty<T>();
+                return Enumerable.Empty<T>();  // Return an empty collection if null
             }
-            return Data;
-
+            return result;
         }
 
         public async Task Add(T entity)

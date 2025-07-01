@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace BusinessLogicsLayer.CSVImports
 {
-    public interface IcsvImportBl : IGenericRepository<CSVImport>
+    public interface IcsvImportBl : IGenericRepositoryDL<CSVImport>
     {
     }
 }

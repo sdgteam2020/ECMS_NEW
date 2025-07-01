@@ -1,4 +1,5 @@
-﻿using DataTransferObject.Domain.Master;
+﻿using DataAccessLayer;
+using DataTransferObject.Domain.Master;
 using DataTransferObject.Domain.Model;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
@@ -11,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace BusinessLogicsLayer.Bde
 {
-    public interface IDomainMapBL : IGenericRepository<TrnDomainMapping>
+    public interface IDomainMapBL : IGenericRepositoryDL<TrnDomainMapping>
     {
         public Task<TrnDomainMapping?> GetTrnDomainMappingByUserId(int UserId);
         public Task<bool> GetByDomainId(TrnDomainMapping Data);

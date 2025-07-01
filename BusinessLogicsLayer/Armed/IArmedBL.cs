@@ -1,9 +1,10 @@
-﻿using DataTransferObject.Domain.Master;
+﻿using DataAccessLayer;
+using DataTransferObject.Domain.Master;
 using DataTransferObject.Response;
 
 namespace BusinessLogicsLayer.Master
 {
-    public interface IArmedBL : IGenericRepository<MArmedType>
+    public interface IArmedBL : IGenericRepositoryDL<MArmedType>
     {
 
         public Task<bool> GetByName(MArmedType Dto);

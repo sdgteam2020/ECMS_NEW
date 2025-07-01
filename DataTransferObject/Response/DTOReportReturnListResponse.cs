@@ -8,6 +8,7 @@ namespace DataTransferObject.Response
 {
     public class DTOReportReturnListResponse
     {
+        public int TotalFilteredRecords { get; set; }
         public int RequestId { get; set; }
         public int StepId { get; set; }
         public string? Name { get; set; }

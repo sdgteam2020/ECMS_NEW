@@ -1,4 +1,5 @@
-﻿using DataTransferObject.Domain;
+﻿using DataAccessLayer;
+using DataTransferObject.Domain;
 using DataTransferObject.Domain.Master;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
@@ -12,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace BusinessLogicsLayer.Master
 {
-    public interface IUserProfileBL : IGenericRepository<MUserProfile>
+    public interface IUserProfileBL : IGenericRepositoryDL<MUserProfile>
     {
         public Task<DTOProfileIdCheckInFKTableResponse> ProfileIdCheckInFKTable(int UserId);
         public Task<DTOProfileManageDeleteResponse> DeleteProfile(MUserProfile mUserProfile);

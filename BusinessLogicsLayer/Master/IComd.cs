@@ -1,4 +1,5 @@
-﻿using DataTransferObject.Domain.Master;
+﻿using DataAccessLayer;
+using DataTransferObject.Domain.Master;
 using DataTransferObject.Response;
 using DataTransferObject.Response.User;
 using System;
@@ -10,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace BusinessLogicsLayer.Master
 { 
-    public interface IComd : IGenericRepository<DataTransferObject.Domain.Master.MComd>
+    public interface IComd : IGenericRepositoryDL<DataTransferObject.Domain.Master.MComd>
     {
 
         public Task<bool> GetByName(DataTransferObject.Domain.Master.MComd DTo);

@@ -1,10 +1,11 @@
-﻿using DataTransferObject.Domain.Model;
+﻿using DataAccessLayer;
+using DataTransferObject.Domain.Model;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
 
 namespace BusinessLogicsLayer.APIData
 {
-    public interface IapiDataBl : IGenericRepository<MApiData>
+    public interface IapiDataBl : IGenericRepositoryDL<MApiData>
     {
 
         public Task<DTOApiPersDataResponse> GetByIC(DTOAPIDataRequest Data);

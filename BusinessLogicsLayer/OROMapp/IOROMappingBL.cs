@@ -1,4 +1,5 @@
-﻿using DataTransferObject.Domain.Model;
+﻿using DataAccessLayer;
+using DataTransferObject.Domain.Model;
 using DataTransferObject.Response;
 using System;
 using System.Collections.Generic;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace BusinessLogicsLayer.OROMapp
 {
-    public interface IOROMappingBL : IGenericRepository<OROMapping>
+    public interface IOROMappingBL : IGenericRepositoryDL<OROMapping>
     {
         public Task<List<DTOOROMappingResponse>?> GetAllOROMapping();
         public Task<bool> GetByName(OROMapping Dto);

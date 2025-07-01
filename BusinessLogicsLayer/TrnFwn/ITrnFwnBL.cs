@@ -1,4 +1,5 @@
 ﻿using BusinessLogicsLayer.BdeCate;
+using DataAccessLayer;
 using DataTransferObject.Domain.Master;
 using DataTransferObject.Domain.Model;
 using DataTransferObject.Requests;
@@ -12,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace BusinessLogicsLayer.Bde
 {
-    public interface ITrnFwnBL : IGenericRepository<MTrnFwd>
+    public interface ITrnFwnBL : IGenericRepositoryDL<MTrnFwd>
     {
         public Task<bool> UpdateAllBYRequestId(int RequestId);
         public Task<bool> UpdateFieldBYTrnFwdId(int TrnFwdId);

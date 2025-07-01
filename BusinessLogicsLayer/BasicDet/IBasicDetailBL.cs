@@ -1,4 +1,5 @@
-﻿using DataTransferObject.Domain.Master;
+﻿using DataAccessLayer;
+using DataTransferObject.Domain.Master;
 using DataTransferObject.Domain.Model;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
@@ -12,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace BusinessLogicsLayer.BasicDet
 {
-    public interface IBasicDetailBL:IGenericRepository<BasicDetail>
+    public interface IBasicDetailBL: IGenericRepositoryDL<BasicDetail>
     {
         public Task<byte?> GetRecordOfficeId(byte ApplyForId, string ServiceNo, byte ArmedId, short RankId, DTOApplFwdConditionRequest dTOApplFwdCondition);
         public Task<bool> CheckArmyNO(string ArmyNo);

@@ -1,4 +1,5 @@
-﻿using DataTransferObject.Domain.Master;
+﻿using DataAccessLayer;
+using DataTransferObject.Domain.Master;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
 using System;
@@ -9,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace BusinessLogicsLayer.Unit
 {
-    public interface IUnitBL : IGenericRepository<MUnit>
+    public interface IUnitBL : IGenericRepositoryDL<MUnit>
     {
 
         public Task<bool> GetByName(MUnit Data);

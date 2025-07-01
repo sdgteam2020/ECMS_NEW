@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace BusinessLogicsLayer.Unit
 {
-    public interface IMapUnitBL : IGenericRepository<MapUnit>
+    public interface IMapUnitBL : IGenericRepositoryDL<MapUnit>
     {
         public Task<DTOCheckUnitMappedInMapUnitResponse?> CheckUnitMappedInMapUnit(string SUSNo);
         public Task<bool> GetByName(MapUnit Data);

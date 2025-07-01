@@ -1,11 +1,12 @@
-﻿using DataTransferObject.Domain.Identitytable;
+﻿using DataAccessLayer;
+using DataTransferObject.Domain.Identitytable;
 using DataTransferObject.Domain.Master;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
 
 namespace BusinessLogicsLayer.Account
 {
-    public interface IAccountBL : IGenericRepository<ApplicationUser>
+    public interface IAccountBL : IGenericRepositoryDL<ApplicationUser>
     {
         public Task<int> TotalProfileCount();
         public bool GetByDomainId(string DomainId, int Id);

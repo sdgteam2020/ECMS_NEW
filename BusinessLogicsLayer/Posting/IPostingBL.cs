@@ -1,4 +1,5 @@
-﻿using DataTransferObject.Domain.Master;
+﻿using DataAccessLayer;
+using DataTransferObject.Domain.Master;
 using DataTransferObject.Domain.Model;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
@@ -10,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace BusinessLogicsLayer.Posting
 {
-    public interface IPostingBL : IGenericRepository<TrnPostingOut>
+    public interface IPostingBL : IGenericRepositoryDL<TrnPostingOut>
     {
         
         public Task<DTOPostingInResponse> GetArmyDataForPostingOut(string ArmyNo);

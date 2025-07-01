@@ -6,10 +6,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using DataAccessLayer;
 
 namespace BusinessLogicsLayer.User
 {
-    public interface IUserBL : IGenericRepository<UserM>
+    public interface IUserBL : IGenericRepositoryDL<UserM>
     {
 
         //public Task<UserM> GetByUserName(string UserName);

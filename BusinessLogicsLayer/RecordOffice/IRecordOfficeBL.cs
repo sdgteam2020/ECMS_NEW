@@ -1,4 +1,5 @@
-﻿using DataTransferObject.Domain.Master;
+﻿using DataAccessLayer;
+using DataTransferObject.Domain.Master;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
 using System;
@@ -9,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace BusinessLogicsLayer.RecordOffice
 {
-    public interface IRecordOfficeBL : IGenericRepository<MRecordOffice>
+    public interface IRecordOfficeBL : IGenericRepositoryDL<MRecordOffice>
     {
         public Task<int> GetByName(MRecordOffice Dto);
         public Task<bool> GetByTDMId(int UnitId, int? TDMId);
