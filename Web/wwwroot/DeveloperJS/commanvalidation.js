@@ -536,6 +536,7 @@ $(function () {
 
     }, 1000);
     $("#tbldatatableForApprovalIO #chkAll").on("click", function () {
+        let rows;
         if ($(this).is(':checked')) {
             rows = memberTable.rows({ 'search': 'applied' }).nodes();
             $('input[type="checkbox"]', rows).prop('checked', this.checked);
@@ -1130,4 +1131,3 @@ function PrintData(div) {
         printWindow.close();
     };
 }
-

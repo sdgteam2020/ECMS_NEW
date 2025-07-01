@@ -39,9 +39,9 @@ namespace BusinessLogicsLayer.Posting
            return await postingDB.GetArmyDataForPostingOut(ArmyNo);
         }
 
-        public async Task<bool> UpdateForPosting(TrnPostingOut Date)
+        public async Task<bool> UpdateForPosting(TrnPostingOut Data)
         {
-            return await postingDB.UpdateForPosting(Date);
+            return await postingDB.UpdateForPosting(Data);
         }
         public async Task<List<DTOAppClosedListResponse>> GetAppClosedList(int UnitMapId, int apply)
         {

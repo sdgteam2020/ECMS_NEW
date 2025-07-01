@@ -104,10 +104,10 @@ namespace Web.Controllers
         }
         [HttpPost]
         //[ValidateAntiForgeryToken]
-        public async Task<IActionResult> GetTokenDetails(DTOTokenResponse Data)
+        public IActionResult GetTokenDetails(DTOTokenResponse Data)
         {
 
-            var data = await _iGetTokenBL.GetTokenDetails(Data);
+            var data = _iGetTokenBL.GetTokenDetails(Data);
             return Json(data);
         }
         [HttpPost]

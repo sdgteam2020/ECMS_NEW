@@ -14,9 +14,9 @@ namespace BusinessLogicsLayer.Bde
     public interface IRankBL : IGenericRepositoryDL<MRank>
     {
 
-        public Task<bool> GetByName(MRank DTo);
+        public Task<bool> GetByName(MRank Dto);
         public Task<short> GetByMaxOrder();
-        public Task<int> OrderByChange(MRank DTo);
+        public Task<int> OrderByChange(MRank Dto);
         public Task<IEnumerable<MRank>> GetAllByorder();
         public Task<IEnumerable<MRank>> GetAllByType(int Type);
         public Task<DTORankIdCheckInFKTableResponse?> RankIdCheckInFKTable(short RankId);

@@ -10,6 +10,6 @@ namespace BusinessLogicsLayer.Formation
 {
     public interface IFormationBL : IGenericRepositoryDL<MFormation>
     {
-        public Task<bool> GetByName(MFormation Data);
+        public Task<bool> GetByName(MFormation Dto);
     }
 }

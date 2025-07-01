@@ -1,24 +1,17 @@
-﻿using DataAccessLayer;
-using DataAccessLayer.BaseInterfaces;
+﻿using DataAccessLayer.BaseInterfaces;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace BusinessLogicsLayer.ReportReturn
 {
     public class ReportReturnBL : IReportReturnBL
     {
         private readonly IReportReturnDB _IReportReturnDB;
-        private readonly IMapUnitDB _IMapUnitDB;
-        public ReportReturnBL(IReportReturnDB reportReturnDB, IMapUnitDB iMapUnitDB)
+        //private readonly IMapUnitDB _IMapUnitDB;
+        public ReportReturnBL(IReportReturnDB reportReturnDB) //IMapUnitDB iMapUnitDB
         {
             _IReportReturnDB = reportReturnDB;
-            _IMapUnitDB = iMapUnitDB;   
+            //_IMapUnitDB = iMapUnitDB;   
         } 
         public async Task<DTOReportReturnCountlst> GetMstepCount(DTOMHierarchyRequest Data,short ArmedIdForORO)
         {

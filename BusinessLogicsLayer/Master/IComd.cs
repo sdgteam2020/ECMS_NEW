@@ -14,9 +14,9 @@ namespace BusinessLogicsLayer.Master
     public interface IComd : IGenericRepositoryDL<DataTransferObject.Domain.Master.MComd>
     {
 
-        public Task<bool> GetByName(DataTransferObject.Domain.Master.MComd DTo);
+        public Task<bool> GetByName(DataTransferObject.Domain.Master.MComd Dto);
         public Task<int> GetByMaxOrder(); 
-        public Task<byte> OrderByChange(DataTransferObject.Domain.Master.MComd DTo);
+        public Task<byte> OrderByChange(DataTransferObject.Domain.Master.MComd Dto);
         public Task<IEnumerable<DataTransferObject.Domain.Master.MComd>> GetAllByorder();
         public Task<DTOTreeViewUnitResponse> GetBinaryTree(int Id);
         public Task<DTOComdIdCheckInFKTableResponse?> ComdIdCheckInFKTable(byte ComdId);

@@ -13,6 +13,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using static System.Runtime.InteropServices.JavaScript.JSType;
@@ -178,81 +179,30 @@ namespace BusinessLogicsLayer.BasicDet
         {
             try
             {
-                //Get properties to check (excluding Remarks)
-                var properties = typeof(DTOCardPriningRequest).GetProperties()
-                                                            .Where(p => p.Name != nameof(DTOCardPriningRequest.Remarks)
-                                                                     && p.Name != nameof(DTOCardPriningRequest.IsValid)
-                                                                     && p.Name != nameof(DTOCardPriningRequest.Status))
-                                                            .ToList();
+                // Get properties to check (excluding Remarks, IsValid, Status)
+                var properties = GetPropertiesToCheck();
 
-                // For each property, find duplicate values
-                var duplicateValuesDict = properties.ToDictionary(
-                    prop => prop.Name,
-                    prop => request
-                        .Where(r => !string.IsNullOrWhiteSpace(prop.GetValue(r)?.ToString()))
-                        .GroupBy(r => prop.GetValue(r)?.ToString()?.Trim())
-                        .Where(g => g.Count() > 1)
-                        .Select(g => g.Key)
-                        .ToHashSet()
-                );
+                // Find duplicate values in request
+                var duplicateValuesDict = FindDuplicateValues(request, properties);
 
-                //Mark records with remarks
-                request = request.Select(r =>
+                // Mark records with remarks
+                request = MarkRecordsWithRemarks(request, properties, duplicateValuesDict);
+
+                // Separate valid and invalid records
+                var (validRecords, invalidRecords) = SeparateRecordsByValidity(request);
+
+                // Ensure validRecords is never null
+                validRecords = validRecords ?? new List<DTOCardPriningRequest>();
+
+                // Check valid records in the database
+                if (validRecords.Any())
                 {
-                    var remarks = new List<string>();
-
-                    foreach (var prop in properties)
-                    {
-                        var rawValue = prop.GetValue(r);
-                        var value = rawValue?.ToString()?.Trim();
-
-                        if (prop.Name == "RequestId")
-                        {
-                            int integerValue = 0;
-                            var isInteger = int.TryParse(value, out integerValue);
-                            if (!isInteger)
-                            {
-                                remarks.Add($"{prop.Name} is not valid");
-                            }
-                        }
-
-                        // Null or Blank Check
-                        if (string.IsNullOrWhiteSpace(value))
-                        {
-                            remarks.Add($"{prop.Name} is blank");
-                        }
-                        else if (prop.Name == nameof(DTOCardPriningRequest.ServiceNo) && value.Length > 10)
-                        {
-                            remarks.Add($"{prop.Name} is out of range");
-                        }
-                        else if ((prop.Name == "CardSerialNo" || prop.Name == "ChipNo") && value.Length > 30)
-                        {
-                            remarks.Add($"{prop.Name} is out of range");
-                        }
-                        else if(duplicateValuesDict[prop.Name].Contains(value))
-                        {
-                            remarks.Add($"{prop.Name} is duplicate");
-                        }
-                    }
-
-                    if (remarks.Any())
-                    {
-                        r.IsValid = false;
-                        r.Status = "SheetInValid";
-                        r.Remarks = string.Join("; ", remarks);
-                    }
-                    return r;
-                }).ToList();
-
-                var validRecords = request.Where(r => r.IsValid).ToList();
-                var invalidRecords = request.Where(r => !r.IsValid).ToList();
-                if (validRecords?.Count() > 0) {
                     var checkDbRecords = await _iBasicDetailDB.CardPrintingCSVCheck(validRecords);
                     validRecords = checkDbRecords.Where(r => r.IsValid).ToList();
-                    var invalidDbRecord = checkDbRecords.Where(r => !r.IsValid).ToList();
-                    invalidRecords = invalidRecords.Concat(invalidDbRecord).ToList();
+                    invalidRecords = invalidRecords.Concat(checkDbRecords.Where(r => !r.IsValid)).ToList();
                 }
-                if(validRecords!=null)
+
+                // Combine invalid and valid records
                 request = invalidRecords.Concat(validRecords).ToList();
             }
             catch(Exception ee)
@@ -260,6 +210,102 @@ namespace BusinessLogicsLayer.BasicDet
                 _logger.LogError(1001, ee, "BasicDetailBL->ValidateCardPrinitng");
             }
             return request;
+        }
+        private List<PropertyInfo> GetPropertiesToCheck()
+        {
+            return typeof(DTOCardPriningRequest).GetProperties()
+                .Where(p => p.Name != nameof(DTOCardPriningRequest.Remarks)
+                            && p.Name != nameof(DTOCardPriningRequest.IsValid)
+                            && p.Name != nameof(DTOCardPriningRequest.Status))
+                .ToList();
+        }
+        private Dictionary<string, HashSet<string?>> FindDuplicateValues(List<DTOCardPriningRequest> request, List<PropertyInfo> properties)
+        {
+            return properties.ToDictionary(
+                    prop => prop.Name,
+                    prop =>
+                    {
+                        // Create a list of values for the current property
+                        var values = request
+                            .Select(r =>
+                            {
+                                // Get value and handle nullable values safely
+                                var value = prop.GetValue(r) as string; // Safe casting to string
+                                return value?.Trim(); // Using null-conditional operator to ensure value is not null
+                            })
+                            .Where(value => !string.IsNullOrWhiteSpace(value))  // Filter out null, empty, or whitespace values
+                            .ToList();
+
+                        // Group by value, find duplicates, and return them as a HashSet
+                        return values
+                            .GroupBy(v => v)
+                            .Where(g => g.Count() > 1)
+                            .Select(g => g.Key)
+                            .ToHashSet();
+                    }
+                );
+        }
+
+        private List<DTOCardPriningRequest> MarkRecordsWithRemarks(List<DTOCardPriningRequest> request,List<PropertyInfo> properties,Dictionary<string, HashSet<string>> duplicateValuesDict)
+        {
+            return request.Select(r =>
+            {
+                var remarks = ValidateRecordProperties(r, properties, duplicateValuesDict);
+
+                if (remarks.Any())
+                {
+                    r.IsValid = false;
+                    r.Status = "SheetInValid";
+                    r.Remarks = string.Join("; ", remarks);
+                }
+
+                return r;
+            }).ToList();
+        }
+        private List<string> ValidateRecordProperties(DTOCardPriningRequest r, List<PropertyInfo> properties, Dictionary<string, HashSet<string>> duplicateValuesDict)
+        {
+            var remarks = new List<string>();
+
+            foreach (var prop in properties)
+            {
+                var value = prop.GetValue(r)?.ToString()?.Trim();
+
+                // Validate specific properties
+                if (prop.Name == "RequestId" && !IsInteger(value))
+                {
+                    remarks.Add($"{prop.Name} is not valid");
+                }
+
+                if (string.IsNullOrWhiteSpace(value))
+                {
+                    remarks.Add($"{prop.Name} is blank");
+                }
+                else if (prop.Name == nameof(DTOCardPriningRequest.ServiceNo) && value.Length > 10)
+                {
+                    remarks.Add($"{prop.Name} is out of range");
+                }
+                else if ((prop.Name == "CardSerialNo" || prop.Name == "ChipNo") && value.Length > 30)
+                {
+                    remarks.Add($"{prop.Name} is out of range");
+                }
+                else if (duplicateValuesDict[prop.Name].Contains(value))
+                {
+                    remarks.Add($"{prop.Name} is duplicate");
+                }
+            }
+
+            return remarks;
+        }
+        private bool IsInteger(string value)
+        {
+            return int.TryParse(value, out _);
+        }
+        private (List<DTOCardPriningRequest> validRecords, List<DTOCardPriningRequest> invalidRecords) SeparateRecordsByValidity(List<DTOCardPriningRequest> request)
+        {
+            var validRecords = request.Where(r => r.IsValid).ToList();
+            var invalidRecords = request.Where(r => !r.IsValid).ToList();
+
+            return (validRecords, invalidRecords);
         }
 
         public Task<List<DTOCardMovementHistoryResponse>> GetCardMovementHistory(int requestId)

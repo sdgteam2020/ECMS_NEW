@@ -2,11 +2,6 @@
 using DataTransferObject.Domain.Master;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BusinessLogicsLayer.RecordOffice
 {
@@ -16,7 +11,7 @@ namespace BusinessLogicsLayer.RecordOffice
         public Task<bool> GetByTDMId(int UnitId, int? TDMId);
         public Task<DTOGetROByTDMIdResponse?> GetROByTDMId(int TDMId);
         public Task<List<DTORecordOfficeResponse>?> GetAllData();
-        public Task<DTOGetUpdateRecordOfficeResponse?> GetUpdateRecordOffice(int TDMId);
+        public Task<DTOGetUpdateRecordOfficeResponse?> GetUpdateRecordOffice(int RecordOfficeId);
         public Task<List<DTOGetMappedForRecordResponse>?> GetDDMappedForRecord(int UnitMapId);
         public Task<bool?> UpdateROValue(DTOUpdateROValueRequest dTO);
     }
