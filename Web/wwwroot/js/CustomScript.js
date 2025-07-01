@@ -1,5 +1,8 @@
-﻿$(function () {
-    var memberTable;
+﻿var memberTable;
+var minDateFilter;
+var maxDateFilter;
+var oTable;
+$(function () {
     $("#icardPrint").on("click",function () {
         window.print();
     });
@@ -226,7 +229,7 @@ function printDiv() {
 }
 /* Load Data In Table */
 function LoadJDTK(selector) {
-    let = memberTable = $(selector).DataTable({
+    memberTable = $(selector).DataTable({
         retrieve: true,
         lengthChange: false,
         "order": [[2, "asc"]],
@@ -253,7 +256,7 @@ function LoadJDTK(selector) {
     memberTable.buttons().container().appendTo('#myProjectTable_wrapper .col-md-6:eq(0)');
 }
 function LoadJDT(selector) {
-    let =oTable = $(selector).DataTable({
+    oTable = $(selector).DataTable({
         /*dom: 'Blfrtip',*/
         dom: '<"top"<"left-col"B><"center-col"l><"right-col"f>>rtip',
         buttons: [
@@ -282,7 +285,7 @@ function LoadDOC(selector, title) {
         img.src = url;
     }
     // End Function to convert an img URL to data URL
-    let = oTable = $(selector).DataTable({
+    oTable = $(selector).DataTable({
         "dom": '<"dt-buttons"Bf><"clear">lirtp',
         "dom": '<"top"<"left-col"Bi><"center-col"l><"right-col"f>>rtp',
         "paging": true,
@@ -403,7 +406,7 @@ function LoadDOCCustomPageLength(selector, title, pageLength ,orien, pagesize) {
         img.src = url;
     }
     // End Function to convert an img URL to data URL
-    let oTable = $(selector).DataTable({
+    oTable = $(selector).DataTable({
         "pageLength": pageLength,
         "dom": '<"dt-buttons"Bf><"clear">lirtp',
         "dom": '<"top"<"left-col"Bi><"center-col"l><"right-col"f>>rtp',
@@ -541,7 +544,7 @@ function LoadDOCCustom(selector, title, args, orien, pagesize) {
         img.src = url;
     }
     // End Function to convert an img URL to data URL
-    let oTable = $(selector).DataTable({
+    oTable = $(selector).DataTable({
         "dom": '<"dt-buttons"Bf><"clear">lirtp',
         "dom": '<"top"<"left-col"Bi><"center-col"l><"right-col"f>>rtp',
         "paging": true,
@@ -662,7 +665,7 @@ function LoadDOCCustom(selector, title, args, orien, pagesize) {
 }
 /*With Custom Columns*/
 function LoadJDTWithCustomCols(selector, args) {
-    let oTable = $(selector).DataTable({
+    oTable = $(selector).DataTable({
         /*dom: 'Blfrtip',*/
         dom: '<"top"<"left-col"B><"center-col"l><"right-col"f>>rtip',
         buttons: [
@@ -700,7 +703,7 @@ function LoadJDTWithCustomCols(selector, args) {
 }
 /*With Custom*/
 function LoadJDTCustom(selector, args,orien,pagesize) {
-    let oTable = $(selector).DataTable({
+    oTable = $(selector).DataTable({
         /*dom: 'Blfrtip',*/
         dom: '<"top"<"left-col"B><"center-col"l><"right-col"f>>rtip',
         buttons: [
@@ -742,7 +745,7 @@ function LoadJDTCustom(selector, args,orien,pagesize) {
 }
 
 function LoadJDTSorted(selector) {
-    let oTable = $(selector).DataTable({
+    oTable = $(selector).DataTable({
         dom: '<"top"<"left-col"B><"center-col"l><"right-col"f>>rtip',
         buttons: [
             'excel', 'pdf', 'print'
@@ -755,7 +758,7 @@ function LoadJDTSorted(selector) {
     });
 }
 function LoadJDTSimple(selector) {
-    let oTable = $(selector).DataTable({
+    oTable = $(selector).DataTable({
         "scrollX": true,
         "processing": true,
         "fixedHeader": true,
@@ -763,7 +766,7 @@ function LoadJDTSimple(selector) {
 }
 //Sorted with Doc Export
 function LoadJDTSortedExport(selector) {
-    let oTable = $(selector).DataTable({
+    oTable = $(selector).DataTable({
         dom: '<"top"<"left-col"B><"center-col"l><"right-col"f>>rtip',
         buttons: [
             'excel', 'pdf', 'print'
@@ -804,7 +807,7 @@ function DeleteJDTRow(id, event, selector, Jsonurl) {
 /*-----------Datatable with custom Date search*/
 
 function LoadJDTSortedDate(selector) {
-    let oTable = $(selector).DataTable({
+    oTable = $(selector).DataTable({
         "scrollX": true,
         "processing": true,
         "order": [[0, "desc"]],
