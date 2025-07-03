@@ -3964,5 +3964,43 @@ namespace Web.Controllers
             return Json(dTOFaulty);
         }
         #endregion DestructionCard
+
+        #region Dispatch
+        public async Task<ActionResult> DispatchOut()
+        {
+            int AspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var user = await userManager.FindByIdAsync(AspNetUsersId.ToString());
+            string ClaimValue=string.Empty;
+
+            // UserManager service GetClaimsAsync method gets all the current claims of the user
+            var UserClaims = await userManager.GetClaimsAsync(user);
+            if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "ICard Export Data"))
+            {
+                ClaimValue = "ICard Export Data";
+                ViewBag.ClaimValue = ClaimValue;
+                return View();
+            }
+            else if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "Dispatch Card"))
+            {
+                ClaimValue = "Dispatch Card";
+                ViewBag.ClaimValue = ClaimValue;
+                return View();
+            }
+            else
+            {
+                TempData["error"] = "Invalid User.";
+                TempData.Keep("error");
+                return RedirectToAction("ContactUs", "Home");
+            }
+        }
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //[Authorize(Policy = "ICardExportDataPolicy")]
+        //public async Task<ActionResult> DispatchOut()
+        //{
+
+        //}
+
+        #endregion
     }
 }
