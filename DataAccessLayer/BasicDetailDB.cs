@@ -46,6 +46,51 @@ namespace DataAccessLayer
             this.protector = dataProtectionProvider.CreateProtector(
                 dataProtectionPurposeStrings.AFSACIdRouteValue);
         }
+        public async Task<DTOGenericResponse<List<DTOMasterResponse>>> GetddlRecordRegiment(byte CategeryId, byte ClaimValue,int TDMId,int UnitId)
+        {
+            List<DTOMasterResponse> ret = new List<DTOMasterResponse>();
+            DTOGenericResponse<List<DTOMasterResponse>> response = new DTOGenericResponse<List<DTOMasterResponse>>();
+            string query=string.Empty;
+            if (ClaimValue == 1)
+            {
+                if(CategeryId == 1)
+                {
+                    query = @"Select oro.RecordOfficeId as Id,mrec.Name as Name from OROMapping oro
+                            inner join MRecordOffice mrec on oro.RecordOfficeId = mrec.RecordOfficeId";
+                }
+                else if(CategeryId == 2)
+                {
+                    query = @"Select RegId as Id, Name  from MRegimental";
+                }
+            }
+            else if (ClaimValue == 2) 
+            {
+                query = @"Select oro.RecordOfficeId as Id,mrec.Name from OROMapping oro
+                        inner join MRecordOffice mrec on oro.RecordOfficeId = mrec.RecordOfficeId WHERE oro.TDMId=@TDMId";
+            }
+            else if (ClaimValue == 3)
+            {
+                query = @"Select RegId as Id, Name  from MRegimental WHERE UnitId=@UnitId";
+            }
+            try
+            {
+                using (var connection = _contextDP.CreateConnection())
+                {
+                     ret = (await connection.QueryAsync<DTOMasterResponse>(query)).ToList();
+                }
+                response.Result = true;  // Operation successful
+                response.Message = "Data retrieved successfully.";
+                response.Value = ret;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "BasicDetailDB->GetddlRecordRegiment");
+                response.Result = false;
+                response.Message = "An error occurred while fetching data.";
+                response.Value = ret;
+            }
+            return response;
+        }
         public async Task<byte?> GetRecordOfficeId(byte ApplyForId,string ServiceNo,byte ArmedId,short RankId, DTOApplFwdConditionRequest dTOApplFwdCondition)
         {
             try

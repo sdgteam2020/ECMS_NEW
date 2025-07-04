@@ -1,4 +1,5 @@
 ﻿using Azure;
+using BusinessLogicsLayer.BdeCate;
 using BusinessLogicsLayer.Master;
 using DataAccessLayer;
 using DataAccessLayer.BaseInterfaces;
@@ -10,6 +11,7 @@ using DataTransferObject.ViewModels;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Hosting.Internal;
 using Microsoft.Extensions.Logging;
+using Microsoft.SqlServer.Management.Smo.Wmi;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,6 +26,15 @@ namespace BusinessLogicsLayer.BasicDet
     {
         private readonly IBasicDetailDB _iBasicDetailDB;
         private readonly ILogger<BasicDetailBL> _logger;
+        public BasicDetailBL(ApplicationDbContext context,IBasicDetailDB BasicDetail, ILogger<BasicDetailBL> logger) : base(context)
+        {
+            _iBasicDetailDB = BasicDetail;
+            _logger = logger;
+        }
+        public async Task<DTOGenericResponse<List<DTOMasterResponse>>> GetddlRecordRegiment(byte CategeryId, byte ClaimValue, int TDMId, int UnitId)
+        {
+            return await _iBasicDetailDB.GetddlRecordRegiment(CategeryId, ClaimValue, TDMId, UnitId);
+        }
         public async Task<byte?> GetRecordOfficeId(byte ApplyForId, string ServiceNo, byte ArmedId, short RankId, DTOApplFwdConditionRequest dTOApplFwdCondition)
         {
             return await _iBasicDetailDB.GetRecordOfficeId(ApplyForId, ServiceNo, ArmedId, RankId, dTOApplFwdCondition);
@@ -36,14 +47,9 @@ namespace BusinessLogicsLayer.BasicDet
         {
             return await _iBasicDetailDB.UploadChipAndSerial(Data);
         }
-        public async Task<string?> GetCSVString(DTOCSVExportRequest Data) 
+        public async Task<string?> GetCSVString(DTOCSVExportRequest Data)
         {
             return await _iBasicDetailDB.GetCSVString(Data);
-        }
-        public BasicDetailBL(ApplicationDbContext context,IBasicDetailDB BasicDetail, ILogger<BasicDetailBL> logger) : base(context)
-        {
-            _iBasicDetailDB = BasicDetail;
-            _logger = logger;
         }
         public async Task<List<DTOTopArmyNoFromICardRequestResponse>?> GetTopArmyNoFromICardRequest(string ArmyNo)
         {

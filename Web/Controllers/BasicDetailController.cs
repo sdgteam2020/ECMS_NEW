@@ -52,6 +52,7 @@ using BusinessLogicsLayer.DistributeCard;
 using BusinessLogicsLayer.BdeCate;
 using System;
 using System.Linq;
+using Org.BouncyCastle.Ocsp;
 
 namespace Web.Controllers
 {
@@ -3966,6 +3967,60 @@ namespace Web.Controllers
         #endregion DestructionCard
 
         #region Dispatch
+
+        public async Task<IActionResult> GetddlRecordRegiment(byte CategeryId)
+        {
+            DtoSession? dtoSession = new DtoSession();
+            DTOGenericResponse<List<DTOMasterResponse>> response = new DTOGenericResponse<List<DTOMasterResponse>>();
+            List<DTOMasterResponse> ret = new List<DTOMasterResponse>();
+            if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
+            {
+                dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+
+            }
+
+            if (dtoSession != null)
+            {
+                int AspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                var user = await userManager.FindByIdAsync(AspNetUsersId.ToString());
+                byte ClaimValue;
+
+                // UserManager service GetClaimsAsync method gets all the current claims of the user
+                var UserClaims = await userManager.GetClaimsAsync(user);
+                if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "ICard Export Data"))
+                {
+                    ClaimValue = 1;
+                    response = await basicDetailBL.GetddlRecordRegiment(CategeryId, ClaimValue, dtoSession.TrnDomainMappingId, dtoSession.UnitId);
+                    return Ok(response);
+                }
+                else if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "Dispatch Card" && i.Value == "Appl Approver"))
+                {
+                    ClaimValue = 2;
+                    response = await basicDetailBL.GetddlRecordRegiment(CategeryId, ClaimValue, dtoSession.TrnDomainMappingId, dtoSession.UnitId);
+                    return Ok(response);
+                }
+                else if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "Dispatch Card"))
+                {
+                    ClaimValue = 3;
+                    response = await basicDetailBL.GetddlRecordRegiment(CategeryId, ClaimValue, dtoSession.TrnDomainMappingId, dtoSession.UnitId);
+                    return Ok(response);
+                }
+                else
+                {
+                    response.Result = false;
+                    response.Message = "An error occurred while fetching data.";
+                    response.Value = ret;
+                    return Ok(response);
+                }
+            }
+            else
+            {
+                response.Result = false;
+                response.Message = "An error occurred while fetching data.";
+                response.Value = ret;
+                return Ok(response);
+            }
+        }
         public async Task<ActionResult> DispatchOut()
         {
             int AspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));

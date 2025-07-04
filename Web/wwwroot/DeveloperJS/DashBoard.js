@@ -44,6 +44,10 @@
         event.stopPropagation();
         location.href = '/Master/MapUnitChangeRequest';
     });
+    document.getElementById("btnAddDispatchCard").addEventListener("click", function (event) {
+        event.stopPropagation();
+        location.href = '/BasicDetail/DispatchOut';
+    });
 
     //document.getElementsByClassName("btnAdd").addEventListener("click", function (event) {
     //    event.stopPropagation(); // Prevent click from bubbling to the <a>
