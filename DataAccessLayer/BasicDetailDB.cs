@@ -28,16 +28,19 @@ using Microsoft.AspNetCore.Http;
 using static Dapper.SqlMapper;
 using DataTransferObject.Response.User;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+using DataTransferObject.Domain.Identitytable;
+using Microsoft.AspNetCore.Identity;
 
 namespace DataAccessLayer
 {
     public class BasicDetailDB : GenericRepositoryDL<BasicDetail>, IBasicDetailDB
     {
         protected new readonly ApplicationDbContext _context;
+        private readonly UserManager<ApplicationUser> userManager;
         private readonly DapperContext _contextDP;
         private readonly IDataProtector protector;
         private readonly ILogger<BasicDetailDB> _logger;
-        public BasicDetailDB(ApplicationDbContext context, DapperContext contextDP, IDataProtectionProvider dataProtectionProvider, ILogger<BasicDetailDB> logger, DataProtectionPurposeStrings dataProtectionPurposeStrings) : base(context)
+        public BasicDetailDB(ApplicationDbContext context, DapperContext contextDP, IDataProtectionProvider dataProtectionProvider, ILogger<BasicDetailDB> logger, DataProtectionPurposeStrings dataProtectionPurposeStrings, UserManager<ApplicationUser> userManager) : base(context)
         {
             _context = context;
             _contextDP = contextDP;
@@ -45,6 +48,147 @@ namespace DataAccessLayer
             // Pass the purpose string as a parameter
             this.protector = dataProtectionProvider.CreateProtector(
                 dataProtectionPurposeStrings.AFSACIdRouteValue);
+            this.userManager = userManager;
+        }
+        public async Task<DTOGenericResponse<DTODispatchToResponse?>> GetDispatchToData(byte CategeryId, int Id)
+        {
+            DTODispatchToResponse? ret = new DTODispatchToResponse();
+            DTOGenericResponse<DTODispatchToResponse?> response = new DTOGenericResponse<DTODispatchToResponse?>();
+            string query = string.Empty;
+            if (CategeryId == 1)
+            {
+                query = @"Select oro.UnitId,mun.Abbreviation as UnitAbbreviation, CONCAT(mun.Sus_no,mun.Suffix) as Sus_no,tdm.UserId,tdm.AspNetUsersId,aspuser.DomainId,up.ArmyNo,up.Name,mran.RankAbbreviation from OROMapping oro
+                            left join MapUnit mapu on oro.UnitId = mapu.UnitMapId
+                            left join MUnit mun on mapu.UnitId = mun.UnitId
+                            left join TrnDomainMapping tdm on oro.TDMId = tdm.Id
+                            left join AspNetUsers aspuser on tdm.AspNetUsersId=aspuser.Id
+                            left join UserProfile up on tdm.UserId=up.UserId
+                            left join MRank mran on up.RankId=mran.RankId
+                            Where oro.RecordOfficeId=@Id";
+                try
+                {
+                    using (var connection = _contextDP.CreateConnection())
+                    {
+                        ret = await connection.QueryFirstOrDefaultAsync<DTODispatchToResponse>(query, new { Id });
+                    }
+                    if (ret != null && ret.UnitId != null && ret.UserId != null && ret.AspNetUsersId != null)
+                    {
+                        response.Result = true;  // Operation successful
+                        response.Message = "Data retrieved successfully.";
+                        response.Value = ret;
+                    }
+                    else
+                    {
+                        response.Message = "Unit not bind with ORO Mapping Master.Contact to MP6 Cell.";
+                        response.Result = false; // Operation failed
+                        response.Value = ret;
+                    }
+                    return response;
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(1001, ex, "BasicDetailDB->GetUnitIdAndTDMIdForDispatch");
+                    response.Result = false;
+                    response.Message = "An error occurred while fetching data.";
+                    response.Value = ret;
+                    return response;
+                }
+            }
+            else if (CategeryId == 2)
+            {
+                query = @"Select UnitId from MRegimental Where RegId=@Id";
+                string query2 = @"Select AspNetUsersId from TrnDomainMapping where UnitId=@UnitId";
+                string query3 = @"Select mreg.UnitId,mun.Abbreviation as UnitAbbreviation, CONCAT(mun.Sus_no,mun.Suffix) as Sus_no,tdm.UserId,tdm.AspNetUsersId,aspuser.DomainId,up.ArmyNo,up.Name,mran.RankAbbreviation from MRegimental mreg
+                                left join MapUnit mapu on mreg.UnitId = mapu.UnitMapId
+                                left join MUnit mun on mapu.UnitId = mun.UnitId
+                                left join AspNetUsers aspuser on aspuser.Id=@AspNetUsersId
+                                left join TrnDomainMapping tdm on aspuser.Id = tdm.AspNetUsersId
+                                left join UserProfile up on tdm.UserId=up.UserId
+                                left join MRank mran on up.RankId=mran.RankId
+                                Where mreg.RegId=@Id";
+                try
+                {
+                    using (var connection = _contextDP.CreateConnection())
+                    {
+                        int? UnitId = await connection.QueryFirstOrDefaultAsync<int?>(query, new { Id });
+                        bool found = false;
+                        if (UnitId == null)
+                        {
+                            response.Result = false; // Operation failed
+                            response.Message = "Unit not bind with Regimental Master. Contact to MP6 Cell";
+                            response.Value = ret;
+                            
+                        }
+                        else
+                        {
+                            var AspNetUsersIds = await connection.QueryAsync<int>(query2, new { UnitId });
+                            int? AspNetUsersId=null;
+                            if (AspNetUsersIds.Any())
+                            {
+                                foreach (var item in AspNetUsersIds)
+                                {
+                                    var user = await userManager.FindByIdAsync(item.ToString());
+                                    
+                                    if (user == null) continue;
+                                    
+                                    var UserClaims = await userManager.GetClaimsAsync(user);
+                                    if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "Dispatch Card"))
+                                    {
+                                        AspNetUsersId = item;
+                                        found = true;
+                                        break;
+                                    }
+                                }
+                                if(found == true && AspNetUsersId !=null)
+                                {
+                                    ret = await connection.QueryFirstOrDefaultAsync<DTODispatchToResponse>(query3, new { Id, UnitId, AspNetUsersId });
+                                    if (ret != null && ret.UnitId != null && ret.UserId != null && ret.AspNetUsersId != null)
+                                    {
+                                        response.Result = true;  // Operation successful
+                                        response.Message = "Data retrieved successfully.";
+                                        response.Value = ret;
+                                    }
+                                    else
+                                    {
+                                        response.Message = "Profile not bind with DID.Please Contact to MP6 Cell.";
+                                        response.Result = false; // Operation failed
+                                        response.Value = ret;
+                                    }
+                                }
+                                else
+                                {
+                                    response.Result = false; // Operation failed
+                                    response.Message = "Claim not assign to any DID.Please Contact to MP6 Cell.";
+                                    response.Value = ret;
+                                }
+                            }
+                            else
+                            {
+                                response.Result = false; // Operation failed
+                                response.Message = "Unit not contain any DID.Please Contact to MP6 Cell.";
+                                response.Value = ret;
+                            }
+
+                        }
+                        return response;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(1001, ex, "BasicDetailDB->GetUnitIdAndTDMIdForDispatch");
+                    response.Result = false;
+                    response.Message = "An error occurred while fetching data.";
+                    response.Value = ret;
+                    return response;
+                }
+            }
+            else
+            {
+                response.Result = false; // Operation failed
+                response.Message = "Invalid CategeryId provided.";
+                response.Value = ret;
+                return response;
+            }
         }
         public async Task<DTOGenericResponse<List<DTOMasterResponse>>> GetddlRecordRegiment(byte CategeryId, byte ClaimValue,int TDMId,int UnitId)
         {
@@ -76,7 +220,7 @@ namespace DataAccessLayer
             {
                 using (var connection = _contextDP.CreateConnection())
                 {
-                     ret = (await connection.QueryAsync<DTOMasterResponse>(query)).ToList();
+                     ret = (await connection.QueryAsync<DTOMasterResponse>(query,new { TDMId , UnitId })).ToList();
                 }
                 response.Result = true;  // Operation successful
                 response.Message = "Data retrieved successfully.";

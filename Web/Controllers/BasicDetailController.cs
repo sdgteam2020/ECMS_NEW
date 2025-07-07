@@ -3967,7 +3967,13 @@ namespace Web.Controllers
         #endregion DestructionCard
 
         #region Dispatch
+        public async Task<IActionResult> GetDispatchToData(byte CategeryId, byte RecordRegimentId)
+        {
+            DTOGenericResponse<DTODispatchToResponse?> response = new DTOGenericResponse<DTODispatchToResponse?>();
 
+            response = await basicDetailBL.GetDispatchToData(CategeryId, RecordRegimentId);
+            return Ok(response);
+        }
         public async Task<IActionResult> GetddlRecordRegiment(byte CategeryId)
         {
             DtoSession? dtoSession = new DtoSession();
@@ -4025,20 +4031,22 @@ namespace Web.Controllers
         {
             int AspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
             var user = await userManager.FindByIdAsync(AspNetUsersId.ToString());
-            string ClaimValue=string.Empty;
 
             // UserManager service GetClaimsAsync method gets all the current claims of the user
             var UserClaims = await userManager.GetClaimsAsync(user);
             if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "ICard Export Data"))
             {
-                ClaimValue = "ICard Export Data";
-                ViewBag.ClaimValue = ClaimValue;
+                ViewBag.ClaimValue = 1;
+                return View();
+            }
+            else if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "Dispatch Card" && i.Value == "Appl Approver"))
+            {
+                ViewBag.ClaimValue = 2;
                 return View();
             }
             else if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "Dispatch Card"))
             {
-                ClaimValue = "Dispatch Card";
-                ViewBag.ClaimValue = ClaimValue;
+                ViewBag.ClaimValue = 3;
                 return View();
             }
             else
