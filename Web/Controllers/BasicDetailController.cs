@@ -3967,6 +3967,13 @@ namespace Web.Controllers
         #endregion DestructionCard
 
         #region Dispatch
+        public async Task<IActionResult> GetUserIdWithName(int AspNetUsersId)
+        {
+            DTOGenericResponse<DTODispatchToResponse?> response = new DTOGenericResponse<DTODispatchToResponse?>();
+
+            response = await basicDetailBL.GetUserIdWithName(AspNetUsersId);
+            return Ok(response);
+        }
         public async Task<IActionResult> GetDispatchToData(byte CategeryId, byte RecordRegimentId)
         {
             DTOGenericResponse<DTODispatchToResponse?> response = new DTOGenericResponse<DTODispatchToResponse?>();
@@ -3999,7 +4006,7 @@ namespace Web.Controllers
                     response = await basicDetailBL.GetddlRecordRegiment(CategeryId, ClaimValue, dtoSession.TrnDomainMappingId, dtoSession.UnitId);
                     return Ok(response);
                 }
-                else if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "Dispatch Card" && i.Value == "Appl Approver"))
+                else if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "Dispatch Card") && UserClaims.Any(i =>i.Value == "Appl Approver"))
                 {
                     ClaimValue = 2;
                     response = await basicDetailBL.GetddlRecordRegiment(CategeryId, ClaimValue, dtoSession.TrnDomainMappingId, dtoSession.UnitId);
@@ -4039,7 +4046,7 @@ namespace Web.Controllers
                 ViewBag.ClaimValue = 1;
                 return View();
             }
-            else if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "Dispatch Card" && i.Value == "Appl Approver"))
+            else if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "Dispatch Card") && UserClaims.Any(i => i.Value == "Appl Approver"))
             {
                 ViewBag.ClaimValue = 2;
                 return View();
@@ -4056,13 +4063,13 @@ namespace Web.Controllers
                 return RedirectToAction("ContactUs", "Home");
             }
         }
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //[Authorize(Policy = "ICardExportDataPolicy")]
-        //public async Task<ActionResult> DispatchOut()
-        //{
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Policy = "ICardExportDataPolicy")]
+        public async Task<ActionResult> DispatchOut()
+        {
 
-        //}
+        }
 
         #endregion
     }

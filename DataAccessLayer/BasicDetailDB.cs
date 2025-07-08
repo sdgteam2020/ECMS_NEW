@@ -50,6 +50,44 @@ namespace DataAccessLayer
                 dataProtectionPurposeStrings.AFSACIdRouteValue);
             this.userManager = userManager;
         }
+        public async Task<DTOGenericResponse<DTODispatchToResponse?>> GetUserIdWithName(int AspNetUsersId) 
+        {
+            DTODispatchToResponse? ret = new DTODispatchToResponse();
+            DTOGenericResponse<DTODispatchToResponse?> response = new DTOGenericResponse<DTODispatchToResponse?>();
+            string query = @"Select up.UserId,up.ArmyNo,up.Name,mran.RankAbbreviation from AspNetUsers aspuser
+                            inner join TrnDomainMapping tdm on aspuser.Id = tdm.AspNetUsersId
+                            inner join UserProfile up on tdm.UserId=up.UserId
+                            inner join MRank mran on up.RankId=mran.RankId
+                            Where aspuser.Id=@AspNetUsersId";
+            try
+            {
+                using (var connection = _contextDP.CreateConnection())
+                {
+                    ret = await connection.QueryFirstOrDefaultAsync<DTODispatchToResponse>(query, new { AspNetUsersId });
+                }
+                if (ret != null && ret.UserId != null)
+                {
+                    response.Result = true;  // Operation successful
+                    response.Message = "Data retrieved successfully.";
+                    response.Value = ret;
+                }
+                else
+                {
+                    response.Message = "User not found.";
+                    response.Result = false; // Operation failed
+                    response.Value = ret;
+                }
+                return response;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "BasicDetailDB->GetUserIdWithName");
+                response.Result = false;
+                response.Message = "An error occurred while fetching data.";
+                response.Value = ret;
+                return response;
+            }
+        }
         public async Task<DTOGenericResponse<DTODispatchToResponse?>> GetDispatchToData(byte CategeryId, int Id)
         {
             DTODispatchToResponse? ret = new DTODispatchToResponse();

@@ -131,7 +131,7 @@ namespace DataAccessLayer
             try
             {
                 string query = "";
-                query = "Select users.DomainId,usep.ArmyNo,ra.RankAbbreviation,usep.Name,trndomain.Id as TDMId from AspNetUsers users" +
+                query = "Select users.Id as AspNetUsersId,users.DomainId,usep.ArmyNo,ra.RankAbbreviation,usep.Name,trndomain.Id as TDMId from AspNetUsers users" +
                         " inner join TrnDomainMapping trndomain on users.Id=trndomain.AspNetUsersId" +
                         " inner join UserProfile usep on usep.UserId=trndomain.UserId" +
                         " inner join MRank ra on ra.RankId=usep.RankId " +

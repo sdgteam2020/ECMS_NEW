@@ -147,6 +147,21 @@
                                         </div>
                                     </div>
                                     <div class="form-group row mb-2">
+                                        <span id="spnUserId" class="d-none">0</span>
+                                        <label class="col-form-label col-sm-5 labelprofile">Army No<i class="fas fa-asterisk mand1"></i></label>
+                                        <div class="col-sm-7">
+                                            <input class="form-control" placeholder="Army No" id="txtArmyNo" name="txtArmyNo" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="Army No is required." data-val-regex-pattern="^[\w ]*$"  readonly/>
+                                            <span class="text-danger field-validation-valid" data-valmsg-for="txtArmyNo" data-valmsg-replace="true"></span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row mb-2">
+                                        <label class="col-form-label col-sm-5 labelprofile">Rk & Offr Name<i class="fas fa-asterisk mand1"></i></label>
+                                        <div class="col-sm-7">
+                                            <input class="form-control" placeholder="Rk & Offr Name" id="txtRkName" name="txtRkName" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="Rk & Offr Name is required." data-val-regex-pattern="^[\w ]*$" readonly />
+                                            <span class="text-danger field-validation-valid" data-valmsg-for="txtRkName" data-valmsg-replace="true"></span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row mb-2">
                                         <label class="col-form-label col-sm-5">Please upload only csv format<i class="fas fa-asterisk mand1"></i></label>
                                         <div class="col-sm-7 d-flex justify-content-start">
                                             <input type="file" class="form-control" name="CSVFile" id="CSVFile" accept="text/csv" data-val-required="CSV File is required." />
