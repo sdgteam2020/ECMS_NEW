@@ -20,11 +20,11 @@ namespace DataTransferObject.Requests
         [MaxLength(100, ErrorMessage = "Maximum length of RemarksIds is hundred character.")]
         public string RemarksIds { get; set; } = string.Empty;
 
-        [RegularExpression(@"^[\w \.]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
+        [RegularExpression(@"^[\w \&\.\-\;]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
         [MaxLength(100, ErrorMessage = "Maximum length of Faulty Remark is hundred character.")]
         public string? FromRemark { get; set; }
 
-        [RegularExpression(@"^[\w \.]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
+        [RegularExpression(@"^[\w \&\.\-\;]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
         [MaxLength(100, ErrorMessage = "Maximum length of Faulty Remark is hundred character.")]
         public string? ToRemark { get; set; }
 

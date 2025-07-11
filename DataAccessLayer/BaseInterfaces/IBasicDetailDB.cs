@@ -14,6 +14,8 @@ namespace DataAccessLayer.BaseInterfaces
 {
     public interface IBasicDetailDB:IGenericRepositoryDL<BasicDetail>
     {
+        public Task<DTOGenericResponse<string>> CardDispatchCSVUpload(List<DTOCardDispatchCheckRequest> requests, DTODispatchOutRequest dTODispatch);
+        public Task<List<DTOCardDispatchCheckRequest>> CardDispatchCSVCheck(List<DTOCardDispatchCheckRequest> requests, byte ClaimValue);
         public Task<DTOGenericResponse<DTODispatchToResponse?>> GetUserIdWithName(int AspNetUsersId);
         public Task<DTOGenericResponse<DTODispatchToResponse?>> GetDispatchToData(byte CategeryId, int Id);
         public Task<DTOGenericResponse<List<DTOMasterResponse>>> GetddlRecordRegiment(byte CategeryId, byte ClaimValue, int TDMId, int UnitId);

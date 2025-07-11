@@ -17,7 +17,6 @@ using System.Collections.Immutable;
 using System.Data;
 using Azure.Core;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
-using Microsoft.Data.SqlClient;
 using System.Linq.Expressions;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using DataTransferObject.Constants;
@@ -30,6 +29,8 @@ using DataTransferObject.Response.User;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 using DataTransferObject.Domain.Identitytable;
 using Microsoft.AspNetCore.Identity;
+using System.Collections.Generic;
+using System.Transactions;
 
 namespace DataAccessLayer
 {
@@ -49,6 +50,47 @@ namespace DataAccessLayer
             this.protector = dataProtectionProvider.CreateProtector(
                 dataProtectionPurposeStrings.AFSACIdRouteValue);
             this.userManager = userManager;
+        }
+        public async Task<List<DTOCardDispatchCheckRequest>> CardDispatchCSVCheck(List<DTOCardDispatchCheckRequest> requests, byte ClaimValue)
+        {
+            byte StepId;
+            string Remarks=string.Empty;
+            if (ClaimValue == 1)
+            {
+                StepId = 6;
+                Remarks = "The card application is not available for printing.;";
+            }
+            else
+            {
+                StepId = 12;
+                Remarks = "The card application is not in the Regiment/Officer Record Office.; ";
+            }
+            var response = new List<DTOCardDispatchCheckRequest>();
+            foreach (var batchRecords in requests.Chunk(5000))
+            {
+                using (var connection = _contextDP.CreateConnection())
+                {
+                    var resultInChunks = await Task.Run(() =>
+                    {
+                        return (from record in batchRecords
+                                join chipNoMatch in _context.TrnICardRequest on record.ChipNo equals chipNoMatch.ChipNo into chipNoJoin
+                                from chipNoExists in chipNoJoin.DefaultIfEmpty()
+                                join stepStatus in _context.TrnStepCounter on new { RequestId = (chipNoExists == null ? 0 : chipNoExists.RequestId), StepId } equals new { stepStatus.RequestId, stepStatus.StepId } into stepStatusJoin
+                                from stepStatus in stepStatusJoin.DefaultIfEmpty()
+                                select new DTOCardDispatchCheckRequest
+                                {
+                                    ChipNo = record.ChipNo,
+                                    IsValid = chipNoExists != null && stepStatus != null,
+                                    Status = chipNoExists != null && stepStatus != null ? "Valid" : "DbInvalid",
+                                    Remarks = (chipNoExists == null ? "ChipNo not exists; " : "") +
+                                              (chipNoExists != null && stepStatus == null ? Remarks : "")
+                                }).ToList();
+                    });
+                    response.AddRange(resultInChunks);
+                }
+            }
+
+            return response;
         }
         public async Task<DTOGenericResponse<DTODispatchToResponse?>> GetUserIdWithName(int AspNetUsersId) 
         {
@@ -2641,6 +2683,79 @@ namespace DataAccessLayer
             catch (Exception ee)
             {
                 response.Message = ee.Message;
+            }
+            return response;
+        }
+        public async Task<DTOGenericResponse<string>> CardDispatchCSVUpload(List<DTOCardDispatchCheckRequest> requests, DTODispatchOutRequest dTODispatch)
+        {
+            DTOGenericResponse<string> response = new DTOGenericResponse<string>();
+            try
+            {
+                byte StepId;
+                if (dTODispatch.Step == 1)
+                {
+                    StepId = 11;
+                }
+                else
+                {
+                    StepId = 13;
+                }
+                    string insert = "";
+                insert = @"INSERT INTO TrnDispatchCard(Step,ApplyForId,RegId,RecordOfficeId,OutDate,ReceiptDate,DispatchDate,RefOfDispatch,LotNo,NameOfCourierIncharge,UploadFilePath,FromRemark,ToRemark,FromUnitId,ToUnitId,ToUserId,FromUserId,FromAspNetUsersId,ToAspNetUsersId,IsComplete,IsActive,Updatedby,UpdatedOn,DispatchModeId)
+                                OUTPUT INSERTED.DispatchCardId
+                                VALUES(@Step,@RegId,@RecordOfficeId,@OutDate,@ReceiptDate,@DispatchDate,@RefOfDispatch,@LotNo,@NameOfCourierIncharge,@UploadFilePath,@FromRemark,@ToRemark,@FromUnitId,@ToUnitId,@ToUserId,@FromUserId,@FromAspNetUsersId,@ToAspNetUsersId,@IsComplete,@IsActive,@Updatedby,@UpdatedOn,@DispatchModeId)";
+                var parameters = new DynamicParameters();
+                parameters.Add("@DispatchCardId", dTODispatch.DispatchCardId, DbType.Int32, ParameterDirection.Output);
+                parameters.Add("@Step", dTODispatch.Step, DbType.Byte, ParameterDirection.Input);
+                parameters.Add("@ApplyForId", dTODispatch.ApplyForId, DbType.Byte, ParameterDirection.Input);
+                parameters.Add("@RegId", dTODispatch.RegId, DbType.Byte, ParameterDirection.Input);
+                parameters.Add("@RecordOfficeId", dTODispatch.RecordOfficeId, DbType.Byte, ParameterDirection.Input);
+                parameters.Add("@OutDate", dTODispatch.OutDate, DbType.DateTime, ParameterDirection.Input);
+                parameters.Add("@ReceiptDate", dTODispatch.ReceiptDate, DbType.DateTime, ParameterDirection.Input);
+                parameters.Add("@DispatchDate", dTODispatch.DispatchDate, DbType.DateTime, ParameterDirection.Input);
+                parameters.Add("@RefOfDispatch", dTODispatch.RefOfDispatch, DbType.String, ParameterDirection.Input, 50);
+                parameters.Add("@LotNo", dTODispatch.LotNo, DbType.String, ParameterDirection.Input,50);
+                parameters.Add("@NameOfCourierIncharge", dTODispatch.NameOfCourierIncharge, DbType.String, ParameterDirection.Input, 50);
+                parameters.Add("@UploadFilePath", dTODispatch.UploadFilePath, DbType.String, ParameterDirection.Input, 100);
+                parameters.Add("@FromRemark", dTODispatch.FromRemark, DbType.String, ParameterDirection.Input, 100);
+                parameters.Add("@ToRemark", dTODispatch.ToRemark, DbType.String, ParameterDirection.Input, 100);
+                parameters.Add("@FromUnitId", dTODispatch.FromUnitId, DbType.Int32, ParameterDirection.Input);
+                parameters.Add("@ToUnitId", dTODispatch.ToUnitId, DbType.Int32, ParameterDirection.Input);
+                parameters.Add("@ToUserId", dTODispatch.ToUserId, DbType.Int32, ParameterDirection.Input);
+                parameters.Add("@FromUserId", dTODispatch.FromUserId, DbType.Int32, ParameterDirection.Input);
+                parameters.Add("@FromAspNetUsersId", dTODispatch.FromAspNetUsersId, DbType.Int32, ParameterDirection.Input);
+                parameters.Add("@ToAspNetUsersId", dTODispatch.ToAspNetUsersId, DbType.Int32, ParameterDirection.Input);
+                parameters.Add("@IsActive", dTODispatch.IsActive, DbType.Boolean, ParameterDirection.Input);
+                parameters.Add("@Updatedby", dTODispatch.Updatedby, DbType.Int32, ParameterDirection.Input);
+                parameters.Add("@UpdatedOn", dTODispatch.UpdatedOn, DbType.DateTime, ParameterDirection.Input);
+                parameters.Add("@DispatchModeId", dTODispatch.DispatchModeId, DbType.Byte, ParameterDirection.Input);
+
+                using (var connection = _contextDP.CreateConnection())
+                {
+                    var Id = await connection.QuerySingleAsync<int>(insert, parameters);
+
+                    foreach (var batchRecords in requests.Chunk(5000))
+                    {
+
+                        DataTable cardDistribution = DataTableHelper.ToDataTable(batchRecords, "Remarks", "IsValid", "Status");
+                        var parameters2 = new DynamicParameters();
+                        parameters2.Add("@data", cardDistribution.AsTableValuedParameter("UT_CardDispatchCSV"));
+                        parameters2.Add("@DispatchCardId", Id, DbType.Int32, ParameterDirection.Input);
+                        parameters2.Add("@StepId", StepId, DbType.Byte, ParameterDirection.Input);
+                        response = (await connection.QueryAsync<DTOGenericResponse<string>>("CardDispatchCSVImport",
+                                                                                                parameters2,
+                                                                                                commandType: CommandType.StoredProcedure
+                                   )).FirstOrDefault();
+                    }
+                    response.Value = "Success";
+                }
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "BasicDetailDB->GetCardMovementHistory");
+                response.Message = "";
+                response.Result = false;
             }
             return response;
         }
