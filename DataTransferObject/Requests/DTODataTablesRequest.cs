@@ -90,4 +90,10 @@ namespace DataTransferObject.Requests
         public int applyForId { get; set; }
         public string JCOOR { get; set; } = string.Empty;
     }
+    public class DTODataTablesRequestForCardDispatch : DTODataTablesRequest 
+    {
+        public byte ClaimValue { get; set; }
+        public int TDMId { get; set; }
+        public int UnitId { get; set; }
+    }
 }

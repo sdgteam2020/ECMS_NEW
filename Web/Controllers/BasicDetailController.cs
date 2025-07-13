@@ -4090,6 +4090,7 @@ namespace Web.Controllers
                 dTO.FromUserId = dtoSession.UserId;
                 dTO.FromUnitId = dtoSession.UnitId;
                 dTO.IsActive = true;
+                dTO.IsComplete = false;
                 dTO.UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
                 dTO.Updatedby = AspNetUsersId;
 
@@ -4157,7 +4158,7 @@ namespace Web.Controllers
                         }
                         #endregion Upload User File
 
-                        var validateResult = await basicDetailBL.ValidateCardDispatchData(records, ClaimValue);
+                        var validateResult = await basicDetailBL.ValidateCardDispatchData(records, ClaimValue, dTO);
 
                         ret.TotalRecords = validateResult.Count();
                         ret.ValidRecords = validateResult.Where(x => x.IsValid).Count();
@@ -4197,8 +4198,37 @@ namespace Web.Controllers
                             }
                         }
                         #endregion Upload User File
-                        SessionHeplers.SetObject(HttpContext.Session, "DestructionCardData", dTO);
-                        SessionHeplers.SetObject(HttpContext.Session, "InValidDispatchCardRecordsUpload", validateResult.Where(v => v.IsValid == false).ToList());
+                        dTO.UploadFilePath = fileName;
+                        DTODispatchOutRequestWithoutIFormFile dTODispatch = new DTODispatchOutRequestWithoutIFormFile
+                        {
+                            DispatchCardId = dTO.DispatchCardId,
+                            Step=dTO.Step,
+                            ApplyForId = dTO.ApplyForId,
+                            RegId =dTO.RegId,
+                            RecordOfficeId = dTO.RecordOfficeId,
+                            OutDate = dTO.OutDate,
+                            ReceiptDate = dTO.ReceiptDate,
+                            DispatchDate = dTO.DispatchDate,
+                            DispatchModeId = dTO.DispatchModeId,
+                            RefOfDispatch =dTO.RefOfDispatch,
+                            LotNo= dTO.LotNo,
+                            NameOfCourierIncharge = dTO.NameOfCourierIncharge,
+                            UploadFilePath = dTO.UploadFilePath,
+                            FromRemark = dTO.FromRemark,
+                            ToRemark = dTO.ToRemark,
+                            FromUnitId = dTO.FromUnitId,
+                            ToUnitId = dTO.ToUnitId,
+                            ToUserId = dTO.ToUserId,
+                            FromUserId = dTO.FromUserId,
+                            FromAspNetUsersId = dTO.FromAspNetUsersId,
+                            ToAspNetUsersId = dTO.ToAspNetUsersId,
+                            IsComplete= dTO.IsComplete,
+                            IsActive = dTO.IsActive,
+                            Updatedby = dTO.Updatedby,
+                            UpdatedOn = dTO.UpdatedOn
+                        };
+
+                        SessionHeplers.SetObject(HttpContext.Session, "DestructionCardData", dTODispatch);
                         SessionHeplers.SetObject(HttpContext.Session, "ValidDispatchCardRecordsUpload", validateResult.Where(v => v.IsValid == true).ToList());
                         ret.FileName = fileName;
                     }
@@ -4242,13 +4272,13 @@ namespace Web.Controllers
             {
                 var records = SessionHeplers.GetObject<List<DTOCardDispatchCheckRequest>>(HttpContext.Session, "ValidDispatchCardRecordsUpload");
 
-                DTODispatchOutRequest? dTODispatch = SessionHeplers.GetObject<DTODispatchOutRequest>(HttpContext.Session, "DestructionCardData");
+                DTODispatchOutRequestWithoutIFormFile? dTODispatch = SessionHeplers.GetObject<DTODispatchOutRequestWithoutIFormFile>(HttpContext.Session, "DestructionCardData");
 
                 if (records?.Count() > 0 && dTODispatch!=null)
                 {
 
                     response = await basicDetailBL.CardDispatchCSVUpload(records, dTODispatch);
-                    response.Result = true;
+                    //response.Result = true;
                 }
                 else
                 {
@@ -4256,10 +4286,6 @@ namespace Web.Controllers
                     response.Message = "There are no valid records!";
                     response.Value = string.Empty;
                 }
-                var csvImportId = SessionHeplers.GetObject<int>(HttpContext.Session, "CsvImportId");
-                var getCsvDetById = await _iCSVImportBL.Get(csvImportId);
-                getCsvDetById.DBUpdated = true;
-                await _iCSVImportBL.Update(getCsvDetById);
             }
             catch (Exception ee)
             {
@@ -4271,9 +4297,119 @@ namespace Web.Controllers
             finally
             {
                 HttpContext.Session.Remove("ValidDispatchCardRecordsUpload");
+                HttpContext.Session.Remove("DestructionCardData");
             }
             return Json(response);
             #endregion
+        }
+
+        public async Task<IActionResult> DispatchCard()
+        {
+            int AspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var user = await userManager.FindByIdAsync(AspNetUsersId.ToString());
+            // UserManager service GetClaimsAsync method gets all the current claims of the user
+            var UserClaims = await userManager.GetClaimsAsync(user);
+            if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "ICard Export Data"))
+            {
+                ViewBag.ClaimValue = 1;
+                return View();
+            }
+            else if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "Dispatch Card") && UserClaims.Any(i => i.Value == "Appl Approver"))
+            {
+                ViewBag.ClaimValue = 2;
+                return View();
+            }
+            else if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "Dispatch Card"))
+            {
+                ViewBag.ClaimValue = 3;
+                return View();
+            }
+            else
+            {
+                TempData["error"] = "Invalid User.";
+                TempData.Keep("error");
+                return RedirectToAction("ContactUs", "Home");
+            }
+        }
+        [HttpPost]
+        public async Task<IActionResult> GetAllDispatchCard(DTODataTablesRequestForCardDispatch dTO)
+        {
+            try
+            {
+                DtoSession? dtoSession = new DtoSession();
+                if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
+                {
+                    dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+
+                }
+
+                if (dtoSession != null)
+                {
+                    int AspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                    var user = await userManager.FindByIdAsync(AspNetUsersId.ToString());
+
+                    // UserManager service GetClaimsAsync method gets all the current claims of the user
+                    var UserClaims = await userManager.GetClaimsAsync(user);
+                    if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "ICard Export Data"))
+                    {
+                        dTO.ClaimValue = 1;
+                        dTO.UnitId = dtoSession.UnitId;
+                        dTO.TDMId = dtoSession.TrnDomainMappingId;
+                        return Json(await basicDetailBL.GetAllDispatchCard(dTO));
+                    }
+                    else if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "Dispatch Card") && UserClaims.Any(i => i.Value == "Appl Approver"))
+                    {
+                        dTO.ClaimValue = 2;
+                        dTO.UnitId = dtoSession.UnitId;
+                        dTO.TDMId = dtoSession.TrnDomainMappingId;
+                        return Json(await basicDetailBL.GetAllDispatchCard(dTO));
+                    }
+                    else if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "Dispatch Card"))
+                    {
+                        dTO.ClaimValue = 3;
+                        dTO.UnitId = dtoSession.UnitId;
+                        dTO.TDMId = dtoSession.TrnDomainMappingId;
+                        return Json(await basicDetailBL.GetAllDispatchCard(dTO));
+                    }
+                    else
+                    {
+                        List<DTODispatchCardListResponse> dTODispatchCardLists = new List<DTODispatchCardListResponse>();
+                        var responseData = new DTODataTablesResponse<DTODispatchCardListResponse>
+                        {
+                            draw = 0,
+                            recordsTotal = 0,
+                            recordsFiltered = 0,
+                            data = dTODispatchCardLists
+                        };
+                        return Json(responseData);
+                    }
+                }
+                else
+                {
+                    List<DTODispatchCardListResponse> dTODispatchCardLists = new List<DTODispatchCardListResponse>();
+                    var responseData = new DTODataTablesResponse<DTODispatchCardListResponse>
+                    {
+                        draw = 0,
+                        recordsTotal = 0,
+                        recordsFiltered = 0,
+                        data = dTODispatchCardLists
+                    };
+                    return Json(responseData);
+                }
+            }
+            catch (Exception ex)
+            {
+                List<DTODispatchCardListResponse> dTODispatchCardLists = new List<DTODispatchCardListResponse>();
+                var responseData = new DTODataTablesResponse<DTODispatchCardListResponse>
+                {
+                    draw = 0,
+                    recordsTotal = 0,
+                    recordsFiltered = 0,
+                    data = dTODispatchCardLists
+                };
+                _logger.LogError(1001, ex, "BasicDetail->GetAllDispatchCard");
+                return Json(responseData);
+            }
         }
     }
 }

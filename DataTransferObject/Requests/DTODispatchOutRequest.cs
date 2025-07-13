@@ -14,7 +14,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace DataTransferObject.Requests
 {
-    public class DTODispatchOutRequest
+    public class DTODispatchOutRequestWithoutIFormFile
     {
         [RegularExpression(@"^[\d]+$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "OnlyNumber")]
         public int DispatchCardId { get; set; }
@@ -51,13 +51,6 @@ namespace DataTransferObject.Requests
         [MaxLength(50, ErrorMessage = "Maximum length of Name Of Courier Incharge is fifty character.")]
         public string NameOfCourierIncharge { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "File is required!")]
-        [SecureFile(allowedExtensions: new[] { ".csv" },
-        allowedMimeTypes: new[] { "text/csv", "application/vnd.ms-excel" },
-        expectedHeaders: new[] { "ChipNo" },
-        maxFileSize: 5 * 1024 * 1024)]
-        public required IFormFile CSVFile { get; set; }
-
         [StringLength(100)]
         [Column(TypeName = "VARCHAR(100)")]
         public string UploadFilePath { get; set; } = string.Empty;
@@ -93,5 +86,14 @@ namespace DataTransferObject.Requests
         public DateTime UpdatedOn { get; set; }
 
 
+    }
+    public class DTODispatchOutRequest : DTODispatchOutRequestWithoutIFormFile
+    {
+        [Required(ErrorMessage = "File is required!")]
+        [SecureFile(allowedExtensions: new[] { ".csv" },
+        allowedMimeTypes: new[] { "text/csv", "application/vnd.ms-excel" },
+        expectedHeaders: new[] { "ChipNo" },
+        maxFileSize: 5 * 1024 * 1024)]
+        public required IFormFile CSVFile { get; set; }
     }
 }

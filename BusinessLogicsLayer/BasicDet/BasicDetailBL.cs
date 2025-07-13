@@ -31,13 +31,17 @@ namespace BusinessLogicsLayer.BasicDet
             _iBasicDetailDB = BasicDetail;
             _logger = logger;
         }
-        public async Task<DTOGenericResponse<string>> CardDispatchCSVUpload(List<DTOCardDispatchCheckRequest> requests, DTODispatchOutRequest dTODispatch)
+        public async Task<DTODataTablesResponse<DTODispatchCardListResponse>> GetAllDispatchCard(DTODataTablesRequestForCardDispatch dTO)
+        {
+            return await _iBasicDetailDB.GetAllDispatchCard(dTO);
+        }
+        public async Task<DTOGenericResponse<string>> CardDispatchCSVUpload(List<DTOCardDispatchCheckRequest> requests, DTODispatchOutRequestWithoutIFormFile dTODispatch)
         {
             return await _iBasicDetailDB.CardDispatchCSVUpload(requests, dTODispatch);
         }
-        public async Task<List<DTOCardDispatchCheckRequest>> CardDispatchCSVCheck(List<DTOCardDispatchCheckRequest> requests, byte ClaimValue)
+        public async Task<List<DTOCardDispatchCheckRequest>> CardDispatchCSVCheck(List<DTOCardDispatchCheckRequest> requests, byte ClaimValue, DTODispatchOutRequest dTO)
         {
-            return await _iBasicDetailDB.CardDispatchCSVCheck(requests, ClaimValue);
+            return await _iBasicDetailDB.CardDispatchCSVCheck(requests, ClaimValue, dTO);
         }
         public async Task<DTOGenericResponse<DTODispatchToResponse?>> GetUserIdWithName(int AspNetUsersId)
         {
@@ -196,7 +200,7 @@ namespace BusinessLogicsLayer.BasicDet
             var data = await _iBasicDetailDB.ICardHistoryCompleted(RequestId);
             return data;
         }
-        public async Task<List<DTOCardDispatchCheckRequest>> ValidateCardDispatchData(List<DTOCardDispatchCheckRequest> request,byte ClaimValue)
+        public async Task<List<DTOCardDispatchCheckRequest>> ValidateCardDispatchData(List<DTOCardDispatchCheckRequest> request,byte ClaimValue, DTODispatchOutRequest dTO)
         {
             try
             {
@@ -256,7 +260,7 @@ namespace BusinessLogicsLayer.BasicDet
                 var invalidRecords = request.Where(r => !r.IsValid).ToList();
                 if (validRecords?.Count() > 0)
                 {
-                    var checkDbRecords = await _iBasicDetailDB.CardDispatchCSVCheck(validRecords, ClaimValue);
+                    var checkDbRecords = await _iBasicDetailDB.CardDispatchCSVCheck(validRecords, ClaimValue, dTO);
                     validRecords = checkDbRecords.Where(r => r.IsValid).ToList();
                     var invalidDbRecord = checkDbRecords.Where(r => !r.IsValid).ToList();
                     invalidRecords = invalidRecords.Concat(invalidDbRecord).ToList();
