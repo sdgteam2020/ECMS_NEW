@@ -1,8 +1,9 @@
 ﻿var table; // Declare table variable outside the function to preserve the instance
+var table2;
 $(function () {
     BindData();
     $("#btnAdd").on("click", function () {
-
+        location.href = '/BasicDetail/DispatchOut';
     });
 });
 function BindData() {
@@ -51,12 +52,17 @@ function BindData() {
                 }
             },
             {
+                data: "ApplyFor",
+                name: "Categery",
+            },
+            {
                 data: "LotNo",
                 name: "LotNo",
             },
             {
                 data: "ToUnit",
                 name: "ToUnit",
+                orderable: false,
             },
             {
                 data: null,
@@ -147,10 +153,11 @@ function BindData() {
                 name: "Action",
                 orderable: false,
                 render: function (data, type, row) {
+                    let Action = `<button type='button' class='cls-btnDialog btn btn-icon btn-round btn-primary mr-1'><i class='fa fa-eye'></i></button>`;
                     if (data == false && parseInt($("#spnClaimValue").html()) != 1) {
-                        return `<button type='button' class='cls-btnedit btn btn-icon btn-round btn-primary mr-1'><i class='fas fa-edit'></i></button>`;
+                        return Action += `<button type='button' class='cls-btnedit btn btn-icon btn-round btn-primary mr-1'><i class='fas fa-edit'></i></button>`;
                     } else {
-                        return `NA`;
+                        return Action += `NA`;
                     }
                 }
             }
@@ -194,6 +201,15 @@ function BindData() {
                     window.location.href = '/BasicDetail/FaultyCardRequest?Id=' + encodeURIComponent(rowData.EncryptedId);
                 }
             });
+            $("#tbldata tbody").off("click", ".cls-btnDialog").on("click", ".cls-btnDialog", function () {
+                var rowData = table.row($(this).closest("tr")).data();
+                if (rowData.DispatchCardId != null) {
+                    $("#tbldatadialog").DataTable().destroy();
+                    $("#lblModelTitle").html('Dispatch Card Lot details');
+                    $("#DataTableDialog").modal('show');
+                    BindDialog(rowData.DispatchCardId, rowData.ApplyForId);
+                }
+            });
 
             $("#tbldata tbody").off("click", ".cls-FromRemark").on("click", ".cls-FromRemark", function () {
                 var rowData = table.row($(this).closest("tr")).data();
@@ -214,5 +230,155 @@ function BindData() {
             });
 
         }
+    });
+}
+
+function BindDialog(DispatchCardId, ApplyForId) {
+    table2 = $("#tbldatadialog").DataTable({
+        processing: true,
+        serverSide: true,
+        filter: true,
+        stateSave: true,
+        order: [[1, 'desc']], // Default sorting on the first column
+        ajax: async function (data, callback, settings) {
+            let requestData = {
+                draw: data.draw,
+                start: data.start,
+                length: data.length,
+                searchValue: data.search.value,
+                sortColumn: data.order.length > 0 ? data.columns[data.order[0].column].data : '',  // Add a check for data.order
+                sortDirection: data.order.length > 0 ? data.order[0].dir : '', // Add a check for data.order
+                DispatchCardId: DispatchCardId
+            };
+            try {
+                let response = await fetch("/BasicDetail/GetDispatchCardDataForDialog", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                    body: new URLSearchParams(requestData).toString()
+                });
+
+                if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+
+                let result = await response.json();
+                callback(result); // Sends data to DataTables
+
+
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            }
+        },
+        columns: [
+            {
+                title: "S No",
+                data: null,
+                name: "SerialNumber",
+                orderable: false, // Disable sorting for this column
+                render: function (data, type, row, meta) {
+                    // Calculate serial number based on row index
+                    return meta.row + meta.settings._iDisplayStart + 1;
+                }
+            },
+            {
+                title: "Request ID",
+                data: 'RequestId',
+                name: 'RequestId',
+            },
+            {
+                title: "Arm / Service",
+                data: "ArmedAbbreviation",
+                name: "ArmedAbbreviation"
+            },
+            {
+                title: "Unit",
+                data: "UnitAbbreviation",
+                name: "UnitAbbreviation",
+                orderable: false,
+            },
+            {
+                title: "ORO",
+                data: "RecordOfficeName",
+                name: "RecordOfficeName"
+            },
+            {
+                title: "Regt",
+                data: "RegimentalName",
+                name: "RegimentalName"
+            },
+            {
+                title: "Army No",
+                data: "ServiceNo",
+                name: "ServiceNo",
+                render: function (data, type, row) {
+                    // Check if first two characters are alphabets
+                    if (/^[A-Za-z]{2}/.test(data)) {
+                        // Insert space after first two characters
+                        return data.slice(0, 2) + ' ' + data.slice(2);
+                    } else {
+                        // No space needed
+                        return data;
+                    }
+                }
+            },
+            {
+                title: "Rank & Name",
+                data: null,
+                name: null,
+                orderable: false,
+                render: function (data, type, row) {
+                    let fullName = `${row.RankName || ""} ${row.FName || ""} ${row.LName || ""}`.trim();
+                    return (fullName);
+                }
+            },
+            {
+                title: "Card Serial No",
+                data: "CardSerialNo",
+                name: "CardSerialNo"
+            },
+            {
+                title: "Chip No",
+                data: "ChipNo",
+                name: "ChipNo"
+            },
+        ],
+        initComplete: function () {
+            // Hide or show column (e.g. salary column at index 3)
+            if (parseInt(ApplyForId) == 1) {
+                table2.column(4).visible(true); 
+                table2.column(5).visible(false); 
+            } else {
+                table2.column(4).visible(false); 
+                table2.column(5).visible(true)
+            }
+        },
+        language: {
+            search: "", // Remove the default "Search:" label
+            searchPlaceholder: "Search Service No" // Add custom placeholder
+        },
+        dom: 'lBfrtip', // Add buttons to the DOM
+        buttons: [
+            {
+                extend: 'copy',
+                exportOptions: {
+                    columns: "thead th:not(.noExport)"
+                }
+            },
+            {
+                extend: 'excel',
+                exportOptions: {
+                    columns: "thead th:not(.noExport)"
+                }
+            },
+            {
+                extend: 'pdfHtml5',
+                orientation: 'landscape',
+                pageSize: 'LEGAL',
+                title: 'E-IASC_DispathCard',
+                exportOptions: {
+                    columns: "thead th:not(.noExport)"
+                },
+                customize: function (doc) {
+                    WaterMarkOnPdf(doc)
+                }
+            }]
     });
 }

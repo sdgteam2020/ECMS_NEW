@@ -14,6 +14,7 @@ namespace DataAccessLayer.BaseInterfaces
 {
     public interface IBasicDetailDB:IGenericRepositoryDL<BasicDetail>
     {
+        public Task<DTODataTablesResponse<DTOCardDispatchDialogResponse>> GetDispatchCardDataForDialog(DTODataTablesRequestForCardDispatchDialog dTO);
         public Task<DTODataTablesResponse<DTODispatchCardListResponse>> GetAllDispatchCard(DTODataTablesRequestForCardDispatch dTO);
         public Task<DTOGenericResponse<string>> CardDispatchCSVUpload(List<DTOCardDispatchCheckRequest> requests, DTODispatchOutRequestWithoutIFormFile dTODispatch);
         public Task<List<DTOCardDispatchCheckRequest>> CardDispatchCSVCheck(List<DTOCardDispatchCheckRequest> requests, byte ClaimValue, DTODispatchOutRequest dTO);

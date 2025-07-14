@@ -54,6 +54,86 @@ namespace DataAccessLayer
                 dataProtectionPurposeStrings.AFSACIdRouteValue);
             this.userManager = userManager;
         }
+        public async Task<DTODataTablesResponse<DTOCardDispatchDialogResponse>> GetDispatchCardDataForDialog(DTODataTablesRequestForCardDispatchDialog dTO)
+        {
+            string query = "";
+            string wherequery = "";
+            // Map allowed sort columns to DB fields
+            Dictionary<string, string> allowedSortColumns = new Dictionary<string, string>();
+
+            var sortOrder = dTO.sortDirection;
+
+            allowedSortColumns = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+            { 
+                ["RequestId"] = "req.RequestId",
+                ["ArmedAbbreviation"] = "marmed.Abbreviation",
+                ["ServiceNo"] = "basi.ServiceNo",
+                ["RecordOfficeName"] = "mrec.Abbreviation",
+                ["RegimentalName"] = "regi.Abbreviation",
+                ["ChipNo"] = "req.ChipNo",
+                ["CardSerialNo"] = "req.CardSerialNo"
+            };
+            query = @"dcm.DispatchCardMappingId,req.RequestId,basi.NameAsPerRecord,ranks.RankAbbreviation as RankName ,basi.FName,basi.LName,basi.ServiceNo,marmed.Abbreviation as ArmedAbbreviation,regi.Abbreviation as RegimentalName,mrec.Abbreviation as RecordOfficeName,req.ChipNo,req.CardSerialNo,munit.Abbreviation as UnitAbbreviation from TrnDispatchCardMapping dcm
+                    INNER JOIN TrnDispatchCard dcard on dcm.DispatchCardId =dcard.DispatchCardId
+                    INNER JOIN TrnICardRequest req on dcm.ChipNo=req.ChipNo
+                    INNER JOIN BasicDetails basi on req.BasicDetailId=basi.BasicDetailId
+                    INNER JOIN MArmedType marmed on basi.ArmedId=marmed.ArmedId
+                    INNER JOIN MRank ranks on ranks.RankId=basi.RankId
+                    INNER JOIN MapUnit unit on basi.UnitId=unit.UnitMapId
+                    INNER JOIN MUnit munit on unit.UnitId = munit.UnitId
+                    LEFT JOIN MRegimental regi on regi.RegId=basi.RegimentalId
+                    LEFT JOIN MRecordOffice mrec on dcard.RecordOfficeId = mrec.RecordOfficeId";
+            wherequery = @"WHERE
+                            dcm.DispatchCardId=@DispatchCardId
+                            AND basi.ServiceNo LIKE '%' + @SearchTerm + '%'";
+            try
+            {
+                var sortColumn = allowedSortColumns.ContainsKey(dTO.sortColumn ?? "")
+                ? allowedSortColumns[dTO.sortColumn!]
+                : "basi.ServiceNo";
+                var multiQuery = query = $@"
+                        WITH RecordCTE AS (
+                            select  Count(*) OVER () as TotalFilteredRecords,ROW_NUMBER() OVER (ORDER BY {sortColumn} {sortOrder}) AS RowNum, {query} {wherequery}
+                        )
+                        SELECT * FROM RecordCTE WHERE RowNum BETWEEN @Offset AND @Limit;";
+
+                using (var connection = _contextDP.CreateConnection())
+                {
+                    dTO.searchValue = string.IsNullOrEmpty(dTO.searchValue) ? string.Empty : dTO.searchValue.Trim();
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@DispatchCardId", dTO.DispatchCardId, DbType.Int32, ParameterDirection.Input);
+                    parameters.Add("@Offset", dTO.Start + 1, DbType.Int32, ParameterDirection.Input);
+                    parameters.Add("@Limit", (dTO.Start + dTO.Length), DbType.Int32, ParameterDirection.Input);
+                    parameters.Add("@SearchTerm", dTO.searchValue, DbType.String, ParameterDirection.Input);
+
+                    var ret = await connection.QueryMultipleAsync(query, parameters);
+                    var records = (await ret.ReadAsync<DTOCardDispatchDialogResponse>()).ToList();
+                    var totalFilteredRecords = records?.FirstOrDefault()?.TotalFilteredRecords;
+
+                    var responseData = new DTODataTablesResponse<DTOCardDispatchDialogResponse>
+                    {
+                        draw = dTO.Draw,
+                        recordsTotal = totalFilteredRecords.GetValueOrDefault(),
+                        recordsFiltered = totalFilteredRecords.GetValueOrDefault(),
+                        data = records,
+                    };
+                    return responseData;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "BasicDetailDB->GetAllDispatchCard");
+                List<DTOCardDispatchDialogResponse> dTOCards = new List<DTOCardDispatchDialogResponse>();
+                var responseData = new DTODataTablesResponse<DTOCardDispatchDialogResponse>
+                {
+                    draw = 0,
+                    recordsTotal = 0,
+                    recordsFiltered = 0,
+                    data = dTOCards
+                };
+                return responseData;
+            }
+        }
         public async Task<DTODataTablesResponse<DTODispatchCardListResponse>> GetAllDispatchCard(DTODataTablesRequestForCardDispatch dTO)
         {
             string query = "";
@@ -66,10 +146,16 @@ namespace DataAccessLayer
             {
                 allowedSortColumns = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
                 {
-                    ["ServiceNo"] = "toUp.ArmyNo",
-                    ["ApplyFor"] = "mappl.Name"
+                    ["ApplyFor"] = "mappl.Name",
+                    ["LotNo"] = "dcard.LotNo",
+                    ["NameOfCourierIncharge"] = "dcard.NameOfCourierIncharge",
+                    ["ToServiceNo"] = "toUp.ArmyNo",
+                    ["DispatchDate"] = "dcard.DispatchDate",
+                    ["FromRemark"] = "dcard.FromRemark",
+                    ["ReceiptDate"] = "dcard.ReceiptDate",
+                    ["ToRemark"] = "dcard.ToRemark"
                 };
-                query = @"dcard.DispatchCardId,dcard.Step,mappl.Name as ApplyFor,regi.Abbreviation RegimentalName,mrec.Name as RecordOfficeName,dcard.OutDate,dcard.ReceiptDate,dcard.DispatchDate,mdis.Description as DispatchMode,dcard.RefOfDispatch,dcard.LotNo,dcard.NameOfCourierIncharge,dcard.UploadFilePath,dcard.FromRemark,dcard.ToRemark,fromMuni.Abbreviation as FromUnit,toMuni.Abbreviation as ToUnit,fromRanks.RankAbbreviation as FromRankName,fromUp.Name as FromName,toRanks.RankAbbreviation as ToRankName,toUp.Name as ToName,fromUp.ArmyNo as FromServiceNo,toUp.ArmyNo as ToServiceNo,fromAspUser.DomainId as FromDID,toAspUser.DomainId as ToDID,dcard.IsComplete,dcard.IsActive,dcard.UpdatedOn from TrnDispatchCard dcard 
+                query = @"dcard.DispatchCardId,dcard.Step,mappl.Name as ApplyFor,mappl.ApplyForId,regi.Abbreviation RegimentalName,mrec.Name as RecordOfficeName,dcard.OutDate,dcard.ReceiptDate,dcard.DispatchDate,mdis.Description as DispatchMode,dcard.RefOfDispatch,dcard.LotNo,dcard.NameOfCourierIncharge,dcard.UploadFilePath,dcard.FromRemark,dcard.ToRemark,fromMuni.Abbreviation as FromUnit,toMuni.Abbreviation as ToUnit,fromRanks.RankAbbreviation as FromRankName,fromUp.Name as FromName,toRanks.RankAbbreviation as ToRankName,toUp.Name as ToName,fromUp.ArmyNo as FromServiceNo,toUp.ArmyNo as ToServiceNo,fromAspUser.DomainId as FromDID,toAspUser.DomainId as ToDID,dcard.IsComplete,dcard.IsActive,dcard.UpdatedOn from TrnDispatchCard dcard 
                         INNER JOIN MApplyFor mappl on mappl.ApplyForId=dcard.ApplyForId
                         INNER JOIN MDispatchMode mdis on dcard.DispatchModeId =mdis.DispatchModeId
                         INNER JOIN MapUnit fromunit on dcard.FromUnitId=fromunit.UnitMapId
@@ -92,10 +178,16 @@ namespace DataAccessLayer
             {
                 allowedSortColumns = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
                 {
-                    ["ServiceNo"] = "toUp.ArmyNo",
-                    ["ApplyFor"] = "mappl.Name"
+                    ["ApplyFor"] = "mappl.Name",
+                    ["LotNo"] = "dcard.LotNo",
+                    ["NameOfCourierIncharge"] = "dcard.NameOfCourierIncharge",
+                    ["ToServiceNo"] = "toUp.ArmyNo",
+                    ["DispatchDate"] = "dcard.DispatchDate",
+                    ["FromRemark"] = "dcard.FromRemark",
+                    ["ReceiptDate"] = "dcard.ReceiptDate",
+                    ["ToRemark"] = "dcard.ToRemark"
                 };
-                query = @"dcard.DispatchCardId,dcard.Step,mappl.Name as ApplyFor,mrec.Name as RecordOfficeName,dcard.OutDate,dcard.ReceiptDate,dcard.DispatchDate,mdis.Description as DispatchMode,dcard.RefOfDispatch,dcard.LotNo,dcard.NameOfCourierIncharge,dcard.UploadFilePath,dcard.FromRemark,dcard.ToRemark,fromMuni.Abbreviation as FromUnit,toMuni.Abbreviation as ToUnit,fromRanks.RankAbbreviation as FromRankName,fromUp.Name as FromName,toRanks.RankAbbreviation as ToRankName,toUp.Name as ToName,fromUp.ArmyNo as FromServiceNo,toUp.ArmyNo as ToServiceNo,fromAspUser.DomainId as FromDID,toAspUser.DomainId as ToDID,dcard.IsComplete,dcard.IsActive,dcard.UpdatedOn from TrnDispatchCard dcard 
+                query = @"dcard.DispatchCardId,dcard.Step,mappl.Name as ApplyFor,mappl.ApplyForId,mrec.Name as RecordOfficeName,dcard.OutDate,dcard.ReceiptDate,dcard.DispatchDate,mdis.Description as DispatchMode,dcard.RefOfDispatch,dcard.LotNo,dcard.NameOfCourierIncharge,dcard.UploadFilePath,dcard.FromRemark,dcard.ToRemark,fromMuni.Abbreviation as FromUnit,toMuni.Abbreviation as ToUnit,fromRanks.RankAbbreviation as FromRankName,fromUp.Name as FromName,toRanks.RankAbbreviation as ToRankName,toUp.Name as ToName,fromUp.ArmyNo as FromServiceNo,toUp.ArmyNo as ToServiceNo,fromAspUser.DomainId as FromDID,toAspUser.DomainId as ToDID,dcard.IsComplete,dcard.IsActive,dcard.UpdatedOn from TrnDispatchCard dcard 
                         INNER JOIN MApplyFor mappl on mappl.ApplyForId=dcard.ApplyForId
                         INNER JOIN MDispatchMode mdis on dcard.DispatchModeId =mdis.DispatchModeId
                         INNER JOIN MapUnit fromunit on dcard.FromUnitId=fromunit.UnitMapId
@@ -118,10 +210,16 @@ namespace DataAccessLayer
             {
                 allowedSortColumns = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
                 {
-                    ["ServiceNo"] = "toUp.ArmyNo",
-                    ["ApplyFor"] = "mappl.Name"
+                    ["ApplyFor"] = "mappl.Name",
+                    ["LotNo"] = "dcard.LotNo",
+                    ["NameOfCourierIncharge"] = "dcard.NameOfCourierIncharge",
+                    ["ToServiceNo"] = "toUp.ArmyNo",
+                    ["DispatchDate"] = "dcard.DispatchDate",
+                    ["FromRemark"] = "dcard.FromRemark",
+                    ["ReceiptDate"] = "dcard.ReceiptDate",
+                    ["ToRemark"] = "dcard.ToRemark"
                 };
-                query = @"dcard.DispatchCardId,dcard.Step,mappl.Name as ApplyFor,regi.Abbreviation RegimentalName,dcard.OutDate,dcard.ReceiptDate,dcard.DispatchDate,mdis.Description as DispatchMode,dcard.RefOfDispatch,dcard.LotNo,dcard.NameOfCourierIncharge,dcard.UploadFilePath,dcard.FromRemark,dcard.ToRemark,fromMuni.Abbreviation as FromUnit,toMuni.Abbreviation as ToUnit,fromRanks.RankAbbreviation as FromRankName,fromUp.Name as FromName,toRanks.RankAbbreviation as ToRankName,toUp.Name as ToName,fromUp.ArmyNo as FromServiceNo,toUp.ArmyNo as ToServiceNo,fromAspUser.DomainId as FromDID,toAspUser.DomainId as ToDID,dcard.IsComplete,dcard.IsActive,dcard.UpdatedOn from TrnDispatchCard dcard 
+                query = @"dcard.DispatchCardId,dcard.Step,mappl.Name as ApplyFor,mappl.ApplyForId,regi.Abbreviation RegimentalName,dcard.OutDate,dcard.ReceiptDate,dcard.DispatchDate,mdis.Description as DispatchMode,dcard.RefOfDispatch,dcard.LotNo,dcard.NameOfCourierIncharge,dcard.UploadFilePath,dcard.FromRemark,dcard.ToRemark,fromMuni.Abbreviation as FromUnit,toMuni.Abbreviation as ToUnit,fromRanks.RankAbbreviation as FromRankName,fromUp.Name as FromName,toRanks.RankAbbreviation as ToRankName,toUp.Name as ToName,fromUp.ArmyNo as FromServiceNo,toUp.ArmyNo as ToServiceNo,fromAspUser.DomainId as FromDID,toAspUser.DomainId as ToDID,dcard.IsComplete,dcard.IsActive,dcard.UpdatedOn from TrnDispatchCard dcard 
                         INNER JOIN MApplyFor mappl on mappl.ApplyForId=dcard.ApplyForId
                         INNER JOIN MDispatchMode mdis on dcard.DispatchModeId=mdis.DispatchModeId
                         INNER JOIN MapUnit fromunit on dcard.FromUnitId=fromunit.UnitMapId

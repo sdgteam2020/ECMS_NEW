@@ -4411,5 +4411,27 @@ namespace Web.Controllers
                 return Json(responseData);
             }
         }
+        
+        [HttpPost]
+        public async Task<IActionResult> GetDispatchCardDataForDialog(DTODataTablesRequestForCardDispatchDialog dTO)
+        {
+            try
+            {
+                return Json(await basicDetailBL.GetDispatchCardDataForDialog(dTO));
+            }
+            catch (Exception ex)
+            {
+                List<DTOCardDispatchDialogResponse> dTOCards = new List<DTOCardDispatchDialogResponse>();
+                var responseData = new DTODataTablesResponse<DTOCardDispatchDialogResponse>
+                {
+                    draw = 0,
+                    recordsTotal = 0,
+                    recordsFiltered = 0,
+                    data = dTOCards
+                };
+                _logger.LogError(1001, ex, "BasicDetail->GetDispatchCardDataForDialog");
+                return Json(responseData);
+            }
+        }
     }
 }

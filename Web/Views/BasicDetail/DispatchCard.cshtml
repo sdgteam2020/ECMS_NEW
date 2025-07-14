@@ -2,6 +2,32 @@
     ViewData["Title"] = "List of Dispatch Card";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+<style>
+    .count-label {
+        background-color: #044C92;
+        text-align: center;
+        padding: 0.5rem !important;
+        margin-right: 0.25rem !important;
+        border: hidden;
+        font-weight: 700 !important;
+        color: #fff !important;
+        width: 120px;
+        height: 60px;
+    }
+
+    .modal-xl {
+        max-width: 90% !important;
+        width: 90% !important;
+    }
+
+    .table {
+        min-width: 100% !important;
+    }
+
+    .modal .modal-body .table-responsive {
+        max-height: 500px;
+    }
+</style>
 <partial name="~/Views/Shared/_DataTableCSS.cshtml" />
 <header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
     <div class="containerMain">
@@ -46,10 +72,11 @@
                         <thead>
                             <tr>
                                 <th class="wd-40-f">S No</th>
+                                <th class="nowrap">Categery</th>
                                 <th class="nowrap">Lot No</th>
                                 <th class="nowrap">Unit</th>
                                 <th class="nowrap">Regt / ORO</th>
-                                <th class="nowrap">Name Of Courier Incharge</th>
+                                <th class="nowrap">CIC Name</th>
                                 <th class="nowrap">Army No</th>
                                 <th class="nowrap">Dispatch To</th>
                                 <th class="nowrap">Dispatch On</th>
@@ -66,6 +93,40 @@
             </div>
         </div>
     </div>
+</div>
+<div class="modal fade" id="DataTableDialog" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel"><span id="lblModelTitle">Dispatch Card Lot details</span></h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="table-responsive">
+                        <table class="table border border-purple table-striped no-footer table-hover" role="grid" id="tbldatadialog">
+                            <thead>
+                                <tr>
+                                    <th class="wd-40-f">S No</th>
+                                    <th class="nowrap">Request ID</th>
+                                    <th class="nowrap">Arm / Service</th>
+                                    <th class="nowrap">Unit</th>
+                                    <th class="nowrap">ORO</th>
+                                    <th class="nowrap">Regt</th>
+                                    <th class="nowrap">Army No</th>
+                                    <th class="nowrap">Rank & Name</th>
+                                    <th class="nowrap">Card No</th>
+                                    <th class="nowrap">Chip No</th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
+                <div class="col-sm-12" id="msg">
+                </div>
+            </div>
+        </div><!-- modal-content -->
+    </div><!-- modal-dialog -->
 </div>
 <script asp-src-include="~/developerjs/DispatchCard.js"></script>
 <partial name="~/Views/Shared/_DataTableJS.cshtml" />

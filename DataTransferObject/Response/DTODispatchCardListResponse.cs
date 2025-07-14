@@ -6,6 +6,7 @@ namespace DataTransferObject.Response
         public int TotalFilteredRecords { get; set; }
         public int DispatchCardId { get; set; }
         public byte Step { get; set; } // 1 For AFSAC AND 2 FOR Regiment / Record
+        public byte ApplyForId { get; set; }
         public string ApplyFor { get; set; }=string.Empty;
         public string? RegimentalName { get; set; }
         public string? RecordOfficeName { get; set; }
