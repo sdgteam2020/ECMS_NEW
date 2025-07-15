@@ -80,7 +80,7 @@
                                 <th class="nowrap">Army No</th>
                                 <th class="nowrap">Dispatch To</th>
                                 <th class="nowrap">Dispatch On</th>
-                                <th class="nowrap">AFSAC Remark</th>
+                                <th class="nowrap">Sender Remark</th>
                                 <th class="nowrap">Dispatch In</th>
                                 <th class="nowrap">Remark</th>
                                 <th class="noExport nowrap">Action</th>
@@ -127,6 +127,42 @@
             </div>
         </div><!-- modal-content -->
     </div><!-- modal-dialog -->
+</div>
+
+<!-- Dispatch In Dialog  -->
+<div class="modal fade" id="DispatchInDialog" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Dispatch In</h5>
+            </div>
+            <form action="" id="SaveDispatchCardIn" method="post" name="SaveDispatchCardIn">
+                @Html.AntiForgeryToken()
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-sm-12 mb-3">
+                            <div class="row">
+                                <span class=" d-none" id="spnDispatchCardId">0</span>
+                                <div class="col-sm-12 mx-auto">
+                                    <div class="form-group row mb-2">
+                                        <label class="col-form-label col-sm-5 labelprofile">Remark<i class="fas fa-asterisk mand1"></i></label>
+                                        <div class="col-sm-7">
+                                            <textarea class="form-control1" style="height:auto!important;" name="txtToRemark" id="txtToRemark" rows="3" maxlength="100" data-val-maxlength="Maximum length of Message is 100 character." data-val-maxlength-max="100" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="Remark is required." data-val-regex-pattern="^[\w\&\.\-\; ]*$"></textarea>
+                                            <span class="text-danger field-validation-valid" data-valmsg-for="txtFromRemark" data-valmsg-replace="true"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="btnSubmit" class="btn btn-primary">Proceed</button>
+                    <button type="button" id="btnClosed" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
 <script asp-src-include="~/developerjs/DispatchCard.js"></script>
 <partial name="~/Views/Shared/_DataTableJS.cshtml" />

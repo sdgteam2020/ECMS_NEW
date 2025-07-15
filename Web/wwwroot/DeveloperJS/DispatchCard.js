@@ -110,7 +110,7 @@ function BindData() {
             },
             {
                 data: "FromRemark",
-                name: "AFSAC Remark",
+                name: "Sender Remark",
                 render: function (data, type, row) {
                     if (data != null) {
                         let sentence = data;
@@ -153,11 +153,11 @@ function BindData() {
                 name: "Action",
                 orderable: false,
                 render: function (data, type, row) {
-                    let Action = `<button type='button' class='cls-btnDialog btn btn-icon btn-round btn-primary mr-1'><i class='fa fa-eye'></i></button>`;
+                    let Action = `<div class='d-flex'><button type='button' class='cls-btnDialog btn btn-icon btn-round btn-primary mr-1'><i class='fa fa-eye'></i></button>`;
                     if (data == false && parseInt($("#spnClaimValue").html()) != 1) {
-                        return Action += `<button type='button' class='cls-btnedit btn btn-icon btn-round btn-primary mr-1'><i class='fas fa-edit'></i></button>`;
+                        return Action += `<button type='button' class='cls-btnedit btn btn-icon btn-round btn-primary mr-1'><i class='fas fa-edit'></i></button></div>`;
                     } else {
-                        return Action += `NA`;
+                        return Action += `NA</div>`;
                     }
                 }
             }
@@ -196,9 +196,12 @@ function BindData() {
 
             $("#tbldata tbody").off("click", ".cls-btnedit").on("click", ".cls-btnedit", function () {
                 var rowData = table.row($(this).closest("tr")).data();
-                if (rowData.EncryptedId != null) {
-                    sessionStorage.setItem("ArmyNo", rowData.ServiceNo);
-                    window.location.href = '/BasicDetail/FaultyCardRequest?Id=' + encodeURIComponent(rowData.EncryptedId);
+                if (rowData.DispatchCardId != null) {
+                    $("#spnDispatchCardId").html(rowData.DispatchCardId);
+                    $("#DispatchInDialog").modal('show');
+                }
+                else {
+                    $("#spnDispatchCardId").html(0);
                 }
             });
             $("#tbldata tbody").off("click", ".cls-btnDialog").on("click", ".cls-btnDialog", function () {

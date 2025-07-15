@@ -21,5 +21,9 @@ namespace DataTransferObject.Domain.Model
         [StringLength(30)]
         [Column(TypeName = "varchar(30)")]
         public string ChipNo { get; set; }=string.Empty;
+
+        [ForeignKey("MTrnICardRequest"), DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public int RequestId { get; set; }
+        public MTrnICardRequest? MTrnICardRequest { get; set; }
     }
 }

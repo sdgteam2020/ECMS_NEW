@@ -88,6 +88,10 @@
         $("#ddlCategery").val(2); // Set default value for Categery
         await GetddlRecordRegiment(2);
     }
+    $('#ddlDID').on('change', async function () {
+        let AspNetUsersId = $(this).val(); // Get the selected value
+        await GetUserIdWithName(AspNetUsersId);
+    });
     $("#txtUnitName").autocomplete({
         source: function (request, response) {
             if (request.term.length > 2) {

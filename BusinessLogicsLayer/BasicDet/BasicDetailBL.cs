@@ -208,9 +208,10 @@ namespace BusinessLogicsLayer.BasicDet
         {
             try
             {
-                // Get properties to check (excluding Remarks, IsValid, Status)
+                // Get properties to check (excluding RequestId,Remarks, IsValid, Status)
                 var properties = typeof(DTOCardDispatchCheckRequest).GetProperties()
-                                                           .Where(p => p.Name != nameof(DTOCardDispatchCheckRequest.Remarks)
+                                                           .Where(p => p.Name != nameof(DTOCardDispatchCheckRequest.RequestId) 
+                                                                    && p.Name != nameof(DTOCardDispatchCheckRequest.Remarks)
                                                                     && p.Name != nameof(DTOCardDispatchCheckRequest.IsValid)
                                                                     && p.Name != nameof(DTOCardDispatchCheckRequest.Status))
                                                            .ToList();

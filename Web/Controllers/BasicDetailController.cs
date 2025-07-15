@@ -4130,7 +4130,7 @@ namespace Web.Controllers
                         using (var reader = new StreamReader(dTO.CSVFile.OpenReadStream()))
                         using (var csv = new CsvReader(reader, new CsvConfiguration(CultureInfo.InvariantCulture)))
                         {
-                            csv.Context.RegisterClassMap(new CsvClassMap<DTOCardDispatchCheckRequest>(true));
+                            csv.Context.RegisterClassMap(new CsvClassMap<DTOCardDispatchCheckRequest>(true, CsvClassMapTypeEnum.DispatchCard));
                             try
                             {
                                 records = csv.GetRecords<DTOCardDispatchCheckRequest>().ToList();
@@ -4326,9 +4326,8 @@ namespace Web.Controllers
             }
             else
             {
-                TempData["error"] = "Invalid User.";
-                TempData.Keep("error");
-                return RedirectToAction("ContactUs", "Home");
+                ViewBag.ClaimValue = 0;
+                return View();
             }
         }
         [HttpPost]
@@ -4373,15 +4372,10 @@ namespace Web.Controllers
                     }
                     else
                     {
-                        List<DTODispatchCardListResponse> dTODispatchCardLists = new List<DTODispatchCardListResponse>();
-                        var responseData = new DTODataTablesResponse<DTODispatchCardListResponse>
-                        {
-                            draw = 0,
-                            recordsTotal = 0,
-                            recordsFiltered = 0,
-                            data = dTODispatchCardLists
-                        };
-                        return Json(responseData);
+                        dTO.ClaimValue = 0;
+                        dTO.UnitId = dtoSession.UnitId;
+                        dTO.TDMId = dtoSession.TrnDomainMappingId;
+                        return Json(await basicDetailBL.GetAllDispatchCard(dTO));
                     }
                 }
                 else

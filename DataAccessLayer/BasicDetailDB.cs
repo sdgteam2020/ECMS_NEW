@@ -237,6 +237,39 @@ namespace DataAccessLayer
                             regi.UnitId=@UnitId
                             AND toUp.ArmyNo LIKE '%' + @SearchTerm + '%'";
             }
+            else
+            {
+                allowedSortColumns = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+                {
+                    ["ApplyFor"] = "mappl.Name",
+                    ["LotNo"] = "dcard.LotNo",
+                    ["NameOfCourierIncharge"] = "dcard.NameOfCourierIncharge",
+                    ["ToServiceNo"] = "toUp.ArmyNo",
+                    ["DispatchDate"] = "dcard.DispatchDate",
+                    ["FromRemark"] = "dcard.FromRemark",
+                    ["ReceiptDate"] = "dcard.ReceiptDate",
+                    ["ToRemark"] = "dcard.ToRemark"
+                };
+                query = @"dcard.DispatchCardId,dcard.Step,mappl.Name as ApplyFor,mappl.ApplyForId,regi.Abbreviation RegimentalName,mrec.Name as RecordOfficeName,dcard.OutDate,dcard.ReceiptDate,dcard.DispatchDate,mdis.Description as DispatchMode,dcard.RefOfDispatch,dcard.LotNo,dcard.NameOfCourierIncharge,dcard.UploadFilePath,dcard.FromRemark,dcard.ToRemark,fromMuni.Abbreviation as FromUnit,toMuni.Abbreviation as ToUnit,fromRanks.RankAbbreviation as FromRankName,fromUp.Name as FromName,toRanks.RankAbbreviation as ToRankName,toUp.Name as ToName,fromUp.ArmyNo as FromServiceNo,toUp.ArmyNo as ToServiceNo,fromAspUser.DomainId as FromDID,toAspUser.DomainId as ToDID,dcard.IsComplete,dcard.IsActive,dcard.UpdatedOn from TrnDispatchCard dcard 
+                        INNER JOIN MApplyFor mappl on mappl.ApplyForId=dcard.ApplyForId
+                        INNER JOIN MDispatchMode mdis on dcard.DispatchModeId =mdis.DispatchModeId
+                        INNER JOIN MapUnit fromunit on dcard.FromUnitId=fromunit.UnitMapId
+                        INNER JOIN MUnit fromMuni on fromunit.UnitId=fromMuni.UnitId
+                        INNER JOIN MapUnit tounit on dcard.ToUnitId=tounit.UnitMapId
+                        INNER JOIN MUnit toMuni on tounit.UnitId=toMuni.UnitId
+                        INNER JOIN UserProfile fromUp on dcard.FromUserId=fromUp.UserId
+                        INNER JOIN MRank fromRanks on fromUp.RankId=fromRanks.RankId
+                        INNER JOIN UserProfile toUp on dcard.ToUserId=toUp.UserId
+                        INNER JOIN MRank toRanks on toUp.RankId=toRanks.RankId
+                        INNER JOIN AspNetUsers fromAspUser on dcard.FromAspNetUsersId = fromAspUser.Id
+                        INNER JOIN AspNetUsers toAspUser on dcard.ToAspNetUsersId = toAspUser.Id
+                        LEFT JOIN MRegimental regi on regi.RegId=dcard.RegId
+                        LEFT JOIN MRecordOffice mrec on dcard.RecordOfficeId = mrec.RecordOfficeId ";
+                wherequery = @"WHERE
+                            dcard.Step=2
+                            AND dcard.ToUnitId=@UnitId
+                            AND toUp.ArmyNo LIKE '%' + @SearchTerm + '%'";
+            }
             try
             {
                 var sortColumn = allowedSortColumns.ContainsKey(dTO.sortColumn ?? "")
@@ -325,6 +358,7 @@ namespace DataAccessLayer
                                         select new DTOCardDispatchCheckRequest
                                         {
                                             ChipNo = record.ChipNo,
+                                            RequestId = chipNoExists?.RequestId ?? 0,
                                             IsValid = chipNoExists != null && chipNoExists.RecordOfficeId == dTO.RecordOfficeId && stepStatus != null,
                                             Status = chipNoExists != null && chipNoExists.RecordOfficeId == dTO.RecordOfficeId && stepStatus != null ? "Valid" : "DbInvalid",
                                             Remarks = (chipNoExists == null ? "ChipNo not exists; " : "") +
@@ -344,6 +378,7 @@ namespace DataAccessLayer
                                         select new DTOCardDispatchCheckRequest
                                         {
                                             ChipNo = record.ChipNo,
+                                            RequestId = chipNoExists?.RequestId ?? 0,
                                             IsValid = chipNoExists != null && bdMatch != null && stepStatus != null,
                                             Status = chipNoExists != null && bdMatch != null && stepStatus != null ? "Valid" : "DbInvalid",
                                             Remarks = (chipNoExists == null ? "ChipNo not exists; " : "") +
