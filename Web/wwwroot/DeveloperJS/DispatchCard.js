@@ -5,7 +5,98 @@ $(function () {
     $("#btnAdd").on("click", function () {
         location.href = '/BasicDetail/DispatchOut';
     });
+    $("#btnSubmit").on('click', async function (e) {
+        let formId = '#SaveDispatchCardIn';
+        $.validator.unobtrusive.parse($(formId));
+        let DispatchCardId = parseInt($("#spnDispatchCardId").html());
+        if (DispatchCardId == 0 || DispatchCardId < 0) {
+            toastr.error('Invalid Dispatch Card Id.');
+            return false; 
+        }
+
+        // Check Form Validation
+        if ($(formId).valid()) {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, Save it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Save();
+                }
+            })
+        }
+        else {
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Please fill required field.',
+
+            })
+            toastr.error('Please fill required field.');
+            return false;
+        }
+    });
 });
+async function Save() {
+    try {
+        var token = $('input[name="__RequestVerificationToken"]').val();
+        let formData = new FormData();
+        let DispatchCardId = parseInt($("#spnDispatchCardId").html());
+
+        formData.append('DispatchCardId', DispatchCardId);
+        formData.append('ToRemark', $("#txtToRemark").val());
+
+        // Append the CSRF token if needed (depends on your backend configuration)
+        formData.append('__RequestVerificationToken', token);
+
+        const response = await fetch('/BasicDetail/DispatchCardIn', {
+            method: 'POST',
+            headers: {
+                'RequestVerificationToken': token
+            },
+            body: formData
+        });
+
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+
+        const result = await response.json();
+
+        if (Boolean(result.Result)) {
+            $("#DispatchInDialog").modal('hide');
+            Swal.fire({
+                title: "Success!",
+                text: result.Message,
+                icon: "success",
+                confirmButtonText: "OK"
+            }).then(() => {
+                // Wait for the SweetAlert to close before reloading the page
+                setTimeout(() => {
+                    location.reload();
+                }, 1500); // 1500 milliseconds delay
+            });
+
+        } else {
+
+            if (result.Message.length > 0) {
+
+                let messages = result.Message.split(';');
+                messages.forEach(msg => {
+                    toastr.error(msg);
+                });
+            }
+        }
+    }
+    catch (error) {
+        alert("Error: " + error.message);
+    }
+}
 function BindData() {
     $("#tbldata").DataTable().destroy();
     table = $("#tbldata").DataTable({
@@ -153,10 +244,15 @@ function BindData() {
                 name: "Action",
                 orderable: false,
                 render: function (data, type, row) {
+                    let ClaimValue = parseInt($("#spnClaimValue").html());
                     let Action = `<div class='d-flex'><button type='button' class='cls-btnDialog btn btn-icon btn-round btn-primary mr-1'><i class='fa fa-eye'></i></button>`;
-                    if (data == false && parseInt($("#spnClaimValue").html()) != 1) {
+                    if (data == false && row.Step == 1 && (ClaimValue == 2 || ClaimValue == 3)) {
                         return Action += `<button type='button' class='cls-btnedit btn btn-icon btn-round btn-primary mr-1'><i class='fas fa-edit'></i></button></div>`;
-                    } else {
+                    }
+                    else if (data == false && row.Step == 2 && ClaimValue == 0) {
+                        return Action += `<button type='button' class='cls-btnedit btn btn-icon btn-round btn-primary mr-1'><i class='fas fa-edit'></i></button></div>`;
+                    }
+                    else {
                         return Action += `NA</div>`;
                     }
                 }
@@ -226,7 +322,7 @@ function BindData() {
             $("#tbldata tbody").off("click", ".cls-ToRemark").on("click", ".cls-ToRemark", function () {
                 var rowData = table.row($(this).closest("tr")).data();
                 if (rowData != null) {
-                    $("#MessageDialogLabel").html('AFSAC Remark');
+                    $("#MessageDialogLabel").html('Remark');
                     $("#MessageDialogBody").html(rowData.ToRemark);
                     $("#MessageDialog").modal('show');
                 }

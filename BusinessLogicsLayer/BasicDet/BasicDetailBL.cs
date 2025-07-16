@@ -425,5 +425,9 @@ namespace BusinessLogicsLayer.BasicDet
         {
             return await _iBasicDetailDB.CheckBeforeDistribution(requestId);
         }
+        public async Task<DTOGenericResponse<string>> DispatchCardIn(List<DTODispatchCardInRequest> dTODispatch, byte StepId, int DispatchCardId,string ToRemark)
+        {
+            return await _iBasicDetailDB.DispatchCardIn(dTODispatch, StepId, DispatchCardId, ToRemark);
+        }
     }
 }

@@ -54,6 +54,10 @@ using System;
 using System.Linq;
 using Org.BouncyCastle.Ocsp;
 using DataTransferObject.Response.User;
+using BusinessLogicsLayer.DispatchCard;
+using BusinessLogicsLayer.DispatchCardMapping;
+using NuGet.Packaging;
+using System.Collections.Generic;
 
 namespace Web.Controllers
 {
@@ -92,13 +96,15 @@ namespace Web.Controllers
         private readonly ILostCardBL _lostCardBL;
         private readonly IDistributeCardBL _distributeCardBL;
         private readonly IDestructionCardBL _destructionCardBL;
+        private readonly IDispatchCardBL dispatchCardBL;
+        private readonly IDispatchCardMappingBL dispatchCardMappingBL;
 
         public BasicDetailController(IConfiguration configuration, IBasicDetailBL basicDetailBL, IMapUnitBL mapUnitBL, IBasicDetailTempBL basicDetailTempBL, IService service, IMapper mapper,
             UserManager<ApplicationUser> userManager, IWebHostEnvironment hostingEnvironment, IDataProtectionProvider dataProtectionProvider,
                               DataProtectionPurposeStrings dataProtectionPurposeStrings, ILogger<BasicDetailController> logger, IStepCounterBL iStepCounterBL,
                               ITrnFwnBL iTrnFwnBL, ITrnICardRequestBL iTrnICardRequestBL, IDomainMapBL iDomainMapBL
             , IBasicUploadBL basicUploadBL, IBasicAddressBL basicAddressBL, IBasicinfoBL basicinfoBL, IRankBL rankBL, INotificationBL notificationBL, IMasterBL masterBL
-           , ITrnLoginLogBL iTrnLoginLogBL, IICardHoldBL iICardHoldBL, IcsvImportBl iCSVImportBL, IFaultyCardBL _faultyCardBL, IHotlistCardBL hotlistCardBL, ILostCardBL lostCardBL, IDistributeCardBL distributeCardBL, IDestructionCardBL destructionCardBL)
+           , ITrnLoginLogBL iTrnLoginLogBL, IICardHoldBL iICardHoldBL, IcsvImportBl iCSVImportBL, IFaultyCardBL _faultyCardBL, IHotlistCardBL hotlistCardBL, ILostCardBL lostCardBL, IDistributeCardBL distributeCardBL, IDestructionCardBL destructionCardBL, IDispatchCardBL dispatchCardBL, IDispatchCardMappingBL dispatchCardMappingBL)
         {
             _configuration = configuration;
             this.basicDetailBL = basicDetailBL;
@@ -132,6 +138,8 @@ namespace Web.Controllers
             _lostCardBL = lostCardBL;
             _distributeCardBL = distributeCardBL;
             _destructionCardBL = destructionCardBL;
+            this.dispatchCardBL = dispatchCardBL;
+            this.dispatchCardMappingBL = dispatchCardMappingBL;
         }
 
         #region Index/ApprovalForIO/View/InaccurateData/InaccurateDataView/RequestType
@@ -4426,6 +4434,73 @@ namespace Web.Controllers
                 _logger.LogError(1001, ex, "BasicDetail->GetDispatchCardDataForDialog");
                 return Json(responseData);
             }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> DispatchCardIn([FromForm] DTODispatchInRequest dTO)
+        {
+            DTOGenericResponse<string> response = new DTOGenericResponse<string>();
+
+            dTO.ReceiptDate = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
+            dTO.IsComplete = true;
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    TrnDispatchCard? trnDispatchCard = await dispatchCardBL.Get(dTO.DispatchCardId);
+                    if (trnDispatchCard != null)
+                    {
+                        if (trnDispatchCard.IsComplete == true && trnDispatchCard.ReceiptDate != null)
+                        {
+                            response.Result = false;
+                            response.Message = "Action has already been taken by you.";
+                            response.Value = string.Empty;
+                        }
+                        else
+                        {
+                            byte StepId = 0;
+                            if (trnDispatchCard.Step == 1)
+                            {
+                                StepId = 12;
+                            }
+                            else if (trnDispatchCard.Step == 2)
+                            {
+                                StepId = 14;
+                            }
+                            List<DTODispatchCardInRequest> dTODispatchCards = new List<DTODispatchCardInRequest>();
+                            dTODispatchCards.AddRange(await dispatchCardMappingBL.GetRequestIds(trnDispatchCard.DispatchCardId));
+                            response = await basicDetailBL.DispatchCardIn(dTODispatchCards, StepId, dTO.DispatchCardId,dTO.ToRemark);
+                            response.Value = string.Empty;
+                        }
+                    }
+                    else
+                    {
+                        response.Result = false;
+                        response.Message = "Invalid Id";
+                        response.Value = string.Empty;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(1001, ex, "BasicDetail->DispatchCardIn");
+                    response.Message = "Internal Server Error!";
+                }
+            }
+            else
+            {
+                var errors = ModelState.Where(x => x.Value?.Errors?.Count > 0)
+                .SelectMany(x => x.Value!.Errors)
+                .Select(e => e.ErrorMessage)
+                .ToList();
+                if (errors.Any())
+                {
+                    response.Message = string.Join("; ", errors); // Concatenate all error messages
+                }
+                response.Result = false;
+                response.Value = string.Empty;
+            }
+            return Ok(response);
         }
     }
 }
